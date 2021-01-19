@@ -25,8 +25,8 @@ class ComponentAbstract extends eventemitter3_1.default {
             if (typeof eventName !== "string" || !eventName.startsWith("/response/")) {
                 continue;
             }
-            const errors = this.validate(eventName, json);
-            if (errors.valid) {
+            const isValid = this.fastValidate(eventName, json);
+            if (isValid) {
                 this.emit(eventName, json);
             }
         }
@@ -37,8 +37,8 @@ class ComponentAbstract extends eventemitter3_1.default {
             if (this._eventHandlerQueue[eventName].length === 0) {
                 continue;
             }
-            const errors = this.validate(eventName, json);
-            if (errors.valid) {
+            const isValid = this.fastValidate(eventName, json);
+            if (isValid) {
                 const func = this._eventHandlerQueue[eventName].shift();
                 if (func) {
                     func(json);
@@ -50,10 +50,20 @@ class ComponentAbstract extends eventemitter3_1.default {
         const schema = WSSchema_1.default.getSchema(commandUri);
         return WSSchema_1.default.validateMultiple(json, schema);
     }
+    fastValidate(commandUri, json) {
+        const schema = WSSchema_1.default.getSchema(commandUri);
+        return WSSchema_1.default.validate(json, schema);
+    }
     onceQueue(eventName, func) {
         this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName] || [];
         if (typeof func === "function") {
             this._eventHandlerQueue[eventName].push(func);
+        }
+    }
+    removeFromOnceQueue(eventName, func) {
+        this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName] || [];
+        if (typeof func === "function") {
+            this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName].filter((e) => e !== func);
         }
     }
     async sendAndReceiveJsonWait(sendObj, schemaPath, option) {
@@ -72,7 +82,12 @@ class ComponentAbstract extends eventemitter3_1.default {
             }
             const clearListeners = () => {
                 this.Obniz.off("close", onObnizClosed);
-                this.off(schemaPath, onDataReceived);
+                if (option.queue) {
+                    this.removeFromOnceQueue(schemaPath, onDataReceived);
+                }
+                else {
+                    this.off(schemaPath, onDataReceived);
+                }
                 if (typeof timeoutHandler === "number") {
                     clearTimeout(timeoutHandler);
                     timeoutHandler = undefined;
@@ -117,5 +132,3 @@ class ComponentAbstract extends eventemitter3_1.default {
     }
 }
 exports.ComponentAbstract = ComponentAbstract;
-
-//# sourceMappingURL=ComponentAbstact.js.map

@@ -13,30 +13,21 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
     constructor(id, options) {
         super(id, options);
     }
-    /**
-     * This closes the current connection.
-     * You need to set auto_connect to false. Otherwise the connection will be recovered.
-     *
-     * ```javascript
-     * var obniz = new Obniz('1234-5678', {
-     *   auto_connect: false,
-     *   reset_obniz_on_ws_disconnection: false
-     * });
-     *
-     * obniz.connect();
-     * obniz.onconnect = async function() {
-     *   obniz.io0.output(true);
-     *   obniz.close();
-     * }
-     * ```
-     */
-    close() {
-        super.close();
-        this.updateOnlineUI();
-    }
-    isValidObnizId(str) {
-        if (typeof str !== "string" || str.length < 8) {
-            return null;
+    static isValidObnizId(str) {
+        if (typeof str !== "string") {
+            return false;
+        }
+        // IP => accept
+        if (this.isIpAddress(str)) {
+            return true;
+        }
+        // Serial Number 'sn_***'
+        if (str.startsWith("sn_")) {
+            return true;
+        }
+        // 0000-0000
+        if (str.length < 8) {
+            return false;
         }
         str = str.replace("-", "");
         let id = parseInt(str);
@@ -45,11 +36,15 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
         }
         return id !== null;
     }
+    _close() {
+        super._close();
+        this.updateOnlineUI();
+    }
     wsconnect(desired_server) {
         this.showOffLine();
-        if (!this.isValidObnizId(this.id)) {
-            if (this.isNode) {
-                this.error("invalid obniz id");
+        if (!this.constructor.isValidObnizId(this.id)) {
+            if (this.isNode || !this.options.obnizid_dialog) {
+                this.error({ alert: "error", message: "invalid obniz id" });
             }
             else {
                 const filled = _ReadCookie("obniz-last-used") || "";
@@ -291,5 +286,3 @@ function _ReadCookie(name) {
     }
     return null;
 }
-
-//# sourceMappingURL=ObnizUIs.js.map

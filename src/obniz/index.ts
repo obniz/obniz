@@ -1,62 +1,4 @@
-/**
- * @packageDocumentation
- * @module ObnizCore
- */
-
-import { M5StackBasic } from "./libs/hw/m5stack_basic";
-import { M5StickC } from "./libs/hw/m5stickc";
-import ObnizDevice from "./ObnizDevice";
-
-/**
- * obniz class is the abstract version of obniz Board hardware within JavaScript.
- *
- * By providing obniz id and instantiating it, you can control obniz Board and the connected parts
- * without the details of websocket api.
- *
- *
- * ### obnizOS version and obniz.js version
- *
- * obniz cloud compare your obniz.js version and target device obnizOS version.
- * If your js sdk major number is below from OS version (eg obniz.js is 2.0.0 and obnizOS is 3.0.0) then obniz cloud will alert when connection established.
- * It will work somehow but some functions looses compatibility.
- *
- * ### one device from two program
- *
- * obniz cloud accept multiple websocket connection from multiple obniz.js at same time.
- * every commands from obniz.js will passed to a device and every command from a device will be dispatched to every obniz.js connected to the cloud.
- *
- * But If one of obniz.js established a connection to a device, then target device will send datas only via local connect. So other connected obniz.js only can send datas and never receive datas from a device.
- *
- * If you'd like to receive, you need to specify `local_connect: false` at all of obniz.js to disable local connect.
- *
- */
-class Obniz extends ObnizDevice {
-  /**
-   * M5StickC device
-   */
-  public static M5StickC = M5StickC;
-  public static M5StackBasic = M5StackBasic;
-
-  /**
-   * obniz REST api class
-   */
-  public api: ObnizApi;
-
-  /**
-   * obniz REST api class
-   * @returns {ObnizApi}
-   */
-  public static get api() {
-    return ObnizApi;
-  }
-
-  constructor(id: string, options?: ObnizOptions) {
-    super(id, options);
-    this.api = new ObnizApi(id, options);
-  }
-}
-
-export = Obniz;
+import { Obniz } from "./Obniz";
 
 /*===================*/
 /* Utils */
@@ -89,8 +31,6 @@ try {
  * @ignore
  */
 import requireContext = require("./libs/webpackReplace/require-context");
-import ObnizApi from "./ObnizApi";
-import { ObnizOptions } from "./ObnizOptions";
 
 require.context = requireContext.default;
 if (requireContext.setBaseDir) {
@@ -111,3 +51,5 @@ for (const path of context.keys()) {
     Obniz.PartsRegistrate(anParts.default);
   }
 }
+
+export = Obniz;

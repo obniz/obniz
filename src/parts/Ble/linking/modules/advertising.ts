@@ -17,7 +17,11 @@ import LinkingIEEE754 from "./ieee754";
 export default class LinkingAdvertising {
   public static parse(peripheral: any) {
     const ad = peripheral;
-    const manu = ad.manufacturerData;
+    if (ad.adv_data.length < 5) {
+      return null;
+    }
+    const manu = Buffer.from(ad.adv_data.slice(5));
+    //    const manu = ad.manufacturerData;
     if (!manu || manu.length < 8) {
       return null;
     }

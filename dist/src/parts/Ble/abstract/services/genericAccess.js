@@ -8,7 +8,7 @@ class BleGenericAccess {
     constructor(service) {
         this._service = service;
     }
-    async getDeviceName() {
+    async getDeviceNameWait() {
         const char = this._service.getCharacteristic("2A00");
         if (!char) {
             return null;
@@ -17,5 +17,3 @@ class BleGenericAccess {
     }
 }
 exports.default = BleGenericAccess;
-
-//# sourceMappingURL=genericAccess.js.map

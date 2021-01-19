@@ -4,7 +4,7 @@ Library for Grove 3-axis accelerometer module[Grove - 3 Axis Digital Acceleromet
 
 ![](image.jpg)
 
-## wired(scl, sda {, vcc, gnd})
+## wired(scl, sda {, vcc, gnd, grove})
 Connect pins to an obniz Board.
 
 | grove | cable | obniz |
@@ -17,6 +17,12 @@ Connect pins to an obniz Board.
 ```javascript
 // Javascript Example
 var accelMeter = obniz.wired("Grove_3AxisAccelerometer", { scl:0, sda:1, vcc:2, gnd:3 });
+```
+
+If the device has a grove interface, it can be connected with just the parameter {grove: obniz.grove0}.
+```javascript
+// Javascript Example
+var accelMeter = obniz.wired("Grove_3AxisAccelerometer", {grove: obniz.grove0});
 ```
 
 ## [await] getWait()

@@ -24,19 +24,17 @@ class Logtta_TH {
             return false;
         }
         const data = peripheral.adv_data;
-        if (Logtta_TH.getName(data) !== "TH Sensor") {
+        if (data[5] !== 0x10 || data[6] !== 0x05 || data[7] !== 0x01 || data[16] !== 0x54 || data[17] !== 0x48) {
+            // CompanyID, Apperance, "T" "H"
             return false;
         }
         return true;
     }
     static getData(peripheral) {
-        if (peripheral.adv_data.length !== 31) {
+        if (!this.isAdvDevice(peripheral)) {
             return null;
         }
         const data = peripheral.adv_data;
-        if (Logtta_TH.getName(data) !== "TH Sensor") {
-            return null;
-        }
         const alert = data[15];
         const interval = (data[13] << 8) | data[14];
         const advData = {
@@ -147,5 +145,3 @@ class Logtta_TH {
     }
 }
 exports.default = Logtta_TH;
-
-//# sourceMappingURL=index.js.map

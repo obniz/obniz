@@ -124,7 +124,7 @@ let testUtil = {
   },
 
   releaseObnizePromise: function(obj, done) {
-    obj.obniz.close();
+    obj.obniz._close();
     obj.obniz = null;
     Obniz.prototype.wsconnect.restore();
 
@@ -137,7 +137,7 @@ let testUtil = {
       serverDataCount = obj.obniz.socket.send.callCount;
 
       const socet = obj.obniz.socket; // stub
-      obj.obniz.close();
+      obj.obniz._close();
       obj.obniz.socket = socet; // stub
       obj.obniz.wsOnOpen();
       obj.obniz.wsOnMessage(
@@ -230,7 +230,8 @@ let testUtil = {
         stub.callCount +
         ' times, but you expect ' +
         (count + 1) +
-        ' times) ';
+        ' times) \n expected data = ' +
+        JSON.stringify(expected);
       new _chai.Assertion(stub.callCount, message).to.be.above(count);
 
       new _chai.Assertion(
@@ -265,7 +266,8 @@ let testUtil = {
         stub.callCount +
         ' times, but you expect ' +
         (count + 1) +
-        ' times) ';
+        ' times) \n expected data = ' +
+        JSON.stringify(expected);
       new _chai.Assertion(stub.callCount, message).to.be.above(count);
 
       new _chai.Assertion(stub.args[count][0]).to.deep.equal(expected);

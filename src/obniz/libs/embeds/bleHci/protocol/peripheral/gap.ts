@@ -5,6 +5,8 @@
  */
 // var debug = require('debug')('gap');
 
+import BleHelper from "../../bleHelper";
+
 /**
  * @ignore
  */
@@ -28,6 +30,14 @@ class Gap extends EventEmitter<GapEventTypes> {
     this._advertiseState = null;
   }
 
+  /**
+   * @ignore
+   * @private
+   */
+  public _reset() {
+    this._advertiseState = null;
+  }
+
   public async startAdvertisingWait(name: any, serviceUuids: any) {
     debug("startAdvertising: name = " + name + ", serviceUuids = " + JSON.stringify(serviceUuids, null, 2));
 
@@ -44,13 +54,7 @@ class Gap extends EventEmitter<GapEventTypes> {
 
     if (serviceUuids && serviceUuids.length) {
       for (i = 0; i < serviceUuids.length; i++) {
-        const serviceUuid: any = Buffer.from(
-          serviceUuids[i]
-            .match(/.{1,2}/g)
-            .reverse()
-            .join(""),
-          "hex",
-        );
+        const serviceUuid: any = BleHelper.hex2reversedBuffer(serviceUuids[i]);
 
         if (serviceUuid.length === 2) {
           serviceUuids16bit.push(serviceUuid);

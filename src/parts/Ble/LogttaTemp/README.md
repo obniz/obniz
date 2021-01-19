@@ -114,7 +114,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     device.onNotify = (data) => {
         console.log(`temperature ${data.temperature} humidity ${data.humidity}`);
     };
-    device.startNotifyWait();
+    await device.startNotifyWait();
   }
 };
 await obniz.ble.scan.startWait();
@@ -137,7 +137,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     device.onNotify = (data) => {
         console.log(`temperature ${data.temperature} humidity ${data.humidity}`);
     };
-    device.startNotifyWait();
+    await device.startNotifyWait();
   }
 };
 await obniz.ble.scan.startWait();
@@ -178,16 +178,16 @@ The format is below.
 
 ## [await]getTemperatureWait()
 
-Get temperature Data from device.
+Get celsius temperature Data from device.
 
 ```javascript
 // Javascript Example
-const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (LOGTTA_AD.isDevice(peripheral)) {
+  if (Logtta_TH.isDevice(peripheral)) {
     console.log("find");
-    const device = new LOGTTA_AD(peripheral);
+    const device = new Logtta_TH(peripheral);
     await device.connectWait();
     console.log("connected");
     
@@ -201,16 +201,16 @@ await obniz.ble.scan.startWait();
 
 ## [await]getHumidityWait()
 
-Get humidity Data from device.
+Get humidity Data from device. 0-100.
 
 ```javascript
 // Javascript Example
-const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (LOGTTA_AD.isDevice(peripheral)) {
+  if (Logtta_TH.isDevice(peripheral)) {
     console.log("find");
-    const device = new LOGTTA_AD(peripheral);
+    const device = new Logtta_TH(peripheral);
     await device.connectWait();
     console.log("connected");
     
@@ -229,12 +229,12 @@ Authenticate with the device. The default value is 0000.
 
 ```javascript
 // Javascript Example
-const Logtta_AD = Obniz.getPartsClass('Logtta_AD');
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (Logtta_AD.isDevice(peripheral) ) {
+  if (Logtta_TH.isDevice(peripheral) ) {
     console.log("find");
-    const device = new Logtta_AD(peripheral);
+    const device = new Logtta_TH(peripheral);
     await device.connectWait();
     console.log("connected");
     await device.authPinCodeWait("0000");
@@ -258,12 +258,12 @@ http://www.uni-elec.co.jp/logtta_page.html
 
 ```javascript
 // Javascript Example
-const Logtta_AD = Obniz.getPartsClass('Logtta_AD');
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (Logtta_AD.isDevice(peripheral) ) {
+  if (Logtta_TH.isDevice(peripheral) ) {
     console.log("find");
-    const device = new Logtta_AD(peripheral);
+    const device = new Logtta_TH(peripheral);
     await device.connectWait();
     console.log("connected");
     await device.authPinCodeWait("0000");
@@ -285,10 +285,10 @@ If it finds the device it is advertizing, it returns true.
 
 ```javascript
 // Javascript Example
-const Logtta_AD = Obniz.getPartsClass('Logtta_AD');
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (Logtta_AD.isAdvDevice(p)) {
+    if (Logtta_TH.isAdvDevice(p)) {
         console.log("found");
     }
 };
@@ -300,20 +300,20 @@ await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 
 Returns the information of the device if it is found. Returns Null if the device was not found.
 
-- battery : battery voltage
+- battery : battery voltage(0-100)
 - address : MacAddress
-- temperature: temperature
-- humidity: humidity
-- interval : transmission interval
+- temperature: temperature (Celsius)
+- humidity: humidity(0-100)
+- interval : transmission interval(seconds)
 
 
 ```javascript
 // Javascript Example
-const Logtta_AD = Obniz.getPartsClass('Logtta_AD');
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (Logtta_AD.isAdvDevice(p)) {
-        let data = Logtta_AD.getData(p);
+    if (Logtta_TH.isAdvDevice(p)) {
+        let data = Logtta_TH.getData(p);
         console.log(data);
     }
 };

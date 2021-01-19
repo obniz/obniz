@@ -3,6 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const WSCommand_1 = __importDefault(require("./WSCommand"));
 class WSCommandPlugin extends WSCommand_1.default {
     constructor() {
@@ -34,8 +38,13 @@ class WSCommandPlugin extends WSCommand_1.default {
     notifyFromBinary(objToSend, func, payload) {
         switch (func) {
             case this._CommandReceive: {
+                // convert buffer to array
+                const arr = new Array(payload.byteLength);
+                for (let i = 0; i < arr.length; i++) {
+                    arr[i] = payload[i];
+                }
                 objToSend.plugin = {
-                    receive: payload,
+                    receive: arr,
                 };
                 break;
             }
@@ -43,5 +52,3 @@ class WSCommandPlugin extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandPlugin;
-
-//# sourceMappingURL=WSCommandPlugin.js.map

@@ -27,7 +27,7 @@ class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.defau
      *
      * It throws an error when failed.
      *
-     * @param val
+     * @return val
      */
     readNumberWait() {
         return super.readNumberWait();
@@ -38,6 +38,7 @@ class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.defau
      *
      * It throws an error when failed.
      * @param str
+     * @param needResponse
      */
     writeTextWait(str, needResponse) {
         return super.writeTextWait(str, needResponse);
@@ -49,11 +50,10 @@ class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.defau
      * It throws an error when failed.
      *
      * @param val
+     * @param needResponse
      */
     writeNumberWait(val, needResponse) {
         return super.writeNumberWait(val, needResponse);
     }
 }
 exports.default = BleRemoteValueAttributeAbstract;
-
-//# sourceMappingURL=bleRemoteValueAttributeAbstract.js.map

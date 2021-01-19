@@ -37,7 +37,7 @@ export default abstract class BleRemoteValueAttributeAbstract<
    *
    * It throws an error when failed.
    *
-   * @param val
+   * @return val
    */
   public readNumberWait(): Promise<number | null> {
     return super.readNumberWait();
@@ -49,6 +49,7 @@ export default abstract class BleRemoteValueAttributeAbstract<
    *
    * It throws an error when failed.
    * @param str
+   * @param needResponse
    */
   public writeTextWait(str: string, needResponse?: boolean): Promise<boolean> {
     return super.writeTextWait(str, needResponse);
@@ -61,6 +62,7 @@ export default abstract class BleRemoteValueAttributeAbstract<
    * It throws an error when failed.
    *
    * @param val
+   * @param needResponse
    */
   public writeNumberWait(val: number, needResponse?: boolean): Promise<boolean> {
     return super.writeNumberWait(val, needResponse);

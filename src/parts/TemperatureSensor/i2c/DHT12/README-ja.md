@@ -36,7 +36,7 @@ console.log(data);
     
 ```
 
-## [await] getHumdWait()
+## [await] getHumidWait()
 現在の湿度を計測して返します。単位は%です。
 
 
@@ -44,7 +44,7 @@ console.log(data);
 // Javascript Example
 let device = obniz.wired("DHT12",{scl:26,sda:0});
 
-let data = await device.getHumdWait();
+let data = await device.getHumidWait();
 console.log(data);
     
 ```

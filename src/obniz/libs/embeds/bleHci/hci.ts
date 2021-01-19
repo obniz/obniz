@@ -14,7 +14,9 @@ export default class ObnizBLEHci {
    * HCI level timeout should never occure. Response must be sent from a device.
    * This timeout is for just in case for a device nerver send response.
    */
-  public timeout: number = 5 * 60 * 1000;
+  public timeout: number = 90 * 1000;
+
+  public hciProtocolOnSocketData: any;
 
   protected _eventHandlerQueue: { [key: string]: EventHandler[] } = {};
 
@@ -74,7 +76,13 @@ export default class ObnizBLEHci {
    */
   public notified(obj: any) {
     if (obj.read && obj.read.data) {
-      this.Obniz._runUserCreatedFunction(this.onread, obj.read.data);
+      if (this.onread === this.hciProtocolOnSocketData) {
+        // obnizjs internal function
+        this.onread(obj.read.data);
+      } else {
+        // user created function
+        this.Obniz._runUserCreatedFunction(this.onread, obj.read.data);
+      }
 
       for (const eventName in this._eventHandlerQueue) {
         if (typeof eventName !== "string" || !eventName.startsWith("[")) {
@@ -105,6 +113,7 @@ export default class ObnizBLEHci {
    * @ignore
    * @private
    * @param promise
+   * @param option
    * @param option.timeout Timeout number in seconds. If not specified. default timeout is applied. If null specified, never timeout.
    * @param option.waitingFor Readable description of command for waiting. Printed when Error or timeout occured.
    */
@@ -149,28 +158,31 @@ export default class ObnizBLEHci {
       }
 
       onObnizClosed = () => {
+        onObnizClosed = null;
         clearListeners();
-        const error = new ObnizOfflineError();
-        reject(error);
+        reject(new ObnizOfflineError());
       };
-      this.Obniz.on("close", onObnizClosed);
+      this.Obniz.once("close", onObnizClosed);
 
       let onTimeout;
       if (option.onTimeout) {
         onTimeout = () => {
+          timeoutHandler = null;
+          clearListeners();
           option
             .onTimeout()
-            .then(() => {})
+            .then(() => {
+              reject(new ObnizTimeoutError(option.waitingFor));
+            })
             .catch((e: Error) => {
               reject(e);
             });
         };
       } else {
         onTimeout = () => {
+          timeoutHandler = null;
           clearListeners();
-
-          const error = new ObnizTimeoutError(option.waitingFor);
-          reject(error);
+          reject(new ObnizTimeoutError(option.waitingFor));
         };
       }
       timeoutHandler = setTimeout(onTimeout, option!.timeout);

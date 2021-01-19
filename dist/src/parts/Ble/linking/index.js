@@ -29,6 +29,12 @@ class Linking {
             name: "Linking",
         };
     }
+    get LinkingAdvertising() {
+        return advertising_1.default;
+    }
+    get LinkingDevice() {
+        return device_1.default;
+    }
     wired(obniz) {
         this.obniz = obniz;
     }
@@ -129,7 +135,7 @@ class Linking {
         // var target = {
         //   uuids: this.PRIMARY_SERVICE_UUID_LIST
         // };
-        this.obniz.ble.scan.start();
+        this.obniz.ble.scan.startWait();
         this._discover_status = true;
     }
     stopScan() {
@@ -139,7 +145,7 @@ class Linking {
                 clearTimeout(this._discover_timer);
                 this._discover_timer = null;
             }
-            this.obniz.ble.scan.end();
+            this.obniz.ble.scan.endWait();
         }
     }
     startScan(p) {
@@ -176,5 +182,3 @@ class Linking {
     }
 }
 exports.default = Linking;
-
-//# sourceMappingURL=index.js.map

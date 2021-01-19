@@ -192,6 +192,9 @@ class BME280 {
         return (await this.getAllWait()).temperature;
     }
     async getHumdWait() {
+        return await this.getHumidWait();
+    }
+    async getHumidWait() {
         return (await this.getAllWait()).humidity;
     }
     async getPressureWait() {
@@ -209,5 +212,3 @@ class BME280 {
     }
 }
 exports.default = BME280;
-
-//# sourceMappingURL=index.js.map

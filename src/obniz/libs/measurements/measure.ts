@@ -6,7 +6,6 @@
 import Obniz from "../../index";
 import { ComponentAbstract } from "../ComponentAbstact";
 import ObnizUtil from "../utils/util";
-import { LogicAnalyzerOptions } from "./logicanalyzer";
 
 export interface ObnizMeasureResult {
   edge: boolean;

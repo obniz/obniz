@@ -29,8 +29,8 @@ const _qrcode = (() => {
     // ---------------------------------------------------------------------
     /**
      * qrcode
-     * @param typeNumber 1 to 40
-     * @param errorCorrectionLevel 'L','M','Q','H'
+     * @param _typeNumber 1 to 40
+     * @param errorCorrectionLevelStr 'L','M','Q','H'
      */
     const qrcode = (_typeNumber, errorCorrectionLevelStr) => {
         const PAD0 = 0xec;
@@ -1523,5 +1523,3 @@ const _qrcode = (() => {
     };
 })();
 exports.default = _qrcode;
-
-//# sourceMappingURL=qr.js.map

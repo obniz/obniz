@@ -32,12 +32,6 @@ class ObnizComponents extends ObnizParts_1.default {
         this.pongObservers = [];
         this._allComponentKeys = [];
     }
-    close() {
-        super.close();
-        if (this.options.reset_obniz_on_ws_disconnection) {
-            this._resetComponents();
-        }
-    }
     /**
      * Output pin Vcc and Gnd
      * @param vcc
@@ -146,6 +140,12 @@ class ObnizComponents extends ObnizParts_1.default {
             return this._hwDefinition.extraInterface[interfaceName];
         }
         return null;
+    }
+    _close() {
+        super._close();
+        if (this.options.reset_obniz_on_ws_disconnection) {
+            this._resetComponents();
+        }
     }
     _callOnConnect() {
         this._prepareComponents();
@@ -311,5 +311,3 @@ class ObnizComponents extends ObnizParts_1.default {
     }
 }
 exports.default = ObnizComponents;
-
-//# sourceMappingURL=ObnizComponents.js.map

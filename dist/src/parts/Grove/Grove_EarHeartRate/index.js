@@ -13,8 +13,8 @@ class Grove_EarHeartRate {
         };
         this.interval = 5;
         this.duration = 2.5 * 1000;
-        this.keys = ["vcc", "gnd", "signal"];
-        this.requiredKeys = ["vcc", "gnd"];
+        this.keys = ["signal", "gnd", "vcc", "grove"];
+        this.requiredKeys = [];
     }
     static info() {
         return {
@@ -23,11 +23,18 @@ class Grove_EarHeartRate {
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        if (this.params.grove) {
+            this.signal = this.params.grove.pin1;
+            this.params.grove.getDigital("5v");
+        }
+        else {
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.signal = this.params.signal;
+        }
     }
     start(callback) {
         this.obniz.logicAnalyzer.start({
-            io: this.params.signal,
+            io: this.signal,
             interval: this.interval,
             duration: this.duration,
         });
@@ -56,5 +63,3 @@ class Grove_EarHeartRate {
     }
 }
 exports.default = Grove_EarHeartRate;
-
-//# sourceMappingURL=index.js.map

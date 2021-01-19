@@ -256,7 +256,7 @@ class LinkingServiceProperty {
         const buf_list = [];
         // packet header
         const header_buf = Buffer.alloc(1);
-        header_buf.writeUInt8(parseInt("00000011", 2));
+        header_buf.writeUInt8(parseInt("00000001", 2));
         buf_list.push(header_buf);
         // Service ID
         const sid_buf = Buffer.alloc(1);
@@ -289,5 +289,3 @@ class LinkingServiceProperty {
     }
 }
 exports.default = LinkingServiceProperty;
-
-//# sourceMappingURL=service-property.js.map

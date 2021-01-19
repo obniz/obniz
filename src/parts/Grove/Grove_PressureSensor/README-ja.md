@@ -15,6 +15,12 @@ gnd | `number(obniz Board io)` | no |  &nbsp; | モジュールの場合はgnd, 
 output | `number(obniz Board io)` | no |  &nbsp; | output 出力端子
 grove | `object` | no | &nbsp;  | 接続するデバイスにgroveがある場合に利用できます
 
+```Javascript
+// Javascript Example
+let sensor = obniz.wired("Grove_PressureSensor", {gnd:0, vcc:1, output: 3});
+```
+
+groveを持つデバイスでは、パラメータに{grove: obniz.grove0}を指定することで接続できます。
 ```javascript
 // Javascript Example
 let sensor = obniz.wired("Grove_PressureSensor", {grove: obniz.grove0});

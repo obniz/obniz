@@ -15,7 +15,15 @@ import Timeout = NodeJS.Timeout;
 
 export type ObnizConnectionEventNames = "connect" | "close" | "notify";
 
-export default abstract class ObnizConnection extends EventEmitter<ObnizConnectionEventNames> {
+/**
+ * @ignore
+ *
+ */
+type ObnizConnectionEventNamesInternal = "_close";
+
+export default abstract class ObnizConnection extends EventEmitter<
+  ObnizConnectionEventNames | ObnizConnectionEventNamesInternal
+> {
   /**
    * obniz.js version
    */
@@ -29,6 +37,11 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
    */
   static get WSCommand() {
     return WSCommand;
+  }
+
+  public static isIpAddress(str: string) {
+    const regex = /^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$/;
+    return str.match(regex) !== null;
   }
 
   /**
@@ -129,6 +142,42 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
   public onconnect?: (obniz: this) => void;
 
   /**
+   * Called continuously while obniz device is online.
+   * Put your main code inside of onloop and put your setup code inside of onconnect.
+   *
+   * onloop will be called after onconnect called. If your funciton set to onconnect return promise, onloop wait until done promise. Even onconnect throws an error onloop will start.
+   *
+   * onloop call `pingWait()` every time to keep connection data buffer between device to your software clean.
+   *
+   * ```javascript
+   * var obniz = new Obniz('1234-5678');
+   * obniz.onconnect = async function() {
+   *
+   * }
+   * obniz.onloop = async function() {
+   *
+   * }
+   * ```
+   *
+   */
+  public onloop?: (obniz: this) => void;
+
+  /**
+   * If an error occurs, the onerror function is called.
+   *
+   * ```javascript
+   * var obniz = new Obniz('1234-5678');
+   * obniz.onconnect = async function() {
+   *
+   * }
+   * obniz.onerror = async function(ob, error) {
+   *    console.error(error);
+   * }
+   * ```
+   */
+  public onerror?: (obniz: this, error: Error) => void;
+
+  /**
    * This let you know connection state to your obniz Board as string value.
    *
    * - 'closed' : not connected.
@@ -147,6 +196,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
    *
    */
   public connectionState: "closed" | "connecting" | "connected" | "closing";
+  protected _userManualConnectionClose: boolean = false;
   protected socket: any;
   protected socket_local: any;
   protected debugs: any;
@@ -160,9 +210,10 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
   protected _connectionRetryCount: number;
   protected sendPool: any;
   private _onConnectCalled: boolean;
-  private _looper: any;
-  private _repeatInterval: any;
+  private _repeatInterval: number = 0;
   private _nextLoopTimeout?: Timeout;
+  private _nextPingTimeout?: Timeout;
+  private _lastDataReceivedAt: number = 0;
 
   constructor(id: string, options?: ObnizOptions) {
     super();
@@ -192,10 +243,11 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
       access_token: options.access_token || null,
       obniz_server: options.obniz_server || "wss://obniz.io",
       reset_obniz_on_ws_disconnection: options.reset_obniz_on_ws_disconnection === false ? false : true,
+      obnizid_dialog: options.obnizid_dialog === false ? false : true,
     };
     if (this.options.binary) {
       this.wscommand = (this.constructor as typeof ObnizConnection).WSCommand;
-      const classes: any = (this.constructor as typeof ObnizConnection).WSCommand.CommandClasses;
+      const classes = (this.constructor as typeof ObnizConnection).WSCommand.CommandClasses;
       this.wscommands = [];
       for (const class_name in classes) {
         this.wscommands.push(
@@ -223,7 +275,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
    * await obniz.connectWait();
    *
    * obniz.io0.output(true);
-   * obniz.close();
+   * await obniz.closeWait();
    *
    * ```
    *
@@ -237,7 +289,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
    *
    * if(connected){
    *    obniz.io0.output(true);
-   *    obniz.close();
+   *    await obniz.closeWait();
    * }
    * ```
    *
@@ -252,7 +304,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
    *
    * if(connected){
    *   obniz.io0.output(true);
-   *   obniz.close();
+   *   await obniz.closeWait();
    * }
    * ```
    *
@@ -305,24 +357,72 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     this.wsconnect();
   }
 
+  /**
+   * This closes the current connection.
+   * You need to set auto_connect to false. Otherwise the connection will be recovered.
+   *
+   * ```javascript
+   * var obniz = new Obniz('1234-5678', {
+   *   auto_connect: false,
+   *   reset_obniz_on_ws_disconnection: false
+   * });
+   *
+   * obniz.connect();
+   * obniz.onconnect = async function() {
+   *   obniz.io0.output(true);
+   *   obniz.close();
+   * }
+   * ```
+   *
+   * @deprecated replace with {@link closeWait}
+   */
   public close() {
-    this._drainQueued();
-    this._disconnectLocal();
-    if (this.socket) {
-      if (this.socket.readyState <= 1) {
-        // Connecting & Connected
-        this.connectionState = "closing";
-        this.socket.close(1000, "close");
-      }
-      this.clearSocket(this.socket);
-      delete this.socket;
+    // noinspection JSIgnoredPromiseFromCall
+    this.closeWait().catch((e) => {
+      // background
+      this.error(e);
+    });
+  }
+
+  /**
+   * This closes the current connection.
+   * You need to set auto_connect to false. Otherwise the connection will be recovered.
+   *
+   * ```javascript
+   * var obniz = new Obniz('1234-5678', {
+   *   auto_connect: false,
+   *   reset_obniz_on_ws_disconnection: false
+   * });
+   *
+   * obniz.connect();
+   * obniz.onconnect = async function() {
+   *   obniz.io0.output(true);
+   *   await obniz.closeWait();
+   * }
+   * ```
+   *
+   */
+  public async closeWait() {
+    if (this.socket && this.socket.readyState <= 1) {
+      // Connecting or Connected
+
+      this._userManualConnectionClose = true;
+      const p = new Promise((resolve) => {
+        this.once("_close", resolve);
+      });
+      this.connectionState = "closing";
+      this.socket.close(1000, "close");
+
+      await p;
+    } else if (this.socket && this.socket.readyState === 2) {
+      // closing
+      this._userManualConnectionClose = true;
+      await new Promise((resolve) => {
+        this.once("_close", resolve);
+      });
+    } else {
+      // already closed : do nothing
     }
-    if (this._nextLoopTimeout) {
-      clearTimeout(this._nextLoopTimeout);
-      this._nextLoopTimeout = undefined;
-    }
-    this.connectionState = "closed";
-    this._onConnectCalled = false;
   }
 
   /**
@@ -356,7 +456,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
         return;
       }
 
-      let sendData: any = JSON.stringify([obj]);
+      let sendData = JSON.stringify([obj]);
       if (this.debugprint) {
         this.print_debug("send: " + sendData);
       }
@@ -373,7 +473,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
             }
           }
         } catch (e) {
-          this.error("------ errored json -------");
+          this.error({ alert: "error", message: "------ errored json -------" });
           this.error(sendData);
           throw e;
         }
@@ -435,6 +535,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     try {
       func(...args);
     } catch (err) {
+      console.error(`obniz.js handled Exception inside of ${func}`);
       setTimeout(() => {
         throw err;
       });
@@ -442,35 +543,44 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
   }
 
   /**
-   * Repeat will call the callback function periodically while it is connected to obniz Board.
-   * It will stop calling once it is disconnected from obniz Board.
-   *
-   * ```javascript
-   * // Javascript Example
-   *  obniz.ad0.start();
-   *  obniz.repeat(function(){
-   *    if (obniz.ad0.value > 2.5) {
-   *      obniz.io0.output(true);
-   *    } else {
-   *      obniz.io0.output(false);
-   *    }
-   *  }, 100)
-   * ```
+   * Set onloop function. Use onloop property instead. This is deprecated function.
    *
    * @param callback
    * @param interval  default 100. It mean 100ms interval loop.
+   * @deprecated
    */
   public repeat(callback: any, interval: any) {
-    if (this._looper) {
-      this._looper = callback;
+    if (this.onloop) {
+      this.onloop = callback;
       this._repeatInterval = interval || this._repeatInterval || 100;
       return;
     }
-    this._looper = callback;
+    this.onloop = callback;
     this._repeatInterval = interval || 100;
   }
 
   public abstract pingWait(unixtime?: number, rand?: number, forceGlobalNetwork?: boolean): Promise<void>;
+
+  protected _close() {
+    this._stopLoopInBackground();
+    this._drainQueued();
+    // expire local connect waiting timer for call.
+    if (this._waitForLocalConnectReadyTimer) {
+      clearTimeout(this._waitForLocalConnectReadyTimer);
+      this._waitForLocalConnectReadyTimer = undefined;
+    }
+    this._disconnectLocal();
+    if (this.socket) {
+      if (this.socket.readyState <= 1) {
+        // Connecting & Connected
+        this.connectionState = "closing";
+        this.socket.close(1000, "close");
+      }
+      this.clearSocket(this.socket);
+      delete this.socket;
+    }
+    this._onConnectCalled = false;
+  }
 
   protected wsOnOpen() {
     this.print_debug("ws connected");
@@ -482,35 +592,48 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
   }
 
   protected wsOnMessage(data: any) {
-    let json: any;
-    if (typeof data === "string") {
-      json = JSON.parse(data);
-    } else if (this.wscommands) {
-      if (this.debugprintBinary) {
-        this.log("binalized: " + new Uint8Array(data).toString());
-      }
-      json = this.binary2Json(data);
-    }
+    this._lastDataReceivedAt = new Date().getTime();
 
-    if (Array.isArray(json)) {
-      for (const i in json) {
-        this.notifyToModule(json[i]);
+    try {
+      let json: any;
+      if (typeof data === "string") {
+        json = JSON.parse(data);
+      } else if (this.wscommands) {
+        if (this.debugprintBinary) {
+          this.log("binalized: " + new Uint8Array(data).toString());
+        }
+        json = this.binary2Json(data);
       }
-    } else {
-      // invalid json
+
+      if (Array.isArray(json)) {
+        for (const i in json) {
+          this.notifyToModule(json[i]);
+        }
+      } else {
+        // invalid json
+      }
+    } catch (e) {
+      this.error(e);
     }
   }
 
   protected wsOnClose(event: any) {
     this.print_debug(`closed from remote event=${event}`);
     const beforeOnConnectCalled = this._onConnectCalled;
-    this.close();
+    this._close();
+    this.connectionState = "closed";
 
+    if (this._userManualConnectionClose) {
+      this.emit("_close", this);
+    }
     if (beforeOnConnectCalled === true) {
+      this.emit("close", this);
       this._runUserCreatedFunction(this.onclose, this);
     }
-    this.emit("close", this);
-    this._reconnect();
+    if (!this._userManualConnectionClose) {
+      this._reconnect();
+    }
+    this._userManualConnectionClose = false;
   }
 
   protected _reconnect() {
@@ -547,17 +670,20 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     this._reconnect();
   }
 
-  protected wsconnect(desired_server?: any) {
-    let server: any = this.options.obniz_server;
+  protected wsconnect(desired_server?: string) {
+    let server = this.options.obniz_server;
     if (desired_server) {
       server = "" + desired_server;
     }
 
     if (this.socket && this.socket.readyState <= 1) {
-      this.close();
+      this._close();
     }
 
-    let url: any = server + "/obniz/" + this.id + "/ws/1";
+    let url = server + "/obniz/" + this.id + "/ws/1";
+    if ((this.constructor as typeof ObnizConnection).isIpAddress(this.id)) {
+      url = `ws://${this.id}/`;
+    }
 
     const query: any = [];
     if ((this.constructor as typeof ObnizConnection).version) {
@@ -598,7 +724,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
   }
 
   protected _connectLocal(host: any) {
-    const url: any = "ws://" + host;
+    const url = "ws://" + host;
     this.print_debug("local connect to " + url);
     let ws: any;
     if (this.isNode) {
@@ -648,16 +774,18 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
 
   protected _disconnectLocal() {
     if (this.socket_local) {
-      if (this.socket.readyState <= 1) {
+      if (this.socket_local.readyState <= 1) {
         this.socket_local.close();
       }
       this.clearSocket(this.socket_local);
       delete this.socket_local;
     }
-    if (this._waitForLocalConnectReadyTimer) {
+    // If connection to cloud is ready and waiting for local connect.
+    // then call onconnect() immidiately.
+    if (this.socket && this.socket.readyState === 1 && this._waitForLocalConnectReadyTimer) {
       clearTimeout(this._waitForLocalConnectReadyTimer);
       this._waitForLocalConnectReadyTimer = null;
-      this._callOnConnect(); /* should call. onlyl local connect was lost. and waiting. */
+      this._callOnConnect();
     }
   }
 
@@ -673,7 +801,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     }
     /* unbind */
     if (this.isNode) {
-      const shouldRemoveObservers: any = ["open", "message", "close", "error", "unexpected-response"];
+      const shouldRemoveObservers = ["open", "message", "close", "error", "unexpected-response"];
       for (let i = 0; i < shouldRemoveObservers.length; i++) {
         socket.removeAllListeners(shouldRemoveObservers[i]);
       }
@@ -688,15 +816,10 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
   /**
    * This function will be called before obniz.onconnect called;
    */
-  protected async _beforeOnConnect() {}
-
-  /**
-   * This function will be called after obniz.onconnect and all emitter called;
-   */
-  protected async _afterOnConnect() {}
+  protected _beforeOnConnect() {}
 
   protected _callOnConnect() {
-    let canChangeToConnected: any = true;
+    let canChangeToConnected = true;
     if (this._waitForLocalConnectReadyTimer) {
       /* obniz.js can't wait for local_connect any more! */
       clearTimeout(this._waitForLocalConnectReadyTimer);
@@ -712,11 +835,16 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     }
 
     if (canChangeToConnected) {
+      const currentTime = new Date().getTime();
+      this._lastDataReceivedAt = currentTime; // reset
+
       this.connectionState = "connected";
       this._beforeOnConnect();
+      this.emit("connect", this);
+      let promise: any;
       if (typeof this.onconnect === "function") {
         try {
-          const promise: any = this.onconnect(this);
+          promise = this.onconnect(this);
           if (promise instanceof Promise) {
             promise.catch((err) => {
               setTimeout(() => {
@@ -725,15 +853,21 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
             });
           }
         } catch (err) {
+          console.error(`obniz.js handled Exception inside of onconnect()`);
           setTimeout(() => {
             throw err;
           });
         }
       }
-      this.emit("connect", this);
       this._onConnectCalled = true;
-      this._startLoopInBackground();
-      this._afterOnConnect();
+      this._startPingLoopInBackground();
+      if (promise instanceof Promise) {
+        promise.finally(() => {
+          this._startLoopInBackground();
+        });
+      } else {
+        this._startLoopInBackground();
+      }
     }
   }
 
@@ -766,12 +900,12 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     if (!this._sendQueue) {
       return;
     }
-    let expectSize: any = 0;
+    let expectSize = 0;
     for (let i = 0; i < this._sendQueue.length; i++) {
       expectSize += this._sendQueue[i].length;
     }
-    let filled: any = 0;
-    const sendData: any = new Uint8Array(expectSize);
+    let filled = 0;
+    const sendData = new Uint8Array(expectSize);
     for (let i = 0; i < this._sendQueue.length; i++) {
       sendData.set(this._sendQueue[i], filled);
       filled += this._sendQueue[i].length;
@@ -840,8 +974,16 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
       }
     }
     if (wsObj.redirect) {
-      const server: any = wsObj.redirect;
-      this.print_debug("WS connection changed to " + server);
+      const urlString: string = wsObj.redirect;
+      this.print_debug("WS connection changed to " + urlString);
+
+      const url = new URL(urlString);
+      const host = url.origin;
+      const paths = url.pathname;
+      if (paths && paths.split("/").length === 5) {
+        // migrate obnizID
+        this.id = paths.split("/")[2];
+      }
 
       /* close current ws immidiately */
       /*  */
@@ -850,23 +992,23 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
       delete this.socket;
 
       /* connect to new server */
-      this.wsconnect(server);
+      this.wsconnect(host);
     }
   }
 
   protected handleSystemCommand(wsObj: any) {}
 
   protected binary2Json(binary: any) {
-    let data: any = new Uint8Array(binary);
+    let data = new Uint8Array(binary);
     const json: any = [];
     while (data !== null) {
-      const frame: any = WSCommand.dequeueOne(data);
+      const frame = WSCommand.dequeueOne(data);
       if (!frame) {
         break;
       }
       const obj: any = {};
       for (let i = 0; i < this.wscommands.length; i++) {
-        const command: any = this.wscommands[i];
+        const command = this.wscommands[i];
         if (command.module === frame.module) {
           command.notifyFromBinary(obj, frame.func, frame.payload);
           break;
@@ -878,21 +1020,90 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     return json;
   }
 
-  private async _startLoopInBackground() {
+  private _startLoopInBackground() {
+    this._stopLoopInBackground();
     this._nextLoopTimeout = setTimeout(async () => {
+      if (this._nextLoopTimeout) {
+        clearTimeout(this._nextLoopTimeout);
+      }
       this._nextLoopTimeout = undefined;
       if (this.connectionState === "connected") {
         try {
-          if (typeof this._looper === "function") {
+          if (typeof this.onloop === "function") {
             await this.pingWait();
-            const prom: any = this._looper();
+            const prom: any = (this.onloop as (obniz: this) => void)(this);
             if (prom instanceof Promise) {
               await prom;
             }
           }
+        } catch (e) {
+          console.error(`obniz.js handled Exception inside of obniz.repeat() function`);
+          console.error(e);
         } finally {
           if (this.connectionState === "connected") {
-            this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), this._repeatInterval || 100);
+            if (!this._nextLoopTimeout) {
+              let interval = this._repeatInterval;
+              if (typeof this.onloop !== "function") {
+                interval = 100;
+              }
+              this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), interval);
+            }
+          }
+        }
+      }
+    }, 0);
+  }
+
+  private _stopLoopInBackground() {
+    if (this._nextLoopTimeout) {
+      clearTimeout(this._nextLoopTimeout);
+      this._nextLoopTimeout = undefined;
+    }
+  }
+
+  private _startPingLoopInBackground() {
+    if (this._nextPingTimeout) {
+      clearTimeout(this._nextPingTimeout);
+    }
+    this._nextPingTimeout = setTimeout(async () => {
+      const loopInterval = 60 * 1000; // 60 sec
+      const loopTimeout = 30 * 1000; // 30 sec
+      if (this._nextPingTimeout) {
+        clearTimeout(this._nextPingTimeout);
+      }
+      this._nextPingTimeout = undefined;
+      if (this.connectionState === "connected") {
+        const currentTime = new Date().getTime();
+
+        // after 15 sec from last data received
+        if (this._lastDataReceivedAt + loopTimeout < currentTime) {
+          const time = this._lastDataReceivedAt;
+          try {
+            const p = this.pingWait();
+            const wait = new Promise((resolve, reject) => {
+              setTimeout(reject, loopTimeout);
+            });
+            await Promise.race([p, wait]);
+            // this.log("ping/pong success");
+          } catch (e) {
+            if (this.connectionState !== "connected") {
+              // already closed
+            } else if (time !== this._lastDataReceivedAt) {
+              // this will be disconnect -> reconnect while pingWait
+            } else {
+              // ping error or timeout
+              // this.error("ping/pong response timeout error");
+              this.wsOnClose("ping/pong response timeout error");
+              return;
+            }
+          }
+        } else {
+          // this.log("ping/pong not need");
+        }
+
+        if (this.connectionState === "connected") {
+          if (!this._nextPingTimeout) {
+            this._nextPingTimeout = setTimeout(this._startPingLoopInBackground.bind(this), loopInterval);
           }
         }
       }

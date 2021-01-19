@@ -3,7 +3,6 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 import { ObnizDeprecatedFunctionError } from "../../../ObnizError";
-import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
 import BleRemoteDescriptor from "./bleRemoteDescriptor";
 import BleRemoteService from "./bleRemoteService";
 import BleRemoteValueAttributeAbstract from "./bleRemoteValueAttributeAbstract";
@@ -194,8 +193,10 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * ```
    *
    * @param callback
+   * @deprecated  replaced by {@link #registerNotifyWait()}
    */
   public registerNotify(callback: (data: any) => void) {
+    // noinspection JSIgnoredPromiseFromCall
     this.registerNotifyWait(callback); // background
   }
 
@@ -261,8 +262,11 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * });
    *
    * ```
+   *
+   * @deprecated  replaced by {@link #unregisterNotifyWait()}
    */
   public unregisterNotify() {
+    // noinspection JSIgnoredPromiseFromCall
     this.unregisterNotifyWait(); // background
   }
 

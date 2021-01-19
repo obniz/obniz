@@ -59,14 +59,22 @@ export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
    */
   public onreadfromremote?: (address: BleDeviceAddress) => void;
 
-  protected parent: ParentClass | null;
+  /**
+   * @ignore
+   */
+  public discoverdOnRemote: boolean;
+
+  /**
+   * @ignore
+   */
+  public parent: ParentClass | null;
+
   protected children: ChildrenClass[];
   protected isRemote: boolean;
-  protected discoverdOnRemote: any;
   protected data: any;
   protected emitter: EventEmitter;
 
-  constructor(params: any) {
+  protected constructor(params: any) {
     this.uuid = BleHelper.uuidFilter(params.uuid);
     this.parent = null;
     this.children = [];

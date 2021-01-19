@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @ignore
  */
-import JsonBinaryConverter from "./jsonBinaryConverter";
 import WSCommand from "./WSCommand";
+
 class WSCommandPlugin extends WSCommand {
   public module: any;
   public _CommandReceive: any; // js <- device
@@ -46,8 +46,14 @@ class WSCommandPlugin extends WSCommand {
   public notifyFromBinary(objToSend: any, func: any, payload: any) {
     switch (func) {
       case this._CommandReceive: {
+        // convert buffer to array
+        const arr: any = new Array(payload.byteLength);
+        for (let i = 0; i < arr.length; i++) {
+          arr[i] = payload[i];
+        }
+
         objToSend.plugin = {
-          receive: payload,
+          receive: arr,
         };
         break;
       }

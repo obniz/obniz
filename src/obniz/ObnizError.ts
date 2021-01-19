@@ -5,8 +5,6 @@
 
 // tslint:disable:max-classes-per-file
 
-import { deprecate } from "util";
-
 export class ObnizError extends Error {
   constructor(public code: number, e?: string) {
     super(e);
@@ -234,6 +232,15 @@ export class ObnizBlePairingRejectByRemoteError extends ObnizError {
     super(
       16,
       `pairing sequence reject by remote peripheral. reason : ${ObnizBlePairingRejectByRemoteError.Errors[reason]}`,
+    );
+  }
+}
+
+export class ObnizBleScanStartError extends ObnizError {
+  constructor(state: number, msg: any) {
+    super(
+      17,
+      `${msg} state=${state}(${ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : ""})`,
     );
   }
 }

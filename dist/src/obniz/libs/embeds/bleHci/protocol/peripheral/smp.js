@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
+const bleHelper_1 = __importDefault(require("../../bleHelper"));
 const crypto_1 = __importDefault(require("./crypto"));
 const mgmt_1 = __importDefault(require("./mgmt"));
 var SMP;
@@ -32,15 +33,9 @@ class Smp extends eventemitter3_1.default {
         this._aclStream = aclStream;
         this._mgmt = new mgmt_1.default(hciProtocol);
         this._iat = Buffer.from([remoteAddressType === "random" ? 0x01 : 0x00]);
-        this._ia = Buffer.from(remoteAddress
-            .split(":")
-            .reverse()
-            .join(""), "hex");
+        this._ia = bleHelper_1.default.hex2reversedBuffer(remoteAddress, ":");
         this._rat = Buffer.from([localAddressType === "random" ? 0x01 : 0x00]);
-        this._ra = Buffer.from(localAddress
-            .split(":")
-            .reverse()
-            .join(""), "hex");
+        this._ra = bleHelper_1.default.hex2reversedBuffer(localAddress, ":");
         this._stk = null;
         this._random = null;
         this._diversifier = null;
@@ -137,5 +132,3 @@ class Smp extends eventemitter3_1.default {
     }
 }
 exports.default = Smp;
-
-//# sourceMappingURL=smp.js.map

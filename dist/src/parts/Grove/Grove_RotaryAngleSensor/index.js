@@ -35,5 +35,3 @@ class Grove_RotaryAngleSensor {
     }
 }
 exports.default = Grove_RotaryAngleSensor;
-
-//# sourceMappingURL=index.js.map

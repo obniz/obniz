@@ -2,7 +2,6 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
 import BleRemoteCharacteristic from "./bleRemoteCharacteristic";
 import BleRemoteValueAttributeAbstract from "./bleRemoteValueAttributeAbstract";
 

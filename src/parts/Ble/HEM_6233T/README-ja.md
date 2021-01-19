@@ -1,5 +1,6 @@
 # HEM_6233T
 オムロン株式会社の血圧計です。
+![](./image.jpg)
 
 ## isDevice(peripheral)
 

@@ -36,7 +36,7 @@ export default class Grove_DistanceSensor extends GP2Y0A21YK0F {
   public wired(obniz: Obniz) {
     this.obniz = obniz;
     if (this.params.grove) {
-      const groveAd = this.params.grove.getAnalog();
+      const groveAd = this.params.grove.getAnalog("5v", "secondaryOnly");
       this.ad_signal = groveAd.secondary;
     } else {
       this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");

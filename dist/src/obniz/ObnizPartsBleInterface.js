@@ -22,6 +22,16 @@ class ObnizPartsBleInterface {
         return val;
     }
     /**
+     * Utility function for reading 4 byte to signed number.
+     */
+    static signed32FromBinary(byte3, byte2, byte1, byte0) {
+        let val = (byte3 << (8 * 3)) | (byte2 << (8 * 2)) | (byte1 << (8 * 1)) | byte0;
+        if ((val & 0x80000000) !== 0) {
+            val = val - 0x100000000;
+        }
+        return val;
+    }
+    /**
      * Utility function for reading 1byte fixed point number
      */
     static readFraction(byte) {
@@ -39,5 +49,3 @@ class ObnizPartsBleInterface {
     }
 }
 exports.default = ObnizPartsBleInterface;
-
-//# sourceMappingURL=ObnizPartsBleInterface.js.map

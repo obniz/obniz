@@ -3,7 +3,9 @@
 [![npm version](https://badge.fury.io/js/obniz.svg)](https://badge.fury.io/js/obniz)
 ![](https://img.shields.io/npm/dt/obniz.svg) [![Build Status](https://secure.travis-ci.org/obniz/obniz.png?branch=master)](http://travis-ci.org/obniz/obniz)
 
-SDK for controlling [obniz enabled Devices](https://obniz.io/) using obniz websocket API from JavaScript.
+[日本語はこちら](./README-ja.md)
+
+SDK for controlling [obniz enabled Devices](https://obniz.com/) using obniz websocket API from JavaScript.
 
 It works on both browser and nodejs.
 
@@ -14,9 +16,13 @@ Docs
 
 Related Sites
 
-- [obniz WebSite](https://obniz.io/)
-- [obniz Devices](https://obniz.io/products)
+- [obniz WebSite](https://obniz.com/)
+- [obniz Devices](https://obniz.com/products)
 - [Examples](https://blog.obniz.io/example/)
+
+Examples in obniz.js
+
+- [Examples](./examples)
 
 ## Usage
 ```html
@@ -103,6 +109,7 @@ and import it to js file.
 The details are on [doc/connection](docs/connection.md) ([ja](docs/connection-ja.md))
 
 To use obniz, instantiate obniz with obniz id, and set onconnect callback function. It will be called when connected to obniz successfully.
+
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
@@ -110,7 +117,8 @@ To use obniz, instantiate obniz with obniz id, and set onconnect callback functi
   }
 ```
 
-You can use everything on obniz Board once connection succeeds.
+You can use everything on obniz Device after connection succeeds.
+
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
@@ -121,8 +129,16 @@ You can use everything on obniz Board once connection succeeds.
       }
     }
   }
+  obniz.onloop = async function () {
+    // called continuously
+  }
+  obniz.onclose = async function () {
+    // called after connection lost
+  }
 ```
+
 and its io peripherals too can be used
+
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
@@ -156,11 +172,11 @@ and its io peripherals too can be used
 The parts library is embedded in obniz.js.
 All parts and their details can be found there.
 
-[obniz Parts Library](https://obniz.io/sdk/parts/)
+[obniz Parts Library](https://obniz.com/sdk/parts/)
 
-To use the connected parts, instantiate the parts in onconnect callback function and use it. The function list can be found on [obniz Parts Library](https://obniz.io/sdk/parts/).
+To use the connected parts, instantiate the parts in onconnect callback function and use it. The function list can be found on [obniz Parts Library](https://obniz.com/sdk/parts/).
 
-For example, LED is found here [https://obniz.io/sdk/parts/LED](https://obniz.io/sdk/parts/LED)
+For example, LED is found here [https://obniz.com/sdk/parts/LED](https://obniz.com/sdk/parts/LED)
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
@@ -169,7 +185,7 @@ For example, LED is found here [https://obniz.io/sdk/parts/LED](https://obniz.io
   }
 ```
 
-HC-SR40(distance measure) [https://obniz.io/sdk/parts/HC-SR04](https://obniz.io/sdk/parts/HC-SR04)
+HC-SR40(distance measure) [https://obniz.com/sdk/parts/HC-SR04](https://obniz.com/sdk/parts/HC-SR04)
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
@@ -182,7 +198,7 @@ HC-SR40(distance measure) [https://obniz.io/sdk/parts/HC-SR04](https://obniz.io/
 ```
 
 ## Example: browser integrates hardware
-It is easy to integrate UI and hardware on html
+Easy to integrate UI and hardware on html
 ```html
 <input id="slider" type="range"  min="0" max="180" />
 
@@ -199,7 +215,7 @@ obniz.onconnect = async function () {
 ```
 
 ## Example: integrate web services
-It is also easy to integrate web services like Dropbox and Twitter and hardware.
+Easy to integrate web services like Dropbox and Twitter and hardware.
 ```javascript
 // save data from obniz to dropbox
 var obniz = new Obniz("0000-0000");
@@ -215,7 +231,7 @@ obniz.onconnect = async function () {
 ```
 
 ## Example: integrate two or more obniz
-Not only is web-obniz Board coordination easy, but obniz Board-obniz Board coordination is also easy.
+Two or more device integration.
 ```javascript
 // control servomotor from potention meter which connected to another obniz.
 var obnizA = new Obniz("0000-0000");

@@ -45,14 +45,14 @@ export default class BleLocalAttributeAbstract<ParentClass, ChildrenClass> exten
   public toBufferObj() {
     const obj: any = {
       uuid: BleHelper.uuidFilter(this.uuid),
+      emit: this.emit.bind(this),
     };
 
     if (this.childrenName) {
-      const key: any = this.childrenName;
+      const key = this.childrenName;
       obj[key] = this.children.map((e: any) => e.toBufferObj());
     }
 
-    obj.emit = this.emit.bind(this);
     return obj;
   }
 
@@ -127,7 +127,7 @@ export default class BleLocalAttributeAbstract<ParentClass, ChildrenClass> exten
 
   /**
    * @ignore
-   * @param dataArray
+   * @return dataArray
    */
   public async readWait(): Promise<number[]> {
     this.notifyFromServer("onread", { data: this.data });

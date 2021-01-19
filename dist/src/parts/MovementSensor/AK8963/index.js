@@ -53,5 +53,3 @@ AK8963.scales = {
     so_14bit: 4912 / 8190,
     so_16bit: 4912 / 32760,
 };
-
-//# sourceMappingURL=index.js.map

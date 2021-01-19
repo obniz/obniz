@@ -3,7 +3,11 @@
  * @packageDocumentation
  * @module Parts.ENERTALK_TOUCH
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const batteryService_1 = __importDefault(require("../abstract/services/batteryService"));
 class ENERTALK_TOUCH {
     constructor(peripheral) {
         this.keys = [];
@@ -53,6 +57,10 @@ class ENERTALK_TOUCH {
         this._humidityChar = this._service.getCharacteristic(this._uuids.humidityChar);
         this._illuminanceChar = this._service.getCharacteristic(this._uuids.illuminanceChar);
         this._accelerometerChar = this._service.getCharacteristic(this._uuids.accelerometerChar);
+        const service180F = this._peripheral.getService("180F");
+        if (service180F) {
+            this.batteryService = new batteryService_1.default(service180F);
+        }
     }
     async disconnectWait() {
         var _a;
@@ -97,5 +105,3 @@ class ENERTALK_TOUCH {
     }
 }
 exports.default = ENERTALK_TOUCH;
-
-//# sourceMappingURL=index.js.map

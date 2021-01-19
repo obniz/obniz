@@ -24,7 +24,7 @@ properties:
       message:
         type: string
         example: "ERROR MESSAGE"
-      address: {$ref: "/deviceAddress"}
-      service_uuid: {$ref: "/uuidOrNull"}
-      characteristic_uuid: {$ref: "/uuidOrNull"}
-      descriptor_uuid: {$ref: "/uuidOrNull"}
+      address: {$ref: "/deviceAddressOrEmpty"}
+      service_uuid: {$ref: "/uuidOrNullOrEmpty"}
+      characteristic_uuid: {$ref: "/uuidOrNullOrEmpty"}
+      descriptor_uuid: {$ref: "/uuidOrNullOrEmpty"}

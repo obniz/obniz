@@ -150,7 +150,7 @@ await obniz.ble.scan.startWait();
 
 ## [await]getWait()
 
-CO2濃度を取得できます。
+CO2濃度を取得できます。値はppmです。
 
 ```javascript
 // Javascript Example
@@ -172,7 +172,7 @@ await obniz.ble.scan.startWait();
 
 
 
-## [await]batteryService.getBatteryLevel()
+## [await]batteryService.getBatteryLevelWait()
 
 バッテリー残量を取得します。
 
@@ -191,7 +191,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     await device.connectWait();
     console.log("connected");
     
-    const batteryLevel = await device.batteryService.getBatteryLevel();
+    const batteryLevel = await device.batteryService.getBatteryLevelWait();
     console.log(`batteryLevel ${batteryLevel}% `);
   }
 };
@@ -275,10 +275,10 @@ await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 
 発見した場合にデバイスの情報を返します。発見できなかった場合にはNullを返します。
 
-- battery : バッテリの電圧
+- battery : バッテリの電圧(0-100)
 - address : MacAddress
-- co2 : co2濃度
-- interval : 送信間隔
+- co2 : co2濃度(ppm)
+- interval : 送信間隔(秒)
 
 
 ```javascript

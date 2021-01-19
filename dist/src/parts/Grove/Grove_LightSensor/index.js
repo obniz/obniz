@@ -35,5 +35,3 @@ class Grove_LightSensor {
     }
 }
 exports.default = Grove_LightSensor;
-
-//# sourceMappingURL=index.js.map

@@ -22,7 +22,7 @@ class Grove_DistanceSensor extends GP2Y0A21YK0F_1.default {
     wired(obniz) {
         this.obniz = obniz;
         if (this.params.grove) {
-            const groveAd = this.params.grove.getAnalog();
+            const groveAd = this.params.grove.getAnalog("5v", "secondaryOnly");
             this.ad_signal = groveAd.secondary;
         }
         else {
@@ -32,5 +32,3 @@ class Grove_DistanceSensor extends GP2Y0A21YK0F_1.default {
     }
 }
 exports.default = Grove_DistanceSensor;
-
-//# sourceMappingURL=index.js.map

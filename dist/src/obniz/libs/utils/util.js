@@ -70,7 +70,7 @@ class ObnizUtil {
     /**
      * @ignore
      * @param data
-     * @param schema
+     * @param reverse
      */
     static hexToBinary(data, reverse = false) {
         const array = [];
@@ -132,5 +132,3 @@ class ObnizUtil {
     }
 }
 exports.default = ObnizUtil;
-
-//# sourceMappingURL=util.js.map

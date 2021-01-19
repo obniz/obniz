@@ -408,7 +408,7 @@ export default class PeripheralUART extends ComponentAbstract {
    * @private
    */
   protected _reset() {
-    this.received = new Uint8Array([]);
+    this.received = [];
     this.used = false;
   }
 }

@@ -19,6 +19,12 @@ grove | `object` | no | &nbsp;  | grove interface object if a device has
 
 ```Javascript
 // Javascript Example
+const speaker = obniz.wired("Grove_Speaker", {gnd:0, vcc:1, signal: 3});
+```
+
+If the device has a grove interface, it can be connected with just the parameter {grove: obniz.grove0}.
+```Javascript
+// Javascript Example
 const speaker = obniz.wired("Grove_Speaker", {grove: obniz.grove0})
 ```
 

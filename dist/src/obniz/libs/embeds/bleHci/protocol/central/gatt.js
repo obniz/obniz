@@ -8,6 +8,7 @@ const debug = () => { };
 /* eslint-disable no-unused-vars */
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const ObnizError_1 = require("../../../../../ObnizError");
+const bleHelper_1 = __importDefault(require("../../bleHelper"));
 /**
  * @ignore
  */
@@ -144,7 +145,7 @@ class Gatt extends eventemitter3_1.default {
         });
         return result;
     }
-    async setEncryptOption(options) {
+    setEncryptOption(options) {
         this._aclStream.setEncryptOption(options);
     }
     onEnd(reason) {
@@ -177,13 +178,7 @@ class Gatt extends eventemitter3_1.default {
                         endHandle: data.readUInt16LE(2 + i * type + 2),
                         uuid: type === 6
                             ? data.readUInt16LE(2 + i * type + 4).toString(16)
-                            : data
-                                .slice(2 + i * type + 4)
-                                .slice(0, 16)
-                                .toString("hex")
-                                .match(/.{1,2}/g)
-                                .reverse()
-                                .join(""),
+                            : bleHelper_1.default.buffer2reversedHex(data.slice(2 + i * type + 4).slice(0, 16)),
                     });
                 }
             }
@@ -217,13 +212,7 @@ class Gatt extends eventemitter3_1.default {
                         startHandle: data.readUInt16LE(2 + i * type + 2),
                         uuid: type === 8
                             ? data.readUInt16LE(2 + i * type + 6).toString(16)
-                            : data
-                                .slice(2 + i * type + 6)
-                                .slice(0, 16)
-                                .toString("hex")
-                                .match(/.{1,2}/g)
-                                .reverse()
-                                .join(""),
+                            : bleHelper_1.default.buffer2reversedHex(data.slice(2 + i * type + 6).slice(0, 16)),
                     });
                 }
             }
@@ -256,17 +245,12 @@ class Gatt extends eventemitter3_1.default {
                 for (i = 0; i < num; i++) {
                     characteristics.push({
                         startHandle: data.readUInt16LE(2 + i * type + 0),
+                        endHandle: 0,
                         properties: data.readUInt8(2 + i * type + 2),
                         valueHandle: data.readUInt16LE(2 + i * type + 3),
                         uuid: type === 7
                             ? data.readUInt16LE(2 + i * type + 5).toString(16)
-                            : data
-                                .slice(2 + i * type + 5)
-                                .slice(0, 16)
-                                .toString("hex")
-                                .match(/.{1,2}/g)
-                                .reverse()
-                                .join(""),
+                            : bleHelper_1.default.buffer2reversedHex(data.slice(2 + i * type + 5).slice(0, 16)),
                     });
                 }
             }
@@ -432,6 +416,8 @@ class Gatt extends eventemitter3_1.default {
             }
             startHandle = descriptors[descriptors.length - 1].handle + 1;
         }
+        // never reached
+        return [];
     }
     async readValueWait(serviceUuid, characteristicUuid, descriptorUuid) {
         const descriptor = this.getDescriptor(serviceUuid, characteristicUuid, descriptorUuid);
@@ -724,5 +710,3 @@ class Gatt extends eventemitter3_1.default {
     }
 }
 exports.default = Gatt;
-
-//# sourceMappingURL=gatt.js.map

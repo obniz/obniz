@@ -41,6 +41,14 @@ export default class Linking {
   public periperal: bleRemotePeripheral | null;
   public obniz!: Obniz;
 
+  public get LinkingAdvertising() {
+    return LinkingAdvertising;
+  }
+
+  public get LinkingDevice() {
+    return LinkingDevice;
+  }
+
   constructor(params: any) {
     this.keys = [];
     this.requiredKeys = [];
@@ -163,7 +171,7 @@ export default class Linking {
     // var target = {
     //   uuids: this.PRIMARY_SERVICE_UUID_LIST
     // };
-    this.obniz.ble!.scan.start();
+    this.obniz.ble!.scan.startWait();
     this._discover_status = true;
   }
 
@@ -174,7 +182,7 @@ export default class Linking {
         clearTimeout(this._discover_timer);
         this._discover_timer = null;
       }
-      this.obniz.ble!.scan.end();
+      this.obniz.ble!.scan.endWait();
     }
   }
 

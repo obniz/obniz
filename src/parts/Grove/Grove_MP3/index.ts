@@ -4,14 +4,20 @@
  */
 
 import Obniz from "../../../obniz";
+import PeripheralGrove from "../../../obniz/libs/io_peripherals/grove";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface Grove_MP3Options {
+export interface Grove_MP3OptionsA {
   vcc?: number;
   gnd?: number;
   mp3_rx: number;
   mp3_tx: number;
 }
+interface Grove_MP3OptionsB {
+  grove: PeripheralGrove;
+}
+
+export type Grove_MP3Options = Grove_MP3OptionsA | Grove_MP3OptionsB;
 
 export default class Grove_MP3 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
@@ -32,8 +38,8 @@ export default class Grove_MP3 implements ObnizPartsInterface {
   public uart: any;
 
   constructor() {
-    this.keys = ["vcc", "gnd", "mp3_rx", "mp3_tx"];
-    this.requiredKeys = ["mp3_rx", "mp3_tx"];
+    this.keys = ["vcc", "gnd", "mp3_rx", "mp3_tx", "grove"];
+    this.requiredKeys = [];
 
     this.ioKeys = this.keys;
     this.displayName = "MP3";
@@ -42,20 +48,22 @@ export default class Grove_MP3 implements ObnizPartsInterface {
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-
-    this.my_tx = this.params.mp3_rx;
-    this.my_rx = this.params.mp3_tx;
-
-    this.uart = this.obniz.getFreeUart();
+    if (this.params.grove) {
+      this.uart = this.params.grove.getUart(9600, "5v");
+    } else {
+      obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+      this.my_tx = this.params.mp3_rx;
+      this.my_rx = this.params.mp3_tx;
+      this.uart = this.obniz.getFreeUart();
+      this.uart.start({
+        tx: this.my_tx,
+        rx: this.my_rx,
+        baud: 9600,
+      });
+    }
   }
 
   public async initWait(strage?: any): Promise<void> {
-    this.uart.start({
-      tx: this.my_tx,
-      rx: this.my_rx,
-      baud: 9600,
-    });
     await this.obniz.wait(100);
     this.uartSend(0x0c, 0);
     await this.obniz.wait(500);

@@ -126,5 +126,3 @@ class MINEW_S1 {
     wired(obniz) { }
 }
 exports.default = MINEW_S1;
-
-//# sourceMappingURL=index.js.map

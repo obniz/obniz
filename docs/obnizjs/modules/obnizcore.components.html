@@ -93,6 +93,7 @@
 							<h3>Other Classes</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter"><a href="../classes/obnizcore.components.componentabstract.html" class="tsd-kind-icon">Component<wbr>Abstract</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/obnizcore.components.plugin.html" class="tsd-kind-icon">Plugin</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/obnizcore.components.wifi.html" class="tsd-kind-icon">Wi<wbr>Fi</a></li>
 							</ul>
 							<h3>Peripherals Classes</h3>
@@ -137,6 +138,7 @@
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="obnizcore.components.html#drivetype" class="tsd-kind-icon">Drive<wbr>Type</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="obnizcore.components.html#eventhandler" class="tsd-kind-icon">Event<wbr>Handler</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="obnizcore.components.html#flowcontroltype" class="tsd-kind-icon">Flow<wbr>Control<wbr>Type</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="obnizcore.components.html#grovepinoption" class="tsd-kind-icon">Grove<wbr>Pin<wbr>Option</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="obnizcore.components.html#i2cmode" class="tsd-kind-icon">I2CMode</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="obnizcore.components.html#obnizmeasureresultarray" class="tsd-kind-icon">Obniz<wbr>Measure<wbr>Result<wbr>Array</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="obnizcore.components.html#obnizswitchcallback" class="tsd-kind-icon">Obniz<wbr>Switch<wbr>Callback</a></li>
@@ -144,6 +146,7 @@
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="obnizcore.components.html#pwmmodulatetype" class="tsd-kind-icon">PWMModulate<wbr>Type</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="obnizcore.components.html#paritytype" class="tsd-kind-icon">Parity<wbr>Type</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="obnizcore.components.html#peripheralgrovetype" class="tsd-kind-icon">Peripheral<wbr>Grove<wbr>Type</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="obnizcore.components.html#pluginreceivecallbackfunction" class="tsd-kind-icon">Plugin<wbr>Receive<wbr>Callback<wbr>Function</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="obnizcore.components.html#pulltype" class="tsd-kind-icon">Pull<wbr>Type</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="obnizcore.components.html#stopbittype" class="tsd-kind-icon">Stop<wbr>Bit<wbr>Type</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="obnizcore.components.html#tcpconnectioncallbackfunction" class="tsd-kind-icon">TCPConnection<wbr>Callback<wbr>Function</a></li>
@@ -250,6 +253,16 @@
 						</ul>
 					</aside>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module">
+					<a name="grovepinoption" class="tsd-anchor"></a>
+					<h3>Grove<wbr>Pin<wbr>Option</h3>
+					<div class="tsd-signature tsd-kind-icon">Grove<wbr>Pin<wbr>Option<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"default"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"secondaryOnly"</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/io_peripherals/grove.ts:23</li>
+						</ul>
+					</aside>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
 					<a name="i2cmode" class="tsd-anchor"></a>
 					<h3>I2CMode</h3>
@@ -266,7 +279,7 @@
 					<div class="tsd-signature tsd-kind-icon">Obniz<wbr>Measure<wbr>Result<wbr>Array<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">[</span><a href="../interfaces/obnizcore.components.obnizmeasureresult.html" class="tsd-signature-type">ObnizMeasureResult</a><span class="tsd-signature-symbol">, </span><a href="../interfaces/obnizcore.components.obnizmeasureresult.html" class="tsd-signature-type">ObnizMeasureResult</a><span class="tsd-signature-symbol">]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/measurements/measure.ts:16</li>
+							<li>Defined in src/obniz/libs/measurements/measure.ts:15</li>
 						</ul>
 					</aside>
 				</section>
@@ -345,12 +358,51 @@
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module">
 					<a name="peripheralgrovetype" class="tsd-anchor"></a>
 					<h3>Peripheral<wbr>Grove<wbr>Type</h3>
-					<div class="tsd-signature tsd-kind-icon">Peripheral<wbr>Grove<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"digital"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"analog"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"analog-digital"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"i2c"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"uart"</span></div>
+					<div class="tsd-signature tsd-kind-icon">Peripheral<wbr>Grove<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"digital"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"analog"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"analog-digital"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"i2c"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"uart"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"pwm"</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/io_peripherals/grove.ts:21</li>
+							<li>Defined in src/obniz/libs/io_peripherals/grove.ts:22</li>
 						</ul>
 					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="pluginreceivecallbackfunction" class="tsd-anchor"></a>
+					<h3>Plugin<wbr>Receive<wbr>Callback<wbr>Function</h3>
+					<div class="tsd-signature tsd-kind-icon">Plugin<wbr>Receive<wbr>Callback<wbr>Function<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, str<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/plugin/plugin.ts:14</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+					</div>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-siganture">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias tsd-is-not-exported">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, str<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<h4 class="tsd-parameters-title">Parameters</h4>
+										<ul class="tsd-parameters">
+											<li>
+												<h5>data: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+												<div class="tsd-comment tsd-typography">
+													<p>received data</p>
+												</div>
+											</li>
+											<li>
+												<h5>str: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
+											</li>
+										</ul>
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module">
 					<a name="pulltype" class="tsd-anchor"></a>
@@ -545,6 +597,9 @@
 					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="../classes/obnizcore.components.peripheraluart.html" class="tsd-kind-icon">PeripheralUART</a>
 					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="../classes/obnizcore.components.plugin.html" class="tsd-kind-icon">Plugin</a>
+					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="../classes/obnizcore.components.tcp.html" class="tsd-kind-icon">Tcp</a>
 					</li>
@@ -605,6 +660,9 @@
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="obnizcore.components.html#flowcontroltype" class="tsd-kind-icon">Flow<wbr>Control<wbr>Type</a>
 					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="obnizcore.components.html#grovepinoption" class="tsd-kind-icon">Grove<wbr>Pin<wbr>Option</a>
+					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="obnizcore.components.html#i2cmode" class="tsd-kind-icon">I2CMode</a>
 					</li>
@@ -625,6 +683,9 @@
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="obnizcore.components.html#peripheralgrovetype" class="tsd-kind-icon">Peripheral<wbr>Grove<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="obnizcore.components.html#pluginreceivecallbackfunction" class="tsd-kind-icon">Plugin<wbr>Receive<wbr>Callback<wbr>Function</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="obnizcore.components.html#pulltype" class="tsd-kind-icon">Pull<wbr>Type</a>

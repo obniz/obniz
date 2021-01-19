@@ -12,7 +12,6 @@ import Hci from "../hci";
  */
 const debug: any = () => {};
 import EventEmitter from "eventemitter3";
-import os from "os";
 import { Handle } from "../../bleTypes";
 import AclStream from "./acl-stream";
 import Gap from "./gap";
@@ -43,6 +42,33 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
     this._gap = new Gap(this._hci);
     this._gatt = new Gatt();
 
+    this._gatt.on("mtuChange", this.onMtuChange.bind(this));
+
+    this._hci.on("stateChange", this.onStateChange.bind(this));
+    this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
+    this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
+
+    this._hci.on("disconnComplete", this.onDisconnCompleteWait.bind(this));
+    this._hci.on("encryptChange", this.onEncryptChange.bind(this));
+    this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
+
+    this._address = null;
+    this._handle = null;
+    this._aclStream = null;
+  }
+
+  /**
+   * @ignore
+   * @private
+   */
+  public _reset() {
+    this._state = null;
+
+    this._advertising = false;
+
+    this._gap._reset();
+    this._gatt._reset();
+
     this._address = null;
     this._handle = null;
     this._aclStream = null;
@@ -72,7 +98,7 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
     await this._gap.stopAdvertisingWait();
   }
 
-  public async setServices(services: any) {
+  public setServices(services: any) {
     this._gatt.setServices(services);
   }
 
@@ -90,18 +116,6 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
       return rssi;
     }
     return null;
-  }
-
-  public init() {
-    this._gatt.on("mtuChange", this.onMtuChange.bind(this));
-
-    this._hci.on("stateChange", this.onStateChange.bind(this));
-    this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
-    this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
-
-    this._hci.on("disconnComplete", this.onDisconnCompleteWait.bind(this));
-    this._hci.on("encryptChange", this.onEncryptChange.bind(this));
-    this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
   }
 
   public onStateChange(state: any) {
@@ -157,13 +171,13 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
     }
     if (this._aclStream) {
       this._aclStream.end();
+      this._aclStream = null;
     }
 
-    const address: any = this._address;
+    const address = this._address;
 
     this._address = null;
     this._handle = null;
-    this._aclStream = null;
 
     if (address) {
       this.emit("disconnect", address, reason); // TODO: use reason

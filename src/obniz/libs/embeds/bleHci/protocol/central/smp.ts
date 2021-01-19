@@ -7,6 +7,7 @@
 import EventEmitter from "eventemitter3";
 
 import { ObnizBlePairingRejectByRemoteError } from "../../../../../ObnizError";
+import BleHelper from "../../bleHelper";
 import { BleDeviceAddress, BleDeviceAddressType } from "../../bleTypes";
 import AclStream from "./acl-stream";
 import crypto from "./crypto";
@@ -49,6 +50,12 @@ export interface SmpEncryptOptions {
    * Callback function that call on pairing passkey required.
    */
   onPairedCallback?: (keys: string) => void;
+
+  /**
+   * Callback function that call on pairing failed internal.
+   * Some pairing error may caused internally when peripheral request regardless central side request.
+   */
+  onPairingFailed?: (e: Error) => void;
 }
 
 /**
@@ -84,21 +91,9 @@ class Smp extends EventEmitter<SmpEventTypes> {
     this._aclStream = aclStream;
 
     this._iat = Buffer.from([localAddressType === "random" ? 0x01 : 0x00]);
-    this._ia = Buffer.from(
-      localAddress
-        .split(":")
-        .reverse()
-        .join(""),
-      "hex",
-    );
+    this._ia = BleHelper.hex2reversedBuffer(localAddress, ":");
     this._rat = Buffer.from([remoteAddressType === "random" ? 0x01 : 0x00]);
-    this._ra = Buffer.from(
-      remoteAddress
-        .split(":")
-        .reverse()
-        .join(""),
-      "hex",
-    );
+    this._ra = BleHelper.hex2reversedBuffer(remoteAddress, ":");
 
     this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
     this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
@@ -165,24 +160,6 @@ class Smp extends EventEmitter<SmpEventTypes> {
       this.handleSecurityRequest(data);
     }
     // console.warn("SMP: " + code);
-    return;
-    if (SMP.PAIRING_RESPONSE === code) {
-      this.handlePairingResponse(data);
-    } else if (SMP.PAIRING_CONFIRM === code) {
-      this.handlePairingConfirm(data);
-    } else if (SMP.PAIRING_RANDOM === code) {
-      this.handlePairingRandomWait(data);
-    } else if (SMP.PAIRING_FAILED === code) {
-      this.handlePairingFailed(data);
-    } else if (SMP.ENCRYPT_INFO === code) {
-      this.handleEncryptInfo(data);
-    } else if (SMP.MASTER_IDENT === code) {
-      this.handleMasterIdent(data);
-    } else if (SMP.SMP_SECURITY_REQUEST === code) {
-      this.handleSecurityRequest(data);
-    } else {
-      throw new Error();
-    }
   }
 
   public onAclStreamEnd() {
@@ -273,7 +250,15 @@ class Smp extends EventEmitter<SmpEventTypes> {
   }
 
   public handleSecurityRequest(data: any) {
-    this.pairingWait();
+    this.pairingWait()
+      .then(() => {})
+      .catch((e) => {
+        if (this._options && this._options.onPairingFailed) {
+          this._options.onPairingFailed(e);
+        } else {
+          throw e;
+        }
+      });
   }
 
   public setKeys(keyStringBase64: string) {

@@ -1,4 +1,10 @@
 "use strict";
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
+// let debug = require('debug')('gap');
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -9,43 +15,70 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const debug = () => { };
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const ObnizError_1 = require("../../../../../ObnizError");
+const bleHelper_1 = __importDefault(require("../../bleHelper"));
 /**
  * @ignore
  */
 class Gap extends eventemitter3_1.default {
     constructor(hci) {
         super();
-        this._hci = hci;
         this._scanState = null;
         this._scanFilterDuplicates = null;
         this._discoveries = {};
+        this._hci = hci;
+        this._reset();
         this._hci.on("leAdvertisingReport", this.onHciLeAdvertisingReport.bind(this));
     }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this._scanState = null;
+        this._scanFilterDuplicates = null;
+        this._discoveries = {};
+    }
     async startScanningWait(allowDuplicates, activeScan) {
-        this._scanState = "starting";
         this._scanFilterDuplicates = !allowDuplicates;
         this._discoveries = {};
         // Always set scan parameters before scanning
         // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
         // p106 - p107
         try {
-            await this.setScanEnabledWait(false, true);
+            if (this._scanState === "starting" || this._scanState === "started") {
+                await this.setScanEnabledWait(false, true);
+            }
         }
         catch (e) {
-            if (e instanceof ObnizError_1.ObnizBleOpError) {
-                // nop
+            if (e instanceof ObnizError_1.ObnizBleScanStartError) {
+                // If not started yet. this error may called. just ignore it.
             }
             else {
                 throw e;
             }
         }
-        const setParamStatus = await this._hci.setScanParametersWait(activeScan);
+        this._scanState = "starting";
+        const status = await this._hci.setScanParametersWait(activeScan);
+        if (status !== 0) {
+            throw new ObnizError_1.ObnizBleScanStartError(status, `startScanning Error setting active scan=${activeScan} was failed`);
+        }
         await new Promise((resolve) => setTimeout(resolve, 1000));
         await this.setScanEnabledWait(true, this._scanFilterDuplicates);
     }
     async stopScanningWait() {
-        this._scanState = "stopping";
-        await this._hci.setScanEnabledWait(false, true);
+        try {
+            if (this._scanState === "starting" || this._scanState === "started") {
+                await this.setScanEnabledWait(false, true);
+            }
+        }
+        catch (e) {
+            if (e instanceof ObnizError_1.ObnizBleScanStartError) {
+                // If not started yet. this error may called. just ignore it.
+            }
+            else {
+                throw e;
+            }
+        }
     }
     onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi) {
         const previouslyDiscovered = !!this._discoveries[address];
@@ -109,12 +142,7 @@ class Gap extends eventemitter3_1.default {
                 case 0x06: // Incomplete List of 128-bit Service Class UUIDs
                 case 0x07: // Complete List of 128-bit Service Class UUIDs
                     for (j = 0; j < bytes.length; j += 16) {
-                        serviceUuid = bytes
-                            .slice(j, j + 16)
-                            .toString("hex")
-                            .match(/.{1,2}/g)
-                            .reverse()
-                            .join("");
+                        serviceUuid = bleHelper_1.default.buffer2reversedHex(bytes.slice(j, j + 16));
                         if (advertisement.serviceUuids.indexOf(serviceUuid) === -1) {
                             advertisement.serviceUuids.push(serviceUuid);
                         }
@@ -142,12 +170,7 @@ class Gap extends eventemitter3_1.default {
                 case 0x15: {
                     // List of 128 bit solicitation UUIDs
                     for (j = 0; j < bytes.length; j += 16) {
-                        serviceSolicitationUuid = bytes
-                            .slice(j, j + 16)
-                            .toString("hex")
-                            .match(/.{1,2}/g)
-                            .reverse()
-                            .join("");
+                        serviceSolicitationUuid = bleHelper_1.default.buffer2reversedHex(bytes.slice(j, j + 16));
                         if (advertisement.serviceSolicitationUuids.indexOf(serviceSolicitationUuid) === -1) {
                             advertisement.serviceSolicitationUuids.push(serviceSolicitationUuid);
                         }
@@ -156,12 +179,7 @@ class Gap extends eventemitter3_1.default {
                 }
                 case 0x16: {
                     // 16-bit Service Data, there can be multiple occurences
-                    const serviceDataUuid = bytes
-                        .slice(0, 2)
-                        .toString("hex")
-                        .match(/.{1,2}/g)
-                        .reverse()
-                        .join("");
+                    const serviceDataUuid = bleHelper_1.default.buffer2reversedHex(bytes.slice(0, 2));
                     const serviceData = bytes.slice(2, bytes.length);
                     advertisement.serviceData.push({
                         uuid: serviceDataUuid,
@@ -171,12 +189,7 @@ class Gap extends eventemitter3_1.default {
                 }
                 case 0x20: {
                     // 32-bit Service Data, there can be multiple occurences
-                    const serviceData32Uuid = bytes
-                        .slice(0, 4)
-                        .toString("hex")
-                        .match(/.{1,2}/g)
-                        .reverse()
-                        .join("");
+                    const serviceData32Uuid = bleHelper_1.default.buffer2reversedHex(bytes.slice(0, 4));
                     const serviceData32 = bytes.slice(4, bytes.length);
                     advertisement.serviceData.push({
                         uuid: serviceData32Uuid,
@@ -186,12 +199,7 @@ class Gap extends eventemitter3_1.default {
                 }
                 case 0x21: {
                     // 128-bit Service Data, there can be multiple occurences
-                    const serviceData128Uuid = bytes
-                        .slice(0, 16)
-                        .toString("hex")
-                        .match(/.{1,2}/g)
-                        .reverse()
-                        .join("");
+                    const serviceData128Uuid = bleHelper_1.default.buffer2reversedHex(bytes.slice(0, 16));
                     const serviceData128 = bytes.slice(16, bytes.length);
                     advertisement.serviceData.push({
                         uuid: serviceData128Uuid,
@@ -227,12 +235,12 @@ class Gap extends eventemitter3_1.default {
         this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
     }
     async setScanEnabledWait(enabled, filterDuplicates) {
-        const scanStopStatus = await this._hci.setScanEnabledWait(enabled, true);
+        const status = await this._hci.setScanEnabledWait(enabled, filterDuplicates);
         // Check the status we got from the command complete function.
-        if (scanStopStatus !== 0) {
+        if (status !== 0) {
             // If it is non-zero there was an error, and we should not change
             // our status as a result.
-            // throw new ObnizBleOpError();
+            throw new ObnizError_1.ObnizBleScanStartError(status, `startScanning enable=${enabled} was failed. Maybe Connection to a device is under going.`);
         }
         else {
             if (this._scanState === "starting") {
@@ -245,5 +253,3 @@ class Gap extends eventemitter3_1.default {
     }
 }
 exports.default = Gap;
-
-//# sourceMappingURL=gap.js.map

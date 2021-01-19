@@ -41,5 +41,3 @@ class Grove_EARTH {
     }
 }
 exports.default = Grove_EARTH;
-
-//# sourceMappingURL=index.js.map

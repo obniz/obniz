@@ -6,8 +6,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_Buzzer {
     constructor() {
-        this.keys = ["signal", "gnd", "vcc"];
-        this.requiredKeys = ["signal"];
+        this.keys = ["signal", "gnd", "vcc", "grove"];
+        this.requiredKeys = [];
     }
     static info() {
         return {
@@ -15,10 +15,15 @@ class Grove_Buzzer {
         };
     }
     wired(obniz) {
-        this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.pwm = obniz.getFreePwm();
-        this.pwm.start({ io: this.params.signal });
+        if (this.params.grove) {
+            this.pwm = this.params.grove.getPwm();
+        }
+        else {
+            this.obniz = obniz;
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.pwm = obniz.getFreePwm();
+            this.pwm.start({ io: this.params.signal });
+        }
     }
     play(freq) {
         if (typeof freq !== "number") {
@@ -38,5 +43,3 @@ class Grove_Buzzer {
     }
 }
 exports.default = Grove_Buzzer;
-
-//# sourceMappingURL=index.js.map

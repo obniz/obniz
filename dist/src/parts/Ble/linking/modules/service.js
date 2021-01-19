@@ -108,5 +108,3 @@ class LinkingService {
     }
 }
 exports.default = LinkingService;
-
-//# sourceMappingURL=service.js.map

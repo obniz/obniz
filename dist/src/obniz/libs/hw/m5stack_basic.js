@@ -12,7 +12,7 @@ class M5StackBasic extends ObnizDevice_1.default {
     constructor(id, options) {
         super(id, options);
     }
-    async _beforeOnConnect() {
+    _beforeOnConnect() {
         super._beforeOnConnect();
         this.buttonA = this.wired("Button", { signal: 39 });
         this.buttonB = this.wired("Button", { signal: 38 });
@@ -27,5 +27,3 @@ class M5StackBasic extends ObnizDevice_1.default {
     }
 }
 exports.M5StackBasic = M5StackBasic;
-
-//# sourceMappingURL=m5stack_basic.js.map

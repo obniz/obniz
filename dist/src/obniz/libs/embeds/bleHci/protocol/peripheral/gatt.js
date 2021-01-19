@@ -3,6 +3,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
+const bleHelper_1 = __importDefault(require("../../bleHelper"));
 // var debug = require('debug')('gatt');
 const debug = () => { };
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
@@ -80,9 +86,20 @@ class Gatt extends eventemitter3_1.default {
         this.maxMtu = 256;
         this._mtu = 23;
         this._preparedWriteRequest = null;
-        this.setServices([]);
+        this._reset();
         this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
         this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this.maxMtu = 256;
+        this._mtu = 23;
+        this._preparedWriteRequest = null;
+        this.setServices([]);
+        this.setAclStream(undefined);
     }
     setServices(services) {
         // var deviceName = process.env.BLENO_DEVICE_NAME || os.hostname();
@@ -90,9 +107,7 @@ class Gatt extends eventemitter3_1.default {
         const allServices = [].concat(services);
         this._handles = [];
         let handle = 0;
-        let i;
-        let j;
-        for (i = 0; i < allServices.length; i++) {
+        for (let i = 0; i < allServices.length; i++) {
             const service = allServices[i];
             handle++;
             const serviceHandle = handle;
@@ -102,7 +117,7 @@ class Gatt extends eventemitter3_1.default {
                 attribute: service,
                 startHandle: serviceHandle,
             };
-            for (j = 0; j < service.characteristics.length; j++) {
+            for (let j = 0; j < service.characteristics.length; j++) {
                 const characteristic = service.characteristics[j];
                 let properties = 0;
                 let secure = 0;
@@ -190,27 +205,33 @@ class Gatt extends eventemitter3_1.default {
             }
             this._handles[serviceHandle].endHandle = handle;
         }
-        const debugHandles = [];
-        for (i = 0; i < this._handles.length; i++) {
-            handle = this._handles[i];
-            debugHandles[i] = {};
-            for (j in handle) {
-                if (Buffer.isBuffer(handle[j])) {
-                    debugHandles[i][j] = handle[j] ? "Buffer('" + handle[j].toString("hex") + "', 'hex')" : null;
-                }
-                else if (j !== "attribute") {
-                    debugHandles[i][j] = handle[j];
-                }
-            }
-        }
-        debug("handles = " + JSON.stringify(debugHandles, null, 2));
+        // const debugHandles = [];
+        // for (let i = 0; i < this._handles.length; i++) {
+        //   const anHandle = this._handles[i];
+        //   debugHandles[i] = {};
+        //   for (let key in anHandle) {
+        //     if (Buffer.isBuffer(anHandle[key])) {
+        //       debugHandles[i][key] = anHandle[key] ? "Buffer('" + anHandle[key].toString("hex") + "', 'hex')" : null;
+        //     } else if (key !== "attribute") {
+        //       debugHandles[i][key] = anHandle[key];
+        //     }
+        //   }
+        // }
+        // debug("handles = " + JSON.stringify(debugHandles, null, 2));
     }
     setAclStream(aclStream) {
         this._mtu = 23;
         this._preparedWriteRequest = null;
+        if (this._aclStream) {
+            this._aclStream.end();
+            this._aclStream.removeListener("data", this.onAclStreamDataBinded);
+            this._aclStream.removeListener("end", this.onAclStreamEndBinded);
+        }
         this._aclStream = aclStream;
-        this._aclStream.on("data", this.onAclStreamDataBinded);
-        this._aclStream.on("end", this.onAclStreamEndBinded);
+        if (this._aclStream) {
+            this._aclStream.on("data", this.onAclStreamDataBinded);
+            this._aclStream.on("end", this.onAclStreamEndBinded);
+        }
     }
     onAclStreamData(cid, data) {
         if (cid !== ATT.CID) {
@@ -364,10 +385,7 @@ class Gatt extends eventemitter3_1.default {
             for (i = 0; i < numInfo; i++) {
                 const info = infos[i];
                 response.writeUInt16LE(info.handle, 2 + i * lengthPerInfo);
-                uuid = Buffer.from(info.uuid
-                    .match(/.{1,2}/g)
-                    .reverse()
-                    .join(""), "hex");
+                uuid = bleHelper_1.default.hex2reversedBuffer(info.uuid);
                 for (let j = 0; j < uuid.length; j++) {
                     response[2 + i * lengthPerInfo + 2 + j] = uuid[j];
                 }
@@ -382,18 +400,8 @@ class Gatt extends eventemitter3_1.default {
         let response = null;
         const startHandle = request.readUInt16LE(1);
         const endHandle = request.readUInt16LE(3);
-        const uuid = request
-            .slice(5, 7)
-            .toString("hex")
-            .match(/.{1,2}/g)
-            .reverse()
-            .join("");
-        const value = request
-            .slice(7)
-            .toString("hex")
-            .match(/.{1,2}/g)
-            .reverse()
-            .join("");
+        const uuid = bleHelper_1.default.buffer2reversedHex(request.slice(5, 7));
+        const value = bleHelper_1.default.buffer2reversedHex(request.slice(7));
         const handles = [];
         let handle;
         for (let i = startHandle; i <= endHandle; i++) {
@@ -430,18 +438,13 @@ class Gatt extends eventemitter3_1.default {
         let response = null;
         const startHandle = request.readUInt16LE(1);
         const endHandle = request.readUInt16LE(3);
-        const uuid = request
-            .slice(5)
-            .toString("hex")
-            .match(/.{1,2}/g)
-            .reverse()
-            .join("");
+        const uuid = bleHelper_1.default.buffer2reversedHex(request.slice(5));
         debug("read by group: startHandle = 0x" +
             startHandle.toString(16) +
             ", endHandle = 0x" +
             endHandle.toString(16) +
             ", uuid = 0x" +
-            uuid.toString(16));
+            uuid);
         if ("2800" === uuid || "2802" === uuid) {
             const services = [];
             const type = "2800" === uuid ? "service" : "includedService";
@@ -474,10 +477,7 @@ class Gatt extends eventemitter3_1.default {
                     const service = services[i];
                     response.writeUInt16LE(service.startHandle, 2 + i * lengthPerService);
                     response.writeUInt16LE(service.endHandle, 2 + i * lengthPerService + 2);
-                    const serviceUuid = Buffer.from(service.uuid
-                        .match(/.{1,2}/g)
-                        .reverse()
-                        .join(""), "hex");
+                    const serviceUuid = bleHelper_1.default.hex2reversedBuffer(service.uuid);
                     for (let j = 0; j < serviceUuid.length; j++) {
                         response[2 + i * lengthPerService + 4 + j] = serviceUuid[j];
                     }
@@ -497,12 +497,7 @@ class Gatt extends eventemitter3_1.default {
         const requestType = request[0];
         const startHandle = request.readUInt16LE(1);
         const endHandle = request.readUInt16LE(3);
-        const uuid = request
-            .slice(5)
-            .toString("hex")
-            .match(/.{1,2}/g)
-            .reverse()
-            .join("");
+        const uuid = bleHelper_1.default.buffer2reversedHex(request.slice(5));
         let i;
         let handle;
         debug("read by type: startHandle = 0x" +
@@ -510,7 +505,7 @@ class Gatt extends eventemitter3_1.default {
             ", endHandle = 0x" +
             endHandle.toString(16) +
             ", uuid = 0x" +
-            uuid.toString(16));
+            uuid);
         if ("2803" === uuid) {
             const characteristics = [];
             for (i = startHandle; i <= endHandle; i++) {
@@ -542,10 +537,7 @@ class Gatt extends eventemitter3_1.default {
                     response.writeUInt16LE(characteristic.startHandle, 2 + i * lengthPerCharacteristic);
                     response.writeUInt8(characteristic.properties, 2 + i * lengthPerCharacteristic + 2);
                     response.writeUInt16LE(characteristic.valueHandle, 2 + i * lengthPerCharacteristic + 3);
-                    const characteristicUuid = Buffer.from(characteristic.uuid
-                        .match(/.{1,2}/g)
-                        .reverse()
-                        .join(""), "hex");
+                    const characteristicUuid = bleHelper_1.default.hex2reversedBuffer(characteristic.uuid);
                     for (let j = 0; j < characteristicUuid.length; j++) {
                         response[2 + i * lengthPerCharacteristic + 5 + j] = characteristicUuid[j];
                     }
@@ -567,12 +559,12 @@ class Gatt extends eventemitter3_1.default {
                 if (handle.type === "characteristic" && handle.uuid === uuid) {
                     handleAttribute = handle.attribute;
                     valueHandle = handle.valueHandle;
-                    secure = handle.secure & 0x02;
+                    secure = (handle.secure & 0x02) !== 0;
                     break;
                 }
                 else if (handle.type === "descriptor" && handle.uuid === uuid) {
                     valueHandle = i;
-                    secure = handle.secure & 0x02;
+                    secure = (handle.secure & 0x02) !== 0;
                     break;
                 }
             }
@@ -648,16 +640,10 @@ class Gatt extends eventemitter3_1.default {
             })(requestType, valueHandle);
             if (handleType === "service" || handleType === "includedService") {
                 result = ATT.ECODE_SUCCESS;
-                data = Buffer.from(handle.uuid
-                    .match(/.{1,2}/g)
-                    .reverse()
-                    .join(""), "hex");
+                data = bleHelper_1.default.hex2reversedBuffer(handle.uuid);
             }
             else if (handleType === "characteristic") {
-                const uuid = Buffer.from(handle.uuid
-                    .match(/.{1,2}/g)
-                    .reverse()
-                    .join(""), "hex");
+                const uuid = bleHelper_1.default.hex2reversedBuffer(handle.uuid);
                 result = ATT.ECODE_SUCCESS;
                 data = Buffer.alloc(3 + uuid.length);
                 data.writeUInt8(handle.properties, 0);
@@ -910,5 +896,3 @@ class Gatt extends eventemitter3_1.default {
     }
 }
 exports.default = Gatt;
-
-//# sourceMappingURL=gatt.js.map

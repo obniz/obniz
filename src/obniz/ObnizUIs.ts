@@ -23,35 +23,24 @@ export default class ObnizUIs extends ObnizSystemMethods {
    */
   public static _promptCount: number = 0;
 
-  constructor(id: string, options?: ObnizOptions) {
-    super(id, options);
-  }
+  public static isValidObnizId(str: string): boolean {
+    if (typeof str !== "string") {
+      return false;
+    }
 
-  /**
-   * This closes the current connection.
-   * You need to set auto_connect to false. Otherwise the connection will be recovered.
-   *
-   * ```javascript
-   * var obniz = new Obniz('1234-5678', {
-   *   auto_connect: false,
-   *   reset_obniz_on_ws_disconnection: false
-   * });
-   *
-   * obniz.connect();
-   * obniz.onconnect = async function() {
-   *   obniz.io0.output(true);
-   *   obniz.close();
-   * }
-   * ```
-   */
-  public close() {
-    super.close();
-    this.updateOnlineUI();
-  }
+    // IP => accept
+    if (this.isIpAddress(str)) {
+      return true;
+    }
 
-  protected isValidObnizId(str: string) {
-    if (typeof str !== "string" || str.length < 8) {
-      return null;
+    // Serial Number 'sn_***'
+    if (str.startsWith("sn_")) {
+      return true;
+    }
+
+    // 0000-0000
+    if (str.length < 8) {
+      return false;
     }
     str = str.replace("-", "");
     let id: any = parseInt(str);
@@ -61,11 +50,20 @@ export default class ObnizUIs extends ObnizSystemMethods {
     return id !== null;
   }
 
+  constructor(id: string, options?: ObnizOptions) {
+    super(id, options);
+  }
+
+  protected _close() {
+    super._close();
+    this.updateOnlineUI();
+  }
+
   protected wsconnect(desired_server: any) {
     this.showOffLine();
-    if (!this.isValidObnizId(this.id)) {
-      if (this.isNode) {
-        this.error("invalid obniz id");
+    if (!(this.constructor as typeof ObnizUIs).isValidObnizId(this.id)) {
+      if (this.isNode || !this.options.obnizid_dialog) {
+        this.error({ alert: "error", message: "invalid obniz id" });
       } else {
         const filled: any = _ReadCookie("obniz-last-used") || "";
         this.prompt(filled, (obnizid: any) => {

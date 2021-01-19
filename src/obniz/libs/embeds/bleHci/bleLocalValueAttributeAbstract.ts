@@ -2,10 +2,7 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import BleCharacteristic from "./bleCharacteristic";
-import BleHelper from "./bleHelper";
 import BleLocalAttributeAbstract from "./bleLocalAttributeAbstract";
-import BleService from "./bleService";
 
 /**
  * @category Use as Peripheral
@@ -63,7 +60,7 @@ export default class BleLocalValueAttributeAbstract<ParentClass, ChildrenClass> 
     this.emitter.emit(notifyName, params);
     switch (notifyName) {
       case "onwritefromremote": {
-        this._runUserCreatedFunction(this.onwritefromremote, params.address, params.data);
+        this._runUserCreatedFunction(this.onwritefromremote, params.address, Array.from(params.data));
         break;
       }
       case "onreadfromremote": {

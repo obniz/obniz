@@ -88,7 +88,7 @@ describe('ble-hci-central', function() {
     await _receiveAdvertisementTest(this.obniz, true, [4, 62, 39, 2, 1, 0, 0, 35, 72, 71, 152, 36, 76, 27, 2, 1, 4, 17, 6, 161, 3, 221, 115, 3, 24, 238, 155, 89, 28, 27, 58, 0, 129, 62, 35, 5, 18, 16, 0, 240, 0, 174]);
 
     //device address filter
-    await _scanStartTestWait(this.obniz, {deviceAddress: "f45c89ab651a"});
+    await _scanStartTestWait(this.obniz, {deviceAddress: "f45c89ab651a"}, true);
     await _receiveAdvertisementTest(this.obniz, false, [4, 62, 43, 2, 1, 0, 1, 111, 79, 102, 162, 248, 197, 31, 2, 1, 6, 14, 255, 74, 5, 18, 215, 12, 121, 0, 250, 5, 153, 130, 244, 72, 12, 9, 78, 76, 77, 48, 48, 48, 48, 48, 53, 50, 52, 168]);
     await _receiveAdvertisementTest(this.obniz, false, [4, 62, 12, 2, 1, 4, 1, 0, 166, 134, 140, 138, 78, 0, 169]);
     await _receiveAdvertisementTest(this.obniz, false, [4, 62, 29, 2, 1, 0, 0, 20, 36, 183, 131, 21, 0, 17, 2, 1, 2, 3, 3, 231, 254, 9, 255, 0, 0, 0, 21, 131, 183, 36, 20, 186]);
@@ -99,7 +99,7 @@ describe('ble-hci-central', function() {
     await _receiveAdvertisementTest(this.obniz, false, [4, 62, 39, 2, 1, 0, 0, 35, 72, 71, 152, 36, 76, 27, 2, 1, 4, 17, 6, 161, 3, 221, 115, 3, 24, 238, 155, 89, 28, 27, 58, 0, 129, 62, 35, 5, 18, 16, 0, 240, 0, 174]);
 
     //uuid filter
-    await _scanStartTestWait(this.obniz, {uuids: ["fee7"]});
+    await _scanStartTestWait(this.obniz, {uuids: ["fee7"]}, true);
     await _receiveAdvertisementTest(this.obniz, false, [4, 62, 43, 2, 1, 0, 1, 111, 79, 102, 162, 248, 197, 31, 2, 1, 6, 14, 255, 74, 5, 18, 215, 12, 121, 0, 250, 5, 153, 130, 244, 72, 12, 9, 78, 76, 77, 48, 48, 48, 48, 48, 53, 50, 52, 168]);
     await _receiveAdvertisementTest(this.obniz, false, [4, 62, 12, 2, 1, 4, 1, 0, 166, 134, 140, 138, 78, 0, 169]);
     await _receiveAdvertisementTest(this.obniz, true, [4, 62, 29, 2, 1, 0, 0, 20, 36, 183, 131, 21, 0, 17, 2, 1, 2, 3, 3, 231, 254, 9, 255, 0, 0, 0, 21, 131, 183, 36, 20, 186]);
@@ -109,7 +109,7 @@ describe('ble-hci-central', function() {
     await _receiveAdvertisementTest(this.obniz, false, [4, 62, 39, 2, 1, 0, 0, 35, 72, 71, 152, 36, 76, 27, 2, 1, 4, 17, 6, 161, 3, 221, 115, 3, 24, 238, 155, 89, 28, 27, 58, 0, 129, 62, 35, 5, 18, 16, 0, 240, 0, 174]);
 
     //localnamePrefix filter
-    await _scanStartTestWait(this.obniz, {localNamePrefix: "Pa"});
+    await _scanStartTestWait(this.obniz, {localNamePrefix: "Pa"}, true);
     await _receiveAdvertisementTest(this.obniz, false, [4, 62, 43, 2, 1, 0, 1, 111, 79, 102, 162, 248, 197, 31, 2, 1, 6, 14, 255, 74, 5, 18, 215, 12, 121, 0, 250, 5, 153, 130, 244, 72, 12, 9, 78, 76, 77, 48, 48, 48, 48, 48, 53, 50, 52, 168]);
     await _receiveAdvertisementTest(this.obniz, false, [4, 62, 12, 2, 1, 4, 1, 0, 166, 134, 140, 138, 78, 0, 169]);
     await _receiveAdvertisementTest(this.obniz, false, [4, 62, 29, 2, 1, 0, 0, 20, 36, 183, 131, 21, 0, 17, 2, 1, 2, 3, 3, 231, 254, 9, 255, 0, 0, 0, 21, 131, 183, 36, 20, 186]);
@@ -120,7 +120,7 @@ describe('ble-hci-central', function() {
     await _receiveAdvertisementTest(this.obniz, true, [4, 62, 39, 2, 1, 0, 0, 35, 72, 71, 152, 36, 76, 27, 2, 1, 4, 17, 6, 161, 3, 221, 115, 3, 24, 238, 155, 89, 28, 27, 58, 0, 129, 62, 35, 5, 18, 16, 0, 240, 0, 174]);
 
     //localname filter
-    await _scanStartTestWait(this.obniz, {localName: "Pa"});
+    await _scanStartTestWait(this.obniz, {localName: "Pa"}, true);
     await _receiveAdvertisementTest(this.obniz, false, [4, 62, 43, 2, 1, 0, 1, 111, 79, 102, 162, 248, 197, 31, 2, 1, 6, 14, 255, 74, 5, 18, 215, 12, 121, 0, 250, 5, 153, 130, 244, 72, 12, 9, 78, 76, 77, 48, 48, 48, 48, 48, 53, 50, 52, 168]);
     await _receiveAdvertisementTest(this.obniz, false, [4, 62, 12, 2, 1, 4, 1, 0, 166, 134, 140, 138, 78, 0, 169]);
     await _receiveAdvertisementTest(this.obniz, false, [4, 62, 29, 2, 1, 0, 0, 20, 36, 183, 131, 21, 0, 17, 2, 1, 2, 3, 3, 231, 254, 9, 255, 0, 0, 0, 21, 131, 183, 36, 20, 186]);
@@ -131,7 +131,7 @@ describe('ble-hci-central', function() {
     await _receiveAdvertisementTest(this.obniz, false, [4, 62, 39, 2, 1, 0, 0, 35, 72, 71, 152, 36, 76, 27, 2, 1, 4, 17, 6, 161, 3, 221, 115, 3, 24, 238, 155, 89, 28, 27, 58, 0, 129, 62, 35, 5, 18, 16, 0, 240, 0, 174]);
 
     //localname filter
-    await _scanStartTestWait(this.obniz, {localName: "PaSoRi"});
+    await _scanStartTestWait(this.obniz, {localName: "PaSoRi"}, true);
     await _receiveAdvertisementTest(this.obniz, false, [4, 62, 43, 2, 1, 0, 1, 111, 79, 102, 162, 248, 197, 31, 2, 1, 6, 14, 255, 74, 5, 18, 215, 12, 121, 0, 250, 5, 153, 130, 244, 72, 12, 9, 78, 76, 77, 48, 48, 48, 48, 48, 53, 50, 52, 168]);
     await _receiveAdvertisementTest(this.obniz, false, [4, 62, 12, 2, 1, 4, 1, 0, 166, 134, 140, 138, 78, 0, 169]);
     await _receiveAdvertisementTest(this.obniz, false, [4, 62, 29, 2, 1, 0, 0, 20, 36, 183, 131, 21, 0, 17, 2, 1, 2, 3, 3, 231, 254, 9, 255, 0, 0, 0, 21, 131, 183, 36, 20, 186]);
@@ -142,7 +142,7 @@ describe('ble-hci-central', function() {
     await _receiveAdvertisementTest(this.obniz, true, [4, 62, 39, 2, 1, 0, 0, 35, 72, 71, 152, 36, 76, 27, 2, 1, 4, 17, 6, 161, 3, 221, 115, 3, 24, 238, 155, 89, 28, 27, 58, 0, 129, 62, 35, 5, 18, 16, 0, 240, 0, 174]);
 
     //multi filter
-    await _scanStartTestWait(this.obniz, {localName: "PaSoRi", uuids: ["fee7"], deviceAddress: "f45c89ab651a"});
+    await _scanStartTestWait(this.obniz, {localName: "PaSoRi", uuids: ["fee7"], deviceAddress: "f45c89ab651a"}, true);
     await _receiveAdvertisementTest(this.obniz, false, [4, 62, 43, 2, 1, 0, 1, 111, 79, 102, 162, 248, 197, 31, 2, 1, 6, 14, 255, 74, 5, 18, 215, 12, 121, 0, 250, 5, 153, 130, 244, 72, 12, 9, 78, 76, 77, 48, 48, 48, 48, 48, 53, 50, 52, 168]);
     await _receiveAdvertisementTest(this.obniz, false, [4, 62, 12, 2, 1, 4, 1, 0, 166, 134, 140, 138, 78, 0, 169]);
     await _receiveAdvertisementTest(this.obniz, true, [4, 62, 29, 2, 1, 0, 0, 20, 36, 183, 131, 21, 0, 17, 2, 1, 2, 3, 3, 231, 254, 9, 255, 0, 0, 0, 21, 131, 183, 36, 20, 186]);
@@ -171,15 +171,15 @@ describe('ble-hci-central', function() {
     peripheral.ondisconnect = disconnectStub;
 
     const p = peripheral.connectWait({autoDiscovery: false});
-    await wait(1);
+    await wait(0);
 
     // scan stop
     sendHciCommands(this.obniz, [1, 12, 32, 2, 0, 1]);
     await receiveHciCommandsWait(this.obniz, [4,14,4,5,12,32,12]);
     // connect req
-    sendHciCommands(this.obniz, [1, 13, 32, 25, 96, 0, 48, 0, 0, 1, 130, 168, 133, 213, 252, 115, 0, 6, 0, 12, 0, 0, 0, 200, 0, 4, 0, 6, 0]);
+    sendHciCommands(this.obniz, [1, 13, 32, 25, 16, 0, 16, 0, 0, 1, 130, 168, 133, 213, 252, 115, 0, 9, 0, 24, 0, 1, 0, 144, 1, 0, 0, 0, 0]);
 
-    await wait(1);
+    await wait(0);
     sinon.assert.callCount(connectStub, 0);
     sinon.assert.callCount(disconnectStub, 0);
     // connection established
@@ -195,7 +195,7 @@ describe('ble-hci-central', function() {
 
     await p;
 
-    await wait(1);
+    await wait(0);
 
     sinon.assert.callCount(connectStub, 1);
     sinon.assert.callCount(disconnectStub, 0);
@@ -203,7 +203,7 @@ describe('ble-hci-central', function() {
     //disconnect
     await receiveHciCommandsWait(this.obniz, [4, 5, 4, 0, 0, 0, 19]);
 
-    await wait(1);
+    await wait(0);
     sinon.assert.callCount(connectStub, 1);
     sinon.assert.callCount(disconnectStub, 1);
 
@@ -216,15 +216,15 @@ describe('ble-hci-central', function() {
     const p = this.obniz.ble.scan.startWait();
     // expect(obniz).send([{ ble: { hci: { advertisement_filter: [] } } }]);  //os ver >= 3.2.0
 
-    expect(this.obniz).send([
-      {
-        ble: {
-          hci: {
-            write: [1, 12, 32, 2, 0, 1],
-          },
-        },
-      },
-    ]);
+    // expect(this.obniz).send([
+    //   {
+    //     ble: {
+    //       hci: {
+    //         write: [1, 12, 32, 2, 0, 1],
+    //       },
+    //     },
+    //   },
+    // ]);
     // no response
     testUtil.closeAndReconnectObnizWait(this);
 
@@ -295,68 +295,87 @@ describe('ble-hci-central', function() {
       },
     ];
     testUtil.receiveJson(obniz, results);
-    await wait(1);
+    await wait(0);
     let secondCommands = [
       [0x01, 0x01, 0x0c, 0x08, 0xff, 0xff, 0xfb, 0xff, 0x07, 0xf8, 0xbf, 0x3d], //setEventMask
       [0x01, 0x01, 0x20, 0x08, 0x1f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00], //setLeEventMask
       [0x01, 0x01, 0x10, 0x00], //readLocalVersion
-      [0x01, 0x09, 0x10, 0x00], //readBdAddr
-      [0x01, 0x6d, 0x0c, 0x02, 0x01, 0x00], //writeLeHostSupported
-      [0x01, 0x6c, 0x0c, 0x00], //readLeHostSupported
-      [0x01, 0x02, 0x20, 0x00], //leReadBufferSize
     ];
-
     sendMultiCommands(obniz, secondCommands);
     expect(obniz).to.be.finished;
-
     let response = [
       [4, 14, 4, 5, 0x01, 0x0c, 0],  // setEventMask comp
       [4, 14, 4, 5, 0x01, 0x20, 0], // setLeEventMask comp
       [4, 14, 12, 5, 0x01, 0x10, 0, 8, 14, 3, 8, 96, 0, 14, 3], //readLocalVersion comp
-      [4, 14, 10, 5, 0x09, 0x10, 0, 214, 24, 141, 227, 80, 204], //readBdAddr
-      [4, 14, 4, 5, 0x6d, 0x0c, 0], //writeLeHostSupported comp
-      [4, 14, 6, 5, 0x6c, 0x0c, 0, 1, 0], //readLeHostSupported comp
-      [4, 14, 7, 5, 0x02, 0x20, 0, 251, 0, 10], //leReadBufferSize comp
     ];
     await receiveMultiCommandsWait(obniz, response);
 
-    let secondInitCommands = [
-      [1, 12, 32, 2, 0, 1], //scan disable
-      [1, 11, 32, 7, 0, 16, 0, 16, 0, 0, 0], //set scan parameter
-    ];
-
-    sendMultiCommands(obniz, secondInitCommands);
+    sendMultiCommands(obniz, [
+      [0x01, 0x6d, 0x0c, 0x02, 0x01, 0x00], //writeLeHostSupported
+      [0x01, 0x6c, 0x0c, 0x00], //readLeHostSupported
+    ]);
     expect(obniz).to.be.finished;
+    await receiveMultiCommandsWait(obniz, [
+      [4, 14, 4, 5, 0x6d, 0x0c, 0], //writeLeHostSupported comp
+      [4, 14, 6, 5, 0x6c, 0x0c, 0, 1, 0], //readLeHostSupported comp
+    ]);
 
-    let secondReceiveCommands = [
+    sendMultiCommands(obniz, [
+      [0x01, 0x09, 0x10, 0x00], //readBdAddr
+    ]);
+    expect(obniz).to.be.finished;
+    await receiveMultiCommandsWait(obniz, [
+      [4, 14, 10, 5, 0x09, 0x10, 0, 214, 24, 141, 227, 80, 204], //readBdAddr
+    ]);
+
+    sendMultiCommands(obniz, [
+      [0x01, 0x02, 0x20, 0x00], //leReadBufferSize
+    ]);
+    expect(obniz).to.be.finished;
+    await receiveMultiCommandsWait(obniz, [
+      [4, 14, 7, 5, 0x02, 0x20, 0, 251, 0, 10], //leReadBufferSize comp
+    ]);
+
+    sendMultiCommands(obniz, [
+      [1, 12, 32, 2, 0, 1], //scan disable
+    ]);
+    expect(obniz).to.be.finished;
+    await receiveMultiCommandsWait(obniz, [
       [4, 14, 4, 5, 12, 32, 12], //scan disable error: already disable
+    ]);
+    sendMultiCommands(obniz, [
+      [1, 11, 32, 7, 0, 16, 0, 16, 0, 0, 0], //set scan parameter
+    ]);
+    expect(obniz).to.be.finished;
+    await receiveMultiCommandsWait(obniz, [
       [4, 14, 4, 5, 11, 32, 0],  //set scan parameter  comp
-    ];
-
-    await receiveMultiCommandsWait(obniz, secondReceiveCommands);
+    ]);
     await p;
   }
 
-  async function _scanStartTestWait(obniz, target = {}) {
+  async function _scanStartTestWait(obniz, target = {}, mustReset) {
     const p = obniz.ble.scan.startWait(target);
     // expect(obniz).send([{ ble: { hci: { advertisement_filter: [] } } }]);  //os ver >= 3.2.0
 
-    expect(obniz).send([
-      {
-        ble: {
-          hci: {
-            write: [1, 12, 32, 2, 0, 1],
+    if(mustReset) {
+      expect(obniz).send([
+        {
+          ble: {
+            hci: {
+              write: [1, 12, 32, 2, 0, 1],
+            },
           },
         },
-      },
-    ]);
-    testUtil.receiveJson(obniz, [
-      {
-        ble: {hci: {read: {data: [4, 14, 4, 5, 12, 32, 12]}}},
-      },
-    ]);
+      ]);
+      testUtil.receiveJson(obniz, [
+        {
+          ble: {hci: {read: {data: [4, 14, 4, 5, 12, 32, 12]}}},
+        },
+      ]);
+    }
 
-    await wait(1);
+
+    await wait(0);
     expect(obniz).send([
       {ble: {hci: {write: [1, 11, 32, 7, 1, 16, 0, 16, 0, 0, 0]}}},
     ]);
@@ -391,7 +410,7 @@ describe('ble-hci-central', function() {
         ble: {hci: {read: {data: hci}}},
       },
     ]);
-    await wait(1);
+    await wait(0);
 
     if (!detect) {
       sinon.assert.callCount(stub, 0);
@@ -440,7 +459,7 @@ async function receiveHciCommandsWait(obniz, command) {
     {"ble": {"hci": {"read": {"data": command}}}}
     ,
   ]);
-  await wait(1);
+  await wait(0);
 }
 
 async function receiveMultiCommandsWait(obniz, response) {
@@ -450,7 +469,7 @@ async function receiveMultiCommandsWait(obniz, response) {
       ,
     ]);
   }
-  await wait(1);
+  await wait(0);
 }
 
 function wait(ms) {

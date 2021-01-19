@@ -12,7 +12,6 @@ const concatWith = require('./concatWith');
 const gulp_sort = require('gulp-sort');
 const docGenerator = require('./wsDocGenerator');
 const ts = require('gulp-typescript');
-let sourcemaps = require('gulp-sourcemaps');
 
 const app = express();
 const port = 3100;
@@ -79,6 +78,8 @@ gulp.task('jsonSchemaDoc', function jsonSchemaForVar(callback) {
     'switch',
     'ble/hci',
     'tcp',
+    'wifi',
+    'plugin',
     'message',
     'debug',
   ];
@@ -183,9 +184,7 @@ gulp.task(
 gulp.task('tsc:compile', function(done) {
   return tsProject
     .src()
-    .pipe(sourcemaps.init())
     .pipe(tsProject())
-    .pipe(sourcemaps.write('../dist'))
     .pipe(gulp.dest('dist'))
     .on('end', function() {
       console.log('tsc compiled!');

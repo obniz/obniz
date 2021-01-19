@@ -20,7 +20,7 @@ var temp = await sensor.getTempWait();
 console.log('temperature:' + temp);
 ```
 
-## [await] getHumdWait()
+## [await] getHumidWait()
 Get a Humidity. Unit is Ratio(%).
 ```javascript
 // Javascript Example

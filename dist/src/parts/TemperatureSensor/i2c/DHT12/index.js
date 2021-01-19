@@ -46,9 +46,10 @@ class DHT12 extends i2cParts_1.default {
         return (await this.getAllDataWait()).temperature;
     }
     async getHumdWait() {
+        return await this.getHumidWait();
+    }
+    async getHumidWait() {
         return (await this.getAllDataWait()).humidity;
     }
 }
 exports.default = DHT12;
-
-//# sourceMappingURL=index.js.map

@@ -14,6 +14,14 @@ class BleAdvertisement {
         this.scan_resp = [];
     }
     /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this.adv_data = [];
+        this.scan_resp = [];
+    }
+    /**
      * This starts advertisement of BLE.
      *
      * Before calling this function, you should call [[setAdvData]] or [[setAdvDataRaw]] to set data.
@@ -35,11 +43,15 @@ class BleAdvertisement {
         await this.obnizBle.peripheralBindings.startAdvertisingWithEIRDataWait(Buffer.from(this.adv_data), Buffer.from(this.scan_resp));
     }
     /**
-     * @deprecated
+     * @deprecated  replaced by {@link #startWait()}
      */
     start() {
         this.obnizBle.warningIfNotInitialize();
-        this.startWait(); // background
+        // noinspection JSIgnoredPromiseFromCall
+        this.startWait().catch((e) => {
+            // background
+            this.obnizBle.Obniz.error(e);
+        });
     }
     /**
      * This stops advertisement of BLE.
@@ -56,10 +68,14 @@ class BleAdvertisement {
         await this.obnizBle.peripheralBindings.stopAdvertisingWait();
     }
     /**
-     *  @deprecated
+     *  @deprecated  replaced by {@link #endWait()}
      */
     end() {
-        this.endWait(); // background
+        // noinspection JSIgnoredPromiseFromCall
+        this.endWait().catch((e) => {
+            // background
+            this.obnizBle.Obniz.error(e);
+        });
     }
     /**
      * This sets advertise data from data array.
@@ -145,5 +161,3 @@ class BleAdvertisement {
     }
 }
 exports.default = BleAdvertisement;
-
-//# sourceMappingURL=bleAdvertisement.js.map

@@ -22,11 +22,11 @@ export default abstract class BleRemoteAttributeAbstract<ParentClass, ChildrenCl
    * @ignore
    */
   get wsChildUuidName() {
-    const childrenName: any = this.childrenName;
+    const childrenName = this.childrenName;
     if (!childrenName) {
       return null;
     }
-    const childName: any = childrenName.slice(0, -1);
+    const childName = childrenName.slice(0, -1);
     return childName + "_uuid";
   }
 

@@ -5,12 +5,13 @@
 
 import semver from "semver";
 import Obniz from "../../index";
+import ObnizUtil from "../utils/util";
 
 /**
  * @param PluginReceiveCallbackFunction.data
  * received data
  */
-type PluginReceiveCallbackFunction = (data: number[]) => void;
+type PluginReceiveCallbackFunction = (data: number[], str: string | null) => void;
 
 export default class Plugin {
   /**
@@ -37,7 +38,9 @@ export default class Plugin {
    *
    * ```javascript
    * // Javascript Example
-   * console.log(await obniz.wifi.scanWait());
+   * obniz.plugin.send("obniz.js send data")
+   *
+   * obniz.plugin.send([0x00, 0x01, 0x02])
    * ```
    *
    */
@@ -70,6 +73,7 @@ export default class Plugin {
    * @private
    */
   public _reset() {}
+
   /**
    * @ignore
    * @param obj
@@ -77,9 +81,8 @@ export default class Plugin {
   public notified(obj: any) {
     if (obj.receive) {
       /* Connectino state update. response of connect(), close from destination, response from */
-      if (this.onreceive) {
-        this.onreceive(obj.receive);
-      }
+      const string = ObnizUtil.dataArray2string(obj.receive);
+      this.Obniz._runUserCreatedFunction(this.onreceive, obj.receive, string);
     }
   }
 }

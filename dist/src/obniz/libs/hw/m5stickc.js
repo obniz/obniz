@@ -55,7 +55,7 @@ class M5StickC extends ObnizDevice_1.default {
             return this.imu;
         });
     }
-    async _beforeOnConnect() {
+    _beforeOnConnect() {
         super._beforeOnConnect();
         if (this.ir) {
             // already wired parts
@@ -86,5 +86,3 @@ class M5StickC extends ObnizDevice_1.default {
     }
 }
 exports.M5StickC = M5StickC;
-
-//# sourceMappingURL=m5stickc.js.map

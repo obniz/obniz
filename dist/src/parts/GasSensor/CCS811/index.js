@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module Parts.CCS811
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -181,5 +185,3 @@ class CCS811 extends i2cParts_1.default {
     }
 }
 exports.default = CCS811;
-
-//# sourceMappingURL=index.js.map

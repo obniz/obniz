@@ -11,6 +11,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const ObnizError_1 = require("../../../../../ObnizError");
+const bleHelper_1 = __importDefault(require("../../bleHelper"));
 const acl_stream_1 = __importDefault(require("./acl-stream"));
 const gap_1 = __importDefault(require("./gap"));
 const gatt_1 = __importDefault(require("./gatt"));
@@ -22,21 +23,42 @@ class NobleBindings extends eventemitter3_1.default {
     constructor(hciProtocol) {
         super();
         this.debugHandler = () => { };
+        this._hci = hciProtocol;
+        this._gap = new gap_1.default(this._hci);
         this._state = null;
         this._addresses = {};
         this._addresseTypes = {};
         this._connectable = {};
-        this._connectPromises = [];
         this._handles = {};
         this._gatts = {};
         this._aclStreams = {};
         this._signalings = {};
-        this._hci = hciProtocol;
-        this._gap = new gap_1.default(this._hci);
+        this._connectPromises = [];
+        this._hci.on("stateChange", this.onStateChange.bind(this));
+        this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
+        this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
+        this._gap.on("discover", this.onDiscover.bind(this));
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this._state = null;
+        this._addresses = {};
+        this._addresseTypes = {};
+        this._connectable = {};
+        this._handles = {};
+        this._gatts = {};
+        this._aclStreams = {};
+        this._signalings = {};
+        this._gap._reset();
+        // TODO: It muset be canceled.
+        this._connectPromises = [];
     }
     addPeripheralData(uuid, addressType) {
         if (!this._addresses[uuid]) {
-            const address = uuid.match(/.{1,2}/g).join(":");
+            const address = bleHelper_1.default.reverseHexString(uuid, ":");
             this._addresses[uuid] = address;
             this._addresseTypes[uuid] = addressType;
             this._connectable[uuid] = true;
@@ -49,22 +71,27 @@ class NobleBindings extends eventemitter3_1.default {
     async stopScanningWait() {
         await this._gap.stopScanningWait();
     }
-    connectWait(peripheralUuid) {
+    async connectWait(peripheralUuid, onConnectCallback) {
         const address = this._addresses[peripheralUuid];
         const addressType = this._addresseTypes[peripheralUuid];
+        // Block parall connection ongoing for ESP32 bug.
         const doPromise = Promise.all(this._connectPromises)
             .catch((error) => {
             // nothing
         })
+            .then(async () => {
+            const conResult = await this._hci.createLeConnWait(address, addressType, 90 * 1000, (result) => {
+                // on connect success
+                this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
+                if (onConnectCallback && typeof onConnectCallback === "function") {
+                    onConnectCallback();
+                }
+            }); // connection timeout for 90 secs.
+            return await this._gatts[conResult.handle].exchangeMtuWait(256);
+        })
             .then(() => {
-            return this._hci.createLeConnWait(address, addressType, 90 * 1000); // connection timeout for 90 secs.
-        })
-            .then((result) => {
-            return this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
-        })
-            .then((result) => {
             this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
-            return Promise.resolve(result);
+            return Promise.resolve();
         }, (error) => {
             this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
             return Promise.reject(error);
@@ -78,12 +105,6 @@ class NobleBindings extends eventemitter3_1.default {
     async updateRssiWait(peripheralUuid) {
         const rssi = await this._hci.readRssiWait(this._handles[peripheralUuid]);
         return rssi;
-    }
-    init() {
-        this._gap.on("discover", this.onDiscover.bind(this));
-        this._hci.on("stateChange", this.onStateChange.bind(this));
-        this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
-        this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
     }
     onStateChange(state) {
         if (this._state === state) {
@@ -130,7 +151,7 @@ class NobleBindings extends eventemitter3_1.default {
             this.emit("discover", uuid, address, addressType, connectable, advertisement, rssi);
         }
     }
-    async onLeConnComplete(status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy) {
+    onLeConnComplete(status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy) {
         if (role !== 0) {
             // not master, ignore
             return;
@@ -157,7 +178,6 @@ class NobleBindings extends eventemitter3_1.default {
         this._gatts[handle].on("notification", this.onNotification.bind(this));
         this._gatts[handle].on("handleNotify", this.onHandleNotify.bind(this));
         this._signalings[handle].on("connectionParameterUpdateRequest", this.onConnectionParameterUpdateWait.bind(this));
-        await this._gatts[handle].exchangeMtuWait(256);
         // public onMtu(address: any, mtu?: any) {}
     }
     onDisconnComplete(handle, reason) {
@@ -230,13 +250,11 @@ class NobleBindings extends eventemitter3_1.default {
     }
     async discoverDescriptorsWait(peripheralUuid, serviceUuid, characteristicUuid) {
         const gatt = this.getGatt(peripheralUuid);
-        const descriptors = await gatt.discoverDescriptorsWait(serviceUuid, characteristicUuid);
-        return descriptors;
+        return await gatt.discoverDescriptorsWait(serviceUuid, characteristicUuid);
     }
     async readValueWait(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid) {
         const gatt = this.getGatt(peripheralUuid);
-        const resp = await gatt.readValueWait(serviceUuid, characteristicUuid, descriptorUuid);
-        return resp;
+        return await gatt.readValueWait(serviceUuid, characteristicUuid, descriptorUuid);
     }
     async writeValueWait(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data) {
         const gatt = this.getGatt(peripheralUuid);
@@ -258,8 +276,15 @@ class NobleBindings extends eventemitter3_1.default {
             .toLowerCase();
         this.emit("handleNotify", uuid, handle, data);
     }
-    async onConnectionParameterUpdateWait(handle, minInterval, maxInterval, latency, supervisionTimeout) {
-        await this._hci.connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout);
+    onConnectionParameterUpdateWait(handle, minInterval, maxInterval, latency, supervisionTimeout) {
+        this._hci
+            .connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout)
+            .then(() => { })
+            .catch((e) => {
+            // TODO:
+            // This must passed to Obniz class.
+            console.error(e);
+        });
         // this.onLeConnUpdateComplete(); is nop
     }
     async pairingWait(peripheralUuid, options) {
@@ -268,7 +293,7 @@ class NobleBindings extends eventemitter3_1.default {
         const result = await gatt.encryptWait(options);
         return result;
     }
-    async setPairingOption(peripheralUuid, options) {
+    setPairingOption(peripheralUuid, options) {
         options = options || {};
         const gatt = this.getGatt(peripheralUuid);
         gatt.setEncryptOption(options);
@@ -286,5 +311,3 @@ class NobleBindings extends eventemitter3_1.default {
     }
 }
 exports.default = NobleBindings;
-
-//# sourceMappingURL=bindings.js.map

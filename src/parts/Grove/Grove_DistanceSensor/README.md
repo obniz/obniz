@@ -17,7 +17,12 @@ gnd | `number(obniz Board io)` | no |  &nbsp; | Power Supply
 signal | `number(obniz Board io)` | no |  &nbsp; | signal output pin
 grove | `object` | no | &nbsp;  | grove interface object if a device has
 
+```javascript
+// Javascript Example
+let sensor = obniz.wired("Grove_DistanceSensor", {vcc:0, gnd:1, signal:2});
+```
 
+If the device has a grove interface, it can be connected with just the parameter {grove: obniz.grove0}.
 ```javascript
 // Javascript Example
 let sensor = obniz.wired("Grove_DistanceSensor", {grove: obniz.grove0});

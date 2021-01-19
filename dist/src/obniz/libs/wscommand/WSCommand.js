@@ -200,6 +200,11 @@ class WSCommand {
         const results = WSSchema_1.default.validateMultiple(json, schema);
         return results;
     }
+    fastValidate(commandUri, json) {
+        const schema = this.getSchema(commandUri);
+        const results = WSSchema_1.default.validate(json, schema);
+        return results;
+    }
     onlyTypeErrorMessage(validateError, rootPath) {
         if (validateError.valid) {
             return true;
@@ -283,5 +288,3 @@ exports.default = WSCommand;
 // tslint:disable:max-classes-per-file
 class WSCommandNotFoundError extends Error {
 }
-
-//# sourceMappingURL=WSCommand.js.map

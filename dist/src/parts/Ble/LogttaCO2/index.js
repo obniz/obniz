@@ -11,7 +11,7 @@ const batteryService_1 = __importDefault(require("../abstract/services/batterySe
 const genericAccess_1 = __importDefault(require("../abstract/services/genericAccess"));
 class Logtta_CO2 {
     constructor(peripheral) {
-        if (!peripheral || !Logtta_CO2.isDevice(peripheral)) {
+        if (peripheral && !Logtta_CO2.isDevice(peripheral)) {
             throw new Error("peripheral is not Logtta CO2");
         }
         this._peripheral = peripheral;
@@ -29,19 +29,22 @@ class Logtta_CO2 {
             return false;
         }
         const data = peripheral.adv_data;
-        if (Logtta_CO2.getName(data) !== "CO2 Sensor") {
+        if (data[5] !== 0x10 ||
+            data[6] !== 0x05 ||
+            data[7] !== 0x02 ||
+            data[16] !== 0x43 ||
+            data[17] !== 0x4f ||
+            data[18] !== 0x32) {
+            // CompanyID, Apperance, "C" "O" "2"
             return false;
         }
         return true;
     }
     static getData(peripheral) {
-        if (peripheral.adv_data.length !== 31) {
+        if (!this.isAdvDevice(peripheral)) {
             return null;
         }
         const data = peripheral.adv_data;
-        if (Logtta_CO2.getName(data) !== "CO2 Sensor") {
-            return null;
-        }
         const alert = data[15];
         const interval = (data[13] << 8) | data[14];
         const advData = {
@@ -147,5 +150,3 @@ class Logtta_CO2 {
     }
 }
 exports.default = Logtta_CO2;
-
-//# sourceMappingURL=index.js.map

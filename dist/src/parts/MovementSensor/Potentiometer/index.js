@@ -31,5 +31,3 @@ class Potentiometer {
     }
 }
 exports.default = Potentiometer;
-
-//# sourceMappingURL=index.js.map

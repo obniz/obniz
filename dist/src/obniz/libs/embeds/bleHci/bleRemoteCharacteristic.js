@@ -138,8 +138,10 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * ```
      *
      * @param callback
+     * @deprecated  replaced by {@link #registerNotifyWait()}
      */
     registerNotify(callback) {
+        // noinspection JSIgnoredPromiseFromCall
         this.registerNotifyWait(callback); // background
     }
     /**
@@ -198,8 +200,11 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * });
      *
      * ```
+     *
+     * @deprecated  replaced by {@link #unregisterNotifyWait()}
      */
     unregisterNotify() {
+        // noinspection JSIgnoredPromiseFromCall
         this.unregisterNotifyWait(); // background
     }
     /**
@@ -427,5 +432,3 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
     }
 }
 exports.default = BleRemoteCharacteristic;
-
-//# sourceMappingURL=bleRemoteCharacteristic.js.map

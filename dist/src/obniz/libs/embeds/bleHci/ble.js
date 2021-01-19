@@ -23,7 +23,6 @@ const bleDescriptor_1 = __importDefault(require("./bleDescriptor"));
 const blePeripheral_1 = __importDefault(require("./blePeripheral"));
 const bleRemotePeripheral_1 = __importDefault(require("./bleRemotePeripheral"));
 const bleScan_1 = __importDefault(require("./bleScan"));
-const bleSecurity_1 = __importDefault(require("./bleSecurity"));
 const bleService_1 = __importDefault(require("./bleService"));
 /**
  * Use a obniz device as a BLE device.
@@ -32,20 +31,59 @@ const bleService_1 = __importDefault(require("./bleService"));
 class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz) {
         super(obniz);
+        this.remotePeripherals = [];
+        /**
+         * @ignore
+         */
+        this._initialized = false;
         this.debugHandler = () => { };
         this.hci = new hci_1.default(obniz);
         this.service = bleService_1.default;
         this.characteristic = bleCharacteristic_1.default;
         this.descriptor = bleDescriptor_1.default;
-        this.on("/response/ble/hci/read", (obj) => {
-            if (obj.hci) {
-                this.hci.notified(obj.hci);
-            }
-        });
-        obniz.on("close", () => {
-            this._reset();
-        });
+        // this.on("/response/ble/hci/read", (obj) => {
+        //   if (obj.hci) {
+        //     this.hci.notified(obj.hci);
+        //   }
+        // });
+        // this.on("/response/ble/error", (obj) => {
+        //   if (obj.error) {
+        //     const error = obj.error;
+        //     let msg = "BLE error: " + error.message;
+        //     msg += " (";
+        //     msg += "error_code: " + error.error_code;
+        //     msg += ", ";
+        //     msg += "module_error_code: " + error.module_error_code;
+        //     msg += ", ";
+        //     msg += "function_code: " + error.function_code;
+        //     msg += ", ";
+        //     msg += "address: " + error.address;
+        //     msg += ", ";
+        //     msg += "service_uuid: " + error.service_uuid;
+        //     msg += ", ";
+        //     msg += "characteristic_uuid: " + error.characteristic_uuid;
+        //     msg += ", ";
+        //     msg += "descriptor_uuid: " + error.descriptor_uuid;
+        //     msg += ")";
+        //
+        //     this.Obniz.error({ alert: "error", message: msg });
+        //   }
+        // });
         this._reset();
+    }
+    // public security!: BleSecurity;
+    /**
+     * Initialized status.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.ble.isInitialized; // => false
+     * await obniz.ble.initWait();
+     * obniz.ble.isInitialized; // => true
+     * ```
+     */
+    get isInitialized() {
+        return this._initialized;
     }
     /**
      * @ignore
@@ -77,6 +115,31 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         }
         return str;
     }
+    notifyFromObniz(json) {
+        if (json.hci) {
+            this.hci.notified(json.hci);
+        }
+        if (json.error) {
+            const error = json.error;
+            let msg = "BLE error: " + error.message;
+            msg += " (";
+            msg += "error_code: " + error.error_code;
+            msg += ", ";
+            msg += "module_error_code: " + error.module_error_code;
+            msg += ", ";
+            msg += "function_code: " + error.function_code;
+            msg += ", ";
+            msg += "address: " + error.address;
+            msg += ", ";
+            msg += "service_uuid: " + error.service_uuid;
+            msg += ", ";
+            msg += "characteristic_uuid: " + error.characteristic_uuid;
+            msg += ", ";
+            msg += "descriptor_uuid: " + error.descriptor_uuid;
+            msg += ")";
+            this.Obniz.error({ alert: "error", message: msg });
+        }
+    }
     /**
      * Initialize BLE module. You need call this first everything before.
      * This throws if device is not supported device.
@@ -92,7 +155,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             if (semver_1.default.lt(this.Obniz.firmware_ver, MinHCIAvailableOS)) {
                 throw new ObnizError_1.ObnizBleUnSupportedOSVersionError(this.Obniz.firmware_ver, MinHCIAvailableOS);
             }
-            this._initialized = true;
             // force initialize on obnizOS < 3.2.0
             if (semver_1.default.lt(this.Obniz.firmware_ver, "3.2.0")) {
                 this.hci.init();
@@ -108,6 +170,30 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
                 }
                 throw e;
             }
+            this._initialized = true;
+        }
+    }
+    /**
+     * Reset Target Device and current SDK status without rebooting. If error occured while reset, then target device will reboot.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.resetWait();
+     * ```
+     */
+    async resetWait() {
+        try {
+            if (this._initialized) {
+                this._reset();
+                await this.hciProtocol.resetWait();
+                this._initialized = true;
+            }
+        }
+        catch (e) {
+            if (e instanceof ObnizError_1.ObnizBleUnsupportedHciError) {
+                this.Obniz.reboot();
+            }
+            throw e;
         }
     }
     /**
@@ -115,49 +201,67 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * @private
      */
     _reset() {
-        if (this.peripheral && this.peripheral.currentConnectedDeviceAddress) {
-            const address = this.peripheral.currentConnectedDeviceAddress;
-            this.peripheral.currentConnectedDeviceAddress = null;
-            setTimeout(() => {
-                if (this.peripheral.onconnectionupdates) {
-                    this.peripheral.onconnectionupdates({
-                        address,
-                        status: "disconnected",
-                        reason: new ObnizError_1.ObnizOfflineError(),
-                    });
-                }
-            }, 0);
-        }
-        if (this.remotePeripherals) {
-            for (const p of this.remotePeripherals) {
-                if (p.connected) {
-                    p.notifyFromServer("statusupdate", { status: "disconnected", reason: new ObnizError_1.ObnizOfflineError() });
-                }
-            }
-        }
-        if (this.scan && this.scan.state !== "stopped") {
-            this.scan.notifyFromServer("obnizClose", {});
-        }
-        this.hci._reset();
-        this.hciProtocol = new hci_2.default(this.hci);
-        this.hciProtocol.debugHandler = (text) => {
-            this.debug(`BLE-HCI: ${text}`);
-        };
-        this.centralBindings = new bindings_1.default(this.hciProtocol);
-        this.peripheralBindings = new bindings_2.default(this.hciProtocol);
-        this.centralBindings.init();
-        this.peripheralBindings.init();
-        this.centralBindings.debugHandler = (text) => {
-            this.debug(`BLE: ${text}`);
-        };
+        // reset state at first
         this._initialized = false;
         this._initializeWarning = true;
+        // clear all found peripherals.
+        for (const p of this.remotePeripherals) {
+            if (p.connected) {
+                p.notifyFromServer("statusupdate", { status: "disconnected", reason: new ObnizError_1.ObnizOfflineError() });
+            }
+        }
         this.remotePeripherals = [];
-        this.peripheral = new blePeripheral_1.default(this);
-        this.advertisement = new bleAdvertisement_1.default(this);
-        this.scan = new bleScan_1.default(this);
-        this.security = new bleSecurity_1.default(this);
-        this._bind();
+        // instantiate
+        if (!this.peripheral) {
+            this.peripheral = new blePeripheral_1.default(this);
+        }
+        if (!this.scan) {
+            this.scan = new bleScan_1.default(this);
+        }
+        else {
+            this.scan.notifyFromServer("obnizClose", {});
+        }
+        if (!this.advertisement) {
+            this.advertisement = new bleAdvertisement_1.default(this);
+        }
+        // reset all submodules.
+        this.peripheral._reset();
+        this.scan._reset();
+        this.advertisement._reset();
+        // clear scanning
+        this.hci._reset();
+        if (!this.hciProtocol) {
+            this.hciProtocol = new hci_2.default(this.hci);
+            this.hciProtocol.debugHandler = (text) => {
+                this.debug(`BLE-HCI: ${text}`);
+            };
+        }
+        else {
+            this.hciProtocol._reset();
+        }
+        if (!this.centralBindings) {
+            this.centralBindings = new bindings_1.default(this.hciProtocol);
+            this.centralBindings.debugHandler = (text) => {
+                this.debug(`BLE: ${text}`);
+            };
+            this.centralBindings.on("stateChange", this.onStateChange.bind(this));
+            this.centralBindings.on("discover", this.onDiscover.bind(this));
+            this.centralBindings.on("disconnect", this.onDisconnect.bind(this));
+            this.centralBindings.on("notification", this.onNotification.bind(this));
+        }
+        else {
+            this.centralBindings._reset();
+        }
+        if (!this.peripheralBindings) {
+            this.peripheralBindings = new bindings_2.default(this.hciProtocol);
+            this.peripheralBindings.on("stateChange", this.onPeripheralStateChange.bind(this));
+            this.peripheralBindings.on("accept", this.onPeripheralAccept.bind(this));
+            this.peripheralBindings.on("mtuChange", this.onPeripheralMtuChange.bind(this));
+            this.peripheralBindings.on("disconnect", this.onPeripheralDisconnect.bind(this));
+        }
+        else {
+            this.peripheralBindings._reset();
+        }
     }
     /**
      * Connect to peripheral without scanning.
@@ -173,17 +277,18 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * }
      * ```
      *
-     * @param uuid peripheral device address
+     * @param address peripheral device address
      * @param addressType "random" or "public"
+     *
+     * @deprecated replaced by {@link #directConnectWait()}
      */
-    directConnect(uuid, addressType) {
-        let peripheral = this.findPeripheral(uuid);
-        if (!peripheral) {
-            peripheral = new bleRemotePeripheral_1.default(this, uuid);
-            this.remotePeripherals.push(peripheral);
-        }
-        this.centralBindings.addPeripheralData(uuid, addressType);
-        peripheral.connect();
+    directConnect(address, addressType) {
+        // noinspection JSIgnoredPromiseFromCall
+        this.directConnectWait(address, addressType).catch((e) => {
+            // background
+            this.Obniz.error(e);
+        });
+        const peripheral = this.findPeripheral(address);
         return peripheral;
     }
     /**
@@ -207,7 +312,12 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * @param addressType "random" or "public"
      */
     async directConnectWait(address, addressType) {
-        const peripheral = this.directConnect(address, addressType);
+        let peripheral = this.findPeripheral(address);
+        if (!peripheral) {
+            peripheral = new bleRemotePeripheral_1.default(this, address);
+            this.remotePeripherals.push(peripheral);
+        }
+        this.centralBindings.addPeripheralData(address, addressType);
         await peripheral.connectWait();
         return peripheral;
     }
@@ -316,20 +426,8 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             });
         }
     }
-    _bind() {
-        this.centralBindings.on("stateChange", this.onStateChange.bind(this));
-        this.centralBindings.on("discover", this.onDiscover.bind(this));
-        this.centralBindings.on("disconnect", this.onDisconnect.bind(this));
-        this.centralBindings.on("notification", this.onNotification.bind(this));
-        this.peripheralBindings.on("stateChange", this.onPeripheralStateChange.bind(this));
-        this.peripheralBindings.on("accept", this.onPeripheralAccept.bind(this));
-        this.peripheralBindings.on("mtuChange", this.onPeripheralMtuChange.bind(this));
-        this.peripheralBindings.on("disconnect", this.onPeripheralDisconnect.bind(this));
-    }
     debug(text) {
         this.debugHandler(text);
     }
 }
 exports.default = ObnizBLE;
-
-//# sourceMappingURL=ble.js.map

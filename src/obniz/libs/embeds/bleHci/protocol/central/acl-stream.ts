@@ -50,14 +50,12 @@ export default class AclStream extends EventEmitter<AclStreamEventTypes> {
   public debugHandler: any = () => {};
 
   public async encryptWait(options?: any) {
-    let encrpytResult = null;
-    encrpytResult = await this._smp.pairingWait(options);
+    const encrpytResult = await this._smp.pairingWait(options);
     return encrpytResult;
   }
 
   public setEncryptOption(options?: any) {
-    let encrpytResult = null;
-    encrpytResult = this._smp.setPairingOption(options);
+    const encrpytResult = this._smp.setPairingOption(options);
     return encrpytResult;
   }
 

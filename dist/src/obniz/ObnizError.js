@@ -4,6 +4,7 @@
  * @module ObnizCore.Errors
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+// tslint:disable:max-classes-per-file
 class ObnizError extends Error {
     constructor(code, e) {
         super(e);
@@ -233,5 +234,9 @@ ObnizBlePairingRejectByRemoteError.Errors = {
     0x0d: "BR/EDR pairing in progress",
     0x0e: "Cross-transport Key Deriva- tion/Generation not allowed",
 };
-
-//# sourceMappingURL=ObnizError.js.map
+class ObnizBleScanStartError extends ObnizError {
+    constructor(state, msg) {
+        super(17, `${msg} state=${state}(${ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : ""})`);
+    }
+}
+exports.ObnizBleScanStartError = ObnizBleScanStartError;

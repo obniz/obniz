@@ -326,7 +326,7 @@ export class M5StackBasic extends ObnizDevice {
     super(id, options);
   }
 
-  protected async _beforeOnConnect() {
+  protected _beforeOnConnect() {
     super._beforeOnConnect();
 
     this.buttonA = this.wired("Button", { signal: 39 });
