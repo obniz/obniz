@@ -737,6 +737,14 @@ class ObnizConnection extends eventemitter3_1.default {
             if (this.options.reset_obniz_on_ws_disconnection) {
                 this.resetOnDisconnect(true);
             }
+            if (wsObj.obniz.metadata) {
+                try {
+                    this.metadata = JSON.parse(wsObj.obniz.metadata);
+                }
+                catch (e) {
+                    // ignore parsing error.
+                }
+            }
             if (wsObj.local_connect &&
                 wsObj.local_connect.ip &&
                 this.wscommand &&

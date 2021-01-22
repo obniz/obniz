@@ -227,7 +227,7 @@ describe('obniz.index', function() {
         ]);
 
         return new Promise(resolve => {
-          setTimeout(resolve, 500);
+          setTimeout(resolve, 10);
         });
       })
       .then(() => {
@@ -238,6 +238,44 @@ describe('obniz.index', function() {
       .then(() => {
         expect(called).to.be.true;
         expect(called2).to.be.true;
+      });
+  });
+
+  it('metadata', function() {
+    let metadata = null;
+    return new Promise(resolve => {
+      testUtil.setupNotConnectedYetObnizPromise(this, resolve);
+    })
+      .then(() => {
+        expect(this.obniz).to.be.obniz;
+        expect(this.obniz).to.be.finished; // input queue
+
+        this.obniz.onconnect = function(obniz) {
+          metadata = obniz.metadata;
+        };
+        testUtil.receiveJson(this.obniz, [
+          {
+            ws: {
+              ready: true,
+              obniz: {
+                firmware: '1.0.3',
+                metadata: JSON.stringify({ description: 'data' }),
+              },
+            },
+          },
+        ]);
+
+        return new Promise(resolve => {
+          setTimeout(resolve, 10);
+        });
+      })
+      .then(() => {
+        return new Promise(resolve => {
+          testUtil.releaseObnizePromise(this, resolve);
+        });
+      })
+      .then(() => {
+        expect(metadata.description).to.equal('data');
       });
   });
 

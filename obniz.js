@@ -1712,7 +1712,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./dist/src/json_schema/response/ws/obniz.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws/obniz","type":"object","required":["obniz"],"properties":{"obniz":{"type":"object","required":["hw","firmware"],"additionalProperties":false,"properties":{"hw":{"type":"string"},"firmware":{"type":"string"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws/obniz","type":"object","required":["obniz"],"properties":{"obniz":{"type":"object","required":["hw","firmware"],"additionalProperties":false,"properties":{"hw":{"type":"string"},"firmware":{"type":"string"},"metadata":{"type":"string"}}}}}
 
 /***/ }),
 
@@ -1849,14 +1849,21 @@ class ObnizApi {
         return this.post("/state", null, callback);
     }
     /**
+     * Get device is online or offline
+     */
+    async getStateWait() {
+        const json = await this.post("/state", null);
+        return json;
+    }
+    /**
      * post data via obniz REST api
      * @param json
      * @param callback
      */
-    postJson(json, callback) {
-        return this.post("/api/" + this.apiVersion, json, callback); // 1 is api version
+    async postJson(json, callback) {
+        return await this.post("/api/" + this.apiVersion, json, callback); // 1 is api version
     }
-    post(path, params, callback) {
+    async post(path, params, callback = null) {
         const url = this.urlBase + path;
         // let query = [];
         // query.push("XXX");
@@ -1875,6 +1882,29 @@ class ObnizApi {
         if (params) {
             fetchParams.body = JSON.stringify(params);
         }
+        const res = await node_fetch_1.default(url, fetchParams);
+        const json = await res.json();
+        if (typeof callback === "function") {
+            callback(json);
+        }
+        return json;
+    }
+    get(path, callback) {
+        const url = this.urlBase + path;
+        // let query = [];
+        // query.push("XXX");
+        // if(query.length > 0){
+        //   url += "?" + query.join("&");
+        // }
+        const headers = {};
+        headers["Content-Type"] = "application/json";
+        if (this.options.access_token) {
+            headers.authorization = "Bearer " + this.options.access_token;
+        }
+        const fetchParams = {
+            method: "GET",
+            headers,
+        };
         return node_fetch_1.default(url, fetchParams)
             .then((res) => {
             return res.json();
@@ -3029,6 +3059,14 @@ class ObnizConnection extends eventemitter3_1.default {
             }
             if (this.options.reset_obniz_on_ws_disconnection) {
                 this.resetOnDisconnect(true);
+            }
+            if (wsObj.obniz.metadata) {
+                try {
+                    this.metadata = JSON.parse(wsObj.obniz.metadata);
+                }
+                catch (e) {
+                    // ignore parsing error.
+                }
             }
             if (wsObj.local_connect &&
                 wsObj.local_connect.ip &&

@@ -89,6 +89,19 @@ export default abstract class ObnizConnection extends EventEmitter<
   public firmware_ver?: string;
 
   /**
+   * Device metadata set on obniz cloud.
+   *
+   * ```javascript
+   * var obniz = new Obniz('1234-5678');
+   * obniz.debugprint = true
+   * obniz.onconnect = async function() {
+   *   console.log(obniz.metadata.description) // value for "description"
+   * }
+   * ```
+   */
+  public metadata?: { [key: string]: string };
+
+  /**
    * Is node.js environment or not.
    * @readonly
    */
@@ -957,6 +970,13 @@ export default abstract class ObnizConnection extends EventEmitter<
       }
       if (this.options.reset_obniz_on_ws_disconnection) {
         (this as any).resetOnDisconnect(true);
+      }
+      if (wsObj.obniz.metadata) {
+        try {
+          this.metadata = JSON.parse(wsObj.obniz.metadata);
+        } catch (e) {
+          // ignore parsing error.
+        }
       }
       if (
         wsObj.local_connect &&

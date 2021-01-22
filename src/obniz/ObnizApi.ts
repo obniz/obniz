@@ -41,15 +41,23 @@ export default class ObnizApi {
   }
 
   /**
+   * Get device is online or offline
+   */
+  public async getStateWait(): Promise<{ state: "online" | "offline" }> {
+    const json = await this.post("/state", null);
+    return json;
+  }
+
+  /**
    * post data via obniz REST api
    * @param json
    * @param callback
    */
-  public postJson(json: any, callback: (result: any) => void) {
-    return this.post("/api/" + this.apiVersion, json, callback); // 1 is api version
+  public async postJson(json: any, callback: (result: any) => void) {
+    return await this.post("/api/" + this.apiVersion, json, callback); // 1 is api version
   }
 
-  protected post(path: any, params: any, callback: any) {
+  protected async post(path: string, params: any, callback: any = null) {
     const url: any = this.urlBase + path;
 
     // let query = [];
@@ -71,6 +79,34 @@ export default class ObnizApi {
     if (params) {
       fetchParams.body = JSON.stringify(params);
     }
+
+    const res = await fetch(url, fetchParams);
+    const json = await res.json();
+    if (typeof callback === "function") {
+      callback(json);
+    }
+    return json;
+  }
+
+  protected get(path: any, callback: any) {
+    const url: any = this.urlBase + path;
+
+    // let query = [];
+    // query.push("XXX");
+    // if(query.length > 0){
+    //   url += "?" + query.join("&");
+    // }
+
+    const headers: any = {};
+    headers["Content-Type"] = "application/json";
+    if (this.options.access_token) {
+      headers.authorization = "Bearer " + this.options.access_token;
+    }
+
+    const fetchParams: any = {
+      method: "GET",
+      headers,
+    };
 
     return fetch(url, fetchParams)
       .then((res: any) => {

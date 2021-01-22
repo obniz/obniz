@@ -35,14 +35,21 @@ class ObnizApi {
         return this.post("/state", null, callback);
     }
     /**
+     * Get device is online or offline
+     */
+    async getStateWait() {
+        const json = await this.post("/state", null);
+        return json;
+    }
+    /**
      * post data via obniz REST api
      * @param json
      * @param callback
      */
-    postJson(json, callback) {
-        return this.post("/api/" + this.apiVersion, json, callback); // 1 is api version
+    async postJson(json, callback) {
+        return await this.post("/api/" + this.apiVersion, json, callback); // 1 is api version
     }
-    post(path, params, callback) {
+    async post(path, params, callback = null) {
         const url = this.urlBase + path;
         // let query = [];
         // query.push("XXX");
@@ -61,6 +68,29 @@ class ObnizApi {
         if (params) {
             fetchParams.body = JSON.stringify(params);
         }
+        const res = await node_fetch_1.default(url, fetchParams);
+        const json = await res.json();
+        if (typeof callback === "function") {
+            callback(json);
+        }
+        return json;
+    }
+    get(path, callback) {
+        const url = this.urlBase + path;
+        // let query = [];
+        // query.push("XXX");
+        // if(query.length > 0){
+        //   url += "?" + query.join("&");
+        // }
+        const headers = {};
+        headers["Content-Type"] = "application/json";
+        if (this.options.access_token) {
+            headers.authorization = "Bearer " + this.options.access_token;
+        }
+        const fetchParams = {
+            method: "GET",
+            headers,
+        };
         return node_fetch_1.default(url, fetchParams)
             .then((res) => {
             return res.json();

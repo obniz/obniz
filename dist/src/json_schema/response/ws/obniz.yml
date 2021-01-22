@@ -20,3 +20,8 @@ properties:
         type: string
         example: "2.0.0"
         description: "Installed firmware version of target device"
+
+      metadata:
+        type: string
+        example: "{\"description\":\"At My Office\"}"
+        description: "device metadata user set on cloud"
