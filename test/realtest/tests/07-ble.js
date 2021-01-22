@@ -29,7 +29,7 @@ describe('7-ble', function() {
     let found = false;
     let expectedValue = [2, 1, 6, 3, 2, 0, 0];
     obnizA.ble.scan.onfind = function(peripheral) {
-      console.log(peripheral.localName);
+      // console.log(peripheral.localName);
       // console.log(peripheral.adv_data.length + ": " + peripheral.localName());
       if (peripheral.adv_data.length === expectedValue.length) {
         // console.log(peripheral.adv_data);
@@ -38,7 +38,7 @@ describe('7-ble', function() {
             return;
           }
         }
-        console.log('FOUND! ' + peripheral.address);
+        // console.log('FOUND! ' + peripheral.address);
         found = true;
       }
     };
@@ -69,11 +69,11 @@ describe('7-ble', function() {
     let found = false;
     // let expectedValue = [2, 1, 6, 3, 2, 1, 0];
     obnizA.ble.scan.onfind = function(peripheral) {
-      console.log(peripheral.localName);
+      // console.log(peripheral.localName);
       if (peripheral.localName === localName) {
-        console.log(
-          'FOUND! ' + peripheral.address + ' ' + peripheral.localName
-        );
+        // console.log(
+        //   'FOUND! ' + peripheral.address + ' ' + peripheral.localName
+        // );
         found = true;
       }
     };
