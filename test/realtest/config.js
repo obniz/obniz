@@ -89,45 +89,37 @@ function reboot(done) {
 }
 
 function connectTwoObniz(done, params) {
-  console.log(json.name + ' Board Test Program');
-  let local_connect = true;
-  checkBoard = new Obniz(checkBoard_ID, { local_connect: true }); //obniz_server: "ws://stg.obniz.io",obniz_server: "ws://oooo.ngrok.io"
+  let local_connect = process.env.LOCAL_CONNECT === 'false' ? false : true;
+  checkBoard = new Obniz(checkBoard_ID, { local_connect }); //obniz_server: "ws://stg.obniz.io",obniz_server: "ws://oooo.ngrok.io"
   checkBoard.onconnect = () => {
     if (process.env.DEBUG) {
       checkBoard.debugprint = true;
     }
-    console.log('checkBoard local_connect : ' + local_connect);
     if (json.board.some(board => board === 'obnizA')) {
-      obnizA = new Obniz(obnizA_ID, { local_connect: local_connect });
-      console.log('A local_connect : ' + local_connect);
+      obnizA = new Obniz(obnizA_ID, { local_connect });
       if (process.env.DEBUG) {
         obnizA.debugprint = true;
       }
       obnizA.onconnect = () => {
         if (json.board.some(board => board === 'obnizB')) {
-          obnizB = new Obniz(obnizB_ID, { local_connect: local_connect });
-          console.log('B local_connect : ' + local_connect);
+          obnizB = new Obniz(obnizB_ID, { local_connect });
           if (process.env.DEBUG) {
             obnizB.debugprint = true;
           }
           obnizB.onconnect = () => {
-            console.log('connected finish');
             done();
           };
         } else {
-          console.log('connected finish');
           done();
         }
       };
     } else {
       if (json.board.some(board => board === 'obnizB')) {
         obnizB = new Obniz(obnizB_ID, { local_connect: local_connect });
-        console.log('B local_connect : ' + local_connect);
         if (process.env.DEBUG) {
           obnizB.debugprint = true;
         }
         obnizB.onconnect = () => {
-          console.log('connected finish');
           done();
         };
       }
