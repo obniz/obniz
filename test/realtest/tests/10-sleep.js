@@ -81,7 +81,7 @@ function reconnect() {
     config.reboot(() => {
       checkBoard = config.checkBoard;
       obnizA = config.obnizA;
-      console.error('reboot finished');
+      // console.error('reboot finished');
       resolve();
     }, false);
   });

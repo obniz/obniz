@@ -245,6 +245,7 @@ class Gatt extends eventemitter3_1.default {
                 for (i = 0; i < num; i++) {
                     characteristics.push({
                         startHandle: data.readUInt16LE(2 + i * type + 0),
+                        endHandle: 0,
                         properties: data.readUInt8(2 + i * type + 2),
                         valueHandle: data.readUInt16LE(2 + i * type + 3),
                         uuid: type === 7
@@ -415,6 +416,8 @@ class Gatt extends eventemitter3_1.default {
             }
             startHandle = descriptors[descriptors.length - 1].handle + 1;
         }
+        // never reached
+        return [];
     }
     async readValueWait(serviceUuid, characteristicUuid, descriptorUuid) {
         const descriptor = this.getDescriptor(serviceUuid, characteristicUuid, descriptorUuid);

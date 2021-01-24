@@ -17,6 +17,7 @@ DEBUG=true npm run realtest
 key|Default|value
 ---|---|---
 DEBUG| `undefined` | true for logout
+LOCAL_CONNECT| `true` | false for do not use local connect
 OBNIZ_ID|   | obnizID for checkboard
 OBNIZ_DEVICE|  `board1y` | hardware for test target
 OBNIZA_ID|   | obnizID for test target

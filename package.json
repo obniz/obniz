@@ -1,6 +1,6 @@
 {
   "name": "obniz",
-  "version": "3.11.0",
+  "version": "3.12.0-beta.3",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -14,7 +14,7 @@
     "obniz.js"
   ],
   "engines": {
-    "node": ">=8.17.0"
+    "node": ">=10.23.0"
   },
   "engineStrict": true,
   "scripts": {
@@ -50,7 +50,7 @@
     "obniz"
   ],
   "repository": "obniz/obniz",
-  "author": "yukisato <yuki@yuki-sato.com>",
+  "author": "CambrianRobotics Inc. <supportteam@cambrianrobotics.com>",
   "homepage": "https://obniz.com/",
   "license": "SEE LICENSE IN LICENSE.txt",
   "devDependencies": {
@@ -135,7 +135,6 @@
     "node-dir": "^0.1.17",
     "node-fetch": "^2.3.0",
     "semver": "^5.7.0",
-    "tsc": "^1.20150623.0",
     "tv4": "^1.3.0",
     "ws": "^6.1.4"
   },

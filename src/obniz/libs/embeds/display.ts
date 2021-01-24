@@ -3,7 +3,6 @@
  * @module ObnizCore.Components
  */
 
-import Obniz from "../../index";
 import { ComponentAbstract } from "../ComponentAbstact";
 
 /**
@@ -92,7 +91,7 @@ export default class Display extends ComponentAbstract {
    * obniz.display.rect(0, 10, 10, 10, false)
    * ```
    *
-   * @param depth css acceptable color definition
+   * @param color css acceptable color definition
    */
   public setColor(color: string) {
     this._color = color;

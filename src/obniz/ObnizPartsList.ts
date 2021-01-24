@@ -163,15 +163,16 @@ import Grove_Buzzer, { Grove_BuzzerOptions } from "../parts/Grove/Grove_Buzzer";
 import Grove_DistanceSensor, { Grove_DistanceSensorOptions } from "../parts/Grove/Grove_DistanceSensor";
 import Grove_EarHeartRate, { Grove_EarHeartRateOptions } from "../parts/Grove/Grove_EarHeartRate";
 import Grove_EARTH, { Grove_EARTHOptions } from "../parts/Grove/Grove_EARTH";
+import Grove_Gesture, { Grove_GestureSensorOptions } from "../parts/Grove/Grove_GestureSensor";
 import Grove_GPS, { Grove_GPSOptions } from "../parts/Grove/Grove_GPS";
 import Grove_JoyStick, { Grove_JoyStickOptions } from "../parts/Grove/Grove_JoyStick";
 import Grove_LightSensor, { Grove_LightSensorOptions } from "../parts/Grove/Grove_LightSensor";
 import Grove_MP3, { Grove_MP3Options } from "../parts/Grove/Grove_MP3";
 import Grove_PressureSensor, { Grove_PressureSensorOptions } from "../parts/Grove/Grove_PressureSensor";
+import Grove_RotaryAngleSensor, { Grove_RotaryAngleSensorOptions } from "../parts/Grove/Grove_RotaryAngleSensor";
 import Grove_SoilMoistureSensor, { Grove_SoilMoistureSensorOptions } from "../parts/Grove/Grove_SoilMoistureSensor";
 import Grove_Speaker, { Grove_SpeakerOptions } from "../parts/Grove/Grove_Speaker";
-
-import Grove_RotaryAngleSensor, { Grove_RotaryAngleSensorOptions } from "../parts/Grove/Grove_RotaryAngleSensor";
+import Grove_WaterLevelSensor, { Grove_WaterLevelSensorOptions } from "../parts/Grove/Grove_WaterLevelSensor";
 // Keyestudio
 import Keyestudio_Button, { Keyestudio_ButtonOptions } from "../parts/Keyestudio/Keyestudio_Button";
 import Keyestudio_Buzzer, { Keyestudio_BuzzerOptions } from "../parts/Keyestudio/Keyestudio_Buzzer";
@@ -195,388 +196,171 @@ import M5StickC_RS485, { M5StickC_RS485Options } from "../parts/M5Stack/M5StickC
 import M5StickC_ToF, { M5StickC_ToFOptions } from "../parts/M5Stack/M5StickC_ToF";
 import M5StickC_Yun, { M5StickC_YunOptions } from "../parts/M5Stack/M5StickC_Yun";
 
-export interface WiredNameMap {
-  // Light
-  "LED": LED;
-  "FullColorLED": FullColorLED;
-  "WS2811": WS2811;
-  "WS2812": WS2812;
-  "WS2812B": WS2812B;
-  // Infrared
-  "InfraredLED": InfraredLED;
-  "IRSensor": IRSensor;
-  "IRModule": IRModule;
-  // Display
-  "7SegmentLED": _7SegmentLED;
-  "7SegmentLEDArray": _7SegmentLEDArray;
-  "7SegmentLED_MAX7219": _7SegmentLED_MAX7219;
-  "MatrixLED_MAX7219": MatrixLED_MAX7219;
-  "MatrixLED_HT16K33": MatrixLED_HT16K33;
-  "SainSmartTFT18LCD": SainSmartTFT18LCD;
-  "SharpMemoryTFT": SharpMemoryTFT;
-  "ST7735S": ST7735S;
-  // Camera
-  "ArduCAMMini": ArduCAMMini;
-  "JpegSerialCam": JpegSerialCam;
-  // Moving
-  "DCMotor": DCMotor;
-  "PCA9685": PCA9685;
-  "ServoMotor": ServoMotor;
-  "Solenoid": Solenoid;
-  "StepperMotor": StepperMotor;
-  // Sound
-  "Speaker": Speaker;
-  // Power
-  "AXP192": AXP192;
-  // GasSensor
-  "MQ2": MQ2;
-  "MQ3": MQ3;
-  "MQ4": MQ4;
-  "MQ5": MQ5;
-  "MQ6": MQ6;
-  "MQ7": MQ7;
-  "MQ8": MQ8;
-  "MQ9": MQ9;
-  "MQ135": MQ135;
-  // Logic
-  "SNx4HC595": SNx4HC595;
-  // Accessory
-  "USB": USB;
-  // Wireless
-  "RN42": RN42;
-  "XBee": XBee;
-  // Movement Sensor
-  "Button": Button;
-  "AK8963": AK8963;
-  "MPU6050": MPU6050;
-  "MPU6500": MPU6500;
-  "MPU6886": MPU6886;
-  "MPU9250": MPU9250;
-  "SH200Q": SH200Q;
-  "AK09916": AK09916;
-  "ICM20948": ICM20948;
-  // 'FlickHat': FlickHat;
-  "HC-SR505": HCSR505;
-  "JoyStick": JoyStick;
-  "KXR94-2050": KXR94_2050;
-  "IPM-165": IPM_165;
-  // 'KXSC7-2050': KXSC7_2050;
-  "PaPIRsVZ": PaPIRsVZ;
-  "Potentiometer": Potentiometer;
-  // Memory
-  // '24LC256': _24LC256;
-  // GyroSensor
-  "ENC03R_Module": ENC03R_Module;
-  // PressureSensor
-  "FSR40X": FSR40X;
-  // Distance Sensor
-  "HC-SR04": HCSR04;
-  "GP2Y0A21YK0F": GP2Y0A21YK0F;
-  "VL53L0X": VL53L0X;
-  // GPS
-  "GYSFDMAXB": GYSFDMAXB;
-  // MagnetSensor
-  "CT10": CT10;
-  "HMC5883L": HMC5883L;
-  // ADConverter
-  "hx711": HX711;
-  // DAConverter
-  "MCP4725": MCP4725;
-  // SoilSensor
-  "SEN0114": SEN0114;
-  // Temperature Sensor
-  "LM35DZ": LM35DZ;
-  "LM60": LM60;
-  "LM61": LM61;
-  "LMT87": LMT87;
-  "MCP9700": MCP9700;
-  "MCP9701": MCP9701;
-  // 'S8100B': S8100B;
-  // 'S8120C': S8120C;
-  // 'ADT7410': ADT7410;
-  "AMG8833": AMG8833;
-  "BME280": BME280;
-  "D6T44L": D6T44L;
-  "DHT12": DHT12;
-  // 'S5851A': S5851A;
-  "SHT31": SHT31;
-  "SHT20": SHT20;
-  "ADT7310": ADT7310;
-  "AM2320": AM2320;
-  // ColorSensor
-  "PT550": PT550;
-  "S11059": S11059;
-  "YG1006": YG1006;
-  // Memory
-  "24LC256": _24LC256;
-  // Grove
-  "Grove_Button": Grove_Button;
-  "Grove_Buzzer": Grove_Buzzer;
-  "Grove_EarHeartRate": Grove_EarHeartRate;
-  "Grove_MP3": Grove_MP3;
-  "Grove_EARTH": Grove_EARTH;
-  "Grove_JoyStick": Grove_JoyStick;
-  "Grove_GPS": Grove_GPS;
-  "Grove_3AxisAccelerometer": Grove_3AxisAccelerometer;
-  "Grove_Speaker": Grove_Speaker;
-  "Grove_SoilMoistureSensor": Grove_SoilMoistureSensor;
-  "Grove_DistanceSensor": Grove_DistanceSensor;
-  "Grove_LightSensor": Grove_LightSensor;
-  "Grove_PressureSensor": Grove_PressureSensor;
-  // StickCHat
-  "M5StickC_JoyStick": M5StickC_JoyStick;
-  "M5StickC_ADC": M5StickC_ADC;
-  "M5StickC_DAC": M5StickC_DAC;
-  "M5StickC_ToF": M5StickC_ToF;
-  "M5StickC_FINGER": M5StickC_FINGER;
-  "M5StickC_RS485": M5StickC_RS485;
-  "M5StickC_Yun": M5StickC_Yun;
-  // Keyestudio
-  "Keyestudio_Button": Keyestudio_Button;
-  "Keyestudio_MoistureSensor": Keyestudio_MoistureSensor;
-  "Keyestudio_Buzzer": Keyestudio_Buzzer;
-  "Keyestudio_TemperatureSensor": Keyestudio_TemperatureSensor;
-  "Keyestudio_PIR": Keyestudio_PIR;
-  "Keyestudio_TrafficLight": Keyestudio_TrafficLight;
-  "Keyestudio_HT16K33": Keyestudio_HT16K33;
-  // Ble
-  "2JCIE": OMRON_2JCIE;
-  "uPRISM": uPRISM;
-  "Logtta_CO2": Logtta_CO2;
-  "Logtta_TH": Logtta_TH;
-  "Logtta_AD": Logtta_AD;
-  "Logtta_Accel": Logtta_Accel;
-  "Linking": Linking;
-  "SCBTGAAAC": SCBTGAAAC;
-  "iBS04i": IBS04I;
-  "iBS03": IBS03;
-  "iBS03T": IBS03T;
-  "iBS03TP": IBS03TP;
-  "iBS01T": IBS01T;
-  "iBS01RG": IBS01RG;
-  "iBS01": IBS01;
-  "iBS02IR": IBS02IR;
-  "iBS02PIR": IBS02PIR;
-  "MINEW_S1": MINEW_S1;
-  "RS_Seek3": RS_Seek3;
-  "REX_BTPM25V": REX_BTPM25V;
-  "ENERTALK_TOUCH": ENERTALK_TOUCH;
-  "cir415a": cir415a;
-  "TM530": TM530;
-  "TM551": TM551;
-  "UT201BLE": UT201BLE;
-  "PLS_01BT": PLS_01BT;
-  "HEM_6233T": HEM_6233T;
-  "MiniBreeze": MiniBreeze;
-  "MT_500BT": MT_500BT;
-
-  // Bioligical
-  "PULSE08_M5STICKC-S": Puls08M5stickcS;
-
-  "FlickHat": FlickHat;
-  "KXSC7_2050": KXSC7_2050;
-  "S8100B": S8100B;
-  "S8120C": S8120C;
-  "ADT7410": ADT7410;
-  "S5851A": S5851A;
-  "DPS310": DPS310;
-  "BMP280": BMP280;
-
-  "toio_CoreCube": Toio_CoreCube;
-
-  "HEM_9200T": HEM_9200T;
-}
-
-// TODO: この二重管理をなんとかしたい
-export interface WiredNameOptionsMap {
-  // Light
-  "LED": LEDOptions;
-  "FullColorLED": FullColorLEDOptions;
-  "WS2811": WS2811Options;
-  "WS2812": WS2812Options;
-  "WS2812B": WS2812BOptions;
-  // Infrared
-  "InfraredLED": InfraredLEDOptions;
-  "IRSensor": IRSensorOptions;
-  "IRModule": IRModuleOptions;
-  // Display
-  "7SegmentLED": _7SegmentLEDOptions;
-  "7SegmentLEDArray": _7SegmentLEDArrayOptions;
-  "7SegmentLED_MAX7219": _7SegmentLED_MAX7219Options;
-  "MatrixLED_MAX7219": MatrixLED_MAX7219Options;
-  "MatrixLED_HT16K33": MatrixLED_HT16K33Options;
-  "SainSmartTFT18LCD": SainSmartTFT18LCDOptions;
-  "SharpMemoryTFT": SharpMemoryTFTOptions;
-  "ST7735S": ST7735SOptions;
-  // Camera
-  "ArduCAMMini": ArduCAMMiniOptions;
-  "JpegSerialCam": JpegSerialCamOptions;
-  // Moving
-  "DCMotor": DCMotorOptions;
-  "PCA9685": PCA9685Options;
-  "ServoMotor": ServoMotorOptions;
-  "Solenoid": SolenoidOptions;
-  "StepperMotor": StepperMotorOptions;
-  // Sound
-  "Speaker": SpeakerOptions;
-  // Power
-  "AXP192": AXP192Options;
-  // GasSensor
-  "MQ2": MQ2Options;
-  "MQ3": MQ3Options;
-  "MQ4": MQ4Options;
-  "MQ5": MQ5Options;
-  "MQ6": MQ6Options;
-  "MQ7": MQ7Options;
-  "MQ8": MQ8Options;
-  "MQ9": MQ9Options;
-  "MQ135": MQ135Options;
-  // Logic
-  "SNx4HC595": SNx4HC595Options;
-  // Accessory
-  "USB": USBOptions;
-  // Wireless
-  "RN42": RN42Options;
-  "XBee": XBeeOptions;
-  // Movement Sensor
-  "Button": ButtonOptions;
-  "AK8963": AK8963Options;
-  "MPU6050": MPU6050Options;
-  "MPU6500": MPU6500Options;
-  "MPU6886": MPU6886Options;
-  "MPU9250": MPU9250Options;
-  "SH200Q": SH200QOptions;
-  "AK09916": AK09916Options;
-  "ICM20948": ICM20948Options;
-  // 'FlickHat': FlickHatOptions;
-  "HC-SR505": HCSR505Options;
-  "JoyStick": JoyStickOptions;
-  "KXR94-2050": KXR94_2050Options;
-  "IPM-165": IPM_165Options;
-  // 'KXSC7-2050': KXSC7_2050Options;
-  "PaPIRsVZ": PaPIRsVZOptions;
-  "Potentiometer": PotentiometerOptions;
-  // Memory
-  // '24LC256': _24LC256Options;
-  // GyroSensor
-  "ENC03R_Module": ENC03R_ModuleOptions;
-  // PressureSensor
-  "FSR40X": FSR40XOptions;
-  // Distance Sensor
-  "HC-SR04": HCSR04Options;
-  "GP2Y0A21YK0F": GP2Y0A21YK0FOptions;
-  "VL53L0X": VL53L0XOptions;
-  // GPS
-  "GYSFDMAXB": GYSFDMAXBOptions;
-  // MagnetSensor
-  "CT10": CT10Options;
-  "HMC5883L": HMC5883LOptions;
-  // ADConverter
-  "hx711": Hx711Options;
-  // DAConverter
-  "MCP4725": MCP4725Options;
-  // SoilSensor
-  "SEN0114": SEN0114Options;
-  // Temperature Sensor
-  "LM35DZ": LM35DZOptions;
-  "LM60": LM60Options;
-  "LM61": LM61Options;
-  "LMT87": LMT87Options;
-  "MCP9700": MCP9700Options;
-  "MCP9701": MCP9701Options;
-  // 'S8100B': S8100BOptions;
-  // 'S8120C': S8120COptions;
-  // 'ADT7410': ADT7410Options;
-  "AMG8833": AMG8833Options;
-  "BME280": BME280Options;
-  "D6T44L": D6T44LOptions;
-  "DHT12": DHT12Options;
-  // 'S5851A': S5851AOptions;
-  "SHT31": SHT31Options;
-  "SHT20": SHT20Options;
-  "ADT7310": ADT7310Options;
-  "AM2320": AM2320Options;
-  // ColorSensor
-  "PT550": PT550Options;
-  "S11059": S11059Options;
-  "YG1006": YG1006Options;
-  // Grove
-  "Grove_Button": Grove_ButtonOptions;
-  "Grove_Buzzer": Grove_BuzzerOptions;
-  "Grove_EarHeartRate": Grove_EarHeartRateOptions;
-  "Grove_MP3": Grove_MP3Options;
-  "Grove_GPS": Grove_GPSOptions;
-  "Grove_EARTH": Grove_EARTHOptions;
-  "Grove_JoyStick": Grove_JoyStickOptions;
-  "Grove_3AxisAccelerometer": Grove_3AxisAccelerometerOptions;
-  "Grove_Speaker": Grove_SpeakerOptions;
-  "Grove_RotaryAnglesensor": Grove_RotaryAngleSensorOptions;
-
-  "Grove_DistanceSensor": Grove_DistanceSensorOptions;
-  "Grove_LightSensor": Grove_LightSensorOptions;
-  "Grove_PressureSensor": Grove_PressureSensorOptions;
-  "Grove_SoilMoistureSensor": Grove_SoilMoistureSensorOptions;
-  // StickCHat
-  "M5StickC_JoyStick": M5StickC_JoyStickOptions;
-  "M5StickC_ADC": M5StickC_ADCOptions;
-  "M5StickC_DAC": M5StickC_DACOptions;
-  "M5StickC_ToF": M5StickC_ToFOptions;
-  "M5StickC_FINGER": M5StickC_FINGEROptions;
-  "M5StickC_RS485": M5StickC_RS485Options;
-  "M5StickC_Yun": M5StickC_YunOptions;
-  // Keyestudio
-  "Keyestudio_Button": Keyestudio_ButtonOptions;
-  "Keyestudio_MoistureSensor": Keyestudio_MoistureSensorOptions;
-  "Keyestudio_Buzzer": Keyestudio_BuzzerOptions;
-  "Keyestudio_TemperatureSensor": Keyestudio_TemperatureSensorOptions;
-  "Keyestudio_PIR": Keyestudio_PIROptions;
-  "Keyestudio_TrafficLight": Keyestudio_TrafficLightOptions;
-  "Keyestudio_HT16K33": Keyestudio_HT16K33Options;
-  // Ble
-  "2JCIE": OMRON_2JCIEOptions;
-  "Logtta_CO2": Logtta_CO2Options;
-  "Logtta_TH": Logtta_THOptions;
-  "Logtta_AD": Logtta_ADOptions;
-  "Logtta_Accel": Logtta_AccelOptions;
-  "Linking": LinkingOptions;
-  "uPRISM": uPRISMOptions;
-  "SCBTGAAAC": SCBTGAAACOptions;
-  "iBS04i": IBS04IOptions;
-  "iBS01T": IBS01TOptions;
-  "iBS01RG": IBS01RGOptions;
-  "iBS01": IBS01Options;
-  "iBS02IR": IBS02IROptions;
-  "iBS02PIR": IBS02PIROptions;
-  "iBS03": IBS03Options;
-  "iBS03T": IBS03TOptions;
-  "iBS03TP": IBS03TPOptions;
-  "MINEW_S1": MINEW_S1Options;
-  "RS_Seek3": RS_Seek3Options;
-  "REX_BTPM25V": REX_BTPM25VOptions;
-  "PLS_01BT": PLS_01BTOptions;
-  "ENERTALK_TOUCH": ENERTALK_TOUCHOptions;
-  "cir415a": cir415aOptions;
-  "TM530": TM530Options;
-  "TM551": TM551Options;
-  "toio_CoreCube": Toio_CoreCubeOptions;
-  "UT201BLE": UT201BLEOptions;
-  "HEM_6233T": HEM_6233TOptions;
-  "MiniBreeze": MiniBreezeOptions;
-  "MT_500BT": MT_500BTOptions;
-
-  // Bioligical
-  "PULSE08_M5STICKC-S": Puls08M5stickcSOptions;
-
-  "24LC256": _24LC256Options;
-  "FlickHat": FlickHatOptions;
-  "KXSC7_2050": KXSC7_2050Options;
-  "S8100B": S8100BOptions;
-  "S8120C": S8120COptions;
-  "ADT7410": ADT7410Options;
-  "S5851A": S5851AOptions;
-  "DPS310": DPS310Options;
-
-  "BMP280": BMP280Options;
-
-  "HEM_9200T": HEM_9200TOptions;
+export interface PartsList {
+  "LED": { class: LED; options: LEDOptions };
+  "FullColorLED": { class: FullColorLED; options: FullColorLEDOptions };
+  "WS2811": { class: WS2811; options: WS2811Options };
+  "WS2812": { class: WS2812; options: WS2812Options };
+  "WS2812B": { class: WS2812B; options: WS2812BOptions };
+  "InfraredLED": { class: InfraredLED; options: InfraredLEDOptions };
+  "IRSensor": { class: IRSensor; options: IRSensorOptions };
+  "IRModule": { class: IRModule; options: IRModuleOptions };
+  "7SegmentLED": { class: _7SegmentLED; options: _7SegmentLEDOptions };
+  "7SegmentLEDArray": { class: _7SegmentLEDArray; options: _7SegmentLEDArrayOptions };
+  "7SegmentLED_MAX7219": { class: _7SegmentLED_MAX7219; options: _7SegmentLED_MAX7219Options };
+  "MatrixLED_MAX7219": { class: MatrixLED_MAX7219; options: MatrixLED_MAX7219Options };
+  "MatrixLED_HT16K33": { class: MatrixLED_HT16K33; options: MatrixLED_HT16K33Options };
+  "SainSmartTFT18LCD": { class: SainSmartTFT18LCD; options: SainSmartTFT18LCDOptions };
+  "SharpMemoryTFT": { class: SharpMemoryTFT; options: SharpMemoryTFTOptions };
+  "ST7735S": { class: ST7735S; options: ST7735SOptions };
+  "ArduCAMMini": { class: ArduCAMMini; options: ArduCAMMiniOptions };
+  "JpegSerialCam": { class: JpegSerialCam; options: JpegSerialCamOptions };
+  "DCMotor": { class: DCMotor; options: DCMotorOptions };
+  "PCA9685": { class: PCA9685; options: PCA9685Options };
+  "ServoMotor": { class: ServoMotor; options: ServoMotorOptions };
+  "Solenoid": { class: Solenoid; options: SolenoidOptions };
+  "StepperMotor": { class: StepperMotor; options: StepperMotorOptions };
+  "Speaker": { class: Speaker; options: SpeakerOptions };
+  "AXP192": { class: AXP192; options: AXP192Options };
+  "MQ2": { class: MQ2; options: MQ2Options };
+  "MQ3": { class: MQ3; options: MQ3Options };
+  "MQ4": { class: MQ4; options: MQ4Options };
+  "MQ5": { class: MQ5; options: MQ5Options };
+  "MQ6": { class: MQ6; options: MQ6Options };
+  "MQ7": { class: MQ7; options: MQ7Options };
+  "MQ8": { class: MQ8; options: MQ8Options };
+  "MQ9": { class: MQ9; options: MQ9Options };
+  "MQ135": { class: MQ135; options: MQ135Options };
+  "SNx4HC595": { class: SNx4HC595; options: SNx4HC595Options };
+  "USB": { class: USB; options: USBOptions };
+  "RN42": { class: RN42; options: RN42Options };
+  "XBee": { class: XBee; options: XBeeOptions };
+  "Button": { class: Button; options: ButtonOptions };
+  "AK8963": { class: AK8963; options: AK8963Options };
+  "MPU6050": { class: MPU6050; options: MPU6050Options };
+  "MPU6500": { class: MPU6500; options: MPU6500Options };
+  "MPU6886": { class: MPU6886; options: MPU6886Options };
+  "MPU9250": { class: MPU9250; options: MPU9250Options };
+  "SH200Q": { class: SH200Q; options: SH200QOptions };
+  "AK09916": { class: AK09916; options: AK09916Options };
+  "ICM20948": { class: ICM20948; options: ICM20948Options };
+  "HC-SR505": { class: HCSR505; options: HCSR505Options };
+  "JoyStick": { class: JoyStick; options: JoyStickOptions };
+  "KXR94-2050": { class: KXR94_2050; options: KXR94_2050Options };
+  "IPM-165": { class: IPM_165; options: IPM_165Options };
+  "PaPIRsVZ": { class: PaPIRsVZ; options: PaPIRsVZOptions };
+  "Potentiometer": { class: Potentiometer; options: PotentiometerOptions };
+  // '24LC256':{class: _24LC256,options: _24LC256Options},
+  "ENC03R_Module": { class: ENC03R_Module; options: ENC03R_ModuleOptions };
+  "FSR40X": { class: FSR40X; options: FSR40XOptions };
+  "HC-SR04": { class: HCSR04; options: HCSR04Options };
+  "GP2Y0A21YK0F": { class: GP2Y0A21YK0F; options: GP2Y0A21YK0FOptions };
+  "VL53L0X": { class: VL53L0X; options: VL53L0XOptions };
+  "GYSFDMAXB": { class: GYSFDMAXB; options: GYSFDMAXBOptions };
+  "CT10": { class: CT10; options: CT10Options };
+  "HMC5883L": { class: HMC5883L; options: HMC5883LOptions };
+  "hx711": { class: HX711; options: Hx711Options };
+  "MCP4725": { class: MCP4725; options: MCP4725Options };
+  "SEN0114": { class: SEN0114; options: SEN0114Options };
+  "LM35DZ": { class: LM35DZ; options: LM35DZOptions };
+  "LM60": { class: LM60; options: LM60Options };
+  "LM61": { class: LM61; options: LM61Options };
+  "LMT87": { class: LMT87; options: LMT87Options };
+  "MCP9700": { class: MCP9700; options: MCP9700Options };
+  "MCP9701": { class: MCP9701; options: MCP9701Options };
+  // 'S8100B':{class: S8100B,options: S8100BOptions},
+  // 'S8120C':{class: S8120C,options: S8120COptions},
+  // 'ADT7410':{class: ADT7410,options: ADT7410Options},
+  "AMG8833": { class: AMG8833; options: AMG8833Options };
+  "BME280": { class: BME280; options: BME280Options };
+  "D6T44L": { class: D6T44L; options: D6T44LOptions };
+  "DHT12": { class: DHT12; options: DHT12Options };
+  // 'S5851A':{class: S5851A,options: S5851AOptions},
+  "SHT31": { class: SHT31; options: SHT31Options };
+  "SHT20": { class: SHT20; options: SHT20Options };
+  "ADT7310": { class: ADT7310; options: ADT7310Options };
+  "AM2320": { class: AM2320; options: AM2320Options };
+  "PT550": { class: PT550; options: PT550Options };
+  "S11059": { class: S11059; options: S11059Options };
+  "YG1006": { class: YG1006; options: YG1006Options };
+  "Grove_Button": { class: Grove_Button; options: Grove_ButtonOptions };
+  "Grove_Buzzer": { class: Grove_Buzzer; options: Grove_BuzzerOptions };
+  "Grove_EarHeartRate": { class: Grove_EarHeartRate; options: Grove_EarHeartRateOptions };
+  "Grove_MP3": { class: Grove_MP3; options: Grove_MP3Options };
+  "Grove_GPS": { class: Grove_GPS; options: Grove_GPSOptions };
+  "Grove_EARTH": { class: Grove_EARTH; options: Grove_EARTHOptions };
+  "Grove_JoyStick": { class: Grove_JoyStick; options: Grove_JoyStickOptions };
+  "Grove_3AxisAccelerometer": { class: Grove_3AxisAccelerometer; options: Grove_3AxisAccelerometerOptions };
+  "Grove_Speaker": { class: Grove_Speaker; options: Grove_SpeakerOptions };
+  "Grove_RotaryAnglesensor": { class: Grove_RotaryAngleSensor; options: Grove_RotaryAngleSensorOptions };
+  "Grove_DistanceSensor": { class: Grove_DistanceSensor; options: Grove_DistanceSensorOptions };
+  "Grove_LightSensor": { class: Grove_LightSensor; options: Grove_LightSensorOptions };
+  "Grove_PressureSensor": { class: Grove_PressureSensor; options: Grove_PressureSensorOptions };
+  "Grove_SoilMoistureSensor": {
+    class: Grove_SoilMoistureSensor;
+    options: Grove_SoilMoistureSensorOptions;
+  };
+  "Grove_Gesture": {
+    class: Grove_Gesture;
+    options: Grove_GestureSensorOptions;
+  };
+  "Grove_WaterLevelSensor": {
+    class: Grove_WaterLevelSensor;
+    options: Grove_WaterLevelSensorOptions;
+  };
+  "M5StickC_JoyStick": { class: M5StickC_JoyStick; options: M5StickC_JoyStickOptions };
+  "M5StickC_ADC": { class: M5StickC_ADC; options: M5StickC_ADCOptions };
+  "M5StickC_DAC": { class: M5StickC_DAC; options: M5StickC_DACOptions };
+  "M5StickC_ToF": { class: M5StickC_ToF; options: M5StickC_ToFOptions };
+  "M5StickC_FINGER": { class: M5StickC_FINGER; options: M5StickC_FINGEROptions };
+  "M5StickC_RS485": { class: M5StickC_RS485; options: M5StickC_RS485Options };
+  "M5StickC_Yun": { class: M5StickC_Yun; options: M5StickC_YunOptions };
+  "Keyestudio_Button": { class: Keyestudio_Button; options: Keyestudio_ButtonOptions };
+  "Keyestudio_MoistureSensor": { class: Keyestudio_MoistureSensor; options: Keyestudio_MoistureSensorOptions };
+  "Keyestudio_Buzzer": { class: Keyestudio_Buzzer; options: Keyestudio_BuzzerOptions };
+  "Keyestudio_TemperatureSensor": { class: Keyestudio_TemperatureSensor; options: Keyestudio_TemperatureSensorOptions };
+  "Keyestudio_PIR": { class: Keyestudio_PIR; options: Keyestudio_PIROptions };
+  "Keyestudio_TrafficLight": { class: Keyestudio_TrafficLight; options: Keyestudio_TrafficLightOptions };
+  "Keyestudio_HT16K33": { class: Keyestudio_HT16K33; options: Keyestudio_HT16K33Options };
+  "2JCIE": { class: OMRON_2JCIE; options: OMRON_2JCIEOptions };
+  "Logtta_CO2": { class: Logtta_CO2; options: Logtta_CO2Options };
+  "Logtta_TH": { class: Logtta_TH; options: Logtta_THOptions };
+  "Logtta_AD": { class: Logtta_AD; options: Logtta_ADOptions };
+  "Logtta_Accel": { class: Logtta_Accel; options: Logtta_AccelOptions };
+  "Linking": { class: Linking; options: LinkingOptions };
+  "uPRISM": { class: uPRISM; options: uPRISMOptions };
+  "SCBTGAAAC": { class: SCBTGAAAC; options: SCBTGAAACOptions };
+  "iBS04i": { class: IBS04I; options: IBS04IOptions };
+  "iBS01T": { class: IBS01T; options: IBS01TOptions };
+  "iBS01RG": { class: IBS01RG; options: IBS01RGOptions };
+  "iBS01": { class: IBS01; options: IBS01Options };
+  "iBS02IR": { class: IBS02IR; options: IBS02IROptions };
+  "iBS02PIR": { class: IBS02PIR; options: IBS02PIROptions };
+  "iBS03": { class: IBS03; options: IBS03Options };
+  "iBS03T": { class: IBS03T; options: IBS03TOptions };
+  "iBS03TP": { class: IBS03TP; options: IBS03TPOptions };
+  "MINEW_S1": { class: MINEW_S1; options: MINEW_S1Options };
+  "RS_Seek3": { class: RS_Seek3; options: RS_Seek3Options };
+  "REX_BTPM25V": { class: REX_BTPM25V; options: REX_BTPM25VOptions };
+  "PLS_01BT": { class: PLS_01BT; options: PLS_01BTOptions };
+  "ENERTALK_TOUCH": { class: ENERTALK_TOUCH; options: ENERTALK_TOUCHOptions };
+  "cir415a": { class: cir415a; options: cir415aOptions };
+  "TM530": { class: TM530; options: TM530Options };
+  "TM551": { class: TM551; options: TM551Options };
+  "toio_CoreCube": { class: Toio_CoreCube; options: Toio_CoreCubeOptions };
+  "UT201BLE": { class: UT201BLE; options: UT201BLEOptions };
+  "HEM_6233T": { class: HEM_6233T; options: HEM_6233TOptions };
+  "MiniBreeze": { class: MiniBreeze; options: MiniBreezeOptions };
+  "MT_500BT": { class: MT_500BT; options: MT_500BTOptions };
+  "PULSE08_M5STICKC-S": { class: Puls08M5stickcS; options: Puls08M5stickcSOptions };
+  "24LC256": { class: _24LC256; options: _24LC256Options };
+  "FlickHat": { class: FlickHat; options: FlickHatOptions };
+  "KXSC7_2050": { class: KXSC7_2050; options: KXSC7_2050Options };
+  "S8100B": { class: S8100B; options: S8100BOptions };
+  "S8120C": { class: S8120C; options: S8120COptions };
+  "ADT7410": { class: ADT7410; options: ADT7410Options };
+  "S5851A": { class: S5851A; options: S5851AOptions };
+  "DPS310": { class: DPS310; options: DPS310Options };
+  "BMP280": { class: BMP280; options: BMP280Options };
+  "HEM_9200T": { class: HEM_9200T; options: HEM_9200TOptions };
 }

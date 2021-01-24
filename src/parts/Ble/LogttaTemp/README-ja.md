@@ -2,6 +2,10 @@
 
 BLE経由で利用できる温度センサーです。フレキシブルケーブルで冷蔵庫の庫内温度などを計測できます。
 
+温度と湿度を計測でき、バッテリー残量を知ることもできます。
+
+また、接続して値を取得するモードと、advertisementで値を取得するモードの２つがあります。
+
 ![](image.jpg)
 
 ![](image2.jpg)
@@ -116,7 +120,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     device.onNotify = (data) => {
         console.log(`temperature ${data.temperature} humidity ${data.humidity}`);
     };
-    device.startNotifyWait();
+    await device.startNotifyWait();
   }
 };
 await obniz.ble.scan.startWait();
@@ -139,7 +143,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     device.onNotify = (data) => {
         console.log(`temperature ${data.temperature} humidity ${data.humidity}`);
     };
-    device.startNotifyWait();
+    await device.startNotifyWait();
   }
 };
 await obniz.ble.scan.startWait();
@@ -184,12 +188,12 @@ await obniz.ble.scan.startWait();
 
 ```javascript
 // Javascript Example
-const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (LOGTTA_AD.isDevice(peripheral)) {
+  if (Logtta_TH.isDevice(peripheral)) {
     console.log("find");
-    const device = new LOGTTA_AD(peripheral);
+    const device = new Logtta_TH(peripheral);
     await device.connectWait();
     console.log("connected");
     
@@ -207,12 +211,12 @@ await obniz.ble.scan.startWait();
 
 ```javascript
 // Javascript Example
-const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (LOGTTA_AD.isDevice(peripheral)) {
+  if (Logtta_TH.isDevice(peripheral)) {
     console.log("find");
-    const device = new LOGTTA_AD(peripheral);
+    const device = new Logtta_TH(peripheral);
     await device.connectWait();
     console.log("connected");
     
@@ -230,12 +234,12 @@ await obniz.ble.scan.startWait();
 
 ```javascript
 // Javascript Example
-const Logtta_AD = Obniz.getPartsClass('Logtta_AD');
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (Logtta_AD.isDevice(peripheral) ) {
+  if (Logtta_TH.isDevice(peripheral) ) {
     console.log("find");
-    const device = new Logtta_AD(peripheral);
+    const device = new Logtta_TH(peripheral);
     await device.connectWait();
     console.log("connected");
     await device.authPinCodeWait("0000");
@@ -259,12 +263,12 @@ http://www.uni-elec.co.jp/logtta_page.html
 
 ```javascript
 // Javascript Example
-const Logtta_AD = Obniz.getPartsClass('Logtta_AD');
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (Logtta_AD.isDevice(peripheral) ) {
+  if (Logtta_TH.isDevice(peripheral) ) {
     console.log("find");
-    const device = new Logtta_AD(peripheral);
+    const device = new Logtta_TH(peripheral);
     await device.connectWait();
     console.log("connected");
     await device.authPinCodeWait("0000");
@@ -286,10 +290,10 @@ await obniz.ble.scan.startWait();
 
 ```javascript
 // Javascript Example
-const Logtta_AD = Obniz.getPartsClass('Logtta_AD');
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (Logtta_AD.isAdvDevice(p)) {
+    if (Logtta_TH.isAdvDevice(p)) {
         console.log("found");
     }
 };
@@ -301,20 +305,20 @@ await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 
 発見した場合にデバイスの情報を返します。発見できなかった場合にはNullを返します。
 
-- battery : バッテリの電圧
+- battery : バッテリの電圧(0-100)
 - address : MacAddress
-- temperature: 温度
-- humidity: 湿度
-- interval : 送信間隔
+- temperature: 温度(セルシウス温度)
+- humidity: 湿度(0-100)
+- interval : 送信間隔(秒)
 
 
 ```javascript
 // Javascript Example
-const Logtta_AD = Obniz.getPartsClass('Logtta_AD');
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (Logtta_AD.isAdvDevice(p)) {
-        let data = Logtta_AD.getData(p);
+    if (Logtta_TH.isAdvDevice(p)) {
+        let data = Logtta_TH.getData(p);
         console.log(data);
     }
 };

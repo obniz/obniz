@@ -3,6 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const bleLocalAttributeAbstract_1 = __importDefault(require("./bleLocalAttributeAbstract"));
 /**
  * @category Use as Peripheral
@@ -54,7 +58,7 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
         this.emitter.emit(notifyName, params);
         switch (notifyName) {
             case "onwritefromremote": {
-                this._runUserCreatedFunction(this.onwritefromremote, params.address, params.data);
+                this._runUserCreatedFunction(this.onwritefromremote, params.address, Array.from(params.data));
                 break;
             }
             case "onreadfromremote": {

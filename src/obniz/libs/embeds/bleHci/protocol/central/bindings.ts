@@ -7,7 +7,7 @@
 
 import EventEmitter from "eventemitter3";
 
-import { ObnizBleHciStateError, ObnizBleUnknownPeripheralError, ObnizError } from "../../../../../ObnizError";
+import { ObnizBleHciStateError, ObnizBleUnknownPeripheralError } from "../../../../../ObnizError";
 import BleHelper from "../../bleHelper";
 import { BleDeviceAddress, BleDeviceAddressType, Handle, UUID } from "../../bleTypes";
 import Hci from "../hci";
@@ -109,7 +109,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   }
 
   public async connectWait(peripheralUuid: any, onConnectCallback?: any) {
-    const address: any = this._addresses[peripheralUuid];
+    const address = this._addresses[peripheralUuid];
     const addressType: any = this._addresseTypes[peripheralUuid];
 
     // Block parall connection ongoing for ESP32 bug.
@@ -117,30 +117,31 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
       .catch((error) => {
         // nothing
       })
-      .then(() => {
-        return this._hci.createLeConnWait(address, addressType, 90 * 1000); // connection timeout for 90 secs.
-      })
-      .then((result) => {
-        this.onLeConnComplete(
-          result.status,
-          result.handle,
-          result.role,
-          result.addressType,
-          result.address,
-          result.interval,
-          result.latency,
-          result.supervisionTimeout,
-          result.masterClockAccuracy,
-        );
-        if (onConnectCallback && typeof onConnectCallback === "function") {
-          onConnectCallback();
-        }
-        return this._gatts[result.handle].exchangeMtuWait(256);
+      .then(async () => {
+        const conResult = await this._hci.createLeConnWait(address, addressType, 90 * 1000, (result: any) => {
+          // on connect success
+          this.onLeConnComplete(
+            result.status,
+            result.handle,
+            result.role,
+            result.addressType,
+            result.address,
+            result.interval,
+            result.latency,
+            result.supervisionTimeout,
+            result.masterClockAccuracy,
+          );
+          if (onConnectCallback && typeof onConnectCallback === "function") {
+            onConnectCallback();
+          }
+        }); // connection timeout for 90 secs.
+
+        return await this._gatts[conResult.handle].exchangeMtuWait(256);
       })
       .then(
-        (result) => {
+        () => {
           this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
-          return Promise.resolve(result);
+          return Promise.resolve();
         },
         (error) => {
           this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
@@ -221,7 +222,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     handle?: any,
     role?: any,
     addressType?: any,
-    address?: any,
+    address?: BleDeviceAddress,
     interval?: any,
     latency?: any,
     supervisionTimeout?: any,
@@ -237,7 +238,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     if (status !== 0) {
       throw new ObnizBleHciStateError(status);
     }
-    uuid = address
+    uuid = address!
       .split(":")
       .join("")
       .toLowerCase();
@@ -253,7 +254,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     aclStream.debugHandler = (text: any) => {
       this.debug(text);
     };
-    const gatt = new Gatt(address, aclStream);
+    const gatt = new Gatt(address!, aclStream);
     const signaling: any = new Signaling(handle, aclStream);
 
     this._gatts[uuid] = this._gatts[handle] = gatt;
@@ -365,16 +366,23 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     this.emit("notification", uuid, serviceUuid, characteristicUuid, data, true, true);
   }
 
-  public async discoverDescriptorsWait(peripheralUuid: any, serviceUuid: any, characteristicUuid: any) {
+  public async discoverDescriptorsWait(
+    peripheralUuid: UUID,
+    serviceUuid: UUID,
+    characteristicUuid: UUID,
+  ): Promise<UUID[]> {
     const gatt: Gatt = this.getGatt(peripheralUuid);
-    const descriptors = await gatt.discoverDescriptorsWait(serviceUuid, characteristicUuid);
-    return descriptors;
+    return await gatt.discoverDescriptorsWait(serviceUuid, characteristicUuid);
   }
 
-  public async readValueWait(peripheralUuid: any, serviceUuid: any, characteristicUuid: any, descriptorUuid: any) {
+  public async readValueWait(
+    peripheralUuid: UUID,
+    serviceUuid: UUID,
+    characteristicUuid: UUID,
+    descriptorUuid: UUID,
+  ): Promise<Buffer> {
     const gatt: Gatt = this.getGatt(peripheralUuid);
-    const resp = await gatt.readValueWait(serviceUuid, characteristicUuid, descriptorUuid);
-    return resp;
+    return await gatt.readValueWait(serviceUuid, characteristicUuid, descriptorUuid);
   }
 
   public async writeValueWait(
@@ -408,14 +416,21 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     this.emit("handleNotify", uuid, handle, data);
   }
 
-  public async onConnectionParameterUpdateWait(
+  public onConnectionParameterUpdateWait(
     handle: Handle,
     minInterval?: any,
     maxInterval?: any,
     latency?: any,
     supervisionTimeout?: any,
   ) {
-    await this._hci.connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout);
+    this._hci
+      .connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout)
+      .then(() => {})
+      .catch((e) => {
+        // TODO:
+        // This must passed to Obniz class.
+        console.error(e);
+      });
     // this.onLeConnUpdateComplete(); is nop
   }
 
@@ -426,7 +441,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     return result;
   }
 
-  public async setPairingOption(peripheralUuid: any, options: any) {
+  public setPairingOption(peripheralUuid: any, options: any) {
     options = options || {};
     const gatt: Gatt = this.getGatt(peripheralUuid);
     gatt.setEncryptOption(options);

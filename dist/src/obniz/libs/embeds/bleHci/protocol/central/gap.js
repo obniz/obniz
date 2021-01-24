@@ -1,4 +1,10 @@
 "use strict";
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
+// let debug = require('debug')('gap');
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };

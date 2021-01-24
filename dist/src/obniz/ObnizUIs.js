@@ -13,33 +13,12 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
     constructor(id, options) {
         super(id, options);
     }
-    /**
-     * This closes the current connection.
-     * You need to set auto_connect to false. Otherwise the connection will be recovered.
-     *
-     * ```javascript
-     * var obniz = new Obniz('1234-5678', {
-     *   auto_connect: false,
-     *   reset_obniz_on_ws_disconnection: false
-     * });
-     *
-     * obniz.connect();
-     * obniz.onconnect = async function() {
-     *   obniz.io0.output(true);
-     *   obniz.close();
-     * }
-     * ```
-     */
-    close() {
-        super.close();
-        this.updateOnlineUI();
-    }
-    isValidObnizId(str) {
+    static isValidObnizId(str) {
         if (typeof str !== "string") {
             return false;
         }
         // IP => accept
-        if (this._isIpAddress(str)) {
+        if (this.isIpAddress(str)) {
             return true;
         }
         // Serial Number 'sn_***'
@@ -57,9 +36,13 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
         }
         return id !== null;
     }
+    _close() {
+        super._close();
+        this.updateOnlineUI();
+    }
     wsconnect(desired_server) {
         this.showOffLine();
-        if (!this.isValidObnizId(this.id)) {
+        if (!this.constructor.isValidObnizId(this.id)) {
             if (this.isNode || !this.options.obnizid_dialog) {
                 this.error({ alert: "error", message: "invalid obniz id" });
             }

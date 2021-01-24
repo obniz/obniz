@@ -4,7 +4,7 @@
  */
 import { UUID } from "./bleTypes";
 
-const BleHelper: any = {
+const BleHelper = {
   uuidFilter(uuid: string | UUID): UUID {
     return uuid.toLowerCase().replace(/[^0-9abcdef]/g, "");
   },

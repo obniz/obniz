@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.11.0",
+  "version": "3.12.0-beta.3",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -106,7 +106,7 @@ module.exports = {
     "obniz.js"
   ],
   "engines": {
-    "node": ">=8.17.0"
+    "node": ">=10.23.0"
   },
   "engineStrict": true,
   "scripts": {
@@ -142,7 +142,7 @@ module.exports = {
     "obniz"
   ],
   "repository": "obniz/obniz",
-  "author": "yukisato <yuki@yuki-sato.com>",
+  "author": "CambrianRobotics Inc. <supportteam@cambrianrobotics.com>",
   "homepage": "https://obniz.com/",
   "license": "SEE LICENSE IN LICENSE.txt",
   "devDependencies": {
@@ -227,7 +227,6 @@ module.exports = {
     "node-dir": "^0.1.17",
     "node-fetch": "^2.3.0",
     "semver": "^5.7.0",
-    "tsc": "^1.20150623.0",
     "tv4": "^1.3.0",
     "ws": "^6.1.4"
   },
@@ -1713,7 +1712,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./dist/src/json_schema/response/ws/obniz.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws/obniz","type":"object","required":["obniz"],"properties":{"obniz":{"type":"object","required":["hw","firmware"],"additionalProperties":false,"properties":{"hw":{"type":"string"},"firmware":{"type":"string"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws/obniz","type":"object","required":["obniz"],"properties":{"obniz":{"type":"object","required":["hw","firmware"],"additionalProperties":false,"properties":{"hw":{"type":"string"},"firmware":{"type":"string"},"metadata":{"type":"string"}}}}}
 
 /***/ }),
 
@@ -1743,6 +1742,69 @@ webpackEmptyContext.keys = function() { return []; };
 webpackEmptyContext.resolve = webpackEmptyContext;
 module.exports = webpackEmptyContext;
 webpackEmptyContext.id = "./dist/src/obniz sync recursive";
+
+/***/ }),
+
+/***/ "./dist/src/obniz/Obniz.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const m5stack_basic_1 = __webpack_require__("./dist/src/obniz/libs/hw/m5stack_basic.js");
+const m5stickc_1 = __webpack_require__("./dist/src/obniz/libs/hw/m5stickc.js");
+const ObnizApi_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApi.js"));
+const ObnizApp_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApp.js"));
+const ObnizDevice_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizDevice.js"));
+/**
+ * obniz class is the abstract version of obniz Board hardware within JavaScript.
+ *
+ * By providing obniz id and instantiating it, you can control obniz Board and the connected parts
+ * without the details of websocket api.
+ *
+ *
+ * ### obnizOS version and obniz.js version
+ *
+ * obniz cloud compare your obniz.js version and target device obnizOS version.
+ * If your js sdk major number is below from OS version (eg obniz.js is 2.0.0 and obnizOS is 3.0.0) then obniz cloud will alert when connection established.
+ * It will work somehow but some functions looses compatibility.
+ *
+ * ### one device from two program
+ *
+ * obniz cloud accept multiple websocket connection from multiple obniz.js at same time.
+ * every commands from obniz.js will passed to a device and every command from a device will be dispatched to every obniz.js connected to the cloud.
+ *
+ * But If one of obniz.js established a connection to a device, then target device will send datas only via local connect. So other connected obniz.js only can send datas and never receive datas from a device.
+ *
+ * If you'd like to receive, you need to specify `local_connect: false` at all of obniz.js to disable local connect.
+ *
+ */
+class Obniz extends ObnizDevice_1.default {
+    /**
+     * obniz REST api class
+     * @returns {ObnizApi}
+     */
+    static get api() {
+        return ObnizApi_1.default;
+    }
+    /**
+     * App Support class
+     * @returns {ObnizApp}
+     */
+    static get App() {
+        return ObnizApp_1.default;
+    }
+}
+exports.Obniz = Obniz;
+/**
+ * M5StickC device
+ */
+Obniz.M5StickC = m5stickc_1.M5StickC;
+Obniz.M5StackBasic = m5stack_basic_1.M5StackBasic;
+
 
 /***/ }),
 
@@ -1787,14 +1849,21 @@ class ObnizApi {
         return this.post("/state", null, callback);
     }
     /**
+     * Get device is online or offline
+     */
+    async getStateWait() {
+        const json = await this.post("/state", null);
+        return json;
+    }
+    /**
      * post data via obniz REST api
      * @param json
      * @param callback
      */
-    postJson(json, callback) {
-        return this.post("/api/" + this.apiVersion, json, callback); // 1 is api version
+    async postJson(json, callback) {
+        return await this.post("/api/" + this.apiVersion, json, callback); // 1 is api version
     }
-    post(path, params, callback) {
+    async post(path, params, callback = null) {
         const url = this.urlBase + path;
         // let query = [];
         // query.push("XXX");
@@ -1813,6 +1882,29 @@ class ObnizApi {
         if (params) {
             fetchParams.body = JSON.stringify(params);
         }
+        const res = await node_fetch_1.default(url, fetchParams);
+        const json = await res.json();
+        if (typeof callback === "function") {
+            callback(json);
+        }
+        return json;
+    }
+    get(path, callback) {
+        const url = this.urlBase + path;
+        // let query = [];
+        // query.push("XXX");
+        // if(query.length > 0){
+        //   url += "?" + query.join("&");
+        // }
+        const headers = {};
+        headers["Content-Type"] = "application/json";
+        if (this.options.access_token) {
+            headers.authorization = "Bearer " + this.options.access_token;
+        }
+        const fetchParams = {
+            method: "GET",
+            headers,
+        };
         return node_fetch_1.default(url, fetchParams)
             .then((res) => {
             return res.json();
@@ -1942,12 +2034,6 @@ class ObnizComponents extends ObnizParts_1.default {
         this.pongObservers = [];
         this._allComponentKeys = [];
     }
-    close() {
-        super.close();
-        if (this.options.reset_obniz_on_ws_disconnection) {
-            this._resetComponents();
-        }
-    }
     /**
      * Output pin Vcc and Gnd
      * @param vcc
@@ -2056,6 +2142,12 @@ class ObnizComponents extends ObnizParts_1.default {
             return this._hwDefinition.extraInterface[interfaceName];
         }
         return null;
+    }
+    _close() {
+        super._close();
+        if (this.options.reset_obniz_on_ws_disconnection) {
+            this._resetComponents();
+        }
     }
     _callOnConnect() {
         this._prepareComponents();
@@ -2247,6 +2339,8 @@ const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 class ObnizConnection extends eventemitter3_1.default {
     constructor(id, options) {
         super();
+        this._userManualConnectionClose = false;
+        this._repeatInterval = 0;
         this._lastDataReceivedAt = 0;
         this.isNode = typeof window === "undefined";
         this.id = id;
@@ -2305,6 +2399,10 @@ class ObnizConnection extends eventemitter3_1.default {
     static get WSCommand() {
         return wscommand_1.default;
     }
+    static isIpAddress(str) {
+        const regex = /^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$/;
+        return str.match(regex) !== null;
+    }
     /**
      * With this you wait until the connection to obniz Board succeeds.
      *
@@ -2314,7 +2412,7 @@ class ObnizConnection extends eventemitter3_1.default {
      * await obniz.connectWait();
      *
      * obniz.io0.output(true);
-     * obniz.close();
+     * await obniz.closeWait();
      *
      * ```
      *
@@ -2328,7 +2426,7 @@ class ObnizConnection extends eventemitter3_1.default {
      *
      * if(connected){
      *    obniz.io0.output(true);
-     *    obniz.close();
+     *    await obniz.closeWait();
      * }
      * ```
      *
@@ -2343,7 +2441,7 @@ class ObnizConnection extends eventemitter3_1.default {
      *
      * if(connected){
      *   obniz.io0.output(true);
-     *   obniz.close();
+     *   await obniz.closeWait();
      * }
      * ```
      *
@@ -2392,26 +2490,71 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         this.wsconnect();
     }
+    /**
+     * This closes the current connection.
+     * You need to set auto_connect to false. Otherwise the connection will be recovered.
+     *
+     * ```javascript
+     * var obniz = new Obniz('1234-5678', {
+     *   auto_connect: false,
+     *   reset_obniz_on_ws_disconnection: false
+     * });
+     *
+     * obniz.connect();
+     * obniz.onconnect = async function() {
+     *   obniz.io0.output(true);
+     *   obniz.close();
+     * }
+     * ```
+     *
+     * @deprecated replace with {@link closeWait}
+     */
     close() {
-        this._stopLoopInBackground();
-        this._drainQueued();
-        // expire local connect waiting timer for call.
-        if (this._waitForLocalConnectReadyTimer) {
-            clearTimeout(this._waitForLocalConnectReadyTimer);
-            this._waitForLocalConnectReadyTimer = undefined;
+        // noinspection JSIgnoredPromiseFromCall
+        this.closeWait().catch((e) => {
+            // background
+            this.error(e);
+        });
+    }
+    /**
+     * This closes the current connection.
+     * You need to set auto_connect to false. Otherwise the connection will be recovered.
+     *
+     * ```javascript
+     * var obniz = new Obniz('1234-5678', {
+     *   auto_connect: false,
+     *   reset_obniz_on_ws_disconnection: false
+     * });
+     *
+     * obniz.connect();
+     * obniz.onconnect = async function() {
+     *   obniz.io0.output(true);
+     *   await obniz.closeWait();
+     * }
+     * ```
+     *
+     */
+    async closeWait() {
+        if (this.socket && this.socket.readyState <= 1) {
+            // Connecting or Connected
+            this._userManualConnectionClose = true;
+            const p = new Promise((resolve) => {
+                this.once("_close", resolve);
+            });
+            this.connectionState = "closing";
+            this.socket.close(1000, "close");
+            await p;
         }
-        this._disconnectLocal();
-        if (this.socket) {
-            if (this.socket.readyState <= 1) {
-                // Connecting & Connected
-                this.connectionState = "closing";
-                this.socket.close(1000, "close");
-            }
-            this.clearSocket(this.socket);
-            delete this.socket;
+        else if (this.socket && this.socket.readyState === 2) {
+            // closing
+            this._userManualConnectionClose = true;
+            await new Promise((resolve) => {
+                this.once("_close", resolve);
+            });
         }
-        this.connectionState = "closed";
-        this._onConnectCalled = false;
+        else {
+            // already closed : do nothing
+        }
     }
     /**
      * Send json/binary data to obniz Cloud or device.
@@ -2525,32 +2668,40 @@ class ObnizConnection extends eventemitter3_1.default {
         }
     }
     /**
-     * Repeat will call the callback function periodically while it is connected to obniz Board.
-     * It will stop calling once it is disconnected from obniz Board.
-     *
-     * ```javascript
-     * // Javascript Example
-     *  obniz.ad0.start();
-     *  obniz.repeat(function(){
-     *    if (obniz.ad0.value > 2.5) {
-     *      obniz.io0.output(true);
-     *    } else {
-     *      obniz.io0.output(false);
-     *    }
-     *  }, 100)
-     * ```
+     * Set onloop function. Use onloop property instead. This is deprecated function.
      *
      * @param callback
      * @param interval  default 100. It mean 100ms interval loop.
+     * @deprecated
      */
     repeat(callback, interval) {
-        if (this._looper) {
-            this._looper = callback;
+        if (this.onloop) {
+            this.onloop = callback;
             this._repeatInterval = interval || this._repeatInterval || 100;
             return;
         }
-        this._looper = callback;
+        this.onloop = callback;
         this._repeatInterval = interval || 100;
+    }
+    _close() {
+        this._stopLoopInBackground();
+        this._drainQueued();
+        // expire local connect waiting timer for call.
+        if (this._waitForLocalConnectReadyTimer) {
+            clearTimeout(this._waitForLocalConnectReadyTimer);
+            this._waitForLocalConnectReadyTimer = undefined;
+        }
+        this._disconnectLocal();
+        if (this.socket) {
+            if (this.socket.readyState <= 1) {
+                // Connecting & Connected
+                this.connectionState = "closing";
+                this.socket.close(1000, "close");
+            }
+            this.clearSocket(this.socket);
+            delete this.socket;
+        }
+        this._onConnectCalled = false;
     }
     wsOnOpen() {
         this.print_debug("ws connected");
@@ -2589,12 +2740,19 @@ class ObnizConnection extends eventemitter3_1.default {
     wsOnClose(event) {
         this.print_debug(`closed from remote event=${event}`);
         const beforeOnConnectCalled = this._onConnectCalled;
-        this.close();
+        this._close();
+        this.connectionState = "closed";
+        if (this._userManualConnectionClose) {
+            this.emit("_close", this);
+        }
         if (beforeOnConnectCalled === true) {
             this.emit("close", this);
             this._runUserCreatedFunction(this.onclose, this);
         }
-        this._reconnect();
+        if (!this._userManualConnectionClose) {
+            this._reconnect();
+        }
+        this._userManualConnectionClose = false;
     }
     _reconnect() {
         this._connectionRetryCount++;
@@ -2632,10 +2790,10 @@ class ObnizConnection extends eventemitter3_1.default {
             server = "" + desired_server;
         }
         if (this.socket && this.socket.readyState <= 1) {
-            this.close();
+            this._close();
         }
         let url = server + "/obniz/" + this.id + "/ws/1";
-        if (this._isIpAddress(this.id)) {
+        if (this.constructor.isIpAddress(this.id)) {
             url = `ws://${this.id}/`;
         }
         const query = [];
@@ -2766,7 +2924,7 @@ class ObnizConnection extends eventemitter3_1.default {
     /**
      * This function will be called before obniz.onconnect called;
      */
-    async _beforeOnConnect() { }
+    _beforeOnConnect() { }
     _callOnConnect() {
         let canChangeToConnected = true;
         if (this._waitForLocalConnectReadyTimer) {
@@ -2790,9 +2948,10 @@ class ObnizConnection extends eventemitter3_1.default {
             this.connectionState = "connected";
             this._beforeOnConnect();
             this.emit("connect", this);
+            let promise;
             if (typeof this.onconnect === "function") {
                 try {
-                    const promise = this.onconnect(this);
+                    promise = this.onconnect(this);
                     if (promise instanceof Promise) {
                         promise.catch((err) => {
                             setTimeout(() => {
@@ -2810,12 +2969,15 @@ class ObnizConnection extends eventemitter3_1.default {
             }
             this._onConnectCalled = true;
             this._startPingLoopInBackground();
-            this._startLoopInBackground();
+            if (promise instanceof Promise) {
+                promise.finally(() => {
+                    this._startLoopInBackground();
+                });
+            }
+            else {
+                this._startLoopInBackground();
+            }
         }
-    }
-    _isIpAddress(str) {
-        const regex = /^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$/;
-        return str.match(regex) !== null;
     }
     print_debug(str) {
         if (this.debugprint) {
@@ -2898,6 +3060,14 @@ class ObnizConnection extends eventemitter3_1.default {
             if (this.options.reset_obniz_on_ws_disconnection) {
                 this.resetOnDisconnect(true);
             }
+            if (wsObj.obniz.metadata) {
+                try {
+                    this.metadata = JSON.parse(wsObj.obniz.metadata);
+                }
+                catch (e) {
+                    // ignore parsing error.
+                }
+            }
             if (wsObj.local_connect &&
                 wsObj.local_connect.ip &&
                 this.wscommand &&
@@ -2962,9 +3132,9 @@ class ObnizConnection extends eventemitter3_1.default {
             this._nextLoopTimeout = undefined;
             if (this.connectionState === "connected") {
                 try {
-                    if (typeof this._looper === "function") {
+                    if (typeof this.onloop === "function") {
                         await this.pingWait();
-                        const prom = this._looper();
+                        const prom = this.onloop(this);
                         if (prom instanceof Promise) {
                             await prom;
                         }
@@ -2977,7 +3147,11 @@ class ObnizConnection extends eventemitter3_1.default {
                 finally {
                     if (this.connectionState === "connected") {
                         if (!this._nextLoopTimeout) {
-                            this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), this._repeatInterval || 100);
+                            let interval = this._repeatInterval;
+                            if (typeof this.onloop !== "function") {
+                                interval = 100;
+                            }
+                            this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), interval);
                         }
                     }
                 }
@@ -3234,6 +3408,7 @@ exports.default = ObnizDevice;
  * @module ObnizCore.Errors
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+// tslint:disable:max-classes-per-file
 class ObnizError extends Error {
     constructor(code, e) {
         super(e);
@@ -3503,6 +3678,7 @@ class ObnizParts extends ObnizConnection_1.default {
     /**
      * Register Parts class
      * @param arg0 Parts class
+     * @param arg1 param for parts
      */
     static PartsRegistrate(arg0, arg1) {
         if (arg0 && typeof arg0.info === "function" && typeof arg0.info().name === "string") {
@@ -3514,7 +3690,7 @@ class ObnizParts extends ObnizConnection_1.default {
     }
     /**
      * Get parts class.
-     * @param string
+     * @param name string
      * @constructor
      */
     static getPartsClass(name) {
@@ -3535,7 +3711,7 @@ class ObnizParts extends ObnizConnection_1.default {
     }
     /**
      * Check the param is valid ad pin no.
-     * @param io
+     * @param ad
      */
     isValidAD(ad) {
         return typeof ad === "number" && this["ad" + ad] !== null;
@@ -3543,13 +3719,13 @@ class ObnizParts extends ObnizConnection_1.default {
     /**
      * Setup Parts of parts library
      *
-     * @param partsname
+     * @param partsName
      * @param options
      */
-    wired(partsname, options) {
-        const Parts = ObnizParts.getPartsClass(partsname);
+    wired(partsName, options) {
+        const Parts = ObnizParts.getPartsClass(partsName);
         if (!Parts) {
-            throw new Error("No such a parts [" + partsname + "] found");
+            throw new Error("No such a parts [" + partsName + "] found");
         }
         const parts = new Parts();
         const args = Array.from(arguments);
@@ -3562,7 +3738,7 @@ class ObnizParts extends ObnizConnection_1.default {
             if (parts.requiredKeys) {
                 const err = util_1.default._requiredKeys(args[1], parts.requiredKeys);
                 if (err) {
-                    throw new Error(partsname + " wired param '" + err + "' required, but not found ");
+                    throw new Error(partsName + " wired param '" + err + "' required, but not found ");
                 }
             }
             parts.params = util_1.default._keyFilter(args[1], parts.keys);
@@ -3571,7 +3747,7 @@ class ObnizParts extends ObnizConnection_1.default {
         parts.wired.apply(parts, args);
         if (parts.keys || parts.ioKeys) {
             const keys = parts.ioKeys || parts.keys;
-            const displayPartsName = parts.displayName || partsname;
+            const displayPartsName = parts.displayName || partsName;
             const ioNames = {};
             for (const index in keys) {
                 let pinName = keys[index];
@@ -3620,6 +3796,16 @@ class ObnizPartsBleInterface {
         let val = (high << 8) | low;
         if ((val & 0x8000) !== 0) {
             val = val - 0x10000;
+        }
+        return val;
+    }
+    /**
+     * Utility function for reading 4 byte to signed number.
+     */
+    static signed32FromBinary(byte3, byte2, byte1, byte0) {
+        let val = (byte3 << (8 * 3)) | (byte2 << (8 * 2)) | (byte1 << (8 * 1)) | byte0;
+        if ((val & 0x80000000) !== 0) {
+            val = val - 0x100000000;
         }
         return val;
     }
@@ -3973,33 +4159,12 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
     constructor(id, options) {
         super(id, options);
     }
-    /**
-     * This closes the current connection.
-     * You need to set auto_connect to false. Otherwise the connection will be recovered.
-     *
-     * ```javascript
-     * var obniz = new Obniz('1234-5678', {
-     *   auto_connect: false,
-     *   reset_obniz_on_ws_disconnection: false
-     * });
-     *
-     * obniz.connect();
-     * obniz.onconnect = async function() {
-     *   obniz.io0.output(true);
-     *   obniz.close();
-     * }
-     * ```
-     */
-    close() {
-        super.close();
-        this.updateOnlineUI();
-    }
-    isValidObnizId(str) {
+    static isValidObnizId(str) {
         if (typeof str !== "string") {
             return false;
         }
         // IP => accept
-        if (this._isIpAddress(str)) {
+        if (this.isIpAddress(str)) {
             return true;
         }
         // Serial Number 'sn_***'
@@ -4017,9 +4182,13 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
         }
         return id !== null;
     }
+    _close() {
+        super._close();
+        this.updateOnlineUI();
+    }
     wsconnect(desired_server) {
         this.showOffLine();
-        if (!this.isValidObnizId(this.id)) {
+        if (!this.constructor.isValidObnizId(this.id)) {
             if (this.isNode || !this.options.obnizid_dialog) {
                 this.error({ alert: "error", message: "invalid obniz id" });
             }
@@ -4272,62 +4441,7 @@ function _ReadCookie(name) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(__dirname) {
-/**
- * @packageDocumentation
- * @module ObnizCore
- */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-const m5stack_basic_1 = __webpack_require__("./dist/src/obniz/libs/hw/m5stack_basic.js");
-const m5stickc_1 = __webpack_require__("./dist/src/obniz/libs/hw/m5stickc.js");
-const ObnizApi_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApi.js"));
-const ObnizApp_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApp.js"));
-const ObnizDevice_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizDevice.js"));
-/**
- * obniz class is the abstract version of obniz Board hardware within JavaScript.
- *
- * By providing obniz id and instantiating it, you can control obniz Board and the connected parts
- * without the details of websocket api.
- *
- *
- * ### obnizOS version and obniz.js version
- *
- * obniz cloud compare your obniz.js version and target device obnizOS version.
- * If your js sdk major number is below from OS version (eg obniz.js is 2.0.0 and obnizOS is 3.0.0) then obniz cloud will alert when connection established.
- * It will work somehow but some functions looses compatibility.
- *
- * ### one device from two program
- *
- * obniz cloud accept multiple websocket connection from multiple obniz.js at same time.
- * every commands from obniz.js will passed to a device and every command from a device will be dispatched to every obniz.js connected to the cloud.
- *
- * But If one of obniz.js established a connection to a device, then target device will send datas only via local connect. So other connected obniz.js only can send datas and never receive datas from a device.
- *
- * If you'd like to receive, you need to specify `local_connect: false` at all of obniz.js to disable local connect.
- *
- */
-class Obniz extends ObnizDevice_1.default {
-    /**
-     * obniz REST api class
-     * @returns {ObnizApi}
-     */
-    static get api() {
-        return ObnizApi_1.default;
-    }
-    /**
-     * App Support class
-     * @returns {ObnizApp}
-     */
-    static get App() {
-        return ObnizApp_1.default;
-    }
-}
-/**
- * M5StickC device
- */
-Obniz.M5StickC = m5stickc_1.M5StickC;
-Obniz.M5StackBasic = m5stack_basic_1.M5StackBasic;
+const Obniz_1 = __webpack_require__("./dist/src/obniz/Obniz.js");
 /*===================*/
 /* Utils */
 /*===================*/
@@ -4371,14 +4485,14 @@ const context = __webpack_require__("./dist/src/parts sync recursive \\.js$");
 for (const path of context.keys()) {
     const anParts = context(path);
     if (anParts.info) {
-        Obniz.PartsRegistrate(anParts);
+        Obniz_1.Obniz.PartsRegistrate(anParts);
     }
     else if (anParts.default.info) {
         // for ts "export default"
-        Obniz.PartsRegistrate(anParts.default);
+        Obniz_1.Obniz.PartsRegistrate(anParts.default);
     }
 }
-module.exports = Obniz;
+module.exports = Obniz_1.Obniz;
 
 /* WEBPACK VAR INJECTION */}.call(this, "/"))
 
@@ -4809,17 +4923,18 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * }
      * ```
      *
-     * @param uuid peripheral device address
+     * @param address peripheral device address
      * @param addressType "random" or "public"
+     *
+     * @deprecated replaced by {@link #directConnectWait()}
      */
-    directConnect(uuid, addressType) {
-        let peripheral = this.findPeripheral(uuid);
-        if (!peripheral) {
-            peripheral = new bleRemotePeripheral_1.default(this, uuid);
-            this.remotePeripherals.push(peripheral);
-        }
-        this.centralBindings.addPeripheralData(uuid, addressType);
-        peripheral.connect();
+    directConnect(address, addressType) {
+        // noinspection JSIgnoredPromiseFromCall
+        this.directConnectWait(address, addressType).catch((e) => {
+            // background
+            this.Obniz.error(e);
+        });
+        const peripheral = this.findPeripheral(address);
         return peripheral;
     }
     /**
@@ -4843,7 +4958,12 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * @param addressType "random" or "public"
      */
     async directConnectWait(address, addressType) {
-        const peripheral = this.directConnect(address, addressType);
+        let peripheral = this.findPeripheral(address);
+        if (!peripheral) {
+            peripheral = new bleRemotePeripheral_1.default(this, address);
+            this.remotePeripherals.push(peripheral);
+        }
+        this.centralBindings.addPeripheralData(address, addressType);
         await peripheral.connectWait();
         return peripheral;
     }
@@ -5010,11 +5130,15 @@ class BleAdvertisement {
         await this.obnizBle.peripheralBindings.startAdvertisingWithEIRDataWait(Buffer.from(this.adv_data), Buffer.from(this.scan_resp));
     }
     /**
-     * @deprecated
+     * @deprecated  replaced by {@link #startWait()}
      */
     start() {
         this.obnizBle.warningIfNotInitialize();
-        this.startWait(); // background
+        // noinspection JSIgnoredPromiseFromCall
+        this.startWait().catch((e) => {
+            // background
+            this.obnizBle.Obniz.error(e);
+        });
     }
     /**
      * This stops advertisement of BLE.
@@ -5031,10 +5155,14 @@ class BleAdvertisement {
         await this.obnizBle.peripheralBindings.stopAdvertisingWait();
     }
     /**
-     *  @deprecated
+     *  @deprecated  replaced by {@link #endWait()}
      */
     end() {
-        this.endWait(); // background
+        // noinspection JSIgnoredPromiseFromCall
+        this.endWait().catch((e) => {
+            // background
+            this.obnizBle.Obniz.error(e);
+        });
     }
     /**
      * This sets advertise data from data array.
@@ -6005,7 +6133,7 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
     }
     /**
      * @ignore
-     * @param dataArray
+     * @return dataArray
      */
     async readWait() {
         this.notifyFromServer("onread", { data: this.data });
@@ -6027,6 +6155,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const bleLocalAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalAttributeAbstract.js"));
 /**
  * @category Use as Peripheral
@@ -6078,7 +6210,7 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
         this.emitter.emit(notifyName, params);
         switch (notifyName) {
             case "onwritefromremote": {
-                this._runUserCreatedFunction(this.onwritefromremote, params.address, params.data);
+                this._runUserCreatedFunction(this.onwritefromremote, params.address, Array.from(params.data));
                 break;
             }
             case "onreadfromremote": {
@@ -6458,8 +6590,10 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * ```
      *
      * @param callback
+     * @deprecated  replaced by {@link #registerNotifyWait()}
      */
     registerNotify(callback) {
+        // noinspection JSIgnoredPromiseFromCall
         this.registerNotifyWait(callback); // background
     }
     /**
@@ -6518,8 +6652,11 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * });
      *
      * ```
+     *
+     * @deprecated  replaced by {@link #unregisterNotifyWait()}
      */
     unregisterNotify() {
+        // noinspection JSIgnoredPromiseFromCall
         this.unregisterNotifyWait(); // background
     }
     /**
@@ -6884,6 +7021,7 @@ class BleRemotePeripheral {
          * @ignore
          */
         this.discoverdOnRemote = undefined;
+        this.keys = ["device_type", "address_type", "ble_event_type", "rssi", "adv_data", "scan_resp"];
         this.obnizBle = obnizBle;
         this.address = address;
         this.connected = false;
@@ -6895,7 +7033,6 @@ class BleRemotePeripheral {
         this.scan_resp = null;
         this.localName = null;
         this.iBeacon = null;
-        this.keys = ["device_type", "address_type", "ble_event_type", "rssi", "adv_data", "scan_resp"];
         this._services = [];
         this.emitter = new eventemitter3_1.default();
     }
@@ -6960,6 +7097,7 @@ class BleRemotePeripheral {
      *  @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
      */
     connect(setting) {
+        // noinspection JSIgnoredPromiseFromCall
         this.connectWait(setting); // background
     }
     /**
@@ -7057,9 +7195,10 @@ class BleRemotePeripheral {
         this.emitter.emit("connect");
     }
     /**
-     *  @deprecated
+     *  @deprecated replaced by {@link #disconnectWait()}
      */
     disconnect() {
+        // noinspection JSIgnoredPromiseFromCall
         this.disconnectWait(); // background
     }
     /**
@@ -7091,10 +7230,10 @@ class BleRemotePeripheral {
      */
     disconnectWait() {
         return new Promise((resolve, reject) => {
-            // if (!this.connected) {
-            //   resolve();
-            //   return;
-            // }
+            if (!this.connected) {
+                resolve();
+                return;
+            }
             this.emitter.once("statusupdate", (params) => {
                 clearTimeout(timeoutTimer);
                 if (params.status === "disconnected") {
@@ -7545,8 +7684,10 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
     }
     /**
      * @ignore
+     * @deprecated  replaced by {@link #discoverAllCharacteristicsWait()}
      */
     discoverAllCharacteristics() {
+        // noinspection JSIgnoredPromiseFromCall
         this.discoverAllCharacteristicsWait(); // background
     }
     /**
@@ -7666,7 +7807,7 @@ class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.defau
      *
      * It throws an error when failed.
      *
-     * @param val
+     * @return val
      */
     readNumberWait() {
         return super.readNumberWait();
@@ -7677,6 +7818,7 @@ class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.defau
      *
      * It throws an error when failed.
      * @param str
+     * @param needResponse
      */
     writeTextWait(str, needResponse) {
         return super.writeTextWait(str, needResponse);
@@ -7688,6 +7830,7 @@ class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.defau
      * It throws an error when failed.
      *
      * @param val
+     * @param needResponse
      */
     writeNumberWait(val, needResponse) {
         return super.writeNumberWait(val, needResponse);
@@ -7852,7 +7995,7 @@ class BleScan {
         return new Promise((resolve, reject) => {
             this.emitter.once("onfind", async (peripheral, error) => {
                 if (error) {
-                    assert_1.rejects(error);
+                    reject(error);
                     return;
                 }
                 resolve(peripheral);
@@ -8184,7 +8327,6 @@ class BleScan {
             return false;
         }
         return true; // cannot detect on obnizjs
-        return false;
     }
     isUuidTarget(peripheral) {
         if (!this.scanTarget.uuids || this.scanTarget.uuids.length === 0) {
@@ -8449,6 +8591,7 @@ class ObnizBLEHci {
      * @ignore
      * @private
      * @param promise
+     * @param option
      * @param option.timeout Timeout number in seconds. If not specified. default timeout is applied. If null specified, never timeout.
      * @param option.waitingFor Readable description of command for waiting. Printed when Error or timeout occured.
      */
@@ -8597,13 +8740,11 @@ class AclStream extends eventemitter3_1.default {
         this._smp.on("end", this.onSmpEndBinded);
     }
     async encryptWait(options) {
-        let encrpytResult = null;
-        encrpytResult = await this._smp.pairingWait(options);
+        const encrpytResult = await this._smp.pairingWait(options);
         return encrpytResult;
     }
     setEncryptOption(options) {
-        let encrpytResult = null;
-        encrpytResult = this._smp.setPairingOption(options);
+        const encrpytResult = this._smp.setPairingOption(options);
         return encrpytResult;
     }
     write(cid, data) {
@@ -8739,19 +8880,19 @@ class NobleBindings extends eventemitter3_1.default {
             .catch((error) => {
             // nothing
         })
+            .then(async () => {
+            const conResult = await this._hci.createLeConnWait(address, addressType, 90 * 1000, (result) => {
+                // on connect success
+                this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
+                if (onConnectCallback && typeof onConnectCallback === "function") {
+                    onConnectCallback();
+                }
+            }); // connection timeout for 90 secs.
+            return await this._gatts[conResult.handle].exchangeMtuWait(256);
+        })
             .then(() => {
-            return this._hci.createLeConnWait(address, addressType, 90 * 1000); // connection timeout for 90 secs.
-        })
-            .then((result) => {
-            this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
-            if (onConnectCallback && typeof onConnectCallback === "function") {
-                onConnectCallback();
-            }
-            return this._gatts[result.handle].exchangeMtuWait(256);
-        })
-            .then((result) => {
             this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
-            return Promise.resolve(result);
+            return Promise.resolve();
         }, (error) => {
             this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
             return Promise.reject(error);
@@ -8910,13 +9051,11 @@ class NobleBindings extends eventemitter3_1.default {
     }
     async discoverDescriptorsWait(peripheralUuid, serviceUuid, characteristicUuid) {
         const gatt = this.getGatt(peripheralUuid);
-        const descriptors = await gatt.discoverDescriptorsWait(serviceUuid, characteristicUuid);
-        return descriptors;
+        return await gatt.discoverDescriptorsWait(serviceUuid, characteristicUuid);
     }
     async readValueWait(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid) {
         const gatt = this.getGatt(peripheralUuid);
-        const resp = await gatt.readValueWait(serviceUuid, characteristicUuid, descriptorUuid);
-        return resp;
+        return await gatt.readValueWait(serviceUuid, characteristicUuid, descriptorUuid);
     }
     async writeValueWait(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data) {
         const gatt = this.getGatt(peripheralUuid);
@@ -8938,8 +9077,15 @@ class NobleBindings extends eventemitter3_1.default {
             .toLowerCase();
         this.emit("handleNotify", uuid, handle, data);
     }
-    async onConnectionParameterUpdateWait(handle, minInterval, maxInterval, latency, supervisionTimeout) {
-        await this._hci.connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout);
+    onConnectionParameterUpdateWait(handle, minInterval, maxInterval, latency, supervisionTimeout) {
+        this._hci
+            .connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout)
+            .then(() => { })
+            .catch((e) => {
+            // TODO:
+            // This must passed to Obniz class.
+            console.error(e);
+        });
         // this.onLeConnUpdateComplete(); is nop
     }
     async pairingWait(peripheralUuid, options) {
@@ -8948,7 +9094,7 @@ class NobleBindings extends eventemitter3_1.default {
         const result = await gatt.encryptWait(options);
         return result;
     }
-    async setPairingOption(peripheralUuid, options) {
+    setPairingOption(peripheralUuid, options) {
         options = options || {};
         const gatt = this.getGatt(peripheralUuid);
         gatt.setEncryptOption(options);
@@ -9043,6 +9189,12 @@ exports.default = {
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
+// let debug = require('debug')('gap');
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -9546,6 +9698,7 @@ class Gatt extends eventemitter3_1.default {
                 for (i = 0; i < num; i++) {
                     characteristics.push({
                         startHandle: data.readUInt16LE(2 + i * type + 0),
+                        endHandle: 0,
                         properties: data.readUInt8(2 + i * type + 2),
                         valueHandle: data.readUInt16LE(2 + i * type + 3),
                         uuid: type === 7
@@ -9716,6 +9869,8 @@ class Gatt extends eventemitter3_1.default {
             }
             startHandle = descriptors[descriptors.length - 1].handle + 1;
         }
+        // never reached
+        return [];
     }
     async readValueWait(serviceUuid, characteristicUuid, descriptorUuid) {
         const descriptor = this.getDescriptor(serviceUuid, characteristicUuid, descriptorUuid);
@@ -10665,7 +10820,7 @@ class Hci extends eventemitter3_1.default {
         const data = await p;
         return data.status;
     }
-    async createLeConnWait(address, addressType, timeout = 90 * 1000) {
+    async createLeConnWait(address, addressType, timeout = 90 * 1000, onConnectCallback) {
         const cmd = Buffer.alloc(29);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -10673,25 +10828,25 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(0x19, 3);
         // data
-        cmd.writeUInt16LE(0x0060, 4); // interval
-        cmd.writeUInt16LE(0x0030, 6); // window
+        cmd.writeUInt16LE(0x0010, 4); // interval
+        cmd.writeUInt16LE(0x0010, 6); // window
         cmd.writeUInt8(0x00, 8); // initiator filter
         cmd.writeUInt8(addressType === "random" ? 0x01 : 0x00, 9); // peer address type
         bleHelper_1.default.hex2reversedBuffer(address, ":").copy(cmd, 10); // peer address
         cmd.writeUInt8(0x00, 16); // own address type
-        cmd.writeUInt16LE(0x0006, 17); // min interval
-        cmd.writeUInt16LE(0x000c, 19); // max interval
-        cmd.writeUInt16LE(0x0000, 21); // latency
-        cmd.writeUInt16LE(0x00c8, 23); // supervision timeout
-        cmd.writeUInt16LE(0x0004, 25); // min ce length
-        cmd.writeUInt16LE(0x0006, 27); // max ce length
+        cmd.writeUInt16LE(0x0009, 17); // min interval 9 * 1.25 msec => 7.5msec (close to android)
+        cmd.writeUInt16LE(0x0018, 19); // max interval 24 * 1.25 msec => 30msec (close to ios)
+        cmd.writeUInt16LE(0x0001, 21); // latency // cmd.writeUInt16LE(0x0000, 21);
+        cmd.writeUInt16LE(0x0190, 23); // supervision timeout 4sec // cmd.writeUInt16LE(0x00c8, 23);
+        cmd.writeUInt16LE(0x0000, 25); // min ce length
+        cmd.writeUInt16LE(0x0000, 27); // max ce length
         this.debug("create le conn - writing: " + cmd.toString("hex"));
         const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, {
             timeout,
         });
         this._socket.write(cmd);
         const { status, data } = await p;
-        return this.processLeConnComplete(status, data);
+        return this.processLeConnComplete(status, data, onConnectCallback);
     }
     async createLeConnCancelWait() {
         const cmd = Buffer.alloc(4);
@@ -11029,14 +11184,17 @@ class Hci extends eventemitter3_1.default {
             this.processLeAdvertisingReport(status, data);
         }
         else if (eventType === COMMANDS.EVT_LE_CONN_COMPLETE) {
-            this.processLeConnComplete(status, data);
+            const role = data.readUInt8(2);
+            if (role === 1) {
+                this.processLeConnComplete(status, data, undefined);
+            }
         }
         else if (eventType === COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE) {
             const { handle, interval, latency, supervisionTimeout } = this.processLeConnUpdateComplete(status, data);
             this.emit("leConnUpdateComplete", status, handle, interval, latency, supervisionTimeout);
         }
     }
-    processLeConnComplete(status, data) {
+    processLeConnComplete(status, data, onConnectCallback) {
         const handle = data.readUInt16LE(0);
         const role = data.readUInt8(2);
         const addressType = data.readUInt8(3) === 0x01 ? "random" : "public";
@@ -11058,7 +11216,7 @@ class Hci extends eventemitter3_1.default {
             // only slave, emit
             this.emit("leConnComplete", status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy);
         }
-        return {
+        const result = {
             status,
             handle,
             role,
@@ -11069,6 +11227,10 @@ class Hci extends eventemitter3_1.default {
             supervisionTimeout,
             masterClockAccuracy,
         };
+        if (typeof onConnectCallback === "function") {
+            onConnectCallback(result);
+        }
+        return result;
     }
     processLeAdvertisingReport(count, data) {
         for (let i = 0; i < count; i++) {
@@ -12203,7 +12365,7 @@ class Gatt extends eventemitter3_1.default {
             ", endHandle = 0x" +
             endHandle.toString(16) +
             ", uuid = 0x" +
-            uuid.toString(16));
+            uuid);
         if ("2800" === uuid || "2802" === uuid) {
             const services = [];
             const type = "2800" === uuid ? "service" : "includedService";
@@ -12264,7 +12426,7 @@ class Gatt extends eventemitter3_1.default {
             ", endHandle = 0x" +
             endHandle.toString(16) +
             ", uuid = 0x" +
-            uuid.toString(16));
+            uuid);
         if ("2803" === uuid) {
             const characteristics = [];
             for (i = startHandle; i <= endHandle; i++) {
@@ -12948,7 +13110,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
      * obniz.display.rect(0, 10, 10, 10, false)
      * ```
      *
-     * @param depth css acceptable color definition
+     * @param color css acceptable color definition
      */
     setColor(color) {
         this._color = color;
@@ -13601,7 +13763,7 @@ module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored\",\"peripherals\":{
 /***/ "./dist/src/obniz/libs/hw/encored_lte.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored_lte\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"18\":{},\"21\":{},\"25\":{},\"26\":{},\"33\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored_lte\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"25\":{},\"26\":{},\"33\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{},\"extraInterface\":{}}");
 
 /***/ }),
 
@@ -13685,7 +13847,7 @@ class M5StackBasic extends ObnizDevice_1.default {
     constructor(id, options) {
         super(id, options);
     }
-    async _beforeOnConnect() {
+    _beforeOnConnect() {
         super._beforeOnConnect();
         this.buttonA = this.wired("Button", { signal: 39 });
         this.buttonB = this.wired("Button", { signal: 38 });
@@ -13772,7 +13934,7 @@ class M5StickC extends ObnizDevice_1.default {
             return this.imu;
         });
     }
-    async _beforeOnConnect() {
+    _beforeOnConnect() {
         super._beforeOnConnect();
         if (this.ir) {
             // already wired parts
@@ -16225,8 +16387,8 @@ const _qrcode = (() => {
     // ---------------------------------------------------------------------
     /**
      * qrcode
-     * @param typeNumber 1 to 40
-     * @param errorCorrectionLevel 'L','M','Q','H'
+     * @param _typeNumber 1 to 40
+     * @param errorCorrectionLevelStr 'L','M','Q','H'
      */
     const qrcode = (_typeNumber, errorCorrectionLevelStr) => {
         const PAD0 = 0xec;
@@ -17799,7 +17961,7 @@ class ObnizUtil {
     /**
      * @ignore
      * @param data
-     * @param schema
+     * @param reverse
      */
     static hexToBinary(data, reverse = false) {
         const array = [];
@@ -20648,6 +20810,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandPlugin extends WSCommand_1.default {
     constructor() {
@@ -21877,6 +22043,7 @@ var map = {
 	"./Grove/Grove_EARTH/index.js": "./dist/src/parts/Grove/Grove_EARTH/index.js",
 	"./Grove/Grove_EarHeartRate/index.js": "./dist/src/parts/Grove/Grove_EarHeartRate/index.js",
 	"./Grove/Grove_GPS/index.js": "./dist/src/parts/Grove/Grove_GPS/index.js",
+	"./Grove/Grove_GestureSensor/index.js": "./dist/src/parts/Grove/Grove_GestureSensor/index.js",
 	"./Grove/Grove_JoyStick/index.js": "./dist/src/parts/Grove/Grove_JoyStick/index.js",
 	"./Grove/Grove_LightSensor/index.js": "./dist/src/parts/Grove/Grove_LightSensor/index.js",
 	"./Grove/Grove_MP3/index.js": "./dist/src/parts/Grove/Grove_MP3/index.js",
@@ -21884,6 +22051,7 @@ var map = {
 	"./Grove/Grove_RotaryAngleSensor/index.js": "./dist/src/parts/Grove/Grove_RotaryAngleSensor/index.js",
 	"./Grove/Grove_SoilMoistureSensor/index.js": "./dist/src/parts/Grove/Grove_SoilMoistureSensor/index.js",
 	"./Grove/Grove_Speaker/index.js": "./dist/src/parts/Grove/Grove_Speaker/index.js",
+	"./Grove/Grove_WaterLevelSensor/index.js": "./dist/src/parts/Grove/Grove_WaterLevelSensor/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./dist/src/parts/GyroSensor/ENC03R_Module/index.js",
 	"./Infrared/IRModule/index.js": "./dist/src/parts/Infrared/IRModule/index.js",
 	"./Infrared/IRSensor/index.js": "./dist/src/parts/Infrared/IRSensor/index.js",
@@ -22260,21 +22428,41 @@ class OMRON_2JCIE {
     }
     static isDevice(peripheral) {
         return ((peripheral.localName && peripheral.localName.indexOf("Env") >= 0) ||
-            (peripheral.localName && peripheral.localName.indexOf("IM") >= 0));
+            (peripheral.localName && peripheral.localName.indexOf("IM") >= 0) ||
+            (peripheral.localName && peripheral.localName.indexOf("Rbt") >= 0));
     }
     /**
      * Get a datas from advertisement mode of OMRON 2JCIE
      */
     static getData(peripheral) {
+        const adv_data = peripheral.adv_data;
         if (peripheral.localName && peripheral.localName.indexOf("IM") >= 0) {
-            const adv_data = peripheral.adv_data;
             return {
                 temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[8], adv_data[9]) * 0.01,
                 relative_humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[10], adv_data[11]) * 0.01,
                 light: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[12], adv_data[13]) * 1,
                 uv_index: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[14], adv_data[15]) * 0.01,
                 barometric_pressure: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[16], adv_data[17]) * 0.1,
-                soud_noise: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[18], adv_data[18]) * 0.01,
+                soud_noise: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[18], adv_data[19]) * 0.01,
+                acceleration_x: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[20], adv_data[21]),
+                acceleration_y: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[22], adv_data[23]),
+                acceleration_z: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[24], adv_data[25]),
+                battery: (adv_data[26] + 100) / 100,
+            };
+        }
+        else if (peripheral.localName &&
+            peripheral.localName.indexOf("Rbt") >= 0 &&
+            adv_data[6] === 0x02 &&
+            adv_data[6] === 0x02 &&
+            adv_data[7] === 0x01) {
+            return {
+                temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[10], adv_data[9]) * 0.01,
+                relative_humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[12], adv_data[11]) * 0.01,
+                light: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[14], adv_data[13]) * 1,
+                barometric_pressure: ObnizPartsBleInterface_1.default.signed32FromBinary(adv_data[18], adv_data[17], adv_data[16], adv_data[15]) * 0.001,
+                soud_noise: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[20], adv_data[19]) * 0.01,
+                etvoc: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[22], adv_data[21]),
+                eco2: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[24], adv_data[23]),
             };
         }
         return null;
@@ -23041,7 +23229,7 @@ const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/B
 const genericAccess_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/abstract/services/genericAccess.js"));
 class Logtta_CO2 {
     constructor(peripheral) {
-        if (!peripheral || !Logtta_CO2.isDevice(peripheral)) {
+        if (peripheral && !Logtta_CO2.isDevice(peripheral)) {
             throw new Error("peripheral is not Logtta CO2");
         }
         this._peripheral = peripheral;
@@ -23059,19 +23247,22 @@ class Logtta_CO2 {
             return false;
         }
         const data = peripheral.adv_data;
-        if (Logtta_CO2.getName(data) !== "CO2 Sensor") {
+        if (data[5] !== 0x10 ||
+            data[6] !== 0x05 ||
+            data[7] !== 0x02 ||
+            data[16] !== 0x43 ||
+            data[17] !== 0x4f ||
+            data[18] !== 0x32) {
+            // CompanyID, Apperance, "C" "O" "2"
             return false;
         }
         return true;
     }
     static getData(peripheral) {
-        if (peripheral.adv_data.length !== 31) {
+        if (!this.isAdvDevice(peripheral)) {
             return null;
         }
         const data = peripheral.adv_data;
-        if (Logtta_CO2.getName(data) !== "CO2 Sensor") {
-            return null;
-        }
         const alert = data[15];
         const interval = (data[13] << 8) | data[14];
         const advData = {
@@ -23211,19 +23402,17 @@ class Logtta_TH {
             return false;
         }
         const data = peripheral.adv_data;
-        if (Logtta_TH.getName(data) !== "TH Sensor") {
+        if (data[5] !== 0x10 || data[6] !== 0x05 || data[7] !== 0x01 || data[16] !== 0x54 || data[17] !== 0x48) {
+            // CompanyID, Apperance, "T" "H"
             return false;
         }
         return true;
     }
     static getData(peripheral) {
-        if (peripheral.adv_data.length !== 31) {
+        if (!this.isAdvDevice(peripheral)) {
             return null;
         }
         const data = peripheral.adv_data;
-        if (Logtta_TH.getName(data) !== "TH Sensor") {
-            return null;
-        }
         const alert = data[15];
         const interval = (data[13] << 8) | data[14];
         const advData = {
@@ -29778,7 +29967,7 @@ class SCBTGAAAC {
         const minor = (data[22] << 8) + data[23];
         const power = data[24];
         if (uuid === "5d490d6c-7eb9-474e-8160-45bde999119a" && major === 3) {
-            return `03-${minor}`;
+            return `03-${("00000" + minor).slice(-5)}`;
         }
         return null;
     }
@@ -38669,6 +38858,368 @@ exports.default = Grove_GPS;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Grove/Grove_GestureSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_GestureSensor
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_GestureSensor {
+    constructor() {
+        this.GESTURE_RIGHT = "GESTURE_RIGHT";
+        this.GESTURE_LEFT = "GESTURE_LEFT";
+        this.GESTURE_UP = "GESTURE_UP";
+        this.GESTURE_DOWN = "GESTURE_DOWN";
+        this.GESTURE_FORWARD = "GESTURE_FORWARD";
+        this.GESTURE_BACKWARD = "GESTURE_BACKWARD";
+        this.GESTURE_CLOCKWISE = "GESTURE_CLOCKWISE";
+        this.GESTURE_COUNT_CLOCKWISE = "GESTURE_COUNT_CLOCKWISE";
+        this.ic2Address = 0x73;
+        this.PAJ7620_ADDR_BASE = 0x00;
+        this.PAJ7620_REGITER_BANK_SEL = this.PAJ7620_ADDR_BASE + 0xef;
+        this.PAJ7620_BANK0 = 0 << 0;
+        this.PAJ7620_BANK1 = 1 << 0;
+        this.GES_RIGHT_FLAG = 1 << 0; // PAJ7620_VAL(1,0)
+        this.GES_LEFT_FLAG = 1 << 1; // PAJ7620_VAL(1,1)
+        this.GES_UP_FLAG = 1 << 2; // PAJ7620_VAL(1,2)
+        this.GES_DOWN_FLAG = 1 << 3; // PAJ7620_VAL(1,3)
+        this.GES_FORWARD_FLAG = 1 << 4; // PAJ7620_VAL(1,4)
+        this.GES_BACKWARD_FLAG = 1 << 5; // PAJ7620_VAL(1,5)
+        this.GES_CLOCKWISE_FLAG = 1 << 6; // PAJ7620_VAL(1,6)
+        this.GES_COUNT_CLOCKWISE_FLAG = 1 << 7; // PAJ7620_VAL(1,7)
+        this.GES_WAVE_FLAG = 1 << 8; // PAJ7620_VAL(1,0)
+        this.initRegisterArray = [
+            [0xef, 0x00],
+            [0x32, 0x29],
+            [0x33, 0x01],
+            [0x34, 0x00],
+            [0x35, 0x01],
+            [0x36, 0x00],
+            [0x37, 0x07],
+            [0x38, 0x17],
+            [0x39, 0x06],
+            [0x3a, 0x12],
+            [0x3f, 0x00],
+            [0x40, 0x02],
+            [0x41, 0xff],
+            [0x42, 0x01],
+            [0x46, 0x2d],
+            [0x47, 0x0f],
+            [0x48, 0x3c],
+            [0x49, 0x00],
+            [0x4a, 0x1e],
+            [0x4b, 0x00],
+            [0x4c, 0x20],
+            [0x4d, 0x00],
+            [0x4e, 0x1a],
+            [0x4f, 0x14],
+            [0x50, 0x00],
+            [0x51, 0x10],
+            [0x52, 0x00],
+            [0x5c, 0x02],
+            [0x5d, 0x00],
+            [0x5e, 0x10],
+            [0x5f, 0x3f],
+            [0x60, 0x27],
+            [0x61, 0x28],
+            [0x62, 0x00],
+            [0x63, 0x03],
+            [0x64, 0xf7],
+            [0x65, 0x03],
+            [0x66, 0xd9],
+            [0x67, 0x03],
+            [0x68, 0x01],
+            [0x69, 0xc8],
+            [0x6a, 0x40],
+            [0x6d, 0x04],
+            [0x6e, 0x00],
+            [0x6f, 0x00],
+            [0x70, 0x80],
+            [0x71, 0x00],
+            [0x72, 0x00],
+            [0x73, 0x00],
+            [0x74, 0xf0],
+            [0x75, 0x00],
+            [0x80, 0x42],
+            [0x81, 0x44],
+            [0x82, 0x04],
+            [0x83, 0x20],
+            [0x84, 0x20],
+            [0x85, 0x00],
+            [0x86, 0x10],
+            [0x87, 0x00],
+            [0x88, 0x05],
+            [0x89, 0x18],
+            [0x8a, 0x10],
+            [0x8b, 0x01],
+            [0x8c, 0x37],
+            [0x8d, 0x00],
+            [0x8e, 0xf0],
+            [0x8f, 0x81],
+            [0x90, 0x06],
+            [0x91, 0x06],
+            [0x92, 0x1e],
+            [0x93, 0x0d],
+            [0x94, 0x0a],
+            [0x95, 0x0a],
+            [0x96, 0x0c],
+            [0x97, 0x05],
+            [0x98, 0x0a],
+            [0x99, 0x41],
+            [0x9a, 0x14],
+            [0x9b, 0x0a],
+            [0x9c, 0x3f],
+            [0x9d, 0x33],
+            [0x9e, 0xae],
+            [0x9f, 0xf9],
+            [0xa0, 0x48],
+            [0xa1, 0x13],
+            [0xa2, 0x10],
+            [0xa3, 0x08],
+            [0xa4, 0x30],
+            [0xa5, 0x19],
+            [0xa6, 0x10],
+            [0xa7, 0x08],
+            [0xa8, 0x24],
+            [0xa9, 0x04],
+            [0xaa, 0x1e],
+            [0xab, 0x1e],
+            [0xcc, 0x19],
+            [0xcd, 0x0b],
+            [0xce, 0x13],
+            [0xcf, 0x64],
+            [0xd0, 0x21],
+            [0xd1, 0x0f],
+            [0xd2, 0x88],
+            [0xe0, 0x01],
+            [0xe1, 0x04],
+            [0xe2, 0x41],
+            [0xe3, 0xd6],
+            [0xe4, 0x00],
+            [0xe5, 0x0c],
+            [0xe6, 0x0a],
+            [0xe7, 0x00],
+            [0xe8, 0x00],
+            [0xe9, 0x00],
+            [0xee, 0x07],
+            [0xef, 0x01],
+            [0x00, 0x1e],
+            [0x01, 0x1e],
+            [0x02, 0x0f],
+            [0x03, 0x10],
+            [0x04, 0x02],
+            [0x05, 0x00],
+            [0x06, 0xb0],
+            [0x07, 0x04],
+            [0x08, 0x0d],
+            [0x09, 0x0e],
+            [0x0a, 0x9c],
+            [0x0b, 0x04],
+            [0x0c, 0x05],
+            [0x0d, 0x0f],
+            [0x0e, 0x02],
+            [0x0f, 0x12],
+            [0x10, 0x02],
+            [0x11, 0x02],
+            [0x12, 0x00],
+            [0x13, 0x01],
+            [0x14, 0x05],
+            [0x15, 0x07],
+            [0x16, 0x05],
+            [0x17, 0x07],
+            [0x18, 0x01],
+            [0x19, 0x04],
+            [0x1a, 0x05],
+            [0x1b, 0x0c],
+            [0x1c, 0x2a],
+            [0x1d, 0x01],
+            [0x1e, 0x00],
+            [0x21, 0x00],
+            [0x22, 0x00],
+            [0x23, 0x00],
+            [0x25, 0x01],
+            [0x26, 0x00],
+            [0x27, 0x39],
+            [0x28, 0x7f],
+            [0x29, 0x08],
+            [0x30, 0x03],
+            [0x31, 0x00],
+            [0x32, 0x1a],
+            [0x33, 0x1a],
+            [0x34, 0x07],
+            [0x35, 0x07],
+            [0x36, 0x01],
+            [0x37, 0xff],
+            [0x38, 0x36],
+            [0x39, 0x07],
+            [0x3a, 0x00],
+            [0x3e, 0xff],
+            [0x3f, 0x00],
+            [0x40, 0x77],
+            [0x41, 0x40],
+            [0x42, 0x00],
+            [0x43, 0x30],
+            [0x44, 0xa0],
+            [0x45, 0x5c],
+            [0x46, 0x00],
+            [0x47, 0x00],
+            [0x48, 0x58],
+            [0x4a, 0x1e],
+            [0x4b, 0x1e],
+            [0x4c, 0x00],
+            [0x4d, 0x00],
+            [0x4e, 0xa0],
+            [0x4f, 0x80],
+            [0x50, 0x00],
+            [0x51, 0x00],
+            [0x52, 0x00],
+            [0x53, 0x00],
+            [0x54, 0x00],
+            [0x57, 0x80],
+            [0x59, 0x10],
+            [0x5a, 0x08],
+            [0x5b, 0x94],
+            [0x5c, 0xe8],
+            [0x5d, 0x08],
+            [0x5e, 0x3d],
+            [0x5f, 0x99],
+            [0x60, 0x45],
+            [0x61, 0x40],
+            [0x63, 0x2d],
+            [0x64, 0x02],
+            [0x65, 0x96],
+            [0x66, 0x00],
+            [0x67, 0x97],
+            [0x68, 0x01],
+            [0x69, 0xcd],
+            [0x6a, 0x01],
+            [0x6b, 0xb0],
+            [0x6c, 0x04],
+            [0x6d, 0x2c],
+            [0x6e, 0x01],
+            [0x6f, 0x32],
+            [0x71, 0x00],
+            [0x72, 0x01],
+            [0x73, 0x35],
+            [0x74, 0x00],
+            [0x75, 0x33],
+            [0x76, 0x31],
+            [0x77, 0x01],
+            [0x7c, 0x84],
+            [0x7d, 0x03],
+            [0x7e, 0x01],
+        ];
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_GestureSensor",
+        };
+    }
+    onchange(value) { }
+    async wired(obniz) {
+        this.obniz = obniz;
+        const speed = 400000;
+        if (this.params.grove) {
+            this.i2c = this.params.grove.getI2c(speed, "5v");
+        }
+        else {
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            await obniz.wait(500);
+            this.params.mode = "master";
+            this.params.clock = speed;
+            this.params.pull = "5v";
+            this.i2c = this.obniz.getI2CWithConfig(this.params);
+        }
+        this.i2c.onerror = (err) => {
+            // console.log('Error:', err);
+        };
+        // await obniz.wait(700);
+        // wakeup check
+        await this.checkWakeUp();
+        // initRegister
+        await this.initRegister();
+        while (true) {
+            // get data
+            this.i2c.write(this.ic2Address, [0x43]);
+            const resArray = await this.i2c.readWait(this.ic2Address, 1);
+            const res = resArray[0];
+            // センサーの上を、上下左右に手を通過させると反応します。
+            if (this.onchange) {
+                if (this.GES_RIGHT_FLAG === res) {
+                    // console.log("GES_RIGHT_FLAG");
+                    this.onchange(this.GESTURE_RIGHT);
+                }
+                else if (this.GES_LEFT_FLAG === res) {
+                    // console.log("GES_LEFT_FLAG");
+                    this.onchange(this.GESTURE_LEFT);
+                }
+                else if (this.GES_UP_FLAG === res) {
+                    // console.log("GES_UP_FLAG");
+                    this.onchange(this.GESTURE_UP);
+                }
+                else if (this.GES_DOWN_FLAG === res) {
+                    // console.log("GES_DOWN_FLAG");
+                    this.onchange(this.GESTURE_DOWN);
+                }
+                else if (this.GES_FORWARD_FLAG === res) {
+                    // console.log("GES_FORWARD_FLAG");
+                    this.onchange(this.GESTURE_FORWARD);
+                }
+                else if (this.GES_BACKWARD_FLAG === res) {
+                    // console.log("GES_BACKWARD_FLAG");
+                    this.onchange(this.GESTURE_BACKWARD);
+                }
+                else if (this.GES_CLOCKWISE_FLAG === res) {
+                    // console.log("GES_CLOCKWISE_FLAG");
+                    this.onchange(this.GESTURE_CLOCKWISE);
+                }
+                else if (this.GES_COUNT_CLOCKWISE_FLAG === res) {
+                    // console.log("GES_COUNT_CLOCKWISE_FLAG");
+                    this.onchange(this.GESTURE_COUNT_CLOCKWISE);
+                }
+            }
+            await obniz.wait(1000);
+        }
+    }
+    async checkWakeUp() {
+        // wakeup check
+        this.i2c.write(this.ic2Address, [this.PAJ7620_REGITER_BANK_SEL, this.PAJ7620_BANK0]);
+        // 3.5.0 以降は try catch で捕らえる
+        let res = [0, 0];
+        try {
+            res = await this.i2c.readWait(this.ic2Address, 1);
+        }
+        catch (e) {
+            // console.log(e);
+        }
+        // 3.4.0、3.4.1 までは値が取れてうまくいく。3.5.0以降は上記の try catch で捕らえる。
+        if (res[0] === 0x20) {
+            // console.log("wake-up finish.");
+        }
+    }
+    async initRegister() {
+        // console.log("initRegister!!");
+        for (let i = 0; i < this.initRegisterArray.length; i++) {
+            this.i2c.write(this.ic2Address, this.initRegisterArray[i]);
+        }
+        // Set up gaming mode.
+        this.i2c.write(this.ic2Address, [this.PAJ7620_REGITER_BANK_SEL, this.PAJ7620_BANK1]);
+        // near mode 240 fps
+        this.i2c.write(this.ic2Address, [0x65, 0x12]);
+        this.i2c.write(this.ic2Address, [this.PAJ7620_REGITER_BANK_SEL, this.PAJ7620_BANK0]);
+    }
+}
+exports.default = Grove_GestureSensor;
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Grove/Grove_JoyStick/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -39064,6 +39615,93 @@ class Grove_Speaker {
     }
 }
 exports.default = Grove_Speaker;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_WaterLevelSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_WaterLevelSensor
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_WaterLevelSensor {
+    constructor() {
+        this.onchange = null;
+        this.keys = ["gnd", "vcc", "sda", "scl", "grove"];
+        this.requiredKeys = [];
+        this.ioKeys = this.keys;
+        this.displayName = "WaterLevel";
+        this.displayIoNames = { sda: "sda", scl: "scl" };
+        this.THRESHOLD = 100;
+        this.ATTINY1_HIGH_ADDR = 0x78;
+        this.ATTINY2_LOW_ADDR = 0x77;
+        this.check_interval_ms = 1000;
+        this.previous_val = 0;
+    }
+    static info() {
+        return {
+            name: "Grove_WaterLevelSensor",
+        };
+    }
+    async wired(obniz) {
+        // Grove_3AxisAccelerometer の I2C 参考
+        if (this.params.grove) {
+            this.i2c = this.params.grove.getI2c(400000, "5v");
+        }
+        else {
+            this.vcc = this.params.vcc;
+            this.gnd = this.params.gnd;
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.params.clock = 400000;
+            this.params.mode = "master";
+            this.i2c = obniz.getI2CWithConfig(this.params);
+        }
+        this.obniz.wait(100);
+        // power on
+        while (true) {
+            const current_val = await this.getWait();
+            if (current_val !== this.previous_val) {
+                if (this.onchange) {
+                    this.onchange(current_val);
+                }
+                this.previous_val = current_val;
+            }
+            this.obniz.wait(this.check_interval_ms);
+        }
+    }
+    // Grove_JoyStick 参考
+    async getWait() {
+        let water_level_mm;
+        const water_level_step = 5; // 5 mm step
+        const high_data = await this.i2c.readWait(this.ATTINY1_HIGH_ADDR, 12);
+        const low_data = await this.i2c.readWait(this.ATTINY2_LOW_ADDR, 8);
+        let i;
+        let touch_val = 0;
+        for (i = 0; i < 8; i++) {
+            if (low_data[i] > this.THRESHOLD) {
+                touch_val |= 1 << i;
+            }
+        }
+        for (i = 0; i < 12; i++) {
+            if (high_data[i] > this.THRESHOLD) {
+                touch_val |= 1 << (8 + i);
+            }
+        }
+        let trig_section = 0;
+        while (touch_val & 0x01) {
+            trig_section++;
+            touch_val >>= 1;
+        }
+        water_level_mm = trig_section * water_level_step;
+        return water_level_mm;
+    }
+}
+exports.default = Grove_WaterLevelSensor;
 
 
 /***/ }),

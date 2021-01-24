@@ -225,7 +225,7 @@ describe('11-tcp', function() {
         '\r\n\r\n'
     );
     jsData = bodyParser(jsData);
-    console.log(jsData);
+    // console.log(jsData);
     for (let i = 0; i < MAX_TCP_CONNECTION; i++) {
       tcpArray[i].write(
         'GET / HTTP/1.0\r\n' +
@@ -240,7 +240,7 @@ describe('11-tcp', function() {
       expect(boardData, 'tcp mult read connection : ' + i).to.deep.equals(
         jsData
       );
-      console.log(boardData);
+      // console.log(boardData);
     }
 
     await checkBoard.pingWait();

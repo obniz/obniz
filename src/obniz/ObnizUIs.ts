@@ -23,39 +23,13 @@ export default class ObnizUIs extends ObnizSystemMethods {
    */
   public static _promptCount: number = 0;
 
-  constructor(id: string, options?: ObnizOptions) {
-    super(id, options);
-  }
-
-  /**
-   * This closes the current connection.
-   * You need to set auto_connect to false. Otherwise the connection will be recovered.
-   *
-   * ```javascript
-   * var obniz = new Obniz('1234-5678', {
-   *   auto_connect: false,
-   *   reset_obniz_on_ws_disconnection: false
-   * });
-   *
-   * obniz.connect();
-   * obniz.onconnect = async function() {
-   *   obniz.io0.output(true);
-   *   obniz.close();
-   * }
-   * ```
-   */
-  public close() {
-    super.close();
-    this.updateOnlineUI();
-  }
-
-  protected isValidObnizId(str: string): boolean {
+  public static isValidObnizId(str: string): boolean {
     if (typeof str !== "string") {
       return false;
     }
 
     // IP => accept
-    if (this._isIpAddress(str)) {
+    if (this.isIpAddress(str)) {
       return true;
     }
 
@@ -76,9 +50,18 @@ export default class ObnizUIs extends ObnizSystemMethods {
     return id !== null;
   }
 
+  constructor(id: string, options?: ObnizOptions) {
+    super(id, options);
+  }
+
+  protected _close() {
+    super._close();
+    this.updateOnlineUI();
+  }
+
   protected wsconnect(desired_server: any) {
     this.showOffLine();
-    if (!this.isValidObnizId(this.id)) {
+    if (!(this.constructor as typeof ObnizUIs).isValidObnizId(this.id)) {
       if (this.isNode || !this.options.obnizid_dialog) {
         this.error({ alert: "error", message: "invalid obniz id" });
       } else {

@@ -1,12 +1,11 @@
 language: node_js
 node_js:
 - lts/*
+- '14'
 - '13'
 - '12'
 - '11'
 - '10'
-- '9'
-- '8'
 
 sudo: required
 addons:

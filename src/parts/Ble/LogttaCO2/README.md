@@ -267,10 +267,10 @@ await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 
 Returns the information of the device if it is found. Returns Null if the device was not found.
 
-- battery : battery voltage
+- battery : battery voltage(0-100)
 - address : MacAddress
-- co2 : co2 concentration
-- interval : transmission interval
+- co2 : co2 concentration(ppm)
+- interval : transmission interval(seconds)
 
 ```javascript
 // Javascript Example

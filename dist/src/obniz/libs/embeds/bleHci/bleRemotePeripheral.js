@@ -26,6 +26,7 @@ class BleRemotePeripheral {
          * @ignore
          */
         this.discoverdOnRemote = undefined;
+        this.keys = ["device_type", "address_type", "ble_event_type", "rssi", "adv_data", "scan_resp"];
         this.obnizBle = obnizBle;
         this.address = address;
         this.connected = false;
@@ -37,7 +38,6 @@ class BleRemotePeripheral {
         this.scan_resp = null;
         this.localName = null;
         this.iBeacon = null;
-        this.keys = ["device_type", "address_type", "ble_event_type", "rssi", "adv_data", "scan_resp"];
         this._services = [];
         this.emitter = new eventemitter3_1.default();
     }
@@ -102,6 +102,7 @@ class BleRemotePeripheral {
      *  @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
      */
     connect(setting) {
+        // noinspection JSIgnoredPromiseFromCall
         this.connectWait(setting); // background
     }
     /**
@@ -199,9 +200,10 @@ class BleRemotePeripheral {
         this.emitter.emit("connect");
     }
     /**
-     *  @deprecated
+     *  @deprecated replaced by {@link #disconnectWait()}
      */
     disconnect() {
+        // noinspection JSIgnoredPromiseFromCall
         this.disconnectWait(); // background
     }
     /**
@@ -233,10 +235,10 @@ class BleRemotePeripheral {
      */
     disconnectWait() {
         return new Promise((resolve, reject) => {
-            // if (!this.connected) {
-            //   resolve();
-            //   return;
-            // }
+            if (!this.connected) {
+                resolve();
+                return;
+            }
             this.emitter.once("statusupdate", (params) => {
                 clearTimeout(timeoutTimer);
                 if (params.status === "disconnected") {

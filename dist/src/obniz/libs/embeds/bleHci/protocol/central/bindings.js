@@ -79,19 +79,19 @@ class NobleBindings extends eventemitter3_1.default {
             .catch((error) => {
             // nothing
         })
+            .then(async () => {
+            const conResult = await this._hci.createLeConnWait(address, addressType, 90 * 1000, (result) => {
+                // on connect success
+                this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
+                if (onConnectCallback && typeof onConnectCallback === "function") {
+                    onConnectCallback();
+                }
+            }); // connection timeout for 90 secs.
+            return await this._gatts[conResult.handle].exchangeMtuWait(256);
+        })
             .then(() => {
-            return this._hci.createLeConnWait(address, addressType, 90 * 1000); // connection timeout for 90 secs.
-        })
-            .then((result) => {
-            this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
-            if (onConnectCallback && typeof onConnectCallback === "function") {
-                onConnectCallback();
-            }
-            return this._gatts[result.handle].exchangeMtuWait(256);
-        })
-            .then((result) => {
             this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
-            return Promise.resolve(result);
+            return Promise.resolve();
         }, (error) => {
             this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
             return Promise.reject(error);
@@ -250,13 +250,11 @@ class NobleBindings extends eventemitter3_1.default {
     }
     async discoverDescriptorsWait(peripheralUuid, serviceUuid, characteristicUuid) {
         const gatt = this.getGatt(peripheralUuid);
-        const descriptors = await gatt.discoverDescriptorsWait(serviceUuid, characteristicUuid);
-        return descriptors;
+        return await gatt.discoverDescriptorsWait(serviceUuid, characteristicUuid);
     }
     async readValueWait(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid) {
         const gatt = this.getGatt(peripheralUuid);
-        const resp = await gatt.readValueWait(serviceUuid, characteristicUuid, descriptorUuid);
-        return resp;
+        return await gatt.readValueWait(serviceUuid, characteristicUuid, descriptorUuid);
     }
     async writeValueWait(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data) {
         const gatt = this.getGatt(peripheralUuid);
@@ -278,8 +276,15 @@ class NobleBindings extends eventemitter3_1.default {
             .toLowerCase();
         this.emit("handleNotify", uuid, handle, data);
     }
-    async onConnectionParameterUpdateWait(handle, minInterval, maxInterval, latency, supervisionTimeout) {
-        await this._hci.connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout);
+    onConnectionParameterUpdateWait(handle, minInterval, maxInterval, latency, supervisionTimeout) {
+        this._hci
+            .connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout)
+            .then(() => { })
+            .catch((e) => {
+            // TODO:
+            // This must passed to Obniz class.
+            console.error(e);
+        });
         // this.onLeConnUpdateComplete(); is nop
     }
     async pairingWait(peripheralUuid, options) {
@@ -288,7 +293,7 @@ class NobleBindings extends eventemitter3_1.default {
         const result = await gatt.encryptWait(options);
         return result;
     }
-    async setPairingOption(peripheralUuid, options) {
+    setPairingOption(peripheralUuid, options) {
         options = options || {};
         const gatt = this.getGatt(peripheralUuid);
         gatt.setEncryptOption(options);

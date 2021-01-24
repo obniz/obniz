@@ -63,6 +63,7 @@ target device information
 |:---- |:---- |:---- |:---- |
 | `ws.obniz.hw` |  string  | <ul><li>required</li></ul> | Hardware Identifier String of target device&nbsp; |
 | `ws.obniz.firmware` |  string  | <ul><li>required</li></ul> | Installed firmware version of target device&nbsp; |
+| `ws.obniz.metadata` |  string  | &nbsp; | device metadata user set on cloud&nbsp; |
 
 
 
@@ -73,7 +74,8 @@ target device information
         "ws": {
             "obniz": {
                 "hw": "obnizb1",
-                "firmware": "2.0.0"
+                "firmware": "2.0.0",
+                "metadata": "{\"description\":\"At My Office\"}"
             }
         }
     }

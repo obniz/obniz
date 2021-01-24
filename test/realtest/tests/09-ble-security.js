@@ -50,12 +50,12 @@ describe('9-ble-security', function() {
     advDataFromService.localName = 'OBNIZ';
     checkBoard.ble.advertisement.setAdvData(advDataFromService);
     checkBoard.ble.advertisement.start();
-    console.error('start adv');
+    // console.error('start adv');
 
     let peripheral = await obnizA.ble.scan.startOneWait({
       uuids: [SPDIService.uuid],
     });
-    console.log(peripheral);
+    // console.log(peripheral);
     await peripheral.connectWait();
     await new Promise(r => {
       setTimeout(r, 1000);

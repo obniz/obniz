@@ -444,7 +444,7 @@ class Gatt extends eventemitter3_1.default {
             ", endHandle = 0x" +
             endHandle.toString(16) +
             ", uuid = 0x" +
-            uuid.toString(16));
+            uuid);
         if ("2800" === uuid || "2802" === uuid) {
             const services = [];
             const type = "2800" === uuid ? "service" : "includedService";
@@ -505,7 +505,7 @@ class Gatt extends eventemitter3_1.default {
             ", endHandle = 0x" +
             endHandle.toString(16) +
             ", uuid = 0x" +
-            uuid.toString(16));
+            uuid);
         if ("2803" === uuid) {
             const characteristics = [];
             for (i = startHandle; i <= endHandle; i++) {

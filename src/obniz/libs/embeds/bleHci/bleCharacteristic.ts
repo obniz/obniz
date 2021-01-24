@@ -3,9 +3,7 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 import BleDescriptor from "./bleDescriptor";
-import BleLocalAttributeAbstract from "./bleLocalAttributeAbstract";
 import BleLocalValueAttributeAbstract from "./bleLocalValueAttributeAbstract";
-import BleRemoteService from "./bleRemoteService";
 import BleService from "./bleService";
 import { BleAttributePropery, BleCharacteristicDefine, BleDescriptorDefine, BleDeviceAddress, UUID } from "./bleTypes";
 

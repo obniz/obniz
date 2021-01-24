@@ -37,7 +37,7 @@ export default class SCBTGAAAC implements ObnizPartsBleInterface {
     const minor: any = (data[22] << 8) + data[23];
     const power: any = data[24];
     if (uuid === "5d490d6c-7eb9-474e-8160-45bde999119a" && major === 3) {
-      return `03-${minor}`;
+      return `03-${("00000" + minor).slice(-5)}`;
     }
     return null;
   }

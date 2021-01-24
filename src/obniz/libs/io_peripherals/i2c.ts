@@ -4,7 +4,7 @@
  */
 
 import Obniz from "../../index";
-import { ObnizError, ObnizI2cError, ObnizI2cWarning } from "../../ObnizError";
+import { ObnizI2cError, ObnizI2cWarning } from "../../ObnizError";
 import { ComponentAbstract } from "../ComponentAbstact";
 import ObnizUtil from "../utils/util";
 import { PullType } from "./common";

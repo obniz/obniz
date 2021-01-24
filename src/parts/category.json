@@ -720,6 +720,20 @@
           "store": {
             "seedstudio": "https://www.seeedstudio.com/Grove-Speaker-p-1445.html"
           }
+        },
+        {
+          "name": "Grove_GestureSensor",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/2645/",
+            "seedstudio": "https://www.seeedstudio.com/Grove-Gesture-PAJ7620U2.html"
+          }
+        },
+        {
+          "name": "Grove_WaterLevelSensor",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/6282/",
+            "seedstudio": "https://www.seeedstudio.com/Grove-Water-Level-Sensor-10CM-p-4443.html"
+          }
         }
       ]
     },

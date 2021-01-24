@@ -31,6 +31,20 @@ export interface OMRON_2JCIE_AdvData {
   uv_index: number;
   barometric_pressure: number;
   soud_noise: number;
+  acceleration_x: number;
+  acceleration_y: number;
+  acceleration_z: number;
+  battery: number;
+}
+
+export interface OMRON_2JCIE_AdvSensorData {
+  temperature: number;
+  relative_humidity: number;
+  light: number;
+  barometric_pressure: number;
+  soud_noise: number;
+  etvoc: number;
+  eco2: number;
 }
 
 export default class OMRON_2JCIE implements ObnizPartsBleInterface {
@@ -43,23 +57,45 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
   public static isDevice(peripheral: BleRemotePeripheral) {
     return (
       (peripheral.localName && peripheral.localName.indexOf("Env") >= 0) ||
-      (peripheral.localName && peripheral.localName.indexOf("IM") >= 0)
+      (peripheral.localName && peripheral.localName.indexOf("IM") >= 0) ||
+      (peripheral.localName && peripheral.localName.indexOf("Rbt") >= 0)
     );
   }
 
   /**
    * Get a datas from advertisement mode of OMRON 2JCIE
    */
-  public static getData(peripheral: BleRemotePeripheral): OMRON_2JCIE_AdvData | null {
+  public static getData(peripheral: BleRemotePeripheral): OMRON_2JCIE_AdvData | OMRON_2JCIE_AdvSensorData | null {
+    const adv_data = peripheral.adv_data;
     if (peripheral.localName && peripheral.localName.indexOf("IM") >= 0) {
-      const adv_data = peripheral.adv_data;
       return {
         temperature: ObnizPartsBleInterface.signed16FromBinary(adv_data[8], adv_data[9]) * 0.01,
         relative_humidity: ObnizPartsBleInterface.signed16FromBinary(adv_data[10], adv_data[11]) * 0.01,
         light: ObnizPartsBleInterface.signed16FromBinary(adv_data[12], adv_data[13]) * 1,
         uv_index: ObnizPartsBleInterface.signed16FromBinary(adv_data[14], adv_data[15]) * 0.01,
         barometric_pressure: ObnizPartsBleInterface.signed16FromBinary(adv_data[16], adv_data[17]) * 0.1,
-        soud_noise: ObnizPartsBleInterface.signed16FromBinary(adv_data[18], adv_data[18]) * 0.01,
+        soud_noise: ObnizPartsBleInterface.signed16FromBinary(adv_data[18], adv_data[19]) * 0.01,
+        acceleration_x: ObnizPartsBleInterface.signed16FromBinary(adv_data[20], adv_data[21]),
+        acceleration_y: ObnizPartsBleInterface.signed16FromBinary(adv_data[22], adv_data[23]),
+        acceleration_z: ObnizPartsBleInterface.signed16FromBinary(adv_data[24], adv_data[25]),
+        battery: (adv_data[26] + 100) / 100,
+      };
+    } else if (
+      peripheral.localName &&
+      peripheral.localName.indexOf("Rbt") >= 0 &&
+      adv_data[6] === 0x02 &&
+      adv_data[6] === 0x02 &&
+      adv_data[7] === 0x01
+    ) {
+      return {
+        temperature: ObnizPartsBleInterface.signed16FromBinary(adv_data[10], adv_data[9]) * 0.01,
+        relative_humidity: ObnizPartsBleInterface.signed16FromBinary(adv_data[12], adv_data[11]) * 0.01,
+        light: ObnizPartsBleInterface.signed16FromBinary(adv_data[14], adv_data[13]) * 1,
+        barometric_pressure:
+          ObnizPartsBleInterface.signed32FromBinary(adv_data[18], adv_data[17], adv_data[16], adv_data[15]) * 0.001,
+        soud_noise: ObnizPartsBleInterface.signed16FromBinary(adv_data[20], adv_data[19]) * 0.01,
+        etvoc: ObnizPartsBleInterface.signed16FromBinary(adv_data[22], adv_data[21]),
+        eco2: ObnizPartsBleInterface.signed16FromBinary(adv_data[24], adv_data[23]),
       };
     }
     return null;

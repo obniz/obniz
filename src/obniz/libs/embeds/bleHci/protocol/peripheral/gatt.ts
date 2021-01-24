@@ -554,7 +554,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
         ", endHandle = 0x" +
         endHandle.toString(16) +
         ", uuid = 0x" +
-        uuid.toString(16),
+        uuid,
     );
 
     if ("2800" === uuid || "2802" === uuid) {
@@ -631,7 +631,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
         ", endHandle = 0x" +
         endHandle.toString(16) +
         ", uuid = 0x" +
-        uuid.toString(16),
+        uuid,
     );
 
     if ("2803" === uuid) {

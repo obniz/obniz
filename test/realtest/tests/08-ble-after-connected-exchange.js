@@ -69,16 +69,16 @@ describe('8-ble-exchange', function() {
     let ad = service.advData;
     obnizA.ble.advertisement.setAdvData(ad);
     obnizA.ble.advertisement.start();
-    console.log('service created');
+    // console.log('service created');
     await obnizA.pingWait();
-    console.log('scannning');
+    // console.log('scannning');
     let peripheral = await checkBoard.ble.scan.startOneWait({
       uuids: ['FFF0'],
     });
     if (!peripheral) {
       throw new Error('NOT FOUND');
     }
-    console.log('FOUND');
+    // console.log('FOUND');
 
     expect(obnizA.ble.advertisement.adv_data).to.be.deep.equal(
       peripheral.adv_data
@@ -204,7 +204,7 @@ describe('8-ble-exchange', function() {
     expect(chara.canRead()).to.be.equal(true);
     expect(chara.canNotify()).to.be.equal(false);
     expect(chara.canIndicate()).to.be.equal(false);
-    console.log('write');
+    // console.log('write');
     let isErrored = false;
     try {
       await chara.writeTextWait('hello');
@@ -212,10 +212,10 @@ describe('8-ble-exchange', function() {
       isErrored = true;
     }
     expect(isErrored).to.be.equal(true);
-    console.log('read');
+    // console.log('read');
     let data = await chara.readWait();
     expect(data).to.be.deep.equal([101, 51, 214]);
-    console.log('finished');
+    // console.log('finished');
   });
   //
   // it('read error', async () => {
@@ -232,7 +232,7 @@ describe('8-ble-exchange', function() {
   // });
 
   it('nofify', async () => {
-    console.log('start!');
+    // console.log('start!');
     let notifyed = false;
     let targetChara = this.peripheral
       .getService('FFF0')
@@ -245,21 +245,21 @@ describe('8-ble-exchange', function() {
 
     let p1 = new Promise(async resolve => {
       await targetChara.registerNotifyWait(function(data) {
-        console.log('notify!' + data.join(','));
+        // console.log('notify!' + data.join(','));
         if (data.length === 1 && data[0] === 92) {
           notifyed = true;
         }
         resolve();
       });
-      console.log('registerNotify');
+      // console.log('registerNotify');
       await checkBoard.pingWait();
       await obnizA.pingWait();
-      console.log('start notify');
+      // console.log('start notify');
       this.service.getCharacteristic('FFF3').notify();
     });
     let p2 = new Promise(function(resolve) {
       setTimeout(function() {
-        console.log('timeout!');
+        // console.log('timeout!');
         resolve();
       }, 20000);
     });
@@ -288,7 +288,7 @@ describe('8-ble-exchange', function() {
   it('close', async () => {
     let p = new Promise(resolve => {
       obnizA.ble.peripheral.onconnectionupdates = data => {
-        console.log('onconnectionupdates ' + data);
+        // console.log('onconnectionupdates ' + data);
         if (data.status === 'disconnected') {
           resolve();
         }
@@ -296,6 +296,6 @@ describe('8-ble-exchange', function() {
     });
     await this.peripheral.disconnectWait();
     await p;
-    console.log('disconnected');
+    // console.log('disconnected');
   });
 });

@@ -5,8 +5,6 @@
 
 // tslint:disable:max-classes-per-file
 
-import { deprecate } from "util";
-
 export class ObnizError extends Error {
   constructor(public code: number, e?: string) {
     super(e);

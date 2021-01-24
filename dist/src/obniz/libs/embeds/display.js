@@ -74,7 +74,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
      * obniz.display.rect(0, 10, 10, 10, false)
      * ```
      *
-     * @param depth css acceptable color definition
+     * @param color css acceptable color definition
      */
     setColor(color) {
         this._color = color;

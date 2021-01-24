@@ -32,20 +32,25 @@ export default class Logtta_CO2 implements ObnizPartsBleInterface {
       return false;
     }
     const data = peripheral.adv_data;
-    if (Logtta_CO2.getName(data) !== "CO2 Sensor") {
+    if (
+      data[5] !== 0x10 ||
+      data[6] !== 0x05 ||
+      data[7] !== 0x02 ||
+      data[16] !== 0x43 ||
+      data[17] !== 0x4f ||
+      data[18] !== 0x32
+    ) {
+      // CompanyID, Apperance, "C" "O" "2"
       return false;
     }
     return true;
   }
 
   public static getData(peripheral: BleRemotePeripheral): Logtta_CO2_Adv_Data | null {
-    if (peripheral.adv_data.length !== 31) {
+    if (!this.isAdvDevice(peripheral)) {
       return null;
     }
-    const data: number[] = peripheral.adv_data;
-    if (Logtta_CO2.getName(data) !== "CO2 Sensor") {
-      return null;
-    }
+    const data = peripheral.adv_data;
     const alert: number = data[15];
     const interval: number = (data[13] << 8) | data[14];
     const advData: Logtta_CO2_Adv_Data = {
@@ -79,7 +84,7 @@ export default class Logtta_CO2 implements ObnizPartsBleInterface {
   public batteryService?: BleBatteryService;
 
   constructor(peripheral: BleRemotePeripheral | null) {
-    if (!peripheral || !Logtta_CO2.isDevice(peripheral)) {
+    if (peripheral && !Logtta_CO2.isDevice(peripheral)) {
       throw new Error("peripheral is not Logtta CO2");
     }
     this._peripheral = peripheral;

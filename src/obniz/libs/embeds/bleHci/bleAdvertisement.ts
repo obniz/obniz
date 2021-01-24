@@ -5,7 +5,7 @@
 import ObnizBLE from "./ble";
 import Builder from "./bleAdvertisementBuilder";
 import BleAdvertisementBuilder from "./bleAdvertisementBuilder";
-import { BleAdvertisementData, BleScanResponseData, UUID } from "./bleTypes";
+import { BleAdvertisementData, BleScanResponseData } from "./bleTypes";
 
 /**
  * @category Use as Peripheral
@@ -56,11 +56,15 @@ export default class BleAdvertisement {
   }
 
   /**
-   * @deprecated
+   * @deprecated  replaced by {@link #startWait()}
    */
   public start() {
     this.obnizBle.warningIfNotInitialize();
-    this.startWait(); // background
+    // noinspection JSIgnoredPromiseFromCall
+    this.startWait().catch((e) => {
+      // background
+      this.obnizBle.Obniz.error(e);
+    });
   }
 
   /**
@@ -79,10 +83,14 @@ export default class BleAdvertisement {
   }
 
   /**
-   *  @deprecated
+   *  @deprecated  replaced by {@link #endWait()}
    */
   public end() {
-    this.endWait(); // background
+    // noinspection JSIgnoredPromiseFromCall
+    this.endWait().catch((e) => {
+      // background
+      this.obnizBle.Obniz.error(e);
+    });
   }
 
   /**
