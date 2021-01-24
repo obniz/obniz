@@ -113,6 +113,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.obnizconnection.html#hw" class="tsd-kind-icon">hw</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.obnizconnection.html#id" class="tsd-kind-icon">id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.obnizconnection.html#isnode" class="tsd-kind-icon">is<wbr>Node</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.obnizconnection.html#metadata" class="tsd-kind-icon">metadata</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.obnizconnection.html#onclose" class="tsd-kind-icon">onclose</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.obnizconnection.html#onconnect" class="tsd-kind-icon">onconnect</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.obnizconnection.html#onerror" class="tsd-kind-icon">onerror</a></li>
@@ -147,6 +148,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.obnizconnection.html#removelistener" class="tsd-kind-icon">remove<wbr>Listener</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.obnizconnection.html#repeat" class="tsd-kind-icon">repeat</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.obnizconnection.html#send" class="tsd-kind-icon">send</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="obnizcore.obnizconnection.html#isipaddress" class="tsd-kind-icon">is<wbr>IpAddress</a></li>
 							</ul>
 						</section>
 					</div>
@@ -164,7 +166,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/ObnizConnection.ts:211</li>
+									<li>Defined in src/obniz/ObnizConnection.ts:229</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -189,7 +191,7 @@
 					<div class="tsd-signature tsd-kind-icon">connection<wbr>State<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"closed"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"connecting"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"connected"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"closing"</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/ObnizConnection.ts:193</li>
+							<li>Defined in src/obniz/ObnizConnection.ts:211</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -215,7 +217,7 @@ obniz.onconnect = <span class="hljs-keyword">async</span> <span class="hljs-func
 					<div class="tsd-signature tsd-kind-icon">debugprint<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/ObnizConnection.ts:53</li>
+							<li>Defined in src/obniz/ObnizConnection.ts:58</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -235,7 +237,7 @@ obniz.onconnect = <span class="hljs-keyword">async</span> <span class="hljs-func
 					<div class="tsd-signature tsd-kind-icon">firmware_<wbr>ver<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/ObnizConnection.ts:84</li>
+							<li>Defined in src/obniz/ObnizConnection.ts:89</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -255,7 +257,7 @@ obniz.onconnect = <span class="hljs-keyword">async</span> <span class="hljs-func
 					<div class="tsd-signature tsd-kind-icon">hw<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/ObnizConnection.ts:71</li>
+							<li>Defined in src/obniz/ObnizConnection.ts:76</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -275,7 +277,7 @@ obniz.onconnect = <span class="hljs-keyword">async</span> <span class="hljs-func
 					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/ObnizConnection.ts:95</li>
+							<li>Defined in src/obniz/ObnizConnection.ts:113</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -290,7 +292,7 @@ obniz.onconnect = <span class="hljs-keyword">async</span> <span class="hljs-func
 					<div class="tsd-signature tsd-kind-icon">is<wbr>Node<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/ObnizConnection.ts:90</li>
+							<li>Defined in src/obniz/ObnizConnection.ts:108</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -304,12 +306,32 @@ obniz.onconnect = <span class="hljs-keyword">async</span> <span class="hljs-func
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="metadata" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> metadata</h3>
+					<div class="tsd-signature tsd-kind-icon">metadata<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{}</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/ObnizConnection.ts:102</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Device metadata set on obniz cloud.</p>
+						</div>
+						<pre><code class="language-javascript"><span class="hljs-keyword">var</span> obniz = <span class="hljs-keyword">new</span> Obniz(<span class="hljs-string">'1234-5678'</span>);
+obniz.debugprint = <span class="hljs-literal">true</span>
+obniz.onconnect = <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+  <span class="hljs-built_in">console</span>.log(obniz.metadata.description) <span class="hljs-comment">// value for "description"</span>
+}</code></pre>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="onclose" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> onclose</h3>
 					<div class="tsd-signature tsd-kind-icon">onclose<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>obniz<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/ObnizConnection.ts:115</li>
+							<li>Defined in src/obniz/ObnizConnection.ts:133</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -331,7 +353,7 @@ obniz.onclose = <span class="hljs-keyword">async</span> <span class="hljs-functi
 					<div class="tsd-signature tsd-kind-icon">onconnect<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>obniz<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/ObnizConnection.ts:137</li>
+							<li>Defined in src/obniz/ObnizConnection.ts:155</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -356,7 +378,7 @@ obniz.onconnect = <span class="hljs-keyword">async</span> <span class="hljs-func
 					<div class="tsd-signature tsd-kind-icon">onerror<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>obniz<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span>, error<span class="tsd-signature-symbol">: </span><a href="obnizcore.errors.obnizerror.html#error" class="tsd-signature-type">Error</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/ObnizConnection.ts:173</li>
+							<li>Defined in src/obniz/ObnizConnection.ts:191</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -378,7 +400,7 @@ obniz.onerror = <span class="hljs-keyword">async</span> <span class="hljs-functi
 					<div class="tsd-signature tsd-kind-icon">onloop<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>obniz<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/ObnizConnection.ts:158</li>
+							<li>Defined in src/obniz/ObnizConnection.ts:176</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -486,7 +508,7 @@ obniz.onloop = <span class="hljs-keyword">async</span> <span class="hljs-functio
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/ObnizConnection.ts:374</li>
+									<li>Defined in src/obniz/ObnizConnection.ts:392</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -524,7 +546,7 @@ obniz.onconnect = <span class="hljs-keyword">async</span> <span class="hljs-func
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/ObnizConnection.ts:397</li>
+									<li>Defined in src/obniz/ObnizConnection.ts:418</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -557,7 +579,7 @@ obniz.onconnect = <span class="hljs-keyword">async</span> <span class="hljs-func
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/ObnizConnection.ts:348</li>
+									<li>Defined in src/obniz/ObnizConnection.ts:366</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -585,7 +607,7 @@ obniz.onconnect = <span class="hljs-keyword">async</span> <span class="hljs-func
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/ObnizConnection.ts:309</li>
+									<li>Defined in src/obniz/ObnizConnection.ts:327</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -861,7 +883,7 @@ obniz.io0.output(<span class="hljs-literal">true</span>);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/ObnizConnection.ts:554</li>
+									<li>Defined in src/obniz/ObnizConnection.ts:575</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -957,7 +979,7 @@ obniz.io0.output(<span class="hljs-literal">true</span>);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/ObnizConnection.ts:544</li>
+									<li>Defined in src/obniz/ObnizConnection.ts:565</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -995,7 +1017,7 @@ obniz.io0.output(<span class="hljs-literal">true</span>);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/ObnizConnection.ts:427</li>
+									<li>Defined in src/obniz/ObnizConnection.ts:448</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1022,6 +1044,29 @@ obniz.io0.output(<span class="hljs-literal">true</span>);
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="isipaddress" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> is<wbr>IpAddress</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>IpAddress<span class="tsd-signature-symbol">(</span>str<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in src/obniz/ObnizConnection.ts:42</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>str: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
 			</section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -1033,7 +1078,7 @@ obniz.io0.output(<span class="hljs-literal">true</span>);
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/obnizapp.html">Obniz<wbr>App</a>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class="current tsd-kind-external-module tsd-is-not-exported">
 						<a href="../modules/obnizcore.html">Obniz<wbr>Core</a>
 					</li>
 					<li class=" tsd-kind-external-module tsd-is-not-exported">
@@ -1083,6 +1128,9 @@ obniz.io0.output(<span class="hljs-literal">true</span>);
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="obnizcore.obnizconnection.html#isnode" class="tsd-kind-icon">is<wbr>Node</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="obnizcore.obnizconnection.html#metadata" class="tsd-kind-icon">metadata</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="obnizcore.obnizconnection.html#onclose" class="tsd-kind-icon">onclose</a>
@@ -1156,6 +1204,9 @@ obniz.io0.output(<span class="hljs-literal">true</span>);
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="obnizcore.obnizconnection.html#send" class="tsd-kind-icon">send</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="obnizcore.obnizconnection.html#isipaddress" class="tsd-kind-icon">is<wbr>IpAddress</a>
+							</li>
 						</ul>
 					</li>
 				</ul>
@@ -1191,10 +1242,7 @@ obniz.io0.output(<span class="hljs-literal">true</span>);
 						<a href="../interfaces/obnizcore.obnizpartsinfo.html" class="tsd-kind-icon">Obniz<wbr>Parts<wbr>Info</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.wirednamemap.html" class="tsd-kind-icon">Wired<wbr>Name<wbr>Map</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.wirednameoptionsmap.html" class="tsd-kind-icon">Wired<wbr>Name<wbr>Options<wbr>Map</a>
+						<a href="../interfaces/obnizcore.partslist.html" class="tsd-kind-icon">Parts<wbr>List</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="../modules/obnizcore.html#obnizconnectioneventnames" class="tsd-kind-icon">Obniz<wbr>Connection<wbr>Event<wbr>Names</a>
