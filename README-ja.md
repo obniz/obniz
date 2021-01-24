@@ -103,7 +103,7 @@ npmでインストールします。
 ```
 
 ## 接続
-obnizをobniz idを使ってインスタンス化します。
+obnizデバイスをobniz idを使ってインスタンス化します。
 そして接続が完了した時に呼ばれる関数をセットします。
 ```javascript
   var obniz = new Obniz("0000-0000");
