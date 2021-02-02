@@ -476,16 +476,24 @@ class Gatt extends EventEmitter<GattEventTypes> {
 
   public async notifyWait(serviceUuid: any, characteristicUuid: any, notify: any): Promise<void> {
     const characteristic: any = this.getCharacteristic(serviceUuid, characteristicUuid);
+    // const descriptor: any = this.getDescriptor(serviceUuid, characteristicUuid, "2902");
 
-    const data = await this._execCommandWait(
-      this.readByTypeRequest(characteristic.startHandle, characteristic.endHandle, GATT.CLIENT_CHARAC_CFG_UUID),
-      ATT.OP_READ_BY_TYPE_RESP,
-    );
+    let value: any = null;
+    let handle: any = null;
+    try {
+      value = await this.readValueWait(serviceUuid, characteristicUuid, "2902");
+    } catch (e) {
+      // retry
+      const data = await this._execCommandWait(
+        this.readByTypeRequest(characteristic.startHandle, characteristic.endHandle, GATT.CLIENT_CHARAC_CFG_UUID),
+        ATT.OP_READ_BY_TYPE_RESP,
+      );
 
-    const opcode: any = data[0];
-    // let type = data[1];
-    const handle: any = data.readUInt16LE(2);
-    let value: any = data.readUInt16LE(4);
+      const opcode: any = data[0];
+      // let type = data[1];
+      handle = data.readUInt16LE(2);
+      value = data.readUInt16LE(4);
+    }
 
     const useNotify: any = characteristic.properties & 0x10;
     const useIndicate: any = characteristic.properties & 0x20;
@@ -507,8 +515,15 @@ class Gatt extends EventEmitter<GattEventTypes> {
     const valueBuffer: any = Buffer.alloc(2);
     valueBuffer.writeUInt16LE(value, 0);
 
-    const _data = await this._execCommandWait(this.writeRequest(handle, valueBuffer, false), ATT.OP_WRITE_RESP);
-    const _opcode: any = _data[0];
+    let _data = null;
+
+    if (handle) {
+      _data = await this._execCommandWait(this.writeRequest(handle, valueBuffer, false), ATT.OP_WRITE_RESP);
+    } else {
+      _data = await this.writeValueWait(serviceUuid, characteristicUuid, "2902", valueBuffer);
+    }
+
+    const _opcode: any = _data && _data[0];
     debug("set notify write results: " + (_opcode === ATT.OP_WRITE_RESP));
   }
 
@@ -567,10 +582,10 @@ class Gatt extends EventEmitter<GattEventTypes> {
     characteristicUuid: any,
     descriptorUuid: any,
     data: any,
-  ): Promise<void> {
+  ): Promise<Buffer> {
     const descriptor: any = this.getDescriptor(serviceUuid, characteristicUuid, descriptorUuid);
 
-    await this._execCommandWait(this.writeRequest(descriptor.handle, data, false), ATT.OP_WRITE_RESP);
+    return await this._execCommandWait(this.writeRequest(descriptor.handle, data, false), ATT.OP_WRITE_RESP);
   }
 
   public async readHandleWait(handle: any): Promise<Buffer> {
