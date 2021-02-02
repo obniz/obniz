@@ -84,20 +84,28 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
       await this.subscribeWait("180F", "2A19", async () => {
         // send command (unknown meaning)
         this._peripheral!.obnizBle.hci.write([
-          0x02,
+          0x02, // acl data
+
           0x00,
-          0x00,
+          0x00, // handle : 0  + flags : First Non-Automatically-Flushable packet  / ACL_START_NO_FLUSH
+
           0x09,
-          0x00,
+          0x00, // data length for acl : 9
+
           0x05,
-          0x00,
+          0x00, // data length for l2cap : 5
+
           0x04,
-          0x00,
+          0x00, // cid : 4 = ATT
+
+          0x01, // opCode : 1 = OP_ERROR
+
+          0x06, // error opcode : 6 = Find By Type Value Request
+
           0x01,
-          0x06,
-          0x01,
-          0x00,
-          0x0a,
+          0x00, // handle : 1 = ???
+
+          0x0a, // error code : 10 = Attribute Not Found
         ]);
 
         this._writeTimeCharWait(this._timezoneOffsetMinute);
