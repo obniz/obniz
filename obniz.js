@@ -1965,7 +1965,7 @@ class ObnizApp {
      * ```javascript
      * // JavaScript example
      * Obniz.App.done({
-     *   status: 'success',  // or 'error'
+     *   status: 'success',  // 'success' | 'error'
      *   text: 'ex. Door Opened'
      * });
      * ```
@@ -1973,7 +1973,10 @@ class ObnizApp {
      */
     static done(arg) {
         if (this.isCloudRunning()) {
-            return done(arg);
+            // wait a few for last communication sent to socket.
+            setTimeout(() => {
+                done(arg);
+            }, 1 * 1000);
         }
         else {
             console.error(`This program is not running on obniz Cloud.`);
