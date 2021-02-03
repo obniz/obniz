@@ -22726,6 +22726,7 @@ class HEM_6233T {
             await this.subscribeWait("1805", "2A2B"); // current time
             await this.subscribeWait("180F", "2A19", async () => {
                 // send command (unknown meaning)
+                // In the command meaning, it should send to central from peripheral, but send to peripheral...?
                 this._peripheral.obnizBle.hci.write([
                     0x02,
                     0x00,
