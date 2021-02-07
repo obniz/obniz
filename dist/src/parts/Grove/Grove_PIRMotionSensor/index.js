@@ -35,18 +35,5 @@ class Grove_PIRMotionSensor {
             this.onChangeForStateWait(value);
         });
     }
-    async isPressedWait() {
-        return await this.io_signal.inputWait();
-    }
-    stateWait(isPressed) {
-        return new Promise((resolve, reject) => {
-            this.onChangeForStateWait = (pressed) => {
-                if (isPressed === pressed) {
-                    this.onChangeForStateWait = () => { };
-                    resolve();
-                }
-            };
-        });
-    }
 }
 exports.default = Grove_PIRMotionSensor;
