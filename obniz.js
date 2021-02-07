@@ -22045,9 +22045,13 @@ var map = {
 	"./Grove/Grove_GPS/index.js": "./dist/src/parts/Grove/Grove_GPS/index.js",
 	"./Grove/Grove_GestureSensor/index.js": "./dist/src/parts/Grove/Grove_GestureSensor/index.js",
 	"./Grove/Grove_JoyStick/index.js": "./dist/src/parts/Grove/Grove_JoyStick/index.js",
+	"./Grove/Grove_LEDButton/index.js": "./dist/src/parts/Grove/Grove_LEDButton/index.js",
 	"./Grove/Grove_LightSensor/index.js": "./dist/src/parts/Grove/Grove_LightSensor/index.js",
 	"./Grove/Grove_MP3/index.js": "./dist/src/parts/Grove/Grove_MP3/index.js",
+	"./Grove/Grove_MicroSwitch/index.js": "./dist/src/parts/Grove/Grove_MicroSwitch/index.js",
+	"./Grove/Grove_PIRMotionSensor/index.js": "./dist/src/parts/Grove/Grove_PIRMotionSensor/index.js",
 	"./Grove/Grove_PressureSensor/index.js": "./dist/src/parts/Grove/Grove_PressureSensor/index.js",
+	"./Grove/Grove_Relay/index.js": "./dist/src/parts/Grove/Grove_Relay/index.js",
 	"./Grove/Grove_RotaryAngleSensor/index.js": "./dist/src/parts/Grove/Grove_RotaryAngleSensor/index.js",
 	"./Grove/Grove_SoilMoistureSensor/index.js": "./dist/src/parts/Grove/Grove_SoilMoistureSensor/index.js",
 	"./Grove/Grove_Speaker/index.js": "./dist/src/parts/Grove/Grove_Speaker/index.js",
@@ -39273,6 +39277,76 @@ exports.default = Grove_JoyStick;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Grove/Grove_LEDButton/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_LEDButton
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_LEDButton {
+    constructor() {
+        this.isPressed = null;
+        this.onchange = null;
+        this.onChangeForStateWait = (pressed) => { };
+        this.keys = ["signal2", "signal1", "gnd", "vcc", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_LEDButton",
+        };
+    }
+    wired(obniz) {
+        if (this.params.grove) {
+            this.pmw_led = this.params.grove.getPwm();
+        }
+        else {
+            this.obniz = obniz;
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.pmw_led = obniz.getFreePwm();
+            this.pmw_led.start({ io: this.params.signal1 });
+            this.pmw_led.freq(490);
+            this.io_button = obniz.getIO(this.params.signal2);
+            this.io_button.input((value) => {
+                const pressed = !value;
+                this.isPressed = pressed;
+                if (this.onchange) {
+                    this.onchange(pressed);
+                }
+                this.onChangeForStateWait(pressed);
+            });
+            this.setLEDBrightness(0);
+        }
+    }
+    setLEDBrightness(percent) {
+        if (typeof percent !== "number") {
+            throw new Error("freq must be a number");
+        }
+        this.pmw_led.duty(percent);
+    }
+    async isPressedWait() {
+        return await this.io_button.inputWait();
+    }
+    stateWait(isPressed) {
+        return new Promise((resolve, reject) => {
+            this.onChangeForStateWait = (pressed) => {
+                if (isPressed === pressed) {
+                    this.onChangeForStateWait = () => { };
+                    resolve();
+                }
+            };
+        });
+    }
+}
+exports.default = Grove_LEDButton;
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Grove/Grove_LightSensor/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -39427,6 +39501,126 @@ exports.default = Grove_MP3;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Grove/Grove_MicroSwitch/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_MicroSwitch
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_MicroSwitch {
+    constructor() {
+        this.isPressed = null;
+        this.onchange = null;
+        this.onChangeForStateWait = (pressed) => { };
+        this.keys = ["signal", "gnd", "vcc", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_MicroSwitch",
+        };
+    }
+    wired(obniz) {
+        if (this.params.grove) {
+            const groveIOs = this.params.grove.getDigital("5v");
+            this.io_signal = groveIOs.primary;
+        }
+        else {
+            this.io_signal = obniz.getIO(this.params.signal);
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        }
+        this.io_signal.pull("5v");
+        this.io_signal.input((value) => {
+            this.isPressed = value;
+            if (this.onchange) {
+                this.onchange(value);
+            }
+            this.onChangeForStateWait(value);
+        });
+    }
+    async isPressedWait() {
+        return await this.io_signal.inputWait();
+    }
+    stateWait(isPressed) {
+        return new Promise((resolve, reject) => {
+            this.onChangeForStateWait = (pressed) => {
+                if (isPressed === pressed) {
+                    this.onChangeForStateWait = () => { };
+                    resolve();
+                }
+            };
+        });
+    }
+}
+exports.default = Grove_MicroSwitch;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_PIRMotionSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_PIRMotionSensor
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_PIRMotionSensor {
+    constructor() {
+        this.isPressed = null;
+        this.onchange = null;
+        this.onChangeForStateWait = (pressed) => { };
+        this.keys = ["signal", "gnd", "vcc", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_PIRMotionSensor",
+        };
+    }
+    wired(obniz) {
+        if (this.params.grove) {
+            const groveIOs = this.params.grove.getDigital("5v");
+            this.io_signal = groveIOs.primary;
+        }
+        else {
+            this.io_signal = obniz.getIO(this.params.signal);
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        }
+        this.io_signal.pull("5v");
+        this.io_signal.input((value) => {
+            this.isPressed = value;
+            if (this.onchange) {
+                this.onchange(value);
+            }
+            this.onChangeForStateWait(value);
+        });
+    }
+    async isPressedWait() {
+        return await this.io_signal.inputWait();
+    }
+    stateWait(isPressed) {
+        return new Promise((resolve, reject) => {
+            this.onChangeForStateWait = (pressed) => {
+                if (isPressed === pressed) {
+                    this.onChangeForStateWait = () => { };
+                    resolve();
+                }
+            };
+        });
+    }
+}
+exports.default = Grove_PIRMotionSensor;
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Grove/Grove_PressureSensor/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -39471,6 +39665,49 @@ class Grove_PressureSensor {
     }
 }
 exports.default = Grove_PressureSensor;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_Relay/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_Relay
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_Relay {
+    constructor() {
+        this.keys = ["signal", "gnd", "vcc", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_Relay",
+        };
+    }
+    wired(obniz) {
+        if (this.params.grove) {
+            this.io_signal = this.params.grove.getDigital();
+        }
+        else {
+            this.obniz = obniz;
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.io_signal = obniz.getIO(this.params.signal);
+        }
+        this.off();
+    }
+    on() {
+        this.io_signal.output(true);
+    }
+    off() {
+        this.io_signal.output(false);
+    }
+}
+exports.default = Grove_Relay;
 
 
 /***/ }),
