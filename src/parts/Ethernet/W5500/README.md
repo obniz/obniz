@@ -16,10 +16,11 @@ var ethernet = obniz.wired('W5500', { reset: 12, mosi: 23, miso: 19, sclk: 18, c
 Next, set the network settings of the main unit. This is necessary every time. See [the reference (Japanease)](https://obniz.github.io/obniz/obnizjs/interfaces/parts.w5500.w5500.commonoptions.html) for detailed options.
 ```javascript
 await ethernet.init({
-    gatewayIP: '192.168.1.1', // IPv4 address of default gateway
-    subnetMask: '255.255.255.0', // Subnet mask
-    macAddress: '12:34:56:78:90:AB', // MAC address
-    localIP: '192.168.1.8', // Local IPv4 address
+  gatewayIP: '192.168.1.1', // IPv4 address of default gateway
+  subnetMask: '255.255.255.0', // Subnet mask
+  macAddress: '12:34:56:78:90:AB', // MAC address
+  localIP: '192.168.1.8', // Local IPv4 address
+  forceNoCheckWrite: true, // Do not always check transfer when writing
 });
 ```
 
@@ -66,6 +67,12 @@ The data that can be sent can be a byte array or a string. The string is decoded
 
 ```javascript
 await socket.sendData(data);
+```
+
+If necessary, use a function that can be executed relatively quickly by simply sending data without confirming the transfer.
+
+```javascript
+await socket.sendDataFast(data);
 ```
 
 If you want to finish all communication, please finish the process.

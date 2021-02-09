@@ -16,10 +16,11 @@ var ethernet = obniz.wired('W5500', { reset: 12, mosi: 23, miso: 19, sclk: 18, c
 次に、本体のネットワーク設定をしてください。これは毎回必要です。細かいオプションは[リファレンス](https://obniz.github.io/obniz/obnizjs/interfaces/parts.w5500.w5500.commonoptions.html)をご覧ください。
 ```javascript
 await ethernet.init({
-    gatewayIP: '192.168.1.1', // デフォルトゲートウェイのIPv4アドレス
-    subnetMask: '255.255.255.0', // サブネットマスク
-    macAddress: '12:34:56:78:90:AB', // MACアドレス
-    localIP: '192.168.1.8', // LAN側のIPv4アドレス
+  gatewayIP: '192.168.1.1', // デフォルトゲートウェイのIPv4アドレス
+  subnetMask: '255.255.255.0', // サブネットマスク
+  macAddress: '12:34:56:78:90:AB', // MACアドレス
+  localIP: '192.168.1.8', // LAN側のIPv4アドレス
+  forceNoCheckWrite: true, // 常に書き込み時に転送チェックを行わない
 });
 ```
 
@@ -66,6 +67,12 @@ socket.setAllInterruptHandler(async (socket, name, data) => {
 
 ```javascript
 await socket.sendData(data);
+```
+
+必要に応じてデータ送信のみ転送チェックなしにすることで比較的、高速に行える関数を利用してください。
+
+```javascript
+await socket.sendDataFast(data);
 ```
 
 全ての通信を終える場合は終了処理をしてください。

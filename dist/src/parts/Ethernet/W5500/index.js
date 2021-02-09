@@ -144,6 +144,7 @@ class W5500 {
             if (option.phyConfig) {
                 result = result && (await this.setPhysicalConfig(option.phyConfig));
             }
+            this.forceNoCheckWrite = option.forceNoCheckWrite;
             // 割り込みハンドラー設定
             if (option.onIPConflictInterrupt) {
                 this.setInterruptHandler("IPConflict", option.onIPConflictInterrupt);
@@ -592,6 +593,9 @@ class W5500 {
             if (data.filter((addr) => 0x00 <= addr && addr <= 0xff).length !== data.length) {
                 throw new Error("Given data field must take a value between 0(0x00) and 255(0xFF).");
             }
+            if (this.forceNoCheckWrite === true && noWait === undefined) {
+                noWait = true;
+            }
             const result = await this.send(address, bsb, "Write", data, noWait);
             if (typeof result === "object") {
                 throw new Error("Unexpected Result");
@@ -787,17 +791,32 @@ exports.W5500 = W5500;
                 this.protocol = null;
             };
             /**
-             * データを送信、書き込みチェックあり
+             * データを送信
              * @param data 送信データまたは文字列
              * @return 書き込み結果
              */
-            this.sendData = (data) => this._sendData(data, false);
+            this.sendData = (data) => this.sendDataBase(data);
             /**
              * データを送信、書き込みチェックなし
              * @param data 送信データまたは文字列
              * @return 書き込み結果
              */
-            this.sendDataFast = (data) => this._sendData(data, true);
+            this.sendDataFast = (data) => this.sendDataBase(data, true);
+            /**
+             * データを送信
+             * @param data 送信データまたは文字列
+             * @param noWait データ書き込み時、spi.writeWaitを使用しない
+             * @internal
+             * @hidden
+             */
+            this.sendDataBase = async (data, noWait) => {
+                const d = typeof data === "string" ? Array.from(new TextEncoder().encode(data)) : data;
+                const txReadPointer = await this.getTXReadPointer();
+                const result = await this.ethernet.bigWrite(txReadPointer, BSB_SOCKET_TX_BUFFER(this.id), d, noWait);
+                await this.setTXWritePointer(txReadPointer + d.length);
+                await this.sendCommand("Send");
+                return result;
+            };
             /**
              * 受信されたデータを読取
              * @return 受信データまたは文字列
@@ -1048,21 +1067,6 @@ exports.W5500 = W5500;
              * @return 書き込み結果
              */
             this.setKeepAliveTimer = (timer) => this.ethernet.numWrite(SOCKET_KEEP_ALIVE_TIMER, BSB_SOCKET_REGISTER(this.id), timer / 5);
-            /**
-             * データを送信
-             * @param data 送信データまたは文字列
-             * @param noWait データ書き込み時、spi.writeWaitを使用しない
-             * @internal
-             * @hidden
-             */
-            this._sendData = async (data, noWait) => {
-                const d = typeof data === "string" ? Array.from(new TextEncoder().encode(data)) : data;
-                const txReadPointer = await this.getTXReadPointer();
-                const result = await this.ethernet.bigWrite(txReadPointer, BSB_SOCKET_TX_BUFFER(this.id), d, noWait);
-                await this.setTXWritePointer(txReadPointer + d.length);
-                await this.sendCommand("Send");
-                return result;
-            };
             this.id = id;
             this.ethernet = ethernet;
             this.TextDecode = new TextDecoder().decode;
