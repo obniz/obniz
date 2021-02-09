@@ -633,6 +633,16 @@
       ]
     },
     {
+      "name": "Ethernet",
+      "image_url": "",
+      "parts": [
+        {
+          "name": "W5500",
+          "store": {}
+        }
+      ]
+    },
+    {
       "name": "Grove",
       "image_url": "https://obniz.io/sdk/parts/Grove_MP3/image.jpg",
       "parts": [

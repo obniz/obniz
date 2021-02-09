@@ -30,10 +30,10 @@ module.exports = {
     "doc": "typedoc --includes ./src/ --theme ./devtools/typedocTheme --stripInternal --readme none --out docs/obnizjs --excludePrivate --excludeProtected  --media ./docs/images",
     "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
     "version": "npm run build && npm run doc && git add docs && git add obniz.js",
-    "lint": "npm run lint-ts && npm run lint-js",
+    "lint": "npm run lint-js",
     "lint-js": "eslint --fix . --rulesdir devtools/eslint/rule",
     "lint-ts": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' ",
-    "precommit": "lint-staged && npm run build && git add dist && git add obniz.js",
+    "precommit": "npm run build && git add dist && git add obniz.js",
     "clean": "rimraf ./dist ./obniz.js ./obniz.d.ts"
   },
   "lint-staged": {
@@ -112,14 +112,14 @@ module.exports = {
     "tslint-plugin-prettier": "^2.1.0",
     "typedoc": "^0.16.9",
     "typedoc-plugin-external-module-name": "^3.0.0",
+    "typedoc-plugin-internal-external": "^2.1.1",
     "typescript": "^3.7.5",
     "vinyl": "^2.2.0",
     "webpack": "^4.34.0",
     "webpack-cli": "^3.3.4",
     "webpack-node-externals": "^1.7.2",
     "webpack-stream": "^5.2.1",
-    "yaml-loader": "^0.5.0",
-    "typedoc-plugin-internal-external": "^2.1.1"
+    "yaml-loader": "^0.5.0"
   },
   "dependencies": {
     "@types/eventemitter3": "^1.2.0",
