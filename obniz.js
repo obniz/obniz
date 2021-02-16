@@ -9572,6 +9572,7 @@ var GATT;
 class Gatt extends eventemitter3_1.default {
     constructor(address, aclStream) {
         super();
+        this._remoteMtuRequest = null;
         this._address = address;
         this._aclStream = aclStream;
         this._services = {};
@@ -9605,6 +9606,19 @@ class Gatt extends eventemitter3_1.default {
         this.emit("end", reason);
     }
     async exchangeMtuWait(mtu) {
+        this._aclStream
+            .readWait(ATT.CID, ATT.OP_MTU_REQ)
+            .then((mtuRequestData) => {
+            const requestMtu = mtuRequestData.readUInt16LE(1);
+            debug(this._address + ": receive OP_MTU_REQ. new MTU is " + requestMtu);
+            this._mtu = requestMtu;
+            this._execNoRespCommandWait(this.mtuResponse(mtu));
+        })
+            .catch((e) => {
+            // TODO:
+            // This must passed to Obniz class.
+            console.error(e);
+        });
         const data = await this._execCommandWait(this.mtuRequest(mtu), ATT.OP_MTU_RESP);
         const opcode = data[0];
         const newMtu = data.readUInt16LE(1);
@@ -9956,6 +9970,12 @@ class Gatt extends eventemitter3_1.default {
     mtuRequest(mtu) {
         const buf = Buffer.alloc(3);
         buf.writeUInt8(ATT.OP_MTU_REQ, 0);
+        buf.writeUInt16LE(mtu, 1);
+        return buf;
+    }
+    mtuResponse(mtu) {
+        const buf = Buffer.alloc(3);
+        buf.writeUInt8(ATT.OP_MTU_RESP, 0);
         buf.writeUInt16LE(mtu, 1);
         return buf;
     }
@@ -11294,7 +11314,7 @@ class Hci extends eventemitter3_1.default {
         return await this._obnizHci.timeoutPromiseWrapper(new Promise((resolve) => {
             const key = (cid << 8) + firstData;
             this._aclStreamObservers[handle] = this._aclStreamObservers[handle] || [];
-            this._aclStreamObservers[handle][key] = this._aclStreamObservers[handle][cid] || [];
+            this._aclStreamObservers[handle][key] = []; // reset: queue is not supported
             this._aclStreamObservers[handle][key].push(resolve);
         }), { timeout, waitingFor: `readAclStream handle:${handle} cid:${cid} firstData:${firstData}` });
     }

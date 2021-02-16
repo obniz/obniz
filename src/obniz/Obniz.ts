@@ -74,6 +74,7 @@ import { ObnizMeasureResult as _ObnizMeasureResult } from "./libs/measurements/m
 import _WiFi from "./libs/network/wifi";
 import _Plugin from "./libs/plugin/plugin";
 import _Tcp from "./libs/protocol/tcp";
+import _ObnizUtil from "./libs/utils/util";
 import _ObnizApi from "./ObnizApi";
 import _ObnizApp from "./ObnizApp";
 import ObnizDevice from "./ObnizDevice";
@@ -210,6 +211,7 @@ export namespace Obniz {
   export type ObnizParameterError = _ObnizParameterError;
   export type ObnizSwitch = _ObnizSwitch;
   export type ObnizTimeoutError = _ObnizTimeoutError;
+  export type ObnizUtil = _ObnizUtil;
   export type PeripheralAD = _PeripheralAD;
   export type PeripheralGrove = _PeripheralGrove;
   export type PeripheralGroveParams = _PeripheralGroveParams;

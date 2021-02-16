@@ -153,18 +153,20 @@ type GattEventTypes = "notification" | "handleConfirmation" | "handleNotify" | "
  * @ignore
  */
 class Gatt extends EventEmitter<GattEventTypes> {
-  public _address: BleDeviceAddress;
-  public _aclStream: AclStream;
-  public _services: { [key: string]: GattService };
-  public _characteristics: any;
-  public _descriptors: any;
-  public _currentCommand: any;
-  public _commandQueue: any;
-  public _mtu: any;
-  public _security: any;
-  public _commandPromises: Array<Promise<any>>;
   public onAclStreamDataBinded: any;
   public onAclStreamEndBinded: any;
+  private _address: BleDeviceAddress;
+  private _aclStream: AclStream;
+  private _services: { [key: string]: GattService };
+  private _characteristics: any;
+  private _descriptors: any;
+  private _currentCommand: any;
+  private _commandQueue: any;
+  private _mtu: any;
+  private _security: any;
+  private _commandPromises: Array<Promise<any>>;
+
+  private _remoteMtuRequest: null | number = null;
 
   constructor(address: BleDeviceAddress, aclStream: AclStream) {
     super();
@@ -210,6 +212,20 @@ class Gatt extends EventEmitter<GattEventTypes> {
   }
 
   public async exchangeMtuWait(mtu: any) {
+    this._aclStream
+      .readWait(ATT.CID, ATT.OP_MTU_REQ)
+      .then((mtuRequestData) => {
+        const requestMtu = mtuRequestData.readUInt16LE(1);
+        debug(this._address + ": receive OP_MTU_REQ. new MTU is " + requestMtu);
+        this._mtu = requestMtu;
+        this._execNoRespCommandWait(this.mtuResponse(mtu));
+      })
+      .catch((e) => {
+        // TODO:
+        // This must passed to Obniz class.
+        console.error(e);
+      });
+
     const data = await this._execCommandWait(this.mtuRequest(mtu), ATT.OP_MTU_RESP);
     const opcode = data[0];
 
@@ -663,6 +679,15 @@ class Gatt extends EventEmitter<GattEventTypes> {
     const buf: any = Buffer.alloc(3);
 
     buf.writeUInt8(ATT.OP_MTU_REQ, 0);
+    buf.writeUInt16LE(mtu, 1);
+
+    return buf;
+  }
+
+  private mtuResponse(mtu: any) {
+    const buf: any = Buffer.alloc(3);
+
+    buf.writeUInt8(ATT.OP_MTU_RESP, 0);
     buf.writeUInt16LE(mtu, 1);
 
     return buf;
