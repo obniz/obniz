@@ -1043,10 +1043,10 @@ export namespace W5500 {
       // ソケットのオープン
       result = result && (await this.sendCommand("Open"));
       if (this.protocol === "TCPClient") {
-        result && (await this.sendCommand("Connect"));
+        result = result && (await this.sendCommand("Connect"));
       }
       if (this.protocol === "TCPServer") {
-        result && (await this.sendCommand("Listen"));
+        result = result && (await this.sendCommand("Listen"));
       }
 
       // 事前にrxReadDataPointerの値を記憶
