@@ -509,7 +509,7 @@ export class W5500 implements ObnizPartsInterface {
    * @return 書き込み結果
    */
   public setPPPoEMaxSegmentSize(size: number) {
-    this.num2Write(COMMON_PPP_MAXIMUM_SEGMENT_SIZE, BSB_COMMON, size);
+    return this.num2Write(COMMON_PPP_MAXIMUM_SEGMENT_SIZE, BSB_COMMON, size);
   }
 
   /**
@@ -532,7 +532,7 @@ export class W5500 implements ObnizPartsInterface {
    * 物理層のステータス取得
    * @return 物理層のステータス
    */
-  public async getPhysicalConfigasync(): Promise<W5500.PhysicalLayerStatus> {
+  public async getPhysicalConfig(): Promise<W5500.PhysicalLayerStatus> {
     const result = await this.numRead(COMMON_PHY_CONFIGURATION, BSB_COMMON);
     return {
       duplex: (result & 0b100) !== 0,
@@ -672,7 +672,7 @@ export class W5500 implements ObnizPartsInterface {
    * @internal
    * @hidden
    */
-  public async bigRead(address: number, bsb: number, length: number): Promise<number[]> {
+  public async bigRead(address: number, bsb: number, length: number) {
     const maxLength = this.fdm ? 4 : 1021; // FDM(4) / VDM(1024-3)
     let data: number[] = [];
     for (let i = 0; i < length; i += maxLength) {
@@ -954,7 +954,6 @@ export namespace W5500 {
   } as const;
 
   /** 接続先情報 */
-
   export class DestInfo {
     /** IPv4アドレス */
     public readonly ip: string;
