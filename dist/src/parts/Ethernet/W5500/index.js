@@ -78,6 +78,25 @@ const SOCKET_KEEP_ALIVE_TIMER = 0x002f; // 1 RW 0x0000 keep-aliveタイマー(TC
 const sleep = (msec) => new Promise((resolve) => setTimeout(resolve, msec));
 /** @hidden */
 const byteString = (bytes) => bytes.map((n) => ("00" + n.toString(16).toUpperCase()).slice(-2)).join("");
+var W5500Parts;
+(function (W5500Parts) {
+    /** 割り込みと対応するフラグ */
+    W5500Parts.InterruptFlags = {
+        IPConflict: 0b10000000,
+        DestUnreach: 0b01000000,
+        PPPoEClose: 0b00100000,
+        MagicPacket: 0b00010000,
+    };
+    /** 接続先情報 */
+    class DestInfo {
+        constructor(ip, port) {
+            this.ip = ip;
+            this.port = port;
+            this.address = `${ip}:${port}`;
+        }
+    }
+    W5500Parts.DestInfo = DestInfo;
+})(W5500Parts = exports.W5500Parts || (exports.W5500Parts = {}));
 /** W5500を管理するクラス */
 class W5500 {
     constructor() {
@@ -228,22 +247,22 @@ class W5500 {
         return phy;
     }
     /**
-     * W5500.Socketのインスタンスを取得、必要ならば生成
+     * W5500Parts.Socketのインスタンスを取得、必要ならば生成
      * @param socketId ソケットID、0~7
-     * @return W5500.Socketのインスタンス
+     * @return W5500Parts.Socketのインスタンス
      */
     getSocket(socketId) {
         if (socketId < 0 || socketId > 7) {
             throw new Error("Socket id must take a value between 0 and 7.");
         }
         if (!this.socketList[socketId]) {
-            this.socketList[socketId] = new W5500.Socket(socketId, this);
+            this.socketList[socketId] = new W5500Socket(socketId, this);
         }
         return this.socketList[socketId];
     }
     /**
      * 使っていないソケットの枠にW5500.Socketのインスタンスを生成
-     * @return W5500.Socketのインスタンス
+     * @return W5500Parts.Socketのインスタンス
      */
     getNewSocket() {
         let id = 0;
@@ -254,7 +273,7 @@ class W5500 {
             return null;
         }
         else {
-            return (this.socketList[id] = new W5500.Socket(id, this));
+            return (this.socketList[id] = new W5500Socket(id, this));
         }
     }
     /**
@@ -333,9 +352,9 @@ class W5500 {
         if (interrupt !== 0) {
             await this.numWrite(COMMON_INTERRUPT, BSB_COMMON, interrupt);
         } // リセット
-        const msgList = Object.keys(W5500.InterruptFlags).filter((msg) => (interrupt & W5500.InterruptFlags[msg]) !== 0);
+        const msgList = Object.keys(W5500Parts.InterruptFlags).filter((msg) => (interrupt & W5500Parts.InterruptFlags[msg]) !== 0);
         const extra = msgList.indexOf("DestUnreach") >= 0
-            ? new W5500.DestInfo(await this.getUnreachableIP(), await this.getUnreachablePort())
+            ? new W5500Parts.DestInfo(await this.getUnreachableIP(), await this.getUnreachablePort())
             : undefined;
         if (disableAllSocketCheck !== false) {
             const funcList = this.socketList
@@ -732,483 +751,466 @@ class W5500 {
     }
 }
 exports.W5500 = W5500;
-(function (W5500) {
-    /** 割り込みと対応するフラグ */
-    W5500.InterruptFlags = {
-        IPConflict: 0b10000000,
-        DestUnreach: 0b01000000,
-        PPPoEClose: 0b00100000,
-        MagicPacket: 0b00010000,
+var W5500SocketParts;
+(function (W5500SocketParts) {
+    /** ソケットのコマンドに対応する値 */
+    W5500SocketParts.CommandCodes = {
+        Open: 0x01,
+        Listen: 0x02,
+        Connect: 0x04,
+        Disconnect: 0x08,
+        Close: 0x10,
+        Send: 0x20,
+        SendMAC: 0x21,
+        SendKeep: 0x22,
+        Receive: 0x40,
     };
-    /** 接続先情報 */
-    class DestInfo {
-        constructor(ip, port) {
-            this.ip = ip;
-            this.port = port;
-            this.address = `${ip}:${port}`;
-        }
+    /** ソケットのステータスに対応する値 */
+    W5500SocketParts.StatusCodes = {
+        Closed: 0x00,
+        Init: 0x13,
+        Listen: 0x14,
+        SynSent: 0x15,
+        SynReceive: 0x16,
+        Established: 0x17,
+        FinWait: 0x18,
+        Closing: 0x1a,
+        TimeWait: 0x1b,
+        CloseWait: 0x1c,
+        LastACK: 0x1d,
+        UDP: 0x22,
+        MACRAW: 0x32,
+    };
+    /** ソケットの割り込みに対応するフラグ */
+    W5500SocketParts.InterruptFlags = {
+        SendOK: 0b10000,
+        Timeout: 0b01000,
+        ReceiveData: 0b00100,
+        Disconnect: 0b00010,
+        ConnectSuccess: 0b00001,
+    };
+})(W5500SocketParts = exports.W5500SocketParts || (exports.W5500SocketParts = {}));
+/** ソケット通信を行い管理するクラス */
+class W5500Socket {
+    constructor(id, ethernet) {
+        /** 受信データを文字列(UTF-8のみ)として処理 */
+        this.stringMode = false;
+        /** 現在のプロトコル */
+        this.protocol = null;
+        /** 割り込みをメッセージ別でキャッチするハンドラーを保持 */
+        this.interruptHandlers = {};
+        /** データ読み込みのアドレスを保持 */
+        this.rxReadDataPointer = 0;
+        this.id = id;
+        this.ethernet = ethernet;
+        this.TextDecode = new TextDecoder().decode;
+        this.TextEncode = new TextEncoder().encode;
     }
-    W5500.DestInfo = DestInfo;
-    /** ソケット通信を行い管理するクラス */
-    class Socket {
-        constructor(id, ethernet) {
-            /** 受信データを文字列(UTF-8のみ)として処理 */
-            this.stringMode = false;
-            /** 現在のプロトコル */
-            this.protocol = null;
-            /** 割り込みをメッセージ別でキャッチするハンドラーを保持 */
-            this.interruptHandlers = {};
-            /** データ読み込みのアドレスを保持 */
-            this.rxReadDataPointer = 0;
-            this.id = id;
-            this.ethernet = ethernet;
-            this.TextDecode = new TextDecoder().decode;
-            this.TextEncode = new TextEncoder().encode;
+    /**
+     * ソケット設定の書き込みをし、ソケットをオープンに(TCPの場合はConnect/Listenも実行)
+     * @param option ソケット設定
+     * @return 書き込み結果
+     */
+    async init(option) {
+        // モード設定
+        let result = await this.setMode(option);
+        // 基本設定
+        if (option.sourcePort) {
+            result = result && (await this.setSourcePort(option.sourcePort));
         }
-        /**
-         * ソケット設定の書き込みをし、ソケットをオープンに(TCPの場合はConnect/Listenも実行)
-         * @param option ソケット設定
-         * @return 書き込み結果
-         */
-        async init(option) {
-            // モード設定
-            let result = await this.setMode(option);
-            // 基本設定
-            if (option.sourcePort) {
-                result = result && (await this.setSourcePort(option.sourcePort));
-            }
-            if (option.destIP) {
-                result = result && (await this.setDestIP(option.destIP));
-            }
-            if (option.destPort) {
-                result = result && (await this.setDestPort(option.destPort));
-            }
-            if (option.ipType) {
-                result = result && (await this.setIPTypeOfService(option.ipType));
-            }
-            if (option.ttl) {
-                result = result && (await this.setTTL(option.ttl));
-            }
-            if (option.rxBufferSize) {
-                result = result && (await this.setRXBufferSize(option.rxBufferSize));
-            }
-            if (option.txBufferSize) {
-                result = result && (await this.setTXBufferSize(option.txBufferSize));
-            }
-            // ソケットのオープン
-            result = result && (await this.sendCommand("Open"));
-            if (this.protocol === "TCPClient") {
-                result = result && (await this.sendCommand("Connect"));
-            }
-            if (this.protocol === "TCPServer") {
-                result = result && (await this.sendCommand("Listen"));
-            }
-            // 事前にrxReadDataPointerの値を記憶
-            this.rxReadDataPointer = await this.getRXReadDataPointer();
-            // 割り込みハンドラー設定
-            if (option.onSendOKtInterrupt) {
-                this.setInterruptHandler("SendOK", option.onSendOKtInterrupt);
-            }
-            if (option.onTimeoutInterrupt) {
-                this.setInterruptHandler("Timeout", option.onTimeoutInterrupt);
-            }
-            if (option.onReceiveDataInterrupt) {
-                this.setInterruptHandler("ReceiveData", option.onReceiveDataInterrupt);
-            }
-            if (option.onDisconnectInterrupt) {
-                this.setInterruptHandler("Disconnect", option.onDisconnectInterrupt);
-            }
-            if (option.onConnectSuccessInterrupt) {
-                this.setInterruptHandler("ConnectSuccess", option.onConnectSuccessInterrupt);
-            }
-            if (option.onAllInterrupt) {
-                this.setAllInterruptHandler(option.onAllInterrupt);
-            }
-            return result;
+        if (option.destIP) {
+            result = result && (await this.setDestIP(option.destIP));
         }
-        /**
-         * ソケットの終了処理
-         */
-        async finalize() {
-            switch (this.protocol) {
-                case "TCPClient":
-                    await this.sendCommand("Disconnect");
-                    while ((await this.getStatus()) !== "Closed") { }
-                    break;
-                case "TCPServer":
-                    await this.sendCommand("Disconnect");
-                case "UDP":
-                    await this.sendCommand("Close");
-                    break;
-            }
-            this.protocol = null;
+        if (option.destPort) {
+            result = result && (await this.setDestPort(option.destPort));
         }
-        /**
-         * データを送信
-         * @param data 送信データまたは文字列
-         * @return 書き込み結果
-         */
-        sendData(data) {
-            return this.sendDataBase(data);
+        if (option.ipType) {
+            result = result && (await this.setIPTypeOfService(option.ipType));
         }
-        /**
-         * データを送信、書き込みチェックなし
-         * @param data 送信データまたは文字列
-         * @return 書き込み結果
-         */
-        sendDataFast(data) {
-            return this.sendDataBase(data, true);
+        if (option.ttl) {
+            result = result && (await this.setTTL(option.ttl));
         }
-        /**
-         * 受信されたデータを読取
-         * @return 受信データまたは文字列
-         */
-        async receiveData() {
-            const rxRecieveSize = await this.getRXReceiveSize();
-            // const rxReadDataPointer = await this.getRXReadDataPointer();
-            const data = await this.ethernet.bigRead(this.rxReadDataPointer, BSB_SOCKET_RX_BUFFER(this.id), rxRecieveSize);
-            this.rxReadDataPointer += rxRecieveSize;
-            await this.setRXReadDataPointer(this.rxReadDataPointer + rxRecieveSize);
-            await this.sendCommand("Receive");
-            return this.stringMode ? new TextDecoder().decode(Uint8Array.from(data)) : data;
+        if (option.rxBufferSize) {
+            result = result && (await this.setRXBufferSize(option.rxBufferSize));
         }
-        /**
-         * 特定の割り込みをキャッチするハンドラーを設定
-         * 実際にキャッチするにはcheckInterrupt()を定期的に実行
-         * @param name 取得する割り込みの名前 (SendOK | Timeout | ReceiveData | Disconnect | ConnectSuccess)
-         * @param handler コールバック関数、extraはname=ReceiveDataの時とname=ConnectSuccessかつprotocol=TCPServerの時のみ
-         */
-        setInterruptHandler(name, handler) {
-            return (this.interruptHandlers[name] = handler);
+        if (option.txBufferSize) {
+            result = result && (await this.setTXBufferSize(option.txBufferSize));
         }
-        /**
-         * 全ての割り込みをキャッチするハンドラーを設定
-         * 実際にキャッチするにはcheckInterrupt()を定期的に実行
-         * @param handler コールバック関数、nameには受け取った割り込み名が入ります、extraはname=ReceiveDataの時とname=ConnectSuccessかつprotocol=TCPServerの時のみ
-         */
-        setAllInterruptHandler(handler) {
-            return (this.allInterruptHandler = handler);
+        // ソケットのオープン
+        result = result && (await this.sendCommand("Open"));
+        if (this.protocol === "TCPClient") {
+            result = result && (await this.sendCommand("Connect"));
         }
-        /**
-         * 現在の設定済みプロトコルを取得
-         * @return プロトコル
-         */
-        getProtocol() {
-            return this.protocol;
+        if (this.protocol === "TCPServer") {
+            result = result && (await this.sendCommand("Listen"));
         }
-        /**
-         * ソケットレジスタのモードを設定
-         * @param option ソケット設定
-         * @return 書き込み結果
-         */
-        setMode(option) {
-            this.protocol = option.protocol;
-            this.stringMode = option.stringMode || false;
-            return this.ethernet.numWrite(SOCKET_MODE, BSB_SOCKET_REGISTER(this.id), option.protocol === null
-                ? 0
-                : 0b10000000 * (option.multicast === true && option.protocol === "UDP" ? 1 : 0) +
-                    0b01000000 * (option.broardcastBlock === true && option.protocol === "UDP" ? 1 : 0) +
-                    0b00100000 * (option.noDelayACK === true && option.protocol.indexOf("TCP") >= 0 ? 1 : 0) +
-                    0b00100000 * (option.multicastVer1 === true && option.protocol === "UDP" ? 1 : 0) +
-                    0b00010000 * (option.unicastBlock === true && option.protocol === "UDP" ? 1 : 0) +
-                    0b00000001 * (option.protocol.indexOf("TCP") >= 0 ? 1 : 0) +
-                    0b00000010 * (option.protocol === "UDP" ? 1 : 0));
+        // 事前にrxReadDataPointerの値を記憶
+        this.rxReadDataPointer = await this.getRXReadDataPointer();
+        // 割り込みハンドラー設定
+        if (option.onSendOKtInterrupt) {
+            this.setInterruptHandler("SendOK", option.onSendOKtInterrupt);
         }
-        /**
-         * ソケットにコマンドを送信
-         * @param command コマンド
-         * @return 書き込み結果
-         */
-        async sendCommand(command) {
-            const code = Socket.CommandCodes[command];
-            if (!code) {
-                throw new Error(`Unknown Command '${command}'.`);
-            }
-            if (this.protocol === null) {
-                throw new Error("Must set Socket Mode before send the command.");
-            }
-            if (this.protocol.indexOf("TCP") >= 0 && 0x20 < code && code < 0x30) {
-                throw new Error(`'${command}' command is only available in UDP mode.`);
-            }
-            if (this.protocol === "UDP" && 0x01 < code && code < 0x10) {
-                throw new Error(`'${command}' command is only available in TCP mode.`);
-            }
-            return await this.ethernet.numWrite(SOCKET_COMMAND, BSB_SOCKET_REGISTER(this.id), code);
+        if (option.onTimeoutInterrupt) {
+            this.setInterruptHandler("Timeout", option.onTimeoutInterrupt);
         }
-        /**
-         * 割り込みをチェック
-         * 割り込みがあった場合、事前に設定されたhandlerを呼び出します
-         * @return 常にtrue
-         */
-        async checkInterrupt() {
-            if (!this.ethernet.getSpiStatus()) {
-                return;
-            }
-            const interrupt = await this.ethernet.numRead(SOCKET_INTERRUPT, BSB_SOCKET_REGISTER(this.id));
-            if (interrupt === 0) {
-                return this.protocol !== null;
-            }
-            else {
-                await this.ethernet.numWrite(SOCKET_INTERRUPT, BSB_SOCKET_REGISTER(this.id), interrupt);
-            } // リセット
-            const msgList = Object.keys(Socket.InterruptFlags).filter((msg) => (interrupt & Socket.InterruptFlags[msg]) !== 0);
-            for (const m in msgList) {
-                const msg = msgList[m];
-                const handler = this.interruptHandlers[msg];
-                if (msg === "Timeout") {
-                    this.protocol = null;
-                }
-                console.info(`Found Interrupt on Socket ${this.id}: ${msg}\n`);
-                if (handler === undefined && this.allInterruptHandler === undefined) {
-                    continue;
-                }
-                let extra;
-                if (msg === "ReceiveData") {
-                    extra = await this.receiveData();
-                }
-                if (msg === "ConnectSuccess" && this.protocol === "TCPServer") {
-                    extra = new W5500.DestInfo(await this.getDestIP(), await this.getDestPort());
-                }
-                if (handler !== undefined) {
-                    await handler(this, extra);
-                }
-                if (this.allInterruptHandler !== undefined) {
-                    await this.allInterruptHandler(this, msg, extra);
-                }
-                return true;
-            }
-            return this.protocol !== null && this.ethernet.getSpiStatus();
+        if (option.onReceiveDataInterrupt) {
+            this.setInterruptHandler("ReceiveData", option.onReceiveDataInterrupt);
         }
-        /**
-         * ソケットのステータスを取得
-         * @return ステータス
-         */
-        async getStatus() {
-            const status = await this.ethernet.numRead(SOCKET_STATUS, BSB_SOCKET_REGISTER(this.id));
-            const index = Object.values(Socket.StatusCodes).indexOf(status);
-            return index < 0 ? "UNKNOWN" : Object.keys(Socket.StatusCodes)[index];
+        if (option.onDisconnectInterrupt) {
+            this.setInterruptHandler("Disconnect", option.onDisconnectInterrupt);
         }
-        /**
-         * 本体側で使用するポートを設定
-         * @param port ポート番号
-         * @return 書き込み結果
-         */
-        setSourcePort(port) {
-            return this.ethernet.num2Write(SOCKET_SOURCE_PORT, BSB_SOCKET_REGISTER(this.id), port);
+        if (option.onConnectSuccessInterrupt) {
+            this.setInterruptHandler("ConnectSuccess", option.onConnectSuccessInterrupt);
         }
-        /**
-         * 接続先のMACアドレスを設定(UDPで必要な場合のみ)
-         * @param mac MACアドレス
-         * @return 書き込み結果
-         */
-        setDestMacAddress(mac) {
-            return this.ethernet.macWrite(SOCKET_DESTINATION_HARDWARE_ADDRESS, BSB_SOCKET_REGISTER(this.id), mac);
+        if (option.onAllInterrupt) {
+            this.setAllInterruptHandler(option.onAllInterrupt);
         }
-        /**
-         * 接続先のIPアドレスを設定
-         * @param ip IPv4アドレス
-         * @return 書き込み結果
-         */
-        setDestIP(ip) {
-            return this.ethernet.ipWrite(SOCKET_DESTINATION_IP_ADDRESS, BSB_SOCKET_REGISTER(this.id), ip);
-        }
-        /**
-         * 接続元のIPアドレスを取得(TCPサーバーのときのみ)
-         * @return IPv4アドレス
-         */
-        getDestIP() {
-            return this.ethernet.ipRead(SOCKET_DESTINATION_IP_ADDRESS, BSB_SOCKET_REGISTER(this.id));
-        }
-        /**
-         * 接続先のポート番号を設定
-         * @param port ポート番号
-         * @return 書き込み結果
-         */
-        setDestPort(port) {
-            return this.ethernet.num2Write(SOCKET_DESTINATION_PORT, BSB_SOCKET_REGISTER(this.id), port);
-        }
-        /**
-         * 接続元のポート番号を取得(TCPサーバーのときのみ)
-         * @return ポート番号
-         */
-        getDestPort() {
-            return this.ethernet.num2Read(SOCKET_DESTINATION_PORT, BSB_SOCKET_REGISTER(this.id));
-        }
-        /**
-         * 最大セグメントサイズを設定(TCPで必要な場合のみ)
-         * @param size 最大セグメントサイズ
-         * @return 書き込み結果
-         */
-        setMaxSegmentSize(size) {
-            return this.ethernet.num2Write(SOCKET_MAX_SEGMENT_SIZE, BSB_SOCKET_REGISTER(this.id), size);
-        }
-        /**
-         * IPサービスタイプを設定
-         * @param type IPサービスタイプ(1byte)
-         * @return 書き込み結果
-         */
-        setIPTypeOfService(type) {
-            return this.ethernet.numWrite(SOCKET_IP_TYPE_OF_SERVICE, BSB_SOCKET_REGISTER(this.id), type);
-        }
-        /**
-         * TTLを設定
-         * @param ttl TTL(0~65535)
-         * @return 書き込み結果
-         */
-        setTTL(ttl) {
-            return this.ethernet.numWrite(SOCKET_TTL, BSB_SOCKET_REGISTER(this.id), ttl);
-        }
-        /**
-         * バッファサイズを設定
-         * @param size バッファサイズ(KB)
-         * @param address 書き込み先の先頭アドレス
-         * @return 書き込み結果
-         * @internal
-         * @hidden
-         */
-        setBufferSize(size, address) {
-            if ([0, 1, 2, 4, 8, 16].indexOf(size) < 0) {
-                throw new Error("Given buffer size must be 0, 1, 2, 4, 8 or 16.");
-            }
-            return this.ethernet.numWrite(address, BSB_SOCKET_REGISTER(this.id), size);
-        }
-        /**
-         * 受信バッファサイズを設定
-         * @param size バッファサイズ(KB) 2の累乗のみ、16まで
-         * @return 書き込み結果
-         */
-        setRXBufferSize(size) {
-            return this.setBufferSize(size, SOCKET_RX_BUFFER_SIZE);
-        }
-        /**
-         * 送信バッファサイズを設定
-         * @param size バッファサイズ(KB) 2の累乗のみ、16まで
-         * @return 書き込み結果
-         */
-        setTXBufferSize(size) {
-            return this.setBufferSize(size, SOCKET_TX_BUFFER_SIZE);
-        }
-        /**
-         * 送信バッファの空きサイズを取得
-         * @return 空きサイズ
-         */
-        getTXFreeSize() {
-            return this.ethernet.num2Read(SOCKET_TX_FREE_SIZE, BSB_SOCKET_REGISTER(this.id));
-        }
-        /**
-         * 送信バッファの書き込み開始アドレスを取得
-         * @return アドレス
-         */
-        getTXReadPointer() {
-            return this.ethernet.num2Read(SOCKET_TX_READ_POINTER, BSB_SOCKET_REGISTER(this.id));
-        }
-        /**
-         * 送信バッファの次の書き込み開始アドレスを設定
-         * @param pointer アドレス
-         * @return 書き込み結果
-         */
-        setTXWritePointer(pointer) {
-            return this.ethernet.num2Write(SOCKET_TX_WRITE_POINTER, BSB_SOCKET_REGISTER(this.id), pointer);
-        }
-        /**
-         * 受信データの長さを取得
-         * @return 長さ
-         */
-        getRXReceiveSize() {
-            return this.ethernet.num2Read(SOCKET_RX_RECEIVE_SIZE, BSB_SOCKET_REGISTER(this.id));
-        }
-        /**
-         * 受信バッファの読み込み開始アドレスを取得
-         * @return アドレス
-         */
-        getRXReadDataPointer() {
-            return this.ethernet.num2Read(SOCLET_RX_READ_DATA_POINTER, BSB_SOCKET_REGISTER(this.id));
-        }
-        /**
-         * 受信バッファの次の読み込み開始アドレスを設定
-         * @param pointer アドレス
-         * @return 書き込み結果
-         */
-        setRXReadDataPointer(pointer) {
-            return this.ethernet.num2Write(SOCLET_RX_READ_DATA_POINTER, BSB_SOCKET_REGISTER(this.id), pointer);
-        }
-        /**
-         * 受信バッファの書き込み開始アドレスを取得
-         * @return アドレス
-         */
-        getRXWritePointer() {
-            return this.ethernet.num2Read(SOCKET_RX_WRITE_POINTER, BSB_SOCKET_REGISTER(this.id));
-        }
-        /**
-         * IPヘッダーのフラグメントを設定
-         * @param fragment IPヘッダーのフラグメント(0x0000~0xFFFF)
-         * @return 書き込み結果
-         */
-        setFragment(fragment) {
-            return this.ethernet.num2Write(SOCKET_FRAGMENT, BSB_SOCKET_REGISTER(this.id), fragment);
-        }
-        /**
-         * keep-aliveの送信間隔を設定(TCPで必要な場合のみ)
-         * @param timer keep-alive 送信間隔(秒)(0~1275)
-         * @return 書き込み結果
-         */
-        setKeepAliveTimer(timer) {
-            return this.ethernet.numWrite(SOCKET_KEEP_ALIVE_TIMER, BSB_SOCKET_REGISTER(this.id), timer / 5);
-        }
-        /**
-         * データを送信
-         * @param data 送信データまたは文字列
-         * @param noWait データ書き込み時、spi.writeWaitを使用しない
-         * @internal
-         * @hidden
-         */
-        async sendDataBase(data, noWait) {
-            const d = typeof data === "string" ? Array.from(new TextEncoder().encode(data)) : data;
-            const txReadPointer = await this.getTXReadPointer();
-            const result = await this.ethernet.bigWrite(txReadPointer, BSB_SOCKET_TX_BUFFER(this.id), d, noWait);
-            await this.setTXWritePointer(txReadPointer + d.length);
-            await this.sendCommand("Send");
-            return result;
-        }
+        return result;
     }
-    W5500.Socket = Socket;
-    (function (Socket) {
-        /** ソケットのコマンドに対応する値 */
-        Socket.CommandCodes = {
-            Open: 0x01,
-            Listen: 0x02,
-            Connect: 0x04,
-            Disconnect: 0x08,
-            Close: 0x10,
-            Send: 0x20,
-            SendMAC: 0x21,
-            SendKeep: 0x22,
-            Receive: 0x40,
-        };
-        /** ソケットのステータスに対応する値 */
-        Socket.StatusCodes = {
-            Closed: 0x00,
-            Init: 0x13,
-            Listen: 0x14,
-            SynSent: 0x15,
-            SynReceive: 0x16,
-            Established: 0x17,
-            FinWait: 0x18,
-            Closing: 0x1a,
-            TimeWait: 0x1b,
-            CloseWait: 0x1c,
-            LastACK: 0x1d,
-            UDP: 0x22,
-            MACRAW: 0x32,
-        };
-        /** ソケットの割り込みに対応するフラグ */
-        Socket.InterruptFlags = {
-            SendOK: 0b10000,
-            Timeout: 0b01000,
-            ReceiveData: 0b00100,
-            Disconnect: 0b00010,
-            ConnectSuccess: 0b00001,
-        };
-    })(Socket = W5500.Socket || (W5500.Socket = {}));
-})(W5500 = exports.W5500 || (exports.W5500 = {}));
+    /**
+     * ソケットの終了処理
+     */
+    async finalize() {
+        switch (this.protocol) {
+            case "TCPClient":
+                await this.sendCommand("Disconnect");
+                while ((await this.getStatus()) !== "Closed") { }
+                break;
+            case "TCPServer":
+                await this.sendCommand("Disconnect");
+            case "UDP":
+                await this.sendCommand("Close");
+                break;
+        }
+        this.protocol = null;
+    }
+    /**
+     * データを送信
+     * @param data 送信データまたは文字列
+     * @return 書き込み結果
+     */
+    sendData(data) {
+        return this.sendDataBase(data);
+    }
+    /**
+     * データを送信、書き込みチェックなし
+     * @param data 送信データまたは文字列
+     * @return 書き込み結果
+     */
+    sendDataFast(data) {
+        return this.sendDataBase(data, true);
+    }
+    /**
+     * 受信されたデータを読取
+     * @return 受信データまたは文字列
+     */
+    async receiveData() {
+        const rxRecieveSize = await this.getRXReceiveSize();
+        // const rxReadDataPointer = await this.getRXReadDataPointer();
+        const data = await this.ethernet.bigRead(this.rxReadDataPointer, BSB_SOCKET_RX_BUFFER(this.id), rxRecieveSize);
+        this.rxReadDataPointer += rxRecieveSize;
+        await this.setRXReadDataPointer(this.rxReadDataPointer + rxRecieveSize);
+        await this.sendCommand("Receive");
+        return this.stringMode ? new TextDecoder().decode(Uint8Array.from(data)) : data;
+    }
+    /**
+     * 特定の割り込みをキャッチするハンドラーを設定
+     * 実際にキャッチするにはcheckInterrupt()を定期的に実行
+     * @param name 取得する割り込みの名前 (SendOK | Timeout | ReceiveData | Disconnect | ConnectSuccess)
+     * @param handler コールバック関数、extraはname=ReceiveDataの時とname=ConnectSuccessかつprotocol=TCPServerの時のみ
+     */
+    setInterruptHandler(name, handler) {
+        return (this.interruptHandlers[name] = handler);
+    }
+    /**
+     * 全ての割り込みをキャッチするハンドラーを設定
+     * 実際にキャッチするにはcheckInterrupt()を定期的に実行
+     * @param handler コールバック関数、nameには受け取った割り込み名が入ります、extraはname=ReceiveDataの時とname=ConnectSuccessかつprotocol=TCPServerの時のみ
+     */
+    setAllInterruptHandler(handler) {
+        return (this.allInterruptHandler = handler);
+    }
+    /**
+     * 現在の設定済みプロトコルを取得
+     * @return プロトコル
+     */
+    getProtocol() {
+        return this.protocol;
+    }
+    /**
+     * ソケットレジスタのモードを設定
+     * @param option ソケット設定
+     * @return 書き込み結果
+     */
+    setMode(option) {
+        this.protocol = option.protocol;
+        this.stringMode = option.stringMode || false;
+        return this.ethernet.numWrite(SOCKET_MODE, BSB_SOCKET_REGISTER(this.id), option.protocol === null
+            ? 0
+            : 0b10000000 * (option.multicast === true && option.protocol === "UDP" ? 1 : 0) +
+                0b01000000 * (option.broardcastBlock === true && option.protocol === "UDP" ? 1 : 0) +
+                0b00100000 * (option.noDelayACK === true && option.protocol.indexOf("TCP") >= 0 ? 1 : 0) +
+                0b00100000 * (option.multicastVer1 === true && option.protocol === "UDP" ? 1 : 0) +
+                0b00010000 * (option.unicastBlock === true && option.protocol === "UDP" ? 1 : 0) +
+                0b00000001 * (option.protocol.indexOf("TCP") >= 0 ? 1 : 0) +
+                0b00000010 * (option.protocol === "UDP" ? 1 : 0));
+    }
+    /**
+     * ソケットにコマンドを送信
+     * @param command コマンド
+     * @return 書き込み結果
+     */
+    async sendCommand(command) {
+        const code = W5500SocketParts.CommandCodes[command];
+        if (!code) {
+            throw new Error(`Unknown Command '${command}'.`);
+        }
+        if (this.protocol === null) {
+            throw new Error("Must set Socket Mode before send the command.");
+        }
+        if (this.protocol.indexOf("TCP") >= 0 && 0x20 < code && code < 0x30) {
+            throw new Error(`'${command}' command is only available in UDP mode.`);
+        }
+        if (this.protocol === "UDP" && 0x01 < code && code < 0x10) {
+            throw new Error(`'${command}' command is only available in TCP mode.`);
+        }
+        return await this.ethernet.numWrite(SOCKET_COMMAND, BSB_SOCKET_REGISTER(this.id), code);
+    }
+    /**
+     * 割り込みをチェック
+     * 割り込みがあった場合、事前に設定されたhandlerを呼び出します
+     * @return 常にtrue
+     */
+    async checkInterrupt() {
+        if (!this.ethernet.getSpiStatus()) {
+            return;
+        }
+        const interrupt = await this.ethernet.numRead(SOCKET_INTERRUPT, BSB_SOCKET_REGISTER(this.id));
+        if (interrupt === 0) {
+            return this.protocol !== null;
+        }
+        else {
+            await this.ethernet.numWrite(SOCKET_INTERRUPT, BSB_SOCKET_REGISTER(this.id), interrupt);
+        } // リセット
+        const msgList = Object.keys(W5500SocketParts.InterruptFlags).filter((msg) => (interrupt & W5500SocketParts.InterruptFlags[msg]) !== 0);
+        for (const m in msgList) {
+            const msg = msgList[m];
+            const handler = this.interruptHandlers[msg];
+            if (msg === "Timeout") {
+                this.protocol = null;
+            }
+            console.info(`Found Interrupt on Socket ${this.id}: ${msg}\n`);
+            if (handler === undefined && this.allInterruptHandler === undefined) {
+                continue;
+            }
+            let extra;
+            if (msg === "ReceiveData") {
+                extra = await this.receiveData();
+            }
+            if (msg === "ConnectSuccess" && this.protocol === "TCPServer") {
+                extra = new W5500Parts.DestInfo(await this.getDestIP(), await this.getDestPort());
+            }
+            if (handler !== undefined) {
+                await handler(this, extra);
+            }
+            if (this.allInterruptHandler !== undefined) {
+                await this.allInterruptHandler(this, msg, extra);
+            }
+            return true;
+        }
+        return this.protocol !== null && this.ethernet.getSpiStatus();
+    }
+    /**
+     * ソケットのステータスを取得
+     * @return ステータス
+     */
+    async getStatus() {
+        const status = await this.ethernet.numRead(SOCKET_STATUS, BSB_SOCKET_REGISTER(this.id));
+        const index = Object.values(W5500SocketParts.StatusCodes).indexOf(status);
+        return index < 0 ? "UNKNOWN" : Object.keys(W5500SocketParts.StatusCodes)[index];
+    }
+    /**
+     * 本体側で使用するポートを設定
+     * @param port ポート番号
+     * @return 書き込み結果
+     */
+    setSourcePort(port) {
+        return this.ethernet.num2Write(SOCKET_SOURCE_PORT, BSB_SOCKET_REGISTER(this.id), port);
+    }
+    /**
+     * 接続先のMACアドレスを設定(UDPで必要な場合のみ)
+     * @param mac MACアドレス
+     * @return 書き込み結果
+     */
+    setDestMacAddress(mac) {
+        return this.ethernet.macWrite(SOCKET_DESTINATION_HARDWARE_ADDRESS, BSB_SOCKET_REGISTER(this.id), mac);
+    }
+    /**
+     * 接続先のIPアドレスを設定
+     * @param ip IPv4アドレス
+     * @return 書き込み結果
+     */
+    setDestIP(ip) {
+        return this.ethernet.ipWrite(SOCKET_DESTINATION_IP_ADDRESS, BSB_SOCKET_REGISTER(this.id), ip);
+    }
+    /**
+     * 接続元のIPアドレスを取得(TCPサーバーのときのみ)
+     * @return IPv4アドレス
+     */
+    getDestIP() {
+        return this.ethernet.ipRead(SOCKET_DESTINATION_IP_ADDRESS, BSB_SOCKET_REGISTER(this.id));
+    }
+    /**
+     * 接続先のポート番号を設定
+     * @param port ポート番号
+     * @return 書き込み結果
+     */
+    setDestPort(port) {
+        return this.ethernet.num2Write(SOCKET_DESTINATION_PORT, BSB_SOCKET_REGISTER(this.id), port);
+    }
+    /**
+     * 接続元のポート番号を取得(TCPサーバーのときのみ)
+     * @return ポート番号
+     */
+    getDestPort() {
+        return this.ethernet.num2Read(SOCKET_DESTINATION_PORT, BSB_SOCKET_REGISTER(this.id));
+    }
+    /**
+     * 最大セグメントサイズを設定(TCPで必要な場合のみ)
+     * @param size 最大セグメントサイズ
+     * @return 書き込み結果
+     */
+    setMaxSegmentSize(size) {
+        return this.ethernet.num2Write(SOCKET_MAX_SEGMENT_SIZE, BSB_SOCKET_REGISTER(this.id), size);
+    }
+    /**
+     * IPサービスタイプを設定
+     * @param type IPサービスタイプ(1byte)
+     * @return 書き込み結果
+     */
+    setIPTypeOfService(type) {
+        return this.ethernet.numWrite(SOCKET_IP_TYPE_OF_SERVICE, BSB_SOCKET_REGISTER(this.id), type);
+    }
+    /**
+     * TTLを設定
+     * @param ttl TTL(0~65535)
+     * @return 書き込み結果
+     */
+    setTTL(ttl) {
+        return this.ethernet.numWrite(SOCKET_TTL, BSB_SOCKET_REGISTER(this.id), ttl);
+    }
+    /**
+     * バッファサイズを設定
+     * @param size バッファサイズ(KB)
+     * @param address 書き込み先の先頭アドレス
+     * @return 書き込み結果
+     * @internal
+     * @hidden
+     */
+    setBufferSize(size, address) {
+        if ([0, 1, 2, 4, 8, 16].indexOf(size) < 0) {
+            throw new Error("Given buffer size must be 0, 1, 2, 4, 8 or 16.");
+        }
+        return this.ethernet.numWrite(address, BSB_SOCKET_REGISTER(this.id), size);
+    }
+    /**
+     * 受信バッファサイズを設定
+     * @param size バッファサイズ(KB) 2の累乗のみ、16まで
+     * @return 書き込み結果
+     */
+    setRXBufferSize(size) {
+        return this.setBufferSize(size, SOCKET_RX_BUFFER_SIZE);
+    }
+    /**
+     * 送信バッファサイズを設定
+     * @param size バッファサイズ(KB) 2の累乗のみ、16まで
+     * @return 書き込み結果
+     */
+    setTXBufferSize(size) {
+        return this.setBufferSize(size, SOCKET_TX_BUFFER_SIZE);
+    }
+    /**
+     * 送信バッファの空きサイズを取得
+     * @return 空きサイズ
+     */
+    getTXFreeSize() {
+        return this.ethernet.num2Read(SOCKET_TX_FREE_SIZE, BSB_SOCKET_REGISTER(this.id));
+    }
+    /**
+     * 送信バッファの書き込み開始アドレスを取得
+     * @return アドレス
+     */
+    getTXReadPointer() {
+        return this.ethernet.num2Read(SOCKET_TX_READ_POINTER, BSB_SOCKET_REGISTER(this.id));
+    }
+    /**
+     * 送信バッファの次の書き込み開始アドレスを設定
+     * @param pointer アドレス
+     * @return 書き込み結果
+     */
+    setTXWritePointer(pointer) {
+        return this.ethernet.num2Write(SOCKET_TX_WRITE_POINTER, BSB_SOCKET_REGISTER(this.id), pointer);
+    }
+    /**
+     * 受信データの長さを取得
+     * @return 長さ
+     */
+    getRXReceiveSize() {
+        return this.ethernet.num2Read(SOCKET_RX_RECEIVE_SIZE, BSB_SOCKET_REGISTER(this.id));
+    }
+    /**
+     * 受信バッファの読み込み開始アドレスを取得
+     * @return アドレス
+     */
+    getRXReadDataPointer() {
+        return this.ethernet.num2Read(SOCLET_RX_READ_DATA_POINTER, BSB_SOCKET_REGISTER(this.id));
+    }
+    /**
+     * 受信バッファの次の読み込み開始アドレスを設定
+     * @param pointer アドレス
+     * @return 書き込み結果
+     */
+    setRXReadDataPointer(pointer) {
+        return this.ethernet.num2Write(SOCLET_RX_READ_DATA_POINTER, BSB_SOCKET_REGISTER(this.id), pointer);
+    }
+    /**
+     * 受信バッファの書き込み開始アドレスを取得
+     * @return アドレス
+     */
+    getRXWritePointer() {
+        return this.ethernet.num2Read(SOCKET_RX_WRITE_POINTER, BSB_SOCKET_REGISTER(this.id));
+    }
+    /**
+     * IPヘッダーのフラグメントを設定
+     * @param fragment IPヘッダーのフラグメント(0x0000~0xFFFF)
+     * @return 書き込み結果
+     */
+    setFragment(fragment) {
+        return this.ethernet.num2Write(SOCKET_FRAGMENT, BSB_SOCKET_REGISTER(this.id), fragment);
+    }
+    /**
+     * keep-aliveの送信間隔を設定(TCPで必要な場合のみ)
+     * @param timer keep-alive 送信間隔(秒)(0~1275)
+     * @return 書き込み結果
+     */
+    setKeepAliveTimer(timer) {
+        return this.ethernet.numWrite(SOCKET_KEEP_ALIVE_TIMER, BSB_SOCKET_REGISTER(this.id), timer / 5);
+    }
+    /**
+     * データを送信
+     * @param data 送信データまたは文字列
+     * @param noWait データ書き込み時、spi.writeWaitを使用しない
+     * @internal
+     * @hidden
+     */
+    async sendDataBase(data, noWait) {
+        const d = typeof data === "string" ? Array.from(new TextEncoder().encode(data)) : data;
+        const txReadPointer = await this.getTXReadPointer();
+        const result = await this.ethernet.bigWrite(txReadPointer, BSB_SOCKET_TX_BUFFER(this.id), d, noWait);
+        await this.setTXWritePointer(txReadPointer + d.length);
+        await this.sendCommand("Send");
+        return result;
+    }
+}
+exports.W5500Socket = W5500Socket;
 exports.default = W5500;
