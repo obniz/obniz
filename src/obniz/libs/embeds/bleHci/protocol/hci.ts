@@ -981,7 +981,7 @@ class Hci extends EventEmitter<HciEventTypes> {
       new Promise((resolve) => {
         const key = (cid << 8) + firstData;
         this._aclStreamObservers[handle] = this._aclStreamObservers[handle] || [];
-        this._aclStreamObservers[handle][key] = this._aclStreamObservers[handle][cid] || [];
+        this._aclStreamObservers[handle][key] = []; // reset: queue is not supported
         this._aclStreamObservers[handle][key].push(resolve);
       }),
       { timeout, waitingFor: `readAclStream handle:${handle} cid:${cid} firstData:${firstData}` },

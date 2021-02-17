@@ -562,7 +562,7 @@ export default abstract class ObnizConnection extends EventEmitter<
    * @param interval  default 100. It mean 100ms interval loop.
    * @deprecated
    */
-  public repeat(callback: any, interval: any) {
+  public repeat(callback: any, interval?: any) {
     if (this.onloop) {
       this.onloop = callback;
       this._repeatInterval = interval || this._repeatInterval || 100;
