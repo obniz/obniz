@@ -974,7 +974,6 @@ export class W5500 implements ObnizPartsInterface {
   }
 }
 
-
 export namespace W5500SocketParts {
   /** プロトコル */
   export type Protocol = "TCPServer" | "TCPClient" | "UDP" | null;
