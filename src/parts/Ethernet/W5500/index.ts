@@ -91,6 +91,129 @@ const sleep = (msec: number) => new Promise((resolve) => setTimeout(resolve, mse
 /** @hidden */
 const byteString = (bytes: number[]) => bytes.map((n) => ("00" + n.toString(16).toUpperCase()).slice(-2)).join("");
 
+export namespace W5500Parts {
+  /** ピンアサインとSPIオプション */
+  export interface WiredOptions {
+    /** リセットピン番号(初期値: 12) */
+    reset?: number;
+    /** SPIのMOSIピン番号(初期値: 23) */
+    mosi?: number;
+    /** SPIのMISOピン番号(初期値: 19) */
+    miso?: number;
+    /** SPIのCLKピン番号(初期値: 18) */
+    clk?: number;
+    /** SPIのCSピン番号(初期値: 33) */
+    cs?: number;
+    /** SPIのクロック周波数(初期値: 26000000(26Mhz)) */
+    frequency?: number;
+  }
+
+  /** W5500の設定内容 */
+  export interface Options {
+    /** WakeOnLANを待ち受ける */
+    wol?: boolean;
+    /** pingを返答しない */
+    pingBlock?: boolean;
+    /** PPPoEを使用する */
+    pppoe?: boolean;
+    /** データを送信した時は必ずARPリクエストを送信する */
+    forceArp?: boolean;
+    /** 固定データ長(最大4Byte)通信を使用する、csピン指定がない場合自動的にオン */
+    fdm?: boolean;
+    /** デフォルトゲートウェイのIPv4アドレス */
+    gatewayIP: string;
+    /** サブネットマスク */
+    subnetMask: string;
+    /** MACアドレス */
+    macAddress: string;
+    /** LAN側のIPv4アドレス */
+    localIP: string;
+    /** 再試行間隔 */
+    retryTime?: number;
+    /** 再試行回数 */
+    retryCount?: number;
+    /** LinkControlプロトコルのechoリクエストを送っている時間 */
+    linkControlProtocolRequestTimer?: number;
+    /** LinkControlプロトコルのechoリクエストの4bytesマジックナンバーの1byte */
+    linkControlProtocolMagicNumber?: number;
+    /** PPPoEサーバーのMACアドレス */
+    pppoeDestMACAddress?: string;
+    /** PPPoEサーバーのセッションID */
+    pppoeSessionID?: number;
+    /** PPPoEの最大受信ユニットサイズ */
+    pppoeMaxSegmentSize?: number;
+    /** 物理層の設定 */
+    phyConfig?: PhysicalLayerOptions;
+    /** 常に書き込み時に転送チェックを行わない */
+    forceNoCheckWrite?: boolean;
+
+    /** 割り込み「IPConflict」のイベントハンドラー */
+    onIPConflictInterrupt?: (ethernet: W5500) => Promise<void>;
+    /** 割り込み「DestUnreach」のイベントハンドラー */
+    onDestUnreachInterrupt?: (ethernet: W5500, extra?: W5500Parts.DestInfo) => Promise<void>;
+    /** 割り込み「PPPoEClose」のイベントハンドラー */
+    onPPPoECloseInterrupt?: (ethernet: W5500) => Promise<void>;
+    /** 割り込み「MagicPacket」のイベントハンドラー */
+    onMagicPacketInterrupt?: (ethernet: W5500) => Promise<void>;
+    /** 全ての割り込みのイベントハンドラー */
+    onAllInterrupt?: (ethernet: W5500, name: W5500Parts.Interrupt, extra?: W5500Parts.DestInfo) => Promise<void>;
+  }
+
+  /** 接続速度(Mbps)(10/100) */
+  export type LinkSpeed = 10 | 100;
+
+  /** 物理層のステータス */
+  export interface PhysicalLayerStatus {
+    /** 全二重かどうか */
+    duplex: boolean;
+    /** 接続速度(Mbps)(10/100) */
+    speed: LinkSpeed;
+    /** 接続が確立されているかどうか */
+    link: boolean;
+  }
+
+  /** 物理層の設定内容 */
+  export interface PhysicalLayerOptions {
+    /** 物理層のリセット */
+    reset?: boolean;
+    /** 自動ネゴシエーション */
+    autoNegotiation?: boolean;
+    /** 接続速度(Mbps)(10/100) */
+    speed?: LinkSpeed;
+    /** 全二重かどうか */
+    duplex?: boolean;
+    /** 電源オフにするかどうか */
+    powerDown?: boolean;
+  }
+
+  /** 割り込みの種類 */
+  export type Interrupt = "IPConflict" | "DestUnreach" | "PPPoEClose" | "MagicPacket";
+
+  /** 割り込みと対応するフラグ */
+  export const InterruptFlags: { [key in Interrupt]: number } = {
+    IPConflict: 0b10000000,
+    DestUnreach: 0b01000000,
+    PPPoEClose: 0b00100000,
+    MagicPacket: 0b00010000,
+  } as const;
+
+  /** 接続先情報 */
+  export class DestInfo {
+    /** IPv4アドレス */
+    public readonly ip: string;
+    /** ポート番号 */
+    public readonly port: number;
+    /** アドレス(123.234.0.1:12345形式) */
+    public readonly address: string;
+
+    constructor(ip: string, port: number) {
+      this.ip = ip;
+      this.port = port;
+      this.address = `${ip}:${port}`;
+    }
+  }
+}
+
 /** W5500を管理するクラス */
 export class W5500 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
@@ -120,7 +243,11 @@ export class W5500 implements ObnizPartsInterface {
       | ((ethernet: W5500, extra?: W5500Parts.DestInfo) => Promise<void>);
   } = {};
   /** 割り込みを全てキャッチするハンドラーを保持 */
-  protected allInterruptHandler?: (ethernet: W5500, msg: W5500Parts.Interrupt, extra?: W5500Parts.DestInfo) => Promise<void>;
+  protected allInterruptHandler?: (
+    ethernet: W5500,
+    msg: W5500Parts.Interrupt,
+    extra?: W5500Parts.DestInfo,
+  ) => Promise<void>;
   /** ソケットのインスタンスの配列 */
   protected socketList: W5500Socket[] = [];
   /** SPIのステータス */
@@ -847,127 +974,138 @@ export class W5500 implements ObnizPartsInterface {
   }
 }
 
-export namespace W5500Parts {
-  /** ピンアサインとSPIオプション */
-  export interface WiredOptions {
-    /** リセットピン番号(初期値: 12) */
-    reset?: number;
-    /** SPIのMOSIピン番号(初期値: 23) */
-    mosi?: number;
-    /** SPIのMISOピン番号(初期値: 19) */
-    miso?: number;
-    /** SPIのCLKピン番号(初期値: 18) */
-    clk?: number;
-    /** SPIのCSピン番号(初期値: 33) */
-    cs?: number;
-    /** SPIのクロック周波数(初期値: 26000000(26Mhz)) */
-    frequency?: number;
-  }
 
-  /** W5500の設定内容 */
+export namespace W5500SocketParts {
+  /** プロトコル */
+  export type Protocol = "TCPServer" | "TCPClient" | "UDP" | null;
+
+  /** バッファサイズ */
+  export type BufferSize = 0 | 1 | 2 | 4 | 8 | 16;
+
+  /** ソケットの設定内容 */
   export interface Options {
-    /** WakeOnLANを待ち受ける */
-    wol?: boolean;
-    /** pingを返答しない */
-    pingBlock?: boolean;
-    /** PPPoEを使用する */
-    pppoe?: boolean;
-    /** データを送信した時は必ずARPリクエストを送信する */
-    forceArp?: boolean;
-    /** 固定データ長(最大4Byte)通信を使用する、csピン指定がない場合自動的にオン */
-    fdm?: boolean;
-    /** デフォルトゲートウェイのIPv4アドレス */
-    gatewayIP: string;
-    /** サブネットマスク */
-    subnetMask: string;
-    /** MACアドレス */
-    macAddress: string;
-    /** LAN側のIPv4アドレス */
-    localIP: string;
-    /** 再試行間隔 */
-    retryTime?: number;
-    /** 再試行回数 */
-    retryCount?: number;
-    /** LinkControlプロトコルのechoリクエストを送っている時間 */
-    linkControlProtocolRequestTimer?: number;
-    /** LinkControlプロトコルのechoリクエストの4bytesマジックナンバーの1byte */
-    linkControlProtocolMagicNumber?: number;
-    /** PPPoEサーバーのMACアドレス */
-    pppoeDestMACAddress?: string;
-    /** PPPoEサーバーのセッションID */
-    pppoeSessionID?: number;
-    /** PPPoEの最大受信ユニットサイズ */
-    pppoeMaxSegmentSize?: number;
-    /** 物理層の設定 */
-    phyConfig?: PhysicalLayerOptions;
-    /** 常に書き込み時に転送チェックを行わない */
-    forceNoCheckWrite?: boolean;
+    /** 使用プロトコル(TCPClient/TCPServer/UDP/null) */
+    protocol: Protocol;
+    /** マルチキャストの使用(UDPのみ)(Openコマンドの前で設定) */
+    multicast?: boolean;
+    /** ブロードキャストされたパケットを受信しない(UDPのみ) */
+    broardcastBlock?: boolean;
+    /** データを受信したときにACKをすぐに送信する(TCPのみ) */
+    noDelayACK?: boolean;
+    /** マルチキャストでIGMPv1を使う(UDPのみ) */
+    multicastVer1?: boolean;
+    /** ユニキャストされたパケットを受信しない(UDPのみ) */
+    unicastBlock?: boolean;
+    /** 使用ポート番号 */
+    sourcePort?: number;
+    /** 接続先IPv4アドレス */
+    destIP?: string;
+    /** 接続先ポート番号 */
+    destPort?: number;
+    /** 最大セグメントサイズ(TCPのみ)(0~65535) */
+    maxSegmentSize?: number;
+    /** IPサービスタイプ(1byte) */
+    ipType?: number;
+    /** TTL(0~65535) */
+    ttl?: number;
+    /** 受信バッファサイズ(KB) 2の累乗のみ、16まで */
+    rxBufferSize?: BufferSize;
+    /** 送信バッファサイズ(KB) 2の累乗のみ、16まで */
+    txBufferSize?: BufferSize;
+    /** IPヘッダーのフラグメント(0x0000~0xFFFF) */
+    ipFragment?: number;
+    /** keep-alive 送信間隔(秒)(TCPのみ)(0~1275) */
+    keepAliveTimer?: number;
+    /** 受信データを文字列(UTF-8)として扱う */
+    stringMode?: boolean;
 
-    /** 割り込み「IPConflict」のイベントハンドラー */
-    onIPConflictInterrupt?: (ethernet: W5500) => Promise<void>;
-    /** 割り込み「DestUnreach」のイベントハンドラー */
-    onDestUnreachInterrupt?: (ethernet: W5500, extra?: W5500Parts.DestInfo) => Promise<void>;
-    /** 割り込み「PPPoEClose」のイベントハンドラー */
-    onPPPoECloseInterrupt?: (ethernet: W5500) => Promise<void>;
-    /** 割り込み「MagicPacket」のイベントハンドラー */
-    onMagicPacketInterrupt?: (ethernet: W5500) => Promise<void>;
+    /** 割り込み「SendOK」のイベントハンドラー */
+    onSendOKtInterrupt?: (socket: W5500Socket) => Promise<void>;
+    /** 割り込み「Timeout」のイベントハンドラー */
+    onTimeoutInterrupt?: (socket: W5500Socket, extra?: number[] | string | W5500Parts.DestInfo) => Promise<void>;
+    /** 割り込み「ReceiveData」のイベントハンドラー */
+    onReceiveDataInterrupt?: (socket: W5500Socket) => Promise<void>;
+    /** 割り込み「Disconnect」のイベントハンドラー */
+    onDisconnectInterrupt?: (socket: W5500Socket) => Promise<void>;
+    /** 割り込み「ConnectSuccess」のイベントハンドラー */
+    onConnectSuccessInterrupt?: (socket: W5500Socket, extra?: number[] | string | W5500Parts.DestInfo) => Promise<void>;
     /** 全ての割り込みのイベントハンドラー */
-    onAllInterrupt?: (ethernet: W5500, name: W5500Parts.Interrupt, extra?: W5500Parts.DestInfo) => Promise<void>;
+    onAllInterrupt?: (
+      socket: W5500Socket,
+      name: W5500SocketParts.Interrupt,
+      extra?: number[] | string | W5500Parts.DestInfo,
+    ) => Promise<void>;
   }
 
-  /** 接続速度(Mbps)(10/100) */
-  export type LinkSpeed = 10 | 100;
+  /** ソケットの使用可能コマンド */
+  export type Command =
+    | "Open"
+    | "Listen"
+    | "Connect"
+    | "Disconnect"
+    | "Close"
+    | "Send"
+    | "SendMAC"
+    | "SendKeep"
+    | "Receive";
 
-  /** 物理層のステータス */
-  export interface PhysicalLayerStatus {
-    /** 全二重かどうか */
-    duplex: boolean;
-    /** 接続速度(Mbps)(10/100) */
-    speed: LinkSpeed;
-    /** 接続が確立されているかどうか */
-    link: boolean;
-  }
-
-  /** 物理層の設定内容 */
-  export interface PhysicalLayerOptions {
-    /** 物理層のリセット */
-    reset?: boolean;
-    /** 自動ネゴシエーション */
-    autoNegotiation?: boolean;
-    /** 接続速度(Mbps)(10/100) */
-    speed?: LinkSpeed;
-    /** 全二重かどうか */
-    duplex?: boolean;
-    /** 電源オフにするかどうか */
-    powerDown?: boolean;
-  }
-
-  /** 割り込みの種類 */
-  export type Interrupt = "IPConflict" | "DestUnreach" | "PPPoEClose" | "MagicPacket";
-
-  /** 割り込みと対応するフラグ */
-  export const InterruptFlags: { [key in Interrupt]: number } = {
-    IPConflict: 0b10000000,
-    DestUnreach: 0b01000000,
-    PPPoEClose: 0b00100000,
-    MagicPacket: 0b00010000,
+  /** ソケットのコマンドに対応する値 */
+  export const CommandCodes: { [key in Command]: number } = {
+    Open: 0x01,
+    Listen: 0x02,
+    Connect: 0x04,
+    Disconnect: 0x08,
+    Close: 0x10,
+    Send: 0x20,
+    SendMAC: 0x21,
+    SendKeep: 0x22,
+    Receive: 0x40,
   } as const;
 
-  /** 接続先情報 */
-  export class DestInfo {
-    /** IPv4アドレス */
-    public readonly ip: string;
-    /** ポート番号 */
-    public readonly port: number;
-    /** アドレス(123.234.0.1:12345形式) */
-    public readonly address: string;
+  /** ソケットのステータス */
+  export type Status =
+    | "Closed"
+    | "Init"
+    | "Listen"
+    | "SynSent"
+    | "SynReceive"
+    | "Established"
+    | "FinWait"
+    | "Closing"
+    | "TimeWait"
+    | "CloseWait"
+    | "LastACK"
+    | "UDP"
+    | "MACRAW";
 
-    constructor(ip: string, port: number) {
-      this.ip = ip;
-      this.port = port;
-      this.address = `${ip}:${port}`;
-    }
-  }
+  /** ソケットのステータスに対応する値 */
+  export const StatusCodes: { [key in Status]: number } = {
+    Closed: 0x00,
+    Init: 0x13,
+    Listen: 0x14,
+    SynSent: 0x15, // 一時的
+    SynReceive: 0x16, // 一時的
+    Established: 0x17,
+    FinWait: 0x18, // 一時的
+    Closing: 0x1a, // 一時的
+    TimeWait: 0x1b, // 一時的
+    CloseWait: 0x1c,
+    LastACK: 0x1d,
+    UDP: 0x22,
+    MACRAW: 0x32,
+  } as const;
+
+  /** ソケットの割り込み */
+  export type Interrupt = "SendOK" | "Timeout" | "ReceiveData" | "Disconnect" | "ConnectSuccess";
+
+  /** ソケットの割り込みに対応するフラグ */
+  export const InterruptFlags: { [key in Interrupt]: number } = {
+    SendOK: 0b10000,
+    Timeout: 0b01000,
+    ReceiveData: 0b00100,
+    Disconnect: 0b00010,
+    ConnectSuccess: 0b00001,
+  } as const;
 }
 
 /** ソケット通信を行い管理するクラス */
@@ -1147,7 +1285,11 @@ export class W5500Socket {
    * @param handler コールバック関数、nameには受け取った割り込み名が入ります、extraはname=ReceiveDataの時とname=ConnectSuccessかつprotocol=TCPServerの時のみ
    */
   public setAllInterruptHandler(
-    handler: (socket: W5500Socket, name: W5500SocketParts.Interrupt, extra?: number[] | string | W5500Parts.DestInfo) => Promise<void>,
+    handler: (
+      socket: W5500Socket,
+      name: W5500SocketParts.Interrupt,
+      extra?: number[] | string | W5500Parts.DestInfo,
+    ) => Promise<void>,
   ) {
     return (this.allInterruptHandler = handler);
   }
@@ -1470,137 +1612,4 @@ export class W5500Socket {
   }
 }
 
-export namespace W5500SocketParts {
-  /** プロトコル */
-  export type Protocol = "TCPServer" | "TCPClient" | "UDP" | null;
-
-  /** バッファサイズ */
-  export type BufferSize = 0 | 1 | 2 | 4 | 8 | 16;
-
-  /** ソケットの設定内容 */
-  export interface Options {
-    /** 使用プロトコル(TCPClient/TCPServer/UDP/null) */
-    protocol: Protocol;
-    /** マルチキャストの使用(UDPのみ)(Openコマンドの前で設定) */
-    multicast?: boolean;
-    /** ブロードキャストされたパケットを受信しない(UDPのみ) */
-    broardcastBlock?: boolean;
-    /** データを受信したときにACKをすぐに送信する(TCPのみ) */
-    noDelayACK?: boolean;
-    /** マルチキャストでIGMPv1を使う(UDPのみ) */
-    multicastVer1?: boolean;
-    /** ユニキャストされたパケットを受信しない(UDPのみ) */
-    unicastBlock?: boolean;
-    /** 使用ポート番号 */
-    sourcePort?: number;
-    /** 接続先IPv4アドレス */
-    destIP?: string;
-    /** 接続先ポート番号 */
-    destPort?: number;
-    /** 最大セグメントサイズ(TCPのみ)(0~65535) */
-    maxSegmentSize?: number;
-    /** IPサービスタイプ(1byte) */
-    ipType?: number;
-    /** TTL(0~65535) */
-    ttl?: number;
-    /** 受信バッファサイズ(KB) 2の累乗のみ、16まで */
-    rxBufferSize?: BufferSize;
-    /** 送信バッファサイズ(KB) 2の累乗のみ、16まで */
-    txBufferSize?: BufferSize;
-    /** IPヘッダーのフラグメント(0x0000~0xFFFF) */
-    ipFragment?: number;
-    /** keep-alive 送信間隔(秒)(TCPのみ)(0~1275) */
-    keepAliveTimer?: number;
-    /** 受信データを文字列(UTF-8)として扱う */
-    stringMode?: boolean;
-
-    /** 割り込み「SendOK」のイベントハンドラー */
-    onSendOKtInterrupt?: (socket: W5500Socket) => Promise<void>;
-    /** 割り込み「Timeout」のイベントハンドラー */
-    onTimeoutInterrupt?: (socket: W5500Socket, extra?: number[] | string | W5500Parts.DestInfo) => Promise<void>;
-    /** 割り込み「ReceiveData」のイベントハンドラー */
-    onReceiveDataInterrupt?: (socket: W5500Socket) => Promise<void>;
-    /** 割り込み「Disconnect」のイベントハンドラー */
-    onDisconnectInterrupt?: (socket: W5500Socket) => Promise<void>;
-    /** 割り込み「ConnectSuccess」のイベントハンドラー */
-    onConnectSuccessInterrupt?: (socket: W5500Socket, extra?: number[] | string | W5500Parts.DestInfo) => Promise<void>;
-    /** 全ての割り込みのイベントハンドラー */
-    onAllInterrupt?: (
-      socket: W5500Socket,
-      name: W5500SocketParts.Interrupt,
-      extra?: number[] | string | W5500Parts.DestInfo,
-    ) => Promise<void>;
-  }
-
-  /** ソケットの使用可能コマンド */
-  export type Command =
-    | "Open"
-    | "Listen"
-    | "Connect"
-    | "Disconnect"
-    | "Close"
-    | "Send"
-    | "SendMAC"
-    | "SendKeep"
-    | "Receive";
-
-  /** ソケットのコマンドに対応する値 */
-  export const CommandCodes: { [key in Command]: number } = {
-    Open: 0x01,
-    Listen: 0x02,
-    Connect: 0x04,
-    Disconnect: 0x08,
-    Close: 0x10,
-    Send: 0x20,
-    SendMAC: 0x21,
-    SendKeep: 0x22,
-    Receive: 0x40,
-  } as const;
-
-  /** ソケットのステータス */
-  export type Status =
-    | "Closed"
-    | "Init"
-    | "Listen"
-    | "SynSent"
-    | "SynReceive"
-    | "Established"
-    | "FinWait"
-    | "Closing"
-    | "TimeWait"
-    | "CloseWait"
-    | "LastACK"
-    | "UDP"
-    | "MACRAW";
-
-  /** ソケットのステータスに対応する値 */
-  export const StatusCodes: { [key in Status]: number } = {
-    Closed: 0x00,
-    Init: 0x13,
-    Listen: 0x14,
-    SynSent: 0x15, // 一時的
-    SynReceive: 0x16, // 一時的
-    Established: 0x17,
-    FinWait: 0x18, // 一時的
-    Closing: 0x1a, // 一時的
-    TimeWait: 0x1b, // 一時的
-    CloseWait: 0x1c,
-    LastACK: 0x1d,
-    UDP: 0x22,
-    MACRAW: 0x32,
-  } as const;
-
-  /** ソケットの割り込み */
-  export type Interrupt = "SendOK" | "Timeout" | "ReceiveData" | "Disconnect" | "ConnectSuccess";
-
-  /** ソケットの割り込みに対応するフラグ */
-  export const InterruptFlags: { [key in Interrupt]: number } = {
-    SendOK: 0b10000,
-    Timeout: 0b01000,
-    ReceiveData: 0b00100,
-    Disconnect: 0b00010,
-    ConnectSuccess: 0b00001,
-  } as const;
-}
-
-export default { W5500, W5500Parts, W5500Socket, W5500SocketParts };
+export default W5500;
