@@ -313,6 +313,10 @@ export interface PartsList {
     class: Grove_WaterLevelSensor;
     options: Grove_WaterLevelSensorOptions;
   };
+  "Grove_MicroSwitch": {
+    class: Grove_MicroSwitch;
+    options: Grove_MicroSwitchOptions;
+  };
   "M5StickC_JoyStick": { class: M5StickC_JoyStick; options: M5StickC_JoyStickOptions };
   "M5StickC_ADC": { class: M5StickC_ADC; options: M5StickC_ADCOptions };
   "M5StickC_DAC": { class: M5StickC_DAC; options: M5StickC_DACOptions };

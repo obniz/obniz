@@ -34,9 +34,7 @@ export default class Grove_MicroSwitch implements ObnizPartsInterface {
   public isPressed: boolean | null = null;
   public onchange: ((pressed: boolean) => void) | null = null;
 
-  private io_vcc!: PeripheralIO;
   private io_signal!: PeripheralIO;
-  private io_supply?: PeripheralIO;
 
   constructor() {
     this.keys = ["signal", "gnd", "vcc", "grove"];
