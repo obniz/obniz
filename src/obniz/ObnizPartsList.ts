@@ -124,6 +124,9 @@ import S11059, { S11059Options } from "../parts/ColorSensor/S11059";
 // biological
 import Puls08M5stickcS, { Puls08M5stickcSOptions } from "../parts/Biological/PULSE08-M5STICKC-S";
 
+// Ethernet
+import W5500, { W5500Parts } from "../parts/Ethernet/W5500";
+
 // Ble
 import OMRON_2JCIE, { OMRON_2JCIEOptions } from "../parts/Ble/2jcie";
 import cir415a, { cir415aOptions } from "../parts/Ble/cir415a";
@@ -363,4 +366,5 @@ export interface PartsList {
   "DPS310": { class: DPS310; options: DPS310Options };
   "BMP280": { class: BMP280; options: BMP280Options };
   "HEM_9200T": { class: HEM_9200T; options: HEM_9200TOptions };
+  "W5500": { class: W5500; options: W5500Parts.WiredOptions };
 }
