@@ -22088,6 +22088,7 @@ var map = {
 	"./Grove/Grove_MP3/index.js": "./dist/src/parts/Grove/Grove_MP3/index.js",
 	"./Grove/Grove_MicroSwitch/index.js": "./dist/src/parts/Grove/Grove_MicroSwitch/index.js",
 	"./Grove/Grove_PressureSensor/index.js": "./dist/src/parts/Grove/Grove_PressureSensor/index.js",
+	"./Grove/Grove_Relay/index.js": "./dist/src/parts/Grove/Grove_Relay/index.js",
 	"./Grove/Grove_RotaryAngleSensor/index.js": "./dist/src/parts/Grove/Grove_RotaryAngleSensor/index.js",
 	"./Grove/Grove_SoilMoistureSensor/index.js": "./dist/src/parts/Grove/Grove_SoilMoistureSensor/index.js",
 	"./Grove/Grove_Speaker/index.js": "./dist/src/parts/Grove/Grove_Speaker/index.js",
@@ -40796,6 +40797,49 @@ class Grove_PressureSensor {
     }
 }
 exports.default = Grove_PressureSensor;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_Relay/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_Relay
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_Relay {
+    constructor() {
+        this.keys = ["signal", "gnd", "vcc", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_Relay",
+        };
+    }
+    wired(obniz) {
+        if (this.params.grove) {
+            this.io_signal = this.params.grove.getDigital();
+        }
+        else {
+            this.obniz = obniz;
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.io_signal = obniz.getIO(this.params.signal);
+        }
+        this.off();
+    }
+    on() {
+        this.io_signal.output(true);
+    }
+    off() {
+        this.io_signal.output(false);
+    }
+}
+exports.default = Grove_Relay;
 
 
 /***/ }),
