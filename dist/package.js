@@ -50,7 +50,7 @@ module.exports = {
     "obniz"
   ],
   "repository": "obniz/obniz",
-  "author": "CambrianRobotics Inc. <supportteam@cambrianrobotics.com>",
+  "author": "obniz Inc. <supportteam@obniz.com>",
   "homepage": "https://obniz.com/",
   "license": "SEE LICENSE IN LICENSE.txt",
   "devDependencies": {
