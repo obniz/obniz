@@ -3,9 +3,11 @@
  * @module Parts.S11059
  */
 
-import Obniz from "../../../obniz";
-import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface S11059Options {
   vcc?: number;
@@ -21,7 +23,7 @@ export type S11059IntergerTime = 0 | 1 | 2 | 3;
 export default class S11059 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "S11059",
+      name: 'S11059',
     };
   }
 
@@ -34,7 +36,7 @@ export default class S11059 implements ObnizPartsInterface {
   public i2c!: PeripheralI2C;
 
   constructor() {
-    this.keys = ["vcc", "sda", "scl", "i2c", "gnd"];
+    this.keys = ['vcc', 'sda', 'scl', 'i2c', 'gnd'];
     this.requiredKeys = [];
 
     this.address = 0x2a;
@@ -47,12 +49,12 @@ export default class S11059 implements ObnizPartsInterface {
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '3v');
     this.obniz.wait(100);
 
     this.params.clock = 100000;
-    this.params.pull = "3v";
-    this.params.mode = "master";
+    this.params.pull = '3v';
+    this.params.mode = 'master';
     this.i2c = obniz.getI2CWithConfig(this.params);
     this.obniz.wait(100);
   }

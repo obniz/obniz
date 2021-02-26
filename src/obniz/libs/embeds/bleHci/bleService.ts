@@ -2,15 +2,23 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import BleCharacteristic from "./bleCharacteristic";
-import BleLocalAttributeAbstract from "./bleLocalAttributeAbstract";
-import BlePeripheral from "./blePeripheral";
-import { BleAdvertisementData, BleCharacteristicDefine, BleServiceDefine, UUID } from "./bleTypes";
+import BleCharacteristic from './bleCharacteristic';
+import BleLocalAttributeAbstract from './bleLocalAttributeAbstract';
+import BlePeripheral from './blePeripheral';
+import {
+  BleAdvertisementData,
+  BleCharacteristicDefine,
+  BleServiceDefine,
+  UUID,
+} from './bleTypes';
 
 /**
  * @category Use as Peripheral
  */
-export default class BleService extends BleLocalAttributeAbstract<null, BleCharacteristic> {
+export default class BleService extends BleLocalAttributeAbstract<
+null,
+BleCharacteristic
+> {
   /**
    * Peripheral instance.
    *
@@ -27,14 +35,18 @@ export default class BleService extends BleLocalAttributeAbstract<null, BleChara
 
   /**
    * Add new Characteristic
+   *
    * @param child
    */
-  public addCharacteristic(child: BleCharacteristicDefine | BleCharacteristic): BleCharacteristic {
+  public addCharacteristic(
+    child: BleCharacteristicDefine | BleCharacteristic
+  ): BleCharacteristic {
     return this.addChild(child);
   }
 
   /**
    * Get Characteristic
+   *
    * @param uuid
    */
   public getCharacteristic(uuid: UUID): BleCharacteristic | null {
@@ -45,14 +57,14 @@ export default class BleService extends BleLocalAttributeAbstract<null, BleChara
    * @ignore
    */
   get parentName(): string | null {
-    return "peripheral";
+    return 'peripheral';
   }
 
   /**
    * @ignore
    */
   get childrenName(): string | null {
-    return "characteristics";
+    return 'characteristics';
   }
 
   /**
@@ -86,7 +98,7 @@ export default class BleService extends BleLocalAttributeAbstract<null, BleChara
    */
   get advData(): BleAdvertisementData {
     return {
-      flags: ["general_discoverable_mode", "br_edr_not_supported"],
+      flags: ['general_discoverable_mode', 'br_edr_not_supported'],
       serviceUuids: [this.uuid],
     };
   }

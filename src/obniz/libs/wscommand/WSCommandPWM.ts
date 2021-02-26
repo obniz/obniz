@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from "./WSCommand";
+import WSCommand from './WSCommand';
 
 class WSCommandPWM extends WSCommand {
   public module: any;
@@ -101,19 +101,24 @@ class WSCommandPWM extends WSCommand {
 
   public parseFromJson(json: any) {
     for (let i = 0; i < this.ModuleNum; i++) {
-      const module: any = json["pwm" + i];
+      const module: any = json['pwm' + i];
       if (module === undefined) {
         continue;
       }
 
       const schemaData: any = [
-        { uri: "/request/pwm/init", onValid: this.init },
-        { uri: "/request/pwm/freq", onValid: this.freq },
-        { uri: "/request/pwm/pulse", onValid: this.pulse },
-        { uri: "/request/pwm/modulate", onValid: this.amModulate },
-        { uri: "/request/pwm/deinit", onValid: this.deinit },
+        { uri: '/request/pwm/init', onValid: this.init },
+        { uri: '/request/pwm/freq', onValid: this.freq },
+        { uri: '/request/pwm/pulse', onValid: this.pulse },
+        { uri: '/request/pwm/modulate', onValid: this.amModulate },
+        { uri: '/request/pwm/deinit', onValid: this.deinit },
       ];
-      const res: any = this.validateCommandSchema(schemaData, module, "pwm" + i, i);
+      const res: any = this.validateCommandSchema(
+        schemaData,
+        module,
+        'pwm' + i,
+        i
+      );
 
       if (res.valid === 0) {
         if (res.invalidButLike.length > 0) {

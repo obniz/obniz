@@ -3,10 +3,12 @@
  * @module Parts.Potentiometer
  */
 
-import Obniz from "../../../obniz";
-import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
+import Obniz from '../../../obniz';
+import PeripheralAD from '../../../obniz/libs/io_peripherals/ad';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface PotentiometerOptions {
   pin0: number;
@@ -17,7 +19,7 @@ export interface PotentiometerOptions {
 export default class Potentiometer implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "Potentiometer",
+      name: 'Potentiometer',
     };
   }
 
@@ -33,12 +35,12 @@ export default class Potentiometer implements ObnizPartsInterface {
   protected obniz!: Obniz;
 
   constructor() {
-    this.keys = ["pin0", "pin1", "pin2"];
-    this.requiredKeys = ["pin0", "pin1", "pin2"];
+    this.keys = ['pin0', 'pin1', 'pin2'];
+    this.requiredKeys = ['pin0', 'pin1', 'pin2'];
   }
 
   public wired(obniz: Obniz) {
-    this.obniz.setVccGnd(this.params.pin0, this.params.pin2, "5v");
+    this.obniz.setVccGnd(this.params.pin0, this.params.pin2, '5v');
     this.ad = obniz.getAD(this.params.pin1);
 
     obniz.getAD(this.params.pin0).start((value: any) => {

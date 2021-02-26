@@ -3,9 +3,9 @@
  * @module ObnizCore
  */
 
-import ObnizUtil from "./libs/utils/util";
-import { ObnizOptions } from "./ObnizOptions";
-import ObnizUIs from "./ObnizUIs";
+import ObnizUtil from './libs/utils/util';
+import { ObnizOptions } from './ObnizOptions';
+import ObnizUIs from './ObnizUIs';
 
 /**
  * @ignore
@@ -103,12 +103,12 @@ export default class ObnizDevice extends ObnizUIs {
     if (this.isNode) {
       console.error(msg);
     } else {
-      if (msg && typeof msg === "object" && msg.alert) {
+      if (msg && typeof msg === 'object' && msg.alert) {
         this.showAlertUI(msg);
         console.log(msg.message);
         return;
       }
-      if (typeof showObnizDebugError === "function") {
+      if (typeof showObnizDebugError === 'function') {
         showObnizDebugError(new Error(msg));
       }
       this.log(`Warning: ${msg}`);
@@ -130,10 +130,10 @@ export default class ObnizDevice extends ObnizUIs {
     }
 
     if (!this.isNode) {
-      if (msg && typeof msg === "object" && msg.alert) {
+      if (msg && typeof msg === 'object' && msg.alert) {
         this.showAlertUI(msg);
       }
-      if (typeof showObnizDebugError === "function") {
+      if (typeof showObnizDebugError === 'function') {
         showObnizDebugError(new Error(msg.message));
       }
     }
@@ -171,7 +171,7 @@ export default class ObnizDevice extends ObnizUIs {
    */
   public message(target: string | string[], message: string) {
     let targets: any = [];
-    if (typeof target === "string") {
+    if (typeof target === 'string') {
       targets.push(target);
     } else {
       targets = target;
@@ -191,19 +191,23 @@ export default class ObnizDevice extends ObnizUIs {
   protected notifyToModule(obj: any) {
     super.notifyToModule(obj);
     // notify messaging
-    if (typeof obj.message === "object" && this.onmessage) {
-      this._runUserCreatedFunction(this.onmessage, obj.message.data, obj.message.from);
+    if (typeof obj.message === 'object' && this.onmessage) {
+      this._runUserCreatedFunction(
+        this.onmessage,
+        obj.message.data,
+        obj.message.from
+      );
     }
     // debug
-    if (typeof obj.debug === "object") {
+    if (typeof obj.debug === 'object') {
       if (obj.debug.warning) {
-        const msg: any = "Warning: " + obj.debug.warning.message;
-        this.warning({ alert: "warning", message: msg });
+        const msg: any = 'Warning: ' + obj.debug.warning.message;
+        this.warning({ alert: 'warning', message: msg });
       }
 
       if (obj.debug.error) {
-        const msg: any = "Error: " + obj.debug.error.message;
-        this.error({ alert: "error", message: msg });
+        const msg: any = 'Error: ' + obj.debug.error.message;
+        this.error({ alert: 'error', message: msg });
       }
       if (this.ondebug) {
         this.ondebug(obj.debug);

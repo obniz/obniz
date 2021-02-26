@@ -3,22 +3,24 @@
  * @module Parts.Toio_CoreCube
  */
 
-import Obniz from "../../../obniz";
-import BleRemoteCharacteristic from "../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic";
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import BleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface Toio_CoreCubeOptions {}
 
 export default class Toio_CoreCube implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "toio_CoreCube",
+      name: 'toio_CoreCube',
     };
   }
 
   public static isDevice(peripheral: BleRemotePeripheral) {
-    if (peripheral.localName === "toio Core Cube") {
+    if (peripheral.localName === 'toio Core Cube') {
       return true;
     } else {
       return false;
@@ -37,15 +39,15 @@ export default class Toio_CoreCube implements ObnizPartsInterface {
   public params: any;
 
   private _uuids = {
-    serviceID: "10B20100-5B3B-4571-9508-CF3EFCD7BBAE",
-    characteristicIDMotor: "10B20102-5B3B-4571-9508-CF3EFCD7BBAE",
-    characteristicIDPos: "10B20101-5B3B-4571-9508-CF3EFCD7BBAE",
-    characteristicIDMotion: "10B20106-5B3B-4571-9508-CF3EFCD7BBAE",
-    characteristicIDButton: "10B20107-5B3B-4571-9508-CF3EFCD7BBAE",
-    characteristicIDBattery: "10B20108-5B3B-4571-9508-CF3EFCD7BBAE",
+    serviceID: '10B20100-5B3B-4571-9508-CF3EFCD7BBAE',
+    characteristicIDMotor: '10B20102-5B3B-4571-9508-CF3EFCD7BBAE',
+    characteristicIDPos: '10B20101-5B3B-4571-9508-CF3EFCD7BBAE',
+    characteristicIDMotion: '10B20106-5B3B-4571-9508-CF3EFCD7BBAE',
+    characteristicIDButton: '10B20107-5B3B-4571-9508-CF3EFCD7BBAE',
+    characteristicIDBattery: '10B20108-5B3B-4571-9508-CF3EFCD7BBAE',
   };
 
-  private timeout: number = 100;
+  private timeout = 100;
   private _buttonCharacteristic: BleRemoteCharacteristic | null = null;
   private _motionCharacteristic: BleRemoteCharacteristic | null = null;
   private _positionCharacteristic: BleRemoteCharacteristic | null = null;
@@ -54,7 +56,7 @@ export default class Toio_CoreCube implements ObnizPartsInterface {
 
   constructor(peripheral: BleRemotePeripheral | null) {
     if (peripheral && !Toio_CoreCube.isDevice(peripheral)) {
-      throw new Error("peripheral is not RS_Seek3");
+      throw new Error('peripheral is not RS_Seek3');
     }
     this.peripheral = peripheral;
   }
@@ -63,10 +65,10 @@ export default class Toio_CoreCube implements ObnizPartsInterface {
 
   public async connectWait(timeout: number) {
     if (!this.peripheral) {
-      throw new Error("RS_Seek3 is not find.");
+      throw new Error('RS_Seek3 is not find.');
     }
     this.peripheral.ondisconnect = (reason: any) => {
-      if (typeof this.ondisconnect === "function") {
+      if (typeof this.ondisconnect === 'function') {
         this.ondisconnect(reason);
       }
     };
@@ -92,12 +94,12 @@ export default class Toio_CoreCube implements ObnizPartsInterface {
       .getCharacteristic(this._uuids.characteristicIDBattery);
 
     if (this._buttonCharacteristic) {
-      if (typeof this.functionButtonPress === "function") {
+      if (typeof this.functionButtonPress === 'function') {
         this._buttonCharacteristic.registerNotify(this.functionButtonPress);
       }
     }
     if (this._buttonCharacteristic) {
-      if (typeof this.functionMotionChange === "function") {
+      if (typeof this.functionMotionChange === 'function') {
         this._buttonCharacteristic.registerNotify(this.functionMotionChange);
       }
     }
@@ -149,7 +151,7 @@ export default class Toio_CoreCube implements ObnizPartsInterface {
     return readData[0];
   }
 
-  public async moveAroundWait(_leftWheelPower: number = 0, _rightWheelPower: number = 0) {
+  public async moveAroundWait(_leftWheelPower = 0, _rightWheelPower = 0) {
     const constraintWheelPower = (wheelPower: number) => {
       // NOTE: Power is limited belong 0 to 255. And minus value is backward.
       if (wheelPower < -255) {
@@ -186,13 +188,13 @@ export default class Toio_CoreCube implements ObnizPartsInterface {
   }
 
   public async movePositionWait(
-    timeoutSec: number = 5,
-    moveType: number = 0,
-    maxWheelPower: number = 30,
-    wheelPowerType: number = 30,
-    targetPosX: number = 0,
-    targetPosY: number = 0,
-    targetAngle: number = 0,
+    timeoutSec = 5,
+    moveType = 0,
+    maxWheelPower = 30,
+    wheelPowerType = 30,
+    targetPosX = 0,
+    targetPosY = 0,
+    targetAngle = 0
   ) {
     const parceNumber = (pos: number) => {
       // NOTE: Pos is must hove belong 0 to 65535.

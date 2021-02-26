@@ -3,10 +3,12 @@
  * @module Parts.Speaker
  */
 
-import Obniz from "../../../obniz";
-import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
+import Obniz from '../../../obniz';
+import PeripheralPWM from '../../../obniz/libs/io_peripherals/pwm';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface SpeakerOptions {
   signal: number;
@@ -16,7 +18,7 @@ export interface SpeakerOptions {
 export default class Speaker implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "Speaker",
+      name: 'Speaker',
     };
   }
 
@@ -29,20 +31,20 @@ export default class Speaker implements ObnizPartsInterface {
   private pwm!: PeripheralPWM;
 
   constructor(obniz: any) {
-    this.keys = ["signal", "gnd"];
-    this.requiredKeys = ["signal"];
+    this.keys = ['signal', 'gnd'];
+    this.requiredKeys = ['signal'];
   }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
-    this.obniz.setVccGnd(null, this.params.gnd, "5v");
+    this.obniz.setVccGnd(null, this.params.gnd, '5v');
     this.pwm = obniz.getFreePwm();
     this.pwm.start({ io: this.params.signal });
   }
 
   public play(frequency: number) {
-    if (typeof frequency !== "number") {
-      throw new Error("freq must be a number");
+    if (typeof frequency !== 'number') {
+      throw new Error('freq must be a number');
     }
     frequency = Math.floor(frequency); // temporary
     if (frequency > 0) {

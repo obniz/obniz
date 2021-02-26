@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @ignore
  */
-export default function(source: any): any {
+export default function (source: any): any {
   // @ts-ignore
   const self: any = this;
   if (self.cacheable) {
@@ -13,15 +13,15 @@ export default function(source: any): any {
     const output: any = {};
 
     for (const key of Object.keys(src)) {
-      if (key.startsWith("_")) {
+      if (key.startsWith('_')) {
         continue;
       }
       output[key] = src[key];
     }
 
-    return JSON.stringify(output, undefined, "\t");
+    return JSON.stringify(output, undefined, '\t');
   } catch (err) {
-    (self as any).emitError(err);
+    self.emitError(err);
     return null;
   }
 }

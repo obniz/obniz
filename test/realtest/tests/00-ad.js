@@ -24,7 +24,7 @@ describe('0-ad', function() {
 
   it('checkBoard -> obniz can detect low on io check', async () => {
     for (let i = 0; i < check_output_io.length; i++) {
-      await ioInRange(
+      await ioInRangeWait(
         checkBoard,
         check_output_io[i].board_io,
         config.getDevice(check_output_io[i].obniz),
@@ -37,7 +37,7 @@ describe('0-ad', function() {
 
   it('checkBoard -> obniz can detect high on io check', async () => {
     for (let i = 0; i < check_output_io.length; i++) {
-      await ioInRange(
+      await ioInRangeWait(
         checkBoard,
         check_output_io[i].board_io,
         config.getDevice(check_output_io[i].obniz),
@@ -50,7 +50,7 @@ describe('0-ad', function() {
 
   it('checkBoard <- obniz can detect low on io check', async () => {
     for (let i = 0; i < check_input_io.length; i++) {
-      await ioInRange(
+      await ioInRangeWait(
         config.getDevice(check_input_io[i].obniz),
         check_input_io[i].obniz_io,
         checkBoard,
@@ -63,7 +63,7 @@ describe('0-ad', function() {
 
   it('checkBoard <- obniz can detect high on io check', async () => {
     for (let i = 0; i < check_input_io.length; i++) {
-      await ioInRange(
+      await ioInRangeWait(
         config.getDevice(check_input_io[i].obniz),
         check_input_io[i].obniz_io,
         checkBoard,
@@ -75,7 +75,7 @@ describe('0-ad', function() {
   });
 });
 
-async function ioInRange(out_dev, out_io, in_dev, in_io, out_val, range) {
+async function ioInRangeWait(out_dev, out_io, in_dev, in_io, out_val, range) {
   out_dev.getIO(out_io).end();
   out_dev.getIO(out_io).drive('3v');
   out_dev.getIO(out_io).output(out_val);

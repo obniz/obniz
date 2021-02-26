@@ -3,10 +3,12 @@
  * @module Parts.ADT7310
  */
 
-import Obniz from "../../../../obniz";
-import PeripheralSPI from "../../../../obniz/libs/io_peripherals/spi";
+import Obniz from '../../../../obniz';
+import PeripheralSPI from '../../../../obniz/libs/io_peripherals/spi';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../../obniz/ObnizPartsInterface';
 
 export interface ADT7310Options {
   vcc: number;
@@ -19,7 +21,7 @@ export interface ADT7310Options {
 export default class ADT7310 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "ADT7310",
+      name: 'ADT7310',
     };
   }
 
@@ -31,16 +33,16 @@ export default class ADT7310 implements ObnizPartsInterface {
   protected spi!: PeripheralSPI;
 
   constructor() {
-    this.keys = ["vcc", "gnd", "frequency", "din", "dout", "clk", "spi"];
+    this.keys = ['vcc', 'gnd', 'frequency', 'din', 'dout', 'clk', 'spi'];
     this.requiredKeys = [];
   }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
 
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
-    this.params.mode = this.params.mode || "master";
+    this.params.mode = this.params.mode || 'master';
     this.params.frequency = this.params.frequency || 500000;
     this.params.mosi = this.params.din;
     this.params.miso = this.params.dout;

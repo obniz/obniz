@@ -3,8 +3,10 @@
  * @module Parts.Logtta_TH
  */
 
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, {
+  ObnizPartsBleInfo,
+} from '../../../obniz/ObnizPartsBleInterface';
 
 export interface Logtta_THOptions {}
 
@@ -24,12 +26,12 @@ export interface Logtta_TH_Adv_Data {
 export default class Logtta_TH implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: "Logtta_TH",
+      name: 'Logtta_TH',
     };
   }
 
   public static isDevice(peripheral: BleRemotePeripheral) {
-    return peripheral.localName === "TH Sensor";
+    return peripheral.localName === 'TH Sensor';
   }
 
   public static isAdvDevice(peripheral: BleRemotePeripheral) {
@@ -37,14 +39,22 @@ export default class Logtta_TH implements ObnizPartsBleInterface {
       return false;
     }
     const data = peripheral.adv_data;
-    if (data[5] !== 0x10 || data[6] !== 0x05 || data[7] !== 0x01 || data[16] !== 0x54 || data[17] !== 0x48) {
+    if (
+      data[5] !== 0x10 ||
+      data[6] !== 0x05 ||
+      data[7] !== 0x01 ||
+      data[16] !== 0x54 ||
+      data[17] !== 0x48
+    ) {
       // CompanyID, Apperance, "T" "H"
       return false;
     }
     return true;
   }
 
-  public static getData(peripheral: BleRemotePeripheral): Logtta_TH_Adv_Data | null {
+  public static getData(
+    peripheral: BleRemotePeripheral
+  ): Logtta_TH_Adv_Data | null {
     if (!this.isAdvDevice(peripheral)) {
       return null;
     }
@@ -62,7 +72,7 @@ export default class Logtta_TH implements ObnizPartsBleInterface {
   }
 
   private static getName(data: number[]) {
-    let name: string = "";
+    let name = '';
     for (let i = 16; i < data.length; i++) {
       if (data[i] === 0) {
         break;
@@ -82,18 +92,18 @@ export default class Logtta_TH implements ObnizPartsBleInterface {
 
   constructor(peripheral: BleRemotePeripheral | null) {
     if (peripheral && !Logtta_TH.isDevice(peripheral)) {
-      throw new Error("peripheral is not logtta TH");
+      throw new Error('peripheral is not logtta TH');
     }
     this._peripheral = peripheral;
   }
 
   public async connectWait() {
     if (!this._peripheral) {
-      throw new Error("Logtta TH not found");
+      throw new Error('Logtta TH not found');
     }
     if (!this._peripheral.connected) {
       this._peripheral.ondisconnect = (reason: any) => {
-        if (typeof this.ondisconnect === "function") {
+        if (typeof this.ondisconnect === 'function') {
           this.ondisconnect(reason);
         }
       };
@@ -112,7 +122,9 @@ export default class Logtta_TH implements ObnizPartsBleInterface {
       return null;
     }
 
-    const c = this._peripheral!.getService(Logtta_TH.get_uuid("AA20"))!.getCharacteristic(Logtta_TH.get_uuid("AA21"));
+    const c = this._peripheral
+      .getService(Logtta_TH.get_uuid('AA20'))!
+      .getCharacteristic(Logtta_TH.get_uuid('AA21'));
     const data: number[] = await c!.readWait();
     return {
       temperature: (((data[0] << 8) | data[1]) / 65536) * 175.72 - 46.85,
@@ -133,7 +145,9 @@ export default class Logtta_TH implements ObnizPartsBleInterface {
       return;
     }
 
-    const c = this._peripheral!.getService(Logtta_TH.get_uuid("AA20"))!.getCharacteristic(Logtta_TH.get_uuid("AA21"));
+    const c = this._peripheral
+      .getService(Logtta_TH.get_uuid('AA20'))!
+      .getCharacteristic(Logtta_TH.get_uuid('AA21'));
 
     await c!.registerNotifyWait((data: number[]) => {
       if (this.onNotify) {
@@ -151,14 +165,19 @@ export default class Logtta_TH implements ObnizPartsBleInterface {
     }
 
     if (code.length !== 4) {
-      throw new Error("Invalid length auth code");
+      throw new Error('Invalid length auth code');
     }
 
     const data: [number] = [0];
     for (let i = 0; i < code.length; i += 2) {
-      data.push((this.checkNumber(code.charAt(i)) << 4) | this.checkNumber(code.charAt(i + 1)));
+      data.push(
+        (this.checkNumber(code.charAt(i)) << 4) |
+          this.checkNumber(code.charAt(i + 1))
+      );
     }
-    const c = this._peripheral!.getService(Logtta_TH.get_uuid("AA20"))!.getCharacteristic(Logtta_TH.get_uuid("AA30"));
+    const c = this._peripheral
+      .getService(Logtta_TH.get_uuid('AA20'))!
+      .getCharacteristic(Logtta_TH.get_uuid('AA30'));
     await c!.writeWait(data);
   }
 
@@ -168,7 +187,9 @@ export default class Logtta_TH implements ObnizPartsBleInterface {
       return;
     }
 
-    const c = this._peripheral!.getService(Logtta_TH.get_uuid("AA20"))!.getCharacteristic(Logtta_TH.get_uuid("AA2D"));
+    const c = this._peripheral
+      .getService(Logtta_TH.get_uuid('AA20'))!
+      .getCharacteristic(Logtta_TH.get_uuid('AA2D'));
     if (enable) {
       await c!.writeWait([1]);
     } else {
@@ -177,10 +198,12 @@ export default class Logtta_TH implements ObnizPartsBleInterface {
   }
 
   private checkNumber(data: string) {
-    if (data >= "0" && data <= "9") {
+    if (data >= '0' && data <= '9') {
       return parseInt(data, 10);
     } else {
-      throw new Error(`authorization code can only be entered from 0-9.input word : ${data}`);
+      throw new Error(
+        `authorization code can only be entered from 0-9.input word : ${data}`
+      );
     }
   }
 }

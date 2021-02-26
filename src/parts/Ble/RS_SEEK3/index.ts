@@ -3,23 +3,25 @@
  * @module Parts.RS_Seek3
  */
 
-import Obniz from "../../../obniz";
-import BleRemoteCharacteristic from "../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic";
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface from "../../../obniz/ObnizPartsBleInterface";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import BleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface RS_Seek3Options {}
 
 export default class RS_Seek3 implements ObnizPartsBleInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "RS_Seek3",
+      name: 'RS_Seek3',
     };
   }
 
   public static isDevice(peripheral: BleRemotePeripheral) {
-    if (peripheral.localName !== "Seek3") {
+    if (peripheral.localName !== 'Seek3') {
       return false;
     }
     return true;
@@ -33,16 +35,16 @@ export default class RS_Seek3 implements ObnizPartsBleInterface {
   public ondisconnect?: (reason: any) => void;
 
   private _uuids = {
-    service: "0EE71523-981A-46B8-BA64-019261C88478",
-    buttonChar: "0EE71524-981A-46B8-BA64-019261C88478",
-    tempHumidChar: "0EE7152C-981A-46B8-BA64-019261C88478",
+    service: '0EE71523-981A-46B8-BA64-019261C88478',
+    buttonChar: '0EE71524-981A-46B8-BA64-019261C88478',
+    tempHumidChar: '0EE7152C-981A-46B8-BA64-019261C88478',
   };
   private _buttonCharacteristic: BleRemoteCharacteristic | null = null;
   private _tempHumidCharacteristic: BleRemoteCharacteristic | null = null;
 
   constructor(peripheral: BleRemotePeripheral | null) {
     if (peripheral && !RS_Seek3.isDevice(peripheral)) {
-      throw new Error("peripheral is not RS_Seek3");
+      throw new Error('peripheral is not RS_Seek3');
     }
     this._peripheral = peripheral;
   }
@@ -52,10 +54,10 @@ export default class RS_Seek3 implements ObnizPartsBleInterface {
 
   public async connectWait() {
     if (!this._peripheral) {
-      throw new Error("RS_Seek3 is not find.");
+      throw new Error('RS_Seek3 is not find.');
     }
     this._peripheral.ondisconnect = (reason: any) => {
-      if (typeof this.ondisconnect === "function") {
+      if (typeof this.ondisconnect === 'function') {
         this.ondisconnect(reason);
       }
     };
@@ -69,7 +71,7 @@ export default class RS_Seek3 implements ObnizPartsBleInterface {
 
     if (this._buttonCharacteristic) {
       this._buttonCharacteristic.registerNotify((data: number[]) => {
-        if (typeof this.onpressed === "function") {
+        if (typeof this.onpressed === 'function') {
           this.onpressed();
         }
       });
@@ -80,9 +82,12 @@ export default class RS_Seek3 implements ObnizPartsBleInterface {
     await this._peripheral?.disconnectWait();
   }
 
-  public async getTempHumidWait(): Promise<{ temperature: number; humidity: number }> {
+  public async getTempHumidWait(): Promise<{
+    temperature: number;
+    humidity: number;
+  }> {
     if (!this._tempHumidCharacteristic) {
-      throw new Error("device is not connected");
+      throw new Error('device is not connected');
     }
     const data = await this._tempHumidCharacteristic.readWait();
     return { temperature: data[0], humidity: data[1] };

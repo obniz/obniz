@@ -3,26 +3,28 @@
  * @module Parts.AK09916
  */
 
-import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from "../../i2cParts";
+import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from '../../i2cParts';
 
-import Obniz from "../../../obniz";
-import { DriveType, PullType } from "../../../obniz/libs/io_peripherals/common";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import { DriveType, PullType } from '../../../obniz/libs/io_peripherals/common';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface AK09916Options extends I2cPartsAbstractOptions {}
 
 export default class AK09916 extends i2cParts implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "AK09916",
+      name: 'AK09916',
     };
   }
 
   public i2cinfo: I2cInfo = {
     address: 0x0c,
     clock: 100000,
-    voltage: "3v",
-    pull: "3v",
+    voltage: '3v',
+    pull: '3v',
   };
 
   protected obniz!: Obniz;
@@ -79,7 +81,10 @@ export default class AK09916 extends i2cParts implements ObnizPartsInterface {
     // 1000 0000 0001 0000 -4912 uT
     // data[0]下位ビット data[1] 上位ビット
 
-    const raw3: [number, number, number] = await this.readThreeInt16Wait(this._HXL, "l");
+    const raw3: [number, number, number] = await this.readThreeInt16Wait(
+      this._HXL,
+      'l'
+    );
 
     this.readWait(this._ST2, 1);
 
@@ -94,7 +99,7 @@ export default class AK09916 extends i2cParts implements ObnizPartsInterface {
     return result[0];
   }
 
-  public async calibrateWait(count: number = 256, delay: number = 200) {
+  public async calibrateWait(count = 256, delay = 200) {
     this.offset = [0, 0, 0];
     this.scale = [1, 1, 1];
 

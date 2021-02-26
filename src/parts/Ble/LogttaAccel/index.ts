@@ -3,9 +3,11 @@
  * @module Parts.Logtta_Accel
  */
 
-import Obniz from "../../../obniz";
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
+import Obniz from '../../../obniz';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, {
+  ObnizPartsBleInfo,
+} from '../../../obniz/ObnizPartsBleInterface';
 
 export interface Logtta_AccelOptions {}
 
@@ -45,7 +47,7 @@ export interface Logtta_Accel_AccelData {
 export default class Logtta_Accel implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: "Logtta_Accel",
+      name: 'Logtta_Accel',
     };
   }
 
@@ -71,7 +73,9 @@ export default class Logtta_Accel implements ObnizPartsBleInterface {
     return advertise.length !== 0;
   }
 
-  public static getScanData(peripheral: BleRemotePeripheral): Logtta_Accel_ScanData | null {
+  public static getScanData(
+    peripheral: BleRemotePeripheral
+  ): Logtta_Accel_ScanData | null {
     if (!Logtta_Accel.isDevice(peripheral)) {
       return null;
     }
@@ -117,15 +121,19 @@ export default class Logtta_Accel implements ObnizPartsBleInterface {
           accel_axis: d[20] & 0b00000111,
           accel_resolution: d[21],
         },
-        temperature: Math.floor((((d[22] | (d[23] << 8)) / 65535) * 175 - 45) * 100) / 100,
-        humidity: Math.floor(((d[24] | (d[25] << 8)) / 65535) * 100 * 100) / 100,
+        temperature:
+          Math.floor((((d[22] | (d[23] << 8)) / 65535) * 175 - 45) * 100) / 100,
+        humidity:
+          Math.floor(((d[24] | (d[25] << 8)) / 65535) * 100 * 100) / 100,
         alert: alertArray,
       };
     }
     return null;
   }
 
-  public static getAccelData(peripheral: BleRemotePeripheral): Logtta_Accel_AccelData | null {
+  public static getAccelData(
+    peripheral: BleRemotePeripheral
+  ): Logtta_Accel_AccelData | null {
     if (!Logtta_Accel.isDevice(peripheral)) {
       return null;
     }
@@ -139,15 +147,33 @@ export default class Logtta_Accel implements ObnizPartsBleInterface {
       return {
         x: {
           peak: d[5] | (d[6] << 8),
-          rms: d[7] | (d[8] << 8) | (d[9] << 16) | (d[10] << 24) | (d[11] << 32) | (d[12] << 40),
+          rms:
+            d[7] |
+            (d[8] << 8) |
+            (d[9] << 16) |
+            (d[10] << 24) |
+            (d[11] << 32) |
+            (d[12] << 40),
         },
         y: {
           peak: d[13] | (d[14] << 8),
-          rms: d[15] | (d[16] << 8) | (d[17] << 16) | (d[18] << 24) | (d[19] << 32) | (d[20] << 40),
+          rms:
+            d[15] |
+            (d[16] << 8) |
+            (d[17] << 16) |
+            (d[18] << 24) |
+            (d[19] << 32) |
+            (d[20] << 40),
         },
         z: {
           peak: d[21] | (d[22] << 8),
-          rms: d[23] | (d[24] << 8) | (d[25] << 16) | (d[26] << 24) | (d[27] << 32) | (d[28] << 40),
+          rms:
+            d[23] |
+            (d[24] << 8) |
+            (d[25] << 16) |
+            (d[26] << 24) |
+            (d[27] << 32) |
+            (d[28] << 40),
         },
       };
     }

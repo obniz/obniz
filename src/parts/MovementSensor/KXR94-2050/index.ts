@@ -3,10 +3,12 @@
  * @module Parts.KXR94-2050
  */
 
-import Obniz from "../../../obniz";
-import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
+import Obniz from '../../../obniz';
+import PeripheralAD from '../../../obniz/libs/io_peripherals/ad';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface KXR94_2050Options {
   x: number;
@@ -21,7 +23,7 @@ export interface KXR94_2050Options {
 export default class KXR94_2050 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "KXR94-2050",
+      name: 'KXR94-2050',
     };
   }
 
@@ -46,25 +48,25 @@ export default class KXR94_2050 implements ObnizPartsInterface {
   private _z_val: any;
 
   constructor() {
-    this.keys = ["x", "y", "z", "vcc", "gnd", "enable", "self_test"];
-    this.requiredKeys = ["x", "y", "z"];
+    this.keys = ['x', 'y', 'z', 'vcc', 'gnd', 'enable', 'self_test'];
+    this.requiredKeys = ['x', 'y', 'z'];
   }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
 
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
     this.ad_x = obniz.getAD(this.params.x);
     this.ad_y = obniz.getAD(this.params.y);
     this.ad_z = obniz.getAD(this.params.z);
 
     if (obniz.isValidIO(this.params.enable)) {
-      obniz.getIO(this.params.enable).drive("5v");
+      obniz.getIO(this.params.enable).drive('5v');
       obniz.getIO(this.params.enable).output(true);
     }
     if (obniz.isValidIO(this.params.self_test)) {
-      obniz.getIO(this.params.self_test).drive("5v");
+      obniz.getIO(this.params.self_test).drive('5v');
       obniz.getIO(this.params.self_test).output(false);
     }
 

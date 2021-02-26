@@ -1,7 +1,7 @@
 /* tslint:disable:class-name max-classes-per-file */
-import Obniz from "../../../dist/src/obniz/index";
+import Obniz from '../../../dist/src/obniz/index';
 
-const OBNIZ_ID = "1234-5678";
+const OBNIZ_ID = '1234-5678';
 
 /**
  * https://obniz.io/ja/sdk/parts/Grove_EarHeartRate/README.md
@@ -10,7 +10,7 @@ class Grove_EarHeartRateTest {
   public start() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const heartrate = obniz.wired("Grove_EarHeartRate", {
+      const heartrate = obniz.wired('Grove_EarHeartRate', {
         gnd: 0,
         vcc: 1,
         signal: 2,
@@ -24,7 +24,7 @@ class Grove_EarHeartRateTest {
   public getWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const heartrate = obniz.wired("Grove_EarHeartRate", {
+      const heartrate = obniz.wired('Grove_EarHeartRate', {
         gnd: 0,
         vcc: 1,
         signal: 2,
@@ -42,7 +42,7 @@ class Grove_MP3Test {
   public initWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const mp3 = obniz.wired("Grove_MP3", {
+      const mp3 = obniz.wired('Grove_MP3', {
         gnd: 0,
         vcc: 1,
         mp3_rx: 2,
@@ -55,7 +55,7 @@ class Grove_MP3Test {
   public setVolume() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const mp3 = obniz.wired("Grove_MP3", {
+      const mp3 = obniz.wired('Grove_MP3', {
         gnd: 0,
         vcc: 1,
         mp3_rx: 2,
@@ -69,7 +69,7 @@ class Grove_MP3Test {
   public volUp() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const mp3 = obniz.wired("Grove_MP3", {
+      const mp3 = obniz.wired('Grove_MP3', {
         gnd: 0,
         vcc: 1,
         mp3_rx: 2,
@@ -83,7 +83,7 @@ class Grove_MP3Test {
   public volDown() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const mp3 = obniz.wired("Grove_MP3", {
+      const mp3 = obniz.wired('Grove_MP3', {
         gnd: 0,
         vcc: 1,
         mp3_rx: 2,
@@ -97,7 +97,7 @@ class Grove_MP3Test {
   public play() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const mp3 = obniz.wired("Grove_MP3", {
+      const mp3 = obniz.wired('Grove_MP3', {
         gnd: 0,
         vcc: 1,
         mp3_rx: 2,
@@ -113,7 +113,7 @@ class Grove_MP3Test {
   public stop() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const mp3 = obniz.wired("Grove_MP3", {
+      const mp3 = obniz.wired('Grove_MP3', {
         gnd: 0,
         vcc: 1,
         mp3_rx: 2,
@@ -130,7 +130,7 @@ class Grove_MP3Test {
   public pause() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const mp3 = obniz.wired("Grove_MP3", {
+      const mp3 = obniz.wired('Grove_MP3', {
         gnd: 0,
         vcc: 1,
         mp3_rx: 2,
@@ -147,7 +147,7 @@ class Grove_MP3Test {
   public resume() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const mp3 = obniz.wired("Grove_MP3", {
+      const mp3 = obniz.wired('Grove_MP3', {
         gnd: 0,
         vcc: 1,
         mp3_rx: 2,

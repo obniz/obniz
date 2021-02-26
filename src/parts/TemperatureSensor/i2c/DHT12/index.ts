@@ -3,15 +3,17 @@
  * @module Parts.DHT12
  */
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
-import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from "../../../i2cParts";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../../obniz/ObnizPartsInterface';
+import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from '../../../i2cParts';
 
 export interface DHT12Options extends I2cPartsAbstractOptions {}
 
 export default class DHT12 extends i2cParts implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "DHT12",
+      name: 'DHT12',
     };
   }
 
@@ -22,8 +24,8 @@ export default class DHT12 extends i2cParts implements ObnizPartsInterface {
     this.i2cinfo = {
       address: 0x5c,
       clock: 100000,
-      voltage: "3v",
-      pull: "3v",
+      voltage: '3v',
+      pull: '3v',
     };
   }
 

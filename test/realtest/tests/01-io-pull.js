@@ -24,13 +24,13 @@ describe('1-io-pull', function() {
     checkBoard.getIO(check_io[0].board_io).input();
     checkBoard.getIO(check_io[0].board_io).pull('0v');
     await checkBoard.wait(100);
-    await ioBisInRange(check_io[0], [0.0, 0.5]);
+    await ioBisInRangeWait(check_io[0], [0.0, 0.5]);
 
     checkBoard.getIO(check_io[check_io.length - 1].board_io).end();
     checkBoard.getIO(check_io[check_io.length - 1].board_io).input();
     checkBoard.getIO(check_io[check_io.length - 1].board_io).pull('0v');
     //await checkBoard.wait(100);
-    await ioBisInRange(check_io[check_io.length - 1], [0.0, 0.5]);
+    await ioBisInRangeWait(check_io[check_io.length - 1], [0.0, 0.5]);
   });
 
   it('pullup', async function() {
@@ -38,17 +38,17 @@ describe('1-io-pull', function() {
     checkBoard.getIO(check_io[0].board_io).input();
     checkBoard.getIO(check_io[0].board_io).pull('3v');
     //await checkBoard.wait(100);
-    await ioBisInRange(check_io[0], [2.4, 3.4]);
+    await ioBisInRangeWait(check_io[0], [2.4, 3.4]);
 
     checkBoard.getIO(check_io[check_io.length - 1].board_io).end();
     checkBoard.getIO(check_io[check_io.length - 1].board_io).input();
     checkBoard.getIO(check_io[check_io.length - 1].board_io).pull('3v');
     //await checkBoard.wait(100);
-    await ioBisInRange(check_io[check_io.length - 1], [2.4, 3.4]);
+    await ioBisInRangeWait(check_io[check_io.length - 1], [2.4, 3.4]);
   });
 });
 
-async function ioBisInRange(device, range) {
+async function ioBisInRangeWait(device, range) {
   await checkBoard.pingWait();
   let obniz = config.getDevice(device.obniz);
   let voltage = await obniz.getAD(device.obniz_io).getWait();

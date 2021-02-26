@@ -3,9 +3,9 @@
  * @module ObnizCore.Components
  */
 
-import Obniz from "../../index";
-import { ComponentAbstract } from "../ComponentAbstact";
-import ObnizUtil from "../utils/util";
+import Obniz from '../../index';
+import { ComponentAbstract } from '../ComponentAbstact';
+import ObnizUtil from '../utils/util';
 
 export interface LogicAnalyzerOptions {
   /**
@@ -89,7 +89,7 @@ export default class LogicAnalyzer extends ComponentAbstract {
   constructor(obniz: Obniz) {
     super(obniz);
 
-    this.on("/response/logicAnalyzer/data", (obj) => {
+    this.on('/response/logicAnalyzer/data', (obj) => {
       if (this.onmeasured) {
         this.Obniz._runUserCreatedFunction(this.onmeasured, obj.data);
       } else {
@@ -136,14 +136,27 @@ export default class LogicAnalyzer extends ComponentAbstract {
    *   console.log(array);
    * }
    * ```
+   *
    * @param params
    */
   public start(params: LogicAnalyzerOptions | LogicAnalyzerOptionsExt) {
-    const err: any = ObnizUtil._requiredKeys(params, ["io", "interval", "duration"]);
+    const err: any = ObnizUtil._requiredKeys(params, [
+      'io',
+      'interval',
+      'duration',
+    ]);
     if (err) {
-      throw new Error("LogicAnalyzer start param '" + err + "' required, but not found ");
+      throw new Error(
+        "LogicAnalyzer start param '" + err + "' required, but not found "
+      );
     }
-    this.params = ObnizUtil._keyFilter(params, ["io", "interval", "duration", "triggerValue", "triggerValueSamples"]);
+    this.params = ObnizUtil._keyFilter(params, [
+      'io',
+      'interval',
+      'duration',
+      'triggerValue',
+      'triggerValueSamples',
+    ]);
 
     const obj: any = {};
     obj.logic_analyzer = {
@@ -179,6 +192,6 @@ export default class LogicAnalyzer extends ComponentAbstract {
   }
 
   public schemaBasePath(): string {
-    return "logic_analyzer";
+    return 'logic_analyzer';
   }
 }

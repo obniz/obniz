@@ -1,6 +1,5 @@
 /**
  * @fileoverview Rule to forbid writing non-ASCII characters.
- * @author amagitakayosi
  */
 
 'use strict';

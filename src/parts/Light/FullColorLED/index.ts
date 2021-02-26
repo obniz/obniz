@@ -3,10 +3,12 @@
  * @module Parts.FullColorLED
  */
 
-import Obniz from "../../../obniz";
+import Obniz from '../../../obniz';
 
-import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import PeripheralPWM from '../../../obniz/libs/io_peripherals/pwm';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface FullColorLEDOptions {
   r: number;
@@ -19,7 +21,7 @@ export interface FullColorLEDOptions {
 export default class FullColorLED implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "FullColorLED",
+      name: 'FullColorLED',
     };
   }
 
@@ -42,12 +44,12 @@ export default class FullColorLED implements ObnizPartsInterface {
   protected obniz!: Obniz;
 
   constructor() {
-    this.anode_keys = ["anode", "anode_common", "anodeCommon", "vcc"];
-    this.cathode_keys = ["cathode", "cathode_common", "cathodeCommon", "gnd"];
-    this.animationName = "FullColorLED-" + Math.round(Math.random() * 1000);
+    this.anode_keys = ['anode', 'anode_common', 'anodeCommon', 'vcc'];
+    this.cathode_keys = ['cathode', 'cathode_common', 'cathodeCommon', 'gnd'];
+    this.animationName = 'FullColorLED-' + Math.round(Math.random() * 1000);
 
-    this.keys = ["r", "g", "b", "common", "commonType"];
-    this.requiredKeys = ["r", "g", "b", "common", "commonType"];
+    this.keys = ['r', 'g', 'b', 'common', 'commonType'];
+    this.requiredKeys = ['r', 'g', 'b', 'common', 'commonType'];
   }
 
   public wired(obniz: Obniz) {
@@ -63,7 +65,9 @@ export default class FullColorLED implements ObnizPartsInterface {
     } else if (this.cathode_keys.includes(commontype)) {
       this.commontype = this.COMMON_TYPE_CATHODE;
     } else {
-      this.obniz.error("FullColorLED param need common type [  anode_common or cathode_common ] ");
+      this.obniz.error(
+        'FullColorLED param need common type [  anode_common or cathode_common ] '
+      );
     }
 
     this.common = this.obniz.getIO(common);
@@ -150,10 +154,10 @@ export default class FullColorLED implements ObnizPartsInterface {
       };
       frames.push(oneFrame);
     }
-    this.obniz.io!.animation(this.animationName, "loop", frames);
+    this.obniz.io!.animation(this.animationName, 'loop', frames);
   }
 
   public stopgradation() {
-    this.obniz.io!.animation(this.animationName, "pause");
+    this.obniz.io!.animation(this.animationName, 'pause');
   }
 }

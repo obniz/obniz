@@ -3,10 +3,12 @@
  * @module Parts.Logtta_CO2
  */
 
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
-import BleBatteryService from "../abstract/services/batteryService";
-import BleGenericAccess from "../abstract/services/genericAccess";
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, {
+  ObnizPartsBleInfo,
+} from '../../../obniz/ObnizPartsBleInterface';
+import BleBatteryService from '../abstract/services/batteryService';
+import BleGenericAccess from '../abstract/services/genericAccess';
 export interface Logtta_CO2Options {}
 
 export interface Logtta_CO2_Adv_Data {
@@ -19,12 +21,12 @@ export interface Logtta_CO2_Adv_Data {
 export default class Logtta_CO2 implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: "Logtta_CO2",
+      name: 'Logtta_CO2',
     };
   }
 
   public static isDevice(peripheral: BleRemotePeripheral) {
-    return peripheral.localName === "CO2 Sensor";
+    return peripheral.localName === 'CO2 Sensor';
   }
 
   public static isAdvDevice(peripheral: BleRemotePeripheral) {
@@ -46,7 +48,9 @@ export default class Logtta_CO2 implements ObnizPartsBleInterface {
     return true;
   }
 
-  public static getData(peripheral: BleRemotePeripheral): Logtta_CO2_Adv_Data | null {
+  public static getData(
+    peripheral: BleRemotePeripheral
+  ): Logtta_CO2_Adv_Data | null {
     if (!this.isAdvDevice(peripheral)) {
       return null;
     }
@@ -63,7 +67,7 @@ export default class Logtta_CO2 implements ObnizPartsBleInterface {
   }
 
   private static getName(data: number[]) {
-    let name: string = "";
+    let name = '';
     for (let i = 16; i < data.length; i++) {
       if (data[i] === 0) {
         break;
@@ -85,28 +89,28 @@ export default class Logtta_CO2 implements ObnizPartsBleInterface {
 
   constructor(peripheral: BleRemotePeripheral | null) {
     if (peripheral && !Logtta_CO2.isDevice(peripheral)) {
-      throw new Error("peripheral is not Logtta CO2");
+      throw new Error('peripheral is not Logtta CO2');
     }
     this._peripheral = peripheral;
   }
 
   public async connectWait() {
     if (!this._peripheral) {
-      throw new Error("Logtta CO2 not found");
+      throw new Error('Logtta CO2 not found');
     }
     if (!this._peripheral.connected) {
       this._peripheral.ondisconnect = (reason: any) => {
-        if (typeof this.ondisconnect === "function") {
+        if (typeof this.ondisconnect === 'function') {
           this.ondisconnect(reason);
         }
       };
       await this._peripheral.connectWait();
 
-      const service1800 = this._peripheral.getService("1800");
+      const service1800 = this._peripheral.getService('1800');
       if (service1800) {
         this.genericAccess = new BleGenericAccess(service1800);
       }
-      const service180F = this._peripheral.getService("180F");
+      const service180F = this._peripheral.getService('180F');
       if (service180F) {
         this.batteryService = new BleBatteryService(service180F);
       }
@@ -124,7 +128,9 @@ export default class Logtta_CO2 implements ObnizPartsBleInterface {
       return null;
     }
 
-    const c = this._peripheral!.getService(Logtta_CO2.get_uuid("AB20"))!.getCharacteristic(Logtta_CO2.get_uuid("AB21"));
+    const c = this._peripheral
+      .getService(Logtta_CO2.get_uuid('AB20'))!
+      .getCharacteristic(Logtta_CO2.get_uuid('AB21'));
     const data: number[] = await c!.readWait();
     return data[0] * 256 + data[1];
   }
@@ -134,7 +140,9 @@ export default class Logtta_CO2 implements ObnizPartsBleInterface {
       return;
     }
 
-    const c = this._peripheral!.getService(Logtta_CO2.get_uuid("AB20"))!.getCharacteristic(Logtta_CO2.get_uuid("AB21"));
+    const c = this._peripheral
+      .getService(Logtta_CO2.get_uuid('AB20'))!
+      .getCharacteristic(Logtta_CO2.get_uuid('AB21'));
 
     await c!.registerNotifyWait((data: number[]) => {
       if (this.onNotify) {
@@ -149,14 +157,19 @@ export default class Logtta_CO2 implements ObnizPartsBleInterface {
     }
 
     if (code.length !== 4) {
-      throw new Error("Invalid length auth code");
+      throw new Error('Invalid length auth code');
     }
 
     const data: [number] = [0];
     for (let i = 0; i < code.length; i += 2) {
-      data.push((this.checkNumber(code.charAt(i)) << 4) | this.checkNumber(code.charAt(i + 1)));
+      data.push(
+        (this.checkNumber(code.charAt(i)) << 4) |
+          this.checkNumber(code.charAt(i + 1))
+      );
     }
-    const c = this._peripheral!.getService(Logtta_CO2.get_uuid("AB20"))!.getCharacteristic(Logtta_CO2.get_uuid("AB30"));
+    const c = this._peripheral
+      .getService(Logtta_CO2.get_uuid('AB20'))!
+      .getCharacteristic(Logtta_CO2.get_uuid('AB30'));
     await c!.writeWait(data);
   }
 
@@ -166,7 +179,9 @@ export default class Logtta_CO2 implements ObnizPartsBleInterface {
       return;
     }
 
-    const c = this._peripheral!.getService(Logtta_CO2.get_uuid("AB20"))!.getCharacteristic(Logtta_CO2.get_uuid("AB2D"));
+    const c = this._peripheral
+      .getService(Logtta_CO2.get_uuid('AB20'))!
+      .getCharacteristic(Logtta_CO2.get_uuid('AB2D'));
     if (enable) {
       await c!.writeWait([1]);
     } else {
@@ -175,10 +190,12 @@ export default class Logtta_CO2 implements ObnizPartsBleInterface {
   }
 
   private checkNumber(data: string) {
-    if (data >= "0" && data <= "9") {
+    if (data >= '0' && data <= '9') {
       return parseInt(data, 10);
     } else {
-      throw new Error(`authorization code can only be entered from 0-9.input word : ${data}`);
+      throw new Error(
+        `authorization code can only be entered from 0-9.input word : ${data}`
+      );
     }
   }
 }

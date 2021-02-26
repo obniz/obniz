@@ -11,25 +11,28 @@
  * Date: 2019-10-24
  * ---------------------------------------------------------------- */
 
-import Obniz from "../../../obniz";
-import bleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import bleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 
-import LinkingAdvertising from "./modules/advertising";
-import LinkingDevice from "./modules/device";
+import LinkingAdvertising from './modules/advertising';
+import LinkingDevice from './modules/device';
 
 export interface LinkingOptions {}
 
 export default class Linking {
   public static info(): ObnizPartsInfo {
     return {
-      name: "Linking",
+      name: 'Linking',
     };
   }
 
   public onadvertisement: any;
   public ondiscover: any;
-  public PRIMARY_SERVICE_UUID_LIST = ["b3b3690150d34044808d50835b13a6cd", "fe4e"];
+  public PRIMARY_SERVICE_UUID_LIST = [
+    'b3b3690150d34044808d50835b13a6cd',
+    'fe4e',
+  ];
   public _discover_status: any;
   public _discover_wait: any;
   public _discover_timer: any;
@@ -77,23 +80,23 @@ export default class Linking {
     this._checkInitialized();
 
     let duration = 5000;
-    let name_filter = "";
-    let id_filter = "";
+    let name_filter = '';
+    let id_filter = '';
     let quick = false;
-    if (p && typeof p === "object") {
-      if ("duration" in p && typeof p.duration === "number") {
+    if (p && typeof p === 'object') {
+      if ('duration' in p && typeof p.duration === 'number') {
         duration = p.duration;
         if (duration < 1000) {
           duration = 1000;
         }
       }
-      if ("nameFilter" in p && typeof (p.nameFilter === "string")) {
+      if ('nameFilter' in p && typeof (p.nameFilter === 'string')) {
         name_filter = p.nameFilter;
       }
-      if ("idFilter" in p && typeof (p.idFilter === "string")) {
+      if ('idFilter' in p && typeof (p.idFilter === 'string')) {
         id_filter = p.idFilter;
       }
-      if ("quick" in p && typeof (p.quick === "boolean")) {
+      if ('quick' in p && typeof (p.quick === 'boolean')) {
         quick = p.quick;
       }
     }
@@ -129,16 +132,22 @@ export default class Linking {
 
   public _checkInitialized() {
     if (this.initialized === false) {
-      throw new Error("The `init()` method has not been called yet.");
+      throw new Error('The `init()` method has not been called yet.');
       return;
     }
     if (this._discover_status === true) {
-      throw new Error("The `discover()` or the `startScan()` method is in progress.");
+      throw new Error(
+        'The `discover()` or the `startScan()` method is in progress.'
+      );
       return;
     }
   }
 
-  public _discoveredDevice(peripheral: bleRemotePeripheral, name_filter: any, id_filter: any) {
+  public _discoveredDevice(
+    peripheral: bleRemotePeripheral,
+    name_filter: any,
+    id_filter: any
+  ) {
     if (!peripheral.localName) {
       return null;
     }
@@ -156,7 +165,7 @@ export default class Linking {
       return null;
     }
     const device = new LinkingDevice(peripheral);
-    if (this.ondiscover && typeof this.ondiscover === "function") {
+    if (this.ondiscover && typeof this.ondiscover === 'function') {
       this.ondiscover(device);
     }
     this._peripherals[addr] = device;
@@ -188,13 +197,13 @@ export default class Linking {
 
   public startScan(p: any) {
     this._checkInitialized();
-    let name_filter = "";
-    let id_filter = "";
-    if (p && typeof p === "object") {
-      if ("nameFilter" in p && typeof (p.nameFilter === "string")) {
+    let name_filter = '';
+    let id_filter = '';
+    if (p && typeof p === 'object') {
+      if ('nameFilter' in p && typeof (p.nameFilter === 'string')) {
         name_filter = p.nameFilter;
       }
-      if ("idFilter" in p && typeof (p.idFilter === "string")) {
+      if ('idFilter' in p && typeof (p.idFilter === 'string')) {
         id_filter = p.idFilter;
       }
     }
@@ -210,7 +219,7 @@ export default class Linking {
       // if (id_filter && peripheral.id.indexOf(id_filter) !== 0) {
       //   return;
       // }
-      if (typeof this.onadvertisement === "function") {
+      if (typeof this.onadvertisement === 'function') {
         const parsed = LinkingAdvertising.parse(peripheral);
         if (parsed) {
           this.onadvertisement(parsed);

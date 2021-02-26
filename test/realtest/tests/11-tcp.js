@@ -109,7 +109,7 @@ describe('11-tcp', function() {
     checkBoard.tcp0.write(
       'GET / HTTP/1.0\r\n' + 'Connection:close\r\n' + 'Host:obniz.io\r\n\r\n'
     );
-    let jsData = await getServerData(
+    let jsData = await getServerDataWait(
       80,
       'obniz.io',
       'GET / HTTP/1.0\r\n' + 'Connection:close\r\n' + 'Host:obniz.io\r\n\r\n'
@@ -144,7 +144,7 @@ describe('11-tcp', function() {
     let boardData = await checkBoard.tcp0.readWait();
     boardData = new TextDecoder('utf-8').decode(bodyParser(boardData));
     //console.log(boardData);
-    let jsData = await getServerData(
+    let jsData = await getServerDataWait(
       3001,
       useIp,
       'GET / HTTP/1.0\r\n' +
@@ -187,7 +187,7 @@ describe('11-tcp', function() {
     checkBoard.tcp0.onreceive = null;
     boardData = bodyParser(boardData);
 
-    let jsData = await getServerData(
+    let jsData = await getServerDataWait(
       3001,
       useIp,
       'GET /obniz_big.png HTTP/1.0\r\n' +
@@ -215,7 +215,7 @@ describe('11-tcp', function() {
       tcpArray.push(checkBoard.getFreeTcp());
       await tcpArray[i].connectWait(3001, useIp);
     }
-    let jsData = await getServerData(
+    let jsData = await getServerDataWait(
       3001,
       useIp,
       'GET / HTTP/1.0\r\n' +
@@ -251,7 +251,7 @@ describe('11-tcp', function() {
   });
 });
 
-async function getServerData(port, domain, writeData) {
+async function getServerDataWait(port, domain, writeData) {
   let client = new net.Socket();
   client.connect({ port: port, host: domain }, () => {
     client.write(writeData);

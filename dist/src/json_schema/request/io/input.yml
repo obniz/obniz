@@ -1,9 +1,0 @@
-## YAML Template.
-##---
-$schema: http://json-schema.org/draft-04/schema#
-id: "/request/io/input"
-related: "/response/io/get"
-
-type: string
-enum:
-  - get

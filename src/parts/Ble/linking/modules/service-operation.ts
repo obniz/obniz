@@ -10,13 +10,13 @@
  * Released under the MIT license
  * Date: 2019-11-02
  * ---------------------------------------------------------------- */
-"use strict";
+'use strict';
 
 export default class LinkingServiceOperation {
   public SERVICE_ID = 0x02;
-  public SERVICE_NAME = "PeripheralDeviceOperation";
+  public SERVICE_NAME = 'PeripheralDeviceOperation';
   public MESSAGE_NAME_MAP: any = {
-    "00": "NOTIFY_PD_OPERATION",
+    '00': 'NOTIFY_PD_OPERATION',
   };
 
   private _device: any = {};
@@ -60,22 +60,22 @@ export default class LinkingServiceOperation {
 
   public _parseResultCode(buf: any) {
     const code = buf.readUInt8(0);
-    let text = "";
+    let text = '';
     if (code === 0x00) {
-      text = "OK, request processed correctly";
+      text = 'OK, request processed correctly';
     } else if (code === 0x01) {
-      text = "Cancel";
+      text = 'Cancel';
     } else if (code === 0x02) {
-      text = "Error, failed";
+      text = 'Error, failed';
     } else if (code === 0x03) {
-      text = "Error, no reason defined";
+      text = 'Error, no reason defined';
     } else if (code === 0x04) {
-      text = "Error, data not available";
+      text = 'Error, data not available';
     } else if (code === 0x05) {
-      text = "Error, not supported";
+      text = 'Error, not supported';
     }
     return {
-      name: "ResultCode",
+      name: 'ResultCode',
       resultCode: code,
       resultText: text,
     };
@@ -83,12 +83,12 @@ export default class LinkingServiceOperation {
 
   public _parseCancel(buf: any) {
     const code = buf.readUInt8(0);
-    let text = "";
+    let text = '';
     if (code === 0x00) {
-      text = "User cancel";
+      text = 'User cancel';
     }
     return {
-      name: "Cancel",
+      name: 'Cancel',
       cancelCode: code,
       cancelText: text,
     };
@@ -96,53 +96,53 @@ export default class LinkingServiceOperation {
 
   public _parseButtonId(buf: any) {
     const code = buf.readUInt8(0);
-    let text = "";
+    let text = '';
     if (code === 0x00) {
-      text = "Power";
+      text = 'Power';
     } else if (code === 0x01) {
-      text = "Return";
+      text = 'Return';
     } else if (code === 0x02) {
-      text = "SingleClick";
+      text = 'SingleClick';
     } else if (code === 0x03) {
-      text = "Home";
+      text = 'Home';
     } else if (code === 0x04) {
-      text = "DoubleClick";
+      text = 'DoubleClick';
     } else if (code === 0x05) {
-      text = "VolumeUp";
+      text = 'VolumeUp';
     } else if (code === 0x06) {
-      text = "VolumeDown";
+      text = 'VolumeDown';
     } else if (code === 0x07) {
-      text = "LongPress";
+      text = 'LongPress';
     } else if (code === 0x08) {
-      text = "Pause";
+      text = 'Pause';
     } else if (code === 0x09) {
-      text = "LongPressRelease";
+      text = 'LongPressRelease';
     } else if (code === 0x0a) {
-      text = "FastForward";
+      text = 'FastForward';
     } else if (code === 0x0b) {
-      text = "ReWind";
+      text = 'ReWind';
     } else if (code === 0x0c) {
-      text = "Shutter";
+      text = 'Shutter';
     } else if (code === 0x0d) {
-      text = "Up";
+      text = 'Up';
     } else if (code === 0x0e) {
-      text = "Down";
+      text = 'Down';
     } else if (code === 0x0f) {
-      text = "Left";
+      text = 'Left';
     } else if (code === 0x10) {
-      text = "Right";
+      text = 'Right';
     } else if (code === 0x11) {
-      text = "Enter";
+      text = 'Enter';
     } else if (code === 0x12) {
-      text = "Menu";
+      text = 'Menu';
     } else if (code === 0x13) {
-      text = "Play";
+      text = 'Play';
     } else if (code === 0x14) {
-      text = "Stop";
+      text = 'Stop';
     }
 
     return {
-      name: "ButtonId",
+      name: 'ButtonId',
       buttonId: code,
       buttonName: text,
     };

@@ -2,13 +2,16 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import BleRemoteCharacteristic from "./bleRemoteCharacteristic";
-import BleRemoteValueAttributeAbstract from "./bleRemoteValueAttributeAbstract";
+import BleRemoteCharacteristic from './bleRemoteCharacteristic';
+import BleRemoteValueAttributeAbstract from './bleRemoteValueAttributeAbstract';
 
 /**
  * @category Use as Central
  */
-export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract<BleRemoteCharacteristic, null> {
+export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract<
+BleRemoteCharacteristic,
+null
+> {
   public characteristic!: BleRemoteCharacteristic;
 
   constructor(params: any) {
@@ -19,7 +22,7 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
    * @ignore
    */
   get parentName(): string | null {
-    return "characteristic";
+    return 'characteristic';
   }
 
   /**
@@ -52,7 +55,7 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
       this.characteristic.service.peripheral.address,
       this.characteristic.service.uuid,
       this.characteristic.uuid,
-      this.uuid,
+      this.uuid
     );
     const data = Array.from(buf);
     this._runUserCreatedFunction(this.onread, data);
@@ -90,9 +93,9 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
       this.characteristic.service.uuid,
       this.characteristic.uuid,
       this.uuid,
-      Buffer.from(data),
+      Buffer.from(data)
     );
-    this._runUserCreatedFunction(this.onwrite, "success");
+    this._runUserCreatedFunction(this.onwrite, 'success');
     return true;
   }
 

@@ -3,7 +3,7 @@
  * @ignore
  */
 
-import WSSchema from "./WSSchema";
+import WSSchema from './WSSchema';
 
 const commandClasses: any = {};
 export default abstract class WSCommand {
@@ -36,15 +36,17 @@ export default abstract class WSCommand {
     } else if (payload_length <= 0x3fffffff) {
       length_type = 2;
     } else {
-      throw new Error("too big payload");
+      throw new Error('too big payload');
     }
-    let length_extra_bytse: any = length_type === 0 ? 0 : length_type === 1 ? 1 : 3;
+    let length_extra_bytse: any =
+      length_type === 0 ? 0 : length_type === 1 ? 1 : 3;
     const header_length: any = 3 + length_extra_bytse;
     const result: any = new Uint8Array(header_length + payload_length);
     let index: any = 0;
     result[index++] = module & 0x7f;
     result[index++] = func;
-    result[index++] = (length_type << 6) | (payload_length >> (length_extra_bytse * 8));
+    result[index++] =
+      (length_type << 6) | (payload_length >> (length_extra_bytse * 8));
     while (length_extra_bytse > 0) {
       length_extra_bytse--;
       result[index++] = payload_length >> (length_extra_bytse * 8);
@@ -62,17 +64,18 @@ export default abstract class WSCommand {
       return null;
     }
     if (buf.byteLength < 3) {
-      throw new Error("something wrong. buf less than 3");
+      throw new Error('something wrong. buf less than 3');
     }
     if (buf[0] & 0x80) {
-      throw new Error("reserved bit 1");
+      throw new Error('reserved bit 1');
     }
     const module: any = 0x7f & buf[0];
     const func: any = buf[1];
     const length_type: any = (buf[2] >> 6) & 0x3;
-    const length_extra_bytse: any = length_type === 0 ? 0 : length_type === 1 ? 1 : 3;
+    const length_extra_bytse: any =
+      length_type === 0 ? 0 : length_type === 1 ? 1 : 3;
     if (length_type === 4) {
-      throw new Error("invalid length");
+      throw new Error('invalid length');
     }
     let length: any = (buf[2] & 0x3f) << (length_extra_bytse * 8);
     let index: any = 3;
@@ -86,7 +89,10 @@ export default abstract class WSCommand {
     return {
       module,
       func,
-      payload: buf.slice(3 + length_extra_bytse, 3 + length_extra_bytse + length),
+      payload: buf.slice(
+        3 + length_extra_bytse,
+        3 + length_extra_bytse + length
+      ),
       next: buf.slice(3 + length_extra_bytse + length),
     };
   }
@@ -184,7 +190,7 @@ export default abstract class WSCommand {
   }
 
   public isValidIO(io: any) {
-    return typeof io === "number" && 0 <= io && io <= 11;
+    return typeof io === 'number' && 0 <= io && io <= 11;
   }
 
   public getSchema(uri: any) {
@@ -193,7 +199,12 @@ export default abstract class WSCommand {
     return WSSchema.getSchema(uri);
   }
 
-  public validateCommandSchema(uriList: any, json: any, rootPath: any, customArg: any) {
+  public validateCommandSchema(
+    uriList: any,
+    json: any,
+    rootPath: any,
+    customArg: any
+  ) {
     const res: any = { valid: 0, invalid: 0, results: [], invalidButLike: [] };
     for (const oneRow of uriList) {
       const errors: any = this.validate(oneRow.uri, json);
@@ -250,17 +261,20 @@ export default abstract class WSCommand {
     const messages: any = [];
     for (const error of validateError.errors) {
       if (error.code === WSSchema.errorCodes.INVALID_TYPE) {
-        if ((error as any).params.type === "object" || (error as any).params.expected === "object") {
+        if (
+          error.params.type === 'object' ||
+          error.params.expected === 'object'
+        ) {
           return false;
         }
       } else if (badErrorCodes.includes(error.code)) {
         return false;
       }
 
-      const path: any = rootPath + (error.dataPath || "").replace(/\//g, ".");
+      const path: any = rootPath + (error.dataPath || '').replace(/\//g, '.');
       messages.push(`[${path}]${error.message}`);
     }
-    return messages.join(";");
+    return messages.join(';');
   }
 
   public filter(commandUri: any, json: any) {
@@ -279,17 +293,17 @@ export default abstract class WSCommand {
     }
 
     if (
-      schema.type === "string" ||
-      schema.type === "integer" ||
-      schema.type === "boolean" ||
-      schema.type === "number" ||
-      schema.type === "null" ||
-      schema.filter === "pass_all"
+      schema.type === 'string' ||
+      schema.type === 'integer' ||
+      schema.type === 'boolean' ||
+      schema.type === 'number' ||
+      schema.type === 'null' ||
+      schema.filter === 'pass_all'
     ) {
       return json;
     }
 
-    if (schema.type === "array") {
+    if (schema.type === 'array') {
       const results: any = [];
       for (const key in json) {
         results[key] = this._filterSchema(schema.items, json[key]);
@@ -297,7 +311,7 @@ export default abstract class WSCommand {
       return results;
     }
 
-    if (schema.type === "object") {
+    if (schema.type === 'object') {
       const results: any = {};
       for (const key in schema.properties) {
         results[key] = this._filterSchema(schema.properties[key], json[key]);
@@ -307,14 +321,17 @@ export default abstract class WSCommand {
         const reg: any = new RegExp(pattern);
         for (const key of Object.keys(json)) {
           if (reg.test(key)) {
-            results[key] = this._filterSchema(schema.patternProperties[pattern], json[key]);
+            results[key] = this._filterSchema(
+              schema.patternProperties[pattern],
+              json[key]
+            );
           }
         }
       }
       return results;
     }
 
-    throw Error("unknown json schema type");
+    throw Error('unknown json schema type');
   }
 }
 

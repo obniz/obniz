@@ -2,14 +2,17 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import BleCharacteristic from "./bleCharacteristic";
-import BleLocalValueAttributeAbstract from "./bleLocalValueAttributeAbstract";
-import { BleDescriptorDefine } from "./bleTypes";
+import BleCharacteristic from './bleCharacteristic';
+import BleLocalValueAttributeAbstract from './bleLocalValueAttributeAbstract';
+import { BleDescriptorDefine } from './bleTypes';
 
 /**
  * @category Use as Peripheral
  */
-export default class BleDescriptor extends BleLocalValueAttributeAbstract<BleCharacteristic, null> {
+export default class BleDescriptor extends BleLocalValueAttributeAbstract<
+BleCharacteristic,
+null
+> {
   /**
    * Characteristic instance
    */
@@ -56,7 +59,7 @@ export default class BleDescriptor extends BleLocalValueAttributeAbstract<BleCha
    * @ignore
    */
   get parentName(): string | null {
-    return "characteristic";
+    return 'characteristic';
   }
 
   // public addPermission(param: any) {

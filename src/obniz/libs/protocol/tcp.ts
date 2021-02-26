@@ -3,9 +3,9 @@
  * @module ObnizCore.Components
  */
 
-import semver from "semver";
-import Obniz from "../../index";
-import { ComponentAbstract } from "../ComponentAbstact";
+import semver from 'semver';
+import Obniz from '../../index';
+import { ComponentAbstract } from '../ComponentAbstact';
 
 /**
  * @param TCPReceiveCallbackFunction.data
@@ -87,21 +87,24 @@ export default class Tcp extends ComponentAbstract {
     super(obniz);
     this.id = id;
 
-    this.on("/response/tcp/connection", (obj) => {
+    this.on('/response/tcp/connection', (obj) => {
       /* Connectino state update. response of connect(), close from destination, response from */
-      this.Obniz._runUserCreatedFunction(this.onconnection, obj.connection.connected);
+      this.Obniz._runUserCreatedFunction(
+        this.onconnection,
+        obj.connection.connected
+      );
       if (!obj.connection.connected) {
         this._reset();
       }
     });
-    this.on("/response/tcp/read", (obj) => {
+    this.on('/response/tcp/read', (obj) => {
       this.Obniz._runUserCreatedFunction(this.onreceive, obj.read.data);
       const callback: any = this.readObservers.shift();
       if (callback) {
         callback(obj.read.data);
       }
     });
-    this.on("/response/tcp/connect", (obj) => {
+    this.on('/response/tcp/connect', (obj) => {
       /* response of connect() */
       /* `this.connection` will called before this function */
       if (obj.connect.code !== 0) {
@@ -129,7 +132,7 @@ export default class Tcp extends ComponentAbstract {
    * @param domain
    */
   public connectWait(port: number, domain: string): Promise<void> {
-    if (semver.lt(this.Obniz.firmware_ver!, "2.1.0")) {
+    if (semver.lt(this.Obniz.firmware_ver!, '2.1.0')) {
       throw new Error(`Please update obniz firmware >= 2.1.0`);
     }
 
@@ -150,7 +153,7 @@ export default class Tcp extends ComponentAbstract {
     return new Promise((resolve: any, reject: any) => {
       this._addConnectObserver(resolve);
       const obj: any = {};
-      obj["tcp" + this.id] = {
+      obj['tcp' + this.id] = {
         connect: {
           port,
           domain,
@@ -176,6 +179,7 @@ export default class Tcp extends ComponentAbstract {
    * // Text
    * tcp.write('hello');
    * ```
+   *
    * @param data
    */
   public write(data: number | number[] | Buffer | string) {
@@ -185,7 +189,7 @@ export default class Tcp extends ComponentAbstract {
     if (data === undefined) {
       return;
     }
-    if (typeof data === "number") {
+    if (typeof data === 'number') {
       data = [data];
     }
 
@@ -194,12 +198,12 @@ export default class Tcp extends ComponentAbstract {
       send_data = [...data];
     } else if (data.constructor === Array) {
       send_data = data;
-    } else if (typeof data === "string") {
+    } else if (typeof data === 'string') {
       const buf: any = Buffer.from(data);
       send_data = [...buf];
     }
     const obj: any = {};
-    obj["tcp" + this.id] = {
+    obj['tcp' + this.id] = {
       write: {
         data: send_data,
       },
@@ -249,7 +253,7 @@ export default class Tcp extends ComponentAbstract {
   }
 
   public schemaBasePath(): string {
-    return "tcp" + this.id;
+    return 'tcp' + this.id;
   }
 
   /**
@@ -267,7 +271,7 @@ export default class Tcp extends ComponentAbstract {
       throw new Error(`tcp${this.id} is not used`);
     }
     const obj: any = {};
-    obj["tcp" + this.id] = {
+    obj['tcp' + this.id] = {
       disconnect: true,
     };
     this.Obniz.send(obj);

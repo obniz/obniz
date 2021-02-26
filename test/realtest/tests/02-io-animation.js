@@ -41,8 +41,8 @@ describe('2-io-animation', function() {
     checkBoard.io.animation('animation-1', 'pause');
     await checkBoard.pingWait();
 
-    await ioAisB(check_io[0], false);
-    await ioAisB(check_io[0], true);
+    await ioAisBWait(check_io[0], false);
+    await ioAisBWait(check_io[0], true);
   });
 
   it('animation resume', async function() {
@@ -55,8 +55,8 @@ describe('2-io-animation', function() {
     checkBoard.io.animation('animation-1', 'loop');
     await checkBoard.pingWait();
 
-    await ioAisB(check_io[0], false);
-    await ioAisB(check_io[0], true);
+    await ioAisBWait(check_io[0], false);
+    await ioAisBWait(check_io[0], true);
   });
 
   it('two animation', async function() {
@@ -132,7 +132,7 @@ function detectPulse(device, ratioRange) {
   });
 }
 
-async function ioAisB(device, val, mustbe) {
+async function ioAisBWait(device, val, mustbe) {
   if (mustbe === undefined) {
     mustbe = val;
   }

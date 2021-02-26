@@ -3,15 +3,17 @@
  * @module Parts.KXSC7-2050
  */
 
-import Obniz from "../../../obniz";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface KXSC7_2050Options {}
 
 export default class KXSC7_2050 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "KXSC7-2050",
+      name: 'KXSC7-2050',
     };
   }
 
@@ -28,14 +30,14 @@ export default class KXSC7_2050 implements ObnizPartsInterface {
   public onchangez: any;
 
   constructor() {
-    this.keys = ["x", "y", "z", "vcc", "gnd"];
-    this.requiredKeys = ["x", "y", "z"];
+    this.keys = ['x', 'y', 'z', 'vcc', 'gnd'];
+    this.requiredKeys = ['x', 'y', 'z'];
   }
 
   public async wired(obniz: any) {
     this.obniz = obniz;
 
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '3v');
     this.ad_x = obniz.getAD(this.params.x);
     this.ad_y = obniz.getAD(this.params.y);
     this.ad_z = obniz.getAD(this.params.z);

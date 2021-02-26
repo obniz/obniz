@@ -2,9 +2,11 @@
  * @packageDocumentation
  * @module Parts.USB
  */
-import Obniz from "../../../obniz";
+import Obniz from '../../../obniz';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface USBOptions {
   vcc: number;
@@ -14,7 +16,7 @@ export interface USBOptions {
 export default class USB implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "USB",
+      name: 'USB',
     };
   }
 
@@ -27,12 +29,12 @@ export default class USB implements ObnizPartsInterface {
   public io_gnd: any;
 
   constructor() {
-    this.keys = ["vcc", "gnd"];
-    this.requiredKeys = ["vcc", "gnd"];
+    this.keys = ['vcc', 'gnd'];
+    this.requiredKeys = ['vcc', 'gnd'];
 
     this.displayIoNames = {
-      vcc: "vcc",
-      gnd: "gnd",
+      vcc: 'vcc',
+      gnd: 'gnd',
     };
   }
 

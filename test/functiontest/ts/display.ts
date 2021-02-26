@@ -1,7 +1,7 @@
 /* tslint:disable:class-name max-classes-per-file */
-import Obniz from "../../../dist/src/obniz/index";
+import Obniz from '../../../dist/src/obniz/index';
 
-const OBNIZ_ID = "1234-5678";
+const OBNIZ_ID = '1234-5678';
 
 /**
  * https://obniz.io/ja/sdk/parts/7SegmentLED/README.md
@@ -10,7 +10,7 @@ class _7SegmentLEDTest {
   public print() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const seg = obniz.wired("7SegmentLED", {
+      const seg = obniz.wired('7SegmentLED', {
         a: 5,
         b: 6,
         c: 7,
@@ -20,7 +20,7 @@ class _7SegmentLEDTest {
         g: 2,
         dp: 8,
         common: 4,
-        commonType: "cathode",
+        commonType: 'cathode',
       });
 
       for (let i = 0; i < 10; i++) {
@@ -33,7 +33,7 @@ class _7SegmentLEDTest {
   public printRaw() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const seg = obniz.wired("7SegmentLED", {
+      const seg = obniz.wired('7SegmentLED', {
         a: 7,
         b: 8,
         c: 1,
@@ -43,7 +43,7 @@ class _7SegmentLEDTest {
         g: 4,
         dp: 0,
         common: 6,
-        commonType: "cathode",
+        commonType: 'cathode',
       });
       seg.printRaw(0x77);
     };
@@ -51,7 +51,7 @@ class _7SegmentLEDTest {
   public off() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const seg = obniz.wired("7SegmentLED", {
+      const seg = obniz.wired('7SegmentLED', {
         a: 5,
         b: 6,
         c: 7,
@@ -61,7 +61,7 @@ class _7SegmentLEDTest {
         g: 2,
         dp: 8,
         common: 4,
-        commonType: "cathode",
+        commonType: 'cathode',
       });
 
       for (let i = 0; i < 10; i++) {
@@ -75,7 +75,7 @@ class _7SegmentLEDTest {
   public on() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const seg = obniz.wired("7SegmentLED", {
+      const seg = obniz.wired('7SegmentLED', {
         a: 5,
         b: 6,
         c: 7,
@@ -85,7 +85,7 @@ class _7SegmentLEDTest {
         g: 2,
         dp: 8,
         common: 4,
-        commonType: "cathode",
+        commonType: 'cathode',
       });
 
       seg.print(7);
@@ -101,7 +101,7 @@ class _7SegmentLEDTest {
   public dpState() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const seg = obniz.wired("7SegmentLED", {
+      const seg = obniz.wired('7SegmentLED', {
         a: 5,
         b: 6,
         c: 7,
@@ -111,7 +111,7 @@ class _7SegmentLEDTest {
         g: 2,
         dp: 8,
         common: 4,
-        commonType: "cathode",
+        commonType: 'cathode',
       });
 
       seg.print(7);
@@ -132,7 +132,7 @@ class _7SegmentLED_MAX7219Test {
   public init() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const segment = obniz.wired("7SegmentLED_MAX7219", {
+      const segment = obniz.wired('7SegmentLED_MAX7219', {
         clk: 0,
         cs: 1,
         din: 2,
@@ -146,7 +146,7 @@ class _7SegmentLED_MAX7219Test {
   public brightness() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const segment = obniz.wired("7SegmentLED_MAX7219", {
+      const segment = obniz.wired('7SegmentLED_MAX7219', {
         clk: 0,
         cs: 1,
         din: 2,
@@ -162,7 +162,7 @@ class _7SegmentLED_MAX7219Test {
   public brightnessAll() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const segment = obniz.wired("7SegmentLED_MAX7219", {
+      const segment = obniz.wired('7SegmentLED_MAX7219', {
         clk: 0,
         cs: 1,
         din: 2,
@@ -178,7 +178,7 @@ class _7SegmentLED_MAX7219Test {
   public setNumber() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const segment = obniz.wired("7SegmentLED_MAX7219", {
+      const segment = obniz.wired('7SegmentLED_MAX7219', {
         clk: 0,
         cs: 1,
         din: 2,
@@ -187,15 +187,15 @@ class _7SegmentLED_MAX7219Test {
       });
       segment.init(1, 4);
       segment.setNumber(0, 0, 5, false);
-      segment.setNumber(0, 1, "e", false);
-      segment.setNumber(0, 2, "off", true);
+      segment.setNumber(0, 1, 'e', false);
+      segment.setNumber(0, 2, 'off', true);
     };
   }
 
   public clear() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const segment = obniz.wired("7SegmentLED_MAX7219", {
+      const segment = obniz.wired('7SegmentLED_MAX7219', {
         clk: 0,
         cs: 1,
         din: 2,
@@ -204,7 +204,7 @@ class _7SegmentLED_MAX7219Test {
       });
       segment.init(1, 4);
       segment.setNumber(0, 0, 5, false);
-      segment.setNumber(0, 1, "e", false);
+      segment.setNumber(0, 1, 'e', false);
       segment.clear(0);
     };
   }
@@ -212,7 +212,7 @@ class _7SegmentLED_MAX7219Test {
   public clearAll() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const segment = obniz.wired("7SegmentLED_MAX7219", {
+      const segment = obniz.wired('7SegmentLED_MAX7219', {
         clk: 0,
         cs: 1,
         din: 2,
@@ -228,7 +228,7 @@ class _7SegmentLED_MAX7219Test {
   public test() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const segment = obniz.wired("7SegmentLED_MAX7219", {
+      const segment = obniz.wired('7SegmentLED_MAX7219', {
         clk: 0,
         cs: 1,
         din: 2,
@@ -246,7 +246,7 @@ class _7SegmentLEDArrayTest {
   public print() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const seg0 = obniz.wired("7SegmentLED", {
+      const seg0 = obniz.wired('7SegmentLED', {
         a: 7,
         b: 8,
         c: 1,
@@ -256,9 +256,9 @@ class _7SegmentLEDArrayTest {
         g: 4,
         dp: 0,
         common: 6,
-        commonType: "cathode",
+        commonType: 'cathode',
       });
-      const seg1 = obniz.wired("7SegmentLED", {
+      const seg1 = obniz.wired('7SegmentLED', {
         a: 7,
         b: 8,
         c: 1,
@@ -268,9 +268,9 @@ class _7SegmentLEDArrayTest {
         g: 4,
         dp: 0,
         common: 9,
-        commonType: "cathode",
+        commonType: 'cathode',
       });
-      const seg2 = obniz.wired("7SegmentLED", {
+      const seg2 = obniz.wired('7SegmentLED', {
         a: 7,
         b: 8,
         c: 1,
@@ -280,9 +280,9 @@ class _7SegmentLEDArrayTest {
         g: 4,
         dp: 0,
         common: 10,
-        commonType: "cathode",
+        commonType: 'cathode',
       });
-      const seg3 = obniz.wired("7SegmentLED", {
+      const seg3 = obniz.wired('7SegmentLED', {
         a: 7,
         b: 8,
         c: 1,
@@ -292,10 +292,10 @@ class _7SegmentLEDArrayTest {
         g: 4,
         dp: 0,
         common: 11,
-        commonType: "cathode",
+        commonType: 'cathode',
       });
 
-      const segArray = obniz.wired("7SegmentLEDArray", {
+      const segArray = obniz.wired('7SegmentLEDArray', {
         segments: [seg0, seg1, seg2, seg3],
       });
       segArray.print(1234);
@@ -305,7 +305,7 @@ class _7SegmentLEDArrayTest {
   public off() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const seg0 = obniz.wired("7SegmentLED", {
+      const seg0 = obniz.wired('7SegmentLED', {
         a: 7,
         b: 8,
         c: 1,
@@ -315,9 +315,9 @@ class _7SegmentLEDArrayTest {
         g: 4,
         dp: 0,
         common: 6,
-        commonType: "cathode",
+        commonType: 'cathode',
       });
-      const seg1 = obniz.wired("7SegmentLED", {
+      const seg1 = obniz.wired('7SegmentLED', {
         a: 7,
         b: 8,
         c: 1,
@@ -327,9 +327,9 @@ class _7SegmentLEDArrayTest {
         g: 4,
         dp: 0,
         common: 9,
-        commonType: "cathode",
+        commonType: 'cathode',
       });
-      const seg2 = obniz.wired("7SegmentLED", {
+      const seg2 = obniz.wired('7SegmentLED', {
         a: 7,
         b: 8,
         c: 1,
@@ -339,9 +339,9 @@ class _7SegmentLEDArrayTest {
         g: 4,
         dp: 0,
         common: 10,
-        commonType: "cathode",
+        commonType: 'cathode',
       });
-      const seg3 = obniz.wired("7SegmentLED", {
+      const seg3 = obniz.wired('7SegmentLED', {
         a: 7,
         b: 8,
         c: 1,
@@ -351,10 +351,10 @@ class _7SegmentLEDArrayTest {
         g: 4,
         dp: 0,
         common: 11,
-        commonType: "cathode",
+        commonType: 'cathode',
       });
 
-      const segArray = obniz.wired("7SegmentLEDArray", {
+      const segArray = obniz.wired('7SegmentLEDArray', {
         segments: [seg0, seg1, seg2, seg3],
       });
 
@@ -369,7 +369,7 @@ class _7SegmentLEDArrayTest {
   public on() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const seg0 = obniz.wired("7SegmentLED", {
+      const seg0 = obniz.wired('7SegmentLED', {
         a: 7,
         b: 8,
         c: 1,
@@ -379,9 +379,9 @@ class _7SegmentLEDArrayTest {
         g: 4,
         dp: 0,
         common: 6,
-        commonType: "cathode",
+        commonType: 'cathode',
       });
-      const seg1 = obniz.wired("7SegmentLED", {
+      const seg1 = obniz.wired('7SegmentLED', {
         a: 7,
         b: 8,
         c: 1,
@@ -391,9 +391,9 @@ class _7SegmentLEDArrayTest {
         g: 4,
         dp: 0,
         common: 9,
-        commonType: "cathode",
+        commonType: 'cathode',
       });
-      const seg2 = obniz.wired("7SegmentLED", {
+      const seg2 = obniz.wired('7SegmentLED', {
         a: 7,
         b: 8,
         c: 1,
@@ -403,9 +403,9 @@ class _7SegmentLEDArrayTest {
         g: 4,
         dp: 0,
         common: 10,
-        commonType: "cathode",
+        commonType: 'cathode',
       });
-      const seg3 = obniz.wired("7SegmentLED", {
+      const seg3 = obniz.wired('7SegmentLED', {
         a: 7,
         b: 8,
         c: 1,
@@ -415,10 +415,10 @@ class _7SegmentLEDArrayTest {
         g: 4,
         dp: 0,
         common: 11,
-        commonType: "cathode",
+        commonType: 'cathode',
       });
 
-      const segArray = obniz.wired("7SegmentLEDArray", {
+      const segArray = obniz.wired('7SegmentLEDArray', {
         segments: [seg0, seg1, seg2, seg3],
       });
 
@@ -438,7 +438,7 @@ class _MatrixLED_MAX7219Test {
   public init() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const matrix = obniz.wired("MatrixLED_MAX7219", {
+      const matrix = obniz.wired('MatrixLED_MAX7219', {
         clk: 0,
         cs: 1,
         din: 2,
@@ -452,7 +452,7 @@ class _MatrixLED_MAX7219Test {
   public brightness() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const matrix = obniz.wired("MatrixLED_MAX7219", {
+      const matrix = obniz.wired('MatrixLED_MAX7219', {
         clk: 0,
         cs: 1,
         din: 2,
@@ -467,7 +467,7 @@ class _MatrixLED_MAX7219Test {
   public draw() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const matrix = obniz.wired("MatrixLED_MAX7219", {
+      const matrix = obniz.wired('MatrixLED_MAX7219', {
         clk: 0,
         cs: 1,
         din: 2,
@@ -478,11 +478,11 @@ class _MatrixLED_MAX7219Test {
       matrix.brightness(7);
 
       const ctx = obniz.util.createCanvasContext(matrix.width, matrix.height);
-      ctx.fillStyle = "black";
+      ctx.fillStyle = 'black';
       ctx.fillRect(0, 0, matrix.width, matrix.height);
-      ctx.fillStyle = "white";
-      ctx.font = "9px sans-serif";
-      ctx.fillText("Hello World", 0, 7);
+      ctx.fillStyle = 'white';
+      ctx.font = '9px sans-serif';
+      ctx.fillText('Hello World', 0, 7);
 
       matrix.draw(ctx);
     };
@@ -491,7 +491,7 @@ class _MatrixLED_MAX7219Test {
   public clear() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const matrix = obniz.wired("MatrixLED_MAX7219", {
+      const matrix = obniz.wired('MatrixLED_MAX7219', {
         clk: 0,
         cs: 1,
         din: 2,
@@ -506,7 +506,7 @@ class _MatrixLED_MAX7219Test {
   public test() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const matrix = obniz.wired("MatrixLED_MAX7219", {
+      const matrix = obniz.wired('MatrixLED_MAX7219', {
         clk: 0,
         cs: 1,
         din: 2,
@@ -524,7 +524,7 @@ class SainSmartTFT18LCDTest {
   public color16() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const lcd = obniz.wired("SainSmartTFT18LCD", {
+      const lcd = obniz.wired('SainSmartTFT18LCD', {
         scl: 4,
         sda: 3,
         dc: 2,
@@ -541,7 +541,7 @@ class SainSmartTFT18LCDTest {
   public drawApi() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const lcd = obniz.wired("SainSmartTFT18LCD", {
+      const lcd = obniz.wired('SainSmartTFT18LCD', {
         scl: 4,
         sda: 3,
         dc: 2,
@@ -570,7 +570,15 @@ class SainSmartTFT18LCDTest {
       lcd.fillCircle(64, 80, 40, YELLOW);
       lcd.drawCircle(64, 80, 40, RED);
       await obniz.wait(1000);
-      lcd.drawTriangle(64, 24, 24, lcd.height - 24, lcd.width - 24, lcd.height - 24, BLACK);
+      lcd.drawTriangle(
+        64,
+        24,
+        24,
+        lcd.height - 24,
+        lcd.width - 24,
+        lcd.height - 24,
+        BLACK
+      );
       lcd.fillTriangle(64, lcd.height - 48, 24, 48, lcd.width - 24, 48, GREEN);
       await obniz.wait(1000);
       lcd.drawVLine(64, 10, lcd.height - 20, RED);
@@ -581,16 +589,16 @@ class SainSmartTFT18LCDTest {
       const white = lcd.color16(255, 255, 255);
       const red = lcd.color16(255, 0, 0);
       const yellow = lcd.color16(255, 255, 0);
-      lcd.drawChar(0, 0, "+", yellow, red, 4);
+      lcd.drawChar(0, 0, '+', yellow, red, 4);
       let x = 7;
       let y = 32;
-      [x, y] = lcd.drawString(x, y, "This is 1st draw.", white, white);
-      [x, y] = lcd.drawString(x, y, "This is 2nd draw.", red, red, 2, true);
+      [x, y] = lcd.drawString(x, y, 'This is 1st draw.', white, white);
+      [x, y] = lcd.drawString(x, y, 'This is 2nd draw.', red, red, 2, true);
 
       // drawContext
-      const canvas = document.getElementById("canvas") as HTMLCanvasElement;
-      const context = canvas.getContext("2d")!;
-      context.fillStyle = "#FFFFCC";
+      const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+      const context = canvas.getContext('2d')!;
+      context.fillStyle = '#FFFFCC';
       context.fillRect(0, 0, lcd.width, lcd.height);
       lcd.drawContext(context, false);
     };
@@ -599,7 +607,7 @@ class SainSmartTFT18LCDTest {
   public otherApi() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const lcd = obniz.wired("SainSmartTFT18LCD", {
+      const lcd = obniz.wired('SainSmartTFT18LCD', {
         scl: 4,
         sda: 3,
         dc: 2,
@@ -611,7 +619,7 @@ class SainSmartTFT18LCDTest {
       lcd.fillScreen(0); // clear screen to black
       for (let n = 0; n < 4; n++) {
         lcd.setRotation(n);
-        lcd.drawChar(0, 0, n + "", 0xffff, 0xffff, 2);
+        lcd.drawChar(0, 0, n + '', 0xffff, 0xffff, 2);
         lcd.fillCircle(2, 2, 2, 0xf800); // plots origin point to red
 
         // preset.
@@ -628,7 +636,7 @@ class SharpMemoryTFT {
   public draw() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const mdisp = obniz.wired("SharpMemoryTFT", {
+      const mdisp = obniz.wired('SharpMemoryTFT', {
         vcc: 0,
         gnd: 2,
         sclk: 3,
@@ -639,13 +647,13 @@ class SharpMemoryTFT {
       });
       mdisp.clear();
 
-      const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+      const canvas = document.getElementById('canvas') as HTMLCanvasElement;
       if (!canvas || !canvas.getContext) {
         return;
       }
-      const ctx = canvas.getContext("2d")!;
+      const ctx = canvas.getContext('2d')!;
       const img = new Image();
-      img.src = "Image address here";
+      img.src = 'Image address here';
       img.onload = () => {
         ctx.drawImage(img, 0, 0);
         mdisp.draw(ctx);

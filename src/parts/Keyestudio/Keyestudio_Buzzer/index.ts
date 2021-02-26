@@ -3,9 +3,11 @@
  * @module Parts.Keyestudio_Buzzer
  */
 
-import Obniz from "../../../obniz";
-import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralPWM from '../../../obniz/libs/io_peripherals/pwm';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface Keyestudio_BuzzerOptions {
   signal: number;
@@ -16,7 +18,7 @@ export interface Keyestudio_BuzzerOptions {
 export default class Keyestudio_Buzzer implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "Keyestudio_Buzzer",
+      name: 'Keyestudio_Buzzer',
     };
   }
 
@@ -29,20 +31,20 @@ export default class Keyestudio_Buzzer implements ObnizPartsInterface {
   private pwm!: PeripheralPWM;
 
   constructor() {
-    this.keys = ["signal", "gnd", "vcc"];
-    this.requiredKeys = ["signal"];
+    this.keys = ['signal', 'gnd', 'vcc'];
+    this.requiredKeys = ['signal'];
   }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     this.pwm = obniz.getFreePwm();
     this.pwm.start({ io: this.params.signal });
   }
 
   public play(freq: number) {
-    if (typeof freq !== "number") {
-      throw new Error("freq must be a number");
+    if (typeof freq !== 'number') {
+      throw new Error('freq must be a number');
     }
     freq = Math.floor(freq);
     if (freq > 0) {

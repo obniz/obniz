@@ -3,12 +3,14 @@
  * @module Parts.MFRC522
  */
 
-import Obniz from "../../../obniz";
+import Obniz from '../../../obniz';
 
 const OK: any = true;
 const ERROR: any = false;
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface MFRC522Options {
   gnd?: number;
@@ -26,7 +28,7 @@ export interface MFRC522Options {
 export default class MFRC522 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "MFRC522",
+      name: 'MFRC522',
     };
   }
 
@@ -258,21 +260,31 @@ export default class MFRC522 implements ObnizPartsInterface {
     // this.Reserved3Fh = 0x3F;
 
     // required pin of obniz
-    this.keys = ["cs", "clk", "mosi", "miso", "rst", "vcc", "gnd", "spi", "spi_frequency"];
-    this.requiredKeys = ["cs", "mosi", "miso", "rst"];
+    this.keys = [
+      'cs',
+      'clk',
+      'mosi',
+      'miso',
+      'rst',
+      'vcc',
+      'gnd',
+      'spi',
+      'spi_frequency',
+    ];
+    this.requiredKeys = ['cs', 'mosi', 'miso', 'rst'];
   }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
     // IO pin settings
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     this.rst = obniz.getIO(this.params.rst);
     // SPI settings
     this.cs = obniz.getIO(this.params.cs);
     this.cs.output(true);
-    this.params.mode = "master";
-    this.params.drive = "3v";
-    this.params.pull = "3v";
+    this.params.mode = 'master';
+    this.params.drive = '3v';
+    this.params.pull = '3v';
     this.params.frequency = this.params.spi_frequency || 5 * 1000 * 1000;
     this.spi = this.obniz.getSpiWithConfig(this.params);
   }
@@ -365,7 +377,7 @@ export default class MFRC522 implements ObnizPartsInterface {
   // RC522 and ISO14443 card communication
   public async toCard(
     command: any,
-    bitsToSend: any,
+    bitsToSend: any
   ): Promise<{
     status: boolean;
     data: any;
@@ -407,7 +419,11 @@ export default class MFRC522 implements ObnizPartsInterface {
 
     // await this.clearRegisterBitMask(this.BitFramingReg, 0x80);	//Reset with resetAndInit()
 
-    const response: any = await this.readRegister_nByte([this.ErrorReg, this.FIFOLevelReg, this.ControlReg]);
+    const response: any = await this.readRegister_nByte([
+      this.ErrorReg,
+      this.FIFOLevelReg,
+      this.ControlReg,
+    ]);
 
     if (TryingTimes !== 0) {
       if ((response[0] & 0x1b) === 0x00) {
@@ -454,7 +470,7 @@ export default class MFRC522 implements ObnizPartsInterface {
 
     const response: any = await this.toCard(this.PCD_Transceive, tagType);
     if (response.bitSize !== 0x10) {
-      throw new Error("card_search_ERROR");
+      throw new Error('card_search_ERROR');
     }
   }
 
@@ -464,11 +480,12 @@ export default class MFRC522 implements ObnizPartsInterface {
 
     const response: any = await this.toCard(this.PCD_Transceive, uid);
     if (!response.status) {
-      throw new Error("uid_scan_ERROR");
+      throw new Error('uid_scan_ERROR');
     }
-    const uidCheck: any = response.data[0] ^ response.data[1] ^ response.data[2] ^ response.data[3];
+    const uidCheck: any =
+      response.data[0] ^ response.data[1] ^ response.data[2] ^ response.data[3];
     if (uidCheck !== response.data[4]) {
-      throw new Error("uid_check_ERROR");
+      throw new Error('uid_check_ERROR');
     }
     uid = response.data;
     // (uid).pop();
@@ -490,33 +507,36 @@ export default class MFRC522 implements ObnizPartsInterface {
       i--;
     } while (i !== 0 && !(n & 0x04)); // CRCIrq = 1 (Calculation done)
     // CRC calculation result
-    return await this.readRegister_nByte([this.CRCResultRegLSB, this.CRCResultRegMSB]);
+    return await this.readRegister_nByte([
+      this.CRCResultRegLSB,
+      this.CRCResultRegMSB,
+    ]);
   }
 
   public async identifySoftwareWait() {
     let version: any = await this.readRegister(this.VersionReg);
     switch (version) {
       case 0x88:
-        version = "(clone)";
+        version = '(clone)';
         break;
       case 0x90:
-        version = "v0.0";
+        version = 'v0.0';
         break;
       case 0x91:
-        version = "v1.0";
+        version = 'v1.0';
         break;
       case 0x92:
-        version = "v2.0";
+        version = 'v2.0';
         break;
       case 0x12:
-        version = "counterfeit chip";
+        version = 'counterfeit chip';
         break;
       default:
-        version = "(unknown)";
+        version = '(unknown)';
     }
     // When 0x00 or 0xFF is returned, communication probably failed
     if (version === 0x00 || version === 0xff) {
-      throw new Error("software_version_ERROR");
+      throw new Error('software_version_ERROR');
     }
     return version;
   }
@@ -532,34 +552,34 @@ export default class MFRC522 implements ObnizPartsInterface {
     }
     switch (PICC_Type) {
       case 0x04:
-        PICC_Type = "SAK indicates UID is not complete.";
+        PICC_Type = 'SAK indicates UID is not complete.';
         break; // UID not complete
       case 0x09:
-        PICC_Type = "MIFARE Mini, 320 bytes";
+        PICC_Type = 'MIFARE Mini, 320 bytes';
         break;
       case 0x08:
-        PICC_Type = "MIFARE 1KB";
+        PICC_Type = 'MIFARE 1KB';
         break;
       case 0x18:
-        PICC_Type = "MIFARE 4KB";
+        PICC_Type = 'MIFARE 4KB';
         break;
       case 0x00:
-        PICC_Type = "MIFARE Ultralight or Ultralight C";
+        PICC_Type = 'MIFARE Ultralight or Ultralight C';
         break;
       case 0x11:
-        PICC_Type = "MIFARE Plus";
+        PICC_Type = 'MIFARE Plus';
         break;
       case 0x01:
-        PICC_Type = "MIFARE TNP3XXX";
+        PICC_Type = 'MIFARE TNP3XXX';
         break;
       case 0x20:
-        PICC_Type = "PICC compliant with ISO/IEC 14443-4";
+        PICC_Type = 'PICC compliant with ISO/IEC 14443-4';
         break;
       case 0x40:
-        PICC_Type = "PICC compliant with ISO/IEC 18092 (NFC)";
+        PICC_Type = 'PICC compliant with ISO/IEC 18092 (NFC)';
         break;
       default:
-        throw new Error("PICC_type_ERROR");
+        throw new Error('PICC_type_ERROR');
     }
     return PICC_Type;
   }
@@ -588,7 +608,7 @@ export default class MFRC522 implements ObnizPartsInterface {
     // Start authentication itself
     await this.toCard(this.PCD_MFAuthent, buffer);
     if (!((await this.readRegister(this.Status2Reg)) & 0x08)) {
-      throw new Error("password_authentication_ERROR");
+      throw new Error('password_authentication_ERROR');
     }
   }
 
@@ -606,7 +626,7 @@ export default class MFRC522 implements ObnizPartsInterface {
     // Start authentication itself
     await this.toCard(this.PCD_MFAuthent, buffer);
     if (!((await this.readRegister(this.Status2Reg)) & 0x08)) {
-      throw new Error("password_authentication_ERROR");
+      throw new Error('password_authentication_ERROR');
     }
   }
 
@@ -623,7 +643,7 @@ export default class MFRC522 implements ObnizPartsInterface {
       request = request.concat(await this.calculateCRCWait(request));
       response[i] = await this.toCard(this.PCD_Transceive, request);
       if (!response[i].status) {
-        throw new Error("data_read_ERROR");
+        throw new Error('data_read_ERROR');
       }
       blockData[i] = response[i].data;
     }
@@ -631,7 +651,7 @@ export default class MFRC522 implements ObnizPartsInterface {
   }
 
   public async getBlockDataWait(
-    address: any,
+    address: any
   ): Promise<{
     status: boolean;
     data: any;
@@ -641,13 +661,13 @@ export default class MFRC522 implements ObnizPartsInterface {
     request = request.concat(await this.calculateCRCWait(request));
     const response: any = await this.toCard(this.PCD_Transceive, request);
     if (!response.status) {
-      throw new Error("data_read_ERROR");
+      throw new Error('data_read_ERROR');
     }
     return response.data;
   }
 
   public async appendCRCtoBufferAndSendToCardWait(
-    buffer: any,
+    buffer: any
   ): Promise<{
     status: boolean;
     data: any;
@@ -655,22 +675,29 @@ export default class MFRC522 implements ObnizPartsInterface {
   }> {
     buffer = buffer.concat(await this.calculateCRCWait(buffer));
     const response: any = await this.toCard(this.PCD_Transceive, buffer);
-    if (!response.status || response.bitSize !== 4 || (response.data[0] & 0x0f) !== 0x0a) {
+    if (
+      !response.status ||
+      response.bitSize !== 4 ||
+      (response.data[0] & 0x0f) !== 0x0a
+    ) {
       response.status = ERROR;
     }
     return response;
   }
 
-  public async writeBlockDataWait(Block: any, sixteenBytes: any): Promise<void> {
+  public async writeBlockDataWait(
+    Block: any,
+    sixteenBytes: any
+  ): Promise<void> {
     if (Block === 0 || Block % 4 === 3) {
-      throw new Error("deny_Write");
+      throw new Error('deny_Write');
     }
     const buffer: any = [this.PICC_WRITE, Block];
     let response: any = await this.appendCRCtoBufferAndSendToCardWait(buffer);
     if (response.status) {
       response = await this.appendCRCtoBufferAndSendToCardWait(sixteenBytes);
     } else {
-      throw new Error("data_write_ERROR");
+      throw new Error('data_write_ERROR');
     }
   }
 }

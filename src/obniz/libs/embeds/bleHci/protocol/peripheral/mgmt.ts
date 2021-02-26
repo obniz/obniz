@@ -4,7 +4,7 @@
  * @ignore
  */
 // let debug = require('debug')('mgmt');
-import Hci from "../hci";
+import Hci from '../hci';
 
 /**
  * @ignore
@@ -34,11 +34,11 @@ export default class Mgmt {
   }
 
   public nSocketData(data: any) {
-    debug("on data ->" + data.toString("hex"));
+    debug('on data ->' + data.toString('hex'));
   }
 
   public nSocketError(error: any) {
-    debug("on error ->" + error.message);
+    debug('on error ->' + error.message);
   }
 
   public ddLongTermKey(
@@ -48,7 +48,7 @@ export default class Mgmt {
     master: any,
     ediv: any,
     rand: any,
-    key: any,
+    key: any
   ) {
     const ltkInfo: any = Buffer.alloc(LTK_INFO_SIZE);
 

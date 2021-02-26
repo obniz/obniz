@@ -3,10 +3,12 @@
  * @module Parts.Keyestudio_MoistureSensor
  */
 
-import Obniz from "../../../obniz";
-import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
+import Obniz from '../../../obniz';
+import PeripheralAD from '../../../obniz/libs/io_peripherals/ad';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface Keyestudio_MoistureSensorOptions {
   vcc?: number;
@@ -17,7 +19,7 @@ export interface Keyestudio_MoistureSensorOptions {
 export default class Keyestudio_MoistureSensor implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "Keyestudio_MoistureSensor",
+      name: 'Keyestudio_MoistureSensor',
     };
   }
 
@@ -33,13 +35,13 @@ export default class Keyestudio_MoistureSensor implements ObnizPartsInterface {
   private ad!: PeripheralAD;
 
   constructor() {
-    this.keys = ["vcc", "signal", "gnd"];
-    this.requiredKeys = ["signal"];
+    this.keys = ['vcc', 'signal', 'gnd'];
+    this.requiredKeys = ['signal'];
   }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     this.ad = obniz.getAD(this.params.signal);
 
     this.ad.start((value: number) => {

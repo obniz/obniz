@@ -3,11 +3,13 @@
  * @module Parts.IRModule
  */
 
-import Obniz from "../../../obniz";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
-import InfraredLED from "../InfraredLED";
-import IRSensor from "../IRSensor";
+import InfraredLED from '../InfraredLED';
+import IRSensor from '../IRSensor';
 
 export interface IRModuleOptions {
   send: number;
@@ -19,7 +21,7 @@ export interface IRModuleOptions {
 export default class IRModule implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "IRModule",
+      name: 'IRModule',
     };
   }
 
@@ -48,32 +50,32 @@ export default class IRModule implements ObnizPartsInterface {
   }
 
   constructor() {
-    this.keys = ["recv", "vcc", "send", "gnd"];
-    this.requiredKeys = ["recv", "send"];
+    this.keys = ['recv', 'vcc', 'send', 'gnd'];
+    this.requiredKeys = ['recv', 'send'];
   }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
     if (!obniz.isValidIO(this.params.recv)) {
-      throw new Error("recv is not valid io");
+      throw new Error('recv is not valid io');
     }
 
     if (!obniz.isValidIO(this.params.send)) {
-      throw new Error("send is not valid io");
+      throw new Error('send is not valid io');
     }
 
-    this.sensor = obniz.wired("IRSensor", {
+    this.sensor = obniz.wired('IRSensor', {
       output: this.params.recv,
     });
-    this.setGetterSetter("sensor", "duration");
-    this.setGetterSetter("sensor", "dataInverted");
-    this.setGetterSetter("sensor", "cutTail");
-    this.setGetterSetter("sensor", "output_pullup");
-    this.setGetterSetter("sensor", "ondetect");
+    this.setGetterSetter('sensor', 'duration');
+    this.setGetterSetter('sensor', 'dataInverted');
+    this.setGetterSetter('sensor', 'cutTail');
+    this.setGetterSetter('sensor', 'output_pullup');
+    this.setGetterSetter('sensor', 'ondetect');
 
-    this.led = obniz.wired("InfraredLED", {
+    this.led = obniz.wired('InfraredLED', {
       anode: this.params.send,
     });
   }

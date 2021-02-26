@@ -3,8 +3,10 @@
  * @module Parts.iBS02PIR
  */
 
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, {
+  ObnizPartsBleInfo,
+} from '../../../obniz/ObnizPartsBleInterface';
 
 export interface IBS02PIROptions {}
 
@@ -16,7 +18,7 @@ export interface IBS02PIR_Data {
 export default class IBS02PIR implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: "iBS02PIR",
+      name: 'iBS02PIR',
     };
   }
 

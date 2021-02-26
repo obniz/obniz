@@ -3,14 +3,20 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 
-import EventEmitter from "eventemitter3";
-import { ObnizTimeoutError } from "../../../ObnizError";
-import ObnizBLE from "./ble";
-import BleHelper from "./bleHelper";
-import BleRemoteCharacteristic from "./bleRemoteCharacteristic";
-import BleRemoteService from "./bleRemoteService";
-import { BleDeviceAddress, BleDeviceAddressType, BleDeviceType, BleEventType, UUID } from "./bleTypes";
-import { SmpEncryptOptions } from "./protocol/central/smp";
+import EventEmitter from 'eventemitter3';
+import { ObnizTimeoutError } from '../../../ObnizError';
+import ObnizBLE from './ble';
+import BleHelper from './bleHelper';
+import BleRemoteCharacteristic from './bleRemoteCharacteristic';
+import BleRemoteService from './bleRemoteService';
+import {
+  BleDeviceAddress,
+  BleDeviceAddressType,
+  BleDeviceType,
+  BleEventType,
+  UUID,
+} from './bleTypes';
+import { SmpEncryptOptions } from './protocol/central/smp';
 
 /**
  * The return values are shown below.
@@ -377,11 +383,19 @@ export default class BleRemotePeripheral {
 
   /**
    * Indicating this peripheral is found by scan or set from software.
+   *
    * @ignore
    */
   public discoverdOnRemote: boolean | undefined = undefined;
 
-  protected keys = ["device_type", "address_type", "ble_event_type", "rssi", "adv_data", "scan_resp"];
+  protected keys = [
+    'device_type',
+    'address_type',
+    'ble_event_type',
+    'rssi',
+    'adv_data',
+    'scan_resp',
+  ];
   protected _services: BleRemoteService[];
   protected emitter: EventEmitter;
 
@@ -499,7 +513,8 @@ export default class BleRemotePeripheral {
    */
   public async connectWait(setting?: BleConnectSetting): Promise<void> {
     this._connectSetting = setting || {};
-    this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
+    this._connectSetting.autoDiscovery =
+      this._connectSetting.autoDiscovery !== false;
     await this.obnizBle.scan.endWait();
     try {
       await this.obnizBle.centralBindings.connectWait(this.address, () => {
@@ -510,7 +525,9 @@ export default class BleRemotePeripheral {
     } catch (e) {
       if (e instanceof ObnizTimeoutError) {
         await this.obnizBle.resetWait();
-        throw new Error(`Connection to device(address=${this.address}) was timedout. ble have been reseted`);
+        throw new Error(
+          `Connection to device(address=${this.address}) was timedout. ble have been reseted`
+        );
       }
       throw e;
     }
@@ -528,7 +545,7 @@ export default class BleRemotePeripheral {
       throw e;
     }
     this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
-    this.emitter.emit("connect");
+    this.emitter.emit('connect');
   }
 
   /**
@@ -572,21 +589,23 @@ export default class BleRemotePeripheral {
         resolve();
         return;
       }
-      this.emitter.once("statusupdate", (params: any) => {
+      this.emitter.once('statusupdate', (params: any) => {
         clearTimeout(timeoutTimer);
-        if (params.status === "disconnected") {
+        if (params.status === 'disconnected') {
           resolve(true); // for compatibility
         } else {
           reject(
-            new Error(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`),
+            new Error(
+              `cutting connection to peripheral name=${this.localName} address=${this.address} was failed`
+            )
           );
         }
       });
       const timeoutTimer = setTimeout(() => {
         reject(
           new ObnizTimeoutError(
-            `cutting connection to peripheral name=${this.localName} address=${this.address} was failed`,
-          ),
+            `cutting connection to peripheral name=${this.localName} address=${this.address} was failed`
+          )
         );
       }, 90 * 1000);
 
@@ -623,6 +642,7 @@ export default class BleRemotePeripheral {
    *   console.error(e);
    * }
    * ```
+   *
    * @param uuid
    */
   public getService(uuid: UUID): BleRemoteService | null {
@@ -695,7 +715,9 @@ export default class BleRemotePeripheral {
    * ```
    */
   public async discoverAllServicesWait(): Promise<BleRemoteService[]> {
-    const serviceUuids = await this.obnizBle.centralBindings.discoverServicesWait(this.address);
+    const serviceUuids = await this.obnizBle.centralBindings.discoverServicesWait(
+      this.address
+    );
     for (const uuid of serviceUuids) {
       let child = this.getService(uuid);
       if (!child) {
@@ -706,14 +728,22 @@ export default class BleRemotePeripheral {
       }
       child.discoverdOnRemote = true;
 
-      this.obnizBle.Obniz._runUserCreatedFunction(this.ondiscoverservice, child);
+      this.obnizBle.Obniz._runUserCreatedFunction(
+        this.ondiscoverservice,
+        child
+      );
     }
 
-    const children: BleRemoteService[] = this._services.filter((elm: BleRemoteService) => {
-      return elm.discoverdOnRemote;
-    });
+    const children: BleRemoteService[] = this._services.filter(
+      (elm: BleRemoteService) => {
+        return elm.discoverdOnRemote;
+      }
+    );
 
-    this.obnizBle.Obniz._runUserCreatedFunction(this.ondiscoverservicefinished, children);
+    this.obnizBle.Obniz._runUserCreatedFunction(
+      this.ondiscoverservicefinished,
+      children
+    );
     return children;
   }
 
@@ -735,10 +765,12 @@ export default class BleRemotePeripheral {
       return flattend;
     };
     const services = await this.discoverAllServicesWait();
-    const charsNest = await Promise.all(services.map((s: BleRemoteService) => s.discoverAllCharacteristicsWait()));
+    const charsNest = await Promise.all(
+      services.map((s: BleRemoteService) => s.discoverAllCharacteristicsWait())
+    );
     const chars = ArrayFlat(charsNest);
     const descriptorsNest = await Promise.all(
-      chars.map((c: BleRemoteCharacteristic) => c.discoverAllDescriptorsWait()),
+      chars.map((c: BleRemoteCharacteristic) => c.discoverAllDescriptorsWait())
     );
 
     // eslint-disable-next-line no-unused-vars
@@ -753,13 +785,16 @@ export default class BleRemotePeripheral {
   public notifyFromServer(notifyName: string, params: any) {
     this.emitter.emit(notifyName, params);
     switch (notifyName) {
-      case "statusupdate": {
-        if (params.status === "disconnected") {
+      case 'statusupdate': {
+        if (params.status === 'disconnected') {
           const pre = this.connected;
           this.connected = false;
           if (pre) {
-            this.obnizBle.Obniz._runUserCreatedFunction(this.ondisconnect, params.reason);
-            this.emitter.emit("disconnect", params.reason);
+            this.obnizBle.Obniz._runUserCreatedFunction(
+              this.ondisconnect,
+              params.reason
+            );
+            this.emitter.emit('disconnect', params.reason);
           }
         }
         break;
@@ -825,10 +860,14 @@ export default class BleRemotePeripheral {
    * ```
    *
    * Go to [[BlePairingOptions]] to see more option.
+   *
    * @param options BlePairingOptions
    */
   public async pairingWait(options?: BlePairingOptions): Promise<string> {
-    const result = await this.obnizBle.centralBindings.pairingWait(this.address, options);
+    const result = await this.obnizBle.centralBindings.pairingWait(
+      this.address,
+      options
+    );
     return result;
   }
 
@@ -892,16 +931,28 @@ export default class BleRemotePeripheral {
 
   protected setIBeacon() {
     const data = this.searchTypeVal(0xff);
-    if (!data || data[0] !== 0x4c || data[1] !== 0x00 || data[2] !== 0x02 || data[3] !== 0x15 || data.length !== 25) {
+    if (
+      !data ||
+      data[0] !== 0x4c ||
+      data[1] !== 0x00 ||
+      data[2] !== 0x02 ||
+      data[3] !== 0x15 ||
+      data.length !== 25
+    ) {
       this.iBeacon = null;
       return;
     }
     const uuidData = data.slice(4, 20);
-    let uuid = "";
+    let uuid = '';
     for (let i = 0; i < uuidData.length; i++) {
-      uuid = uuid + ("00" + uuidData[i].toString(16)).slice(-2);
-      if (i === 4 - 1 || i === 4 + 2 - 1 || i === 4 + 2 * 2 - 1 || i === 4 + 2 * 3 - 1) {
-        uuid += "-";
+      uuid = uuid + ('00' + uuidData[i].toString(16)).slice(-2);
+      if (
+        i === 4 - 1 ||
+        i === 4 + 2 - 1 ||
+        i === 4 + 2 * 2 - 1 ||
+        i === 4 + 2 * 3 - 1
+      ) {
+        uuid += '-';
       }
     }
 

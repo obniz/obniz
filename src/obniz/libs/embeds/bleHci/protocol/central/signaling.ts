@@ -6,7 +6,7 @@
 // let debug = require('debug')('signaling');
 const debug: any = () => {};
 
-import EventEmitter from "eventemitter3";
+import EventEmitter from 'eventemitter3';
 
 /**
  * @ignore
@@ -23,7 +23,7 @@ const CONNECTION_PARAMETER_UPDATE_RESPONSE: any = 0x13;
  */
 const SIGNALING_CID: any = 0x0005;
 
-type SignalingEventTypes = "connectionParameterUpdateRequest";
+type SignalingEventTypes = 'connectionParameterUpdateRequest';
 /**
  * @ignore
  */
@@ -41,8 +41,8 @@ class Signaling extends EventEmitter<SignalingEventTypes> {
     this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
     this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
 
-    this._aclStream.on("data", this.onAclStreamDataBinded);
-    this._aclStream.on("end", this.onAclStreamEndBinded);
+    this._aclStream.on('data', this.onAclStreamDataBinded);
+    this._aclStream.on('end', this.onAclStreamEndBinded);
   }
 
   public onAclStreamData(cid: any, data?: any) {
@@ -50,16 +50,16 @@ class Signaling extends EventEmitter<SignalingEventTypes> {
       return;
     }
 
-    debug("onAclStreamData: " + data.toString("hex"));
+    debug('onAclStreamData: ' + data.toString('hex'));
 
     const code = data.readUInt8(0);
     const identifier = data.readUInt8(1);
     const length = data.readUInt16LE(2);
     const signalingData = data.slice(4);
 
-    debug("\tcode = " + code);
-    debug("\tidentifier = " + identifier);
-    debug("\tlength = " + length);
+    debug('\tcode = ' + code);
+    debug('\tidentifier = ' + identifier);
+    debug('\tlength = ' + length);
 
     if (code === CONNECTION_PARAMETER_UPDATE_REQUEST) {
       this.processConnectionParameterUpdateRequest(identifier, signalingData);
@@ -67,8 +67,8 @@ class Signaling extends EventEmitter<SignalingEventTypes> {
   }
 
   public onAclStreamEnd() {
-    this._aclStream.removeListener("data", this.onAclStreamDataBinded);
-    this._aclStream.removeListener("end", this.onAclStreamEndBinded);
+    this._aclStream.removeListener('data', this.onAclStreamDataBinded);
+    this._aclStream.removeListener('end', this.onAclStreamEndBinded);
   }
 
   private processConnectionParameterUpdateRequest(identifier: any, data: any) {
@@ -77,10 +77,10 @@ class Signaling extends EventEmitter<SignalingEventTypes> {
     const latency = data.readUInt16LE(4);
     const supervisionTimeout = data.readUInt16LE(6) * 10;
 
-    debug("\t\tmin interval = ", minInterval);
-    debug("\t\tmax interval = ", maxInterval);
-    debug("\t\tlatency = ", latency);
-    debug("\t\tsupervision timeout = ", supervisionTimeout);
+    debug('\t\tmin interval = ', minInterval);
+    debug('\t\tmax interval = ', maxInterval);
+    debug('\t\tlatency = ', latency);
+    debug('\t\tsupervision timeout = ', supervisionTimeout);
 
     const response = Buffer.alloc(6);
 
@@ -91,7 +91,14 @@ class Signaling extends EventEmitter<SignalingEventTypes> {
 
     this._aclStream.write(SIGNALING_CID, response);
 
-    this.emit("connectionParameterUpdateRequest", this._handle, minInterval, maxInterval, latency, supervisionTimeout);
+    this.emit(
+      'connectionParameterUpdateRequest',
+      this._handle,
+      minInterval,
+      maxInterval,
+      latency,
+      supervisionTimeout
+    );
   }
 }
 

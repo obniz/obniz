@@ -3,7 +3,7 @@
  * @module ObnizCore
  */
 
-import BleRemotePeripheral from "./libs/embeds/bleHci/bleRemotePeripheral";
+import BleRemotePeripheral from './libs/embeds/bleHci/bleRemotePeripheral';
 export interface ObnizPartsBleInfo {
   name: string;
   datasheet?: any;
@@ -35,8 +35,14 @@ export default abstract class ObnizPartsBleInterface {
   /**
    * Utility function for reading 4 byte to signed number.
    */
-  public static signed32FromBinary(byte3: number, byte2: number, byte1: number, byte0: number): number {
-    let val: number = (byte3 << (8 * 3)) | (byte2 << (8 * 2)) | (byte1 << (8 * 1)) | byte0;
+  public static signed32FromBinary(
+    byte3: number,
+    byte2: number,
+    byte1: number,
+    byte0: number
+  ): number {
+    let val: number =
+      (byte3 << (8 * 3)) | (byte2 << (8 * 2)) | (byte1 << (8 * 1)) | byte0;
     if ((val & 0x80000000) !== 0) {
       val = val - 0x100000000;
     }

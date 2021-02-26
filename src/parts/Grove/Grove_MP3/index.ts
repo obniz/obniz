@@ -3,9 +3,11 @@
  * @module Parts.Grove_MP3
  */
 
-import Obniz from "../../../obniz";
-import PeripheralGrove from "../../../obniz/libs/io_peripherals/grove";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralGrove from '../../../obniz/libs/io_peripherals/grove';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface Grove_MP3OptionsA {
   vcc?: number;
@@ -22,7 +24,7 @@ export type Grove_MP3Options = Grove_MP3OptionsA | Grove_MP3OptionsB;
 export default class Grove_MP3 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "Grove_MP3",
+      name: 'Grove_MP3',
     };
   }
 
@@ -38,20 +40,20 @@ export default class Grove_MP3 implements ObnizPartsInterface {
   public uart: any;
 
   constructor() {
-    this.keys = ["vcc", "gnd", "mp3_rx", "mp3_tx", "grove"];
+    this.keys = ['vcc', 'gnd', 'mp3_rx', 'mp3_tx', 'grove'];
     this.requiredKeys = [];
 
     this.ioKeys = this.keys;
-    this.displayName = "MP3";
-    this.displayIoNames = { mp3_rx: "MP3Rx", mp3_tx: "MP3Tx" };
+    this.displayName = 'MP3';
+    this.displayIoNames = { mp3_rx: 'MP3Rx', mp3_tx: 'MP3Tx' };
   }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
     if (this.params.grove) {
-      this.uart = this.params.grove.getUart(9600, "5v");
+      this.uart = this.params.grove.getUart(9600, '5v');
     } else {
-      obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+      obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
       this.my_tx = this.params.mp3_rx;
       this.my_rx = this.params.mp3_tx;
       this.uart = this.obniz.getFreeUart();
@@ -71,9 +73,9 @@ export default class Grove_MP3 implements ObnizPartsInterface {
     await this.obniz.wait(100);
 
     if (strage) {
-      if (strage === "usb") {
+      if (strage === 'usb') {
         this.uartSend(0x09, 1);
-      } else if (strage === "sd") {
+      } else if (strage === 'sd') {
         this.uartSend(0x09, 2);
       }
     } else {

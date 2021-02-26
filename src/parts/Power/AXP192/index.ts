@@ -3,16 +3,18 @@
  * @module Parts.AXP192
  */
 
-import Obniz from "../../../obniz";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-import { I2cPartsAbstractOptions } from "../../../parts/i2cParts";
+import Obniz from '../../../obniz';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
+import { I2cPartsAbstractOptions } from '../../../parts/i2cParts';
 
 export interface AXP192Options extends I2cPartsAbstractOptions {}
 
 export default class AXP192 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "AXP192",
+      name: 'AXP192',
     };
   }
 
@@ -24,11 +26,11 @@ export default class AXP192 implements ObnizPartsInterface {
 
   constructor() {
     this.requiredKeys = [];
-    this.keys = ["sda", "scl", "i2c"];
+    this.keys = ['sda', 'scl', 'i2c'];
   }
 
   public wired(obniz: Obniz) {
-    this.params.mode = "master"; // for i2c
+    this.params.mode = 'master'; // for i2c
     this.params.clock = 400 * 1000; // for i2c
     this.i2c = obniz.getI2CWithConfig(this.params);
   }
@@ -56,7 +58,7 @@ export default class AXP192 implements ObnizPartsInterface {
       offset = 15;
     }
     set = (set & 0x0f) | (offset << 4);
-    console.log("set voltage to ", set);
+    console.log('set voltage to ', set);
     this.set(REG_VOLT_SET_LDO2_3, set);
   }
 

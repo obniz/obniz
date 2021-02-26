@@ -10,9 +10,9 @@
  * Released under the MIT license
  * Date: 2019-11-02
  * ---------------------------------------------------------------- */
-"use strict";
+'use strict';
 
-import LinkingIEEE754 from "./ieee754";
+import LinkingIEEE754 from './ieee754';
 
 export default class LinkingAdvertising {
   public static parse(peripheral: any) {
@@ -27,9 +27,9 @@ export default class LinkingAdvertising {
     }
     // Company identifier
     const company_id = manu.readUInt16LE(0);
-    let company_name = "Unknown";
+    let company_name = 'Unknown';
     if (company_id === 0x02e2) {
-      company_name = "NTT docomo";
+      company_name = 'NTT docomo';
     }
     // Version
     const version = manu.readUInt8(2) >>> 4;
@@ -72,96 +72,96 @@ export default class LinkingAdvertising {
     let res: any = {};
     if (service_id === 0) {
       res = {
-        name: "General",
+        name: 'General',
       };
     } else if (service_id === 1) {
       res = {
-        name: "Temperature (°C)",
+        name: 'Temperature (°C)',
         temperature: LinkingIEEE754.read(n, 1, 4, 7),
       };
     } else if (service_id === 2) {
       res = {
-        name: "Humidity (%)",
+        name: 'Humidity (%)',
         humidity: LinkingIEEE754.read(n, 0, 4, 8),
       };
     } else if (service_id === 3) {
       res = {
-        name: "Air pressure (hPa)",
+        name: 'Air pressure (hPa)',
         pressure: LinkingIEEE754.read(n, 0, 5, 7),
       };
     } else if (service_id === 4) {
       res = {
-        name: "Remaining battery power (Threshold value or less)",
+        name: 'Remaining battery power (Threshold value or less)',
         chargeRequired: n & 0b0000100000000000 ? true : false,
         chargeLevel: Math.min((n & 0b0000011111111111) / 10, 100),
       };
     } else if (service_id === 5) {
       const code = n & 0b0000111111111111;
-      let text = "";
+      let text = '';
       if (code === 0x00) {
-        text = "Power";
+        text = 'Power';
       } else if (code === 0x01) {
-        text = "Return";
+        text = 'Return';
       } else if (code === 0x02) {
-        text = "SingleClick";
+        text = 'SingleClick';
       } else if (code === 0x03) {
-        text = "Home";
+        text = 'Home';
       } else if (code === 0x04) {
-        text = "DoubleClick";
+        text = 'DoubleClick';
       } else if (code === 0x05) {
-        text = "VolumeUp";
+        text = 'VolumeUp';
       } else if (code === 0x06) {
-        text = "VolumeDown";
+        text = 'VolumeDown';
       } else if (code === 0x07) {
-        text = "LongPress";
+        text = 'LongPress';
       } else if (code === 0x08) {
-        text = "Pause";
+        text = 'Pause';
       } else if (code === 0x09) {
-        text = "LongPressRelease";
+        text = 'LongPressRelease';
       } else if (code === 0x0a) {
-        text = "FastForward";
+        text = 'FastForward';
       } else if (code === 0x0b) {
-        text = "ReWind";
+        text = 'ReWind';
       } else if (code === 0x0c) {
-        text = "Shutter";
+        text = 'Shutter';
       } else if (code === 0x0d) {
-        text = "Up";
+        text = 'Up';
       } else if (code === 0x0e) {
-        text = "Down";
+        text = 'Down';
       } else if (code === 0x0f) {
-        text = "Left";
+        text = 'Left';
       } else if (code === 0x10) {
-        text = "Right";
+        text = 'Right';
       } else if (code === 0x11) {
-        text = "Enter";
+        text = 'Enter';
       } else if (code === 0x12) {
-        text = "Menu";
+        text = 'Menu';
       } else if (code === 0x13) {
-        text = "Play";
+        text = 'Play';
       } else if (code === 0x14) {
-        text = "Stop";
+        text = 'Stop';
       }
 
       res = {
-        name: "Pressed button information",
+        name: 'Pressed button information',
         buttonId: code,
         buttonName: text,
       };
     } else if (service_id === 6) {
       res = {
-        name: "Opening/closing",
+        name: 'Opening/closing',
         openingStatus: n & 0b0000100000000000 ? true : false,
         openingCount: n & 0b0000011111111111,
       };
     } else if (service_id === 7) {
       res = {
-        name: "Human detection",
+        name: 'Human detection',
         humanDetectionResponse: n & 0b0000100000000000 ? true : false,
         humanDetectionCount: n & 0b0000011111111111,
       };
     } else if (service_id === 8) {
       res = {
-        name: "Vibration",
+        name: 'Vibration',
         moveResponse: n & 0b0000100000000000 ? true : false,
         moveCount: n & 0b0000011111111111,
       };
@@ -171,13 +171,13 @@ export default class LinkingAdvertising {
         illuminance = (n - 2047) * 50 + 2000;
       }
       res = {
-        name: "Illuminance (lx)",
+        name: 'Illuminance (lx)',
         illuminance,
       };
     } else if (service_id === 15) {
       res = {
-        name: "Vendor",
-        bin: ("000000000000" + n.toString(2)).slice(-12),
+        name: 'Vendor',
+        bin: ('000000000000' + n.toString(2)).slice(-12),
       };
     }
     res.serviceId = service_id;

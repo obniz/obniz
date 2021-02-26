@@ -3,12 +3,14 @@
  * @module Parts.Keyestudio_TrafficLight
  */
 
-import Obniz from "../../../obniz";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-import LED from "../../Light/LED";
+import Obniz from '../../../obniz';
+import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
+import LED from '../../Light/LED';
 
-export type TrafficLightType = "green" | "yellow" | "red";
+export type TrafficLightType = 'green' | 'yellow' | 'red';
 
 export interface Keyestudio_TrafficLightOptions {
   gnd?: number;
@@ -20,7 +22,7 @@ export interface Keyestudio_TrafficLightOptions {
 export default class Keyestudio_TrafficLight implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "Keyestudio_TrafficLight",
+      name: 'Keyestudio_TrafficLight',
     };
   }
 
@@ -37,15 +39,15 @@ export default class Keyestudio_TrafficLight implements ObnizPartsInterface {
   private state: TrafficLightType;
 
   constructor() {
-    this.keys = ["gnd", "green", "yellow", "red"];
-    this.requiredKeys = ["green", "yellow", "red"];
-    this.state = "red";
+    this.keys = ['gnd', 'green', 'yellow', 'red'];
+    this.requiredKeys = ['green', 'yellow', 'red'];
+    this.state = 'red';
   }
 
   public wired(obniz: Obniz) {
     function getIO(io: any) {
-      if (io && typeof io === "object") {
-        if (typeof io.output === "function") {
+      if (io && typeof io === 'object') {
+        if (typeof io.output === 'function') {
           return io;
         }
       }
@@ -53,11 +55,11 @@ export default class Keyestudio_TrafficLight implements ObnizPartsInterface {
     }
 
     this.obniz = obniz;
-    obniz.setVccGnd(null, this.params.gnd, "5v");
+    obniz.setVccGnd(null, this.params.gnd, '5v');
 
-    this.green = obniz.wired("LED", { anode: this.params.green });
-    this.yellow = obniz.wired("LED", { anode: this.params.yellow });
-    this.red = obniz.wired("LED", { anode: this.params.red });
+    this.green = obniz.wired('LED', { anode: this.params.green });
+    this.yellow = obniz.wired('LED', { anode: this.params.yellow });
+    this.red = obniz.wired('LED', { anode: this.params.red });
   }
 
   public single(led: TrafficLightType) {
@@ -66,31 +68,31 @@ export default class Keyestudio_TrafficLight implements ObnizPartsInterface {
     this.red.off();
     this.state = led;
     switch (led) {
-      case "green":
+      case 'green':
         this.green.on();
         break;
-      case "yellow":
+      case 'yellow':
         this.yellow.on();
         break;
-      case "red":
+      case 'red':
       default:
         this.red.on();
-        this.state = "red";
+        this.state = 'red';
         break;
     }
   }
 
   public next() {
     switch (this.state) {
-      case "green":
-        this.single("yellow");
+      case 'green':
+        this.single('yellow');
         break;
-      case "yellow":
-        this.single("red");
+      case 'yellow':
+        this.single('red');
         break;
-      case "red":
+      case 'red':
       default:
-        this.single("green");
+        this.single('green');
         break;
     }
   }

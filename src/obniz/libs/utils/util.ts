@@ -11,7 +11,7 @@ class ObnizUtil {
    */
   public static _keyFilter(params: any, keys: any) {
     let filterdParams: any = {};
-    if (typeof params !== "object") {
+    if (typeof params !== 'object') {
       return filterdParams;
     }
     filterdParams = Object.keys(params)
@@ -29,7 +29,7 @@ class ObnizUtil {
    * @return {String} key name of not found.
    */
   public static _requiredKeys(params: any, keys: any) {
-    if (typeof params !== "object") {
+    if (typeof params !== 'object') {
       return keys[0];
     }
 
@@ -43,14 +43,15 @@ class ObnizUtil {
 
   /**
    * convert from data array to string
+   *
    * @param data
    */
   public static dataArray2string(data: number[]): string | null {
     let string: any = null;
     try {
-      const StringDecoder: any = require("string_decoder").StringDecoder;
+      const StringDecoder: any = require('string_decoder').StringDecoder;
       if (StringDecoder) {
-        string = new StringDecoder("utf8").write(Buffer.from(data));
+        string = new StringDecoder('utf8').write(Buffer.from(data));
       }
     } catch (e) {
       // this.obniz.error(e);
@@ -60,6 +61,7 @@ class ObnizUtil {
 
   /**
    * convert from string to data array
+   *
    * @param str
    */
   public static string2dataArray(str: string) {
@@ -72,9 +74,9 @@ class ObnizUtil {
    * @param data
    * @param reverse
    */
-  public static hexToBinary(data: string, reverse: boolean = false): number[] {
+  public static hexToBinary(data: string, reverse = false): number[] {
     const array: number[] = [];
-    const hex: string = data.toLowerCase().replace(/[^0-9abcdef]/g, "");
+    const hex: string = data.toLowerCase().replace(/[^0-9abcdef]/g, '');
     for (let i = 0; i < hex.length / 2; i++) {
       array[i] = parseInt(hex[i * 2] + hex[i * 2 + 1], 16);
     }
@@ -91,10 +93,15 @@ class ObnizUtil {
    * @param variable_name
    * @param variable
    */
-  public static assertNumber(min: number, max: number, variable_name: string, variable: number) {
+  public static assertNumber(
+    min: number,
+    max: number,
+    variable_name: string,
+    variable: number
+  ) {
     if (!(min <= variable && variable <= max)) {
       throw new Error(
-        `${variable_name} is out of range.Input value : ${variable} .value range [ ${min} <= ${variable_name} <= ${max} ]`,
+        `${variable_name} is out of range.Input value : ${variable} .value range [ ${min} <= ${variable_name} <= ${max} ]`
       );
     }
   }
@@ -125,20 +132,22 @@ class ObnizUtil {
   public createCanvasContext(width: number, height: number) {
     if (this.obniz.isNode) {
       try {
-        const { createCanvas } = require("canvas");
+        const { createCanvas } = require('canvas');
         return createCanvas(this.width, this.height);
       } catch (e) {
-        throw new Error("obniz.js require node-canvas to draw rich contents. see more detail on docs");
+        throw new Error(
+          'obniz.js require node-canvas to draw rich contents. see more detail on docs'
+        );
       }
     } else {
-      const canvas: any = document.createElement("canvas");
+      const canvas: any = document.createElement('canvas');
       canvas.width = width;
       canvas.height = height;
-      (canvas.style as any)["-webkit-font-smoothing"] = "none";
-      const body: any = document.getElementsByTagName("body")[0];
+      canvas.style['-webkit-font-smoothing'] = 'none';
+      const body: any = document.getElementsByTagName('body')[0];
       body.appendChild(canvas);
 
-      const ctx: any = canvas.getContext("2d");
+      const ctx: any = canvas.getContext('2d');
       return ctx;
     }
   }

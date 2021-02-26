@@ -1,10 +1,10 @@
-import { Obniz } from "./Obniz";
+import { Obniz } from './Obniz';
 
-/*===================*/
+/* ===================*/
 /* Utils */
-/*===================*/
+/* ===================*/
 try {
-  if (typeof window !== "undefined") {
+  if (typeof window !== 'undefined') {
     if (window && window.parent && window.parent.userAppLoaded) {
       window.parent.userAppLoaded(window);
     }
@@ -24,13 +24,13 @@ try {
   }
 }
 
-/*===================*/
+/* ===================*/
 /* ReadParts */
-/*===================*/
+/* ===================*/
 /**
  * @ignore
  */
-import requireContext = require("./libs/webpackReplace/require-context");
+import requireContext = require('./libs/webpackReplace/require-context');
 
 require.context = requireContext.default;
 if (requireContext.setBaseDir) {
@@ -40,7 +40,7 @@ if (requireContext.setBaseDir) {
 /**
  * @ignore
  */
-const context: any = require.context("../parts", true, /\.js$/);
+const context: any = require.context('../parts', true, /\.js$/);
 /* webpack loader */
 for (const path of context.keys()) {
   const anParts: any = context(path);

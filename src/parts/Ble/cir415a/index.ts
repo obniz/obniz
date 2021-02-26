@@ -3,22 +3,24 @@
  * @module Parts.cir415a
  */
 
-import crypto from "crypto";
-import BleRemoteCharacteristic from "../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic";
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
+import crypto from 'crypto';
+import BleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, {
+  ObnizPartsBleInfo,
+} from '../../../obniz/ObnizPartsBleInterface';
 
 export interface cir415aOptions {}
 
 export default class cir415a implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: "cir415a",
+      name: 'cir415a',
     };
   }
 
   public static isDevice(peripheral: BleRemotePeripheral): boolean {
-    return peripheral.localName?.indexOf("ACR1255U-J1-") === 0;
+    return peripheral.localName?.indexOf('ACR1255U-J1-') === 0;
   }
 
   public onNotify: ((data: number[]) => void) | null = null;
@@ -27,7 +29,7 @@ export default class cir415a implements ObnizPartsBleInterface {
   public _peripheral: BleRemotePeripheral | null = null;
   public ondisconnect?: (reason: any) => void;
 
-  private _authenticated: boolean = false;
+  private _authenticated = false;
   private masterKey: number[] = [
     0x41,
     0x43,
@@ -48,18 +50,35 @@ export default class cir415a implements ObnizPartsBleInterface {
   ];
   private sessionKey: number[] = [];
   private randomDeviceNumber: number[] = [];
-  private randomNumber: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+  private randomNumber: number[] = [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+  ];
   private _uuids = {
-    service: "3C4AFFF0-4783-3DE5-A983-D348718EF133",
-    writeChar: "3C4AFFF1-4783-3DE5-A983-D348718EF133",
-    readChar: "3C4AFFF2-4783-3DE5-A983-D348718EF133",
+    service: '3C4AFFF0-4783-3DE5-A983-D348718EF133',
+    writeChar: '3C4AFFF1-4783-3DE5-A983-D348718EF133',
+    readChar: '3C4AFFF2-4783-3DE5-A983-D348718EF133',
   };
   private readData: number[] = [];
   private readChar: BleRemoteCharacteristic | null = null;
 
   constructor(peripheral: BleRemotePeripheral | null) {
     if (peripheral && !cir415a.isDevice(peripheral)) {
-      throw new Error("peripheral is not cir415a");
+      throw new Error('peripheral is not cir415a');
     }
     this._peripheral = peripheral;
     this._authenticated = false;
@@ -67,11 +86,11 @@ export default class cir415a implements ObnizPartsBleInterface {
 
   public async connectWait() {
     if (!this._peripheral) {
-      throw new Error("peripheral is not cir415a");
+      throw new Error('peripheral is not cir415a');
     }
     if (!this._peripheral.connected) {
       this._peripheral.ondisconnect = (reason: any) => {
-        if (typeof this.ondisconnect === "function") {
+        if (typeof this.ondisconnect === 'function') {
           this.ondisconnect(reason);
         }
       };
@@ -81,11 +100,16 @@ export default class cir415a implements ObnizPartsBleInterface {
     }
     const service = this._peripheral.getService(this._uuids.service)!;
     this.readChar = service.getCharacteristic(this._uuids.writeChar);
-    await service.getCharacteristic(this._uuids.readChar)!.registerNotifyWait(async (data: number[]) => {
-      this.readPacket(data);
-    });
+    await service
+      .getCharacteristic(this._uuids.readChar)!
+      .registerNotifyWait(async (data: number[]) => {
+        this.readPacket(data);
+      });
 
-    await this.writeBle([0x6b, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x45, 0x00], null); // auth step.1
+    await this.writeBle(
+      [0x6b, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x45, 0x00],
+      null
+    ); // auth step.1
   }
 
   public async disconnectWait() {
@@ -96,7 +120,7 @@ export default class cir415a implements ObnizPartsBleInterface {
 
   public async write(data: number[]) {
     if (!this._authenticated) {
-      throw new Error("cir415a no authenticate");
+      throw new Error('cir415a no authenticate');
     }
     if (data.length % 16 !== 0) {
       const l = 16 - (data.length % 16);
@@ -109,23 +133,46 @@ export default class cir415a implements ObnizPartsBleInterface {
 
   public setMasterKey(key: number[]) {
     if (key.length !== 16) {
-      throw new Error("setMasterKey length error");
+      throw new Error('setMasterKey length error');
     }
     this.masterKey = key;
   }
 
   public async setAutoPollingWait(enable: boolean) {
     if (!this._authenticated) {
-      throw new Error("cir415a no authenticate");
+      throw new Error('cir415a no authenticate');
     }
-    await this.write([0x6b, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x40, enable ? 0x01 : 0x00]);
+    await this.write([
+      0x6b,
+      0x00,
+      0x05,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0xe0,
+      0x00,
+      0x00,
+      0x40,
+      enable ? 0x01 : 0x00,
+    ]);
   }
 
   public async writeADPU(data: number[]) {
     if (!this._authenticated) {
-      throw new Error("cir415a no authenticate");
+      throw new Error('cir415a no authenticate');
     }
-    await this.write([0x6f, (data.length & 0xff00) >> 8, data.length & 0x00ff, 0x00, 0x00, 0x00, 0x00].concat(data));
+    await this.write(
+      [
+        0x6f,
+        (data.length & 0xff00) >> 8,
+        data.length & 0x00ff,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+      ].concat(data)
+    );
   }
 
   private readPacket(data: number[]) {
@@ -133,7 +180,8 @@ export default class cir415a implements ObnizPartsBleInterface {
     if (this.readData[0] !== 0x05) {
       this.readData = [];
     }
-    const dLength = ((this.readData[1] & 0xff) << 8) | (this.readData[2] & 0x00ff);
+    const dLength =
+      ((this.readData[1] & 0xff) << 8) | (this.readData[2] & 0x00ff);
 
     if (this.readData.length - 5 < dLength) {
       // lack data length
@@ -158,23 +206,33 @@ export default class cir415a implements ObnizPartsBleInterface {
   }
 
   private encrypt(data: number[], key: number[]): number[] {
-    const c = crypto.createCipheriv("aes-128-cbc", Buffer.from(key), new Uint8Array(16));
+    const c = crypto.createCipheriv(
+      'aes-128-cbc',
+      Buffer.from(key),
+      new Uint8Array(16)
+    );
     c.setAutoPadding(false);
 
-    let t = c.update(Buffer.from(data), undefined, "hex");
-    t += c.final("hex");
-    return Array.from(Buffer.from(t, "hex"));
+    let t = c.update(Buffer.from(data), undefined, 'hex');
+    t += c.final('hex');
+    return Array.from(Buffer.from(t, 'hex'));
   }
 
   private decrypt(data: number[], key: number[]): number[] {
-    const dec = crypto.createDecipheriv("aes-128-cbc", Buffer.from(key), new Uint8Array(16));
+    const dec = crypto.createDecipheriv(
+      'aes-128-cbc',
+      Buffer.from(key),
+      new Uint8Array(16)
+    );
     dec.setAutoPadding(false);
-    let t = dec.update(Buffer.from(data), "binary", "binary");
-    t += dec.final("binary");
+    let t = dec.update(Buffer.from(data), 'binary', 'binary');
+    t += dec.final('binary');
     const d = Array.from(Buffer.from(t));
     const list: number[] = [];
     for (let i = 0; i < d.length; i++) {
-      list.push(d[i] >= 194 ? ((d[i] & 0b00000011) << 6) | (d[++i] & 0b00111111) : d[i]);
+      list.push(
+        d[i] >= 194 ? ((d[i] & 0b00000011) << 6) | (d[++i] & 0b00111111) : d[i]
+      );
     }
     return list;
   }
@@ -191,9 +249,27 @@ export default class cir415a implements ObnizPartsBleInterface {
             }
             this.randomDeviceNumber = randomDevice;
             randomDevice = this.decrypt(randomDevice, this.masterKey);
-            this.sessionKey = randomDevice.slice(0, 8).concat(this.randomNumber.slice(0, 8));
-            randomDevice = this.decrypt(this.randomNumber.concat(randomDevice), this.masterKey);
-            let sendPacket = [0x6b, 0x00, 0x25, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x46, 0x00];
+            this.sessionKey = randomDevice
+              .slice(0, 8)
+              .concat(this.randomNumber.slice(0, 8));
+            randomDevice = this.decrypt(
+              this.randomNumber.concat(randomDevice),
+              this.masterKey
+            );
+            let sendPacket = [
+              0x6b,
+              0x00,
+              0x25,
+              0x00,
+              0x00,
+              0x00,
+              0x00,
+              0xe0,
+              0x00,
+              0x00,
+              0x46,
+              0x00,
+            ];
             sendPacket = sendPacket.concat(randomDevice);
             this.writeBle(sendPacket, null);
             return;

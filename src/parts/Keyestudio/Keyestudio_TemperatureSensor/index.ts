@@ -2,10 +2,12 @@
  * @packageDocumentation
  * @module Parts.Keyestudio_TemperatureSensor
  */
-import Obniz from "../../../obniz";
-import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
+import Obniz from '../../../obniz';
+import PeripheralAD from '../../../obniz/libs/io_peripherals/ad';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface Keyestudio_TemperatureSensorOptions {
   vcc?: number;
@@ -13,10 +15,11 @@ export interface Keyestudio_TemperatureSensorOptions {
   gnd?: number;
 }
 
-export default class Keyestudio_TemperatureSensor implements ObnizPartsInterface {
+export default class Keyestudio_TemperatureSensor
+implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "Keyestudio_TemperatureSensor",
+      name: 'Keyestudio_TemperatureSensor',
     };
   }
 
@@ -31,9 +34,9 @@ export default class Keyestudio_TemperatureSensor implements ObnizPartsInterface
   private temp = 0;
 
   constructor() {
-    this.keys = ["vcc", "gnd", "signal"];
-    this.requiredKeys = ["signal"];
-    this.drive = "5v";
+    this.keys = ['vcc', 'gnd', 'signal'];
+    this.requiredKeys = ['signal'];
+    this.drive = '5v';
   }
 
   public wired(obniz: Obniz) {

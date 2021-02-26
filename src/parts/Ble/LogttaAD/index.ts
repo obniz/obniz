@@ -3,10 +3,12 @@
  * @module Parts.Logtta_AD
  */
 
-import Obniz from "../../../obniz";
-import bleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
+import Obniz from '../../../obniz';
+import bleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, {
+  ObnizPartsBleInfo,
+} from '../../../obniz/ObnizPartsBleInterface';
 
 export interface Logtta_ADOptions {}
 
@@ -18,12 +20,12 @@ export interface Logtta_AD_Data {
 export default class Logtta_AD implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: "Logtta_AD",
+      name: 'Logtta_AD',
     };
   }
 
   public static isDevice(peripheral: BleRemotePeripheral) {
-    return peripheral.localName === "Analog";
+    return peripheral.localName === 'Analog';
   }
 
   private static get_uuid(uuid: string): string {
@@ -36,18 +38,18 @@ export default class Logtta_AD implements ObnizPartsBleInterface {
 
   constructor(peripheral: BleRemotePeripheral | null) {
     if (peripheral && !Logtta_AD.isDevice(peripheral)) {
-      throw new Error("peripheral is not logtta AD");
+      throw new Error('peripheral is not logtta AD');
     }
     this._peripheral = peripheral;
   }
 
   public async connectWait() {
     if (!this._peripheral) {
-      throw new Error("Logtta AD not found");
+      throw new Error('Logtta AD not found');
     }
     if (!this._peripheral.connected) {
       this._peripheral.ondisconnect = (reason: any) => {
-        if (typeof this.ondisconnect === "function") {
+        if (typeof this.ondisconnect === 'function') {
           this.ondisconnect(reason);
         }
       };
@@ -66,7 +68,9 @@ export default class Logtta_AD implements ObnizPartsBleInterface {
       return null;
     }
 
-    const c = this._peripheral!.getService(Logtta_AD.get_uuid("AE20"))!.getCharacteristic(Logtta_AD.get_uuid("AE21"));
+    const c = this._peripheral
+      .getService(Logtta_AD.get_uuid('AE20'))!
+      .getCharacteristic(Logtta_AD.get_uuid('AE21'));
     const data: number[] = await c!.readWait();
     return {
       ampere: (((data[0] << 8) | data[1]) * 916) / 16,
@@ -92,7 +96,9 @@ export default class Logtta_AD implements ObnizPartsBleInterface {
       return;
     }
 
-    const c = this._peripheral!.getService(Logtta_AD.get_uuid("AE20"))!.getCharacteristic(Logtta_AD.get_uuid("AE21"));
+    const c = this._peripheral
+      .getService(Logtta_AD.get_uuid('AE20'))!
+      .getCharacteristic(Logtta_AD.get_uuid('AE21'));
 
     await c!.registerNotifyWait((data: number[]) => {
       if (this.onNotify) {

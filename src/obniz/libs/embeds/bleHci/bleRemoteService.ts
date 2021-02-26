@@ -2,16 +2,19 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import BleHelper from "./bleHelper";
-import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
-import BleRemoteCharacteristic from "./bleRemoteCharacteristic";
-import BleRemotePeripheral from "./bleRemotePeripheral";
-import { UUID } from "./bleTypes";
+import BleHelper from './bleHelper';
+import BleRemoteAttributeAbstract from './bleRemoteAttributeAbstract';
+import BleRemoteCharacteristic from './bleRemoteCharacteristic';
+import BleRemotePeripheral from './bleRemotePeripheral';
+import { UUID } from './bleTypes';
 
 /**
  * @category Use as Central
  */
-export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemotePeripheral, BleRemoteCharacteristic> {
+export default class BleRemoteService extends BleRemoteAttributeAbstract<
+BleRemotePeripheral,
+BleRemoteCharacteristic
+> {
   /**
    * Peripheral instance
    */
@@ -25,7 +28,7 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
    * @ignore
    */
   get parentName(): string | null {
-    return "peripheral";
+    return 'peripheral';
   }
 
   /**
@@ -39,7 +42,7 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
    * @ignore
    */
   get childrenName(): string | null {
-    return "characteristics";
+    return 'characteristics';
   }
 
   /**
@@ -110,6 +113,7 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
    *   console.error(e);
    * }
    * ```
+   *
    * @param uuid
    */
   public getCharacteristic(uuid: UUID): BleRemoteCharacteristic | null {
@@ -150,15 +154,19 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
    * await obniz.ble.scan.startWait();
    * ```
    */
-  public async discoverAllCharacteristicsWait(): Promise<BleRemoteCharacteristic[]> {
+  public async discoverAllCharacteristicsWait(): Promise<
+  BleRemoteCharacteristic[]
+  > {
     const chars = await this.parent!.obnizBle.centralBindings.discoverCharacteristicsWait(
       this.peripheral.address,
-      this.uuid,
+      this.uuid
     );
 
     for (const char of chars) {
       const uuid = char.uuid;
-      const properties = char.properties.map((e: string) => BleHelper.toSnakeCase(e));
+      const properties = char.properties.map((e: string) =>
+        BleHelper.toSnakeCase(e)
+      );
       let child = this.getChild(uuid);
       if (!child) {
         child = this.addChild({ uuid });
@@ -185,7 +193,10 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
    * @param characteristics
    */
   public ondiscoverfinished(characteristics: BleRemoteCharacteristic) {
-    this._runUserCreatedFunction(this.ondiscovercharacteristicfinished, characteristics);
+    this._runUserCreatedFunction(
+      this.ondiscovercharacteristicfinished,
+      characteristics
+    );
   }
 
   /**
@@ -198,19 +209,21 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
    * @ignore
    * @param characteristics
    */
-  public ondiscovercharacteristicfinished(characteristics: BleRemoteCharacteristic[]) {}
+  public ondiscovercharacteristicfinished(
+    characteristics: BleRemoteCharacteristic[]
+  ) {}
 
   /**
    * @ignore
    */
   public async readWait(): Promise<number[]> {
-    throw new Error("cannot read service");
+    throw new Error('cannot read service');
   }
 
   /**
    * @ignore
    */
   public async writeWait(): Promise<boolean> {
-    throw new Error("cannot write service");
+    throw new Error('cannot write service');
   }
 }

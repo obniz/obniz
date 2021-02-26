@@ -3,18 +3,20 @@
  * @module Parts.D6T44L
  */
 
-import Obniz from "../../../../obniz";
-import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
+import Obniz from '../../../../obniz';
+import PeripheralI2C from '../../../../obniz/libs/io_peripherals/i2c';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
-import { I2cPartsAbstractOptions } from "../../../i2cParts";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../../obniz/ObnizPartsInterface';
+import { I2cPartsAbstractOptions } from '../../../i2cParts';
 
 export interface D6T44LOptions extends I2cPartsAbstractOptions {}
 
 class D6T44L implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "D6T44L",
+      name: 'D6T44L',
     };
   }
 
@@ -31,20 +33,20 @@ class D6T44L implements ObnizPartsInterface {
 
   constructor() {
     this.requiredKeys = [];
-    this.keys = ["vcc", "gnd", "sda", "scl", "clock"];
+    this.keys = ['vcc', 'gnd', 'sda', 'scl', 'clock'];
     this.address = 0x0a;
 
-    this.ioKeys = ["vcc", "gnd", "sda", "scl"];
+    this.ioKeys = ['vcc', 'gnd', 'sda', 'scl'];
     this.commands = {};
     this.commands.read_data = [0x4c];
   }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
     this.params.clock = this.params.clock || 100 * 1000; // for i2c
-    this.params.mode = this.params.mode || "master"; // for i2c
+    this.params.mode = this.params.mode || 'master'; // for i2c
     this.params.pull = this.params.pull || null; // for i2c
     this.i2c = obniz.getI2CWithConfig(this.params);
     this.obniz.wait(50);
@@ -63,7 +65,9 @@ class D6T44L implements ObnizPartsInterface {
     const data: number[] = [];
 
     for (let i = 0; i < 16; i++) {
-      data[i] = parseFloat(((raw[i * 2 + 2] + (raw[i * 2 + 3] << 8)) * 0.1).toFixed(1));
+      data[i] = parseFloat(
+        ((raw[i * 2 + 2] + (raw[i * 2 + 3] << 8)) * 0.1).toFixed(1)
+      );
     }
 
     return data;

@@ -3,10 +3,12 @@
  * @module Parts.MatrixLED_MAX7219
  */
 
-import Obniz from "../../../obniz";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
+import PeripheralSPI from '../../../obniz/libs/io_peripherals/spi';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface MatrixLED_MAX7219Options {
   clk: number;
@@ -19,7 +21,7 @@ export interface MatrixLED_MAX7219Options {
 export default class MatrixLED_MAX7219 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "MatrixLED_MAX7219",
+      name: 'MatrixLED_MAX7219',
     };
   }
 
@@ -29,13 +31,13 @@ export default class MatrixLED_MAX7219 implements ObnizPartsInterface {
   public params: any;
   public spi!: PeripheralSPI;
   public obniz!: Obniz;
-  public width: number = 0;
-  public height: number = 0;
+  public width = 0;
+  public height = 0;
   public vram: number[][] = [[]];
 
   constructor() {
-    this.keys = ["vcc", "gnd", "din", "cs", "clk"];
-    this.requiredKeys = ["din", "cs", "clk"];
+    this.keys = ['vcc', 'gnd', 'din', 'cs', 'clk'];
+    this.requiredKeys = ['din', 'cs', 'clk'];
   }
 
   public wired(obniz: Obniz) {
@@ -50,9 +52,9 @@ export default class MatrixLED_MAX7219 implements ObnizPartsInterface {
 
     // max 10Mhz but motor driver can't
     this.params.frequency = this.params.frequency || 10 * 1000 * 1000;
-    this.params.mode = "master";
+    this.params.mode = 'master';
     this.params.mosi = this.params.din;
-    this.params.drive = "3v";
+    this.params.drive = '3v';
     this.spi = this.obniz.getSpiWithConfig(this.params);
 
     // reset a onece
@@ -140,7 +142,8 @@ export default class MatrixLED_MAX7219 implements ObnizPartsInterface {
     const data = imageData.data;
 
     for (let i = 0; i < data.length; i += 4) {
-      const brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+      const brightness =
+        0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
       const index = Math.floor(i / 4);
       const line = Math.floor(index / this.width);
       const col = Math.floor((index - line * this.width) / 8);

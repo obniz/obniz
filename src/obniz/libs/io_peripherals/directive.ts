@@ -3,10 +3,10 @@
  * @module ObnizCore.Components
  */
 
-import semver from "semver";
-import Obniz from "../../index";
-import { ComponentAbstract } from "../ComponentAbstact";
-import { AnimationStatus } from "./common";
+import semver from 'semver';
+import Obniz from '../../index';
+import { ComponentAbstract } from '../ComponentAbstact';
+import { AnimationStatus } from './common';
 
 export interface DirectiveAnimationFrame {
   /**
@@ -16,6 +16,7 @@ export interface DirectiveAnimationFrame {
 
   /**
    * function of frame io config
+   *
    * @param state.index frame index
    */
   state: (index: number) => void;
@@ -26,13 +27,13 @@ export interface DirectiveAnimationFrame {
  */
 export default class Directive extends ComponentAbstract {
   private observers: any[] = [];
-  private _animationIdentifier: number = 0;
+  private _animationIdentifier = 0;
 
   constructor(obniz: Obniz, id: number) {
     super(obniz);
 
-    this.on("/response/ioAnimation/notify", (obj) => {
-      if (obj.animation.status === "finish") {
+    this.on('/response/ioAnimation/notify', (obj) => {
+      if (obj.animation.status === 'finish') {
         for (let i = this.observers.length - 1; i >= 0; i--) {
           if (obj.animation.name === this.observers[i].name) {
             this.observers[i].resolve();
@@ -102,8 +103,16 @@ export default class Directive extends ComponentAbstract {
    * @param animations instructions. This is optional when status is pause``resume.
    * @param repeat The number of repeat count of animation. If not specified, it repeat endless.
    */
-  public animation(name: string, status: AnimationStatus, animations?: DirectiveAnimationFrame[], repeat?: number) {
-    if ((typeof repeat === "number" || status === "registrate") && semver.lt(this.Obniz.firmware_ver!, "2.0.0")) {
+  public animation(
+    name: string,
+    status: AnimationStatus,
+    animations?: DirectiveAnimationFrame[],
+    repeat?: number
+  ) {
+    if (
+      (typeof repeat === 'number' || status === 'registrate') &&
+      semver.lt(this.Obniz.firmware_ver!, '2.0.0')
+    ) {
       throw new Error(`Please update obniz firmware >= 2.0.0`);
     }
     const obj: any = {};
@@ -113,7 +122,7 @@ export default class Directive extends ComponentAbstract {
         status,
       },
     };
-    if (typeof repeat === "number") {
+    if (typeof repeat === 'number') {
       obj.io.animation.repeat = repeat;
     }
     if (!animations) {
@@ -136,7 +145,7 @@ export default class Directive extends ComponentAbstract {
         state: pooledJsonArray,
       });
     }
-    if (status === "loop" || status === "registrate") {
+    if (status === 'loop' || status === 'registrate') {
       obj.io.animation.states = states;
     }
     this.Obniz.send(obj);
@@ -166,29 +175,29 @@ export default class Directive extends ComponentAbstract {
    * @param repeat  The number of repeat count of animation.
    */
   public repeatWait(animations: DirectiveAnimationFrame[], repeat: number) {
-    if (semver.lt(this.Obniz.firmware_ver!, "2.0.0")) {
+    if (semver.lt(this.Obniz.firmware_ver!, '2.0.0')) {
       throw new Error(`Please update obniz firmware >= 2.0.0`);
     }
-    if (typeof repeat !== "number" || repeat < 1) {
-      throw new Error("please specify repeat count > 0");
+    if (typeof repeat !== 'number' || repeat < 1) {
+      throw new Error('please specify repeat count > 0');
     }
     if (Math.floor(repeat) !== repeat) {
-      throw new Error("please provide integer number like 1, 2, 3,,,");
+      throw new Error('please provide integer number like 1, 2, 3,,,');
     }
 
     return new Promise((resolve: any, reject: any) => {
-      const name = "_repeatwait" + Date.now() + this._animationIdentifier;
+      const name = '_repeatwait' + Date.now() + this._animationIdentifier;
       if (++this._animationIdentifier > 1000) {
         this._animationIdentifier = 0;
       }
 
-      this.animation(name, "loop", animations, repeat);
+      this.animation(name, 'loop', animations, repeat);
       this.addObserver(name, resolve, reject);
     });
   }
 
   public schemaBasePath(): string {
-    return "io";
+    return 'io';
   }
 
   /**
@@ -198,7 +207,7 @@ export default class Directive extends ComponentAbstract {
   protected _reset() {
     if (this.observers) {
       for (let i = 0; i < this.observers.length; i++) {
-        this.observers[i].reject(new Error("reset called"));
+        this.observers[i].reject(new Error('reset called'));
       }
     }
     this.observers = [];

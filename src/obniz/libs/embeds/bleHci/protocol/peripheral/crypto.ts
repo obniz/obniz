@@ -3,7 +3,7 @@
  *
  * @ignore
  */
-import crypto from "crypto";
+import crypto from 'crypto';
 
 /**
  * @ignore
@@ -15,10 +15,19 @@ function r() {
 /**
  * @ignore
  */
-function c1(k: any, _r: any, pres: any, preq: any, iat: any, ia: any, rat: any, ra: any) {
+function c1(
+  k: any,
+  _r: any,
+  pres: any,
+  preq: any,
+  iat: any,
+  ia: any,
+  rat: any,
+  ra: any
+) {
   const p1: any = Buffer.concat([iat, rat, preq, pres]);
 
-  const p2: any = Buffer.concat([ra, ia, Buffer.from("00000000", "hex")]);
+  const p2: any = Buffer.concat([ra, ia, Buffer.from('00000000', 'hex')]);
 
   let res: any = xor(_r, p1);
   res = e(k, res);
@@ -36,7 +45,7 @@ function e(key: any, data: any) {
   key = swap(key);
   data = swap(data);
 
-  const cipher: any = crypto.createCipheriv("aes-128-ecb", key, "");
+  const cipher: any = crypto.createCipheriv('aes-128-ecb', key, '');
   cipher.setAutoPadding(false);
 
   return swap(Buffer.concat([cipher.update(data), cipher.final()]));

@@ -3,11 +3,13 @@
  * @module Parts.OMRON_2JCIE
  */
 
-import Obniz from "../../../obniz";
-import bleRemoteCharacteristic from "../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic";
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface from "../../../obniz/ObnizPartsBleInterface";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import bleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface OMRON_2JCIEOptions {}
 
@@ -50,52 +52,110 @@ export interface OMRON_2JCIE_AdvSensorData {
 export default class OMRON_2JCIE implements ObnizPartsBleInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "2JCIE",
+      name: '2JCIE',
     };
   }
 
   public static isDevice(peripheral: BleRemotePeripheral) {
     return (
-      (peripheral.localName && peripheral.localName.indexOf("Env") >= 0) ||
-      (peripheral.localName && peripheral.localName.indexOf("IM") >= 0) ||
-      (peripheral.localName && peripheral.localName.indexOf("Rbt") >= 0)
+      (peripheral.localName && peripheral.localName.indexOf('Env') >= 0) ||
+      (peripheral.localName && peripheral.localName.indexOf('IM') >= 0) ||
+      (peripheral.localName && peripheral.localName.indexOf('Rbt') >= 0)
     );
   }
 
   /**
    * Get a datas from advertisement mode of OMRON 2JCIE
    */
-  public static getData(peripheral: BleRemotePeripheral): OMRON_2JCIE_AdvData | OMRON_2JCIE_AdvSensorData | null {
+  public static getData(
+    peripheral: BleRemotePeripheral
+  ): OMRON_2JCIE_AdvData | OMRON_2JCIE_AdvSensorData | null {
     const adv_data = peripheral.adv_data;
-    if (peripheral.localName && peripheral.localName.indexOf("IM") >= 0) {
+    if (peripheral.localName && peripheral.localName.indexOf('IM') >= 0) {
       return {
-        temperature: ObnizPartsBleInterface.signed16FromBinary(adv_data[8], adv_data[9]) * 0.01,
-        relative_humidity: ObnizPartsBleInterface.signed16FromBinary(adv_data[10], adv_data[11]) * 0.01,
-        light: ObnizPartsBleInterface.signed16FromBinary(adv_data[12], adv_data[13]) * 1,
-        uv_index: ObnizPartsBleInterface.signed16FromBinary(adv_data[14], adv_data[15]) * 0.01,
-        barometric_pressure: ObnizPartsBleInterface.signed16FromBinary(adv_data[16], adv_data[17]) * 0.1,
-        soud_noise: ObnizPartsBleInterface.signed16FromBinary(adv_data[18], adv_data[19]) * 0.01,
-        acceleration_x: ObnizPartsBleInterface.signed16FromBinary(adv_data[20], adv_data[21]),
-        acceleration_y: ObnizPartsBleInterface.signed16FromBinary(adv_data[22], adv_data[23]),
-        acceleration_z: ObnizPartsBleInterface.signed16FromBinary(adv_data[24], adv_data[25]),
+        temperature:
+          ObnizPartsBleInterface.signed16FromBinary(adv_data[8], adv_data[9]) *
+          0.01,
+        relative_humidity:
+          ObnizPartsBleInterface.signed16FromBinary(
+            adv_data[10],
+            adv_data[11]
+          ) * 0.01,
+        light:
+          ObnizPartsBleInterface.signed16FromBinary(
+            adv_data[12],
+            adv_data[13]
+          ) * 1,
+        uv_index:
+          ObnizPartsBleInterface.signed16FromBinary(
+            adv_data[14],
+            adv_data[15]
+          ) * 0.01,
+        barometric_pressure:
+          ObnizPartsBleInterface.signed16FromBinary(
+            adv_data[16],
+            adv_data[17]
+          ) * 0.1,
+        soud_noise:
+          ObnizPartsBleInterface.signed16FromBinary(
+            adv_data[18],
+            adv_data[19]
+          ) * 0.01,
+        acceleration_x: ObnizPartsBleInterface.signed16FromBinary(
+          adv_data[20],
+          adv_data[21]
+        ),
+        acceleration_y: ObnizPartsBleInterface.signed16FromBinary(
+          adv_data[22],
+          adv_data[23]
+        ),
+        acceleration_z: ObnizPartsBleInterface.signed16FromBinary(
+          adv_data[24],
+          adv_data[25]
+        ),
         battery: (adv_data[26] + 100) / 100,
       };
     } else if (
       peripheral.localName &&
-      peripheral.localName.indexOf("Rbt") >= 0 &&
+      peripheral.localName.indexOf('Rbt') >= 0 &&
       adv_data[6] === 0x02 &&
       adv_data[6] === 0x02 &&
       adv_data[7] === 0x01
     ) {
       return {
-        temperature: ObnizPartsBleInterface.signed16FromBinary(adv_data[10], adv_data[9]) * 0.01,
-        relative_humidity: ObnizPartsBleInterface.signed16FromBinary(adv_data[12], adv_data[11]) * 0.01,
-        light: ObnizPartsBleInterface.signed16FromBinary(adv_data[14], adv_data[13]) * 1,
+        temperature:
+          ObnizPartsBleInterface.signed16FromBinary(adv_data[10], adv_data[9]) *
+          0.01,
+        relative_humidity:
+          ObnizPartsBleInterface.signed16FromBinary(
+            adv_data[12],
+            adv_data[11]
+          ) * 0.01,
+        light:
+          ObnizPartsBleInterface.signed16FromBinary(
+            adv_data[14],
+            adv_data[13]
+          ) * 1,
         barometric_pressure:
-          ObnizPartsBleInterface.signed32FromBinary(adv_data[18], adv_data[17], adv_data[16], adv_data[15]) * 0.001,
-        soud_noise: ObnizPartsBleInterface.signed16FromBinary(adv_data[20], adv_data[19]) * 0.01,
-        etvoc: ObnizPartsBleInterface.signed16FromBinary(adv_data[22], adv_data[21]),
-        eco2: ObnizPartsBleInterface.signed16FromBinary(adv_data[24], adv_data[23]),
+          ObnizPartsBleInterface.signed32FromBinary(
+            adv_data[18],
+            adv_data[17],
+            adv_data[16],
+            adv_data[15]
+          ) * 0.001,
+        soud_noise:
+          ObnizPartsBleInterface.signed16FromBinary(
+            adv_data[20],
+            adv_data[19]
+          ) * 0.01,
+        etvoc: ObnizPartsBleInterface.signed16FromBinary(
+          adv_data[22],
+          adv_data[21]
+        ),
+        eco2: ObnizPartsBleInterface.signed16FromBinary(
+          adv_data[24],
+          adv_data[23]
+        ),
       };
     }
     return null;
@@ -108,7 +168,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
 
   constructor(peripheral: BleRemotePeripheral | null) {
     if (peripheral && !OMRON_2JCIE.isDevice(peripheral)) {
-      throw new Error("peripheral is not RS_BTIREX2");
+      throw new Error('peripheral is not RS_BTIREX2');
     }
     this._peripheral = peripheral;
   }
@@ -119,7 +179,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
 
   public async findWait(): Promise<any> {
     const target: any = {
-      localName: "Env",
+      localName: 'Env',
     };
 
     await this.obniz.ble!.initWait();
@@ -137,11 +197,11 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
       await this.findWait();
     }
     if (!this._peripheral) {
-      throw new Error("2JCIE not found");
+      throw new Error('2JCIE not found');
     }
     if (!this._peripheral.connected) {
       this._peripheral.ondisconnect = (reason: any) => {
-        if (typeof this.ondisconnect === "function") {
+        if (typeof this.ondisconnect === 'function') {
           this.ondisconnect(reason);
         }
       };
@@ -179,7 +239,9 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
   public async getLatestData(): Promise<OMRON_2JCIE_Data> {
     await this.connectWait();
 
-    const c = this._peripheral!.getService(this.omron_uuid("3000"))!.getCharacteristic(this.omron_uuid("3001"))!;
+    const c = this._peripheral!.getService(
+      this.omron_uuid('3000')
+    )!.getCharacteristic(this.omron_uuid('3001'))!;
     const data: number[] = await c.readWait();
     const json: any = {
       row_number: data[0],
@@ -190,8 +252,10 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
       barometric_pressure: this.signedNumberFromBinary(data.slice(9, 11)) * 0.1,
       soud_noise: this.signedNumberFromBinary(data.slice(11, 13)) * 0.01,
       discomfort_index: this.signedNumberFromBinary(data.slice(13, 15)) * 0.01,
-      heatstroke_risk_factor: this.signedNumberFromBinary(data.slice(15, 17)) * 0.01,
-      battery_voltage: this.unsignedNumberFromBinary(data.slice(17, 19)) * 0.001,
+      heatstroke_risk_factor:
+        this.signedNumberFromBinary(data.slice(15, 17)) * 0.01,
+      battery_voltage:
+        this.unsignedNumberFromBinary(data.slice(17, 19)) * 0.001,
     };
 
     return json;

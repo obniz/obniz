@@ -3,12 +3,14 @@
  * @module Parts.PCA9685
  */
 
-import Obniz from "../../../obniz";
-import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import { PWMInterface } from "../../../obniz/libs/io_peripherals/pwm";
+import Obniz from '../../../obniz';
+import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
+import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
+import { PWMInterface } from '../../../obniz/libs/io_peripherals/pwm';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 class PCA9685_PWM implements PWMInterface {
   public chip: PCA9685;
@@ -51,7 +53,7 @@ export interface PCA9685Options {
 export default class PCA9685 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "PCA9685",
+      name: 'PCA9685',
     };
   }
 
@@ -74,11 +76,21 @@ export default class PCA9685 implements ObnizPartsInterface {
 
   private io_oe?: PeripheralIO;
   private i2c!: PeripheralI2C;
-  private _freq: number = 0;
+  private _freq = 0;
 
   constructor() {
     /* https://www.nxp.com/docs/en/data-sheet/PCA9685.pdf */
-    this.keys = ["gnd", "vcc", "scl", "sda", "oe", "i2c", "enabled", "address", "drive"];
+    this.keys = [
+      'gnd',
+      'vcc',
+      'scl',
+      'sda',
+      'oe',
+      'i2c',
+      'enabled',
+      'address',
+      'drive',
+    ];
     this.requiredKeys = [];
 
     this.address = 0x40;
@@ -117,15 +129,15 @@ export default class PCA9685 implements ObnizPartsInterface {
       this.io_oe = obniz.getIO(this.params.oe);
     }
 
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
-    if (typeof this.params.address === "number") {
+    if (typeof this.params.address === 'number') {
       this.address = this.params.address;
     }
 
     this.params.clock = this.params.clock || 400 * 1000; // for i2c
-    this.params.mode = this.params.mode || "master"; // for i2c
-    this.params.pull = this.params.pull || "5v"; // for i2c
+    this.params.mode = this.params.mode || 'master'; // for i2c
+    this.params.pull = this.params.pull || '5v'; // for i2c
     this.i2c = obniz.getI2CWithConfig(this.params);
 
     if (this.obniz.isValidIO(this.params.srclr)) {
@@ -133,21 +145,27 @@ export default class PCA9685 implements ObnizPartsInterface {
       this.io_srclr.output(true);
     }
 
-    if (typeof this.params.enabled !== "boolean") {
+    if (typeof this.params.enabled !== 'boolean') {
       this.params.enabled = true;
     }
     if (this.io_oe && this.params.enabled) {
       this.io_oe.output(false);
     }
 
-    if (this.params.drive === "open-drain") {
-      this.i2c.write(this.address, [this._commands.MODE2, this._commands.bits.OUTDRV]);
+    if (this.params.drive === 'open-drain') {
+      this.i2c.write(this.address, [
+        this._commands.MODE2,
+        this._commands.bits.OUTDRV,
+      ]);
     }
 
     let mode1: any = this._commands.bits.AUTO_INCREMENT_ENABLED;
     mode1 = mode1 & ~this._commands.bits.SLEEP_ENABLE;
     this.i2c.write(this.address, [this._commands.MODE1, mode1]);
-    this.i2c.write(this.address, [this._commands.MODE1, mode1 | this._commands.bits.RESTART]);
+    this.i2c.write(this.address, [
+      this._commands.MODE1,
+      mode1 | this._commands.bits.RESTART,
+    ]);
 
     this._regs[this._commands.MODE1] = mode1;
 
@@ -161,22 +179,22 @@ export default class PCA9685 implements ObnizPartsInterface {
   }
 
   public isValidPWM(id: any) {
-    return typeof id === "number" && id >= 0 && id < this.pwmNum;
+    return typeof id === 'number' && id >= 0 && id < this.pwmNum;
   }
 
   public getPWM(id: number): PCA9685_PWM {
     if (!this.isValidPWM(id)) {
-      throw new Error("pwm " + id + " is not valid pwm");
+      throw new Error('pwm ' + id + ' is not valid pwm');
     }
     return this.pwms[id];
   }
 
   public freq(frequency: number) {
-    if (typeof frequency !== "number") {
+    if (typeof frequency !== 'number') {
       return;
     }
     if (frequency < 24 || 1526 < frequency) {
-      throw new Error("freq must be within 24-1526 hz");
+      throw new Error('freq must be within 24-1526 hz');
     }
     if (this._freq === frequency) {
       return;
@@ -189,7 +207,10 @@ export default class PCA9685 implements ObnizPartsInterface {
     const prescale: any = Math.floor(Math.floor(prescaleval + 0.5));
     const mode1: any = this._regs[this._commands.MODE1];
 
-    this.i2c.write(this.address, [this._commands.MODE1, (mode1 & 0x7f) | this._commands.bits.SLEEP_ENABLE]); // enter sleep
+    this.i2c.write(this.address, [
+      this._commands.MODE1,
+      (mode1 & 0x7f) | this._commands.bits.SLEEP_ENABLE,
+    ]); // enter sleep
     this.i2c.write(this.address, [this._commands.PRESCALE, prescale]);
     this.i2c.write(this.address, [this._commands.MODE1, mode1]); // recover from sleep
 
@@ -203,19 +224,19 @@ export default class PCA9685 implements ObnizPartsInterface {
   }
 
   public pulse(index: number, pulse_width: number) {
-    if (typeof this._freq !== "number" || this._freq <= 0) {
-      throw new Error("please provide freq first.");
+    if (typeof this._freq !== 'number' || this._freq <= 0) {
+      throw new Error('please provide freq first.');
     }
     this.duty(index, (pulse_width / 1000.0 / (1.0 / this._freq)) * 100);
   }
 
   public duty(index: number, duty: number) {
     duty *= 1.0;
-    if (typeof this._freq !== "number" || this._freq <= 0) {
-      throw new Error("please provide freq first.");
+    if (typeof this._freq !== 'number' || this._freq <= 0) {
+      throw new Error('please provide freq first.');
     }
-    if (typeof duty !== "number") {
-      throw new Error("please provide duty in number");
+    if (typeof duty !== 'number') {
+      throw new Error('please provide duty in number');
     }
     if (duty < 0) {
       duty = 0;
@@ -228,7 +249,13 @@ export default class PCA9685 implements ObnizPartsInterface {
   }
 
   public writeSingleONOFF(index: number, on: number, off: number) {
-    this.i2c.write(this.address, [this._commands.LED0_ON_L + 4 * index, on & 0xff, on >> 8, off & 0xff, off >> 8]);
+    this.i2c.write(this.address, [
+      this._commands.LED0_ON_L + 4 * index,
+      on & 0xff,
+      on >> 8,
+      off & 0xff,
+      off >> 8,
+    ]);
   }
 
   public setEnable(enable: boolean) {

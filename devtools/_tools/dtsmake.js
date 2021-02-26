@@ -27,7 +27,7 @@ function pascalCase(str) {
 
 const relativePath = './src/';
 
-async function createDtsOnDir(relativePath) {
+async function createDtsOnDirWait(relativePath) {
   const root_directory = path.resolve(__dirname, '../../', relativePath);
 
   let file_list = fs.readdirSync(root_directory);
@@ -65,8 +65,8 @@ async function createDtsOnDir(relativePath) {
     })
     .each(function(file) {
       let file_path = path.resolve(root_directory, file);
-      createDtsOnDir(file_path);
+      createDtsOnDirWait(file_path);
     });
 }
 
-createDtsOnDir(relativePath);
+createDtsOnDirWait(relativePath);

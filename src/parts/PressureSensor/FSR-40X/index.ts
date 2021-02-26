@@ -3,11 +3,13 @@
  * @module Parts.FSR40X
  */
 
-import Obniz from "../../../obniz";
-import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
+import Obniz from '../../../obniz';
+import PeripheralAD from '../../../obniz/libs/io_peripherals/ad';
+import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 // Todo: add weight and calc pressure(kg)
 
@@ -19,7 +21,7 @@ export interface FSR40XOptions {
 export default class FSR40X implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "FSR40X",
+      name: 'FSR40X',
     };
   }
 
@@ -36,8 +38,8 @@ export default class FSR40X implements ObnizPartsInterface {
   private ad!: PeripheralAD;
 
   constructor() {
-    this.keys = ["pin0", "pin1"];
-    this.requiredKeys = ["pin0", "pin1"];
+    this.keys = ['pin0', 'pin1'];
+    this.requiredKeys = ['pin0', 'pin1'];
   }
 
   public wired(obniz: Obniz) {
@@ -46,7 +48,7 @@ export default class FSR40X implements ObnizPartsInterface {
     this.io_pwr = obniz.getIO(this.params.pin0);
     this.ad = obniz.getAD(this.params.pin1);
 
-    this.io_pwr.drive("5v");
+    this.io_pwr.drive('5v');
     this.io_pwr.output(true);
 
     this.ad.start((value: number) => {

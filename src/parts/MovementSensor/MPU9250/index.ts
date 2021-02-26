@@ -3,18 +3,20 @@
  * @module Parts.MPU9250
  */
 
-import Obniz from "../../../obniz";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-import { Inertia6, Xyz } from "../../i2cImu6";
-import AK8963, { AK8963Options } from "../AK8963";
-import MPU6500, { MPU6500Options } from "../MPU6500";
+import Obniz from '../../../obniz';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
+import { Inertia6, Xyz } from '../../i2cImu6';
+import AK8963, { AK8963Options } from '../AK8963';
+import MPU6500, { MPU6500Options } from '../MPU6500';
 
 export interface MPU9250Options extends MPU6500Options {}
 
 export default class MPU9250 extends MPU6500 {
   public static info(): ObnizPartsInfo {
     return {
-      name: "MPU9250",
+      name: 'MPU9250',
     };
   }
 
@@ -26,7 +28,7 @@ export default class MPU9250 extends MPU6500 {
 
   public wired(obniz: Obniz) {
     super.wired(obniz);
-    this.ak8963 = obniz.wired("AK8963", { i2c: this.i2c });
+    this.ak8963 = obniz.wired('AK8963', { i2c: this.i2c });
     this.write(MPU6500.commands.pwr_mgmt_1, [0x00]); // activate MPU9250
     this.write(MPU6500.commands.int_pin_cfg, [0x02]); // activate AK8963 (bypass)
     this.write(MPU6500.commands.config, [0x06]); // activate LPF (search datasheet_p.13)

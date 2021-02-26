@@ -3,10 +3,12 @@
  * @module Parts.Grove_LightSensor
  */
 
-import Obniz from "../../../obniz";
-import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
-import PeripheralGrove from "../../../obniz/libs/io_peripherals/grove";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralAD from '../../../obniz/libs/io_peripherals/ad';
+import PeripheralGrove from '../../../obniz/libs/io_peripherals/grove';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 interface Grove_LightSensorOptionsA {
   vcc?: number;
@@ -18,12 +20,14 @@ interface Grove_LightSensorOptionsB {
   grove: PeripheralGrove;
 }
 
-export type Grove_LightSensorOptions = Grove_LightSensorOptionsA | Grove_LightSensorOptionsB;
+export type Grove_LightSensorOptions =
+  | Grove_LightSensorOptionsA
+  | Grove_LightSensorOptionsB;
 
 export default class Grove_LightSensor implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "Grove_LightSensor",
+      name: 'Grove_LightSensor',
     };
   }
 
@@ -36,7 +40,7 @@ export default class Grove_LightSensor implements ObnizPartsInterface {
   protected obniz!: Obniz;
 
   constructor() {
-    this.keys = ["vcc", "gnd", "signal", "grove"];
+    this.keys = ['vcc', 'gnd', 'signal', 'grove'];
     this.requiredKeys = [];
   }
 
@@ -47,7 +51,7 @@ export default class Grove_LightSensor implements ObnizPartsInterface {
       const groveAd = this.params.grove.getAnalog();
       this.ad = groveAd.primary;
     } else {
-      this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+      this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
       this.ad = obniz.getAD(this.params.signal);
     }
     this.ad.start((value: any) => {

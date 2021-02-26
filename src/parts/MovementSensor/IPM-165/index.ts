@@ -3,10 +3,12 @@
  * @module Parts.IPM-165
  */
 
-import Obniz from "../../../obniz";
-import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
+import Obniz from '../../../obniz';
+import PeripheralAD from '../../../obniz/libs/io_peripherals/ad';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface IPM_165Options {
   signal: number;
@@ -17,7 +19,7 @@ export interface IPM_165Options {
 export default class IPM_165 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "IPM-165",
+      name: 'IPM-165',
     };
   }
 
@@ -31,13 +33,13 @@ export default class IPM_165 implements ObnizPartsInterface {
   protected obniz!: Obniz;
 
   constructor() {
-    this.keys = ["signal", "vcc", "gnd"];
-    this.requiredKeys = ["signal"];
+    this.keys = ['signal', 'vcc', 'gnd'];
+    this.requiredKeys = ['signal'];
   }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     this.signal = this.obniz.getAD(this.params.signal);
     this.signal.start((value: number) => {
       if (this.onchange) {

@@ -3,17 +3,22 @@
  * @module Parts.HMC5883L
  */
 
-import Obniz from "../../../obniz";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-import i2cCompass, { compassUnit, I2cCompassAbstractOptions } from "../../i2cCompass";
-import { I2cInfo, Xyz } from "../../i2cParts";
+import Obniz from '../../../obniz';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
+import i2cCompass, {
+  compassUnit,
+  I2cCompassAbstractOptions,
+} from '../../i2cCompass';
+import { I2cInfo, Xyz } from '../../i2cParts';
 
 export interface HMC5883LOptions extends I2cCompassAbstractOptions {}
 
 export default class HMC5883L extends i2cCompass {
   public static info(): ObnizPartsInfo {
     return {
-      name: "HMC5883L",
+      name: 'HMC5883L',
     };
   }
 
@@ -25,25 +30,34 @@ export default class HMC5883L extends i2cCompass {
     status: 0x09,
   };
 
-  private static scales = [1 / 1370, 1 / 1090, 1 / 820, 1 / 660, 1 / 440, 1 / 390, 1 / 330, 1 / 230];
+  private static scales = [
+    1 / 1370,
+    1 / 1090,
+    1 / 820,
+    1 / 660,
+    1 / 440,
+    1 / 390,
+    1 / 330,
+    1 / 230,
+  ];
   public i2cinfo: I2cInfo;
   protected so: number;
   protected sf: compassUnit;
   protected range: string;
 
-  protected defaultUnit: compassUnit = "G";
+  protected defaultUnit: compassUnit = 'G';
 
   constructor() {
     super();
     this.i2cinfo = {
       address: 0x1e,
       clock: 100000,
-      voltage: "3v",
-      pull: "3v",
+      voltage: '3v',
+      pull: '3v',
     };
     this.sf = this.defaultUnit;
     this.so = HMC5883L.scales[1];
-    this.range = "8G";
+    this.range = '8G';
   }
 
   public wired(obniz: Obniz) {
@@ -63,7 +77,7 @@ export default class HMC5883L extends i2cCompass {
 
   public async getAdcWait(): Promise<Xyz> {
     const raw = await this.readWait(HMC5883L.commands.x_MSB, 6);
-    return HMC5883L.charArrayToXyz(raw, "b");
+    return HMC5883L.charArrayToXyz(raw, 'b');
   }
 
   public setRange(index: number) {

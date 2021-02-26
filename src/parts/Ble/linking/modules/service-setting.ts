@@ -10,22 +10,22 @@
  * Released under the MIT license
  * Date: 2019-10-24
  * ---------------------------------------------------------------- */
-"use strict";
+'use strict';
 
 export default class LinkingServiceSetting {
   public SERVICE_ID = 0x04;
-  public SERVICE_NAME = "PeripheralDeviceSettingOperation";
+  public SERVICE_NAME = 'PeripheralDeviceSettingOperation';
   public MESSAGE_NAME_MAP: any = {
-    "00": "GET_APP_VERSION",
-    "01": "GET_APP_VERSION_RESP",
-    "02": "CONFIRM_INSTALL_APP",
-    "03": "CONFIRM_INSTALL_APP_RESP",
-    "04": "GET_SETTING_INFORMATION",
-    "05": "GET_SETTING_INFORMATION_RESP",
-    "06": "GET_SETTING_NAME",
-    "07": "GET_SETTING_NAME_RESP",
-    "08": "SELECT_SETTING_INFORMATION",
-    "09": "SELECT_SETTING_INFORMATION_RESP",
+    '00': 'GET_APP_VERSION',
+    '01': 'GET_APP_VERSION_RESP',
+    '02': 'CONFIRM_INSTALL_APP',
+    '03': 'CONFIRM_INSTALL_APP_RESP',
+    '04': 'GET_SETTING_INFORMATION',
+    '05': 'GET_SETTING_INFORMATION_RESP',
+    '06': 'GET_SETTING_NAME',
+    '07': 'GET_SETTING_NAME_RESP',
+    '08': 'SELECT_SETTING_INFORMATION',
+    '09': 'SELECT_SETTING_INFORMATION_RESP',
   };
 
   // Private
@@ -97,22 +97,22 @@ export default class LinkingServiceSetting {
 
   public _parseResultCode(buf: any) {
     const code = buf.readUInt8(0);
-    let text = "";
+    let text = '';
     if (code === 0x00) {
-      text = "OK, request processed correctly";
+      text = 'OK, request processed correctly';
     } else if (code === 0x01) {
-      text = "Cancel";
+      text = 'Cancel';
     } else if (code === 0x02) {
-      text = "Error, failed";
+      text = 'Error, failed';
     } else if (code === 0x03) {
-      text = "Error, no reason defined";
+      text = 'Error, no reason defined';
     } else if (code === 0x04) {
-      text = "Error, data not available";
+      text = 'Error, data not available';
     } else if (code === 0x05) {
-      text = "Error, not supported";
+      text = 'Error, not supported';
     }
     return {
-      name: "ResultCode",
+      name: 'ResultCode',
       resultCode: code,
       resultText: text,
     };
@@ -120,12 +120,12 @@ export default class LinkingServiceSetting {
 
   public _parseCancel(buf: any) {
     const code = buf.readUInt8(0);
-    let text = "";
+    let text = '';
     if (code === 0x00) {
-      text = "User cancel";
+      text = 'User cancel';
     }
     return {
-      name: "Cancel",
+      name: 'Cancel',
       cancelCode: code,
       cancelText: text,
     };
@@ -133,18 +133,18 @@ export default class LinkingServiceSetting {
 
   public _parseSettingNameType(buf: any) {
     const code = buf.readUInt8(0);
-    let text = "";
+    let text = '';
     if (code === 0x00) {
-      text = "LEDColorName";
+      text = 'LEDColorName';
     } else if (code === 0x01) {
-      text = "LEDPatternName";
+      text = 'LEDPatternName';
     } else if (code === 0x02) {
-      text = "VibrationPatternName";
+      text = 'VibrationPatternName';
     } else if (code === 0x03) {
-      text = "BeepPatternName";
+      text = 'BeepPatternName';
     }
     return {
-      name: "SettingNameType",
+      name: 'SettingNameType',
       settingNameTypeCode: code,
       settingNameTypeText: text,
     };
@@ -152,8 +152,8 @@ export default class LinkingServiceSetting {
 
   public _parseAppName(buf: any) {
     return {
-      name: "AppName",
-      appName: buf.toString("UTF-8"),
+      name: 'AppName',
+      appName: buf.toString('UTF-8'),
     };
   }
 
@@ -163,42 +163,42 @@ export default class LinkingServiceSetting {
       list.push(buf.readUInt8(i));
     }
     return {
-      name: "FileVer",
-      fileVer: list.join("."),
+      name: 'FileVer',
+      fileVer: list.join('.'),
     };
   }
 
   public _parseFileSize(buf: any) {
     return {
-      name: "FileSize",
+      name: 'FileSize',
       fileSize: buf.readUInt32LE(0),
     };
   }
 
   public _parseInstallConfirmStatus(buf: any) {
     const code = buf.readUInt8(0);
-    let text = "";
+    let text = '';
     if (code === 0x00) {
-      text = "OK, Device has been ready for install";
+      text = 'OK, Device has been ready for install';
     } else if (code === 0x01) {
-      text = "Cancel";
+      text = 'Cancel';
     } else if (code === 0x02) {
-      text = "Error, failed";
+      text = 'Error, failed';
     } else if (code === 0x03) {
-      text = "Error, no reason defined";
+      text = 'Error, no reason defined';
     } else if (code === 0x04) {
-      text = "Error, data not available";
+      text = 'Error, data not available';
     } else if (code === 0x05) {
-      text = "Error, not supported";
+      text = 'Error, not supported';
     } else if (code === 0x06) {
-      text = "Error, Device has no space to install";
+      text = 'Error, Device has no space to install';
     } else if (code === 0x07) {
-      text = "Error, Requested file was already installed";
+      text = 'Error, Requested file was already installed';
     } else if (code === 0x08) {
-      text = "Error, Newest file was already installed";
+      text = 'Error, Newest file was already installed';
     }
     return {
-      name: "InstallConfirmStatus",
+      name: 'InstallConfirmStatus',
       installConfirmStatusCode: code,
       installConfirmStatusText: text,
     };
@@ -206,13 +206,13 @@ export default class LinkingServiceSetting {
 
   public _parseSettingInformationRequest(buf: any) {
     const code = buf.readUInt8(0);
-    let text = "";
+    let text = '';
     if (code === 0x00) {
-      text = "SETTING";
+      text = 'SETTING';
     } else if (code === 0x01) {
-      text = "START_DEMONSTRATION";
+      text = 'START_DEMONSTRATION';
     } else if (code === 0x02) {
-      text = "STOP_DEMONSTRATION";
+      text = 'STOP_DEMONSTRATION';
     }
 
     let offset = 1;
@@ -222,7 +222,7 @@ export default class LinkingServiceSetting {
       if (setting_code === 0x00) {
         settings.push({
           settingCode: setting_code,
-          settingName: "LED",
+          settingName: 'LED',
           colorMax: buf.readUInt8(offset + 1),
           colorNumber: buf.readUInt8(offset + 2),
           patternMax: buf.readUInt8(offset + 3),
@@ -233,7 +233,7 @@ export default class LinkingServiceSetting {
       } else if (setting_code === 0x01) {
         settings.push({
           settingCode: setting_code,
-          settingName: "Vibration",
+          settingName: 'Vibration',
           patternMax: buf.readUInt8(offset + 1),
           patternNumber: buf.readUInt8(offset + 2),
           duration: buf.readUInt8(offset + 3),
@@ -242,7 +242,7 @@ export default class LinkingServiceSetting {
       } else if (setting_code === 0x02) {
         settings.push({
           settingCode: setting_code,
-          settingName: "Beep",
+          settingName: 'Beep',
           patternMax: buf.readUInt8(offset + 1),
           patternNumber: buf.readUInt8(offset + 2),
           duration: buf.readUInt8(offset + 3),
@@ -255,7 +255,7 @@ export default class LinkingServiceSetting {
     }
 
     return {
-      name: "SettingInformationRequest",
+      name: 'SettingInformationRequest',
       settingInformationRequestCode: code,
       settingInformationRequestName: text,
       settingInformationRequestData: settings,
@@ -270,7 +270,7 @@ export default class LinkingServiceSetting {
       if (setting_code === 0x00) {
         settings.push({
           id: setting_code,
-          name: "LED",
+          name: 'LED',
           colorMax: buf.readUInt8(offset + 1),
           colorNumber: buf.readUInt8(offset + 2),
           patternMax: buf.readUInt8(offset + 3),
@@ -281,7 +281,7 @@ export default class LinkingServiceSetting {
       } else if (setting_code === 0x01) {
         settings.push({
           id: setting_code,
-          name: "Vibration",
+          name: 'Vibration',
           patternMax: buf.readUInt8(offset + 1),
           patternNumber: buf.readUInt8(offset + 2),
           duration: buf.readUInt8(offset + 3),
@@ -290,7 +290,7 @@ export default class LinkingServiceSetting {
       } else if (setting_code === 0x02) {
         settings.push({
           id: setting_code,
-          name: "Beep",
+          name: 'Beep',
           patternMax: buf.readUInt8(offset + 1),
           patternNumber: buf.readUInt8(offset + 2),
           duration: buf.readUInt8(offset + 3),
@@ -303,7 +303,7 @@ export default class LinkingServiceSetting {
     }
 
     return {
-      name: "SettingInformationData",
+      name: 'SettingInformationData',
       settingInformationData: settings,
     };
   }
@@ -313,7 +313,7 @@ export default class LinkingServiceSetting {
     let offset = 0;
     while (true) {
       const len = buf.readUInt8(offset++);
-      const name = buf.slice(offset, offset + len - 1).toString("utf-8");
+      const name = buf.slice(offset, offset + len - 1).toString('utf-8');
       offset += len;
       list.push(name);
       if (offset >= buf.length) {
@@ -322,7 +322,7 @@ export default class LinkingServiceSetting {
     }
 
     return {
-      name: "SettingNameData",
+      name: 'SettingNameData',
       settingNameData: list,
     };
   }
@@ -337,7 +337,7 @@ export default class LinkingServiceSetting {
     const buf_list = [];
     // packet header
     const header_buf: any = Buffer.alloc(1);
-    header_buf.writeUInt8(parseInt("00000001", 2));
+    header_buf.writeUInt8(parseInt('00000001', 2));
     buf_list.push(header_buf);
     // Service ID
     const sid_buf: any = Buffer.alloc(1);
@@ -358,18 +358,18 @@ export default class LinkingServiceSetting {
   }
 
   public _createPayload(message_name: any, params: any) {
-    if (!params || typeof params !== "object") {
+    if (!params || typeof params !== 'object') {
       params = {};
     }
-    if (message_name === "GET_APP_VERSION") {
+    if (message_name === 'GET_APP_VERSION') {
       return this._createPayloadGetAppVersion(params);
-    } else if (message_name === "CONFIRM_INSTALL_APP") {
+    } else if (message_name === 'CONFIRM_INSTALL_APP') {
       return this._createPayloadConfirmInstallApp(params);
-    } else if (message_name === "GET_SETTING_INFORMATION") {
+    } else if (message_name === 'GET_SETTING_INFORMATION') {
       return this._createPayloadGetSettingInformation(params);
-    } else if (message_name === "GET_SETTING_NAME") {
+    } else if (message_name === 'GET_SETTING_NAME') {
       return this._createPayloadGetSettingName(params);
-    } else if (message_name === "SELECT_SETTING_INFORMATION") {
+    } else if (message_name === 'SELECT_SETTING_INFORMATION') {
       return this._createPayloadSelectSettingInformation(params);
     } else {
       return null;
@@ -395,7 +395,7 @@ export default class LinkingServiceSetting {
   public _createPayloadGetAppVersion(params: any) {
     let pnum = 0;
     let app_name = null;
-    if ("AppName" in params && typeof params.AppName === "string") {
+    if ('AppName' in params && typeof params.AppName === 'string') {
       app_name = params.AppName;
       pnum++;
     } else {
@@ -418,19 +418,23 @@ export default class LinkingServiceSetting {
   public _createPayloadConfirmInstallApp(params: any) {
     let pnum = 0;
     let app_name = null;
-    if ("AppName" in params && typeof params.AppName === "string") {
+    if ('AppName' in params && typeof params.AppName === 'string') {
       app_name = params.AppName;
       pnum++;
     } else {
       return null;
     }
     let file_ver = null;
-    if ("FileVer" in params && typeof params.FileVer === "string") {
+    if ('FileVer' in params && typeof params.FileVer === 'string') {
       file_ver = params.FileVer;
       pnum++;
     }
     let file_size: any = null;
-    if ("FileSize" in params && typeof params.FileSize === "number" && file_size % 1 === 0) {
+    if (
+      'FileSize' in params &&
+      typeof params.FileSize === 'number' &&
+      file_size % 1 === 0
+    ) {
       file_size = params.FileSize;
       pnum++;
     }
@@ -468,10 +472,10 @@ export default class LinkingServiceSetting {
   public _createPayloadGetSettingName(params: any) {
     let pnum = 0;
     let type = null;
-    if ("SettingNameType" in params) {
+    if ('SettingNameType' in params) {
       type = params.SettingNameType;
-      if (typeof type === "number") {
-        let setting_name = "";
+      if (typeof type === 'number') {
+        let setting_name = '';
         for (const name in this._SETTING_NAME_TYPE_MAP) {
           if (this._SETTING_NAME_TYPE_MAP[name] === type) {
             setting_name = name;
@@ -481,7 +485,7 @@ export default class LinkingServiceSetting {
         if (!setting_name) {
           return null;
         }
-      } else if (typeof type === "string") {
+      } else if (typeof type === 'string') {
         if (type in this._SETTING_NAME_TYPE_MAP) {
           type = this._SETTING_NAME_TYPE_MAP[type];
         } else {
@@ -509,23 +513,26 @@ export default class LinkingServiceSetting {
   public _createPayloadSelectSettingInformation(params: any) {
     let pnum = 0;
     let code = null;
-    if ("SettingInformationRequest" in params && typeof params.SettingInformationRequest === "object") {
+    if (
+      'SettingInformationRequest' in params &&
+      typeof params.SettingInformationRequest === 'object'
+    ) {
       const req = params.SettingInformationRequest;
       if (
-        "requestCode" in req &&
-        typeof req.requestCode === "number" &&
+        'requestCode' in req &&
+        typeof req.requestCode === 'number' &&
         req.requestCode >= 0 &&
         req.requestCode <= 0x02 &&
         req.requestCode % 1 === 0
       ) {
         code = req.requestCode;
-      } else if ("requestName" in req && typeof req.requestName === "string") {
+      } else if ('requestName' in req && typeof req.requestName === 'string') {
         const name = req.requestName;
-        if (name === "SETTING") {
+        if (name === 'SETTING') {
           code = 0x00;
-        } else if (name === "START_DEMONSTRATION") {
+        } else if (name === 'START_DEMONSTRATION') {
           code = 0x01;
-        } else if (name === "STOP_DEMONSTRATION") {
+        } else if (name === 'STOP_DEMONSTRATION') {
           code = 0x02;
         } else {
           return null;
@@ -539,35 +546,35 @@ export default class LinkingServiceSetting {
     pnum++;
 
     let settings = null;
-    if ("SettingInformationData" in params) {
+    if ('SettingInformationData' in params) {
       if (Array.isArray(params.SettingInformationData)) {
         settings = [];
         for (let i = 0; i < params.SettingInformationData.length; i++) {
           const s = params.SettingInformationData[i];
           let scode = null;
-          let sname = "";
+          let sname = '';
           if (
-            "settingCode" in s &&
-            typeof s.settingCode === "number" &&
+            'settingCode' in s &&
+            typeof s.settingCode === 'number' &&
             s.settingCode >= 0x00 &&
             s.settingCode <= 0x02 &&
             s.settingCode % 1 === 0
           ) {
             scode = s.settingCode;
             if (scode === 0x00) {
-              sname = "LED";
+              sname = 'LED';
             } else if (scode === 0x01) {
-              sname = "Vibration";
+              sname = 'Vibration';
             } else if (scode === 0x02) {
-              sname = "Beep";
+              sname = 'Beep';
             }
-          } else if ("settingName" in s && typeof s.settingName === "string") {
+          } else if ('settingName' in s && typeof s.settingName === 'string') {
             sname = s.settingName;
-            if (sname === "LED") {
+            if (sname === 'LED') {
               scode = 0x00;
-            } else if (sname === "Vibration") {
+            } else if (sname === 'Vibration') {
               scode = 0x01;
-            } else if (sname === "Beep") {
+            } else if (sname === 'Beep') {
               scode = 0x02;
             } else {
               return null;
@@ -581,9 +588,9 @@ export default class LinkingServiceSetting {
           let cm = null;
           if (scode === 0x00) {
             // LED
-            if ("colorNumber" in s) {
+            if ('colorNumber' in s) {
               if (
-                typeof s.colorNumber === "number" &&
+                typeof s.colorNumber === 'number' &&
                 s.colorNumber >= 0 &&
                 s.colorNumber <= this._device.settings.LED.colorMax &&
                 s.colorNumber % 1 === 0
@@ -599,9 +606,9 @@ export default class LinkingServiceSetting {
           }
 
           let pn = null;
-          if ("patternNumber" in s) {
+          if ('patternNumber' in s) {
             if (
-              typeof s.patternNumber === "number" &&
+              typeof s.patternNumber === 'number' &&
               s.patternNumber >= 0 &&
               s.patternNumber <= this._device.settings[sname].patternMax &&
               s.patternNumber % 1 === 0
@@ -616,8 +623,13 @@ export default class LinkingServiceSetting {
           const pm = this._device.settings[sname].patternMax;
 
           let dur = null;
-          if ("duration" in s) {
-            if (typeof s.duration === "number" && s.duration >= 0 && s.duration <= 0xff && s.duration % 1 === 0) {
+          if ('duration' in s) {
+            if (
+              typeof s.duration === 'number' &&
+              s.duration >= 0 &&
+              s.duration <= 0xff &&
+              s.duration % 1 === 0
+            ) {
               dur = s.duration;
               if (dur <= 0x05) {
                 dur = 0x05;

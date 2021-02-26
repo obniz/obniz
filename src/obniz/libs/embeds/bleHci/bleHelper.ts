@@ -2,11 +2,11 @@
  * @packageDocumentation
  * @ignore
  */
-import { UUID } from "./bleTypes";
+import { UUID } from './bleTypes';
 
 const BleHelper = {
   uuidFilter(uuid: string | UUID): UUID {
-    return uuid.toLowerCase().replace(/[^0-9abcdef]/g, "");
+    return uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
   },
 
   toCamelCase(str: string): string {
@@ -19,28 +19,22 @@ const BleHelper = {
   toSnakeCase(str: string): string {
     const camel: any = this.toCamelCase(str);
     return camel.replace(/[A-Z]/g, (s: any) => {
-      return "_" + s.charAt(0).toLowerCase();
+      return '_' + s.charAt(0).toLowerCase();
     });
   },
-  buffer2reversedHex(buf: Buffer, sepalator = ""): string {
-    return this.reverseHexString(buf.toString("hex"), sepalator);
+  buffer2reversedHex(buf: Buffer, sepalator = ''): string {
+    return this.reverseHexString(buf.toString('hex'), sepalator);
   },
 
-  hex2reversedBuffer(address: string, sepalator = ""): Buffer {
-    if (sepalator === "") {
-      return Buffer.from(this.reverseHexString(address), "hex");
+  hex2reversedBuffer(address: string, sepalator = ''): Buffer {
+    if (sepalator === '') {
+      return Buffer.from(this.reverseHexString(address), 'hex');
     }
 
-    return Buffer.from(
-      address
-        .split(":")
-        .reverse()
-        .join(""),
-      "hex",
-    );
+    return Buffer.from(address.split(':').reverse().join(''), 'hex');
   },
 
-  reverseHexString(str: string, separator = ""): string {
+  reverseHexString(str: string, separator = ''): string {
     // 40msec (100000 times)
     // return str
     //   .match(/.{1,2}/g)!
@@ -55,7 +49,7 @@ const BleHelper = {
     // return parts.reverse().join(separator);
 
     // 13msec (100000 times)
-    let result = "";
+    let result = '';
     const len = str.length + (str.length % 2);
     for (let i = len; i > 0; i -= 2) {
       result += str.slice(i - 2, i) + separator;
