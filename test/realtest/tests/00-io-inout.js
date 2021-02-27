@@ -4,25 +4,25 @@ const config = require('../config.js');
 
 let checkBoard, check_io, check_read;
 
-describe('0-io-input', function() {
+describe('0-io-input', function () {
   this.timeout(10000);
 
-  before(function() {
-    return new Promise(resolve => {
+  before(function () {
+    return new Promise((resolve) => {
       config.waitForConenct(() => {
         checkBoard = config.checkBoard;
-        check_io = config.check_io.filter(io =>
-          io.mode.some(mode => mode === 'digitalWrite')
+        check_io = config.check_io.filter((io) =>
+          io.mode.some((mode) => mode === 'digitalWrite')
         );
-        check_read = config.check_io.filter(io =>
-          io.mode.some(mode => mode === 'digitalRead')
+        check_read = config.check_io.filter((io) =>
+          io.mode.some((mode) => mode === 'digitalRead')
         );
         resolve();
       });
     });
   });
 
-  it('checkBoard -> obniz 3v low', async function() {
+  it('checkBoard -> obniz 3v low', async function () {
     for (let i = 0; i < check_io.length; i++) {
       checkBoard.getIO(check_io[i].board_io).pull(null);
       checkBoard.getIO(check_io[i].board_io).drive('3v');
@@ -30,20 +30,20 @@ describe('0-io-input', function() {
     }
   });
 
-  it('checkBoard -> obniz 3v high', async function() {
+  it('checkBoard -> obniz 3v high', async function () {
     for (let i = 0; i < check_io.length; i++) {
       checkBoard.getIO(check_io[i].board_io).drive('3v');
       await ioAisBWait(check_io[i], true);
     }
   });
 
-  it('checkBoard <- obniz 3v low', async function() {
+  it('checkBoard <- obniz 3v low', async function () {
     for (let i = 0; i < check_read.length; i++) {
       await ioObnizisEspWait(check_read[i], false);
     }
   });
 
-  it('checkBoard <- obniz 3v high', async function() {
+  it('checkBoard <- obniz 3v high', async function () {
     for (let i = 0; i < check_read.length; i++) {
       await ioObnizisEspWait(check_read[i], true);
     }
@@ -57,21 +57,21 @@ describe('0-io-input', function() {
   //   await ioAisBWait(check_io[check_io.length - 1], false);
   // });
 
-  it('3v low with pull up3', async function() {
+  it('3v low with pull up3', async function () {
     checkBoard.getIO(check_io[0].board_io).pull('3v');
     await ioAisBWait(check_io[0], false);
     checkBoard.getIO(check_io[check_io.length - 1].board_io).pull('3v');
     await ioAisBWait(check_io[check_io.length - 1], false);
   });
 
-  it('3v low with pull down', async function() {
+  it('3v low with pull down', async function () {
     checkBoard.getIO(check_io[0].board_io).pull('0v');
     await ioAisBWait(check_io[0], false);
     checkBoard.getIO(check_io[check_io.length - 1].board_io).pull('0v');
     await ioAisBWait(check_io[check_io.length - 1], false);
   });
 
-  it('3v high', async function() {
+  it('3v high', async function () {
     await ioAisBWait(check_io[0], true);
     await ioAisBWait(check_io[check_io.length - 1], true);
   });
@@ -83,21 +83,21 @@ describe('0-io-input', function() {
   //   await ioAisBWait(check_io[check_io.length - 1], true);
   // });
 
-  it('3v high with pull up3', async function() {
+  it('3v high with pull up3', async function () {
     checkBoard.getIO(check_io[0].board_io).pull('3v');
     await ioAisBWait(check_io[0], true);
     checkBoard.getIO(check_io[check_io.length - 1].board_io).pull('3v');
     await ioAisBWait(check_io[check_io.length - 1], true);
   });
 
-  it('3v high with pull down', async function() {
+  it('3v high with pull down', async function () {
     checkBoard.getIO(check_io[0].board_io).pull('0v');
     await ioAisBWait(check_io[0], true);
     checkBoard.getIO(check_io[check_io.length - 1].board_io).pull('0v');
     await ioAisBWait(check_io[check_io.length - 1], true);
   });
 
-  it('open-drain low is low (floating)', async function() {
+  it('open-drain low is low (floating)', async function () {
     checkBoard.getIO(check_io[0].board_io).pull(null);
     checkBoard.getIO(check_io[0].board_io).drive('open-drain');
     await ioAisBWait(check_io[0], false);
@@ -109,7 +109,7 @@ describe('0-io-input', function() {
     await ioAisBWait(check_io[check_io.length - 1], false);
   });
 
-  it('open-drain low is low (pullup3)', async function() {
+  it('open-drain low is low (pullup3)', async function () {
     checkBoard.getIO(check_io[0].board_io).pull('3v');
     checkBoard.getIO(check_io[0].board_io).drive('open-drain');
     await ioAisBWait(check_io[0], false);
@@ -131,7 +131,7 @@ describe('0-io-input', function() {
   //   await ioAisBWait(check_io[check_io.length - 1], false);
   // });
 
-  it('open-drain high is low (pulldown)', async function() {
+  it('open-drain high is low (pulldown)', async function () {
     checkBoard.getIO(check_io[0].board_io).pull('0v');
     checkBoard.getIO(check_io[0].board_io).drive('open-drain');
     await ioAisBWait(check_io[0], true, false);
@@ -154,7 +154,7 @@ describe('0-io-input', function() {
   //   await ioAisBWait(check_io[check_io.length - 1], true);
   // });
 
-  it('open-drain high is high (pullup3)', async function() {
+  it('open-drain high is high (pullup3)', async function () {
     checkBoard.getIO(check_io[0].board_io).pull('3v');
     checkBoard.getIO(check_io[0].board_io).drive('open-drain');
     await ioAisBWait(check_io[0], true);

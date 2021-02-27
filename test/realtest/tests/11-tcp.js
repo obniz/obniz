@@ -15,11 +15,11 @@ let checkBoard;
 const MAX_TCP_CONNECTION = 8;
 let tcpArray = [];
 
-describe('11-tcp', function() {
+describe('11-tcp', function () {
   this.timeout(30000);
 
-  before(function() {
-    return new Promise(resolve => {
+  before(function () {
+    return new Promise((resolve) => {
       config.waitForConenct(async () => {
         checkBoard = config.checkBoard;
         // checkBoard.tcp0.onconnection = state => {
@@ -47,7 +47,7 @@ describe('11-tcp', function() {
     }
   });
 
-  it('tcp connect error', async function() {
+  it('tcp connect error', async function () {
     let res = await checkBoard.tcp0.connectWait(80, 'obniz.i');
     expect(res).to.deep.within(3, 4);
     await checkBoard.pingWait();
@@ -58,7 +58,7 @@ describe('11-tcp', function() {
     }
   });
 
-  it('tcp connect ok', async function() {
+  it('tcp connect ok', async function () {
     let res = await checkBoard.tcp0.connectWait(80, 'obniz.io');
     await checkBoard.pingWait();
     expect(res).to.deep.equal(0);
@@ -71,7 +71,7 @@ describe('11-tcp', function() {
     }
   });
 
-  it('tcp socket close', async function() {
+  it('tcp socket close', async function () {
     let socketState;
     socketState = checkBoard.tcp0.isUsed();
     expect(socketState, 'socket start').to.be.false;
@@ -104,7 +104,7 @@ describe('11-tcp', function() {
     }
   });
 
-  it('tcp get', async function() {
+  it('tcp get', async function () {
     await checkBoard.tcp0.connectWait(80, 'obniz.io');
     checkBoard.tcp0.write(
       'GET / HTTP/1.0\r\n' + 'Connection:close\r\n' + 'Host:obniz.io\r\n\r\n'
@@ -129,7 +129,7 @@ describe('11-tcp', function() {
     }
   });
 
-  it('tcp port', async function() {
+  it('tcp port', async function () {
     if (!useIp) {
       this.skip();
     }
@@ -163,7 +163,7 @@ describe('11-tcp', function() {
     }
   });
 
-  it('tcp image', async function() {
+  it('tcp image', async function () {
     if (!useIp) {
       this.skip();
     }
@@ -176,7 +176,7 @@ describe('11-tcp', function() {
         '\r\n\r\n'
     );
     let boardData = [];
-    checkBoard.tcp0.onreceive = data => {
+    checkBoard.tcp0.onreceive = (data) => {
       boardData = boardData.concat(data);
       //console.log(boardData.length);
     };
@@ -207,7 +207,7 @@ describe('11-tcp', function() {
     }
   });
 
-  it('tcp mult connect', async function() {
+  it('tcp mult connect', async function () {
     if (!useIp) {
       this.skip();
     }
@@ -256,15 +256,15 @@ async function getServerDataWait(port, domain, writeData) {
   client.connect({ port: port, host: domain }, () => {
     client.write(writeData);
   });
-  return new Promise(function(resolve, reject) {
-    client.on('data', data => {
+  return new Promise(function (resolve, reject) {
+    client.on('data', (data) => {
       resolve(data);
     });
   });
 }
 
 function wait(ms) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 }

@@ -8,7 +8,7 @@
 // Rule Definition
 //------------------------------------------------------------------------------
 
-module.exports = function(context) {
+module.exports = function (context) {
   function checkName(node, identifier = null) {
     if (!identifier) {
       identifier = node.id;
@@ -37,7 +37,7 @@ module.exports = function(context) {
     FunctionDeclaration: checkName,
     FunctionExpression: checkName,
     ArrowFunctionExpression: checkName,
-    MethodDefinition: node => {
+    MethodDefinition: (node) => {
       checkName(node.value, node.key);
     },
   };

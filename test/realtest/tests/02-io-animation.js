@@ -4,31 +4,31 @@ const config = require('../config.js');
 
 let checkBoard, check_io;
 
-describe('2-io-animation', function() {
+describe('2-io-animation', function () {
   this.timeout(20000);
-  before(function() {
-    return new Promise(resolve => {
+  before(function () {
+    return new Promise((resolve) => {
       config.waitForConenct(() => {
         checkBoard = config.checkBoard;
-        check_io = config.check_io.filter(io =>
-          io.mode.some(mode => mode === 'digitalWrite')
+        check_io = config.check_io.filter((io) =>
+          io.mode.some((mode) => mode === 'digitalWrite')
         );
         resolve();
       });
     });
   });
 
-  it('animation', async function() {
+  it('animation', async function () {
     checkBoard.io.animation('animation-1', 'loop', [
       {
         duration: 10,
-        state: function() {
+        state: function () {
           checkBoard.getIO(check_io[0].board_io).output(false);
         },
       },
       {
         duration: 10,
-        state: function() {
+        state: function () {
           checkBoard.getIO(check_io[0].board_io).output(true);
         },
       },
@@ -37,7 +37,7 @@ describe('2-io-animation', function() {
     await detectPulse(check_io[0], [40, 60]);
   });
 
-  it('animation pause', async function() {
+  it('animation pause', async function () {
     checkBoard.io.animation('animation-1', 'pause');
     await checkBoard.pingWait();
 
@@ -45,13 +45,13 @@ describe('2-io-animation', function() {
     await ioAisBWait(check_io[0], true);
   });
 
-  it('animation resume', async function() {
+  it('animation resume', async function () {
     checkBoard.io.animation('animation-1', 'resume');
     await checkBoard.pingWait();
     await detectPulse(check_io[0], [40, 60]);
   });
 
-  it('animation remove', async function() {
+  it('animation remove', async function () {
     checkBoard.io.animation('animation-1', 'loop');
     await checkBoard.pingWait();
 
@@ -59,17 +59,17 @@ describe('2-io-animation', function() {
     await ioAisBWait(check_io[0], true);
   });
 
-  it('two animation', async function() {
+  it('two animation', async function () {
     checkBoard.io.animation('animation-1', 'loop', [
       {
         duration: 10,
-        state: function() {
+        state: function () {
           checkBoard.getIO(check_io[0].board_io).output(false);
         },
       },
       {
         duration: 10,
-        state: function() {
+        state: function () {
           checkBoard.getIO(check_io[0].board_io).output(true);
         },
       },
@@ -77,13 +77,13 @@ describe('2-io-animation', function() {
     checkBoard.io.animation('animation-2', 'loop', [
       {
         duration: 10,
-        state: function() {
+        state: function () {
           checkBoard.getIO(check_io[1].board_io).output(false);
         },
       },
       {
         duration: 10,
-        state: function() {
+        state: function () {
           checkBoard.getIO(check_io[1].board_io).output(true);
         },
       },
@@ -105,7 +105,7 @@ function detectPulse(device, ratioRange) {
       interval: 1,
       duration: 300,
     });
-    obniz.logicAnalyzer.onmeasured = async function(array) {
+    obniz.logicAnalyzer.onmeasured = async function (array) {
       if (ignores > 0) {
         ignores--;
         return;

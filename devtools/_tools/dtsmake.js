@@ -6,7 +6,7 @@ const execSync = require('child_process').execSync;
 
 function camelCase(str) {
   str = str.charAt(0).toLowerCase() + str.slice(1);
-  return str.replace(/[-_](.)/g, function(match, group1) {
+  return str.replace(/[-_](.)/g, function (match, group1) {
     return group1.toUpperCase();
   });
 }
@@ -14,7 +14,7 @@ function camelCase(str) {
 // eslint-disable-next-line no-unused-vars
 function snakeCase(str) {
   let camel = camelCase(str);
-  return camel.replace(/[A-Z]/g, function(s) {
+  return camel.replace(/[A-Z]/g, function (s) {
     return '_' + s.charAt(0).toLowerCase();
   });
 }
@@ -34,10 +34,10 @@ async function createDtsOnDirWait(relativePath) {
 
   //build
   _.chain(file_list)
-    .filter(function(file) {
+    .filter(function (file) {
       return file.match(/.*\.js$/);
     })
-    .each(function(file) {
+    .each(function (file) {
       let fullpath = path.resolve(__dirname, '../../', relativePath, file);
       let dtsFilePath = fullpath.replace('.js', '.d.ts');
       try {
@@ -59,11 +59,11 @@ async function createDtsOnDirWait(relativePath) {
 
   // Recurse on directories
   _.chain(file_list)
-    .filter(function(file) {
+    .filter(function (file) {
       let file_path = path.resolve(root_directory, file);
       return fs.lstatSync(file_path).isDirectory();
     })
-    .each(function(file) {
+    .each(function (file) {
       let file_path = path.resolve(root_directory, file);
       createDtsOnDirWait(file_path);
     });

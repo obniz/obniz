@@ -30,20 +30,16 @@
     "doc": "typedoc --includes ./src/ --theme ./devtools/typedocTheme --stripInternal --readme none --out docs/obnizjs --excludePrivate --excludeProtected  --media ./docs/images",
     "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
     "version": "npm run build && npm run doc && git add docs && git add obniz.js",
-    "lint": "npm run lint-ts && npm run lint-js",
-    "lint-js": "eslint --fix . --rulesdir devtools/eslint/rule",
-    "lint-ts": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' ",
+    "lint": "eslint --fix . --rulesdir devtools/eslint/rule",
+    "lint-js": "eslint --fix './**/*.js' --rulesdir devtools/eslint/rule",
+    "lint-ts": "eslint --fix 'src/**/*.ts' 'test/**/*.ts' --rulesdir devtools/eslint/rule ",
     "lint-test": "mocha $NODE_DEBUG_OPTION ./devtools/eslint/test/**/*.js",
     "precommit": "lint-staged && npm run build && git add dist && git add obniz.js",
     "clean": "rimraf ./dist ./obniz.js ./obniz.d.ts"
   },
   "lint-staged": {
-    "src/**/*.js": [
-      "eslint --rulesdir devtools/eslint/rule --fix ",
-      "git add"
-    ],
     "src/**/*.ts": [
-      "tslint -c tslint.json --fix ",
+      "eslint -c tslint.json --fix ",
       "git add"
     ]
   },

@@ -5,16 +5,16 @@ let testUtil = require('../../testUtil.js');
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
-describe('led', function() {
-  beforeEach(function(done) {
+describe('led', function () {
+  beforeEach(function (done) {
     return testUtil.setupObnizPromise(this, done);
   });
 
-  afterEach(function(done) {
+  afterEach(function (done) {
     return testUtil.releaseObnizePromise(this, done);
   });
 
-  it('wired', function() {
+  it('wired', function () {
     this.obniz.wired('LED', { anode: 0, cathode: 1 });
 
     expect(this.obniz).send([
@@ -33,11 +33,11 @@ describe('led', function() {
       {
         display: {
           pin_assign: {
-            '0': {
+            0: {
               module_name: 'LED',
               pin_name: 'anode',
             },
-            '1': {
+            1: {
               module_name: 'LED',
               pin_name: 'cathode',
             },
@@ -49,21 +49,21 @@ describe('led', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('wired error', function() {
+  it('wired error', function () {
     expect(() => {
       this.obniz.wired('LED', {});
     }).throws;
     expect(this.obniz).to.be.finished;
   });
 
-  it('wired error2', function() {
+  it('wired error2', function () {
     expect(() => {
       this.obniz.wired('LED');
     }).throws;
     expect(this.obniz).to.be.finished;
   });
 
-  it('wired only anode', function() {
+  it('wired only anode', function () {
     this.obniz.wired('LED', { anode: 10 });
 
     expect(this.obniz).send([
@@ -81,7 +81,7 @@ describe('led', function() {
       {
         display: {
           pin_assign: {
-            '10': {
+            10: {
               module_name: 'LED',
               pin_name: 'anode',
             },
@@ -92,7 +92,7 @@ describe('led', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('on', function() {
+  it('on', function () {
     let led = this.obniz.wired('LED', { anode: 0, cathode: 1 });
 
     expect(this.obniz).send([
@@ -111,11 +111,11 @@ describe('led', function() {
       {
         display: {
           pin_assign: {
-            '0': {
+            0: {
               module_name: 'LED',
               pin_name: 'anode',
             },
-            '1': {
+            1: {
               module_name: 'LED',
               pin_name: 'cathode',
             },

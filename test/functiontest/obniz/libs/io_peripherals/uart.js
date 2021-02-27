@@ -6,16 +6,16 @@ let testUtil = require('../../../testUtil.js');
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
-describe('obniz.libs.uart', function() {
-  beforeEach(function(done) {
+describe('obniz.libs.uart', function () {
+  beforeEach(function (done) {
     return testUtil.setupObnizPromise(this, done);
   });
 
-  afterEach(function(done) {
+  afterEach(function (done) {
     return testUtil.releaseObnizePromise(this, done);
   });
 
-  it('start', function() {
+  it('start', function () {
     this.obniz.uart0.start({ tx: 1, rx: 2, baud: 9600, bits: 7 });
     expect(this.obniz).send([{ io2: { output_type: 'push-pull5v' } }]);
     expect(this.obniz).send([{ io1: { output_type: 'push-pull5v' } }]);
@@ -30,7 +30,7 @@ describe('obniz.libs.uart', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('startWithGnd', function() {
+  it('startWithGnd', function () {
     this.obniz.uart0.start({ tx: 1, rx: 2, baud: 9600, bits: 7, gnd: 3 });
     expect(this.obniz).send([{ io2: { output_type: 'push-pull5v' } }]);
     expect(this.obniz).send([{ io1: { output_type: 'push-pull5v' } }]);
@@ -41,7 +41,7 @@ describe('obniz.libs.uart', function() {
       {
         display: {
           pin_assign: {
-            '3': {
+            3: {
               module_name: 'uart0',
               pin_name: 'gnd',
             },
@@ -58,7 +58,7 @@ describe('obniz.libs.uart', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('send', function() {
+  it('send', function () {
     this.obniz.uart0.start({ tx: 1, rx: 2 }); // 1 is output, 2 is input
     expect(this.obniz).send([{ io2: { output_type: 'push-pull5v' } }]);
     expect(this.obniz).send([{ io1: { output_type: 'push-pull5v' } }]);
@@ -76,7 +76,7 @@ describe('obniz.libs.uart', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('end', function() {
+  it('end', function () {
     this.obniz.uart0.start({ tx: 1, rx: 2 }); // 1 is output, 2 is input
     expect(this.obniz).send([{ io2: { output_type: 'push-pull5v' } }]);
     expect(this.obniz).send([{ io1: { output_type: 'push-pull5v' } }]);
@@ -92,7 +92,7 @@ describe('obniz.libs.uart', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('onreceive', function() {
+  it('onreceive', function () {
     this.obniz.uart0.start({ tx: 0, rx: 1 }); // 0 is output, 1 is input
     expect(this.obniz).send([{ io1: { output_type: 'push-pull5v' } }]);
     expect(this.obniz).send([{ io0: { output_type: 'push-pull5v' } }]);
@@ -109,7 +109,7 @@ describe('obniz.libs.uart', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('readBytes', function() {
+  it('readBytes', function () {
     this.obniz.uart0.start({ tx: 0, rx: 1 }); // 0 is output, 1 is input
     expect(this.obniz).send([{ io1: { output_type: 'push-pull5v' } }]);
     expect(this.obniz).send([{ io0: { output_type: 'push-pull5v' } }]);
@@ -133,7 +133,7 @@ describe('obniz.libs.uart', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('readText', function() {
+  it('readText', function () {
     this.obniz.uart0.start({ tx: 0, rx: 1 }); // 0 is output, 1 is input
     expect(this.obniz).send([{ io1: { output_type: 'push-pull5v' } }]);
     expect(this.obniz).send([{ io0: { output_type: 'push-pull5v' } }]);

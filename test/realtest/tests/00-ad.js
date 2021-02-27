@@ -4,18 +4,18 @@ const expect = chai.expect;
 const config = require('../config.js');
 
 let checkBoard, check_output_io, check_input_io;
-describe('0-ad', function() {
+describe('0-ad', function () {
   this.timeout(15000);
 
   before(() => {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       config.waitForConenct(() => {
         checkBoard = config.checkBoard;
-        check_output_io = config.check_io.filter(io =>
-          io.mode.some(mode => mode === 'digitalWrite')
+        check_output_io = config.check_io.filter((io) =>
+          io.mode.some((mode) => mode === 'digitalWrite')
         );
-        check_input_io = config.check_io.filter(io =>
-          io.mode.some(mode => mode === 'analogRead')
+        check_input_io = config.check_io.filter((io) =>
+          io.mode.some((mode) => mode === 'analogRead')
         );
         resolve();
       });

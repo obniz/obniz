@@ -11,13 +11,13 @@ Sleep test
 
 let checkBoard, obnizA;
 
-describe('10-sleep', function() {
+describe('10-sleep', function () {
   this.timeout(40000);
-  before(function() {
+  before(function () {
     if (!config.json.sleep_test) {
       this.skip();
     }
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       config.waitForConenct(() => {
         checkBoard = config.checkBoard;
         obnizA = config.obnizA;
@@ -27,7 +27,7 @@ describe('10-sleep', function() {
   });
 
   //step1
-  it('setup', async function() {
+  it('setup', async function () {
     checkBoard.getIO(0).output(true);
     await checkBoard.pingWait();
     let valB = await obnizA.getIO(0).inputWait();
@@ -35,7 +35,7 @@ describe('10-sleep', function() {
   });
 
   //step2
-  it('sleep', async function() {
+  it('sleep', async function () {
     checkBoard.sleepSeconds(5);
     obnizA.getIO(0).pull('0v');
     obnizA.getIO(0).drive('open-drain');
@@ -46,7 +46,7 @@ describe('10-sleep', function() {
   });
 
   //step3
-  it('wakeup', async function() {
+  it('wakeup', async function () {
     await reconnect();
     await wait(1000);
     await checkBoard.pingWait();
@@ -58,7 +58,7 @@ describe('10-sleep', function() {
   });
 
   //step4
-  it('sleepIO sleep', async function() {
+  it('sleepIO sleep', async function () {
     checkBoard.sleepIoTrigger(true);
     config.close(checkBoard);
     await wait(3000); //sleep = Wait 3 seconds because we can't verify if the command was executed offline
@@ -77,7 +77,7 @@ describe('10-sleep', function() {
 });
 
 function reconnect() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     config.reboot(() => {
       checkBoard = config.checkBoard;
       obnizA = config.obnizA;
@@ -88,7 +88,7 @@ function reconnect() {
 }
 
 function wait(ms) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 }

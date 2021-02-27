@@ -5,16 +5,16 @@ let testUtil = require(global.appRoot + '/test/functiontest/testUtil.js');
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
-describe('i2c.log', function() {
-  beforeEach(function(done) {
+describe('i2c.log', function () {
+  beforeEach(function (done) {
     return testUtil.setupObnizPromise(this, done, { binary: true });
   });
 
-  afterEach(function(done) {
+  afterEach(function (done) {
     return testUtil.releaseObnizePromise(this, done);
   });
 
-  it('request test no.0', function() {
+  it('request test no.0', function () {
     let requestJson = [{ io0: false }];
     let expecteBinaryStrings = ['02 00 02 00 00'];
 
@@ -31,7 +31,7 @@ describe('i2c.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -40,7 +40,7 @@ describe('i2c.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.1', function() {
+  it('request test no.1', function () {
     let requestJson = [{ io1: true }];
     let expecteBinaryStrings = ['02 00 02 01 01'];
 
@@ -57,7 +57,7 @@ describe('i2c.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -66,7 +66,7 @@ describe('i2c.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.2', function() {
+  it('request test no.2', function () {
     let requestJson = [
       { i2c0: { mode: 'master', sda: 4, scl: 3, clock: 400000 } },
     ];
@@ -85,7 +85,7 @@ describe('i2c.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -94,7 +94,7 @@ describe('i2c.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.3', function() {
+  it('request test no.3', function () {
     let requestJson = [{ i2c0: { address: 80, data: [0, 0, 1] } }];
     let expecteBinaryStrings = ['06 02 06 00 00 50 00 00 01'];
 
@@ -111,7 +111,7 @@ describe('i2c.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -120,7 +120,7 @@ describe('i2c.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.4', function() {
+  it('request test no.4', function () {
     let requestJson = [{ system: { wait: 10 } }];
     let expecteBinaryStrings = ['00 04 02 00 0a'];
 
@@ -137,7 +137,7 @@ describe('i2c.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -146,7 +146,7 @@ describe('i2c.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.5', function() {
+  it('request test no.5', function () {
     let requestJson = [{ i2c0: { address: 80, data: [0, 0] } }];
     let expecteBinaryStrings = ['06 02 05 00 00 50 00 00'];
 
@@ -163,7 +163,7 @@ describe('i2c.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -172,7 +172,7 @@ describe('i2c.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.6', function() {
+  it('request test no.6', function () {
     let requestJson = [{ i2c0: { address: 80, read: 2 } }];
     let expecteBinaryStrings = ['06 03 07 00 00 50 00 00 00 02'];
 
@@ -189,7 +189,7 @@ describe('i2c.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -198,15 +198,17 @@ describe('i2c.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('response test no.7', function() {
+  it('response test no.7', function () {
     let responseBinaryString = '06 03 05 00 00 50 01 f5';
     let expectJson = [
       { i2c0: { address: 80, data: [1, 245], mode: 'master' } },
     ];
 
-    let binaryArray = responseBinaryString.split(' ').map(function(val, index) {
-      return parseInt(val, 16);
-    });
+    let binaryArray = responseBinaryString
+      .split(' ')
+      .map(function (val, index) {
+        return parseInt(val, 16);
+      });
     let binary = new Uint8Array(binaryArray);
 
     let json = this.obniz.binary2Json(binary);
@@ -217,7 +219,7 @@ describe('i2c.log', function() {
     expect(json).to.be.deep.equal(expectJson);
   });
 
-  it('request test no.8', function() {
+  it('request test no.8', function () {
     let requestJson = [{ i2c0: { address: 80, read: 2 } }];
     let expecteBinaryStrings = ['06 03 07 00 00 50 00 00 00 02'];
 
@@ -234,7 +236,7 @@ describe('i2c.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -243,15 +245,17 @@ describe('i2c.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('response test no.9', function() {
+  it('response test no.9', function () {
     let responseBinaryString = '06 03 05 00 00 50 ff ff';
     let expectJson = [
       { i2c0: { address: 80, data: [255, 255], mode: 'master' } },
     ];
 
-    let binaryArray = responseBinaryString.split(' ').map(function(val, index) {
-      return parseInt(val, 16);
-    });
+    let binaryArray = responseBinaryString
+      .split(' ')
+      .map(function (val, index) {
+        return parseInt(val, 16);
+      });
     let binary = new Uint8Array(binaryArray);
 
     let json = this.obniz.binary2Json(binary);
@@ -262,7 +266,7 @@ describe('i2c.log', function() {
     expect(json).to.be.deep.equal(expectJson);
   });
 
-  it('request test no.10', function() {
+  it('request test no.10', function () {
     let requestJson = [{ i2c0: null }];
     let expecteBinaryStrings = ['06 01 01 00'];
 
@@ -279,7 +283,7 @@ describe('i2c.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -288,7 +292,7 @@ describe('i2c.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.11', function() {
+  it('request test no.11', function () {
     let requestJson = [
       { i2c0: { mode: 'master', sda: 4, scl: 3, clock: 1000 } },
     ];
@@ -307,7 +311,7 @@ describe('i2c.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -316,7 +320,7 @@ describe('i2c.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.12', function() {
+  it('request test no.12', function () {
     let requestJson = [{ i2c0: { address: 592, data: [0, 0, 1] } }];
     let expecteBinaryStrings = ['06 02 06 00 82 50 00 00 01'];
 
@@ -333,7 +337,7 @@ describe('i2c.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -342,7 +346,7 @@ describe('i2c.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.13', function() {
+  it('request test no.13', function () {
     let requestJson = [{ system: { wait: 10 } }];
     let expecteBinaryStrings = ['00 04 02 00 0a'];
 
@@ -359,7 +363,7 @@ describe('i2c.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -368,7 +372,7 @@ describe('i2c.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.14', function() {
+  it('request test no.14', function () {
     let requestJson = [{ i2c0: { address: 592, data: [0, 0] } }];
     let expecteBinaryStrings = ['06 02 05 00 82 50 00 00'];
 
@@ -385,7 +389,7 @@ describe('i2c.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -394,7 +398,7 @@ describe('i2c.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.15', function() {
+  it('request test no.15', function () {
     let requestJson = [{ i2c0: { address: 592, read: 2 } }];
     let expecteBinaryStrings = ['06 03 07 00 82 50 00 00 00 02'];
 
@@ -411,7 +415,7 @@ describe('i2c.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -420,7 +424,7 @@ describe('i2c.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.16', function() {
+  it('request test no.16', function () {
     let requestJson = [
       {
         i2c0: {
@@ -447,7 +451,7 @@ describe('i2c.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -456,7 +460,7 @@ describe('i2c.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('response test no.17', function() {
+  it('response test no.17', function () {
     let responseBinaryString =
       '6 4 40 44 0 7 0 1 0 1 2 3 4 5 6 7 8 9 a b c d e f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e 3f';
     let expectJson = [
@@ -535,9 +539,11 @@ describe('i2c.log', function() {
       },
     ];
 
-    let binaryArray = responseBinaryString.split(' ').map(function(val, index) {
-      return parseInt(val, 16);
-    });
+    let binaryArray = responseBinaryString
+      .split(' ')
+      .map(function (val, index) {
+        return parseInt(val, 16);
+      });
     let binary = new Uint8Array(binaryArray);
 
     let json = this.obniz.binary2Json(binary);
