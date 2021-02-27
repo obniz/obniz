@@ -506,9 +506,9 @@ export class W5500 implements ObnizPartsInterface {
    * @param config W5500 config W5500の設定内容
    * @return Write result 書き込み結果
    */
-  public async init(config: W5500Parts.Config) {
+  public async initWait(config: W5500Parts.Config) {
     // Reset リセット
-    await this.hardReset();
+    await this.hardResetWait();
 
     // Use fixed length data mode 固定長通信の使用
     this.fdm = config.fdm === true;
@@ -518,49 +518,49 @@ export class W5500 implements ObnizPartsInterface {
     this.csPin.output(!this.fdm);
 
     // Mode setting モード設定
-    let result = await this.setMode(config);
+    let result = await this.setModeWait(config);
 
     // Network initialization ネットワークの初期化
     if (config.gatewayIP) {
-      result = result && (await this.setGateway(config.gatewayIP));
+      result = result && (await this.setGatewayWait(config.gatewayIP));
     }
     if (config.subnetMask) {
       result = result && (await this.setSubnetMask(config.subnetMask));
     }
     if (config.macAddress) {
-      result = result && (await this.setMacAddress(config.macAddress));
+      result = result && (await this.setMacAddressWait(config.macAddress));
     }
     if (config.localIP) {
-      result = result && (await this.setLocalIP(config.localIP));
+      result = result && (await this.setLocalIPWait(config.localIP));
     }
 
     // Turn on all interrupt masks 割り込みマスクを全てオンに
-    result = result && (await this.setInterruptMask(0xff));
+    result = result && (await this.setInterruptMaskWaut(0xff));
 
     // Other settings その他設定
     if (config.retryTime) {
-      result = result && (await this.setRetryTime(config.retryTime));
+      result = result && (await this.setRetryTimeWait(config.retryTime));
     }
     if (config.retryCount) {
-      result = result && (await this.setRetryCount(config.retryCount));
+      result = result && (await this.setRetryCountWait(config.retryCount));
     }
     if (config.linkControlProtocolRequestTimer) {
-      result = result && (await this.setPPPLinkControlProtocolRequestTimer(config.linkControlProtocolRequestTimer));
+      result = result && (await this.setPPPLinkControlProtocolRequestTimerWait(config.linkControlProtocolRequestTimer));
     }
     if (config.linkControlProtocolMagicNumber) {
-      result = result && (await this.setPPPLinkControlProtocolMagicNumber(config.linkControlProtocolMagicNumber));
+      result = result && (await this.setPPPLinkControlProtocolMagicNumberWait(config.linkControlProtocolMagicNumber));
     }
     if (config.pppoeDestMACAddress) {
-      result = result && (await this.setPPPoEMacAddress(config.pppoeDestMACAddress));
+      result = result && (await this.setPPPoEMacAddressWait(config.pppoeDestMACAddress));
     }
     if (config.pppoeSessionID) {
-      result = result && (await this.setPPPoESessionID(config.pppoeSessionID));
+      result = result && (await this.setPPPoESessionIDWait(config.pppoeSessionID));
     }
     if (config.pppoeMaxSegmentSize) {
-      result = result && (await this.setPPPoEMaxSegmentSize(config.pppoeMaxSegmentSize));
+      result = result && (await this.setPPPoEMaxSegmentSizeWait(config.pppoeMaxSegmentSize));
     }
     if (config.phyConfig) {
-      result = result && (await this.setPhysicalConfig(config.phyConfig));
+      result = result && (await this.setPhysicalConfigWait(config.phyConfig));
     }
 
     this.forceNoCheckWrite = config.forceNoCheckWrite;
@@ -590,8 +590,8 @@ export class W5500 implements ObnizPartsInterface {
    *
    * 各ソケットの終了処理をし、SPI通信を終了
    */
-  public async finalize() {
-    const funcList = this.socketList.filter((s) => s !== undefined).map((s) => s.finalize);
+  public async finalizeWait() {
+    const funcList = this.socketList.filter((s) => s !== undefined).map((s) => s.finalizeWait);
     for (const f in funcList) {
       await funcList[f]();
     }
@@ -602,7 +602,7 @@ export class W5500 implements ObnizPartsInterface {
   /**
    * Set a handler to catch a specific interrupt
    *
-   * Run checkInterrupt() regularly to actually catch
+   * Run checkInterruptWait() regularly to actually catch
    *
    * 特定の割り込みをキャッチするハンドラーを設定
    *
@@ -622,7 +622,7 @@ export class W5500 implements ObnizPartsInterface {
   /**
    * Set handler to catch all interrupts
    *
-   * Run checkInterrupt() regularly to actually catch
+   * Run checkInterruptWait() regularly to actually catch
    *
    * 全ての割り込みをキャッチするハンドラーを設定
    *
@@ -643,10 +643,10 @@ export class W5500 implements ObnizPartsInterface {
    * ルーターとの接続が確立されるまで待機
    * @return Physical layer status 物理層のステータス
    */
-  public async waitLinkUp() {
+  public async waitLinkUpWait() {
     let phy;
     while (true) {
-      phy = await this.getPhysicalStatus();
+      phy = await this.getPhysicalStatusWait();
       if (phy.link) {
         break;
       }
@@ -705,7 +705,7 @@ export class W5500 implements ObnizPartsInterface {
    *
    * W5500をハードウェア的にリセット
    */
-  public async hardReset() {
+  public async hardResetWait() {
     this.resetPin.drive("3v");
     this.resetPin.output(false);
     await sleep(10); // > 500ns
@@ -718,8 +718,8 @@ export class W5500 implements ObnizPartsInterface {
    * @param config WakeOnLAN(WoL), PingBlock, PPPoE and ForceARP
    * @return Write result 書き込み結果
    */
-  public setMode(config: W5500Parts.Config) {
-    return this.numWrite(
+  public setModeWait(config: W5500Parts.Config) {
+    return this.numWriteWait(
       COMMON_MODE,
       BSB_COMMON,
       0b00100000 * (config.wol === true ? 1 : 0) +
@@ -736,8 +736,8 @@ export class W5500 implements ObnizPartsInterface {
    * @param ip IPv4 address IPv4アドレス
    * @return Write result 書き込み結果
    */
-  public setGateway(ip: string) {
-    return this.ipWrite(COMMON_GATEWAY_ADDRESS, BSB_COMMON, ip);
+  public setGatewayWait(ip: string) {
+    return this.ipWriteWait(COMMON_GATEWAY_ADDRESS, BSB_COMMON, ip);
   }
 
   /**
@@ -746,7 +746,7 @@ export class W5500 implements ObnizPartsInterface {
    * @return Write result 書き込み結果
    */
   public setSubnetMask(mask: string) {
-    return this.ipWrite(COMMON_SOURCE_SUBNET_MASK, BSB_COMMON, mask);
+    return this.ipWriteWait(COMMON_SOURCE_SUBNET_MASK, BSB_COMMON, mask);
   }
 
   /**
@@ -754,8 +754,8 @@ export class W5500 implements ObnizPartsInterface {
    * @param mac MAC address MACアドレス
    * @return Write result 書き込み結果
    */
-  public setMacAddress(mac: string) {
-    return this.macWrite(COMMON_SOURCE_HARDWARE_ADDRESS, BSB_COMMON, mac);
+  public setMacAddressWait(mac: string) {
+    return this.macWriteWait(COMMON_SOURCE_HARDWARE_ADDRESS, BSB_COMMON, mac);
   }
 
   /**
@@ -763,8 +763,8 @@ export class W5500 implements ObnizPartsInterface {
    * @param ip IPv4 address IPv4アドレス
    * @return Write result 書き込み結果
    */
-  public setLocalIP(ip: string) {
-    return this.ipWrite(COMMON_SOURCE_IP_ADDRESS, BSB_COMMON, ip);
+  public setLocalIPWait(ip: string) {
+    return this.ipWriteWait(COMMON_SOURCE_IP_ADDRESS, BSB_COMMON, ip);
   }
 
   /**
@@ -779,22 +779,22 @@ export class W5500 implements ObnizPartsInterface {
    * ソケットの割り込みもチェックします
    *
    * 割り込みがあった場合、事前に設定されたhandlerを呼び出します
-   * @param disableAllSocketCheck When it's true, do not call checkInterrupt() for all sockets
+   * @param disableAllSocketCheck When it's true, do not call checkInterruptWait() for all sockets
    *
    * trueの時、全ソケットのcheckInterrupt()呼び出しを行いません
    * @return Then whether you can check for interrupts
    *
    * 次に割り込みをチェックできるかどうか
    */
-  public async checkInterrupt(disableAllSocketCheck?: boolean) {
+  public async checkInterruptWait(disableAllSocketCheck?: boolean) {
     if (!this.spiStatus) {
       return false;
     }
 
-    const interrupt = await this.numRead(COMMON_INTERRUPT, BSB_COMMON);
+    const interrupt = await this.numReadWait(COMMON_INTERRUPT, BSB_COMMON);
     if (interrupt !== 0) {
       // リセット
-      await this.numWrite(COMMON_INTERRUPT, BSB_COMMON, interrupt);
+      await this.numWriteWait(COMMON_INTERRUPT, BSB_COMMON, interrupt);
     }
 
     const msgList = Object.keys(W5500Parts.InterruptFlags).filter(
@@ -808,7 +808,7 @@ export class W5500 implements ObnizPartsInterface {
     if (disableAllSocketCheck !== false) {
       const funcList = this.socketList
         .filter((s) => s !== undefined && s.getProtocol() !== null)
-        .map((s) => s.checkInterrupt);
+        .map((s) => s.checkInterruptWait);
       for (const f in funcList) {
         await funcList[f]();
       }
@@ -834,8 +834,8 @@ export class W5500 implements ObnizPartsInterface {
    * @param mask Mask マスク
    * @return Write result 書き込み結果
    */
-  public setInterruptMask(mask: number) {
-    return this.numWrite(COMMON_INTERRUPT_MASK, BSB_COMMON, mask);
+  public setInterruptMaskWaut(mask: number) {
+    return this.numWriteWait(COMMON_INTERRUPT_MASK, BSB_COMMON, mask);
   }
 
   /**
@@ -843,8 +843,8 @@ export class W5500 implements ObnizPartsInterface {
    * @param time Retry interval (in 0.2ms increments) 再試行間隔 (0.2ms刻み) (0\~6553.5ms)
    * @return Write result 書き込み結果
    */
-  public setRetryTime(time: number) {
-    return this.num2Write(COMMON_RETRY_TIME, BSB_COMMON, time * 10);
+  public setRetryTimeWait(time: number) {
+    return this.num2WriteWait(COMMON_RETRY_TIME, BSB_COMMON, time * 10);
   }
 
   /**
@@ -852,8 +852,8 @@ export class W5500 implements ObnizPartsInterface {
    * @param count retry count 再試行回数 (0\~255)
    * @return Write result 書き込み結果
    */
-  public setRetryCount(count: number) {
-    return this.numWrite(COMMON_RETRY_COUNT, BSB_COMMON, count);
+  public setRetryCountWait(count: number) {
+    return this.numWriteWait(COMMON_RETRY_COUNT, BSB_COMMON, count);
   }
 
   /**
@@ -863,8 +863,8 @@ export class W5500 implements ObnizPartsInterface {
    * @param time time (in 25ms increments) 時間 (25ms刻み) (0\~6375ms)
    * @return Write result 書き込み結果
    */
-  public setPPPLinkControlProtocolRequestTimer(time: number) {
-    return this.numWrite(COMMON_PPP_LCP_REQUEST_TIMER, BSB_COMMON, time / 25);
+  public setPPPLinkControlProtocolRequestTimerWait(time: number) {
+    return this.numWriteWait(COMMON_PPP_LCP_REQUEST_TIMER, BSB_COMMON, time / 25);
   }
 
   /**
@@ -874,8 +874,8 @@ export class W5500 implements ObnizPartsInterface {
    * @param num Magic number マジックナンバー
    * @return Write result 書き込み結果
    */
-  public setPPPLinkControlProtocolMagicNumber(num: number) {
-    return this.numWrite(COMMON_PPP_LCP_MAGIC_NUMBER, BSB_COMMON, num);
+  public setPPPLinkControlProtocolMagicNumberWait(num: number) {
+    return this.numWriteWait(COMMON_PPP_LCP_MAGIC_NUMBER, BSB_COMMON, num);
   }
 
   /**
@@ -883,8 +883,8 @@ export class W5500 implements ObnizPartsInterface {
    * @param mac MAC address MACアドレス
    * @return Write result 書き込み結果
    */
-  public setPPPoEMacAddress(mac: string) {
-    return this.macWrite(COMMON_PPP_DESTINATION_MAC_ADDRESS, BSB_COMMON, mac);
+  public setPPPoEMacAddressWait(mac: string) {
+    return this.macWriteWait(COMMON_PPP_DESTINATION_MAC_ADDRESS, BSB_COMMON, mac);
   }
 
   /**
@@ -892,8 +892,8 @@ export class W5500 implements ObnizPartsInterface {
    * @param id Session ID セッションID
    * @return Write result 書き込み結果
    */
-  public setPPPoESessionID(id: number) {
-    return this.num2Write(COMMON_PPP_SESSION_IDENTIFICATION, BSB_COMMON, id);
+  public setPPPoESessionIDWait(id: number) {
+    return this.num2WriteWait(COMMON_PPP_SESSION_IDENTIFICATION, BSB_COMMON, id);
   }
 
   /**
@@ -901,8 +901,8 @@ export class W5500 implements ObnizPartsInterface {
    * @param size Unit size ユニットサイズ
    * @return Write result 書き込み結果
    */
-  public setPPPoEMaxSegmentSize(size: number) {
-    return this.num2Write(COMMON_PPP_MAXIMUM_SEGMENT_SIZE, BSB_COMMON, size);
+  public setPPPoEMaxSegmentSizeWait(size: number) {
+    return this.num2WriteWait(COMMON_PPP_MAXIMUM_SEGMENT_SIZE, BSB_COMMON, size);
   }
 
   /**
@@ -912,7 +912,7 @@ export class W5500 implements ObnizPartsInterface {
    * @return IPv4 address IPv4アドレス
    */
   public getUnreachableIP() {
-    return this.ipRead(COMMON_UNREACHABLE_IP_ADDRESS, BSB_COMMON);
+    return this.ipReadWait(COMMON_UNREACHABLE_IP_ADDRESS, BSB_COMMON);
   }
 
   /**
@@ -922,15 +922,15 @@ export class W5500 implements ObnizPartsInterface {
    * @return Port number ポート番号
    */
   public getUnreachablePort() {
-    return this.num2Read(COMMON_UNREACHABLE_PORT, BSB_COMMON);
+    return this.num2ReadWait(COMMON_UNREACHABLE_PORT, BSB_COMMON);
   }
 
   /**
    * Get physical layer status 物理層のステータス取得
    * @return Physical layer status 物理層のステータス
    */
-  public async getPhysicalStatus(): Promise<W5500Parts.PhysicalLayerStatus> {
-    const result = await this.numRead(COMMON_PHY_CONFIGURATION, BSB_COMMON);
+  public async getPhysicalStatusWait(): Promise<W5500Parts.PhysicalLayerStatus> {
+    const result = await this.numReadWait(COMMON_PHY_CONFIGURATION, BSB_COMMON);
     return {
       duplex: (result & 0b100) !== 0,
       speed: (result & 0b010) !== 0 ? 100 : 10,
@@ -943,9 +943,9 @@ export class W5500 implements ObnizPartsInterface {
    * @param config Physical layer config 物理層の設定内容
    * @return Write result 書き込み結果
    */
-  public async setPhysicalConfig(config: W5500Parts.PhysicalLayerOptions) {
+  public async setPhysicalConfigWait(config: W5500Parts.PhysicalLayerOptions) {
     if (config.reset) {
-      await this.numWrite(COMMON_PHY_CONFIGURATION, BSB_COMMON, 0);
+      await this.numWriteWait(COMMON_PHY_CONFIGURATION, BSB_COMMON, 0);
       await sleep(500);
     }
     let value = 0b11111000;
@@ -961,7 +961,7 @@ export class W5500 implements ObnizPartsInterface {
     if (config.powerOff === true) {
       value = 0b11110000;
     }
-    return await this.numWrite(COMMON_PHY_CONFIGURATION, BSB_COMMON, value);
+    return await this.numWriteWait(COMMON_PHY_CONFIGURATION, BSB_COMMON, value);
   }
 
   /**
@@ -969,7 +969,7 @@ export class W5500 implements ObnizPartsInterface {
    * @return Chip version チップバージョン
    */
   public getVersion() {
-    return this.numRead(COMMON_CHIP_VERSION, BSB_COMMON);
+    return this.numReadWait(COMMON_CHIP_VERSION, BSB_COMMON);
   }
 
   /**
@@ -982,8 +982,8 @@ export class W5500 implements ObnizPartsInterface {
    * @return Write result 書き込み結果
    * @hidden
    */
-  public ipWrite(address: number, bsb: number, ip: string) {
-    return this.addressWrite(address, bsb, ip, "IP Address", "123.234.0.1", ".", 4, 10);
+  public ipWriteWait(address: number, bsb: number, ip: string) {
+    return this.addressWriteWait(address, bsb, ip, "IP Address", "123.234.0.1", ".", 4, 10);
   }
 
   /**
@@ -992,12 +992,12 @@ export class W5500 implements ObnizPartsInterface {
    * 文字列のMACアドレスをバリデーションチェックしてから書き込み
    * @param address Start address of write destination 書き込み先の先頭アドレス
    * @param bsb Block select bit ブロック選択ビット
-   * @param ip MAC address MACアドレス
+   * @param mac MAC address MACアドレス
    * @return Write result 書き込み結果
    * @hidden
    */
-  public macWrite(address: number, bsb: number, mac: string) {
-    return this.addressWrite(address, bsb, mac, "MAC Address", "12:34:56:78:90:AB", ":", 6, 16);
+  public macWriteWait(address: number, bsb: number, mac: string) {
+    return this.addressWriteWait(address, bsb, mac, "MAC Address", "12:34:56:78:90:AB", ":", 6, 16);
   }
 
   /**
@@ -1019,12 +1019,12 @@ export class W5500 implements ObnizPartsInterface {
    * @return Write result 書き込み結果
    * @hidden
    */
-  public async bigWrite(address: number, bsb: number, data: number[], noWait?: boolean) {
+  public async bigWriteWait(address: number, bsb: number, data: number[], noWait?: boolean) {
     const maxLength = this.fdm ? 4 : 1021; // FDM(4) / VDM(1024-3)
     let result = true;
     for (let i = 0; i < data.length; i += maxLength) {
       const size = i + maxLength <= data.length ? maxLength : data.length - i;
-      result = result && (await this.write(address + i, bsb, data.slice(i, i + size), noWait));
+      result = result && (await this.writeWait(address + i, bsb, data.slice(i, i + size), noWait));
     }
     return result;
   }
@@ -1039,8 +1039,8 @@ export class W5500 implements ObnizPartsInterface {
    * @return Write result 書き込み結果
    * @hidden
    */
-  public numWrite(address: number, bsb: number, num: number) {
-    return this.write(address, bsb, [num]);
+  public numWriteWait(address: number, bsb: number, num: number) {
+    return this.writeWait(address, bsb, [num]);
   }
 
   /**
@@ -1053,8 +1053,8 @@ export class W5500 implements ObnizPartsInterface {
    * @return Write result 書き込み結果
    * @hidden
    */
-  public num2Write(address: number, bsb: number, num: number) {
-    return this.write(address, bsb, [(num & 0xff00) >> 8, num & 0xff]);
+  public num2WriteWait(address: number, bsb: number, num: number) {
+    return this.writeWait(address, bsb, [(num & 0xff00) >> 8, num & 0xff]);
   }
 
   /**
@@ -1064,8 +1064,8 @@ export class W5500 implements ObnizPartsInterface {
    * @return IPv4 address IPv4アドレス
    * @hidden
    */
-  public async ipRead(address: number, bsb: number) {
-    return (await this.read(address, bsb, 4)).join(".");
+  public async ipReadWait(address: number, bsb: number) {
+    return (await this.readWait(address, bsb, 4)).join(".");
   }
 
   /**
@@ -1086,12 +1086,12 @@ export class W5500 implements ObnizPartsInterface {
    * @return Read data 読み込みデータ
    * @hidden
    */
-  public async bigRead(address: number, bsb: number, length: number) {
+  public async bigReadWait(address: number, bsb: number, length: number) {
     const maxLength = this.fdm ? 4 : 1021; // FDM(4) / VDM(1024-3)
     let data: number[] = [];
     for (let i = 0; i < length; i += maxLength) {
       const size = i + maxLength <= length ? maxLength : length - i;
-      data = data.concat(await this.read(address + i, bsb, size));
+      data = data.concat(await this.readWait(address + i, bsb, size));
     }
     return data;
   }
@@ -1105,8 +1105,8 @@ export class W5500 implements ObnizPartsInterface {
    * @return Value 値 (0\~255)
    * @hidden
    */
-  public async numRead(address: number, bsb: number) {
-    const result = await this.read(address, bsb, 1);
+  public async numReadWait(address: number, bsb: number) {
+    const result = await this.readWait(address, bsb, 1);
     return result[0];
   }
 
@@ -1119,8 +1119,8 @@ export class W5500 implements ObnizPartsInterface {
    * @return Value 値 (0\~65535)
    * @hidden
    */
-  public async num2Read(address: number, bsb: number) {
-    const result = await this.read(address, bsb, 2);
+  public async num2ReadWait(address: number, bsb: number) {
+    const result = await this.readWait(address, bsb, 2);
     return (result[0] << 8) + result[1];
   }
 
@@ -1138,7 +1138,7 @@ export class W5500 implements ObnizPartsInterface {
    * @param radix Description format of numbers in the address (N-ary) アドレス内の数字の記述形式 (N進数)
    * @hidden
    */
-  private addressWrite(
+  private addressWriteWait(
     address: number,
     bsb: number,
     val: string,
@@ -1155,7 +1155,7 @@ export class W5500 implements ObnizPartsInterface {
     if (valList.filter((addr) => typeof addr === "number").length !== length) {
       throw new Error(`${name} format must be '${example}'.`);
     }
-    const func = length > 4 && this.fdm ? this.bigWrite : this.write;
+    const func = length > 4 && this.fdm ? this.bigWriteWait : this.writeWait;
     return func(address, bsb, valList);
   }
 
@@ -1178,7 +1178,7 @@ export class W5500 implements ObnizPartsInterface {
    * @return Write result 書き込み結果
    * @hidden
    */
-  private async write(address: number, bsb: number, data: number[], noWait?: boolean) {
+  private async writeWait(address: number, bsb: number, data: number[], noWait?: boolean) {
     if (!Array.isArray(data)) {
       throw new Error("Given data must be array.");
     }
@@ -1200,7 +1200,7 @@ export class W5500 implements ObnizPartsInterface {
     if (this.forceNoCheckWrite === true && noWait === undefined) {
       noWait = true;
     }
-    const result = await this.send(address, bsb, "Write", data, noWait);
+    const result = await this.sendWait(address, bsb, "Write", data, noWait);
     if (typeof result === "object") {
       throw new Error("Unexpected Result");
     } else {
@@ -1218,8 +1218,8 @@ export class W5500 implements ObnizPartsInterface {
    * @return Read data 読み込みデータ
    * @hidden
    */
-  private async read(address: number, bsb: number, length: number) {
-    const result = await this.send(address, bsb, "Read", Array(length).fill(0));
+  private async readWait(address: number, bsb: number, length: number) {
+    const result = await this.sendWait(address, bsb, "Read", Array(length).fill(0));
     if (typeof result === "boolean") {
       throw new Error("Unexpected Result");
     } else {
@@ -1241,7 +1241,7 @@ export class W5500 implements ObnizPartsInterface {
    * 書込: 書き込み結果  読込: 読み込みデータ
    * @hidden
    */
-  private async send(address: number, bsb: number, mode: SendMode, data: number[], noWait?: boolean) {
+  private async sendWait(address: number, bsb: number, mode: SendMode, data: number[], noWait?: boolean) {
     const write = [
       (address & 0xff00) >> 8,
       address & 0x00ff,
@@ -1508,45 +1508,45 @@ export class W5500Socket {
    * @param config Socket config ソケットの設定内容
    * @return Write result 書き込み結果
    */
-  public async init(config: W5500SocketParts.Config) {
+  public async initWait(config: W5500SocketParts.Config) {
     // モード設定
-    let result = await this.setMode(config);
+    let result = await this.setModeWait(config);
 
     // 基本設定
     if (config.sourcePort) {
-      result = result && (await this.setSourcePort(config.sourcePort));
+      result = result && (await this.setSourcePortWait(config.sourcePort));
     }
     if (config.destIP) {
-      result = result && (await this.setDestIP(config.destIP));
+      result = result && (await this.setDestIPWait(config.destIP));
     }
     if (config.destPort) {
-      result = result && (await this.setDestPort(config.destPort));
+      result = result && (await this.setDestPortWait(config.destPort));
     }
     if (config.ipType) {
-      result = result && (await this.setIPTypeOfService(config.ipType));
+      result = result && (await this.setIPTypeOfServiceWait(config.ipType));
     }
     if (config.ttl) {
-      result = result && (await this.setTTL(config.ttl));
+      result = result && (await this.setTTLWait(config.ttl));
     }
     if (config.rxBufferSize) {
-      result = result && (await this.setRXBufferSize(config.rxBufferSize));
+      result = result && (await this.setRXBufferSizeWait(config.rxBufferSize));
     }
     if (config.txBufferSize) {
-      result = result && (await this.setTXBufferSize(config.txBufferSize));
+      result = result && (await this.setTXBufferSizeWait(config.txBufferSize));
     }
 
     // Open socket ソケットのオープン
-    result = result && (await this.sendCommand("Open"));
+    result = result && (await this.sendCommandWait("Open"));
     if (this.protocol === "TCPClient") {
-      result = result && (await this.sendCommand("Connect"));
+      result = result && (await this.sendCommandWait("Connect"));
     }
     if (this.protocol === "TCPServer") {
-      result = result && (await this.sendCommand("Listen"));
+      result = result && (await this.sendCommandWait("Listen"));
     }
 
     // Remember the value of rxReadDataPointer in advance
     // 事前にrxReadDataPointerの値を記憶
-    this.rxReadDataPointer = await this.getRXReadDataPointer();
+    this.rxReadDataPointer = await this.getRXReadDataPointerWait();
 
     // Interrupt handler settings 割り込みハンドラー設定
     if (config.onSendOKInterrupt) {
@@ -1574,16 +1574,16 @@ export class W5500Socket {
   /**
    * Socket termination process ソケットの終了処理
    */
-  public async finalize() {
+  public async finalizeWait() {
     switch (this.protocol) {
       case "TCPClient":
-        await this.sendCommand("Disconnect");
-        while ((await this.getStatus()) !== "Closed") {}
+        await this.sendCommandWait("Disconnect");
+        while ((await this.getStatusWait()) !== "Closed") {}
         break;
       case "TCPServer":
-        await this.sendCommand("Disconnect");
+        await this.sendCommandWait("Disconnect");
       case "UDP":
-        await this.sendCommand("Close");
+        await this.sendCommandWait("Close");
         break;
     }
     this.protocol = null;
@@ -1594,8 +1594,8 @@ export class W5500Socket {
    * @param data Raw byte data or string to send 送信するバイトデータまたは文字列
    * @return Write result 書き込み結果
    */
-  public sendData(data: number[] | string) {
-    return this.sendDataBase(data);
+  public sendDataWait(data: number[] | string) {
+    return this.sendDataBaseWait(data);
   }
 
   /**
@@ -1603,28 +1603,28 @@ export class W5500Socket {
    * @param data Raw byte data or string to send 送信するバイトデータまたは文字列
    * @return Write result 書き込み結果
    */
-  public sendDataFast(data: number[] | string) {
-    return this.sendDataBase(data, true);
+  public sendDataFastWait(data: number[] | string) {
+    return this.sendDataBaseWait(data, true);
   }
 
   /**
    * Read the received data 受信されたデータを読取
    * @return Raw byte data or string to receive 受信データまたは文字列
    */
-  public async receiveData() {
-    const rxRecieveSize = await this.getRXReceiveSize();
-    // const rxReadDataPointer = await this.getRXReadDataPointer();
-    const data = await this.ethernet.bigRead(this.rxReadDataPointer, BSB_SOCKET_RX_BUFFER(this.id), rxRecieveSize);
+  public async receiveDataWait() {
+    const rxRecieveSize = await this.getRXReceiveSizeWait();
+    // const rxReadDataPointer = await this.getRXReadDataPointerWait();
+    const data = await this.ethernet.bigReadWait(this.rxReadDataPointer, BSB_SOCKET_RX_BUFFER(this.id), rxRecieveSize);
     this.rxReadDataPointer += rxRecieveSize;
-    await this.setRXReadDataPointer(this.rxReadDataPointer + rxRecieveSize);
-    await this.sendCommand("Receive");
+    await this.setRXReadDataPointerWait(this.rxReadDataPointer + rxRecieveSize);
+    await this.sendCommandWait("Receive");
     return this.stringMode ? new TextDecoder().decode(Uint8Array.from(data)) : data;
   }
 
   /**
    * Set a handler to catch a specific interrupt
    *
-   * Run checkInterrupt() regularly to actually catch
+   * Run checkInterruptWait() regularly to actually catch
    *
    * 特定の割り込みをキャッチするハンドラーを設定
    *
@@ -1646,7 +1646,7 @@ export class W5500Socket {
   /**
    * Set a handler to catch all interrupts
    *
-   * Run checkInterrupt() regularly to actually catch
+   * Run checkInterruptWait() regularly to actually catch
    *
    * 全ての割り込みをキャッチするハンドラーを設定
    *
@@ -1678,10 +1678,10 @@ export class W5500Socket {
    * @param config Multicast, BroardcastBlock, NoDelayACK, MulticastVer1, UnicastBlock and Protocol
    * @return Write result 書き込み結果
    */
-  public setMode(config: W5500SocketParts.Config) {
+  public setModeWait(config: W5500SocketParts.Config) {
     this.protocol = config.protocol;
     this.stringMode = config.stringMode || false;
-    return this.ethernet.numWrite(
+    return this.ethernet.numWriteWait(
       SOCKET_MODE,
       BSB_SOCKET_REGISTER(this.id),
       config.protocol === null
@@ -1701,7 +1701,7 @@ export class W5500Socket {
    * @param command Command コマンド
    * @return Write result 書き込み結果
    */
-  public async sendCommand(command: W5500SocketParts.Command) {
+  public async sendCommandWait(command: W5500SocketParts.Command) {
     const code = W5500SocketParts.CommandCodes[command];
     if (!code) {
       throw new Error(`Unknown Command '${command}'.`);
@@ -1715,7 +1715,7 @@ export class W5500Socket {
     if (this.protocol === "UDP" && 0x01 < code && code < 0x10) {
       throw new Error(`'${command}' command is only available in TCP mode.`);
     }
-    return await this.ethernet.numWrite(SOCKET_COMMAND, BSB_SOCKET_REGISTER(this.id), code);
+    return await this.ethernet.numWriteWait(SOCKET_COMMAND, BSB_SOCKET_REGISTER(this.id), code);
   }
 
   /**
@@ -1730,15 +1730,15 @@ export class W5500Socket {
    *
    * 次に割り込みをチェックできるかどうか
    */
-  public async checkInterrupt() {
+  public async checkInterruptWait() {
     if (!this.ethernet.getSpiStatus()) {
       return;
     }
-    const interrupt = await this.ethernet.numRead(SOCKET_INTERRUPT, BSB_SOCKET_REGISTER(this.id));
+    const interrupt = await this.ethernet.numReadWait(SOCKET_INTERRUPT, BSB_SOCKET_REGISTER(this.id));
     if (interrupt === 0) {
       return this.protocol !== null;
     } else {
-      await this.ethernet.numWrite(SOCKET_INTERRUPT, BSB_SOCKET_REGISTER(this.id), interrupt);
+      await this.ethernet.numWriteWait(SOCKET_INTERRUPT, BSB_SOCKET_REGISTER(this.id), interrupt);
     } // リセット
 
     const msgList = Object.keys(W5500SocketParts.InterruptFlags).filter(
@@ -1758,10 +1758,10 @@ export class W5500Socket {
 
       let extra;
       if (msg === "ReceiveData") {
-        extra = await this.receiveData();
+        extra = await this.receiveDataWait();
       }
       if (msg === "ConnectSuccess" && this.protocol === "TCPServer") {
-        extra = new W5500Parts.DestInfo(await this.getDestIP(), await this.getDestPort());
+        extra = new W5500Parts.DestInfo(await this.getDestIPWait(), await this.getDestPortWait());
       }
 
       if (handler !== undefined) {
@@ -1779,8 +1779,8 @@ export class W5500Socket {
    * Get Status ステータスを取得
    * @return Status ステータス
    */
-  public async getStatus(): Promise<W5500SocketParts.Status | "UNKNOWN"> {
-    const status = await this.ethernet.numRead(SOCKET_STATUS, BSB_SOCKET_REGISTER(this.id));
+  public async getStatusWait(): Promise<W5500SocketParts.Status | "UNKNOWN"> {
+    const status = await this.ethernet.numReadWait(SOCKET_STATUS, BSB_SOCKET_REGISTER(this.id));
     const index = Object.values(W5500SocketParts.StatusCodes).indexOf(status);
     return index < 0 ? "UNKNOWN" : (Object.keys(W5500SocketParts.StatusCodes)[index] as W5500SocketParts.Status);
   }
@@ -1790,8 +1790,8 @@ export class W5500Socket {
    * @param port Port number ポート番号
    * @return Write result 書き込み結果
    */
-  public setSourcePort(port: number) {
-    return this.ethernet.num2Write(SOCKET_SOURCE_PORT, BSB_SOCKET_REGISTER(this.id), port);
+  public setSourcePortWait(port: number) {
+    return this.ethernet.num2WriteWait(SOCKET_SOURCE_PORT, BSB_SOCKET_REGISTER(this.id), port);
   }
 
   /**
@@ -1801,8 +1801,8 @@ export class W5500Socket {
    * @param mac MAC address MACアドレス
    * @return Write result 書き込み結果
    */
-  public setDestMacAddress(mac: string) {
-    return this.ethernet.macWrite(SOCKET_DESTINATION_HARDWARE_ADDRESS, BSB_SOCKET_REGISTER(this.id), mac);
+  public setDestMacAddressWait(mac: string) {
+    return this.ethernet.macWriteWait(SOCKET_DESTINATION_HARDWARE_ADDRESS, BSB_SOCKET_REGISTER(this.id), mac);
   }
 
   /**
@@ -1812,8 +1812,8 @@ export class W5500Socket {
    * @param ip IPv4 address IPv4アドレス
    * @return Write result 書き込み結果
    */
-  public setDestIP(ip: string) {
-    return this.ethernet.ipWrite(SOCKET_DESTINATION_IP_ADDRESS, BSB_SOCKET_REGISTER(this.id), ip);
+  public setDestIPWait(ip: string) {
+    return this.ethernet.ipWriteWait(SOCKET_DESTINATION_IP_ADDRESS, BSB_SOCKET_REGISTER(this.id), ip);
   }
 
   /**
@@ -1822,8 +1822,8 @@ export class W5500Socket {
    * 接続元のIPv4アドレスを取得(TCPサーバーのときのみ)
    * @return IPv4 address IPv4アドレス
    */
-  public getDestIP() {
-    return this.ethernet.ipRead(SOCKET_DESTINATION_IP_ADDRESS, BSB_SOCKET_REGISTER(this.id));
+  public getDestIPWait() {
+    return this.ethernet.ipReadWait(SOCKET_DESTINATION_IP_ADDRESS, BSB_SOCKET_REGISTER(this.id));
   }
 
   /**
@@ -1833,8 +1833,8 @@ export class W5500Socket {
    * @param port Port number ポート番号
    * @return Write result 書き込み結果
    */
-  public setDestPort(port: number) {
-    return this.ethernet.num2Write(SOCKET_DESTINATION_PORT, BSB_SOCKET_REGISTER(this.id), port);
+  public setDestPortWait(port: number) {
+    return this.ethernet.num2WriteWait(SOCKET_DESTINATION_PORT, BSB_SOCKET_REGISTER(this.id), port);
   }
 
   /**
@@ -1843,8 +1843,8 @@ export class W5500Socket {
    * 接続元のポート番号を取得(TCPサーバーのときのみ)
    * @return Port number ポート番号
    */
-  public getDestPort() {
-    return this.ethernet.num2Read(SOCKET_DESTINATION_PORT, BSB_SOCKET_REGISTER(this.id));
+  public getDestPortWait() {
+    return this.ethernet.num2ReadWait(SOCKET_DESTINATION_PORT, BSB_SOCKET_REGISTER(this.id));
   }
 
   /**
@@ -1854,8 +1854,8 @@ export class W5500Socket {
    * @param size 最大セグメントサイズ
    * @return Write result 書き込み結果
    */
-  public setMaxSegmentSize(size: number) {
-    return this.ethernet.num2Write(SOCKET_MAX_SEGMENT_SIZE, BSB_SOCKET_REGISTER(this.id), size);
+  public setMaxSegmentSizeWait(size: number) {
+    return this.ethernet.num2WriteWait(SOCKET_MAX_SEGMENT_SIZE, BSB_SOCKET_REGISTER(this.id), size);
   }
 
   /**
@@ -1863,8 +1863,8 @@ export class W5500Socket {
    * @param type IP service type IPサービスタイプ (1byte)
    * @return Write result 書き込み結果
    */
-  public setIPTypeOfService(type: number) {
-    return this.ethernet.numWrite(SOCKET_IP_TYPE_OF_SERVICE, BSB_SOCKET_REGISTER(this.id), type);
+  public setIPTypeOfServiceWait(type: number) {
+    return this.ethernet.numWriteWait(SOCKET_IP_TYPE_OF_SERVICE, BSB_SOCKET_REGISTER(this.id), type);
   }
 
   /**
@@ -1872,8 +1872,8 @@ export class W5500Socket {
    * @param ttl TTL (0\~65535)
    * @return Write result 書き込み結果
    */
-  public setTTL(ttl: number) {
-    return this.ethernet.numWrite(SOCKET_TTL, BSB_SOCKET_REGISTER(this.id), ttl);
+  public setTTLWait(ttl: number) {
+    return this.ethernet.numWriteWait(SOCKET_TTL, BSB_SOCKET_REGISTER(this.id), ttl);
   }
 
   /**
@@ -1883,11 +1883,11 @@ export class W5500Socket {
    * @return Write result 書き込み結果
    * @hidden
    */
-  public setBufferSize(size: W5500SocketParts.BufferSize, address: number) {
+  public setBufferSizeWait(size: W5500SocketParts.BufferSize, address: number) {
     if ([0, 1, 2, 4, 8, 16].indexOf(size) < 0) {
       throw new Error("Given buffer size must be 0, 1, 2, 4, 8 or 16.");
     }
-    return this.ethernet.numWrite(address, BSB_SOCKET_REGISTER(this.id), size);
+    return this.ethernet.numWriteWait(address, BSB_SOCKET_REGISTER(this.id), size);
   }
 
   /**
@@ -1897,8 +1897,8 @@ export class W5500Socket {
    * バッファサイズ(KB) 2の累乗のみ、16まで
    * @return Write result 書き込み結果
    */
-  public setRXBufferSize(size: W5500SocketParts.BufferSize) {
-    return this.setBufferSize(size, SOCKET_RX_BUFFER_SIZE);
+  public setRXBufferSizeWait(size: W5500SocketParts.BufferSize) {
+    return this.setBufferSizeWait(size, SOCKET_RX_BUFFER_SIZE);
   }
 
   /**
@@ -1908,16 +1908,16 @@ export class W5500Socket {
    * バッファサイズ(KB) 2の累乗のみ、16まで
    * @return Write result 書き込み結果
    */
-  public setTXBufferSize(size: W5500SocketParts.BufferSize) {
-    return this.setBufferSize(size, SOCKET_TX_BUFFER_SIZE);
+  public setTXBufferSizeWait(size: W5500SocketParts.BufferSize) {
+    return this.setBufferSizeWait(size, SOCKET_TX_BUFFER_SIZE);
   }
 
   /**
    * Get free size of send buffer 送信バッファの空きサイズを取得
    * @return Free size 空きサイズ
    */
-  public getTXFreeSize() {
-    return this.ethernet.num2Read(SOCKET_TX_FREE_SIZE, BSB_SOCKET_REGISTER(this.id));
+  public getTXFreeSizeWait() {
+    return this.ethernet.num2ReadWait(SOCKET_TX_FREE_SIZE, BSB_SOCKET_REGISTER(this.id));
   }
 
   /**
@@ -1926,8 +1926,8 @@ export class W5500Socket {
    * 送信バッファの書き込み開始アドレスを取得
    * @return Address アドレス
    */
-  public getTXReadPointer() {
-    return this.ethernet.num2Read(SOCKET_TX_READ_POINTER, BSB_SOCKET_REGISTER(this.id));
+  public getTXReadPointerWait() {
+    return this.ethernet.num2ReadWait(SOCKET_TX_READ_POINTER, BSB_SOCKET_REGISTER(this.id));
   }
 
   /**
@@ -1937,16 +1937,16 @@ export class W5500Socket {
    * @param pointer Address アドレス
    * @return Write result 書き込み結果
    */
-  public setTXWritePointer(pointer: number) {
-    return this.ethernet.num2Write(SOCKET_TX_WRITE_POINTER, BSB_SOCKET_REGISTER(this.id), pointer);
+  public setTXWritePointerWait(pointer: number) {
+    return this.ethernet.num2WriteWait(SOCKET_TX_WRITE_POINTER, BSB_SOCKET_REGISTER(this.id), pointer);
   }
 
   /**
    * Get the length of received data 受信データの長さを取得
    * @return Length 長さ
    */
-  public getRXReceiveSize() {
-    return this.ethernet.num2Read(SOCKET_RX_RECEIVE_SIZE, BSB_SOCKET_REGISTER(this.id));
+  public getRXReceiveSizeWait() {
+    return this.ethernet.num2ReadWait(SOCKET_RX_RECEIVE_SIZE, BSB_SOCKET_REGISTER(this.id));
   }
 
   /**
@@ -1955,8 +1955,8 @@ export class W5500Socket {
    * 受信バッファの読み込み開始アドレスを取得
    * @return Address アドレス
    */
-  public getRXReadDataPointer() {
-    return this.ethernet.num2Read(SOCLET_RX_READ_DATA_POINTER, BSB_SOCKET_REGISTER(this.id));
+  public getRXReadDataPointerWait() {
+    return this.ethernet.num2ReadWait(SOCLET_RX_READ_DATA_POINTER, BSB_SOCKET_REGISTER(this.id));
   }
 
   /**
@@ -1966,8 +1966,8 @@ export class W5500Socket {
    * @param pointer Address アドレス
    * @return Write result 書き込み結果
    */
-  public setRXReadDataPointer(pointer: number) {
-    return this.ethernet.num2Write(SOCLET_RX_READ_DATA_POINTER, BSB_SOCKET_REGISTER(this.id), pointer);
+  public setRXReadDataPointerWait(pointer: number) {
+    return this.ethernet.num2WriteWait(SOCLET_RX_READ_DATA_POINTER, BSB_SOCKET_REGISTER(this.id), pointer);
   }
 
   /**
@@ -1976,8 +1976,8 @@ export class W5500Socket {
    * 受信バッファの書き込み開始アドレスを取得
    * @return Address アドレス
    */
-  public getRXWritePointer() {
-    return this.ethernet.num2Read(SOCKET_RX_WRITE_POINTER, BSB_SOCKET_REGISTER(this.id));
+  public getRXWritePointerWait() {
+    return this.ethernet.num2ReadWait(SOCKET_RX_WRITE_POINTER, BSB_SOCKET_REGISTER(this.id));
   }
 
   /**
@@ -1985,8 +1985,8 @@ export class W5500Socket {
    * @param fragment IP header fragment IPヘッダーのフラグメント (0x0000\~0xFFFF)
    * @return Write result 書き込み結果
    */
-  public setFragment(fragment: number) {
-    return this.ethernet.num2Write(SOCKET_FRAGMENT, BSB_SOCKET_REGISTER(this.id), fragment);
+  public setFragmentWait(fragment: number) {
+    return this.ethernet.num2WriteWait(SOCKET_FRAGMENT, BSB_SOCKET_REGISTER(this.id), fragment);
   }
 
   /**
@@ -1998,8 +1998,8 @@ export class W5500Socket {
    * keep-alive 送信間隔(秒)(0\~1275)
    * @return Write result 書き込み結果
    */
-  public setKeepAliveTimer(time: number) {
-    return this.ethernet.numWrite(SOCKET_KEEP_ALIVE_TIMER, BSB_SOCKET_REGISTER(this.id), time / 5);
+  public setKeepAliveTimerWait(time: number) {
+    return this.ethernet.numWriteWait(SOCKET_KEEP_ALIVE_TIMER, BSB_SOCKET_REGISTER(this.id), time / 5);
   }
 
   /**
@@ -2010,12 +2010,12 @@ export class W5500Socket {
    * データ書き込み時、spi.writeWait()を使用しない
    * @hidden
    */
-  protected async sendDataBase(data: number[] | string, noWait?: boolean) {
+  protected async sendDataBaseWait(data: number[] | string, noWait?: boolean) {
     const d = typeof data === "string" ? Array.from(new TextEncoder().encode(data)) : data;
-    const txReadPointer = await this.getTXReadPointer();
-    const result = await this.ethernet.bigWrite(txReadPointer, BSB_SOCKET_TX_BUFFER(this.id), d, noWait);
-    await this.setTXWritePointer(txReadPointer + d.length);
-    await this.sendCommand("Send");
+    const txReadPointer = await this.getTXReadPointerWait();
+    const result = await this.ethernet.bigWriteWait(txReadPointer, BSB_SOCKET_TX_BUFFER(this.id), d, noWait);
+    await this.setTXWritePointerWait(txReadPointer + d.length);
+    await this.sendCommandWait("Send");
     return result;
   }
 }
