@@ -33,8 +33,8 @@ await socket.init({
   sourcePort: 54321,
   destIP: '93.184.216.34', // example.com
   destPort: 80, // HTTP
-  rxBufferSize: 4, // 受信データは最大4KB
-  stringMode: true, // 受信データを文字列(UTF-8)として扱う
+  rxBufferSize: 4, // Received data is up to 4KB
+  stringMode: true, // Treat received data as string (UTF-8)
 });
 ```
 
