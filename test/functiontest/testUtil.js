@@ -10,6 +10,7 @@ let WSServer = ws.Server;
 let semver = require('semver');
 
 let fs = require('fs');
+let path = require('path');
 let ejs = require('ejs');
 
 const chai = require('chai');
@@ -360,7 +361,11 @@ let testUtil = {
   ejs: function(url, param) {
     let data = fs.readFileSync(url, 'utf8');
     let html = ejs.render(data, param);
-    let newFilename = url.replace('.', '_') + '.html';
+    let newFilename =
+      path.dirname(url) +
+      path.sep +
+      path.basename(url).replace('.', '_') +
+      '.html';
 
     return new Promise(function(resolve, reject) {
       fs.writeFile(newFilename, html, function(err) {
