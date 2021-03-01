@@ -633,6 +633,16 @@
       ]
     },
     {
+      "name": "Ethernet",
+      "image_url": "",
+      "parts": [
+        {
+          "name": "W5500",
+          "store": {}
+        }
+      ]
+    },
+    {
       "name": "Grove",
       "image_url": "https://obniz.io/sdk/parts/Grove_MP3/image.jpg",
       "parts": [
@@ -733,6 +743,13 @@
           "store": {
             "switchscience": "https://www.switch-science.com/catalog/6282/",
             "seedstudio": "https://www.seeedstudio.com/Grove-Water-Level-Sensor-10CM-p-4443.html"
+          }
+        },
+        {
+          "name": "Grove_MicroSwitch",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/3933/",
+            "seedstudio": "https://www.seeedstudio.com/Grove-Micro-Switch.html"
           }
         }
       ]

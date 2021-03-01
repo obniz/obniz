@@ -119,6 +119,7 @@ var GATT;
 class Gatt extends eventemitter3_1.default {
     constructor(address, aclStream) {
         super();
+        this._remoteMtuRequest = null;
         this._address = address;
         this._aclStream = aclStream;
         this._services = {};
@@ -152,6 +153,19 @@ class Gatt extends eventemitter3_1.default {
         this.emit("end", reason);
     }
     async exchangeMtuWait(mtu) {
+        this._aclStream
+            .readWait(ATT.CID, ATT.OP_MTU_REQ)
+            .then((mtuRequestData) => {
+            const requestMtu = mtuRequestData.readUInt16LE(1);
+            debug(this._address + ": receive OP_MTU_REQ. new MTU is " + requestMtu);
+            this._mtu = requestMtu;
+            this._execNoRespCommandWait(this.mtuResponse(mtu));
+        })
+            .catch((e) => {
+            // TODO:
+            // This must passed to Obniz class.
+            console.error(e);
+        });
         const data = await this._execCommandWait(this.mtuRequest(mtu), ATT.OP_MTU_RESP);
         const opcode = data[0];
         const newMtu = data.readUInt16LE(1);
@@ -356,11 +370,20 @@ class Gatt extends eventemitter3_1.default {
     }
     async notifyWait(serviceUuid, characteristicUuid, notify) {
         const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
-        const data = await this._execCommandWait(this.readByTypeRequest(characteristic.startHandle, characteristic.endHandle, GATT.CLIENT_CHARAC_CFG_UUID), ATT.OP_READ_BY_TYPE_RESP);
-        const opcode = data[0];
-        // let type = data[1];
-        const handle = data.readUInt16LE(2);
-        let value = data.readUInt16LE(4);
+        // const descriptor: any = this.getDescriptor(serviceUuid, characteristicUuid, "2902");
+        let value = null;
+        let handle = null;
+        try {
+            value = await this.readValueWait(serviceUuid, characteristicUuid, "2902");
+        }
+        catch (e) {
+            // retry
+            const data = await this._execCommandWait(this.readByTypeRequest(characteristic.startHandle, characteristic.endHandle, GATT.CLIENT_CHARAC_CFG_UUID), ATT.OP_READ_BY_TYPE_RESP);
+            const opcode = data[0];
+            // let type = data[1];
+            handle = data.readUInt16LE(2);
+            value = data.readUInt16LE(4);
+        }
         const useNotify = characteristic.properties & 0x10;
         const useIndicate = characteristic.properties & 0x20;
         if (notify) {
@@ -381,8 +404,14 @@ class Gatt extends eventemitter3_1.default {
         }
         const valueBuffer = Buffer.alloc(2);
         valueBuffer.writeUInt16LE(value, 0);
-        const _data = await this._execCommandWait(this.writeRequest(handle, valueBuffer, false), ATT.OP_WRITE_RESP);
-        const _opcode = _data[0];
+        let _data = null;
+        if (handle) {
+            _data = await this._execCommandWait(this.writeRequest(handle, valueBuffer, false), ATT.OP_WRITE_RESP);
+        }
+        else {
+            _data = await this.writeValueWait(serviceUuid, characteristicUuid, "2902", valueBuffer);
+        }
+        const _opcode = _data && _data[0];
         debug("set notify write results: " + (_opcode === ATT.OP_WRITE_RESP));
     }
     async discoverDescriptorsWait(serviceUuid, characteristicUuid) {
@@ -426,7 +455,7 @@ class Gatt extends eventemitter3_1.default {
     }
     async writeValueWait(serviceUuid, characteristicUuid, descriptorUuid, data) {
         const descriptor = this.getDescriptor(serviceUuid, characteristicUuid, descriptorUuid);
-        await this._execCommandWait(this.writeRequest(descriptor.handle, data, false), ATT.OP_WRITE_RESP);
+        return await this._execCommandWait(this.writeRequest(descriptor.handle, data, false), ATT.OP_WRITE_RESP);
     }
     async readHandleWait(handle) {
         const data = await this._execCommandWait(this.readRequest(handle), ATT.OP_READ_RESP);
@@ -488,6 +517,12 @@ class Gatt extends eventemitter3_1.default {
     mtuRequest(mtu) {
         const buf = Buffer.alloc(3);
         buf.writeUInt8(ATT.OP_MTU_REQ, 0);
+        buf.writeUInt16LE(mtu, 1);
+        return buf;
+    }
+    mtuResponse(mtu) {
+        const buf = Buffer.alloc(3);
+        buf.writeUInt8(ATT.OP_MTU_RESP, 0);
         buf.writeUInt16LE(mtu, 1);
         return buf;
     }

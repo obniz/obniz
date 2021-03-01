@@ -124,6 +124,9 @@ import S11059, { S11059Options } from "../parts/ColorSensor/S11059";
 // biological
 import Puls08M5stickcS, { Puls08M5stickcSOptions } from "../parts/Biological/PULSE08-M5STICKC-S";
 
+// Ethernet
+import W5500, { W5500Parts } from "../parts/Ethernet/W5500";
+
 // Ble
 import OMRON_2JCIE, { OMRON_2JCIEOptions } from "../parts/Ble/2jcie";
 import cir415a, { cir415aOptions } from "../parts/Ble/cir415a";
@@ -167,12 +170,14 @@ import Grove_Gesture, { Grove_GestureSensorOptions } from "../parts/Grove/Grove_
 import Grove_GPS, { Grove_GPSOptions } from "../parts/Grove/Grove_GPS";
 import Grove_JoyStick, { Grove_JoyStickOptions } from "../parts/Grove/Grove_JoyStick";
 import Grove_LightSensor, { Grove_LightSensorOptions } from "../parts/Grove/Grove_LightSensor";
+import Grove_MicroSwitch, { Grove_MicroSwitchOptions } from "../parts/Grove/Grove_MicroSwitch";
 import Grove_MP3, { Grove_MP3Options } from "../parts/Grove/Grove_MP3";
 import Grove_PressureSensor, { Grove_PressureSensorOptions } from "../parts/Grove/Grove_PressureSensor";
 import Grove_RotaryAngleSensor, { Grove_RotaryAngleSensorOptions } from "../parts/Grove/Grove_RotaryAngleSensor";
 import Grove_SoilMoistureSensor, { Grove_SoilMoistureSensorOptions } from "../parts/Grove/Grove_SoilMoistureSensor";
 import Grove_Speaker, { Grove_SpeakerOptions } from "../parts/Grove/Grove_Speaker";
 import Grove_WaterLevelSensor, { Grove_WaterLevelSensorOptions } from "../parts/Grove/Grove_WaterLevelSensor";
+
 // Keyestudio
 import Keyestudio_Button, { Keyestudio_ButtonOptions } from "../parts/Keyestudio/Keyestudio_Button";
 import Keyestudio_Buzzer, { Keyestudio_BuzzerOptions } from "../parts/Keyestudio/Keyestudio_Buzzer";
@@ -308,6 +313,10 @@ export interface PartsList {
     class: Grove_WaterLevelSensor;
     options: Grove_WaterLevelSensorOptions;
   };
+  "Grove_MicroSwitch": {
+    class: Grove_MicroSwitch;
+    options: Grove_MicroSwitchOptions;
+  };
   "M5StickC_JoyStick": { class: M5StickC_JoyStick; options: M5StickC_JoyStickOptions };
   "M5StickC_ADC": { class: M5StickC_ADC; options: M5StickC_ADCOptions };
   "M5StickC_DAC": { class: M5StickC_DAC; options: M5StickC_DACOptions };
@@ -363,4 +372,5 @@ export interface PartsList {
   "DPS310": { class: DPS310; options: DPS310Options };
   "BMP280": { class: BMP280; options: BMP280Options };
   "HEM_9200T": { class: HEM_9200T; options: HEM_9200TOptions };
+  "W5500": { class: W5500; options: W5500Parts.WiredOptions };
 }

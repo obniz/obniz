@@ -199,7 +199,7 @@ export default class BleScan {
    * Use startWait() instead.
    * @deprecated
    */
-  public start(target: BleScanTarget = {}, settings: BleScanSetting = {}) {
+  public start(target: BleScanTarget | null = {}, settings: BleScanSetting = {}) {
     console.log(`start() is deprecated since 3.5.0. Use startWait() instead`);
     this.startWait(target, settings)
       .then(() => {})
@@ -241,7 +241,7 @@ export default class BleScan {
    * @param target
    * @param settings
    */
-  public async startWait(target: BleScanTarget = {}, settings: BleScanSetting = {}) {
+  public async startWait(target: BleScanTarget | null = {}, settings: BleScanSetting = {}) {
     this.obnizBle.warningIfNotInitialize();
     this.state = "starting";
 

@@ -5,7 +5,7 @@
 import BleCharacteristic from "./bleCharacteristic";
 import BleLocalAttributeAbstract from "./bleLocalAttributeAbstract";
 import BlePeripheral from "./blePeripheral";
-import { BleCharacteristicDefine, BleServiceDefine, UUID } from "./bleTypes";
+import { BleAdvertisementData, BleCharacteristicDefine, BleServiceDefine, UUID } from "./bleTypes";
 
 /**
  * @category Use as Peripheral
@@ -84,7 +84,7 @@ export default class BleService extends BleLocalAttributeAbstract<null, BleChara
    * obniz.ble.advertisement.start();
    * ```
    */
-  get advData() {
+  get advData(): BleAdvertisementData {
     return {
       flags: ["general_discoverable_mode", "br_edr_not_supported"],
       serviceUuids: [this.uuid],
