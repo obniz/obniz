@@ -751,6 +751,13 @@
             "switchscience": "https://www.switch-science.com/catalog/3933/",
             "seedstudio": "https://www.seeedstudio.com/Grove-Micro-Switch.html"
           }
+        },
+        {
+          "name": "Grove_Relay",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/807/",
+            "seedstudio": "https://www.seeedstudio.com/Grove-Relay.html"
+          }
         }
       ]
     },
