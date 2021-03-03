@@ -1,4 +1,4 @@
-# Grove_3AxisAccelerometer
+# Grove Water Level Sensor
 
 Library for Grove water level sensor module [Grove Water Level Sensor](https://wiki.seeedstudio.com/Grove-Water-Level-Sensor/).
 
