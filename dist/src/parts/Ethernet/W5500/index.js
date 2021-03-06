@@ -318,7 +318,8 @@ class W5500 {
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.params.frequency = this.params.frequency || 26000000;
+        // W5500 may accept up to 26 Mhz. But it may fail on some devices. Reduce it when spi error occures. Increase it when no spi error occures and want to improve speed.
+        this.params.frequency = this.params.frequency || 20 * 1000 * 1000;
         this.params.mosi = this.params.mosi || 23;
         this.params.miso = this.params.miso || 19;
         this.params.clk = this.params.clk || 18;

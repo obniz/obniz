@@ -291,9 +291,9 @@ export namespace W5500Parts {
     /** SPI CS pin number (initial value: 33) SPIのCSピン番号 (初期値: 33) */
     cs?: number;
     /**
-     * SPI clock frequency (initial value: 26000000(26Mhz))
+     * SPI clock frequency (initial value: 20000000(26Mhz))
      *
-     * SPIのクロック周波数(初期値: 26000000(26Mhz))
+     * SPIのクロック周波数(初期値: 20000000(26Mhz))
      */
     frequency?: number;
   }
@@ -485,7 +485,9 @@ export class W5500 implements ObnizPartsInterface {
   public wired(obniz: Obniz) {
     this.obniz = obniz;
 
-    this.params.frequency = this.params.frequency || 26000000;
+    // W5500 may accept up to 26 Mhz. But it may fail on some devices. Reduce it when spi error occures. Increase it when no spi error occures and want to improve speed.
+    this.params.frequency = this.params.frequency || 20 * 1000 * 1000;
+
     this.params.mosi = this.params.mosi || 23;
     this.params.miso = this.params.miso || 19;
     this.params.clk = this.params.clk || 18;
