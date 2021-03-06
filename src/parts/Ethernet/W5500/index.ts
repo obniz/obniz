@@ -475,7 +475,7 @@ export class W5500 implements ObnizPartsInterface {
    *
    * 常に書き込み時に転送チェックを行わない
    */
-  protected forceNoCheckWrite?: boolean;
+  protected forceNoCheckWrite = false;
 
   constructor() {
     this.keys = ["frequency", "reset", "mosi", "miso", "sclk", "cs"];
@@ -563,7 +563,7 @@ export class W5500 implements ObnizPartsInterface {
       result = result && (await this.setPhysicalConfigWait(config.phyConfig));
     }
 
-    this.forceNoCheckWrite = config.forceNoCheckWrite;
+    this.forceNoCheckWrite = config.forceNoCheckWrite === true;
 
     // Interrupt handlers 割り込みハンドラー設定
     if (config.onIPConflictInterrupt) {
@@ -591,9 +591,10 @@ export class W5500 implements ObnizPartsInterface {
    * 各ソケットの終了処理をし、SPI通信を終了
    */
   public async finalizeWait() {
-    const funcList = this.socketList.filter((s) => s !== undefined).map((s) => s.finalizeWait);
-    for (const f in funcList) {
-      await funcList[f]();
+    for (const socket of this.socketList) {
+      if (socket !== undefined) {
+        await socket.finalizeWait();
+      }
     }
     this.spi.end();
     this.spiStatus = false;
@@ -806,11 +807,10 @@ export class W5500 implements ObnizPartsInterface {
         : undefined;
 
     if (disableAllSocketCheck !== false) {
-      const funcList = this.socketList
-        .filter((s) => s !== undefined && s.getProtocol() !== null)
-        .map((s) => s.checkInterruptWait);
-      for (const f in funcList) {
-        await funcList[f]();
+      for (const socket of this.socketList) {
+        if (socket !== undefined && socket.getProtocol() !== null) {
+          await socket.checkInterruptWait();
+        }
       }
     }
 
@@ -1138,7 +1138,7 @@ export class W5500 implements ObnizPartsInterface {
    * @param radix Description format of numbers in the address (N-ary) アドレス内の数字の記述形式 (N進数)
    * @hidden
    */
-  private addressWriteWait(
+  private async addressWriteWait(
     address: number,
     bsb: number,
     val: string,
@@ -1155,8 +1155,13 @@ export class W5500 implements ObnizPartsInterface {
     if (valList.filter((addr) => typeof addr === "number").length !== length) {
       throw new Error(`${name} format must be '${example}'.`);
     }
-    const func = length > 4 && this.fdm ? this.bigWriteWait : this.writeWait;
-    return func(address, bsb, valList);
+    if (length > 4 && this.fdm) {
+      return await this.bigWriteWait(address, bsb, valList);
+    } else {
+      return await this.writeWait(address, bsb, valList);
+    }
+    // const func = length > 4 && this.fdm ? this.bigWriteWait : this.writeWait;
+    // return func(address, bsb, valList);
   }
 
   /**

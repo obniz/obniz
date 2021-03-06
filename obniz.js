@@ -37559,6 +37559,12 @@ class W5500 {
         this.socketList = [];
         /** SPI status SPIのステータス */
         this.spiStatus = false;
+        /**
+         * Do not always check transfer when writing
+         *
+         * 常に書き込み時に転送チェックを行わない
+         */
+        this.forceNoCheckWrite = false;
         this.keys = ["frequency", "reset", "mosi", "miso", "sclk", "cs"];
         this.requiredKeys = [];
     }
@@ -37637,7 +37643,7 @@ class W5500 {
         if (config.phyConfig) {
             result = result && (await this.setPhysicalConfigWait(config.phyConfig));
         }
-        this.forceNoCheckWrite = config.forceNoCheckWrite;
+        this.forceNoCheckWrite = config.forceNoCheckWrite === true;
         // Interrupt handlers 割り込みハンドラー設定
         if (config.onIPConflictInterrupt) {
             this.setInterruptHandler("IPConflict", config.onIPConflictInterrupt);
@@ -37662,9 +37668,10 @@ class W5500 {
      * 各ソケットの終了処理をし、SPI通信を終了
      */
     async finalizeWait() {
-        const funcList = this.socketList.filter((s) => s !== undefined).map((s) => s.finalizeWait);
-        for (const f in funcList) {
-            await funcList[f]();
+        for (const socket of this.socketList) {
+            if (socket !== undefined) {
+                await socket.finalizeWait();
+            }
         }
         this.spi.end();
         this.spiStatus = false;
@@ -37851,11 +37858,10 @@ class W5500 {
             ? new W5500Parts.DestInfo(await this.getUnreachableIP(), await this.getUnreachablePort())
             : undefined;
         if (disableAllSocketCheck !== false) {
-            const funcList = this.socketList
-                .filter((s) => s !== undefined && s.getProtocol() !== null)
-                .map((s) => s.checkInterruptWait);
-            for (const f in funcList) {
-                await funcList[f]();
+            for (const socket of this.socketList) {
+                if (socket !== undefined && socket.getProtocol() !== null) {
+                    await socket.checkInterruptWait();
+                }
             }
         }
         for (const m in msgList) {
@@ -38158,7 +38164,7 @@ class W5500 {
      * @param radix Description format of numbers in the address (N-ary) アドレス内の数字の記述形式 (N進数)
      * @hidden
      */
-    addressWriteWait(address, bsb, val, name, example, splitVal, length, radix) {
+    async addressWriteWait(address, bsb, val, name, example, splitVal, length, radix) {
         if (typeof val !== "string") {
             throw new Error(`Given ${name} must be string.`);
         }
@@ -38166,8 +38172,14 @@ class W5500 {
         if (valList.filter((addr) => typeof addr === "number").length !== length) {
             throw new Error(`${name} format must be '${example}'.`);
         }
-        const func = length > 4 && this.fdm ? this.bigWriteWait : this.writeWait;
-        return func(address, bsb, valList);
+        if (length > 4 && this.fdm) {
+            return await this.bigWriteWait(address, bsb, valList);
+        }
+        else {
+            return await this.writeWait(address, bsb, valList);
+        }
+        // const func = length > 4 && this.fdm ? this.bigWriteWait : this.writeWait;
+        // return func(address, bsb, valList);
     }
     /**
      * Writing normal data
@@ -65066,7 +65078,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.2\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^3.0.8\",\"grunt\":\"^1.0.4\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^3.0.7\",\"jshint\":\"^2.10.3\",\"mocha\":\"^6.2.2\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"}}");
+module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^3.0.8\",\"grunt\":\"^1.0.4\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^3.0.7\",\"jshint\":\"^2.10.3\",\"mocha\":\"^6.2.2\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.2\"}");
 
 /***/ }),
 

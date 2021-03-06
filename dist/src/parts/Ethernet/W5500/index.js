@@ -302,6 +302,12 @@ class W5500 {
         this.socketList = [];
         /** SPI status SPIのステータス */
         this.spiStatus = false;
+        /**
+         * Do not always check transfer when writing
+         *
+         * 常に書き込み時に転送チェックを行わない
+         */
+        this.forceNoCheckWrite = false;
         this.keys = ["frequency", "reset", "mosi", "miso", "sclk", "cs"];
         this.requiredKeys = [];
     }
@@ -380,7 +386,7 @@ class W5500 {
         if (config.phyConfig) {
             result = result && (await this.setPhysicalConfigWait(config.phyConfig));
         }
-        this.forceNoCheckWrite = config.forceNoCheckWrite;
+        this.forceNoCheckWrite = config.forceNoCheckWrite === true;
         // Interrupt handlers 割り込みハンドラー設定
         if (config.onIPConflictInterrupt) {
             this.setInterruptHandler("IPConflict", config.onIPConflictInterrupt);
@@ -405,9 +411,10 @@ class W5500 {
      * 各ソケットの終了処理をし、SPI通信を終了
      */
     async finalizeWait() {
-        const funcList = this.socketList.filter((s) => s !== undefined).map((s) => s.finalizeWait);
-        for (const f in funcList) {
-            await funcList[f]();
+        for (const socket of this.socketList) {
+            if (socket !== undefined) {
+                await socket.finalizeWait();
+            }
         }
         this.spi.end();
         this.spiStatus = false;
@@ -594,11 +601,10 @@ class W5500 {
             ? new W5500Parts.DestInfo(await this.getUnreachableIP(), await this.getUnreachablePort())
             : undefined;
         if (disableAllSocketCheck !== false) {
-            const funcList = this.socketList
-                .filter((s) => s !== undefined && s.getProtocol() !== null)
-                .map((s) => s.checkInterruptWait);
-            for (const f in funcList) {
-                await funcList[f]();
+            for (const socket of this.socketList) {
+                if (socket !== undefined && socket.getProtocol() !== null) {
+                    await socket.checkInterruptWait();
+                }
             }
         }
         for (const m in msgList) {
@@ -901,7 +907,7 @@ class W5500 {
      * @param radix Description format of numbers in the address (N-ary) アドレス内の数字の記述形式 (N進数)
      * @hidden
      */
-    addressWriteWait(address, bsb, val, name, example, splitVal, length, radix) {
+    async addressWriteWait(address, bsb, val, name, example, splitVal, length, radix) {
         if (typeof val !== "string") {
             throw new Error(`Given ${name} must be string.`);
         }
@@ -909,8 +915,14 @@ class W5500 {
         if (valList.filter((addr) => typeof addr === "number").length !== length) {
             throw new Error(`${name} format must be '${example}'.`);
         }
-        const func = length > 4 && this.fdm ? this.bigWriteWait : this.writeWait;
-        return func(address, bsb, valList);
+        if (length > 4 && this.fdm) {
+            return await this.bigWriteWait(address, bsb, valList);
+        }
+        else {
+            return await this.writeWait(address, bsb, valList);
+        }
+        // const func = length > 4 && this.fdm ? this.bigWriteWait : this.writeWait;
+        // return func(address, bsb, valList);
     }
     /**
      * Writing normal data
