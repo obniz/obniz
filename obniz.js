@@ -37845,7 +37845,6 @@ class W5500 {
      * 次に割り込みをチェックできるかどうか
      */
     async checkInterruptWait(disableAllSocketCheck) {
-        var _a;
         if (!this.spiStatus) {
             return false;
         }
@@ -37867,7 +37866,7 @@ class W5500 {
         }
         for (const m in msgList) {
             const msg = msgList[m];
-            console.info(`Found Interrupt: ${msg}` + msg === "DestUnreach" ? ` address=${(_a = extra) === null || _a === void 0 ? void 0 : _a.address}` : "");
+            // console.info(`Found Interrupt: ${msg}` + msg === "DestUnreach" ? ` address=${extra?.address}` : "");
             const handler = this.interruptHandlers[msg];
             if (handler !== undefined) {
                 await handler(this, extra);

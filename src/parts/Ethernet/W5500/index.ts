@@ -818,7 +818,7 @@ export class W5500 implements ObnizPartsInterface {
 
     for (const m in msgList) {
       const msg = msgList[m] as W5500Parts.Interrupt;
-      console.info(`Found Interrupt: ${msg}` + msg === "DestUnreach" ? ` address=${extra?.address}` : "");
+      // console.info(`Found Interrupt: ${msg}` + msg === "DestUnreach" ? ` address=${extra?.address}` : "");
       const handler = this.interruptHandlers[msg];
       if (handler !== undefined) {
         await handler(this, extra);
