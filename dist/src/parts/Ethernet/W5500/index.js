@@ -302,6 +302,12 @@ class W5500 {
         this.socketList = [];
         /** SPI status SPIのステータス */
         this.spiStatus = false;
+        /**
+         * Do not always check transfer when writing
+         *
+         * 常に書き込み時に転送チェックを行わない
+         */
+        this.forceNoCheckWrite = false;
         this.keys = ["frequency", "reset", "mosi", "miso", "sclk", "cs"];
         this.requiredKeys = [];
     }
@@ -312,7 +318,8 @@ class W5500 {
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.params.frequency = this.params.frequency || 26000000;
+        // W5500 may accept up to 26 Mhz. But it may fail on some devices. Reduce it when spi error occures. Increase it when no spi error occures and want to improve speed.
+        this.params.frequency = this.params.frequency || 20 * 1000 * 1000;
         this.params.mosi = this.params.mosi || 23;
         this.params.miso = this.params.miso || 19;
         this.params.clk = this.params.clk || 18;
@@ -380,7 +387,7 @@ class W5500 {
         if (config.phyConfig) {
             result = result && (await this.setPhysicalConfigWait(config.phyConfig));
         }
-        this.forceNoCheckWrite = config.forceNoCheckWrite;
+        this.forceNoCheckWrite = config.forceNoCheckWrite === true;
         // Interrupt handlers 割り込みハンドラー設定
         if (config.onIPConflictInterrupt) {
             this.setInterruptHandler("IPConflict", config.onIPConflictInterrupt);
@@ -405,9 +412,10 @@ class W5500 {
      * 各ソケットの終了処理をし、SPI通信を終了
      */
     async finalizeWait() {
-        const funcList = this.socketList.filter((s) => s !== undefined).map((s) => s.finalizeWait);
-        for (const f in funcList) {
-            await funcList[f]();
+        for (const socket of this.socketList) {
+            if (socket !== undefined) {
+                await socket.finalizeWait();
+            }
         }
         this.spi.end();
         this.spiStatus = false;
@@ -580,7 +588,6 @@ class W5500 {
      * 次に割り込みをチェックできるかどうか
      */
     async checkInterruptWait(disableAllSocketCheck) {
-        var _a;
         if (!this.spiStatus) {
             return false;
         }
@@ -594,16 +601,15 @@ class W5500 {
             ? new W5500Parts.DestInfo(await this.getUnreachableIP(), await this.getUnreachablePort())
             : undefined;
         if (disableAllSocketCheck !== false) {
-            const funcList = this.socketList
-                .filter((s) => s !== undefined && s.getProtocol() !== null)
-                .map((s) => s.checkInterruptWait);
-            for (const f in funcList) {
-                await funcList[f]();
+            for (const socket of this.socketList) {
+                if (socket !== undefined && socket.getProtocol() !== null) {
+                    await socket.checkInterruptWait();
+                }
             }
         }
         for (const m in msgList) {
             const msg = msgList[m];
-            console.info(`Found Interrupt: ${msg}` + msg === "DestUnreach" ? ` address=${(_a = extra) === null || _a === void 0 ? void 0 : _a.address}` : "");
+            // console.info(`Found Interrupt: ${msg}` + msg === "DestUnreach" ? ` address=${extra?.address}` : "");
             const handler = this.interruptHandlers[msg];
             if (handler !== undefined) {
                 await handler(this, extra);
@@ -901,7 +907,7 @@ class W5500 {
      * @param radix Description format of numbers in the address (N-ary) アドレス内の数字の記述形式 (N進数)
      * @hidden
      */
-    addressWriteWait(address, bsb, val, name, example, splitVal, length, radix) {
+    async addressWriteWait(address, bsb, val, name, example, splitVal, length, radix) {
         if (typeof val !== "string") {
             throw new Error(`Given ${name} must be string.`);
         }
@@ -909,8 +915,14 @@ class W5500 {
         if (valList.filter((addr) => typeof addr === "number").length !== length) {
             throw new Error(`${name} format must be '${example}'.`);
         }
-        const func = length > 4 && this.fdm ? this.bigWriteWait : this.writeWait;
-        return func(address, bsb, valList);
+        if (length > 4 && this.fdm) {
+            return await this.bigWriteWait(address, bsb, valList);
+        }
+        else {
+            return await this.writeWait(address, bsb, valList);
+        }
+        // const func = length > 4 && this.fdm ? this.bigWriteWait : this.writeWait;
+        // return func(address, bsb, valList);
     }
     /**
      * Writing normal data
