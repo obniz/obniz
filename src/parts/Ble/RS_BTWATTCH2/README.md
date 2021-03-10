@@ -1,11 +1,11 @@
 # RS_BTWATTCH2
-ラトックシステムズ社製のコンセントの消費電力計で、ON/OFFも可能です。
+This is a power consumption meter for electrical outlets made by RATOC Systems, Inc. and can be turned on and off.
 
-このデバイスは事前にペアリングが必要となります。本体のボタンを３秒間押し、LEDが点滅するとペアリングモードです。
-プログラムでは
+This device needs to be paired in advance. Press the button on the device for 3 seconds, and when the LED flashes, it is in pairing mode.
+In the program
 
-1. ペアリングモードにすることでペアリングし、キーを取得し保存
-2. 通常モードのデバイスに取得済みのペアリングキーで接続
+1. pair the device by putting it into pairing mode, and retrieve and save the key
+2. connect to the device in normal mode with the pairing key you have already obtained
 
 ```javascript
 // Javascript Example
@@ -39,6 +39,6 @@ await obniz.ble.scan.startWait();
 
 ```
 
-各関数について詳しくは下記をご覧ください。
+See below for more details about each function.
 
-[リファレンス](https://obniz.github.io/obniz/obnizjs/interfaces/parts.RS_BTWATTCH2.RS_BTWATTCH2.commonoptions.html)
+[Reference](https://obniz.github.io/obniz/obnizjs/interfaces/parts.rs_btwattch2.rs_btwattch2.html)

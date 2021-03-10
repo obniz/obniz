@@ -41,4 +41,4 @@ await obniz.ble.scan.startWait();
 
 各関数について詳しくは下記をご覧ください。
 
-[リファレンス](https://obniz.github.io/obniz/obnizjs/interfaces/parts.RS_BTWATTCH2.RS_BTWATTCH2.commonoptions.html)
+[リファレンス](https://obniz.github.io/obniz/obnizjs/interfaces/parts.rs_btwattch2.rs_btwattch2.html)

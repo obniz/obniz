@@ -13,6 +13,23 @@ export interface RS_BTWATTCH2Options {
   rtcAutoset: boolean;
 }
 
+export interface RS_BTWATTCH2RealtimeData {
+  /** Voltage (unit v) 計測された電圧(v) */
+  vrms: number;
+
+  /** Amp (unit A) 消費電流(A) */
+  irms: number;
+
+  /** Watt (unit W) 消費電力(W) */
+  wa: number;
+
+  /** Current Power State (Relay State) */
+  powerState: boolean;
+
+  /** Reported time from device */
+  date: Date;
+}
+
 export default class RS_BTWATTCH2 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
@@ -182,7 +199,7 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
   }
 
   /**
-   * Set Relay state
+   * Set Relay ON/OFF
    * @param isOn
    */
   public async setPowerStateWait(isOn: boolean) {
@@ -198,26 +215,14 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
   /**
    * Getting Current Relay State;
    */
-  public async getPowerStateWait() {
+  public async getPowerStateWait(): Promise<boolean> {
     return (await this.getRealTimeDataWait()).powerState;
-  }
-
-  /**
-   * Getting Current Power Consumption
-   */
-  public async getMeasuredConsumptionWait() {
-    const obj = await this.getRealTimeDataWait();
-    return {
-      vrms: obj.vrms,
-      irms: obj.irms,
-      wa: obj.wa,
-    };
   }
 
   /**
    * Getting All of realtime data
    */
-  public async getRealTimeDataWait() {
+  public async getRealTimeDataWait(): Promise<RS_BTWATTCH2RealtimeData> {
     const ret = await this._transaction([0x08]);
     if (ret.length !== 27) {
       throw new Error(`communiation error`);
@@ -259,7 +264,7 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
 
     obj.date = new Date(1900 + ret[25], ret[24], ret[23], ret[22], ret[21], ret[20], 0);
 
-    return obj;
+    return obj as RS_BTWATTCH2RealtimeData;
   }
 
   private _pushData(data: number[]) {

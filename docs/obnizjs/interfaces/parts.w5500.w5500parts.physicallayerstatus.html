@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>WiredOptions | obniz</title>
+	<title>PhysicalLayerStatus | obniz</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -62,13 +62,13 @@
 					<a href="../modules/parts.w5500.html">W5500</a>
 				</li>
 				<li>
-					<a href="../classes/parts.w5500.w5500.html">W5500</a>
+					<a href="../modules/parts.w5500.w5500parts.html">W5500Parts</a>
 				</li>
 				<li>
-					<a href="parts.w5500.w5500.wiredoptions.html">WiredOptions</a>
+					<a href="parts.w5500.w5500parts.physicallayerstatus.html">PhysicalLayerStatus</a>
 				</li>
 			</ul>
-			<h1>Interface WiredOptions</h1>
+			<h1>Interface PhysicalLayerStatus</h1>
 		</div>
 	</div>
 </header>
@@ -78,7 +78,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>ピンアサインとSPIオプション</p>
+						<p>Physical layer status 物理層のステータス</p>
 					</div>
 				</div>
 			</section>
@@ -86,7 +86,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">WiredOptions</span>
+						<span class="target">PhysicalLayerStatus</span>
 					</li>
 				</ul>
 			</section>
@@ -97,13 +97,9 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.w5500.w5500.wiredoptions.html#cs" class="tsd-kind-icon">cs</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.w5500.w5500.wiredoptions.html#frequency" class="tsd-kind-icon">frequency</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.w5500.w5500.wiredoptions.html#miso" class="tsd-kind-icon">miso</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.w5500.w5500.wiredoptions.html#mosi" class="tsd-kind-icon">mosi</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.w5500.w5500.wiredoptions.html#reset" class="tsd-kind-icon">reset</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.w5500.w5500.wiredoptions.html#sclk" class="tsd-kind-icon">sclk</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.w5500.w5500.wiredoptions.html#spi" class="tsd-kind-icon">spi</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.w5500.w5500parts.physicallayerstatus.html#duplex" class="tsd-kind-icon">duplex</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.w5500.w5500parts.physicallayerstatus.html#link" class="tsd-kind-icon">link</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.w5500.w5500parts.physicallayerstatus.html#speed" class="tsd-kind-icon">speed</a></li>
 							</ul>
 						</section>
 					</div>
@@ -112,107 +108,47 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="cs" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> cs</h3>
-					<div class="tsd-signature tsd-kind-icon">cs<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+					<a name="duplex" class="tsd-anchor"></a>
+					<h3>duplex</h3>
+					<div class="tsd-signature tsd-kind-icon">duplex<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ethernet/W5500/index.ts:649</li>
+							<li>Defined in src/parts/Ethernet/W5500/index.ts:374</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>SPIのCSピン番号(初期値: 33)</p>
+							<p>Whether it is full duplex 全二重かどうか</p>
 						</div>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="frequency" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> frequency</h3>
-					<div class="tsd-signature tsd-kind-icon">frequency<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+					<a name="link" class="tsd-anchor"></a>
+					<h3>link</h3>
+					<div class="tsd-signature tsd-kind-icon">link<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ethernet/W5500/index.ts:651</li>
+							<li>Defined in src/parts/Ethernet/W5500/index.ts:378</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>SPIのクロック周波数(初期値: 26000000(26Mhz))</p>
+							<p>Whether the connection is established 接続が確立されているかどうか</p>
 						</div>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="miso" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> miso</h3>
-					<div class="tsd-signature tsd-kind-icon">miso<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+					<a name="speed" class="tsd-anchor"></a>
+					<h3>speed</h3>
+					<div class="tsd-signature tsd-kind-icon">speed<span class="tsd-signature-symbol">:</span> <a href="../modules/parts.w5500.w5500parts.html#linkspeed" class="tsd-signature-type">LinkSpeed</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ethernet/W5500/index.ts:645</li>
+							<li>Defined in src/parts/Ethernet/W5500/index.ts:376</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>SPIのMISOピン番号(初期値: 19)</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="mosi" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> mosi</h3>
-					<div class="tsd-signature tsd-kind-icon">mosi<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in src/parts/Ethernet/W5500/index.ts:643</li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>SPIのMOSIピン番号(初期値: 23)</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="reset" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> reset</h3>
-					<div class="tsd-signature tsd-kind-icon">reset<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in src/parts/Ethernet/W5500/index.ts:641</li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>リセットピン番号(初期値: 12)</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="sclk" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> sclk</h3>
-					<div class="tsd-signature tsd-kind-icon">sclk<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in src/parts/Ethernet/W5500/index.ts:647</li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>SPIのSCLKピン番号(初期値: 18)</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="spi" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> spi</h3>
-					<div class="tsd-signature tsd-kind-icon">spi<span class="tsd-signature-symbol">:</span> <a href="../classes/obnizcore.components.peripheralspi.html" class="tsd-signature-type">PeripheralSPI</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in src/parts/Ethernet/W5500/index.ts:653</li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>SPIのインスタンス、なければピンアサインにより生成</p>
+							<p>Link speed 接続速度 (Mbps) (10/100)</p>
 						</div>
 					</div>
 				</section>
@@ -228,41 +164,45 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/parts.w5500.w5500parts.destinfo.html" class="tsd-kind-icon">Dest<wbr>Info</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="parts.w5500.w5500parts.config.html" class="tsd-kind-icon">Config</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="parts.w5500.w5500parts.physicallayeroptions.html" class="tsd-kind-icon">Physical<wbr>Layer<wbr>Options</a>
+					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/parts.w5500.w5500.html" class="tsd-kind-icon">W5500</a>
+					<li class="current tsd-kind-interface tsd-parent-kind-module">
+						<a href="parts.w5500.w5500parts.physicallayerstatus.html" class="tsd-kind-icon">Physical<wbr>Layer<wbr>Status</a>
 						<ul>
-							<li class="current tsd-kind-interface tsd-parent-kind-class">
-								<a href="parts.w5500.w5500.wiredoptions.html" class="tsd-kind-icon">Wired<wbr>Options</a>
-								<ul>
-									<li class=" tsd-kind-property tsd-parent-kind-interface">
-										<a href="parts.w5500.w5500.wiredoptions.html#cs" class="tsd-kind-icon">cs</a>
-									</li>
-									<li class=" tsd-kind-property tsd-parent-kind-interface">
-										<a href="parts.w5500.w5500.wiredoptions.html#frequency" class="tsd-kind-icon">frequency</a>
-									</li>
-									<li class=" tsd-kind-property tsd-parent-kind-interface">
-										<a href="parts.w5500.w5500.wiredoptions.html#miso" class="tsd-kind-icon">miso</a>
-									</li>
-									<li class=" tsd-kind-property tsd-parent-kind-interface">
-										<a href="parts.w5500.w5500.wiredoptions.html#mosi" class="tsd-kind-icon">mosi</a>
-									</li>
-									<li class=" tsd-kind-property tsd-parent-kind-interface">
-										<a href="parts.w5500.w5500.wiredoptions.html#reset" class="tsd-kind-icon">reset</a>
-									</li>
-									<li class=" tsd-kind-property tsd-parent-kind-interface">
-										<a href="parts.w5500.w5500.wiredoptions.html#sclk" class="tsd-kind-icon">sclk</a>
-									</li>
-									<li class=" tsd-kind-property tsd-parent-kind-interface">
-										<a href="parts.w5500.w5500.wiredoptions.html#spi" class="tsd-kind-icon">spi</a>
-									</li>
-								</ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.w5500.w5500parts.physicallayerstatus.html#duplex" class="tsd-kind-icon">duplex</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.w5500.w5500parts.physicallayerstatus.html#link" class="tsd-kind-icon">link</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.w5500.w5500parts.physicallayerstatus.html#speed" class="tsd-kind-icon">speed</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="parts.w5500.w5500parts.wiredoptions.html" class="tsd-kind-icon">Wired<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/parts.w5500.w5500parts.html#interrupt" class="tsd-kind-icon">Interrupt</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/parts.w5500.w5500parts.html#linkspeed" class="tsd-kind-icon">Link<wbr>Speed</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-module">
+						<a href="../modules/parts.w5500.w5500parts.html#interruptflags" class="tsd-kind-icon">Interrupt<wbr>Flags</a>
+					</li>
 				</ul>
 			</nav>
 		</div>

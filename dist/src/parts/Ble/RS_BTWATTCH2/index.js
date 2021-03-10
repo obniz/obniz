@@ -148,7 +148,7 @@ class RS_BTWATTCH2 {
         }
     }
     /**
-     * Set Relay state
+     * Set Relay ON/OFF
      * @param isOn
      */
     async setPowerStateWait(isOn) {
@@ -165,17 +165,6 @@ class RS_BTWATTCH2 {
      */
     async getPowerStateWait() {
         return (await this.getRealTimeDataWait()).powerState;
-    }
-    /**
-     * Getting Current Power Consumption
-     */
-    async getMeasuredConsumptionWait() {
-        const obj = await this.getRealTimeDataWait();
-        return {
-            vrms: obj.vrms,
-            irms: obj.irms,
-            wa: obj.wa,
-        };
     }
     /**
      * Getting All of realtime data
