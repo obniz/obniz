@@ -24422,34 +24422,54 @@ exports.default = RS_BTIREX2;
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 class RS_BTWATTCH2 {
-    constructor(peripheral) {
-        this.keys = [];
+    /**
+     * Constructor. Provide option at this time
+     * @param peripheral
+     * @param options
+     */
+    constructor(peripheral, options) {
+        this.keys = ["rtcAutoset"];
         this.requiredKeys = [];
-        this._uuids = {
-            service: "00001523-1212-EFDE-1523-785FEABCD123",
-            buttonChar: "000000A1-1212-EFDE-1523-785FEABCD123",
-            continuousMeasurementChar: "000000A5-1212-EFDE-1523-785FEABCD123",
-            oneShotMeasurementChar: "000000A8-1212-EFDE-1523-785FEABCD123",
-            ledChar: "000000A9-1212-EFDE-1523-785FEABCD123",
-        };
+        // parsing
+        this._totalSize = -1;
+        this._received = [];
+        this._waitings = [];
         if (peripheral && !RS_BTWATTCH2.isDevice(peripheral)) {
             throw new Error("peripheral is not RS_BTWATTCH2");
         }
         this._peripheral = peripheral;
+        this.params = options || {};
     }
     static info() {
         return {
             name: "RS_BTWATTCH2",
         };
     }
+    /**
+     * Check found peripheral is part of this parts
+     * @param peripheral
+     */
     static isDevice(peripheral) {
-        return peripheral.localName && peripheral.localName.indexOf("BTWATTCH2") >= 0;
+        return (peripheral.localName &&
+            (peripheral.localName.indexOf("BTWATTCH2_") >= 0 || peripheral.localName.indexOf("btwattch2_") >= 0));
     }
     // @ts-ignore
     wired(obniz) { }
+    /**
+     * Check if device is under paring mode(over 3 seconds button pressing)
+     */
+    isPairingMode() {
+        return this._peripheral.localName.indexOf("BTWATTCH2_") < 0;
+    }
+    /**
+     * get pairing key
+     */
     async firstPairingWait() {
         if (!this._peripheral) {
             throw new Error("No Peripheral Found");
+        }
+        if (this.isPairingMode() === false) {
+            throw new Error(`peripheral is not pairing mode. Press Pairing Button on device over 3 seconds. LED will start blinking then it is under pairing mode.`);
         }
         this._peripheral.ondisconnect = (reason) => {
             if (typeof this.ondisconnect === "function") {
@@ -24469,6 +24489,10 @@ class RS_BTWATTCH2 {
                         },
                     },
                 });
+                if (!gotKeys) {
+                    const keys = await this._peripheral.pairingWait();
+                    gotKeys = keys;
+                }
                 await this._peripheral.disconnectWait();
                 resolve(gotKeys);
             }
@@ -24477,9 +24501,15 @@ class RS_BTWATTCH2 {
             }
         });
     }
+    /**
+     * Connect to the target device regarding pairing key
+     */
     async connectWait(keys) {
         if (!keys) {
             throw new Error(`You should get keys before. call firstPairingWait() to get keys and provide this`);
+        }
+        if (this.isPairingMode()) {
+            throw new Error(`peripheral is pairing mode. Unplug and plug it again to change to normal mode.`);
         }
         await this._peripheral.connectWait({
             pairingOption: {
@@ -24498,37 +24528,167 @@ class RS_BTWATTCH2 {
         this._rxFromTargetCharacteristic = service.getCharacteristic("6e400003b5a3f393e0a9e50e24dcca9e");
         this._txToTargetCharacteristic = service.getCharacteristic("6e400002b5a3f393e0a9e50e24dcca9e");
         await this._rxFromTargetCharacteristic.registerNotifyWait((data) => {
-            console.log("notify with data " + data.join(","));
+            this._pushData(data);
         });
+        if (this.params.rtcAutoset !== false) {
+            await this.setRTC();
+        }
     }
+    /**
+     * Disconnect from the device
+     */
     async disconnectWait() {
-        var _a;
-        await ((_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.disconnectWait());
+        await this._peripheral.disconnectWait();
     }
-    async _transaction(data, length) {
-        const send = this._createData(data);
-        // console.log(`send`, send);
-        await this._txToTargetCharacteristic.writeWait(send);
-        // return;
-        // let ret = await rxChar.readWait();
-        // console.log(`result`, ret);
-        // return;
-        // if (!ret || ret.length < 2) {
-        //   throw new Error(`invalid response`);
-        // }
-        // if (ret[0] !== data[0]) {
-        //   throw new Error(`response command mismatch`);
-        // }
-        // if (ret[1] !== 0) {
-        //   throw new Error(`comand [${data[0]}] failed with error [${ret[1]}]`);
-        // }
-        // while (ret.length < length) {
-        //   console.log("here");
-        //   let next = await rxChar.readWait();
-        //   console.log(`result`, next);
-        //   ret.push(...next);
-        // }
-        // return ret.slice(2);
+    /**
+     * Seting Time on device clock
+     * @param date
+     */
+    async setRTC(date) {
+        if (!date) {
+            date = new Date();
+        }
+        const ret = await this._transaction([
+            0x01,
+            date.getSeconds(),
+            date.getMinutes(),
+            date.getHours(),
+            date.getDate(),
+            date.getMonth(),
+            date.getFullYear() - 1900,
+        ]);
+        if (ret.length !== 2) {
+            throw new Error(`communiation error`);
+        }
+        if (ret[1] !== 0x00) {
+            throw new Error(`set rtc failed`);
+        }
+    }
+    /**
+     * Set Relay state
+     * @param isOn
+     */
+    async setPowerStateWait(isOn) {
+        const ret = await this._transaction([0xa7, isOn ? 0x01 : 0x00]);
+        if (ret.length !== 3) {
+            throw new Error(`communiation error`);
+        }
+        if (ret[1] === 0x01) {
+            throw new Error(`set power failed`);
+        }
+    }
+    /**
+     * Getting Current Relay State;
+     */
+    async getPowerStateWait() {
+        return (await this.getRealTimeDataWait()).powerState;
+    }
+    /**
+     * Getting Current Power Consumption
+     */
+    async getMeasuredConsumptionWait() {
+        const obj = await this.getRealTimeDataWait();
+        return {
+            vrms: obj.vrms,
+            irms: obj.irms,
+            wa: obj.wa,
+        };
+    }
+    /**
+     * Getting All of realtime data
+     */
+    async getRealTimeDataWait() {
+        const ret = await this._transaction([0x08]);
+        if (ret.length !== 27) {
+            throw new Error(`communiation error`);
+        }
+        if (ret[1] !== 0x00) {
+            throw new Error(`get data failed`);
+        }
+        const obj = {};
+        // Relay
+        obj.powerState = ret[26] === 0x01;
+        // measured
+        let vrms = ((ret[2] + ret[3]) << (8 * 1)) +
+            (ret[4] << (8 * 2)) +
+            (ret[5] << (8 * 3)) +
+            (ret[6] << (8 * 4)) +
+            (ret[7] << (8 * 5));
+        vrms /= Math.pow(2, 24);
+        obj.vrms = vrms;
+        let irms = ((ret[8] + ret[9]) << (8 * 1)) +
+            (ret[10] << (8 * 2)) +
+            (ret[11] << (8 * 3)) +
+            (ret[12] << (8 * 4)) +
+            (ret[13] << (8 * 5));
+        irms /= Math.pow(2, 30);
+        obj.irms = irms;
+        let wa = ((ret[14] + ret[15]) << (8 * 1)) +
+            (ret[16] << (8 * 2)) +
+            (ret[17] << (8 * 3)) +
+            (ret[18] << (8 * 4)) +
+            (ret[19] << (8 * 5));
+        wa /= Math.pow(2, 24);
+        obj.wa = wa;
+        obj.date = new Date(1900 + ret[25], ret[24], ret[23], ret[22], ret[21], ret[20], 0);
+        return obj;
+    }
+    _pushData(data) {
+        if (this._waitings.length === 0) {
+            return;
+        }
+        if (this._totalSize === -1) {
+            if (data[0] !== 0xaa) {
+                return;
+            }
+            this._totalSize = (data[1] << 8) + data[2]; // Not found in maker's docs
+            this._received = [];
+            data = data.splice(3);
+        }
+        this._received.push(...data);
+        if (this._received.length === this._totalSize + 1) {
+            this._received.pop(); // => CRC
+            this._onRecieved(this._received);
+            this._received = [];
+            this._totalSize = -1;
+        }
+    }
+    _onRecieved(data) {
+        const one = this._waitings.shift();
+        if (!one) {
+            return;
+        }
+        if (one.command !== data[0]) {
+            one.reject(new Error(`received command does not matched`));
+            return;
+        }
+        one.resolve(data);
+    }
+    async _transaction(data) {
+        return await new Promise(async (resolve, reject) => {
+            const timeout = setTimeout(() => {
+                reject(new Error(`Timed out for waiting`));
+            }, 30 * 1000);
+            try {
+                this._waitings.push({
+                    command: data[0],
+                    resolve: (received) => {
+                        clearTimeout(timeout);
+                        resolve(received);
+                    },
+                    reject: (e) => {
+                        clearTimeout(timeout);
+                        reject(e);
+                    },
+                });
+                const send = this._createData(data);
+                await this._txToTargetCharacteristic.writeWait(send);
+            }
+            catch (e) {
+                clearTimeout(timeout);
+                reject(e);
+            }
+        });
     }
     _createData(data) {
         const cmd = Buffer.alloc(data.length + 4);
@@ -65478,7 +65638,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^3.0.8\",\"grunt\":\"^1.0.4\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^3.0.7\",\"jshint\":\"^2.10.3\",\"mocha\":\"^6.2.2\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.2\"}");
+module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.2\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^3.0.8\",\"grunt\":\"^1.0.4\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^3.0.7\",\"jshint\":\"^2.10.3\",\"mocha\":\"^6.2.2\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"}}");
 
 /***/ }),
 
