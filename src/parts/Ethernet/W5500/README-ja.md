@@ -11,6 +11,12 @@ W5500には1つのRJ-45コネクタを接続でき、最大100Mbpsでの通信�
 var ethernet = obniz.wired('W5500', { reset: 12, mosi: 23, miso: 19, sclk: 18, cs: 33 });
 ```
 
+M5社の出しているW5500スタックの場合は以下の配線となります。(なおSPIがディスプレイと共有のため、obnizOS for M5Stackでなく obnizOS for esp32を利用する必要があります)
+```javascript
+var ethernet = obniz.wired('W5500', { reset: 13, mosi: 23, miso: 19, sclk: 18, cs: 26 });
+```
+
+
 **ここからのコードは基本的に非同期(async)関数です。awaitを使用しないとSPI通信エラーが起きる原因となりますので、ご注意ください。**
 
 次に、本体のネットワーク設定をしてください。これは毎回必要です。細かいオプションは[リファレンス](https://obniz.github.io/obniz/obnizjs/interfaces/parts.w5500.w5500.commonoptions.html)をご覧ください。

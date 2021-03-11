@@ -11,6 +11,11 @@ First of all, specify the pin assignment of W5500 and pass it to wired.
 var ethernet = obniz.wired('W5500', { reset: 12, mosi: 23, miso: 19, sclk: 18, cs: 33 });
 ```
 
+In the case of M5's W5500 stack, the wiring is as follows. (Note that you need to use obnizOS for esp32 instead of obnizOS for M5Stack because the SPI is shared with the display)
+```javascript
+var ethernet = obniz.wired('W5500', { reset: 13, mosi: 23, miso: 19, sclk: 18, cs: 26 });
+```
+
 **The code from here is basically an async function. Please note that not using await will cause an SPI communication error.**
 
 Next, set the network settings of the main unit. This is necessary every time. See [the reference (Japanease)](https://obniz.github.io/obniz/obnizjs/interfaces/parts.w5500.w5500.commonoptions.html) for detailed options.
