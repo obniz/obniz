@@ -7,6 +7,11 @@ In the program
 1. pair the device by putting it into pairing mode, and retrieve and save the key
 2. connect to the device in normal mode with the pairing key you have already obtained
 
+## Attention About Pairing
+
+- You cannot share keys with another obnizID device. You can only use them on the device you paired them to.
+- A second pairing with a device that has been paired once will result in an error. You can reset the device by pressing and holding the button for more than 10 seconds.
+
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
