@@ -91,7 +91,7 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
   /**
    * get pairing key
    */
-  public async firstPairingWait() {
+  public async firstPairingWait(): Promise<string> {
     if (!this._peripheral) {
       throw new Error("No Peripheral Found");
     }
