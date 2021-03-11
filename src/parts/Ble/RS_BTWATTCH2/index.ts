@@ -125,6 +125,14 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
         await this._peripheral.disconnectWait();
         resolve(gotKeys);
       } catch (e) {
+        try {
+          if (this._peripheral.connected) {
+            await this._peripheral.disconnectWait();
+          }
+        } catch (disconErr) {
+          // ignore when disconnection failed.
+          console.log(disconErr);
+        }
         reject(e);
       }
     });
@@ -157,12 +165,24 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
     this._rxFromTargetCharacteristic = service.getCharacteristic("6e400003b5a3f393e0a9e50e24dcca9e")!;
     this._txToTargetCharacteristic = service.getCharacteristic("6e400002b5a3f393e0a9e50e24dcca9e")!;
 
-    await this._rxFromTargetCharacteristic.registerNotifyWait((data: number[]) => {
-      this._pushData(data);
-    });
+    try {
+      await this._rxFromTargetCharacteristic.registerNotifyWait((data: number[]) => {
+        this._pushData(data);
+      });
 
-    if (this.params.rtcAutoset !== false) {
-      await this.setRTC();
+      if (this.params.rtcAutoset !== false) {
+        await this.setRTC();
+      }
+    } catch (e) {
+      try {
+        if (this._peripheral.connected) {
+          await this._peripheral.disconnectWait();
+        }
+      } catch (disconErr) {
+        // ignore when disconnection failed.
+        console.log(disconErr);
+      }
+      throw e;
     }
   }
 

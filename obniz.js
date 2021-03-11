@@ -24497,6 +24497,15 @@ class RS_BTWATTCH2 {
                 resolve(gotKeys);
             }
             catch (e) {
+                try {
+                    if (this._peripheral.connected) {
+                        await this._peripheral.disconnectWait();
+                    }
+                }
+                catch (disconErr) {
+                    // ignore when disconnection failed.
+                    console.log(disconErr);
+                }
                 reject(e);
             }
         });
@@ -24527,11 +24536,25 @@ class RS_BTWATTCH2 {
         }
         this._rxFromTargetCharacteristic = service.getCharacteristic("6e400003b5a3f393e0a9e50e24dcca9e");
         this._txToTargetCharacteristic = service.getCharacteristic("6e400002b5a3f393e0a9e50e24dcca9e");
-        await this._rxFromTargetCharacteristic.registerNotifyWait((data) => {
-            this._pushData(data);
-        });
-        if (this.params.rtcAutoset !== false) {
-            await this.setRTC();
+        try {
+            await this._rxFromTargetCharacteristic.registerNotifyWait((data) => {
+                this._pushData(data);
+            });
+            if (this.params.rtcAutoset !== false) {
+                await this.setRTC();
+            }
+        }
+        catch (e) {
+            try {
+                if (this._peripheral.connected) {
+                    await this._peripheral.disconnectWait();
+                }
+            }
+            catch (disconErr) {
+                // ignore when disconnection failed.
+                console.log(disconErr);
+            }
+            throw e;
         }
     }
     /**
