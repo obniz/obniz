@@ -3,8 +3,6 @@
  * @module Parts.MH_Z19B
  */
 
-import { resolveCname } from "dns";
-import { isArray } from "util";
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
@@ -13,8 +11,8 @@ import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsIn
 export interface MH_Z19BOptions {
   vcc?: number;
   gnd?: number;
-  tx: number;
-  rx: number;
+  sensor_tx: number;
+  sensor_rx: number;
 }
 
 export default class MH_Z19B implements ObnizPartsInterface {
@@ -33,6 +31,8 @@ export default class MH_Z19B implements ObnizPartsInterface {
   public params: any;
   public vcc!: number;
   public gnd!: number;
+  public my_tx: any;
+  public my_rx: any;
 
   protected obniz!: Obniz;
 
@@ -42,12 +42,12 @@ export default class MH_Z19B implements ObnizPartsInterface {
   private uart!: PeripheralUART;
 
   constructor() {
-    this.keys = ["vcc", "gnd", "tx", "rx"];
-    this.requiredKeys = ["tx", "rx"];
+    this.keys = ["vcc", "gnd", "sensor_tx", "sensor_rx"];
+    this.requiredKeys = ["sensor_tx", "sensor_rx"];
 
     this.ioKeys = this.keys;
     this.displayName = "co2";
-    this.displayIoNames = { tx: "tx", rx: "rx" };
+    this.displayIoNames = { sensor_tx: "sensorTx", rx: "sensorRx" };
 
     this.rxbuf = Buffer.alloc(9);
 
@@ -71,6 +71,8 @@ export default class MH_Z19B implements ObnizPartsInterface {
 
     this.vcc = this.params.vcc;
     this.gnd = this.params.gnd;
+    this.my_tx = this.params.sensor_rx;
+    this.my_rx = this.params.sensor_tx;
 
     this.uart = obniz.getFreeUart();
   }
@@ -78,8 +80,8 @@ export default class MH_Z19B implements ObnizPartsInterface {
   public startHeating() {
     this.obniz.setVccGnd(this.vcc, this.gnd, "5v");
     this.uart.start({
-      tx: this.params.tx,
-      rx: this.params.rx,
+      tx: this.my_tx,
+      rx: this.my_rx,
       baud: 9600,
     });
   }
@@ -131,7 +133,7 @@ export default class MH_Z19B implements ObnizPartsInterface {
     this.uart.send(command);
   }
 
-  public CalibrateSpan(ppm: number = 2000) {
+  public calibrateSpan(ppm: number = 2000) {
     if (ppm < 1000) {
       return;
     }

@@ -39386,11 +39386,11 @@ exports.default = CCS811;
 Object.defineProperty(exports, "__esModule", { value: true });
 class MH_Z19B {
     constructor() {
-        this.keys = ["vcc", "gnd", "tx", "rx"];
-        this.requiredKeys = ["tx", "rx"];
+        this.keys = ["vcc", "gnd", "sensor_tx", "sensor_rx"];
+        this.requiredKeys = ["sensor_tx", "sensor_rx"];
         this.ioKeys = this.keys;
         this.displayName = "co2";
-        this.displayIoNames = { tx: "tx", rx: "rx" };
+        this.displayIoNames = { sensor_tx: "sensorTx", rx: "sensorRx" };
         this.rxbuf = Buffer.alloc(9);
         this.modes = {
             Read: 0x86,
@@ -39414,13 +39414,15 @@ class MH_Z19B {
         this.obniz = obniz;
         this.vcc = this.params.vcc;
         this.gnd = this.params.gnd;
+        this.my_tx = this.params.sensor_rx;
+        this.my_rx = this.params.sensor_tx;
         this.uart = obniz.getFreeUart();
     }
     startHeating() {
         this.obniz.setVccGnd(this.vcc, this.gnd, "5v");
         this.uart.start({
-            tx: this.params.tx,
-            rx: this.params.rx,
+            tx: this.my_tx,
+            rx: this.my_rx,
             baud: 9600,
         });
     }
@@ -39471,7 +39473,7 @@ class MH_Z19B {
         command = this.makeRequestCmd("CalibZ", [0x00, 0x00, 0x00, 0x00, 0x00]);
         this.uart.send(command);
     }
-    CalibrateSpan(ppm = 2000) {
+    calibrateSpan(ppm = 2000) {
         if (ppm < 1000) {
             return;
         }
