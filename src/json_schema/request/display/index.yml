@@ -1,0 +1,12 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/display"
+basePath: "display"
+
+"anyOf":
+  - {$ref: "/request/display/text"}
+  - {$ref: "/request/display/clear"}
+  - {$ref: "/request/display/qr"}
+  - {$ref: "/request/display/raw"}
+  - {$ref: "/request/display/pin_assign"}

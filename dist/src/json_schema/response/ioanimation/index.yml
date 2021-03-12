@@ -1,0 +1,8 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ioAnimation"
+basePath: "io"
+
+"anyOf":
+  - {$ref: "/response/ioAnimation/notify"}

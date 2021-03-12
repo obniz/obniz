@@ -1,0 +1,43 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:recommended",
+    "tslint-plugin-prettier"
+  ],
+  "jsRules": {},
+  "rules": {
+    "prettier": [true, {
+      "trailingComma": "all",
+      "arrowParens": "always",
+      "quoteProps": "consistent",
+      "printWidth": 120
+    }],
+    "no-console": [
+      false
+    ],
+    "class-name": false,//後で消したい
+    "radix": false, //後で消したい
+    "no-empty": false, //後で消したい
+    "no-var-requires": false, //後で消したい
+    "prefer-for-of" : false, //後で消したい
+    "forin": false, //後で消したい
+    "no-misused-new": false, //後で消したい
+    "no-namespace": false, //後で消したい
+    "max-line-length" : false, //後で消したい
+    "no-empty-interface": false,
+    "indent": [true, "spaces", 2],
+    "interface-name": [false],
+    "no-bitwise": [false],
+    "variable-name": false,
+    "object-literal-sort-keys" : false
+  },
+  "rulesDirectory": [],
+  "linterOptions": {
+    "exclude": [
+      "src/webpack-replace/*.js",
+      "test/test-*.{js,ts}",
+      "dist",
+      "examples"
+    ]
+  }
+}

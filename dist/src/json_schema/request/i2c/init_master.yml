@@ -1,0 +1,22 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/i2c/init_master"
+description: "internal pull-up is available. But, We recommend use external pull-up resistor."
+
+type: object
+required: [mode, sda, scl, clock]
+uniqueKeys: [sda,scl]
+properties:
+  mode:
+    type: string
+    enum: [master]
+
+  sda:  {$ref: "/pinSetting"}
+  scl:  {$ref: "/pinSetting"}
+
+  clock:
+    type: integer
+    description: "frequency (Hz)"
+    minimum: 1
+    maximum: 1000000 #1MHz

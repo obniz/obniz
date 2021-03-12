@@ -1,0 +1,11 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ws/ready"
+description: "all things ready"
+type: object
+required: [ready]
+properties:
+  ready:
+    type: boolean
+    enum: [true]

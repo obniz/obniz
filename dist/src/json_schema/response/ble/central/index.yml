@@ -1,0 +1,23 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ble/central"
+basePath: "ble"
+
+"anyOf":
+  - {$ref: "/response/ble/central/scan"}
+  - {$ref: "/response/ble/central/scan_finish"}
+  - {$ref: "/response/ble/central/status_update"}
+  - {$ref: "/response/ble/central/service_get"}
+  - {$ref: "/response/ble/central/service_get_finish"}
+  - {$ref: "/response/ble/central/characteristic_get"}
+  - {$ref: "/response/ble/central/characteristic_get_finish"}
+  - {$ref: "/response/ble/central/characteristic_write"}
+  - {$ref: "/response/ble/central/characteristic_read"}
+  - {$ref: "/response/ble/central/characteristic_register_notify"}
+  - {$ref: "/response/ble/central/characteristic_notify"}
+  - {$ref: "/response/ble/central/characteristic_notify"}
+  - {$ref: "/response/ble/central/descriptor_get"}
+  - {$ref: "/response/ble/central/descriptor_get_finish"}
+  - {$ref: "/response/ble/central/descriptor_write"}
+  - {$ref: "/response/ble/central/descriptor_read"}

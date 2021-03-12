@@ -1,0 +1,12 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ble/central/scan_finish"
+deprecated: 3.0.0
+
+type: object
+required: [scan_result_finish]
+properties:
+  scan_result_finish:
+    type: boolean
+    enum: [true]

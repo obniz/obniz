@@ -1,0 +1,96 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/peripheral/service_start"
+related:
+  - "/response/ble/peripheral/status"
+  - "/response/ble/peripheral/characteristic_notify_read"
+  - "/response/ble/peripheral/characteristic_notify_write"
+  - "/response/ble/peripheral/descriptor_notify_read"
+  - "/response/ble/peripheral/descriptor_notify_write"
+description: "callback of external device connected"
+deprecated: 3.0.0
+
+type: object
+required: [peripheral]
+properties:
+  peripheral:
+    type: object
+    required: [services]
+    properties:
+      services:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          required: [uuid]
+          additionalProperties: false
+          properties:
+            uuid: {$ref: "/uuid"}
+            characteristics:
+              type: array
+              minItems: 0
+              items:
+                type: object
+                required: [uuid]
+                additionalProperties: false
+                properties:
+                  uuid: {$ref: "/uuid"}
+                  data: {$ref: "/dataArray"}
+                  properties:
+                    type: array
+                    default: [read,write]
+                    items:
+                      type: string
+                      enum:
+                        - broadcast
+                        - read
+                        - write_without_response
+                        - write
+                        - notify
+                        - indicate
+                        - auth
+                        - extended_properties
+
+                  permissions:
+                    type: array
+                    default: [read,write]
+                    items:
+                      default: [read,write]
+                      type: string
+                      enum:
+                        - read
+                        - read_encrypted
+                        - read_encrypted_mitm
+                        - write
+                        - write_encrypted
+                        - write_encrypted_mitm
+                        - write_signed
+                        - write_signed_mitm
+
+                  descriptors:
+                    type: array
+                    minItems: 0
+                    items:
+                      type: object
+                      required: [uuid]
+                      additionalProperties: false
+                      properties:
+                        uuid: {$ref: "/uuid"}
+                        data: {$ref: "/dataArray"}
+                        permissions:
+                          type: array
+                          default: [read,write]
+                          items:
+                            default: [read,write]
+                            type: string
+                            enum:
+                              - read
+                              - read_encrypted
+                              - read_encrypted_mitm
+                              - write
+                              - write_encrypted
+                              - write_encrypted_mitm
+                              - write_signed
+                              - write_signed_mitm
+

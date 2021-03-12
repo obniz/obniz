@@ -1,0 +1,8 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/wifi"
+basePath: "wifi"
+
+"anyOf":
+  - {$ref:  "/response/wifi/scan"}

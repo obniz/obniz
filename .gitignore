@@ -14,4 +14,11 @@ temp
 .idea
 log
 
+/test*.js
+/test*.html
+/test/test*.html
+/test/test*.js
+/test/test*.ts
+dist/**/*.map
+dist/**/*.ts
 .vscode

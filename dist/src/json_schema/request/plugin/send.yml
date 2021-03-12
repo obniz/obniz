@@ -1,0 +1,11 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/plugin/send"
+desccription: "plugin send"
+
+type: object
+required: [send]
+properties:
+  send: {$ref: "/dataArray"}
+

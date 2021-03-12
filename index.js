@@ -1,1 +1,1 @@
-module.exports = require('./obniz/index');
+module.exports = require('./dist/src/obniz/index');
