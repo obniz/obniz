@@ -22065,6 +22065,7 @@ var map = {
 	"./Ethernet/W5500/index.js": "./dist/src/parts/Ethernet/W5500/index.js",
 	"./GPS/GYSFDMAXB/index.js": "./dist/src/parts/GPS/GYSFDMAXB/index.js",
 	"./GasSensor/CCS811/index.js": "./dist/src/parts/GasSensor/CCS811/index.js",
+	"./GasSensor/MH_Z19B/index.js": "./dist/src/parts/GasSensor/MH_Z19B/index.js",
 	"./GasSensor/MQ135/index.js": "./dist/src/parts/GasSensor/MQ135/index.js",
 	"./GasSensor/MQ2/index.js": "./dist/src/parts/GasSensor/MQ2/index.js",
 	"./GasSensor/MQ3/index.js": "./dist/src/parts/GasSensor/MQ3/index.js",
@@ -39370,6 +39371,195 @@ class CCS811 extends i2cParts_1.default {
 }
 exports.default = CCS811;
 
+
+/***/ }),
+
+/***/ "./dist/src/parts/GasSensor/MH_Z19B/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.MH_Z19B
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class MH_Z19B {
+    constructor() {
+        this.keys = ["vcc", "gnd", "tx", "rx"];
+        this.requiredKeys = ["tx", "rx"];
+        this.ioKeys = this.keys;
+        this.displayName = "co2";
+        this.displayIoNames = { tx: "tx", rx: "rx" };
+        this.rxbuf = Buffer.alloc(9);
+        this.modes = {
+            Read: 0x86,
+            CalibZ: 0x87,
+            CalibS: 0x88,
+            ACBOnOff: 0x79,
+            RangeSet: 0x99,
+        };
+        this.rangeType = {
+            2000: [0x00, 0x00, 0x00, 0x07, 0xd0],
+            5000: [0x00, 0x00, 0x00, 0x13, 0x88],
+            10000: [0x00, 0x00, 0x00, 0x27, 0x10],
+        };
+    }
+    static info() {
+        return {
+            name: "MH_Z19B",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.vcc = this.params.vcc;
+        this.gnd = this.params.gnd;
+        this.uart = obniz.getFreeUart();
+    }
+    startHeating() {
+        this.obniz.setVccGnd(this.vcc, this.gnd, "5v");
+        this.uart.start({
+            tx: this.params.tx,
+            rx: this.params.rx,
+            baud: 9600,
+        });
+    }
+    heatWait(seconds) {
+        this.startHeating();
+        if (typeof seconds === "number" && seconds > 0) {
+            seconds *= 1000;
+        }
+        else {
+            seconds = 3 * 60 * 1000;
+        }
+        return new Promise((resolve) => {
+            setTimeout(resolve, seconds);
+        });
+    }
+    getWait() {
+        return new Promise(async (resolve, reject) => {
+            try {
+                await this.requestReadConcentraiton();
+                setTimeout(async () => {
+                    if (this.uart.isDataExists()) {
+                        const data = this.uart.readBytes();
+                        const val = await this.getCO2Concentration(data);
+                        resolve(val);
+                    }
+                    else {
+                        reject(undefined);
+                        console.log("cannot receive data");
+                    }
+                }, 10);
+                // await this.obniz.wait(10);
+                // if (this.uart.isDataExists()) {
+                //   const data: number[] = this.uart.readBytes();
+                //   const val: number = await this.getCO2Concentration(data);
+                //   resolve(val);
+                // } else {
+                //   reject();
+                //   console.log("cannot receive data");
+                // }
+            }
+            catch (e) {
+                reject(e);
+            }
+        });
+    }
+    calibrateZero() {
+        let command;
+        command = this.makeRequestCmd("CalibZ", [0x00, 0x00, 0x00, 0x00, 0x00]);
+        this.uart.send(command);
+    }
+    CalibrateSpan(ppm = 2000) {
+        if (ppm < 1000) {
+            return;
+        }
+        let command;
+        const span_byte = Buffer.alloc(2);
+        span_byte[0] = ppm / 256;
+        span_byte[1] = ppm % 256;
+        command = this.makeRequestCmd("CalibS", [span_byte[0], span_byte[1], 0x00, 0x00, 0x00]);
+        this.uart.send(command);
+    }
+    setAutoCalibration(autoCalibration = true) {
+        let command;
+        if (autoCalibration) {
+            command = this.makeRequestCmd("ACBOnOff", [0xa0, 0x00, 0x00, 0x00, 0x00]);
+        }
+        else {
+            command = this.makeRequestCmd("ABCOnOff", [0x00, 0x00, 0x00, 0x00, 0x00]);
+        }
+        this.uart.send(command);
+    }
+    setDetectionRange(range) {
+        let command;
+        if (range in this.rangeType) {
+            command = this.makeRequestCmd("RangeSet", this.rangeType[range]);
+            console.log("Configured Range : " + String(range));
+        }
+        else {
+            console.log("invalid range value");
+            command = this.makeRequestCmd("RangeSet", this.rangeType[5000]);
+        }
+        this.uart.send(command);
+    }
+    checkSum(res8) {
+        let sum = 0;
+        for (let i = 1; i < 8; i++) {
+            sum += res8[i];
+        }
+        sum = 255 - (sum % 256) + 1;
+        return sum;
+    }
+    makeRequestCmd(mode, databox = [0x00, 0x00, 0x00, 0x00, 0x00]) {
+        const _buffer = Buffer.alloc(9);
+        _buffer[0] = 0xff;
+        _buffer[1] = 0x01;
+        _buffer[2] = this.modes[mode];
+        for (let i = 3; i < 8; i++) {
+            _buffer[i] = databox[i - 3];
+        }
+        _buffer[8] = this.checkSum(_buffer);
+        return _buffer;
+    }
+    requestReadConcentraiton() {
+        let command;
+        command = this.makeRequestCmd("Read", [0x00, 0x00, 0x00, 0x00, 0x00]);
+        this.uart.send(command);
+    }
+    getCO2Concentration(data) {
+        let co2Concentration = 0;
+        const status = this.checkResponseData(data);
+        if (status) {
+            co2Concentration = this.rxbuf[2] * 256 + this.rxbuf[3];
+        }
+        else {
+            console.log("checksum error");
+        }
+        this.rxbuf = [];
+        return co2Concentration;
+    }
+    checkResponseData(data) {
+        let cs_result = false;
+        if (data.length === 9) {
+            for (let i = 0; i < data.length; i++) {
+                this.rxbuf[i] = data[i];
+            }
+            if (this.checkSum(this.rxbuf) === this.rxbuf[8]) {
+                cs_result = true;
+            }
+            else {
+                cs_result = false;
+            }
+        }
+        data = [];
+        return cs_result;
+    }
+}
+exports.default = MH_Z19B;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -65066,7 +65256,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.2\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^3.0.8\",\"grunt\":\"^1.0.4\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^3.0.7\",\"jshint\":\"^2.10.3\",\"mocha\":\"^6.2.2\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"}}");
+module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^3.0.8\",\"grunt\":\"^1.0.4\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^3.0.7\",\"jshint\":\"^2.10.3\",\"mocha\":\"^6.2.2\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.2\"}");
 
 /***/ }),
 
