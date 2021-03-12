@@ -22018,6 +22018,7 @@ var map = {
 	"./Ble/REX_BTPM25V/index.js": "./dist/src/parts/Ble/REX_BTPM25V/index.js",
 	"./Ble/RS_BTIREX2/index.js": "./dist/src/parts/Ble/RS_BTIREX2/index.js",
 	"./Ble/RS_SEEK3/index.js": "./dist/src/parts/Ble/RS_SEEK3/index.js",
+	"./Ble/SM_GW_920_BLE/index.js": "./dist/src/parts/Ble/SM_GW_920_BLE/index.js",
 	"./Ble/UT201BLE/index.js": "./dist/src/parts/Ble/UT201BLE/index.js",
 	"./Ble/abstract/services/batteryService.js": "./dist/src/parts/Ble/abstract/services/batteryService.js",
 	"./Ble/abstract/services/genericAccess.js": "./dist/src/parts/Ble/abstract/services/genericAccess.js",
@@ -24488,6 +24489,109 @@ class RS_Seek3 {
     }
 }
 exports.default = RS_Seek3;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/SM_GW_920_BLE/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.SM_GW_920_BLE
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class SM_GW_920_BLE {
+    constructor() {
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: "SM_GW_920_BLE",
+        };
+    }
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
+        }
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
+        }
+        return (peripheral.adv_data[18] === 0xff &&
+            peripheral.adv_data[19] === 0xff &&
+            peripheral.adv_data[20] === 0xff &&
+            peripheral.adv_data[21] === 0xff &&
+            peripheral.adv_data[22] === 0xff &&
+            peripheral.adv_data[23] === 0xff &&
+            peripheral.adv_data[24] === 0xff &&
+            peripheral.adv_data[25] === 0xff);
+    }
+    static getData(peripheral) {
+        if (!this.isDevice(peripheral)) {
+            return null;
+        }
+        const deviceTypeList = {
+            0x03: "leakage",
+            0x04: "gateway",
+        };
+        const deviceType = deviceTypeList[peripheral.adv_data[7]] || "unknown";
+        const deviceId = (peripheral.adv_data[11] << 24) +
+            (peripheral.adv_data[12] << 16) +
+            (peripheral.adv_data[13] << 8) +
+            (peripheral.adv_data[14] << 0);
+        const eventTypeList = {
+            0x01: "alive",
+            0x02: "leak",
+        };
+        const eventType = eventTypeList[peripheral.adv_data[15]] || "unknown";
+        const battery = peripheral.adv_data[16];
+        const rssi = peripheral.adv_data[17];
+        return {
+            deviceType,
+            deviceId,
+            eventType,
+            battery,
+            rssi,
+        };
+    }
+}
+exports.default = SM_GW_920_BLE;
+SM_GW_920_BLE.deviceAdv = [
+    0x02,
+    0x01,
+    0x04,
+    0x16,
+    0xff,
+    0x65,
+    0x02,
+    -1,
+    0x11,
+    0x01,
+    0x00,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+];
 
 
 /***/ }),
@@ -38475,7 +38579,7 @@ class W5500Socket {
         // const rxReadDataPointer = await this.getRXReadDataPointerWait();
         const data = await this.ethernet.bigReadWait(this.rxReadDataPointer, BSB_SOCKET_RX_BUFFER(this.id), rxRecieveSize);
         this.rxReadDataPointer += rxRecieveSize;
-        await this.setRXReadDataPointerWait(this.rxReadDataPointer + rxRecieveSize);
+        await this.setRXReadDataPointerWait(this.rxReadDataPointer);
         await this.sendCommandWait("Receive");
         return this.stringMode ? new TextDecoder().decode(Uint8Array.from(data)) : data;
     }
@@ -65078,7 +65182,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^3.0.8\",\"grunt\":\"^1.0.4\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^3.0.7\",\"jshint\":\"^2.10.3\",\"mocha\":\"^6.2.2\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.2\"}");
+module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.2\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^3.0.8\",\"grunt\":\"^1.0.4\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^3.0.7\",\"jshint\":\"^2.10.3\",\"mocha\":\"^6.2.2\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"}}");
 
 /***/ }),
 
