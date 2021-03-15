@@ -1218,7 +1218,7 @@ class W5500Socket {
         // const rxReadDataPointer = await this.getRXReadDataPointerWait();
         const data = await this.ethernet.bigReadWait(this.rxReadDataPointer, BSB_SOCKET_RX_BUFFER(this.id), rxRecieveSize);
         this.rxReadDataPointer += rxRecieveSize;
-        await this.setRXReadDataPointerWait(this.rxReadDataPointer + rxRecieveSize);
+        await this.setRXReadDataPointerWait(this.rxReadDataPointer);
         await this.sendCommandWait("Receive");
         return this.stringMode ? new TextDecoder().decode(Uint8Array.from(data)) : data;
     }
