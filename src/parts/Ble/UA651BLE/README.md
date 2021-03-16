@@ -1,17 +1,17 @@
-# UT201BLE
-This is a thermometer from A&D Corporation.
+# UA651BLE
+This is a blood pressure meter from A&D Corporation.
 
 ![](./image.jpg)
 
 ## isDevice(peripheral)
 
-Judges whether or not it is UT201BLE based on the advertised information received by the BLE.
+Judges whether or not it is UA651BLE based on the advertised information received by the BLE.
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
-const UT201BLE = Obniz.getPartsClass("UT201BLE");
+const UA651BLE = Obniz.getPartsClass("UA651BLE");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (UT201BLE.isDevice(peripheral)) {
+  if (UA651BLE.isDevice(peripheral)) {
     console.log("device find");
   }
 };
@@ -19,18 +19,18 @@ await obniz.ble.scan.startWait();
 
 ```
 
-## new UT201BLE(peripheral)
+## new UA651BLE(peripheral)
 
 Instances are created based on the advertised information received by the BLE.
 
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
-const UT201BLE = Obniz.getPartsClass("UT201BLE");
+const UA651BLE = Obniz.getPartsClass("UA651BLE");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (UT201BLE.isDevice(peripheral) ) {
+  if (UA651BLE.isDevice(peripheral) ) {
     console.log("device find");
-    const device = new UT201BLE(peripheral);
+    const device = new UA651BLE(peripheral);
   }
 };
 await obniz.ble.scan.startWait();
@@ -45,32 +45,34 @@ The only data that can be retrieved is the data that the device has not yet sent
 
 After the data is sent, the connection to the device is automatically terminated.
 
-
-
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
-const UT201BLE = Obniz.getPartsClass("UT201BLE");
+const UA651BLE = Obniz.getPartsClass("UA651BLE");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (UT201BLE.isDevice(peripheral)) {
+  if (UA651BLE.isDevice(peripheral)) {
     console.log("find");
-    const device = new UT201BLE(peripheral);
+    const device = new UA651BLE(peripheral);
     
     const data = await device.getDataWait();
     
     console.log(data);
     // {
-    //     fahrenheit?: number;
-    //     celsius?: number;
-    //     date?: {
-    //       year: number;
-    //       month: number;
-    //       day: number;
-    //       hour: number;
-    //       minute: number;
-    //       second: number;
-    //     };
-    //     temperatureType?: string;
+    // SystolicPressure_mmHg?: number;
+    // DiastolicPressure_mmHg?: number;
+    // MeanArterialPressure_mmHg?: number;
+    // SystolicPressure_kPa?: number;
+    // DiastolicPressure_kPa?: number;
+    // MeanArterialPressure_kPa?: number;
+    // date?: {
+    //   year: number;
+    //   month: number;
+    //   day: number;
+    //   hour: number;
+    //   minute: number;
+    //   second: number;
+    // }
+    // PulseRate?: number;
     //   }
   }
 };
@@ -79,12 +81,16 @@ await obniz.ble.scan.startWait();
 ```
 
 
-Output format is here. temperature data is in fahrenheit or celsius.
+Output format is here. Blood pressure data is in mmHg or kPa format, and Pulse rate data is in pulse/min format.
 
 ```json
 {
-  fahrenheit?: number;
-  celsius?: number;
+  SystolicPressure_mmHg?: number;
+  DiastolicPressure_mmHg?: number;
+  MeanArterialPressure_mmHg?: number;
+  SystolicPressure_kPa?: number;
+  DiastolicPressure_kPa?: number;
+  MeanArterialPressure_kPa?: number;
   date?: {
     year: number;
     month: number;
@@ -92,7 +98,7 @@ Output format is here. temperature data is in fahrenheit or celsius.
     hour: number;
     minute: number;
     second: number;
-  };
-  temperatureType?: string;
+  }
+  PulseRate?: number;
 }
 ```

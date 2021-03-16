@@ -1,18 +1,18 @@
-# UT201BLE
-株式会社エー・アンド・デイの体温計です。
+# UA651BLE
+株式会社エー・アンド・デイの血圧計です。
 
 ![](./image.jpg)
 
 ## isDevice(peripheral)
 
-BLEで受信したアドバタイズ情報をもとに、UT201BLEかどうかを判定します
+BLEで受信したアドバタイズ情報をもとに、UA651BLEかどうかを判定します。
 
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
-const UT201BLE = Obniz.getPartsClass("UT201BLE");
+const UA651BLE = Obniz.getPartsClass("UA651BLE");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (UT201BLE.isDevice(peripheral)) {
+  if (UA651BLE.isDevice(peripheral)) {
     console.log("device find");
   }
 };
@@ -20,18 +20,18 @@ await obniz.ble.scan.startWait();
 
 ```
 
-## new UT201BLE(peripheral)
+## new UA651BLE(peripheral)
 
 BLEで受信したアドバタイズ情報をもとに、インスタンスを作成します。
 
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
-const UT201BLE = Obniz.getPartsClass("UT201BLE");
+const UA651BLE = Obniz.getPartsClass("UA651BLE");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (UT201BLE.isDevice(peripheral) ) {
+  if (UA651BLE.isDevice(peripheral) ) {
     console.log("device find");
-    const device = new UT201BLE(peripheral);
+    const device = new UA651BLE(peripheral);
   }
 };
 await obniz.ble.scan.startWait();
@@ -49,27 +49,31 @@ await obniz.ble.scan.startWait();
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
-const UT201BLE = Obniz.getPartsClass("UT201BLE");
+const UA651BLE = Obniz.getPartsClass("UA651BLE");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (UT201BLE.isDevice(peripheral)) {
+  if (UA651BLE.isDevice(peripheral)) {
     console.log("find");
-    const device = new UT201BLE(peripheral);
+    const device = new UA651BLE(peripheral);
     
     const data = await device.getDataWait();
     
     console.log(data);
     // {
-    //     fahrenheit?: number;
-    //     celsius?: number;
-    //     date?: {
-    //       year: number;
-    //       month: number;
-    //       day: number;
-    //       hour: number;
-    //       minute: number;
-    //       second: number;
-    //     };
-    //     temperatureType?: string;
+    // SystolicPressure_mmHg?: number;
+    // DiastolicPressure_mmHg?: number;
+    // MeanArterialPressure_mmHg?: number;
+    // SystolicPressure_kPa?: number;
+    // DiastolicPressure_kPa?: number;
+    // MeanArterialPressure_kPa?: number;
+    // date?: {
+    //   year: number;
+    //   month: number;
+    //   day: number;
+    //   hour: number;
+    //   minute: number;
+    //   second: number;
+    // }
+    // PulseRate?: number;
     //   }
   }
 };
@@ -78,12 +82,16 @@ await obniz.ble.scan.startWait();
 ```
 
 
-データフォーマットは次の通りで、celsius　もしくは fahrenheit に温度データが入っています。
+データフォーマットは次の通りで、血圧が mmHg もしくは kPa 形式で、脈拍が pulse/min 形式で入っています。
 
 ```json
 {
-  fahrenheit?: number;
-  celsius?: number;
+  SystolicPressure_mmHg?: number;
+  DiastolicPressure_mmHg?: number;
+  MeanArterialPressure_mmHg?: number;
+  SystolicPressure_kPa?: number;
+  DiastolicPressure_kPa?: number;
+  MeanArterialPressure_kPa?: number;
   date?: {
     year: number;
     month: number;
@@ -91,7 +99,7 @@ await obniz.ble.scan.startWait();
     hour: number;
     minute: number;
     second: number;
-  };
-  temperatureType?: string;
+  }
+  PulseRate?: number;
 }
 ```
