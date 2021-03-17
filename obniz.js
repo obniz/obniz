@@ -25108,8 +25108,7 @@ class UA1200BLE {
                 },
             },
         });
-        const { timeChar, customServiceChar } = this._getChars();
-        await this._writeTimeChar(this._timezoneOffsetMinute);
+        const { customServiceChar } = this._getCharsCoopMode();
         await customServiceChar.writeWait([2, 1, 3]); // disconnect req
         return key;
     }
@@ -25147,7 +25146,7 @@ class UA1200BLE {
             "23",
         ].join("");
         if (peripheralHex.indexOf(peripheralArray) > -1) {
-            throw new Error("Cooperation mode(BP-01) is not supportted in this liberary so far. Please activate obniz after measurement.");
+            throw new Error("Cooperation mode(BP-01) is not supportted in this liberary at present. Please activate obniz after measurement.");
         }
         // console.log(this._peripheral.services);
         return await new Promise(async (resolve, reject) => {
@@ -25161,6 +25160,8 @@ class UA1200BLE {
             // bloodPressureMeasurementChar.registerNotifyWait((data: number[]) => {
             //   results.push(this._analyzeData(data));
             // });
+            await this._writeTimeChar(this._timezoneOffsetMinute);
+            // await this._writeCCCDChar();
             const { bloodPressureMeasurementChar, timeChar } = this._getCharsSingleMode();
             await this._writeTimeChar(this._timezoneOffsetMinute);
             bloodPressureMeasurementChar.registerNotifyWait((data) => {
@@ -25233,23 +25234,6 @@ class UA1200BLE {
         }
         return result;
     }
-    _getChars() {
-        if (!this._peripheral) {
-            throw new Error("UA1200BLE not found");
-        }
-        const bloodPressureMeasurementChar = this._peripheral
-            .getService("1810")
-            .getCharacteristic("2A35");
-        const timeChar = this._peripheral.getService("1810").getCharacteristic("2A08");
-        const customServiceChar = this._peripheral
-            .getService("233bf0005a341b6d975c000d5690abe4") // Primary Service Custom Service(pp.26)
-            .getCharacteristic("233bf0015a341b6d975c000d5690abe4"); // Custom Characteristic(pp.27)
-        return {
-            bloodPressureMeasurementChar,
-            timeChar,
-            customServiceChar,
-        };
-    }
     _getCharsCoopMode() {
         if (!this._peripheral) {
             throw new Error("UA1200BLE not found");
@@ -25273,6 +25257,7 @@ class UA1200BLE {
             .getService("1810")
             .getCharacteristic("2A35");
         const timeChar = this._peripheral.getService("1805").getCharacteristic("2A2B");
+        // const CCCDChar = this._peripheral.getService("1810")!.getCharacteristic("2902")!;
         return {
             bloodPressureMeasurementChar,
             timeChar,

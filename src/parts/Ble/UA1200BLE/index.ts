@@ -75,9 +75,7 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
       },
     });
 
-    const { timeChar, customServiceChar } = this._getChars();
-
-    await this._writeTimeChar(this._timezoneOffsetMinute);
+    const { customServiceChar } = this._getCharsCoopMode();
 
     await customServiceChar.writeWait([2, 1, 3]); // disconnect req
     return key;
@@ -126,7 +124,7 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
     ].join("");
     if (peripheralHex.indexOf(peripheralArray) > -1) {
       throw new Error(
-        "Cooperation mode(BP-01) is not supportted in this liberary so far. Please activate obniz after measurement.",
+        "Cooperation mode(BP-01) is not supportted in this liberary at present. Please activate obniz after measurement.",
       );
     }
 
@@ -144,6 +142,8 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
       // bloodPressureMeasurementChar.registerNotifyWait((data: number[]) => {
       //   results.push(this._analyzeData(data));
       // });
+      await this._writeTimeChar(this._timezoneOffsetMinute);
+      // await this._writeCCCDChar();
       const { bloodPressureMeasurementChar, timeChar } = this._getCharsSingleMode();
       await this._writeTimeChar(this._timezoneOffsetMinute);
       bloodPressureMeasurementChar.registerNotifyWait((data: number[]) => {
@@ -222,26 +222,6 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
     return result;
   }
 
-  private _getChars() {
-    if (!this._peripheral) {
-      throw new Error("UA1200BLE not found");
-    }
-
-    const bloodPressureMeasurementChar: BleRemoteCharacteristic = this._peripheral
-      .getService("1810")!
-      .getCharacteristic("2A35")!;
-    const timeChar = this._peripheral.getService("1810")!.getCharacteristic("2A08")!;
-    const customServiceChar = this._peripheral
-      .getService("233bf0005a341b6d975c000d5690abe4")! // Primary Service Custom Service(pp.26)
-      .getCharacteristic("233bf0015a341b6d975c000d5690abe4")!; // Custom Characteristic(pp.27)
-
-    return {
-      bloodPressureMeasurementChar,
-      timeChar,
-      customServiceChar,
-    };
-  }
-
   private _getCharsCoopMode() {
     if (!this._peripheral) {
       throw new Error("UA1200BLE not found");
@@ -269,10 +249,12 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
       .getService("1810")!
       .getCharacteristic("2A35")!;
     const timeChar = this._peripheral.getService("1805")!.getCharacteristic("2A2B")!;
+    // const CCCDChar = this._peripheral.getService("1810")!.getCharacteristic("2902")!;
 
     return {
       bloodPressureMeasurementChar,
       timeChar,
+      // CCCDChar,
     };
   }
 
@@ -291,4 +273,9 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
     const arr = Array.from(buf);
     await timeChar.writeWait(arr);
   }
+
+  // private async _writeCCCDChar() {
+  //   const { CCCDChar } = this._getCharsSingleMode();
+  //   await CCCDChar.writeWait([512]);
+  // }
 }
