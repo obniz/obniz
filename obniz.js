@@ -25217,14 +25217,15 @@ class UA1200BLE {
         }
         if (flags & 0x02) {
             // Time Stamp Flag
-            result.date = {
-                year: buf.readUInt16LE(index),
-                month: buf.readUInt8(index + 2),
-                day: buf.readUInt8(index + 3),
-                hour: buf.readUInt8(index + 4),
-                minute: buf.readUInt8(index + 5),
-                second: buf.readUInt8(index + 6),
-            };
+            // TODO: get Time stamp
+            // result.date = {
+            //   year: buf.readUInt16LE(index),
+            //   month: buf.readUInt8(index + 2),
+            //   day: buf.readUInt8(index + 3),
+            //   hour: buf.readUInt8(index + 4),
+            //   minute: buf.readUInt8(index + 5),
+            //   second: buf.readUInt8(index + 6),
+            // };
             index += 7;
         }
         if (flags & 0x04) {
@@ -25267,13 +25268,16 @@ class UA1200BLE {
         const { timeChar } = this._getCharsSingleMode();
         const date = new Date();
         date.setTime(Date.now() + 1000 * 60 * timeOffsetMinute);
-        const buf = Buffer.alloc(7);
+        const buf = Buffer.alloc(9);
+        // Current Time Service(pp.11)
         buf.writeUInt16LE(date.getUTCFullYear(), 0);
         buf.writeUInt8(date.getUTCMonth() + 1, 2);
         buf.writeUInt8(date.getUTCDate(), 3);
         buf.writeUInt8(date.getUTCHours(), 4);
         buf.writeUInt8(date.getUTCMinutes(), 5);
         buf.writeUInt8(date.getUTCSeconds(), 6);
+        buf.writeUInt8(date.getDay(), 7);
+        buf.writeUInt8(0, 8);
         const arr = Array.from(buf);
         await timeChar.writeWait(arr);
     }
