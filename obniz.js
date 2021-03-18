@@ -24520,10 +24520,9 @@ class RS_BTWATTCH2 {
         if (this.isPairingMode()) {
             throw new Error(`peripheral is pairing mode. Unplug and plug it again to change to normal mode.`);
         }
-        await this._peripheral.connectWait({
-            pairingOption: {
-                keys,
-            },
+        await this._peripheral.connectWait();
+        await this._peripheral.pairingWait({
+            keys,
         });
         this._peripheral.ondisconnect = (reason) => {
             if (typeof this.ondisconnect === "function") {
