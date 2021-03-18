@@ -10357,7 +10357,11 @@ class Smp extends eventemitter3_1.default {
     async pairingWait(options) {
         this._options = Object.assign(Object.assign({}, this._options), options);
         if (this._options && this._options.keys) {
-            return await this.pairingWithKeyWait(this._options.keys);
+            const result = await this.pairingWithKeyWait(this._options.keys);
+            if (this._options && this._options.onPairedCallback) {
+                this._options.onPairedCallback(this.getKeys());
+            }
+            return result;
         }
         this.debug(`Going to Pairing`);
         await this.sendPairingRequestWait();

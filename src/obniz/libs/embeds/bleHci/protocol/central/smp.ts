@@ -118,7 +118,12 @@ class Smp extends EventEmitter<SmpEventTypes> {
   public async pairingWait(options?: SmpEncryptOptions) {
     this._options = { ...this._options, ...options };
     if (this._options && this._options.keys) {
-      return await this.pairingWithKeyWait(this._options.keys);
+      const result = await this.pairingWithKeyWait(this._options.keys);
+
+      if (this._options && this._options.onPairedCallback) {
+        this._options.onPairedCallback(this.getKeys());
+      }
+      return result;
     }
     this.debug(`Going to Pairing`);
     await this.sendPairingRequestWait();
