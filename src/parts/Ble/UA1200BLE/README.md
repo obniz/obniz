@@ -64,14 +64,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
     // SystolicPressure_kPa?: number;
     // DiastolicPressure_kPa?: number;
     // MeanArterialPressure_kPa?: number;
-    // date?: {
-    //   year: number;
-    //   month: number;
-    //   day: number;
-    //   hour: number;
-    //   minute: number;
-    //   second: number;
-    // }
     // PulseRate?: number;
     //   }
   }
@@ -91,14 +83,6 @@ Output format is here. Blood pressure data is in mmHg or kPa format, and Pulse r
   SystolicPressure_kPa?: number;
   DiastolicPressure_kPa?: number;
   MeanArterialPressure_kPa?: number;
-  date?: {
-    year: number;
-    month: number;
-    day: number;
-    hour: number;
-    minute: number;
-    second: number;
-  }
   PulseRate?: number;
 }
 ```
