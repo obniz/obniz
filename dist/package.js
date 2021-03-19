@@ -112,14 +112,14 @@ module.exports = {
     "tslint-plugin-prettier": "^2.1.0",
     "typedoc": "^0.16.9",
     "typedoc-plugin-external-module-name": "^3.0.0",
+    "typedoc-plugin-internal-external": "^2.1.1",
     "typescript": "^3.7.5",
     "vinyl": "^2.2.0",
     "webpack": "^4.34.0",
     "webpack-cli": "^3.3.4",
     "webpack-node-externals": "^1.7.2",
     "webpack-stream": "^5.2.1",
-    "yaml-loader": "^0.5.0",
-    "typedoc-plugin-internal-external": "^2.1.1"
+    "yaml-loader": "^0.5.0"
   },
   "dependencies": {
     "@types/eventemitter3": "^1.2.0",
@@ -133,7 +133,7 @@ module.exports = {
     "eventemitter3": "^3.1.2",
     "js-yaml": "^3.13.1",
     "node-dir": "^0.1.17",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2.3.0",
     "semver": "^5.7.0",
     "tv4": "^1.3.0",
     "ws": "^6.1.4"
