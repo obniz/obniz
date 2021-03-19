@@ -32628,6 +32628,7 @@ class MatrixLED_HT16K33 {
     constructor() {
         this.width = 0;
         this.height = 0;
+        this.bitArray = [7, 0, 1, 2, 3, 4, 5, 6];
         this.keys = ["vcc", "gnd", "sda", "scl", "i2c", "address"];
         this.requiredKeys = [];
         this.command = {};
@@ -32707,7 +32708,12 @@ class MatrixLED_HT16K33 {
     }
     dots(data) {
         for (let i = 0; i < this.height; i++) {
-            this.vram[i] = data[i];
+            this.vram[i] = 0;
+            for (let j = 0; j < this.width; j++) {
+                if (data[i] & (1 << j)) {
+                    this.vram[i] |= 0x1 << this.bitArray[j];
+                }
+            }
         }
         this.writeVram();
     }
@@ -42386,10 +42392,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const MatrixLED_HT16K33_1 = __importDefault(__webpack_require__("./dist/src/parts/Display/MatrixLED_HT16K33/index.js"));
 class Keyestudio_HT16K33 extends MatrixLED_HT16K33_1.default {
-    constructor() {
-        super(...arguments);
-        this.bitArray = [7, 0, 1, 2, 3, 4, 5, 6];
-    }
     static info() {
         return {
             name: "Keyestudio_HT16K33",

@@ -24,6 +24,8 @@ export default class MatrixLED_HT16K33 implements ObnizPartsInterface {
   public width: number = 0;
   public height: number = 0;
 
+  public bitArray: number[] = [7, 0, 1, 2, 3, 4, 5, 6];
+
   protected obniz!: Obniz;
   protected i2c!: PeripheralI2C;
   protected vram: number[];
@@ -113,7 +115,12 @@ export default class MatrixLED_HT16K33 implements ObnizPartsInterface {
 
   public dots(data: number[]) {
     for (let i = 0; i < this.height; i++) {
-      this.vram[i] = data[i];
+      this.vram[i] = 0;
+      for (let j: number = 0; j < this.width; j++) {
+        if (data[i] & (1 << j)) {
+          this.vram[i] |= 0x1 << this.bitArray[j];
+        }
+      }
     }
     this.writeVram();
   }

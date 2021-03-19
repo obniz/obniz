@@ -9,10 +9,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const MatrixLED_HT16K33_1 = __importDefault(require("../../Display/MatrixLED_HT16K33"));
 class Keyestudio_HT16K33 extends MatrixLED_HT16K33_1.default {
-    constructor() {
-        super(...arguments);
-        this.bitArray = [7, 0, 1, 2, 3, 4, 5, 6];
-    }
     static info() {
         return {
             name: "Keyestudio_HT16K33",
