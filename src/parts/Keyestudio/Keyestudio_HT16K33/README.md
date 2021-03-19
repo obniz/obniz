@@ -10,6 +10,11 @@ Connect a driver to an obniz.
 const matrix = obniz.wired("Keyestudio_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
 ```
 
+In some devices, the positions of the GND and VCC pins may be reversed.
+
+![check-keystudio_MatrixLED](./check-keystudio_MatrixLED.jpg)
+
+If you look like the picture above, you should also reverse the pin you specify in obniz.wired
 
 ## brightness(value)
 value: 0 to 15;

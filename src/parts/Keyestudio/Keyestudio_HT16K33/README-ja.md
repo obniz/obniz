@@ -3,7 +3,7 @@
 Keyestudioの製品のサポートになります。
 ![](image.jpg)
 
-## wired(obniz,  { vcc, gnd, sda, scl　});
+## wired(obniz,  { vcc, gnd, sda, scl });
 
 obniz BoardにマトリックスLEDを接続します。
 
@@ -20,6 +20,12 @@ const matrix = obniz.wired("Keyestudio_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 })
 const matrix = obniz.wired("Keyestudio_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
 matrix.brightness(7);
 ```
+
+デバイスによっては、GNDとVCCのピンの位置が逆になっていることがあります。
+
+![keystudio_MatrixLED](./check-keystudio_MatrixLED.jpg)
+
+上記の写真のような場合は、obniz.wiredで指定するピンも逆にしてください。
 
 ## draw(ctx)
 HTML5のcanvasをそのまま描画します。html上でobniz Boardを使っている場合は
