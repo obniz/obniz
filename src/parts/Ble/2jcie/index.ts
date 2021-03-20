@@ -6,6 +6,7 @@
 import Obniz from "../../../obniz";
 import bleRemoteCharacteristic from "../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic";
 import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
+import JsonBinaryConverter from "../../../obniz/libs/wscommand/jsonBinaryConverter";
 import ObnizPartsBleInterface from "../../../obniz/ObnizPartsBleInterface";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
@@ -18,10 +19,34 @@ export interface OMRON_2JCIE_Data {
   light: number;
   uv_index: number;
   barometric_pressure: number;
-  soud_noise: number;
+  sound_noise: number;
   discomfort_index: number;
   heatstroke_risk_factor: number;
   battery_voltage: number;
+}
+
+export interface OMRON_2JCIE_USBSenData {
+  seqence_number: number;
+  temperature: number;
+  relative_humidity: number;
+  light: number;
+  barometric_pressure: number;
+  sound_noise: number;
+  etvoc: number;
+  eco2: number;
+}
+
+export interface OMRON_2JCIE_USBCalData {
+  sequence_number: number;
+  disconfort_index: number;
+  heatstroke_risk_factor: number;
+  vibration_information: number;
+  si_value: number;
+  pga: number;
+  seismic_intensity: number;
+  acceleration_x: number;
+  acceleration_y: number;
+  acceleration_z: number;
 }
 
 export interface OMRON_2JCIE_AdvData {
@@ -30,7 +55,7 @@ export interface OMRON_2JCIE_AdvData {
   light: number;
   uv_index: number;
   barometric_pressure: number;
-  soud_noise: number;
+  sound_noise: number;
   acceleration_x: number;
   acceleration_y: number;
   acceleration_z: number;
@@ -42,7 +67,7 @@ export interface OMRON_2JCIE_AdvSensorData {
   relative_humidity: number;
   light: number;
   barometric_pressure: number;
-  soud_noise: number;
+  sound_noise: number;
   etvoc: number;
   eco2: number;
 }
@@ -65,6 +90,9 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
   /**
    * Get a datas from advertisement mode of OMRON 2JCIE
    */
+  // TODO:
+  // rename eg. getDataFromAdv
+  // EnvとIMとRbtの棲み分け確認
   public static getData(peripheral: BleRemotePeripheral): OMRON_2JCIE_AdvData | OMRON_2JCIE_AdvSensorData | null {
     const adv_data = peripheral.adv_data;
     if (peripheral.localName && peripheral.localName.indexOf("IM") >= 0) {
@@ -74,7 +102,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
         light: ObnizPartsBleInterface.signed16FromBinary(adv_data[12], adv_data[13]) * 1,
         uv_index: ObnizPartsBleInterface.signed16FromBinary(adv_data[14], adv_data[15]) * 0.01,
         barometric_pressure: ObnizPartsBleInterface.signed16FromBinary(adv_data[16], adv_data[17]) * 0.1,
-        soud_noise: ObnizPartsBleInterface.signed16FromBinary(adv_data[18], adv_data[19]) * 0.01,
+        sound_noise: ObnizPartsBleInterface.signed16FromBinary(adv_data[18], adv_data[19]) * 0.01,
         acceleration_x: ObnizPartsBleInterface.signed16FromBinary(adv_data[20], adv_data[21]),
         acceleration_y: ObnizPartsBleInterface.signed16FromBinary(adv_data[22], adv_data[23]),
         acceleration_z: ObnizPartsBleInterface.signed16FromBinary(adv_data[24], adv_data[25]),
@@ -93,7 +121,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
         light: ObnizPartsBleInterface.signed16FromBinary(adv_data[14], adv_data[13]) * 1,
         barometric_pressure:
           ObnizPartsBleInterface.signed32FromBinary(adv_data[18], adv_data[17], adv_data[16], adv_data[15]) * 0.001,
-        soud_noise: ObnizPartsBleInterface.signed16FromBinary(adv_data[20], adv_data[19]) * 0.01,
+        sound_noise: ObnizPartsBleInterface.signed16FromBinary(adv_data[20], adv_data[19]) * 0.01,
         etvoc: ObnizPartsBleInterface.signed16FromBinary(adv_data[22], adv_data[21]),
         eco2: ObnizPartsBleInterface.signed16FromBinary(adv_data[24], adv_data[23]),
       };
@@ -106,9 +134,15 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
   public params: any;
   public ondisconnect?: (reason: any) => void;
 
+  private vibrationState: { [index: number]: string } = {
+    0x00: "NONE",
+    0x01: "druing vibration (Earthquake judgment in progress)",
+    0x02: "during earthquake",
+  };
+
   constructor(peripheral: BleRemotePeripheral | null) {
     if (peripheral && !OMRON_2JCIE.isDevice(peripheral)) {
-      throw new Error("peripheral is not OMRON_2JCIE");
+      throw new Error("peripheral is not RS_BTIREX2");
     }
     this._peripheral = peripheral;
   }
@@ -128,8 +162,15 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     return this._peripheral;
   }
 
-  public omron_uuid(uuid: string): string {
-    return `0C4C${uuid}-7700-46F4-AA96D5E974E32A54`;
+  // TODO: 判断方法変更
+  public omron_uuid(uuid: string, type: string): string | any {
+    if (type === "Env" || "IM") {
+      return `0C4C${uuid}-7700-46F4-AA96D5E974E32A54`;
+    } else if (type === "Rbt") {
+      return `AB70XXXX-0A3A-11E8-BA89-0ED5F89F718B`;
+    } else {
+      return undefined;
+    }
   }
 
   public async connectWait() {
@@ -176,10 +217,14 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     return val;
   }
 
+  // TODO
+  // (案)こちらにBAGとつけるか、関数内でBAGかUSBかを場合わけする
   public async getLatestData(): Promise<OMRON_2JCIE_Data> {
     await this.connectWait();
 
-    const c = this._peripheral!.getService(this.omron_uuid("3000"))!.getCharacteristic(this.omron_uuid("3001"))!;
+    const c = this._peripheral!.getService(this.omron_uuid("3000", "Env"))!.getCharacteristic(
+      this.omron_uuid("3001", "Env"),
+    )!;
     const data: number[] = await c.readWait();
     const json: any = {
       row_number: data[0],
@@ -188,10 +233,54 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
       light: this.signedNumberFromBinary(data.slice(5, 7)) * 1,
       uv_index: this.signedNumberFromBinary(data.slice(7, 9)) * 0.01,
       barometric_pressure: this.signedNumberFromBinary(data.slice(9, 11)) * 0.1,
-      soud_noise: this.signedNumberFromBinary(data.slice(11, 13)) * 0.01,
+      sound_noise: this.signedNumberFromBinary(data.slice(11, 13)) * 0.01,
       discomfort_index: this.signedNumberFromBinary(data.slice(13, 15)) * 0.01,
       heatstroke_risk_factor: this.signedNumberFromBinary(data.slice(15, 17)) * 0.01,
       battery_voltage: this.unsignedNumberFromBinary(data.slice(17, 19)) * 0.001,
+    };
+
+    return json;
+  }
+
+  public async getLatestSensorDataUSB(): Promise<OMRON_2JCIE_USBSenData> {
+    await this.connectWait();
+
+    const c = this._peripheral!.getService(this.omron_uuid("5010", "Rbt"))!.getCharacteristic(
+      this.omron_uuid("5012", "Rbt"),
+    )!;
+    const data: number[] = await c.readWait();
+    const json: any = {
+      seqence_number: data[0],
+      temperature: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
+      relative_humidity: this.signedNumberFromBinary(data.slice(3, 5)) * 0.01,
+      light: this.signedNumberFromBinary(data.slice(5, 7)) * 1,
+      barometric_pressure: this.signedNumberFromBinary(data.slice(7, 11)) * 0.001,
+      sound_noise: this.signedNumberFromBinary(data.slice(11, 13)) * 0.01,
+      etvoc: this.signedNumberFromBinary(data.slice(13, 15)) * 1,
+      eco2: this.signedNumberFromBinary(data.slice(15, 17)) * 1,
+    };
+
+    return json;
+  }
+
+  public async getLatestCalclationDataUSB(): Promise<OMRON_2JCIE_USBCalData> {
+    await this.connectWait();
+
+    const c = this._peripheral!.getService(this.omron_uuid("5010", "Rbt"))!.getCharacteristic(
+      this.omron_uuid("5013", "Rbt"),
+    )!;
+    const data: number[] = await c.readWait();
+    const json: any = {
+      sequence_number: data[0],
+      disconfort_index: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
+      heatstroke_risk_factor: this.signedNumberFromBinary(data.slice(3, 5)) * 0.01,
+      vibration_information: this.vibrationState[data[5]],
+      si_value: this.unsignedNumberFromBinary(data.slice(6, 8)) * 0.1,
+      pga: this.unsignedNumberFromBinary(data.slice(8, 10)) * 0.1,
+      seismic_intensity: this.unsignedNumberFromBinary(data.slice(10, 12)) * 0.001,
+      acceleration_x: this.signedNumberFromBinary(data.slice(12, 14)) * 1,
+      acceleration_y: this.signedNumberFromBinary(data.slice(14, 16)) * 1,
+      acceleration_z: this.signedNumberFromBinary(data.slice(16, 18)) * 1,
     };
 
     return json;
