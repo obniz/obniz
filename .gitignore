@@ -13,6 +13,7 @@ test/**/*.html
 temp
 .idea
 log
+
 /test*.js
 /test*.html
 /test/test*.html
@@ -21,4 +22,3 @@ log
 dist/**/*.map
 dist/**/*.ts
 .vscode
-

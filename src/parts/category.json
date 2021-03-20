@@ -862,6 +862,10 @@
           "store": {}
         },
         {
+          "name": "RS_BTWATTCH2",
+          "store": {}
+        },
+        {
           "name": "toio_CoreCube",
           "store": {
             "toio": "https://toio.io/",

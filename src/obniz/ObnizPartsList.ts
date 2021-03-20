@@ -152,6 +152,7 @@ import MiniBreeze, { MiniBreezeOptions } from "../parts/Ble/MiniBreeze";
 import MT_500BT, { MT_500BTOptions } from "../parts/Ble/MT_500BT";
 import PLS_01BT, { PLS_01BTOptions } from "../parts/Ble/PLS_01BT";
 import REX_BTPM25V, { REX_BTPM25VOptions } from "../parts/Ble/REX_BTPM25V";
+import RS_BTWATTCH2, { RS_BTWATTCH2Options } from "../parts/Ble/RS_BTWATTCH2";
 import RS_Seek3, { RS_Seek3Options } from "../parts/Ble/RS_SEEK3";
 import SCBTGAAAC, { SCBTGAAACOptions } from "../parts/Ble/scbtgaaac";
 import TM530, { TM530Options } from "../parts/Ble/tm530";
@@ -375,4 +376,5 @@ export interface PartsList {
   "BMP280": { class: BMP280; options: BMP280Options };
   "HEM_9200T": { class: HEM_9200T; options: HEM_9200TOptions };
   "W5500": { class: W5500; options: W5500Parts.WiredOptions };
+  "RS_BTWATTCH2": { class: RS_BTWATTCH2; options: RS_BTWATTCH2Options };
 }
