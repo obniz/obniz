@@ -29,19 +29,10 @@ obniz.repeat(async()=>{
 }, 10000);
 ```
 
-## startHeating()
-Start heating. If you do not run this function or the `[await]heatWait(sec: number)` function, you can run the other functions.  
-Also, since the value will not change for about 3 minutes after the start, wait at least 3 minutes after running this function or use the `[await]heatWait(sec: number)` function.
-
-```Javascript
-// Javascript Example
-var sensor = obniz.wired("MH_Z19B", {vcc:0, gnd:1, sensor_tx:2, sensor_rx:3});
-sensor.startHeating();
-```
 
 ## [await] heatWait(sec: number)
 Start heating and waits until the time elapses. You can change the waiting time from the default of 3 minutes by specifying an argument (more than 3 minutes recommended).  
-You cannot run the other functions without running this function or the `startHeating()` function.
+Be sure to run this function before running any other functions.
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
@@ -75,7 +66,7 @@ Run this function after running the sensor for at least 20 minutes out of doors 
 // Javascript Example
 var sensor = obniz.wired("MH_Z19B", {vcc:0, gnd:1, sensor_tx:2, sensor_rx:3});
 await sensor.heatWait();
-setTimeout(calibrateZero(), 1200000);
+setTimeout(sensor.calibrateZero(), 1200000);
 ```
 
 ## calibrateSpan(ppm: number)
@@ -92,8 +83,8 @@ Also, Please be sure to do the zero calibration before the span calibration.
 // Javascript Example
 var sensor = obniz.wired("MH_Z19B", {vcc:0, gnd:1, sensor_tx:2, sensor_rx:3});
 await sensor.heatWait();
-setTimeout(calibrateZero(), 1200000);
-setTimeout(calibrateSpan(), 1200000);
+setTimeout(sensor.calibrateZero(), 1200000);
+setTimeout(sensor.calibrateSpan(), 1200000);
 ```
 
 ## setAutoCalibration(autoCalibration: boolean)
@@ -110,7 +101,7 @@ For indoor use, it is recommended to turn off the automatic calibration from thi
 // Javascript Example
 var sensor = obniz.wired("MH_Z19B", {vcc:0, gnd:1, sensor_tx:2, sensor_rx:3});
 await sensor.heatWait();
-setAutoCalibration(false);
+sensor.setAutoCalibration(false);
 console.log(await sensor.getWait());
 ```
 
@@ -128,7 +119,7 @@ If you set any other value as the argument, the upper limit will be automaticall
 // Javascript Example
 var sensor = obniz.wired("MH_Z19B", {vcc:0, gnd:1, sensor_tx:2, sensor_rx:3});
 await sensor.heatWait();
-setDetectionRange(5000);
+sensor.setDetectionRange(5000);
 console.log(await sensor.getWait());
 ```
 

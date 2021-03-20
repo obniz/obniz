@@ -28,19 +28,10 @@ obniz.repeat(async()=>{
 }, 10000);
 ```
 
-## startHeating()
-加熱を開始します。この関数または `[await]heatWait(sec: number)`関数を実行しないと、その他の関数は実行できません。  
-また、開始後約3分間は値が変化しないため、この関数を実行後に3分以上待つか、`[await]heatWait(sec: number)`関数を利用してください。
-
-```Javascript
-// Javascript Example
-var sensor = obniz.wired("MH_Z19B", {vcc:0, gnd:1, sensor_tx:2, sensor_rx:3});
-sensor.startHeating();
-```
 
 ## [await] heatWait(sec: number)
 加熱を開始し、時間が経過するまで待ちます。引数を指定することで待ち時間をデフォルトの3分から変更できます(3分以上推奨です)。  
-この関数または`startHeating()`関数を実行しないと、その他の関数は実行できません。
+他の関数を実行する前に、必ずこの関数を実行してください。
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
@@ -73,7 +64,7 @@ obniz.repeat(async()=>{
 // Javascript Example
 var sensor = obniz.wired("MH_Z19B", {vcc:0, gnd:1, sensor_tx:2, sensor_rx:3});
 await sensor.heatWait();
-setTimeout(calibrateZero(), 1200000);
+setTimeout(sensor.calibrateZero(), 1200000);
 ```
 
 ## calibrateSpan(ppm: number)
@@ -90,8 +81,8 @@ ppm | `number` | no | 2000 | CO2濃度(ppm)
 // Javascript Example
 var sensor = obniz.wired("MH_Z19B", {vcc:0, gnd:1, sensor_tx:2, sensor_rx:3});
 await sensor.heatWait();
-setTimeout(calibrateZero(), 1200000);
-setTimeout(calibrateSpan(), 1200000);
+setTimeout(sensor.calibrateZero(), 1200000);
+setTimeout(sensor.calibrateSpan(), 1200000);
 ```
 
 ## setAutoCalibration(autoCalibration: boolean)
@@ -108,7 +99,7 @@ autoCalibration | `boolean` | no | true | 自動キャリブレーションの�
 // Javascript Example
 var sensor = obniz.wired("MH_Z19B", {vcc:0, gnd:1, sensor_tx:2, sensor_rx:3});
 await sensor.heatWait();
-setAutoCalibration(false);
+sensor.setAutoCalibration(false);
 console.log(await sensor.getWait());
 ```
 
@@ -125,7 +116,7 @@ range | `number` | yes | &nbsp; | 測定範囲上限[2000,5000,10000]のいず�
 // Javascript Example
 var sensor = obniz.wired("MH_Z19B", {vcc:0, gnd:1, sensor_tx:2, sensor_rx:3});
 await sensor.heatWait();
-setDetectionRange(5000);
+sensor.setDetectionRange(5000);
 console.log(await sensor.getWait());
 ```
 

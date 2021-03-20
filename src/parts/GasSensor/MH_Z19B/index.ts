@@ -74,11 +74,8 @@ export default class MH_Z19B implements ObnizPartsInterface {
     this.my_tx = this.params.sensor_rx;
     this.my_rx = this.params.sensor_tx;
 
-    this.uart = obniz.getFreeUart();
-  }
-
-  public startHeating() {
     this.obniz.setVccGnd(this.vcc, this.gnd, "5v");
+    this.uart = obniz.getFreeUart();
     this.uart.start({
       tx: this.my_tx,
       rx: this.my_rx,
@@ -87,7 +84,6 @@ export default class MH_Z19B implements ObnizPartsInterface {
   }
 
   public heatWait(seconds?: number): Promise<void> {
-    this.startHeating();
     if (typeof seconds === "number" && seconds > 0) {
       seconds *= 1000;
     } else {
@@ -102,16 +98,18 @@ export default class MH_Z19B implements ObnizPartsInterface {
     return new Promise(async (resolve, reject) => {
       try {
         await this.requestReadConcentraiton();
-        setTimeout(async () => {
-          if (this.uart.isDataExists()) {
-            const data: number[] = this.uart.readBytes();
-            const val: number = await this.getCO2Concentration(data);
-            resolve(val);
-          } else {
-            reject(undefined);
-            console.log("cannot receive data");
-          }
-        }, 10);
+        await this.obniz.wait(10);
+        if (this.uart.isDataExists()) {
+          const data: number[] = this.uart.readBytes();
+          // console.log("received data");
+          // console.log(data);
+
+          const val: number = await this.getCO2Concentration(data);
+          resolve(val);
+        } else {
+          reject(undefined);
+          console.log("cannot receive data");
+        }
       } catch (e) {
         reject(e);
       }
@@ -119,9 +117,10 @@ export default class MH_Z19B implements ObnizPartsInterface {
   }
 
   public calibrateZero() {
-    let command: Buffer;
+    let command: Buffer | number[];
     command = this.makeRequestCmd("CalibZ", [0x00, 0x00, 0x00, 0x00, 0x00]);
     this.uart.send(command);
+    console.log("send a Zero Calibration command");
   }
 
   public calibrateSpan(ppm: number = 2000) {
@@ -129,26 +128,29 @@ export default class MH_Z19B implements ObnizPartsInterface {
       return;
     }
 
-    let command: Buffer;
+    let command: Buffer | number[];
     const span_byte: Buffer = Buffer.alloc(2);
     span_byte[0] = ppm / 256;
     span_byte[1] = ppm % 256;
     command = this.makeRequestCmd("CalibS", [span_byte[0], span_byte[1], 0x00, 0x00, 0x00]);
     this.uart.send(command);
+    console.log("send a Span Calibration command");
   }
 
   public setAutoCalibration(autoCalibration: boolean = true) {
-    let command: Buffer;
+    let command: Buffer | number[];
     if (autoCalibration) {
       command = this.makeRequestCmd("ACBOnOff", [0xa0, 0x00, 0x00, 0x00, 0x00]);
+      console.log("set an Auto Calibration ON");
     } else {
-      command = this.makeRequestCmd("ABCOnOff", [0x00, 0x00, 0x00, 0x00, 0x00]);
+      command = this.makeRequestCmd("ACBOnOff", [0x00, 0x00, 0x00, 0x00, 0x00]);
+      console.log("set an Auto Calibration OFF");
     }
     this.uart.send(command);
   }
 
   public setDetectionRange(range: number) {
-    let command: Buffer;
+    let command: Buffer | number[];
     if (range in this.rangeType) {
       command = this.makeRequestCmd("RangeSet", this.rangeType[range]);
       console.log("Configured Range : " + String(range));
@@ -168,7 +170,7 @@ export default class MH_Z19B implements ObnizPartsInterface {
     return sum;
   }
 
-  private makeRequestCmd(mode: string, databox: number[] = [0x00, 0x00, 0x00, 0x00, 0x00]): Buffer {
+  private makeRequestCmd(mode: string, databox: number[] = [0x00, 0x00, 0x00, 0x00, 0x00]): Buffer | number[] {
     const _buffer: Buffer = Buffer.alloc(9);
     _buffer[0] = 0xff;
     _buffer[1] = 0x01;
@@ -177,12 +179,14 @@ export default class MH_Z19B implements ObnizPartsInterface {
       _buffer[i] = databox[i - 3];
     }
     _buffer[8] = this.checkSum(_buffer);
-    return _buffer;
+    return Array.from(_buffer);
   }
 
   private requestReadConcentraiton() {
-    let command: Buffer;
+    let command: Buffer | number[];
     command = this.makeRequestCmd("Read", [0x00, 0x00, 0x00, 0x00, 0x00]);
+    // console.log("being sent request command");
+    // console.log(command);
     this.uart.send(command);
   }
 

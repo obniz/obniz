@@ -39416,10 +39416,8 @@ class MH_Z19B {
         this.gnd = this.params.gnd;
         this.my_tx = this.params.sensor_rx;
         this.my_rx = this.params.sensor_tx;
-        this.uart = obniz.getFreeUart();
-    }
-    startHeating() {
         this.obniz.setVccGnd(this.vcc, this.gnd, "5v");
+        this.uart = obniz.getFreeUart();
         this.uart.start({
             tx: this.my_tx,
             rx: this.my_rx,
@@ -39427,7 +39425,6 @@ class MH_Z19B {
         });
     }
     heatWait(seconds) {
-        this.startHeating();
         if (typeof seconds === "number" && seconds > 0) {
             seconds *= 1000;
         }
@@ -39442,17 +39439,18 @@ class MH_Z19B {
         return new Promise(async (resolve, reject) => {
             try {
                 await this.requestReadConcentraiton();
-                setTimeout(async () => {
-                    if (this.uart.isDataExists()) {
-                        const data = this.uart.readBytes();
-                        const val = await this.getCO2Concentration(data);
-                        resolve(val);
-                    }
-                    else {
-                        reject(undefined);
-                        console.log("cannot receive data");
-                    }
-                }, 10);
+                await this.obniz.wait(10);
+                if (this.uart.isDataExists()) {
+                    const data = this.uart.readBytes();
+                    // console.log("received data");
+                    // console.log(data);
+                    const val = await this.getCO2Concentration(data);
+                    resolve(val);
+                }
+                else {
+                    reject(undefined);
+                    console.log("cannot receive data");
+                }
             }
             catch (e) {
                 reject(e);
@@ -39463,6 +39461,7 @@ class MH_Z19B {
         let command;
         command = this.makeRequestCmd("CalibZ", [0x00, 0x00, 0x00, 0x00, 0x00]);
         this.uart.send(command);
+        console.log("send a Zero Calibration command");
     }
     calibrateSpan(ppm = 2000) {
         if (ppm < 1000) {
@@ -39474,14 +39473,17 @@ class MH_Z19B {
         span_byte[1] = ppm % 256;
         command = this.makeRequestCmd("CalibS", [span_byte[0], span_byte[1], 0x00, 0x00, 0x00]);
         this.uart.send(command);
+        console.log("send a Span Calibration command");
     }
     setAutoCalibration(autoCalibration = true) {
         let command;
         if (autoCalibration) {
             command = this.makeRequestCmd("ACBOnOff", [0xa0, 0x00, 0x00, 0x00, 0x00]);
+            console.log("set an Auto Calibration ON");
         }
         else {
-            command = this.makeRequestCmd("ABCOnOff", [0x00, 0x00, 0x00, 0x00, 0x00]);
+            command = this.makeRequestCmd("ACBOnOff", [0x00, 0x00, 0x00, 0x00, 0x00]);
+            console.log("set an Auto Calibration OFF");
         }
         this.uart.send(command);
     }
@@ -39514,11 +39516,13 @@ class MH_Z19B {
             _buffer[i] = databox[i - 3];
         }
         _buffer[8] = this.checkSum(_buffer);
-        return _buffer;
+        return Array.from(_buffer);
     }
     requestReadConcentraiton() {
         let command;
         command = this.makeRequestCmd("Read", [0x00, 0x00, 0x00, 0x00, 0x00]);
+        // console.log("being sent request command");
+        // console.log(command);
         this.uart.send(command);
     }
     getCO2Concentration(data) {
