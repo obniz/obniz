@@ -1,4 +1,4 @@
-/* tslint:disable:class-name max-classes-per-file */
+/* eslint max-classes-per-file:0 */
 
 import Obniz from '../../../dist/src/obniz/index';
 
@@ -20,7 +20,7 @@ class RN42Test {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
       const rn42 = obniz.wired('RN42', { tx: 1, rx: 2 });
-      rn42.onreceive = (data, text) => {
+      rn42.onreceive = (data: any, text: any) => {
         console.log(text);
       };
     };
@@ -62,7 +62,7 @@ class RN42Test {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
       const rn42 = obniz.wired('RN42', { tx: 1, rx: 2 });
-      rn42.onreceive = (data, text) => {
+      rn42.onreceive = (data: any, text: any) => {
         console.log(text);
       };
       rn42.enterCommandMode();
@@ -74,7 +74,7 @@ class RN42Test {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
       const rn42 = obniz.wired('RN42', { tx: 1, rx: 2 });
-      rn42.onreceive = (data, text) => {
+      rn42.onreceive = (data: any, text: any) => {
         console.log(text);
       };
       rn42.enterCommandMode();

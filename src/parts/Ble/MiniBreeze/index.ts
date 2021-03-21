@@ -10,25 +10,25 @@ import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
 
 export interface MiniBreeze_InfoData {
   gasType:
-  | 'none'
-  | 'HCHO'
-  | 'CO'
-  | 'CO2'
-  | 'Rn'
-  | 'PM1.0'
-  | 'PM2.5'
-  | 'PM10'
-  | 'unknown';
+    | 'none'
+    | 'HCHO'
+    | 'CO'
+    | 'CO2'
+    | 'Rn'
+    | 'PM1.0'
+    | 'PM2.5'
+    | 'PM10'
+    | 'unknown';
   sensVal: number;
   temperature: number;
   humidity: number;
   version: string;
   status:
-  | 'BatteryEmpty'
-  | 'BatteryLow'
-  | 'BatteryNormal'
-  | 'BatteryCharging'
-  | 'Invalid';
+    | 'BatteryEmpty'
+    | 'BatteryLow'
+    | 'BatteryNormal'
+    | 'BatteryCharging'
+    | 'Invalid';
   devName: string;
 }
 

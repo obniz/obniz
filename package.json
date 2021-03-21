@@ -32,7 +32,7 @@
     "version": "npm run build && npm run doc && git add docs && git add obniz.js",
     "lint": "eslint --fix . --rulesdir devtools/eslint/rule",
     "lint-js": "eslint --fix './**/*.js' --rulesdir devtools/eslint/rule",
-    "lint-ts": "eslint --fix 'src/**/*.ts' 'test/**/*.ts' --rulesdir devtools/eslint/rule ",
+    "lint-ts": "eslint --fix 'src/**/*.ts' 'test/**/*.ts' --rulesdir devtools/eslint/rule  --quiet",
     "lint-test": "mocha $NODE_DEBUG_OPTION ./devtools/eslint/test/**/*.js",
     "precommit": "lint-staged && npm run build && git add dist && git add obniz.js",
     "clean": "rimraf ./dist ./obniz.js ./obniz.d.ts"
@@ -83,7 +83,7 @@
     "eslint-plugin-jasmine": "^2.10.1",
     "eslint-plugin-jsdoc": "^32.2.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
-    "eslint-plugin-prettier": "^2.7.0",
+    "eslint-plugin-prettier": "^3.3.1",
     "espower-typescript": "^9.0.2",
     "express": "^4.17.1",
     "get-port": "^4.0.0",

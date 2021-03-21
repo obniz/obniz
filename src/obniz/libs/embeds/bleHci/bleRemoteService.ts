@@ -12,8 +12,8 @@ import { UUID } from './bleTypes';
  * @category Use as Central
  */
 export default class BleRemoteService extends BleRemoteAttributeAbstract<
-BleRemotePeripheral,
-BleRemoteCharacteristic
+  BleRemotePeripheral,
+  BleRemoteCharacteristic
 > {
   /**
    * Peripheral instance
@@ -155,7 +155,7 @@ BleRemoteCharacteristic
    * ```
    */
   public async discoverAllCharacteristicsWait(): Promise<
-  BleRemoteCharacteristic[]
+    BleRemoteCharacteristic[]
   > {
     const chars = await this.parent!.obnizBle.centralBindings.discoverCharacteristicsWait(
       this.peripheral.address,

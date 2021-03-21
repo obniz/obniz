@@ -9,8 +9,8 @@ import BleRemoteValueAttributeAbstract from './bleRemoteValueAttributeAbstract';
  * @category Use as Central
  */
 export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract<
-BleRemoteCharacteristic,
-null
+  BleRemoteCharacteristic,
+  null
 > {
   public characteristic!: BleRemoteCharacteristic;
 

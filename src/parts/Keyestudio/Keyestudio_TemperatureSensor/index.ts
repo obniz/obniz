@@ -16,7 +16,7 @@ export interface Keyestudio_TemperatureSensorOptions {
 }
 
 export default class Keyestudio_TemperatureSensor
-implements ObnizPartsInterface {
+  implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
       name: 'Keyestudio_TemperatureSensor',

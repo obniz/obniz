@@ -243,19 +243,21 @@ describe('8-ble', function () {
     expect(targetChara.canNotify()).to.be.equal(true);
     expect(targetChara.canIndicate()).to.be.equal(false);
 
-    let p1 = new Promise(async (resolve) => {
-      await targetChara.registerNotifyWait(function (data) {
-        // console.log('notify!' + data.join(','));
-        if (data.length === 1 && data[0] === 92) {
-          notifyed = true;
-        }
-        resolve();
-      });
-      // console.log('registerNotify');
-      await obnizA.pingWait();
-      await checkBoard.pingWait();
-      // console.log('start notify');
-      this.service.getCharacteristic('FFF3').notify();
+    let p1 = new Promise((resolve) => {
+      (async () => {
+        await targetChara.registerNotifyWait(function (data) {
+          // console.log('notify!' + data.join(','));
+          if (data.length === 1 && data[0] === 92) {
+            notifyed = true;
+          }
+          resolve();
+        });
+        // console.log('registerNotify');
+        await obnizA.pingWait();
+        await checkBoard.pingWait();
+        // console.log('start notify');
+        this.service.getCharacteristic('FFF3').notify();
+      })();
     });
     let p2 = new Promise(function (resolve) {
       setTimeout(function () {

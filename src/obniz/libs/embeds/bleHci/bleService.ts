@@ -16,8 +16,8 @@ import {
  * @category Use as Peripheral
  */
 export default class BleService extends BleLocalAttributeAbstract<
-null,
-BleCharacteristic
+  null,
+  BleCharacteristic
 > {
   /**
    * Peripheral instance.

@@ -412,8 +412,8 @@ export class W5500 implements ObnizPartsInterface {
   public setInterruptHandler(
     name: W5500Parts.Interrupt,
     handler:
-    | ((ethernet: W5500) => Promise<void>)
-    | ((ethernet: W5500, extra?: W5500Parts.DestInfo) => Promise<void>)
+      | ((ethernet: W5500) => Promise<void>)
+      | ((ethernet: W5500, extra?: W5500Parts.DestInfo) => Promise<void>)
   ) {
     this.interruptHandlers[name] = handler;
   }
@@ -587,9 +587,9 @@ export class W5500 implements ObnizPartsInterface {
     const extra =
       msgList.indexOf('DestUnreach') >= 0
         ? new W5500Parts.DestInfo(
-          await this.getUnreachableIP(),
-          await this.getUnreachablePort()
-        )
+            await this.getUnreachableIP(),
+            await this.getUnreachablePort()
+          )
         : undefined;
 
     if (disableAllSocketCheck !== false) {
@@ -1264,9 +1264,9 @@ export class W5500Socket {
     [key in W5500SocketParts.Interrupt]?:
       | ((socket: W5500Socket) => Promise<void>)
       | ((
-      socket: W5500Socket,
-      extra?: number[] | string | W5500Parts.DestInfo
-    ) => Promise<void>);
+          socket: W5500Socket,
+          extra?: number[] | string | W5500Parts.DestInfo
+        ) => Promise<void>);
   } = {};
   /** 割り込みを全てキャッチするハンドラーを保持 */
   protected allInterruptHandler?: (
@@ -1433,9 +1433,9 @@ export class W5500Socket {
     handler:
       | ((socket: W5500Socket) => Promise<void>)
       | ((
-      socket: W5500Socket,
-      extra?: number[] | string | W5500Parts.DestInfo
-    ) => Promise<void>)
+          socket: W5500Socket,
+          extra?: number[] | string | W5500Parts.DestInfo
+        ) => Promise<void>)
   ) {
     return (this.interruptHandlers[name] = handler);
   }
@@ -1609,8 +1609,8 @@ export class W5500Socket {
     return index < 0
       ? 'UNKNOWN'
       : (Object.keys(W5500SocketParts.StatusCodes)[
-        index
-      ] as W5500SocketParts.Status);
+          index
+        ] as W5500SocketParts.Status);
   }
 
   /**

@@ -1,5 +1,6 @@
 /* tslint:disable:class-name max-classes-per-file */
 import Obniz from '../../../dist/src/obniz/index';
+import AMG8833 from '../../../src/parts/TemperatureSensor/i2c/AMG8833';
 
 const OBNIZ_ID = '1234-5678';
 
@@ -160,14 +161,14 @@ class AMG8833Test {
   public getAllPixWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const grideye = obniz.wired('AMG8833', {
+      const grideye: AMG8833 = obniz.wired('AMG8833', {
         vcc: 0,
         gnd: 1,
         sda: 2,
         scl: 3,
       });
       const temps = await grideye.getAllPixWait();
-      console.log('temperature:' + temps);
+      console.log(`temperature:${temps.join()}`);
 
       const canvas = document.getElementById('canvas') as HTMLCanvasElement;
       const ctx = canvas.getContext('2d')!;

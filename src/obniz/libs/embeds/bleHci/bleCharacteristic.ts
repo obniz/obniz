@@ -17,8 +17,8 @@ import {
  * @category Use as Peripheral
  */
 export default class BleCharacteristic extends BleLocalValueAttributeAbstract<
-BleService,
-BleDescriptor
+  BleService,
+  BleDescriptor
 > {
   /**
    * This is a callback function used when characteristic is read by an external device.

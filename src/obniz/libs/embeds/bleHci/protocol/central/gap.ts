@@ -23,11 +23,11 @@ type GapEventTypes = 'scanStop' | 'discover';
 class Gap extends EventEmitter<GapEventTypes> {
   public _hci: Hci;
   public _scanState:
-  | null
-  | 'starting'
-  | 'started'
-  | 'stopping'
-  | 'stopped' = null;
+    | null
+    | 'starting'
+    | 'started'
+    | 'stopping'
+    | 'stopped' = null;
   public _scanFilterDuplicates: null | boolean = null;
   public _discoveries: any = {};
 

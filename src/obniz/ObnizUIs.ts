@@ -216,8 +216,8 @@ export default class ObnizUIs extends ObnizSystemMethods {
     }
     const dom: any = `
     <div style="background-color:${
-  obj.alert === 'warning' ? '#ffee35' : '#ff7b34'
-}">${obj.message}</div>`;
+      obj.alert === 'warning' ? '#ffee35' : '#ff7b34'
+    }">${obj.message}</div>`;
     document
       .getElementById(this.options.debug_dom_id)!
       .insertAdjacentHTML('beforeend', dom);

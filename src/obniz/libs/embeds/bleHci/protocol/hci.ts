@@ -1118,13 +1118,13 @@ class Hci extends EventEmitter<HciEventTypes> {
     requestCmd: number,
     additionalResultFilter?: number[]
   ): Promise<{
-      eventType: number;
-      subEventType: number;
-      ncmd: number;
-      cmd: number;
-      status: number;
-      result: Buffer;
-    }> {
+    eventType: number;
+    subEventType: number;
+    ncmd: number;
+    cmd: number;
+    status: number;
+    result: Buffer;
+  }> {
     additionalResultFilter = additionalResultFilter || [];
     let filter = this.createCmdCompleteEventFilter(requestCmd);
     if (additionalResultFilter.length > 0) {

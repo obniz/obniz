@@ -1,6 +1,13 @@
 {
   "env": {
-
     "mocha": true
+  },
+  "rules": {
+    "@typescript-eslint/require-await" : "warn",
+    "async-function-name": "off",
+    "non-ascii": "off",
+    "prefer-arrow/prefer-arrow-functions": "warn",
+    "max-classes-per-file" : "off",
+    "no-unused-vars" : "warn"
   }
 }
