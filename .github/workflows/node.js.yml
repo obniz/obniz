@@ -1,0 +1,34 @@
+name: test
+
+on:
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+    build:
+        name: test
+        runs-on: ubuntu-18.04
+        env:
+            TZ: Asia/Tokyo
+            
+        strategy:
+          matrix:
+            node-version: [10.x, 11.x, 12.x, 13.x, 14.x, 15.x]
+
+        steps:
+            - uses: actions/checkout@v2
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v1
+              with:
+                node-version: ${{ matrix.node-version }}
+            - run: npm ci
+            - run: npm run build --if-present
+            - run: npm test
+            - name: Notification Slack
+              uses: 8398a7/action-slack@v3.8.1
+              with:
+                 status: ${{ job.status }}
+              env:
+                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                 SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+              if: always()
