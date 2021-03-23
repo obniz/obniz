@@ -38,7 +38,7 @@ export default class UA651BLE implements ObnizPartsBleInterface {
   }
 
   public static isDevice(peripheral: BleRemotePeripheral) {
-    return peripheral.localName && peripheral.localName.startsWith("A&D_UA-651BLE_");
+    return false;
   }
 
   public onNotify?: (co2: number) => void;
@@ -49,8 +49,8 @@ export default class UA651BLE implements ObnizPartsBleInterface {
   private _timezoneOffsetMinute: number;
 
   constructor(peripheral: BleRemotePeripheral | null, timezoneOffsetMinute: number) {
-    if (!peripheral || !UA651BLE.isDevice(peripheral)) {
-      throw new Error("peripheral is not UA651BLE");
+    if (!peripheral) {
+      throw new Error("no peripheral");
     }
     this._peripheral = peripheral;
     this._timezoneOffsetMinute = timezoneOffsetMinute;

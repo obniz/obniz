@@ -6,8 +6,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class UA651BLE {
     constructor(peripheral, timezoneOffsetMinute) {
-        if (!peripheral || !UA651BLE.isDevice(peripheral)) {
-            throw new Error("peripheral is not UA651BLE");
+        if (!peripheral) {
+            throw new Error("no peripheral");
         }
         this._peripheral = peripheral;
         this._timezoneOffsetMinute = timezoneOffsetMinute;
@@ -18,7 +18,7 @@ class UA651BLE {
         };
     }
     static isDevice(peripheral) {
-        return peripheral.localName && peripheral.localName.startsWith("A&D_UA-651BLE_");
+        return false;
     }
     async connectWait() { }
     async getDataWait() {
