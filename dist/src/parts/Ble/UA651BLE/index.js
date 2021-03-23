@@ -18,7 +18,7 @@ class UA651BLE {
         };
     }
     static isDevice(peripheral) {
-        return false;
+        return peripheral.localName && peripheral.localName.startsWith("A&D_UA-651BLE_");
     }
     async connectWait() { }
     async getDataWait() {

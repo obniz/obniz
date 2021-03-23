@@ -38,7 +38,7 @@ export default class UA651BLE implements ObnizPartsBleInterface {
   }
 
   public static isDevice(peripheral: BleRemotePeripheral) {
-    return false;
+    return peripheral.localName && peripheral.localName.startsWith("A&D_UA-651BLE_");
   }
 
   public onNotify?: (co2: number) => void;

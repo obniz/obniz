@@ -42,7 +42,10 @@ await obniz.ble.scan.startWait();
 ## [await]getDataWait()
 
 デバイスに接続し、データを一括取得します。
-取得できるデータはデバイスが未送信のデータのみです
+
+このデバイスではデータが存在する場合も存在しない場合もadvertisementを発信します。
+データがない場合接続してもデータは得られません。`isCooperationMode()`が`true`である場合はデータは存在しません。
+また、取得できるデータはデバイスが未送信のデータのみです。
 
 データ送信後、自動的にデバイスとの接続が切断されます。
 
@@ -51,7 +54,7 @@ await obniz.ble.scan.startWait();
 await obniz.ble.initWait();
 const UA1200BLE = Obniz.getPartsClass("UA1200BLE");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (UA1200BLE.isDevice(peripheral)) {
+  if (UA1200BLE.isDevice(peripheral) && !UA1200BLE.isCooperationMode(peripheral)) {
     console.log("find");
     const device = new UA1200BLE(peripheral);
     
