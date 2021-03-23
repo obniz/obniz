@@ -20,51 +20,31 @@ class UA651BLE {
     static isDevice(peripheral) {
         return peripheral.localName && peripheral.localName.startsWith("A&D_UA-651BLE_");
     }
-    async pairingWait() {
+    async connectWait() { }
+    async getDataWait() {
         if (!this._peripheral) {
             throw new Error("UA651BLE not found");
         }
-        this._peripheral.ondisconnect = (reason) => {
-            if (typeof this.ondisconnect === "function") {
-                this.ondisconnect(reason);
-            }
-        };
-        let key = null;
-        await this._peripheral.connectWait({
-            pairingOption: {
-                onPairedCallback: (pairingKey) => {
-                    key = pairingKey;
-                },
-            },
-        });
-        const { timeChar, customServiceChar } = this._getChars();
-        await this._writeTimeChar(this._timezoneOffsetMinute);
-        await customServiceChar.writeWait([2, 1, 3]); // disconnect req
-        return key;
-    }
-    async getDataWait(pairingKeys) {
-        if (!this._peripheral) {
-            throw new Error("UA651BLE not found");
+        if (!this._peripheral.connected) {
+            this._peripheral.ondisconnect = (reason) => {
+                if (this.ondisconnect) {
+                    this.ondisconnect(reason);
+                }
+            };
+            await this._peripheral.connectWait();
         }
-        await this._peripheral.connectWait({
-            pairingOption: {
-                keys: pairingKeys,
-            },
-        });
         return await new Promise(async (resolve, reject) => {
             if (!this._peripheral) {
                 throw new Error("UA651BLE not found");
             }
             const results = [];
             const { bloodPressureMeasurementChar, timeChar, customServiceChar } = this._getChars();
-            await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
-            await this._writeTimeChar(this._timezoneOffsetMinute);
-            bloodPressureMeasurementChar.registerNotifyWait((data) => {
+            await bloodPressureMeasurementChar.registerNotifyWait((data) => {
                 results.push(this._analyzeData(data));
-            });
-            this._peripheral.ondisconnect = (reason) => {
                 resolve(results);
-            };
+            });
+            await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
+            // await this._writeTimeChar(this._timezoneOffsetMinute);
         });
     }
     _readFLOAT_LE(buffer, index) {
