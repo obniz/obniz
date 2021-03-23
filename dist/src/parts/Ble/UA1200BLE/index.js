@@ -96,7 +96,7 @@ class UA1200BLE {
                 results.push(this._analyzeData(data));
                 resolve(results);
             });
-            // await this._writeTimeChar(this._timezoneOffsetMinute);
+            await this._writeTimeChar(this._timezoneOffsetMinute);
         });
     }
     _readFLOAT_LE(buffer, index) {

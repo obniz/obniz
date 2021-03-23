@@ -84,7 +84,7 @@ export default class UA651BLE implements ObnizPartsBleInterface {
       });
 
       await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
-      // await this._writeTimeChar(this._timezoneOffsetMinute);
+      await this._writeTimeChar(this._timezoneOffsetMinute);
     });
   }
 

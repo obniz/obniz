@@ -44,7 +44,7 @@ class UA651BLE {
                 resolve(results);
             });
             await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
-            // await this._writeTimeChar(this._timezoneOffsetMinute);
+            await this._writeTimeChar(this._timezoneOffsetMinute);
         });
     }
     _readFLOAT_LE(buffer, index) {

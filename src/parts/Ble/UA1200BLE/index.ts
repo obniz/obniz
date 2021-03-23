@@ -147,7 +147,7 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
         results.push(this._analyzeData(data));
         resolve(results);
       });
-      // await this._writeTimeChar(this._timezoneOffsetMinute);
+      await this._writeTimeChar(this._timezoneOffsetMinute);
     });
   }
 
