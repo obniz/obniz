@@ -36,3 +36,4 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
           name: 'obniz.js CI'
+          icon_url: ${{ secrets.SLACK_ICON_URL }}
