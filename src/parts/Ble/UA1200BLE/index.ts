@@ -146,8 +146,13 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
       await this._writeTimeChar(this._timezoneOffsetMinute);
       await bloodPressureMeasurementChar.registerNotifyWait((data: number[]) => {
         results.push(this._analyzeData(data));
-        resolve(results);
       });
+      this._peripheral.ondisconnect = (reason) => {
+        resolve(results);
+        if (this.ondisconnect) {
+          this.ondisconnect(reason);
+        }
+      };
     });
   }
 

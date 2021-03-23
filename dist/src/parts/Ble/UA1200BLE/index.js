@@ -95,8 +95,13 @@ class UA1200BLE {
             await this._writeTimeChar(this._timezoneOffsetMinute);
             await bloodPressureMeasurementChar.registerNotifyWait((data) => {
                 results.push(this._analyzeData(data));
-                resolve(results);
             });
+            this._peripheral.ondisconnect = (reason) => {
+                resolve(results);
+                if (this.ondisconnect) {
+                    this.ondisconnect(reason);
+                }
+            };
         });
     }
     _readFLOAT_LE(buffer, index) {

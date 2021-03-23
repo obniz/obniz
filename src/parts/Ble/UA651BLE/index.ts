@@ -83,8 +83,13 @@ export default class UA651BLE implements ObnizPartsBleInterface {
 
       await bloodPressureMeasurementChar.registerNotifyWait((data: number[]) => {
         results.push(this._analyzeData(data));
-        resolve(results);
       });
+      this._peripheral.ondisconnect = (reason) => {
+        resolve(results);
+        if (this.ondisconnect) {
+          this.ondisconnect(reason);
+        }
+      };
     });
   }
 
