@@ -24,11 +24,22 @@ jobs:
             - run: npm ci
             - run: npm run build --if-present
             - run: npm test
-            - name: Notification Slack
-              uses: 8398a7/action-slack@v3.8.1
-              with:
-                 status: ${{ job.status }}
-              env:
-                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                 SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-              if: always()
+            # - name: Notification Slack
+            #   uses: 8398a7/action-slack@v3.8.1
+            #   with:
+            #      status: ${{ job.status }}
+            #   env:
+            #      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            #      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+            #   if: always()
+
+    slack-notify:
+    　　　if: always()
+    　　　needs: [test]
+    　　　name: workflow notification to slack
+    　　　runs-on: ubuntu-latest
+    　　　steps:
+    　　　  - uses: Gamesight/slack-workflow-status@master
+    　　　    with:
+    　　　      repo_token: ${{ secrets.GITHUB_TOKEN }}
+    　　　      slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
