@@ -25163,11 +25163,11 @@ class UA1200BLE {
             // await this._writeTimeChar(this._timezoneOffsetMinute);
             // await this._writeCCCDChar();
             const { bloodPressureMeasurementChar, timeChar } = this._getCharsSingleMode();
+            await this._writeTimeChar(this._timezoneOffsetMinute);
             await bloodPressureMeasurementChar.registerNotifyWait((data) => {
                 results.push(this._analyzeData(data));
                 resolve(results);
             });
-            await this._writeTimeChar(this._timezoneOffsetMinute);
         });
     }
     _readFLOAT_LE(buffer, index) {
@@ -25331,12 +25331,12 @@ class UA651BLE {
             }
             const results = [];
             const { bloodPressureMeasurementChar, timeChar, customServiceChar } = this._getChars();
+            await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
+            await this._writeTimeChar(this._timezoneOffsetMinute);
             await bloodPressureMeasurementChar.registerNotifyWait((data) => {
                 results.push(this._analyzeData(data));
                 resolve(results);
             });
-            await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
-            await this._writeTimeChar(this._timezoneOffsetMinute);
         });
     }
     _readFLOAT_LE(buffer, index) {

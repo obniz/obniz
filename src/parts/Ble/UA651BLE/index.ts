@@ -78,13 +78,13 @@ export default class UA651BLE implements ObnizPartsBleInterface {
       const results: UA651BLEResult[] = [];
       const { bloodPressureMeasurementChar, timeChar, customServiceChar } = this._getChars();
 
+      await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
+      await this._writeTimeChar(this._timezoneOffsetMinute);
+
       await bloodPressureMeasurementChar.registerNotifyWait((data: number[]) => {
         results.push(this._analyzeData(data));
         resolve(results);
       });
-
-      await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
-      await this._writeTimeChar(this._timezoneOffsetMinute);
     });
   }
 

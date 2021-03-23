@@ -92,11 +92,11 @@ class UA1200BLE {
             // await this._writeTimeChar(this._timezoneOffsetMinute);
             // await this._writeCCCDChar();
             const { bloodPressureMeasurementChar, timeChar } = this._getCharsSingleMode();
+            await this._writeTimeChar(this._timezoneOffsetMinute);
             await bloodPressureMeasurementChar.registerNotifyWait((data) => {
                 results.push(this._analyzeData(data));
                 resolve(results);
             });
-            await this._writeTimeChar(this._timezoneOffsetMinute);
         });
     }
     _readFLOAT_LE(buffer, index) {
