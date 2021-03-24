@@ -175,6 +175,7 @@ import Grove_MicroSwitch, { Grove_MicroSwitchOptions } from "../parts/Grove/Grov
 import Grove_MP3, { Grove_MP3Options } from "../parts/Grove/Grove_MP3";
 import Grove_PressureSensor, { Grove_PressureSensorOptions } from "../parts/Grove/Grove_PressureSensor";
 import Grove_RotaryAngleSensor, { Grove_RotaryAngleSensorOptions } from "../parts/Grove/Grove_RotaryAngleSensor";
+import Grove_SHT35Sensor, { Grove_SHT35SensorOptions } from "../parts/Grove/Grove_SHT35Sensor";
 import Grove_SoilMoistureSensor, { Grove_SoilMoistureSensorOptions } from "../parts/Grove/Grove_SoilMoistureSensor";
 import Grove_Speaker, { Grove_SpeakerOptions } from "../parts/Grove/Grove_Speaker";
 import Grove_WaterLevelSensor, { Grove_WaterLevelSensorOptions } from "../parts/Grove/Grove_WaterLevelSensor";
