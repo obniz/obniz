@@ -758,6 +758,13 @@
             "switchscience": "https://www.switch-science.com/catalog/807/",
             "seedstudio": "https://www.seeedstudio.com/Grove-Relay.html"
           }
+        },
+        {
+          "name": "Grove_SHT35Sensor",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/5337/",
+            "seedstudio": "https://www.seeedstudio.com/Grove-I2C-High-Accuracy-Temp-Humi-Sensor-SHT35.html"
+          }
         }
       ]
     },
@@ -859,6 +866,10 @@
         },
         {
           "name": "tm551",
+          "store": {}
+        },
+        {
+          "name": "RS_BTWATTCH2",
           "store": {}
         },
         {

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Grove_DistanceSensorOptionsB | obniz</title>
+	<title>RS_BTWATTCH2RealtimeData | obniz</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -59,16 +59,13 @@
 					<a href="../modules/parts.html">Parts</a>
 				</li>
 				<li>
-					<a href="../modules/parts.reflection-19541.html"></a>
+					<a href="../modules/parts.rs_btwattch2.html">RS_BTWATTCH2</a>
 				</li>
 				<li>
-					<a href="../modules/parts.reflection-19541.grove_distancesensor.html">Grove_DistanceSensor</a>
-				</li>
-				<li>
-					<a href="parts.reflection-19541.grove_distancesensor.grove_distancesensoroptionsb.html">Grove_DistanceSensorOptionsB</a>
+					<a href="parts.rs_btwattch2.rs_btwattch2realtimedata.html">RS_BTWATTCH2RealtimeData</a>
 				</li>
 			</ul>
-			<h1>Interface Grove_DistanceSensorOptionsB</h1>
+			<h1>Interface RS_BTWATTCH2RealtimeData</h1>
 		</div>
 	</div>
 </header>
@@ -79,7 +76,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Grove_DistanceSensorOptionsB</span>
+						<span class="target">RS_BTWATTCH2RealtimeData</span>
 					</li>
 				</ul>
 			</section>
@@ -87,26 +84,95 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section tsd-is-not-exported">
+						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="parts.reflection-19541.grove_distancesensor.grove_distancesensoroptionsb.html#grove" class="tsd-kind-icon">grove</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.rs_btwattch2.rs_btwattch2realtimedata.html#date" class="tsd-kind-icon">date</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.rs_btwattch2.rs_btwattch2realtimedata.html#irms" class="tsd-kind-icon">irms</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.rs_btwattch2.rs_btwattch2realtimedata.html#powerstate" class="tsd-kind-icon">power<wbr>State</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.rs_btwattch2.rs_btwattch2realtimedata.html#vrms" class="tsd-kind-icon">vrms</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.rs_btwattch2.rs_btwattch2realtimedata.html#wa" class="tsd-kind-icon">wa</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="grove" class="tsd-anchor"></a>
-					<h3>grove</h3>
-					<div class="tsd-signature tsd-kind-icon">grove<span class="tsd-signature-symbol">:</span> <a href="../classes/obnizcore.components.peripheralgrove.html" class="tsd-signature-type">PeripheralGrove</a></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="date" class="tsd-anchor"></a>
+					<h3>date</h3>
+					<div class="tsd-signature tsd-kind-icon">date<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Date</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Grove/Grove_DistanceSensor/index.ts:18</li>
+							<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:30</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Reported time from device</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="irms" class="tsd-anchor"></a>
+					<h3>irms</h3>
+					<div class="tsd-signature tsd-kind-icon">irms<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:21</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Amp (unit A) 消費電流(A)</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="powerstate" class="tsd-anchor"></a>
+					<h3>power<wbr>State</h3>
+					<div class="tsd-signature tsd-kind-icon">power<wbr>State<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:27</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Current Power State (Relay State)</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="vrms" class="tsd-anchor"></a>
+					<h3>vrms</h3>
+					<div class="tsd-signature tsd-kind-icon">vrms<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:18</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Voltage (unit v) 計測された電圧(v)</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="wa" class="tsd-anchor"></a>
+					<h3>wa</h3>
+					<div class="tsd-signature tsd-kind-icon">wa<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:24</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Watt (unit W) 消費電力(W)</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -121,26 +187,35 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/parts.reflection-19541.grove_distancesensor.grove_distancesensor.html" class="tsd-kind-icon">Grove_<wbr><wbr>Distance<wbr>Sensor</a>
+						<a href="../classes/parts.rs_btwattch2.rs_btwattch2.html" class="tsd-kind-icon">RS_<wbr>BTWATTCH2</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="parts.reflection-19541.grove_distancesensor.grove_distancesensoroptionsa.html" class="tsd-kind-icon">Grove_<wbr><wbr>Distance<wbr>Sensor<wbr>OptionsA</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="parts.rs_btwattch2.rs_btwattch2options.html" class="tsd-kind-icon">RS_<wbr>BTWATTCH2<wbr>Options</a>
 					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="parts.reflection-19541.grove_distancesensor.grove_distancesensoroptionsb.html" class="tsd-kind-icon">Grove_<wbr><wbr>Distance<wbr>Sensor<wbr>OptionsB</a>
+					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="parts.rs_btwattch2.rs_btwattch2realtimedata.html" class="tsd-kind-icon">RS_<wbr>BTWATTCH2<wbr>Realtime<wbr>Data</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="parts.reflection-19541.grove_distancesensor.grove_distancesensoroptionsb.html#grove" class="tsd-kind-icon">grove</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.rs_btwattch2.rs_btwattch2realtimedata.html#date" class="tsd-kind-icon">date</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.rs_btwattch2.rs_btwattch2realtimedata.html#irms" class="tsd-kind-icon">irms</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.rs_btwattch2.rs_btwattch2realtimedata.html#powerstate" class="tsd-kind-icon">power<wbr>State</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.rs_btwattch2.rs_btwattch2realtimedata.html#vrms" class="tsd-kind-icon">vrms</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.rs_btwattch2.rs_btwattch2realtimedata.html#wa" class="tsd-kind-icon">wa</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/parts.reflection-19541.grove_distancesensor.html#grove_distancesensoroptions" class="tsd-kind-icon">Grove_<wbr><wbr>Distance<wbr>Sensor<wbr>Options</a>
-					</li>
 				</ul>
 			</nav>
 		</div>

@@ -151,6 +151,7 @@ import MiniBreeze, { MiniBreezeOptions } from "../parts/Ble/MiniBreeze";
 import MT_500BT, { MT_500BTOptions } from "../parts/Ble/MT_500BT";
 import PLS_01BT, { PLS_01BTOptions } from "../parts/Ble/PLS_01BT";
 import REX_BTPM25V, { REX_BTPM25VOptions } from "../parts/Ble/REX_BTPM25V";
+import RS_BTWATTCH2, { RS_BTWATTCH2Options } from "../parts/Ble/RS_BTWATTCH2";
 import RS_Seek3, { RS_Seek3Options } from "../parts/Ble/RS_SEEK3";
 import SCBTGAAAC, { SCBTGAAACOptions } from "../parts/Ble/scbtgaaac";
 import TM530, { TM530Options } from "../parts/Ble/tm530";
@@ -175,6 +176,7 @@ import Grove_MP3, { Grove_MP3Options } from "../parts/Grove/Grove_MP3";
 import Grove_PressureSensor, { Grove_PressureSensorOptions } from "../parts/Grove/Grove_PressureSensor";
 import Grove_Relay, { Grove_RelayOptions } from "../parts/Grove/Grove_Relay";
 import Grove_RotaryAngleSensor, { Grove_RotaryAngleSensorOptions } from "../parts/Grove/Grove_RotaryAngleSensor";
+import Grove_SHT35Sensor, { Grove_SHT35SensorOptions } from "../parts/Grove/Grove_SHT35Sensor";
 import Grove_SoilMoistureSensor, { Grove_SoilMoistureSensorOptions } from "../parts/Grove/Grove_SoilMoistureSensor";
 import Grove_Speaker, { Grove_SpeakerOptions } from "../parts/Grove/Grove_Speaker";
 import Grove_WaterLevelSensor, { Grove_WaterLevelSensorOptions } from "../parts/Grove/Grove_WaterLevelSensor";
@@ -374,4 +376,5 @@ export interface PartsList {
   "BMP280": { class: BMP280; options: BMP280Options };
   "HEM_9200T": { class: HEM_9200T; options: HEM_9200TOptions };
   "W5500": { class: W5500; options: W5500Parts.WiredOptions };
+  "RS_BTWATTCH2": { class: RS_BTWATTCH2; options: RS_BTWATTCH2Options };
 }

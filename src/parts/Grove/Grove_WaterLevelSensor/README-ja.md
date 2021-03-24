@@ -1,4 +1,4 @@
-# Grove_Buzzer
+# Grove 水位センサ
 
 Grove 水位センサ [Grove Water Level Sensor](https://wiki.seeedstudio.com/Grove-Water-Level-Sensor/) から水位を取得します。
 

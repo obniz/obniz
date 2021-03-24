@@ -1,6 +1,6 @@
 module.exports = {
   "name": "obniz",
-  "version": "3.13.0",
+  "version": "3.13.1-beta.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -112,14 +112,14 @@ module.exports = {
     "tslint-plugin-prettier": "^2.1.0",
     "typedoc": "^0.16.9",
     "typedoc-plugin-external-module-name": "^3.0.0",
+    "typedoc-plugin-internal-external": "^2.1.1",
     "typescript": "^3.7.5",
     "vinyl": "^2.2.0",
     "webpack": "^4.34.0",
     "webpack-cli": "^3.3.4",
     "webpack-node-externals": "^1.7.2",
     "webpack-stream": "^5.2.1",
-    "yaml-loader": "^0.5.0",
-    "typedoc-plugin-internal-external": "^2.1.1"
+    "yaml-loader": "^0.5.0"
   },
   "dependencies": {
     "@types/eventemitter3": "^1.2.0",

@@ -291,9 +291,9 @@ export namespace W5500Parts {
     /** SPI CS pin number (initial value: 33) SPIのCSピン番号 (初期値: 33) */
     cs?: number;
     /**
-     * SPI clock frequency (initial value: 26000000(26Mhz))
+     * SPI clock frequency (initial value: 20000000(26Mhz))
      *
-     * SPIのクロック周波数(初期値: 26000000(26Mhz))
+     * SPIのクロック周波数(初期値: 20000000(26Mhz))
      */
     frequency?: number;
   }
@@ -475,7 +475,7 @@ export class W5500 implements ObnizPartsInterface {
    *
    * 常に書き込み時に転送チェックを行わない
    */
-  protected forceNoCheckWrite?: boolean;
+  protected forceNoCheckWrite = false;
 
   constructor() {
     this.keys = ["frequency", "reset", "mosi", "miso", "sclk", "cs"];
@@ -485,7 +485,9 @@ export class W5500 implements ObnizPartsInterface {
   public wired(obniz: Obniz) {
     this.obniz = obniz;
 
-    this.params.frequency = this.params.frequency || 26000000;
+    // W5500 may accept up to 26 Mhz. But it may fail on some devices. Reduce it when spi error occures. Increase it when no spi error occures and want to improve speed.
+    this.params.frequency = this.params.frequency || 20 * 1000 * 1000;
+
     this.params.mosi = this.params.mosi || 23;
     this.params.miso = this.params.miso || 19;
     this.params.clk = this.params.clk || 18;
@@ -563,7 +565,7 @@ export class W5500 implements ObnizPartsInterface {
       result = result && (await this.setPhysicalConfigWait(config.phyConfig));
     }
 
-    this.forceNoCheckWrite = config.forceNoCheckWrite;
+    this.forceNoCheckWrite = config.forceNoCheckWrite === true;
 
     // Interrupt handlers 割り込みハンドラー設定
     if (config.onIPConflictInterrupt) {
@@ -591,9 +593,10 @@ export class W5500 implements ObnizPartsInterface {
    * 各ソケットの終了処理をし、SPI通信を終了
    */
   public async finalizeWait() {
-    const funcList = this.socketList.filter((s) => s !== undefined).map((s) => s.finalizeWait);
-    for (const f in funcList) {
-      await funcList[f]();
+    for (const socket of this.socketList) {
+      if (socket !== undefined) {
+        await socket.finalizeWait();
+      }
     }
     this.spi.end();
     this.spiStatus = false;
@@ -806,17 +809,16 @@ export class W5500 implements ObnizPartsInterface {
         : undefined;
 
     if (disableAllSocketCheck !== false) {
-      const funcList = this.socketList
-        .filter((s) => s !== undefined && s.getProtocol() !== null)
-        .map((s) => s.checkInterruptWait);
-      for (const f in funcList) {
-        await funcList[f]();
+      for (const socket of this.socketList) {
+        if (socket !== undefined && socket.getProtocol() !== null) {
+          await socket.checkInterruptWait();
+        }
       }
     }
 
     for (const m in msgList) {
       const msg = msgList[m] as W5500Parts.Interrupt;
-      console.info(`Found Interrupt: ${msg}` + msg === "DestUnreach" ? ` address=${extra?.address}` : "");
+      // console.info(`Found Interrupt: ${msg}` + msg === "DestUnreach" ? ` address=${extra?.address}` : "");
       const handler = this.interruptHandlers[msg];
       if (handler !== undefined) {
         await handler(this, extra);
@@ -1138,7 +1140,7 @@ export class W5500 implements ObnizPartsInterface {
    * @param radix Description format of numbers in the address (N-ary) アドレス内の数字の記述形式 (N進数)
    * @hidden
    */
-  private addressWriteWait(
+  private async addressWriteWait(
     address: number,
     bsb: number,
     val: string,
@@ -1155,8 +1157,13 @@ export class W5500 implements ObnizPartsInterface {
     if (valList.filter((addr) => typeof addr === "number").length !== length) {
       throw new Error(`${name} format must be '${example}'.`);
     }
-    const func = length > 4 && this.fdm ? this.bigWriteWait : this.writeWait;
-    return func(address, bsb, valList);
+    if (length > 4 && this.fdm) {
+      return await this.bigWriteWait(address, bsb, valList);
+    } else {
+      return await this.writeWait(address, bsb, valList);
+    }
+    // const func = length > 4 && this.fdm ? this.bigWriteWait : this.writeWait;
+    // return func(address, bsb, valList);
   }
 
   /**
@@ -1616,7 +1623,7 @@ export class W5500Socket {
     // const rxReadDataPointer = await this.getRXReadDataPointerWait();
     const data = await this.ethernet.bigReadWait(this.rxReadDataPointer, BSB_SOCKET_RX_BUFFER(this.id), rxRecieveSize);
     this.rxReadDataPointer += rxRecieveSize;
-    await this.setRXReadDataPointerWait(this.rxReadDataPointer + rxRecieveSize);
+    await this.setRXReadDataPointerWait(this.rxReadDataPointer);
     await this.sendCommandWait("Receive");
     return this.stringMode ? new TextDecoder().decode(Uint8Array.from(data)) : data;
   }

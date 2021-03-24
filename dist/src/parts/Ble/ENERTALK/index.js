@@ -27,7 +27,7 @@ class ENERTALK_TOUCH {
         this._illuminanceChar = null;
         this._accelerometerChar = null;
         if (peripheral && !ENERTALK_TOUCH.isDevice(peripheral)) {
-            throw new Error("peripheral is not RS_BTIREX2");
+            throw new Error("peripheral is not ENERTALK_TOUCH");
         }
         this._peripheral = peripheral;
     }
@@ -44,7 +44,7 @@ class ENERTALK_TOUCH {
     }
     async connectWait() {
         if (!this._peripheral) {
-            throw new Error("RS_BTIREX2 is not find.");
+            throw new Error("ENERTALK_TOUCH is not find.");
         }
         this._peripheral.ondisconnect = (reason) => {
             if (typeof this.ondisconnect === "function") {
