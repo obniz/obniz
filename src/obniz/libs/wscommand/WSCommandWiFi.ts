@@ -4,6 +4,7 @@
  */
 import JsonBinaryConverter from './jsonBinaryConverter';
 import WSCommand from './WSCommand';
+
 class WSCommandWiFi extends WSCommand {
   public module: any;
   public _CommandScan: any;
@@ -49,6 +50,7 @@ class WSCommandWiFi extends WSCommand {
           SCAN_MAC,
           SCAN_RSSI,
         }
+
         let mode: ScanState = ScanState.SCAN_SSID_LEN;
         let tmpIndex = 0;
         let ssid = '';

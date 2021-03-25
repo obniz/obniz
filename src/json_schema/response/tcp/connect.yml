@@ -14,7 +14,7 @@ properties:
     properties:
       message:
         type: string
-        enum :
+        enum:
           - "ok"
           - "Port Used"
           - "Port Area Error"

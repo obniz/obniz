@@ -191,8 +191,8 @@ export class ObnizBleHciStateError extends ObnizError {
 export class ObnizBleAttError extends ObnizError {
   public static Errors: { [key: number]: string } = {};
 
-  constructor(public state: number, params?: any) {
-    super(11, `ATT Error: ${params}`);
+  constructor(public state: number, params?: string) {
+    super(11, `ATT Error: ${params || ''}`);
   }
 }
 

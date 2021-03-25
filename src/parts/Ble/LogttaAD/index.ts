@@ -17,6 +17,7 @@ export interface Logtta_AD_Data {
   volt: number;
   count: number;
 }
+
 export default class Logtta_AD implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {

@@ -86,6 +86,7 @@ export abstract class ComponentAbstract<
     const schema = WSSchema.getSchema(commandUri);
     return WSSchema.validateMultiple(json, schema);
   }
+
   public fastValidate(commandUri: any, json: any): boolean {
     const schema = WSSchema.getSchema(commandUri);
     return WSSchema.validate(json, schema);

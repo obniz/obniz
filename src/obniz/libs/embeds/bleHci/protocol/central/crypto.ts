@@ -4,12 +4,14 @@
  * @ignore
  */
 import crypto from 'crypto';
+
 /**
  * @ignore
  */
 function r() {
   return crypto.randomBytes(16);
 }
+
 /**
  * @ignore
  */

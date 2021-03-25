@@ -18,6 +18,7 @@ export default class MPU6886 extends MPU6050 {
       name: 'MPU6886',
     };
   }
+
   public i2cinfo: I2cInfo;
 
   constructor() {

@@ -9,6 +9,7 @@ import ObnizPartsBleInterface, {
 } from '../../../obniz/ObnizPartsBleInterface';
 import BleBatteryService from '../abstract/services/batteryService';
 import BleGenericAccess from '../abstract/services/genericAccess';
+
 export interface Logtta_CO2Options {}
 
 export interface Logtta_CO2_Adv_Data {

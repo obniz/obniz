@@ -496,7 +496,6 @@ class Gatt extends EventEmitter<GattEventTypes> {
       );
 
       if (data.length === this._mtu) {
-        continue;
       } else {
         return readData;
       }

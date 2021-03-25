@@ -4,6 +4,7 @@
  */
 
 import BleRemotePeripheral from './libs/embeds/bleHci/bleRemotePeripheral';
+
 export interface ObnizPartsBleInfo {
   name: string;
   datasheet?: any;

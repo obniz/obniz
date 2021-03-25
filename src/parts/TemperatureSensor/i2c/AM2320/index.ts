@@ -75,6 +75,7 @@ export default class AM2320 implements ObnizPartsInterface {
   public async getHumdWait(): Promise<number> {
     return await this.getHumidWait();
   }
+
   public async getHumidWait(): Promise<number> {
     return (await this.getAllWait()).humidity;
   }

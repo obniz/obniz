@@ -105,6 +105,7 @@ export default class BlePeripheral {
 
     this._updateServices();
   }
+
   /**
    * @ignore
    * @private

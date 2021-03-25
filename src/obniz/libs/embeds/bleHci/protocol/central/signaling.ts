@@ -24,6 +24,7 @@ const CONNECTION_PARAMETER_UPDATE_RESPONSE: any = 0x13;
 const SIGNALING_CID: any = 0x0005;
 
 type SignalingEventTypes = 'connectionParameterUpdateRequest';
+
 /**
  * @ignore
  */

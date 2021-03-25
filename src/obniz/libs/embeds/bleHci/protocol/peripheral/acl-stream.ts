@@ -9,6 +9,7 @@ import Hci from '../hci';
 import Smp from './smp';
 
 type AclStreamEventTypes = 'data' | 'end' | 'encryptChange';
+
 /**
  * @ignore
  */
@@ -51,6 +52,7 @@ class AclStream extends EventEmitter<AclStreamEventTypes> {
       this.emit('data', cid, data);
     }
   }
+
   public end() {
     this.emit('end');
   }

@@ -231,8 +231,8 @@ export default class ObnizSystemMethods extends ObnizComponents {
    *
    * @param trigger
    *
-   *  - true: Rise （LOW -> HIGH）
-   *  - false: Falling （HIGH -> LOW）
+   *  - true: Rise (LOW -> HIGH）
+   *  - false: Falling  (HIGH -> LOW）
    */
   public sleepIoTrigger(trigger: any) {
     if (typeof trigger !== 'boolean') {

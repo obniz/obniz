@@ -15,6 +15,7 @@ export interface Grove_MP3OptionsA {
   mp3_rx: number;
   mp3_tx: number;
 }
+
 interface Grove_MP3OptionsB {
   grove: PeripheralGrove;
 }

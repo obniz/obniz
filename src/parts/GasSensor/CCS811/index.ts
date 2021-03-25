@@ -27,6 +27,7 @@ export default class CCS811 extends i2cParts implements ObnizPartsInterface {
       // datasheet: "",
     };
   }
+
   public i2cinfo: I2cInfo;
   public keys: string[];
   public requiredKeys: string[];
@@ -179,6 +180,7 @@ export default class CCS811 extends i2cParts implements ObnizPartsInterface {
     ); // Read what's currently there
     return meas_mode[0];
   }
+
   public async getDriveModeWait(): Promise<number> {
     const meas_mode: number = await this.getMeasModeWait();
     let drive_mode = meas_mode >>> 4;
@@ -239,6 +241,7 @@ export default class CCS811 extends i2cParts implements ObnizPartsInterface {
   public async geteCO2Wait(): Promise<number> {
     return (await this.readAlgorithmResultsWait()).eCO2;
   }
+
   public async getTVOCWait(): Promise<number> {
     return (await this.readAlgorithmResultsWait()).TVOC;
   }

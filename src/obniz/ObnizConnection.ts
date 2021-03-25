@@ -5,13 +5,13 @@
 
 import EventEmitter from 'eventemitter3';
 import wsClient from 'ws';
+import '@types/node/globals';
 
 // @ts-ignore
 import packageJson from '../../package'; // pakcage.js will be created from package.json on build.
 import WSCommand from './libs/wscommand';
 import { ObnizOfflineError } from './ObnizError';
 import { ObnizOptions } from './ObnizOptions';
-import Timeout = NodeJS.Timeout;
 
 export type ObnizConnectionEventNames = 'connect' | 'close' | 'notify';
 
@@ -41,7 +41,7 @@ export default abstract class ObnizConnection extends EventEmitter<
 
   public static isIpAddress(str: string) {
     const regex = /^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$/;
-    return str.match(regex) !== null;
+    return regex.exec(str) !== null;
   }
 
   /**
@@ -225,8 +225,8 @@ export default abstract class ObnizConnection extends EventEmitter<
   protected sendPool: any;
   private _onConnectCalled: boolean;
   private _repeatInterval = 0;
-  private _nextLoopTimeout?: Timeout;
-  private _nextPingTimeout?: Timeout;
+  private _nextLoopTimeout?: NodeJS.Timeout;
+  private _nextPingTimeout?: NodeJS.Timeout;
   private _lastDataReceivedAt = 0;
 
   constructor(id: string, options?: ObnizOptions) {
@@ -449,7 +449,7 @@ export default abstract class ObnizConnection extends EventEmitter<
    * @param options.local_connect If false, send data via gloval internet.
    */
   public send(
-    obj: object | object[],
+    obj: Record<string, any> | Record<string, any>[],
     options?: { local_connect?: boolean; connect_check?: boolean }
   ) {
     options = options || {};
@@ -533,7 +533,7 @@ export default abstract class ObnizConnection extends EventEmitter<
    * @ignore
    * @param msg
    */
-  public error(msg: any) {
+  public error(msg: string) {
     console.error(`[obniz ${this.id}] error:${msg}`);
   }
 

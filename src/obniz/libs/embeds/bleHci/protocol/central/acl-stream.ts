@@ -53,6 +53,7 @@ export default class AclStream extends EventEmitter<AclStreamEventTypes> {
     this._smp.on('fail', this.onSmpFailBinded);
     this._smp.on('end', this.onSmpEndBinded);
   }
+
   public debugHandler: any = () => {};
 
   public async encryptWait(options?: any) {
