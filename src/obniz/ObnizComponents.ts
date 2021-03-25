@@ -29,6 +29,8 @@ import HW from './libs/hw';
 import PeripheralGrove from './libs/io_peripherals/grove';
 import { ObnizOptions } from './ObnizOptions';
 
+export type PeripheralName = 'pwm' | 'uart' | 'spi' | 'i2c' | 'tcp';
+
 export default abstract class ObnizComponents extends ObnizParts {
   /* board peripherals */
 
@@ -410,7 +412,7 @@ export default abstract class ObnizComponents extends ObnizParts {
 
     this._hwDefinition = HW.getDefinitionFor(this.hw);
     if (!this._hwDefinition) {
-      throw new Error(`unkown hw ${this.hw}`);
+      throw new Error(`unkown hw ${this.hw || ''}`);
     }
 
     const hw_peripherals: any = this._hwDefinition.peripherals;
@@ -570,7 +572,7 @@ export default abstract class ObnizComponents extends ObnizParts {
     }
   }
 
-  protected _getFreePeripheralUnit(peripheral: any): any {
+  protected _getFreePeripheralUnit(peripheral: PeripheralName): any {
     for (const key of this._allComponentKeys) {
       if (key.indexOf(peripheral) === 0) {
         /* "io" for "io0" */

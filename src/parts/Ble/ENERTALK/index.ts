@@ -66,6 +66,10 @@ export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
     };
     await this._peripheral.connectWait();
     this._service = this._peripheral.getService(this._uuids.service);
+    if (!this._service) {
+      await this._peripheral.disconnectWait();
+      throw new Error('service is not find.');
+    }
     this._temperatureChar = this._service.getCharacteristic(
       this._uuids.temperatureChar
     );

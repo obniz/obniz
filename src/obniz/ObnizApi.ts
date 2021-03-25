@@ -5,6 +5,7 @@
 
 import fetch from 'node-fetch';
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import packageJson from '../../package';
 import { ObnizOptions } from './ObnizOptions'; // pakcage.js will be created from package.json on build.
@@ -38,14 +39,14 @@ export default class ObnizApi {
    * @param callback with result
    */
   public getState(callback: (val: { state: 'online' | 'offline' }) => void) {
-    return this.post('/state', null, callback);
+    return this.postWait('/state', null, callback);
   }
 
   /**
    * Get device is online or offline
    */
   public async getStateWait(): Promise<{ state: 'online' | 'offline' }> {
-    const json = await this.post('/state', null);
+    const json = await this.postWait('/state', null);
     return json;
   }
 
@@ -55,11 +56,11 @@ export default class ObnizApi {
    * @param json
    * @param callback
    */
-  public async postJson(json: any, callback: (result: any) => void) {
-    return await this.post('/api/' + this.apiVersion, json, callback); // 1 is api version
+  public async postJsonWait(json: any, callback: (result: any) => void) {
+    return await this.postWait('/api/' + this.apiVersion, json, callback); // 1 is api version
   }
 
-  protected async post(path: string, params: any, callback: any = null) {
+  protected async postWait(path: string, params: any, callback: any = null) {
     const url: any = this.urlBase + path;
 
     // let query = [];

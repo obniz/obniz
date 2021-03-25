@@ -152,6 +152,7 @@ export class Obniz extends ObnizDevice {
 /**
  * types
  */
+// eslint-disable-next-line no-redeclare
 export namespace Obniz {
   export type ObnizApp = _ObnizApp;
   export type ObnizApi = _ObnizApi;

@@ -52,6 +52,11 @@ module.exports = {
     {
       files: ['**/*.ts'],
 
+      env: {
+        browser: true,
+        es6: true,
+        node: true,
+      },
       extends: [
         'plugin:@typescript-eslint/recommended',
         'plugin:@typescript-eslint/recommended-requiring-type-checking',
@@ -128,6 +133,7 @@ module.exports = {
         '@typescript-eslint/consistent-type-assertions': 'error',
         '@typescript-eslint/dot-notation': 'error',
         '@typescript-eslint/indent': 'off',
+        '@typescript-eslint/ban-ts-comment': 'warn',
         '@typescript-eslint/naming-convention': 'off',
         '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/no-empty-interface': 'off',
