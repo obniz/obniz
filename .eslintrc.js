@@ -8,6 +8,8 @@ module.exports = {
   },
   parserOptions: {
     ecmaVersion: 2017,
+    project: path.join(__dirname, 'tsconfig.eslint.json'),
+    sourceType: 'module',
   },
   extends: ['eslint:recommended', 'plugin:prettier/recommended'],
   plugins: [
@@ -50,17 +52,11 @@ module.exports = {
     {
       files: ['**/*.ts'],
 
-      parserOptions: {
-        ecmaVersion: 2017,
-        project: path.join(__dirname, 'tsconfig.eslint.json'),
-        sourceType: 'module',
-      },
       extends: [
         'plugin:@typescript-eslint/recommended',
         'plugin:@typescript-eslint/recommended-requiring-type-checking',
       ],
       parser: '@typescript-eslint/parser',
-      plugins: ['@typescript-eslint'],
       rules: {
         'prettier/prettier': [
           'error',

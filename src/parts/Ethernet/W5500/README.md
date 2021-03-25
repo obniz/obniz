@@ -11,11 +11,16 @@ First of all, specify the pin assignment of W5500 and pass it to wired.
 var ethernet = obniz.wired('W5500', { reset: 12, mosi: 23, miso: 19, sclk: 18, cs: 33 });
 ```
 
+In the case of M5's W5500 stack, the wiring is as follows. (Note that you need to use obnizOS for esp32 instead of obnizOS for M5Stack because the SPI is shared with the display)
+```javascript
+var ethernet = obniz.wired('W5500', { reset: 13, mosi: 23, miso: 19, sclk: 18, cs: 26 });
+```
+
 **The code from here is basically an async function. Please note that not using await will cause an SPI communication error.**
 
 Next, set the network settings of the main unit. This is necessary every time. See [the reference (Japanease)](https://obniz.github.io/obniz/obnizjs/interfaces/parts.w5500.w5500.commonoptions.html) for detailed options.
 ```javascript
-await ethernet.init({
+await ethernet.initWait({
   gatewayIP: '192.168.1.1', // IPv4 address of default gateway
   subnetMask: '255.255.255.0', // Subnet mask
   macAddress: '12:34:56:78:90:AB', // MAC address
@@ -28,13 +33,13 @@ Then initialize the socket. Up to 8 sockets can be used at the same time on the 
 
 ```javascript
 var socket = ethernet.getNewSocket();
-await socket.init({
+await socket.initWait({
   protocol: 'TCPClient', // TCPClient、TCPServer又はUDP
   sourcePort: 54321,
   destIP: '93.184.216.34', // example.com
   destPort: 80, // HTTP
-  rxBufferSize: 4, // 受信データは最大4KB
-  stringMode: true, // 受信データを文字列(UTF-8)として扱う
+  rxBufferSize: 4, // Received data is up to 4KB
+  stringMode: true, // Treat received data as string (UTF-8)
 });
 ```
 
@@ -66,38 +71,38 @@ socket.setAllInterruptHandler(async (socket, name, data) => {
 The data that can be sent can be a byte array or a string. The string is decoded from UTF-8. Data reception is done in advance when calling the interrupt handler. When ```stringMode: true``` is set in init, the received data is also encoded in the UTF-8 character string. In both cases, the maximum length can be changed by txBufferSize (send) or rxBufferSize (receive).
 
 ```javascript
-await socket.sendData(data);
+await socket.sendDataWait(data);
 ```
 
 If necessary, use a function that can be executed relatively quickly by simply sending data without confirming the transfer.
 
 ```javascript
-await socket.sendDataFast(data);
+await socket.sendDataFastWait(data);
 ```
 
 If you want to finish all communication, please finish the process.
 
 ```javascript
-await ethernet.finalize();
+await ethernet.finalizeWait();
 ```
 
 If you want to end communication with a specific socket, execute from the socket. However, all settings and states are not changed just by closing the process.
 
 ```javascript
-await socket.finalize();
+await socket.finalizeWait();
 ```
 
 Be sure to embed this code at the end after completing the settings. checkInterrupt() checks for interrupts each time. This loop will continue unless all sockets are closed.
 
 ```javascript
-while (await ethernet.checkInterrupt());
+while (await ethernet.checkInterruptWait());
 ```
 
 You can wait for a connection with the router if needed. The return value is the physical layer status (such as duplex 100Mbps).
 
 ```javascript
 // { duplex: true, speed: 100, link: true }
-await ethernet.waitLinkUp();
+await ethernet.waitLinkUpWait();
 ```
 
 Please refer to [the reference (Japanease)](https://obniz.github.io/obniz/obnizjs/classes/parts.w5500.w5500.html) for other functions.
@@ -109,17 +114,17 @@ Please refer to [the reference (Japanease)](https://obniz.github.io/obniz/obnizj
 ```javascript
 var ethernet = obniz.wired('W5500', { reset: 12, mosi: 23, miso: 19, sclk: 18, cs: 33 });
 console.log('Start');
-await ethernet.init({
+await ethernet.initWait({
   gatewayIP: '192.168.8.1',
   subnetMask: '255.255.255.0',
   macAddress: 'C8:2B:96:AE:10:63',
   localIP: '192.168.8.200',
 });
 
-await ethernet.waitLinkUp();
+await ethernet.waitLinkUpWait();
 
 var socket = ethernet.getNewSocket();
-await socket.init({
+await socket.initWait({
   protocol: 'TCPClient',
   sourcePort: 54321,
   destIP: '93.184.216.34', // example.com
@@ -130,7 +135,7 @@ await socket.init({
 
 socket.setInterruptHandler('ReceiveData', async (socket, data) => {
   console.log(`Socket${socket.id}[Receive]`, data);
-  await ethernet.finalize();
+  await ethernet.finalizeWait();
   console.log('End');
 });
 
@@ -142,11 +147,11 @@ socket.setInterruptHandler('ConnectSuccess', async (socket) => {
              'Cache-Control: no-cache\n' +
              'Accept: text/html\n' +
              'Accept-Language: ja,en-US;q=0.9,en;q=0.8\n\n'
-  await socket.sendData(data);
+  await socket.sendDataWait(data);
   console.log(`Socket${socket.id}[Send]`, data);
 });
 
-while (await ethernet.checkInterrupt());
+while (await ethernet.checkInterruptWait());
 ```
 
 ## NTP with UDP(Only operation check)
@@ -154,17 +159,17 @@ while (await ethernet.checkInterrupt());
 ```javascript
 var ethernet = obniz.wired('W5500', { reset: 12, mosi: 23, miso: 19, sclk: 18, cs: 33 });
 console.log('Start');
-await ethernet.init({
+await ethernet.initWait({
   gatewayIP: '192.168.8.1',
   subnetMask: '255.255.255.0',
   macAddress: 'C8:2B:96:AE:10:63',
   localIP: '192.168.8.200',
 });
 
-await ethernet.waitLinkUp();
+await ethernet.waitLinkUpWait();
 
-var socket = ethernet.getNewSocket();
-await socket.init({
+var socket = ethernet.getNewSocketWait();
+await socket.initWait({
   protocol: 'UDP',
   sourcePort: 54321,
   destIP: '61.205.120.130', // ntp.nict.jp
@@ -173,7 +178,7 @@ await socket.init({
 
 socket.setInterruptHandler('ReceiveData', async (socket, data) => {
   console.log(`Socket${socket.id}[Receive]`, data);
-  await ethernet.finalize();
+  await ethernet.finalizeWait();
   console.log('End');
 });
 
@@ -192,8 +197,8 @@ var data = [
   (unix & 0xFF000000) >> (8*3), (unix & 0xFF0000) >> (8*2), (unix & 0xFF00) >> (8*1), unix & 0xFF,
   0, 0, 0, 0,
 ];
-await socket.sendData(data);
+await socket.sendDataWait(data);
 console.log(`Socket${socket.id}[Send]`, data);
 
-while (await ethernet.checkInterrupt());
+while (await ethernet.checkInterruptWait());
 ```
