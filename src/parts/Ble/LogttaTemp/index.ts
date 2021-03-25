@@ -181,8 +181,15 @@ export default class Logtta_TH implements ObnizPartsBleInterface {
     await c!.writeWait(data);
   }
 
-  // 有効にしたあと、切断するとビーコンが発信される
-  public async setBeaconMode(enable: boolean) {
+  /**
+   * @deprecated
+   * @param enable
+   */
+  public setBeaconMode(enable: boolean) {
+    return this.setBeaconModeWait(enable);
+  }
+
+  public async setBeaconModeWait(enable: boolean) {
     if (!(this._peripheral && this._peripheral.connected)) {
       return;
     }

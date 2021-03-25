@@ -110,7 +110,7 @@ if(results){
       console.log('disconnected');
     }
     await omron.connectWait();
-    let data = await omron.getLatestData();
+    let data = await omron.getLatestDataWait();
     
     console.log(data);
 }else{
@@ -131,7 +131,7 @@ if(results){
     console.log("find");
   
     await omron.connectWait();
-    let data = await omron.getLatestData();
+    let data = await omron.getLatestDataWait();
     
     console.log(data);
     
@@ -143,7 +143,7 @@ if(results){
 ```
 
 
-## [await]getLatestData()
+## [await]getLatestDataWait()
 最新のデータを取得します
 
 ```javascript
@@ -156,7 +156,7 @@ if(results){
     console.log("find");
   
     await omron.connectWait();
-    let data = await omron.getLatestData();
+    let data = await omron.getLatestDataWait();
     
     console.log(data);
     

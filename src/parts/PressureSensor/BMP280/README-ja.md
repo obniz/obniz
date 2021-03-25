@@ -27,7 +27,7 @@ address | `number` | no | 0x76  | 0x76 or 0x77
 // Javascript Example
 // Please pullup sdi and sck.
 var bmp280 = obniz.wired("BMP280", {vio:0, vcore:1, gnd:2, csb:3, sdi: 4, sck: 5, sdo:6 });
-await bmp280.applyCalibration();
+await bmp280.applyCalibrationWait();
 const val = await bmp280.getAllWait();
 console.log(val);
 ```
@@ -45,7 +45,7 @@ csbはhighに単純に繋げられ、sdoもgndに単純に繋げられます。
 // sdo connected to gnd
 
 var bmp280 = obniz.wired("BMP280", {vio:0, gnd:1, sdi: 2, sck: 3 });
-await bmp280.applyCalibration();
+await bmp280.applyCalibrationWait();
 const val = await bmp280.getAllWait();
 console.log(val);
 ```
@@ -69,7 +69,7 @@ var bmp280 = obniz.wired("BMP280", {vio:0, gnd:1, i2c: i2c });
 var bmp280 = obniz.wired("BMP280", {vio:0, gnd:1, sdi: 2, sck: 3, address: 0x77});
 ```
 
-## [await] applyCalibration()
+## [await] applyCalibrationWait()
 
 チップに保存されている工場で設定されているキャリブレーションデータを取り出します。
 これをしないで使うことも出来ますが、これを一度呼び出すことで精度がかなり上がります。
@@ -78,10 +78,10 @@ var bmp280 = obniz.wired("BMP280", {vio:0, gnd:1, sdi: 2, sck: 3, address: 0x77}
 // Javascript Example
 // Please pullup sdi and sck.
 var bmp280 = obniz.wired("BMP280", {vio:0, vcore:1, gnd:2, csb:3, sdi: 4, sck: 5, sdo:6 });
-await bmp280.applyCalibration();
+await bmp280.applyCalibrationWait();
 ```
 
-## [await] setIIRStrength()
+## [await] setIIRStrengthWait()
 
 内蔵IIRフィルタの強度を変更できます。 0 to 4.
 
@@ -95,8 +95,8 @@ IIRフィルタは計測結果を安定させてより高い精度にします�
 // Javascript Example
 // Please pullup sdi and sck.
 var bmp280 = obniz.wired("BMP280", {vio:0, vcore:1, gnd:2, csb:3, sdi: 4, sck: 5, sdo:6 });
-await bmp280.applyCalibration();
-await bmp280.setIIRStrength(1); // start using minimum IIR 
+await bmp280.applyCalibrationWait();
+await bmp280.setIIRStrengthWait(1); // start using minimum IIR 
 ```
 
 ## [await] getAllWait()
@@ -110,7 +110,7 @@ await bmp280.setIIRStrength(1); // start using minimum IIR
 // Javascript Example
 // Please pullup sdi and sck.
 var bmp280 = obniz.wired("BMP280", {vio:0, vcore:1, gnd:2, csb:3, sdi: 4, sck: 5, sdo:6 });
-await bmp280.applyCalibration();
+await bmp280.applyCalibrationWait();
 const obj = await bmp280.getAllWait();
 console.log('temp: ' + obj.temperature + ' degree');
 console.log('humidity: ' + obj.humidity + ' %');
@@ -126,7 +126,7 @@ console.log('pressure: ' + obj.pressure + ' hPa');
 // Javascript Example
 // Please pullup sdi and sck.
 var bmp280 = obniz.wired("BMP280", {vio:0, vcore:1, gnd:2, csb:3, sdi: 4, sck: 5, sdo:6 });
-await bmp280.applyCalibration();
+await bmp280.applyCalibrationWait();
 console.log('pressure: ' + await bmp280.getPressureWait() + ' hPa');
 ```
 
@@ -138,7 +138,7 @@ console.log('pressure: ' + await bmp280.getPressureWait() + ' hPa');
 // Javascript Example
 // Please pullup sdi and sck.
 var bmp280 = obniz.wired("BMP280", {vio:0, vcore:1, gnd:2, csb:3, sdi: 4, sck: 5, sdo:6 });
-await bmp280.applyCalibration();
+await bmp280.applyCalibrationWait();
 console.log('temp: ' + await bmp280.getTempWait() + ' degree');
 ```
 
@@ -151,7 +151,7 @@ console.log('temp: ' + await bmp280.getTempWait() + ' degree');
 // Javascript Example
 // Please pullup sdi and sck.
 var bmp280 = obniz.wired("BMP280", {vio:0, vcore:1, gnd:2, csb:3, sdi: 4, sck: 5, sdo:6 });
-await bmp280.applyCalibration();
+await bmp280.applyCalibrationWait();
 const obj = await bmp280.getAllWait();
 const airPressure = obj.pressure;
 const hight_in_m = bmp280.calcAltitude(airPressure);

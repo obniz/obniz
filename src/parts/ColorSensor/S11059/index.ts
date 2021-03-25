@@ -65,7 +65,14 @@ export default class S11059 implements ObnizPartsInterface {
     this.i2c.write(this.address, [this.regAdrs.ctrl, val]); // Set gain,interger time
   }
 
-  public async getVal() {
+  /**
+   * @deprecated
+   */
+  public getVal() {
+    return this.getValWait();
+  }
+
+  public async getValWait() {
     this.i2c.write(this.address, [this.regAdrs.sensorRed]);
     const ret = await this.i2c.readWait(this.address, 8);
     const level = [0, 0, 0, 0];

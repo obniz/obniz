@@ -117,8 +117,10 @@ export default class REX_BTPM25V implements ObnizPartsInterface {
     );
     return this._analyzeResultExt(data);
   }
-
-  public async getLedMode() {
+  public getLedMode() {
+    return this.getLedModeWait();
+  }
+  public async getLedModeWait() {
     if (!this._ledCharacteristic) {
       throw new Error('device is not connected');
     }

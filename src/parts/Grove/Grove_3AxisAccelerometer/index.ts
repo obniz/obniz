@@ -90,7 +90,7 @@ export default class Grove_3AxisAccelerometer implements ObnizPartsInterface {
     this.constVal.INT2_PIN = 0x01;
   }
 
-  public async wired(obniz: any) {
+  public wired(obniz: any) {
     this.obniz = obniz;
 
     if (this.params.grove) {
@@ -105,8 +105,12 @@ export default class Grove_3AxisAccelerometer implements ObnizPartsInterface {
 
       this.i2c = obniz.getI2CWithConfig(this.params);
     }
-    this.obniz.wait(100);
+    this.obniz.wait(100).then(() => {
+      return this.initWait();
+    });
+  }
 
+  public async initWait() {
     // power on
     this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 0]);
     this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 16]);
@@ -115,15 +119,15 @@ export default class Grove_3AxisAccelerometer implements ObnizPartsInterface {
     this.i2c.write(this.address, [this.regAdrs.THRESH_ACT, 75]); // set activity threshold 0~255
     this.i2c.write(this.address, [this.regAdrs.THRESH_INACT, 75]); // set inactivity threshold 0~255
     this.i2c.write(this.address, [this.regAdrs.THRESH_INACT, 10]); // set time inactivity 0~255
-    await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 6, 1); // setActivityX
-    await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 5, 1); // setActivityY
-    await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 4, 1); // setActivityZ
-    await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 2, 1); // setInactivityX
-    await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 1, 1); // setInactivityY
-    await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 0, 1); // setInactivityZ
-    await this.setRegisterBit(this.regAdrs.TAP_AXES, 2, 0); // setTapDetectionOnX
-    await this.setRegisterBit(this.regAdrs.TAP_AXES, 1, 0); // setTapDetectionOnY
-    await this.setRegisterBit(this.regAdrs.TAP_AXES, 0, 1); // setTapDetectionOnZ
+    await this.setRegisterBitWait(this.regAdrs.ACT_INACT_CTL, 6, 1); // setActivityX
+    await this.setRegisterBitWait(this.regAdrs.ACT_INACT_CTL, 5, 1); // setActivityY
+    await this.setRegisterBitWait(this.regAdrs.ACT_INACT_CTL, 4, 1); // setActivityZ
+    await this.setRegisterBitWait(this.regAdrs.ACT_INACT_CTL, 2, 1); // setInactivityX
+    await this.setRegisterBitWait(this.regAdrs.ACT_INACT_CTL, 1, 1); // setInactivityY
+    await this.setRegisterBitWait(this.regAdrs.ACT_INACT_CTL, 0, 1); // setInactivityZ
+    await this.setRegisterBitWait(this.regAdrs.TAP_AXES, 2, 0); // setTapDetectionOnX
+    await this.setRegisterBitWait(this.regAdrs.TAP_AXES, 1, 0); // setTapDetectionOnY
+    await this.setRegisterBitWait(this.regAdrs.TAP_AXES, 0, 1); // setTapDetectionOnZ
 
     this.i2c.write(this.address, [this.regAdrs.THRESH_TAP, 50]); // setTapThreshold
     this.i2c.write(this.address, [this.regAdrs.DUR, 15]); // setTapDuration
@@ -133,36 +137,46 @@ export default class Grove_3AxisAccelerometer implements ObnizPartsInterface {
     this.i2c.write(this.address, [this.regAdrs.TIME_FF, 45]); // setFreeFallDuration
 
     // setInterruptMapping
-    await this.setInterruptMapping(
+    await this.setInterruptMappingWait(
       this.regAdrs.INT_SINGLE_TAP_BIT,
       this.constVal.INT1_PIN
     );
-    await this.setInterruptMapping(
+    await this.setInterruptMappingWait(
       this.regAdrs.INT_DOUBLE_TAP_BIT,
       this.constVal.INT1_PIN
     );
-    await this.setInterruptMapping(
+    await this.setInterruptMappingWait(
       this.regAdrs.INT_FREE_FALL_BIT,
       this.constVal.INT1_PIN
     );
-    await this.setInterruptMapping(
+    await this.setInterruptMappingWait(
       this.regAdrs.INT_ACTIVITY_BIT,
       this.constVal.INT1_PIN
     );
-    await this.setInterruptMapping(
+    await this.setInterruptMappingWait(
       this.regAdrs.INT_INACTIVITY_BIT,
       this.constVal.INT1_PIN
     );
 
     // setInterrupt
-    await this.setInterrupt(this.regAdrs.INT_SINGLE_TAP_BIT, 1);
-    await this.setInterrupt(this.regAdrs.INT_DOUBLE_TAP_BIT, 1);
-    await this.setInterrupt(this.regAdrs.INT_FREE_FALL_BIT, 1);
-    await this.setInterrupt(this.regAdrs.INT_ACTIVITY_BIT, 1);
-    await this.setInterrupt(this.regAdrs.INT_INACTIVITY_BIT, 1);
+    await this.setInterruptWait(this.regAdrs.INT_SINGLE_TAP_BIT, 1);
+    await this.setInterruptWait(this.regAdrs.INT_DOUBLE_TAP_BIT, 1);
+    await this.setInterruptWait(this.regAdrs.INT_FREE_FALL_BIT, 1);
+    await this.setInterruptWait(this.regAdrs.INT_ACTIVITY_BIT, 1);
+    await this.setInterruptWait(this.regAdrs.INT_INACTIVITY_BIT, 1);
   }
 
-  public async setRegisterBit(regAddr: any, bitPos: any, state: any) {
+  /**
+   * @deprecated
+   * @param regAddr
+   * @param bitPos
+   * @param state
+   */
+  public setRegisterBit(regAddr: any, bitPos: any, state: any) {
+    return this.setRegisterBitWait(regAddr, bitPos, state);
+  }
+
+  public async setRegisterBitWait(regAddr: any, bitPos: any, state: any) {
     this.i2c.write(this.address, [regAddr]);
     let b: any = await this.i2c.readWait(this.address, 1);
     if (state) {
@@ -173,12 +187,32 @@ export default class Grove_3AxisAccelerometer implements ObnizPartsInterface {
     this.i2c.write(this.address, [b]);
   }
 
-  public async setInterruptMapping(interruptBit: any, interruptPin: any) {
-    await this.setRegisterBit(this.regAdrs.INT_MAP, interruptBit, interruptPin);
+  /**
+   * @deprecated
+   * @param interruptBit
+   * @param interruptPin
+   */
+  public setInterruptMapping(interruptBit: any, interruptPin: any) {
+    return this.setInterruptMappingWait(interruptBit, interruptPin);
   }
 
-  public async setInterrupt(interruptBit: any, state: any) {
-    await this.setRegisterBit(this.regAdrs.INT_ENABLE, interruptBit, state);
+  public async setInterruptMappingWait(interruptBit: any, interruptPin: any) {
+    await this.setRegisterBitWait(
+      this.regAdrs.INT_MAP,
+      interruptBit,
+      interruptPin
+    );
+  }
+
+  /**
+   * @deprecated
+   */
+  public setInterrupt(interruptBit: any, state: any) {
+    return this.setInterruptWait(interruptBit, state);
+  }
+
+  public async setInterruptWait(interruptBit: any, state: any) {
+    await this.setRegisterBitWait(this.regAdrs.INT_ENABLE, interruptBit, state);
   }
 
   public signHandling(val: number): number {
@@ -189,7 +223,14 @@ export default class Grove_3AxisAccelerometer implements ObnizPartsInterface {
     return val;
   }
 
-  public async getRawVal(): Promise<number[]> {
+  /**
+   * @deprecated
+   */
+  public getRawVal(): Promise<number[]> {
+    return this.getRawValWait();
+  }
+
+  public async getRawValWait(): Promise<number[]> {
     this.i2c.write(this.address, [this.regAdrs.DATAX0]);
     const buff: any = await this.i2c.readWait(this.address, 6);
     const rawVal: any = [0, 0, 0];

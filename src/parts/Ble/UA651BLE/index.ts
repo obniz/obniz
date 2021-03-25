@@ -83,7 +83,7 @@ export default class UA651BLE implements ObnizPartsBleInterface {
 
     const { timeChar, customServiceChar } = this._getChars();
 
-    await this._writeTimeChar(this._timezoneOffsetMinute);
+    await this._writeTimeCharWait(this._timezoneOffsetMinute);
 
     await customServiceChar.writeWait([2, 1, 3]); // disconnect req
     return key;
@@ -113,7 +113,7 @@ export default class UA651BLE implements ObnizPartsBleInterface {
 
       await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
 
-      await this._writeTimeChar(this._timezoneOffsetMinute);
+      await this._writeTimeCharWait(this._timezoneOffsetMinute);
 
       bloodPressureMeasurementChar.registerNotifyWait((data: number[]) => {
         results.push(this._analyzeData(data));
@@ -214,7 +214,7 @@ export default class UA651BLE implements ObnizPartsBleInterface {
     };
   }
 
-  private async _writeTimeChar(timeOffsetMinute: number) {
+  private async _writeTimeCharWait(timeOffsetMinute: number) {
     const { timeChar } = this._getChars();
 
     const date = new Date();

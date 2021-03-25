@@ -156,7 +156,15 @@ export default class FlickHat implements ObnizPartsInterface {
     }
   }
 
-  public async start(callback: (fwInfo: any) => void): Promise<void> {
+  /**
+   * @deprecated
+   * @param callback
+   */
+  public start(callback?: (fwInfo: any) => void): Promise<void> {
+    return this.startWait(callback);
+  }
+
+  public async startWait(callback?: (fwInfo: any) => void): Promise<void> {
     this.io_ts.pull('3v');
 
     this.io_reset.output(false);
@@ -224,7 +232,15 @@ export default class FlickHat implements ObnizPartsInterface {
     return result;
   }
 
-  public async polling(timeout?: any) {
+  /**
+   * @deprecated
+   * @param timeout
+   */
+  public polling(timeout?: any) {
+    return this.pollingWait(timeout);
+  }
+
+  public async pollingWait(timeout?: any) {
     timeout = timeout || 3000; // default: 3s
 
     // DataOutputConfigMask	2byte

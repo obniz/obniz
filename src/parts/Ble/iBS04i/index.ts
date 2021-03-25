@@ -97,7 +97,7 @@ export default class IBS04I implements ObnizPartsBleInterface {
     }
     const type = advertise[0][14];
     if (type !== 24) {
-      // iBS04i以外
+      // is not ibs04i
       return null;
     }
     return advertise[0];

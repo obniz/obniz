@@ -206,7 +206,6 @@ export default class ST7735S implements ObnizPartsInterface {
     this.params.frequency = 16 * 1000 * 1000; // 16MHz
     this.params.mode = 'master';
     this.params.clk = this.params.sclk;
-    this.params.mosi = this.params.mosi;
     this.params.drive = '3v';
     this.spi = this.obniz.getSpiWithConfig(this.params);
 

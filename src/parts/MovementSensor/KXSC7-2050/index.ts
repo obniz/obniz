@@ -34,7 +34,7 @@ export default class KXSC7_2050 implements ObnizPartsInterface {
     this.requiredKeys = ['x', 'y', 'z'];
   }
 
-  public async wired(obniz: any) {
+  public wired(obniz: any) {
     this.obniz = obniz;
 
     obniz.setVccGnd(this.params.vcc, this.params.gnd, '3v');
@@ -42,32 +42,34 @@ export default class KXSC7_2050 implements ObnizPartsInterface {
     this.ad_y = obniz.getAD(this.params.y);
     this.ad_z = obniz.getAD(this.params.z);
 
-    await obniz.wait(500);
-    const ad: any = obniz.getAD(this.params.vcc);
+    this.initWait();
+  }
+  public async initWait() {
+    await this.obniz.wait(500);
+    const ad: any = this.obniz.getAD(this.params.vcc);
     const pwrVoltage: any = await ad.getWait();
     const horizontalZ: any = await this.ad_z.getWait();
     const sensitivity: any = pwrVoltage / 5; // Set sensitivity (unit:V)
     const offsetVoltage: any = horizontalZ - sensitivity; // Set offset voltage (Output voltage at 0g, unit:V)
 
-    const self: any = this;
     this.ad_x.start((value: any) => {
-      self.gravity = (value - offsetVoltage) / sensitivity;
-      if (self.onchangex) {
-        self.onchangex(self.gravity);
+      this.gravity = (value - offsetVoltage) / sensitivity;
+      if (this.onchangex) {
+        this.onchangex(this.gravity);
       }
     });
 
     this.ad_y.start((value: any) => {
-      self.gravity = (value - offsetVoltage) / sensitivity;
-      if (self.onchangey) {
-        self.onchangey(self.gravity);
+      this.gravity = (value - offsetVoltage) / sensitivity;
+      if (this.onchangey) {
+        this.onchangey(this.gravity);
       }
     });
 
     this.ad_z.start((value: any) => {
-      self.gravity = (value - offsetVoltage) / sensitivity;
-      if (self.onchangez) {
-        self.onchangez(self.gravity);
+      this.gravity = (value - offsetVoltage) / sensitivity;
+      if (this.onchangez) {
+        this.onchangez(this.gravity);
       }
     });
   }

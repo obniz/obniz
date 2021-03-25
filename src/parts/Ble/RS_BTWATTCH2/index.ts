@@ -187,7 +187,7 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
       );
 
       if (this.params.rtcAutoset !== false) {
-        await this.setRTC();
+        await this.setRTCWait();
       }
     } catch (e) {
       try {
@@ -210,15 +210,23 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
   }
 
   /**
-   * Seting Time on device clock
+   * @deprecated
+   * @param date
+   */
+  public setRTC(date?: Date) {
+    return this.setRTCWait(date);
+  }
+
+  /**
+   * Setting Time on device clock
    *
    * @param date
    */
-  public async setRTC(date?: Date) {
+  public async setRTCWait(date?: Date) {
     if (!date) {
       date = new Date();
     }
-    const ret = await this._transaction([
+    const ret = await this._transactionWait([
       0x01,
       date.getSeconds(),
       date.getMinutes(),
@@ -241,7 +249,7 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
    * @param isOn
    */
   public async setPowerStateWait(isOn: boolean) {
-    const ret = await this._transaction([0xa7, isOn ? 0x01 : 0x00]);
+    const ret = await this._transactionWait([0xa7, isOn ? 0x01 : 0x00]);
     if (ret.length !== 3) {
       throw new Error(`communiation error`);
     }
@@ -261,7 +269,7 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
    * Getting All of realtime data
    */
   public async getRealTimeDataWait(): Promise<RS_BTWATTCH2RealtimeData> {
-    const ret = await this._transaction([0x08]);
+    const ret = await this._transactionWait([0x08]);
     if (ret.length !== 27) {
       throw new Error(`communiation error`);
     }
@@ -346,7 +354,7 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
     one.resolve(data);
   }
 
-  private async _transaction(data: number[]): Promise<number[]> {
+  private async _transactionWait(data: number[]): Promise<number[]> {
     return await new Promise(async (resolve, reject) => {
       const timeout = setTimeout(() => {
         reject(new Error(`Timed out for waiting`));

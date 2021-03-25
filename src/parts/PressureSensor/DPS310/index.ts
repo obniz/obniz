@@ -176,8 +176,6 @@ export default class DPS310 implements ObnizPartsInterface {
   public wired(obniz: Obniz) {
     this.obniz = obniz;
     this.address = 0x77;
-    this.params.sda = this.params.sda;
-    this.params.scl = this.params.scl;
     this.params.clock = this.params.clock || 100 * 1000;
     this.params.mode = 'master';
     this.params.pull = '3v';
@@ -198,7 +196,7 @@ export default class DPS310 implements ObnizPartsInterface {
       this.bitFileds.DPS310__REG_INFO_TEMP_SENSORREC
     );
 
-    await this.writeByteBitfield(
+    await this.writeByteBitfieldWait(
       this.bitFileds.DPS310__REG_INFO_TEMP_SENSOR,
       0
     );
@@ -275,7 +273,7 @@ export default class DPS310 implements ObnizPartsInterface {
     }
   }
 
-  private async writeByteBitfield(
+  private async writeByteBitfieldWait(
     field: any,
     data: any,
     check?: any
@@ -313,24 +311,36 @@ export default class DPS310 implements ObnizPartsInterface {
 
   private async standbyWait(): Promise<void> {
     this.setOpModeWait(this.mode.IDLE);
-    await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_FIFO_FL, 1);
-    await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_FIFO_EN, 0);
+    await this.writeByteBitfieldWait(
+      this.bitFileds.DPS310__REG_INFO_FIFO_FL,
+      1
+    );
+    await this.writeByteBitfieldWait(
+      this.bitFileds.DPS310__REG_INFO_FIFO_EN,
+      0
+    );
   }
 
   private async configTempWait(tempMr: any, tempOsr: any): Promise<void> {
-    await this.writeByteBitfield(
+    await this.writeByteBitfieldWait(
       this.bitFileds.DPS310__REG_INFO_TEMP_MR,
       tempMr
     );
-    await this.writeByteBitfield(
+    await this.writeByteBitfieldWait(
       this.bitFileds.DPS310__REG_INFO_TEMP_OSR,
       tempOsr
     );
 
     if (tempOsr > this.DPS310__OSR_SE) {
-      await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SE, 1);
+      await this.writeByteBitfieldWait(
+        this.bitFileds.DPS310__REG_INFO_TEMP_SE,
+        1
+      );
     } else {
-      await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SE, 0);
+      await this.writeByteBitfieldWait(
+        this.bitFileds.DPS310__REG_INFO_TEMP_SE,
+        0
+      );
     }
 
     this.tempMr = tempMr;
@@ -338,16 +348,25 @@ export default class DPS310 implements ObnizPartsInterface {
   }
 
   private async configPressureWait(prsMr: any, prsOsr: any): Promise<void> {
-    await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_MR, prsMr);
-    await this.writeByteBitfield(
+    await this.writeByteBitfieldWait(
+      this.bitFileds.DPS310__REG_INFO_PRS_MR,
+      prsMr
+    );
+    await this.writeByteBitfieldWait(
       this.bitFileds.DPS310__REG_INFO_PRS_OSR,
       prsOsr
     );
 
     if (prsOsr > this.DPS310__OSR_SE) {
-      await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_SE, 1);
+      await this.writeByteBitfieldWait(
+        this.bitFileds.DPS310__REG_INFO_PRS_SE,
+        1
+      );
     } else {
-      await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_SE, 0);
+      await this.writeByteBitfieldWait(
+        this.bitFileds.DPS310__REG_INFO_PRS_SE,
+        0
+      );
     }
     this.prsMr = prsMr;
     this.prsOsr = prsOsr;

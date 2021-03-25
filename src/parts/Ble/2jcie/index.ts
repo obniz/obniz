@@ -236,7 +236,14 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     return val;
   }
 
-  public async getLatestData(): Promise<OMRON_2JCIE_Data> {
+  /**
+   * @deprecated
+   */
+  public getLatestData(): Promise<OMRON_2JCIE_Data> {
+    return this.getLatestDataWait();
+  }
+
+  public async getLatestDataWait(): Promise<OMRON_2JCIE_Data> {
     await this.connectWait();
 
     const c = this._peripheral!.getService(

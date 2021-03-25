@@ -146,27 +146,27 @@ const COMMON_UNREACHABLE_PORT = 0x002c;
  *
  * - Reset
  *
- *   Reset the internal physical layer, need to set this bit to 0 and then back to 1
+ * Reset the internal physical layer, need to set this bit to 0 and then back to 1
  *
- *   内部の物理層をリセット、このビットを0にした後、1に戻す必要がある
+ * 内部の物理層をリセット、このビットを0にした後、1に戻す必要がある
  *
  * - OperationMode
  *
- *   1: Use the following 3-bit settings 次の3bitの設定を使用
+ * 1: Use the following 3-bit settings 次の3bitの設定を使用
  *
- *   0: Follow the hardware pin settings ハードウェアピンの設定に従う
+ * 0: Follow the hardware pin settings ハードウェアピンの設定に従う
  *
  * - ConfigBit
  *
- *   The default setting for both hardware pins and registers is 111
+ * The default setting for both hardware pins and registers is 111
  *
- *   ハードウェアピン、レジスタともに初期設定は111
+ * ハードウェアピン、レジスタともに初期設定は111
  *
- *   - 000  10BT Half duplex 半二重 / 001  10BT Full duplex 全二重
- *   - 010 100BT Half duplex 半二重 / 011 100BT Full duplex 全二重
- *   - 100 100BT Half duplex enable auto negotiation 半二重 自動ネゴシエーションオン
- *   - 110 Power Off Mode 電源オフモード
- *   - 111 All available & Enable auto negotiation 全て使用可能 自動ネゴシエーションオン
+ * - 000  10BT Half duplex 半二重 / 001  10BT Full duplex 全二重
+ * - 010 100BT Half duplex 半二重 / 011 100BT Full duplex 全二重
+ * - 100 100BT Half duplex enable auto negotiation 半二重 自動ネゴシエーションオン
+ * - 110 Power Off Mode 電源オフモード
+ * - 111 All available & Enable auto negotiation 全て使用可能 自動ネゴシエーションオン
  *
  * - Duplex  1: Full duplex 全二重 0: Half duplex 半二重
  * - Speed  1: 100Mbps 0: 10Mbps

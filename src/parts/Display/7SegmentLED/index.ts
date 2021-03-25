@@ -85,33 +85,15 @@ class _7SegmentLED implements ObnizPartsInterface {
   }
 
   public wired(obniz: Obniz) {
-    function getIO(io: any) {
-      if (io && typeof io === 'object') {
-        if (typeof io.output === 'function') {
-          return io;
-        }
-      }
-      return obniz.getIO(io);
-    }
-
-    function isValidIO(io: any) {
-      if (io && typeof io === 'object') {
-        if (typeof io.output === 'function') {
-          return true;
-        }
-      }
-      return obniz.isValidIO(io);
-    }
-
     this.obniz = obniz;
     this.ios = [];
-    this.ios.push(getIO(this.params.a));
-    this.ios.push(getIO(this.params.b));
-    this.ios.push(getIO(this.params.c));
-    this.ios.push(getIO(this.params.d));
-    this.ios.push(getIO(this.params.e));
-    this.ios.push(getIO(this.params.f));
-    this.ios.push(getIO(this.params.g));
+    this.ios.push(this.obniz.getIO(this.params.a));
+    this.ios.push(this.obniz.getIO(this.params.b));
+    this.ios.push(this.obniz.getIO(this.params.c));
+    this.ios.push(this.obniz.getIO(this.params.d));
+    this.ios.push(this.obniz.getIO(this.params.e));
+    this.ios.push(this.obniz.getIO(this.params.f));
+    this.ios.push(this.obniz.getIO(this.params.g));
 
     this.isCathodeCommon = this.params.commonType === 'anode' ? false : true;
 
@@ -119,13 +101,13 @@ class _7SegmentLED implements ObnizPartsInterface {
       this.ios[i].output(this.isCathodeCommon ? false : true);
     }
 
-    if (isValidIO(this.params.dp)) {
-      const dp = getIO(this.params.dp);
+    if (this.obniz.isValidIO(this.params.dp)) {
+      const dp = this.obniz.getIO(this.params.dp);
       dp.output(false);
       this.dp = dp;
     }
-    if (isValidIO(this.params.common)) {
-      this.common = getIO(this.params.common);
+    if (this.obniz.isValidIO(this.params.common)) {
+      this.common = this.obniz.getIO(this.params.common);
       this.on();
     }
   }

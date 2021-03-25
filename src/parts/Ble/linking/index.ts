@@ -71,12 +71,27 @@ export default class Linking {
     this.obniz = obniz;
   }
 
-  public async init() {
+  /**
+   * @deprecated
+   */
+  public init() {
+    return this.initWait();
+  }
+
+  public async initWait() {
     await this.obniz.ble!.initWait();
     this.initialized = true;
   }
 
+  /**
+   * @deprecated
+   * @param p
+   */
   public discover(p: any): Promise<any[]> {
+    return this.discoverWait(p);
+  }
+
+  public discoverWait(p: any): Promise<any[]> {
     this._checkInitialized();
 
     let duration = 5000;
@@ -133,13 +148,11 @@ export default class Linking {
   public _checkInitialized() {
     if (this.initialized === false) {
       throw new Error('The `init()` method has not been called yet.');
-      return;
     }
     if (this._discover_status === true) {
       throw new Error(
         'The `discover()` or the `startScan()` method is in progress.'
       );
-      return;
     }
   }
 

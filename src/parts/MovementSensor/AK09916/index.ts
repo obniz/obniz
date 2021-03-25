@@ -75,11 +75,17 @@ export default class AK09916 extends i2cParts implements ObnizPartsInterface {
     this.write(this._CNTL2, this.MODE_CONTINOUS_MEASURE_1);
   }
 
-  public async magnetic(): Promise<[number, number, number]> {
+  /**
+   * @deprecated
+   */
+  public magnetic(): Promise<[number, number, number]> {
+    return this.magneticWait();
+  }
+
+  public async magneticWait(): Promise<[number, number, number]> {
     // 0111 1111 1111 0000 4912 uT
     // 1111 1111 1111 1111 -1 uT
     // 1000 0000 0001 0000 -4912 uT
-    // data[0]下位ビット data[1] 上位ビット
 
     const raw3: [number, number, number] = await this.readThreeInt16Wait(
       this._HXL,

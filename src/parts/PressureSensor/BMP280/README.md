@@ -33,7 +33,7 @@ This library use I2C to communicate.
 // Javascript Example
 // Please pullup sdi and sck.
 var bmp280 = obniz.wired("BMP280", {vio:0, vcore:1, gnd:2, csb:3, sdi: 4, sck: 5, sdo:6 });
-await bmp280.applyCalibration();
+await bmp280.applyCalibrationWait();
 const val = await bmp280.getAllWait();
 console.log(val);
 ```
@@ -51,7 +51,7 @@ So, minimum connection and configration is.
 // sdo connected to gnd
 
 var bmp280 = obniz.wired("BMP280", {vio:0, gnd:1, sdi: 2, sck: 3 });
-await bmp280.applyCalibration();
+await bmp280.applyCalibrationWait();
 const val = await bmp280.getAllWait();
 console.log(val);
 ```
@@ -75,7 +75,7 @@ If you configured a chip to use address 0x77 (by pull-up sdo)
 var bmp280 = obniz.wired("BMP280", {vio:0, gnd:1, sdi: 2, sck: 3, address: 0x77});
 ```
 
-## [await] applyCalibration()
+## [await] applyCalibrationWait()
 
 Retrive factory stored calibration data from connected chip.
 You can use BMP280 without calling this, But You should do for better accuracy.
@@ -84,10 +84,10 @@ You can use BMP280 without calling this, But You should do for better accuracy.
 // Javascript Example
 // Please pullup sdi and sck.
 var bmp280 = obniz.wired("BMP280", {vio:0, vcore:1, gnd:2, csb:3, sdi: 4, sck: 5, sdo:6 });
-await bmp280.applyCalibration();
+await bmp280.applyCalibrationWait();
 ```
 
-## [await] setIIRStrength()
+## [await] setIIRStrengthWait()
 
 configure of internal IIR filter. 0 to 4.
 
@@ -101,8 +101,8 @@ But you should wait for get more accurate result.
 // Javascript Example
 // Please pullup sdi and sck.
 var bmp280 = obniz.wired("BMP280", {vio:0, vcore:1, gnd:2, csb:3, sdi: 4, sck: 5, sdo:6 });
-await bmp280.applyCalibration();
-await bmp280.setIIRStrength(1); // start using minimum IIR 
+await bmp280.applyCalibrationWait();
+await bmp280.setIIRStrengthWait(1); // start using minimum IIR 
 ```
 
 ## [await] getAllWait()
@@ -117,7 +117,7 @@ get all values.
 // Javascript Example
 // Please pullup sdi and sck.
 var bmp280 = obniz.wired("BMP280", {vio:0, vcore:1, gnd:2, csb:3, sdi: 4, sck: 5, sdo:6 });
-await bmp280.applyCalibration();
+await bmp280.applyCalibrationWait();
 const obj = await bmp280.getAllWait();
 console.log('temp: ' + obj.temperature + ' degree');
 console.log('pressure: ' + obj.pressure + ' hPa');
@@ -131,7 +131,7 @@ get pressure values.
 // Javascript Example
 // Please pullup sdi and sck.
 var bmp280 = obniz.wired("BMP280", {vio:0, vcore:1, gnd:2, csb:3, sdi: 4, sck: 5, sdo:6 });
-await bmp280.applyCalibration();
+await bmp280.applyCalibrationWait();
 console.log('pressure: ' + await bmp280.getPressureWait() + ' hPa');
 ```
 
@@ -143,7 +143,7 @@ get temperature values.
 // Javascript Example
 // Please pullup sdi and sck.
 var bmp280 = obniz.wired("BMP280", {vio:0, vcore:1, gnd:2, csb:3, sdi: 4, sck: 5, sdo:6 });
-await bmp280.applyCalibration();
+await bmp280.applyCalibrationWait();
 console.log('temp: ' + await bmp280.getTempWait() + ' degree');
 ```
 
@@ -157,7 +157,7 @@ Unit is m.
 // Javascript Example
 // Please pullup sdi and sck.
 var bmp280 = obniz.wired("BMP280", {vio:0, vcore:1, gnd:2, csb:3, sdi: 4, sck: 5, sdo:6 });
-await bmp280.applyCalibration();
+await bmp280.applyCalibrationWait();
 const obj = await bmp280.getAllWait();
 const airPressure = obj.pressure;
 const hight_in_m = bmp280.calcAltitude(airPressure);

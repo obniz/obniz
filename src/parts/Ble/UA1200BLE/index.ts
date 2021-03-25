@@ -151,13 +151,13 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
       // bloodPressureMeasurementChar.registerNotifyWait((data: number[]) => {
       //   results.push(this._analyzeData(data));
       // });
-      await this._writeTimeChar(this._timezoneOffsetMinute);
+      await this._writeTimeCharWait(this._timezoneOffsetMinute);
       // await this._writeCCCDChar();
       const {
         bloodPressureMeasurementChar,
         timeChar,
       } = this._getCharsSingleMode();
-      await this._writeTimeChar(this._timezoneOffsetMinute);
+      await this._writeTimeCharWait(this._timezoneOffsetMinute);
       bloodPressureMeasurementChar.registerNotifyWait((data: number[]) => {
         results.push(this._analyzeData(data));
       });
@@ -273,7 +273,7 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
     };
   }
 
-  private async _writeTimeChar(timeOffsetMinute: number) {
+  private async _writeTimeCharWait(timeOffsetMinute: number) {
     const { timeChar } = this._getCharsSingleMode();
 
     const date = new Date();

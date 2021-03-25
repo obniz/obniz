@@ -70,7 +70,15 @@ export default class LinkingDevice {
     this._peripheral = peripheral;
   }
 
-  public async connect(setting?: BleConnectSetting) {
+  /**
+   * @deprecated
+   * @param setting
+   */
+  public connect(setting?: BleConnectSetting) {
+    return this.connectWait(setting);
+  }
+
+  public async connectWait(setting?: BleConnectSetting) {
     if (this.connected === true) {
       throw new Error('The device has been already connected.');
     }
@@ -82,7 +90,7 @@ export default class LinkingDevice {
     onprogress({ step: 1, desc: 'CONNECTING' });
     try {
       peripheral.ondisconnect = async () => {
-        await this._clean();
+        await this._cleanWait();
         if (this._isFunction(this.ondisconnect)) {
           this.ondisconnect({ wasClean: false });
         }
@@ -92,7 +100,7 @@ export default class LinkingDevice {
       onprogress({ step: 3, desc: 'GETTING_CHARACTERISTICS' });
       await this._getServicesAndChars();
       onprogress({ step: 4, desc: 'SUBSCRIBING' });
-      await this._subscribeForIndicate();
+      await this._subscribeForIndicateWait();
       onprogress({ step: 5, desc: 'GETTING_DEVICE_INFOMATION' });
       let res: any;
       res = await this.write('GET_DEVICE_INFORMATION');
@@ -173,7 +181,7 @@ export default class LinkingDevice {
       onprogress({ step: 12, desc: 'COMPLETED' });
     } catch (e) {
       onprogress({ step: 0, desc: 'FAILED' });
-      await this._clean();
+      await this._cleanWait();
       throw e;
     }
   }
@@ -298,7 +306,14 @@ export default class LinkingDevice {
     }
   }
 
-  public async _subscribeForIndicate() {
+  /**
+   * @deprecated
+   */
+  public _subscribeForIndicate() {
+    return this._subscribeForIndicateWait();
+  }
+
+  public async _subscribeForIndicateWait() {
     await this.char_indicate!.registerNotifyWait((data: number[]) => {
       this._receivedPacket(Buffer.from(data));
     });
@@ -475,19 +490,33 @@ export default class LinkingDevice {
     }
   }
 
-  public async disconnect() {
+  /**
+   * @deprecated
+   */
+  public disconnect() {
+    return this.disconnectWait();
+  }
+
+  public async disconnectWait() {
     if (this._peripheral) {
       if (this._peripheral.connected) {
         await this._peripheral.disconnectWait(); // ondisconnect will call
       } else {
-        await this._clean();
+        await this._cleanWait();
       }
     } else {
-      await this._clean();
+      await this._cleanWait();
     }
   }
 
-  public async _clean() {
+  /**
+   * @deprecated
+   */
+  public _clean() {
+    return this._cleanWait();
+  }
+
+  public async _cleanWait() {
     const p = this._peripheral;
     if (!p) {
       return;
@@ -567,14 +596,14 @@ export default class LinkingDevice {
     // Device Name
     if (this._generic_access_service.device_name.char) {
       this.services.deviceName = {
-        get: this._deviceNameGet.bind(this),
-        set: this._deviceNameSet.bind(this),
+        get: this._deviceNameSetWait.bind(this),
+        set: this._deviceNameSetWait.bind(this),
       };
     }
     // Button
     if (
       'Button' in this.info.exsensors ||
-      device_name.match(/^(Linking Board01|BLEAD\-LK\-TSH)/)
+      device_name.match(/^(Linking Board01|BLEAD-LK-TSH)/)
     ) {
       this.services.button = {
         onnotify: null,
@@ -666,7 +695,13 @@ export default class LinkingDevice {
     }
   }
 
-  public async _deviceNameGet(): Promise<any> {
+  /**
+   * @deprecated
+   */
+  public _deviceNameGet(): Promise<any> {
+    return this._deviceNameGetWait();
+  }
+  public async _deviceNameGetWait(): Promise<any> {
     const char = this._generic_access_service.device_name
       .char as BleRemoteCharacteristic;
     const data = await char.readWait();
@@ -675,18 +710,23 @@ export default class LinkingDevice {
     };
   }
 
-  public async _deviceNameSet(name: string) {
+  /**
+   * @deprecated
+   * @param name
+   */
+  public _deviceNameSet(name: string) {
+    return this._deviceNameSetWait(name);
+  }
+
+  public async _deviceNameSetWait(name: string) {
     if (!name) {
       throw new Error('Device name is required.');
-      return;
     } else if (typeof name !== 'string') {
       throw new Error('Device name must be a string.');
-      return;
     } else if (name.length > 32) {
       throw new Error(
         'Device name is too long. The length must be in the range 1 to 32.'
       );
-      return;
     }
     const buf = Buffer.from(name, 'utf8');
     const char = this._generic_access_service.device_name

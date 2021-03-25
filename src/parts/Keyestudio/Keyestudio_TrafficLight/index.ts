@@ -45,15 +45,6 @@ export default class Keyestudio_TrafficLight implements ObnizPartsInterface {
   }
 
   public wired(obniz: Obniz) {
-    function getIO(io: any) {
-      if (io && typeof io === 'object') {
-        if (typeof io.output === 'function') {
-          return io;
-        }
-      }
-      return obniz.getIO(io);
-    }
-
     this.obniz = obniz;
     obniz.setVccGnd(null, this.params.gnd, '5v');
 

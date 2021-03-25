@@ -181,7 +181,7 @@ export default class Display extends ComponentAbstract {
    * ```
    * ![](media://obniz_display_print.jpg)
    *
-   *  @param text Text to display. With browser, UTF8 string is available. (It does not work with node.js. Please use display.draw())
+   * @param text Text to display. With browser, UTF8 string is available. (It does not work with node.js. Please use display.draw())
    */
   public print(text: string) {
     const ctx = this._ctx();

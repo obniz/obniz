@@ -115,7 +115,6 @@ export default class Toio_CoreCube implements ObnizPartsInterface {
     const readData = await this._positionCharacteristic!.readWait();
 
     return {
-      // NOTE: toioの中心から見たポジション
       posX: (readData[2] << 8) | readData[1],
       posY: (readData[4] << 8) | readData[3],
       angle: (readData[6] << 8) | readData[5],
@@ -129,7 +128,6 @@ export default class Toio_CoreCube implements ObnizPartsInterface {
     const readData = await this._motionCharacteristic!.readWait();
 
     return {
-      // NOTE: toioの中心から見たポジション
       isHorizon: readData[1] === 1,
       isCollision: readData[2] === 1,
       isDoubletap: readData[3] === 1,

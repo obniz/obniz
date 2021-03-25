@@ -69,8 +69,7 @@ export default class Grove_WaterLevelSensor implements ObnizPartsInterface {
     this.previous_val = 0;
   }
 
-  public async wired(obniz: Obniz) {
-    // Grove_3AxisAccelerometer の I2C 参考
+  public wired(obniz: Obniz) {
     if (this.params.grove) {
       this.i2c = this.params.grove.getI2c(400000, '5v');
     } else {
@@ -83,7 +82,10 @@ export default class Grove_WaterLevelSensor implements ObnizPartsInterface {
 
       this.i2c = obniz.getI2CWithConfig(this.params);
     }
-    this.obniz.wait(100);
+    this.initWait();
+  }
+
+  async initWait() {
     // power on
     while (true) {
       const current_val: number = await this.getWait();
@@ -93,13 +95,11 @@ export default class Grove_WaterLevelSensor implements ObnizPartsInterface {
         }
         this.previous_val = current_val;
       }
-      this.obniz.wait(this.check_interval_ms);
+      await this.obniz.wait(this.check_interval_ms);
     }
   }
 
-  // Grove_JoyStick 参考
   public async getWait(): Promise<number> {
-    let water_level_mm: number;
     const water_level_step = 5; // 5 mm step
 
     const high_data: any[] = await this.i2c.readWait(
@@ -127,7 +127,7 @@ export default class Grove_WaterLevelSensor implements ObnizPartsInterface {
       touch_val >>= 1;
     }
 
-    water_level_mm = trig_section * water_level_step;
+    const water_level_mm = trig_section * water_level_step;
 
     return water_level_mm;
   }

@@ -85,8 +85,10 @@ export default class HMC5883L extends i2cCompass {
     this.so = HMC5883L.scales[index];
   }
 
-  // legacy
-  public async get() {
-    return await this.getWait();
+  /**
+   * @deprecated
+   */
+  public get() {
+    return this.getWait();
   }
 }

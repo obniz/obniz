@@ -289,14 +289,13 @@ export default class Grove_GestureSensor implements ObnizPartsInterface {
 
   public onchange(value: string) {}
 
-  public async wired(obniz: Obniz) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     const speed = 400000;
     if (this.params.grove) {
       this.i2c = this.params.grove.getI2c(speed, '5v');
     } else {
       this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
-      await obniz.wait(500);
       this.params.mode = 'master';
       this.params.clock = speed;
       this.params.pull = '5v';
@@ -307,16 +306,18 @@ export default class Grove_GestureSensor implements ObnizPartsInterface {
       // console.log('Error:', err);
     };
     // await obniz.wait(700);
+    this.initWait();
+  }
+  public async initWait() {
     // wakeup check
-    await this.checkWakeUp();
+    await this.checkWakeUpWait();
     // initRegister
-    await this.initRegister();
+    await this.initRegisterWait();
     while (true) {
       // get data
       this.i2c.write(this.ic2Address, [0x43]);
       const resArray = await this.i2c.readWait(this.ic2Address, 1);
       const res: number = resArray[0];
-      // センサーの上を、上下左右に手を通過させると反応します。
       if (this.onchange) {
         if (this.GES_RIGHT_FLAG === res) {
           // console.log("GES_RIGHT_FLAG");
@@ -345,30 +346,28 @@ export default class Grove_GestureSensor implements ObnizPartsInterface {
         }
       }
 
-      await obniz.wait(1000);
+      await this.obniz.wait(1000);
     }
   }
 
-  private async checkWakeUp() {
+  private async checkWakeUpWait() {
     // wakeup check
     this.i2c.write(this.ic2Address, [
       this.PAJ7620_REGITER_BANK_SEL,
       this.PAJ7620_BANK0,
     ]);
-    // 3.5.0 以降は try catch で捕らえる
     let res = [0, 0];
     try {
       res = await this.i2c.readWait(this.ic2Address, 1);
     } catch (e) {
       // console.log(e);
     }
-    // 3.4.0、3.4.1 までは値が取れてうまくいく。3.5.0以降は上記の try catch で捕らえる。
     if (res[0] === 0x20) {
       // console.log("wake-up finish.");
     }
   }
 
-  private async initRegister() {
+  private async initRegisterWait() {
     // console.log("initRegister!!");
     for (let i = 0; i < this.initRegisterArray.length; i++) {
       this.i2c.write(this.ic2Address, this.initRegisterArray[i]);

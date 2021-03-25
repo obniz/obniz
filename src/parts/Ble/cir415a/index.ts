@@ -103,10 +103,10 @@ export default class cir415a implements ObnizPartsBleInterface {
     await service
       .getCharacteristic(this._uuids.readChar)!
       .registerNotifyWait(async (data: number[]) => {
-        this.readPacket(data);
+        await this.readPacketWait(data);
       });
 
-    await this.writeBle(
+    await this.writeBleWait(
       [0x6b, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x45, 0x00],
       null
     ); // auth step.1
@@ -118,7 +118,15 @@ export default class cir415a implements ObnizPartsBleInterface {
     }
   }
 
-  public async write(data: number[]) {
+  /**
+   * @deprecated
+   * @param data
+   */
+  public write(data: number[]) {
+    return this.writeWait(data);
+  }
+
+  public async writeWait(data: number[]) {
     if (!this._authenticated) {
       throw new Error('cir415a no authenticate');
     }
@@ -128,7 +136,7 @@ export default class cir415a implements ObnizPartsBleInterface {
         data.push(0xff);
       }
     }
-    this.writeBle(data, this.sessionKey);
+    await this.writeBleWait(data, this.sessionKey);
   }
 
   public setMasterKey(key: number[]) {
@@ -142,7 +150,7 @@ export default class cir415a implements ObnizPartsBleInterface {
     if (!this._authenticated) {
       throw new Error('cir415a no authenticate');
     }
-    await this.write([
+    await this.writeWait([
       0x6b,
       0x00,
       0x05,
@@ -158,11 +166,19 @@ export default class cir415a implements ObnizPartsBleInterface {
     ]);
   }
 
-  public async writeADPU(data: number[]) {
+  /**
+   * @deprecated
+   * @param data
+   */
+  public writeADPU(data: number[]) {
+    return this.writeADPUWait(data);
+  }
+
+  public async writeADPUWait(data: number[]) {
     if (!this._authenticated) {
       throw new Error('cir415a no authenticate');
     }
-    await this.write(
+    await this.writeWait(
       [
         0x6f,
         (data.length & 0xff00) >> 8,
@@ -175,7 +191,7 @@ export default class cir415a implements ObnizPartsBleInterface {
     );
   }
 
-  private readPacket(data: number[]) {
+  private async readPacketWait(data: number[]) {
     this.readData = this.readData.concat(data);
     if (this.readData[0] !== 0x05) {
       this.readData = [];
@@ -190,11 +206,11 @@ export default class cir415a implements ObnizPartsBleInterface {
     if (this.readData[dLength + 4] === 0x0a) {
       // last packet check
       data = this.readData.slice(0, dLength + 5);
-      this.parseBlePacket(data);
+      await this.parseBlePacketWait(data);
       if (this.readData.length > dLength + 5) {
         // more data
         this.readData = this.readData.slice(dLength + 5);
-        this.readPacket([]);
+        await this.readPacketWait([]);
       } else {
         // delete data
         this.readData = [];
@@ -237,7 +253,7 @@ export default class cir415a implements ObnizPartsBleInterface {
     return list;
   }
 
-  private parseBlePacket(data: number[]) {
+  private async parseBlePacketWait(data: number[]) {
     switch (data[3]) {
       case 0x83:
         if (!this._authenticated) {
@@ -271,7 +287,7 @@ export default class cir415a implements ObnizPartsBleInterface {
               0x00,
             ];
             sendPacket = sendPacket.concat(randomDevice);
-            this.writeBle(sendPacket, null);
+            await this.writeBleWait(sendPacket, null);
             return;
             // auth step.3
           } else {
@@ -307,7 +323,7 @@ export default class cir415a implements ObnizPartsBleInterface {
     }
   }
 
-  private async writeBle(data: number[], key: number[] | null) {
+  private async writeBleWait(data: number[], key: number[] | null) {
     let packet = [0x05, (data.length & 0xff00) >> 8, data.length & 0x00ff];
     let checksum = 0;
     for (let i = 0; i < data.length; i++) {

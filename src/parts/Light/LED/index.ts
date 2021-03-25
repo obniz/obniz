@@ -37,14 +37,14 @@ export default class LED implements ObnizPartsInterface {
   }
 
   public wired(obniz: Obniz) {
-    function getIO(io: any) {
+    const getIO = (io: any) => {
       if (io && typeof io === 'object') {
         if (typeof io.output === 'function') {
           return io;
         }
       }
       return obniz.getIO(io);
-    }
+    };
 
     this.obniz = obniz;
 

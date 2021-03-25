@@ -58,7 +58,7 @@ export default class JpegSerialCam implements ObnizPartsInterface {
     this.uart = this.obniz.getFreeUart();
   }
 
-  public async _drainUntil(
+  public async _drainUntilWait(
     uart: PeripheralUART,
     search: number[],
     recv?: number[]
@@ -111,9 +111,9 @@ export default class JpegSerialCam implements ObnizPartsInterface {
     await this.obniz.wait(2500);
   }
 
-  public async resetwait() {
+  public async resetWait() {
     this.uart.send([0x56, 0x00, 0x26, 0x00]);
-    await this._drainUntil(this.uart, [0x76, 0x00, 0x26, 0x00]);
+    await this._drainUntilWait(this.uart, [0x76, 0x00, 0x26, 0x00]);
     await this.obniz.wait(2500);
   }
 
@@ -129,15 +129,15 @@ export default class JpegSerialCam implements ObnizPartsInterface {
       throw new Error('unsupported size');
     }
     this.uart.send([0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19, val]);
-    await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
-    await this.resetwait();
+    await this._drainUntilWait(this.uart, [0x76, 0x00, 0x31, 0x00]);
+    await this.resetWait();
   }
 
   public async setCompressibilityWait(compress: number) {
     const val = Math.floor((compress / 100) * 0xff);
     this.uart.send([0x56, 0x00, 0x31, 0x05, 0x01, 0x01, 0x12, 0x04, val]);
-    await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
-    await this.resetwait();
+    await this._drainUntilWait(this.uart, [0x76, 0x00, 0x31, 0x00]);
+    await this.resetWait();
   }
 
   public async setBaudWait(baud: JpegSerialCamBaud) {
@@ -173,7 +173,7 @@ export default class JpegSerialCam implements ObnizPartsInterface {
       val[0],
       val[1],
     ]);
-    await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
+    await this._drainUntilWait(this.uart, [0x76, 0x00, 0x31, 0x00]);
     // await this.obniz.wait(1000);
     await this.startWait({
       baud,
@@ -184,15 +184,15 @@ export default class JpegSerialCam implements ObnizPartsInterface {
     const uart = this.uart;
     // console.log("stop a photo")
     uart.send([0x56, 0x00, 0x36, 0x01, 0x02]);
-    await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
+    await this._drainUntilWait(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
 
     // console.log("take a photo")
     uart.send([0x56, 0x00, 0x36, 0x01, 0x00]);
-    await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
+    await this._drainUntilWait(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
 
     // console.log("read length")
     uart.send([0x56, 0x00, 0x34, 0x01, 0x00]); // read length of image data
-    let recv = await this._drainUntil(uart, [
+    let recv = await this._drainUntilWait(uart, [
       0x76,
       0x00,
       0x34,
@@ -238,7 +238,7 @@ export default class JpegSerialCam implements ObnizPartsInterface {
       0x00,
       0xff,
     ]);
-    recv = await this._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
+    recv = await this._drainUntilWait(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
     // console.log("reading...");
     while (true) {
       const readed = uart.readBytes();

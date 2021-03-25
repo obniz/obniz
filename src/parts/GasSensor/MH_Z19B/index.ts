@@ -119,10 +119,15 @@ export default class MH_Z19B implements ObnizPartsInterface {
   }
 
   public calibrateZero() {
-    let command: Buffer | number[];
-    command = this.makeRequestCmd('CalibZ', [0x00, 0x00, 0x00, 0x00, 0x00]);
+    const command: Buffer | number[] = this.makeRequestCmd('CalibZ', [
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+    ]);
     this.uart.send(command);
-    console.log('send a Zero Calibration command');
+    // console.log('send a Zero Calibration command');
   }
 
   public calibrateSpan(ppm = 2000) {
@@ -130,11 +135,10 @@ export default class MH_Z19B implements ObnizPartsInterface {
       return;
     }
 
-    let command: Buffer | number[];
     const span_byte: Buffer = Buffer.alloc(2);
     span_byte[0] = ppm / 256;
     span_byte[1] = ppm % 256;
-    command = this.makeRequestCmd('CalibS', [
+    const command: Buffer | number[] = this.makeRequestCmd('CalibS', [
       span_byte[0],
       span_byte[1],
       0x00,
@@ -142,7 +146,7 @@ export default class MH_Z19B implements ObnizPartsInterface {
       0x00,
     ]);
     this.uart.send(command);
-    console.log('send a Span Calibration command');
+    // console.log('send a Span Calibration command');
   }
 
   public setAutoCalibration(autoCalibration = true) {
@@ -194,8 +198,13 @@ export default class MH_Z19B implements ObnizPartsInterface {
   }
 
   private requestReadConcentraiton() {
-    let command: Buffer | number[];
-    command = this.makeRequestCmd('Read', [0x00, 0x00, 0x00, 0x00, 0x00]);
+    const command: Buffer | number[] = this.makeRequestCmd('Read', [
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+    ]);
     // console.log("being sent request command");
     // console.log(command);
     this.uart.send(command);

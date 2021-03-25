@@ -733,8 +733,6 @@ export default class ArduCAMMini implements ObnizPartsInterface {
     this.params.clk = this.params.sclk;
     this.spi = this.obniz.getSpiWithConfig(this.params);
 
-    this.params.sda = this.params.sda;
-    this.params.scl = this.params.scl;
     this.params.clock = this.params.clock || 100 * 1000;
     this.params.mode = 'master';
     this.params.pull = '5v';

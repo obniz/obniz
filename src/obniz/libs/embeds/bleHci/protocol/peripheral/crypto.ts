@@ -8,7 +8,7 @@ import crypto from 'crypto';
 /**
  * @ignore
  */
-const r: () => {
+const r = () => {
   return crypto.randomBytes(16);
 };
 

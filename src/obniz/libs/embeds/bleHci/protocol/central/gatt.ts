@@ -500,6 +500,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
       }
     }
     // never reach
+    // eslint-disable-next-line no-unreachable
     return readData;
   }
 
@@ -692,6 +693,10 @@ class Gatt extends EventEmitter<GattEventTypes> {
       }
       startHandle = descriptors[descriptors.length - 1].handle + 1;
     }
+
+    // never reach
+    // eslint-disable-next-line no-unreachable
+    return [];
   }
 
   public async readValueWait(
