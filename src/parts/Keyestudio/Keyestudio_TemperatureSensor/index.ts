@@ -39,6 +39,7 @@ export default class Keyestudio_TemperatureSensor implements ObnizPartsInterface
   public wired(obniz: Obniz) {
     this.obniz = obniz;
     obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
+    obniz.getIO(this.params.signal).pull("0v");
     this.ad = obniz.getAD(this.params.signal);
 
     this.ad.start((voltage: any) => {
