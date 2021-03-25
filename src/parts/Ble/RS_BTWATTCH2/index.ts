@@ -16,13 +16,13 @@ export interface RS_BTWATTCH2Options {
 }
 
 export interface RS_BTWATTCH2RealtimeData {
-  /** Voltage (unit v) 計測された電圧(v) */
+  /** measured voltage (unit v)  */
   vrms: number;
 
-  /** Amp (unit A) 消費電流(A) */
+  /** Amp (unit A) */
   irms: number;
 
-  /** Watt (unit W) 消費電力(W) */
+  /** Watt (unit W)  */
   wa: number;
 
   /** Current Power State (Relay State) */

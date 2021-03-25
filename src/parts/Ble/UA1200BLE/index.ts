@@ -14,14 +14,14 @@ import BleGenericAccess from '../abstract/services/genericAccess';
 export interface UA1200BLEOptions {}
 
 export interface UA1200BLEResult {
-  SystolicPressure_mmHg?: number; // ex) 128mmHg → 0x80 = 128, 0x00
+  SystolicPressure_mmHg?: number; // ex) 128mmHg -> 0x80 = 128, 0x00
   DiastolicPressure_mmHg?: number;
   MeanArterialPressure_mmHg?: number;
-  SystolicPressure_kPa?: number; // ex) 17.6Kpa → 0xB0 = 176, 0xF0
+  SystolicPressure_kPa?: number; // ex) 17.6Kpa -> 0xB0 = 176, 0xF0
   DiastolicPressure_kPa?: number;
   MeanArterialPressure_kPa?: number;
   date?: {
-    // Time Stamp ex) 2013/8/26 9:10:20 → 0xDD 0x07 0x08 0x1A 0x09 0x0A 0x14
+    // Time Stamp ex) 2013/8/26 9:10:20 -> 0xDD 0x07 0x08 0x1A 0x09 0x0A 0x14
     year: number;
     month: number;
     day: number;
