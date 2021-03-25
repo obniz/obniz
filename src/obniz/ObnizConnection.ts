@@ -15,6 +15,11 @@ import { ObnizOptions } from './ObnizOptions';
 
 export type ObnizConnectionEventNames = 'connect' | 'close' | 'notify';
 
+export interface ObnizErrorMessage {
+  alert: 'warn' | 'error';
+  message: string;
+}
+
 /**
  * @ignore
  *
@@ -225,8 +230,8 @@ export default abstract class ObnizConnection extends EventEmitter<
   protected sendPool: any;
   private _onConnectCalled: boolean;
   private _repeatInterval = 0;
-  private _nextLoopTimeout?: NodeJS.Timeout;
-  private _nextPingTimeout?: NodeJS.Timeout;
+  private _nextLoopTimeout?: ReturnType<typeof setTimeout>;
+  private _nextPingTimeout?: ReturnType<typeof setTimeout>;
   private _lastDataReceivedAt = 0;
 
   constructor(id: string, options?: ObnizOptions) {
@@ -499,7 +504,10 @@ export default abstract class ObnizConnection extends EventEmitter<
             alert: 'error',
             message: '------ errored json -------',
           });
-          this.error(sendData);
+          this.error({
+            alert: 'error',
+            message: sendData,
+          });
           throw e;
         }
       }
@@ -533,8 +541,8 @@ export default abstract class ObnizConnection extends EventEmitter<
    * @ignore
    * @param msg
    */
-  public error(msg: string) {
-    console.error(`[obniz ${this.id}] error:${msg}`);
+  public error(msg: ObnizErrorMessage | Error) {
+    console.error(`[obniz ${this.id}] error:${msg.message}`);
   }
 
   /**
@@ -548,7 +556,10 @@ export default abstract class ObnizConnection extends EventEmitter<
    * @ignore
    * @private
    */
-  public _runUserCreatedFunction(func?: (...args: any) => any, ...args: any[]) {
+  public _runUserCreatedFunction(
+    func?: (..._args: any) => any,
+    ...args: any[]
+  ) {
     if (!func) {
       return;
     }

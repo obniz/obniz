@@ -4,6 +4,7 @@
  */
 
 import ObnizUtil from './libs/utils/util';
+import { ObnizErrorMessage } from './ObnizConnection';
 import { ObnizOptions } from './ObnizOptions';
 import ObnizUIs from './ObnizUIs';
 
@@ -11,14 +12,15 @@ import ObnizUIs from './ObnizUIs';
  * @ignore
  */
 declare global {
-  var showObnizDebugError: any;
-  var MozWebSocket: any;
+  let showObnizDebugError: any;
+  let MozWebSocket: any;
 
   interface Window {
     userAppLoaded?: any;
     logger?: any;
     WebSocket: any;
     MozWebSocket: any;
+    showObnizDebugError: any;
   }
 }
 
@@ -108,8 +110,8 @@ export default class ObnizDevice extends ObnizUIs {
         console.log(msg.message);
         return;
       }
-      if (typeof showObnizDebugError === 'function') {
-        showObnizDebugError(new Error(msg));
+      if (typeof window.showObnizDebugError === 'function') {
+        window.showObnizDebugError(new Error(msg));
       }
       this.log(`Warning: ${msg}`);
     }
@@ -119,22 +121,24 @@ export default class ObnizDevice extends ObnizUIs {
    * @ignore
    * @param msg
    */
-  public error(msg: any) {
+  public error(msg: ObnizErrorMessage | Error) {
     if (this.onerror) {
-      let sendError = msg;
-      if (!(msg instanceof Error)) {
-        sendError = new Error(msg.message);
-      }
+      const sendError = msg instanceof Error ? msg : new Error(msg.message);
       this.onerror(this, sendError);
       return;
     }
 
     if (!this.isNode) {
-      if (msg && typeof msg === 'object' && msg.alert) {
+      if (
+        msg &&
+        typeof msg === 'object' &&
+        !(msg instanceof Error) &&
+        msg.alert
+      ) {
         this.showAlertUI(msg);
       }
-      if (typeof showObnizDebugError === 'function') {
-        showObnizDebugError(new Error(msg.message));
+      if (window && typeof window.showObnizDebugError === 'function') {
+        window.showObnizDebugError(new Error(msg.message));
       }
     }
     console.error(`${msg.message}`);

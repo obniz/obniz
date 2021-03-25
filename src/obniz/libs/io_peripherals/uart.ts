@@ -17,7 +17,7 @@ import {
 
 export interface PeripheralUARTOptions {
   /**
-   *  Pin no of tx is used for sending data from obniz Board to parts.
+   * Pin no of tx is used for sending data from obniz Board to parts.
    */
   tx: number;
 

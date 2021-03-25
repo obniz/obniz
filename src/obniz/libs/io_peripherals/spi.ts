@@ -244,13 +244,12 @@ export default class PeripheralSPI extends ComponentAbstract {
       );
     }
 
-    const self: any = this;
     const obj: any = {};
-    obj['spi' + self.id] = {
+    obj['spi' + this.id] = {
       data,
       read: false,
     };
-    self.Obniz.send(obj);
+    this.Obniz.send(obj);
   }
 
   /**
@@ -275,11 +274,10 @@ export default class PeripheralSPI extends ComponentAbstract {
    * - False : getFreeSpi will return this object
    */
   public end(reuse?: boolean) {
-    const self: any = this;
     const obj: any = {};
-    obj['spi' + self.id] = null;
+    obj['spi' + this.id] = null;
     this.params = null;
-    self.Obniz.send(obj);
+    this.Obniz.send(obj);
     if (!reuse) {
       this.used = false;
     }

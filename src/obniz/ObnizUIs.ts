@@ -190,9 +190,6 @@ export default class ObnizUIs extends ObnizSystemMethods {
 
       dialog.addEventListener('cancel', (param) => {
         // escape key
-        const inputValue = (dialog.querySelector(
-          '#return_value'
-        ) as HTMLInputElement).value;
         div.parentElement!.removeChild(div);
         resolve();
       });
@@ -314,7 +311,7 @@ export default class ObnizUIs extends ObnizSystemMethods {
  *
  * @ignore
  */
-function _ReadCookie(name: any) {
+const _ReadCookie = (name: any) => {
   const nameEQ: any = name + '=';
   const ca: any = document.cookie.split(';');
   for (let i = 0; i < ca.length; i++) {
@@ -327,4 +324,4 @@ function _ReadCookie(name: any) {
     }
   }
   return null;
-}
+};

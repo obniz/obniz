@@ -471,12 +471,11 @@ class Hci extends EventEmitter<HciEventTypes> {
     // length
     cmd.writeUInt8(0x0, 3);
 
-    /*
-     * 成功すると0x00 失敗で 0x01~0xFFが帰る
-     * 特に接続処理中じゃない場合は 0x0x(command disallowed)がかえる
-     * キャンセルに成功してその応答が来たあとには
-     * LE Connection Complete or an HCI_LE_Enhanced_Connection_Complete event
-     * のどちらかがちゃんと返る
+    /**
+     * On success, 0x00 is returned. On failure, 0x01~0xFF is returned.
+     * If the connection is not being processed, 0x0x (command disallowed) will be returned.
+     * After a successful cancellation and response, either LE_Connection_Complete or
+     * an HCI_LE_Enhanced_Connection_Complete event will be returned.
      */
     this.debug('create le conn cancel - writing: ' + cmd.toString('hex'));
     const p = this.readCmdCompleteEventWait(COMMANDS.LE_CREATE_CONN_CANCEL_CMD);
@@ -915,22 +914,22 @@ class Hci extends EventEmitter<HciEventTypes> {
     this._socket.write(pkt);
   }
 
-  public async longTermKeyRequestNegativeReply(handle: Handle) {
+  public async longTermKeyRequestNegativeReplyWait(handle: Handle) {
     throw new Error('TODO: no checked');
 
-    const cmd = Buffer.alloc(5);
-
-    // header
-    cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
-    cmd.writeUInt16LE(COMMANDS.LE_LTK_NEG_REPLY_CMD, 1);
-
-    // length
-    cmd.writeUInt16LE(handle, 3);
-
-    const p = this.readCmdCompleteEventWait(COMMANDS.LE_LTK_NEG_REPLY_CMD);
-    this._socket.write(cmd);
-    const data = await p;
-    return data.status;
+    // const cmd = Buffer.alloc(5);
+    //
+    // // header
+    // cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+    // cmd.writeUInt16LE(COMMANDS.LE_LTK_NEG_REPLY_CMD, 1);
+    //
+    // // length
+    // cmd.writeUInt16LE(handle, 3);
+    //
+    // const p = this.readCmdCompleteEventWait(COMMANDS.LE_LTK_NEG_REPLY_CMD);
+    // this._socket.write(cmd);
+    // const data = await p;
+    // return data.status;
   }
 
   public processLeMetaEvent(eventType: any, status: any, data: any) {

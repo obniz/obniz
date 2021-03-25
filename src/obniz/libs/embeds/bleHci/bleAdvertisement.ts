@@ -83,7 +83,7 @@ export default class BleAdvertisement {
   }
 
   /**
-   *  @deprecated  replaced by {@link #endWait()}
+   * @deprecated  replaced by {@link #endWait()}
    */
   public end() {
     // noinspection JSIgnoredPromiseFromCall

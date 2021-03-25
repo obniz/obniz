@@ -8,6 +8,7 @@ import Obniz from '../../index';
 import { ComponentAbstract } from '../ComponentAbstact';
 import { AnimationStatus } from './common';
 
+export type DirectiveAnimationFrameFunction = (index: number) => void;
 export interface DirectiveAnimationFrame {
   /**
    * frame duration time in milliseconds
@@ -19,7 +20,7 @@ export interface DirectiveAnimationFrame {
    *
    * @param state.index frame index
    */
-  state: (index: number) => void;
+  state: DirectiveAnimationFrameFunction;
 }
 
 /**
@@ -131,9 +132,9 @@ export default class Directive extends ComponentAbstract {
 
     const states: any[] = [];
     for (let i = 0; i < animations.length; i++) {
-      const state: any = animations[i];
+      const state: DirectiveAnimationFrame = animations[i];
       const duration: number = state.duration;
-      const operation: (index: number) => {} = state.state;
+      const operation: DirectiveAnimationFrameFunction = state.state;
 
       // dry run. and get json commands
       (this.Obniz as any).sendPool = [];

@@ -6,7 +6,7 @@ const yaml: any = require('js-yaml');
 
 export default (source: any) => {
   // @ts-ignore
-  const self: any = this;
+  const self: any = this; // eslint-disable-line @typescript-eslint/no-this-alias
   if (self.cacheable) {
     self.cacheable();
   }
@@ -24,7 +24,7 @@ export default (source: any) => {
   }
 };
 
-function filter(target: any, excludeKeys: any) {
+const filter = (target: any, excludeKeys: any) => {
   if (typeof target !== 'object') {
     return target;
   }
@@ -47,4 +47,4 @@ function filter(target: any, excludeKeys: any) {
     }
   }
   return newObj;
-}
+};

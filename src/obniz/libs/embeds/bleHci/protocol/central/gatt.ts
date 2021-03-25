@@ -19,7 +19,6 @@ import {
   ObnizBleUnknownServiceError,
 } from '../../../../../ObnizError';
 import BleHelper from '../../bleHelper';
-import BleRemoteService from '../../bleRemoteService';
 import { BleDeviceAddress, UUID } from '../../bleTypes';
 
 interface GattService {
@@ -500,6 +499,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
         return readData;
       }
     }
+    // never reach
     return readData;
   }
 
@@ -692,8 +692,6 @@ class Gatt extends EventEmitter<GattEventTypes> {
       }
       startHandle = descriptors[descriptors.length - 1].handle + 1;
     }
-    // never reached
-    return [];
   }
 
   public async readValueWait(

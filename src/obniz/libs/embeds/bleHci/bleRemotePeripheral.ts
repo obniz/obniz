@@ -446,7 +446,7 @@ export default class BleRemotePeripheral {
   }
 
   /**
-   *  @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
+   * @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
    */
   public connect(setting?: BleConnectSetting) {
     // noinspection JSIgnoredPromiseFromCall
@@ -549,7 +549,7 @@ export default class BleRemotePeripheral {
   }
 
   /**
-   *  @deprecated replaced by {@link #disconnectWait()}
+   * @deprecated replaced by {@link #disconnectWait()}
    */
   public disconnect() {
     // noinspection JSIgnoredPromiseFromCall
@@ -753,7 +753,7 @@ export default class BleRemotePeripheral {
   public async discoverAllHandlesWait() {
     const ArrayFlat: any = (array: any, depth: any) => {
       const flattend: any = [];
-      (function flat(_array: any, _depth: any) {
+      const flat = (_array: any, _depth: any) => {
         for (const el of _array) {
           if (Array.isArray(el) && _depth > 0) {
             flat(el, _depth - 1);
@@ -761,7 +761,8 @@ export default class BleRemotePeripheral {
             flattend.push(el);
           }
         }
-      })(array, Math.floor(depth) || 1);
+      };
+      flat(array, Math.floor(depth) || 1);
       return flattend;
     };
     const services = await this.discoverAllServicesWait();
@@ -773,7 +774,7 @@ export default class BleRemotePeripheral {
       chars.map((c: BleRemoteCharacteristic) => c.discoverAllDescriptorsWait())
     );
 
-    // eslint-disable-next-line no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const descriptors = ArrayFlat(descriptorsNest);
   }
 

@@ -100,7 +100,7 @@ export default abstract class WSCommand {
   public static compress(wscommands: any, json: any): Uint8Array | null {
     let ret: any = null;
 
-    function append(module: any, func: any, payload: any) {
+    const append = (module: any, func: any, payload: any) => {
       const frame: any = WSCommand.framed(module, func, payload);
       if (ret) {
         const combined: any = new Uint8Array(ret.length + frame.length);
@@ -110,7 +110,7 @@ export default abstract class WSCommand {
       } else {
         ret = frame;
       }
-    }
+    };
 
     for (const wscommand of wscommands) {
       wscommand.parsed = append;
@@ -335,6 +335,6 @@ export default abstract class WSCommand {
   }
 }
 
-// tslint:disable:max-classes-per-file
+/* eslint max-classes-per-file: 0 */
 
 class WSCommandNotFoundError extends Error {}

@@ -48,7 +48,7 @@ export interface PCA9685Options {
   drive?: string;
 }
 
-// tslint:disable:max-classes-per-file
+/* eslint max-classes-per-file: 0 */
 
 export default class PCA9685 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {

@@ -5,6 +5,7 @@
 import { rejects } from 'assert';
 import EventEmitter from 'eventemitter3';
 import semver from 'semver';
+import { Result } from 'typedoc/dist/lib/utils';
 import { ObnizOfflineError } from '../../../ObnizError';
 import Util from '../../utils/util';
 import ObnizBLE from './ble';
@@ -166,10 +167,10 @@ export default class BleScan {
   protected obnizBle: ObnizBLE;
   protected emitter: EventEmitter<'onfind' | 'onfinish'>;
   protected scanedPeripherals: BleRemotePeripheral[];
-  private _timeoutTimer?: NodeJS.Timeout;
+  private _timeoutTimer?: ReturnType<typeof setTimeout>;
   private _delayNotifyTimers: {
     peripheral: BleRemotePeripheral;
-    timer: NodeJS.Timeout;
+    timer: ReturnType<typeof setTimeout>;
   }[] = [];
 
   constructor(obnizBle: ObnizBLE) {

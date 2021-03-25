@@ -25,6 +25,5 @@ export default class HW {
       // default
       return require('./esp32w.json');
     }
-    return undefined;
   }
 }

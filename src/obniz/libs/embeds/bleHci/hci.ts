@@ -139,7 +139,7 @@ export default class ObnizBLEHci {
     option.waitingFor = option.waitingFor || undefined;
 
     let onObnizClosed: null | (() => void) = null;
-    let timeoutHandler: null | NodeJS.Timeout = null;
+    let timeoutHandler: null | ReturnType<typeof setTimeout> = null;
 
     const clearListeners = () => {
       this.Obniz.off('close', onObnizClosed);

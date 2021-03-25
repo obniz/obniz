@@ -4,7 +4,7 @@
  */
 export default function (source: any): any {
   // @ts-ignore
-  const self: any = this;
+  const self: any = this; // eslint-disable-line @typescript-eslint/no-this-alias
   if (self.cacheable) {
     self.cacheable();
   }

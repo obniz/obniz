@@ -133,7 +133,7 @@ class Smp extends EventEmitter<SmpEventTypes> {
     await this.sendPairingRequestWait();
     this.debug(`Waiting Pairing Response`);
     const pairingResponse = await this._readWait(SMP.PAIRING_RESPONSE);
-    await this.handlePairingResponse(pairingResponse);
+    await this.handlePairingResponseWait(pairingResponse);
     this.debug(`Waiting Pairing Confirm`);
     const confirm = await this._readWait(SMP.PAIRING_CONFIRM, 60 * 1000); // 60sec timeout
     this.handlePairingConfirm(confirm);
@@ -178,7 +178,7 @@ class Smp extends EventEmitter<SmpEventTypes> {
     this.emit('end');
   }
 
-  public async handlePairingResponse(data: any) {
+  public async handlePairingResponseWait(data: any) {
     this._pres = data;
 
     if (this.isPasskeyMode()) {

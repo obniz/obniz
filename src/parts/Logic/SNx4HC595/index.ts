@@ -37,7 +37,7 @@ export interface SNx4HC595Options {
   enabled?: boolean;
 }
 
-// tslint:disable:max-classes-per-file
+/* eslint max-classes-per-file: 0 */
 
 export default class SNx4HC595 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {

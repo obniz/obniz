@@ -3,7 +3,7 @@
  * @module ObnizCore.Errors
  */
 
-// tslint:disable:max-classes-per-file
+/* eslint max-classes-per-file: 0 */
 
 export class ObnizError extends Error {
   constructor(public code: number, e?: string) {

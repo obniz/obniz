@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-
+/* eslint non-ascii:0 */
 import { ComponentAbstract } from '../ComponentAbstact';
 
 /**
@@ -152,8 +152,8 @@ export default class Display extends ComponentAbstract {
    * ```
    * ![](media://obniz_display_pos.jpg)
    *
-   *  @param x
-   *  @param y
+   * @param x
+   * @param y
    */
   public pos(x: number, y: number) {
     this._ctx(); // crete first

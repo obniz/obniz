@@ -9,12 +9,12 @@ try {
       window.parent.userAppLoaded(window);
     }
 
-    function showObnizDebugError(err: any) {
+    window.showObnizDebugError = (err: any) => {
       // eslint-disable-line
       if (window.parent && window.parent.logger) {
         window.parent.logger.onObnizError(err);
       }
-    }
+    };
   }
 } catch (e) {
   if (e instanceof DOMException) {

@@ -277,7 +277,10 @@ export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
    * @ignore
    * @private
    */
-  public _runUserCreatedFunction(func?: (...args: any) => any, ...args: any[]) {
+  public _runUserCreatedFunction(
+    func?: (..._args: any) => any,
+    ...args: any[]
+  ) {
     if (!func) {
       return;
     }

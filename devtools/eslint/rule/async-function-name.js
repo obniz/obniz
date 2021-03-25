@@ -29,7 +29,7 @@ module.exports = function (context) {
         line: identifier.loc.start.line,
         column: identifier.loc.start.column,
       },
-      `Async function name "${functionName}" without suffix "wait" was found.`
+      `Async function name "${functionName}" without suffix "Wait" was found.`
     );
   }
 

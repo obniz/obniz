@@ -30,8 +30,8 @@ interface PeripheralI2COptions extends PeripheralI2CState {
 
 /**
  * i2c can be used.
- *  Master/Slave mode.
- *  But slave mode only works with "written" events. You can't set data to be read.
+ * Master/Slave mode.
+ * But slave mode only works with "written" events. You can't set data to be read.
  *
  * @category Peripherals
  */
@@ -319,10 +319,9 @@ class PeripheralI2C extends ComponentAbstract {
     if (length > 1024) {
       throw new Error('i2c: data length should be under 1024 bytes');
     }
-    const self: any = this;
 
     const obj: any = {};
-    obj['i2c' + self.id] = {
+    obj['i2c' + this.id] = {
       address,
       read: length,
     };

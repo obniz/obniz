@@ -2,8 +2,9 @@
  * @packageDocumentation
  * @module Parts.W5500
  */
+/* eslint max-classes-per-file: 0 */
+/* eslint non-ascii: 0 */
 
-// tslint:disable:max-classes-per-file
 import Obniz from '../../../obniz';
 import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
 import PeripheralSPI from '../../../obniz/libs/io_peripherals/spi';
