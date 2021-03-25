@@ -379,4 +379,6 @@ export interface PartsList {
   "HEM_9200T": { class: HEM_9200T; options: HEM_9200TOptions };
   "W5500": { class: W5500; options: W5500Parts.WiredOptions };
   "RS_BTWATTCH2": { class: RS_BTWATTCH2; options: RS_BTWATTCH2Options };
+  "Grove_Relay": { class: Grove_Relay; options: Grove_RelayOptions };
+  "Grove_SHT35Sensor": { class: Grove_SHT35Sensor; options: Grove_SHT35SensorOptions };
 }
