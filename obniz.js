@@ -25317,7 +25317,6 @@ class UA651BLE {
     static isDevice(peripheral) {
         return peripheral.localName && peripheral.localName.startsWith("A&D_UA-651BLE_");
     }
-    async connectWait() { }
     async getDataWait() {
         if (!this._peripheral) {
             throw new Error("UA651BLE not found");

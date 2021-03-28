@@ -56,8 +56,6 @@ export default class UA651BLE implements ObnizPartsBleInterface {
     this._timezoneOffsetMinute = timezoneOffsetMinute;
   }
 
-  public async connectWait() {}
-
   public async getDataWait(): Promise<UA651BLEResult[]> {
     if (!this._peripheral) {
       throw new Error("UA651BLE not found");
