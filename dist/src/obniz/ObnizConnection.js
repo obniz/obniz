@@ -230,7 +230,11 @@ class ObnizConnection extends eventemitter3_1.default {
             });
         }
         else {
-            // already closed : do nothing
+            // already closed : stop auto connect
+            this._userManualConnectionClose = true;
+            if (this._autoConnectTimeout) {
+                clearTimeout(this._autoConnectTimeout);
+            }
         }
     }
     /**
@@ -442,7 +446,7 @@ class ObnizConnection extends eventemitter3_1.default {
             }
         }
         if (this.options.auto_connect) {
-            setTimeout(() => {
+            this._autoConnectTimeout = setTimeout(() => {
                 this.wsconnect(); // always connect to mainserver if ws lost
             }, tryAfter);
         }

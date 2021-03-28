@@ -706,6 +706,120 @@ describe('obniz.index', function() {
       });
   });
 
+  it('reconnect', async () => {
+    const port = await getPort();
+    const server = testUtil.createServer(port);
+
+    server.on('connection', c => {
+      let val = [
+        {
+          ws: {
+            ready: true,
+            obniz: {
+              firmware: '1.0.3',
+            },
+          },
+        },
+      ];
+      c.send(JSON.stringify(val));
+    });
+    const obniz = testUtil.createObniz(port, '11111111');
+    expect(obniz).to.be.obniz;
+    await new Promise(resolve => {
+      obniz.onconnect = resolve;
+    });
+
+    expect(server.clients.size, 'before server not connected').to.equal(1);
+
+    await wait(1);
+
+    let onclosePromise = new Promise(resolve => {
+      obniz.onclose = resolve;
+    });
+
+    server.clients
+      .values()
+      .next()
+      .value.close();
+    // wsOnClose wrapped by stub
+    obniz.wsOnClose.wrappedMethod.bind(obniz)();
+    await wait(100);
+    await onclosePromise;
+    expect(server.clients.size, 'before server not connected').to.equal(0);
+    await Promise.race([
+      wait(5 * 1000),
+      new Promise(async resolve => {
+        while (1) {
+          if (server.clients.size === 1) {
+            resolve();
+          }
+          await wait(1);
+        }
+      }),
+    ]);
+    expect(server.clients.size, 'before server not connected').to.equal(1);
+    obniz.close();
+    server.close();
+  }).timeout(20*1000);
+
+  it('stop reconnect  when use close', async () => {
+    const port = await getPort();
+    const server = testUtil.createServer(port);
+
+    server.on('connection', c => {
+      let val = [
+        {
+          ws: {
+            ready: true,
+            obniz: {
+              firmware: '1.0.3',
+            },
+          },
+        },
+      ];
+      c.send(JSON.stringify(val));
+    });
+    const obniz = testUtil.createObniz(port, '11111111');
+    expect(obniz).to.be.obniz;
+    await new Promise(resolve => {
+      obniz.onconnect = resolve;
+    });
+
+    expect(server.clients.size, 'before server not connected').to.equal(1);
+
+    await wait(1);
+
+    let onclosePromise = new Promise(resolve => {
+      obniz.onclose = resolve;
+    });
+
+    server.clients
+      .values()
+      .next()
+      .value.close();
+    // wsOnClose wrapped by stub
+    obniz.wsOnClose.wrappedMethod.bind(obniz)();
+    await wait(100);
+    await onclosePromise;
+    await obniz.closeWait();
+
+    expect(server.clients.size, 'before server not connected').to.equal(0);
+    await Promise.race([
+      wait(5 * 1000),
+      new Promise(async resolve => {
+        while (1) {
+          if (server.clients.size === 1) {
+            resolve();
+          }
+          await wait(1);
+        }
+      }),
+    ]);
+    expect(server.clients.size, 'before server not connected').to.equal(0);
+    obniz.close();
+    server.close();
+  }).timeout(20*1000);
+
   function wait(ms) {
     return new Promise(resolve => {
       setTimeout(resolve, ms);
