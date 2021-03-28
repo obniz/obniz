@@ -134,7 +134,7 @@ export default class BME280 implements ObnizPartsInterface {
     this.obniz.wait(10);
   }
 
-  public async config() {
+  public config() {
     this.write([
       this.commands.addresses.config,
       (this.configration.interval << 5) |
@@ -153,12 +153,27 @@ export default class BME280 implements ObnizPartsInterface {
     ]);
   }
 
-  public async setIIRStrength(strengh: any) {
+  /**
+   * @deprecated
+   * @param strengh
+   */
+  public setIIRStrength(strengh: any) {
+    return this.setIIRStrengthWait(strengh);
+  }
+
+  public async setIIRStrengthWait(strengh: any) {
     this.configration.iir_strength = strengh;
     this.config();
   }
 
-  public async applyCalibration() {
+  /**
+   * @deprecated
+   */
+  public applyCalibration() {
+    return this.applyCalibrationWait();
+  }
+
+  public async applyCalibrationWait() {
     this.i2c.write(this.address, [0x88]);
     const data: any = await this.i2c.readWait(this.address, 24);
     this.i2c.write(this.address, [0xa1]);
@@ -208,7 +223,14 @@ export default class BME280 implements ObnizPartsInterface {
     this.i2c.write(this.address, data);
   }
 
-  public async getData() {
+  /**
+   * @deprecated
+   */
+  public getData() {
+    return this.getDataWait();
+  }
+
+  public async getDataWait() {
     this.i2c.write(this.address, [0xf7]);
     return await this.i2c.readWait(this.address, 8);
   }
@@ -232,14 +254,11 @@ export default class BME280 implements ObnizPartsInterface {
   }
 
   public calibration_T(adc_T: any) {
-    let var1: any;
-    let var2: any;
-    let T: any;
-    var1 =
+    const var1 =
       (((adc_T >> 3) - (this._calibrated.dig_T1 << 1)) *
         this._calibrated.dig_T2) >>
       11;
-    var2 =
+    const var2 =
       (((((adc_T >> 4) - this._calibrated.dig_T1) *
         ((adc_T >> 4) - this._calibrated.dig_T1)) >>
         12) *
@@ -247,7 +266,7 @@ export default class BME280 implements ObnizPartsInterface {
       14;
 
     this._t_fine = var1 + var2;
-    T = (this._t_fine * 5 + 128) >> 8;
+    const T = (this._t_fine * 5 + 128) >> 8;
     return T;
   }
 

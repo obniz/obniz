@@ -141,7 +141,7 @@ export default class BMP280 implements ObnizPartsInterface {
   }
   public async setIIRStrengthWait(strengh: any) {
     this.configration.iir_strength = strengh;
-    this.config();
+    await this.configWait();
   }
 
   /**

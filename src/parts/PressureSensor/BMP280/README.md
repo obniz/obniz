@@ -87,7 +87,7 @@ var bmp280 = obniz.wired("BMP280", {vio:0, vcore:1, gnd:2, csb:3, sdi: 4, sck: 5
 await bmp280.applyCalibrationWait();
 ```
 
-## [await] setIIRStrengthWait()
+## [await] setIIRStrength()
 
 configure of internal IIR filter. 0 to 4.
 
