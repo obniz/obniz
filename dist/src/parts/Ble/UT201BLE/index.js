@@ -57,14 +57,14 @@ class UT201BLE {
             }
             const results = [];
             const { temperatureMeasurementChar, timeChar, customServiceChar } = this._getChars();
-            await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
-            await this._writeTimeChar(this._timezoneOffsetMinute);
-            temperatureMeasurementChar.registerNotifyWait((data) => {
-                results.push(this._analyzeData(data));
-            });
             this._peripheral.ondisconnect = (reason) => {
                 resolve(results);
             };
+            await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
+            await this._writeTimeChar(this._timezoneOffsetMinute);
+            await temperatureMeasurementChar.registerNotifyWait((data) => {
+                results.push(this._analyzeData(data));
+            });
         });
     }
     _readFloatLE(buffer, index) {

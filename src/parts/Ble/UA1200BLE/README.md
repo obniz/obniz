@@ -41,7 +41,9 @@ await obniz.ble.scan.startWait();
 ## [await]getDataWait()
 
 Connects to the device and collects data in batches.
-The only data that can be retrieved is the data that the device has not yet sent.
+This device will send out an advertisement whether data is present or not.
+If no data is available, no data will be obtained by connecting. If `isCooperationMode()` is `true`, there is no data.
+Also, the only data that can be obtained is the data that the device has not yet sent.
 
 After the data is sent, the connection to the device is automatically terminated.
 

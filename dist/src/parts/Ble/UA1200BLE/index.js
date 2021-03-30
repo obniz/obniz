@@ -20,37 +20,8 @@ class UA1200BLE {
     static isDevice(peripheral) {
         return peripheral.localName && peripheral.localName.startsWith("UA-1200BLE_");
     }
-    async pairingWait() {
-        if (!this._peripheral) {
-            throw new Error("UA1200BLE not found");
-        }
-        this._peripheral.ondisconnect = (reason) => {
-            if (typeof this.ondisconnect === "function") {
-                this.ondisconnect(reason);
-            }
-        };
-        let key = null;
-        await this._peripheral.connectWait({
-            pairingOption: {
-                onPairedCallback: (pairingKey) => {
-                    key = pairingKey;
-                },
-            },
-        });
-        const { customServiceChar } = this._getCharsCoopMode();
-        await customServiceChar.writeWait([2, 1, 3]); // disconnect req
-        return key;
-    }
-    async getDataWait(pairingKeys) {
-        if (!this._peripheral) {
-            throw new Error("UA1200BLE not found");
-        }
-        await this._peripheral.connectWait({
-            pairingOption: {
-                keys: pairingKeys,
-            },
-        });
-        const peripheralHex = this._peripheral.adv_data.map((e) => e.toString(16)).join("");
+    static isCooperationMode(peripheral) {
+        const peripheralHex = peripheral.adv_data.map((e) => e.toString(16)).join("");
         const peripheralArray = [
             // "2",
             // "1",
@@ -74,10 +45,39 @@ class UA1200BLE {
             "3b",
             "23",
         ].join("");
-        if (peripheralHex.indexOf(peripheralArray) > -1) {
-            throw new Error("Cooperation mode(BP-01) is not supportted in this liberary at present. Please activate obniz after measurement.");
+        return peripheralHex.indexOf(peripheralArray) > -1;
+    }
+    async pairingWait() {
+        if (!this._peripheral) {
+            throw new Error("UA1200BLE not found");
         }
-        // console.log(this._peripheral.services);
+        this._peripheral.ondisconnect = (reason) => {
+            if (typeof this.ondisconnect === "function") {
+                this.ondisconnect(reason);
+            }
+        };
+        let key = null;
+        await this._peripheral.connectWait({
+            pairingOption: {
+                onPairedCallback: (pairingKey) => {
+                    key = pairingKey;
+                },
+            },
+        });
+        const { customServiceChar } = this._getCharsCoopMode();
+        await customServiceChar.writeWait([2, 1, 3]); // disconnect req
+        return key;
+    }
+    async getDataWait() {
+        if (!this._peripheral) {
+            throw new Error("UA1200BLE not found");
+        }
+        this._peripheral.ondisconnect = (reason) => {
+            if (this.ondisconnect) {
+                this.ondisconnect(reason);
+            }
+        };
+        await this._peripheral.connectWait();
         return await new Promise(async (resolve, reject) => {
             if (!this._peripheral) {
                 throw new Error("UA1200BLE not found");
@@ -89,15 +89,18 @@ class UA1200BLE {
             // bloodPressureMeasurementChar.registerNotifyWait((data: number[]) => {
             //   results.push(this._analyzeData(data));
             // });
-            await this._writeTimeChar(this._timezoneOffsetMinute);
+            // await this._writeTimeChar(this._timezoneOffsetMinute);
             // await this._writeCCCDChar();
             const { bloodPressureMeasurementChar, timeChar } = this._getCharsSingleMode();
             await this._writeTimeChar(this._timezoneOffsetMinute);
-            bloodPressureMeasurementChar.registerNotifyWait((data) => {
+            await bloodPressureMeasurementChar.registerNotifyWait((data) => {
                 results.push(this._analyzeData(data));
             });
             this._peripheral.ondisconnect = (reason) => {
                 resolve(results);
+                if (this.ondisconnect) {
+                    this.ondisconnect(reason);
+                }
             };
         });
     }

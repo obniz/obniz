@@ -37,6 +37,7 @@ describe('obniz.index', function() {
       .then(function(p) {
         port = p;
         server = testUtil.createServer(port);
+        // console.log(new Date(), 'use port ' + port);
 
         let result = new Promise(function(resolve) {
           server.on('connection', function() {
@@ -64,11 +65,13 @@ describe('obniz.index', function() {
     return getPort()
       .then(function(p) {
         port = p;
+        // console.log(new Date(), 'use port ' + port);
         server = testUtil.createServer(port);
         return getPort();
       })
       .then(function(p2) {
         port2 = p2;
+        // console.log(new Date(), 'use port ' + port2);
         server2 = testUtil.createServer(port2);
 
         let result = new Promise(function(resolve) {
@@ -129,16 +132,19 @@ describe('obniz.index', function() {
       return getPort()
         .then(function(p) {
           port1 = p;
+          // console.log(new Date(), 'use port ' + port1);
           server1 = testUtil.createServer(port1);
           return getPort();
         })
         .then(function(p) {
           port2 = p;
+          // console.log(new Date(), 'use port ' + port2);
           server2 = testUtil.createServer(port2);
           return getPort();
         })
         .then(function(p) {
           port3 = p;
+          // console.log(new Date(), 'use port ' + port3);
           server3 = testUtil.createServer(port3);
 
           server2.on('connection', function() {
@@ -151,7 +157,7 @@ describe('obniz.index', function() {
             }, 10);
           });
 
-          return getPort();
+          return;
         })
         .then(function() {
           return testUtil.ejs(path.resolve(__dirname, 'index.ejs'), {
@@ -403,7 +409,6 @@ describe('obniz.index', function() {
     expect(this.obniz).to.be.finished; // input queue
 
     this.obniz.onconnect = () => {
-      console.log('set repeat');
       this.obniz.onloop = function() {
         called = true;
       };
@@ -705,6 +710,130 @@ describe('obniz.index', function() {
         expect(called).to.be.true;
       });
   });
+
+  it('reconnect', async () => {
+    const port = await getPort();
+
+    // console.log(new Date(), 'get port ' + port);
+    const server = testUtil.createServer(port);
+    // console.log(new Date(), 'server created');
+
+    server.on('connection', c => {
+      let val = [
+        {
+          ws: {
+            ready: true,
+            obniz: {
+              firmware: '1.0.3',
+            },
+          },
+        },
+      ];
+      c.send(JSON.stringify(val));
+    });
+    const obniz = testUtil.createObniz(port, '11111111');
+    // console.log(new Date(), 'obniz created');
+    expect(obniz).to.be.obniz;
+    await wait(waitMs * 3);
+
+    expect(server.clients.size, 'before server not connected').to.equal(1);
+
+    // console.log(new Date(), 'server connected');
+    await wait(1);
+
+    let onclosePromise = new Promise(resolve => {
+      obniz.onclose = resolve;
+    });
+
+    server.clients
+      .values()
+      .next()
+      .value.close();
+    // wsOnClose wrapped by stub
+    obniz.wsOnClose.wrappedMethod.bind(obniz)();
+    await wait(100);
+    await onclosePromise;
+    // console.log(new Date(), 'server closed');
+    expect(server.clients.size, 'before server not connected').to.equal(0);
+    // console.log(new Date(), 'waiting');
+    await Promise.race([
+      wait(5 * 1000),
+      new Promise(async resolve => {
+        while (1) {
+          if (server.clients.size === 1) {
+            resolve();
+          }
+          await wait(1);
+        }
+      }),
+    ]);
+    // console.log(new Date(), 'raceds');
+    expect(server.clients.size, 'before server not connected').to.equal(1);
+    obniz.close();
+    server.close();
+  }).timeout(20 * 1000);
+
+  it('stop reconnect  when use close', async () => {
+    const port = await getPort();
+    // console.log(new Date(), 'get port ' + port);
+    const server = testUtil.createServer(port);
+    // console.log(new Date(), 'server created');
+
+    server.on('connection', c => {
+      let val = [
+        {
+          ws: {
+            ready: true,
+            obniz: {
+              firmware: '1.0.3',
+            },
+          },
+        },
+      ];
+      c.send(JSON.stringify(val));
+    });
+    const obniz = testUtil.createObniz(port, '11111111');
+    // console.log(new Date(), 'obniz created');
+    expect(obniz).to.be.obniz;
+
+    await wait(waitMs * 3);
+
+    expect(server.clients.size, 'before server not connected').to.equal(1);
+    // console.log(new Date(), 'server connected');
+
+    await wait(1);
+
+    let onclosePromise = new Promise(resolve => {
+      obniz.onclose = resolve;
+    });
+
+    server.clients
+      .values()
+      .next()
+      .value.close();
+    // wsOnClose wrapped by stub
+    obniz.wsOnClose.wrappedMethod.bind(obniz)();
+    await wait(100);
+    await onclosePromise;
+    // console.log(new Date(), 'server closed');
+    await obniz.closeWait();
+
+    expect(server.clients.size, 'before server not connected').to.equal(0);
+    await Promise.race([
+      wait(5 * 1000),
+      new Promise(async resolve => {
+        while (1) {
+          if (server.clients.size === 1) {
+            resolve();
+          }
+          await wait(1);
+        }
+      }),
+    ]);
+    expect(server.clients.size, 'before server not connected').to.equal(0);
+    obniz.close();
+    server.close();
+  }).timeout(20 * 1000);
 
   function wait(ms) {
     return new Promise(resolve => {

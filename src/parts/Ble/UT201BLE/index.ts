@@ -95,17 +95,17 @@ export default class UT201BLE implements ObnizPartsBleInterface {
       const results: UT201BLEResult[] = [];
       const { temperatureMeasurementChar, timeChar, customServiceChar } = this._getChars();
 
+      this._peripheral.ondisconnect = (reason: any) => {
+        resolve(results);
+      };
+
       await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
 
       await this._writeTimeChar(this._timezoneOffsetMinute);
 
-      temperatureMeasurementChar.registerNotifyWait((data: number[]) => {
+      await temperatureMeasurementChar.registerNotifyWait((data: number[]) => {
         results.push(this._analyzeData(data));
       });
-
-      this._peripheral.ondisconnect = (reason: any) => {
-        resolve(results);
-      };
     });
   }
 
