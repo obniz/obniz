@@ -23,6 +23,7 @@ import HCSR04, { HCSR04Options } from "../parts/DistanceSensor/HC-SR04";
 import VL53L0X, { VL53L0XOptions } from "../parts/DistanceSensor/VL53L0X";
 
 // GasSensor
+import MH_Z19B, { MH_Z19BOptions } from "../parts/GasSensor/MH_Z19B";
 import MQ135, { MQ135Options } from "../parts/GasSensor/MQ135";
 import MQ2, { MQ2Options } from "../parts/GasSensor/MQ2";
 import MQ3, { MQ3Options } from "../parts/GasSensor/MQ3";
@@ -174,7 +175,9 @@ import Grove_LightSensor, { Grove_LightSensorOptions } from "../parts/Grove/Grov
 import Grove_MicroSwitch, { Grove_MicroSwitchOptions } from "../parts/Grove/Grove_MicroSwitch";
 import Grove_MP3, { Grove_MP3Options } from "../parts/Grove/Grove_MP3";
 import Grove_PressureSensor, { Grove_PressureSensorOptions } from "../parts/Grove/Grove_PressureSensor";
+import Grove_Relay, { Grove_RelayOptions } from "../parts/Grove/Grove_Relay";
 import Grove_RotaryAngleSensor, { Grove_RotaryAngleSensorOptions } from "../parts/Grove/Grove_RotaryAngleSensor";
+import Grove_SHT35Sensor, { Grove_SHT35SensorOptions } from "../parts/Grove/Grove_SHT35Sensor";
 import Grove_SoilMoistureSensor, { Grove_SoilMoistureSensorOptions } from "../parts/Grove/Grove_SoilMoistureSensor";
 import Grove_Speaker, { Grove_SpeakerOptions } from "../parts/Grove/Grove_Speaker";
 import Grove_WaterLevelSensor, { Grove_WaterLevelSensorOptions } from "../parts/Grove/Grove_WaterLevelSensor";
@@ -237,6 +240,7 @@ export interface PartsList {
   "MQ8": { class: MQ8; options: MQ8Options };
   "MQ9": { class: MQ9; options: MQ9Options };
   "MQ135": { class: MQ135; options: MQ135Options };
+  "MH_Z19B": { class: MH_Z19B; options: MH_Z19BOptions };
   "SNx4HC595": { class: SNx4HC595; options: SNx4HC595Options };
   "USB": { class: USB; options: USBOptions };
   "RN42": { class: RN42; options: RN42Options };

@@ -283,6 +283,13 @@
             "amazon.com": "https://www.amazon.com/Eiechip9PCS-Gas-Detection-Sensor-Module/dp/B079NJML69/ref=sr_1_2?ie=UTF8&qid=1550117613&sr=8-2&keywords=mq-6",
             "aliexpress": "https://www.aliexpress.com/item/MQ-2-MQ-3-MQ-4-MQ-5-MQ-6-MQ-7-MQ-8-MQ-9/32928371071.html?spm=2114.search0204.3.1.435e3918nLX40M&ws_ab_test=searchweb0_0,searchweb201602_4_10065_10068_319_10059_10884_317_10887_10696_321_322_10084_453_10083_454_10103_10618_10307_537_536_10902,searchweb201603_56,ppcSwitch_0&algo_expid=8be5002e-22e6-4365-bbc7-3a410f767e26-0&algo_pvid=8be5002e-22e6-4365-bbc7-3a410f767e26"
           }
+        },
+        {
+          "name": "MH_Z19B",
+          "store": {
+            "amazon.com": "https://www.amazon.com/Infrared-0-5000ppm-Monitor-Dioxide-MH-Z19B/dp/B07L6QZDK7",
+            "aliexpress": "https://ja.aliexpress.com/item/32986067884.html"
+          }
         }
       ]
     },
@@ -750,6 +757,20 @@
           "store": {
             "switchscience": "https://www.switch-science.com/catalog/3933/",
             "seedstudio": "https://www.seeedstudio.com/Grove-Micro-Switch.html"
+          }
+        },
+        {
+          "name": "Grove_Relay",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/807/",
+            "seedstudio": "https://www.seeedstudio.com/Grove-Relay.html"
+          }
+        },
+        {
+          "name": "Grove_SHT35Sensor",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/5337/",
+            "seedstudio": "https://www.seeedstudio.com/Grove-I2C-High-Accuracy-Temp-Humi-Sensor-SHT35.html"
           }
         }
       ]
