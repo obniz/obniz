@@ -125,3 +125,7 @@ describe('all', function() {
     });
   }
 });
+after(
+  'Exit mocha gracefully after finishing all tests execution',
+  process.exit
+);
