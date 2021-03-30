@@ -1,6 +1,9 @@
 # UA651BLE
 This is a blood pressure meter from A&D Corporation.
 
+Pairing is required for data communication. Pairing can be done by pressing and holding the power button until "Pr" is displayed.
+The device will record the paired device, return localName only to that device, and transfer data only to that device after the connection is established.
+
 ![](./image.jpg)
 
 ## isDevice(peripheral)
