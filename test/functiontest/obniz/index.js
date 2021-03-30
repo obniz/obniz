@@ -26,7 +26,7 @@ describe('obniz.index', function() {
     sinon.assert.calledOnce(console.error);
     sinon.assert.calledWith(console.error, 'invalid obniz id');
     console.error.restore(); // Unwraps the spy
-    // console.log.restore(); // Unwraps the spy
+    console.log.restore(); // Unwraps the spy
   });
 
   it('connect', function() {
@@ -734,7 +734,7 @@ describe('obniz.index', function() {
     const obniz = testUtil.createObniz(port, '11111111');
     // console.log(new Date(), 'obniz created');
     expect(obniz).to.be.obniz;
-    await wait(waitMs*3);
+    await wait(waitMs * 3);
 
     expect(server.clients.size, 'before server not connected').to.equal(1);
 
