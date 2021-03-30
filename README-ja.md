@@ -1,7 +1,7 @@
 # obniz.js: SDK for JavaScript
 
 [![npm version](https://badge.fury.io/js/obniz.svg)](https://badge.fury.io/js/obniz)
-![](https://img.shields.io/npm/dt/obniz.svg) [![Build Status](https://secure.travis-ci.org/obniz/obniz.png?branch=master)](http://travis-ci.org/obniz/obniz)
+![](https://img.shields.io/npm/dt/obniz.svg) [![test](https://github.com/obniz/obniz/actions/workflows/node.js.yml/badge.svg)](https://github.com/obniz/obniz/actions/workflows/node.js.yml)
 
 
 [obniz](https://obniz.com/ja/) や[obnizOS](https://obniz.com/ja/doc/obnizos)をobniz websocket APIを使いJavaScriptから操作するためのsdkです。
