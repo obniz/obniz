@@ -9618,7 +9618,17 @@ class Gatt extends eventemitter3_1.default {
     async exchangeMtuWait(mtu) {
         this._aclStream
             .readWait(ATT.CID, ATT.OP_MTU_REQ)
+            .catch((e) => {
+            if (e instanceof ObnizError_1.ObnizTimeoutError) {
+                return null;
+            }
+            throw e;
+        })
             .then((mtuRequestData) => {
+            if (!mtuRequestData) {
+                // throw timeout error and catched above
+                return;
+            }
             const requestMtu = mtuRequestData.readUInt16LE(1);
             debug(this._address + ": receive OP_MTU_REQ. new MTU is " + requestMtu);
             this._mtu = requestMtu;
@@ -26208,8 +26218,8 @@ class IBS01T {
             button: false,
             moving: false,
             reed: false,
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
+            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) / 100.0,
+            temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) / 100.0,
             humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[15], peripheral.adv_data[14]),
         };
         if (Boolean(peripheral.adv_data[11] & 0b0001)) {
