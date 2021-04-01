@@ -155,7 +155,17 @@ class Gatt extends eventemitter3_1.default {
     async exchangeMtuWait(mtu) {
         this._aclStream
             .readWait(ATT.CID, ATT.OP_MTU_REQ)
+            .catch((e) => {
+            if (e instanceof ObnizError_1.ObnizTimeoutError) {
+                return null;
+            }
+            throw e;
+        })
             .then((mtuRequestData) => {
+            if (!mtuRequestData) {
+                // throw timeout error and catched above
+                return;
+            }
             const requestMtu = mtuRequestData.readUInt16LE(1);
             debug(this._address + ": receive OP_MTU_REQ. new MTU is " + requestMtu);
             this._mtu = requestMtu;

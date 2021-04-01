@@ -61,7 +61,7 @@ export default class Grove_SHT35Sensor implements ObnizPartsInterface {
     this.displayIoNames = { sda: "sda", scl: "scl" };
   }
 
-  public async wired(obniz: Obniz) {
+  public wired(obniz: Obniz) {
     if (this.params.grove) {
       this.i2c = this.params.grove.getI2c(400000, "5v");
     } else {
@@ -77,20 +77,23 @@ export default class Grove_SHT35Sensor implements ObnizPartsInterface {
 
     this.obniz.wait(100);
 
-    await this.send_command(this.CMD_SOFT_RST);
-    this.obniz.wait(100);
-
-    this.launched = true;
+    this.sendCommandWait(this.CMD_SOFT_RST)
+      .then(() => {
+        return this.obniz.wait(100);
+      })
+      .then(() => {
+        this.launched = true;
+      });
   }
 
-  public async read_meas_data_single_shot(cfg_cmd: any) {
+  public async readMeasDataSingleShotWait(cfg_cmd: any) {
     let temp_hex: number = 0;
     let hum_hex: number = 0;
     let temp: number = 0;
     let hum: number = 0;
 
     if (this.launched) {
-      await this.send_command(cfg_cmd);
+      await this.sendCommandWait(cfg_cmd);
 
       const data = await this.i2c.readWait(this.SHT35_IIC_ADDR, 6);
 
@@ -108,7 +111,7 @@ export default class Grove_SHT35Sensor implements ObnizPartsInterface {
     return ret;
   }
 
-  public async send_command(cmd: any) {
+  public async sendCommandWait(cmd: any) {
     const ret = 0;
 
     const val1 = (cmd >> 8) & 0xff;
@@ -120,7 +123,7 @@ export default class Grove_SHT35Sensor implements ObnizPartsInterface {
     temperature: number;
     humidity: number;
   }> {
-    const ret = await this.read_meas_data_single_shot(this.HIGH_REP_WITH_STRCH);
+    const ret = await this.readMeasDataSingleShotWait(this.HIGH_REP_WITH_STRCH);
     return ret;
   }
 }

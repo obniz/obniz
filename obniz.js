@@ -9618,7 +9618,17 @@ class Gatt extends eventemitter3_1.default {
     async exchangeMtuWait(mtu) {
         this._aclStream
             .readWait(ATT.CID, ATT.OP_MTU_REQ)
+            .catch((e) => {
+            if (e instanceof ObnizError_1.ObnizTimeoutError) {
+                return null;
+            }
+            throw e;
+        })
             .then((mtuRequestData) => {
+            if (!mtuRequestData) {
+                // throw timeout error and catched above
+                return;
+            }
             const requestMtu = mtuRequestData.readUInt16LE(1);
             debug(this._address + ": receive OP_MTU_REQ. new MTU is " + requestMtu);
             this._mtu = requestMtu;
@@ -26208,8 +26218,8 @@ class IBS01T {
             button: false,
             moving: false,
             reed: false,
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
+            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) / 100.0,
+            temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) / 100.0,
             humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[15], peripheral.adv_data[14]),
         };
         if (Boolean(peripheral.adv_data[11] & 0b0001)) {
@@ -42435,7 +42445,7 @@ class Grove_SHT35Sensor {
             name: "Grove_SHT35Sensor",
         };
     }
-    async wired(obniz) {
+    wired(obniz) {
         if (this.params.grove) {
             this.i2c = this.params.grove.getI2c(400000, "5v");
         }
@@ -42448,17 +42458,21 @@ class Grove_SHT35Sensor {
             this.i2c = obniz.getI2CWithConfig(this.params);
         }
         this.obniz.wait(100);
-        await this.send_command(this.CMD_SOFT_RST);
-        this.obniz.wait(100);
-        this.launched = true;
+        this.sendCommandWait(this.CMD_SOFT_RST)
+            .then(() => {
+            return this.obniz.wait(100);
+        })
+            .then(() => {
+            this.launched = true;
+        });
     }
-    async read_meas_data_single_shot(cfg_cmd) {
+    async readMeasDataSingleShotWait(cfg_cmd) {
         let temp_hex = 0;
         let hum_hex = 0;
         let temp = 0;
         let hum = 0;
         if (this.launched) {
-            await this.send_command(cfg_cmd);
+            await this.sendCommandWait(cfg_cmd);
             const data = await this.i2c.readWait(this.SHT35_IIC_ADDR, 6);
             temp_hex = (data[0] << 8) | data[1];
             hum_hex = (data[3] << 8) | data[4];
@@ -42471,14 +42485,14 @@ class Grove_SHT35Sensor {
         };
         return ret;
     }
-    async send_command(cmd) {
+    async sendCommandWait(cmd) {
         const ret = 0;
         const val1 = (cmd >> 8) & 0xff;
         const val2 = cmd & 0xff;
         this.i2c.write(this.SHT35_IIC_ADDR, [val1, val2]);
     }
     async getAllWait() {
-        const ret = await this.read_meas_data_single_shot(this.HIGH_REP_WITH_STRCH);
+        const ret = await this.readMeasDataSingleShotWait(this.HIGH_REP_WITH_STRCH);
         return ret;
     }
 }

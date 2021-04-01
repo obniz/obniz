@@ -43,8 +43,8 @@ class IBS01T {
             button: false,
             moving: false,
             reed: false,
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
+            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) / 100.0,
+            temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) / 100.0,
             humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[15], peripheral.adv_data[14]),
         };
         if (Boolean(peripheral.adv_data[11] & 0b0001)) {
