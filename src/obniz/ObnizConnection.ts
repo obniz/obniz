@@ -227,6 +227,7 @@ export default abstract class ObnizConnection extends EventEmitter<
   private _nextLoopTimeout?: Timeout;
   private _nextPingTimeout?: Timeout;
   private _lastDataReceivedAt: number = 0;
+  private _autoConnectTimeout?: Timeout;
 
   constructor(id: string, options?: ObnizOptions) {
     super();
@@ -434,7 +435,11 @@ export default abstract class ObnizConnection extends EventEmitter<
         this.once("_close", resolve);
       });
     } else {
-      // already closed : do nothing
+      // already closed : stop auto connect
+      this._userManualConnectionClose = true;
+      if (this._autoConnectTimeout) {
+        clearTimeout(this._autoConnectTimeout);
+      }
     }
   }
 
@@ -660,7 +665,7 @@ export default abstract class ObnizConnection extends EventEmitter<
       }
     }
     if (this.options.auto_connect) {
-      setTimeout(() => {
+      this._autoConnectTimeout = setTimeout(() => {
         this.wsconnect(); // always connect to mainserver if ws lost
       }, tryAfter);
     }

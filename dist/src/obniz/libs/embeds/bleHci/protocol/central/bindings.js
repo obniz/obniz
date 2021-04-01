@@ -53,7 +53,7 @@ class NobleBindings extends eventemitter3_1.default {
         this._aclStreams = {};
         this._signalings = {};
         this._gap._reset();
-        // TODO: It muset be canceled.
+        // TODO: It must be canceled.
         this._connectPromises = [];
     }
     addPeripheralData(uuid, addressType) {
@@ -74,6 +74,9 @@ class NobleBindings extends eventemitter3_1.default {
     async connectWait(peripheralUuid, onConnectCallback) {
         const address = this._addresses[peripheralUuid];
         const addressType = this._addresseTypes[peripheralUuid];
+        if (!address) {
+            throw new ObnizError_1.ObnizBleUnknownPeripheralError(peripheralUuid);
+        }
         // Block parall connection ongoing for ESP32 bug.
         const doPromise = Promise.all(this._connectPromises)
             .catch((error) => {
