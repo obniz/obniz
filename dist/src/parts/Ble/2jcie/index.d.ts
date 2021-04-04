@@ -15,10 +15,32 @@ export interface OMRON_2JCIE_Data {
     light: number;
     uv_index: number;
     barometric_pressure: number;
-    soud_noise: number;
+    sound_noise: number;
     discomfort_index: number;
     heatstroke_risk_factor: number;
     battery_voltage: number;
+}
+export interface OMRON_2JCIE_USBSenData {
+    seqence_number: number;
+    temperature: number;
+    relative_humidity: number;
+    light: number;
+    barometric_pressure: number;
+    sound_noise: number;
+    etvoc: number;
+    eco2: number;
+}
+export interface OMRON_2JCIE_USBCalData {
+    sequence_number: number;
+    disconfort_index: number;
+    heatstroke_risk_factor: number;
+    vibration_information: number;
+    si_value: number;
+    pga: number;
+    seismic_intensity: number;
+    acceleration_x: number;
+    acceleration_y: number;
+    acceleration_z: number;
 }
 export interface OMRON_2JCIE_AdvData {
     temperature: number;
@@ -26,7 +48,7 @@ export interface OMRON_2JCIE_AdvData {
     light: number;
     uv_index: number;
     barometric_pressure: number;
-    soud_noise: number;
+    sound_noise: number;
     acceleration_x: number;
     acceleration_y: number;
     acceleration_z: number;
@@ -37,7 +59,7 @@ export interface OMRON_2JCIE_AdvSensorData {
     relative_humidity: number;
     light: number;
     barometric_pressure: number;
-    soud_noise: number;
+    sound_noise: number;
     etvoc: number;
     eco2: number;
 }
@@ -52,13 +74,16 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     obniz: Obniz;
     params: any;
     ondisconnect?: (reason: any) => void;
+    private vibrationState;
     constructor(peripheral: BleRemotePeripheral | null);
     wired(obniz: Obniz): void;
     findWait(): Promise<any>;
-    omron_uuid(uuid: string): string;
+    omron_uuid(uuid: string, type: string): string | any;
     connectWait(): Promise<void>;
     disconnectWait(): Promise<void>;
     signedNumberFromBinary(data: number[]): number;
     unsignedNumberFromBinary(data: number[]): number;
-    getLatestData(): Promise<OMRON_2JCIE_Data>;
+    getLatestDataBAG(): Promise<OMRON_2JCIE_Data>;
+    getLatestSensorDataUSB(): Promise<OMRON_2JCIE_USBSenData>;
+    getLatestCalclationDataUSB(): Promise<OMRON_2JCIE_USBCalData>;
 }

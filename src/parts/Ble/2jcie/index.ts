@@ -90,9 +90,6 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
   /**
    * Get a datas from advertisement mode of OMRON 2JCIE
    */
-  // TODO:
-  // rename eg. getDataFromAdv
-  // EnvとIMとRbtの棲み分け確認
   public static getData(peripheral: BleRemotePeripheral): OMRON_2JCIE_AdvData | OMRON_2JCIE_AdvSensorData | null {
     const adv_data = peripheral.adv_data;
     if (peripheral.localName && peripheral.localName.indexOf("IM") >= 0) {
@@ -153,7 +150,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
 
   public async findWait(): Promise<any> {
     const target: any = {
-      localName: "Env",
+      localName: ["Env", "Rbt"],
     };
 
     await this.obniz.ble!.initWait();
@@ -162,12 +159,11 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     return this._peripheral;
   }
 
-  // TODO: 判断方法変更
   public omron_uuid(uuid: string, type: string): string | any {
-    if (type === "Env" || "IM") {
+    if (type === "BAG") {
       return `0C4C${uuid}-7700-46F4-AA96D5E974E32A54`;
-    } else if (type === "Rbt") {
-      return `AB70XXXX-0A3A-11E8-BA89-0ED5F89F718B`;
+    } else if (type === "USB") {
+      return `AB70${uuid}-0A3A-11E8-BA89-0ED5F89F718B`;
     } else {
       return undefined;
     }
@@ -217,13 +213,11 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     return val;
   }
 
-  // TODO
-  // (案)こちらにBAGとつけるか、関数内でBAGかUSBかを場合わけする
-  public async getLatestData(): Promise<OMRON_2JCIE_Data> {
+  public async getLatestDataBAG(): Promise<OMRON_2JCIE_Data> {
     await this.connectWait();
 
-    const c = this._peripheral!.getService(this.omron_uuid("3000", "Env"))!.getCharacteristic(
-      this.omron_uuid("3001", "Env"),
+    const c = this._peripheral!.getService(this.omron_uuid("3000", "BAG"))!.getCharacteristic(
+      this.omron_uuid("3001", "BAG"),
     )!;
     const data: number[] = await c.readWait();
     const json: any = {
@@ -245,8 +239,8 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
   public async getLatestSensorDataUSB(): Promise<OMRON_2JCIE_USBSenData> {
     await this.connectWait();
 
-    const c = this._peripheral!.getService(this.omron_uuid("5010", "Rbt"))!.getCharacteristic(
-      this.omron_uuid("5012", "Rbt"),
+    const c = this._peripheral!.getService(this.omron_uuid("5010", "USB"))!.getCharacteristic(
+      this.omron_uuid("5012", "USB"),
     )!;
     const data: number[] = await c.readWait();
     const json: any = {

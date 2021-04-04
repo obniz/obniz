@@ -1,6 +1,8 @@
 # 2JCIE
 enviroment sensor made by OMRON. Battery powered. Temperature, Humidity, Brightness, UV, Air Pressure, Sound Level, Acceleration, VOC.
 
+The 2JCIE-BU01 (bag shape) and 2JCIE-BL01 (USB connection) are available in two different shapes (and each has its mode). (Also, each of them has its mode.) The data that can be acquired and the corresponding functions are different for each of them, so please check before using them.
+
 ![](image.jpg)
 
 ## isDevice(BleRemotePeripheral)
@@ -94,8 +96,12 @@ if(results){
 
 ## connectWait()
 
-Connect to the device.
-Search device automatically, but if not found, throw error.
+Connect to the device.Search device automatically, but if not found, throw error.
+The following shapes & modes are supported.  
+
+* 2JCIE-BU01 (bag shape) mode with localName `Env`
+* 2JCIE-BL01 (USB connection) mode with localName `Rbt`
+
 
 ```javascript
 // Javascript Example
@@ -109,7 +115,7 @@ if(results){
       console.log('disconnected');
     }
     await omron.connectWait();
-    let data = await omron.getLatestData();
+    let data = await omron.getLatestDataBAG();
     
     console.log(data);
 }else{
@@ -130,7 +136,7 @@ if(results){
     console.log("find");
   
     await omron.connectWait();
-    let data = await omron.getLatestData();
+    let data = await omron.getLatestDataBAG();
     
     console.log(data);
     
@@ -142,8 +148,8 @@ if(results){
 ```
 
 
-## [await]getLatestData()
-Get Latest Data from device.
+## [await]getLatestDataBAG()
+Get the latest data of the sensor of 2JCIE-BU01 (bag shape).
 
 ```javascript
 // Javascript Example
@@ -155,7 +161,7 @@ if(results){
     console.log("find");
   
     await omron.connectWait();
-    let data = await omron.getLatestData();
+    let data = await omron.getLatestDataBAG();
     
     console.log(data);
     
@@ -164,11 +170,11 @@ if(results){
     console.log("not find");
 }
 
-```
+```   
 
-The format is below.
+The return format is below.
+
 ```javascript
-
 //example response
 {
   row_number: 0,
@@ -181,6 +187,91 @@ The format is below.
   discomfort_index: 68.75,  
   heatstroke_risk_factor: 19,  //degC
   battery_voltage: 30.12  // V
+}
+
+```
+
+## [await]getLatestSensorDataUSB()
+Get the latest sensor data from 2JCIE-BL01 (USB connection).
+
+```javascript
+// Javascript Example
+
+let omron = obniz.wired('2JCIE');
+let results = await omron.findWait();
+
+if(results){
+    console.log("find");
+  
+    await omron.connectWait();
+    let data = await omron.getLatestSensorDataUSB();
+    
+    console.log(data);
+    
+    await omron.disconnectWait();
+}else{
+    console.log("not find");
+}
+
+```   
+
+The return format is below. 
+
+```javascript
+//example response
+{
+  sequence_number: 0,
+  temperature: 22.91,   //degC
+  relative_humidity: 46.46, //%RH
+  light: 75, //lx
+  barometric_pressure: 1010.4000000000001, // hPa
+  soud_noise: 39.42, //dB
+  etvoc: 4000,	//ppb
+  eco2: 4000	//ppm
+}
+
+```
+
+
+## [await]getLatestCalclationDataUSB()
+Get the latest index data and acceleration data from 2JCIE-BL01 (USB connection).
+
+```javascript
+// Javascript Example
+
+let omron = obniz.wired('2JCIE');
+let results = await omron.findWait();
+
+if(results){
+    console.log("find");
+  
+    await omron.connectWait();
+    let data = await omron.getLatestCalclationDataUSB();
+    
+    console.log(data);
+    
+    await omron.disconnectWait();
+}else{
+    console.log("not find");
+}
+
+```   
+
+The return format is below.  
+
+```javascript
+//example response
+{
+  sequence_number: 0,
+  disconfort_index: 22.91,
+  heatstroke_risk_factor: 46.46, //degC
+  vibration_information: NONE,
+  si_value: 2000.0, //kine
+  pga: 2000.0, //gal
+  seismic_intensity: 20.0,
+  acceleration_x: 200.0	//gal
+  acceleration_y: 200.0	//gal
+  acceleration_z: 200.0	//gal
 }
 
 ```

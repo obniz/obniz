@@ -22506,9 +22506,6 @@ class OMRON_2JCIE {
     /**
      * Get a datas from advertisement mode of OMRON 2JCIE
      */
-    // TODO:
-    // rename eg. getDataFromAdv
-    // EnvとIMとRbtの棲み分け確認
     static getData(peripheral) {
         const adv_data = peripheral.adv_data;
         if (peripheral.localName && peripheral.localName.indexOf("IM") >= 0) {
@@ -22547,19 +22544,18 @@ class OMRON_2JCIE {
     }
     async findWait() {
         const target = {
-            localName: "Env",
+            localName: ["Env", "Rbt"],
         };
         await this.obniz.ble.initWait();
         this._peripheral = await this.obniz.ble.scan.startOneWait(target);
         return this._peripheral;
     }
-    // TODO: 判断方法変更
     omron_uuid(uuid, type) {
-        if (type === "Env" || "IM") {
+        if (type === "BAG") {
             return `0C4C${uuid}-7700-46F4-AA96D5E974E32A54`;
         }
-        else if (type === "Rbt") {
-            return `AB70XXXX-0A3A-11E8-BA89-0ED5F89F718B`;
+        else if (type === "USB") {
+            return `AB70${uuid}-0A3A-11E8-BA89-0ED5F89F718B`;
         }
         else {
             return undefined;
@@ -22605,11 +22601,9 @@ class OMRON_2JCIE {
         }
         return val;
     }
-    // TODO
-    // (案)こちらにBAGとつけるか、関数内でBAGかUSBかを場合わけする
-    async getLatestData() {
+    async getLatestDataBAG() {
         await this.connectWait();
-        const c = this._peripheral.getService(this.omron_uuid("3000", "Env")).getCharacteristic(this.omron_uuid("3001", "Env"));
+        const c = this._peripheral.getService(this.omron_uuid("3000", "BAG")).getCharacteristic(this.omron_uuid("3001", "BAG"));
         const data = await c.readWait();
         const json = {
             row_number: data[0],
@@ -22627,7 +22621,7 @@ class OMRON_2JCIE {
     }
     async getLatestSensorDataUSB() {
         await this.connectWait();
-        const c = this._peripheral.getService(this.omron_uuid("5010", "Rbt")).getCharacteristic(this.omron_uuid("5012", "Rbt"));
+        const c = this._peripheral.getService(this.omron_uuid("5010", "USB")).getCharacteristic(this.omron_uuid("5012", "USB"));
         const data = await c.readWait();
         const json = {
             seqence_number: data[0],
