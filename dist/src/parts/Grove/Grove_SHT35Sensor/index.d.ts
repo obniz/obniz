@@ -36,12 +36,12 @@ export default class Grove_SHT35Sensor implements ObnizPartsInterface {
     private ERROR_OTHERS;
     private launched;
     constructor();
-    wired(obniz: Obniz): Promise<void>;
-    read_meas_data_single_shot(cfg_cmd: any): Promise<{
+    wired(obniz: Obniz): void;
+    readMeasDataSingleShotWait(cfg_cmd: any): Promise<{
         temperature: number;
         humidity: number;
     }>;
-    send_command(cmd: any): Promise<void>;
+    sendCommandWait(cmd: any): Promise<void>;
     getAllWait(): Promise<{
         temperature: number;
         humidity: number;
