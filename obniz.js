@@ -230,6 +230,9 @@ module.exports = {
     "tv4": "^1.3.0",
     "ws": "^6.1.4"
   },
+  "optionalDependencies": {
+    "canvas": "^2.7.0"
+  },
   "bugs": {
     "url": "https://forum.obniz.com"
   },
@@ -18063,7 +18066,9 @@ class ObnizUtil {
         if (this.obniz.isNode) {
             try {
                 const { createCanvas } = __webpack_require__("./dist/src/obniz/libs/webpackReplace/canvas.js");
-                return createCanvas(this.width, this.height);
+                const canvas = createCanvas(width, height);
+                const ctx = canvas.getContext("2d");
+                return ctx;
             }
             catch (e) {
                 throw new Error("obniz.js require node-canvas to draw rich contents. see more detail on docs");

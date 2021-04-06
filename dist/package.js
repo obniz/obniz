@@ -138,6 +138,9 @@ module.exports = {
     "tv4": "^1.3.0",
     "ws": "^6.1.4"
   },
+  "optionalDependencies": {
+    "canvas": "^2.7.0"
+  },
   "bugs": {
     "url": "https://forum.obniz.com"
   },
