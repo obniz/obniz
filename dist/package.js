@@ -18,7 +18,7 @@ module.exports = {
   },
   "engineStrict": true,
   "scripts": {
-    "test": "npm run tstest && nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/functiontest/index.js -b 1",
+    "test": "npm run tstest && nyc --reporter=text --reporter=html mocha --exit $NODE_DEBUG_OPTION  ./test/functiontest/index.js -b 1",
     "testOnlyNodejs": "NO_BROWSER_TEST=1 npm test",
     "buildAndtest": "npm run build && npm test",
     "tstest": "mocha --require espower-typescript/guess test/functiontest/**/*.ts",
