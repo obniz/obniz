@@ -1,6 +1,6 @@
 # iBS01H
 
-Magnet sensor by INGICS.
+magnet sensor by INGICS.
 
 Support device
 

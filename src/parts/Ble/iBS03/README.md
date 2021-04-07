@@ -1,6 +1,6 @@
 # iBS03
 
-Waterproof magnet sensor by INGICS.
+waterproof magnet sensor by INGICS.
 
 Support device
 

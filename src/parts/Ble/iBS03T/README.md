@@ -1,5 +1,6 @@
 # iBS03T
-temperature sensor made by INGICS.
+
+waterproof temperature sensor made by INGICS.
 
 Support device
 

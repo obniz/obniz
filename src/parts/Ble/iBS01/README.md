@@ -1,5 +1,6 @@
 # iBS01
-INGICS BLE tag.
+
+beacon by INGICS.
 
 Support device
 

@@ -1,7 +1,6 @@
 # iBS01G
-INGICS BLE tag.
 
-Moving and falling by INGICS.
+moving and falling sensor by INGICS.
 
 - iBS01G
 

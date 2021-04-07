@@ -1,6 +1,6 @@
 # iBS03G
 
-Waterproof acceleration by INGICS.
+waterproof moving and falling sensor by INGICS.
 
 Support device
 

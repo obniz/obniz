@@ -10,6 +10,7 @@ export interface IBS03G_Data {
     battery: number;
     button: boolean;
     moving: boolean;
+    fall: boolean;
 }
 export default class IBS03G implements ObnizPartsBleInterface {
     static info(): ObnizPartsBleInfo;
