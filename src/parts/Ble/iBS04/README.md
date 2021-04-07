@@ -1,16 +1,18 @@
-# iBS01
-INGICS BLE tag.
+# iBS04
+beacon advertising device made by INGICS.
 
 Support device
 
-- iBS01
+- iBS04
+
+![](image.jpg)
 
 
 ## getPartsClass(name)
 
 ```javascript
 // Javascript Example
-const IBS01 = Obniz.getPartsClass('iBS01');
+const IBS04 = Obniz.getPartsClass('iBS04');
 ```
 
 ## isDevice(BleRemotePeripheral)
@@ -19,11 +21,11 @@ Returns true if a device was found.
 
 ```javascript
 // Javascript Example
-let IBS01 = Obniz.getPartsClass('iBS01');
+const IBS04 = Obniz.getPartsClass('iBS04');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (IBS01.isDevice(p)) {
-        let data = IBS01.getData(p);
+    if (IBS04.isDevice(p)) {
+        let data = IBS04.getData(p);
         console.log(data);
     }
 };
@@ -40,11 +42,11 @@ Returns device information if found. Returns Null if not found.
 
 ```javascript
 // Javascript Example
-let IBS01 = Obniz.getPartsClass('iBS01');
+const IBS04 = Obniz.getPartsClass('iBS04');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (IBS01.isDevice(p)) {
-        let data = IBS01.getData(p);
+    if (IBS04.isDevice(p)) {
+        let data = IBS04.getData(p);
         console.log(data);
     }
 };

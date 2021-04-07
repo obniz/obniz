@@ -9,7 +9,6 @@ export interface IBS03Options {
 export interface IBS03_Data {
     battery: number;
     button: boolean;
-    moving: boolean;
     hall_sensor: boolean;
 }
 export default class IBS03 implements ObnizPartsBleInterface {

@@ -11,13 +11,17 @@ import ENERTALK_TOUCH, { ENERTALK_TOUCHOptions } from "../parts/Ble/ENERTALK";
 import HEM_6233T, { HEM_6233TOptions } from "../parts/Ble/HEM_6233T";
 import HEM_9200T, { HEM_9200TOptions } from "../parts/Ble/HEM_9200T";
 import IBS01, { IBS01Options } from "../parts/Ble/iBS01";
+import IBS01G, { IBS01GOptions } from "../parts/Ble/iBS01G";
+import IBS01H, { IBS01HOptions } from "../parts/Ble/iBS01H";
 import IBS01RG, { IBS01RGOptions } from "../parts/Ble/iBS01RG";
 import IBS01T, { IBS01TOptions } from "../parts/Ble/iBS01T";
 import IBS02IR, { IBS02IROptions } from "../parts/Ble/iBS02IR";
 import IBS02PIR, { IBS02PIROptions } from "../parts/Ble/iBS02PIR";
-import IBS03, { IBS03Options } from "../parts/Ble/iBS03_iBS04";
+import IBS03, { IBS03Options } from "../parts/Ble/iBS03";
+import IBS03G, { IBS03GOptions } from "../parts/Ble/iBS03G";
 import IBS03T, { IBS03TOptions } from "../parts/Ble/iBS03T";
 import IBS03TP, { IBS03TPOptions } from "../parts/Ble/iBS03TP";
+import IBS04, { IBS04Options } from "../parts/Ble/iBS04";
 import IBS04I, { IBS04IOptions } from "../parts/Ble/iBS04i";
 import Linking, { LinkingOptions } from "../parts/Ble/linking";
 import Logtta_Accel, { Logtta_AccelOptions } from "../parts/Ble/LogttaAccel";
@@ -647,21 +651,25 @@ export interface PartsList {
         class: SCBTGAAAC;
         options: SCBTGAAACOptions;
     };
-    "iBS04i": {
-        class: IBS04I;
-        options: IBS04IOptions;
+    "iBS01": {
+        class: IBS01;
+        options: IBS01Options;
     };
-    "iBS01T": {
-        class: IBS01T;
-        options: IBS01TOptions;
+    "iBS01G": {
+        class: IBS01G;
+        options: IBS01GOptions;
+    };
+    "iBS01H": {
+        class: IBS01H;
+        options: IBS01HOptions;
     };
     "iBS01RG": {
         class: IBS01RG;
         options: IBS01RGOptions;
     };
-    "iBS01": {
-        class: IBS01;
-        options: IBS01Options;
+    "iBS01T": {
+        class: IBS01T;
+        options: IBS01TOptions;
     };
     "iBS02IR": {
         class: IBS02IR;
@@ -675,6 +683,10 @@ export interface PartsList {
         class: IBS03;
         options: IBS03Options;
     };
+    "iBS03G": {
+        class: IBS03G;
+        options: IBS03GOptions;
+    };
     "iBS03T": {
         class: IBS03T;
         options: IBS03TOptions;
@@ -682,6 +694,14 @@ export interface PartsList {
     "iBS03TP": {
         class: IBS03TP;
         options: IBS03TPOptions;
+    };
+    "iBS04": {
+        class: IBS04;
+        options: IBS04Options;
+    };
+    "iBS04i": {
+        class: IBS04I;
+        options: IBS04IOptions;
     };
     "MINEW_S1": {
         class: MINEW_S1;

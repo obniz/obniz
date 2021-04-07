@@ -1,24 +1,24 @@
 /**
  * @packageDocumentation
- * @module Parts.iBS03
+ * @module Parts.iBS01G
  */
 
 import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
 import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
 
-export interface IBS03Options {}
+export interface IBS01GOptions {}
 
-export interface IBS03_Data {
+export interface IBS01G_Data {
   battery: number;
   button: boolean;
   moving: boolean;
-  hall_sensor: boolean;
+  fall: boolean;
 }
 
-export default class IBS03 implements ObnizPartsBleInterface {
+export default class IBS01G implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: "iBS03",
+      name: "iBS01G",
     };
   }
 
@@ -35,18 +35,23 @@ export default class IBS03 implements ObnizPartsBleInterface {
       }
       return false;
     }
-    return true;
+    return (
+      peripheral.adv_data[12] === 0xff &&
+      peripheral.adv_data[13] === 0xff &&
+      peripheral.adv_data[14] === 0xff &&
+      peripheral.adv_data[15] === 0xff
+    );
   }
 
-  public static getData(peripheral: BleRemotePeripheral): IBS03_Data | null {
-    if (!IBS03.isDevice(peripheral)) {
+  public static getData(peripheral: BleRemotePeripheral): IBS01G_Data | null {
+    if (!IBS01G.isDevice(peripheral)) {
       return null;
     }
-    const data: IBS03_Data = {
+    const data: IBS01G_Data = {
       battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
       button: false,
       moving: false,
-      hall_sensor: false,
+      fall: false,
     };
 
     if (Boolean(peripheral.adv_data[11] & 0b0001)) {
@@ -55,8 +60,8 @@ export default class IBS03 implements ObnizPartsBleInterface {
     if (Boolean(peripheral.adv_data[11] & 0b0010)) {
       data.moving = true;
     }
-    if (Boolean(peripheral.adv_data[11] & 0b0100)) {
-      data.hall_sensor = true;
+    if (Boolean(peripheral.adv_data[11] & 0b1000)) {
+      data.fall = true;
     }
     return data;
   }
@@ -67,9 +72,9 @@ export default class IBS03 implements ObnizPartsBleInterface {
     0x06,
     0x12,
     0xff,
-    0x0d, // Manufacturer vendor code
+    0x59, // Manufacturer vendor code
     0x00, // Manufacturer vendor code
-    0x83, // Magic code
+    0x80, // Magic code
     0xbc, // Magic code
     -1, // Battery
     -1, // Battery
@@ -78,9 +83,9 @@ export default class IBS03 implements ObnizPartsBleInterface {
     -1, // reserved
     -1, // reserved
     -1, // reserved
-    -1, // user
-    -1, // user
-    0x10, // subType
+    -1, // reserved
+    -1, // reserved
+    0x06, // subtype
     -1, // reserved
     -1, // reserved
     -1, // reserved

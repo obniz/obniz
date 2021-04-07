@@ -1,16 +1,19 @@
-# iBS01
-INGICS BLE tag.
+# iBS03G
+
+Waterproof acceleration by INGICS.
 
 Support device
 
-- iBS01
+- iBS03G
+
+![](image.jpg)
 
 
 ## getPartsClass(name)
 
 ```javascript
 // Javascript Example
-const IBS01 = Obniz.getPartsClass('iBS01');
+const IBS03G = Obniz.getPartsClass('iBS03G');
 ```
 
 ## isDevice(BleRemotePeripheral)
@@ -19,11 +22,11 @@ Returns true if a device was found.
 
 ```javascript
 // Javascript Example
-let IBS01 = Obniz.getPartsClass('iBS01');
+const IBS03G = Obniz.getPartsClass('iBS03G');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (IBS01.isDevice(p)) {
-        let data = IBS01.getData(p);
+    if (IBS03G.isDevice(p)) {
+        let data = IBS03G.getData(p);
         console.log(data);
     }
 };
@@ -36,15 +39,16 @@ Returns device information if found. Returns Null if not found.
 
 - battery : Battery voltage
 - button : True when button is pressed
+- moving : True when moving
 
 
 ```javascript
 // Javascript Example
-let IBS01 = Obniz.getPartsClass('iBS01');
+const IBS03G = Obniz.getPartsClass('iBS03G');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (IBS01.isDevice(p)) {
-        let data = IBS01.getData(p);
+    if (IBS03G.isDevice(p)) {
+        let data = IBS03G.getData(p);
         console.log(data);
     }
 };

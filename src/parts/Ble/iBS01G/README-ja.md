@@ -1,16 +1,16 @@
-# iBS01
-INGICS社製のビーコンです。
+# iBS01G
+INGICS社製の落下検知センサです。
 
 サポートデバイス
 
-- iBS01
+- iBS01G
 
 
 ## getPartsClass(name)
 
 ```javascript
 // Javascript Example
-const IBS01 = Obniz.getPartsClass('iBS01');
+const IBS01G = Obniz.getPartsClass('iBS01G');
 ```
 
 ## isDevice(BleRemotePeripheral)
@@ -19,11 +19,11 @@ const IBS01 = Obniz.getPartsClass('iBS01');
 
 ```javascript
 // Javascript Example
-let IBS01 = Obniz.getPartsClass('iBS01');
+let IBS01G = Obniz.getPartsClass('iBS01G');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (IBS01.isDevice(p)) {
-        let data = IBS01.getData(p);
+    if (IBS01G.isDevice(p)) {
+        let data = IBS01G.getData(p);
         console.log(data);
     }
 };
@@ -36,14 +36,16 @@ await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 
 - battery : 電池電圧
 - button : ボタンを押すとtrue
+- moving : 動くとtrue
+- fall : 落下するとtrue
 
 ```javascript
 // Javascript Example
-let IBS01 = Obniz.getPartsClass('iBS01');
+let IBS01G = Obniz.getPartsClass('iBS01G');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (IBS01.isDevice(p)) {
-        let data = IBS01.getData(p);
+    if (IBS01G.isDevice(p)) {
+        let data = IBS01G.getData(p);
         console.log(data);
     }
 };

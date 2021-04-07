@@ -1,16 +1,16 @@
 "use strict";
 /**
  * @packageDocumentation
- * @module Parts.iBS01
+ * @module Parts.iBS01H
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-class IBS01 {
+class IBS01H {
     constructor() {
         this._peripheral = null;
     }
     static info() {
         return {
-            name: "iBS01",
+            name: "iBS01H",
         };
     }
     static isDevice(peripheral) {
@@ -32,21 +32,25 @@ class IBS01 {
             peripheral.adv_data[15] === 0xff);
     }
     static getData(peripheral) {
-        if (!IBS01.isDevice(peripheral)) {
+        if (!IBS01H.isDevice(peripheral)) {
             return null;
         }
         const data = {
             battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
             button: false,
+            hall_sensor: false,
         };
         if (Boolean(peripheral.adv_data[11] & 0b0001)) {
             data.button = true;
         }
+        if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+            data.hall_sensor = true;
+        }
         return data;
     }
 }
-exports.default = IBS01;
-IBS01.deviceAdv = [
+exports.default = IBS01H;
+IBS01H.deviceAdv = [
     0x02,
     0x01,
     0x06,
@@ -65,7 +69,7 @@ IBS01.deviceAdv = [
     -1,
     -1,
     -1,
-    0x03,
+    0x04,
     -1,
     -1,
     -1,

@@ -1,16 +1,19 @@
-# iBS01
-INGICS BLE tag.
+# iBS01H
+
+Magnet sensor by INGICS.
 
 Support device
 
-- iBS01
+- iBS01H
+
+![](image.jpg)
 
 
 ## getPartsClass(name)
 
 ```javascript
 // Javascript Example
-const IBS01 = Obniz.getPartsClass('iBS01');
+const IBS01H = Obniz.getPartsClass('iBS01H');
 ```
 
 ## isDevice(BleRemotePeripheral)
@@ -19,11 +22,11 @@ Returns true if a device was found.
 
 ```javascript
 // Javascript Example
-let IBS01 = Obniz.getPartsClass('iBS01');
+let IBS01H = Obniz.getPartsClass('iBS01H');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (IBS01.isDevice(p)) {
-        let data = IBS01.getData(p);
+    if (IBS01H.isDevice(p)) {
+        let data = IBS01H.getData(p);
         console.log(data);
     }
 };
@@ -36,15 +39,16 @@ Returns device information if found. Returns Null if not found.
 
 - battery : Battery voltage
 - button : True when button is pressed
+- hall_sensor : True when the magnet approaches
 
 
 ```javascript
 // Javascript Example
-let IBS01 = Obniz.getPartsClass('iBS01');
+let IBS01H = Obniz.getPartsClass('iBS01H');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (IBS01.isDevice(p)) {
-        let data = IBS01.getData(p);
+    if (IBS01H.isDevice(p)) {
+        let data = IBS01H.getData(p);
         console.log(data);
     }
 };
