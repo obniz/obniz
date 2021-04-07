@@ -40,6 +40,7 @@ Returns device information if found. Returns Null if not found.
 - battery : Battery voltage
 - button : True when button is pressed
 - moving : True when moving
+- fall : True when falling
 
 
 ```javascript

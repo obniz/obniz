@@ -40,6 +40,7 @@ await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 - battery : 電池電圧
 - button : ボタンを押すとtrue
 - moving : 動くとtrue
+- fall : 落下するとtrue
 
 ```javascript
 // Javascript Example

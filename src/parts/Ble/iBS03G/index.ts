@@ -12,6 +12,7 @@ export interface IBS03G_Data {
   battery: number;
   button: boolean;
   moving: boolean;
+  fall: boolean;
 }
 
 export default class IBS03G implements ObnizPartsBleInterface {
@@ -45,6 +46,7 @@ export default class IBS03G implements ObnizPartsBleInterface {
       battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
       button: false,
       moving: false,
+      fall: false,
     };
 
     if (Boolean(peripheral.adv_data[11] & 0b0001)) {
@@ -52,6 +54,9 @@ export default class IBS03G implements ObnizPartsBleInterface {
     }
     if (Boolean(peripheral.adv_data[11] & 0b0010)) {
       data.moving = true;
+    }
+    if (Boolean(peripheral.adv_data[11] & 0b1000)) {
+      data.fall = true;
     }
     return data;
   }
