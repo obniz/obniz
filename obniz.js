@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.14.0",
+  "version": "3.15.0-alpha.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -13649,7 +13649,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
                 this._reset_canvas();
             }
         }
-        return this._canvas || null;
+        return this._canvas;
     }
     _ctx() {
         const canvas = this._preparedCanvas();
