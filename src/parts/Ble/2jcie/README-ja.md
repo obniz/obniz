@@ -1,6 +1,8 @@
 # 2JCIE
 OMRON社製の環境センサです。電池で動作し、温度、湿度、照度、UV、気圧、騒音、加速度、VOCを計測できます。
 
+2JCIE-BU01(バッグ形状)と2JCIE-BL01(USB接続)の2種類の形状が存在します(加えてそれぞれにモードが存在します)。それぞれ取得できるデータや対応する関数が異なっているため、ご確認の上お使いください。
+
 ![](image.jpg)
 
 ## isDevice(BleRemotePeripheral)
@@ -95,8 +97,11 @@ if(results){
 ```
 
 ## connectWait()
-センサに接続します。
-自動的にデバイスを検索しますが、見つからなかった場合はエラーをthrowします
+センサに接続します。自動的にデバイスを検索しますが、見つからなかった場合はエラーをthrowします。  
+以下の形状&モードに対応しています。
+
+* 2JCIE-BU01(バッグ形状)の`Env`というlocalNameを持つモード
+* 2JCIE-BL01(USB接続)の`Rbt`というlocalNameを持つモード
 
 ```javascript
 // Javascript Example
@@ -110,7 +115,7 @@ if(results){
       console.log('disconnected');
     }
     await omron.connectWait();
-    let data = await omron.getLatestData();
+    let data = await omron.getLatestDataBAG();
     
     console.log(data);
 }else{
@@ -120,7 +125,7 @@ if(results){
 
 
 ## [await]disconnectWait()
-センサから切断します
+センサから切断します。
 
 ```javascript
 // Javascript Example
@@ -131,7 +136,7 @@ if(results){
     console.log("find");
   
     await omron.connectWait();
-    let data = await omron.getLatestData();
+    let data = await omron.getLatestDataBAG();
     
     console.log(data);
     
@@ -144,7 +149,7 @@ if(results){
 
 
 ## [await]getLatestData()
-最新のデータを取得します
+2JCIE-BU01(バッグ形状)のセンサの最新のデータを取得します。
 
 ```javascript
 // Javascript Example
@@ -165,11 +170,11 @@ if(results){
     console.log("not find");
 }
 
-```
+```   
 
-返り値のフォーマットと単位は下記のとおりです
+返り値のフォーマットと単位は下記のとおりです。  
+
 ```javascript
-
 //example response
 {
   row_number: 0,
@@ -185,3 +190,89 @@ if(results){
 }
 
 ```
+
+## [await]getLatestSensorDataUSB()
+2JCIE-BL01(USB接続)のセンサの最新の値データを取得します。
+
+```javascript
+// Javascript Example
+
+let omron = obniz.wired('2JCIE');
+let results = await omron.findWait();
+
+if(results){
+    console.log("find");
+  
+    await omron.connectWait();
+    let data = await omron.getLatestSensorDataUSB();
+    
+    console.log(data);
+    
+    await omron.disconnectWait();
+}else{
+    console.log("not find");
+}
+
+```   
+
+返り値のフォーマットと単位は下記のとおりです。  
+
+```javascript
+//example response
+{
+  sequence_number: 0,
+  temperature: 22.91,   //degC
+  relative_humidity: 46.46, //%RH
+  light: 75, //lx
+  barometric_pressure: 1010.4000000000001, // hPa
+  soud_noise: 39.42, //dB
+  etvoc: 1463,	//ppb
+  eco2: 2353	//ppm
+}
+
+```
+
+
+## [await]getLatestCalculationDataUSB()
+2JCIE-BL01(USB接続)のセンサの最新の指標データや加速度データを取得します。
+
+```javascript
+// Javascript Example
+
+let omron = obniz.wired('2JCIE');
+let results = await omron.findWait();
+
+if(results){
+    console.log("find");
+  
+    await omron.connectWait();
+    let data = await omron.getLatestCalculationDataUSB();
+    
+    console.log(data);
+    
+    await omron.disconnectWait();
+}else{
+    console.log("not find");
+}
+
+```   
+
+返り値のフォーマットと単位は下記のとおりです。  
+
+```javascript
+//example response
+{
+  sequence_number: 0,
+  disconfort_index: 68.78,
+  heatstroke_risk_factor: 18.29, //degC
+  vibration_information: "NONE",
+  si_value: 0, //kine
+  pga: 0, //gal
+  seismic_intensity: 0,
+  acceleration_x: 185	//gal
+  acceleration_y: -9915	//gal
+  acceleration_z: -191	//gal
+}
+
+```
+
