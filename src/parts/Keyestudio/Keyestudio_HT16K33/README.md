@@ -7,7 +7,7 @@ Connect a driver to an obniz.
 
 ```Javascript
 // Javascript Example
-const matrix = obniz.wired("Keyestudio_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
+const matrix = obniz.wired("Keyestudio_HT16K33", { gnd:0, vcc:1, sda:2, scl:3 });
 ```
 
 
@@ -16,7 +16,7 @@ value: 0 to 15;
 
 ```Javascript
 // Javascript Example
-const matrix = obniz.wired("Keyestudio_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
+const matrix = obniz.wired("Keyestudio_HT16K33", { gnd:0, vcc:1, sda:2, scl:3 });
 matrix.brightness(7);
 ```
 
@@ -29,7 +29,7 @@ See more detail on obniz util document's.
 
 ```Javascript
 // Javascript Example
-const matrix = obniz.wired("Keyestudio_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
+const matrix = obniz.wired("Keyestudio_HT16K33", { gnd:0, vcc:1, sda:2, scl:3 });
 matrix.brightness(7);
 
 const ctx = obniz.util.createCanvasContext(matrix.width, matrix.height);
@@ -48,7 +48,7 @@ Can be turned on in dot units.
  
  ```Javascript
  // Javascript Example
- const matrix = obniz.wired("Keyestudio_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
+ const matrix = obniz.wired("Keyestudio_HT16K33", { gnd:0, vcc:1, sda:2, scl:3 });
  const dots = [1,2,4,8,16,32,64,128]
  matrix.dots(dots);
  ```
@@ -58,6 +58,6 @@ clear all.
 
 ```Javascript
 // Javascript Example
-const matrix = obniz.wired("Keyestudio_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
+const matrix = obniz.wired("Keyestudio_HT16K33", { gnd:0, vcc:1, sda:2, scl:3 });
 matrix.clear();
 ```

@@ -113,7 +113,9 @@ class ObnizUtil {
         if (this.obniz.isNode) {
             try {
                 const { createCanvas } = require("canvas");
-                return createCanvas(this.width, this.height);
+                const canvas = createCanvas(width, height);
+                const ctx = canvas.getContext("2d");
+                return ctx;
             }
             catch (e) {
                 throw new Error("obniz.js require node-canvas to draw rich contents. see more detail on docs");
