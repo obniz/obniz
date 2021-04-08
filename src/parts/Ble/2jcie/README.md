@@ -148,7 +148,7 @@ if(results){
 ```
 
 
-## [await]getLatestDataBAG()
+## [await]getLatestData()
 Get the latest data of the sensor of 2JCIE-BU01 (bag shape).
 
 ```javascript
@@ -161,7 +161,7 @@ if(results){
     console.log("find");
   
     await omron.connectWait();
-    let data = await omron.getLatestDataBAG();
+    let data = await omron.getLatestData();
     
     console.log(data);
     

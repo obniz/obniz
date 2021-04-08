@@ -83,7 +83,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     disconnectWait(): Promise<void>;
     signedNumberFromBinary(data: number[]): number;
     unsignedNumberFromBinary(data: number[]): number;
-    getLatestDataBAG(): Promise<OMRON_2JCIE_Data>;
+    getLatestData(): Promise<OMRON_2JCIE_Data>;
     getLatestSensorDataUSB(): Promise<OMRON_2JCIE_USBSenData>;
     getLatestCalculationDataUSB(): Promise<OMRON_2JCIE_USBCalData>;
 }

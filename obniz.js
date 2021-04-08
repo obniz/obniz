@@ -22601,7 +22601,7 @@ class OMRON_2JCIE {
         }
         return val;
     }
-    async getLatestDataBAG() {
+    async getLatestData() {
         await this.connectWait();
         const c = this._peripheral.getService(this.omron_uuid("3000", "BAG")).getCharacteristic(this.omron_uuid("3001", "BAG"));
         const data = await c.readWait();
