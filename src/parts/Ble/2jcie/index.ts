@@ -139,7 +139,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
 
   constructor(peripheral: BleRemotePeripheral | null) {
     if (peripheral && !OMRON_2JCIE.isDevice(peripheral)) {
-      throw new Error("peripheral is not RS_BTIREX2");
+      throw new Error("peripheral is not OMRON_2JCIE");
     }
     this._peripheral = peripheral;
   }
