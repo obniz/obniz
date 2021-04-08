@@ -550,7 +550,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
                 this._reset_canvas();
             }
         }
-        return this._canvas;
+        return this._canvas || null;
     }
     _ctx() {
         const canvas = this._preparedCanvas();
