@@ -7,7 +7,13 @@ chai.use(testUtil.obnizAssert);
 
 describe('obniz.libs.display', function() {
   beforeEach(function(done) {
-    return testUtil.setupObnizPromise(this, done);
+    return testUtil.setupObnizPromise(this, () => {
+      if (this.obniz.isNode) {
+        // disable node-canvas
+        this.obniz.display._ctx = () => {};
+      }
+      done();
+    });
   });
 
   afterEach(function(done) {
@@ -23,20 +29,23 @@ describe('obniz.libs.display', function() {
     }
   });
 
-  // if (this.obniz.isNode) {
-  //   it("print",  function () {
-  //     this.obniz.display.print("Hello!!");
-  //     expect(this.obniz).to.be.obniz;
-  //     expect(this.obniz).send([{display:{text:"Hello!!"}}]);
-  //     expect(this.obniz).to.be.finished;
-  //   });
-  //   it("print_bool",  function () {
-  //     this.obniz.display.print(true);
-  //     expect(this.obniz).to.be.obniz;
-  //     expect(this.obniz).send([{display:{text:"true"}}]);
-  //     expect(this.obniz).to.be.finished;
-  //   });
-  // }
+  it('print', function() {
+    if (this.obniz.isNode) {
+      this.obniz.display.print('Hello!!');
+      expect(this.obniz).to.be.obniz;
+      expect(this.obniz).send([{ display: { text: 'Hello!!' } }]);
+      expect(this.obniz).to.be.finished;
+    }
+  });
+
+  it('print_bool', function() {
+    if (this.obniz.isNode) {
+      this.obniz.display.print(true);
+      expect(this.obniz).to.be.obniz;
+      expect(this.obniz).send([{ display: { text: 'true' } }]);
+      expect(this.obniz).to.be.finished;
+    }
+  });
 
   it('qr', function() {
     this.obniz.display.qr('https://obniz.io');

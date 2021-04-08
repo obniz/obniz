@@ -110,7 +110,7 @@ module.exports = {
   },
   "engineStrict": true,
   "scripts": {
-    "test": "npm run tstest && nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/functiontest/index.js -b 1",
+    "test": "npm run tstest && nyc --reporter=text --reporter=html mocha --exit $NODE_DEBUG_OPTION  ./test/functiontest/index.js -b 1",
     "testOnlyNodejs": "NO_BROWSER_TEST=1 npm test",
     "buildAndtest": "npm run build && npm test",
     "tstest": "mocha --require espower-typescript/guess test/functiontest/**/*.ts",
@@ -229,6 +229,9 @@ module.exports = {
     "semver": "^5.7.0",
     "tv4": "^1.3.0",
     "ws": "^6.1.4"
+  },
+  "optionalDependencies": {
+    "canvas": "^2.7.0"
   },
   "bugs": {
     "url": "https://forum.obniz.com"
@@ -18063,7 +18066,9 @@ class ObnizUtil {
         if (this.obniz.isNode) {
             try {
                 const { createCanvas } = __webpack_require__("./dist/src/obniz/libs/webpackReplace/canvas.js");
-                return createCanvas(this.width, this.height);
+                const canvas = createCanvas(width, height);
+                const ctx = canvas.getContext("2d");
+                return ctx;
             }
             catch (e) {
                 throw new Error("obniz.js require node-canvas to draw rich contents. see more detail on docs");
