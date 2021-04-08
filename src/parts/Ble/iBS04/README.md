@@ -1,10 +1,9 @@
-# iBS03TP
-
-waterproof temperature sensor made by INGICS.
+# iBS04
+beacon advertising device made by INGICS.
 
 Support device
 
-- iBS03TP
+- iBS04
 
 ![](image.jpg)
 
@@ -13,7 +12,7 @@ Support device
 
 ```javascript
 // Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03TP');
+const IBS04 = Obniz.getPartsClass('iBS04');
 ```
 
 ## isDevice(BleRemotePeripheral)
@@ -22,11 +21,11 @@ Returns true if a device was found.
 
 ```javascript
 // Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03TP');
+const IBS04 = Obniz.getPartsClass('iBS04');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (IBS03.isDevice(p)) {
-        let data = IBS03.getData(p);
+    if (IBS04.isDevice(p)) {
+        let data = IBS04.getData(p);
         console.log(data);
     }
 };
@@ -38,16 +37,16 @@ await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 Returns device information if found. Returns Null if not found.
 
 - battery : Battery voltage
-- temperature : temperature(℃)
+- button : True when button is pressed
 
 
 ```javascript
 // Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03TP');
+const IBS04 = Obniz.getPartsClass('iBS04');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (IBS03.isDevice(p)) {
-        let data = IBS03.getData(p);
+    if (IBS04.isDevice(p)) {
+        let data = IBS04.getData(p);
         console.log(data);
     }
 };

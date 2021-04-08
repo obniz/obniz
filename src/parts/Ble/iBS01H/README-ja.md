@@ -1,10 +1,9 @@
-# iBS03TP
+# iBS01H
+INGICS社製の開閉検知センサです。
 
-INGICS社製の防水温度センサです。
+このライブラリにより以下の２機種について検知できます。
 
-サポートデバイス
-
-- iBS03TP
+- iBS01H
 
 ![](image.jpg)
 
@@ -13,7 +12,7 @@ INGICS社製の防水温度センサです。
 
 ```javascript
 // Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03TP');
+const IBS01H = Obniz.getPartsClass('iBS01H');
 ```
 
 ## isDevice(BleRemotePeripheral)
@@ -22,11 +21,11 @@ const IBS03 = Obniz.getPartsClass('iBS03TP');
 
 ```javascript
 // Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03TP');
+let IBS01H = Obniz.getPartsClass('iBS01H');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (IBS03.isDevice(p)) {
-        let data = IBS03.getData(p);
+    if (IBS01H.isDevice(p)) {
+        let data = IBS01H.getData(p);
         console.log(data);
     }
 };
@@ -38,18 +37,18 @@ await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 発見した場合にデバイスの情報を返します。発見できなかった場合にはNullを返します。
 
 - battery : 電池電圧
-- temperature : 温度センサの値
+- button : ボタンを押すとtrue
+- hall_sensor : 磁石が近づくとtrue
 
 ```javascript
 // Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03TP');
+let IBS01H = Obniz.getPartsClass('iBS01H');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (IBS03.isDevice(p)) {
-        let data = IBS03.getData(p);
+    if (IBS01H.isDevice(p)) {
+        let data = IBS01H.getData(p);
         console.log(data);
     }
 };
 await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
-

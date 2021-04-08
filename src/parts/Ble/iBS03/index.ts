@@ -1,26 +1,23 @@
 /**
  * @packageDocumentation
- * @module Parts.iBS01T
+ * @module Parts.iBS03
  */
 
 import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
 import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
 
-export interface IBS01TOptions {}
+export interface IBS03Options {}
 
-export interface IBS01T_Data {
-  button: boolean;
-  moving: boolean;
-  reed: boolean;
+export interface IBS03_Data {
   battery: number;
-  temperature: number;
-  humidity: number;
+  button: boolean;
+  hall_sensor: boolean;
 }
 
-export default class IBS01T implements ObnizPartsBleInterface {
+export default class IBS03 implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: "iBS01T",
+      name: "iBS03",
     };
   }
 
@@ -37,37 +34,26 @@ export default class IBS01T implements ObnizPartsBleInterface {
       }
       return false;
     }
-    return !(
-      peripheral.adv_data[12] === 0xff &&
-      peripheral.adv_data[13] === 0xff &&
-      peripheral.adv_data[14] === 0xff &&
-      peripheral.adv_data[15] === 0xff
-    );
+    return true;
   }
 
-  public static getData(peripheral: BleRemotePeripheral): IBS01T_Data | null {
-    if (!IBS01T.isDevice(peripheral)) {
+  public static getData(peripheral: BleRemotePeripheral): IBS03_Data | null {
+    if (!IBS03.isDevice(peripheral)) {
       return null;
     }
-    const d: IBS01T_Data = {
-      button: false,
-      moving: false,
-      reed: false,
+    const data: IBS03_Data = {
       battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-      temperature: ObnizPartsBleInterface.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
-      humidity: ObnizPartsBleInterface.signed16FromBinary(peripheral.adv_data[15], peripheral.adv_data[14]),
+      button: false,
+      hall_sensor: false,
     };
 
     if (Boolean(peripheral.adv_data[11] & 0b0001)) {
-      d.button = true;
-    }
-    if (Boolean(peripheral.adv_data[11] & 0b0010)) {
-      d.moving = true;
+      data.button = true;
     }
     if (Boolean(peripheral.adv_data[11] & 0b0100)) {
-      d.reed = true;
+      data.hall_sensor = true;
     }
-    return d;
+    return data;
   }
 
   private static deviceAdv: number[] = [
@@ -76,20 +62,20 @@ export default class IBS01T implements ObnizPartsBleInterface {
     0x06,
     0x12,
     0xff,
-    0x59, // Manufacturer vendor code
+    0x0d, // Manufacturer vendor code
     0x00, // Manufacturer vendor code
-    0x80, // Magic code
+    0x83, // Magic code
     0xbc, // Magic code
     -1, // Battery
     -1, // Battery
     -1, // Event
-    -1, // temp
-    -1, // temp
-    -1, // humid
-    -1, // humid
     -1, // reserved
     -1, // reserved
-    0x05, // subtype
+    -1, // reserved
+    -1, // reserved
+    -1, // user
+    -1, // user
+    0x10, // subType
     -1, // reserved
     -1, // reserved
     -1, // reserved

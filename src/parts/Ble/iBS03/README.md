@@ -1,10 +1,10 @@
-# iBS03TP
+# iBS03
 
-INGICS社製の防水温度センサです。
+waterproof magnet sensor by INGICS.
 
-サポートデバイス
+Support device
 
-- iBS03TP
+- iBS03
 
 ![](image.jpg)
 
@@ -13,16 +13,16 @@ INGICS社製の防水温度センサです。
 
 ```javascript
 // Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03TP');
+const IBS03 = Obniz.getPartsClass('iBS03');
 ```
 
 ## isDevice(BleRemotePeripheral)
 
-デバイスを発見した場合、trueを返します。
+Returns true if a device was found.
 
 ```javascript
 // Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03TP');
+const IBS03 = Obniz.getPartsClass('iBS03');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
     if (IBS03.isDevice(p)) {
@@ -35,14 +35,16 @@ await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 
 ## getData(BleRemotePeripheral)
 
-発見した場合にデバイスの情報を返します。発見できなかった場合にはNullを返します。
+Returns device information if found. Returns Null if not found.
 
-- battery : 電池電圧
-- temperature : 温度センサの値
+- battery : Battery voltage
+- button : True when button is pressed
+- hall_sensor : True when the magnet approaches
+
 
 ```javascript
 // Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03TP');
+const IBS03 = Obniz.getPartsClass('iBS03');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
     if (IBS03.isDevice(p)) {
@@ -52,4 +54,3 @@ obniz.ble.scan.onfind = (p) => {
 };
 await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
-

@@ -1,19 +1,16 @@
-# iBS03TP
-
-INGICS社製の防水温度センサです。
+# iBS01G
+INGICS社製の落下検知センサです。
 
 サポートデバイス
 
-- iBS03TP
-
-![](image.jpg)
+- iBS01G
 
 
 ## getPartsClass(name)
 
 ```javascript
 // Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03TP');
+const IBS01G = Obniz.getPartsClass('iBS01G');
 ```
 
 ## isDevice(BleRemotePeripheral)
@@ -22,11 +19,11 @@ const IBS03 = Obniz.getPartsClass('iBS03TP');
 
 ```javascript
 // Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03TP');
+let IBS01G = Obniz.getPartsClass('iBS01G');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (IBS03.isDevice(p)) {
-        let data = IBS03.getData(p);
+    if (IBS01G.isDevice(p)) {
+        let data = IBS01G.getData(p);
         console.log(data);
     }
 };
@@ -38,18 +35,19 @@ await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 発見した場合にデバイスの情報を返します。発見できなかった場合にはNullを返します。
 
 - battery : 電池電圧
-- temperature : 温度センサの値
+- button : ボタンを押すとtrue
+- moving : 動くとtrue
+- fall : 落下するとtrue
 
 ```javascript
 // Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03TP');
+let IBS01G = Obniz.getPartsClass('iBS01G');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (IBS03.isDevice(p)) {
-        let data = IBS03.getData(p);
+    if (IBS01G.isDevice(p)) {
+        let data = IBS01G.getData(p);
         console.log(data);
     }
 };
 await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
-

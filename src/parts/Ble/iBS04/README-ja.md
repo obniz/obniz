@@ -1,10 +1,9 @@
-# iBS03 iBS04
-INGICS社製のBLEタグです。
+# iBS04
+INGICS社製のBLEを利用しビーコンを発信するデバイスです。
 
-以下の２つの製品を扱うことができます。
+サポートデバイス
 
-- iBS03(H) : ボタン・磁気センサー
-- iBS04 : ボタン
+- iBS04
 
 ![](image.jpg)
 
@@ -13,7 +12,7 @@ INGICS社製のBLEタグです。
 
 ```javascript
 // Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03');
+const IBS04 = Obniz.getPartsClass('iBS04');
 ```
 
 ## isDevice(BleRemotePeripheral)
@@ -22,11 +21,11 @@ const IBS03 = Obniz.getPartsClass('iBS03');
 
 ```javascript
 // Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03');
+const IBS04 = Obniz.getPartsClass('iBS04');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (IBS03.isDevice(p)) {
-        let data = IBS03.getData(p);
+    if (IBS04.isDevice(p)) {
+        let data = IBS04.getData(p);
         console.log(data);
     }
 };
@@ -39,16 +38,14 @@ await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 
 - battery : 電池電圧
 - button : ボタンを押すとtrue
-- moving : 動くとtrue
-- hall_sensor : 磁石が近づくとtrue
 
 ```javascript
 // Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03');
+const IBS04 = Obniz.getPartsClass('iBS04');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (IBS03.isDevice(p)) {
-        let data = IBS03.getData(p);
+    if (IBS04.isDevice(p)) {
+        let data = IBS04.getData(p);
         console.log(data);
     }
 };

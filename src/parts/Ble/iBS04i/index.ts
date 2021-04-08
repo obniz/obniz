@@ -63,7 +63,7 @@ export default class IBS04I implements ObnizPartsBleInterface {
     0xff, // reserved
     0x00, // user
     -1, // user
-    -1, // subType
+    0x18, // subType
     -1, // reserved
     -1, // reserved
     -1, // reserved

@@ -1,10 +1,10 @@
-# iBS03TP
+# iBS01H
 
-waterproof temperature sensor made by INGICS.
+magnet sensor by INGICS.
 
 Support device
 
-- iBS03TP
+- iBS01H
 
 ![](image.jpg)
 
@@ -13,7 +13,7 @@ Support device
 
 ```javascript
 // Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03TP');
+const IBS01H = Obniz.getPartsClass('iBS01H');
 ```
 
 ## isDevice(BleRemotePeripheral)
@@ -22,11 +22,11 @@ Returns true if a device was found.
 
 ```javascript
 // Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03TP');
+let IBS01H = Obniz.getPartsClass('iBS01H');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (IBS03.isDevice(p)) {
-        let data = IBS03.getData(p);
+    if (IBS01H.isDevice(p)) {
+        let data = IBS01H.getData(p);
         console.log(data);
     }
 };
@@ -38,16 +38,17 @@ await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 Returns device information if found. Returns Null if not found.
 
 - battery : Battery voltage
-- temperature : temperature(℃)
+- button : True when button is pressed
+- hall_sensor : True when the magnet approaches
 
 
 ```javascript
 // Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03TP');
+let IBS01H = Obniz.getPartsClass('iBS01H');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (IBS03.isDevice(p)) {
-        let data = IBS03.getData(p);
+    if (IBS01H.isDevice(p)) {
+        let data = IBS01H.getData(p);
         console.log(data);
     }
 };

@@ -1,6 +1,6 @@
 # iBS01RG
 
-Acceleration by INGICS.
+acceleration sensor by INGICS.
 
 Support device
 

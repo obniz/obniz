@@ -1,10 +1,10 @@
-# iBS03TP
+# iBS03G
 
-waterproof temperature sensor made by INGICS.
+waterproof moving and falling sensor by INGICS.
 
 Support device
 
-- iBS03TP
+- iBS03G
 
 ![](image.jpg)
 
@@ -13,7 +13,7 @@ Support device
 
 ```javascript
 // Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03TP');
+const IBS03G = Obniz.getPartsClass('iBS03G');
 ```
 
 ## isDevice(BleRemotePeripheral)
@@ -22,11 +22,11 @@ Returns true if a device was found.
 
 ```javascript
 // Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03TP');
+const IBS03G = Obniz.getPartsClass('iBS03G');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (IBS03.isDevice(p)) {
-        let data = IBS03.getData(p);
+    if (IBS03G.isDevice(p)) {
+        let data = IBS03G.getData(p);
         console.log(data);
     }
 };
@@ -38,16 +38,18 @@ await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 Returns device information if found. Returns Null if not found.
 
 - battery : Battery voltage
-- temperature : temperature(℃)
+- button : True when button is pressed
+- moving : True when moving
+- fall : True when falling
 
 
 ```javascript
 // Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03TP');
+const IBS03G = Obniz.getPartsClass('iBS03G');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (IBS03.isDevice(p)) {
-        let data = IBS03.getData(p);
+    if (IBS03G.isDevice(p)) {
+        let data = IBS03G.getData(p);
         console.log(data);
     }
 };
