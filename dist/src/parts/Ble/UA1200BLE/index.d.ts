@@ -15,6 +15,11 @@ export interface UA1200BLEResult {
     SystolicPressure_kPa?: number;
     DiastolicPressure_kPa?: number;
     MeanArterialPressure_kPa?: number;
+    bodyMoved?: boolean;
+    cuffFitLoose?: boolean;
+    irregularPulseDetected?: boolean;
+    improperMeasurement?: boolean;
+    PulseRate?: number;
     date?: {
         year: number;
         month: number;
@@ -23,7 +28,6 @@ export interface UA1200BLEResult {
         minute: number;
         second: number;
     };
-    PulseRate?: number;
 }
 export default class UA1200BLE implements ObnizPartsBleInterface {
     static info(): ObnizPartsBleInfo;

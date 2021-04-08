@@ -165,6 +165,19 @@ class UA1200BLE {
             result.PulseRate = this._readSFLOAT_LE(buf, index);
             index += 2;
         }
+        if (flags & 0x08) {
+            // UserIdFlag
+            index += 1;
+        }
+        if (flags & 0x10) {
+            // UserIdFlag
+            const ms = buf[index];
+            result.bodyMoved = (ms & 0b1) !== 0;
+            result.cuffFitLoose = (ms & 0b10) !== 0;
+            result.irregularPulseDetected = (ms & 0b100) !== 0;
+            result.improperMeasurement = (ms & 0b100000) !== 0;
+            index += 1;
+        }
         return result;
     }
     _getCharsCoopMode() {

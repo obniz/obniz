@@ -79,12 +79,16 @@ Output format is here. Blood pressure data is in mmHg or kPa format, and Pulse r
 
 ```json
 {
-  SystolicPressure_mmHg?: number;
+  SystolicPressure_mmHg?: number; // ex) 128mmHg → 0x80 = 128, 0x00
   DiastolicPressure_mmHg?: number;
   MeanArterialPressure_mmHg?: number;
-  SystolicPressure_kPa?: number;
+  SystolicPressure_kPa?: number; // ex) 17.6Kpa → 0xB0 = 176, 0xF0
   DiastolicPressure_kPa?: number;
   MeanArterialPressure_kPa?: number;
+  bodyMoved?: number;
+  cuffFitLoose?: boolean;
+  irregularPulseDetected?: boolean;
+  improperMeasurement?: boolean;
   PulseRate?: number;
 }
 ```

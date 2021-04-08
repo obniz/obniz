@@ -18,6 +18,11 @@ export interface UA1200BLEResult {
   SystolicPressure_kPa?: number; // ex) 17.6Kpa → 0xB0 = 176, 0xF0
   DiastolicPressure_kPa?: number;
   MeanArterialPressure_kPa?: number;
+  bodyMoved?: number;
+  cuffFitLoose?: boolean;
+  irregularPulseDetected?: boolean;
+  improperMeasurement?: boolean;
+  PulseRate?: number;
   date?: {
     // Time Stamp ex) 2013/8/26 9:10:20 → 0xDD 0x07 0x08 0x1A 0x09 0x0A 0x14
     year: number;
@@ -27,7 +32,6 @@ export interface UA1200BLEResult {
     minute: number;
     second: number;
   };
-  PulseRate?: number;
 }
 
 export default class UA1200BLE implements ObnizPartsBleInterface {
@@ -218,6 +222,19 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
       // Pulse Rate Flag
       result.PulseRate = this._readSFLOAT_LE(buf, index);
       index += 2;
+    }
+    if (flags & 0x08) {
+      // UserIdFlag
+      index += 1;
+    }
+    if (flags & 0x10) {
+      // UserIdFlag
+      const ms = buf[index];
+      result.bodyMoved = ms & 0b1;
+      result.cuffFitLoose = ms & 0b10;
+      result.irregularPulseDetected = ms & 0b100;
+      result.improperMeasurement = ms & 0b100000;
+      index += 1;
     }
 
     return result;
