@@ -18,7 +18,7 @@ export interface UA1200BLEResult {
   SystolicPressure_kPa?: number; // ex) 17.6Kpa → 0xB0 = 176, 0xF0
   DiastolicPressure_kPa?: number;
   MeanArterialPressure_kPa?: number;
-  bodyMoved?: number;
+  bodyMoved?: boolean;
   cuffFitLoose?: boolean;
   irregularPulseDetected?: boolean;
   improperMeasurement?: boolean;
@@ -230,10 +230,10 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
     if (flags & 0x10) {
       // UserIdFlag
       const ms = buf[index];
-      result.bodyMoved = ms & 0b1;
-      result.cuffFitLoose = ms & 0b10;
-      result.irregularPulseDetected = ms & 0b100;
-      result.improperMeasurement = ms & 0b100000;
+      result.bodyMoved = (ms & 0b1) !== 0;
+      result.cuffFitLoose = (ms & 0b10) !== 0;
+      result.irregularPulseDetected = (ms & 0b100) !== 0;
+      result.improperMeasurement = (ms & 0b100000) !== 0;
       index += 1;
     }
 
