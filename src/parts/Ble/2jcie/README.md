@@ -226,14 +226,14 @@ The return format is below.
   light: 75, //lx
   barometric_pressure: 1010.4000000000001, // hPa
   soud_noise: 39.42, //dB
-  etvoc: 4000,	//ppb
-  eco2: 4000	//ppm
+  etvoc: 1463,	//ppb
+  eco2: 2353	//ppm
 }
 
 ```
 
 
-## [await]getLatestCalclationDataUSB()
+## [await]getLatestCalculationDataUSB()
 Get the latest index data and acceleration data from 2JCIE-BL01 (USB connection).
 
 ```javascript
@@ -246,7 +246,7 @@ if(results){
     console.log("find");
   
     await omron.connectWait();
-    let data = await omron.getLatestCalclationDataUSB();
+    let data = await omron.getLatestCalculationDataUSB();
     
     console.log(data);
     
@@ -263,15 +263,15 @@ The return format is below.
 //example response
 {
   sequence_number: 0,
-  disconfort_index: 22.91,
-  heatstroke_risk_factor: 46.46, //degC
-  vibration_information: NONE,
-  si_value: 2000.0, //kine
-  pga: 2000.0, //gal
-  seismic_intensity: 20.0,
-  acceleration_x: 200.0	//gal
-  acceleration_y: 200.0	//gal
-  acceleration_z: 200.0	//gal
+  disconfort_index: 68.78,
+  heatstroke_risk_factor: 18.29, //degC
+  vibration_information: "NONE",
+  si_value: 0, //kine
+  pga: 0, //gal
+  seismic_intensity: 0,
+  acceleration_x: 185	//gal
+  acceleration_y: -9915	//gal
+  acceleration_z: -191	//gal
 }
 
 ```

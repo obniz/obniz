@@ -257,11 +257,11 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     return json;
   }
 
-  public async getLatestCalclationDataUSB(): Promise<OMRON_2JCIE_USBCalData> {
+  public async getLatestCalculationDataUSB(): Promise<OMRON_2JCIE_USBCalData> {
     await this.connectWait();
 
-    const c = this._peripheral!.getService(this.omron_uuid("5010", "Rbt"))!.getCharacteristic(
-      this.omron_uuid("5013", "Rbt"),
+    const c = this._peripheral!.getService(this.omron_uuid("5010", "USB"))!.getCharacteristic(
+      this.omron_uuid("5013", "USB"),
     )!;
     const data: number[] = await c.readWait();
     const json: any = {

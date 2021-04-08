@@ -22635,9 +22635,9 @@ class OMRON_2JCIE {
         };
         return json;
     }
-    async getLatestCalclationDataUSB() {
+    async getLatestCalculationDataUSB() {
         await this.connectWait();
-        const c = this._peripheral.getService(this.omron_uuid("5010", "Rbt")).getCharacteristic(this.omron_uuid("5013", "Rbt"));
+        const c = this._peripheral.getService(this.omron_uuid("5010", "USB")).getCharacteristic(this.omron_uuid("5013", "USB"));
         const data = await c.readWait();
         const json = {
             sequence_number: data[0],
