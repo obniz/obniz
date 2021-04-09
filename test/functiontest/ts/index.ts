@@ -1,3 +1,5 @@
 import Obniz from '../../../dist/src/obniz/index';
 
-console.log(Obniz);
+const a = () => {
+  console.log(Obniz);
+};
