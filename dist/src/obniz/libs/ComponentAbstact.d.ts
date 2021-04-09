@@ -3,10 +3,10 @@
  * @module ObnizCore.Components
  */
 /// <reference types="tv4" />
-import EventEmitter from "eventemitter3";
-import Obniz from "../index";
-import { ObnizError } from "../ObnizError";
-import WSSchema from "./wscommand/WSSchema";
+import EventEmitter from 'eventemitter3';
+import Obniz from '../index';
+import { ObnizError } from '../ObnizError';
+import WSSchema from './wscommand/WSSchema';
 export declare type EventHandler = (...args: any) => any;
 export interface ReceiveJsonOptions {
     /**

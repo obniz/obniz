@@ -2,30 +2,30 @@
  * @packageDocumentation
  * @ignore
  */
-const yaml: any = require("js-yaml");
+const yaml: any = require('js-yaml');
 
 export default (source: any) => {
   // @ts-ignore
-  const self: any = this;
+  const self: any = this; // eslint-disable-line @typescript-eslint/no-this-alias
   if (self.cacheable) {
     self.cacheable();
   }
   try {
     const src: any = yaml.safeLoad(source);
-    const excludeKeys: any = ["example", "description"];
+    const excludeKeys: any = ['example', 'description'];
 
     const res: any = filter(src, excludeKeys);
     // console.log("src",src);
     // console.log("res",res);
-    return JSON.stringify(res, undefined, "\t");
+    return JSON.stringify(res, undefined, '\t');
   } catch (err) {
     self.emitError(err);
     return null;
   }
 };
 
-function filter(target: any, excludeKeys: any) {
-  if (typeof target !== "object") {
+const filter = (target: any, excludeKeys: any) => {
+  if (typeof target !== 'object') {
     return target;
   }
   if (target === null) {
@@ -47,4 +47,4 @@ function filter(target: any, excludeKeys: any) {
     }
   }
   return newObj;
-}
+};

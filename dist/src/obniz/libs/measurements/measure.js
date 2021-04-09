@@ -11,6 +11,7 @@ const ComponentAbstact_1 = require("../ComponentAbstact");
 const util_1 = __importDefault(require("../utils/util"));
 /**
  * The measure module provides hardware level measurement.
+ *
  * @category Measurement
  */
 class ObnizMeasure extends ComponentAbstact_1.ComponentAbstract {
@@ -51,18 +52,24 @@ class ObnizMeasure extends ComponentAbstact_1.ComponentAbstract {
      * @param params
      */
     echo(params) {
-        const err = util_1.default._requiredKeys(params, ["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges"]);
+        const err = util_1.default._requiredKeys(params, [
+            'io_pulse',
+            'pulse',
+            'pulse_width',
+            'io_echo',
+            'measure_edges',
+        ]);
         if (err) {
             throw new Error("Measure start param '" + err + "' required, but not found ");
         }
         params = util_1.default._keyFilter(params, [
-            "io_pulse",
-            "pulse",
-            "pulse_width",
-            "io_echo",
-            "measure_edges",
-            "timeout",
-            "callback",
+            'io_pulse',
+            'pulse',
+            'pulse_width',
+            'io_echo',
+            'measure_edges',
+            'timeout',
+            'callback',
         ]);
         const echo = {};
         echo.io_pulse = params.io_pulse;
@@ -70,11 +77,11 @@ class ObnizMeasure extends ComponentAbstact_1.ComponentAbstract {
         echo.pulse_width = params.pulse_width;
         echo.io_echo = params.io_echo;
         echo.measure_edges = params.measure_edges;
-        if (typeof params.timeout === "number") {
+        if (typeof params.timeout === 'number') {
             echo.timeout = params.timeout;
         }
-        if (typeof params.callback === "function") {
-            this.onceQueue("/response/measure/echo", (obj) => {
+        if (typeof params.callback === 'function') {
+            this.onceQueue('/response/measure/echo', (obj) => {
                 this.Obniz._runUserCreatedFunction(params.callback, obj.echo);
             });
         }
@@ -85,7 +92,7 @@ class ObnizMeasure extends ComponentAbstact_1.ComponentAbstract {
         });
     }
     schemaBasePath() {
-        return "measure";
+        return 'measure';
     }
 }
 exports.default = ObnizMeasure;

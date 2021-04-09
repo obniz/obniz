@@ -3,10 +3,12 @@
  * @module Parts.Solenoid
  */
 
-import Obniz from "../../../obniz";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
+import Obniz from '../../../obniz';
+import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface SolenoidOptions {
   signal: number;
@@ -16,7 +18,7 @@ export interface SolenoidOptions {
 export default class Solenoid implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "Solenoid",
+      name: 'Solenoid',
     };
   }
 
@@ -30,8 +32,8 @@ export default class Solenoid implements ObnizPartsInterface {
   private io_signal!: PeripheralIO;
 
   constructor() {
-    this.keys = ["gnd", "signal"];
-    this.requiredKeys = ["signal"];
+    this.keys = ['gnd', 'signal'];
+    this.requiredKeys = ['signal'];
   }
 
   public wired(obniz: Obniz) {
@@ -56,7 +58,7 @@ export default class Solenoid implements ObnizPartsInterface {
 
   public click(time_msec?: number) {
     this.on();
-    if (typeof time_msec !== "number") {
+    if (typeof time_msec !== 'number') {
       time_msec = 100;
     }
     this.obniz.wait(time_msec);
@@ -64,7 +66,7 @@ export default class Solenoid implements ObnizPartsInterface {
   }
 
   public doubleClick(time_msec?: number) {
-    if (typeof time_msec !== "number") {
+    if (typeof time_msec !== 'number') {
       time_msec = 100;
     }
     this.click(time_msec);

@@ -2,12 +2,12 @@
  * @packageDocumentation
  * @module Parts.SH200Q
  */
-import { I2cInfo, I2cPartsAbstractOptions } from "../../i2cParts";
-import Obniz from "../../../obniz";
-import { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-import I2cImu6, { Inertia6, Xyz } from "../../i2cImu6";
-export declare type SH200QAccelRange = "4g" | "8g" | "16g";
-export declare type SH200QGyroRange = "125dps" | "250dps" | "500dps" | "1000dps" | "2000dps";
+import { I2cInfo, I2cPartsAbstractOptions } from '../../i2cParts';
+import Obniz from '../../../obniz';
+import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import I2cImu6, { Inertia6, Xyz } from '../../i2cImu6';
+export declare type SH200QAccelRange = '4g' | '8g' | '16g';
+export declare type SH200QGyroRange = '125dps' | '250dps' | '500dps' | '1000dps' | '2000dps';
 export interface SH200QOptions extends I2cPartsAbstractOptions {
 }
 export default class SH200Q extends I2cImu6 {
@@ -29,16 +29,16 @@ export default class SH200Q extends I2cImu6 {
         soft_reset: number;
         reset: number;
         accel_fs_sel: {
-            "4g": number;
-            "8g": number;
-            "16g": number;
+            '4g': number;
+            '8g': number;
+            '16g': number;
         };
         gyro_fs_sel: {
-            "125dps": number;
-            "250dps": number;
-            "500dps": number;
-            "1000dps": number;
-            "2000dps": number;
+            '125dps': number;
+            '250dps': number;
+            '500dps': number;
+            '1000dps': number;
+            '2000dps': number;
         };
     };
     static info(): ObnizPartsInfo;

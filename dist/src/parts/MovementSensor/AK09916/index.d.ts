@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @module Parts.AK09916
  */
-import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from "../../i2cParts";
-import Obniz from "../../../obniz";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from '../../i2cParts';
+import Obniz from '../../../obniz';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface AK09916Options extends I2cPartsAbstractOptions {
 }
 export default class AK09916 extends i2cParts implements ObnizPartsInterface {
@@ -40,7 +40,11 @@ export default class AK09916 extends i2cParts implements ObnizPartsInterface {
     private scale;
     constructor();
     wired(obniz: Obniz): void;
+    /**
+     * @deprecated
+     */
     magnetic(): Promise<[number, number, number]>;
+    magneticWait(): Promise<[number, number, number]>;
     whoamiWait(): Promise<number>;
     calibrateWait(count?: number, delay?: number): Promise<{
         offset: [number, number, number];

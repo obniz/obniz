@@ -17,18 +17,18 @@ class HEM_6233T {
     }
     static info() {
         return {
-            name: "HEM_6233T",
+            name: 'HEM_6233T',
         };
     }
     static isDevice(peripheral) {
-        if (peripheral.localName && peripheral.localName.startsWith("BLESmart_")) {
+        if (peripheral.localName && peripheral.localName.startsWith('BLESmart_')) {
             return true;
         }
         return false;
     }
     async getDataWait(pairingKeys) {
         if (!this._peripheral) {
-            throw new Error("HEM_6233T is not find.");
+            throw new Error('HEM_6233T is not find.');
         }
         await this._peripheral.connectWait({
             autoDiscovery: true,
@@ -41,8 +41,8 @@ class HEM_6233T {
             this._peripheral.ondisconnect = (reason) => {
                 resolve(results);
             };
-            await this.subscribeWait("1805", "2A2B"); // current time
-            await this.subscribeWait("180F", "2A19", async () => {
+            await this.subscribeWait('1805', '2A2B'); // current time
+            await this.subscribeWait('180F', '2A19', async () => {
                 // send command (unknown meaning)
                 // In the command meaning, it should send to central from peripheral, but send to peripheral...?
                 this._peripheral.obnizBle.hci.write([
@@ -63,17 +63,19 @@ class HEM_6233T {
                 ]);
                 this._writeTimeCharWait(this._timezoneOffsetMinute);
             }); // battery Level
-            await this.subscribeWait("1810", "2A35", async (data) => {
-                console.error("SUCCESS", data);
+            await this.subscribeWait('1810', '2A35', async (data) => {
+                console.error('SUCCESS', data);
                 results.push(this._analyzeData(data));
             }); // blood pressure
         });
     }
     async subscribeWait(service, char, callback) {
         if (!this._peripheral) {
-            throw new Error("HEM_6233T is not find.");
+            throw new Error('HEM_6233T is not find.');
         }
-        const characteristics = this._peripheral.getService(service).getCharacteristic(char);
+        const characteristics = this._peripheral
+            .getService(service)
+            .getCharacteristic(char);
         await characteristics.registerNotifyWait(async (data) => {
             if (callback) {
                 callback(data);
@@ -82,9 +84,11 @@ class HEM_6233T {
     }
     async _writeTimeCharWait(timeOffsetMinute) {
         if (!this._peripheral) {
-            throw new Error("HEM_6233T is not find.");
+            throw new Error('HEM_6233T is not find.');
         }
-        const timeChar = this._peripheral.getService("1805").getCharacteristic("2A2B");
+        const timeChar = this._peripheral
+            .getService('1805')
+            .getCharacteristic('2A2B');
         const date = new Date();
         date.setTime(Date.now() + 1000 * 60 * timeOffsetMinute);
         const buf = Buffer.alloc(7);
@@ -129,7 +133,7 @@ class HEM_6233T {
             systolic: this._readFloatLE(buf, index) * scale,
             diastolic: this._readFloatLE(buf, index + 2) * scale,
             meanArterialPressure: this._readFloatLE(buf, index + 4) * scale,
-            unit: "mmHg",
+            unit: 'mmHg',
         };
         index += 6;
         if (flags & 0x02) {
@@ -154,11 +158,11 @@ class HEM_6233T {
         }
         if (flags & 0x10) {
             const statusFlag = {
-                0x01: "BodyMovementDetection",
-                0x02: "CuffFitDetection",
-                0x04: "IrregularPulseDetection",
-                0x08: "PulseRateRangeDetection",
-                0x10: "MeasurementPositionDetection",
+                0x01: 'BodyMovementDetection',
+                0x02: 'CuffFitDetection',
+                0x04: 'IrregularPulseDetection',
+                0x08: 'PulseRateRangeDetection',
+                0x10: 'MeasurementPositionDetection',
             };
             const mesurementStatus = buf.readUInt16LE(index);
             index++;

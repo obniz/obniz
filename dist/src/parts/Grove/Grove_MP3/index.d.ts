@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @module Parts.Grove_MP3
  */
-import Obniz from "../../../obniz";
-import PeripheralGrove from "../../../obniz/libs/io_peripherals/grove";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralGrove from '../../../obniz/libs/io_peripherals/grove';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface Grove_MP3OptionsA {
     vcc?: number;
     gnd?: number;

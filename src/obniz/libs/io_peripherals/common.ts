@@ -12,7 +12,7 @@
  * - "Open-drain"
  * Open-drain mode.
  */
-export type DriveType = "5v" | "3v" | "open-drain";
+export type DriveType = '5v' | '3v' | 'open-drain';
 
 /**
  * IO pull type
@@ -21,7 +21,7 @@ export type DriveType = "5v" | "3v" | "open-drain";
  * - "3v" pull up to 3v
  * - "0v" pull down to gnd
  */
-export type PullType = "5v" | "3v" | "0v" | null;
+export type PullType = '5v' | '3v' | '0v' | null;
 
 /**
  * Animation Status
@@ -31,9 +31,9 @@ export type PullType = "5v" | "3v" | "0v" | null;
  * - pause : Pause current running animation.
  * - resume : Resume paused or just registered animation.
  */
-export type AnimationStatus = "loop" | "registrate" | "pause" | "resume";
+export type AnimationStatus = 'loop' | 'registrate' | 'pause' | 'resume';
 
 export type StopBitType = 1 | 1.5 | 2;
 export type BitType = 5 | 6 | 7 | 8;
-export type ParityType = "off" | "odd" | "even";
-export type FlowControlType = "off" | "rts" | "cts" | "rts-cts";
+export type ParityType = 'off' | 'odd' | 'even';
+export type FlowControlType = 'off' | 'rts' | 'cts' | 'rts-cts';

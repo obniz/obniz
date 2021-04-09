@@ -35,36 +35,53 @@ class cir415a {
         ];
         this.sessionKey = [];
         this.randomDeviceNumber = [];
-        this.randomNumber = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+        this.randomNumber = [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+        ];
         this._uuids = {
-            service: "3C4AFFF0-4783-3DE5-A983-D348718EF133",
-            writeChar: "3C4AFFF1-4783-3DE5-A983-D348718EF133",
-            readChar: "3C4AFFF2-4783-3DE5-A983-D348718EF133",
+            service: '3C4AFFF0-4783-3DE5-A983-D348718EF133',
+            writeChar: '3C4AFFF1-4783-3DE5-A983-D348718EF133',
+            readChar: '3C4AFFF2-4783-3DE5-A983-D348718EF133',
         };
         this.readData = [];
         this.readChar = null;
         if (peripheral && !cir415a.isDevice(peripheral)) {
-            throw new Error("peripheral is not cir415a");
+            throw new Error('peripheral is not cir415a');
         }
         this._peripheral = peripheral;
         this._authenticated = false;
     }
     static info() {
         return {
-            name: "cir415a",
+            name: 'cir415a',
         };
     }
     static isDevice(peripheral) {
         var _a;
-        return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf("ACR1255U-J1-")) === 0;
+        return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf('ACR1255U-J1-')) === 0;
     }
     async connectWait() {
         if (!this._peripheral) {
-            throw new Error("peripheral is not cir415a");
+            throw new Error('peripheral is not cir415a');
         }
         if (!this._peripheral.connected) {
             this._peripheral.ondisconnect = (reason) => {
-                if (typeof this.ondisconnect === "function") {
+                if (typeof this.ondisconnect === 'function') {
                     this.ondisconnect(reason);
                 }
             };
@@ -74,19 +91,28 @@ class cir415a {
         }
         const service = this._peripheral.getService(this._uuids.service);
         this.readChar = service.getCharacteristic(this._uuids.writeChar);
-        await service.getCharacteristic(this._uuids.readChar).registerNotifyWait(async (data) => {
-            this.readPacket(data);
+        await service
+            .getCharacteristic(this._uuids.readChar)
+            .registerNotifyWait(async (data) => {
+            await this.readPacketWait(data);
         });
-        await this.writeBle([0x6b, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x45, 0x00], null); // auth step.1
+        await this.writeBleWait([0x6b, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x45, 0x00], null); // auth step.1
     }
     async disconnectWait() {
         if (this._peripheral && this._peripheral.connected) {
             await this._peripheral.disconnectWait();
         }
     }
-    async write(data) {
+    /**
+     * @deprecated
+     * @param data
+     */
+    write(data) {
+        return this.writeWait(data);
+    }
+    async writeWait(data) {
         if (!this._authenticated) {
-            throw new Error("cir415a no authenticate");
+            throw new Error('cir415a no authenticate');
         }
         if (data.length % 16 !== 0) {
             const l = 16 - (data.length % 16);
@@ -94,27 +120,55 @@ class cir415a {
                 data.push(0xff);
             }
         }
-        this.writeBle(data, this.sessionKey);
+        await this.writeBleWait(data, this.sessionKey);
     }
     setMasterKey(key) {
         if (key.length !== 16) {
-            throw new Error("setMasterKey length error");
+            throw new Error('setMasterKey length error');
         }
         this.masterKey = key;
     }
     async setAutoPollingWait(enable) {
         if (!this._authenticated) {
-            throw new Error("cir415a no authenticate");
+            throw new Error('cir415a no authenticate');
         }
-        await this.write([0x6b, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x40, enable ? 0x01 : 0x00]);
+        await this.writeWait([
+            0x6b,
+            0x00,
+            0x05,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0xe0,
+            0x00,
+            0x00,
+            0x40,
+            enable ? 0x01 : 0x00,
+        ]);
     }
-    async writeADPU(data) {
+    /**
+     * @deprecated
+     * @param data
+     */
+    writeADPU(data) {
+        return this.writeADPUWait(data);
+    }
+    async writeADPUWait(data) {
         if (!this._authenticated) {
-            throw new Error("cir415a no authenticate");
+            throw new Error('cir415a no authenticate');
         }
-        await this.write([0x6f, (data.length & 0xff00) >> 8, data.length & 0x00ff, 0x00, 0x00, 0x00, 0x00].concat(data));
+        await this.writeWait([
+            0x6f,
+            (data.length & 0xff00) >> 8,
+            data.length & 0x00ff,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+        ].concat(data));
     }
-    readPacket(data) {
+    async readPacketWait(data) {
         this.readData = this.readData.concat(data);
         if (this.readData[0] !== 0x05) {
             this.readData = [];
@@ -127,11 +181,11 @@ class cir415a {
         if (this.readData[dLength + 4] === 0x0a) {
             // last packet check
             data = this.readData.slice(0, dLength + 5);
-            this.parseBlePacket(data);
+            await this.parseBlePacketWait(data);
             if (this.readData.length > dLength + 5) {
                 // more data
                 this.readData = this.readData.slice(dLength + 5);
-                this.readPacket([]);
+                await this.readPacketWait([]);
             }
             else {
                 // delete data
@@ -144,17 +198,17 @@ class cir415a {
         }
     }
     encrypt(data, key) {
-        const c = crypto_1.default.createCipheriv("aes-128-cbc", Buffer.from(key), new Uint8Array(16));
+        const c = crypto_1.default.createCipheriv('aes-128-cbc', Buffer.from(key), new Uint8Array(16));
         c.setAutoPadding(false);
-        let t = c.update(Buffer.from(data), undefined, "hex");
-        t += c.final("hex");
-        return Array.from(Buffer.from(t, "hex"));
+        let t = c.update(Buffer.from(data), undefined, 'hex');
+        t += c.final('hex');
+        return Array.from(Buffer.from(t, 'hex'));
     }
     decrypt(data, key) {
-        const dec = crypto_1.default.createDecipheriv("aes-128-cbc", Buffer.from(key), new Uint8Array(16));
+        const dec = crypto_1.default.createDecipheriv('aes-128-cbc', Buffer.from(key), new Uint8Array(16));
         dec.setAutoPadding(false);
-        let t = dec.update(Buffer.from(data), "binary", "binary");
-        t += dec.final("binary");
+        let t = dec.update(Buffer.from(data), 'binary', 'binary');
+        t += dec.final('binary');
         const d = Array.from(Buffer.from(t));
         const list = [];
         for (let i = 0; i < d.length; i++) {
@@ -162,7 +216,7 @@ class cir415a {
         }
         return list;
     }
-    parseBlePacket(data) {
+    async parseBlePacketWait(data) {
         switch (data[3]) {
             case 0x83:
                 if (!this._authenticated) {
@@ -174,11 +228,26 @@ class cir415a {
                         }
                         this.randomDeviceNumber = randomDevice;
                         randomDevice = this.decrypt(randomDevice, this.masterKey);
-                        this.sessionKey = randomDevice.slice(0, 8).concat(this.randomNumber.slice(0, 8));
+                        this.sessionKey = randomDevice
+                            .slice(0, 8)
+                            .concat(this.randomNumber.slice(0, 8));
                         randomDevice = this.decrypt(this.randomNumber.concat(randomDevice), this.masterKey);
-                        let sendPacket = [0x6b, 0x00, 0x25, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x46, 0x00];
+                        let sendPacket = [
+                            0x6b,
+                            0x00,
+                            0x25,
+                            0x00,
+                            0x00,
+                            0x00,
+                            0x00,
+                            0xe0,
+                            0x00,
+                            0x00,
+                            0x46,
+                            0x00,
+                        ];
                         sendPacket = sendPacket.concat(randomDevice);
-                        this.writeBle(sendPacket, null);
+                        await this.writeBleWait(sendPacket, null);
                         return;
                         // auth step.3
                     }
@@ -214,7 +283,7 @@ class cir415a {
             this.onNotify(dt);
         }
     }
-    async writeBle(data, key) {
+    async writeBleWait(data, key) {
         let packet = [0x05, (data.length & 0xff00) >> 8, data.length & 0x00ff];
         let checksum = 0;
         for (let i = 0; i < data.length; i++) {

@@ -10,7 +10,7 @@ class IBS02IR {
     }
     static info() {
         return {
-            name: "iBS02IR",
+            name: 'iBS02IR',
         };
     }
     static isDevice(peripheral) {

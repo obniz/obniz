@@ -8,7 +8,7 @@ class MatrixLED_HT16K33 {
     constructor() {
         this.width = 0;
         this.height = 0;
-        this.keys = ["vcc", "gnd", "sda", "scl", "i2c", "address"];
+        this.keys = ['vcc', 'gnd', 'sda', 'scl', 'i2c', 'address'];
         this.requiredKeys = [];
         this.command = {};
         this.command.blink = 0x80;
@@ -23,15 +23,15 @@ class MatrixLED_HT16K33 {
     }
     static info() {
         return {
-            name: "MatrixLED_HT16K33",
+            name: 'MatrixLED_HT16K33',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.address = this.params.address || 0x70;
-        this.params.pull = "5v";
-        this.params.mode = "master";
+        this.params.pull = '5v';
+        this.params.mode = 'master';
         this.params.clock = this.params.clock || 400 * 1000;
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.obniz.wait(1000);
@@ -53,7 +53,9 @@ class MatrixLED_HT16K33 {
         if (val > 3) {
             val = 3;
         }
-        this.i2c.write(this.address, [this.command.blink | this.blink_mode.display_on | (val << 1)]);
+        this.i2c.write(this.address, [
+            this.command.blink | this.blink_mode.display_on | (val << 1),
+        ]);
     }
     brightness(val) {
         if (val < 0) {

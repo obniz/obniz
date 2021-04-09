@@ -6,18 +6,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class ADT7310 {
     constructor() {
-        this.keys = ["vcc", "gnd", "frequency", "din", "dout", "clk", "spi"];
+        this.keys = ['vcc', 'gnd', 'frequency', 'din', 'dout', 'clk', 'spi'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "ADT7310",
+            name: 'ADT7310',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.params.mode = this.params.mode || "master";
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+        this.params.mode = this.params.mode || 'master';
         this.params.frequency = this.params.frequency || 500000;
         this.params.mosi = this.params.din;
         this.params.miso = this.params.dout;

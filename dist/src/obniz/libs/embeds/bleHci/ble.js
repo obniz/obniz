@@ -3,6 +3,7 @@
  * Obniz BLE are switches automatically. <br/>
  * obnizOS ver >= 3.0.0  : [[ObnizCore.Components.Ble.Hci | Hci]] <br/>
  * obnizOS ver < 3.0.0   : Not Supported <br/>
+ *
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
@@ -95,22 +96,22 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     static _dataArray2uuidHex(data, reverse) {
         let uuid = [];
         for (let i = 0; i < data.length; i++) {
-            uuid.push(("00" + data[i].toString(16).toLowerCase()).slice(-2));
+            uuid.push(('00' + data[i].toString(16).toLowerCase()).slice(-2));
         }
         if (reverse) {
             uuid = uuid.reverse();
         }
-        let str = uuid.join("");
+        let str = uuid.join('');
         if (uuid.length >= 16) {
             str =
                 str.slice(0, 8) +
-                    "-" +
+                    '-' +
                     str.slice(8, 12) +
-                    "-" +
+                    '-' +
                     str.slice(12, 16) +
-                    "-" +
+                    '-' +
                     str.slice(16, 20) +
-                    "-" +
+                    '-' +
                     str.slice(20);
         }
         return str;
@@ -121,23 +122,23 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         }
         if (json.error) {
             const error = json.error;
-            let msg = "BLE error: " + error.message;
-            msg += " (";
-            msg += "error_code: " + error.error_code;
-            msg += ", ";
-            msg += "module_error_code: " + error.module_error_code;
-            msg += ", ";
-            msg += "function_code: " + error.function_code;
-            msg += ", ";
-            msg += "address: " + error.address;
-            msg += ", ";
-            msg += "service_uuid: " + error.service_uuid;
-            msg += ", ";
-            msg += "characteristic_uuid: " + error.characteristic_uuid;
-            msg += ", ";
-            msg += "descriptor_uuid: " + error.descriptor_uuid;
-            msg += ")";
-            this.Obniz.error({ alert: "error", message: msg });
+            let msg = 'BLE error: ' + error.message;
+            msg += ' (';
+            msg += 'error_code: ' + error.error_code;
+            msg += ', ';
+            msg += 'module_error_code: ' + error.module_error_code;
+            msg += ', ';
+            msg += 'function_code: ' + error.function_code;
+            msg += ', ';
+            msg += 'address: ' + error.address;
+            msg += ', ';
+            msg += 'service_uuid: ' + error.service_uuid;
+            msg += ', ';
+            msg += 'characteristic_uuid: ' + error.characteristic_uuid;
+            msg += ', ';
+            msg += 'descriptor_uuid: ' + error.descriptor_uuid;
+            msg += ')';
+            this.Obniz.error({ alert: 'error', message: msg });
         }
     }
     /**
@@ -151,12 +152,12 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      */
     async initWait() {
         if (!this._initialized) {
-            const MinHCIAvailableOS = "3.0.0";
+            const MinHCIAvailableOS = '3.0.0';
             if (semver_1.default.lt(this.Obniz.firmware_ver, MinHCIAvailableOS)) {
                 throw new ObnizError_1.ObnizBleUnSupportedOSVersionError(this.Obniz.firmware_ver, MinHCIAvailableOS);
             }
             // force initialize on obnizOS < 3.2.0
-            if (semver_1.default.lt(this.Obniz.firmware_ver, "3.2.0")) {
+            if (semver_1.default.lt(this.Obniz.firmware_ver, '3.2.0')) {
                 this.hci.init();
                 this.hci.end(); // disable once
                 this.hci.init();
@@ -207,7 +208,10 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         // clear all found peripherals.
         for (const p of this.remotePeripherals) {
             if (p.connected) {
-                p.notifyFromServer("statusupdate", { status: "disconnected", reason: new ObnizError_1.ObnizOfflineError() });
+                p.notifyFromServer('statusupdate', {
+                    status: 'disconnected',
+                    reason: new ObnizError_1.ObnizOfflineError(),
+                });
             }
         }
         this.remotePeripherals = [];
@@ -219,7 +223,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             this.scan = new bleScan_1.default(this);
         }
         else {
-            this.scan.notifyFromServer("obnizClose", {});
+            this.scan.notifyFromServer('obnizClose', {});
         }
         if (!this.advertisement) {
             this.advertisement = new bleAdvertisement_1.default(this);
@@ -244,20 +248,20 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             this.centralBindings.debugHandler = (text) => {
                 this.debug(`BLE: ${text}`);
             };
-            this.centralBindings.on("stateChange", this.onStateChange.bind(this));
-            this.centralBindings.on("discover", this.onDiscover.bind(this));
-            this.centralBindings.on("disconnect", this.onDisconnect.bind(this));
-            this.centralBindings.on("notification", this.onNotification.bind(this));
+            this.centralBindings.on('stateChange', this.onStateChange.bind(this));
+            this.centralBindings.on('discover', this.onDiscover.bind(this));
+            this.centralBindings.on('disconnect', this.onDisconnect.bind(this));
+            this.centralBindings.on('notification', this.onNotification.bind(this));
         }
         else {
             this.centralBindings._reset();
         }
         if (!this.peripheralBindings) {
             this.peripheralBindings = new bindings_2.default(this.hciProtocol);
-            this.peripheralBindings.on("stateChange", this.onPeripheralStateChange.bind(this));
-            this.peripheralBindings.on("accept", this.onPeripheralAccept.bind(this));
-            this.peripheralBindings.on("mtuChange", this.onPeripheralMtuChange.bind(this));
-            this.peripheralBindings.on("disconnect", this.onPeripheralDisconnect.bind(this));
+            this.peripheralBindings.on('stateChange', this.onPeripheralStateChange.bind(this));
+            this.peripheralBindings.on('accept', this.onPeripheralAccept.bind(this));
+            this.peripheralBindings.on('mtuChange', this.onPeripheralMtuChange.bind(this));
+            this.peripheralBindings.on('disconnect', this.onPeripheralDisconnect.bind(this));
         }
         else {
             this.peripheralBindings._reset();
@@ -328,13 +332,13 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         if (!this._initialized && this._initializeWarning) {
             this._initializeWarning = true;
             this.Obniz.warning({
-                alert: "warning",
+                alert: 'warning',
                 message: `BLE is not initialized. Please call 'await obniz.ble.initWait()'`,
             });
         }
     }
     schemaBasePath() {
-        return "ble";
+        return 'ble';
     }
     onStateChange() { }
     findPeripheral(address) {
@@ -353,19 +357,24 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         }
         val.discoverdOnRemote = true;
         const peripheralData = {
-            device_type: "ble",
+            device_type: 'ble',
             address_type: addressType,
-            ble_event_type: connectable ? "connectable_advertisemnt" : "non_connectable_advertising",
+            ble_event_type: connectable
+                ? 'connectable_advertisemnt'
+                : 'non_connectable_advertising',
             rssi,
             adv_data: advertisement.advertisementRaw,
             scan_resp: advertisement.scanResponseRaw,
         };
         val.setParams(peripheralData);
-        this.scan.notifyFromServer("onfind", val);
+        this.scan.notifyFromServer('onfind', val);
     }
     onDisconnect(peripheralUuid, reason) {
         const peripheral = this.findPeripheral(peripheralUuid);
-        peripheral.notifyFromServer("statusupdate", { status: "disconnected", reason });
+        peripheral.notifyFromServer('statusupdate', {
+            status: 'disconnected',
+            reason,
+        });
     }
     //
     // protected onServicesDiscover(peripheralUuid: any, serviceUuids?: any) {
@@ -398,7 +407,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             const obj = {
                 data: Array.from(data),
             };
-            characteristic.notifyFromServer("onnotify", obj);
+            characteristic.notifyFromServer('onnotify', obj);
         }
     }
     onPeripheralStateChange(state) {
@@ -409,7 +418,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         if (this.peripheral.onconnectionupdates) {
             this.peripheral.onconnectionupdates({
                 address: clientAddress,
-                status: "connected",
+                status: 'connected',
             });
         }
     }
@@ -421,7 +430,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         if (this.peripheral.onconnectionupdates) {
             this.peripheral.onconnectionupdates({
                 address: clientAddress,
-                status: "disconnected",
+                status: 'disconnected',
                 reason,
             });
         }

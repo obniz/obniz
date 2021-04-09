@@ -7,28 +7,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class Logtta_AD {
     constructor(peripheral) {
         if (peripheral && !Logtta_AD.isDevice(peripheral)) {
-            throw new Error("peripheral is not logtta AD");
+            throw new Error('peripheral is not logtta AD');
         }
         this._peripheral = peripheral;
     }
     static info() {
         return {
-            name: "Logtta_AD",
+            name: 'Logtta_AD',
         };
     }
     static isDevice(peripheral) {
-        return peripheral.localName === "Analog";
+        return peripheral.localName === 'Analog';
     }
     static get_uuid(uuid) {
         return `4e43${uuid}-6687-4f3c-a1c3-1c327583f29d`;
     }
     async connectWait() {
         if (!this._peripheral) {
-            throw new Error("Logtta AD not found");
+            throw new Error('Logtta AD not found');
         }
         if (!this._peripheral.connected) {
             this._peripheral.ondisconnect = (reason) => {
-                if (typeof this.ondisconnect === "function") {
+                if (typeof this.ondisconnect === 'function') {
                     this.ondisconnect(reason);
                 }
             };
@@ -44,7 +44,9 @@ class Logtta_AD {
         if (!(this._peripheral && this._peripheral.connected)) {
             return null;
         }
-        const c = this._peripheral.getService(Logtta_AD.get_uuid("AE20")).getCharacteristic(Logtta_AD.get_uuid("AE21"));
+        const c = this._peripheral
+            .getService(Logtta_AD.get_uuid('AE20'))
+            .getCharacteristic(Logtta_AD.get_uuid('AE21'));
         const data = await c.readWait();
         return {
             ampere: (((data[0] << 8) | data[1]) * 916) / 16,
@@ -65,7 +67,9 @@ class Logtta_AD {
         if (!(this._peripheral && this._peripheral.connected)) {
             return;
         }
-        const c = this._peripheral.getService(Logtta_AD.get_uuid("AE20")).getCharacteristic(Logtta_AD.get_uuid("AE21"));
+        const c = this._peripheral
+            .getService(Logtta_AD.get_uuid('AE20'))
+            .getCharacteristic(Logtta_AD.get_uuid('AE21'));
         await c.registerNotifyWait((data) => {
             if (this.onNotify) {
                 this.onNotify({

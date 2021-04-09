@@ -2,11 +2,11 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import EventEmitter from "eventemitter3";
-import { ObnizDeprecatedFunctionError } from "../../../ObnizError";
-import ObnizUtil from "../../utils/util";
-import BleHelper from "./bleHelper";
-import { BleDeviceAddress, UUID } from "./bleTypes";
+import EventEmitter from 'eventemitter3';
+import { ObnizDeprecatedFunctionError } from '../../../ObnizError';
+import ObnizUtil from '../../utils/util';
+import BleHelper from './bleHelper';
+import { BleDeviceAddress, UUID } from './bleTypes';
 
 export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
@@ -52,7 +52,10 @@ export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * @ignore
    */
-  public onwritefromremote?: (address: BleDeviceAddress, data: number[]) => void;
+  public onwritefromremote?: (
+    address: BleDeviceAddress,
+    data: number[]
+  ) => void;
 
   /**
    * @ignore
@@ -180,37 +183,48 @@ export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * @ignore
    */
-  public abstract writeWait(data: number[], needResponse?: boolean): Promise<boolean>;
+  public abstract writeWait(
+    data: number[],
+    needResponse?: boolean
+  ): Promise<boolean>;
 
   /**
    * Use writeTextWait() instead from 3.5.0
+   *
    * @ignore
    * @deprecated
    */
   public writeText(str: string, needResponse?: boolean) {
-    throw new ObnizDeprecatedFunctionError("writeText", "writeTextWait");
+    throw new ObnizDeprecatedFunctionError('writeText', 'writeTextWait');
   }
 
   /**
    * @ignore
    */
-  public async writeTextWait(str: string, needResponse?: boolean): Promise<boolean> {
+  public async writeTextWait(
+    str: string,
+    needResponse?: boolean
+  ): Promise<boolean> {
     return await this.writeWait(ObnizUtil.string2dataArray(str), needResponse);
   }
 
   /**
    * Use writeNumberWait() instead from 3.5.0
+   *
    * @ignore
    * @deprecated
    */
   public writeNumber(val: number, needResponse?: boolean) {
-    throw new ObnizDeprecatedFunctionError("writeNumber", "writeNumberWait");
+    throw new ObnizDeprecatedFunctionError('writeNumber', 'writeNumberWait');
   }
 
   /**
    * @ignore
    */
-  public async writeNumberWait(val: number, needResponse?: boolean): Promise<boolean> {
+  public async writeNumberWait(
+    val: number,
+    needResponse?: boolean
+  ): Promise<boolean> {
     return await this.writeWait([val], needResponse);
   }
 
@@ -219,7 +233,7 @@ export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
    */
   public readFromRemoteWait(): Promise<void> {
     return new Promise((resolve: any) => {
-      this.emitter.once("onreadfromremote", () => {
+      this.emitter.once('onreadfromremote', () => {
         resolve();
       });
     });
@@ -230,7 +244,7 @@ export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
    */
   public writeFromRemoteWait(): Promise<number[]> {
     return new Promise((resolve: any) => {
-      this.emitter.once("onreadfromremote", (params: any) => {
+      this.emitter.once('onreadfromremote', (params: any) => {
         resolve(params.data);
       });
     });
@@ -252,7 +266,7 @@ export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
   public notifyFromServer(notifyName: any, params: any) {
     this.emitter.emit(notifyName, params);
     switch (notifyName) {
-      case "onerror": {
+      case 'onerror': {
         this.onerror(params);
         break;
       }
@@ -263,12 +277,15 @@ export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
    * @ignore
    * @private
    */
-  public _runUserCreatedFunction(func?: (...args: any) => any, ...args: any[]) {
+  public _runUserCreatedFunction(
+    func?: (..._args: any) => any,
+    ...args: any[]
+  ) {
     if (!func) {
       return;
     }
 
-    if (typeof func !== "function") {
+    if (typeof func !== 'function') {
       return;
     }
 
@@ -284,13 +301,14 @@ export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
   protected setFunctions() {
     let childrenName: any = this.childrenName;
     if (childrenName) {
-      childrenName = childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
+      childrenName =
+        childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
       const childName: any = childrenName.slice(0, -1);
 
-      let funcName: string = "add" + childName;
+      let funcName: string = 'add' + childName;
       (this as any)[funcName] = this.addChild;
 
-      funcName = "get" + childName;
+      funcName = 'get' + childName;
       (this as any)[funcName] = this.getChild;
     }
 

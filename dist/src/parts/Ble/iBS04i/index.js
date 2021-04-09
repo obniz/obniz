@@ -10,7 +10,7 @@ class IBS04I {
     }
     static info() {
         return {
-            name: "iBS04i",
+            name: 'iBS04i',
         };
     }
     static isDevice(peripheral) {
@@ -57,7 +57,7 @@ class IBS04I {
         }
         const type = advertise[0][14];
         if (type !== 24) {
-            // iBS04i以外
+            // is not ibs04i
             return null;
         }
         return advertise[0];

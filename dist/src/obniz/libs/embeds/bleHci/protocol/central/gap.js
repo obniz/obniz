@@ -27,7 +27,7 @@ class Gap extends eventemitter3_1.default {
         this._discoveries = {};
         this._hci = hci;
         this._reset();
-        this._hci.on("leAdvertisingReport", this.onHciLeAdvertisingReport.bind(this));
+        this._hci.on('leAdvertisingReport', this.onHciLeAdvertisingReport.bind(this));
     }
     /**
      * @ignore
@@ -45,7 +45,7 @@ class Gap extends eventemitter3_1.default {
         // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
         // p106 - p107
         try {
-            if (this._scanState === "starting" || this._scanState === "started") {
+            if (this._scanState === 'starting' || this._scanState === 'started') {
                 await this.setScanEnabledWait(false, true);
             }
         }
@@ -57,7 +57,7 @@ class Gap extends eventemitter3_1.default {
                 throw e;
             }
         }
-        this._scanState = "starting";
+        this._scanState = 'starting';
         const status = await this._hci.setScanParametersWait(activeScan);
         if (status !== 0) {
             throw new ObnizError_1.ObnizBleScanStartError(status, `startScanning Error setting active scan=${activeScan} was failed`);
@@ -67,7 +67,7 @@ class Gap extends eventemitter3_1.default {
     }
     async stopScanningWait() {
         try {
-            if (this._scanState === "starting" || this._scanState === "started") {
+            if (this._scanState === 'starting' || this._scanState === 'started') {
                 await this.setScanEnabledWait(false, true);
             }
         }
@@ -95,8 +95,12 @@ class Gap extends eventemitter3_1.default {
                 scanResponseRaw: [],
                 raw: [],
             };
-        let discoveryCount = previouslyDiscovered ? this._discoveries[address].count : 0;
-        let hasScanResponse = previouslyDiscovered ? this._discoveries[address].hasScanResponse : false;
+        let discoveryCount = previouslyDiscovered
+            ? this._discoveries[address].count
+            : 0;
+        let hasScanResponse = previouslyDiscovered
+            ? this._discoveries[address].hasScanResponse
+            : false;
         if (type === 0x04) {
             hasScanResponse = true;
             if (eir.length > 0) {
@@ -120,12 +124,12 @@ class Gap extends eventemitter3_1.default {
         while (i + 1 < eir.length) {
             const length = eir.readUInt8(i);
             if (length < 1) {
-                debug("invalid EIR data, length = " + length);
+                debug('invalid EIR data, length = ' + length);
                 break;
             }
             const eirType = eir.readUInt8(i + 1); // https://www.bluetooth.org/en-us/specification/assigned-numbers/generic-access-profile
             if (i + length + 1 > eir.length) {
-                debug("invalid EIR data, out of range of buffer length");
+                debug('invalid EIR data, out of range of buffer length');
                 break;
             }
             const bytes = eir.slice(i + 2).slice(0, length - 1);
@@ -150,7 +154,7 @@ class Gap extends eventemitter3_1.default {
                     break;
                 case 0x08: // Shortened Local Name
                 case 0x09: // Complete Local Name
-                    advertisement.localName = bytes.toString("utf8");
+                    advertisement.localName = bytes.toString('utf8');
                     break;
                 case 0x0a: {
                     // Tx Power Level
@@ -221,8 +225,10 @@ class Gap extends eventemitter3_1.default {
             }
             i += length + 1;
         }
-        debug("advertisement = " + JSON.stringify(advertisement, null, 0));
-        const connectable = type === 0x04 && previouslyDiscovered ? this._discoveries[address].connectable : type !== 0x03;
+        debug('advertisement = ' + JSON.stringify(advertisement, null, 0));
+        const connectable = type === 0x04 && previouslyDiscovered
+            ? this._discoveries[address].connectable
+            : type !== 0x03;
         this._discoveries[address] = {
             address,
             addressType,
@@ -232,7 +238,7 @@ class Gap extends eventemitter3_1.default {
             count: discoveryCount,
             hasScanResponse,
         };
-        this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
+        this.emit('discover', status, address, addressType, connectable, advertisement, rssi);
     }
     async setScanEnabledWait(enabled, filterDuplicates) {
         const status = await this._hci.setScanEnabledWait(enabled, filterDuplicates);
@@ -243,11 +249,11 @@ class Gap extends eventemitter3_1.default {
             throw new ObnizError_1.ObnizBleScanStartError(status, `startScanning enable=${enabled} was failed. Maybe Connection to a device is under going.`);
         }
         else {
-            if (this._scanState === "starting") {
-                this._scanState = "started";
+            if (this._scanState === 'starting') {
+                this._scanState = 'started';
             }
-            else if (this._scanState === "stopping") {
-                this._scanState = "stopped";
+            else if (this._scanState === 'stopping') {
+                this._scanState = 'stopped';
             }
         }
     }

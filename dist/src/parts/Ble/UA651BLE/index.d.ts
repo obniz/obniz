@@ -2,10 +2,10 @@
  * @packageDocumentation
  * @module Parts.UA651BLE
  */
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
-import BleBatteryService from "../abstract/services/batteryService";
-import BleGenericAccess from "../abstract/services/genericAccess";
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
+import BleBatteryService from '../abstract/services/batteryService';
+import BleGenericAccess from '../abstract/services/genericAccess';
 export interface UA651BLEOptions {
 }
 export interface UA651BLEResult {
@@ -40,5 +40,5 @@ export default class UA651BLE implements ObnizPartsBleInterface {
     private _readSFLOAT_LE;
     private _analyzeData;
     private _getChars;
-    private _writeTimeChar;
+    private _writeTimeCharWait;
 }

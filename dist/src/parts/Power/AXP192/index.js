@@ -7,15 +7,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class AXP192 {
     constructor() {
         this.requiredKeys = [];
-        this.keys = ["sda", "scl", "i2c"];
+        this.keys = ['sda', 'scl', 'i2c'];
     }
     static info() {
         return {
-            name: "AXP192",
+            name: 'AXP192',
         };
     }
     wired(obniz) {
-        this.params.mode = "master"; // for i2c
+        this.params.mode = 'master'; // for i2c
         this.params.clock = 400 * 1000; // for i2c
         this.i2c = obniz.getI2CWithConfig(this.params);
     }
@@ -27,7 +27,14 @@ class AXP192 {
         this.i2c.write(AXP192_ADDRESS, [address]);
         return await this.i2c.readWait(AXP192_ADDRESS, 1);
     }
-    async setLDO2Voltage(voltage) {
+    /**
+     * @deprecated
+     * @param voltage
+     */
+    setLDO2Voltage(voltage) {
+        return this.setLDO2VoltageWait(voltage);
+    }
+    async setLDO2VoltageWait(voltage) {
         if (voltage < 1.8) {
             voltage = 1.8;
         }
@@ -40,10 +47,17 @@ class AXP192 {
             offset = 15;
         }
         set = (set & 0x0f) | (offset << 4);
-        console.log("set voltage to ", set);
+        console.log('set voltage to ', set);
         this.set(REG_VOLT_SET_LDO2_3, set);
     }
-    async setLDO3Voltage(voltage) {
+    /**
+     * @deprecated
+     * @param voltage
+     */
+    setLDO3Voltage(voltage) {
+        this.setLDO3VoltageWait(voltage);
+    }
+    async setLDO3VoltageWait(voltage) {
         if (voltage < 1.8) {
             voltage = 1.8;
         }
@@ -64,13 +78,27 @@ class AXP192 {
     enableLDO2_3() {
         this.set(REG_EN_DC1_LDO2_3, 0x4d);
     }
-    async toggleLDO2(val) {
+    /**
+     * @deprecated
+     * @param val
+     */
+    toggleLDO2(val) {
+        return this.toggleLDO2Wait(val);
+    }
+    async toggleLDO2Wait(val) {
         const bit = val ? 1 : 0;
         let state = await this.getWait(REG_EN_DC1_LDO2_3);
         state = (state & LDO2_EN_MASK) | (bit << 2);
         this.set(REG_EN_DC1_LDO2_3, state);
     }
-    async toggleLDO3(val) {
+    /**
+     * @deprecated
+     * @param val
+     */
+    toggleLDO3(val) {
+        return this.toggleLDO3Wait(val);
+    }
+    async toggleLDO3Wait(val) {
         const bit = val ? 1 : 0;
         let state = await this.getWait(REG_EN_DC1_LDO2_3);
         state = (state & LDO3_EN_MASK) | (bit << 3);
@@ -89,7 +117,10 @@ class AXP192 {
         this.i2c.write(AXP192_ADDRESS, [REG_CHARGE_OVTEMP, 0xfc]);
         this.i2c.write(AXP192_ADDRESS, [REG_BCKUP_BAT, 0xa2]);
     }
-    async getVbat() {
+    getVbat() {
+        return this.getVbatWait();
+    }
+    async getVbatWait() {
         this.i2c.write(AXP192_ADDRESS, [REG_VBAT_LSB]);
         const vbat_lsb = await this.i2c.readWait(AXP192_ADDRESS, 1);
         this.i2c.write(AXP192_ADDRESS, [REG_VBAT_MSB]);

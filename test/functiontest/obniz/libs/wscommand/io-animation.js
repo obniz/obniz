@@ -5,16 +5,16 @@ let testUtil = require('../../../testUtil.js');
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
-describe('io.animation', function() {
-  beforeEach(function(done) {
+describe('io.animation', function () {
+  beforeEach(function (done) {
     return testUtil.setupObnizPromise(this, done, { binary: true });
   });
 
-  afterEach(function(done) {
+  afterEach(function (done) {
     return testUtil.releaseObnizePromise(this, done);
   });
 
-  it('request ioAnimation', function() {
+  it('request ioAnimation', function () {
     compressTest(
       this.obniz,
       [
@@ -37,7 +37,7 @@ describe('io.animation', function() {
     );
   });
 
-  it('request ioAnimation single array format', function() {
+  it('request ioAnimation single array format', function () {
     compressTest(
       this.obniz,
       [
@@ -60,7 +60,7 @@ describe('io.animation', function() {
     );
   });
 
-  it('request ioAnimation multiple array format', function() {
+  it('request ioAnimation multiple array format', function () {
     compressTest(
       this.obniz,
       [
@@ -83,7 +83,7 @@ describe('io.animation', function() {
     );
   });
 
-  it('request ioAnimation-pause', function() {
+  it('request ioAnimation-pause', function () {
     compressTest(
       this.obniz,
       [{ io: { animation: { name: 'animation-1', status: 'pause' } } }],
@@ -91,7 +91,7 @@ describe('io.animation', function() {
     );
   });
 
-  it('request ioAnimation-pause', function() {
+  it('request ioAnimation-pause', function () {
     compressTest(
       this.obniz,
       [{ io: { animation: { name: 'anim', status: 'pause' } } }],
@@ -99,7 +99,7 @@ describe('io.animation', function() {
     );
   });
 
-  it('request ioAnimation-resume', function() {
+  it('request ioAnimation-resume', function () {
     compressTest(
       this.obniz,
       [{ io: { animation: { name: 'a', status: 'resume' } } }],
@@ -111,7 +111,7 @@ describe('io.animation', function() {
 function compressTest(obniz, requestJson, expecteBinarystrings) {
   let binaryArray = expecteBinarystrings[0]
     .split(' ')
-    .map(function(val, index) {
+    .map(function (val, index) {
       return parseInt(val, 16);
     });
   let binary = new Uint8Array(binaryArray);

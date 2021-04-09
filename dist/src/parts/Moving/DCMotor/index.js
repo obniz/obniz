@@ -6,12 +6,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class DCMotor {
     constructor() {
-        this.keys = ["forward", "back"];
-        this.requiredKeys = ["forward", "back"];
+        this.keys = ['forward', 'back'];
+        this.requiredKeys = ['forward', 'back'];
     }
     static info() {
         return {
-            name: "DCMotor",
+            name: 'DCMotor',
         };
     }
     wired(obniz) {

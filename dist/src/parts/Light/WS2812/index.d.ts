@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module Parts.WS2812
  */
-import Obniz from "../../../obniz";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface WS2812Options {
     din: number;
     vcc?: number;
@@ -23,6 +23,6 @@ export default class WS2812 implements ObnizPartsInterface {
     wired(obniz: Obniz): void;
     rgb(red: number, green: number, blue: number): void;
     hsv(hue: number, saturation: number, value: number): void;
-    rgbs(array: Array<[number, number, number]>): void;
-    hsvs(array: Array<[number, number, number]>): void;
+    rgbs(array: [number, number, number][]): void;
+    hsvs(array: [number, number, number][]): void;
 }

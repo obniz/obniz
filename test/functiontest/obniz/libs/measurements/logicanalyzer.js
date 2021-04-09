@@ -6,16 +6,16 @@ let testUtil = require('../../../testUtil.js');
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
-describe('obniz.libs.logicanalyser', function() {
-  beforeEach(function(done) {
+describe('obniz.libs.logicanalyser', function () {
+  beforeEach(function (done) {
     return testUtil.setupObnizPromise(this, done);
   });
 
-  afterEach(function(done) {
+  afterEach(function (done) {
     return testUtil.releaseObnizePromise(this, done);
   });
 
-  it('start', function() {
+  it('start', function () {
     this.obniz.logicAnalyzer.start({ io: 1, interval: 0.1, duration: 100 });
 
     expect(this.obniz).send([
@@ -24,7 +24,7 @@ describe('obniz.libs.logicanalyser', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('startWithTrigger', function() {
+  it('startWithTrigger', function () {
     this.obniz.logicAnalyzer.start({
       io: 1,
       interval: 0.1,
@@ -45,7 +45,7 @@ describe('obniz.libs.logicanalyser', function() {
     ]);
     expect(this.obniz).to.be.finished;
   });
-  it('startWithTrigger2', function() {
+  it('startWithTrigger2', function () {
     this.obniz.logicAnalyzer.start({
       io: 1,
       interval: 0.1,
@@ -67,7 +67,7 @@ describe('obniz.libs.logicanalyser', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('onmeasured', function() {
+  it('onmeasured', function () {
     let stub = sinon.stub();
     this.obniz.logicAnalyzer.start({
       io: 1,
@@ -596,7 +596,7 @@ describe('obniz.libs.logicanalyser', function() {
 
   it('onmeasured need pin no');
 
-  it('finished', function() {
+  it('finished', function () {
     this.obniz.logicAnalyzer.start({ io: 1, interval: 0.1, duration: 100 });
 
     expect(this.obniz).send([

@@ -22,7 +22,7 @@ class WSCommandTcp extends WSCommand_1.default {
         this._CommandRead = 4;
     }
     connect(params, index) {
-        const domain = new Uint8Array(Buffer.from(params.connect.domain, "utf8"));
+        const domain = new Uint8Array(Buffer.from(params.connect.domain, 'utf8'));
         const buf = new Uint8Array(domain.length + 3);
         buf[0] = index;
         buf[1] = 0xff && params.connect.port >> 8;
@@ -46,16 +46,16 @@ class WSCommandTcp extends WSCommand_1.default {
     }
     parseFromJson(json) {
         for (let i = 0; i < this._MaxPort; i++) {
-            const module = json["tcp" + i];
+            const module = json['tcp' + i];
             if (module === undefined) {
                 continue;
             }
             const schemaData = [
-                { uri: "/request/tcp/connect", onValid: this.connect },
-                { uri: "/request/tcp/disconnect", onValid: this.disconnect },
-                { uri: "/request/tcp/write", onValid: this.write },
+                { uri: '/request/tcp/connect', onValid: this.connect },
+                { uri: '/request/tcp/disconnect', onValid: this.disconnect },
+                { uri: '/request/tcp/write', onValid: this.write },
             ];
-            const res = this.validateCommandSchema(schemaData, module, "tcp" + i, i);
+            const res = this.validateCommandSchema(schemaData, module, 'tcp' + i, i);
             if (res.valid === 0) {
                 if (res.invalidButLike.length > 0) {
                     throw new Error(res.invalidButLike[0].message);
@@ -69,26 +69,26 @@ class WSCommandTcp extends WSCommand_1.default {
     notifyFromBinary(objToSend, func, payload) {
         switch (func) {
             case this._CommandConnect: {
-                let state = "Error";
+                let state = 'Error';
                 switch (payload[1]) {
                     case 0:
-                        state = "ok";
+                        state = 'ok';
                         break;
                     case 1:
-                        state = "Port Used";
+                        state = 'Port Used';
                         break;
                     case 2:
-                        state = "Port Area Error";
+                        state = 'Port Area Error';
                         break;
                     case 3:
-                        state = "Lookup Error";
+                        state = 'Lookup Error';
                         break;
                     case 4:
-                        state = "Error";
+                        state = 'Error';
                         break;
                 }
                 const module_index = payload[0];
-                objToSend["tcp" + module_index] = {
+                objToSend['tcp' + module_index] = {
                     connect: {
                         message: state,
                         code: payload[1],
@@ -99,7 +99,7 @@ class WSCommandTcp extends WSCommand_1.default {
             case this._CommandConnection:
                 if (payload.length === 2 && payload[1] === 0) {
                     const module_index = payload[0];
-                    objToSend["tcp" + module_index] = {
+                    objToSend['tcp' + module_index] = {
                         connection: {
                             connected: true,
                         },
@@ -107,7 +107,7 @@ class WSCommandTcp extends WSCommand_1.default {
                 }
                 else {
                     const module_index = payload[0];
-                    objToSend["tcp" + module_index] = {
+                    objToSend['tcp' + module_index] = {
                         connection: {
                             connected: false,
                         },
@@ -121,7 +121,7 @@ class WSCommandTcp extends WSCommand_1.default {
                     for (let i = 0; i < arr.length; i++) {
                         arr[i] = payload[i + 1];
                     }
-                    objToSend["tcp" + module_index] = {
+                    objToSend['tcp' + module_index] = {
                         read: {
                             data: arr,
                         },

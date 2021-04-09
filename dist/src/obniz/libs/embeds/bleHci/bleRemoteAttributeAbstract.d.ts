@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import BleAttributeAbstract from "./bleAttributeAbstract";
+import BleAttributeAbstract from './bleAttributeAbstract';
 /**
  * @category Use as Central
  */

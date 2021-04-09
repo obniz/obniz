@@ -6,10 +6,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_3AxisAccelerometer {
     constructor() {
-        this.displayName = "3axis";
-        this.displayIoNames = { sda: "sda", scl: "scl" };
+        this.displayName = '3axis';
+        this.displayIoNames = { sda: 'sda', scl: 'scl' };
         this.address = 0x53;
-        this.keys = ["gnd", "vcc", "sda", "scl", "grove"];
+        this.keys = ['gnd', 'vcc', 'sda', 'scl', 'grove'];
         this.requiredKeys = [];
         this.ioKeys = this.keys;
         this.regAdrs = {};
@@ -45,23 +45,27 @@ class Grove_3AxisAccelerometer {
     }
     static info() {
         return {
-            name: "Grove_3AxisAccelerometer",
+            name: 'Grove_3AxisAccelerometer',
         };
     }
-    async wired(obniz) {
+    wired(obniz) {
         this.obniz = obniz;
         if (this.params.grove) {
-            this.i2c = this.params.grove.getI2c(400000, "5v");
+            this.i2c = this.params.grove.getI2c(400000, '5v');
         }
         else {
             this.vcc = this.params.vcc;
             this.gnd = this.params.gnd;
-            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
             this.params.clock = 400000;
-            this.params.mode = "master";
+            this.params.mode = 'master';
             this.i2c = obniz.getI2CWithConfig(this.params);
         }
-        this.obniz.wait(100);
+        this.obniz.wait(100).then(() => {
+            return this.initWait();
+        });
+    }
+    async initWait() {
         // power on
         this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 0]);
         this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 16]);
@@ -69,15 +73,15 @@ class Grove_3AxisAccelerometer {
         this.i2c.write(this.address, [this.regAdrs.THRESH_ACT, 75]); // set activity threshold 0~255
         this.i2c.write(this.address, [this.regAdrs.THRESH_INACT, 75]); // set inactivity threshold 0~255
         this.i2c.write(this.address, [this.regAdrs.THRESH_INACT, 10]); // set time inactivity 0~255
-        await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 6, 1); // setActivityX
-        await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 5, 1); // setActivityY
-        await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 4, 1); // setActivityZ
-        await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 2, 1); // setInactivityX
-        await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 1, 1); // setInactivityY
-        await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 0, 1); // setInactivityZ
-        await this.setRegisterBit(this.regAdrs.TAP_AXES, 2, 0); // setTapDetectionOnX
-        await this.setRegisterBit(this.regAdrs.TAP_AXES, 1, 0); // setTapDetectionOnY
-        await this.setRegisterBit(this.regAdrs.TAP_AXES, 0, 1); // setTapDetectionOnZ
+        await this.setRegisterBitWait(this.regAdrs.ACT_INACT_CTL, 6, 1); // setActivityX
+        await this.setRegisterBitWait(this.regAdrs.ACT_INACT_CTL, 5, 1); // setActivityY
+        await this.setRegisterBitWait(this.regAdrs.ACT_INACT_CTL, 4, 1); // setActivityZ
+        await this.setRegisterBitWait(this.regAdrs.ACT_INACT_CTL, 2, 1); // setInactivityX
+        await this.setRegisterBitWait(this.regAdrs.ACT_INACT_CTL, 1, 1); // setInactivityY
+        await this.setRegisterBitWait(this.regAdrs.ACT_INACT_CTL, 0, 1); // setInactivityZ
+        await this.setRegisterBitWait(this.regAdrs.TAP_AXES, 2, 0); // setTapDetectionOnX
+        await this.setRegisterBitWait(this.regAdrs.TAP_AXES, 1, 0); // setTapDetectionOnY
+        await this.setRegisterBitWait(this.regAdrs.TAP_AXES, 0, 1); // setTapDetectionOnZ
         this.i2c.write(this.address, [this.regAdrs.THRESH_TAP, 50]); // setTapThreshold
         this.i2c.write(this.address, [this.regAdrs.DUR, 15]); // setTapDuration
         this.i2c.write(this.address, [this.regAdrs.LATENT, 80]); // setDoubleTapLatency
@@ -85,19 +89,28 @@ class Grove_3AxisAccelerometer {
         this.i2c.write(this.address, [this.regAdrs.THRESH_FF, 7]); // setFreeFallThreshold
         this.i2c.write(this.address, [this.regAdrs.TIME_FF, 45]); // setFreeFallDuration
         // setInterruptMapping
-        await this.setInterruptMapping(this.regAdrs.INT_SINGLE_TAP_BIT, this.constVal.INT1_PIN);
-        await this.setInterruptMapping(this.regAdrs.INT_DOUBLE_TAP_BIT, this.constVal.INT1_PIN);
-        await this.setInterruptMapping(this.regAdrs.INT_FREE_FALL_BIT, this.constVal.INT1_PIN);
-        await this.setInterruptMapping(this.regAdrs.INT_ACTIVITY_BIT, this.constVal.INT1_PIN);
-        await this.setInterruptMapping(this.regAdrs.INT_INACTIVITY_BIT, this.constVal.INT1_PIN);
+        await this.setInterruptMappingWait(this.regAdrs.INT_SINGLE_TAP_BIT, this.constVal.INT1_PIN);
+        await this.setInterruptMappingWait(this.regAdrs.INT_DOUBLE_TAP_BIT, this.constVal.INT1_PIN);
+        await this.setInterruptMappingWait(this.regAdrs.INT_FREE_FALL_BIT, this.constVal.INT1_PIN);
+        await this.setInterruptMappingWait(this.regAdrs.INT_ACTIVITY_BIT, this.constVal.INT1_PIN);
+        await this.setInterruptMappingWait(this.regAdrs.INT_INACTIVITY_BIT, this.constVal.INT1_PIN);
         // setInterrupt
-        await this.setInterrupt(this.regAdrs.INT_SINGLE_TAP_BIT, 1);
-        await this.setInterrupt(this.regAdrs.INT_DOUBLE_TAP_BIT, 1);
-        await this.setInterrupt(this.regAdrs.INT_FREE_FALL_BIT, 1);
-        await this.setInterrupt(this.regAdrs.INT_ACTIVITY_BIT, 1);
-        await this.setInterrupt(this.regAdrs.INT_INACTIVITY_BIT, 1);
+        await this.setInterruptWait(this.regAdrs.INT_SINGLE_TAP_BIT, 1);
+        await this.setInterruptWait(this.regAdrs.INT_DOUBLE_TAP_BIT, 1);
+        await this.setInterruptWait(this.regAdrs.INT_FREE_FALL_BIT, 1);
+        await this.setInterruptWait(this.regAdrs.INT_ACTIVITY_BIT, 1);
+        await this.setInterruptWait(this.regAdrs.INT_INACTIVITY_BIT, 1);
     }
-    async setRegisterBit(regAddr, bitPos, state) {
+    /**
+     * @deprecated
+     * @param regAddr
+     * @param bitPos
+     * @param state
+     */
+    setRegisterBit(regAddr, bitPos, state) {
+        return this.setRegisterBitWait(regAddr, bitPos, state);
+    }
+    async setRegisterBitWait(regAddr, bitPos, state) {
         this.i2c.write(this.address, [regAddr]);
         let b = await this.i2c.readWait(this.address, 1);
         if (state) {
@@ -108,11 +121,25 @@ class Grove_3AxisAccelerometer {
         }
         this.i2c.write(this.address, [b]);
     }
-    async setInterruptMapping(interruptBit, interruptPin) {
-        await this.setRegisterBit(this.regAdrs.INT_MAP, interruptBit, interruptPin);
+    /**
+     * @deprecated
+     * @param interruptBit
+     * @param interruptPin
+     */
+    setInterruptMapping(interruptBit, interruptPin) {
+        return this.setInterruptMappingWait(interruptBit, interruptPin);
     }
-    async setInterrupt(interruptBit, state) {
-        await this.setRegisterBit(this.regAdrs.INT_ENABLE, interruptBit, state);
+    async setInterruptMappingWait(interruptBit, interruptPin) {
+        await this.setRegisterBitWait(this.regAdrs.INT_MAP, interruptBit, interruptPin);
+    }
+    /**
+     * @deprecated
+     */
+    setInterrupt(interruptBit, state) {
+        return this.setInterruptWait(interruptBit, state);
+    }
+    async setInterruptWait(interruptBit, state) {
+        await this.setRegisterBitWait(this.regAdrs.INT_ENABLE, interruptBit, state);
     }
     signHandling(val) {
         const sign = val >> 15;
@@ -121,7 +148,13 @@ class Grove_3AxisAccelerometer {
         }
         return val;
     }
-    async getRawVal() {
+    /**
+     * @deprecated
+     */
+    getRawVal() {
+        return this.getRawValWait();
+    }
+    async getRawValWait() {
         this.i2c.write(this.address, [this.regAdrs.DATAX0]);
         const buff = await this.i2c.readWait(this.address, 6);
         const rawVal = [0, 0, 0];

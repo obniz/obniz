@@ -6,16 +6,16 @@ let testUtil = require('../../../../testUtil.js');
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
-describe('ble-security', function() {
-  beforeEach(function(done) {
+describe('ble-security', function () {
+  beforeEach(function (done) {
     return testUtil.setupObnizPromise(this, done, { __firmware_ver: '3.0.0' });
   });
 
-  afterEach(function(done) {
+  afterEach(function (done) {
     return testUtil.releaseObnizePromise(this, done);
   });
 
-  it('write', function() {
+  it('write', function () {
     this.obniz.ble.hci.write([0, 1, 2, 3, 4, 5, 22, 1]);
 
     expect(this.obniz).send([
@@ -24,7 +24,7 @@ describe('ble-security', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('read', function() {
+  it('read', function () {
     let stub = sinon.stub();
 
     this.obniz.ble.hci.onread = stub;
@@ -42,7 +42,7 @@ describe('ble-security', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('error', function() {
+  it('error', function () {
     let error = this.obniz.error;
     this.obniz.error = sinon.stub();
     testUtil.receiveJson(this.obniz, [
@@ -74,7 +74,7 @@ describe('ble-security', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('error2', function() {
+  it('error2', function () {
     let error = this.obniz.error;
     this.obniz.error = sinon.stub();
     testUtil.receiveJson(this.obniz, [

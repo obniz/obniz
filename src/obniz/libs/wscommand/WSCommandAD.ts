@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from "./WSCommand";
+import WSCommand from './WSCommand';
 
 class WSCommandAD extends WSCommand {
   public module: any;
@@ -28,7 +28,10 @@ class WSCommandAD extends WSCommand {
 
   public get(params: any, no: any) {
     const buf: any = new Uint8Array([no]);
-    this.sendCommand(params.stream ? this._CommandInitNormalInterval : this._CommandDoOnece, buf);
+    this.sendCommand(
+      params.stream ? this._CommandInitNormalInterval : this._CommandDoOnece,
+      buf
+    );
   }
 
   public deinit(params: any, no: any) {
@@ -38,16 +41,21 @@ class WSCommandAD extends WSCommand {
 
   public parseFromJson(json: any) {
     for (let i = 0; i < 40; i++) {
-      const module: any = json["ad" + i];
+      const module: any = json['ad' + i];
       if (module === undefined) {
         continue;
       }
 
       const schemaData: any = [
-        { uri: "/request/ad/deinit", onValid: this.deinit },
-        { uri: "/request/ad/get", onValid: this.get },
+        { uri: '/request/ad/deinit', onValid: this.deinit },
+        { uri: '/request/ad/get', onValid: this.get },
       ];
-      const res: any = this.validateCommandSchema(schemaData, module, "ad" + i, i);
+      const res: any = this.validateCommandSchema(
+        schemaData,
+        module,
+        'ad' + i,
+        i
+      );
 
       if (res.valid === 0) {
         if (res.invalidButLike.length > 0) {
@@ -78,7 +86,7 @@ class WSCommandAD extends WSCommand {
           value = (payload[i + 1] << 8) + payload[i + 2];
           value = value / 100.0;
         }
-        objToSend["ad" + payload[i]] = value;
+        objToSend['ad' + payload[i]] = value;
       }
     } else {
       super.notifyFromBinary(objToSend, func, payload);

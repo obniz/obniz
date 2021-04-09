@@ -7,7 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class VL53L0X {
     constructor() {
         this.requiredKeys = [];
-        this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
+        this.keys = ['vcc', 'gnd', 'sda', 'scl', 'i2c'];
         this.address = 0x29;
         this.regs = {
             IDENTIFICATION_MODEL_ID: 0xc0,
@@ -24,16 +24,16 @@ class VL53L0X {
     }
     static info() {
         return {
-            name: "VL53L0X",
+            name: 'VL53L0X',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '3v');
         this.obniz.wait(100);
         this.params.clock = 100000;
-        this.params.pull = "3v";
-        this.params.mode = "master";
+        this.params.pull = '3v';
+        this.params.mode = 'master';
         this.i2c = obniz.getI2CWithConfig(this.params);
     }
     async getWait() {

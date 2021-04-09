@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @module Parts.Grove_WaterLevelSensor
  */
-import Obniz from "../../../obniz";
-import PeripheralGrove from "../../../obniz/libs/io_peripherals/grove";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralGrove from '../../../obniz/libs/io_peripherals/grove';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface Grove_WaterLevelSensorOptionsA {
     gnd?: number;
     vcc?: number;
@@ -34,7 +34,8 @@ export default class Grove_WaterLevelSensor implements ObnizPartsInterface {
     private ATTINY2_LOW_ADDR;
     private previous_val;
     constructor();
-    wired(obniz: Obniz): Promise<void>;
+    wired(obniz: Obniz): void;
+    initWait(): Promise<void>;
     getWait(): Promise<number>;
 }
 export {};

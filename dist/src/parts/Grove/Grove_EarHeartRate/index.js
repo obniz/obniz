@@ -7,28 +7,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_EarHeartRate {
     constructor() {
         this.displayIoNames = {
-            vcc: "vcc",
-            gnd: "gnd",
-            signal: "signal",
+            vcc: 'vcc',
+            gnd: 'gnd',
+            signal: 'signal',
         };
         this.interval = 5;
         this.duration = 2.5 * 1000;
-        this.keys = ["signal", "gnd", "vcc", "grove"];
+        this.keys = ['signal', 'gnd', 'vcc', 'grove'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "Grove_EarHeartRate",
+            name: 'Grove_EarHeartRate',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
         if (this.params.grove) {
             this.signal = this.params.grove.pin1;
-            this.params.grove.getDigital("5v");
+            this.params.grove.getDigital('5v');
         }
         else {
-            obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
             this.signal = this.params.signal;
         }
     }

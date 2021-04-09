@@ -2,16 +2,16 @@
  * @packageDocumentation
  * @module Parts.HC-SR04
  */
-import Obniz from "../../../obniz";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface HCSR04Options {
     gnd?: number;
     echo: number;
     trigger: number;
     vcc: number;
 }
-export declare type HCSR04UnitType = "mm" | "inch";
+export declare type HCSR04UnitType = 'mm' | 'inch';
 export default class HCSR04 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

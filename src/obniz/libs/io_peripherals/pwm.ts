@@ -3,10 +3,10 @@
  * @module ObnizCore.Components
  */
 
-import Obniz from "../../index";
-import { ComponentAbstract } from "../ComponentAbstact";
-import ObnizUtil from "../utils/util";
-import { DriveType, PullType } from "./common";
+import Obniz from '../../index';
+import { ComponentAbstract } from '../ComponentAbstact';
+import ObnizUtil from '../utils/util';
+import { DriveType, PullType } from './common';
 
 interface PeripheralPWMOptions {
   /**
@@ -29,14 +29,17 @@ export interface PWMInterface {
  *
  * Currently only "am" are supported
  */
-export type PWMModulateType = "am";
+export type PWMModulateType = 'am';
 
 /**
  * We will now generate PWM.
  * Maximum current depends on the driving mode. See [[PeripheralIO|io]].
+ *
  * @category Peripherals
  */
-export default class PeripheralPWM extends ComponentAbstract implements PWMInterface {
+export default class PeripheralPWM
+  extends ComponentAbstract
+  implements PWMInterface {
   /**
    * @ignore
    */
@@ -72,16 +75,16 @@ export default class PeripheralPWM extends ComponentAbstract implements PWMInter
    * @param params
    */
   public start(params: PeripheralPWMOptions) {
-    const err: any = ObnizUtil._requiredKeys(params, ["io"]);
+    const err: any = ObnizUtil._requiredKeys(params, ['io']);
     if (err) {
       throw new Error("pwm start param '" + err + "' required, but not found ");
     }
-    this.params = ObnizUtil._keyFilter(params, ["io", "drive", "pull"]);
+    this.params = ObnizUtil._keyFilter(params, ['io', 'drive', 'pull']);
 
     const io: any = this.params.io;
     const ioObj: any = this.Obniz.getIO(io);
 
-    ioObj.drive(this.params.drive || "5v");
+    ioObj.drive(this.params.drive || '5v');
     ioObj.pull(this.params.pull || null);
 
     this.state = {
@@ -114,14 +117,14 @@ export default class PeripheralPWM extends ComponentAbstract implements PWMInter
       throw new Error(`pwm${this.id} is not started`);
     }
     freq *= 1;
-    if (typeof freq !== "number") {
-      throw new Error("please provide freq in number");
+    if (typeof freq !== 'number') {
+      throw new Error('please provide freq in number');
     }
     this.state.freq = freq;
     this.sendWS({
       freq,
     });
-    if (typeof this.state.duty === "number") {
+    if (typeof this.state.duty === 'number') {
       this.duty(this.state.duty);
     }
   }
@@ -169,11 +172,11 @@ export default class PeripheralPWM extends ComponentAbstract implements PWMInter
       throw new Error(`pwm${this.id} is not started`);
     }
     duty *= 1;
-    if (typeof this.state.freq !== "number" || this.state.freq <= 0) {
-      throw new Error("please provide freq first.");
+    if (typeof this.state.freq !== 'number' || this.state.freq <= 0) {
+      throw new Error('please provide freq first.');
     }
-    if (typeof duty !== "number") {
-      throw new Error("please provide duty in number");
+    if (typeof duty !== 'number') {
+      throw new Error('please provide duty in number');
     }
     if (duty < 0) {
       duty = 0;
@@ -233,7 +236,11 @@ export default class PeripheralPWM extends ComponentAbstract implements PWMInter
    * @param symbol_length
    * @param data data array. All data[index] is 0 or 1.
    */
-  public modulate(type: PWMModulateType, symbol_length: number, data: number[]) {
+  public modulate(
+    type: PWMModulateType,
+    symbol_length: number,
+    data: number[]
+  ) {
     if (!this.used) {
       throw new Error(`pwm${this.id} is not started`);
     }
@@ -251,7 +258,7 @@ export default class PeripheralPWM extends ComponentAbstract implements PWMInter
    * @private
    */
   public schemaBasePath(): string {
-    return "pwm" + this.id;
+    return 'pwm' + this.id;
   }
 
   /**
@@ -265,7 +272,7 @@ export default class PeripheralPWM extends ComponentAbstract implements PWMInter
 
   private sendWS(obj: any) {
     const wsObj: any = {};
-    wsObj["pwm" + this.id] = obj;
+    wsObj['pwm' + this.id] = obj;
     this.Obniz.send(wsObj);
   }
 }

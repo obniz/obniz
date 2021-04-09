@@ -7,8 +7,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class AMG8833 {
     constructor() {
         this.requiredKeys = [];
-        this.keys = ["vcc", "gnd", "sda", "scl", "address"];
-        this.ioKeys = ["vcc", "gnd", "sda", "scl"];
+        this.keys = ['vcc', 'gnd', 'sda', 'scl', 'address'];
+        this.ioKeys = ['vcc', 'gnd', 'sda', 'scl'];
         this.commands = {};
         this.commands.mode_normal = [0x00, 0x00];
         this.commands.reset_flag = [0x01, 0x30];
@@ -26,12 +26,12 @@ class AMG8833 {
     }
     static info() {
         return {
-            name: "AMG8833",
+            name: 'AMG8833',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.address = 0x69;
         if (this.params.address === 0x69) {
             this.address = 0x69;
@@ -40,10 +40,10 @@ class AMG8833 {
             this.address = 0x68;
         }
         else if (this.params.address !== undefined) {
-            throw new Error("address must be 0x68 or 0x69");
+            throw new Error('address must be 0x68 or 0x69');
         }
         this.params.clock = this.params.clock || 400 * 1000; // for i2c
-        this.params.mode = this.params.mode || "master"; // for i2c
+        this.params.mode = this.params.mode || 'master'; // for i2c
         this.params.pull = this.params.pull || null; // for i2c
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.obniz.wait(50);
@@ -60,7 +60,7 @@ class AMG8833 {
             pixelAddrH = 0x81 + pixel * 2;
         }
         else {
-            throw new Error("pixel number must be range of 0 to 63");
+            throw new Error('pixel number must be range of 0 to 63');
         }
         this.i2c.write(this.address, [pixelAddrL]);
         const dataL = await this.i2c.readWait(this.address, 1);

@@ -13,20 +13,20 @@ class M5StickC extends ObnizDevice_1.default {
         super(id, options);
     }
     gyroWait() {
-        const supportedIMUNameArr = ["MPU6886", "SH200Q"];
+        const supportedIMUNameArr = ['MPU6886', 'SH200Q'];
         if (!supportedIMUNameArr.includes(this.imu.constructor.name)) {
             throw new Error(`gyroWait is supported only on M5stickC with ${supportedIMUNameArr.join()}`);
         }
         return this.imu.getGyroWait();
     }
     accelerationWait() {
-        const supportedIMUNameArr = ["MPU6886", "SH200Q"];
+        const supportedIMUNameArr = ['MPU6886', 'SH200Q'];
         if (!supportedIMUNameArr.includes(this.imu.constructor.name)) {
             throw new Error(`accelerationWait is supported only on M5stickC with ${supportedIMUNameArr.join()}`);
         }
         return this.imu.getAccelWait();
     }
-    setupIMUWait(imuName = "MPU6886") {
+    setupIMUWait(imuName = 'MPU6886') {
         const i2c = this._m5i2c;
         const onerror = i2c.onerror;
         this.imu = this.wired(imuName, { i2c });
@@ -43,10 +43,10 @@ class M5StickC extends ObnizDevice_1.default {
                 throw new Error(`Cannot find IMU (${imuName}) on this M5StickC`);
             }
             switch (imuName) {
-                case "SH200Q":
+                case 'SH200Q':
                     await this.imu.initWait();
                     break;
-                case "MPU6886":
+                case 'MPU6886':
                     this.imu.init();
                     break;
                 default:
@@ -61,27 +61,27 @@ class M5StickC extends ObnizDevice_1.default {
             // already wired parts
             return;
         }
-        this.ir = this.wired("InfraredLED", { anode: 9 });
-        this.led = this.wired("LED", { cathode: 10 });
-        this.buttonA = this.wired("Button", { signal: 37 });
-        this.buttonB = this.wired("Button", { signal: 39 });
+        this.ir = this.wired('InfraredLED', { anode: 9 });
+        this.led = this.wired('LED', { cathode: 10 });
+        this.buttonA = this.wired('Button', { signal: 37 });
+        this.buttonB = this.wired('Button', { signal: 39 });
         const i2cParams = {
             sda: 21,
             scl: 22,
             clock: 100000,
-            pull: "3v",
-            mode: "master",
+            pull: '3v',
+            mode: 'master',
         };
         this._m5i2c = this.i2c1;
         this._m5i2c.start(i2cParams);
-        this.axp = this.wired("AXP192", { i2c: this._m5i2c });
+        this.axp = this.wired('AXP192', { i2c: this._m5i2c });
         this.led.off();
     }
     _prepareComponents() {
         // @ts-ignore
         super._prepareComponents();
-        if (this.hw !== "m5stickc") {
-            throw new Error("Obniz.M5StickC only support ObnizOS for M5StickC. Your device is not ObnizOS for M5StickC.");
+        if (this.hw !== 'm5stickc') {
+            throw new Error('Obniz.M5StickC only support ObnizOS for M5StickC. Your device is not ObnizOS for M5StickC.');
         }
     }
 }

@@ -1,4 +1,4 @@
-import { BleAdvertisementData, BleScanResponseData, UUID } from "./bleTypes";
+import { BleAdvertisementData, BleScanResponseData, UUID } from './bleTypes';
 /**
  * @category Use as Peripheral
  */

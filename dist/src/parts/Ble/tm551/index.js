@@ -14,7 +14,7 @@ class TM551 {
     }
     static info() {
         return {
-            name: "TM551",
+            name: 'TM551',
         };
     }
     static isDevice(peripheral) {
@@ -38,9 +38,12 @@ class TM551 {
         }
         const data = {
             battery: peripheral.adv_data[13],
-            x: peripheral.adv_data[14] + ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[15]),
-            y: peripheral.adv_data[16] + ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[17]),
-            z: peripheral.adv_data[18] + ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[19]),
+            x: peripheral.adv_data[14] +
+                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[15]),
+            y: peripheral.adv_data[16] +
+                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[17]),
+            z: peripheral.adv_data[18] +
+                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[19]),
         };
         return data;
     }

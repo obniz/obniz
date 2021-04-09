@@ -2,15 +2,24 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import BleDescriptor from "./bleDescriptor";
-import BleLocalValueAttributeAbstract from "./bleLocalValueAttributeAbstract";
-import BleService from "./bleService";
-import { BleAttributePropery, BleCharacteristicDefine, BleDescriptorDefine, BleDeviceAddress, UUID } from "./bleTypes";
+import BleDescriptor from './bleDescriptor';
+import BleLocalValueAttributeAbstract from './bleLocalValueAttributeAbstract';
+import BleService from './bleService';
+import {
+  BleAttributePropery,
+  BleCharacteristicDefine,
+  BleDescriptorDefine,
+  BleDeviceAddress,
+  UUID,
+} from './bleTypes';
 
 /**
  * @category Use as Peripheral
  */
-export default class BleCharacteristic extends BleLocalValueAttributeAbstract<BleService, BleDescriptor> {
+export default class BleCharacteristic extends BleLocalValueAttributeAbstract<
+  BleService,
+  BleDescriptor
+> {
   /**
    * This is a callback function used when characteristic is read by an external device.
    *
@@ -24,7 +33,10 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<Bl
    * @param onwritefromremote.address central device address
    * @param onwritefromremote.data written data
    */
-  public onwritefromremote?: (address: BleDeviceAddress, data: number[]) => void;
+  public onwritefromremote?: (
+    address: BleDeviceAddress,
+    data: number[]
+  ) => void;
 
   /**
    * This is a callback function used when characteristic is read by an external device.
@@ -43,7 +55,7 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<Bl
    * @ignore
    */
   get parentName(): string | null {
-    return "service";
+    return 'service';
   }
 
   /**
@@ -57,7 +69,7 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<Bl
    * @ignore
    */
   get childrenName(): string | null {
-    return "descriptors";
+    return 'descriptors';
   }
 
   /**
@@ -110,7 +122,7 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<Bl
     this._maxValueSize = null;
     this._updateValueCallback = null;
 
-    if (!Array.isArray(obj.properties) && typeof obj.properties === "string") {
+    if (!Array.isArray(obj.properties) && typeof obj.properties === 'string') {
       this.properties = [obj.properties as BleAttributePropery];
     } else {
       this.properties = obj.properties || [];
@@ -119,14 +131,18 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<Bl
 
   /**
    * Add new descriptor
+   *
    * @param desc
    */
-  public addDescriptor(desc: BleDescriptorDefine | BleDescriptor): BleDescriptor {
+  public addDescriptor(
+    desc: BleDescriptorDefine | BleDescriptor
+  ): BleDescriptor {
     return this.addChild(desc);
   }
 
   /**
    * Get descriptor
+   *
    * @param uuid
    */
   public getDescriptor(uuid: UUID): BleDescriptor | null {
@@ -163,6 +179,7 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<Bl
 
   /**
    * Add property
+   *
    * @param param
    */
   public addProperty(param: BleAttributePropery) {
@@ -173,6 +190,7 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<Bl
 
   /**
    * Remove property
+   *
    * @param param
    */
   public removeProperty(param: BleAttributePropery) {
@@ -204,20 +222,20 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<Bl
       return result;
     }
     switch (name) {
-      case "subscribe":
+      case 'subscribe':
         this._onSubscribe(...(params as [any, any]));
         return true;
-      case "unsubscribe":
+      case 'unsubscribe':
         this._onUnsubscribe();
         return true;
-      case "notify":
+      case 'notify':
         this._onNotify();
         return true;
-      case "indicate":
+      case 'indicate':
         this._onIndicate();
         return true;
       default:
-        throw new Error("unknown emit");
+        throw new Error('unknown emit');
     }
   }
 

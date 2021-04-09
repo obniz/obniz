@@ -9,12 +9,12 @@ class MatrixLED_MAX7219 {
         this.width = 0;
         this.height = 0;
         this.vram = [[]];
-        this.keys = ["vcc", "gnd", "din", "cs", "clk"];
-        this.requiredKeys = ["din", "cs", "clk"];
+        this.keys = ['vcc', 'gnd', 'din', 'cs', 'clk'];
+        this.requiredKeys = ['din', 'cs', 'clk'];
     }
     static info() {
         return {
-            name: "MatrixLED_MAX7219",
+            name: 'MatrixLED_MAX7219',
         };
     }
     wired(obniz) {
@@ -28,9 +28,9 @@ class MatrixLED_MAX7219 {
         }
         // max 10Mhz but motor driver can't
         this.params.frequency = this.params.frequency || 10 * 1000 * 1000;
-        this.params.mode = "master";
+        this.params.mode = 'master';
         this.params.mosi = this.params.din;
-        this.params.drive = "3v";
+        this.params.drive = '3v';
         this.spi = this.obniz.getSpiWithConfig(this.params);
         // reset a onece
         this.cs.output(true);

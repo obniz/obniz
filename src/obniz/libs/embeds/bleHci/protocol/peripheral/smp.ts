@@ -3,11 +3,11 @@
  *
  * @ignore
  */
-import EventEmitter from "eventemitter3";
+import EventEmitter from 'eventemitter3';
 
-import BleHelper from "../../bleHelper";
-import crypto from "./crypto";
-import Mgmt from "./mgmt";
+import BleHelper from '../../bleHelper';
+import crypto from './crypto';
+import Mgmt from './mgmt';
 
 namespace SMP {
   export const CID: any = 0x0006;
@@ -23,7 +23,7 @@ namespace SMP {
   export const UNSPECIFIED: any = 0x08;
 }
 
-type SmpEventTypes = "fail";
+type SmpEventTypes = 'fail';
 
 /**
  * @ignore
@@ -54,30 +54,32 @@ export default class Smp extends EventEmitter<SmpEventTypes> {
     localAddress: any,
     remoteAddressType: any,
     remoteAddress: any,
-    hciProtocol: any,
+    hciProtocol: any
   ) {
     super();
     this._aclStream = aclStream;
     this._mgmt = new Mgmt(hciProtocol);
 
-    this._iat = Buffer.from([remoteAddressType === "random" ? 0x01 : 0x00]);
-    this._ia = BleHelper.hex2reversedBuffer(remoteAddress, ":");
-    this._rat = Buffer.from([localAddressType === "random" ? 0x01 : 0x00]);
-    this._ra = BleHelper.hex2reversedBuffer(localAddress, ":");
+    this._iat = Buffer.from([remoteAddressType === 'random' ? 0x01 : 0x00]);
+    this._ia = BleHelper.hex2reversedBuffer(remoteAddress, ':');
+    this._rat = Buffer.from([localAddressType === 'random' ? 0x01 : 0x00]);
+    this._ra = BleHelper.hex2reversedBuffer(localAddress, ':');
 
     this._stk = null;
     this._random = null;
     this._diversifier = null;
 
     this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
-    this.onAclStreamEncryptChangeBinded = this.onAclStreamEncryptChange.bind(this);
+    this.onAclStreamEncryptChangeBinded = this.onAclStreamEncryptChange.bind(
+      this
+    );
     this.onAclStreamLtkNegReplyBinded = this.onAclStreamLtkNegReply.bind(this);
     this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
 
-    this._aclStream.on("data", this.onAclStreamDataBinded);
-    this._aclStream.on("encryptChange", this.onAclStreamEncryptChangeBinded);
-    this._aclStream.on("ltkNegReply", this.onAclStreamLtkNegReplyBinded);
-    this._aclStream.on("end", this.onAclStreamEndBinded);
+    this._aclStream.on('data', this.onAclStreamDataBinded);
+    this._aclStream.on('encryptChange', this.onAclStreamEncryptChangeBinded);
+    this._aclStream.on('ltkNegReply', this.onAclStreamLtkNegReplyBinded);
+    this._aclStream.on('end', this.onAclStreamEndBinded);
   }
 
   public onAclStreamData(cid: any, data: any) {
@@ -103,7 +105,13 @@ export default class Smp extends EventEmitter<SmpEventTypes> {
       if (this._stk && this._diversifier && this._random) {
         this.write(Buffer.concat([Buffer.from([SMP.ENCRYPT_INFO]), this._stk]));
 
-        this.write(Buffer.concat([Buffer.from([SMP.MASTER_IDENT]), this._diversifier, this._random]));
+        this.write(
+          Buffer.concat([
+            Buffer.from([SMP.MASTER_IDENT]),
+            this._diversifier,
+            this._random,
+          ])
+        );
       }
     }
   }
@@ -111,14 +119,20 @@ export default class Smp extends EventEmitter<SmpEventTypes> {
   public onAclStreamLtkNegReply() {
     this.write(Buffer.from([SMP.PAIRING_FAILED, SMP.UNSPECIFIED]));
 
-    this.emit("fail");
+    this.emit('fail');
   }
 
   public onAclStreamEnd() {
-    this._aclStream.removeListener("data", this.onAclStreamDataBinded);
-    this._aclStream.removeListener("encryptChange", this.onAclStreamEncryptChangeBinded);
-    this._aclStream.removeListener("ltkNegReply", this.onAclStreamLtkNegReplyBinded);
-    this._aclStream.removeListener("end", this.onAclStreamEndBinded);
+    this._aclStream.removeListener('data', this.onAclStreamDataBinded);
+    this._aclStream.removeListener(
+      'encryptChange',
+      this.onAclStreamEncryptChangeBinded
+    );
+    this._aclStream.removeListener(
+      'ltkNegReply',
+      this.onAclStreamLtkNegReplyBinded
+    );
+    this._aclStream.removeListener('end', this.onAclStreamEndBinded);
   }
 
   public handlePairingRequest(data: any) {
@@ -139,14 +153,23 @@ export default class Smp extends EventEmitter<SmpEventTypes> {
   public handlePairingConfirm(data: any) {
     this._pcnf = data;
 
-    this._tk = Buffer.from("00000000000000000000000000000000", "hex");
+    this._tk = Buffer.from('00000000000000000000000000000000', 'hex');
     this._r = crypto.r();
 
     this.write(
       Buffer.concat([
         Buffer.from([SMP.PAIRING_CONFIRM]),
-        crypto.c1(this._tk, this._r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
-      ]),
+        crypto.c1(
+          this._tk,
+          this._r,
+          this._pres,
+          this._preq,
+          this._iat,
+          this._ia,
+          this._rat,
+          this._ra
+        ),
+      ])
     );
   }
 
@@ -155,26 +178,43 @@ export default class Smp extends EventEmitter<SmpEventTypes> {
 
     const pcnf: any = Buffer.concat([
       Buffer.from([SMP.PAIRING_CONFIRM]),
-      crypto.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
+      crypto.c1(
+        this._tk,
+        r,
+        this._pres,
+        this._preq,
+        this._iat,
+        this._ia,
+        this._rat,
+        this._ra
+      ),
     ]);
 
-    if (this._pcnf.toString("hex") === pcnf.toString("hex")) {
-      this._diversifier = Buffer.from("0000", "hex");
-      this._random = Buffer.from("0000000000000000", "hex");
+    if (this._pcnf.toString('hex') === pcnf.toString('hex')) {
+      this._diversifier = Buffer.from('0000', 'hex');
+      this._random = Buffer.from('0000000000000000', 'hex');
       this._stk = crypto.s1(this._tk, this._r, r);
 
-      this._mgmt.addLongTermKey(this._ia, this._iat, 0, 0, this._diversifier, this._random, this._stk);
+      this._mgmt.addLongTermKey(
+        this._ia,
+        this._iat,
+        0,
+        0,
+        this._diversifier,
+        this._random,
+        this._stk
+      );
 
       this.write(Buffer.concat([Buffer.from([SMP.PAIRING_RANDOM]), this._r]));
     } else {
       this.write(Buffer.from([SMP.PAIRING_FAILED, SMP.PAIRING_CONFIRM]));
 
-      this.emit("fail");
+      this.emit('fail');
     }
   }
 
   public handlePairingFailed(data: any) {
-    this.emit("fail");
+    this.emit('fail');
   }
 
   public write(data: any) {

@@ -2,14 +2,15 @@
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-import { ComponentAbstract } from "../ComponentAbstact";
+import { ComponentAbstract } from '../ComponentAbstact';
 /**
  * switch state
  */
-declare type ObnizSwitchState = "none" | "push" | "left" | "right";
+declare type ObnizSwitchState = 'none' | 'push' | 'left' | 'right';
 declare type ObnizSwitchCallback = (result: ObnizSwitchState) => void;
 /**
  * The embedded switch on obniz Board.
+ *
  * @category Embeds
  */
 export default class ObnizSwitch extends ComponentAbstract {

@@ -2,9 +2,10 @@
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-import Obniz from "../../index";
-import { ComponentAbstract } from "../ComponentAbstact";
-import { AnimationStatus } from "./common";
+import Obniz from '../../index';
+import { ComponentAbstract } from '../ComponentAbstact';
+import { AnimationStatus } from './common';
+export declare type DirectiveAnimationFrameFunction = (index: number) => void;
 export interface DirectiveAnimationFrame {
     /**
      * frame duration time in milliseconds
@@ -12,9 +13,10 @@ export interface DirectiveAnimationFrame {
     duration: number;
     /**
      * function of frame io config
+     *
      * @param state.index frame index
      */
-    state: (index: number) => void;
+    state: DirectiveAnimationFrameFunction;
 }
 /**
  * @category Peripherals

@@ -2,10 +2,12 @@
  * @packageDocumentation
  * @module Parts.AnalogTemperatureSensor
  */
-import Obniz from "../../../obniz";
-import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
+import Obniz from '../../../obniz';
+import PeripheralAD from '../../../obniz/libs/io_peripherals/ad';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface AnalogTemperatureSensorOptions {
   vcc?: number;
@@ -24,9 +26,9 @@ export default class AnalogTemperatureSensor implements ObnizPartsInterface {
   protected ad!: PeripheralAD;
 
   constructor() {
-    this.keys = ["vcc", "gnd", "output"];
-    this.requiredKeys = ["output"];
-    this.drive = "5v";
+    this.keys = ['vcc', 'gnd', 'output'];
+    this.requiredKeys = ['output'];
+    this.drive = '5v';
   }
 
   public wired(obniz: Obniz) {

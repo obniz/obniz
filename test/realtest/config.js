@@ -54,8 +54,8 @@ const check_io = json.io;
 
 function waitForConenct(done) {
   if (
-    (obnizA === undefined && json.board.some(board => board === 'obnizA')) ||
-    (obnizB === undefined && json.board.some(board => board === 'obnizB')) ||
+    (obnizA === undefined && json.board.some((board) => board === 'obnizA')) ||
+    (obnizB === undefined && json.board.some((board) => board === 'obnizB')) ||
     checkBoard === undefined
   ) {
     connectTwoObniz(done);
@@ -95,13 +95,13 @@ function connectTwoObniz(done, params) {
     if (process.env.DEBUG) {
       checkBoard.debugprint = true;
     }
-    if (json.board.some(board => board === 'obnizA')) {
+    if (json.board.some((board) => board === 'obnizA')) {
       obnizA = new Obniz(obnizA_ID, { local_connect });
       if (process.env.DEBUG) {
         obnizA.debugprint = true;
       }
       obnizA.onconnect = () => {
-        if (json.board.some(board => board === 'obnizB')) {
+        if (json.board.some((board) => board === 'obnizB')) {
           obnizB = new Obniz(obnizB_ID, { local_connect });
           if (process.env.DEBUG) {
             obnizB.debugprint = true;
@@ -114,7 +114,7 @@ function connectTwoObniz(done, params) {
         }
       };
     } else {
-      if (json.board.some(board => board === 'obnizB')) {
+      if (json.board.some((board) => board === 'obnizB')) {
         obnizB = new Obniz(obnizB_ID, { local_connect: local_connect });
         if (process.env.DEBUG) {
           obnizB.debugprint = true;

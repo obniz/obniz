@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @module Parts.S11059
  */
-import Obniz from "../../../obniz";
-import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface S11059Options {
     vcc?: number;
     sda?: number;
@@ -28,5 +28,9 @@ export default class S11059 implements ObnizPartsInterface {
     constructor();
     wired(obniz: Obniz): void;
     init(gain: S11059Gain, intergerTime: S11059IntergerTime): void;
+    /**
+     * @deprecated
+     */
     getVal(): Promise<number[]>;
+    getValWait(): Promise<number[]>;
 }

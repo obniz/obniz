@@ -3,14 +3,21 @@
  * @module ObnizCore.Components
  */
 
-import Obniz from "../../index";
-import { ComponentAbstract } from "../ComponentAbstact";
-import ObnizUtil from "../utils/util";
-import { BitType, DriveType, FlowControlType, ParityType, PullType, StopBitType } from "./common";
+import Obniz from '../../index';
+import { ComponentAbstract } from '../ComponentAbstact';
+import ObnizUtil from '../utils/util';
+import {
+  BitType,
+  DriveType,
+  FlowControlType,
+  ParityType,
+  PullType,
+  StopBitType,
+} from './common';
 
 export interface PeripheralUARTOptions {
   /**
-   *  Pin no of tx is used for sending data from obniz Board to parts.
+   * Pin no of tx is used for sending data from obniz Board to parts.
    */
   tx: number;
 
@@ -74,6 +81,7 @@ export interface PeripheralUARTOptions {
 
 /**
  * Uart module
+ *
  * @category Peripherals
  */
 export default class PeripheralUART extends ComponentAbstract {
@@ -114,7 +122,7 @@ export default class PeripheralUART extends ComponentAbstract {
     super(obniz);
     this.id = id;
 
-    this.on("/response/uart/receive", (obj) => {
+    this.on('/response/uart/receive', (obj) => {
       if (this.onreceive) {
         const string: any = this.tryConvertString(obj.data);
         this.Obniz._runUserCreatedFunction(this.onreceive, obj.data, string);
@@ -132,44 +140,47 @@ export default class PeripheralUART extends ComponentAbstract {
    * It starts uart on io tx, rx.
    *
    * You can start uart without much configuration. Just use as below.
+   *
    * @param params
    */
   public start(params: PeripheralUARTOptions) {
-    const err: any = ObnizUtil._requiredKeys(params, ["tx", "rx"]);
+    const err: any = ObnizUtil._requiredKeys(params, ['tx', 'rx']);
     if (err) {
-      throw new Error("uart start param '" + err + "' required, but not found ");
+      throw new Error(
+        "uart start param '" + err + "' required, but not found "
+      );
     }
     this.params = ObnizUtil._keyFilter(params, [
-      "tx",
-      "rx",
-      "baud",
-      "stop",
-      "bits",
-      "parity",
-      "flowcontrol",
-      "rts",
-      "cts",
-      "drive",
-      "pull",
-      "gnd",
+      'tx',
+      'rx',
+      'baud',
+      'stop',
+      'bits',
+      'parity',
+      'flowcontrol',
+      'rts',
+      'cts',
+      'drive',
+      'pull',
+      'gnd',
     ]);
 
-    const ioKeys: any = ["rx", "tx", "rts", "cts", "gnd"];
+    const ioKeys: any = ['rx', 'tx', 'rts', 'cts', 'gnd'];
     for (const key of ioKeys) {
       if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
         throw new Error("uart start param '" + key + "' are to be valid io no");
       }
     }
 
-    if (this.params.hasOwnProperty("drive")) {
+    if (this.params.hasOwnProperty('drive')) {
       this.Obniz.getIO(this.params.rx).drive(this.params.drive);
       this.Obniz.getIO(this.params.tx).drive(this.params.drive);
     } else {
-      this.Obniz.getIO(this.params.rx).drive("5v");
-      this.Obniz.getIO(this.params.tx).drive("5v");
+      this.Obniz.getIO(this.params.rx).drive('5v');
+      this.Obniz.getIO(this.params.tx).drive('5v');
     }
 
-    if (this.params.hasOwnProperty("pull")) {
+    if (this.params.hasOwnProperty('pull')) {
       this.Obniz.getIO(this.params.rx).pull(this.params.pull);
       this.Obniz.getIO(this.params.tx).pull(this.params.pull);
     } else {
@@ -177,28 +188,28 @@ export default class PeripheralUART extends ComponentAbstract {
       this.Obniz.getIO(this.params.tx).pull(null);
     }
 
-    if (this.params.hasOwnProperty("gnd")) {
+    if (this.params.hasOwnProperty('gnd')) {
       this.Obniz.getIO(this.params.gnd).output(false);
       const ioNames: any = {};
-      ioNames[this.params.gnd] = "gnd";
+      ioNames[this.params.gnd] = 'gnd';
       if (this.Obniz.display) {
-        this.Obniz.display.setPinNames("uart" + this.id, ioNames);
+        this.Obniz.display.setPinNames('uart' + this.id, ioNames);
       }
     }
 
     const obj: any = {};
     const sendParams: any = ObnizUtil._keyFilter(this.params, [
-      "tx",
-      "rx",
-      "baud",
-      "stop",
-      "bits",
-      "parity",
-      "flowcontrol",
-      "rts",
-      "cts",
+      'tx',
+      'rx',
+      'baud',
+      'stop',
+      'bits',
+      'parity',
+      'flowcontrol',
+      'rts',
+      'cts',
     ]);
-    obj["uart" + this.id] = sendParams;
+    obj['uart' + this.id] = sendParams;
     this.Obniz.send(obj);
     this.received = [];
     this.used = true;
@@ -229,6 +240,7 @@ export default class PeripheralUART extends ComponentAbstract {
    * obniz.uart0.send(0x11);
    * obniz.uart0.send([0x11, 0x45, 0x44]);
    * ```
+   *
    * @param data
    */
   public send(data: string | number | number[] | Buffer) {
@@ -239,20 +251,20 @@ export default class PeripheralUART extends ComponentAbstract {
     if (data === undefined) {
       return;
     }
-    if (typeof data === "number") {
+    if (typeof data === 'number') {
       data = [data];
     }
     if (this.Obniz.isNode && data instanceof Buffer) {
       send_data = [...data];
     } else if (data.constructor === Array) {
       send_data = data;
-    } else if (typeof data === "string") {
+    } else if (typeof data === 'string') {
       const buf: any = Buffer.from(data);
       send_data = [...buf];
     }
     const obj: any = {};
-    obj["uart" + this.id] = {};
-    obj["uart" + this.id].data = send_data;
+    obj['uart' + this.id] = {};
+    obj['uart' + this.id].data = send_data;
     //  console.log(obj);
     this.Obniz.send(obj);
   }
@@ -294,6 +306,7 @@ export default class PeripheralUART extends ComponentAbstract {
    *   await obniz.wait(10);  //wait for 10ms
    * }
    * ```
+   *
    * @return received data. If not exist data, return [].
    */
   public readBytes(): number[] {
@@ -378,7 +391,7 @@ export default class PeripheralUART extends ComponentAbstract {
    */
   public end() {
     const obj: any = {};
-    obj["uart" + this.id] = null;
+    obj['uart' + this.id] = null;
     this.params = null;
     this.Obniz.send(obj);
     this.used = false;
@@ -400,7 +413,7 @@ export default class PeripheralUART extends ComponentAbstract {
    * @private
    */
   public schemaBasePath(): string {
-    return "uart" + this.id;
+    return 'uart' + this.id;
   }
 
   /**

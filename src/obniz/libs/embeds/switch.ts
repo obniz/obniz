@@ -3,16 +3,17 @@
  * @module ObnizCore.Components
  */
 
-import { ComponentAbstract } from "../ComponentAbstact";
+import { ComponentAbstract } from '../ComponentAbstact';
 
 /**
  * switch state
  */
-type ObnizSwitchState = "none" | "push" | "left" | "right";
+type ObnizSwitchState = 'none' | 'push' | 'left' | 'right';
 type ObnizSwitchCallback = (result: ObnizSwitchState) => void;
 
 /**
  * The embedded switch on obniz Board.
+ *
  * @category Embeds
  */
 export default class ObnizSwitch extends ComponentAbstract {
@@ -41,7 +42,7 @@ export default class ObnizSwitch extends ComponentAbstract {
 
   constructor(obniz: any, info: any) {
     super(obniz);
-    this.on("/response/switch/change", (obj) => {
+    this.on('/response/switch/change', (obj) => {
       this.state = obj.state;
       this.Obniz._runUserCreatedFunction(this.onchange, this.state);
     });
@@ -64,8 +65,11 @@ export default class ObnizSwitch extends ComponentAbstract {
    */
   public async getWait(): Promise<ObnizSwitchState> {
     const obj: any = {};
-    obj.switch = "get";
-    const data = await this.sendAndReceiveJsonWait(obj, "/response/switch/change");
+    obj.switch = 'get';
+    const data = await this.sendAndReceiveJsonWait(
+      obj,
+      '/response/switch/change'
+    );
     return data.state;
   }
 
@@ -91,7 +95,7 @@ export default class ObnizSwitch extends ComponentAbstract {
    */
   public async stateWait(state: ObnizSwitchState): Promise<void> {
     while (1) {
-      const data = await this.receiveJsonWait("/response/switch/change");
+      const data = await this.receiveJsonWait('/response/switch/change');
       if (state === data.state) {
         return;
       }
@@ -99,10 +103,10 @@ export default class ObnizSwitch extends ComponentAbstract {
   }
 
   public schemaBasePath(): string {
-    return "switch";
+    return 'switch';
   }
 
   protected _reset() {
-    this.state = "none";
+    this.state = 'none';
   }
 }

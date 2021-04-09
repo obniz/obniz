@@ -11,20 +11,20 @@ const i2cCompass_1 = __importDefault(require("../../i2cCompass"));
 class AK8963 extends i2cCompass_1.default {
     constructor() {
         super();
-        this.defaultUnit = "uT";
+        this.defaultUnit = 'uT';
         this.i2cinfo = {
             address: 0x0c,
             clock: 100000,
-            voltage: "3v",
-            pull: "3v",
+            voltage: '3v',
+            pull: '3v',
         };
         this.sf = this.defaultUnit;
         this.so = AK8963.scales.so_16bit;
-        this.range = "4912uT";
+        this.range = '4912uT';
     }
     static info() {
         return {
-            name: "AK8963",
+            name: 'AK8963',
         };
     }
     wired(obniz) {
@@ -40,12 +40,12 @@ class AK8963 extends i2cCompass_1.default {
                 this.write(0x0a, [0x16]); // 16bit
                 break;
             default:
-                throw new Error("Invalid ADC_cycle value. Valid values are 8,100.");
+                throw new Error('Invalid ADC_cycle value. Valid values are 8,100.');
         }
     }
     async getAdcWait() {
         const raw = await this.readWait(0x03, 7);
-        return AK8963.charArrayToXyz(raw, "l");
+        return AK8963.charArrayToXyz(raw, 'l');
     }
 }
 exports.default = AK8963;

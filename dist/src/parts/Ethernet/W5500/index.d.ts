@@ -2,10 +2,10 @@
  * @packageDocumentation
  * @module Parts.W5500
  */
-import Obniz from "../../../obniz";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
+import PeripheralSPI from '../../../obniz/libs/io_peripherals/spi';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 /** W5500 type definitions and constants W5500の型定義や定数 */
 export declare namespace W5500Parts {
     /** Pin assignment and SPI options ピンアサインとSPIオプション */
@@ -117,7 +117,7 @@ export declare namespace W5500Parts {
         powerOff?: boolean;
     }
     /** Interrupt type 割り込みの種類 */
-    type Interrupt = "IPConflict" | "DestUnreach" | "PPPoEClose" | "MagicPacket";
+    type Interrupt = 'IPConflict' | 'DestUnreach' | 'PPPoEClose' | 'MagicPacket';
     /** Flags corresponding to interrupts 割り込みに対応するフラグ */
     const InterruptFlags: {
         [key in Interrupt]: number;
@@ -183,6 +183,7 @@ export declare class W5500 implements ObnizPartsInterface {
      * Initialize W5500 and write common settings
      *
      * W5500を初期化、共通設定の書き込み
+     *
      * @param config W5500 config W5500の設定内容
      * @return Write result 書き込み結果
      */
@@ -201,6 +202,7 @@ export declare class W5500 implements ObnizPartsInterface {
      * 特定の割り込みをキャッチするハンドラーを設定
      *
      * 実際にキャッチするにはcheckInterrupt()を定期的に実行
+     *
      * @param name Name of the interrupt to get 取得する割り込みの名前 (IPConflict | DestUnreach | PPPoEClose | MagicPacket)
      * @param handler Callback function, extra is only when name=DestUnreach
      *
@@ -215,6 +217,7 @@ export declare class W5500 implements ObnizPartsInterface {
      * 全ての割り込みをキャッチするハンドラーを設定
      *
      * 実際にキャッチするにはcheckInterrupt()を定期的に実行
+     *
      * @param handler Callback function, name is the name of the interrupt received, extra is only when name=DestUnreach
      *
      * コールバック関数、nameには受け取った割り込み名が入ります、extraはname=DestUnreachのときのみ
@@ -224,6 +227,7 @@ export declare class W5500 implements ObnizPartsInterface {
      * Wait until the connection with the router is established
      *
      * ルーターとの接続が確立されるまで待機
+     *
      * @return Physical layer status 物理層のステータス
      */
     waitLinkUpWait(): Promise<W5500Parts.PhysicalLayerStatus>;
@@ -231,6 +235,7 @@ export declare class W5500 implements ObnizPartsInterface {
      * Get an instance of W5500Socket, generate if necessary
      *
      * W5500Socketのインスタンスを取得、必要ならば生成
+     *
      * @param socketId Socket ID (0\~7) ソケットID (0\~7)
      * @return Instance of W5500Socket W5500Socketのインスタンス
      */
@@ -239,6 +244,7 @@ export declare class W5500 implements ObnizPartsInterface {
      * Create an instance of W5500Socket in the frame of the unused socket
      *
      * 使っていないソケットの枠にW5500Socketのインスタンスを生成
+     *
      * @return Instance of W5500Socket W5500Socketのインスタンス
      */
     getNewSocket(): W5500Socket | null;
@@ -246,6 +252,7 @@ export declare class W5500 implements ObnizPartsInterface {
      * Whether SPI is available
      *
      * SPIが利用可能かどうか
+     *
      * @return SPI status SPIのステータス
      */
     getSpiStatus(): boolean;
@@ -257,6 +264,7 @@ export declare class W5500 implements ObnizPartsInterface {
     hardResetWait(): Promise<void>;
     /**
      * Set mode モードを設定
+     *
      * @param config WakeOnLAN(WoL), PingBlock, PPPoE and ForceARP
      * @return Write result 書き込み結果
      */
@@ -265,24 +273,28 @@ export declare class W5500 implements ObnizPartsInterface {
      * Set IPv4 address of default gateway
      *
      * デフォルトゲートウェイのIPv4アドレスを設定
+     *
      * @param ip IPv4 address IPv4アドレス
      * @return Write result 書き込み結果
      */
     setGatewayWait(ip: string): Promise<boolean>;
     /**
      * Set subnet mask サブネットマスクを設定
+     *
      * @param mask Subnet mask サブネットマスク
      * @return Write result 書き込み結果
      */
     setSubnetMask(mask: string): Promise<boolean>;
     /**
      * Set MAC address MACアドレスを設定
+     *
      * @param mac MAC address MACアドレス
      * @return Write result 書き込み結果
      */
     setMacAddressWait(mac: string): Promise<boolean>;
     /**
      * Set local IPv4 address ローカルIPv4アドレスを設定
+     *
      * @param ip IPv4 address IPv4アドレス
      * @return Write result 書き込み結果
      */
@@ -299,6 +311,7 @@ export declare class W5500 implements ObnizPartsInterface {
      * ソケットの割り込みもチェックします
      *
      * 割り込みがあった場合、事前に設定されたhandlerを呼び出します
+     *
      * @param disableAllSocketCheck When it's true, do not call checkInterruptWait() for all sockets
      *
      * trueの時、全ソケットのcheckInterrupt()呼び出しを行いません
@@ -309,18 +322,21 @@ export declare class W5500 implements ObnizPartsInterface {
     checkInterruptWait(disableAllSocketCheck?: boolean): Promise<boolean>;
     /**
      * Set interrupt mask 割り込みマスクを設定
+     *
      * @param mask Mask マスク
      * @return Write result 書き込み結果
      */
     setInterruptMaskWaut(mask: number): Promise<boolean>;
     /**
      * Set retry interval (Initial value: 200ms) 再試行間隔を設定 (初期値: 200ms)
+     *
      * @param time Retry interval (in 0.2ms increments) 再試行間隔 (0.2ms刻み) (0\~6553.5ms)
      * @return Write result 書き込み結果
      */
     setRetryTimeWait(time: number): Promise<boolean>;
     /**
      * Set retry count (Initial value: 8 times) 再試行回数を設定 (初期値: 8回)
+     *
      * @param count retry count 再試行回数 (0\~255)
      * @return Write result 書き込み結果
      */
@@ -329,6 +345,7 @@ export declare class W5500 implements ObnizPartsInterface {
      * Set time to send echo request for Link Control Protocol
      *
      * LinkControlプロトコルのechoリクエストを送っている時間を設定
+     *
      * @param time time (in 25ms increments) 時間 (25ms刻み) (0\~6375ms)
      * @return Write result 書き込み結果
      */
@@ -337,24 +354,28 @@ export declare class W5500 implements ObnizPartsInterface {
      * Set 1 byte of the 4 bytes magic number of the Link Control protocol echo request
      *
      * LinkControlプロトコルのechoリクエストの4bytesマジックナンバーの1byteを設定
+     *
      * @param num Magic number マジックナンバー
      * @return Write result 書き込み結果
      */
     setPPPLinkControlProtocolMagicNumberWait(num: number): Promise<boolean>;
     /**
      * Set MAC address of PPPoE server PPPoEサーバーのMACアドレスを設定
+     *
      * @param mac MAC address MACアドレス
      * @return Write result 書き込み結果
      */
     setPPPoEMacAddressWait(mac: string): Promise<boolean>;
     /**
      * Set session ID of PPPoE server PPPoEサーバーのセッションIDを設定
+     *
      * @param id Session ID セッションID
      * @return Write result 書き込み結果
      */
     setPPPoESessionIDWait(id: number): Promise<boolean>;
     /**
      * Set maximum receiving unit size of PPPoE PPPoEの最大受信ユニットサイズを設定
+     *
      * @param size Unit size ユニットサイズ
      * @return Write result 書き込み結果
      */
@@ -363,6 +384,7 @@ export declare class W5500 implements ObnizPartsInterface {
      * Get the IPv4 address when the destination could not be reached
      *
      * 宛先に到達できなかった時のIPv4アドレスを取得
+     *
      * @return IPv4 address IPv4アドレス
      */
     getUnreachableIP(): Promise<string>;
@@ -370,22 +392,26 @@ export declare class W5500 implements ObnizPartsInterface {
      * Get the port number when the destination could not be reached
      *
      * 宛先に到達できなかった時のポート番号を取得
+     *
      * @return Port number ポート番号
      */
     getUnreachablePort(): Promise<number>;
     /**
      * Get physical layer status 物理層のステータス取得
+     *
      * @return Physical layer status 物理層のステータス
      */
     getPhysicalStatusWait(): Promise<W5500Parts.PhysicalLayerStatus>;
     /**
      * Set physical layer config 物理層の設定
+     *
      * @param config Physical layer config 物理層の設定内容
      * @return Write result 書き込み結果
      */
     setPhysicalConfigWait(config: W5500Parts.PhysicalLayerOptions): Promise<boolean>;
     /**
      * Get chip version チップバージョンの取得
+     *
      * @return Chip version チップバージョン
      */
     getVersion(): Promise<number>;
@@ -393,6 +419,7 @@ export declare class W5500 implements ObnizPartsInterface {
      * Write after validating the IPv4 address of the character string
      *
      * 文字列のIPv4アドレスをバリデーションチェックしてから書き込み
+     *
      * @param address Start address of write destination 書き込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param ip IPv4 address IPv4アドレス
@@ -404,6 +431,7 @@ export declare class W5500 implements ObnizPartsInterface {
      * Write after validating the MAC address of the character string
      *
      * 文字列のMACアドレスをバリデーションチェックしてから書き込み
+     *
      * @param address Start address of write destination 書き込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param mac MAC address MACアドレス
@@ -423,6 +451,7 @@ export declare class W5500 implements ObnizPartsInterface {
      * FDMのとき、長さが4より大きいときに使用
      *
      * VDMのとき、長さが1021より大きいときに使用
+     *
      * @param address Start address of write destination 書き込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param data Raw byte data Raw byte data バイト列データ
@@ -435,6 +464,7 @@ export declare class W5500 implements ObnizPartsInterface {
      * Writing a value to the area for one address
      *
      * 1アドレス分の領域への値の書き込み
+     *
      * @param address Start address of write destination 書き込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param num Value 値 (0\~255)
@@ -446,6 +476,7 @@ export declare class W5500 implements ObnizPartsInterface {
      * Writing a value to the area for two addresses
      *
      * 2アドレス分の領域への値の書き込み
+     *
      * @param address Start address of write destination 書き込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param num Value 値 (0\~65535)
@@ -455,6 +486,7 @@ export declare class W5500 implements ObnizPartsInterface {
     num2WriteWait(address: number, bsb: number, num: number): Promise<boolean>;
     /**
      * Read IPv4 address data IPv4アドレスデータの読み込み
+     *
      * @param address Start address of read destination 読み込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @return IPv4 address IPv4アドレス
@@ -473,6 +505,7 @@ export declare class W5500 implements ObnizPartsInterface {
      * FDMのとき、長さが4より大きいときに使用
      *
      * VDMのとき、長さが1021より大きいときに使用
+     *
      * @param address Start address of read destination 読み込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param length Data length (byte length) データの長さ (バイト長)
@@ -484,6 +517,7 @@ export declare class W5500 implements ObnizPartsInterface {
      * Reading values from the area for one address
      *
      * 1アドレス分の領域からの値の読み込み
+     *
      * @param address Start address of read destination 読み込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @return Value 値 (0\~255)
@@ -494,6 +528,7 @@ export declare class W5500 implements ObnizPartsInterface {
      * Reading values from the area for two addresses
      *
      * 2アドレス分の領域からの値の読み込み
+     *
      * @param address Start address of read destination 読み込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @return Value 値 (0\~65535)
@@ -504,6 +539,7 @@ export declare class W5500 implements ObnizPartsInterface {
      * Validate and write the address based on the definition
      *
      * アドレスを定義に基づいてバリデーションチェックして書き込み
+     *
      * @param address Start address of write destination 書き込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param val String of the address to write 書き込むアドレスの文字列
@@ -527,6 +563,7 @@ export declare class W5500 implements ObnizPartsInterface {
      * FDMのとき、長さは4まで
      *
      * VDMのとき、長さは1021まで
+     *
      * @param address Start address of write destination 書き込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param data Raw byte data バイト列データ
@@ -539,6 +576,7 @@ export declare class W5500 implements ObnizPartsInterface {
      * Reading normal data
      *
      * 通常データの読み込み
+     *
      * @param address Start address of read destination 読み込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param length Data length (byte length) データの長さ (バイト長)
@@ -550,6 +588,7 @@ export declare class W5500 implements ObnizPartsInterface {
      * 読み書き共通のメソッド、返却されたデータを検証
      *
      * Common read / write method, verify returned data
+     *
      * @param address Start address of operation destination 操作先の先頭アドレス (0x0000\~0xFFFF)
      * @param bsb Block select bit ブロック選択ビット (0b00000\~0b11111)
      * @param mode Read or write 読み込みか書き込みか (Read|Write)
@@ -650,11 +689,11 @@ export declare namespace W5500SocketParts {
         onAllInterrupt?: (socket: W5500Socket, name: W5500SocketParts.Interrupt, extra?: number[] | string | W5500Parts.DestInfo) => Promise<void>;
     }
     /** Socket available protocol ソケットの使用可能プロトコル */
-    type Protocol = "TCPClient" | "TCPServer" | "UDP" | null;
+    type Protocol = 'TCPClient' | 'TCPServer' | 'UDP' | null;
     /** Buffer size バッファサイズ */
     type BufferSize = 0 | 1 | 2 | 4 | 8 | 16;
     /** Socket available commands ソケットの使用可能コマンド */
-    type Command = "Open" | "Listen" | "Connect" | "Disconnect" | "Close" | "Send" | "SendMAC" | "SendKeep" | "Receive";
+    type Command = 'Open' | 'Listen' | 'Connect' | 'Disconnect' | 'Close' | 'Send' | 'SendMAC' | 'SendKeep' | 'Receive';
     /**
      * Value corresponding to socket command
      *
@@ -664,7 +703,7 @@ export declare namespace W5500SocketParts {
         [key in Command]: number;
     };
     /** Socket status ソケットのステータス */
-    type Status = "Closed" | "Init" | "Listen" | "SynSent" | "SynReceive" | "Established" | "FinWait" | "Closing" | "TimeWait" | "CloseWait" | "LastACK" | "UDP" | "MACRAW";
+    type Status = 'Closed' | 'Init' | 'Listen' | 'SynSent' | 'SynReceive' | 'Established' | 'FinWait' | 'Closing' | 'TimeWait' | 'CloseWait' | 'LastACK' | 'UDP' | 'MACRAW';
     /**
      * Value corresponding to socket status
      *
@@ -674,7 +713,7 @@ export declare namespace W5500SocketParts {
         [key in Status]: number;
     };
     /** Socket interrupt ソケットの割り込み */
-    type Interrupt = "SendOK" | "Timeout" | "ReceiveData" | "Disconnect" | "ConnectSuccess";
+    type Interrupt = 'SendOK' | 'Timeout' | 'ReceiveData' | 'Disconnect' | 'ConnectSuccess';
     /**
      * Flags corresponding to socket interrupts
      *
@@ -723,6 +762,7 @@ export declare class W5500Socket {
      * Write the socket settings and open the socket (Connect / Listen is also executed for TCP)
      *
      * ソケット設定の書き込みをし、ソケットをOpenに(TCPの時はConnect/Listenも実行)
+     *
      * @param config Socket config ソケットの設定内容
      * @return Write result 書き込み結果
      */
@@ -733,18 +773,21 @@ export declare class W5500Socket {
     finalizeWait(): Promise<void>;
     /**
      * Send data データを送信
+     *
      * @param data Raw byte data or string to send 送信するバイトデータまたは文字列
      * @return Write result 書き込み結果
      */
     sendDataWait(data: number[] | string): Promise<boolean>;
     /**
      * Send data, no write check データを送信、書き込みチェックなし
+     *
      * @param data Raw byte data or string to send 送信するバイトデータまたは文字列
      * @return Write result 書き込み結果
      */
     sendDataFastWait(data: number[] | string): Promise<boolean>;
     /**
      * Read the received data 受信されたデータを読取
+     *
      * @return Raw byte data or string to receive 受信データまたは文字列
      */
     receiveDataWait(): Promise<string | number[]>;
@@ -756,6 +799,7 @@ export declare class W5500Socket {
      * 特定の割り込みをキャッチするハンドラーを設定
      *
      * 実際にキャッチするにはcheckInterrupt()を定期的に実行
+     *
      * @param name The name of the interrupt to get 取得する割り込みの名前 (SendOK | Timeout | ReceiveData | Disconnect | ConnectSuccess)
      * @param handler Callback function, extra is only when name=ReceiveData and when name=ConnectSuccess and protocol=TCPServer
      *
@@ -770,6 +814,7 @@ export declare class W5500Socket {
      * 全ての割り込みをキャッチするハンドラーを設定
      *
      * 実際にキャッチするにはcheckInterrupt()を定期的に実行
+     *
      * @param handler Callback function, name is the type of interrupt, extra is only when name=ReceiveData and when name=ConnectSuccess and protocol=TCPServer
      *
      * コールバック関数、nameは割り込みの種類、extraはname=ReceiveDataの時とname=ConnectSuccessかつprotocol=TCPServerの時のみ
@@ -777,17 +822,20 @@ export declare class W5500Socket {
     setAllInterruptHandler(handler: (socket: W5500Socket, name: W5500SocketParts.Interrupt, extra?: number[] | string | W5500Parts.DestInfo) => Promise<void>): (socket: W5500Socket, name: W5500SocketParts.Interrupt, extra?: string | number[] | W5500Parts.DestInfo | undefined) => Promise<void>;
     /**
      * Get the current protocol 現在のプロトコルを取得
+     *
      * @return Protocol プロトコル
      */
     getProtocol(): W5500SocketParts.Protocol;
     /**
      * Set mode モードを設定
+     *
      * @param config Multicast, BroardcastBlock, NoDelayACK, MulticastVer1, UnicastBlock and Protocol
      * @return Write result 書き込み結果
      */
     setModeWait(config: W5500SocketParts.Config): Promise<boolean>;
     /**
      * Send command コマンドを送信
+     *
      * @param command Command コマンド
      * @return Write result 書き込み結果
      */
@@ -800,6 +848,7 @@ export declare class W5500Socket {
      * 割り込みをチェック
      *
      * 割り込みがあった場合、事前に設定されたhandlerを呼び出します
+     *
      * @return Then whether you can check for interrupts
      *
      * 次に割り込みをチェックできるかどうか
@@ -807,11 +856,13 @@ export declare class W5500Socket {
     checkInterruptWait(): Promise<boolean | undefined>;
     /**
      * Get Status ステータスを取得
+     *
      * @return Status ステータス
      */
-    getStatusWait(): Promise<W5500SocketParts.Status | "UNKNOWN">;
+    getStatusWait(): Promise<W5500SocketParts.Status | 'UNKNOWN'>;
     /**
      * Set the connection source port 接続元ポートを設定
+     *
      * @param port Port number ポート番号
      * @return Write result 書き込み結果
      */
@@ -820,6 +871,7 @@ export declare class W5500Socket {
      * Set the MAC address of the connection destination (only if required by UDP)
      *
      * 接続先のMACアドレスを設定(UDPで必要な場合のみ)
+     *
      * @param mac MAC address MACアドレス
      * @return Write result 書き込み結果
      */
@@ -828,6 +880,7 @@ export declare class W5500Socket {
      * Set the IPv4 address of the connection destination
      *
      * 接続先のIPv4アドレスを設定
+     *
      * @param ip IPv4 address IPv4アドレス
      * @return Write result 書き込み結果
      */
@@ -836,6 +889,7 @@ export declare class W5500Socket {
      * Get the IPv4 address of the connection source (only for TCP server)
      *
      * 接続元のIPv4アドレスを取得(TCPサーバーのときのみ)
+     *
      * @return IPv4 address IPv4アドレス
      */
     getDestIPWait(): Promise<string>;
@@ -843,6 +897,7 @@ export declare class W5500Socket {
      * Set the port number of the connection destination
      *
      * 接続先のポート番号を設定
+     *
      * @param port Port number ポート番号
      * @return Write result 書き込み結果
      */
@@ -851,6 +906,7 @@ export declare class W5500Socket {
      * Get the port number of the connection source (only for TCP server)
      *
      * 接続元のポート番号を取得(TCPサーバーのときのみ)
+     *
      * @return Port number ポート番号
      */
     getDestPortWait(): Promise<number>;
@@ -858,24 +914,28 @@ export declare class W5500Socket {
      * Set maximum segment size (only if required by TCP)
      *
      * 最大セグメントサイズを設定(TCPで必要な場合のみ)
+     *
      * @param size 最大セグメントサイズ
      * @return Write result 書き込み結果
      */
     setMaxSegmentSizeWait(size: number): Promise<boolean>;
     /**
      * Set IP service type IPサービスタイプを設定
+     *
      * @param type IP service type IPサービスタイプ (1byte)
      * @return Write result 書き込み結果
      */
     setIPTypeOfServiceWait(type: number): Promise<boolean>;
     /**
      * Set TTL TTLを設定
+     *
      * @param ttl TTL (0\~65535)
      * @return Write result 書き込み結果
      */
     setTTLWait(ttl: number): Promise<boolean>;
     /**
      * Set buffer size バッファサイズを設定
+     *
      * @param size Buffer size バッファサイズ(KB)
      * @param address Start address of write destination 書き込み先の先頭アドレス
      * @return Write result 書き込み結果
@@ -884,6 +944,7 @@ export declare class W5500Socket {
     setBufferSizeWait(size: W5500SocketParts.BufferSize, address: number): Promise<boolean>;
     /**
      * Set receive buffer size 受信バッファサイズを設定
+     *
      * @param size Buffer size (KB) only to the power of 2, up to 16
      *
      * バッファサイズ(KB) 2の累乗のみ、16まで
@@ -892,6 +953,7 @@ export declare class W5500Socket {
     setRXBufferSizeWait(size: W5500SocketParts.BufferSize): Promise<boolean>;
     /**
      * Set send buffer size 送信バッファサイズを設定
+     *
      * @param size Buffer size (KB) only to the power of 2, up to 16
      *
      * バッファサイズ(KB) 2の累乗のみ、16まで
@@ -900,6 +962,7 @@ export declare class W5500Socket {
     setTXBufferSizeWait(size: W5500SocketParts.BufferSize): Promise<boolean>;
     /**
      * Get free size of send buffer 送信バッファの空きサイズを取得
+     *
      * @return Free size 空きサイズ
      */
     getTXFreeSizeWait(): Promise<number>;
@@ -907,6 +970,7 @@ export declare class W5500Socket {
      * Get the write start address of the send buffer
      *
      * 送信バッファの書き込み開始アドレスを取得
+     *
      * @return Address アドレス
      */
     getTXReadPointerWait(): Promise<number>;
@@ -914,12 +978,14 @@ export declare class W5500Socket {
      * Set the next write start address of the send buffer
      *
      * 送信バッファの次の書き込み開始アドレスを設定
+     *
      * @param pointer Address アドレス
      * @return Write result 書き込み結果
      */
     setTXWritePointerWait(pointer: number): Promise<boolean>;
     /**
      * Get the length of received data 受信データの長さを取得
+     *
      * @return Length 長さ
      */
     getRXReceiveSizeWait(): Promise<number>;
@@ -927,6 +993,7 @@ export declare class W5500Socket {
      * Get the read start address of the receive buffer
      *
      * 受信バッファの読み込み開始アドレスを取得
+     *
      * @return Address アドレス
      */
     getRXReadDataPointerWait(): Promise<number>;
@@ -934,6 +1001,7 @@ export declare class W5500Socket {
      * Set the next read start address of the receive buffer
      *
      * 受信バッファの次の読み込み開始アドレスを設定
+     *
      * @param pointer Address アドレス
      * @return Write result 書き込み結果
      */
@@ -942,11 +1010,13 @@ export declare class W5500Socket {
      * Get the write start address of the receive buffer
      *
      * 受信バッファの書き込み開始アドレスを取得
+     *
      * @return Address アドレス
      */
     getRXWritePointerWait(): Promise<number>;
     /**
      * Set IP header fragment IPヘッダーのフラグメントを設定
+     *
      * @param fragment IP header fragment IPヘッダーのフラグメント (0x0000\~0xFFFF)
      * @return Write result 書き込み結果
      */
@@ -955,6 +1025,7 @@ export declare class W5500Socket {
      * Set keep-alive transmission interval (only if TCP requires)
      *
      * keep-aliveの送信間隔を設定(TCPで必要な場合のみ)
+     *
      * @param time keep-alive transmission interval (sec) (0\~1275)
      *
      * keep-alive 送信間隔(秒)(0\~1275)
@@ -963,6 +1034,7 @@ export declare class W5500Socket {
     setKeepAliveTimerWait(time: number): Promise<boolean>;
     /**
      * Send data データを送信
+     *
      * @param data Raw byte data to send or string 送信するバイトデータまたは文字列
      * @param noWait Do not use spi.writeWait() when writing data
      *

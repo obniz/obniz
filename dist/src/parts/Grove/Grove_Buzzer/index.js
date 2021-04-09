@@ -6,12 +6,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_Buzzer {
     constructor() {
-        this.keys = ["signal", "gnd", "vcc", "grove"];
+        this.keys = ['signal', 'gnd', 'vcc', 'grove'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "Grove_Buzzer",
+            name: 'Grove_Buzzer',
         };
     }
     wired(obniz) {
@@ -20,14 +20,14 @@ class Grove_Buzzer {
         }
         else {
             this.obniz = obniz;
-            obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
             this.pwm = obniz.getFreePwm();
             this.pwm.start({ io: this.params.signal });
         }
     }
     play(freq) {
-        if (typeof freq !== "number") {
-            throw new Error("freq must be a number");
+        if (typeof freq !== 'number') {
+            throw new Error('freq must be a number');
         }
         freq = Math.floor(freq);
         if (freq > 0) {

@@ -20,11 +20,11 @@ set(address, value) method allows the user to set any of the configuration regis
 
 getWait(address) is an async method that allows the user to read any of the device's registers. 
 
-### await setLDO2Voltage(3);
+### await setLDO2VoltageWait(3);
 
 setLDO2Voltage(voltage) sets the output voltage level for LDO2 output. Voltage can be between 1.8V and 3V. On M5StickC this output drives the display backlight so it can be used to set the brightness for example.
 
-### await setLDO3Voltage(3);
+### await setLDO3VoltageWait(3);
 
 same as above expect for LDO3. Suspect on M5StickC it drives the ST7735S controller.
 
@@ -36,11 +36,11 @@ A quick way to set both LDO2 and LDO3 to 3V.
 
 A quick way to switch on both LDO2 and LDO3.
 
-### await toggleLDO2(false);
+### await toggleLDO2Wait(false);
 
 toggleLDO2(bool) is a method that allows the user to turn on/off LDO2 output. On M5StickC this can be used to turn off display backlight when going to sleep to preserve battery power.
 
-### await toggleLDO3(false);
+### await toggleLDO3Wait(false);
 
 same as above but for LDO3.
 
@@ -48,7 +48,7 @@ same as above but for LDO3.
 
 A quick way to initiliaze power on M5StickC according to [original firmware](https://github.com/m5stack/M5StickC/blob/master/src/AXP192.cpp).
 
-### let vbat = await getVbat();
+### let vbat = await getVbatWait();
 
 getVbat() returns the battery voltage if there is one.
 

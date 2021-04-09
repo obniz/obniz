@@ -2,16 +2,16 @@
  * @packageDocumentation
  * @module Parts.HEM-9200T
  */
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface from "../../../obniz/ObnizPartsBleInterface";
-import { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-export declare type HEM_9200TMesurementStatus = "BodyMovementDetection" | "CuffFitDetection" | "IrregularPulseDetection" | "PulseRateRangeDetection" | "MeasurementPositionDetection";
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
+import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+export declare type HEM_9200TMesurementStatus = 'BodyMovementDetection' | 'CuffFitDetection' | 'IrregularPulseDetection' | 'PulseRateRangeDetection' | 'MeasurementPositionDetection';
 export interface HEM_9200TResult {
     bloodPressure?: {
         systolic: number;
         diastolic: number;
         meanArterialPressure: number;
-        unit: "mmHg";
+        unit: 'mmHg';
     };
     date?: {
         year: number;

@@ -22,7 +22,8 @@ class ComponentAbstract extends eventemitter3_1.default {
     }
     notifyFromObniz(json) {
         for (const eventName of this.eventNames()) {
-            if (typeof eventName !== "string" || !eventName.startsWith("/response/")) {
+            if (typeof eventName !== 'string' ||
+                !eventName.startsWith('/response/')) {
                 continue;
             }
             const isValid = this.fastValidate(eventName, json);
@@ -31,7 +32,8 @@ class ComponentAbstract extends eventemitter3_1.default {
             }
         }
         for (const eventName in this._eventHandlerQueue) {
-            if (typeof eventName !== "string" || !eventName.startsWith("/response/")) {
+            if (typeof eventName !== 'string' ||
+                !eventName.startsWith('/response/')) {
                 continue;
             }
             if (this._eventHandlerQueue[eventName].length === 0) {
@@ -55,14 +57,16 @@ class ComponentAbstract extends eventemitter3_1.default {
         return WSSchema_1.default.validate(json, schema);
     }
     onceQueue(eventName, func) {
-        this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName] || [];
-        if (typeof func === "function") {
+        this._eventHandlerQueue[eventName] =
+            this._eventHandlerQueue[eventName] || [];
+        if (typeof func === 'function') {
             this._eventHandlerQueue[eventName].push(func);
         }
     }
     removeFromOnceQueue(eventName, func) {
-        this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName] || [];
-        if (typeof func === "function") {
+        this._eventHandlerQueue[eventName] =
+            this._eventHandlerQueue[eventName] || [];
+        if (typeof func === 'function') {
             this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName].filter((e) => e !== func);
         }
     }
@@ -76,19 +80,19 @@ class ComponentAbstract extends eventemitter3_1.default {
         option.queue = option.queue !== false;
         option.errors = option.errors || {};
         return new Promise((resolve, reject) => {
-            if (this.Obniz.connectionState !== "connected") {
+            if (this.Obniz.connectionState !== 'connected') {
                 reject(new ObnizError_1.ObnizOfflineError());
                 return;
             }
             const clearListeners = () => {
-                this.Obniz.off("close", onObnizClosed);
+                this.Obniz.off('close', onObnizClosed);
                 if (option.queue) {
                     this.removeFromOnceQueue(schemaPath, onDataReceived);
                 }
                 else {
                     this.off(schemaPath, onDataReceived);
                 }
-                if (typeof timeoutHandler === "number") {
+                if (typeof timeoutHandler === 'number') {
                     clearTimeout(timeoutHandler);
                     timeoutHandler = undefined;
                 }
@@ -111,7 +115,7 @@ class ComponentAbstract extends eventemitter3_1.default {
                 reject(error);
             };
             const onErrorFuncs = [];
-            this.Obniz.once("close", onObnizClosed);
+            this.Obniz.once('close', onObnizClosed);
             if (option.queue) {
                 this.onceQueue(schemaPath, onDataReceived);
             }

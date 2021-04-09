@@ -12,12 +12,12 @@ class ST7735S {
         this.x_offset = 0;
         this.y_offset = 0;
         this.writeBuffer = [];
-        this.keys = ["sclk", "mosi", "cs", "res", "dc"];
+        this.keys = ['sclk', 'mosi', 'cs', 'res', 'dc'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "ST7735S",
+            name: 'ST7735S',
         };
     }
     wired(obniz) {
@@ -27,10 +27,9 @@ class ST7735S {
         this.io_res = obniz.getIO(this.params.res);
         this.io_cs = obniz.getIO(this.params.cs);
         this.params.frequency = 16 * 1000 * 1000; // 16MHz
-        this.params.mode = "master";
+        this.params.mode = 'master';
         this.params.clk = this.params.sclk;
-        this.params.mosi = this.params.mosi;
-        this.params.drive = "3v";
+        this.params.drive = '3v';
         this.spi = this.obniz.getSpiWithConfig(this.params);
         this.io_dc.output(true);
         this.io_cs.output(false);
@@ -45,7 +44,7 @@ class ST7735S {
     }
     print_debug(v) {
         if (this.debugprint) {
-            console.log("SainSmartTFT18LCD: " + Array.prototype.slice.call(arguments).join(""));
+            console.log('SainSmartTFT18LCD: ' + Array.prototype.slice.call(arguments).join(''));
         }
     }
     _deadSleep(waitMsec) {
@@ -617,11 +616,11 @@ class ST7735S {
         //  wrap = wrap || true;
         for (let n = 0; n < string.length; n++) {
             const c = string.charAt(n);
-            if (c === "\n") {
+            if (c === '\n') {
                 y += size * 8;
                 x = 0;
             }
-            else if (c === "\r") {
+            else if (c === '\r') {
                 // skip em
             }
             else {

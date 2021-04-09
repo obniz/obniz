@@ -13,19 +13,19 @@ class IRSensor {
         this.cutTail = false;
         this.output_pullup = true;
         this.ondetect = null;
-        this.keys = ["output", "vcc", "gnd"];
-        this.requiredKeys = ["output"];
+        this.keys = ['output', 'vcc', 'gnd'];
+        this.requiredKeys = ['output'];
     }
     static info() {
         return {
-            name: "IRSensor",
+            name: 'IRSensor',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         if (!obniz.isValidIO(this.params.output)) {
-            throw new Error("output is not valid io");
+            throw new Error('output is not valid io');
         }
     }
     start(callback) {
@@ -33,7 +33,7 @@ class IRSensor {
             this.ondetect = callback;
         }
         if (this.output_pullup) {
-            this.obniz.getIO(this.params.output).pull("5v");
+            this.obniz.getIO(this.params.output).pull('5v');
         }
         this.obniz.logicAnalyzer.start({
             io: this.params.output,
@@ -43,7 +43,7 @@ class IRSensor {
             triggerValueSamples: this.triggerSampleCount,
         });
         this.obniz.logicAnalyzer.onmeasured = (levels) => {
-            if (typeof this.ondetect === "function") {
+            if (typeof this.ondetect === 'function') {
                 if (this.dataInverted) {
                     const arr = new Uint8Array(levels);
                     for (let i = 0; i < arr.length; i++) {

@@ -8,17 +8,19 @@
  * @module Parts
  */
 
-import Obniz from "../../../../obniz";
-import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
-import { I2cPartsAbstractOptions } from "../../../i2cParts";
+import Obniz from '../../../../obniz';
+import PeripheralI2C from '../../../../obniz/libs/io_peripherals/i2c';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../../obniz/ObnizPartsInterface';
+import { I2cPartsAbstractOptions } from '../../../i2cParts';
 
 export interface AM2320Options extends I2cPartsAbstractOptions {}
 
 export default class AM2320 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "AM2320",
+      name: 'AM2320',
     };
   }
 
@@ -31,16 +33,16 @@ export default class AM2320 implements ObnizPartsInterface {
   protected i2c!: PeripheralI2C;
 
   constructor() {
-    this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
+    this.keys = ['vcc', 'gnd', 'sda', 'scl', 'i2c'];
     this.requiredKeys = [];
   }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     this.address = 0x5c;
-    this.params.pull = "5v";
-    this.params.mode = "master";
+    this.params.pull = '5v';
+    this.params.mode = 'master';
     this.params.clock = this.params.clock || 100 * 1000;
     this.i2c = obniz.getI2CWithConfig(this.params);
   }
@@ -73,6 +75,7 @@ export default class AM2320 implements ObnizPartsInterface {
   public async getHumdWait(): Promise<number> {
     return await this.getHumidWait();
   }
+
   public async getHumidWait(): Promise<number> {
     return (await this.getAllWait()).humidity;
   }

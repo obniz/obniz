@@ -6,34 +6,34 @@ let testUtil = require('../../../../../test/functiontest/testUtil.js');
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
-describe('obniz.libs.ad', function() {
-  beforeEach(function(done) {
+describe('obniz.libs.ad', function () {
+  beforeEach(function (done) {
     return testUtil.setupObnizPromise(this, done);
   });
 
-  afterEach(function(done) {
+  afterEach(function (done) {
     return testUtil.releaseObnizePromise(this, done);
   });
 
-  it('getAD', function() {
+  it('getAD', function () {
     let ad0 = this.obniz.getAD(0);
     expect(ad0.id).to.be.equal(0);
 
     let ad11 = this.obniz.getAD(11);
     expect(ad11.id).to.be.equal(11);
 
-    expect(function() {
+    expect(function () {
       this.obniz.getAD(12);
     }).to.throw();
 
-    expect(function() {
+    expect(function () {
       this.obniz.getAD('0');
     }).to.throw();
 
     expect(this.obniz).to.be.finished;
   });
 
-  it('start', function() {
+  it('start', function () {
     let stub = sinon.stub();
     this.obniz.ad0.start(stub);
 
@@ -41,7 +41,7 @@ describe('obniz.libs.ad', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('value', function() {
+  it('value', function () {
     let stub = sinon.stub();
     this.obniz.ad0.start(stub);
     expect(this.obniz).send([{ ad0: { stream: true } }]);
@@ -57,7 +57,7 @@ describe('obniz.libs.ad', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('onchange', function() {
+  it('onchange', function () {
     let stub = sinon.stub();
     this.obniz.ad1.start();
     this.obniz.ad1.onchange = stub;
@@ -73,7 +73,7 @@ describe('obniz.libs.ad', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('in var', function() {
+  it('in var', function () {
     this.obniz.ad1.start();
     expect(this.obniz).send([{ ad1: { stream: true } }]);
 
@@ -83,10 +83,10 @@ describe('obniz.libs.ad', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('inputWaitTrue', function() {
+  it('inputWaitTrue', function () {
     return new Promise(
-      function(resolve, reject) {
-        this.obniz.ad4.getWait().then(function(result) {
+      function (resolve, reject) {
+        this.obniz.ad4.getWait().then(function (result) {
           expect(result).to.be.equal(2.6);
           resolve();
         });
@@ -96,7 +96,7 @@ describe('obniz.libs.ad', function() {
         expect(this.obniz).to.be.finished;
 
         setTimeout(
-          function() {
+          function () {
             testUtil.receiveJson(this.obniz, [{ ad4: 2.6 }]);
           }.bind(this),
           10
@@ -105,7 +105,7 @@ describe('obniz.libs.ad', function() {
     );
   });
 
-  it('end', function() {
+  it('end', function () {
     this.obniz.ad1.start();
     expect(this.obniz).send([{ ad1: { stream: true } }]);
 

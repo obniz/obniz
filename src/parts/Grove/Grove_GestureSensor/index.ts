@@ -3,23 +3,27 @@
  * @module Parts.Grove_GestureSensor
  */
 
-import Obniz from "../../../obniz";
-import PeripheralGrove from "../../../obniz/libs/io_peripherals/grove";
-import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
+import Obniz from '../../../obniz';
+import PeripheralGrove from '../../../obniz/libs/io_peripherals/grove';
+import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-import { I2cPartsAbstractOptions } from "../../i2cParts";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
+import { I2cPartsAbstractOptions } from '../../i2cParts';
 
 interface GroveInterface {
   grove: PeripheralGrove;
 }
 
-export type Grove_GestureSensorOptions = I2cPartsAbstractOptions | GroveInterface;
+export type Grove_GestureSensorOptions =
+  | I2cPartsAbstractOptions
+  | GroveInterface;
 
 export default class Grove_GestureSensor implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "Grove_GestureSensor",
+      name: 'Grove_GestureSensor',
     };
   }
 
@@ -27,21 +31,21 @@ export default class Grove_GestureSensor implements ObnizPartsInterface {
   public keys: string[];
   public params: any;
 
-  public GESTURE_RIGHT: string = "GESTURE_RIGHT";
-  public GESTURE_LEFT: string = "GESTURE_LEFT";
-  public GESTURE_UP: string = "GESTURE_UP";
-  public GESTURE_DOWN: string = "GESTURE_DOWN";
-  public GESTURE_FORWARD: string = "GESTURE_FORWARD";
-  public GESTURE_BACKWARD: string = "GESTURE_BACKWARD";
-  public GESTURE_CLOCKWISE: string = "GESTURE_CLOCKWISE";
-  public GESTURE_COUNT_CLOCKWISE: string = "GESTURE_COUNT_CLOCKWISE";
+  public GESTURE_RIGHT = 'GESTURE_RIGHT';
+  public GESTURE_LEFT = 'GESTURE_LEFT';
+  public GESTURE_UP = 'GESTURE_UP';
+  public GESTURE_DOWN = 'GESTURE_DOWN';
+  public GESTURE_FORWARD = 'GESTURE_FORWARD';
+  public GESTURE_BACKWARD = 'GESTURE_BACKWARD';
+  public GESTURE_CLOCKWISE = 'GESTURE_CLOCKWISE';
+  public GESTURE_COUNT_CLOCKWISE = 'GESTURE_COUNT_CLOCKWISE';
 
   protected obniz!: Obniz;
   protected i2c!: PeripheralI2C;
 
-  private ic2Address: number = 0x73;
+  private ic2Address = 0x73;
 
-  private PAJ7620_ADDR_BASE: number = 0x00;
+  private PAJ7620_ADDR_BASE = 0x00;
   private PAJ7620_REGITER_BANK_SEL: number = this.PAJ7620_ADDR_BASE + 0xef;
   private PAJ7620_BANK0: number = 0 << 0;
   private PAJ7620_BANK1: number = 1 << 0;
@@ -279,23 +283,22 @@ export default class Grove_GestureSensor implements ObnizPartsInterface {
   ];
 
   constructor() {
-    this.keys = ["vcc", "gnd", "sda", "scl", "i2c", "grove"];
+    this.keys = ['vcc', 'gnd', 'sda', 'scl', 'i2c', 'grove'];
     this.requiredKeys = [];
   }
 
   public onchange(value: string) {}
 
-  public async wired(obniz: Obniz) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     const speed = 400000;
     if (this.params.grove) {
-      this.i2c = this.params.grove.getI2c(speed, "5v");
+      this.i2c = this.params.grove.getI2c(speed, '5v');
     } else {
-      this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-      await obniz.wait(500);
-      this.params.mode = "master";
+      this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+      this.params.mode = 'master';
       this.params.clock = speed;
-      this.params.pull = "5v";
+      this.params.pull = '5v';
       this.i2c = this.obniz.getI2CWithConfig(this.params);
     }
 
@@ -303,16 +306,18 @@ export default class Grove_GestureSensor implements ObnizPartsInterface {
       // console.log('Error:', err);
     };
     // await obniz.wait(700);
+    this.initWait();
+  }
+  public async initWait() {
     // wakeup check
-    await this.checkWakeUp();
+    await this.checkWakeUpWait();
     // initRegister
-    await this.initRegister();
+    await this.initRegisterWait();
     while (true) {
       // get data
       this.i2c.write(this.ic2Address, [0x43]);
       const resArray = await this.i2c.readWait(this.ic2Address, 1);
       const res: number = resArray[0];
-      // センサーの上を、上下左右に手を通過させると反応します。
       if (this.onchange) {
         if (this.GES_RIGHT_FLAG === res) {
           // console.log("GES_RIGHT_FLAG");
@@ -341,36 +346,43 @@ export default class Grove_GestureSensor implements ObnizPartsInterface {
         }
       }
 
-      await obniz.wait(1000);
+      await this.obniz.wait(1000);
     }
   }
 
-  private async checkWakeUp() {
+  private async checkWakeUpWait() {
     // wakeup check
-    this.i2c.write(this.ic2Address, [this.PAJ7620_REGITER_BANK_SEL, this.PAJ7620_BANK0]);
-    // 3.5.0 以降は try catch で捕らえる
+    this.i2c.write(this.ic2Address, [
+      this.PAJ7620_REGITER_BANK_SEL,
+      this.PAJ7620_BANK0,
+    ]);
     let res = [0, 0];
     try {
       res = await this.i2c.readWait(this.ic2Address, 1);
     } catch (e) {
       // console.log(e);
     }
-    // 3.4.0、3.4.1 までは値が取れてうまくいく。3.5.0以降は上記の try catch で捕らえる。
     if (res[0] === 0x20) {
       // console.log("wake-up finish.");
     }
   }
 
-  private async initRegister() {
+  private async initRegisterWait() {
     // console.log("initRegister!!");
     for (let i = 0; i < this.initRegisterArray.length; i++) {
       this.i2c.write(this.ic2Address, this.initRegisterArray[i]);
     }
     // Set up gaming mode.
-    this.i2c.write(this.ic2Address, [this.PAJ7620_REGITER_BANK_SEL, this.PAJ7620_BANK1]);
+    this.i2c.write(this.ic2Address, [
+      this.PAJ7620_REGITER_BANK_SEL,
+      this.PAJ7620_BANK1,
+    ]);
 
     // near mode 240 fps
     this.i2c.write(this.ic2Address, [0x65, 0x12]);
-    this.i2c.write(this.ic2Address, [this.PAJ7620_REGITER_BANK_SEL, this.PAJ7620_BANK0]);
+    this.i2c.write(this.ic2Address, [
+      this.PAJ7620_REGITER_BANK_SEL,
+      this.PAJ7620_BANK0,
+    ]);
   }
 }

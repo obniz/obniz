@@ -4,28 +4,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @packageDocumentation
  * @ignore
  */
-const yaml = require("js-yaml");
+const yaml = require('js-yaml');
 exports.default = (source) => {
     // @ts-ignore
-    const self = this;
+    const self = this; // eslint-disable-line @typescript-eslint/no-this-alias
     if (self.cacheable) {
         self.cacheable();
     }
     try {
         const src = yaml.safeLoad(source);
-        const excludeKeys = ["example", "description"];
+        const excludeKeys = ['example', 'description'];
         const res = filter(src, excludeKeys);
         // console.log("src",src);
         // console.log("res",res);
-        return JSON.stringify(res, undefined, "\t");
+        return JSON.stringify(res, undefined, '\t');
     }
     catch (err) {
         self.emitError(err);
         return null;
     }
 };
-function filter(target, excludeKeys) {
-    if (typeof target !== "object") {
+const filter = (target, excludeKeys) => {
+    if (typeof target !== 'object') {
         return target;
     }
     if (target === null) {
@@ -47,4 +47,4 @@ function filter(target, excludeKeys) {
         }
     }
     return newObj;
-}
+};

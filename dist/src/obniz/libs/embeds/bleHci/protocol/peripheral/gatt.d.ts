@@ -1,7 +1,7 @@
 /// <reference types="node" />
-import AclStream from "./acl-stream";
-import EventEmitter from "eventemitter3";
-declare type GattEventTypes = "mtuChange";
+import AclStream from './acl-stream';
+import EventEmitter from 'eventemitter3';
+declare type GattEventTypes = 'mtuChange';
 /**
  * @ignore
  */

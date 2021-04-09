@@ -14,7 +14,7 @@ class IBS03T {
     }
     static info() {
         return {
-            name: "iBS03T",
+            name: 'iBS03T',
         };
     }
     static isDevice(peripheral) {
@@ -43,13 +43,13 @@ class IBS03T {
             hall_sensor: false,
             temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
         };
-        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+        if (peripheral.adv_data[11] & 0b0001) {
             data.button = true;
         }
-        if (Boolean(peripheral.adv_data[11] & 0b0010)) {
+        if (peripheral.adv_data[11] & 0b0010) {
             data.moving = true;
         }
-        if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+        if (peripheral.adv_data[11] & 0b0100) {
             data.hall_sensor = true;
         }
         return data;

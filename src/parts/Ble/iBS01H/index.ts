@@ -3,8 +3,10 @@
  * @module Parts.iBS01H
  */
 
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, {
+  ObnizPartsBleInfo,
+} from '../../../obniz/ObnizPartsBleInterface';
 
 export interface IBS01HOptions {}
 
@@ -17,7 +19,7 @@ export interface IBS01H_Data {
 export default class IBS01H implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: "iBS01H",
+      name: 'iBS01H',
     };
   }
 
@@ -52,10 +54,10 @@ export default class IBS01H implements ObnizPartsBleInterface {
       hall_sensor: false,
     };
 
-    if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+    if (peripheral.adv_data[11] & 0b0001) {
       data.button = true;
     }
-    if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+    if (peripheral.adv_data[11] & 0b0100) {
       data.hall_sensor = true;
     }
     return data;

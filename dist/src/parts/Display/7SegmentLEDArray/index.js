@@ -6,13 +6,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class _7SegmentLEDArray {
     constructor() {
-        this.identifier = "" + new Date().getTime();
-        this.keys = ["segments"];
+        this.identifier = '' + new Date().getTime();
+        this.keys = ['segments'];
         this.requiredKeys = this.keys;
     }
     static info() {
         return {
-            name: "7SegmentLEDArray",
+            name: '7SegmentLEDArray',
         };
     }
     wired(obniz) {
@@ -20,7 +20,7 @@ class _7SegmentLEDArray {
         this.segments = this.params.segments;
     }
     print(data) {
-        if (typeof data === "number") {
+        if (typeof data === 'number') {
             data = Math.floor(data);
             const print = (index) => {
                 let val = data;
@@ -41,14 +41,14 @@ class _7SegmentLEDArray {
                     state: print,
                 });
             }
-            this.obniz.io.animation(this.identifier, "loop", animations);
+            this.obniz.io.animation(this.identifier, 'loop', animations);
         }
     }
     on() {
-        this.obniz.io.animation(this.identifier, "resume");
+        this.obniz.io.animation(this.identifier, 'resume');
     }
     off() {
-        this.obniz.io.animation(this.identifier, "pause");
+        this.obniz.io.animation(this.identifier, 'pause');
         for (let i = 0; i < this.segments.length; i++) {
             this.segments[i].off();
         }

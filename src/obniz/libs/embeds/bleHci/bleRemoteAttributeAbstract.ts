@@ -2,15 +2,15 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import BleAttributeAbstract from "./bleAttributeAbstract";
+import BleAttributeAbstract from './bleAttributeAbstract';
 
 /**
  * @category Use as Central
  */
-export default abstract class BleRemoteAttributeAbstract<ParentClass, ChildrenClass> extends BleAttributeAbstract<
+export default abstract class BleRemoteAttributeAbstract<
   ParentClass,
   ChildrenClass
-> {
+> extends BleAttributeAbstract<ParentClass, ChildrenClass> {
   constructor(params: any) {
     super(params);
 
@@ -27,7 +27,7 @@ export default abstract class BleRemoteAttributeAbstract<ParentClass, ChildrenCl
       return null;
     }
     const childName = childrenName.slice(0, -1);
-    return childName + "_uuid";
+    return childName + '_uuid';
   }
 
   /**

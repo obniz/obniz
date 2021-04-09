@@ -3,10 +3,12 @@
  * @module Parts.Grove_GPS
  */
 
-import Obniz from "../../../obniz";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
+import PeripheralUART from '../../../obniz/libs/io_peripherals/uart';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface Grove_GPSOptions {
   vcc?: number;
@@ -42,7 +44,7 @@ export default class Grove_GPS implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
-      name: "Grove_GPS",
+      name: 'Grove_GPS',
     };
   }
 
@@ -63,25 +65,25 @@ export default class Grove_GPS implements ObnizPartsInterface {
   protected obniz!: Obniz;
 
   private uart!: PeripheralUART;
-  private _latitude: number = 0;
-  private _longitude: number = 0;
+  private _latitude = 0;
+  private _longitude = 0;
 
   constructor() {
-    this.keys = ["tx", "rx", "vcc", "gnd", "grove"];
+    this.keys = ['tx', 'rx', 'vcc', 'gnd', 'grove'];
     this.requiredKeys = [];
 
     this.ioKeys = this.keys;
-    this.displayName = "gps";
-    this.displayIoNames = { tx: "tx", rx: "rx" };
+    this.displayName = 'gps';
+    this.displayIoNames = { tx: 'tx', rx: 'rx' };
   }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
 
     if (this.params.grove) {
-      this.uart = this.params.grove.getUart(9600, "5v");
+      this.uart = this.params.grove.getUart(9600, '5v');
     } else {
-      this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+      this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
       this.uart = obniz.getFreeUart();
       this.uart.start({
         tx: this.params.tx,
@@ -102,7 +104,7 @@ export default class Grove_GPS implements ObnizPartsInterface {
       GPVTG: 0x0010, // VTG - Track made good and ground speed
       GPZDA: 0x0020, // ZDA - Date & Time
     };
-    this.gpsInfo.status = "V";
+    this.gpsInfo.status = 'V';
     this.gpsInfo.sentences = new Set(); // Set specifying sentence of MNEA from which data have been obtained
     this.gpsInfo.satelliteInfo = {
       satellites: [],
@@ -119,12 +121,12 @@ export default class Grove_GPS implements ObnizPartsInterface {
         this.uart.received.splice(0, pos + 1);
         let str = this.uart.tryConvertString(results);
         if (str === null) {
-          str = "";
+          str = '';
         }
         return str;
       }
     }
-    return "";
+    return '';
   }
 
   public getEditedData(): Grove_GPSEditedData {
@@ -135,24 +137,24 @@ export default class Grove_GPS implements ObnizPartsInterface {
     this.editedData.enable = false;
     this.editedData.GPGSV = new Array(4);
     while (sentence.length > 0) {
-      const part: any = sentence.split(",");
-      if (sentence.slice(-4, -3) !== ",") {
+      const part: any = sentence.split(',');
+      if (sentence.slice(-4, -3) !== ',') {
         const st: any = part[part.length - 1].slice(0, -3);
         part.push(part[part.length - 1].slice(-3));
         part[part.length - 2] = st;
       }
-      this.editedData.sentence = part.join(",");
+      this.editedData.sentence = part.join(',');
       switch (part[0]) {
-        case "$GPGGA":
+        case '$GPGGA':
           this.editedData.GPGGA = part;
           break;
-        case "$GPGLL":
+        case '$GPGLL':
           this.editedData.GPGLL = part;
           break;
-        case "$GPGSA":
+        case '$GPGSA':
           this.editedData.GPGSA = part;
           break;
-        case "$GPGSV":
+        case '$GPGSV':
           n = Number(part[2]);
           if (n > this.editedData.GPGSV.length) {
             while (n > this.editedData.GPGSV.length) {
@@ -161,27 +163,27 @@ export default class Grove_GPS implements ObnizPartsInterface {
           }
           this.editedData.GPGSV[n - 1] = part;
           break;
-        case "$GPRMC":
+        case '$GPRMC':
           this.editedData.GPRMC = part;
           break;
-        case "$GPVTG":
+        case '$GPVTG':
           this.editedData.GPVTG = part;
           break;
-        case "$GPZDA":
+        case '$GPZDA':
           this.editedData.GPZDA = part;
           utc =
             part[4] +
-            "/" +
+            '/' +
             part[3] +
-            "/" +
+            '/' +
             part[2] +
-            " " +
+            ' ' +
             part[1].substring(0, 2) +
-            ":" +
+            ':' +
             part[1].substring(2, 4) +
-            ":" +
+            ':' +
             part[1].substring(4, 6) +
-            " +00:00";
+            ' +00:00';
           this.editedData.timestamp = new Date(utc);
           break;
         default:
@@ -199,7 +201,7 @@ export default class Grove_GPS implements ObnizPartsInterface {
     const NMEA_SATINSENTENCE: any = 4;
     const NMEA_MAXSAT: any = 12;
     editedData = editedData || this.getEditedData();
-    this.gpsInfo.status = "V";
+    this.gpsInfo.status = 'V';
     if (editedData.enable) {
       if (editedData.GPGGA) {
         const gga: any = editedData.GPGGA;
@@ -207,9 +209,9 @@ export default class Grove_GPS implements ObnizPartsInterface {
         this.gpsInfo.hdop = parseFloat(gga[8]); // Horizontal Dilution of Precision (HDOP)
         this.gpsInfo.altitude = parseFloat(gga[9]); // Antenna Altitude meters above mean sea level
         const latitude: any = this.nmea2dd(parseFloat(gga[2]));
-        this.gpsInfo.latitude = gga[3] === "N" ? latitude : -latitude;
+        this.gpsInfo.latitude = gga[3] === 'N' ? latitude : -latitude;
         const longitude: any = this.nmea2dd(parseFloat(gga[4]));
-        this.gpsInfo.longitude = gga[5] === "E" ? longitude : -longitude;
+        this.gpsInfo.longitude = gga[5] === 'E' ? longitude : -longitude;
         this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPGGA);
       }
       if (editedData.GPGSV) {
@@ -225,7 +227,10 @@ export default class Grove_GPS implements ObnizPartsInterface {
 
             this.gpsInfo.satelliteInfo.inView = sat_count;
             let nsat: any = (pack_index - 1) * NMEA_SATINSENTENCE;
-            nsat = nsat + NMEA_SATINSENTENCE > sat_count ? sat_count - nsat : NMEA_SATINSENTENCE;
+            nsat =
+              nsat + NMEA_SATINSENTENCE > sat_count
+                ? sat_count - nsat
+                : NMEA_SATINSENTENCE;
 
             for (let isat = 0; isat < nsat; ++isat) {
               const isi: any = (pack_index - 1) * NMEA_SATINSENTENCE + isat;
@@ -270,9 +275,9 @@ export default class Grove_GPS implements ObnizPartsInterface {
         const rmc: any = editedData.GPRMC;
         this.gpsInfo.status = rmc[2]; // Status Active or Void
         const latitude: any = this.nmea2dd(parseFloat(rmc[3]));
-        this.gpsInfo.latitude = rmc[4] === "N" ? latitude : -latitude;
+        this.gpsInfo.latitude = rmc[4] === 'N' ? latitude : -latitude;
         const longitude: any = this.nmea2dd(parseFloat(rmc[5]));
-        this.gpsInfo.longitude = rmc[6] === "E" ? longitude : -longitude;
+        this.gpsInfo.longitude = rmc[6] === 'E' ? longitude : -longitude;
         const NMEA_TUD_KNOTS: any = 1.852; // 1knot=1.852km/h
         this.gpsInfo.speed = parseFloat(rmc[7]) * NMEA_TUD_KNOTS; // unit: km/h
         this.gpsInfo.direction = rmc[8];
@@ -295,15 +300,15 @@ export default class Grove_GPS implements ObnizPartsInterface {
 
   public _mneaTo(format: any, value: any) {
     let result: any = this.nmea2dd(value);
-    if (typeof format === "string") {
+    if (typeof format === 'string') {
       switch (format.toUpperCase()) {
-        case "DMS":
+        case 'DMS':
           result = this.nmea2dms(value);
           break;
-        case "DM":
+        case 'DM':
           result = this.nmea2dm(value);
           break;
-        case "S":
+        case 'S':
           result = this.nmea2s(value);
           break;
         default:
@@ -322,11 +327,11 @@ export default class Grove_GPS implements ObnizPartsInterface {
 
   public status2string(status: any) {
     status = status || this.status;
-    if (status === "A") {
-      return "Active";
+    if (status === 'A') {
+      return 'Active';
     }
-    if (status === "V") {
-      return "Void";
+    if (status === 'V') {
+      return 'Void';
     }
     return status;
   }
@@ -334,13 +339,13 @@ export default class Grove_GPS implements ObnizPartsInterface {
   public fixMode2string(fixMode: any) {
     fixMode = fixMode || this.fixMode;
     if (fixMode === 1) {
-      return "Fix not available";
+      return 'Fix not available';
     }
     if (fixMode === 2) {
-      return "2D";
+      return '2D';
     }
     if (fixMode === 3) {
-      return "3D";
+      return '3D';
     }
     return fixMode;
   }
@@ -348,13 +353,13 @@ export default class Grove_GPS implements ObnizPartsInterface {
   public gpsQuality2string(gpsQuality: any) {
     gpsQuality = gpsQuality || this.gpsQuality;
     if (gpsQuality === 0) {
-      return "Invalid";
+      return 'Invalid';
     }
     if (gpsQuality === 1) {
-      return "GPS fix";
+      return 'GPS fix';
     }
     if (gpsQuality === 2) {
-      return "DGPS fix";
+      return 'DGPS fix';
     }
     return gpsQuality;
   }
@@ -366,7 +371,7 @@ export default class Grove_GPS implements ObnizPartsInterface {
     const d: any = Math.floor(val / 100);
     const m: any = Math.floor((val / 100.0 - d) * 100.0);
     const s: any = ((val / 100.0 - d) * 100.0 - m) * 60;
-    return d + "°" + m + "'" + s.toFixed(1) + '"';
+    return d + '°' + m + "'" + s.toFixed(1) + '"';
   }
 
   public nmea2dm(val: any): string {
@@ -374,7 +379,7 @@ export default class Grove_GPS implements ObnizPartsInterface {
     val = parseFloat(val);
     const d: any = Math.floor(val / 100.0);
     const m: any = (val / 100.0 - d) * 100.0;
-    return d + "°" + m.toFixed(4) + "'";
+    return d + '°' + m.toFixed(4) + "'";
   }
 
   public nmea2dd(val: any): number {

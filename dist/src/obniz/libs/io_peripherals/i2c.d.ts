@@ -2,10 +2,10 @@
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-import Obniz from "../../index";
-import { ComponentAbstract } from "../ComponentAbstact";
-import { PullType } from "./common";
-declare type I2CMode = "master" | "slave";
+import Obniz from '../../index';
+import { ComponentAbstract } from '../ComponentAbstact';
+import { PullType } from './common';
+declare type I2CMode = 'master' | 'slave';
 interface PeripheralI2CState {
     mode: I2CMode;
     sda: number;
@@ -23,8 +23,9 @@ interface PeripheralI2COptions extends PeripheralI2CState {
 }
 /**
  * i2c can be used.
- *  Master/Slave mode.
- *  But slave mode only works with "written" events. You can't set data to be read.
+ * Master/Slave mode.
+ * But slave mode only works with "written" events. You can't set data to be read.
+ *
  * @category Peripherals
  */
 declare class PeripheralI2C extends ComponentAbstract {
@@ -112,6 +113,7 @@ declare class PeripheralI2C extends ComponentAbstract {
      * obniz.i2c0.start({mode: "master",sda:2, scl:3, clock:400000, pull:null});
      * obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
      * ```
+     *
      * @param address 7bit address only.
      * @param data Max length is 1024;
      */

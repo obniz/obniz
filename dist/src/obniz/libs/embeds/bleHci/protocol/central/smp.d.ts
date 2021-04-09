@@ -4,13 +4,13 @@
  * @ignore
  */
 /// <reference types="node" />
-import EventEmitter from "eventemitter3";
-import { BleDeviceAddress, BleDeviceAddressType } from "../../bleTypes";
-import AclStream from "./acl-stream";
+import EventEmitter from 'eventemitter3';
+import { BleDeviceAddress, BleDeviceAddressType } from '../../bleTypes';
+import AclStream from './acl-stream';
 /**
  * @ignore
  */
-declare type SmpEventTypes = "masterIdent" | "ltk" | "fail" | "end";
+declare type SmpEventTypes = 'masterIdent' | 'ltk' | 'fail' | 'end';
 /**
  * @ignore
  */
@@ -61,7 +61,7 @@ declare class Smp extends EventEmitter<SmpEventTypes> {
     pairingWait(options?: SmpEncryptOptions): Promise<string | number>;
     onAclStreamData(cid: any, data?: any): void;
     onAclStreamEnd(): void;
-    handlePairingResponse(data: any): Promise<void>;
+    handlePairingResponseWait(data: any): Promise<void>;
     handlePairingConfirm(data: any): void;
     handlePairingRandomWait(data: any): Promise<string | number>;
     handlePairingFailed(data: Buffer): void;

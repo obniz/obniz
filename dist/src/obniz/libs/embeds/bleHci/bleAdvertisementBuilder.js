@@ -18,7 +18,9 @@ class BleAdvertisementBuilder {
             if (json.localName) {
                 this.setCompleteLocalName(json.localName);
             }
-            if (json.manufacturerData && json.manufacturerData.companyCode && json.manufacturerData.data) {
+            if (json.manufacturerData &&
+                json.manufacturerData.companyCode &&
+                json.manufacturerData.data) {
                 this.setManufacturerSpecificData(json.manufacturerData.companyCode, json.manufacturerData.data);
             }
             if (json.serviceUuids) {
@@ -27,7 +29,7 @@ class BleAdvertisementBuilder {
                 }
             }
         }
-        if (typeof this.extendEvalJson === "function") {
+        if (typeof this.extendEvalJson === 'function') {
             this.extendEvalJson(json);
         }
     }
@@ -48,7 +50,7 @@ class BleAdvertisementBuilder {
             Array.prototype.push.apply(data, this.rows[key]);
         }
         if (data.length > 31) {
-            throw new Error("Too large data. Advertise/ScanResponse data are must be less than 32 byte.");
+            throw new Error('Too large data. Advertise/ScanResponse data are must be less than 32 byte.');
         }
         return data;
     }
@@ -79,8 +81,10 @@ class BleAdvertisementBuilder {
     }
     convertUuid(uuid) {
         const uuidNumeric = bleHelper_1.default.uuidFilter(uuid);
-        if (uuidNumeric.length !== 32 && uuidNumeric.length !== 8 && uuidNumeric.length !== 4) {
-            throw new Error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
+        if (uuidNumeric.length !== 32 &&
+            uuidNumeric.length !== 8 &&
+            uuidNumeric.length !== 4) {
+            throw new Error('BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)');
         }
         const data = [];
         for (let i = uuidNumeric.length; i > 1; i -= 2) {
@@ -119,19 +123,19 @@ class BleAdvertisementBuilder {
     extendEvalJson(json) {
         if (json) {
             if (json.flags) {
-                if (json.flags.includes("limited_discoverable_mode")) {
+                if (json.flags.includes('limited_discoverable_mode')) {
                     this.setLeLimitedDiscoverableModeFlag();
                 }
-                if (json.flags.includes("general_discoverable_mode")) {
+                if (json.flags.includes('general_discoverable_mode')) {
                     this.setLeGeneralDiscoverableModeFlag();
                 }
-                if (json.flags.includes("br_edr_not_supported")) {
+                if (json.flags.includes('br_edr_not_supported')) {
                     this.setBrEdrNotSupportedFlag();
                 }
-                if (json.flags.includes("le_br_edr_controller")) {
+                if (json.flags.includes('le_br_edr_controller')) {
                     this.setLeBrEdrControllerFlag();
                 }
-                if (json.flags.includes("le_br_edr_host")) {
+                if (json.flags.includes('le_br_edr_host')) {
                     this.setLeBrEdrHostFlag();
                 }
             }

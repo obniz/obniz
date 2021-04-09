@@ -12,12 +12,12 @@ class M5StickC_Yun {
     constructor() {
         this.LED_LEN = 14;
         this.requiredKeys = [];
-        this.keys = ["sda", "scl", "i2c"];
-        this.ioKeys = ["sda", "scl"];
+        this.keys = ['sda', 'scl', 'i2c'];
+        this.ioKeys = ['sda', 'scl'];
     }
     static info() {
         return {
-            name: "M5StickC_Yun",
+            name: 'M5StickC_Yun',
         };
     }
     static _generateHsvColor(h, s, v) {
@@ -54,9 +54,11 @@ class M5StickC_Yun {
     }
     wired(obniz) {
         this.obniz = obniz;
-        if (!this.obniz.isValidIO(this.params.sda) && !this.obniz.isValidIO(this.params.scl) && !this.params.i2c) {
-            if (this.obniz.hasExtraInterface("m5stickc_hat")) {
-                const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
+        if (!this.obniz.isValidIO(this.params.sda) &&
+            !this.obniz.isValidIO(this.params.scl) &&
+            !this.params.i2c) {
+            if (this.obniz.hasExtraInterface('m5stickc_hat')) {
+                const hatI2c = this.obniz.getExtraInterface('m5stickc_hat').i2c;
                 this.params.sda = hatI2c.sda;
                 this.params.scl = hatI2c.scl;
             }
@@ -65,11 +67,11 @@ class M5StickC_Yun {
             }
         }
         this.params.clock = 100 * 1000; // for i2c
-        this.params.mode = "master"; // for i2c
-        this.params.pull = "3v"; // for i2c
+        this.params.mode = 'master'; // for i2c
+        this.params.pull = '3v'; // for i2c
         this.i2c = obniz.getI2CWithConfig(this.params);
-        this.sht20 = obniz.wired("SHT20", { i2c: this.i2c });
-        this.bmp280 = obniz.wired("BMP280", { i2c: this.i2c });
+        this.sht20 = obniz.wired('SHT20', { i2c: this.i2c });
+        this.bmp280 = obniz.wired('BMP280', { i2c: this.i2c });
         this.bmp280.applyCalibration();
     }
     // public setColorCode(ledNum: number, colorCode: string) {
@@ -89,9 +91,9 @@ class M5StickC_Yun {
     //   this.rgb(color[0], color[1], color[2]);
     // }
     rgb(red, green, blue) {
-        util_1.default.assertNumber(0, 255, "red", red);
-        util_1.default.assertNumber(0, 255, "green", green);
-        util_1.default.assertNumber(0, 255, "blue", blue);
+        util_1.default.assertNumber(0, 255, 'red', red);
+        util_1.default.assertNumber(0, 255, 'green', green);
+        util_1.default.assertNumber(0, 255, 'blue', blue);
         const leds = [];
         for (let i = 0; i < this.LED_LEN; i++) {
             leds.push([red, green, blue]);
@@ -99,16 +101,22 @@ class M5StickC_Yun {
         this.rgbs(leds);
     }
     hsv(hue, saturation, value) {
-        util_1.default.assertNumber(0, 300, "hue", hue);
-        util_1.default.assertNumber(0, 1, "saturation", saturation);
-        util_1.default.assertNumber(0, 1, "value", value);
+        util_1.default.assertNumber(0, 300, 'hue', hue);
+        util_1.default.assertNumber(0, 1, 'saturation', saturation);
+        util_1.default.assertNumber(0, 1, 'value', value);
         const color = M5StickC_Yun._generateHsvColor(hue, saturation, value);
         this.rgb(color.red, color.green, color.blue);
     }
     rgbs(array) {
         if (array.length <= this.LED_LEN) {
             array.forEach((value, index) => {
-                this.i2c.write(0x38, [0x01, index, Math.floor(value[0]), Math.floor(value[1]), Math.floor(value[2])]);
+                this.i2c.write(0x38, [
+                    0x01,
+                    index,
+                    Math.floor(value[0]),
+                    Math.floor(value[1]),
+                    Math.floor(value[2]),
+                ]);
             });
         }
     }

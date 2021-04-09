@@ -3,8 +3,10 @@
  * @module Parts.iBS01T
  */
 
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, {
+  ObnizPartsBleInfo,
+} from '../../../obniz/ObnizPartsBleInterface';
 
 export interface IBS01TOptions {}
 
@@ -20,7 +22,7 @@ export interface IBS01T_Data {
 export default class IBS01T implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: "iBS01T",
+      name: 'iBS01T',
     };
   }
 
@@ -54,17 +56,24 @@ export default class IBS01T implements ObnizPartsBleInterface {
       moving: false,
       reed: false,
       battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-      temperature: ObnizPartsBleInterface.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
-      humidity: ObnizPartsBleInterface.signed16FromBinary(peripheral.adv_data[15], peripheral.adv_data[14]),
+      temperature:
+        ObnizPartsBleInterface.signed16FromBinary(
+          peripheral.adv_data[13],
+          peripheral.adv_data[12]
+        ) * 0.01,
+      humidity: ObnizPartsBleInterface.signed16FromBinary(
+        peripheral.adv_data[15],
+        peripheral.adv_data[14]
+      ),
     };
 
-    if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+    if (peripheral.adv_data[11] & 0b0001) {
       d.button = true;
     }
-    if (Boolean(peripheral.adv_data[11] & 0b0010)) {
+    if (peripheral.adv_data[11] & 0b0010) {
       d.moving = true;
     }
-    if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+    if (peripheral.adv_data[11] & 0b0100) {
       d.reed = true;
     }
     return d;

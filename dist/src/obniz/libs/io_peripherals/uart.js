@@ -11,13 +11,14 @@ const ComponentAbstact_1 = require("../ComponentAbstact");
 const util_1 = __importDefault(require("../utils/util"));
 /**
  * Uart module
+ *
  * @category Peripherals
  */
 class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
         super(obniz);
         this.id = id;
-        this.on("/response/uart/receive", (obj) => {
+        this.on('/response/uart/receive', (obj) => {
             if (this.onreceive) {
                 const string = this.tryConvertString(obj.data);
                 this.Obniz._runUserCreatedFunction(this.onreceive, obj.data, string);
@@ -35,42 +36,43 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
      * It starts uart on io tx, rx.
      *
      * You can start uart without much configuration. Just use as below.
+     *
      * @param params
      */
     start(params) {
-        const err = util_1.default._requiredKeys(params, ["tx", "rx"]);
+        const err = util_1.default._requiredKeys(params, ['tx', 'rx']);
         if (err) {
             throw new Error("uart start param '" + err + "' required, but not found ");
         }
         this.params = util_1.default._keyFilter(params, [
-            "tx",
-            "rx",
-            "baud",
-            "stop",
-            "bits",
-            "parity",
-            "flowcontrol",
-            "rts",
-            "cts",
-            "drive",
-            "pull",
-            "gnd",
+            'tx',
+            'rx',
+            'baud',
+            'stop',
+            'bits',
+            'parity',
+            'flowcontrol',
+            'rts',
+            'cts',
+            'drive',
+            'pull',
+            'gnd',
         ]);
-        const ioKeys = ["rx", "tx", "rts", "cts", "gnd"];
+        const ioKeys = ['rx', 'tx', 'rts', 'cts', 'gnd'];
         for (const key of ioKeys) {
             if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
                 throw new Error("uart start param '" + key + "' are to be valid io no");
             }
         }
-        if (this.params.hasOwnProperty("drive")) {
+        if (this.params.hasOwnProperty('drive')) {
             this.Obniz.getIO(this.params.rx).drive(this.params.drive);
             this.Obniz.getIO(this.params.tx).drive(this.params.drive);
         }
         else {
-            this.Obniz.getIO(this.params.rx).drive("5v");
-            this.Obniz.getIO(this.params.tx).drive("5v");
+            this.Obniz.getIO(this.params.rx).drive('5v');
+            this.Obniz.getIO(this.params.tx).drive('5v');
         }
-        if (this.params.hasOwnProperty("pull")) {
+        if (this.params.hasOwnProperty('pull')) {
             this.Obniz.getIO(this.params.rx).pull(this.params.pull);
             this.Obniz.getIO(this.params.tx).pull(this.params.pull);
         }
@@ -78,27 +80,27 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
             this.Obniz.getIO(this.params.rx).pull(null);
             this.Obniz.getIO(this.params.tx).pull(null);
         }
-        if (this.params.hasOwnProperty("gnd")) {
+        if (this.params.hasOwnProperty('gnd')) {
             this.Obniz.getIO(this.params.gnd).output(false);
             const ioNames = {};
-            ioNames[this.params.gnd] = "gnd";
+            ioNames[this.params.gnd] = 'gnd';
             if (this.Obniz.display) {
-                this.Obniz.display.setPinNames("uart" + this.id, ioNames);
+                this.Obniz.display.setPinNames('uart' + this.id, ioNames);
             }
         }
         const obj = {};
         const sendParams = util_1.default._keyFilter(this.params, [
-            "tx",
-            "rx",
-            "baud",
-            "stop",
-            "bits",
-            "parity",
-            "flowcontrol",
-            "rts",
-            "cts",
+            'tx',
+            'rx',
+            'baud',
+            'stop',
+            'bits',
+            'parity',
+            'flowcontrol',
+            'rts',
+            'cts',
         ]);
-        obj["uart" + this.id] = sendParams;
+        obj['uart' + this.id] = sendParams;
         this.Obniz.send(obj);
         this.received = [];
         this.used = true;
@@ -128,6 +130,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
      * obniz.uart0.send(0x11);
      * obniz.uart0.send([0x11, 0x45, 0x44]);
      * ```
+     *
      * @param data
      */
     send(data) {
@@ -138,7 +141,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
         if (data === undefined) {
             return;
         }
-        if (typeof data === "number") {
+        if (typeof data === 'number') {
             data = [data];
         }
         if (this.Obniz.isNode && data instanceof Buffer) {
@@ -147,13 +150,13 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
         else if (data.constructor === Array) {
             send_data = data;
         }
-        else if (typeof data === "string") {
+        else if (typeof data === 'string') {
             const buf = Buffer.from(data);
             send_data = [...buf];
         }
         const obj = {};
-        obj["uart" + this.id] = {};
-        obj["uart" + this.id].data = send_data;
+        obj['uart' + this.id] = {};
+        obj['uart' + this.id].data = send_data;
         //  console.log(obj);
         this.Obniz.send(obj);
     }
@@ -193,6 +196,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
      *   await obniz.wait(10);  //wait for 10ms
      * }
      * ```
+     *
      * @return received data. If not exist data, return [].
      */
     readBytes() {
@@ -273,7 +277,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
      */
     end() {
         const obj = {};
-        obj["uart" + this.id] = null;
+        obj['uart' + this.id] = null;
         this.params = null;
         this.Obniz.send(obj);
         this.used = false;
@@ -293,7 +297,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
      * @private
      */
     schemaBasePath() {
-        return "uart" + this.id;
+        return 'uart' + this.id;
     }
     /**
      * @ignore

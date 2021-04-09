@@ -7,22 +7,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class D6T44L {
     constructor() {
         this.requiredKeys = [];
-        this.keys = ["vcc", "gnd", "sda", "scl", "clock"];
+        this.keys = ['vcc', 'gnd', 'sda', 'scl', 'clock'];
         this.address = 0x0a;
-        this.ioKeys = ["vcc", "gnd", "sda", "scl"];
+        this.ioKeys = ['vcc', 'gnd', 'sda', 'scl'];
         this.commands = {};
         this.commands.read_data = [0x4c];
     }
     static info() {
         return {
-            name: "D6T44L",
+            name: 'D6T44L',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.params.clock = this.params.clock || 100 * 1000; // for i2c
-        this.params.mode = this.params.mode || "master"; // for i2c
+        this.params.mode = this.params.mode || 'master'; // for i2c
         this.params.pull = this.params.pull || null; // for i2c
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.obniz.wait(50);

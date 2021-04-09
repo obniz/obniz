@@ -5,24 +5,32 @@
  */
 // var debug = require('debug')('bindings');
 
-import EventEmitter from "eventemitter3";
+import EventEmitter from 'eventemitter3';
 
-import { ObnizBleHciStateError, ObnizBleUnknownPeripheralError } from "../../../../../ObnizError";
-import BleHelper from "../../bleHelper";
-import { BleDeviceAddress, BleDeviceAddressType, Handle, UUID } from "../../bleTypes";
-import Hci from "../hci";
-import AclStream from "./acl-stream";
-import Gap from "./gap";
-import Gatt from "./gatt";
-import Signaling from "./signaling";
+import {
+  ObnizBleHciStateError,
+  ObnizBleUnknownPeripheralError,
+} from '../../../../../ObnizError';
+import BleHelper from '../../bleHelper';
+import {
+  BleDeviceAddress,
+  BleDeviceAddressType,
+  Handle,
+  UUID,
+} from '../../bleTypes';
+import Hci from '../hci';
+import AclStream from './acl-stream';
+import Gap from './gap';
+import Gatt from './gatt';
+import Signaling from './signaling';
 
 type NobleBindingsEventType =
   // notify from peripheral
-  | "discover" // for onfind
-  | "disconnect"
-  | "stateChange"
-  | "notification"
-  | "handleNotify";
+  | 'discover' // for onfind
+  | 'disconnect'
+  | 'stateChange'
+  | 'notification'
+  | 'handleNotify';
 
 /**
  * @ignore
@@ -40,7 +48,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   private _hci: Hci;
   private _gap: Gap;
   private _scanServiceUuids: any;
-  private _connectPromises: Array<Promise<any>>;
+  private _connectPromises: Promise<any>[];
 
   constructor(hciProtocol: any) {
     super();
@@ -59,11 +67,11 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     this._signalings = {};
     this._connectPromises = [];
 
-    this._hci.on("stateChange", this.onStateChange.bind(this));
-    this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
-    this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
+    this._hci.on('stateChange', this.onStateChange.bind(this));
+    this._hci.on('disconnComplete', this.onDisconnComplete.bind(this));
+    this._hci.on('aclDataPkt', this.onAclDataPkt.bind(this));
 
-    this._gap.on("discover", this.onDiscover.bind(this));
+    this._gap.on('discover', this.onDiscover.bind(this));
   }
 
   /**
@@ -91,14 +99,18 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
 
   public addPeripheralData(uuid: UUID, addressType: BleDeviceAddressType) {
     if (!this._addresses[uuid]) {
-      const address: any = BleHelper.reverseHexString(uuid, ":");
+      const address: any = BleHelper.reverseHexString(uuid, ':');
       this._addresses[uuid] = address;
       this._addresseTypes[uuid] = addressType;
       this._connectable[uuid] = true;
     }
   }
 
-  public async startScanningWait(serviceUuids: any, allowDuplicates: any, activeScan: boolean) {
+  public async startScanningWait(
+    serviceUuids: any,
+    allowDuplicates: any,
+    activeScan: boolean
+  ) {
     this._scanServiceUuids = serviceUuids || [];
 
     await this._gap.startScanningWait(allowDuplicates, activeScan);
@@ -121,35 +133,44 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
         // nothing
       })
       .then(async () => {
-        const conResult = await this._hci.createLeConnWait(address, addressType, 90 * 1000, (result: any) => {
-          // on connect success
-          this.onLeConnComplete(
-            result.status,
-            result.handle,
-            result.role,
-            result.addressType,
-            result.address,
-            result.interval,
-            result.latency,
-            result.supervisionTimeout,
-            result.masterClockAccuracy,
-          );
-          if (onConnectCallback && typeof onConnectCallback === "function") {
-            onConnectCallback();
+        const conResult = await this._hci.createLeConnWait(
+          address,
+          addressType,
+          90 * 1000,
+          (result: any) => {
+            // on connect success
+            this.onLeConnComplete(
+              result.status,
+              result.handle,
+              result.role,
+              result.addressType,
+              result.address,
+              result.interval,
+              result.latency,
+              result.supervisionTimeout,
+              result.masterClockAccuracy
+            );
+            if (onConnectCallback && typeof onConnectCallback === 'function') {
+              onConnectCallback();
+            }
           }
-        }); // connection timeout for 90 secs.
+        ); // connection timeout for 90 secs.
 
         return await this._gatts[conResult.handle].exchangeMtuWait(256);
       })
       .then(
         () => {
-          this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
+          this._connectPromises = this._connectPromises.filter(
+            (e) => e === doPromise
+          );
           return Promise.resolve();
         },
         (error) => {
-          this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
+          this._connectPromises = this._connectPromises.filter(
+            (e) => e === doPromise
+          );
           return Promise.reject(error);
-        },
+        }
       );
     this._connectPromises.push(doPromise);
     return doPromise;
@@ -170,20 +191,35 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     }
     this._state = state;
 
-    if (state === "unauthorized") {
-      console.log("noble warning: adapter state unauthorized, please run as root or with sudo");
-      console.log("               or see README for information on running without root/sudo:");
-      console.log("               https://github.com/sandeepmistry/noble#running-on-linux");
-    } else if (state === "unsupported") {
-      console.log("noble warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).");
-      console.log("               Try to run with environment variable:");
-      console.log("               [sudo] NOBLE_HCI_DEVICE_ID=x node ...");
+    if (state === 'unauthorized') {
+      console.log(
+        'noble warning: adapter state unauthorized, please run as root or with sudo'
+      );
+      console.log(
+        '               or see README for information on running without root/sudo:'
+      );
+      console.log(
+        '               https://github.com/sandeepmistry/noble#running-on-linux'
+      );
+    } else if (state === 'unsupported') {
+      console.log(
+        'noble warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).'
+      );
+      console.log('               Try to run with environment variable:');
+      console.log('               [sudo] NOBLE_HCI_DEVICE_ID=x node ...');
     }
 
-    this.emit("stateChange", state);
+    this.emit('stateChange', state);
   }
 
-  public onDiscover(status: any, address?: any, addressType?: any, connectable?: any, advertisement?: any, rssi?: any) {
+  public onDiscover(
+    status: any,
+    address?: any,
+    addressType?: any,
+    connectable?: any,
+    advertisement?: any,
+    rssi?: any
+  ) {
     if (this._scanServiceUuids === undefined) {
       return;
     }
@@ -202,7 +238,8 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
       }
 
       for (i in serviceUuids) {
-        hasScanServiceUuids = this._scanServiceUuids.indexOf(serviceUuids[i]) !== -1;
+        hasScanServiceUuids =
+          this._scanServiceUuids.indexOf(serviceUuids[i]) !== -1;
 
         if (hasScanServiceUuids) {
           break;
@@ -211,12 +248,20 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     }
 
     if (hasScanServiceUuids) {
-      const uuid: any = address.split(":").join("");
+      const uuid: any = address.split(':').join('');
       this._addresses[uuid] = address;
       this._addresseTypes[uuid] = addressType;
       this._connectable[uuid] = connectable;
 
-      this.emit("discover", uuid, address, addressType, connectable, advertisement, rssi);
+      this.emit(
+        'discover',
+        uuid,
+        address,
+        addressType,
+        connectable,
+        advertisement,
+        rssi
+      );
     }
   }
 
@@ -229,7 +274,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     interval?: any,
     latency?: any,
     supervisionTimeout?: any,
-    masterClockAccuracy?: any,
+    masterClockAccuracy?: any
   ) {
     if (role !== 0) {
       // not master, ignore
@@ -241,10 +286,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     if (status !== 0) {
       throw new ObnizBleHciStateError(status);
     }
-    uuid = address!
-      .split(":")
-      .join("")
-      .toLowerCase();
+    uuid = address!.split(':').join('').toLowerCase();
 
     const aclStream: AclStream = new AclStream(
       this._hci,
@@ -252,7 +294,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
       this._hci.addressType,
       this._hci.address,
       addressType,
-      address,
+      address
     );
     aclStream.debugHandler = (text: any) => {
       this.debug(text);
@@ -266,10 +308,13 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     this._handles[uuid] = handle;
     this._handles[handle] = uuid;
 
-    this._gatts[handle].on("notification", this.onNotification.bind(this));
-    this._gatts[handle].on("handleNotify", this.onHandleNotify.bind(this));
+    this._gatts[handle].on('notification', this.onNotification.bind(this));
+    this._gatts[handle].on('handleNotify', this.onHandleNotify.bind(this));
 
-    this._signalings[handle].on("connectionParameterUpdateRequest", this.onConnectionParameterUpdateWait.bind(this));
+    this._signalings[handle].on(
+      'connectionParameterUpdateRequest',
+      this.onConnectionParameterUpdateWait.bind(this)
+    );
 
     // public onMtu(address: any, mtu?: any) {}
   }
@@ -278,7 +323,9 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     const uuid: any = this._handles[handle];
 
     if (uuid) {
-      const error = new ObnizBleHciStateError(reason, { peripheralAddress: uuid });
+      const error = new ObnizBleHciStateError(reason, {
+        peripheralAddress: uuid,
+      });
       this._gatts[handle].onEnd(error);
       this._gatts[handle].removeAllListeners();
       this._signalings[handle].removeAllListeners();
@@ -291,7 +338,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
       delete this._handles[uuid];
       delete this._handles[handle];
 
-      this.emit("disconnect", uuid, error); // TODO: handle reason?
+      this.emit('disconnect', uuid, error); // TODO: handle reason?
     } else {
       // maybe disconnect as peripheral
       // console.warn(
@@ -315,20 +362,38 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     return services;
   }
 
-  public async discoverIncludedServicesWait(peripheralUuid: string, serviceUuid: UUID, serviceUuids: UUID[]) {
+  public async discoverIncludedServicesWait(
+    peripheralUuid: string,
+    serviceUuid: UUID,
+    serviceUuids: UUID[]
+  ) {
     const gatt: Gatt = this.getGatt(peripheralUuid);
 
-    const services = gatt.discoverIncludedServicesWait(serviceUuid, serviceUuids || []);
+    const services = gatt.discoverIncludedServicesWait(
+      serviceUuid,
+      serviceUuids || []
+    );
     return services;
   }
 
-  public async discoverCharacteristicsWait(peripheralUuid: any, serviceUuid: any, characteristicUuids?: any) {
+  public async discoverCharacteristicsWait(
+    peripheralUuid: any,
+    serviceUuid: any,
+    characteristicUuids?: any
+  ) {
     const gatt: Gatt = this.getGatt(peripheralUuid);
-    const chars = await gatt.discoverCharacteristicsWait(serviceUuid, characteristicUuids || []);
+    const chars = await gatt.discoverCharacteristicsWait(
+      serviceUuid,
+      characteristicUuids || []
+    );
     return chars;
   }
 
-  public async readWait(peripheralUuid: any, serviceUuid: any, characteristicUuid: any): Promise<Buffer> {
+  public async readWait(
+    peripheralUuid: any,
+    serviceUuid: any,
+    characteristicUuid: any
+  ): Promise<Buffer> {
     const gatt: Gatt = this.getGatt(peripheralUuid);
     const data = await gatt.readWait(serviceUuid, characteristicUuid);
     return data;
@@ -339,40 +404,60 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     serviceUuid: any,
     characteristicUuid: any,
     data: any,
-    withoutResponse: any,
+    withoutResponse: any
   ): Promise<void> {
     const gatt: Gatt = this.getGatt(peripheralUuid);
-    await gatt.writeWait(serviceUuid, characteristicUuid, data, withoutResponse);
+    await gatt.writeWait(
+      serviceUuid,
+      characteristicUuid,
+      data,
+      withoutResponse
+    );
   }
 
   public async broadcastWait(
     peripheralUuid: any,
     serviceUuid: any,
     characteristicUuid: any,
-    broadcast: any,
+    broadcast: any
   ): Promise<void> {
     const gatt: Gatt = this.getGatt(peripheralUuid);
     await gatt.broadcastWait(serviceUuid, characteristicUuid, broadcast);
   }
 
-  public async notifyWait(peripheralUuid: any, serviceUuid: any, characteristicUuid: any, notify: any) {
+  public async notifyWait(
+    peripheralUuid: any,
+    serviceUuid: any,
+    characteristicUuid: any,
+    notify: any
+  ) {
     const gatt: Gatt = this.getGatt(peripheralUuid);
     await gatt.notifyWait(serviceUuid, characteristicUuid, notify);
   }
 
-  public onNotification(address: any, serviceUuid?: any, characteristicUuid?: any, data?: any) {
-    const uuid: any = address
-      .split(":")
-      .join("")
-      .toLowerCase();
+  public onNotification(
+    address: any,
+    serviceUuid?: any,
+    characteristicUuid?: any,
+    data?: any
+  ) {
+    const uuid: any = address.split(':').join('').toLowerCase();
 
-    this.emit("notification", uuid, serviceUuid, characteristicUuid, data, true, true);
+    this.emit(
+      'notification',
+      uuid,
+      serviceUuid,
+      characteristicUuid,
+      data,
+      true,
+      true
+    );
   }
 
   public async discoverDescriptorsWait(
     peripheralUuid: UUID,
     serviceUuid: UUID,
-    characteristicUuid: UUID,
+    characteristicUuid: UUID
   ): Promise<UUID[]> {
     const gatt: Gatt = this.getGatt(peripheralUuid);
     return await gatt.discoverDescriptorsWait(serviceUuid, characteristicUuid);
@@ -382,10 +467,14 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     peripheralUuid: UUID,
     serviceUuid: UUID,
     characteristicUuid: UUID,
-    descriptorUuid: UUID,
+    descriptorUuid: UUID
   ): Promise<Buffer> {
     const gatt: Gatt = this.getGatt(peripheralUuid);
-    return await gatt.readValueWait(serviceUuid, characteristicUuid, descriptorUuid);
+    return await gatt.readValueWait(
+      serviceUuid,
+      characteristicUuid,
+      descriptorUuid
+    );
   }
 
   public async writeValueWait(
@@ -393,30 +482,40 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     serviceUuid: any,
     characteristicUuid: any,
     descriptorUuid: any,
-    data: any,
+    data: any
   ) {
     const gatt: Gatt = this.getGatt(peripheralUuid);
-    await gatt.writeValueWait(serviceUuid, characteristicUuid, descriptorUuid, data);
+    await gatt.writeValueWait(
+      serviceUuid,
+      characteristicUuid,
+      descriptorUuid,
+      data
+    );
   }
 
-  public async readHandleWait(peripheralUuid: any, attHandle: any): Promise<Buffer> {
+  public async readHandleWait(
+    peripheralUuid: any,
+    attHandle: any
+  ): Promise<Buffer> {
     const gatt: Gatt = this.getGatt(peripheralUuid);
     const data = await gatt.readHandleWait(attHandle);
     return data;
   }
 
-  public async writeHandleWait(peripheralUuid: any, attHandle: any, data: any, withoutResponse: any): Promise<void> {
+  public async writeHandleWait(
+    peripheralUuid: any,
+    attHandle: any,
+    data: any,
+    withoutResponse: any
+  ): Promise<void> {
     const gatt: Gatt = this.getGatt(peripheralUuid);
     await gatt.writeHandleWait(attHandle, data, withoutResponse);
   }
 
   public onHandleNotify(address: any, handle?: any, data?: any) {
-    const uuid: any = address
-      .split(":")
-      .join("")
-      .toLowerCase();
+    const uuid: any = address.split(':').join('').toLowerCase();
 
-    this.emit("handleNotify", uuid, handle, data);
+    this.emit('handleNotify', uuid, handle, data);
   }
 
   public onConnectionParameterUpdateWait(
@@ -424,10 +523,16 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     minInterval?: any,
     maxInterval?: any,
     latency?: any,
-    supervisionTimeout?: any,
+    supervisionTimeout?: any
   ) {
     this._hci
-      .connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout)
+      .connUpdateLeWait(
+        handle,
+        minInterval,
+        maxInterval,
+        latency,
+        supervisionTimeout
+      )
       .then(() => {})
       .catch((e) => {
         // TODO:
@@ -437,7 +542,10 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     // this.onLeConnUpdateComplete(); is nop
   }
 
-  public async pairingWait(peripheralUuid: any, options?: any): Promise<string> {
+  public async pairingWait(
+    peripheralUuid: any,
+    options?: any
+  ): Promise<string> {
     options = options || {};
     const gatt: Gatt = this.getGatt(peripheralUuid);
     const result = await gatt.encryptWait(options);

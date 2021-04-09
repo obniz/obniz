@@ -2,11 +2,11 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import { ObnizDeprecatedFunctionError } from "../../../ObnizError";
-import BleRemoteDescriptor from "./bleRemoteDescriptor";
-import BleRemoteService from "./bleRemoteService";
-import BleRemoteValueAttributeAbstract from "./bleRemoteValueAttributeAbstract";
-import { BleAttributePropery, UUID } from "./bleTypes";
+import { ObnizDeprecatedFunctionError } from '../../../ObnizError';
+import BleRemoteDescriptor from './bleRemoteDescriptor';
+import BleRemoteService from './bleRemoteService';
+import BleRemoteValueAttributeAbstract from './bleRemoteValueAttributeAbstract';
+import { BleAttributePropery, UUID } from './bleTypes';
 
 /**
  * @category Use as Central
@@ -19,7 +19,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * @ignore
    */
   get parentName(): string | null {
-    return "service";
+    return 'service';
   }
 
   /**
@@ -34,7 +34,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    *
    */
   get childrenName(): string | null {
-    return "descriptors";
+    return 'descriptors';
   }
 
   /**
@@ -129,7 +129,9 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * @ignore
    * @param params
    */
-  public addDescriptor(params: { uuid: UUID } | BleRemoteDescriptor): BleRemoteDescriptor {
+  public addDescriptor(
+    params: { uuid: UUID } | BleRemoteDescriptor
+  ): BleRemoteDescriptor {
     return this.addChild(params);
   }
 
@@ -162,6 +164,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    *   console.error(e);
    * }
    * ```
+   *
    * @param uuid
    */
   public getDescriptor(uuid: UUID): BleRemoteDescriptor | null {
@@ -221,13 +224,15 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * @param callback
    *
    */
-  public async registerNotifyWait(callback: (data: any) => void): Promise<void> {
+  public async registerNotifyWait(
+    callback: (data: any) => void
+  ): Promise<void> {
     this.onnotify = callback;
     await this.service.peripheral.obnizBle.centralBindings.notifyWait(
       this.service.peripheral.address,
       this.service.uuid,
       this.uuid,
-      true,
+      true
     );
     if (this.onregisternotify) {
       this.onregisternotify();
@@ -301,25 +306,27 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
       this.service.peripheral.address,
       this.service.uuid,
       this.uuid,
-      false,
+      false
     );
     this._runUserCreatedFunction(this.onunregisternotify);
   }
 
   /**
    * Use readWait() instead from 3.5.0
+   *
    * @deprecated
    */
   public read() {
-    throw new ObnizDeprecatedFunctionError("read", "readWait");
+    throw new ObnizDeprecatedFunctionError('read', 'readWait');
   }
 
   /**
    * Use writeWait() instead from 3.5.0
+   *
    * @deprecated
    */
   public write(array: number[], needResponse?: boolean) {
-    throw new ObnizDeprecatedFunctionError("read", "readWait");
+    throw new ObnizDeprecatedFunctionError('read', 'readWait');
   }
 
   /**
@@ -357,9 +364,9 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
       this.service.uuid,
       this.uuid,
       Buffer.from(data),
-      !needResponse,
+      !needResponse
     );
-    this._runUserCreatedFunction(this.onwrite, "success");
+    this._runUserCreatedFunction(this.onwrite, 'success');
     return true;
   }
 
@@ -391,7 +398,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
     const buf = await this.service.peripheral.obnizBle.centralBindings.readWait(
       this.service.peripheral.address,
       this.service.uuid,
-      this.uuid,
+      this.uuid
     );
     const data = Array.from(buf);
 
@@ -430,7 +437,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
     const descriptors = await this.service.peripheral.obnizBle.centralBindings.discoverDescriptorsWait(
       this.service.peripheral.address,
       this.service.uuid,
-      this.uuid,
+      this.uuid
     );
 
     for (const descr of descriptors) {
@@ -464,42 +471,42 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * This characteristics can broadcast or not.
    */
   public canBroadcast(): boolean {
-    return this.properties.includes("broadcast");
+    return this.properties.includes('broadcast');
   }
 
   /**
    * This characteristics can notify or not.
    */
   public canNotify(): boolean {
-    return this.properties.includes("notify");
+    return this.properties.includes('notify');
   }
 
   /**
    * This characteristics can read or not.
    */
   public canRead(): boolean {
-    return this.properties.includes("read");
+    return this.properties.includes('read');
   }
 
   /**
    * This characteristics can write or not.
    */
   public canWrite(): boolean {
-    return this.properties.includes("write");
+    return this.properties.includes('write');
   }
 
   /**
    * This characteristics can 'write without response' or not.
    */
   public canWriteWithoutResponse(): boolean {
-    return this.properties.includes("write_without_response");
+    return this.properties.includes('write_without_response');
   }
 
   /**
    * This characteristics can indicate or not.
    */
   public canIndicate(): boolean {
-    return this.properties.includes("indicate");
+    return this.properties.includes('indicate');
   }
 
   /**
@@ -515,7 +522,10 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * @param descriptors
    */
   public ondiscoverfinished(descriptors: any) {
-    this._runUserCreatedFunction(this.ondiscoverdescriptorfinished, descriptors);
+    this._runUserCreatedFunction(
+      this.ondiscoverdescriptorfinished,
+      descriptors
+    );
   }
 
   /**
@@ -526,7 +536,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
   public notifyFromServer(notifyName: any, params: any) {
     super.notifyFromServer(notifyName, params);
     switch (notifyName) {
-      case "onnotify": {
+      case 'onnotify': {
         this._runUserCreatedFunction(this.onnotify, params.data || undefined);
 
         break;

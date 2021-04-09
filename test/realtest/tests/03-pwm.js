@@ -4,15 +4,15 @@ const config = require('../config.js');
 
 let checkBoard, check_io;
 
-describe('3-pwm', function() {
+describe('3-pwm', function () {
   this.timeout(20000);
 
-  before(function() {
-    return new Promise(resolve => {
+  before(function () {
+    return new Promise((resolve) => {
       config.waitForConenct(() => {
         checkBoard = config.checkBoard;
-        check_io = config.check_io.filter(io =>
-          io.mode.some(mode => mode === 'digitalWrite')
+        check_io = config.check_io.filter((io) =>
+          io.mode.some((mode) => mode === 'digitalWrite')
         );
         resolve();
       });
@@ -21,7 +21,7 @@ describe('3-pwm', function() {
 
   let pwms = new Array(6);
 
-  it('10%', async function() {
+  it('10%', async function () {
     const pwm = checkBoard.getFreePwm();
     pwm.start({ io: check_io[0].board_io }); // start pwm. output at io0
     pwm.freq(100);
@@ -31,7 +31,7 @@ describe('3-pwm', function() {
     pwm.end();
   });
 
-  it('50%', async function() {
+  it('50%', async function () {
     const pwm = checkBoard.getFreePwm();
     pwm.start({ io: check_io[0].board_io }); // start pwm. output at io0
     pwm.freq(100);
@@ -41,7 +41,7 @@ describe('3-pwm', function() {
     pwm.end();
   });
 
-  it('90%', async function() {
+  it('90%', async function () {
     const pwm = checkBoard.getFreePwm();
     pwm.start({ io: check_io[0].board_io }); // start pwm. output at io0
     pwm.freq(100);
@@ -51,7 +51,7 @@ describe('3-pwm', function() {
     pwm.end();
   });
 
-  it('six pwm', async function() {
+  it('six pwm', async function () {
     for (let i = 0; i < 6; i++) {
       if (check_io.length <= i) break;
       let pwm = checkBoard.getFreePwm();
@@ -63,39 +63,39 @@ describe('3-pwm', function() {
     await checkBoard.pingWait();
   });
 
-  it('pwm0 = duty 30', async function() {
+  it('pwm0 = duty 30', async function () {
     await detectPulse(check_io[0], [20, 40]);
   });
 
-  it('pwm1 = duty 40', async function() {
+  it('pwm1 = duty 40', async function () {
     await detectPulse(check_io[1], [30, 50]);
   });
 
-  it('pwm2 = duty 50', async function() {
+  it('pwm2 = duty 50', async function () {
     await detectPulse(check_io[2], [40, 60]);
   });
 
-  it('pwm3 = duty 60', async function() {
+  it('pwm3 = duty 60', async function () {
     await detectPulse(check_io[3], [50, 70]);
   });
 
   //todo:bug:get duty 50 However, the waveform looks good...?
-  it.skip('pwm4 = duty 70', async function() {
+  it.skip('pwm4 = duty 70', async function () {
     await detectPulse(check_io[4], [60, 80]);
   });
 
-  it('pwm5 = duty 80', async function() {
+  it('pwm5 = duty 80', async function () {
     await detectPulse(check_io[5], [70, 90]);
   });
 
-  it('terminate successfull', async function() {
+  it('terminate successfull', async function () {
     for (let i = 0; i < 6; i++) {
       if (check_io.length <= i) break;
       pwms[i].end();
     }
   });
 
-  it('pwm with push-pull3v', async function() {
+  it('pwm with push-pull3v', async function () {
     const pwm = checkBoard.getFreePwm();
     pwm.start({ io: check_io[0].board_io, drive: '3v' });
     pwm.freq(100);
@@ -119,7 +119,7 @@ describe('3-pwm', function() {
   //   pwm.end();
   // });
 
-  it.skip('pwm with open-drain(no pullup)', async function() {
+  it.skip('pwm with open-drain(no pullup)', async function () {
     const pwm = checkBoard.getFreePwm();
     pwm.start({ io: check_io[0].board_io, drive: 'open-drain' });
     pwm.freq(1000);
@@ -151,7 +151,7 @@ function detectPulse(device, ratioRange) {
       interval: 1,
       duration: 300,
     });
-    obniz.logicAnalyzer.onmeasured = async function(array) {
+    obniz.logicAnalyzer.onmeasured = async function (array) {
       if (ignores > 0) {
         ignores--;
         return;

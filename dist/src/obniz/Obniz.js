@@ -34,6 +34,7 @@ const ObnizDevice_1 = __importDefault(require("./ObnizDevice"));
 class Obniz extends ObnizDevice_1.default {
     /**
      * obniz REST api class
+     *
      * @returns {ObnizApi}
      */
     static get api() {
@@ -41,6 +42,7 @@ class Obniz extends ObnizDevice_1.default {
     }
     /**
      * App Support class
+     *
      * @returns {ObnizApp}
      */
     static get App() {

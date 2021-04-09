@@ -18,19 +18,20 @@ class HEM_9200T {
     }
     static info() {
         return {
-            name: "HEM_9200T",
+            name: 'HEM_9200T',
         };
     }
     static isDevice(peripheral) {
         if (peripheral.localName &&
-            (peripheral.localName.startsWith("BLESmart_") || peripheral.localName.startsWith("BLEsmart_"))) {
+            (peripheral.localName.startsWith('BLESmart_') ||
+                peripheral.localName.startsWith('BLEsmart_'))) {
             return true;
         }
         return false;
     }
     async getDataWait() {
         if (!this._peripheral) {
-            throw new Error("HEM_9200T is not find.");
+            throw new Error('HEM_9200T is not find.');
         }
         // console.log(`connecting HEM passkey ${this._passkey}`);
         await this._peripheral.connectWait({
@@ -56,9 +57,9 @@ class HEM_9200T {
             this._peripheral.ondisconnect = (reason) => {
                 resolve(results);
             };
-            await this.subscribeWait("1805", "2A2B"); // current time
-            await this.subscribeWait("180F", "2A19"); // battery level
-            await this.subscribeWait("1810", "2A35", async (data) => {
+            await this.subscribeWait('1805', '2A2B'); // current time
+            await this.subscribeWait('180F', '2A19'); // battery level
+            await this.subscribeWait('1810', '2A35', async (data) => {
                 // console.log(data);
                 results.push(this._analyzeData(data));
             }); // blood pressure
@@ -66,9 +67,11 @@ class HEM_9200T {
     }
     async subscribeWait(service, char, callback) {
         if (!this._peripheral) {
-            throw new Error("HEM_9200T is not find.");
+            throw new Error('HEM_9200T is not find.');
         }
-        const characteristics = this._peripheral.getService(service).getCharacteristic(char);
+        const characteristics = this._peripheral
+            .getService(service)
+            .getCharacteristic(char);
         await characteristics.registerNotifyWait(async (data) => {
             if (callback) {
                 callback(data);
@@ -89,7 +92,7 @@ class HEM_9200T {
             systolic: this._readSFloat(buf, index) * scale,
             diastolic: this._readSFloat(buf, index + 2) * scale,
             meanArterialPressure: this._readSFloat(buf, index + 4) * scale,
-            unit: "mmHg",
+            unit: 'mmHg',
         };
         index += 6;
         if (flags & 0x02) {
@@ -114,11 +117,11 @@ class HEM_9200T {
         }
         if (flags & 0x10) {
             const statusFlag = {
-                0x01: "BodyMovementDetection",
-                0x02: "CuffFitDetection",
-                0x04: "IrregularPulseDetection",
-                0x08: "PulseRateRangeDetection",
-                0x10: "MeasurementPositionDetection",
+                0x01: 'BodyMovementDetection',
+                0x02: 'CuffFitDetection',
+                0x04: 'IrregularPulseDetection',
+                0x08: 'PulseRateRangeDetection',
+                0x10: 'MeasurementPositionDetection',
             };
             const mesurementStatus = buf.readUInt16LE(index);
             index++;

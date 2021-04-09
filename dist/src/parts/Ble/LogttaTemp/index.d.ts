@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module Parts.Logtta_TH
  */
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
 export interface Logtta_THOptions {
 }
 export interface Logtta_TH_Data {
@@ -35,6 +35,11 @@ export default class Logtta_TH implements ObnizPartsBleInterface {
     getHumidityWait(): Promise<number>;
     startNotifyWait(): Promise<void>;
     authPinCodeWait(code: string): Promise<void>;
+    /**
+     * @deprecated
+     * @param enable
+     */
     setBeaconMode(enable: boolean): Promise<void>;
+    setBeaconModeWait(enable: boolean): Promise<void>;
     private checkNumber;
 }

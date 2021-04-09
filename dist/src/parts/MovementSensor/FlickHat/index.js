@@ -6,49 +6,56 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class FlickHat {
     constructor() {
-        this.keys = ["vcc", "gnd", "sda", "scl", "reset", "ts", "led1", "led2"];
-        this.requiredKeys = ["gnd", "sda", "scl", "reset", "ts"];
+        this.keys = ['vcc', 'gnd', 'sda', 'scl', 'reset', 'ts', 'led1', 'led2'];
+        this.requiredKeys = ['gnd', 'sda', 'scl', 'reset', 'ts'];
         this.displayIoNames = {
             // vcc: 'vcc', //5v
-            sda: "sda",
-            scl: "scl",
-            gnd: "gnd",
-            reset: "reset",
-            ts: "ts",
+            sda: 'sda',
+            scl: 'scl',
+            gnd: 'gnd',
+            reset: 'reset',
+            ts: 'ts',
         };
     }
     static info() {
         return {
-            name: "FlickHat",
+            name: 'FlickHat',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
         this.address = 0x42;
         if (this.obniz.isValidIO(this.params.vcc)) {
-            this.obniz.getIO(this.params.vcc).drive("5v");
+            this.obniz.getIO(this.params.vcc).drive('5v');
             this.obniz.getIO(this.params.vcc).output(true);
         }
         this.obniz.getIO(this.params.gnd).output(false);
         this.io_reset = this.obniz.getIO(this.params.reset);
-        this.io_reset.drive("3v");
+        this.io_reset.drive('3v');
         this.io_ts = this.obniz.getIO(this.params.ts);
-        this.io_ts.drive("open-drain");
-        this.io_ts.pull("3v");
-        this.params.mode = "master";
-        this.params.pull = "3v";
+        this.io_ts.drive('open-drain');
+        this.io_ts.pull('3v');
+        this.params.mode = 'master';
+        this.params.pull = '3v';
         this.params.clock = 100 * 1000; // 100KHz
         // PeripheralI2C
         this.i2c = this.obniz.getI2CWithConfig(this.params);
         if (this.obniz.isValidIO(this.params.led1)) {
-            this.led1 = this.obniz.wired("LED", { anode: this.params.led1 });
+            this.led1 = this.obniz.wired('LED', { anode: this.params.led1 });
         }
         if (this.obniz.isValidIO(this.params.led2)) {
-            this.led2 = this.obniz.wired("LED", { anode: this.params.led2 });
+            this.led2 = this.obniz.wired('LED', { anode: this.params.led2 });
         }
     }
-    async start(callback) {
-        this.io_ts.pull("3v");
+    /**
+     * @deprecated
+     * @param callback
+     */
+    start(callback) {
+        return this.startWait(callback);
+    }
+    async startWait(callback) {
+        this.io_ts.pull('3v');
         this.io_reset.output(false);
         await this.obniz.wait(50);
         this.io_reset.output(true);
@@ -102,13 +109,20 @@ class FlickHat {
         ]);
     }
     _dataArray2string(data) {
-        let result = "";
+        let result = '';
         for (const n of data) {
             result += String.fromCharCode(n);
         }
         return result;
     }
-    async polling(timeout) {
+    /**
+     * @deprecated
+     * @param timeout
+     */
+    polling(timeout) {
+        return this.pollingWait(timeout);
+    }
+    async pollingWait(timeout) {
         timeout = timeout || 3000; // default: 3s
         // DataOutputConfigMask	2byte
         // const maskDSPStatus = 1;
@@ -126,7 +140,7 @@ class FlickHat {
             ts = await this.io_ts.inputWait();
         }
         if (!ts) {
-            this.io_ts.pull("0v");
+            this.io_ts.pull('0v');
             // await this.obniz.wait(1);
             const data = await this.i2c.readWait(this.address, this.readSize);
             const size = data[0];
@@ -135,7 +149,8 @@ class FlickHat {
             const msgID = data[3];
             if (size !== 0xff && size > 0) {
                 if (this.debugprint || this.obniz.debugprint) {
-                    console.log("flickHat: " + data.slice(0, size).map((v) => "0x" + v.toString(16)));
+                    console.log('flickHat: ' +
+                        data.slice(0, size).map((v) => '0x' + v.toString(16)));
                 }
                 let configmask;
                 let sysinfo;
@@ -155,7 +170,10 @@ class FlickHat {
                         airwheel = data.slice(18, 20);
                         // let xyz = data.slice(20, 26);
                         // let noisepow = data.slice(27, 30);
-                        if (gesture[0] === 255 && gesture[1] === 255 && gesture[2] === 255 && gesture[3] === 255) {
+                        if (gesture[0] === 255 &&
+                            gesture[1] === 255 &&
+                            gesture[2] === 255 &&
+                            gesture[3] === 255) {
                             break;
                         }
                         if (configmask & maskXYZPosition && sysinfo & sysPositionValid) {
@@ -167,27 +185,28 @@ class FlickHat {
                                 seq,
                             };
                             this.xyz = xyz;
-                            if (typeof this.onxyz === "function") {
+                            if (typeof this.onxyz === 'function') {
                                 this.onxyz(xyz);
                             }
                         }
                         if (configmask & maskGestureInfo && gesture[0] > 0) {
                             this.lastGesture = gesture[0];
                             const gestures = [
-                                ["", "", ""],
-                                ["garbage", "", ""],
-                                ["flick", "west", "east"],
-                                ["flick", "east", "west"],
-                                ["flick", "south", "north"],
-                                ["flick", "north", "south"],
-                                ["circle", "clockwise", ""],
-                                ["circle", "counter-clockwise", ""],
-                                ["wave", "x", ""],
-                                ["wave", "y", ""],
-                                ["hold", "", ""],
+                                ['', '', ''],
+                                ['garbage', '', ''],
+                                ['flick', 'west', 'east'],
+                                ['flick', 'east', 'west'],
+                                ['flick', 'south', 'north'],
+                                ['flick', 'north', 'south'],
+                                ['circle', 'clockwise', ''],
+                                ['circle', 'counter-clockwise', ''],
+                                ['wave', 'x', ''],
+                                ['wave', 'y', ''],
+                                ['hold', '', ''],
                             ];
                             for (const index in gestures) {
-                                if (index === gesture[0] && typeof this.ongestureall === "function") {
+                                if (index === gesture[0] &&
+                                    typeof this.ongestureall === 'function') {
                                     this.ongestureall({
                                         action: gestures[index][0],
                                         from: gestures[index][1],
@@ -196,9 +215,11 @@ class FlickHat {
                                         seq,
                                     });
                                 }
-                                if (index === gesture[0] && gestures[index][0] === "flick" && typeof this.ongesture === "function") {
+                                if (index === gesture[0] &&
+                                    gestures[index][0] === 'flick' &&
+                                    typeof this.ongesture === 'function') {
                                     this.ongesture({
-                                        action: "gesture",
+                                        action: 'gesture',
                                         from: gestures[index][1],
                                         to: gestures[index][2],
                                         raw: gesture,
@@ -207,7 +228,9 @@ class FlickHat {
                                 }
                             }
                         }
-                        if (configmask & maskTouchInfo && !(touch[0] === 0 && touch[1] === 0) && touch[3] === 0) {
+                        if (configmask & maskTouchInfo &&
+                            !(touch[0] === 0 && touch[1] === 0) &&
+                            touch[3] === 0) {
                             // console.log('touch: ' + touch.map(v => '0x' + v.toString(16)));
                             const touchAction = touch[0] | (touch[1] << 8); // little endian
                             if (touchAction === 0xffff) {
@@ -215,21 +238,21 @@ class FlickHat {
                             }
                             // let touchCount = touch[2] * 5; // touch counter value * 5[ms]
                             const actions = [
-                                ["touch", "south"],
-                                ["touch", "west"],
-                                ["touch", "north"],
-                                ["touch", "east"],
-                                ["touch", "center"],
-                                ["tap", "south"],
-                                ["tap", "west"],
-                                ["tap", "north"],
-                                ["tap", "east"],
-                                ["tap", "center"],
-                                ["doubletap", "south"],
-                                ["doubletap", "west"],
-                                ["doubletap", "north"],
-                                ["doubletap", "east"],
-                                ["doubletap", "center"],
+                                ['touch', 'south'],
+                                ['touch', 'west'],
+                                ['touch', 'north'],
+                                ['touch', 'east'],
+                                ['touch', 'center'],
+                                ['tap', 'south'],
+                                ['tap', 'west'],
+                                ['tap', 'north'],
+                                ['tap', 'east'],
+                                ['tap', 'center'],
+                                ['doubletap', 'south'],
+                                ['doubletap', 'west'],
+                                ['doubletap', 'north'],
+                                ['doubletap', 'east'],
+                                ['doubletap', 'center'],
                             ];
                             const touches = [];
                             const taps = [];
@@ -241,13 +264,13 @@ class FlickHat {
                                 if (touchAction & comp) {
                                     // console.log(`touchAction:${touchAction.toString(16)}, comp:${comp.toString(16)}, index:${index}, group:${group}`);
                                     switch (value[0]) {
-                                        case "touch":
+                                        case 'touch':
                                             touches.push(value[1]);
                                             break;
-                                        case "tap":
+                                        case 'tap':
                                             taps.push(value[1]);
                                             break;
-                                        case "doubletap":
+                                        case 'doubletap':
                                             doubletaps.push(value[1]);
                                             break;
                                         default:
@@ -255,25 +278,26 @@ class FlickHat {
                                 }
                                 comp <<= 1;
                             }
-                            if (touches.length > 0 && typeof this.ontouch === "function") {
+                            if (touches.length > 0 && typeof this.ontouch === 'function') {
                                 this.ontouch({
-                                    action: "touch",
+                                    action: 'touch',
                                     positions: touches,
                                     raw: touch,
                                     seq,
                                 });
                             }
-                            if (taps.length > 0 && typeof this.ontap === "function") {
+                            if (taps.length > 0 && typeof this.ontap === 'function') {
                                 this.ontap({
-                                    action: "tap",
+                                    action: 'tap',
                                     positions: taps,
                                     raw: touch,
                                     seq,
                                 });
                             }
-                            if (doubletaps.length > 0 && typeof this.ondoubletap === "function") {
+                            if (doubletaps.length > 0 &&
+                                typeof this.ondoubletap === 'function') {
                                 this.ondoubletap({
-                                    action: "doubletap",
+                                    action: 'doubletap',
                                     positions: doubletaps,
                                     raw: touch,
                                     seq,
@@ -285,7 +309,7 @@ class FlickHat {
                             this.rotation += delta * 360.0;
                             this.rotation %= 360;
                             if (delta !== 0 && delta > -0.5 && delta < 0.5) {
-                                if (typeof this.onairwheel === "function") {
+                                if (typeof this.onairwheel === 'function') {
                                     this.onairwheel({
                                         delta: delta * 360.0,
                                         rotation: this.rotation,
@@ -316,11 +340,11 @@ class FlickHat {
                             libLoaderVer: [data[8], data[9]],
                             libLoaderPlatform: data[10],
                             fwStartAddr: data[11] * 128,
-                            fwVersion: this._dataArray2string(data.slice(12, 132)).split("\0")[0],
+                            fwVersion: this._dataArray2string(data.slice(12, 132)).split('\0')[0],
                             fwInfoReceived: true,
                         };
                         this.fwInfo = fwInfo;
-                        if (typeof this.onfwinfo === "function") {
+                        if (typeof this.onfwinfo === 'function') {
                             this.onfwinfo(fwInfo);
                         }
                         this.readSize = 26;
@@ -328,10 +352,10 @@ class FlickHat {
                     default:
                         console.error(`unknown message: 0x${msgID.toString(16)}, data:${data
                             .slice(0, size)
-                            .map((v) => "0x" + v.toString(16))}`);
+                            .map((v) => '0x' + v.toString(16))}`);
                 }
             }
-            this.io_ts.pull("3v");
+            this.io_ts.pull('3v');
             // await this.obniz.wait(1);
         }
     }

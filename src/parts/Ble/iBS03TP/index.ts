@@ -3,8 +3,10 @@
  * @module Parts.iBS03TP
  */
 
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, {
+  ObnizPartsBleInfo,
+} from '../../../obniz/ObnizPartsBleInterface';
 
 export interface IBS03TPOptions {}
 
@@ -20,7 +22,7 @@ export interface IBS03TP_Data {
 export default class IBS03TP implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: "iBS03TP",
+      name: 'iBS03TP',
     };
   }
 
@@ -49,18 +51,25 @@ export default class IBS03TP implements ObnizPartsBleInterface {
       button: false,
       moving: false,
       hall_sensor: false,
-      temperature: ObnizPartsBleInterface.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
+      temperature:
+        ObnizPartsBleInterface.signed16FromBinary(
+          peripheral.adv_data[13],
+          peripheral.adv_data[12]
+        ) * 0.01,
       probe_temperature:
-        ObnizPartsBleInterface.signed16FromBinary(peripheral.adv_data[15], peripheral.adv_data[14]) * 0.01,
+        ObnizPartsBleInterface.signed16FromBinary(
+          peripheral.adv_data[15],
+          peripheral.adv_data[14]
+        ) * 0.01,
     };
 
-    if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+    if (peripheral.adv_data[11] & 0b0001) {
       data.button = true;
     }
-    if (Boolean(peripheral.adv_data[11] & 0b0010)) {
+    if (peripheral.adv_data[11] & 0b0010) {
       data.moving = true;
     }
-    if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+    if (peripheral.adv_data[11] & 0b0100) {
       data.hall_sensor = true;
     }
     return data;

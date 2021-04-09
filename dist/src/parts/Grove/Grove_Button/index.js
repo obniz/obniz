@@ -9,24 +9,24 @@ class Grove_Button {
         this.isPressed = null;
         this.onchange = null;
         this.onChangeForStateWait = (pressed) => { };
-        this.keys = ["signal", "gnd", "vcc", "grove"];
+        this.keys = ['signal', 'gnd', 'vcc', 'grove'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "Grove_Button",
+            name: 'Grove_Button',
         };
     }
     wired(obniz) {
         if (this.params.grove) {
-            const groveIOs = this.params.grove.getDigital("5v");
+            const groveIOs = this.params.grove.getDigital('5v');
             this.io_signal = groveIOs.primary;
         }
         else {
             this.io_signal = obniz.getIO(this.params.signal);
-            obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         }
-        this.io_signal.pull("5v");
+        this.io_signal.pull('5v');
         this.io_signal.input((value) => {
             this.isPressed = value;
             if (this.onchange) {

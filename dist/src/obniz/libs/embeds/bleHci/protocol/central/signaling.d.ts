@@ -1,5 +1,5 @@
-import EventEmitter from "eventemitter3";
-declare type SignalingEventTypes = "connectionParameterUpdateRequest";
+import EventEmitter from 'eventemitter3';
+declare type SignalingEventTypes = 'connectionParameterUpdateRequest';
 /**
  * @ignore
  */

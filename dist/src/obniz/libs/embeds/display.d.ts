@@ -2,20 +2,23 @@
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-import { ComponentAbstract } from "../ComponentAbstact";
+import { ComponentAbstract } from '../ComponentAbstact';
 /**
  * Here we will show letters and pictures on display on obniz Board.
  * ![](media://obniz_display_sphere.gif)
+ *
  * @category Embeds
  */
 export default class Display extends ComponentAbstract {
     /**
      * display width size
+     *
      * @readonly
      */
     readonly width: number;
     /**
      * display height size
+     *
      * @readonly
      */
     readonly height: number;
@@ -94,8 +97,9 @@ export default class Display extends ComponentAbstract {
      * obniz.display.print("YES. こんにちは");
      * ```
      * ![](media://obniz_display_pos.jpg)
-     *  @param x
-     *  @param y
+     *
+     * @param x
+     * @param y
      */
     pos(x: number, y: number): {
         x: number;
@@ -116,7 +120,7 @@ export default class Display extends ComponentAbstract {
      * ```
      * ![](media://obniz_display_print.jpg)
      *
-     *  @param text Text to display. With browser, UTF8 string is available. (It does not work with node.js. Please use display.draw())
+     * @param text Text to display. With browser, UTF8 string is available. (It does not work with node.js. Please use display.draw())
      */
     print(text: string): void;
     /**
@@ -196,10 +200,11 @@ export default class Display extends ComponentAbstract {
      * // Javascript Example
      * obniz.display.qr("https://obniz.io")
      * ```
+     *
      * @param text
      * @param correction
      */
-    qr(text: string, correction?: "L" | "M" | "Q" | "H"): void;
+    qr(text: string, correction?: 'L' | 'M' | 'Q' | 'H'): void;
     /**
      * Draw BMP image
      *
@@ -319,6 +324,7 @@ export default class Display extends ComponentAbstract {
      * }
      * obniz.display.drawing(true);
      * ```
+     *
      * @param autoFlush
      */
     drawing(autoFlush: boolean): void;

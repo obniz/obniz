@@ -3,11 +3,13 @@
  * @module Parts.MINEW_S1_HT
  */
 
-import Obniz from "../../../obniz";
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizUtil from "../../../obniz/libs/utils/util";
-import ObnizPartsBleInterface from "../../../obniz/ObnizPartsBleInterface";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizUtil from '../../../obniz/libs/utils/util';
+import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface MINEW_S1_HTData {
   frameType: number;
@@ -30,10 +32,13 @@ export interface MINEW_S1Options {}
 
 export default class MINEW_S1 implements ObnizPartsBleInterface {
   public static info() {
-    return { name: "MINEW_S1" };
+    return { name: 'MINEW_S1' };
   }
 
-  public static isDevice(peripheral: BleRemotePeripheral, macAddress: string | null = null): boolean {
+  public static isDevice(
+    peripheral: BleRemotePeripheral,
+    macAddress: string | null = null
+  ): boolean {
     if (!this._hasPrefix(peripheral)) {
       return false;
     }
@@ -47,7 +52,9 @@ export default class MINEW_S1 implements ObnizPartsBleInterface {
     return true;
   }
 
-  public static getInfoData(peripheral: BleRemotePeripheral): null | MINEW_S1_InfoData {
+  public static getInfoData(
+    peripheral: BleRemotePeripheral
+  ): null | MINEW_S1_InfoData {
     if (!this._hasPrefix(peripheral)) {
       return null;
     }
@@ -63,13 +70,15 @@ export default class MINEW_S1 implements ObnizPartsBleInterface {
     const batteryLevel = peripheral.adv_data[13];
     const macAddress = peripheral.adv_data
       .slice(14, 20)
-      .map((e: number) => ("0" + e.toString(16)).slice(-2))
-      .join("")
+      .map((e: number) => ('0' + e.toString(16)).slice(-2))
+      .join('')
       .match(/.{1,2}/g)!
       .reverse()
-      .join("");
+      .join('');
 
-    const name = ObnizUtil.dataArray2string(peripheral.adv_data.slice(20)) as string;
+    const name = ObnizUtil.dataArray2string(
+      peripheral.adv_data.slice(20)
+    ) as string;
 
     return {
       frameType,
@@ -80,7 +89,9 @@ export default class MINEW_S1 implements ObnizPartsBleInterface {
     };
   }
 
-  public static getHTData(peripheral: BleRemotePeripheral): null | MINEW_S1_HTData {
+  public static getHTData(
+    peripheral: BleRemotePeripheral
+  ): null | MINEW_S1_HTData {
     if (!this._hasPrefix(peripheral)) {
       return null;
     }
@@ -103,11 +114,11 @@ export default class MINEW_S1 implements ObnizPartsBleInterface {
 
     const macAddress = peripheral.adv_data
       .splice(18)
-      .map((e: number) => ("0" + e.toString(16)).slice(-2))
-      .join("")
+      .map((e: number) => ('0' + e.toString(16)).slice(-2))
+      .join('')
       .match(/.{1,2}/g)!
       .reverse()
-      .join("");
+      .join('');
 
     return {
       frameType,

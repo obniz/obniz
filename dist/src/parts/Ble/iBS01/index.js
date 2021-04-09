@@ -10,7 +10,7 @@ class IBS01 {
     }
     static info() {
         return {
-            name: "iBS01",
+            name: 'iBS01',
         };
     }
     static isDevice(peripheral) {
@@ -39,7 +39,7 @@ class IBS01 {
             battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
             button: false,
         };
-        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+        if (peripheral.adv_data[11] & 0b0001) {
             data.button = true;
         }
         return data;

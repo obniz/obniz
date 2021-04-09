@@ -23,10 +23,18 @@ class BleRemotePeripheral {
         this._connectSetting = {};
         /**
          * Indicating this peripheral is found by scan or set from software.
+         *
          * @ignore
          */
         this.discoverdOnRemote = undefined;
-        this.keys = ["device_type", "address_type", "ble_event_type", "rssi", "adv_data", "scan_resp"];
+        this.keys = [
+            'device_type',
+            'address_type',
+            'ble_event_type',
+            'rssi',
+            'adv_data',
+            'scan_resp',
+        ];
         this.obnizBle = obnizBle;
         this.address = address;
         this.connected = false;
@@ -99,7 +107,7 @@ class BleRemotePeripheral {
         this.analyseAdvertisement();
     }
     /**
-     *  @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
+     * @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
      */
     connect(setting) {
         // noinspection JSIgnoredPromiseFromCall
@@ -165,7 +173,8 @@ class BleRemotePeripheral {
      */
     async connectWait(setting) {
         this._connectSetting = setting || {};
-        this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
+        this._connectSetting.autoDiscovery =
+            this._connectSetting.autoDiscovery !== false;
         await this.obnizBle.scan.endWait();
         try {
             await this.obnizBle.centralBindings.connectWait(this.address, () => {
@@ -197,10 +206,10 @@ class BleRemotePeripheral {
             throw e;
         }
         this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
-        this.emitter.emit("connect");
+        this.emitter.emit('connect');
     }
     /**
-     *  @deprecated replaced by {@link #disconnectWait()}
+     * @deprecated replaced by {@link #disconnectWait()}
      */
     disconnect() {
         // noinspection JSIgnoredPromiseFromCall
@@ -239,9 +248,9 @@ class BleRemotePeripheral {
                 resolve();
                 return;
             }
-            this.emitter.once("statusupdate", (params) => {
+            this.emitter.once('statusupdate', (params) => {
                 clearTimeout(timeoutTimer);
-                if (params.status === "disconnected") {
+                if (params.status === 'disconnected') {
                     resolve(true); // for compatibility
                 }
                 else {
@@ -283,6 +292,7 @@ class BleRemotePeripheral {
      *   console.error(e);
      * }
      * ```
+     *
      * @param uuid
      */
     getService(uuid) {
@@ -375,7 +385,7 @@ class BleRemotePeripheral {
     async discoverAllHandlesWait() {
         const ArrayFlat = (array, depth) => {
             const flattend = [];
-            (function flat(_array, _depth) {
+            const flat = (_array, _depth) => {
                 for (const el of _array) {
                     if (Array.isArray(el) && _depth > 0) {
                         flat(el, _depth - 1);
@@ -384,14 +394,15 @@ class BleRemotePeripheral {
                         flattend.push(el);
                     }
                 }
-            })(array, Math.floor(depth) || 1);
+            };
+            flat(array, Math.floor(depth) || 1);
             return flattend;
         };
         const services = await this.discoverAllServicesWait();
         const charsNest = await Promise.all(services.map((s) => s.discoverAllCharacteristicsWait()));
         const chars = ArrayFlat(charsNest);
         const descriptorsNest = await Promise.all(chars.map((c) => c.discoverAllDescriptorsWait()));
-        // eslint-disable-next-line no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const descriptors = ArrayFlat(descriptorsNest);
     }
     /**
@@ -402,13 +413,13 @@ class BleRemotePeripheral {
     notifyFromServer(notifyName, params) {
         this.emitter.emit(notifyName, params);
         switch (notifyName) {
-            case "statusupdate": {
-                if (params.status === "disconnected") {
+            case 'statusupdate': {
+                if (params.status === 'disconnected') {
                     const pre = this.connected;
                     this.connected = false;
                     if (pre) {
                         this.obnizBle.Obniz._runUserCreatedFunction(this.ondisconnect, params.reason);
-                        this.emitter.emit("disconnect", params.reason);
+                        this.emitter.emit('disconnect', params.reason);
                     }
                 }
                 break;
@@ -472,6 +483,7 @@ class BleRemotePeripheral {
      * ```
      *
      * Go to [[BlePairingOptions]] to see more option.
+     *
      * @param options BlePairingOptions
      */
     async pairingWait(options) {
@@ -535,16 +547,24 @@ class BleRemotePeripheral {
     }
     setIBeacon() {
         const data = this.searchTypeVal(0xff);
-        if (!data || data[0] !== 0x4c || data[1] !== 0x00 || data[2] !== 0x02 || data[3] !== 0x15 || data.length !== 25) {
+        if (!data ||
+            data[0] !== 0x4c ||
+            data[1] !== 0x00 ||
+            data[2] !== 0x02 ||
+            data[3] !== 0x15 ||
+            data.length !== 25) {
             this.iBeacon = null;
             return;
         }
         const uuidData = data.slice(4, 20);
-        let uuid = "";
+        let uuid = '';
         for (let i = 0; i < uuidData.length; i++) {
-            uuid = uuid + ("00" + uuidData[i].toString(16)).slice(-2);
-            if (i === 4 - 1 || i === 4 + 2 - 1 || i === 4 + 2 * 2 - 1 || i === 4 + 2 * 3 - 1) {
-                uuid += "-";
+            uuid = uuid + ('00' + uuidData[i].toString(16)).slice(-2);
+            if (i === 4 - 1 ||
+                i === 4 + 2 - 1 ||
+                i === 4 + 2 * 2 - 1 ||
+                i === 4 + 2 * 3 - 1) {
+                uuid += '-';
             }
         }
         const major = (data[20] << 8) + data[21];

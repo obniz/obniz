@@ -12,12 +12,12 @@ class Toio_CoreCube {
         this.keys = [];
         this.requiredKeys = [];
         this._uuids = {
-            serviceID: "10B20100-5B3B-4571-9508-CF3EFCD7BBAE",
-            characteristicIDMotor: "10B20102-5B3B-4571-9508-CF3EFCD7BBAE",
-            characteristicIDPos: "10B20101-5B3B-4571-9508-CF3EFCD7BBAE",
-            characteristicIDMotion: "10B20106-5B3B-4571-9508-CF3EFCD7BBAE",
-            characteristicIDButton: "10B20107-5B3B-4571-9508-CF3EFCD7BBAE",
-            characteristicIDBattery: "10B20108-5B3B-4571-9508-CF3EFCD7BBAE",
+            serviceID: '10B20100-5B3B-4571-9508-CF3EFCD7BBAE',
+            characteristicIDMotor: '10B20102-5B3B-4571-9508-CF3EFCD7BBAE',
+            characteristicIDPos: '10B20101-5B3B-4571-9508-CF3EFCD7BBAE',
+            characteristicIDMotion: '10B20106-5B3B-4571-9508-CF3EFCD7BBAE',
+            characteristicIDButton: '10B20107-5B3B-4571-9508-CF3EFCD7BBAE',
+            characteristicIDBattery: '10B20108-5B3B-4571-9508-CF3EFCD7BBAE',
         };
         this.timeout = 100;
         this._buttonCharacteristic = null;
@@ -26,17 +26,17 @@ class Toio_CoreCube {
         this._motorCharacteristic = null;
         this._batteryCharacteristic = null;
         if (peripheral && !Toio_CoreCube.isDevice(peripheral)) {
-            throw new Error("peripheral is not RS_Seek3");
+            throw new Error('peripheral is not RS_Seek3');
         }
         this.peripheral = peripheral;
     }
     static info() {
         return {
-            name: "toio_CoreCube",
+            name: 'toio_CoreCube',
         };
     }
     static isDevice(peripheral) {
-        if (peripheral.localName === "toio Core Cube") {
+        if (peripheral.localName === 'toio Core Cube') {
             return true;
         }
         else {
@@ -46,10 +46,10 @@ class Toio_CoreCube {
     wired(obniz) { }
     async connectWait(timeout) {
         if (!this.peripheral) {
-            throw new Error("RS_Seek3 is not find.");
+            throw new Error('RS_Seek3 is not find.');
         }
         this.peripheral.ondisconnect = (reason) => {
-            if (typeof this.ondisconnect === "function") {
+            if (typeof this.ondisconnect === 'function') {
                 this.ondisconnect(reason);
             }
         };
@@ -71,12 +71,12 @@ class Toio_CoreCube {
             .getService(this._uuids.serviceID)
             .getCharacteristic(this._uuids.characteristicIDBattery);
         if (this._buttonCharacteristic) {
-            if (typeof this.functionButtonPress === "function") {
+            if (typeof this.functionButtonPress === 'function') {
                 this._buttonCharacteristic.registerNotify(this.functionButtonPress);
             }
         }
         if (this._buttonCharacteristic) {
-            if (typeof this.functionMotionChange === "function") {
+            if (typeof this.functionMotionChange === 'function') {
                 this._buttonCharacteristic.registerNotify(this.functionMotionChange);
             }
         }
@@ -89,7 +89,6 @@ class Toio_CoreCube {
     async getPositionWait() {
         const readData = await this._positionCharacteristic.readWait();
         return {
-            // NOTE: toioの中心から見たポジション
             posX: (readData[2] << 8) | readData[1],
             posY: (readData[4] << 8) | readData[3],
             angle: (readData[6] << 8) | readData[5],
@@ -101,7 +100,6 @@ class Toio_CoreCube {
     async getMotionWait() {
         const readData = await this._motionCharacteristic.readWait();
         return {
-            // NOTE: toioの中心から見たポジション
             isHorizon: readData[1] === 1,
             isCollision: readData[2] === 1,
             isDoubletap: readData[3] === 1,

@@ -3,11 +3,13 @@
  * @module Parts.CCS811
  */
 
-import Obniz from "../../../obniz";
-import { PullType } from "../../../obniz/libs/io_peripherals/common";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from "../../i2cParts";
+import Obniz from '../../../obniz';
+import { PullType } from '../../../obniz/libs/io_peripherals/common';
+import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
+import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from '../../i2cParts';
 
 export interface CCS811Options extends I2cPartsAbstractOptions {
   pull?: PullType;
@@ -21,10 +23,11 @@ export interface CCS811Options extends I2cPartsAbstractOptions {
 export default class CCS811 extends i2cParts implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "CCS811",
+      name: 'CCS811',
       // datasheet: "",
     };
   }
+
   public i2cinfo: I2cInfo;
   public keys: string[];
   public requiredKeys: string[];
@@ -40,12 +43,23 @@ export default class CCS811 extends i2cParts implements ObnizPartsInterface {
     this.i2cinfo = {
       address: 0x5b,
       clock: 100000,
-      voltage: "3v",
-      pull: "3v",
+      voltage: '3v',
+      pull: '3v',
     };
     this.requiredKeys = [];
-    this.keys = ["vcc", "gnd", "scl", "sda", "nwak", "nrst", "nint", "i2c", "add", "address"];
-    this.ioKeys = ["vcc", "gnd", "scl", "sda", "nwak", "nrst", "nint", "add"];
+    this.keys = [
+      'vcc',
+      'gnd',
+      'scl',
+      'sda',
+      'nwak',
+      'nrst',
+      'nint',
+      'i2c',
+      'add',
+      'address',
+    ];
+    this.ioKeys = ['vcc', 'gnd', 'scl', 'sda', 'nwak', 'nrst', 'nint', 'add'];
 
     this.commands = {};
     this.commands.addresses = {
@@ -74,8 +88,8 @@ export default class CCS811 extends i2cParts implements ObnizPartsInterface {
   public wired(obniz: Obniz): void {
     this.obniz = obniz;
 
-    this.obniz.setVccGnd(this.params.vcc, null, "3v");
-    this.obniz.setVccGnd(null, this.params.gnd, "5v");
+    this.obniz.setVccGnd(this.params.vcc, null, '3v');
+    this.obniz.setVccGnd(null, this.params.gnd, '5v');
     this.obniz.wait(10);
 
     this.address = 0x5b;
@@ -84,12 +98,12 @@ export default class CCS811 extends i2cParts implements ObnizPartsInterface {
     } else if (this.params.address === 0x5a) {
       this.address = 0x5a;
     } else if (this.params.address !== undefined) {
-      throw new Error("address must be 0x5a or 0x5b");
+      throw new Error('address must be 0x5a or 0x5b');
     }
 
     if (obniz.isValidIO(this.params.add)) {
       this.io_add = obniz.getIO(this.params.add);
-      this.io_add.drive("3v");
+      this.io_add.drive('3v');
       this.io_add.output(this.address === 0x5a ? false : true);
     }
 
@@ -97,8 +111,8 @@ export default class CCS811 extends i2cParts implements ObnizPartsInterface {
       this.i2c = this.params.i2c;
     } else {
       this.params.clock = this.params.clock || 100 * 1000;
-      this.params.mode = "master";
-      this.params.pull = "3v";
+      this.params.mode = 'master';
+      this.params.pull = '3v';
       this.i2c = obniz.getI2CWithConfig(this.params);
     }
 
@@ -107,26 +121,37 @@ export default class CCS811 extends i2cParts implements ObnizPartsInterface {
 
   public async configWait() {
     // restart
-    const readCheck = await this.readWait(this.commands.addresses.CCS811_HW_ID, 1);
+    const readCheck = await this.readWait(
+      this.commands.addresses.CCS811_HW_ID,
+      1
+    );
     if (readCheck[0] !== 0x81) {
-      console.log("readCheck error " + readCheck);
+      console.log('readCheck error ' + readCheck);
     }
     await this.obniz.wait(10);
-    console.log("restarted");
+    console.log('restarted');
 
     // reset
-    this.write(this.commands.addresses.CCS811_SW_RESET, [0x11, 0xe5, 0x72, 0x8a]);
+    this.write(this.commands.addresses.CCS811_SW_RESET, [
+      0x11,
+      0xe5,
+      0x72,
+      0x8a,
+    ]);
     await this.obniz.wait(10);
-    console.log("reset");
+    console.log('reset');
 
     // checkForStatusError
-    const status = await this.readWait(this.commands.addresses.CCS811_STATUS, 1);
-    console.log("Status: " + status);
+    const status = await this.readWait(
+      this.commands.addresses.CCS811_STATUS,
+      1
+    );
+    console.log('Status: ' + status);
 
     this.start();
     await this.setDriveModeWait(1); // Read every second
     await this.obniz.wait(10);
-    console.log("config done");
+    console.log('config done');
   }
 
   public start() {
@@ -149,9 +174,13 @@ export default class CCS811 extends i2cParts implements ObnizPartsInterface {
   }
 
   public async getMeasModeWait(): Promise<number> {
-    const meas_mode = await this.readWait(this.commands.addresses.CCS811_MEAS_MODE, 1); // Read what's currently there
+    const meas_mode = await this.readWait(
+      this.commands.addresses.CCS811_MEAS_MODE,
+      1
+    ); // Read what's currently there
     return meas_mode[0];
   }
+
   public async getDriveModeWait(): Promise<number> {
     const meas_mode: number = await this.getMeasModeWait();
     let drive_mode = meas_mode >>> 4;
@@ -161,14 +190,17 @@ export default class CCS811 extends i2cParts implements ObnizPartsInterface {
     return drive_mode;
   }
 
-  public async setEnvironmentalDataWait(relativeHumidity: number, temperature: number): Promise<void> {
+  public async setEnvironmentalDataWait(
+    relativeHumidity: number,
+    temperature: number
+  ): Promise<void> {
     // Check for invalid temperatures
     if (temperature < -25 || temperature > 50) {
-      console.log("temperature is out of range");
+      console.log('temperature is out of range');
     }
     // Check for invalid humidity
     if (relativeHumidity < 0 || relativeHumidity > 100) {
-      console.log("humidity is out of range");
+      console.log('humidity is out of range');
     }
 
     const rH = relativeHumidity * 1000; // 42.348 becomes 42348
@@ -185,12 +217,20 @@ export default class CCS811 extends i2cParts implements ObnizPartsInterface {
 
   // Checks to see if DATA_READ flag is set in the status register
   public async checkAvailableDataWait(): Promise<boolean> {
-    const value = (await this.readWait(this.commands.addresses.CCS811_STATUS, 1))[0];
+    const value = (
+      await this.readWait(this.commands.addresses.CCS811_STATUS, 1)
+    )[0];
     return Boolean(value & (1 << 3));
   }
 
-  public async readAlgorithmResultsWait(): Promise<{ eCO2: number; TVOC: number }> {
-    const data = await this.readWait(this.commands.addresses.CCS811_ALG_RESULT_DATA, 8);
+  public async readAlgorithmResultsWait(): Promise<{
+    eCO2: number;
+    TVOC: number;
+  }> {
+    const data = await this.readWait(
+      this.commands.addresses.CCS811_ALG_RESULT_DATA,
+      8
+    );
     // Data ordered:
     // co2MSB, co2LSB, tvocMSB, tvocLSB
     const eCO2 = (data[0] << 8) | data[1];
@@ -201,25 +241,26 @@ export default class CCS811 extends i2cParts implements ObnizPartsInterface {
   public async geteCO2Wait(): Promise<number> {
     return (await this.readAlgorithmResultsWait()).eCO2;
   }
+
   public async getTVOCWait(): Promise<number> {
     return (await this.readAlgorithmResultsWait()).TVOC;
   }
 
   public wake(): void {
     this.io_nwak = this.obniz.getIO(this.params.nwak);
-    this.io_nwak.drive("3v");
+    this.io_nwak.drive('3v');
     this.io_nwak.output(false);
   }
 
   public sleep(): void {
     this.io_nwak = this.obniz.getIO(this.params.nwak);
-    this.io_nwak.drive("3v");
+    this.io_nwak.drive('3v');
     this.io_nwak.output(true);
   }
 
   public async hwResetWait(): Promise<void> {
     this.io_nrst = this.obniz.getIO(this.params.nrst);
-    this.io_nrst.drive("3v");
+    this.io_nrst.drive('3v');
     this.io_nrst.output(false);
     await this.obniz.wait(10);
     this.io_nrst.output(true);

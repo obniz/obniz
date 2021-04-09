@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module ObnizCore
  */
-import ObnizComponents from "./ObnizComponents";
-import { ObnizOptions } from "./ObnizOptions";
+import ObnizComponents from './ObnizComponents';
+import { ObnizOptions } from './ObnizOptions';
 export default class ObnizSystemMethods extends ObnizComponents {
     constructor(id: string, options?: ObnizOptions);
     /**
@@ -37,6 +37,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
      * led.off();
      * console.log((new Date()).getTime() - time.getTime()) // => about 1000
      * ```
+     *
      * @param msec
      */
     wait(msec: any): Promise<void>;
@@ -74,6 +75,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
      * // Example
      * obniz.keepWorkingAtOffline(true);
      * ```
+     *
      * @param working
      */
     keepWorkingAtOffline(working: any): void;
@@ -118,8 +120,9 @@ export default class ObnizSystemMethods extends ObnizComponents {
      *
      * ```javascript
      * // JavaScript example
-     * obniz.sleepMinute （60）; // 60 minutes
+     * obniz.sleepMinute (60); // 60 minutes
      * ```
+     *
      * @param minute up to 64800 minutes(45 days ).
      */
     sleepMinute(minute: any): void;
@@ -152,8 +155,8 @@ export default class ObnizSystemMethods extends ObnizComponents {
      *
      * @param trigger
      *
-     *  - true: Rise （LOW -> HIGH）
-     *  - false: Falling （HIGH -> LOW）
+     * - true: Rise (LOW -> HIGH)
+     * - false: Falling  (HIGH -> LOW)
      */
     sleepIoTrigger(trigger: any): void;
     /**

@@ -3,10 +3,12 @@
  * @module Parts.RS_BTIREX2
  */
 
-import Obniz from "../../../obniz";
-import BleRemoteCharacteristic from "../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic";
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import BleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface RS_BTIREX2Options {}
 
@@ -14,12 +16,12 @@ export interface RS_BTIREX2Options {}
 export default class RS_BTIREX2 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "RS_BTIREX2",
+      name: 'RS_BTIREX2',
     };
   }
 
   public static isDevice(peripheral: BleRemotePeripheral) {
-    if (peripheral.localName && peripheral.localName.startsWith("BTIR")) {
+    if (peripheral.localName && peripheral.localName.startsWith('BTIR')) {
       return true;
     }
     return false;
@@ -31,9 +33,9 @@ export default class RS_BTIREX2 implements ObnizPartsInterface {
   public onbuttonpressed: ((pressed: boolean) => void) | null = null;
 
   private _uuids = {
-    service: "6e400001-b5a3-f393-e0a9-e50e24dcca9e",
-    rxChar: "6e400002-b5a3-f393-e0a9-e50e24dcca9e",
-    txChar: "6e400003-b5a3-f393-e0a9-e50e24dcca9e",
+    service: '6e400001-b5a3-f393-e0a9-e50e24dcca9e',
+    rxChar: '6e400002-b5a3-f393-e0a9-e50e24dcca9e',
+    txChar: '6e400003-b5a3-f393-e0a9-e50e24dcca9e',
   };
   private _peripheral: BleRemotePeripheral | null = null;
   private _rxCharacteristic: BleRemoteCharacteristic | null = null;
@@ -41,7 +43,7 @@ export default class RS_BTIREX2 implements ObnizPartsInterface {
 
   constructor(peripheral: BleRemotePeripheral | null) {
     if (peripheral && !RS_BTIREX2.isDevice(peripheral)) {
-      throw new Error("peripheral is not RS_BTIREX2");
+      throw new Error('peripheral is not RS_BTIREX2');
     }
     this._peripheral = peripheral;
   }
@@ -51,23 +53,27 @@ export default class RS_BTIREX2 implements ObnizPartsInterface {
 
   public async connectWait() {
     if (!this._peripheral) {
-      throw new Error("RS_BTIREX2 is not find.");
+      throw new Error('RS_BTIREX2 is not find.');
     }
     this._peripheral.ondisconnect = () => {
-      console.log("disconnect");
+      console.log('disconnect');
     };
     await this._peripheral.connectWait();
 
-    console.error("encrypt start");
+    console.error('encrypt start');
     // const handle = this._peripheral.obnizBle.centralBindings._handles[this._peripheral.address];
     // this._peripheral.obnizBle.centralBindings._aclStreams[handle].encrypt();
-    this._rxCharacteristic = this._peripheral.getService(this._uuids.service)!.getCharacteristic(this._uuids.rxChar);
-    this._txCharacteristic = this._peripheral.getService(this._uuids.service)!.getCharacteristic(this._uuids.txChar);
+    this._rxCharacteristic = this._peripheral
+      .getService(this._uuids.service)!
+      .getCharacteristic(this._uuids.rxChar);
+    this._txCharacteristic = this._peripheral
+      .getService(this._uuids.service)!
+      .getCharacteristic(this._uuids.txChar);
   }
 
-  public _sendAndReceiveWait(payload: number[], crc: number = 0xb6): Promise<number[]> {
+  public _sendAndReceiveWait(payload: number[], crc = 0xb6): Promise<number[]> {
     if (!this._rxCharacteristic || !this._txCharacteristic) {
-      throw new Error("device is not connected");
+      throw new Error('device is not connected');
     }
     const data: number[] = new Array(payload.length + 4);
     data[0] = 0xaa;
@@ -80,7 +86,7 @@ export default class RS_BTIREX2 implements ObnizPartsInterface {
     const tx = this._txCharacteristic;
     const p: Promise<number[]> = new Promise((resolve) => {
       tx.registerNotify((resultData: number[]) => {
-        console.error("CRC " + crc);
+        console.error('CRC ' + crc);
         resolve(resultData);
       });
     });

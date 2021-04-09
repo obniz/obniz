@@ -9,17 +9,17 @@ class ENC03R_Module {
         this.Sens = 0.00067; // Sensitivity, 0.67mV / deg/sec
         this.sens1 = 0;
         this.sens2 = 0;
-        this.keys = ["vcc", "out1", "out2", "gnd"];
-        this.requiredKeys = ["out1", "out2"];
+        this.keys = ['vcc', 'out1', 'out2', 'gnd'];
+        this.requiredKeys = ['out1', 'out2'];
     }
     static info() {
         return {
-            name: "ENC03R_Module",
+            name: 'ENC03R_Module',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.ad0 = obniz.getAD(this.params.out1);
         this.ad1 = obniz.getAD(this.params.out2);
         this.ad0.start((value) => {

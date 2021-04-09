@@ -25,7 +25,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * @ignore
      */
     get parentName() {
-        return "service";
+        return 'service';
     }
     /**
      * @ignore
@@ -38,7 +38,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      *
      */
     get childrenName() {
-        return "descriptors";
+        return 'descriptors';
     }
     /**
      * It contains descriptors in a characteristic.
@@ -108,6 +108,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      *   console.error(e);
      * }
      * ```
+     *
      * @param uuid
      */
     getDescriptor(uuid) {
@@ -238,17 +239,19 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
     }
     /**
      * Use readWait() instead from 3.5.0
+     *
      * @deprecated
      */
     read() {
-        throw new ObnizError_1.ObnizDeprecatedFunctionError("read", "readWait");
+        throw new ObnizError_1.ObnizDeprecatedFunctionError('read', 'readWait');
     }
     /**
      * Use writeWait() instead from 3.5.0
+     *
      * @deprecated
      */
     write(array, needResponse) {
-        throw new ObnizError_1.ObnizDeprecatedFunctionError("read", "readWait");
+        throw new ObnizError_1.ObnizDeprecatedFunctionError('read', 'readWait');
     }
     /**
      * This writes dataArray to the characteristic.
@@ -281,7 +284,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
             needResponse = true;
         }
         await this.service.peripheral.obnizBle.centralBindings.writeWait(this.service.peripheral.address, this.service.uuid, this.uuid, Buffer.from(data), !needResponse);
-        this._runUserCreatedFunction(this.onwrite, "success");
+        this._runUserCreatedFunction(this.onwrite, 'success');
         return true;
     }
     /**
@@ -370,37 +373,37 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * This characteristics can broadcast or not.
      */
     canBroadcast() {
-        return this.properties.includes("broadcast");
+        return this.properties.includes('broadcast');
     }
     /**
      * This characteristics can notify or not.
      */
     canNotify() {
-        return this.properties.includes("notify");
+        return this.properties.includes('notify');
     }
     /**
      * This characteristics can read or not.
      */
     canRead() {
-        return this.properties.includes("read");
+        return this.properties.includes('read');
     }
     /**
      * This characteristics can write or not.
      */
     canWrite() {
-        return this.properties.includes("write");
+        return this.properties.includes('write');
     }
     /**
      * This characteristics can 'write without response' or not.
      */
     canWriteWithoutResponse() {
-        return this.properties.includes("write_without_response");
+        return this.properties.includes('write_without_response');
     }
     /**
      * This characteristics can indicate or not.
      */
     canIndicate() {
-        return this.properties.includes("indicate");
+        return this.properties.includes('indicate');
     }
     /**
      * @ignore
@@ -424,7 +427,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
     notifyFromServer(notifyName, params) {
         super.notifyFromServer(notifyName, params);
         switch (notifyName) {
-            case "onnotify": {
+            case 'onnotify': {
                 this._runUserCreatedFunction(this.onnotify, params.data || undefined);
                 break;
             }

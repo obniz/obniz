@@ -3,8 +3,10 @@
  * @module Parts.iBS03G
  */
 
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, {
+  ObnizPartsBleInfo,
+} from '../../../obniz/ObnizPartsBleInterface';
 
 export interface IBS03GOptions {}
 
@@ -18,7 +20,7 @@ export interface IBS03G_Data {
 export default class IBS03G implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: "iBS03G",
+      name: 'iBS03G',
     };
   }
 
@@ -49,13 +51,13 @@ export default class IBS03G implements ObnizPartsBleInterface {
       fall: false,
     };
 
-    if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+    if (peripheral.adv_data[11] & 0b0001) {
       data.button = true;
     }
-    if (Boolean(peripheral.adv_data[11] & 0b0010)) {
+    if (peripheral.adv_data[11] & 0b0010) {
       data.moving = true;
     }
-    if (Boolean(peripheral.adv_data[11] & 0b1000)) {
+    if (peripheral.adv_data[11] & 0b1000) {
       data.fall = true;
     }
     return data;

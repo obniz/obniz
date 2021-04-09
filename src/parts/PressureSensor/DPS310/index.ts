@@ -3,17 +3,19 @@
  * @module Parts.DPS310
  */
 
-import Obniz from "../../../obniz";
-import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface DPS310Options {}
 
 export default class DPS310 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "DPS310",
-      datasheet: "",
+      name: 'DPS310',
+      datasheet: '',
     };
   }
 
@@ -145,7 +147,16 @@ export default class DPS310 implements ObnizPartsInterface {
       length: 3,
     },
   };
-  private scaling_facts = [524288, 1572864, 3670016, 7864320, 253952, 516096, 1040384, 2088960];
+  private scaling_facts = [
+    524288,
+    1572864,
+    3670016,
+    7864320,
+    253952,
+    516096,
+    1040384,
+    2088960,
+  ];
   private opMode: any;
   private coeffs: any;
   private obniz!: Obniz;
@@ -153,9 +164,9 @@ export default class DPS310 implements ObnizPartsInterface {
   private i2c!: PeripheralI2C;
 
   constructor() {
-    this.requiredKeys = ["sda", "scl"];
-    this.keys = ["gpio3", "vcc", "gnd", "scl", "sda"];
-    this.ioKeys = ["gpio3", "vcc", "gnd", "scl", "sda"];
+    this.requiredKeys = ['sda', 'scl'];
+    this.keys = ['gpio3', 'vcc', 'gnd', 'scl', 'sda'];
+    this.ioKeys = ['gpio3', 'vcc', 'gnd', 'scl', 'sda'];
 
     this.coeffs = {};
 
@@ -165,30 +176,41 @@ export default class DPS310 implements ObnizPartsInterface {
   public wired(obniz: Obniz) {
     this.obniz = obniz;
     this.address = 0x77;
-    this.params.sda = this.params.sda;
-    this.params.scl = this.params.scl;
     this.params.clock = this.params.clock || 100 * 1000;
-    this.params.mode = "master";
-    this.params.pull = "3v";
+    this.params.mode = 'master';
+    this.params.pull = '3v';
     this.i2c = obniz.getI2CWithConfig(this.params);
     this.obniz.wait(10);
   }
 
   public async initWait(): Promise<void> {
-    const prodId: any = await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_PROD_ID);
+    const prodId: any = await this.readByteBitfieldWait(
+      this.bitFileds.DPS310__REG_INFO_PROD_ID
+    );
     if (prodId !== 0) {
-      throw new Error("invalid prodId");
+      throw new Error('invalid prodId');
     }
     await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_REV_ID);
 
-    await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_TEMP_SENSORREC);
+    await this.readByteBitfieldWait(
+      this.bitFileds.DPS310__REG_INFO_TEMP_SENSORREC
+    );
 
-    await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SENSOR, 0);
+    await this.writeByteBitfieldWait(
+      this.bitFileds.DPS310__REG_INFO_TEMP_SENSOR,
+      0
+    );
 
     await this.readCoeffsWait();
     await this.standbyWait();
-    await this.configTempWait(this.DPS310__TEMP_STD_MR, this.DPS310__TEMP_STD_OSR);
-    await this.configPressureWait(this.DPS310__PRS_STD_MR, this.DPS310__PRS_STD_OSR);
+    await this.configTempWait(
+      this.DPS310__TEMP_STD_MR,
+      this.DPS310__TEMP_STD_OSR
+    );
+    await this.configPressureWait(
+      this.DPS310__PRS_STD_MR,
+      this.DPS310__PRS_STD_OSR
+    );
     await this.standbyWait();
     await this.measureTempOnceWait();
     await this.standbyWait();
@@ -238,49 +260,87 @@ export default class DPS310 implements ObnizPartsInterface {
     return results;
   }
 
-  private async writeByteWait(regAddress: any, data: any, check?: any): Promise<void> {
+  private async writeByteWait(
+    regAddress: any,
+    data: any,
+    check?: any
+  ): Promise<void> {
     this.i2c.write(this.address, [regAddress, data]);
     if (check) {
       if ((await this.readByteWait(regAddress)) !== data) {
-        throw new Error("DPS310 data write failed");
+        throw new Error('DPS310 data write failed');
       }
     }
   }
 
-  private async writeByteBitfield(field: any, data: any, check?: any): Promise<void> {
+  private async writeByteBitfieldWait(
+    field: any,
+    data: any,
+    check?: any
+  ): Promise<void> {
     const old: any = await this.readByteWait(field.address);
-    const sendData: any = (old & ~field.mask) | ((data << field.shift) & field.mask);
+    const sendData: any =
+      (old & ~field.mask) | ((data << field.shift) & field.mask);
 
     await this.writeByteWait(field.address, sendData, check);
   }
 
-  private async setOpModeDetailWait(background: any, temperature: any, pressure: any): Promise<void> {
+  private async setOpModeDetailWait(
+    background: any,
+    temperature: any,
+    pressure: any
+  ): Promise<void> {
     const opMode: any =
-      ((background & this.DPS310__LSB) << 2) | ((temperature & this.DPS310__LSB) << 1) | (pressure & this.DPS310__LSB);
+      ((background & this.DPS310__LSB) << 2) |
+      ((temperature & this.DPS310__LSB) << 1) |
+      (pressure & this.DPS310__LSB);
     return await this.setOpModeWait(opMode);
   }
 
   private async setOpModeWait(opMode: any): Promise<void> {
-    opMode &= this.bitFileds.DPS310__REG_INFO_OPMODE.mask >> this.bitFileds.DPS310__REG_INFO_OPMODE.shift;
+    opMode &=
+      this.bitFileds.DPS310__REG_INFO_OPMODE.mask >>
+      this.bitFileds.DPS310__REG_INFO_OPMODE.shift;
 
-    await this.writeByteWait(this.bitFileds.DPS310__REG_INFO_OPMODE.address, opMode);
+    await this.writeByteWait(
+      this.bitFileds.DPS310__REG_INFO_OPMODE.address,
+      opMode
+    );
     this.opMode = opMode;
   }
 
   private async standbyWait(): Promise<void> {
     this.setOpModeWait(this.mode.IDLE);
-    await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_FIFO_FL, 1);
-    await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_FIFO_EN, 0);
+    await this.writeByteBitfieldWait(
+      this.bitFileds.DPS310__REG_INFO_FIFO_FL,
+      1
+    );
+    await this.writeByteBitfieldWait(
+      this.bitFileds.DPS310__REG_INFO_FIFO_EN,
+      0
+    );
   }
 
   private async configTempWait(tempMr: any, tempOsr: any): Promise<void> {
-    await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_MR, tempMr);
-    await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_OSR, tempOsr);
+    await this.writeByteBitfieldWait(
+      this.bitFileds.DPS310__REG_INFO_TEMP_MR,
+      tempMr
+    );
+    await this.writeByteBitfieldWait(
+      this.bitFileds.DPS310__REG_INFO_TEMP_OSR,
+      tempOsr
+    );
 
     if (tempOsr > this.DPS310__OSR_SE) {
-      await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SE, 1);
+      await this.writeByteBitfieldWait(
+        this.bitFileds.DPS310__REG_INFO_TEMP_SE,
+        1
+      );
     } else {
-      await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SE, 0);
+      await this.writeByteBitfieldWait(
+        this.bitFileds.DPS310__REG_INFO_TEMP_SE,
+        0
+      );
     }
 
     this.tempMr = tempMr;
@@ -288,20 +348,34 @@ export default class DPS310 implements ObnizPartsInterface {
   }
 
   private async configPressureWait(prsMr: any, prsOsr: any): Promise<void> {
-    await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_MR, prsMr);
-    await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_OSR, prsOsr);
+    await this.writeByteBitfieldWait(
+      this.bitFileds.DPS310__REG_INFO_PRS_MR,
+      prsMr
+    );
+    await this.writeByteBitfieldWait(
+      this.bitFileds.DPS310__REG_INFO_PRS_OSR,
+      prsOsr
+    );
 
     if (prsOsr > this.DPS310__OSR_SE) {
-      await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_SE, 1);
+      await this.writeByteBitfieldWait(
+        this.bitFileds.DPS310__REG_INFO_PRS_SE,
+        1
+      );
     } else {
-      await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_SE, 0);
+      await this.writeByteBitfieldWait(
+        this.bitFileds.DPS310__REG_INFO_PRS_SE,
+        0
+      );
     }
     this.prsMr = prsMr;
     this.prsOsr = prsOsr;
   }
 
   private async readCoeffsWait(): Promise<void> {
-    const buffer: any = await this.readBlockWait(this.dataBlock.DPS310__REG_ADR_COEF);
+    const buffer: any = await this.readBlockWait(
+      this.dataBlock.DPS310__REG_ADR_COEF
+    );
 
     this.coeffs.m_c0Half = (buffer[0] << 4) | ((buffer[1] >> 4) & 0x0f);
     if (this.coeffs.m_c0Half & (1 << 11)) {
@@ -313,12 +387,14 @@ export default class DPS310 implements ObnizPartsInterface {
     if (this.coeffs.m_c1 & (1 << 11)) {
       this.coeffs.m_c1 -= 1 << 12;
     }
-    this.coeffs.m_c00 = (buffer[3] << 12) | (buffer[4] << 4) | ((buffer[5] >> 4) & 0x0f);
+    this.coeffs.m_c00 =
+      (buffer[3] << 12) | (buffer[4] << 4) | ((buffer[5] >> 4) & 0x0f);
     if (this.coeffs.m_c00 & (1 << 19)) {
       this.coeffs.m_c00 -= 1 << 20;
     }
 
-    this.coeffs.m_c10 = ((buffer[5] & 0x0f) << 16) | (buffer[6] << 8) | buffer[7];
+    this.coeffs.m_c10 =
+      ((buffer[5] & 0x0f) << 16) | (buffer[6] << 8) | buffer[7];
     if (this.coeffs.m_c10 & (1 << 19)) {
       this.coeffs.m_c10 -= 1 << 20;
     }
@@ -353,10 +429,14 @@ export default class DPS310 implements ObnizPartsInterface {
     let rdy: any;
     switch (this.opMode) {
       case this.mode.CMD_TEMP:
-        rdy = await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_TEMP_RDY);
+        rdy = await this.readByteBitfieldWait(
+          this.bitFileds.DPS310__REG_INFO_TEMP_RDY
+        );
         break;
       case this.mode.CMD_PRS:
-        rdy = await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_PRS_RDY);
+        rdy = await this.readByteBitfieldWait(
+          this.bitFileds.DPS310__REG_INFO_PRS_RDY
+        );
         break;
       default:
         return this.DPS310__FAIL_TOOBUSY;
@@ -365,7 +445,7 @@ export default class DPS310 implements ObnizPartsInterface {
     let oldMode: any;
     switch (rdy) {
       case this.DPS310__FAIL_UNKNOWN:
-        throw new Error("DPS310__FAIL_UNKNOWN");
+        throw new Error('DPS310__FAIL_UNKNOWN');
       case 0:
         return this.obniz.wait(10).then(() => {
           return this.getSingleResultWait();
@@ -379,10 +459,10 @@ export default class DPS310 implements ObnizPartsInterface {
           case this.mode.CMD_PRS:
             return await this.getPressureWait();
           default:
-            throw new Error("DPS310__FAIL_UNKNOWN");
+            throw new Error('DPS310__FAIL_UNKNOWN');
         }
     }
-    throw new Error("DPS310__FAIL_UNKNOWN");
+    throw new Error('DPS310__FAIL_UNKNOWN');
   }
 
   private async startMeasureTempOnceWait(oversamplingRate: any): Promise<void> {
@@ -390,7 +470,9 @@ export default class DPS310 implements ObnizPartsInterface {
     await this.setOpModeDetailWait(0, 1, 0);
   }
 
-  private async startMeasurePressureOnceWait(oversamplingRate: any): Promise<void> {
+  private async startMeasurePressureOnceWait(
+    oversamplingRate: any
+  ): Promise<void> {
     await this.configPressureWait(0, oversamplingRate);
     await this.setOpModeDetailWait(0, 0, 1);
   }
@@ -400,8 +482,12 @@ export default class DPS310 implements ObnizPartsInterface {
     prs /= this.scaling_facts[this.prsOsr];
     prs =
       this.coeffs.m_c00 +
-      prs * (this.coeffs.m_c10 + prs * (this.coeffs.m_c20 + prs * this.coeffs.m_c30)) +
-      this.m_lastTempScal * (this.coeffs.m_c01 + prs * (this.coeffs.m_c11 + prs * this.coeffs.m_c21));
+      prs *
+        (this.coeffs.m_c10 +
+          prs * (this.coeffs.m_c20 + prs * this.coeffs.m_c30)) +
+      this.m_lastTempScal *
+        (this.coeffs.m_c01 +
+          prs * (this.coeffs.m_c11 + prs * this.coeffs.m_c21));
     return prs;
   }
 
@@ -433,7 +519,9 @@ export default class DPS310 implements ObnizPartsInterface {
   }
 
   private async getTempWait(): Promise<number> {
-    const data: any = await this.readBlockWait(this.dataBlock.DPS310__REG_ADR_TEMP);
+    const data: any = await this.readBlockWait(
+      this.dataBlock.DPS310__REG_ADR_TEMP
+    );
 
     let temp: any = (data[0] << 16) | (data[1] << 8) | data[2];
     if (temp & (1 << 23)) {
@@ -443,7 +531,9 @@ export default class DPS310 implements ObnizPartsInterface {
   }
 
   private async getPressureWait(): Promise<number> {
-    const data: any = await this.readBlockWait(this.dataBlock.DPS310__REG_ADR_PRS);
+    const data: any = await this.readBlockWait(
+      this.dataBlock.DPS310__REG_ADR_PRS
+    );
     let prs: any = (data[0] << 16) | (data[1] << 8) | data[2];
     if (prs & (1 << 23)) {
       prs -= 1 << 24;

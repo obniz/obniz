@@ -3,11 +3,15 @@
  * @module ObnizCore.Components
  */
 
-import EventEmitter from "eventemitter3";
-import Obniz from "../index";
-import { ObnizError, ObnizOfflineError, ObnizTimeoutError } from "../ObnizError";
+import EventEmitter from 'eventemitter3';
+import Obniz from '../index';
+import {
+  ObnizError,
+  ObnizOfflineError,
+  ObnizTimeoutError,
+} from '../ObnizError';
 
-import WSSchema from "./wscommand/WSSchema";
+import WSSchema from './wscommand/WSSchema';
 
 export type EventHandler = (...args: any) => any;
 
@@ -25,7 +29,9 @@ export interface ReceiveJsonOptions {
   errors?: { [schema: string]: typeof ObnizError };
 }
 
-export abstract class ComponentAbstract<EventTypes extends string = string> extends EventEmitter<EventTypes> {
+export abstract class ComponentAbstract<
+  EventTypes extends string = string
+> extends EventEmitter<EventTypes> {
   /**
    * obniz to be used
    */
@@ -45,7 +51,10 @@ export abstract class ComponentAbstract<EventTypes extends string = string> exte
 
   public notifyFromObniz(json: any) {
     for (const eventName of this.eventNames()) {
-      if (typeof eventName !== "string" || !eventName.startsWith("/response/")) {
+      if (
+        typeof eventName !== 'string' ||
+        !eventName.startsWith('/response/')
+      ) {
         continue;
       }
       const isValid = this.fastValidate(eventName, json);
@@ -54,7 +63,10 @@ export abstract class ComponentAbstract<EventTypes extends string = string> exte
       }
     }
     for (const eventName in this._eventHandlerQueue) {
-      if (typeof eventName !== "string" || !eventName.startsWith("/response/")) {
+      if (
+        typeof eventName !== 'string' ||
+        !eventName.startsWith('/response/')
+      ) {
         continue;
       }
       if (this._eventHandlerQueue[eventName].length === 0) {
@@ -74,6 +86,7 @@ export abstract class ComponentAbstract<EventTypes extends string = string> exte
     const schema = WSSchema.getSchema(commandUri);
     return WSSchema.validateMultiple(json, schema);
   }
+
   public fastValidate(commandUri: any, json: any): boolean {
     const schema = WSSchema.getSchema(commandUri);
     return WSSchema.validate(json, schema);
@@ -84,43 +97,54 @@ export abstract class ComponentAbstract<EventTypes extends string = string> exte
   protected abstract _reset(): void;
 
   protected onceQueue(eventName: string, func: EventHandler) {
-    this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName] || [];
-    if (typeof func === "function") {
+    this._eventHandlerQueue[eventName] =
+      this._eventHandlerQueue[eventName] || [];
+    if (typeof func === 'function') {
       this._eventHandlerQueue[eventName].push(func);
     }
   }
 
   protected removeFromOnceQueue(eventName: string, func: EventHandler) {
-    this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName] || [];
-    if (typeof func === "function") {
-      this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName].filter((e) => e !== func);
+    this._eventHandlerQueue[eventName] =
+      this._eventHandlerQueue[eventName] || [];
+    if (typeof func === 'function') {
+      this._eventHandlerQueue[eventName] = this._eventHandlerQueue[
+        eventName
+      ].filter((e) => e !== func);
     }
   }
 
-  protected async sendAndReceiveJsonWait(sendObj: any, schemaPath: string, option?: ReceiveJsonOptions): Promise<any> {
+  protected async sendAndReceiveJsonWait(
+    sendObj: any,
+    schemaPath: string,
+    option?: ReceiveJsonOptions
+  ): Promise<any> {
     this.Obniz.send(sendObj);
     return await this.receiveJsonWait(schemaPath, option);
   }
 
-  protected receiveJsonWait(schemaPath: string, option?: ReceiveJsonOptions): Promise<any> {
+  protected receiveJsonWait(
+    schemaPath: string,
+    option?: ReceiveJsonOptions
+  ): Promise<any> {
     option = option || {};
     option.timeout = option.timeout || this.timeout;
     option.queue = option.queue !== false;
     option.errors = option.errors || {};
 
     return new Promise((resolve, reject) => {
-      if (this.Obniz.connectionState !== "connected") {
+      if (this.Obniz.connectionState !== 'connected') {
         reject(new ObnizOfflineError());
         return;
       }
       const clearListeners = () => {
-        this.Obniz.off("close", onObnizClosed);
+        this.Obniz.off('close', onObnizClosed);
         if (option!.queue) {
           this.removeFromOnceQueue(schemaPath as any, onDataReceived);
         } else {
           this.off(schemaPath as any, onDataReceived);
         }
-        if (typeof timeoutHandler === "number") {
+        if (typeof timeoutHandler === 'number') {
           clearTimeout(timeoutHandler);
           timeoutHandler = undefined;
         }
@@ -146,7 +170,7 @@ export abstract class ComponentAbstract<EventTypes extends string = string> exte
       };
       const onErrorFuncs: any[] = [];
 
-      this.Obniz.once("close", onObnizClosed);
+      this.Obniz.once('close', onObnizClosed);
       if (option!.queue) {
         this.onceQueue(schemaPath as any, onDataReceived);
       } else {
@@ -162,7 +186,10 @@ export abstract class ComponentAbstract<EventTypes extends string = string> exte
         this.on(path as any, onError);
         onErrorFuncs.push({ onError, path });
       }
-      let timeoutHandler: number | undefined = setTimeout(onTimeout, option!.timeout);
+      let timeoutHandler: number | undefined = setTimeout(
+        onTimeout,
+        option!.timeout
+      );
     });
   }
 }

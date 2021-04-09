@@ -14,8 +14,8 @@ class AK09916 extends i2cParts_1.default {
         this.i2cinfo = {
             address: 0x0c,
             clock: 100000,
-            voltage: "3v",
-            pull: "3v",
+            voltage: '3v',
+            pull: '3v',
         };
         this.ADDR = 0x0c;
         this._WIA = 0x01;
@@ -47,19 +47,24 @@ class AK09916 extends i2cParts_1.default {
     }
     static info() {
         return {
-            name: "AK09916",
+            name: 'AK09916',
         };
     }
     wired(obniz) {
         super.wired(obniz);
         this.write(this._CNTL2, this.MODE_CONTINOUS_MEASURE_1);
     }
-    async magnetic() {
+    /**
+     * @deprecated
+     */
+    magnetic() {
+        return this.magneticWait();
+    }
+    async magneticWait() {
         // 0111 1111 1111 0000 4912 uT
         // 1111 1111 1111 1111 -1 uT
         // 1000 0000 0001 0000 -4912 uT
-        // data[0]下位ビット data[1] 上位ビット
-        const raw3 = await this.readThreeInt16Wait(this._HXL, "l");
+        const raw3 = await this.readThreeInt16Wait(this._HXL, 'l');
         this.readWait(this._ST2, 1);
         const xyz = raw3.map((d, i) => {
             return (d * this.so - this.offset[i]) * this.scale[i];

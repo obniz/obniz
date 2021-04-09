@@ -3,10 +3,12 @@
  * @module Parts.MQGas
  */
 
-import Obniz from "../../../obniz";
-import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralAD from '../../../obniz/libs/io_peripherals/ad';
+import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface MQGasSensorOptions {
   gnd?: number;
@@ -18,7 +20,7 @@ export interface MQGasSensorOptions {
 export default class MQGasSensor implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "MQGas",
+      name: 'MQGas',
     };
   }
 
@@ -36,7 +38,7 @@ export default class MQGasSensor implements ObnizPartsInterface {
   private do!: PeripheralIO;
 
   constructor() {
-    this.keys = ["gnd", "vcc", "do", "ao"];
+    this.keys = ['gnd', 'vcc', 'do', 'ao'];
     this.requiredKeys = [];
 
     // this.RL = 2 * 1000;
@@ -53,13 +55,13 @@ export default class MQGasSensor implements ObnizPartsInterface {
       this.ad = obniz.getAD(this.params.ao);
       this.ad.start((voltage: any) => {
         // this.level = this.calc(voltage);
-        if (typeof this.onchangeanalog === "function") {
+        if (typeof this.onchangeanalog === 'function') {
           this.onchangeanalog(voltage);
         }
         if (
-          typeof this.voltageLimit === "number" &&
+          typeof this.voltageLimit === 'number' &&
           this.voltageLimit <= voltage &&
-          typeof this.onexceedvoltage === "function"
+          typeof this.onexceedvoltage === 'function'
         ) {
           this.onexceedvoltage(voltage);
         }
@@ -69,7 +71,7 @@ export default class MQGasSensor implements ObnizPartsInterface {
     if (this.obniz.isValidIO(this.params.do)) {
       this.do = obniz.getIO(this.params.do);
       this.do.input((value: any) => {
-        if (typeof this.onchangedigital === "function") {
+        if (typeof this.onchangedigital === 'function') {
           this.onchangedigital(value);
         }
       });
@@ -77,12 +79,12 @@ export default class MQGasSensor implements ObnizPartsInterface {
   }
 
   public startHeating() {
-    this.obniz.setVccGnd(this.vcc, this.gnd, "5v");
+    this.obniz.setVccGnd(this.vcc, this.gnd, '5v');
   }
 
   public heatWait(seconds?: number): Promise<void> {
     this.startHeating();
-    if (typeof seconds === "number" && seconds > 0) {
+    if (typeof seconds === 'number' && seconds > 0) {
       seconds *= 1000;
     } else {
       seconds = 2 * 60 * 1000;

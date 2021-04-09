@@ -3,11 +3,13 @@
  * @module Parts.Grove_RotaryAngleSensorOptionsA
  */
 
-import Obniz from "../../../obniz";
-import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
-import { DriveType } from "../../../obniz/libs/io_peripherals/common";
-import PeripheralGrove from "../../../obniz/libs/io_peripherals/grove";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralAD from '../../../obniz/libs/io_peripherals/ad';
+import { DriveType } from '../../../obniz/libs/io_peripherals/common';
+import PeripheralGrove from '../../../obniz/libs/io_peripherals/grove';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 interface Grove_RotaryAngleSensorOptionsA {
   signal: number;
@@ -19,12 +21,14 @@ interface Grove_RotaryAngleSensorOptionsB {
   grove: PeripheralGrove;
 }
 
-export type Grove_RotaryAngleSensorOptions = Grove_RotaryAngleSensorOptionsA | Grove_RotaryAngleSensorOptionsB;
+export type Grove_RotaryAngleSensorOptions =
+  | Grove_RotaryAngleSensorOptionsA
+  | Grove_RotaryAngleSensorOptionsB;
 
 export default class Grove_RotaryAngleSensor implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "Grove_RotaryAngleSensor",
+      name: 'Grove_RotaryAngleSensor',
     };
   }
 
@@ -42,9 +46,9 @@ export default class Grove_RotaryAngleSensor implements ObnizPartsInterface {
   protected obniz!: Obniz;
 
   constructor() {
-    this.keys = ["vcc", "gnd", "signal", "grove"];
+    this.keys = ['vcc', 'gnd', 'signal', 'grove'];
     this.requiredKeys = [];
-    this.drive = "5v";
+    this.drive = '5v';
   }
 
   public wired(obniz: Obniz) {

@@ -43,6 +43,7 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
      * led.off();
      * console.log((new Date()).getTime() - time.getTime()) // => about 1000
      * ```
+     *
      * @param msec
      */
     wait(msec) {
@@ -96,6 +97,7 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
      * // Example
      * obniz.keepWorkingAtOffline(true);
      * ```
+     *
      * @param working
      */
     keepWorkingAtOffline(working) {
@@ -141,7 +143,7 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
         }
         else if (sec > 60 * 60 * 18) {
             // max 18h (60(s)*60(m)*18(h))
-            throw new Error("Error max 18h(64800) sleep");
+            throw new Error('Error max 18h(64800) sleep');
         }
         this.send({ system: { sleep_seconds: sec } });
     }
@@ -154,8 +156,9 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
      *
      * ```javascript
      * // JavaScript example
-     * obniz.sleepMinute （60）; // 60 minutes
+     * obniz.sleepMinute (60); // 60 minutes
      * ```
+     *
      * @param minute up to 64800 minutes(45 days ).
      */
     sleepMinute(minute) {
@@ -165,7 +168,7 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
         }
         else if (minute > 60 * 24 * 45) {
             // max 45day (60(m)*24(h)*45(d))
-            throw new Error("max 45day(64800m) sleep");
+            throw new Error('max 45day(64800m) sleep');
         }
         this.send({ system: { sleep_minute: minute } });
     }
@@ -186,7 +189,7 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
      */
     sleep(date) {
         if (!(date instanceof Date)) {
-            throw new Error("Date instance argument required");
+            throw new Error('Date instance argument required');
         }
         let sleepTime = Math.floor((date - new Date()) / 1000);
         this.print_debug(`sleep time : ${sleepTime}s`);
@@ -219,12 +222,12 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
      *
      * @param trigger
      *
-     *  - true: Rise （LOW -> HIGH）
-     *  - false: Falling （HIGH -> LOW）
+     * - true: Rise (LOW -> HIGH)
+     * - false: Falling  (HIGH -> LOW)
      */
     sleepIoTrigger(trigger) {
-        if (typeof trigger !== "boolean") {
-            throw new Error("sleepIoTrigger need boolean arg");
+        if (typeof trigger !== 'boolean') {
+            throw new Error('sleepIoTrigger need boolean arg');
         }
         this.send({ system: { sleep_io_trigger: trigger } });
     }

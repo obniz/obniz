@@ -10,7 +10,7 @@ class IBS01H {
     }
     static info() {
         return {
-            name: "iBS01H",
+            name: 'iBS01H',
         };
     }
     static isDevice(peripheral) {
@@ -40,10 +40,10 @@ class IBS01H {
             button: false,
             hall_sensor: false,
         };
-        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+        if (peripheral.adv_data[11] & 0b0001) {
             data.button = true;
         }
-        if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+        if (peripheral.adv_data[11] & 0b0100) {
             data.hall_sensor = true;
         }
         return data;

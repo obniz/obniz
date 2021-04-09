@@ -115,7 +115,7 @@ if(results){
       console.log('disconnected');
     }
     await omron.connectWait();
-    let data = await omron.getLatestDataBAG();
+    let data = await omron.getLatestDataBAGWait();
     
     console.log(data);
 }else{
@@ -136,7 +136,7 @@ if(results){
     console.log("find");
   
     await omron.connectWait();
-    let data = await omron.getLatestDataBAG();
+    let data = await omron.getLatestDataBAGWait();
     
     console.log(data);
     
@@ -148,7 +148,7 @@ if(results){
 ```
 
 
-## [await]getLatestData()
+## [await]getLatestDataWait()
 Get the latest data of the sensor of 2JCIE-BU01 (bag shape).
 
 ```javascript
@@ -161,7 +161,7 @@ if(results){
     console.log("find");
   
     await omron.connectWait();
-    let data = await omron.getLatestData();
+    let data = await omron.getLatestDataWait();
     
     console.log(data);
     
@@ -191,7 +191,7 @@ The return format is below.
 
 ```
 
-## [await]getLatestSensorDataUSB()
+## [await]getLatestSensorDataUSBWait()
 Get the latest sensor data from 2JCIE-BL01 (USB connection).
 
 ```javascript
@@ -204,7 +204,7 @@ if(results){
     console.log("find");
   
     await omron.connectWait();
-    let data = await omron.getLatestSensorDataUSB();
+    let data = await omron.getLatestSensorDataUSBWait();
     
     console.log(data);
     
@@ -233,7 +233,7 @@ The return format is below.
 ```
 
 
-## [await]getLatestCalculationDataUSB()
+## [await]getLatestCalculationDataUSBWait()
 Get the latest index data and acceleration data from 2JCIE-BL01 (USB connection).
 
 ```javascript
@@ -246,7 +246,7 @@ if(results){
     console.log("find");
   
     await omron.connectWait();
-    let data = await omron.getLatestCalculationDataUSB();
+    let data = await omron.getLatestCalculationDataUSBWait();
     
     console.log(data);
     

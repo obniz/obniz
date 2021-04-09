@@ -3,10 +3,12 @@
  * @module Parts.Grove_SHT35Sensor
  */
 
-import Obniz from "../../../obniz";
-import PeripheralGrove from "../../../obniz/libs/io_peripherals/grove";
-import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralGrove from '../../../obniz/libs/io_peripherals/grove';
+import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface Grove_SHT35SensorOptionsA {
   gnd?: number;
@@ -19,12 +21,14 @@ interface Grove_SHT35SensorOptionsB {
   grove: PeripheralGrove;
 }
 
-export type Grove_SHT35SensorOptions = Grove_SHT35SensorOptionsA | Grove_SHT35SensorOptionsB;
+export type Grove_SHT35SensorOptions =
+  | Grove_SHT35SensorOptionsA
+  | Grove_SHT35SensorOptionsB;
 
 export default class Grove_SHT35Sensor implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "Grove_SHT35Sensor",
+      name: 'Grove_SHT35Sensor',
     };
   }
 
@@ -42,35 +46,35 @@ export default class Grove_SHT35Sensor implements ObnizPartsInterface {
   private gnd?: number;
   private i2c!: PeripheralI2C;
 
-  private SHT35_IIC_ADDR: number = 0x45;
-  private CMD_SOFT_RST: number = 0x30a2;
-  private HIGH_REP_WITH_STRCH: number = 0x2c06;
+  private SHT35_IIC_ADDR = 0x45;
+  private CMD_SOFT_RST = 0x30a2;
+  private HIGH_REP_WITH_STRCH = 0x2c06;
 
-  private NO_ERROR: number = 0;
-  private ERROR_PARAM: number = -1;
-  private ERROR_COMM: number = -2;
-  private ERROR_OTHERS: number = -128;
+  private NO_ERROR = 0;
+  private ERROR_PARAM = -1;
+  private ERROR_COMM = -2;
+  private ERROR_OTHERS = -128;
 
-  private launched: boolean = false;
+  private launched = false;
 
   constructor() {
-    this.keys = ["gnd", "vcc", "sda", "scl", "grove"];
+    this.keys = ['gnd', 'vcc', 'sda', 'scl', 'grove'];
     this.requiredKeys = [];
     this.ioKeys = this.keys;
-    this.displayName = "GroveSHT35";
-    this.displayIoNames = { sda: "sda", scl: "scl" };
+    this.displayName = 'GroveSHT35';
+    this.displayIoNames = { sda: 'sda', scl: 'scl' };
   }
 
   public wired(obniz: Obniz) {
     if (this.params.grove) {
-      this.i2c = this.params.grove.getI2c(400000, "5v");
+      this.i2c = this.params.grove.getI2c(400000, '5v');
     } else {
       this.vcc = this.params.vcc;
       this.gnd = this.params.gnd;
-      this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+      this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
       this.params.clock = 400000;
-      this.params.mode = "master";
+      this.params.mode = 'master';
 
       this.i2c = obniz.getI2CWithConfig(this.params);
     }
@@ -87,10 +91,10 @@ export default class Grove_SHT35Sensor implements ObnizPartsInterface {
   }
 
   public async readMeasDataSingleShotWait(cfg_cmd: any) {
-    let temp_hex: number = 0;
-    let hum_hex: number = 0;
-    let temp: number = 0;
-    let hum: number = 0;
+    let temp_hex = 0;
+    let hum_hex = 0;
+    let temp = 0;
+    let hum = 0;
 
     if (this.launched) {
       await this.sendCommandWait(cfg_cmd);

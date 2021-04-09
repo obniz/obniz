@@ -113,11 +113,12 @@ class BleAttributeAbstract {
     }
     /**
      * Use writeTextWait() instead from 3.5.0
+     *
      * @ignore
      * @deprecated
      */
     writeText(str, needResponse) {
-        throw new ObnizError_1.ObnizDeprecatedFunctionError("writeText", "writeTextWait");
+        throw new ObnizError_1.ObnizDeprecatedFunctionError('writeText', 'writeTextWait');
     }
     /**
      * @ignore
@@ -127,11 +128,12 @@ class BleAttributeAbstract {
     }
     /**
      * Use writeNumberWait() instead from 3.5.0
+     *
      * @ignore
      * @deprecated
      */
     writeNumber(val, needResponse) {
-        throw new ObnizError_1.ObnizDeprecatedFunctionError("writeNumber", "writeNumberWait");
+        throw new ObnizError_1.ObnizDeprecatedFunctionError('writeNumber', 'writeNumberWait');
     }
     /**
      * @ignore
@@ -144,7 +146,7 @@ class BleAttributeAbstract {
      */
     readFromRemoteWait() {
         return new Promise((resolve) => {
-            this.emitter.once("onreadfromremote", () => {
+            this.emitter.once('onreadfromremote', () => {
                 resolve();
             });
         });
@@ -154,7 +156,7 @@ class BleAttributeAbstract {
      */
     writeFromRemoteWait() {
         return new Promise((resolve) => {
-            this.emitter.once("onreadfromremote", (params) => {
+            this.emitter.once('onreadfromremote', (params) => {
                 resolve(params.data);
             });
         });
@@ -174,7 +176,7 @@ class BleAttributeAbstract {
     notifyFromServer(notifyName, params) {
         this.emitter.emit(notifyName, params);
         switch (notifyName) {
-            case "onerror": {
+            case 'onerror': {
                 this.onerror(params);
                 break;
             }
@@ -188,7 +190,7 @@ class BleAttributeAbstract {
         if (!func) {
             return;
         }
-        if (typeof func !== "function") {
+        if (typeof func !== 'function') {
             return;
         }
         try {
@@ -203,11 +205,12 @@ class BleAttributeAbstract {
     setFunctions() {
         let childrenName = this.childrenName;
         if (childrenName) {
-            childrenName = childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
+            childrenName =
+                childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
             const childName = childrenName.slice(0, -1);
-            let funcName = "add" + childName;
+            let funcName = 'add' + childName;
             this[funcName] = this.addChild;
-            funcName = "get" + childName;
+            funcName = 'get' + childName;
             this[funcName] = this.getChild;
         }
         const parentName = this.parentName;

@@ -3,16 +3,16 @@
  * @module ObnizApp
  */
 
-declare var done: any;
-declare var req: any;
-declare var configs: any;
+declare let done: any;
+declare let req: any;
+declare let configs: any;
 
 export default class ObnizApp {
   /**
    * Determine obniz.js is running on obniz Cloud or not.
    */
   public static isCloudRunning(): boolean {
-    return typeof done === "function";
+    return typeof done === 'function';
   }
 
   /**
@@ -46,7 +46,7 @@ export default class ObnizApp {
    * ```
    *
    */
-  public static done(arg: { status: "success" | "error"; text: string }) {
+  public static done(arg: { status: 'success' | 'error'; text: string }) {
     if (this.isCloudRunning()) {
       // wait a few for last communication sent to socket.
       setTimeout(() => {
@@ -61,7 +61,7 @@ export default class ObnizApp {
    * Configration by user for This App. Only Available for BrowserApp
    */
   public static configs(): any {
-    if (typeof configs === "object") {
+    if (typeof configs === 'object') {
       return configs;
     } else {
       return null;

@@ -3,12 +3,12 @@
  *
  * @ignore
  */
-import Hci from "../hci";
-import EventEmitter from "eventemitter3";
-import { Handle } from "../../bleTypes";
-import Gap from "./gap";
-import Gatt from "./gatt";
-declare type BlenoBindingsEventType = "stateChange" | "mtuChange" | "accept" | "disconnect";
+import Hci from '../hci';
+import EventEmitter from 'eventemitter3';
+import { Handle } from '../../bleTypes';
+import Gap from './gap';
+import Gatt from './gatt';
+declare type BlenoBindingsEventType = 'stateChange' | 'mtuChange' | 'accept' | 'disconnect';
 /**
  * @ignore
  */

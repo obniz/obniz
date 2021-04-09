@@ -18,21 +18,21 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
         super(obniz);
         this.id = id;
-        this.on("/response/tcp/connection", (obj) => {
+        this.on('/response/tcp/connection', (obj) => {
             /* Connectino state update. response of connect(), close from destination, response from */
             this.Obniz._runUserCreatedFunction(this.onconnection, obj.connection.connected);
             if (!obj.connection.connected) {
                 this._reset();
             }
         });
-        this.on("/response/tcp/read", (obj) => {
+        this.on('/response/tcp/read', (obj) => {
             this.Obniz._runUserCreatedFunction(this.onreceive, obj.read.data);
             const callback = this.readObservers.shift();
             if (callback) {
                 callback(obj.read.data);
             }
         });
-        this.on("/response/tcp/connect", (obj) => {
+        this.on('/response/tcp/connect', (obj) => {
             /* response of connect() */
             /* `this.connection` will called before this function */
             if (obj.connect.code !== 0) {
@@ -58,7 +58,7 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
      * @param domain
      */
     connectWait(port, domain) {
-        if (semver_1.default.lt(this.Obniz.firmware_ver, "2.1.0")) {
+        if (semver_1.default.lt(this.Obniz.firmware_ver, '2.1.0')) {
             throw new Error(`Please update obniz firmware >= 2.1.0`);
         }
         // TODO
@@ -76,7 +76,7 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
         return new Promise((resolve, reject) => {
             this._addConnectObserver(resolve);
             const obj = {};
-            obj["tcp" + this.id] = {
+            obj['tcp' + this.id] = {
                 connect: {
                     port,
                     domain,
@@ -101,6 +101,7 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
      * // Text
      * tcp.write('hello');
      * ```
+     *
      * @param data
      */
     write(data) {
@@ -110,7 +111,7 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
         if (data === undefined) {
             return;
         }
-        if (typeof data === "number") {
+        if (typeof data === 'number') {
             data = [data];
         }
         let send_data = null;
@@ -120,12 +121,12 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
         else if (data.constructor === Array) {
             send_data = data;
         }
-        else if (typeof data === "string") {
+        else if (typeof data === 'string') {
             const buf = Buffer.from(data);
             send_data = [...buf];
         }
         const obj = {};
-        obj["tcp" + this.id] = {
+        obj['tcp' + this.id] = {
             write: {
                 data: send_data,
             },
@@ -171,7 +172,7 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
         return this.used;
     }
     schemaBasePath() {
-        return "tcp" + this.id;
+        return 'tcp' + this.id;
     }
     /**
      * @ignore
@@ -187,7 +188,7 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
             throw new Error(`tcp${this.id} is not used`);
         }
         const obj = {};
-        obj["tcp" + this.id] = {
+        obj['tcp' + this.id] = {
             disconnect: true,
         };
         this.Obniz.send(obj);

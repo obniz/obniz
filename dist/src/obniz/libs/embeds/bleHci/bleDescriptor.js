@@ -46,7 +46,7 @@ class BleDescriptor extends bleLocalValueAttributeAbstract_1.default {
      * @ignore
      */
     get parentName() {
-        return "characteristic";
+        return 'characteristic';
     }
     // public addPermission(param: any) {
     //   if (!this.permissions.includes(param)) {

@@ -2,10 +2,10 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import BleAttributeAbstract from "./bleAttributeAbstract";
-import BleCharacteristic from "./bleCharacteristic";
-import BleHelper from "./bleHelper";
-import BleService from "./bleService";
+import BleAttributeAbstract from './bleAttributeAbstract';
+import BleCharacteristic from './bleCharacteristic';
+import BleHelper from './bleHelper';
+import BleService from './bleService';
 
 /**
  * @ignore
@@ -21,10 +21,10 @@ enum BleResponseResult {
 /**
  * @category Use as Peripheral
  */
-export default class BleLocalAttributeAbstract<ParentClass, ChildrenClass> extends BleAttributeAbstract<
+export default class BleLocalAttributeAbstract<
   ParentClass,
   ChildrenClass
-> {
+> extends BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * @ignore
    */
@@ -63,10 +63,10 @@ export default class BleLocalAttributeAbstract<ParentClass, ChildrenClass> exten
    */
   public emit(name: any, ...params: any) {
     switch (name) {
-      case "readRequest":
+      case 'readRequest':
         this._onReadRequest(...(params as [any, any]));
         return true;
-      case "writeRequest":
+      case 'writeRequest':
         this._onWriteRequest(...(params as [any, any]));
         return true;
     }
@@ -83,12 +83,13 @@ export default class BleLocalAttributeAbstract<ParentClass, ChildrenClass> exten
     if (this.data.length >= offset) {
       callback(BleResponseResult.SUCCESS, Buffer.from(this.data.slice(offset)));
       let address: any = null;
-      if (this.parentName === "characteristic") {
-        address = this.characteristic!.service.peripheral.currentConnectedDeviceAddress;
-      } else if (this.parentName === "service") {
-        address = this.service!.peripheral.currentConnectedDeviceAddress;
+      if (this.parentName === 'characteristic') {
+        address = this.characteristic.service.peripheral
+          .currentConnectedDeviceAddress;
+      } else if (this.parentName === 'service') {
+        address = this.service.peripheral.currentConnectedDeviceAddress;
       }
-      this.notifyFromServer("onreadfromremote", { address });
+      this.notifyFromServer('onreadfromremote', { address });
     } else {
       callback(BleResponseResult.UNLIKELY_ERROR, null);
     }
@@ -102,17 +103,23 @@ export default class BleLocalAttributeAbstract<ParentClass, ChildrenClass> exten
    * @param callback
    * @private
    */
-  public _onWriteRequest(data: any, offset?: any, withoutResponse?: any, callback?: any) {
+  public _onWriteRequest(
+    data: any,
+    offset?: any,
+    withoutResponse?: any,
+    callback?: any
+  ) {
     // console.log('onWriteRequest');
     this.data = Array.from(data);
     callback(BleResponseResult.SUCCESS);
     let address: any = null;
-    if (this.parentName === "characteristic") {
-      address = this.characteristic.service.peripheral.currentConnectedDeviceAddress;
-    } else if (this.parentName === "service") {
+    if (this.parentName === 'characteristic') {
+      address = this.characteristic.service.peripheral
+        .currentConnectedDeviceAddress;
+    } else if (this.parentName === 'service') {
       address = this.service.peripheral.currentConnectedDeviceAddress;
     }
-    this.notifyFromServer("onwritefromremote", { address, data });
+    this.notifyFromServer('onwritefromremote', { address, data });
   }
 
   /**
@@ -121,7 +128,7 @@ export default class BleLocalAttributeAbstract<ParentClass, ChildrenClass> exten
    */
   public async writeWait(dataArray: number[]): Promise<boolean> {
     this.data = dataArray;
-    this.notifyFromServer("onwrite", { result: "success" });
+    this.notifyFromServer('onwrite', { result: 'success' });
     return true;
   }
 
@@ -130,7 +137,7 @@ export default class BleLocalAttributeAbstract<ParentClass, ChildrenClass> exten
    * @return dataArray
    */
   public async readWait(): Promise<number[]> {
-    this.notifyFromServer("onread", { data: this.data });
+    this.notifyFromServer('onread', { data: this.data });
     return this.data;
   }
 }

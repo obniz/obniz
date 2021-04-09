@@ -39,7 +39,7 @@ var colorSens = obniz.wired("S11059", {vcc:0, sda:1, scl:2, gnd:3});
 colorSens.init(1,2);
 ```
 
-## [await] getVal()
+## [await] getValWait()
 measure/get sensor value.
 return is an array of mumbers.
 
@@ -53,7 +53,7 @@ value is within 0~0xFFFF
 // Javascript Example
 var colorSens = obniz.wired("S11059", {vcc:0, sda:1, scl:2, gnd:3});
 colorSens.init(1,2);
-var ret = await colorSens.getVal(); // get each color
+var ret = await colorSens.getValWait(); // get each color
 console.log("getVal:"+ ret); // show array
 var red = ret[0]; // red level
 var green = ret[1];　// green level

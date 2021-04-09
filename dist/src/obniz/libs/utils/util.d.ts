@@ -17,11 +17,13 @@ declare class ObnizUtil {
     static _requiredKeys(params: any, keys: any): any;
     /**
      * convert from data array to string
+     *
      * @param data
      */
     static dataArray2string(data: number[]): string | null;
     /**
      * convert from string to data array
+     *
      * @param str
      */
     static string2dataArray(str: string): any[];

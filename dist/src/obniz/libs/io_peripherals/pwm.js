@@ -12,6 +12,7 @@ const util_1 = __importDefault(require("../utils/util"));
 /**
  * We will now generate PWM.
  * Maximum current depends on the driving mode. See [[PeripheralIO|io]].
+ *
  * @category Peripherals
  */
 class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
@@ -40,14 +41,14 @@ class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
      * @param params
      */
     start(params) {
-        const err = util_1.default._requiredKeys(params, ["io"]);
+        const err = util_1.default._requiredKeys(params, ['io']);
         if (err) {
             throw new Error("pwm start param '" + err + "' required, but not found ");
         }
-        this.params = util_1.default._keyFilter(params, ["io", "drive", "pull"]);
+        this.params = util_1.default._keyFilter(params, ['io', 'drive', 'pull']);
         const io = this.params.io;
         const ioObj = this.Obniz.getIO(io);
-        ioObj.drive(this.params.drive || "5v");
+        ioObj.drive(this.params.drive || '5v');
         ioObj.pull(this.params.pull || null);
         this.state = {
             io,
@@ -78,14 +79,14 @@ class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
             throw new Error(`pwm${this.id} is not started`);
         }
         freq *= 1;
-        if (typeof freq !== "number") {
-            throw new Error("please provide freq in number");
+        if (typeof freq !== 'number') {
+            throw new Error('please provide freq in number');
         }
         this.state.freq = freq;
         this.sendWS({
             freq,
         });
-        if (typeof this.state.duty === "number") {
+        if (typeof this.state.duty === 'number') {
             this.duty(this.state.duty);
         }
     }
@@ -130,11 +131,11 @@ class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
             throw new Error(`pwm${this.id} is not started`);
         }
         duty *= 1;
-        if (typeof this.state.freq !== "number" || this.state.freq <= 0) {
-            throw new Error("please provide freq first.");
+        if (typeof this.state.freq !== 'number' || this.state.freq <= 0) {
+            throw new Error('please provide freq first.');
         }
-        if (typeof duty !== "number") {
-            throw new Error("please provide duty in number");
+        if (typeof duty !== 'number') {
+            throw new Error('please provide duty in number');
         }
         if (duty < 0) {
             duty = 0;
@@ -208,7 +209,7 @@ class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
      * @private
      */
     schemaBasePath() {
-        return "pwm" + this.id;
+        return 'pwm' + this.id;
     }
     /**
      * @ignore
@@ -220,7 +221,7 @@ class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
     }
     sendWS(obj) {
         const wsObj = {};
-        wsObj["pwm" + this.id] = obj;
+        wsObj['pwm' + this.id] = obj;
         this.Obniz.send(wsObj);
     }
 }

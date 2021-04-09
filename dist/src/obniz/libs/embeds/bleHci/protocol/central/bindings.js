@@ -34,10 +34,10 @@ class NobleBindings extends eventemitter3_1.default {
         this._aclStreams = {};
         this._signalings = {};
         this._connectPromises = [];
-        this._hci.on("stateChange", this.onStateChange.bind(this));
-        this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
-        this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
-        this._gap.on("discover", this.onDiscover.bind(this));
+        this._hci.on('stateChange', this.onStateChange.bind(this));
+        this._hci.on('disconnComplete', this.onDisconnComplete.bind(this));
+        this._hci.on('aclDataPkt', this.onAclDataPkt.bind(this));
+        this._gap.on('discover', this.onDiscover.bind(this));
     }
     /**
      * @ignore
@@ -58,7 +58,7 @@ class NobleBindings extends eventemitter3_1.default {
     }
     addPeripheralData(uuid, addressType) {
         if (!this._addresses[uuid]) {
-            const address = bleHelper_1.default.reverseHexString(uuid, ":");
+            const address = bleHelper_1.default.reverseHexString(uuid, ':');
             this._addresses[uuid] = address;
             this._addresseTypes[uuid] = addressType;
             this._connectable[uuid] = true;
@@ -86,7 +86,7 @@ class NobleBindings extends eventemitter3_1.default {
             const conResult = await this._hci.createLeConnWait(address, addressType, 90 * 1000, (result) => {
                 // on connect success
                 this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
-                if (onConnectCallback && typeof onConnectCallback === "function") {
+                if (onConnectCallback && typeof onConnectCallback === 'function') {
                     onConnectCallback();
                 }
             }); // connection timeout for 90 secs.
@@ -114,17 +114,17 @@ class NobleBindings extends eventemitter3_1.default {
             return;
         }
         this._state = state;
-        if (state === "unauthorized") {
-            console.log("noble warning: adapter state unauthorized, please run as root or with sudo");
-            console.log("               or see README for information on running without root/sudo:");
-            console.log("               https://github.com/sandeepmistry/noble#running-on-linux");
+        if (state === 'unauthorized') {
+            console.log('noble warning: adapter state unauthorized, please run as root or with sudo');
+            console.log('               or see README for information on running without root/sudo:');
+            console.log('               https://github.com/sandeepmistry/noble#running-on-linux');
         }
-        else if (state === "unsupported") {
-            console.log("noble warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).");
-            console.log("               Try to run with environment variable:");
-            console.log("               [sudo] NOBLE_HCI_DEVICE_ID=x node ...");
+        else if (state === 'unsupported') {
+            console.log('noble warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).');
+            console.log('               Try to run with environment variable:');
+            console.log('               [sudo] NOBLE_HCI_DEVICE_ID=x node ...');
         }
-        this.emit("stateChange", state);
+        this.emit('stateChange', state);
     }
     onDiscover(status, address, addressType, connectable, advertisement, rssi) {
         if (this._scanServiceUuids === undefined) {
@@ -140,18 +140,19 @@ class NobleBindings extends eventemitter3_1.default {
                 serviceUuids.push(serviceData[i].uuid);
             }
             for (i in serviceUuids) {
-                hasScanServiceUuids = this._scanServiceUuids.indexOf(serviceUuids[i]) !== -1;
+                hasScanServiceUuids =
+                    this._scanServiceUuids.indexOf(serviceUuids[i]) !== -1;
                 if (hasScanServiceUuids) {
                     break;
                 }
             }
         }
         if (hasScanServiceUuids) {
-            const uuid = address.split(":").join("");
+            const uuid = address.split(':').join('');
             this._addresses[uuid] = address;
             this._addresseTypes[uuid] = addressType;
             this._connectable[uuid] = connectable;
-            this.emit("discover", uuid, address, addressType, connectable, advertisement, rssi);
+            this.emit('discover', uuid, address, addressType, connectable, advertisement, rssi);
         }
     }
     onLeConnComplete(status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy) {
@@ -163,10 +164,7 @@ class NobleBindings extends eventemitter3_1.default {
         if (status !== 0) {
             throw new ObnizError_1.ObnizBleHciStateError(status);
         }
-        uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
+        uuid = address.split(':').join('').toLowerCase();
         const aclStream = new acl_stream_1.default(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
         aclStream.debugHandler = (text) => {
             this.debug(text);
@@ -178,15 +176,17 @@ class NobleBindings extends eventemitter3_1.default {
         this._aclStreams[handle] = aclStream;
         this._handles[uuid] = handle;
         this._handles[handle] = uuid;
-        this._gatts[handle].on("notification", this.onNotification.bind(this));
-        this._gatts[handle].on("handleNotify", this.onHandleNotify.bind(this));
-        this._signalings[handle].on("connectionParameterUpdateRequest", this.onConnectionParameterUpdateWait.bind(this));
+        this._gatts[handle].on('notification', this.onNotification.bind(this));
+        this._gatts[handle].on('handleNotify', this.onHandleNotify.bind(this));
+        this._signalings[handle].on('connectionParameterUpdateRequest', this.onConnectionParameterUpdateWait.bind(this));
         // public onMtu(address: any, mtu?: any) {}
     }
     onDisconnComplete(handle, reason) {
         const uuid = this._handles[handle];
         if (uuid) {
-            const error = new ObnizError_1.ObnizBleHciStateError(reason, { peripheralAddress: uuid });
+            const error = new ObnizError_1.ObnizBleHciStateError(reason, {
+                peripheralAddress: uuid,
+            });
             this._gatts[handle].onEnd(error);
             this._gatts[handle].removeAllListeners();
             this._signalings[handle].removeAllListeners();
@@ -197,7 +197,7 @@ class NobleBindings extends eventemitter3_1.default {
             delete this._aclStreams[handle];
             delete this._handles[uuid];
             delete this._handles[handle];
-            this.emit("disconnect", uuid, error); // TODO: handle reason?
+            this.emit('disconnect', uuid, error); // TODO: handle reason?
         }
         else {
             // maybe disconnect as peripheral
@@ -245,11 +245,8 @@ class NobleBindings extends eventemitter3_1.default {
         await gatt.notifyWait(serviceUuid, characteristicUuid, notify);
     }
     onNotification(address, serviceUuid, characteristicUuid, data) {
-        const uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
-        this.emit("notification", uuid, serviceUuid, characteristicUuid, data, true, true);
+        const uuid = address.split(':').join('').toLowerCase();
+        this.emit('notification', uuid, serviceUuid, characteristicUuid, data, true, true);
     }
     async discoverDescriptorsWait(peripheralUuid, serviceUuid, characteristicUuid) {
         const gatt = this.getGatt(peripheralUuid);
@@ -273,11 +270,8 @@ class NobleBindings extends eventemitter3_1.default {
         await gatt.writeHandleWait(attHandle, data, withoutResponse);
     }
     onHandleNotify(address, handle, data) {
-        const uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
-        this.emit("handleNotify", uuid, handle, data);
+        const uuid = address.split(':').join('').toLowerCase();
+        this.emit('handleNotify', uuid, handle, data);
     }
     onConnectionParameterUpdateWait(handle, minInterval, maxInterval, latency, supervisionTimeout) {
         this._hci

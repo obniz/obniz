@@ -2,15 +2,19 @@
  * @packageDocumentation
  * @module ObnizCore
  */
-import EventEmitter from "eventemitter3";
-import WSCommand from "./libs/wscommand";
-import { ObnizOptions } from "./ObnizOptions";
-export declare type ObnizConnectionEventNames = "connect" | "close" | "notify";
+import EventEmitter from 'eventemitter3';
+import WSCommand from './libs/wscommand';
+import { ObnizOptions } from './ObnizOptions';
+export declare type ObnizConnectionEventNames = 'connect' | 'close' | 'notify';
+export interface ObnizErrorMessage {
+    alert: 'warn' | 'error';
+    message: string;
+}
 /**
  * @ignore
  *
  */
-declare type ObnizConnectionEventNamesInternal = "_close";
+declare type ObnizConnectionEventNamesInternal = '_close';
 export default abstract class ObnizConnection extends EventEmitter<ObnizConnectionEventNames | ObnizConnectionEventNamesInternal> {
     /**
      * obniz.js version
@@ -78,6 +82,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     };
     /**
      * Is node.js environment or not.
+     *
      * @readonly
      */
     isNode: boolean;
@@ -176,7 +181,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
      *
      *
      */
-    connectionState: "closed" | "connecting" | "connected" | "closing";
+    connectionState: 'closed' | 'connecting' | 'connected' | 'closing';
     protected _userManualConnectionClose: boolean;
     protected socket: any;
     protected socket_local: any;
@@ -304,7 +309,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
      * @param options send option
      * @param options.local_connect If false, send data via gloval internet.
      */
-    send(obj: object | object[], options?: {
+    send(obj: Record<string, any> | Record<string, any>[], options?: {
         local_connect?: boolean;
         connect_check?: boolean;
     }): void;
@@ -317,7 +322,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
      * @ignore
      * @param msg
      */
-    error(msg: any): void;
+    error(msg: ObnizErrorMessage | Error): void;
     /**
      * @ignore
      */
@@ -326,7 +331,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
      * @ignore
      * @private
      */
-    _runUserCreatedFunction(func?: (...args: any) => any, ...args: any[]): void;
+    _runUserCreatedFunction(func?: (..._args: any) => any, ...args: any[]): void;
     /**
      * Set onloop function. Use onloop property instead. This is deprecated function.
      *

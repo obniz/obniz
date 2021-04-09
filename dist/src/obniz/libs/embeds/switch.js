@@ -7,12 +7,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ComponentAbstact_1 = require("../ComponentAbstact");
 /**
  * The embedded switch on obniz Board.
+ *
  * @category Embeds
  */
 class ObnizSwitch extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, info) {
         super(obniz);
-        this.on("/response/switch/change", (obj) => {
+        this.on('/response/switch/change', (obj) => {
             this.state = obj.state;
             this.Obniz._runUserCreatedFunction(this.onchange, this.state);
         });
@@ -33,8 +34,8 @@ class ObnizSwitch extends ComponentAbstact_1.ComponentAbstract {
      */
     async getWait() {
         const obj = {};
-        obj.switch = "get";
-        const data = await this.sendAndReceiveJsonWait(obj, "/response/switch/change");
+        obj.switch = 'get';
+        const data = await this.sendAndReceiveJsonWait(obj, '/response/switch/change');
         return data.state;
     }
     /**
@@ -59,17 +60,17 @@ class ObnizSwitch extends ComponentAbstact_1.ComponentAbstract {
      */
     async stateWait(state) {
         while (1) {
-            const data = await this.receiveJsonWait("/response/switch/change");
+            const data = await this.receiveJsonWait('/response/switch/change');
             if (state === data.state) {
                 return;
             }
         }
     }
     schemaBasePath() {
-        return "switch";
+        return 'switch';
     }
     _reset() {
-        this.state = "none";
+        this.state = 'none';
     }
 }
 exports.default = ObnizSwitch;

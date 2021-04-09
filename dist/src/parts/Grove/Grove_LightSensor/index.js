@@ -6,12 +6,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_LightSensor {
     constructor() {
-        this.keys = ["vcc", "gnd", "signal", "grove"];
+        this.keys = ['vcc', 'gnd', 'signal', 'grove'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "Grove_LightSensor",
+            name: 'Grove_LightSensor',
         };
     }
     onchange(value) { }
@@ -21,7 +21,7 @@ class Grove_LightSensor {
             this.ad = groveAd.primary;
         }
         else {
-            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
             this.ad = obniz.getAD(this.params.signal);
         }
         this.ad.start((value) => {

@@ -3,43 +3,46 @@
  * @module ObnizCore.Hardware
  */
 
-import ObnizDevice from "../../ObnizDevice";
+import ObnizDevice from '../../ObnizDevice';
 
-import InfraredLED from "../../../parts/Infrared/InfraredLED";
-import LED from "../../../parts/Light/LED";
-import Button from "../../../parts/MovementSensor/Button";
+import InfraredLED from '../../../parts/Infrared/InfraredLED';
+import LED from '../../../parts/Light/LED';
+import Button from '../../../parts/MovementSensor/Button';
 
-import I2C from "../../../obniz/libs/io_peripherals/i2c";
-import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import IO from "../../../obniz/libs/io_peripherals/io";
-import MPU6886 from "../../../parts/MovementSensor/MPU6886";
-import SH200Q from "../../../parts/MovementSensor/SH200Q";
-import AXP192 from "../../../parts/Power/AXP192";
-import ObnizBLEHci from "../embeds/bleHci/ble";
-import Display from "../embeds/display";
-import PeripheralAD from "../io_peripherals/ad";
-import PeripheralGrove from "../io_peripherals/grove";
-import PeripheralPWM from "../io_peripherals/pwm";
-import PeripheralSPI from "../io_peripherals/spi";
-import PeripheralUART from "../io_peripherals/uart";
-import LogicAnalyzer from "../measurements/logicanalyzer";
-import ObnizMeasure from "../measurements/measure";
+import I2C from '../../../obniz/libs/io_peripherals/i2c';
+import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
+import IO from '../../../obniz/libs/io_peripherals/io';
+import MPU6886 from '../../../parts/MovementSensor/MPU6886';
+import SH200Q from '../../../parts/MovementSensor/SH200Q';
+import AXP192 from '../../../parts/Power/AXP192';
+import ObnizBLEHci from '../embeds/bleHci/ble';
+import Display from '../embeds/display';
+import PeripheralAD from '../io_peripherals/ad';
+import PeripheralGrove from '../io_peripherals/grove';
+import PeripheralPWM from '../io_peripherals/pwm';
+import PeripheralSPI from '../io_peripherals/spi';
+import PeripheralUART from '../io_peripherals/uart';
+import LogicAnalyzer from '../measurements/logicanalyzer';
+import ObnizMeasure from '../measurements/measure';
 
 export class M5StickC extends ObnizDevice {
   /**
    * Embeded Primary Button on M5StickC. Big button right of display with print "M5". Also This button can be used as trigger of serverless function trigger.
+   *
    * @category Embeds
    */
   public buttonA!: Button;
 
   /**
    * Embeded Secondary Button on M5StickC. It is on side of M5StickC.
+   *
    * @category Embeds
    */
   public buttonB!: Button;
 
   /**
    * Embeded Infrared LED inside of M5StickC
+   *
    * @category Embeds
    */
   public ir!: InfraredLED;
@@ -59,12 +62,14 @@ export class M5StickC extends ObnizDevice {
 
   /**
    * Power management chip in M5StickC.
+   *
    * @category Embeds
    */
   public axp!: AXP192;
 
   /**
    * Embeded Red LED on M5StickC
+   *
    * @category Embeds
    */
   public led!: LED;
@@ -291,6 +296,7 @@ export class M5StickC extends ObnizDevice {
 
   /**
    * This is used by system. Please use i2c0.
+   *
    * @category Peripherals
    */
   public i2c1!: PeripheralI2C;
@@ -318,6 +324,7 @@ export class M5StickC extends ObnizDevice {
   /**
    * If obnizOS ver >= 3.0.0, automatically load [[ObnizCore.Components.Ble.Hci.ObnizBLE|ObnizHciBLE]],
    * and obnizOS ver < 3.0.0 throw unsupported error,
+   *
    * @category Embeds
    */
   public ble!: ObnizBLEHci;
@@ -339,23 +346,29 @@ export class M5StickC extends ObnizDevice {
   }
 
   public gyroWait(): Promise<{ x: number; y: number; z: number }> {
-    const supportedIMUNameArr = ["MPU6886", "SH200Q"];
+    const supportedIMUNameArr = ['MPU6886', 'SH200Q'];
     if (!supportedIMUNameArr.includes(this.imu!.constructor.name)) {
-      throw new Error(`gyroWait is supported only on M5stickC with ${supportedIMUNameArr.join()}`);
+      throw new Error(
+        `gyroWait is supported only on M5stickC with ${supportedIMUNameArr.join()}`
+      );
     }
     return this.imu!.getGyroWait();
   }
 
   public accelerationWait(): Promise<{ x: number; y: number; z: number }> {
-    const supportedIMUNameArr = ["MPU6886", "SH200Q"];
+    const supportedIMUNameArr = ['MPU6886', 'SH200Q'];
     if (!supportedIMUNameArr.includes(this.imu!.constructor.name)) {
-      throw new Error(`accelerationWait is supported only on M5stickC with ${supportedIMUNameArr.join()}`);
+      throw new Error(
+        `accelerationWait is supported only on M5stickC with ${supportedIMUNameArr.join()}`
+      );
     }
     return this.imu!.getAccelWait();
   }
 
-  public setupIMUWait(imuName: "MPU6886" | "SH200Q" = "MPU6886"): Promise<MPU6886 | SH200Q> {
-    const i2c = this._m5i2c!;
+  public setupIMUWait(
+    imuName: 'MPU6886' | 'SH200Q' = 'MPU6886'
+  ): Promise<MPU6886 | SH200Q> {
+    const i2c = this._m5i2c;
     const onerror = i2c.onerror;
     this.imu = this.wired(imuName, { i2c });
 
@@ -372,10 +385,10 @@ export class M5StickC extends ObnizDevice {
         throw new Error(`Cannot find IMU (${imuName}) on this M5StickC`);
       }
       switch (imuName) {
-        case "SH200Q":
+        case 'SH200Q':
           await (this.imu as SH200Q).initWait();
           break;
-        case "MPU6886":
+        case 'MPU6886':
           (this.imu as MPU6886).init();
           break;
         default:
@@ -393,22 +406,22 @@ export class M5StickC extends ObnizDevice {
       return;
     }
 
-    this.ir = this.wired("InfraredLED", { anode: 9 });
-    this.led = this.wired("LED", { cathode: 10 });
-    this.buttonA = this.wired("Button", { signal: 37 });
-    this.buttonB = this.wired("Button", { signal: 39 });
+    this.ir = this.wired('InfraredLED', { anode: 9 });
+    this.led = this.wired('LED', { cathode: 10 });
+    this.buttonA = this.wired('Button', { signal: 37 });
+    this.buttonB = this.wired('Button', { signal: 39 });
 
     const i2cParams = {
       sda: 21,
       scl: 22,
       clock: 100000,
-      pull: "3v",
-      mode: "master",
+      pull: '3v',
+      mode: 'master',
     };
 
     this._m5i2c = this.i2c1;
     this._m5i2c.start(i2cParams as any);
-    this.axp = this.wired("AXP192", { i2c: this._m5i2c });
+    this.axp = this.wired('AXP192', { i2c: this._m5i2c });
     this.led.off();
   }
 
@@ -416,8 +429,10 @@ export class M5StickC extends ObnizDevice {
     // @ts-ignore
     super._prepareComponents();
 
-    if (this.hw !== "m5stickc") {
-      throw new Error("Obniz.M5StickC only support ObnizOS for M5StickC. Your device is not ObnizOS for M5StickC.");
+    if (this.hw !== 'm5stickc') {
+      throw new Error(
+        'Obniz.M5StickC only support ObnizOS for M5StickC. Your device is not ObnizOS for M5StickC.'
+      );
     }
   }
 }

@@ -6,12 +6,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class M5StickC_RS485 {
     constructor() {
-        this.keys = ["tx", "rx", "gnd", "vcc", "baud"];
-        this.requiredKeys = ["tx", "rx"];
+        this.keys = ['tx', 'rx', 'gnd', 'vcc', 'baud'];
+        this.requiredKeys = ['tx', 'rx'];
     }
     static info() {
         return {
-            name: "M5StickC_RS485",
+            name: 'M5StickC_RS485',
         };
     }
     wired(obniz) {
@@ -22,9 +22,10 @@ class M5StickC_RS485 {
             obniz.getIO(this.params.vcc).output(true);
         }
         this.params.baud = this.params.baud || 9600;
-        if (!this.obniz.isValidIO(this.params.tx) && !this.obniz.isValidIO(this.params.rx)) {
-            if (this.obniz.hasExtraInterface("m5stickc_hat")) {
-                const uart = this.obniz.getExtraInterface("m5stickc_hat").uart;
+        if (!this.obniz.isValidIO(this.params.tx) &&
+            !this.obniz.isValidIO(this.params.rx)) {
+            if (this.obniz.hasExtraInterface('m5stickc_hat')) {
+                const uart = this.obniz.getExtraInterface('m5stickc_hat').uart;
                 this.params.tx = uart.tx;
                 this.params.rx = uart.rx;
             }
@@ -39,7 +40,7 @@ class M5StickC_RS485 {
             baud: this.params.baud,
         });
         this.uart.onreceive = (data, text) => {
-            if (typeof this.onreceive === "function") {
+            if (typeof this.onreceive === 'function') {
                 this.onreceive(data, text);
             }
         };

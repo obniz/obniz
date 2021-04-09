@@ -3,18 +3,20 @@
  * @module Parts.M5StickC_ADC
  */
 
-import Obniz from "../../../obniz";
-import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
+import Obniz from '../../../obniz';
+import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-import { I2cPartsAbstractOptions } from "../../i2cParts";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
+import { I2cPartsAbstractOptions } from '../../i2cParts';
 
 export interface M5StickC_ADCOptions extends I2cPartsAbstractOptions {}
 
 export default class M5StickC_ADC implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "M5StickC_ADC",
+      name: 'M5StickC_ADC',
     };
   }
 
@@ -36,7 +38,7 @@ export default class M5StickC_ADC implements ObnizPartsInterface {
   private minCode: number;
 
   constructor() {
-    this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
+    this.keys = ['vcc', 'gnd', 'sda', 'scl', 'i2c'];
     this.requiredKeys = [];
 
     this.address = 0x48;
@@ -75,21 +77,27 @@ export default class M5StickC_ADC implements ObnizPartsInterface {
   public wired(obniz: Obniz) {
     this.obniz = obniz;
 
-    if (!this.obniz.isValidIO(this.params.sda) && !this.obniz.isValidIO(this.params.scl) && !this.params.i2c) {
-      if (this.obniz.hasExtraInterface("m5stickc_hat")) {
-        const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
+    if (
+      !this.obniz.isValidIO(this.params.sda) &&
+      !this.obniz.isValidIO(this.params.scl) &&
+      !this.params.i2c
+    ) {
+      if (this.obniz.hasExtraInterface('m5stickc_hat')) {
+        const hatI2c = this.obniz.getExtraInterface('m5stickc_hat').i2c;
         this.params.sda = hatI2c.sda;
         this.params.scl = hatI2c.scl;
       } else {
-        throw new Error("Cannot find m5stickc hat interface. Please set param 'sda'/'scl' or 'i2c'");
+        throw new Error(
+          "Cannot find m5stickc hat interface. Please set param 'sda'/'scl' or 'i2c'"
+        );
       }
     }
 
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
-    this.params.mode = "master";
+    this.params.mode = 'master';
     this.params.clock = 400000;
-    this.params.pull = "5v";
+    this.params.pull = '5v';
     this.i2c = this.obniz.getI2CWithConfig(this.params);
     this.obniz.wait(100);
   }
@@ -144,10 +152,10 @@ export default class M5StickC_ADC implements ObnizPartsInterface {
 
   public setMode(mode: string) {
     switch (mode) {
-      case "CONTIN":
+      case 'CONTIN':
         this.mode = this.config_regs.MODE_CONTIN;
         break;
-      case "SINGLE":
+      case 'SINGLE':
         this.mode = this.config_regs.MODE_SINGLE;
         break;
       default:

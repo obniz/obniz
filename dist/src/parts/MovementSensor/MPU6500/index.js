@@ -11,7 +11,7 @@ const MPU6050_1 = __importDefault(require("../MPU6050"));
 class MPU6500 extends MPU6050_1.default {
     static info() {
         return {
-            name: "MPU6500",
+            name: 'MPU6500',
         };
     }
     constructor() {

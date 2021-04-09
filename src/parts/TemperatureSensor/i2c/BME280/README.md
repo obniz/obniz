@@ -33,7 +33,7 @@ This library use I2C to communicate.
 // Javascript Example
 // Please pullup sdi and sck.
 var bme280 = obniz.wired("BME280", {vio:0, vcore:1, gnd:2, csb:3, sdi: 4, sck: 5, sdo:6 });
-await bme280.applyCalibration();
+await bme280.applyCalibrationWait();
 const val = await bme280.getAllWait();
 console.log(val);
 ```
@@ -51,7 +51,7 @@ So, minimum connection and configration is.
 // sdo connected to gnd
 
 var bme280 = obniz.wired("BME280", {vio:0, gnd:1, sdi: 2, sck: 3 });
-await bme280.applyCalibration();
+await bme280.applyCalibrationWait();
 const val = await bme280.getAllWait();
 console.log(val);
 ```
@@ -75,7 +75,7 @@ If you configured a chip to use address 0x77 (by pull-up sdo)
 var bme280 = obniz.wired("BME280", {vio:0, gnd:1, sdi: 2, sck: 3, address: 0x77});
 ```
 
-## [await] applyCalibration()
+## [await] applyCalibrationWait()
 
 Retrive factory stored calibration data from connected chip.
 You can use BME280 without calling this, But You should do for better accuracy.
@@ -84,10 +84,10 @@ You can use BME280 without calling this, But You should do for better accuracy.
 // Javascript Example
 // Please pullup sdi and sck.
 var bme280 = obniz.wired("BME280", {vio:0, vcore:1, gnd:2, csb:3, sdi: 4, sck: 5, sdo:6 });
-await bme280.applyCalibration();
+await bme280.applyCalibrationWait();
 ```
 
-## [await] setIIRStrength()
+## [await] setIIRStrengthWait()
 
 configure of internal IIR filter. 0 to 4.
 
@@ -101,7 +101,7 @@ But you should wait for get more accurate result.
 // Javascript Example
 // Please pullup sdi and sck.
 var bme280 = obniz.wired("BME280", {vio:0, vcore:1, gnd:2, csb:3, sdi: 4, sck: 5, sdo:6 });
-await bme280.applyCalibration();
+await bme280.applyCalibrationWait();
 await bme280.setIIRStrength(1); // start using minimum IIR 
 ```
 
@@ -117,7 +117,7 @@ get all values.
 // Javascript Example
 // Please pullup sdi and sck.
 var bme280 = obniz.wired("BME280", {vio:0, vcore:1, gnd:2, csb:3, sdi: 4, sck: 5, sdo:6 });
-await bme280.applyCalibration();
+await bme280.applyCalibrationWait();
 const obj = await bme280.getAllWait();
 console.log('temp: ' + obj.temperature + ' degree');
 console.log('humidity: ' + obj.humidity + ' %');
@@ -133,7 +133,7 @@ Unit is m.
 // Javascript Example
 // Please pullup sdi and sck.
 var bme280 = obniz.wired("BME280", {vio:0, vcore:1, gnd:2, csb:3, sdi: 4, sck: 5, sdo:6 });
-await bme280.applyCalibration();
+await bme280.applyCalibrationWait();
 const obj = await bme280.getAllWait();
 const airPressure = obj.pressure;
 const hight_in_m = bme280.calcAltitude(airPressure);

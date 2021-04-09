@@ -2,19 +2,19 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import BleCharacteristic from "./bleCharacteristic";
-import BleDescriptor from "./bleDescriptor";
+import BleCharacteristic from './bleCharacteristic';
+import BleDescriptor from './bleDescriptor';
 /**
  * BLE UUID. Case is ignored. So aa00 and AA00 are the same.
  */
 export declare type UUID = string;
 export declare type BleDeviceAddress = string;
 export declare type Handle = number;
-export declare type BleDeviceType = "ble" | "dumo" | "breder";
-export declare type BleDeviceAddressType = "public" | "random" | "rpa_public" | "rpa_random";
-export declare type BleEventType = "connectable_advertisemnt" | "connectable_directed_advertisemnt" | "scannable_advertising" | "non_connectable_advertising" | "scan_response";
-export declare type BleAttributePropery = "broadcast" | "notify" | "read" | "write" | "write_without_response" | "indicate";
-export declare type BleAdvertisementFlag = "limited_discoverable_mode" | "general_discoverable_mode" | "br_edr_not_supported" | "le_br_edr_controller" | "le_br_edr_host";
+export declare type BleDeviceType = 'ble' | 'dumo' | 'breder';
+export declare type BleDeviceAddressType = 'public' | 'random' | 'rpa_public' | 'rpa_random';
+export declare type BleEventType = 'connectable_advertisemnt' | 'connectable_directed_advertisemnt' | 'scannable_advertising' | 'non_connectable_advertising' | 'scan_response';
+export declare type BleAttributePropery = 'broadcast' | 'notify' | 'read' | 'write' | 'write_without_response' | 'indicate';
+export declare type BleAdvertisementFlag = 'limited_discoverable_mode' | 'general_discoverable_mode' | 'br_edr_not_supported' | 'le_br_edr_controller' | 'le_br_edr_host';
 export interface BleScanResponseData {
     serviceUuids?: UUID[];
     localName?: string;
@@ -62,14 +62,14 @@ export interface BleCharacteristicDefine {
      */
     text?: string;
     properties?: BleAttributePropery[];
-    descriptors?: Array<BleDescriptorDefine | BleDescriptor>;
+    descriptors?: (BleDescriptorDefine | BleDescriptor)[];
 }
 export interface BleServiceDefine {
     /**
      * UUID
      */
     uuid: UUID;
-    characteristics?: Array<BleCharacteristicDefine | BleCharacteristic>;
+    characteristics?: (BleCharacteristicDefine | BleCharacteristic)[];
 }
 export interface BlePeripheralDefine {
 }

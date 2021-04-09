@@ -245,7 +245,7 @@ await obniz.ble.scan.startWait();
 
 ```
 
-## [await]setBeaconMode(enable)
+## [await]setBeaconModeWait(enable)
 
 Run the device and authentication in advance.
 
@@ -268,7 +268,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log("connected");
     await device.authPinCodeWait("0000");
     console.log("authPinCodeWait");
-    await device.setBeaconMode(true);
+    await device.setBeaconModeWait(true);
     console.log("authPinCodeWait");
     await device.disconnectWait();
     console.log("disconnected");

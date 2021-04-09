@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 function default_1(source) {
     // @ts-ignore
-    const self = this;
+    const self = this; // eslint-disable-line @typescript-eslint/no-this-alias
     if (self.cacheable) {
         self.cacheable();
     }
@@ -14,12 +14,12 @@ function default_1(source) {
         const src = JSON.parse(source);
         const output = {};
         for (const key of Object.keys(src)) {
-            if (key.startsWith("_")) {
+            if (key.startsWith('_')) {
                 continue;
             }
             output[key] = src[key];
         }
-        return JSON.stringify(output, undefined, "\t");
+        return JSON.stringify(output, undefined, '\t');
     }
     catch (err) {
         self.emitError(err);

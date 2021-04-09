@@ -2,37 +2,40 @@
  * @packageDocumentation
  * @module ObnizCore.Hardware
  */
-import ObnizDevice from "../../ObnizDevice";
-import InfraredLED from "../../../parts/Infrared/InfraredLED";
-import LED from "../../../parts/Light/LED";
-import Button from "../../../parts/MovementSensor/Button";
-import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import IO from "../../../obniz/libs/io_peripherals/io";
-import MPU6886 from "../../../parts/MovementSensor/MPU6886";
-import SH200Q from "../../../parts/MovementSensor/SH200Q";
-import AXP192 from "../../../parts/Power/AXP192";
-import ObnizBLEHci from "../embeds/bleHci/ble";
-import Display from "../embeds/display";
-import PeripheralAD from "../io_peripherals/ad";
-import PeripheralGrove from "../io_peripherals/grove";
-import PeripheralPWM from "../io_peripherals/pwm";
-import PeripheralSPI from "../io_peripherals/spi";
-import PeripheralUART from "../io_peripherals/uart";
-import LogicAnalyzer from "../measurements/logicanalyzer";
-import ObnizMeasure from "../measurements/measure";
+import ObnizDevice from '../../ObnizDevice';
+import InfraredLED from '../../../parts/Infrared/InfraredLED';
+import LED from '../../../parts/Light/LED';
+import Button from '../../../parts/MovementSensor/Button';
+import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
+import IO from '../../../obniz/libs/io_peripherals/io';
+import MPU6886 from '../../../parts/MovementSensor/MPU6886';
+import SH200Q from '../../../parts/MovementSensor/SH200Q';
+import AXP192 from '../../../parts/Power/AXP192';
+import ObnizBLEHci from '../embeds/bleHci/ble';
+import Display from '../embeds/display';
+import PeripheralAD from '../io_peripherals/ad';
+import PeripheralGrove from '../io_peripherals/grove';
+import PeripheralPWM from '../io_peripherals/pwm';
+import PeripheralSPI from '../io_peripherals/spi';
+import PeripheralUART from '../io_peripherals/uart';
+import LogicAnalyzer from '../measurements/logicanalyzer';
+import ObnizMeasure from '../measurements/measure';
 export declare class M5StickC extends ObnizDevice {
     /**
      * Embeded Primary Button on M5StickC. Big button right of display with print "M5". Also This button can be used as trigger of serverless function trigger.
+     *
      * @category Embeds
      */
     buttonA: Button;
     /**
      * Embeded Secondary Button on M5StickC. It is on side of M5StickC.
+     *
      * @category Embeds
      */
     buttonB: Button;
     /**
      * Embeded Infrared LED inside of M5StickC
+     *
      * @category Embeds
      */
     ir: InfraredLED;
@@ -50,11 +53,13 @@ export declare class M5StickC extends ObnizDevice {
     imu?: MPU6886 | SH200Q;
     /**
      * Power management chip in M5StickC.
+     *
      * @category Embeds
      */
     axp: AXP192;
     /**
      * Embeded Red LED on M5StickC
+     *
      * @category Embeds
      */
     led: LED;
@@ -238,6 +243,7 @@ export declare class M5StickC extends ObnizDevice {
     grove0: PeripheralGrove;
     /**
      * This is used by system. Please use i2c0.
+     *
      * @category Peripherals
      */
     i2c1: PeripheralI2C;
@@ -260,6 +266,7 @@ export declare class M5StickC extends ObnizDevice {
     /**
      * If obnizOS ver >= 3.0.0, automatically load [[ObnizCore.Components.Ble.Hci.ObnizBLE|ObnizHciBLE]],
      * and obnizOS ver < 3.0.0 throw unsupported error,
+     *
      * @category Embeds
      */
     ble: ObnizBLEHci;
@@ -280,7 +287,7 @@ export declare class M5StickC extends ObnizDevice {
         y: number;
         z: number;
     }>;
-    setupIMUWait(imuName?: "MPU6886" | "SH200Q"): Promise<MPU6886 | SH200Q>;
+    setupIMUWait(imuName?: 'MPU6886' | 'SH200Q'): Promise<MPU6886 | SH200Q>;
     protected _beforeOnConnect(): void;
     protected _prepareComponents(): void;
 }

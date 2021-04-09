@@ -7,7 +7,7 @@ const AnalogTemperatureSensor_1 = __importDefault(require("../AnalogTemperatureS
 class LM60 extends AnalogTemperatureSensor_1.default {
     static info() {
         return {
-            name: "LM60",
+            name: 'LM60',
         };
     }
     calc(voltage) {

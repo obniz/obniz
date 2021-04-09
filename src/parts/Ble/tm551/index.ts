@@ -3,8 +3,10 @@
  * @module Parts.TM551
  */
 
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, {
+  ObnizPartsBleInfo,
+} from '../../../obniz/ObnizPartsBleInterface';
 
 export interface TM551Options {}
 
@@ -18,7 +20,7 @@ export interface TM551_Data {
 export default class TM551 implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: "TM551",
+      name: 'TM551',
     };
   }
 
@@ -44,9 +46,15 @@ export default class TM551 implements ObnizPartsBleInterface {
     }
     const data: TM551_Data = {
       battery: peripheral.adv_data[13],
-      x: peripheral.adv_data[14] + ObnizPartsBleInterface.readFraction(peripheral.adv_data[15]),
-      y: peripheral.adv_data[16] + ObnizPartsBleInterface.readFraction(peripheral.adv_data[17]),
-      z: peripheral.adv_data[18] + ObnizPartsBleInterface.readFraction(peripheral.adv_data[19]),
+      x:
+        peripheral.adv_data[14] +
+        ObnizPartsBleInterface.readFraction(peripheral.adv_data[15]),
+      y:
+        peripheral.adv_data[16] +
+        ObnizPartsBleInterface.readFraction(peripheral.adv_data[17]),
+      z:
+        peripheral.adv_data[18] +
+        ObnizPartsBleInterface.readFraction(peripheral.adv_data[19]),
     };
     return data;
   }

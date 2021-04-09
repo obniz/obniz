@@ -27,8 +27,8 @@ class AclStream extends eventemitter3_1.default {
         };
         this.onSmpFailBinded = this.onSmpFail.bind(this);
         this.onSmpEndBinded = this.onSmpEnd.bind(this);
-        this._smp.on("fail", this.onSmpFailBinded);
-        this._smp.on("end", this.onSmpEndBinded);
+        this._smp.on('fail', this.onSmpFailBinded);
+        this._smp.on('end', this.onSmpEndBinded);
     }
     async encryptWait(options) {
         const encrpytResult = await this._smp.pairingWait(options);
@@ -47,33 +47,33 @@ class AclStream extends eventemitter3_1.default {
     }
     push(cid, data) {
         if (data) {
-            this.emit("data", cid, data);
+            this.emit('data', cid, data);
         }
         else {
-            this.emit("end");
+            this.emit('end');
         }
     }
     end() {
-        this.emit("end");
+        this.emit('end');
     }
     async onSmpStkWait(stk) {
-        const random = Buffer.from("0000000000000000", "hex");
-        const diversifier = Buffer.from("0000", "hex");
+        const random = Buffer.from('0000000000000000', 'hex');
+        const diversifier = Buffer.from('0000', 'hex');
         const result = await this._hci.startLeEncryptionWait(this._handle, random, diversifier, stk);
-        this.emit("encrypt", result);
+        this.emit('encrypt', result);
         return result;
     }
     async onSmpLtkWait(ltk, random, diversifier) {
         const result = await this._hci.startLeEncryptionWait(this._handle, random, diversifier, ltk);
-        this.emit("encrypt", result);
+        this.emit('encrypt', result);
         return result;
     }
     onSmpFail() {
-        this.emit("encryptFail");
+        this.emit('encryptFail');
     }
     onSmpEnd() {
-        this._smp.removeListener("fail", this.onSmpFailBinded);
-        this._smp.removeListener("end", this.onSmpEndBinded);
+        this._smp.removeListener('fail', this.onSmpFailBinded);
+        this._smp.removeListener('end', this.onSmpEndBinded);
     }
     startEncrypt(option) { }
     debug(text) {

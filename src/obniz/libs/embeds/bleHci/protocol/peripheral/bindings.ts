@@ -5,19 +5,23 @@
  */
 // var debug = require('debug')('bindings');
 
-import Hci from "../hci";
+import Hci from '../hci';
 
 /**
  * @ignore
  */
 const debug: any = () => {};
-import EventEmitter from "eventemitter3";
-import { Handle } from "../../bleTypes";
-import AclStream from "./acl-stream";
-import Gap from "./gap";
-import Gatt from "./gatt";
+import EventEmitter from 'eventemitter3';
+import { Handle } from '../../bleTypes';
+import AclStream from './acl-stream';
+import Gap from './gap';
+import Gatt from './gatt';
 
-type BlenoBindingsEventType = "stateChange" | "mtuChange" | "accept" | "disconnect";
+type BlenoBindingsEventType =
+  | 'stateChange'
+  | 'mtuChange'
+  | 'accept'
+  | 'disconnect';
 
 /**
  * @ignore
@@ -42,15 +46,18 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
     this._gap = new Gap(this._hci);
     this._gatt = new Gatt();
 
-    this._gatt.on("mtuChange", this.onMtuChange.bind(this));
+    this._gatt.on('mtuChange', this.onMtuChange.bind(this));
 
-    this._hci.on("stateChange", this.onStateChange.bind(this));
-    this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
-    this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
+    this._hci.on('stateChange', this.onStateChange.bind(this));
+    this._hci.on('leConnComplete', this.onLeConnComplete.bind(this));
+    this._hci.on(
+      'leConnUpdateComplete',
+      this.onLeConnUpdateComplete.bind(this)
+    );
 
-    this._hci.on("disconnComplete", this.onDisconnCompleteWait.bind(this));
-    this._hci.on("encryptChange", this.onEncryptChange.bind(this));
-    this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
+    this._hci.on('disconnComplete', this.onDisconnCompleteWait.bind(this));
+    this._hci.on('encryptChange', this.onEncryptChange.bind(this));
+    this._hci.on('aclDataPkt', this.onAclDataPkt.bind(this));
 
     this._address = null;
     this._handle = null;
@@ -86,10 +93,16 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
     await this._gap.startAdvertisingIBeaconWait(data);
   }
 
-  public async startAdvertisingWithEIRDataWait(advertisementData: any, scanData: any) {
+  public async startAdvertisingWithEIRDataWait(
+    advertisementData: any,
+    scanData: any
+  ) {
     this._advertising = true;
 
-    await this._gap.startAdvertisingWithEIRDataWait(advertisementData, scanData);
+    await this._gap.startAdvertisingWithEIRDataWait(
+      advertisementData,
+      scanData
+    );
   }
 
   public async stopAdvertisingWait() {
@@ -104,7 +117,7 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
 
   public disconnect() {
     if (this._handle) {
-      debug("disconnect by server");
+      debug('disconnect by server');
 
       this._hci.disconnect(this._handle);
     }
@@ -124,17 +137,25 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
     }
     this._state = state;
 
-    if (state === "unauthorized") {
-      console.log("bleno warning: adapter state unauthorized, please run as root or with sudo");
-      console.log("               or see README for information on running without root/sudo:");
-      console.log("               https://github.com/sandeepmistry/bleno#running-on-linux");
-    } else if (state === "unsupported") {
-      console.log("bleno warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).");
-      console.log("               Try to run with environment variable:");
-      console.log("               [sudo] BLENO_HCI_DEVICE_ID=x node ...");
+    if (state === 'unauthorized') {
+      console.log(
+        'bleno warning: adapter state unauthorized, please run as root or with sudo'
+      );
+      console.log(
+        '               or see README for information on running without root/sudo:'
+      );
+      console.log(
+        '               https://github.com/sandeepmistry/bleno#running-on-linux'
+      );
+    } else if (state === 'unsupported') {
+      console.log(
+        'bleno warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).'
+      );
+      console.log('               Try to run with environment variable:');
+      console.log('               [sudo] BLENO_HCI_DEVICE_ID=x node ...');
     }
 
-    this.emit("stateChange", state);
+    this.emit('stateChange', state);
   }
 
   public onLeConnComplete(
@@ -146,7 +167,7 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
     interval?: any,
     latency?: any,
     supervisionTimeout?: any,
-    masterClockAccuracy?: any,
+    masterClockAccuracy?: any
   ) {
     if (role !== 1) {
       // not slave, ignore
@@ -155,13 +176,25 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
 
     this._address = address;
     this._handle = handle;
-    this._aclStream = new AclStream(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
+    this._aclStream = new AclStream(
+      this._hci,
+      handle,
+      this._hci.addressType,
+      this._hci.address,
+      addressType,
+      address
+    );
     this._gatt.setAclStream(this._aclStream);
 
-    this.emit("accept", address);
+    this.emit('accept', address);
   }
 
-  public onLeConnUpdateComplete(handle: any, interval?: any, latency?: any, supervisionTimeout?: any) {
+  public onLeConnUpdateComplete(
+    handle: any,
+    interval?: any,
+    latency?: any,
+    supervisionTimeout?: any
+  ) {
     // no-op
   }
 
@@ -180,7 +213,7 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
     this._handle = null;
 
     if (address) {
-      this.emit("disconnect", address, reason); // TODO: use reason
+      this.emit('disconnect', address, reason); // TODO: use reason
     }
 
     if (this._advertising) {
@@ -195,7 +228,7 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
   }
 
   public onMtuChange(mtu: any) {
-    this.emit("mtuChange", mtu);
+    this.emit('mtuChange', mtu);
   }
 
   public onAclDataPkt(handle: Handle, cid?: any, data?: any) {

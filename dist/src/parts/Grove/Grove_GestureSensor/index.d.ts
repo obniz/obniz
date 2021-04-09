@@ -2,11 +2,11 @@
  * @packageDocumentation
  * @module Parts.Grove_GestureSensor
  */
-import Obniz from "../../../obniz";
-import PeripheralGrove from "../../../obniz/libs/io_peripherals/grove";
-import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-import { I2cPartsAbstractOptions } from "../../i2cParts";
+import Obniz from '../../../obniz';
+import PeripheralGrove from '../../../obniz/libs/io_peripherals/grove';
+import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { I2cPartsAbstractOptions } from '../../i2cParts';
 interface GroveInterface {
     grove: PeripheralGrove;
 }
@@ -43,8 +43,9 @@ export default class Grove_GestureSensor implements ObnizPartsInterface {
     private initRegisterArray;
     constructor();
     onchange(value: string): void;
-    wired(obniz: Obniz): Promise<void>;
-    private checkWakeUp;
-    private initRegister;
+    wired(obniz: Obniz): void;
+    initWait(): Promise<void>;
+    private checkWakeUpWait;
+    private initRegisterWait;
 }
 export {};

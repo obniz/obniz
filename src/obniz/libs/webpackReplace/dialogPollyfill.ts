@@ -7,5 +7,5 @@ export default {
   dialogPolyfill: {
     registerDialog: (dialog: any) => {},
   },
-  css: "",
+  css: '',
 };

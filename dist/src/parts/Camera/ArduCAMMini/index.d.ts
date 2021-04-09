@@ -2,11 +2,11 @@
  * @packageDocumentation
  * @module Parts.ArduCAMMini
  */
-import Obniz from "../../../obniz";
-import { DriveType } from "../../../obniz/libs/io_peripherals/common";
-import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import { DriveType } from '../../../obniz/libs/io_peripherals/common';
+import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
+import PeripheralSPI from '../../../obniz/libs/io_peripherals/spi';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface ArduCAMMiniOptions {
     cs: number;
     mosi?: number;
@@ -22,8 +22,8 @@ export interface ArduCAMMiniOptions {
     spi_frequency?: number;
     module_version?: number;
 }
-export declare type ArduCAMMiniMode = "MCU2LCD" | "CAM2LCD" | "LCD2MCU";
-export declare type ArduCAMMiniSize = "160x120" | "176x144" | "320x240" | "352x288" | "640x480" | "800x600" | "1024x768" | "1280x960" | "1600x1200";
+export declare type ArduCAMMiniMode = 'MCU2LCD' | 'CAM2LCD' | 'LCD2MCU';
+export declare type ArduCAMMiniSize = '160x120' | '176x144' | '320x240' | '352x288' | '640x480' | '800x600' | '1024x768' | '1280x960' | '1600x1200';
 export default class ArduCAMMini implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

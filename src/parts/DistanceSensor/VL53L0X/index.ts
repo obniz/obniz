@@ -3,18 +3,20 @@
  * @module Parts.VL53L0X
  */
 
-import Obniz from "../../../obniz";
-import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
+import Obniz from '../../../obniz';
+import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-import { I2cPartsAbstractOptions } from "../../i2cParts";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
+import { I2cPartsAbstractOptions } from '../../i2cParts';
 
 export interface VL53L0XOptions extends I2cPartsAbstractOptions {}
 
 export default class VL53L0X implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "VL53L0X",
+      name: 'VL53L0X',
     };
   }
 
@@ -34,7 +36,7 @@ export default class VL53L0X implements ObnizPartsInterface {
 
   constructor() {
     this.requiredKeys = [];
-    this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
+    this.keys = ['vcc', 'gnd', 'sda', 'scl', 'i2c'];
     this.address = 0x29;
     this.regs = {
       IDENTIFICATION_MODEL_ID: 0xc0,
@@ -52,18 +54,18 @@ export default class VL53L0X implements ObnizPartsInterface {
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '3v');
     this.obniz.wait(100);
     this.params.clock = 100000;
-    this.params.pull = "3v";
-    this.params.mode = "master";
+    this.params.pull = '3v';
+    this.params.mode = 'master';
     this.i2c = obniz.getI2CWithConfig(this.params);
   }
 
   public async getWait() {
     this.i2c.write(this.address, [this.regs.SYSRANGE_START, 0x01]);
     let val = [0];
-    let cnt: number = 0;
+    let cnt = 0;
     while (cnt < 10) {
       await this.obniz.wait(10);
       this.i2c.write(this.address, [this.regs.RESULT_RANGE_STATUS]);

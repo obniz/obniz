@@ -14,7 +14,7 @@ class TM530 {
     }
     static info() {
         return {
-            name: "TM530",
+            name: 'TM530',
         };
     }
     static isDevice(peripheral) {
@@ -38,8 +38,10 @@ class TM530 {
         }
         const data = {
             battery: peripheral.adv_data[13],
-            temperature: peripheral.adv_data[14] + ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[15]),
-            humidity: peripheral.adv_data[16] + ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[17]),
+            temperature: peripheral.adv_data[14] +
+                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[15]),
+            humidity: peripheral.adv_data[16] +
+                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[17]),
         };
         return data;
     }

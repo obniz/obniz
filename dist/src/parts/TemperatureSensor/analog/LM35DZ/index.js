@@ -15,7 +15,7 @@ class LM35DZ extends AnalogTemperatureSensor_1.default {
     }
     static info() {
         return {
-            name: "LM35DZ",
+            name: 'LM35DZ',
         };
     }
     calc(voltage) {

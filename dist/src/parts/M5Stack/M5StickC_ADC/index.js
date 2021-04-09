@@ -6,7 +6,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class M5StickC_ADC {
     constructor() {
-        this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
+        this.keys = ['vcc', 'gnd', 'sda', 'scl', 'i2c'];
         this.requiredKeys = [];
         this.address = 0x48;
         this.conversionDelay = 100;
@@ -39,14 +39,16 @@ class M5StickC_ADC {
     }
     static info() {
         return {
-            name: "M5StickC_ADC",
+            name: 'M5StickC_ADC',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        if (!this.obniz.isValidIO(this.params.sda) && !this.obniz.isValidIO(this.params.scl) && !this.params.i2c) {
-            if (this.obniz.hasExtraInterface("m5stickc_hat")) {
-                const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
+        if (!this.obniz.isValidIO(this.params.sda) &&
+            !this.obniz.isValidIO(this.params.scl) &&
+            !this.params.i2c) {
+            if (this.obniz.hasExtraInterface('m5stickc_hat')) {
+                const hatI2c = this.obniz.getExtraInterface('m5stickc_hat').i2c;
                 this.params.sda = hatI2c.sda;
                 this.params.scl = hatI2c.scl;
             }
@@ -54,10 +56,10 @@ class M5StickC_ADC {
                 throw new Error("Cannot find m5stickc hat interface. Please set param 'sda'/'scl' or 'i2c'");
             }
         }
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.params.mode = "master";
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+        this.params.mode = 'master';
         this.params.clock = 400000;
-        this.params.pull = "5v";
+        this.params.pull = '5v';
         this.i2c = this.obniz.getI2CWithConfig(this.params);
         this.obniz.wait(100);
     }
@@ -108,10 +110,10 @@ class M5StickC_ADC {
     }
     setMode(mode) {
         switch (mode) {
-            case "CONTIN":
+            case 'CONTIN':
                 this.mode = this.config_regs.MODE_CONTIN;
                 break;
-            case "SINGLE":
+            case 'SINGLE':
                 this.mode = this.config_regs.MODE_SINGLE;
                 break;
             default:

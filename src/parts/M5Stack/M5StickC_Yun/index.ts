@@ -3,20 +3,22 @@
  * @module Parts.M5StickC_Yun
  */
 
-import Obniz from "../../../obniz";
-import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import ObnizUtil from "../../../obniz/libs/utils/util";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-import { I2cPartsAbstractOptions } from "../../i2cParts";
-import BMP280 from "../../PressureSensor/BMP280";
-import SHT20 from "../../TemperatureSensor/i2c/SHT20";
+import Obniz from '../../../obniz';
+import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
+import ObnizUtil from '../../../obniz/libs/utils/util';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
+import { I2cPartsAbstractOptions } from '../../i2cParts';
+import BMP280 from '../../PressureSensor/BMP280';
+import SHT20 from '../../TemperatureSensor/i2c/SHT20';
 
 export interface M5StickC_YunOptions extends I2cPartsAbstractOptions {}
 
 export default class M5StickC_Yun implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "M5StickC_Yun",
+      name: 'M5StickC_Yun',
     };
   }
 
@@ -25,9 +27,9 @@ export default class M5StickC_Yun implements ObnizPartsInterface {
     const Hp: number = h / 60;
     const X: number = C * (1 - Math.abs((Hp % 2) - 1));
 
-    let R: number = 0;
-    let G: number = 0;
-    let B: number = 0;
+    let R = 0;
+    let G = 0;
+    let B = 0;
     if (0 <= Hp && Hp < 1) {
       [R, G, B] = [C, X, 0];
     }
@@ -72,30 +74,36 @@ export default class M5StickC_Yun implements ObnizPartsInterface {
 
   constructor() {
     this.requiredKeys = [];
-    this.keys = ["sda", "scl", "i2c"];
+    this.keys = ['sda', 'scl', 'i2c'];
 
-    this.ioKeys = ["sda", "scl"];
+    this.ioKeys = ['sda', 'scl'];
   }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
 
-    if (!this.obniz.isValidIO(this.params.sda) && !this.obniz.isValidIO(this.params.scl) && !this.params.i2c) {
-      if (this.obniz.hasExtraInterface("m5stickc_hat")) {
-        const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
+    if (
+      !this.obniz.isValidIO(this.params.sda) &&
+      !this.obniz.isValidIO(this.params.scl) &&
+      !this.params.i2c
+    ) {
+      if (this.obniz.hasExtraInterface('m5stickc_hat')) {
+        const hatI2c = this.obniz.getExtraInterface('m5stickc_hat').i2c;
         this.params.sda = hatI2c.sda;
         this.params.scl = hatI2c.scl;
       } else {
-        throw new Error("Cannot find m5stickc hat interface. Please set param 'sda'/'scl' or 'i2c'");
+        throw new Error(
+          "Cannot find m5stickc hat interface. Please set param 'sda'/'scl' or 'i2c'"
+        );
       }
     }
 
     this.params.clock = 100 * 1000; // for i2c
-    this.params.mode = "master"; // for i2c
-    this.params.pull = "3v"; // for i2c
+    this.params.mode = 'master'; // for i2c
+    this.params.pull = '3v'; // for i2c
     this.i2c = obniz.getI2CWithConfig(this.params);
-    this.sht20 = obniz.wired("SHT20", { i2c: this.i2c });
-    this.bmp280 = obniz.wired("BMP280", { i2c: this.i2c });
+    this.sht20 = obniz.wired('SHT20', { i2c: this.i2c });
+    this.bmp280 = obniz.wired('BMP280', { i2c: this.i2c });
     this.bmp280.applyCalibration();
   }
 
@@ -117,10 +125,10 @@ export default class M5StickC_Yun implements ObnizPartsInterface {
   // }
 
   public rgb(red: number, green: number, blue: number): void {
-    ObnizUtil.assertNumber(0, 255, "red", red);
-    ObnizUtil.assertNumber(0, 255, "green", green);
-    ObnizUtil.assertNumber(0, 255, "blue", blue);
-    const leds: Array<[number, number, number]> = [];
+    ObnizUtil.assertNumber(0, 255, 'red', red);
+    ObnizUtil.assertNumber(0, 255, 'green', green);
+    ObnizUtil.assertNumber(0, 255, 'blue', blue);
+    const leds: [number, number, number][] = [];
     for (let i = 0; i < this.LED_LEN; i++) {
       leds.push([red, green, blue]);
     }
@@ -128,24 +136,34 @@ export default class M5StickC_Yun implements ObnizPartsInterface {
   }
 
   public hsv(hue: number, saturation: number, value: number) {
-    ObnizUtil.assertNumber(0, 300, "hue", hue);
-    ObnizUtil.assertNumber(0, 1, "saturation", saturation);
-    ObnizUtil.assertNumber(0, 1, "value", value);
+    ObnizUtil.assertNumber(0, 300, 'hue', hue);
+    ObnizUtil.assertNumber(0, 1, 'saturation', saturation);
+    ObnizUtil.assertNumber(0, 1, 'value', value);
     const color = M5StickC_Yun._generateHsvColor(hue, saturation, value);
     this.rgb(color.red, color.green, color.blue);
   }
 
-  public rgbs(array: Array<[number, number, number]>) {
+  public rgbs(array: [number, number, number][]) {
     if (array.length <= this.LED_LEN) {
       array.forEach((value, index) => {
-        this.i2c.write(0x38, [0x01, index, Math.floor(value[0]), Math.floor(value[1]), Math.floor(value[2])]);
+        this.i2c.write(0x38, [
+          0x01,
+          index,
+          Math.floor(value[0]),
+          Math.floor(value[1]),
+          Math.floor(value[2]),
+        ]);
       });
     }
   }
 
-  public hsvs(array: Array<[number, number, number]>) {
-    const leds: Array<[number, number, number]> = array.map((value, index) => {
-      const color = M5StickC_Yun._generateHsvColor(value[0], value[1], value[2]);
+  public hsvs(array: [number, number, number][]) {
+    const leds: [number, number, number][] = array.map((value, index) => {
+      const color = M5StickC_Yun._generateHsvColor(
+        value[0],
+        value[1],
+        value[2]
+      );
       return [color.red, color.green, color.blue];
     });
     this.rgbs(leds);

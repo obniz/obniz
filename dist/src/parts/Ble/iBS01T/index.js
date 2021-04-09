@@ -14,7 +14,7 @@ class IBS01T {
     }
     static info() {
         return {
-            name: "iBS01T",
+            name: 'iBS01T',
         };
     }
     static isDevice(peripheral) {
@@ -47,13 +47,13 @@ class IBS01T {
             temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
             humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[15], peripheral.adv_data[14]),
         };
-        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+        if (peripheral.adv_data[11] & 0b0001) {
             d.button = true;
         }
-        if (Boolean(peripheral.adv_data[11] & 0b0010)) {
+        if (peripheral.adv_data[11] & 0b0010) {
             d.moving = true;
         }
-        if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+        if (peripheral.adv_data[11] & 0b0100) {
             d.reed = true;
         }
         return d;

@@ -9,7 +9,7 @@ class BleBatteryService {
         this._service = service;
     }
     async getBatteryLevelWait() {
-        const char = this._service.getCharacteristic("2A19");
+        const char = this._service.getCharacteristic('2A19');
         if (!char) {
             return null;
         }

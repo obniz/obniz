@@ -6,24 +6,24 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_MP3 {
     constructor() {
-        this.keys = ["vcc", "gnd", "mp3_rx", "mp3_tx", "grove"];
+        this.keys = ['vcc', 'gnd', 'mp3_rx', 'mp3_tx', 'grove'];
         this.requiredKeys = [];
         this.ioKeys = this.keys;
-        this.displayName = "MP3";
-        this.displayIoNames = { mp3_rx: "MP3Rx", mp3_tx: "MP3Tx" };
+        this.displayName = 'MP3';
+        this.displayIoNames = { mp3_rx: 'MP3Rx', mp3_tx: 'MP3Tx' };
     }
     static info() {
         return {
-            name: "Grove_MP3",
+            name: 'Grove_MP3',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
         if (this.params.grove) {
-            this.uart = this.params.grove.getUart(9600, "5v");
+            this.uart = this.params.grove.getUart(9600, '5v');
         }
         else {
-            obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
             this.my_tx = this.params.mp3_rx;
             this.my_rx = this.params.mp3_tx;
             this.uart = this.obniz.getFreeUart();
@@ -41,10 +41,10 @@ class Grove_MP3 {
         this.uartSend(0x0b, 0);
         await this.obniz.wait(100);
         if (strage) {
-            if (strage === "usb") {
+            if (strage === 'usb') {
                 this.uartSend(0x09, 1);
             }
-            else if (strage === "sd") {
+            else if (strage === 'sd') {
                 this.uartSend(0x09, 2);
             }
         }
