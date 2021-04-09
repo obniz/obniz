@@ -1,0 +1,33 @@
+## YAML Template.
+---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request"
+type: array
+minItems: 1
+items:
+  type: object
+  additionalProperties: false
+  patternProperties:
+    "^io[0-9]$": {$ref: "/request/io" }
+    "^io1[0-1]$": {$ref: "/request/io" }
+    "^ad[0-9]$": {$ref: "/request/ad" }
+    "^ad1[0-1]$": {$ref: "/request/ad" }
+    "^pwm[0-5]$": {$ref: "/request/pwm" }
+    "^uart[0-1]$": {$ref: "/request/uart" }
+    "^spi[0-1]$": {$ref: "/request/spi" }
+    "^i2c[0-1]$": {$ref: "/request/i2c" }
+    "^tcp[0-7]$": {$ref: "/request/tcp" }
+
+  properties:
+    io: {$ref: "/request/ioAnimation" }
+    ble: {$ref: "/request/ble" }
+    switch: {$ref: "/request/switch" }
+    display: {$ref: "/request/display" }
+    measure:  {$ref: "/request/measure" }
+    message:  {$ref: "/request/message" }
+    logic_analyzer:  {$ref: "/request/logicAnalyzer" }
+    system:  {$ref: "/request/system" }
+    ws:  {$ref: "/request/ws" }
+    wifi:  {$ref: "/request/wifi" }
+    plugin:  {$ref: "/request/plugin" }
+

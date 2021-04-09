@@ -1,0 +1,7 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/io/output"
+
+type: boolean
+

@@ -96,7 +96,13 @@ export default class SHT31 implements ObnizPartsInterface {
     this.i2c.write(this.address, this.commands.softReset);
   }
 
-  public async getData() {
+  /**
+   * @deprecated
+   */
+  public getData() {
+    return this.getDataWait();
+  }
+  public async getDataWait() {
     this.i2c.write(this.address, this.commands.highRepeat);
     await this.obniz.wait(this.waitTime.highRepeat);
     return await this.i2c.readWait(this.address, 6);
@@ -118,7 +124,7 @@ export default class SHT31 implements ObnizPartsInterface {
     temperature: number;
     humidity: number;
   }> {
-    const ret = await this.getData();
+    const ret = await this.getDataWait();
 
     const tempBin = ret[0] * 256 + ret[1];
     const temperature = -45 + 175 * (tempBin / (65536 - 1));

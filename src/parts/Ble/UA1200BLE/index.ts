@@ -45,6 +45,42 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
     );
   }
 
+  public static isCooperationMode(peripheral: BleRemotePeripheral) {
+    const peripheralHex = peripheral.adv_data
+      .map((e) => e.toString(16))
+      .join('');
+    const peripheralArray: string = [
+      // "2",
+      // "1",
+      // "6",
+      // "11",
+      // "7",
+      'e4',
+      'ab',
+      '90',
+      '56',
+      'd',
+      '0',
+      '5c',
+      '97',
+      '6d',
+      '1b',
+      '34',
+      '5a',
+      '0',
+      'f0',
+      '3b',
+      '23',
+      // "5",
+      // "ff",
+      // "69",
+      // "0",
+      // "0",
+      // "ff",
+    ].join('');
+    return peripheralHex.indexOf(peripheralArray) > -1;
+  }
+
   public onNotify?: (co2: number) => void;
   public _peripheral: BleRemotePeripheral | null;
   public ondisconnect?: (reason: any) => void;
@@ -88,56 +124,17 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
     return key;
   }
 
-  public async getDataWait(pairingKeys?: string): Promise<UA1200BLEResult[]> {
+  public async getDataWait(): Promise<UA1200BLEResult[]> {
     if (!this._peripheral) {
       throw new Error('UA1200BLE not found');
     }
 
-    await this._peripheral.connectWait({
-      pairingOption: {
-        keys: pairingKeys,
-      },
-    });
-
-    const peripheralHex = this._peripheral.adv_data
-      .map((e) => e.toString(16))
-      .join('');
-    const peripheralArray: string = [
-      // "2",
-      // "1",
-      // "6",
-      // "11",
-      // "7",
-      'e4',
-      'ab',
-      '90',
-      '56',
-      'd',
-      '0',
-      '5c',
-      '97',
-      '6d',
-      '1b',
-      '34',
-      '5a',
-      '0',
-      'f0',
-      '3b',
-      '23',
-      // "5",
-      // "ff",
-      // "69",
-      // "0",
-      // "0",
-      // "ff",
-    ].join('');
-    if (peripheralHex.indexOf(peripheralArray) > -1) {
-      throw new Error(
-        'Cooperation mode(BP-01) is not supportted in this liberary at present. Please activate obniz after measurement.'
-      );
-    }
-
-    // console.log(this._peripheral.services);
+    this._peripheral.ondisconnect = (reason) => {
+      if (this.ondisconnect) {
+        this.ondisconnect(reason);
+      }
+    };
+    await this._peripheral.connectWait();
 
     return await new Promise(async (resolve, reject) => {
       if (!this._peripheral) {
@@ -151,19 +148,24 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
       // bloodPressureMeasurementChar.registerNotifyWait((data: number[]) => {
       //   results.push(this._analyzeData(data));
       // });
-      await this._writeTimeCharWait(this._timezoneOffsetMinute);
+      // await this._writeTimeCharWait(this._timezoneOffsetMinute);
       // await this._writeCCCDChar();
+
       const {
         bloodPressureMeasurementChar,
         timeChar,
       } = this._getCharsSingleMode();
       await this._writeTimeCharWait(this._timezoneOffsetMinute);
-      bloodPressureMeasurementChar.registerNotifyWait((data: number[]) => {
-        results.push(this._analyzeData(data));
-      });
-
-      this._peripheral.ondisconnect = (reason: any) => {
+      await bloodPressureMeasurementChar.registerNotifyWait(
+        (data: number[]) => {
+          results.push(this._analyzeData(data));
+        }
+      );
+      this._peripheral.ondisconnect = (reason) => {
         resolve(results);
+        if (this.ondisconnect) {
+          this.ondisconnect(reason);
+        }
       };
     });
   }

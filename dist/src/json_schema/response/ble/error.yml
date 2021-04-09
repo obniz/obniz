@@ -1,0 +1,30 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ble/error"
+deprecated: 3.0.0
+
+type: object
+required: [error]
+properties:
+  error:
+    type: object
+    required: [error_code, message]
+    additionalProperties: false
+    properties:
+      error_code:
+        type: integer
+        example: 0
+      module_error_code:
+        type: integer
+        example: 0
+      function_code:
+        type: integer
+        example: 0
+      message:
+        type: string
+        example: "ERROR MESSAGE"
+      address: {$ref: "/deviceAddressOrEmpty"}
+      service_uuid: {$ref: "/uuidOrNullOrEmpty"}
+      characteristic_uuid: {$ref: "/uuidOrNullOrEmpty"}
+      descriptor_uuid: {$ref: "/uuidOrNullOrEmpty"}

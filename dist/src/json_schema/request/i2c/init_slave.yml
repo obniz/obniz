@@ -1,0 +1,42 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/i2c/init_slave"
+related: "/response/i2c/slave"
+
+type: object
+required: [mode, sda, scl, slave_address]
+uniqueKeys: [sda,scl]
+properties:
+  mode:
+    type: string
+    enum: [master, slave]
+  sda:  {$ref: "/pinSetting"}
+  scl:  {$ref: "/pinSetting"}
+
+  slave_address:
+    type: integer
+    minimum: 0
+    maximum: 1023
+
+  slave_address_length:
+    type: integer
+    enum: [7]
+    default: 7
+
+
+
+  address:
+    type: integer
+    minimum: 0
+    maximum: 1023
+
+  address_bits:
+    type: integer
+    enum: [7]
+    default: 7
+
+  data: {$ref: "/dataArray"}
+  read:
+    type: integer
+    minimum: 0

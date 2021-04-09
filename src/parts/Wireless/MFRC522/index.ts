@@ -289,7 +289,14 @@ export default class MFRC522 implements ObnizPartsInterface {
     this.spi = this.obniz.getSpiWithConfig(this.params);
   }
 
-  public async init() {
+  /**
+   * @deprecated
+   */
+  public init() {
+    return this.initWait();
+  }
+
+  public async initWait() {
     // Initializes the MFRC522 chip
     // Hardware and Software reset
     this.rst.output(false);
@@ -305,7 +312,7 @@ export default class MFRC522 implements ObnizPartsInterface {
     this.writeRegister(this.TReloadRegLo, 0xe8); // Reload timer with 0x3E8 = 1000, ie. 25ms before timeout
     this.writeRegister(this.TxASKReg, 0x40); // Default 0x00. Force a 100 % ASK modulation independent of the ModGsPReg register setting
     this.writeRegister(this.ModeReg, 0x3d); // Default 0x3F. Set the preset value for the CRC coprocessor for the CalcCRC command to 0x6363 (6.2.4)
-    await this.antennaOn(); // Enable the antenna driver pins TX1 and TX2 (they were disabled by the reset)
+    await this.antennaOnWait(); // Enable the antenna driver pins TX1 and TX2 (they were disabled by the reset)
   }
 
   public writeRegister(addr: number, val: any) {
@@ -321,7 +328,15 @@ export default class MFRC522 implements ObnizPartsInterface {
     this.cs.output(true);
   }
 
-  public async readRegister(addr: number) {
+  /**
+   * @deprecated
+   * @param addr
+   */
+  public readRegister(addr: number) {
+    return this.readRegisterWait(addr);
+  }
+
+  public async readRegisterWait(addr: number) {
     const data = [((addr << 1) & 0x7e) | 0x80, 0];
     this.cs.output(false);
     const response = await this.spi.writeWait(data);
@@ -329,7 +344,16 @@ export default class MFRC522 implements ObnizPartsInterface {
     return response[1];
   }
 
-  public async readRegister_nByte(addr: any, n?: any): Promise<number[]> {
+  /**
+   * @deprecated
+   * @param addr
+   * @param n
+   */
+  public readRegister_nByte(addr: any, n?: any): Promise<number[]> {
+    return this.readRegister_nByteWait(addr, n);
+  }
+
+  public async readRegister_nByteWait(addr: any, n?: any): Promise<number[]> {
     const dataArray: any = [];
     if (addr instanceof Array) {
       // Multiple addresses(If addr is Array)
@@ -350,32 +374,81 @@ export default class MFRC522 implements ObnizPartsInterface {
     return values;
   }
 
-  public async setRegisterBitMask(reg: any, mask: any) {
-    const response: any = await this.readRegister(reg);
+  /**
+   * @deprecated
+   * @param reg
+   * @param mask
+   */
+  public setRegisterBitMask(reg: any, mask: any) {
+    return this.setRegisterBitMaskWait(reg, mask);
+  }
+
+  public async setRegisterBitMaskWait(reg: any, mask: any) {
+    const response: any = await this.readRegisterWait(reg);
     this.writeRegister(reg, response | mask);
   }
 
-  public async clearRegisterBitMask(reg: any, mask: any) {
-    const response: any = await this.readRegister(reg);
+  /**
+   * @deprecated
+   *
+   * @param reg
+   * @param mask
+   */
+  public clearRegisterBitMask(reg: any, mask: any) {
+    return this.clearRegisterBitMaskWait(reg, mask);
+  }
+
+  public async clearRegisterBitMaskWait(reg: any, mask: any) {
+    const response: any = await this.readRegisterWait(reg);
     this.writeRegister(reg, response & ~mask);
   }
 
-  public async antennaOn() {
+  /**
+   * @deprecated
+   */
+  public antennaOn() {
+    return this.antennaOnWait();
+  }
+
+  public async antennaOnWait() {
     // Turns the antenna on by enabling pins TX1 and TX2
-    const response: any = await this.readRegister(this.TxControlReg);
+    const response: any = await this.readRegisterWait(this.TxControlReg);
     if ((response & 0x03) !== 0x03) {
       // If TX1 and TX2 down
-      await this.setRegisterBitMask(this.TxControlReg, response | 0x03);
+      await this.setRegisterBitMaskWait(this.TxControlReg, response | 0x03);
     }
   }
 
-  public async antennaOff() {
+  /**
+   * @deprecated
+   */
+  public antennaOff() {
+    return this.antennaOffWait();
+  }
+
+  public async antennaOffWait() {
     // Turns the antenna off by disabling pins TX1 and TX2
-    await this.clearRegisterBitMask(this.TxControlReg, 0x03);
+    await this.clearRegisterBitMaskWait(this.TxControlReg, 0x03);
+  }
+
+  /**
+   * @deprecated
+   * @param command
+   * @param bitsToSend
+   */
+  public toCard(
+    command: any,
+    bitsToSend: any
+  ): Promise<{
+    status: boolean;
+    data: any;
+    bitSize: number;
+  }> {
+    return this.toCardWait(command, bitsToSend);
   }
 
   // RC522 and ISO14443 card communication
-  public async toCard(
+  public async toCardWait(
     command: any,
     bitsToSend: any
   ): Promise<{
@@ -406,20 +479,20 @@ export default class MFRC522 implements ObnizPartsInterface {
     this.writeRegister(this.CommandReg, command); // Execute the command
 
     if (command === this.PCD_Transceive) {
-      await this.setRegisterBitMask(this.BitFramingReg, 0x80); // StartSend=1, transmission of data starts
+      await this.setRegisterBitMaskWait(this.BitFramingReg, 0x80); // StartSend=1, transmission of data starts
     }
 
     let TryingTimes: any = 10;
     let n: any = 0;
     do {
       // Wait for the received data complete
-      n = await this.readRegister(this.ComIrqReg);
+      n = await this.readRegisterWait(this.ComIrqReg);
       TryingTimes--;
     } while (TryingTimes !== 0 && !(n & 0x01) && !(n & waitIRq)); // !(Timer interrupt - nothing received before timeout) & !(One of the interrupts that signal success has been set)
 
-    // await this.clearRegisterBitMask(this.BitFramingReg, 0x80);	//Reset with resetAndInit()
+    // await this.clearRegisterBitMaskWait(this.BitFramingReg, 0x80);	//Reset with resetAndInit()
 
-    const response: any = await this.readRegister_nByte([
+    const response: any = await this.readRegister_nByteWait([
       this.ErrorReg,
       this.FIFOLevelReg,
       this.ControlReg,
@@ -444,7 +517,7 @@ export default class MFRC522 implements ObnizPartsInterface {
           if (n > 16) {
             n = 16;
           } // Restrict until 16bytes
-          data = await this.readRegister_nByte(this.FIFODataReg, n); // Get received data from FIFO buffer
+          data = await this.readRegister_nByteWait(this.FIFODataReg, n); // Get received data from FIFO buffer
         }
       } else {
         status = ERROR;
@@ -457,7 +530,7 @@ export default class MFRC522 implements ObnizPartsInterface {
     uid: any;
     PICC_Type: string;
   }> {
-    await this.init();
+    await this.initWait();
     await this.searchTagWait();
     const uid: any = await this.getUidWait();
     const PICC_Type: any = await this.identifyCardTypeWait(uid);
@@ -468,7 +541,7 @@ export default class MFRC522 implements ObnizPartsInterface {
     this.writeRegister(this.BitFramingReg, 0x07);
     const tagType: any = [this.PICC_REQA];
 
-    const response: any = await this.toCard(this.PCD_Transceive, tagType);
+    const response: any = await this.toCardWait(this.PCD_Transceive, tagType);
     if (response.bitSize !== 0x10) {
       throw new Error('card_search_ERROR');
     }
@@ -478,7 +551,7 @@ export default class MFRC522 implements ObnizPartsInterface {
     this.writeRegister(this.BitFramingReg, 0x00);
     let uid: any = [this.PICC_SEL_CL1, 0x20];
 
-    const response: any = await this.toCard(this.PCD_Transceive, uid);
+    const response: any = await this.toCardWait(this.PCD_Transceive, uid);
     if (!response.status) {
       throw new Error('uid_scan_ERROR');
     }
@@ -503,18 +576,18 @@ export default class MFRC522 implements ObnizPartsInterface {
     let n: any;
     // Wait for the CRC calculation to complete
     do {
-      n = await this.readRegister(this.DivIrqReg);
+      n = await this.readRegisterWait(this.DivIrqReg);
       i--;
     } while (i !== 0 && !(n & 0x04)); // CRCIrq = 1 (Calculation done)
     // CRC calculation result
-    return await this.readRegister_nByte([
+    return await this.readRegister_nByteWait([
       this.CRCResultRegLSB,
       this.CRCResultRegMSB,
     ]);
   }
 
   public async identifySoftwareWait() {
-    let version: any = await this.readRegister(this.VersionReg);
+    let version: any = await this.readRegisterWait(this.VersionReg);
     switch (version) {
       case 0x88:
         version = '(clone)';
@@ -545,7 +618,7 @@ export default class MFRC522 implements ObnizPartsInterface {
     // Identify type of the scanned card
     let buffer: any = [this.PICC_SElECTTAG, 0x70].concat(uid);
     buffer = buffer.concat(await this.calculateCRCWait(buffer));
-    const response: any = await this.toCard(this.PCD_Transceive, buffer);
+    const response: any = await this.toCardWait(this.PCD_Transceive, buffer);
     let PICC_Type: any;
     if (response.status && response.bitSize === 0x18) {
       PICC_Type = response.data[0];
@@ -606,8 +679,8 @@ export default class MFRC522 implements ObnizPartsInterface {
     uid = uid.slice(0, 4); // Append the first 4 bit of the UID
     buffer = buffer.concat(uid); // 12byte
     // Start authentication itself
-    await this.toCard(this.PCD_MFAuthent, buffer);
-    if (!((await this.readRegister(this.Status2Reg)) & 0x08)) {
+    await this.toCardWait(this.PCD_MFAuthent, buffer);
+    if (!((await this.readRegisterWait(this.Status2Reg)) & 0x08)) {
       throw new Error('password_authentication_ERROR');
     }
   }
@@ -624,15 +697,15 @@ export default class MFRC522 implements ObnizPartsInterface {
     buffer = buffer.concat(uid); // 12byte
 
     // Start authentication itself
-    await this.toCard(this.PCD_MFAuthent, buffer);
-    if (!((await this.readRegister(this.Status2Reg)) & 0x08)) {
+    await this.toCardWait(this.PCD_MFAuthent, buffer);
+    if (!((await this.readRegisterWait(this.Status2Reg)) & 0x08)) {
       throw new Error('password_authentication_ERROR');
     }
   }
 
   public async readAgainWait() {
-    // If you finish reading and want to read again, this can use instead of init()
-    await this.clearRegisterBitMask(this.Status2Reg, 0x08);
+    // If you finish reading and want to read again, this can use instead of initWait()
+    await this.clearRegisterBitMaskWait(this.Status2Reg, 0x08);
   }
 
   public async getSectorDataWait(address: any) {
@@ -641,7 +714,7 @@ export default class MFRC522 implements ObnizPartsInterface {
     for (let i = 0; i < 4; i++) {
       let request: any = [this.PICC_READ, address * 4 + i];
       request = request.concat(await this.calculateCRCWait(request));
-      response[i] = await this.toCard(this.PCD_Transceive, request);
+      response[i] = await this.toCardWait(this.PCD_Transceive, request);
       if (!response[i].status) {
         throw new Error('data_read_ERROR');
       }
@@ -659,7 +732,7 @@ export default class MFRC522 implements ObnizPartsInterface {
   }> {
     let request: any = [this.PICC_READ, address];
     request = request.concat(await this.calculateCRCWait(request));
-    const response: any = await this.toCard(this.PCD_Transceive, request);
+    const response: any = await this.toCardWait(this.PCD_Transceive, request);
     if (!response.status) {
       throw new Error('data_read_ERROR');
     }
@@ -674,7 +747,7 @@ export default class MFRC522 implements ObnizPartsInterface {
     bitSize: number;
   }> {
     buffer = buffer.concat(await this.calculateCRCWait(buffer));
-    const response: any = await this.toCard(this.PCD_Transceive, buffer);
+    const response: any = await this.toCardWait(this.PCD_Transceive, buffer);
     if (
       !response.status ||
       response.bitSize !== 4 ||

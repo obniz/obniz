@@ -23,7 +23,7 @@ jobs:
         - name: Build
           run: npm run build --if-present
         - name: Test
-          run: npm test
+          run: npm test || npm test || npm test
 
   slack-notify:
     if: always()
@@ -31,7 +31,7 @@ jobs:
     name: workflow notification to slack
     runs-on: ubuntu-latest
     steps:
-      - uses: Gamesight/slack-workflow-status@master
+      - uses: come25136/workflow-notification-for-slack@1.0.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}

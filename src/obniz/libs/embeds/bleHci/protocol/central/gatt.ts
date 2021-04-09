@@ -17,8 +17,10 @@ import {
   ObnizBleUnknownCharacteristicError,
   ObnizBleUnknownDescriptorError,
   ObnizBleUnknownServiceError,
+  ObnizTimeoutError,
 } from '../../../../../ObnizError';
 import BleHelper from '../../bleHelper';
+import BleRemoteService from '../../bleRemoteService';
 import { BleDeviceAddress, UUID } from '../../bleTypes';
 
 interface GattService {
@@ -217,7 +219,17 @@ class Gatt extends EventEmitter<GattEventTypes> {
   public async exchangeMtuWait(mtu: any) {
     this._aclStream
       .readWait(ATT.CID, ATT.OP_MTU_REQ)
+      .catch((e) => {
+        if (e instanceof ObnizTimeoutError) {
+          return null;
+        }
+        throw e;
+      })
       .then((mtuRequestData) => {
+        if (!mtuRequestData) {
+          // throw timeout error and catched above
+          return;
+        }
         const requestMtu = mtuRequestData.readUInt16LE(1);
         debug(this._address + ': receive OP_MTU_REQ. new MTU is ' + requestMtu);
         this._mtu = requestMtu;

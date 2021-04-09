@@ -80,7 +80,9 @@ export default class XBee implements ObnizPartsInterface {
     if (this.isAtMode === false) {
       this.uart.send(data);
     } else {
-      this.obniz.error('XBee is AT Command mode now. Wait for finish config.');
+      this.obniz.error(
+        new Error('XBee is AT Command mode now. Wait for finish config.')
+      );
     }
   }
 
@@ -106,7 +108,7 @@ export default class XBee implements ObnizPartsInterface {
       }
       next();
     } else if (text === 'ERROR\r') {
-      this.obniz.error('XBee config error : ' + this.currentCommand);
+      this.obniz.error(new Error('XBee config error : ' + this.currentCommand));
     } else {
       // response of at command.
       console.log('XBEE : no catch message', data);

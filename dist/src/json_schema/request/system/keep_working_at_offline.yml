@@ -1,0 +1,11 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/system/keepWorkingAtOffline"
+description: "reset obniz Board when obniz Board gone to offline."
+
+type: object
+required: [keep_working_at_offline]
+properties:
+  keep_working_at_offline:
+    type: boolean

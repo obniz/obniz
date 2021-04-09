@@ -1,0 +1,24 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/tcp/connect"
+
+
+type: object
+required: [connect]
+properties:
+  connect:
+    type: object
+    required: [port,domain]
+    additionalProperties: false
+    properties:
+      port:
+        type: integer
+        minimum: 0
+        maximum: 65535
+        description: "TCP port"
+      domain:
+        type: string
+        default: "obniz.io"
+        maxLength: 30
+        description: "Server Domain"

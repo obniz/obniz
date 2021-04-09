@@ -2,18 +2,21 @@
   "env": {
     "mocha": true
   },
-  "parserOptions": {
-    "ecmaVersion": 2017,
-    "project": "../../tsconfig.eslint.json",
-    "sourceType": "module"
-  },
-  "parser": "@typescript-eslint/parser",
   "rules": {
-    "@typescript-eslint/require-await": "warn",
     "async-function-name": "off",
     "non-ascii": "off",
     "prefer-arrow/prefer-arrow-functions": "warn",
     "max-classes-per-file": "off",
     "no-unused-vars": "warn"
-  }
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/*.ts"
+      ],
+      "rules": {
+        "@typescript-eslint/require-await": "warn"
+      }
+    }
+  ]
 }

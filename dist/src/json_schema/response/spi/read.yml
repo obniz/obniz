@@ -1,0 +1,10 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/spi/read"
+
+
+type: object
+required: [data]
+properties:
+  data: {$ref: "/dataArray"}

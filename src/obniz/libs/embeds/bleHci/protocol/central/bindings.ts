@@ -91,7 +91,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     this._signalings = {};
     this._gap._reset();
 
-    // TODO: It muset be canceled.
+    // TODO: It must be canceled.
     this._connectPromises = [];
   }
 
@@ -123,6 +123,9 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   public async connectWait(peripheralUuid: any, onConnectCallback?: any) {
     const address = this._addresses[peripheralUuid];
     const addressType: any = this._addresseTypes[peripheralUuid];
+    if (!address) {
+      throw new ObnizBleUnknownPeripheralError(peripheralUuid);
+    }
 
     // Block parall connection ongoing for ESP32 bug.
     const doPromise = Promise.all(this._connectPromises)

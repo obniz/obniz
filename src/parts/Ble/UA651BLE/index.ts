@@ -56,49 +56,25 @@ export default class UA651BLE implements ObnizPartsBleInterface {
     peripheral: BleRemotePeripheral | null,
     timezoneOffsetMinute: number
   ) {
-    if (!peripheral || !UA651BLE.isDevice(peripheral)) {
-      throw new Error('peripheral is not UA651BLE');
+    if (!peripheral) {
+      throw new Error('no peripheral');
     }
     this._peripheral = peripheral;
     this._timezoneOffsetMinute = timezoneOffsetMinute;
   }
 
-  public async pairingWait(): Promise<string | null> {
+  public async getDataWait(): Promise<UA651BLEResult[]> {
     if (!this._peripheral) {
       throw new Error('UA651BLE not found');
     }
-    this._peripheral.ondisconnect = (reason: any) => {
-      if (typeof this.ondisconnect === 'function') {
-        this.ondisconnect(reason);
-      }
-    };
-    let key: string | null = null;
-    await this._peripheral.connectWait({
-      pairingOption: {
-        onPairedCallback: (pairingKey) => {
-          key = pairingKey;
-        },
-      },
-    });
-
-    const { timeChar, customServiceChar } = this._getChars();
-
-    await this._writeTimeCharWait(this._timezoneOffsetMinute);
-
-    await customServiceChar.writeWait([2, 1, 3]); // disconnect req
-    return key;
-  }
-
-  public async getDataWait(pairingKeys?: string): Promise<UA651BLEResult[]> {
-    if (!this._peripheral) {
-      throw new Error('UA651BLE not found');
+    if (!this._peripheral.connected) {
+      this._peripheral.ondisconnect = (reason) => {
+        if (this.ondisconnect) {
+          this.ondisconnect(reason);
+        }
+      };
+      await this._peripheral.connectWait();
     }
-
-    await this._peripheral.connectWait({
-      pairingOption: {
-        keys: pairingKeys,
-      },
-    });
 
     return await new Promise(async (resolve, reject) => {
       if (!this._peripheral) {
@@ -112,15 +88,18 @@ export default class UA651BLE implements ObnizPartsBleInterface {
       } = this._getChars();
 
       await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
-
       await this._writeTimeCharWait(this._timezoneOffsetMinute);
 
-      bloodPressureMeasurementChar.registerNotifyWait((data: number[]) => {
-        results.push(this._analyzeData(data));
-      });
-
-      this._peripheral.ondisconnect = (reason: any) => {
+      await bloodPressureMeasurementChar.registerNotifyWait(
+        (data: number[]) => {
+          results.push(this._analyzeData(data));
+        }
+      );
+      this._peripheral.ondisconnect = (reason) => {
         resolve(results);
+        if (this.ondisconnect) {
+          this.ondisconnect(reason);
+        }
       };
     });
   }

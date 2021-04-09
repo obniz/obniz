@@ -66,7 +66,9 @@ export default class FullColorLED implements ObnizPartsInterface {
       this.commontype = this.COMMON_TYPE_CATHODE;
     } else {
       this.obniz.error(
-        'FullColorLED param need common type [  anode_common or cathode_common ] '
+        new Error(
+          'FullColorLED param need common type [  anode_common or cathode_common ] '
+        )
       );
     }
 

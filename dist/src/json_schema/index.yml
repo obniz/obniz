@@ -1,0 +1,162 @@
+## YAML Template.
+---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/"
+definitions:
+  pinSetting:
+    id: "pinSetting"
+    type: integer
+    minimum: 0
+    maximum: 40
+    default: null
+    example: [0,1,2,3,4,5,6]
+
+  bleAdvertiseData:
+    id: "bleAdvertiseData"
+    type: array
+    default: null
+    maxItems: 31
+    example:
+      - [0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]
+      - [0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]
+    items:
+      type: integer
+      minimum: 0
+      maximum: 255
+
+  dataArray32:
+    id: "dataArray32"
+    type: array
+    default: null
+    maxItems: 32
+    example:
+      - [100, 255, 21, 0, 21]
+    items:
+      type: integer
+      minimum: 0
+      maximum: 255
+
+  dataArray1024:
+    id: "dataArray1024"
+    type: array
+    default: null
+    maxItems: 1024
+    example:
+      - [100, 255, 21, 0, 21]
+    items:
+      type: integer
+      minimum: 0
+      maximum: 255
+
+  bitArray:
+    id: "bitArray"
+    type: array
+    default: null
+    description: "Binary data array represented in 0 1."
+    example:
+      - [0, 1, 1, 0, 0, 1, 1, 0]
+      - [0, 0, 1, 0 ,0, 0, 0, 0]
+    items:
+      type: integer
+      minimum: 0
+      maximum: 1
+
+  dataArray:
+    id: "dataArray"
+    type: array
+    default: null
+    description: "Binary data array."
+    example:
+      - [0x10, 0x22, 0xF2]
+      - [100, 255, 21, 0, 21]
+    items:
+      type: integer
+      minimum: 0
+      maximum: 255
+
+  imageDataArray:
+    id: "imageDataArray"
+    type: array
+    description: "Image data bit array."
+    minItems: 0
+    example: [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,255,240,56,0,0,0,0,0,0,0,0,0,0,0,0,7,255,224,120,0,0,0,0,0,0,0,0,0,0,0,0,63,255,192,240,0,0,0,0,0,0,0,0,0,0,0,0,127,255,129,248,0,0,0,0,0,0,0,0,0,0,0,1,255,255,3,254,0,0,0,0,0,0,0,0,0,0,0,3,255,254,7,255,0,0,0,0,0,0,0,0,0,0,0,15,255,252,15,255,128,0,0,0,0,0,0,0,0,0,0,31,255,248,31,255,192,0,0,0,0,0,0,0,0,0,0,63,255,240,63,255,224,0,0,0,0,0,0,0,0,0,0,63,255,224,127,255,240,0,0,0,0,0,0,0,0,0,0,127,255,192,255,255,248,0,0,0,0,0,0,0,0,0,0,255,255,129,255,255,252,0,0,0,0,0,0,0,0,0,1,255,255,3,255,255,254,0,0,0,0,0,0,0,0,0,1,255,254,7,255,255,254,0,0,0,0,0,0,0,0,0,3,255,252,15,255,255,255,0,0,0,0,0,0,0,0,0,7,255,248,31,255,255,255,0,0,0,0,0,0,0,0,0,7,255,240,63,255,255,255,128,0,0,0,0,0,0,0,0,7,255,224,127,193,255,255,128,0,0,0,0,0,0,0,0,15,252,64,255,128,255,255,128,0,0,0,0,0,0,0,0,15,240,1,255,0,127,255,0,0,0,0,0,0,0,0,0,15,224,3,254,0,127,254,14,0,0,0,0,0,0,0,0,31,224,7,254,0,63,252,30,0,0,0,0,0,0,0,0,31,224,7,254,0,63,248,60,0,0,0,0,0,0,0,0,31,192,7,254,0,63,240,120,0,0,0,0,0,0,0,0,31,192,7,254,0,127,224,240,0,0,0,0,0,0,0,0,31,224,7,252,0,127,193,224,0,0,0,0,0,0,0,0,31,224,15,248,0,255,131,224,0,0,0,0,0,0,0,0,31,240,31,240,39,255,7,224,0,0,0,0,0,0,0,0,31,252,63,224,127,254,15,224,0,0,0,0,0,0,0,0,31,255,255,192,255,252,31,224,0,0,0,0,0,0,0,0,31,255,255,129,255,248,63,224,0,0,0,0,0,0,0,0,31,255,255,3,255,240,127,224,0,0,0,0,0,0,0,0,31,255,254,7,255,224,255,224,0,0,0,0,0,0,0,0,31,255,252,15,255,193,255,192,0,0,0,0,0,0,0,0,15,255,248,31,255,131,255,192,0,0,0,0,0,0,0,0,15,255,240,63,255,7,255,192,0,0,0,0,0,0,0,0,15,255,224,127,254,15,255,192,0,0,0,0,0,0,0,0,15,255,192,255,252,31,255,128,0,0,0,0,0,0,0,0,7,255,129,255,0,63,255,128,0,0,0,0,0,0,0,0,7,255,3,254,0,127,255,0,0,0,0,0,0,0,0,0,3,254,7,252,0,255,255,0,0,0,0,0,0,0,0,0,3,252,15,252,0,255,254,0,0,0,0,0,0,0,0,0,1,248,31,252,0,255,254,0,0,0,0,0,0,0,0,0,0,240,63,252,0,255,252,0,0,0,0,0,0,0,0,0,0,224,127,252,0,255,252,0,0,0,0,0,0,0,0,0,0,64,255,252,0,255,248,0,0,0,0,0,0,0,0,0,0,1,255,254,1,255,240,0,0,0,0,0,0,0,0,0,0,3,255,255,3,255,224,0,0,0,0,0,0,0,0,0,0,7,255,255,255,255,192,0,0,0,0,0,0,0,0,0,0,15,255,255,255,255,128,0,0,0,0,0,0,0,0,0,0,31,255,255,255,254,0,0,0,0,0,0,0,0,0,0,0,12,255,255,255,252,0,0,0,0,0,0,0,0,0,0,0,0,63,255,255,240,0,0,0,0,0,0,0,0,0,0,0,0,15,255,255,192,0,0,0,0,0,0,0,0,0,0,0,0,3,255,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,63,224,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
+    items:
+      type: integer
+      minimum: 0
+
+  hexString:
+    id: "hexString"
+    type: string
+    default: null
+    "pattern": "^([0-9a-fA-F]+)$"
+    description: "Bluetooth device id.If it contain '-', it ignored."
+    example: "8d0fd8f9"
+
+  uuid:
+    id: "uuid"
+    type: string
+    pattern: "^([-0-9a-fA-F]+)$"   ## "-"は許容
+    minLength: 4
+    maxLength: 36
+    description: "Bluetooth uuid. If it contain '-', it ignored."
+    example:
+      - "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e"
+      - "8d3591bda71140fd8f9f00535fe57179"
+      - "d822b53c"
+      - "de44"
+  uuidOrNull:
+    id: "uuidOrNull"
+    type: [string, "null"]
+    pattern: "^([-0-9a-fA-F]+)$"   ## "-"は許容
+    minLength: 4
+    maxLength: 36
+    description: "Bluetooth uuid. If it contain '-', it ignored."
+    example:
+      - "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e"
+      - "8d3591bda71140fd8f9f00535fe57179"
+      - "d822b53c"
+      - "de44"
+      - null
+
+  uuidOrNullOrEmpty:
+    id: "uuidOrNullOrEmpty"
+    type: [string, "null"]
+    pattern: "^([-0-9a-fA-F]*)$"   ## "-"は許容
+    minLength: 0
+    maxLength: 36
+    description: "Bluetooth uuid. If it contain '-', it ignored."
+    example:
+      - "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e"
+      - "8d3591bda71140fd8f9f00535fe57179"
+      - "d822b53c"
+      - "de44"
+      - null
+
+  deviceAddress:
+    id: "deviceAddress"
+    type: string
+    pattern: "^([0-9a-fA-F]+)$"
+    minLength: 12
+    maxLength: 12
+    description: "Bluetooth device id. It's hexString cannot contain '0x' or '-'."
+    example: "77e754ab8591"
+
+  deviceAddressOrEmpty:
+    id: "deviceAddressOrEmpty"
+    type: string
+    pattern: "^([0-9a-fA-F]*)$"
+    minLength: 0
+    maxLength: 12
+    description: "Bluetooth device id. It's hexString cannot contain '0x' or '-'."
+    example: "77e754ab8591"
+
+  obnizId:
+    id: "obnizId"
+    type: [string, integer]
+    pattern: "^[0-9]{4}-?[0-9]{4}$"   ## "-"は許容
+    minimum: 0
+    maximum: 99999999
+    description: "Obniz id. It can contain '-' or not."
+    example:
+      - "1234-5678"
+      - 12345678

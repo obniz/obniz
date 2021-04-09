@@ -54,7 +54,15 @@ export default class SHT20 implements ObnizPartsInterface {
     this.obniz.wait(50);
   }
 
-  public async getData(command: [number]): Promise<number> {
+  /**
+   * @deprecated
+   * @param command
+   */
+  public getData(command: [number]): Promise<number> {
+    return this.getDataWait(command);
+  }
+
+  public async getDataWait(command: [number]): Promise<number> {
     this.i2c.write(this.address, command);
 
     await this.obniz.wait(100);
@@ -68,7 +76,7 @@ export default class SHT20 implements ObnizPartsInterface {
   }
 
   public async getTempWait(): Promise<number> {
-    const rawTemperature = await this.getData(this.commands.tempNoHold);
+    const rawTemperature = await this.getDataWait(this.commands.tempNoHold);
     if (rawTemperature < 0) {
       console.log('error sht20', rawTemperature);
       return rawTemperature;
@@ -77,7 +85,7 @@ export default class SHT20 implements ObnizPartsInterface {
   }
 
   public async getHumidWait(): Promise<number> {
-    const rawHumidity = await this.getData(this.commands.humidityNoHold);
+    const rawHumidity = await this.getDataWait(this.commands.humidityNoHold);
     if (rawHumidity < 0) {
       console.log('error sht20', rawHumidity);
       return rawHumidity;

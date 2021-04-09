@@ -98,7 +98,7 @@ export default class IBS01T implements ObnizPartsBleInterface {
     -1, // humid
     -1, // reserved
     -1, // reserved
-    -1, // reserved
+    0x05, // subtype
     -1, // reserved
     -1, // reserved
     -1, // reserved

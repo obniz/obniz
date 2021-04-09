@@ -7,10 +7,11 @@ import ObnizBLEHci from '../hci';
 
 import {
   ObnizBleHciStateError,
+  ObnizBleUnknownPeripheralError,
   ObnizBleUnsupportedHciError,
 } from '../../../../ObnizError';
 import BleHelper from '../bleHelper';
-import { Handle } from '../bleTypes';
+import { BleDeviceAddress, BleDeviceAddressType, Handle } from '../bleTypes';
 
 namespace COMMANDS {
   export const HCI_COMMAND_PKT = 0x01;
@@ -420,8 +421,8 @@ class Hci extends EventEmitter<HciEventTypes> {
   }
 
   public async createLeConnWait(
-    address: any,
-    addressType: any,
+    address: BleDeviceAddress,
+    addressType: BleDeviceAddressType,
     timeout: number = 90 * 1000,
     onConnectCallback: any
   ) {

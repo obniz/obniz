@@ -1,0 +1,21 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/central"
+basePath: "ble"
+description: "use obniz Board as central"
+
+"anyOf":
+  - {$ref: "/request/ble/central/scan_start"}
+  - {$ref: "/request/ble/central/scan_stop"}
+  - {$ref: "/request/ble/central/connect"}
+  - {$ref: "/request/ble/central/disconnect"}
+  - {$ref: "/request/ble/central/service_get"}
+  - {$ref: "/request/ble/central/characteristic_get"}
+  - {$ref: "/request/ble/central/characteristic_read"}
+  - {$ref: "/request/ble/central/characteristic_write"}
+  - {$ref: "/request/ble/central/characteristic_register_notify"}
+  - {$ref: "/request/ble/central/characteristic_unregister_notify"}
+  - {$ref: "/request/ble/central/descriptor_get"}
+  - {$ref: "/request/ble/central/descriptor_read"}
+  - {$ref: "/request/ble/central/descriptor_write"}
