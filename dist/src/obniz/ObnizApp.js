@@ -9,7 +9,7 @@ class ObnizApp {
      * Determine obniz.js is running on obniz Cloud or not.
      */
     static isCloudRunning() {
-        return typeof done === "function";
+        return typeof done === 'function';
     }
     /**
      * request object on obniz Cloud execution for webhook call.
@@ -56,7 +56,7 @@ class ObnizApp {
      * Configration by user for This App. Only Available for BrowserApp
      */
     static configs() {
-        if (typeof configs === "object") {
+        if (typeof configs === 'object') {
             return configs;
         }
         else {

@@ -3,9 +3,11 @@
  * @module Parts.LED
  */
 
-import Obniz from "../../../obniz";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface LEDOptions {
   anode?: number;
@@ -15,7 +17,7 @@ export interface LEDOptions {
 export default class LED implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "LED",
+      name: 'LED',
     };
   }
 
@@ -30,19 +32,19 @@ export default class LED implements ObnizPartsInterface {
   private animationName!: string;
 
   constructor() {
-    this.keys = ["anode", "cathode"];
+    this.keys = ['anode', 'cathode'];
     this.requiredKeys = [];
   }
 
   public wired(obniz: Obniz) {
-    function getIO(io: any) {
-      if (io && typeof io === "object") {
-        if (typeof io.output === "function") {
+    const getIO = (io: any) => {
+      if (io && typeof io === 'object') {
+        if (typeof io.output === 'function') {
           return io;
         }
       }
       return obniz.getIO(io);
-    }
+    };
 
     this.obniz = obniz;
 
@@ -52,7 +54,7 @@ export default class LED implements ObnizPartsInterface {
     if (this.obniz.isValidIO(this.params.cathode)) {
       this.io_cathode = getIO(this.params.cathode);
     }
-    this.animationName = "Led-" + this.params.anode;
+    this.animationName = 'Led-' + this.params.anode;
     this.off();
   }
 
@@ -75,7 +77,7 @@ export default class LED implements ObnizPartsInterface {
   }
 
   public endBlink() {
-    this.obniz.io!.animation(this.animationName, "pause");
+    this.obniz.io!.animation(this.animationName, 'pause');
   }
 
   public blink(interval?: number) {
@@ -99,7 +101,7 @@ export default class LED implements ObnizPartsInterface {
       },
     ];
 
-    this.obniz.io!.animation(this.animationName, "loop", frames);
+    this.obniz.io!.animation(this.animationName, 'loop', frames);
   }
 
   private _on() {

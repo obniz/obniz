@@ -2,23 +2,29 @@
  * @packageDocumentation
  * @module Parts.LM35DZ
  */
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
-import AnalogTemperatureSensor, { AnalogTemperatureSensorOptions } from "../AnalogTemperatureSensor";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../../obniz/ObnizPartsInterface';
+import AnalogTemperatureSensor, {
+  AnalogTemperatureSensorOptions,
+} from '../AnalogTemperatureSensor';
 
 export interface LM35DZOptions extends AnalogTemperatureSensorOptions {}
 
-export default class LM35DZ extends AnalogTemperatureSensor implements ObnizPartsInterface {
+export default class LM35DZ
+  extends AnalogTemperatureSensor
+  implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "LM35DZ",
+      name: 'LM35DZ',
     };
   }
 
-  private temperature: number = 0;
+  private temperature = 0;
   private tempArray: number[] = new Array(100);
-  private sum: number = 0;
-  private init_count: number = 0;
-  private count: number = 0;
+  private sum = 0;
+  private init_count = 0;
+  private count = 0;
 
   public calc(voltage: any) {
     this.temperature = voltage * 100; // Temp(Celsius) = [AD Voltage] * 100;

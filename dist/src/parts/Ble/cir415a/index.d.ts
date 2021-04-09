@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module Parts.cir415a
  */
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
 export interface cir415aOptions {
 }
 export default class cir415a implements ObnizPartsBleInterface {
@@ -25,14 +25,24 @@ export default class cir415a implements ObnizPartsBleInterface {
     constructor(peripheral: BleRemotePeripheral | null);
     connectWait(): Promise<void>;
     disconnectWait(): Promise<void>;
+    /**
+     * @deprecated
+     * @param data
+     */
     write(data: number[]): Promise<void>;
+    writeWait(data: number[]): Promise<void>;
     setMasterKey(key: number[]): void;
     setAutoPollingWait(enable: boolean): Promise<void>;
+    /**
+     * @deprecated
+     * @param data
+     */
     writeADPU(data: number[]): Promise<void>;
-    private readPacket;
+    writeADPUWait(data: number[]): Promise<void>;
+    private readPacketWait;
     private encrypt;
     private decrypt;
-    private parseBlePacket;
-    private writeBle;
+    private parseBlePacketWait;
+    private writeBleWait;
     private arrayMatch;
 }

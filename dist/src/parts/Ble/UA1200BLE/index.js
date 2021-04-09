@@ -7,52 +7,54 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class UA1200BLE {
     constructor(peripheral, timezoneOffsetMinute) {
         if (!peripheral || !UA1200BLE.isDevice(peripheral)) {
-            throw new Error("peripheral is not UA1200BLE");
+            throw new Error('peripheral is not UA1200BLE');
         }
         this._peripheral = peripheral;
         this._timezoneOffsetMinute = timezoneOffsetMinute;
     }
     static info() {
         return {
-            name: "UA1200BLE",
+            name: 'UA1200BLE',
         };
     }
     static isDevice(peripheral) {
-        return peripheral.localName && peripheral.localName.startsWith("UA-1200BLE_");
+        return (peripheral.localName && peripheral.localName.startsWith('UA-1200BLE_'));
     }
     static isCooperationMode(peripheral) {
-        const peripheralHex = peripheral.adv_data.map((e) => e.toString(16)).join("");
+        const peripheralHex = peripheral.adv_data
+            .map((e) => e.toString(16))
+            .join('');
         const peripheralArray = [
             // "2",
             // "1",
             // "6",
             // "11",
             // "7",
-            "e4",
-            "ab",
-            "90",
-            "56",
-            "d",
-            "0",
-            "5c",
-            "97",
-            "6d",
-            "1b",
-            "34",
-            "5a",
-            "0",
-            "f0",
-            "3b",
-            "23",
-        ].join("");
+            'e4',
+            'ab',
+            '90',
+            '56',
+            'd',
+            '0',
+            '5c',
+            '97',
+            '6d',
+            '1b',
+            '34',
+            '5a',
+            '0',
+            'f0',
+            '3b',
+            '23',
+        ].join('');
         return peripheralHex.indexOf(peripheralArray) > -1;
     }
     async pairingWait() {
         if (!this._peripheral) {
-            throw new Error("UA1200BLE not found");
+            throw new Error('UA1200BLE not found');
         }
         this._peripheral.ondisconnect = (reason) => {
-            if (typeof this.ondisconnect === "function") {
+            if (typeof this.ondisconnect === 'function') {
                 this.ondisconnect(reason);
             }
         };
@@ -70,7 +72,7 @@ class UA1200BLE {
     }
     async getDataWait() {
         if (!this._peripheral) {
-            throw new Error("UA1200BLE not found");
+            throw new Error('UA1200BLE not found');
         }
         this._peripheral.ondisconnect = (reason) => {
             if (this.ondisconnect) {
@@ -80,7 +82,7 @@ class UA1200BLE {
         await this._peripheral.connectWait();
         return await new Promise(async (resolve, reject) => {
             if (!this._peripheral) {
-                throw new Error("UA1200BLE not found");
+                throw new Error('UA1200BLE not found');
             }
             const results = [];
             // Advertise mode (BP-00 or BP-01 in pp.7)
@@ -89,10 +91,10 @@ class UA1200BLE {
             // bloodPressureMeasurementChar.registerNotifyWait((data: number[]) => {
             //   results.push(this._analyzeData(data));
             // });
-            // await this._writeTimeChar(this._timezoneOffsetMinute);
+            // await this._writeTimeCharWait(this._timezoneOffsetMinute);
             // await this._writeCCCDChar();
-            const { bloodPressureMeasurementChar, timeChar } = this._getCharsSingleMode();
-            await this._writeTimeChar(this._timezoneOffsetMinute);
+            const { bloodPressureMeasurementChar, timeChar, } = this._getCharsSingleMode();
+            await this._writeTimeCharWait(this._timezoneOffsetMinute);
             await bloodPressureMeasurementChar.registerNotifyWait((data) => {
                 results.push(this._analyzeData(data));
             });
@@ -169,14 +171,14 @@ class UA1200BLE {
     }
     _getCharsCoopMode() {
         if (!this._peripheral) {
-            throw new Error("UA1200BLE not found");
+            throw new Error('UA1200BLE not found');
         }
         const bloodPressureMeasurementChar = this._peripheral
-            .getService("1810")
-            .getCharacteristic("2A35");
+            .getService('1810')
+            .getCharacteristic('2A35');
         const customServiceChar = this._peripheral
-            .getService("233bf0005a341b6d975c000d5690abe4") // Primary Service Custom Service(pp.26)
-            .getCharacteristic("233bf0015a341b6d975c000d5690abe4"); // Custom Characteristic(pp.27)
+            .getService('233bf0005a341b6d975c000d5690abe4') // Primary Service Custom Service(pp.26)
+            .getCharacteristic('233bf0015a341b6d975c000d5690abe4'); // Custom Characteristic(pp.27)
         return {
             bloodPressureMeasurementChar,
             customServiceChar,
@@ -184,19 +186,21 @@ class UA1200BLE {
     }
     _getCharsSingleMode() {
         if (!this._peripheral) {
-            throw new Error("UA1200BLE not found");
+            throw new Error('UA1200BLE not found');
         }
         const bloodPressureMeasurementChar = this._peripheral
-            .getService("1810")
-            .getCharacteristic("2A35");
-        const timeChar = this._peripheral.getService("1805").getCharacteristic("2A2B");
+            .getService('1810')
+            .getCharacteristic('2A35');
+        const timeChar = this._peripheral
+            .getService('1805')
+            .getCharacteristic('2A2B');
         // const CCCDChar = this._peripheral.getService("1810")!.getCharacteristic("2902")!;
         return {
             bloodPressureMeasurementChar,
             timeChar,
         };
     }
-    async _writeTimeChar(timeOffsetMinute) {
+    async _writeTimeCharWait(timeOffsetMinute) {
         const { timeChar } = this._getCharsSingleMode();
         const date = new Date();
         date.setTime(Date.now() + 1000 * 60 * timeOffsetMinute);

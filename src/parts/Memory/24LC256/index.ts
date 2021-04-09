@@ -3,9 +3,11 @@
  * @module Parts.24LC256
  */
 
-import Obniz from "../../../obniz";
-import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface _24LC256Options {
   sda?: number;
@@ -19,7 +21,7 @@ export interface _24LC256Options {
 export default class _24LC256 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "24LC256",
+      name: '24LC256',
     };
   }
 
@@ -32,12 +34,12 @@ export default class _24LC256 implements ObnizPartsInterface {
   private i2c!: PeripheralI2C;
 
   constructor() {
-    this.requiredKeys = ["address"];
-    this.keys = ["sda", "scl", "clock", "pull", "i2c", "address"];
+    this.requiredKeys = ['address'];
+    this.keys = ['sda', 'scl', 'clock', 'pull', 'i2c', 'address'];
   }
 
   public wired(obniz: Obniz) {
-    this.params.mode = this.params.mode || "master"; // for i2c
+    this.params.mode = this.params.mode || 'master'; // for i2c
     this.params.clock = this.params.clock || 400 * 1000; // for i2c
     this.i2c = obniz.getI2CWithConfig(this.params);
   }

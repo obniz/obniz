@@ -27,7 +27,7 @@ class WSCommandDirective extends WSCommand_1.default {
         const nameArray = util_1.default.string2dataArray(params.animation.name);
         let frame;
         let offset = 0;
-        if (semver.lt(this._hw.firmware, "2.0.0")) {
+        if (semver.lt(this._hw.firmware, '2.0.0')) {
             // < 2.0.0
             frame = new Uint8Array(1 + nameArray.length + 1);
             // name //
@@ -35,8 +35,9 @@ class WSCommandDirective extends WSCommand_1.default {
             frame.set(nameArray, offset);
             offset += nameArray.length;
             frame[offset++] = 0; // null string
-            if (params.animation.status === "registrate" || typeof params.animation.repeat === "number") {
-                throw new Error("you need to update your firmware >= 2.0.0");
+            if (params.animation.status === 'registrate' ||
+                typeof params.animation.repeat === 'number') {
+                throw new Error('you need to update your firmware >= 2.0.0');
             }
         }
         else {
@@ -49,10 +50,10 @@ class WSCommandDirective extends WSCommand_1.default {
             // type and count //
             let type = 0;
             let repeat_count = 0;
-            if (params.animation.status === "loop") {
+            if (params.animation.status === 'loop') {
                 type = 1; // auto start
             }
-            if (typeof params.animation.repeat === "number") {
+            if (typeof params.animation.repeat === 'number') {
                 repeat_count = params.animation.repeat;
                 type += 2;
             }
@@ -76,7 +77,7 @@ class WSCommandDirective extends WSCommand_1.default {
             for (let commandIndex = 0; commandIndex < parsedCommands.length; commandIndex++) {
                 const _frame = WSCommand_1.default.compress(this.availableCommands, parsedCommands[commandIndex]);
                 if (!_frame) {
-                    throw new Error("[io.animation.states.state]only io or pwm commands. Pleave provide state at least one of them.");
+                    throw new Error('[io.animation.states.state]only io or pwm commands. Pleave provide state at least one of them.');
                 }
                 if (compressed) {
                     const _combined = new Uint8Array(compressed.length + _frame.length);
@@ -89,7 +90,7 @@ class WSCommandDirective extends WSCommand_1.default {
                 }
             }
             if (!compressed) {
-                throw new Error("[io.animation.states.state]only io or pwm commands. Pleave provide state at least one of them.");
+                throw new Error('[io.animation.states.state]only io or pwm commands. Pleave provide state at least one of them.');
             }
             const length = compressed.byteLength;
             const commandHeader = new Uint8Array(8);
@@ -109,12 +110,12 @@ class WSCommandDirective extends WSCommand_1.default {
         }
         if (frame.byteLength > 1000) {
             // 1kbyte over
-            throw new Error("[io.animation]Too big animation datas");
+            throw new Error('[io.animation]Too big animation datas');
         }
         this.sendCommand(this._CommandRegistrate, frame);
     }
     changeState(params) {
-        if (params.animation.status === "resume") {
+        if (params.animation.status === 'resume') {
             const nameArray = util_1.default.string2dataArray(params.animation.name);
             const frame = new Uint8Array(nameArray.length + 2);
             frame[0] = nameArray.length + 1;
@@ -122,7 +123,7 @@ class WSCommandDirective extends WSCommand_1.default {
             frame[frame.byteLength - 1] = 0;
             this.sendCommand(this._CommandResume, frame);
         }
-        else if (params.animation.status === "pause") {
+        else if (params.animation.status === 'pause') {
             const nameArray = util_1.default.string2dataArray(params.animation.name);
             const frame = new Uint8Array(nameArray.length + 2);
             frame[0] = nameArray.length + 1;
@@ -149,10 +150,10 @@ class WSCommandDirective extends WSCommand_1.default {
             return;
         }
         const schemaData = [
-            { uri: "/request/ioAnimation/init", onValid: this.init },
-            { uri: "/request/ioAnimation/changeState", onValid: this.changeState },
+            { uri: '/request/ioAnimation/init', onValid: this.init },
+            { uri: '/request/ioAnimation/changeState', onValid: this.changeState },
         ];
-        const res = this.validateCommandSchema(schemaData, module, "io", module);
+        const res = this.validateCommandSchema(schemaData, module, 'io', module);
         if (res.valid === 0 && parentCommandNotFound) {
             if (res.invalidButLike.length > 0) {
                 throw new Error(res.invalidButLike[0].message);
@@ -169,7 +170,7 @@ class WSCommandDirective extends WSCommand_1.default {
             objToSend.io = {
                 animation: {
                     name,
-                    status: "finish",
+                    status: 'finish',
                 },
             };
         }

@@ -5,16 +5,16 @@ let testUtil = require('../../../testUtil.js');
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
-describe('obniz.libs.spi', function() {
-  beforeEach(function(done) {
+describe('obniz.libs.spi', function () {
+  beforeEach(function (done) {
     return testUtil.setupObnizPromise(this, done);
   });
 
-  afterEach(function(done) {
+  afterEach(function (done) {
     return testUtil.releaseObnizePromise(this, done);
   });
 
-  it('start', function() {
+  it('start', function () {
     this.obniz.spi0.start({
       clk: 0,
       frequency: 1000000,
@@ -35,7 +35,7 @@ describe('obniz.libs.spi', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('startWithGnd', function() {
+  it('startWithGnd', function () {
     this.obniz.spi0.start({
       clk: 0,
       frequency: 1000000,
@@ -56,7 +56,7 @@ describe('obniz.libs.spi', function() {
       {
         display: {
           pin_assign: {
-            '7': {
+            7: {
               module_name: 'spi0',
               pin_name: 'gnd',
             },
@@ -70,7 +70,7 @@ describe('obniz.libs.spi', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('write', function() {
+  it('write', function () {
     this.obniz.spi0.start({
       clk: 0,
       frequency: 1000000,
@@ -86,7 +86,7 @@ describe('obniz.libs.spi', function() {
     ]);
 
     let r = this.obniz.spi0.writeWait([0x12, 0x98]).then(
-      function(value) {
+      function (value) {
         expect(value).to.be.deep.equal([0x61, 0xf2]);
         expect(this.obniz).to.be.finished;
       }.bind(this)
@@ -94,7 +94,7 @@ describe('obniz.libs.spi', function() {
 
     expect(this.obniz).send([{ spi0: { data: [0x12, 0x98], read: true } }]);
     setTimeout(
-      function() {
+      function () {
         testUtil.receiveJson(this.obniz, [{ spi0: { data: [0x61, 0xf2] } }]);
       }.bind(this),
       10
@@ -102,7 +102,7 @@ describe('obniz.libs.spi', function() {
     return r;
   });
 
-  it('write over 32 to <1.0.3', async function() {
+  it('write over 32 to <1.0.3', async function () {
     let firmver_ver = this.obniz.firmware_ver;
     this.obniz.firmware_ver = '1.0.2';
     this.obniz.spi0.start({
@@ -135,7 +135,7 @@ describe('obniz.libs.spi', function() {
     this.obniz.firmware_ver = firmver_ver;
   });
 
-  it('write over 32 to >=1.0.3', function() {
+  it('write over 32 to >=1.0.3', function () {
     let firmver_ver = this.obniz.firmware_ver;
     this.obniz.firmware_ver = '1.0.3';
     this.obniz.spi0.start({
@@ -158,7 +158,7 @@ describe('obniz.libs.spi', function() {
     }
 
     let r = this.obniz.spi0.writeWait(data).then(
-      function(value) {
+      function (value) {
         expect(value).to.be.deep.equal(data);
         expect(this.obniz).to.be.finished;
       }.bind(this)
@@ -166,7 +166,7 @@ describe('obniz.libs.spi', function() {
 
     expect(this.obniz).send([{ spi0: { data: data, read: true } }]);
     setTimeout(
-      function() {
+      function () {
         testUtil.receiveJson(this.obniz, [{ spi0: { data: data } }]);
       }.bind(this),
       10
@@ -175,7 +175,7 @@ describe('obniz.libs.spi', function() {
     return r;
   });
 
-  it.skip('SPI send 2byte and receive 3byte', function() {
+  it.skip('SPI send 2byte and receive 3byte', function () {
     this.obniz.spi0.start({
       clk: 0,
       frequency: 1000000,
@@ -194,7 +194,7 @@ describe('obniz.libs.spi', function() {
     ]);
 
     let r = this.obniz.spi0.writeWait([0x12, 0x98]).then(
-      function(value) {
+      function (value) {
         expect(value).to.be.deep.equal([0x61, 0xf2]);
         expect(this.obniz).to.be.finished;
       }.bind(this)
@@ -202,7 +202,7 @@ describe('obniz.libs.spi', function() {
 
     expect(this.obniz).send([{ spi0: { data: [0x12, 0x98], read: true } }]);
     setTimeout(
-      function() {
+      function () {
         testUtil.receiveJson(this.obniz, [
           { spi0: { data: [0x61, 0xf2, 0x34] } },
         ]);
@@ -212,7 +212,7 @@ describe('obniz.libs.spi', function() {
     return r;
   });
 
-  it('end', function() {
+  it('end', function () {
     this.obniz.spi0.start({
       clk: 0,
       frequency: 1000000,

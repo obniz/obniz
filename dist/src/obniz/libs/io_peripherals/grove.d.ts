@@ -2,22 +2,22 @@
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-import Obniz from "../../index";
-import { ComponentAbstract } from "../ComponentAbstact";
-import PeripheralAD from "./ad";
-import { DriveType } from "./common";
-import PeripheralI2C from "./i2c";
-import PeripheralIO from "./io";
-import PeripheralPWM from "./pwm";
-import PeripheralUART from "./uart";
+import Obniz from '../../index';
+import { ComponentAbstract } from '../ComponentAbstact';
+import PeripheralAD from './ad';
+import { DriveType } from './common';
+import PeripheralI2C from './i2c';
+import PeripheralIO from './io';
+import PeripheralPWM from './pwm';
+import PeripheralUART from './uart';
 export interface PeripheralGroveParams {
     pin1: number;
     pin2: number;
     vcc?: number;
     gnd?: number;
 }
-export declare type PeripheralGroveType = "digital" | "analog" | "analog-digital" | "i2c" | "uart" | "pwm";
-export declare type GrovePinOption = "default" | "secondaryOnly";
+export declare type PeripheralGroveType = 'digital' | 'analog' | 'analog-digital' | 'i2c' | 'uart' | 'pwm';
+export declare type GrovePinOption = 'default' | 'secondaryOnly';
 /**
  * @category Peripherals
  */

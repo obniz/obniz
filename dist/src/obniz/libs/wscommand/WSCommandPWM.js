@@ -84,18 +84,18 @@ class WSCommandPWM extends WSCommand_1.default {
     }
     parseFromJson(json) {
         for (let i = 0; i < this.ModuleNum; i++) {
-            const module = json["pwm" + i];
+            const module = json['pwm' + i];
             if (module === undefined) {
                 continue;
             }
             const schemaData = [
-                { uri: "/request/pwm/init", onValid: this.init },
-                { uri: "/request/pwm/freq", onValid: this.freq },
-                { uri: "/request/pwm/pulse", onValid: this.pulse },
-                { uri: "/request/pwm/modulate", onValid: this.amModulate },
-                { uri: "/request/pwm/deinit", onValid: this.deinit },
+                { uri: '/request/pwm/init', onValid: this.init },
+                { uri: '/request/pwm/freq', onValid: this.freq },
+                { uri: '/request/pwm/pulse', onValid: this.pulse },
+                { uri: '/request/pwm/modulate', onValid: this.amModulate },
+                { uri: '/request/pwm/deinit', onValid: this.deinit },
             ];
-            const res = this.validateCommandSchema(schemaData, module, "pwm" + i, i);
+            const res = this.validateCommandSchema(schemaData, module, 'pwm' + i, i);
             if (res.valid === 0) {
                 if (res.invalidButLike.length > 0) {
                     throw new Error(res.invalidButLike[0].message);

@@ -68,7 +68,7 @@ class BleAdvertisement {
         await this.obnizBle.peripheralBindings.stopAdvertisingWait();
     }
     /**
-     *  @deprecated  replaced by {@link #endWait()}
+     * @deprecated  replaced by {@link #endWait()}
      */
     end() {
         // noinspection JSIgnoredPromiseFromCall
@@ -113,6 +113,7 @@ class BleAdvertisement {
      *
      * obniz.ble.advertisement.start();
      * ```
+     *
      * @param json
      */
     setAdvData(json) {
@@ -148,6 +149,7 @@ class BleAdvertisement {
      *
      * obniz.ble.advertisement.start();
      * ```
+     *
      * @param json
      */
     setScanRespData(json) {

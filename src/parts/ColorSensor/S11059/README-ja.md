@@ -38,7 +38,7 @@ var colorSens = obniz.wired("S11059", {vcc:0, sda:1, scl:2, gnd:3});
 colorSens.init(1,2); // ゲイン高感度, 積分時間22.4msで初期化
 ```
 
-## [await] getVal()
+## [await] getValWait()
 センサから値を取得します。各色の強さが数値の配列として返されます。
 
 [赤, 緑, 青, 赤外線]
@@ -49,7 +49,7 @@ colorSens.init(1,2); // ゲイン高感度, 積分時間22.4msで初期化
 // Javascript Example
 var colorSens = obniz.wired("S11059", {vcc:0, sda:1, scl:2, gnd:3});
 colorSens.init(1,2);
-var ret = await colorSens.getVal(); // 各色の値を取得
+var ret = await colorSens.getValWait(); // 各色の値を取得
 console.log("getVal:"+ ret); // 取得した配列を表示
 var red = ret[0]; // 赤色のレベルを変数redへ代入
 var green = ret[1];　// 緑色のレベルを変数greenへ代入

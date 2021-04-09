@@ -3,9 +3,11 @@
  * @module Parts.ENC03R_Module
  */
 
-import Obniz from "../../../obniz";
-import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralAD from '../../../obniz/libs/io_peripherals/ad';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface ENC03R_ModuleOptions {
   gnd?: number;
@@ -17,7 +19,7 @@ export interface ENC03R_ModuleOptions {
 export default class ENC03R_Module implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "ENC03R_Module",
+      name: 'ENC03R_Module',
     };
   }
 
@@ -26,9 +28,9 @@ export default class ENC03R_Module implements ObnizPartsInterface {
   public params: any;
 
   public Sens = 0.00067; // Sensitivity, 0.67mV / deg/sec
-  public sens1: number = 0;
+  public sens1 = 0;
   public onchange1?: (val: number) => void;
-  public sens2: number = 0;
+  public sens2 = 0;
   public onchange2?: (val: number) => void;
 
   protected obniz!: Obniz;
@@ -37,13 +39,13 @@ export default class ENC03R_Module implements ObnizPartsInterface {
   private ad1!: PeripheralAD;
 
   constructor() {
-    this.keys = ["vcc", "out1", "out2", "gnd"];
-    this.requiredKeys = ["out1", "out2"];
+    this.keys = ['vcc', 'out1', 'out2', 'gnd'];
+    this.requiredKeys = ['out1', 'out2'];
   }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     this.ad0 = obniz.getAD(this.params.out1);
     this.ad1 = obniz.getAD(this.params.out2);
 

@@ -15,7 +15,7 @@ class M5StickC_FINGER {
         this.TxBuf = [0, 0, 0, 0, 0, 0, 0, 0, 0];
         this.RxBuf = [0, 0, 0, 0, 0, 0, 0, 0, 0];
         this.requiredKeys = [];
-        this.keys = ["tx", "rx", "gnd"];
+        this.keys = ['tx', 'rx', 'gnd'];
         this.ack = {
             SUCCESS: 0x00,
             FAIL: 0x01,
@@ -48,15 +48,16 @@ class M5StickC_FINGER {
     }
     static info() {
         return {
-            name: "M5StickC_FINGER",
+            name: 'M5StickC_FINGER',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(null, this.params.gnd, "3v");
-        if (!this.obniz.isValidIO(this.params.tx) && !this.obniz.isValidIO(this.params.rx)) {
-            if (this.obniz.hasExtraInterface("m5stickc_hat")) {
-                const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").uart;
+        this.obniz.setVccGnd(null, this.params.gnd, '3v');
+        if (!this.obniz.isValidIO(this.params.tx) &&
+            !this.obniz.isValidIO(this.params.rx)) {
+            if (this.obniz.hasExtraInterface('m5stickc_hat')) {
+                const hatI2c = this.obniz.getExtraInterface('m5stickc_hat').uart;
                 this.params.tx = hatI2c.tx;
                 this.params.rx = hatI2c.rx;
             }
@@ -144,7 +145,7 @@ class M5StickC_FINGER {
         if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
             return this.ack.SUCCESS;
         }
-        throw Error("failed to set add mode.");
+        throw Error('failed to set add mode.');
     }
     async readAddModeWait() {
         this.TxBuf[this.CMD] = this.cmd.ADD_MODE;
@@ -155,7 +156,7 @@ class M5StickC_FINGER {
         if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
             return this.RxBuf[this.Q2];
         }
-        throw Error("failed to read add mode.");
+        throw Error('failed to read add mode.');
     }
     async deleteAllUserWait() {
         this.TxBuf[this.CMD] = this.cmd.DEL_ALL;
@@ -166,7 +167,7 @@ class M5StickC_FINGER {
         if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
             return this.ack.SUCCESS;
         }
-        throw Error("failed to delete all users.");
+        throw Error('failed to delete all users.');
     }
     async deleteUserWait(userNum) {
         this.TxBuf[this.CMD] = this.cmd.DEL;
@@ -177,7 +178,7 @@ class M5StickC_FINGER {
         if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
             return this.ack.SUCCESS;
         }
-        throw Error("failed to delete user: " + userNum);
+        throw Error('failed to delete user: ' + userNum);
     }
     async getUserPermissionWait(userNum) {
         this.TxBuf[this.CMD] = this.cmd.GET_PERMISSION;
@@ -189,7 +190,7 @@ class M5StickC_FINGER {
     }
     async setSecurityLevelWait(level) {
         if (level < 0 || level > 9) {
-            throw Error("security level argument must be between 0 and 9");
+            throw Error('security level argument must be between 0 and 9');
         }
         this.TxBuf[this.CMD] = this.cmd.SECURITY_LEVEL;
         this.TxBuf[this.P1] = 0;
@@ -199,7 +200,7 @@ class M5StickC_FINGER {
         if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
             return this.ack.SUCCESS;
         }
-        throw Error("failed to set security level.");
+        throw Error('failed to set security level.');
     }
     async getSecurityLevelWait() {
         this.TxBuf[this.CMD] = this.cmd.SECURITY_LEVEL;
@@ -210,7 +211,7 @@ class M5StickC_FINGER {
         if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
             return this.RxBuf[this.Q2];
         }
-        throw Error("failed to get security level.");
+        throw Error('failed to get security level.');
     }
     async sendAndReceiveWait(timeout) {
         let checkSum = 0;
@@ -232,20 +233,20 @@ class M5StickC_FINGER {
             return this.ack.TIMEOUT;
         }
         if (this.RxBuf[this.HEAD] !== this.cmd.HEAD) {
-            throw Error("communication failed.");
+            throw Error('communication failed.');
         }
         if (this.RxBuf[this.TAIL] !== this.cmd.TAIL) {
-            throw Error("communication failed.");
+            throw Error('communication failed.');
         }
         if (this.RxBuf[this.CMD] !== this.TxBuf[this.CMD]) {
-            throw Error("communication failed.");
+            throw Error('communication failed.');
         }
         checkSum = 0;
         for (let i = 1; i < this.CHK; i++) {
             checkSum ^= this.RxBuf[i];
         }
         if (checkSum !== this.RxBuf[this.CHK]) {
-            throw Error("communication failed.");
+            throw Error('communication failed.');
         }
         return this.ack.SUCCESS;
     }

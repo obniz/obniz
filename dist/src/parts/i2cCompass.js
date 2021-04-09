@@ -10,10 +10,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const i2cParts_1 = __importDefault(require("./i2cParts"));
 class I2cCompassAbstract extends i2cParts_1.default {
     static async calibrateWait() {
-        throw new Error("Method not implemented.");
+        throw new Error('Method not implemented.');
     }
     static async headingWait() {
-        throw new Error("Method not implemented.");
+        throw new Error('Method not implemented.');
     }
     async getWait() {
         const adc = await this.getAdcWait();
@@ -46,7 +46,8 @@ class I2cCompassAbstract extends i2cParts_1.default {
         }
     }
     calcMag(data) {
-        return (data * this.so * I2cCompassAbstract.unitScales[this.sf]) / I2cCompassAbstract.unitScales[this.defaultUnit];
+        return ((data * this.so * I2cCompassAbstract.unitScales[this.sf]) /
+            I2cCompassAbstract.unitScales[this.defaultUnit]);
     }
 }
 exports.default = I2cCompassAbstract;

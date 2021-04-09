@@ -2,15 +2,15 @@ const config = require('../config.js');
 
 let checkBoard, obnizA, check_io;
 
-describe('4-uart-exchange', function() {
+describe('4-uart-exchange', function () {
   this.timeout(20000);
 
-  before(function() {
-    return new Promise(resolve => {
+  before(function () {
+    return new Promise((resolve) => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
         checkBoard = config.checkBoard;
-        check_io = config.check_io.filter(io => io.obniz === 'obnizA');
+        check_io = config.check_io.filter((io) => io.obniz === 'obnizA');
         resolve();
       });
     });
@@ -31,7 +31,7 @@ describe('4-uart-exchange', function() {
     }
   });
 
-  it('short string tx rx', async function() {
+  it('short string tx rx', async function () {
     const receiver = checkBoard.getFreeUart();
     receiver.start({ tx: check_io[0].board_io, rx: check_io[1].board_io });
     await checkBoard.pingWait();
@@ -56,7 +56,7 @@ describe('4-uart-exchange', function() {
     sender.end();
   });
 
-  it('short utf8 tx rx', async function() {
+  it('short utf8 tx rx', async function () {
     const receiver = checkBoard.getFreeUart();
     receiver.start({ tx: check_io[0].board_io, rx: check_io[1].board_io });
     await checkBoard.pingWait();
@@ -81,7 +81,7 @@ describe('4-uart-exchange', function() {
     sender.end();
   });
 
-  it('long string tx rx 9600', async function() {
+  it('long string tx rx 9600', async function () {
     const receiver = checkBoard.getFreeUart();
     receiver.start({
       tx: check_io[0].board_io,
@@ -118,7 +118,7 @@ describe('4-uart-exchange', function() {
     sender.end();
   });
 
-  it('long string tx rx 115200', async function() {
+  it('long string tx rx 115200', async function () {
     const receiver = checkBoard.getFreeUart();
     receiver.start({
       tx: check_io[0].board_io,
@@ -155,7 +155,7 @@ describe('4-uart-exchange', function() {
     sender.end();
   });
 
-  it('long binary tx rx 115200', async function() {
+  it('long binary tx rx 115200', async function () {
     const receiver = checkBoard.getFreeUart();
     receiver.start({
       tx: check_io[0].board_io,
@@ -192,7 +192,7 @@ describe('4-uart-exchange', function() {
     sender.end();
   });
 
-  it('two port at same time', async function() {
+  it('two port at same time', async function () {
     const receiver0 = checkBoard.getFreeUart();
     receiver0.start({
       tx: check_io[0].board_io,
@@ -263,7 +263,7 @@ describe('4-uart-exchange', function() {
 });
 
 function wait(ms) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 }

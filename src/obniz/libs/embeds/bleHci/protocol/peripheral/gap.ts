@@ -5,16 +5,16 @@
  */
 // var debug = require('debug')('gap');
 
-import BleHelper from "../../bleHelper";
+import BleHelper from '../../bleHelper';
 
 /**
  * @ignore
  */
 const debug: any = () => {};
-import EventEmitter from "eventemitter3";
-import Hci from "../hci";
+import EventEmitter from 'eventemitter3';
+import Hci from '../hci';
 
-type GapEventTypes = "";
+type GapEventTypes = '';
 
 /**
  * @ignore
@@ -39,7 +39,12 @@ class Gap extends EventEmitter<GapEventTypes> {
   }
 
   public async startAdvertisingWait(name: any, serviceUuids: any) {
-    debug("startAdvertising: name = " + name + ", serviceUuids = " + JSON.stringify(serviceUuids, null, 2));
+    debug(
+      'startAdvertising: name = ' +
+        name +
+        ', serviceUuids = ' +
+        JSON.stringify(serviceUuids, null, 2)
+    );
 
     let advertisementDataLength: any = 3;
     let scanDataLength: any = 0;
@@ -83,7 +88,10 @@ class Gap extends EventEmitter<GapEventTypes> {
     let advertisementDataOffset: any = 3;
 
     if (serviceUuids16bit.length) {
-      advertisementData.writeUInt8(1 + 2 * serviceUuids16bit.length, advertisementDataOffset);
+      advertisementData.writeUInt8(
+        1 + 2 * serviceUuids16bit.length,
+        advertisementDataOffset
+      );
       advertisementDataOffset++;
 
       advertisementData.writeUInt8(0x03, advertisementDataOffset);
@@ -96,7 +104,10 @@ class Gap extends EventEmitter<GapEventTypes> {
     }
 
     if (serviceUuids128bit.length) {
-      advertisementData.writeUInt8(1 + 16 * serviceUuids128bit.length, advertisementDataOffset);
+      advertisementData.writeUInt8(
+        1 + 16 * serviceUuids128bit.length,
+        advertisementDataOffset
+      );
       advertisementDataOffset++;
 
       advertisementData.writeUInt8(0x06, advertisementDataOffset);
@@ -121,7 +132,7 @@ class Gap extends EventEmitter<GapEventTypes> {
   }
 
   public async startAdvertisingIBeaconWait(data: any) {
-    debug("startAdvertisingIBeacon: data = " + data.toString("hex"));
+    debug('startAdvertisingIBeacon: data = ' + data.toString('hex'));
 
     const dataLength: any = data.length;
     const manufacturerDataLength: any = 4 + dataLength;
@@ -147,24 +158,27 @@ class Gap extends EventEmitter<GapEventTypes> {
     await this.startAdvertisingWithEIRDataWait(advertisementData, scanData);
   }
 
-  public async startAdvertisingWithEIRDataWait(advertisementData: any, scanData: any) {
+  public async startAdvertisingWithEIRDataWait(
+    advertisementData: any,
+    scanData: any
+  ) {
     advertisementData = advertisementData || Buffer.alloc(0);
     scanData = scanData || Buffer.alloc(0);
 
     debug(
-      "startAdvertisingWithEIRData: advertisement data = " +
-        advertisementData.toString("hex") +
-        ", scan data = " +
-        scanData.toString("hex"),
+      'startAdvertisingWithEIRData: advertisement data = ' +
+        advertisementData.toString('hex') +
+        ', scan data = ' +
+        scanData.toString('hex')
     );
 
     if (advertisementData.length > 31) {
-      throw new Error("Advertisement data is over maximum limit of 31 bytes");
+      throw new Error('Advertisement data is over maximum limit of 31 bytes');
     } else if (scanData.length > 31) {
-      throw new Error("Scan data is over maximum limit of 31 bytes");
+      throw new Error('Scan data is over maximum limit of 31 bytes');
     }
 
-    this._advertiseState = "starting";
+    this._advertiseState = 'starting';
 
     const p1 = this._hci.setScanResponseDataWait(scanData);
     const p2 = this._hci.setAdvertisingDataWait(advertisementData);
@@ -176,24 +190,26 @@ class Gap extends EventEmitter<GapEventTypes> {
 
     const status = await p3;
 
-    if (this._advertiseState === "starting") {
-      this._advertiseState = "started";
+    if (this._advertiseState === 'starting') {
+      this._advertiseState = 'started';
       if (status) {
-        throw new Error(Hci.STATUS_MAPPER[status] || "Unknown (" + status + ")");
+        throw new Error(
+          Hci.STATUS_MAPPER[status] || 'Unknown (' + status + ')'
+        );
       }
-    } else if (this._advertiseState === "stopping") {
-      this._advertiseState = "stopped";
+    } else if (this._advertiseState === 'stopping') {
+      this._advertiseState = 'stopped';
     }
   }
 
   public async restartAdvertisingWait() {
-    this._advertiseState = "restarting";
+    this._advertiseState = 'restarting';
 
     await this._hci.setAdvertiseEnableWait(true);
   }
 
   public async stopAdvertisingWait() {
-    this._advertiseState = "stopping";
+    this._advertiseState = 'stopping';
 
     await this._hci.setAdvertiseEnableWait(false);
   }

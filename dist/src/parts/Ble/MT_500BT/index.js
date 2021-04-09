@@ -14,23 +14,23 @@ class MT_500BT {
         this.keys = [];
         this.requiredKeys = [];
         this._uuids = {
-            MSDPService: "1ef19620a8034af0ae954b4b0aa26f29",
-            rxChar: "1ef19621a8034af0ae954b4b0aa26f29",
-            txChar: "1ef19622a8034af0ae954b4b0aa26f29",
+            MSDPService: '1ef19620a8034af0ae954b4b0aa26f29',
+            rxChar: '1ef19621a8034af0ae954b4b0aa26f29',
+            txChar: '1ef19622a8034af0ae954b4b0aa26f29',
         };
         if (peripheral && !MT_500BT.isDevice(peripheral)) {
-            throw new Error("peripheral is not MT_500BT");
+            throw new Error('peripheral is not MT_500BT');
         }
         this._peripheral = peripheral;
         this._emitter = new eventemitter3_1.default();
     }
     static info() {
         return {
-            name: "MT_500BT",
+            name: 'MT_500BT',
         };
     }
     static isDevice(peripheral) {
-        if (peripheral.localName && peripheral.localName.startsWith("MT-500")) {
+        if (peripheral.localName && peripheral.localName.startsWith('MT-500')) {
             return true;
         }
         return false;
@@ -40,7 +40,7 @@ class MT_500BT {
             return null;
         }
         const hexStr = peripheral.localName.slice(7, 11);
-        return Buffer.from(hexStr, "hex").readUInt16BE(0);
+        return Buffer.from(hexStr, 'hex').readUInt16BE(0);
     }
     static getCNKey(peripheral) {
         const ifuid = this.getIFUID(peripheral);
@@ -54,7 +54,7 @@ class MT_500BT {
     wired(obniz) { }
     async connectWait() {
         if (!this._peripheral) {
-            throw new Error("MT-500BT is not find.");
+            throw new Error('MT-500BT is not find.');
         }
         this._peripheral.ondisconnect = (reason) => {
             // console.log("disconnect");
@@ -73,17 +73,17 @@ class MT_500BT {
             await this.MSDPRxChar.registerNotifyWait((data) => {
                 // console.log("recv array", data);
                 if (data.length !== 20) {
-                    throw new Error("unknown format received");
+                    throw new Error('unknown format received');
                 }
                 if (data[0] !== 0xe7) {
-                    throw new Error("unknown header");
+                    throw new Error('unknown header');
                 }
                 const calcedChecksum = this._checksum(data.slice(0, 19));
                 if (data[19] !== calcedChecksum) {
-                    throw new Error("checksum failed");
+                    throw new Error('checksum failed');
                 }
                 const replyBuf = Buffer.from(data);
-                this._emitter.emit("" + replyBuf.readUInt8(1), replyBuf);
+                this._emitter.emit('' + replyBuf.readUInt8(1), replyBuf);
             });
             // console.log("registerNotifyWait");
             await this.startCommunicationCommandWait();
@@ -93,24 +93,24 @@ class MT_500BT {
         }
     }
     async startCommunicationCommandWait() {
-        const cnkey = "" + MT_500BT.getCNKey(this._peripheral); // to string
-        const CNKeyBuf = Buffer.from(cnkey, "utf8");
+        const cnkey = '' + MT_500BT.getCNKey(this._peripheral); // to string
+        const CNKeyBuf = Buffer.from(cnkey, 'utf8');
         const startCommand = this._createCommand(0xfd, Array.from(CNKeyBuf));
         // console.log("sendDataReplyWait");
         const res = await this._sendDataReplyWait(startCommand);
         if (res.readUInt8(2) !== 0) {
-            throw new Error("StartCommunicationError " + res.readUInt8(2));
+            throw new Error('StartCommunicationError ' + res.readUInt8(2));
         }
     }
     async getDeviceInformationWait() {
         const res1 = await this._sendDataReplyWait(this._createCommand(0x00, [0x01]));
         const res2 = await this._sendDataReplyWait(this._createCommand(0x00, [0x02]));
         const deviceType = {
-            2: "Pulse rate meter",
-            3: "SpO2(BO)",
-            4: "Thermometer",
-            5: "SpO2(MP)",
-            6: "Blood pressure meter",
+            2: 'Pulse rate meter',
+            3: 'SpO2(BO)',
+            4: 'Thermometer',
+            5: 'SpO2(MP)',
+            6: 'Blood pressure meter',
         };
         return {
             cls: deviceType[res1.readUInt8(3)],
@@ -186,7 +186,7 @@ class MT_500BT {
     }
     async disconnectWait() {
         if (!this._peripheral) {
-            throw new Error("MT-500BT is not find.");
+            throw new Error('MT-500BT is not find.');
         }
         if (this._peripheral.connected) {
             await this._peripheral.disconnectWait();
@@ -194,7 +194,7 @@ class MT_500BT {
     }
     _createCommand(cid, data = []) {
         if (data.length >= 18) {
-            throw new Error("too many data length");
+            throw new Error('too many data length');
         }
         const command = [0xe7, cid, ...data];
         for (let i = 0; i < 19; i++) {
@@ -207,7 +207,7 @@ class MT_500BT {
     }
     _checksum(data) {
         if (data.length !== 19) {
-            throw Error("unknown format");
+            throw Error('unknown format');
         }
         const sum = data.reduce((a, b) => a + b, 0);
         const inv = (0xa5 + sum) & 0xff;
@@ -217,15 +217,15 @@ class MT_500BT {
     _sendDataReplyWait(sendData) {
         return new Promise((resolve, reject) => {
             if (!this.MSDPRxChar) {
-                reject(new Error("MSDPRxChar is not found"));
+                reject(new Error('MSDPRxChar is not found'));
                 return;
             }
             if (!this.MSDPTxChar) {
-                reject(new Error("MSDPTxChar is not found"));
+                reject(new Error('MSDPTxChar is not found'));
                 return;
             }
             // console.log("write array", Array.from(sendData));
-            this._emitter.once("" + sendData.readUInt8(1), resolve);
+            this._emitter.once('' + sendData.readUInt8(1), resolve);
             this.MSDPTxChar.writeWait(Array.from(sendData));
         });
     }

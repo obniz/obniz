@@ -8,15 +8,15 @@ class FullColorLED {
     constructor() {
         this.COMMON_TYPE_ANODE = 1;
         this.COMMON_TYPE_CATHODE = 0;
-        this.anode_keys = ["anode", "anode_common", "anodeCommon", "vcc"];
-        this.cathode_keys = ["cathode", "cathode_common", "cathodeCommon", "gnd"];
-        this.animationName = "FullColorLED-" + Math.round(Math.random() * 1000);
-        this.keys = ["r", "g", "b", "common", "commonType"];
-        this.requiredKeys = ["r", "g", "b", "common", "commonType"];
+        this.anode_keys = ['anode', 'anode_common', 'anodeCommon', 'vcc'];
+        this.cathode_keys = ['cathode', 'cathode_common', 'cathodeCommon', 'gnd'];
+        this.animationName = 'FullColorLED-' + Math.round(Math.random() * 1000);
+        this.keys = ['r', 'g', 'b', 'common', 'commonType'];
+        this.requiredKeys = ['r', 'g', 'b', 'common', 'commonType'];
     }
     static info() {
         return {
-            name: "FullColorLED",
+            name: 'FullColorLED',
         };
     }
     wired(obniz) {
@@ -33,7 +33,7 @@ class FullColorLED {
             this.commontype = this.COMMON_TYPE_CATHODE;
         }
         else {
-            this.obniz.error("FullColorLED param need common type [  anode_common or cathode_common ] ");
+            this.obniz.error(new Error('FullColorLED param need common type [  anode_common or cathode_common ] '));
         }
         this.common = this.obniz.getIO(common);
         this.common.output(this.commontype);
@@ -110,10 +110,10 @@ class FullColorLED {
             };
             frames.push(oneFrame);
         }
-        this.obniz.io.animation(this.animationName, "loop", frames);
+        this.obniz.io.animation(this.animationName, 'loop', frames);
     }
     stopgradation() {
-        this.obniz.io.animation(this.animationName, "pause");
+        this.obniz.io.animation(this.animationName, 'pause');
     }
 }
 exports.default = FullColorLED;

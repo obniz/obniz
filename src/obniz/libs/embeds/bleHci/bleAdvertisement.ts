@@ -2,10 +2,10 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import ObnizBLE from "./ble";
-import Builder from "./bleAdvertisementBuilder";
-import BleAdvertisementBuilder from "./bleAdvertisementBuilder";
-import { BleAdvertisementData, BleScanResponseData } from "./bleTypes";
+import ObnizBLE from './ble';
+import Builder from './bleAdvertisementBuilder';
+import BleAdvertisementBuilder from './bleAdvertisementBuilder';
+import { BleAdvertisementData, BleScanResponseData } from './bleTypes';
 
 /**
  * @category Use as Peripheral
@@ -51,7 +51,7 @@ export default class BleAdvertisement {
     this.obnizBle.warningIfNotInitialize();
     await this.obnizBle.peripheralBindings.startAdvertisingWithEIRDataWait(
       Buffer.from(this.adv_data),
-      Buffer.from(this.scan_resp),
+      Buffer.from(this.scan_resp)
     );
   }
 
@@ -83,7 +83,7 @@ export default class BleAdvertisement {
   }
 
   /**
-   *  @deprecated  replaced by {@link #endWait()}
+   * @deprecated  replaced by {@link #endWait()}
    */
   public end() {
     // noinspection JSIgnoredPromiseFromCall
@@ -130,6 +130,7 @@ export default class BleAdvertisement {
    *
    * obniz.ble.advertisement.start();
    * ```
+   *
    * @param json
    */
   public setAdvData(json: BleAdvertisementData) {
@@ -167,17 +168,22 @@ export default class BleAdvertisement {
    *
    * obniz.ble.advertisement.start();
    * ```
+   *
    * @param json
    */
   public setScanRespData(json: BleScanResponseData) {
     this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
   }
 
-  protected advDataBulider(jsonVal: BleAdvertisementData): BleAdvertisementBuilder {
+  protected advDataBulider(
+    jsonVal: BleAdvertisementData
+  ): BleAdvertisementBuilder {
     return new Builder(jsonVal);
   }
 
-  protected scanRespDataBuilder(json: BleScanResponseData): BleAdvertisementBuilder {
+  protected scanRespDataBuilder(
+    json: BleScanResponseData
+  ): BleAdvertisementBuilder {
     return new Builder(json);
   }
 }

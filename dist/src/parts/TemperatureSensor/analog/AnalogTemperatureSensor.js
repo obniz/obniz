@@ -3,9 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class AnalogTemperatureSensor {
     constructor() {
         this.temp = 0;
-        this.keys = ["vcc", "gnd", "output"];
-        this.requiredKeys = ["output"];
-        this.drive = "5v";
+        this.keys = ['vcc', 'gnd', 'output'];
+        this.requiredKeys = ['output'];
+        this.drive = '5v';
     }
     wired(obniz) {
         this.obniz = obniz;

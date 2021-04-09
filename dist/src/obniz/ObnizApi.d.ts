@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module ObnizCore
  */
-import { ObnizOptions } from "./ObnizOptions";
+import { ObnizOptions } from './ObnizOptions';
 export default class ObnizApi {
     /**
      * obniz.js major version string
@@ -14,23 +14,25 @@ export default class ObnizApi {
     constructor(obnizId: string, options?: ObnizOptions);
     /**
      * Get device is online or offline
+     *
      * @param callback with result
      */
     getState(callback: (val: {
-        state: "online" | "offline";
+        state: 'online' | 'offline';
     }) => void): Promise<any>;
     /**
      * Get device is online or offline
      */
     getStateWait(): Promise<{
-        state: "online" | "offline";
+        state: 'online' | 'offline';
     }>;
     /**
      * post data via obniz REST api
+     *
      * @param json
      * @param callback
      */
-    postJson(json: any, callback: (result: any) => void): Promise<any>;
-    protected post(path: string, params: any, callback?: any): Promise<any>;
+    postJsonWait(json: any, callback: (result: any) => void): Promise<any>;
+    protected postWait(path: string, params: any, callback?: any): Promise<any>;
     protected get(path: any, callback: any): Promise<unknown>;
 }

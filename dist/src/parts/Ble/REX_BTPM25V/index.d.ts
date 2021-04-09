@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @module Parts.REX_BTPM25V
  */
-import Obniz from "../../../obniz";
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface REX_BTPM25VOptions {
 }
 export default class REX_BTPM25V implements ObnizPartsInterface {
@@ -46,6 +46,7 @@ export default class REX_BTPM25V implements ObnizPartsInterface {
         uv: number;
     }>;
     getLedMode(): Promise<void>;
+    getLedModeWait(): Promise<void>;
     private _sendAndReceiveWait;
     private _analyzeResult;
     private _bitValue;

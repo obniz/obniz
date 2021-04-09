@@ -3,9 +3,11 @@
  * @module Parts.Button
  */
 
-import Obniz from "../../../obniz";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface ButtonOptions {
   signal: number;
@@ -15,7 +17,7 @@ export interface ButtonOptions {
 export default class Button implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "Button",
+      name: 'Button',
     };
   }
 
@@ -31,8 +33,8 @@ export default class Button implements ObnizPartsInterface {
   private io_supply?: PeripheralIO;
 
   constructor() {
-    this.keys = ["signal", "gnd", "pull"];
-    this.requiredKeys = ["signal"];
+    this.keys = ['signal', 'gnd', 'pull'];
+    this.requiredKeys = ['signal'];
 
     this.onChangeForStateWait = () => {};
   }
@@ -46,12 +48,12 @@ export default class Button implements ObnizPartsInterface {
     }
 
     // start input
-    if (this.params.pull === "3v") {
-      this.io_signal.pull("3v");
-    } else if (this.params.pull === "0v") {
-      this.io_signal.pull("0v");
+    if (this.params.pull === '3v') {
+      this.io_signal.pull('3v');
+    } else if (this.params.pull === '0v') {
+      this.io_signal.pull('0v');
     } else {
-      this.io_signal.pull("5v");
+      this.io_signal.pull('5v');
     }
 
     this.io_signal.input((value: any) => {

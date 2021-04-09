@@ -12,33 +12,34 @@ class OMRON_2JCIE {
     constructor(peripheral) {
         this._peripheral = null;
         this.vibrationState = {
-            0x00: "NONE",
-            0x01: "druing vibration (Earthquake judgment in progress)",
-            0x02: "during earthquake",
+            0x00: 'NONE',
+            0x01: 'druing vibration (Earthquake judgment in progress)',
+            0x02: 'during earthquake',
         };
         if (peripheral && !OMRON_2JCIE.isDevice(peripheral)) {
-            throw new Error("peripheral is not OMRON_2JCIE");
+            throw new Error('peripheral is not OMRON_2JCIE');
         }
         this._peripheral = peripheral;
     }
     static info() {
         return {
-            name: "2JCIE",
+            name: '2JCIE',
         };
     }
     static isDevice(peripheral) {
-        return ((peripheral.localName && peripheral.localName.indexOf("Env") >= 0) ||
-            (peripheral.localName && peripheral.localName.indexOf("IM") >= 0) ||
-            (peripheral.localName && peripheral.localName.indexOf("Rbt") >= 0));
+        return ((peripheral.localName && peripheral.localName.indexOf('Env') >= 0) ||
+            (peripheral.localName && peripheral.localName.indexOf('IM') >= 0) ||
+            (peripheral.localName && peripheral.localName.indexOf('Rbt') >= 0));
     }
     /**
      * Get a datas from advertisement mode of OMRON 2JCIE
      */
     static getData(peripheral) {
         const adv_data = peripheral.adv_data;
-        if (peripheral.localName && peripheral.localName.indexOf("IM") >= 0) {
+        if (peripheral.localName && peripheral.localName.indexOf('IM') >= 0) {
             return {
-                temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[8], adv_data[9]) * 0.01,
+                temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[8], adv_data[9]) *
+                    0.01,
                 relative_humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[10], adv_data[11]) * 0.01,
                 light: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[12], adv_data[13]) * 1,
                 uv_index: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[14], adv_data[15]) * 0.01,
@@ -51,12 +52,13 @@ class OMRON_2JCIE {
             };
         }
         else if (peripheral.localName &&
-            peripheral.localName.indexOf("Rbt") >= 0 &&
+            peripheral.localName.indexOf('Rbt') >= 0 &&
             adv_data[6] === 0x02 &&
             adv_data[6] === 0x02 &&
             adv_data[7] === 0x01) {
             return {
-                temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[10], adv_data[9]) * 0.01,
+                temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[10], adv_data[9]) *
+                    0.01,
                 relative_humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[12], adv_data[11]) * 0.01,
                 light: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[14], adv_data[13]) * 1,
                 barometric_pressure: ObnizPartsBleInterface_1.default.signed32FromBinary(adv_data[18], adv_data[17], adv_data[16], adv_data[15]) * 0.001,
@@ -72,17 +74,17 @@ class OMRON_2JCIE {
     }
     async findWait() {
         const target = {
-            localName: ["Env", "Rbt"],
+            localName: ['Env', 'Rbt'],
         };
         await this.obniz.ble.initWait();
         this._peripheral = await this.obniz.ble.scan.startOneWait(target);
         return this._peripheral;
     }
     omron_uuid(uuid, type) {
-        if (type === "BAG") {
+        if (type === 'BAG') {
             return `0C4C${uuid}-7700-46F4-AA96D5E974E32A54`;
         }
-        else if (type === "USB") {
+        else if (type === 'USB') {
             return `AB70${uuid}-0A3A-11E8-BA89-0ED5F89F718B`;
         }
         else {
@@ -94,11 +96,11 @@ class OMRON_2JCIE {
             await this.findWait();
         }
         if (!this._peripheral) {
-            throw new Error("2JCIE not found");
+            throw new Error('2JCIE not found');
         }
         if (!this._peripheral.connected) {
             this._peripheral.ondisconnect = (reason) => {
-                if (typeof this.ondisconnect === "function") {
+                if (typeof this.ondisconnect === 'function') {
                     this.ondisconnect(reason);
                 }
             };
@@ -129,9 +131,18 @@ class OMRON_2JCIE {
         }
         return val;
     }
-    async getLatestData() {
+    async getLatestDataBAGWait() {
+        return this.getLatestDataWait();
+    }
+    /**
+     * @deprecated
+     */
+    getLatestData() {
+        return this.getLatestDataWait();
+    }
+    async getLatestDataWait() {
         await this.connectWait();
-        const c = this._peripheral.getService(this.omron_uuid("3000", "BAG")).getCharacteristic(this.omron_uuid("3001", "BAG"));
+        const c = this._peripheral.getService(this.omron_uuid('3000', 'BAG')).getCharacteristic(this.omron_uuid('3001', 'BAG'));
         const data = await c.readWait();
         const json = {
             row_number: data[0],
@@ -147,9 +158,12 @@ class OMRON_2JCIE {
         };
         return json;
     }
-    async getLatestSensorDataUSB() {
+    getLatestSensorDataUSB() {
+        return this.getLatestSensorDataUSBWait();
+    }
+    async getLatestSensorDataUSBWait() {
         await this.connectWait();
-        const c = this._peripheral.getService(this.omron_uuid("5010", "USB")).getCharacteristic(this.omron_uuid("5012", "USB"));
+        const c = this._peripheral.getService(this.omron_uuid('5010', 'USB')).getCharacteristic(this.omron_uuid('5012', 'USB'));
         const data = await c.readWait();
         const json = {
             seqence_number: data[0],
@@ -163,9 +177,15 @@ class OMRON_2JCIE {
         };
         return json;
     }
-    async getLatestCalculationDataUSB() {
+    /**
+     * @deprecated
+     */
+    getLatestCalculationDataUSB() {
+        return this.getLatestCalculationDataUSBWait();
+    }
+    async getLatestCalculationDataUSBWait() {
         await this.connectWait();
-        const c = this._peripheral.getService(this.omron_uuid("5010", "USB")).getCharacteristic(this.omron_uuid("5013", "USB"));
+        const c = this._peripheral.getService(this.omron_uuid('5010', 'USB')).getCharacteristic(this.omron_uuid('5013', 'USB'));
         const data = await c.readWait();
         const json = {
             sequence_number: data[0],

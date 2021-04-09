@@ -3,7 +3,7 @@
  * @ignore
  */
 /// <reference types="tv4" />
-import WSSchema from "./WSSchema";
+import WSSchema from './WSSchema';
 export default abstract class WSCommand {
     static get schema(): WSSchema.TV4;
     static get CommandClasses(): any;

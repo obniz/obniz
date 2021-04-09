@@ -29,7 +29,7 @@ class WSCommandDisplay extends WSCommand_1.default {
         this.sendCommand(this._CommandPrint, buf);
     }
     printText(text) {
-        const buf = Buffer.from(text, "utf8");
+        const buf = Buffer.from(text, 'utf8');
         const result = new Uint8Array(buf);
         this.print(result);
     }
@@ -37,7 +37,7 @@ class WSCommandDisplay extends WSCommand_1.default {
         this.printText(params.text);
     }
     raw(params) {
-        if (typeof params.color_depth === "number" && params.color_depth > 1) {
+        if (typeof params.color_depth === 'number' && params.color_depth > 1) {
             this.drawRawColors(params.raw, params.color_depth);
         }
         else {
@@ -46,7 +46,7 @@ class WSCommandDisplay extends WSCommand_1.default {
     }
     qr(params) {
         const text = params.qr.text;
-        const correctionLevel = params.qr.correction || "M";
+        const correctionLevel = params.qr.correction || 'M';
         const typeNumber = 0; // auto detect type.
         const qr = qr_1.default(typeNumber, correctionLevel);
         qr.addData(text);
@@ -74,7 +74,8 @@ class WSCommandDisplay extends WSCommand_1.default {
             for (let row = 0; row < size; row++) {
                 for (let col = 0; col < size; col++) {
                     if (!modules[Math.floor(row / 2)][Math.floor(col / 2)]) {
-                        vram[Math.floor((row + 2) * 16 + (col + 2) / 8)] |= 0x80 >> (col + 2) % 8;
+                        vram[Math.floor((row + 2) * 16 + (col + 2) / 8)] |=
+                            0x80 >> (col + 2) % 8;
                     }
                 }
             }
@@ -83,8 +84,8 @@ class WSCommandDisplay extends WSCommand_1.default {
     }
     pinName(params) {
         for (let i = 0; i < 40; i++) {
-            if (typeof params.pin_assign[i] === "object") {
-                this.setPinName(i, params.pin_assign[i].module_name || "?", params.pin_assign[i].pin_name || "?");
+            if (typeof params.pin_assign[i] === 'object') {
+                this.setPinName(i, params.pin_assign[i].module_name || '?', params.pin_assign[i].pin_name || '?');
             }
         }
     }
@@ -99,11 +100,11 @@ class WSCommandDisplay extends WSCommand_1.default {
         this.sendCommand(this._CommandDrawIOState, buf);
     }
     setPinName(no, moduleName, pinName) {
-        let str = moduleName.slice(0, 4) + " " + pinName;
+        let str = moduleName.slice(0, 4) + ' ' + pinName;
         str = str.slice(0, 9);
         const buf = new Uint8Array(1);
         buf[0] = no;
-        const stringarray = new Uint8Array(Buffer.from(str, "utf8"));
+        const stringarray = new Uint8Array(Buffer.from(str, 'utf8'));
         const combined = new Uint8Array(buf.length + stringarray.length);
         combined.set(buf, 0);
         combined.set(stringarray, 1);
@@ -121,13 +122,13 @@ class WSCommandDisplay extends WSCommand_1.default {
             return;
         }
         const schemaData = [
-            { uri: "/request/display/clear", onValid: this.clear },
-            { uri: "/request/display/text", onValid: this.text },
-            { uri: "/request/display/raw", onValid: this.raw },
-            { uri: "/request/display/pin_assign", onValid: this.pinName },
-            { uri: "/request/display/qr", onValid: this.qr },
+            { uri: '/request/display/clear', onValid: this.clear },
+            { uri: '/request/display/text', onValid: this.text },
+            { uri: '/request/display/raw', onValid: this.raw },
+            { uri: '/request/display/pin_assign', onValid: this.pinName },
+            { uri: '/request/display/qr', onValid: this.qr },
         ];
-        const res = this.validateCommandSchema(schemaData, module, "display");
+        const res = this.validateCommandSchema(schemaData, module, 'display');
         if (res.valid === 0) {
             if (res.invalidButLike.length > 0) {
                 throw new Error(res.invalidButLike[0].message);

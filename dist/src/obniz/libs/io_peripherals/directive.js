@@ -17,8 +17,8 @@ class Directive extends ComponentAbstact_1.ComponentAbstract {
         super(obniz);
         this.observers = [];
         this._animationIdentifier = 0;
-        this.on("/response/ioAnimation/notify", (obj) => {
-            if (obj.animation.status === "finish") {
+        this.on('/response/ioAnimation/notify', (obj) => {
+            if (obj.animation.status === 'finish') {
                 for (let i = this.observers.length - 1; i >= 0; i--) {
                     if (obj.animation.name === this.observers[i].name) {
                         this.observers[i].resolve();
@@ -87,7 +87,8 @@ class Directive extends ComponentAbstact_1.ComponentAbstract {
      * @param repeat The number of repeat count of animation. If not specified, it repeat endless.
      */
     animation(name, status, animations, repeat) {
-        if ((typeof repeat === "number" || status === "registrate") && semver_1.default.lt(this.Obniz.firmware_ver, "2.0.0")) {
+        if ((typeof repeat === 'number' || status === 'registrate') &&
+            semver_1.default.lt(this.Obniz.firmware_ver, '2.0.0')) {
             throw new Error(`Please update obniz firmware >= 2.0.0`);
         }
         const obj = {};
@@ -97,7 +98,7 @@ class Directive extends ComponentAbstact_1.ComponentAbstract {
                 status,
             },
         };
-        if (typeof repeat === "number") {
+        if (typeof repeat === 'number') {
             obj.io.animation.repeat = repeat;
         }
         if (!animations) {
@@ -118,7 +119,7 @@ class Directive extends ComponentAbstact_1.ComponentAbstract {
                 state: pooledJsonArray,
             });
         }
-        if (status === "loop" || status === "registrate") {
+        if (status === 'loop' || status === 'registrate') {
             obj.io.animation.states = states;
         }
         this.Obniz.send(obj);
@@ -147,26 +148,26 @@ class Directive extends ComponentAbstact_1.ComponentAbstract {
      * @param repeat  The number of repeat count of animation.
      */
     repeatWait(animations, repeat) {
-        if (semver_1.default.lt(this.Obniz.firmware_ver, "2.0.0")) {
+        if (semver_1.default.lt(this.Obniz.firmware_ver, '2.0.0')) {
             throw new Error(`Please update obniz firmware >= 2.0.0`);
         }
-        if (typeof repeat !== "number" || repeat < 1) {
-            throw new Error("please specify repeat count > 0");
+        if (typeof repeat !== 'number' || repeat < 1) {
+            throw new Error('please specify repeat count > 0');
         }
         if (Math.floor(repeat) !== repeat) {
-            throw new Error("please provide integer number like 1, 2, 3,,,");
+            throw new Error('please provide integer number like 1, 2, 3,,,');
         }
         return new Promise((resolve, reject) => {
-            const name = "_repeatwait" + Date.now() + this._animationIdentifier;
+            const name = '_repeatwait' + Date.now() + this._animationIdentifier;
             if (++this._animationIdentifier > 1000) {
                 this._animationIdentifier = 0;
             }
-            this.animation(name, "loop", animations, repeat);
+            this.animation(name, 'loop', animations, repeat);
             this.addObserver(name, resolve, reject);
         });
     }
     schemaBasePath() {
-        return "io";
+        return 'io';
     }
     /**
      * @ignore
@@ -175,7 +176,7 @@ class Directive extends ComponentAbstact_1.ComponentAbstract {
     _reset() {
         if (this.observers) {
             for (let i = 0; i < this.observers.length; i++) {
-                this.observers[i].reject(new Error("reset called"));
+                this.observers[i].reject(new Error('reset called'));
             }
         }
         this.observers = [];

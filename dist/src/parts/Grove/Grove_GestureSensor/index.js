@@ -6,14 +6,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_GestureSensor {
     constructor() {
-        this.GESTURE_RIGHT = "GESTURE_RIGHT";
-        this.GESTURE_LEFT = "GESTURE_LEFT";
-        this.GESTURE_UP = "GESTURE_UP";
-        this.GESTURE_DOWN = "GESTURE_DOWN";
-        this.GESTURE_FORWARD = "GESTURE_FORWARD";
-        this.GESTURE_BACKWARD = "GESTURE_BACKWARD";
-        this.GESTURE_CLOCKWISE = "GESTURE_CLOCKWISE";
-        this.GESTURE_COUNT_CLOCKWISE = "GESTURE_COUNT_CLOCKWISE";
+        this.GESTURE_RIGHT = 'GESTURE_RIGHT';
+        this.GESTURE_LEFT = 'GESTURE_LEFT';
+        this.GESTURE_UP = 'GESTURE_UP';
+        this.GESTURE_DOWN = 'GESTURE_DOWN';
+        this.GESTURE_FORWARD = 'GESTURE_FORWARD';
+        this.GESTURE_BACKWARD = 'GESTURE_BACKWARD';
+        this.GESTURE_CLOCKWISE = 'GESTURE_CLOCKWISE';
+        this.GESTURE_COUNT_CLOCKWISE = 'GESTURE_COUNT_CLOCKWISE';
         this.ic2Address = 0x73;
         this.PAJ7620_ADDR_BASE = 0x00;
         this.PAJ7620_REGITER_BANK_SEL = this.PAJ7620_ADDR_BASE + 0xef;
@@ -249,43 +249,44 @@ class Grove_GestureSensor {
             [0x7d, 0x03],
             [0x7e, 0x01],
         ];
-        this.keys = ["vcc", "gnd", "sda", "scl", "i2c", "grove"];
+        this.keys = ['vcc', 'gnd', 'sda', 'scl', 'i2c', 'grove'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "Grove_GestureSensor",
+            name: 'Grove_GestureSensor',
         };
     }
     onchange(value) { }
-    async wired(obniz) {
+    wired(obniz) {
         this.obniz = obniz;
         const speed = 400000;
         if (this.params.grove) {
-            this.i2c = this.params.grove.getI2c(speed, "5v");
+            this.i2c = this.params.grove.getI2c(speed, '5v');
         }
         else {
-            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-            await obniz.wait(500);
-            this.params.mode = "master";
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+            this.params.mode = 'master';
             this.params.clock = speed;
-            this.params.pull = "5v";
+            this.params.pull = '5v';
             this.i2c = this.obniz.getI2CWithConfig(this.params);
         }
         this.i2c.onerror = (err) => {
             // console.log('Error:', err);
         };
         // await obniz.wait(700);
+        this.initWait();
+    }
+    async initWait() {
         // wakeup check
-        await this.checkWakeUp();
+        await this.checkWakeUpWait();
         // initRegister
-        await this.initRegister();
+        await this.initRegisterWait();
         while (true) {
             // get data
             this.i2c.write(this.ic2Address, [0x43]);
             const resArray = await this.i2c.readWait(this.ic2Address, 1);
             const res = resArray[0];
-            // センサーの上を、上下左右に手を通過させると反応します。
             if (this.onchange) {
                 if (this.GES_RIGHT_FLAG === res) {
                     // console.log("GES_RIGHT_FLAG");
@@ -320,13 +321,15 @@ class Grove_GestureSensor {
                     this.onchange(this.GESTURE_COUNT_CLOCKWISE);
                 }
             }
-            await obniz.wait(1000);
+            await this.obniz.wait(1000);
         }
     }
-    async checkWakeUp() {
+    async checkWakeUpWait() {
         // wakeup check
-        this.i2c.write(this.ic2Address, [this.PAJ7620_REGITER_BANK_SEL, this.PAJ7620_BANK0]);
-        // 3.5.0 以降は try catch で捕らえる
+        this.i2c.write(this.ic2Address, [
+            this.PAJ7620_REGITER_BANK_SEL,
+            this.PAJ7620_BANK0,
+        ]);
         let res = [0, 0];
         try {
             res = await this.i2c.readWait(this.ic2Address, 1);
@@ -334,21 +337,26 @@ class Grove_GestureSensor {
         catch (e) {
             // console.log(e);
         }
-        // 3.4.0、3.4.1 までは値が取れてうまくいく。3.5.0以降は上記の try catch で捕らえる。
         if (res[0] === 0x20) {
             // console.log("wake-up finish.");
         }
     }
-    async initRegister() {
+    async initRegisterWait() {
         // console.log("initRegister!!");
         for (let i = 0; i < this.initRegisterArray.length; i++) {
             this.i2c.write(this.ic2Address, this.initRegisterArray[i]);
         }
         // Set up gaming mode.
-        this.i2c.write(this.ic2Address, [this.PAJ7620_REGITER_BANK_SEL, this.PAJ7620_BANK1]);
+        this.i2c.write(this.ic2Address, [
+            this.PAJ7620_REGITER_BANK_SEL,
+            this.PAJ7620_BANK1,
+        ]);
         // near mode 240 fps
         this.i2c.write(this.ic2Address, [0x65, 0x12]);
-        this.i2c.write(this.ic2Address, [this.PAJ7620_REGITER_BANK_SEL, this.PAJ7620_BANK0]);
+        this.i2c.write(this.ic2Address, [
+            this.PAJ7620_REGITER_BANK_SEL,
+            this.PAJ7620_BANK0,
+        ]);
     }
 }
 exports.default = Grove_GestureSensor;

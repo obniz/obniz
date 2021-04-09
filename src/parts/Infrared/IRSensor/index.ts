@@ -3,8 +3,10 @@
  * @module Parts.IRSensor
  */
 
-import Obniz from "../../../obniz";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface IRSensorOptions {
   output: number;
@@ -15,7 +17,7 @@ export interface IRSensorOptions {
 export default class IRSensor implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "IRSensor",
+      name: 'IRSensor',
     };
   }
 
@@ -34,15 +36,15 @@ export default class IRSensor implements ObnizPartsInterface {
   protected obniz!: Obniz;
 
   constructor() {
-    this.keys = ["output", "vcc", "gnd"];
-    this.requiredKeys = ["output"];
+    this.keys = ['output', 'vcc', 'gnd'];
+    this.requiredKeys = ['output'];
   }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     if (!obniz.isValidIO(this.params.output)) {
-      throw new Error("output is not valid io");
+      throw new Error('output is not valid io');
     }
   }
 
@@ -51,7 +53,7 @@ export default class IRSensor implements ObnizPartsInterface {
       this.ondetect = callback;
     }
     if (this.output_pullup) {
-      this.obniz.getIO(this.params.output).pull("5v");
+      this.obniz.getIO(this.params.output).pull('5v');
     }
 
     this.obniz.logicAnalyzer!.start({
@@ -62,7 +64,7 @@ export default class IRSensor implements ObnizPartsInterface {
       triggerValueSamples: this.triggerSampleCount,
     });
     this.obniz.logicAnalyzer!.onmeasured = (levels: number[]) => {
-      if (typeof this.ondetect === "function") {
+      if (typeof this.ondetect === 'function') {
         if (this.dataInverted) {
           const arr = new Uint8Array(levels);
           for (let i = 0; i < arr.length; i++) {

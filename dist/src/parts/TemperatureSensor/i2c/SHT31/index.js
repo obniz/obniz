@@ -7,8 +7,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class SHT31 {
     constructor() {
         this.requiredKeys = [];
-        this.keys = ["vcc", "sda", "scl", "gnd", "adr", "addressmode", "i2c", "pull", "address"];
-        this.ioKeys = ["vcc", "sda", "scl", "gnd", "adr"];
+        this.keys = [
+            'vcc',
+            'sda',
+            'scl',
+            'gnd',
+            'adr',
+            'addressmode',
+            'i2c',
+            'pull',
+            'address',
+        ];
+        this.ioKeys = ['vcc', 'sda', 'scl', 'gnd', 'adr'];
         this.commands = {};
         this.commands.softReset = [0x30, 0xa2];
         this.commands.highRepeatStreach = [0x2c, 0x06];
@@ -28,12 +38,12 @@ class SHT31 {
     }
     static info() {
         return {
-            name: "SHT31",
+            name: 'SHT31',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.address = this.params.address || 0x44;
         if (this.params.addressmode) {
             this.io_adr = obniz.getIO(this.params.adr);
@@ -42,17 +52,23 @@ class SHT31 {
                 this.address = 0x44;
             }
             else if (this.params.addressmode === 5) {
-                this.io_adr.pull("5v");
+                this.io_adr.pull('5v');
                 this.address = 0x45;
             }
         }
         this.params.clock = this.params.clock || 100 * 1000; // for i2c
-        this.params.mode = this.params.mode || "master"; // for i2c
-        this.params.pull = this.params.pull || "5v"; // for i2c
+        this.params.mode = this.params.mode || 'master'; // for i2c
+        this.params.pull = this.params.pull || '5v'; // for i2c
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.i2c.write(this.address, this.commands.softReset);
     }
-    async getData() {
+    /**
+     * @deprecated
+     */
+    getData() {
+        return this.getDataWait();
+    }
+    async getDataWait() {
         this.i2c.write(this.address, this.commands.highRepeat);
         await this.obniz.wait(this.waitTime.highRepeat);
         return await this.i2c.readWait(this.address, 6);
@@ -67,7 +83,7 @@ class SHT31 {
         return (await this.getAllWait()).humidity;
     }
     async getAllWait() {
-        const ret = await this.getData();
+        const ret = await this.getDataWait();
         const tempBin = ret[0] * 256 + ret[1];
         const temperature = -45 + 175 * (tempBin / (65536 - 1));
         const humdBin = ret[3] * 256 + ret[4];

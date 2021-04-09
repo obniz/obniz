@@ -3,25 +3,25 @@
  * @module Parts.HEM_6233T
  */
 
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface from "../../../obniz/ObnizPartsBleInterface";
-import { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
+import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 
 export interface HEM_6233TOptions {}
 
 export type HEM_6233TMesurementStatus =
-  | "BodyMovementDetection"
-  | "CuffFitDetection"
-  | "IrregularPulseDetection"
-  | "PulseRateRangeDetection"
-  | "MeasurementPositionDetection";
+  | 'BodyMovementDetection'
+  | 'CuffFitDetection'
+  | 'IrregularPulseDetection'
+  | 'PulseRateRangeDetection'
+  | 'MeasurementPositionDetection';
 
 export interface HEM_6233TResult {
   bloodPressure?: {
     systolic: number;
     diastolic: number;
     meanArterialPressure: number;
-    unit: "mmHg";
+    unit: 'mmHg';
   };
   date?: {
     year: number;
@@ -39,12 +39,12 @@ export interface HEM_6233TResult {
 export default class HEM_6233T implements ObnizPartsBleInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "HEM_6233T",
+      name: 'HEM_6233T',
     };
   }
 
   public static isDevice(peripheral: BleRemotePeripheral) {
-    if (peripheral.localName && peripheral.localName.startsWith("BLESmart_")) {
+    if (peripheral.localName && peripheral.localName.startsWith('BLESmart_')) {
       return true;
     }
     return false;
@@ -56,7 +56,10 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
   public _peripheral: BleRemotePeripheral | null = null;
   private _timezoneOffsetMinute: number;
 
-  constructor(peripheral: BleRemotePeripheral | null, timezoneOffsetMinute: number) {
+  constructor(
+    peripheral: BleRemotePeripheral | null,
+    timezoneOffsetMinute: number
+  ) {
     // if (peripheral && !HEM_6233T.isDevice(peripheral)) {
     //   throw new Error("peripheral is not HEM_6233T");
     // }
@@ -66,7 +69,7 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
 
   public async getDataWait(pairingKeys?: string): Promise<HEM_6233TResult[]> {
     if (!this._peripheral) {
-      throw new Error("HEM_6233T is not find.");
+      throw new Error('HEM_6233T is not find.');
     }
     await this._peripheral.connectWait({
       autoDiscovery: true,
@@ -80,8 +83,8 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
       this._peripheral!.ondisconnect = (reason: any) => {
         resolve(results);
       };
-      await this.subscribeWait("1805", "2A2B"); // current time
-      await this.subscribeWait("180F", "2A19", async () => {
+      await this.subscribeWait('1805', '2A2B'); // current time
+      await this.subscribeWait('180F', '2A19', async () => {
         // send command (unknown meaning)
         // In the command meaning, it should send to central from peripheral, but send to peripheral...?
         this._peripheral!.obnizBle.hci.write([
@@ -111,8 +114,8 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
 
         this._writeTimeCharWait(this._timezoneOffsetMinute);
       }); // battery Level
-      await this.subscribeWait("1810", "2A35", async (data: number[]) => {
-        console.error("SUCCESS", data);
+      await this.subscribeWait('1810', '2A35', async (data: number[]) => {
+        console.error('SUCCESS', data);
         results.push(this._analyzeData(data));
       }); // blood pressure
     });
@@ -120,9 +123,11 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
 
   public async subscribeWait(service: string, char: string, callback?: any) {
     if (!this._peripheral) {
-      throw new Error("HEM_6233T is not find.");
+      throw new Error('HEM_6233T is not find.');
     }
-    const characteristics = this._peripheral.getService(service)!.getCharacteristic(char)!;
+    const characteristics = this._peripheral
+      .getService(service)!
+      .getCharacteristic(char)!;
     await characteristics.registerNotifyWait(async (data) => {
       if (callback) {
         callback(data);
@@ -132,10 +137,12 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
 
   public async _writeTimeCharWait(timeOffsetMinute: number) {
     if (!this._peripheral) {
-      throw new Error("HEM_6233T is not find.");
+      throw new Error('HEM_6233T is not find.');
     }
 
-    const timeChar = this._peripheral.getService("1805")!.getCharacteristic("2A2B")!;
+    const timeChar = this._peripheral
+      .getService('1805')!
+      .getCharacteristic('2A2B')!;
     const date = new Date();
     date.setTime(Date.now() + 1000 * 60 * timeOffsetMinute);
 
@@ -186,7 +193,7 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
       systolic: this._readFloatLE(buf, index) * scale,
       diastolic: this._readFloatLE(buf, index + 2) * scale,
       meanArterialPressure: this._readFloatLE(buf, index + 4) * scale,
-      unit: "mmHg",
+      unit: 'mmHg',
     };
     index += 6;
 
@@ -213,11 +220,11 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
     }
     if (flags & 0x10) {
       const statusFlag: { [_: number]: HEM_6233TMesurementStatus } = {
-        0x01: "BodyMovementDetection",
-        0x02: "CuffFitDetection",
-        0x04: "IrregularPulseDetection",
-        0x08: "PulseRateRangeDetection",
-        0x10: "MeasurementPositionDetection",
+        0x01: 'BodyMovementDetection',
+        0x02: 'CuffFitDetection',
+        0x04: 'IrregularPulseDetection',
+        0x08: 'PulseRateRangeDetection',
+        0x10: 'MeasurementPositionDetection',
       };
       const mesurementStatus = buf.readUInt16LE(index);
       index++;

@@ -7,25 +7,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class UT201BLE {
     constructor(peripheral, timezoneOffsetMinute) {
         if (!peripheral || !UT201BLE.isDevice(peripheral)) {
-            throw new Error("peripheral is not UT201BLE");
+            throw new Error('peripheral is not UT201BLE');
         }
         this._peripheral = peripheral;
         this._timezoneOffsetMinute = timezoneOffsetMinute;
     }
     static info() {
         return {
-            name: "UT201BLE",
+            name: 'UT201BLE',
         };
     }
     static isDevice(peripheral) {
-        return peripheral.localName && peripheral.localName.startsWith("A&D_UT201BLE_");
+        return (peripheral.localName && peripheral.localName.startsWith('A&D_UT201BLE_'));
     }
     async pairingWait() {
         if (!this._peripheral) {
-            throw new Error("UT201BLE not found");
+            throw new Error('UT201BLE not found');
         }
         this._peripheral.ondisconnect = (reason) => {
-            if (typeof this.ondisconnect === "function") {
+            if (typeof this.ondisconnect === 'function') {
                 this.ondisconnect(reason);
             }
         };
@@ -38,13 +38,13 @@ class UT201BLE {
             },
         });
         const { timeChar, customServiceChar } = this._getChars();
-        await this._writeTimeChar(this._timezoneOffsetMinute);
+        await this._writeTimeCharWait(this._timezoneOffsetMinute);
         await customServiceChar.writeWait([2, 1, 3]); // disconnect req
         return key;
     }
     async getDataWait(pairingKeys) {
         if (!this._peripheral) {
-            throw new Error("UT201BLE not found");
+            throw new Error('UT201BLE not found');
         }
         await this._peripheral.connectWait({
             pairingOption: {
@@ -53,15 +53,15 @@ class UT201BLE {
         });
         return await new Promise(async (resolve, reject) => {
             if (!this._peripheral) {
-                throw new Error("UT201BLE not found");
+                throw new Error('UT201BLE not found');
             }
             const results = [];
-            const { temperatureMeasurementChar, timeChar, customServiceChar } = this._getChars();
+            const { temperatureMeasurementChar, timeChar, customServiceChar, } = this._getChars();
             this._peripheral.ondisconnect = (reason) => {
                 resolve(results);
             };
             await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
-            await this._writeTimeChar(this._timezoneOffsetMinute);
+            await this._writeTimeCharWait(this._timezoneOffsetMinute);
             await temperatureMeasurementChar.registerNotifyWait((data) => {
                 results.push(this._analyzeData(data));
             });
@@ -105,41 +105,43 @@ class UT201BLE {
         }
         if (flags & 0x04) {
             const types = [
-                "unknown",
-                "Armpit",
-                "Body",
-                "Ear",
-                "Finger",
-                "Gastro-intestinal Tract",
-                "Mouth",
-                "Rectum",
-                "Toe",
-                "Tympanum",
+                'unknown',
+                'Armpit',
+                'Body',
+                'Ear',
+                'Finger',
+                'Gastro-intestinal Tract',
+                'Mouth',
+                'Rectum',
+                'Toe',
+                'Tympanum',
             ];
             const value = buf.readUInt8(index);
             index++;
-            result.temperatureType = types[value] || "unknown";
+            result.temperatureType = types[value] || 'unknown';
         }
         return result;
     }
     _getChars() {
         if (!this._peripheral) {
-            throw new Error("UT201BLE not found");
+            throw new Error('UT201BLE not found');
         }
         const temperatureMeasurementChar = this._peripheral
-            .getService("1809")
-            .getCharacteristic("2A1C");
-        const timeChar = this._peripheral.getService("1809").getCharacteristic("2A08");
+            .getService('1809')
+            .getCharacteristic('2A1C');
+        const timeChar = this._peripheral
+            .getService('1809')
+            .getCharacteristic('2A08');
         const customServiceChar = this._peripheral
-            .getService("233bf0005a341b6d975c000d5690abe4")
-            .getCharacteristic("233bf0015a341b6d975c000d5690abe4");
+            .getService('233bf0005a341b6d975c000d5690abe4')
+            .getCharacteristic('233bf0015a341b6d975c000d5690abe4');
         return {
             temperatureMeasurementChar,
             timeChar,
             customServiceChar,
         };
     }
-    async _writeTimeChar(timeOffsetMinute) {
+    async _writeTimeCharWait(timeOffsetMinute) {
         const { timeChar } = this._getChars();
         const date = new Date();
         date.setTime(Date.now() + 1000 * 60 * timeOffsetMinute);

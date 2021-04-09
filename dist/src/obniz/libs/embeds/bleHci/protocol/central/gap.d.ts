@@ -3,15 +3,15 @@
  *
  * @ignore
  */
-import EventEmitter from "eventemitter3";
-import Hci from "../hci";
-declare type GapEventTypes = "scanStop" | "discover";
+import EventEmitter from 'eventemitter3';
+import Hci from '../hci';
+declare type GapEventTypes = 'scanStop' | 'discover';
 /**
  * @ignore
  */
 declare class Gap extends EventEmitter<GapEventTypes> {
     _hci: Hci;
-    _scanState: null | "starting" | "started" | "stopping" | "stopped";
+    _scanState: null | 'starting' | 'started' | 'stopping' | 'stopped';
     _scanFilterDuplicates: null | boolean;
     _discoveries: any;
     constructor(hci: Hci);

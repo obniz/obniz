@@ -10,21 +10,21 @@ class SainSmartTFT18LCD {
         this.width = 0;
         this.height = 0;
         this.writeBuffer = [];
-        this.keys = ["vcc", "gnd", "scl", "sda", "dc", "res", "cs"];
-        this.requiredKeys = ["scl", "sda", "dc", "res", "cs"];
+        this.keys = ['vcc', 'gnd', 'scl', 'sda', 'dc', 'res', 'cs'];
+        this.requiredKeys = ['scl', 'sda', 'dc', 'res', 'cs'];
         this.displayIoNames = {
-            vcc: "vcc",
-            gnd: "gnd",
-            scl: "scl",
-            sda: "sda",
-            dc: "dc",
-            res: "res",
-            cs: "cs",
+            vcc: 'vcc',
+            gnd: 'gnd',
+            scl: 'scl',
+            sda: 'sda',
+            dc: 'dc',
+            res: 'res',
+            cs: 'cs',
         };
     }
     static info() {
         return {
-            name: "SainSmartTFT18LCD",
+            name: 'SainSmartTFT18LCD',
         };
     }
     wired(obniz) {
@@ -33,12 +33,12 @@ class SainSmartTFT18LCD {
         this.io_dc = obniz.getIO(this.params.dc);
         this.io_res = obniz.getIO(this.params.res);
         this.io_cs = obniz.getIO(this.params.cs);
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.params.frequency = 16 * 1000 * 1000; // 16MHz
-        this.params.mode = "master";
+        this.params.mode = 'master';
         this.params.clk = this.params.scl;
         this.params.mosi = this.params.sda;
-        this.params.drive = "3v";
+        this.params.drive = '3v';
         this.spi = this.obniz.getSpiWithConfig(this.params);
         this.io_dc.output(true);
         this.io_cs.output(false);
@@ -50,7 +50,7 @@ class SainSmartTFT18LCD {
     }
     print_debug(v) {
         if (this.debugprint) {
-            console.log("SainSmartTFT18LCD: " + Array.prototype.slice.call(arguments).join(""));
+            console.log('SainSmartTFT18LCD: ' + Array.prototype.slice.call(arguments).join(''));
         }
     }
     _deadSleep(waitMsec) {
@@ -531,11 +531,11 @@ class SainSmartTFT18LCD {
         //  wrap = wrap || true;
         for (let n = 0; n < string.length; n++) {
             const c = string.charAt(n);
-            if (c === "\n") {
+            if (c === '\n') {
                 y += size * 8;
                 x = 0;
             }
-            else if (c === "\r") {
+            else if (c === '\r') {
                 // skip em
             }
             else {

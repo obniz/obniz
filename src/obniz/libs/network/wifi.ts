@@ -3,8 +3,8 @@
  * @module ObnizCore.Components
  */
 
-import semver from "semver";
-import Obniz from "../../index";
+import semver from 'semver';
+import Obniz from '../../index';
 
 export default class WiFi {
   private Obniz: Obniz;
@@ -25,7 +25,7 @@ export default class WiFi {
    *
    */
   public scanWait(): Promise<any> {
-    if (semver.lt(this.Obniz.firmware_ver!, "3.3.0")) {
+    if (semver.lt(this.Obniz.firmware_ver!, '3.3.0')) {
       throw new Error(`Please update obniz firmware >= 3.3.0`);
     }
 

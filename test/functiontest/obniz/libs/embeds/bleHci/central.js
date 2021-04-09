@@ -6,26 +6,26 @@ let testUtil = require('../../../../testUtil.js');
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
-describe('ble-hci-central', function() {
-  beforeEach(function(done) {
+describe('ble-hci-central', function () {
+  beforeEach(function (done) {
     return testUtil.setupObnizPromise(this, done, { __firmware_ver: '3.0.0' });
   });
 
-  afterEach(function(done) {
+  afterEach(function (done) {
     return testUtil.releaseObnizePromise(this, done);
   });
 
-  it('init', async function() {
+  it('init', async function () {
     await _initWaitTestWait(this.obniz);
   });
 
-  it('init twice', async function() {
+  it('init twice', async function () {
     await _initWaitTestWait(this.obniz);
     testUtil.closeAndReconnectObnizWait(this);
     await _initWaitTestWait(this.obniz);
   });
 
-  it('write', function() {
+  it('write', function () {
     let commands = [
       [0x01, 0x03, 0x0c, 0x0], // reset
     ];
@@ -45,7 +45,7 @@ describe('ble-hci-central', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('read', function() {
+  it('read', function () {
     let stub = sinon.stub();
 
     this.obniz.ble.hci.onread = stub;
@@ -63,12 +63,12 @@ describe('ble-hci-central', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('scan', async function() {
+  it('scan', async function () {
     await _initWaitTestWait(this.obniz);
     await _scanStartTestWait(this.obniz);
   });
 
-  it('scan filter', async function() {
+  it('scan filter', async function () {
     this.timeout(10 * 1000);
     await _initWaitTestWait(this.obniz);
 
@@ -155,7 +155,7 @@ describe('ble-hci-central', function() {
     /* eslint-enable */
   });
 
-  it('connect', async function() {
+  it('connect', async function () {
     this.timeout(10 * 1000);
     await _initWaitTestWait(this.obniz);
 

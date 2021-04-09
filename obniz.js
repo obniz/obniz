@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.14.0",
+  "version": "3.15.0-alpha.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -110,7 +110,7 @@ module.exports = {
   },
   "engineStrict": true,
   "scripts": {
-    "test": "npm run tstest && nyc --reporter=text --reporter=html mocha --exit $NODE_DEBUG_OPTION  ./test/functiontest/index.js -b 1",
+    "test": "npm run tstest && npm run lint-test &&  nyc --reporter=text --reporter=html mocha --exit $NODE_DEBUG_OPTION  ./test/functiontest/index.js -b 1",
     "testOnlyNodejs": "NO_BROWSER_TEST=1 npm test",
     "buildAndtest": "npm run build && npm test",
     "tstest": "mocha --require espower-typescript/guess test/functiontest/**/*.ts",
@@ -118,23 +118,25 @@ module.exports = {
     "realtest": "mocha $NODE_DEBUG_OPTION ./test/realtest/index.js",
     "realtest-debug": "DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./test/realtest/index.js",
     "local": "gulp --gulpfile devtools/_tools/server.js --cwd .",
+    "watch": "tsc -w & webpack --watch --config ./devtools/webpack.config.js  ",
     "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build ",
     "doc": "typedoc --includes ./src/ --theme ./devtools/typedocTheme --stripInternal --readme none --out docs/obnizjs --excludePrivate --excludeProtected  --media ./docs/images",
     "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
     "version": "npm run build && npm run doc && git add docs && git add obniz.js",
-    "lint": "npm run lint-ts && npm run lint-js",
-    "lint-js": "eslint --fix . --rulesdir devtools/eslint/rule",
-    "lint-ts": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' ",
+    "lint": "eslint --fix . --rulesdir devtools/eslint/rule --quiet",
+    "lint-js": "eslint --fix './**/*.js' --rulesdir devtools/eslint/rule --quiet",
+    "lint-ts": "eslint --fix 'src/**/*.ts' 'test/**/*.ts' --rulesdir devtools/eslint/rule  --quiet",
+    "lint-test": "mocha $NODE_DEBUG_OPTION ./devtools/eslint/test/**/*.js",
     "precommit": "lint-staged && npm run build && git add dist && git add obniz.js",
     "clean": "rimraf ./dist ./obniz.js ./obniz.d.ts"
   },
   "lint-staged": {
-    "src/**/*.js": [
-      "eslint --rulesdir devtools/eslint/rule --fix ",
+    "src/**/*.ts": [
+      "eslint --fix  --rulesdir devtools/eslint/rule --quiet",
       "git add"
     ],
-    "src/**/*.ts": [
-      "tslint -c tslint.json --fix ",
+    "test/**/*.ts": [
+      "eslint --fix  --rulesdir devtools/eslint/rule --quiet",
       "git add"
     ]
   },
@@ -149,23 +151,36 @@ module.exports = {
     "@types/chai": "^4.2.7",
     "@types/chai-like": "^1.1.0",
     "@types/dialog-polyfill": "^0.5.0",
+    "@types/eventemitter3": "^1.2.0",
     "@types/events": "^3.0.0",
     "@types/glob": "^7.1.1",
+    "@types/js-yaml": "^3.12.1",
     "@types/minimatch": "^3.0.3",
     "@types/mocha": "^5.2.7",
+    "@types/node": "^13.1.5",
+    "@types/node-dir": "0.0.33",
+    "@types/node-fetch": "^2.5.4",
+    "@types/semver": "^6.2.0",
     "@types/sinon": "^7.5.1",
+    "@types/tv4": "^1.2.29",
     "@types/webpack-env": "^1.15.0",
     "@types/window-or-global": "^1.0.0",
+    "@types/ws": "^6.0.4",
+    "@typescript-eslint/eslint-plugin": "^4.15.2",
+    "@typescript-eslint/eslint-plugin-tslint": "^4.15.2",
+    "@typescript-eslint/parser": "^4.15.2",
     "chai": "^4.2.0",
     "chai-like": "^1.1.1",
     "child_process": "^1.0.2",
     "concat-with-sourcemaps": "^1.1.0",
     "dialog-polyfill": "^0.5.0",
     "ejs": "^2.6.2",
-    "eslint": "^5.16.0",
+    "eslint": "^7.4.0",
     "eslint-config-prettier": "^3.6.0",
     "eslint-plugin-jasmine": "^2.10.1",
-    "eslint-plugin-prettier": "^2.7.0",
+    "eslint-plugin-jsdoc": "^32.2.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint-plugin-prettier": "^3.3.1",
     "espower-typescript": "^9.0.2",
     "express": "^4.17.1",
     "get-port": "^4.0.0",
@@ -183,6 +198,7 @@ module.exports = {
     "husky": "^0.14.3",
     "json-loader": "^0.5.7",
     "lint-staged": "^9.4.1",
+    "lodash": "^4.17.21",
     "mocha": "^5.2.0",
     "mocha-chrome": "^2.2.0",
     "mocha-directory": "^2.3.0",
@@ -194,14 +210,12 @@ module.exports = {
     "path": "^0.12.7",
     "plugin-error": "^1.0.1",
     "power-assert": "^1.6.1",
-    "prettier": "^1.14.3",
+    "prettier": "^2.2.1",
     "raw-loader": "^4.0.0",
     "rimraf": "^3.0.2",
     "sinon": "^7.5.0",
     "text-encoding": "^0.7.0",
     "through2": "^2.0.3",
-    "tslint": "^5.20.1",
-    "tslint-plugin-prettier": "^2.1.0",
     "typedoc": "^0.16.9",
     "typedoc-plugin-external-module-name": "^3.0.0",
     "typedoc-plugin-internal-external": "^2.1.1",
@@ -214,14 +228,6 @@ module.exports = {
     "yaml-loader": "^0.5.0"
   },
   "dependencies": {
-    "@types/eventemitter3": "^1.2.0",
-    "@types/js-yaml": "^3.12.1",
-    "@types/node": "^13.1.5",
-    "@types/node-dir": "0.0.33",
-    "@types/node-fetch": "^2.5.4",
-    "@types/semver": "^6.2.0",
-    "@types/tv4": "^1.2.29",
-    "@types/ws": "^6.0.4",
     "eventemitter3": "^3.1.2",
     "js-yaml": "^3.13.1",
     "node-dir": "^0.1.17",
@@ -1788,6 +1794,7 @@ const ObnizDevice_1 = __importDefault(__webpack_require__("./dist/src/obniz/Obni
 class Obniz extends ObnizDevice_1.default {
     /**
      * obniz REST api class
+     *
      * @returns {ObnizApi}
      */
     static get api() {
@@ -1795,6 +1802,7 @@ class Obniz extends ObnizDevice_1.default {
     }
     /**
      * App Support class
+     *
      * @returns {ObnizApp}
      */
     static get App() {
@@ -1825,6 +1833,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const node_fetch_1 = __importDefault(__webpack_require__("./node_modules/node-fetch/browser.js"));
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const package_1 = __importDefault(__webpack_require__("./dist/package.js"));
 class ObnizApi {
@@ -1833,40 +1842,42 @@ class ObnizApi {
         options = options || {};
         this.options = {
             access_token: options.access_token || null,
-            obniz_server: options.obniz_server || "https://obniz.io",
+            obniz_server: options.obniz_server || 'https://obniz.io',
         };
-        this.urlBase = this.options.obniz_server + "/obniz/" + this.id;
+        this.urlBase = this.options.obniz_server + '/obniz/' + this.id;
     }
     /**
      * obniz.js major version string
      */
     get apiVersion() {
         const versionString = package_1.default.version;
-        return versionString.split(".").shift();
+        return versionString.split('.').shift();
     }
     /**
      * Get device is online or offline
+     *
      * @param callback with result
      */
     getState(callback) {
-        return this.post("/state", null, callback);
+        return this.postWait('/state', null, callback);
     }
     /**
      * Get device is online or offline
      */
     async getStateWait() {
-        const json = await this.post("/state", null);
+        const json = await this.postWait('/state', null);
         return json;
     }
     /**
      * post data via obniz REST api
+     *
      * @param json
      * @param callback
      */
-    async postJson(json, callback) {
-        return await this.post("/api/" + this.apiVersion, json, callback); // 1 is api version
+    async postJsonWait(json, callback) {
+        return await this.postWait('/api/' + this.apiVersion, json, callback); // 1 is api version
     }
-    async post(path, params, callback = null) {
+    async postWait(path, params, callback = null) {
         const url = this.urlBase + path;
         // let query = [];
         // query.push("XXX");
@@ -1874,12 +1885,12 @@ class ObnizApi {
         //   url += "?" + query.join("&");
         // }
         const headers = {};
-        headers["Content-Type"] = "application/json";
+        headers['Content-Type'] = 'application/json';
         if (this.options.access_token) {
-            headers.authorization = "Bearer " + this.options.access_token;
+            headers.authorization = 'Bearer ' + this.options.access_token;
         }
         const fetchParams = {
-            method: "POST",
+            method: 'POST',
             headers,
         };
         if (params) {
@@ -1887,7 +1898,7 @@ class ObnizApi {
         }
         const res = await node_fetch_1.default(url, fetchParams);
         const json = await res.json();
-        if (typeof callback === "function") {
+        if (typeof callback === 'function') {
             callback(json);
         }
         return json;
@@ -1900,12 +1911,12 @@ class ObnizApi {
         //   url += "?" + query.join("&");
         // }
         const headers = {};
-        headers["Content-Type"] = "application/json";
+        headers['Content-Type'] = 'application/json';
         if (this.options.access_token) {
-            headers.authorization = "Bearer " + this.options.access_token;
+            headers.authorization = 'Bearer ' + this.options.access_token;
         }
         const fetchParams = {
-            method: "GET",
+            method: 'GET',
             headers,
         };
         return node_fetch_1.default(url, fetchParams)
@@ -1913,7 +1924,7 @@ class ObnizApi {
             return res.json();
         })
             .then((json) => {
-            if (typeof callback === "function") {
+            if (typeof callback === 'function') {
                 callback(json);
             }
             return new Promise((resolve) => {
@@ -1942,7 +1953,7 @@ class ObnizApp {
      * Determine obniz.js is running on obniz Cloud or not.
      */
     static isCloudRunning() {
-        return typeof done === "function";
+        return typeof done === 'function';
     }
     /**
      * request object on obniz Cloud execution for webhook call.
@@ -1989,7 +2000,7 @@ class ObnizApp {
      * Configration by user for This App. Only Available for BrowserApp
      */
     static configs() {
-        if (typeof configs === "object") {
+        if (typeof configs === 'object') {
             return configs;
         }
         else {
@@ -2042,6 +2053,7 @@ class ObnizComponents extends ObnizParts_1.default {
     }
     /**
      * Output pin Vcc and Gnd
+     *
      * @param vcc
      * @param gnd
      * @param drive
@@ -2062,43 +2074,46 @@ class ObnizComponents extends ObnizParts_1.default {
     }
     /**
      * Get IO module from pin no
+     *
      * @param io
      */
     getIO(io) {
         if (!this.isValidIO(io)) {
-            throw new Error("io " + io + " is not valid io");
+            throw new Error('io ' + io + ' is not valid io');
         }
-        return this["io" + io];
+        return this['io' + io];
     }
     /**
      * GET AD module from pin no
+     *
      * @param io
      */
     getAD(io) {
         if (!this.isValidIO(io)) {
-            throw new Error("ad " + io + " is not valid io");
+            throw new Error('ad ' + io + ' is not valid io');
         }
-        return this["ad" + io];
+        return this['ad' + io];
     }
     /**
      * It returns unused PWM module.
      */
     getFreePwm() {
-        return this._getFreePeripheralUnit("pwm");
+        return this._getFreePeripheralUnit('pwm');
     }
     /**
      * It returns unused I2C module.
      */
     getFreeI2C() {
-        return this._getFreePeripheralUnit("i2c");
+        return this._getFreePeripheralUnit('i2c');
     }
     /**
      * It returns setuped I2C module .
+     *
      * @param config
      */
     getI2CWithConfig(config) {
-        if (typeof config !== "object") {
-            throw new Error("getI2CWithConfig need config arg");
+        if (typeof config !== 'object') {
+            throw new Error('getI2CWithConfig need config arg');
         }
         if (config.i2c) {
             return config.i2c;
@@ -2111,15 +2126,16 @@ class ObnizComponents extends ObnizParts_1.default {
      * It returns unused SPI module.
      */
     getFreeSpi() {
-        return this._getFreePeripheralUnit("spi");
+        return this._getFreePeripheralUnit('spi');
     }
     /**
      * It returns setuped SPI module.
+     *
      * @param config
      */
     getSpiWithConfig(config) {
-        if (typeof config !== "object") {
-            throw new Error("getSpiWithConfig need config arg");
+        if (typeof config !== 'object') {
+            throw new Error('getSpiWithConfig need config arg');
         }
         if (config.spi) {
             return config.spi;
@@ -2132,19 +2148,20 @@ class ObnizComponents extends ObnizParts_1.default {
      * It returns unused UART module.
      */
     getFreeUart() {
-        return this._getFreePeripheralUnit("uart");
+        return this._getFreePeripheralUnit('uart');
     }
     /**
      * It returns unused TCP module.
      */
     getFreeTcp() {
-        return this._getFreePeripheralUnit("tcp");
+        return this._getFreePeripheralUnit('tcp');
     }
     hasExtraInterface(interfaceName) {
         return !!this.getExtraInterface(interfaceName);
     }
     getExtraInterface(interfaceName) {
-        if (this._hwDefinition.extraInterface && this._hwDefinition.extraInterface[interfaceName]) {
+        if (this._hwDefinition.extraInterface &&
+            this._hwDefinition.extraInterface[interfaceName]) {
             return this._hwDefinition.extraInterface[interfaceName];
         }
         return null;
@@ -2165,7 +2182,7 @@ class ObnizComponents extends ObnizParts_1.default {
         }
         this._hwDefinition = hw_1.default.getDefinitionFor(this.hw);
         if (!this._hwDefinition) {
-            throw new Error(`unkown hw ${this.hw}`);
+            throw new Error(`unkown hw ${this.hw || ''}`);
         }
         const hw_peripherals = this._hwDefinition.peripherals;
         this._hw_peripherals = hw_peripherals;
@@ -2223,7 +2240,7 @@ class ObnizComponents extends ObnizParts_1.default {
                     const Class = embeds_map[key];
                     this[key] = new Class(this, hw_embeds[key]);
                     this._allComponentKeys.push(key);
-                    if (typeof this[key].debugHandler === "function") {
+                    if (typeof this[key].debugHandler === 'function') {
                         this[key].debugHandler = (text) => {
                             this.print_debug(text);
                         };
@@ -2255,7 +2272,7 @@ class ObnizComponents extends ObnizParts_1.default {
         }
     }
     _resetComponents() {
-        this.print_debug("components state resets");
+        this.print_debug('components state resets');
         for (const key of this._allComponentKeys) {
             this[key]._reset();
         }
@@ -2271,8 +2288,8 @@ class ObnizComponents extends ObnizParts_1.default {
                 }
             }
             else {
-                if (key === "logicAnalyzer") {
-                    if (obj.hasOwnProperty("logic_analyzer")) {
+                if (key === 'logicAnalyzer') {
+                    if (obj.hasOwnProperty('logic_analyzer')) {
                         this.logicAnalyzer.notified(obj.logic_analyzer);
                     }
                     continue;
@@ -2309,7 +2326,7 @@ class ObnizComponents extends ObnizParts_1.default {
             if (key.indexOf(peripheral) === 0) {
                 /* "io" for "io0" */
                 const obj = this[key];
-                if (typeof obj === "object" && !obj.isUsed()) {
+                if (typeof obj === 'object' && !obj.isUsed()) {
                     obj.used = true;
                     return obj;
                 }
@@ -2348,7 +2365,7 @@ class ObnizConnection extends eventemitter3_1.default {
         this._userManualConnectionClose = false;
         this._repeatInterval = 0;
         this._lastDataReceivedAt = 0;
-        this.isNode = typeof window === "undefined";
+        this.isNode = typeof window === 'undefined';
         this.id = id;
         this.socket = null;
         this.socket_local = null;
@@ -2358,7 +2375,7 @@ class ObnizConnection extends eventemitter3_1.default {
         this._onConnectCalled = false;
         this.hw = undefined;
         this.firmware_ver = undefined;
-        this.connectionState = "closed"; // closed/connecting/connected/closing
+        this.connectionState = 'closed'; // closed/connecting/connected/closing
         this.bufferdAmoundWarnBytes = 10 * 1000 * 1000; // 10M bytes
         this._connectionRetryCount = 0;
         if (!options) {
@@ -2367,22 +2384,23 @@ class ObnizConnection extends eventemitter3_1.default {
         this.options = {
             binary: options.binary === false ? false : true,
             local_connect: options.local_connect === false ? false : true,
-            debug_dom_id: options.debug_dom_id || "obniz-debug",
+            debug_dom_id: options.debug_dom_id || 'obniz-debug',
             auto_connect: options.auto_connect === false ? false : true,
             access_token: options.access_token || null,
-            obniz_server: options.obniz_server || "wss://obniz.io",
+            obniz_server: options.obniz_server || 'wss://obniz.io',
             reset_obniz_on_ws_disconnection: options.reset_obniz_on_ws_disconnection === false ? false : true,
             obnizid_dialog: options.obnizid_dialog === false ? false : true,
         };
         if (this.options.binary) {
             this.wscommand = this.constructor.WSCommand;
-            const classes = this.constructor.WSCommand.CommandClasses;
+            const classes = this.constructor.WSCommand
+                .CommandClasses;
             this.wscommands = [];
             for (const class_name in classes) {
                 this.wscommands.push(new classes[class_name]({
                     hw: {
                         firmware: undefined,
-                        model: "obniz_board",
+                        model: 'obniz_board',
                     },
                     delegate: undefined,
                 }));
@@ -2407,7 +2425,7 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     static isIpAddress(str) {
         const regex = /^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$/;
-        return str.match(regex) !== null;
+        return regex.exec(str) !== null;
     }
     /**
      * With this you wait until the connection to obniz Board succeeds.
@@ -2462,7 +2480,7 @@ class ObnizConnection extends eventemitter3_1.default {
                 resolve(true);
                 return;
             }
-            this.once("connect", () => {
+            this.once('connect', () => {
                 resolve(true);
             });
             if (timeout) {
@@ -2471,7 +2489,7 @@ class ObnizConnection extends eventemitter3_1.default {
                 }, timeout * 1000);
             }
             if (!this.options.auto_connect) {
-                this.once("close", () => {
+                this.once('close', () => {
                     resolve(false);
                 });
                 this.connect();
@@ -2545,17 +2563,17 @@ class ObnizConnection extends eventemitter3_1.default {
             // Connecting or Connected
             this._userManualConnectionClose = true;
             const p = new Promise((resolve) => {
-                this.once("_close", resolve);
+                this.once('_close', resolve);
             });
-            this.connectionState = "closing";
-            this.socket.close(1000, "close");
+            this.connectionState = 'closing';
+            this.socket.close(1000, 'close');
             await p;
         }
         else if (this.socket && this.socket.readyState === 2) {
             // closing
             this._userManualConnectionClose = true;
             await new Promise((resolve) => {
-                this.once("_close", resolve);
+                this.once('_close', resolve);
             });
         }
         else {
@@ -2577,12 +2595,12 @@ class ObnizConnection extends eventemitter3_1.default {
         options = options || {};
         options.local_connect = options.local_connect !== false;
         options.connect_check = options.connect_check !== false;
-        if (options.connect_check && this.connectionState !== "connected") {
+        if (options.connect_check && this.connectionState !== 'connected') {
             throw new ObnizError_1.ObnizOfflineError();
         }
         try {
-            if (!obj || typeof obj !== "object") {
-                this.log("obnizjs. didnt send ", obj);
+            if (!obj || typeof obj !== 'object') {
+                this.log('obnizjs. didnt send ', obj);
                 return;
             }
             if (Array.isArray(obj)) {
@@ -2597,7 +2615,7 @@ class ObnizConnection extends eventemitter3_1.default {
             }
             let sendData = JSON.stringify([obj]);
             if (this.debugprint) {
-                this.print_debug("send: " + sendData);
+                this.print_debug('send: ' + sendData);
             }
             /* compress */
             if (this.wscommand && options.local_connect) {
@@ -2607,18 +2625,24 @@ class ObnizConnection extends eventemitter3_1.default {
                     if (compressed) {
                         sendData = compressed;
                         if (this.debugprintBinary) {
-                            this.log("binalized: " + new Uint8Array(compressed).toString());
+                            this.log('binalized: ' + new Uint8Array(compressed).toString());
                         }
                     }
                 }
                 catch (e) {
-                    this.error({ alert: "error", message: "------ errored json -------" });
-                    this.error(sendData);
+                    this.error({
+                        alert: 'error',
+                        message: '------ errored json -------',
+                    });
+                    this.error({
+                        alert: 'error',
+                        message: sendData,
+                    });
                     throw e;
                 }
             }
             /* queue sending */
-            if (typeof sendData === "string") {
+            if (typeof sendData === 'string') {
                 this._drainQueued();
                 this._sendRouted(sendData);
             }
@@ -2641,14 +2665,14 @@ class ObnizConnection extends eventemitter3_1.default {
      * @param msg
      */
     warning(msg) {
-        this.log("warning:" + msg);
+        this.log('warning:' + msg);
     }
     /**
      * @ignore
      * @param msg
      */
     error(msg) {
-        console.error(`[obniz ${this.id}] error:${msg}`);
+        console.error(`[obniz ${this.id}] error:${msg.message}`);
     }
     /**
      * @ignore
@@ -2664,7 +2688,7 @@ class ObnizConnection extends eventemitter3_1.default {
         if (!func) {
             return;
         }
-        if (typeof func !== "function") {
+        if (typeof func !== 'function') {
             return;
         }
         try {
@@ -2705,8 +2729,8 @@ class ObnizConnection extends eventemitter3_1.default {
         if (this.socket) {
             if (this.socket.readyState <= 1) {
                 // Connecting & Connected
-                this.connectionState = "closing";
-                this.socket.close(1000, "close");
+                this.connectionState = 'closing';
+                this.socket.close(1000, 'close');
             }
             this.clearSocket(this.socket);
             delete this.socket;
@@ -2714,10 +2738,10 @@ class ObnizConnection extends eventemitter3_1.default {
         this._onConnectCalled = false;
     }
     wsOnOpen() {
-        this.print_debug("ws connected");
+        this.print_debug('ws connected');
         this._connectionRetryCount = 0;
         // wait for {ws:{ready:true}} object
-        if (typeof this.onopen === "function") {
+        if (typeof this.onopen === 'function') {
             this.onopen(this);
         }
     }
@@ -2725,12 +2749,12 @@ class ObnizConnection extends eventemitter3_1.default {
         this._lastDataReceivedAt = new Date().getTime();
         try {
             let json;
-            if (typeof data === "string") {
+            if (typeof data === 'string') {
                 json = JSON.parse(data);
             }
             else if (this.wscommands) {
                 if (this.debugprintBinary) {
-                    this.log("binalized: " + new Uint8Array(data).toString());
+                    this.log('binalized: ' + new Uint8Array(data).toString());
                 }
                 json = this.binary2Json(data);
             }
@@ -2751,12 +2775,12 @@ class ObnizConnection extends eventemitter3_1.default {
         this.print_debug(`closed from remote event=${event}`);
         const beforeOnConnectCalled = this._onConnectCalled;
         this._close();
-        this.connectionState = "closed";
+        this.connectionState = 'closed';
         if (this._userManualConnectionClose) {
-            this.emit("_close", this);
+            this.emit('_close', this);
         }
         if (beforeOnConnectCalled === true) {
-            this.emit("close", this);
+            this.emit('close', this);
             this._runUserCreatedFunction(this.onclose, this);
         }
         if (!this._userManualConnectionClose) {
@@ -2785,7 +2809,7 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     wsOnUnexpectedResponse(req, res) {
         if (res && res.statusCode === 404) {
-            this.print_debug("obniz not online");
+            this.print_debug('obniz not online');
         }
         else {
             this.print_debug( true ? res.statusCode : undefined);
@@ -2797,41 +2821,41 @@ class ObnizConnection extends eventemitter3_1.default {
     wsconnect(desired_server) {
         let server = this.options.obniz_server;
         if (desired_server) {
-            server = "" + desired_server;
+            server = '' + desired_server;
         }
         if (this.socket && this.socket.readyState <= 1) {
             this._close();
         }
-        let url = server + "/obniz/" + this.id + "/ws/1";
+        let url = server + '/obniz/' + this.id + '/ws/1';
         if (this.constructor.isIpAddress(this.id)) {
             url = `ws://${this.id}/`;
         }
         const query = [];
         if (this.constructor.version) {
-            query.push("obnizjs=" + this.constructor.version);
+            query.push('obnizjs=' + this.constructor.version);
         }
         if (this.options.access_token) {
-            query.push("access_token=" + this.options.access_token);
+            query.push('access_token=' + this.options.access_token);
         }
         if (this.wscommand) {
-            query.push("accept_binary=true");
+            query.push('accept_binary=true');
         }
         if (query.length > 0) {
-            url += "?" + query.join("&");
+            url += '?' + query.join('&');
         }
-        this.print_debug("connecting to " + url);
+        this.print_debug('connecting to ' + url);
         let socket;
         if (this.isNode) {
             socket = new ws_1.default(url);
-            socket.on("open", this.wsOnOpen.bind(this));
-            socket.on("message", this.wsOnMessage.bind(this));
-            socket.on("close", this.wsOnClose.bind(this));
-            socket.on("error", this.wsOnError.bind(this));
-            socket.on("unexpected-response", this.wsOnUnexpectedResponse.bind(this));
+            socket.on('open', this.wsOnOpen.bind(this));
+            socket.on('message', this.wsOnMessage.bind(this));
+            socket.on('close', this.wsOnClose.bind(this));
+            socket.on('error', this.wsOnError.bind(this));
+            socket.on('unexpected-response', this.wsOnUnexpectedResponse.bind(this));
         }
         else {
             socket = new WebSocket(url);
-            socket.binaryType = "arraybuffer";
+            socket.binaryType = 'arraybuffer';
             socket.onopen = this.wsOnOpen.bind(this);
             socket.onmessage = (event) => {
                 this.wsOnMessage(event.data);
@@ -2840,52 +2864,52 @@ class ObnizConnection extends eventemitter3_1.default {
             socket.onerror = this.wsOnError.bind(this);
         }
         this.socket = socket;
-        this.connectionState = "connecting";
+        this.connectionState = 'connecting';
     }
     _connectLocal(host) {
-        const url = "ws://" + host;
-        this.print_debug("local connect to " + url);
+        const url = 'ws://' + host;
+        this.print_debug('local connect to ' + url);
         let ws;
         if (this.isNode) {
             ws = new ws_1.default(url);
-            ws.on("open", () => {
-                this.print_debug("connected to " + url);
+            ws.on('open', () => {
+                this.print_debug('connected to ' + url);
                 this._callOnConnect();
             });
-            ws.on("message", (data) => {
-                this.print_debug("recvd via local");
+            ws.on('message', (data) => {
+                this.print_debug('recvd via local');
                 this.wsOnMessage(data);
             });
-            ws.on("close", (event) => {
-                this.log("local websocket closed");
+            ws.on('close', (event) => {
+                this.log('local websocket closed');
                 this._disconnectLocal();
             });
-            ws.on("error", (err) => {
-                console.error("local websocket error.", err);
+            ws.on('error', (err) => {
+                console.error('local websocket error.', err);
                 this._disconnectLocal();
             });
-            ws.on("unexpected-response", (event) => {
-                this.log("local websocket closed");
+            ws.on('unexpected-response', (event) => {
+                this.log('local websocket closed');
                 this._disconnectLocal();
             });
         }
         else {
             ws = new WebSocket(url);
-            ws.binaryType = "arraybuffer";
+            ws.binaryType = 'arraybuffer';
             ws.onopen = () => {
-                this.print_debug("connected to " + url);
+                this.print_debug('connected to ' + url);
                 this._callOnConnect();
             };
             ws.onmessage = (event) => {
-                this.print_debug("recvd via local");
+                this.print_debug('recvd via local');
                 this.wsOnMessage(event.data);
             };
             ws.onclose = (event) => {
-                this.log("local websocket closed");
+                this.log('local websocket closed');
                 this._disconnectLocal();
             };
             ws.onerror = (err) => {
-                this.log("local websocket error.", err);
+                this.log('local websocket error.', err);
                 this._disconnectLocal();
             };
         }
@@ -2901,7 +2925,9 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         // If connection to cloud is ready and waiting for local connect.
         // then call onconnect() immidiately.
-        if (this.socket && this.socket.readyState === 1 && this._waitForLocalConnectReadyTimer) {
+        if (this.socket &&
+            this.socket.readyState === 1 &&
+            this._waitForLocalConnectReadyTimer) {
             clearTimeout(this._waitForLocalConnectReadyTimer);
             this._waitForLocalConnectReadyTimer = null;
             this._callOnConnect();
@@ -2919,7 +2945,13 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         /* unbind */
         if (this.isNode) {
-            const shouldRemoveObservers = ["open", "message", "close", "error", "unexpected-response"];
+            const shouldRemoveObservers = [
+                'open',
+                'message',
+                'close',
+                'error',
+                'unexpected-response',
+            ];
             for (let i = 0; i < shouldRemoveObservers.length; i++) {
                 socket.removeAllListeners(shouldRemoveObservers[i]);
             }
@@ -2955,11 +2987,11 @@ class ObnizConnection extends eventemitter3_1.default {
         if (canChangeToConnected) {
             const currentTime = new Date().getTime();
             this._lastDataReceivedAt = currentTime; // reset
-            this.connectionState = "connected";
+            this.connectionState = 'connected';
             this._beforeOnConnect();
-            this.emit("connect", this);
+            this.emit('connect', this);
             let promise;
-            if (typeof this.onconnect === "function") {
+            if (typeof this.onconnect === 'function') {
                 try {
                     promise = this.onconnect(this);
                     if (promise instanceof Promise) {
@@ -2995,18 +3027,20 @@ class ObnizConnection extends eventemitter3_1.default {
         }
     }
     _sendRouted(data) {
-        if (this.socket_local && this.socket_local.readyState === 1 && typeof data !== "string") {
-            this.print_debug("send via local");
+        if (this.socket_local &&
+            this.socket_local.readyState === 1 &&
+            typeof data !== 'string') {
+            this.print_debug('send via local');
             this.socket_local.send(data);
             if (this.socket_local.bufferedAmount > this.bufferdAmoundWarnBytes) {
-                this.warning("over " + this.socket_local.bufferedAmount + " bytes queued");
+                this.warning('over ' + this.socket_local.bufferedAmount + ' bytes queued');
             }
             return;
         }
         if (this.socket && this.socket.readyState === 1) {
             this.socket.send(data);
             if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
-                this.warning("over " + this.socket.bufferedAmount + " bytes queued");
+                this.warning('over ' + this.socket.bufferedAmount + ' bytes queued');
             }
             return;
         }
@@ -3048,7 +3082,7 @@ class ObnizConnection extends eventemitter3_1.default {
             return true;
         }
         else {
-            return location.protocol !== "https:";
+            return location.protocol !== 'https:';
         }
     }
     handleWSCommand(wsObj) {
@@ -3056,7 +3090,7 @@ class ObnizConnection extends eventemitter3_1.default {
             this.firmware_ver = wsObj.obniz.firmware;
             this.hw = wsObj.obniz.hw;
             if (!this.hw) {
-                this.hw = "obnizb1";
+                this.hw = 'obnizb1';
             }
             if (this.wscommands) {
                 for (let i = 0; i < this.wscommands.length; i++) {
@@ -3094,17 +3128,17 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         if (wsObj.redirect) {
             const urlString = wsObj.redirect;
-            this.print_debug("WS connection changed to " + urlString);
+            this.print_debug('WS connection changed to ' + urlString);
             const url = new URL(urlString);
             const host = url.origin;
             const paths = url.pathname;
-            if (paths && paths.split("/").length === 5) {
+            if (paths && paths.split('/').length === 5) {
                 // migrate obnizID
-                this.id = paths.split("/")[2];
+                this.id = paths.split('/')[2];
             }
             /* close current ws immidiately */
             /*  */
-            this.socket.close(1000, "close");
+            this.socket.close(1000, 'close');
             this.clearSocket(this.socket);
             delete this.socket;
             /* connect to new server */
@@ -3140,9 +3174,9 @@ class ObnizConnection extends eventemitter3_1.default {
                 clearTimeout(this._nextLoopTimeout);
             }
             this._nextLoopTimeout = undefined;
-            if (this.connectionState === "connected") {
+            if (this.connectionState === 'connected') {
                 try {
-                    if (typeof this.onloop === "function") {
+                    if (typeof this.onloop === 'function') {
                         await this.pingWait();
                         const prom = this.onloop(this);
                         if (prom instanceof Promise) {
@@ -3155,10 +3189,10 @@ class ObnizConnection extends eventemitter3_1.default {
                     console.error(e);
                 }
                 finally {
-                    if (this.connectionState === "connected") {
+                    if (this.connectionState === 'connected') {
                         if (!this._nextLoopTimeout) {
                             let interval = this._repeatInterval;
-                            if (typeof this.onloop !== "function") {
+                            if (typeof this.onloop !== 'function') {
                                 interval = 100;
                             }
                             this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), interval);
@@ -3185,7 +3219,7 @@ class ObnizConnection extends eventemitter3_1.default {
                 clearTimeout(this._nextPingTimeout);
             }
             this._nextPingTimeout = undefined;
-            if (this.connectionState === "connected") {
+            if (this.connectionState === 'connected') {
                 const currentTime = new Date().getTime();
                 // after 15 sec from last data received
                 if (this._lastDataReceivedAt + loopTimeout < currentTime) {
@@ -3199,7 +3233,7 @@ class ObnizConnection extends eventemitter3_1.default {
                         // this.log("ping/pong success");
                     }
                     catch (e) {
-                        if (this.connectionState !== "connected") {
+                        if (this.connectionState !== 'connected') {
                             // already closed
                         }
                         else if (time !== this._lastDataReceivedAt) {
@@ -3208,7 +3242,7 @@ class ObnizConnection extends eventemitter3_1.default {
                         else {
                             // ping error or timeout
                             // this.error("ping/pong response timeout error");
-                            this.wsOnClose("ping/pong response timeout error");
+                            this.wsOnClose('ping/pong response timeout error');
                             return;
                         }
                     }
@@ -3216,7 +3250,7 @@ class ObnizConnection extends eventemitter3_1.default {
                 else {
                     // this.log("ping/pong not need");
                 }
-                if (this.connectionState === "connected") {
+                if (this.connectionState === 'connected') {
                     if (!this._nextPingTimeout) {
                         this._nextPingTimeout = setTimeout(this._startPingLoopInBackground.bind(this), loopInterval);
                     }
@@ -3300,13 +3334,13 @@ class ObnizDevice extends ObnizUIs_1.default {
             console.error(msg);
         }
         else {
-            if (msg && typeof msg === "object" && msg.alert) {
+            if (msg && typeof msg === 'object' && msg.alert) {
                 this.showAlertUI(msg);
                 console.log(msg.message);
                 return;
             }
-            if (typeof showObnizDebugError === "function") {
-                showObnizDebugError(new Error(msg));
+            if (typeof window.showObnizDebugError === 'function') {
+                window.showObnizDebugError(new Error(msg));
             }
             this.log(`Warning: ${msg}`);
         }
@@ -3317,19 +3351,19 @@ class ObnizDevice extends ObnizUIs_1.default {
      */
     error(msg) {
         if (this.onerror) {
-            let sendError = msg;
-            if (!(msg instanceof Error)) {
-                sendError = new Error(msg.message);
-            }
+            const sendError = msg instanceof Error ? msg : new Error(msg.message);
             this.onerror(this, sendError);
             return;
         }
         if (!this.isNode) {
-            if (msg && typeof msg === "object" && msg.alert) {
+            if (msg &&
+                typeof msg === 'object' &&
+                !(msg instanceof Error) &&
+                msg.alert) {
                 this.showAlertUI(msg);
             }
-            if (typeof showObnizDebugError === "function") {
-                showObnizDebugError(new Error(msg.message));
+            if (window && typeof window.showObnizDebugError === 'function') {
+                window.showObnizDebugError(new Error(msg.message));
             }
         }
         console.error(`${msg.message}`);
@@ -3365,7 +3399,7 @@ class ObnizDevice extends ObnizUIs_1.default {
      */
     message(target, message) {
         let targets = [];
-        if (typeof target === "string") {
+        if (typeof target === 'string') {
             targets.push(target);
         }
         else {
@@ -3384,18 +3418,18 @@ class ObnizDevice extends ObnizUIs_1.default {
     notifyToModule(obj) {
         super.notifyToModule(obj);
         // notify messaging
-        if (typeof obj.message === "object" && this.onmessage) {
+        if (typeof obj.message === 'object' && this.onmessage) {
             this._runUserCreatedFunction(this.onmessage, obj.message.data, obj.message.from);
         }
         // debug
-        if (typeof obj.debug === "object") {
+        if (typeof obj.debug === 'object') {
             if (obj.debug.warning) {
-                const msg = "Warning: " + obj.debug.warning.message;
-                this.warning({ alert: "warning", message: msg });
+                const msg = 'Warning: ' + obj.debug.warning.message;
+                this.warning({ alert: 'warning', message: msg });
             }
             if (obj.debug.error) {
-                const msg = "Error: " + obj.debug.error.message;
-                this.error({ alert: "error", message: msg });
+                const msg = 'Error: ' + obj.debug.error.message;
+                this.error({ alert: 'error', message: msg });
             }
             if (this.ondebug) {
                 this.ondebug(obj.debug);
@@ -3418,7 +3452,7 @@ exports.default = ObnizDevice;
  * @module ObnizCore.Errors
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-// tslint:disable:max-classes-per-file
+/* eslint max-classes-per-file: 0 */
 class ObnizError extends Error {
     constructor(code, e) {
         super(e);
@@ -3430,39 +3464,42 @@ class ObnizError extends Error {
 exports.ObnizError = ObnizError;
 class ObnizOfflineError extends ObnizError {
     constructor() {
-        super(1, "obniz is not online.");
+        super(1, 'obniz is not online.');
     }
 }
 exports.ObnizOfflineError = ObnizOfflineError;
 class ObnizTimeoutError extends ObnizError {
     constructor(waitingFor) {
-        super(2, "Receive data timeout." + (waitingFor ? " Waiting for " + waitingFor : ""));
+        super(2, 'Receive data timeout.' + (waitingFor ? ' Waiting for ' + waitingFor : ''));
         this.waitingFor = waitingFor;
     }
 }
 exports.ObnizTimeoutError = ObnizTimeoutError;
 class ObnizI2cError extends ObnizError {
     constructor() {
-        super(3, "I2C error.");
+        super(3, 'I2C error.');
     }
 }
 exports.ObnizI2cError = ObnizI2cError;
 class ObnizI2cWarning extends ObnizError {
     constructor() {
-        super(4, "I2C error.");
+        super(4, 'I2C error.');
     }
 }
 exports.ObnizI2cWarning = ObnizI2cWarning;
 class ObnizBleUnknownPeripheralError extends ObnizError {
     constructor(peripheralUuid) {
-        super(5, "unknown peripheral :" + peripheralUuid);
+        super(5, 'unknown peripheral :' + peripheralUuid);
         this.peripheralUuid = peripheralUuid;
     }
 }
 exports.ObnizBleUnknownPeripheralError = ObnizBleUnknownPeripheralError;
 class ObnizBleUnknownServiceError extends ObnizError {
     constructor(peripheralUuid, serviceUuid) {
-        super(6, "unknown service.  peripheral :" + peripheralUuid + " service :" + serviceUuid);
+        super(6, 'unknown service.  peripheral :' +
+            peripheralUuid +
+            ' service :' +
+            serviceUuid);
         this.peripheralUuid = peripheralUuid;
         this.serviceUuid = serviceUuid;
     }
@@ -3470,11 +3507,11 @@ class ObnizBleUnknownServiceError extends ObnizError {
 exports.ObnizBleUnknownServiceError = ObnizBleUnknownServiceError;
 class ObnizBleUnknownCharacteristicError extends ObnizError {
     constructor(peripheralUuid, serviceUuid, characteristicUuid) {
-        super(7, "unknown characteristic.  peripheral :" +
+        super(7, 'unknown characteristic.  peripheral :' +
             peripheralUuid +
-            " service :" +
+            ' service :' +
             serviceUuid +
-            " characteristic :" +
+            ' characteristic :' +
             characteristicUuid);
         this.peripheralUuid = peripheralUuid;
         this.serviceUuid = serviceUuid;
@@ -3484,13 +3521,13 @@ class ObnizBleUnknownCharacteristicError extends ObnizError {
 exports.ObnizBleUnknownCharacteristicError = ObnizBleUnknownCharacteristicError;
 class ObnizBleUnknownDescriptorError extends ObnizError {
     constructor(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid) {
-        super(8, "unknown descriptor.  peripheral :" +
+        super(8, 'unknown descriptor.  peripheral :' +
             peripheralUuid +
-            " service :" +
+            ' service :' +
             serviceUuid +
-            " characteristic :" +
+            ' characteristic :' +
             characteristicUuid +
-            " descriptor :" +
+            ' descriptor :' +
             descriptorUuid);
         this.peripheralUuid = peripheralUuid;
         this.serviceUuid = serviceUuid;
@@ -3501,94 +3538,95 @@ class ObnizBleUnknownDescriptorError extends ObnizError {
 exports.ObnizBleUnknownDescriptorError = ObnizBleUnknownDescriptorError;
 class ObnizBleOpError extends ObnizError {
     constructor() {
-        super(9, "BLE operation error");
+        super(9, 'BLE operation error');
     }
 }
 exports.ObnizBleOpError = ObnizBleOpError;
 class ObnizBleHciStateError extends ObnizError {
     constructor(state, params) {
-        super(10, (ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble Hci state Error") +
-            (params ? ` ${JSON.stringify(params)}` : ""));
+        super(10, (ObnizBleHciStateError.Errors[state]
+            ? ObnizBleHciStateError.Errors[state]
+            : 'Ble Hci state Error') + (params ? ` ${JSON.stringify(params)}` : ''));
         this.state = state;
     }
 }
 exports.ObnizBleHciStateError = ObnizBleHciStateError;
 ObnizBleHciStateError.Errors = {
-    0x00: "Success",
-    0x01: "Unknown HCI Command",
-    0x02: "Unknown Connection Identifier ",
-    0x03: "Hardware Failure ",
-    0x04: "Page Timeout ",
-    0x05: "Authentication Failure ",
-    0x06: "PIN or Key Missing ",
-    0x07: "Memory Capacity Exceeded ",
-    0x08: "Connection Timeout ",
-    0x09: "Connection Limit Exceeded ",
-    0x0a: "Synchronous Connection Limit To A Device Exceeded ",
-    0x0b: "Connection Already Exists ",
-    0x0c: "Command Disallowed ",
-    0x0d: "Connection Rejected due to Limited Resources ",
-    0x0e: "Connection Rejected Due To Security Reasons ",
-    0x0f: "Connection Rejected due to Unacceptable BD_ADDR ",
-    0x10: "Connection Accept Timeout Exceeded ",
-    0x11: "Unsupported Feature or Parameter Value ",
-    0x12: "Invalid HCI Command Parameters ",
-    0x13: "Remote User Terminated Connection ",
-    0x14: "Remote Device Terminated Connection due to Low Resources ",
-    0x15: "Remote Device Terminated Connection due to Power Off ",
-    0x16: "Connection Terminated By Local Host ",
-    0x17: "Repeated Attempts ",
-    0x18: "Pairing Not Allowed ",
-    0x19: "Unknown LMP PDU ",
-    0x1a: "Unsupported Remote Feature / Unsupported LMP Feature ",
-    0x1b: "SCO Offset Rejected ",
-    0x1c: "SCO Interval Rejected ",
-    0x1d: "SCO Air Mode Rejected ",
-    0x1e: "Invalid LMP Parameters / Invalid LL Parameters ",
-    0x1f: "Unspecified Error ",
-    0x20: "Unsupported LMP Parameter Value / Unsupported LL Parameter Value ",
-    0x21: "Role Change Not Allowed ",
-    0x22: "LMP Response Timeout / LL Response Timeout ",
-    0x23: "LMP Error Transaction Collision / LL Procedure Collision ",
-    0x24: "LMP PDU Not Allowed ",
-    0x25: "Encryption Mode Not Acceptable ",
-    0x26: "Link Key cannot be Changed ",
-    0x27: "Requested QoS Not Supported ",
-    0x28: "Instant Passed ",
-    0x29: "Pairing With Unit Key Not Supported ",
-    0x2a: "Different Transaction Collision ",
-    0x2b: "Reserved for future use ",
-    0x2c: "QoS Unacceptable Parameter ",
-    0x2d: "QoS Rejected ",
-    0x2e: "Channel Classification Not Supported ",
-    0x2f: "Insufficient Security ",
-    0x30: "Parameter Out Of Mandatory Range ",
-    0x31: "Reserved for future use ",
-    0x32: "Role Switch Pending ",
-    0x33: "Reserved for future use ",
-    0x34: "Reserved Slot Violation ",
-    0x35: "Role Switch Failed ",
-    0x36: "Extended Inquiry Response Too Large ",
-    0x37: "Secure Simple Pairing Not Supported By Host ",
-    0x38: "Host Busy - Pairing ",
-    0x39: "Connection Rejected due to No Suitable Channel Found ",
-    0x3a: "Controller Busy ",
-    0x3b: "Unacceptable Connection Parameters ",
-    0x3c: "Advertising Timeout ",
-    0x3d: "Connection Terminated due to MIC Failure ",
-    0x3e: "Connection Failed to be Established / Synchronization Timeout ",
-    0x3f: "MAC Connection Failed ",
-    0x40: "Coarse Clock Adjustment Rejected but Will Try to Adjust Using Clock Dragging ",
-    0x41: "Type0 Submap Not Defined ",
-    0x42: "Unknown Advertising Identifier ",
-    0x43: "Limit Reached ",
-    0x44: "Operation Cancelled by Host ",
-    0x45: "Packet Too Long ",
+    0x00: 'Success',
+    0x01: 'Unknown HCI Command',
+    0x02: 'Unknown Connection Identifier ',
+    0x03: 'Hardware Failure ',
+    0x04: 'Page Timeout ',
+    0x05: 'Authentication Failure ',
+    0x06: 'PIN or Key Missing ',
+    0x07: 'Memory Capacity Exceeded ',
+    0x08: 'Connection Timeout ',
+    0x09: 'Connection Limit Exceeded ',
+    0x0a: 'Synchronous Connection Limit To A Device Exceeded ',
+    0x0b: 'Connection Already Exists ',
+    0x0c: 'Command Disallowed ',
+    0x0d: 'Connection Rejected due to Limited Resources ',
+    0x0e: 'Connection Rejected Due To Security Reasons ',
+    0x0f: 'Connection Rejected due to Unacceptable BD_ADDR ',
+    0x10: 'Connection Accept Timeout Exceeded ',
+    0x11: 'Unsupported Feature or Parameter Value ',
+    0x12: 'Invalid HCI Command Parameters ',
+    0x13: 'Remote User Terminated Connection ',
+    0x14: 'Remote Device Terminated Connection due to Low Resources ',
+    0x15: 'Remote Device Terminated Connection due to Power Off ',
+    0x16: 'Connection Terminated By Local Host ',
+    0x17: 'Repeated Attempts ',
+    0x18: 'Pairing Not Allowed ',
+    0x19: 'Unknown LMP PDU ',
+    0x1a: 'Unsupported Remote Feature / Unsupported LMP Feature ',
+    0x1b: 'SCO Offset Rejected ',
+    0x1c: 'SCO Interval Rejected ',
+    0x1d: 'SCO Air Mode Rejected ',
+    0x1e: 'Invalid LMP Parameters / Invalid LL Parameters ',
+    0x1f: 'Unspecified Error ',
+    0x20: 'Unsupported LMP Parameter Value / Unsupported LL Parameter Value ',
+    0x21: 'Role Change Not Allowed ',
+    0x22: 'LMP Response Timeout / LL Response Timeout ',
+    0x23: 'LMP Error Transaction Collision / LL Procedure Collision ',
+    0x24: 'LMP PDU Not Allowed ',
+    0x25: 'Encryption Mode Not Acceptable ',
+    0x26: 'Link Key cannot be Changed ',
+    0x27: 'Requested QoS Not Supported ',
+    0x28: 'Instant Passed ',
+    0x29: 'Pairing With Unit Key Not Supported ',
+    0x2a: 'Different Transaction Collision ',
+    0x2b: 'Reserved for future use ',
+    0x2c: 'QoS Unacceptable Parameter ',
+    0x2d: 'QoS Rejected ',
+    0x2e: 'Channel Classification Not Supported ',
+    0x2f: 'Insufficient Security ',
+    0x30: 'Parameter Out Of Mandatory Range ',
+    0x31: 'Reserved for future use ',
+    0x32: 'Role Switch Pending ',
+    0x33: 'Reserved for future use ',
+    0x34: 'Reserved Slot Violation ',
+    0x35: 'Role Switch Failed ',
+    0x36: 'Extended Inquiry Response Too Large ',
+    0x37: 'Secure Simple Pairing Not Supported By Host ',
+    0x38: 'Host Busy - Pairing ',
+    0x39: 'Connection Rejected due to No Suitable Channel Found ',
+    0x3a: 'Controller Busy ',
+    0x3b: 'Unacceptable Connection Parameters ',
+    0x3c: 'Advertising Timeout ',
+    0x3d: 'Connection Terminated due to MIC Failure ',
+    0x3e: 'Connection Failed to be Established / Synchronization Timeout ',
+    0x3f: 'MAC Connection Failed ',
+    0x40: 'Coarse Clock Adjustment Rejected but Will Try to Adjust Using Clock Dragging ',
+    0x41: 'Type0 Submap Not Defined ',
+    0x42: 'Unknown Advertising Identifier ',
+    0x43: 'Limit Reached ',
+    0x44: 'Operation Cancelled by Host ',
+    0x45: 'Packet Too Long ',
 };
 // todo error code to message
 class ObnizBleAttError extends ObnizError {
     constructor(state, params) {
-        super(11, `ATT Error: ${params}`);
+        super(11, `ATT Error: ${params || ''}`);
         this.state = state;
     }
 }
@@ -3632,25 +3670,27 @@ class ObnizBlePairingRejectByRemoteError extends ObnizError {
 }
 exports.ObnizBlePairingRejectByRemoteError = ObnizBlePairingRejectByRemoteError;
 ObnizBlePairingRejectByRemoteError.Errors = {
-    0x00: "Unknown",
-    0x01: "Passkey Entry Failed",
-    0x02: "OOB Not Available",
-    0x03: "Authentication Requirements",
-    0x04: "Confirm Value Failed",
-    0x05: "Pairing Not Supported",
-    0x06: "Encryption Key Size",
-    0x07: "Command Not Supported",
-    0x08: "Unspecified Reason",
-    0x09: "Repeated Attempts",
-    0x0a: "Invalid Parameters",
-    0x0b: "DHKey Check Failed",
-    0x0c: "Numeric Comparison Failed",
-    0x0d: "BR/EDR pairing in progress",
-    0x0e: "Cross-transport Key Deriva- tion/Generation not allowed",
+    0x00: 'Unknown',
+    0x01: 'Passkey Entry Failed',
+    0x02: 'OOB Not Available',
+    0x03: 'Authentication Requirements',
+    0x04: 'Confirm Value Failed',
+    0x05: 'Pairing Not Supported',
+    0x06: 'Encryption Key Size',
+    0x07: 'Command Not Supported',
+    0x08: 'Unspecified Reason',
+    0x09: 'Repeated Attempts',
+    0x0a: 'Invalid Parameters',
+    0x0b: 'DHKey Check Failed',
+    0x0c: 'Numeric Comparison Failed',
+    0x0d: 'BR/EDR pairing in progress',
+    0x0e: 'Cross-transport Key Deriva- tion/Generation not allowed',
 };
 class ObnizBleScanStartError extends ObnizError {
     constructor(state, msg) {
-        super(17, `${msg} state=${state}(${ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : ""})`);
+        super(17, `${msg} state=${state}(${ObnizBleHciStateError.Errors[state]
+            ? ObnizBleHciStateError.Errors[state]
+            : ''})`);
     }
 }
 exports.ObnizBleScanStartError = ObnizBleScanStartError;
@@ -3687,19 +3727,23 @@ class ObnizParts extends ObnizConnection_1.default {
     }
     /**
      * Register Parts class
+     *
      * @param arg0 Parts class
      * @param arg1 param for parts
      */
     static PartsRegistrate(arg0, arg1) {
-        if (arg0 && typeof arg0.info === "function" && typeof arg0.info().name === "string") {
+        if (arg0 &&
+            typeof arg0.info === 'function' &&
+            typeof arg0.info().name === 'string') {
             _parts[arg0.info().name] = arg0;
         }
-        else if (typeof arg0 === "string" && typeof arg1 === "object") {
+        else if (typeof arg0 === 'string' && typeof arg1 === 'object') {
             _parts[arg0] = arg1;
         }
     }
     /**
      * Get parts class.
+     *
      * @param name string
      * @constructor
      */
@@ -3714,17 +3758,19 @@ class ObnizParts extends ObnizConnection_1.default {
     }
     /**
      * Check the param is valid io pin no.
+     *
      * @param io
      */
     isValidIO(io) {
-        return typeof io === "number" && this["io" + io] !== null;
+        return typeof io === 'number' && this['io' + io] !== null;
     }
     /**
      * Check the param is valid ad pin no.
+     *
      * @param ad
      */
     isValidAD(ad) {
-        return typeof ad === "number" && this["ad" + ad] !== null;
+        return typeof ad === 'number' && this['ad' + ad] !== null;
     }
     /**
      * Setup Parts of parts library
@@ -3735,7 +3781,7 @@ class ObnizParts extends ObnizConnection_1.default {
     wired(partsName, options) {
         const Parts = ObnizParts.getPartsClass(partsName);
         if (!Parts) {
-            throw new Error("No such a parts [" + partsName + "] found");
+            throw new Error('No such a parts [' + partsName + '] found');
         }
         const parts = new Parts();
         const args = Array.from(arguments);
@@ -3890,6 +3936,7 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
      * led.off();
      * console.log((new Date()).getTime() - time.getTime()) // => about 1000
      * ```
+     *
      * @param msec
      */
     wait(msec) {
@@ -3943,6 +3990,7 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
      * // Example
      * obniz.keepWorkingAtOffline(true);
      * ```
+     *
      * @param working
      */
     keepWorkingAtOffline(working) {
@@ -3988,7 +4036,7 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
         }
         else if (sec > 60 * 60 * 18) {
             // max 18h (60(s)*60(m)*18(h))
-            throw new Error("Error max 18h(64800) sleep");
+            throw new Error('Error max 18h(64800) sleep');
         }
         this.send({ system: { sleep_seconds: sec } });
     }
@@ -4001,8 +4049,9 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
      *
      * ```javascript
      * // JavaScript example
-     * obniz.sleepMinute （60）; // 60 minutes
+     * obniz.sleepMinute (60); // 60 minutes
      * ```
+     *
      * @param minute up to 64800 minutes(45 days ).
      */
     sleepMinute(minute) {
@@ -4012,7 +4061,7 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
         }
         else if (minute > 60 * 24 * 45) {
             // max 45day (60(m)*24(h)*45(d))
-            throw new Error("max 45day(64800m) sleep");
+            throw new Error('max 45day(64800m) sleep');
         }
         this.send({ system: { sleep_minute: minute } });
     }
@@ -4033,7 +4082,7 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
      */
     sleep(date) {
         if (!(date instanceof Date)) {
-            throw new Error("Date instance argument required");
+            throw new Error('Date instance argument required');
         }
         let sleepTime = Math.floor((date - new Date()) / 1000);
         this.print_debug(`sleep time : ${sleepTime}s`);
@@ -4066,12 +4115,12 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
      *
      * @param trigger
      *
-     *  - true: Rise （LOW -> HIGH）
-     *  - false: Falling （HIGH -> LOW）
+     * - true: Rise (LOW -> HIGH)
+     * - false: Falling  (HIGH -> LOW)
      */
     sleepIoTrigger(trigger) {
-        if (typeof trigger !== "boolean") {
-            throw new Error("sleepIoTrigger need boolean arg");
+        if (typeof trigger !== 'boolean') {
+            throw new Error('sleepIoTrigger need boolean arg');
         }
         this.send({ system: { sleep_io_trigger: trigger } });
     }
@@ -4170,7 +4219,7 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
         super(id, options);
     }
     static isValidObnizId(str) {
-        if (typeof str !== "string") {
+        if (typeof str !== 'string') {
             return false;
         }
         // IP => accept
@@ -4178,14 +4227,14 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
             return true;
         }
         // Serial Number 'sn_***'
-        if (str.startsWith("sn_")) {
+        if (str.startsWith('sn_')) {
             return true;
         }
         // 0000-0000
         if (str.length < 8) {
             return false;
         }
-        str = str.replace("-", "");
+        str = str.replace('-', '');
         let id = parseInt(str);
         if (isNaN(id)) {
             id = null;
@@ -4200,10 +4249,10 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
         this.showOffLine();
         if (!this.constructor.isValidObnizId(this.id)) {
             if (this.isNode || !this.options.obnizid_dialog) {
-                this.error({ alert: "error", message: "invalid obniz id" });
+                this.error({ alert: 'error', message: 'invalid obniz id' });
             }
             else {
-                const filled = _ReadCookie("obniz-last-used") || "";
+                const filled = _ReadCookie('obniz-last-used') || '';
                 this.prompt(filled, (obnizid) => {
                     this.id = obnizid;
                     this.wsconnect(desired_server);
@@ -4213,7 +4262,7 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
         }
         super.wsconnect(desired_server);
     }
-    prompt(filled = "", callback) {
+    prompt(filled = '', callback) {
         ObnizUIs._promptQueue.push({ filled, callback });
         this._promptNext();
     }
@@ -4224,11 +4273,11 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
         const next = ObnizUIs._promptQueue.shift();
         if (next) {
             ObnizUIs._promptWaiting = true;
-            if (document.readyState !== "loading") {
+            if (document.readyState !== 'loading') {
                 this._promptOne(next.filled, next.callback);
             }
             else {
-                document.addEventListener("DOMContentLoaded", () => {
+                document.addEventListener('DOMContentLoaded', () => {
                     this._promptOne(next.filled, next.callback);
                 });
             }
@@ -4236,51 +4285,51 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
     }
     _promptOne(filled, callback) {
         ObnizUIs._promptCount++;
-        let result = "";
+        let result = '';
         new Promise((resolve) => {
             const text = filled;
             const selectorId = `obniz-id-prompt${ObnizUIs._promptCount}`;
             let css = dialogPollyfill_1.default.css;
             css +=
                 `dialog#${selectorId}::backdrop {\n` +
-                    "  background: rgba(0, 0, 0, 0.5);\n" +
-                    "  animation: modal-open .4s ease;\n" +
-                    "}\n" +
-                    "\n" +
+                    '  background: rgba(0, 0, 0, 0.5);\n' +
+                    '  animation: modal-open .4s ease;\n' +
+                    '}\n' +
+                    '\n' +
                     `dialog#${selectorId}[open] {\n` +
-                    "    position: fixed;\n" +
-                    "    bottom: auto;\n" +
-                    "    top: 10px;" +
-                    "    animation: modal-slide .5s ease;\n" +
-                    "    border: none;" +
-                    "    padding: 0;" +
-                    "}\n" +
+                    '    position: fixed;\n' +
+                    '    bottom: auto;\n' +
+                    '    top: 10px;' +
+                    '    animation: modal-slide .5s ease;\n' +
+                    '    border: none;' +
+                    '    padding: 0;' +
+                    '}\n' +
                     `dialog#${selectorId} .contents {\n` +
-                    "    padding: 1em;" +
-                    "}\n" +
+                    '    padding: 1em;' +
+                    '}\n' +
                     `dialog#${selectorId} button {\n` +
-                    "    background-color: #00a4e3;\n" +
-                    "    border-color: #00a4e3;\n" +
-                    "    color: white;\n" +
-                    "}" +
-                    "@keyframes modal-open {\n" +
-                    "  0% {\n" +
-                    "    opacity: 0;\n" +
-                    "  }\n" +
-                    "  100%{\n" +
-                    "    opacity: 1;\n" +
-                    "  }\n" +
-                    "}\n" +
-                    "\n" +
-                    "@keyframes modal-slide {\n" +
-                    "  0% {\n" +
-                    "    transform: translateY(-20px);\n" +
-                    "  }\n" +
-                    "  100%{\n" +
-                    "    transform: translateY(0);\n" +
-                    "  }\n" +
-                    "}";
-            let html = "";
+                    '    background-color: #00a4e3;\n' +
+                    '    border-color: #00a4e3;\n' +
+                    '    color: white;\n' +
+                    '}' +
+                    '@keyframes modal-open {\n' +
+                    '  0% {\n' +
+                    '    opacity: 0;\n' +
+                    '  }\n' +
+                    '  100%{\n' +
+                    '    opacity: 1;\n' +
+                    '  }\n' +
+                    '}\n' +
+                    '\n' +
+                    '@keyframes modal-slide {\n' +
+                    '  0% {\n' +
+                    '    transform: translateY(-20px);\n' +
+                    '  }\n' +
+                    '  100%{\n' +
+                    '    transform: translateY(0);\n' +
+                    '  }\n' +
+                    '}';
+            let html = '';
             html += `<dialog id='${selectorId}'><div class="contents">`;
             html += `Connect obniz device`;
             if (ObnizUIs._promptCount > 1) {
@@ -4290,32 +4339,31 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
             html += ` <form method="dialog">`;
             html += ` <input type="text" name="obniz-id" id="return_value" value="${text}" placeholder="obniz id">`;
             html += '  <button id="close">Connect</button>';
-            html += "</form>";
-            html += "</div></dialog>";
-            html += "<style>";
+            html += '</form>';
+            html += '</div></dialog>';
+            html += '<style>';
             html += css;
-            html += "</style>";
-            const div = document.createElement("div");
+            html += '</style>';
+            const div = document.createElement('div');
             div.innerHTML = html;
-            const dialog = div.querySelector("dialog");
-            dialog.addEventListener("click", () => {
+            const dialog = div.querySelector('dialog');
+            dialog.addEventListener('click', () => {
                 // cancel
-                dialog.querySelector("#return_value").value = "";
+                dialog.querySelector('#return_value').value = '';
                 dialog.close();
                 resolve();
             });
-            dialog.querySelector(".contents").addEventListener("click", (event) => {
+            dialog.querySelector('.contents').addEventListener('click', (event) => {
                 event.stopPropagation();
             });
-            dialog.addEventListener("close", (param) => {
-                const inputValue = dialog.querySelector("#return_value").value;
+            dialog.addEventListener('close', (param) => {
+                const inputValue = dialog.querySelector('#return_value').value;
                 div.parentElement.removeChild(div);
                 result = inputValue;
                 resolve();
             });
-            dialog.addEventListener("cancel", (param) => {
+            dialog.addEventListener('cancel', (param) => {
                 // escape key
-                const inputValue = dialog.querySelector("#return_value").value;
                 div.parentElement.removeChild(div);
                 resolve();
             });
@@ -4336,22 +4384,24 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
             return;
         }
         const dom = `
-    <div style="background-color:${obj.alert === "warning" ? "#ffee35" : "#ff7b34"}">${obj.message}</div>`;
-        document.getElementById(this.options.debug_dom_id).insertAdjacentHTML("beforeend", dom);
+    <div style="background-color:${obj.alert === 'warning' ? '#ffee35' : '#ff7b34'}">${obj.message}</div>`;
+        document
+            .getElementById(this.options.debug_dom_id)
+            .insertAdjacentHTML('beforeend', dom);
     }
     getDebugDoms() {
         if (this.isNode) {
             return;
         }
-        const loaderDom = document.querySelector("#loader");
-        const debugDom = document.querySelector("#" + this.options.debug_dom_id);
-        let statusDom = document.querySelector("#" + this.options.debug_dom_id + " #online-status");
+        const loaderDom = document.querySelector('#loader');
+        const debugDom = document.querySelector('#' + this.options.debug_dom_id);
+        let statusDom = document.querySelector('#' + this.options.debug_dom_id + ' #online-status');
         if (debugDom && !statusDom) {
-            statusDom = document.createElement("div");
-            statusDom.id = "online-status";
-            statusDom.style.color = "#FFF";
-            statusDom.style.padding = "5px";
-            statusDom.style.textAlign = "center";
+            statusDom = document.createElement('div');
+            statusDom.id = 'online-status';
+            statusDom.style.color = '#FFF';
+            statusDom.style.padding = '5px';
+            statusDom.style.textAlign = 'center';
             debugDom.insertBefore(statusDom, debugDom.firstChild);
         }
         return { loaderDom, debugDom, statusDom };
@@ -4387,13 +4437,16 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
         }
         const doms = this.getDebugDoms();
         if (doms.loaderDom) {
-            doms.loaderDom.style.display = "none";
+            doms.loaderDom.style.display = 'none';
         }
         if (doms.statusDom) {
-            doms.statusDom.style.backgroundColor = isConnectedLocally ? "#0cd362" : "#31965d";
-            doms.statusDom.style.color = "#FFF";
+            doms.statusDom.style.backgroundColor = isConnectedLocally
+                ? '#0cd362'
+                : '#31965d';
+            doms.statusDom.style.color = '#FFF';
             doms.statusDom.innerHTML =
-                (this.id ? "online : " + this.id : "online") + (isConnectedLocally ? " via local_connect" : " via internet");
+                (this.id ? 'online : ' + this.id : 'online') +
+                    (isConnectedLocally ? ' via local_connect' : ' via internet');
         }
     }
     showOffLine() {
@@ -4402,12 +4455,12 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
         }
         const doms = this.getDebugDoms();
         if (doms.loaderDom) {
-            doms.loaderDom.style.display = "block";
+            doms.loaderDom.style.display = 'block';
         }
         if (doms.statusDom) {
-            doms.statusDom.style.backgroundColor = "#d9534f";
-            doms.statusDom.style.color = "#FFF";
-            doms.statusDom.innerHTML = this.id ? "offline : " + this.id : "offline";
+            doms.statusDom.style.backgroundColor = '#d9534f';
+            doms.statusDom.style.color = '#FFF';
+            doms.statusDom.innerHTML = this.id ? 'offline : ' + this.id : 'offline';
         }
     }
 }
@@ -4428,12 +4481,12 @@ ObnizUIs._promptCount = 0;
  *
  * @ignore
  */
-function _ReadCookie(name) {
-    const nameEQ = name + "=";
-    const ca = document.cookie.split(";");
+const _ReadCookie = (name) => {
+    const nameEQ = name + '=';
+    const ca = document.cookie.split(';');
     for (let i = 0; i < ca.length; i++) {
         let c = ca[i];
-        while (c.charAt(0) === " ") {
+        while (c.charAt(0) === ' ') {
             c = c.substring(1, c.length);
         }
         if (c.indexOf(nameEQ) === 0) {
@@ -4441,7 +4494,7 @@ function _ReadCookie(name) {
         }
     }
     return null;
-}
+};
 
 
 /***/ }),
@@ -4452,20 +4505,20 @@ function _ReadCookie(name) {
 "use strict";
 /* WEBPACK VAR INJECTION */(function(__dirname) {
 const Obniz_1 = __webpack_require__("./dist/src/obniz/Obniz.js");
-/*===================*/
+/* ===================*/
 /* Utils */
-/*===================*/
+/* ===================*/
 try {
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
         if (window && window.parent && window.parent.userAppLoaded) {
             window.parent.userAppLoaded(window);
         }
-        function showObnizDebugError(err) {
+        window.showObnizDebugError = (err) => {
             // eslint-disable-line
             if (window.parent && window.parent.logger) {
                 window.parent.logger.onObnizError(err);
             }
-        }
+        };
     }
 }
 catch (e) {
@@ -4476,9 +4529,9 @@ catch (e) {
         console.error(e);
     }
 }
-/*===================*/
+/* ===================*/
 /* ReadParts */
-/*===================*/
+/* ===================*/
 /**
  * @ignore
  */
@@ -4536,7 +4589,8 @@ class ComponentAbstract extends eventemitter3_1.default {
     }
     notifyFromObniz(json) {
         for (const eventName of this.eventNames()) {
-            if (typeof eventName !== "string" || !eventName.startsWith("/response/")) {
+            if (typeof eventName !== 'string' ||
+                !eventName.startsWith('/response/')) {
                 continue;
             }
             const isValid = this.fastValidate(eventName, json);
@@ -4545,7 +4599,8 @@ class ComponentAbstract extends eventemitter3_1.default {
             }
         }
         for (const eventName in this._eventHandlerQueue) {
-            if (typeof eventName !== "string" || !eventName.startsWith("/response/")) {
+            if (typeof eventName !== 'string' ||
+                !eventName.startsWith('/response/')) {
                 continue;
             }
             if (this._eventHandlerQueue[eventName].length === 0) {
@@ -4569,14 +4624,16 @@ class ComponentAbstract extends eventemitter3_1.default {
         return WSSchema_1.default.validate(json, schema);
     }
     onceQueue(eventName, func) {
-        this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName] || [];
-        if (typeof func === "function") {
+        this._eventHandlerQueue[eventName] =
+            this._eventHandlerQueue[eventName] || [];
+        if (typeof func === 'function') {
             this._eventHandlerQueue[eventName].push(func);
         }
     }
     removeFromOnceQueue(eventName, func) {
-        this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName] || [];
-        if (typeof func === "function") {
+        this._eventHandlerQueue[eventName] =
+            this._eventHandlerQueue[eventName] || [];
+        if (typeof func === 'function') {
             this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName].filter((e) => e !== func);
         }
     }
@@ -4590,19 +4647,19 @@ class ComponentAbstract extends eventemitter3_1.default {
         option.queue = option.queue !== false;
         option.errors = option.errors || {};
         return new Promise((resolve, reject) => {
-            if (this.Obniz.connectionState !== "connected") {
+            if (this.Obniz.connectionState !== 'connected') {
                 reject(new ObnizError_1.ObnizOfflineError());
                 return;
             }
             const clearListeners = () => {
-                this.Obniz.off("close", onObnizClosed);
+                this.Obniz.off('close', onObnizClosed);
                 if (option.queue) {
                     this.removeFromOnceQueue(schemaPath, onDataReceived);
                 }
                 else {
                     this.off(schemaPath, onDataReceived);
                 }
-                if (typeof timeoutHandler === "number") {
+                if (typeof timeoutHandler === 'number') {
                     clearTimeout(timeoutHandler);
                     timeoutHandler = undefined;
                 }
@@ -4625,7 +4682,7 @@ class ComponentAbstract extends eventemitter3_1.default {
                 reject(error);
             };
             const onErrorFuncs = [];
-            this.Obniz.once("close", onObnizClosed);
+            this.Obniz.once('close', onObnizClosed);
             if (option.queue) {
                 this.onceQueue(schemaPath, onDataReceived);
             }
@@ -4659,6 +4716,7 @@ exports.ComponentAbstract = ComponentAbstract;
  * Obniz BLE are switches automatically. <br/>
  * obnizOS ver >= 3.0.0  : [[ObnizCore.Components.Ble.Hci | Hci]] <br/>
  * obnizOS ver < 3.0.0   : Not Supported <br/>
+ *
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
@@ -4751,22 +4809,22 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     static _dataArray2uuidHex(data, reverse) {
         let uuid = [];
         for (let i = 0; i < data.length; i++) {
-            uuid.push(("00" + data[i].toString(16).toLowerCase()).slice(-2));
+            uuid.push(('00' + data[i].toString(16).toLowerCase()).slice(-2));
         }
         if (reverse) {
             uuid = uuid.reverse();
         }
-        let str = uuid.join("");
+        let str = uuid.join('');
         if (uuid.length >= 16) {
             str =
                 str.slice(0, 8) +
-                    "-" +
+                    '-' +
                     str.slice(8, 12) +
-                    "-" +
+                    '-' +
                     str.slice(12, 16) +
-                    "-" +
+                    '-' +
                     str.slice(16, 20) +
-                    "-" +
+                    '-' +
                     str.slice(20);
         }
         return str;
@@ -4777,23 +4835,23 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         }
         if (json.error) {
             const error = json.error;
-            let msg = "BLE error: " + error.message;
-            msg += " (";
-            msg += "error_code: " + error.error_code;
-            msg += ", ";
-            msg += "module_error_code: " + error.module_error_code;
-            msg += ", ";
-            msg += "function_code: " + error.function_code;
-            msg += ", ";
-            msg += "address: " + error.address;
-            msg += ", ";
-            msg += "service_uuid: " + error.service_uuid;
-            msg += ", ";
-            msg += "characteristic_uuid: " + error.characteristic_uuid;
-            msg += ", ";
-            msg += "descriptor_uuid: " + error.descriptor_uuid;
-            msg += ")";
-            this.Obniz.error({ alert: "error", message: msg });
+            let msg = 'BLE error: ' + error.message;
+            msg += ' (';
+            msg += 'error_code: ' + error.error_code;
+            msg += ', ';
+            msg += 'module_error_code: ' + error.module_error_code;
+            msg += ', ';
+            msg += 'function_code: ' + error.function_code;
+            msg += ', ';
+            msg += 'address: ' + error.address;
+            msg += ', ';
+            msg += 'service_uuid: ' + error.service_uuid;
+            msg += ', ';
+            msg += 'characteristic_uuid: ' + error.characteristic_uuid;
+            msg += ', ';
+            msg += 'descriptor_uuid: ' + error.descriptor_uuid;
+            msg += ')';
+            this.Obniz.error({ alert: 'error', message: msg });
         }
     }
     /**
@@ -4807,12 +4865,12 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      */
     async initWait() {
         if (!this._initialized) {
-            const MinHCIAvailableOS = "3.0.0";
+            const MinHCIAvailableOS = '3.0.0';
             if (semver_1.default.lt(this.Obniz.firmware_ver, MinHCIAvailableOS)) {
                 throw new ObnizError_1.ObnizBleUnSupportedOSVersionError(this.Obniz.firmware_ver, MinHCIAvailableOS);
             }
             // force initialize on obnizOS < 3.2.0
-            if (semver_1.default.lt(this.Obniz.firmware_ver, "3.2.0")) {
+            if (semver_1.default.lt(this.Obniz.firmware_ver, '3.2.0')) {
                 this.hci.init();
                 this.hci.end(); // disable once
                 this.hci.init();
@@ -4863,7 +4921,10 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         // clear all found peripherals.
         for (const p of this.remotePeripherals) {
             if (p.connected) {
-                p.notifyFromServer("statusupdate", { status: "disconnected", reason: new ObnizError_1.ObnizOfflineError() });
+                p.notifyFromServer('statusupdate', {
+                    status: 'disconnected',
+                    reason: new ObnizError_1.ObnizOfflineError(),
+                });
             }
         }
         this.remotePeripherals = [];
@@ -4875,7 +4936,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             this.scan = new bleScan_1.default(this);
         }
         else {
-            this.scan.notifyFromServer("obnizClose", {});
+            this.scan.notifyFromServer('obnizClose', {});
         }
         if (!this.advertisement) {
             this.advertisement = new bleAdvertisement_1.default(this);
@@ -4900,20 +4961,20 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             this.centralBindings.debugHandler = (text) => {
                 this.debug(`BLE: ${text}`);
             };
-            this.centralBindings.on("stateChange", this.onStateChange.bind(this));
-            this.centralBindings.on("discover", this.onDiscover.bind(this));
-            this.centralBindings.on("disconnect", this.onDisconnect.bind(this));
-            this.centralBindings.on("notification", this.onNotification.bind(this));
+            this.centralBindings.on('stateChange', this.onStateChange.bind(this));
+            this.centralBindings.on('discover', this.onDiscover.bind(this));
+            this.centralBindings.on('disconnect', this.onDisconnect.bind(this));
+            this.centralBindings.on('notification', this.onNotification.bind(this));
         }
         else {
             this.centralBindings._reset();
         }
         if (!this.peripheralBindings) {
             this.peripheralBindings = new bindings_2.default(this.hciProtocol);
-            this.peripheralBindings.on("stateChange", this.onPeripheralStateChange.bind(this));
-            this.peripheralBindings.on("accept", this.onPeripheralAccept.bind(this));
-            this.peripheralBindings.on("mtuChange", this.onPeripheralMtuChange.bind(this));
-            this.peripheralBindings.on("disconnect", this.onPeripheralDisconnect.bind(this));
+            this.peripheralBindings.on('stateChange', this.onPeripheralStateChange.bind(this));
+            this.peripheralBindings.on('accept', this.onPeripheralAccept.bind(this));
+            this.peripheralBindings.on('mtuChange', this.onPeripheralMtuChange.bind(this));
+            this.peripheralBindings.on('disconnect', this.onPeripheralDisconnect.bind(this));
         }
         else {
             this.peripheralBindings._reset();
@@ -4984,13 +5045,13 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         if (!this._initialized && this._initializeWarning) {
             this._initializeWarning = true;
             this.Obniz.warning({
-                alert: "warning",
+                alert: 'warning',
                 message: `BLE is not initialized. Please call 'await obniz.ble.initWait()'`,
             });
         }
     }
     schemaBasePath() {
-        return "ble";
+        return 'ble';
     }
     onStateChange() { }
     findPeripheral(address) {
@@ -5009,19 +5070,24 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         }
         val.discoverdOnRemote = true;
         const peripheralData = {
-            device_type: "ble",
+            device_type: 'ble',
             address_type: addressType,
-            ble_event_type: connectable ? "connectable_advertisemnt" : "non_connectable_advertising",
+            ble_event_type: connectable
+                ? 'connectable_advertisemnt'
+                : 'non_connectable_advertising',
             rssi,
             adv_data: advertisement.advertisementRaw,
             scan_resp: advertisement.scanResponseRaw,
         };
         val.setParams(peripheralData);
-        this.scan.notifyFromServer("onfind", val);
+        this.scan.notifyFromServer('onfind', val);
     }
     onDisconnect(peripheralUuid, reason) {
         const peripheral = this.findPeripheral(peripheralUuid);
-        peripheral.notifyFromServer("statusupdate", { status: "disconnected", reason });
+        peripheral.notifyFromServer('statusupdate', {
+            status: 'disconnected',
+            reason,
+        });
     }
     //
     // protected onServicesDiscover(peripheralUuid: any, serviceUuids?: any) {
@@ -5054,7 +5120,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             const obj = {
                 data: Array.from(data),
             };
-            characteristic.notifyFromServer("onnotify", obj);
+            characteristic.notifyFromServer('onnotify', obj);
         }
     }
     onPeripheralStateChange(state) {
@@ -5065,7 +5131,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         if (this.peripheral.onconnectionupdates) {
             this.peripheral.onconnectionupdates({
                 address: clientAddress,
-                status: "connected",
+                status: 'connected',
             });
         }
     }
@@ -5077,7 +5143,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         if (this.peripheral.onconnectionupdates) {
             this.peripheral.onconnectionupdates({
                 address: clientAddress,
-                status: "disconnected",
+                status: 'disconnected',
                 reason,
             });
         }
@@ -5165,7 +5231,7 @@ class BleAdvertisement {
         await this.obnizBle.peripheralBindings.stopAdvertisingWait();
     }
     /**
-     *  @deprecated  replaced by {@link #endWait()}
+     * @deprecated  replaced by {@link #endWait()}
      */
     end() {
         // noinspection JSIgnoredPromiseFromCall
@@ -5210,6 +5276,7 @@ class BleAdvertisement {
      *
      * obniz.ble.advertisement.start();
      * ```
+     *
      * @param json
      */
     setAdvData(json) {
@@ -5245,6 +5312,7 @@ class BleAdvertisement {
      *
      * obniz.ble.advertisement.start();
      * ```
+     *
      * @param json
      */
     setScanRespData(json) {
@@ -5287,7 +5355,9 @@ class BleAdvertisementBuilder {
             if (json.localName) {
                 this.setCompleteLocalName(json.localName);
             }
-            if (json.manufacturerData && json.manufacturerData.companyCode && json.manufacturerData.data) {
+            if (json.manufacturerData &&
+                json.manufacturerData.companyCode &&
+                json.manufacturerData.data) {
                 this.setManufacturerSpecificData(json.manufacturerData.companyCode, json.manufacturerData.data);
             }
             if (json.serviceUuids) {
@@ -5296,7 +5366,7 @@ class BleAdvertisementBuilder {
                 }
             }
         }
-        if (typeof this.extendEvalJson === "function") {
+        if (typeof this.extendEvalJson === 'function') {
             this.extendEvalJson(json);
         }
     }
@@ -5317,7 +5387,7 @@ class BleAdvertisementBuilder {
             Array.prototype.push.apply(data, this.rows[key]);
         }
         if (data.length > 31) {
-            throw new Error("Too large data. Advertise/ScanResponse data are must be less than 32 byte.");
+            throw new Error('Too large data. Advertise/ScanResponse data are must be less than 32 byte.');
         }
         return data;
     }
@@ -5348,8 +5418,10 @@ class BleAdvertisementBuilder {
     }
     convertUuid(uuid) {
         const uuidNumeric = bleHelper_1.default.uuidFilter(uuid);
-        if (uuidNumeric.length !== 32 && uuidNumeric.length !== 8 && uuidNumeric.length !== 4) {
-            throw new Error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
+        if (uuidNumeric.length !== 32 &&
+            uuidNumeric.length !== 8 &&
+            uuidNumeric.length !== 4) {
+            throw new Error('BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)');
         }
         const data = [];
         for (let i = uuidNumeric.length; i > 1; i -= 2) {
@@ -5388,19 +5460,19 @@ class BleAdvertisementBuilder {
     extendEvalJson(json) {
         if (json) {
             if (json.flags) {
-                if (json.flags.includes("limited_discoverable_mode")) {
+                if (json.flags.includes('limited_discoverable_mode')) {
                     this.setLeLimitedDiscoverableModeFlag();
                 }
-                if (json.flags.includes("general_discoverable_mode")) {
+                if (json.flags.includes('general_discoverable_mode')) {
                     this.setLeGeneralDiscoverableModeFlag();
                 }
-                if (json.flags.includes("br_edr_not_supported")) {
+                if (json.flags.includes('br_edr_not_supported')) {
                     this.setBrEdrNotSupportedFlag();
                 }
-                if (json.flags.includes("le_br_edr_controller")) {
+                if (json.flags.includes('le_br_edr_controller')) {
                     this.setLeBrEdrControllerFlag();
                 }
-                if (json.flags.includes("le_br_edr_host")) {
+                if (json.flags.includes('le_br_edr_host')) {
                     this.setLeBrEdrHostFlag();
                 }
             }
@@ -5536,11 +5608,12 @@ class BleAttributeAbstract {
     }
     /**
      * Use writeTextWait() instead from 3.5.0
+     *
      * @ignore
      * @deprecated
      */
     writeText(str, needResponse) {
-        throw new ObnizError_1.ObnizDeprecatedFunctionError("writeText", "writeTextWait");
+        throw new ObnizError_1.ObnizDeprecatedFunctionError('writeText', 'writeTextWait');
     }
     /**
      * @ignore
@@ -5550,11 +5623,12 @@ class BleAttributeAbstract {
     }
     /**
      * Use writeNumberWait() instead from 3.5.0
+     *
      * @ignore
      * @deprecated
      */
     writeNumber(val, needResponse) {
-        throw new ObnizError_1.ObnizDeprecatedFunctionError("writeNumber", "writeNumberWait");
+        throw new ObnizError_1.ObnizDeprecatedFunctionError('writeNumber', 'writeNumberWait');
     }
     /**
      * @ignore
@@ -5567,7 +5641,7 @@ class BleAttributeAbstract {
      */
     readFromRemoteWait() {
         return new Promise((resolve) => {
-            this.emitter.once("onreadfromremote", () => {
+            this.emitter.once('onreadfromremote', () => {
                 resolve();
             });
         });
@@ -5577,7 +5651,7 @@ class BleAttributeAbstract {
      */
     writeFromRemoteWait() {
         return new Promise((resolve) => {
-            this.emitter.once("onreadfromremote", (params) => {
+            this.emitter.once('onreadfromremote', (params) => {
                 resolve(params.data);
             });
         });
@@ -5597,7 +5671,7 @@ class BleAttributeAbstract {
     notifyFromServer(notifyName, params) {
         this.emitter.emit(notifyName, params);
         switch (notifyName) {
-            case "onerror": {
+            case 'onerror': {
                 this.onerror(params);
                 break;
             }
@@ -5611,7 +5685,7 @@ class BleAttributeAbstract {
         if (!func) {
             return;
         }
-        if (typeof func !== "function") {
+        if (typeof func !== 'function') {
             return;
         }
         try {
@@ -5626,11 +5700,12 @@ class BleAttributeAbstract {
     setFunctions() {
         let childrenName = this.childrenName;
         if (childrenName) {
-            childrenName = childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
+            childrenName =
+                childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
             const childName = childrenName.slice(0, -1);
-            let funcName = "add" + childName;
+            let funcName = 'add' + childName;
             this[funcName] = this.addChild;
-            funcName = "get" + childName;
+            funcName = 'get' + childName;
             this[funcName] = this.getChild;
         }
         const parentName = this.parentName;
@@ -5698,7 +5773,7 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
         super(obj);
         this._maxValueSize = null;
         this._updateValueCallback = null;
-        if (!Array.isArray(obj.properties) && typeof obj.properties === "string") {
+        if (!Array.isArray(obj.properties) && typeof obj.properties === 'string') {
             this.properties = [obj.properties];
         }
         else {
@@ -5709,7 +5784,7 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
      * @ignore
      */
     get parentName() {
-        return "service";
+        return 'service';
     }
     /**
      * @ignore
@@ -5721,7 +5796,7 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
      * @ignore
      */
     get childrenName() {
-        return "descriptors";
+        return 'descriptors';
     }
     /**
      * Get descriptor array
@@ -5731,6 +5806,7 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
     }
     /**
      * Add new descriptor
+     *
      * @param desc
      */
     addDescriptor(desc) {
@@ -5738,6 +5814,7 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
     }
     /**
      * Get descriptor
+     *
      * @param uuid
      */
     getDescriptor(uuid) {
@@ -5767,6 +5844,7 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
     }
     /**
      * Add property
+     *
      * @param param
      */
     addProperty(param) {
@@ -5776,6 +5854,7 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
     }
     /**
      * Remove property
+     *
      * @param param
      */
     removeProperty(param) {
@@ -5804,20 +5883,20 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
             return result;
         }
         switch (name) {
-            case "subscribe":
+            case 'subscribe':
                 this._onSubscribe(...params);
                 return true;
-            case "unsubscribe":
+            case 'unsubscribe':
                 this._onUnsubscribe();
                 return true;
-            case "notify":
+            case 'notify':
                 this._onNotify();
                 return true;
-            case "indicate":
+            case 'indicate':
                 this._onIndicate();
                 return true;
             default:
-                throw new Error("unknown emit");
+                throw new Error('unknown emit');
         }
     }
     /**
@@ -5934,7 +6013,7 @@ class BleDescriptor extends bleLocalValueAttributeAbstract_1.default {
      * @ignore
      */
     get parentName() {
-        return "characteristic";
+        return 'characteristic';
     }
     // public addPermission(param: any) {
     //   if (!this.permissions.includes(param)) {
@@ -5968,35 +6047,32 @@ exports.default = BleDescriptor;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 Object.defineProperty(exports, "__esModule", { value: true });
-const BleHelper = {
+class BleHelper {
     uuidFilter(uuid) {
-        return uuid.toLowerCase().replace(/[^0-9abcdef]/g, "");
-    },
+        return uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
+    }
     toCamelCase(str) {
         str = str.charAt(0).toLowerCase() + str.slice(1);
         return str.replace(/[-_](.)/g, (match, group1) => {
             return group1.toUpperCase();
         });
-    },
+    }
     toSnakeCase(str) {
         const camel = this.toCamelCase(str);
         return camel.replace(/[A-Z]/g, (s) => {
-            return "_" + s.charAt(0).toLowerCase();
+            return '_' + s.charAt(0).toLowerCase();
         });
-    },
-    buffer2reversedHex(buf, sepalator = "") {
-        return this.reverseHexString(buf.toString("hex"), sepalator);
-    },
-    hex2reversedBuffer(address, sepalator = "") {
-        if (sepalator === "") {
-            return Buffer.from(this.reverseHexString(address), "hex");
+    }
+    buffer2reversedHex(buf, sepalator = '') {
+        return this.reverseHexString(buf.toString('hex'), sepalator);
+    }
+    hex2reversedBuffer(address, sepalator = '') {
+        if (sepalator === '') {
+            return Buffer.from(this.reverseHexString(address), 'hex');
         }
-        return Buffer.from(address
-            .split(":")
-            .reverse()
-            .join(""), "hex");
-    },
-    reverseHexString(str, separator = "") {
+        return Buffer.from(address.split(':').reverse().join(''), 'hex');
+    }
+    reverseHexString(str, separator = '') {
         // 40msec (100000 times)
         // return str
         //   .match(/.{1,2}/g)!
@@ -6009,7 +6085,7 @@ const BleHelper = {
         // }
         // return parts.reverse().join(separator);
         // 13msec (100000 times)
-        let result = "";
+        let result = '';
         const len = str.length + (str.length % 2);
         for (let i = len; i > 0; i -= 2) {
             result += str.slice(i - 2, i) + separator;
@@ -6018,9 +6094,9 @@ const BleHelper = {
             return result.slice(0, -1 * separator.length);
         }
         return result;
-    },
-};
-exports.default = BleHelper;
+    }
+}
+exports.default = new BleHelper();
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -6080,10 +6156,10 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
      */
     emit(name, ...params) {
         switch (name) {
-            case "readRequest":
+            case 'readRequest':
                 this._onReadRequest(...params);
                 return true;
-            case "writeRequest":
+            case 'writeRequest':
                 this._onWriteRequest(...params);
                 return true;
         }
@@ -6099,13 +6175,14 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
         if (this.data.length >= offset) {
             callback(BleResponseResult.SUCCESS, Buffer.from(this.data.slice(offset)));
             let address = null;
-            if (this.parentName === "characteristic") {
-                address = this.characteristic.service.peripheral.currentConnectedDeviceAddress;
+            if (this.parentName === 'characteristic') {
+                address = this.characteristic.service.peripheral
+                    .currentConnectedDeviceAddress;
             }
-            else if (this.parentName === "service") {
+            else if (this.parentName === 'service') {
                 address = this.service.peripheral.currentConnectedDeviceAddress;
             }
-            this.notifyFromServer("onreadfromremote", { address });
+            this.notifyFromServer('onreadfromremote', { address });
         }
         else {
             callback(BleResponseResult.UNLIKELY_ERROR, null);
@@ -6124,13 +6201,14 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
         this.data = Array.from(data);
         callback(BleResponseResult.SUCCESS);
         let address = null;
-        if (this.parentName === "characteristic") {
-            address = this.characteristic.service.peripheral.currentConnectedDeviceAddress;
+        if (this.parentName === 'characteristic') {
+            address = this.characteristic.service.peripheral
+                .currentConnectedDeviceAddress;
         }
-        else if (this.parentName === "service") {
+        else if (this.parentName === 'service') {
             address = this.service.peripheral.currentConnectedDeviceAddress;
         }
-        this.notifyFromServer("onwritefromremote", { address, data });
+        this.notifyFromServer('onwritefromremote', { address, data });
     }
     /**
      * @ignore
@@ -6138,7 +6216,7 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
      */
     async writeWait(dataArray) {
         this.data = dataArray;
-        this.notifyFromServer("onwrite", { result: "success" });
+        this.notifyFromServer('onwrite', { result: 'success' });
         return true;
     }
     /**
@@ -6146,7 +6224,7 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
      * @return dataArray
      */
     async readWait() {
-        this.notifyFromServer("onread", { data: this.data });
+        this.notifyFromServer('onread', { data: this.data });
         return this.data;
     }
 }
@@ -6191,7 +6269,7 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
      */
     async writeWait(data) {
         this.data = data;
-        this.notifyFromServer("onwrite", { result: "success" });
+        this.notifyFromServer('onwrite', { result: 'success' });
         return true;
     }
     /**
@@ -6207,7 +6285,7 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
      * ```
      */
     async readWait() {
-        this.notifyFromServer("onread", { data: this.data });
+        this.notifyFromServer('onread', { data: this.data });
         return this.data;
     }
     /**
@@ -6219,11 +6297,11 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
         super.notifyFromServer(notifyName, params);
         this.emitter.emit(notifyName, params);
         switch (notifyName) {
-            case "onwritefromremote": {
+            case 'onwritefromremote': {
                 this._runUserCreatedFunction(this.onwritefromremote, params.address, Array.from(params.data));
                 break;
             }
-            case "onreadfromremote": {
+            case 'onreadfromremote': {
                 this._runUserCreatedFunction(this.onreadfromremote, params.address);
                 break;
             }
@@ -6270,7 +6348,7 @@ class BlePeripheral {
             this.currentConnectedDeviceAddress = null;
             this.obnizBle.Obniz._runUserCreatedFunction(this.onconnectionupdates, {
                 address,
-                status: "disconnected",
+                status: 'disconnected',
                 reason: new ObnizError_1.ObnizOfflineError(),
             });
         }
@@ -6330,6 +6408,7 @@ class BlePeripheral {
     }
     /**
      * Get service by UUID
+     *
      * @param uuid
      */
     getService(uuid) {
@@ -6346,6 +6425,7 @@ class BlePeripheral {
     }
     /**
      * Terminate service by UUID
+     *
      * @param uuid
      */
     removeService(uuid) {
@@ -6448,7 +6528,7 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
             return null;
         }
         const childName = childrenName.slice(0, -1);
-        return childName + "_uuid";
+        return childName + '_uuid';
     }
 }
 exports.default = BleRemoteAttributeAbstract;
@@ -6487,7 +6567,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * @ignore
      */
     get parentName() {
-        return "service";
+        return 'service';
     }
     /**
      * @ignore
@@ -6500,7 +6580,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      *
      */
     get childrenName() {
-        return "descriptors";
+        return 'descriptors';
     }
     /**
      * It contains descriptors in a characteristic.
@@ -6570,6 +6650,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      *   console.error(e);
      * }
      * ```
+     *
      * @param uuid
      */
     getDescriptor(uuid) {
@@ -6700,17 +6781,19 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
     }
     /**
      * Use readWait() instead from 3.5.0
+     *
      * @deprecated
      */
     read() {
-        throw new ObnizError_1.ObnizDeprecatedFunctionError("read", "readWait");
+        throw new ObnizError_1.ObnizDeprecatedFunctionError('read', 'readWait');
     }
     /**
      * Use writeWait() instead from 3.5.0
+     *
      * @deprecated
      */
     write(array, needResponse) {
-        throw new ObnizError_1.ObnizDeprecatedFunctionError("read", "readWait");
+        throw new ObnizError_1.ObnizDeprecatedFunctionError('read', 'readWait');
     }
     /**
      * This writes dataArray to the characteristic.
@@ -6743,7 +6826,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
             needResponse = true;
         }
         await this.service.peripheral.obnizBle.centralBindings.writeWait(this.service.peripheral.address, this.service.uuid, this.uuid, Buffer.from(data), !needResponse);
-        this._runUserCreatedFunction(this.onwrite, "success");
+        this._runUserCreatedFunction(this.onwrite, 'success');
         return true;
     }
     /**
@@ -6832,37 +6915,37 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * This characteristics can broadcast or not.
      */
     canBroadcast() {
-        return this.properties.includes("broadcast");
+        return this.properties.includes('broadcast');
     }
     /**
      * This characteristics can notify or not.
      */
     canNotify() {
-        return this.properties.includes("notify");
+        return this.properties.includes('notify');
     }
     /**
      * This characteristics can read or not.
      */
     canRead() {
-        return this.properties.includes("read");
+        return this.properties.includes('read');
     }
     /**
      * This characteristics can write or not.
      */
     canWrite() {
-        return this.properties.includes("write");
+        return this.properties.includes('write');
     }
     /**
      * This characteristics can 'write without response' or not.
      */
     canWriteWithoutResponse() {
-        return this.properties.includes("write_without_response");
+        return this.properties.includes('write_without_response');
     }
     /**
      * This characteristics can indicate or not.
      */
     canIndicate() {
-        return this.properties.includes("indicate");
+        return this.properties.includes('indicate');
     }
     /**
      * @ignore
@@ -6886,7 +6969,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
     notifyFromServer(notifyName, params) {
         super.notifyFromServer(notifyName, params);
         switch (notifyName) {
-            case "onnotify": {
+            case 'onnotify': {
                 this._runUserCreatedFunction(this.onnotify, params.data || undefined);
                 break;
             }
@@ -6920,7 +7003,7 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
      * @ignore
      */
     get parentName() {
-        return "characteristic";
+        return 'characteristic';
     }
     /**
      * Read data from descriptor.
@@ -6980,7 +7063,7 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
      */
     async writeWait(data) {
         await this.characteristic.service.peripheral.obnizBle.centralBindings.writeValueWait(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid, Buffer.from(data));
-        this._runUserCreatedFunction(this.onwrite, "success");
+        this._runUserCreatedFunction(this.onwrite, 'success');
         return true;
     }
     /**
@@ -7028,10 +7111,18 @@ class BleRemotePeripheral {
         this._connectSetting = {};
         /**
          * Indicating this peripheral is found by scan or set from software.
+         *
          * @ignore
          */
         this.discoverdOnRemote = undefined;
-        this.keys = ["device_type", "address_type", "ble_event_type", "rssi", "adv_data", "scan_resp"];
+        this.keys = [
+            'device_type',
+            'address_type',
+            'ble_event_type',
+            'rssi',
+            'adv_data',
+            'scan_resp',
+        ];
         this.obnizBle = obnizBle;
         this.address = address;
         this.connected = false;
@@ -7104,7 +7195,7 @@ class BleRemotePeripheral {
         this.analyseAdvertisement();
     }
     /**
-     *  @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
+     * @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
      */
     connect(setting) {
         // noinspection JSIgnoredPromiseFromCall
@@ -7170,7 +7261,8 @@ class BleRemotePeripheral {
      */
     async connectWait(setting) {
         this._connectSetting = setting || {};
-        this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
+        this._connectSetting.autoDiscovery =
+            this._connectSetting.autoDiscovery !== false;
         await this.obnizBle.scan.endWait();
         try {
             await this.obnizBle.centralBindings.connectWait(this.address, () => {
@@ -7202,10 +7294,10 @@ class BleRemotePeripheral {
             throw e;
         }
         this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
-        this.emitter.emit("connect");
+        this.emitter.emit('connect');
     }
     /**
-     *  @deprecated replaced by {@link #disconnectWait()}
+     * @deprecated replaced by {@link #disconnectWait()}
      */
     disconnect() {
         // noinspection JSIgnoredPromiseFromCall
@@ -7244,9 +7336,9 @@ class BleRemotePeripheral {
                 resolve();
                 return;
             }
-            this.emitter.once("statusupdate", (params) => {
+            this.emitter.once('statusupdate', (params) => {
                 clearTimeout(timeoutTimer);
-                if (params.status === "disconnected") {
+                if (params.status === 'disconnected') {
                     resolve(true); // for compatibility
                 }
                 else {
@@ -7288,6 +7380,7 @@ class BleRemotePeripheral {
      *   console.error(e);
      * }
      * ```
+     *
      * @param uuid
      */
     getService(uuid) {
@@ -7380,7 +7473,7 @@ class BleRemotePeripheral {
     async discoverAllHandlesWait() {
         const ArrayFlat = (array, depth) => {
             const flattend = [];
-            (function flat(_array, _depth) {
+            const flat = (_array, _depth) => {
                 for (const el of _array) {
                     if (Array.isArray(el) && _depth > 0) {
                         flat(el, _depth - 1);
@@ -7389,14 +7482,15 @@ class BleRemotePeripheral {
                         flattend.push(el);
                     }
                 }
-            })(array, Math.floor(depth) || 1);
+            };
+            flat(array, Math.floor(depth) || 1);
             return flattend;
         };
         const services = await this.discoverAllServicesWait();
         const charsNest = await Promise.all(services.map((s) => s.discoverAllCharacteristicsWait()));
         const chars = ArrayFlat(charsNest);
         const descriptorsNest = await Promise.all(chars.map((c) => c.discoverAllDescriptorsWait()));
-        // eslint-disable-next-line no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const descriptors = ArrayFlat(descriptorsNest);
     }
     /**
@@ -7407,13 +7501,13 @@ class BleRemotePeripheral {
     notifyFromServer(notifyName, params) {
         this.emitter.emit(notifyName, params);
         switch (notifyName) {
-            case "statusupdate": {
-                if (params.status === "disconnected") {
+            case 'statusupdate': {
+                if (params.status === 'disconnected') {
                     const pre = this.connected;
                     this.connected = false;
                     if (pre) {
                         this.obnizBle.Obniz._runUserCreatedFunction(this.ondisconnect, params.reason);
-                        this.emitter.emit("disconnect", params.reason);
+                        this.emitter.emit('disconnect', params.reason);
                     }
                 }
                 break;
@@ -7477,6 +7571,7 @@ class BleRemotePeripheral {
      * ```
      *
      * Go to [[BlePairingOptions]] to see more option.
+     *
      * @param options BlePairingOptions
      */
     async pairingWait(options) {
@@ -7540,16 +7635,24 @@ class BleRemotePeripheral {
     }
     setIBeacon() {
         const data = this.searchTypeVal(0xff);
-        if (!data || data[0] !== 0x4c || data[1] !== 0x00 || data[2] !== 0x02 || data[3] !== 0x15 || data.length !== 25) {
+        if (!data ||
+            data[0] !== 0x4c ||
+            data[1] !== 0x00 ||
+            data[2] !== 0x02 ||
+            data[3] !== 0x15 ||
+            data.length !== 25) {
             this.iBeacon = null;
             return;
         }
         const uuidData = data.slice(4, 20);
-        let uuid = "";
+        let uuid = '';
         for (let i = 0; i < uuidData.length; i++) {
-            uuid = uuid + ("00" + uuidData[i].toString(16)).slice(-2);
-            if (i === 4 - 1 || i === 4 + 2 - 1 || i === 4 + 2 * 2 - 1 || i === 4 + 2 * 3 - 1) {
-                uuid += "-";
+            uuid = uuid + ('00' + uuidData[i].toString(16)).slice(-2);
+            if (i === 4 - 1 ||
+                i === 4 + 2 - 1 ||
+                i === 4 + 2 * 2 - 1 ||
+                i === 4 + 2 * 3 - 1) {
+                uuid += '-';
             }
         }
         const major = (data[20] << 8) + data[21];
@@ -7607,7 +7710,7 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      * @ignore
      */
     get parentName() {
-        return "peripheral";
+        return 'peripheral';
     }
     /**
      * @ignore
@@ -7619,7 +7722,7 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      * @ignore
      */
     get childrenName() {
-        return "characteristics";
+        return 'characteristics';
     }
     /**
      * It contains characteristics in a service.
@@ -7687,6 +7790,7 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      *   console.error(e);
      * }
      * ```
+     *
      * @param uuid
      */
     getCharacteristic(uuid) {
@@ -7770,13 +7874,13 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      * @ignore
      */
     async readWait() {
-        throw new Error("cannot read service");
+        throw new Error('cannot read service');
     }
     /**
      * @ignore
      */
     async writeWait() {
-        throw new Error("cannot write service");
+        throw new Error('cannot write service');
     }
 }
 exports.default = BleRemoteService;
@@ -7827,6 +7931,7 @@ class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.defau
      * It convert string to UTF-8 and write binary array.
      *
      * It throws an error when failed.
+     *
      * @param str
      * @param needResponse
      */
@@ -7875,7 +7980,7 @@ const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/e
  */
 class BleScan {
     constructor(obnizBle) {
-        this.state = "stopping";
+        this.state = 'stopping';
         this._delayNotifyTimers = [];
         this.obnizBle = obnizBle;
         this.emitter = new eventemitter3_1.default();
@@ -7897,6 +8002,7 @@ class BleScan {
     }
     /**
      * Use startWait() instead.
+     *
      * @deprecated
      */
     start(target = {}, settings = {}) {
@@ -7942,7 +8048,7 @@ class BleScan {
      */
     async startWait(target = {}, settings = {}) {
         this.obnizBle.warningIfNotInitialize();
-        this.state = "starting";
+        this.state = 'starting';
         const timeout = settings.duration === undefined ? 30 : settings.duration;
         settings.duplicate = !!settings.duplicate;
         settings.filterOnDevice = !!settings.filterOnDevice;
@@ -7980,7 +8086,7 @@ class BleScan {
                 }
             }, timeout * 1000);
         }
-        this.state = "started";
+        this.state = 'started';
     }
     /**
      * This scans and returns the first peripheral that was found among the objects specified in the target.
@@ -8003,7 +8109,7 @@ class BleScan {
     async startOneWait(target, settings = {}) {
         await this.startWait(target, settings);
         return new Promise((resolve, reject) => {
-            this.emitter.once("onfind", async (peripheral, error) => {
+            this.emitter.once('onfind', async (peripheral, error) => {
                 if (error) {
                     reject(error);
                     return;
@@ -8011,7 +8117,7 @@ class BleScan {
                 resolve(peripheral);
                 await this.endWait();
             });
-            this.emitter.once("onfinish", (peripherals, error) => {
+            this.emitter.once('onfinish', (peripherals, error) => {
                 if (error) {
                     assert_1.rejects(error);
                     return;
@@ -8050,7 +8156,7 @@ class BleScan {
     async startAllWait(target, settings) {
         await this.startWait(target, settings);
         return new Promise((resolve, reject) => {
-            this.emitter.once("onfinish", (peripherals, error) => {
+            this.emitter.once('onfinish', (peripherals, error) => {
                 if (error) {
                     reject(error);
                     return;
@@ -8061,6 +8167,7 @@ class BleScan {
     }
     /**
      * Use endWait() instead
+     *
      * @deprecated
      */
     end() {
@@ -8083,8 +8190,8 @@ class BleScan {
      * ```
      */
     async endWait() {
-        if (this.state === "started" || this.state === "starting") {
-            this.state = "stopping";
+        if (this.state === 'started' || this.state === 'starting') {
+            this.state = 'stopping';
             this.clearTimeoutTimer();
             await this.obnizBle.centralBindings.stopScanningWait();
             this.finish(); // state will changed to stopped inside of this function.
@@ -8097,17 +8204,17 @@ class BleScan {
      */
     notifyFromServer(notifyName, params) {
         switch (notifyName) {
-            case "obnizClose": {
+            case 'obnizClose': {
                 this.finish(new ObnizError_1.ObnizOfflineError());
                 break;
             }
-            case "onfind": {
+            case 'onfind': {
                 const peripheral = params;
                 const alreadyGotCompleteAdveData = peripheral.adv_data &&
                     peripheral.adv_data.length > 0 &&
                     peripheral.scan_resp &&
                     peripheral.scan_resp.length > 0;
-                const nonConnectable = peripheral.ble_event_type === "non_connectable_advertising";
+                const nonConnectable = peripheral.ble_event_type === 'non_connectable_advertising';
                 const maybeAdvOnly = this._delayNotifyTimers.find((e) => e.peripheral.address === peripheral.address) &&
                     (!peripheral.scan_resp || peripheral.scan_resp.length === 0);
                 // wait for adv_data + scan resp
@@ -8140,7 +8247,7 @@ class BleScan {
     }
     _setAdvertisementFilter(filterVals) {
         // < 3.2.0
-        if (semver_1.default.lt(this.obnizBle.Obniz.firmware_ver, "3.2.0")) {
+        if (semver_1.default.lt(this.obnizBle.Obniz.firmware_ver, '3.2.0')) {
             return;
         }
         // #define BLE_AD_REPORT_DEVICE_ADDRESS_INDEX 2
@@ -8210,7 +8317,7 @@ class BleScan {
     }
     _setTargetFilterOnDevice(scanTarget) {
         // < 3.2.0
-        if (semver_1.default.lt(this.obnizBle.Obniz.firmware_ver, "3.2.0")) {
+        if (semver_1.default.lt(this.obnizBle.Obniz.firmware_ver, '3.2.0')) {
             return;
         }
         const adFilters = [];
@@ -8288,12 +8395,12 @@ class BleScan {
         }
     }
     finish(error) {
-        if (this.state !== "stopped") {
+        if (this.state !== 'stopped') {
             this.clearTimeoutTimer();
             this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
             this._clearDelayNotifyTimer();
-            this.state = "stopped";
-            this.emitter.emit("onfinish", this.scanedPeripherals, error);
+            this.state = 'stopped';
+            this.emitter.emit('onfinish', this.scanedPeripherals, error);
             this.obnizBle.Obniz._runUserCreatedFunction(this.onfinish, this.scanedPeripherals, error);
         }
     }
@@ -8306,7 +8413,7 @@ class BleScan {
         }
         if (this.isTarget(peripheral)) {
             this.scanedPeripherals.push(peripheral);
-            this.emitter.emit("onfind", peripheral);
+            this.emitter.emit('onfind', peripheral);
             this.obnizBle.Obniz._runUserCreatedFunction(this.onfind, peripheral);
         }
     }
@@ -8410,6 +8517,7 @@ class BleService extends bleLocalAttributeAbstract_1.default {
     }
     /**
      * Add new Characteristic
+     *
      * @param child
      */
     addCharacteristic(child) {
@@ -8417,6 +8525,7 @@ class BleService extends bleLocalAttributeAbstract_1.default {
     }
     /**
      * Get Characteristic
+     *
      * @param uuid
      */
     getCharacteristic(uuid) {
@@ -8426,13 +8535,13 @@ class BleService extends bleLocalAttributeAbstract_1.default {
      * @ignore
      */
     get parentName() {
-        return "peripheral";
+        return 'peripheral';
     }
     /**
      * @ignore
      */
     get childrenName() {
-        return "characteristics";
+        return 'characteristics';
     }
     /**
      * @ignore
@@ -8463,7 +8572,7 @@ class BleService extends bleLocalAttributeAbstract_1.default {
      */
     get advData() {
         return {
-            flags: ["general_discoverable_mode", "br_edr_not_supported"],
+            flags: ['general_discoverable_mode', 'br_edr_not_supported'],
             serviceUuids: [this.uuid],
         };
     }
@@ -8550,6 +8659,7 @@ class ObnizBLEHci {
     }
     /**
      * write HCI command to HCI module
+     *
      * @param hciCommand
      */
     write(hciCommand) {
@@ -8576,7 +8686,7 @@ class ObnizBLEHci {
                 this.Obniz._runUserCreatedFunction(this.onread, obj.read.data);
             }
             for (const eventName in this._eventHandlerQueue) {
-                if (typeof eventName !== "string" || !eventName.startsWith("[")) {
+                if (typeof eventName !== 'string' || !eventName.startsWith('[')) {
                     continue;
                 }
                 if (this._eventHandlerQueue[eventName].length === 0) {
@@ -8594,6 +8704,7 @@ class ObnizBLEHci {
     }
     /**
      * Callback on HCI command received.
+     *
      * @param data
      */
     onread(data) { }
@@ -8620,7 +8731,7 @@ class ObnizBLEHci {
         let onObnizClosed = null;
         let timeoutHandler = null;
         const clearListeners = () => {
-            this.Obniz.off("close", onObnizClosed);
+            this.Obniz.off('close', onObnizClosed);
             if (timeoutHandler) {
                 clearTimeout(timeoutHandler);
                 timeoutHandler = null;
@@ -8634,7 +8745,7 @@ class ObnizBLEHci {
             throw reason;
         });
         const errorPromise = new Promise((resolve, reject) => {
-            if (this.Obniz.connectionState !== "connected") {
+            if (this.Obniz.connectionState !== 'connected') {
                 reject(new ObnizError_1.ObnizOfflineError());
                 return;
             }
@@ -8643,7 +8754,7 @@ class ObnizBLEHci {
                 clearListeners();
                 reject(new ObnizError_1.ObnizOfflineError());
             };
-            this.Obniz.once("close", onObnizClosed);
+            this.Obniz.once('close', onObnizClosed);
             let onTimeout;
             if (option.onTimeout) {
                 onTimeout = () => {
@@ -8680,8 +8791,9 @@ class ObnizBLEHci {
     }
     onceQueue(binaryFilter, func) {
         const eventName = this.encodeBinaryFilter(binaryFilter);
-        this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName] || [];
-        if (typeof func === "function") {
+        this._eventHandlerQueue[eventName] =
+            this._eventHandlerQueue[eventName] || [];
+        if (typeof func === 'function') {
             this._eventHandlerQueue[eventName].push(func);
         }
     }
@@ -8746,8 +8858,8 @@ class AclStream extends eventemitter3_1.default {
         };
         this.onSmpFailBinded = this.onSmpFail.bind(this);
         this.onSmpEndBinded = this.onSmpEnd.bind(this);
-        this._smp.on("fail", this.onSmpFailBinded);
-        this._smp.on("end", this.onSmpEndBinded);
+        this._smp.on('fail', this.onSmpFailBinded);
+        this._smp.on('end', this.onSmpEndBinded);
     }
     async encryptWait(options) {
         const encrpytResult = await this._smp.pairingWait(options);
@@ -8766,33 +8878,33 @@ class AclStream extends eventemitter3_1.default {
     }
     push(cid, data) {
         if (data) {
-            this.emit("data", cid, data);
+            this.emit('data', cid, data);
         }
         else {
-            this.emit("end");
+            this.emit('end');
         }
     }
     end() {
-        this.emit("end");
+        this.emit('end');
     }
     async onSmpStkWait(stk) {
-        const random = Buffer.from("0000000000000000", "hex");
-        const diversifier = Buffer.from("0000", "hex");
+        const random = Buffer.from('0000000000000000', 'hex');
+        const diversifier = Buffer.from('0000', 'hex');
         const result = await this._hci.startLeEncryptionWait(this._handle, random, diversifier, stk);
-        this.emit("encrypt", result);
+        this.emit('encrypt', result);
         return result;
     }
     async onSmpLtkWait(ltk, random, diversifier) {
         const result = await this._hci.startLeEncryptionWait(this._handle, random, diversifier, ltk);
-        this.emit("encrypt", result);
+        this.emit('encrypt', result);
         return result;
     }
     onSmpFail() {
-        this.emit("encryptFail");
+        this.emit('encryptFail');
     }
     onSmpEnd() {
-        this._smp.removeListener("fail", this.onSmpFailBinded);
-        this._smp.removeListener("end", this.onSmpEndBinded);
+        this._smp.removeListener('fail', this.onSmpFailBinded);
+        this._smp.removeListener('end', this.onSmpEndBinded);
     }
     startEncrypt(option) { }
     debug(text) {
@@ -8845,10 +8957,10 @@ class NobleBindings extends eventemitter3_1.default {
         this._aclStreams = {};
         this._signalings = {};
         this._connectPromises = [];
-        this._hci.on("stateChange", this.onStateChange.bind(this));
-        this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
-        this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
-        this._gap.on("discover", this.onDiscover.bind(this));
+        this._hci.on('stateChange', this.onStateChange.bind(this));
+        this._hci.on('disconnComplete', this.onDisconnComplete.bind(this));
+        this._hci.on('aclDataPkt', this.onAclDataPkt.bind(this));
+        this._gap.on('discover', this.onDiscover.bind(this));
     }
     /**
      * @ignore
@@ -8869,7 +8981,7 @@ class NobleBindings extends eventemitter3_1.default {
     }
     addPeripheralData(uuid, addressType) {
         if (!this._addresses[uuid]) {
-            const address = bleHelper_1.default.reverseHexString(uuid, ":");
+            const address = bleHelper_1.default.reverseHexString(uuid, ':');
             this._addresses[uuid] = address;
             this._addresseTypes[uuid] = addressType;
             this._connectable[uuid] = true;
@@ -8897,7 +9009,7 @@ class NobleBindings extends eventemitter3_1.default {
             const conResult = await this._hci.createLeConnWait(address, addressType, 90 * 1000, (result) => {
                 // on connect success
                 this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
-                if (onConnectCallback && typeof onConnectCallback === "function") {
+                if (onConnectCallback && typeof onConnectCallback === 'function') {
                     onConnectCallback();
                 }
             }); // connection timeout for 90 secs.
@@ -8925,17 +9037,17 @@ class NobleBindings extends eventemitter3_1.default {
             return;
         }
         this._state = state;
-        if (state === "unauthorized") {
-            console.log("noble warning: adapter state unauthorized, please run as root or with sudo");
-            console.log("               or see README for information on running without root/sudo:");
-            console.log("               https://github.com/sandeepmistry/noble#running-on-linux");
+        if (state === 'unauthorized') {
+            console.log('noble warning: adapter state unauthorized, please run as root or with sudo');
+            console.log('               or see README for information on running without root/sudo:');
+            console.log('               https://github.com/sandeepmistry/noble#running-on-linux');
         }
-        else if (state === "unsupported") {
-            console.log("noble warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).");
-            console.log("               Try to run with environment variable:");
-            console.log("               [sudo] NOBLE_HCI_DEVICE_ID=x node ...");
+        else if (state === 'unsupported') {
+            console.log('noble warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).');
+            console.log('               Try to run with environment variable:');
+            console.log('               [sudo] NOBLE_HCI_DEVICE_ID=x node ...');
         }
-        this.emit("stateChange", state);
+        this.emit('stateChange', state);
     }
     onDiscover(status, address, addressType, connectable, advertisement, rssi) {
         if (this._scanServiceUuids === undefined) {
@@ -8951,18 +9063,19 @@ class NobleBindings extends eventemitter3_1.default {
                 serviceUuids.push(serviceData[i].uuid);
             }
             for (i in serviceUuids) {
-                hasScanServiceUuids = this._scanServiceUuids.indexOf(serviceUuids[i]) !== -1;
+                hasScanServiceUuids =
+                    this._scanServiceUuids.indexOf(serviceUuids[i]) !== -1;
                 if (hasScanServiceUuids) {
                     break;
                 }
             }
         }
         if (hasScanServiceUuids) {
-            const uuid = address.split(":").join("");
+            const uuid = address.split(':').join('');
             this._addresses[uuid] = address;
             this._addresseTypes[uuid] = addressType;
             this._connectable[uuid] = connectable;
-            this.emit("discover", uuid, address, addressType, connectable, advertisement, rssi);
+            this.emit('discover', uuid, address, addressType, connectable, advertisement, rssi);
         }
     }
     onLeConnComplete(status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy) {
@@ -8974,10 +9087,7 @@ class NobleBindings extends eventemitter3_1.default {
         if (status !== 0) {
             throw new ObnizError_1.ObnizBleHciStateError(status);
         }
-        uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
+        uuid = address.split(':').join('').toLowerCase();
         const aclStream = new acl_stream_1.default(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
         aclStream.debugHandler = (text) => {
             this.debug(text);
@@ -8989,15 +9099,17 @@ class NobleBindings extends eventemitter3_1.default {
         this._aclStreams[handle] = aclStream;
         this._handles[uuid] = handle;
         this._handles[handle] = uuid;
-        this._gatts[handle].on("notification", this.onNotification.bind(this));
-        this._gatts[handle].on("handleNotify", this.onHandleNotify.bind(this));
-        this._signalings[handle].on("connectionParameterUpdateRequest", this.onConnectionParameterUpdateWait.bind(this));
+        this._gatts[handle].on('notification', this.onNotification.bind(this));
+        this._gatts[handle].on('handleNotify', this.onHandleNotify.bind(this));
+        this._signalings[handle].on('connectionParameterUpdateRequest', this.onConnectionParameterUpdateWait.bind(this));
         // public onMtu(address: any, mtu?: any) {}
     }
     onDisconnComplete(handle, reason) {
         const uuid = this._handles[handle];
         if (uuid) {
-            const error = new ObnizError_1.ObnizBleHciStateError(reason, { peripheralAddress: uuid });
+            const error = new ObnizError_1.ObnizBleHciStateError(reason, {
+                peripheralAddress: uuid,
+            });
             this._gatts[handle].onEnd(error);
             this._gatts[handle].removeAllListeners();
             this._signalings[handle].removeAllListeners();
@@ -9008,7 +9120,7 @@ class NobleBindings extends eventemitter3_1.default {
             delete this._aclStreams[handle];
             delete this._handles[uuid];
             delete this._handles[handle];
-            this.emit("disconnect", uuid, error); // TODO: handle reason?
+            this.emit('disconnect', uuid, error); // TODO: handle reason?
         }
         else {
             // maybe disconnect as peripheral
@@ -9056,11 +9168,8 @@ class NobleBindings extends eventemitter3_1.default {
         await gatt.notifyWait(serviceUuid, characteristicUuid, notify);
     }
     onNotification(address, serviceUuid, characteristicUuid, data) {
-        const uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
-        this.emit("notification", uuid, serviceUuid, characteristicUuid, data, true, true);
+        const uuid = address.split(':').join('').toLowerCase();
+        this.emit('notification', uuid, serviceUuid, characteristicUuid, data, true, true);
     }
     async discoverDescriptorsWait(peripheralUuid, serviceUuid, characteristicUuid) {
         const gatt = this.getGatt(peripheralUuid);
@@ -9084,11 +9193,8 @@ class NobleBindings extends eventemitter3_1.default {
         await gatt.writeHandleWait(attHandle, data, withoutResponse);
     }
     onHandleNotify(address, handle, data) {
-        const uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
-        this.emit("handleNotify", uuid, handle, data);
+        const uuid = address.split(':').join('').toLowerCase();
+        this.emit('handleNotify', uuid, handle, data);
     }
     onConnectionParameterUpdateWait(handle, minInterval, maxInterval, latency, supervisionTimeout) {
         this._hci
@@ -9147,45 +9253,45 @@ const crypto_1 = __importDefault(__webpack_require__("./node_modules/crypto-brow
 /**
  * @ignore
  */
-function r() {
+const r = () => {
     return crypto_1.default.randomBytes(16);
-}
+};
 /**
  * @ignore
  */
-function c1(k, _r, pres, preq, iat, ia, rat, ra) {
+const c1 = (k, _r, pres, preq, iat, ia, rat, ra) => {
     const p1 = Buffer.concat([iat, rat, preq, pres]);
-    const p2 = Buffer.concat([ra, ia, Buffer.from("00000000", "hex")]);
+    const p2 = Buffer.concat([ra, ia, Buffer.from('00000000', 'hex')]);
     let res = xor(_r, p1);
     res = e(k, res);
     res = xor(res, p2);
     res = e(k, res);
     return res;
-}
-function s1(k, r1, r2) {
+};
+const s1 = (k, r1, r2) => {
     return e(k, Buffer.concat([r2.slice(0, 8), r1.slice(0, 8)]));
-}
-function e(key, data) {
+};
+const e = (key, data) => {
     key = swap(key);
     data = swap(data);
-    const cipher = crypto_1.default.createCipheriv("aes-128-ecb", key, "");
+    const cipher = crypto_1.default.createCipheriv('aes-128-ecb', key, '');
     cipher.setAutoPadding(false);
     return swap(Buffer.concat([cipher.update(data), cipher.final()]));
-}
-function xor(b1, b2) {
+};
+const xor = (b1, b2) => {
     const result = Buffer.alloc(b1.length);
     for (let i = 0; i < b1.length; i++) {
         result[i] = b1[i] ^ b2[i];
     }
     return result;
-}
-function swap(input) {
+};
+const swap = (input) => {
     const output = Buffer.alloc(input.length);
     for (let i = 0; i < output.length; i++) {
         output[i] = input[input.length - i - 1];
     }
     return output;
-}
+};
 exports.default = {
     r,
     c1,
@@ -9230,7 +9336,7 @@ class Gap extends eventemitter3_1.default {
         this._discoveries = {};
         this._hci = hci;
         this._reset();
-        this._hci.on("leAdvertisingReport", this.onHciLeAdvertisingReport.bind(this));
+        this._hci.on('leAdvertisingReport', this.onHciLeAdvertisingReport.bind(this));
     }
     /**
      * @ignore
@@ -9248,7 +9354,7 @@ class Gap extends eventemitter3_1.default {
         // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
         // p106 - p107
         try {
-            if (this._scanState === "starting" || this._scanState === "started") {
+            if (this._scanState === 'starting' || this._scanState === 'started') {
                 await this.setScanEnabledWait(false, true);
             }
         }
@@ -9260,7 +9366,7 @@ class Gap extends eventemitter3_1.default {
                 throw e;
             }
         }
-        this._scanState = "starting";
+        this._scanState = 'starting';
         const status = await this._hci.setScanParametersWait(activeScan);
         if (status !== 0) {
             throw new ObnizError_1.ObnizBleScanStartError(status, `startScanning Error setting active scan=${activeScan} was failed`);
@@ -9270,7 +9376,7 @@ class Gap extends eventemitter3_1.default {
     }
     async stopScanningWait() {
         try {
-            if (this._scanState === "starting" || this._scanState === "started") {
+            if (this._scanState === 'starting' || this._scanState === 'started') {
                 await this.setScanEnabledWait(false, true);
             }
         }
@@ -9298,8 +9404,12 @@ class Gap extends eventemitter3_1.default {
                 scanResponseRaw: [],
                 raw: [],
             };
-        let discoveryCount = previouslyDiscovered ? this._discoveries[address].count : 0;
-        let hasScanResponse = previouslyDiscovered ? this._discoveries[address].hasScanResponse : false;
+        let discoveryCount = previouslyDiscovered
+            ? this._discoveries[address].count
+            : 0;
+        let hasScanResponse = previouslyDiscovered
+            ? this._discoveries[address].hasScanResponse
+            : false;
         if (type === 0x04) {
             hasScanResponse = true;
             if (eir.length > 0) {
@@ -9323,12 +9433,12 @@ class Gap extends eventemitter3_1.default {
         while (i + 1 < eir.length) {
             const length = eir.readUInt8(i);
             if (length < 1) {
-                debug("invalid EIR data, length = " + length);
+                debug('invalid EIR data, length = ' + length);
                 break;
             }
             const eirType = eir.readUInt8(i + 1); // https://www.bluetooth.org/en-us/specification/assigned-numbers/generic-access-profile
             if (i + length + 1 > eir.length) {
-                debug("invalid EIR data, out of range of buffer length");
+                debug('invalid EIR data, out of range of buffer length');
                 break;
             }
             const bytes = eir.slice(i + 2).slice(0, length - 1);
@@ -9353,7 +9463,7 @@ class Gap extends eventemitter3_1.default {
                     break;
                 case 0x08: // Shortened Local Name
                 case 0x09: // Complete Local Name
-                    advertisement.localName = bytes.toString("utf8");
+                    advertisement.localName = bytes.toString('utf8');
                     break;
                 case 0x0a: {
                     // Tx Power Level
@@ -9424,8 +9534,10 @@ class Gap extends eventemitter3_1.default {
             }
             i += length + 1;
         }
-        debug("advertisement = " + JSON.stringify(advertisement, null, 0));
-        const connectable = type === 0x04 && previouslyDiscovered ? this._discoveries[address].connectable : type !== 0x03;
+        debug('advertisement = ' + JSON.stringify(advertisement, null, 0));
+        const connectable = type === 0x04 && previouslyDiscovered
+            ? this._discoveries[address].connectable
+            : type !== 0x03;
         this._discoveries[address] = {
             address,
             addressType,
@@ -9435,7 +9547,7 @@ class Gap extends eventemitter3_1.default {
             count: discoveryCount,
             hasScanResponse,
         };
-        this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
+        this.emit('discover', status, address, addressType, connectable, advertisement, rssi);
     }
     async setScanEnabledWait(enabled, filterDuplicates) {
         const status = await this._hci.setScanEnabledWait(enabled, filterDuplicates);
@@ -9446,11 +9558,11 @@ class Gap extends eventemitter3_1.default {
             throw new ObnizError_1.ObnizBleScanStartError(status, `startScanning enable=${enabled} was failed. Maybe Connection to a device is under going.`);
         }
         else {
-            if (this._scanState === "starting") {
-                this._scanState = "started";
+            if (this._scanState === 'starting') {
+                this._scanState = 'started';
             }
-            else if (this._scanState === "stopping") {
-                this._scanState = "stopped";
+            else if (this._scanState === 'stopping') {
+                this._scanState = 'stopped';
             }
         }
     }
@@ -9524,49 +9636,49 @@ var ATT;
     ATT.CID = 0x0004;
 })(ATT || (ATT = {}));
 const ATT_OP_READABLES = {
-    0x01: "OP_ERROR",
-    0x02: "OP_MTU_REQ",
-    0x03: "OP_MTU_RESP",
-    0x04: "OP_FIND_INFO_REQ",
-    0x05: "OP_FIND_INFO_RESP",
-    0x08: "OP_READ_BY_TYPE_REQ",
-    0x09: "OP_READ_BY_TYPE_RESP",
-    0x0a: "OP_READ_REQ",
-    0x0b: "OP_READ_RESP",
-    0x0c: "OP_READ_BLOB_REQ",
-    0x0d: "OP_READ_BLOB_RESP",
-    0x10: "OP_READ_BY_GROUP_REQ",
-    0x11: "OP_READ_BY_GROUP_RESP",
-    0x12: "OP_WRITE_REQ",
-    0x13: "OP_WRITE_RESP",
-    0x16: "OP_PREPARE_WRITE_REQ",
-    0x17: "OP_PREPARE_WRITE_RESP",
-    0x18: "OP_EXECUTE_WRITE_REQ",
-    0x19: "OP_EXECUTE_WRITE_RESP",
-    0x1b: "OP_HANDLE_NOTIFY",
-    0x1d: "OP_HANDLE_IND",
-    0x1e: "OP_HANDLE_CNF",
-    0x52: "OP_WRITE_CMD",
+    0x01: 'OP_ERROR',
+    0x02: 'OP_MTU_REQ',
+    0x03: 'OP_MTU_RESP',
+    0x04: 'OP_FIND_INFO_REQ',
+    0x05: 'OP_FIND_INFO_RESP',
+    0x08: 'OP_READ_BY_TYPE_REQ',
+    0x09: 'OP_READ_BY_TYPE_RESP',
+    0x0a: 'OP_READ_REQ',
+    0x0b: 'OP_READ_RESP',
+    0x0c: 'OP_READ_BLOB_REQ',
+    0x0d: 'OP_READ_BLOB_RESP',
+    0x10: 'OP_READ_BY_GROUP_REQ',
+    0x11: 'OP_READ_BY_GROUP_RESP',
+    0x12: 'OP_WRITE_REQ',
+    0x13: 'OP_WRITE_RESP',
+    0x16: 'OP_PREPARE_WRITE_REQ',
+    0x17: 'OP_PREPARE_WRITE_RESP',
+    0x18: 'OP_EXECUTE_WRITE_REQ',
+    0x19: 'OP_EXECUTE_WRITE_RESP',
+    0x1b: 'OP_HANDLE_NOTIFY',
+    0x1d: 'OP_HANDLE_IND',
+    0x1e: 'OP_HANDLE_CNF',
+    0x52: 'OP_WRITE_CMD',
 };
 const ATT_ECODE_READABLES = {
-    0x00: "ECODE_SUCCESS",
-    0x01: "ECODE_INVALID_HANDLE",
-    0x02: "ECODE_READ_NOT_PERM",
-    0x03: "ECODE_WRITE_NOT_PERM",
-    0x04: "ECODE_INVALID_PDU",
-    0x05: "ECODE_AUTHENTICATION",
-    0x06: "ECODE_REQ_NOT_SUPP",
-    0x07: "ECODE_INVALID_OFFSET",
-    0x08: "ECODE_AUTHORIZATION",
-    0x09: "ECODE_PREP_QUEUE_FULL",
-    0x0a: "ECODE_ATTR_NOT_FOUND",
-    0x0b: "ECODE_ATTR_NOT_LONG",
-    0x0c: "ECODE_INSUFF_ENCR_KEY_SIZE",
-    0x0d: "ECODE_INVAL_ATTR_VALUE_LEN",
-    0x0e: "ECODE_UNLIKELY",
-    0x0f: "ECODE_INSUFF_ENC",
-    0x10: "ECODE_UNSUPP_GRP_TYPE",
-    0x11: "ECODE_INSUFF_RESOURCES",
+    0x00: 'ECODE_SUCCESS',
+    0x01: 'ECODE_INVALID_HANDLE',
+    0x02: 'ECODE_READ_NOT_PERM',
+    0x03: 'ECODE_WRITE_NOT_PERM',
+    0x04: 'ECODE_INVALID_PDU',
+    0x05: 'ECODE_AUTHENTICATION',
+    0x06: 'ECODE_REQ_NOT_SUPP',
+    0x07: 'ECODE_INVALID_OFFSET',
+    0x08: 'ECODE_AUTHORIZATION',
+    0x09: 'ECODE_PREP_QUEUE_FULL',
+    0x0a: 'ECODE_ATTR_NOT_FOUND',
+    0x0b: 'ECODE_ATTR_NOT_LONG',
+    0x0c: 'ECODE_INSUFF_ENCR_KEY_SIZE',
+    0x0d: 'ECODE_INVAL_ATTR_VALUE_LEN',
+    0x0e: 'ECODE_UNLIKELY',
+    0x0f: 'ECODE_INSUFF_ENC',
+    0x10: 'ECODE_UNSUPP_GRP_TYPE',
+    0x11: 'ECODE_INSUFF_RESOURCES',
 };
 /**
  * @ignore
@@ -9595,19 +9707,19 @@ class Gatt extends eventemitter3_1.default {
         this._commandQueue = [];
         this._commandPromises = [];
         this._mtu = 23;
-        this._security = "low";
+        this._security = 'low';
         this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
         this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
-        this._aclStream.on("data", this.onAclStreamDataBinded);
-        this._aclStream.on("end", this.onAclStreamEndBinded);
+        this._aclStream.on('data', this.onAclStreamDataBinded);
+        this._aclStream.on('end', this.onAclStreamEndBinded);
     }
     async encryptWait(options) {
         const result = await this._serialPromiseQueueWait(async () => {
             const encrypt = await this._aclStream.encryptWait(options);
             if (encrypt === 0) {
-                throw new Error("Encript failed");
+                throw new Error('Encript failed');
             }
-            this._security = "medium";
+            this._security = 'medium';
             return this._aclStream._smp.getKeys();
         });
         return result;
@@ -9616,7 +9728,7 @@ class Gatt extends eventemitter3_1.default {
         this._aclStream.setEncryptOption(options);
     }
     onEnd(reason) {
-        this.emit("end", reason);
+        this.emit('end', reason);
     }
     async exchangeMtuWait(mtu) {
         this._aclStream
@@ -9633,7 +9745,7 @@ class Gatt extends eventemitter3_1.default {
                 return;
             }
             const requestMtu = mtuRequestData.readUInt16LE(1);
-            debug(this._address + ": receive OP_MTU_REQ. new MTU is " + requestMtu);
+            debug(this._address + ': receive OP_MTU_REQ. new MTU is ' + requestMtu);
             this._mtu = requestMtu;
             this._execNoRespCommandWait(this.mtuResponse(mtu));
         })
@@ -9645,7 +9757,7 @@ class Gatt extends eventemitter3_1.default {
         const data = await this._execCommandWait(this.mtuRequest(mtu), ATT.OP_MTU_RESP);
         const opcode = data[0];
         const newMtu = data.readUInt16LE(1);
-        debug(this._address + ": new MTU is " + newMtu);
+        debug(this._address + ': new MTU is ' + newMtu);
         this._mtu = newMtu;
         return this._mtu;
     }
@@ -9653,10 +9765,7 @@ class Gatt extends eventemitter3_1.default {
         const services = [];
         let startHandle = 0x0001;
         while (1) {
-            const data = await this._execCommandWait(this.readByGroupRequest(startHandle, 0xffff, GATT.PRIM_SVC_UUID), [
-                ATT.OP_READ_BY_GROUP_RESP,
-                ATT.OP_ERROR,
-            ]);
+            const data = await this._execCommandWait(this.readByGroupRequest(startHandle, 0xffff, GATT.PRIM_SVC_UUID), [ATT.OP_READ_BY_GROUP_RESP, ATT.OP_ERROR]);
             const opcode = data[0];
             let i = 0;
             if (opcode === ATT.OP_READ_BY_GROUP_RESP) {
@@ -9672,7 +9781,8 @@ class Gatt extends eventemitter3_1.default {
                     });
                 }
             }
-            if (opcode !== ATT.OP_READ_BY_GROUP_RESP || services[services.length - 1].endHandle === 0xffff) {
+            if (opcode !== ATT.OP_READ_BY_GROUP_RESP ||
+                services[services.length - 1].endHandle === 0xffff) {
                 const serviceUuids = [];
                 for (i = 0; i < services.length; i++) {
                     if (uuids.length === 0 || uuids.indexOf(services[i].uuid) !== -1) {
@@ -9707,10 +9817,12 @@ class Gatt extends eventemitter3_1.default {
                 }
             }
             if (opcode !== ATT.OP_READ_BY_TYPE_RESP ||
-                includedServices[includedServices.length - 1].endHandle === service.endHandle) {
+                includedServices[includedServices.length - 1].endHandle ===
+                    service.endHandle) {
                 const includedServiceUuids = [];
                 for (i = 0; i < includedServices.length; i++) {
-                    if (uuids.length === 0 || uuids.indexOf(includedServices[i].uuid) !== -1) {
+                    if (uuids.length === 0 ||
+                        uuids.indexOf(includedServices[i].uuid) !== -1) {
                         includedServiceUuids.push(includedServices[i].uuid);
                     }
                 }
@@ -9722,7 +9834,8 @@ class Gatt extends eventemitter3_1.default {
     async discoverCharacteristicsWait(serviceUuid, characteristicUuids) {
         const service = this.getService(serviceUuid);
         const characteristics = [];
-        this._characteristics[serviceUuid] = this._characteristics[serviceUuid] || {};
+        this._characteristics[serviceUuid] =
+            this._characteristics[serviceUuid] || {};
         this._descriptors[serviceUuid] = this._descriptors[serviceUuid] || {};
         let startHandle = service.startHandle;
         while (1) {
@@ -9745,7 +9858,8 @@ class Gatt extends eventemitter3_1.default {
                 }
             }
             if (opcode !== ATT.OP_READ_BY_TYPE_RESP ||
-                characteristics[characteristics.length - 1].valueHandle === service.endHandle) {
+                characteristics[characteristics.length - 1].valueHandle ===
+                    service.endHandle) {
                 const characteristicsDiscovered = [];
                 for (i = 0; i < characteristics.length; i++) {
                     const properties = characteristics[i].properties;
@@ -9754,37 +9868,40 @@ class Gatt extends eventemitter3_1.default {
                         uuid: characteristics[i].uuid,
                     };
                     if (i !== 0) {
-                        characteristics[i - 1].endHandle = characteristics[i].startHandle - 1;
+                        characteristics[i - 1].endHandle =
+                            characteristics[i].startHandle - 1;
                     }
                     if (i === characteristics.length - 1) {
                         characteristics[i].endHandle = service.endHandle;
                     }
-                    this._characteristics[serviceUuid][characteristics[i].uuid] = characteristics[i];
+                    this._characteristics[serviceUuid][characteristics[i].uuid] =
+                        characteristics[i];
                     if (properties & 0x01) {
-                        characteristic.properties.push("broadcast");
+                        characteristic.properties.push('broadcast');
                     }
                     if (properties & 0x02) {
-                        characteristic.properties.push("read");
+                        characteristic.properties.push('read');
                     }
                     if (properties & 0x04) {
-                        characteristic.properties.push("writeWithoutResponse");
+                        characteristic.properties.push('writeWithoutResponse');
                     }
                     if (properties & 0x08) {
-                        characteristic.properties.push("write");
+                        characteristic.properties.push('write');
                     }
                     if (properties & 0x10) {
-                        characteristic.properties.push("notify");
+                        characteristic.properties.push('notify');
                     }
                     if (properties & 0x20) {
-                        characteristic.properties.push("indicate");
+                        characteristic.properties.push('indicate');
                     }
                     if (properties & 0x40) {
-                        characteristic.properties.push("authenticatedSignedWrites");
+                        characteristic.properties.push('authenticatedSignedWrites');
                     }
                     if (properties & 0x80) {
-                        characteristic.properties.push("extendedProperties");
+                        characteristic.properties.push('extendedProperties');
                     }
-                    if (characteristicUuids.length === 0 || characteristicUuids.indexOf(characteristic.uuid) !== -1) {
+                    if (characteristicUuids.length === 0 ||
+                        characteristicUuids.indexOf(characteristic.uuid) !== -1) {
                         characteristicsDiscovered.push(characteristic);
                     }
                 }
@@ -9805,14 +9922,15 @@ class Gatt extends eventemitter3_1.default {
                 data = await this._execCommandWait(this.readBlobRequest(characteristic.valueHandle, readData.length), ATT.OP_READ_BLOB_RESP);
             }
             const opcode = data[0];
-            readData = Buffer.from(readData.toString("hex") + data.slice(1).toString("hex"), "hex");
+            readData = Buffer.from(readData.toString('hex') + data.slice(1).toString('hex'), 'hex');
             if (data.length === this._mtu) {
-                continue;
             }
             else {
                 return readData;
             }
         }
+        // never reach
+        // eslint-disable-next-line no-unreachable
         return readData;
     }
     async writeWait(serviceUuid, characteristicUuid, data, withoutResponse) {
@@ -9850,7 +9968,7 @@ class Gatt extends eventemitter3_1.default {
         let value = null;
         let handle = null;
         try {
-            value = await this.readValueWait(serviceUuid, characteristicUuid, "2902");
+            value = await this.readValueWait(serviceUuid, characteristicUuid, '2902');
         }
         catch (e) {
             // retry
@@ -9885,10 +10003,10 @@ class Gatt extends eventemitter3_1.default {
             _data = await this._execCommandWait(this.writeRequest(handle, valueBuffer, false), ATT.OP_WRITE_RESP);
         }
         else {
-            _data = await this.writeValueWait(serviceUuid, characteristicUuid, "2902", valueBuffer);
+            _data = await this.writeValueWait(serviceUuid, characteristicUuid, '2902', valueBuffer);
         }
         const _opcode = _data && _data[0];
-        debug("set notify write results: " + (_opcode === ATT.OP_WRITE_RESP));
+        debug('set notify write results: ' + (_opcode === ATT.OP_WRITE_RESP));
     }
     async discoverDescriptorsWait(serviceUuid, characteristicUuid) {
         const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
@@ -9896,10 +10014,7 @@ class Gatt extends eventemitter3_1.default {
         this._descriptors[serviceUuid][characteristicUuid] = {};
         let startHandle = characteristic.valueHandle + 1;
         while (1) {
-            const data = await this._execCommandWait(this.findInfoRequest(startHandle, characteristic.endHandle), [
-                ATT.OP_FIND_INFO_RESP,
-                ATT.OP_ERROR,
-            ]);
+            const data = await this._execCommandWait(this.findInfoRequest(startHandle, characteristic.endHandle), [ATT.OP_FIND_INFO_RESP, ATT.OP_ERROR]);
             const opcode = data[0];
             let i = 0;
             if (opcode === ATT.OP_FIND_INFO_RESP) {
@@ -9911,7 +10026,8 @@ class Gatt extends eventemitter3_1.default {
                     });
                 }
             }
-            if (opcode !== ATT.OP_FIND_INFO_RESP || descriptors[descriptors.length - 1].handle === characteristic.endHandle) {
+            if (opcode !== ATT.OP_FIND_INFO_RESP ||
+                descriptors[descriptors.length - 1].handle === characteristic.endHandle) {
                 const descriptorUuids = [];
                 for (i = 0; i < descriptors.length; i++) {
                     descriptorUuids.push(descriptors[i].uuid);
@@ -9921,7 +10037,8 @@ class Gatt extends eventemitter3_1.default {
             }
             startHandle = descriptors[descriptors.length - 1].handle + 1;
         }
-        // never reached
+        // never reach
+        // eslint-disable-next-line no-unreachable
         return [];
     }
     async readValueWait(serviceUuid, characteristicUuid, descriptorUuid) {
@@ -9953,33 +10070,34 @@ class Gatt extends eventemitter3_1.default {
         if (data[0] === ATT.OP_HANDLE_NOTIFY || data[0] === ATT.OP_HANDLE_IND) {
             const valueHandle = data.readUInt16LE(1);
             const valueData = data.slice(3);
-            this.emit("handleNotify", this._address, valueHandle, valueData);
+            this.emit('handleNotify', this._address, valueHandle, valueData);
             if (data[0] === ATT.OP_HANDLE_IND) {
                 // background
                 this._execNoRespCommandWait(this.handleConfirmation()).then(() => {
-                    this.emit("handleConfirmation", this._address, valueHandle);
+                    this.emit('handleConfirmation', this._address, valueHandle);
                 });
             }
             for (const serviceUuid in this._services) {
                 for (const characteristicUuid in this._characteristics[serviceUuid]) {
-                    if (this._characteristics[serviceUuid][characteristicUuid].valueHandle === valueHandle) {
-                        this.emit("notification", this._address, serviceUuid, characteristicUuid, valueData);
+                    if (this._characteristics[serviceUuid][characteristicUuid]
+                        .valueHandle === valueHandle) {
+                        this.emit('notification', this._address, serviceUuid, characteristicUuid, valueData);
                     }
                 }
             }
         }
     }
     onAclStreamEnd() {
-        this._aclStream.removeListener("data", this.onAclStreamDataBinded);
-        this._aclStream.removeListener("end", this.onAclStreamEndBinded);
+        this._aclStream.removeListener('data', this.onAclStreamDataBinded);
+        this._aclStream.removeListener('end', this.onAclStreamEndBinded);
     }
     writeAtt(data) {
         const opCode = data[0];
-        const handle = data.length > 3 ? data.readUInt16LE(1) : "none";
+        const handle = data.length > 3 ? data.readUInt16LE(1) : 'none';
         debug(`ATT: opCode=${opCode}(${ATT_OP_READABLES[opCode]}) handle=${handle} address=` +
             this._address +
-            ": write: " +
-            data.toString("hex"));
+            ': write: ' +
+            data.toString('hex'));
         this._aclStream.write(ATT.CID, data);
     }
     errorResponse(opcode, handle, status) {
@@ -10100,7 +10218,8 @@ class Gatt extends eventemitter3_1.default {
         return this._services[serviceUuid];
     }
     getCharacteristic(serviceUuid, characteristicUuid) {
-        if (!this._characteristics[serviceUuid] || !this._characteristics[serviceUuid][characteristicUuid]) {
+        if (!this._characteristics[serviceUuid] ||
+            !this._characteristics[serviceUuid][characteristicUuid]) {
             throw new ObnizError_1.ObnizBleUnknownCharacteristicError(this._address, serviceUuid, characteristicUuid);
         }
         return this._characteristics[serviceUuid][characteristicUuid];
@@ -10140,7 +10259,7 @@ class Gatt extends eventemitter3_1.default {
         const onfinish = () => {
             this._commandPromises = this._commandPromises.filter((e) => e !== resultPromise);
             if (disconnectReject) {
-                this.off("end", disconnectReject);
+                this.off('end', disconnectReject);
             }
         };
         let disconnectReject = null;
@@ -10166,14 +10285,16 @@ class Gatt extends eventemitter3_1.default {
                 onfinish();
                 reject(reason);
             };
-            this.on("end", disconnectReject);
+            this.on('end', disconnectReject);
         });
         const resultPromise = Promise.race([doPromise, disconnectPromise]);
         this._commandPromises.push(resultPromise);
         return resultPromise;
     }
     _execCommandWait(buffer, waitOpcode) {
-        const waitOpcodes = Array.isArray(waitOpcode) ? waitOpcode : [waitOpcode];
+        const waitOpcodes = Array.isArray(waitOpcode)
+            ? waitOpcode
+            : [waitOpcode];
         let errorHandle = true;
         if (!waitOpcodes.includes(ATT.OP_ERROR)) {
             waitOpcodes.push(ATT.OP_ERROR);
@@ -10195,7 +10316,7 @@ class Gatt extends eventemitter3_1.default {
                     if ((errCode === ATT.ECODE_AUTHENTICATION ||
                         errCode === ATT.ECODE_AUTHORIZATION ||
                         errCode === ATT.ECODE_INSUFF_ENC) &&
-                        this._security !== "medium") {
+                        this._security !== 'medium') {
                         // retry after encrypt
                         debug(`ATT: going to encrypt and try it later.`);
                         await this._aclStream.encryptWait();
@@ -10265,45 +10386,45 @@ class Signaling extends eventemitter3_1.default {
         this._aclStream = aclStream;
         this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
         this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
-        this._aclStream.on("data", this.onAclStreamDataBinded);
-        this._aclStream.on("end", this.onAclStreamEndBinded);
+        this._aclStream.on('data', this.onAclStreamDataBinded);
+        this._aclStream.on('end', this.onAclStreamEndBinded);
     }
     onAclStreamData(cid, data) {
         if (cid !== SIGNALING_CID) {
             return;
         }
-        debug("onAclStreamData: " + data.toString("hex"));
+        debug('onAclStreamData: ' + data.toString('hex'));
         const code = data.readUInt8(0);
         const identifier = data.readUInt8(1);
         const length = data.readUInt16LE(2);
         const signalingData = data.slice(4);
-        debug("\tcode = " + code);
-        debug("\tidentifier = " + identifier);
-        debug("\tlength = " + length);
+        debug('\tcode = ' + code);
+        debug('\tidentifier = ' + identifier);
+        debug('\tlength = ' + length);
         if (code === CONNECTION_PARAMETER_UPDATE_REQUEST) {
             this.processConnectionParameterUpdateRequest(identifier, signalingData);
         }
     }
     onAclStreamEnd() {
-        this._aclStream.removeListener("data", this.onAclStreamDataBinded);
-        this._aclStream.removeListener("end", this.onAclStreamEndBinded);
+        this._aclStream.removeListener('data', this.onAclStreamDataBinded);
+        this._aclStream.removeListener('end', this.onAclStreamEndBinded);
     }
     processConnectionParameterUpdateRequest(identifier, data) {
         const minInterval = data.readUInt16LE(0) * 1.25;
         const maxInterval = data.readUInt16LE(2) * 1.25;
         const latency = data.readUInt16LE(4);
         const supervisionTimeout = data.readUInt16LE(6) * 10;
-        debug("\t\tmin interval = ", minInterval);
-        debug("\t\tmax interval = ", maxInterval);
-        debug("\t\tlatency = ", latency);
-        debug("\t\tsupervision timeout = ", supervisionTimeout);
+        debug('\t\tmin interval = ', minInterval);
+        debug('\t\tmax interval = ', maxInterval);
+        debug('\t\tlatency = ', latency);
+        debug('\t\tsupervision timeout = ', supervisionTimeout);
         const response = Buffer.alloc(6);
         response.writeUInt8(CONNECTION_PARAMETER_UPDATE_RESPONSE, 0); // code
         response.writeUInt8(identifier, 1); // identifier
         response.writeUInt16LE(2, 2); // length
         response.writeUInt16LE(0, 4);
         this._aclStream.write(SIGNALING_CID, response);
-        this.emit("connectionParameterUpdateRequest", this._handle, minInterval, maxInterval, latency, supervisionTimeout);
+        this.emit('connectionParameterUpdateRequest', this._handle, minInterval, maxInterval, latency, supervisionTimeout);
     }
 }
 exports.default = Signaling;
@@ -10356,14 +10477,14 @@ class Smp extends eventemitter3_1.default {
         this._options = undefined;
         this.debugHandler = () => { };
         this._aclStream = aclStream;
-        this._iat = Buffer.from([localAddressType === "random" ? 0x01 : 0x00]);
-        this._ia = bleHelper_1.default.hex2reversedBuffer(localAddress, ":");
-        this._rat = Buffer.from([remoteAddressType === "random" ? 0x01 : 0x00]);
-        this._ra = bleHelper_1.default.hex2reversedBuffer(remoteAddress, ":");
+        this._iat = Buffer.from([localAddressType === 'random' ? 0x01 : 0x00]);
+        this._ia = bleHelper_1.default.hex2reversedBuffer(localAddress, ':');
+        this._rat = Buffer.from([remoteAddressType === 'random' ? 0x01 : 0x00]);
+        this._ra = bleHelper_1.default.hex2reversedBuffer(remoteAddress, ':');
         this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
         this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
-        this._aclStream.on("data", this.onAclStreamDataBinded);
-        this._aclStream.on("end", this.onAclStreamEndBinded);
+        this._aclStream.on('data', this.onAclStreamDataBinded);
+        this._aclStream.on('end', this.onAclStreamEndBinded);
     }
     async pairingWithKeyWait(key) {
         this.debug(`Pairing using keys ${key}`);
@@ -10387,7 +10508,7 @@ class Smp extends eventemitter3_1.default {
         await this.sendPairingRequestWait();
         this.debug(`Waiting Pairing Response`);
         const pairingResponse = await this._readWait(SMP.PAIRING_RESPONSE);
-        await this.handlePairingResponse(pairingResponse);
+        await this.handlePairingResponseWait(pairingResponse);
         this.debug(`Waiting Pairing Confirm`);
         const confirm = await this._readWait(SMP.PAIRING_CONFIRM, 60 * 1000); // 60sec timeout
         this.handlePairingConfirm(confirm);
@@ -10422,11 +10543,11 @@ class Smp extends eventemitter3_1.default {
         // console.warn("SMP: " + code);
     }
     onAclStreamEnd() {
-        this._aclStream.removeListener("data", this.onAclStreamDataBinded);
-        this._aclStream.removeListener("end", this.onAclStreamEndBinded);
-        this.emit("end");
+        this._aclStream.removeListener('data', this.onAclStreamDataBinded);
+        this._aclStream.removeListener('end', this.onAclStreamEndBinded);
+        this.emit('end');
     }
-    async handlePairingResponse(data) {
+    async handlePairingResponseWait(data) {
         this._pres = data;
         if (this.isPasskeyMode()) {
             let passkeyNumber = 0;
@@ -10439,7 +10560,7 @@ class Smp extends eventemitter3_1.default {
             this._tk = Buffer.from(passkey);
         }
         else {
-            this._tk = Buffer.from("00000000000000000000000000000000", "hex");
+            this._tk = Buffer.from('00000000000000000000000000000000', 'hex');
         }
         this._r = crypto_1.default.r();
         this.write(Buffer.concat([
@@ -10458,9 +10579,9 @@ class Smp extends eventemitter3_1.default {
             Buffer.from([SMP.PAIRING_CONFIRM]),
             crypto_1.default.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
         ]);
-        if (this._pcnf.toString("hex") === pcnf.toString("hex")) {
+        if (this._pcnf.toString('hex') === pcnf.toString('hex')) {
             if (this._stk !== null) {
-                console.error("second stk");
+                console.error('second stk');
             }
             this._stk = crypto_1.default.s1(this._tk, r, this._r);
             // this.emit("stk", this._stk);
@@ -10468,24 +10589,24 @@ class Smp extends eventemitter3_1.default {
         }
         else {
             this.write(Buffer.from([SMP.PAIRING_RANDOM, SMP.PAIRING_CONFIRM]));
-            this.emit("fail", 0);
-            throw new Error("Encryption pcnf error");
+            this.emit('fail', 0);
+            throw new Error('Encryption pcnf error');
         }
         return encResult;
     }
     handlePairingFailed(data) {
-        this.emit("fail", data.readUInt8(1));
+        this.emit('fail', data.readUInt8(1));
     }
     handleEncryptInfo(data) {
         this._ltk = data.slice(1);
-        this.emit("ltk", this._ltk);
+        this.emit('ltk', this._ltk);
     }
     handleMasterIdent(data) {
         const ediv = data.slice(1, 3);
         const rand = data.slice(3);
         this._ediv = ediv;
         this._rand = rand;
-        this.emit("masterIdent", ediv, rand);
+        this.emit('masterIdent', ediv, rand);
     }
     write(data) {
         this._aclStream.write(SMP.CID, data);
@@ -10503,33 +10624,33 @@ class Smp extends eventemitter3_1.default {
         });
     }
     setKeys(keyStringBase64) {
-        const keyString = Buffer.from(keyStringBase64, "base64").toString("ascii");
+        const keyString = Buffer.from(keyStringBase64, 'base64').toString('ascii');
         this.debug(`restored keys ${keyString}`);
         const keys = JSON.parse(keyString);
-        this._stk = Buffer.from(keys.stk, "hex");
-        this._preq = Buffer.from(keys.preq, "hex");
-        this._pres = Buffer.from(keys.pres, "hex");
-        this._tk = Buffer.from(keys.tk, "hex");
-        this._r = Buffer.from(keys.r, "hex");
-        this._pcnf = Buffer.from(keys.pcnf, "hex");
-        this._ltk = Buffer.from(keys.ltk, "hex");
-        this._ediv = Buffer.from(keys.ediv, "hex");
-        this._rand = Buffer.from(keys.rand, "hex");
+        this._stk = Buffer.from(keys.stk, 'hex');
+        this._preq = Buffer.from(keys.preq, 'hex');
+        this._pres = Buffer.from(keys.pres, 'hex');
+        this._tk = Buffer.from(keys.tk, 'hex');
+        this._r = Buffer.from(keys.r, 'hex');
+        this._pcnf = Buffer.from(keys.pcnf, 'hex');
+        this._ltk = Buffer.from(keys.ltk, 'hex');
+        this._ediv = Buffer.from(keys.ediv, 'hex');
+        this._rand = Buffer.from(keys.rand, 'hex');
     }
     getKeys() {
         const keys = {
-            stk: this._stk.toString("hex"),
-            preq: this._preq.toString("hex"),
-            pres: this._pres.toString("hex"),
-            tk: this._tk.toString("hex"),
-            r: this._r.toString("hex"),
-            pcnf: this._pcnf.toString("hex"),
-            ltk: this._ltk.toString("hex"),
-            ediv: this._ediv.toString("hex"),
-            rand: this._rand.toString("hex"),
+            stk: this._stk.toString('hex'),
+            preq: this._preq.toString('hex'),
+            pres: this._pres.toString('hex'),
+            tk: this._tk.toString('hex'),
+            r: this._r.toString('hex'),
+            pcnf: this._pcnf.toString('hex'),
+            ltk: this._ltk.toString('hex'),
+            ediv: this._ediv.toString('hex'),
+            rand: this._rand.toString('hex'),
         };
         const jsonString = JSON.stringify(keys);
-        const keyString = Buffer.from(jsonString, "ascii").toString("base64");
+        const keyString = Buffer.from(jsonString, 'ascii').toString('base64');
         return keyString;
     }
     async sendPairingRequestWait() {
@@ -10566,11 +10687,14 @@ class Smp extends eventemitter3_1.default {
         return false;
     }
     _readWait(flag, timeout) {
-        return Promise.race([this._aclStream.readWait(SMP.CID, flag, timeout), this._pairingFailReject()]);
+        return Promise.race([
+            this._aclStream.readWait(SMP.CID, flag, timeout),
+            this._pairingFailReject(),
+        ]);
     }
     _pairingFailReject() {
         return new Promise((resolve, reject) => {
-            this.on("fail", (reason) => {
+            this.on('fail', (reason) => {
                 reject(new ObnizError_1.ObnizBlePairingRejectByRemoteError(reason));
             });
         });
@@ -10687,7 +10811,7 @@ const STATUS_MAPPER = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/p
 class Hci extends eventemitter3_1.default {
     constructor(obnizHci) {
         super();
-        this._state = "poweredOff";
+        this._state = 'poweredOff';
         this._aclStreamObservers = {};
         /**
          * @ignore
@@ -10695,8 +10819,8 @@ class Hci extends eventemitter3_1.default {
          */
         this.debugHandler = () => { };
         this._obnizHci = obnizHci;
-        this._obnizHci.Obniz.on("disconnect", () => {
-            this.stateChange("poweredOff");
+        this._obnizHci.Obniz.on('disconnect', () => {
+            this.stateChange('poweredOff');
         });
         this._socket = {
             write: (data) => {
@@ -10713,7 +10837,7 @@ class Hci extends eventemitter3_1.default {
      * @private
      */
     _reset() {
-        this.stateChange("poweredOff");
+        this.stateChange('poweredOff');
         this.resetBuffers();
     }
     async initWait() {
@@ -10721,14 +10845,14 @@ class Hci extends eventemitter3_1.default {
     }
     setEventMask() {
         const cmd = Buffer.alloc(12);
-        const eventMask = Buffer.from("fffffbff07f8bf3d", "hex");
+        const eventMask = Buffer.from('fffffbff07f8bf3d', 'hex');
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
         cmd.writeUInt16LE(COMMANDS.SET_EVENT_MASK_CMD, 1);
         // length
         cmd.writeUInt8(eventMask.length, 3);
         eventMask.copy(cmd, 4);
-        this.debug("set event mask - writing: " + cmd.toString("hex"));
+        this.debug('set event mask - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
     }
     async resetWait() {
@@ -10740,12 +10864,12 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(0x00, 3);
         const p = this.readCmdCompleteEventWait(COMMANDS.RESET_CMD);
-        this.debug("reset - writing: " + cmd.toString("hex"));
+        this.debug('reset - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const resetResult = await p;
         this.setEventMask();
         this.setLeEventMask();
-        const { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer } = await this.readLocalVersionWait();
+        const { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer, } = await this.readLocalVersionWait();
         this.debug(`localVersion ${hciVer} ${hciRev} ${lmpVer} ${manufacturer} ${lmpSubVer}`);
         this.writeLeHostSupported();
         await this.readLeHostSupportedWait();
@@ -10755,10 +10879,10 @@ class Hci extends eventemitter3_1.default {
         if (bufsize) {
             this.debug(`Buffer Mtu=${bufsize.aclMtu} aclMaxInProgress=${bufsize.aclMaxInProgress}`);
         }
-        if (this._state !== "poweredOn") {
+        if (this._state !== 'poweredOn') {
             await this.setScanEnabledWait(false, true);
             await this.setScanParametersWait(false);
-            this.stateChange("poweredOn");
+            this.stateChange('poweredOn');
         }
     }
     resetBuffers() {
@@ -10774,7 +10898,7 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(0x0, 3);
         const p = this.readCmdCompleteEventWait(COMMANDS.READ_LOCAL_VERSION_CMD);
-        this.debug("read local version - writing: " + cmd.toString("hex"));
+        this.debug('read local version - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const data = await p;
         const hciVer = data.result.readUInt8(0);
@@ -10795,24 +10919,24 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(0x0, 3);
         const p = this.readCmdCompleteEventWait(COMMANDS.READ_BD_ADDR_CMD);
-        this.debug("read bd addr - writing: " + cmd.toString("hex"));
+        this.debug('read bd addr - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const data = await p;
-        this.addressType = "public";
-        this.address = bleHelper_1.default.buffer2reversedHex(data.result, ":");
-        this.debug("address = " + this.address);
+        this.addressType = 'public';
+        this.address = bleHelper_1.default.buffer2reversedHex(data.result, ':');
+        this.debug('address = ' + this.address);
         return this.address;
     }
     setLeEventMask() {
         const cmd = Buffer.alloc(12);
-        const leEventMask = Buffer.from("1f00000000000000", "hex");
+        const leEventMask = Buffer.from('1f00000000000000', 'hex');
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
         cmd.writeUInt16LE(COMMANDS.LE_SET_EVENT_MASK_CMD, 1);
         // length
         cmd.writeUInt8(leEventMask.length, 3);
         leEventMask.copy(cmd, 4);
-        this.debug("set le event mask - writing: " + cmd.toString("hex"));
+        this.debug('set le event mask - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
     }
     async readLeHostSupportedWait() {
@@ -10823,14 +10947,14 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(0x00, 3);
         const p = this.readCmdCompleteEventWait(COMMANDS.READ_LE_HOST_SUPPORTED_CMD);
-        this.debug("read LE host supported - writing: " + cmd.toString("hex"));
+        this.debug('read LE host supported - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const data = await p;
         if (data.status === 0) {
             const le = data.result.readUInt8(0);
             const simul = data.result.readUInt8(1);
-            this.debug("\t\t\tle = " + le);
-            this.debug("\t\t\tsimul = " + simul);
+            this.debug('\t\t\tle = ' + le);
+            this.debug('\t\t\tsimul = ' + simul);
         }
         return data;
     }
@@ -10844,7 +10968,7 @@ class Hci extends eventemitter3_1.default {
         // data
         cmd.writeUInt8(0x01, 4); // le
         cmd.writeUInt8(0x00, 5); // simul
-        this.debug("write LE host supported - writing: " + cmd.toString("hex"));
+        this.debug('write LE host supported - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
     }
     async setScanParametersWait(isActiveScan) {
@@ -10861,7 +10985,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(0x00, 9); // own address type: 0 -> public, 1 -> random
         cmd.writeUInt8(0x00, 10); // filter: 0 -> all event types
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_PARAMETERS_CMD);
-        this.debug("set scan parameters - writing: " + cmd.toString("hex"));
+        this.debug('set scan parameters - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const data = await p;
         return data.status;
@@ -10876,7 +11000,7 @@ class Hci extends eventemitter3_1.default {
         // data
         cmd.writeUInt8(enabled ? 0x01 : 0x00, 4); // enable: 0 -> disabled, 1 -> enabled
         cmd.writeUInt8(filterDuplicates ? 0x01 : 0x00, 5); // 0x01 => filter enabled, 0x00 => filter disable
-        this.debug("set scan enabled - writing: " + cmd.toString("hex"));
+        this.debug('set scan enabled - writing: ' + cmd.toString('hex'));
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_ENABLE_CMD);
         this._socket.write(cmd);
         const data = await p;
@@ -10893,8 +11017,8 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(0x0010, 4); // interval
         cmd.writeUInt16LE(0x0010, 6); // window
         cmd.writeUInt8(0x00, 8); // initiator filter
-        cmd.writeUInt8(addressType === "random" ? 0x01 : 0x00, 9); // peer address type
-        bleHelper_1.default.hex2reversedBuffer(address, ":").copy(cmd, 10); // peer address
+        cmd.writeUInt8(addressType === 'random' ? 0x01 : 0x00, 9); // peer address type
+        bleHelper_1.default.hex2reversedBuffer(address, ':').copy(cmd, 10); // peer address
         cmd.writeUInt8(0x00, 16); // own address type
         cmd.writeUInt16LE(0x0009, 17); // min interval 9 * 1.25 msec => 7.5msec (close to android)
         cmd.writeUInt16LE(0x0018, 19); // max interval 24 * 1.25 msec => 30msec (close to ios)
@@ -10902,7 +11026,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(0x0190, 23); // supervision timeout 4sec // cmd.writeUInt16LE(0x00c8, 23);
         cmd.writeUInt16LE(0x0000, 25); // min ce length
         cmd.writeUInt16LE(0x0000, 27); // max ce length
-        this.debug("create le conn - writing: " + cmd.toString("hex"));
+        this.debug('create le conn - writing: ' + cmd.toString('hex'));
         const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, {
             timeout,
         });
@@ -10917,14 +11041,13 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(COMMANDS.LE_CREATE_CONN_CANCEL_CMD, 1);
         // length
         cmd.writeUInt8(0x0, 3);
-        /*
-         * 成功すると0x00 失敗で 0x01~0xFFが帰る
-         * 特に接続処理中じゃない場合は 0x0x(command disallowed)がかえる
-         * キャンセルに成功してその応答が来たあとには
-         * LE Connection Complete or an HCI_LE_Enhanced_Connection_Complete event
-         * のどちらかがちゃんと返る
+        /**
+         * On success, 0x00 is returned. On failure, 0x01~0xFF is returned.
+         * If the connection is not being processed, 0x0x (command disallowed) will be returned.
+         * After a successful cancellation and response, either LE_Connection_Complete or
+         * an HCI_LE_Enhanced_Connection_Complete event will be returned.
          */
-        this.debug("create le conn cancel - writing: " + cmd.toString("hex"));
+        this.debug('create le conn cancel - writing: ' + cmd.toString('hex'));
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_CREATE_CONN_CANCEL_CMD);
         this._socket.write(cmd);
         const { status } = await p;
@@ -10947,7 +11070,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(Math.floor(supervisionTimeout / 10), 12); // supervision timeout
         cmd.writeUInt16LE(0x0000, 14); // min ce length
         cmd.writeUInt16LE(0x0000, 16); // max ce length
-        this.debug("conn update le - writing: " + cmd.toString("hex"));
+        this.debug('conn update le - writing: ' + cmd.toString('hex'));
         const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE);
         this._socket.write(cmd);
         const { status, data } = await p;
@@ -10959,10 +11082,10 @@ class Hci extends eventemitter3_1.default {
         const interval = data.readUInt16LE(2) * 1.25;
         const latency = data.readUInt16LE(4); // TODO: multiplier?
         const supervisionTimeout = data.readUInt16LE(6) * 10;
-        this.debug("\t\t\thandle = " + handle);
-        this.debug("\t\t\tinterval = " + interval);
-        this.debug("\t\t\tlatency = " + latency);
-        this.debug("\t\t\tsupervision timeout = " + supervisionTimeout);
+        this.debug('\t\t\thandle = ' + handle);
+        this.debug('\t\t\tinterval = ' + interval);
+        this.debug('\t\t\tlatency = ' + latency);
+        this.debug('\t\t\tsupervision timeout = ' + supervisionTimeout);
         return { status, handle, interval, latency, supervisionTimeout };
     }
     async startLeEncryptionWait(handle, random, diversifier, key) {
@@ -10979,12 +11102,12 @@ class Hci extends eventemitter3_1.default {
         key.copy(cmd, 16);
         // console.log("start le encryption - writing: " + cmd.toString("hex"));
         const p1 = this._obnizHci.readWait([COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_ENCRYPT_CHANGE], {
-            waitingFor: "EVT_ENCRYPT_CHANGE",
+            waitingFor: 'EVT_ENCRYPT_CHANGE',
         });
         const p2 = this._obnizHci.readWait([COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_ENCRYPTION_KEY_REFRESH_COMPLETE], {
-            waitingFor: "EVT_ENCRYPTION_KEY_REFRESH_COMPLETE",
+            waitingFor: 'EVT_ENCRYPTION_KEY_REFRESH_COMPLETE',
         });
-        this.debug("start le encryption - writing: " + cmd.toString("hex"));
+        this.debug('start le encryption - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const data = await Promise.race([p1, p2]);
         // const data = await p1;
@@ -10999,9 +11122,9 @@ class Hci extends eventemitter3_1.default {
             }
             const encHandle = data.readUInt16LE(4);
             const encrypt = data.readUInt8(6);
-            this.debug("\t\thandle = " + encHandle);
-            this.debug("\t\tencrypt = " + encrypt);
-            this.emit("encryptChange", encHandle, encrypt);
+            this.debug('\t\thandle = ' + encHandle);
+            this.debug('\t\tencrypt = ' + encrypt);
+            this.emit('encryptChange', encHandle, encrypt);
             return encrypt;
         }
         else if (data[1] === COMMANDS.EVT_ENCRYPTION_KEY_REFRESH_COMPLETE) {
@@ -11013,10 +11136,10 @@ class Hci extends eventemitter3_1.default {
                 throw new Error(`le encryption event EVT_ENCRYPTION_KEY_REFRESH_COMPLETE failed with error ${status}`);
             }
             const encHandle = data.readUInt16LE(4);
-            this.debug("\t\thandle = " + encHandle);
-            return "refresh";
+            this.debug('\t\thandle = ' + encHandle);
+            return 'refresh';
         }
-        throw new Error("Never Happend");
+        throw new Error('Never Happend');
     }
     disconnect(handle, reason) {
         const cmd = Buffer.alloc(7);
@@ -11029,7 +11152,7 @@ class Hci extends eventemitter3_1.default {
         // data
         cmd.writeUInt16LE(handle, 4); // handle
         cmd.writeUInt8(reason, 6); // reason
-        this.debug("disconnect - writing: " + cmd.toString("hex"));
+        this.debug('disconnect - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
     }
     async readRssiWait(handle) {
@@ -11041,16 +11164,19 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(0x02, 3);
         // data
         cmd.writeUInt16LE(handle, 4); // handle
-        const p = this.readCmdCompleteEventWait(COMMANDS.READ_RSSI_CMD, [handle & 0xff, (handle >> 8) & 0xff]);
-        this.debug("read rssi - writing: " + cmd.toString("hex"));
+        const p = this.readCmdCompleteEventWait(COMMANDS.READ_RSSI_CMD, [
+            handle & 0xff,
+            (handle >> 8) & 0xff,
+        ]);
+        this.debug('read rssi - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const data = await p;
         if (handle !== data.result.readUInt16LE(0)) {
-            throw new Error("handle is different");
+            throw new Error('handle is different');
         }
         const rssi = data.result.readInt8(2);
-        this.debug("\t\t\thandle = " + handle);
-        this.debug("\t\t\trssi = " + rssi);
+        this.debug('\t\t\thandle = ' + handle);
+        this.debug('\t\t\trssi = ' + rssi);
         return rssi;
     }
     async setAdvertisingParametersWait() {
@@ -11060,18 +11186,20 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD, 1);
         // length
         cmd.writeUInt8(15, 3);
-        const advertisementInterval = Math.floor((process.env.BLENO_ADVERTISING_INTERVAL ? parseFloat(process.env.BLENO_ADVERTISING_INTERVAL) : 100) * 1.6);
+        const advertisementInterval = Math.floor((process.env.BLENO_ADVERTISING_INTERVAL
+            ? parseFloat(process.env.BLENO_ADVERTISING_INTERVAL)
+            : 100) * 1.6);
         // data
         cmd.writeUInt16LE(advertisementInterval, 4); // min interval
         cmd.writeUInt16LE(advertisementInterval, 6); // max interval
         cmd.writeUInt8(0x00, 8); // adv type
         cmd.writeUInt8(0x00, 9); // own addr typ
         cmd.writeUInt8(0x00, 10); // direct addr type
-        Buffer.from("000000000000", "hex").copy(cmd, 11); // direct addr
+        Buffer.from('000000000000', 'hex').copy(cmd, 11); // direct addr
         cmd.writeUInt8(0x07, 17);
         cmd.writeUInt8(0x00, 18);
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD);
-        this.debug("set advertisement parameters - writing: " + cmd.toString("hex"));
+        this.debug('set advertisement parameters - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const data = await p;
         // this.emit("stateChange", "poweredOn"); // TODO : really need?
@@ -11089,7 +11217,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(data.length, 4);
         data.copy(cmd, 5);
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISING_DATA_CMD);
-        this.debug("set advertisement data - writing: " + cmd.toString("hex"));
+        this.debug('set advertisement data - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const result = await p;
         return result.status;
@@ -11106,7 +11234,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(data.length, 4);
         data.copy(cmd, 5);
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_RESPONSE_DATA_CMD);
-        this.debug("set scan response data - writing: " + cmd.toString("hex"));
+        this.debug('set scan response data - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const result = await p;
         return result.status;
@@ -11121,7 +11249,7 @@ class Hci extends eventemitter3_1.default {
         // data
         cmd.writeUInt8(enabled ? 0x01 : 0x00, 4); // enable: 0 -> disabled, 1 -> enabled
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISE_ENABLE_CMD);
-        this.debug("set advertise enable - writing: " + cmd.toString("hex"));
+        this.debug('set advertise enable - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const data = await p;
         return data.status;
@@ -11134,7 +11262,7 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(0x0, 3);
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_READ_BUFFER_SIZE_CMD);
-        this.debug("le read buffer size - writing: " + cmd.toString("hex"));
+        this.debug('le read buffer size - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const data = await p;
         if (!data.status) {
@@ -11149,7 +11277,7 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(0x0, 3);
         const p = this.readCmdCompleteEventWait(COMMANDS.READ_BUFFER_SIZE_CMD);
-        this.debug("read buffer size - writing: " + cmd.toString("hex"));
+        this.debug('read buffer size - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const data = await p;
         if (!data.status) {
@@ -11157,8 +11285,8 @@ class Hci extends eventemitter3_1.default {
             const aclMaxInProgress = data.result.readUInt16LE(3);
             // sanity
             if (aclMtu && aclMaxInProgress) {
-                this.debug("br/edr acl mtu = " + aclMtu);
-                this.debug("br/edr acl max pkts = " + aclMaxInProgress);
+                this.debug('br/edr acl mtu = ' + aclMtu);
+                this.debug('br/edr acl max pkts = ' + aclMaxInProgress);
                 this._aclMtu = aclMtu;
                 this._aclMaxInProgress = aclMaxInProgress;
                 return { aclMtu, aclMaxInProgress };
@@ -11193,7 +11321,7 @@ class Hci extends eventemitter3_1.default {
         this.pushAclOutQueue();
     }
     pushAclOutQueue() {
-        this.debug("pushAclOutQueue");
+        this.debug('pushAclOutQueue');
         let inProgress = 0;
         for (const handle in this._handleAclsInProgress) {
             inProgress += this._handleAclsInProgress[handle];
@@ -11204,16 +11332,21 @@ class Hci extends eventemitter3_1.default {
             this.writeOneAclDataPkt();
         }
         if (inProgress >= this._aclMaxInProgress && this._aclOutQueue.length) {
-            this.debug("acl out queue congested");
-            this.debug("\tin progress = " + inProgress);
-            this.debug("\twaiting = " + this._aclOutQueue.length);
+            this.debug('acl out queue congested');
+            this.debug('\tin progress = ' + inProgress);
+            this.debug('\twaiting = ' + this._aclOutQueue.length);
         }
     }
     writeOneAclDataPkt() {
-        this.debug("writeOneAclDataPkt");
+        this.debug('writeOneAclDataPkt');
         const pkt = this._aclOutQueue.shift();
         this._handleAclsInProgress[pkt.handle]++;
-        this.debug("write acl data pkt frag " + pkt.fragId + " handle " + pkt.handle + " - writing: " + pkt.pkt.toString("hex"));
+        this.debug('write acl data pkt frag ' +
+            pkt.fragId +
+            ' handle ' +
+            pkt.handle +
+            ' - writing: ' +
+            pkt.pkt.toString('hex'));
         this._socket.write(pkt.pkt);
     }
     writeAclDataPkt(handle, cid, data) {
@@ -11225,21 +11358,24 @@ class Hci extends eventemitter3_1.default {
         pkt.writeUInt16LE(data.length, 5); // data length 2  for l2cap
         pkt.writeUInt16LE(cid, 7);
         data.copy(pkt, 9);
-        this.debug("write acl data pkt - writing: " + pkt.toString("hex"));
+        this.debug('write acl data pkt - writing: ' + pkt.toString('hex'));
         this._socket.write(pkt);
     }
-    async longTermKeyRequestNegativeReply(handle) {
-        throw new Error("TODO: no checked");
-        const cmd = Buffer.alloc(5);
-        // header
-        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(COMMANDS.LE_LTK_NEG_REPLY_CMD, 1);
-        // length
-        cmd.writeUInt16LE(handle, 3);
-        const p = this.readCmdCompleteEventWait(COMMANDS.LE_LTK_NEG_REPLY_CMD);
-        this._socket.write(cmd);
-        const data = await p;
-        return data.status;
+    async longTermKeyRequestNegativeReplyWait(handle) {
+        throw new Error('TODO: no checked');
+        // const cmd = Buffer.alloc(5);
+        //
+        // // header
+        // cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        // cmd.writeUInt16LE(COMMANDS.LE_LTK_NEG_REPLY_CMD, 1);
+        //
+        // // length
+        // cmd.writeUInt16LE(handle, 3);
+        //
+        // const p = this.readCmdCompleteEventWait(COMMANDS.LE_LTK_NEG_REPLY_CMD);
+        // this._socket.write(cmd);
+        // const data = await p;
+        // return data.status;
     }
     processLeMetaEvent(eventType, status, data) {
         if (eventType === COMMANDS.EVT_LE_ADVERTISING_REPORT) {
@@ -11252,31 +11388,31 @@ class Hci extends eventemitter3_1.default {
             }
         }
         else if (eventType === COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE) {
-            const { handle, interval, latency, supervisionTimeout } = this.processLeConnUpdateComplete(status, data);
-            this.emit("leConnUpdateComplete", status, handle, interval, latency, supervisionTimeout);
+            const { handle, interval, latency, supervisionTimeout, } = this.processLeConnUpdateComplete(status, data);
+            this.emit('leConnUpdateComplete', status, handle, interval, latency, supervisionTimeout);
         }
     }
     processLeConnComplete(status, data, onConnectCallback) {
         const handle = data.readUInt16LE(0);
         const role = data.readUInt8(2);
-        const addressType = data.readUInt8(3) === 0x01 ? "random" : "public";
-        const address = bleHelper_1.default.buffer2reversedHex(data.slice(4, 10), ":");
+        const addressType = data.readUInt8(3) === 0x01 ? 'random' : 'public';
+        const address = bleHelper_1.default.buffer2reversedHex(data.slice(4, 10), ':');
         const interval = data.readUInt16LE(10) * 1.25;
         const latency = data.readUInt16LE(12); // TODO: multiplier?
         const supervisionTimeout = data.readUInt16LE(14) * 10;
         const masterClockAccuracy = data.readUInt8(16); // TODO: multiplier?
-        this.debug("\t\t\thandle = " + handle);
-        this.debug("\t\t\trole = " + role);
-        this.debug("\t\t\taddress type = " + addressType);
-        this.debug("\t\t\taddress = " + address);
-        this.debug("\t\t\tinterval = " + interval);
-        this.debug("\t\t\tlatency = " + latency);
-        this.debug("\t\t\tsupervision timeout = " + supervisionTimeout);
-        this.debug("\t\t\tmaster clock accuracy = " + masterClockAccuracy);
+        this.debug('\t\t\thandle = ' + handle);
+        this.debug('\t\t\trole = ' + role);
+        this.debug('\t\t\taddress type = ' + addressType);
+        this.debug('\t\t\taddress = ' + address);
+        this.debug('\t\t\tinterval = ' + interval);
+        this.debug('\t\t\tlatency = ' + latency);
+        this.debug('\t\t\tsupervision timeout = ' + supervisionTimeout);
+        this.debug('\t\t\tmaster clock accuracy = ' + masterClockAccuracy);
         this._handleAclsInProgress[handle] = 0;
         if (role === 1) {
             // only slave, emit
-            this.emit("leConnComplete", status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy);
+            this.emit('leConnComplete', status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy);
         }
         const result = {
             status,
@@ -11289,7 +11425,7 @@ class Hci extends eventemitter3_1.default {
             supervisionTimeout,
             masterClockAccuracy,
         };
-        if (typeof onConnectCallback === "function") {
+        if (typeof onConnectCallback === 'function') {
             onConnectCallback(result);
         }
         return result;
@@ -11297,24 +11433,24 @@ class Hci extends eventemitter3_1.default {
     processLeAdvertisingReport(count, data) {
         for (let i = 0; i < count; i++) {
             const type = data.readUInt8(0);
-            const addressType = data.readUInt8(1) === 0x01 ? "random" : "public";
-            const address = bleHelper_1.default.buffer2reversedHex(data.slice(2, 8), ":");
+            const addressType = data.readUInt8(1) === 0x01 ? 'random' : 'public';
+            const address = bleHelper_1.default.buffer2reversedHex(data.slice(2, 8), ':');
             const eirLength = data.readUInt8(8);
             const eir = data.slice(9, eirLength + 9);
             const rssi = data.readInt8(eirLength + 9);
-            this.debug("\t\t\ttype = " + type);
-            this.debug("\t\t\taddress = " + address);
-            this.debug("\t\t\taddress type = " + addressType);
-            this.debug("\t\t\teir = " + eir.toString("hex"));
-            this.debug("\t\t\trssi = " + rssi);
-            this.emit("leAdvertisingReport", 0, type, address, addressType, eir, rssi);
+            this.debug('\t\t\ttype = ' + type);
+            this.debug('\t\t\taddress = ' + address);
+            this.debug('\t\t\taddress type = ' + addressType);
+            this.debug('\t\t\teir = ' + eir.toString('hex'));
+            this.debug('\t\t\trssi = ' + rssi);
+            this.emit('leAdvertisingReport', 0, type, address, addressType, eir, rssi);
             data = data.slice(eirLength + 10);
         }
     }
     processCmdStatusEvent(cmd, status) {
         if (cmd === COMMANDS.LE_CREATE_CONN_CMD) {
             if (status !== 0) {
-                this.emit("leConnComplete", status);
+                this.emit('leConnComplete', status);
             }
         }
     }
@@ -11323,27 +11459,31 @@ class Hci extends eventemitter3_1.default {
         const aclMaxInProgress = result.readUInt8(2);
         if (!aclMtu) {
             // as per Bluetooth specs
-            this.debug("falling back to br/edr buffer size");
+            this.debug('falling back to br/edr buffer size');
             return await this.readBufferSizeWait();
         }
         else {
-            this.debug("le acl mtu = " + aclMtu);
-            this.debug("le acl max in progress = " + aclMaxInProgress);
+            this.debug('le acl mtu = ' + aclMtu);
+            this.debug('le acl max in progress = ' + aclMaxInProgress);
             this._aclMtu = aclMtu;
             this._aclMaxInProgress = aclMaxInProgress;
         }
     }
     stateChange(state) {
         this._state = state;
-        this.emit("stateChange", state);
+        this.emit('stateChange', state);
     }
     async readAclStreamWait(handle, cid, firstData, timeout) {
         return await this._obnizHci.timeoutPromiseWrapper(new Promise((resolve) => {
             const key = (cid << 8) + firstData;
-            this._aclStreamObservers[handle] = this._aclStreamObservers[handle] || [];
+            this._aclStreamObservers[handle] =
+                this._aclStreamObservers[handle] || [];
             this._aclStreamObservers[handle][key] = []; // reset: queue is not supported
             this._aclStreamObservers[handle][key].push(resolve);
-        }), { timeout, waitingFor: `readAclStream handle:${handle} cid:${cid} firstData:${firstData}` });
+        }), {
+            timeout,
+            waitingFor: `readAclStream handle:${handle} cid:${cid} firstData:${firstData}`,
+        });
     }
     async readLeMetaEventWait(eventType, options) {
         const filter = this.createLeMetaEventFilter(eventType);
@@ -11380,7 +11520,14 @@ class Hci extends eventemitter3_1.default {
         return { eventType, subEventType, ncmd, cmd, status, result };
     }
     createCmdCompleteEventFilter(cmd) {
-        return [COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_CMD_COMPLETE, -1, -1, (cmd >> 0) & 0xff, (cmd >> 8) & 0xff];
+        return [
+            COMMANDS.HCI_EVENT_PKT,
+            COMMANDS.EVT_CMD_COMPLETE,
+            -1,
+            -1,
+            (cmd >> 0) & 0xff,
+            (cmd >> 8) & 0xff,
+        ];
     }
     debug(...args) {
         this.debugHandler(`${args[0]}`);
@@ -11392,11 +11539,11 @@ class Hci extends eventemitter3_1.default {
             const cid = data.readUInt16LE(7);
             const length = data.readUInt16LE(5);
             const pktData = data.slice(9);
-            this.debug("\t\tcid = " + cid);
+            this.debug('\t\tcid = ' + cid);
             if (length === pktData.length) {
-                this.debug("\t\thandle = " + handle);
-                this.debug("\t\tdata = " + pktData.toString("hex"));
-                this.emit("aclDataPkt", handle, cid, pktData);
+                this.debug('\t\thandle = ' + handle);
+                this.debug('\t\tdata = ' + pktData.toString('hex'));
+                this.emit('aclDataPkt', handle, cid, pktData);
                 const key = (cid << 8) + pktData.readUInt8(0);
                 if (this._aclStreamObservers[handle] &&
                     this._aclStreamObservers[handle][key] &&
@@ -11417,10 +11564,15 @@ class Hci extends eventemitter3_1.default {
             if (!this._handleBuffers[handle] || !this._handleBuffers[handle].data) {
                 return;
             }
-            this._handleBuffers[handle].data = Buffer.concat([this._handleBuffers[handle].data, data.slice(5)]);
-            if (this._handleBuffers[handle].data.length === this._handleBuffers[handle].length) {
-                this.emit("aclDataPkt", handle, this._handleBuffers[handle].cid, this._handleBuffers[handle].data);
-                const key = (this._handleBuffers[handle].cid << 8) + this._handleBuffers[handle].data.readUInt8(0);
+            this._handleBuffers[handle].data = Buffer.concat([
+                this._handleBuffers[handle].data,
+                data.slice(5),
+            ]);
+            if (this._handleBuffers[handle].data.length ===
+                this._handleBuffers[handle].length) {
+                this.emit('aclDataPkt', handle, this._handleBuffers[handle].cid, this._handleBuffers[handle].data);
+                const key = (this._handleBuffers[handle].cid << 8) +
+                    this._handleBuffers[handle].data.readUInt8(0);
                 if (this._aclStreamObservers[handle] &&
                     this._aclStreamObservers[handle][key] &&
                     this._aclStreamObservers[handle][key].length > 0) {
@@ -11433,12 +11585,12 @@ class Hci extends eventemitter3_1.default {
     }
     onHciEventData(data) {
         const subEventType = data.readUInt8(1);
-        this.debug("\tsub event type = 0x" + subEventType.toString(16));
+        this.debug('\tsub event type = 0x' + subEventType.toString(16));
         if (subEventType === COMMANDS.EVT_DISCONN_COMPLETE) {
             const handle = data.readUInt16LE(4);
             const reason = data.readUInt8(6);
-            this.debug("\t\thandle = " + handle);
-            this.debug("\t\treason = " + reason);
+            this.debug('\t\thandle = ' + handle);
+            this.debug('\t\treason = ' + reason);
             delete this._handleAclsInProgress[handle];
             const aclOutQueue = [];
             let discarded = 0;
@@ -11451,26 +11603,26 @@ class Hci extends eventemitter3_1.default {
                 }
             }
             if (discarded) {
-                this.debug("\t\tacls discarded = " + discarded);
+                this.debug('\t\tacls discarded = ' + discarded);
             }
             this._aclOutQueue = aclOutQueue;
             this.pushAclOutQueue();
-            this.emit("disconnComplete", handle, reason);
+            this.emit('disconnComplete', handle, reason);
         }
         else if (subEventType === COMMANDS.EVT_ENCRYPT_CHANGE) {
             const status = data.readUInt8(3);
             const handle = data.readUInt16LE(4);
             const encrypt = data.readUInt8(6);
             if (status === 0) {
-                this.debug("\t\thandle = " + handle);
-                this.debug("\t\tencrypt = " + encrypt);
-                this.emit("encryptChange", handle, encrypt);
+                this.debug('\t\thandle = ' + handle);
+                this.debug('\t\tencrypt = ' + encrypt);
+                this.emit('encryptChange', handle, encrypt);
             }
             else {
-                this.debug("\t\tencrypt status = " + status);
-                this.debug("\t\thandle = " + handle);
-                this.debug("\t\tencrypt = " + encrypt);
-                this.emit("encryptChange", handle, encrypt);
+                this.debug('\t\tencrypt status = ' + status);
+                this.debug('\t\thandle = ' + handle);
+                this.debug('\t\tencrypt = ' + encrypt);
+                this.emit('encryptChange', handle, encrypt);
             }
         }
         else if (subEventType === COMMANDS.EVT_CMD_COMPLETE) {
@@ -11479,17 +11631,17 @@ class Hci extends eventemitter3_1.default {
         else if (subEventType === COMMANDS.EVT_CMD_STATUS) {
             const status = data.readUInt8(3);
             const cmd = data.readUInt16LE(5);
-            this.debug("\t\tstatus = " + status);
-            this.debug("\t\tcmd = " + cmd);
+            this.debug('\t\tstatus = ' + status);
+            this.debug('\t\tcmd = ' + cmd);
             this.processCmdStatusEvent(cmd, status);
         }
         else if (subEventType === COMMANDS.EVT_LE_META_EVENT) {
             const leMetaEventType = data.readUInt8(3);
             const leMetaEventStatus = data.readUInt8(4);
             const leMetaEventData = data.slice(5);
-            this.debug("\t\tLE meta event type = " + leMetaEventType);
-            this.debug("\t\tLE meta event status = " + leMetaEventStatus);
-            this.debug("\t\tLE meta event data = " + leMetaEventData.toString("hex"));
+            this.debug('\t\tLE meta event type = ' + leMetaEventType);
+            this.debug('\t\tLE meta event status = ' + leMetaEventStatus);
+            this.debug('\t\tLE meta event data = ' + leMetaEventData.toString('hex'));
             this.processLeMetaEvent(leMetaEventType, leMetaEventStatus, leMetaEventData);
         }
         else if (subEventType === COMMANDS.EVT_NUMBER_OF_COMPLETED_PACKETS) {
@@ -11497,10 +11649,10 @@ class Hci extends eventemitter3_1.default {
             for (let i = 0; i < handles; i++) {
                 const handle = data.readUInt16LE(4 + i * 4);
                 const pkts = data.readUInt16LE(6 + i * 4);
-                this.debug("\thandle = " + handle);
-                this.debug("\t\tcompleted = " + pkts);
+                this.debug('\thandle = ' + handle);
+                this.debug('\t\tcompleted = ' + pkts);
                 if (this._handleAclsInProgress[handle] === undefined) {
-                    this.debug("\t\talready closed");
+                    this.debug('\t\talready closed');
                     continue;
                 }
                 if (pkts > this._handleAclsInProgress[handle]) {
@@ -11510,16 +11662,16 @@ class Hci extends eventemitter3_1.default {
                 else {
                     this._handleAclsInProgress[handle] -= pkts;
                 }
-                this.debug("\t\tin progress = " + this._handleAclsInProgress[handle]);
+                this.debug('\t\tin progress = ' + this._handleAclsInProgress[handle]);
             }
             this.pushAclOutQueue();
         }
     }
     onSocketData(array) {
         const data = Buffer.from(array);
-        this.debug("onSocketData: " + data.toString("hex"));
+        this.debug('onSocketData: ' + data.toString('hex'));
         const eventType = data.readUInt8(0);
-        this.debug("\tevent type = 0x" + eventType.toString(16));
+        this.debug('\tevent type = 0x' + eventType.toString(16));
         if (COMMANDS.HCI_EVENT_PKT === eventType) {
             this.onHciEventData(data);
         }
@@ -11567,15 +11719,15 @@ class AclStream extends eventemitter3_1.default {
     }
     push(cid, data) {
         if (data) {
-            this.emit("data", cid, data);
+            this.emit('data', cid, data);
         }
     }
     end() {
-        this.emit("end");
+        this.emit('end');
     }
     pushEncrypt(encrypt) {
         this.encrypted = encrypt ? true : false;
-        this.emit("encryptChange", this.encrypted);
+        this.emit('encryptChange', this.encrypted);
     }
 }
 exports.default = AclStream;
@@ -11617,13 +11769,13 @@ class BlenoBindings extends eventemitter3_1.default {
         this._hci = hciProtocol;
         this._gap = new gap_1.default(this._hci);
         this._gatt = new gatt_1.default();
-        this._gatt.on("mtuChange", this.onMtuChange.bind(this));
-        this._hci.on("stateChange", this.onStateChange.bind(this));
-        this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
-        this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
-        this._hci.on("disconnComplete", this.onDisconnCompleteWait.bind(this));
-        this._hci.on("encryptChange", this.onEncryptChange.bind(this));
-        this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
+        this._gatt.on('mtuChange', this.onMtuChange.bind(this));
+        this._hci.on('stateChange', this.onStateChange.bind(this));
+        this._hci.on('leConnComplete', this.onLeConnComplete.bind(this));
+        this._hci.on('leConnUpdateComplete', this.onLeConnUpdateComplete.bind(this));
+        this._hci.on('disconnComplete', this.onDisconnCompleteWait.bind(this));
+        this._hci.on('encryptChange', this.onEncryptChange.bind(this));
+        this._hci.on('aclDataPkt', this.onAclDataPkt.bind(this));
         this._address = null;
         this._handle = null;
         this._aclStream = null;
@@ -11662,7 +11814,7 @@ class BlenoBindings extends eventemitter3_1.default {
     }
     disconnect() {
         if (this._handle) {
-            debug("disconnect by server");
+            debug('disconnect by server');
             this._hci.disconnect(this._handle);
         }
     }
@@ -11678,17 +11830,17 @@ class BlenoBindings extends eventemitter3_1.default {
             return;
         }
         this._state = state;
-        if (state === "unauthorized") {
-            console.log("bleno warning: adapter state unauthorized, please run as root or with sudo");
-            console.log("               or see README for information on running without root/sudo:");
-            console.log("               https://github.com/sandeepmistry/bleno#running-on-linux");
+        if (state === 'unauthorized') {
+            console.log('bleno warning: adapter state unauthorized, please run as root or with sudo');
+            console.log('               or see README for information on running without root/sudo:');
+            console.log('               https://github.com/sandeepmistry/bleno#running-on-linux');
         }
-        else if (state === "unsupported") {
-            console.log("bleno warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).");
-            console.log("               Try to run with environment variable:");
-            console.log("               [sudo] BLENO_HCI_DEVICE_ID=x node ...");
+        else if (state === 'unsupported') {
+            console.log('bleno warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).');
+            console.log('               Try to run with environment variable:');
+            console.log('               [sudo] BLENO_HCI_DEVICE_ID=x node ...');
         }
-        this.emit("stateChange", state);
+        this.emit('stateChange', state);
     }
     onLeConnComplete(status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy) {
         if (role !== 1) {
@@ -11699,7 +11851,7 @@ class BlenoBindings extends eventemitter3_1.default {
         this._handle = handle;
         this._aclStream = new acl_stream_1.default(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
         this._gatt.setAclStream(this._aclStream);
-        this.emit("accept", address);
+        this.emit('accept', address);
     }
     onLeConnUpdateComplete(handle, interval, latency, supervisionTimeout) {
         // no-op
@@ -11716,7 +11868,7 @@ class BlenoBindings extends eventemitter3_1.default {
         this._address = null;
         this._handle = null;
         if (address) {
-            this.emit("disconnect", address, reason); // TODO: use reason
+            this.emit('disconnect', address, reason); // TODO: use reason
         }
         if (this._advertising) {
             await this._gap.restartAdvertisingWait();
@@ -11728,7 +11880,7 @@ class BlenoBindings extends eventemitter3_1.default {
         }
     }
     onMtuChange(mtu) {
-        this.emit("mtuChange", mtu);
+        this.emit('mtuChange', mtu);
     }
     onAclDataPkt(handle, cid, data) {
         if (this._handle === handle && this._aclStream) {
@@ -11759,45 +11911,45 @@ const crypto_1 = __importDefault(__webpack_require__("./node_modules/crypto-brow
 /**
  * @ignore
  */
-function r() {
+const r = () => {
     return crypto_1.default.randomBytes(16);
-}
+};
 /**
  * @ignore
  */
-function c1(k, _r, pres, preq, iat, ia, rat, ra) {
+const c1 = (k, _r, pres, preq, iat, ia, rat, ra) => {
     const p1 = Buffer.concat([iat, rat, preq, pres]);
-    const p2 = Buffer.concat([ra, ia, Buffer.from("00000000", "hex")]);
+    const p2 = Buffer.concat([ra, ia, Buffer.from('00000000', 'hex')]);
     let res = xor(_r, p1);
     res = e(k, res);
     res = xor(res, p2);
     res = e(k, res);
     return res;
-}
-function s1(k, r1, r2) {
+};
+const s1 = (k, r1, r2) => {
     return e(k, Buffer.concat([r2.slice(0, 8), r1.slice(0, 8)]));
-}
-function e(key, data) {
+};
+const e = (key, data) => {
     key = swap(key);
     data = swap(data);
-    const cipher = crypto_1.default.createCipheriv("aes-128-ecb", key, "");
+    const cipher = crypto_1.default.createCipheriv('aes-128-ecb', key, '');
     cipher.setAutoPadding(false);
     return swap(Buffer.concat([cipher.update(data), cipher.final()]));
-}
-function xor(b1, b2) {
+};
+const xor = (b1, b2) => {
     const result = Buffer.alloc(b1.length);
     for (let i = 0; i < b1.length; i++) {
         result[i] = b1[i] ^ b2[i];
     }
     return result;
-}
-function swap(input) {
+};
+const swap = (input) => {
     const output = Buffer.alloc(input.length);
     for (let i = 0; i < output.length; i++) {
         output[i] = input[input.length - i - 1];
     }
     return output;
-}
+};
 exports.default = {
     r,
     c1,
@@ -11848,7 +12000,10 @@ class Gap extends eventemitter3_1.default {
         this._advertiseState = null;
     }
     async startAdvertisingWait(name, serviceUuids) {
-        debug("startAdvertising: name = " + name + ", serviceUuids = " + JSON.stringify(serviceUuids, null, 2));
+        debug('startAdvertising: name = ' +
+            name +
+            ', serviceUuids = ' +
+            JSON.stringify(serviceUuids, null, 2));
         let advertisementDataLength = 3;
         let scanDataLength = 0;
         const serviceUuids16bit = [];
@@ -11911,7 +12066,7 @@ class Gap extends eventemitter3_1.default {
         await this.startAdvertisingWithEIRDataWait(advertisementData, scanData);
     }
     async startAdvertisingIBeaconWait(data) {
-        debug("startAdvertisingIBeacon: data = " + data.toString("hex"));
+        debug('startAdvertisingIBeacon: data = ' + data.toString('hex'));
         const dataLength = data.length;
         const manufacturerDataLength = 4 + dataLength;
         const advertisementDataLength = 5 + manufacturerDataLength;
@@ -11933,17 +12088,17 @@ class Gap extends eventemitter3_1.default {
     async startAdvertisingWithEIRDataWait(advertisementData, scanData) {
         advertisementData = advertisementData || Buffer.alloc(0);
         scanData = scanData || Buffer.alloc(0);
-        debug("startAdvertisingWithEIRData: advertisement data = " +
-            advertisementData.toString("hex") +
-            ", scan data = " +
-            scanData.toString("hex"));
+        debug('startAdvertisingWithEIRData: advertisement data = ' +
+            advertisementData.toString('hex') +
+            ', scan data = ' +
+            scanData.toString('hex'));
         if (advertisementData.length > 31) {
-            throw new Error("Advertisement data is over maximum limit of 31 bytes");
+            throw new Error('Advertisement data is over maximum limit of 31 bytes');
         }
         else if (scanData.length > 31) {
-            throw new Error("Scan data is over maximum limit of 31 bytes");
+            throw new Error('Scan data is over maximum limit of 31 bytes');
         }
-        this._advertiseState = "starting";
+        this._advertiseState = 'starting';
         const p1 = this._hci.setScanResponseDataWait(scanData);
         const p2 = this._hci.setAdvertisingDataWait(advertisementData);
         await Promise.all([p1, p2]);
@@ -11952,22 +12107,22 @@ class Gap extends eventemitter3_1.default {
         const p5 = this._hci.setAdvertisingDataWait(advertisementData);
         await Promise.all([p3, p4, p5]);
         const status = await p3;
-        if (this._advertiseState === "starting") {
-            this._advertiseState = "started";
+        if (this._advertiseState === 'starting') {
+            this._advertiseState = 'started';
             if (status) {
-                throw new Error(hci_1.default.STATUS_MAPPER[status] || "Unknown (" + status + ")");
+                throw new Error(hci_1.default.STATUS_MAPPER[status] || 'Unknown (' + status + ')');
             }
         }
-        else if (this._advertiseState === "stopping") {
-            this._advertiseState = "stopped";
+        else if (this._advertiseState === 'stopping') {
+            this._advertiseState = 'stopped';
         }
     }
     async restartAdvertisingWait() {
-        this._advertiseState = "restarting";
+        this._advertiseState = 'restarting';
         await this._hci.setAdvertiseEnableWait(true);
     }
     async stopAdvertisingWait() {
-        this._advertiseState = "stopping";
+        this._advertiseState = 'stopping';
         await this._hci.setAdvertiseEnableWait(false);
     }
 }
@@ -12095,7 +12250,7 @@ class Gatt extends eventemitter3_1.default {
             handle++;
             const serviceHandle = handle;
             this._handles[serviceHandle] = {
-                type: "service",
+                type: 'service',
                 uuid: service.uuid,
                 attribute: service,
                 startHandle: serviceHandle,
@@ -12104,33 +12259,33 @@ class Gatt extends eventemitter3_1.default {
                 const characteristic = service.characteristics[j];
                 let properties = 0;
                 let secure = 0;
-                if (characteristic.properties.indexOf("read") !== -1) {
+                if (characteristic.properties.indexOf('read') !== -1) {
                     properties |= 0x02;
-                    if (characteristic.secure.indexOf("read") !== -1) {
+                    if (characteristic.secure.indexOf('read') !== -1) {
                         secure |= 0x02;
                     }
                 }
-                if (characteristic.properties.indexOf("writeWithoutResponse") !== -1) {
+                if (characteristic.properties.indexOf('writeWithoutResponse') !== -1) {
                     properties |= 0x04;
-                    if (characteristic.secure.indexOf("writeWithoutResponse") !== -1) {
+                    if (characteristic.secure.indexOf('writeWithoutResponse') !== -1) {
                         secure |= 0x04;
                     }
                 }
-                if (characteristic.properties.indexOf("write") !== -1) {
+                if (characteristic.properties.indexOf('write') !== -1) {
                     properties |= 0x08;
-                    if (characteristic.secure.indexOf("write") !== -1) {
+                    if (characteristic.secure.indexOf('write') !== -1) {
                         secure |= 0x08;
                     }
                 }
-                if (characteristic.properties.indexOf("notify") !== -1) {
+                if (characteristic.properties.indexOf('notify') !== -1) {
                     properties |= 0x10;
-                    if (characteristic.secure.indexOf("notify") !== -1) {
+                    if (characteristic.secure.indexOf('notify') !== -1) {
                         secure |= 0x10;
                     }
                 }
-                if (characteristic.properties.indexOf("indicate") !== -1) {
+                if (characteristic.properties.indexOf('indicate') !== -1) {
                     properties |= 0x20;
-                    if (characteristic.secure.indexOf("indicate") !== -1) {
+                    if (characteristic.secure.indexOf('indicate') !== -1) {
                         secure |= 0x20;
                     }
                 }
@@ -12139,7 +12294,7 @@ class Gatt extends eventemitter3_1.default {
                 handle++;
                 const characteristicValueHandle = handle;
                 this._handles[characteristicHandle] = {
-                    type: "characteristic",
+                    type: 'characteristic',
                     uuid: characteristic.uuid,
                     properties,
                     secure,
@@ -12148,20 +12303,20 @@ class Gatt extends eventemitter3_1.default {
                     valueHandle: characteristicValueHandle,
                 };
                 this._handles[characteristicValueHandle] = {
-                    type: "characteristicValue",
+                    type: 'characteristicValue',
                     handle: characteristicValueHandle,
                     value: characteristic.value,
                 };
-                const hasCCCD = characteristic.descriptors.find((e) => e.uuid === "2902");
+                const hasCCCD = characteristic.descriptors.find((e) => e.uuid === '2902');
                 if (hasCCCD || properties & 0x30) {
                     // notify or indicate
                     // add client characteristic configuration descriptor
                     handle++;
                     const clientCharacteristicConfigurationDescriptorHandle = handle;
                     this._handles[clientCharacteristicConfigurationDescriptorHandle] = {
-                        type: "descriptor",
+                        type: 'descriptor',
                         handle: clientCharacteristicConfigurationDescriptorHandle,
-                        uuid: "2902",
+                        uuid: '2902',
                         attribute: characteristic,
                         properties: 0x02 | 0x04 | 0x08,
                         secure: secure & 0x10 ? 0x02 | 0x04 | 0x08 : 0,
@@ -12170,13 +12325,13 @@ class Gatt extends eventemitter3_1.default {
                 }
                 for (let k = 0; k < characteristic.descriptors.length; k++) {
                     const descriptor = characteristic.descriptors[k];
-                    if (descriptor.uuid === "2902") {
+                    if (descriptor.uuid === '2902') {
                         continue;
                     }
                     handle++;
                     const descriptorHandle = handle;
                     this._handles[descriptorHandle] = {
-                        type: "descriptor",
+                        type: 'descriptor',
                         handle: descriptorHandle,
                         uuid: descriptor.uuid,
                         attribute: descriptor,
@@ -12207,13 +12362,13 @@ class Gatt extends eventemitter3_1.default {
         this._preparedWriteRequest = null;
         if (this._aclStream) {
             this._aclStream.end();
-            this._aclStream.removeListener("data", this.onAclStreamDataBinded);
-            this._aclStream.removeListener("end", this.onAclStreamEndBinded);
+            this._aclStream.removeListener('data', this.onAclStreamDataBinded);
+            this._aclStream.removeListener('end', this.onAclStreamEndBinded);
         }
         this._aclStream = aclStream;
         if (this._aclStream) {
-            this._aclStream.on("data", this.onAclStreamDataBinded);
-            this._aclStream.on("end", this.onAclStreamEndBinded);
+            this._aclStream.on('data', this.onAclStreamDataBinded);
+            this._aclStream.on('end', this.onAclStreamEndBinded);
         }
     }
     onAclStreamData(cid, data) {
@@ -12223,24 +12378,24 @@ class Gatt extends eventemitter3_1.default {
         this.handleRequest(data);
     }
     onAclStreamEnd() {
-        this._aclStream.removeListener("data", this.onAclStreamDataBinded);
-        this._aclStream.removeListener("end", this.onAclStreamEndBinded);
+        this._aclStream.removeListener('data', this.onAclStreamDataBinded);
+        this._aclStream.removeListener('end', this.onAclStreamEndBinded);
         for (let i = 0; i < this._handles.length; i++) {
             if (this._handles[i] &&
-                this._handles[i].type === "descriptor" &&
-                this._handles[i].uuid === "2902" &&
+                this._handles[i].type === 'descriptor' &&
+                this._handles[i].uuid === '2902' &&
                 this._handles[i].value.readUInt16LE(0) !== 0) {
                 this._handles[i].value = Buffer.from([0x00, 0x00]);
                 if (this._handles[i].attribute && this._handles[i].attribute.emit) {
-                    this._handles[i].attribute.emit("unsubscribe");
+                    this._handles[i].attribute.emit('unsubscribe');
                 }
             }
         }
     }
     send(data) {
-        debug("send: " + data.toString("hex"));
+        debug('send: ' + data.toString('hex'));
         if (!this._aclStream) {
-            throw new Error("_aclStream is not found");
+            throw new Error('_aclStream is not found');
         }
         this._aclStream.write(ATT.CID, data);
     }
@@ -12253,7 +12408,7 @@ class Gatt extends eventemitter3_1.default {
         return buf;
     }
     handleRequest(request) {
-        debug("handing request: " + request.toString("hex"));
+        debug('handing request: ' + request.toString('hex'));
         const requestType = request[0];
         let response = null;
         switch (requestType) {
@@ -12296,7 +12451,7 @@ class Gatt extends eventemitter3_1.default {
                 break;
         }
         if (response) {
-            debug("response: " + response.toString("hex"));
+            debug('response: ' + response.toString('hex'));
             this.send(response);
         }
     }
@@ -12309,7 +12464,7 @@ class Gatt extends eventemitter3_1.default {
             mtu = this.maxMtu;
         }
         this._mtu = mtu;
-        this.emit("mtuChange", this._mtu);
+        this.emit('mtuChange', this._mtu);
         const response = Buffer.alloc(3);
         response.writeUInt8(ATT.OP_MTU_RESP, 0);
         response.writeUInt16LE(mtu, 1);
@@ -12328,19 +12483,19 @@ class Gatt extends eventemitter3_1.default {
                 break;
             }
             uuid = null;
-            if ("service" === handle.type) {
-                uuid = "2800";
+            if ('service' === handle.type) {
+                uuid = '2800';
             }
-            else if ("includedService" === handle.type) {
-                uuid = "2802";
+            else if ('includedService' === handle.type) {
+                uuid = '2802';
             }
-            else if ("characteristic" === handle.type) {
-                uuid = "2803";
+            else if ('characteristic' === handle.type) {
+                uuid = '2803';
             }
-            else if ("characteristicValue" === handle.type) {
+            else if ('characteristicValue' === handle.type) {
                 uuid = this._handles[i - 1].uuid;
             }
-            else if ("descriptor" === handle.type) {
+            else if ('descriptor' === handle.type) {
                 uuid = handle.uuid;
             }
             if (uuid) {
@@ -12392,7 +12547,9 @@ class Gatt extends eventemitter3_1.default {
             if (!handle) {
                 break;
             }
-            if ("2800" === uuid && handle.type === "service" && handle.uuid === value) {
+            if ('2800' === uuid &&
+                handle.type === 'service' &&
+                handle.uuid === value) {
                 handles.push({
                     start: handle.startHandle,
                     end: handle.endHandle,
@@ -12422,15 +12579,15 @@ class Gatt extends eventemitter3_1.default {
         const startHandle = request.readUInt16LE(1);
         const endHandle = request.readUInt16LE(3);
         const uuid = bleHelper_1.default.buffer2reversedHex(request.slice(5));
-        debug("read by group: startHandle = 0x" +
+        debug('read by group: startHandle = 0x' +
             startHandle.toString(16) +
-            ", endHandle = 0x" +
+            ', endHandle = 0x' +
             endHandle.toString(16) +
-            ", uuid = 0x" +
+            ', uuid = 0x' +
             uuid);
-        if ("2800" === uuid || "2802" === uuid) {
+        if ('2800' === uuid || '2802' === uuid) {
             const services = [];
-            const type = "2800" === uuid ? "service" : "includedService";
+            const type = '2800' === uuid ? 'service' : 'includedService';
             let i;
             for (i = startHandle; i <= endHandle; i++) {
                 const handle = this._handles[i];
@@ -12483,20 +12640,20 @@ class Gatt extends eventemitter3_1.default {
         const uuid = bleHelper_1.default.buffer2reversedHex(request.slice(5));
         let i;
         let handle;
-        debug("read by type: startHandle = 0x" +
+        debug('read by type: startHandle = 0x' +
             startHandle.toString(16) +
-            ", endHandle = 0x" +
+            ', endHandle = 0x' +
             endHandle.toString(16) +
-            ", uuid = 0x" +
+            ', uuid = 0x' +
             uuid);
-        if ("2803" === uuid) {
+        if ('2803' === uuid) {
             const characteristics = [];
             for (i = startHandle; i <= endHandle; i++) {
                 handle = this._handles[i];
                 if (!handle) {
                     break;
                 }
-                if (handle.type === "characteristic") {
+                if (handle.type === 'characteristic') {
                     characteristics.push(handle);
                 }
             }
@@ -12522,7 +12679,8 @@ class Gatt extends eventemitter3_1.default {
                     response.writeUInt16LE(characteristic.valueHandle, 2 + i * lengthPerCharacteristic + 3);
                     const characteristicUuid = bleHelper_1.default.hex2reversedBuffer(characteristic.uuid);
                     for (let j = 0; j < characteristicUuid.length; j++) {
-                        response[2 + i * lengthPerCharacteristic + 5 + j] = characteristicUuid[j];
+                        response[2 + i * lengthPerCharacteristic + 5 + j] =
+                            characteristicUuid[j];
                     }
                 }
             }
@@ -12539,13 +12697,13 @@ class Gatt extends eventemitter3_1.default {
                 if (!handle) {
                     break;
                 }
-                if (handle.type === "characteristic" && handle.uuid === uuid) {
+                if (handle.type === 'characteristic' && handle.uuid === uuid) {
                     handleAttribute = handle.attribute;
                     valueHandle = handle.valueHandle;
                     secure = (handle.secure & 0x02) !== 0;
                     break;
                 }
-                else if (handle.type === "descriptor" && handle.uuid === uuid) {
+                else if (handle.type === 'descriptor' && handle.uuid === uuid) {
                     valueHandle = i;
                     secure = (handle.secure & 0x02) !== 0;
                     break;
@@ -12571,7 +12729,7 @@ class Gatt extends eventemitter3_1.default {
                         else {
                             callbackResponse = this.errorResponse(requestType, _valueHandle, result);
                         }
-                        debug("read by type response: " + callbackResponse.toString("hex"));
+                        debug('read by type response: ' + callbackResponse.toString('hex'));
                         this.send(callbackResponse);
                     };
                 })(valueHandle);
@@ -12580,7 +12738,7 @@ class Gatt extends eventemitter3_1.default {
                     callback(ATT.ECODE_SUCCESS, data);
                 }
                 else if (handleAttribute) {
-                    handleAttribute.emit("readRequest", 0, callback);
+                    handleAttribute.emit('readRequest', 0, callback);
                 }
                 else {
                     callback(ATT.ECODE_UNLIKELY);
@@ -12609,7 +12767,10 @@ class Gatt extends eventemitter3_1.default {
                     if (ATT.ECODE_SUCCESS === _result) {
                         const dataLength = Math.min(_data.length, this._mtu - 1);
                         callbackResponse = Buffer.alloc(1 + dataLength);
-                        callbackResponse[0] = _requestType === ATT.OP_READ_BLOB_REQ ? ATT.OP_READ_BLOB_RESP : ATT.OP_READ_RESP;
+                        callbackResponse[0] =
+                            _requestType === ATT.OP_READ_BLOB_REQ
+                                ? ATT.OP_READ_BLOB_RESP
+                                : ATT.OP_READ_RESP;
                         for (i = 0; i < dataLength; i++) {
                             callbackResponse[1 + i] = _data[i];
                         }
@@ -12617,15 +12778,15 @@ class Gatt extends eventemitter3_1.default {
                     else {
                         callbackResponse = this.errorResponse(_requestType, _valueHandle, _result);
                     }
-                    debug("read response: " + callbackResponse.toString("hex"));
+                    debug('read response: ' + callbackResponse.toString('hex'));
                     this.send(callbackResponse);
                 };
             })(requestType, valueHandle);
-            if (handleType === "service" || handleType === "includedService") {
+            if (handleType === 'service' || handleType === 'includedService') {
                 result = ATT.ECODE_SUCCESS;
                 data = bleHelper_1.default.hex2reversedBuffer(handle.uuid);
             }
-            else if (handleType === "characteristic") {
+            else if (handleType === 'characteristic') {
                 const uuid = bleHelper_1.default.hex2reversedBuffer(handle.uuid);
                 result = ATT.ECODE_SUCCESS;
                 data = Buffer.alloc(3 + uuid.length);
@@ -12635,17 +12796,19 @@ class Gatt extends eventemitter3_1.default {
                     data[i + 3] = uuid[i];
                 }
             }
-            else if (handleType === "characteristicValue" || handleType === "descriptor") {
+            else if (handleType === 'characteristicValue' ||
+                handleType === 'descriptor') {
                 let handleProperties = handle.properties;
                 let handleSecure = handle.secure;
                 let handleAttribute = handle.attribute;
-                if (handleType === "characteristicValue") {
+                if (handleType === 'characteristicValue') {
                     handleProperties = this._handles[valueHandle - 1].properties;
                     handleSecure = this._handles[valueHandle - 1].secure;
                     handleAttribute = this._handles[valueHandle - 1].attribute;
                 }
                 if (handleProperties & 0x02) {
-                    if (handleSecure & 0x02 && !(this._aclStream && this._aclStream.encrypted)) {
+                    if (handleSecure & 0x02 &&
+                        !(this._aclStream && this._aclStream.encrypted)) {
                         result = ATT.ECODE_AUTHENTICATION;
                     }
                     else {
@@ -12654,7 +12817,7 @@ class Gatt extends eventemitter3_1.default {
                             result = ATT.ECODE_SUCCESS;
                         }
                         else {
-                            handleAttribute.emit("readRequest", offset, callback);
+                            handleAttribute.emit('readRequest', offset, callback);
                         }
                     }
                 }
@@ -12662,7 +12825,7 @@ class Gatt extends eventemitter3_1.default {
                     result = ATT.ECODE_READ_NOT_PERM; // non-readable
                 }
             }
-            if (data && typeof data === "string") {
+            if (data && typeof data === 'string') {
                 data = Buffer.from(data);
             }
             if (result === ATT.ECODE_SUCCESS && data && offset) {
@@ -12692,12 +12855,13 @@ class Gatt extends eventemitter3_1.default {
         const offset = 0;
         let handle = this._handles[valueHandle];
         if (handle) {
-            if (handle.type === "characteristicValue") {
+            if (handle.type === 'characteristicValue') {
                 handle = this._handles[valueHandle - 1];
             }
             const handleProperties = handle.properties;
             const handleSecure = handle.secure;
-            if (handleProperties && (withoutResponse ? handleProperties & 0x04 : handleProperties & 0x08)) {
+            if (handleProperties &&
+                (withoutResponse ? handleProperties & 0x04 : handleProperties & 0x08)) {
                 const callback = ((_requestType, _valueHandle, _withoutResponse) => {
                     return (result) => {
                         if (!_withoutResponse) {
@@ -12708,15 +12872,16 @@ class Gatt extends eventemitter3_1.default {
                             else {
                                 callbackResponse = this.errorResponse(_requestType, _valueHandle, result);
                             }
-                            debug("write response: " + callbackResponse.toString("hex"));
+                            debug('write response: ' + callbackResponse.toString('hex'));
                             this.send(callbackResponse);
                         }
                     };
                 })(requestType, valueHandle, withoutResponse);
-                if (handleSecure & (withoutResponse ? 0x04 : 0x08) && !(this._aclStream && this._aclStream.encrypted)) {
+                if (handleSecure & (withoutResponse ? 0x04 : 0x08) &&
+                    !(this._aclStream && this._aclStream.encrypted)) {
                     response = this.errorResponse(requestType, valueHandle, ATT.ECODE_AUTHENTICATION);
                 }
-                else if (handle.type === "descriptor" || handle.uuid === "2902") {
+                else if (handle.type === 'descriptor' || handle.uuid === '2902') {
                     let result = null;
                     if (data.length !== 2) {
                         result = ATT.ECODE_INVAL_ATTR_VALUE_LEN;
@@ -12729,8 +12894,8 @@ class Gatt extends eventemitter3_1.default {
                             const updateValueCallback = ((_valueHandle, _attribute) => {
                                 return (_data) => {
                                     const dataLength = Math.min(_data.length, this._mtu - 3);
-                                    const useNotify = _attribute.properties.indexOf("notify") !== -1;
-                                    const useIndicate = _attribute.properties.indexOf("indicate") !== -1;
+                                    const useNotify = _attribute.properties.indexOf('notify') !== -1;
+                                    const useIndicate = _attribute.properties.indexOf('indicate') !== -1;
                                     let i;
                                     if (useNotify) {
                                         const notifyMessage = Buffer.alloc(3 + dataLength);
@@ -12739,9 +12904,9 @@ class Gatt extends eventemitter3_1.default {
                                         for (i = 0; i < dataLength; i++) {
                                             notifyMessage[3 + i] = _data[i];
                                         }
-                                        debug("notify message: " + notifyMessage.toString("hex"));
+                                        debug('notify message: ' + notifyMessage.toString('hex'));
                                         this.send(notifyMessage);
-                                        _attribute.emit("notify");
+                                        _attribute.emit('notify');
                                     }
                                     else if (useIndicate) {
                                         const indicateMessage = Buffer.alloc(3 + dataLength);
@@ -12751,24 +12916,24 @@ class Gatt extends eventemitter3_1.default {
                                             indicateMessage[3 + i] = _data[i];
                                         }
                                         this._lastIndicatedAttribute = _attribute;
-                                        debug("indicate message: " + indicateMessage.toString("hex"));
+                                        debug('indicate message: ' + indicateMessage.toString('hex'));
                                         this.send(indicateMessage);
                                     }
                                 };
                             })(valueHandle - 1, handleAttribute);
                             if (handleAttribute.emit) {
-                                handleAttribute.emit("subscribe", this._mtu - 3, updateValueCallback);
+                                handleAttribute.emit('subscribe', this._mtu - 3, updateValueCallback);
                             }
                         }
                         else {
-                            handleAttribute.emit("unsubscribe");
+                            handleAttribute.emit('unsubscribe');
                         }
                         result = ATT.ECODE_SUCCESS;
                     }
                     callback(result);
                 }
                 else {
-                    handle.attribute.emit("writeRequest", data, offset, withoutResponse, callback);
+                    handle.attribute.emit('writeRequest', data, offset, withoutResponse, callback);
                 }
             }
             else {
@@ -12788,20 +12953,26 @@ class Gatt extends eventemitter3_1.default {
         const data = request.slice(5);
         let handle = this._handles[valueHandle];
         if (handle) {
-            if (handle.type === "characteristicValue") {
+            if (handle.type === 'characteristicValue') {
                 handle = this._handles[valueHandle - 1];
                 const handleProperties = handle.properties;
                 const handleSecure = handle.secure;
                 if (handleProperties && handleProperties & 0x08) {
-                    if (handleSecure & 0x08 && !(this._aclStream && this._aclStream.encrypted)) {
+                    if (handleSecure & 0x08 &&
+                        !(this._aclStream && this._aclStream.encrypted)) {
                         response = this.errorResponse(requestType, valueHandle, ATT.ECODE_AUTHENTICATION);
                     }
                     else if (this._preparedWriteRequest) {
                         if (this._preparedWriteRequest.handle !== handle) {
                             response = this.errorResponse(requestType, valueHandle, ATT.ECODE_UNLIKELY);
                         }
-                        else if (offset === this._preparedWriteRequest.offset + this._preparedWriteRequest.data.length) {
-                            this._preparedWriteRequest.data = Buffer.concat([this._preparedWriteRequest.data, data]);
+                        else if (offset ===
+                            this._preparedWriteRequest.offset +
+                                this._preparedWriteRequest.data.length) {
+                            this._preparedWriteRequest.data = Buffer.concat([
+                                this._preparedWriteRequest.data,
+                                data,
+                            ]);
                             response = Buffer.alloc(request.length);
                             request.copy(response);
                             response[0] = ATT.OP_PREP_WRITE_RESP;
@@ -12853,11 +13024,11 @@ class Gatt extends eventemitter3_1.default {
                         else {
                             callbackResponse = this.errorResponse(_requestType, _valueHandle, result);
                         }
-                        debug("execute write response: " + callbackResponse.toString("hex"));
+                        debug('execute write response: ' + callbackResponse.toString('hex'));
                         this.send(callbackResponse);
                     };
                 })(requestType, this._preparedWriteRequest.valueHandle);
-                this._preparedWriteRequest.handle.attribute.emit("writeRequest", this._preparedWriteRequest.data, this._preparedWriteRequest.offset, false, callback);
+                this._preparedWriteRequest.handle.attribute.emit('writeRequest', this._preparedWriteRequest.data, this._preparedWriteRequest.offset, false, callback);
             }
             else {
                 response = this.errorResponse(requestType, 0x0000, ATT.ECODE_UNLIKELY);
@@ -12872,7 +13043,7 @@ class Gatt extends eventemitter3_1.default {
     handleConfirmation(request) {
         if (this._lastIndicatedAttribute) {
             if (this._lastIndicatedAttribute.emit) {
-                this._lastIndicatedAttribute.emit("indicate");
+                this._lastIndicatedAttribute.emit('indicate');
             }
             this._lastIndicatedAttribute = null;
         }
@@ -12911,10 +13082,10 @@ class Mgmt {
         this._hci = hciProtocol;
     }
     nSocketData(data) {
-        debug("on data ->" + data.toString("hex"));
+        debug('on data ->' + data.toString('hex'));
     }
     nSocketError(error) {
-        debug("on error ->" + error.message);
+        debug('on error ->' + error.message);
     }
     ddLongTermKey(address, addressType, authenticated, master, ediv, rand, key) {
         const ltkInfo = Buffer.alloc(LTK_INFO_SIZE);
@@ -12987,10 +13158,10 @@ class Smp extends eventemitter3_1.default {
         super();
         this._aclStream = aclStream;
         this._mgmt = new mgmt_1.default(hciProtocol);
-        this._iat = Buffer.from([remoteAddressType === "random" ? 0x01 : 0x00]);
-        this._ia = bleHelper_1.default.hex2reversedBuffer(remoteAddress, ":");
-        this._rat = Buffer.from([localAddressType === "random" ? 0x01 : 0x00]);
-        this._ra = bleHelper_1.default.hex2reversedBuffer(localAddress, ":");
+        this._iat = Buffer.from([remoteAddressType === 'random' ? 0x01 : 0x00]);
+        this._ia = bleHelper_1.default.hex2reversedBuffer(remoteAddress, ':');
+        this._rat = Buffer.from([localAddressType === 'random' ? 0x01 : 0x00]);
+        this._ra = bleHelper_1.default.hex2reversedBuffer(localAddress, ':');
         this._stk = null;
         this._random = null;
         this._diversifier = null;
@@ -12998,10 +13169,10 @@ class Smp extends eventemitter3_1.default {
         this.onAclStreamEncryptChangeBinded = this.onAclStreamEncryptChange.bind(this);
         this.onAclStreamLtkNegReplyBinded = this.onAclStreamLtkNegReply.bind(this);
         this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
-        this._aclStream.on("data", this.onAclStreamDataBinded);
-        this._aclStream.on("encryptChange", this.onAclStreamEncryptChangeBinded);
-        this._aclStream.on("ltkNegReply", this.onAclStreamLtkNegReplyBinded);
-        this._aclStream.on("end", this.onAclStreamEndBinded);
+        this._aclStream.on('data', this.onAclStreamDataBinded);
+        this._aclStream.on('encryptChange', this.onAclStreamEncryptChangeBinded);
+        this._aclStream.on('ltkNegReply', this.onAclStreamLtkNegReplyBinded);
+        this._aclStream.on('end', this.onAclStreamEndBinded);
     }
     onAclStreamData(cid, data) {
         if (cid !== SMP.CID) {
@@ -13025,19 +13196,23 @@ class Smp extends eventemitter3_1.default {
         if (encrypted) {
             if (this._stk && this._diversifier && this._random) {
                 this.write(Buffer.concat([Buffer.from([SMP.ENCRYPT_INFO]), this._stk]));
-                this.write(Buffer.concat([Buffer.from([SMP.MASTER_IDENT]), this._diversifier, this._random]));
+                this.write(Buffer.concat([
+                    Buffer.from([SMP.MASTER_IDENT]),
+                    this._diversifier,
+                    this._random,
+                ]));
             }
         }
     }
     onAclStreamLtkNegReply() {
         this.write(Buffer.from([SMP.PAIRING_FAILED, SMP.UNSPECIFIED]));
-        this.emit("fail");
+        this.emit('fail');
     }
     onAclStreamEnd() {
-        this._aclStream.removeListener("data", this.onAclStreamDataBinded);
-        this._aclStream.removeListener("encryptChange", this.onAclStreamEncryptChangeBinded);
-        this._aclStream.removeListener("ltkNegReply", this.onAclStreamLtkNegReplyBinded);
-        this._aclStream.removeListener("end", this.onAclStreamEndBinded);
+        this._aclStream.removeListener('data', this.onAclStreamDataBinded);
+        this._aclStream.removeListener('encryptChange', this.onAclStreamEncryptChangeBinded);
+        this._aclStream.removeListener('ltkNegReply', this.onAclStreamLtkNegReplyBinded);
+        this._aclStream.removeListener('end', this.onAclStreamEndBinded);
     }
     handlePairingRequest(data) {
         this._preq = data;
@@ -13054,7 +13229,7 @@ class Smp extends eventemitter3_1.default {
     }
     handlePairingConfirm(data) {
         this._pcnf = data;
-        this._tk = Buffer.from("00000000000000000000000000000000", "hex");
+        this._tk = Buffer.from('00000000000000000000000000000000', 'hex');
         this._r = crypto_1.default.r();
         this.write(Buffer.concat([
             Buffer.from([SMP.PAIRING_CONFIRM]),
@@ -13067,20 +13242,20 @@ class Smp extends eventemitter3_1.default {
             Buffer.from([SMP.PAIRING_CONFIRM]),
             crypto_1.default.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
         ]);
-        if (this._pcnf.toString("hex") === pcnf.toString("hex")) {
-            this._diversifier = Buffer.from("0000", "hex");
-            this._random = Buffer.from("0000000000000000", "hex");
+        if (this._pcnf.toString('hex') === pcnf.toString('hex')) {
+            this._diversifier = Buffer.from('0000', 'hex');
+            this._random = Buffer.from('0000000000000000', 'hex');
             this._stk = crypto_1.default.s1(this._tk, this._r, r);
             this._mgmt.addLongTermKey(this._ia, this._iat, 0, 0, this._diversifier, this._random, this._stk);
             this.write(Buffer.concat([Buffer.from([SMP.PAIRING_RANDOM]), this._r]));
         }
         else {
             this.write(Buffer.from([SMP.PAIRING_FAILED, SMP.PAIRING_CONFIRM]));
-            this.emit("fail");
+            this.emit('fail');
         }
     }
     handlePairingFailed(data) {
-        this.emit("fail");
+        this.emit('fail');
     }
     write(data) {
         this._aclStream.write(SMP.CID, data);
@@ -13097,15 +13272,17 @@ exports.default = Smp;
 
 "use strict";
 
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-Object.defineProperty(exports, "__esModule", { value: true });
+/* eslint non-ascii:0 */
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 /**
  * Here we will show letters and pictures on display on obniz Board.
  * ![](media://obniz_display_sphere.gif)
+ *
  * @category Embeds
  */
 class Display extends ComponentAbstact_1.ComponentAbstract {
@@ -13116,7 +13293,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
         this._pos = { x: 0, y: 0 };
         this._colorDepthCapabilities = [1];
         this._colorDepth = 1;
-        this._color = "#000";
+        this._color = '#000';
         this._paper_white = true;
         this._raw_alternate = false;
         this.width = info.width;
@@ -13153,14 +13330,14 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
      */
     font(font, size) {
         const ctx = this._ctx();
-        if (typeof size !== "number") {
+        if (typeof size !== 'number') {
             size = 16;
         }
-        if (typeof font !== "string") {
-            font = "Arial";
+        if (typeof font !== 'string') {
+            font = 'Arial';
         }
         this.fontSize = size;
-        ctx.font = "" + +" " + size + "px " + font;
+        ctx.font = '' + +' ' + size + 'px ' + font;
     }
     /**
      * Setting color for fill/stroke style for further rendering.
@@ -13204,7 +13381,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
         this._pos.y = 0;
         if (ctx) {
             const currentFillStyle = ctx.fillStyle;
-            ctx.fillStyle = this._paper_white ? "#FFF" : "#000";
+            ctx.fillStyle = this._paper_white ? '#FFF' : '#000';
             ctx.fillRect(0, 0, this.width, this.height);
             ctx.fillStyle = currentFillStyle;
             this.draw(ctx);
@@ -13227,15 +13404,16 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
      * obniz.display.print("YES. こんにちは");
      * ```
      * ![](media://obniz_display_pos.jpg)
-     *  @param x
-     *  @param y
+     *
+     * @param x
+     * @param y
      */
     pos(x, y) {
         this._ctx(); // crete first
-        if (typeof x === "number") {
+        if (typeof x === 'number') {
             this._pos.x = x;
         }
-        if (typeof y === "number") {
+        if (typeof y === 'number') {
             this._pos.y = y;
         }
         return this._pos;
@@ -13255,7 +13433,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
      * ```
      * ![](media://obniz_display_print.jpg)
      *
-     *  @param text Text to display. With browser, UTF8 string is available. (It does not work with node.js. Please use display.draw())
+     * @param text Text to display. With browser, UTF8 string is available. (It does not work with node.js. Please use display.draw())
      */
     print(text) {
         const ctx = this._ctx();
@@ -13267,7 +13445,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
         else {
             const obj = {};
             obj.display = {
-                text: "" + text,
+                text: '' + text,
             };
             this.Obniz.send(obj);
         }
@@ -13391,6 +13569,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
      * // Javascript Example
      * obniz.display.qr("https://obniz.io")
      * ```
+     *
      * @param text
      * @param correction
      */
@@ -13572,6 +13751,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
      * }
      * obniz.display.drawing(true);
      * ```
+     *
      * @param autoFlush
      */
     drawing(autoFlush) {
@@ -13582,30 +13762,30 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
         }
     }
     schemaBasePath() {
-        return "display";
+        return 'display';
     }
     _reset() {
         this.autoFlush = true;
         // reset to default
         this._pos = { x: 0, y: 0 };
-        this._color = this._paper_white ? "#000" : "#FFF";
+        this._color = this._paper_white ? '#000' : '#FFF';
         this.fontSize = this.height > 200 ? 32 : 16;
         this._colorDepth = this._colorDepthCapabilities[this._colorDepthCapabilities.length - 1];
         this._reset_canvas();
     }
     warnCanvasAvailability() {
         if (this.Obniz.isNode) {
-            throw new Error("obniz.js require node-canvas to draw rich contents. see more detail on docs");
+            throw new Error('obniz.js require node-canvas to draw rich contents. see more detail on docs');
         }
         else {
-            throw new Error("obniz.js cant create canvas element to body");
+            throw new Error('obniz.js cant create canvas element to body');
         }
     }
     _reset_canvas() {
         // reset canvas
         if (this._canvas) {
-            const ctx = this._canvas.getContext("2d");
-            ctx.fillStyle = this._paper_white ? "#FFF" : "#000";
+            const ctx = this._canvas.getContext('2d');
+            ctx.fillStyle = this._paper_white ? '#FFF' : '#000';
             ctx.fillRect(0, 0, this.width, this.height);
             ctx.fillStyle = this._color;
             ctx.strokeStyle = this._color;
@@ -13627,22 +13807,22 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
             }
         }
         else {
-            const identifier = "obnizcanvas-" + this.Obniz.id;
+            const identifier = 'obnizcanvas-' + this.Obniz.id;
             let canvas = document.getElementById(identifier);
             if (canvas) {
                 this._canvas = canvas;
             }
             else {
-                canvas = document.createElement("canvas");
-                canvas.setAttribute("id", identifier);
-                canvas.style.visibility = "hidden";
+                canvas = document.createElement('canvas');
+                canvas.setAttribute('id', identifier);
+                canvas.style.visibility = 'hidden';
                 canvas.width = this.width;
                 canvas.height = this.height;
                 if (this._colorDepthCapabilities.length === 1) {
                     // for monochro display
-                    canvas.style["-webkit-font-smoothing"] = "none";
+                    canvas.style['-webkit-font-smoothing'] = 'none';
                 }
-                const body = document.getElementsByTagName("body")[0];
+                const body = document.getElementsByTagName('body')[0];
                 body.appendChild(canvas);
                 this._canvas = canvas;
                 this._reset_canvas();
@@ -13653,7 +13833,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
     _ctx() {
         const canvas = this._preparedCanvas();
         if (canvas) {
-            return canvas.getContext("2d");
+            return canvas.getContext('2d');
         }
     }
     _draw(ctx) {
@@ -13665,7 +13845,9 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
                 const red = data[pixel_index * 4];
                 const green = data[pixel_index * 4 + 1];
                 const blue = data[pixel_index * 4 + 2];
-                const hexColor = (((red >> 3) & 0x1f) << 11) | (((green >> 2) & 0x3f) << 5) | (((blue >> 3) & 0x1f) << 0);
+                const hexColor = (((red >> 3) & 0x1f) << 11) |
+                    (((green >> 2) & 0x3f) << 5) |
+                    (((blue >> 3) & 0x1f) << 0);
                 raw[pixel_index * 2] = (hexColor >> 8) & 0xff;
                 raw[pixel_index * 2 + 1] = hexColor & 0xff;
             }
@@ -13745,12 +13927,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 /**
  * The embedded switch on obniz Board.
+ *
  * @category Embeds
  */
 class ObnizSwitch extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, info) {
         super(obniz);
-        this.on("/response/switch/change", (obj) => {
+        this.on('/response/switch/change', (obj) => {
             this.state = obj.state;
             this.Obniz._runUserCreatedFunction(this.onchange, this.state);
         });
@@ -13771,8 +13954,8 @@ class ObnizSwitch extends ComponentAbstact_1.ComponentAbstract {
      */
     async getWait() {
         const obj = {};
-        obj.switch = "get";
-        const data = await this.sendAndReceiveJsonWait(obj, "/response/switch/change");
+        obj.switch = 'get';
+        const data = await this.sendAndReceiveJsonWait(obj, '/response/switch/change');
         return data.state;
     }
     /**
@@ -13797,17 +13980,17 @@ class ObnizSwitch extends ComponentAbstact_1.ComponentAbstract {
      */
     async stateWait(state) {
         while (1) {
-            const data = await this.receiveJsonWait("/response/switch/change");
+            const data = await this.receiveJsonWait('/response/switch/change');
             if (state === data.state) {
                 return;
             }
         }
     }
     schemaBasePath() {
-        return "switch";
+        return 'switch';
     }
     _reset() {
-        this.state = "none";
+        this.state = 'none';
     }
 }
 exports.default = ObnizSwitch;
@@ -13855,35 +14038,34 @@ module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\
 Object.defineProperty(exports, "__esModule", { value: true });
 class HW {
     static getDefinitionFor(hw) {
-        if (hw === "obnizb1") {
+        if (hw === 'obnizb1') {
             return __webpack_require__("./dist/src/obniz/libs/hw/obnizb1.json");
         }
-        else if (hw === "obnizb2") {
+        else if (hw === 'obnizb2') {
             return __webpack_require__("./dist/src/obniz/libs/hw/obnizb2.json");
         }
-        else if (hw === "esp32w") {
+        else if (hw === 'esp32w') {
             return __webpack_require__("./dist/src/obniz/libs/hw/esp32w.json");
         }
-        else if (hw === "esp32p") {
+        else if (hw === 'esp32p') {
             return __webpack_require__("./dist/src/obniz/libs/hw/esp32p.json");
         }
-        else if (hw === "m5stickc") {
+        else if (hw === 'm5stickc') {
             return __webpack_require__("./dist/src/obniz/libs/hw/m5stickc.json");
         }
-        else if (hw === "m5stack_basic") {
+        else if (hw === 'm5stack_basic') {
             return __webpack_require__("./dist/src/obniz/libs/hw/m5stack_basic.json");
         }
-        else if (hw === "encored") {
+        else if (hw === 'encored') {
             return __webpack_require__("./dist/src/obniz/libs/hw/encored.json");
         }
-        else if (hw === "encored_lte") {
+        else if (hw === 'encored_lte') {
             return __webpack_require__("./dist/src/obniz/libs/hw/encored_lte.json");
         }
         else {
             // default
             return __webpack_require__("./dist/src/obniz/libs/hw/esp32w.json");
         }
-        return undefined;
     }
 }
 exports.default = HW;
@@ -13911,15 +14093,15 @@ class M5StackBasic extends ObnizDevice_1.default {
     }
     _beforeOnConnect() {
         super._beforeOnConnect();
-        this.buttonA = this.wired("Button", { signal: 39 });
-        this.buttonB = this.wired("Button", { signal: 38 });
-        this.buttonC = this.wired("Button", { signal: 37 });
+        this.buttonA = this.wired('Button', { signal: 39 });
+        this.buttonB = this.wired('Button', { signal: 38 });
+        this.buttonC = this.wired('Button', { signal: 37 });
     }
     _prepareComponents() {
         // @ts-ignore
         super._prepareComponents();
-        if (this.hw !== "m5stack_basic") {
-            throw new Error("Obniz.M5StackBasic only support ObnizOS for M5Stack Basic. Your device is not ObnizOS for M5Stack Basic.");
+        if (this.hw !== 'm5stack_basic') {
+            throw new Error('Obniz.M5StackBasic only support ObnizOS for M5Stack Basic. Your device is not ObnizOS for M5Stack Basic.');
         }
     }
 }
@@ -13954,20 +14136,20 @@ class M5StickC extends ObnizDevice_1.default {
         super(id, options);
     }
     gyroWait() {
-        const supportedIMUNameArr = ["MPU6886", "SH200Q"];
+        const supportedIMUNameArr = ['MPU6886', 'SH200Q'];
         if (!supportedIMUNameArr.includes(this.imu.constructor.name)) {
             throw new Error(`gyroWait is supported only on M5stickC with ${supportedIMUNameArr.join()}`);
         }
         return this.imu.getGyroWait();
     }
     accelerationWait() {
-        const supportedIMUNameArr = ["MPU6886", "SH200Q"];
+        const supportedIMUNameArr = ['MPU6886', 'SH200Q'];
         if (!supportedIMUNameArr.includes(this.imu.constructor.name)) {
             throw new Error(`accelerationWait is supported only on M5stickC with ${supportedIMUNameArr.join()}`);
         }
         return this.imu.getAccelWait();
     }
-    setupIMUWait(imuName = "MPU6886") {
+    setupIMUWait(imuName = 'MPU6886') {
         const i2c = this._m5i2c;
         const onerror = i2c.onerror;
         this.imu = this.wired(imuName, { i2c });
@@ -13984,10 +14166,10 @@ class M5StickC extends ObnizDevice_1.default {
                 throw new Error(`Cannot find IMU (${imuName}) on this M5StickC`);
             }
             switch (imuName) {
-                case "SH200Q":
+                case 'SH200Q':
                     await this.imu.initWait();
                     break;
-                case "MPU6886":
+                case 'MPU6886':
                     this.imu.init();
                     break;
                 default:
@@ -14002,27 +14184,27 @@ class M5StickC extends ObnizDevice_1.default {
             // already wired parts
             return;
         }
-        this.ir = this.wired("InfraredLED", { anode: 9 });
-        this.led = this.wired("LED", { cathode: 10 });
-        this.buttonA = this.wired("Button", { signal: 37 });
-        this.buttonB = this.wired("Button", { signal: 39 });
+        this.ir = this.wired('InfraredLED', { anode: 9 });
+        this.led = this.wired('LED', { cathode: 10 });
+        this.buttonA = this.wired('Button', { signal: 37 });
+        this.buttonB = this.wired('Button', { signal: 39 });
         const i2cParams = {
             sda: 21,
             scl: 22,
             clock: 100000,
-            pull: "3v",
-            mode: "master",
+            pull: '3v',
+            mode: 'master',
         };
         this._m5i2c = this.i2c1;
         this._m5i2c.start(i2cParams);
-        this.axp = this.wired("AXP192", { i2c: this._m5i2c });
+        this.axp = this.wired('AXP192', { i2c: this._m5i2c });
         this.led.off();
     }
     _prepareComponents() {
         // @ts-ignore
         super._prepareComponents();
-        if (this.hw !== "m5stickc") {
-            throw new Error("Obniz.M5StickC only support ObnizOS for M5StickC. Your device is not ObnizOS for M5StickC.");
+        if (this.hw !== 'm5stickc') {
+            throw new Error('Obniz.M5StickC only support ObnizOS for M5StickC. Your device is not ObnizOS for M5StickC.');
         }
     }
 }
@@ -14070,7 +14252,7 @@ class PeripheralAD extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
         super(obniz);
         this.id = id;
-        this.on("/response/ad/get", (obj) => {
+        this.on('/response/ad/get', (obj) => {
             this.value = obj;
             this.Obniz._runUserCreatedFunction(this.onchange, obj);
         });
@@ -14083,13 +14265,14 @@ class PeripheralAD extends ComponentAbstact_1.ComponentAbstract {
      *  console.log("changed to "+voltage+" v")
      * });
      * ```
+     *
      * @param callback  called when voltage gets changed.
      * @param callback.voltage  voltage
      */
     start(callback) {
         this.onchange = callback;
         const obj = {};
-        obj["ad" + this.id] = {
+        obj['ad' + this.id] = {
             stream: true,
         };
         this.Obniz.send(obj);
@@ -14111,10 +14294,10 @@ class PeripheralAD extends ComponentAbstact_1.ComponentAbstract {
      */
     async getWait() {
         const obj = {};
-        obj["ad" + this.id] = {
+        obj['ad' + this.id] = {
             stream: false,
         };
-        const data = await this.sendAndReceiveJsonWait(obj, "/response/ad/get");
+        const data = await this.sendAndReceiveJsonWait(obj, '/response/ad/get');
         return data;
     }
     /**
@@ -14127,7 +14310,7 @@ class PeripheralAD extends ComponentAbstact_1.ComponentAbstract {
     end() {
         this.onchange = undefined;
         const obj = {};
-        obj["ad" + this.id] = null;
+        obj['ad' + this.id] = null;
         this.Obniz.send(obj);
         return;
     }
@@ -14136,7 +14319,7 @@ class PeripheralAD extends ComponentAbstact_1.ComponentAbstract {
      * @private
      */
     schemaBasePath() {
-        return "ad" + this.id;
+        return 'ad' + this.id;
     }
     /**
      * @ignore
@@ -14174,8 +14357,8 @@ class Directive extends ComponentAbstact_1.ComponentAbstract {
         super(obniz);
         this.observers = [];
         this._animationIdentifier = 0;
-        this.on("/response/ioAnimation/notify", (obj) => {
-            if (obj.animation.status === "finish") {
+        this.on('/response/ioAnimation/notify', (obj) => {
+            if (obj.animation.status === 'finish') {
                 for (let i = this.observers.length - 1; i >= 0; i--) {
                     if (obj.animation.name === this.observers[i].name) {
                         this.observers[i].resolve();
@@ -14244,7 +14427,8 @@ class Directive extends ComponentAbstact_1.ComponentAbstract {
      * @param repeat The number of repeat count of animation. If not specified, it repeat endless.
      */
     animation(name, status, animations, repeat) {
-        if ((typeof repeat === "number" || status === "registrate") && semver_1.default.lt(this.Obniz.firmware_ver, "2.0.0")) {
+        if ((typeof repeat === 'number' || status === 'registrate') &&
+            semver_1.default.lt(this.Obniz.firmware_ver, '2.0.0')) {
             throw new Error(`Please update obniz firmware >= 2.0.0`);
         }
         const obj = {};
@@ -14254,7 +14438,7 @@ class Directive extends ComponentAbstact_1.ComponentAbstract {
                 status,
             },
         };
-        if (typeof repeat === "number") {
+        if (typeof repeat === 'number') {
             obj.io.animation.repeat = repeat;
         }
         if (!animations) {
@@ -14275,7 +14459,7 @@ class Directive extends ComponentAbstact_1.ComponentAbstract {
                 state: pooledJsonArray,
             });
         }
-        if (status === "loop" || status === "registrate") {
+        if (status === 'loop' || status === 'registrate') {
             obj.io.animation.states = states;
         }
         this.Obniz.send(obj);
@@ -14304,26 +14488,26 @@ class Directive extends ComponentAbstact_1.ComponentAbstract {
      * @param repeat  The number of repeat count of animation.
      */
     repeatWait(animations, repeat) {
-        if (semver_1.default.lt(this.Obniz.firmware_ver, "2.0.0")) {
+        if (semver_1.default.lt(this.Obniz.firmware_ver, '2.0.0')) {
             throw new Error(`Please update obniz firmware >= 2.0.0`);
         }
-        if (typeof repeat !== "number" || repeat < 1) {
-            throw new Error("please specify repeat count > 0");
+        if (typeof repeat !== 'number' || repeat < 1) {
+            throw new Error('please specify repeat count > 0');
         }
         if (Math.floor(repeat) !== repeat) {
-            throw new Error("please provide integer number like 1, 2, 3,,,");
+            throw new Error('please provide integer number like 1, 2, 3,,,');
         }
         return new Promise((resolve, reject) => {
-            const name = "_repeatwait" + Date.now() + this._animationIdentifier;
+            const name = '_repeatwait' + Date.now() + this._animationIdentifier;
             if (++this._animationIdentifier > 1000) {
                 this._animationIdentifier = 0;
             }
-            this.animation(name, "loop", animations, repeat);
+            this.animation(name, 'loop', animations, repeat);
             this.addObserver(name, resolve, reject);
         });
     }
     schemaBasePath() {
-        return "io";
+        return 'io';
     }
     /**
      * @ignore
@@ -14332,7 +14516,7 @@ class Directive extends ComponentAbstact_1.ComponentAbstract {
     _reset() {
         if (this.observers) {
             for (let i = 0; i < this.observers.length; i++) {
-                this.observers[i].reject(new Error("reset called"));
+                this.observers[i].reject(new Error('reset called'));
             }
         }
         this.observers = [];
@@ -14376,57 +14560,69 @@ class PeripheralGrove extends ComponentAbstact_1.ComponentAbstract {
         this._params = params;
         this._reset();
     }
-    getDigital(drive = "5v", pinOption = "default") {
-        this.useWithType("digital", drive);
-        const primary = this.Obniz.isValidIO(this._params.pin1) ? this.Obniz.getIO(this._params.pin1) : undefined;
-        const secondary = this.Obniz.isValidIO(this._params.pin2) ? this.Obniz.getIO(this._params.pin2) : undefined;
+    getDigital(drive = '5v', pinOption = 'default') {
+        this.useWithType('digital', drive);
+        const primary = this.Obniz.isValidIO(this._params.pin1)
+            ? this.Obniz.getIO(this._params.pin1)
+            : undefined;
+        const secondary = this.Obniz.isValidIO(this._params.pin2)
+            ? this.Obniz.getIO(this._params.pin2)
+            : undefined;
         if (!primary) {
             // required
-            throw new Error("grove digital primary pin " + this._params.pin1 + " is not valid io");
+            throw new Error('grove digital primary pin ' + this._params.pin1 + ' is not valid io');
         }
-        if (pinOption === "default" && !primary) {
+        if (pinOption === 'default' && !primary) {
             // required
-            throw new Error("grove digital primary pin " + this._params.pin1 + " is not valid io");
+            throw new Error('grove digital primary pin ' + this._params.pin1 + ' is not valid io');
         }
-        if (pinOption === "secondaryOnly" && !secondary) {
+        if (pinOption === 'secondaryOnly' && !secondary) {
             // required
-            throw new Error("grove digital secondary pin " + this._params.pin2 + " is not valid io");
+            throw new Error('grove digital secondary pin ' + this._params.pin2 + ' is not valid io');
         }
         return { primary, secondary };
     }
-    getAnalog(drive = "5v", pinOption = "default") {
-        this.useWithType("analog", drive);
-        const primary = this.Obniz.isValidAD(this._params.pin1) ? this.Obniz.getAD(this._params.pin1) : undefined;
-        const secondary = this.Obniz.isValidAD(this._params.pin2) ? this.Obniz.getAD(this._params.pin2) : undefined;
-        if (pinOption === "default" && !primary) {
+    getAnalog(drive = '5v', pinOption = 'default') {
+        this.useWithType('analog', drive);
+        const primary = this.Obniz.isValidAD(this._params.pin1)
+            ? this.Obniz.getAD(this._params.pin1)
+            : undefined;
+        const secondary = this.Obniz.isValidAD(this._params.pin2)
+            ? this.Obniz.getAD(this._params.pin2)
+            : undefined;
+        if (pinOption === 'default' && !primary) {
             // required
-            throw new Error("grove analog primary pin " + this._params.pin1 + " is not valid io");
+            throw new Error('grove analog primary pin ' + this._params.pin1 + ' is not valid io');
         }
-        if (pinOption === "secondaryOnly" && !secondary) {
+        if (pinOption === 'secondaryOnly' && !secondary) {
             // required
-            throw new Error("grove analog secondary pin " + this._params.pin2 + " is not valid io");
+            throw new Error('grove analog secondary pin ' + this._params.pin2 + ' is not valid io');
         }
         return { primary, secondary };
     }
-    getAnalogDigital(drive = "5v") {
-        this.useWithType("analog-digital", drive);
-        const analog = this.Obniz.isValidAD(this._params.pin1) ? this.Obniz.getAD(this._params.pin1) : undefined;
-        const digital = this.Obniz.isValidIO(this._params.pin2) ? this.Obniz.getIO(this._params.pin2) : undefined;
+    getAnalogDigital(drive = '5v') {
+        this.useWithType('analog-digital', drive);
+        const analog = this.Obniz.isValidAD(this._params.pin1)
+            ? this.Obniz.getAD(this._params.pin1)
+            : undefined;
+        const digital = this.Obniz.isValidIO(this._params.pin2)
+            ? this.Obniz.getIO(this._params.pin2)
+            : undefined;
         if (!analog) {
             // required
-            throw new Error("grove analog pin " + this._params.pin1 + " is not valid io");
+            throw new Error('grove analog pin ' + this._params.pin1 + ' is not valid io');
         }
         if (!digital) {
             // required
-            throw new Error("grove digital pin " + this._params.pin2 + " is not valid io");
+            throw new Error('grove digital pin ' + this._params.pin2 + ' is not valid io');
         }
         return { analog, digital };
     }
-    getI2c(frequency, drive = "5v") {
-        this.useWithType("i2c", drive);
+    getI2c(frequency, drive = '5v') {
+        this.useWithType('i2c', drive);
         if (!this._current.i2c) {
             this._current.i2c = this.Obniz.getI2CWithConfig({
-                mode: "master",
+                mode: 'master',
                 sda: this._params.pin2,
                 scl: this._params.pin1,
                 clock: frequency,
@@ -14434,8 +14630,8 @@ class PeripheralGrove extends ComponentAbstact_1.ComponentAbstract {
         }
         return this._current.i2c;
     }
-    getUart(baud, drive = "5v") {
-        this.useWithType("uart", drive);
+    getUart(baud, drive = '5v') {
+        this.useWithType('uart', drive);
         this._current.uart = this.Obniz.getFreeUart();
         this._current.uart.start({
             rx: this._params.pin1,
@@ -14445,8 +14641,8 @@ class PeripheralGrove extends ComponentAbstact_1.ComponentAbstract {
         });
         return this._current.uart;
     }
-    getPwm(drive = "5v") {
-        this.useWithType("pwm", drive);
+    getPwm(drive = '5v') {
+        this.useWithType('pwm', drive);
         this._current.pwm = this.Obniz.getFreePwm();
         this._current.pwm.start({
             io: this._params.pin1,
@@ -14465,7 +14661,7 @@ class PeripheralGrove extends ComponentAbstact_1.ComponentAbstract {
         if (this._current.i2c) {
             this._current.i2c.end();
         }
-        if (this._current.type === "analog") {
+        if (this._current.type === 'analog') {
             if (this.Obniz.isValidAD(this._params.pin1)) {
                 this.Obniz.getAD(this._params.pin1).end();
             }
@@ -14473,7 +14669,7 @@ class PeripheralGrove extends ComponentAbstact_1.ComponentAbstract {
                 this.Obniz.getAD(this._params.pin2).end();
             }
         }
-        else if (this._current.type === "analog-digital") {
+        else if (this._current.type === 'analog-digital') {
             if (this.Obniz.isValidAD(this._params.pin1)) {
                 this.Obniz.getAD(this._params.pin1).end();
             }
@@ -14495,8 +14691,8 @@ class PeripheralGrove extends ComponentAbstact_1.ComponentAbstract {
     }
     useWithType(type, drive) {
         if (this.used) {
-            if (this._current.type !== "i2c" || this._current.drive !== drive) {
-                throw new Error("Grove pins are already used.");
+            if (this._current.type !== 'i2c' || this._current.drive !== drive) {
+                throw new Error('Grove pins are already used.');
             }
         }
         this.used = true;
@@ -14534,8 +14730,9 @@ const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentA
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 /**
  * i2c can be used.
- *  Master/Slave mode.
- *  But slave mode only works with "written" events. You can't set data to be read.
+ * Master/Slave mode.
+ * But slave mode only works with "written" events. You can't set data to be read.
+ *
  * @category Peripherals
  */
 class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
@@ -14543,24 +14740,24 @@ class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
         super(obniz);
         this.id = id;
         this.onerror = undefined;
-        this.on("/response/i2c/slave", (obj) => {
+        this.on('/response/i2c/slave', (obj) => {
             this.Obniz._runUserCreatedFunction(this.onwritten, obj.data, obj.address);
         });
-        this.on("/response/i2c/error", (obj) => {
+        this.on('/response/i2c/error', (obj) => {
             const message = `i2c${this.id}: ${obj.error.message}`;
-            if (typeof this.onerror === "function") {
+            if (typeof this.onerror === 'function') {
                 this.Obniz._runUserCreatedFunction(this.onerror, new Error(message));
             }
             else {
                 this.Obniz.error({
-                    alert: "error",
+                    alert: 'error',
                     message,
                 });
             }
         });
-        this.on("/response/i2c/warning", (obj) => {
+        this.on('/response/i2c/warning', (obj) => {
             this.Obniz.warning({
-                alert: "warning",
+                alert: 'warning',
                 message: `i2c${this.id}: ${obj.warning.message}`,
             });
         });
@@ -14602,54 +14799,64 @@ class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
      * @param arg
      */
     start(arg) {
-        const err = util_1.default._requiredKeys(arg, ["mode", "sda", "scl"]);
+        const err = util_1.default._requiredKeys(arg, ['mode', 'sda', 'scl']);
         if (err) {
             throw new Error("I2C start param '" + err + "' required, but not found ");
         }
-        this.state = util_1.default._keyFilter(arg, ["mode", "sda", "scl", "pull", "gnd"]);
-        const ioKeys = ["sda", "scl", "gnd"];
+        this.state = util_1.default._keyFilter(arg, [
+            'mode',
+            'sda',
+            'scl',
+            'pull',
+            'gnd',
+        ]);
+        const ioKeys = ['sda', 'scl', 'gnd'];
         for (const key of ioKeys) {
             if (this.state[key] && !this.Obniz.isValidIO(this.state[key])) {
                 throw new Error("i2c start param '" + key + "' are to be valid io no");
             }
         }
         const mode = this.state.mode;
-        const clock = typeof arg.clock === "number" ? Math.floor(arg.clock) : null;
-        const slave_address = typeof arg.slave_address === "number" ? Math.floor(arg.slave_address) : null;
-        const slave_address_length = typeof arg.slave_address_length === "number" ? Math.floor(arg.slave_address_length) : null;
-        if (mode !== "master" && mode !== "slave") {
-            throw new Error("i2c: invalid mode " + mode);
+        const clock = typeof arg.clock === 'number' ? Math.floor(arg.clock) : null;
+        const slave_address = typeof arg.slave_address === 'number'
+            ? Math.floor(arg.slave_address)
+            : null;
+        const slave_address_length = typeof arg.slave_address_length === 'number'
+            ? Math.floor(arg.slave_address_length)
+            : null;
+        if (mode !== 'master' && mode !== 'slave') {
+            throw new Error('i2c: invalid mode ' + mode);
         }
-        if (mode === "master") {
+        if (mode === 'master') {
             if (clock === null) {
-                throw new Error("i2c: please specify clock when master mode");
+                throw new Error('i2c: please specify clock when master mode');
             }
             if (clock <= 0 || clock > 1 * 1000 * 1000) {
-                throw new Error("i2c: invalid clock " + clock);
+                throw new Error('i2c: invalid clock ' + clock);
             }
-            if (arg.pull === "5v" && clock > 400 * 1000) {
-                throw new Error("i2c: please use under 400khz when internal 5v internal pull-up");
+            if (arg.pull === '5v' && clock > 400 * 1000) {
+                throw new Error('i2c: please use under 400khz when internal 5v internal pull-up');
             }
-            if (arg.pull === "3v" && clock > 100 * 1000) {
-                throw new Error("i2c: please use under 100khz when internal 3v internal pull-up");
+            if (arg.pull === '3v' && clock > 100 * 1000) {
+                throw new Error('i2c: please use under 100khz when internal 3v internal pull-up');
             }
         }
         else {
             if (slave_address === null) {
-                throw new Error("i2c: please specify slave_address");
+                throw new Error('i2c: please specify slave_address');
             }
             if (slave_address < 0 || slave_address > 0x7f) {
-                throw new Error("i2c: invalid slave_address");
+                throw new Error('i2c: invalid slave_address');
             }
             if (slave_address < 0 || slave_address > 0x7f) {
-                throw new Error("i2c: invalid slave_address");
+                throw new Error('i2c: invalid slave_address');
             }
             if (slave_address_length !== null && slave_address_length !== 7) {
-                throw new Error("i2c: invalid slave_address_length. please specify 7");
+                throw new Error('i2c: invalid slave_address_length. please specify 7');
             }
         }
-        this.Obniz.getIO(this.state.sda).drive("open-drain");
-        this.Obniz.getIO(this.state.scl).drive("open-drain");
+        this.Obniz.getIO(this.state.sda).drive('open-drain');
+        this.Obniz.getIO(this.state.scl).drive('open-drain');
         if (this.state.pull) {
             this.Obniz.getIO(this.state.sda).pull(this.state.pull);
             this.Obniz.getIO(this.state.scl).pull(this.state.pull);
@@ -14661,13 +14868,17 @@ class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
         if (this.state.gnd !== undefined) {
             this.Obniz.getIO(this.state.gnd).output(false);
             const ioNames = {};
-            ioNames[this.state.gnd] = "gnd";
+            ioNames[this.state.gnd] = 'gnd';
             if (this.Obniz.display) {
-                this.Obniz.display.setPinNames("i2c" + this.id, ioNames);
+                this.Obniz.display.setPinNames('i2c' + this.id, ioNames);
             }
         }
-        const startObj = util_1.default._keyFilter(this.state, ["mode", "sda", "scl"]);
-        if (mode === "master") {
+        const startObj = util_1.default._keyFilter(this.state, [
+            'mode',
+            'sda',
+            'scl',
+        ]);
+        if (mode === 'master') {
             startObj.clock = clock;
         }
         else {
@@ -14677,7 +14888,7 @@ class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
             }
         }
         const obj = {};
-        obj["i2c" + this.id] = startObj;
+        obj['i2c' + this.id] = startObj;
         this.used = true;
         this.Obniz.send(obj);
     }
@@ -14689,6 +14900,7 @@ class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
      * obniz.i2c0.start({mode: "master",sda:2, scl:3, clock:400000, pull:null});
      * obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
      * ```
+     *
      * @param address 7bit address only.
      * @param data Max length is 1024;
      */
@@ -14698,19 +14910,19 @@ class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
         }
         address = parseInt(address);
         if (isNaN(address)) {
-            throw new Error("i2c: please specify address");
+            throw new Error('i2c: please specify address');
         }
         if (address < 0 || address > 0x7f) {
-            throw new Error("i2c: invalid address");
+            throw new Error('i2c: invalid address');
         }
         if (!data) {
-            throw new Error("i2c: please provide data");
+            throw new Error('i2c: please provide data');
         }
         if (data.length > 1024) {
-            throw new Error("i2c: data should be under 1024 bytes");
+            throw new Error('i2c: data should be under 1024 bytes');
         }
         const obj = {};
-        obj["i2c" + this.id] = {
+        obj['i2c' + this.id] = {
             address,
             data,
         };
@@ -14736,29 +14948,28 @@ class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
         }
         address = parseInt(address);
         if (isNaN(address)) {
-            throw new Error("i2c: please specify address");
+            throw new Error('i2c: please specify address');
         }
         if (address < 0 || address > 0x7f) {
-            throw new Error("i2c: invalid address");
+            throw new Error('i2c: invalid address');
         }
         length = parseInt(length);
         if (isNaN(length) || length < 0) {
-            throw new Error("i2c: invalid length to read");
+            throw new Error('i2c: invalid length to read');
         }
         if (length > 1024) {
-            throw new Error("i2c: data length should be under 1024 bytes");
+            throw new Error('i2c: data length should be under 1024 bytes');
         }
-        const self = this;
         const obj = {};
-        obj["i2c" + self.id] = {
+        obj['i2c' + this.id] = {
             address,
             read: length,
         };
         const errors = {
-            "/response/i2c/error": ObnizError_1.ObnizI2cError,
-            "/response/i2c/warning": ObnizError_1.ObnizI2cWarning,
+            '/response/i2c/error': ObnizError_1.ObnizI2cError,
+            '/response/i2c/warning': ObnizError_1.ObnizI2cWarning,
         };
-        const receiveData = await this.sendAndReceiveJsonWait(obj, "/response/i2c/master", { errors });
+        const receiveData = await this.sendAndReceiveJsonWait(obj, '/response/i2c/master', { errors });
         return receiveData.data;
     }
     /**
@@ -14778,7 +14989,7 @@ class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
      */
     end() {
         const obj = {};
-        obj["i2c" + this.id] = null;
+        obj['i2c' + this.id] = null;
         this.Obniz.send(obj);
         this.used = false;
     }
@@ -14787,7 +14998,7 @@ class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
      * @private
      */
     schemaBasePath() {
-        return "i2c" + this.id;
+        return 'i2c' + this.id;
     }
     /**
      * @ignore
@@ -14817,25 +15028,26 @@ const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentA
 /**
  * General purpose IO
  * This is available on each io (for obniz Board series, it's io0 to io11)
+ *
  * @category Peripherals
  */
 class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
         super(obniz);
         this.id = id;
-        this.on("/response/io/get", (obj) => {
+        this.on('/response/io/get', (obj) => {
             this.value = obj;
             this.Obniz._runUserCreatedFunction(this.onchange, obj);
         });
-        this.on("/response/io/warning", (obj) => {
+        this.on('/response/io/warning', (obj) => {
             this.Obniz.warning({
-                alert: "warning",
+                alert: 'warning',
                 message: `io${this.id}: ${obj.warning.message}`,
             });
         });
-        this.on("/response/io/error", (obj) => {
+        this.on('/response/io/error', (obj) => {
             this.Obniz.error({
-                alert: "error",
+                alert: 'error',
                 message: `io${this.id}: ${obj.error.message}`,
             });
         });
@@ -14857,7 +15069,7 @@ class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
     output(value) {
         value = !!value;
         const obj = {};
-        obj["io" + this.id] = value;
+        obj['io' + this.id] = value;
         this.value = value;
         this.Obniz.send(obj);
     }
@@ -14881,25 +15093,25 @@ class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
      *
      */
     drive(drive) {
-        if (typeof drive !== "string") {
-            throw new Error("please specify drive methods in string");
+        if (typeof drive !== 'string') {
+            throw new Error('please specify drive methods in string');
         }
-        let output_type = "";
+        let output_type = '';
         switch (drive) {
-            case "5v":
-                output_type = "push-pull5v";
+            case '5v':
+                output_type = 'push-pull5v';
                 break;
-            case "3v":
-                output_type = "push-pull3v";
+            case '3v':
+                output_type = 'push-pull3v';
                 break;
-            case "open-drain":
-                output_type = "open-drain";
+            case 'open-drain':
+                output_type = 'open-drain';
                 break;
             default:
-                throw new Error("unknown drive method");
+                throw new Error('unknown drive method');
         }
         const obj = {};
-        obj["io" + this.id] = {
+        obj['io' + this.id] = {
             output_type,
         };
         this.Obniz.send(obj);
@@ -14918,28 +15130,28 @@ class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
      *
      */
     pull(updown) {
-        if (typeof updown !== "string" && updown !== null) {
-            throw new Error("please specify pull methods in string");
+        if (typeof updown !== 'string' && updown !== null) {
+            throw new Error('please specify pull methods in string');
         }
-        let pull_type = "";
+        let pull_type = '';
         switch (updown) {
-            case "5v":
-                pull_type = "pull-up5v";
+            case '5v':
+                pull_type = 'pull-up5v';
                 break;
-            case "3v":
-                pull_type = "pull-up3v";
+            case '3v':
+                pull_type = 'pull-up3v';
                 break;
-            case "0v":
-                pull_type = "pull-down";
+            case '0v':
+                pull_type = 'pull-down';
                 break;
             case null:
-                pull_type = "float";
+                pull_type = 'float';
                 break;
             default:
-                throw new Error("unknown pull_type method");
+                throw new Error('unknown pull_type method');
         }
         const obj = {};
-        obj["io" + this.id] = {
+        obj['io' + this.id] = {
             pull_type,
         };
         this.Obniz.send(obj);
@@ -14954,8 +15166,8 @@ class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
     input(callback) {
         this.onchange = callback;
         const obj = {};
-        obj["io" + this.id] = {
-            direction: "input",
+        obj['io' + this.id] = {
+            direction: 'input',
             stream: true,
         };
         this.Obniz.send(obj);
@@ -14976,10 +15188,10 @@ class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
     async inputWait() {
         const obj = {};
         obj[this.schemaBasePath()] = {
-            direction: "input",
+            direction: 'input',
             stream: false,
         };
-        const data = await this.sendAndReceiveJsonWait(obj, "/response/io/get");
+        const data = await this.sendAndReceiveJsonWait(obj, '/response/io/get');
         return data;
     }
     /**
@@ -14999,7 +15211,7 @@ class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
      */
     end() {
         const obj = {};
-        obj["io" + this.id] = null;
+        obj['io' + this.id] = null;
         this.Obniz.send(obj);
     }
     /**
@@ -15007,7 +15219,7 @@ class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
      * @private
      */
     schemaBasePath() {
-        return "io" + this.id;
+        return 'io' + this.id;
     }
     /**
      * @ignore
@@ -15040,6 +15252,7 @@ const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/
 /**
  * We will now generate PWM.
  * Maximum current depends on the driving mode. See [[PeripheralIO|io]].
+ *
  * @category Peripherals
  */
 class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
@@ -15068,14 +15281,14 @@ class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
      * @param params
      */
     start(params) {
-        const err = util_1.default._requiredKeys(params, ["io"]);
+        const err = util_1.default._requiredKeys(params, ['io']);
         if (err) {
             throw new Error("pwm start param '" + err + "' required, but not found ");
         }
-        this.params = util_1.default._keyFilter(params, ["io", "drive", "pull"]);
+        this.params = util_1.default._keyFilter(params, ['io', 'drive', 'pull']);
         const io = this.params.io;
         const ioObj = this.Obniz.getIO(io);
-        ioObj.drive(this.params.drive || "5v");
+        ioObj.drive(this.params.drive || '5v');
         ioObj.pull(this.params.pull || null);
         this.state = {
             io,
@@ -15106,14 +15319,14 @@ class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
             throw new Error(`pwm${this.id} is not started`);
         }
         freq *= 1;
-        if (typeof freq !== "number") {
-            throw new Error("please provide freq in number");
+        if (typeof freq !== 'number') {
+            throw new Error('please provide freq in number');
         }
         this.state.freq = freq;
         this.sendWS({
             freq,
         });
-        if (typeof this.state.duty === "number") {
+        if (typeof this.state.duty === 'number') {
             this.duty(this.state.duty);
         }
     }
@@ -15158,11 +15371,11 @@ class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
             throw new Error(`pwm${this.id} is not started`);
         }
         duty *= 1;
-        if (typeof this.state.freq !== "number" || this.state.freq <= 0) {
-            throw new Error("please provide freq first.");
+        if (typeof this.state.freq !== 'number' || this.state.freq <= 0) {
+            throw new Error('please provide freq first.');
         }
-        if (typeof duty !== "number") {
-            throw new Error("please provide duty in number");
+        if (typeof duty !== 'number') {
+            throw new Error('please provide duty in number');
         }
         if (duty < 0) {
             duty = 0;
@@ -15236,7 +15449,7 @@ class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
      * @private
      */
     schemaBasePath() {
-        return "pwm" + this.id;
+        return 'pwm' + this.id;
     }
     /**
      * @ignore
@@ -15248,7 +15461,7 @@ class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
     }
     sendWS(obj) {
         const wsObj = {};
-        wsObj["pwm" + this.id] = obj;
+        wsObj['pwm' + this.id] = obj;
         this.Obniz.send(wsObj);
     }
 }
@@ -15275,6 +15488,7 @@ const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentA
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 /**
  * It is General Purpose SPI
+ *
  * @category Peripherals
  */
 class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
@@ -15304,39 +15518,44 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
      * @param params spi parameters
      */
     start(params) {
-        const err = util_1.default._requiredKeys(params, ["mode", "frequency"]);
+        const err = util_1.default._requiredKeys(params, ['mode', 'frequency']);
         if (err) {
             throw new Error("spi start param '" + err + "' required, but not found ");
         }
         this.params = util_1.default._keyFilter(params, [
-            "mode",
-            "clk",
-            "mosi",
-            "miso",
-            "frequency",
-            "drive",
-            "pull",
-            "gnd",
+            'mode',
+            'clk',
+            'mosi',
+            'miso',
+            'frequency',
+            'drive',
+            'pull',
+            'gnd',
         ]);
         const obj = {};
-        const ioKeys = ["clk", "mosi", "miso", "gnd"];
+        const ioKeys = [
+            'clk',
+            'mosi',
+            'miso',
+            'gnd',
+        ];
         for (const key of ioKeys) {
             if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
                 throw new Error("spi start param '" + key + "' are to be valid io no");
             }
         }
-        obj["spi" + this.id] = {
+        obj['spi' + this.id] = {
             mode: this.params.mode,
             clock: this.params.frequency,
         };
         if (this.params.clk !== undefined) {
-            obj["spi" + this.id].clk = this.params.clk;
+            obj['spi' + this.id].clk = this.params.clk;
         }
         if (this.params.mosi !== undefined) {
-            obj["spi" + this.id].mosi = this.params.mosi;
+            obj['spi' + this.id].mosi = this.params.mosi;
         }
         if (this.params.miso !== undefined) {
-            obj["spi" + this.id].miso = this.params.miso;
+            obj['spi' + this.id].miso = this.params.miso;
         }
         if (this.params.drive) {
             if (this.params.clk !== undefined) {
@@ -15351,13 +15570,13 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
         }
         else {
             if (this.params.clk !== undefined) {
-                this.Obniz.getIO(this.params.clk).drive("5v");
+                this.Obniz.getIO(this.params.clk).drive('5v');
             }
             if (this.params.mosi !== undefined) {
-                this.Obniz.getIO(this.params.mosi).drive("5v");
+                this.Obniz.getIO(this.params.mosi).drive('5v');
             }
             if (this.params.miso !== undefined) {
-                this.Obniz.getIO(this.params.miso).drive("5v");
+                this.Obniz.getIO(this.params.miso).drive('5v');
             }
         }
         if (this.params.pull) {
@@ -15385,9 +15604,9 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
         if (this.params.gnd !== undefined) {
             this.Obniz.getIO(this.params.gnd).output(false);
             const ioNames = {};
-            ioNames[this.params.gnd] = "gnd";
+            ioNames[this.params.gnd] = 'gnd';
             if (this.Obniz.display) {
-                this.Obniz.display.setPinNames("spi" + this.id, ioNames);
+                this.Obniz.display.setPinNames('spi' + this.id, ioNames);
             }
         }
         this.used = true;
@@ -15412,15 +15631,15 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
         if (!this.used) {
             throw new Error(`spi${this.id} is not started`);
         }
-        if (semver_1.default.lte(this.Obniz.firmware_ver, "1.0.2") && data.length > 32) {
+        if (semver_1.default.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
             throw new Error(`with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`);
         }
         const obj = {};
-        obj["spi" + this.id] = {
+        obj['spi' + this.id] = {
             data,
             read: true,
         };
-        const receiveData = await this.sendAndReceiveJsonWait(obj, "/response/spi/read");
+        const receiveData = await this.sendAndReceiveJsonWait(obj, '/response/spi/read');
         return receiveData.data;
     }
     /**
@@ -15438,16 +15657,15 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
         if (!this.used) {
             throw new Error(`spi${this.id} is not started`);
         }
-        if (semver_1.default.lte(this.Obniz.firmware_ver, "1.0.2") && data.length > 32) {
+        if (semver_1.default.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
             throw new Error(`with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`);
         }
-        const self = this;
         const obj = {};
-        obj["spi" + self.id] = {
+        obj['spi' + this.id] = {
             data,
             read: false,
         };
-        self.Obniz.send(obj);
+        this.Obniz.send(obj);
     }
     /**
      * @ignore
@@ -15470,11 +15688,10 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
      * - False : getFreeSpi will return this object
      */
     end(reuse) {
-        const self = this;
         const obj = {};
-        obj["spi" + self.id] = null;
+        obj['spi' + this.id] = null;
         this.params = null;
-        self.Obniz.send(obj);
+        this.Obniz.send(obj);
         if (!reuse) {
             this.used = false;
         }
@@ -15484,7 +15701,7 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
      * @private
      */
     schemaBasePath() {
-        return "spi" + this.id;
+        return 'spi' + this.id;
     }
     /**
      * @ignore
@@ -15517,13 +15734,14 @@ const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentA
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 /**
  * Uart module
+ *
  * @category Peripherals
  */
 class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
         super(obniz);
         this.id = id;
-        this.on("/response/uart/receive", (obj) => {
+        this.on('/response/uart/receive', (obj) => {
             if (this.onreceive) {
                 const string = this.tryConvertString(obj.data);
                 this.Obniz._runUserCreatedFunction(this.onreceive, obj.data, string);
@@ -15541,42 +15759,43 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
      * It starts uart on io tx, rx.
      *
      * You can start uart without much configuration. Just use as below.
+     *
      * @param params
      */
     start(params) {
-        const err = util_1.default._requiredKeys(params, ["tx", "rx"]);
+        const err = util_1.default._requiredKeys(params, ['tx', 'rx']);
         if (err) {
             throw new Error("uart start param '" + err + "' required, but not found ");
         }
         this.params = util_1.default._keyFilter(params, [
-            "tx",
-            "rx",
-            "baud",
-            "stop",
-            "bits",
-            "parity",
-            "flowcontrol",
-            "rts",
-            "cts",
-            "drive",
-            "pull",
-            "gnd",
+            'tx',
+            'rx',
+            'baud',
+            'stop',
+            'bits',
+            'parity',
+            'flowcontrol',
+            'rts',
+            'cts',
+            'drive',
+            'pull',
+            'gnd',
         ]);
-        const ioKeys = ["rx", "tx", "rts", "cts", "gnd"];
+        const ioKeys = ['rx', 'tx', 'rts', 'cts', 'gnd'];
         for (const key of ioKeys) {
             if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
                 throw new Error("uart start param '" + key + "' are to be valid io no");
             }
         }
-        if (this.params.hasOwnProperty("drive")) {
+        if (this.params.hasOwnProperty('drive')) {
             this.Obniz.getIO(this.params.rx).drive(this.params.drive);
             this.Obniz.getIO(this.params.tx).drive(this.params.drive);
         }
         else {
-            this.Obniz.getIO(this.params.rx).drive("5v");
-            this.Obniz.getIO(this.params.tx).drive("5v");
+            this.Obniz.getIO(this.params.rx).drive('5v');
+            this.Obniz.getIO(this.params.tx).drive('5v');
         }
-        if (this.params.hasOwnProperty("pull")) {
+        if (this.params.hasOwnProperty('pull')) {
             this.Obniz.getIO(this.params.rx).pull(this.params.pull);
             this.Obniz.getIO(this.params.tx).pull(this.params.pull);
         }
@@ -15584,27 +15803,27 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
             this.Obniz.getIO(this.params.rx).pull(null);
             this.Obniz.getIO(this.params.tx).pull(null);
         }
-        if (this.params.hasOwnProperty("gnd")) {
+        if (this.params.hasOwnProperty('gnd')) {
             this.Obniz.getIO(this.params.gnd).output(false);
             const ioNames = {};
-            ioNames[this.params.gnd] = "gnd";
+            ioNames[this.params.gnd] = 'gnd';
             if (this.Obniz.display) {
-                this.Obniz.display.setPinNames("uart" + this.id, ioNames);
+                this.Obniz.display.setPinNames('uart' + this.id, ioNames);
             }
         }
         const obj = {};
         const sendParams = util_1.default._keyFilter(this.params, [
-            "tx",
-            "rx",
-            "baud",
-            "stop",
-            "bits",
-            "parity",
-            "flowcontrol",
-            "rts",
-            "cts",
+            'tx',
+            'rx',
+            'baud',
+            'stop',
+            'bits',
+            'parity',
+            'flowcontrol',
+            'rts',
+            'cts',
         ]);
-        obj["uart" + this.id] = sendParams;
+        obj['uart' + this.id] = sendParams;
         this.Obniz.send(obj);
         this.received = [];
         this.used = true;
@@ -15634,6 +15853,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
      * obniz.uart0.send(0x11);
      * obniz.uart0.send([0x11, 0x45, 0x44]);
      * ```
+     *
      * @param data
      */
     send(data) {
@@ -15644,7 +15864,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
         if (data === undefined) {
             return;
         }
-        if (typeof data === "number") {
+        if (typeof data === 'number') {
             data = [data];
         }
         if (this.Obniz.isNode && data instanceof Buffer) {
@@ -15653,13 +15873,13 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
         else if (data.constructor === Array) {
             send_data = data;
         }
-        else if (typeof data === "string") {
+        else if (typeof data === 'string') {
             const buf = Buffer.from(data);
             send_data = [...buf];
         }
         const obj = {};
-        obj["uart" + this.id] = {};
-        obj["uart" + this.id].data = send_data;
+        obj['uart' + this.id] = {};
+        obj['uart' + this.id].data = send_data;
         //  console.log(obj);
         this.Obniz.send(obj);
     }
@@ -15699,6 +15919,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
      *   await obniz.wait(10);  //wait for 10ms
      * }
      * ```
+     *
      * @return received data. If not exist data, return [].
      */
     readBytes() {
@@ -15779,7 +16000,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
      */
     end() {
         const obj = {};
-        obj["uart" + this.id] = null;
+        obj['uart' + this.id] = null;
         this.params = null;
         this.Obniz.send(obj);
         this.used = false;
@@ -15799,7 +16020,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
      * @private
      */
     schemaBasePath() {
-        return "uart" + this.id;
+        return 'uart' + this.id;
     }
     /**
      * @ignore
@@ -15856,7 +16077,7 @@ const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/
 class LogicAnalyzer extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz) {
         super(obniz);
-        this.on("/response/logicAnalyzer/data", (obj) => {
+        this.on('/response/logicAnalyzer/data', (obj) => {
             if (this.onmeasured) {
                 this.Obniz._runUserCreatedFunction(this.onmeasured, obj.data);
             }
@@ -15902,14 +16123,25 @@ class LogicAnalyzer extends ComponentAbstact_1.ComponentAbstract {
      *   console.log(array);
      * }
      * ```
+     *
      * @param params
      */
     start(params) {
-        const err = util_1.default._requiredKeys(params, ["io", "interval", "duration"]);
+        const err = util_1.default._requiredKeys(params, [
+            'io',
+            'interval',
+            'duration',
+        ]);
         if (err) {
             throw new Error("LogicAnalyzer start param '" + err + "' required, but not found ");
         }
-        this.params = util_1.default._keyFilter(params, ["io", "interval", "duration", "triggerValue", "triggerValueSamples"]);
+        this.params = util_1.default._keyFilter(params, [
+            'io',
+            'interval',
+            'duration',
+            'triggerValue',
+            'triggerValueSamples',
+        ]);
         const obj = {};
         obj.logic_analyzer = {
             io: [this.params.io],
@@ -15941,7 +16173,7 @@ class LogicAnalyzer extends ComponentAbstact_1.ComponentAbstract {
         return;
     }
     schemaBasePath() {
-        return "logic_analyzer";
+        return 'logic_analyzer';
     }
 }
 exports.default = LogicAnalyzer;
@@ -15966,6 +16198,7 @@ const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentA
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 /**
  * The measure module provides hardware level measurement.
+ *
  * @category Measurement
  */
 class ObnizMeasure extends ComponentAbstact_1.ComponentAbstract {
@@ -16006,18 +16239,24 @@ class ObnizMeasure extends ComponentAbstact_1.ComponentAbstract {
      * @param params
      */
     echo(params) {
-        const err = util_1.default._requiredKeys(params, ["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges"]);
+        const err = util_1.default._requiredKeys(params, [
+            'io_pulse',
+            'pulse',
+            'pulse_width',
+            'io_echo',
+            'measure_edges',
+        ]);
         if (err) {
             throw new Error("Measure start param '" + err + "' required, but not found ");
         }
         params = util_1.default._keyFilter(params, [
-            "io_pulse",
-            "pulse",
-            "pulse_width",
-            "io_echo",
-            "measure_edges",
-            "timeout",
-            "callback",
+            'io_pulse',
+            'pulse',
+            'pulse_width',
+            'io_echo',
+            'measure_edges',
+            'timeout',
+            'callback',
         ]);
         const echo = {};
         echo.io_pulse = params.io_pulse;
@@ -16025,11 +16264,11 @@ class ObnizMeasure extends ComponentAbstact_1.ComponentAbstract {
         echo.pulse_width = params.pulse_width;
         echo.io_echo = params.io_echo;
         echo.measure_edges = params.measure_edges;
-        if (typeof params.timeout === "number") {
+        if (typeof params.timeout === 'number') {
             echo.timeout = params.timeout;
         }
-        if (typeof params.callback === "function") {
-            this.onceQueue("/response/measure/echo", (obj) => {
+        if (typeof params.callback === 'function') {
+            this.onceQueue('/response/measure/echo', (obj) => {
                 this.Obniz._runUserCreatedFunction(params.callback, obj.echo);
             });
         }
@@ -16040,7 +16279,7 @@ class ObnizMeasure extends ComponentAbstact_1.ComponentAbstract {
         });
     }
     schemaBasePath() {
-        return "measure";
+        return 'measure';
     }
 }
 exports.default = ObnizMeasure;
@@ -16077,7 +16316,7 @@ class WiFi {
      *
      */
     scanWait() {
-        if (semver_1.default.lt(this.Obniz.firmware_ver, "3.3.0")) {
+        if (semver_1.default.lt(this.Obniz.firmware_ver, '3.3.0')) {
             throw new Error(`Please update obniz firmware >= 3.3.0`);
         }
         this.connectObservers = [];
@@ -16154,14 +16393,14 @@ class Plugin {
      *
      */
     send(data) {
-        if (semver_1.default.lt(this.Obniz.firmware_ver, "3.4.0")) {
+        if (semver_1.default.lt(this.Obniz.firmware_ver, '3.4.0')) {
             throw new Error(`Please update obniz firmware >= 3.4.0`);
         }
         let send_data = null;
         if (data === undefined) {
             return;
         }
-        if (typeof data === "number") {
+        if (typeof data === 'number') {
             data = [data];
         }
         if (this.Obniz.isNode && data instanceof Buffer) {
@@ -16170,7 +16409,7 @@ class Plugin {
         else if (data.constructor === Array) {
             send_data = data;
         }
-        else if (typeof data === "string") {
+        else if (typeof data === 'string') {
             const buf = Buffer.from(data);
             send_data = [...buf];
         }
@@ -16223,21 +16462,21 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
         super(obniz);
         this.id = id;
-        this.on("/response/tcp/connection", (obj) => {
+        this.on('/response/tcp/connection', (obj) => {
             /* Connectino state update. response of connect(), close from destination, response from */
             this.Obniz._runUserCreatedFunction(this.onconnection, obj.connection.connected);
             if (!obj.connection.connected) {
                 this._reset();
             }
         });
-        this.on("/response/tcp/read", (obj) => {
+        this.on('/response/tcp/read', (obj) => {
             this.Obniz._runUserCreatedFunction(this.onreceive, obj.read.data);
             const callback = this.readObservers.shift();
             if (callback) {
                 callback(obj.read.data);
             }
         });
-        this.on("/response/tcp/connect", (obj) => {
+        this.on('/response/tcp/connect', (obj) => {
             /* response of connect() */
             /* `this.connection` will called before this function */
             if (obj.connect.code !== 0) {
@@ -16263,7 +16502,7 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
      * @param domain
      */
     connectWait(port, domain) {
-        if (semver_1.default.lt(this.Obniz.firmware_ver, "2.1.0")) {
+        if (semver_1.default.lt(this.Obniz.firmware_ver, '2.1.0')) {
             throw new Error(`Please update obniz firmware >= 2.1.0`);
         }
         // TODO
@@ -16281,7 +16520,7 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
         return new Promise((resolve, reject) => {
             this._addConnectObserver(resolve);
             const obj = {};
-            obj["tcp" + this.id] = {
+            obj['tcp' + this.id] = {
                 connect: {
                     port,
                     domain,
@@ -16306,6 +16545,7 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
      * // Text
      * tcp.write('hello');
      * ```
+     *
      * @param data
      */
     write(data) {
@@ -16315,7 +16555,7 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
         if (data === undefined) {
             return;
         }
-        if (typeof data === "number") {
+        if (typeof data === 'number') {
             data = [data];
         }
         let send_data = null;
@@ -16325,12 +16565,12 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
         else if (data.constructor === Array) {
             send_data = data;
         }
-        else if (typeof data === "string") {
+        else if (typeof data === 'string') {
             const buf = Buffer.from(data);
             send_data = [...buf];
         }
         const obj = {};
-        obj["tcp" + this.id] = {
+        obj['tcp' + this.id] = {
             write: {
                 data: send_data,
             },
@@ -16376,7 +16616,7 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
         return this.used;
     }
     schemaBasePath() {
-        return "tcp" + this.id;
+        return 'tcp' + this.id;
     }
     /**
      * @ignore
@@ -16392,7 +16632,7 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
             throw new Error(`tcp${this.id} is not used`);
         }
         const obj = {};
-        obj["tcp" + this.id] = {
+        obj['tcp' + this.id] = {
             disconnect: true,
         };
         this.Obniz.send(obj);
@@ -17969,7 +18209,7 @@ class ObnizUtil {
      */
     static _keyFilter(params, keys) {
         let filterdParams = {};
-        if (typeof params !== "object") {
+        if (typeof params !== 'object') {
             return filterdParams;
         }
         filterdParams = Object.keys(params)
@@ -17985,7 +18225,7 @@ class ObnizUtil {
      * @return {String} key name of not found.
      */
     static _requiredKeys(params, keys) {
-        if (typeof params !== "object") {
+        if (typeof params !== 'object') {
             return keys[0];
         }
         for (const index in keys) {
@@ -17997,6 +18237,7 @@ class ObnizUtil {
     }
     /**
      * convert from data array to string
+     *
      * @param data
      */
     static dataArray2string(data) {
@@ -18004,7 +18245,7 @@ class ObnizUtil {
         try {
             const StringDecoder = __webpack_require__("./node_modules/string_decoder/lib/string_decoder.js").StringDecoder;
             if (StringDecoder) {
-                string = new StringDecoder("utf8").write(Buffer.from(data));
+                string = new StringDecoder('utf8').write(Buffer.from(data));
             }
         }
         catch (e) {
@@ -18014,6 +18255,7 @@ class ObnizUtil {
     }
     /**
      * convert from string to data array
+     *
      * @param str
      */
     static string2dataArray(str) {
@@ -18027,7 +18269,7 @@ class ObnizUtil {
      */
     static hexToBinary(data, reverse = false) {
         const array = [];
-        const hex = data.toLowerCase().replace(/[^0-9abcdef]/g, "");
+        const hex = data.toLowerCase().replace(/[^0-9abcdef]/g, '');
         for (let i = 0; i < hex.length / 2; i++) {
             array[i] = parseInt(hex[i * 2] + hex[i * 2 + 1], 16);
         }
@@ -18067,21 +18309,21 @@ class ObnizUtil {
             try {
                 const { createCanvas } = __webpack_require__("./dist/src/obniz/libs/webpackReplace/canvas.js");
                 const canvas = createCanvas(width, height);
-                const ctx = canvas.getContext("2d");
+                const ctx = canvas.getContext('2d');
                 return ctx;
             }
             catch (e) {
-                throw new Error("obniz.js require node-canvas to draw rich contents. see more detail on docs");
+                throw new Error('obniz.js require node-canvas to draw rich contents. see more detail on docs');
             }
         }
         else {
-            const canvas = document.createElement("canvas");
+            const canvas = document.createElement('canvas');
             canvas.width = width;
             canvas.height = height;
-            canvas.style["-webkit-font-smoothing"] = "none";
-            const body = document.getElementsByTagName("body")[0];
+            canvas.style['-webkit-font-smoothing'] = 'none';
+            const body = document.getElementsByTagName('body')[0];
             body.appendChild(canvas);
-            const ctx = canvas.getContext("2d");
+            const ctx = canvas.getContext('2d');
             return ctx;
         }
     }
@@ -18103,7 +18345,7 @@ exports.default = ObnizUtil;
  */
 // load from webpack
 Object.defineProperty(exports, "__esModule", { value: true });
-const canvas = "canvas";
+const canvas = 'canvas';
 exports.default = canvas;
 
 
@@ -18158,10 +18400,10 @@ exports.default = {};
 // load from webpack
 Object.defineProperty(exports, "__esModule", { value: true });
 let ws;
-if (typeof WebSocket !== "undefined") {
+if (typeof WebSocket !== 'undefined') {
     ws = WebSocket;
 }
-else if (typeof MozWebSocket !== "undefined") {
+else if (typeof MozWebSocket !== 'undefined') {
     ws = MozWebSocket; // eslint-disable-line
 }
 else {
@@ -18240,7 +18482,7 @@ class WSCommand {
             length_type = 2;
         }
         else {
-            throw new Error("too big payload");
+            throw new Error('too big payload');
         }
         let length_extra_bytse = length_type === 0 ? 0 : length_type === 1 ? 1 : 3;
         const header_length = 3 + length_extra_bytse;
@@ -18248,7 +18490,8 @@ class WSCommand {
         let index = 0;
         result[index++] = module & 0x7f;
         result[index++] = func;
-        result[index++] = (length_type << 6) | (payload_length >> (length_extra_bytse * 8));
+        result[index++] =
+            (length_type << 6) | (payload_length >> (length_extra_bytse * 8));
         while (length_extra_bytse > 0) {
             length_extra_bytse--;
             result[index++] = payload_length >> (length_extra_bytse * 8);
@@ -18266,17 +18509,17 @@ class WSCommand {
             return null;
         }
         if (buf.byteLength < 3) {
-            throw new Error("something wrong. buf less than 3");
+            throw new Error('something wrong. buf less than 3');
         }
         if (buf[0] & 0x80) {
-            throw new Error("reserved bit 1");
+            throw new Error('reserved bit 1');
         }
         const module = 0x7f & buf[0];
         const func = buf[1];
         const length_type = (buf[2] >> 6) & 0x3;
         const length_extra_bytse = length_type === 0 ? 0 : length_type === 1 ? 1 : 3;
         if (length_type === 4) {
-            throw new Error("invalid length");
+            throw new Error('invalid length');
         }
         let length = (buf[2] & 0x3f) << (length_extra_bytse * 8);
         let index = 3;
@@ -18295,7 +18538,7 @@ class WSCommand {
     }
     static compress(wscommands, json) {
         let ret = null;
-        function append(module, func, payload) {
+        const append = (module, func, payload) => {
             const frame = WSCommand.framed(module, func, payload);
             if (ret) {
                 const combined = new Uint8Array(ret.length + frame.length);
@@ -18306,7 +18549,7 @@ class WSCommand {
             else {
                 ret = frame;
             }
-        }
+        };
         for (const wscommand of wscommands) {
             wscommand.parsed = append;
             wscommand.parseFromJson(json);
@@ -18361,7 +18604,7 @@ class WSCommand {
         objToSend[module_key].error = obj;
     }
     isValidIO(io) {
-        return typeof io === "number" && 0 <= io && io <= 11;
+        return typeof io === 'number' && 0 <= io && io <= 11;
     }
     getSchema(uri) {
         // chack isFirst
@@ -18420,17 +18663,18 @@ class WSCommand {
         const messages = [];
         for (const error of validateError.errors) {
             if (error.code === WSSchema_1.default.errorCodes.INVALID_TYPE) {
-                if (error.params.type === "object" || error.params.expected === "object") {
+                if (error.params.type === 'object' ||
+                    error.params.expected === 'object') {
                     return false;
                 }
             }
             else if (badErrorCodes.includes(error.code)) {
                 return false;
             }
-            const path = rootPath + (error.dataPath || "").replace(/\//g, ".");
+            const path = rootPath + (error.dataPath || '').replace(/\//g, '.');
             messages.push(`[${path}]${error.message}`);
         }
-        return messages.join(";");
+        return messages.join(';');
     }
     filter(commandUri, json) {
         const schema = this.getSchema(commandUri);
@@ -18444,22 +18688,22 @@ class WSCommand {
         if (json === undefined) {
             return schema.default;
         }
-        if (schema.type === "string" ||
-            schema.type === "integer" ||
-            schema.type === "boolean" ||
-            schema.type === "number" ||
-            schema.type === "null" ||
-            schema.filter === "pass_all") {
+        if (schema.type === 'string' ||
+            schema.type === 'integer' ||
+            schema.type === 'boolean' ||
+            schema.type === 'number' ||
+            schema.type === 'null' ||
+            schema.filter === 'pass_all') {
             return json;
         }
-        if (schema.type === "array") {
+        if (schema.type === 'array') {
             const results = [];
             for (const key in json) {
                 results[key] = this._filterSchema(schema.items, json[key]);
             }
             return results;
         }
-        if (schema.type === "object") {
+        if (schema.type === 'object') {
             const results = {};
             for (const key in schema.properties) {
                 results[key] = this._filterSchema(schema.properties[key], json[key]);
@@ -18474,11 +18718,11 @@ class WSCommand {
             }
             return results;
         }
-        throw Error("unknown json schema type");
+        throw Error('unknown json schema type');
     }
 }
 exports.default = WSCommand;
-// tslint:disable:max-classes-per-file
+/* eslint max-classes-per-file: 0 */
 class WSCommandNotFoundError extends Error {
 }
 
@@ -18519,15 +18763,15 @@ class WSCommandAD extends WSCommand_1.default {
     }
     parseFromJson(json) {
         for (let i = 0; i < 40; i++) {
-            const module = json["ad" + i];
+            const module = json['ad' + i];
             if (module === undefined) {
                 continue;
             }
             const schemaData = [
-                { uri: "/request/ad/deinit", onValid: this.deinit },
-                { uri: "/request/ad/get", onValid: this.get },
+                { uri: '/request/ad/deinit', onValid: this.deinit },
+                { uri: '/request/ad/get', onValid: this.get },
             ];
-            const res = this.validateCommandSchema(schemaData, module, "ad" + i, i);
+            const res = this.validateCommandSchema(schemaData, module, 'ad' + i, i);
             if (res.valid === 0) {
                 if (res.invalidButLike.length > 0) {
                     throw new Error(res.invalidButLike[0].message);
@@ -18559,7 +18803,7 @@ class WSCommandAD extends WSCommand_1.default {
                     value = (payload[i + 1] << 8) + payload[i + 2];
                     value = value / 100.0;
                 }
-                objToSend["ad" + payload[i]] = value;
+                objToSend['ad' + payload[i]] = value;
             }
         }
         else {
@@ -18647,20 +18891,20 @@ class WSCommandBle extends WSCommand_1.default {
             rpa_random: 0x03,
         };
         this._CommandScanResultsEvet = {
-            inquiry_result: 0 /*!< Inquiry result for a peer device. */,
-            inquiry_complete: 1 /*!< Inquiry complete. */,
-            discovery_result: 2 /*!< Discovery result for a peer device. */,
-            discovery_ble_result: 3 /*!< Discovery result for BLE GATT based service on a peer device. */,
-            discovery_cmoplete: 4 /*!< Discovery complete. */,
-            discovery_di_cmoplete: 5 /*!< Discovery complete. */,
-            cancelled: 6 /*!< Search cancelled */,
+            inquiry_result: 0 /* !< Inquiry result for a peer device. */,
+            inquiry_complete: 1 /* !< Inquiry complete. */,
+            discovery_result: 2 /* !< Discovery result for a peer device. */,
+            discovery_ble_result: 3 /* !< Discovery result for BLE GATT based service on a peer device. */,
+            discovery_cmoplete: 4 /* !< Discovery complete. */,
+            discovery_di_cmoplete: 5 /* !< Discovery complete. */,
+            cancelled: 6 /* !< Search cancelled */,
         };
         this._CommandScanResultsBleEvent = {
-            connectable_advertisemnt: 0x00 /*!< Connectable undirected advertising (ADV_IND) */,
-            connectable_directed_advertisemnt: 0x01 /*!< Connectable directed advertising (ADV_DIRECT_IND) */,
-            scannable_advertising: 0x02 /*!< Scannable undirected advertising (ADV_SCAN_IND) */,
-            non_connectable_advertising: 0x03 /*!< Non connectable undirected advertising (ADV_NONCONN_IND) */,
-            scan_response: 0x04 /*!< Scan Response (SCAN_RSP) */,
+            connectable_advertisemnt: 0x00 /* !< Connectable undirected advertising (ADV_IND) */,
+            connectable_directed_advertisemnt: 0x01 /* !< Connectable directed advertising (ADV_DIRECT_IND) */,
+            scannable_advertising: 0x02 /* !< Scannable undirected advertising (ADV_SCAN_IND) */,
+            non_connectable_advertising: 0x03 /* !< Non connectable undirected advertising (ADV_NONCONN_IND) */,
+            scan_response: 0x04 /* !< Scan Response (SCAN_RSP) */,
         };
         this._CommandCharacteristicsProperties = {
             broadcast: 0x01,
@@ -18677,9 +18921,9 @@ class WSCommandBle extends WSCommand_1.default {
             failed: 1,
         };
         this._securityAuthValues = {
-            0x01: "bonding",
-            0x04: "mitm",
-            0x08: "secure_connection",
+            0x01: 'bonding',
+            0x04: 'mitm',
+            0x08: 'secure_connection',
         };
         this._securityEncryotionLevels = {
             none: 0x01,
@@ -18687,15 +18931,17 @@ class WSCommandBle extends WSCommand_1.default {
             mitm: 0x03,
         };
         this._securityKeyTypes = {
-            0x01: "ltk",
-            0x02: "irk",
-            0x04: "csrk",
+            0x01: 'ltk',
+            0x02: 'irk',
+            0x04: 'csrk',
         };
         this.hciCommand = new WSCommandBleHci_1.default(this);
     }
     /* CENTRAL   */
     centralScanStart(params) {
-        const schema = [{ path: "scan.duration", length: 4, type: "int", default: 30 }];
+        const schema = [
+            { path: 'scan.duration', length: 4, type: 'int', default: 30 },
+        ];
         const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
         this.sendCommand(this._CommandStartScan, buf);
     }
@@ -18705,13 +18951,13 @@ class WSCommandBle extends WSCommand_1.default {
     centralConnect(params) {
         const schema = [
             {
-                path: "connect.address",
+                path: 'connect.address',
                 length: 6,
-                type: "hex",
+                type: 'hex',
                 required: true,
-                endianness: "little",
+                endianness: 'little',
             },
-            { path: null, length: 1, type: "char", default: false },
+            { path: null, length: 1, type: 'char', default: false },
         ];
         const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
         this.sendCommand(this._CommandConnect, buf);
@@ -18719,13 +18965,13 @@ class WSCommandBle extends WSCommand_1.default {
     centralDisconnect(params) {
         const schema = [
             {
-                path: "disconnect.address",
+                path: 'disconnect.address',
                 length: 6,
-                type: "hex",
+                type: 'hex',
                 required: true,
-                endianness: "little",
+                endianness: 'little',
             },
-            { path: null, length: 1, type: "char", default: true },
+            { path: null, length: 1, type: 'char', default: true },
         ];
         const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
         this.sendCommand(this._CommandConnect, buf);
@@ -18733,11 +18979,11 @@ class WSCommandBle extends WSCommand_1.default {
     centralServiceGet(params) {
         const schema = [
             {
-                path: "get_services.address",
+                path: 'get_services.address',
                 length: 6,
-                type: "hex",
+                type: 'hex',
                 required: true,
-                endianness: "little",
+                endianness: 'little',
             },
         ];
         const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
@@ -18746,16 +18992,16 @@ class WSCommandBle extends WSCommand_1.default {
     centralCharacteristicGet(params) {
         const schema = [
             {
-                path: "get_characteristics.address",
+                path: 'get_characteristics.address',
                 length: 6,
-                type: "hex",
+                type: 'hex',
                 required: true,
-                endianness: "little",
+                endianness: 'little',
             },
             {
-                path: "get_characteristics.service_uuid",
+                path: 'get_characteristics.service_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
         ];
@@ -18765,22 +19011,22 @@ class WSCommandBle extends WSCommand_1.default {
     centralCharacteristicRead(params) {
         const schema = [
             {
-                path: "read_characteristic.address",
+                path: 'read_characteristic.address',
                 length: 6,
-                type: "hex",
+                type: 'hex',
                 required: true,
-                endianness: "little",
+                endianness: 'little',
             },
             {
-                path: "read_characteristic.service_uuid",
+                path: 'read_characteristic.service_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
             {
-                path: "read_characteristic.characteristic_uuid",
+                path: 'read_characteristic.characteristic_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
         ];
@@ -18790,31 +19036,31 @@ class WSCommandBle extends WSCommand_1.default {
     centralCharacteristicWrite(params) {
         const schema = [
             {
-                path: "write_characteristic.address",
+                path: 'write_characteristic.address',
                 length: 6,
-                type: "hex",
+                type: 'hex',
                 required: true,
-                endianness: "little",
+                endianness: 'little',
             },
             {
-                path: "write_characteristic.service_uuid",
+                path: 'write_characteristic.service_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
             {
-                path: "write_characteristic.characteristic_uuid",
+                path: 'write_characteristic.characteristic_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
             {
-                path: "write_characteristic.needResponse",
+                path: 'write_characteristic.needResponse',
                 length: 1,
-                type: "char",
+                type: 'char',
                 default: 1,
             },
-            { path: "write_characteristic.data", length: null, type: "dataArray" },
+            { path: 'write_characteristic.data', length: null, type: 'dataArray' },
         ];
         const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
         this.sendCommand(this._CommandWriteCharacteristics, buf);
@@ -18822,22 +19068,22 @@ class WSCommandBle extends WSCommand_1.default {
     centralCharacteristicRegisterNotify(params) {
         const schema = [
             {
-                path: "register_notify_characteristic.address",
+                path: 'register_notify_characteristic.address',
                 length: 6,
-                type: "hex",
+                type: 'hex',
                 required: true,
-                endianness: "little",
+                endianness: 'little',
             },
             {
-                path: "register_notify_characteristic.service_uuid",
+                path: 'register_notify_characteristic.service_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
             {
-                path: "register_notify_characteristic.characteristic_uuid",
+                path: 'register_notify_characteristic.characteristic_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
         ];
@@ -18847,22 +19093,22 @@ class WSCommandBle extends WSCommand_1.default {
     centralCharacteristicUnregisterNotify(params) {
         const schema = [
             {
-                path: "unregister_notify_characteristic.address",
+                path: 'unregister_notify_characteristic.address',
                 length: 6,
-                type: "hex",
+                type: 'hex',
                 required: true,
-                endianness: "little",
+                endianness: 'little',
             },
             {
-                path: "unregister_notify_characteristic.service_uuid",
+                path: 'unregister_notify_characteristic.service_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
             {
-                path: "unregister_notify_characteristic.characteristic_uuid",
+                path: 'unregister_notify_characteristic.characteristic_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
         ];
@@ -18872,22 +19118,22 @@ class WSCommandBle extends WSCommand_1.default {
     centralDescriptorGet(params) {
         const schema = [
             {
-                path: "get_descriptors.address",
+                path: 'get_descriptors.address',
                 length: 6,
-                type: "hex",
+                type: 'hex',
                 required: true,
-                endianness: "little",
+                endianness: 'little',
             },
             {
-                path: "get_descriptors.service_uuid",
+                path: 'get_descriptors.service_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
             {
-                path: "get_descriptors.characteristic_uuid",
+                path: 'get_descriptors.characteristic_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
         ];
@@ -18897,28 +19143,28 @@ class WSCommandBle extends WSCommand_1.default {
     centralDescriptorRead(params) {
         const schema = [
             {
-                path: "read_descriptor.address",
+                path: 'read_descriptor.address',
                 length: 6,
-                type: "hex",
+                type: 'hex',
                 required: true,
-                endianness: "little",
+                endianness: 'little',
             },
             {
-                path: "read_descriptor.service_uuid",
+                path: 'read_descriptor.service_uuid',
                 length: 18,
-                type: "uuid",
-                required: true,
-            },
-            {
-                path: "read_descriptor.characteristic_uuid",
-                length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
             {
-                path: "read_descriptor.descriptor_uuid",
+                path: 'read_descriptor.characteristic_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
+                required: true,
+            },
+            {
+                path: 'read_descriptor.descriptor_uuid',
+                length: 18,
+                type: 'uuid',
                 required: true,
             },
         ];
@@ -18928,37 +19174,37 @@ class WSCommandBle extends WSCommand_1.default {
     centralDescriptorWrite(params) {
         const schema = [
             {
-                path: "write_descriptor.address",
+                path: 'write_descriptor.address',
                 length: 6,
-                type: "hex",
+                type: 'hex',
                 required: true,
-                endianness: "little",
+                endianness: 'little',
             },
             {
-                path: "write_descriptor.service_uuid",
+                path: 'write_descriptor.service_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
             {
-                path: "write_descriptor.characteristic_uuid",
+                path: 'write_descriptor.characteristic_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
             {
-                path: "write_descriptor.descriptor_uuid",
+                path: 'write_descriptor.descriptor_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
             {
-                path: "write_descriptor.needResponse",
+                path: 'write_descriptor.needResponse',
                 length: 1,
-                type: "char",
+                type: 'char',
                 default: 1,
             },
-            { path: "write_descriptor.data", length: null, type: "dataArray" },
+            { path: 'write_descriptor.data', length: null, type: 'dataArray' },
         ];
         const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
         this.sendCommand(this._CommandWriteDescriptor, buf);
@@ -18977,78 +19223,78 @@ class WSCommandBle extends WSCommand_1.default {
     peripheralServiceStart(params) {
         const val = params.peripheral;
         const propFlags = {
-            0x01: "broadcast",
-            0x02: "read",
-            0x04: "write_without_response",
-            0x08: "write",
-            0x10: "notify",
-            0x20: "indiate",
-            0x40: "auth",
-            0x80: "ext_prop",
+            0x01: 'broadcast',
+            0x02: 'read',
+            0x04: 'write_without_response',
+            0x08: 'write',
+            0x10: 'notify',
+            0x20: 'indiate',
+            0x40: 'auth',
+            0x80: 'ext_prop',
         };
         const permissionFlags = {
-            0x001: "read",
-            0x002: "read_encrypted",
-            0x004: "read_encrypted_mitm",
-            0x010: "write",
-            0x020: "write_encrypted",
-            0x040: "write_encrypted_mitm",
-            0x080: "write_signed",
-            0x100: "write_signed_mitm",
+            0x001: 'read',
+            0x002: 'read_encrypted',
+            0x004: 'read_encrypted_mitm',
+            0x010: 'write',
+            0x020: 'write_encrypted',
+            0x040: 'write_encrypted_mitm',
+            0x080: 'write_signed',
+            0x100: 'write_signed_mitm',
         };
         const schema = {
             service: {
                 command: this._CommandServerAddService,
-                schema: [{ path: "uuid", length: 18, type: "uuid", required: true }],
+                schema: [{ path: 'uuid', length: 18, type: 'uuid', required: true }],
             },
             characteristic: {
                 command: this._CommandServerAddCharacteristic,
                 schema: [
-                    { path: "service_uuid", length: 18, type: "uuid", required: true },
-                    { path: "uuid", length: 18, type: "uuid", required: true },
+                    { path: 'service_uuid', length: 18, type: 'uuid', required: true },
+                    { path: 'uuid', length: 18, type: 'uuid', required: true },
                     {
-                        path: "permissions",
+                        path: 'permissions',
                         length: 2,
-                        type: "flag",
-                        default: ["write", "read"],
+                        type: 'flag',
+                        default: ['write', 'read'],
                         flags: permissionFlags,
                     },
                     {
-                        path: "properties",
+                        path: 'properties',
                         length: 1,
-                        type: "flag",
-                        default: ["write", "read"],
+                        type: 'flag',
+                        default: ['write', 'read'],
                         flags: propFlags,
                     },
-                    { path: "data", type: "dataArray" },
+                    { path: 'data', type: 'dataArray' },
                 ],
             },
             descriptor: {
                 command: this._CommandServerAddDescriptor,
                 schema: [
-                    { path: "service_uuid", length: 18, type: "uuid", required: true },
+                    { path: 'service_uuid', length: 18, type: 'uuid', required: true },
                     {
-                        path: "characteristic_uuid",
+                        path: 'characteristic_uuid',
                         length: 18,
-                        type: "uuid",
+                        type: 'uuid',
                         required: true,
                     },
-                    { path: "uuid", length: 18, type: "uuid", required: true },
+                    { path: 'uuid', length: 18, type: 'uuid', required: true },
                     {
-                        path: "permissions",
+                        path: 'permissions',
                         length: 2,
-                        type: "flag",
-                        default: ["write", "read"],
+                        type: 'flag',
+                        default: ['write', 'read'],
                         flags: permissionFlags,
                     },
-                    { path: "data", type: "dataArray" },
+                    { path: 'data', type: 'dataArray' },
                 ],
             },
             startService: {
                 command: this._CommandServerStartStopService,
                 schema: [
-                    { path: "uuid", length: 18, type: "uuid", required: true },
-                    { path: null, length: 1, type: "char", default: 0 },
+                    { path: 'uuid', length: 18, type: 'uuid', required: true },
+                    { path: null, length: 1, type: 'char', default: 0 },
                 ],
             },
         };
@@ -19100,12 +19346,12 @@ class WSCommandBle extends WSCommand_1.default {
     peripheralServiceStop(params) {
         const schema = [
             {
-                path: "peripheral.stop_service.service_uuid",
+                path: 'peripheral.stop_service.service_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
-            { path: null, length: 1, type: "char", default: 1 },
+            { path: null, length: 1, type: 'char', default: 1 },
         ];
         const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
         this.sendCommand(this._CommandServerStartStopService, buf);
@@ -19116,15 +19362,15 @@ class WSCommandBle extends WSCommand_1.default {
     peripheralCharacteristicRead(params) {
         const schema = [
             {
-                path: "peripheral.read_characteristic.service_uuid",
+                path: 'peripheral.read_characteristic.service_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
             {
-                path: "peripheral.read_characteristic.characteristic_uuid",
+                path: 'peripheral.read_characteristic.characteristic_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
         ];
@@ -19134,18 +19380,18 @@ class WSCommandBle extends WSCommand_1.default {
     peripheralCharacteristicWrite(params) {
         const schema = [
             {
-                path: "peripheral.write_characteristic.service_uuid",
+                path: 'peripheral.write_characteristic.service_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
             {
-                path: "peripheral.write_characteristic.characteristic_uuid",
+                path: 'peripheral.write_characteristic.characteristic_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
-            { path: "peripheral.write_characteristic.data", type: "dataArray" },
+            { path: 'peripheral.write_characteristic.data', type: 'dataArray' },
         ];
         const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
         this.sendCommand(this._CommandServerWriteCharavteristicValue, buf);
@@ -19153,15 +19399,15 @@ class WSCommandBle extends WSCommand_1.default {
     peripheralCharacteristicNotify(params) {
         const schema = [
             {
-                path: "peripheral.notify_characteristic.service_uuid",
+                path: 'peripheral.notify_characteristic.service_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
             {
-                path: "peripheral.notify_characteristic.characteristic_uuid",
+                path: 'peripheral.notify_characteristic.characteristic_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
         ];
@@ -19171,21 +19417,21 @@ class WSCommandBle extends WSCommand_1.default {
     peripheralDescriptorRead(params) {
         const schema = [
             {
-                path: "peripheral.read_descriptor.service_uuid",
+                path: 'peripheral.read_descriptor.service_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
             {
-                path: "peripheral.read_descriptor.characteristic_uuid",
+                path: 'peripheral.read_descriptor.characteristic_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
             {
-                path: "peripheral.read_descriptor.descriptor_uuid",
+                path: 'peripheral.read_descriptor.descriptor_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
         ];
@@ -19195,24 +19441,24 @@ class WSCommandBle extends WSCommand_1.default {
     peripheralDescriptorWrite(params) {
         const schema = [
             {
-                path: "peripheral.write_descriptor.service_uuid",
+                path: 'peripheral.write_descriptor.service_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
             {
-                path: "peripheral.write_descriptor.characteristic_uuid",
+                path: 'peripheral.write_descriptor.characteristic_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
             {
-                path: "peripheral.write_descriptor.descriptor_uuid",
+                path: 'peripheral.write_descriptor.descriptor_uuid',
                 length: 18,
-                type: "uuid",
+                type: 'uuid',
                 required: true,
             },
-            { path: "peripheral.write_descriptor.data", type: "dataArray" },
+            { path: 'peripheral.write_descriptor.data', type: 'dataArray' },
         ];
         const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
         this.sendCommand(this._CommandServerWriteDescriptorValue, buf);
@@ -19220,8 +19466,8 @@ class WSCommandBle extends WSCommand_1.default {
     securityAuth(params) {
         const schema = [
             {
-                path: "security.auth",
-                type: "flag",
+                path: 'security.auth',
+                type: 'flag',
                 length: 1,
                 required: true,
                 flags: this._securityAuthValues,
@@ -19233,8 +19479,8 @@ class WSCommandBle extends WSCommand_1.default {
     securityIndicateLevel(params) {
         const schema = [
             {
-                path: "security.indicate_security_level",
-                type: "char",
+                path: 'security.indicate_security_level',
+                type: 'char',
                 length: 1,
                 required: true,
             },
@@ -19245,8 +19491,8 @@ class WSCommandBle extends WSCommand_1.default {
     securityKeyType(params) {
         const schema = [
             {
-                path: "security.key.type",
-                type: "flag",
+                path: 'security.key.type',
+                type: 'flag',
                 length: 1,
                 required: true,
                 flags: this._securityKeyTypes,
@@ -19258,8 +19504,8 @@ class WSCommandBle extends WSCommand_1.default {
     securityKeySize(params) {
         const schema = [
             {
-                path: "security.key.max_size",
-                type: "char",
+                path: 'security.key.max_size',
+                type: 'char',
                 length: 1,
                 required: true,
             },
@@ -19278,114 +19524,114 @@ class WSCommandBle extends WSCommand_1.default {
         }
         const schemaData = [
             {
-                uri: "/request/ble/central/scan_start",
+                uri: '/request/ble/central/scan_start',
                 onValid: this.centralScanStart,
             },
-            { uri: "/request/ble/central/scan_stop", onValid: this.centralScanStop },
-            { uri: "/request/ble/central/connect", onValid: this.centralConnect },
+            { uri: '/request/ble/central/scan_stop', onValid: this.centralScanStop },
+            { uri: '/request/ble/central/connect', onValid: this.centralConnect },
             {
-                uri: "/request/ble/central/disconnect",
+                uri: '/request/ble/central/disconnect',
                 onValid: this.centralDisconnect,
             },
             {
-                uri: "/request/ble/central/service_get",
+                uri: '/request/ble/central/service_get',
                 onValid: this.centralServiceGet,
             },
             {
-                uri: "/request/ble/central/characteristic_get",
+                uri: '/request/ble/central/characteristic_get',
                 onValid: this.centralCharacteristicGet,
             },
             {
-                uri: "/request/ble/central/characteristic_read",
+                uri: '/request/ble/central/characteristic_read',
                 onValid: this.centralCharacteristicRead,
             },
             {
-                uri: "/request/ble/central/characteristic_write",
+                uri: '/request/ble/central/characteristic_write',
                 onValid: this.centralCharacteristicWrite,
             },
             {
-                uri: "/request/ble/central/characteristic_register_notify",
+                uri: '/request/ble/central/characteristic_register_notify',
                 onValid: this.centralCharacteristicRegisterNotify,
             },
             {
-                uri: "/request/ble/central/characteristic_unregister_notify",
+                uri: '/request/ble/central/characteristic_unregister_notify',
                 onValid: this.centralCharacteristicUnregisterNotify,
             },
             {
-                uri: "/request/ble/central/descriptor_get",
+                uri: '/request/ble/central/descriptor_get',
                 onValid: this.centralDescriptorGet,
             },
             {
-                uri: "/request/ble/central/descriptor_read",
+                uri: '/request/ble/central/descriptor_read',
                 onValid: this.centralDescriptorRead,
             },
             {
-                uri: "/request/ble/central/descriptor_write",
+                uri: '/request/ble/central/descriptor_write',
                 onValid: this.centralDescriptorWrite,
             },
             {
-                uri: "/request/ble/peripheral/advertisement_start",
+                uri: '/request/ble/peripheral/advertisement_start',
                 onValid: this.peripheralAdvertisementStart,
             },
             {
-                uri: "/request/ble/peripheral/advertisement_stop",
+                uri: '/request/ble/peripheral/advertisement_stop',
                 onValid: this.peripheralAdvertisementStop,
             },
             {
-                uri: "/request/ble/peripheral/service_start",
+                uri: '/request/ble/peripheral/service_start',
                 onValid: this.peripheralServiceStart,
             },
             {
-                uri: "/request/ble/peripheral/service_stop",
+                uri: '/request/ble/peripheral/service_stop',
                 onValid: this.peripheralServiceStop,
             },
             {
-                uri: "/request/ble/peripheral/service_stop_all",
+                uri: '/request/ble/peripheral/service_stop_all',
                 onValid: this.peripheralServiceStopAll,
             },
             {
-                uri: "/request/ble/peripheral/characteristic_read",
+                uri: '/request/ble/peripheral/characteristic_read',
                 onValid: this.peripheralCharacteristicRead,
             },
             {
-                uri: "/request/ble/peripheral/characteristic_write",
+                uri: '/request/ble/peripheral/characteristic_write',
                 onValid: this.peripheralCharacteristicWrite,
             },
             {
-                uri: "/request/ble/peripheral/characteristic_notify",
+                uri: '/request/ble/peripheral/characteristic_notify',
                 onValid: this.peripheralCharacteristicNotify,
             },
             {
-                uri: "/request/ble/peripheral/descriptor_read",
+                uri: '/request/ble/peripheral/descriptor_read',
                 onValid: this.peripheralDescriptorRead,
             },
             {
-                uri: "/request/ble/peripheral/descriptor_write",
+                uri: '/request/ble/peripheral/descriptor_write',
                 onValid: this.peripheralDescriptorWrite,
             },
             {
-                uri: "/request/ble/security/auth",
+                uri: '/request/ble/security/auth',
                 onValid: this.securityAuth,
             },
             {
-                uri: "/request/ble/security/indicate_security_level",
+                uri: '/request/ble/security/indicate_security_level',
                 onValid: this.securityIndicateLevel,
             },
             {
-                uri: "/request/ble/security/key_type",
+                uri: '/request/ble/security/key_type',
                 onValid: this.securityKeyType,
             },
             {
-                uri: "/request/ble/security/key_max_size",
+                uri: '/request/ble/security/key_max_size',
                 onValid: this.securityKeySize,
             },
             {
-                uri: "/request/ble/security/devices_clear",
+                uri: '/request/ble/security/devices_clear',
                 onValid: this.clearBondingDevicesList,
             },
         ];
         schemaData.push(...this.hciCommand.schemaData());
-        const res = this.validateCommandSchema(schemaData, module, "ble");
+        const res = this.validateCommandSchema(schemaData, module, 'ble');
         if (res.valid === 0) {
             if (res.invalidButLike.length > 0) {
                 throw new Error(res.invalidButLike[0].message);
@@ -19428,36 +19674,36 @@ class WSCommandBle extends WSCommand_1.default {
         if (payload.byteLength > 1) {
             const schema = [
                 {
-                    name: "event_type",
-                    type: "enum",
+                    name: 'event_type',
+                    type: 'enum',
                     length: 1,
                     enum: this._CommandScanResultsEvet,
                 },
-                { name: "address", type: "hex", length: 6, endianness: "little" },
+                { name: 'address', type: 'hex', length: 6, endianness: 'little' },
                 {
-                    name: "device_type",
-                    type: "enum",
+                    name: 'device_type',
+                    type: 'enum',
                     length: 1,
                     enum: this._CommandScanResultsDevice,
                 },
                 {
-                    name: "address_type",
-                    type: "enum",
+                    name: 'address_type',
+                    type: 'enum',
                     length: 1,
                     enum: this._CommandScanResultsDeviceAddress,
                 },
                 {
-                    name: "ble_event_type",
-                    type: "enum",
+                    name: 'ble_event_type',
+                    type: 'enum',
                     length: 1,
                     enum: this._CommandScanResultsBleEvent,
                 },
-                { name: "rssi", type: "signed number", length: 4 },
-                { name: "adv_data", type: "dataArray", length: 31 * 2 },
-                { name: "flag", type: "number", length: 4 },
-                { name: "num_response", type: "number", length: 4 },
-                { name: "advertise_length", type: "number", length: 1 },
-                { name: "scan_response_length", type: "number", length: 1 },
+                { name: 'rssi', type: 'signed number', length: 4 },
+                { name: 'adv_data', type: 'dataArray', length: 31 * 2 },
+                { name: 'flag', type: 'number', length: 4 },
+                { name: 'num_response', type: 'number', length: 4 },
+                { name: 'advertise_length', type: 'number', length: 1 },
+                { name: 'scan_response_length', type: 'number', length: 1 },
             ];
             const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
             results.scan_resp = results.adv_data.slice(results.advertise_length, results.advertise_length + results.scan_response_length);
@@ -19466,52 +19712,52 @@ class WSCommandBle extends WSCommand_1.default {
             delete results.advertise_length;
             delete results.scan_response_length;
             delete results.advertise_data;
-            if (results.event_type === "inquiry_result") {
+            if (results.event_type === 'inquiry_result') {
                 delete results.event_type;
-                this._addRowForPath(objToSend, "ble.scan_result", results);
+                this._addRowForPath(objToSend, 'ble.scan_result', results);
             }
-            else if (results.event_type === "inquiry_complete") {
-                this._addRowForPath(objToSend, "ble.scan_result_finish", true);
+            else if (results.event_type === 'inquiry_complete') {
+                this._addRowForPath(objToSend, 'ble.scan_result_finish', true);
             }
         }
     }
     notifyFromBinaryConnect(objToSend, payload) {
         if (payload.length === 7) {
             const schema = [
-                { name: "address", type: "hex", length: 6, endianness: "little" },
+                { name: 'address', type: 'hex', length: 6, endianness: 'little' },
                 {
-                    name: "status",
-                    type: "enum",
+                    name: 'status',
+                    type: 'enum',
                     length: 1,
                     enum: { connected: 0, disconnected: 1 },
                 },
             ];
             const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-            this._addRowForPath(objToSend, "ble.status_update", results);
+            this._addRowForPath(objToSend, 'ble.status_update', results);
         }
     }
     notifyFromBinaryServices(objToSend, payload) {
         const schema = [
-            { name: "address", type: "hex", length: 6, endianness: "little" },
-            { name: "service_uuid", type: "uuid", length: this.uuidLength },
+            { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+            { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
         if (results.service_uuid !== null) {
-            this._addRowForPath(objToSend, "ble.get_service_result", results);
+            this._addRowForPath(objToSend, 'ble.get_service_result', results);
         }
         else {
             delete results.service_uuid;
-            this._addRowForPath(objToSend, "ble.get_service_result_finish", results);
+            this._addRowForPath(objToSend, 'ble.get_service_result_finish', results);
         }
     }
     notifyFromBinaryChacateristics(objToSend, payload) {
         const schema = [
-            { name: "address", type: "hex", length: 6, endianness: "little" },
-            { name: "service_uuid", type: "uuid", length: this.uuidLength },
-            { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
+            { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+            { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
             {
-                name: "properties",
-                type: "enum",
+                name: 'properties',
+                type: 'enum',
                 length: 1,
                 enum: this._CommandCharacteristicsProperties,
                 flags: true,
@@ -19519,274 +19765,285 @@ class WSCommandBle extends WSCommand_1.default {
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
         if (results.characteristic_uuid !== null) {
-            this._addRowForPath(objToSend, "ble.get_characteristic_result", results);
+            this._addRowForPath(objToSend, 'ble.get_characteristic_result', results);
         }
         else {
             delete results.characteristic_uuid;
             delete results.properties;
-            this._addRowForPath(objToSend, "ble.get_characteristic_result_finish", results);
+            this._addRowForPath(objToSend, 'ble.get_characteristic_result_finish', results);
         }
     }
     notifyFromBinaryReadChacateristics(objToSend, payload) {
         const schema = [
-            { name: "address", type: "hex", length: 6, endianness: "little" },
-            { name: "service_uuid", type: "uuid", length: this.uuidLength },
-            { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
-            { name: "result", type: "int", length: 1 },
-            { name: "data", type: "dataArray", length: null },
+            { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+            { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'result', type: 'int', length: 1 },
+            { name: 'data', type: 'dataArray', length: null },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result = results.result === this._commandResults.success ? "success" : "failed";
-        this._addRowForPath(objToSend, "ble.read_characteristic_result", results);
+        results.result =
+            results.result === this._commandResults.success ? 'success' : 'failed';
+        this._addRowForPath(objToSend, 'ble.read_characteristic_result', results);
     }
     notifyFromBinaryWriteChacateristics(objToSend, payload) {
         const schema = [
-            { name: "address", type: "hex", length: 6, endianness: "little" },
-            { name: "service_uuid", type: "uuid", length: this.uuidLength },
-            { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
-            { name: "result", type: "int", length: 1 },
+            { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+            { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'result', type: 'int', length: 1 },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result = results.result === this._commandResults.success ? "success" : "failed";
-        this._addRowForPath(objToSend, "ble.write_characteristic_result", results);
+        results.result =
+            results.result === this._commandResults.success ? 'success' : 'failed';
+        this._addRowForPath(objToSend, 'ble.write_characteristic_result', results);
     }
     notifyFromBinaryRegisterNotifyChacateristic(objToSend, payload) {
         const schema = [
-            { name: "address", type: "hex", length: 6, endianness: "little" },
-            { name: "service_uuid", type: "uuid", length: this.uuidLength },
-            { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
-            { name: "result", type: "int", length: 1 },
+            { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+            { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'result', type: 'int', length: 1 },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result = results.result === this._commandResults.success ? "success" : "failed";
-        this._addRowForPath(objToSend, "ble.register_notify_characteristic_result", results);
+        results.result =
+            results.result === this._commandResults.success ? 'success' : 'failed';
+        this._addRowForPath(objToSend, 'ble.register_notify_characteristic_result', results);
     }
     notifyFromBinaryUnregisterNotifyChacateristic(objToSend, payload) {
         const schema = [
-            { name: "address", type: "hex", length: 6, endianness: "little" },
-            { name: "service_uuid", type: "uuid", length: this.uuidLength },
-            { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
-            { name: "result", type: "int", length: 1 },
+            { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+            { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'result', type: 'int', length: 1 },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result = results.result === this._commandResults.success ? "success" : "failed";
-        this._addRowForPath(objToSend, "ble.unregister_notify_characteristic_result", results);
+        results.result =
+            results.result === this._commandResults.success ? 'success' : 'failed';
+        this._addRowForPath(objToSend, 'ble.unregister_notify_characteristic_result', results);
     }
     notifyFromBinaryNotifyChacateristic(objToSend, payload) {
         const schema = [
-            { name: "address", type: "hex", length: 6, endianness: "little" },
-            { name: "service_uuid", type: "uuid", length: this.uuidLength },
-            { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
-            { name: "is_notify", type: "int", length: 1 },
-            { name: "data", type: "dataArray", length: null },
+            { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+            { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'is_notify', type: 'int', length: 1 },
+            { name: 'data', type: 'dataArray', length: null },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
         results.is_notify = results.is_notify === 1;
-        this._addRowForPath(objToSend, "ble.notify_characteristic", results);
+        this._addRowForPath(objToSend, 'ble.notify_characteristic', results);
     }
     notifyFromBinaryDescriptors(objToSend, payload) {
         const schema = [
-            { name: "address", type: "hex", length: 6, endianness: "little" },
-            { name: "service_uuid", type: "uuid", length: this.uuidLength },
-            { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
-            { name: "descriptor_uuid", type: "uuid", length: this.uuidLength },
+            { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+            { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
         if (results.descriptor_uuid !== null) {
-            this._addRowForPath(objToSend, "ble.get_descriptor_result", results);
+            this._addRowForPath(objToSend, 'ble.get_descriptor_result', results);
         }
         else {
             delete results.descriptor_uuid;
-            this._addRowForPath(objToSend, "ble.get_descriptor_result_finish", results);
+            this._addRowForPath(objToSend, 'ble.get_descriptor_result_finish', results);
         }
     }
     notifyFromBinaryReadDescriptor(objToSend, payload) {
         const schema = [
-            { name: "address", type: "hex", length: 6, endianness: "little" },
-            { name: "service_uuid", type: "uuid", length: this.uuidLength },
-            { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
-            { name: "descriptor_uuid", type: "uuid", length: this.uuidLength },
-            { name: "result", type: "int", length: 1 },
-            { name: "data", type: "dataArray", length: null },
+            { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+            { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'result', type: 'int', length: 1 },
+            { name: 'data', type: 'dataArray', length: null },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result = results.result === this._commandResults.success ? "success" : "failed";
-        this._addRowForPath(objToSend, "ble.read_descriptor_result", results);
+        results.result =
+            results.result === this._commandResults.success ? 'success' : 'failed';
+        this._addRowForPath(objToSend, 'ble.read_descriptor_result', results);
     }
     notifyFromBinaryWriteDescriptor(objToSend, payload) {
         const schema = [
-            { name: "address", type: "hex", length: 6, endianness: "little" },
-            { name: "service_uuid", type: "uuid", length: this.uuidLength },
-            { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
-            { name: "descriptor_uuid", type: "uuid", length: this.uuidLength },
-            { name: "result", type: "int", length: 1 },
+            { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+            { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'result', type: 'int', length: 1 },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result = results.result === this._commandResults.success ? "success" : "failed";
-        this._addRowForPath(objToSend, "ble.write_descriptor_result", results);
+        results.result =
+            results.result === this._commandResults.success ? 'success' : 'failed';
+        this._addRowForPath(objToSend, 'ble.write_descriptor_result', results);
     }
     notifyFromBinaryServerConnectionState(objToSend, payload) {
         const schema = [
-            { name: "address", type: "hex", length: 6, endianness: "little" },
+            { name: 'address', type: 'hex', length: 6, endianness: 'little' },
             {
-                name: "status",
-                type: "enum",
+                name: 'status',
+                type: 'enum',
                 length: 1,
                 enum: { connected: 1, disconnected: 0 },
             },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        this._addRowForPath(objToSend, "ble.peripheral.connection_status", results);
+        this._addRowForPath(objToSend, 'ble.peripheral.connection_status', results);
     }
     notifyFromBinaryServerWriteCharavteristicValue(objToSend, payload) {
         const schema = [
-            { name: "service_uuid", type: "uuid", length: this.uuidLength },
-            { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
-            { name: "result", type: "int", length: 1 },
+            { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'result', type: 'int', length: 1 },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result = results.result === this._commandResults.success ? "success" : "failed";
-        this._addRowForPath(objToSend, "ble.peripheral.write_characteristic_result", results);
+        results.result =
+            results.result === this._commandResults.success ? 'success' : 'failed';
+        this._addRowForPath(objToSend, 'ble.peripheral.write_characteristic_result', results);
     }
     notifyFromBinaryServerReadCharavteristicValue(objToSend, payload) {
         const schema = [
-            { name: "service_uuid", type: "uuid", length: this.uuidLength },
-            { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
-            { name: "data", type: "dataArray", length: null },
+            { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'data', type: 'dataArray', length: null },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result = "success"; // always success
-        this._addRowForPath(objToSend, "ble.peripheral.read_characteristic_result", results);
+        results.result = 'success'; // always success
+        this._addRowForPath(objToSend, 'ble.peripheral.read_characteristic_result', results);
     }
     notifyFromBinaryServerNotifyReadCharavteristicValue(objToSend, payload) {
         const schema = [
-            { name: "address", type: "hex", length: 6, endianness: "little" },
-            { name: "service_uuid", type: "uuid", length: this.uuidLength },
-            { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
+            { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+            { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        this._addRowForPath(objToSend, "ble.peripheral.notify_read_characteristic", results);
+        this._addRowForPath(objToSend, 'ble.peripheral.notify_read_characteristic', results);
     }
     notifyFromBinaryServerNotifyWriteCharavteristicValue(objToSend, payload) {
         const schema = [
-            { name: "address", type: "hex", length: 6, endianness: "little" },
-            { name: "service_uuid", type: "uuid", length: this.uuidLength },
-            { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
-            { name: "data", type: "dataArray", length: null },
+            { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+            { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'data', type: 'dataArray', length: null },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        this._addRowForPath(objToSend, "ble.peripheral.notify_write_characteristic", results);
+        this._addRowForPath(objToSend, 'ble.peripheral.notify_write_characteristic', results);
     }
     notifyFromBinaryServerReadDescriptorValue(objToSend, payload) {
         const schema = [
-            { name: "service_uuid", type: "uuid", length: this.uuidLength },
-            { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
-            { name: "descriptor_uuid", type: "uuid", length: this.uuidLength },
-            { name: "data", type: "dataArray", length: null },
+            { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'data', type: 'dataArray', length: null },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result = "success"; // always success
-        this._addRowForPath(objToSend, "ble.peripheral.read_descriptor_result", results);
+        results.result = 'success'; // always success
+        this._addRowForPath(objToSend, 'ble.peripheral.read_descriptor_result', results);
     }
     notifyFromBinaryServerWriteDescriptorValue(objToSend, payload) {
         const schema = [
-            { name: "service_uuid", type: "uuid", length: this.uuidLength },
-            { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
-            { name: "descriptor_uuid", type: "uuid", length: this.uuidLength },
-            { name: "result", type: "int", length: 1 },
+            { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'result', type: 'int', length: 1 },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result = results.result === this._commandResults.success ? "success" : "failed";
-        this._addRowForPath(objToSend, "ble.peripheral.write_descriptor_result", results);
+        results.result =
+            results.result === this._commandResults.success ? 'success' : 'failed';
+        this._addRowForPath(objToSend, 'ble.peripheral.write_descriptor_result', results);
     }
     notifyFromBinaryServerNotifyReadDescriptorValue(objToSend, payload) {
         const schema = [
-            { name: "address", type: "hex", length: 6, endianness: "little" },
-            { name: "service_uuid", type: "uuid", length: this.uuidLength },
-            { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
-            { name: "descriptor_uuid", type: "uuid", length: this.uuidLength },
+            { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+            { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        this._addRowForPath(objToSend, "ble.peripheral.notify_read_descriptor", results);
+        this._addRowForPath(objToSend, 'ble.peripheral.notify_read_descriptor', results);
     }
     notifyFromBinaryServerNotifyWriteDescriptorValue(objToSend, payload) {
         const schema = [
-            { name: "address", type: "hex", length: 6, endianness: "little" },
-            { name: "service_uuid", type: "uuid", length: this.uuidLength },
-            { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
-            { name: "descriptor_uuid", type: "uuid", length: this.uuidLength },
-            { name: "data", type: "dataArray", length: null },
+            { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+            { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'data', type: 'dataArray', length: null },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        this._addRowForPath(objToSend, "ble.peripheral.notify_write_descriptor", results);
+        this._addRowForPath(objToSend, 'ble.peripheral.notify_write_descriptor', results);
     }
     notifyFromBinaryError(objToSend, payload) {
         const schema = [
-            { name: "module_error_code", type: "char", length: 1 },
-            { name: "error_code", type: "char", length: 1 },
-            { name: "function_code", type: "char", length: 1 },
-            { name: "address", type: "hex", length: 6, endianness: "little" },
-            { name: "service_uuid", type: "uuid", length: this.uuidLength },
-            { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
-            { name: "descriptor_uuid", type: "uuid", length: this.uuidLength },
+            { name: 'module_error_code', type: 'char', length: 1 },
+            { name: 'error_code', type: 'char', length: 1 },
+            { name: 'function_code', type: 'char', length: 1 },
+            { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+            { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+            { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
         const errorMessage = {
-            0x00: "no error",
-            0x01: "device not connected",
-            0x02: "service not found",
-            0x03: "charavteristic not found",
-            0x04: "descriptor not found",
-            0x05: "no permission",
-            0x06: "device not found",
-            0x07: "ble is busy",
-            0x08: "service already running",
-            0x09: "security param are already set",
-            0xff: "error",
+            0x00: 'no error',
+            0x01: 'device not connected',
+            0x02: 'service not found',
+            0x03: 'charavteristic not found',
+            0x04: 'descriptor not found',
+            0x05: 'no permission',
+            0x06: 'device not found',
+            0x07: 'ble is busy',
+            0x08: 'service already running',
+            0x09: 'security param are already set',
+            0xff: 'error',
         };
         const functionMessage = {
-            0: "on setting advertisement data",
-            1: "on setting scan response data",
-            2: "on starting advertisement",
-            3: "on stopping advertisement",
-            4: "on starting scan",
-            5: "on stoping scan",
-            6: "",
-            7: "on connecting device",
-            8: "on getting services",
-            9: "on getting characteristic",
-            10: "on writing characteristic",
-            11: "on reading characteristic",
-            14: "on getting descriptor",
-            15: "on writing descriptor",
-            16: "on reading descriptor",
-            20: "on start pheripheral",
-            21: "on notify connect",
-            22: "on adding service",
-            23: "on adding characteristic",
-            24: "on adding descriptor",
-            25: "on writing characteristic",
-            26: "on reading characteristic",
-            27: "on writing characteristic from remote",
-            28: "on reading characteristic from remote",
-            29: "on writing descriptor",
-            30: "on reading descriptor",
-            31: "on writing descriptor from remote",
-            32: "on reading descriptor from remote",
-            33: "on notify characteristic",
-            34: "on start/stop service",
-            35: "on set security auth param",
-            36: "on set security encryption level param",
-            37: "on set security key type param",
-            38: "on set security key size param",
-            39: "on set security io capability",
-            40: "on clear bonding devices list",
+            0: 'on setting advertisement data',
+            1: 'on setting scan response data',
+            2: 'on starting advertisement',
+            3: 'on stopping advertisement',
+            4: 'on starting scan',
+            5: 'on stoping scan',
+            6: '',
+            7: 'on connecting device',
+            8: 'on getting services',
+            9: 'on getting characteristic',
+            10: 'on writing characteristic',
+            11: 'on reading characteristic',
+            14: 'on getting descriptor',
+            15: 'on writing descriptor',
+            16: 'on reading descriptor',
+            20: 'on start pheripheral',
+            21: 'on notify connect',
+            22: 'on adding service',
+            23: 'on adding characteristic',
+            24: 'on adding descriptor',
+            25: 'on writing characteristic',
+            26: 'on reading characteristic',
+            27: 'on writing characteristic from remote',
+            28: 'on reading characteristic from remote',
+            29: 'on writing descriptor',
+            30: 'on reading descriptor',
+            31: 'on writing descriptor from remote',
+            32: 'on reading descriptor from remote',
+            33: 'on notify characteristic',
+            34: 'on start/stop service',
+            35: 'on set security auth param',
+            36: 'on set security encryption level param',
+            37: 'on set security key type param',
+            38: 'on set security key size param',
+            39: 'on set security io capability',
+            40: 'on clear bonding devices list',
         };
-        results.message = errorMessage[results.error_code] + " " + functionMessage[results.function_code];
-        this.envelopError(objToSend, "ble", results);
+        results.message =
+            errorMessage[results.error_code] +
+                ' ' +
+                functionMessage[results.function_code];
+        this.envelopError(objToSend, 'ble', results);
     }
     _addRowForPath(sendObj, path, row) {
-        const keys = path.split(".");
+        const keys = path.split('.');
         let target = sendObj;
         for (let index = 0; index < keys.length - 1; index++) {
             target[keys[index]] = target[keys[index]] || {};
@@ -19821,11 +20078,11 @@ class WSCommandBleHci {
     }
     schemaData() {
         return [
-            { uri: "/request/ble/hci/init", onValid: this.init.bind(this) },
-            { uri: "/request/ble/hci/deinit", onValid: this.deinit.bind(this) },
-            { uri: "/request/ble/hci/write", onValid: this.send.bind(this) },
+            { uri: '/request/ble/hci/init', onValid: this.init.bind(this) },
+            { uri: '/request/ble/hci/deinit', onValid: this.deinit.bind(this) },
+            { uri: '/request/ble/hci/write', onValid: this.send.bind(this) },
             {
-                uri: "/request/ble/hci/advertisement_filter",
+                uri: '/request/ble/hci/advertisement_filter',
                 onValid: this.advertisementFilter.bind(this),
             },
         ];
@@ -19860,7 +20117,12 @@ class WSCommandBleHci {
     advertisementFilter(params) {
         const sendData = [];
         params.hci.advertisement_filter.forEach((e) => {
-            const one = [e.range.index, e.range.length, e.value.length, ...e.value];
+            const one = [
+                e.range.index,
+                e.range.length,
+                e.value.length,
+                ...e.value,
+            ];
             sendData.push(...one);
         });
         const buf = new Uint8Array(sendData.length);
@@ -19906,7 +20168,7 @@ class WSCommandDirective extends WSCommand_1.default {
         const nameArray = util_1.default.string2dataArray(params.animation.name);
         let frame;
         let offset = 0;
-        if (semver.lt(this._hw.firmware, "2.0.0")) {
+        if (semver.lt(this._hw.firmware, '2.0.0')) {
             // < 2.0.0
             frame = new Uint8Array(1 + nameArray.length + 1);
             // name //
@@ -19914,8 +20176,9 @@ class WSCommandDirective extends WSCommand_1.default {
             frame.set(nameArray, offset);
             offset += nameArray.length;
             frame[offset++] = 0; // null string
-            if (params.animation.status === "registrate" || typeof params.animation.repeat === "number") {
-                throw new Error("you need to update your firmware >= 2.0.0");
+            if (params.animation.status === 'registrate' ||
+                typeof params.animation.repeat === 'number') {
+                throw new Error('you need to update your firmware >= 2.0.0');
             }
         }
         else {
@@ -19928,10 +20191,10 @@ class WSCommandDirective extends WSCommand_1.default {
             // type and count //
             let type = 0;
             let repeat_count = 0;
-            if (params.animation.status === "loop") {
+            if (params.animation.status === 'loop') {
                 type = 1; // auto start
             }
-            if (typeof params.animation.repeat === "number") {
+            if (typeof params.animation.repeat === 'number') {
                 repeat_count = params.animation.repeat;
                 type += 2;
             }
@@ -19955,7 +20218,7 @@ class WSCommandDirective extends WSCommand_1.default {
             for (let commandIndex = 0; commandIndex < parsedCommands.length; commandIndex++) {
                 const _frame = WSCommand_1.default.compress(this.availableCommands, parsedCommands[commandIndex]);
                 if (!_frame) {
-                    throw new Error("[io.animation.states.state]only io or pwm commands. Pleave provide state at least one of them.");
+                    throw new Error('[io.animation.states.state]only io or pwm commands. Pleave provide state at least one of them.');
                 }
                 if (compressed) {
                     const _combined = new Uint8Array(compressed.length + _frame.length);
@@ -19968,7 +20231,7 @@ class WSCommandDirective extends WSCommand_1.default {
                 }
             }
             if (!compressed) {
-                throw new Error("[io.animation.states.state]only io or pwm commands. Pleave provide state at least one of them.");
+                throw new Error('[io.animation.states.state]only io or pwm commands. Pleave provide state at least one of them.');
             }
             const length = compressed.byteLength;
             const commandHeader = new Uint8Array(8);
@@ -19988,12 +20251,12 @@ class WSCommandDirective extends WSCommand_1.default {
         }
         if (frame.byteLength > 1000) {
             // 1kbyte over
-            throw new Error("[io.animation]Too big animation datas");
+            throw new Error('[io.animation]Too big animation datas');
         }
         this.sendCommand(this._CommandRegistrate, frame);
     }
     changeState(params) {
-        if (params.animation.status === "resume") {
+        if (params.animation.status === 'resume') {
             const nameArray = util_1.default.string2dataArray(params.animation.name);
             const frame = new Uint8Array(nameArray.length + 2);
             frame[0] = nameArray.length + 1;
@@ -20001,7 +20264,7 @@ class WSCommandDirective extends WSCommand_1.default {
             frame[frame.byteLength - 1] = 0;
             this.sendCommand(this._CommandResume, frame);
         }
-        else if (params.animation.status === "pause") {
+        else if (params.animation.status === 'pause') {
             const nameArray = util_1.default.string2dataArray(params.animation.name);
             const frame = new Uint8Array(nameArray.length + 2);
             frame[0] = nameArray.length + 1;
@@ -20028,10 +20291,10 @@ class WSCommandDirective extends WSCommand_1.default {
             return;
         }
         const schemaData = [
-            { uri: "/request/ioAnimation/init", onValid: this.init },
-            { uri: "/request/ioAnimation/changeState", onValid: this.changeState },
+            { uri: '/request/ioAnimation/init', onValid: this.init },
+            { uri: '/request/ioAnimation/changeState', onValid: this.changeState },
         ];
-        const res = this.validateCommandSchema(schemaData, module, "io", module);
+        const res = this.validateCommandSchema(schemaData, module, 'io', module);
         if (res.valid === 0 && parentCommandNotFound) {
             if (res.invalidButLike.length > 0) {
                 throw new Error(res.invalidButLike[0].message);
@@ -20048,7 +20311,7 @@ class WSCommandDirective extends WSCommand_1.default {
             objToSend.io = {
                 animation: {
                     name,
-                    status: "finish",
+                    status: 'finish',
                 },
             };
         }
@@ -20097,7 +20360,7 @@ class WSCommandDisplay extends WSCommand_1.default {
         this.sendCommand(this._CommandPrint, buf);
     }
     printText(text) {
-        const buf = Buffer.from(text, "utf8");
+        const buf = Buffer.from(text, 'utf8');
         const result = new Uint8Array(buf);
         this.print(result);
     }
@@ -20105,7 +20368,7 @@ class WSCommandDisplay extends WSCommand_1.default {
         this.printText(params.text);
     }
     raw(params) {
-        if (typeof params.color_depth === "number" && params.color_depth > 1) {
+        if (typeof params.color_depth === 'number' && params.color_depth > 1) {
             this.drawRawColors(params.raw, params.color_depth);
         }
         else {
@@ -20114,7 +20377,7 @@ class WSCommandDisplay extends WSCommand_1.default {
     }
     qr(params) {
         const text = params.qr.text;
-        const correctionLevel = params.qr.correction || "M";
+        const correctionLevel = params.qr.correction || 'M';
         const typeNumber = 0; // auto detect type.
         const qr = qr_1.default(typeNumber, correctionLevel);
         qr.addData(text);
@@ -20142,7 +20405,8 @@ class WSCommandDisplay extends WSCommand_1.default {
             for (let row = 0; row < size; row++) {
                 for (let col = 0; col < size; col++) {
                     if (!modules[Math.floor(row / 2)][Math.floor(col / 2)]) {
-                        vram[Math.floor((row + 2) * 16 + (col + 2) / 8)] |= 0x80 >> (col + 2) % 8;
+                        vram[Math.floor((row + 2) * 16 + (col + 2) / 8)] |=
+                            0x80 >> (col + 2) % 8;
                     }
                 }
             }
@@ -20151,8 +20415,8 @@ class WSCommandDisplay extends WSCommand_1.default {
     }
     pinName(params) {
         for (let i = 0; i < 40; i++) {
-            if (typeof params.pin_assign[i] === "object") {
-                this.setPinName(i, params.pin_assign[i].module_name || "?", params.pin_assign[i].pin_name || "?");
+            if (typeof params.pin_assign[i] === 'object') {
+                this.setPinName(i, params.pin_assign[i].module_name || '?', params.pin_assign[i].pin_name || '?');
             }
         }
     }
@@ -20167,11 +20431,11 @@ class WSCommandDisplay extends WSCommand_1.default {
         this.sendCommand(this._CommandDrawIOState, buf);
     }
     setPinName(no, moduleName, pinName) {
-        let str = moduleName.slice(0, 4) + " " + pinName;
+        let str = moduleName.slice(0, 4) + ' ' + pinName;
         str = str.slice(0, 9);
         const buf = new Uint8Array(1);
         buf[0] = no;
-        const stringarray = new Uint8Array(Buffer.from(str, "utf8"));
+        const stringarray = new Uint8Array(Buffer.from(str, 'utf8'));
         const combined = new Uint8Array(buf.length + stringarray.length);
         combined.set(buf, 0);
         combined.set(stringarray, 1);
@@ -20189,13 +20453,13 @@ class WSCommandDisplay extends WSCommand_1.default {
             return;
         }
         const schemaData = [
-            { uri: "/request/display/clear", onValid: this.clear },
-            { uri: "/request/display/text", onValid: this.text },
-            { uri: "/request/display/raw", onValid: this.raw },
-            { uri: "/request/display/pin_assign", onValid: this.pinName },
-            { uri: "/request/display/qr", onValid: this.qr },
+            { uri: '/request/display/clear', onValid: this.clear },
+            { uri: '/request/display/text', onValid: this.text },
+            { uri: '/request/display/raw', onValid: this.raw },
+            { uri: '/request/display/pin_assign', onValid: this.pinName },
+            { uri: '/request/display/qr', onValid: this.qr },
         ];
-        const res = this.validateCommandSchema(schemaData, module, "display");
+        const res = this.validateCommandSchema(schemaData, module, 'display');
         if (res.valid === 0) {
             if (res.invalidButLike.length > 0) {
                 throw new Error(res.invalidButLike[0].message);
@@ -20312,18 +20576,18 @@ class WSCommandI2C extends WSCommand_1.default {
     parseFromJson(json) {
         // 0
         for (let i = 0; i < 2; i++) {
-            const module = json["i2c" + i];
+            const module = json['i2c' + i];
             if (module === undefined) {
                 continue;
             }
             const schemaData = [
-                { uri: "/request/i2c/init_master", onValid: this.initMaster },
-                { uri: "/request/i2c/init_slave", onValid: this.initSlave },
-                { uri: "/request/i2c/write", onValid: this.write },
-                { uri: "/request/i2c/read", onValid: this.read },
-                { uri: "/request/i2c/deinit", onValid: this.deinit },
+                { uri: '/request/i2c/init_master', onValid: this.initMaster },
+                { uri: '/request/i2c/init_slave', onValid: this.initSlave },
+                { uri: '/request/i2c/write', onValid: this.write },
+                { uri: '/request/i2c/read', onValid: this.read },
+                { uri: '/request/i2c/deinit', onValid: this.deinit },
             ];
-            const res = this.validateCommandSchema(schemaData, module, "i2c" + i, i);
+            const res = this.validateCommandSchema(schemaData, module, 'i2c' + i, i);
             if (res.valid === 0) {
                 if (res.invalidButLike.length > 0) {
                     throw new Error(res.invalidButLike[0].message);
@@ -20342,8 +20606,8 @@ class WSCommandI2C extends WSCommand_1.default {
             for (let i = 0; i < arr.length; i++) {
                 arr[i] = payload[i + 3];
             }
-            objToSend["i2c" + module_index] = {
-                mode: "master",
+            objToSend['i2c' + module_index] = {
+                mode: 'master',
                 address,
                 data: arr,
             };
@@ -20356,8 +20620,8 @@ class WSCommandI2C extends WSCommand_1.default {
             for (let i = 0; i < arr.length; i++) {
                 arr[i] = payload[i + 4];
             }
-            objToSend["i2c" + module_index] = {
-                mode: "slave",
+            objToSend['i2c' + module_index] = {
+                mode: 'slave',
                 is_fragmented: true,
                 address,
                 data: arr,
@@ -20367,14 +20631,17 @@ class WSCommandI2C extends WSCommand_1.default {
             // const _esperr = payload[0];
             const err = payload[1];
             const ref_func_id = payload[2];
-            if (ref_func_id === this._CommandWrite || ref_func_id === this._CommandRead) {
-                let reason = "" + (ref_func_id === this._CommandWrite ? "writing" : "reading") + " error. ";
+            if (ref_func_id === this._CommandWrite ||
+                ref_func_id === this._CommandRead) {
+                let reason = '' +
+                    (ref_func_id === this._CommandWrite ? 'writing' : 'reading') +
+                    ' error. ';
                 if (err === 7) {
                     // in fact. it is 0x107. but truncated
-                    reason += "Communication Timeout. Maybe, target is not connected.";
+                    reason += 'Communication Timeout. Maybe, target is not connected.';
                 }
                 else if (err === 255) {
-                    reason += "Communication Failed. Maybe, target is not connected.";
+                    reason += 'Communication Failed. Maybe, target is not connected.';
                 }
                 this.envelopError(objToSend, `i2c0`, { message: reason });
             }
@@ -20412,21 +20679,21 @@ const COMMAND_IO_ERRORS_IO_TOO_LOW = 3;
 const COMMAND_IO_ERRORS_IO_TOO_HIGH = 4;
 const COMMAND_IO_ERRORS_IO_FORCE_RELEASED = 0xf0;
 const COMMAND_IO_ERROR_MESSAGES = {
-    0: "unknown error",
-    1: "heavy output. output voltage is too low when driving high",
-    2: "heavy output. output voltage is too high when driving low",
-    3: "output voltage is too low when driving high. io state has changed output to input",
-    4: "output voltage is too high when driving low. io state has changed output to input",
+    0: 'unknown error',
+    1: 'heavy output. output voltage is too low when driving high',
+    2: 'heavy output. output voltage is too high when driving low',
+    3: 'output voltage is too low when driving high. io state has changed output to input',
+    4: 'output voltage is too high when driving low. io state has changed output to input',
 };
 const COMMAND_IO_MUTEX_NAMES = {
-    1: "io.input",
-    2: "io.output",
-    3: "pwm",
-    4: "uart",
-    5: "i2c",
-    6: "spi",
-    7: "LogicAnalyzer",
-    8: "Measure",
+    1: 'io.input',
+    2: 'io.output',
+    3: 'pwm',
+    4: 'uart',
+    5: 'i2c',
+    6: 'spi',
+    7: 'LogicAnalyzer',
+    8: 'Measure',
 };
 class WSCommandIO extends WSCommand_1.default {
     constructor() {
@@ -20459,37 +20726,37 @@ class WSCommandIO extends WSCommand_1.default {
     outputType(params, id) {
         const buf = new Uint8Array(2);
         buf[0] = id;
-        if (params.output_type === "push-pull5v") {
+        if (params.output_type === 'push-pull5v') {
             buf[1] = 0;
         }
-        else if (params.output_type === "push-pull3v") {
+        else if (params.output_type === 'push-pull3v') {
             buf[1] = 2;
         }
-        else if (params.output_type === "open-drain") {
+        else if (params.output_type === 'open-drain') {
             buf[1] = 3;
         }
         else {
-            return "io unknown outputtype: " + params.output_type;
+            return 'io unknown outputtype: ' + params.output_type;
         }
         this.sendCommand(this._CommandOutputType, buf);
     }
     pullType(params, id) {
         const buf = new Uint8Array(2);
         buf[0] = id;
-        if (params.pull_type === "float") {
+        if (params.pull_type === 'float') {
             buf[1] = 0;
         }
-        else if (params.pull_type === "pull-up3v") {
+        else if (params.pull_type === 'pull-up3v') {
             buf[1] = 1;
         }
-        else if (params.pull_type === "pull-down") {
+        else if (params.pull_type === 'pull-down') {
             buf[1] = 2;
         }
-        else if (params.pull_type === "pull-up5v") {
+        else if (params.pull_type === 'pull-up5v') {
             buf[1] = 3;
         }
         else {
-            return "io unknown pull_type: " + params.pull_type;
+            return 'io unknown pull_type: ' + params.pull_type;
         }
         this.sendCommand(this._CommandPullResisterType, buf);
     }
@@ -20499,20 +20766,20 @@ class WSCommandIO extends WSCommand_1.default {
     }
     parseFromJson(json) {
         for (let i = 0; i < 40; i++) {
-            const module = json["io" + i];
+            const module = json['io' + i];
             if (module === undefined) {
                 continue;
             }
             const schemaData = [
-                { uri: "/request/io/input", onValid: this.input },
-                { uri: "/request/io/input_detail", onValid: this.inputDetail },
-                { uri: "/request/io/output", onValid: this.output },
-                { uri: "/request/io/output_detail", onValid: this.outputDetail },
-                { uri: "/request/io/output_type", onValid: this.outputType },
-                { uri: "/request/io/pull_type", onValid: this.pullType },
-                { uri: "/request/io/deinit", onValid: this.deinit },
+                { uri: '/request/io/input', onValid: this.input },
+                { uri: '/request/io/input_detail', onValid: this.inputDetail },
+                { uri: '/request/io/output', onValid: this.output },
+                { uri: '/request/io/output_detail', onValid: this.outputDetail },
+                { uri: '/request/io/output_type', onValid: this.outputType },
+                { uri: '/request/io/pull_type', onValid: this.pullType },
+                { uri: '/request/io/deinit', onValid: this.deinit },
             ];
-            const res = this.validateCommandSchema(schemaData, module, "io" + i, i);
+            const res = this.validateCommandSchema(schemaData, module, 'io' + i, i);
             if (res.valid === 0) {
                 if (res.invalidButLike.length > 0) {
                     throw new Error(res.invalidButLike[0].message);
@@ -20526,7 +20793,7 @@ class WSCommandIO extends WSCommand_1.default {
     notifyFromBinary(objToSend, func, payload) {
         if (func === this._CommandInputStream || func === this._CommandInputOnece) {
             for (let i = 0; i < payload.byteLength; i += 2) {
-                objToSend["io" + payload[i]] = payload[i + 1] > 0;
+                objToSend['io' + payload[i]] = payload[i + 1] > 0;
             }
         }
         else if (func === this.COMMAND_FUNC_ID_ERROR && payload.byteLength >= 4) {
@@ -20534,20 +20801,23 @@ class WSCommandIO extends WSCommand_1.default {
             const err = payload[1];
             // const ref_func_id = payload[2];
             const module_index = payload[3];
-            if (err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH || err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW) {
+            if (err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH ||
+                err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW) {
                 this.envelopWarning(objToSend, `io${module_index}`, {
                     message: COMMAND_IO_ERROR_MESSAGES[err],
                 });
             }
-            else if (err === COMMAND_IO_ERRORS_IO_TOO_LOW || err === COMMAND_IO_ERRORS_IO_TOO_HIGH) {
+            else if (err === COMMAND_IO_ERRORS_IO_TOO_LOW ||
+                err === COMMAND_IO_ERRORS_IO_TOO_HIGH) {
                 this.envelopError(objToSend, `io${module_index}`, {
                     message: COMMAND_IO_ERROR_MESSAGES[err],
                 });
             }
-            else if (err === COMMAND_IO_ERRORS_IO_FORCE_RELEASED && payload.byteLength >= 6) {
+            else if (err === COMMAND_IO_ERRORS_IO_FORCE_RELEASED &&
+                payload.byteLength >= 6) {
                 const oldMutexOwner = payload[4];
                 const newMutexOwner = payload[5];
-                this.envelopWarning(objToSend, "debug", {
+                this.envelopWarning(objToSend, 'debug', {
                     message: `io${module_index} binded "${COMMAND_IO_MUTEX_NAMES[oldMutexOwner]}" was stopped. "${COMMAND_IO_MUTEX_NAMES[newMutexOwner]}" have started using this io.`,
                 });
             }
@@ -20616,10 +20886,10 @@ class WSCommandLogicAnalyzer extends WSCommand_1.default {
             return;
         }
         const schemaData = [
-            { uri: "/request/logicAnalyzer/init", onValid: this.init },
-            { uri: "/request/logicAnalyzer/deinit", onValid: this.deinit },
+            { uri: '/request/logicAnalyzer/init', onValid: this.init },
+            { uri: '/request/logicAnalyzer/deinit', onValid: this.deinit },
         ];
-        const res = this.validateCommandSchema(schemaData, module, "logic_analyzer");
+        const res = this.validateCommandSchema(schemaData, module, 'logic_analyzer');
         if (res.valid === 0) {
             if (res.invalidButLike.length > 0) {
                 throw new Error(res.invalidButLike[0].message);
@@ -20677,7 +20947,7 @@ class WSCommandMeasurement extends WSCommand_1.default {
     // Commands
     echo(params) {
         const triggerIO = params.echo.io_pulse;
-        const triggerPosNeg = params.echo.pulse === "negative" ? false : true;
+        const triggerPosNeg = params.echo.pulse === 'negative' ? false : true;
         const triggerWidthUs = Math.floor(params.echo.pulse_width * 1000);
         const echoIO = params.echo.io_echo;
         const responseCount = params.echo.measure_edges;
@@ -20704,8 +20974,10 @@ class WSCommandMeasurement extends WSCommand_1.default {
         if (module === undefined) {
             return;
         }
-        const schemaData = [{ uri: "/request/measure/echo", onValid: this.echo }];
-        const res = this.validateCommandSchema(schemaData, module, "measure");
+        const schemaData = [
+            { uri: '/request/measure/echo', onValid: this.echo },
+        ];
+        const res = this.validateCommandSchema(schemaData, module, 'measure');
         if (res.valid === 0) {
             if (res.invalidButLike.length > 0) {
                 throw new Error(res.invalidButLike[0].message);
@@ -20837,18 +21109,18 @@ class WSCommandPWM extends WSCommand_1.default {
     }
     parseFromJson(json) {
         for (let i = 0; i < this.ModuleNum; i++) {
-            const module = json["pwm" + i];
+            const module = json['pwm' + i];
             if (module === undefined) {
                 continue;
             }
             const schemaData = [
-                { uri: "/request/pwm/init", onValid: this.init },
-                { uri: "/request/pwm/freq", onValid: this.freq },
-                { uri: "/request/pwm/pulse", onValid: this.pulse },
-                { uri: "/request/pwm/modulate", onValid: this.amModulate },
-                { uri: "/request/pwm/deinit", onValid: this.deinit },
+                { uri: '/request/pwm/init', onValid: this.init },
+                { uri: '/request/pwm/freq', onValid: this.freq },
+                { uri: '/request/pwm/pulse', onValid: this.pulse },
+                { uri: '/request/pwm/modulate', onValid: this.amModulate },
+                { uri: '/request/pwm/deinit', onValid: this.deinit },
             ];
-            const res = this.validateCommandSchema(schemaData, module, "pwm" + i, i);
+            const res = this.validateCommandSchema(schemaData, module, 'pwm' + i, i);
             if (res.valid === 0) {
                 if (res.invalidButLike.length > 0) {
                     throw new Error(res.invalidButLike[0].message);
@@ -20895,8 +21167,10 @@ class WSCommandPlugin extends WSCommand_1.default {
         if (module === undefined) {
             return;
         }
-        const schemaData = [{ uri: "/request/plugin/send", onValid: this.send }];
-        const res = this.validateCommandSchema(schemaData, module, "plugin");
+        const schemaData = [
+            { uri: '/request/plugin/send', onValid: this.send },
+        ];
+        const res = this.validateCommandSchema(schemaData, module, 'plugin');
         if (res.valid === 0) {
             if (res.invalidButLike.length > 0) {
                 throw new Error(res.invalidButLike[0].message);
@@ -20959,7 +21233,7 @@ class WSCommandSPI extends WSCommand_1.default {
         let cs = params.cs;
         const clock = params.clock;
         if (clk === null && mosi === null && miso === null) {
-            throw new Error("spi: master mode require one of clk/mosi/miso");
+            throw new Error('spi: master mode require one of clk/mosi/miso');
         }
         if (clk === null) {
             clk = this.ioNotUsed;
@@ -21005,16 +21279,16 @@ class WSCommandSPI extends WSCommand_1.default {
     }
     parseFromJson(json) {
         for (let i = 0; i < 2; i++) {
-            const module = json["spi" + i];
+            const module = json['spi' + i];
             if (module === undefined) {
                 continue;
             }
             const schemaData = [
-                { uri: "/request/spi/init_master", onValid: this.initMaster },
-                { uri: "/request/spi/write", onValid: this.write },
-                { uri: "/request/spi/deinit", onValid: this.deinit },
+                { uri: '/request/spi/init_master', onValid: this.initMaster },
+                { uri: '/request/spi/write', onValid: this.write },
+                { uri: '/request/spi/deinit', onValid: this.deinit },
             ];
-            const res = this.validateCommandSchema(schemaData, module, "spi" + i, i);
+            const res = this.validateCommandSchema(schemaData, module, 'spi' + i, i);
             if (res.valid === 0) {
                 if (res.invalidButLike.length > 0) {
                     throw new Error(res.invalidButLike[0].message);
@@ -21033,7 +21307,7 @@ class WSCommandSPI extends WSCommand_1.default {
             for (let i = 0; i < arr.length; i++) {
                 arr[i] = payload[i + 1];
             }
-            objToSend["spi" + module_index] = {
+            objToSend['spi' + module_index] = {
                 data: arr,
             };
         }
@@ -21078,8 +21352,8 @@ class WSCommandSwitch extends WSCommand_1.default {
         if (module === undefined) {
             return;
         }
-        const schemaData = [{ uri: "/request/switch/get", onValid: this.get }];
-        const res = this.validateCommandSchema(schemaData, module, "switch");
+        const schemaData = [{ uri: '/request/switch/get', onValid: this.get }];
+        const res = this.validateCommandSchema(schemaData, module, 'switch');
         if (res.valid === 0) {
             if (res.invalidButLike.length > 0) {
                 throw new Error(res.invalidButLike[0].message);
@@ -21090,14 +21364,15 @@ class WSCommandSwitch extends WSCommand_1.default {
         }
     }
     notifyFromBinary(objToSend, func, payload) {
-        if ((func === this._CommandOnece || func === this._CommandNotifyValue) && payload.byteLength === 1) {
+        if ((func === this._CommandOnece || func === this._CommandNotifyValue) &&
+            payload.byteLength === 1) {
             const state = parseInt(payload[0]);
-            const states = ["none", "push", "left", "right"];
+            const states = ['none', 'push', 'left', 'right'];
             objToSend.switch = {
                 state: states[state],
             };
             if (func === this._CommandOnece) {
-                objToSend.switch.action = "get";
+                objToSend.switch.action = 'get';
             }
         }
         else {
@@ -21185,20 +21460,20 @@ class WSCommandSystem extends WSCommand_1.default {
             return;
         }
         const schemaData = [
-            { uri: "/request/system/reboot", onValid: this.reboot },
-            { uri: "/request/system/reset", onValid: this.reset },
-            { uri: "/request/system/wait", onValid: this.wait },
-            { uri: "/request/system/selfCheck", onValid: this.selfCheck },
+            { uri: '/request/system/reboot', onValid: this.reboot },
+            { uri: '/request/system/reset', onValid: this.reset },
+            { uri: '/request/system/wait', onValid: this.wait },
+            { uri: '/request/system/selfCheck', onValid: this.selfCheck },
             {
-                uri: "/request/system/keepWorkingAtOffline",
+                uri: '/request/system/keepWorkingAtOffline',
                 onValid: this.keepWorkingAtOffline,
             },
-            { uri: "/request/system/ping", onValid: this.ping },
-            { uri: "/request/system/sleepSeconds", onValid: this.sleepSeconds },
-            { uri: "/request/system/sleepMinute", onValid: this.sleepMinute },
-            { uri: "/request/system/sleepIoTrigger", onValid: this.sleepIoTrigger },
+            { uri: '/request/system/ping', onValid: this.ping },
+            { uri: '/request/system/sleepSeconds', onValid: this.sleepSeconds },
+            { uri: '/request/system/sleepMinute', onValid: this.sleepMinute },
+            { uri: '/request/system/sleepIoTrigger', onValid: this.sleepIoTrigger },
         ];
-        const res = this.validateCommandSchema(schemaData, module, "system");
+        const res = this.validateCommandSchema(schemaData, module, 'system');
         if (res.valid === 0) {
             if (res.invalidButLike.length > 0) {
                 throw new Error(res.invalidButLike[0].message);
@@ -21238,7 +21513,7 @@ class WSCommandSystem extends WSCommand_1.default {
                 if (payload.byteLength === 3) {
                     let value = (payload[1] << 8) + payload[2];
                     value = value / 100.0;
-                    this.envelopWarning(objToSend, "debug", {
+                    this.envelopWarning(objToSend, 'debug', {
                         message: `Low Voltage ${value}v. connect obniz to more powerful USB.`,
                     });
                 }
@@ -21307,7 +21582,7 @@ class WSCommandTcp extends WSCommand_1.default {
         this._CommandRead = 4;
     }
     connect(params, index) {
-        const domain = new Uint8Array(Buffer.from(params.connect.domain, "utf8"));
+        const domain = new Uint8Array(Buffer.from(params.connect.domain, 'utf8'));
         const buf = new Uint8Array(domain.length + 3);
         buf[0] = index;
         buf[1] =  true && params.connect.port >> 8;
@@ -21331,16 +21606,16 @@ class WSCommandTcp extends WSCommand_1.default {
     }
     parseFromJson(json) {
         for (let i = 0; i < this._MaxPort; i++) {
-            const module = json["tcp" + i];
+            const module = json['tcp' + i];
             if (module === undefined) {
                 continue;
             }
             const schemaData = [
-                { uri: "/request/tcp/connect", onValid: this.connect },
-                { uri: "/request/tcp/disconnect", onValid: this.disconnect },
-                { uri: "/request/tcp/write", onValid: this.write },
+                { uri: '/request/tcp/connect', onValid: this.connect },
+                { uri: '/request/tcp/disconnect', onValid: this.disconnect },
+                { uri: '/request/tcp/write', onValid: this.write },
             ];
-            const res = this.validateCommandSchema(schemaData, module, "tcp" + i, i);
+            const res = this.validateCommandSchema(schemaData, module, 'tcp' + i, i);
             if (res.valid === 0) {
                 if (res.invalidButLike.length > 0) {
                     throw new Error(res.invalidButLike[0].message);
@@ -21354,26 +21629,26 @@ class WSCommandTcp extends WSCommand_1.default {
     notifyFromBinary(objToSend, func, payload) {
         switch (func) {
             case this._CommandConnect: {
-                let state = "Error";
+                let state = 'Error';
                 switch (payload[1]) {
                     case 0:
-                        state = "ok";
+                        state = 'ok';
                         break;
                     case 1:
-                        state = "Port Used";
+                        state = 'Port Used';
                         break;
                     case 2:
-                        state = "Port Area Error";
+                        state = 'Port Area Error';
                         break;
                     case 3:
-                        state = "Lookup Error";
+                        state = 'Lookup Error';
                         break;
                     case 4:
-                        state = "Error";
+                        state = 'Error';
                         break;
                 }
                 const module_index = payload[0];
-                objToSend["tcp" + module_index] = {
+                objToSend['tcp' + module_index] = {
                     connect: {
                         message: state,
                         code: payload[1],
@@ -21384,7 +21659,7 @@ class WSCommandTcp extends WSCommand_1.default {
             case this._CommandConnection:
                 if (payload.length === 2 && payload[1] === 0) {
                     const module_index = payload[0];
-                    objToSend["tcp" + module_index] = {
+                    objToSend['tcp' + module_index] = {
                         connection: {
                             connected: true,
                         },
@@ -21392,7 +21667,7 @@ class WSCommandTcp extends WSCommand_1.default {
                 }
                 else {
                     const module_index = payload[0];
-                    objToSend["tcp" + module_index] = {
+                    objToSend['tcp' + module_index] = {
                         connection: {
                             connected: false,
                         },
@@ -21406,7 +21681,7 @@ class WSCommandTcp extends WSCommand_1.default {
                     for (let i = 0; i < arr.length; i++) {
                         arr[i] = payload[i + 1];
                     }
-                    objToSend["tcp" + module_index] = {
+                    objToSend['tcp' + module_index] = {
                         read: {
                             data: arr,
                         },
@@ -21468,22 +21743,22 @@ class WSCommandUart extends WSCommand_1.default {
             buf[7] = 0;
         }
         else {
-            throw new Error("uart: invalid stop bits");
+            throw new Error('uart: invalid stop bits');
         }
         buf[8] = params.bits;
-        if (params.parity === "even") {
+        if (params.parity === 'even') {
             buf[9] = 2;
         }
-        else if (params.parity === "odd") {
+        else if (params.parity === 'odd') {
             buf[9] = 3;
         }
-        if (params.flowcontrol === "rts") {
+        if (params.flowcontrol === 'rts') {
             buf[10] = 2;
         }
-        else if (params.flowcontrol === "cts") {
+        else if (params.flowcontrol === 'cts') {
             buf[10] = 3;
         }
-        else if (params.flowcontrol === "rts-cts") {
+        else if (params.flowcontrol === 'rts-cts') {
             buf[10] = 4;
         }
         if (params.rts !== null) {
@@ -21508,16 +21783,16 @@ class WSCommandUart extends WSCommand_1.default {
     parseFromJson(json) {
         // 0~2
         for (let i = 0; i < 3; i++) {
-            const module = json["uart" + i];
+            const module = json['uart' + i];
             if (module === undefined) {
                 continue;
             }
             const schemaData = [
-                { uri: "/request/uart/init", onValid: this.init },
-                { uri: "/request/uart/send", onValid: this.send },
-                { uri: "/request/uart/deinit", onValid: this.deinit },
+                { uri: '/request/uart/init', onValid: this.init },
+                { uri: '/request/uart/send', onValid: this.send },
+                { uri: '/request/uart/deinit', onValid: this.deinit },
             ];
-            const res = this.validateCommandSchema(schemaData, module, "uart" + i, i);
+            const res = this.validateCommandSchema(schemaData, module, 'uart' + i, i);
             if (res.valid === 0) {
                 if (res.invalidButLike.length > 0) {
                     throw new Error(res.invalidButLike[0].message);
@@ -21535,7 +21810,7 @@ class WSCommandUart extends WSCommand_1.default {
             for (let i = 0; i < arr.length; i++) {
                 arr[i] = payload[i + 1];
             }
-            objToSend["uart" + module_index] = {
+            objToSend['uart' + module_index] = {
                 data: arr,
             };
         }
@@ -21578,8 +21853,8 @@ class WSCommandWiFi extends WSCommand_1.default {
         if (module === undefined) {
             return;
         }
-        const schemaData = [{ uri: "/request/wifi/scan", onValid: this.scan }];
-        const res = this.validateCommandSchema(schemaData, module, "wifi");
+        const schemaData = [{ uri: '/request/wifi/scan', onValid: this.scan }];
+        const res = this.validateCommandSchema(schemaData, module, 'wifi');
         if (res.valid === 0) {
             if (res.invalidButLike.length > 0) {
                 throw new Error(res.invalidButLike[0].message);
@@ -21601,8 +21876,8 @@ class WSCommandWiFi extends WSCommand_1.default {
                 })(ScanState || (ScanState = {}));
                 let mode = ScanState.SCAN_SSID_LEN;
                 let tmpIndex = 0;
-                let ssid = "";
-                let macAddress = "";
+                let ssid = '';
+                let macAddress = '';
                 let rssi = 0;
                 const scanArray = [];
                 for (let i = 0; i < payload.length; i++) {
@@ -21634,8 +21909,8 @@ class WSCommandWiFi extends WSCommand_1.default {
                                 macAddress,
                                 rssi,
                             });
-                            ssid = "";
-                            macAddress = "";
+                            ssid = '';
+                            macAddress = '';
                             rssi = 0;
                             break;
                     }
@@ -21667,9 +21942,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 const tv4 = __webpack_require__("./node_modules/tv4/tv4.js");
-tv4.defineError("UNIQUE_KEYS", 10001, "{uniqueKeys} are must be unique value.");
+tv4.defineError('UNIQUE_KEYS', 10001, '{uniqueKeys} are must be unique value.');
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-tv4.defineKeyword("uniqueKeys", (data, value, schema) => {
+tv4.defineKeyword('uniqueKeys', ((data, value, schema) => {
+    // tslint:disable-line
     if (!Array.isArray(value)) {
         return null;
     }
@@ -21685,17 +21962,20 @@ tv4.defineKeyword("uniqueKeys", (data, value, schema) => {
     if (duplicated.length > 0) {
         return {
             code: tv4.errorCodes.UNIQUE_KEYS,
-            message: { uniqueKeys: value.join(",") },
+            message: { uniqueKeys: value.join(',') },
         };
     }
     return null;
-});
+}));
 const wsSchema = [];
 const require_context_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/webpackReplace/require-context-browser.js"));
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 __webpack_require__("./dist/src/obniz/libs/wscommand sync recursive").context = require_context_1.default;
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 if (__webpack_require__("./dist/src/obniz/libs/wscommand sync recursive").context && __webpack_require__("./dist/src/obniz/libs/wscommand sync recursive").context.setBaseDir) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     __webpack_require__("./dist/src/obniz/libs/wscommand sync recursive").context.setBaseDir(__dirname);
 }
@@ -21776,14 +22056,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class JsonBinaryConverter {
     static convertFromBinaryToJson(schema, binary) {
         const types = {
-            "hex": this.hexFromBinary.bind(this),
-            "uuid": this.uuidFromBinary.bind(this),
-            "number": this.numberFromBinary.bind(this),
-            "signed number": this.signedNumberFromBinary.bind(this),
-            "int": this.numberFromBinary.bind(this),
-            "char": this.numberFromBinary.bind(this),
-            "enum": this.enumFromBinary.bind(this),
-            "dataArray": this.dataArrayFromBinary.bind(this),
+            hex: this.hexFromBinary.bind(this),
+            uuid: this.uuidFromBinary.bind(this),
+            number: this.numberFromBinary.bind(this),
+            'signed number': this.signedNumberFromBinary.bind(this),
+            int: this.numberFromBinary.bind(this),
+            char: this.numberFromBinary.bind(this),
+            enum: this.enumFromBinary.bind(this),
+            dataArray: this.dataArrayFromBinary.bind(this),
         };
         const json = {};
         let count = 0;
@@ -21800,13 +22080,13 @@ class JsonBinaryConverter {
         return json;
     }
     static hexFromBinary(data, schema) {
-        let str = "";
+        let str = '';
         for (let i = 0; i < data.length; i++) {
-            if (schema.endianness && schema.endianness === "little") {
-                str = ("00" + data[i].toString(16)).slice(-2) + str;
+            if (schema.endianness && schema.endianness === 'little') {
+                str = ('00' + data[i].toString(16)).slice(-2) + str;
             }
             else {
-                str = str + ("00" + data[i].toString(16)).slice(-2);
+                str = str + ('00' + data[i].toString(16)).slice(-2);
             }
         }
         return str;
@@ -21817,9 +22097,9 @@ class JsonBinaryConverter {
             return null;
         }
         const uuidData = data.slice(2);
-        let str = "";
+        let str = '';
         for (let i = 0; i < len; i++) {
-            str = ("00" + uuidData[i].toString(16)).slice(-2) + str;
+            str = ('00' + uuidData[i].toString(16)).slice(-2) + str;
         }
         return str;
     }
@@ -21922,16 +22202,16 @@ class JsonBinaryConverter {
         }
         const row = types[schemaRow.type](val, schemaRow);
         if (schemaRow.length && row.length !== schemaRow.length) {
-            console.log("JSON->BINARY SCHEMA ERROR: (", val, ")", schemaRow);
+            console.log('JSON->BINARY SCHEMA ERROR: (', val, ')', schemaRow);
         }
         return row;
     }
     static getProperty(object, path) {
-        if (path === "" || path === undefined) {
+        if (path === '' || path === undefined) {
             return object;
         }
-        if (typeof path === "string") {
-            path = path.split(".");
+        if (typeof path === 'string') {
+            path = path.split('.');
         }
         if (!Array.isArray(path)) {
             path = [path];
@@ -21948,11 +22228,11 @@ class JsonBinaryConverter {
     }
     static hexToBinary(data, schema) {
         const array = [];
-        const hex = data.toLowerCase().replace(/[^0-9abcdef]/g, "");
+        const hex = data.toLowerCase().replace(/[^0-9abcdef]/g, '');
         for (let i = 0; i < hex.length / 2; i++) {
             array[i] = parseInt(hex[i * 2] + hex[i * 2 + 1], 16);
         }
-        if (schema && schema.endianness && schema.endianness === "little") {
+        if (schema && schema.endianness && schema.endianness === 'little') {
             array.reverse();
         }
         return array;
@@ -22013,7 +22293,7 @@ class JsonBinaryConverter {
         return array;
     }
     static stringToBinary(data) {
-        return new Uint8Array(Buffer.from(data, "utf8"));
+        return new Uint8Array(Buffer.from(data, 'utf8'));
     }
 }
 exports.default = JsonBinaryConverter;
@@ -22245,21 +22525,21 @@ webpackContext.id = "./dist/src/parts sync recursive \\.js$";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Hx711 {
     constructor() {
-        this.keys = ["vcc", "gnd", "sck", "dout"];
-        this.requiredKeys = ["sck", "dout"];
+        this.keys = ['vcc', 'gnd', 'sck', 'dout'];
+        this.requiredKeys = ['sck', 'dout'];
         this._offset = 0;
         this._scale = 1;
     }
     static info() {
         return {
-            name: "hx711",
+            name: 'hx711',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
         this.spi = obniz.getFreeSpi();
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        const ioKeys = ["clk", "dout"];
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+        const ioKeys = ['clk', 'dout'];
         for (const key of ioKeys) {
             if (this.params[key] && !this.obniz.isValidIO(this.params[key])) {
                 throw new Error("spi start param '" + key + "' are to be valid io no");
@@ -22279,12 +22559,20 @@ class Hx711 {
             }
         }
         this.spi.start({
-            mode: "master",
+            mode: 'master',
             mosi: this.params.sck,
             miso: this.params.dout,
             frequency: 500 * 1000,
         });
-        const ret_double = await this.spi.writeWait([0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0x80]);
+        const ret_double = await this.spi.writeWait([
+            0xaa,
+            0xaa,
+            0xaa,
+            0xaa,
+            0xaa,
+            0xaa,
+            0x80,
+        ]);
         this.spi.end(true);
         this.sck.output(false);
         const ret = [
@@ -22333,14 +22621,14 @@ class Hx711 {
         return (val - this._offset) / this._scale;
     }
     setOffset(offset) {
-        if (typeof offset !== "number") {
-            throw new Error("offset variable is Number");
+        if (typeof offset !== 'number') {
+            throw new Error('offset variable is Number');
         }
         this._offset = offset;
     }
     setScale(scale) {
-        if (typeof scale !== "number") {
-            throw new Error("scale variable is Number");
+        if (typeof scale !== 'number') {
+            throw new Error('scale variable is Number');
         }
         this._scale = scale;
     }
@@ -22358,16 +22646,16 @@ exports.default = Hx711;
 Object.defineProperty(exports, "__esModule", { value: true });
 class USB {
     constructor() {
-        this.keys = ["vcc", "gnd"];
-        this.requiredKeys = ["vcc", "gnd"];
+        this.keys = ['vcc', 'gnd'];
+        this.requiredKeys = ['vcc', 'gnd'];
         this.displayIoNames = {
-            vcc: "vcc",
-            gnd: "gnd",
+            vcc: 'vcc',
+            gnd: 'gnd',
         };
     }
     static info() {
         return {
-            name: "USB",
+            name: 'USB',
         };
     }
     wired(obniz) {
@@ -22400,13 +22688,13 @@ exports.default = USB;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Puls08M5stickcS {
     constructor() {
-        this.keys = ["vcc", "gnd", "tx", "rx"];
-        this.requiredKeys = ["tx", "rx"];
+        this.keys = ['vcc', 'gnd', 'tx', 'rx'];
+        this.requiredKeys = ['tx', 'rx'];
         this.delimiter = 0x0a;
     }
     static info() {
         return {
-            name: "Puls08M5stickcS",
+            name: 'Puls08M5stickcS',
         };
     }
     onbpmupdate(bpm) {
@@ -22417,7 +22705,7 @@ class Puls08M5stickcS {
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.uart = obniz.getFreeUart();
         this.uart.start({ tx: this.params.tx, rx: this.params.rx, baud: 19200 });
         this.receivingData = [];
@@ -22431,8 +22719,8 @@ class Puls08M5stickcS {
                 }
                 else {
                     const row = this.receivingData;
-                    if (row[0] === "#".charCodeAt(0)) {
-                        row[0] = " ".charCodeAt(0);
+                    if (row[0] === '#'.charCodeAt(0)) {
+                        row[0] = ' '.charCodeAt(0);
                         const str = this.decode(row);
                         const val = parseInt(str);
                         const bpm = val > 0 ? 60000 / val : null;
@@ -22452,7 +22740,7 @@ class Puls08M5stickcS {
         };
     }
     decode(data) {
-        return Buffer.from(data).toString("utf8");
+        return Buffer.from(data).toString('utf8');
         // if (typeof TextDecoder !== 'undefined') {
         //   let enc = new TextDecoder('utf-8');
         //   let arr = new Uint8Array(data);
@@ -22463,9 +22751,9 @@ class Puls08M5stickcS {
         // throw new Error('cannot decode');
     }
     init() {
-        this.uart.send("@OF30");
+        this.uart.send('@OF30');
         this.uart.send(0x0a);
-        this.uart.send("@RG2");
+        this.uart.send('@RG2');
         this.uart.send(0x0a);
     }
 }
@@ -22493,33 +22781,34 @@ class OMRON_2JCIE {
     constructor(peripheral) {
         this._peripheral = null;
         this.vibrationState = {
-            0x00: "NONE",
-            0x01: "druing vibration (Earthquake judgment in progress)",
-            0x02: "during earthquake",
+            0x00: 'NONE',
+            0x01: 'druing vibration (Earthquake judgment in progress)',
+            0x02: 'during earthquake',
         };
         if (peripheral && !OMRON_2JCIE.isDevice(peripheral)) {
-            throw new Error("peripheral is not OMRON_2JCIE");
+            throw new Error('peripheral is not OMRON_2JCIE');
         }
         this._peripheral = peripheral;
     }
     static info() {
         return {
-            name: "2JCIE",
+            name: '2JCIE',
         };
     }
     static isDevice(peripheral) {
-        return ((peripheral.localName && peripheral.localName.indexOf("Env") >= 0) ||
-            (peripheral.localName && peripheral.localName.indexOf("IM") >= 0) ||
-            (peripheral.localName && peripheral.localName.indexOf("Rbt") >= 0));
+        return ((peripheral.localName && peripheral.localName.indexOf('Env') >= 0) ||
+            (peripheral.localName && peripheral.localName.indexOf('IM') >= 0) ||
+            (peripheral.localName && peripheral.localName.indexOf('Rbt') >= 0));
     }
     /**
      * Get a datas from advertisement mode of OMRON 2JCIE
      */
     static getData(peripheral) {
         const adv_data = peripheral.adv_data;
-        if (peripheral.localName && peripheral.localName.indexOf("IM") >= 0) {
+        if (peripheral.localName && peripheral.localName.indexOf('IM') >= 0) {
             return {
-                temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[8], adv_data[9]) * 0.01,
+                temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[8], adv_data[9]) *
+                    0.01,
                 relative_humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[10], adv_data[11]) * 0.01,
                 light: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[12], adv_data[13]) * 1,
                 uv_index: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[14], adv_data[15]) * 0.01,
@@ -22532,12 +22821,13 @@ class OMRON_2JCIE {
             };
         }
         else if (peripheral.localName &&
-            peripheral.localName.indexOf("Rbt") >= 0 &&
+            peripheral.localName.indexOf('Rbt') >= 0 &&
             adv_data[6] === 0x02 &&
             adv_data[6] === 0x02 &&
             adv_data[7] === 0x01) {
             return {
-                temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[10], adv_data[9]) * 0.01,
+                temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[10], adv_data[9]) *
+                    0.01,
                 relative_humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[12], adv_data[11]) * 0.01,
                 light: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[14], adv_data[13]) * 1,
                 barometric_pressure: ObnizPartsBleInterface_1.default.signed32FromBinary(adv_data[18], adv_data[17], adv_data[16], adv_data[15]) * 0.001,
@@ -22553,17 +22843,17 @@ class OMRON_2JCIE {
     }
     async findWait() {
         const target = {
-            localName: ["Env", "Rbt"],
+            localName: ['Env', 'Rbt'],
         };
         await this.obniz.ble.initWait();
         this._peripheral = await this.obniz.ble.scan.startOneWait(target);
         return this._peripheral;
     }
     omron_uuid(uuid, type) {
-        if (type === "BAG") {
+        if (type === 'BAG') {
             return `0C4C${uuid}-7700-46F4-AA96D5E974E32A54`;
         }
-        else if (type === "USB") {
+        else if (type === 'USB') {
             return `AB70${uuid}-0A3A-11E8-BA89-0ED5F89F718B`;
         }
         else {
@@ -22575,11 +22865,11 @@ class OMRON_2JCIE {
             await this.findWait();
         }
         if (!this._peripheral) {
-            throw new Error("2JCIE not found");
+            throw new Error('2JCIE not found');
         }
         if (!this._peripheral.connected) {
             this._peripheral.ondisconnect = (reason) => {
-                if (typeof this.ondisconnect === "function") {
+                if (typeof this.ondisconnect === 'function') {
                     this.ondisconnect(reason);
                 }
             };
@@ -22610,9 +22900,18 @@ class OMRON_2JCIE {
         }
         return val;
     }
-    async getLatestData() {
+    async getLatestDataBAGWait() {
+        return this.getLatestDataWait();
+    }
+    /**
+     * @deprecated
+     */
+    getLatestData() {
+        return this.getLatestDataWait();
+    }
+    async getLatestDataWait() {
         await this.connectWait();
-        const c = this._peripheral.getService(this.omron_uuid("3000", "BAG")).getCharacteristic(this.omron_uuid("3001", "BAG"));
+        const c = this._peripheral.getService(this.omron_uuid('3000', 'BAG')).getCharacteristic(this.omron_uuid('3001', 'BAG'));
         const data = await c.readWait();
         const json = {
             row_number: data[0],
@@ -22628,9 +22927,12 @@ class OMRON_2JCIE {
         };
         return json;
     }
-    async getLatestSensorDataUSB() {
+    getLatestSensorDataUSB() {
+        return this.getLatestSensorDataUSBWait();
+    }
+    async getLatestSensorDataUSBWait() {
         await this.connectWait();
-        const c = this._peripheral.getService(this.omron_uuid("5010", "USB")).getCharacteristic(this.omron_uuid("5012", "USB"));
+        const c = this._peripheral.getService(this.omron_uuid('5010', 'USB')).getCharacteristic(this.omron_uuid('5012', 'USB'));
         const data = await c.readWait();
         const json = {
             seqence_number: data[0],
@@ -22644,9 +22946,15 @@ class OMRON_2JCIE {
         };
         return json;
     }
-    async getLatestCalculationDataUSB() {
+    /**
+     * @deprecated
+     */
+    getLatestCalculationDataUSB() {
+        return this.getLatestCalculationDataUSBWait();
+    }
+    async getLatestCalculationDataUSBWait() {
         await this.connectWait();
-        const c = this._peripheral.getService(this.omron_uuid("5010", "USB")).getCharacteristic(this.omron_uuid("5013", "USB"));
+        const c = this._peripheral.getService(this.omron_uuid('5010', 'USB')).getCharacteristic(this.omron_uuid('5013', 'USB'));
         const data = await c.readWait();
         const json = {
             sequence_number: data[0],
@@ -22689,11 +22997,11 @@ class ENERTALK_TOUCH {
         this.onbuttonpressed = null;
         this._peripheral = null;
         this._uuids = {
-            service: "3526797e-448b-4bbb-9145-c5083e0e09dc",
-            temperatureChar: "2A6E",
-            humidityChar: "2A6F",
-            illuminanceChar: "74c3fe9d-25b2-4903-8dcd-680e5ef0a6b3",
-            accelerometerChar: "71ef0979-0e2c-4a55-8d3c-78083869fae6",
+            service: '3526797e-448b-4bbb-9145-c5083e0e09dc',
+            temperatureChar: '2A6E',
+            humidityChar: '2A6F',
+            illuminanceChar: '74c3fe9d-25b2-4903-8dcd-680e5ef0a6b3',
+            accelerometerChar: '71ef0979-0e2c-4a55-8d3c-78083869fae6',
         };
         this._service = null;
         this._temperatureChar = null;
@@ -22701,37 +23009,41 @@ class ENERTALK_TOUCH {
         this._illuminanceChar = null;
         this._accelerometerChar = null;
         if (peripheral && !ENERTALK_TOUCH.isDevice(peripheral)) {
-            throw new Error("peripheral is not ENERTALK_TOUCH");
+            throw new Error('peripheral is not ENERTALK_TOUCH');
         }
         this._peripheral = peripheral;
     }
     static info() {
         return {
-            name: "ENERTALK_TOUCH",
+            name: 'ENERTALK_TOUCH',
         };
     }
     static isDevice(peripheral) {
-        if (peripheral.localName && peripheral.localName.startsWith("ensensor_")) {
+        if (peripheral.localName && peripheral.localName.startsWith('ensensor_')) {
             return true;
         }
         return false;
     }
     async connectWait() {
         if (!this._peripheral) {
-            throw new Error("ENERTALK_TOUCH is not find.");
+            throw new Error('ENERTALK_TOUCH is not find.');
         }
         this._peripheral.ondisconnect = (reason) => {
-            if (typeof this.ondisconnect === "function") {
+            if (typeof this.ondisconnect === 'function') {
                 this.ondisconnect(reason);
             }
         };
         await this._peripheral.connectWait();
         this._service = this._peripheral.getService(this._uuids.service);
+        if (!this._service) {
+            await this._peripheral.disconnectWait();
+            throw new Error('service is not find.');
+        }
         this._temperatureChar = this._service.getCharacteristic(this._uuids.temperatureChar);
         this._humidityChar = this._service.getCharacteristic(this._uuids.humidityChar);
         this._illuminanceChar = this._service.getCharacteristic(this._uuids.illuminanceChar);
         this._accelerometerChar = this._service.getCharacteristic(this._uuids.accelerometerChar);
-        const service180F = this._peripheral.getService("180F");
+        const service180F = this._peripheral.getService('180F');
         if (service180F) {
             this.batteryService = new batteryService_1.default(service180F);
         }
@@ -22742,7 +23054,7 @@ class ENERTALK_TOUCH {
     }
     async getTemperatureWait() {
         if (!this._temperatureChar) {
-            throw new Error("device is not connected");
+            throw new Error('device is not connected');
         }
         const tempData = await this._temperatureChar.readWait();
         const buf = Buffer.from(tempData);
@@ -22751,7 +23063,7 @@ class ENERTALK_TOUCH {
     }
     async getHumidityWait() {
         if (!this._humidityChar) {
-            throw new Error("device is not connected");
+            throw new Error('device is not connected');
         }
         const humidityData = await this._humidityChar.readWait();
         const humidity = humidityData[0];
@@ -22759,7 +23071,7 @@ class ENERTALK_TOUCH {
     }
     async getIlluminationWait() {
         if (!this._illuminanceChar) {
-            throw new Error("device is not connected");
+            throw new Error('device is not connected');
         }
         const illuminanceData = await this._illuminanceChar.readWait();
         const buf = Buffer.from(illuminanceData);
@@ -22768,7 +23080,7 @@ class ENERTALK_TOUCH {
     }
     async getAccelerometerWait() {
         if (!this._accelerometerChar) {
-            throw new Error("device is not connected");
+            throw new Error('device is not connected');
         }
         const accelerometerData = await this._accelerometerChar.readWait();
         const buf = Buffer.from(accelerometerData);
@@ -22807,18 +23119,18 @@ class HEM_6233T {
     }
     static info() {
         return {
-            name: "HEM_6233T",
+            name: 'HEM_6233T',
         };
     }
     static isDevice(peripheral) {
-        if (peripheral.localName && peripheral.localName.startsWith("BLESmart_")) {
+        if (peripheral.localName && peripheral.localName.startsWith('BLESmart_')) {
             return true;
         }
         return false;
     }
     async getDataWait(pairingKeys) {
         if (!this._peripheral) {
-            throw new Error("HEM_6233T is not find.");
+            throw new Error('HEM_6233T is not find.');
         }
         await this._peripheral.connectWait({
             autoDiscovery: true,
@@ -22831,8 +23143,8 @@ class HEM_6233T {
             this._peripheral.ondisconnect = (reason) => {
                 resolve(results);
             };
-            await this.subscribeWait("1805", "2A2B"); // current time
-            await this.subscribeWait("180F", "2A19", async () => {
+            await this.subscribeWait('1805', '2A2B'); // current time
+            await this.subscribeWait('180F', '2A19', async () => {
                 // send command (unknown meaning)
                 // In the command meaning, it should send to central from peripheral, but send to peripheral...?
                 this._peripheral.obnizBle.hci.write([
@@ -22853,17 +23165,19 @@ class HEM_6233T {
                 ]);
                 this._writeTimeCharWait(this._timezoneOffsetMinute);
             }); // battery Level
-            await this.subscribeWait("1810", "2A35", async (data) => {
-                console.error("SUCCESS", data);
+            await this.subscribeWait('1810', '2A35', async (data) => {
+                console.error('SUCCESS', data);
                 results.push(this._analyzeData(data));
             }); // blood pressure
         });
     }
     async subscribeWait(service, char, callback) {
         if (!this._peripheral) {
-            throw new Error("HEM_6233T is not find.");
+            throw new Error('HEM_6233T is not find.');
         }
-        const characteristics = this._peripheral.getService(service).getCharacteristic(char);
+        const characteristics = this._peripheral
+            .getService(service)
+            .getCharacteristic(char);
         await characteristics.registerNotifyWait(async (data) => {
             if (callback) {
                 callback(data);
@@ -22872,9 +23186,11 @@ class HEM_6233T {
     }
     async _writeTimeCharWait(timeOffsetMinute) {
         if (!this._peripheral) {
-            throw new Error("HEM_6233T is not find.");
+            throw new Error('HEM_6233T is not find.');
         }
-        const timeChar = this._peripheral.getService("1805").getCharacteristic("2A2B");
+        const timeChar = this._peripheral
+            .getService('1805')
+            .getCharacteristic('2A2B');
         const date = new Date();
         date.setTime(Date.now() + 1000 * 60 * timeOffsetMinute);
         const buf = Buffer.alloc(7);
@@ -22919,7 +23235,7 @@ class HEM_6233T {
             systolic: this._readFloatLE(buf, index) * scale,
             diastolic: this._readFloatLE(buf, index + 2) * scale,
             meanArterialPressure: this._readFloatLE(buf, index + 4) * scale,
-            unit: "mmHg",
+            unit: 'mmHg',
         };
         index += 6;
         if (flags & 0x02) {
@@ -22944,11 +23260,11 @@ class HEM_6233T {
         }
         if (flags & 0x10) {
             const statusFlag = {
-                0x01: "BodyMovementDetection",
-                0x02: "CuffFitDetection",
-                0x04: "IrregularPulseDetection",
-                0x08: "PulseRateRangeDetection",
-                0x10: "MeasurementPositionDetection",
+                0x01: 'BodyMovementDetection',
+                0x02: 'CuffFitDetection',
+                0x04: 'IrregularPulseDetection',
+                0x08: 'PulseRateRangeDetection',
+                0x10: 'MeasurementPositionDetection',
             };
             const mesurementStatus = buf.readUInt16LE(index);
             index++;
@@ -22992,19 +23308,20 @@ class HEM_9200T {
     }
     static info() {
         return {
-            name: "HEM_9200T",
+            name: 'HEM_9200T',
         };
     }
     static isDevice(peripheral) {
         if (peripheral.localName &&
-            (peripheral.localName.startsWith("BLESmart_") || peripheral.localName.startsWith("BLEsmart_"))) {
+            (peripheral.localName.startsWith('BLESmart_') ||
+                peripheral.localName.startsWith('BLEsmart_'))) {
             return true;
         }
         return false;
     }
     async getDataWait() {
         if (!this._peripheral) {
-            throw new Error("HEM_9200T is not find.");
+            throw new Error('HEM_9200T is not find.');
         }
         // console.log(`connecting HEM passkey ${this._passkey}`);
         await this._peripheral.connectWait({
@@ -23030,9 +23347,9 @@ class HEM_9200T {
             this._peripheral.ondisconnect = (reason) => {
                 resolve(results);
             };
-            await this.subscribeWait("1805", "2A2B"); // current time
-            await this.subscribeWait("180F", "2A19"); // battery level
-            await this.subscribeWait("1810", "2A35", async (data) => {
+            await this.subscribeWait('1805', '2A2B'); // current time
+            await this.subscribeWait('180F', '2A19'); // battery level
+            await this.subscribeWait('1810', '2A35', async (data) => {
                 // console.log(data);
                 results.push(this._analyzeData(data));
             }); // blood pressure
@@ -23040,9 +23357,11 @@ class HEM_9200T {
     }
     async subscribeWait(service, char, callback) {
         if (!this._peripheral) {
-            throw new Error("HEM_9200T is not find.");
+            throw new Error('HEM_9200T is not find.');
         }
-        const characteristics = this._peripheral.getService(service).getCharacteristic(char);
+        const characteristics = this._peripheral
+            .getService(service)
+            .getCharacteristic(char);
         await characteristics.registerNotifyWait(async (data) => {
             if (callback) {
                 callback(data);
@@ -23063,7 +23382,7 @@ class HEM_9200T {
             systolic: this._readSFloat(buf, index) * scale,
             diastolic: this._readSFloat(buf, index + 2) * scale,
             meanArterialPressure: this._readSFloat(buf, index + 4) * scale,
-            unit: "mmHg",
+            unit: 'mmHg',
         };
         index += 6;
         if (flags & 0x02) {
@@ -23088,11 +23407,11 @@ class HEM_9200T {
         }
         if (flags & 0x10) {
             const statusFlag = {
-                0x01: "BodyMovementDetection",
-                0x02: "CuffFitDetection",
-                0x04: "IrregularPulseDetection",
-                0x08: "PulseRateRangeDetection",
-                0x10: "MeasurementPositionDetection",
+                0x01: 'BodyMovementDetection',
+                0x02: 'CuffFitDetection',
+                0x04: 'IrregularPulseDetection',
+                0x08: 'PulseRateRangeDetection',
+                0x10: 'MeasurementPositionDetection',
             };
             const mesurementStatus = buf.readUInt16LE(index);
             index++;
@@ -23134,28 +23453,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class Logtta_AD {
     constructor(peripheral) {
         if (peripheral && !Logtta_AD.isDevice(peripheral)) {
-            throw new Error("peripheral is not logtta AD");
+            throw new Error('peripheral is not logtta AD');
         }
         this._peripheral = peripheral;
     }
     static info() {
         return {
-            name: "Logtta_AD",
+            name: 'Logtta_AD',
         };
     }
     static isDevice(peripheral) {
-        return peripheral.localName === "Analog";
+        return peripheral.localName === 'Analog';
     }
     static get_uuid(uuid) {
         return `4e43${uuid}-6687-4f3c-a1c3-1c327583f29d`;
     }
     async connectWait() {
         if (!this._peripheral) {
-            throw new Error("Logtta AD not found");
+            throw new Error('Logtta AD not found');
         }
         if (!this._peripheral.connected) {
             this._peripheral.ondisconnect = (reason) => {
-                if (typeof this.ondisconnect === "function") {
+                if (typeof this.ondisconnect === 'function') {
                     this.ondisconnect(reason);
                 }
             };
@@ -23171,7 +23490,9 @@ class Logtta_AD {
         if (!(this._peripheral && this._peripheral.connected)) {
             return null;
         }
-        const c = this._peripheral.getService(Logtta_AD.get_uuid("AE20")).getCharacteristic(Logtta_AD.get_uuid("AE21"));
+        const c = this._peripheral
+            .getService(Logtta_AD.get_uuid('AE20'))
+            .getCharacteristic(Logtta_AD.get_uuid('AE21'));
         const data = await c.readWait();
         return {
             ampere: (((data[0] << 8) | data[1]) * 916) / 16,
@@ -23192,7 +23513,9 @@ class Logtta_AD {
         if (!(this._peripheral && this._peripheral.connected)) {
             return;
         }
-        const c = this._peripheral.getService(Logtta_AD.get_uuid("AE20")).getCharacteristic(Logtta_AD.get_uuid("AE21"));
+        const c = this._peripheral
+            .getService(Logtta_AD.get_uuid('AE20'))
+            .getCharacteristic(Logtta_AD.get_uuid('AE21'));
         await c.registerNotifyWait((data) => {
             if (this.onNotify) {
                 this.onNotify({
@@ -23225,7 +23548,7 @@ class Logtta_Accel {
     }
     static info() {
         return {
-            name: "Logtta_Accel",
+            name: 'Logtta_Accel',
         };
     }
     static isDevice(peripheral) {
@@ -23310,15 +23633,30 @@ class Logtta_Accel {
             return {
                 x: {
                     peak: d[5] | (d[6] << 8),
-                    rms: d[7] | (d[8] << 8) | (d[9] << 16) | (d[10] << 24) | (d[11] << 32) | (d[12] << 40),
+                    rms: d[7] |
+                        (d[8] << 8) |
+                        (d[9] << 16) |
+                        (d[10] << 24) |
+                        (d[11] << 32) |
+                        (d[12] << 40),
                 },
                 y: {
                     peak: d[13] | (d[14] << 8),
-                    rms: d[15] | (d[16] << 8) | (d[17] << 16) | (d[18] << 24) | (d[19] << 32) | (d[20] << 40),
+                    rms: d[15] |
+                        (d[16] << 8) |
+                        (d[17] << 16) |
+                        (d[18] << 24) |
+                        (d[19] << 32) |
+                        (d[20] << 40),
                 },
                 z: {
                     peak: d[21] | (d[22] << 8),
-                    rms: d[23] | (d[24] << 8) | (d[25] << 16) | (d[26] << 24) | (d[27] << 32) | (d[28] << 40),
+                    rms: d[23] |
+                        (d[24] << 8) |
+                        (d[25] << 16) |
+                        (d[26] << 24) |
+                        (d[27] << 32) |
+                        (d[28] << 40),
                 },
             };
         }
@@ -23354,17 +23692,17 @@ const genericAccess_1 = __importDefault(__webpack_require__("./dist/src/parts/Bl
 class Logtta_CO2 {
     constructor(peripheral) {
         if (peripheral && !Logtta_CO2.isDevice(peripheral)) {
-            throw new Error("peripheral is not Logtta CO2");
+            throw new Error('peripheral is not Logtta CO2');
         }
         this._peripheral = peripheral;
     }
     static info() {
         return {
-            name: "Logtta_CO2",
+            name: 'Logtta_CO2',
         };
     }
     static isDevice(peripheral) {
-        return peripheral.localName === "CO2 Sensor";
+        return peripheral.localName === 'CO2 Sensor';
     }
     static isAdvDevice(peripheral) {
         if (peripheral.adv_data.length !== 31) {
@@ -23398,7 +23736,7 @@ class Logtta_CO2 {
         return advData;
     }
     static getName(data) {
-        let name = "";
+        let name = '';
         for (let i = 16; i < data.length; i++) {
             if (data[i] === 0) {
                 break;
@@ -23412,20 +23750,20 @@ class Logtta_CO2 {
     }
     async connectWait() {
         if (!this._peripheral) {
-            throw new Error("Logtta CO2 not found");
+            throw new Error('Logtta CO2 not found');
         }
         if (!this._peripheral.connected) {
             this._peripheral.ondisconnect = (reason) => {
-                if (typeof this.ondisconnect === "function") {
+                if (typeof this.ondisconnect === 'function') {
                     this.ondisconnect(reason);
                 }
             };
             await this._peripheral.connectWait();
-            const service1800 = this._peripheral.getService("1800");
+            const service1800 = this._peripheral.getService('1800');
             if (service1800) {
                 this.genericAccess = new genericAccess_1.default(service1800);
             }
-            const service180F = this._peripheral.getService("180F");
+            const service180F = this._peripheral.getService('180F');
             if (service180F) {
                 this.batteryService = new batteryService_1.default(service180F);
             }
@@ -23440,7 +23778,9 @@ class Logtta_CO2 {
         if (!(this._peripheral && this._peripheral.connected)) {
             return null;
         }
-        const c = this._peripheral.getService(Logtta_CO2.get_uuid("AB20")).getCharacteristic(Logtta_CO2.get_uuid("AB21"));
+        const c = this._peripheral
+            .getService(Logtta_CO2.get_uuid('AB20'))
+            .getCharacteristic(Logtta_CO2.get_uuid('AB21'));
         const data = await c.readWait();
         return data[0] * 256 + data[1];
     }
@@ -23448,7 +23788,9 @@ class Logtta_CO2 {
         if (!(this._peripheral && this._peripheral.connected)) {
             return;
         }
-        const c = this._peripheral.getService(Logtta_CO2.get_uuid("AB20")).getCharacteristic(Logtta_CO2.get_uuid("AB21"));
+        const c = this._peripheral
+            .getService(Logtta_CO2.get_uuid('AB20'))
+            .getCharacteristic(Logtta_CO2.get_uuid('AB21'));
         await c.registerNotifyWait((data) => {
             if (this.onNotify) {
                 this.onNotify(data[0] * 256 + data[1]);
@@ -23460,21 +23802,32 @@ class Logtta_CO2 {
             return;
         }
         if (code.length !== 4) {
-            throw new Error("Invalid length auth code");
+            throw new Error('Invalid length auth code');
         }
         const data = [0];
         for (let i = 0; i < code.length; i += 2) {
-            data.push((this.checkNumber(code.charAt(i)) << 4) | this.checkNumber(code.charAt(i + 1)));
+            data.push((this.checkNumber(code.charAt(i)) << 4) |
+                this.checkNumber(code.charAt(i + 1)));
         }
-        const c = this._peripheral.getService(Logtta_CO2.get_uuid("AB20")).getCharacteristic(Logtta_CO2.get_uuid("AB30"));
+        const c = this._peripheral
+            .getService(Logtta_CO2.get_uuid('AB20'))
+            .getCharacteristic(Logtta_CO2.get_uuid('AB30'));
         await c.writeWait(data);
     }
-    // 有効にしたあと、切断するとビーコンが発信される
-    async setBeaconMode(enable) {
+    /**
+     * @deprecated
+     * @param enable
+     */
+    setBeaconMode(enable) {
+        return this.setBeaconModeWait(enable);
+    }
+    async setBeaconModeWait(enable) {
         if (!(this._peripheral && this._peripheral.connected)) {
             return;
         }
-        const c = this._peripheral.getService(Logtta_CO2.get_uuid("AB20")).getCharacteristic(Logtta_CO2.get_uuid("AB2D"));
+        const c = this._peripheral
+            .getService(Logtta_CO2.get_uuid('AB20'))
+            .getCharacteristic(Logtta_CO2.get_uuid('AB2D'));
         if (enable) {
             await c.writeWait([1]);
         }
@@ -23483,7 +23836,7 @@ class Logtta_CO2 {
         }
     }
     checkNumber(data) {
-        if (data >= "0" && data <= "9") {
+        if (data >= '0' && data <= '9') {
             return parseInt(data, 10);
         }
         else {
@@ -23509,24 +23862,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class Logtta_TH {
     constructor(peripheral) {
         if (peripheral && !Logtta_TH.isDevice(peripheral)) {
-            throw new Error("peripheral is not logtta TH");
+            throw new Error('peripheral is not logtta TH');
         }
         this._peripheral = peripheral;
     }
     static info() {
         return {
-            name: "Logtta_TH",
+            name: 'Logtta_TH',
         };
     }
     static isDevice(peripheral) {
-        return peripheral.localName === "TH Sensor";
+        return peripheral.localName === 'TH Sensor';
     }
     static isAdvDevice(peripheral) {
         if (peripheral.adv_data.length !== 31) {
             return false;
         }
         const data = peripheral.adv_data;
-        if (data[5] !== 0x10 || data[6] !== 0x05 || data[7] !== 0x01 || data[16] !== 0x54 || data[17] !== 0x48) {
+        if (data[5] !== 0x10 ||
+            data[6] !== 0x05 ||
+            data[7] !== 0x01 ||
+            data[16] !== 0x54 ||
+            data[17] !== 0x48) {
             // CompanyID, Apperance, "T" "H"
             return false;
         }
@@ -23549,7 +23906,7 @@ class Logtta_TH {
         return advData;
     }
     static getName(data) {
-        let name = "";
+        let name = '';
         for (let i = 16; i < data.length; i++) {
             if (data[i] === 0) {
                 break;
@@ -23563,11 +23920,11 @@ class Logtta_TH {
     }
     async connectWait() {
         if (!this._peripheral) {
-            throw new Error("Logtta TH not found");
+            throw new Error('Logtta TH not found');
         }
         if (!this._peripheral.connected) {
             this._peripheral.ondisconnect = (reason) => {
-                if (typeof this.ondisconnect === "function") {
+                if (typeof this.ondisconnect === 'function') {
                     this.ondisconnect(reason);
                 }
             };
@@ -23583,7 +23940,9 @@ class Logtta_TH {
         if (!(this._peripheral && this._peripheral.connected)) {
             return null;
         }
-        const c = this._peripheral.getService(Logtta_TH.get_uuid("AA20")).getCharacteristic(Logtta_TH.get_uuid("AA21"));
+        const c = this._peripheral
+            .getService(Logtta_TH.get_uuid('AA20'))
+            .getCharacteristic(Logtta_TH.get_uuid('AA21'));
         const data = await c.readWait();
         return {
             temperature: (((data[0] << 8) | data[1]) / 65536) * 175.72 - 46.85,
@@ -23600,7 +23959,9 @@ class Logtta_TH {
         if (!(this._peripheral && this._peripheral.connected)) {
             return;
         }
-        const c = this._peripheral.getService(Logtta_TH.get_uuid("AA20")).getCharacteristic(Logtta_TH.get_uuid("AA21"));
+        const c = this._peripheral
+            .getService(Logtta_TH.get_uuid('AA20'))
+            .getCharacteristic(Logtta_TH.get_uuid('AA21'));
         await c.registerNotifyWait((data) => {
             if (this.onNotify) {
                 this.onNotify({
@@ -23615,21 +23976,32 @@ class Logtta_TH {
             return;
         }
         if (code.length !== 4) {
-            throw new Error("Invalid length auth code");
+            throw new Error('Invalid length auth code');
         }
         const data = [0];
         for (let i = 0; i < code.length; i += 2) {
-            data.push((this.checkNumber(code.charAt(i)) << 4) | this.checkNumber(code.charAt(i + 1)));
+            data.push((this.checkNumber(code.charAt(i)) << 4) |
+                this.checkNumber(code.charAt(i + 1)));
         }
-        const c = this._peripheral.getService(Logtta_TH.get_uuid("AA20")).getCharacteristic(Logtta_TH.get_uuid("AA30"));
+        const c = this._peripheral
+            .getService(Logtta_TH.get_uuid('AA20'))
+            .getCharacteristic(Logtta_TH.get_uuid('AA30'));
         await c.writeWait(data);
     }
-    // 有効にしたあと、切断するとビーコンが発信される
-    async setBeaconMode(enable) {
+    /**
+     * @deprecated
+     * @param enable
+     */
+    setBeaconMode(enable) {
+        return this.setBeaconModeWait(enable);
+    }
+    async setBeaconModeWait(enable) {
         if (!(this._peripheral && this._peripheral.connected)) {
             return;
         }
-        const c = this._peripheral.getService(Logtta_TH.get_uuid("AA20")).getCharacteristic(Logtta_TH.get_uuid("AA2D"));
+        const c = this._peripheral
+            .getService(Logtta_TH.get_uuid('AA20'))
+            .getCharacteristic(Logtta_TH.get_uuid('AA2D'));
         if (enable) {
             await c.writeWait([1]);
         }
@@ -23638,7 +24010,7 @@ class Logtta_TH {
         }
     }
     checkNumber(data) {
-        if (data >= "0" && data <= "9") {
+        if (data >= '0' && data <= '9') {
             return parseInt(data, 10);
         }
         else {
@@ -23674,7 +24046,7 @@ class MINEW_S1 {
         this.params = {};
     }
     static info() {
-        return { name: "MINEW_S1" };
+        return { name: 'MINEW_S1' };
     }
     static isDevice(peripheral, macAddress = null) {
         if (!this._hasPrefix(peripheral)) {
@@ -23704,11 +24076,11 @@ class MINEW_S1 {
         const batteryLevel = peripheral.adv_data[13];
         const macAddress = peripheral.adv_data
             .slice(14, 20)
-            .map((e) => ("0" + e.toString(16)).slice(-2))
-            .join("")
+            .map((e) => ('0' + e.toString(16)).slice(-2))
+            .join('')
             .match(/.{1,2}/g)
             .reverse()
-            .join("");
+            .join('');
         const name = util_1.default.dataArray2string(peripheral.adv_data.slice(20));
         return {
             frameType,
@@ -23739,11 +24111,11 @@ class MINEW_S1 {
         const humidity = humidityH + (humidityL * 1) / (1 << 8);
         const macAddress = peripheral.adv_data
             .splice(18)
-            .map((e) => ("0" + e.toString(16)).slice(-2))
-            .join("")
+            .map((e) => ('0' + e.toString(16)).slice(-2))
+            .join('')
             .match(/.{1,2}/g)
             .reverse()
-            .join("");
+            .join('');
         return {
             frameType,
             versionNumber,
@@ -23807,23 +24179,23 @@ class MT_500BT {
         this.keys = [];
         this.requiredKeys = [];
         this._uuids = {
-            MSDPService: "1ef19620a8034af0ae954b4b0aa26f29",
-            rxChar: "1ef19621a8034af0ae954b4b0aa26f29",
-            txChar: "1ef19622a8034af0ae954b4b0aa26f29",
+            MSDPService: '1ef19620a8034af0ae954b4b0aa26f29',
+            rxChar: '1ef19621a8034af0ae954b4b0aa26f29',
+            txChar: '1ef19622a8034af0ae954b4b0aa26f29',
         };
         if (peripheral && !MT_500BT.isDevice(peripheral)) {
-            throw new Error("peripheral is not MT_500BT");
+            throw new Error('peripheral is not MT_500BT');
         }
         this._peripheral = peripheral;
         this._emitter = new eventemitter3_1.default();
     }
     static info() {
         return {
-            name: "MT_500BT",
+            name: 'MT_500BT',
         };
     }
     static isDevice(peripheral) {
-        if (peripheral.localName && peripheral.localName.startsWith("MT-500")) {
+        if (peripheral.localName && peripheral.localName.startsWith('MT-500')) {
             return true;
         }
         return false;
@@ -23833,7 +24205,7 @@ class MT_500BT {
             return null;
         }
         const hexStr = peripheral.localName.slice(7, 11);
-        return Buffer.from(hexStr, "hex").readUInt16BE(0);
+        return Buffer.from(hexStr, 'hex').readUInt16BE(0);
     }
     static getCNKey(peripheral) {
         const ifuid = this.getIFUID(peripheral);
@@ -23847,7 +24219,7 @@ class MT_500BT {
     wired(obniz) { }
     async connectWait() {
         if (!this._peripheral) {
-            throw new Error("MT-500BT is not find.");
+            throw new Error('MT-500BT is not find.');
         }
         this._peripheral.ondisconnect = (reason) => {
             // console.log("disconnect");
@@ -23866,17 +24238,17 @@ class MT_500BT {
             await this.MSDPRxChar.registerNotifyWait((data) => {
                 // console.log("recv array", data);
                 if (data.length !== 20) {
-                    throw new Error("unknown format received");
+                    throw new Error('unknown format received');
                 }
                 if (data[0] !== 0xe7) {
-                    throw new Error("unknown header");
+                    throw new Error('unknown header');
                 }
                 const calcedChecksum = this._checksum(data.slice(0, 19));
                 if (data[19] !== calcedChecksum) {
-                    throw new Error("checksum failed");
+                    throw new Error('checksum failed');
                 }
                 const replyBuf = Buffer.from(data);
-                this._emitter.emit("" + replyBuf.readUInt8(1), replyBuf);
+                this._emitter.emit('' + replyBuf.readUInt8(1), replyBuf);
             });
             // console.log("registerNotifyWait");
             await this.startCommunicationCommandWait();
@@ -23886,24 +24258,24 @@ class MT_500BT {
         }
     }
     async startCommunicationCommandWait() {
-        const cnkey = "" + MT_500BT.getCNKey(this._peripheral); // to string
-        const CNKeyBuf = Buffer.from(cnkey, "utf8");
+        const cnkey = '' + MT_500BT.getCNKey(this._peripheral); // to string
+        const CNKeyBuf = Buffer.from(cnkey, 'utf8');
         const startCommand = this._createCommand(0xfd, Array.from(CNKeyBuf));
         // console.log("sendDataReplyWait");
         const res = await this._sendDataReplyWait(startCommand);
         if (res.readUInt8(2) !== 0) {
-            throw new Error("StartCommunicationError " + res.readUInt8(2));
+            throw new Error('StartCommunicationError ' + res.readUInt8(2));
         }
     }
     async getDeviceInformationWait() {
         const res1 = await this._sendDataReplyWait(this._createCommand(0x00, [0x01]));
         const res2 = await this._sendDataReplyWait(this._createCommand(0x00, [0x02]));
         const deviceType = {
-            2: "Pulse rate meter",
-            3: "SpO2(BO)",
-            4: "Thermometer",
-            5: "SpO2(MP)",
-            6: "Blood pressure meter",
+            2: 'Pulse rate meter',
+            3: 'SpO2(BO)',
+            4: 'Thermometer',
+            5: 'SpO2(MP)',
+            6: 'Blood pressure meter',
         };
         return {
             cls: deviceType[res1.readUInt8(3)],
@@ -23979,7 +24351,7 @@ class MT_500BT {
     }
     async disconnectWait() {
         if (!this._peripheral) {
-            throw new Error("MT-500BT is not find.");
+            throw new Error('MT-500BT is not find.');
         }
         if (this._peripheral.connected) {
             await this._peripheral.disconnectWait();
@@ -23987,7 +24359,7 @@ class MT_500BT {
     }
     _createCommand(cid, data = []) {
         if (data.length >= 18) {
-            throw new Error("too many data length");
+            throw new Error('too many data length');
         }
         const command = [0xe7, cid, ...data];
         for (let i = 0; i < 19; i++) {
@@ -24000,7 +24372,7 @@ class MT_500BT {
     }
     _checksum(data) {
         if (data.length !== 19) {
-            throw Error("unknown format");
+            throw Error('unknown format');
         }
         const sum = data.reduce((a, b) => a + b, 0);
         const inv = (0xa5 + sum) & 0xff;
@@ -24010,15 +24382,15 @@ class MT_500BT {
     _sendDataReplyWait(sendData) {
         return new Promise((resolve, reject) => {
             if (!this.MSDPRxChar) {
-                reject(new Error("MSDPRxChar is not found"));
+                reject(new Error('MSDPRxChar is not found'));
                 return;
             }
             if (!this.MSDPTxChar) {
-                reject(new Error("MSDPTxChar is not found"));
+                reject(new Error('MSDPTxChar is not found'));
                 return;
             }
             // console.log("write array", Array.from(sendData));
-            this._emitter.once("" + sendData.readUInt8(1), resolve);
+            this._emitter.once('' + sendData.readUInt8(1), resolve);
             this.MSDPTxChar.writeWait(Array.from(sendData));
         });
     }
@@ -24048,26 +24420,26 @@ class MiniBreeze {
         this.params = {};
     }
     static info() {
-        return { name: "MiniBreeze" };
+        return { name: 'MiniBreeze' };
     }
     static gasType() {
         return {
-            0: "none",
-            1: "HCHO",
-            2: "CO",
-            3: "CO2",
-            5: "Rn",
-            6: "PM1.0",
-            7: "PM2.5",
-            8: "PM10",
+            0: 'none',
+            1: 'HCHO',
+            2: 'CO',
+            3: 'CO2',
+            5: 'Rn',
+            6: 'PM1.0',
+            7: 'PM2.5',
+            8: 'PM10',
         };
     }
     static status() {
         return {
-            0: "BatteryEmpty",
-            1: "BatteryLow",
-            2: "BatteryNormal",
-            3: "BatteryCharging",
+            0: 'BatteryEmpty',
+            1: 'BatteryLow',
+            2: 'BatteryNormal',
+            3: 'BatteryCharging',
         };
     }
     static isDevice(peripheral) {
@@ -24080,16 +24452,18 @@ class MiniBreeze {
         if (!this._hasPrefix(peripheral)) {
             return null;
         }
-        if (!peripheral.adv_data || peripheral.adv_data.length !== 31 || !peripheral.localName) {
+        if (!peripheral.adv_data ||
+            peripheral.adv_data.length !== 31 ||
+            !peripheral.localName) {
             return null;
         }
         const buf = Buffer.from(peripheral.adv_data.splice(7));
-        const gasType = MiniBreeze.gasType()[buf.readUInt8(0)] || "unknown";
+        const gasType = MiniBreeze.gasType()[buf.readUInt8(0)] || 'unknown';
         const sensVal = buf.readUInt16LE(1);
         const temperature = buf.readUInt8(3);
         const humidity = buf.readUInt8(4);
-        const version = buf.readUInt8(5) + "." + buf.readUInt8(6) + "." + buf.readUInt8(7);
-        const status = MiniBreeze.status()[buf.readUInt8(9)] || "Invalid";
+        const version = buf.readUInt8(5) + '.' + buf.readUInt8(6) + '.' + buf.readUInt8(7);
+        const status = MiniBreeze.status()[buf.readUInt8(9)] || 'Invalid';
         return {
             gasType,
             sensVal,
@@ -24146,24 +24520,25 @@ class PLS_01BT {
         this.requiredKeys = [];
         this.onmesured = null;
         this._uuids = {
-            service: "CDEACB80-5235-4C07-8846-93A37EE6B86D",
-            rxChar: "CDEACB81-5235-4C07-8846-93A37EE6B86D",
+            service: 'CDEACB80-5235-4C07-8846-93A37EE6B86D',
+            rxChar: 'CDEACB81-5235-4C07-8846-93A37EE6B86D',
         };
         this._peripheral = null;
         this._rxCharacteristic = null;
         this._txCharacteristic = null;
         if (peripheral && !PLS_01BT.isDevice(peripheral)) {
-            throw new Error("peripheral is not PLS_01BT");
+            throw new Error('peripheral is not PLS_01BT');
         }
         this._peripheral = peripheral;
     }
     static info() {
         return {
-            name: "PLS_01BT",
+            name: 'PLS_01BT',
         };
     }
     static isDevice(peripheral) {
-        if (peripheral.localName && peripheral.localName.startsWith("My Oximeter")) {
+        if (peripheral.localName &&
+            peripheral.localName.startsWith('My Oximeter')) {
             return true;
         }
         return false;
@@ -24172,7 +24547,7 @@ class PLS_01BT {
     wired(obniz) { }
     async connectWait() {
         if (!this._peripheral) {
-            throw new Error("PLS_01BT is not find.");
+            throw new Error('PLS_01BT is not find.');
         }
         this._peripheral.ondisconnect = (reason) => {
             if (this.ondisconnect) {
@@ -24180,9 +24555,11 @@ class PLS_01BT {
             }
         };
         await this._peripheral.connectWait();
-        this._rxCharacteristic = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.rxChar);
+        this._rxCharacteristic = this._peripheral
+            .getService(this._uuids.service)
+            .getCharacteristic(this._uuids.rxChar);
         if (!this._rxCharacteristic) {
-            throw new Error("device is not PLS_01BT");
+            throw new Error('device is not PLS_01BT');
         }
         await this._rxCharacteristic.registerNotifyWait((data) => {
             if (data.length === 4 && data[0] === 0x81) {
@@ -24203,7 +24580,7 @@ class PLS_01BT {
     }
     async disconnectWait() {
         if (!this._peripheral) {
-            throw new Error("PLS_01BT is not find.");
+            throw new Error('PLS_01BT is not find.');
         }
         await this._peripheral.disconnectWait();
     }
@@ -24230,28 +24607,28 @@ class REX_BTPM25V {
         this.onbuttonpressed = null;
         this._peripheral = null;
         this._uuids = {
-            service: "00001523-1212-EFDE-1523-785FEABCD123",
-            buttonChar: "000000A1-1212-EFDE-1523-785FEABCD123",
-            continuousMeasurementChar: "000000A5-1212-EFDE-1523-785FEABCD123",
-            oneShotMeasurementChar: "000000A8-1212-EFDE-1523-785FEABCD123",
-            ledChar: "000000A9-1212-EFDE-1523-785FEABCD123",
+            service: '00001523-1212-EFDE-1523-785FEABCD123',
+            buttonChar: '000000A1-1212-EFDE-1523-785FEABCD123',
+            continuousMeasurementChar: '000000A5-1212-EFDE-1523-785FEABCD123',
+            oneShotMeasurementChar: '000000A8-1212-EFDE-1523-785FEABCD123',
+            ledChar: '000000A9-1212-EFDE-1523-785FEABCD123',
         };
         this._oneShotMeasurementCharacteristic = null;
         this._continuousMeasurementCharacteristic = null;
         this._ledCharacteristic = null;
         this._buttonCharacteristic = null;
         if (peripheral && !REX_BTPM25V.isDevice(peripheral)) {
-            throw new Error("peripheral is not RS_Seek3");
+            throw new Error('peripheral is not RS_Seek3');
         }
         this._peripheral = peripheral;
     }
     static info() {
         return {
-            name: "REX_BTPM25V",
+            name: 'REX_BTPM25V',
         };
     }
     static isDevice(peripheral) {
-        if (peripheral.localName !== "PM25V") {
+        if (peripheral.localName !== 'PM25V') {
             return false;
         }
         return true;
@@ -24260,10 +24637,10 @@ class REX_BTPM25V {
     wired(obniz) { }
     async connectWait() {
         if (!this._peripheral) {
-            throw new Error("RS_Seek3 is not find.");
+            throw new Error('RS_Seek3 is not find.');
         }
         this._peripheral.ondisconnect = (reason) => {
-            if (typeof this.ondisconnect === "function") {
+            if (typeof this.ondisconnect === 'function') {
                 this.ondisconnect(reason);
             }
         };
@@ -24274,13 +24651,15 @@ class REX_BTPM25V {
         this._continuousMeasurementCharacteristic = this._peripheral
             .getService(this._uuids.service)
             .getCharacteristic(this._uuids.continuousMeasurementChar);
-        this._ledCharacteristic = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.ledChar);
+        this._ledCharacteristic = this._peripheral
+            .getService(this._uuids.service)
+            .getCharacteristic(this._uuids.ledChar);
         this._buttonCharacteristic = this._peripheral
             .getService(this._uuids.service)
             .getCharacteristic(this._uuids.buttonChar);
         if (this._buttonCharacteristic) {
             this._buttonCharacteristic.registerNotify((data) => {
-                if (typeof this.onbuttonpressed === "function") {
+                if (typeof this.onbuttonpressed === 'function') {
                     this.onbuttonpressed(data[0] === 1);
                 }
             });
@@ -24292,7 +24671,7 @@ class REX_BTPM25V {
     }
     async measureOneShotWait() {
         if (!this._oneShotMeasurementCharacteristic) {
-            throw new Error("device is not connected");
+            throw new Error('device is not connected');
         }
         const sendData = new Array(20);
         sendData[0] = 0x01;
@@ -24301,18 +24680,24 @@ class REX_BTPM25V {
     }
     async measureOneShotExtWait() {
         if (!this._oneShotMeasurementCharacteristic) {
-            throw new Error("device is not connected");
+            throw new Error('device is not connected');
         }
         const sendData = new Array(20);
         sendData[0] = 0x10;
         const data = await this._sendAndReceiveWait(this._oneShotMeasurementCharacteristic, sendData);
         return this._analyzeResultExt(data);
     }
-    async getLedMode() {
+    getLedMode() {
+        return this.getLedModeWait();
+    }
+    async getLedModeWait() {
         if (!this._ledCharacteristic) {
-            throw new Error("device is not connected");
+            throw new Error('device is not connected');
         }
-        const data = this._sendAndReceiveWait(this._ledCharacteristic, [0xff, 0x00]);
+        const data = this._sendAndReceiveWait(this._ledCharacteristic, [
+            0xff,
+            0x00,
+        ]);
     }
     _sendAndReceiveWait(char, data) {
         return new Promise((resolve) => {
@@ -24347,17 +24732,26 @@ class REX_BTPM25V {
         };
     }
     _bitValue(buffer, location) {
-        const startLoc = { byte: Math.floor(location.start / 8), bit: location.start % 8 };
-        const endLoc = { byte: Math.floor(location.end / 8), bit: location.end % 8 };
+        const startLoc = {
+            byte: Math.floor(location.start / 8),
+            bit: location.start % 8,
+        };
+        const endLoc = {
+            byte: Math.floor(location.end / 8),
+            bit: location.end % 8,
+        };
         let result = 0;
-        result = buffer.readUInt8(endLoc.byte) & (~(0xff << (endLoc.bit + 1)) & 0xff);
+        result =
+            buffer.readUInt8(endLoc.byte) & (~(0xff << (endLoc.bit + 1)) & 0xff);
         if (startLoc.byte === endLoc.byte) {
             return result >> startLoc.bit;
         }
         for (let byte = endLoc.byte - 1; byte > startLoc.byte; byte--) {
             result = result << (8 + buffer.readInt8(byte));
         }
-        result = (result << (8 - startLoc.bit)) + (buffer.readUInt8(startLoc.byte) >> startLoc.bit);
+        result =
+            (result << (8 - startLoc.bit)) +
+                (buffer.readUInt8(startLoc.byte) >> startLoc.bit);
         return result;
     }
     _analyzeResultExt(data) {
@@ -24426,25 +24820,25 @@ class RS_BTIREX2 {
         this.requiredKeys = [];
         this.onbuttonpressed = null;
         this._uuids = {
-            service: "6e400001-b5a3-f393-e0a9-e50e24dcca9e",
-            rxChar: "6e400002-b5a3-f393-e0a9-e50e24dcca9e",
-            txChar: "6e400003-b5a3-f393-e0a9-e50e24dcca9e",
+            service: '6e400001-b5a3-f393-e0a9-e50e24dcca9e',
+            rxChar: '6e400002-b5a3-f393-e0a9-e50e24dcca9e',
+            txChar: '6e400003-b5a3-f393-e0a9-e50e24dcca9e',
         };
         this._peripheral = null;
         this._rxCharacteristic = null;
         this._txCharacteristic = null;
         if (peripheral && !RS_BTIREX2.isDevice(peripheral)) {
-            throw new Error("peripheral is not RS_BTIREX2");
+            throw new Error('peripheral is not RS_BTIREX2');
         }
         this._peripheral = peripheral;
     }
     static info() {
         return {
-            name: "RS_BTIREX2",
+            name: 'RS_BTIREX2',
         };
     }
     static isDevice(peripheral) {
-        if (peripheral.localName && peripheral.localName.startsWith("BTIR")) {
+        if (peripheral.localName && peripheral.localName.startsWith('BTIR')) {
             return true;
         }
         return false;
@@ -24453,21 +24847,25 @@ class RS_BTIREX2 {
     wired(obniz) { }
     async connectWait() {
         if (!this._peripheral) {
-            throw new Error("RS_BTIREX2 is not find.");
+            throw new Error('RS_BTIREX2 is not find.');
         }
         this._peripheral.ondisconnect = () => {
-            console.log("disconnect");
+            console.log('disconnect');
         };
         await this._peripheral.connectWait();
-        console.error("encrypt start");
+        console.error('encrypt start');
         // const handle = this._peripheral.obnizBle.centralBindings._handles[this._peripheral.address];
         // this._peripheral.obnizBle.centralBindings._aclStreams[handle].encrypt();
-        this._rxCharacteristic = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.rxChar);
-        this._txCharacteristic = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.txChar);
+        this._rxCharacteristic = this._peripheral
+            .getService(this._uuids.service)
+            .getCharacteristic(this._uuids.rxChar);
+        this._txCharacteristic = this._peripheral
+            .getService(this._uuids.service)
+            .getCharacteristic(this._uuids.txChar);
     }
     _sendAndReceiveWait(payload, crc = 0xb6) {
         if (!this._rxCharacteristic || !this._txCharacteristic) {
-            throw new Error("device is not connected");
+            throw new Error('device is not connected');
         }
         const data = new Array(payload.length + 4);
         data[0] = 0xaa;
@@ -24480,7 +24878,7 @@ class RS_BTIREX2 {
         const tx = this._txCharacteristic;
         const p = new Promise((resolve) => {
             tx.registerNotify((resultData) => {
-                console.error("CRC " + crc);
+                console.error('CRC ' + crc);
                 resolve(resultData);
             });
         });
@@ -24506,34 +24904,37 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class RS_BTWATTCH2 {
     /**
      * Constructor. Provide option at this time
+     *
      * @param peripheral
      * @param options
      */
     constructor(peripheral, options) {
-        this.keys = ["rtcAutoset"];
+        this.keys = ['rtcAutoset'];
         this.requiredKeys = [];
         // parsing
         this._totalSize = -1;
         this._received = [];
         this._waitings = [];
         if (peripheral && !RS_BTWATTCH2.isDevice(peripheral)) {
-            throw new Error("peripheral is not RS_BTWATTCH2");
+            throw new Error('peripheral is not RS_BTWATTCH2');
         }
         this._peripheral = peripheral;
         this.params = options || {};
     }
     static info() {
         return {
-            name: "RS_BTWATTCH2",
+            name: 'RS_BTWATTCH2',
         };
     }
     /**
      * Check found peripheral is part of this parts
+     *
      * @param peripheral
      */
     static isDevice(peripheral) {
         return (peripheral.localName &&
-            (peripheral.localName.indexOf("BTWATTCH2_") >= 0 || peripheral.localName.indexOf("btwattch2_") >= 0));
+            (peripheral.localName.indexOf('BTWATTCH2_') >= 0 ||
+                peripheral.localName.indexOf('btwattch2_') >= 0));
     }
     // @ts-ignore
     wired(obniz) { }
@@ -24541,20 +24942,20 @@ class RS_BTWATTCH2 {
      * Check if device is under paring mode(over 3 seconds button pressing)
      */
     isPairingMode() {
-        return this._peripheral.localName.indexOf("BTWATTCH2_") < 0;
+        return this._peripheral.localName.indexOf('BTWATTCH2_') < 0;
     }
     /**
      * get pairing key
      */
     async firstPairingWait() {
         if (!this._peripheral) {
-            throw new Error("No Peripheral Found");
+            throw new Error('No Peripheral Found');
         }
         if (this.isPairingMode() === false) {
             throw new Error(`peripheral is not pairing mode. Press Pairing Button on device over 3 seconds. LED will start blinking then it is under pairing mode.`);
         }
         this._peripheral.ondisconnect = (reason) => {
-            if (typeof this.ondisconnect === "function") {
+            if (typeof this.ondisconnect === 'function') {
                 this.ondisconnect(reason);
             }
         };
@@ -24607,22 +25008,22 @@ class RS_BTWATTCH2 {
             keys,
         });
         this._peripheral.ondisconnect = (reason) => {
-            if (typeof this.ondisconnect === "function") {
+            if (typeof this.ondisconnect === 'function') {
                 this.ondisconnect(reason);
             }
         };
-        const service = this._peripheral.getService("6e400001b5a3f393e0a9e50e24dcca9e");
+        const service = this._peripheral.getService('6e400001b5a3f393e0a9e50e24dcca9e');
         if (!service) {
             throw new Error(`no serivce found`);
         }
-        this._rxFromTargetCharacteristic = service.getCharacteristic("6e400003b5a3f393e0a9e50e24dcca9e");
-        this._txToTargetCharacteristic = service.getCharacteristic("6e400002b5a3f393e0a9e50e24dcca9e");
+        this._rxFromTargetCharacteristic = service.getCharacteristic('6e400003b5a3f393e0a9e50e24dcca9e');
+        this._txToTargetCharacteristic = service.getCharacteristic('6e400002b5a3f393e0a9e50e24dcca9e');
         try {
             await this._rxFromTargetCharacteristic.registerNotifyWait((data) => {
                 this._pushData(data);
             });
             if (this.params.rtcAutoset !== false) {
-                await this.setRTC();
+                await this.setRTCWait();
             }
         }
         catch (e) {
@@ -24645,14 +25046,22 @@ class RS_BTWATTCH2 {
         await this._peripheral.disconnectWait();
     }
     /**
-     * Seting Time on device clock
+     * @deprecated
      * @param date
      */
-    async setRTC(date) {
+    setRTC(date) {
+        return this.setRTCWait(date);
+    }
+    /**
+     * Setting Time on device clock
+     *
+     * @param date
+     */
+    async setRTCWait(date) {
         if (!date) {
             date = new Date();
         }
-        const ret = await this._transaction([
+        const ret = await this._transactionWait([
             0x01,
             date.getSeconds(),
             date.getMinutes(),
@@ -24670,10 +25079,11 @@ class RS_BTWATTCH2 {
     }
     /**
      * Set Relay ON/OFF
+     *
      * @param isOn
      */
     async setPowerStateWait(isOn) {
-        const ret = await this._transaction([0xa7, isOn ? 0x01 : 0x00]);
+        const ret = await this._transactionWait([0xa7, isOn ? 0x01 : 0x00]);
         if (ret.length !== 3) {
             throw new Error(`communiation error`);
         }
@@ -24691,7 +25101,7 @@ class RS_BTWATTCH2 {
      * Getting All of realtime data
      */
     async getRealTimeDataWait() {
-        const ret = await this._transaction([0x08]);
+        const ret = await this._transactionWait([0x08]);
         if (ret.length !== 27) {
             throw new Error(`communiation error`);
         }
@@ -24757,7 +25167,7 @@ class RS_BTWATTCH2 {
         }
         one.resolve(data);
     }
-    async _transaction(data) {
+    async _transactionWait(data) {
         return await new Promise(async (resolve, reject) => {
             const timeout = setTimeout(() => {
                 reject(new Error(`Timed out for waiting`));
@@ -25080,24 +25490,24 @@ class RS_Seek3 {
         this.onpressed = null;
         this._peripheral = null;
         this._uuids = {
-            service: "0EE71523-981A-46B8-BA64-019261C88478",
-            buttonChar: "0EE71524-981A-46B8-BA64-019261C88478",
-            tempHumidChar: "0EE7152C-981A-46B8-BA64-019261C88478",
+            service: '0EE71523-981A-46B8-BA64-019261C88478',
+            buttonChar: '0EE71524-981A-46B8-BA64-019261C88478',
+            tempHumidChar: '0EE7152C-981A-46B8-BA64-019261C88478',
         };
         this._buttonCharacteristic = null;
         this._tempHumidCharacteristic = null;
         if (peripheral && !RS_Seek3.isDevice(peripheral)) {
-            throw new Error("peripheral is not RS_Seek3");
+            throw new Error('peripheral is not RS_Seek3');
         }
         this._peripheral = peripheral;
     }
     static info() {
         return {
-            name: "RS_Seek3",
+            name: 'RS_Seek3',
         };
     }
     static isDevice(peripheral) {
-        if (peripheral.localName !== "Seek3") {
+        if (peripheral.localName !== 'Seek3') {
             return false;
         }
         return true;
@@ -25106,10 +25516,10 @@ class RS_Seek3 {
     wired(obniz) { }
     async connectWait() {
         if (!this._peripheral) {
-            throw new Error("RS_Seek3 is not find.");
+            throw new Error('RS_Seek3 is not find.');
         }
         this._peripheral.ondisconnect = (reason) => {
-            if (typeof this.ondisconnect === "function") {
+            if (typeof this.ondisconnect === 'function') {
                 this.ondisconnect(reason);
             }
         };
@@ -25122,7 +25532,7 @@ class RS_Seek3 {
             .getCharacteristic(this._uuids.tempHumidChar);
         if (this._buttonCharacteristic) {
             this._buttonCharacteristic.registerNotify((data) => {
-                if (typeof this.onpressed === "function") {
+                if (typeof this.onpressed === 'function') {
                     this.onpressed();
                 }
             });
@@ -25134,7 +25544,7 @@ class RS_Seek3 {
     }
     async getTempHumidWait() {
         if (!this._tempHumidCharacteristic) {
-            throw new Error("device is not connected");
+            throw new Error('device is not connected');
         }
         const data = await this._tempHumidCharacteristic.readWait();
         return { temperature: data[0], humidity: data[1] };
@@ -25158,52 +25568,54 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class UA1200BLE {
     constructor(peripheral, timezoneOffsetMinute) {
         if (!peripheral || !UA1200BLE.isDevice(peripheral)) {
-            throw new Error("peripheral is not UA1200BLE");
+            throw new Error('peripheral is not UA1200BLE');
         }
         this._peripheral = peripheral;
         this._timezoneOffsetMinute = timezoneOffsetMinute;
     }
     static info() {
         return {
-            name: "UA1200BLE",
+            name: 'UA1200BLE',
         };
     }
     static isDevice(peripheral) {
-        return peripheral.localName && peripheral.localName.startsWith("UA-1200BLE_");
+        return (peripheral.localName && peripheral.localName.startsWith('UA-1200BLE_'));
     }
     static isCooperationMode(peripheral) {
-        const peripheralHex = peripheral.adv_data.map((e) => e.toString(16)).join("");
+        const peripheralHex = peripheral.adv_data
+            .map((e) => e.toString(16))
+            .join('');
         const peripheralArray = [
             // "2",
             // "1",
             // "6",
             // "11",
             // "7",
-            "e4",
-            "ab",
-            "90",
-            "56",
-            "d",
-            "0",
-            "5c",
-            "97",
-            "6d",
-            "1b",
-            "34",
-            "5a",
-            "0",
-            "f0",
-            "3b",
-            "23",
-        ].join("");
+            'e4',
+            'ab',
+            '90',
+            '56',
+            'd',
+            '0',
+            '5c',
+            '97',
+            '6d',
+            '1b',
+            '34',
+            '5a',
+            '0',
+            'f0',
+            '3b',
+            '23',
+        ].join('');
         return peripheralHex.indexOf(peripheralArray) > -1;
     }
     async pairingWait() {
         if (!this._peripheral) {
-            throw new Error("UA1200BLE not found");
+            throw new Error('UA1200BLE not found');
         }
         this._peripheral.ondisconnect = (reason) => {
-            if (typeof this.ondisconnect === "function") {
+            if (typeof this.ondisconnect === 'function') {
                 this.ondisconnect(reason);
             }
         };
@@ -25221,7 +25633,7 @@ class UA1200BLE {
     }
     async getDataWait() {
         if (!this._peripheral) {
-            throw new Error("UA1200BLE not found");
+            throw new Error('UA1200BLE not found');
         }
         this._peripheral.ondisconnect = (reason) => {
             if (this.ondisconnect) {
@@ -25231,7 +25643,7 @@ class UA1200BLE {
         await this._peripheral.connectWait();
         return await new Promise(async (resolve, reject) => {
             if (!this._peripheral) {
-                throw new Error("UA1200BLE not found");
+                throw new Error('UA1200BLE not found');
             }
             const results = [];
             // Advertise mode (BP-00 or BP-01 in pp.7)
@@ -25240,10 +25652,10 @@ class UA1200BLE {
             // bloodPressureMeasurementChar.registerNotifyWait((data: number[]) => {
             //   results.push(this._analyzeData(data));
             // });
-            // await this._writeTimeChar(this._timezoneOffsetMinute);
+            // await this._writeTimeCharWait(this._timezoneOffsetMinute);
             // await this._writeCCCDChar();
-            const { bloodPressureMeasurementChar, timeChar } = this._getCharsSingleMode();
-            await this._writeTimeChar(this._timezoneOffsetMinute);
+            const { bloodPressureMeasurementChar, timeChar, } = this._getCharsSingleMode();
+            await this._writeTimeCharWait(this._timezoneOffsetMinute);
             await bloodPressureMeasurementChar.registerNotifyWait((data) => {
                 results.push(this._analyzeData(data));
             });
@@ -25320,14 +25732,14 @@ class UA1200BLE {
     }
     _getCharsCoopMode() {
         if (!this._peripheral) {
-            throw new Error("UA1200BLE not found");
+            throw new Error('UA1200BLE not found');
         }
         const bloodPressureMeasurementChar = this._peripheral
-            .getService("1810")
-            .getCharacteristic("2A35");
+            .getService('1810')
+            .getCharacteristic('2A35');
         const customServiceChar = this._peripheral
-            .getService("233bf0005a341b6d975c000d5690abe4") // Primary Service Custom Service(pp.26)
-            .getCharacteristic("233bf0015a341b6d975c000d5690abe4"); // Custom Characteristic(pp.27)
+            .getService('233bf0005a341b6d975c000d5690abe4') // Primary Service Custom Service(pp.26)
+            .getCharacteristic('233bf0015a341b6d975c000d5690abe4'); // Custom Characteristic(pp.27)
         return {
             bloodPressureMeasurementChar,
             customServiceChar,
@@ -25335,19 +25747,21 @@ class UA1200BLE {
     }
     _getCharsSingleMode() {
         if (!this._peripheral) {
-            throw new Error("UA1200BLE not found");
+            throw new Error('UA1200BLE not found');
         }
         const bloodPressureMeasurementChar = this._peripheral
-            .getService("1810")
-            .getCharacteristic("2A35");
-        const timeChar = this._peripheral.getService("1805").getCharacteristic("2A2B");
+            .getService('1810')
+            .getCharacteristic('2A35');
+        const timeChar = this._peripheral
+            .getService('1805')
+            .getCharacteristic('2A2B');
         // const CCCDChar = this._peripheral.getService("1810")!.getCharacteristic("2902")!;
         return {
             bloodPressureMeasurementChar,
             timeChar,
         };
     }
-    async _writeTimeChar(timeOffsetMinute) {
+    async _writeTimeCharWait(timeOffsetMinute) {
         const { timeChar } = this._getCharsSingleMode();
         const date = new Date();
         date.setTime(Date.now() + 1000 * 60 * timeOffsetMinute);
@@ -25384,22 +25798,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class UA651BLE {
     constructor(peripheral, timezoneOffsetMinute) {
         if (!peripheral) {
-            throw new Error("no peripheral");
+            throw new Error('no peripheral');
         }
         this._peripheral = peripheral;
         this._timezoneOffsetMinute = timezoneOffsetMinute;
     }
     static info() {
         return {
-            name: "UA651BLE",
+            name: 'UA651BLE',
         };
     }
     static isDevice(peripheral) {
-        return peripheral.localName && peripheral.localName.startsWith("A&D_UA-651BLE_");
+        return (peripheral.localName && peripheral.localName.startsWith('A&D_UA-651BLE_'));
     }
     async getDataWait() {
         if (!this._peripheral) {
-            throw new Error("UA651BLE not found");
+            throw new Error('UA651BLE not found');
         }
         if (!this._peripheral.connected) {
             this._peripheral.ondisconnect = (reason) => {
@@ -25411,12 +25825,12 @@ class UA651BLE {
         }
         return await new Promise(async (resolve, reject) => {
             if (!this._peripheral) {
-                throw new Error("UA651BLE not found");
+                throw new Error('UA651BLE not found');
             }
             const results = [];
-            const { bloodPressureMeasurementChar, timeChar, customServiceChar } = this._getChars();
+            const { bloodPressureMeasurementChar, timeChar, customServiceChar, } = this._getChars();
             await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
-            await this._writeTimeChar(this._timezoneOffsetMinute);
+            await this._writeTimeCharWait(this._timezoneOffsetMinute);
             await bloodPressureMeasurementChar.registerNotifyWait((data) => {
                 results.push(this._analyzeData(data));
             });
@@ -25492,22 +25906,24 @@ class UA651BLE {
     }
     _getChars() {
         if (!this._peripheral) {
-            throw new Error("UA651BLE not found");
+            throw new Error('UA651BLE not found');
         }
         const bloodPressureMeasurementChar = this._peripheral
-            .getService("1810")
-            .getCharacteristic("2A35");
-        const timeChar = this._peripheral.getService("1810").getCharacteristic("2A08");
+            .getService('1810')
+            .getCharacteristic('2A35');
+        const timeChar = this._peripheral
+            .getService('1810')
+            .getCharacteristic('2A08');
         const customServiceChar = this._peripheral
-            .getService("233bf0005a341b6d975c000d5690abe4") // Primary Service Custom Service(pp.14)
-            .getCharacteristic("233bf0015a341b6d975c000d5690abe4"); // Custom Characteristic(pp.14)
+            .getService('233bf0005a341b6d975c000d5690abe4') // Primary Service Custom Service(pp.14)
+            .getCharacteristic('233bf0015a341b6d975c000d5690abe4'); // Custom Characteristic(pp.14)
         return {
             bloodPressureMeasurementChar,
             timeChar,
             customServiceChar,
         };
     }
-    async _writeTimeChar(timeOffsetMinute) {
+    async _writeTimeCharWait(timeOffsetMinute) {
         const { timeChar } = this._getChars();
         const date = new Date();
         date.setTime(Date.now() + 1000 * 60 * timeOffsetMinute);
@@ -25541,25 +25957,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class UT201BLE {
     constructor(peripheral, timezoneOffsetMinute) {
         if (!peripheral || !UT201BLE.isDevice(peripheral)) {
-            throw new Error("peripheral is not UT201BLE");
+            throw new Error('peripheral is not UT201BLE');
         }
         this._peripheral = peripheral;
         this._timezoneOffsetMinute = timezoneOffsetMinute;
     }
     static info() {
         return {
-            name: "UT201BLE",
+            name: 'UT201BLE',
         };
     }
     static isDevice(peripheral) {
-        return peripheral.localName && peripheral.localName.startsWith("A&D_UT201BLE_");
+        return (peripheral.localName && peripheral.localName.startsWith('A&D_UT201BLE_'));
     }
     async pairingWait() {
         if (!this._peripheral) {
-            throw new Error("UT201BLE not found");
+            throw new Error('UT201BLE not found');
         }
         this._peripheral.ondisconnect = (reason) => {
-            if (typeof this.ondisconnect === "function") {
+            if (typeof this.ondisconnect === 'function') {
                 this.ondisconnect(reason);
             }
         };
@@ -25572,13 +25988,13 @@ class UT201BLE {
             },
         });
         const { timeChar, customServiceChar } = this._getChars();
-        await this._writeTimeChar(this._timezoneOffsetMinute);
+        await this._writeTimeCharWait(this._timezoneOffsetMinute);
         await customServiceChar.writeWait([2, 1, 3]); // disconnect req
         return key;
     }
     async getDataWait(pairingKeys) {
         if (!this._peripheral) {
-            throw new Error("UT201BLE not found");
+            throw new Error('UT201BLE not found');
         }
         await this._peripheral.connectWait({
             pairingOption: {
@@ -25587,15 +26003,15 @@ class UT201BLE {
         });
         return await new Promise(async (resolve, reject) => {
             if (!this._peripheral) {
-                throw new Error("UT201BLE not found");
+                throw new Error('UT201BLE not found');
             }
             const results = [];
-            const { temperatureMeasurementChar, timeChar, customServiceChar } = this._getChars();
+            const { temperatureMeasurementChar, timeChar, customServiceChar, } = this._getChars();
             this._peripheral.ondisconnect = (reason) => {
                 resolve(results);
             };
             await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
-            await this._writeTimeChar(this._timezoneOffsetMinute);
+            await this._writeTimeCharWait(this._timezoneOffsetMinute);
             await temperatureMeasurementChar.registerNotifyWait((data) => {
                 results.push(this._analyzeData(data));
             });
@@ -25639,41 +26055,43 @@ class UT201BLE {
         }
         if (flags & 0x04) {
             const types = [
-                "unknown",
-                "Armpit",
-                "Body",
-                "Ear",
-                "Finger",
-                "Gastro-intestinal Tract",
-                "Mouth",
-                "Rectum",
-                "Toe",
-                "Tympanum",
+                'unknown',
+                'Armpit',
+                'Body',
+                'Ear',
+                'Finger',
+                'Gastro-intestinal Tract',
+                'Mouth',
+                'Rectum',
+                'Toe',
+                'Tympanum',
             ];
             const value = buf.readUInt8(index);
             index++;
-            result.temperatureType = types[value] || "unknown";
+            result.temperatureType = types[value] || 'unknown';
         }
         return result;
     }
     _getChars() {
         if (!this._peripheral) {
-            throw new Error("UT201BLE not found");
+            throw new Error('UT201BLE not found');
         }
         const temperatureMeasurementChar = this._peripheral
-            .getService("1809")
-            .getCharacteristic("2A1C");
-        const timeChar = this._peripheral.getService("1809").getCharacteristic("2A08");
+            .getService('1809')
+            .getCharacteristic('2A1C');
+        const timeChar = this._peripheral
+            .getService('1809')
+            .getCharacteristic('2A08');
         const customServiceChar = this._peripheral
-            .getService("233bf0005a341b6d975c000d5690abe4")
-            .getCharacteristic("233bf0015a341b6d975c000d5690abe4");
+            .getService('233bf0005a341b6d975c000d5690abe4')
+            .getCharacteristic('233bf0015a341b6d975c000d5690abe4');
         return {
             temperatureMeasurementChar,
             timeChar,
             customServiceChar,
         };
     }
-    async _writeTimeChar(timeOffsetMinute) {
+    async _writeTimeCharWait(timeOffsetMinute) {
         const { timeChar } = this._getChars();
         const date = new Date();
         date.setTime(Date.now() + 1000 * 60 * timeOffsetMinute);
@@ -25709,7 +26127,7 @@ class BleBatteryService {
         this._service = service;
     }
     async getBatteryLevelWait() {
-        const char = this._service.getCharacteristic("2A19");
+        const char = this._service.getCharacteristic('2A19');
         if (!char) {
             return null;
         }
@@ -25739,7 +26157,7 @@ class BleGenericAccess {
         this._service = service;
     }
     async getDeviceNameWait() {
-        const char = this._service.getCharacteristic("2A00");
+        const char = this._service.getCharacteristic('2A00');
         if (!char) {
             return null;
         }
@@ -25792,36 +26210,53 @@ class cir415a {
         ];
         this.sessionKey = [];
         this.randomDeviceNumber = [];
-        this.randomNumber = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+        this.randomNumber = [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+        ];
         this._uuids = {
-            service: "3C4AFFF0-4783-3DE5-A983-D348718EF133",
-            writeChar: "3C4AFFF1-4783-3DE5-A983-D348718EF133",
-            readChar: "3C4AFFF2-4783-3DE5-A983-D348718EF133",
+            service: '3C4AFFF0-4783-3DE5-A983-D348718EF133',
+            writeChar: '3C4AFFF1-4783-3DE5-A983-D348718EF133',
+            readChar: '3C4AFFF2-4783-3DE5-A983-D348718EF133',
         };
         this.readData = [];
         this.readChar = null;
         if (peripheral && !cir415a.isDevice(peripheral)) {
-            throw new Error("peripheral is not cir415a");
+            throw new Error('peripheral is not cir415a');
         }
         this._peripheral = peripheral;
         this._authenticated = false;
     }
     static info() {
         return {
-            name: "cir415a",
+            name: 'cir415a',
         };
     }
     static isDevice(peripheral) {
         var _a;
-        return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf("ACR1255U-J1-")) === 0;
+        return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf('ACR1255U-J1-')) === 0;
     }
     async connectWait() {
         if (!this._peripheral) {
-            throw new Error("peripheral is not cir415a");
+            throw new Error('peripheral is not cir415a');
         }
         if (!this._peripheral.connected) {
             this._peripheral.ondisconnect = (reason) => {
-                if (typeof this.ondisconnect === "function") {
+                if (typeof this.ondisconnect === 'function') {
                     this.ondisconnect(reason);
                 }
             };
@@ -25831,19 +26266,28 @@ class cir415a {
         }
         const service = this._peripheral.getService(this._uuids.service);
         this.readChar = service.getCharacteristic(this._uuids.writeChar);
-        await service.getCharacteristic(this._uuids.readChar).registerNotifyWait(async (data) => {
-            this.readPacket(data);
+        await service
+            .getCharacteristic(this._uuids.readChar)
+            .registerNotifyWait(async (data) => {
+            await this.readPacketWait(data);
         });
-        await this.writeBle([0x6b, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x45, 0x00], null); // auth step.1
+        await this.writeBleWait([0x6b, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x45, 0x00], null); // auth step.1
     }
     async disconnectWait() {
         if (this._peripheral && this._peripheral.connected) {
             await this._peripheral.disconnectWait();
         }
     }
-    async write(data) {
+    /**
+     * @deprecated
+     * @param data
+     */
+    write(data) {
+        return this.writeWait(data);
+    }
+    async writeWait(data) {
         if (!this._authenticated) {
-            throw new Error("cir415a no authenticate");
+            throw new Error('cir415a no authenticate');
         }
         if (data.length % 16 !== 0) {
             const l = 16 - (data.length % 16);
@@ -25851,27 +26295,55 @@ class cir415a {
                 data.push(0xff);
             }
         }
-        this.writeBle(data, this.sessionKey);
+        await this.writeBleWait(data, this.sessionKey);
     }
     setMasterKey(key) {
         if (key.length !== 16) {
-            throw new Error("setMasterKey length error");
+            throw new Error('setMasterKey length error');
         }
         this.masterKey = key;
     }
     async setAutoPollingWait(enable) {
         if (!this._authenticated) {
-            throw new Error("cir415a no authenticate");
+            throw new Error('cir415a no authenticate');
         }
-        await this.write([0x6b, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x40, enable ? 0x01 : 0x00]);
+        await this.writeWait([
+            0x6b,
+            0x00,
+            0x05,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0xe0,
+            0x00,
+            0x00,
+            0x40,
+            enable ? 0x01 : 0x00,
+        ]);
     }
-    async writeADPU(data) {
+    /**
+     * @deprecated
+     * @param data
+     */
+    writeADPU(data) {
+        return this.writeADPUWait(data);
+    }
+    async writeADPUWait(data) {
         if (!this._authenticated) {
-            throw new Error("cir415a no authenticate");
+            throw new Error('cir415a no authenticate');
         }
-        await this.write([0x6f, (data.length & 0xff00) >> 8, data.length & 0x00ff, 0x00, 0x00, 0x00, 0x00].concat(data));
+        await this.writeWait([
+            0x6f,
+            (data.length & 0xff00) >> 8,
+            data.length & 0x00ff,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+        ].concat(data));
     }
-    readPacket(data) {
+    async readPacketWait(data) {
         this.readData = this.readData.concat(data);
         if (this.readData[0] !== 0x05) {
             this.readData = [];
@@ -25884,11 +26356,11 @@ class cir415a {
         if (this.readData[dLength + 4] === 0x0a) {
             // last packet check
             data = this.readData.slice(0, dLength + 5);
-            this.parseBlePacket(data);
+            await this.parseBlePacketWait(data);
             if (this.readData.length > dLength + 5) {
                 // more data
                 this.readData = this.readData.slice(dLength + 5);
-                this.readPacket([]);
+                await this.readPacketWait([]);
             }
             else {
                 // delete data
@@ -25901,17 +26373,17 @@ class cir415a {
         }
     }
     encrypt(data, key) {
-        const c = crypto_1.default.createCipheriv("aes-128-cbc", Buffer.from(key), new Uint8Array(16));
+        const c = crypto_1.default.createCipheriv('aes-128-cbc', Buffer.from(key), new Uint8Array(16));
         c.setAutoPadding(false);
-        let t = c.update(Buffer.from(data), undefined, "hex");
-        t += c.final("hex");
-        return Array.from(Buffer.from(t, "hex"));
+        let t = c.update(Buffer.from(data), undefined, 'hex');
+        t += c.final('hex');
+        return Array.from(Buffer.from(t, 'hex'));
     }
     decrypt(data, key) {
-        const dec = crypto_1.default.createDecipheriv("aes-128-cbc", Buffer.from(key), new Uint8Array(16));
+        const dec = crypto_1.default.createDecipheriv('aes-128-cbc', Buffer.from(key), new Uint8Array(16));
         dec.setAutoPadding(false);
-        let t = dec.update(Buffer.from(data), "binary", "binary");
-        t += dec.final("binary");
+        let t = dec.update(Buffer.from(data), 'binary', 'binary');
+        t += dec.final('binary');
         const d = Array.from(Buffer.from(t));
         const list = [];
         for (let i = 0; i < d.length; i++) {
@@ -25919,7 +26391,7 @@ class cir415a {
         }
         return list;
     }
-    parseBlePacket(data) {
+    async parseBlePacketWait(data) {
         switch (data[3]) {
             case 0x83:
                 if (!this._authenticated) {
@@ -25931,11 +26403,26 @@ class cir415a {
                         }
                         this.randomDeviceNumber = randomDevice;
                         randomDevice = this.decrypt(randomDevice, this.masterKey);
-                        this.sessionKey = randomDevice.slice(0, 8).concat(this.randomNumber.slice(0, 8));
+                        this.sessionKey = randomDevice
+                            .slice(0, 8)
+                            .concat(this.randomNumber.slice(0, 8));
                         randomDevice = this.decrypt(this.randomNumber.concat(randomDevice), this.masterKey);
-                        let sendPacket = [0x6b, 0x00, 0x25, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x46, 0x00];
+                        let sendPacket = [
+                            0x6b,
+                            0x00,
+                            0x25,
+                            0x00,
+                            0x00,
+                            0x00,
+                            0x00,
+                            0xe0,
+                            0x00,
+                            0x00,
+                            0x46,
+                            0x00,
+                        ];
                         sendPacket = sendPacket.concat(randomDevice);
-                        this.writeBle(sendPacket, null);
+                        await this.writeBleWait(sendPacket, null);
                         return;
                         // auth step.3
                     }
@@ -25971,7 +26458,7 @@ class cir415a {
             this.onNotify(dt);
         }
     }
-    async writeBle(data, key) {
+    async writeBleWait(data, key) {
         let packet = [0x05, (data.length & 0xff00) >> 8, data.length & 0x00ff];
         let checksum = 0;
         for (let i = 0; i < data.length; i++) {
@@ -26031,7 +26518,7 @@ class IBS01 {
     }
     static info() {
         return {
-            name: "iBS01",
+            name: 'iBS01',
         };
     }
     static isDevice(peripheral) {
@@ -26060,7 +26547,7 @@ class IBS01 {
             battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
             button: false,
         };
-        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+        if (peripheral.adv_data[11] & 0b0001) {
             data.button = true;
         }
         return data;
@@ -26111,7 +26598,7 @@ class IBS01G {
     }
     static info() {
         return {
-            name: "iBS01G",
+            name: 'iBS01G',
         };
     }
     static isDevice(peripheral) {
@@ -26142,13 +26629,13 @@ class IBS01G {
             moving: false,
             fall: false,
         };
-        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+        if (peripheral.adv_data[11] & 0b0001) {
             data.button = true;
         }
-        if (Boolean(peripheral.adv_data[11] & 0b0010)) {
+        if (peripheral.adv_data[11] & 0b0010) {
             data.moving = true;
         }
-        if (Boolean(peripheral.adv_data[11] & 0b1000)) {
+        if (peripheral.adv_data[11] & 0b1000) {
             data.fall = true;
         }
         return data;
@@ -26199,7 +26686,7 @@ class IBS01H {
     }
     static info() {
         return {
-            name: "iBS01H",
+            name: 'iBS01H',
         };
     }
     static isDevice(peripheral) {
@@ -26229,10 +26716,10 @@ class IBS01H {
             button: false,
             hall_sensor: false,
         };
-        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+        if (peripheral.adv_data[11] & 0b0001) {
             data.button = true;
         }
-        if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+        if (peripheral.adv_data[11] & 0b0100) {
             data.hall_sensor = true;
         }
         return data;
@@ -26322,7 +26809,7 @@ class IBS01RG {
     }
     static info() {
         return {
-            name: "iBS01RG",
+            name: 'iBS01RG',
         };
     }
     static isDevice(peripheral) {
@@ -26353,7 +26840,8 @@ class IBS01RG {
             });
         }
         const data = {
-            battery: (peripheral.adv_data[9] + (peripheral.adv_data[10] & 0x0f) * 256) * 0.01,
+            battery: (peripheral.adv_data[9] + (peripheral.adv_data[10] & 0x0f) * 256) *
+                0.01,
             active: Boolean((peripheral.adv_data[10] & 0x10) >> 4),
             button: Boolean((peripheral.adv_data[10] & 0x20) >> 5),
             acceleration: accelArray,
@@ -26405,7 +26893,7 @@ class IBS01T {
     }
     static info() {
         return {
-            name: "iBS01T",
+            name: 'iBS01T',
         };
     }
     static isDevice(peripheral) {
@@ -26438,13 +26926,13 @@ class IBS01T {
             temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
             humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[15], peripheral.adv_data[14]),
         };
-        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+        if (peripheral.adv_data[11] & 0b0001) {
             d.button = true;
         }
-        if (Boolean(peripheral.adv_data[11] & 0b0010)) {
+        if (peripheral.adv_data[11] & 0b0010) {
             d.moving = true;
         }
-        if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+        if (peripheral.adv_data[11] & 0b0100) {
             d.reed = true;
         }
         return d;
@@ -26495,7 +26983,7 @@ class IBS02IR {
     }
     static info() {
         return {
-            name: "iBS02IR",
+            name: 'iBS02IR',
         };
     }
     static isDevice(peripheral) {
@@ -26568,7 +27056,7 @@ class IBS02PIR {
     }
     static info() {
         return {
-            name: "iBS02PIR",
+            name: 'iBS02PIR',
         };
     }
     static isDevice(peripheral) {
@@ -26641,7 +27129,7 @@ class IBS03 {
     }
     static info() {
         return {
-            name: "iBS03",
+            name: 'iBS03',
         };
     }
     static isDevice(peripheral) {
@@ -26668,10 +27156,10 @@ class IBS03 {
             button: false,
             hall_sensor: false,
         };
-        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+        if (peripheral.adv_data[11] & 0b0001) {
             data.button = true;
         }
-        if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+        if (peripheral.adv_data[11] & 0b0100) {
             data.hall_sensor = true;
         }
         return data;
@@ -26722,7 +27210,7 @@ class IBS03G {
     }
     static info() {
         return {
-            name: "iBS03G",
+            name: 'iBS03G',
         };
     }
     static isDevice(peripheral) {
@@ -26750,13 +27238,13 @@ class IBS03G {
             moving: false,
             fall: false,
         };
-        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+        if (peripheral.adv_data[11] & 0b0001) {
             data.button = true;
         }
-        if (Boolean(peripheral.adv_data[11] & 0b0010)) {
+        if (peripheral.adv_data[11] & 0b0010) {
             data.moving = true;
         }
-        if (Boolean(peripheral.adv_data[11] & 0b1000)) {
+        if (peripheral.adv_data[11] & 0b1000) {
             data.fall = true;
         }
         return data;
@@ -26811,7 +27299,7 @@ class IBS03T {
     }
     static info() {
         return {
-            name: "iBS03T",
+            name: 'iBS03T',
         };
     }
     static isDevice(peripheral) {
@@ -26840,13 +27328,13 @@ class IBS03T {
             hall_sensor: false,
             temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
         };
-        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+        if (peripheral.adv_data[11] & 0b0001) {
             data.button = true;
         }
-        if (Boolean(peripheral.adv_data[11] & 0b0010)) {
+        if (peripheral.adv_data[11] & 0b0010) {
             data.moving = true;
         }
-        if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+        if (peripheral.adv_data[11] & 0b0100) {
             data.hall_sensor = true;
         }
         return data;
@@ -26901,7 +27389,7 @@ class IBS03TP {
     }
     static info() {
         return {
-            name: "iBS03TP",
+            name: 'iBS03TP',
         };
     }
     static isDevice(peripheral) {
@@ -26931,13 +27419,13 @@ class IBS03TP {
             temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
             probe_temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[15], peripheral.adv_data[14]) * 0.01,
         };
-        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+        if (peripheral.adv_data[11] & 0b0001) {
             data.button = true;
         }
-        if (Boolean(peripheral.adv_data[11] & 0b0010)) {
+        if (peripheral.adv_data[11] & 0b0010) {
             data.moving = true;
         }
-        if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+        if (peripheral.adv_data[11] & 0b0100) {
             data.hall_sensor = true;
         }
         return data;
@@ -26988,7 +27476,7 @@ class IBS04 {
     }
     static info() {
         return {
-            name: "iBS04",
+            name: 'iBS04',
         };
     }
     static isDevice(peripheral) {
@@ -27014,7 +27502,7 @@ class IBS04 {
             battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
             button: false,
         };
-        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+        if (peripheral.adv_data[11] & 0b0001) {
             data.button = true;
         }
         return data;
@@ -27065,7 +27553,7 @@ class IBS04I {
     }
     static info() {
         return {
-            name: "iBS04i",
+            name: 'iBS04i',
         };
     }
     static isDevice(peripheral) {
@@ -27112,7 +27600,7 @@ class IBS04I {
         }
         const type = advertise[0][14];
         if (type !== 24) {
-            // iBS04i以外
+            // is not ibs04i
             return null;
         }
         return advertise[0];
@@ -27160,7 +27648,10 @@ const advertising_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/
 const device_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/device.js"));
 class Linking {
     constructor(params) {
-        this.PRIMARY_SERVICE_UUID_LIST = ["b3b3690150d34044808d50835b13a6cd", "fe4e"];
+        this.PRIMARY_SERVICE_UUID_LIST = [
+            'b3b3690150d34044808d50835b13a6cd',
+            'fe4e',
+        ];
         this.initialized = false;
         this.keys = [];
         this.requiredKeys = [];
@@ -27175,7 +27666,7 @@ class Linking {
     }
     static info() {
         return {
-            name: "Linking",
+            name: 'Linking',
         };
     }
     get LinkingAdvertising() {
@@ -27187,30 +27678,43 @@ class Linking {
     wired(obniz) {
         this.obniz = obniz;
     }
-    async init() {
+    /**
+     * @deprecated
+     */
+    init() {
+        return this.initWait();
+    }
+    async initWait() {
         await this.obniz.ble.initWait();
         this.initialized = true;
     }
+    /**
+     * @deprecated
+     * @param p
+     */
     discover(p) {
+        return this.discoverWait(p);
+    }
+    discoverWait(p) {
         this._checkInitialized();
         let duration = 5000;
-        let name_filter = "";
-        let id_filter = "";
+        let name_filter = '';
+        let id_filter = '';
         let quick = false;
-        if (p && typeof p === "object") {
-            if ("duration" in p && typeof p.duration === "number") {
+        if (p && typeof p === 'object') {
+            if ('duration' in p && typeof p.duration === 'number') {
                 duration = p.duration;
                 if (duration < 1000) {
                     duration = 1000;
                 }
             }
-            if ("nameFilter" in p && typeof (p.nameFilter === "string")) {
+            if ('nameFilter' in p && typeof (p.nameFilter === 'string')) {
                 name_filter = p.nameFilter;
             }
-            if ("idFilter" in p && typeof (p.idFilter === "string")) {
+            if ('idFilter' in p && typeof (p.idFilter === 'string')) {
                 id_filter = p.idFilter;
             }
-            if ("quick" in p && typeof (p.quick === "boolean")) {
+            if ('quick' in p && typeof (p.quick === 'boolean')) {
                 quick = p.quick;
             }
         }
@@ -27244,12 +27748,10 @@ class Linking {
     }
     _checkInitialized() {
         if (this.initialized === false) {
-            throw new Error("The `init()` method has not been called yet.");
-            return;
+            throw new Error('The `init()` method has not been called yet.');
         }
         if (this._discover_status === true) {
-            throw new Error("The `discover()` or the `startScan()` method is in progress.");
-            return;
+            throw new Error('The `discover()` or the `startScan()` method is in progress.');
         }
     }
     _discoveredDevice(peripheral, name_filter, id_filter) {
@@ -27270,7 +27772,7 @@ class Linking {
             return null;
         }
         const device = new device_1.default(peripheral);
-        if (this.ondiscover && typeof this.ondiscover === "function") {
+        if (this.ondiscover && typeof this.ondiscover === 'function') {
             this.ondiscover(device);
         }
         this._peripherals[addr] = device;
@@ -27299,13 +27801,13 @@ class Linking {
     }
     startScan(p) {
         this._checkInitialized();
-        let name_filter = "";
-        let id_filter = "";
-        if (p && typeof p === "object") {
-            if ("nameFilter" in p && typeof (p.nameFilter === "string")) {
+        let name_filter = '';
+        let id_filter = '';
+        if (p && typeof p === 'object') {
+            if ('nameFilter' in p && typeof (p.nameFilter === 'string')) {
                 name_filter = p.nameFilter;
             }
-            if ("idFilter" in p && typeof (p.idFilter === "string")) {
+            if ('idFilter' in p && typeof (p.idFilter === 'string')) {
                 id_filter = p.idFilter;
             }
         }
@@ -27320,7 +27822,7 @@ class Linking {
             // if (id_filter && peripheral.id.indexOf(id_filter) !== 0) {
             //   return;
             // }
-            if (typeof this.onadvertisement === "function") {
+            if (typeof this.onadvertisement === 'function') {
                 const parsed = advertising_1.default.parse(peripheral);
                 if (parsed) {
                     this.onadvertisement(parsed);
@@ -27369,9 +27871,9 @@ class LinkingAdvertising {
         }
         // Company identifier
         const company_id = manu.readUInt16LE(0);
-        let company_name = "Unknown";
+        let company_name = 'Unknown';
         if (company_id === 0x02e2) {
-            company_name = "NTT docomo";
+            company_name = 'NTT docomo';
         }
         // Version
         const version = manu.readUInt8(2) >>> 4;
@@ -27413,123 +27915,123 @@ class LinkingAdvertising {
         let res = {};
         if (service_id === 0) {
             res = {
-                name: "General",
+                name: 'General',
             };
         }
         else if (service_id === 1) {
             res = {
-                name: "Temperature (°C)",
+                name: 'Temperature (°C)',
                 temperature: ieee754_1.default.read(n, 1, 4, 7),
             };
         }
         else if (service_id === 2) {
             res = {
-                name: "Humidity (%)",
+                name: 'Humidity (%)',
                 humidity: ieee754_1.default.read(n, 0, 4, 8),
             };
         }
         else if (service_id === 3) {
             res = {
-                name: "Air pressure (hPa)",
+                name: 'Air pressure (hPa)',
                 pressure: ieee754_1.default.read(n, 0, 5, 7),
             };
         }
         else if (service_id === 4) {
             res = {
-                name: "Remaining battery power (Threshold value or less)",
+                name: 'Remaining battery power (Threshold value or less)',
                 chargeRequired: n & 0b0000100000000000 ? true : false,
                 chargeLevel: Math.min((n & 0b0000011111111111) / 10, 100),
             };
         }
         else if (service_id === 5) {
             const code = n & 0b0000111111111111;
-            let text = "";
+            let text = '';
             if (code === 0x00) {
-                text = "Power";
+                text = 'Power';
             }
             else if (code === 0x01) {
-                text = "Return";
+                text = 'Return';
             }
             else if (code === 0x02) {
-                text = "SingleClick";
+                text = 'SingleClick';
             }
             else if (code === 0x03) {
-                text = "Home";
+                text = 'Home';
             }
             else if (code === 0x04) {
-                text = "DoubleClick";
+                text = 'DoubleClick';
             }
             else if (code === 0x05) {
-                text = "VolumeUp";
+                text = 'VolumeUp';
             }
             else if (code === 0x06) {
-                text = "VolumeDown";
+                text = 'VolumeDown';
             }
             else if (code === 0x07) {
-                text = "LongPress";
+                text = 'LongPress';
             }
             else if (code === 0x08) {
-                text = "Pause";
+                text = 'Pause';
             }
             else if (code === 0x09) {
-                text = "LongPressRelease";
+                text = 'LongPressRelease';
             }
             else if (code === 0x0a) {
-                text = "FastForward";
+                text = 'FastForward';
             }
             else if (code === 0x0b) {
-                text = "ReWind";
+                text = 'ReWind';
             }
             else if (code === 0x0c) {
-                text = "Shutter";
+                text = 'Shutter';
             }
             else if (code === 0x0d) {
-                text = "Up";
+                text = 'Up';
             }
             else if (code === 0x0e) {
-                text = "Down";
+                text = 'Down';
             }
             else if (code === 0x0f) {
-                text = "Left";
+                text = 'Left';
             }
             else if (code === 0x10) {
-                text = "Right";
+                text = 'Right';
             }
             else if (code === 0x11) {
-                text = "Enter";
+                text = 'Enter';
             }
             else if (code === 0x12) {
-                text = "Menu";
+                text = 'Menu';
             }
             else if (code === 0x13) {
-                text = "Play";
+                text = 'Play';
             }
             else if (code === 0x14) {
-                text = "Stop";
+                text = 'Stop';
             }
             res = {
-                name: "Pressed button information",
+                name: 'Pressed button information',
                 buttonId: code,
                 buttonName: text,
             };
         }
         else if (service_id === 6) {
             res = {
-                name: "Opening/closing",
+                name: 'Opening/closing',
                 openingStatus: n & 0b0000100000000000 ? true : false,
                 openingCount: n & 0b0000011111111111,
             };
         }
         else if (service_id === 7) {
             res = {
-                name: "Human detection",
+                name: 'Human detection',
                 humanDetectionResponse: n & 0b0000100000000000 ? true : false,
                 humanDetectionCount: n & 0b0000011111111111,
             };
         }
         else if (service_id === 8) {
             res = {
-                name: "Vibration",
+                name: 'Vibration',
                 moveResponse: n & 0b0000100000000000 ? true : false,
                 moveCount: n & 0b0000011111111111,
             };
@@ -27540,14 +28042,14 @@ class LinkingAdvertising {
                 illuminance = (n - 2047) * 50 + 2000;
             }
             res = {
-                name: "Illuminance (lx)",
+                name: 'Illuminance (lx)',
                 illuminance,
             };
         }
         else if (service_id === 15) {
             res = {
-                name: "Vendor",
-                bin: ("000000000000" + n.toString(2)).slice(-12),
+                name: 'Vendor',
+                bin: ('000000000000' + n.toString(2)).slice(-12),
             };
         }
         res.serviceId = service_id;
@@ -27585,9 +28087,9 @@ const advertising_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/
 const service_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service.js"));
 class LinkingDevice {
     constructor(peripheral) {
-        this.PRIMARY_SERVICE_UUID = "b3b3690150d34044808d50835b13a6cd";
-        this.WRITE_CHARACTERRISTIC_UUID = "b3b3910150d34044808d50835b13a6cd";
-        this.INDICATE_CHARACTERRISTIC_UUID = "b3b3910250d34044808d50835b13a6cd";
+        this.PRIMARY_SERVICE_UUID = 'b3b3690150d34044808d50835b13a6cd';
+        this.WRITE_CHARACTERRISTIC_UUID = 'b3b3910150d34044808d50835b13a6cd';
+        this.INDICATE_CHARACTERRISTIC_UUID = 'b3b3910250d34044808d50835b13a6cd';
         this.info = {};
         this.connected = false;
         this.onconnect = null;
@@ -27617,105 +28119,112 @@ class LinkingDevice {
         this._onresponse = null;
         this._write_response_timeout = 30000; // msec
         this._generic_access_service = {
-            SERVICE_UUID: "1800",
+            SERVICE_UUID: '1800',
             service: null,
             device_name: {
-                CHARACTERRISTIC_UUID: "2a00",
+                CHARACTERRISTIC_UUID: '2a00',
                 char: null,
             },
         };
         this.advertisement = advertising_1.default.parse(peripheral);
         this._peripheral = peripheral;
     }
-    async connect(setting) {
+    /**
+     * @deprecated
+     * @param setting
+     */
+    connect(setting) {
+        return this.connectWait(setting);
+    }
+    async connectWait(setting) {
         if (this.connected === true) {
-            throw new Error("The device has been already connected.");
+            throw new Error('The device has been already connected.');
         }
         let onprogress = this.onconnectprogress;
         if (!this._isFunction(this.onconnectprogress)) {
             onprogress = () => { };
         }
         const peripheral = this._peripheral;
-        onprogress({ step: 1, desc: "CONNECTING" });
+        onprogress({ step: 1, desc: 'CONNECTING' });
         try {
             peripheral.ondisconnect = async () => {
-                await this._clean();
+                await this._cleanWait();
                 if (this._isFunction(this.ondisconnect)) {
                     this.ondisconnect({ wasClean: false });
                 }
             };
             await peripheral.connectWait(setting);
-            onprogress({ step: 2, desc: "CONNECTION_ESTABLISHED" });
-            onprogress({ step: 3, desc: "GETTING_CHARACTERISTICS" });
+            onprogress({ step: 2, desc: 'CONNECTION_ESTABLISHED' });
+            onprogress({ step: 3, desc: 'GETTING_CHARACTERISTICS' });
             await this._getServicesAndChars();
-            onprogress({ step: 4, desc: "SUBSCRIBING" });
-            await this._subscribeForIndicate();
-            onprogress({ step: 5, desc: "GETTING_DEVICE_INFOMATION" });
+            onprogress({ step: 4, desc: 'SUBSCRIBING' });
+            await this._subscribeForIndicateWait();
+            onprogress({ step: 5, desc: 'GETTING_DEVICE_INFOMATION' });
             let res;
-            res = await this.write("GET_DEVICE_INFORMATION");
-            this.info.id = "";
-            if ("deviceId" in res.data) {
+            res = await this.write('GET_DEVICE_INFORMATION');
+            this.info.id = '';
+            if ('deviceId' in res.data) {
                 this.info.id = res.data.deviceId;
             }
-            this.info.uid = "";
-            if ("deviceUid" in res.data) {
+            this.info.uid = '';
+            if ('deviceUid' in res.data) {
                 this.info.uid = res.data.deviceUid;
             }
             this.info.services = {};
-            if ("serviceList" in res.data) {
+            if ('serviceList' in res.data) {
                 res.data.serviceList.forEach((o) => {
                     this.info.services[o.name] = o.id;
                 });
             }
             this.info.capabilities = {};
-            if ("deviceCapability" in res.data) {
+            if ('deviceCapability' in res.data) {
                 res.data.deviceCapability.forEach((o) => {
                     this.info.capabilities[o.name] = o.id;
                 });
             }
             this.info.exsensors = {};
-            if ("exSensorType" in res.data) {
+            if ('exSensorType' in res.data) {
                 res.data.exSensorType.forEach((o) => {
                     this.info.exsensors[o.name] = o.id;
                 });
             }
-            onprogress({ step: 6, desc: "GETTING_NOTIFY_CATEGORIES" });
+            onprogress({ step: 6, desc: 'GETTING_NOTIFY_CATEGORIES' });
             res = await this._writeConfirmNotifyCategory();
             this.info.notifyCategories = {};
             if (res) {
-                if ("notifyCategory" in res.data) {
+                if ('notifyCategory' in res.data) {
                     res.data.notifyCategory.forEach((o) => {
                         this.info.notifyCategories[o.name] = o.id;
                     });
                 }
             }
-            onprogress({ step: 7, desc: "GETTING_SETTING_INFORMATION" });
+            onprogress({ step: 7, desc: 'GETTING_SETTING_INFORMATION' });
             res = await this._writeGetSettingInformation();
             this.info.settings = {};
             if (res) {
-                if ("settingInformationData" in res.data) {
+                if ('settingInformationData' in res.data) {
                     res.data.settingInformationData.forEach((o) => {
                         this.info.settings[o.name] = o;
                     });
                 }
             }
-            onprogress({ step: 8, desc: "GETTING_LED_COLOR_NAMES" });
-            res = await this._writeGetSettingName("LEDColorName");
+            onprogress({ step: 8, desc: 'GETTING_LED_COLOR_NAMES' });
+            res = await this._writeGetSettingName('LEDColorName');
             if (res) {
                 this.info.settings.LED.colors = res.data.settingNameData;
             }
-            onprogress({ step: 9, desc: "GETTING_LED_PATTERN_NAMES" });
-            res = await this._writeGetSettingName("LEDPatternName");
+            onprogress({ step: 9, desc: 'GETTING_LED_PATTERN_NAMES' });
+            res = await this._writeGetSettingName('LEDPatternName');
             if (res) {
                 this.info.settings.LED.patterns = res.data.settingNameData;
             }
-            onprogress({ step: 10, desc: "GETTING_VIBRATION_PATTERN_NAMES" });
-            res = await this._writeGetSettingName("VibrationPatternName");
+            onprogress({ step: 10, desc: 'GETTING_VIBRATION_PATTERN_NAMES' });
+            res = await this._writeGetSettingName('VibrationPatternName');
             if (res) {
                 this.info.settings.Vibration.patterns = res.data.settingNameData;
             }
-            onprogress({ step: 11, desc: "GETTING_BEEP_PATTERN_NAMES" });
-            res = await this._writeGetSettingName("BeepPatternName");
+            onprogress({ step: 11, desc: 'GETTING_BEEP_PATTERN_NAMES' });
+            res = await this._writeGetSettingName('BeepPatternName');
             if (res) {
                 this.info.settings.Beep.patterns = res.data.settingNameData;
             }
@@ -27725,11 +28234,11 @@ class LinkingDevice {
             if (this._isFunction(this.onconnect)) {
                 this.onconnect();
             }
-            onprogress({ step: 12, desc: "COMPLETED" });
+            onprogress({ step: 12, desc: 'COMPLETED' });
         }
         catch (e) {
-            onprogress({ step: 0, desc: "FAILED" });
-            await this._clean();
+            onprogress({ step: 0, desc: 'FAILED' });
+            await this._cleanWait();
             throw e;
         }
     }
@@ -27743,11 +28252,11 @@ class LinkingDevice {
     }
     _writeConfirmNotifyCategory() {
         const promise = new Promise((resolve, reject) => {
-            if (!("PeripheralDeviceNotification" in this.info.services)) {
+            if (!('PeripheralDeviceNotification' in this.info.services)) {
                 resolve(null);
                 return;
             }
-            this.write("CONFIRM_NOTIFY_CATEGORY")
+            this.write('CONFIRM_NOTIFY_CATEGORY')
                 .then((res) => {
                 resolve(res);
             })
@@ -27759,11 +28268,11 @@ class LinkingDevice {
     }
     _writeGetSettingInformation() {
         const promise = new Promise((resolve, reject) => {
-            if (!("PeripheralDeviceSettingOperation" in this.info.services)) {
+            if (!('PeripheralDeviceSettingOperation' in this.info.services)) {
                 resolve(null);
                 return;
             }
-            this.write("GET_SETTING_INFORMATION")
+            this.write('GET_SETTING_INFORMATION')
                 .then((res) => {
                 resolve(res);
             })
@@ -27775,36 +28284,36 @@ class LinkingDevice {
     }
     _writeGetSettingName(name) {
         const promise = new Promise((resolve, reject) => {
-            if (!("PeripheralDeviceSettingOperation" in this.info.services)) {
+            if (!('PeripheralDeviceSettingOperation' in this.info.services)) {
                 resolve(null);
                 return;
             }
             const s = this.info.settings;
-            if (name === "LEDColorName") {
-                if (!("LED" in s && s.LED.colorMax)) {
+            if (name === 'LEDColorName') {
+                if (!('LED' in s && s.LED.colorMax)) {
                     resolve(null);
                     return;
                 }
             }
-            else if (name === "LEDPatternName") {
-                if (!("LED" in s && s.LED.patternMax)) {
+            else if (name === 'LEDPatternName') {
+                if (!('LED' in s && s.LED.patternMax)) {
                     resolve(null);
                     return;
                 }
             }
-            else if (name === "VibrationPatternName") {
-                if (!("Vibration" in s && s.Vibration.patternMax)) {
+            else if (name === 'VibrationPatternName') {
+                if (!('Vibration' in s && s.Vibration.patternMax)) {
                     resolve(null);
                     return;
                 }
             }
-            else if (name === "BeepPatternName") {
-                if (!("Beep" in s && s.Beep.patternMax)) {
+            else if (name === 'BeepPatternName') {
+                if (!('Beep' in s && s.Beep.patternMax)) {
                     resolve(null);
                     return;
                 }
             }
-            this.write("GET_SETTING_NAME", { SettingNameType: name })
+            this.write('GET_SETTING_NAME', { SettingNameType: name })
                 .then((res) => {
                 resolve(res);
             })
@@ -27815,18 +28324,18 @@ class LinkingDevice {
         return promise;
     }
     _isFunction(o) {
-        return o && typeof o === "function" ? true : false;
+        return o && typeof o === 'function' ? true : false;
     }
     _getServicesAndChars() {
         const peripheral = this._peripheral;
         const service = peripheral.getService(this.PRIMARY_SERVICE_UUID);
         if (!service) {
-            throw new Error("No service was found");
+            throw new Error('No service was found');
         }
         const write_char = service.getCharacteristic(this.WRITE_CHARACTERRISTIC_UUID);
         const indicate_char = service.getCharacteristic(this.INDICATE_CHARACTERRISTIC_UUID);
         if (!(write_char && indicate_char)) {
-            throw new Error("No characteristic was found");
+            throw new Error('No characteristic was found');
         }
         this.char_write = write_char;
         this.char_indicate = indicate_char;
@@ -27840,7 +28349,13 @@ class LinkingDevice {
             }
         }
     }
-    async _subscribeForIndicate() {
+    /**
+     * @deprecated
+     */
+    _subscribeForIndicate() {
+        return this._subscribeForIndicateWait();
+    }
+    async _subscribeForIndicateWait() {
         await this.char_indicate.registerNotifyWait((data) => {
             this._receivedPacket(Buffer.from(data));
         });
@@ -28034,20 +28549,32 @@ class LinkingDevice {
             }
         }
     }
-    async disconnect() {
+    /**
+     * @deprecated
+     */
+    disconnect() {
+        return this.disconnectWait();
+    }
+    async disconnectWait() {
         if (this._peripheral) {
             if (this._peripheral.connected) {
                 await this._peripheral.disconnectWait(); // ondisconnect will call
             }
             else {
-                await this._clean();
+                await this._cleanWait();
             }
         }
         else {
-            await this._clean();
+            await this._cleanWait();
         }
     }
-    async _clean() {
+    /**
+     * @deprecated
+     */
+    _clean() {
+        return this._cleanWait();
+    }
+    async _cleanWait() {
         const p = this._peripheral;
         if (!p) {
             return;
@@ -28070,14 +28597,14 @@ class LinkingDevice {
         return new Promise(async (resolve, reject) => {
             const buf = this._LinkingService.createRequest(message_name, params);
             if (!buf) {
-                reject(new Error("The specified parameters are invalid."));
+                reject(new Error('The specified parameters are invalid.'));
             }
             const timer = setTimeout(() => {
                 this._onresponse = null;
-                reject(new Error("Timeout"));
+                reject(new Error('Timeout'));
             }, this._write_response_timeout);
             this._onresponse = (res) => {
-                if (res.messageName === message_name + "_RESP") {
+                if (res.messageName === message_name + '_RESP') {
                     this._onresponse = null;
                     clearTimeout(timer);
                     const data = this._margeResponsePrameters(res);
@@ -28086,7 +28613,7 @@ class LinkingDevice {
                         resolve(res);
                     }
                     else {
-                        reject(new Error("Unknown response"));
+                        reject(new Error('Unknown response'));
                     }
                 }
             };
@@ -28120,24 +28647,28 @@ class LinkingDevice {
         }
     }
     _initServices() {
-        const device_name = this._peripheral.localName || "";
+        const device_name = this._peripheral.localName || '';
         // Device Name
         if (this._generic_access_service.device_name.char) {
             this.services.deviceName = {
-                get: this._deviceNameGet.bind(this),
-                set: this._deviceNameSet.bind(this),
+                get: this._deviceNameSetWait.bind(this),
+                set: this._deviceNameSetWait.bind(this),
             };
         }
         // Button
-        if ("Button" in this.info.exsensors || device_name.match(/^(Linking Board01|BLEAD\-LK\-TSH)/)) {
+        if ('Button' in this.info.exsensors ||
+            device_name.match(/^(Linking Board01|BLEAD-LK-TSH)/)) {
             this.services.button = {
                 onnotify: null,
             };
         }
         // LED
-        if ("LED" in this.info.settings) {
+        if ('LED' in this.info.settings) {
             const o = this.info.settings.LED;
-            if (o.colors && o.colors.length > 0 && o.patterns && o.patterns.length > 0) {
+            if (o.colors &&
+                o.colors.length > 0 &&
+                o.patterns &&
+                o.patterns.length > 0) {
                 const colors = {};
                 for (let i = 0; i < o.colors.length; i++) {
                     colors[o.colors[i]] = i + 1;
@@ -28155,7 +28686,7 @@ class LinkingDevice {
             }
         }
         // Vibration
-        if ("Vibration" in this.info.settings) {
+        if ('Vibration' in this.info.settings) {
             const o = this.info.settings.Vibration;
             if (o.patterns && o.patterns.length > 0) {
                 const patterns = {};
@@ -28170,79 +28701,91 @@ class LinkingDevice {
             }
         }
         // Gyroscope
-        if ("Gyroscope" in this.info.capabilities) {
+        if ('Gyroscope' in this.info.capabilities) {
             this.services.gyroscope = this._createSensorServiceObject(0x00);
         }
         // Accelerometer
-        if ("Accelerometer" in this.info.capabilities) {
+        if ('Accelerometer' in this.info.capabilities) {
             this.services.accelerometer = this._createSensorServiceObject(0x01);
         }
         // Orientation
-        if ("Orientation" in this.info.capabilities) {
+        if ('Orientation' in this.info.capabilities) {
             this.services.orientation = this._createSensorServiceObject(0x02);
         }
         // Battery
-        if ("Battery" in this.info.capabilities) {
+        if ('Battery' in this.info.capabilities) {
             this.services.battery = this._createSensorServiceObject(0x03);
         }
         // Temperature
-        if ("Temperature" in this.info.capabilities) {
+        if ('Temperature' in this.info.capabilities) {
             this.services.temperature = this._createSensorServiceObject(0x04);
         }
         // Humidity
-        if ("Humidity" in this.info.capabilities) {
+        if ('Humidity' in this.info.capabilities) {
             this.services.humidity = this._createSensorServiceObject(0x05);
         }
         // Atmospheric pressure
-        if ("Atmospheric pressure" in this.info.capabilities) {
+        if ('Atmospheric pressure' in this.info.capabilities) {
             this.services.pressure = this._createSensorServiceObject(0x06);
         }
         // Opening and closing
-        if ("Opening and closing" in this.info.exsensors) {
+        if ('Opening and closing' in this.info.exsensors) {
             this.services.openclose = this._createSensorServiceObject(0x07);
         }
         // Human detection
-        if ("Human detection" in this.info.exsensors) {
+        if ('Human detection' in this.info.exsensors) {
             this.services.human = this._createSensorServiceObject(0x08);
         }
         // Move
-        if ("Move" in this.info.exsensors) {
+        if ('Move' in this.info.exsensors) {
             this.services.move = this._createSensorServiceObject(0x09);
         }
         // Illuminance
-        if ("Illuminance" in this.info.exsensors) {
+        if ('Illuminance' in this.info.exsensors) {
             this.services.illuminance = this._createSensorServiceObject(0x0a);
         }
     }
-    async _deviceNameGet() {
-        const char = this._generic_access_service.device_name.char;
+    /**
+     * @deprecated
+     */
+    _deviceNameGet() {
+        return this._deviceNameGetWait();
+    }
+    async _deviceNameGetWait() {
+        const char = this._generic_access_service.device_name
+            .char;
         const data = await char.readWait();
         return {
-            deviceName: Buffer.from(data).toString("utf8"),
+            deviceName: Buffer.from(data).toString('utf8'),
         };
     }
-    async _deviceNameSet(name) {
+    /**
+     * @deprecated
+     * @param name
+     */
+    _deviceNameSet(name) {
+        return this._deviceNameSetWait(name);
+    }
+    async _deviceNameSetWait(name) {
         if (!name) {
-            throw new Error("Device name is required.");
-            return;
+            throw new Error('Device name is required.');
         }
-        else if (typeof name !== "string") {
-            throw new Error("Device name must be a string.");
-            return;
+        else if (typeof name !== 'string') {
+            throw new Error('Device name must be a string.');
         }
         else if (name.length > 32) {
-            throw new Error("Device name is too long. The length must be in the range 1 to 32.");
-            return;
+            throw new Error('Device name is too long. The length must be in the range 1 to 32.');
         }
-        const buf = Buffer.from(name, "utf8");
-        const char = this._generic_access_service.device_name.char;
+        const buf = Buffer.from(name, 'utf8');
+        const char = this._generic_access_service.device_name
+            .char;
         await char.writeWait(buf, false);
     }
     _ledTurnOn(color, pattern, duration) {
         let color_number = 1;
         if (color) {
             const colors = this.services.led.colors;
-            if (typeof color === "number") {
+            if (typeof color === 'number') {
                 for (const name in colors) {
                     if (colors[name] === color) {
                         color_number = color;
@@ -28250,7 +28793,7 @@ class LinkingDevice {
                     }
                 }
             }
-            else if (typeof color === "string") {
+            else if (typeof color === 'string') {
                 if (color in colors) {
                     color_number = colors[color];
                 }
@@ -28259,7 +28802,7 @@ class LinkingDevice {
         let pattern_number = 2;
         if (pattern) {
             const patterns = this.services.led.patterns;
-            if (typeof pattern === "number") {
+            if (typeof pattern === 'number') {
                 for (const name in patterns) {
                     if (patterns[name] === pattern) {
                         pattern_number = pattern;
@@ -28267,23 +28810,23 @@ class LinkingDevice {
                     }
                 }
             }
-            else if (typeof pattern === "string") {
+            else if (typeof pattern === 'string') {
                 if (pattern in patterns) {
                     pattern_number = patterns[pattern];
                 }
             }
         }
-        if (!duration || typeof duration !== "number" || duration % 1 !== 0) {
+        if (!duration || typeof duration !== 'number' || duration % 1 !== 0) {
             duration = 5;
         }
         const promise = new Promise((resolve, reject) => {
-            this.write("SELECT_SETTING_INFORMATION", {
+            this.write('SELECT_SETTING_INFORMATION', {
                 SettingInformationRequest: {
-                    requestName: "START_DEMONSTRATION",
+                    requestName: 'START_DEMONSTRATION',
                 },
                 SettingInformationData: [
                     {
-                        settingName: "LED",
+                        settingName: 'LED',
                         colorNumber: color_number,
                         patternNumber: pattern_number,
                         duration,
@@ -28301,9 +28844,9 @@ class LinkingDevice {
     }
     _ledTurnOff() {
         const promise = new Promise((resolve, reject) => {
-            this.write("SELECT_SETTING_INFORMATION", {
+            this.write('SELECT_SETTING_INFORMATION', {
                 SettingInformationRequest: {
-                    requestName: "STOP_DEMONSTRATION",
+                    requestName: 'STOP_DEMONSTRATION',
                 },
             })
                 .then((res) => {
@@ -28319,7 +28862,7 @@ class LinkingDevice {
         let pattern_number = 2;
         if (pattern) {
             const patterns = this.services.vibration.patterns;
-            if (typeof pattern === "number") {
+            if (typeof pattern === 'number') {
                 for (const name in patterns) {
                     if (patterns[name] === pattern) {
                         pattern_number = pattern;
@@ -28327,23 +28870,23 @@ class LinkingDevice {
                     }
                 }
             }
-            else if (typeof pattern === "string") {
+            else if (typeof pattern === 'string') {
                 if (pattern in patterns) {
                     pattern_number = patterns[pattern];
                 }
             }
         }
-        if (!duration || typeof duration !== "number" || duration % 1 !== 0) {
+        if (!duration || typeof duration !== 'number' || duration % 1 !== 0) {
             duration = 5;
         }
         const promise = new Promise((resolve, reject) => {
-            this.write("SELECT_SETTING_INFORMATION", {
+            this.write('SELECT_SETTING_INFORMATION', {
                 SettingInformationRequest: {
-                    requestName: "START_DEMONSTRATION",
+                    requestName: 'START_DEMONSTRATION',
                 },
                 SettingInformationData: [
                     {
-                        settingName: "Vibration",
+                        settingName: 'Vibration',
                         patternNumber: pattern_number,
                         duration,
                     },
@@ -28360,9 +28903,9 @@ class LinkingDevice {
     }
     _vibrationTurnOff() {
         const promise = new Promise((resolve, reject) => {
-            this.write("SELECT_SETTING_INFORMATION", {
+            this.write('SELECT_SETTING_INFORMATION', {
                 SettingInformationRequest: {
-                    requestName: "STOP_DEMONSTRATION",
+                    requestName: 'STOP_DEMONSTRATION',
                 },
             })
                 .then((res) => {
@@ -28390,7 +28933,7 @@ class LinkingDevice {
     }
     _setNotifySensorInfo(sensor_type, status) {
         const promise = new Promise((resolve, reject) => {
-            this.write("SET_NOTIFY_SENSOR_INFO", {
+            this.write('SET_NOTIFY_SENSOR_INFO', {
                 SensorType: sensor_type,
                 Status: status,
             })
@@ -28405,7 +28948,7 @@ class LinkingDevice {
     }
     _getSensorInfo(sensor_type) {
         const promise = new Promise((resolve, reject) => {
-            this.write("GET_SENSOR_INFO", {
+            this.write('GET_SENSOR_INFO', {
                 SensorType: sensor_type,
             })
                 .then((res) => {
@@ -28514,16 +29057,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class LinkingServiceNotification {
     constructor() {
         this.SERVICE_ID = 0x01;
-        this.SERVICE_NAME = "PeripheralDeviceNotification";
+        this.SERVICE_NAME = 'PeripheralDeviceNotification';
         this.MESSAGE_NAME_MAP = {
-            "00": "CONFIRM_NOTIFY_CATEGORY",
-            "01": "CONFIRM_NOTIFY_CATEGORY_RESP",
-            "02": "NOTIFY_INFORMATION",
-            "03": "GET_PD_NOTIFY_DETAIL_DATA",
-            "04": "GET_PD_NOTIFY_DETAIL_DATA_RESP",
-            "05": "NOTIFY_PD_GENERAL_INFORMATION",
-            "06": "START_PD_APPLICATION",
-            "07": "START_PD_APPLICATION_RESP",
+            '00': 'CONFIRM_NOTIFY_CATEGORY',
+            '01': 'CONFIRM_NOTIFY_CATEGORY_RESP',
+            '02': 'NOTIFY_INFORMATION',
+            '03': 'GET_PD_NOTIFY_DETAIL_DATA',
+            '04': 'GET_PD_NOTIFY_DETAIL_DATA_RESP',
+            '05': 'NOTIFY_PD_GENERAL_INFORMATION',
+            '06': 'START_PD_APPLICATION',
+            '07': 'START_PD_APPLICATION_RESP',
         };
         // Private
         this._WRITE_MESSAGE_ID_MAP = {
@@ -28563,7 +29106,7 @@ class LinkingServiceNotification {
                 offset += plen;
                 const p = this._parseParameter(pid, pvalue_buf);
                 parameters.push(this._parseParameter(pid, pvalue_buf, notify_cateogry_id));
-                if (pid === 0x04 && "id" in p) {
+                if (pid === 0x04 && 'id' in p) {
                     notify_cateogry_id = p.id;
                 }
             }
@@ -28685,69 +29228,69 @@ class LinkingServiceNotification {
     }
     _parseResultCode(buf) {
         const code = buf.readUInt8(0);
-        let text = "";
+        let text = '';
         if (code === 0x00) {
-            text = "OK, request processed correctly";
+            text = 'OK, request processed correctly';
         }
         else if (code === 0x01) {
-            text = "Cancel";
+            text = 'Cancel';
         }
         else if (code === 0x02) {
-            text = "Error, failed";
+            text = 'Error, failed';
         }
         else if (code === 0x03) {
-            text = "Error, no reason defined";
+            text = 'Error, no reason defined';
         }
         else if (code === 0x04) {
-            text = "Error, data not available";
+            text = 'Error, data not available';
         }
         else if (code === 0x05) {
-            text = "Error, not supported";
+            text = 'Error, not supported';
         }
         return {
-            name: "ResultCode",
+            name: 'ResultCode',
             resultCode: code,
             resultText: text,
         };
     }
     _parseCancel(buf) {
         const code = buf.readUInt8(0);
-        let text = "";
+        let text = '';
         if (code === 0x00) {
-            text = "User cancel";
+            text = 'User cancel';
         }
         return {
-            name: "Cancel",
+            name: 'Cancel',
             cancelCode: code,
             cancelText: text,
         };
     }
     _parseGetStatus(buf) {
         const code = buf.readUInt8(0);
-        let text = "";
+        let text = '';
         if (code === 0x00) {
-            text = "OK, request processed correctly";
+            text = 'OK, request processed correctly';
         }
         else if (code === 0x01) {
-            text = "OK, request processed ,but some parameter not";
+            text = 'OK, request processed ,but some parameter not';
         }
         else if (code === 0x02) {
-            text = "Cancel";
+            text = 'Cancel';
         }
         else if (code === 0x03) {
-            text = "Error, failed";
+            text = 'Error, failed';
         }
         else if (code === 0x04) {
-            text = "Error, no reason defined";
+            text = 'Error, no reason defined';
         }
         else if (code === 0x05) {
-            text = "Error, data not available";
+            text = 'Error, data not available';
         }
         else if (code === 0x06) {
-            text = "Error, not supported";
+            text = 'Error, not supported';
         }
         return {
-            name: "GetStatus",
+            name: 'GetStatus',
             statusCode: code,
             statusText: text,
         };
@@ -28758,60 +29301,60 @@ class LinkingServiceNotification {
         if (v1 & 0b00000001) {
             list.push({
                 id: 0,
-                name: "NotNotify",
+                name: 'NotNotify',
             });
         }
         if (v1 & 0b00000010) {
             list.push({
                 id: 1,
-                name: "All",
+                name: 'All',
             });
         }
         if (v1 & 0b00000100) {
             list.push({
                 id: 2,
-                name: "PhoneIncomingCall",
+                name: 'PhoneIncomingCall',
             });
         }
         if (v1 & 0b00001000) {
             list.push({
                 id: 3,
-                name: "PhoneInCall",
+                name: 'PhoneInCall',
             });
         }
         if (v1 & 0b00010000) {
             list.push({
                 id: 4,
-                name: "PhoneIdle",
+                name: 'PhoneIdle',
             });
         }
         if (v1 & 0b00100000) {
             list.push({
                 id: 5,
-                name: "Mail",
+                name: 'Mail',
             });
         }
         if (v1 & 0b01000000) {
             list.push({
                 id: 6,
-                name: "Schedule",
+                name: 'Schedule',
             });
         }
         if (v1 & 0b10000000) {
             list.push({
                 id: 7,
-                name: "General",
+                name: 'General',
             });
         }
         const v2 = buf.readUInt8(1);
         if (v2 & 0b00000001) {
             list.push({
                 id: 8,
-                name: "Etc",
+                name: 'Etc',
             });
         }
         return {
-            name: "NotifyCategory",
+            name: 'NotifyCategory',
             notifyCategory: list,
         };
     }
@@ -28820,47 +29363,47 @@ class LinkingServiceNotification {
         const v1 = buf.readUInt8(0);
         const v2 = buf.readUInt8(1);
         if (v1 & 0b00000001) {
-            res = { id: 0, text: "NotNotify" };
+            res = { id: 0, text: 'NotNotify' };
         }
         else if (v1 & 0b00000010) {
-            res = { id: 1, text: "All" };
+            res = { id: 1, text: 'All' };
         }
         else if (v1 & 0b00000100) {
-            res = { id: 2, text: "PhoneIncomingCall" };
+            res = { id: 2, text: 'PhoneIncomingCall' };
         }
         else if (v1 & 0b00001000) {
-            res = { id: 3, text: "PhoneInCall" };
+            res = { id: 3, text: 'PhoneInCall' };
         }
         else if (v1 & 0b00010000) {
-            res = { id: 4, text: "PhoneIdle" };
+            res = { id: 4, text: 'PhoneIdle' };
         }
         else if (v1 & 0b00100000) {
-            res = { id: 5, text: "Mail" };
+            res = { id: 5, text: 'Mail' };
         }
         else if (v1 & 0b01000000) {
-            res = { id: 6, text: "Schedule" };
+            res = { id: 6, text: 'Schedule' };
         }
         else if (v1 & 0b10000000) {
-            res = { id: 7, text: "General" };
+            res = { id: 7, text: 'General' };
         }
         else if (v2 & 0b00000001) {
-            res = { id: 8, text: "Etc" };
+            res = { id: 8, text: 'Etc' };
         }
         return {
-            name: "NotifyCategoryID",
+            name: 'NotifyCategoryID',
             notifyCategoryId: res.id,
             NotifyCategoryText: res.text,
         };
     }
     _parseGetParameterID(buf) {
         return {
-            name: "GetParameterID",
+            name: 'GetParameterID',
             getParameterId: buf.readUInt8(0),
         };
     }
     _parseGetParameterLength(buf) {
         return {
-            name: "GetParameterLength",
+            name: 'GetParameterLength',
             getParameterLength: buf.readUInt32LE(0),
         };
     }
@@ -28870,241 +29413,241 @@ class LinkingServiceNotification {
         if (notify_cateogry_id >= 2 && notify_cateogry_id <= 4) {
             // PhoneIncomingCall/PhoneInCall/PhoneIdle
             if (v & 0b0000000000000001) {
-                list.push({ id: 0x09, name: "NotifyId" });
+                list.push({ id: 0x09, name: 'NotifyId' });
             }
             if (v & 0b0000000000000010) {
-                list.push({ id: 0x04, name: "NotifyCategoryID" });
+                list.push({ id: 0x04, name: 'NotifyCategoryID' });
             }
         }
         else if (notify_cateogry_id === 5) {
             // Mail
             if (v & 0b0000000000000001) {
-                list.push({ id: 0x0d, name: "AppName" });
+                list.push({ id: 0x0d, name: 'AppName' });
             }
             if (v & 0b0000000000000010) {
-                list.push({ id: 0x0e, name: "AppNameLocal" });
+                list.push({ id: 0x0e, name: 'AppNameLocal' });
             }
             if (v & 0b0000000000000100) {
-                list.push({ id: 0x28, name: "Package" });
+                list.push({ id: 0x28, name: 'Package' });
             }
             if (v & 0b0000000000001000) {
-                list.push({ id: 0x0b, name: "Tittle" });
+                list.push({ id: 0x0b, name: 'Tittle' });
             }
             if (v & 0b0000000000010000) {
-                list.push({ id: 0x0c, name: "Text" });
+                list.push({ id: 0x0c, name: 'Text' });
             }
             if (v & 0b0000000000100000) {
-                list.push({ id: 0x13, name: "Sender" });
+                list.push({ id: 0x13, name: 'Sender' });
             }
             if (v & 0b0000000001000000) {
-                list.push({ id: 0x14, name: "SenderAddress" });
+                list.push({ id: 0x14, name: 'SenderAddress' });
             }
             if (v & 0b0000000010000000) {
-                list.push({ id: 0x15, name: "ReceiveDate" });
+                list.push({ id: 0x15, name: 'ReceiveDate' });
             }
             if (v & 0b0000000100000000) {
-                list.push({ id: 0x09, name: "NotifyId" });
+                list.push({ id: 0x09, name: 'NotifyId' });
             }
             if (v & 0b0000001000000000) {
-                list.push({ id: 0x04, name: "NotifyCategoryID" });
+                list.push({ id: 0x04, name: 'NotifyCategoryID' });
             }
         }
         else if (notify_cateogry_id === 6) {
             // Schedule
             if (v & 0b0000000000000001) {
-                list.push({ id: 0x0d, name: "AppName" });
+                list.push({ id: 0x0d, name: 'AppName' });
             }
             if (v & 0b0000000000000010) {
-                list.push({ id: 0x0e, name: "AppNameLocal" });
+                list.push({ id: 0x0e, name: 'AppNameLocal' });
             }
             if (v & 0b0000000000000100) {
-                list.push({ id: 0x28, name: "Package" });
+                list.push({ id: 0x28, name: 'Package' });
             }
             if (v & 0b0000000000001000) {
-                list.push({ id: 0x0b, name: "Tittle" });
+                list.push({ id: 0x0b, name: 'Tittle' });
             }
             if (v & 0b0000000000010000) {
-                list.push({ id: 0x16, name: "StartDate" });
+                list.push({ id: 0x16, name: 'StartDate' });
             }
             if (v & 0b0000000000100000) {
-                list.push({ id: 0x17, name: "EndDate" });
+                list.push({ id: 0x17, name: 'EndDate' });
             }
             if (v & 0b0000000001000000) {
-                list.push({ id: 0x18, name: "Area" });
+                list.push({ id: 0x18, name: 'Area' });
             }
             if (v & 0b0000000010000000) {
-                list.push({ id: 0x19, name: "Person" });
+                list.push({ id: 0x19, name: 'Person' });
             }
             if (v & 0b0000000100000000) {
-                list.push({ id: 0x0c, name: "Text" });
+                list.push({ id: 0x0c, name: 'Text' });
             }
             if (v & 0b0000001000000000) {
-                list.push({ id: 0x1d, name: "Contents1" });
+                list.push({ id: 0x1d, name: 'Contents1' });
             }
             if (v & 0b0000010000000000) {
-                list.push({ id: 0x1e, name: "Contents2" });
+                list.push({ id: 0x1e, name: 'Contents2' });
             }
             if (v & 0b0000100000000000) {
-                list.push({ id: 0x1f, name: "Contents3" });
+                list.push({ id: 0x1f, name: 'Contents3' });
             }
             if (v & 0b0001000000000000) {
-                list.push({ id: 0x09, name: "NotifyId" });
+                list.push({ id: 0x09, name: 'NotifyId' });
             }
             if (v & 0b0010000000000000) {
-                list.push({ id: 0x04, name: "NotifyCategoryID" });
+                list.push({ id: 0x04, name: 'NotifyCategoryID' });
             }
         }
         else if (notify_cateogry_id === 7) {
             // General
             if (v & 0b0000000000000001) {
-                list.push({ id: 0x0d, name: "AppName" });
+                list.push({ id: 0x0d, name: 'AppName' });
             }
             if (v & 0b0000000000000010) {
-                list.push({ id: 0x0e, name: "AppNameLocal" });
+                list.push({ id: 0x0e, name: 'AppNameLocal' });
             }
             if (v & 0b0000000000000100) {
-                list.push({ id: 0x28, name: "Package" });
+                list.push({ id: 0x28, name: 'Package' });
             }
             if (v & 0b0000000000001000) {
-                list.push({ id: 0x0b, name: "Tittle" });
+                list.push({ id: 0x0b, name: 'Tittle' });
             }
             if (v & 0b0000000000010000) {
-                list.push({ id: 0x0c, name: "Text" });
+                list.push({ id: 0x0c, name: 'Text' });
             }
             if (v & 0b0000000000100000) {
-                list.push({ id: 0x09, name: "NotifyId" });
+                list.push({ id: 0x09, name: 'NotifyId' });
             }
             if (v & 0b0000000001000000) {
-                list.push({ id: 0x04, name: "NotifyCategoryID" });
+                list.push({ id: 0x04, name: 'NotifyCategoryID' });
             }
         }
         else if (notify_cateogry_id === 8) {
             // Etc
             if (v & 0b0000000000000001) {
-                list.push({ id: 0x0d, name: "AppName" });
+                list.push({ id: 0x0d, name: 'AppName' });
             }
             if (v & 0b0000000000000010) {
-                list.push({ id: 0x0e, name: "AppNameLocal" });
+                list.push({ id: 0x0e, name: 'AppNameLocal' });
             }
             if (v & 0b0000000000000100) {
-                list.push({ id: 0x28, name: "Package" });
+                list.push({ id: 0x28, name: 'Package' });
             }
             if (v & 0b0000000000001000) {
-                list.push({ id: 0x1d, name: "Contents1" });
+                list.push({ id: 0x1d, name: 'Contents1' });
             }
             if (v & 0b0000000000010000) {
-                list.push({ id: 0x1e, name: "Contents2" });
+                list.push({ id: 0x1e, name: 'Contents2' });
             }
             if (v & 0b0000000000100000) {
-                list.push({ id: 0x1f, name: "Contents3" });
+                list.push({ id: 0x1f, name: 'Contents3' });
             }
             if (v & 0b0000000001000000) {
-                list.push({ id: 0x20, name: "Contents4" });
+                list.push({ id: 0x20, name: 'Contents4' });
             }
             if (v & 0b0000000010000000) {
-                list.push({ id: 0x21, name: "Contents5" });
+                list.push({ id: 0x21, name: 'Contents5' });
             }
             if (v & 0b0000000100000000) {
-                list.push({ id: 0x22, name: "Contents6" });
+                list.push({ id: 0x22, name: 'Contents6' });
             }
             if (v & 0b0000001000000000) {
-                list.push({ id: 0x23, name: "Contents7" });
+                list.push({ id: 0x23, name: 'Contents7' });
             }
             if (v & 0b0000010000000000) {
-                list.push({ id: 0x1b, name: "MimeTypeForMedia" });
+                list.push({ id: 0x1b, name: 'MimeTypeForMedia' });
             }
             if (v & 0b0000100000000000) {
-                list.push({ id: 0x27, name: "Media" });
+                list.push({ id: 0x27, name: 'Media' });
             }
             if (v & 0b0001000000000000) {
-                list.push({ id: 0x1a, name: "MimeTypeForImage" });
+                list.push({ id: 0x1a, name: 'MimeTypeForImage' });
             }
             if (v & 0b0010000000000000) {
-                list.push({ id: 0x1c, name: "Image" });
+                list.push({ id: 0x1c, name: 'Image' });
             }
             if (v & 0b0100000000000000) {
-                list.push({ id: 0x09, name: "NotifyId" });
+                list.push({ id: 0x09, name: 'NotifyId' });
             }
             if (v & 0b1000000000000000) {
-                list.push({ id: 0x04, name: "NotifyCategoryID" });
+                list.push({ id: 0x04, name: 'NotifyCategoryID' });
             }
         }
         return {
-            name: "ParameterIdList",
+            name: 'ParameterIdList',
             parameterIdList: list,
         };
     }
     _parseUniqueId(buf) {
         return {
-            name: "UniqueId",
+            name: 'UniqueId',
             uniqueId: buf.readUInt16LE(0),
         };
     }
     _parseNotifyId(buf) {
         return {
-            name: "NotifyId",
+            name: 'NotifyId',
             notifyId: buf.readUInt16LE(0),
         };
     }
     _parseNotificationOperation(buf) {
         const code = buf.readUInt8(0);
-        let text = "";
+        let text = '';
         if (code === 0x00) {
-            text = "AlreadyRead";
+            text = 'AlreadyRead';
         }
         else if (code === 0x01) {
-            text = "Delete";
+            text = 'Delete';
         }
         return {
-            name: "NotificationOperation",
+            name: 'NotificationOperation',
             notificationOperationCode: code,
             notificationOperationText: text,
         };
     }
     _parseTittle(buf) {
         return {
-            name: "Tittle",
-            title: buf.toString("UTF-8"),
+            name: 'Tittle',
+            title: buf.toString('UTF-8'),
         };
     }
     _parseText(buf) {
         return {
-            name: "Text",
-            text: buf.toString("UTF-8"),
+            name: 'Text',
+            text: buf.toString('UTF-8'),
         };
     }
     _parseAppName(buf) {
         return {
-            name: "AppName",
-            appName: buf.toString("UTF-8"),
+            name: 'AppName',
+            appName: buf.toString('UTF-8'),
         };
     }
     _parseAppNameLocal(buf) {
         return {
-            name: "AppNameLocal",
-            appNameLocal: buf.toString("UTF-8"),
+            name: 'AppNameLocal',
+            appNameLocal: buf.toString('UTF-8'),
         };
     }
     _parseNotifyApp(buf) {
         return {
-            name: "NotifyApp",
-            notifyApp: buf.toString("UTF-8"),
+            name: 'NotifyApp',
+            notifyApp: buf.toString('UTF-8'),
         };
     }
     _parseRumblingSetting(buf) {
         const list = [];
         const v = buf.readUInt8(0);
         if (v & 0b00000001) {
-            list.push({ id: 0, name: "LED" });
+            list.push({ id: 0, name: 'LED' });
         }
         if (v & 0b00000010) {
-            list.push({ id: 1, name: "Vibration" });
+            list.push({ id: 1, name: 'Vibration' });
         }
         if (v & 0b00000100) {
-            list.push({ id: 2, name: "Beep" });
+            list.push({ id: 2, name: 'Beep' });
         }
         return {
-            name: "RumblingSetting",
+            name: 'RumblingSetting',
             rumblingSetting: list,
         };
     }
@@ -29113,7 +29656,7 @@ class LinkingServiceNotification {
         let offset = 0;
         while (true) {
             const len = buf.readUInt8(offset++);
-            let name = "";
+            let name = '';
             for (let i = 0; i < len; i++) {
                 name += String.fromCharCode(buf.readUInt8(offset++));
             }
@@ -29123,7 +29666,7 @@ class LinkingServiceNotification {
             }
         }
         return {
-            name: "VibrationPattern",
+            name: 'VibrationPattern',
             vibrationPattern: list,
         };
     }
@@ -29132,7 +29675,7 @@ class LinkingServiceNotification {
         let offset = 0;
         while (true) {
             const len = buf.readUInt8(offset++);
-            let name = "";
+            let name = '';
             for (let i = 0; i < len; i++) {
                 name += String.fromCharCode(buf.readUInt8(offset++));
             }
@@ -29142,20 +29685,20 @@ class LinkingServiceNotification {
             }
         }
         return {
-            name: "LedPattern",
+            name: 'LedPattern',
             LedPattern: list,
         };
     }
     _parseSender(buf) {
         return {
-            name: "Sender",
-            sender: buf.toString("UTF-8"),
+            name: 'Sender',
+            sender: buf.toString('UTF-8'),
         };
     }
     _parseSenderAddress(buf) {
         return {
-            name: "SenderAddress",
-            senderAddress: buf.toString("UTF-8"),
+            name: 'SenderAddress',
+            senderAddress: buf.toString('UTF-8'),
         };
     }
     _parseReceiveDate(buf) {
@@ -29167,7 +29710,7 @@ class LinkingServiceNotification {
         const s = buf.readUInt8(6);
         const dt = new Date(Y, M, D, h, m, s);
         return {
-            name: "ReceiveDate",
+            name: 'ReceiveDate',
             receiveDate: dt,
         };
     }
@@ -29180,7 +29723,7 @@ class LinkingServiceNotification {
         const s = buf.readUInt8(6);
         const dt = new Date(Y, M, D, h, m, s);
         return {
-            name: "StartDate",
+            name: 'StartDate',
             startDate: dt,
         };
     }
@@ -29193,14 +29736,14 @@ class LinkingServiceNotification {
         const s = buf.readUInt8(6);
         const dt = new Date(Y, M, D, h, m, s);
         return {
-            name: "EndDate",
+            name: 'EndDate',
             endDate: dt,
         };
     }
     _parseArea(buf) {
         return {
-            name: "Area",
-            area: buf.toString("UTF-8"),
+            name: 'Area',
+            area: buf.toString('UTF-8'),
         };
     }
     _parsePerson(buf) {
@@ -29224,59 +29767,59 @@ class LinkingServiceNotification {
         }
         const list = [];
         buf_list.forEach((b) => {
-            list.push(b.toString("UTF-8"));
+            list.push(b.toString('UTF-8'));
         });
         return {
-            name: "Person",
+            name: 'Person',
             person: list,
         };
     }
     _parseMimeTypeForImage(buf) {
         return {
-            name: "MimeTypeForImage",
-            mimeTypeForImage: buf.toString("UTF-8"),
+            name: 'MimeTypeForImage',
+            mimeTypeForImage: buf.toString('UTF-8'),
         };
     }
     _parseMimeTypeForMedia(buf) {
         return {
-            name: "MimeTypeForMedia",
-            mimeTypeForMedia: buf.toString("UTF-8"),
+            name: 'MimeTypeForMedia',
+            mimeTypeForMedia: buf.toString('UTF-8'),
         };
     }
     _parseImage(buf) {
         return {
-            name: "Image",
+            name: 'Image',
             image: buf,
         };
     }
     _parseContents(buf, pid) {
         return {
-            name: "Contents" + pid,
-            contents: buf.toString("UTF-8"),
+            name: 'Contents' + pid,
+            contents: buf.toString('UTF-8'),
         };
     }
     _parseMedia(buf) {
         return {
-            name: "Media",
+            name: 'Media',
             media: buf,
         };
     }
     _parsePackage(buf) {
         return {
-            name: "Package",
-            package: buf.toString("UTF-8"),
+            name: 'Package',
+            package: buf.toString('UTF-8'),
         };
     }
     _parseClass(buf) {
         return {
-            name: "Class",
-            class: buf.toString("UTF-8"),
+            name: 'Class',
+            class: buf.toString('UTF-8'),
         };
     }
     _parseSharingInformation(buf) {
         return {
-            name: "SharingInformation",
-            sharingInformation: buf.toString("UTF-8"),
+            name: 'SharingInformation',
+            sharingInformation: buf.toString('UTF-8'),
         };
     }
     _parseBeepPattern(buf) {
@@ -29284,7 +29827,7 @@ class LinkingServiceNotification {
         let offset = 0;
         while (true) {
             const len = buf.readUInt8(offset++);
-            let name = "";
+            let name = '';
             for (let i = 0; i < len; i++) {
                 name += String.fromCharCode(buf.readUInt8(offset++));
             }
@@ -29294,7 +29837,7 @@ class LinkingServiceNotification {
             }
         }
         return {
-            name: "BeepPattern",
+            name: 'BeepPattern',
             beepPattern: list,
         };
     }
@@ -29305,7 +29848,7 @@ class LinkingServiceNotification {
         const buf_list = [];
         // packet header
         const header_buf = Buffer.alloc(1);
-        header_buf.writeUInt8(parseInt("00000001", 2));
+        header_buf.writeUInt8(parseInt('00000001', 2));
         buf_list.push(header_buf);
         // Service ID
         const sid_buf = Buffer.alloc(1);
@@ -29324,16 +29867,16 @@ class LinkingServiceNotification {
         return Buffer.concat(buf_list);
     }
     _createPayload(message_name, params) {
-        if (message_name === "CONFIRM_NOTIFY_CATEGORY") {
+        if (message_name === 'CONFIRM_NOTIFY_CATEGORY') {
             return this._createPayloadConfirmNotifyCategory(params);
         }
-        else if (message_name === "NOTIFY_INFORMATION") {
+        else if (message_name === 'NOTIFY_INFORMATION') {
             return this._createPayloadNotifyInformation(params);
         }
-        else if (message_name === "GET_PD_NOTIFY_DETAIL_DATA_RESP") {
+        else if (message_name === 'GET_PD_NOTIFY_DETAIL_DATA_RESP') {
             return this._createPayloadGetPdNotifyDetailDataResp(params);
         }
-        else if (message_name === "START_PD_APPLICATION_RESP") {
+        else if (message_name === 'START_PD_APPLICATION_RESP') {
             return this._createPayloadStartPdApplicationResp(params);
         }
         else {
@@ -29441,8 +29984,8 @@ class LinkingServiceNotification {
     _createPayloadGetPdNotifyDetailDataResp(params) {
         let pnum = 0;
         let rcode = null;
-        if ("ResultCode" in params &&
-            typeof params.ResultCode === "number" &&
+        if ('ResultCode' in params &&
+            typeof params.ResultCode === 'number' &&
             params.ResultCode >= 0 &&
             params.ResultCode <= 0xff &&
             params.ResultCode % 1 === 0) {
@@ -29453,8 +29996,8 @@ class LinkingServiceNotification {
             return null;
         }
         let uid = null;
-        if ("UniqueId" in params &&
-            typeof params.UniqueId === "number" &&
+        if ('UniqueId' in params &&
+            typeof params.UniqueId === 'number' &&
             params.UniqueId >= 0 &&
             params.UniqueId <= 0xff &&
             params.UniqueId % 1 === 0) {
@@ -29487,8 +30030,8 @@ class LinkingServiceNotification {
     _createPayloadStartPdApplicationResp(params) {
         let pnum = 0;
         let rcode;
-        if ("ResultCode" in params &&
-            typeof params.ResultCode === "number" &&
+        if ('ResultCode' in params &&
+            typeof params.ResultCode === 'number' &&
             params.ResultCode >= 0 &&
             params.ResultCode <= 0xff &&
             params.ResultCode % 1 === 0) {
@@ -29539,9 +30082,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class LinkingServiceOperation {
     constructor() {
         this.SERVICE_ID = 0x02;
-        this.SERVICE_NAME = "PeripheralDeviceOperation";
+        this.SERVICE_NAME = 'PeripheralDeviceOperation';
         this.MESSAGE_NAME_MAP = {
-            "00": "NOTIFY_PD_OPERATION",
+            '00': 'NOTIFY_PD_OPERATION',
         };
         this._device = {};
     }
@@ -29584,111 +30127,111 @@ class LinkingServiceOperation {
     }
     _parseResultCode(buf) {
         const code = buf.readUInt8(0);
-        let text = "";
+        let text = '';
         if (code === 0x00) {
-            text = "OK, request processed correctly";
+            text = 'OK, request processed correctly';
         }
         else if (code === 0x01) {
-            text = "Cancel";
+            text = 'Cancel';
         }
         else if (code === 0x02) {
-            text = "Error, failed";
+            text = 'Error, failed';
         }
         else if (code === 0x03) {
-            text = "Error, no reason defined";
+            text = 'Error, no reason defined';
         }
         else if (code === 0x04) {
-            text = "Error, data not available";
+            text = 'Error, data not available';
         }
         else if (code === 0x05) {
-            text = "Error, not supported";
+            text = 'Error, not supported';
         }
         return {
-            name: "ResultCode",
+            name: 'ResultCode',
             resultCode: code,
             resultText: text,
         };
     }
     _parseCancel(buf) {
         const code = buf.readUInt8(0);
-        let text = "";
+        let text = '';
         if (code === 0x00) {
-            text = "User cancel";
+            text = 'User cancel';
         }
         return {
-            name: "Cancel",
+            name: 'Cancel',
             cancelCode: code,
             cancelText: text,
         };
     }
     _parseButtonId(buf) {
         const code = buf.readUInt8(0);
-        let text = "";
+        let text = '';
         if (code === 0x00) {
-            text = "Power";
+            text = 'Power';
         }
         else if (code === 0x01) {
-            text = "Return";
+            text = 'Return';
         }
         else if (code === 0x02) {
-            text = "SingleClick";
+            text = 'SingleClick';
         }
         else if (code === 0x03) {
-            text = "Home";
+            text = 'Home';
         }
         else if (code === 0x04) {
-            text = "DoubleClick";
+            text = 'DoubleClick';
         }
         else if (code === 0x05) {
-            text = "VolumeUp";
+            text = 'VolumeUp';
         }
         else if (code === 0x06) {
-            text = "VolumeDown";
+            text = 'VolumeDown';
         }
         else if (code === 0x07) {
-            text = "LongPress";
+            text = 'LongPress';
         }
         else if (code === 0x08) {
-            text = "Pause";
+            text = 'Pause';
         }
         else if (code === 0x09) {
-            text = "LongPressRelease";
+            text = 'LongPressRelease';
         }
         else if (code === 0x0a) {
-            text = "FastForward";
+            text = 'FastForward';
         }
         else if (code === 0x0b) {
-            text = "ReWind";
+            text = 'ReWind';
         }
         else if (code === 0x0c) {
-            text = "Shutter";
+            text = 'Shutter';
         }
         else if (code === 0x0d) {
-            text = "Up";
+            text = 'Up';
         }
         else if (code === 0x0e) {
-            text = "Down";
+            text = 'Down';
         }
         else if (code === 0x0f) {
-            text = "Left";
+            text = 'Left';
         }
         else if (code === 0x10) {
-            text = "Right";
+            text = 'Right';
         }
         else if (code === 0x11) {
-            text = "Enter";
+            text = 'Enter';
         }
         else if (code === 0x12) {
-            text = "Menu";
+            text = 'Menu';
         }
         else if (code === 0x13) {
-            text = "Play";
+            text = 'Play';
         }
         else if (code === 0x14) {
-            text = "Stop";
+            text = 'Stop';
         }
         return {
-            name: "ButtonId",
+            name: 'ButtonId',
             buttonId: code,
             buttonName: text,
         };
@@ -29720,10 +30263,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class LinkingServiceProperty {
     constructor() {
         this.SERVICE_ID = 0x00;
-        this.SERVICE_NAME = "PeripheralDevicePropertyInformation";
+        this.SERVICE_NAME = 'PeripheralDevicePropertyInformation';
         this.MESSAGE_NAME_MAP = {
-            "00": "GET_DEVICE_INFORMATION",
-            "01": "GET_DEVICE_INFORMATION_RESP",
+            '00': 'GET_DEVICE_INFORMATION',
+            '01': 'GET_DEVICE_INFORMATION_RESP',
         };
         // Private
         this._WRITE_MESSAGE_ID_MAP = {
@@ -29785,39 +30328,39 @@ class LinkingServiceProperty {
     }
     _parseResultCode(buf) {
         const code = buf.readUInt8(0);
-        let text = "";
+        let text = '';
         if (code === 0x00) {
-            text = "OK, request processed correctly";
+            text = 'OK, request processed correctly';
         }
         else if (code === 0x01) {
-            text = "Cancel";
+            text = 'Cancel';
         }
         else if (code === 0x02) {
-            text = "Error, failed";
+            text = 'Error, failed';
         }
         else if (code === 0x03) {
-            text = "Error, no reason defined";
+            text = 'Error, no reason defined';
         }
         else if (code === 0x04) {
-            text = "Error, data not available";
+            text = 'Error, data not available';
         }
         else if (code === 0x05) {
-            text = "Error, not supported";
+            text = 'Error, not supported';
         }
         return {
-            name: "ResultCode",
+            name: 'ResultCode',
             resultCode: code,
             resultText: text,
         };
     }
     _parseCancel(buf) {
         const code = buf.readUInt8(0);
-        let text = "";
+        let text = '';
         if (code === 0x00) {
-            text = "User cancel";
+            text = 'User cancel';
         }
         return {
-            name: "Cancel",
+            name: 'Cancel',
             cancelCode: code,
             cancelText: text,
         };
@@ -29826,132 +30369,132 @@ class LinkingServiceProperty {
         const v = buf.readUInt8(0);
         const list = [];
         if (v & 0b00000001) {
-            list.push({ id: 0, name: "PeripheralDevicePropertyInformation" });
+            list.push({ id: 0, name: 'PeripheralDevicePropertyInformation' });
         }
         if (v & 0b00000010) {
-            list.push({ id: 1, name: "PeripheralDeviceNotification" });
+            list.push({ id: 1, name: 'PeripheralDeviceNotification' });
         }
         if (v & 0b00000100) {
-            list.push({ id: 2, name: "PeripheralDeviceOperation" });
+            list.push({ id: 2, name: 'PeripheralDeviceOperation' });
         }
         if (v & 0b00001000) {
-            list.push({ id: 3, name: "PeripheralDeviceSensorInformation" });
+            list.push({ id: 3, name: 'PeripheralDeviceSensorInformation' });
         }
         if (v & 0b00010000) {
-            list.push({ id: 4, name: "PeripheralDeviceSettingOperation" });
+            list.push({ id: 4, name: 'PeripheralDeviceSettingOperation' });
         }
         return {
-            name: "ServiceList",
+            name: 'ServiceList',
             serviceList: list,
         };
     }
     _parseDeviceId(buf) {
         return {
-            name: "DeviceId",
-            deviceId: buf.toString("hex"),
+            name: 'DeviceId',
+            deviceId: buf.toString('hex'),
         };
     }
     _parseDeviceUid(buf) {
         return {
-            name: "DeviceUid",
-            deviceUid: buf.toString("hex"),
+            name: 'DeviceUid',
+            deviceUid: buf.toString('hex'),
         };
     }
     _parseDeviceCapability(buf) {
         const v = buf.readUInt8(0);
         const list = [];
         if (v & 0b00000010) {
-            list.push({ id: 1, name: "Gyroscope" });
+            list.push({ id: 1, name: 'Gyroscope' });
         }
         if (v & 0b00000100) {
-            list.push({ id: 2, name: "Accelerometer" });
+            list.push({ id: 2, name: 'Accelerometer' });
         }
         if (v & 0b00001000) {
-            list.push({ id: 3, name: "Orientation" });
+            list.push({ id: 3, name: 'Orientation' });
         }
         if (v & 0b00010000) {
-            list.push({ id: 4, name: "Battery" });
+            list.push({ id: 4, name: 'Battery' });
         }
         if (v & 0b00100000) {
-            list.push({ id: 5, name: "Temperature" });
+            list.push({ id: 5, name: 'Temperature' });
         }
         if (v & 0b01000000) {
-            list.push({ id: 6, name: "Humidity" });
+            list.push({ id: 6, name: 'Humidity' });
         }
         if (v & 0b10000000) {
-            list.push({ id: 7, name: "Atmospheric pressure" });
+            list.push({ id: 7, name: 'Atmospheric pressure' });
         }
         return {
-            name: "DeviceCapability",
+            name: 'DeviceCapability',
             deviceCapability: list,
         };
     }
     _parseOriginalInformation(buf) {
         const type = buf.readUInt8(0);
-        let type_name = "";
+        let type_name = '';
         if (type === 0x00) {
-            type_name = "AppName";
+            type_name = 'AppName';
         }
         else if (type === 0x01) {
-            type_name = "AppNameLocal";
+            type_name = 'AppNameLocal';
         }
         else if (type === 0x02) {
-            type_name = "AppDLURL1";
+            type_name = 'AppDLURL1';
         }
         else if (type === 0x03) {
-            type_name = "AppDLURL2";
+            type_name = 'AppDLURL2';
         }
         else if (type === 0x04) {
-            type_name = "AppDLURL3";
+            type_name = 'AppDLURL3';
         }
         else if (type === 0x05) {
-            type_name = "AppExecInfo1";
+            type_name = 'AppExecInfo1';
         }
         else if (type === 0x06) {
-            type_name = "AppExecInfo2";
+            type_name = 'AppExecInfo2';
         }
         else if (type === 0x07) {
-            type_name = "AppExecInfo3";
+            type_name = 'AppExecInfo3';
         }
         else if (type === 0x08) {
-            type_name = "AppPackage";
+            type_name = 'AppPackage';
         }
         return {
-            name: "OriginalInformation",
+            name: 'OriginalInformation',
             originalInformationCode: type,
             originalInformationName: type_name,
-            originalInformationText: buf.slice(1).toString("UTF-8"),
+            originalInformationText: buf.slice(1).toString('UTF-8'),
         };
     }
     _parseExSensorType(buf) {
         const v = buf.readUInt8(0);
         const list = [];
         if (v & 0b00000001) {
-            list.push({ id: 0, name: "Version" });
+            list.push({ id: 0, name: 'Version' });
         }
         if (v & 0b00000010) {
-            list.push({ id: 1, name: "Version" });
+            list.push({ id: 1, name: 'Version' });
         }
         if (v & 0b00000100) {
-            list.push({ id: 2, name: "Flag" });
+            list.push({ id: 2, name: 'Flag' });
         }
         if (v & 0b00001000) {
-            list.push({ id: 3, name: "Button" });
+            list.push({ id: 3, name: 'Button' });
         }
         if (v & 0b00010000) {
-            list.push({ id: 4, name: "Opening and closing" });
+            list.push({ id: 4, name: 'Opening and closing' });
         }
         if (v & 0b00100000) {
-            list.push({ id: 5, name: "Human detection" });
+            list.push({ id: 5, name: 'Human detection' });
         }
         if (v & 0b01000000) {
-            list.push({ id: 6, name: "Move" });
+            list.push({ id: 6, name: 'Move' });
         }
         if (v & 0b10000000) {
-            list.push({ id: 7, name: "Illuminance" });
+            list.push({ id: 7, name: 'Illuminance' });
         }
         return {
-            name: "ExSensorType",
+            name: 'ExSensorType',
             exSensorType: list,
         };
     }
@@ -29962,7 +30505,7 @@ class LinkingServiceProperty {
         const buf_list = [];
         // packet header
         const header_buf = Buffer.alloc(1);
-        header_buf.writeUInt8(parseInt("00000001", 2));
+        header_buf.writeUInt8(parseInt('00000001', 2));
         buf_list.push(header_buf);
         // Service ID
         const sid_buf = Buffer.alloc(1);
@@ -29981,7 +30524,7 @@ class LinkingServiceProperty {
         return Buffer.concat(buf_list);
     }
     _createPayload(message_name, params) {
-        if (message_name === "GET_DEVICE_INFORMATION") {
+        if (message_name === 'GET_DEVICE_INFORMATION') {
             return this._createPayloadGetDeviceInformation(params);
         }
         else {
@@ -30024,13 +30567,13 @@ const ieee754_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/link
 class LinkingServiceSensor {
     constructor() {
         this.SERVICE_ID = 0x03;
-        this.SERVICE_NAME = "PeripheralDeviceSensorInformation";
+        this.SERVICE_NAME = 'PeripheralDeviceSensorInformation';
         this.MESSAGE_NAME_MAP = {
-            "00": "GET_SENSOR_INFO",
-            "01": "GET_SENSOR_INFO_RESP",
-            "02": "SET_NOTIFY_SENSOR_INFO",
-            "03": "SET_NOTIFY_SENSOR_INFO_RESP",
-            "04": "NOTIFY_PD_SENSOR_INFO",
+            '00': 'GET_SENSOR_INFO',
+            '01': 'GET_SENSOR_INFO_RESP',
+            '02': 'SET_NOTIFY_SENSOR_INFO',
+            '03': 'SET_NOTIFY_SENSOR_INFO_RESP',
+            '04': 'NOTIFY_PD_SENSOR_INFO',
         };
         // Private
         this._WRITE_MESSAGE_ID_MAP = {
@@ -30056,7 +30599,7 @@ class LinkingServiceSensor {
                 const pvalue_buf = buf.slice(offset, offset + plen);
                 offset += plen;
                 const p = this._parseParameter(pid, pvalue_buf, sensor_type);
-                if (pid === 0x02 && "sensorTypeCode" in p) {
+                if (pid === 0x02 && 'sensorTypeCode' in p) {
                     sensor_type = p.sensorTypeCode;
                 }
                 parameters.push(p);
@@ -30105,133 +30648,133 @@ class LinkingServiceSensor {
     }
     _parseResultCode(buf) {
         const code = buf.readUInt8(0);
-        let text = "";
+        let text = '';
         if (code === 0x00) {
-            text = "OK, request processed correctly";
+            text = 'OK, request processed correctly';
         }
         else if (code === 0x01) {
-            text = "Cancel";
+            text = 'Cancel';
         }
         else if (code === 0x02) {
-            text = "Error, failed";
+            text = 'Error, failed';
         }
         else if (code === 0x03) {
-            text = "Error, no reason defined";
+            text = 'Error, no reason defined';
         }
         else if (code === 0x04) {
-            text = "Error, data not available";
+            text = 'Error, data not available';
         }
         else if (code === 0x05) {
-            text = "Error, not supported";
+            text = 'Error, not supported';
         }
         return {
-            name: "ResultCode",
+            name: 'ResultCode',
             resultCode: code,
             resultText: text,
         };
     }
     _parseCancel(buf) {
         const code = buf.readUInt8(0);
-        let text = "";
+        let text = '';
         if (code === 0x00) {
-            text = "User cancel";
+            text = 'User cancel';
         }
         return {
-            name: "Cancel",
+            name: 'Cancel',
             cancelCode: code,
             cancelText: text,
         };
     }
     _parseSensorType(buf) {
         const code = buf.readUInt8(0);
-        let text = "";
+        let text = '';
         if (code === 0x00) {
-            text = "Gyroscope";
+            text = 'Gyroscope';
         }
         else if (code === 0x01) {
-            text = "Accelerometer";
+            text = 'Accelerometer';
         }
         else if (code === 0x02) {
-            text = "Orientation";
+            text = 'Orientation';
         }
         else if (code === 0x03) {
-            text = "Battery";
+            text = 'Battery';
         }
         else if (code === 0x04) {
-            text = "Temperature";
+            text = 'Temperature';
         }
         else if (code === 0x05) {
-            text = "Humidity";
+            text = 'Humidity';
         }
         else if (code === 0x06) {
-            text = "Atmospheric pressure";
+            text = 'Atmospheric pressure';
         }
         else if (code === 0x07) {
-            text = "Opening and closing";
+            text = 'Opening and closing';
         }
         else if (code === 0x08) {
-            text = "Human detection";
+            text = 'Human detection';
         }
         else if (code === 0x09) {
-            text = "Move";
+            text = 'Move';
         }
         else if (code === 0x0a) {
-            text = "Illuminance";
+            text = 'Illuminance';
         }
         return {
-            name: "SensorType",
+            name: 'SensorType',
             sensorTypeCode: code,
             sensorTypeText: text,
         };
     }
     _parseStatus(buf) {
         const code = buf.readUInt8(0);
-        let text = "";
+        let text = '';
         if (code === 0x00) {
-            text = "OFF";
+            text = 'OFF';
         }
         else if (code === 0x01) {
-            text = "ON";
+            text = 'ON';
         }
         return {
-            name: "Status",
+            name: 'Status',
             statusCode: code,
             statusText: text,
         };
     }
     _parseX_value(buf) {
         return {
-            name: "X_value",
+            name: 'X_value',
             xValue: buf.readFloatLE(0),
         };
     }
     _parseY_value(buf) {
         return {
-            name: "Y_value",
+            name: 'Y_value',
             yValue: buf.readFloatLE(0),
         };
     }
     _parseZ_value(buf) {
         return {
-            name: "Z_value",
+            name: 'Z_value',
             zValue: buf.readFloatLE(0),
         };
     }
     _parseX_threshold(buf) {
         return {
-            name: "X_threshold",
+            name: 'X_threshold',
             xThreshold: buf.readFloatLE(0),
         };
     }
     _parseY_threshold(buf) {
         return {
-            name: "Y_threshold",
+            name: 'Y_threshold',
             yThreshold: buf.readFloatLE(0),
         };
     }
     _parseZ_threshold(buf) {
         return {
-            name: "Z_threshold",
+            name: 'Z_threshold',
             zThreshold: buf.readFloatLE(0),
         };
     }
@@ -30301,7 +30844,7 @@ class LinkingServiceSensor {
         const buf_list = [];
         // packet header
         const header_buf = Buffer.alloc(1);
-        header_buf.writeUInt8(parseInt("00000001", 2));
+        header_buf.writeUInt8(parseInt('00000001', 2));
         buf_list.push(header_buf);
         // Service ID
         const sid_buf = Buffer.alloc(1);
@@ -30320,10 +30863,10 @@ class LinkingServiceSensor {
         return Buffer.concat(buf_list);
     }
     _createPayload(message_name, params) {
-        if (message_name === "GET_SENSOR_INFO") {
+        if (message_name === 'GET_SENSOR_INFO') {
             return this._createPayloadGetSensorInfo(params);
         }
-        else if (message_name === "SET_NOTIFY_SENSOR_INFO") {
+        else if (message_name === 'SET_NOTIFY_SENSOR_INFO') {
             return this._createPayloadSetNotifySensorInfo(params);
         }
         else {
@@ -30348,8 +30891,8 @@ class LinkingServiceSensor {
     _createPayloadGetSensorInfo(params) {
         let pnum = 0;
         let sensor_type = null;
-        if ("SensorType" in params &&
-            typeof params.SensorType === "number" &&
+        if ('SensorType' in params &&
+            typeof params.SensorType === 'number' &&
             params.SensorType >= 0x00 &&
             params.SensorType <= 0xff &&
             params.SensorType % 1 === 0) {
@@ -30375,8 +30918,8 @@ class LinkingServiceSensor {
     _createPayloadSetNotifySensorInfo(params) {
         let pnum = 0;
         let sensor_type = null;
-        if ("SensorType" in params &&
-            typeof params.SensorType === "number" &&
+        if ('SensorType' in params &&
+            typeof params.SensorType === 'number' &&
             params.SensorType >= 0x00 &&
             params.SensorType <= 0xff &&
             params.SensorType % 1 === 0) {
@@ -30387,7 +30930,7 @@ class LinkingServiceSensor {
             return null;
         }
         let status = null;
-        if ("Status" in params) {
+        if ('Status' in params) {
             status = params.Status ? 1 : 0;
             pnum++;
         }
@@ -30398,8 +30941,8 @@ class LinkingServiceSensor {
         let y = null;
         let z = null;
         if (sensor_type <= 0x02) {
-            if ("X_threshold" in params) {
-                if (typeof params.X_threshold === "number") {
+            if ('X_threshold' in params) {
+                if (typeof params.X_threshold === 'number') {
                     x = params.X_threshold;
                     pnum++;
                 }
@@ -30407,8 +30950,8 @@ class LinkingServiceSensor {
                     return null;
                 }
             }
-            if ("Y_threshold" in params) {
-                if (typeof params.Y_threshold === "number") {
+            if ('Y_threshold' in params) {
+                if (typeof params.Y_threshold === 'number') {
                     y = params.Y_threshold;
                     pnum++;
                 }
@@ -30416,8 +30959,8 @@ class LinkingServiceSensor {
                     return null;
                 }
             }
-            if ("Z_threshold" in params) {
-                if (typeof params.Z_threshold === "number") {
+            if ('Z_threshold' in params) {
+                if (typeof params.Z_threshold === 'number') {
                     z = params.Z_threshold;
                     pnum++;
                 }
@@ -30427,7 +30970,7 @@ class LinkingServiceSensor {
             }
         }
         let odata = null;
-        if ("OriginalData" in params) {
+        if ('OriginalData' in params) {
             if (params.OriginalData && params.OriginalData instanceof Buffer) {
                 odata = params.OriginalData;
                 pnum++;
@@ -30504,18 +31047,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class LinkingServiceSetting {
     constructor() {
         this.SERVICE_ID = 0x04;
-        this.SERVICE_NAME = "PeripheralDeviceSettingOperation";
+        this.SERVICE_NAME = 'PeripheralDeviceSettingOperation';
         this.MESSAGE_NAME_MAP = {
-            "00": "GET_APP_VERSION",
-            "01": "GET_APP_VERSION_RESP",
-            "02": "CONFIRM_INSTALL_APP",
-            "03": "CONFIRM_INSTALL_APP_RESP",
-            "04": "GET_SETTING_INFORMATION",
-            "05": "GET_SETTING_INFORMATION_RESP",
-            "06": "GET_SETTING_NAME",
-            "07": "GET_SETTING_NAME_RESP",
-            "08": "SELECT_SETTING_INFORMATION",
-            "09": "SELECT_SETTING_INFORMATION_RESP",
+            '00': 'GET_APP_VERSION',
+            '01': 'GET_APP_VERSION_RESP',
+            '02': 'CONFIRM_INSTALL_APP',
+            '03': 'CONFIRM_INSTALL_APP_RESP',
+            '04': 'GET_SETTING_INFORMATION',
+            '05': 'GET_SETTING_INFORMATION_RESP',
+            '06': 'GET_SETTING_NAME',
+            '07': 'GET_SETTING_NAME_RESP',
+            '08': 'SELECT_SETTING_INFORMATION',
+            '09': 'SELECT_SETTING_INFORMATION_RESP',
         };
         // Private
         this._WRITE_MESSAGE_ID_MAP = {
@@ -30593,68 +31136,68 @@ class LinkingServiceSetting {
     }
     _parseResultCode(buf) {
         const code = buf.readUInt8(0);
-        let text = "";
+        let text = '';
         if (code === 0x00) {
-            text = "OK, request processed correctly";
+            text = 'OK, request processed correctly';
         }
         else if (code === 0x01) {
-            text = "Cancel";
+            text = 'Cancel';
         }
         else if (code === 0x02) {
-            text = "Error, failed";
+            text = 'Error, failed';
         }
         else if (code === 0x03) {
-            text = "Error, no reason defined";
+            text = 'Error, no reason defined';
         }
         else if (code === 0x04) {
-            text = "Error, data not available";
+            text = 'Error, data not available';
         }
         else if (code === 0x05) {
-            text = "Error, not supported";
+            text = 'Error, not supported';
         }
         return {
-            name: "ResultCode",
+            name: 'ResultCode',
             resultCode: code,
             resultText: text,
         };
     }
     _parseCancel(buf) {
         const code = buf.readUInt8(0);
-        let text = "";
+        let text = '';
         if (code === 0x00) {
-            text = "User cancel";
+            text = 'User cancel';
         }
         return {
-            name: "Cancel",
+            name: 'Cancel',
             cancelCode: code,
             cancelText: text,
         };
     }
     _parseSettingNameType(buf) {
         const code = buf.readUInt8(0);
-        let text = "";
+        let text = '';
         if (code === 0x00) {
-            text = "LEDColorName";
+            text = 'LEDColorName';
         }
         else if (code === 0x01) {
-            text = "LEDPatternName";
+            text = 'LEDPatternName';
         }
         else if (code === 0x02) {
-            text = "VibrationPatternName";
+            text = 'VibrationPatternName';
         }
         else if (code === 0x03) {
-            text = "BeepPatternName";
+            text = 'BeepPatternName';
         }
         return {
-            name: "SettingNameType",
+            name: 'SettingNameType',
             settingNameTypeCode: code,
             settingNameTypeText: text,
         };
     }
     _parseAppName(buf) {
         return {
-            name: "AppName",
-            appName: buf.toString("UTF-8"),
+            name: 'AppName',
+            appName: buf.toString('UTF-8'),
         };
     }
     _parseFileVer(buf) {
@@ -30663,63 +31206,63 @@ class LinkingServiceSetting {
             list.push(buf.readUInt8(i));
         }
         return {
-            name: "FileVer",
-            fileVer: list.join("."),
+            name: 'FileVer',
+            fileVer: list.join('.'),
         };
     }
     _parseFileSize(buf) {
         return {
-            name: "FileSize",
+            name: 'FileSize',
             fileSize: buf.readUInt32LE(0),
         };
     }
     _parseInstallConfirmStatus(buf) {
         const code = buf.readUInt8(0);
-        let text = "";
+        let text = '';
         if (code === 0x00) {
-            text = "OK, Device has been ready for install";
+            text = 'OK, Device has been ready for install';
         }
         else if (code === 0x01) {
-            text = "Cancel";
+            text = 'Cancel';
         }
         else if (code === 0x02) {
-            text = "Error, failed";
+            text = 'Error, failed';
         }
         else if (code === 0x03) {
-            text = "Error, no reason defined";
+            text = 'Error, no reason defined';
         }
         else if (code === 0x04) {
-            text = "Error, data not available";
+            text = 'Error, data not available';
         }
         else if (code === 0x05) {
-            text = "Error, not supported";
+            text = 'Error, not supported';
         }
         else if (code === 0x06) {
-            text = "Error, Device has no space to install";
+            text = 'Error, Device has no space to install';
         }
         else if (code === 0x07) {
-            text = "Error, Requested file was already installed";
+            text = 'Error, Requested file was already installed';
         }
         else if (code === 0x08) {
-            text = "Error, Newest file was already installed";
+            text = 'Error, Newest file was already installed';
         }
         return {
-            name: "InstallConfirmStatus",
+            name: 'InstallConfirmStatus',
             installConfirmStatusCode: code,
             installConfirmStatusText: text,
         };
     }
     _parseSettingInformationRequest(buf) {
         const code = buf.readUInt8(0);
-        let text = "";
+        let text = '';
         if (code === 0x00) {
-            text = "SETTING";
+            text = 'SETTING';
         }
         else if (code === 0x01) {
-            text = "START_DEMONSTRATION";
+            text = 'START_DEMONSTRATION';
         }
         else if (code === 0x02) {
-            text = "STOP_DEMONSTRATION";
+            text = 'STOP_DEMONSTRATION';
         }
         let offset = 1;
         const settings = [];
@@ -30728,7 +31271,7 @@ class LinkingServiceSetting {
             if (setting_code === 0x00) {
                 settings.push({
                     settingCode: setting_code,
-                    settingName: "LED",
+                    settingName: 'LED',
                     colorMax: buf.readUInt8(offset + 1),
                     colorNumber: buf.readUInt8(offset + 2),
                     patternMax: buf.readUInt8(offset + 3),
@@ -30740,7 +31283,7 @@ class LinkingServiceSetting {
             else if (setting_code === 0x01) {
                 settings.push({
                     settingCode: setting_code,
-                    settingName: "Vibration",
+                    settingName: 'Vibration',
                     patternMax: buf.readUInt8(offset + 1),
                     patternNumber: buf.readUInt8(offset + 2),
                     duration: buf.readUInt8(offset + 3),
@@ -30750,7 +31293,7 @@ class LinkingServiceSetting {
             else if (setting_code === 0x02) {
                 settings.push({
                     settingCode: setting_code,
-                    settingName: "Beep",
+                    settingName: 'Beep',
                     patternMax: buf.readUInt8(offset + 1),
                     patternNumber: buf.readUInt8(offset + 2),
                     duration: buf.readUInt8(offset + 3),
@@ -30762,7 +31305,7 @@ class LinkingServiceSetting {
             }
         }
         return {
-            name: "SettingInformationRequest",
+            name: 'SettingInformationRequest',
             settingInformationRequestCode: code,
             settingInformationRequestName: text,
             settingInformationRequestData: settings,
@@ -30776,7 +31319,7 @@ class LinkingServiceSetting {
             if (setting_code === 0x00) {
                 settings.push({
                     id: setting_code,
-                    name: "LED",
+                    name: 'LED',
                     colorMax: buf.readUInt8(offset + 1),
                     colorNumber: buf.readUInt8(offset + 2),
                     patternMax: buf.readUInt8(offset + 3),
@@ -30788,7 +31331,7 @@ class LinkingServiceSetting {
             else if (setting_code === 0x01) {
                 settings.push({
                     id: setting_code,
-                    name: "Vibration",
+                    name: 'Vibration',
                     patternMax: buf.readUInt8(offset + 1),
                     patternNumber: buf.readUInt8(offset + 2),
                     duration: buf.readUInt8(offset + 3),
@@ -30798,7 +31341,7 @@ class LinkingServiceSetting {
             else if (setting_code === 0x02) {
                 settings.push({
                     id: setting_code,
-                    name: "Beep",
+                    name: 'Beep',
                     patternMax: buf.readUInt8(offset + 1),
                     patternNumber: buf.readUInt8(offset + 2),
                     duration: buf.readUInt8(offset + 3),
@@ -30810,7 +31353,7 @@ class LinkingServiceSetting {
             }
         }
         return {
-            name: "SettingInformationData",
+            name: 'SettingInformationData',
             settingInformationData: settings,
         };
     }
@@ -30819,7 +31362,7 @@ class LinkingServiceSetting {
         let offset = 0;
         while (true) {
             const len = buf.readUInt8(offset++);
-            const name = buf.slice(offset, offset + len - 1).toString("utf-8");
+            const name = buf.slice(offset, offset + len - 1).toString('utf-8');
             offset += len;
             list.push(name);
             if (offset >= buf.length) {
@@ -30827,7 +31370,7 @@ class LinkingServiceSetting {
             }
         }
         return {
-            name: "SettingNameData",
+            name: 'SettingNameData',
             settingNameData: list,
         };
     }
@@ -30841,7 +31384,7 @@ class LinkingServiceSetting {
         const buf_list = [];
         // packet header
         const header_buf = Buffer.alloc(1);
-        header_buf.writeUInt8(parseInt("00000001", 2));
+        header_buf.writeUInt8(parseInt('00000001', 2));
         buf_list.push(header_buf);
         // Service ID
         const sid_buf = Buffer.alloc(1);
@@ -30860,22 +31403,22 @@ class LinkingServiceSetting {
         return Buffer.concat(buf_list);
     }
     _createPayload(message_name, params) {
-        if (!params || typeof params !== "object") {
+        if (!params || typeof params !== 'object') {
             params = {};
         }
-        if (message_name === "GET_APP_VERSION") {
+        if (message_name === 'GET_APP_VERSION') {
             return this._createPayloadGetAppVersion(params);
         }
-        else if (message_name === "CONFIRM_INSTALL_APP") {
+        else if (message_name === 'CONFIRM_INSTALL_APP') {
             return this._createPayloadConfirmInstallApp(params);
         }
-        else if (message_name === "GET_SETTING_INFORMATION") {
+        else if (message_name === 'GET_SETTING_INFORMATION') {
             return this._createPayloadGetSettingInformation(params);
         }
-        else if (message_name === "GET_SETTING_NAME") {
+        else if (message_name === 'GET_SETTING_NAME') {
             return this._createPayloadGetSettingName(params);
         }
-        else if (message_name === "SELECT_SETTING_INFORMATION") {
+        else if (message_name === 'SELECT_SETTING_INFORMATION') {
             return this._createPayloadSelectSettingInformation(params);
         }
         else {
@@ -30900,7 +31443,7 @@ class LinkingServiceSetting {
     _createPayloadGetAppVersion(params) {
         let pnum = 0;
         let app_name = null;
-        if ("AppName" in params && typeof params.AppName === "string") {
+        if ('AppName' in params && typeof params.AppName === 'string') {
             app_name = params.AppName;
             pnum++;
         }
@@ -30923,7 +31466,7 @@ class LinkingServiceSetting {
     _createPayloadConfirmInstallApp(params) {
         let pnum = 0;
         let app_name = null;
-        if ("AppName" in params && typeof params.AppName === "string") {
+        if ('AppName' in params && typeof params.AppName === 'string') {
             app_name = params.AppName;
             pnum++;
         }
@@ -30931,12 +31474,14 @@ class LinkingServiceSetting {
             return null;
         }
         let file_ver = null;
-        if ("FileVer" in params && typeof params.FileVer === "string") {
+        if ('FileVer' in params && typeof params.FileVer === 'string') {
             file_ver = params.FileVer;
             pnum++;
         }
         let file_size = null;
-        if ("FileSize" in params && typeof params.FileSize === "number" && file_size % 1 === 0) {
+        if ('FileSize' in params &&
+            typeof params.FileSize === 'number' &&
+            file_size % 1 === 0) {
             file_size = params.FileSize;
             pnum++;
         }
@@ -30971,10 +31516,10 @@ class LinkingServiceSetting {
     _createPayloadGetSettingName(params) {
         let pnum = 0;
         let type = null;
-        if ("SettingNameType" in params) {
+        if ('SettingNameType' in params) {
             type = params.SettingNameType;
-            if (typeof type === "number") {
-                let setting_name = "";
+            if (typeof type === 'number') {
+                let setting_name = '';
                 for (const name in this._SETTING_NAME_TYPE_MAP) {
                     if (this._SETTING_NAME_TYPE_MAP[name] === type) {
                         setting_name = name;
@@ -30985,7 +31530,7 @@ class LinkingServiceSetting {
                     return null;
                 }
             }
-            else if (typeof type === "string") {
+            else if (typeof type === 'string') {
                 if (type in this._SETTING_NAME_TYPE_MAP) {
                     type = this._SETTING_NAME_TYPE_MAP[type];
                 }
@@ -31014,24 +31559,25 @@ class LinkingServiceSetting {
     _createPayloadSelectSettingInformation(params) {
         let pnum = 0;
         let code = null;
-        if ("SettingInformationRequest" in params && typeof params.SettingInformationRequest === "object") {
+        if ('SettingInformationRequest' in params &&
+            typeof params.SettingInformationRequest === 'object') {
             const req = params.SettingInformationRequest;
-            if ("requestCode" in req &&
-                typeof req.requestCode === "number" &&
+            if ('requestCode' in req &&
+                typeof req.requestCode === 'number' &&
                 req.requestCode >= 0 &&
                 req.requestCode <= 0x02 &&
                 req.requestCode % 1 === 0) {
                 code = req.requestCode;
             }
-            else if ("requestName" in req && typeof req.requestName === "string") {
+            else if ('requestName' in req && typeof req.requestName === 'string') {
                 const name = req.requestName;
-                if (name === "SETTING") {
+                if (name === 'SETTING') {
                     code = 0x00;
                 }
-                else if (name === "START_DEMONSTRATION") {
+                else if (name === 'START_DEMONSTRATION') {
                     code = 0x01;
                 }
-                else if (name === "STOP_DEMONSTRATION") {
+                else if (name === 'STOP_DEMONSTRATION') {
                     code = 0x02;
                 }
                 else {
@@ -31047,38 +31593,38 @@ class LinkingServiceSetting {
         }
         pnum++;
         let settings = null;
-        if ("SettingInformationData" in params) {
+        if ('SettingInformationData' in params) {
             if (Array.isArray(params.SettingInformationData)) {
                 settings = [];
                 for (let i = 0; i < params.SettingInformationData.length; i++) {
                     const s = params.SettingInformationData[i];
                     let scode = null;
-                    let sname = "";
-                    if ("settingCode" in s &&
-                        typeof s.settingCode === "number" &&
+                    let sname = '';
+                    if ('settingCode' in s &&
+                        typeof s.settingCode === 'number' &&
                         s.settingCode >= 0x00 &&
                         s.settingCode <= 0x02 &&
                         s.settingCode % 1 === 0) {
                         scode = s.settingCode;
                         if (scode === 0x00) {
-                            sname = "LED";
+                            sname = 'LED';
                         }
                         else if (scode === 0x01) {
-                            sname = "Vibration";
+                            sname = 'Vibration';
                         }
                         else if (scode === 0x02) {
-                            sname = "Beep";
+                            sname = 'Beep';
                         }
                     }
-                    else if ("settingName" in s && typeof s.settingName === "string") {
+                    else if ('settingName' in s && typeof s.settingName === 'string') {
                         sname = s.settingName;
-                        if (sname === "LED") {
+                        if (sname === 'LED') {
                             scode = 0x00;
                         }
-                        else if (sname === "Vibration") {
+                        else if (sname === 'Vibration') {
                             scode = 0x01;
                         }
-                        else if (sname === "Beep") {
+                        else if (sname === 'Beep') {
                             scode = 0x02;
                         }
                         else {
@@ -31092,8 +31638,8 @@ class LinkingServiceSetting {
                     let cm = null;
                     if (scode === 0x00) {
                         // LED
-                        if ("colorNumber" in s) {
-                            if (typeof s.colorNumber === "number" &&
+                        if ('colorNumber' in s) {
+                            if (typeof s.colorNumber === 'number' &&
                                 s.colorNumber >= 0 &&
                                 s.colorNumber <= this._device.settings.LED.colorMax &&
                                 s.colorNumber % 1 === 0) {
@@ -31109,8 +31655,8 @@ class LinkingServiceSetting {
                         cm = this._device.settings.LED.colorMax;
                     }
                     let pn = null;
-                    if ("patternNumber" in s) {
-                        if (typeof s.patternNumber === "number" &&
+                    if ('patternNumber' in s) {
+                        if (typeof s.patternNumber === 'number' &&
                             s.patternNumber >= 0 &&
                             s.patternNumber <= this._device.settings[sname].patternMax &&
                             s.patternNumber % 1 === 0) {
@@ -31125,8 +31671,11 @@ class LinkingServiceSetting {
                     }
                     const pm = this._device.settings[sname].patternMax;
                     let dur = null;
-                    if ("duration" in s) {
-                        if (typeof s.duration === "number" && s.duration >= 0 && s.duration <= 0xff && s.duration % 1 === 0) {
+                    if ('duration' in s) {
+                        if (typeof s.duration === 'number' &&
+                            s.duration >= 0 &&
+                            s.duration <= 0xff &&
+                            s.duration % 1 === 0) {
                             dur = s.duration;
                             if (dur <= 0x05) {
                                 dur = 0x05;
@@ -31233,27 +31782,27 @@ const service_setting_js_1 = __importDefault(__webpack_require__("./dist/src/par
 class LinkingService {
     constructor() {
         this._services = {
-            "00": new service_property_js_1.default(),
-            "01": new service_notification_1.default(),
-            "02": new service_operation_js_1.default(),
-            "03": new service_sensor_js_1.default(),
-            "04": new service_setting_js_1.default(),
+            '00': new service_property_js_1.default(),
+            '01': new service_notification_1.default(),
+            '02': new service_operation_js_1.default(),
+            '03': new service_sensor_js_1.default(),
+            '04': new service_setting_js_1.default(),
         };
         this._write_message_name_map = {
             // PeripheralDevicePropertyInformation Service
-            GET_DEVICE_INFORMATION: "00",
+            GET_DEVICE_INFORMATION: '00',
             // PeripheralDeviceNotification Service
-            CONFIRM_NOTIFY_CATEGORY: "01",
-            NOTIFY_INFORMATION: "01",
+            CONFIRM_NOTIFY_CATEGORY: '01',
+            NOTIFY_INFORMATION: '01',
             // PeripheralDeviceSensorInformation Service
-            GET_SENSOR_INFO: "03",
-            SET_NOTIFY_SENSOR_INFO: "03",
+            GET_SENSOR_INFO: '03',
+            SET_NOTIFY_SENSOR_INFO: '03',
             // PeripheralDeviceSettingOperation Service
-            GET_APP_VERSION: "04",
-            CONFIRM_INSTALL_APP: "04",
-            GET_SETTING_INFORMATION: "04",
-            GET_SETTING_NAME: "04",
-            SELECT_SETTING_INFORMATION: "04",
+            GET_APP_VERSION: '04',
+            CONFIRM_INSTALL_APP: '04',
+            GET_SETTING_INFORMATION: '04',
+            GET_SETTING_NAME: '04',
+            SELECT_SETTING_INFORMATION: '04',
         };
         this._device_info = null;
     }
@@ -31264,7 +31813,7 @@ class LinkingService {
         this._device_info = device_info;
     }
     parseResponse(buf) {
-        const service_id_hex = buf.slice(1, 2).toString("hex");
+        const service_id_hex = buf.slice(1, 2).toString('hex');
         const service = this._services[service_id_hex];
         if (!service) {
             return null;
@@ -31272,7 +31821,7 @@ class LinkingService {
         const service_id = buf.readUInt8(1);
         const msg_id = buf.readUInt16LE(2);
         // let msg_id = buf.readUInt8(2);
-        const msg_id_hex = buf.slice(2, 3).toString("hex");
+        const msg_id_hex = buf.slice(2, 3).toString('hex');
         const pnum = buf.readUInt8(4);
         const payload_buf = buf.slice(5, buf.length);
         const parameters = service.parsePayload(pnum, payload_buf);
@@ -31304,7 +31853,9 @@ class LinkingService {
             return false;
         }
         sid = parseInt(sid, 10);
-        const services = this._device_info && this._device_info.services ? this._device_info.services : null;
+        const services = this._device_info && this._device_info.services
+            ? this._device_info.services
+            : null;
         if (!services) {
             return false;
         }
@@ -31339,7 +31890,7 @@ class SCBTGAAAC {
     }
     static info() {
         return {
-            name: "SCBTGAAAC",
+            name: 'SCBTGAAAC',
         };
     }
     static isDevice(peripheral) {
@@ -31347,22 +31898,30 @@ class SCBTGAAAC {
     }
     static getData(peripheral) {
         const data = SCBTGAAAC.searchTypeVal(peripheral.advertise_data_rows, 0xff);
-        if (!data || data[0] !== 0x31 || data[1] !== 0x07 || data[2] !== 0x02 || data[3] !== 0x15 || data.length !== 25) {
+        if (!data ||
+            data[0] !== 0x31 ||
+            data[1] !== 0x07 ||
+            data[2] !== 0x02 ||
+            data[3] !== 0x15 ||
+            data.length !== 25) {
             return null;
         }
         const uuidData = data.slice(4, 20);
-        let uuid = "";
+        let uuid = '';
         for (let i = 0; i < uuidData.length; i++) {
-            uuid = uuid + ("00" + uuidData[i].toString(16)).slice(-2);
-            if (i === 4 - 1 || i === 4 + 2 - 1 || i === 4 + 2 * 2 - 1 || i === 4 + 2 * 3 - 1) {
-                uuid += "-";
+            uuid = uuid + ('00' + uuidData[i].toString(16)).slice(-2);
+            if (i === 4 - 1 ||
+                i === 4 + 2 - 1 ||
+                i === 4 + 2 * 2 - 1 ||
+                i === 4 + 2 * 3 - 1) {
+                uuid += '-';
             }
         }
         const major = (data[20] << 8) + data[21];
         const minor = (data[22] << 8) + data[23];
         const power = data[24];
-        if (uuid === "5d490d6c-7eb9-474e-8160-45bde999119a" && major === 3) {
-            return `03-${("00000" + minor).slice(-5)}`;
+        if (uuid === '5d490d6c-7eb9-474e-8160-45bde999119a' && major === 3) {
+            return `03-${('00000' + minor).slice(-5)}`;
         }
         return null;
     }
@@ -31402,7 +31961,7 @@ class TM530 {
     }
     static info() {
         return {
-            name: "TM530",
+            name: 'TM530',
         };
     }
     static isDevice(peripheral) {
@@ -31426,8 +31985,10 @@ class TM530 {
         }
         const data = {
             battery: peripheral.adv_data[13],
-            temperature: peripheral.adv_data[14] + ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[15]),
-            humidity: peripheral.adv_data[16] + ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[17]),
+            temperature: peripheral.adv_data[14] +
+                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[15]),
+            humidity: peripheral.adv_data[16] +
+                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[17]),
         };
         return data;
     }
@@ -31477,7 +32038,7 @@ class TM551 {
     }
     static info() {
         return {
-            name: "TM551",
+            name: 'TM551',
         };
     }
     static isDevice(peripheral) {
@@ -31501,9 +32062,12 @@ class TM551 {
         }
         const data = {
             battery: peripheral.adv_data[13],
-            x: peripheral.adv_data[14] + ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[15]),
-            y: peripheral.adv_data[16] + ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[17]),
-            z: peripheral.adv_data[18] + ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[19]),
+            x: peripheral.adv_data[14] +
+                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[15]),
+            y: peripheral.adv_data[16] +
+                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[17]),
+            z: peripheral.adv_data[18] +
+                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[19]),
         };
         return data;
     }
@@ -31553,12 +32117,12 @@ class Toio_CoreCube {
         this.keys = [];
         this.requiredKeys = [];
         this._uuids = {
-            serviceID: "10B20100-5B3B-4571-9508-CF3EFCD7BBAE",
-            characteristicIDMotor: "10B20102-5B3B-4571-9508-CF3EFCD7BBAE",
-            characteristicIDPos: "10B20101-5B3B-4571-9508-CF3EFCD7BBAE",
-            characteristicIDMotion: "10B20106-5B3B-4571-9508-CF3EFCD7BBAE",
-            characteristicIDButton: "10B20107-5B3B-4571-9508-CF3EFCD7BBAE",
-            characteristicIDBattery: "10B20108-5B3B-4571-9508-CF3EFCD7BBAE",
+            serviceID: '10B20100-5B3B-4571-9508-CF3EFCD7BBAE',
+            characteristicIDMotor: '10B20102-5B3B-4571-9508-CF3EFCD7BBAE',
+            characteristicIDPos: '10B20101-5B3B-4571-9508-CF3EFCD7BBAE',
+            characteristicIDMotion: '10B20106-5B3B-4571-9508-CF3EFCD7BBAE',
+            characteristicIDButton: '10B20107-5B3B-4571-9508-CF3EFCD7BBAE',
+            characteristicIDBattery: '10B20108-5B3B-4571-9508-CF3EFCD7BBAE',
         };
         this.timeout = 100;
         this._buttonCharacteristic = null;
@@ -31567,17 +32131,17 @@ class Toio_CoreCube {
         this._motorCharacteristic = null;
         this._batteryCharacteristic = null;
         if (peripheral && !Toio_CoreCube.isDevice(peripheral)) {
-            throw new Error("peripheral is not RS_Seek3");
+            throw new Error('peripheral is not RS_Seek3');
         }
         this.peripheral = peripheral;
     }
     static info() {
         return {
-            name: "toio_CoreCube",
+            name: 'toio_CoreCube',
         };
     }
     static isDevice(peripheral) {
-        if (peripheral.localName === "toio Core Cube") {
+        if (peripheral.localName === 'toio Core Cube') {
             return true;
         }
         else {
@@ -31587,10 +32151,10 @@ class Toio_CoreCube {
     wired(obniz) { }
     async connectWait(timeout) {
         if (!this.peripheral) {
-            throw new Error("RS_Seek3 is not find.");
+            throw new Error('RS_Seek3 is not find.');
         }
         this.peripheral.ondisconnect = (reason) => {
-            if (typeof this.ondisconnect === "function") {
+            if (typeof this.ondisconnect === 'function') {
                 this.ondisconnect(reason);
             }
         };
@@ -31612,12 +32176,12 @@ class Toio_CoreCube {
             .getService(this._uuids.serviceID)
             .getCharacteristic(this._uuids.characteristicIDBattery);
         if (this._buttonCharacteristic) {
-            if (typeof this.functionButtonPress === "function") {
+            if (typeof this.functionButtonPress === 'function') {
                 this._buttonCharacteristic.registerNotify(this.functionButtonPress);
             }
         }
         if (this._buttonCharacteristic) {
-            if (typeof this.functionMotionChange === "function") {
+            if (typeof this.functionMotionChange === 'function') {
                 this._buttonCharacteristic.registerNotify(this.functionMotionChange);
             }
         }
@@ -31630,7 +32194,6 @@ class Toio_CoreCube {
     async getPositionWait() {
         const readData = await this._positionCharacteristic.readWait();
         return {
-            // NOTE: toioの中心から見たポジション
             posX: (readData[2] << 8) | readData[1],
             posY: (readData[4] << 8) | readData[3],
             angle: (readData[6] << 8) | readData[5],
@@ -31642,7 +32205,6 @@ class Toio_CoreCube {
     async getMotionWait() {
         const readData = await this._motionCharacteristic.readWait();
         return {
-            // NOTE: toioの中心から見たポジション
             isHorizon: readData[1] === 1,
             isCollision: readData[2] === 1,
             isDoubletap: readData[3] === 1,
@@ -31759,34 +32321,34 @@ class uPRISM {
         this.readIndex = -1;
         this.accelRange = 1024;
         this._uuids = {
-            service: "a587905b-ac98-4cb1-8b1d-5e22ae747d17",
-            settingEnableChar: "51bc99bd-b22e-4ff5-807e-b641d21af060",
-            notifyChar: "0d6fcf18-d935-49d1-836d-384c7b857b83",
+            service: 'a587905b-ac98-4cb1-8b1d-5e22ae747d17',
+            settingEnableChar: '51bc99bd-b22e-4ff5-807e-b641d21af060',
+            notifyChar: '0d6fcf18-d935-49d1-836d-384c7b857b83',
         };
         if (peripheral === null) {
-            throw new Error("peripheral is null");
+            throw new Error('peripheral is null');
         }
         if (peripheral && !uPRISM.isDevice(peripheral)) {
-            throw new Error("peripheral is not uPRISM");
+            throw new Error('peripheral is not uPRISM');
         }
         this._peripheral = peripheral;
     }
     static info() {
         return {
-            name: "uPRISM",
+            name: 'uPRISM',
         };
     }
     static isDevice(peripheral) {
         var _a;
-        return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf("uPrism_")) === 0;
+        return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf('uPrism_')) === 0;
     }
     async connectWait() {
         if (!this._peripheral) {
-            throw new Error("peripheral is not uPRISM");
+            throw new Error('peripheral is not uPRISM');
         }
         if (!this._peripheral.connected) {
             this._peripheral.ondisconnect = (reason) => {
-                if (typeof this.ondisconnect === "function") {
+                if (typeof this.ondisconnect === 'function') {
                     this.ondisconnect(reason);
                 }
             };
@@ -31800,27 +32362,31 @@ class uPRISM {
     }
     setAccelRange(range) {
         switch (range) {
-            case "2g":
+            case '2g':
                 this.accelRange = 1024;
                 break;
-            case "4g":
+            case '4g':
                 this.accelRange = 512;
                 break;
-            case "8g":
+            case '8g':
                 this.accelRange = 256;
                 break;
-            case "16g":
+            case '16g':
                 this.accelRange = 128;
                 break;
         }
     }
     async startNotifyWait() {
         if (!this._peripheral || !this._peripheral.connected) {
-            throw new Error("peripheral not connected uPRISM");
+            throw new Error('peripheral not connected uPRISM');
         }
-        const rc = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.settingEnableChar);
+        const rc = this._peripheral
+            .getService(this._uuids.service)
+            .getCharacteristic(this._uuids.settingEnableChar);
         await rc.writeWait([0x04, 0x03, 0x01]);
-        const c = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.notifyChar);
+        const c = this._peripheral
+            .getService(this._uuids.service)
+            .getCharacteristic(this._uuids.notifyChar);
         await c.registerNotifyWait((data) => {
             if (data[1] !== 0x14) {
                 return;
@@ -31829,14 +32395,19 @@ class uPRISM {
                 this.readIndex = data[19];
                 this.readData = {
                     acceleration: {
-                        x: ObnizPartsBleInterface_1.default.signed16FromBinary(data[3], data[2]) / this.accelRange,
-                        y: ObnizPartsBleInterface_1.default.signed16FromBinary(data[5], data[4]) / this.accelRange,
-                        z: ObnizPartsBleInterface_1.default.signed16FromBinary(data[7], data[6]) / this.accelRange,
+                        x: ObnizPartsBleInterface_1.default.signed16FromBinary(data[3], data[2]) /
+                            this.accelRange,
+                        y: ObnizPartsBleInterface_1.default.signed16FromBinary(data[5], data[4]) /
+                            this.accelRange,
+                        z: ObnizPartsBleInterface_1.default.signed16FromBinary(data[7], data[6]) /
+                            this.accelRange,
                     },
                     geomagnetic: {
                         x: ObnizPartsBleInterface_1.default.signed16FromBinary(data[9], data[8]) / 16,
-                        y: ObnizPartsBleInterface_1.default.signed16FromBinary(data[11], data[10]) / 16,
-                        z: ObnizPartsBleInterface_1.default.signed16FromBinary(data[13], data[12]) / 16,
+                        y: ObnizPartsBleInterface_1.default.signed16FromBinary(data[11], data[10]) /
+                            16,
+                        z: ObnizPartsBleInterface_1.default.signed16FromBinary(data[13], data[12]) /
+                            16,
                     },
                     time: {
                         year: 0,
@@ -31857,11 +32428,14 @@ class uPRISM {
             }
             else if (data[0] === 0xb2) {
                 if (this.readIndex === data[19] && this.readData) {
-                    this.readData.temperature = ObnizPartsBleInterface_1.default.signed16FromBinary(data[3], data[2]) / 100;
+                    this.readData.temperature =
+                        ObnizPartsBleInterface_1.default.signed16FromBinary(data[3], data[2]) / 100;
                     this.readData.humidity = ((data[5] << 8) | data[4]) / 100;
-                    this.readData.ambient_light = ((data[8] << 16) | (data[7] << 8) | data[6]) / 128;
+                    this.readData.ambient_light =
+                        ((data[8] << 16) | (data[7] << 8) | data[6]) / 128;
                     this.readData.uvi = data[9] / 16;
-                    this.readData.pressure = (data[13] << 16) | (data[12] << 8) | data[11];
+                    this.readData.pressure =
+                        (data[13] << 16) | (data[12] << 8) | data[11];
                     this.readData.time.day = data[16];
                     this.readData.time.month = data[17];
                     this.readData.time.year = data[18];
@@ -31872,7 +32446,7 @@ class uPRISM {
                     // console.log(
                     //   `accel x:${r.acceleration.x} y:${r.acceleration.y} z:${r.acceleration.z}\n` +
                     //     `geo x:${r.geomagnetic.x} y:${r.geomagnetic.y} z:${r.geomagnetic.z}\n` +
-                    //     `temp:${r.temperature}℃ humid:${r.humidity}% light:${r.ambient_light}lx pressure:${r.pressure}Pa UV index:${r.uvi} index:${r.index}\n` +
+                    //     `temp:${r.temperature}degree humid:${r.humidity}% light:${r.ambient_light}lx pressure:${r.pressure}Pa UV index:${r.uvi} index:${r.index}\n` +
                     //     `date ${r.time.year}/${r.time.month}/${r.time.day} ${r.time.hour}:${r.time.minute}:${r.time.second}:${r.time.micro_second}`,
                     // );
                 }
@@ -31883,9 +32457,13 @@ class uPRISM {
         if (!(this._peripheral && this._peripheral.connected)) {
             return;
         }
-        const rc = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.settingEnableChar);
+        const rc = this._peripheral
+            .getService(this._uuids.service)
+            .getCharacteristic(this._uuids.settingEnableChar);
         await rc.writeWait([0x04, 0x03, 0x00]);
-        const c = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.notifyChar);
+        const c = this._peripheral
+            .getService(this._uuids.service)
+            .getCharacteristic(this._uuids.notifyChar);
         await c.unregisterNotifyWait();
     }
 }
@@ -31907,23 +32485,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class ArduCAMMini {
     constructor() {
         this.keys = [
-            "cs",
-            "mosi",
-            "miso",
-            "sclk",
-            "gnd",
-            "vcc",
-            "sda",
-            "scl",
-            "spi",
-            "i2c",
-            "spi_frequency",
-            "spi_drive",
-            "module_version",
+            'cs',
+            'mosi',
+            'miso',
+            'sclk',
+            'gnd',
+            'vcc',
+            'sda',
+            'scl',
+            'spi',
+            'i2c',
+            'spi_frequency',
+            'spi_drive',
+            'module_version',
         ];
-        this.requiredKeys = ["cs"];
+        this.requiredKeys = ['cs'];
         this.ioKeys = this.keys;
-        this.displayName = "Cam";
+        this.displayName = 'Cam';
         this.regs = {
             ARDUCHIP_TEST1: 0x00,
             ARDUCHIP_MODE: 0x02,
@@ -32537,26 +33115,24 @@ class ArduCAMMini {
     }
     static info() {
         return {
-            name: "ArduCAMMini",
+            name: 'ArduCAMMini',
         };
     }
     wired(obniz) {
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.io_cs = obniz.getIO(this.params.cs);
         this.io_cs.output(true);
         obniz.wait(100);
         this.sensor_addr = 0x30; // i2c
         this.params.module_version = this.params.module_version || 0;
-        this.params.mode = this.params.mode || "master";
-        this.params.drive = this.params.spi_drive || "3v";
+        this.params.mode = this.params.mode || 'master';
+        this.params.drive = this.params.spi_drive || '3v';
         this.params.frequency = this.params.spi_frequency || 4 * 1000 * 1000;
         this.params.clk = this.params.sclk;
         this.spi = this.obniz.getSpiWithConfig(this.params);
-        this.params.sda = this.params.sda;
-        this.params.scl = this.params.scl;
         this.params.clock = this.params.clock || 100 * 1000;
-        this.params.mode = "master";
-        this.params.pull = "5v";
+        this.params.mode = 'master';
+        this.params.pull = '5v';
         this.i2c = obniz.getI2CWithConfig(this.params);
     }
     spi_write(addr, byteData) {
@@ -32595,7 +33171,7 @@ class ArduCAMMini {
         this.spi_write_reg(this.regs.ARDUCHIP_TEST1, testVal);
         const val = await this.spi_read_regWait(this.regs.ARDUCHIP_TEST1);
         if (val !== testVal) {
-            throw new Error("spi bus fail");
+            throw new Error('spi bus fail');
         }
     }
     setMode(mode) {
@@ -32604,8 +33180,8 @@ class ArduCAMMini {
             CAM2LCD: 0x01,
             LCD2MCU: 0x02,
         };
-        if (typeof modes[mode] !== "number") {
-            throw new Error("unknown mode. options are " + modes);
+        if (typeof modes[mode] !== 'number') {
+            throw new Error('unknown mode. options are ' + modes);
         }
         this.spi_write_reg(this.regs.ARDUCHIP_MODE, modes[mode]);
     }
@@ -32625,19 +33201,19 @@ class ArduCAMMini {
         this.i2c_regs_write(this.configs.OV2640_JPEG);
         this.i2c_byte_write(0xff, 0x01);
         this.i2c_byte_write(0x15, 0x00);
-        this.setSize("320x240");
+        this.setSize('320x240');
     }
     async startupWait() {
         await this.spi_pingpongWait();
-        this.setMode("MCU2LCD");
+        this.setMode('MCU2LCD');
         const chipid = await this.getChipIdWait();
         if (chipid !== 0x2642 && chipid !== 0x2641) {
-            throw new Error("unknown chip " + chipid);
+            throw new Error('unknown chip ' + chipid);
         }
         this.init();
     }
     async takeWait(size) {
-        if (typeof size === "string" && this._size !== size) {
+        if (typeof size === 'string' && this._size !== size) {
             this.setSize(size);
             this.obniz.wait(1000);
         }
@@ -32656,22 +33232,22 @@ class ArduCAMMini {
             return;
         }
         const map = {
-            "160x120": this.configs.OV2640_160x120_JPEG,
-            "176x144": this.configs.OV2640_176x144_JPEG,
-            "320x240": this.configs.OV2640_320x240_JPEG,
-            "352x288": this.configs.OV2640_352x288_JPEG,
-            "640x480": this.configs.OV2640_640x480_JPEG,
-            "800x600": this.configs.OV2640_800x600_JPEG,
-            "1024x768": this.configs.OV2640_1024x768_JPEG,
-            "1280x960": this.configs.OV2640_1280x960_JPEG,
-            "1600x1200": this.configs.OV2640_1600x1200_JPEG,
+            '160x120': this.configs.OV2640_160x120_JPEG,
+            '176x144': this.configs.OV2640_176x144_JPEG,
+            '320x240': this.configs.OV2640_320x240_JPEG,
+            '352x288': this.configs.OV2640_352x288_JPEG,
+            '640x480': this.configs.OV2640_640x480_JPEG,
+            '800x600': this.configs.OV2640_800x600_JPEG,
+            '1024x768': this.configs.OV2640_1024x768_JPEG,
+            '1280x960': this.configs.OV2640_1280x960_JPEG,
+            '1600x1200': this.configs.OV2640_1600x1200_JPEG,
         };
         if (map[string]) {
             this._size = string;
             this.i2c_regs_write(map[string]);
         }
         else {
-            throw new Error("unsupported size options are " + Object.keys(map));
+            throw new Error('unsupported size options are ' + Object.keys(map));
         }
     }
     updateFIFO(data) {
@@ -32723,7 +33299,7 @@ class ArduCAMMini {
         return buf;
     }
     arrayToBase64(array) {
-        return Buffer.from(array).toString("base64");
+        return Buffer.from(array).toString('base64');
     }
 }
 exports.default = ArduCAMMini;
@@ -32744,26 +33320,26 @@ exports.default = ArduCAMMini;
 Object.defineProperty(exports, "__esModule", { value: true });
 class JpegSerialCam {
     constructor() {
-        this.keys = ["vcc", "cam_tx", "cam_rx", "gnd"];
-        this.requiredKeys = ["cam_tx", "cam_rx"];
+        this.keys = ['vcc', 'cam_tx', 'cam_rx', 'gnd'];
+        this.requiredKeys = ['cam_tx', 'cam_rx'];
         this.ioKeys = this.keys;
-        this.displayName = "Jcam";
-        this.displayIoNames = { cam_tx: "camTx", cam_rx: "camRx" };
+        this.displayName = 'Jcam';
+        this.displayIoNames = { cam_tx: 'camTx', cam_rx: 'camRx' };
     }
     static info() {
         return {
-            name: "JpegSerialCam",
+            name: 'JpegSerialCam',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.my_tx = this.params.cam_rx;
         this.my_rx = this.params.cam_tx;
-        this.obniz.getIO(this.my_tx).drive("3v");
+        this.obniz.getIO(this.my_tx).drive('3v');
         this.uart = this.obniz.getFreeUart();
     }
-    async _drainUntil(uart, search, recv) {
+    async _drainUntilWait(uart, search, recv) {
         if (!recv) {
             recv = [];
         }
@@ -32794,7 +33370,7 @@ class JpegSerialCam {
         return -1;
     }
     arrayToBase64(array) {
-        return Buffer.from(array).toString("base64");
+        return Buffer.from(array).toString('base64');
     }
     async startWait(obj) {
         if (!obj) {
@@ -32805,38 +33381,38 @@ class JpegSerialCam {
             rx: this.my_rx,
             baud: obj.baud || 38400,
         });
-        this.obniz.display.setPinName(this.my_tx, "JpegSerialCam", "camRx");
-        this.obniz.display.setPinName(this.my_rx, "JpegSerialCam", "camTx");
+        this.obniz.display.setPinName(this.my_tx, 'JpegSerialCam', 'camRx');
+        this.obniz.display.setPinName(this.my_rx, 'JpegSerialCam', 'camTx');
         await this.obniz.wait(2500);
     }
-    async resetwait() {
+    async resetWait() {
         this.uart.send([0x56, 0x00, 0x26, 0x00]);
-        await this._drainUntil(this.uart, [0x76, 0x00, 0x26, 0x00]);
+        await this._drainUntilWait(this.uart, [0x76, 0x00, 0x26, 0x00]);
         await this.obniz.wait(2500);
     }
     async setSizeWait(resolution) {
         let val;
-        if (resolution === "640x480") {
+        if (resolution === '640x480') {
             val = 0x00;
         }
-        else if (resolution === "320x240") {
+        else if (resolution === '320x240') {
             val = 0x11;
         }
-        else if (resolution === "160x120") {
+        else if (resolution === '160x120') {
             val = 0x22;
         }
         else {
-            throw new Error("unsupported size");
+            throw new Error('unsupported size');
         }
         this.uart.send([0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19, val]);
-        await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
-        await this.resetwait();
+        await this._drainUntilWait(this.uart, [0x76, 0x00, 0x31, 0x00]);
+        await this.resetWait();
     }
     async setCompressibilityWait(compress) {
         const val = Math.floor((compress / 100) * 0xff);
         this.uart.send([0x56, 0x00, 0x31, 0x05, 0x01, 0x01, 0x12, 0x04, val]);
-        await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
-        await this.resetwait();
+        await this._drainUntilWait(this.uart, [0x76, 0x00, 0x31, 0x00]);
+        await this.resetWait();
     }
     async setBaudWait(baud) {
         let val;
@@ -32857,10 +33433,21 @@ class JpegSerialCam {
                 val = [0x0d, 0xa6];
                 break;
             default:
-                throw new Error("invalid baud rate");
+                throw new Error('invalid baud rate');
         }
-        this.uart.send([0x56, 0x00, 0x31, 0x06, 0x04, 0x02, 0x00, 0x08, val[0], val[1]]);
-        await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
+        this.uart.send([
+            0x56,
+            0x00,
+            0x31,
+            0x06,
+            0x04,
+            0x02,
+            0x00,
+            0x08,
+            val[0],
+            val[1],
+        ]);
+        await this._drainUntilWait(this.uart, [0x76, 0x00, 0x31, 0x00]);
         // await this.obniz.wait(1000);
         await this.startWait({
             baud,
@@ -32870,13 +33457,21 @@ class JpegSerialCam {
         const uart = this.uart;
         // console.log("stop a photo")
         uart.send([0x56, 0x00, 0x36, 0x01, 0x02]);
-        await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
+        await this._drainUntilWait(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
         // console.log("take a photo")
         uart.send([0x56, 0x00, 0x36, 0x01, 0x00]);
-        await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
+        await this._drainUntilWait(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
         // console.log("read length")
         uart.send([0x56, 0x00, 0x34, 0x01, 0x00]); // read length of image data
-        let recv = await this._drainUntil(uart, [0x76, 0x00, 0x34, 0x00, 0x04, 0x00, 0x00]); // ack
+        let recv = await this._drainUntilWait(uart, [
+            0x76,
+            0x00,
+            0x34,
+            0x00,
+            0x04,
+            0x00,
+            0x00,
+        ]); // ack
         let XX;
         let YY;
         while (true) {
@@ -32895,8 +33490,25 @@ class JpegSerialCam {
         // const high = (databytes >> 8) & 0xff;
         // const low = databytes & 0xff;
         // console.log("start reading image")
-        uart.send([0x56, 0x00, 0x32, 0x0c, 0x00, 0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, XX, YY, 0x00, 0xff]);
-        recv = await this._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
+        uart.send([
+            0x56,
+            0x00,
+            0x32,
+            0x0c,
+            0x00,
+            0x0a,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            XX,
+            YY,
+            0x00,
+            0xff,
+        ]);
+        recv = await this._drainUntilWait(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
         // console.log("reading...");
         while (true) {
             const readed = uart.readBytes();
@@ -32931,18 +33543,18 @@ exports.default = JpegSerialCam;
 Object.defineProperty(exports, "__esModule", { value: true });
 class PT550 {
     constructor() {
-        this.keys = ["signal", "vcc", "gnd"];
-        this.requiredKeys = ["signal"];
+        this.keys = ['signal', 'vcc', 'gnd'];
+        this.requiredKeys = ['signal'];
     }
     static info() {
         return {
-            name: "PT550",
+            name: 'PT550',
         };
     }
     onchange(value) { }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.signal = this.obniz.getAD(this.params.signal);
         this.signal.start((value) => {
             if (this.onchange) {
@@ -32971,7 +33583,7 @@ exports.default = PT550;
 Object.defineProperty(exports, "__esModule", { value: true });
 class S11059 {
     constructor() {
-        this.keys = ["vcc", "sda", "scl", "i2c", "gnd"];
+        this.keys = ['vcc', 'sda', 'scl', 'i2c', 'gnd'];
         this.requiredKeys = [];
         this.address = 0x2a;
         this.regAdrs = {
@@ -32982,16 +33594,16 @@ class S11059 {
     }
     static info() {
         return {
-            name: "S11059",
+            name: 'S11059',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '3v');
         this.obniz.wait(100);
         this.params.clock = 100000;
-        this.params.pull = "3v";
-        this.params.mode = "master";
+        this.params.pull = '3v';
+        this.params.mode = 'master';
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.obniz.wait(100);
     }
@@ -33000,7 +33612,13 @@ class S11059 {
         const val = (gain << 3) | intergerTime;
         this.i2c.write(this.address, [this.regAdrs.ctrl, val]); // Set gain,interger time
     }
-    async getVal() {
+    /**
+     * @deprecated
+     */
+    getVal() {
+        return this.getValWait();
+    }
+    async getValWait() {
         this.i2c.write(this.address, [this.regAdrs.sensorRed]);
         const ret = await this.i2c.readWait(this.address, 8);
         const level = [0, 0, 0, 0];
@@ -33033,21 +33651,21 @@ class MCP4725 {
             WRITEDACEEPROM: 0x60,
         };
         this._vcc_voltage = 5.0;
-        this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
+        this.keys = ['vcc', 'gnd', 'sda', 'scl', 'i2c'];
         this.requiredKeys = [];
         this.address = 0x60;
     }
     static info() {
         return {
-            name: "MCP4725",
+            name: 'MCP4725',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.params.clock = 400000;
-        this.params.pull = "5v";
-        this.params.mode = "master";
+        this.params.pull = '5v';
+        this.params.mode = 'master';
         this.i2c = this.obniz.getI2CWithConfig(this.params);
         this.obniz.wait(100);
     }
@@ -33089,70 +33707,77 @@ exports.default = MCP4725;
 Object.defineProperty(exports, "__esModule", { value: true });
 class _7SegmentLED {
     constructor() {
-        this.keys = ["a", "b", "c", "d", "e", "f", "g", "dp", "common", "commonType"];
-        this.requiredKeys = ["a", "b", "c", "d", "e", "f", "g"];
-        this.digits = [0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f, 0x6f];
+        this.keys = [
+            'a',
+            'b',
+            'c',
+            'd',
+            'e',
+            'f',
+            'g',
+            'dp',
+            'common',
+            'commonType',
+        ];
+        this.requiredKeys = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
+        this.digits = [
+            0x3f,
+            0x06,
+            0x5b,
+            0x4f,
+            0x66,
+            0x6d,
+            0x7d,
+            0x07,
+            0x7f,
+            0x6f,
+            0x6f,
+        ];
         this.displayIoNames = {
-            a: "a",
-            b: "b",
-            c: "c",
-            d: "d",
-            e: "e",
-            f: "f",
-            g: "g",
-            dp: "dp",
-            common: "com",
+            a: 'a',
+            b: 'b',
+            c: 'c',
+            d: 'd',
+            e: 'e',
+            f: 'f',
+            g: 'g',
+            dp: 'dp',
+            common: 'com',
         };
         this.ios = [];
         this.isCathodeCommon = false;
     }
     static info() {
         return {
-            name: "7SegmentLED",
+            name: '7SegmentLED',
         };
     }
     wired(obniz) {
-        function getIO(io) {
-            if (io && typeof io === "object") {
-                if (typeof io.output === "function") {
-                    return io;
-                }
-            }
-            return obniz.getIO(io);
-        }
-        function isValidIO(io) {
-            if (io && typeof io === "object") {
-                if (typeof io.output === "function") {
-                    return true;
-                }
-            }
-            return obniz.isValidIO(io);
-        }
         this.obniz = obniz;
         this.ios = [];
-        this.ios.push(getIO(this.params.a));
-        this.ios.push(getIO(this.params.b));
-        this.ios.push(getIO(this.params.c));
-        this.ios.push(getIO(this.params.d));
-        this.ios.push(getIO(this.params.e));
-        this.ios.push(getIO(this.params.f));
-        this.ios.push(getIO(this.params.g));
-        this.isCathodeCommon = this.params.commonType === "anode" ? false : true;
+        this.ios.push(this.obniz.getIO(this.params.a));
+        this.ios.push(this.obniz.getIO(this.params.b));
+        this.ios.push(this.obniz.getIO(this.params.c));
+        this.ios.push(this.obniz.getIO(this.params.d));
+        this.ios.push(this.obniz.getIO(this.params.e));
+        this.ios.push(this.obniz.getIO(this.params.f));
+        this.ios.push(this.obniz.getIO(this.params.g));
+        this.isCathodeCommon = this.params.commonType === 'anode' ? false : true;
         for (let i = 0; i < this.ios.length; i++) {
             this.ios[i].output(this.isCathodeCommon ? false : true);
         }
-        if (isValidIO(this.params.dp)) {
-            const dp = getIO(this.params.dp);
+        if (this.obniz.isValidIO(this.params.dp)) {
+            const dp = this.obniz.getIO(this.params.dp);
             dp.output(false);
             this.dp = dp;
         }
-        if (isValidIO(this.params.common)) {
-            this.common = getIO(this.params.common);
+        if (this.obniz.isValidIO(this.params.common)) {
+            this.common = this.obniz.getIO(this.params.common);
             this.on();
         }
     }
     print(data) {
-        if (typeof data === "number") {
+        if (typeof data === 'number') {
             data = Math.floor(data);
             data = data % 10;
             for (let i = 0; i < 7; i++) {
@@ -33168,7 +33793,7 @@ class _7SegmentLED {
         }
     }
     printRaw(data) {
-        if (typeof data === "number") {
+        if (typeof data === 'number') {
             for (let i = 0; i < 7; i++) {
                 if (this.ios[i]) {
                     let val = data & (1 << i) ? true : false;
@@ -33214,13 +33839,13 @@ exports.default = _7SegmentLED;
 Object.defineProperty(exports, "__esModule", { value: true });
 class _7SegmentLEDArray {
     constructor() {
-        this.identifier = "" + new Date().getTime();
-        this.keys = ["segments"];
+        this.identifier = '' + new Date().getTime();
+        this.keys = ['segments'];
         this.requiredKeys = this.keys;
     }
     static info() {
         return {
-            name: "7SegmentLEDArray",
+            name: '7SegmentLEDArray',
         };
     }
     wired(obniz) {
@@ -33228,7 +33853,7 @@ class _7SegmentLEDArray {
         this.segments = this.params.segments;
     }
     print(data) {
-        if (typeof data === "number") {
+        if (typeof data === 'number') {
             data = Math.floor(data);
             const print = (index) => {
                 let val = data;
@@ -33249,14 +33874,14 @@ class _7SegmentLEDArray {
                     state: print,
                 });
             }
-            this.obniz.io.animation(this.identifier, "loop", animations);
+            this.obniz.io.animation(this.identifier, 'loop', animations);
         }
     }
     on() {
-        this.obniz.io.animation(this.identifier, "resume");
+        this.obniz.io.animation(this.identifier, 'resume');
     }
     off() {
-        this.obniz.io.animation(this.identifier, "pause");
+        this.obniz.io.animation(this.identifier, 'pause');
         for (let i = 0; i < this.segments.length; i++) {
             this.segments[i].off();
         }
@@ -33279,12 +33904,12 @@ exports.default = _7SegmentLEDArray;
 Object.defineProperty(exports, "__esModule", { value: true });
 class _7SegmentLED_MAX7219 {
     constructor() {
-        this.keys = ["vcc", "gnd", "din", "cs", "clk"];
-        this.requiredKeys = ["din", "cs", "clk"];
+        this.keys = ['vcc', 'gnd', 'din', 'cs', 'clk'];
+        this.requiredKeys = ['din', 'cs', 'clk'];
     }
     static info() {
         return {
-            name: "7SegmentLED_MAX7219",
+            name: '7SegmentLED_MAX7219',
         };
     }
     wired(obniz) {
@@ -33298,9 +33923,9 @@ class _7SegmentLED_MAX7219 {
         }
         // max 10Mhz but motor driver can't
         this.params.frequency = this.params.frequency || 10 * 1000 * 1000;
-        this.params.mode = "master";
+        this.params.mode = 'master';
         this.params.mosi = this.params.din;
-        this.params.drive = "3v";
+        this.params.drive = '3v';
         this.spi = this.obniz.getSpiWithConfig(this.params);
         // reset a onece
         this.cs.output(true);
@@ -33364,26 +33989,26 @@ class _7SegmentLED_MAX7219 {
         if (decimal >= 0 && decimal <= 9) {
             return decimal | dpreg;
         }
-        else if (decimal === "-" || decimal === 10) {
+        else if (decimal === '-' || decimal === 10) {
             return 0x0a | dpreg;
         }
-        else if (decimal === "e" || decimal === 11) {
+        else if (decimal === 'e' || decimal === 11) {
             return 0x0b | dpreg;
         }
-        else if (decimal === "h" || decimal === 12) {
+        else if (decimal === 'h' || decimal === 12) {
             return 0x0c | dpreg;
         }
-        else if (decimal === "l" || decimal === 13) {
+        else if (decimal === 'l' || decimal === 13) {
             return 0x0d | dpreg;
         }
-        else if (decimal === "p" || decimal === 14) {
+        else if (decimal === 'p' || decimal === 14) {
             return 0x0e | dpreg;
         }
-        else if (decimal === "on") {
+        else if (decimal === 'on') {
             // light all segments
             return 0x88;
         }
-        else if (decimal === "off") {
+        else if (decimal === 'off') {
             return 0x0f | dpreg;
         }
         else {
@@ -33410,7 +34035,7 @@ class MatrixLED_HT16K33 {
     constructor() {
         this.width = 0;
         this.height = 0;
-        this.keys = ["vcc", "gnd", "sda", "scl", "i2c", "address"];
+        this.keys = ['vcc', 'gnd', 'sda', 'scl', 'i2c', 'address'];
         this.requiredKeys = [];
         this.command = {};
         this.command.blink = 0x80;
@@ -33425,15 +34050,15 @@ class MatrixLED_HT16K33 {
     }
     static info() {
         return {
-            name: "MatrixLED_HT16K33",
+            name: 'MatrixLED_HT16K33',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.address = this.params.address || 0x70;
-        this.params.pull = "5v";
-        this.params.mode = "master";
+        this.params.pull = '5v';
+        this.params.mode = 'master';
         this.params.clock = this.params.clock || 400 * 1000;
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.obniz.wait(1000);
@@ -33455,7 +34080,9 @@ class MatrixLED_HT16K33 {
         if (val > 3) {
             val = 3;
         }
-        this.i2c.write(this.address, [this.command.blink | this.blink_mode.display_on | (val << 1)]);
+        this.i2c.write(this.address, [
+            this.command.blink | this.blink_mode.display_on | (val << 1),
+        ]);
     }
     brightness(val) {
         if (val < 0) {
@@ -33528,12 +34155,12 @@ class MatrixLED_MAX7219 {
         this.width = 0;
         this.height = 0;
         this.vram = [[]];
-        this.keys = ["vcc", "gnd", "din", "cs", "clk"];
-        this.requiredKeys = ["din", "cs", "clk"];
+        this.keys = ['vcc', 'gnd', 'din', 'cs', 'clk'];
+        this.requiredKeys = ['din', 'cs', 'clk'];
     }
     static info() {
         return {
-            name: "MatrixLED_MAX7219",
+            name: 'MatrixLED_MAX7219',
         };
     }
     wired(obniz) {
@@ -33547,9 +34174,9 @@ class MatrixLED_MAX7219 {
         }
         // max 10Mhz but motor driver can't
         this.params.frequency = this.params.frequency || 10 * 1000 * 1000;
-        this.params.mode = "master";
+        this.params.mode = 'master';
         this.params.mosi = this.params.din;
-        this.params.drive = "3v";
+        this.params.drive = '3v';
         this.spi = this.obniz.getSpiWithConfig(this.params);
         // reset a onece
         this.cs.output(true);
@@ -33663,12 +34290,12 @@ class ST7735S {
         this.x_offset = 0;
         this.y_offset = 0;
         this.writeBuffer = [];
-        this.keys = ["sclk", "mosi", "cs", "res", "dc"];
+        this.keys = ['sclk', 'mosi', 'cs', 'res', 'dc'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "ST7735S",
+            name: 'ST7735S',
         };
     }
     wired(obniz) {
@@ -33678,10 +34305,9 @@ class ST7735S {
         this.io_res = obniz.getIO(this.params.res);
         this.io_cs = obniz.getIO(this.params.cs);
         this.params.frequency = 16 * 1000 * 1000; // 16MHz
-        this.params.mode = "master";
+        this.params.mode = 'master';
         this.params.clk = this.params.sclk;
-        this.params.mosi = this.params.mosi;
-        this.params.drive = "3v";
+        this.params.drive = '3v';
         this.spi = this.obniz.getSpiWithConfig(this.params);
         this.io_dc.output(true);
         this.io_cs.output(false);
@@ -33696,7 +34322,7 @@ class ST7735S {
     }
     print_debug(v) {
         if (this.debugprint) {
-            console.log("SainSmartTFT18LCD: " + Array.prototype.slice.call(arguments).join(""));
+            console.log('SainSmartTFT18LCD: ' + Array.prototype.slice.call(arguments).join(''));
         }
     }
     _deadSleep(waitMsec) {
@@ -34268,11 +34894,11 @@ class ST7735S {
         //  wrap = wrap || true;
         for (let n = 0; n < string.length; n++) {
             const c = string.charAt(n);
-            if (c === "\n") {
+            if (c === '\n') {
                 y += size * 8;
                 x = 0;
             }
-            else if (c === "\r") {
+            else if (c === '\r') {
                 // skip em
             }
             else {
@@ -35866,21 +36492,21 @@ class SainSmartTFT18LCD {
         this.width = 0;
         this.height = 0;
         this.writeBuffer = [];
-        this.keys = ["vcc", "gnd", "scl", "sda", "dc", "res", "cs"];
-        this.requiredKeys = ["scl", "sda", "dc", "res", "cs"];
+        this.keys = ['vcc', 'gnd', 'scl', 'sda', 'dc', 'res', 'cs'];
+        this.requiredKeys = ['scl', 'sda', 'dc', 'res', 'cs'];
         this.displayIoNames = {
-            vcc: "vcc",
-            gnd: "gnd",
-            scl: "scl",
-            sda: "sda",
-            dc: "dc",
-            res: "res",
-            cs: "cs",
+            vcc: 'vcc',
+            gnd: 'gnd',
+            scl: 'scl',
+            sda: 'sda',
+            dc: 'dc',
+            res: 'res',
+            cs: 'cs',
         };
     }
     static info() {
         return {
-            name: "SainSmartTFT18LCD",
+            name: 'SainSmartTFT18LCD',
         };
     }
     wired(obniz) {
@@ -35889,12 +36515,12 @@ class SainSmartTFT18LCD {
         this.io_dc = obniz.getIO(this.params.dc);
         this.io_res = obniz.getIO(this.params.res);
         this.io_cs = obniz.getIO(this.params.cs);
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.params.frequency = 16 * 1000 * 1000; // 16MHz
-        this.params.mode = "master";
+        this.params.mode = 'master';
         this.params.clk = this.params.scl;
         this.params.mosi = this.params.sda;
-        this.params.drive = "3v";
+        this.params.drive = '3v';
         this.spi = this.obniz.getSpiWithConfig(this.params);
         this.io_dc.output(true);
         this.io_cs.output(false);
@@ -35906,7 +36532,7 @@ class SainSmartTFT18LCD {
     }
     print_debug(v) {
         if (this.debugprint) {
-            console.log("SainSmartTFT18LCD: " + Array.prototype.slice.call(arguments).join(""));
+            console.log('SainSmartTFT18LCD: ' + Array.prototype.slice.call(arguments).join(''));
         }
     }
     _deadSleep(waitMsec) {
@@ -36387,11 +37013,11 @@ class SainSmartTFT18LCD {
         //  wrap = wrap || true;
         for (let n = 0; n < string.length; n++) {
             const c = string.charAt(n);
-            if (c === "\n") {
+            if (c === '\n') {
                 y += size * 8;
                 x = 0;
             }
-            else if (c === "\r") {
+            else if (c === '\r') {
                 // skip em
             }
             else {
@@ -38060,26 +38686,26 @@ class SharpMemoryTFT {
         this.autoFlush = false;
         this.fontSize = 0;
         this.keys = [
-            "vcc",
-            "gnd",
-            "vcc_a",
-            "gnd_a",
-            "sclk",
-            "mosi",
-            "cs",
-            "disp",
-            "extcomin",
-            "extmode",
-            "width",
-            "height",
+            'vcc',
+            'gnd',
+            'vcc_a',
+            'gnd_a',
+            'sclk',
+            'mosi',
+            'cs',
+            'disp',
+            'extcomin',
+            'extmode',
+            'width',
+            'height',
         ];
-        this.requiredKeys = ["sclk", "mosi", "cs", "width", "height"];
+        this.requiredKeys = ['sclk', 'mosi', 'cs', 'width', 'height'];
         this._canvas = null;
         this._reset();
     }
     static info() {
         return {
-            name: "SharpMemoryTFT",
+            name: 'SharpMemoryTFT',
         };
     }
     wired(obniz) {
@@ -38093,12 +38719,12 @@ class SharpMemoryTFT {
             this.io_extcomin.output(false);
             this.io_extmode.output(false);
         }
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        obniz.setVccGnd(this.params.vcc_a, this.params.gnd_a, "5v");
-        this.params.mode = "master";
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+        obniz.setVccGnd(this.params.vcc_a, this.params.gnd_a, '5v');
+        this.params.mode = 'master';
         this.params.frequency = 1000 * 1000;
         this.params.clk = this.params.sclk;
-        this.params.drive = "5v"; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
+        this.params.drive = '5v'; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
         this.spi = this.obniz.getSpiWithConfig(this.params);
         this.width = this.params.width;
         this.height = this.params.height;
@@ -38163,10 +38789,10 @@ class SharpMemoryTFT {
     }
     warnCanvasAvailability() {
         if (this.obniz.isNode) {
-            throw new Error("MemoryDisplay require node-canvas to draw rich contents. see more detail on docs");
+            throw new Error('MemoryDisplay require node-canvas to draw rich contents. see more detail on docs');
         }
         else {
-            throw new Error("MemoryDisplay cant create canvas element to body");
+            throw new Error('MemoryDisplay cant create canvas element to body');
         }
     }
     _preparedCanvas() {
@@ -38184,25 +38810,25 @@ class SharpMemoryTFT {
             }
         }
         else {
-            const identifier = "MemoryDispCanvas-" + this.obniz.id;
+            const identifier = 'MemoryDispCanvas-' + this.obniz.id;
             let canvas = document.getElementById(identifier);
             if (!canvas) {
-                canvas = document.createElement("canvas");
-                canvas.setAttribute("id", identifier);
-                canvas.style.visibility = "hidden";
+                canvas = document.createElement('canvas');
+                canvas.setAttribute('id', identifier);
+                canvas.style.visibility = 'hidden';
                 canvas.width = this.width;
                 canvas.height = this.height;
-                canvas.style["-webkit-font-smoothing"] = "none";
-                const body = document.getElementsByTagName("body")[0];
+                canvas.style['-webkit-font-smoothing'] = 'none';
+                const body = document.getElementsByTagName('body')[0];
                 body.appendChild(canvas);
             }
             this._canvas = canvas;
         }
-        const ctx = this._canvas.getContext("2d");
-        ctx.fillStyle = "#FFF";
+        const ctx = this._canvas.getContext('2d');
+        ctx.fillStyle = '#FFF';
         ctx.fillRect(0, 0, this.width, this.height);
-        ctx.fillStyle = "#000";
-        ctx.strokeStyle = "#000";
+        ctx.fillStyle = '#000';
+        ctx.strokeStyle = '#000';
         this._pos.x = 0;
         this._pos.y = 0;
         this.fontSize = 16;
@@ -38211,28 +38837,28 @@ class SharpMemoryTFT {
     }
     _ctx() {
         const canvas = this._preparedCanvas();
-        return canvas.getContext("2d");
+        return canvas.getContext('2d');
     }
     font(font, size) {
         const ctx = this._ctx();
-        if (typeof size !== "number") {
+        if (typeof size !== 'number') {
             size = 16;
         }
-        if (typeof font !== "string") {
-            font = "Arial";
+        if (typeof font !== 'string') {
+            font = 'Arial';
         }
         this.fontSize = size;
-        ctx.font = "" + size + "px " + font;
+        ctx.font = '' + size + 'px ' + font;
     }
     clear() {
         const ctx = this._ctx();
         this._pos.x = 0;
         this._pos.y = 0;
         if (ctx) {
-            ctx.fillStyle = "#fff";
+            ctx.fillStyle = '#fff';
             ctx.fillRect(0, 0, this.width, this.height);
-            ctx.fillStyle = "#000";
-            ctx.strokeStyle = "#000";
+            ctx.fillStyle = '#000';
+            ctx.strokeStyle = '#000';
             this.draw(ctx);
         }
         else {
@@ -38241,10 +38867,10 @@ class SharpMemoryTFT {
     }
     pos(x, y) {
         this._ctx(); // crete first
-        if (typeof x === "number") {
+        if (typeof x === 'number') {
             this._pos.x = x;
         }
-        if (typeof y === "number") {
+        if (typeof y === 'number') {
             this._pos.y = y;
         }
         return this._pos;
@@ -38362,22 +38988,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class GP2Y0A21YK0F {
     constructor() {
         this.displayIoNames = {
-            vcc: "vcc",
-            gnd: "gnd",
-            signal: "signal",
+            vcc: 'vcc',
+            gnd: 'gnd',
+            signal: 'signal',
         };
-        this._unit = "mm";
-        this.keys = ["vcc", "gnd", "signal"];
-        this.requiredKeys = ["signal"];
+        this._unit = 'mm';
+        this.keys = ['vcc', 'gnd', 'signal'];
+        this.requiredKeys = ['signal'];
     }
     static info() {
         return {
-            name: "GP2Y0A21YK0F",
+            name: 'GP2Y0A21YK0F',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         const io_signal = obniz.getIO(this.params.signal);
         io_signal.end();
         this.ad_signal = obniz.getAD(this.params.signal);
@@ -38385,7 +39011,7 @@ class GP2Y0A21YK0F {
     start(callback) {
         this.ad_signal.start((val) => {
             const distance = this._volt2distance(val);
-            if (typeof callback === "function") {
+            if (typeof callback === 'function') {
                 callback(distance);
             }
         });
@@ -38395,7 +39021,7 @@ class GP2Y0A21YK0F {
             val = 0.001;
         }
         let distance = 19988.34 * Math.pow((val / 5.0) * 1024, -1.25214) * 10;
-        if (this._unit === "mm") {
+        if (this._unit === 'mm') {
             distance = Math.floor(distance * 10) / 10;
         }
         else {
@@ -38417,14 +39043,14 @@ class GP2Y0A21YK0F {
         });
     }
     unit(unit) {
-        if (unit === "mm") {
-            this._unit = "mm";
+        if (unit === 'mm') {
+            this._unit = 'mm';
         }
-        else if (unit === "inch") {
-            this._unit = "inch";
+        else if (unit === 'inch') {
+            this._unit = 'inch';
         }
         else {
-            throw new Error("unknown unit " + unit);
+            throw new Error('unknown unit ' + unit);
         }
     }
 }
@@ -38445,20 +39071,20 @@ exports.default = GP2Y0A21YK0F;
 Object.defineProperty(exports, "__esModule", { value: true });
 class HCSR04 {
     constructor() {
-        this._unit = "mm";
+        this._unit = 'mm';
         this.reset_alltime = false;
         this.temp = 15;
-        this.keys = ["vcc", "trigger", "echo", "gnd"];
-        this.requiredKeys = ["vcc", "trigger", "echo"];
+        this.keys = ['vcc', 'trigger', 'echo', 'gnd'];
+        this.requiredKeys = ['vcc', 'trigger', 'echo'];
     }
     static info() {
         return {
-            name: "HC-SR04",
+            name: 'HC-SR04',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(null, this.params.gnd, "5v");
+        obniz.setVccGnd(null, this.params.gnd, '5v');
         this.vccIO = obniz.getIO(this.params.vcc);
         if (obniz.isValidIO(this.params.trigger) === false) {
             throw new Error(`trigger ${this.params.trigger} is invalid io`);
@@ -38468,7 +39094,7 @@ class HCSR04 {
         }
         this.trigger = this.params.trigger;
         this.echo = this.params.echo;
-        this.vccIO.drive("5v");
+        this.vccIO.drive('5v');
         this.vccIO.output(true);
         this.obniz.wait(100);
     }
@@ -38476,7 +39102,7 @@ class HCSR04 {
         this.obniz.measure.echo({
             io_pulse: this.trigger,
             io_echo: this.echo,
-            pulse: "positive",
+            pulse: 'positive',
             pulse_width: 0.011,
             measure_edges: 3,
             timeout: (10 / 340) * 1000,
@@ -38492,13 +39118,14 @@ class HCSR04 {
                     // HCSR04's output of io_echo is initially high when trigger is finshed
                     if (edges[i].edge === true) {
                         const time = (edges[i + 1].timing - edges[i].timing) / 1000; // (1/4000 * 8) + is needed??
-                        distance = (time / 2) * 20.055 * Math.sqrt(this.temp + 273.15) * 1000;
-                        if (this._unit === "inch") {
+                        distance =
+                            (time / 2) * 20.055 * Math.sqrt(this.temp + 273.15) * 1000;
+                        if (this._unit === 'inch') {
                             distance = distance * 0.0393701;
                         }
                     }
                 }
-                if (typeof callback === "function") {
+                if (typeof callback === 'function') {
                     callback(distance);
                 }
             },
@@ -38512,14 +39139,14 @@ class HCSR04 {
         });
     }
     unit(unit) {
-        if (unit === "mm") {
-            this._unit = "mm";
+        if (unit === 'mm') {
+            this._unit = 'mm';
         }
-        else if (unit === "inch") {
-            this._unit = "inch";
+        else if (unit === 'inch') {
+            this._unit = 'inch';
         }
         else {
-            throw new Error("HCSR04: unknown unit " + unit);
+            throw new Error('HCSR04: unknown unit ' + unit);
         }
     }
 }
@@ -38541,7 +39168,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class VL53L0X {
     constructor() {
         this.requiredKeys = [];
-        this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
+        this.keys = ['vcc', 'gnd', 'sda', 'scl', 'i2c'];
         this.address = 0x29;
         this.regs = {
             IDENTIFICATION_MODEL_ID: 0xc0,
@@ -38558,16 +39185,16 @@ class VL53L0X {
     }
     static info() {
         return {
-            name: "VL53L0X",
+            name: 'VL53L0X',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '3v');
         this.obniz.wait(100);
         this.params.clock = 100000;
-        this.params.pull = "3v";
-        this.params.mode = "master";
+        this.params.pull = '3v';
+        this.params.mode = 'master';
         this.i2c = obniz.getI2CWithConfig(this.params);
     }
     async getWait() {
@@ -38614,6 +39241,8 @@ exports.default = VL53L0X;
  * @packageDocumentation
  * @module Parts.W5500
  */
+/* eslint max-classes-per-file: 0 */
+/* eslint non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 // Block select bit (BSB)
 // ブロック選択ビット(BSB)
@@ -38621,16 +39250,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const BSB_COMMON = 0;
 /**
  * 01/05/09/13/17/21/25/29 Socket 0\~7 register ソケット 0\~7 レジスタ
+ *
  * @param socketId ソケットID
  */
 const BSB_SOCKET_REGISTER = (socketId) => socketId * 4 + 1;
 /**
  * 02/06/10/14/18/22/26/30 Socket 0\~7 TX buffer ソケット 0\~7 TXバッファ
+ *
  * @param socketId ソケットID
  */
 const BSB_SOCKET_TX_BUFFER = (socketId) => socketId * 4 + 2;
 /**
  * 03/07/11/15/19/23/27/31 Socket 0\~7 RX buffer ソケット 0\~7 RXバッファ
+ *
  * @param socketId ソケットID
  */
 const BSB_SOCKET_RX_BUFFER = (socketId) => socketId * 4 + 3;
@@ -38741,27 +39373,27 @@ const COMMON_UNREACHABLE_PORT = 0x002c;
  *
  * - Reset
  *
- *   Reset the internal physical layer, need to set this bit to 0 and then back to 1
+ * Reset the internal physical layer, need to set this bit to 0 and then back to 1
  *
- *   内部の物理層をリセット、このビットを0にした後、1に戻す必要がある
+ * 内部の物理層をリセット、このビットを0にした後、1に戻す必要がある
  *
  * - OperationMode
  *
- *   1: Use the following 3-bit settings 次の3bitの設定を使用
+ * 1: Use the following 3-bit settings 次の3bitの設定を使用
  *
- *   0: Follow the hardware pin settings ハードウェアピンの設定に従う
+ * 0: Follow the hardware pin settings ハードウェアピンの設定に従う
  *
  * - ConfigBit
  *
- *   The default setting for both hardware pins and registers is 111
+ * The default setting for both hardware pins and registers is 111
  *
- *   ハードウェアピン、レジスタともに初期設定は111
+ * ハードウェアピン、レジスタともに初期設定は111
  *
- *   - 000  10BT Half duplex 半二重 / 001  10BT Full duplex 全二重
- *   - 010 100BT Half duplex 半二重 / 011 100BT Full duplex 全二重
- *   - 100 100BT Half duplex enable auto negotiation 半二重 自動ネゴシエーションオン
- *   - 110 Power Off Mode 電源オフモード
- *   - 111 All available & Enable auto negotiation 全て使用可能 自動ネゴシエーションオン
+ * - 000  10BT Half duplex 半二重 / 001  10BT Full duplex 全二重
+ * - 010 100BT Half duplex 半二重 / 011 100BT Full duplex 全二重
+ * - 100 100BT Half duplex enable auto negotiation 半二重 自動ネゴシエーションオン
+ * - 110 Power Off Mode 電源オフモード
+ * - 111 All available & Enable auto negotiation 全て使用可能 自動ネゴシエーションオン
  *
  * - Duplex  1: Full duplex 全二重 0: Half duplex 半二重
  * - Speed  1: 100Mbps 0: 10Mbps
@@ -38873,7 +39505,7 @@ const SOCKET_KEEP_ALIVE_TIMER = 0x002f;
 /** Wait Xms Xミリ秒待つ @hidden */
 const sleep = (msec) => new Promise((resolve) => setTimeout(resolve, msec));
 /** [43, 227, 213] => '2BE3D5' @hidden */
-const byteString = (bytes) => bytes.map((n) => ("00" + n.toString(16).toUpperCase()).slice(-2)).join("");
+const byteString = (bytes) => bytes.map((n) => ('00' + n.toString(16).toUpperCase()).slice(-2)).join('');
 /** W5500 type definitions and constants W5500の型定義や定数 */
 var W5500Parts;
 (function (W5500Parts) {
@@ -38919,12 +39551,12 @@ class W5500 {
          * 常に書き込み時に転送チェックを行わない
          */
         this.forceNoCheckWrite = false;
-        this.keys = ["frequency", "reset", "mosi", "miso", "sclk", "cs"];
+        this.keys = ['frequency', 'reset', 'mosi', 'miso', 'sclk', 'cs'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "W5500",
+            name: 'W5500',
         };
     }
     wired(obniz) {
@@ -38934,8 +39566,8 @@ class W5500 {
         this.params.mosi = this.params.mosi || 23;
         this.params.miso = this.params.miso || 19;
         this.params.clk = this.params.clk || 18;
-        this.params.drive = "3v";
-        this.params.mode = "master";
+        this.params.drive = '3v';
+        this.params.mode = 'master';
         this.spi = this.params.spi || this.obniz.getSpiWithConfig(this.params);
         this.spiStatus = true;
         this.resetPin = this.obniz.getIO(this.params.reset || 12);
@@ -38945,6 +39577,7 @@ class W5500 {
      * Initialize W5500 and write common settings
      *
      * W5500を初期化、共通設定の書き込み
+     *
      * @param config W5500 config W5500の設定内容
      * @return Write result 書き込み結果
      */
@@ -38954,7 +39587,7 @@ class W5500 {
         // Use fixed length data mode 固定長通信の使用
         this.fdm = config.fdm === true;
         // SPI chip select SPIのセレクト
-        this.csPin.drive("3v");
+        this.csPin.drive('3v');
         this.csPin.output(!this.fdm);
         // Mode setting モード設定
         let result = await this.setModeWait(config);
@@ -38981,19 +39614,28 @@ class W5500 {
             result = result && (await this.setRetryCountWait(config.retryCount));
         }
         if (config.linkControlProtocolRequestTimer) {
-            result = result && (await this.setPPPLinkControlProtocolRequestTimerWait(config.linkControlProtocolRequestTimer));
+            result =
+                result &&
+                    (await this.setPPPLinkControlProtocolRequestTimerWait(config.linkControlProtocolRequestTimer));
         }
         if (config.linkControlProtocolMagicNumber) {
-            result = result && (await this.setPPPLinkControlProtocolMagicNumberWait(config.linkControlProtocolMagicNumber));
+            result =
+                result &&
+                    (await this.setPPPLinkControlProtocolMagicNumberWait(config.linkControlProtocolMagicNumber));
         }
         if (config.pppoeDestMACAddress) {
-            result = result && (await this.setPPPoEMacAddressWait(config.pppoeDestMACAddress));
+            result =
+                result &&
+                    (await this.setPPPoEMacAddressWait(config.pppoeDestMACAddress));
         }
         if (config.pppoeSessionID) {
-            result = result && (await this.setPPPoESessionIDWait(config.pppoeSessionID));
+            result =
+                result && (await this.setPPPoESessionIDWait(config.pppoeSessionID));
         }
         if (config.pppoeMaxSegmentSize) {
-            result = result && (await this.setPPPoEMaxSegmentSizeWait(config.pppoeMaxSegmentSize));
+            result =
+                result &&
+                    (await this.setPPPoEMaxSegmentSizeWait(config.pppoeMaxSegmentSize));
         }
         if (config.phyConfig) {
             result = result && (await this.setPhysicalConfigWait(config.phyConfig));
@@ -39001,16 +39643,16 @@ class W5500 {
         this.forceNoCheckWrite = config.forceNoCheckWrite === true;
         // Interrupt handlers 割り込みハンドラー設定
         if (config.onIPConflictInterrupt) {
-            this.setInterruptHandler("IPConflict", config.onIPConflictInterrupt);
+            this.setInterruptHandler('IPConflict', config.onIPConflictInterrupt);
         }
         if (config.onDestUnreachInterrupt) {
-            this.setInterruptHandler("DestUnreach", config.onDestUnreachInterrupt);
+            this.setInterruptHandler('DestUnreach', config.onDestUnreachInterrupt);
         }
         if (config.onPPPoECloseInterrupt) {
-            this.setInterruptHandler("PPPoEClose", config.onPPPoECloseInterrupt);
+            this.setInterruptHandler('PPPoEClose', config.onPPPoECloseInterrupt);
         }
         if (config.onMagicPacketInterrupt) {
-            this.setInterruptHandler("MagicPacket", config.onMagicPacketInterrupt);
+            this.setInterruptHandler('MagicPacket', config.onMagicPacketInterrupt);
         }
         if (config.onAllInterrupt) {
             this.setAllInterruptHandler(config.onAllInterrupt);
@@ -39039,6 +39681,7 @@ class W5500 {
      * 特定の割り込みをキャッチするハンドラーを設定
      *
      * 実際にキャッチするにはcheckInterrupt()を定期的に実行
+     *
      * @param name Name of the interrupt to get 取得する割り込みの名前 (IPConflict | DestUnreach | PPPoEClose | MagicPacket)
      * @param handler Callback function, extra is only when name=DestUnreach
      *
@@ -39055,6 +39698,7 @@ class W5500 {
      * 全ての割り込みをキャッチするハンドラーを設定
      *
      * 実際にキャッチするにはcheckInterrupt()を定期的に実行
+     *
      * @param handler Callback function, name is the name of the interrupt received, extra is only when name=DestUnreach
      *
      * コールバック関数、nameには受け取った割り込み名が入ります、extraはname=DestUnreachのときのみ
@@ -39066,6 +39710,7 @@ class W5500 {
      * Wait until the connection with the router is established
      *
      * ルーターとの接続が確立されるまで待機
+     *
      * @return Physical layer status 物理層のステータス
      */
     async waitLinkUpWait() {
@@ -39083,12 +39728,13 @@ class W5500 {
      * Get an instance of W5500Socket, generate if necessary
      *
      * W5500Socketのインスタンスを取得、必要ならば生成
+     *
      * @param socketId Socket ID (0\~7) ソケットID (0\~7)
      * @return Instance of W5500Socket W5500Socketのインスタンス
      */
     getSocket(socketId) {
         if (socketId < 0 || socketId > 7) {
-            throw new Error("Socket id must take a value between 0 and 7.");
+            throw new Error('Socket id must take a value between 0 and 7.');
         }
         if (!this.socketList[socketId]) {
             this.socketList[socketId] = new W5500Socket(socketId, this);
@@ -39099,6 +39745,7 @@ class W5500 {
      * Create an instance of W5500Socket in the frame of the unused socket
      *
      * 使っていないソケットの枠にW5500Socketのインスタンスを生成
+     *
      * @return Instance of W5500Socket W5500Socketのインスタンス
      */
     getNewSocket() {
@@ -39117,6 +39764,7 @@ class W5500 {
      * Whether SPI is available
      *
      * SPIが利用可能かどうか
+     *
      * @return SPI status SPIのステータス
      */
     getSpiStatus() {
@@ -39128,7 +39776,7 @@ class W5500 {
      * W5500をハードウェア的にリセット
      */
     async hardResetWait() {
-        this.resetPin.drive("3v");
+        this.resetPin.drive('3v');
         this.resetPin.output(false);
         await sleep(10); // > 500ns
         this.resetPin.output(true);
@@ -39136,6 +39784,7 @@ class W5500 {
     }
     /**
      * Set mode モードを設定
+     *
      * @param config WakeOnLAN(WoL), PingBlock, PPPoE and ForceARP
      * @return Write result 書き込み結果
      */
@@ -39149,6 +39798,7 @@ class W5500 {
      * Set IPv4 address of default gateway
      *
      * デフォルトゲートウェイのIPv4アドレスを設定
+     *
      * @param ip IPv4 address IPv4アドレス
      * @return Write result 書き込み結果
      */
@@ -39157,6 +39807,7 @@ class W5500 {
     }
     /**
      * Set subnet mask サブネットマスクを設定
+     *
      * @param mask Subnet mask サブネットマスク
      * @return Write result 書き込み結果
      */
@@ -39165,6 +39816,7 @@ class W5500 {
     }
     /**
      * Set MAC address MACアドレスを設定
+     *
      * @param mac MAC address MACアドレス
      * @return Write result 書き込み結果
      */
@@ -39173,6 +39825,7 @@ class W5500 {
     }
     /**
      * Set local IPv4 address ローカルIPv4アドレスを設定
+     *
      * @param ip IPv4 address IPv4アドレス
      * @return Write result 書き込み結果
      */
@@ -39191,6 +39844,7 @@ class W5500 {
      * ソケットの割り込みもチェックします
      *
      * 割り込みがあった場合、事前に設定されたhandlerを呼び出します
+     *
      * @param disableAllSocketCheck When it's true, do not call checkInterruptWait() for all sockets
      *
      * trueの時、全ソケットのcheckInterrupt()呼び出しを行いません
@@ -39207,8 +39861,9 @@ class W5500 {
             // リセット
             await this.numWriteWait(COMMON_INTERRUPT, BSB_COMMON, interrupt);
         }
-        const msgList = Object.keys(W5500Parts.InterruptFlags).filter((msg) => (interrupt & W5500Parts.InterruptFlags[msg]) !== 0);
-        const extra = msgList.indexOf("DestUnreach") >= 0
+        const msgList = Object.keys(W5500Parts.InterruptFlags).filter((msg) => (interrupt & W5500Parts.InterruptFlags[msg]) !==
+            0);
+        const extra = msgList.indexOf('DestUnreach') >= 0
             ? new W5500Parts.DestInfo(await this.getUnreachableIP(), await this.getUnreachablePort())
             : undefined;
         if (disableAllSocketCheck !== false) {
@@ -39226,13 +39881,14 @@ class W5500 {
                 await handler(this, extra);
             }
             if (this.allInterruptHandler !== undefined) {
-                await this.allInterruptHandler(this, msg, msg === "DestUnreach" ? extra : undefined);
+                await this.allInterruptHandler(this, msg, msg === 'DestUnreach' ? extra : undefined);
             }
         }
         return this.spiStatus;
     }
     /**
      * Set interrupt mask 割り込みマスクを設定
+     *
      * @param mask Mask マスク
      * @return Write result 書き込み結果
      */
@@ -39241,6 +39897,7 @@ class W5500 {
     }
     /**
      * Set retry interval (Initial value: 200ms) 再試行間隔を設定 (初期値: 200ms)
+     *
      * @param time Retry interval (in 0.2ms increments) 再試行間隔 (0.2ms刻み) (0\~6553.5ms)
      * @return Write result 書き込み結果
      */
@@ -39249,6 +39906,7 @@ class W5500 {
     }
     /**
      * Set retry count (Initial value: 8 times) 再試行回数を設定 (初期値: 8回)
+     *
      * @param count retry count 再試行回数 (0\~255)
      * @return Write result 書き込み結果
      */
@@ -39259,6 +39917,7 @@ class W5500 {
      * Set time to send echo request for Link Control Protocol
      *
      * LinkControlプロトコルのechoリクエストを送っている時間を設定
+     *
      * @param time time (in 25ms increments) 時間 (25ms刻み) (0\~6375ms)
      * @return Write result 書き込み結果
      */
@@ -39269,6 +39928,7 @@ class W5500 {
      * Set 1 byte of the 4 bytes magic number of the Link Control protocol echo request
      *
      * LinkControlプロトコルのechoリクエストの4bytesマジックナンバーの1byteを設定
+     *
      * @param num Magic number マジックナンバー
      * @return Write result 書き込み結果
      */
@@ -39277,6 +39937,7 @@ class W5500 {
     }
     /**
      * Set MAC address of PPPoE server PPPoEサーバーのMACアドレスを設定
+     *
      * @param mac MAC address MACアドレス
      * @return Write result 書き込み結果
      */
@@ -39285,6 +39946,7 @@ class W5500 {
     }
     /**
      * Set session ID of PPPoE server PPPoEサーバーのセッションIDを設定
+     *
      * @param id Session ID セッションID
      * @return Write result 書き込み結果
      */
@@ -39293,6 +39955,7 @@ class W5500 {
     }
     /**
      * Set maximum receiving unit size of PPPoE PPPoEの最大受信ユニットサイズを設定
+     *
      * @param size Unit size ユニットサイズ
      * @return Write result 書き込み結果
      */
@@ -39303,6 +39966,7 @@ class W5500 {
      * Get the IPv4 address when the destination could not be reached
      *
      * 宛先に到達できなかった時のIPv4アドレスを取得
+     *
      * @return IPv4 address IPv4アドレス
      */
     getUnreachableIP() {
@@ -39312,6 +39976,7 @@ class W5500 {
      * Get the port number when the destination could not be reached
      *
      * 宛先に到達できなかった時のポート番号を取得
+     *
      * @return Port number ポート番号
      */
     getUnreachablePort() {
@@ -39319,6 +39984,7 @@ class W5500 {
     }
     /**
      * Get physical layer status 物理層のステータス取得
+     *
      * @return Physical layer status 物理層のステータス
      */
     async getPhysicalStatusWait() {
@@ -39331,6 +39997,7 @@ class W5500 {
     }
     /**
      * Set physical layer config 物理層の設定
+     *
      * @param config Physical layer config 物理層の設定内容
      * @return Write result 書き込み結果
      */
@@ -39356,6 +40023,7 @@ class W5500 {
     }
     /**
      * Get chip version チップバージョンの取得
+     *
      * @return Chip version チップバージョン
      */
     getVersion() {
@@ -39365,6 +40033,7 @@ class W5500 {
      * Write after validating the IPv4 address of the character string
      *
      * 文字列のIPv4アドレスをバリデーションチェックしてから書き込み
+     *
      * @param address Start address of write destination 書き込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param ip IPv4 address IPv4アドレス
@@ -39372,12 +40041,13 @@ class W5500 {
      * @hidden
      */
     ipWriteWait(address, bsb, ip) {
-        return this.addressWriteWait(address, bsb, ip, "IP Address", "123.234.0.1", ".", 4, 10);
+        return this.addressWriteWait(address, bsb, ip, 'IP Address', '123.234.0.1', '.', 4, 10);
     }
     /**
      * Write after validating the MAC address of the character string
      *
      * 文字列のMACアドレスをバリデーションチェックしてから書き込み
+     *
      * @param address Start address of write destination 書き込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param mac MAC address MACアドレス
@@ -39385,7 +40055,7 @@ class W5500 {
      * @hidden
      */
     macWriteWait(address, bsb, mac) {
-        return this.addressWriteWait(address, bsb, mac, "MAC Address", "12:34:56:78:90:AB", ":", 6, 16);
+        return this.addressWriteWait(address, bsb, mac, 'MAC Address', '12:34:56:78:90:AB', ':', 6, 16);
     }
     /**
      * Writing large data
@@ -39399,6 +40069,7 @@ class W5500 {
      * FDMのとき、長さが4より大きいときに使用
      *
      * VDMのとき、長さが1021より大きいときに使用
+     *
      * @param address Start address of write destination 書き込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param data Raw byte data Raw byte data バイト列データ
@@ -39411,7 +40082,9 @@ class W5500 {
         let result = true;
         for (let i = 0; i < data.length; i += maxLength) {
             const size = i + maxLength <= data.length ? maxLength : data.length - i;
-            result = result && (await this.writeWait(address + i, bsb, data.slice(i, i + size), noWait));
+            result =
+                result &&
+                    (await this.writeWait(address + i, bsb, data.slice(i, i + size), noWait));
         }
         return result;
     }
@@ -39419,6 +40092,7 @@ class W5500 {
      * Writing a value to the area for one address
      *
      * 1アドレス分の領域への値の書き込み
+     *
      * @param address Start address of write destination 書き込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param num Value 値 (0\~255)
@@ -39432,6 +40106,7 @@ class W5500 {
      * Writing a value to the area for two addresses
      *
      * 2アドレス分の領域への値の書き込み
+     *
      * @param address Start address of write destination 書き込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param num Value 値 (0\~65535)
@@ -39443,13 +40118,14 @@ class W5500 {
     }
     /**
      * Read IPv4 address data IPv4アドレスデータの読み込み
+     *
      * @param address Start address of read destination 読み込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @return IPv4 address IPv4アドレス
      * @hidden
      */
     async ipReadWait(address, bsb) {
-        return (await this.readWait(address, bsb, 4)).join(".");
+        return (await this.readWait(address, bsb, 4)).join('.');
     }
     /**
      * Reading large data
@@ -39463,6 +40139,7 @@ class W5500 {
      * FDMのとき、長さが4より大きいときに使用
      *
      * VDMのとき、長さが1021より大きいときに使用
+     *
      * @param address Start address of read destination 読み込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param length Data length (byte length) データの長さ (バイト長)
@@ -39482,6 +40159,7 @@ class W5500 {
      * Reading values from the area for one address
      *
      * 1アドレス分の領域からの値の読み込み
+     *
      * @param address Start address of read destination 読み込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @return Value 値 (0\~255)
@@ -39495,6 +40173,7 @@ class W5500 {
      * Reading values from the area for two addresses
      *
      * 2アドレス分の領域からの値の読み込み
+     *
      * @param address Start address of read destination 読み込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @return Value 値 (0\~65535)
@@ -39508,6 +40187,7 @@ class W5500 {
      * Validate and write the address based on the definition
      *
      * アドレスを定義に基づいてバリデーションチェックして書き込み
+     *
      * @param address Start address of write destination 書き込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param val String of the address to write 書き込むアドレスの文字列
@@ -39519,11 +40199,11 @@ class W5500 {
      * @hidden
      */
     async addressWriteWait(address, bsb, val, name, example, splitVal, length, radix) {
-        if (typeof val !== "string") {
+        if (typeof val !== 'string') {
             throw new Error(`Given ${name} must be string.`);
         }
         const valList = val.split(splitVal).map((addr) => parseInt(addr, radix));
-        if (valList.filter((addr) => typeof addr === "number").length !== length) {
+        if (valList.filter((addr) => typeof addr === 'number').length !== length) {
             throw new Error(`${name} format must be '${example}'.`);
         }
         if (length > 4 && this.fdm) {
@@ -39547,6 +40227,7 @@ class W5500 {
      * FDMのとき、長さは4まで
      *
      * VDMのとき、長さは1021まで
+     *
      * @param address Start address of write destination 書き込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param data Raw byte data バイト列データ
@@ -39556,29 +40237,29 @@ class W5500 {
      */
     async writeWait(address, bsb, data, noWait) {
         if (!Array.isArray(data)) {
-            throw new Error("Given data must be array.");
+            throw new Error('Given data must be array.');
         }
         if (data.length === 3 && this.fdm) {
             data[3] = 0;
         }
         if (data.length === 0) {
-            throw new Error("Given data is empty.");
+            throw new Error('Given data is empty.');
         }
         if (data.length > 4 && this.fdm) {
-            throw new Error("Given data length must be 1, 2 or 4.");
+            throw new Error('Given data length must be 1, 2 or 4.');
         }
         if (data.length > 1021 && !this.fdm) {
-            throw new Error("Given data length must be 1021 or less.");
+            throw new Error('Given data length must be 1021 or less.');
         }
         if (data.filter((addr) => 0x00 <= addr && addr <= 0xff).length !== data.length) {
-            throw new Error("Given data field must take a value between 0(0x00) and 255(0xFF).");
+            throw new Error('Given data field must take a value between 0(0x00) and 255(0xFF).');
         }
         if (this.forceNoCheckWrite === true && noWait === undefined) {
             noWait = true;
         }
-        const result = await this.sendWait(address, bsb, "Write", data, noWait);
-        if (typeof result === "object") {
-            throw new Error("Unexpected Result");
+        const result = await this.sendWait(address, bsb, 'Write', data, noWait);
+        if (typeof result === 'object') {
+            throw new Error('Unexpected Result');
         }
         else {
             return result;
@@ -39588,6 +40269,7 @@ class W5500 {
      * Reading normal data
      *
      * 通常データの読み込み
+     *
      * @param address Start address of read destination 読み込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param length Data length (byte length) データの長さ (バイト長)
@@ -39595,9 +40277,9 @@ class W5500 {
      * @hidden
      */
     async readWait(address, bsb, length) {
-        const result = await this.sendWait(address, bsb, "Read", Array(length).fill(0));
-        if (typeof result === "boolean") {
-            throw new Error("Unexpected Result");
+        const result = await this.sendWait(address, bsb, 'Read', Array(length).fill(0));
+        if (typeof result === 'boolean') {
+            throw new Error('Unexpected Result');
         }
         else {
             return result;
@@ -39607,6 +40289,7 @@ class W5500 {
      * 読み書き共通のメソッド、返却されたデータを検証
      *
      * Common read / write method, verify returned data
+     *
      * @param address Start address of operation destination 操作先の先頭アドレス (0x0000\~0xFFFF)
      * @param bsb Block select bit ブロック選択ビット (0b00000\~0b11111)
      * @param mode Read or write 読み込みか書き込みか (Read|Write)
@@ -39621,7 +40304,9 @@ class W5500 {
         const write = [
             (address & 0xff00) >> 8,
             address & 0x00ff,
-            (bsb << 3) + (mode === "Write" ? 0b0100 : 0b0000) + (this.fdm ? (data.length < 4 ? data.length : 0b11) : 0),
+            (bsb << 3) +
+                (mode === 'Write' ? 0b0100 : 0b0000) +
+                (this.fdm ? (data.length < 4 ? data.length : 0b11) : 0),
             ...data,
         ];
         if (!this.fdm && this.csPin) {
@@ -39633,14 +40318,14 @@ class W5500 {
             this.csPin.output(true);
             this.csPin.output(false);
         }
-        if (typeof result === "undefined") {
+        if (typeof result === 'undefined') {
             return true;
         }
         if (result[0] === 1 && result[1] === 2 && result[2] === 3) {
-            return mode === "Write" ? true : result.slice(3);
+            return mode === 'Write' ? true : result.slice(3);
         }
         else {
-            throw new Error(`${mode} Error\n address: 0x${("0000" + address.toString(16).toUpperCase()).slice(-4)}  bsb: ${bsb}\n send: 0x${byteString(write)}\n receive: 0x${byteString(result)}\n`);
+            throw new Error(`${mode} Error\n address: 0x${('0000' + address.toString(16).toUpperCase()).slice(-4)}  bsb: ${bsb}\n send: 0x${byteString(write)}\n receive: 0x${byteString(result)}\n`);
         }
     }
 }
@@ -39727,6 +40412,7 @@ class W5500Socket {
      * Write the socket settings and open the socket (Connect / Listen is also executed for TCP)
      *
      * ソケット設定の書き込みをし、ソケットをOpenに(TCPの時はConnect/Listenも実行)
+     *
      * @param config Socket config ソケットの設定内容
      * @return Write result 書き込み結果
      */
@@ -39756,31 +40442,31 @@ class W5500Socket {
             result = result && (await this.setTXBufferSizeWait(config.txBufferSize));
         }
         // Open socket ソケットのオープン
-        result = result && (await this.sendCommandWait("Open"));
-        if (this.protocol === "TCPClient") {
-            result = result && (await this.sendCommandWait("Connect"));
+        result = result && (await this.sendCommandWait('Open'));
+        if (this.protocol === 'TCPClient') {
+            result = result && (await this.sendCommandWait('Connect'));
         }
-        if (this.protocol === "TCPServer") {
-            result = result && (await this.sendCommandWait("Listen"));
+        if (this.protocol === 'TCPServer') {
+            result = result && (await this.sendCommandWait('Listen'));
         }
         // Remember the value of rxReadDataPointer in advance
         // 事前にrxReadDataPointerの値を記憶
         this.rxReadDataPointer = await this.getRXReadDataPointerWait();
         // Interrupt handler settings 割り込みハンドラー設定
         if (config.onSendOKInterrupt) {
-            this.setInterruptHandler("SendOK", config.onSendOKInterrupt);
+            this.setInterruptHandler('SendOK', config.onSendOKInterrupt);
         }
         if (config.onTimeoutInterrupt) {
-            this.setInterruptHandler("Timeout", config.onTimeoutInterrupt);
+            this.setInterruptHandler('Timeout', config.onTimeoutInterrupt);
         }
         if (config.onReceiveDataInterrupt) {
-            this.setInterruptHandler("ReceiveData", config.onReceiveDataInterrupt);
+            this.setInterruptHandler('ReceiveData', config.onReceiveDataInterrupt);
         }
         if (config.onDisconnectInterrupt) {
-            this.setInterruptHandler("Disconnect", config.onDisconnectInterrupt);
+            this.setInterruptHandler('Disconnect', config.onDisconnectInterrupt);
         }
         if (config.onConnectSuccessInterrupt) {
-            this.setInterruptHandler("ConnectSuccess", config.onConnectSuccessInterrupt);
+            this.setInterruptHandler('ConnectSuccess', config.onConnectSuccessInterrupt);
         }
         if (config.onAllInterrupt) {
             this.setAllInterruptHandler(config.onAllInterrupt);
@@ -39792,20 +40478,21 @@ class W5500Socket {
      */
     async finalizeWait() {
         switch (this.protocol) {
-            case "TCPClient":
-                await this.sendCommandWait("Disconnect");
-                while ((await this.getStatusWait()) !== "Closed") { }
+            case 'TCPClient':
+                await this.sendCommandWait('Disconnect');
+                while ((await this.getStatusWait()) !== 'Closed') { }
                 break;
-            case "TCPServer":
-                await this.sendCommandWait("Disconnect");
-            case "UDP":
-                await this.sendCommandWait("Close");
+            case 'TCPServer':
+                await this.sendCommandWait('Disconnect');
+            case 'UDP':
+                await this.sendCommandWait('Close');
                 break;
         }
         this.protocol = null;
     }
     /**
      * Send data データを送信
+     *
      * @param data Raw byte data or string to send 送信するバイトデータまたは文字列
      * @return Write result 書き込み結果
      */
@@ -39814,6 +40501,7 @@ class W5500Socket {
     }
     /**
      * Send data, no write check データを送信、書き込みチェックなし
+     *
      * @param data Raw byte data or string to send 送信するバイトデータまたは文字列
      * @return Write result 書き込み結果
      */
@@ -39822,6 +40510,7 @@ class W5500Socket {
     }
     /**
      * Read the received data 受信されたデータを読取
+     *
      * @return Raw byte data or string to receive 受信データまたは文字列
      */
     async receiveDataWait() {
@@ -39830,8 +40519,10 @@ class W5500Socket {
         const data = await this.ethernet.bigReadWait(this.rxReadDataPointer, BSB_SOCKET_RX_BUFFER(this.id), rxRecieveSize);
         this.rxReadDataPointer += rxRecieveSize;
         await this.setRXReadDataPointerWait(this.rxReadDataPointer);
-        await this.sendCommandWait("Receive");
-        return this.stringMode ? new TextDecoder().decode(Uint8Array.from(data)) : data;
+        await this.sendCommandWait('Receive');
+        return this.stringMode
+            ? new TextDecoder().decode(Uint8Array.from(data))
+            : data;
     }
     /**
      * Set a handler to catch a specific interrupt
@@ -39841,6 +40532,7 @@ class W5500Socket {
      * 特定の割り込みをキャッチするハンドラーを設定
      *
      * 実際にキャッチするにはcheckInterrupt()を定期的に実行
+     *
      * @param name The name of the interrupt to get 取得する割り込みの名前 (SendOK | Timeout | ReceiveData | Disconnect | ConnectSuccess)
      * @param handler Callback function, extra is only when name=ReceiveData and when name=ConnectSuccess and protocol=TCPServer
      *
@@ -39857,6 +40549,7 @@ class W5500Socket {
      * 全ての割り込みをキャッチするハンドラーを設定
      *
      * 実際にキャッチするにはcheckInterrupt()を定期的に実行
+     *
      * @param handler Callback function, name is the type of interrupt, extra is only when name=ReceiveData and when name=ConnectSuccess and protocol=TCPServer
      *
      * コールバック関数、nameは割り込みの種類、extraはname=ReceiveDataの時とname=ConnectSuccessかつprotocol=TCPServerの時のみ
@@ -39866,6 +40559,7 @@ class W5500Socket {
     }
     /**
      * Get the current protocol 現在のプロトコルを取得
+     *
      * @return Protocol プロトコル
      */
     getProtocol() {
@@ -39873,6 +40567,7 @@ class W5500Socket {
     }
     /**
      * Set mode モードを設定
+     *
      * @param config Multicast, BroardcastBlock, NoDelayACK, MulticastVer1, UnicastBlock and Protocol
      * @return Write result 書き込み結果
      */
@@ -39881,16 +40576,30 @@ class W5500Socket {
         this.stringMode = config.stringMode || false;
         return this.ethernet.numWriteWait(SOCKET_MODE, BSB_SOCKET_REGISTER(this.id), config.protocol === null
             ? 0
-            : 0b10000000 * (config.multicast === true && config.protocol === "UDP" ? 1 : 0) +
-                0b01000000 * (config.broardcastBlock === true && config.protocol === "UDP" ? 1 : 0) +
-                0b00100000 * (config.noDelayACK === true && config.protocol.indexOf("TCP") >= 0 ? 1 : 0) +
-                0b00100000 * (config.multicastVer1 === true && config.protocol === "UDP" ? 1 : 0) +
-                0b00010000 * (config.unicastBlock === true && config.protocol === "UDP" ? 1 : 0) +
-                0b00000001 * (config.protocol.indexOf("TCP") >= 0 ? 1 : 0) +
-                0b00000010 * (config.protocol === "UDP" ? 1 : 0));
+            : 0b10000000 *
+                (config.multicast === true && config.protocol === 'UDP' ? 1 : 0) +
+                0b01000000 *
+                    (config.broardcastBlock === true && config.protocol === 'UDP'
+                        ? 1
+                        : 0) +
+                0b00100000 *
+                    (config.noDelayACK === true && config.protocol.indexOf('TCP') >= 0
+                        ? 1
+                        : 0) +
+                0b00100000 *
+                    (config.multicastVer1 === true && config.protocol === 'UDP'
+                        ? 1
+                        : 0) +
+                0b00010000 *
+                    (config.unicastBlock === true && config.protocol === 'UDP'
+                        ? 1
+                        : 0) +
+                0b00000001 * (config.protocol.indexOf('TCP') >= 0 ? 1 : 0) +
+                0b00000010 * (config.protocol === 'UDP' ? 1 : 0));
     }
     /**
      * Send command コマンドを送信
+     *
      * @param command Command コマンド
      * @return Write result 書き込み結果
      */
@@ -39900,12 +40609,12 @@ class W5500Socket {
             throw new Error(`Unknown Command '${command}'.`);
         }
         if (this.protocol === null) {
-            throw new Error("Must set Socket Mode before send the command.");
+            throw new Error('Must set Socket Mode before send the command.');
         }
-        if (this.protocol.indexOf("TCP") >= 0 && 0x20 < code && code < 0x30) {
+        if (this.protocol.indexOf('TCP') >= 0 && 0x20 < code && code < 0x30) {
             throw new Error(`'${command}' command is only available in UDP mode.`);
         }
-        if (this.protocol === "UDP" && 0x01 < code && code < 0x10) {
+        if (this.protocol === 'UDP' && 0x01 < code && code < 0x10) {
             throw new Error(`'${command}' command is only available in TCP mode.`);
         }
         return await this.ethernet.numWriteWait(SOCKET_COMMAND, BSB_SOCKET_REGISTER(this.id), code);
@@ -39918,6 +40627,7 @@ class W5500Socket {
      * 割り込みをチェック
      *
      * 割り込みがあった場合、事前に設定されたhandlerを呼び出します
+     *
      * @return Then whether you can check for interrupts
      *
      * 次に割り込みをチェックできるかどうか
@@ -39933,11 +40643,13 @@ class W5500Socket {
         else {
             await this.ethernet.numWriteWait(SOCKET_INTERRUPT, BSB_SOCKET_REGISTER(this.id), interrupt);
         } // リセット
-        const msgList = Object.keys(W5500SocketParts.InterruptFlags).filter((msg) => (interrupt & W5500SocketParts.InterruptFlags[msg]) !== 0);
+        const msgList = Object.keys(W5500SocketParts.InterruptFlags).filter((msg) => (interrupt &
+            W5500SocketParts.InterruptFlags[msg]) !==
+            0);
         for (const m in msgList) {
             const msg = msgList[m];
             const handler = this.interruptHandlers[msg];
-            if (msg === "Timeout") {
+            if (msg === 'Timeout') {
                 this.protocol = null;
             }
             console.info(`Found Interrupt on Socket ${this.id}: ${msg}\n`);
@@ -39945,10 +40657,10 @@ class W5500Socket {
                 continue;
             }
             let extra;
-            if (msg === "ReceiveData") {
+            if (msg === 'ReceiveData') {
                 extra = await this.receiveDataWait();
             }
-            if (msg === "ConnectSuccess" && this.protocol === "TCPServer") {
+            if (msg === 'ConnectSuccess' && this.protocol === 'TCPServer') {
                 extra = new W5500Parts.DestInfo(await this.getDestIPWait(), await this.getDestPortWait());
             }
             if (handler !== undefined) {
@@ -39963,15 +40675,19 @@ class W5500Socket {
     }
     /**
      * Get Status ステータスを取得
+     *
      * @return Status ステータス
      */
     async getStatusWait() {
         const status = await this.ethernet.numReadWait(SOCKET_STATUS, BSB_SOCKET_REGISTER(this.id));
         const index = Object.values(W5500SocketParts.StatusCodes).indexOf(status);
-        return index < 0 ? "UNKNOWN" : Object.keys(W5500SocketParts.StatusCodes)[index];
+        return index < 0
+            ? 'UNKNOWN'
+            : Object.keys(W5500SocketParts.StatusCodes)[index];
     }
     /**
      * Set the connection source port 接続元ポートを設定
+     *
      * @param port Port number ポート番号
      * @return Write result 書き込み結果
      */
@@ -39982,6 +40698,7 @@ class W5500Socket {
      * Set the MAC address of the connection destination (only if required by UDP)
      *
      * 接続先のMACアドレスを設定(UDPで必要な場合のみ)
+     *
      * @param mac MAC address MACアドレス
      * @return Write result 書き込み結果
      */
@@ -39992,6 +40709,7 @@ class W5500Socket {
      * Set the IPv4 address of the connection destination
      *
      * 接続先のIPv4アドレスを設定
+     *
      * @param ip IPv4 address IPv4アドレス
      * @return Write result 書き込み結果
      */
@@ -40002,6 +40720,7 @@ class W5500Socket {
      * Get the IPv4 address of the connection source (only for TCP server)
      *
      * 接続元のIPv4アドレスを取得(TCPサーバーのときのみ)
+     *
      * @return IPv4 address IPv4アドレス
      */
     getDestIPWait() {
@@ -40011,6 +40730,7 @@ class W5500Socket {
      * Set the port number of the connection destination
      *
      * 接続先のポート番号を設定
+     *
      * @param port Port number ポート番号
      * @return Write result 書き込み結果
      */
@@ -40021,6 +40741,7 @@ class W5500Socket {
      * Get the port number of the connection source (only for TCP server)
      *
      * 接続元のポート番号を取得(TCPサーバーのときのみ)
+     *
      * @return Port number ポート番号
      */
     getDestPortWait() {
@@ -40030,6 +40751,7 @@ class W5500Socket {
      * Set maximum segment size (only if required by TCP)
      *
      * 最大セグメントサイズを設定(TCPで必要な場合のみ)
+     *
      * @param size 最大セグメントサイズ
      * @return Write result 書き込み結果
      */
@@ -40038,6 +40760,7 @@ class W5500Socket {
     }
     /**
      * Set IP service type IPサービスタイプを設定
+     *
      * @param type IP service type IPサービスタイプ (1byte)
      * @return Write result 書き込み結果
      */
@@ -40046,6 +40769,7 @@ class W5500Socket {
     }
     /**
      * Set TTL TTLを設定
+     *
      * @param ttl TTL (0\~65535)
      * @return Write result 書き込み結果
      */
@@ -40054,6 +40778,7 @@ class W5500Socket {
     }
     /**
      * Set buffer size バッファサイズを設定
+     *
      * @param size Buffer size バッファサイズ(KB)
      * @param address Start address of write destination 書き込み先の先頭アドレス
      * @return Write result 書き込み結果
@@ -40061,12 +40786,13 @@ class W5500Socket {
      */
     setBufferSizeWait(size, address) {
         if ([0, 1, 2, 4, 8, 16].indexOf(size) < 0) {
-            throw new Error("Given buffer size must be 0, 1, 2, 4, 8 or 16.");
+            throw new Error('Given buffer size must be 0, 1, 2, 4, 8 or 16.');
         }
         return this.ethernet.numWriteWait(address, BSB_SOCKET_REGISTER(this.id), size);
     }
     /**
      * Set receive buffer size 受信バッファサイズを設定
+     *
      * @param size Buffer size (KB) only to the power of 2, up to 16
      *
      * バッファサイズ(KB) 2の累乗のみ、16まで
@@ -40077,6 +40803,7 @@ class W5500Socket {
     }
     /**
      * Set send buffer size 送信バッファサイズを設定
+     *
      * @param size Buffer size (KB) only to the power of 2, up to 16
      *
      * バッファサイズ(KB) 2の累乗のみ、16まで
@@ -40087,6 +40814,7 @@ class W5500Socket {
     }
     /**
      * Get free size of send buffer 送信バッファの空きサイズを取得
+     *
      * @return Free size 空きサイズ
      */
     getTXFreeSizeWait() {
@@ -40096,6 +40824,7 @@ class W5500Socket {
      * Get the write start address of the send buffer
      *
      * 送信バッファの書き込み開始アドレスを取得
+     *
      * @return Address アドレス
      */
     getTXReadPointerWait() {
@@ -40105,6 +40834,7 @@ class W5500Socket {
      * Set the next write start address of the send buffer
      *
      * 送信バッファの次の書き込み開始アドレスを設定
+     *
      * @param pointer Address アドレス
      * @return Write result 書き込み結果
      */
@@ -40113,6 +40843,7 @@ class W5500Socket {
     }
     /**
      * Get the length of received data 受信データの長さを取得
+     *
      * @return Length 長さ
      */
     getRXReceiveSizeWait() {
@@ -40122,6 +40853,7 @@ class W5500Socket {
      * Get the read start address of the receive buffer
      *
      * 受信バッファの読み込み開始アドレスを取得
+     *
      * @return Address アドレス
      */
     getRXReadDataPointerWait() {
@@ -40131,6 +40863,7 @@ class W5500Socket {
      * Set the next read start address of the receive buffer
      *
      * 受信バッファの次の読み込み開始アドレスを設定
+     *
      * @param pointer Address アドレス
      * @return Write result 書き込み結果
      */
@@ -40141,6 +40874,7 @@ class W5500Socket {
      * Get the write start address of the receive buffer
      *
      * 受信バッファの書き込み開始アドレスを取得
+     *
      * @return Address アドレス
      */
     getRXWritePointerWait() {
@@ -40148,6 +40882,7 @@ class W5500Socket {
     }
     /**
      * Set IP header fragment IPヘッダーのフラグメントを設定
+     *
      * @param fragment IP header fragment IPヘッダーのフラグメント (0x0000\~0xFFFF)
      * @return Write result 書き込み結果
      */
@@ -40158,6 +40893,7 @@ class W5500Socket {
      * Set keep-alive transmission interval (only if TCP requires)
      *
      * keep-aliveの送信間隔を設定(TCPで必要な場合のみ)
+     *
      * @param time keep-alive transmission interval (sec) (0\~1275)
      *
      * keep-alive 送信間隔(秒)(0\~1275)
@@ -40168,6 +40904,7 @@ class W5500Socket {
     }
     /**
      * Send data データを送信
+     *
      * @param data Raw byte data to send or string 送信するバイトデータまたは文字列
      * @param noWait Do not use spi.writeWait() when writing data
      *
@@ -40175,11 +40912,13 @@ class W5500Socket {
      * @hidden
      */
     async sendDataBaseWait(data, noWait) {
-        const d = typeof data === "string" ? Array.from(new TextEncoder().encode(data)) : data;
+        const d = typeof data === 'string'
+            ? Array.from(new TextEncoder().encode(data))
+            : data;
         const txReadPointer = await this.getTXReadPointerWait();
         const result = await this.ethernet.bigWriteWait(txReadPointer, BSB_SOCKET_TX_BUFFER(this.id), d, noWait);
         await this.setTXWritePointerWait(txReadPointer + d.length);
-        await this.sendCommandWait("Send");
+        await this.sendCommandWait('Send');
         return result;
     }
 }
@@ -40201,12 +40940,12 @@ exports.default = W5500;
 Object.defineProperty(exports, "__esModule", { value: true });
 class GYSFDMAXB {
     constructor() {
-        this.displayName = "gps";
-        this.displayIoNames = { txd: "txd", rxd: "rxd", Opps: "1pps" };
+        this.displayName = 'gps';
+        this.displayIoNames = { txd: 'txd', rxd: 'rxd', Opps: '1pps' };
         this.on1pps = null;
         this.last1pps = 0;
-        this.keys = ["vcc", "txd", "rxd", "gnd", "Opps"];
-        this.requiredKeys = ["txd", "rxd"];
+        this.keys = ['vcc', 'txd', 'rxd', 'gnd', 'Opps'];
+        this.requiredKeys = ['txd', 'rxd'];
         this.ioKeys = this.keys;
     }
     // -------------------
@@ -40218,7 +40957,7 @@ class GYSFDMAXB {
     }
     static info() {
         return {
-            name: "GYSFDMAXB",
+            name: 'GYSFDMAXB',
         };
     }
     wired(obniz) {
@@ -40228,13 +40967,13 @@ class GYSFDMAXB {
         this.vcc = this.params.vcc;
         this.gnd = this.params.gnd;
         this.Opps = this.params.Opps;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.uart = obniz.getFreeUart();
         this.uart.start({
             tx: this.params.txd,
             rx: this.params.rxd,
             baud: 9600,
-            drive: "3v",
+            drive: '3v',
         });
         this.editedData = {};
         this.editedData.enable = false;
@@ -40250,7 +40989,7 @@ class GYSFDMAXB {
             GPVTG: 0x0010,
             GPZDA: 0x0020,
         };
-        this.gpsInfo.status = "V";
+        this.gpsInfo.status = 'V';
         this.gpsInfo.sentences = new Set(); // Set specifying sentence of MNEA from which data have been obtained
         this.gpsInfo.satelliteInfo = {
             satellites: [],
@@ -40285,7 +41024,7 @@ class GYSFDMAXB {
                 return this.uart.tryConvertString(results);
             }
         }
-        return "";
+        return '';
     }
     getEditedData() {
         let n;
@@ -40295,24 +41034,24 @@ class GYSFDMAXB {
         this.editedData.enable = false;
         this.editedData.GPGSV = new Array(4);
         while (sentence.length > 0) {
-            const part = sentence.split(",");
-            if (sentence.slice(-4, -3) !== ",") {
+            const part = sentence.split(',');
+            if (sentence.slice(-4, -3) !== ',') {
                 const st = part[part.length - 1].slice(0, -3);
                 part.push(part[part.length - 1].slice(-3));
                 part[part.length - 2] = st;
             }
-            this.editedData.sentence = part.join(",");
+            this.editedData.sentence = part.join(',');
             switch (part[0]) {
-                case "$GPGGA":
+                case '$GPGGA':
                     this.editedData.GPGGA = part;
                     break;
-                case "$GPGLL":
+                case '$GPGLL':
                     this.editedData.GPGLL = part;
                     break;
-                case "$GPGSA":
+                case '$GPGSA':
                     this.editedData.GPGSA = part;
                     break;
-                case "$GPGSV":
+                case '$GPGSV':
                     n = Number(part[2]);
                     if (n > this.editedData.GPGSV.length) {
                         while (n > this.editedData.GPGSV.length) {
@@ -40321,27 +41060,27 @@ class GYSFDMAXB {
                     }
                     this.editedData.GPGSV[n - 1] = part;
                     break;
-                case "$GPRMC":
+                case '$GPRMC':
                     this.editedData.GPRMC = part;
                     break;
-                case "$GPVTG":
+                case '$GPVTG':
                     this.editedData.GPVTG = part;
                     break;
-                case "$GPZDA":
+                case '$GPZDA':
                     this.editedData.GPZDA = part;
                     utc =
                         part[4] +
-                            "/" +
+                            '/' +
                             part[3] +
-                            "/" +
+                            '/' +
                             part[2] +
-                            " " +
+                            ' ' +
                             part[1].substring(0, 2) +
-                            ":" +
+                            ':' +
                             part[1].substring(2, 4) +
-                            ":" +
+                            ':' +
                             part[1].substring(4, 6) +
-                            " +00:00";
+                            ' +00:00';
                     this.editedData.timestamp = new Date(utc);
                     break;
                 default:
@@ -40357,7 +41096,7 @@ class GYSFDMAXB {
         const NMEA_SATINSENTENCE = 4;
         const NMEA_MAXSAT = 12;
         editedData = editedData || this.getEditedData();
-        this.gpsInfo.status = "V";
+        this.gpsInfo.status = 'V';
         if (editedData.enable) {
             if (editedData.GPGGA) {
                 const gga = editedData.GPGGA;
@@ -40365,9 +41104,9 @@ class GYSFDMAXB {
                 this.gpsInfo.hdop = parseFloat(gga[8]); // Horizontal Dilution of Precision (HDOP)
                 this.gpsInfo.altitude = parseFloat(gga[9]); // Antenna Altitude meters above mean sea level
                 const latitude = this.nmea2dd(parseFloat(gga[2]));
-                this.gpsInfo.latitude = gga[3] === "N" ? latitude : -latitude;
+                this.gpsInfo.latitude = gga[3] === 'N' ? latitude : -latitude;
                 const longitude = this.nmea2dd(parseFloat(gga[4]));
-                this.gpsInfo.longitude = gga[5] === "E" ? longitude : -longitude;
+                this.gpsInfo.longitude = gga[5] === 'E' ? longitude : -longitude;
                 this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPGGA);
             }
             if (editedData.GPGSV) {
@@ -40382,7 +41121,10 @@ class GYSFDMAXB {
                         }
                         this.gpsInfo.satelliteInfo.inView = sat_count;
                         let nsat = (pack_index - 1) * NMEA_SATINSENTENCE;
-                        nsat = nsat + NMEA_SATINSENTENCE > sat_count ? sat_count - nsat : NMEA_SATINSENTENCE;
+                        nsat =
+                            nsat + NMEA_SATINSENTENCE > sat_count
+                                ? sat_count - nsat
+                                : NMEA_SATINSENTENCE;
                         for (let isat = 0; isat < nsat; ++isat) {
                             const isi = (pack_index - 1) * NMEA_SATINSENTENCE + isat;
                             if (this.gpsInfo.satelliteInfo.satellites.length <= isi) {
@@ -40424,9 +41166,9 @@ class GYSFDMAXB {
                 const rmc = editedData.GPRMC;
                 this.gpsInfo.status = rmc[2]; // Status Active or Void
                 const latitude = this.nmea2dd(parseFloat(rmc[3]));
-                this.gpsInfo.latitude = rmc[4] === "N" ? latitude : -latitude;
+                this.gpsInfo.latitude = rmc[4] === 'N' ? latitude : -latitude;
                 const longitude = this.nmea2dd(parseFloat(rmc[5]));
-                this.gpsInfo.longitude = rmc[6] === "E" ? longitude : -longitude;
+                this.gpsInfo.longitude = rmc[6] === 'E' ? longitude : -longitude;
                 const NMEA_TUD_KNOTS = 1.852; // 1knot=1.852km/h
                 this.gpsInfo.speed = parseFloat(rmc[7]) * NMEA_TUD_KNOTS; // unit: km/h
                 this.gpsInfo.direction = rmc[8];
@@ -40448,15 +41190,15 @@ class GYSFDMAXB {
     }
     _mneaTo(format, value) {
         let result = this.nmea2dd(value);
-        if (typeof format === "string") {
+        if (typeof format === 'string') {
             switch (format.toUpperCase()) {
-                case "DMS":
+                case 'DMS':
                     result = this.nmea2dms(value);
                     break;
-                case "DM":
+                case 'DM':
                     result = this.nmea2dm(value);
                     break;
-                case "S":
+                case 'S':
                     result = this.nmea2s(value);
                     break;
                 default:
@@ -40472,37 +41214,37 @@ class GYSFDMAXB {
     }
     status2string(status) {
         status = status || this.status;
-        if (status === "A") {
-            return "Active";
+        if (status === 'A') {
+            return 'Active';
         }
-        if (status === "V") {
-            return "Void";
+        if (status === 'V') {
+            return 'Void';
         }
         return status;
     }
     fixMode2string(fixMode) {
         fixMode = fixMode || this.fixMode;
         if (fixMode === 1) {
-            return "Fix not available";
+            return 'Fix not available';
         }
         if (fixMode === 2) {
-            return "2D";
+            return '2D';
         }
         if (fixMode === 3) {
-            return "3D";
+            return '3D';
         }
         return fixMode;
     }
     gpsQuality2string(gpsQuality) {
         gpsQuality = gpsQuality || this.gpsQuality;
         if (gpsQuality === 0) {
-            return "Invalid";
+            return 'Invalid';
         }
         if (gpsQuality === 1) {
-            return "GPS fix";
+            return 'GPS fix';
         }
         if (gpsQuality === 2) {
-            return "DGPS fix";
+            return 'DGPS fix';
         }
         return gpsQuality;
     }
@@ -40513,14 +41255,14 @@ class GYSFDMAXB {
         const d = Math.floor(val / 100);
         const m = Math.floor((val / 100.0 - d) * 100.0);
         const s = ((val / 100.0 - d) * 100.0 - m) * 60;
-        return d + "°" + m + "'" + s.toFixed(1) + '"';
+        return d + '°' + m + "'" + s.toFixed(1) + '"';
     }
     nmea2dm(val) {
         // NMEA format to DM format string (999° 99.9999')
         val = parseFloat(val);
         const d = Math.floor(val / 100.0);
         const m = (val / 100.0 - d) * 100.0;
-        return d + "°" + m.toFixed(4) + "'";
+        return d + '°' + m.toFixed(4) + "'";
     }
     nmea2dd(val) {
         // NMEA format to DD format decimal (999.999999)
@@ -40564,12 +41306,23 @@ class CCS811 extends i2cParts_1.default {
         this.i2cinfo = {
             address: 0x5b,
             clock: 100000,
-            voltage: "3v",
-            pull: "3v",
+            voltage: '3v',
+            pull: '3v',
         };
         this.requiredKeys = [];
-        this.keys = ["vcc", "gnd", "scl", "sda", "nwak", "nrst", "nint", "i2c", "add", "address"];
-        this.ioKeys = ["vcc", "gnd", "scl", "sda", "nwak", "nrst", "nint", "add"];
+        this.keys = [
+            'vcc',
+            'gnd',
+            'scl',
+            'sda',
+            'nwak',
+            'nrst',
+            'nint',
+            'i2c',
+            'add',
+            'address',
+        ];
+        this.ioKeys = ['vcc', 'gnd', 'scl', 'sda', 'nwak', 'nrst', 'nint', 'add'];
         this.commands = {};
         this.commands.addresses = {
             CCS811_STATUS: 0x00,
@@ -40591,7 +41344,7 @@ class CCS811 extends i2cParts_1.default {
     }
     static info() {
         return {
-            name: "CCS811",
+            name: 'CCS811',
         };
     }
     i2cInfo() {
@@ -40599,8 +41352,8 @@ class CCS811 extends i2cParts_1.default {
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, null, "3v");
-        this.obniz.setVccGnd(null, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, null, '3v');
+        this.obniz.setVccGnd(null, this.params.gnd, '5v');
         this.obniz.wait(10);
         this.address = 0x5b;
         if (this.params.address === 0x5b) {
@@ -40610,11 +41363,11 @@ class CCS811 extends i2cParts_1.default {
             this.address = 0x5a;
         }
         else if (this.params.address !== undefined) {
-            throw new Error("address must be 0x5a or 0x5b");
+            throw new Error('address must be 0x5a or 0x5b');
         }
         if (obniz.isValidIO(this.params.add)) {
             this.io_add = obniz.getIO(this.params.add);
-            this.io_add.drive("3v");
+            this.io_add.drive('3v');
             this.io_add.output(this.address === 0x5a ? false : true);
         }
         if (this.params.i2c !== undefined) {
@@ -40622,8 +41375,8 @@ class CCS811 extends i2cParts_1.default {
         }
         else {
             this.params.clock = this.params.clock || 100 * 1000;
-            this.params.mode = "master";
-            this.params.pull = "3v";
+            this.params.mode = 'master';
+            this.params.pull = '3v';
             this.i2c = obniz.getI2CWithConfig(this.params);
         }
         this.obniz.wait(10);
@@ -40632,21 +41385,26 @@ class CCS811 extends i2cParts_1.default {
         // restart
         const readCheck = await this.readWait(this.commands.addresses.CCS811_HW_ID, 1);
         if (readCheck[0] !== 0x81) {
-            console.log("readCheck error " + readCheck);
+            console.log('readCheck error ' + readCheck);
         }
         await this.obniz.wait(10);
-        console.log("restarted");
+        console.log('restarted');
         // reset
-        this.write(this.commands.addresses.CCS811_SW_RESET, [0x11, 0xe5, 0x72, 0x8a]);
+        this.write(this.commands.addresses.CCS811_SW_RESET, [
+            0x11,
+            0xe5,
+            0x72,
+            0x8a,
+        ]);
         await this.obniz.wait(10);
-        console.log("reset");
+        console.log('reset');
         // checkForStatusError
         const status = await this.readWait(this.commands.addresses.CCS811_STATUS, 1);
-        console.log("Status: " + status);
+        console.log('Status: ' + status);
         this.start();
         await this.setDriveModeWait(1); // Read every second
         await this.obniz.wait(10);
-        console.log("config done");
+        console.log('config done');
     }
     start() {
         this.write(this.commands.addresses.CCS811_APP_START, []);
@@ -40680,11 +41438,11 @@ class CCS811 extends i2cParts_1.default {
     async setEnvironmentalDataWait(relativeHumidity, temperature) {
         // Check for invalid temperatures
         if (temperature < -25 || temperature > 50) {
-            console.log("temperature is out of range");
+            console.log('temperature is out of range');
         }
         // Check for invalid humidity
         if (relativeHumidity < 0 || relativeHumidity > 100) {
-            console.log("humidity is out of range");
+            console.log('humidity is out of range');
         }
         const rH = relativeHumidity * 1000; // 42.348 becomes 42348
         let temp = temperature * 1000; // 23.2 becomes 23200
@@ -40718,17 +41476,17 @@ class CCS811 extends i2cParts_1.default {
     }
     wake() {
         this.io_nwak = this.obniz.getIO(this.params.nwak);
-        this.io_nwak.drive("3v");
+        this.io_nwak.drive('3v');
         this.io_nwak.output(false);
     }
     sleep() {
         this.io_nwak = this.obniz.getIO(this.params.nwak);
-        this.io_nwak.drive("3v");
+        this.io_nwak.drive('3v');
         this.io_nwak.output(true);
     }
     async hwResetWait() {
         this.io_nrst = this.obniz.getIO(this.params.nrst);
-        this.io_nrst.drive("3v");
+        this.io_nrst.drive('3v');
         this.io_nrst.output(false);
         await this.obniz.wait(10);
         this.io_nrst.output(true);
@@ -40751,11 +41509,11 @@ exports.default = CCS811;
 Object.defineProperty(exports, "__esModule", { value: true });
 class MH_Z19B {
     constructor() {
-        this.keys = ["vcc", "gnd", "sensor_tx", "sensor_rx"];
-        this.requiredKeys = ["sensor_tx", "sensor_rx"];
+        this.keys = ['vcc', 'gnd', 'sensor_tx', 'sensor_rx'];
+        this.requiredKeys = ['sensor_tx', 'sensor_rx'];
         this.ioKeys = this.keys;
-        this.displayName = "co2";
-        this.displayIoNames = { sensor_tx: "sensorTx", rx: "sensorRx" };
+        this.displayName = 'co2';
+        this.displayIoNames = { sensor_tx: 'sensorTx', rx: 'sensorRx' };
         this.rxbuf = Buffer.alloc(9);
         this.modes = {
             Read: 0x86,
@@ -40772,7 +41530,7 @@ class MH_Z19B {
     }
     static info() {
         return {
-            name: "MH_Z19B",
+            name: 'MH_Z19B',
         };
     }
     wired(obniz) {
@@ -40781,7 +41539,7 @@ class MH_Z19B {
         this.gnd = this.params.gnd;
         this.my_tx = this.params.sensor_rx;
         this.my_rx = this.params.sensor_tx;
-        this.obniz.setVccGnd(this.vcc, this.gnd, "5v");
+        this.obniz.setVccGnd(this.vcc, this.gnd, '5v');
         this.uart = obniz.getFreeUart();
         this.uart.start({
             tx: this.my_tx,
@@ -40790,7 +41548,7 @@ class MH_Z19B {
         });
     }
     heatWait(seconds) {
-        if (typeof seconds === "number" && seconds > 0) {
+        if (typeof seconds === 'number' && seconds > 0) {
             seconds *= 1000;
         }
         else {
@@ -40814,7 +41572,7 @@ class MH_Z19B {
                 }
                 else {
                     reject(undefined);
-                    console.log("cannot receive data");
+                    console.log('cannot receive data');
                 }
             }
             catch (e) {
@@ -40823,44 +41581,54 @@ class MH_Z19B {
         });
     }
     calibrateZero() {
-        let command;
-        command = this.makeRequestCmd("CalibZ", [0x00, 0x00, 0x00, 0x00, 0x00]);
+        const command = this.makeRequestCmd('CalibZ', [
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+        ]);
         this.uart.send(command);
-        console.log("send a Zero Calibration command");
+        // console.log('send a Zero Calibration command');
     }
     calibrateSpan(ppm = 2000) {
         if (ppm < 1000) {
             return;
         }
-        let command;
         const span_byte = Buffer.alloc(2);
         span_byte[0] = ppm / 256;
         span_byte[1] = ppm % 256;
-        command = this.makeRequestCmd("CalibS", [span_byte[0], span_byte[1], 0x00, 0x00, 0x00]);
+        const command = this.makeRequestCmd('CalibS', [
+            span_byte[0],
+            span_byte[1],
+            0x00,
+            0x00,
+            0x00,
+        ]);
         this.uart.send(command);
-        console.log("send a Span Calibration command");
+        // console.log('send a Span Calibration command');
     }
     setAutoCalibration(autoCalibration = true) {
         let command;
         if (autoCalibration) {
-            command = this.makeRequestCmd("ACBOnOff", [0xa0, 0x00, 0x00, 0x00, 0x00]);
-            console.log("set an Auto Calibration ON");
+            command = this.makeRequestCmd('ACBOnOff', [0xa0, 0x00, 0x00, 0x00, 0x00]);
+            console.log('set an Auto Calibration ON');
         }
         else {
-            command = this.makeRequestCmd("ACBOnOff", [0x00, 0x00, 0x00, 0x00, 0x00]);
-            console.log("set an Auto Calibration OFF");
+            command = this.makeRequestCmd('ACBOnOff', [0x00, 0x00, 0x00, 0x00, 0x00]);
+            console.log('set an Auto Calibration OFF');
         }
         this.uart.send(command);
     }
     setDetectionRange(range) {
         let command;
         if (range in this.rangeType) {
-            command = this.makeRequestCmd("RangeSet", this.rangeType[range]);
-            console.log("Configured Range : " + String(range));
+            command = this.makeRequestCmd('RangeSet', this.rangeType[range]);
+            console.log('Configured Range : ' + String(range));
         }
         else {
-            console.log("invalid range value");
-            command = this.makeRequestCmd("RangeSet", this.rangeType[5000]);
+            console.log('invalid range value');
+            command = this.makeRequestCmd('RangeSet', this.rangeType[5000]);
         }
         this.uart.send(command);
     }
@@ -40884,8 +41652,13 @@ class MH_Z19B {
         return Array.from(_buffer);
     }
     requestReadConcentraiton() {
-        let command;
-        command = this.makeRequestCmd("Read", [0x00, 0x00, 0x00, 0x00, 0x00]);
+        const command = this.makeRequestCmd('Read', [
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+        ]);
         // console.log("being sent request command");
         // console.log(command);
         this.uart.send(command);
@@ -40897,7 +41670,7 @@ class MH_Z19B {
             co2Concentration = this.rxbuf[2] * 256 + this.rxbuf[3];
         }
         else {
-            console.log("checksum error");
+            console.log('checksum error');
         }
         this.rxbuf = [];
         return co2Concentration;
@@ -40942,7 +41715,7 @@ const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/
 class MQ135 extends MQGas_1.default {
     static info() {
         return {
-            name: "MQ135",
+            name: 'MQ135',
         };
     }
     constructor() {
@@ -40971,7 +41744,7 @@ const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/
 class MQ2 extends MQGas_1.default {
     static info() {
         return {
-            name: "MQ2",
+            name: 'MQ2',
         };
     }
     constructor() {
@@ -41000,7 +41773,7 @@ const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/
 class MQ3 extends MQGas_1.default {
     static info() {
         return {
-            name: "MQ3",
+            name: 'MQ3',
         };
     }
     constructor() {
@@ -41029,7 +41802,7 @@ const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/
 class MQ4 extends MQGas_1.default {
     static info() {
         return {
-            name: "MQ4",
+            name: 'MQ4',
         };
     }
     constructor() {
@@ -41058,7 +41831,7 @@ const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/
 class MQ5 extends MQGas_1.default {
     static info() {
         return {
-            name: "MQ5",
+            name: 'MQ5',
         };
     }
     constructor() {
@@ -41087,7 +41860,7 @@ const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/
 class MQ6 extends MQGas_1.default {
     static info() {
         return {
-            name: "MQ6",
+            name: 'MQ6',
         };
     }
     constructor() {
@@ -41116,7 +41889,7 @@ const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/
 class MQ7 extends MQGas_1.default {
     static info() {
         return {
-            name: "MQ7",
+            name: 'MQ7',
         };
     }
     constructor() {
@@ -41145,7 +41918,7 @@ const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/
 class MQ8 extends MQGas_1.default {
     static info() {
         return {
-            name: "MQ8",
+            name: 'MQ8',
         };
     }
     constructor() {
@@ -41174,7 +41947,7 @@ const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/
 class MQ9 extends MQGas_1.default {
     static info() {
         return {
-            name: "MQ9",
+            name: 'MQ9',
         };
     }
     constructor() {
@@ -41198,14 +41971,14 @@ exports.default = MQ9;
 Object.defineProperty(exports, "__esModule", { value: true });
 class MQGasSensor {
     constructor() {
-        this.keys = ["gnd", "vcc", "do", "ao"];
+        this.keys = ['gnd', 'vcc', 'do', 'ao'];
         this.requiredKeys = [];
         // this.RL = 2 * 1000;
         // this.RO = 20 * 1000;
     }
     static info() {
         return {
-            name: "MQGas",
+            name: 'MQGas',
         };
     }
     wired(obniz) {
@@ -41216,12 +41989,12 @@ class MQGasSensor {
             this.ad = obniz.getAD(this.params.ao);
             this.ad.start((voltage) => {
                 // this.level = this.calc(voltage);
-                if (typeof this.onchangeanalog === "function") {
+                if (typeof this.onchangeanalog === 'function') {
                     this.onchangeanalog(voltage);
                 }
-                if (typeof this.voltageLimit === "number" &&
+                if (typeof this.voltageLimit === 'number' &&
                     this.voltageLimit <= voltage &&
-                    typeof this.onexceedvoltage === "function") {
+                    typeof this.onexceedvoltage === 'function') {
                     this.onexceedvoltage(voltage);
                 }
             });
@@ -41229,18 +42002,18 @@ class MQGasSensor {
         if (this.obniz.isValidIO(this.params.do)) {
             this.do = obniz.getIO(this.params.do);
             this.do.input((value) => {
-                if (typeof this.onchangedigital === "function") {
+                if (typeof this.onchangedigital === 'function') {
                     this.onchangedigital(value);
                 }
             });
         }
     }
     startHeating() {
-        this.obniz.setVccGnd(this.vcc, this.gnd, "5v");
+        this.obniz.setVccGnd(this.vcc, this.gnd, '5v');
     }
     heatWait(seconds) {
         this.startHeating();
-        if (typeof seconds === "number" && seconds > 0) {
+        if (typeof seconds === 'number' && seconds > 0) {
             seconds *= 1000;
         }
         else {
@@ -41268,10 +42041,10 @@ exports.default = MQGasSensor;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_3AxisAccelerometer {
     constructor() {
-        this.displayName = "3axis";
-        this.displayIoNames = { sda: "sda", scl: "scl" };
+        this.displayName = '3axis';
+        this.displayIoNames = { sda: 'sda', scl: 'scl' };
         this.address = 0x53;
-        this.keys = ["gnd", "vcc", "sda", "scl", "grove"];
+        this.keys = ['gnd', 'vcc', 'sda', 'scl', 'grove'];
         this.requiredKeys = [];
         this.ioKeys = this.keys;
         this.regAdrs = {};
@@ -41307,23 +42080,27 @@ class Grove_3AxisAccelerometer {
     }
     static info() {
         return {
-            name: "Grove_3AxisAccelerometer",
+            name: 'Grove_3AxisAccelerometer',
         };
     }
-    async wired(obniz) {
+    wired(obniz) {
         this.obniz = obniz;
         if (this.params.grove) {
-            this.i2c = this.params.grove.getI2c(400000, "5v");
+            this.i2c = this.params.grove.getI2c(400000, '5v');
         }
         else {
             this.vcc = this.params.vcc;
             this.gnd = this.params.gnd;
-            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
             this.params.clock = 400000;
-            this.params.mode = "master";
+            this.params.mode = 'master';
             this.i2c = obniz.getI2CWithConfig(this.params);
         }
-        this.obniz.wait(100);
+        this.obniz.wait(100).then(() => {
+            return this.initWait();
+        });
+    }
+    async initWait() {
         // power on
         this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 0]);
         this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 16]);
@@ -41331,15 +42108,15 @@ class Grove_3AxisAccelerometer {
         this.i2c.write(this.address, [this.regAdrs.THRESH_ACT, 75]); // set activity threshold 0~255
         this.i2c.write(this.address, [this.regAdrs.THRESH_INACT, 75]); // set inactivity threshold 0~255
         this.i2c.write(this.address, [this.regAdrs.THRESH_INACT, 10]); // set time inactivity 0~255
-        await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 6, 1); // setActivityX
-        await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 5, 1); // setActivityY
-        await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 4, 1); // setActivityZ
-        await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 2, 1); // setInactivityX
-        await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 1, 1); // setInactivityY
-        await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 0, 1); // setInactivityZ
-        await this.setRegisterBit(this.regAdrs.TAP_AXES, 2, 0); // setTapDetectionOnX
-        await this.setRegisterBit(this.regAdrs.TAP_AXES, 1, 0); // setTapDetectionOnY
-        await this.setRegisterBit(this.regAdrs.TAP_AXES, 0, 1); // setTapDetectionOnZ
+        await this.setRegisterBitWait(this.regAdrs.ACT_INACT_CTL, 6, 1); // setActivityX
+        await this.setRegisterBitWait(this.regAdrs.ACT_INACT_CTL, 5, 1); // setActivityY
+        await this.setRegisterBitWait(this.regAdrs.ACT_INACT_CTL, 4, 1); // setActivityZ
+        await this.setRegisterBitWait(this.regAdrs.ACT_INACT_CTL, 2, 1); // setInactivityX
+        await this.setRegisterBitWait(this.regAdrs.ACT_INACT_CTL, 1, 1); // setInactivityY
+        await this.setRegisterBitWait(this.regAdrs.ACT_INACT_CTL, 0, 1); // setInactivityZ
+        await this.setRegisterBitWait(this.regAdrs.TAP_AXES, 2, 0); // setTapDetectionOnX
+        await this.setRegisterBitWait(this.regAdrs.TAP_AXES, 1, 0); // setTapDetectionOnY
+        await this.setRegisterBitWait(this.regAdrs.TAP_AXES, 0, 1); // setTapDetectionOnZ
         this.i2c.write(this.address, [this.regAdrs.THRESH_TAP, 50]); // setTapThreshold
         this.i2c.write(this.address, [this.regAdrs.DUR, 15]); // setTapDuration
         this.i2c.write(this.address, [this.regAdrs.LATENT, 80]); // setDoubleTapLatency
@@ -41347,19 +42124,28 @@ class Grove_3AxisAccelerometer {
         this.i2c.write(this.address, [this.regAdrs.THRESH_FF, 7]); // setFreeFallThreshold
         this.i2c.write(this.address, [this.regAdrs.TIME_FF, 45]); // setFreeFallDuration
         // setInterruptMapping
-        await this.setInterruptMapping(this.regAdrs.INT_SINGLE_TAP_BIT, this.constVal.INT1_PIN);
-        await this.setInterruptMapping(this.regAdrs.INT_DOUBLE_TAP_BIT, this.constVal.INT1_PIN);
-        await this.setInterruptMapping(this.regAdrs.INT_FREE_FALL_BIT, this.constVal.INT1_PIN);
-        await this.setInterruptMapping(this.regAdrs.INT_ACTIVITY_BIT, this.constVal.INT1_PIN);
-        await this.setInterruptMapping(this.regAdrs.INT_INACTIVITY_BIT, this.constVal.INT1_PIN);
+        await this.setInterruptMappingWait(this.regAdrs.INT_SINGLE_TAP_BIT, this.constVal.INT1_PIN);
+        await this.setInterruptMappingWait(this.regAdrs.INT_DOUBLE_TAP_BIT, this.constVal.INT1_PIN);
+        await this.setInterruptMappingWait(this.regAdrs.INT_FREE_FALL_BIT, this.constVal.INT1_PIN);
+        await this.setInterruptMappingWait(this.regAdrs.INT_ACTIVITY_BIT, this.constVal.INT1_PIN);
+        await this.setInterruptMappingWait(this.regAdrs.INT_INACTIVITY_BIT, this.constVal.INT1_PIN);
         // setInterrupt
-        await this.setInterrupt(this.regAdrs.INT_SINGLE_TAP_BIT, 1);
-        await this.setInterrupt(this.regAdrs.INT_DOUBLE_TAP_BIT, 1);
-        await this.setInterrupt(this.regAdrs.INT_FREE_FALL_BIT, 1);
-        await this.setInterrupt(this.regAdrs.INT_ACTIVITY_BIT, 1);
-        await this.setInterrupt(this.regAdrs.INT_INACTIVITY_BIT, 1);
+        await this.setInterruptWait(this.regAdrs.INT_SINGLE_TAP_BIT, 1);
+        await this.setInterruptWait(this.regAdrs.INT_DOUBLE_TAP_BIT, 1);
+        await this.setInterruptWait(this.regAdrs.INT_FREE_FALL_BIT, 1);
+        await this.setInterruptWait(this.regAdrs.INT_ACTIVITY_BIT, 1);
+        await this.setInterruptWait(this.regAdrs.INT_INACTIVITY_BIT, 1);
     }
-    async setRegisterBit(regAddr, bitPos, state) {
+    /**
+     * @deprecated
+     * @param regAddr
+     * @param bitPos
+     * @param state
+     */
+    setRegisterBit(regAddr, bitPos, state) {
+        return this.setRegisterBitWait(regAddr, bitPos, state);
+    }
+    async setRegisterBitWait(regAddr, bitPos, state) {
         this.i2c.write(this.address, [regAddr]);
         let b = await this.i2c.readWait(this.address, 1);
         if (state) {
@@ -41370,11 +42156,25 @@ class Grove_3AxisAccelerometer {
         }
         this.i2c.write(this.address, [b]);
     }
-    async setInterruptMapping(interruptBit, interruptPin) {
-        await this.setRegisterBit(this.regAdrs.INT_MAP, interruptBit, interruptPin);
+    /**
+     * @deprecated
+     * @param interruptBit
+     * @param interruptPin
+     */
+    setInterruptMapping(interruptBit, interruptPin) {
+        return this.setInterruptMappingWait(interruptBit, interruptPin);
     }
-    async setInterrupt(interruptBit, state) {
-        await this.setRegisterBit(this.regAdrs.INT_ENABLE, interruptBit, state);
+    async setInterruptMappingWait(interruptBit, interruptPin) {
+        await this.setRegisterBitWait(this.regAdrs.INT_MAP, interruptBit, interruptPin);
+    }
+    /**
+     * @deprecated
+     */
+    setInterrupt(interruptBit, state) {
+        return this.setInterruptWait(interruptBit, state);
+    }
+    async setInterruptWait(interruptBit, state) {
+        await this.setRegisterBitWait(this.regAdrs.INT_ENABLE, interruptBit, state);
     }
     signHandling(val) {
         const sign = val >> 15;
@@ -41383,7 +42183,13 @@ class Grove_3AxisAccelerometer {
         }
         return val;
     }
-    async getRawVal() {
+    /**
+     * @deprecated
+     */
+    getRawVal() {
+        return this.getRawValWait();
+    }
+    async getRawValWait() {
         this.i2c.write(this.address, [this.regAdrs.DATAX0]);
         const buff = await this.i2c.readWait(this.address, 6);
         const rawVal = [0, 0, 0];
@@ -41421,24 +42227,24 @@ class Grove_Button {
         this.isPressed = null;
         this.onchange = null;
         this.onChangeForStateWait = (pressed) => { };
-        this.keys = ["signal", "gnd", "vcc", "grove"];
+        this.keys = ['signal', 'gnd', 'vcc', 'grove'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "Grove_Button",
+            name: 'Grove_Button',
         };
     }
     wired(obniz) {
         if (this.params.grove) {
-            const groveIOs = this.params.grove.getDigital("5v");
+            const groveIOs = this.params.grove.getDigital('5v');
             this.io_signal = groveIOs.primary;
         }
         else {
             this.io_signal = obniz.getIO(this.params.signal);
-            obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         }
-        this.io_signal.pull("5v");
+        this.io_signal.pull('5v');
         this.io_signal.input((value) => {
             this.isPressed = value;
             if (this.onchange) {
@@ -41478,12 +42284,12 @@ exports.default = Grove_Button;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_Buzzer {
     constructor() {
-        this.keys = ["signal", "gnd", "vcc", "grove"];
+        this.keys = ['signal', 'gnd', 'vcc', 'grove'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "Grove_Buzzer",
+            name: 'Grove_Buzzer',
         };
     }
     wired(obniz) {
@@ -41492,14 +42298,14 @@ class Grove_Buzzer {
         }
         else {
             this.obniz = obniz;
-            obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
             this.pwm = obniz.getFreePwm();
             this.pwm.start({ io: this.params.signal });
         }
     }
     play(freq) {
-        if (typeof freq !== "number") {
-            throw new Error("freq must be a number");
+        if (typeof freq !== 'number') {
+            throw new Error('freq must be a number');
         }
         freq = Math.floor(freq);
         if (freq > 0) {
@@ -41536,22 +42342,22 @@ const GP2Y0A21YK0F_1 = __importDefault(__webpack_require__("./dist/src/parts/Dis
 class Grove_DistanceSensor extends GP2Y0A21YK0F_1.default {
     static info() {
         return {
-            name: "Grove_DistanceSensor",
+            name: 'Grove_DistanceSensor',
         };
     }
     constructor() {
         super();
-        this.keys = ["gnd", "vcc", "signal", "grove"];
+        this.keys = ['gnd', 'vcc', 'signal', 'grove'];
         this.requiredKeys = [];
     }
     wired(obniz) {
         this.obniz = obniz;
         if (this.params.grove) {
-            const groveAd = this.params.grove.getAnalog("5v", "secondaryOnly");
+            const groveAd = this.params.grove.getAnalog('5v', 'secondaryOnly');
             this.ad_signal = groveAd.secondary;
         }
         else {
-            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
             this.ad_signal = obniz.getAD(this.params.signal);
         }
     }
@@ -41573,12 +42379,12 @@ exports.default = Grove_DistanceSensor;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_EARTH {
     constructor() {
-        this.keys = ["vcc", "aout", "dout", "gnd", "grove"];
+        this.keys = ['vcc', 'aout', 'dout', 'gnd', 'grove'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "Grove_EARTH",
+            name: 'Grove_EARTH',
         };
     }
     wired(obniz) {
@@ -41589,7 +42395,7 @@ class Grove_EARTH {
             this.io = groveIOs.digital;
         }
         else {
-            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
             this.ad = obniz.getAD(this.params.aout);
             this.io = obniz.getIO(this.params.dout);
         }
@@ -41625,28 +42431,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_EarHeartRate {
     constructor() {
         this.displayIoNames = {
-            vcc: "vcc",
-            gnd: "gnd",
-            signal: "signal",
+            vcc: 'vcc',
+            gnd: 'gnd',
+            signal: 'signal',
         };
         this.interval = 5;
         this.duration = 2.5 * 1000;
-        this.keys = ["signal", "gnd", "vcc", "grove"];
+        this.keys = ['signal', 'gnd', 'vcc', 'grove'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "Grove_EarHeartRate",
+            name: 'Grove_EarHeartRate',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
         if (this.params.grove) {
             this.signal = this.params.grove.pin1;
-            this.params.grove.getDigital("5v");
+            this.params.grove.getDigital('5v');
         }
         else {
-            obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
             this.signal = this.params.signal;
         }
     }
@@ -41699,11 +42505,11 @@ class Grove_GPS {
     constructor() {
         this._latitude = 0;
         this._longitude = 0;
-        this.keys = ["tx", "rx", "vcc", "gnd", "grove"];
+        this.keys = ['tx', 'rx', 'vcc', 'gnd', 'grove'];
         this.requiredKeys = [];
         this.ioKeys = this.keys;
-        this.displayName = "gps";
-        this.displayIoNames = { tx: "tx", rx: "rx" };
+        this.displayName = 'gps';
+        this.displayIoNames = { tx: 'tx', rx: 'rx' };
     }
     // -------------------
     get latitude() {
@@ -41714,16 +42520,16 @@ class Grove_GPS {
     }
     static info() {
         return {
-            name: "Grove_GPS",
+            name: 'Grove_GPS',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
         if (this.params.grove) {
-            this.uart = this.params.grove.getUart(9600, "5v");
+            this.uart = this.params.grove.getUart(9600, '5v');
         }
         else {
-            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
             this.uart = obniz.getFreeUart();
             this.uart.start({
                 tx: this.params.tx,
@@ -41743,7 +42549,7 @@ class Grove_GPS {
             GPVTG: 0x0010,
             GPZDA: 0x0020,
         };
-        this.gpsInfo.status = "V";
+        this.gpsInfo.status = 'V';
         this.gpsInfo.sentences = new Set(); // Set specifying sentence of MNEA from which data have been obtained
         this.gpsInfo.satelliteInfo = {
             satellites: [],
@@ -41759,12 +42565,12 @@ class Grove_GPS {
                 this.uart.received.splice(0, pos + 1);
                 let str = this.uart.tryConvertString(results);
                 if (str === null) {
-                    str = "";
+                    str = '';
                 }
                 return str;
             }
         }
-        return "";
+        return '';
     }
     getEditedData() {
         let n;
@@ -41774,24 +42580,24 @@ class Grove_GPS {
         this.editedData.enable = false;
         this.editedData.GPGSV = new Array(4);
         while (sentence.length > 0) {
-            const part = sentence.split(",");
-            if (sentence.slice(-4, -3) !== ",") {
+            const part = sentence.split(',');
+            if (sentence.slice(-4, -3) !== ',') {
                 const st = part[part.length - 1].slice(0, -3);
                 part.push(part[part.length - 1].slice(-3));
                 part[part.length - 2] = st;
             }
-            this.editedData.sentence = part.join(",");
+            this.editedData.sentence = part.join(',');
             switch (part[0]) {
-                case "$GPGGA":
+                case '$GPGGA':
                     this.editedData.GPGGA = part;
                     break;
-                case "$GPGLL":
+                case '$GPGLL':
                     this.editedData.GPGLL = part;
                     break;
-                case "$GPGSA":
+                case '$GPGSA':
                     this.editedData.GPGSA = part;
                     break;
-                case "$GPGSV":
+                case '$GPGSV':
                     n = Number(part[2]);
                     if (n > this.editedData.GPGSV.length) {
                         while (n > this.editedData.GPGSV.length) {
@@ -41800,27 +42606,27 @@ class Grove_GPS {
                     }
                     this.editedData.GPGSV[n - 1] = part;
                     break;
-                case "$GPRMC":
+                case '$GPRMC':
                     this.editedData.GPRMC = part;
                     break;
-                case "$GPVTG":
+                case '$GPVTG':
                     this.editedData.GPVTG = part;
                     break;
-                case "$GPZDA":
+                case '$GPZDA':
                     this.editedData.GPZDA = part;
                     utc =
                         part[4] +
-                            "/" +
+                            '/' +
                             part[3] +
-                            "/" +
+                            '/' +
                             part[2] +
-                            " " +
+                            ' ' +
                             part[1].substring(0, 2) +
-                            ":" +
+                            ':' +
                             part[1].substring(2, 4) +
-                            ":" +
+                            ':' +
                             part[1].substring(4, 6) +
-                            " +00:00";
+                            ' +00:00';
                     this.editedData.timestamp = new Date(utc);
                     break;
                 default:
@@ -41836,7 +42642,7 @@ class Grove_GPS {
         const NMEA_SATINSENTENCE = 4;
         const NMEA_MAXSAT = 12;
         editedData = editedData || this.getEditedData();
-        this.gpsInfo.status = "V";
+        this.gpsInfo.status = 'V';
         if (editedData.enable) {
             if (editedData.GPGGA) {
                 const gga = editedData.GPGGA;
@@ -41844,9 +42650,9 @@ class Grove_GPS {
                 this.gpsInfo.hdop = parseFloat(gga[8]); // Horizontal Dilution of Precision (HDOP)
                 this.gpsInfo.altitude = parseFloat(gga[9]); // Antenna Altitude meters above mean sea level
                 const latitude = this.nmea2dd(parseFloat(gga[2]));
-                this.gpsInfo.latitude = gga[3] === "N" ? latitude : -latitude;
+                this.gpsInfo.latitude = gga[3] === 'N' ? latitude : -latitude;
                 const longitude = this.nmea2dd(parseFloat(gga[4]));
-                this.gpsInfo.longitude = gga[5] === "E" ? longitude : -longitude;
+                this.gpsInfo.longitude = gga[5] === 'E' ? longitude : -longitude;
                 this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPGGA);
             }
             if (editedData.GPGSV) {
@@ -41861,7 +42667,10 @@ class Grove_GPS {
                         }
                         this.gpsInfo.satelliteInfo.inView = sat_count;
                         let nsat = (pack_index - 1) * NMEA_SATINSENTENCE;
-                        nsat = nsat + NMEA_SATINSENTENCE > sat_count ? sat_count - nsat : NMEA_SATINSENTENCE;
+                        nsat =
+                            nsat + NMEA_SATINSENTENCE > sat_count
+                                ? sat_count - nsat
+                                : NMEA_SATINSENTENCE;
                         for (let isat = 0; isat < nsat; ++isat) {
                             const isi = (pack_index - 1) * NMEA_SATINSENTENCE + isat;
                             if (this.gpsInfo.satelliteInfo.satellites.length <= isi) {
@@ -41903,9 +42712,9 @@ class Grove_GPS {
                 const rmc = editedData.GPRMC;
                 this.gpsInfo.status = rmc[2]; // Status Active or Void
                 const latitude = this.nmea2dd(parseFloat(rmc[3]));
-                this.gpsInfo.latitude = rmc[4] === "N" ? latitude : -latitude;
+                this.gpsInfo.latitude = rmc[4] === 'N' ? latitude : -latitude;
                 const longitude = this.nmea2dd(parseFloat(rmc[5]));
-                this.gpsInfo.longitude = rmc[6] === "E" ? longitude : -longitude;
+                this.gpsInfo.longitude = rmc[6] === 'E' ? longitude : -longitude;
                 const NMEA_TUD_KNOTS = 1.852; // 1knot=1.852km/h
                 this.gpsInfo.speed = parseFloat(rmc[7]) * NMEA_TUD_KNOTS; // unit: km/h
                 this.gpsInfo.direction = rmc[8];
@@ -41927,15 +42736,15 @@ class Grove_GPS {
     }
     _mneaTo(format, value) {
         let result = this.nmea2dd(value);
-        if (typeof format === "string") {
+        if (typeof format === 'string') {
             switch (format.toUpperCase()) {
-                case "DMS":
+                case 'DMS':
                     result = this.nmea2dms(value);
                     break;
-                case "DM":
+                case 'DM':
                     result = this.nmea2dm(value);
                     break;
-                case "S":
+                case 'S':
                     result = this.nmea2s(value);
                     break;
                 default:
@@ -41951,37 +42760,37 @@ class Grove_GPS {
     }
     status2string(status) {
         status = status || this.status;
-        if (status === "A") {
-            return "Active";
+        if (status === 'A') {
+            return 'Active';
         }
-        if (status === "V") {
-            return "Void";
+        if (status === 'V') {
+            return 'Void';
         }
         return status;
     }
     fixMode2string(fixMode) {
         fixMode = fixMode || this.fixMode;
         if (fixMode === 1) {
-            return "Fix not available";
+            return 'Fix not available';
         }
         if (fixMode === 2) {
-            return "2D";
+            return '2D';
         }
         if (fixMode === 3) {
-            return "3D";
+            return '3D';
         }
         return fixMode;
     }
     gpsQuality2string(gpsQuality) {
         gpsQuality = gpsQuality || this.gpsQuality;
         if (gpsQuality === 0) {
-            return "Invalid";
+            return 'Invalid';
         }
         if (gpsQuality === 1) {
-            return "GPS fix";
+            return 'GPS fix';
         }
         if (gpsQuality === 2) {
-            return "DGPS fix";
+            return 'DGPS fix';
         }
         return gpsQuality;
     }
@@ -41992,14 +42801,14 @@ class Grove_GPS {
         const d = Math.floor(val / 100);
         const m = Math.floor((val / 100.0 - d) * 100.0);
         const s = ((val / 100.0 - d) * 100.0 - m) * 60;
-        return d + "°" + m + "'" + s.toFixed(1) + '"';
+        return d + '°' + m + "'" + s.toFixed(1) + '"';
     }
     nmea2dm(val) {
         // NMEA format to DM format string (999° 99.9999')
         val = parseFloat(val);
         const d = Math.floor(val / 100.0);
         const m = (val / 100.0 - d) * 100.0;
-        return d + "°" + m.toFixed(4) + "'";
+        return d + '°' + m.toFixed(4) + "'";
     }
     nmea2dd(val) {
         // NMEA format to DD format decimal (999.999999)
@@ -42035,14 +42844,14 @@ exports.default = Grove_GPS;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_GestureSensor {
     constructor() {
-        this.GESTURE_RIGHT = "GESTURE_RIGHT";
-        this.GESTURE_LEFT = "GESTURE_LEFT";
-        this.GESTURE_UP = "GESTURE_UP";
-        this.GESTURE_DOWN = "GESTURE_DOWN";
-        this.GESTURE_FORWARD = "GESTURE_FORWARD";
-        this.GESTURE_BACKWARD = "GESTURE_BACKWARD";
-        this.GESTURE_CLOCKWISE = "GESTURE_CLOCKWISE";
-        this.GESTURE_COUNT_CLOCKWISE = "GESTURE_COUNT_CLOCKWISE";
+        this.GESTURE_RIGHT = 'GESTURE_RIGHT';
+        this.GESTURE_LEFT = 'GESTURE_LEFT';
+        this.GESTURE_UP = 'GESTURE_UP';
+        this.GESTURE_DOWN = 'GESTURE_DOWN';
+        this.GESTURE_FORWARD = 'GESTURE_FORWARD';
+        this.GESTURE_BACKWARD = 'GESTURE_BACKWARD';
+        this.GESTURE_CLOCKWISE = 'GESTURE_CLOCKWISE';
+        this.GESTURE_COUNT_CLOCKWISE = 'GESTURE_COUNT_CLOCKWISE';
         this.ic2Address = 0x73;
         this.PAJ7620_ADDR_BASE = 0x00;
         this.PAJ7620_REGITER_BANK_SEL = this.PAJ7620_ADDR_BASE + 0xef;
@@ -42278,43 +43087,44 @@ class Grove_GestureSensor {
             [0x7d, 0x03],
             [0x7e, 0x01],
         ];
-        this.keys = ["vcc", "gnd", "sda", "scl", "i2c", "grove"];
+        this.keys = ['vcc', 'gnd', 'sda', 'scl', 'i2c', 'grove'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "Grove_GestureSensor",
+            name: 'Grove_GestureSensor',
         };
     }
     onchange(value) { }
-    async wired(obniz) {
+    wired(obniz) {
         this.obniz = obniz;
         const speed = 400000;
         if (this.params.grove) {
-            this.i2c = this.params.grove.getI2c(speed, "5v");
+            this.i2c = this.params.grove.getI2c(speed, '5v');
         }
         else {
-            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-            await obniz.wait(500);
-            this.params.mode = "master";
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+            this.params.mode = 'master';
             this.params.clock = speed;
-            this.params.pull = "5v";
+            this.params.pull = '5v';
             this.i2c = this.obniz.getI2CWithConfig(this.params);
         }
         this.i2c.onerror = (err) => {
             // console.log('Error:', err);
         };
         // await obniz.wait(700);
+        this.initWait();
+    }
+    async initWait() {
         // wakeup check
-        await this.checkWakeUp();
+        await this.checkWakeUpWait();
         // initRegister
-        await this.initRegister();
+        await this.initRegisterWait();
         while (true) {
             // get data
             this.i2c.write(this.ic2Address, [0x43]);
             const resArray = await this.i2c.readWait(this.ic2Address, 1);
             const res = resArray[0];
-            // センサーの上を、上下左右に手を通過させると反応します。
             if (this.onchange) {
                 if (this.GES_RIGHT_FLAG === res) {
                     // console.log("GES_RIGHT_FLAG");
@@ -42349,13 +43159,15 @@ class Grove_GestureSensor {
                     this.onchange(this.GESTURE_COUNT_CLOCKWISE);
                 }
             }
-            await obniz.wait(1000);
+            await this.obniz.wait(1000);
         }
     }
-    async checkWakeUp() {
+    async checkWakeUpWait() {
         // wakeup check
-        this.i2c.write(this.ic2Address, [this.PAJ7620_REGITER_BANK_SEL, this.PAJ7620_BANK0]);
-        // 3.5.0 以降は try catch で捕らえる
+        this.i2c.write(this.ic2Address, [
+            this.PAJ7620_REGITER_BANK_SEL,
+            this.PAJ7620_BANK0,
+        ]);
         let res = [0, 0];
         try {
             res = await this.i2c.readWait(this.ic2Address, 1);
@@ -42363,21 +43175,26 @@ class Grove_GestureSensor {
         catch (e) {
             // console.log(e);
         }
-        // 3.4.0、3.4.1 までは値が取れてうまくいく。3.5.0以降は上記の try catch で捕らえる。
         if (res[0] === 0x20) {
             // console.log("wake-up finish.");
         }
     }
-    async initRegister() {
+    async initRegisterWait() {
         // console.log("initRegister!!");
         for (let i = 0; i < this.initRegisterArray.length; i++) {
             this.i2c.write(this.ic2Address, this.initRegisterArray[i]);
         }
         // Set up gaming mode.
-        this.i2c.write(this.ic2Address, [this.PAJ7620_REGITER_BANK_SEL, this.PAJ7620_BANK1]);
+        this.i2c.write(this.ic2Address, [
+            this.PAJ7620_REGITER_BANK_SEL,
+            this.PAJ7620_BANK1,
+        ]);
         // near mode 240 fps
         this.i2c.write(this.ic2Address, [0x65, 0x12]);
-        this.i2c.write(this.ic2Address, [this.PAJ7620_REGITER_BANK_SEL, this.PAJ7620_BANK0]);
+        this.i2c.write(this.ic2Address, [
+            this.PAJ7620_REGITER_BANK_SEL,
+            this.PAJ7620_BANK0,
+        ]);
     }
 }
 exports.default = Grove_GestureSensor;
@@ -42397,26 +43214,26 @@ exports.default = Grove_GestureSensor;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_JoyStick {
     constructor() {
-        this.keys = ["vcc", "gnd", "sda", "scl", "i2c", "grove"];
+        this.keys = ['vcc', 'gnd', 'sda', 'scl', 'i2c', 'grove'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "Grove_JoyStick",
+            name: 'Grove_JoyStick',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
         const speed = 400000;
         if (this.params.grove) {
-            this.i2c = this.params.grove.getI2c(speed, "5v");
+            this.i2c = this.params.grove.getI2c(speed, '5v');
         }
         else {
-            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
             this.obniz.wait(100); // wait for booting of MEGA328
-            this.params.mode = "master";
+            this.params.mode = 'master';
             this.params.clock = speed;
-            this.params.pull = "5v";
+            this.params.pull = '5v';
             this.i2c = this.obniz.getI2CWithConfig(this.params);
         }
     }
@@ -42450,12 +43267,12 @@ exports.default = Grove_JoyStick;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_LightSensor {
     constructor() {
-        this.keys = ["vcc", "gnd", "signal", "grove"];
+        this.keys = ['vcc', 'gnd', 'signal', 'grove'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "Grove_LightSensor",
+            name: 'Grove_LightSensor',
         };
     }
     onchange(value) { }
@@ -42465,7 +43282,7 @@ class Grove_LightSensor {
             this.ad = groveAd.primary;
         }
         else {
-            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
             this.ad = obniz.getAD(this.params.signal);
         }
         this.ad.start((value) => {
@@ -42495,24 +43312,24 @@ exports.default = Grove_LightSensor;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_MP3 {
     constructor() {
-        this.keys = ["vcc", "gnd", "mp3_rx", "mp3_tx", "grove"];
+        this.keys = ['vcc', 'gnd', 'mp3_rx', 'mp3_tx', 'grove'];
         this.requiredKeys = [];
         this.ioKeys = this.keys;
-        this.displayName = "MP3";
-        this.displayIoNames = { mp3_rx: "MP3Rx", mp3_tx: "MP3Tx" };
+        this.displayName = 'MP3';
+        this.displayIoNames = { mp3_rx: 'MP3Rx', mp3_tx: 'MP3Tx' };
     }
     static info() {
         return {
-            name: "Grove_MP3",
+            name: 'Grove_MP3',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
         if (this.params.grove) {
-            this.uart = this.params.grove.getUart(9600, "5v");
+            this.uart = this.params.grove.getUart(9600, '5v');
         }
         else {
-            obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
             this.my_tx = this.params.mp3_rx;
             this.my_rx = this.params.mp3_tx;
             this.uart = this.obniz.getFreeUart();
@@ -42530,10 +43347,10 @@ class Grove_MP3 {
         this.uartSend(0x0b, 0);
         await this.obniz.wait(100);
         if (strage) {
-            if (strage === "usb") {
+            if (strage === 'usb') {
                 this.uartSend(0x09, 1);
             }
-            else if (strage === "sd") {
+            else if (strage === 'sd') {
                 this.uartSend(0x09, 2);
             }
         }
@@ -42607,24 +43424,24 @@ class Grove_MicroSwitch {
         this.isPressed = null;
         this.onchange = null;
         this.onChangeForStateWait = (pressed) => { };
-        this.keys = ["signal", "gnd", "vcc", "grove"];
+        this.keys = ['signal', 'gnd', 'vcc', 'grove'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "Grove_MicroSwitch",
+            name: 'Grove_MicroSwitch',
         };
     }
     wired(obniz) {
         if (this.params.grove) {
-            const groveIOs = this.params.grove.getDigital("5v");
+            const groveIOs = this.params.grove.getDigital('5v');
             this.io_signal = groveIOs.primary;
         }
         else {
             this.io_signal = obniz.getIO(this.params.signal);
-            obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         }
-        this.io_signal.pull("5v");
+        this.io_signal.pull('5v');
         this.io_signal.input((value) => {
             this.isPressed = value;
             if (this.onchange) {
@@ -42664,12 +43481,12 @@ exports.default = Grove_MicroSwitch;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_PressureSensor {
     constructor() {
-        this.keys = ["vcc", "gnd", "output", "grove"];
+        this.keys = ['vcc', 'gnd', 'output', 'grove'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "Grove_PressureSensor",
+            name: 'Grove_PressureSensor',
         };
     }
     onchange(value) { }
@@ -42679,7 +43496,7 @@ class Grove_PressureSensor {
             this.ad = groveAd.primary;
         }
         else {
-            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
             this.ad = obniz.getAD(this.params.output);
         }
         this.ad.start((value) => {
@@ -42712,12 +43529,12 @@ exports.default = Grove_PressureSensor;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_Relay {
     constructor() {
-        this.keys = ["signal", "gnd", "vcc", "grove"];
+        this.keys = ['signal', 'gnd', 'vcc', 'grove'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "Grove_Relay",
+            name: 'Grove_Relay',
         };
     }
     wired(obniz) {
@@ -42726,7 +43543,7 @@ class Grove_Relay {
         }
         else {
             this.obniz = obniz;
-            obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
             this.io_signal = obniz.getIO(this.params.signal);
         }
         this.off();
@@ -42757,13 +43574,13 @@ class Grove_RotaryAngleSensor {
     constructor() {
         // public vcc_voltage = 5.0;
         this.position = 0;
-        this.keys = ["vcc", "gnd", "signal", "grove"];
+        this.keys = ['vcc', 'gnd', 'signal', 'grove'];
         this.requiredKeys = [];
-        this.drive = "5v";
+        this.drive = '5v';
     }
     static info() {
         return {
-            name: "Grove_RotaryAngleSensor",
+            name: 'Grove_RotaryAngleSensor',
         };
     }
     wired(obniz) {
@@ -42808,27 +43625,27 @@ class Grove_SHT35Sensor {
         this.ERROR_COMM = -2;
         this.ERROR_OTHERS = -128;
         this.launched = false;
-        this.keys = ["gnd", "vcc", "sda", "scl", "grove"];
+        this.keys = ['gnd', 'vcc', 'sda', 'scl', 'grove'];
         this.requiredKeys = [];
         this.ioKeys = this.keys;
-        this.displayName = "GroveSHT35";
-        this.displayIoNames = { sda: "sda", scl: "scl" };
+        this.displayName = 'GroveSHT35';
+        this.displayIoNames = { sda: 'sda', scl: 'scl' };
     }
     static info() {
         return {
-            name: "Grove_SHT35Sensor",
+            name: 'Grove_SHT35Sensor',
         };
     }
     wired(obniz) {
         if (this.params.grove) {
-            this.i2c = this.params.grove.getI2c(400000, "5v");
+            this.i2c = this.params.grove.getI2c(400000, '5v');
         }
         else {
             this.vcc = this.params.vcc;
             this.gnd = this.params.gnd;
-            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
             this.params.clock = 400000;
-            this.params.mode = "master";
+            this.params.mode = 'master';
             this.i2c = obniz.getI2CWithConfig(this.params);
         }
         this.obniz.wait(100);
@@ -42887,12 +43704,12 @@ exports.default = Grove_SHT35Sensor;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_SoilMoistureSensor {
     constructor() {
-        this.keys = ["vcc", "gnd", "signal", "grove"];
+        this.keys = ['vcc', 'gnd', 'signal', 'grove'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "Grove_SoilMoistureSensor",
+            name: 'Grove_SoilMoistureSensor',
         };
     }
     onchange(value) { }
@@ -42902,7 +43719,7 @@ class Grove_SoilMoistureSensor {
             this.ad = groveAd.primary;
         }
         else {
-            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
             this.ad = obniz.getAD(this.params.signal);
         }
         this.ad.start((value) => {
@@ -42932,12 +43749,12 @@ exports.default = Grove_SoilMoistureSensor;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_Speaker {
     constructor() {
-        this.keys = ["vcc", "gnd", "signal", "grove"];
+        this.keys = ['vcc', 'gnd', 'signal', 'grove'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "Grove_Speaker",
+            name: 'Grove_Speaker',
         };
     }
     onchange(value) { }
@@ -42947,14 +43764,14 @@ class Grove_Speaker {
         }
         else {
             this.obniz = obniz;
-            this.obniz.setVccGnd(null, this.params.gnd, "5v");
+            this.obniz.setVccGnd(null, this.params.gnd, '5v');
             this.pwm = obniz.getFreePwm();
             this.pwm.start({ io: this.params.signal });
         }
     }
     play(frequency) {
-        if (typeof frequency !== "number") {
-            throw new Error("freq must be a number");
+        if (typeof frequency !== 'number') {
+            throw new Error('freq must be a number');
         }
         frequency = Math.floor(frequency); // temporary
         if (frequency > 0) {
@@ -42987,11 +43804,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_WaterLevelSensor {
     constructor() {
         this.onchange = null;
-        this.keys = ["gnd", "vcc", "sda", "scl", "grove"];
+        this.keys = ['gnd', 'vcc', 'sda', 'scl', 'grove'];
         this.requiredKeys = [];
         this.ioKeys = this.keys;
-        this.displayName = "WaterLevel";
-        this.displayIoNames = { sda: "sda", scl: "scl" };
+        this.displayName = 'WaterLevel';
+        this.displayIoNames = { sda: 'sda', scl: 'scl' };
         this.THRESHOLD = 100;
         this.ATTINY1_HIGH_ADDR = 0x78;
         this.ATTINY2_LOW_ADDR = 0x77;
@@ -43000,23 +43817,24 @@ class Grove_WaterLevelSensor {
     }
     static info() {
         return {
-            name: "Grove_WaterLevelSensor",
+            name: 'Grove_WaterLevelSensor',
         };
     }
-    async wired(obniz) {
-        // Grove_3AxisAccelerometer の I2C 参考
+    wired(obniz) {
         if (this.params.grove) {
-            this.i2c = this.params.grove.getI2c(400000, "5v");
+            this.i2c = this.params.grove.getI2c(400000, '5v');
         }
         else {
             this.vcc = this.params.vcc;
             this.gnd = this.params.gnd;
-            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
             this.params.clock = 400000;
-            this.params.mode = "master";
+            this.params.mode = 'master';
             this.i2c = obniz.getI2CWithConfig(this.params);
         }
-        this.obniz.wait(100);
+        this.initWait();
+    }
+    async initWait() {
         // power on
         while (true) {
             const current_val = await this.getWait();
@@ -43026,12 +43844,10 @@ class Grove_WaterLevelSensor {
                 }
                 this.previous_val = current_val;
             }
-            this.obniz.wait(this.check_interval_ms);
+            await this.obniz.wait(this.check_interval_ms);
         }
     }
-    // Grove_JoyStick 参考
     async getWait() {
-        let water_level_mm;
         const water_level_step = 5; // 5 mm step
         const high_data = await this.i2c.readWait(this.ATTINY1_HIGH_ADDR, 12);
         const low_data = await this.i2c.readWait(this.ATTINY2_LOW_ADDR, 8);
@@ -43052,7 +43868,7 @@ class Grove_WaterLevelSensor {
             trig_section++;
             touch_val >>= 1;
         }
-        water_level_mm = trig_section * water_level_step;
+        const water_level_mm = trig_section * water_level_step;
         return water_level_mm;
     }
 }
@@ -43076,17 +43892,17 @@ class ENC03R_Module {
         this.Sens = 0.00067; // Sensitivity, 0.67mV / deg/sec
         this.sens1 = 0;
         this.sens2 = 0;
-        this.keys = ["vcc", "out1", "out2", "gnd"];
-        this.requiredKeys = ["out1", "out2"];
+        this.keys = ['vcc', 'out1', 'out2', 'gnd'];
+        this.requiredKeys = ['out1', 'out2'];
     }
     static info() {
         return {
-            name: "ENC03R_Module",
+            name: 'ENC03R_Module',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.ad0 = obniz.getAD(this.params.out1);
         this.ad1 = obniz.getAD(this.params.out2);
         this.ad0.start((value) => {
@@ -43134,12 +43950,12 @@ exports.default = ENC03R_Module;
 Object.defineProperty(exports, "__esModule", { value: true });
 class IRModule {
     constructor() {
-        this.keys = ["recv", "vcc", "send", "gnd"];
-        this.requiredKeys = ["recv", "send"];
+        this.keys = ['recv', 'vcc', 'send', 'gnd'];
+        this.requiredKeys = ['recv', 'send'];
     }
     static info() {
         return {
-            name: "IRModule",
+            name: 'IRModule',
         };
     }
     get dataSymbolLength() {
@@ -43151,22 +43967,22 @@ class IRModule {
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         if (!obniz.isValidIO(this.params.recv)) {
-            throw new Error("recv is not valid io");
+            throw new Error('recv is not valid io');
         }
         if (!obniz.isValidIO(this.params.send)) {
-            throw new Error("send is not valid io");
+            throw new Error('send is not valid io');
         }
-        this.sensor = obniz.wired("IRSensor", {
+        this.sensor = obniz.wired('IRSensor', {
             output: this.params.recv,
         });
-        this.setGetterSetter("sensor", "duration");
-        this.setGetterSetter("sensor", "dataInverted");
-        this.setGetterSetter("sensor", "cutTail");
-        this.setGetterSetter("sensor", "output_pullup");
-        this.setGetterSetter("sensor", "ondetect");
-        this.led = obniz.wired("InfraredLED", {
+        this.setGetterSetter('sensor', 'duration');
+        this.setGetterSetter('sensor', 'dataInverted');
+        this.setGetterSetter('sensor', 'cutTail');
+        this.setGetterSetter('sensor', 'output_pullup');
+        this.setGetterSetter('sensor', 'ondetect');
+        this.led = obniz.wired('InfraredLED', {
             anode: this.params.send,
         });
     }
@@ -43212,19 +44028,19 @@ class IRSensor {
         this.cutTail = false;
         this.output_pullup = true;
         this.ondetect = null;
-        this.keys = ["output", "vcc", "gnd"];
-        this.requiredKeys = ["output"];
+        this.keys = ['output', 'vcc', 'gnd'];
+        this.requiredKeys = ['output'];
     }
     static info() {
         return {
-            name: "IRSensor",
+            name: 'IRSensor',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         if (!obniz.isValidIO(this.params.output)) {
-            throw new Error("output is not valid io");
+            throw new Error('output is not valid io');
         }
     }
     start(callback) {
@@ -43232,7 +44048,7 @@ class IRSensor {
             this.ondetect = callback;
         }
         if (this.output_pullup) {
-            this.obniz.getIO(this.params.output).pull("5v");
+            this.obniz.getIO(this.params.output).pull('5v');
         }
         this.obniz.logicAnalyzer.start({
             io: this.params.output,
@@ -43242,7 +44058,7 @@ class IRSensor {
             triggerValueSamples: this.triggerSampleCount,
         });
         this.obniz.logicAnalyzer.onmeasured = (levels) => {
-            if (typeof this.ondetect === "function") {
+            if (typeof this.ondetect === 'function') {
                 if (this.dataInverted) {
                     const arr = new Uint8Array(levels);
                     for (let i = 0; i < arr.length; i++) {
@@ -43283,22 +44099,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class InfraredLED {
     constructor() {
         this.dataSymbolLength = 0.07;
-        this.keys = ["anode", "cathode"];
-        this.requiredKeys = ["anode"];
+        this.keys = ['anode', 'cathode'];
+        this.requiredKeys = ['anode'];
     }
     static info() {
         return {
-            name: "InfraredLED",
+            name: 'InfraredLED',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
         if (!this.obniz.isValidIO(this.params.anode)) {
-            throw new Error("anode is not valid io");
+            throw new Error('anode is not valid io');
         }
         if (this.params.cathode) {
             if (!this.obniz.isValidIO(this.params.cathode)) {
-                throw new Error("cathode is not valid io");
+                throw new Error('cathode is not valid io');
             }
             this.io_cathode = obniz.getIO(this.params.cathode);
             this.io_cathode.output(false);
@@ -43312,7 +44128,7 @@ class InfraredLED {
         if (data && data.length > 0 && data[data.length - 1] === 1) {
             data.push(0);
         }
-        this.pwm.modulate("am", this.dataSymbolLength, data);
+        this.pwm.modulate('am', this.dataSymbolLength, data);
     }
 }
 exports.default = InfraredLED;
@@ -43333,17 +44149,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class YG1006 {
     constructor() {
         this.onchange = null;
-        this.keys = ["signal", "vcc", "gnd"];
-        this.requiredKeys = ["signal"];
+        this.keys = ['signal', 'vcc', 'gnd'];
+        this.requiredKeys = ['signal'];
     }
     static info() {
         return {
-            name: "YG1006",
+            name: 'YG1006',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.signal = this.obniz.getAD(this.params.signal);
         this.signal.start((value) => {
             if (this.onchange) {
@@ -43375,12 +44191,12 @@ class Keyestudio_Button {
         this.isPressed = null;
         this.onchange = null;
         this.onChangeForStateWait = (pressed) => { };
-        this.keys = ["signal", "gnd", "vcc"];
-        this.requiredKeys = ["signal"];
+        this.keys = ['signal', 'gnd', 'vcc'];
+        this.requiredKeys = ['signal'];
     }
     static info() {
         return {
-            name: "Keyestudio_Button",
+            name: 'Keyestudio_Button',
         };
     }
     wired(obniz) {
@@ -43393,7 +44209,7 @@ class Keyestudio_Button {
             this.io_supply = obniz.getIO(this.params.gnd);
             this.io_supply.output(false);
         }
-        this.io_signal.pull("5v");
+        this.io_signal.pull('5v');
         this.io_signal.input((value) => {
             this.isPressed = value;
             if (this.onchange) {
@@ -43433,23 +44249,23 @@ exports.default = Keyestudio_Button;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Keyestudio_Buzzer {
     constructor() {
-        this.keys = ["signal", "gnd", "vcc"];
-        this.requiredKeys = ["signal"];
+        this.keys = ['signal', 'gnd', 'vcc'];
+        this.requiredKeys = ['signal'];
     }
     static info() {
         return {
-            name: "Keyestudio_Buzzer",
+            name: 'Keyestudio_Buzzer',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.pwm = obniz.getFreePwm();
         this.pwm.start({ io: this.params.signal });
     }
     play(freq) {
-        if (typeof freq !== "number") {
-            throw new Error("freq must be a number");
+        if (typeof freq !== 'number') {
+            throw new Error('freq must be a number');
         }
         freq = Math.floor(freq);
         if (freq > 0) {
@@ -43490,7 +44306,7 @@ class Keyestudio_HT16K33 extends MatrixLED_HT16K33_1.default {
     }
     static info() {
         return {
-            name: "Keyestudio_HT16K33",
+            name: 'Keyestudio_HT16K33',
         };
     }
     wired(obniz) {
@@ -43541,17 +44357,17 @@ exports.default = Keyestudio_HT16K33;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Keyestudio_MoistureSensor {
     constructor() {
-        this.keys = ["vcc", "signal", "gnd"];
-        this.requiredKeys = ["signal"];
+        this.keys = ['vcc', 'signal', 'gnd'];
+        this.requiredKeys = ['signal'];
     }
     static info() {
         return {
-            name: "Keyestudio_MoistureSensor",
+            name: 'Keyestudio_MoistureSensor',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.ad = obniz.getAD(this.params.signal);
         this.ad.start((value) => {
             this.value = value;
@@ -43581,19 +44397,19 @@ exports.default = Keyestudio_MoistureSensor;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Keyestudio_PIR {
     constructor() {
-        this.keys = ["vcc", "gnd", "signal"];
-        this.requiredKeys = ["signal"];
+        this.keys = ['vcc', 'gnd', 'signal'];
+        this.requiredKeys = ['signal'];
     }
     static info() {
         return {
-            name: "Keyestudio_PIR",
+            name: 'Keyestudio_PIR',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
         this.io_signal = obniz.getIO(this.params.signal);
-        this.io_signal.pull("0v");
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.io_signal.pull('0v');
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.io_signal.input((value) => {
             if (this.onchange) {
                 this.onchange(value);
@@ -43620,19 +44436,19 @@ class Keyestudio_TemperatureSensor {
         this.sum = 0;
         this.init_count = 0;
         this.count = 0;
-        this.keys = ["vcc", "gnd", "signal"];
-        this.requiredKeys = ["signal"];
-        this.drive = "5v";
+        this.keys = ['vcc', 'gnd', 'signal'];
+        this.requiredKeys = ['signal'];
+        this.drive = '5v';
     }
     static info() {
         return {
-            name: "Keyestudio_TemperatureSensor",
+            name: 'Keyestudio_TemperatureSensor',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
         obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
-        obniz.getIO(this.params.signal).pull("0v");
+        obniz.getIO(this.params.signal).pull('0v');
         this.ad = obniz.getAD(this.params.signal);
         this.ad.start((voltage) => {
             this.temp = this.calc(voltage);
@@ -43684,29 +44500,21 @@ exports.default = Keyestudio_TemperatureSensor;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Keyestudio_TrafficLight {
     constructor() {
-        this.keys = ["gnd", "green", "yellow", "red"];
-        this.requiredKeys = ["green", "yellow", "red"];
-        this.state = "red";
+        this.keys = ['gnd', 'green', 'yellow', 'red'];
+        this.requiredKeys = ['green', 'yellow', 'red'];
+        this.state = 'red';
     }
     static info() {
         return {
-            name: "Keyestudio_TrafficLight",
+            name: 'Keyestudio_TrafficLight',
         };
     }
     wired(obniz) {
-        function getIO(io) {
-            if (io && typeof io === "object") {
-                if (typeof io.output === "function") {
-                    return io;
-                }
-            }
-            return obniz.getIO(io);
-        }
         this.obniz = obniz;
-        obniz.setVccGnd(null, this.params.gnd, "5v");
-        this.green = obniz.wired("LED", { anode: this.params.green });
-        this.yellow = obniz.wired("LED", { anode: this.params.yellow });
-        this.red = obniz.wired("LED", { anode: this.params.red });
+        obniz.setVccGnd(null, this.params.gnd, '5v');
+        this.green = obniz.wired('LED', { anode: this.params.green });
+        this.yellow = obniz.wired('LED', { anode: this.params.yellow });
+        this.red = obniz.wired('LED', { anode: this.params.red });
     }
     single(led) {
         this.green.off();
@@ -43714,30 +44522,30 @@ class Keyestudio_TrafficLight {
         this.red.off();
         this.state = led;
         switch (led) {
-            case "green":
+            case 'green':
                 this.green.on();
                 break;
-            case "yellow":
+            case 'yellow':
                 this.yellow.on();
                 break;
-            case "red":
+            case 'red':
             default:
                 this.red.on();
-                this.state = "red";
+                this.state = 'red';
                 break;
         }
     }
     next() {
         switch (this.state) {
-            case "green":
-                this.single("yellow");
+            case 'green':
+                this.single('yellow');
                 break;
-            case "yellow":
-                this.single("red");
+            case 'yellow':
+                this.single('red');
                 break;
-            case "red":
+            case 'red':
             default:
-                this.single("green");
+                this.single('green');
                 break;
         }
     }
@@ -43761,15 +44569,15 @@ class FullColorLED {
     constructor() {
         this.COMMON_TYPE_ANODE = 1;
         this.COMMON_TYPE_CATHODE = 0;
-        this.anode_keys = ["anode", "anode_common", "anodeCommon", "vcc"];
-        this.cathode_keys = ["cathode", "cathode_common", "cathodeCommon", "gnd"];
-        this.animationName = "FullColorLED-" + Math.round(Math.random() * 1000);
-        this.keys = ["r", "g", "b", "common", "commonType"];
-        this.requiredKeys = ["r", "g", "b", "common", "commonType"];
+        this.anode_keys = ['anode', 'anode_common', 'anodeCommon', 'vcc'];
+        this.cathode_keys = ['cathode', 'cathode_common', 'cathodeCommon', 'gnd'];
+        this.animationName = 'FullColorLED-' + Math.round(Math.random() * 1000);
+        this.keys = ['r', 'g', 'b', 'common', 'commonType'];
+        this.requiredKeys = ['r', 'g', 'b', 'common', 'commonType'];
     }
     static info() {
         return {
-            name: "FullColorLED",
+            name: 'FullColorLED',
         };
     }
     wired(obniz) {
@@ -43786,7 +44594,7 @@ class FullColorLED {
             this.commontype = this.COMMON_TYPE_CATHODE;
         }
         else {
-            this.obniz.error("FullColorLED param need common type [  anode_common or cathode_common ] ");
+            this.obniz.error(new Error('FullColorLED param need common type [  anode_common or cathode_common ] '));
         }
         this.common = this.obniz.getIO(common);
         this.common.output(this.commontype);
@@ -43863,10 +44671,10 @@ class FullColorLED {
             };
             frames.push(oneFrame);
         }
-        this.obniz.io.animation(this.animationName, "loop", frames);
+        this.obniz.io.animation(this.animationName, 'loop', frames);
     }
     stopgradation() {
-        this.obniz.io.animation(this.animationName, "pause");
+        this.obniz.io.animation(this.animationName, 'pause');
     }
 }
 exports.default = FullColorLED;
@@ -43886,23 +44694,23 @@ exports.default = FullColorLED;
 Object.defineProperty(exports, "__esModule", { value: true });
 class LED {
     constructor() {
-        this.keys = ["anode", "cathode"];
+        this.keys = ['anode', 'cathode'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "LED",
+            name: 'LED',
         };
     }
     wired(obniz) {
-        function getIO(io) {
-            if (io && typeof io === "object") {
-                if (typeof io.output === "function") {
+        const getIO = (io) => {
+            if (io && typeof io === 'object') {
+                if (typeof io.output === 'function') {
                     return io;
                 }
             }
             return obniz.getIO(io);
-        }
+        };
         this.obniz = obniz;
         if (this.obniz.isValidIO(this.params.anode)) {
             this.io_anode = getIO(this.params.anode);
@@ -43910,7 +44718,7 @@ class LED {
         if (this.obniz.isValidIO(this.params.cathode)) {
             this.io_cathode = getIO(this.params.cathode);
         }
-        this.animationName = "Led-" + this.params.anode;
+        this.animationName = 'Led-' + this.params.anode;
         this.off();
     }
     on() {
@@ -43930,7 +44738,7 @@ class LED {
         }
     }
     endBlink() {
-        this.obniz.io.animation(this.animationName, "pause");
+        this.obniz.io.animation(this.animationName, 'pause');
     }
     blink(interval) {
         if (!interval) {
@@ -43952,7 +44760,7 @@ class LED {
                 },
             },
         ];
-        this.obniz.io.animation(this.animationName, "loop", frames);
+        this.obniz.io.animation(this.animationName, 'loop', frames);
     }
     _on() {
         if (this.io_anode && this.io_cathode) {
@@ -43996,12 +44804,12 @@ exports.default = LED;
 Object.defineProperty(exports, "__esModule", { value: true });
 class WS2811 {
     constructor() {
-        this.keys = ["din", "vcc", "gnd"];
-        this.requiredKeys = ["din"];
+        this.keys = ['din', 'vcc', 'gnd'];
+        this.requiredKeys = ['din'];
     }
     static info() {
         return {
-            name: "WS2811",
+            name: 'WS2811',
         };
     }
     static _generateFromByte(val) {
@@ -44074,11 +44882,11 @@ class WS2811 {
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.params.mode = "master";
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+        this.params.mode = 'master';
         this.params.frequency = 2 * 1000 * 1000;
         this.params.mosi = this.params.din;
-        this.params.drive = "5v"; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
+        this.params.drive = '5v'; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
         this.spi = this.obniz.getSpiWithConfig(this.params);
     }
     rgb(red, green, blue) {
@@ -44121,12 +44929,12 @@ exports.default = WS2811;
 Object.defineProperty(exports, "__esModule", { value: true });
 class WS2812 {
     constructor() {
-        this.keys = ["din", "vcc", "gnd"];
-        this.requiredKeys = ["din"];
+        this.keys = ['din', 'vcc', 'gnd'];
+        this.requiredKeys = ['din'];
     }
     static info() {
         return {
-            name: "WS2812",
+            name: 'WS2812',
         };
     }
     static _generateFromByte(val) {
@@ -44197,11 +45005,11 @@ class WS2812 {
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.params.mode = "master";
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+        this.params.mode = 'master';
         this.params.frequency = Math.floor(3.33 * 1000 * 1000);
         this.params.mosi = this.params.din;
-        this.params.drive = "5v"; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
+        this.params.drive = '5v'; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
         this.spi = this.obniz.getSpiWithConfig(this.params);
     }
     rgb(red, green, blue) {
@@ -44244,12 +45052,12 @@ exports.default = WS2812;
 Object.defineProperty(exports, "__esModule", { value: true });
 class WS2812B {
     constructor() {
-        this.keys = ["din", "vcc", "gnd"];
-        this.requiredKeys = ["din"];
+        this.keys = ['din', 'vcc', 'gnd'];
+        this.requiredKeys = ['din'];
     }
     static info() {
         return {
-            name: "WS2812B",
+            name: 'WS2812B',
         };
     }
     static _generateFromByte(val) {
@@ -44320,11 +45128,11 @@ class WS2812B {
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.params.mode = "master";
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+        this.params.mode = 'master';
         this.params.frequency = Math.floor(3.33 * 1000 * 1000);
         this.params.mosi = this.params.din;
-        this.params.drive = "5v"; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
+        this.params.drive = '5v'; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
         this.spi = this.obniz.getSpiWithConfig(this.params);
     }
     rgb(red, green, blue) {
@@ -44375,17 +45183,27 @@ class SNx4HC595_IO {
         this.chip.output(this.id, value);
     }
 }
-// tslint:disable:max-classes-per-file
+/* eslint max-classes-per-file: 0 */
 class SNx4HC595 {
     constructor() {
         /* http://www.ti.com/lit/ds/symlink/sn74hc595.pdf */
-        this.keys = ["gnd", "vcc", "ser", "srclk", "rclk", "oe", "srclr", "io_num", "enabled"];
-        this.requiredKeys = ["ser", "srclk", "rclk"];
+        this.keys = [
+            'gnd',
+            'vcc',
+            'ser',
+            'srclk',
+            'rclk',
+            'oe',
+            'srclr',
+            'io_num',
+            'enabled',
+        ];
+        this.requiredKeys = ['ser', 'srclk', 'rclk'];
         this.autoFlash = true;
     }
     static info() {
         return {
-            name: "SNx4HC595",
+            name: 'SNx4HC595',
         };
     }
     wired(obniz) {
@@ -44396,7 +45214,7 @@ class SNx4HC595 {
         this.io_ser.output(false);
         this.io_srclk.output(false);
         this.io_rclk.output(false);
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         if (this.obniz.isValidIO(this.params.srclr)) {
             this.io_srclr = this.obniz.getIO(this.params.srclr);
             this.io_srclr.output(true);
@@ -44405,14 +45223,15 @@ class SNx4HC595 {
             this.io_oe = this.obniz.getIO(this.params.oe);
             this.io_oe.output(true);
         }
-        if (this.obniz.isValidIO(this.params.vcc) || this.obniz.isValidIO(this.params.gnd)) {
+        if (this.obniz.isValidIO(this.params.vcc) ||
+            this.obniz.isValidIO(this.params.gnd)) {
             this.obniz.wait(100);
         }
-        if (typeof this.params.io_num !== "number") {
+        if (typeof this.params.io_num !== 'number') {
             this.params.io_num = 8;
         }
         this.ioNum(this.params.io_num);
-        if (typeof this.params.enabled !== "boolean") {
+        if (typeof this.params.enabled !== 'boolean') {
             this.params.enabled = true;
         }
         if (this.io_oe && this.params.enabled) {
@@ -44420,7 +45239,7 @@ class SNx4HC595 {
         }
     }
     ioNum(num) {
-        if (typeof num === "number" && this._io_num !== num) {
+        if (typeof num === 'number' && this._io_num !== num) {
             this._io_num = num;
             this.io = [];
             for (let i = 0; i < num; i++) {
@@ -44429,15 +45248,15 @@ class SNx4HC595 {
             this.flush();
         }
         else {
-            throw new Error("io num should be a number");
+            throw new Error('io num should be a number');
         }
     }
     isValidIO(io) {
-        return typeof io === "number" && io >= 0 && io < this._io_num;
+        return typeof io === 'number' && io >= 0 && io < this._io_num;
     }
     getIO(io) {
         if (!this.isValidIO(io)) {
-            throw new Error("io " + io + " is not valid io");
+            throw new Error('io ' + io + ' is not valid io');
         }
         return this.io[io];
     }
@@ -44449,8 +45268,8 @@ class SNx4HC595 {
         }
     }
     onece(operation) {
-        if (typeof operation !== "function") {
-            throw new Error("please provide function");
+        if (typeof operation !== 'function') {
+            throw new Error('please provide function');
         }
         const lastValue = this.autoFlash;
         this.autoFlash = false;
@@ -44492,7 +45311,7 @@ exports.default = SNx4HC595;
 Object.defineProperty(exports, "__esModule", { value: true });
 class M5StickC_ADC {
     constructor() {
-        this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
+        this.keys = ['vcc', 'gnd', 'sda', 'scl', 'i2c'];
         this.requiredKeys = [];
         this.address = 0x48;
         this.conversionDelay = 100;
@@ -44525,14 +45344,16 @@ class M5StickC_ADC {
     }
     static info() {
         return {
-            name: "M5StickC_ADC",
+            name: 'M5StickC_ADC',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        if (!this.obniz.isValidIO(this.params.sda) && !this.obniz.isValidIO(this.params.scl) && !this.params.i2c) {
-            if (this.obniz.hasExtraInterface("m5stickc_hat")) {
-                const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
+        if (!this.obniz.isValidIO(this.params.sda) &&
+            !this.obniz.isValidIO(this.params.scl) &&
+            !this.params.i2c) {
+            if (this.obniz.hasExtraInterface('m5stickc_hat')) {
+                const hatI2c = this.obniz.getExtraInterface('m5stickc_hat').i2c;
                 this.params.sda = hatI2c.sda;
                 this.params.scl = hatI2c.scl;
             }
@@ -44540,10 +45361,10 @@ class M5StickC_ADC {
                 throw new Error("Cannot find m5stickc hat interface. Please set param 'sda'/'scl' or 'i2c'");
             }
         }
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.params.mode = "master";
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+        this.params.mode = 'master';
         this.params.clock = 400000;
-        this.params.pull = "5v";
+        this.params.pull = '5v';
         this.i2c = this.obniz.getI2CWithConfig(this.params);
         this.obniz.wait(100);
     }
@@ -44594,10 +45415,10 @@ class M5StickC_ADC {
     }
     setMode(mode) {
         switch (mode) {
-            case "CONTIN":
+            case 'CONTIN':
                 this.mode = this.config_regs.MODE_CONTIN;
                 break;
-            case "SINGLE":
+            case 'SINGLE':
                 this.mode = this.config_regs.MODE_SINGLE;
                 break;
             default:
@@ -44641,13 +45462,15 @@ const MCP4725_1 = __importDefault(__webpack_require__("./dist/src/parts/DAConver
 class M5StickC_DAC extends MCP4725_1.default {
     static info() {
         return {
-            name: "M5StickC_DAC",
+            name: 'M5StickC_DAC',
         };
     }
     wired(obniz) {
-        if (!this.obniz.isValidIO(this.params.sda) && !this.obniz.isValidIO(this.params.scl) && !this.params.i2c) {
-            if (this.obniz.hasExtraInterface("m5stickc_hat")) {
-                const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
+        if (!this.obniz.isValidIO(this.params.sda) &&
+            !this.obniz.isValidIO(this.params.scl) &&
+            !this.params.i2c) {
+            if (this.obniz.hasExtraInterface('m5stickc_hat')) {
+                const hatI2c = this.obniz.getExtraInterface('m5stickc_hat').i2c;
                 this.params.sda = hatI2c.sda;
                 this.params.scl = hatI2c.scl;
             }
@@ -44684,7 +45507,7 @@ class M5StickC_FINGER {
         this.TxBuf = [0, 0, 0, 0, 0, 0, 0, 0, 0];
         this.RxBuf = [0, 0, 0, 0, 0, 0, 0, 0, 0];
         this.requiredKeys = [];
-        this.keys = ["tx", "rx", "gnd"];
+        this.keys = ['tx', 'rx', 'gnd'];
         this.ack = {
             SUCCESS: 0x00,
             FAIL: 0x01,
@@ -44717,15 +45540,16 @@ class M5StickC_FINGER {
     }
     static info() {
         return {
-            name: "M5StickC_FINGER",
+            name: 'M5StickC_FINGER',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(null, this.params.gnd, "3v");
-        if (!this.obniz.isValidIO(this.params.tx) && !this.obniz.isValidIO(this.params.rx)) {
-            if (this.obniz.hasExtraInterface("m5stickc_hat")) {
-                const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").uart;
+        this.obniz.setVccGnd(null, this.params.gnd, '3v');
+        if (!this.obniz.isValidIO(this.params.tx) &&
+            !this.obniz.isValidIO(this.params.rx)) {
+            if (this.obniz.hasExtraInterface('m5stickc_hat')) {
+                const hatI2c = this.obniz.getExtraInterface('m5stickc_hat').uart;
                 this.params.tx = hatI2c.tx;
                 this.params.rx = hatI2c.rx;
             }
@@ -44813,7 +45637,7 @@ class M5StickC_FINGER {
         if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
             return this.ack.SUCCESS;
         }
-        throw Error("failed to set add mode.");
+        throw Error('failed to set add mode.');
     }
     async readAddModeWait() {
         this.TxBuf[this.CMD] = this.cmd.ADD_MODE;
@@ -44824,7 +45648,7 @@ class M5StickC_FINGER {
         if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
             return this.RxBuf[this.Q2];
         }
-        throw Error("failed to read add mode.");
+        throw Error('failed to read add mode.');
     }
     async deleteAllUserWait() {
         this.TxBuf[this.CMD] = this.cmd.DEL_ALL;
@@ -44835,7 +45659,7 @@ class M5StickC_FINGER {
         if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
             return this.ack.SUCCESS;
         }
-        throw Error("failed to delete all users.");
+        throw Error('failed to delete all users.');
     }
     async deleteUserWait(userNum) {
         this.TxBuf[this.CMD] = this.cmd.DEL;
@@ -44846,7 +45670,7 @@ class M5StickC_FINGER {
         if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
             return this.ack.SUCCESS;
         }
-        throw Error("failed to delete user: " + userNum);
+        throw Error('failed to delete user: ' + userNum);
     }
     async getUserPermissionWait(userNum) {
         this.TxBuf[this.CMD] = this.cmd.GET_PERMISSION;
@@ -44858,7 +45682,7 @@ class M5StickC_FINGER {
     }
     async setSecurityLevelWait(level) {
         if (level < 0 || level > 9) {
-            throw Error("security level argument must be between 0 and 9");
+            throw Error('security level argument must be between 0 and 9');
         }
         this.TxBuf[this.CMD] = this.cmd.SECURITY_LEVEL;
         this.TxBuf[this.P1] = 0;
@@ -44868,7 +45692,7 @@ class M5StickC_FINGER {
         if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
             return this.ack.SUCCESS;
         }
-        throw Error("failed to set security level.");
+        throw Error('failed to set security level.');
     }
     async getSecurityLevelWait() {
         this.TxBuf[this.CMD] = this.cmd.SECURITY_LEVEL;
@@ -44879,7 +45703,7 @@ class M5StickC_FINGER {
         if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
             return this.RxBuf[this.Q2];
         }
-        throw Error("failed to get security level.");
+        throw Error('failed to get security level.');
     }
     async sendAndReceiveWait(timeout) {
         let checkSum = 0;
@@ -44901,20 +45725,20 @@ class M5StickC_FINGER {
             return this.ack.TIMEOUT;
         }
         if (this.RxBuf[this.HEAD] !== this.cmd.HEAD) {
-            throw Error("communication failed.");
+            throw Error('communication failed.');
         }
         if (this.RxBuf[this.TAIL] !== this.cmd.TAIL) {
-            throw Error("communication failed.");
+            throw Error('communication failed.');
         }
         if (this.RxBuf[this.CMD] !== this.TxBuf[this.CMD]) {
-            throw Error("communication failed.");
+            throw Error('communication failed.');
         }
         checkSum = 0;
         for (let i = 1; i < this.CHK; i++) {
             checkSum ^= this.RxBuf[i];
         }
         if (checkSum !== this.RxBuf[this.CHK]) {
-            throw Error("communication failed.");
+            throw Error('communication failed.');
         }
         return this.ack.SUCCESS;
     }
@@ -44936,19 +45760,21 @@ exports.default = M5StickC_FINGER;
 Object.defineProperty(exports, "__esModule", { value: true });
 class M5StickC_JoyStick {
     constructor() {
-        this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
+        this.keys = ['vcc', 'gnd', 'sda', 'scl', 'i2c'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "M5StickC_JoyStick",
+            name: 'M5StickC_JoyStick',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        if (!this.obniz.isValidIO(this.params.sda) && !this.obniz.isValidIO(this.params.scl) && !this.params.i2c) {
-            if (this.obniz.hasExtraInterface("m5stickc_hat")) {
-                const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
+        if (!this.obniz.isValidIO(this.params.sda) &&
+            !this.obniz.isValidIO(this.params.scl) &&
+            !this.params.i2c) {
+            if (this.obniz.hasExtraInterface('m5stickc_hat')) {
+                const hatI2c = this.obniz.getExtraInterface('m5stickc_hat').i2c;
                 this.params.sda = hatI2c.sda;
                 this.params.scl = hatI2c.scl;
             }
@@ -44956,11 +45782,11 @@ class M5StickC_JoyStick {
                 throw new Error("Cannot find m5stickc hat interface. Please set param 'sda'/'scl' or 'i2c'");
             }
         }
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.obniz.wait(100); // wait for booting of STM32F030F4
-        this.params.mode = "master";
+        this.params.mode = 'master';
         this.params.clock = 100000;
-        this.params.pull = "5v";
+        this.params.pull = '5v';
         this.i2c = this.obniz.getI2CWithConfig(this.params);
     }
     async getXWait() {
@@ -44982,7 +45808,7 @@ class M5StickC_JoyStick {
     async isPressedWait() {
         this.i2c.write(0x38, [0x02]);
         const ret = await this.i2c.readWait(0x38, 3);
-        return !Boolean(ret[2]);
+        return !ret[2];
     }
     async getXYWait() {
         this.i2c.write(0x38, [0x02]);
@@ -45007,12 +45833,12 @@ exports.default = M5StickC_JoyStick;
 Object.defineProperty(exports, "__esModule", { value: true });
 class M5StickC_RS485 {
     constructor() {
-        this.keys = ["tx", "rx", "gnd", "vcc", "baud"];
-        this.requiredKeys = ["tx", "rx"];
+        this.keys = ['tx', 'rx', 'gnd', 'vcc', 'baud'];
+        this.requiredKeys = ['tx', 'rx'];
     }
     static info() {
         return {
-            name: "M5StickC_RS485",
+            name: 'M5StickC_RS485',
         };
     }
     wired(obniz) {
@@ -45023,9 +45849,10 @@ class M5StickC_RS485 {
             obniz.getIO(this.params.vcc).output(true);
         }
         this.params.baud = this.params.baud || 9600;
-        if (!this.obniz.isValidIO(this.params.tx) && !this.obniz.isValidIO(this.params.rx)) {
-            if (this.obniz.hasExtraInterface("m5stickc_hat")) {
-                const uart = this.obniz.getExtraInterface("m5stickc_hat").uart;
+        if (!this.obniz.isValidIO(this.params.tx) &&
+            !this.obniz.isValidIO(this.params.rx)) {
+            if (this.obniz.hasExtraInterface('m5stickc_hat')) {
+                const uart = this.obniz.getExtraInterface('m5stickc_hat').uart;
                 this.params.tx = uart.tx;
                 this.params.rx = uart.rx;
             }
@@ -45040,7 +45867,7 @@ class M5StickC_RS485 {
             baud: this.params.baud,
         });
         this.uart.onreceive = (data, text) => {
-            if (typeof this.onreceive === "function") {
+            if (typeof this.onreceive === 'function') {
                 this.onreceive(data, text);
             }
         };
@@ -45071,13 +45898,15 @@ const VL53L0X_1 = __importDefault(__webpack_require__("./dist/src/parts/Distance
 class M5StickC_ToF extends VL53L0X_1.default {
     static info() {
         return {
-            name: "M5StickC_ToF",
+            name: 'M5StickC_ToF',
         };
     }
     wired(obniz) {
-        if (!this.obniz.isValidIO(this.params.sda) && !this.obniz.isValidIO(this.params.scl) && !this.params.i2c) {
-            if (this.obniz.hasExtraInterface("m5stickc_hat")) {
-                const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
+        if (!this.obniz.isValidIO(this.params.sda) &&
+            !this.obniz.isValidIO(this.params.scl) &&
+            !this.params.i2c) {
+            if (this.obniz.hasExtraInterface('m5stickc_hat')) {
+                const hatI2c = this.obniz.getExtraInterface('m5stickc_hat').i2c;
                 this.params.sda = hatI2c.sda;
                 this.params.scl = hatI2c.scl;
             }
@@ -45111,12 +45940,12 @@ class M5StickC_Yun {
     constructor() {
         this.LED_LEN = 14;
         this.requiredKeys = [];
-        this.keys = ["sda", "scl", "i2c"];
-        this.ioKeys = ["sda", "scl"];
+        this.keys = ['sda', 'scl', 'i2c'];
+        this.ioKeys = ['sda', 'scl'];
     }
     static info() {
         return {
-            name: "M5StickC_Yun",
+            name: 'M5StickC_Yun',
         };
     }
     static _generateHsvColor(h, s, v) {
@@ -45153,9 +45982,11 @@ class M5StickC_Yun {
     }
     wired(obniz) {
         this.obniz = obniz;
-        if (!this.obniz.isValidIO(this.params.sda) && !this.obniz.isValidIO(this.params.scl) && !this.params.i2c) {
-            if (this.obniz.hasExtraInterface("m5stickc_hat")) {
-                const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
+        if (!this.obniz.isValidIO(this.params.sda) &&
+            !this.obniz.isValidIO(this.params.scl) &&
+            !this.params.i2c) {
+            if (this.obniz.hasExtraInterface('m5stickc_hat')) {
+                const hatI2c = this.obniz.getExtraInterface('m5stickc_hat').i2c;
                 this.params.sda = hatI2c.sda;
                 this.params.scl = hatI2c.scl;
             }
@@ -45164,11 +45995,11 @@ class M5StickC_Yun {
             }
         }
         this.params.clock = 100 * 1000; // for i2c
-        this.params.mode = "master"; // for i2c
-        this.params.pull = "3v"; // for i2c
+        this.params.mode = 'master'; // for i2c
+        this.params.pull = '3v'; // for i2c
         this.i2c = obniz.getI2CWithConfig(this.params);
-        this.sht20 = obniz.wired("SHT20", { i2c: this.i2c });
-        this.bmp280 = obniz.wired("BMP280", { i2c: this.i2c });
+        this.sht20 = obniz.wired('SHT20', { i2c: this.i2c });
+        this.bmp280 = obniz.wired('BMP280', { i2c: this.i2c });
         this.bmp280.applyCalibration();
     }
     // public setColorCode(ledNum: number, colorCode: string) {
@@ -45188,9 +46019,9 @@ class M5StickC_Yun {
     //   this.rgb(color[0], color[1], color[2]);
     // }
     rgb(red, green, blue) {
-        util_1.default.assertNumber(0, 255, "red", red);
-        util_1.default.assertNumber(0, 255, "green", green);
-        util_1.default.assertNumber(0, 255, "blue", blue);
+        util_1.default.assertNumber(0, 255, 'red', red);
+        util_1.default.assertNumber(0, 255, 'green', green);
+        util_1.default.assertNumber(0, 255, 'blue', blue);
         const leds = [];
         for (let i = 0; i < this.LED_LEN; i++) {
             leds.push([red, green, blue]);
@@ -45198,16 +46029,22 @@ class M5StickC_Yun {
         this.rgbs(leds);
     }
     hsv(hue, saturation, value) {
-        util_1.default.assertNumber(0, 300, "hue", hue);
-        util_1.default.assertNumber(0, 1, "saturation", saturation);
-        util_1.default.assertNumber(0, 1, "value", value);
+        util_1.default.assertNumber(0, 300, 'hue', hue);
+        util_1.default.assertNumber(0, 1, 'saturation', saturation);
+        util_1.default.assertNumber(0, 1, 'value', value);
         const color = M5StickC_Yun._generateHsvColor(hue, saturation, value);
         this.rgb(color.red, color.green, color.blue);
     }
     rgbs(array) {
         if (array.length <= this.LED_LEN) {
             array.forEach((value, index) => {
-                this.i2c.write(0x38, [0x01, index, Math.floor(value[0]), Math.floor(value[1]), Math.floor(value[2])]);
+                this.i2c.write(0x38, [
+                    0x01,
+                    index,
+                    Math.floor(value[0]),
+                    Math.floor(value[1]),
+                    Math.floor(value[2]),
+                ]);
             });
         }
     }
@@ -45252,13 +46089,13 @@ class CT10 {
     constructor() {
         this.isNear = null;
         this.onchange = null;
-        this.keys = ["signal", "gnd", "vcc"];
-        this.requiredKeys = ["signal"];
+        this.keys = ['signal', 'gnd', 'vcc'];
+        this.requiredKeys = ['signal'];
         this.onChangeForStateWait = () => { };
     }
     static info() {
         return {
-            name: "CT10",
+            name: 'CT10',
         };
     }
     wired(obniz) {
@@ -45271,7 +46108,7 @@ class CT10 {
             this.io_supply = obniz.getIO(this.params.gnd);
             this.io_supply.output(false);
         }
-        this.io_signal.pull("0v");
+        this.io_signal.pull('0v');
         this.io_signal.input((value) => {
             this.isNear = value;
             if (this.onchange) {
@@ -45316,20 +46153,20 @@ const i2cCompass_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cCo
 class HMC5883L extends i2cCompass_1.default {
     constructor() {
         super();
-        this.defaultUnit = "G";
+        this.defaultUnit = 'G';
         this.i2cinfo = {
             address: 0x1e,
             clock: 100000,
-            voltage: "3v",
-            pull: "3v",
+            voltage: '3v',
+            pull: '3v',
         };
         this.sf = this.defaultUnit;
         this.so = HMC5883L.scales[1];
-        this.range = "8G";
+        this.range = '8G';
     }
     static info() {
         return {
-            name: "HMC5883L",
+            name: 'HMC5883L',
         };
     }
     wired(obniz) {
@@ -45346,15 +46183,17 @@ class HMC5883L extends i2cCompass_1.default {
     }
     async getAdcWait() {
         const raw = await this.readWait(HMC5883L.commands.x_MSB, 6);
-        return HMC5883L.charArrayToXyz(raw, "b");
+        return HMC5883L.charArrayToXyz(raw, 'b');
     }
     setRange(index) {
         this.write(HMC5883L.commands.config_b, index << 5);
         this.so = HMC5883L.scales[index];
     }
-    // legacy
-    async get() {
-        return await this.getWait();
+    /**
+     * @deprecated
+     */
+    get() {
+        return this.getWait();
     }
 }
 exports.default = HMC5883L;
@@ -45365,7 +46204,16 @@ HMC5883L.commands = {
     x_MSB: 0x03,
     status: 0x09,
 };
-HMC5883L.scales = [1 / 1370, 1 / 1090, 1 / 820, 1 / 660, 1 / 440, 1 / 390, 1 / 330, 1 / 230];
+HMC5883L.scales = [
+    1 / 1370,
+    1 / 1090,
+    1 / 820,
+    1 / 660,
+    1 / 440,
+    1 / 390,
+    1 / 330,
+    1 / 230,
+];
 
 
 /***/ }),
@@ -45382,16 +46230,16 @@ HMC5883L.scales = [1 / 1370, 1 / 1090, 1 / 820, 1 / 660, 1 / 440, 1 / 390, 1 / 3
 Object.defineProperty(exports, "__esModule", { value: true });
 class _24LC256 {
     constructor() {
-        this.requiredKeys = ["address"];
-        this.keys = ["sda", "scl", "clock", "pull", "i2c", "address"];
+        this.requiredKeys = ['address'];
+        this.keys = ['sda', 'scl', 'clock', 'pull', 'i2c', 'address'];
     }
     static info() {
         return {
-            name: "24LC256",
+            name: '24LC256',
         };
     }
     wired(obniz) {
-        this.params.mode = this.params.mode || "master"; // for i2c
+        this.params.mode = this.params.mode || 'master'; // for i2c
         this.params.clock = this.params.clock || 400 * 1000; // for i2c
         this.i2c = obniz.getI2CWithConfig(this.params);
     }
@@ -45437,8 +46285,8 @@ class AK09916 extends i2cParts_1.default {
         this.i2cinfo = {
             address: 0x0c,
             clock: 100000,
-            voltage: "3v",
-            pull: "3v",
+            voltage: '3v',
+            pull: '3v',
         };
         this.ADDR = 0x0c;
         this._WIA = 0x01;
@@ -45470,19 +46318,24 @@ class AK09916 extends i2cParts_1.default {
     }
     static info() {
         return {
-            name: "AK09916",
+            name: 'AK09916',
         };
     }
     wired(obniz) {
         super.wired(obniz);
         this.write(this._CNTL2, this.MODE_CONTINOUS_MEASURE_1);
     }
-    async magnetic() {
+    /**
+     * @deprecated
+     */
+    magnetic() {
+        return this.magneticWait();
+    }
+    async magneticWait() {
         // 0111 1111 1111 0000 4912 uT
         // 1111 1111 1111 1111 -1 uT
         // 1000 0000 0001 0000 -4912 uT
-        // data[0]下位ビット data[1] 上位ビット
-        const raw3 = await this.readThreeInt16Wait(this._HXL, "l");
+        const raw3 = await this.readThreeInt16Wait(this._HXL, 'l');
         this.readWait(this._ST2, 1);
         const xyz = raw3.map((d, i) => {
             return (d * this.so - this.offset[i]) * this.scale[i];
@@ -45553,20 +46406,20 @@ const i2cCompass_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cCo
 class AK8963 extends i2cCompass_1.default {
     constructor() {
         super();
-        this.defaultUnit = "uT";
+        this.defaultUnit = 'uT';
         this.i2cinfo = {
             address: 0x0c,
             clock: 100000,
-            voltage: "3v",
-            pull: "3v",
+            voltage: '3v',
+            pull: '3v',
         };
         this.sf = this.defaultUnit;
         this.so = AK8963.scales.so_16bit;
-        this.range = "4912uT";
+        this.range = '4912uT';
     }
     static info() {
         return {
-            name: "AK8963",
+            name: 'AK8963',
         };
     }
     wired(obniz) {
@@ -45582,12 +46435,12 @@ class AK8963 extends i2cCompass_1.default {
                 this.write(0x0a, [0x16]); // 16bit
                 break;
             default:
-                throw new Error("Invalid ADC_cycle value. Valid values are 8,100.");
+                throw new Error('Invalid ADC_cycle value. Valid values are 8,100.');
         }
     }
     async getAdcWait() {
         const raw = await this.readWait(0x03, 7);
-        return AK8963.charArrayToXyz(raw, "l");
+        return AK8963.charArrayToXyz(raw, 'l');
     }
 }
 exports.default = AK8963;
@@ -45613,13 +46466,13 @@ class Button {
     constructor() {
         this.isPressed = null;
         this.onchange = null;
-        this.keys = ["signal", "gnd", "pull"];
-        this.requiredKeys = ["signal"];
+        this.keys = ['signal', 'gnd', 'pull'];
+        this.requiredKeys = ['signal'];
         this.onChangeForStateWait = () => { };
     }
     static info() {
         return {
-            name: "Button",
+            name: 'Button',
         };
     }
     wired(obniz) {
@@ -45629,14 +46482,14 @@ class Button {
             this.io_supply.output(false);
         }
         // start input
-        if (this.params.pull === "3v") {
-            this.io_signal.pull("3v");
+        if (this.params.pull === '3v') {
+            this.io_signal.pull('3v');
         }
-        else if (this.params.pull === "0v") {
-            this.io_signal.pull("0v");
+        else if (this.params.pull === '0v') {
+            this.io_signal.pull('0v');
         }
         else {
-            this.io_signal.pull("5v");
+            this.io_signal.pull('5v');
         }
         this.io_signal.input((value) => {
             this.isPressed = value === false;
@@ -45678,49 +46531,56 @@ exports.default = Button;
 Object.defineProperty(exports, "__esModule", { value: true });
 class FlickHat {
     constructor() {
-        this.keys = ["vcc", "gnd", "sda", "scl", "reset", "ts", "led1", "led2"];
-        this.requiredKeys = ["gnd", "sda", "scl", "reset", "ts"];
+        this.keys = ['vcc', 'gnd', 'sda', 'scl', 'reset', 'ts', 'led1', 'led2'];
+        this.requiredKeys = ['gnd', 'sda', 'scl', 'reset', 'ts'];
         this.displayIoNames = {
             // vcc: 'vcc', //5v
-            sda: "sda",
-            scl: "scl",
-            gnd: "gnd",
-            reset: "reset",
-            ts: "ts",
+            sda: 'sda',
+            scl: 'scl',
+            gnd: 'gnd',
+            reset: 'reset',
+            ts: 'ts',
         };
     }
     static info() {
         return {
-            name: "FlickHat",
+            name: 'FlickHat',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
         this.address = 0x42;
         if (this.obniz.isValidIO(this.params.vcc)) {
-            this.obniz.getIO(this.params.vcc).drive("5v");
+            this.obniz.getIO(this.params.vcc).drive('5v');
             this.obniz.getIO(this.params.vcc).output(true);
         }
         this.obniz.getIO(this.params.gnd).output(false);
         this.io_reset = this.obniz.getIO(this.params.reset);
-        this.io_reset.drive("3v");
+        this.io_reset.drive('3v');
         this.io_ts = this.obniz.getIO(this.params.ts);
-        this.io_ts.drive("open-drain");
-        this.io_ts.pull("3v");
-        this.params.mode = "master";
-        this.params.pull = "3v";
+        this.io_ts.drive('open-drain');
+        this.io_ts.pull('3v');
+        this.params.mode = 'master';
+        this.params.pull = '3v';
         this.params.clock = 100 * 1000; // 100KHz
         // PeripheralI2C
         this.i2c = this.obniz.getI2CWithConfig(this.params);
         if (this.obniz.isValidIO(this.params.led1)) {
-            this.led1 = this.obniz.wired("LED", { anode: this.params.led1 });
+            this.led1 = this.obniz.wired('LED', { anode: this.params.led1 });
         }
         if (this.obniz.isValidIO(this.params.led2)) {
-            this.led2 = this.obniz.wired("LED", { anode: this.params.led2 });
+            this.led2 = this.obniz.wired('LED', { anode: this.params.led2 });
         }
     }
-    async start(callback) {
-        this.io_ts.pull("3v");
+    /**
+     * @deprecated
+     * @param callback
+     */
+    start(callback) {
+        return this.startWait(callback);
+    }
+    async startWait(callback) {
+        this.io_ts.pull('3v');
         this.io_reset.output(false);
         await this.obniz.wait(50);
         this.io_reset.output(true);
@@ -45774,13 +46634,20 @@ class FlickHat {
         ]);
     }
     _dataArray2string(data) {
-        let result = "";
+        let result = '';
         for (const n of data) {
             result += String.fromCharCode(n);
         }
         return result;
     }
-    async polling(timeout) {
+    /**
+     * @deprecated
+     * @param timeout
+     */
+    polling(timeout) {
+        return this.pollingWait(timeout);
+    }
+    async pollingWait(timeout) {
         timeout = timeout || 3000; // default: 3s
         // DataOutputConfigMask	2byte
         // const maskDSPStatus = 1;
@@ -45798,7 +46665,7 @@ class FlickHat {
             ts = await this.io_ts.inputWait();
         }
         if (!ts) {
-            this.io_ts.pull("0v");
+            this.io_ts.pull('0v');
             // await this.obniz.wait(1);
             const data = await this.i2c.readWait(this.address, this.readSize);
             const size = data[0];
@@ -45807,7 +46674,8 @@ class FlickHat {
             const msgID = data[3];
             if (size !== 0xff && size > 0) {
                 if (this.debugprint || this.obniz.debugprint) {
-                    console.log("flickHat: " + data.slice(0, size).map((v) => "0x" + v.toString(16)));
+                    console.log('flickHat: ' +
+                        data.slice(0, size).map((v) => '0x' + v.toString(16)));
                 }
                 let configmask;
                 let sysinfo;
@@ -45827,7 +46695,10 @@ class FlickHat {
                         airwheel = data.slice(18, 20);
                         // let xyz = data.slice(20, 26);
                         // let noisepow = data.slice(27, 30);
-                        if (gesture[0] === 255 && gesture[1] === 255 && gesture[2] === 255 && gesture[3] === 255) {
+                        if (gesture[0] === 255 &&
+                            gesture[1] === 255 &&
+                            gesture[2] === 255 &&
+                            gesture[3] === 255) {
                             break;
                         }
                         if (configmask & maskXYZPosition && sysinfo & sysPositionValid) {
@@ -45839,27 +46710,28 @@ class FlickHat {
                                 seq,
                             };
                             this.xyz = xyz;
-                            if (typeof this.onxyz === "function") {
+                            if (typeof this.onxyz === 'function') {
                                 this.onxyz(xyz);
                             }
                         }
                         if (configmask & maskGestureInfo && gesture[0] > 0) {
                             this.lastGesture = gesture[0];
                             const gestures = [
-                                ["", "", ""],
-                                ["garbage", "", ""],
-                                ["flick", "west", "east"],
-                                ["flick", "east", "west"],
-                                ["flick", "south", "north"],
-                                ["flick", "north", "south"],
-                                ["circle", "clockwise", ""],
-                                ["circle", "counter-clockwise", ""],
-                                ["wave", "x", ""],
-                                ["wave", "y", ""],
-                                ["hold", "", ""],
+                                ['', '', ''],
+                                ['garbage', '', ''],
+                                ['flick', 'west', 'east'],
+                                ['flick', 'east', 'west'],
+                                ['flick', 'south', 'north'],
+                                ['flick', 'north', 'south'],
+                                ['circle', 'clockwise', ''],
+                                ['circle', 'counter-clockwise', ''],
+                                ['wave', 'x', ''],
+                                ['wave', 'y', ''],
+                                ['hold', '', ''],
                             ];
                             for (const index in gestures) {
-                                if (index === gesture[0] && typeof this.ongestureall === "function") {
+                                if (index === gesture[0] &&
+                                    typeof this.ongestureall === 'function') {
                                     this.ongestureall({
                                         action: gestures[index][0],
                                         from: gestures[index][1],
@@ -45868,9 +46740,11 @@ class FlickHat {
                                         seq,
                                     });
                                 }
-                                if (index === gesture[0] && gestures[index][0] === "flick" && typeof this.ongesture === "function") {
+                                if (index === gesture[0] &&
+                                    gestures[index][0] === 'flick' &&
+                                    typeof this.ongesture === 'function') {
                                     this.ongesture({
-                                        action: "gesture",
+                                        action: 'gesture',
                                         from: gestures[index][1],
                                         to: gestures[index][2],
                                         raw: gesture,
@@ -45879,7 +46753,9 @@ class FlickHat {
                                 }
                             }
                         }
-                        if (configmask & maskTouchInfo && !(touch[0] === 0 && touch[1] === 0) && touch[3] === 0) {
+                        if (configmask & maskTouchInfo &&
+                            !(touch[0] === 0 && touch[1] === 0) &&
+                            touch[3] === 0) {
                             // console.log('touch: ' + touch.map(v => '0x' + v.toString(16)));
                             const touchAction = touch[0] | (touch[1] << 8); // little endian
                             if (touchAction === 0xffff) {
@@ -45887,21 +46763,21 @@ class FlickHat {
                             }
                             // let touchCount = touch[2] * 5; // touch counter value * 5[ms]
                             const actions = [
-                                ["touch", "south"],
-                                ["touch", "west"],
-                                ["touch", "north"],
-                                ["touch", "east"],
-                                ["touch", "center"],
-                                ["tap", "south"],
-                                ["tap", "west"],
-                                ["tap", "north"],
-                                ["tap", "east"],
-                                ["tap", "center"],
-                                ["doubletap", "south"],
-                                ["doubletap", "west"],
-                                ["doubletap", "north"],
-                                ["doubletap", "east"],
-                                ["doubletap", "center"],
+                                ['touch', 'south'],
+                                ['touch', 'west'],
+                                ['touch', 'north'],
+                                ['touch', 'east'],
+                                ['touch', 'center'],
+                                ['tap', 'south'],
+                                ['tap', 'west'],
+                                ['tap', 'north'],
+                                ['tap', 'east'],
+                                ['tap', 'center'],
+                                ['doubletap', 'south'],
+                                ['doubletap', 'west'],
+                                ['doubletap', 'north'],
+                                ['doubletap', 'east'],
+                                ['doubletap', 'center'],
                             ];
                             const touches = [];
                             const taps = [];
@@ -45913,13 +46789,13 @@ class FlickHat {
                                 if (touchAction & comp) {
                                     // console.log(`touchAction:${touchAction.toString(16)}, comp:${comp.toString(16)}, index:${index}, group:${group}`);
                                     switch (value[0]) {
-                                        case "touch":
+                                        case 'touch':
                                             touches.push(value[1]);
                                             break;
-                                        case "tap":
+                                        case 'tap':
                                             taps.push(value[1]);
                                             break;
-                                        case "doubletap":
+                                        case 'doubletap':
                                             doubletaps.push(value[1]);
                                             break;
                                         default:
@@ -45927,25 +46803,26 @@ class FlickHat {
                                 }
                                 comp <<= 1;
                             }
-                            if (touches.length > 0 && typeof this.ontouch === "function") {
+                            if (touches.length > 0 && typeof this.ontouch === 'function') {
                                 this.ontouch({
-                                    action: "touch",
+                                    action: 'touch',
                                     positions: touches,
                                     raw: touch,
                                     seq,
                                 });
                             }
-                            if (taps.length > 0 && typeof this.ontap === "function") {
+                            if (taps.length > 0 && typeof this.ontap === 'function') {
                                 this.ontap({
-                                    action: "tap",
+                                    action: 'tap',
                                     positions: taps,
                                     raw: touch,
                                     seq,
                                 });
                             }
-                            if (doubletaps.length > 0 && typeof this.ondoubletap === "function") {
+                            if (doubletaps.length > 0 &&
+                                typeof this.ondoubletap === 'function') {
                                 this.ondoubletap({
-                                    action: "doubletap",
+                                    action: 'doubletap',
                                     positions: doubletaps,
                                     raw: touch,
                                     seq,
@@ -45957,7 +46834,7 @@ class FlickHat {
                             this.rotation += delta * 360.0;
                             this.rotation %= 360;
                             if (delta !== 0 && delta > -0.5 && delta < 0.5) {
-                                if (typeof this.onairwheel === "function") {
+                                if (typeof this.onairwheel === 'function') {
                                     this.onairwheel({
                                         delta: delta * 360.0,
                                         rotation: this.rotation,
@@ -45988,11 +46865,11 @@ class FlickHat {
                             libLoaderVer: [data[8], data[9]],
                             libLoaderPlatform: data[10],
                             fwStartAddr: data[11] * 128,
-                            fwVersion: this._dataArray2string(data.slice(12, 132)).split("\0")[0],
+                            fwVersion: this._dataArray2string(data.slice(12, 132)).split('\0')[0],
                             fwInfoReceived: true,
                         };
                         this.fwInfo = fwInfo;
-                        if (typeof this.onfwinfo === "function") {
+                        if (typeof this.onfwinfo === 'function') {
                             this.onfwinfo(fwInfo);
                         }
                         this.readSize = 26;
@@ -46000,10 +46877,10 @@ class FlickHat {
                     default:
                         console.error(`unknown message: 0x${msgID.toString(16)}, data:${data
                             .slice(0, size)
-                            .map((v) => "0x" + v.toString(16))}`);
+                            .map((v) => '0x' + v.toString(16))}`);
                 }
             }
-            this.io_ts.pull("3v");
+            this.io_ts.pull('3v');
             // await this.obniz.wait(1);
         }
     }
@@ -46025,18 +46902,18 @@ exports.default = FlickHat;
 Object.defineProperty(exports, "__esModule", { value: true });
 class HCSR505 {
     constructor() {
-        this.keys = ["vcc", "gnd", "signal"];
-        this.requiredKeys = ["signal"];
+        this.keys = ['vcc', 'gnd', 'signal'];
+        this.requiredKeys = ['signal'];
     }
     static info() {
         return {
-            name: "HC-SR505",
+            name: 'HC-SR505',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
         this.io_signal = obniz.getIO(this.params.signal);
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.io_signal.input((value) => {
             if (this.onchange) {
                 this.onchange(value);
@@ -46073,8 +46950,8 @@ class ICM20948 extends i2cParts_1.default {
         this.i2cinfo = {
             address: 0x69,
             clock: 100000,
-            voltage: "3v",
-            pull: "3v",
+            voltage: '3v',
+            pull: '3v',
         };
         this._ADDR = 0x69;
         this._WHO_AM_I = 0x00;
@@ -46128,7 +47005,7 @@ class ICM20948 extends i2cParts_1.default {
     }
     static info() {
         return {
-            name: "ICM20948",
+            name: 'ICM20948',
         };
     }
     wired(obniz) {
@@ -46139,26 +47016,26 @@ class ICM20948 extends i2cParts_1.default {
     async initWait() {
         const data = await this.whoamiWait();
         if (data !== 0xea) {
-            throw new Error("ICM20948 not found in I2C bus.");
+            throw new Error('ICM20948 not found in I2C bus.');
         }
         this.write(0x06, [0x01]); // wake;
         this.write(0x0f, [0x02]); // passthrough;
         this.write(0x03, [0x00]);
         // this.write(12, 0x31, [0x00]);  // power down mode
         // const buf3 = await this._studuinoI2C.readFromMem(12, 0x60, 3);
-        this._ak09916 = this.obniz.wired("AK09916", { i2c: this.i2c });
+        this._ak09916 = this.obniz.wired('AK09916', { i2c: this.i2c });
     }
     accelFs(value) {
-        if (value === "2g") {
+        if (value === '2g') {
             this._accel_so = this._accelFs(this._ACCEL_FS_SEL_2G);
         }
-        else if (value === "4g") {
+        else if (value === '4g') {
             this._accel_so = this._accelFs(this._ACCEL_FS_SEL_4G);
         }
-        else if (value === "8g") {
+        else if (value === '8g') {
             this._accel_so = this._accelFs(this._ACCEL_FS_SEL_8G);
         }
-        else if (value === "16g") {
+        else if (value === '16g') {
             this._accel_so = this._accelFs(this._ACCEL_FS_SEL_16G);
         }
         else {
@@ -46166,13 +47043,13 @@ class ICM20948 extends i2cParts_1.default {
         }
     }
     accelSf(value) {
-        if (value === "g") {
+        if (value === 'g') {
             this._accel_sf = this._SF_G;
         }
-        else if (value === "mg") {
+        else if (value === 'mg') {
             this._accel_sf = this._SF_MG;
         }
-        else if (value === "ms2") {
+        else if (value === 'ms2') {
             this._accel_sf = this._SF_M_S2;
         }
         else {
@@ -46210,16 +47087,16 @@ class ICM20948 extends i2cParts_1.default {
         return result[0];
     }
     gyroFs(value) {
-        if (value === "250dps") {
+        if (value === '250dps') {
             this._gyro_so = this._gyroFs(this._GYRO_FS_SEL_250DPS);
         }
-        else if (value === "500dps") {
+        else if (value === '500dps') {
             this._gyro_so = this._gyroFs(this._GYRO_FS_SEL_500DPS);
         }
-        else if (value === "1000dps") {
+        else if (value === '1000dps') {
             this._gyro_so = this._gyroFs(this._GYRO_FS_SEL_1000DPS);
         }
-        else if (value === "2000dps") {
+        else if (value === '2000dps') {
             this._gyro_so = this._gyroFs(this._GYRO_FS_SEL_2000DPS);
         }
         else {
@@ -46227,10 +47104,10 @@ class ICM20948 extends i2cParts_1.default {
         }
     }
     gyroSf(value) {
-        if (value === "dps") {
+        if (value === 'dps') {
             this._gyro_sf = this._SF_DEG_S;
         }
-        else if (value === "rps") {
+        else if (value === 'rps') {
             this._gyro_sf = this._SF_RAD_S;
         }
         else {
@@ -46331,17 +47208,17 @@ exports.default = ICM20948;
 Object.defineProperty(exports, "__esModule", { value: true });
 class IPM_165 {
     constructor() {
-        this.keys = ["signal", "vcc", "gnd"];
-        this.requiredKeys = ["signal"];
+        this.keys = ['signal', 'vcc', 'gnd'];
+        this.requiredKeys = ['signal'];
     }
     static info() {
         return {
-            name: "IPM-165",
+            name: 'IPM-165',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.signal = this.obniz.getAD(this.params.signal);
         this.signal.start((value) => {
             if (this.onchange) {
@@ -46370,24 +47247,24 @@ exports.default = IPM_165;
 Object.defineProperty(exports, "__esModule", { value: true });
 class JoyStick {
     constructor() {
-        this.keys = ["sw", "y", "x", "vcc", "gnd", "i2c"];
-        this.requiredKeys = ["sw", "y", "x"];
-        this.pins = this.keys || ["sw", "y", "x", "vcc", "gnd"];
-        this.pinname = { sw: "sw12" };
-        this.shortName = "joyS";
+        this.keys = ['sw', 'y', 'x', 'vcc', 'gnd', 'i2c'];
+        this.requiredKeys = ['sw', 'y', 'x'];
+        this.pins = this.keys || ['sw', 'y', 'x', 'vcc', 'gnd'];
+        this.pinname = { sw: 'sw12' };
+        this.shortName = 'joyS';
     }
     static info() {
         return {
-            name: "JoyStick",
+            name: 'JoyStick',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.io_sig_sw = obniz.getIO(this.params.sw);
         this.ad_x = obniz.getAD(this.params.x);
         this.ad_y = obniz.getAD(this.params.y);
-        this.io_sig_sw.pull("5v");
+        this.io_sig_sw.pull('5v');
         this.ad_x.start((value) => {
             this.positionX = value / 5.0;
             if (this.onchangex) {
@@ -46439,26 +47316,26 @@ exports.default = JoyStick;
 Object.defineProperty(exports, "__esModule", { value: true });
 class KXR94_2050 {
     constructor() {
-        this.keys = ["x", "y", "z", "vcc", "gnd", "enable", "self_test"];
-        this.requiredKeys = ["x", "y", "z"];
+        this.keys = ['x', 'y', 'z', 'vcc', 'gnd', 'enable', 'self_test'];
+        this.requiredKeys = ['x', 'y', 'z'];
     }
     static info() {
         return {
-            name: "KXR94-2050",
+            name: 'KXR94-2050',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.ad_x = obniz.getAD(this.params.x);
         this.ad_y = obniz.getAD(this.params.y);
         this.ad_z = obniz.getAD(this.params.z);
         if (obniz.isValidIO(this.params.enable)) {
-            obniz.getIO(this.params.enable).drive("5v");
+            obniz.getIO(this.params.enable).drive('5v');
             obniz.getIO(this.params.enable).output(true);
         }
         if (obniz.isValidIO(this.params.self_test)) {
-            obniz.getIO(this.params.self_test).drive("5v");
+            obniz.getIO(this.params.self_test).drive('5v');
             obniz.getIO(this.params.self_test).output(false);
         }
         this.changeVccVoltage(5);
@@ -46536,43 +47413,45 @@ exports.default = KXR94_2050;
 Object.defineProperty(exports, "__esModule", { value: true });
 class KXSC7_2050 {
     constructor() {
-        this.keys = ["x", "y", "z", "vcc", "gnd"];
-        this.requiredKeys = ["x", "y", "z"];
+        this.keys = ['x', 'y', 'z', 'vcc', 'gnd'];
+        this.requiredKeys = ['x', 'y', 'z'];
     }
     static info() {
         return {
-            name: "KXSC7-2050",
+            name: 'KXSC7-2050',
         };
     }
-    async wired(obniz) {
+    wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '3v');
         this.ad_x = obniz.getAD(this.params.x);
         this.ad_y = obniz.getAD(this.params.y);
         this.ad_z = obniz.getAD(this.params.z);
-        await obniz.wait(500);
-        const ad = obniz.getAD(this.params.vcc);
+        this.initWait();
+    }
+    async initWait() {
+        await this.obniz.wait(500);
+        const ad = this.obniz.getAD(this.params.vcc);
         const pwrVoltage = await ad.getWait();
         const horizontalZ = await this.ad_z.getWait();
         const sensitivity = pwrVoltage / 5; // Set sensitivity (unit:V)
         const offsetVoltage = horizontalZ - sensitivity; // Set offset voltage (Output voltage at 0g, unit:V)
-        const self = this;
         this.ad_x.start((value) => {
-            self.gravity = (value - offsetVoltage) / sensitivity;
-            if (self.onchangex) {
-                self.onchangex(self.gravity);
+            this.gravity = (value - offsetVoltage) / sensitivity;
+            if (this.onchangex) {
+                this.onchangex(this.gravity);
             }
         });
         this.ad_y.start((value) => {
-            self.gravity = (value - offsetVoltage) / sensitivity;
-            if (self.onchangey) {
-                self.onchangey(self.gravity);
+            this.gravity = (value - offsetVoltage) / sensitivity;
+            if (this.onchangey) {
+                this.onchangey(this.gravity);
             }
         });
         this.ad_z.start((value) => {
-            self.gravity = (value - offsetVoltage) / sensitivity;
-            if (self.onchangez) {
-                self.onchangez(self.gravity);
+            this.gravity = (value - offsetVoltage) / sensitivity;
+            if (this.onchangez) {
+                this.onchangez(this.gravity);
             }
         });
     }
@@ -46602,17 +47481,17 @@ class MPU6050 extends i2cImu6_1.default {
         this.i2cinfo = {
             address: 0x68,
             clock: 100000,
-            voltage: "3v",
-            pull: "3v",
+            voltage: '3v',
+            pull: '3v',
         };
     }
     static info() {
         return {
-            name: "MPU6050",
+            name: 'MPU6050',
         };
     }
     calcTemp(data) {
-        if (typeof data === "undefined" || data === null) {
+        if (typeof data === 'undefined' || data === null) {
             return null;
         }
         return data / 333.87 + 21;
@@ -46673,22 +47552,22 @@ class MPU6050 extends i2cImu6_1.default {
     }
     async getAccelAdcWait() {
         const raw = await this.readWait(MPU6050.commands.accel_x_h, 6);
-        return MPU6050.charArrayToXyz(raw, "b");
+        return MPU6050.charArrayToXyz(raw, 'b');
     }
     async getGyroAdcWait() {
         const raw = await this.readWait(MPU6050.commands.gyro_x_h, 6);
-        return MPU6050.charArrayToXyz(raw, "b");
+        return MPU6050.charArrayToXyz(raw, 'b');
     }
     async getTempAdcWait() {
         const raw = await this.readWait(MPU6050.commands.temp_h, 2);
-        return MPU6050.charArrayToInt16(raw, "b");
+        return MPU6050.charArrayToInt16(raw, 'b');
     }
     async getAllAdcWait() {
         const raw = await this.readWait(MPU6050.commands.accel_x_h, 14);
         return {
-            accelerometer: MPU6050.charArrayToXyz(raw.slice(0, 6), "b"),
-            gyroscope: MPU6050.charArrayToXyz(raw.slice(8, 14), "b"),
-            temperature: MPU6050.charArrayToInt16(raw.slice(6, 8), "b"),
+            accelerometer: MPU6050.charArrayToXyz(raw.slice(0, 6), 'b'),
+            gyroscope: MPU6050.charArrayToXyz(raw.slice(8, 14), 'b'),
+            temperature: MPU6050.charArrayToInt16(raw.slice(6, 8), 'b'),
         };
     }
     setAccelRange(accel_range) {
@@ -46713,36 +47592,36 @@ class MPU6050 extends i2cImu6_1.default {
         // accel range set (0x00:2g, 0x08:4g, 0x10:8g, 0x18:16g)
         switch (accelerometer_range) {
             case 2:
-                this.setAccelRange("2g");
+                this.setAccelRange('2g');
                 break;
             case 4:
-                this.setAccelRange("4g");
+                this.setAccelRange('4g');
                 break;
             case 8:
-                this.setAccelRange("8g");
+                this.setAccelRange('8g');
                 break;
             case 16:
-                this.setAccelRange("16g");
+                this.setAccelRange('16g');
                 break;
             default:
-                throw new Error("accel_range variable 2,4,8,16 setting");
+                throw new Error('accel_range variable 2,4,8,16 setting');
         }
         // gyro range & LPF set (0x00:250, 0x08:500, 0x10:1000, 0x18:2000[deg/s])
         switch (gyroscope_range) {
             case 250:
-                this.setGyroRange("250dps");
+                this.setGyroRange('250dps');
                 break;
             case 500:
-                this.setGyroRange("500dps");
+                this.setGyroRange('500dps');
                 break;
             case 1000:
-                this.setGyroRange("1000dps");
+                this.setGyroRange('1000dps');
                 break;
             case 2000:
-                this.setGyroRange("2000dps");
+                this.setGyroRange('2000dps');
                 break;
             default:
-                throw new Error("accel_range variable 250,500,1000,2000 setting");
+                throw new Error('accel_range variable 250,500,1000,2000 setting');
         }
     }
 }
@@ -46775,16 +47654,16 @@ MPU6050.commands = {
     gyro_config: 0x1b,
     accel_config: 0x1c,
     accel_fs_sel: {
-        "2g": 0x00,
-        "4g": 0x08,
-        "8g": 0x10,
-        "16g": 0x18,
+        '2g': 0x00,
+        '4g': 0x08,
+        '8g': 0x10,
+        '16g': 0x18,
     },
     gyro_fs_sel: {
-        "250dps": 0x00,
-        "500dps": 0x08,
-        "1000dps": 0x10,
-        "2000dps": 0x18,
+        '250dps': 0x00,
+        '500dps': 0x08,
+        '1000dps': 0x10,
+        '2000dps': 0x18,
     },
 };
 
@@ -46808,7 +47687,7 @@ const MPU6050_1 = __importDefault(__webpack_require__("./dist/src/parts/Movement
 class MPU6500 extends MPU6050_1.default {
     static info() {
         return {
-            name: "MPU6500",
+            name: 'MPU6500',
         };
     }
     constructor() {
@@ -46848,8 +47727,8 @@ class MPU6886 extends MPU6050_1.default {
         this.i2cinfo = {
             address: 0x68,
             clock: 100000,
-            voltage: "3v",
-            pull: "3v",
+            voltage: '3v',
+            pull: '3v',
         };
         MPU6050_1.default.commands.accel_intel_ctrl = 0x69;
         MPU6050_1.default.commands.accel_config2 = 0x1d;
@@ -46857,7 +47736,7 @@ class MPU6886 extends MPU6050_1.default {
     }
     static info() {
         return {
-            name: "MPU6886",
+            name: 'MPU6886',
         };
     }
     init() {
@@ -46891,12 +47770,12 @@ class MPU9250 extends MPU6500_1.default {
     }
     static info() {
         return {
-            name: "MPU9250",
+            name: 'MPU9250',
         };
     }
     wired(obniz) {
         super.wired(obniz);
-        this.ak8963 = obniz.wired("AK8963", { i2c: this.i2c });
+        this.ak8963 = obniz.wired('AK8963', { i2c: this.i2c });
         this.write(MPU6500_1.default.commands.pwr_mgmt_1, [0x00]); // activate MPU9250
         this.write(MPU6500_1.default.commands.int_pin_cfg, [0x02]); // activate AK8963 (bypass)
         this.write(MPU6500_1.default.commands.config, [0x06]); // activate LPF (search datasheet_p.13)
@@ -46984,19 +47863,19 @@ exports.default = MPU9250;
 Object.defineProperty(exports, "__esModule", { value: true });
 class PaPIRsVZ {
     constructor() {
-        this.keys = ["vcc", "gnd", "signal"];
-        this.requiredKeys = ["signal"];
+        this.keys = ['vcc', 'gnd', 'signal'];
+        this.requiredKeys = ['signal'];
     }
     static info() {
         return {
-            name: "PaPIRsVZ",
+            name: 'PaPIRsVZ',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
         this.io_signal = obniz.getIO(this.params.signal);
-        this.io_signal.pull("0v");
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.io_signal.pull('0v');
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.io_signal.input((value) => {
             if (this.onchange) {
                 this.onchange(value);
@@ -47023,16 +47902,16 @@ class Potentiometer {
     constructor() {
         this.vcc_voltage = 5.0;
         this.position = 0;
-        this.keys = ["pin0", "pin1", "pin2"];
-        this.requiredKeys = ["pin0", "pin1", "pin2"];
+        this.keys = ['pin0', 'pin1', 'pin2'];
+        this.requiredKeys = ['pin0', 'pin1', 'pin2'];
     }
     static info() {
         return {
-            name: "Potentiometer",
+            name: 'Potentiometer',
         };
     }
     wired(obniz) {
-        this.obniz.setVccGnd(this.params.pin0, this.params.pin2, "5v");
+        this.obniz.setVccGnd(this.params.pin0, this.params.pin2, '5v');
         this.ad = obniz.getAD(this.params.pin1);
         obniz.getAD(this.params.pin0).start((value) => {
             this.vcc_voltage = value;
@@ -47066,13 +47945,13 @@ class SH200Q extends i2cImu6_1.default {
         this.i2cinfo = {
             address: 0x6c,
             clock: 100000,
-            voltage: "3v",
-            pull: "3v",
+            voltage: '3v',
+            pull: '3v',
         };
     }
     static info() {
         return {
-            name: "SH200Q",
+            name: 'SH200Q',
         };
     }
     wired(obniz) {
@@ -47109,35 +47988,35 @@ class SH200Q extends i2cImu6_1.default {
     setConfig(accelerometer_range, gyroscope_range) {
         switch (accelerometer_range) {
             case 4:
-                this.setAccelRange("4g");
+                this.setAccelRange('4g');
                 break;
             case 8:
-                this.setAccelRange("8g");
+                this.setAccelRange('8g');
                 break;
             case 16:
-                this.setAccelRange("16g");
+                this.setAccelRange('16g');
                 break;
             default:
-                throw new Error("accel_range variable 4,8,16 setting");
+                throw new Error('accel_range variable 4,8,16 setting');
         }
         switch (gyroscope_range) {
             case 125:
-                this.setGyroRange("125dps");
+                this.setGyroRange('125dps');
                 break;
             case 250:
-                this.setGyroRange("250dps");
+                this.setGyroRange('250dps');
                 break;
             case 500:
-                this.setGyroRange("500dps");
+                this.setGyroRange('500dps');
                 break;
             case 1000:
-                this.setGyroRange("1000dps");
+                this.setGyroRange('1000dps');
                 break;
             case 2000:
-                this.setGyroRange("2000dps");
+                this.setGyroRange('2000dps');
                 break;
             default:
-                throw new Error("gyroscope_range variable 125,250,500,1000,2000 setting");
+                throw new Error('gyroscope_range variable 125,250,500,1000,2000 setting');
         }
     }
     async resetAdcWait() {
@@ -47169,29 +48048,29 @@ class SH200Q extends i2cImu6_1.default {
         }
     }
     calcTemp(data) {
-        if (typeof data === "undefined" || data === null) {
+        if (typeof data === 'undefined' || data === null) {
             return null;
         }
         return data / 333.87 + 21.0;
     }
     async getAccelAdcWait() {
         const raw = await this.readWait(SH200Q.commands.output_acc, 6);
-        return SH200Q.charArrayToXyz(raw, "l");
+        return SH200Q.charArrayToXyz(raw, 'l');
     }
     async getGyroAdcWait() {
         const raw = await this.readWait(SH200Q.commands.output_gyro, 6);
-        return SH200Q.charArrayToXyz(raw, "l");
+        return SH200Q.charArrayToXyz(raw, 'l');
     }
     async getTempAdcWait() {
         const raw = await this.readWait(SH200Q.commands.output_temp, 2);
-        return SH200Q.charArrayToInt16(raw, "l");
+        return SH200Q.charArrayToInt16(raw, 'l');
     }
     async getAllAdcWait() {
         const raw = await this.readWait(SH200Q.commands.output_acc, 14); // request all data
         return {
-            accelerometer: SH200Q.charArrayToXyz(raw.slice(0, 6), "l"),
-            gyroscope: SH200Q.charArrayToXyz(raw.slice(6, 12), "l"),
-            temperature: SH200Q.charArrayToInt16(raw.slice(12, 14), "l"),
+            accelerometer: SH200Q.charArrayToXyz(raw.slice(0, 6), 'l'),
+            gyroscope: SH200Q.charArrayToXyz(raw.slice(6, 12), 'l'),
+            temperature: SH200Q.charArrayToInt16(raw.slice(12, 14), 'l'),
         };
     }
 }
@@ -47214,16 +48093,16 @@ SH200Q.commands = {
     soft_reset: 0x7f,
     reset: 0x75,
     accel_fs_sel: {
-        "4g": 0b00,
-        "8g": 0b01,
-        "16g": 0b10,
+        '4g': 0b00,
+        '8g': 0b01,
+        '16g': 0b10,
     },
     gyro_fs_sel: {
-        "125dps": 0b100,
-        "250dps": 0b011,
-        "500dps": 0b010,
-        "1000dps": 0b001,
-        "2000dps": 0b000,
+        '125dps': 0b100,
+        '250dps': 0b011,
+        '500dps': 0b010,
+        '1000dps': 0b001,
+        '2000dps': 0b000,
     },
 };
 
@@ -47242,12 +48121,12 @@ SH200Q.commands = {
 Object.defineProperty(exports, "__esModule", { value: true });
 class DCMotor {
     constructor() {
-        this.keys = ["forward", "back"];
-        this.requiredKeys = ["forward", "back"];
+        this.keys = ['forward', 'back'];
+        this.requiredKeys = ['forward', 'back'];
     }
     static info() {
         return {
-            name: "DCMotor",
+            name: 'DCMotor',
         };
     }
     wired(obniz) {
@@ -47349,13 +48228,23 @@ class PCA9685_PWM {
         this.chip.duty(this.id, value);
     }
 }
-// tslint:disable:max-classes-per-file
+/* eslint max-classes-per-file: 0 */
 class PCA9685 {
     constructor() {
         this.pwms = [];
         this._freq = 0;
         /* https://www.nxp.com/docs/en/data-sheet/PCA9685.pdf */
-        this.keys = ["gnd", "vcc", "scl", "sda", "oe", "i2c", "enabled", "address", "drive"];
+        this.keys = [
+            'gnd',
+            'vcc',
+            'scl',
+            'sda',
+            'oe',
+            'i2c',
+            'enabled',
+            'address',
+            'drive',
+        ];
         this.requiredKeys = [];
         this.address = 0x40;
         this._commands = {
@@ -47383,7 +48272,7 @@ class PCA9685 {
     }
     static info() {
         return {
-            name: "PCA9685",
+            name: 'PCA9685',
         };
     }
     wired(obniz) {
@@ -47391,31 +48280,37 @@ class PCA9685 {
         if (obniz.isValidIO(this.params.oe)) {
             this.io_oe = obniz.getIO(this.params.oe);
         }
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        if (typeof this.params.address === "number") {
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+        if (typeof this.params.address === 'number') {
             this.address = this.params.address;
         }
         this.params.clock = this.params.clock || 400 * 1000; // for i2c
-        this.params.mode = this.params.mode || "master"; // for i2c
-        this.params.pull = this.params.pull || "5v"; // for i2c
+        this.params.mode = this.params.mode || 'master'; // for i2c
+        this.params.pull = this.params.pull || '5v'; // for i2c
         this.i2c = obniz.getI2CWithConfig(this.params);
         if (this.obniz.isValidIO(this.params.srclr)) {
             this.io_srclr = this.obniz.getIO(this.params.srclr);
             this.io_srclr.output(true);
         }
-        if (typeof this.params.enabled !== "boolean") {
+        if (typeof this.params.enabled !== 'boolean') {
             this.params.enabled = true;
         }
         if (this.io_oe && this.params.enabled) {
             this.io_oe.output(false);
         }
-        if (this.params.drive === "open-drain") {
-            this.i2c.write(this.address, [this._commands.MODE2, this._commands.bits.OUTDRV]);
+        if (this.params.drive === 'open-drain') {
+            this.i2c.write(this.address, [
+                this._commands.MODE2,
+                this._commands.bits.OUTDRV,
+            ]);
         }
         let mode1 = this._commands.bits.AUTO_INCREMENT_ENABLED;
         mode1 = mode1 & ~this._commands.bits.SLEEP_ENABLE;
         this.i2c.write(this.address, [this._commands.MODE1, mode1]);
-        this.i2c.write(this.address, [this._commands.MODE1, mode1 | this._commands.bits.RESTART]);
+        this.i2c.write(this.address, [
+            this._commands.MODE1,
+            mode1 | this._commands.bits.RESTART,
+        ]);
         this._regs[this._commands.MODE1] = mode1;
         obniz.wait(10);
     }
@@ -47425,20 +48320,20 @@ class PCA9685 {
         }
     }
     isValidPWM(id) {
-        return typeof id === "number" && id >= 0 && id < this.pwmNum;
+        return typeof id === 'number' && id >= 0 && id < this.pwmNum;
     }
     getPWM(id) {
         if (!this.isValidPWM(id)) {
-            throw new Error("pwm " + id + " is not valid pwm");
+            throw new Error('pwm ' + id + ' is not valid pwm');
         }
         return this.pwms[id];
     }
     freq(frequency) {
-        if (typeof frequency !== "number") {
+        if (typeof frequency !== 'number') {
             return;
         }
         if (frequency < 24 || 1526 < frequency) {
-            throw new Error("freq must be within 24-1526 hz");
+            throw new Error('freq must be within 24-1526 hz');
         }
         if (this._freq === frequency) {
             return;
@@ -47449,7 +48344,10 @@ class PCA9685 {
         prescaleval -= 1.0;
         const prescale = Math.floor(Math.floor(prescaleval + 0.5));
         const mode1 = this._regs[this._commands.MODE1];
-        this.i2c.write(this.address, [this._commands.MODE1, (mode1 & 0x7f) | this._commands.bits.SLEEP_ENABLE]); // enter sleep
+        this.i2c.write(this.address, [
+            this._commands.MODE1,
+            (mode1 & 0x7f) | this._commands.bits.SLEEP_ENABLE,
+        ]); // enter sleep
         this.i2c.write(this.address, [this._commands.PRESCALE, prescale]);
         this.i2c.write(this.address, [this._commands.MODE1, mode1]); // recover from sleep
         this.obniz.wait(5);
@@ -47460,18 +48358,18 @@ class PCA9685 {
         }
     }
     pulse(index, pulse_width) {
-        if (typeof this._freq !== "number" || this._freq <= 0) {
-            throw new Error("please provide freq first.");
+        if (typeof this._freq !== 'number' || this._freq <= 0) {
+            throw new Error('please provide freq first.');
         }
         this.duty(index, (pulse_width / 1000.0 / (1.0 / this._freq)) * 100);
     }
     duty(index, duty) {
         duty *= 1.0;
-        if (typeof this._freq !== "number" || this._freq <= 0) {
-            throw new Error("please provide freq first.");
+        if (typeof this._freq !== 'number' || this._freq <= 0) {
+            throw new Error('please provide freq first.');
         }
-        if (typeof duty !== "number") {
-            throw new Error("please provide duty in number");
+        if (typeof duty !== 'number') {
+            throw new Error('please provide duty in number');
         }
         if (duty < 0) {
             duty = 0;
@@ -47483,7 +48381,13 @@ class PCA9685 {
         this.writeSingleONOFF(index, 0, (duty / 100.0) * 4095);
     }
     writeSingleONOFF(index, on, off) {
-        this.i2c.write(this.address, [this._commands.LED0_ON_L + 4 * index, on & 0xff, on >> 8, off & 0xff, off >> 8]);
+        this.i2c.write(this.address, [
+            this._commands.LED0_ON_L + 4 * index,
+            on & 0xff,
+            on >> 8,
+            off & 0xff,
+            off >> 8,
+        ]);
     }
     setEnable(enable) {
         if (!this.io_oe && enable === false) {
@@ -47513,17 +48417,17 @@ class ServoMotor {
             min: 0.5,
             max: 2.4,
         };
-        this.keys = ["gnd", "vcc", "signal", "pwm"];
+        this.keys = ['gnd', 'vcc', 'signal', 'pwm'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "ServoMotor",
+            name: 'ServoMotor',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         if (obniz.isValidIO(this.params.vcc)) {
             this.io_vcc = obniz.getIO(this.params.vcc);
         }
@@ -47533,7 +48437,7 @@ class ServoMotor {
         else {
             this.pwm = obniz.getFreePwm();
             this.pwm_io_num = this.params.signal;
-            if (typeof this.pwm_io_num !== "number") {
+            if (typeof this.pwm_io_num !== 'number') {
                 throw new Error(`no io specified for pwm`);
             }
             this.pwm.start({ io: this.pwm_io_num });
@@ -47575,12 +48479,12 @@ exports.default = ServoMotor;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Solenoid {
     constructor() {
-        this.keys = ["gnd", "signal"];
-        this.requiredKeys = ["signal"];
+        this.keys = ['gnd', 'signal'];
+        this.requiredKeys = ['signal'];
     }
     static info() {
         return {
-            name: "Solenoid",
+            name: 'Solenoid',
         };
     }
     wired(obniz) {
@@ -47600,14 +48504,14 @@ class Solenoid {
     }
     click(time_msec) {
         this.on();
-        if (typeof time_msec !== "number") {
+        if (typeof time_msec !== 'number') {
             time_msec = 100;
         }
         this.obniz.wait(time_msec);
         this.off();
     }
     doubleClick(time_msec) {
-        if (typeof time_msec !== "number") {
+        if (typeof time_msec !== 'number') {
             time_msec = 100;
         }
         this.click(time_msec);
@@ -47638,19 +48542,19 @@ class StepperMotor {
         this.milliMeterStepCount = 1;
         this.ios = [];
         this._stepInstructions = {
-            "1": [
+            '1': [
                 [0, 1, 1, 1],
                 [1, 0, 1, 1],
                 [1, 1, 0, 1],
                 [1, 1, 1, 0],
             ],
-            "2": [
+            '2': [
                 [0, 0, 1, 1],
                 [1, 0, 0, 1],
                 [1, 1, 0, 0],
                 [0, 1, 1, 0],
             ],
-            "1-2": [
+            '1-2': [
                 [0, 1, 1, 1],
                 [0, 0, 1, 1],
                 [1, 0, 1, 1],
@@ -47661,13 +48565,13 @@ class StepperMotor {
                 [0, 1, 1, 0],
             ],
         };
-        this._stepType = "2";
-        this.keys = ["a", "b", "aa", "bb", "common"];
-        this.requiredKeys = ["a", "b", "aa", "bb"];
+        this._stepType = '2';
+        this.keys = ['a', 'b', 'aa', 'bb', 'common'];
+        this.requiredKeys = ['a', 'b', 'aa', 'bb'];
     }
     static info() {
         return {
-            name: "StepperMotor",
+            name: 'StepperMotor',
         };
     }
     wired(obniz) {
@@ -47675,10 +48579,10 @@ class StepperMotor {
         if (obniz.isValidIO(this.params.common)) {
             this.common = obniz.getIO(this.params.common);
             this.common.output(true);
-            this.type = "unipolar";
+            this.type = 'unipolar';
         }
         else {
-            this.type = "bipolar";
+            this.type = 'bipolar';
         }
         this.ios = [];
         this.ios.push(obniz.getIO(this.params.a));
@@ -47687,8 +48591,8 @@ class StepperMotor {
         this.ios.push(obniz.getIO(this.params.bb));
     }
     async stepWait(step_count) {
-        if (typeof step_count !== "number") {
-            throw new Error("must provide number");
+        if (typeof step_count !== 'number') {
+            throw new Error('must provide number');
         }
         step_count = Math.round(step_count);
         if (step_count === 0) {
@@ -47768,7 +48672,7 @@ class StepperMotor {
     stepType(stepType) {
         const newType = this._stepInstructions[stepType];
         if (!newType) {
-            throw new Error("unknown step type " + stepType);
+            throw new Error('unknown step type ' + stepType);
         }
         this._stepType = stepType;
     }
@@ -47834,15 +48738,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class AXP192 {
     constructor() {
         this.requiredKeys = [];
-        this.keys = ["sda", "scl", "i2c"];
+        this.keys = ['sda', 'scl', 'i2c'];
     }
     static info() {
         return {
-            name: "AXP192",
+            name: 'AXP192',
         };
     }
     wired(obniz) {
-        this.params.mode = "master"; // for i2c
+        this.params.mode = 'master'; // for i2c
         this.params.clock = 400 * 1000; // for i2c
         this.i2c = obniz.getI2CWithConfig(this.params);
     }
@@ -47854,7 +48758,14 @@ class AXP192 {
         this.i2c.write(AXP192_ADDRESS, [address]);
         return await this.i2c.readWait(AXP192_ADDRESS, 1);
     }
-    async setLDO2Voltage(voltage) {
+    /**
+     * @deprecated
+     * @param voltage
+     */
+    setLDO2Voltage(voltage) {
+        return this.setLDO2VoltageWait(voltage);
+    }
+    async setLDO2VoltageWait(voltage) {
         if (voltage < 1.8) {
             voltage = 1.8;
         }
@@ -47867,10 +48778,17 @@ class AXP192 {
             offset = 15;
         }
         set = (set & 0x0f) | (offset << 4);
-        console.log("set voltage to ", set);
+        console.log('set voltage to ', set);
         this.set(REG_VOLT_SET_LDO2_3, set);
     }
-    async setLDO3Voltage(voltage) {
+    /**
+     * @deprecated
+     * @param voltage
+     */
+    setLDO3Voltage(voltage) {
+        this.setLDO3VoltageWait(voltage);
+    }
+    async setLDO3VoltageWait(voltage) {
         if (voltage < 1.8) {
             voltage = 1.8;
         }
@@ -47891,13 +48809,27 @@ class AXP192 {
     enableLDO2_3() {
         this.set(REG_EN_DC1_LDO2_3, 0x4d);
     }
-    async toggleLDO2(val) {
+    /**
+     * @deprecated
+     * @param val
+     */
+    toggleLDO2(val) {
+        return this.toggleLDO2Wait(val);
+    }
+    async toggleLDO2Wait(val) {
         const bit = val ? 1 : 0;
         let state = await this.getWait(REG_EN_DC1_LDO2_3);
         state = (state & LDO2_EN_MASK) | (bit << 2);
         this.set(REG_EN_DC1_LDO2_3, state);
     }
-    async toggleLDO3(val) {
+    /**
+     * @deprecated
+     * @param val
+     */
+    toggleLDO3(val) {
+        return this.toggleLDO3Wait(val);
+    }
+    async toggleLDO3Wait(val) {
         const bit = val ? 1 : 0;
         let state = await this.getWait(REG_EN_DC1_LDO2_3);
         state = (state & LDO3_EN_MASK) | (bit << 3);
@@ -47916,7 +48848,10 @@ class AXP192 {
         this.i2c.write(AXP192_ADDRESS, [REG_CHARGE_OVTEMP, 0xfc]);
         this.i2c.write(AXP192_ADDRESS, [REG_BCKUP_BAT, 0xa2]);
     }
-    async getVbat() {
+    getVbat() {
+        return this.getVbatWait();
+    }
+    async getVbatWait() {
         this.i2c.write(AXP192_ADDRESS, [REG_VBAT_LSB]);
         const vbat_lsb = await this.i2c.readWait(AXP192_ADDRESS, 1);
         this.i2c.write(AXP192_ADDRESS, [REG_VBAT_MSB]);
@@ -47958,8 +48893,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class BMP280 {
     constructor() {
         this.requiredKeys = [];
-        this.keys = ["vcore", "vio", "gnd", "csb", "sdi", "sck", "sdo", "i2c", "address"];
-        this.ioKeys = ["vcore", "vio", "gnd", "csb", "sdi", "sdo", "sck"];
+        this.keys = [
+            'vcore',
+            'vio',
+            'gnd',
+            'csb',
+            'sdi',
+            'sck',
+            'sdo',
+            'i2c',
+            'address',
+        ];
+        this.ioKeys = ['vcore', 'vio', 'gnd', 'csb', 'sdi', 'sdo', 'sck'];
         this.configration = {
             sampling: {
                 temp: 1,
@@ -47982,8 +48927,8 @@ class BMP280 {
     }
     static info() {
         return {
-            name: "BMP280",
-            datasheet: "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp280-ds001.pdf",
+            name: 'BMP280',
+            datasheet: 'https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp280-ds001.pdf',
         };
     }
     wired(obniz) {
@@ -47991,12 +48936,12 @@ class BMP280 {
         if (obniz.isValidIO(this.params.csb)) {
             // selecting I2C mode before powerup
             this.io_csb = obniz.getIO(this.params.csb);
-            this.io_csb.drive("3v");
+            this.io_csb.drive('3v');
             this.io_csb.output(true);
         }
-        this.obniz.setVccGnd(this.params.vio, null, "3v");
-        this.obniz.setVccGnd(this.params.vcore, null, "3v");
-        this.obniz.setVccGnd(null, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vio, null, '3v');
+        this.obniz.setVccGnd(this.params.vcore, null, '3v');
+        this.obniz.setVccGnd(null, this.params.gnd, '5v');
         this.obniz.wait(10);
         this.address = 0x76;
         if (this.params.address === 0x76) {
@@ -48006,28 +48951,41 @@ class BMP280 {
             this.address = 0x77;
         }
         else if (this.params.address !== undefined) {
-            throw new Error("address must be 0x76 or 0x77");
+            throw new Error('address must be 0x76 or 0x77');
         }
         if (obniz.isValidIO(this.params.sdo)) {
             this.io_sdo = obniz.getIO(this.params.sdo);
-            this.io_sdo.drive("3v");
+            this.io_sdo.drive('3v');
             this.io_sdo.output(this.address === 0x76 ? false : true);
         }
         this.params.sda = this.params.sda || this.params.sdi;
         this.params.scl = this.params.scl || this.params.sck;
         this.params.clock = this.params.clock || 100 * 1000;
-        this.params.mode = "master";
-        this.params.pull = "3v";
+        this.params.mode = 'master';
+        this.params.pull = '3v';
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.obniz.wait(10);
         this.config();
         this.obniz.wait(10);
     }
-    async setIIRStrength(strengh) {
-        this.configration.iir_strength = strengh;
-        this.config();
+    /**
+     * @deprecated
+     * @param strength
+     */
+    setIIRStrength(strength) {
+        return this.setIIRStrengthWait(strength);
     }
-    async applyCalibration() {
+    async setIIRStrengthWait(strengh) {
+        this.configration.iir_strength = strengh;
+        await this.configWait();
+    }
+    /**
+     * @deprecated
+     */
+    applyCalibration() {
+        return this.applyCalibrationWait();
+    }
+    async applyCalibrationWait() {
         this.i2c.write(this.address, [0x88]);
         const data = await this.i2c.readWait(this.address, 24);
         this._calibrated = {
@@ -48065,19 +49023,30 @@ class BMP280 {
         return this.calcAltitude(pressure);
     }
     calcAltitude(pressure, seaPressure) {
-        if (typeof seaPressure !== "number") {
+        if (typeof seaPressure !== 'number') {
             seaPressure = 1013.25;
         }
-        return (1.0 - Math.pow(pressure / seaPressure, 1 / 5.2553)) * 145366.45 * 0.3048;
+        return ((1.0 - Math.pow(pressure / seaPressure, 1 / 5.2553)) * 145366.45 * 0.3048);
     }
-    async config() {
+    /**
+     * @deprecated
+     * @private
+     */
+    config() {
+        return this.configWait();
+    }
+    async configWait() {
         this.write([
             this.commands.addresses.config,
-            (this.configration.interval << 5) | (this.configration.iir_strength << 2) | 0,
+            (this.configration.interval << 5) |
+                (this.configration.iir_strength << 2) |
+                0,
         ]);
         this.write([
             this.commands.addresses.ctrl_meas,
-            (this.configration.sampling.temp << 5) | (this.configration.sampling.pres << 2) | this.configration.mode,
+            (this.configration.sampling.temp << 5) |
+                (this.configration.sampling.pres << 2) |
+                this.configration.mode,
         ]);
     }
     _readSigned16(value) {
@@ -48095,21 +49064,24 @@ class BMP280 {
     write(data) {
         this.i2c.write(this.address, data);
     }
-    async getData() {
+    getData() {
+        return this.getDataWait();
+    }
+    async getDataWait() {
         this.i2c.write(this.address, [0xf7]);
         return await this.i2c.readWait(this.address, 6);
     }
     calibration_T(adc_T) {
-        let var1;
-        let var2;
-        let T;
-        var1 = (((adc_T >> 3) - (this._calibrated.dig_T1 << 1)) * this._calibrated.dig_T2) >> 11;
-        var2 =
-            (((((adc_T >> 4) - this._calibrated.dig_T1) * ((adc_T >> 4) - this._calibrated.dig_T1)) >> 12) *
-                this._calibrated.dig_T3) >>
-                14;
+        const var1 = (((adc_T >> 3) - (this._calibrated.dig_T1 << 1)) *
+            this._calibrated.dig_T2) >>
+            11;
+        const var2 = (((((adc_T >> 4) - this._calibrated.dig_T1) *
+            ((adc_T >> 4) - this._calibrated.dig_T1)) >>
+            12) *
+            this._calibrated.dig_T3) >>
+            14;
         this._t_fine = var1 + var2;
-        T = (this._t_fine * 5 + 128) >> 8;
+        const T = (this._t_fine * 5 + 128) >> 8;
         return T;
     }
     calibration_P(adc_P) {
@@ -48117,7 +49089,10 @@ class BMP280 {
         let pvar2 = (pvar1 * pvar1 * this._calibrated.dig_P6) / 32768;
         pvar2 = pvar2 + pvar1 * this._calibrated.dig_P5 * 2;
         pvar2 = pvar2 / 4 + this._calibrated.dig_P4 * 65536;
-        pvar1 = ((this._calibrated.dig_P3 * pvar1 * pvar1) / 524288 + this._calibrated.dig_P2 * pvar1) / 524288;
+        pvar1 =
+            ((this._calibrated.dig_P3 * pvar1 * pvar1) / 524288 +
+                this._calibrated.dig_P2 * pvar1) /
+                524288;
         pvar1 = (1 + pvar1 / 32768) * this._calibrated.dig_P1;
         if (pvar1 !== 0) {
             let p = 1048576 - adc_P;
@@ -48267,38 +49242,45 @@ class DPS310 {
                 length: 3,
             },
         };
-        this.scaling_facts = [524288, 1572864, 3670016, 7864320, 253952, 516096, 1040384, 2088960];
-        this.requiredKeys = ["sda", "scl"];
-        this.keys = ["gpio3", "vcc", "gnd", "scl", "sda"];
-        this.ioKeys = ["gpio3", "vcc", "gnd", "scl", "sda"];
+        this.scaling_facts = [
+            524288,
+            1572864,
+            3670016,
+            7864320,
+            253952,
+            516096,
+            1040384,
+            2088960,
+        ];
+        this.requiredKeys = ['sda', 'scl'];
+        this.keys = ['gpio3', 'vcc', 'gnd', 'scl', 'sda'];
+        this.ioKeys = ['gpio3', 'vcc', 'gnd', 'scl', 'sda'];
         this.coeffs = {};
         this.opMode = this.mode.IDLE;
     }
     static info() {
         return {
-            name: "DPS310",
-            datasheet: "",
+            name: 'DPS310',
+            datasheet: '',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
         this.address = 0x77;
-        this.params.sda = this.params.sda;
-        this.params.scl = this.params.scl;
         this.params.clock = this.params.clock || 100 * 1000;
-        this.params.mode = "master";
-        this.params.pull = "3v";
+        this.params.mode = 'master';
+        this.params.pull = '3v';
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.obniz.wait(10);
     }
     async initWait() {
         const prodId = await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_PROD_ID);
         if (prodId !== 0) {
-            throw new Error("invalid prodId");
+            throw new Error('invalid prodId');
         }
         await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_REV_ID);
         await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_TEMP_SENSORREC);
-        await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SENSOR, 0);
+        await this.writeByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_TEMP_SENSOR, 0);
         await this.readCoeffsWait();
         await this.standbyWait();
         await this.configTempWait(this.DPS310__TEMP_STD_MR, this.DPS310__TEMP_STD_OSR);
@@ -48351,49 +49333,53 @@ class DPS310 {
         this.i2c.write(this.address, [regAddress, data]);
         if (check) {
             if ((await this.readByteWait(regAddress)) !== data) {
-                throw new Error("DPS310 data write failed");
+                throw new Error('DPS310 data write failed');
             }
         }
     }
-    async writeByteBitfield(field, data, check) {
+    async writeByteBitfieldWait(field, data, check) {
         const old = await this.readByteWait(field.address);
         const sendData = (old & ~field.mask) | ((data << field.shift) & field.mask);
         await this.writeByteWait(field.address, sendData, check);
     }
     async setOpModeDetailWait(background, temperature, pressure) {
-        const opMode = ((background & this.DPS310__LSB) << 2) | ((temperature & this.DPS310__LSB) << 1) | (pressure & this.DPS310__LSB);
+        const opMode = ((background & this.DPS310__LSB) << 2) |
+            ((temperature & this.DPS310__LSB) << 1) |
+            (pressure & this.DPS310__LSB);
         return await this.setOpModeWait(opMode);
     }
     async setOpModeWait(opMode) {
-        opMode &= this.bitFileds.DPS310__REG_INFO_OPMODE.mask >> this.bitFileds.DPS310__REG_INFO_OPMODE.shift;
+        opMode &=
+            this.bitFileds.DPS310__REG_INFO_OPMODE.mask >>
+                this.bitFileds.DPS310__REG_INFO_OPMODE.shift;
         await this.writeByteWait(this.bitFileds.DPS310__REG_INFO_OPMODE.address, opMode);
         this.opMode = opMode;
     }
     async standbyWait() {
         this.setOpModeWait(this.mode.IDLE);
-        await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_FIFO_FL, 1);
-        await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_FIFO_EN, 0);
+        await this.writeByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_FIFO_FL, 1);
+        await this.writeByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_FIFO_EN, 0);
     }
     async configTempWait(tempMr, tempOsr) {
-        await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_MR, tempMr);
-        await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_OSR, tempOsr);
+        await this.writeByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_TEMP_MR, tempMr);
+        await this.writeByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_TEMP_OSR, tempOsr);
         if (tempOsr > this.DPS310__OSR_SE) {
-            await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SE, 1);
+            await this.writeByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_TEMP_SE, 1);
         }
         else {
-            await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SE, 0);
+            await this.writeByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_TEMP_SE, 0);
         }
         this.tempMr = tempMr;
         this.tempOsr = tempOsr;
     }
     async configPressureWait(prsMr, prsOsr) {
-        await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_MR, prsMr);
-        await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_OSR, prsOsr);
+        await this.writeByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_PRS_MR, prsMr);
+        await this.writeByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_PRS_OSR, prsOsr);
         if (prsOsr > this.DPS310__OSR_SE) {
-            await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_SE, 1);
+            await this.writeByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_PRS_SE, 1);
         }
         else {
-            await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_SE, 0);
+            await this.writeByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_PRS_SE, 0);
         }
         this.prsMr = prsMr;
         this.prsOsr = prsOsr;
@@ -48409,11 +49395,13 @@ class DPS310 {
         if (this.coeffs.m_c1 & (1 << 11)) {
             this.coeffs.m_c1 -= 1 << 12;
         }
-        this.coeffs.m_c00 = (buffer[3] << 12) | (buffer[4] << 4) | ((buffer[5] >> 4) & 0x0f);
+        this.coeffs.m_c00 =
+            (buffer[3] << 12) | (buffer[4] << 4) | ((buffer[5] >> 4) & 0x0f);
         if (this.coeffs.m_c00 & (1 << 19)) {
             this.coeffs.m_c00 -= 1 << 20;
         }
-        this.coeffs.m_c10 = ((buffer[5] & 0x0f) << 16) | (buffer[6] << 8) | buffer[7];
+        this.coeffs.m_c10 =
+            ((buffer[5] & 0x0f) << 16) | (buffer[6] << 8) | buffer[7];
         if (this.coeffs.m_c10 & (1 << 19)) {
             this.coeffs.m_c10 -= 1 << 20;
         }
@@ -48453,7 +49441,7 @@ class DPS310 {
         let oldMode;
         switch (rdy) {
             case this.DPS310__FAIL_UNKNOWN:
-                throw new Error("DPS310__FAIL_UNKNOWN");
+                throw new Error('DPS310__FAIL_UNKNOWN');
             case 0:
                 return this.obniz.wait(10).then(() => {
                     return this.getSingleResultWait();
@@ -48467,10 +49455,10 @@ class DPS310 {
                     case this.mode.CMD_PRS:
                         return await this.getPressureWait();
                     default:
-                        throw new Error("DPS310__FAIL_UNKNOWN");
+                        throw new Error('DPS310__FAIL_UNKNOWN');
                 }
         }
-        throw new Error("DPS310__FAIL_UNKNOWN");
+        throw new Error('DPS310__FAIL_UNKNOWN');
     }
     async startMeasureTempOnceWait(oversamplingRate) {
         await this.configTempWait(0, oversamplingRate);
@@ -48485,8 +49473,12 @@ class DPS310 {
         prs /= this.scaling_facts[this.prsOsr];
         prs =
             this.coeffs.m_c00 +
-                prs * (this.coeffs.m_c10 + prs * (this.coeffs.m_c20 + prs * this.coeffs.m_c30)) +
-                this.m_lastTempScal * (this.coeffs.m_c01 + prs * (this.coeffs.m_c11 + prs * this.coeffs.m_c21));
+                prs *
+                    (this.coeffs.m_c10 +
+                        prs * (this.coeffs.m_c20 + prs * this.coeffs.m_c30)) +
+                this.m_lastTempScal *
+                    (this.coeffs.m_c01 +
+                        prs * (this.coeffs.m_c11 + prs * this.coeffs.m_c21));
         return prs;
     }
     calcTemp(raw) {
@@ -48547,19 +49539,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class FSR40X {
     constructor() {
         this.pressure = 0;
-        this.keys = ["pin0", "pin1"];
-        this.requiredKeys = ["pin0", "pin1"];
+        this.keys = ['pin0', 'pin1'];
+        this.requiredKeys = ['pin0', 'pin1'];
     }
     static info() {
         return {
-            name: "FSR40X",
+            name: 'FSR40X',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
         this.io_pwr = obniz.getIO(this.params.pin0);
         this.ad = obniz.getAD(this.params.pin1);
-        this.io_pwr.drive("5v");
+        this.io_pwr.drive('5v');
         this.io_pwr.output(true);
         this.ad.start((value) => {
             const pressure = value * 100;
@@ -48593,17 +49585,17 @@ exports.default = FSR40X;
 Object.defineProperty(exports, "__esModule", { value: true });
 class SEN0114 {
     constructor() {
-        this.keys = ["vcc", "output", "gnd"];
-        this.requiredKeys = ["output"];
+        this.keys = ['vcc', 'output', 'gnd'];
+        this.requiredKeys = ['output'];
     }
     static info() {
         return {
-            name: "SEN0114",
+            name: 'SEN0114',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.ad = obniz.getAD(this.params.output);
         this.ad.start((value) => {
             this.value = value;
@@ -48633,23 +49625,23 @@ exports.default = SEN0114;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Speaker {
     constructor(obniz) {
-        this.keys = ["signal", "gnd"];
-        this.requiredKeys = ["signal"];
+        this.keys = ['signal', 'gnd'];
+        this.requiredKeys = ['signal'];
     }
     static info() {
         return {
-            name: "Speaker",
+            name: 'Speaker',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(null, this.params.gnd, "5v");
+        this.obniz.setVccGnd(null, this.params.gnd, '5v');
         this.pwm = obniz.getFreePwm();
         this.pwm.start({ io: this.params.signal });
     }
     play(frequency) {
-        if (typeof frequency !== "number") {
-            throw new Error("freq must be a number");
+        if (typeof frequency !== 'number') {
+            throw new Error('freq must be a number');
         }
         frequency = Math.floor(frequency); // temporary
         if (frequency > 0) {
@@ -48678,9 +49670,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class AnalogTemperatureSensor {
     constructor() {
         this.temp = 0;
-        this.keys = ["vcc", "gnd", "output"];
-        this.requiredKeys = ["output"];
-        this.drive = "5v";
+        this.keys = ['vcc', 'gnd', 'output'];
+        this.requiredKeys = ['output'];
+        this.drive = '5v';
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -48727,7 +49719,7 @@ class LM35DZ extends AnalogTemperatureSensor_1.default {
     }
     static info() {
         return {
-            name: "LM35DZ",
+            name: 'LM35DZ',
         };
     }
     calc(voltage) {
@@ -48770,7 +49762,7 @@ const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/sr
 class LM60 extends AnalogTemperatureSensor_1.default {
     static info() {
         return {
-            name: "LM60",
+            name: 'LM60',
         };
     }
     calc(voltage) {
@@ -48795,7 +49787,7 @@ const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/sr
 class LM61 extends AnalogTemperatureSensor_1.default {
     static info() {
         return {
-            name: "LM61",
+            name: 'LM61',
         };
     }
     calc(voltage) {
@@ -48820,7 +49812,7 @@ const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/sr
 class LMT87 extends AnalogTemperatureSensor_1.default {
     static info() {
         return {
-            name: "LMT87",
+            name: 'LMT87',
         };
     }
     calc(voltage) {
@@ -48845,7 +49837,7 @@ const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/sr
 class MCP9700 extends AnalogTemperatureSensor_1.default {
     static info() {
         return {
-            name: "MCP9700",
+            name: 'MCP9700',
         };
     }
     calc(voltage) {
@@ -48870,7 +49862,7 @@ const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/sr
 class MCP9701 extends AnalogTemperatureSensor_1.default {
     static info() {
         return {
-            name: "MCP9701",
+            name: 'MCP9701',
         };
     }
     calc(voltage) {
@@ -48899,7 +49891,7 @@ const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/sr
 class S8100B extends AnalogTemperatureSensor_1.default {
     static info() {
         return {
-            name: "S8100B",
+            name: 'S8100B',
         };
     }
     calc(voltage) {
@@ -48928,7 +49920,7 @@ const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/sr
 class S8120C extends AnalogTemperatureSensor_1.default {
     static info() {
         return {
-            name: "S8120C",
+            name: 'S8120C',
         };
     }
     calc(voltage) {
@@ -48952,17 +49944,17 @@ exports.default = S8120C;
 Object.defineProperty(exports, "__esModule", { value: true });
 class ADT7410 {
     constructor() {
-        this.keys = ["vcc", "gnd", "sda", "scl", "addressMode"];
-        this.requiredKeys = ["addressMode"];
+        this.keys = ['vcc', 'gnd', 'sda', 'scl', 'addressMode'];
+        this.requiredKeys = ['addressMode'];
     }
     static info() {
         return {
-            name: "ADT7410",
+            name: 'ADT7410',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         if (this.params.addressMode === 8) {
             this.address = 0x48;
         }
@@ -48973,8 +49965,8 @@ class ADT7410 {
             throw new Error(`please specify address. 8 or 9`);
         }
         this.params.clock = 400000;
-        this.params.pull = "5v";
-        this.params.mode = "master";
+        this.params.pull = '5v';
+        this.params.mode = 'master';
         this.i2c = obniz.getI2CWithConfig(this.params);
     }
     async getTempWait() {
@@ -49005,20 +49997,20 @@ exports.default = ADT7410;
 Object.defineProperty(exports, "__esModule", { value: true });
 class AM2320 {
     constructor() {
-        this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
+        this.keys = ['vcc', 'gnd', 'sda', 'scl', 'i2c'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "AM2320",
+            name: 'AM2320',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.address = 0x5c;
-        this.params.pull = "5v";
-        this.params.mode = "master";
+        this.params.pull = '5v';
+        this.params.mode = 'master';
         this.params.clock = this.params.clock || 100 * 1000;
         this.i2c = obniz.getI2CWithConfig(this.params);
     }
@@ -49067,8 +50059,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class AMG8833 {
     constructor() {
         this.requiredKeys = [];
-        this.keys = ["vcc", "gnd", "sda", "scl", "address"];
-        this.ioKeys = ["vcc", "gnd", "sda", "scl"];
+        this.keys = ['vcc', 'gnd', 'sda', 'scl', 'address'];
+        this.ioKeys = ['vcc', 'gnd', 'sda', 'scl'];
         this.commands = {};
         this.commands.mode_normal = [0x00, 0x00];
         this.commands.reset_flag = [0x01, 0x30];
@@ -49086,12 +50078,12 @@ class AMG8833 {
     }
     static info() {
         return {
-            name: "AMG8833",
+            name: 'AMG8833',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.address = 0x69;
         if (this.params.address === 0x69) {
             this.address = 0x69;
@@ -49100,10 +50092,10 @@ class AMG8833 {
             this.address = 0x68;
         }
         else if (this.params.address !== undefined) {
-            throw new Error("address must be 0x68 or 0x69");
+            throw new Error('address must be 0x68 or 0x69');
         }
         this.params.clock = this.params.clock || 400 * 1000; // for i2c
-        this.params.mode = this.params.mode || "master"; // for i2c
+        this.params.mode = this.params.mode || 'master'; // for i2c
         this.params.pull = this.params.pull || null; // for i2c
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.obniz.wait(50);
@@ -49120,7 +50112,7 @@ class AMG8833 {
             pixelAddrH = 0x81 + pixel * 2;
         }
         else {
-            throw new Error("pixel number must be range of 0 to 63");
+            throw new Error('pixel number must be range of 0 to 63');
         }
         this.i2c.write(this.address, [pixelAddrL]);
         const dataL = await this.i2c.readWait(this.address, 1);
@@ -49178,8 +50170,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class BME280 {
     constructor() {
         this.requiredKeys = [];
-        this.keys = ["vcore", "vio", "gnd", "csb", "sdi", "sck", "sdo", "i2c", "address"];
-        this.ioKeys = ["vcore", "vio", "gnd", "csb", "sdi", "sdo", "sck"];
+        this.keys = [
+            'vcore',
+            'vio',
+            'gnd',
+            'csb',
+            'sdi',
+            'sck',
+            'sdo',
+            'i2c',
+            'address',
+        ];
+        this.ioKeys = ['vcore', 'vio', 'gnd', 'csb', 'sdi', 'sdo', 'sck'];
         this.configration = {
             sampling: {
                 temp: 1,
@@ -49204,8 +50206,8 @@ class BME280 {
     }
     static info() {
         return {
-            name: "BME280",
-            datasheet: "https://ae-bst.resource.bosch.com/media/_tech/media/datasheets/BST-BME280_DS001-12.pdf",
+            name: 'BME280',
+            datasheet: 'https://ae-bst.resource.bosch.com/media/_tech/media/datasheets/BST-BME280_DS001-12.pdf',
         };
     }
     wired(obniz) {
@@ -49213,12 +50215,12 @@ class BME280 {
         if (obniz.isValidIO(this.params.csb)) {
             // selecting I2C mode before powerup
             this.io_csb = obniz.getIO(this.params.csb);
-            this.io_csb.drive("3v");
+            this.io_csb.drive('3v');
             this.io_csb.output(true);
         }
-        this.obniz.setVccGnd(this.params.vio, null, "3v");
-        this.obniz.setVccGnd(this.params.vcore, null, "3v");
-        this.obniz.setVccGnd(null, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vio, null, '3v');
+        this.obniz.setVccGnd(this.params.vcore, null, '3v');
+        this.obniz.setVccGnd(null, this.params.gnd, '5v');
         this.obniz.wait(10);
         this.address = 0x76;
         if (this.params.address === 0x76) {
@@ -49228,39 +50230,59 @@ class BME280 {
             this.address = 0x77;
         }
         else if (this.params.address !== undefined) {
-            throw new Error("address must be 0x76 or 0x77");
+            throw new Error('address must be 0x76 or 0x77');
         }
         if (obniz.isValidIO(this.params.sdo)) {
             this.io_sdo = obniz.getIO(this.params.sdo);
-            this.io_sdo.drive("3v");
+            this.io_sdo.drive('3v');
             this.io_sdo.output(this.address === 0x76 ? false : true);
         }
         this.params.sda = this.params.sda || this.params.sdi;
         this.params.scl = this.params.scl || this.params.sck;
         this.params.clock = this.params.clock || 100 * 1000;
-        this.params.mode = "master";
-        this.params.pull = "3v";
+        this.params.mode = 'master';
+        this.params.pull = '3v';
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.obniz.wait(10);
         this.config();
         this.obniz.wait(10);
     }
-    async config() {
+    config() {
         this.write([
             this.commands.addresses.config,
-            (this.configration.interval << 5) | (this.configration.iir_strength << 2) | 0,
+            (this.configration.interval << 5) |
+                (this.configration.iir_strength << 2) |
+                0,
         ]);
-        this.write([this.commands.addresses.ctrl_hum, this.configration.sampling.hum]);
+        this.write([
+            this.commands.addresses.ctrl_hum,
+            this.configration.sampling.hum,
+        ]);
         this.write([
             this.commands.addresses.ctrl_meas,
-            (this.configration.sampling.temp << 5) | (this.configration.sampling.pres << 2) | this.configration.mode,
+            (this.configration.sampling.temp << 5) |
+                (this.configration.sampling.pres << 2) |
+                this.configration.mode,
         ]);
     }
-    async setIIRStrength(strengh) {
+    /**
+     * @deprecated
+     * @param strengh
+     */
+    setIIRStrength(strengh) {
+        return this.setIIRStrengthWait(strengh);
+    }
+    async setIIRStrengthWait(strengh) {
         this.configration.iir_strength = strengh;
         this.config();
     }
-    async applyCalibration() {
+    /**
+     * @deprecated
+     */
+    applyCalibration() {
+        return this.applyCalibrationWait();
+    }
+    async applyCalibrationWait() {
         this.i2c.write(this.address, [0x88]);
         const data = await this.i2c.readWait(this.address, 24);
         this.i2c.write(this.address, [0xa1]);
@@ -49306,7 +50328,13 @@ class BME280 {
     write(data) {
         this.i2c.write(this.address, data);
     }
-    async getData() {
+    /**
+     * @deprecated
+     */
+    getData() {
+        return this.getDataWait();
+    }
+    async getDataWait() {
         this.i2c.write(this.address, [0xf7]);
         return await this.i2c.readWait(this.address, 8);
     }
@@ -49321,16 +50349,16 @@ class BME280 {
         return { temperature, humidity, pressure };
     }
     calibration_T(adc_T) {
-        let var1;
-        let var2;
-        let T;
-        var1 = (((adc_T >> 3) - (this._calibrated.dig_T1 << 1)) * this._calibrated.dig_T2) >> 11;
-        var2 =
-            (((((adc_T >> 4) - this._calibrated.dig_T1) * ((adc_T >> 4) - this._calibrated.dig_T1)) >> 12) *
-                this._calibrated.dig_T3) >>
-                14;
+        const var1 = (((adc_T >> 3) - (this._calibrated.dig_T1 << 1)) *
+            this._calibrated.dig_T2) >>
+            11;
+        const var2 = (((((adc_T >> 4) - this._calibrated.dig_T1) *
+            ((adc_T >> 4) - this._calibrated.dig_T1)) >>
+            12) *
+            this._calibrated.dig_T3) >>
+            14;
         this._t_fine = var1 + var2;
-        T = (this._t_fine * 5 + 128) >> 8;
+        const T = (this._t_fine * 5 + 128) >> 8;
         return T;
     }
     calibration_P(adc_P) {
@@ -49338,7 +50366,10 @@ class BME280 {
         let pvar2 = (pvar1 * pvar1 * this._calibrated.dig_P6) / 32768;
         pvar2 = pvar2 + pvar1 * this._calibrated.dig_P5 * 2;
         pvar2 = pvar2 / 4 + this._calibrated.dig_P4 * 65536;
-        pvar1 = ((this._calibrated.dig_P3 * pvar1 * pvar1) / 524288 + this._calibrated.dig_P2 * pvar1) / 524288;
+        pvar1 =
+            ((this._calibrated.dig_P3 * pvar1 * pvar1) / 524288 +
+                this._calibrated.dig_P2 * pvar1) /
+                524288;
         pvar1 = (1 + pvar1 / 32768) * this._calibrated.dig_P1;
         if (pvar1 !== 0) {
             let p = 1048576 - adc_P;
@@ -49353,9 +50384,14 @@ class BME280 {
     calibration_H(adc_H) {
         let h = this._t_fine - 76800;
         h =
-            (adc_H - (this._calibrated.dig_H4 * 64 + (this._calibrated.dig_H5 / 16384) * h)) *
+            (adc_H -
+                (this._calibrated.dig_H4 * 64 +
+                    (this._calibrated.dig_H5 / 16384) * h)) *
                 ((this._calibrated.dig_H2 / 65536) *
-                    (1 + (this._calibrated.dig_H6 / 67108864) * h * (1 + (this._calibrated.dig_H3 / 67108864) * h)));
+                    (1 +
+                        (this._calibrated.dig_H6 / 67108864) *
+                            h *
+                            (1 + (this._calibrated.dig_H3 / 67108864) * h)));
         h = h * (1 - (this._calibrated.dig_H1 * h) / 524288);
         return h;
     }
@@ -49376,10 +50412,10 @@ class BME280 {
         return this.calcAltitude(pressure);
     }
     calcAltitude(pressure, seaPressure) {
-        if (typeof seaPressure !== "number") {
+        if (typeof seaPressure !== 'number') {
             seaPressure = 1013.25;
         }
-        return (1.0 - Math.pow(pressure / seaPressure, 1 / 5.2553)) * 145366.45 * 0.3048;
+        return ((1.0 - Math.pow(pressure / seaPressure, 1 / 5.2553)) * 145366.45 * 0.3048);
     }
 }
 exports.default = BME280;
@@ -49400,22 +50436,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class D6T44L {
     constructor() {
         this.requiredKeys = [];
-        this.keys = ["vcc", "gnd", "sda", "scl", "clock"];
+        this.keys = ['vcc', 'gnd', 'sda', 'scl', 'clock'];
         this.address = 0x0a;
-        this.ioKeys = ["vcc", "gnd", "sda", "scl"];
+        this.ioKeys = ['vcc', 'gnd', 'sda', 'scl'];
         this.commands = {};
         this.commands.read_data = [0x4c];
     }
     static info() {
         return {
-            name: "D6T44L",
+            name: 'D6T44L',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.params.clock = this.params.clock || 100 * 1000; // for i2c
-        this.params.mode = this.params.mode || "master"; // for i2c
+        this.params.mode = this.params.mode || 'master'; // for i2c
         this.params.pull = this.params.pull || null; // for i2c
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.obniz.wait(50);
@@ -49460,13 +50496,13 @@ class DHT12 extends i2cParts_1.default {
         this.i2cinfo = {
             address: 0x5c,
             clock: 100000,
-            voltage: "3v",
-            pull: "3v",
+            voltage: '3v',
+            pull: '3v',
         };
     }
     static info() {
         return {
-            name: "DHT12",
+            name: 'DHT12',
         };
     }
     i2cInfo() {
@@ -49515,19 +50551,19 @@ exports.default = DHT12;
 Object.defineProperty(exports, "__esModule", { value: true });
 class S5851A {
     constructor() {
-        this.requiredKeys = ["vcc", "gnd", "adr0", "adr1", "adr_select"];
-        this.keys = ["sda", "scl", "adr0", "adr1", "adr_select", "i2c"];
+        this.requiredKeys = ['vcc', 'gnd', 'adr0', 'adr1', 'adr_select'];
+        this.keys = ['sda', 'scl', 'adr0', 'adr1', 'adr_select', 'i2c'];
     }
     static info() {
         return {
-            name: "S5851A",
+            name: 'S5851A',
         };
     }
     wired(obniz) {
         // params: pwr, gnd, sda, scl, adr0, adr1, adr_select
         this.io_adr0 = obniz.getIO(this.params.adr0);
         this.io_adr1 = obniz.getIO(this.params.adr1);
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         switch (this.params.adr_select) {
             case 8:
                 this.io_adr0.output(false);
@@ -49539,32 +50575,32 @@ class S5851A {
                 this.io_adr1.output(false);
                 this.address = 0x49;
                 break;
-            case "A":
+            case 'A':
                 this.io_adr0.output(true);
                 this.io_adr1.output(false);
                 this.address = 0x4a;
                 break;
-            case "B":
+            case 'B':
                 this.io_adr0.output(false);
                 this.io_adr1.output(true);
                 this.address = 0x4b;
                 break;
-            case "C":
+            case 'C':
                 this.io_adr0.pull(null);
                 this.io_adr1.output(true);
                 this.address = 0x4c;
                 break;
-            case "D":
+            case 'D':
                 this.io_adr0.output(true);
                 this.io_adr1.output(true);
                 this.address = 0x4d;
                 break;
-            case "E":
+            case 'E':
                 this.io_adr0.output(false);
                 this.io_adr1.pull(null);
                 this.address = 0x4e;
                 break;
-            case "F":
+            case 'F':
                 this.io_adr0.output(true);
                 this.io_adr1.pull(null);
                 this.address = 0x4f;
@@ -49575,10 +50611,10 @@ class S5851A {
                 this.address = 0x48;
                 break;
         }
-        console.log("i2c address=" + this.address);
+        console.log('i2c address=' + this.address);
         this.params.clock = this.params.clock || 400 * 1000; // for i2c
-        this.params.mode = this.params.mode || "master"; // for i2c
-        this.params.pull = this.params.pull || "5v"; // for i2c
+        this.params.mode = this.params.mode || 'master'; // for i2c
+        this.params.pull = this.params.pull || '5v'; // for i2c
         this.i2c = obniz.getI2CWithConfig(this.params);
         // obniz.i2c0.write(address, [0x20, 0x24]);
     }
@@ -49588,7 +50624,7 @@ class S5851A {
         // obniz.i2c0.write(address, [0xE0, 0x00]);
         const ret = await this.i2c0.readWait(this.address, 2);
         // console.log('ret:' + ret);
-        const tempBin = ret[0].toString(2) + ("00000000" + ret[1].toString(2)).slice(-8);
+        const tempBin = ret[0].toString(2) + ('00000000' + ret[1].toString(2)).slice(-8);
         const temperature = -45 + 175 * (parseInt(tempBin, 2) / (65536 - 1));
         return temperature;
     }
@@ -49599,7 +50635,7 @@ class S5851A {
         this.i2c.write(this.address, [0x20, 0x24]);
         this.i2c.write(this.address, [0xe0, 0x00]);
         const ret = await this.i2c.readWait(this.address, 4);
-        const humdBin = ret[2].toString(2) + ("00000000" + ret[3].toString(2)).slice(-8);
+        const humdBin = ret[2].toString(2) + ('00000000' + ret[3].toString(2)).slice(-8);
         const humidity = 100 * (parseInt(humdBin, 2) / (65536 - 1));
         return humidity;
     }
@@ -49622,8 +50658,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class SHT20 {
     constructor() {
         this.requiredKeys = [];
-        this.keys = ["vcc", "sda", "scl", "gnd", "i2c", "pull"];
-        this.ioKeys = ["vcc", "sda", "scl", "gnd"];
+        this.keys = ['vcc', 'sda', 'scl', 'gnd', 'i2c', 'pull'];
+        this.ioKeys = ['vcc', 'sda', 'scl', 'gnd'];
         this.commands = {};
         this.commands.softReset = [0xfe];
         this.commands.tempNoHold = [0xf3];
@@ -49631,21 +50667,28 @@ class SHT20 {
     }
     static info() {
         return {
-            name: "SHT20",
+            name: 'SHT20',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '3v');
         this.address = 0x40;
         this.params.clock = this.params.clock || 100 * 1000; // for i2c
-        this.params.mode = this.params.mode || "master"; // for i2c
-        this.params.pull = this.params.pull || "3v"; // for i2c
+        this.params.mode = this.params.mode || 'master'; // for i2c
+        this.params.pull = this.params.pull || '3v'; // for i2c
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.i2c.write(this.address, this.commands.softReset);
         this.obniz.wait(50);
     }
-    async getData(command) {
+    /**
+     * @deprecated
+     * @param command
+     */
+    getData(command) {
+        return this.getDataWait(command);
+    }
+    async getDataWait(command) {
         this.i2c.write(this.address, command);
         await this.obniz.wait(100);
         const data = await this.i2c.readWait(this.address, 3);
@@ -49656,17 +50699,17 @@ class SHT20 {
         return rawValue & 0xfffc;
     }
     async getTempWait() {
-        const rawTemperature = await this.getData(this.commands.tempNoHold);
+        const rawTemperature = await this.getDataWait(this.commands.tempNoHold);
         if (rawTemperature < 0) {
-            console.log("error sht20", rawTemperature);
+            console.log('error sht20', rawTemperature);
             return rawTemperature;
         }
         return rawTemperature * (175.72 / 65536.0) - 46.85;
     }
     async getHumidWait() {
-        const rawHumidity = await this.getData(this.commands.humidityNoHold);
+        const rawHumidity = await this.getDataWait(this.commands.humidityNoHold);
         if (rawHumidity < 0) {
-            console.log("error sht20", rawHumidity);
+            console.log('error sht20', rawHumidity);
             return rawHumidity;
         }
         return rawHumidity * (125.0 / 65536.0) - 6.0;
@@ -49702,8 +50745,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class SHT31 {
     constructor() {
         this.requiredKeys = [];
-        this.keys = ["vcc", "sda", "scl", "gnd", "adr", "addressmode", "i2c", "pull", "address"];
-        this.ioKeys = ["vcc", "sda", "scl", "gnd", "adr"];
+        this.keys = [
+            'vcc',
+            'sda',
+            'scl',
+            'gnd',
+            'adr',
+            'addressmode',
+            'i2c',
+            'pull',
+            'address',
+        ];
+        this.ioKeys = ['vcc', 'sda', 'scl', 'gnd', 'adr'];
         this.commands = {};
         this.commands.softReset = [0x30, 0xa2];
         this.commands.highRepeatStreach = [0x2c, 0x06];
@@ -49723,12 +50776,12 @@ class SHT31 {
     }
     static info() {
         return {
-            name: "SHT31",
+            name: 'SHT31',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.address = this.params.address || 0x44;
         if (this.params.addressmode) {
             this.io_adr = obniz.getIO(this.params.adr);
@@ -49737,17 +50790,23 @@ class SHT31 {
                 this.address = 0x44;
             }
             else if (this.params.addressmode === 5) {
-                this.io_adr.pull("5v");
+                this.io_adr.pull('5v');
                 this.address = 0x45;
             }
         }
         this.params.clock = this.params.clock || 100 * 1000; // for i2c
-        this.params.mode = this.params.mode || "master"; // for i2c
-        this.params.pull = this.params.pull || "5v"; // for i2c
+        this.params.mode = this.params.mode || 'master'; // for i2c
+        this.params.pull = this.params.pull || '5v'; // for i2c
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.i2c.write(this.address, this.commands.softReset);
     }
-    async getData() {
+    /**
+     * @deprecated
+     */
+    getData() {
+        return this.getDataWait();
+    }
+    async getDataWait() {
         this.i2c.write(this.address, this.commands.highRepeat);
         await this.obniz.wait(this.waitTime.highRepeat);
         return await this.i2c.readWait(this.address, 6);
@@ -49762,7 +50821,7 @@ class SHT31 {
         return (await this.getAllWait()).humidity;
     }
     async getAllWait() {
-        const ret = await this.getData();
+        const ret = await this.getDataWait();
         const tempBin = ret[0] * 256 + ret[1];
         const temperature = -45 + 175 * (tempBin / (65536 - 1));
         const humdBin = ret[3] * 256 + ret[4];
@@ -49787,18 +50846,18 @@ exports.default = SHT31;
 Object.defineProperty(exports, "__esModule", { value: true });
 class ADT7310 {
     constructor() {
-        this.keys = ["vcc", "gnd", "frequency", "din", "dout", "clk", "spi"];
+        this.keys = ['vcc', 'gnd', 'frequency', 'din', 'dout', 'clk', 'spi'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "ADT7310",
+            name: 'ADT7310',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.params.mode = this.params.mode || "master";
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+        this.params.mode = this.params.mode || 'master';
         this.params.frequency = this.params.frequency || 500000;
         this.params.mosi = this.params.din;
         this.params.miso = this.params.dout;
@@ -49955,29 +51014,45 @@ class MFRC522 {
         // this.Reserved3Eh = 0x3E;
         // this.Reserved3Fh = 0x3F;
         // required pin of obniz
-        this.keys = ["cs", "clk", "mosi", "miso", "rst", "vcc", "gnd", "spi", "spi_frequency"];
-        this.requiredKeys = ["cs", "mosi", "miso", "rst"];
+        this.keys = [
+            'cs',
+            'clk',
+            'mosi',
+            'miso',
+            'rst',
+            'vcc',
+            'gnd',
+            'spi',
+            'spi_frequency',
+        ];
+        this.requiredKeys = ['cs', 'mosi', 'miso', 'rst'];
     }
     static info() {
         return {
-            name: "MFRC522",
+            name: 'MFRC522',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
         // IO pin settings
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.rst = obniz.getIO(this.params.rst);
         // SPI settings
         this.cs = obniz.getIO(this.params.cs);
         this.cs.output(true);
-        this.params.mode = "master";
-        this.params.drive = "3v";
-        this.params.pull = "3v";
+        this.params.mode = 'master';
+        this.params.drive = '3v';
+        this.params.pull = '3v';
         this.params.frequency = this.params.spi_frequency || 5 * 1000 * 1000;
         this.spi = this.obniz.getSpiWithConfig(this.params);
     }
-    async init() {
+    /**
+     * @deprecated
+     */
+    init() {
+        return this.initWait();
+    }
+    async initWait() {
         // Initializes the MFRC522 chip
         // Hardware and Software reset
         this.rst.output(false);
@@ -49992,7 +51067,7 @@ class MFRC522 {
         this.writeRegister(this.TReloadRegLo, 0xe8); // Reload timer with 0x3E8 = 1000, ie. 25ms before timeout
         this.writeRegister(this.TxASKReg, 0x40); // Default 0x00. Force a 100 % ASK modulation independent of the ModGsPReg register setting
         this.writeRegister(this.ModeReg, 0x3d); // Default 0x3F. Set the preset value for the CRC coprocessor for the CalcCRC command to 0x6363 (6.2.4)
-        await this.antennaOn(); // Enable the antenna driver pins TX1 and TX2 (they were disabled by the reset)
+        await this.antennaOnWait(); // Enable the antenna driver pins TX1 and TX2 (they were disabled by the reset)
     }
     writeRegister(addr, val) {
         let data;
@@ -50007,14 +51082,29 @@ class MFRC522 {
         this.spi.write(data);
         this.cs.output(true);
     }
-    async readRegister(addr) {
+    /**
+     * @deprecated
+     * @param addr
+     */
+    readRegister(addr) {
+        return this.readRegisterWait(addr);
+    }
+    async readRegisterWait(addr) {
         const data = [((addr << 1) & 0x7e) | 0x80, 0];
         this.cs.output(false);
         const response = await this.spi.writeWait(data);
         this.cs.output(true);
         return response[1];
     }
-    async readRegister_nByte(addr, n) {
+    /**
+     * @deprecated
+     * @param addr
+     * @param n
+     */
+    readRegister_nByte(addr, n) {
+        return this.readRegister_nByteWait(addr, n);
+    }
+    async readRegister_nByteWait(addr, n) {
         const dataArray = [];
         if (addr instanceof Array) {
             // Multiple addresses(If addr is Array)
@@ -50035,28 +51125,65 @@ class MFRC522 {
         values.shift();
         return values;
     }
-    async setRegisterBitMask(reg, mask) {
-        const response = await this.readRegister(reg);
+    /**
+     * @deprecated
+     * @param reg
+     * @param mask
+     */
+    setRegisterBitMask(reg, mask) {
+        return this.setRegisterBitMaskWait(reg, mask);
+    }
+    async setRegisterBitMaskWait(reg, mask) {
+        const response = await this.readRegisterWait(reg);
         this.writeRegister(reg, response | mask);
     }
-    async clearRegisterBitMask(reg, mask) {
-        const response = await this.readRegister(reg);
+    /**
+     * @deprecated
+     *
+     * @param reg
+     * @param mask
+     */
+    clearRegisterBitMask(reg, mask) {
+        return this.clearRegisterBitMaskWait(reg, mask);
+    }
+    async clearRegisterBitMaskWait(reg, mask) {
+        const response = await this.readRegisterWait(reg);
         this.writeRegister(reg, response & ~mask);
     }
-    async antennaOn() {
+    /**
+     * @deprecated
+     */
+    antennaOn() {
+        return this.antennaOnWait();
+    }
+    async antennaOnWait() {
         // Turns the antenna on by enabling pins TX1 and TX2
-        const response = await this.readRegister(this.TxControlReg);
+        const response = await this.readRegisterWait(this.TxControlReg);
         if ((response & 0x03) !== 0x03) {
             // If TX1 and TX2 down
-            await this.setRegisterBitMask(this.TxControlReg, response | 0x03);
+            await this.setRegisterBitMaskWait(this.TxControlReg, response | 0x03);
         }
     }
-    async antennaOff() {
+    /**
+     * @deprecated
+     */
+    antennaOff() {
+        return this.antennaOffWait();
+    }
+    async antennaOffWait() {
         // Turns the antenna off by disabling pins TX1 and TX2
-        await this.clearRegisterBitMask(this.TxControlReg, 0x03);
+        await this.clearRegisterBitMaskWait(this.TxControlReg, 0x03);
+    }
+    /**
+     * @deprecated
+     * @param command
+     * @param bitsToSend
+     */
+    toCard(command, bitsToSend) {
+        return this.toCardWait(command, bitsToSend);
     }
     // RC522 and ISO14443 card communication
-    async toCard(command, bitsToSend) {
+    async toCardWait(command, bitsToSend) {
         let data = [];
         let bitSize = 0;
         let status = ERROR;
@@ -50077,17 +51204,21 @@ class MFRC522 {
         this.writeRegister(this.FIFODataReg, bitsToSend); // Write sendData to the FIFO
         this.writeRegister(this.CommandReg, command); // Execute the command
         if (command === this.PCD_Transceive) {
-            await this.setRegisterBitMask(this.BitFramingReg, 0x80); // StartSend=1, transmission of data starts
+            await this.setRegisterBitMaskWait(this.BitFramingReg, 0x80); // StartSend=1, transmission of data starts
         }
         let TryingTimes = 10;
         let n = 0;
         do {
             // Wait for the received data complete
-            n = await this.readRegister(this.ComIrqReg);
+            n = await this.readRegisterWait(this.ComIrqReg);
             TryingTimes--;
         } while (TryingTimes !== 0 && !(n & 0x01) && !(n & waitIRq)); // !(Timer interrupt - nothing received before timeout) & !(One of the interrupts that signal success has been set)
-        // await this.clearRegisterBitMask(this.BitFramingReg, 0x80);	//Reset with resetAndInit()
-        const response = await this.readRegister_nByte([this.ErrorReg, this.FIFOLevelReg, this.ControlReg]);
+        // await this.clearRegisterBitMaskWait(this.BitFramingReg, 0x80);	//Reset with resetAndInit()
+        const response = await this.readRegister_nByteWait([
+            this.ErrorReg,
+            this.FIFOLevelReg,
+            this.ControlReg,
+        ]);
         if (TryingTimes !== 0) {
             if ((response[0] & 0x1b) === 0x00) {
                 // BufferOvfl CollErr ParityErr ProtocolErr
@@ -50107,7 +51238,7 @@ class MFRC522 {
                     if (n > 16) {
                         n = 16;
                     } // Restrict until 16bytes
-                    data = await this.readRegister_nByte(this.FIFODataReg, n); // Get received data from FIFO buffer
+                    data = await this.readRegister_nByteWait(this.FIFODataReg, n); // Get received data from FIFO buffer
                 }
             }
             else {
@@ -50117,7 +51248,7 @@ class MFRC522 {
         return { status, data, bitSize };
     }
     async findCardWait() {
-        await this.init();
+        await this.initWait();
         await this.searchTagWait();
         const uid = await this.getUidWait();
         const PICC_Type = await this.identifyCardTypeWait(uid);
@@ -50126,21 +51257,21 @@ class MFRC522 {
     async searchTagWait() {
         this.writeRegister(this.BitFramingReg, 0x07);
         const tagType = [this.PICC_REQA];
-        const response = await this.toCard(this.PCD_Transceive, tagType);
+        const response = await this.toCardWait(this.PCD_Transceive, tagType);
         if (response.bitSize !== 0x10) {
-            throw new Error("card_search_ERROR");
+            throw new Error('card_search_ERROR');
         }
     }
     async getUidWait() {
         this.writeRegister(this.BitFramingReg, 0x00);
         let uid = [this.PICC_SEL_CL1, 0x20];
-        const response = await this.toCard(this.PCD_Transceive, uid);
+        const response = await this.toCardWait(this.PCD_Transceive, uid);
         if (!response.status) {
-            throw new Error("uid_scan_ERROR");
+            throw new Error('uid_scan_ERROR');
         }
         const uidCheck = response.data[0] ^ response.data[1] ^ response.data[2] ^ response.data[3];
         if (uidCheck !== response.data[4]) {
-            throw new Error("uid_check_ERROR");
+            throw new Error('uid_check_ERROR');
         }
         uid = response.data;
         // (uid).pop();
@@ -50156,36 +51287,39 @@ class MFRC522 {
         let n;
         // Wait for the CRC calculation to complete
         do {
-            n = await this.readRegister(this.DivIrqReg);
+            n = await this.readRegisterWait(this.DivIrqReg);
             i--;
         } while (i !== 0 && !(n & 0x04)); // CRCIrq = 1 (Calculation done)
         // CRC calculation result
-        return await this.readRegister_nByte([this.CRCResultRegLSB, this.CRCResultRegMSB]);
+        return await this.readRegister_nByteWait([
+            this.CRCResultRegLSB,
+            this.CRCResultRegMSB,
+        ]);
     }
     async identifySoftwareWait() {
-        let version = await this.readRegister(this.VersionReg);
+        let version = await this.readRegisterWait(this.VersionReg);
         switch (version) {
             case 0x88:
-                version = "(clone)";
+                version = '(clone)';
                 break;
             case 0x90:
-                version = "v0.0";
+                version = 'v0.0';
                 break;
             case 0x91:
-                version = "v1.0";
+                version = 'v1.0';
                 break;
             case 0x92:
-                version = "v2.0";
+                version = 'v2.0';
                 break;
             case 0x12:
-                version = "counterfeit chip";
+                version = 'counterfeit chip';
                 break;
             default:
-                version = "(unknown)";
+                version = '(unknown)';
         }
         // When 0x00 or 0xFF is returned, communication probably failed
         if (version === 0x00 || version === 0xff) {
-            throw new Error("software_version_ERROR");
+            throw new Error('software_version_ERROR');
         }
         return version;
     }
@@ -50193,41 +51327,41 @@ class MFRC522 {
         // Identify type of the scanned card
         let buffer = [this.PICC_SElECTTAG, 0x70].concat(uid);
         buffer = buffer.concat(await this.calculateCRCWait(buffer));
-        const response = await this.toCard(this.PCD_Transceive, buffer);
+        const response = await this.toCardWait(this.PCD_Transceive, buffer);
         let PICC_Type;
         if (response.status && response.bitSize === 0x18) {
             PICC_Type = response.data[0];
         }
         switch (PICC_Type) {
             case 0x04:
-                PICC_Type = "SAK indicates UID is not complete.";
+                PICC_Type = 'SAK indicates UID is not complete.';
                 break; // UID not complete
             case 0x09:
-                PICC_Type = "MIFARE Mini, 320 bytes";
+                PICC_Type = 'MIFARE Mini, 320 bytes';
                 break;
             case 0x08:
-                PICC_Type = "MIFARE 1KB";
+                PICC_Type = 'MIFARE 1KB';
                 break;
             case 0x18:
-                PICC_Type = "MIFARE 4KB";
+                PICC_Type = 'MIFARE 4KB';
                 break;
             case 0x00:
-                PICC_Type = "MIFARE Ultralight or Ultralight C";
+                PICC_Type = 'MIFARE Ultralight or Ultralight C';
                 break;
             case 0x11:
-                PICC_Type = "MIFARE Plus";
+                PICC_Type = 'MIFARE Plus';
                 break;
             case 0x01:
-                PICC_Type = "MIFARE TNP3XXX";
+                PICC_Type = 'MIFARE TNP3XXX';
                 break;
             case 0x20:
-                PICC_Type = "PICC compliant with ISO/IEC 14443-4";
+                PICC_Type = 'PICC compliant with ISO/IEC 14443-4';
                 break;
             case 0x40:
-                PICC_Type = "PICC compliant with ISO/IEC 18092 (NFC)";
+                PICC_Type = 'PICC compliant with ISO/IEC 18092 (NFC)';
                 break;
             default:
-                throw new Error("PICC_type_ERROR");
+                throw new Error('PICC_type_ERROR');
         }
         return PICC_Type;
     }
@@ -50251,9 +51385,9 @@ class MFRC522 {
         uid = uid.slice(0, 4); // Append the first 4 bit of the UID
         buffer = buffer.concat(uid); // 12byte
         // Start authentication itself
-        await this.toCard(this.PCD_MFAuthent, buffer);
-        if (!((await this.readRegister(this.Status2Reg)) & 0x08)) {
-            throw new Error("password_authentication_ERROR");
+        await this.toCardWait(this.PCD_MFAuthent, buffer);
+        if (!((await this.readRegisterWait(this.Status2Reg)) & 0x08)) {
+            throw new Error('password_authentication_ERROR');
         }
     }
     async authenticateBlockWait(Block, uid) {
@@ -50267,14 +51401,14 @@ class MFRC522 {
         uid = uid.slice(0, 4); // Append the first 4 bit of the UID
         buffer = buffer.concat(uid); // 12byte
         // Start authentication itself
-        await this.toCard(this.PCD_MFAuthent, buffer);
-        if (!((await this.readRegister(this.Status2Reg)) & 0x08)) {
-            throw new Error("password_authentication_ERROR");
+        await this.toCardWait(this.PCD_MFAuthent, buffer);
+        if (!((await this.readRegisterWait(this.Status2Reg)) & 0x08)) {
+            throw new Error('password_authentication_ERROR');
         }
     }
     async readAgainWait() {
-        // If you finish reading and want to read again, this can use instead of init()
-        await this.clearRegisterBitMask(this.Status2Reg, 0x08);
+        // If you finish reading and want to read again, this can use instead of initWait()
+        await this.clearRegisterBitMaskWait(this.Status2Reg, 0x08);
     }
     async getSectorDataWait(address) {
         const response = [];
@@ -50282,9 +51416,9 @@ class MFRC522 {
         for (let i = 0; i < 4; i++) {
             let request = [this.PICC_READ, address * 4 + i];
             request = request.concat(await this.calculateCRCWait(request));
-            response[i] = await this.toCard(this.PCD_Transceive, request);
+            response[i] = await this.toCardWait(this.PCD_Transceive, request);
             if (!response[i].status) {
-                throw new Error("data_read_ERROR");
+                throw new Error('data_read_ERROR');
             }
             blockData[i] = response[i].data;
         }
@@ -50293,23 +51427,25 @@ class MFRC522 {
     async getBlockDataWait(address) {
         let request = [this.PICC_READ, address];
         request = request.concat(await this.calculateCRCWait(request));
-        const response = await this.toCard(this.PCD_Transceive, request);
+        const response = await this.toCardWait(this.PCD_Transceive, request);
         if (!response.status) {
-            throw new Error("data_read_ERROR");
+            throw new Error('data_read_ERROR');
         }
         return response.data;
     }
     async appendCRCtoBufferAndSendToCardWait(buffer) {
         buffer = buffer.concat(await this.calculateCRCWait(buffer));
-        const response = await this.toCard(this.PCD_Transceive, buffer);
-        if (!response.status || response.bitSize !== 4 || (response.data[0] & 0x0f) !== 0x0a) {
+        const response = await this.toCardWait(this.PCD_Transceive, buffer);
+        if (!response.status ||
+            response.bitSize !== 4 ||
+            (response.data[0] & 0x0f) !== 0x0a) {
             response.status = ERROR;
         }
         return response;
     }
     async writeBlockDataWait(Block, sixteenBytes) {
         if (Block === 0 || Block % 4 === 3) {
-            throw new Error("deny_Write");
+            throw new Error('deny_Write');
         }
         const buffer = [this.PICC_WRITE, Block];
         let response = await this.appendCRCtoBufferAndSendToCardWait(buffer);
@@ -50317,7 +51453,7 @@ class MFRC522 {
             response = await this.appendCRCtoBufferAndSendToCardWait(sixteenBytes);
         }
         else {
-            throw new Error("data_write_ERROR");
+            throw new Error('data_write_ERROR');
         }
     }
 }
@@ -50338,12 +51474,12 @@ exports.default = MFRC522;
 Object.defineProperty(exports, "__esModule", { value: true });
 class RN42 {
     constructor() {
-        this.keys = ["tx", "rx", "gnd"];
-        this.requiredKeys = ["tx", "rx"];
+        this.keys = ['tx', 'rx', 'gnd'];
+        this.requiredKeys = ['tx', 'rx'];
     }
     static info() {
         return {
-            name: "RN42",
+            name: 'RN42',
         };
     }
     wired(obniz) {
@@ -50355,17 +51491,17 @@ class RN42 {
             tx: this.params.tx,
             rx: this.params.rx,
             baud: 115200,
-            drive: "3v",
+            drive: '3v',
         });
         this.uart.onreceive = (data, text) => {
             // this is not perfect. separation is possible.
-            if (text.indexOf("CONNECT") >= 0) {
+            if (text.indexOf('CONNECT') >= 0) {
                 // console.log("connected");
             }
-            else if (text.indexOf("DISCONNECT") >= 0) {
+            else if (text.indexOf('DISCONNECT') >= 0) {
                 // console.log("disconnected");
             }
-            if (typeof this.onreceive === "function") {
+            if (typeof this.onreceive === 'function') {
                 this.onreceive(data, text);
             }
         };
@@ -50374,21 +51510,21 @@ class RN42 {
         this.uart.send(data);
     }
     sendCommand(data) {
-        this.uart.send(data + "\n");
+        this.uart.send(data + '\n');
         this.obniz.wait(100);
     }
     enterCommandMode() {
-        this.send("$$$");
+        this.send('$$$');
         this.obniz.wait(100);
     }
     config(json) {
         this.enterCommandMode();
-        if (typeof json !== "object") {
+        if (typeof json !== 'object') {
             // TODO: warning
             return;
         }
         // remove noize data
-        this.sendCommand("");
+        this.sendCommand('');
         if (json.master_slave) {
             this.config_masterslave(json.master_slave);
         }
@@ -50410,22 +51546,22 @@ class RN42 {
         this.config_reboot();
     }
     config_reboot() {
-        this.sendCommand("R,1");
+        this.sendCommand('R,1');
     }
     config_masterslave(mode) {
         let val = -1;
-        if (typeof mode === "number") {
+        if (typeof mode === 'number') {
             val = mode;
         }
-        else if (typeof mode === "string") {
+        else if (typeof mode === 'string') {
             const modes = [
-                "slave",
-                "master",
-                "trigger",
-                "auto-connect-master",
-                "auto-connect-dtr",
-                "auto-connect-any",
-                "pairing",
+                'slave',
+                'master',
+                'trigger',
+                'auto-connect-master',
+                'auto-connect-dtr',
+                'auto-connect-any',
+                'pairing',
             ];
             for (let i = 0; i < modes.length; i++) {
                 if (modes[i] === mode) {
@@ -50438,22 +51574,30 @@ class RN42 {
             // TODO: warning
             return;
         }
-        this.sendCommand("SM," + val);
+        this.sendCommand('SM,' + val);
     }
     config_displayName(name) {
-        this.sendCommand("SN," + name);
+        this.sendCommand('SN,' + name);
     }
     // // SH,0200 HID Flag register. Descriptor=keyboard
     config_HIDflag(flag) {
-        this.sendCommand("SH," + flag);
+        this.sendCommand('SH,' + flag);
     }
     config_profile(mode) {
         let val = -1;
-        if (typeof mode === "number") {
+        if (typeof mode === 'number') {
             val = mode;
         }
-        else if (typeof mode === "string") {
-            const modes = ["SPP", "DUN-DCE", "DUN-DTE", "MDM-SPP", "SPP-DUN-DCE", "APL", "HID"];
+        else if (typeof mode === 'string') {
+            const modes = [
+                'SPP',
+                'DUN-DCE',
+                'DUN-DTE',
+                'MDM-SPP',
+                'SPP-DUN-DCE',
+                'APL',
+                'HID',
+            ];
             for (let i = 0; i < modes.length; i++) {
                 if (modes[i] === mode) {
                     val = i;
@@ -50465,18 +51609,18 @@ class RN42 {
             // TODO: warning
             return;
         }
-        this.sendCommand("S~," + val);
+        this.sendCommand('S~,' + val);
     }
     config_revert_localecho() {
-        this.sendCommand("+");
+        this.sendCommand('+');
     }
     config_auth(mode) {
         let val = -1;
-        if (typeof mode === "number") {
+        if (typeof mode === 'number') {
             val = mode;
         }
-        else if (typeof mode === "string") {
-            const modes = ["open", "ssp-keyboard", "just-work", "pincode"];
+        else if (typeof mode === 'string') {
+            const modes = ['open', 'ssp-keyboard', 'just-work', 'pincode'];
             for (let i = 0; i < modes.length; i++) {
                 if (modes[i] === mode) {
                     val = i;
@@ -50488,38 +51632,38 @@ class RN42 {
             // TODO: warning
             return;
         }
-        this.sendCommand("SA," + val);
+        this.sendCommand('SA,' + val);
     }
     config_power(dbm) {
-        let val = "0010";
+        let val = '0010';
         if (16 > dbm && dbm >= 12) {
-            val = "000C";
+            val = '000C';
         }
         else if (12 > dbm && dbm >= 8) {
-            val = "0008";
+            val = '0008';
         }
         else if (8 > dbm && dbm >= 4) {
-            val = "0004";
+            val = '0004';
         }
         else if (4 > dbm && dbm >= 0) {
-            val = "0000";
+            val = '0000';
         }
         else if (0 > dbm && dbm >= -4) {
-            val = "FFFC";
+            val = 'FFFC';
         }
         else if (-4 > dbm && dbm >= -8) {
-            val = "FFF8";
+            val = 'FFF8';
         }
         else if (-8 > dbm) {
-            val = "FFF4";
+            val = 'FFF4';
         }
-        this.sendCommand("SY," + val);
+        this.sendCommand('SY,' + val);
     }
     config_get_setting() {
-        this.sendCommand("D");
+        this.sendCommand('D');
     }
     config_get_extendSetting() {
-        this.sendCommand("E");
+        this.sendCommand('E');
     }
 }
 exports.default = RN42;
@@ -50539,13 +51683,13 @@ exports.default = RN42;
 Object.defineProperty(exports, "__esModule", { value: true });
 class XBee {
     constructor() {
-        this.displayIoNames = { tx: "<tx", rx: ">rx" };
-        this.keys = ["tx", "rx", "gnd"];
-        this.requiredKeys = ["tx", "rx"];
+        this.displayIoNames = { tx: '<tx', rx: '>rx' };
+        this.keys = ['tx', 'rx', 'gnd'];
+        this.requiredKeys = ['tx', 'rx'];
     }
     static info() {
         return {
-            name: "XBee",
+            name: 'XBee',
         };
     }
     wired(obniz) {
@@ -50554,21 +51698,21 @@ class XBee {
         this.commands = [];
         this.isAtMode = false;
         this.onFinishAtModeCallback = null;
-        if (typeof this.params.gnd === "number") {
+        if (typeof this.params.gnd === 'number') {
             obniz.getIO(this.params.gnd).output(false);
         }
         this.uart.start({
             tx: this.params.tx,
             rx: this.params.rx,
             baud: 9600,
-            drive: "3v",
+            drive: '3v',
         });
         this.uart.onreceive = (data, text) => {
             if (this.isAtMode) {
                 this.onAtResultsRecieve(data, text);
             }
             else {
-                if (typeof this.onreceive === "function") {
+                if (typeof this.onreceive === 'function') {
                     this.onreceive(data, text);
                 }
             }
@@ -50579,7 +51723,7 @@ class XBee {
             this.uart.send(data);
         }
         else {
-            this.obniz.error("XBee is AT Command mode now. Wait for finish config.");
+            this.obniz.error(new Error('XBee is AT Command mode now. Wait for finish config.'));
         }
     }
     onAtResultsRecieve(data, text) {
@@ -50590,11 +51734,11 @@ class XBee {
             this.currentCommand = null;
             this.sendCommand();
         };
-        if (text === "OK\r") {
-            if (this.currentCommand === "ATCN") {
+        if (text === 'OK\r') {
+            if (this.currentCommand === 'ATCN') {
                 this.isAtMode = false;
                 this.currentCommand = null;
-                if (typeof this.onFinishAtModeCallback === "function") {
+                if (typeof this.onFinishAtModeCallback === 'function') {
                     this.onFinishAtModeCallback();
                     this.onFinishAtModeCallback = null;
                 }
@@ -50602,26 +51746,28 @@ class XBee {
             }
             next();
         }
-        else if (text === "ERROR\r") {
-            this.obniz.error("XBee config error : " + this.currentCommand);
+        else if (text === 'ERROR\r') {
+            this.obniz.error(new Error('XBee config error : ' + this.currentCommand));
         }
         else {
             // response of at command.
-            console.log("XBEE : no catch message", data);
+            console.log('XBEE : no catch message', data);
             next();
         }
     }
     addCommand(command, value) {
-        const str = command + (value ? " " + value : "");
+        const str = command + (value ? ' ' + value : '');
         this.commands.push(str);
         if (this.isAtMode === true && this.currentCommand === null) {
             this.sendCommand();
         }
     }
     sendCommand() {
-        if (this.isAtMode === true && this.currentCommand === null && this.commands.length > 0) {
-            this.currentCommand = "AT" + this.commands.shift();
-            this.uart.send(this.currentCommand + "\r");
+        if (this.isAtMode === true &&
+            this.currentCommand === null &&
+            this.commands.length > 0) {
+            this.currentCommand = 'AT' + this.commands.shift();
+            this.uart.send(this.currentCommand + '\r');
         }
     }
     enterAtMode() {
@@ -50630,25 +51776,25 @@ class XBee {
         }
         this.isAtMode = true;
         this.obniz.wait(1000);
-        const command = "+++";
+        const command = '+++';
         this.currentCommand = command;
         this.uart.send(this.currentCommand);
         this.obniz.wait(1000);
     }
     exitAtMode() {
-        this.addCommand("CN");
+        this.addCommand('CN');
     }
     async configWait(config) {
         if (this.isAtMode) {
-            throw new Error("Xbee : duplicate config setting");
+            throw new Error('Xbee : duplicate config setting');
         }
         return new Promise((resolve, reject) => {
             const standaloneKeys = {
-                destination_address_high: "DH",
-                destination_address_low: "DL",
-                source_address: "MY",
+                destination_address_high: 'DH',
+                destination_address_low: 'DL',
+                source_address: 'MY',
             };
-            const highLowKeys = ["destination_address"];
+            const highLowKeys = ['destination_address'];
             this.enterAtMode();
             for (const key in config) {
                 if (key.length === 2) {
@@ -50660,11 +51806,11 @@ class XBee {
                 else if (highLowKeys.includes(key)) {
                     let high = config[key].slice(0, -8);
                     if (!high) {
-                        high = "0";
+                        high = '0';
                     }
                     const low = config[key].slice(-8);
-                    this.addCommand(standaloneKeys[key + "_high"], high);
-                    this.addCommand(standaloneKeys[key + "_low"], low);
+                    this.addCommand(standaloneKeys[key + '_high'], high);
+                    this.addCommand(standaloneKeys[key + '_low'], low);
                 }
             }
             this.exitAtMode();
@@ -50695,10 +51841,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
 class I2cCompassAbstract extends i2cParts_1.default {
     static async calibrateWait() {
-        throw new Error("Method not implemented.");
+        throw new Error('Method not implemented.');
     }
     static async headingWait() {
-        throw new Error("Method not implemented.");
+        throw new Error('Method not implemented.');
     }
     async getWait() {
         const adc = await this.getAdcWait();
@@ -50731,7 +51877,8 @@ class I2cCompassAbstract extends i2cParts_1.default {
         }
     }
     calcMag(data) {
-        return (data * this.so * I2cCompassAbstract.unitScales[this.sf]) / I2cCompassAbstract.unitScales[this.defaultUnit];
+        return ((data * this.so * I2cCompassAbstract.unitScales[this.sf]) /
+            I2cCompassAbstract.unitScales[this.defaultUnit]);
     }
 }
 exports.default = I2cCompassAbstract;
@@ -50765,16 +51912,18 @@ const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cPart
 class I2cImu6Abstract extends i2cParts_1.default {
     constructor() {
         super(...arguments);
-        this.accel_so = "2g";
-        this.gyro_so = "250dps";
-        this.accel_sf = "g";
-        this.gyro_sf = "dps";
+        this.accel_so = '2g';
+        this.gyro_so = '250dps';
+        this.accel_sf = 'g';
+        this.gyro_sf = 'dps';
     }
     static _accelS(value, accel_so, accel_sf) {
-        return (value / I2cImu6Abstract.scales.accel.so[accel_so]) * I2cImu6Abstract.scales.accel.sf[accel_sf];
+        return ((value / I2cImu6Abstract.scales.accel.so[accel_so]) *
+            I2cImu6Abstract.scales.accel.sf[accel_sf]);
     }
     static _gyroS(value, gyro_so, gyro_sf) {
-        return (value / I2cImu6Abstract.scales.gyro.so[gyro_so]) * I2cImu6Abstract.scales.gyro.sf[gyro_sf];
+        return ((value / I2cImu6Abstract.scales.gyro.so[gyro_so]) *
+            I2cImu6Abstract.scales.gyro.sf[gyro_sf]);
     }
     async getAccelWait() {
         const adc = await this.getAccelAdcWait();
@@ -50795,7 +51944,7 @@ class I2cImu6Abstract extends i2cParts_1.default {
             gyroscope: this.calcGyro(adc.gyroscope),
             temperature: this.calcTemp(adc.temperature),
         };
-        if ("compass" in adc) {
+        if ('compass' in adc) {
             ret.compass = adc.compass;
         }
         return ret;
@@ -50890,10 +52039,10 @@ exports.default = I2cImu6Abstract;
 I2cImu6Abstract.scales = {
     accel: {
         so: {
-            "2g": 16384,
-            "4g": 8192,
-            "8g": 4096,
-            "16g": 2048,
+            '2g': 16384,
+            '4g': 8192,
+            '8g': 4096,
+            '16g': 2048,
         },
         sf: {
             m_s2: 9.80665,
@@ -50903,11 +52052,11 @@ I2cImu6Abstract.scales = {
     },
     gyro: {
         so: {
-            "125dps": 262.144,
-            "250dps": 131.072,
-            "500dps": 65.536,
-            "1000dps": 32.768,
-            "2000dps": 16.384,
+            '125dps': 262.144,
+            '250dps': 131.072,
+            '500dps': 65.536,
+            '1000dps': 32.768,
+            '2000dps': 16.384,
         },
         sf: {
             dps: 1,
@@ -50931,17 +52080,27 @@ I2cImu6Abstract.scales = {
 Object.defineProperty(exports, "__esModule", { value: true });
 class I2cPartsAbstract {
     constructor() {
-        this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "pull", "clock", "voltage", "address"];
+        this.keys = [
+            'gnd',
+            'vcc',
+            'sda',
+            'scl',
+            'i2c',
+            'pull',
+            'clock',
+            'voltage',
+            'address',
+        ];
         this.requiredKeys = [];
     }
-    static charArrayToInt16(values, endian = "b") {
+    static charArrayToInt16(values, endian = 'b') {
         const buffer = new ArrayBuffer(2);
         const dv = new DataView(buffer);
         dv.setUint8(0, values[0]);
         dv.setUint8(1, values[1]);
-        return dv.getInt16(0, endian !== "b");
+        return dv.getInt16(0, endian !== 'b');
     }
-    static charArrayToXyz(data, endian = "b", scaleFunc = (d) => d) {
+    static charArrayToXyz(data, endian = 'b', scaleFunc = (d) => d) {
         return {
             x: scaleFunc(I2cPartsAbstract.charArrayToInt16(data.slice(0, 2), endian)),
             y: scaleFunc(I2cPartsAbstract.charArrayToInt16(data.slice(2, 4), endian)),
@@ -50955,7 +52114,7 @@ class I2cPartsAbstract {
     wired(obniz) {
         this.obniz = obniz;
         Object.keys(this.i2cinfo).map((k) => {
-            if (typeof this.params[k] === "undefined") {
+            if (typeof this.params[k] === 'undefined') {
                 this.params[k] = this.i2cinfo[k];
             }
             else {
@@ -50964,7 +52123,7 @@ class I2cPartsAbstract {
             }
         });
         obniz.setVccGnd(this.params.vcc, this.params.gnd, this.params.voltage);
-        this.params.mode = "master";
+        this.params.mode = 'master';
         this.i2c = this.obniz.getI2CWithConfig(this.params);
         this.address = this.i2cinfo.address;
     }
@@ -50995,11 +52154,11 @@ class I2cPartsAbstract {
         tempdata[0] = tempdata[0] & (0xff - (0b1 << index));
         this.write(address, tempdata);
     }
-    async readInt16Wait(register, endian = "b") {
+    async readInt16Wait(register, endian = 'b') {
         const data = (await this.readWait(register, 2));
         return I2cPartsAbstract.charArrayToInt16(data, endian);
     }
-    async readThreeInt16Wait(register, endian = "b") {
+    async readThreeInt16Wait(register, endian = 'b') {
         const data = await this.readWait(register, 6);
         const results = [0, 0, 0];
         results[0] = I2cPartsAbstract.charArrayToInt16(data.slice(0, 2), endian);

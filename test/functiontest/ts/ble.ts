@@ -1,6 +1,6 @@
-import Obniz from "../../../dist/src/obniz/index";
+import Obniz from '../../../dist/src/obniz/index';
 
-const OBNIZ_ID = "1234-5678";
+const OBNIZ_ID = '1234-5678';
 
 /**
  * https://obniz.io/ja/sdk/parts/2JCIE/README.md
@@ -9,13 +9,13 @@ class TEST2JCIETest {
   public findWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const omron = obniz.wired("2JCIE");
+      const omron = obniz.wired('2JCIE');
       const results = await omron.findWait();
 
       if (results) {
-        console.log("find");
+        console.log('find');
       } else {
-        console.log("not find");
+        console.log('not find');
       }
     };
   }
@@ -23,18 +23,18 @@ class TEST2JCIETest {
   public connectWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const omron = obniz.wired("2JCIE");
+      const omron = obniz.wired('2JCIE');
       const results = await omron.findWait();
 
       if (results) {
-        console.log("find");
+        console.log('find');
 
         await omron.connectWait();
         const data = await omron.getLatestData();
 
         console.log(data);
       } else {
-        console.log("not find");
+        console.log('not find');
       }
     };
   }
@@ -42,11 +42,11 @@ class TEST2JCIETest {
   public disconnectWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const omron = obniz.wired("2JCIE");
+      const omron = obniz.wired('2JCIE');
       const results = await omron.findWait();
 
       if (results) {
-        console.log("find");
+        console.log('find');
 
         await omron.connectWait();
         const data = await omron.getLatestData();
@@ -55,7 +55,7 @@ class TEST2JCIETest {
 
         await omron.disconnectWait();
       } else {
-        console.log("not find");
+        console.log('not find');
       }
     };
   }
@@ -63,11 +63,11 @@ class TEST2JCIETest {
   public getLatestData() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const omron = obniz.wired("2JCIE");
+      const omron = obniz.wired('2JCIE');
       const results = await omron.findWait();
 
       if (results) {
-        console.log("find");
+        console.log('find');
 
         await omron.connectWait();
         const data = await omron.getLatestData();
@@ -76,7 +76,7 @@ class TEST2JCIETest {
 
         await omron.disconnectWait();
       } else {
-        console.log("not find");
+        console.log('not find');
       }
     };
   }

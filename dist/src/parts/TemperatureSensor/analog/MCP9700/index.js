@@ -7,7 +7,7 @@ const AnalogTemperatureSensor_1 = __importDefault(require("../AnalogTemperatureS
 class MCP9700 extends AnalogTemperatureSensor_1.default {
     static info() {
         return {
-            name: "MCP9700",
+            name: 'MCP9700',
         };
     }
     calc(voltage) {

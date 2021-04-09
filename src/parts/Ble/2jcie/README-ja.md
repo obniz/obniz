@@ -115,7 +115,7 @@ if(results){
       console.log('disconnected');
     }
     await omron.connectWait();
-    let data = await omron.getLatestDataBAG();
+    let data = await omron.getLatestDataBAGWait();
     
     console.log(data);
 }else{
@@ -136,7 +136,7 @@ if(results){
     console.log("find");
   
     await omron.connectWait();
-    let data = await omron.getLatestDataBAG();
+    let data = await omron.getLatestDataBAGWait();
     
     console.log(data);
     
@@ -148,7 +148,7 @@ if(results){
 ```
 
 
-## [await]getLatestData()
+## [await]getLatestDataWait()
 2JCIE-BU01(バッグ形状)のセンサの最新のデータを取得します。
 
 ```javascript
@@ -161,7 +161,7 @@ if(results){
     console.log("find");
   
     await omron.connectWait();
-    let data = await omron.getLatestData();
+    let data = await omron.getLatestDataWait();
     
     console.log(data);
     
@@ -191,7 +191,7 @@ if(results){
 
 ```
 
-## [await]getLatestSensorDataUSB()
+## [await]getLatestSensorDataUSBWait()
 2JCIE-BL01(USB接続)のセンサの最新の値データを取得します。
 
 ```javascript
@@ -204,7 +204,7 @@ if(results){
     console.log("find");
   
     await omron.connectWait();
-    let data = await omron.getLatestSensorDataUSB();
+    let data = await omron.getLatestSensorDataUSBWait();
     
     console.log(data);
     
@@ -233,7 +233,7 @@ if(results){
 ```
 
 
-## [await]getLatestCalculationDataUSB()
+## [await]getLatestCalculationDataUSBWait()
 2JCIE-BL01(USB接続)のセンサの最新の指標データや加速度データを取得します。
 
 ```javascript
@@ -246,7 +246,7 @@ if(results){
     console.log("find");
   
     await omron.connectWait();
-    let data = await omron.getLatestCalculationDataUSB();
+    let data = await omron.getLatestCalculationDataUSBWait();
     
     console.log(data);
     

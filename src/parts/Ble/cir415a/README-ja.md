@@ -122,7 +122,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 };
 ```
 
-## writeADPU(data)
+## writeADPUWait(data)
 
 カードに対して、コマンドを実行できます。
 ``onAuthenticated``のコールバック関数が実行された後に行ってください。
@@ -139,14 +139,14 @@ obniz.ble.scan.onfind = async (peripheral) => {
     device.onAuthenticated = async () => {
         console.log("onAuthenticated");
         await device.setAutoPollingWait(true);
-        await device.writeADPU([ 0xff, 0xca, 0x00, 0x00, 0x00]); // send apdu idm
+        await device.writeADPUWait([ 0xff, 0xca, 0x00, 0x00, 0x00]); // send apdu idm
     };
     await device.connectWait();
   }
 };
 ```
 
-## write(data)
+## writeWait(data)
 
 CIR415Aに対して、コマンドを実行できます。
 ``onAuthenticated``のコールバック関数が実行された後に行ってください。
@@ -162,7 +162,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const device = new CIR415A(peripheral);
     device.onAuthenticated = async () => {
         console.log("onAuthenticated");
-        await device.write([0x6b, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x40, 0x01]);
+        await device.writeWait([0x6b, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x40, 0x01]);
     };
     await device.connectWait();
   }
@@ -266,7 +266,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     device.onCardTouch = async (touch) =>{
         if(touch){
             console.log("card touch");
-            await device.writeADPU([ 0xff, 0xca, 0x00, 0x00, 0x00]); // send apdu idm
+            await device.writeADPUWait([ 0xff, 0xca, 0x00, 0x00, 0x00]); // send apdu idm
         }else{
             console.log("card not touch");
         }

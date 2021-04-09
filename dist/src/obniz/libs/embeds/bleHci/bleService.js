@@ -20,6 +20,7 @@ class BleService extends bleLocalAttributeAbstract_1.default {
     }
     /**
      * Add new Characteristic
+     *
      * @param child
      */
     addCharacteristic(child) {
@@ -27,6 +28,7 @@ class BleService extends bleLocalAttributeAbstract_1.default {
     }
     /**
      * Get Characteristic
+     *
      * @param uuid
      */
     getCharacteristic(uuid) {
@@ -36,13 +38,13 @@ class BleService extends bleLocalAttributeAbstract_1.default {
      * @ignore
      */
     get parentName() {
-        return "peripheral";
+        return 'peripheral';
     }
     /**
      * @ignore
      */
     get childrenName() {
-        return "characteristics";
+        return 'characteristics';
     }
     /**
      * @ignore
@@ -73,7 +75,7 @@ class BleService extends bleLocalAttributeAbstract_1.default {
      */
     get advData() {
         return {
-            flags: ["general_discoverable_mode", "br_edr_not_supported"],
+            flags: ['general_discoverable_mode', 'br_edr_not_supported'],
             serviceUuids: [this.uuid],
         };
     }

@@ -48,10 +48,10 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
      */
     emit(name, ...params) {
         switch (name) {
-            case "readRequest":
+            case 'readRequest':
                 this._onReadRequest(...params);
                 return true;
-            case "writeRequest":
+            case 'writeRequest':
                 this._onWriteRequest(...params);
                 return true;
         }
@@ -67,13 +67,14 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
         if (this.data.length >= offset) {
             callback(BleResponseResult.SUCCESS, Buffer.from(this.data.slice(offset)));
             let address = null;
-            if (this.parentName === "characteristic") {
-                address = this.characteristic.service.peripheral.currentConnectedDeviceAddress;
+            if (this.parentName === 'characteristic') {
+                address = this.characteristic.service.peripheral
+                    .currentConnectedDeviceAddress;
             }
-            else if (this.parentName === "service") {
+            else if (this.parentName === 'service') {
                 address = this.service.peripheral.currentConnectedDeviceAddress;
             }
-            this.notifyFromServer("onreadfromremote", { address });
+            this.notifyFromServer('onreadfromremote', { address });
         }
         else {
             callback(BleResponseResult.UNLIKELY_ERROR, null);
@@ -92,13 +93,14 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
         this.data = Array.from(data);
         callback(BleResponseResult.SUCCESS);
         let address = null;
-        if (this.parentName === "characteristic") {
-            address = this.characteristic.service.peripheral.currentConnectedDeviceAddress;
+        if (this.parentName === 'characteristic') {
+            address = this.characteristic.service.peripheral
+                .currentConnectedDeviceAddress;
         }
-        else if (this.parentName === "service") {
+        else if (this.parentName === 'service') {
             address = this.service.peripheral.currentConnectedDeviceAddress;
         }
-        this.notifyFromServer("onwritefromremote", { address, data });
+        this.notifyFromServer('onwritefromremote', { address, data });
     }
     /**
      * @ignore
@@ -106,7 +108,7 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
      */
     async writeWait(dataArray) {
         this.data = dataArray;
-        this.notifyFromServer("onwrite", { result: "success" });
+        this.notifyFromServer('onwrite', { result: 'success' });
         return true;
     }
     /**
@@ -114,7 +116,7 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
      * @return dataArray
      */
     async readWait() {
-        this.notifyFromServer("onread", { data: this.data });
+        this.notifyFromServer('onread', { data: this.data });
         return this.data;
     }
 }

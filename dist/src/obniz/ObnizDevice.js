@@ -64,13 +64,13 @@ class ObnizDevice extends ObnizUIs_1.default {
             console.error(msg);
         }
         else {
-            if (msg && typeof msg === "object" && msg.alert) {
+            if (msg && typeof msg === 'object' && msg.alert) {
                 this.showAlertUI(msg);
                 console.log(msg.message);
                 return;
             }
-            if (typeof showObnizDebugError === "function") {
-                showObnizDebugError(new Error(msg));
+            if (typeof window.showObnizDebugError === 'function') {
+                window.showObnizDebugError(new Error(msg));
             }
             this.log(`Warning: ${msg}`);
         }
@@ -81,19 +81,19 @@ class ObnizDevice extends ObnizUIs_1.default {
      */
     error(msg) {
         if (this.onerror) {
-            let sendError = msg;
-            if (!(msg instanceof Error)) {
-                sendError = new Error(msg.message);
-            }
+            const sendError = msg instanceof Error ? msg : new Error(msg.message);
             this.onerror(this, sendError);
             return;
         }
         if (!this.isNode) {
-            if (msg && typeof msg === "object" && msg.alert) {
+            if (msg &&
+                typeof msg === 'object' &&
+                !(msg instanceof Error) &&
+                msg.alert) {
                 this.showAlertUI(msg);
             }
-            if (typeof showObnizDebugError === "function") {
-                showObnizDebugError(new Error(msg.message));
+            if (window && typeof window.showObnizDebugError === 'function') {
+                window.showObnizDebugError(new Error(msg.message));
             }
         }
         console.error(`${msg.message}`);
@@ -129,7 +129,7 @@ class ObnizDevice extends ObnizUIs_1.default {
      */
     message(target, message) {
         let targets = [];
-        if (typeof target === "string") {
+        if (typeof target === 'string') {
             targets.push(target);
         }
         else {
@@ -148,18 +148,18 @@ class ObnizDevice extends ObnizUIs_1.default {
     notifyToModule(obj) {
         super.notifyToModule(obj);
         // notify messaging
-        if (typeof obj.message === "object" && this.onmessage) {
+        if (typeof obj.message === 'object' && this.onmessage) {
             this._runUserCreatedFunction(this.onmessage, obj.message.data, obj.message.from);
         }
         // debug
-        if (typeof obj.debug === "object") {
+        if (typeof obj.debug === 'object') {
             if (obj.debug.warning) {
-                const msg = "Warning: " + obj.debug.warning.message;
-                this.warning({ alert: "warning", message: msg });
+                const msg = 'Warning: ' + obj.debug.warning.message;
+                this.warning({ alert: 'warning', message: msg });
             }
             if (obj.debug.error) {
-                const msg = "Error: " + obj.debug.error.message;
-                this.error({ alert: "error", message: msg });
+                const msg = 'Error: ' + obj.debug.error.message;
+                this.error({ alert: 'error', message: msg });
             }
             if (this.ondebug) {
                 this.ondebug(obj.debug);

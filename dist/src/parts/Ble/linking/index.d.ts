@@ -2,11 +2,11 @@
  * @packageDocumentation
  * @module Parts.Linking
  */
-import Obniz from "../../../obniz";
-import bleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-import LinkingAdvertising from "./modules/advertising";
-import LinkingDevice from "./modules/device";
+import Obniz from '../../../obniz';
+import bleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import LinkingAdvertising from './modules/advertising';
+import LinkingDevice from './modules/device';
 export interface LinkingOptions {
 }
 export default class Linking {
@@ -27,8 +27,17 @@ export default class Linking {
     get LinkingDevice(): typeof LinkingDevice;
     constructor(params: any);
     wired(obniz: Obniz): void;
+    /**
+     * @deprecated
+     */
     init(): Promise<void>;
+    initWait(): Promise<void>;
+    /**
+     * @deprecated
+     * @param p
+     */
     discover(p: any): Promise<any[]>;
+    discoverWait(p: any): Promise<any[]>;
     _checkInitialized(): void;
     _discoveredDevice(peripheral: bleRemotePeripheral, name_filter: any, id_filter: any): LinkingDevice | null;
     _scanDevices(): void;

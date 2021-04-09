@@ -7,24 +7,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class Logtta_TH {
     constructor(peripheral) {
         if (peripheral && !Logtta_TH.isDevice(peripheral)) {
-            throw new Error("peripheral is not logtta TH");
+            throw new Error('peripheral is not logtta TH');
         }
         this._peripheral = peripheral;
     }
     static info() {
         return {
-            name: "Logtta_TH",
+            name: 'Logtta_TH',
         };
     }
     static isDevice(peripheral) {
-        return peripheral.localName === "TH Sensor";
+        return peripheral.localName === 'TH Sensor';
     }
     static isAdvDevice(peripheral) {
         if (peripheral.adv_data.length !== 31) {
             return false;
         }
         const data = peripheral.adv_data;
-        if (data[5] !== 0x10 || data[6] !== 0x05 || data[7] !== 0x01 || data[16] !== 0x54 || data[17] !== 0x48) {
+        if (data[5] !== 0x10 ||
+            data[6] !== 0x05 ||
+            data[7] !== 0x01 ||
+            data[16] !== 0x54 ||
+            data[17] !== 0x48) {
             // CompanyID, Apperance, "T" "H"
             return false;
         }
@@ -47,7 +51,7 @@ class Logtta_TH {
         return advData;
     }
     static getName(data) {
-        let name = "";
+        let name = '';
         for (let i = 16; i < data.length; i++) {
             if (data[i] === 0) {
                 break;
@@ -61,11 +65,11 @@ class Logtta_TH {
     }
     async connectWait() {
         if (!this._peripheral) {
-            throw new Error("Logtta TH not found");
+            throw new Error('Logtta TH not found');
         }
         if (!this._peripheral.connected) {
             this._peripheral.ondisconnect = (reason) => {
-                if (typeof this.ondisconnect === "function") {
+                if (typeof this.ondisconnect === 'function') {
                     this.ondisconnect(reason);
                 }
             };
@@ -81,7 +85,9 @@ class Logtta_TH {
         if (!(this._peripheral && this._peripheral.connected)) {
             return null;
         }
-        const c = this._peripheral.getService(Logtta_TH.get_uuid("AA20")).getCharacteristic(Logtta_TH.get_uuid("AA21"));
+        const c = this._peripheral
+            .getService(Logtta_TH.get_uuid('AA20'))
+            .getCharacteristic(Logtta_TH.get_uuid('AA21'));
         const data = await c.readWait();
         return {
             temperature: (((data[0] << 8) | data[1]) / 65536) * 175.72 - 46.85,
@@ -98,7 +104,9 @@ class Logtta_TH {
         if (!(this._peripheral && this._peripheral.connected)) {
             return;
         }
-        const c = this._peripheral.getService(Logtta_TH.get_uuid("AA20")).getCharacteristic(Logtta_TH.get_uuid("AA21"));
+        const c = this._peripheral
+            .getService(Logtta_TH.get_uuid('AA20'))
+            .getCharacteristic(Logtta_TH.get_uuid('AA21'));
         await c.registerNotifyWait((data) => {
             if (this.onNotify) {
                 this.onNotify({
@@ -113,21 +121,32 @@ class Logtta_TH {
             return;
         }
         if (code.length !== 4) {
-            throw new Error("Invalid length auth code");
+            throw new Error('Invalid length auth code');
         }
         const data = [0];
         for (let i = 0; i < code.length; i += 2) {
-            data.push((this.checkNumber(code.charAt(i)) << 4) | this.checkNumber(code.charAt(i + 1)));
+            data.push((this.checkNumber(code.charAt(i)) << 4) |
+                this.checkNumber(code.charAt(i + 1)));
         }
-        const c = this._peripheral.getService(Logtta_TH.get_uuid("AA20")).getCharacteristic(Logtta_TH.get_uuid("AA30"));
+        const c = this._peripheral
+            .getService(Logtta_TH.get_uuid('AA20'))
+            .getCharacteristic(Logtta_TH.get_uuid('AA30'));
         await c.writeWait(data);
     }
-    // 有効にしたあと、切断するとビーコンが発信される
-    async setBeaconMode(enable) {
+    /**
+     * @deprecated
+     * @param enable
+     */
+    setBeaconMode(enable) {
+        return this.setBeaconModeWait(enable);
+    }
+    async setBeaconModeWait(enable) {
         if (!(this._peripheral && this._peripheral.connected)) {
             return;
         }
-        const c = this._peripheral.getService(Logtta_TH.get_uuid("AA20")).getCharacteristic(Logtta_TH.get_uuid("AA2D"));
+        const c = this._peripheral
+            .getService(Logtta_TH.get_uuid('AA20'))
+            .getCharacteristic(Logtta_TH.get_uuid('AA2D'));
         if (enable) {
             await c.writeWait([1]);
         }
@@ -136,7 +155,7 @@ class Logtta_TH {
         }
     }
     checkNumber(data) {
-        if (data >= "0" && data <= "9") {
+        if (data >= '0' && data <= '9') {
             return parseInt(data, 10);
         }
         else {

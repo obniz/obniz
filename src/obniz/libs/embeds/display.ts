@@ -2,34 +2,37 @@
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-
-import { ComponentAbstract } from "../ComponentAbstact";
+/* eslint non-ascii:0 */
+import { ComponentAbstract } from '../ComponentAbstact';
 
 /**
  * Here we will show letters and pictures on display on obniz Board.
  * ![](media://obniz_display_sphere.gif)
+ *
  * @category Embeds
  */
 export default class Display extends ComponentAbstract {
   /**
    * display width size
+   *
    * @readonly
    */
   public readonly width: number;
 
   /**
    * display height size
+   *
    * @readonly
    */
   public readonly height: number;
 
-  private autoFlush: boolean = true;
-  private fontSize: number = 16;
+  private autoFlush = true;
+  private fontSize = 16;
   private _canvas?: HTMLCanvasElement;
   private _pos = { x: 0, y: 0 };
   private _colorDepthCapabilities: [number] = [1];
-  private _colorDepth: number = 1;
-  private _color = "#000";
+  private _colorDepth = 1;
+  private _color = '#000';
   private _paper_white = true;
   private _raw_alternate = false;
 
@@ -71,14 +74,14 @@ export default class Display extends ComponentAbstract {
    */
   public font(font: string | null, size?: number) {
     const ctx: any = this._ctx();
-    if (typeof size !== "number") {
+    if (typeof size !== 'number') {
       size = 16;
     }
-    if (typeof font !== "string") {
-      font = "Arial";
+    if (typeof font !== 'string') {
+      font = 'Arial';
     }
     this.fontSize = size;
-    ctx.font = "" + +" " + size + "px " + font;
+    ctx.font = '' + +' ' + size + 'px ' + font;
   }
 
   /**
@@ -125,7 +128,7 @@ export default class Display extends ComponentAbstract {
     this._pos.y = 0;
     if (ctx) {
       const currentFillStyle = ctx.fillStyle;
-      ctx.fillStyle = this._paper_white ? "#FFF" : "#000";
+      ctx.fillStyle = this._paper_white ? '#FFF' : '#000';
       ctx.fillRect(0, 0, this.width, this.height);
       ctx.fillStyle = currentFillStyle;
       this.draw(ctx);
@@ -148,15 +151,16 @@ export default class Display extends ComponentAbstract {
    * obniz.display.print("YES. こんにちは");
    * ```
    * ![](media://obniz_display_pos.jpg)
-   *  @param x
-   *  @param y
+   *
+   * @param x
+   * @param y
    */
   public pos(x: number, y: number) {
     this._ctx(); // crete first
-    if (typeof x === "number") {
+    if (typeof x === 'number') {
       this._pos.x = x;
     }
-    if (typeof y === "number") {
+    if (typeof y === 'number') {
       this._pos.y = y;
     }
     return this._pos;
@@ -177,7 +181,7 @@ export default class Display extends ComponentAbstract {
    * ```
    * ![](media://obniz_display_print.jpg)
    *
-   *  @param text Text to display. With browser, UTF8 string is available. (It does not work with node.js. Please use display.draw())
+   * @param text Text to display. With browser, UTF8 string is available. (It does not work with node.js. Please use display.draw())
    */
   public print(text: string) {
     const ctx = this._ctx();
@@ -188,7 +192,7 @@ export default class Display extends ComponentAbstract {
     } else {
       const obj: any = {};
       obj.display = {
-        text: "" + text,
+        text: '' + text,
       };
       this.Obniz.send(obj);
     }
@@ -250,7 +254,13 @@ export default class Display extends ComponentAbstract {
    * @param height
    * @param mustFill
    */
-  public rect(x: number, y: number, width: number, height: number, mustFill?: boolean) {
+  public rect(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    mustFill?: boolean
+  ) {
     const ctx: any = this._ctx();
     if (ctx) {
       if (mustFill) {
@@ -311,10 +321,11 @@ export default class Display extends ComponentAbstract {
    * // Javascript Example
    * obniz.display.qr("https://obniz.io")
    * ```
+   *
    * @param text
    * @param correction
    */
-  public qr(text: string, correction?: "L" | "M" | "Q" | "H") {
+  public qr(text: string, correction?: 'L' | 'M' | 'Q' | 'H') {
     const obj: any = {};
     obj.display = {
       qr: {
@@ -368,12 +379,16 @@ export default class Display extends ComponentAbstract {
    * If you call just
    */
   public setColorDepth(depth: number) {
-    const found = this._colorDepthCapabilities.find((element) => element === depth);
+    const found = this._colorDepthCapabilities.find(
+      (element) => element === depth
+    );
     if (found) {
       this._colorDepth = depth;
     } else {
       throw new Error(
-        `This device can't accept depth ${depth}. availables are ${JSON.stringify(this._colorDepthCapabilities)}`,
+        `This device can't accept depth ${depth}. availables are ${JSON.stringify(
+          this._colorDepthCapabilities
+        )}`
       );
     }
   }
@@ -501,6 +516,7 @@ export default class Display extends ComponentAbstract {
    * }
    * obniz.display.drawing(true);
    * ```
+   *
    * @param autoFlush
    */
   public drawing(autoFlush: boolean) {
@@ -512,32 +528,36 @@ export default class Display extends ComponentAbstract {
   }
 
   public schemaBasePath(): string {
-    return "display";
+    return 'display';
   }
 
   protected _reset() {
     this.autoFlush = true;
     // reset to default
     this._pos = { x: 0, y: 0 };
-    this._color = this._paper_white ? "#000" : "#FFF";
+    this._color = this._paper_white ? '#000' : '#FFF';
     this.fontSize = this.height > 200 ? 32 : 16;
-    this._colorDepth = this._colorDepthCapabilities[this._colorDepthCapabilities.length - 1];
+    this._colorDepth = this._colorDepthCapabilities[
+      this._colorDepthCapabilities.length - 1
+    ];
     this._reset_canvas();
   }
 
   private warnCanvasAvailability() {
     if (this.Obniz.isNode) {
-      throw new Error("obniz.js require node-canvas to draw rich contents. see more detail on docs");
+      throw new Error(
+        'obniz.js require node-canvas to draw rich contents. see more detail on docs'
+      );
     } else {
-      throw new Error("obniz.js cant create canvas element to body");
+      throw new Error('obniz.js cant create canvas element to body');
     }
   }
 
   private _reset_canvas() {
     // reset canvas
     if (this._canvas) {
-      const ctx: any = this._canvas!.getContext("2d");
-      ctx.fillStyle = this._paper_white ? "#FFF" : "#000";
+      const ctx: any = this._canvas.getContext('2d');
+      ctx.fillStyle = this._paper_white ? '#FFF' : '#000';
       ctx.fillRect(0, 0, this.width, this.height);
       ctx.fillStyle = this._color;
       ctx.strokeStyle = this._color;
@@ -551,28 +571,28 @@ export default class Display extends ComponentAbstract {
     }
     if (this.Obniz.isNode) {
       try {
-        const { createCanvas } = require("canvas");
+        const { createCanvas } = require('canvas');
         this._canvas = createCanvas(this.width, this.height);
       } catch (e) {
         // this.warnCanvasAvailability();
         return null;
       }
     } else {
-      const identifier: any = "obnizcanvas-" + this.Obniz.id;
+      const identifier: any = 'obnizcanvas-' + this.Obniz.id;
       let canvas: any = document.getElementById(identifier);
       if (canvas) {
         this._canvas = canvas;
       } else {
-        canvas = document.createElement("canvas");
-        canvas.setAttribute("id", identifier);
-        canvas.style.visibility = "hidden";
+        canvas = document.createElement('canvas');
+        canvas.setAttribute('id', identifier);
+        canvas.style.visibility = 'hidden';
         canvas.width = this.width;
         canvas.height = this.height;
         if (this._colorDepthCapabilities.length === 1) {
           // for monochro display
-          canvas.style["-webkit-font-smoothing"] = "none";
+          canvas.style['-webkit-font-smoothing'] = 'none';
         }
-        const body: any = document.getElementsByTagName("body")[0];
+        const body: any = document.getElementsByTagName('body')[0];
         body.appendChild(canvas);
 
         this._canvas = canvas;
@@ -585,7 +605,7 @@ export default class Display extends ComponentAbstract {
   private _ctx() {
     const canvas: any = this._preparedCanvas();
     if (canvas) {
-      return canvas.getContext("2d");
+      return canvas.getContext('2d');
     }
   }
 
@@ -595,17 +615,28 @@ export default class Display extends ComponentAbstract {
     const data = imageData.data;
 
     if (this._colorDepth === 16) {
-      for (let pixel_index = 0; pixel_index < this.width * this.height; pixel_index++) {
+      for (
+        let pixel_index = 0;
+        pixel_index < this.width * this.height;
+        pixel_index++
+      ) {
         const red = data[pixel_index * 4];
         const green = data[pixel_index * 4 + 1];
         const blue = data[pixel_index * 4 + 2];
-        const hexColor = (((red >> 3) & 0x1f) << 11) | (((green >> 2) & 0x3f) << 5) | (((blue >> 3) & 0x1f) << 0);
+        const hexColor =
+          (((red >> 3) & 0x1f) << 11) |
+          (((green >> 2) & 0x3f) << 5) |
+          (((blue >> 3) & 0x1f) << 0);
         raw[pixel_index * 2] = (hexColor >> 8) & 0xff;
         raw[pixel_index * 2 + 1] = hexColor & 0xff;
       }
     } else if (this._colorDepth === 4) {
       const stride = this.width / 2;
-      for (let pixel_index = 0; pixel_index < this.width * this.height; pixel_index++) {
+      for (
+        let pixel_index = 0;
+        pixel_index < this.width * this.height;
+        pixel_index++
+      ) {
         const red = data[pixel_index * 4];
         const green = data[pixel_index * 4 + 1];
         const blue = data[pixel_index * 4 + 2];
@@ -636,7 +667,11 @@ export default class Display extends ComponentAbstract {
       }
     } else {
       const stride = this.width / 8;
-      for (let pixel_index = 0; pixel_index < this.width * this.height; pixel_index++) {
+      for (
+        let pixel_index = 0;
+        pixel_index < this.width * this.height;
+        pixel_index++
+      ) {
         const red = data[pixel_index * 4];
         const green = data[pixel_index * 4 + 1];
         const blue = data[pixel_index * 4 + 2];

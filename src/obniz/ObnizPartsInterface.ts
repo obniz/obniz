@@ -3,7 +3,7 @@
  * @module ObnizCore
  */
 
-import Obniz from "./index";
+import Obniz from './index';
 
 export interface ObnizPartsInfo {
   name: string;

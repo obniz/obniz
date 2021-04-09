@@ -3,10 +3,12 @@
  * @module Parts.SEN0114
  */
 
-import Obniz from "../../../obniz";
-import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
+import Obniz from '../../../obniz';
+import PeripheralAD from '../../../obniz/libs/io_peripherals/ad';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface SEN0114Options {
   vcc?: number;
@@ -17,7 +19,7 @@ export interface SEN0114Options {
 export default class SEN0114 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "SEN0114",
+      name: 'SEN0114',
     };
   }
 
@@ -33,13 +35,13 @@ export default class SEN0114 implements ObnizPartsInterface {
   private ad!: PeripheralAD;
 
   constructor() {
-    this.keys = ["vcc", "output", "gnd"];
-    this.requiredKeys = ["output"];
+    this.keys = ['vcc', 'output', 'gnd'];
+    this.requiredKeys = ['output'];
   }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     this.ad = obniz.getAD(this.params.output);
 
     this.ad.start((value: number) => {

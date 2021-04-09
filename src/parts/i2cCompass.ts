@@ -3,19 +3,19 @@
  * @module Parts
  */
 
-import i2cParts, { I2cPartsAbstractOptions, Xyz } from "./i2cParts";
+import i2cParts, { I2cPartsAbstractOptions, Xyz } from './i2cParts';
 
-export type compassUnit = "uT" | "G" | "mT" | "T" | "mG" | "kG" | "uG";
+export type compassUnit = 'uT' | 'G' | 'mT' | 'T' | 'mG' | 'kG' | 'uG';
 
 export interface I2cCompassAbstractOptions extends I2cPartsAbstractOptions {}
 
 export default abstract class I2cCompassAbstract extends i2cParts {
   public static async calibrateWait() {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   public static async headingWait() {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   protected static unitScales = {
@@ -65,11 +65,18 @@ export default abstract class I2cCompassAbstract extends i2cParts {
     if (Object.keys(I2cCompassAbstract.unitScales).includes(new_unit)) {
       this.sf = new_unit;
     } else {
-      throw new Error(`Invalid compass unit. Valid values are ${Object.keys(I2cCompassAbstract.unitScales).join()}`);
+      throw new Error(
+        `Invalid compass unit. Valid values are ${Object.keys(
+          I2cCompassAbstract.unitScales
+        ).join()}`
+      );
     }
   }
 
   private calcMag(data: number): number {
-    return (data * this.so * I2cCompassAbstract.unitScales[this.sf]) / I2cCompassAbstract.unitScales[this.defaultUnit];
+    return (
+      (data * this.so * I2cCompassAbstract.unitScales[this.sf]) /
+      I2cCompassAbstract.unitScales[this.defaultUnit]
+    );
   }
 }

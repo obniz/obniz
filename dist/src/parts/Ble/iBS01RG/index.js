@@ -49,7 +49,7 @@ class IBS01RG {
     }
     static info() {
         return {
-            name: "iBS01RG",
+            name: 'iBS01RG',
         };
     }
     static isDevice(peripheral) {
@@ -80,7 +80,8 @@ class IBS01RG {
             });
         }
         const data = {
-            battery: (peripheral.adv_data[9] + (peripheral.adv_data[10] & 0x0f) * 256) * 0.01,
+            battery: (peripheral.adv_data[9] + (peripheral.adv_data[10] & 0x0f) * 256) *
+                0.01,
             active: Boolean((peripheral.adv_data[10] & 0x10) >> 4),
             button: Boolean((peripheral.adv_data[10] & 0x20) >> 5),
             acceleration: accelArray,

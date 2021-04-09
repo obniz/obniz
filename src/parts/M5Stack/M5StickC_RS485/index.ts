@@ -3,10 +3,12 @@
  * @module Parts.M5StackC_RS485
  */
 
-import Obniz from "../../../obniz";
-import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
+import Obniz from '../../../obniz';
+import PeripheralUART from '../../../obniz/libs/io_peripherals/uart';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface M5StickC_RS485Options {
   tx: number;
@@ -19,7 +21,7 @@ export interface M5StickC_RS485Options {
 export default class M5StickC_RS485 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "M5StickC_RS485",
+      name: 'M5StickC_RS485',
     };
   }
 
@@ -34,8 +36,8 @@ export default class M5StickC_RS485 implements ObnizPartsInterface {
   private uart!: PeripheralUART;
 
   constructor() {
-    this.keys = ["tx", "rx", "gnd", "vcc", "baud"];
-    this.requiredKeys = ["tx", "rx"];
+    this.keys = ['tx', 'rx', 'gnd', 'vcc', 'baud'];
+    this.requiredKeys = ['tx', 'rx'];
   }
 
   public wired(obniz: Obniz) {
@@ -49,13 +51,18 @@ export default class M5StickC_RS485 implements ObnizPartsInterface {
 
     this.params.baud = this.params.baud || 9600;
 
-    if (!this.obniz.isValidIO(this.params.tx) && !this.obniz.isValidIO(this.params.rx)) {
-      if (this.obniz.hasExtraInterface("m5stickc_hat")) {
-        const uart = this.obniz.getExtraInterface("m5stickc_hat").uart;
+    if (
+      !this.obniz.isValidIO(this.params.tx) &&
+      !this.obniz.isValidIO(this.params.rx)
+    ) {
+      if (this.obniz.hasExtraInterface('m5stickc_hat')) {
+        const uart = this.obniz.getExtraInterface('m5stickc_hat').uart;
         this.params.tx = uart.tx;
         this.params.rx = uart.rx;
       } else {
-        throw new Error("Cannot find m5stickc hat interface. Please set param 'tx'/'rx'");
+        throw new Error(
+          "Cannot find m5stickc hat interface. Please set param 'tx'/'rx'"
+        );
       }
     }
 
@@ -68,7 +75,7 @@ export default class M5StickC_RS485 implements ObnizPartsInterface {
     });
 
     this.uart.onreceive = (data, text) => {
-      if (typeof this.onreceive === "function") {
+      if (typeof this.onreceive === 'function') {
         this.onreceive(data, text);
       }
     };

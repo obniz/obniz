@@ -11,13 +11,15 @@ const VL53L0X_1 = __importDefault(require("../../DistanceSensor/VL53L0X"));
 class M5StickC_ToF extends VL53L0X_1.default {
     static info() {
         return {
-            name: "M5StickC_ToF",
+            name: 'M5StickC_ToF',
         };
     }
     wired(obniz) {
-        if (!this.obniz.isValidIO(this.params.sda) && !this.obniz.isValidIO(this.params.scl) && !this.params.i2c) {
-            if (this.obniz.hasExtraInterface("m5stickc_hat")) {
-                const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
+        if (!this.obniz.isValidIO(this.params.sda) &&
+            !this.obniz.isValidIO(this.params.scl) &&
+            !this.params.i2c) {
+            if (this.obniz.hasExtraInterface('m5stickc_hat')) {
+                const hatI2c = this.obniz.getExtraInterface('m5stickc_hat').i2c;
                 this.params.sda = hatI2c.sda;
                 this.params.scl = hatI2c.scl;
             }

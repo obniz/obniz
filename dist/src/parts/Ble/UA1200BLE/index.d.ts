@@ -2,10 +2,10 @@
  * @packageDocumentation
  * @module Parts.UA1200BLE
  */
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
-import BleBatteryService from "../abstract/services/batteryService";
-import BleGenericAccess from "../abstract/services/genericAccess";
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
+import BleBatteryService from '../abstract/services/batteryService';
+import BleGenericAccess from '../abstract/services/genericAccess';
 export interface UA1200BLEOptions {
 }
 export interface UA1200BLEResult {
@@ -44,5 +44,5 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
     private _analyzeData;
     private _getCharsCoopMode;
     private _getCharsSingleMode;
-    private _writeTimeChar;
+    private _writeTimeCharWait;
 }

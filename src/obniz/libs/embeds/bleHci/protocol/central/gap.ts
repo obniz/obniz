@@ -10,19 +10,24 @@
  */
 const debug: any = () => {};
 
-import EventEmitter from "eventemitter3";
-import { ObnizBleScanStartError } from "../../../../../ObnizError";
-import BleHelper from "../../bleHelper";
-import Hci from "../hci";
+import EventEmitter from 'eventemitter3';
+import { ObnizBleScanStartError } from '../../../../../ObnizError';
+import BleHelper from '../../bleHelper';
+import Hci from '../hci';
 
-type GapEventTypes = "scanStop" | "discover";
+type GapEventTypes = 'scanStop' | 'discover';
 
 /**
  * @ignore
  */
 class Gap extends EventEmitter<GapEventTypes> {
   public _hci: Hci;
-  public _scanState: null | "starting" | "started" | "stopping" | "stopped" = null;
+  public _scanState:
+    | null
+    | 'starting'
+    | 'started'
+    | 'stopping'
+    | 'stopped' = null;
   public _scanFilterDuplicates: null | boolean = null;
   public _discoveries: any = {};
 
@@ -32,7 +37,10 @@ class Gap extends EventEmitter<GapEventTypes> {
 
     this._reset();
 
-    this._hci.on("leAdvertisingReport", this.onHciLeAdvertisingReport.bind(this));
+    this._hci.on(
+      'leAdvertisingReport',
+      this.onHciLeAdvertisingReport.bind(this)
+    );
   }
 
   /**
@@ -45,7 +53,10 @@ class Gap extends EventEmitter<GapEventTypes> {
     this._discoveries = {};
   }
 
-  public async startScanningWait(allowDuplicates: boolean, activeScan: boolean) {
+  public async startScanningWait(
+    allowDuplicates: boolean,
+    activeScan: boolean
+  ) {
     this._scanFilterDuplicates = !allowDuplicates;
     this._discoveries = {};
     // Always set scan parameters before scanning
@@ -53,7 +64,7 @@ class Gap extends EventEmitter<GapEventTypes> {
     // p106 - p107
 
     try {
-      if (this._scanState === "starting" || this._scanState === "started") {
+      if (this._scanState === 'starting' || this._scanState === 'started') {
         await this.setScanEnabledWait(false, true);
       }
     } catch (e) {
@@ -63,11 +74,14 @@ class Gap extends EventEmitter<GapEventTypes> {
         throw e;
       }
     }
-    this._scanState = "starting";
+    this._scanState = 'starting';
 
     const status = await this._hci.setScanParametersWait(activeScan);
     if (status !== 0) {
-      throw new ObnizBleScanStartError(status, `startScanning Error setting active scan=${activeScan} was failed`);
+      throw new ObnizBleScanStartError(
+        status,
+        `startScanning Error setting active scan=${activeScan} was failed`
+      );
     }
     await new Promise((resolve) => setTimeout(resolve, 1000));
     await this.setScanEnabledWait(true, this._scanFilterDuplicates);
@@ -75,7 +89,7 @@ class Gap extends EventEmitter<GapEventTypes> {
 
   public async stopScanningWait() {
     try {
-      if (this._scanState === "starting" || this._scanState === "started") {
+      if (this._scanState === 'starting' || this._scanState === 'started') {
         await this.setScanEnabledWait(false, true);
       }
     } catch (e) {
@@ -87,7 +101,14 @@ class Gap extends EventEmitter<GapEventTypes> {
     }
   }
 
-  public onHciLeAdvertisingReport(status: any, type?: any, address?: any, addressType?: any, eir?: any, rssi?: any) {
+  public onHciLeAdvertisingReport(
+    status: any,
+    type?: any,
+    address?: any,
+    addressType?: any,
+    eir?: any,
+    rssi?: any
+  ) {
     const previouslyDiscovered: any = !!this._discoveries[address];
     const advertisement: any = previouslyDiscovered
       ? this._discoveries[address].advertisement
@@ -103,8 +124,12 @@ class Gap extends EventEmitter<GapEventTypes> {
           raw: [],
         };
 
-    let discoveryCount: any = previouslyDiscovered ? this._discoveries[address].count : 0;
-    let hasScanResponse: any = previouslyDiscovered ? this._discoveries[address].hasScanResponse : false;
+    let discoveryCount: any = previouslyDiscovered
+      ? this._discoveries[address].count
+      : 0;
+    let hasScanResponse: any = previouslyDiscovered
+      ? this._discoveries[address].hasScanResponse
+      : false;
 
     if (type === 0x04) {
       hasScanResponse = true;
@@ -134,14 +159,14 @@ class Gap extends EventEmitter<GapEventTypes> {
       const length: any = eir.readUInt8(i);
 
       if (length < 1) {
-        debug("invalid EIR data, length = " + length);
+        debug('invalid EIR data, length = ' + length);
         break;
       }
 
       const eirType: any = eir.readUInt8(i + 1); // https://www.bluetooth.org/en-us/specification/assigned-numbers/generic-access-profile
 
       if (i + length + 1 > eir.length) {
-        debug("invalid EIR data, out of range of buffer length");
+        debug('invalid EIR data, out of range of buffer length');
         break;
       }
 
@@ -170,7 +195,7 @@ class Gap extends EventEmitter<GapEventTypes> {
 
         case 0x08: // Shortened Local Name
         case 0x09: // Complete Local Name
-          advertisement.localName = bytes.toString("utf8");
+          advertisement.localName = bytes.toString('utf8');
           break;
 
         case 0x0a: {
@@ -182,8 +207,14 @@ class Gap extends EventEmitter<GapEventTypes> {
           // List of 16 bit solicitation UUIDs
           for (j = 0; j < bytes.length; j += 2) {
             serviceSolicitationUuid = bytes.readUInt16LE(j).toString(16);
-            if (advertisement.serviceSolicitationUuids.indexOf(serviceSolicitationUuid) === -1) {
-              advertisement.serviceSolicitationUuids.push(serviceSolicitationUuid);
+            if (
+              advertisement.serviceSolicitationUuids.indexOf(
+                serviceSolicitationUuid
+              ) === -1
+            ) {
+              advertisement.serviceSolicitationUuids.push(
+                serviceSolicitationUuid
+              );
             }
           }
           break;
@@ -191,16 +222,26 @@ class Gap extends EventEmitter<GapEventTypes> {
         case 0x15: {
           // List of 128 bit solicitation UUIDs
           for (j = 0; j < bytes.length; j += 16) {
-            serviceSolicitationUuid = BleHelper.buffer2reversedHex(bytes.slice(j, j + 16));
-            if (advertisement.serviceSolicitationUuids.indexOf(serviceSolicitationUuid) === -1) {
-              advertisement.serviceSolicitationUuids.push(serviceSolicitationUuid);
+            serviceSolicitationUuid = BleHelper.buffer2reversedHex(
+              bytes.slice(j, j + 16)
+            );
+            if (
+              advertisement.serviceSolicitationUuids.indexOf(
+                serviceSolicitationUuid
+              ) === -1
+            ) {
+              advertisement.serviceSolicitationUuids.push(
+                serviceSolicitationUuid
+              );
             }
           }
           break;
         }
         case 0x16: {
           // 16-bit Service Data, there can be multiple occurences
-          const serviceDataUuid: any = BleHelper.buffer2reversedHex(bytes.slice(0, 2));
+          const serviceDataUuid: any = BleHelper.buffer2reversedHex(
+            bytes.slice(0, 2)
+          );
           const serviceData: any = bytes.slice(2, bytes.length);
 
           advertisement.serviceData.push({
@@ -211,7 +252,9 @@ class Gap extends EventEmitter<GapEventTypes> {
         }
         case 0x20: {
           // 32-bit Service Data, there can be multiple occurences
-          const serviceData32Uuid: any = BleHelper.buffer2reversedHex(bytes.slice(0, 4));
+          const serviceData32Uuid: any = BleHelper.buffer2reversedHex(
+            bytes.slice(0, 4)
+          );
           const serviceData32: any = bytes.slice(4, bytes.length);
 
           advertisement.serviceData.push({
@@ -223,7 +266,9 @@ class Gap extends EventEmitter<GapEventTypes> {
         case 0x21: {
           // 128-bit Service Data, there can be multiple occurences
 
-          const serviceData128Uuid: any = BleHelper.buffer2reversedHex(bytes.slice(0, 16));
+          const serviceData128Uuid: any = BleHelper.buffer2reversedHex(
+            bytes.slice(0, 16)
+          );
           const serviceData128: any = bytes.slice(16, bytes.length);
 
           advertisement.serviceData.push({
@@ -235,8 +280,14 @@ class Gap extends EventEmitter<GapEventTypes> {
         case 0x1f: // List of 32 bit solicitation UUIDs
           for (j = 0; j < bytes.length; j += 4) {
             serviceSolicitationUuid = bytes.readUInt32LE(j).toString(16);
-            if (advertisement.serviceSolicitationUuids.indexOf(serviceSolicitationUuid) === -1) {
-              advertisement.serviceSolicitationUuids.push(serviceSolicitationUuid);
+            if (
+              advertisement.serviceSolicitationUuids.indexOf(
+                serviceSolicitationUuid
+              ) === -1
+            ) {
+              advertisement.serviceSolicitationUuids.push(
+                serviceSolicitationUuid
+              );
             }
           }
           break;
@@ -249,10 +300,12 @@ class Gap extends EventEmitter<GapEventTypes> {
       i += length + 1;
     }
 
-    debug("advertisement = " + JSON.stringify(advertisement, null, 0));
+    debug('advertisement = ' + JSON.stringify(advertisement, null, 0));
 
     const connectable: any =
-      type === 0x04 && previouslyDiscovered ? this._discoveries[address].connectable : type !== 0x03;
+      type === 0x04 && previouslyDiscovered
+        ? this._discoveries[address].connectable
+        : type !== 0x03;
 
     this._discoveries[address] = {
       address,
@@ -264,11 +317,25 @@ class Gap extends EventEmitter<GapEventTypes> {
       hasScanResponse,
     };
 
-    this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
+    this.emit(
+      'discover',
+      status,
+      address,
+      addressType,
+      connectable,
+      advertisement,
+      rssi
+    );
   }
 
-  private async setScanEnabledWait(enabled: boolean, filterDuplicates: boolean) {
-    const status = await this._hci.setScanEnabledWait(enabled, filterDuplicates);
+  private async setScanEnabledWait(
+    enabled: boolean,
+    filterDuplicates: boolean
+  ) {
+    const status = await this._hci.setScanEnabledWait(
+      enabled,
+      filterDuplicates
+    );
 
     // Check the status we got from the command complete function.
     if (status !== 0) {
@@ -276,13 +343,13 @@ class Gap extends EventEmitter<GapEventTypes> {
       // our status as a result.
       throw new ObnizBleScanStartError(
         status,
-        `startScanning enable=${enabled} was failed. Maybe Connection to a device is under going.`,
+        `startScanning enable=${enabled} was failed. Maybe Connection to a device is under going.`
       );
     } else {
-      if (this._scanState === "starting") {
-        this._scanState = "started";
-      } else if (this._scanState === "stopping") {
-        this._scanState = "stopped";
+      if (this._scanState === 'starting') {
+        this._scanState = 'started';
+      } else if (this._scanState === 'stopping') {
+        this._scanState = 'stopped';
       }
     }
   }

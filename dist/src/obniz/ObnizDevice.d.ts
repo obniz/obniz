@@ -2,19 +2,21 @@
  * @packageDocumentation
  * @module ObnizCore
  */
-import { ObnizOptions } from "./ObnizOptions";
-import ObnizUIs from "./ObnizUIs";
+import { ObnizErrorMessage } from './ObnizConnection';
+import { ObnizOptions } from './ObnizOptions';
+import ObnizUIs from './ObnizUIs';
 /**
  * @ignore
  */
 declare global {
-    var showObnizDebugError: any;
-    var MozWebSocket: any;
+    let showObnizDebugError: any;
+    let MozWebSocket: any;
     interface Window {
         userAppLoaded?: any;
         logger?: any;
         WebSocket: any;
         MozWebSocket: any;
+        showObnizDebugError: any;
     }
 }
 export default class ObnizDevice extends ObnizUIs {
@@ -92,7 +94,7 @@ export default class ObnizDevice extends ObnizUIs {
      * @ignore
      * @param msg
      */
-    error(msg: any): void;
+    error(msg: ObnizErrorMessage | Error): void;
     /**
      * Send message to obniz clients. If you want receive data, see [[Obniz.onmessage]]
      *

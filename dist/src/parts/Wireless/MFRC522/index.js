@@ -127,29 +127,45 @@ class MFRC522 {
         // this.Reserved3Eh = 0x3E;
         // this.Reserved3Fh = 0x3F;
         // required pin of obniz
-        this.keys = ["cs", "clk", "mosi", "miso", "rst", "vcc", "gnd", "spi", "spi_frequency"];
-        this.requiredKeys = ["cs", "mosi", "miso", "rst"];
+        this.keys = [
+            'cs',
+            'clk',
+            'mosi',
+            'miso',
+            'rst',
+            'vcc',
+            'gnd',
+            'spi',
+            'spi_frequency',
+        ];
+        this.requiredKeys = ['cs', 'mosi', 'miso', 'rst'];
     }
     static info() {
         return {
-            name: "MFRC522",
+            name: 'MFRC522',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
         // IO pin settings
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.rst = obniz.getIO(this.params.rst);
         // SPI settings
         this.cs = obniz.getIO(this.params.cs);
         this.cs.output(true);
-        this.params.mode = "master";
-        this.params.drive = "3v";
-        this.params.pull = "3v";
+        this.params.mode = 'master';
+        this.params.drive = '3v';
+        this.params.pull = '3v';
         this.params.frequency = this.params.spi_frequency || 5 * 1000 * 1000;
         this.spi = this.obniz.getSpiWithConfig(this.params);
     }
-    async init() {
+    /**
+     * @deprecated
+     */
+    init() {
+        return this.initWait();
+    }
+    async initWait() {
         // Initializes the MFRC522 chip
         // Hardware and Software reset
         this.rst.output(false);
@@ -164,7 +180,7 @@ class MFRC522 {
         this.writeRegister(this.TReloadRegLo, 0xe8); // Reload timer with 0x3E8 = 1000, ie. 25ms before timeout
         this.writeRegister(this.TxASKReg, 0x40); // Default 0x00. Force a 100 % ASK modulation independent of the ModGsPReg register setting
         this.writeRegister(this.ModeReg, 0x3d); // Default 0x3F. Set the preset value for the CRC coprocessor for the CalcCRC command to 0x6363 (6.2.4)
-        await this.antennaOn(); // Enable the antenna driver pins TX1 and TX2 (they were disabled by the reset)
+        await this.antennaOnWait(); // Enable the antenna driver pins TX1 and TX2 (they were disabled by the reset)
     }
     writeRegister(addr, val) {
         let data;
@@ -179,14 +195,29 @@ class MFRC522 {
         this.spi.write(data);
         this.cs.output(true);
     }
-    async readRegister(addr) {
+    /**
+     * @deprecated
+     * @param addr
+     */
+    readRegister(addr) {
+        return this.readRegisterWait(addr);
+    }
+    async readRegisterWait(addr) {
         const data = [((addr << 1) & 0x7e) | 0x80, 0];
         this.cs.output(false);
         const response = await this.spi.writeWait(data);
         this.cs.output(true);
         return response[1];
     }
-    async readRegister_nByte(addr, n) {
+    /**
+     * @deprecated
+     * @param addr
+     * @param n
+     */
+    readRegister_nByte(addr, n) {
+        return this.readRegister_nByteWait(addr, n);
+    }
+    async readRegister_nByteWait(addr, n) {
         const dataArray = [];
         if (addr instanceof Array) {
             // Multiple addresses(If addr is Array)
@@ -207,28 +238,65 @@ class MFRC522 {
         values.shift();
         return values;
     }
-    async setRegisterBitMask(reg, mask) {
-        const response = await this.readRegister(reg);
+    /**
+     * @deprecated
+     * @param reg
+     * @param mask
+     */
+    setRegisterBitMask(reg, mask) {
+        return this.setRegisterBitMaskWait(reg, mask);
+    }
+    async setRegisterBitMaskWait(reg, mask) {
+        const response = await this.readRegisterWait(reg);
         this.writeRegister(reg, response | mask);
     }
-    async clearRegisterBitMask(reg, mask) {
-        const response = await this.readRegister(reg);
+    /**
+     * @deprecated
+     *
+     * @param reg
+     * @param mask
+     */
+    clearRegisterBitMask(reg, mask) {
+        return this.clearRegisterBitMaskWait(reg, mask);
+    }
+    async clearRegisterBitMaskWait(reg, mask) {
+        const response = await this.readRegisterWait(reg);
         this.writeRegister(reg, response & ~mask);
     }
-    async antennaOn() {
+    /**
+     * @deprecated
+     */
+    antennaOn() {
+        return this.antennaOnWait();
+    }
+    async antennaOnWait() {
         // Turns the antenna on by enabling pins TX1 and TX2
-        const response = await this.readRegister(this.TxControlReg);
+        const response = await this.readRegisterWait(this.TxControlReg);
         if ((response & 0x03) !== 0x03) {
             // If TX1 and TX2 down
-            await this.setRegisterBitMask(this.TxControlReg, response | 0x03);
+            await this.setRegisterBitMaskWait(this.TxControlReg, response | 0x03);
         }
     }
-    async antennaOff() {
+    /**
+     * @deprecated
+     */
+    antennaOff() {
+        return this.antennaOffWait();
+    }
+    async antennaOffWait() {
         // Turns the antenna off by disabling pins TX1 and TX2
-        await this.clearRegisterBitMask(this.TxControlReg, 0x03);
+        await this.clearRegisterBitMaskWait(this.TxControlReg, 0x03);
+    }
+    /**
+     * @deprecated
+     * @param command
+     * @param bitsToSend
+     */
+    toCard(command, bitsToSend) {
+        return this.toCardWait(command, bitsToSend);
     }
     // RC522 and ISO14443 card communication
-    async toCard(command, bitsToSend) {
+    async toCardWait(command, bitsToSend) {
         let data = [];
         let bitSize = 0;
         let status = ERROR;
@@ -249,17 +317,21 @@ class MFRC522 {
         this.writeRegister(this.FIFODataReg, bitsToSend); // Write sendData to the FIFO
         this.writeRegister(this.CommandReg, command); // Execute the command
         if (command === this.PCD_Transceive) {
-            await this.setRegisterBitMask(this.BitFramingReg, 0x80); // StartSend=1, transmission of data starts
+            await this.setRegisterBitMaskWait(this.BitFramingReg, 0x80); // StartSend=1, transmission of data starts
         }
         let TryingTimes = 10;
         let n = 0;
         do {
             // Wait for the received data complete
-            n = await this.readRegister(this.ComIrqReg);
+            n = await this.readRegisterWait(this.ComIrqReg);
             TryingTimes--;
         } while (TryingTimes !== 0 && !(n & 0x01) && !(n & waitIRq)); // !(Timer interrupt - nothing received before timeout) & !(One of the interrupts that signal success has been set)
-        // await this.clearRegisterBitMask(this.BitFramingReg, 0x80);	//Reset with resetAndInit()
-        const response = await this.readRegister_nByte([this.ErrorReg, this.FIFOLevelReg, this.ControlReg]);
+        // await this.clearRegisterBitMaskWait(this.BitFramingReg, 0x80);	//Reset with resetAndInit()
+        const response = await this.readRegister_nByteWait([
+            this.ErrorReg,
+            this.FIFOLevelReg,
+            this.ControlReg,
+        ]);
         if (TryingTimes !== 0) {
             if ((response[0] & 0x1b) === 0x00) {
                 // BufferOvfl CollErr ParityErr ProtocolErr
@@ -279,7 +351,7 @@ class MFRC522 {
                     if (n > 16) {
                         n = 16;
                     } // Restrict until 16bytes
-                    data = await this.readRegister_nByte(this.FIFODataReg, n); // Get received data from FIFO buffer
+                    data = await this.readRegister_nByteWait(this.FIFODataReg, n); // Get received data from FIFO buffer
                 }
             }
             else {
@@ -289,7 +361,7 @@ class MFRC522 {
         return { status, data, bitSize };
     }
     async findCardWait() {
-        await this.init();
+        await this.initWait();
         await this.searchTagWait();
         const uid = await this.getUidWait();
         const PICC_Type = await this.identifyCardTypeWait(uid);
@@ -298,21 +370,21 @@ class MFRC522 {
     async searchTagWait() {
         this.writeRegister(this.BitFramingReg, 0x07);
         const tagType = [this.PICC_REQA];
-        const response = await this.toCard(this.PCD_Transceive, tagType);
+        const response = await this.toCardWait(this.PCD_Transceive, tagType);
         if (response.bitSize !== 0x10) {
-            throw new Error("card_search_ERROR");
+            throw new Error('card_search_ERROR');
         }
     }
     async getUidWait() {
         this.writeRegister(this.BitFramingReg, 0x00);
         let uid = [this.PICC_SEL_CL1, 0x20];
-        const response = await this.toCard(this.PCD_Transceive, uid);
+        const response = await this.toCardWait(this.PCD_Transceive, uid);
         if (!response.status) {
-            throw new Error("uid_scan_ERROR");
+            throw new Error('uid_scan_ERROR');
         }
         const uidCheck = response.data[0] ^ response.data[1] ^ response.data[2] ^ response.data[3];
         if (uidCheck !== response.data[4]) {
-            throw new Error("uid_check_ERROR");
+            throw new Error('uid_check_ERROR');
         }
         uid = response.data;
         // (uid).pop();
@@ -328,36 +400,39 @@ class MFRC522 {
         let n;
         // Wait for the CRC calculation to complete
         do {
-            n = await this.readRegister(this.DivIrqReg);
+            n = await this.readRegisterWait(this.DivIrqReg);
             i--;
         } while (i !== 0 && !(n & 0x04)); // CRCIrq = 1 (Calculation done)
         // CRC calculation result
-        return await this.readRegister_nByte([this.CRCResultRegLSB, this.CRCResultRegMSB]);
+        return await this.readRegister_nByteWait([
+            this.CRCResultRegLSB,
+            this.CRCResultRegMSB,
+        ]);
     }
     async identifySoftwareWait() {
-        let version = await this.readRegister(this.VersionReg);
+        let version = await this.readRegisterWait(this.VersionReg);
         switch (version) {
             case 0x88:
-                version = "(clone)";
+                version = '(clone)';
                 break;
             case 0x90:
-                version = "v0.0";
+                version = 'v0.0';
                 break;
             case 0x91:
-                version = "v1.0";
+                version = 'v1.0';
                 break;
             case 0x92:
-                version = "v2.0";
+                version = 'v2.0';
                 break;
             case 0x12:
-                version = "counterfeit chip";
+                version = 'counterfeit chip';
                 break;
             default:
-                version = "(unknown)";
+                version = '(unknown)';
         }
         // When 0x00 or 0xFF is returned, communication probably failed
         if (version === 0x00 || version === 0xff) {
-            throw new Error("software_version_ERROR");
+            throw new Error('software_version_ERROR');
         }
         return version;
     }
@@ -365,41 +440,41 @@ class MFRC522 {
         // Identify type of the scanned card
         let buffer = [this.PICC_SElECTTAG, 0x70].concat(uid);
         buffer = buffer.concat(await this.calculateCRCWait(buffer));
-        const response = await this.toCard(this.PCD_Transceive, buffer);
+        const response = await this.toCardWait(this.PCD_Transceive, buffer);
         let PICC_Type;
         if (response.status && response.bitSize === 0x18) {
             PICC_Type = response.data[0];
         }
         switch (PICC_Type) {
             case 0x04:
-                PICC_Type = "SAK indicates UID is not complete.";
+                PICC_Type = 'SAK indicates UID is not complete.';
                 break; // UID not complete
             case 0x09:
-                PICC_Type = "MIFARE Mini, 320 bytes";
+                PICC_Type = 'MIFARE Mini, 320 bytes';
                 break;
             case 0x08:
-                PICC_Type = "MIFARE 1KB";
+                PICC_Type = 'MIFARE 1KB';
                 break;
             case 0x18:
-                PICC_Type = "MIFARE 4KB";
+                PICC_Type = 'MIFARE 4KB';
                 break;
             case 0x00:
-                PICC_Type = "MIFARE Ultralight or Ultralight C";
+                PICC_Type = 'MIFARE Ultralight or Ultralight C';
                 break;
             case 0x11:
-                PICC_Type = "MIFARE Plus";
+                PICC_Type = 'MIFARE Plus';
                 break;
             case 0x01:
-                PICC_Type = "MIFARE TNP3XXX";
+                PICC_Type = 'MIFARE TNP3XXX';
                 break;
             case 0x20:
-                PICC_Type = "PICC compliant with ISO/IEC 14443-4";
+                PICC_Type = 'PICC compliant with ISO/IEC 14443-4';
                 break;
             case 0x40:
-                PICC_Type = "PICC compliant with ISO/IEC 18092 (NFC)";
+                PICC_Type = 'PICC compliant with ISO/IEC 18092 (NFC)';
                 break;
             default:
-                throw new Error("PICC_type_ERROR");
+                throw new Error('PICC_type_ERROR');
         }
         return PICC_Type;
     }
@@ -423,9 +498,9 @@ class MFRC522 {
         uid = uid.slice(0, 4); // Append the first 4 bit of the UID
         buffer = buffer.concat(uid); // 12byte
         // Start authentication itself
-        await this.toCard(this.PCD_MFAuthent, buffer);
-        if (!((await this.readRegister(this.Status2Reg)) & 0x08)) {
-            throw new Error("password_authentication_ERROR");
+        await this.toCardWait(this.PCD_MFAuthent, buffer);
+        if (!((await this.readRegisterWait(this.Status2Reg)) & 0x08)) {
+            throw new Error('password_authentication_ERROR');
         }
     }
     async authenticateBlockWait(Block, uid) {
@@ -439,14 +514,14 @@ class MFRC522 {
         uid = uid.slice(0, 4); // Append the first 4 bit of the UID
         buffer = buffer.concat(uid); // 12byte
         // Start authentication itself
-        await this.toCard(this.PCD_MFAuthent, buffer);
-        if (!((await this.readRegister(this.Status2Reg)) & 0x08)) {
-            throw new Error("password_authentication_ERROR");
+        await this.toCardWait(this.PCD_MFAuthent, buffer);
+        if (!((await this.readRegisterWait(this.Status2Reg)) & 0x08)) {
+            throw new Error('password_authentication_ERROR');
         }
     }
     async readAgainWait() {
-        // If you finish reading and want to read again, this can use instead of init()
-        await this.clearRegisterBitMask(this.Status2Reg, 0x08);
+        // If you finish reading and want to read again, this can use instead of initWait()
+        await this.clearRegisterBitMaskWait(this.Status2Reg, 0x08);
     }
     async getSectorDataWait(address) {
         const response = [];
@@ -454,9 +529,9 @@ class MFRC522 {
         for (let i = 0; i < 4; i++) {
             let request = [this.PICC_READ, address * 4 + i];
             request = request.concat(await this.calculateCRCWait(request));
-            response[i] = await this.toCard(this.PCD_Transceive, request);
+            response[i] = await this.toCardWait(this.PCD_Transceive, request);
             if (!response[i].status) {
-                throw new Error("data_read_ERROR");
+                throw new Error('data_read_ERROR');
             }
             blockData[i] = response[i].data;
         }
@@ -465,23 +540,25 @@ class MFRC522 {
     async getBlockDataWait(address) {
         let request = [this.PICC_READ, address];
         request = request.concat(await this.calculateCRCWait(request));
-        const response = await this.toCard(this.PCD_Transceive, request);
+        const response = await this.toCardWait(this.PCD_Transceive, request);
         if (!response.status) {
-            throw new Error("data_read_ERROR");
+            throw new Error('data_read_ERROR');
         }
         return response.data;
     }
     async appendCRCtoBufferAndSendToCardWait(buffer) {
         buffer = buffer.concat(await this.calculateCRCWait(buffer));
-        const response = await this.toCard(this.PCD_Transceive, buffer);
-        if (!response.status || response.bitSize !== 4 || (response.data[0] & 0x0f) !== 0x0a) {
+        const response = await this.toCardWait(this.PCD_Transceive, buffer);
+        if (!response.status ||
+            response.bitSize !== 4 ||
+            (response.data[0] & 0x0f) !== 0x0a) {
             response.status = ERROR;
         }
         return response;
     }
     async writeBlockDataWait(Block, sixteenBytes) {
         if (Block === 0 || Block % 4 === 3) {
-            throw new Error("deny_Write");
+            throw new Error('deny_Write');
         }
         const buffer = [this.PICC_WRITE, Block];
         let response = await this.appendCRCtoBufferAndSendToCardWait(buffer);
@@ -489,7 +566,7 @@ class MFRC522 {
             response = await this.appendCRCtoBufferAndSendToCardWait(sixteenBytes);
         }
         else {
-            throw new Error("data_write_ERROR");
+            throw new Error('data_write_ERROR');
         }
     }
 }

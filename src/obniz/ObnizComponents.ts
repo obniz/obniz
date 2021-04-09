@@ -3,31 +3,33 @@
  * @module ObnizCore
  */
 
-import ObnizHciBLE from "./libs/embeds/bleHci/ble";
-import Display from "./libs/embeds/display";
-import ObnizSwitch from "./libs/embeds/switch";
+import ObnizHciBLE from './libs/embeds/bleHci/ble';
+import Display from './libs/embeds/display';
+import ObnizSwitch from './libs/embeds/switch';
 
-import PeripheralAD from "./libs/io_peripherals/ad";
-import { DriveType } from "./libs/io_peripherals/common";
-import PeripheralDirective from "./libs/io_peripherals/directive";
-import PeripheralI2C from "./libs/io_peripherals/i2c";
-import PeripheralIO from "./libs/io_peripherals/io";
-import PeripheralPWM from "./libs/io_peripherals/pwm";
-import PeripheralSPI from "./libs/io_peripherals/spi";
-import PeripheralUART from "./libs/io_peripherals/uart";
-import LogicAnalyzer from "./libs/measurements/logicanalyzer";
-import ObnizMeasure from "./libs/measurements/measure";
-import WiFi from "./libs/network/wifi";
-import Plugin from "./libs/plugin/plugin";
+import PeripheralAD from './libs/io_peripherals/ad';
+import { DriveType } from './libs/io_peripherals/common';
+import PeripheralDirective from './libs/io_peripherals/directive';
+import PeripheralI2C from './libs/io_peripherals/i2c';
+import PeripheralIO from './libs/io_peripherals/io';
+import PeripheralPWM from './libs/io_peripherals/pwm';
+import PeripheralSPI from './libs/io_peripherals/spi';
+import PeripheralUART from './libs/io_peripherals/uart';
+import LogicAnalyzer from './libs/measurements/logicanalyzer';
+import ObnizMeasure from './libs/measurements/measure';
+import WiFi from './libs/network/wifi';
+import Plugin from './libs/plugin/plugin';
 
-import TCP from "./libs/protocol/tcp";
+import TCP from './libs/protocol/tcp';
 
-import ObnizParts from "./ObnizParts";
+import ObnizParts from './ObnizParts';
 
-import { ComponentAbstract } from "./libs/ComponentAbstact";
-import HW from "./libs/hw";
-import PeripheralGrove from "./libs/io_peripherals/grove";
-import { ObnizOptions } from "./ObnizOptions";
+import { ComponentAbstract } from './libs/ComponentAbstact';
+import HW from './libs/hw';
+import PeripheralGrove from './libs/io_peripherals/grove';
+import { ObnizOptions } from './ObnizOptions';
+
+export type PeripheralName = 'pwm' | 'uart' | 'spi' | 'i2c' | 'tcp';
 
 export default abstract class ObnizComponents extends ObnizParts {
   /* board peripherals */
@@ -235,6 +237,7 @@ export default abstract class ObnizComponents extends ObnizParts {
   /**
    * If obnizOS ver >= 3.0.0, automatically load [[ObnizCore.Components.Ble.Hci.ObnizBLE|ObnizHciBLE]],
    * and obnizOS ver < 3.0.0 throw unsupported Error,
+   *
    * @category Embeds
    */
   public ble?: ObnizHciBLE;
@@ -258,11 +261,16 @@ export default abstract class ObnizComponents extends ObnizParts {
 
   /**
    * Output pin Vcc and Gnd
+   *
    * @param vcc
    * @param gnd
    * @param drive
    */
-  public setVccGnd(vcc: number | null | undefined, gnd: number | null | undefined, drive: DriveType) {
+  public setVccGnd(
+    vcc: number | null | undefined,
+    gnd: number | null | undefined,
+    drive: DriveType
+  ) {
     if (this.isValidIO(vcc)) {
       if (drive) {
         this.getIO(vcc!).drive(drive);
@@ -280,47 +288,50 @@ export default abstract class ObnizComponents extends ObnizParts {
 
   /**
    * Get IO module from pin no
+   *
    * @param io
    */
   public getIO(io: number): PeripheralIO {
     if (!this.isValidIO(io)) {
-      throw new Error("io " + io + " is not valid io");
+      throw new Error('io ' + io + ' is not valid io');
     }
-    return (this as any)["io" + io];
+    return (this as any)['io' + io];
   }
 
   /**
    * GET AD module from pin no
+   *
    * @param io
    */
   public getAD(io: number): PeripheralAD {
     if (!this.isValidIO(io)) {
-      throw new Error("ad " + io + " is not valid io");
+      throw new Error('ad ' + io + ' is not valid io');
     }
-    return (this as any)["ad" + io];
+    return (this as any)['ad' + io];
   }
 
   /**
    * It returns unused PWM module.
    */
   public getFreePwm(): PeripheralPWM {
-    return this._getFreePeripheralUnit("pwm");
+    return this._getFreePeripheralUnit('pwm');
   }
 
   /**
    * It returns unused I2C module.
    */
   public getFreeI2C(): PeripheralI2C {
-    return this._getFreePeripheralUnit("i2c");
+    return this._getFreePeripheralUnit('i2c');
   }
 
   /**
    * It returns setuped I2C module .
+   *
    * @param config
    */
   public getI2CWithConfig(config: any): PeripheralI2C {
-    if (typeof config !== "object") {
-      throw new Error("getI2CWithConfig need config arg");
+    if (typeof config !== 'object') {
+      throw new Error('getI2CWithConfig need config arg');
     }
     if (config.i2c) {
       return config.i2c;
@@ -334,16 +345,17 @@ export default abstract class ObnizComponents extends ObnizParts {
    * It returns unused SPI module.
    */
   public getFreeSpi(): PeripheralSPI {
-    return this._getFreePeripheralUnit("spi");
+    return this._getFreePeripheralUnit('spi');
   }
 
   /**
    * It returns setuped SPI module.
+   *
    * @param config
    */
   public getSpiWithConfig(config: any): PeripheralSPI {
-    if (typeof config !== "object") {
-      throw new Error("getSpiWithConfig need config arg");
+    if (typeof config !== 'object') {
+      throw new Error('getSpiWithConfig need config arg');
     }
     if (config.spi) {
       return config.spi;
@@ -357,14 +369,14 @@ export default abstract class ObnizComponents extends ObnizParts {
    * It returns unused UART module.
    */
   public getFreeUart(): PeripheralUART {
-    return this._getFreePeripheralUnit("uart");
+    return this._getFreePeripheralUnit('uart');
   }
 
   /**
    * It returns unused TCP module.
    */
   public getFreeTcp() {
-    return this._getFreePeripheralUnit("tcp");
+    return this._getFreePeripheralUnit('tcp');
   }
 
   public hasExtraInterface(interfaceName: string): boolean {
@@ -372,7 +384,10 @@ export default abstract class ObnizComponents extends ObnizParts {
   }
 
   public getExtraInterface(interfaceName: string): any {
-    if (this._hwDefinition.extraInterface && this._hwDefinition.extraInterface[interfaceName]) {
+    if (
+      this._hwDefinition.extraInterface &&
+      this._hwDefinition.extraInterface[interfaceName]
+    ) {
       return this._hwDefinition.extraInterface[interfaceName];
     }
     return null;
@@ -397,7 +412,7 @@ export default abstract class ObnizComponents extends ObnizParts {
 
     this._hwDefinition = HW.getDefinitionFor(this.hw);
     if (!this._hwDefinition) {
-      throw new Error(`unkown hw ${this.hw}`);
+      throw new Error(`unkown hw ${this.hw || ''}`);
     }
 
     const hw_peripherals: any = this._hwDefinition.peripherals;
@@ -452,7 +467,11 @@ export default abstract class ObnizComponents extends ObnizParts {
           const Class: any = peripheral_map[key];
           for (const unitId in units) {
             const unitIdNumber = parseInt(unitId);
-            (this as any)[key + unitIdNumber] = new Class(this, unitIdNumber, units[unitId]);
+            (this as any)[key + unitIdNumber] = new Class(
+              this,
+              unitIdNumber,
+              units[unitId]
+            );
             this._allComponentKeys.push(key + unitIdNumber);
           }
         }
@@ -465,7 +484,7 @@ export default abstract class ObnizComponents extends ObnizParts {
           const Class: any = embeds_map[key];
           (this as any)[key] = new Class(this, hw_embeds[key]);
           this._allComponentKeys.push(key);
-          if (typeof (this as any)[key].debugHandler === "function") {
+          if (typeof (this as any)[key].debugHandler === 'function') {
             (this as any)[key].debugHandler = (text: any) => {
               this.print_debug(text);
             };
@@ -500,7 +519,7 @@ export default abstract class ObnizComponents extends ObnizParts {
   }
 
   protected _resetComponents() {
-    this.print_debug("components state resets");
+    this.print_debug('components state resets');
     for (const key of this._allComponentKeys) {
       (this as any)[key]._reset();
     }
@@ -516,8 +535,8 @@ export default abstract class ObnizComponents extends ObnizParts {
           targetComponent.notifyFromObniz(obj[basePath]);
         }
       } else {
-        if (key === "logicAnalyzer") {
-          if (obj.hasOwnProperty("logic_analyzer")) {
+        if (key === 'logicAnalyzer') {
+          if (obj.hasOwnProperty('logic_analyzer')) {
             (this as any).logicAnalyzer.notified(obj.logic_analyzer);
           }
           continue;
@@ -553,12 +572,12 @@ export default abstract class ObnizComponents extends ObnizParts {
     }
   }
 
-  protected _getFreePeripheralUnit(peripheral: any): any {
+  protected _getFreePeripheralUnit(peripheral: PeripheralName): any {
     for (const key of this._allComponentKeys) {
       if (key.indexOf(peripheral) === 0) {
         /* "io" for "io0" */
         const obj: any = (this as any)[key];
-        if (typeof obj === "object" && !obj.isUsed()) {
+        if (typeof obj === 'object' && !obj.isUsed()) {
           obj.used = true;
           return obj;
         }

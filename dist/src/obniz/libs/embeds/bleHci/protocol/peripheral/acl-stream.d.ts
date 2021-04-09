@@ -4,9 +4,9 @@
  *
  * @ignore
  */
-import EventEmitter from "eventemitter3";
-import Hci from "../hci";
-declare type AclStreamEventTypes = "data" | "end" | "encryptChange";
+import EventEmitter from 'eventemitter3';
+import Hci from '../hci';
+declare type AclStreamEventTypes = 'data' | 'end' | 'encryptChange';
 /**
  * @ignore
  */

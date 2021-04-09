@@ -37,6 +37,7 @@ class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.defau
      * It convert string to UTF-8 and write binary array.
      *
      * It throws an error when failed.
+     *
      * @param str
      * @param needResponse
      */

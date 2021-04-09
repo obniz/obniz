@@ -3,16 +3,18 @@
  * @module Parts.AXP192
  */
 
-import Obniz from "../../../obniz";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-import { I2cPartsAbstractOptions } from "../../../parts/i2cParts";
+import Obniz from '../../../obniz';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
+import { I2cPartsAbstractOptions } from '../../../parts/i2cParts';
 
 export interface AXP192Options extends I2cPartsAbstractOptions {}
 
 export default class AXP192 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "AXP192",
+      name: 'AXP192',
     };
   }
 
@@ -24,11 +26,11 @@ export default class AXP192 implements ObnizPartsInterface {
 
   constructor() {
     this.requiredKeys = [];
-    this.keys = ["sda", "scl", "i2c"];
+    this.keys = ['sda', 'scl', 'i2c'];
   }
 
   public wired(obniz: Obniz) {
-    this.params.mode = "master"; // for i2c
+    this.params.mode = 'master'; // for i2c
     this.params.clock = 400 * 1000; // for i2c
     this.i2c = obniz.getI2CWithConfig(this.params);
   }
@@ -43,7 +45,15 @@ export default class AXP192 implements ObnizPartsInterface {
     return await this.i2c.readWait(AXP192_ADDRESS, 1);
   }
 
-  public async setLDO2Voltage(voltage: number) {
+  /**
+   * @deprecated
+   * @param voltage
+   */
+  public setLDO2Voltage(voltage: number) {
+    return this.setLDO2VoltageWait(voltage);
+  }
+
+  public async setLDO2VoltageWait(voltage: number) {
     if (voltage < 1.8) {
       voltage = 1.8;
     }
@@ -56,11 +66,19 @@ export default class AXP192 implements ObnizPartsInterface {
       offset = 15;
     }
     set = (set & 0x0f) | (offset << 4);
-    console.log("set voltage to ", set);
+    console.log('set voltage to ', set);
     this.set(REG_VOLT_SET_LDO2_3, set);
   }
 
-  public async setLDO3Voltage(voltage: number) {
+  /**
+   * @deprecated
+   * @param voltage
+   */
+  public setLDO3Voltage(voltage: number) {
+    this.setLDO3VoltageWait(voltage);
+  }
+
+  public async setLDO3VoltageWait(voltage: number) {
     if (voltage < 1.8) {
       voltage = 1.8;
     }
@@ -84,14 +102,30 @@ export default class AXP192 implements ObnizPartsInterface {
     this.set(REG_EN_DC1_LDO2_3, 0x4d);
   }
 
-  public async toggleLDO2(val: number) {
+  /**
+   * @deprecated
+   * @param val
+   */
+  public toggleLDO2(val: number) {
+    return this.toggleLDO2Wait(val);
+  }
+
+  public async toggleLDO2Wait(val: number) {
     const bit = val ? 1 : 0;
     let state = await this.getWait(REG_EN_DC1_LDO2_3);
     state = (state & LDO2_EN_MASK) | (bit << 2);
     this.set(REG_EN_DC1_LDO2_3, state);
   }
 
-  public async toggleLDO3(val: number) {
+  /**
+   * @deprecated
+   * @param val
+   */
+  public toggleLDO3(val: number) {
+    return this.toggleLDO3Wait(val);
+  }
+
+  public async toggleLDO3Wait(val: number) {
     const bit = val ? 1 : 0;
     let state = await this.getWait(REG_EN_DC1_LDO2_3);
     state = (state & LDO3_EN_MASK) | (bit << 3);
@@ -112,7 +146,11 @@ export default class AXP192 implements ObnizPartsInterface {
     this.i2c.write(AXP192_ADDRESS, [REG_BCKUP_BAT, 0xa2]);
   }
 
-  public async getVbat() {
+  public getVbat() {
+    return this.getVbatWait();
+  }
+
+  public async getVbatWait() {
     this.i2c.write(AXP192_ADDRESS, [REG_VBAT_LSB]);
     const vbat_lsb: any = await this.i2c.readWait(AXP192_ADDRESS, 1);
     this.i2c.write(AXP192_ADDRESS, [REG_VBAT_MSB]);

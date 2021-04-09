@@ -2,8 +2,9 @@
  * @packageDocumentation
  * @ignore
  */
-import JsonBinaryConverter from "./jsonBinaryConverter";
-import WSCommand from "./WSCommand";
+import JsonBinaryConverter from './jsonBinaryConverter';
+import WSCommand from './WSCommand';
+
 class WSCommandWiFi extends WSCommand {
   public module: any;
   public _CommandScan: any;
@@ -28,8 +29,8 @@ class WSCommandWiFi extends WSCommand {
       return;
     }
 
-    const schemaData: any = [{ uri: "/request/wifi/scan", onValid: this.scan }];
-    const res: any = this.validateCommandSchema(schemaData, module, "wifi");
+    const schemaData: any = [{ uri: '/request/wifi/scan', onValid: this.scan }];
+    const res: any = this.validateCommandSchema(schemaData, module, 'wifi');
 
     if (res.valid === 0) {
       if (res.invalidButLike.length > 0) {
@@ -49,10 +50,11 @@ class WSCommandWiFi extends WSCommand {
           SCAN_MAC,
           SCAN_RSSI,
         }
+
         let mode: ScanState = ScanState.SCAN_SSID_LEN;
         let tmpIndex = 0;
-        let ssid = "";
-        let macAddress = "";
+        let ssid = '';
+        let macAddress = '';
         let rssi = 0;
         const scanArray = [];
         for (let i = 0; i < payload.length; i++) {
@@ -84,8 +86,8 @@ class WSCommandWiFi extends WSCommand {
                 macAddress,
                 rssi,
               });
-              ssid = "";
-              macAddress = "";
+              ssid = '';
+              macAddress = '';
               rssi = 0;
               break;
           }

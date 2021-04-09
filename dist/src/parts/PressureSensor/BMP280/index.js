@@ -7,8 +7,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class BMP280 {
     constructor() {
         this.requiredKeys = [];
-        this.keys = ["vcore", "vio", "gnd", "csb", "sdi", "sck", "sdo", "i2c", "address"];
-        this.ioKeys = ["vcore", "vio", "gnd", "csb", "sdi", "sdo", "sck"];
+        this.keys = [
+            'vcore',
+            'vio',
+            'gnd',
+            'csb',
+            'sdi',
+            'sck',
+            'sdo',
+            'i2c',
+            'address',
+        ];
+        this.ioKeys = ['vcore', 'vio', 'gnd', 'csb', 'sdi', 'sdo', 'sck'];
         this.configration = {
             sampling: {
                 temp: 1,
@@ -31,8 +41,8 @@ class BMP280 {
     }
     static info() {
         return {
-            name: "BMP280",
-            datasheet: "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp280-ds001.pdf",
+            name: 'BMP280',
+            datasheet: 'https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp280-ds001.pdf',
         };
     }
     wired(obniz) {
@@ -40,12 +50,12 @@ class BMP280 {
         if (obniz.isValidIO(this.params.csb)) {
             // selecting I2C mode before powerup
             this.io_csb = obniz.getIO(this.params.csb);
-            this.io_csb.drive("3v");
+            this.io_csb.drive('3v');
             this.io_csb.output(true);
         }
-        this.obniz.setVccGnd(this.params.vio, null, "3v");
-        this.obniz.setVccGnd(this.params.vcore, null, "3v");
-        this.obniz.setVccGnd(null, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vio, null, '3v');
+        this.obniz.setVccGnd(this.params.vcore, null, '3v');
+        this.obniz.setVccGnd(null, this.params.gnd, '5v');
         this.obniz.wait(10);
         this.address = 0x76;
         if (this.params.address === 0x76) {
@@ -55,28 +65,41 @@ class BMP280 {
             this.address = 0x77;
         }
         else if (this.params.address !== undefined) {
-            throw new Error("address must be 0x76 or 0x77");
+            throw new Error('address must be 0x76 or 0x77');
         }
         if (obniz.isValidIO(this.params.sdo)) {
             this.io_sdo = obniz.getIO(this.params.sdo);
-            this.io_sdo.drive("3v");
+            this.io_sdo.drive('3v');
             this.io_sdo.output(this.address === 0x76 ? false : true);
         }
         this.params.sda = this.params.sda || this.params.sdi;
         this.params.scl = this.params.scl || this.params.sck;
         this.params.clock = this.params.clock || 100 * 1000;
-        this.params.mode = "master";
-        this.params.pull = "3v";
+        this.params.mode = 'master';
+        this.params.pull = '3v';
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.obniz.wait(10);
         this.config();
         this.obniz.wait(10);
     }
-    async setIIRStrength(strengh) {
-        this.configration.iir_strength = strengh;
-        this.config();
+    /**
+     * @deprecated
+     * @param strength
+     */
+    setIIRStrength(strength) {
+        return this.setIIRStrengthWait(strength);
     }
-    async applyCalibration() {
+    async setIIRStrengthWait(strengh) {
+        this.configration.iir_strength = strengh;
+        await this.configWait();
+    }
+    /**
+     * @deprecated
+     */
+    applyCalibration() {
+        return this.applyCalibrationWait();
+    }
+    async applyCalibrationWait() {
         this.i2c.write(this.address, [0x88]);
         const data = await this.i2c.readWait(this.address, 24);
         this._calibrated = {
@@ -114,19 +137,30 @@ class BMP280 {
         return this.calcAltitude(pressure);
     }
     calcAltitude(pressure, seaPressure) {
-        if (typeof seaPressure !== "number") {
+        if (typeof seaPressure !== 'number') {
             seaPressure = 1013.25;
         }
-        return (1.0 - Math.pow(pressure / seaPressure, 1 / 5.2553)) * 145366.45 * 0.3048;
+        return ((1.0 - Math.pow(pressure / seaPressure, 1 / 5.2553)) * 145366.45 * 0.3048);
     }
-    async config() {
+    /**
+     * @deprecated
+     * @private
+     */
+    config() {
+        return this.configWait();
+    }
+    async configWait() {
         this.write([
             this.commands.addresses.config,
-            (this.configration.interval << 5) | (this.configration.iir_strength << 2) | 0,
+            (this.configration.interval << 5) |
+                (this.configration.iir_strength << 2) |
+                0,
         ]);
         this.write([
             this.commands.addresses.ctrl_meas,
-            (this.configration.sampling.temp << 5) | (this.configration.sampling.pres << 2) | this.configration.mode,
+            (this.configration.sampling.temp << 5) |
+                (this.configration.sampling.pres << 2) |
+                this.configration.mode,
         ]);
     }
     _readSigned16(value) {
@@ -144,21 +178,24 @@ class BMP280 {
     write(data) {
         this.i2c.write(this.address, data);
     }
-    async getData() {
+    getData() {
+        return this.getDataWait();
+    }
+    async getDataWait() {
         this.i2c.write(this.address, [0xf7]);
         return await this.i2c.readWait(this.address, 6);
     }
     calibration_T(adc_T) {
-        let var1;
-        let var2;
-        let T;
-        var1 = (((adc_T >> 3) - (this._calibrated.dig_T1 << 1)) * this._calibrated.dig_T2) >> 11;
-        var2 =
-            (((((adc_T >> 4) - this._calibrated.dig_T1) * ((adc_T >> 4) - this._calibrated.dig_T1)) >> 12) *
-                this._calibrated.dig_T3) >>
-                14;
+        const var1 = (((adc_T >> 3) - (this._calibrated.dig_T1 << 1)) *
+            this._calibrated.dig_T2) >>
+            11;
+        const var2 = (((((adc_T >> 4) - this._calibrated.dig_T1) *
+            ((adc_T >> 4) - this._calibrated.dig_T1)) >>
+            12) *
+            this._calibrated.dig_T3) >>
+            14;
         this._t_fine = var1 + var2;
-        T = (this._t_fine * 5 + 128) >> 8;
+        const T = (this._t_fine * 5 + 128) >> 8;
         return T;
     }
     calibration_P(adc_P) {
@@ -166,7 +203,10 @@ class BMP280 {
         let pvar2 = (pvar1 * pvar1 * this._calibrated.dig_P6) / 32768;
         pvar2 = pvar2 + pvar1 * this._calibrated.dig_P5 * 2;
         pvar2 = pvar2 / 4 + this._calibrated.dig_P4 * 65536;
-        pvar1 = ((this._calibrated.dig_P3 * pvar1 * pvar1) / 524288 + this._calibrated.dig_P2 * pvar1) / 524288;
+        pvar1 =
+            ((this._calibrated.dig_P3 * pvar1 * pvar1) / 524288 +
+                this._calibrated.dig_P2 * pvar1) /
+                524288;
         pvar1 = (1 + pvar1 / 32768) * this._calibrated.dig_P1;
         if (pvar1 !== 0) {
             let p = 1048576 - adc_P;

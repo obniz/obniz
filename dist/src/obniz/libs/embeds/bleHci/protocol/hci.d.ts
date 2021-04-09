@@ -3,11 +3,11 @@
  * @packageDocumentation
  * @ignore
  */
-import EventEmitter from "eventemitter3";
-import ObnizBLEHci from "../hci";
-import { BleDeviceAddress, BleDeviceAddressType, Handle } from "../bleTypes";
-declare type HciEventTypes = "leAdvertisingReport" | "leConnComplete" | "stateChange" | "leConnUpdateComplete" | "disconnComplete" | "encryptChange" | "aclDataPkt";
-declare type HciState = "poweredOn" | "poweredOff";
+import EventEmitter from 'eventemitter3';
+import ObnizBLEHci from '../hci';
+import { BleDeviceAddress, BleDeviceAddressType, Handle } from '../bleTypes';
+declare type HciEventTypes = 'leAdvertisingReport' | 'leConnComplete' | 'stateChange' | 'leConnUpdateComplete' | 'disconnComplete' | 'encryptChange' | 'aclDataPkt';
+declare type HciState = 'poweredOn' | 'poweredOff';
 /**
  * @ignore
  */
@@ -104,7 +104,7 @@ declare class Hci extends EventEmitter<HciEventTypes> {
     pushAclOutQueue(): void;
     writeOneAclDataPkt(): void;
     writeAclDataPkt(handle: Handle, cid: any, data: any): void;
-    longTermKeyRequestNegativeReply(handle: Handle): Promise<number>;
+    longTermKeyRequestNegativeReplyWait(handle: Handle): Promise<void>;
     processLeMetaEvent(eventType: any, status: any, data: any): void;
     processLeConnComplete(status: any, data: Buffer, onConnectCallback: any): {
         status: any;

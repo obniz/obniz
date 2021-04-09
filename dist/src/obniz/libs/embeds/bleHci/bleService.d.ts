@@ -2,10 +2,10 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import BleCharacteristic from "./bleCharacteristic";
-import BleLocalAttributeAbstract from "./bleLocalAttributeAbstract";
-import BlePeripheral from "./blePeripheral";
-import { BleAdvertisementData, BleCharacteristicDefine, BleServiceDefine, UUID } from "./bleTypes";
+import BleCharacteristic from './bleCharacteristic';
+import BleLocalAttributeAbstract from './bleLocalAttributeAbstract';
+import BlePeripheral from './blePeripheral';
+import { BleAdvertisementData, BleCharacteristicDefine, BleServiceDefine, UUID } from './bleTypes';
 /**
  * @category Use as Peripheral
  */
@@ -19,11 +19,13 @@ export default class BleService extends BleLocalAttributeAbstract<null, BleChara
     constructor(obj: BleServiceDefine);
     /**
      * Add new Characteristic
+     *
      * @param child
      */
     addCharacteristic(child: BleCharacteristicDefine | BleCharacteristic): BleCharacteristic;
     /**
      * Get Characteristic
+     *
      * @param uuid
      */
     getCharacteristic(uuid: UUID): BleCharacteristic | null;

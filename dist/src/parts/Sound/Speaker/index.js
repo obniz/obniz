@@ -6,23 +6,23 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Speaker {
     constructor(obniz) {
-        this.keys = ["signal", "gnd"];
-        this.requiredKeys = ["signal"];
+        this.keys = ['signal', 'gnd'];
+        this.requiredKeys = ['signal'];
     }
     static info() {
         return {
-            name: "Speaker",
+            name: 'Speaker',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(null, this.params.gnd, "5v");
+        this.obniz.setVccGnd(null, this.params.gnd, '5v');
         this.pwm = obniz.getFreePwm();
         this.pwm.start({ io: this.params.signal });
     }
     play(frequency) {
-        if (typeof frequency !== "number") {
-            throw new Error("freq must be a number");
+        if (typeof frequency !== 'number') {
+            throw new Error('freq must be a number');
         }
         frequency = Math.floor(frequency); // temporary
         if (frequency > 0) {

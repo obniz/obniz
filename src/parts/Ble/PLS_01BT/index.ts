@@ -3,10 +3,12 @@
  * @module Parts.PLS_01BT
  */
 
-import Obniz from "../../../obniz";
-import BleRemoteCharacteristic from "../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic";
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import BleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface PLS_01BTResult {
   pulseRate: number;
@@ -19,12 +21,15 @@ export interface PLS_01BTOptions {}
 export default class PLS_01BT implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "PLS_01BT",
+      name: 'PLS_01BT',
     };
   }
 
   public static isDevice(peripheral: BleRemotePeripheral) {
-    if (peripheral.localName && peripheral.localName.startsWith("My Oximeter")) {
+    if (
+      peripheral.localName &&
+      peripheral.localName.startsWith('My Oximeter')
+    ) {
       return true;
     }
     return false;
@@ -37,8 +42,8 @@ export default class PLS_01BT implements ObnizPartsInterface {
   public ondisconnect?: (reason: any) => void;
 
   private _uuids = {
-    service: "CDEACB80-5235-4C07-8846-93A37EE6B86D",
-    rxChar: "CDEACB81-5235-4C07-8846-93A37EE6B86D",
+    service: 'CDEACB80-5235-4C07-8846-93A37EE6B86D',
+    rxChar: 'CDEACB81-5235-4C07-8846-93A37EE6B86D',
   };
   private _peripheral: BleRemotePeripheral | null = null;
   private _rxCharacteristic: BleRemoteCharacteristic | null = null;
@@ -46,7 +51,7 @@ export default class PLS_01BT implements ObnizPartsInterface {
 
   constructor(peripheral: BleRemotePeripheral | null) {
     if (peripheral && !PLS_01BT.isDevice(peripheral)) {
-      throw new Error("peripheral is not PLS_01BT");
+      throw new Error('peripheral is not PLS_01BT');
     }
     this._peripheral = peripheral;
   }
@@ -56,7 +61,7 @@ export default class PLS_01BT implements ObnizPartsInterface {
 
   public async connectWait() {
     if (!this._peripheral) {
-      throw new Error("PLS_01BT is not find.");
+      throw new Error('PLS_01BT is not find.');
     }
     this._peripheral.ondisconnect = (reason) => {
       if (this.ondisconnect) {
@@ -64,10 +69,12 @@ export default class PLS_01BT implements ObnizPartsInterface {
       }
     };
     await this._peripheral.connectWait();
-    this._rxCharacteristic = this._peripheral.getService(this._uuids.service)!.getCharacteristic(this._uuids.rxChar);
+    this._rxCharacteristic = this._peripheral
+      .getService(this._uuids.service)!
+      .getCharacteristic(this._uuids.rxChar);
 
     if (!this._rxCharacteristic) {
-      throw new Error("device is not PLS_01BT");
+      throw new Error('device is not PLS_01BT');
     }
 
     await this._rxCharacteristic.registerNotifyWait((data) => {
@@ -90,7 +97,7 @@ export default class PLS_01BT implements ObnizPartsInterface {
 
   public async disconnectWait() {
     if (!this._peripheral) {
-      throw new Error("PLS_01BT is not find.");
+      throw new Error('PLS_01BT is not find.');
     }
     await this._peripheral.disconnectWait();
   }

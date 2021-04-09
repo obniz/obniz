@@ -6,16 +6,16 @@ let testUtil = require('../../../testUtil.js');
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
-describe('obniz.libs.switch', function() {
-  beforeEach(function(done) {
+describe('obniz.libs.switch', function () {
+  beforeEach(function (done) {
     return testUtil.setupObnizPromise(this, done);
   });
 
-  afterEach(function(done) {
+  afterEach(function (done) {
     return testUtil.releaseObnizePromise(this, done);
   });
 
-  it('onchange', function() {
+  it('onchange', function () {
     let stub = sinon.stub();
     this.obniz.switch.onchange = stub;
     expect(this.obniz).to.be.obniz;
@@ -29,7 +29,7 @@ describe('obniz.libs.switch', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it.skip('not value changd  , but it detect action:get on onchange func', function() {
+  it.skip('not value changd  , but it detect action:get on onchange func', function () {
     let stub = sinon.stub();
     this.obniz.switch.onchange = stub;
     expect(this.obniz).to.be.obniz;
@@ -44,10 +44,10 @@ describe('obniz.libs.switch', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('inputWaitLeft', function() {
+  it('inputWaitLeft', function () {
     return new Promise(
-      function(resolve, reject) {
-        this.obniz.switch.getWait().then(function(result) {
+      function (resolve, reject) {
+        this.obniz.switch.getWait().then(function (result) {
           expect(result).to.be.equal('left');
           resolve();
         });
@@ -57,7 +57,7 @@ describe('obniz.libs.switch', function() {
         expect(this.obniz).to.be.finished;
 
         setTimeout(
-          function() {
+          function () {
             testUtil.receiveJson(this.obniz, [
               { switch: { state: 'left', action: 'get' } },
             ]);
@@ -68,11 +68,11 @@ describe('obniz.libs.switch', function() {
     );
   });
 
-  it('stateWait', function() {
+  it('stateWait', function () {
     let before = true;
     return new Promise(
-      function(resolve, reject) {
-        this.obniz.switch.stateWait('push').then(function(result) {
+      function (resolve, reject) {
+        this.obniz.switch.stateWait('push').then(function (result) {
           expect(before).to.be.false;
           resolve();
         });
@@ -85,7 +85,7 @@ describe('obniz.libs.switch', function() {
         expect(this.obniz).to.be.finished;
 
         setTimeout(
-          function() {
+          function () {
             before = false;
             testUtil.receiveJson(this.obniz, [{ switch: { state: 'push' } }]);
           }.bind(this),

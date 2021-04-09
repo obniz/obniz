@@ -12,17 +12,17 @@ const genericAccess_1 = __importDefault(require("../abstract/services/genericAcc
 class Logtta_CO2 {
     constructor(peripheral) {
         if (peripheral && !Logtta_CO2.isDevice(peripheral)) {
-            throw new Error("peripheral is not Logtta CO2");
+            throw new Error('peripheral is not Logtta CO2');
         }
         this._peripheral = peripheral;
     }
     static info() {
         return {
-            name: "Logtta_CO2",
+            name: 'Logtta_CO2',
         };
     }
     static isDevice(peripheral) {
-        return peripheral.localName === "CO2 Sensor";
+        return peripheral.localName === 'CO2 Sensor';
     }
     static isAdvDevice(peripheral) {
         if (peripheral.adv_data.length !== 31) {
@@ -56,7 +56,7 @@ class Logtta_CO2 {
         return advData;
     }
     static getName(data) {
-        let name = "";
+        let name = '';
         for (let i = 16; i < data.length; i++) {
             if (data[i] === 0) {
                 break;
@@ -70,20 +70,20 @@ class Logtta_CO2 {
     }
     async connectWait() {
         if (!this._peripheral) {
-            throw new Error("Logtta CO2 not found");
+            throw new Error('Logtta CO2 not found');
         }
         if (!this._peripheral.connected) {
             this._peripheral.ondisconnect = (reason) => {
-                if (typeof this.ondisconnect === "function") {
+                if (typeof this.ondisconnect === 'function') {
                     this.ondisconnect(reason);
                 }
             };
             await this._peripheral.connectWait();
-            const service1800 = this._peripheral.getService("1800");
+            const service1800 = this._peripheral.getService('1800');
             if (service1800) {
                 this.genericAccess = new genericAccess_1.default(service1800);
             }
-            const service180F = this._peripheral.getService("180F");
+            const service180F = this._peripheral.getService('180F');
             if (service180F) {
                 this.batteryService = new batteryService_1.default(service180F);
             }
@@ -98,7 +98,9 @@ class Logtta_CO2 {
         if (!(this._peripheral && this._peripheral.connected)) {
             return null;
         }
-        const c = this._peripheral.getService(Logtta_CO2.get_uuid("AB20")).getCharacteristic(Logtta_CO2.get_uuid("AB21"));
+        const c = this._peripheral
+            .getService(Logtta_CO2.get_uuid('AB20'))
+            .getCharacteristic(Logtta_CO2.get_uuid('AB21'));
         const data = await c.readWait();
         return data[0] * 256 + data[1];
     }
@@ -106,7 +108,9 @@ class Logtta_CO2 {
         if (!(this._peripheral && this._peripheral.connected)) {
             return;
         }
-        const c = this._peripheral.getService(Logtta_CO2.get_uuid("AB20")).getCharacteristic(Logtta_CO2.get_uuid("AB21"));
+        const c = this._peripheral
+            .getService(Logtta_CO2.get_uuid('AB20'))
+            .getCharacteristic(Logtta_CO2.get_uuid('AB21'));
         await c.registerNotifyWait((data) => {
             if (this.onNotify) {
                 this.onNotify(data[0] * 256 + data[1]);
@@ -118,21 +122,32 @@ class Logtta_CO2 {
             return;
         }
         if (code.length !== 4) {
-            throw new Error("Invalid length auth code");
+            throw new Error('Invalid length auth code');
         }
         const data = [0];
         for (let i = 0; i < code.length; i += 2) {
-            data.push((this.checkNumber(code.charAt(i)) << 4) | this.checkNumber(code.charAt(i + 1)));
+            data.push((this.checkNumber(code.charAt(i)) << 4) |
+                this.checkNumber(code.charAt(i + 1)));
         }
-        const c = this._peripheral.getService(Logtta_CO2.get_uuid("AB20")).getCharacteristic(Logtta_CO2.get_uuid("AB30"));
+        const c = this._peripheral
+            .getService(Logtta_CO2.get_uuid('AB20'))
+            .getCharacteristic(Logtta_CO2.get_uuid('AB30'));
         await c.writeWait(data);
     }
-    // 有効にしたあと、切断するとビーコンが発信される
-    async setBeaconMode(enable) {
+    /**
+     * @deprecated
+     * @param enable
+     */
+    setBeaconMode(enable) {
+        return this.setBeaconModeWait(enable);
+    }
+    async setBeaconModeWait(enable) {
         if (!(this._peripheral && this._peripheral.connected)) {
             return;
         }
-        const c = this._peripheral.getService(Logtta_CO2.get_uuid("AB20")).getCharacteristic(Logtta_CO2.get_uuid("AB2D"));
+        const c = this._peripheral
+            .getService(Logtta_CO2.get_uuid('AB20'))
+            .getCharacteristic(Logtta_CO2.get_uuid('AB2D'));
         if (enable) {
             await c.writeWait([1]);
         }
@@ -141,7 +156,7 @@ class Logtta_CO2 {
         }
     }
     checkNumber(data) {
-        if (data >= "0" && data <= "9") {
+        if (data >= '0' && data <= '9') {
             return parseInt(data, 10);
         }
         else {

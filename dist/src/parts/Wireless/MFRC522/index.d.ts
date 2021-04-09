@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module Parts.MFRC522
  */
-import Obniz from "../../../obniz";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface MFRC522Options {
     gnd?: number;
     vcc?: number;
@@ -119,15 +119,61 @@ export default class MFRC522 implements ObnizPartsInterface {
     spi: any;
     constructor();
     wired(obniz: Obniz): void;
+    /**
+     * @deprecated
+     */
     init(): Promise<void>;
+    initWait(): Promise<void>;
     writeRegister(addr: number, val: any): void;
+    /**
+     * @deprecated
+     * @param addr
+     */
     readRegister(addr: number): Promise<any>;
+    readRegisterWait(addr: number): Promise<any>;
+    /**
+     * @deprecated
+     * @param addr
+     * @param n
+     */
     readRegister_nByte(addr: any, n?: any): Promise<number[]>;
+    readRegister_nByteWait(addr: any, n?: any): Promise<number[]>;
+    /**
+     * @deprecated
+     * @param reg
+     * @param mask
+     */
     setRegisterBitMask(reg: any, mask: any): Promise<void>;
+    setRegisterBitMaskWait(reg: any, mask: any): Promise<void>;
+    /**
+     * @deprecated
+     *
+     * @param reg
+     * @param mask
+     */
     clearRegisterBitMask(reg: any, mask: any): Promise<void>;
+    clearRegisterBitMaskWait(reg: any, mask: any): Promise<void>;
+    /**
+     * @deprecated
+     */
     antennaOn(): Promise<void>;
+    antennaOnWait(): Promise<void>;
+    /**
+     * @deprecated
+     */
     antennaOff(): Promise<void>;
+    antennaOffWait(): Promise<void>;
+    /**
+     * @deprecated
+     * @param command
+     * @param bitsToSend
+     */
     toCard(command: any, bitsToSend: any): Promise<{
+        status: boolean;
+        data: any;
+        bitSize: number;
+    }>;
+    toCardWait(command: any, bitsToSend: any): Promise<{
         status: boolean;
         data: any;
         bitSize: number;

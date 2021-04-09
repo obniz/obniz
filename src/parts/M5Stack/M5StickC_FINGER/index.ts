@@ -2,10 +2,12 @@
  * @packageDocumentation
  * @module Parts.M5StickC_FINGER
  */
-import Obniz from "../../../obniz";
-import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
+import Obniz from '../../../obniz';
+import PeripheralUART from '../../../obniz/libs/io_peripherals/uart';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface M5StickC_FINGEROptions {
   tx: number;
@@ -16,7 +18,7 @@ export interface M5StickC_FINGEROptions {
 export default class M5StickC_FINGER implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "M5StickC_FINGER",
+      name: 'M5StickC_FINGER',
     };
   }
 
@@ -45,7 +47,7 @@ export default class M5StickC_FINGER implements ObnizPartsInterface {
 
   constructor() {
     this.requiredKeys = [];
-    this.keys = ["tx", "rx", "gnd"];
+    this.keys = ['tx', 'rx', 'gnd'];
     this.ack = {
       SUCCESS: 0x00,
       FAIL: 0x01,
@@ -79,14 +81,19 @@ export default class M5StickC_FINGER implements ObnizPartsInterface {
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
-    this.obniz.setVccGnd(null, this.params.gnd, "3v");
-    if (!this.obniz.isValidIO(this.params.tx) && !this.obniz.isValidIO(this.params.rx)) {
-      if (this.obniz.hasExtraInterface("m5stickc_hat")) {
-        const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").uart;
+    this.obniz.setVccGnd(null, this.params.gnd, '3v');
+    if (
+      !this.obniz.isValidIO(this.params.tx) &&
+      !this.obniz.isValidIO(this.params.rx)
+    ) {
+      if (this.obniz.hasExtraInterface('m5stickc_hat')) {
+        const hatI2c = this.obniz.getExtraInterface('m5stickc_hat').uart;
         this.params.tx = hatI2c.tx;
         this.params.rx = hatI2c.rx;
       } else {
-        throw new Error("Cannot find m5stickc hat interface. Please set param 'tx'/'rx'");
+        throw new Error(
+          "Cannot find m5stickc hat interface. Please set param 'tx'/'rx'"
+        );
       }
     }
 
@@ -186,7 +193,7 @@ export default class M5StickC_FINGER implements ObnizPartsInterface {
       return this.ack.SUCCESS;
     }
 
-    throw Error("failed to set add mode.");
+    throw Error('failed to set add mode.');
   }
 
   public async readAddModeWait() {
@@ -201,7 +208,7 @@ export default class M5StickC_FINGER implements ObnizPartsInterface {
       return this.RxBuf[this.Q2];
     }
 
-    throw Error("failed to read add mode.");
+    throw Error('failed to read add mode.');
   }
 
   public async deleteAllUserWait() {
@@ -216,7 +223,7 @@ export default class M5StickC_FINGER implements ObnizPartsInterface {
       return this.ack.SUCCESS;
     }
 
-    throw Error("failed to delete all users.");
+    throw Error('failed to delete all users.');
   }
 
   public async deleteUserWait(userNum: number) {
@@ -231,7 +238,7 @@ export default class M5StickC_FINGER implements ObnizPartsInterface {
       return this.ack.SUCCESS;
     }
 
-    throw Error("failed to delete user: " + userNum);
+    throw Error('failed to delete user: ' + userNum);
   }
 
   public async getUserPermissionWait(userNum: number) {
@@ -247,7 +254,7 @@ export default class M5StickC_FINGER implements ObnizPartsInterface {
 
   public async setSecurityLevelWait(level: number) {
     if (level < 0 || level > 9) {
-      throw Error("security level argument must be between 0 and 9");
+      throw Error('security level argument must be between 0 and 9');
     }
 
     this.TxBuf[this.CMD] = this.cmd.SECURITY_LEVEL;
@@ -261,7 +268,7 @@ export default class M5StickC_FINGER implements ObnizPartsInterface {
       return this.ack.SUCCESS;
     }
 
-    throw Error("failed to set security level.");
+    throw Error('failed to set security level.');
   }
 
   public async getSecurityLevelWait() {
@@ -276,7 +283,7 @@ export default class M5StickC_FINGER implements ObnizPartsInterface {
       return this.RxBuf[this.Q2];
     }
 
-    throw Error("failed to get security level.");
+    throw Error('failed to get security level.');
   }
 
   private async sendAndReceiveWait(timeout: number) {
@@ -302,13 +309,13 @@ export default class M5StickC_FINGER implements ObnizPartsInterface {
       return this.ack.TIMEOUT;
     }
     if (this.RxBuf[this.HEAD] !== this.cmd.HEAD) {
-      throw Error("communication failed.");
+      throw Error('communication failed.');
     }
     if (this.RxBuf[this.TAIL] !== this.cmd.TAIL) {
-      throw Error("communication failed.");
+      throw Error('communication failed.');
     }
     if (this.RxBuf[this.CMD] !== this.TxBuf[this.CMD]) {
-      throw Error("communication failed.");
+      throw Error('communication failed.');
     }
 
     checkSum = 0;
@@ -316,7 +323,7 @@ export default class M5StickC_FINGER implements ObnizPartsInterface {
       checkSum ^= this.RxBuf[i];
     }
     if (checkSum !== this.RxBuf[this.CHK]) {
-      throw Error("communication failed.");
+      throw Error('communication failed.');
     }
 
     return this.ack.SUCCESS;

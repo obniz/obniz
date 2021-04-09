@@ -17,7 +17,7 @@ class WSCommandMeasurement extends WSCommand_1.default {
     // Commands
     echo(params) {
         const triggerIO = params.echo.io_pulse;
-        const triggerPosNeg = params.echo.pulse === "negative" ? false : true;
+        const triggerPosNeg = params.echo.pulse === 'negative' ? false : true;
         const triggerWidthUs = Math.floor(params.echo.pulse_width * 1000);
         const echoIO = params.echo.io_echo;
         const responseCount = params.echo.measure_edges;
@@ -44,8 +44,10 @@ class WSCommandMeasurement extends WSCommand_1.default {
         if (module === undefined) {
             return;
         }
-        const schemaData = [{ uri: "/request/measure/echo", onValid: this.echo }];
-        const res = this.validateCommandSchema(schemaData, module, "measure");
+        const schemaData = [
+            { uri: '/request/measure/echo', onValid: this.echo },
+        ];
+        const res = this.validateCommandSchema(schemaData, module, 'measure');
         if (res.valid === 0) {
             if (res.invalidButLike.length > 0) {
                 throw new Error(res.invalidButLike[0].message);

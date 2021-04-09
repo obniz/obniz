@@ -2,16 +2,16 @@
  * @packageDocumentation
  * @module Parts.MiniBreeze
  */
-import Obniz from "../../../obniz";
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface from "../../../obniz/ObnizPartsBleInterface";
+import Obniz from '../../../obniz';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
 export interface MiniBreeze_InfoData {
-    gasType: "none" | "HCHO" | "CO" | "CO2" | "Rn" | "PM1.0" | "PM2.5" | "PM10" | "unknown";
+    gasType: 'none' | 'HCHO' | 'CO' | 'CO2' | 'Rn' | 'PM1.0' | 'PM2.5' | 'PM10' | 'unknown';
     sensVal: number;
     temperature: number;
     humidity: number;
     version: string;
-    status: "BatteryEmpty" | "BatteryLow" | "BatteryNormal" | "BatteryCharging" | "Invalid";
+    status: 'BatteryEmpty' | 'BatteryLow' | 'BatteryNormal' | 'BatteryCharging' | 'Invalid';
     devName: string;
 }
 export interface MiniBreezeOptions {

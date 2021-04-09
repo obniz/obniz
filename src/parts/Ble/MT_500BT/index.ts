@@ -3,26 +3,28 @@
  * @module Parts.MT_500BT
  */
 
-import EventEmitter from "eventemitter3";
-import Obniz from "../../../obniz";
-import BleRemoteCharacteristic from "../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic";
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import BleRemoteService from "../../../obniz/libs/embeds/bleHci/bleRemoteService";
-import ObnizUtil from "../../../obniz/libs/utils/util";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-import BleGenericAccess from "../abstract/services/genericAccess";
+import EventEmitter from 'eventemitter3';
+import Obniz from '../../../obniz';
+import BleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import BleRemoteService from '../../../obniz/libs/embeds/bleHci/bleRemoteService';
+import ObnizUtil from '../../../obniz/libs/utils/util';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
+import BleGenericAccess from '../abstract/services/genericAccess';
 
 export interface MT_500BTOptions {}
 
 export default class MT_500BT implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "MT_500BT",
+      name: 'MT_500BT',
     };
   }
 
   public static isDevice(peripheral: BleRemotePeripheral): boolean {
-    if (peripheral.localName && peripheral.localName.startsWith("MT-500")) {
+    if (peripheral.localName && peripheral.localName.startsWith('MT-500')) {
       return true;
     }
     return false;
@@ -33,7 +35,7 @@ export default class MT_500BT implements ObnizPartsInterface {
       return null;
     }
     const hexStr = peripheral.localName!.slice(7, 11);
-    return Buffer.from(hexStr, "hex").readUInt16BE(0);
+    return Buffer.from(hexStr, 'hex').readUInt16BE(0);
   }
 
   public static getCNKey(peripheral: BleRemotePeripheral): number | null {
@@ -41,7 +43,8 @@ export default class MT_500BT implements ObnizPartsInterface {
     if (ifuid === null) {
       return null;
     }
-    const cnkey = (((ifuid ^ 0xb452) << 3) & 0xffff) | ((ifuid ^ 0xb452) >> (16 - 3));
+    const cnkey =
+      (((ifuid ^ 0xb452) << 3) & 0xffff) | ((ifuid ^ 0xb452) >> (16 - 3));
     return cnkey;
   }
 
@@ -56,15 +59,15 @@ export default class MT_500BT implements ObnizPartsInterface {
   private _emitter: EventEmitter;
 
   private _uuids = {
-    MSDPService: "1ef19620a8034af0ae954b4b0aa26f29",
-    rxChar: "1ef19621a8034af0ae954b4b0aa26f29",
-    txChar: "1ef19622a8034af0ae954b4b0aa26f29",
+    MSDPService: '1ef19620a8034af0ae954b4b0aa26f29',
+    rxChar: '1ef19621a8034af0ae954b4b0aa26f29',
+    txChar: '1ef19622a8034af0ae954b4b0aa26f29',
   };
   private _peripheral: BleRemotePeripheral;
 
   constructor(peripheral: BleRemotePeripheral) {
     if (peripheral && !MT_500BT.isDevice(peripheral)) {
-      throw new Error("peripheral is not MT_500BT");
+      throw new Error('peripheral is not MT_500BT');
     }
     this._peripheral = peripheral;
     this._emitter = new EventEmitter();
@@ -75,7 +78,7 @@ export default class MT_500BT implements ObnizPartsInterface {
 
   public async connectWait() {
     if (!this._peripheral) {
-      throw new Error("MT-500BT is not find.");
+      throw new Error('MT-500BT is not find.');
     }
     this._peripheral.ondisconnect = (reason) => {
       // console.log("disconnect");
@@ -88,25 +91,25 @@ export default class MT_500BT implements ObnizPartsInterface {
     try {
       // console.log("connected");
       this.MSDPService = this._peripheral.getService(this._uuids.MSDPService)!;
-      this.MSDPRxChar = this.MSDPService!.getCharacteristic(this._uuids.rxChar)!;
-      this.MSDPTxChar = this.MSDPService!.getCharacteristic(this._uuids.txChar)!;
+      this.MSDPRxChar = this.MSDPService.getCharacteristic(this._uuids.rxChar)!;
+      this.MSDPTxChar = this.MSDPService.getCharacteristic(this._uuids.txChar)!;
       // console.log("char set");
 
       await this.MSDPRxChar.registerNotifyWait((data) => {
         // console.log("recv array", data);
         if (data.length !== 20) {
-          throw new Error("unknown format received");
+          throw new Error('unknown format received');
         }
         if (data[0] !== 0xe7) {
-          throw new Error("unknown header");
+          throw new Error('unknown header');
         }
 
         const calcedChecksum = this._checksum(data.slice(0, 19));
         if (data[19] !== calcedChecksum) {
-          throw new Error("checksum failed");
+          throw new Error('checksum failed');
         }
         const replyBuf = Buffer.from(data);
-        this._emitter.emit("" + replyBuf.readUInt8(1), replyBuf);
+        this._emitter.emit('' + replyBuf.readUInt8(1), replyBuf);
       });
 
       // console.log("registerNotifyWait");
@@ -117,26 +120,30 @@ export default class MT_500BT implements ObnizPartsInterface {
   }
 
   public async startCommunicationCommandWait() {
-    const cnkey = "" + MT_500BT.getCNKey(this._peripheral); // to string
-    const CNKeyBuf = Buffer.from(cnkey, "utf8");
+    const cnkey = '' + MT_500BT.getCNKey(this._peripheral); // to string
+    const CNKeyBuf = Buffer.from(cnkey, 'utf8');
     const startCommand = this._createCommand(0xfd, Array.from(CNKeyBuf));
     // console.log("sendDataReplyWait");
     const res = await this._sendDataReplyWait(startCommand);
     if (res.readUInt8(2) !== 0) {
-      throw new Error("StartCommunicationError " + res.readUInt8(2));
+      throw new Error('StartCommunicationError ' + res.readUInt8(2));
     }
   }
 
   public async getDeviceInformationWait(): Promise<any> {
-    const res1 = await this._sendDataReplyWait(this._createCommand(0x00, [0x01]));
-    const res2 = await this._sendDataReplyWait(this._createCommand(0x00, [0x02]));
+    const res1 = await this._sendDataReplyWait(
+      this._createCommand(0x00, [0x01])
+    );
+    const res2 = await this._sendDataReplyWait(
+      this._createCommand(0x00, [0x02])
+    );
 
     const deviceType: any = {
-      2: "Pulse rate meter",
-      3: "SpO2(BO)",
-      4: "Thermometer",
-      5: "SpO2(MP)",
-      6: "Blood pressure meter",
+      2: 'Pulse rate meter',
+      3: 'SpO2(BO)',
+      4: 'Thermometer',
+      5: 'SpO2(MP)',
+      6: 'Blood pressure meter',
     };
 
     return {
@@ -188,16 +195,20 @@ export default class MT_500BT implements ObnizPartsInterface {
 
   public async getTemperatureWait(): Promise<any> {
     const res = await this._sendDataReplyWait(this._createCommand(0x80));
-    const year = res.readUInt8(3) !== 0xff ? res.readUInt8(3) + 2000 : undefined;
+    const year =
+      res.readUInt8(3) !== 0xff ? res.readUInt8(3) + 2000 : undefined;
     const month = res.readUInt8(4) !== 0xff ? res.readUInt8(4) : undefined;
     const day = res.readUInt8(5) !== 0xff ? res.readUInt8(5) : undefined;
     const hour = res.readUInt8(6) !== 0xff ? res.readUInt8(6) : undefined;
     const minute = res.readUInt8(7) !== 0xff ? res.readUInt8(7) : undefined;
     const second = res.readUInt8(8) !== 0xff ? res.readUInt8(8) : undefined;
 
-    const bodyTemperature = res.readUInt16LE(9) !== 0xff7f ? res.readUInt16LE(9) / 10 : undefined;
-    const materialTemperature = res.readUInt16LE(11) !== 0xff7f ? res.readUInt16LE(11) / 10 : undefined;
-    const airTemperature = res.readUInt16LE(13) !== 0xff7f ? res.readUInt16LE(13) / 10 : undefined;
+    const bodyTemperature =
+      res.readUInt16LE(9) !== 0xff7f ? res.readUInt16LE(9) / 10 : undefined;
+    const materialTemperature =
+      res.readUInt16LE(11) !== 0xff7f ? res.readUInt16LE(11) / 10 : undefined;
+    const airTemperature =
+      res.readUInt16LE(13) !== 0xff7f ? res.readUInt16LE(13) / 10 : undefined;
 
     return {
       timestamp: {
@@ -218,7 +229,7 @@ export default class MT_500BT implements ObnizPartsInterface {
 
   public async disconnectWait() {
     if (!this._peripheral) {
-      throw new Error("MT-500BT is not find.");
+      throw new Error('MT-500BT is not find.');
     }
     if (this._peripheral.connected) {
       await this._peripheral.disconnectWait();
@@ -227,7 +238,7 @@ export default class MT_500BT implements ObnizPartsInterface {
 
   private _createCommand(cid: number, data: number[] = []): Buffer {
     if (data.length >= 18) {
-      throw new Error("too many data length");
+      throw new Error('too many data length');
     }
     const command = [0xe7, cid, ...data];
     for (let i = 0; i < 19; i++) {
@@ -241,7 +252,7 @@ export default class MT_500BT implements ObnizPartsInterface {
 
   private _checksum(data: number[]) {
     if (data.length !== 19) {
-      throw Error("unknown format");
+      throw Error('unknown format');
     }
     const sum = data.reduce((a, b) => a + b, 0);
     const inv = (0xa5 + sum) & 0xff;
@@ -252,16 +263,16 @@ export default class MT_500BT implements ObnizPartsInterface {
   private _sendDataReplyWait(sendData: Buffer): Promise<Buffer> {
     return new Promise((resolve, reject) => {
       if (!this.MSDPRxChar) {
-        reject(new Error("MSDPRxChar is not found"));
+        reject(new Error('MSDPRxChar is not found'));
         return;
       }
       if (!this.MSDPTxChar) {
-        reject(new Error("MSDPTxChar is not found"));
+        reject(new Error('MSDPTxChar is not found'));
         return;
       }
 
       // console.log("write array", Array.from(sendData));
-      this._emitter.once("" + sendData.readUInt8(1), resolve);
+      this._emitter.once('' + sendData.readUInt8(1), resolve);
       this.MSDPTxChar.writeWait(Array.from(sendData));
     });
   }

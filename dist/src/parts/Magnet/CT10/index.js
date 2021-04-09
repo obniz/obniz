@@ -8,13 +8,13 @@ class CT10 {
     constructor() {
         this.isNear = null;
         this.onchange = null;
-        this.keys = ["signal", "gnd", "vcc"];
-        this.requiredKeys = ["signal"];
+        this.keys = ['signal', 'gnd', 'vcc'];
+        this.requiredKeys = ['signal'];
         this.onChangeForStateWait = () => { };
     }
     static info() {
         return {
-            name: "CT10",
+            name: 'CT10',
         };
     }
     wired(obniz) {
@@ -27,7 +27,7 @@ class CT10 {
             this.io_supply = obniz.getIO(this.params.gnd);
             this.io_supply.output(false);
         }
-        this.io_signal.pull("0v");
+        this.io_signal.pull('0v');
         this.io_signal.input((value) => {
             this.isNear = value;
             if (this.onchange) {

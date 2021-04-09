@@ -3,8 +3,10 @@
  * @module Parts.TM530
  */
 
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, {
+  ObnizPartsBleInfo,
+} from '../../../obniz/ObnizPartsBleInterface';
 
 export interface TM530Options {}
 
@@ -17,7 +19,7 @@ export interface TM530_Data {
 export default class TM530 implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: "TM530",
+      name: 'TM530',
     };
   }
 
@@ -43,8 +45,12 @@ export default class TM530 implements ObnizPartsBleInterface {
     }
     const data: TM530_Data = {
       battery: peripheral.adv_data[13],
-      temperature: peripheral.adv_data[14] + ObnizPartsBleInterface.readFraction(peripheral.adv_data[15]),
-      humidity: peripheral.adv_data[16] + ObnizPartsBleInterface.readFraction(peripheral.adv_data[17]),
+      temperature:
+        peripheral.adv_data[14] +
+        ObnizPartsBleInterface.readFraction(peripheral.adv_data[15]),
+      humidity:
+        peripheral.adv_data[16] +
+        ObnizPartsBleInterface.readFraction(peripheral.adv_data[17]),
     };
     return data;
   }

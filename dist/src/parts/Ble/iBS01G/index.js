@@ -10,7 +10,7 @@ class IBS01G {
     }
     static info() {
         return {
-            name: "iBS01G",
+            name: 'iBS01G',
         };
     }
     static isDevice(peripheral) {
@@ -41,13 +41,13 @@ class IBS01G {
             moving: false,
             fall: false,
         };
-        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+        if (peripheral.adv_data[11] & 0b0001) {
             data.button = true;
         }
-        if (Boolean(peripheral.adv_data[11] & 0b0010)) {
+        if (peripheral.adv_data[11] & 0b0010) {
             data.moving = true;
         }
-        if (Boolean(peripheral.adv_data[11] & 0b1000)) {
+        if (peripheral.adv_data[11] & 0b1000) {
             data.fall = true;
         }
         return data;

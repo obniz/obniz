@@ -2,11 +2,11 @@ let through = require('through2');
 let PluginError = require('plugin-error');
 let PLUGIN_NAME = 'obnizVersion';
 
-module.exports = function() {
+module.exports = function () {
   /**
    * @this {Transform}
    */
-  let transform = function(file, encoding, callback) {
+  let transform = function (file, encoding, callback) {
     if (file.isNull()) {
       this.push(file);
       return callback(null, file);

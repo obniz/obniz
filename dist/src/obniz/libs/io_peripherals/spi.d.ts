@@ -2,16 +2,16 @@
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-import Obniz from "../../index";
-import { ComponentAbstract } from "../ComponentAbstact";
-import { DriveType, PullType } from "./common";
+import Obniz from '../../index';
+import { ComponentAbstract } from '../ComponentAbstact';
+import { DriveType, PullType } from './common';
 interface PeripheralSPIOptions {
     /**
      * SPI mode
      *
      * currently only "master" is supported
      */
-    mode: "master";
+    mode: 'master';
     /**
      * clock pin no
      */
@@ -37,6 +37,7 @@ interface PeripheralSPIOptions {
 }
 /**
  * It is General Purpose SPI
+ *
  * @category Peripherals
  */
 export default class PeripheralSPI extends ComponentAbstract {

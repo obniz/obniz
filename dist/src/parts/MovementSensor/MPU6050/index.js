@@ -14,17 +14,17 @@ class MPU6050 extends i2cImu6_1.default {
         this.i2cinfo = {
             address: 0x68,
             clock: 100000,
-            voltage: "3v",
-            pull: "3v",
+            voltage: '3v',
+            pull: '3v',
         };
     }
     static info() {
         return {
-            name: "MPU6050",
+            name: 'MPU6050',
         };
     }
     calcTemp(data) {
-        if (typeof data === "undefined" || data === null) {
+        if (typeof data === 'undefined' || data === null) {
             return null;
         }
         return data / 333.87 + 21;
@@ -85,22 +85,22 @@ class MPU6050 extends i2cImu6_1.default {
     }
     async getAccelAdcWait() {
         const raw = await this.readWait(MPU6050.commands.accel_x_h, 6);
-        return MPU6050.charArrayToXyz(raw, "b");
+        return MPU6050.charArrayToXyz(raw, 'b');
     }
     async getGyroAdcWait() {
         const raw = await this.readWait(MPU6050.commands.gyro_x_h, 6);
-        return MPU6050.charArrayToXyz(raw, "b");
+        return MPU6050.charArrayToXyz(raw, 'b');
     }
     async getTempAdcWait() {
         const raw = await this.readWait(MPU6050.commands.temp_h, 2);
-        return MPU6050.charArrayToInt16(raw, "b");
+        return MPU6050.charArrayToInt16(raw, 'b');
     }
     async getAllAdcWait() {
         const raw = await this.readWait(MPU6050.commands.accel_x_h, 14);
         return {
-            accelerometer: MPU6050.charArrayToXyz(raw.slice(0, 6), "b"),
-            gyroscope: MPU6050.charArrayToXyz(raw.slice(8, 14), "b"),
-            temperature: MPU6050.charArrayToInt16(raw.slice(6, 8), "b"),
+            accelerometer: MPU6050.charArrayToXyz(raw.slice(0, 6), 'b'),
+            gyroscope: MPU6050.charArrayToXyz(raw.slice(8, 14), 'b'),
+            temperature: MPU6050.charArrayToInt16(raw.slice(6, 8), 'b'),
         };
     }
     setAccelRange(accel_range) {
@@ -125,36 +125,36 @@ class MPU6050 extends i2cImu6_1.default {
         // accel range set (0x00:2g, 0x08:4g, 0x10:8g, 0x18:16g)
         switch (accelerometer_range) {
             case 2:
-                this.setAccelRange("2g");
+                this.setAccelRange('2g');
                 break;
             case 4:
-                this.setAccelRange("4g");
+                this.setAccelRange('4g');
                 break;
             case 8:
-                this.setAccelRange("8g");
+                this.setAccelRange('8g');
                 break;
             case 16:
-                this.setAccelRange("16g");
+                this.setAccelRange('16g');
                 break;
             default:
-                throw new Error("accel_range variable 2,4,8,16 setting");
+                throw new Error('accel_range variable 2,4,8,16 setting');
         }
         // gyro range & LPF set (0x00:250, 0x08:500, 0x10:1000, 0x18:2000[deg/s])
         switch (gyroscope_range) {
             case 250:
-                this.setGyroRange("250dps");
+                this.setGyroRange('250dps');
                 break;
             case 500:
-                this.setGyroRange("500dps");
+                this.setGyroRange('500dps');
                 break;
             case 1000:
-                this.setGyroRange("1000dps");
+                this.setGyroRange('1000dps');
                 break;
             case 2000:
-                this.setGyroRange("2000dps");
+                this.setGyroRange('2000dps');
                 break;
             default:
-                throw new Error("accel_range variable 250,500,1000,2000 setting");
+                throw new Error('accel_range variable 250,500,1000,2000 setting');
         }
     }
 }
@@ -187,15 +187,15 @@ MPU6050.commands = {
     gyro_config: 0x1b,
     accel_config: 0x1c,
     accel_fs_sel: {
-        "2g": 0x00,
-        "4g": 0x08,
-        "8g": 0x10,
-        "16g": 0x18,
+        '2g': 0x00,
+        '4g': 0x08,
+        '8g': 0x10,
+        '16g': 0x18,
     },
     gyro_fs_sel: {
-        "250dps": 0x00,
-        "500dps": 0x08,
-        "1000dps": 0x10,
-        "2000dps": 0x18,
+        '250dps': 0x00,
+        '500dps': 0x08,
+        '1000dps': 0x10,
+        '2000dps': 0x18,
     },
 };

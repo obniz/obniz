@@ -6,23 +6,23 @@ let testUtil = require('../../../testUtil.js');
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
-describe('obniz.libs.tcp', function() {
-  beforeEach(function(done) {
+describe('obniz.libs.tcp', function () {
+  beforeEach(function (done) {
     return testUtil.setupObnizPromise(this, done);
   });
 
-  afterEach(function(done) {
+  afterEach(function (done) {
     return testUtil.releaseObnizePromise(this, done);
   });
 
-  it('gettcp', function() {
+  it('gettcp', function () {
     let tcp = this.obniz.getFreeTcp();
 
     expect(this.obniz).to.be.finished;
     expect(tcp).to.be.equal(this.obniz.tcp0);
   });
 
-  it('gettcp double', function() {
+  it('gettcp double', function () {
     let tcp1 = this.obniz.getFreeTcp();
     let tcp2 = this.obniz.getFreeTcp();
 
@@ -31,7 +31,7 @@ describe('obniz.libs.tcp', function() {
     expect(tcp2).to.be.equal(this.obniz.tcp1);
   });
 
-  it('tcp connect', function() {
+  it('tcp connect', function () {
     this.obniz.tcp2.connectWait(80, 'obniz.io');
     expect(this.obniz).send([
       {
@@ -46,7 +46,7 @@ describe('obniz.libs.tcp', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('tcp close', function() {
+  it('tcp close', function () {
     this.obniz.tcp4.used = true;
     this.obniz.tcp4.close();
     expect(this.obniz).send([
@@ -60,7 +60,7 @@ describe('obniz.libs.tcp', function() {
     this.obniz.tcp4.used = false;
   });
 
-  it('tcp number write', function() {
+  it('tcp number write', function () {
     let tcp1 = this.obniz.getFreeTcp();
     expect(tcp1).to.be.equal(this.obniz.tcp0);
     tcp1.used = true;
@@ -78,7 +78,7 @@ describe('obniz.libs.tcp', function() {
     tcp1.used = false;
   });
 
-  it('tcp text write', function() {
+  it('tcp text write', function () {
     let tcp1 = this.obniz.getFreeTcp();
     expect(tcp1).to.be.equal(this.obniz.tcp0);
     tcp1.used = true;
@@ -96,7 +96,7 @@ describe('obniz.libs.tcp', function() {
     tcp1.used = false;
   });
 
-  it('tcp onreceive', function() {
+  it('tcp onreceive', function () {
     let stub = sinon.stub();
     this.obniz.tcp0.used = true;
     this.obniz.tcp0.onreceive = stub;
@@ -109,12 +109,12 @@ describe('obniz.libs.tcp', function() {
     this.obniz.tcp0.used = false;
   });
 
-  it('tcp readWait', function() {
+  it('tcp readWait', function () {
     let data = [20, 30];
     return new Promise(
-      function(resolve, reject) {
+      function (resolve, reject) {
         this.obniz.tcp0.used = true;
-        this.obniz.tcp0.readWait().then(result => {
+        this.obniz.tcp0.readWait().then((result) => {
           expect(result).to.be.deep.equal(data);
           this.obniz.tcp0.used = false;
           resolve();

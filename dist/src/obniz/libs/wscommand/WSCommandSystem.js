@@ -69,20 +69,20 @@ class WSCommandSystem extends WSCommand_1.default {
             return;
         }
         const schemaData = [
-            { uri: "/request/system/reboot", onValid: this.reboot },
-            { uri: "/request/system/reset", onValid: this.reset },
-            { uri: "/request/system/wait", onValid: this.wait },
-            { uri: "/request/system/selfCheck", onValid: this.selfCheck },
+            { uri: '/request/system/reboot', onValid: this.reboot },
+            { uri: '/request/system/reset', onValid: this.reset },
+            { uri: '/request/system/wait', onValid: this.wait },
+            { uri: '/request/system/selfCheck', onValid: this.selfCheck },
             {
-                uri: "/request/system/keepWorkingAtOffline",
+                uri: '/request/system/keepWorkingAtOffline',
                 onValid: this.keepWorkingAtOffline,
             },
-            { uri: "/request/system/ping", onValid: this.ping },
-            { uri: "/request/system/sleepSeconds", onValid: this.sleepSeconds },
-            { uri: "/request/system/sleepMinute", onValid: this.sleepMinute },
-            { uri: "/request/system/sleepIoTrigger", onValid: this.sleepIoTrigger },
+            { uri: '/request/system/ping', onValid: this.ping },
+            { uri: '/request/system/sleepSeconds', onValid: this.sleepSeconds },
+            { uri: '/request/system/sleepMinute', onValid: this.sleepMinute },
+            { uri: '/request/system/sleepIoTrigger', onValid: this.sleepIoTrigger },
         ];
-        const res = this.validateCommandSchema(schemaData, module, "system");
+        const res = this.validateCommandSchema(schemaData, module, 'system');
         if (res.valid === 0) {
             if (res.invalidButLike.length > 0) {
                 throw new Error(res.invalidButLike[0].message);
@@ -122,7 +122,7 @@ class WSCommandSystem extends WSCommand_1.default {
                 if (payload.byteLength === 3) {
                     let value = (payload[1] << 8) + payload[2];
                     value = value / 100.0;
-                    this.envelopWarning(objToSend, "debug", {
+                    this.envelopWarning(objToSend, 'debug', {
                         message: `Low Voltage ${value}v. connect obniz to more powerful USB.`,
                     });
                 }

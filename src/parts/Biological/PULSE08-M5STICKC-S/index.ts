@@ -3,9 +3,11 @@
  * @module Parts.Puls08M5stickcS
  */
 
-import Obniz from "../../../obniz";
-import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralUART from '../../../obniz/libs/io_peripherals/uart';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface Puls08M5stickcSOptions {
   vcc?: number;
@@ -17,7 +19,7 @@ export interface Puls08M5stickcSOptions {
 export default class Puls08M5stickcS implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "Puls08M5stickcS",
+      name: 'Puls08M5stickcS',
     };
   }
 
@@ -30,8 +32,8 @@ export default class Puls08M5stickcS implements ObnizPartsInterface {
   public receivingData: any;
 
   constructor() {
-    this.keys = ["vcc", "gnd", "tx", "rx"];
-    this.requiredKeys = ["tx", "rx"];
+    this.keys = ['vcc', 'gnd', 'tx', 'rx'];
+    this.requiredKeys = ['tx', 'rx'];
     this.delimiter = 0x0a;
   }
 
@@ -46,7 +48,7 @@ export default class Puls08M5stickcS implements ObnizPartsInterface {
   public wired(obniz: Obniz) {
     this.obniz = obniz;
 
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     this.uart = obniz.getFreeUart();
     this.uart.start({ tx: this.params.tx, rx: this.params.rx, baud: 19200 });
     this.receivingData = [];
@@ -61,8 +63,8 @@ export default class Puls08M5stickcS implements ObnizPartsInterface {
           return;
         } else {
           const row: any = this.receivingData;
-          if (row[0] === "#".charCodeAt(0)) {
-            row[0] = " ".charCodeAt(0);
+          if (row[0] === '#'.charCodeAt(0)) {
+            row[0] = ' '.charCodeAt(0);
             const str: string = this.decode(row);
             const val: number = parseInt(str);
             const bpm: number | null = val > 0 ? 60000 / val : null;
@@ -82,7 +84,7 @@ export default class Puls08M5stickcS implements ObnizPartsInterface {
   }
 
   public decode(data: any): string {
-    return Buffer.from(data).toString("utf8");
+    return Buffer.from(data).toString('utf8');
 
     // if (typeof TextDecoder !== 'undefined') {
     //   let enc = new TextDecoder('utf-8');
@@ -95,9 +97,9 @@ export default class Puls08M5stickcS implements ObnizPartsInterface {
   }
 
   public init() {
-    this.uart.send("@OF30");
+    this.uart.send('@OF30');
     this.uart.send(0x0a);
-    this.uart.send("@RG2");
+    this.uart.send('@RG2');
     this.uart.send(0x0a);
   }
 }

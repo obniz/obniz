@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-import Obniz from "../../index";
-import { ComponentAbstract } from "../ComponentAbstact";
-import { DriveType, PullType } from "./common";
+import Obniz from '../../index';
+import { ComponentAbstract } from '../ComponentAbstact';
+import { DriveType, PullType } from './common';
 interface PeripheralPWMOptions {
     /**
      * device io number
@@ -23,10 +23,11 @@ export interface PWMInterface {
  *
  * Currently only "am" are supported
  */
-export declare type PWMModulateType = "am";
+export declare type PWMModulateType = 'am';
 /**
  * We will now generate PWM.
  * Maximum current depends on the driving mode. See [[PeripheralIO|io]].
+ *
  * @category Peripherals
  */
 export default class PeripheralPWM extends ComponentAbstract implements PWMInterface {

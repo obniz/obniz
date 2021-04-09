@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
+import BleRemoteAttributeAbstract from './bleRemoteAttributeAbstract';
 
 /**
  * @category Use as Central
@@ -48,6 +48,7 @@ export default abstract class BleRemoteValueAttributeAbstract<
    * It convert string to UTF-8 and write binary array.
    *
    * It throws an error when failed.
+   *
    * @param str
    * @param needResponse
    */
@@ -64,7 +65,10 @@ export default abstract class BleRemoteValueAttributeAbstract<
    * @param val
    * @param needResponse
    */
-  public writeNumberWait(val: number, needResponse?: boolean): Promise<boolean> {
+  public writeNumberWait(
+    val: number,
+    needResponse?: boolean
+  ): Promise<boolean> {
     return super.writeNumberWait(val, needResponse);
   }
 }

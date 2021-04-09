@@ -2,10 +2,10 @@
  * @packageDocumentation
  * @module ObnizCore
  */
-import ObnizConnection from "./ObnizConnection";
-import { ObnizOptions } from "./ObnizOptions";
-import ObnizPartsInterface from "./ObnizPartsInterface";
-import { PartsList } from "./ObnizPartsList";
+import ObnizConnection from './ObnizConnection';
+import { ObnizOptions } from './ObnizOptions';
+import ObnizPartsInterface from './ObnizPartsInterface';
+import { PartsList } from './ObnizPartsList';
 export default abstract class ObnizParts extends ObnizConnection {
     /**
      * @ignore
@@ -14,12 +14,14 @@ export default abstract class ObnizParts extends ObnizConnection {
     static _parts(): any;
     /**
      * Register Parts class
+     *
      * @param arg0 Parts class
      * @param arg1 param for parts
      */
     static PartsRegistrate(arg0: typeof ObnizPartsInterface, arg1?: any): void;
     /**
      * Get parts class.
+     *
      * @param name string
      * @constructor
      */
@@ -27,11 +29,13 @@ export default abstract class ObnizParts extends ObnizConnection {
     constructor(id: string, options?: ObnizOptions);
     /**
      * Check the param is valid io pin no.
+     *
      * @param io
      */
     isValidIO(io: any): boolean;
     /**
      * Check the param is valid ad pin no.
+     *
      * @param ad
      */
     isValidAD(ad: any): boolean;
@@ -41,5 +45,5 @@ export default abstract class ObnizParts extends ObnizConnection {
      * @param partsName
      * @param options
      */
-    wired<K extends keyof PartsList>(partsName: K, options?: PartsList[K]["options"]): PartsList[K]["class"];
+    wired<K extends keyof PartsList>(partsName: K, options?: PartsList[K]['options']): PartsList[K]['class'];
 }

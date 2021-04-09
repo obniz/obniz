@@ -14,12 +14,23 @@ class CCS811 extends i2cParts_1.default {
         this.i2cinfo = {
             address: 0x5b,
             clock: 100000,
-            voltage: "3v",
-            pull: "3v",
+            voltage: '3v',
+            pull: '3v',
         };
         this.requiredKeys = [];
-        this.keys = ["vcc", "gnd", "scl", "sda", "nwak", "nrst", "nint", "i2c", "add", "address"];
-        this.ioKeys = ["vcc", "gnd", "scl", "sda", "nwak", "nrst", "nint", "add"];
+        this.keys = [
+            'vcc',
+            'gnd',
+            'scl',
+            'sda',
+            'nwak',
+            'nrst',
+            'nint',
+            'i2c',
+            'add',
+            'address',
+        ];
+        this.ioKeys = ['vcc', 'gnd', 'scl', 'sda', 'nwak', 'nrst', 'nint', 'add'];
         this.commands = {};
         this.commands.addresses = {
             CCS811_STATUS: 0x00,
@@ -41,7 +52,7 @@ class CCS811 extends i2cParts_1.default {
     }
     static info() {
         return {
-            name: "CCS811",
+            name: 'CCS811',
         };
     }
     i2cInfo() {
@@ -49,8 +60,8 @@ class CCS811 extends i2cParts_1.default {
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, null, "3v");
-        this.obniz.setVccGnd(null, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, null, '3v');
+        this.obniz.setVccGnd(null, this.params.gnd, '5v');
         this.obniz.wait(10);
         this.address = 0x5b;
         if (this.params.address === 0x5b) {
@@ -60,11 +71,11 @@ class CCS811 extends i2cParts_1.default {
             this.address = 0x5a;
         }
         else if (this.params.address !== undefined) {
-            throw new Error("address must be 0x5a or 0x5b");
+            throw new Error('address must be 0x5a or 0x5b');
         }
         if (obniz.isValidIO(this.params.add)) {
             this.io_add = obniz.getIO(this.params.add);
-            this.io_add.drive("3v");
+            this.io_add.drive('3v');
             this.io_add.output(this.address === 0x5a ? false : true);
         }
         if (this.params.i2c !== undefined) {
@@ -72,8 +83,8 @@ class CCS811 extends i2cParts_1.default {
         }
         else {
             this.params.clock = this.params.clock || 100 * 1000;
-            this.params.mode = "master";
-            this.params.pull = "3v";
+            this.params.mode = 'master';
+            this.params.pull = '3v';
             this.i2c = obniz.getI2CWithConfig(this.params);
         }
         this.obniz.wait(10);
@@ -82,21 +93,26 @@ class CCS811 extends i2cParts_1.default {
         // restart
         const readCheck = await this.readWait(this.commands.addresses.CCS811_HW_ID, 1);
         if (readCheck[0] !== 0x81) {
-            console.log("readCheck error " + readCheck);
+            console.log('readCheck error ' + readCheck);
         }
         await this.obniz.wait(10);
-        console.log("restarted");
+        console.log('restarted');
         // reset
-        this.write(this.commands.addresses.CCS811_SW_RESET, [0x11, 0xe5, 0x72, 0x8a]);
+        this.write(this.commands.addresses.CCS811_SW_RESET, [
+            0x11,
+            0xe5,
+            0x72,
+            0x8a,
+        ]);
         await this.obniz.wait(10);
-        console.log("reset");
+        console.log('reset');
         // checkForStatusError
         const status = await this.readWait(this.commands.addresses.CCS811_STATUS, 1);
-        console.log("Status: " + status);
+        console.log('Status: ' + status);
         this.start();
         await this.setDriveModeWait(1); // Read every second
         await this.obniz.wait(10);
-        console.log("config done");
+        console.log('config done');
     }
     start() {
         this.write(this.commands.addresses.CCS811_APP_START, []);
@@ -130,11 +146,11 @@ class CCS811 extends i2cParts_1.default {
     async setEnvironmentalDataWait(relativeHumidity, temperature) {
         // Check for invalid temperatures
         if (temperature < -25 || temperature > 50) {
-            console.log("temperature is out of range");
+            console.log('temperature is out of range');
         }
         // Check for invalid humidity
         if (relativeHumidity < 0 || relativeHumidity > 100) {
-            console.log("humidity is out of range");
+            console.log('humidity is out of range');
         }
         const rH = relativeHumidity * 1000; // 42.348 becomes 42348
         let temp = temperature * 1000; // 23.2 becomes 23200
@@ -168,17 +184,17 @@ class CCS811 extends i2cParts_1.default {
     }
     wake() {
         this.io_nwak = this.obniz.getIO(this.params.nwak);
-        this.io_nwak.drive("3v");
+        this.io_nwak.drive('3v');
         this.io_nwak.output(false);
     }
     sleep() {
         this.io_nwak = this.obniz.getIO(this.params.nwak);
-        this.io_nwak.drive("3v");
+        this.io_nwak.drive('3v');
         this.io_nwak.output(true);
     }
     async hwResetWait() {
         this.io_nrst = this.obniz.getIO(this.params.nrst);
-        this.io_nrst.drive("3v");
+        this.io_nrst.drive('3v');
         this.io_nrst.output(false);
         await this.obniz.wait(10);
         this.io_nrst.output(true);

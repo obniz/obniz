@@ -12,7 +12,7 @@ class PeripheralAD extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
         super(obniz);
         this.id = id;
-        this.on("/response/ad/get", (obj) => {
+        this.on('/response/ad/get', (obj) => {
             this.value = obj;
             this.Obniz._runUserCreatedFunction(this.onchange, obj);
         });
@@ -25,13 +25,14 @@ class PeripheralAD extends ComponentAbstact_1.ComponentAbstract {
      *  console.log("changed to "+voltage+" v")
      * });
      * ```
+     *
      * @param callback  called when voltage gets changed.
      * @param callback.voltage  voltage
      */
     start(callback) {
         this.onchange = callback;
         const obj = {};
-        obj["ad" + this.id] = {
+        obj['ad' + this.id] = {
             stream: true,
         };
         this.Obniz.send(obj);
@@ -53,10 +54,10 @@ class PeripheralAD extends ComponentAbstact_1.ComponentAbstract {
      */
     async getWait() {
         const obj = {};
-        obj["ad" + this.id] = {
+        obj['ad' + this.id] = {
             stream: false,
         };
-        const data = await this.sendAndReceiveJsonWait(obj, "/response/ad/get");
+        const data = await this.sendAndReceiveJsonWait(obj, '/response/ad/get');
         return data;
     }
     /**
@@ -69,7 +70,7 @@ class PeripheralAD extends ComponentAbstact_1.ComponentAbstract {
     end() {
         this.onchange = undefined;
         const obj = {};
-        obj["ad" + this.id] = null;
+        obj['ad' + this.id] = null;
         this.Obniz.send(obj);
         return;
     }
@@ -78,7 +79,7 @@ class PeripheralAD extends ComponentAbstact_1.ComponentAbstract {
      * @private
      */
     schemaBasePath() {
-        return "ad" + this.id;
+        return 'ad' + this.id;
     }
     /**
      * @ignore

@@ -2,10 +2,10 @@
  * @packageDocumentation
  * @module Parts.7SegmentLED_MAX7219
  */
-import Obniz from "../../../obniz";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
+import PeripheralSPI from '../../../obniz/libs/io_peripherals/spi';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface _7SegmentLED_MAX7219Options {
     clk: number;
     cs: number;
@@ -13,7 +13,7 @@ export interface _7SegmentLED_MAX7219Options {
     gnd?: number;
     vcc?: number;
 }
-export declare type MAX7219NumberType = "on" | "off" | "-" | "e" | "h" | "l" | "p";
+export declare type MAX7219NumberType = 'on' | 'off' | '-' | 'e' | 'h' | 'l' | 'p';
 export default class _7SegmentLED_MAX7219 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

@@ -3,10 +3,12 @@
  * @module Parts.hx711
  */
 
-import Obniz from "../../../obniz";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
+import PeripheralSPI from '../../../obniz/libs/io_peripherals/spi';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface Hx711Options {
   vcc?: number;
@@ -18,7 +20,7 @@ export interface Hx711Options {
 export default class Hx711 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "hx711",
+      name: 'hx711',
     };
   }
 
@@ -33,8 +35,8 @@ export default class Hx711 implements ObnizPartsInterface {
   public dout!: PeripheralIO;
 
   constructor() {
-    this.keys = ["vcc", "gnd", "sck", "dout"];
-    this.requiredKeys = ["sck", "dout"];
+    this.keys = ['vcc', 'gnd', 'sck', 'dout'];
+    this.requiredKeys = ['sck', 'dout'];
     this._offset = 0;
     this._scale = 1;
   }
@@ -42,9 +44,9 @@ export default class Hx711 implements ObnizPartsInterface {
   public wired(obniz: Obniz) {
     this.obniz = obniz;
     this.spi = obniz.getFreeSpi();
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
-    const ioKeys: any = ["clk", "dout"];
+    const ioKeys: any = ['clk', 'dout'];
     for (const key of ioKeys) {
       if (this.params[key] && !this.obniz.isValidIO(this.params[key])) {
         throw new Error("spi start param '" + key + "' are to be valid io no");
@@ -67,13 +69,21 @@ export default class Hx711 implements ObnizPartsInterface {
       }
     }
     this.spi.start({
-      mode: "master",
+      mode: 'master',
       mosi: this.params.sck,
       miso: this.params.dout,
       frequency: 500 * 1000,
     });
 
-    const ret_double: any = await this.spi.writeWait([0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0x80]);
+    const ret_double: any = await this.spi.writeWait([
+      0xaa,
+      0xaa,
+      0xaa,
+      0xaa,
+      0xaa,
+      0xaa,
+      0x80,
+    ]);
     this.spi.end(true);
     this.sck.output(false);
     const ret: any = [
@@ -134,15 +144,15 @@ export default class Hx711 implements ObnizPartsInterface {
   }
 
   public setOffset(offset: any) {
-    if (typeof offset !== "number") {
-      throw new Error("offset variable is Number");
+    if (typeof offset !== 'number') {
+      throw new Error('offset variable is Number');
     }
     this._offset = offset;
   }
 
   public setScale(scale: any) {
-    if (typeof scale !== "number") {
-      throw new Error("scale variable is Number");
+    if (typeof scale !== 'number') {
+      throw new Error('scale variable is Number');
     }
     this._scale = scale;
   }

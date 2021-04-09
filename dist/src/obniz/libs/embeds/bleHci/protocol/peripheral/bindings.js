@@ -28,13 +28,13 @@ class BlenoBindings extends eventemitter3_1.default {
         this._hci = hciProtocol;
         this._gap = new gap_1.default(this._hci);
         this._gatt = new gatt_1.default();
-        this._gatt.on("mtuChange", this.onMtuChange.bind(this));
-        this._hci.on("stateChange", this.onStateChange.bind(this));
-        this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
-        this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
-        this._hci.on("disconnComplete", this.onDisconnCompleteWait.bind(this));
-        this._hci.on("encryptChange", this.onEncryptChange.bind(this));
-        this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
+        this._gatt.on('mtuChange', this.onMtuChange.bind(this));
+        this._hci.on('stateChange', this.onStateChange.bind(this));
+        this._hci.on('leConnComplete', this.onLeConnComplete.bind(this));
+        this._hci.on('leConnUpdateComplete', this.onLeConnUpdateComplete.bind(this));
+        this._hci.on('disconnComplete', this.onDisconnCompleteWait.bind(this));
+        this._hci.on('encryptChange', this.onEncryptChange.bind(this));
+        this._hci.on('aclDataPkt', this.onAclDataPkt.bind(this));
         this._address = null;
         this._handle = null;
         this._aclStream = null;
@@ -73,7 +73,7 @@ class BlenoBindings extends eventemitter3_1.default {
     }
     disconnect() {
         if (this._handle) {
-            debug("disconnect by server");
+            debug('disconnect by server');
             this._hci.disconnect(this._handle);
         }
     }
@@ -89,17 +89,17 @@ class BlenoBindings extends eventemitter3_1.default {
             return;
         }
         this._state = state;
-        if (state === "unauthorized") {
-            console.log("bleno warning: adapter state unauthorized, please run as root or with sudo");
-            console.log("               or see README for information on running without root/sudo:");
-            console.log("               https://github.com/sandeepmistry/bleno#running-on-linux");
+        if (state === 'unauthorized') {
+            console.log('bleno warning: adapter state unauthorized, please run as root or with sudo');
+            console.log('               or see README for information on running without root/sudo:');
+            console.log('               https://github.com/sandeepmistry/bleno#running-on-linux');
         }
-        else if (state === "unsupported") {
-            console.log("bleno warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).");
-            console.log("               Try to run with environment variable:");
-            console.log("               [sudo] BLENO_HCI_DEVICE_ID=x node ...");
+        else if (state === 'unsupported') {
+            console.log('bleno warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).');
+            console.log('               Try to run with environment variable:');
+            console.log('               [sudo] BLENO_HCI_DEVICE_ID=x node ...');
         }
-        this.emit("stateChange", state);
+        this.emit('stateChange', state);
     }
     onLeConnComplete(status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy) {
         if (role !== 1) {
@@ -110,7 +110,7 @@ class BlenoBindings extends eventemitter3_1.default {
         this._handle = handle;
         this._aclStream = new acl_stream_1.default(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
         this._gatt.setAclStream(this._aclStream);
-        this.emit("accept", address);
+        this.emit('accept', address);
     }
     onLeConnUpdateComplete(handle, interval, latency, supervisionTimeout) {
         // no-op
@@ -127,7 +127,7 @@ class BlenoBindings extends eventemitter3_1.default {
         this._address = null;
         this._handle = null;
         if (address) {
-            this.emit("disconnect", address, reason); // TODO: use reason
+            this.emit('disconnect', address, reason); // TODO: use reason
         }
         if (this._advertising) {
             await this._gap.restartAdvertisingWait();
@@ -139,7 +139,7 @@ class BlenoBindings extends eventemitter3_1.default {
         }
     }
     onMtuChange(mtu) {
-        this.emit("mtuChange", mtu);
+        this.emit('mtuChange', mtu);
     }
     onAclDataPkt(handle, cid, data) {
         if (this._handle === handle && this._aclStream) {

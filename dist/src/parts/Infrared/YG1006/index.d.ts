@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module Parts.YG1006
  */
-import Obniz from "../../../obniz";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface YG1006Options {
     signal: number;
     vcc?: number;

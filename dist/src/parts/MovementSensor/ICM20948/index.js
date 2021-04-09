@@ -15,8 +15,8 @@ class ICM20948 extends i2cParts_1.default {
         this.i2cinfo = {
             address: 0x69,
             clock: 100000,
-            voltage: "3v",
-            pull: "3v",
+            voltage: '3v',
+            pull: '3v',
         };
         this._ADDR = 0x69;
         this._WHO_AM_I = 0x00;
@@ -70,7 +70,7 @@ class ICM20948 extends i2cParts_1.default {
     }
     static info() {
         return {
-            name: "ICM20948",
+            name: 'ICM20948',
         };
     }
     wired(obniz) {
@@ -81,26 +81,26 @@ class ICM20948 extends i2cParts_1.default {
     async initWait() {
         const data = await this.whoamiWait();
         if (data !== 0xea) {
-            throw new Error("ICM20948 not found in I2C bus.");
+            throw new Error('ICM20948 not found in I2C bus.');
         }
         this.write(0x06, [0x01]); // wake;
         this.write(0x0f, [0x02]); // passthrough;
         this.write(0x03, [0x00]);
         // this.write(12, 0x31, [0x00]);  // power down mode
         // const buf3 = await this._studuinoI2C.readFromMem(12, 0x60, 3);
-        this._ak09916 = this.obniz.wired("AK09916", { i2c: this.i2c });
+        this._ak09916 = this.obniz.wired('AK09916', { i2c: this.i2c });
     }
     accelFs(value) {
-        if (value === "2g") {
+        if (value === '2g') {
             this._accel_so = this._accelFs(this._ACCEL_FS_SEL_2G);
         }
-        else if (value === "4g") {
+        else if (value === '4g') {
             this._accel_so = this._accelFs(this._ACCEL_FS_SEL_4G);
         }
-        else if (value === "8g") {
+        else if (value === '8g') {
             this._accel_so = this._accelFs(this._ACCEL_FS_SEL_8G);
         }
-        else if (value === "16g") {
+        else if (value === '16g') {
             this._accel_so = this._accelFs(this._ACCEL_FS_SEL_16G);
         }
         else {
@@ -108,13 +108,13 @@ class ICM20948 extends i2cParts_1.default {
         }
     }
     accelSf(value) {
-        if (value === "g") {
+        if (value === 'g') {
             this._accel_sf = this._SF_G;
         }
-        else if (value === "mg") {
+        else if (value === 'mg') {
             this._accel_sf = this._SF_MG;
         }
-        else if (value === "ms2") {
+        else if (value === 'ms2') {
             this._accel_sf = this._SF_M_S2;
         }
         else {
@@ -152,16 +152,16 @@ class ICM20948 extends i2cParts_1.default {
         return result[0];
     }
     gyroFs(value) {
-        if (value === "250dps") {
+        if (value === '250dps') {
             this._gyro_so = this._gyroFs(this._GYRO_FS_SEL_250DPS);
         }
-        else if (value === "500dps") {
+        else if (value === '500dps') {
             this._gyro_so = this._gyroFs(this._GYRO_FS_SEL_500DPS);
         }
-        else if (value === "1000dps") {
+        else if (value === '1000dps') {
             this._gyro_so = this._gyroFs(this._GYRO_FS_SEL_1000DPS);
         }
-        else if (value === "2000dps") {
+        else if (value === '2000dps') {
             this._gyro_so = this._gyroFs(this._GYRO_FS_SEL_2000DPS);
         }
         else {
@@ -169,10 +169,10 @@ class ICM20948 extends i2cParts_1.default {
         }
     }
     gyroSf(value) {
-        if (value === "dps") {
+        if (value === 'dps') {
             this._gyro_sf = this._SF_DEG_S;
         }
-        else if (value === "rps") {
+        else if (value === 'rps') {
             this._gyro_sf = this._SF_RAD_S;
         }
         else {

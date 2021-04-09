@@ -2,11 +2,11 @@ const config = require('../config.js');
 
 let obnizA, checkBoard;
 
-describe('7-ble', function() {
+describe('7-ble', function () {
   this.timeout(30000);
 
-  before(async function() {
-    await new Promise(resolve => {
+  before(async function () {
+    await new Promise((resolve) => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
         checkBoard = config.checkBoard;
@@ -17,7 +17,7 @@ describe('7-ble', function() {
     await obnizA.ble.initWait();
   });
 
-  it('simple ad', async function() {
+  it('simple ad', async function () {
     let service = new checkBoard.ble.service({
       uuid: '0000',
     });
@@ -28,7 +28,7 @@ describe('7-ble', function() {
 
     let found = false;
     let expectedValue = [2, 1, 6, 3, 2, 0, 0];
-    obnizA.ble.scan.onfind = function(peripheral) {
+    obnizA.ble.scan.onfind = function (peripheral) {
       // console.log(peripheral.localName);
       // console.log(peripheral.adv_data.length + ": " + peripheral.localName());
       if (peripheral.adv_data.length === expectedValue.length) {
@@ -53,7 +53,7 @@ describe('7-ble', function() {
     checkBoard.ble.peripheral.end();
   });
 
-  it('ad localname', async function() {
+  it('ad localname', async function () {
     let service = new checkBoard.ble.service({
       uuid: '0001',
     });
@@ -68,7 +68,7 @@ describe('7-ble', function() {
 
     let found = false;
     // let expectedValue = [2, 1, 6, 3, 2, 1, 0];
-    obnizA.ble.scan.onfind = function(peripheral) {
+    obnizA.ble.scan.onfind = function (peripheral) {
       // console.log(peripheral.localName);
       if (peripheral.localName === localName) {
         // console.log(
@@ -89,7 +89,7 @@ describe('7-ble', function() {
 });
 
 function wait(ms) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 }

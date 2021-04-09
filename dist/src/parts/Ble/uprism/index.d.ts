@@ -2,11 +2,11 @@
  * @packageDocumentation
  * @module Parts.uPRISM
  */
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
 export interface uPRISMOptions {
 }
-export declare type AccelRangeType = "2g" | "4g" | "8g" | "16g";
+export declare type AccelRangeType = '2g' | '4g' | '8g' | '16g';
 export interface uPRISM_Data {
     acceleration: {
         x: number;

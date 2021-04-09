@@ -1,7 +1,7 @@
 /* tslint:disable:class-name max-classes-per-file */
-import Obniz from "../../../dist/src/obniz/index";
+import Obniz, { Parts } from '../../../dist/src/obniz/index';
 
-const OBNIZ_ID = "1234-5678";
+const OBNIZ_ID = '1234-5678';
 
 /**
  * https://obniz.io/ja/sdk/parts/LM35DZ/README.md
@@ -10,7 +10,7 @@ class LM35DZTest {
   public onchange() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const tempsens = obniz.wired("LM35DZ", { gnd: 0, output: 1, vcc: 2 });
+      const tempsens = obniz.wired('LM35DZ', { gnd: 0, output: 1, vcc: 2 });
       tempsens.onchange = (temp) => {
         console.log(temp);
       };
@@ -20,7 +20,7 @@ class LM35DZTest {
   public getWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const tempsens = obniz.wired("LM35DZ", { gnd: 0, output: 1, vcc: 2 });
+      const tempsens = obniz.wired('LM35DZ', { gnd: 0, output: 1, vcc: 2 });
       const temp = await tempsens.getWait();
       console.log(temp);
     };
@@ -34,7 +34,7 @@ class LM60Test {
   public onchange() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const tempsens = obniz.wired("LM60", { gnd: 0, output: 1, vcc: 2 });
+      const tempsens = obniz.wired('LM60', { gnd: 0, output: 1, vcc: 2 });
       tempsens.onchange = (temp) => {
         console.log(temp);
       };
@@ -44,7 +44,7 @@ class LM60Test {
   public getWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const tempsens = obniz.wired("LM60", { gnd: 0, output: 1, vcc: 2 });
+      const tempsens = obniz.wired('LM60', { gnd: 0, output: 1, vcc: 2 });
       const temp = await tempsens.getWait();
       console.log(temp);
     };
@@ -58,7 +58,7 @@ class LM61Test {
   public onchange() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const tempsens = obniz.wired("LM61", { gnd: 0, output: 1, vcc: 2 });
+      const tempsens = obniz.wired('LM61', { gnd: 0, output: 1, vcc: 2 });
       tempsens.onchange = (temp) => {
         console.log(temp);
       };
@@ -68,7 +68,7 @@ class LM61Test {
   public getWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const tempsens = obniz.wired("LM61", { gnd: 0, output: 1, vcc: 2 });
+      const tempsens = obniz.wired('LM61', { gnd: 0, output: 1, vcc: 2 });
       const temp = await tempsens.getWait();
       console.log(temp);
     };
@@ -82,7 +82,7 @@ class LMT87Test {
   public onchange() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const tempsens = obniz.wired("LMT87", { gnd: 0, output: 1, vcc: 2 });
+      const tempsens = obniz.wired('LMT87', { gnd: 0, output: 1, vcc: 2 });
       tempsens.onchange = (temp) => {
         console.log(temp);
       };
@@ -92,7 +92,7 @@ class LMT87Test {
   public getWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const tempsens = obniz.wired("LMT87", { gnd: 0, output: 1, vcc: 2 });
+      const tempsens = obniz.wired('LMT87', { gnd: 0, output: 1, vcc: 2 });
       const temp = await tempsens.getWait();
       console.log(temp);
     };
@@ -106,7 +106,7 @@ class MCP9700Test {
   public onchange() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const tempsens = obniz.wired("MCP9700", { gnd: 0, output: 1, vcc: 2 });
+      const tempsens = obniz.wired('MCP9700', { gnd: 0, output: 1, vcc: 2 });
       tempsens.onchange = (temp) => {
         console.log(temp);
       };
@@ -116,7 +116,7 @@ class MCP9700Test {
   public getWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const tempsens = obniz.wired("MCP9700", { gnd: 0, output: 1, vcc: 2 });
+      const tempsens = obniz.wired('MCP9700', { gnd: 0, output: 1, vcc: 2 });
       const temp = await tempsens.getWait();
       console.log(temp);
     };
@@ -130,7 +130,7 @@ class MCP9701Test {
   public onchange() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const tempsens = obniz.wired("MCP9701", { gnd: 0, output: 1, vcc: 2 });
+      const tempsens = obniz.wired('MCP9701', { gnd: 0, output: 1, vcc: 2 });
       tempsens.onchange = (temp) => {
         console.log(temp);
       };
@@ -140,7 +140,7 @@ class MCP9701Test {
   public getWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const tempsens = obniz.wired("MCP9701", { gnd: 0, output: 1, vcc: 2 });
+      const tempsens = obniz.wired('MCP9701', { gnd: 0, output: 1, vcc: 2 });
       const temp = await tempsens.getWait();
       console.log(temp);
     };
@@ -160,17 +160,17 @@ class AMG8833Test {
   public getAllPixWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const grideye = obniz.wired("AMG8833", {
+      const grideye: Parts<'AMG8833'> = obniz.wired('AMG8833', {
         vcc: 0,
         gnd: 1,
         sda: 2,
         scl: 3,
       });
       const temps = await grideye.getAllPixWait();
-      console.log("temperature:" + temps);
+      console.log(`temperature:${temps.join()}`);
 
-      const canvas = document.getElementById("canvas") as HTMLCanvasElement;
-      const ctx = canvas.getContext("2d")!;
+      const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+      const ctx = canvas.getContext('2d')!;
       const width = canvas.width;
       const height = canvas.height;
 
@@ -178,8 +178,13 @@ class AMG8833Test {
         for (let y = 0; y < 8; y++) {
           const temp = temps[x * 8 + y];
           const h = -80 + (temp - 29) * 25;
-          ctx.fillStyle = "hsl(" + h + ", 100%, 50%)";
-          ctx.fillRect((width / 8) * x, (height / 8) * y, width / 8, height / 8);
+          ctx.fillStyle = 'hsl(' + h + ', 100%, 50%)';
+          ctx.fillRect(
+            (width / 8) * x,
+            (height / 8) * y,
+            width / 8,
+            height / 8
+          );
         }
       }
     };
@@ -188,14 +193,14 @@ class AMG8833Test {
   public getOnePixWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const grideye = obniz.wired("AMG8833", {
+      const grideye = obniz.wired('AMG8833', {
         vcc: 0,
         gnd: 1,
         sda: 2,
         scl: 3,
       });
       const temp = await grideye.getOnePixWait(10);
-      console.log("temperature:" + temp);
+      console.log('temperature:' + temp);
     };
   }
 }
@@ -208,15 +213,15 @@ class BME280Test {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
       const i2c = obniz.getFreeI2C();
-      i2c.start({ mode: "master", sda: 2, scl: 3, clock: 100000 });
-      const bme280 = obniz.wired("BME280", { vio: 0, gnd: 1, i2c });
+      i2c.start({ mode: 'master', sda: 2, scl: 3, clock: 100000 });
+      const bme280 = obniz.wired('BME280', { vio: 0, gnd: 1, i2c });
     };
   }
 
   public applyCalibration() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const bme280 = obniz.wired("BME280", {
+      const bme280 = obniz.wired('BME280', {
         vio: 0,
         vcore: 1,
         gnd: 2,
@@ -232,7 +237,7 @@ class BME280Test {
   public setIIRStrength() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const bme280 = obniz.wired("BME280", {
+      const bme280 = obniz.wired('BME280', {
         vio: 0,
         vcore: 1,
         gnd: 2,
@@ -249,7 +254,7 @@ class BME280Test {
   public getAllWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const bme280 = obniz.wired("BME280", {
+      const bme280 = obniz.wired('BME280', {
         vio: 0,
         vcore: 1,
         gnd: 2,
@@ -260,16 +265,16 @@ class BME280Test {
       });
       await bme280.applyCalibration();
       const obj = await bme280.getAllWait();
-      console.log("temp: " + obj.temperature + " degree");
-      console.log("humidity: " + obj.humidity + " %");
-      console.log("pressure: " + obj.pressure + " hPa");
+      console.log('temp: ' + obj.temperature + ' degree');
+      console.log('humidity: ' + obj.humidity + ' %');
+      console.log('pressure: ' + obj.pressure + ' hPa');
     };
   }
 
   public calcAltitude() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const bme280 = obniz.wired("BME280", {
+      const bme280 = obniz.wired('BME280', {
         vio: 0,
         vcore: 1,
         gnd: 2,
@@ -282,7 +287,7 @@ class BME280Test {
       const obj = await bme280.getAllWait();
       const airPressure = obj.pressure;
       const hight_in_m = bme280.calcAltitude(airPressure);
-      console.log("altitude: " + hight_in_m + " m");
+      console.log('altitude: ' + hight_in_m + ' m');
     };
   }
 }
@@ -294,12 +299,12 @@ class D6T44LTest {
   public getAllPixWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const d6t = obniz.wired("D6T44L", { gnd: 0, vcc: 1, sda: 2, scl: 3 });
+      const d6t = obniz.wired('D6T44L', { gnd: 0, vcc: 1, sda: 2, scl: 3 });
       const temps = await d6t.getAllPixWait();
-      console.log("temperature:" + temps);
+      console.log('temperature:' + temps);
 
-      const canvas = document.getElementById("canvas") as HTMLCanvasElement;
-      const ctx = canvas.getContext("2d")!;
+      const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+      const ctx = canvas.getContext('2d')!;
       const width = canvas.width;
       const height = canvas.height;
 
@@ -307,8 +312,13 @@ class D6T44LTest {
         for (let y = 0; y < 4; y++) {
           const temp = temps[x * 4 + y];
           const h = -80 + (temp - 29) * 25;
-          ctx.fillStyle = "hsl(" + h + ", 100%, 50%)";
-          ctx.fillRect((width / 4) * x, (height / 4) * y, width / 4, height / 4);
+          ctx.fillStyle = 'hsl(' + h + ', 100%, 50%)';
+          ctx.fillRect(
+            (width / 4) * x,
+            (height / 4) * y,
+            width / 4,
+            height / 4
+          );
         }
       }
     };
@@ -317,9 +327,9 @@ class D6T44LTest {
   public getOnePixWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const d6t = obniz.wired("D6T44L", { gnd: 0, vcc: 1, sda: 2, scl: 3 });
+      const d6t = obniz.wired('D6T44L', { gnd: 0, vcc: 1, sda: 2, scl: 3 });
       const temp = await d6t.getOnePixWait(10);
-      console.log("temperature:" + temp);
+      console.log('temperature:' + temp);
     };
   }
 }
@@ -333,7 +343,7 @@ class SHT31Test {
   public getTempWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const sensor = obniz.wired("SHT31", {
+      const sensor = obniz.wired('SHT31', {
         vcc: 0,
         sda: 1,
         scl: 2,
@@ -343,15 +353,15 @@ class SHT31Test {
       });
       const temp = await sensor.getTempWait();
       const humd = await sensor.getHumidWait();
-      console.log("temperature:" + temp);
-      console.log("humidity:" + humd);
+      console.log('temperature:' + temp);
+      console.log('humidity:' + humd);
     };
   }
 
   public getHumdWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const sensor = obniz.wired("SHT31", {
+      const sensor = obniz.wired('SHT31', {
         vcc: 0,
         sda: 1,
         scl: 2,
@@ -361,8 +371,8 @@ class SHT31Test {
       });
       const temp = await sensor.getTempWait();
       const humd = await sensor.getHumidWait();
-      console.log("temperature:" + temp);
-      console.log("humidity:" + humd);
+      console.log('temperature:' + temp);
+      console.log('humidity:' + humd);
     };
   }
 }

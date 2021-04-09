@@ -3,8 +3,10 @@
  * @module Parts.iBS04i
  */
 
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, {
+  ObnizPartsBleInfo,
+} from '../../../obniz/ObnizPartsBleInterface';
 
 export interface IBS04IOptions {}
 
@@ -22,7 +24,7 @@ export interface IBS04I_Data {
 export default class IBS04I implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: "iBS04i",
+      name: 'iBS04i',
     };
   }
 
@@ -69,7 +71,9 @@ export default class IBS04I implements ObnizPartsBleInterface {
     -1, // reserved
   ];
 
-  private static getDeviceArray(peripheral: BleRemotePeripheral): number[] | null {
+  private static getDeviceArray(
+    peripheral: BleRemotePeripheral
+  ): number[] | null {
     const advertise = peripheral.advertise_data_rows.filter((adv: number[]) => {
       let find = false;
       if (this.deviceAdv.length > adv.length) {
@@ -93,7 +97,7 @@ export default class IBS04I implements ObnizPartsBleInterface {
     }
     const type = advertise[0][14];
     if (type !== 24) {
-      // iBS04i以外
+      // is not ibs04i
       return null;
     }
     return advertise[0];

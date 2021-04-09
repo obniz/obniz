@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from "./WSCommand";
+import WSCommand from './WSCommand';
 
 class WSCommandPlugin extends WSCommand {
   public module: any;
@@ -31,8 +31,10 @@ class WSCommandPlugin extends WSCommand {
       return;
     }
 
-    const schemaData: any = [{ uri: "/request/plugin/send", onValid: this.send }];
-    const res: any = this.validateCommandSchema(schemaData, module, "plugin");
+    const schemaData: any = [
+      { uri: '/request/plugin/send', onValid: this.send },
+    ];
+    const res: any = this.validateCommandSchema(schemaData, module, 'plugin');
 
     if (res.valid === 0) {
       if (res.invalidButLike.length > 0) {

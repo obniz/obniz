@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module Parts.SNx4HC595
  */
-import Obniz from "../../../obniz";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface SNx4HC595Options {
     gnd?: number;
     vcc?: number;

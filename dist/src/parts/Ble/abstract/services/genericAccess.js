@@ -9,7 +9,7 @@ class BleGenericAccess {
         this._service = service;
     }
     async getDeviceNameWait() {
-        const char = this._service.getCharacteristic("2A00");
+        const char = this._service.getCharacteristic('2A00');
         if (!char) {
             return null;
         }

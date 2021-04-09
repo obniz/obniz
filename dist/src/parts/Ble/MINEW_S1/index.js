@@ -17,7 +17,7 @@ class MINEW_S1 {
         this.params = {};
     }
     static info() {
-        return { name: "MINEW_S1" };
+        return { name: 'MINEW_S1' };
     }
     static isDevice(peripheral, macAddress = null) {
         if (!this._hasPrefix(peripheral)) {
@@ -47,11 +47,11 @@ class MINEW_S1 {
         const batteryLevel = peripheral.adv_data[13];
         const macAddress = peripheral.adv_data
             .slice(14, 20)
-            .map((e) => ("0" + e.toString(16)).slice(-2))
-            .join("")
+            .map((e) => ('0' + e.toString(16)).slice(-2))
+            .join('')
             .match(/.{1,2}/g)
             .reverse()
-            .join("");
+            .join('');
         const name = util_1.default.dataArray2string(peripheral.adv_data.slice(20));
         return {
             frameType,
@@ -82,11 +82,11 @@ class MINEW_S1 {
         const humidity = humidityH + (humidityL * 1) / (1 << 8);
         const macAddress = peripheral.adv_data
             .splice(18)
-            .map((e) => ("0" + e.toString(16)).slice(-2))
-            .join("")
+            .map((e) => ('0' + e.toString(16)).slice(-2))
+            .join('')
             .match(/.{1,2}/g)
             .reverse()
-            .join("");
+            .join('');
         return {
             frameType,
             versionNumber,

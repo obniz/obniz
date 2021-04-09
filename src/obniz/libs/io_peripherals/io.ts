@@ -3,13 +3,14 @@
  * @module ObnizCore.Components
  */
 
-import Obniz from "../../index";
-import { ComponentAbstract } from "../ComponentAbstact";
-import { DriveType, PullType } from "./common";
+import Obniz from '../../index';
+import { ComponentAbstract } from '../ComponentAbstact';
+import { DriveType, PullType } from './common';
 
 /**
  * General purpose IO
  * This is available on each io (for obniz Board series, it's io0 to io11)
+ *
  * @category Peripherals
  */
 export default class PeripheralIO extends ComponentAbstract {
@@ -21,21 +22,21 @@ export default class PeripheralIO extends ComponentAbstract {
     super(obniz);
     this.id = id;
 
-    this.on("/response/io/get", (obj) => {
+    this.on('/response/io/get', (obj) => {
       this.value = obj;
       this.Obniz._runUserCreatedFunction(this.onchange, obj);
     });
 
-    this.on("/response/io/warning", (obj) => {
+    this.on('/response/io/warning', (obj) => {
       this.Obniz.warning({
-        alert: "warning",
+        alert: 'warning',
         message: `io${this.id}: ${obj.warning.message}`,
       });
     });
 
-    this.on("/response/io/error", (obj) => {
+    this.on('/response/io/error', (obj) => {
       this.Obniz.error({
-        alert: "error",
+        alert: 'error',
         message: `io${this.id}: ${obj.error.message}`,
       });
     });
@@ -59,7 +60,7 @@ export default class PeripheralIO extends ComponentAbstract {
   public output(value: boolean | 0 | 1) {
     value = !!value;
     const obj: any = {};
-    obj["io" + this.id] = value;
+    obj['io' + this.id] = value;
     this.value = value;
     this.Obniz.send(obj);
   }
@@ -84,26 +85,26 @@ export default class PeripheralIO extends ComponentAbstract {
    *
    */
   public drive(drive: DriveType) {
-    if (typeof drive !== "string") {
-      throw new Error("please specify drive methods in string");
+    if (typeof drive !== 'string') {
+      throw new Error('please specify drive methods in string');
     }
-    let output_type: any = "";
+    let output_type: any = '';
     switch (drive) {
-      case "5v":
-        output_type = "push-pull5v";
+      case '5v':
+        output_type = 'push-pull5v';
         break;
-      case "3v":
-        output_type = "push-pull3v";
+      case '3v':
+        output_type = 'push-pull3v';
         break;
-      case "open-drain":
-        output_type = "open-drain";
+      case 'open-drain':
+        output_type = 'open-drain';
         break;
       default:
-        throw new Error("unknown drive method");
+        throw new Error('unknown drive method');
     }
 
     const obj: any = {};
-    obj["io" + this.id] = {
+    obj['io' + this.id] = {
       output_type,
     };
     this.Obniz.send(obj);
@@ -123,29 +124,29 @@ export default class PeripheralIO extends ComponentAbstract {
    *
    */
   public pull(updown: PullType) {
-    if (typeof updown !== "string" && updown !== null) {
-      throw new Error("please specify pull methods in string");
+    if (typeof updown !== 'string' && updown !== null) {
+      throw new Error('please specify pull methods in string');
     }
-    let pull_type: any = "";
+    let pull_type: any = '';
     switch (updown) {
-      case "5v":
-        pull_type = "pull-up5v";
+      case '5v':
+        pull_type = 'pull-up5v';
         break;
-      case "3v":
-        pull_type = "pull-up3v";
+      case '3v':
+        pull_type = 'pull-up3v';
         break;
-      case "0v":
-        pull_type = "pull-down";
+      case '0v':
+        pull_type = 'pull-down';
         break;
       case null:
-        pull_type = "float";
+        pull_type = 'float';
         break;
       default:
-        throw new Error("unknown pull_type method");
+        throw new Error('unknown pull_type method');
     }
 
     const obj: any = {};
-    obj["io" + this.id] = {
+    obj['io' + this.id] = {
       pull_type,
     };
     this.Obniz.send(obj);
@@ -161,8 +162,8 @@ export default class PeripheralIO extends ComponentAbstract {
   public input(callback: (value: boolean) => void) {
     this.onchange = callback;
     const obj: any = {};
-    obj["io" + this.id] = {
-      direction: "input",
+    obj['io' + this.id] = {
+      direction: 'input',
       stream: true,
     };
     this.Obniz.send(obj);
@@ -184,10 +185,10 @@ export default class PeripheralIO extends ComponentAbstract {
   public async inputWait(): Promise<boolean> {
     const obj: any = {};
     obj[this.schemaBasePath()] = {
-      direction: "input",
+      direction: 'input',
       stream: false,
     };
-    const data = await this.sendAndReceiveJsonWait(obj, "/response/io/get");
+    const data = await this.sendAndReceiveJsonWait(obj, '/response/io/get');
     return data;
   }
 
@@ -208,7 +209,7 @@ export default class PeripheralIO extends ComponentAbstract {
    */
   public end() {
     const obj: any = {};
-    obj["io" + this.id] = null;
+    obj['io' + this.id] = null;
     this.Obniz.send(obj);
   }
 
@@ -217,7 +218,7 @@ export default class PeripheralIO extends ComponentAbstract {
    * @private
    */
   public schemaBasePath(): string {
-    return "io" + this.id;
+    return 'io' + this.id;
   }
 
   /**

@@ -8,25 +8,26 @@ const ComponentAbstact_1 = require("../ComponentAbstact");
 /**
  * General purpose IO
  * This is available on each io (for obniz Board series, it's io0 to io11)
+ *
  * @category Peripherals
  */
 class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
         super(obniz);
         this.id = id;
-        this.on("/response/io/get", (obj) => {
+        this.on('/response/io/get', (obj) => {
             this.value = obj;
             this.Obniz._runUserCreatedFunction(this.onchange, obj);
         });
-        this.on("/response/io/warning", (obj) => {
+        this.on('/response/io/warning', (obj) => {
             this.Obniz.warning({
-                alert: "warning",
+                alert: 'warning',
                 message: `io${this.id}: ${obj.warning.message}`,
             });
         });
-        this.on("/response/io/error", (obj) => {
+        this.on('/response/io/error', (obj) => {
             this.Obniz.error({
-                alert: "error",
+                alert: 'error',
                 message: `io${this.id}: ${obj.error.message}`,
             });
         });
@@ -48,7 +49,7 @@ class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
     output(value) {
         value = !!value;
         const obj = {};
-        obj["io" + this.id] = value;
+        obj['io' + this.id] = value;
         this.value = value;
         this.Obniz.send(obj);
     }
@@ -72,25 +73,25 @@ class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
      *
      */
     drive(drive) {
-        if (typeof drive !== "string") {
-            throw new Error("please specify drive methods in string");
+        if (typeof drive !== 'string') {
+            throw new Error('please specify drive methods in string');
         }
-        let output_type = "";
+        let output_type = '';
         switch (drive) {
-            case "5v":
-                output_type = "push-pull5v";
+            case '5v':
+                output_type = 'push-pull5v';
                 break;
-            case "3v":
-                output_type = "push-pull3v";
+            case '3v':
+                output_type = 'push-pull3v';
                 break;
-            case "open-drain":
-                output_type = "open-drain";
+            case 'open-drain':
+                output_type = 'open-drain';
                 break;
             default:
-                throw new Error("unknown drive method");
+                throw new Error('unknown drive method');
         }
         const obj = {};
-        obj["io" + this.id] = {
+        obj['io' + this.id] = {
             output_type,
         };
         this.Obniz.send(obj);
@@ -109,28 +110,28 @@ class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
      *
      */
     pull(updown) {
-        if (typeof updown !== "string" && updown !== null) {
-            throw new Error("please specify pull methods in string");
+        if (typeof updown !== 'string' && updown !== null) {
+            throw new Error('please specify pull methods in string');
         }
-        let pull_type = "";
+        let pull_type = '';
         switch (updown) {
-            case "5v":
-                pull_type = "pull-up5v";
+            case '5v':
+                pull_type = 'pull-up5v';
                 break;
-            case "3v":
-                pull_type = "pull-up3v";
+            case '3v':
+                pull_type = 'pull-up3v';
                 break;
-            case "0v":
-                pull_type = "pull-down";
+            case '0v':
+                pull_type = 'pull-down';
                 break;
             case null:
-                pull_type = "float";
+                pull_type = 'float';
                 break;
             default:
-                throw new Error("unknown pull_type method");
+                throw new Error('unknown pull_type method');
         }
         const obj = {};
-        obj["io" + this.id] = {
+        obj['io' + this.id] = {
             pull_type,
         };
         this.Obniz.send(obj);
@@ -145,8 +146,8 @@ class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
     input(callback) {
         this.onchange = callback;
         const obj = {};
-        obj["io" + this.id] = {
-            direction: "input",
+        obj['io' + this.id] = {
+            direction: 'input',
             stream: true,
         };
         this.Obniz.send(obj);
@@ -167,10 +168,10 @@ class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
     async inputWait() {
         const obj = {};
         obj[this.schemaBasePath()] = {
-            direction: "input",
+            direction: 'input',
             stream: false,
         };
-        const data = await this.sendAndReceiveJsonWait(obj, "/response/io/get");
+        const data = await this.sendAndReceiveJsonWait(obj, '/response/io/get');
         return data;
     }
     /**
@@ -190,7 +191,7 @@ class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
      */
     end() {
         const obj = {};
-        obj["io" + this.id] = null;
+        obj['io' + this.id] = null;
         this.Obniz.send(obj);
     }
     /**
@@ -198,7 +199,7 @@ class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
      * @private
      */
     schemaBasePath() {
-        return "io" + this.id;
+        return 'io' + this.id;
     }
     /**
      * @ignore

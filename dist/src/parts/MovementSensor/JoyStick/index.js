@@ -6,24 +6,24 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class JoyStick {
     constructor() {
-        this.keys = ["sw", "y", "x", "vcc", "gnd", "i2c"];
-        this.requiredKeys = ["sw", "y", "x"];
-        this.pins = this.keys || ["sw", "y", "x", "vcc", "gnd"];
-        this.pinname = { sw: "sw12" };
-        this.shortName = "joyS";
+        this.keys = ['sw', 'y', 'x', 'vcc', 'gnd', 'i2c'];
+        this.requiredKeys = ['sw', 'y', 'x'];
+        this.pins = this.keys || ['sw', 'y', 'x', 'vcc', 'gnd'];
+        this.pinname = { sw: 'sw12' };
+        this.shortName = 'joyS';
     }
     static info() {
         return {
-            name: "JoyStick",
+            name: 'JoyStick',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.io_sig_sw = obniz.getIO(this.params.sw);
         this.ad_x = obniz.getAD(this.params.x);
         this.ad_y = obniz.getAD(this.params.y);
-        this.io_sig_sw.pull("5v");
+        this.io_sig_sw.pull('5v');
         this.ad_x.start((value) => {
             this.positionX = value / 5.0;
             if (this.onchangex) {

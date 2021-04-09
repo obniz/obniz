@@ -3,9 +3,9 @@
  * @module ObnizCore.Components
  */
 
-import Obniz from "../../index";
-import { ComponentAbstract } from "../ComponentAbstact";
-import ObnizUtil from "../utils/util";
+import Obniz from '../../index';
+import { ComponentAbstract } from '../ComponentAbstact';
+import ObnizUtil from '../utils/util';
 
 export interface ObnizMeasureResult {
   edge: boolean;
@@ -27,9 +27,10 @@ export interface ObnizMeasureOptions {
 
   /**
    * "positive" or "negative"
+   *
    * @category Pulse generation
    */
-  pulse: "positive" | "negative";
+  pulse: 'positive' | 'negative';
 
   /**
    * pulse duration in values between ms. 0.001 to 1000.
@@ -40,18 +41,21 @@ export interface ObnizMeasureOptions {
 
   /**
    * io for measuring response. Please use with 'measure_edges' params.
+   *
    * @category Response measurement
    */
   io_echo: number;
 
   /**
    * maximum number of edges to detect. 1 to 4.
+   *
    * @category Response measurement
    */
   measure_edges: number;
 
   /**
    * timeout in ms, and default is 1000. 0.001 to 1000.
+   *
    * @category Response measurement
    */
   timeout?: number;
@@ -83,10 +87,11 @@ export interface ObnizMeasureOptions {
 
 /**
  * The measure module provides hardware level measurement.
+ *
  * @category Measurement
  */
 export default class ObnizMeasure extends ComponentAbstract {
-  private observers!: Array<(edges: ObnizMeasureResultArray) => void>;
+  private observers!: ((edges: ObnizMeasureResultArray) => void)[];
   private params?: ObnizMeasureOptions;
 
   constructor(obniz: Obniz) {
@@ -128,18 +133,26 @@ export default class ObnizMeasure extends ComponentAbstract {
    * @param params
    */
   public echo(params: ObnizMeasureOptions) {
-    const err: any = ObnizUtil._requiredKeys(params, ["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges"]);
+    const err: any = ObnizUtil._requiredKeys(params, [
+      'io_pulse',
+      'pulse',
+      'pulse_width',
+      'io_echo',
+      'measure_edges',
+    ]);
     if (err) {
-      throw new Error("Measure start param '" + err + "' required, but not found ");
+      throw new Error(
+        "Measure start param '" + err + "' required, but not found "
+      );
     }
     params = ObnizUtil._keyFilter(params, [
-      "io_pulse",
-      "pulse",
-      "pulse_width",
-      "io_echo",
-      "measure_edges",
-      "timeout",
-      "callback",
+      'io_pulse',
+      'pulse',
+      'pulse_width',
+      'io_echo',
+      'measure_edges',
+      'timeout',
+      'callback',
     ]) as ObnizMeasureOptions;
 
     const echo: any = {};
@@ -148,12 +161,12 @@ export default class ObnizMeasure extends ComponentAbstract {
     echo.pulse_width = params.pulse_width;
     echo.io_echo = params.io_echo;
     echo.measure_edges = params.measure_edges;
-    if (typeof params.timeout === "number") {
+    if (typeof params.timeout === 'number') {
       echo.timeout = params.timeout;
     }
 
-    if (typeof params.callback === "function") {
-      this.onceQueue("/response/measure/echo", (obj) => {
+    if (typeof params.callback === 'function') {
+      this.onceQueue('/response/measure/echo', (obj) => {
         this.Obniz._runUserCreatedFunction(params.callback, obj.echo);
       });
     }
@@ -166,6 +179,6 @@ export default class ObnizMeasure extends ComponentAbstract {
   }
 
   public schemaBasePath(): string {
-    return "measure";
+    return 'measure';
   }
 }

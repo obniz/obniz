@@ -1,4 +1,4 @@
-import WSCommand from "./WSCommand";
+import WSCommand from './WSCommand';
 declare class WSCommandDisplay extends WSCommand {
     module: number;
     _CommandClear: number;

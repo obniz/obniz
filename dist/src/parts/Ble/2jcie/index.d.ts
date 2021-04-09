@@ -2,10 +2,10 @@
  * @packageDocumentation
  * @module Parts.OMRON_2JCIE
  */
-import Obniz from "../../../obniz";
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface from "../../../obniz/ObnizPartsBleInterface";
-import { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
+import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface OMRON_2JCIEOptions {
 }
 export interface OMRON_2JCIE_Data {
@@ -83,7 +83,17 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     disconnectWait(): Promise<void>;
     signedNumberFromBinary(data: number[]): number;
     unsignedNumberFromBinary(data: number[]): number;
+    getLatestDataBAGWait(): Promise<OMRON_2JCIE_Data>;
+    /**
+     * @deprecated
+     */
     getLatestData(): Promise<OMRON_2JCIE_Data>;
+    getLatestDataWait(): Promise<OMRON_2JCIE_Data>;
     getLatestSensorDataUSB(): Promise<OMRON_2JCIE_USBSenData>;
+    getLatestSensorDataUSBWait(): Promise<OMRON_2JCIE_USBSenData>;
+    /**
+     * @deprecated
+     */
     getLatestCalculationDataUSB(): Promise<OMRON_2JCIE_USBCalData>;
+    getLatestCalculationDataUSBWait(): Promise<OMRON_2JCIE_USBCalData>;
 }

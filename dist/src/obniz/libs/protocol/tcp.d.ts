@@ -3,8 +3,8 @@
  * @module ObnizCore.Components
  */
 /// <reference types="node" />
-import Obniz from "../../index";
-import { ComponentAbstract } from "../ComponentAbstact";
+import Obniz from '../../index';
+import { ComponentAbstract } from '../ComponentAbstact';
 /**
  * @param TCPReceiveCallbackFunction.data
  * received data
@@ -105,6 +105,7 @@ export default class Tcp extends ComponentAbstract {
      * // Text
      * tcp.write('hello');
      * ```
+     *
      * @param data
      */
     write(data: number | number[] | Buffer | string): void;

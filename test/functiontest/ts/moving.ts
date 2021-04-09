@@ -1,7 +1,7 @@
 /* tslint:disable:class-name max-classes-per-file */
-import Obniz from "../../../dist/src/obniz/index";
+import Obniz from '../../../dist/src/obniz/index';
 
-const OBNIZ_ID = "1234-5678";
+const OBNIZ_ID = '1234-5678';
 
 /**
  * https://obniz.io/ja/sdk/parts/DCMotor/README.md
@@ -10,7 +10,7 @@ class DCMotorTest {
   public forward() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const motor = obniz.wired("DCMotor", { forward: 0, back: 1 });
+      const motor = obniz.wired('DCMotor', { forward: 0, back: 1 });
       motor.forward();
     };
   }
@@ -18,7 +18,7 @@ class DCMotorTest {
   public reverse() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const motor = obniz.wired("DCMotor", { forward: 0, back: 1 });
+      const motor = obniz.wired('DCMotor', { forward: 0, back: 1 });
       motor.reverse();
     };
   }
@@ -26,7 +26,7 @@ class DCMotorTest {
   public stop() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const motor = obniz.wired("DCMotor", { forward: 0, back: 1 });
+      const motor = obniz.wired('DCMotor', { forward: 0, back: 1 });
 
       motor.forward();
       setTimeout(() => {
@@ -38,7 +38,7 @@ class DCMotorTest {
   public move() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const motor = obniz.wired("DCMotor", { forward: 0, back: 1 });
+      const motor = obniz.wired('DCMotor', { forward: 0, back: 1 });
 
       motor.move(true); // = motor.forward();
     };
@@ -47,7 +47,7 @@ class DCMotorTest {
   public power() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const motor = obniz.wired("DCMotor", { forward: 0, back: 1 });
+      const motor = obniz.wired('DCMotor', { forward: 0, back: 1 });
 
       motor.power(3);
       motor.move(true);
@@ -62,7 +62,7 @@ class PCA9685Test {
   public getPWM() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const driver = obniz.wired("PCA9685", {
+      const driver = obniz.wired('PCA9685', {
         gnd: 0,
         oe: 1,
         scl: 2,
@@ -73,9 +73,9 @@ class PCA9685Test {
       pwm0.freq(1000);
       pwm0.duty(50);
 
-      const servo0 = obniz.wired("ServoMotor", { pwm: driver.getPWM(0) });
-      const servo1 = obniz.wired("ServoMotor", { pwm: driver.getPWM(1) });
-      const servo2 = obniz.wired("ServoMotor", { pwm: driver.getPWM(2) });
+      const servo0 = obniz.wired('ServoMotor', { pwm: driver.getPWM(0) });
+      const servo1 = obniz.wired('ServoMotor', { pwm: driver.getPWM(1) });
+      const servo2 = obniz.wired('ServoMotor', { pwm: driver.getPWM(2) });
       servo0.angle(90);
       servo1.angle(95);
       servo2.angle(100);
@@ -85,7 +85,7 @@ class PCA9685Test {
   public freq() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const driver = obniz.wired("PCA9685", {
+      const driver = obniz.wired('PCA9685', {
         gnd: 0,
         oe: 1,
         scl: 2,
@@ -99,7 +99,7 @@ class PCA9685Test {
   public duty() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const driver = obniz.wired("PCA9685", {
+      const driver = obniz.wired('PCA9685', {
         gnd: 0,
         oe: 1,
         scl: 2,
@@ -115,7 +115,7 @@ class PCA9685Test {
   public pulse() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const driver = obniz.wired("PCA9685", {
+      const driver = obniz.wired('PCA9685', {
         gnd: 0,
         oe: 1,
         scl: 2,
@@ -131,7 +131,7 @@ class PCA9685Test {
   public setEnable() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const driver = obniz.wired("PCA9685", {
+      const driver = obniz.wired('PCA9685', {
         gnd: 0,
         oe: 1,
         scl: 2,
@@ -152,14 +152,14 @@ class ServoMotorTest {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
       const pwm = obniz.getFreePwm();
-      const servo = obniz.wired("ServoMotor", { pwm });
+      const servo = obniz.wired('ServoMotor', { pwm });
     };
   }
 
   public angle() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const servo = obniz.wired("ServoMotor", { signal: 0, vcc: 1, gnd: 2 });
+      const servo = obniz.wired('ServoMotor', { signal: 0, vcc: 1, gnd: 2 });
 
       servo.angle(90.0); // half position
     };
@@ -168,7 +168,7 @@ class ServoMotorTest {
   public range() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const servo = obniz.wired("ServoMotor", { signal: 0, vcc: 1, gnd: 2 });
+      const servo = obniz.wired('ServoMotor', { signal: 0, vcc: 1, gnd: 2 });
       servo.range = {
         min: 0.8,
         max: 2.4,
@@ -180,7 +180,7 @@ class ServoMotorTest {
   public on() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const servo = obniz.wired("ServoMotor", { signal: 0, vcc: 1, gnd: 2 });
+      const servo = obniz.wired('ServoMotor', { signal: 0, vcc: 1, gnd: 2 });
 
       servo.angle(90.0); // half position
       servo.off();
@@ -191,7 +191,7 @@ class ServoMotorTest {
   public off() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const servo = obniz.wired("ServoMotor", { signal: 0, vcc: 1, gnd: 2 });
+      const servo = obniz.wired('ServoMotor', { signal: 0, vcc: 1, gnd: 2 });
 
       servo.angle(90.0); // half position
       servo.off();
@@ -207,7 +207,7 @@ class SolenoidTest {
   public on() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const solenoid = obniz.wired("Solenoid", { gnd: 0, signal: 1 });
+      const solenoid = obniz.wired('Solenoid', { gnd: 0, signal: 1 });
       solenoid.on();
     };
   }
@@ -215,7 +215,7 @@ class SolenoidTest {
   public off() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const solenoid = obniz.wired("Solenoid", { gnd: 0, signal: 1 });
+      const solenoid = obniz.wired('Solenoid', { gnd: 0, signal: 1 });
       solenoid.on();
       await obniz.wait(1000);
       solenoid.off();
@@ -225,7 +225,7 @@ class SolenoidTest {
   public click() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const solenoid = obniz.wired("Solenoid", { gnd: 0, signal: 1 });
+      const solenoid = obniz.wired('Solenoid', { gnd: 0, signal: 1 });
       solenoid.click();
     };
   }
@@ -233,7 +233,7 @@ class SolenoidTest {
   public doubleClick() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const solenoid = obniz.wired("Solenoid", { gnd: 0, signal: 1 });
+      const solenoid = obniz.wired('Solenoid', { gnd: 0, signal: 1 });
       solenoid.doubleClick();
     };
   }
@@ -246,8 +246,8 @@ class StepperMotorTest {
   public stepType() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const motor = obniz.wired("StepperMotor", { a: 0, aa: 1, b: 2, bb: 3 });
-      motor.stepType("1");
+      const motor = obniz.wired('StepperMotor', { a: 0, aa: 1, b: 2, bb: 3 });
+      motor.stepType('1');
       await motor.stepWait(100);
       await motor.stepWait(200);
       console.log(motor.currentStep); // => 300
@@ -257,7 +257,7 @@ class StepperMotorTest {
   public speed() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const motor = obniz.wired("StepperMotor", { a: 0, aa: 1, b: 2, bb: 3 });
+      const motor = obniz.wired('StepperMotor', { a: 0, aa: 1, b: 2, bb: 3 });
       motor.speed(1000);
       await motor.stepWait(100);
     };
@@ -266,7 +266,7 @@ class StepperMotorTest {
   public stepWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const motor = obniz.wired("StepperMotor", { a: 0, aa: 1, b: 2, bb: 3 });
+      const motor = obniz.wired('StepperMotor', { a: 0, aa: 1, b: 2, bb: 3 });
       await motor.stepWait(100);
       await motor.stepWait(-100);
       // now returned to start position.
@@ -276,7 +276,7 @@ class StepperMotorTest {
   public stepToWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const motor = obniz.wired("StepperMotor", { a: 0, aa: 1, b: 2, bb: 3 });
+      const motor = obniz.wired('StepperMotor', { a: 0, aa: 1, b: 2, bb: 3 });
       await motor.stepWait(100);
       await motor.stepToWait(-150); // it move -250 steps
       console.log(motor.currentStep); // => -150
@@ -286,7 +286,7 @@ class StepperMotorTest {
   public holdWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const motor = obniz.wired("StepperMotor", { a: 0, aa: 1, b: 2, bb: 3 });
+      const motor = obniz.wired('StepperMotor', { a: 0, aa: 1, b: 2, bb: 3 });
       await motor.holdWait();
     };
   }
@@ -294,7 +294,7 @@ class StepperMotorTest {
   public freeWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const motor = obniz.wired("StepperMotor", { a: 0, aa: 1, b: 2, bb: 3 });
+      const motor = obniz.wired('StepperMotor', { a: 0, aa: 1, b: 2, bb: 3 });
       await motor.stepWait(100);
       await motor.freeWait();
     };
@@ -303,7 +303,7 @@ class StepperMotorTest {
   public currentStep() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const motor = obniz.wired("StepperMotor", { a: 0, aa: 1, b: 2, bb: 3 });
+      const motor = obniz.wired('StepperMotor', { a: 0, aa: 1, b: 2, bb: 3 });
       await motor.stepWait(100);
       await motor.stepToWait(-150); // it move -250 steps
       console.log(motor.currentStep); // => -150
@@ -313,7 +313,7 @@ class StepperMotorTest {
   public rotateWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const motor = obniz.wired("StepperMotor", { a: 0, aa: 1, b: 2, bb: 3 });
+      const motor = obniz.wired('StepperMotor', { a: 0, aa: 1, b: 2, bb: 3 });
       motor.rotationStepCount = 100;
       await motor.rotateWait(360 * 2);
       console.log(motor.currentRotation()); // => 720
@@ -324,7 +324,7 @@ class StepperMotorTest {
   public rotateToWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const motor = obniz.wired("StepperMotor", { a: 0, aa: 1, b: 2, bb: 3 });
+      const motor = obniz.wired('StepperMotor', { a: 0, aa: 1, b: 2, bb: 3 });
       motor.rotationStepCount = 100;
       await motor.rotateToWait(90);
     };
@@ -333,7 +333,7 @@ class StepperMotorTest {
   public rotationStepCount() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const motor = obniz.wired("StepperMotor", { a: 0, aa: 1, b: 2, bb: 3 });
+      const motor = obniz.wired('StepperMotor', { a: 0, aa: 1, b: 2, bb: 3 });
       motor.rotationStepCount = 100;
       await motor.rotateToWait(90);
     };
@@ -342,7 +342,7 @@ class StepperMotorTest {
   public moveWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const motor = obniz.wired("StepperMotor", { a: 0, aa: 1, b: 2, bb: 3 });
+      const motor = obniz.wired('StepperMotor', { a: 0, aa: 1, b: 2, bb: 3 });
       motor.milliMeterStepCount = 10;
       await motor.moveWait(100);
       await motor.moveWait(-10);
@@ -353,7 +353,7 @@ class StepperMotorTest {
   public moveToWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const motor = obniz.wired("StepperMotor", { a: 0, aa: 1, b: 2, bb: 3 });
+      const motor = obniz.wired('StepperMotor', { a: 0, aa: 1, b: 2, bb: 3 });
       motor.milliMeterStepCount = 10;
       await motor.moveWait(100);
       await motor.moveToWait(-10);
@@ -364,7 +364,7 @@ class StepperMotorTest {
   public milliMeterStepCount() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const motor = obniz.wired("StepperMotor", { a: 0, aa: 1, b: 2, bb: 3 });
+      const motor = obniz.wired('StepperMotor', { a: 0, aa: 1, b: 2, bb: 3 });
       motor.milliMeterStepCount = 10;
       await motor.moveWait(100);
       await motor.moveToWait(-10);

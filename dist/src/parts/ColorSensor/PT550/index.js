@@ -6,18 +6,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class PT550 {
     constructor() {
-        this.keys = ["signal", "vcc", "gnd"];
-        this.requiredKeys = ["signal"];
+        this.keys = ['signal', 'vcc', 'gnd'];
+        this.requiredKeys = ['signal'];
     }
     static info() {
         return {
-            name: "PT550",
+            name: 'PT550',
         };
     }
     onchange(value) { }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.signal = this.obniz.getAD(this.params.signal);
         this.signal.start((value) => {
             if (this.onchange) {

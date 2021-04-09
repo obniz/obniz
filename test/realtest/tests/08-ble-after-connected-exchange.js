@@ -5,11 +5,11 @@ chai.use(require('chai-like'));
 
 let obnizA, checkBoard;
 
-describe('8-ble-exchange', function() {
+describe('8-ble-exchange', function () {
   this.timeout(120000);
 
   before(async () => {
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
         checkBoard = config.checkBoard; //exchange A<->B
@@ -86,7 +86,7 @@ describe('8-ble-exchange', function() {
 
     await peripheral.connectWait();
 
-    await new Promise(r => {
+    await new Promise((r) => {
       setTimeout(r, 2000);
     });
 
@@ -115,7 +115,7 @@ describe('8-ble-exchange', function() {
 
     // remove device information (default added at ESP32)
     let filteredResults = results.filter(
-      e => !['1801', '1800'].includes(e.uuid)
+      (e) => !['1801', '1800'].includes(e.uuid)
     );
     expect(filteredResults).like([
       {
@@ -243,22 +243,24 @@ describe('8-ble-exchange', function() {
     expect(targetChara.canNotify()).to.be.equal(true);
     expect(targetChara.canIndicate()).to.be.equal(false);
 
-    let p1 = new Promise(async resolve => {
-      await targetChara.registerNotifyWait(function(data) {
-        // console.log('notify!' + data.join(','));
-        if (data.length === 1 && data[0] === 92) {
-          notifyed = true;
-        }
-        resolve();
-      });
-      // console.log('registerNotify');
-      await checkBoard.pingWait();
-      await obnizA.pingWait();
-      // console.log('start notify');
-      this.service.getCharacteristic('FFF3').notify();
+    let p1 = new Promise((resolve) => {
+      (async () => {
+        await targetChara.registerNotifyWait(function (data) {
+          // console.log('notify!' + data.join(','));
+          if (data.length === 1 && data[0] === 92) {
+            notifyed = true;
+          }
+          resolve();
+        });
+        // console.log('registerNotify');
+        await checkBoard.pingWait();
+        await obnizA.pingWait();
+        // console.log('start notify');
+        this.service.getCharacteristic('FFF3').notify();
+      })();
     });
-    let p2 = new Promise(function(resolve) {
-      setTimeout(function() {
+    let p2 = new Promise(function (resolve) {
+      setTimeout(function () {
         // console.log('timeout!');
         resolve();
       }, 20000);
@@ -286,8 +288,8 @@ describe('8-ble-exchange', function() {
   });
 
   it('close', async () => {
-    let p = new Promise(resolve => {
-      obnizA.ble.peripheral.onconnectionupdates = data => {
+    let p = new Promise((resolve) => {
+      obnizA.ble.peripheral.onconnectionupdates = (data) => {
         // console.log('onconnectionupdates ' + data);
         if (data.status === 'disconnected') {
           resolve();

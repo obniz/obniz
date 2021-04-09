@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import EventEmitter from "eventemitter3";
-import { BleDeviceAddress, UUID } from "./bleTypes";
+import EventEmitter from 'eventemitter3';
+import { BleDeviceAddress, UUID } from './bleTypes';
 export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
     /**
      * @ignore
@@ -91,6 +91,7 @@ export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
     abstract writeWait(data: number[], needResponse?: boolean): Promise<boolean>;
     /**
      * Use writeTextWait() instead from 3.5.0
+     *
      * @ignore
      * @deprecated
      */
@@ -101,6 +102,7 @@ export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
     writeTextWait(str: string, needResponse?: boolean): Promise<boolean>;
     /**
      * Use writeNumberWait() instead from 3.5.0
+     *
      * @ignore
      * @deprecated
      */
@@ -132,6 +134,6 @@ export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
      * @ignore
      * @private
      */
-    _runUserCreatedFunction(func?: (...args: any) => any, ...args: any[]): void;
+    _runUserCreatedFunction(func?: (..._args: any) => any, ...args: any[]): void;
     protected setFunctions(): void;
 }

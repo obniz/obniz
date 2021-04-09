@@ -6,26 +6,26 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class KXR94_2050 {
     constructor() {
-        this.keys = ["x", "y", "z", "vcc", "gnd", "enable", "self_test"];
-        this.requiredKeys = ["x", "y", "z"];
+        this.keys = ['x', 'y', 'z', 'vcc', 'gnd', 'enable', 'self_test'];
+        this.requiredKeys = ['x', 'y', 'z'];
     }
     static info() {
         return {
-            name: "KXR94-2050",
+            name: 'KXR94-2050',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.ad_x = obniz.getAD(this.params.x);
         this.ad_y = obniz.getAD(this.params.y);
         this.ad_z = obniz.getAD(this.params.z);
         if (obniz.isValidIO(this.params.enable)) {
-            obniz.getIO(this.params.enable).drive("5v");
+            obniz.getIO(this.params.enable).drive('5v');
             obniz.getIO(this.params.enable).output(true);
         }
         if (obniz.isValidIO(this.params.self_test)) {
-            obniz.getIO(this.params.self_test).drive("5v");
+            obniz.getIO(this.params.self_test).drive('5v');
             obniz.getIO(this.params.self_test).output(false);
         }
         this.changeVccVoltage(5);

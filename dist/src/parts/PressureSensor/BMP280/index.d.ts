@@ -2,10 +2,10 @@
  * @packageDocumentation
  * @module Parts.BMP280
  */
-import Obniz from "../../../obniz";
-import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
+import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface BMP280Options {
     vio?: number;
     vcore?: number;
@@ -34,8 +34,17 @@ export default class BMP280 implements ObnizPartsInterface {
     private _t_fine;
     constructor();
     wired(obniz: Obniz): void;
-    setIIRStrength(strengh: any): Promise<void>;
+    /**
+     * @deprecated
+     * @param strength
+     */
+    setIIRStrength(strength: any): Promise<void>;
+    setIIRStrengthWait(strengh: any): Promise<void>;
+    /**
+     * @deprecated
+     */
     applyCalibration(): Promise<void>;
+    applyCalibrationWait(): Promise<void>;
     getAllWait(): Promise<{
         temperature: number;
         pressure: number;
@@ -44,11 +53,17 @@ export default class BMP280 implements ObnizPartsInterface {
     getPressureWait(): Promise<number>;
     getAltitudeWait(): Promise<number>;
     calcAltitude(pressure: number, seaPressure?: number): number;
+    /**
+     * @deprecated
+     * @private
+     */
     private config;
+    private configWait;
     private _readSigned16;
     private _readSigned8;
     private write;
     private getData;
+    private getDataWait;
     private calibration_T;
     private calibration_P;
 }

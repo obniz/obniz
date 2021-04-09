@@ -3,10 +3,12 @@
  * @module Parts.7SegmentLED_MAX7219
  */
 
-import Obniz from "../../../obniz";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
+import PeripheralSPI from '../../../obniz/libs/io_peripherals/spi';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface _7SegmentLED_MAX7219Options {
   clk: number;
@@ -16,12 +18,12 @@ export interface _7SegmentLED_MAX7219Options {
   vcc?: number;
 }
 
-export type MAX7219NumberType = "on" | "off" | "-" | "e" | "h" | "l" | "p";
+export type MAX7219NumberType = 'on' | 'off' | '-' | 'e' | 'h' | 'l' | 'p';
 
 export default class _7SegmentLED_MAX7219 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "7SegmentLED_MAX7219",
+      name: '7SegmentLED_MAX7219',
     };
   }
 
@@ -35,8 +37,8 @@ export default class _7SegmentLED_MAX7219 implements ObnizPartsInterface {
   public digits!: number;
 
   constructor() {
-    this.keys = ["vcc", "gnd", "din", "cs", "clk"];
-    this.requiredKeys = ["din", "cs", "clk"];
+    this.keys = ['vcc', 'gnd', 'din', 'cs', 'clk'];
+    this.requiredKeys = ['din', 'cs', 'clk'];
   }
 
   public wired(obniz: Obniz) {
@@ -51,9 +53,9 @@ export default class _7SegmentLED_MAX7219 implements ObnizPartsInterface {
 
     // max 10Mhz but motor driver can't
     this.params.frequency = this.params.frequency || 10 * 1000 * 1000;
-    this.params.mode = "master";
+    this.params.mode = 'master';
     this.params.mosi = this.params.din;
-    this.params.drive = "3v";
+    this.params.drive = '3v';
     this.spi = this.obniz.getSpiWithConfig(this.params);
 
     // reset a onece
@@ -117,7 +119,12 @@ export default class _7SegmentLED_MAX7219 implements ObnizPartsInterface {
     this.cs.output(true);
   }
 
-  public setNumber(display: number, digit: number, number: number | MAX7219NumberType, dp: boolean) {
+  public setNumber(
+    display: number,
+    digit: number,
+    number: number | MAX7219NumberType,
+    dp: boolean
+  ) {
     if (digit >= 0 && digit <= this.digits - 1) {
       this.writeOneDisp(display, [digit + 1, this.encodeBCD(number, dp)]);
     }
@@ -128,20 +135,20 @@ export default class _7SegmentLED_MAX7219 implements ObnizPartsInterface {
 
     if (decimal >= 0 && decimal <= 9) {
       return (decimal as number) | dpreg;
-    } else if (decimal === "-" || decimal === 10) {
+    } else if (decimal === '-' || decimal === 10) {
       return 0x0a | dpreg;
-    } else if (decimal === "e" || decimal === 11) {
+    } else if (decimal === 'e' || decimal === 11) {
       return 0x0b | dpreg;
-    } else if (decimal === "h" || decimal === 12) {
+    } else if (decimal === 'h' || decimal === 12) {
       return 0x0c | dpreg;
-    } else if (decimal === "l" || decimal === 13) {
+    } else if (decimal === 'l' || decimal === 13) {
       return 0x0d | dpreg;
-    } else if (decimal === "p" || decimal === 14) {
+    } else if (decimal === 'p' || decimal === 14) {
       return 0x0e | dpreg;
-    } else if (decimal === "on") {
+    } else if (decimal === 'on') {
       // light all segments
       return 0x88;
-    } else if (decimal === "off") {
+    } else if (decimal === 'off') {
       return 0x0f | dpreg;
     } else {
       return 0x0f | dpreg;

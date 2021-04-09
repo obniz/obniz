@@ -16,7 +16,7 @@ class ObnizUtil {
      */
     static _keyFilter(params, keys) {
         let filterdParams = {};
-        if (typeof params !== "object") {
+        if (typeof params !== 'object') {
             return filterdParams;
         }
         filterdParams = Object.keys(params)
@@ -32,7 +32,7 @@ class ObnizUtil {
      * @return {String} key name of not found.
      */
     static _requiredKeys(params, keys) {
-        if (typeof params !== "object") {
+        if (typeof params !== 'object') {
             return keys[0];
         }
         for (const index in keys) {
@@ -44,14 +44,15 @@ class ObnizUtil {
     }
     /**
      * convert from data array to string
+     *
      * @param data
      */
     static dataArray2string(data) {
         let string = null;
         try {
-            const StringDecoder = require("string_decoder").StringDecoder;
+            const StringDecoder = require('string_decoder').StringDecoder;
             if (StringDecoder) {
-                string = new StringDecoder("utf8").write(Buffer.from(data));
+                string = new StringDecoder('utf8').write(Buffer.from(data));
             }
         }
         catch (e) {
@@ -61,6 +62,7 @@ class ObnizUtil {
     }
     /**
      * convert from string to data array
+     *
      * @param str
      */
     static string2dataArray(str) {
@@ -74,7 +76,7 @@ class ObnizUtil {
      */
     static hexToBinary(data, reverse = false) {
         const array = [];
-        const hex = data.toLowerCase().replace(/[^0-9abcdef]/g, "");
+        const hex = data.toLowerCase().replace(/[^0-9abcdef]/g, '');
         for (let i = 0; i < hex.length / 2; i++) {
             array[i] = parseInt(hex[i * 2] + hex[i * 2 + 1], 16);
         }
@@ -112,23 +114,23 @@ class ObnizUtil {
     createCanvasContext(width, height) {
         if (this.obniz.isNode) {
             try {
-                const { createCanvas } = require("canvas");
+                const { createCanvas } = require('canvas');
                 const canvas = createCanvas(width, height);
-                const ctx = canvas.getContext("2d");
+                const ctx = canvas.getContext('2d');
                 return ctx;
             }
             catch (e) {
-                throw new Error("obniz.js require node-canvas to draw rich contents. see more detail on docs");
+                throw new Error('obniz.js require node-canvas to draw rich contents. see more detail on docs');
             }
         }
         else {
-            const canvas = document.createElement("canvas");
+            const canvas = document.createElement('canvas');
             canvas.width = width;
             canvas.height = height;
-            canvas.style["-webkit-font-smoothing"] = "none";
-            const body = document.getElementsByTagName("body")[0];
+            canvas.style['-webkit-font-smoothing'] = 'none';
+            const body = document.getElementsByTagName('body')[0];
             body.appendChild(canvas);
-            const ctx = canvas.getContext("2d");
+            const ctx = canvas.getContext('2d');
             return ctx;
         }
     }

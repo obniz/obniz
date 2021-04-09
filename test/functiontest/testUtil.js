@@ -16,20 +16,8 @@ let ejs = require('ejs');
 const chai = require('chai');
 const expect = chai.expect;
 
-let Obniz;
-let MochaChrome;
-if (
-  typeof window === 'undefined' &&
-  process &&
-  !semver.satisfies(process.versions.node, '>=7.6.0')
-) {
-  console.log('Loading obniz.js for node 6.10');
-  Obniz = require('../../index.js');
-} else {
-  console.log('Loading normal obniz.js');
-  Obniz = require('../../index.js');
-  MochaChrome = require('mocha-chrome');
-}
+let Obniz = require('../../index.js');
+let MochaChrome = require('mocha-chrome');
 
 sinon.stub(Obniz.prototype, 'wsOnClose');
 
@@ -37,10 +25,10 @@ let serverDataCount = 0;
 let errorDataCount = 0;
 let testUtil = {
   log: console.log,
-  isNode: function() {
+  isNode: function () {
     return typeof window === 'undefined';
   },
-  createServer: function(port, velify) {
+  createServer: function (port, velify) {
     let wss = new WSServer({
       host: 'localhost',
       port: port,
@@ -48,11 +36,11 @@ let testUtil = {
     });
 
     if (velify === null || velify === undefined || velify === true) {
-      wss.verifyClient = function(info, accept) {
+      wss.verifyClient = function (info, accept) {
         accept(true);
       };
     } else {
-      wss.verifyClient = function(info, accept) {
+      wss.verifyClient = function (info, accept) {
         accept(false, velify.statusCode, velify.message);
       };
     }
@@ -60,7 +48,7 @@ let testUtil = {
     return wss;
   },
 
-  createObniz: function(port, obnizId, options) {
+  createObniz: function (port, obnizId, options) {
     let binary =
       options && options.binary !== undefined ? options.binary : false;
     return new Obniz(obnizId, {
@@ -69,7 +57,7 @@ let testUtil = {
     });
   },
 
-  setupNotConnectedYetObnizPromise: function(obj, done, options) {
+  setupNotConnectedYetObnizPromise: function (obj, done, options) {
     options = options || {};
     let stub = sinon.stub();
     stub.on = sinon.stub();
@@ -89,7 +77,7 @@ let testUtil = {
     done();
   },
 
-  setupObnizPromise: function(obj, done, options) {
+  setupObnizPromise: function (obj, done, options) {
     options = options || {};
     let stub = sinon.stub();
     stub.on = sinon.stub();
@@ -124,7 +112,7 @@ let testUtil = {
     done();
   },
 
-  releaseObnizePromise: function(obj, done) {
+  releaseObnizePromise: function (obj, done) {
     obj.obniz._close();
     obj.obniz = null;
     Obniz.prototype.wsconnect.restore();
@@ -132,9 +120,9 @@ let testUtil = {
     done();
   },
 
-  closeAndReconnectObnizWait: function(obj) {
+  closeAndReconnectObnizWait: function (obj) {
     const options = obj.obnizOptions;
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       serverDataCount = obj.obniz.socket.send.callCount;
 
       const socet = obj.obniz.socket; // stub
@@ -162,10 +150,10 @@ let testUtil = {
     });
   },
 
-  waitForWebsocketCall: function(obj, n) {
-    return new Promise(function(resolve, reject) {
+  waitForWebsocketCall: function (obj, n) {
+    return new Promise(function (resolve, reject) {
       let count = 100;
-      let wait = function() {
+      let wait = function () {
         if (obj.onServerMessage.callCount >= n) {
           resolve();
         } else {
@@ -180,7 +168,7 @@ let testUtil = {
       setTimeout(wait, 10);
     });
   },
-  receiveJson: function(obniz, jsonVal) {
+  receiveJson: function (obniz, jsonVal) {
     if (testUtil.isNode()) {
       let validator = require('./obnizJsonValidator');
       let results = validator.responseValidate(jsonVal, 'json');
@@ -190,7 +178,7 @@ let testUtil = {
     obniz.wsOnMessage(JSON.stringify(jsonVal));
   },
 
-  isValidCommandRequestJson: function(jsonVal) {
+  isValidCommandRequestJson: function (jsonVal) {
     if (testUtil.isNode()) {
       let validator = require('./obnizJsonValidator');
       let results = validator.requestValidate(jsonVal, 'wscommand');
@@ -202,7 +190,7 @@ let testUtil = {
     return { valid: true };
   },
 
-  isValidCommandResponseJson: function(jsonVal) {
+  isValidCommandResponseJson: function (jsonVal) {
     if (testUtil.isNode()) {
       let validator = require('./obnizJsonValidator');
       let results = validator.responseValidate(jsonVal, 'wscommand');
@@ -213,13 +201,13 @@ let testUtil = {
     return { valid: true };
   },
 
-  obnizAssert: function(_chai, utils) {
-    _chai.Assertion.addProperty('obniz', function() {
+  obnizAssert: function (_chai, utils) {
+    _chai.Assertion.addProperty('obniz', function () {
       let obj = utils.flag(this, 'object');
       new _chai.Assertion(obj).to.be.instanceof(Obniz);
     });
 
-    _chai.Assertion.addMethod('send', function(expected) {
+    _chai.Assertion.addMethod('send', function (expected) {
       let count = serverDataCount;
       serverDataCount++;
 
@@ -255,7 +243,7 @@ let testUtil = {
       }
     });
 
-    _chai.Assertion.addMethod('sendBinary', function(expected) {
+    _chai.Assertion.addMethod('sendBinary', function (expected) {
       let count = serverDataCount;
       serverDataCount++;
 
@@ -274,7 +262,7 @@ let testUtil = {
       new _chai.Assertion(stub.args[count][0]).to.deep.equal(expected);
     });
 
-    _chai.Assertion.addProperty('finished', function(expected) {
+    _chai.Assertion.addProperty('finished', function (expected) {
       let obniz = utils.flag(this, 'object');
       let stub = obniz.socket.send;
       let message =
@@ -297,7 +285,7 @@ let testUtil = {
       );
     });
 
-    _chai.Assertion.addMethod('error', function(expected) {
+    _chai.Assertion.addMethod('error', function (expected) {
       let count = errorDataCount;
       errorDataCount++;
 
@@ -317,7 +305,7 @@ let testUtil = {
       }
     });
 
-    _chai.Assertion.addProperty('json', function(expected) {
+    _chai.Assertion.addProperty('json', function (expected) {
       let string = utils.flag(this, 'object');
       new _chai.Assertion(string).is.string;
       let resolve = null;
@@ -331,7 +319,7 @@ let testUtil = {
     });
   },
 
-  browser: function(url) {
+  browser: function (url) {
     url = 'file://' + url;
     let options = {
       url,
@@ -339,26 +327,26 @@ let testUtil = {
     };
     const runner = new MochaChrome(options);
     const result = new Promise((resolve, reject) => {
-      runner.on('ended', stats => {
+      runner.on('ended', (stats) => {
         resolve(stats);
       });
 
-      runner.on('failure', message => {
+      runner.on('failure', (message) => {
         reject(message);
       });
     });
 
     return runner
       .connect()
-      .then(function() {
+      .then(function () {
         return runner.run();
       })
-      .then(function() {
+      .then(function () {
         return result;
       });
   },
 
-  ejs: function(url, param) {
+  ejs: function (url, param) {
     let data = fs.readFileSync(url, 'utf8');
     let html = ejs.render(data, param);
     let newFilename =
@@ -367,20 +355,20 @@ let testUtil = {
       path.basename(url).replace('.', '_') +
       '.html';
 
-    return new Promise(function(resolve, reject) {
-      fs.writeFile(newFilename, html, function(err) {
+    return new Promise(function (resolve, reject) {
+      fs.writeFile(newFilename, html, function (err) {
         if (err) {
           reject(err);
         } else {
           resolve();
         }
       });
-    }).then(function() {
+    }).then(function () {
       return testUtil.browser(newFilename);
     });
   },
 
-  needBrowserTest: function() {
+  needBrowserTest: function () {
     if (
       typeof window === 'undefined' &&
       process &&
@@ -393,7 +381,7 @@ let testUtil = {
     return true;
   },
 
-  checkJsonToBinary: function(requestJson, binary, self) {
+  checkJsonToBinary: function (requestJson, binary, self) {
     if (typeof requestJson === 'string') {
       requestJson = JSON.parse(requestJson);
     }
@@ -405,7 +393,7 @@ let testUtil = {
       binary = binary.join(' ');
     }
     if (typeof binary === 'string') {
-      binary = binary.split(' ').map(function(val, index) {
+      binary = binary.split(' ').map(function (val, index) {
         return parseInt(val, 16);
       });
 
@@ -426,10 +414,12 @@ let testUtil = {
     expect(compress).to.be.deep.equal(binary);
   },
 
-  checkBinaryToJson: function(responseBinaryString, expectedJson, self) {
-    let binaryArray = responseBinaryString.split(' ').map(function(val, index) {
-      return parseInt(val, 16);
-    });
+  checkBinaryToJson: function (responseBinaryString, expectedJson, self) {
+    let binaryArray = responseBinaryString
+      .split(' ')
+      .map(function (val, index) {
+        return parseInt(val, 16);
+      });
     let binary = new Uint8Array(binaryArray);
 
     let json = self.obniz.binary2Json(binary);

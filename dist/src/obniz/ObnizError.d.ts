@@ -56,7 +56,7 @@ export declare class ObnizBleAttError extends ObnizError {
     static Errors: {
         [key: number]: string;
     };
-    constructor(state: number, params?: any);
+    constructor(state: number, params?: string);
 }
 export declare class ObnizDeprecatedFunctionError extends ObnizError {
     deprecateFunctionName: string;

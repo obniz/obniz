@@ -6,21 +6,21 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Hx711 {
     constructor() {
-        this.keys = ["vcc", "gnd", "sck", "dout"];
-        this.requiredKeys = ["sck", "dout"];
+        this.keys = ['vcc', 'gnd', 'sck', 'dout'];
+        this.requiredKeys = ['sck', 'dout'];
         this._offset = 0;
         this._scale = 1;
     }
     static info() {
         return {
-            name: "hx711",
+            name: 'hx711',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
         this.spi = obniz.getFreeSpi();
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        const ioKeys = ["clk", "dout"];
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+        const ioKeys = ['clk', 'dout'];
         for (const key of ioKeys) {
             if (this.params[key] && !this.obniz.isValidIO(this.params[key])) {
                 throw new Error("spi start param '" + key + "' are to be valid io no");
@@ -40,12 +40,20 @@ class Hx711 {
             }
         }
         this.spi.start({
-            mode: "master",
+            mode: 'master',
             mosi: this.params.sck,
             miso: this.params.dout,
             frequency: 500 * 1000,
         });
-        const ret_double = await this.spi.writeWait([0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0x80]);
+        const ret_double = await this.spi.writeWait([
+            0xaa,
+            0xaa,
+            0xaa,
+            0xaa,
+            0xaa,
+            0xaa,
+            0x80,
+        ]);
         this.spi.end(true);
         this.sck.output(false);
         const ret = [
@@ -94,14 +102,14 @@ class Hx711 {
         return (val - this._offset) / this._scale;
     }
     setOffset(offset) {
-        if (typeof offset !== "number") {
-            throw new Error("offset variable is Number");
+        if (typeof offset !== 'number') {
+            throw new Error('offset variable is Number');
         }
         this._offset = offset;
     }
     setScale(scale) {
-        if (typeof scale !== "number") {
-            throw new Error("scale variable is Number");
+        if (typeof scale !== 'number') {
+            throw new Error('scale variable is Number');
         }
         this._scale = scale;
     }

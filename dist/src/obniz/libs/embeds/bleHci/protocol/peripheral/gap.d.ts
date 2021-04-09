@@ -3,9 +3,9 @@
  *
  * @ignore
  */
-import EventEmitter from "eventemitter3";
-import Hci from "../hci";
-declare type GapEventTypes = "";
+import EventEmitter from 'eventemitter3';
+import Hci from '../hci';
+declare type GapEventTypes = '';
 /**
  * @ignore
  */

@@ -3,12 +3,12 @@ const chai = require('chai');
 const expect = chai.expect;
 let obnizA, checkBoard;
 
-describe('9-ble-security', function() {
+describe('9-ble-security', function () {
   this.timeout(30000);
 
-  beforeEach(function() {
+  beforeEach(function () {
     console.error('reboot start');
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       config.reboot(() => {
         obnizA = config.obnizA;
         checkBoard = config.checkBoard;
@@ -17,9 +17,9 @@ describe('9-ble-security', function() {
       }, false);
     });
   });
-  it('dummy for reboot', async function() {});
+  it('dummy for reboot', async function () {});
 
-  it('security', async function() {
+  it('security', async function () {
     if (checkBoard.ble.hci) {
       return;
     }
@@ -57,7 +57,7 @@ describe('9-ble-security', function() {
     });
     // console.log(peripheral);
     await peripheral.connectWait();
-    await new Promise(r => {
+    await new Promise((r) => {
       setTimeout(r, 1000);
     });
     let data = await peripheral

@@ -6,11 +6,11 @@ let through = require('through2');
 let PluginError = require('plugin-error');
 let PLUGIN_NAME = 'wsDocGenerator';
 
-module.exports = function(docfilePath, moduleName) {
+module.exports = function (docfilePath, moduleName) {
   /**
    * @this {Transform}
    */
-  let transform = function(file, encoding, callback) {
+  let transform = function (file, encoding, callback) {
     if (file.isNull()) {
       this.push(file);
       return callback(null, file);
@@ -45,7 +45,7 @@ module.exports = function(docfilePath, moduleName) {
   return through.obj(transform);
 };
 
-let convert = function(str, docfilePath, moduleName) {
+let convert = function (str, docfilePath, moduleName) {
   let wsSchema;
   eval(str.substring(3)); //let wsSchema = [ [....} ]
   for (let schema of wsSchema) {
@@ -83,7 +83,7 @@ let convert = function(str, docfilePath, moduleName) {
     let groupUri = '/' + methodType + '/' + moduleName;
     let groupSchema = tv4.getSchema(groupUri);
     if (!groupSchema) continue;
-    let commands = groupSchema.anyOf.map(elm => {
+    let commands = groupSchema.anyOf.map((elm) => {
       return elm['$ref'];
     });
 
@@ -152,7 +152,7 @@ function conditions(schema) {
       results.push(
         'enum <ul><li>' +
           schema.enum
-            .map(elm => {
+            .map((elm) => {
               return '`' + formatter(elm, true) + '`';
             })
             .join('</li><li>') +

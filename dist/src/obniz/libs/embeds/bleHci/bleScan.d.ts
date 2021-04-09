@@ -1,8 +1,8 @@
-import EventEmitter from "eventemitter3";
-import ObnizBLE from "./ble";
-import BleRemotePeripheral from "./bleRemotePeripheral";
-import { BleDeviceAddress, UUID } from "./bleTypes";
-export declare type BleScanMode = "passive" | "active";
+import EventEmitter from 'eventemitter3';
+import ObnizBLE from './ble';
+import BleRemotePeripheral from './bleRemotePeripheral';
+import { BleDeviceAddress, UUID } from './bleTypes';
+export declare type BleScanMode = 'passive' | 'active';
 export declare type BleBinary = number[];
 /**
  * All parameters are OR. If you set uuid and localName, obniz find uuid match but localName not match device.
@@ -98,7 +98,7 @@ export interface BleScanSetting {
      */
     filterOnDevice?: boolean;
 }
-declare type BleScanState = "stopped" | "stopping" | "started" | "starting";
+declare type BleScanState = 'stopped' | 'stopping' | 'started' | 'starting';
 /**
  * @category Use as Central
  */
@@ -142,7 +142,7 @@ export default class BleScan {
     protected scanTarget: BleScanTarget;
     protected scanSettings: BleScanSetting;
     protected obnizBle: ObnizBLE;
-    protected emitter: EventEmitter<"onfind" | "onfinish">;
+    protected emitter: EventEmitter<'onfind' | 'onfinish'>;
     protected scanedPeripherals: BleRemotePeripheral[];
     private _timeoutTimer?;
     private _delayNotifyTimers;
@@ -154,6 +154,7 @@ export default class BleScan {
     _reset(): void;
     /**
      * Use startWait() instead.
+     *
      * @deprecated
      */
     start(target?: BleScanTarget | null, settings?: BleScanSetting): void;
@@ -240,6 +241,7 @@ export default class BleScan {
     startAllWait(target: BleScanTarget, settings: BleScanSetting): Promise<BleRemotePeripheral[]>;
     /**
      * Use endWait() instead
+     *
      * @deprecated
      */
     end(): void;

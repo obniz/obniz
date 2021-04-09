@@ -2,10 +2,10 @@
  * @packageDocumentation
  * @module Parts.Grove_Speaker
  */
-import Obniz from "../../../obniz";
-import PeripheralGrove from "../../../obniz/libs/io_peripherals/grove";
-import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralGrove from '../../../obniz/libs/io_peripherals/grove';
+import PeripheralPWM from '../../../obniz/libs/io_peripherals/pwm';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 interface Grove_SpeakerOptionsA {
     vcc?: number;
     gnd?: number;

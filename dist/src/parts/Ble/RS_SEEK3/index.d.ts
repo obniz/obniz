@@ -2,10 +2,10 @@
  * @packageDocumentation
  * @module Parts.RS_Seek3
  */
-import Obniz from "../../../obniz";
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface from "../../../obniz/ObnizPartsBleInterface";
-import { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
+import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface RS_Seek3Options {
 }
 export default class RS_Seek3 implements ObnizPartsBleInterface {

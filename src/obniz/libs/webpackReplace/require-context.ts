@@ -3,16 +3,16 @@
  * @ignore
  */
 let baseDir: any;
-import fs = require("fs");
-import yaml = require("js-yaml");
-import nodeDir = require("node-dir");
-import path = require("path");
+import fs = require('fs');
+import yaml = require('js-yaml');
+import nodeDir = require('node-dir');
+import path = require('path');
 
 export default (directory: string, recursive: boolean, regExp: RegExp): any => {
   // Assume absolute path by default
   let basepath: any = directory;
 
-  if (directory[0] === ".") {
+  if (directory[0] === '.') {
     // Relative path
     let dir: any = __dirname;
     if (baseDir) {
@@ -33,7 +33,7 @@ export default (directory: string, recursive: boolean, regExp: RegExp): any => {
       return file.match(regExp || /\.(json|js)$/);
     })
     .map((file: string) => {
-      return path.join(".", file.slice(basepath.length + 1));
+      return path.join('.', file.slice(basepath.length + 1));
     });
 
   const context: any = (key: string) => {
@@ -41,9 +41,9 @@ export default (directory: string, recursive: boolean, regExp: RegExp): any => {
     if (/\.(json|js)$/.test(modulePath)) {
       return require(modulePath);
     } else if (/\.(yaml|yml)$/.test(modulePath)) {
-      return yaml.safeLoad(fs.readFileSync(modulePath, "utf8"));
+      return yaml.safeLoad(fs.readFileSync(modulePath, 'utf8'));
     } else {
-      throw new Error("unknown type");
+      throw new Error('unknown type');
     }
   };
 
@@ -58,6 +58,6 @@ export default (directory: string, recursive: boolean, regExp: RegExp): any => {
   return context;
 };
 
-export let setBaseDir = (base: string) => {
+export const setBaseDir = (base: string) => {
   baseDir = base;
 };

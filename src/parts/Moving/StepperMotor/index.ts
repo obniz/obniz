@@ -3,10 +3,12 @@
  * @module Parts.StepperMotor
  */
 
-import Obniz from "../../../obniz";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
+import Obniz from '../../../obniz';
+import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface StepperMotorOptions {
   a: number;
@@ -16,12 +18,12 @@ export interface StepperMotorOptions {
   common?: number;
 }
 
-export type StepType = "1" | "2" | "1-2";
+export type StepType = '1' | '2' | '1-2';
 
 export default class StepperMotor implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "StepperMotor",
+      name: 'StepperMotor',
     };
   }
 
@@ -40,19 +42,19 @@ export default class StepperMotor implements ObnizPartsInterface {
   protected obniz!: Obniz;
 
   private _stepInstructions = {
-    "1": [
+    '1': [
       [0, 1, 1, 1],
       [1, 0, 1, 1],
       [1, 1, 0, 1],
       [1, 1, 1, 0],
     ],
-    "2": [
+    '2': [
       [0, 0, 1, 1],
       [1, 0, 0, 1],
       [1, 1, 0, 0],
       [0, 1, 1, 0],
     ],
-    "1-2": [
+    '1-2': [
       [0, 1, 1, 1],
       [0, 0, 1, 1],
       [1, 0, 1, 1],
@@ -63,11 +65,11 @@ export default class StepperMotor implements ObnizPartsInterface {
       [0, 1, 1, 0],
     ],
   };
-  private _stepType: StepType = "2";
+  private _stepType: StepType = '2';
 
   constructor() {
-    this.keys = ["a", "b", "aa", "bb", "common"];
-    this.requiredKeys = ["a", "b", "aa", "bb"];
+    this.keys = ['a', 'b', 'aa', 'bb', 'common'];
+    this.requiredKeys = ['a', 'b', 'aa', 'bb'];
   }
 
   public wired(obniz: Obniz) {
@@ -76,9 +78,9 @@ export default class StepperMotor implements ObnizPartsInterface {
     if (obniz.isValidIO(this.params.common)) {
       this.common = obniz.getIO(this.params.common);
       this.common.output(true);
-      this.type = "unipolar";
+      this.type = 'unipolar';
     } else {
-      this.type = "bipolar";
+      this.type = 'bipolar';
     }
     this.ios = [];
     this.ios.push(obniz.getIO(this.params.a));
@@ -88,8 +90,8 @@ export default class StepperMotor implements ObnizPartsInterface {
   }
 
   public async stepWait(step_count: number) {
-    if (typeof step_count !== "number") {
-      throw new Error("must provide number");
+    if (typeof step_count !== 'number') {
+      throw new Error('must provide number');
     }
     step_count = Math.round(step_count);
     if (step_count === 0) {
@@ -173,7 +175,7 @@ export default class StepperMotor implements ObnizPartsInterface {
   public stepType(stepType: StepType) {
     const newType = this._stepInstructions[stepType];
     if (!newType) {
-      throw new Error("unknown step type " + stepType);
+      throw new Error('unknown step type ' + stepType);
     }
     this._stepType = stepType;
   }
@@ -222,7 +224,8 @@ export default class StepperMotor implements ObnizPartsInterface {
   }
 
   public async moveToWait(destination: number) {
-    const needed = (destination - this.currentDistance()) * this.milliMeterStepCount;
+    const needed =
+      (destination - this.currentDistance()) * this.milliMeterStepCount;
     await this.stepWait(needed);
   }
 

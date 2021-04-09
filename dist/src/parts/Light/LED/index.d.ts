@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module Parts.LED
  */
-import Obniz from "../../../obniz";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface LEDOptions {
     anode?: number;
     cathode?: number;

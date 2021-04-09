@@ -2,24 +2,25 @@
  * Obniz BLE are switches automatically. <br/>
  * obnizOS ver >= 3.0.0  : [[ObnizCore.Components.Ble.Hci | Hci]] <br/>
  * obnizOS ver < 3.0.0   : Not Supported <br/>
+ *
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import ObnizBLEHci from "./hci";
-import CentralBindings from "./protocol/central/bindings";
-import HciProtocol from "./protocol/hci";
-import PeripheralBindings from "./protocol/peripheral/bindings";
-import Obniz from "../../../index";
-import { ObnizBleHciStateError } from "../../../ObnizError";
-import { ComponentAbstract } from "../../ComponentAbstact";
-import BleAdvertisement from "./bleAdvertisement";
-import BleCharacteristic from "./bleCharacteristic";
-import BleDescriptor from "./bleDescriptor";
-import BlePeripheral from "./blePeripheral";
-import BleRemotePeripheral from "./bleRemotePeripheral";
-import BleScan from "./bleScan";
-import BleService from "./bleService";
-import { BleDeviceAddress, BleDeviceAddressType, UUID } from "./bleTypes";
+import ObnizBLEHci from './hci';
+import CentralBindings from './protocol/central/bindings';
+import HciProtocol from './protocol/hci';
+import PeripheralBindings from './protocol/peripheral/bindings';
+import Obniz from '../../../index';
+import { ObnizBleHciStateError } from '../../../ObnizError';
+import { ComponentAbstract } from '../../ComponentAbstact';
+import BleAdvertisement from './bleAdvertisement';
+import BleCharacteristic from './bleCharacteristic';
+import BleDescriptor from './bleDescriptor';
+import BlePeripheral from './blePeripheral';
+import BleRemotePeripheral from './bleRemotePeripheral';
+import BleScan from './bleScan';
+import BleService from './bleService';
+import { BleDeviceAddress, BleDeviceAddressType, UUID } from './bleTypes';
 /**
  * Use a obniz device as a BLE device.
  * Peripheral and Central mode are supported

@@ -14,12 +14,12 @@ class MPU9250 extends MPU6500_1.default {
     }
     static info() {
         return {
-            name: "MPU9250",
+            name: 'MPU9250',
         };
     }
     wired(obniz) {
         super.wired(obniz);
-        this.ak8963 = obniz.wired("AK8963", { i2c: this.i2c });
+        this.ak8963 = obniz.wired('AK8963', { i2c: this.i2c });
         this.write(MPU6500_1.default.commands.pwr_mgmt_1, [0x00]); // activate MPU9250
         this.write(MPU6500_1.default.commands.int_pin_cfg, [0x02]); // activate AK8963 (bypass)
         this.write(MPU6500_1.default.commands.config, [0x06]); // activate LPF (search datasheet_p.13)

@@ -149,7 +149,7 @@ definitions:
     maxLength: 12
     description: "Bluetooth device id. It's hexString cannot contain '0x' or '-'."
     example: "77e754ab8591"
-  
+
   obnizId:
     id: "obnizId"
     type: [string, integer]

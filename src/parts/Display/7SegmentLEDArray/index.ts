@@ -3,9 +3,11 @@
  * @module Parts.7SegmentLEDArray
  */
 
-import Obniz from "../../../obniz";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-import _7SegmentLED from "../7SegmentLED";
+import Obniz from '../../../obniz';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
+import _7SegmentLED from '../7SegmentLED';
 
 export interface _7SegmentLEDArrayOptions {
   segments: _7SegmentLED[];
@@ -14,7 +16,7 @@ export interface _7SegmentLEDArrayOptions {
 export default class _7SegmentLEDArray implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "7SegmentLEDArray",
+      name: '7SegmentLEDArray',
     };
   }
 
@@ -26,9 +28,9 @@ export default class _7SegmentLEDArray implements ObnizPartsInterface {
   public params: any;
 
   constructor() {
-    this.identifier = "" + new Date().getTime();
+    this.identifier = '' + new Date().getTime();
 
-    this.keys = ["segments"];
+    this.keys = ['segments'];
     this.requiredKeys = this.keys;
   }
 
@@ -39,7 +41,7 @@ export default class _7SegmentLEDArray implements ObnizPartsInterface {
   }
 
   public print(data: number) {
-    if (typeof data === "number") {
+    if (typeof data === 'number') {
       data = Math.floor(data);
 
       const print: any = (index: number) => {
@@ -63,16 +65,16 @@ export default class _7SegmentLEDArray implements ObnizPartsInterface {
         });
       }
 
-      this.obniz.io!.animation(this.identifier, "loop", animations);
+      this.obniz.io!.animation(this.identifier, 'loop', animations);
     }
   }
 
   public on() {
-    this.obniz.io!.animation(this.identifier, "resume");
+    this.obniz.io!.animation(this.identifier, 'resume');
   }
 
   public off() {
-    this.obniz.io!.animation(this.identifier, "pause");
+    this.obniz.io!.animation(this.identifier, 'pause');
     for (let i = 0; i < this.segments.length; i++) {
       this.segments[i].off();
     }

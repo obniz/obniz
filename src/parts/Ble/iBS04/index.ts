@@ -3,8 +3,10 @@
  * @module Parts.iBS04
  */
 
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, {
+  ObnizPartsBleInfo,
+} from '../../../obniz/ObnizPartsBleInterface';
 
 export interface IBS04Options {}
 
@@ -16,7 +18,7 @@ export interface IBS04_Data {
 export default class IBS04 implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: "iBS04",
+      name: 'iBS04',
     };
   }
 
@@ -45,7 +47,7 @@ export default class IBS04 implements ObnizPartsBleInterface {
       button: false,
     };
 
-    if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+    if (peripheral.adv_data[11] & 0b0001) {
       data.button = true;
     }
     return data;

@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from "./WSCommand";
+import WSCommand from './WSCommand';
 
 class WSCommandI2C extends WSCommand {
   public module: any;
@@ -117,19 +117,24 @@ class WSCommandI2C extends WSCommand {
   public parseFromJson(json: any) {
     // 0
     for (let i = 0; i < 2; i++) {
-      const module: any = json["i2c" + i];
+      const module: any = json['i2c' + i];
       if (module === undefined) {
         continue;
       }
 
       const schemaData: any = [
-        { uri: "/request/i2c/init_master", onValid: this.initMaster },
-        { uri: "/request/i2c/init_slave", onValid: this.initSlave },
-        { uri: "/request/i2c/write", onValid: this.write },
-        { uri: "/request/i2c/read", onValid: this.read },
-        { uri: "/request/i2c/deinit", onValid: this.deinit },
+        { uri: '/request/i2c/init_master', onValid: this.initMaster },
+        { uri: '/request/i2c/init_slave', onValid: this.initSlave },
+        { uri: '/request/i2c/write', onValid: this.write },
+        { uri: '/request/i2c/read', onValid: this.read },
+        { uri: '/request/i2c/deinit', onValid: this.deinit },
       ];
-      const res: any = this.validateCommandSchema(schemaData, module, "i2c" + i, i);
+      const res: any = this.validateCommandSchema(
+        schemaData,
+        module,
+        'i2c' + i,
+        i
+      );
 
       if (res.valid === 0) {
         if (res.invalidButLike.length > 0) {
@@ -151,8 +156,8 @@ class WSCommandI2C extends WSCommand {
         arr[i] = payload[i + 3];
       }
 
-      objToSend["i2c" + module_index] = {
-        mode: "master",
+      objToSend['i2c' + module_index] = {
+        mode: 'master',
         address,
         data: arr,
       };
@@ -166,8 +171,8 @@ class WSCommandI2C extends WSCommand {
         arr[i] = payload[i + 4];
       }
 
-      objToSend["i2c" + module_index] = {
-        mode: "slave",
+      objToSend['i2c' + module_index] = {
+        mode: 'slave',
         is_fragmented: true,
         address,
         data: arr,
@@ -177,13 +182,19 @@ class WSCommandI2C extends WSCommand {
       const err: any = payload[1];
       const ref_func_id: any = payload[2];
 
-      if (ref_func_id === this._CommandWrite || ref_func_id === this._CommandRead) {
-        let reason: any = "" + (ref_func_id === this._CommandWrite ? "writing" : "reading") + " error. ";
+      if (
+        ref_func_id === this._CommandWrite ||
+        ref_func_id === this._CommandRead
+      ) {
+        let reason: any =
+          '' +
+          (ref_func_id === this._CommandWrite ? 'writing' : 'reading') +
+          ' error. ';
         if (err === 7) {
           // in fact. it is 0x107. but truncated
-          reason += "Communication Timeout. Maybe, target is not connected.";
+          reason += 'Communication Timeout. Maybe, target is not connected.';
         } else if (err === 255) {
-          reason += "Communication Failed. Maybe, target is not connected.";
+          reason += 'Communication Failed. Maybe, target is not connected.';
         }
         this.envelopError(objToSend, `i2c0`, { message: reason });
       } else {
