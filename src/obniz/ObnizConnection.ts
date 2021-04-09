@@ -5,7 +5,6 @@
 
 import EventEmitter from 'eventemitter3';
 import wsClient from 'ws';
-import '@types/node/globals';
 
 // @ts-ignore
 import packageJson from '../../package'; // pakcage.js will be created from package.json on build.

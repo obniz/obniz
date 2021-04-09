@@ -16,20 +16,8 @@ let ejs = require('ejs');
 const chai = require('chai');
 const expect = chai.expect;
 
-let Obniz;
-let MochaChrome;
-if (
-  typeof window === 'undefined' &&
-  process &&
-  !semver.satisfies(process.versions.node, '>=7.6.0')
-) {
-  console.log('Loading obniz.js for node 6.10');
-  Obniz = require('../../index.js');
-} else {
-  console.log('Loading normal obniz.js');
-  Obniz = require('../../index.js');
-  MochaChrome = require('mocha-chrome');
-}
+let Obniz = require('../../index.js');
+let MochaChrome = require('mocha-chrome');
 
 sinon.stub(Obniz.prototype, 'wsOnClose');
 

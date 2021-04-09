@@ -3,7 +3,6 @@
  * @module ObnizCore
  */
 import EventEmitter from 'eventemitter3';
-import '@types/node/globals';
 import WSCommand from './libs/wscommand';
 import { ObnizOptions } from './ObnizOptions';
 export declare type ObnizConnectionEventNames = 'connect' | 'close' | 'notify';

@@ -10,66 +10,66 @@ const OBNIZ_ID = '1234-5678';
 class DisplayTest {
   public clear() {
     const obniz = new Obniz(OBNIZ_ID);
-    obniz.display.clear();
+    obniz.display!.clear();
   }
   public print() {
     const obniz = new Obniz(OBNIZ_ID);
-    obniz.display.print('Hello!');
-    obniz.display.font('Serif', 18);
-    obniz.display.print('Hello World🧡');
+    obniz.display!.print('Hello!');
+    obniz.display!.font('Serif', 18);
+    obniz.display!.print('Hello World🧡');
   }
   public pos() {
     const obniz = new Obniz(OBNIZ_ID);
-    obniz.display.pos(0, 30);
-    obniz.display.print('YES. こんにちは');
+    obniz.display!.pos(0, 30);
+    obniz.display!.print('YES. こんにちは');
   }
   public font() {
     const obniz = new Obniz(OBNIZ_ID);
-    obniz.display.font('Avenir', 30);
-    obniz.display.print('Avenir');
-    obniz.display.font(null, 30); // デフォルトフォント(Arial)の30px
-    obniz.display.font('Avenir'); // Avenirのデフォルトサイズ(16px)
+    obniz.display!.font('Avenir', 30);
+    obniz.display!.print('Avenir');
+    obniz.display!.font(null, 30); // デフォルトフォント(Arial)の30px
+    obniz.display!.font('Avenir'); // Avenirのデフォルトサイズ(16px)
   }
   public line() {
     const obniz = new Obniz(OBNIZ_ID);
-    obniz.display.line(30, 30, 100, 30);
-    obniz.display.rect(20, 20, 20, 20);
-    obniz.display.circle(100, 30, 20);
-    obniz.display.line(60, 50, 100, 30);
-    obniz.display.rect(50, 40, 20, 20, true);
-    obniz.display.line(50, 10, 100, 30);
-    obniz.display.circle(50, 10, 10, true);
+    obniz.display!.line(30, 30, 100, 30);
+    obniz.display!.rect(20, 20, 20, 20);
+    obniz.display!.circle(100, 30, 20);
+    obniz.display!.line(60, 50, 100, 30);
+    obniz.display!.rect(50, 40, 20, 20, true);
+    obniz.display!.line(50, 10, 100, 30);
+    obniz.display!.circle(50, 10, 10, true);
   }
   public rect() {
     const obniz = new Obniz(OBNIZ_ID);
-    obniz.display.rect(10, 10, 20, 20);
-    obniz.display.rect(20, 20, 20, 20, true); // filled rect
+    obniz.display!.rect(10, 10, 20, 20);
+    obniz.display!.rect(20, 20, 20, 20, true); // filled rect
   }
   public circle() {
     const obniz = new Obniz(OBNIZ_ID);
-    obniz.display.circle(40, 30, 20);
-    obniz.display.circle(90, 30, 20, true); // filled circle
+    obniz.display!.circle(40, 30, 20);
+    obniz.display!.circle(90, 30, 20, true); // filled circle
   }
   public drawing() {
     const obniz = new Obniz(OBNIZ_ID);
-    obniz.display.drawing(false);
+    obniz.display!.drawing(false);
     for (let i = 0; i < 100; i++) {
       const x0 = Math.random() * 128;
       const y0 = Math.random() * 64;
       const x1 = Math.random() * 128;
       const y1 = Math.random() * 64;
-      obniz.display.clear();
-      obniz.display.line(x0, y0, x1, y1);
+      obniz.display!.clear();
+      obniz.display!.line(x0, y0, x1, y1);
     }
-    obniz.display.drawing(true);
+    obniz.display!.drawing(true);
   }
   public qr() {
     const obniz = new Obniz(OBNIZ_ID);
-    obniz.display.qr('https://obniz.io');
+    obniz.display!.qr('https://obniz.io');
   }
   public raw() {
     const obniz = new Obniz(OBNIZ_ID);
-    obniz.display.raw([255, 255]); // must be 128*64 bits(=1024byte)
+    obniz.display!.raw([255, 255]); // must be 128*64 bits(=1024byte)
   }
   public draw() {
     const obniz = new Obniz(OBNIZ_ID);
@@ -77,14 +77,14 @@ class DisplayTest {
       // 1. load existing
       const canvas1 = document.getElementById('canvas') as HTMLCanvasElement;
       const ctx1 = canvas1.getContext('2d')!;
-      obniz.display.draw(ctx1);
+      obniz.display!.draw(ctx1);
 
       // 2. create new canvas dom and load it.
       const ctx2 = obniz.util.createCanvasContext(
-        obniz.display.width,
-        obniz.display.height
+        obniz.display!.width,
+        obniz.display!.height
       );
-      obniz.display.draw(ctx2);
+      obniz.display!.draw(ctx2);
 
       // 3. running with node.js
       //    npm install canvas. ( version 2.0.0 or later required )
@@ -96,7 +96,7 @@ class DisplayTest {
       ctx3.font = '30px Avenir';
       ctx3.fillText('Avenir', 0, 40);
 
-      obniz.display.draw(ctx3);
+      obniz.display!.draw(ctx3);
     };
   }
 }
@@ -108,18 +108,18 @@ class ADTest {
   public start() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.ad0.start((voltage) => {
+      obniz.ad0!.start((voltage) => {
         console.log('changed to ' + voltage + ' v');
       });
 
-      obniz.ad0.start();
-      obniz.ad0.onchange = (voltage) => {
+      obniz.ad0!.start();
+      obniz.ad0!.onchange = (voltage) => {
         console.log('changed to ' + voltage + ' v');
       };
 
-      obniz.ad0.start();
+      obniz.ad0!.start();
       while (true) {
-        console.log('changed to ' + obniz.ad0.value + ' v');
+        console.log('changed to ' + obniz.ad0!.value + ' v');
         await obniz.wait(10); // 10ms wait
       }
     };
@@ -128,9 +128,9 @@ class ADTest {
   public getWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.io0.output(true);
-      const voltage = await obniz.ad0.getWait();
-      obniz.io0.output(false);
+      obniz.io0!.output(true);
+      const voltage = await obniz.ad0!.getWait();
+      obniz.io0!.output(false);
       console.log('' + voltage + ' should be closed to 5.00');
     };
   }
@@ -138,16 +138,16 @@ class ADTest {
   public end() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.ad0.start();
-      obniz.ad0.end();
+      obniz.ad0!.start();
+      obniz.ad0!.end();
     };
   }
 
   public onchange() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.ad0.start();
-      obniz.ad0.onchange = (voltage) => {
+      obniz.ad0!.start();
+      obniz.ad0!.onchange = (voltage) => {
         console.log('voltage = ' + voltage);
       };
     };
@@ -168,20 +168,20 @@ class I2CTest {
   public start() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.i2c0.start({ mode: 'master', sda: 2, scl: 3, clock: 400000 });
-      obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
-      const ret = await obniz.i2c0.readWait(0x50, 1);
+      obniz.i2c0!.start({ mode: 'master', sda: 2, scl: 3, clock: 400000 });
+      obniz.i2c0!.write(0x50, [0x00, 0x00, 0x12]);
+      const ret = await obniz.i2c0!.readWait(0x50, 1);
       console.log('read ' + ret);
 
       // use internal pull up
-      obniz.i2c0.start({
+      obniz.i2c0!.start({
         mode: 'master',
         sda: 2,
         scl: 3,
         clock: 400000,
         pull: '5v',
       });
-      obniz.i2c0.start({
+      obniz.i2c0!.start({
         mode: 'master',
         sda: 2,
         scl: 3,
@@ -190,23 +190,23 @@ class I2CTest {
       });
 
       // slave mode
-      obniz.i2c0.start({ mode: 'slave', sda: 0, scl: 1, slave_address: 0x01 });
+      obniz.i2c0!.start({ mode: 'slave', sda: 0, scl: 1, slave_address: 0x01 });
     };
   }
 
   public write() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.i2c0.start({ mode: 'master', sda: 2, scl: 3, clock: 400000 });
-      obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
+      obniz.i2c0!.start({ mode: 'master', sda: 2, scl: 3, clock: 400000 });
+      obniz.i2c0!.write(0x50, [0x00, 0x00, 0x12]);
     };
   }
 
   public readWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.i2c0.start({ mode: 'master', sda: 2, scl: 3, clock: 400000 });
-      const ret = await obniz.i2c0.readWait(0x50, 1);
+      obniz.i2c0!.start({ mode: 'master', sda: 2, scl: 3, clock: 400000 });
+      const ret = await obniz.i2c0!.readWait(0x50, 1);
       console.log('read ' + ret);
     };
   }
@@ -214,8 +214,8 @@ class I2CTest {
   public onwritten() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.i2c0.start({ mode: 'slave', sda: 0, scl: 1, slave_address: 0x01 });
-      obniz.i2c0.onwritten = (data) => {
+      obniz.i2c0!.start({ mode: 'slave', sda: 0, scl: 1, slave_address: 0x01 });
+      obniz.i2c0!.onwritten = (data) => {
         console.log(data);
       };
     };
@@ -224,19 +224,19 @@ class I2CTest {
   public onerror() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.i2c0.start({ mode: 'master', sda: 2, scl: 3, clock: 400000 });
-      obniz.i2c0.onerror = (err) => {
+      obniz.i2c0!.start({ mode: 'master', sda: 2, scl: 3, clock: 400000 });
+      obniz.i2c0!.onerror = (err) => {
         console.log('Error', err);
       };
-      const ret = await obniz.i2c0.readWait(0x50, 1);
+      const ret = await obniz.i2c0!.readWait(0x50, 1);
     };
   }
 
   public end() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.i2c0.start({ mode: 'master', sda: 2, scl: 3, clock: 400000 });
-      obniz.i2c0.end();
+      obniz.i2c0!.start({ mode: 'master', sda: 2, scl: 3, clock: 400000 });
+      obniz.i2c0!.end();
     };
   }
 }
@@ -248,40 +248,40 @@ class IOTest {
   public output() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.io1.output(true); // io1 is 5v
-      obniz.io2.output(1); //  io2 is 5v
-      obniz.io3.drive('3v');
-      obniz.io3.output(1); // io3 is around 3v.
+      obniz.io1!.output(true); // io1 is 5v
+      obniz.io2!.output(1); //  io2 is 5v
+      obniz.io3!.drive('3v');
+      obniz.io3!.output(1); // io3 is around 3v.
     };
   }
 
   public drive() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.io0.output(true); // output push-pull 5v
+      obniz.io0!.output(true); // output push-pull 5v
 
-      obniz.io1.drive('3v');
-      obniz.io1.output(true); // output push-pull 3v
+      obniz.io1!.drive('3v');
+      obniz.io1!.output(true); // output push-pull 3v
 
-      obniz.io2.pull('5v');
-      obniz.io2.drive('open-drain');
-      obniz.io2.output(true); // output open-drain with 5v pull-up
+      obniz.io2!.pull('5v');
+      obniz.io2!.drive('open-drain');
+      obniz.io2!.output(true); // output open-drain with 5v pull-up
     };
   }
 
   public pull() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.io0.pull('3v');
-      obniz.io0.drive('open-drain'); // output open-drain
-      obniz.io0.output(false);
+      obniz.io0!.pull('3v');
+      obniz.io0!.drive('open-drain'); // output open-drain
+      obniz.io0!.output(false);
     };
   }
 
   public input() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.io0.input((value) => {
+      obniz.io0!.input((value) => {
         console.log('changed to ' + value);
       });
     };
@@ -290,7 +290,7 @@ class IOTest {
   public inputWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const value = await obniz.io0.inputWait();
+      const value = await obniz.io0!.inputWait();
       console.log(value);
     };
   }
@@ -298,8 +298,8 @@ class IOTest {
   public end() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.io0.output(true);
-      obniz.io0.end();
+      obniz.io0!.output(true);
+      obniz.io0!.end();
     };
   }
 
@@ -311,16 +311,16 @@ class IOTest {
           duration: 10,
           state(index: number) {
             // index = 0
-            obniz.io0.output(false);
-            obniz.io1.output(true);
+            obniz.io0!.output(false);
+            obniz.io1!.output(true);
           },
         },
         {
           duration: 10,
           state(index: number) {
             // index = 1
-            obniz.io0.output(true);
-            obniz.io1.output(false);
+            obniz.io0!.output(true);
+            obniz.io1!.output(false);
           },
         },
       ]);
@@ -335,13 +335,13 @@ class IOTest {
           {
             duration: 1000,
             state(index: number) {
-              obniz.io0.output(true);
+              obniz.io0!.output(true);
             },
           },
           {
             duration: 1000,
             state(index: number) {
-              obniz.io0.output(false);
+              obniz.io0!.output(false);
             },
           },
         ],
@@ -467,18 +467,18 @@ class SPITest {
   public start() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.spi0.start({
+      obniz.spi0!.start({
         mode: 'master',
         clk: 0,
         mosi: 1,
         miso: 2,
         frequency: 1000000,
       });
-      const ret = await obniz.spi0.writeWait([0x12, 0x98]);
+      const ret = await obniz.spi0!.writeWait([0x12, 0x98]);
       console.log('received: ' + ret);
 
       // drive and pull is optional
-      obniz.spi0.start({
+      obniz.spi0!.start({
         mode: 'master',
         clk: 0,
         mosi: 1,
@@ -492,14 +492,14 @@ class SPITest {
   public writeWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.spi0.start({
+      obniz.spi0!.start({
         mode: 'master',
         clk: 0,
         mosi: 1,
         miso: 2,
         frequency: 1000000,
       });
-      const ret = await obniz.spi0.writeWait([0x12, 0x98]);
+      const ret = await obniz.spi0!.writeWait([0x12, 0x98]);
       console.log('received: ' + ret);
     };
   }
@@ -507,30 +507,30 @@ class SPITest {
   public write() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.spi0.start({
+      obniz.spi0!.start({
         mode: 'master',
         clk: 0,
         mosi: 1,
         miso: 2,
         frequency: 1000000,
       });
-      obniz.spi0.write([0x12, 0x98]);
+      obniz.spi0!.write([0x12, 0x98]);
     };
   }
 
   public end() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      // obniz.spi0.start({ mode: 'master', clk: 0, mosi: 1, miso: 2, clock: 1000000 });
-      obniz.spi0.start({
+      // obniz.spi0!.start({ mode: 'master', clk: 0, mosi: 1, miso: 2, clock: 1000000 });
+      obniz.spi0!.start({
         mode: 'master',
         clk: 0,
         mosi: 1,
         miso: 2,
         frequency: 1000000,
       });
-      obniz.spi0.write([0x12, 0x98]);
-      obniz.spi0.end();
+      obniz.spi0!.write([0x12, 0x98]);
+      obniz.spi0!.end();
     };
   }
 }
@@ -549,60 +549,60 @@ class UARTTest {
   public start() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.io0.output(false); // for sharing GND.
-      obniz.uart0.start({ tx: 1, rx: 2, baud: 9600, bits: 7 });
-      obniz.uart0.send('Hi');
+      obniz.io0!.output(false); // for sharing GND.
+      obniz.uart0!.start({ tx: 1, rx: 2, baud: 9600, bits: 7 });
+      obniz.uart0!.send('Hi');
 
-      obniz.uart1.start({
+      obniz.uart1!.start({
         tx: 3,
         rx: 4,
         cts: 5,
         rts: 6,
         flowcontrol: 'rts-cts',
       });
-      obniz.uart1.send('Hi');
+      obniz.uart1!.send('Hi');
     };
   }
 
   public send() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.uart0.start({ tx: 0, rx: 1 });
-      obniz.uart0.send('Hi');
-      obniz.uart0.send(0x11);
-      obniz.uart0.send([0x11, 0x45, 0x44]);
+      obniz.uart0!.start({ tx: 0, rx: 1 });
+      obniz.uart0!.send('Hi');
+      obniz.uart0!.send(0x11);
+      obniz.uart0!.send([0x11, 0x45, 0x44]);
     };
   }
 
   public end() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.uart0.start({ tx: 0, rx: 1 });
-      obniz.uart0.send('Hi');
-      obniz.uart0.end();
+      obniz.uart0!.start({ tx: 0, rx: 1 });
+      obniz.uart0!.send('Hi');
+      obniz.uart0!.end();
     };
   }
 
   public onreceive() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.uart0.start({ tx: 0, rx: 1 });
-      obniz.uart0.onreceive = (data, text) => {
+      obniz.uart0!.start({ tx: 0, rx: 1 });
+      obniz.uart0!.onreceive = (data, text) => {
         console.log(data);
         console.log(text);
       };
-      obniz.uart0.send('Hello');
+      obniz.uart0!.send('Hello');
     };
   }
 
   public isDataExists() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.uart0.start({ tx: 0, rx: 1 });
+      obniz.uart0!.start({ tx: 0, rx: 1 });
 
       while (1) {
-        if (obniz.uart0.isDataExists()) {
-          console.log(obniz.uart0.readText());
+        if (obniz.uart0!.isDataExists()) {
+          console.log(obniz.uart0!.readText());
         }
         await obniz.wait(10); // wait for 10ms
       }
@@ -612,11 +612,11 @@ class UARTTest {
   public readByte() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.uart0.start({ tx: 0, rx: 1 });
+      obniz.uart0!.start({ tx: 0, rx: 1 });
 
       while (1) {
-        while (obniz.uart0.isDataExists()) {
-          console.log(obniz.uart0.readByte());
+        while (obniz.uart0!.isDataExists()) {
+          console.log(obniz.uart0!.readByte());
         }
         await obniz.wait(10); // wait for 10ms
       }
@@ -626,11 +626,11 @@ class UARTTest {
   public readBytes() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.uart0.start({ tx: 0, rx: 1 });
+      obniz.uart0!.start({ tx: 0, rx: 1 });
 
       while (1) {
-        if (obniz.uart0.isDataExists()) {
-          console.log(obniz.uart0.readBytes());
+        if (obniz.uart0!.isDataExists()) {
+          console.log(obniz.uart0!.readBytes());
         }
         await obniz.wait(10); // wait for 10ms
       }
@@ -640,11 +640,11 @@ class UARTTest {
   public readText() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.uart0.start({ tx: 0, rx: 1 });
+      obniz.uart0!.start({ tx: 0, rx: 1 });
 
       while (1) {
-        if (obniz.uart0.isDataExists()) {
-          console.log(obniz.uart0.readText());
+        if (obniz.uart0!.isDataExists()) {
+          console.log(obniz.uart0!.readText());
         }
         await obniz.wait(10); // wait for 10ms
       }

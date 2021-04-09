@@ -9,7 +9,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const ws_1 = __importDefault(require("ws"));
-require("@types/node/globals");
 // @ts-ignore
 const package_1 = __importDefault(require("../../package")); // pakcage.js will be created from package.json on build.
 const wscommand_1 = __importDefault(require("./libs/wscommand"));

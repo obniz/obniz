@@ -2355,7 +2355,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ws_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/webpackReplace/ws.js"));
-__webpack_require__("@types/node/globals");
 // @ts-ignore
 const package_1 = __importDefault(__webpack_require__("./dist/package.js")); // pakcage.js will be created from package.json on build.
 const wscommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/index.js"));
@@ -84232,13 +84231,6 @@ module.exports = function(module) {
 /***/ (function(module, exports) {
 
 /* (ignored) */
-
-/***/ }),
-
-/***/ "@types/node/globals":
-/***/ (function(module, exports) {
-
-module.exports = require("@types/node/globals");
 
 /***/ })
 
