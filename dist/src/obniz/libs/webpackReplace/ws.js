@@ -15,4 +15,28 @@ else if (typeof MozWebSocket !== 'undefined') {
 else {
     ws = window.WebSocket || window.MozWebSocket;
 }
-exports.default = ws;
+class CompatibleWebSocket extends ws {
+    constructor(...arg0) {
+        super(...arg0);
+        this.eventFunctionKetMap = {
+            open: 'onopen',
+            message: 'onmessage',
+            close: 'onclose',
+            error: 'onerror',
+        };
+        this.binaryType = 'arraybuffer';
+    }
+    on(event, f) {
+        const functionName = this.eventFunctionKetMap[event];
+        if (functionName) {
+            this[functionName] = f;
+        }
+    }
+    removeAllListeners(event) {
+        const functionName = this.eventFunctionKetMap[event];
+        if (functionName) {
+            this[functionName] = null;
+        }
+    }
+}
+exports.default = CompatibleWebSocket;

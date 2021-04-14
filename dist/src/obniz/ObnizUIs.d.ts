@@ -20,7 +20,7 @@ export default class ObnizUIs extends ObnizSystemMethods {
     static isValidObnizId(str: string): boolean;
     constructor(id: string, options?: ObnizOptions);
     protected _close(): void;
-    protected wsconnect(desired_server: any): void;
+    protected tryWsConnectOnceWait(desired_server?: string): Promise<void>;
     protected prompt(filled: string | undefined, callback: any): void;
     protected _promptNext(): void;
     protected _promptOne(filled: any, callback: any): void;

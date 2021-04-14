@@ -197,10 +197,10 @@ class Gatt extends EventEmitter<GattEventTypes> {
   }
 
   public async encryptWait(options: any): Promise<string> {
-    const result = await this._serialPromiseQueueWait(async () => {
+    const result = await this._serialPromiseQueueWait<string>(async () => {
       const encrypt = await this._aclStream.encryptWait(options);
       if (encrypt === 0) {
-        throw new Error('Encript failed');
+        throw new Error('Encrypt failed');
       }
       this._security = 'medium';
       return this._aclStream._smp.getKeys();
@@ -1074,7 +1074,9 @@ class Gatt extends EventEmitter<GattEventTypes> {
     }
   }
 
-  private _serialPromiseQueueWait(func: any) {
+  private _serialPromiseQueueWait<T>(
+    func: (...arg0: any) => Promise<T>
+  ): Promise<T> {
     const onfinish = () => {
       this._commandPromises = this._commandPromises.filter(
         (e) => e !== resultPromise
@@ -1096,7 +1098,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
         throw reason;
       })
       .then(
-        (result) => {
+        (result: T) => {
           onfinish();
           return Promise.resolve(result);
         },
@@ -1114,7 +1116,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
     });
     const resultPromise = Promise.race([doPromise, disconnectPromise]);
     this._commandPromises.push(resultPromise);
-    return resultPromise;
+    return resultPromise as Promise<T>;
   }
 
   private _execCommandWait(
@@ -1129,7 +1131,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
       waitOpcodes.push(ATT.OP_ERROR);
       errorHandle = false;
     }
-    return this._serialPromiseQueueWait(async () => {
+    return this._serialPromiseQueueWait<Buffer>(async () => {
       while (1) {
         this.writeAtt(buffer);
         const promises = [];
@@ -1166,12 +1168,14 @@ class Gatt extends EventEmitter<GattEventTypes> {
         }
         return data;
       }
-    }).catch((reason) => {
-      throw reason;
+
+      // unreachable here
+      // eslint-disable-next-line no-unreachable
+      return Buffer.from([]);
     });
   }
 
-  private _execNoRespCommandWait(buffer: Buffer): Promise<Buffer> {
+  private _execNoRespCommandWait(buffer: Buffer): Promise<void> {
     return this._serialPromiseQueueWait(async () => {
       this.writeAtt(buffer);
     });

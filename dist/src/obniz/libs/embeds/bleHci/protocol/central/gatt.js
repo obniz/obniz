@@ -139,7 +139,7 @@ class Gatt extends eventemitter3_1.default {
         const result = await this._serialPromiseQueueWait(async () => {
             const encrypt = await this._aclStream.encryptWait(options);
             if (encrypt === 0) {
-                throw new Error('Encript failed');
+                throw new Error('Encrypt failed');
             }
             this._security = 'medium';
             return this._aclStream._smp.getKeys();
@@ -753,8 +753,9 @@ class Gatt extends eventemitter3_1.default {
                 }
                 return data;
             }
-        }).catch((reason) => {
-            throw reason;
+            // unreachable here
+            // eslint-disable-next-line no-unreachable
+            return Buffer.from([]);
         });
     }
     _execNoRespCommandWait(buffer) {

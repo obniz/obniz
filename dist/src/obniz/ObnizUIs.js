@@ -40,7 +40,7 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
         super._close();
         this.updateOnlineUI();
     }
-    wsconnect(desired_server) {
+    async tryWsConnectOnceWait(desired_server) {
         this.showOffLine();
         if (!this.constructor.isValidObnizId(this.id)) {
             if (this.isNode || !this.options.obnizid_dialog) {
@@ -50,12 +50,12 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
                 const filled = _ReadCookie('obniz-last-used') || '';
                 this.prompt(filled, (obnizid) => {
                     this.id = obnizid;
-                    this.wsconnect(desired_server);
+                    this.tryWsConnectOnceWait(desired_server);
                 });
             }
             return;
         }
-        super.wsconnect(desired_server);
+        super.tryWsConnectOnceWait(desired_server);
     }
     prompt(filled = '', callback) {
         ObnizUIs._promptQueue.push({ filled, callback });

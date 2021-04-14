@@ -3,6 +3,7 @@
  * @module ObnizCore
  */
 import EventEmitter from 'eventemitter3';
+import wsClient from 'ws';
 import WSCommand from './libs/wscommand';
 import { ObnizOptions } from './ObnizOptions';
 export declare type ObnizConnectionEventNames = 'connect' | 'close' | 'notify';
@@ -14,7 +15,7 @@ export interface ObnizErrorMessage {
  * @ignore
  *
  */
-declare type ObnizConnectionEventNamesInternal = '_close';
+declare type ObnizConnectionEventNamesInternal = '_close' | '_cloudConnectRedirect' | '_cloudConnectReady' | '_cloudConnectClose' | '_localConnectReady' | '_localConnectClose';
 export default abstract class ObnizConnection extends EventEmitter<ObnizConnectionEventNames | ObnizConnectionEventNamesInternal> {
     /**
      * obniz.js version
@@ -182,9 +183,8 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
      *
      */
     connectionState: 'closed' | 'connecting' | 'connected' | 'closing';
-    protected _userManualConnectionClose: boolean;
-    protected socket: WebSocket | null;
-    protected socket_local: WebSocket | null;
+    protected socket: wsClient | null;
+    protected socket_local: wsClient | null;
     protected bufferdAmoundWarnBytes: number;
     protected options: Required<ObnizOptions>;
     protected wscommand: typeof WSCommand | null;
@@ -198,9 +198,13 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     private _repeatInterval;
     private _nextLoopTimeout;
     private _nextPingTimeout;
+    private _nextAutoConnectLoopTimeout;
     private _lastDataReceivedAt;
     private _autoConnectTimeout?;
+    private _localConnectIp;
     constructor(id: string, options?: ObnizOptions);
+    get autoConnect(): boolean;
+    set autoConnect(val: boolean);
     startCommandPool(): void;
     endCommandPool(): any[] | null;
     /**
@@ -332,7 +336,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
      * @ignore
      * @private
      */
-    _runUserCreatedFunction(func?: (..._args: any) => any, ...args: any[]): void;
+    _runUserCreatedFunction(func?: (..._args: any) => any, ...args: any[]): any;
     /**
      * Set onloop function. Use onloop property instead. This is deprecated function.
      *
@@ -349,10 +353,13 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     protected _reconnect(): void;
     protected wsOnError(event: any): void;
     protected wsOnUnexpectedResponse(req: any, res?: any): void;
-    protected wsconnect(desired_server?: string): void;
-    protected _connectLocal(host: any): void;
+    protected tryWsConnectOnceWait(desired_server?: string): Promise<void>;
+    protected cloudWsConnectWait(desired_server?: string): Promise<unknown>;
+    protected _connectLocalWait(): Promise<unknown>;
     protected _disconnectLocal(): void;
-    protected _clearSocket(socket: any): void;
+    protected _disconnectCloudRequest(): void;
+    protected _disconnectCloud(notify?: boolean): void;
+    protected _clearSocket(socket: wsClient): void;
     /**
      * This function will be called before obniz.onconnect called;
      */
@@ -368,6 +375,8 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     protected _binary2Json(binary: any): any;
     private _startLoopInBackground;
     private _stopLoopInBackground;
+    private _startAutoConnectLoopInBackground;
+    private _stopAutoConnectLoopInBackground;
     private _startPingLoopInBackground;
 }
 export {};

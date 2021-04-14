@@ -59,7 +59,7 @@ export default class ObnizUIs extends ObnizSystemMethods {
     this.updateOnlineUI();
   }
 
-  protected wsconnect(desired_server: any) {
+  protected async tryWsConnectOnceWait(desired_server?: string) {
     this.showOffLine();
     if (!(this.constructor as typeof ObnizUIs).isValidObnizId(this.id)) {
       if (this.isNode || !this.options.obnizid_dialog) {
@@ -68,12 +68,12 @@ export default class ObnizUIs extends ObnizSystemMethods {
         const filled: any = _ReadCookie('obniz-last-used') || '';
         this.prompt(filled, (obnizid: any) => {
           this.id = obnizid;
-          this.wsconnect(desired_server);
+          this.tryWsConnectOnceWait(desired_server);
         });
       }
       return;
     }
-    super.wsconnect(desired_server);
+    super.tryWsConnectOnceWait(desired_server);
   }
 
   protected prompt(filled = '', callback: any) {
