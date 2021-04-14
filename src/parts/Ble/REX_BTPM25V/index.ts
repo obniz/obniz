@@ -135,8 +135,9 @@ export default class REX_BTPM25V implements ObnizPartsInterface {
     data: number[]
   ): Promise<number[]> {
     return new Promise((resolve) => {
-      char.registerNotify(resolve);
-      char.write(data);
+      char.registerNotifyWait(resolve).then(() => {
+        return char.writeWait(data);
+      });
     });
   }
 
