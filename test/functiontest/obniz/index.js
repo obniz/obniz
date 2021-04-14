@@ -728,7 +728,7 @@ describe('obniz.index', function () {
     const obniz = testUtil.createObniz(port, '11111111');
     // console.log(new Date(), 'obniz created');
     expect(obniz).to.be.obniz;
-    await wait(waitMs * 3);
+    await pollClientNumWait(server, 1);
 
     expect(server.clients.size, 'before server not connected').to.equal(1);
 
@@ -747,18 +747,7 @@ describe('obniz.index', function () {
     // console.log(new Date(), 'server closed');
     expect(server.clients.size, 'before server not connected').to.equal(0);
     // console.log(new Date(), 'waiting');
-    await Promise.race([
-      wait(5 * 1000),
-      new Promise((resolve) => {
-        const hop = () => {
-          if (server.clients.size === 1) {
-            resolve();
-          } else {
-            setTimeout(hop, 1);
-          }
-        };
-      }),
-    ]);
+    await pollClientNumWait(server, 1);
     // console.log(new Date(), 'raceds');
     expect(server.clients.size, 'before server not connected').to.equal(1);
     obniz.close();
@@ -788,7 +777,7 @@ describe('obniz.index', function () {
     // console.log(new Date(), 'obniz created');
     expect(obniz).to.be.obniz;
 
-    await wait(waitMs * 3);
+    await pollClientNumWait(server, 1, 5000);
 
     expect(server.clients.size, 'before server not connected').to.equal(1);
     // console.log(new Date(), 'server connected');
@@ -808,18 +797,7 @@ describe('obniz.index', function () {
     await obniz.closeWait();
 
     expect(server.clients.size, 'before server not connected').to.equal(0);
-    await Promise.race([
-      wait(5 * 1000),
-      new Promise((resolve) => {
-        const hop = () => {
-          if (server.clients.size === 1) {
-            resolve();
-          } else {
-            setTimeout(hop, 1);
-          }
-        };
-      }),
-    ]);
+    await pollClientNumWait(server, 1);
     expect(server.clients.size, 'before server not connected').to.equal(0);
     obniz.close();
     server.close();
@@ -829,6 +807,22 @@ describe('obniz.index', function () {
     return new Promise((resolve) => {
       setTimeout(resolve, ms);
     });
+  }
+
+  function pollClientNumWait(server, num, timeout = 1000) {
+    return Promise.race([
+      new Promise((resolve) => {
+        const hop = () => {
+          if (server.clients.size === num) {
+            resolve();
+          } else {
+            setTimeout(hop, 1);
+          }
+        };
+        hop();
+      }),
+      wait(timeout),
+    ]);
   }
 
   async function pingPongWait(obniz) {

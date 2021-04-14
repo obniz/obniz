@@ -422,7 +422,7 @@ let testUtil = {
       });
     let binary = new Uint8Array(binaryArray);
 
-    let json = self.obniz.binary2Json(binary);
+    let json = self.obniz._binary2Json(binary);
 
     let isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;

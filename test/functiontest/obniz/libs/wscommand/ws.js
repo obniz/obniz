@@ -49,7 +49,7 @@ describe('ws', function () {
       });
     let binary = new Uint8Array(binaryArray);
 
-    let json = this.obniz.binary2Json(binary);
+    let json = this.obniz._binary2Json(binary);
 
     let isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
