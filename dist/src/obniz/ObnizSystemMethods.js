@@ -192,7 +192,7 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
             throw new Error('Date instance argument required');
         }
         let sleepTime = Math.floor((date - new Date()) / 1000);
-        this.print_debug(`sleep time : ${sleepTime}s`);
+        this._print_debug(`sleep time : ${sleepTime}s`);
         if (sleepTime <= 0) {
             throw new Error(`past sleep time : ${sleepTime}s`);
         }
@@ -201,7 +201,7 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
             return;
         }
         sleepTime = Math.floor(sleepTime / 60);
-        this.print_debug(`sleep time : ${sleepTime}m`);
+        this._print_debug(`sleep time : ${sleepTime}m`);
         if (sleepTime <= 60 * 24 * 45) {
             this.sleepMinute(sleepTime);
         }
@@ -294,7 +294,7 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
                 const timeObniz2Server = systemObj.pong.pongServerTime - systemObj.pong.obnizTime;
                 const timeServer2Js = obnizJsPongUnixtime - systemObj.pong.pongServerTime;
                 const str = `ping ${allTime}ms (js --[${timeJs2server}ms]--> server --[${timeServer2Obniz}ms]--> obniz --[${timeObniz2Server}ms]--> server --[${timeServer2Js}ms]--> js)`;
-                this.print_debug(str);
+                this._print_debug(str);
                 resolve(str);
             };
             this.addPongObserver(callback);

@@ -254,8 +254,8 @@ export default abstract class ObnizComponents extends ObnizParts {
     protected _callOnConnect(): void;
     protected _prepareComponents(): void;
     protected _resetComponents(): void;
-    protected notifyToModule(obj: any): void;
-    protected handleSystemCommand(wsObj: any): void;
+    protected _notifyToModule(obj: any): void;
+    protected _handleSystemCommand(wsObj: any): void;
     protected addPongObserver(callback: any): void;
     protected removePongObserver(callback: any): void;
     protected _getFreePeripheralUnit(peripheral: PeripheralName): any;

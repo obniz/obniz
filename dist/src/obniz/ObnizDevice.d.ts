@@ -126,5 +126,5 @@ export default class ObnizDevice extends ObnizUIs {
      */
     message(target: string | string[], message: string): void;
     protected _callOnConnect(): void;
-    protected notifyToModule(obj: any): void;
+    protected _notifyToModule(obj: any): void;
 }

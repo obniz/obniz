@@ -183,25 +183,26 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
      */
     connectionState: 'closed' | 'connecting' | 'connected' | 'closing';
     protected _userManualConnectionClose: boolean;
-    protected socket: any;
-    protected socket_local: any;
-    protected debugs: any;
+    protected socket: WebSocket | null;
+    protected socket_local: WebSocket | null;
     protected bufferdAmoundWarnBytes: number;
-    protected options: any;
-    protected wscommand: any;
-    protected wscommands: any;
-    protected _sendQueueTimer: any;
-    protected _sendQueue: any;
-    protected _waitForLocalConnectReadyTimer: any;
+    protected options: Required<ObnizOptions>;
+    protected wscommand: typeof WSCommand | null;
+    protected wscommands: WSCommand[];
+    protected _sendQueueTimer: ReturnType<typeof setTimeout> | null;
+    protected _sendQueue: Uint8Array[] | null;
+    protected _waitForLocalConnectReadyTimer: ReturnType<typeof setTimeout> | null;
     protected _connectionRetryCount: number;
-    protected sendPool: any;
+    private _sendPool;
     private _onConnectCalled;
     private _repeatInterval;
-    private _nextLoopTimeout?;
-    private _nextPingTimeout?;
+    private _nextLoopTimeout;
+    private _nextPingTimeout;
     private _lastDataReceivedAt;
     private _autoConnectTimeout?;
     constructor(id: string, options?: ObnizOptions);
+    startCommandPool(): void;
+    endCommandPool(): any[] | null;
     /**
      * With this you wait until the connection to obniz Board succeeds.
      *
@@ -351,20 +352,20 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     protected wsconnect(desired_server?: string): void;
     protected _connectLocal(host: any): void;
     protected _disconnectLocal(): void;
-    protected clearSocket(socket: any): void;
+    protected _clearSocket(socket: any): void;
     /**
      * This function will be called before obniz.onconnect called;
      */
     protected _beforeOnConnect(): void;
     protected _callOnConnect(): void;
-    protected print_debug(str: any): void;
+    protected _print_debug(str: any): void;
     protected _sendRouted(data: any): void;
     protected _drainQueued(): void;
-    protected notifyToModule(obj: any): void;
+    protected _notifyToModule(obj: any): void;
     protected _canConnectToInsecure(): boolean;
-    protected handleWSCommand(wsObj: any): void;
-    protected handleSystemCommand(wsObj: any): void;
-    protected binary2Json(binary: any): any;
+    protected _handleWSCommand(wsObj: any): void;
+    protected _handleSystemCommand(wsObj: any): void;
+    protected _binary2Json(binary: any): any;
     private _startLoopInBackground;
     private _stopLoopInBackground;
     private _startPingLoopInBackground;

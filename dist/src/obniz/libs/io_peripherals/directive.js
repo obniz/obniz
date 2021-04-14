@@ -110,10 +110,9 @@ class Directive extends ComponentAbstact_1.ComponentAbstract {
             const duration = state.duration;
             const operation = state.state;
             // dry run. and get json commands
-            this.Obniz.sendPool = [];
+            this.Obniz.startCommandPool();
             operation(i);
-            const pooledJsonArray = this.Obniz.sendPool;
-            this.Obniz.sendPool = null;
+            const pooledJsonArray = this.Obniz.endCommandPool();
             states.push({
                 duration,
                 state: pooledJsonArray,
