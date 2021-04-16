@@ -4,15 +4,12 @@ let sinon = require('sinon');
 
 let testUtil = require('../../../../testUtil.js');
 
-
-
 describe('ble-security', function () {
- beforeEach(async function () {
+  beforeEach(async function () {
     await testUtil.setupObnizPromise(this, null, { __firmware_ver: '3.0.0' });
   });
 
-
-   afterEach(async function () {
+  afterEach(async function () {
     await testUtil.releaseObnizePromise(this);
   });
 

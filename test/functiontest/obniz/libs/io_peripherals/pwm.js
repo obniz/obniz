@@ -3,13 +3,11 @@ let expect = chai.expect;
 
 let testUtil = require(global.appRoot + '/test/functiontest/testUtil.js');
 
-
-
 describe('obniz.libs.pwm', function () {
- beforeEach(async function () {
+  beforeEach(async function () {
     await testUtil.setupObnizPromise(this);
   });
-afterEach(async function () {
+  afterEach(async function () {
     await testUtil.releaseObnizePromise(this);
   });
 

@@ -132,4 +132,3 @@ Logtta_Accel.deviceAdv = [
     0x05,
     0x05,
 ];
-//# sourceMappingURL=index.js.map

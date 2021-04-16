@@ -56,4 +56,3 @@ class CompatibleWebSocket extends ws {
     }
 }
 exports.default = CompatibleWebSocket;
-//# sourceMappingURL=ws.js.map

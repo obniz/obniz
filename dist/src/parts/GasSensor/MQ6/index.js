@@ -19,4 +19,3 @@ class MQ6 extends MQGas_1.default {
     }
 }
 exports.default = MQ6;
-//# sourceMappingURL=index.js.map

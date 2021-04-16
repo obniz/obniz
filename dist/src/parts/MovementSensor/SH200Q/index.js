@@ -170,4 +170,3 @@ SH200Q.commands = {
         '2000dps': 0b000,
     },
 };
-//# sourceMappingURL=index.js.map

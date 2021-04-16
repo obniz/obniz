@@ -10,4 +10,3 @@ exports.default = {
     },
     css: '',
 };
-//# sourceMappingURL=dialogPollyfill.js.map

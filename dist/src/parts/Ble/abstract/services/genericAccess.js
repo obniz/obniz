@@ -17,4 +17,3 @@ class BleGenericAccess {
     }
 }
 exports.default = BleGenericAccess;
-//# sourceMappingURL=genericAccess.js.map

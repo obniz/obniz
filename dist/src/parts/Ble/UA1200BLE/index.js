@@ -232,4 +232,3 @@ class UA1200BLE {
     }
 }
 exports.default = UA1200BLE;
-//# sourceMappingURL=index.js.map

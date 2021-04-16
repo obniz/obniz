@@ -72,4 +72,3 @@ HMC5883L.scales = [
     1 / 330,
     1 / 230,
 ];
-//# sourceMappingURL=index.js.map

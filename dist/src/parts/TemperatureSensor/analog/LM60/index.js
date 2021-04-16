@@ -15,4 +15,3 @@ class LM60 extends AnalogTemperatureSensor_1.default {
     }
 }
 exports.default = LM60;
-//# sourceMappingURL=index.js.map

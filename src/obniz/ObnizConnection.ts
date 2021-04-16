@@ -675,7 +675,6 @@ export default abstract class ObnizConnection extends EventEmitter<
         if (this.debugprintBinary) {
           this.log('binalized: ' + new Uint8Array(data).toString());
         }
-        debugger;
         json = this._binary2Json(data);
       }
 

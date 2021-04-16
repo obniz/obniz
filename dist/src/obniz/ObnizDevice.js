@@ -168,4 +168,3 @@ class ObnizDevice extends ObnizUIs_1.default {
     }
 }
 exports.default = ObnizDevice;
-//# sourceMappingURL=ObnizDevice.js.map

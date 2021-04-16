@@ -226,4 +226,3 @@ class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
     }
 }
 exports.default = PeripheralPWM;
-//# sourceMappingURL=pwm.js.map

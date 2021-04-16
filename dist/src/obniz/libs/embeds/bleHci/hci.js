@@ -207,4 +207,3 @@ class ObnizBLEHci {
     }
 }
 exports.default = ObnizBLEHci;
-//# sourceMappingURL=hci.js.map

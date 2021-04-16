@@ -3,14 +3,12 @@ let expect = chai.expect;
 
 let testUtil = require('../../../testUtil.js');
 
-
-
 describe('io.animation', function () {
   beforeEach(async function () {
     await testUtil.setupObnizPromise(this, null, { binary: true });
   });
 
-   afterEach(async function () {
+  afterEach(async function () {
     await testUtil.releaseObnizePromise(this);
   });
 

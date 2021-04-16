@@ -2,15 +2,12 @@ let chai = require('chai');
 let expect = chai.expect;
 let testUtil = require('../../../testUtil.js');
 
-
-
-
 describe('system.log', function () {
   beforeEach(async function () {
     await testUtil.setupObnizPromise(this, null, { binary: true });
   });
 
-   afterEach(async function () {
+  afterEach(async function () {
     await testUtil.releaseObnizePromise(this);
   });
 

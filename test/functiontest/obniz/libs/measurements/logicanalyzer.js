@@ -4,13 +4,11 @@ let sinon = require('sinon');
 
 let testUtil = require('../../../testUtil.js');
 
-
-
 describe('obniz.libs.logicanalyser', function () {
- beforeEach(async function () {
+  beforeEach(async function () {
     await testUtil.setupObnizPromise(this);
   });
-afterEach(async function () {
+  afterEach(async function () {
     await testUtil.releaseObnizePromise(this);
   });
 

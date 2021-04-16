@@ -2,15 +2,12 @@ let chai = require('chai');
 let expect = chai.expect;
 let testUtil = require('../../../testUtil.js');
 
-
-
 describe('obniz.libs.io', function () {
- beforeEach(async function () {
+  beforeEach(async function () {
     await testUtil.setupObnizPromise(this, null, { __firmware_ver: '2.0.0' });
   });
 
-
-   afterEach(async function () {
+  afterEach(async function () {
     await testUtil.releaseObnizePromise(this);
   });
 

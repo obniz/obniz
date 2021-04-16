@@ -3,12 +3,11 @@ let expect = chai.expect;
 
 let testUtil = require('../../testUtil.js');
 
-
 describe('led', function () {
- beforeEach(async function () {
+  beforeEach(async function () {
     await testUtil.setupObnizPromise(this);
   });
-afterEach(async function () {
+  afterEach(async function () {
     await testUtil.releaseObnizePromise(this);
   });
 

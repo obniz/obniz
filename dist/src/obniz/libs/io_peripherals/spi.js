@@ -237,4 +237,3 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
     }
 }
 exports.default = PeripheralSPI;
-//# sourceMappingURL=spi.js.map

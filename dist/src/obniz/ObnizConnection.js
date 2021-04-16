@@ -435,7 +435,6 @@ class ObnizConnection extends eventemitter3_1.default {
                 if (this.debugprintBinary) {
                     this.log('binalized: ' + new Uint8Array(data).toString());
                 }
-                debugger;
                 json = this._binary2Json(data);
             }
             console.log(new Date(), this.id, 'json', json);
@@ -989,4 +988,3 @@ class ObnizConnection extends eventemitter3_1.default {
     }
 }
 exports.default = ObnizConnection;
-//# sourceMappingURL=ObnizConnection.js.map

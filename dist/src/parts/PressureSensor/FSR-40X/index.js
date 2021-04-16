@@ -37,4 +37,3 @@ class FSR40X {
     }
 }
 exports.default = FSR40X;
-//# sourceMappingURL=index.js.map

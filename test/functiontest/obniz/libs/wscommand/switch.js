@@ -3,14 +3,12 @@ let expect = chai.expect;
 
 let testUtil = require(global.appRoot + '/test/functiontest/testUtil.js');
 
-
-
 describe('switch', function () {
   beforeEach(async function () {
     await testUtil.setupObnizPromise(this, null, { binary: true });
   });
 
-   afterEach(async function () {
+  afterEach(async function () {
     await testUtil.releaseObnizePromise(this);
   });
 

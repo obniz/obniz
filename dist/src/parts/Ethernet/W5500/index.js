@@ -1686,4 +1686,3 @@ class W5500Socket {
 }
 exports.W5500Socket = W5500Socket;
 exports.default = W5500;
-//# sourceMappingURL=index.js.map

@@ -82,4 +82,3 @@ class Logtta_AD {
     }
 }
 exports.default = Logtta_AD;
-//# sourceMappingURL=index.js.map

@@ -94,4 +94,3 @@ class I2cPartsAbstract {
     }
 }
 exports.default = I2cPartsAbstract;
-//# sourceMappingURL=i2cParts.js.map

@@ -571,4 +571,3 @@ class RS_BTWATTCH2 {
     }
 }
 exports.default = RS_BTWATTCH2;
-//# sourceMappingURL=index.js.map

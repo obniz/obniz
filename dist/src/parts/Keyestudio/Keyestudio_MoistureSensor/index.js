@@ -30,4 +30,3 @@ class Keyestudio_MoistureSensor {
     }
 }
 exports.default = Keyestudio_MoistureSensor;
-//# sourceMappingURL=index.js.map

@@ -92,4 +92,3 @@ class MiniBreeze {
     wired(obniz) { }
 }
 exports.default = MiniBreeze;
-//# sourceMappingURL=index.js.map

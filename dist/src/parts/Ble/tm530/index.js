@@ -67,4 +67,3 @@ TM530.deviceAdv = [
     -1,
     -1,
 ];
-//# sourceMappingURL=index.js.map

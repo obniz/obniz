@@ -3,14 +3,12 @@ let expect = chai.expect;
 
 const testUtil = require('../../../testUtil.js');
 
-
-
 describe('ble.hci', function () {
   beforeEach(async function () {
     await testUtil.setupObnizPromise(this, null, { binary: true });
   });
 
-   afterEach(async function () {
+  afterEach(async function () {
     await testUtil.releaseObnizePromise(this);
   });
 

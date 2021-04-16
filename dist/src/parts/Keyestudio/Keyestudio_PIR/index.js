@@ -27,4 +27,3 @@ class Keyestudio_PIR {
     }
 }
 exports.default = Keyestudio_PIR;
-//# sourceMappingURL=index.js.map

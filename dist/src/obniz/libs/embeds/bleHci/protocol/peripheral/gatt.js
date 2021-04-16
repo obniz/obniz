@@ -912,4 +912,3 @@ class Gatt extends eventemitter3_1.default {
     }
 }
 exports.default = Gatt;
-//# sourceMappingURL=gatt.js.map

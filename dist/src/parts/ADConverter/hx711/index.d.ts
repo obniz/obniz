@@ -27,7 +27,7 @@ export default class Hx711 implements ObnizPartsInterface {
     wired(obniz: Obniz): void;
     readWait(): Promise<number>;
     doubleBit2singleBit(a: number, b: number): number;
-    bit(a: number, n: number): 0 | 1;
+    bit(a: number, n: number): 1 | 0;
     readAverageWait(times: any): Promise<number>;
     powerDown(): void;
     powerUp(): void;

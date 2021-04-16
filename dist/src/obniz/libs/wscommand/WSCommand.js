@@ -290,4 +290,3 @@ exports.default = WSCommand;
 /* eslint max-classes-per-file: 0 */
 class WSCommandNotFoundError extends Error {
 }
-//# sourceMappingURL=WSCommand.js.map

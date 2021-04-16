@@ -525,4 +525,3 @@ class BleScan {
     }
 }
 exports.default = BleScan;
-//# sourceMappingURL=bleScan.js.map

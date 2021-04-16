@@ -50,4 +50,3 @@ class BleHelper {
     }
 }
 exports.default = new BleHelper();
-//# sourceMappingURL=bleHelper.js.map

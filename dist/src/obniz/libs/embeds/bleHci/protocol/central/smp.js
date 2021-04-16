@@ -265,4 +265,3 @@ class Smp extends eventemitter3_1.default {
     }
 }
 exports.default = Smp;
-//# sourceMappingURL=smp.js.map

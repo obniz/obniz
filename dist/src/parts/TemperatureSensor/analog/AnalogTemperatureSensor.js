@@ -27,4 +27,3 @@ class AnalogTemperatureSensor {
     }
 }
 exports.default = AnalogTemperatureSensor;
-//# sourceMappingURL=AnalogTemperatureSensor.js.map

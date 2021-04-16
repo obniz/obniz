@@ -960,4 +960,3 @@ class Hci extends eventemitter3_1.default {
 }
 Hci.STATUS_MAPPER = STATUS_MAPPER;
 exports.default = Hci;
-//# sourceMappingURL=hci.js.map

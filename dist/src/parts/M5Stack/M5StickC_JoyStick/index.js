@@ -63,4 +63,3 @@ class M5StickC_JoyStick {
     }
 }
 exports.default = M5StickC_JoyStick;
-//# sourceMappingURL=index.js.map

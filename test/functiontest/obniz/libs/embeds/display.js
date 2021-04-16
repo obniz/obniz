@@ -12,7 +12,7 @@ describe('obniz.libs.display', function () {
     }
   });
 
-   afterEach(async function () {
+  afterEach(async function () {
     await testUtil.releaseObnizePromise(this);
   });
 

@@ -308,4 +308,3 @@ class NobleBindings extends eventemitter3_1.default {
     }
 }
 exports.default = NobleBindings;
-//# sourceMappingURL=bindings.js.map
