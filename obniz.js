@@ -2601,9 +2601,6 @@ class ObnizConnection extends eventemitter3_1.default {
             this.connectionState = 'closing';
             const p = new Promise((resolve) => {
                 this.once('_close', resolve);
-                this.once('_close', () => {
-                    console.log('emit _close');
-                });
             });
             this._disconnectCloudRequest();
             await p;
@@ -2703,7 +2700,7 @@ class ObnizConnection extends eventemitter3_1.default {
      * @ignore
      */
     log(...args) {
-        console.log(`[obniz ${this.id}]`, ...args);
+        console.log(new Date(), `[obniz ${this.id}]`, ...args);
     }
     /**
      * @ignore
@@ -2760,7 +2757,6 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     wsOnOpen() {
         this._print_debug('ws connected');
-        console.log(new Date(), this.id, 'ws connected');
         this._connectionRetryCount = 0;
         // wait for {ws:{ready:true}} object
         if (typeof this.onopen === 'function') {
@@ -2768,22 +2764,18 @@ class ObnizConnection extends eventemitter3_1.default {
         }
     }
     wsOnMessage(data) {
-        console.log(new Date(), this.id, 'wsOnMessage', data);
         this._lastDataReceivedAt = new Date().getTime();
         try {
             let json;
             if (typeof data === 'string') {
-                console.log(new Date(), this.id, "typeof data === 'string'");
                 json = JSON.parse(data);
             }
             else if (this.wscommands) {
-                console.log(new Date(), this.id, 'this.wscommands');
                 if (this.debugprintBinary) {
                     this.log('binalized: ' + new Uint8Array(data).toString());
                 }
                 json = this._binary2Json(data);
             }
-            console.log(new Date(), this.id, 'json', json);
             if (Array.isArray(json)) {
                 for (const i in json) {
                     this._notifyToModule(json[i]);
@@ -2799,13 +2791,10 @@ class ObnizConnection extends eventemitter3_1.default {
         }
     }
     wsOnClose(event) {
-        console.log('wsOnClose');
         this._print_debug(`closed from remote event=${event}`);
         const beforeOnConnectCalled = this._onConnectCalled;
-        console.log(new Date(), this.id, 'wsOnClose', beforeOnConnectCalled);
         this._close();
         this.connectionState = 'closed';
-        console.log("emit('_close'");
         this.emit('_close', this);
         if (beforeOnConnectCalled === true) {
             this.emit('close', this);
@@ -2877,7 +2866,6 @@ class ObnizConnection extends eventemitter3_1.default {
             url += '?' + query.join('&');
         }
         this._print_debug('connecting to ' + url);
-        console.log(new Date(), this.id, 'connecting...');
         return new Promise((resolve, reject) => {
             const release = () => {
                 if (redirect) {
@@ -2895,24 +2883,20 @@ class ObnizConnection extends eventemitter3_1.default {
             };
             let redirect = (host) => {
                 release();
-                console.log(new Date(), this.id, 'redirect');
                 this._connectCloudWait(host).then(resolve).catch(reject);
             };
             this.once('_cloudConnectRedirect', redirect);
             let ready = () => {
                 release();
-                console.log(new Date(), this.id, 'connected');
                 resolve();
             };
             this.once('_cloudConnectReady', ready);
             let closed = () => {
                 release();
-                console.log(new Date(), this.id, 'closed');
                 reject(new Error('Connection closed'));
             };
             this.once('_cloudConnectClose', closed);
             this.socket = this._createCloudSocket(url);
-            console.log(new Date(), this.id, 'requested');
         });
     }
     _createCloudSocket(url) {
@@ -2924,7 +2908,6 @@ class ObnizConnection extends eventemitter3_1.default {
             this.wsOnMessage(msg);
         });
         socket.on('close', (event) => {
-            console.log(new Date(), this.id, "socket.on('close'");
             this.wsOnClose(event);
         });
         socket.on('error', (err) => {
@@ -2993,14 +2976,11 @@ class ObnizConnection extends eventemitter3_1.default {
         this.emit('_localConnectClose');
     }
     _disconnectCloudRequest() {
-        var _a, _b;
-        console.log(new Date(), '_disconnectCloudRequest', (_a = this.socket) === null || _a === void 0 ? void 0 : _a.readyState);
         if (this.socket) {
             if (this.socket.readyState <= 1) {
                 // Connecting & Connected
                 this.connectionState = 'closing';
                 this.socket.close(1000, 'close');
-                console.log(new Date(), 'close request', (_b = this.socket) === null || _b === void 0 ? void 0 : _b.readyState);
             }
         }
     }
@@ -3132,7 +3112,6 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     _handleWSCommand(wsObj) {
         if (wsObj.ready) {
-            console.log(new Date(), 'wsObj.ready');
             this.firmware_ver = wsObj.obniz.firmware;
             this.hw = wsObj.obniz.hw;
             if (!this.hw) {
@@ -3164,7 +3143,6 @@ class ObnizConnection extends eventemitter3_1.default {
             this.emit('_cloudConnectReady');
         }
         if (wsObj.redirect) {
-            console.log(new Date(), 'wsObj.redirect');
             const urlString = wsObj.redirect;
             this._print_debug('WS connection changed to ' + urlString);
             const url = new URL(urlString);
@@ -3176,7 +3154,6 @@ class ObnizConnection extends eventemitter3_1.default {
             }
             /* close current ws immediately */
             this._disconnectCloud(false);
-            console.log(new Date(), '_cloudConnectRedirect');
             this.emit('_cloudConnectRedirect', host);
         }
     }
