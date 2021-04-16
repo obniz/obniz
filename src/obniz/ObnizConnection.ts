@@ -12,7 +12,7 @@ import WSCommand from './libs/wscommand';
 import { ObnizOfflineError } from './ObnizError';
 import { ObnizOptions } from './ObnizOptions';
 
-export type ObnizConnectionEventNames = 'connect' | 'close' | 'notify';
+export type ObnizConnectionEventNames = 'connect' | 'close';
 
 export interface ObnizErrorMessage {
   alert: 'warn' | 'error';
@@ -282,7 +282,7 @@ export default abstract class ObnizConnection extends EventEmitter<
         this.wscommands.push(new classes[class_name]());
       }
     }
-    if (this.options.auto_connect) {
+    if (this.autoConnect) {
       this._startAutoConnectLoopInBackground();
     }
   }
@@ -410,7 +410,9 @@ export default abstract class ObnizConnection extends EventEmitter<
     ) {
       return;
     }
-    this.tryWsConnectOnceWait();
+    this.tryWsConnectOnceWait().catch((e) => {
+      this.error(e);
+    });
   }
 
   /**
@@ -468,6 +470,9 @@ export default abstract class ObnizConnection extends EventEmitter<
       this.connectionState = 'closing';
       const p = new Promise((resolve) => {
         this.once('_close', resolve);
+        this.once('_close', () => {
+          console.log('emit _close');
+        });
       });
       this._disconnectCloudRequest();
       await p;
@@ -648,6 +653,7 @@ export default abstract class ObnizConnection extends EventEmitter<
 
   protected wsOnOpen() {
     this._print_debug('ws connected');
+    console.log(new Date(), this.id, 'ws connected');
     this._connectionRetryCount = 0;
     // wait for {ws:{ready:true}} object
     if (typeof this.onopen === 'function') {
@@ -656,19 +662,24 @@ export default abstract class ObnizConnection extends EventEmitter<
   }
 
   protected wsOnMessage(data: any) {
+    console.log(new Date(), this.id, 'wsOnMessage', data);
     this._lastDataReceivedAt = new Date().getTime();
 
     try {
       let json: any;
       if (typeof data === 'string') {
+        console.log(new Date(), this.id, "typeof data === 'string'");
         json = JSON.parse(data);
       } else if (this.wscommands) {
+        console.log(new Date(), this.id, 'this.wscommands');
         if (this.debugprintBinary) {
           this.log('binalized: ' + new Uint8Array(data).toString());
         }
+        debugger;
         json = this._binary2Json(data);
       }
 
+      console.log(new Date(), this.id, 'json', json);
       if (Array.isArray(json)) {
         for (const i in json) {
           this._notifyToModule(json[i]);
@@ -677,16 +688,20 @@ export default abstract class ObnizConnection extends EventEmitter<
         // invalid json
       }
     } catch (e) {
+      console.error(e);
       this.error(e);
     }
   }
 
   protected wsOnClose(event: any) {
+    console.log('wsOnClose');
     this._print_debug(`closed from remote event=${event}`);
     const beforeOnConnectCalled = this._onConnectCalled;
+    console.log(new Date(), this.id, 'wsOnClose', beforeOnConnectCalled);
     this._close();
     this.connectionState = 'closed';
 
+    console.log("emit('_close'");
     this.emit('_close', this);
 
     if (beforeOnConnectCalled === true) {
@@ -695,24 +710,7 @@ export default abstract class ObnizConnection extends EventEmitter<
     }
 
     if (this.autoConnect) {
-      this._reconnect();
-    }
-  }
-
-  protected _reconnect() {
-    this._connectionRetryCount++;
-    let tryAfter: any = 1000;
-    if (this._connectionRetryCount > 15) {
-      tryAfter = (this._connectionRetryCount - 15) * 1000;
-      const Limit: any = this.isNode ? 60 * 1000 : 10 * 1000;
-      if (tryAfter > Limit) {
-        tryAfter = Limit;
-      }
-    }
-    if (this.options.auto_connect) {
-      this._autoConnectTimeout = setTimeout(() => {
-        this.tryWsConnectOnceWait(); // always connect to mainserver if ws lost
-      }, tryAfter);
+      this._startAutoConnectLoopInBackground();
     }
   }
 
@@ -727,14 +725,13 @@ export default abstract class ObnizConnection extends EventEmitter<
       this._print_debug('invalid server response ' + res ? res.statusCode : '');
     }
 
-    this._disconnectCloud();
-    this._reconnect();
+    this._disconnectCloudRequest();
   }
 
   protected async tryWsConnectOnceWait(desired_server?: string) {
     try {
       this.connectionState = 'connecting';
-      await this.cloudWsConnectWait(desired_server);
+      await this._connectCloudWait(desired_server);
       try {
         const localConnectTimeout = new Promise((resolve, reject) => {
           setTimeout(() => {
@@ -755,11 +752,10 @@ export default abstract class ObnizConnection extends EventEmitter<
       this._callOnConnect();
     } catch (e) {
       this.error(e);
-      this._close();
     }
   }
 
-  protected cloudWsConnectWait(desired_server?: string) {
+  protected _connectCloudWait(desired_server?: string) {
     let server = this.options.obniz_server;
     if (desired_server) {
       server = '' + desired_server;
@@ -792,49 +788,85 @@ export default abstract class ObnizConnection extends EventEmitter<
     }
     this._print_debug('connecting to ' + url);
 
-    this.socket = new wsClient(url);
-    this.socket.on('open', () => {
-      this.wsOnOpen();
-    });
-    this.socket.on('message', (msg) => {
-      this.wsOnMessage(msg);
-    });
-    this.socket.on('close', (event) => {
-      this.wsOnClose(event);
-    });
-    this.socket.on('error', (err) => {
-      this.wsOnError(err);
-    });
-    this.socket.on('unexpected-response', (err) => {
-      this.wsOnUnexpectedResponse(err);
-    });
+    console.log(new Date(), this.id, 'connecting...');
 
     return new Promise((resolve, reject) => {
-      this.once('_cloudConnectRedirect', (host) => {
-        this.cloudWsConnectWait(host).then(resolve).catch(reject);
-      });
-      this.once('_cloudConnectReady', () => {
+      const release = () => {
+        if (redirect) {
+          this.off('_cloudConnectRedirect', redirect);
+          redirect = null;
+        }
+        if (ready) {
+          this.off('_cloudConnectReady', ready);
+          ready = null;
+        }
+        if (closed) {
+          this.off('_cloudConnectClose', closed);
+          closed = null;
+        }
+      };
+      let redirect: null | ((host: string) => void) = (host: string) => {
+        release();
+        console.log(new Date(), this.id, 'redirect');
+        this._connectCloudWait(host).then(resolve).catch(reject);
+      };
+      this.once('_cloudConnectRedirect', redirect);
+
+      let ready: (() => void) | null = () => {
+        release();
+        console.log(new Date(), this.id, 'connected');
         resolve();
-      });
-      this.once('_cloudConnectClose', () => {
+      };
+      this.once('_cloudConnectReady', ready);
+
+      let closed: (() => void) | null = () => {
+        release();
+        console.log(new Date(), this.id, 'closed');
         reject(new Error('Connection closed'));
-      });
+      };
+      this.once('_cloudConnectClose', closed);
+
+      this.socket = this._createCloudSocket(url);
+      console.log(new Date(), this.id, 'requested');
     });
+  }
+
+  protected _createCloudSocket(url: string) {
+    const socket = new wsClient(url);
+    socket.on('open', () => {
+      this.wsOnOpen();
+    });
+    socket.on('message', (msg) => {
+      this.wsOnMessage(msg);
+    });
+    socket.on('close', (event) => {
+      console.log(new Date(), this.id, "socket.on('close'");
+      this.wsOnClose(event);
+    });
+    socket.on('error', (err) => {
+      this.wsOnError(err);
+    });
+    socket.on('unexpected-response', (req: any, res?: any) => {
+      this.wsOnUnexpectedResponse(req, res);
+    });
+    return socket;
   }
 
   protected _connectLocalWait() {
     const host = this._localConnectIp;
     if (!host || !this.wscommand || !this.options.local_connect) {
+      return;
       // cannot local connect
-      throw new Error(
-        'Cannot use local_connect because target device is on a different network'
-      );
+      // throw new Error(
+      //   'Cannot use local_connect because target device is on a different network'
+      // );
     }
     if (!this._canConnectToInsecure()) {
+      return;
       // cannot local connect
-      throw new Error(
-        'Cannot use local_connect because this page use HTTP protocol'
-      );
+      // throw new Error(
+      //   'Cannot use local_connect because this page use HTTP protocol'
+      // );
     }
 
     const url = 'ws://' + host;
@@ -887,11 +919,13 @@ export default abstract class ObnizConnection extends EventEmitter<
   }
 
   protected _disconnectCloudRequest() {
+    console.log(new Date(), '_disconnectCloudRequest', this.socket?.readyState);
     if (this.socket) {
       if (this.socket.readyState <= 1) {
         // Connecting & Connected
         this.connectionState = 'closing';
         this.socket.close(1000, 'close');
+        console.log(new Date(), 'close request', this.socket?.readyState);
       }
     }
   }
@@ -947,8 +981,8 @@ export default abstract class ObnizConnection extends EventEmitter<
     this._beforeOnConnect();
     this.emit('connect', this);
     let promise: any;
+    this._onConnectCalled = true;
     if (typeof this.onconnect === 'function') {
-      this._onConnectCalled = true;
       promise = this._runUserCreatedFunction(this.onconnect, this);
     }
     this._startPingLoopInBackground();
@@ -1039,6 +1073,7 @@ export default abstract class ObnizConnection extends EventEmitter<
 
   protected _handleWSCommand(wsObj: any) {
     if (wsObj.ready) {
+      console.log(new Date(), 'wsObj.ready');
       this.firmware_ver = wsObj.obniz.firmware;
       this.hw = wsObj.obniz.hw;
       if (!this.hw) {
@@ -1070,6 +1105,7 @@ export default abstract class ObnizConnection extends EventEmitter<
       this.emit('_cloudConnectReady');
     }
     if (wsObj.redirect) {
+      console.log(new Date(), 'wsObj.redirect');
       const urlString: string = wsObj.redirect;
       this._print_debug('WS connection changed to ' + urlString);
 
@@ -1083,6 +1119,7 @@ export default abstract class ObnizConnection extends EventEmitter<
 
       /* close current ws immediately */
       this._disconnectCloud(false);
+      console.log(new Date(), '_cloudConnectRedirect');
       this.emit('_cloudConnectRedirect', host);
     }
   }
@@ -1158,42 +1195,39 @@ export default abstract class ObnizConnection extends EventEmitter<
   }
 
   private _startAutoConnectLoopInBackground() {
-    console.log('_startAutoConnectLoopInBackground');
+    if (!this.autoConnect) {
+      return;
+    }
     this.connectionState = 'connecting';
     this._connectionRetryCount++;
+    let tryAfter = this._connectionRetryCount === 1 ? 0 : 1000;
+
+    if (this._connectionRetryCount > 15) {
+      tryAfter = (this._connectionRetryCount - 15) * 1000;
+      const Limit: any = this.isNode ? 60 * 1000 : 10 * 1000;
+      if (tryAfter > Limit) {
+        tryAfter = Limit;
+      }
+    }
 
     this._stopAutoConnectLoopInBackground();
+
     this._nextAutoConnectLoopTimeout = setTimeout(async () => {
-      console.log('_nextAutoConnectLoopTimeout');
       if (this._nextAutoConnectLoopTimeout) {
         clearTimeout(this._nextAutoConnectLoopTimeout);
       }
       this._nextAutoConnectLoopTimeout = null;
-      console.log('_nextAutoConnectLoopTimeout= null');
       if (!this.autoConnect) {
         return;
       }
-      console.log('autoConnect');
       try {
         await this.tryWsConnectOnceWait();
       } catch (e) {
         // cannot connect
         console.error(e);
-
-        let tryAfter: any = 1000;
-        if (this._connectionRetryCount > 15) {
-          tryAfter = (this._connectionRetryCount - 15) * 1000;
-          const Limit: any = this.isNode ? 60 * 1000 : 10 * 1000;
-          if (tryAfter > Limit) {
-            tryAfter = Limit;
-          }
-        }
-        this._nextLoopTimeout = setTimeout(
-          this._startAutoConnectLoopInBackground.bind(this),
-          tryAfter
-        );
+        this._startAutoConnectLoopInBackground();
       }
-    }, 0);
+    }, tryAfter);
   }
 
   private _stopAutoConnectLoopInBackground() {

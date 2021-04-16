@@ -19,3 +19,4 @@ class S8100B extends AnalogTemperatureSensor_1.default {
     }
 }
 exports.default = S8100B;
+//# sourceMappingURL=index.js.map

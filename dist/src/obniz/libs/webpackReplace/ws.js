@@ -16,8 +16,8 @@ else {
     ws = window.WebSocket || window.MozWebSocket;
 }
 class CompatibleWebSocket extends ws {
-    constructor(...arg0) {
-        super(...arg0);
+    constructor(url, protocols) {
+        super(url, protocols);
         this.eventFunctionKetMap = {
             open: 'onopen',
             message: 'onmessage',
@@ -27,9 +27,25 @@ class CompatibleWebSocket extends ws {
         this.binaryType = 'arraybuffer';
     }
     on(event, f) {
-        const functionName = this.eventFunctionKetMap[event];
-        if (functionName) {
-            this[functionName] = f;
+        if (event === 'open') {
+            this.onopen = (_) => {
+                f();
+            };
+        }
+        else if (event === 'message') {
+            this.onmessage = (me) => {
+                f(me.data);
+            };
+        }
+        else if (event === 'close') {
+            this.onclose = (ce) => {
+                f(ce.code);
+            };
+        }
+        else if (event === 'error') {
+            this.onerror = (e) => {
+                f(e);
+            };
         }
     }
     removeAllListeners(event) {
@@ -40,3 +56,4 @@ class CompatibleWebSocket extends ws {
     }
 }
 exports.default = CompatibleWebSocket;
+//# sourceMappingURL=ws.js.map

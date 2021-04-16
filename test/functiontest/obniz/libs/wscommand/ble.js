@@ -2,16 +2,16 @@ const chai = require('chai');
 const expect = chai.expect;
 
 const testUtil = require('../../../testUtil.js');
-chai.use(require('chai-like'));
-chai.use(testUtil.obnizAssert);
+
+
 
 describe('ble.log', function () {
-  beforeEach(function (done) {
-    return testUtil.setupObnizPromise(this, done, { binary: true });
+  beforeEach(async function () {
+    await testUtil.setupObnizPromise(this, null, { binary: true });
   });
 
-  afterEach(function (done) {
-    return testUtil.releaseObnizePromise(this, done);
+   afterEach(async function () {
+    await testUtil.releaseObnizePromise(this);
   });
 
   it('request test no.0', function () {

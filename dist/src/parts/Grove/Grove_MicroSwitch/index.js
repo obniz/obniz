@@ -50,3 +50,4 @@ class Grove_MicroSwitch {
     }
 }
 exports.default = Grove_MicroSwitch;
+//# sourceMappingURL=index.js.map

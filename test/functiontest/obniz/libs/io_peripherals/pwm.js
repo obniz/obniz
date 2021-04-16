@@ -2,16 +2,15 @@ let chai = require('chai');
 let expect = chai.expect;
 
 let testUtil = require(global.appRoot + '/test/functiontest/testUtil.js');
-chai.use(require('chai-like'));
-chai.use(testUtil.obnizAssert);
+
+
 
 describe('obniz.libs.pwm', function () {
-  beforeEach(function (done) {
-    return testUtil.setupObnizPromise(this, done);
+ beforeEach(async function () {
+    await testUtil.setupObnizPromise(this);
   });
-
-  afterEach(function (done) {
-    return testUtil.releaseObnizePromise(this, done);
+afterEach(async function () {
+    await testUtil.releaseObnizePromise(this);
   });
 
   it('getpwm', function () {

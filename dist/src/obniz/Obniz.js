@@ -55,3 +55,4 @@ exports.Obniz = Obniz;
  */
 Obniz.M5StickC = m5stickc_1.M5StickC;
 Obniz.M5StackBasic = m5stack_basic_1.M5StackBasic;
+//# sourceMappingURL=Obniz.js.map

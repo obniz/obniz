@@ -51,3 +51,4 @@ for (const path of context.keys()) {
     }
 }
 module.exports = Obniz_1.Obniz;
+//# sourceMappingURL=index.js.map

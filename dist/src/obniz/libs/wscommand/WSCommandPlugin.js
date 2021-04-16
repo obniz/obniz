@@ -54,3 +54,4 @@ class WSCommandPlugin extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandPlugin;
+//# sourceMappingURL=WSCommandPlugin.js.map

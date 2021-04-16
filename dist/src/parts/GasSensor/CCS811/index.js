@@ -201,3 +201,4 @@ class CCS811 extends i2cParts_1.default {
     }
 }
 exports.default = CCS811;
+//# sourceMappingURL=index.js.map

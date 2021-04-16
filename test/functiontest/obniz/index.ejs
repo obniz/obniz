@@ -27,38 +27,42 @@
       });
 
     describe('browser', () => {
-        it("instance", function () {
+        it("instance", async function () {
             sinon.stub(Obniz.prototype, 'prompt');
             var obniz = new Obniz('OBNIZ_ID')
             expect(obniz).to.be.instanceOf(Obniz);
+            await new Promise(r => setTimeout(r,1));
             sinon.assert.calledOnce(Obniz.prototype.prompt);
             Obniz.prototype.prompt.restore(); // Unwraps the spy
         });
       
-        it("connect", function () {
+        it("connect", async function () {
+            this.timeout(10*1000);
             var obniz = new Obniz('11111111',{obniz_server: "ws://localhost:<%= port1 %>"});
             expect(obniz).to.be.instanceOf(Obniz);
-            var count = 100;
-            return new Promise(function(resolve,reject){
+            var count = 1000;
+            await new Promise(function(resolve,reject){
                 function loop(){
-                if(obniz.socket && obniz.socket.readyState === 1){ // OPEN
-                    return resolve();
-                };
-                count--;
-                if(count > 0){
-                    setTimeout(loop, 10);
-                }else{
-                    return reject("connection timeout error");
-                }
+                  if(obniz.socket && obniz.socket.readyState === 1){ // OPEN
+                      return resolve();
+                  };
+                  count--;
+                  if(count > 0){
+                      setTimeout(loop, 10);
+                  }else{
+                      return reject("connection timeout error");
+                  }
                 };
                 loop();
             });
+            await obniz.closeWait();
       });
-      it("soft_redirect", function () {
-          var obniz = new Obniz('11111111',{obniz_server: "ws://localhost:<%= port2 %>"});
+      it("soft_redirect", async function () {
+          this.timeout(10*1000);
+          var obniz = new Obniz('22222222',{obniz_server: "ws://localhost:<%= port2 %>"});
           expect(obniz).to.be.instanceOf(Obniz);
           var count = 1000;
-          return new Promise(function(resolve,reject){
+          await new Promise(function(resolve,reject){
               function loop(){
                 if(obniz.socket && obniz.socket.readyState === 1
                     && obniz.socket.url.startsWith("ws://localhost:<%= port3 %>")){ // redirected
@@ -73,6 +77,7 @@
               };
               loop();
           });
+         await obniz.closeWait();
       });
       
 

@@ -148,3 +148,4 @@ class UA651BLE {
     }
 }
 exports.default = UA651BLE;
+//# sourceMappingURL=index.js.map

@@ -33,3 +33,4 @@ class MPU6886 extends MPU6050_1.default {
     }
 }
 exports.default = MPU6886;
+//# sourceMappingURL=index.js.map

@@ -289,3 +289,4 @@ class LinkingServiceProperty {
     }
 }
 exports.default = LinkingServiceProperty;
+//# sourceMappingURL=service-property.js.map

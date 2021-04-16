@@ -4,7 +4,7 @@
  */
 // load from webpack
 
-let ws: any;
+let ws: typeof WebSocket;
 
 if (typeof WebSocket !== 'undefined') {
   ws = WebSocket;
@@ -22,22 +22,35 @@ class CompatibleWebSocket extends ws {
     error: 'onerror',
   };
 
-  constructor(...arg0: any) {
-    super(...arg0);
+  constructor(url: string, protocols?: string | string[]) {
+    super(url, protocols);
     this.binaryType = 'arraybuffer';
   }
 
   on(event: string, f: (...arg0: any) => void) {
-    const functionName = this.eventFunctionKetMap[event];
-    if (functionName) {
-      this[functionName] = f;
+    if (event === 'open') {
+      this.onopen = (_: Event) => {
+        f();
+      };
+    } else if (event === 'message') {
+      this.onmessage = (me: MessageEvent) => {
+        f(me.data);
+      };
+    } else if (event === 'close') {
+      this.onclose = (ce: CloseEvent) => {
+        f(ce.code);
+      };
+    } else if (event === 'error') {
+      this.onerror = (e: Event) => {
+        f(e);
+      };
     }
   }
 
   removeAllListeners(event: string) {
     const functionName = this.eventFunctionKetMap[event];
     if (functionName) {
-      this[functionName] = null;
+      (this as any)[functionName] = null;
     }
   }
 }

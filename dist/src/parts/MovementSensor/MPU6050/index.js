@@ -199,3 +199,4 @@ MPU6050.commands = {
         '2000dps': 0x18,
     },
 };
+//# sourceMappingURL=index.js.map

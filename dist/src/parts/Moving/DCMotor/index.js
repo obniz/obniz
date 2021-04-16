@@ -82,3 +82,4 @@ class DCMotor {
     }
 }
 exports.default = DCMotor;
+//# sourceMappingURL=index.js.map

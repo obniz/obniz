@@ -45,3 +45,4 @@ class LinkingIEEE754 {
     constructor() { }
 }
 exports.default = LinkingIEEE754;
+//# sourceMappingURL=ieee754.js.map

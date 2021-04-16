@@ -716,3 +716,4 @@ class LinkingServiceSetting {
     }
 }
 exports.default = LinkingServiceSetting;
+//# sourceMappingURL=service-setting.js.map

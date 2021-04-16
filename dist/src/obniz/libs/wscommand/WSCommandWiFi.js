@@ -94,3 +94,4 @@ class WSCommandWiFi extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandWiFi;
+//# sourceMappingURL=WSCommandWiFi.js.map

@@ -77,3 +77,4 @@ class WSCommandAD extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandAD;
+//# sourceMappingURL=WSCommandAD.js.map

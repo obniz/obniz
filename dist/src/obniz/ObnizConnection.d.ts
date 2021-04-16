@@ -6,7 +6,7 @@ import EventEmitter from 'eventemitter3';
 import wsClient from 'ws';
 import WSCommand from './libs/wscommand';
 import { ObnizOptions } from './ObnizOptions';
-export declare type ObnizConnectionEventNames = 'connect' | 'close' | 'notify';
+export declare type ObnizConnectionEventNames = 'connect' | 'close';
 export interface ObnizErrorMessage {
     alert: 'warn' | 'error';
     message: string;
@@ -350,12 +350,12 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     protected wsOnOpen(): void;
     protected wsOnMessage(data: any): void;
     protected wsOnClose(event: any): void;
-    protected _reconnect(): void;
     protected wsOnError(event: any): void;
     protected wsOnUnexpectedResponse(req: any, res?: any): void;
     protected tryWsConnectOnceWait(desired_server?: string): Promise<void>;
-    protected cloudWsConnectWait(desired_server?: string): Promise<unknown>;
-    protected _connectLocalWait(): Promise<unknown>;
+    protected _connectCloudWait(desired_server?: string): Promise<unknown>;
+    protected _createCloudSocket(url: string): wsClient;
+    protected _connectLocalWait(): Promise<unknown> | undefined;
     protected _disconnectLocal(): void;
     protected _disconnectCloudRequest(): void;
     protected _disconnectCloud(notify?: boolean): void;

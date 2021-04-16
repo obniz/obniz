@@ -91,3 +91,4 @@ class MPU9250 extends MPU6500_1.default {
     }
 }
 exports.default = MPU9250;
+//# sourceMappingURL=index.js.map

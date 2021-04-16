@@ -164,3 +164,4 @@ class Logtta_TH {
     }
 }
 exports.default = Logtta_TH;
+//# sourceMappingURL=index.js.map

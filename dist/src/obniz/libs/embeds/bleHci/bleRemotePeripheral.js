@@ -590,3 +590,4 @@ class BleRemotePeripheral {
     }
 }
 exports.default = BleRemotePeripheral;
+//# sourceMappingURL=bleRemotePeripheral.js.map

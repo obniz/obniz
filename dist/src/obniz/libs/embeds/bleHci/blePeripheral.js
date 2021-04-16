@@ -173,3 +173,4 @@ class BlePeripheral {
     onerror(error) { }
 }
 exports.default = BlePeripheral;
+//# sourceMappingURL=blePeripheral.js.map

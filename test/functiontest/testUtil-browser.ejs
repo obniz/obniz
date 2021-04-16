@@ -1,6 +1,4 @@
 
-sinon.stub(Obniz.prototype , 'wsOnClose');
-
 var   serverDataCount = 0;
 var   errorDataCount = 0;
 var testUtil = {
@@ -26,7 +24,7 @@ var testUtil = {
     return new Obniz(obnizId, {obniz_server: "ws://localhost:" + port, binary: binary});
   },
 
-  setupNotConnectedYetObnizPromise: function(obj, done, options) {
+  setupNotConnectedYetObnizPromise: async function(obj, done, options) {
     options = options || {};
     let stub = sinon.stub();
     stub.on = sinon.stub();
@@ -35,18 +33,20 @@ var testUtil = {
     stub.removeAllListeners = sinon.stub();
     stub.readyState = 1;
 
-    sinon.stub(Obniz.prototype, 'wsconnect');
+    sinon.stub(Obniz.prototype, '_createCloudSocket').callsFake(() => {
+      return stub;
+    });
     obj.obniz = this.createObniz(100, '12345678', options);
-    obj.obniz.socket = stub;
     obj.obniz.error = sinon.stub();
+    await new Promise((r) => setTimeout(r, 1));
     obj.obniz.wsOnOpen();
 
     serverDataCount = 0;
-
+    await new Promise((r) => setTimeout(r, 1));
     done();
   },
 
-  setupObnizPromise: function(obj, done, options) {
+  setupObnizPromise: async function(obj, done, options) {
     options = options || {};
     let stub = sinon.stub();
     stub.on = sinon.stub();
@@ -55,11 +55,13 @@ var testUtil = {
     stub.removeAllListeners = sinon.stub();
     stub.readyState = 1;
 
-    sinon.stub(Obniz.prototype, 'wsconnect');
+    sinon.stub(Obniz.prototype, '_createCloudSocket').callsFake(() => {
+      return stub;
+    });
     obj.obnizOptions = options;
     obj.obniz = this.createObniz(100, '12345678', options);
-    obj.obniz.socket = stub;
     obj.obniz.error = sinon.stub();
+    await new Promise((r) => setTimeout(r, 1));
     obj.obniz.wsOnOpen();
     obj.obniz.wsOnMessage(JSON.stringify([{
       ws:{
@@ -73,6 +75,7 @@ var testUtil = {
 
     expect(obj.obniz).send([{"ws":{"reset_obniz_on_ws_disconnection":true}}]);
 
+    await new Promise((r) => setTimeout(r, 1));
     done();
   },
 
@@ -80,8 +83,9 @@ var testUtil = {
   releaseObnizePromise: function (obj,done) {
     obj.obniz._close();
     obj.obniz = null;
-    Obniz.prototype.wsconnect.restore();
-    
+    Obniz.prototype._createCloudSocket.restore();
+
+
     done();
   },
 

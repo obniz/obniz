@@ -7,7 +7,6 @@ import testUtil = require('../testUtil');
 const expect = chai.expect;
 
 chai.use(chaiLike);
-chai.use(testUtil.obnizAssert);
 
 describe('ts', () => {
   it('test', () => {

@@ -27,3 +27,4 @@ class PaPIRsVZ {
     }
 }
 exports.default = PaPIRsVZ;
+//# sourceMappingURL=index.js.map

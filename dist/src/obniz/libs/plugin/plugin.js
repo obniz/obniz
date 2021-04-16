@@ -65,3 +65,4 @@ class Plugin {
     }
 }
 exports.default = Plugin;
+//# sourceMappingURL=plugin.js.map
