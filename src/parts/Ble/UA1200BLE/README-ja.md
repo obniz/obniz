@@ -70,6 +70,8 @@ await obniz.ble.scan.startWait();
 
 データフォーマットは次の通りで、血圧が mmHg もしくは kPa 形式で、脈拍が pulse/min 形式で入っています。
 
+[https://obniz.github.io/obniz/obnizjs/interfaces/parts.ua1200ble.ua1200bleresult.html](https://obniz.github.io/obniz/obnizjs/interfaces/parts.ua1200ble.ua1200bleresult.html)
+
 ```json
 {
   SystolicPressure_mmHg?: number; // ex) 128mmHg → 0x80 = 128, 0x00

@@ -174,16 +174,6 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
     });
   }
 
-  private _readFLOAT_LE(buffer: Buffer, index: number) {
-    const data = buffer.readUInt32LE(index);
-    let mantissa = data & 0x00ffffff;
-    if ((mantissa & 0x00800000) > 0) {
-      mantissa = -1 * (~(mantissa - 0x01) & 0x00ffffff);
-    }
-    const exponential = data >> 24;
-    return mantissa * Math.pow(10, exponential);
-  }
-
   private _readSFLOAT_LE(buffer: Buffer, index: number) {
     // convert SFLOAT Little Endian (not sfloat!) to numerical value
     const data = buffer.readUInt16LE(index);

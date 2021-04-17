@@ -106,15 +106,6 @@ class UA1200BLE {
             };
         });
     }
-    _readFLOAT_LE(buffer, index) {
-        const data = buffer.readUInt32LE(index);
-        let mantissa = data & 0x00ffffff;
-        if ((mantissa & 0x00800000) > 0) {
-            mantissa = -1 * (~(mantissa - 0x01) & 0x00ffffff);
-        }
-        const exponential = data >> 24;
-        return mantissa * Math.pow(10, exponential);
-    }
     _readSFLOAT_LE(buffer, index) {
         // convert SFLOAT Little Endian (not sfloat!) to numerical value
         const data = buffer.readUInt16LE(index);

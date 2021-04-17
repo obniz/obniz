@@ -43,7 +43,6 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
     constructor(peripheral: BleRemotePeripheral | null, timezoneOffsetMinute: number);
     pairingWait(): Promise<string | null>;
     getDataWait(): Promise<UA1200BLEResult[]>;
-    private _readFLOAT_LE;
     private _readSFLOAT_LE;
     private _analyzeData;
     private _getCharsCoopMode;
