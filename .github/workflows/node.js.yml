@@ -42,7 +42,6 @@ jobs:
         with:
           timeout_minutes: 10
           max_attempts: 3
-          retry_on: timeout
           command: npm test
 
   slack-notify:
