@@ -73,7 +73,7 @@ export default class ObnizUIs extends ObnizSystemMethods {
       }
       return;
     }
-    super.tryWsConnectOnceWait(desired_server);
+    return super.tryWsConnectOnceWait(desired_server);
   }
 
   protected prompt(filled = '', callback: any) {

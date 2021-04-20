@@ -55,7 +55,7 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
             }
             return;
         }
-        super.tryWsConnectOnceWait(desired_server);
+        return super.tryWsConnectOnceWait(desired_server);
     }
     prompt(filled = '', callback) {
         ObnizUIs._promptQueue.push({ filled, callback });
