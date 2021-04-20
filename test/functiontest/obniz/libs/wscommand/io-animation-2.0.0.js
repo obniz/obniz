@@ -2,19 +2,17 @@ let chai = require('chai');
 let expect = chai.expect;
 
 let testUtil = require('../../../testUtil.js');
-chai.use(require('chai-like'));
-chai.use(testUtil.obnizAssert);
 
 describe('io.animation2_0_0', function () {
-  beforeEach(function (done) {
-    return testUtil.setupObnizPromise(this, done, {
+  beforeEach(async function () {
+    await testUtil.setupObnizPromise(this, null, {
       binary: true,
       __firmware_ver: '2.0.0',
     });
   });
 
-  afterEach(function (done) {
-    return testUtil.releaseObnizePromise(this, done);
+  afterEach(async function () {
+    await testUtil.releaseObnizePromise(this);
   });
 
   it('request ioAnimation', function () {
@@ -192,7 +190,7 @@ describe('io.animation2_0_0', function () {
       });
     let binary = new Uint8Array(binaryArray);
 
-    let json = this.obniz.binary2Json(binary);
+    let json = this.obniz._binary2Json(binary);
 
     let isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;

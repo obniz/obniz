@@ -2,16 +2,13 @@ let chai = require('chai');
 let expect = chai.expect;
 let sinon = require('sinon');
 let testUtil = require('../../../testUtil.js');
-chai.use(require('chai-like'));
-chai.use(testUtil.obnizAssert);
 
 describe('obniz.libs.io', function () {
-  beforeEach(function (done) {
-    return testUtil.setupObnizPromise(this, done);
+  beforeEach(async function () {
+    await testUtil.setupObnizPromise(this);
   });
-
-  afterEach(function (done) {
-    return testUtil.releaseObnizePromise(this, done);
+  afterEach(async function () {
+    await testUtil.releaseObnizePromise(this);
   });
 
   it('output(true)', function () {

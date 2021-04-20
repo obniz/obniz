@@ -11,7 +11,7 @@ import CommandPWM from './WSCommandPWM';
 export default class WSCommandDirective extends WSCommand {
   public availableCommands: any;
 
-  protected module: number;
+  public module: number;
   protected _CommandRegistrate: number;
   protected _CommandPause: number;
   protected _CommandResume: number;

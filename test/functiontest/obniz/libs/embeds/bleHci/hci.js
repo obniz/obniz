@@ -3,16 +3,14 @@ let expect = chai.expect;
 let sinon = require('sinon');
 
 let testUtil = require('../../../../testUtil.js');
-chai.use(require('chai-like'));
-chai.use(testUtil.obnizAssert);
 
 describe('ble-security', function () {
-  beforeEach(function (done) {
-    return testUtil.setupObnizPromise(this, done, { __firmware_ver: '3.0.0' });
+  beforeEach(async function () {
+    await testUtil.setupObnizPromise(this, null, { __firmware_ver: '3.0.0' });
   });
 
-  afterEach(function (done) {
-    return testUtil.releaseObnizePromise(this, done);
+  afterEach(async function () {
+    await testUtil.releaseObnizePromise(this);
   });
 
   it('write', function () {

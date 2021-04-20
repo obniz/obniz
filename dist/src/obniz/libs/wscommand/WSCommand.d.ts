@@ -4,11 +4,14 @@
  */
 /// <reference types="tv4" />
 import WSSchema from './WSSchema';
+declare type WSCommandConstructor = new () => WSCommand;
 export default abstract class WSCommand {
     static get schema(): WSSchema.TV4;
-    static get CommandClasses(): any;
+    static get CommandClasses(): {
+        [key: string]: WSCommandConstructor;
+    };
     get WSCommandNotFoundError(): typeof WSCommandNotFoundError;
-    static addCommandClass(name: any, classObj: any): void;
+    static addCommandClass(name: string, classObj: WSCommandConstructor): void;
     static framed(module: any, func: any, payload: any): Uint8Array;
     static dequeueOne(buf: any): {
         module: any;
@@ -20,7 +23,7 @@ export default abstract class WSCommand {
     _hw: any;
     ioNotUsed: number;
     COMMAND_FUNC_ID_ERROR: number;
-    protected abstract module: number;
+    abstract module: number;
     private parsed?;
     constructor();
     setHw(obj: any): void;

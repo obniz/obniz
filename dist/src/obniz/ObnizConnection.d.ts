@@ -3,9 +3,10 @@
  * @module ObnizCore
  */
 import EventEmitter from 'eventemitter3';
+import wsClient from 'ws';
 import WSCommand from './libs/wscommand';
 import { ObnizOptions } from './ObnizOptions';
-export declare type ObnizConnectionEventNames = 'connect' | 'close' | 'notify';
+export declare type ObnizConnectionEventNames = 'connect' | 'close';
 export interface ObnizErrorMessage {
     alert: 'warn' | 'error';
     message: string;
@@ -14,7 +15,7 @@ export interface ObnizErrorMessage {
  * @ignore
  *
  */
-declare type ObnizConnectionEventNamesInternal = '_close';
+declare type ObnizConnectionEventNamesInternal = '_close' | '_cloudConnectRedirect' | '_cloudConnectReady' | '_cloudConnectClose' | '_localConnectReady' | '_localConnectClose';
 export default abstract class ObnizConnection extends EventEmitter<ObnizConnectionEventNames | ObnizConnectionEventNamesInternal> {
     /**
      * obniz.js version
@@ -182,26 +183,30 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
      *
      */
     connectionState: 'closed' | 'connecting' | 'connected' | 'closing';
-    protected _userManualConnectionClose: boolean;
-    protected socket: any;
-    protected socket_local: any;
-    protected debugs: any;
+    protected socket: wsClient | null;
+    protected socket_local: wsClient | null;
     protected bufferdAmoundWarnBytes: number;
-    protected options: any;
-    protected wscommand: any;
-    protected wscommands: any;
-    protected _sendQueueTimer: any;
-    protected _sendQueue: any;
-    protected _waitForLocalConnectReadyTimer: any;
+    protected options: Required<ObnizOptions>;
+    protected wscommand: typeof WSCommand | null;
+    protected wscommands: WSCommand[];
+    protected _sendQueueTimer: ReturnType<typeof setTimeout> | null;
+    protected _sendQueue: Uint8Array[] | null;
+    protected _waitForLocalConnectReadyTimer: ReturnType<typeof setTimeout> | null;
     protected _connectionRetryCount: number;
-    protected sendPool: any;
+    private _sendPool;
     private _onConnectCalled;
     private _repeatInterval;
-    private _nextLoopTimeout?;
-    private _nextPingTimeout?;
+    private _nextLoopTimeout;
+    private _nextPingTimeout;
+    private _nextAutoConnectLoopTimeout;
     private _lastDataReceivedAt;
     private _autoConnectTimeout?;
+    private _localConnectIp;
     constructor(id: string, options?: ObnizOptions);
+    get autoConnect(): boolean;
+    set autoConnect(val: boolean);
+    startCommandPool(): void;
+    endCommandPool(): any[] | null;
     /**
      * With this you wait until the connection to obniz Board succeeds.
      *
@@ -331,7 +336,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
      * @ignore
      * @private
      */
-    _runUserCreatedFunction(func?: (..._args: any) => any, ...args: any[]): void;
+    _runUserCreatedFunction(func?: (..._args: any) => any, ...args: any[]): any;
     /**
      * Set onloop function. Use onloop property instead. This is deprecated function.
      *
@@ -345,28 +350,33 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     protected wsOnOpen(): void;
     protected wsOnMessage(data: any): void;
     protected wsOnClose(event: any): void;
-    protected _reconnect(): void;
     protected wsOnError(event: any): void;
     protected wsOnUnexpectedResponse(req: any, res?: any): void;
-    protected wsconnect(desired_server?: string): void;
-    protected _connectLocal(host: any): void;
+    protected tryWsConnectOnceWait(desired_server?: string): Promise<void>;
+    protected _connectCloudWait(desired_server?: string): Promise<unknown>;
+    protected _createCloudSocket(url: string): wsClient;
+    protected _connectLocalWait(): Promise<unknown> | undefined;
     protected _disconnectLocal(): void;
-    protected clearSocket(socket: any): void;
+    protected _disconnectCloudRequest(): void;
+    protected _disconnectCloud(notify?: boolean): void;
+    protected _clearSocket(socket: wsClient): void;
     /**
      * This function will be called before obniz.onconnect called;
      */
     protected _beforeOnConnect(): void;
     protected _callOnConnect(): void;
-    protected print_debug(str: any): void;
+    protected _print_debug(str: any): void;
     protected _sendRouted(data: any): void;
     protected _drainQueued(): void;
-    protected notifyToModule(obj: any): void;
+    protected _notifyToModule(obj: any): void;
     protected _canConnectToInsecure(): boolean;
-    protected handleWSCommand(wsObj: any): void;
-    protected handleSystemCommand(wsObj: any): void;
-    protected binary2Json(binary: any): any;
+    protected _handleWSCommand(wsObj: any): void;
+    protected _handleSystemCommand(wsObj: any): void;
+    protected _binary2Json(binary: any): any;
     private _startLoopInBackground;
     private _stopLoopInBackground;
+    private _startAutoConnectLoopInBackground;
+    private _stopAutoConnectLoopInBackground;
     private _startPingLoopInBackground;
 }
 export {};

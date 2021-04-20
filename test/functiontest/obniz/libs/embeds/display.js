@@ -2,22 +2,18 @@ let chai = require('chai');
 let expect = chai.expect;
 
 let testUtil = require('../../../testUtil.js');
-chai.use(require('chai-like'));
-chai.use(testUtil.obnizAssert);
 
 describe('obniz.libs.display', function () {
-  beforeEach(function (done) {
-    return testUtil.setupObnizPromise(this, () => {
-      if (this.obniz.isNode) {
-        // disable node-canvas
-        this.obniz.display._ctx = () => {};
-      }
-      done();
-    });
+  beforeEach(async function () {
+    await testUtil.setupObnizPromise(this);
+    if (this.obniz.isNode) {
+      // disable node-canvas
+      this.obniz.display._ctx = () => {};
+    }
   });
 
-  afterEach(function (done) {
-    return testUtil.releaseObnizePromise(this, done);
+  afterEach(async function () {
+    await testUtil.releaseObnizePromise(this);
   });
 
   it('clear', function () {

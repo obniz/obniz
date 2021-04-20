@@ -8,15 +8,14 @@
     <script src="<%= appRoot %>/node_modules/chai/chai.js"></script> 
     <script src="<%= appRoot %>/node_modules/sinon/pkg/sinon.js"></script> 
     <script src="<%= appRoot %>/obniz.js"></script>
-    <script src="<%= appRoot %>/test/functiontest/testUtil-browser.ejs"></script>
+    <script src="<%= appRoot %>/test/functiontest/testUtil.js"></script>
   </head>
   <body>
     <script>
       expect = chai.expect;
       assert = chai.assert;
       mocha.setup('bdd');
-      
-      chai.use(testUtil.obnizAssert);
+
     </script>
     <div id="mocha"></div>
     <script>

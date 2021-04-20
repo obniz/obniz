@@ -223,7 +223,7 @@ class ObnizComponents extends ObnizParts_1.default {
                     this._allComponentKeys.push(key);
                     if (typeof this[key].debugHandler === 'function') {
                         this[key].debugHandler = (text) => {
-                            this.print_debug(text);
+                            this._print_debug(text);
                         };
                     }
                 }
@@ -253,13 +253,13 @@ class ObnizComponents extends ObnizParts_1.default {
         }
     }
     _resetComponents() {
-        this.print_debug('components state resets');
+        this._print_debug('components state resets');
         for (const key of this._allComponentKeys) {
             this[key]._reset();
         }
     }
-    notifyToModule(obj) {
-        super.notifyToModule(obj);
+    _notifyToModule(obj) {
+        super._notifyToModule(obj);
         for (const key of this._allComponentKeys) {
             const targetComponent = this[key];
             if (targetComponent instanceof ComponentAbstact_1.ComponentAbstract) {
@@ -282,8 +282,8 @@ class ObnizComponents extends ObnizParts_1.default {
             }
         }
     }
-    handleSystemCommand(wsObj) {
-        super.handleSystemCommand(wsObj);
+    _handleSystemCommand(wsObj) {
+        super._handleSystemCommand(wsObj);
         // ping pong
         if (wsObj.pong) {
             for (const callback of this.pongObservers) {

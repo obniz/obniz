@@ -486,7 +486,7 @@ export default abstract class ObnizComponents extends ObnizParts {
           this._allComponentKeys.push(key);
           if (typeof (this as any)[key].debugHandler === 'function') {
             (this as any)[key].debugHandler = (text: any) => {
-              this.print_debug(text);
+              this._print_debug(text);
             };
           }
         }
@@ -519,14 +519,14 @@ export default abstract class ObnizComponents extends ObnizParts {
   }
 
   protected _resetComponents() {
-    this.print_debug('components state resets');
+    this._print_debug('components state resets');
     for (const key of this._allComponentKeys) {
       (this as any)[key]._reset();
     }
   }
 
-  protected notifyToModule(obj: any) {
-    super.notifyToModule(obj);
+  protected _notifyToModule(obj: any) {
+    super._notifyToModule(obj);
     for (const key of this._allComponentKeys) {
       const targetComponent = (this as any)[key];
       if (targetComponent instanceof ComponentAbstract) {
@@ -549,8 +549,8 @@ export default abstract class ObnizComponents extends ObnizParts {
     }
   }
 
-  protected handleSystemCommand(wsObj: any) {
-    super.handleSystemCommand(wsObj);
+  protected _handleSystemCommand(wsObj: any) {
+    super._handleSystemCommand(wsObj);
     // ping pong
     if (wsObj.pong) {
       for (const callback of this.pongObservers) {

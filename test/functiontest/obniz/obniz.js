@@ -3,19 +3,16 @@ let expect = chai.expect;
 let sinon = require('sinon');
 
 let testUtil = require('../testUtil.js');
-chai.use(require('chai-like'));
-chai.use(testUtil.obnizAssert);
 
-describe('obniz', function() {
-  beforeEach(function(done) {
-    return testUtil.setupObnizPromise(this, done);
+describe('obniz', function () {
+  beforeEach(async function () {
+    await testUtil.setupObnizPromise(this);
+  });
+  afterEach(async function () {
+    await testUtil.releaseObnizePromise(this);
   });
 
-  afterEach(function(done) {
-    return testUtil.releaseObnizePromise(this, done);
-  });
-
-  it('message', function() {
+  it('message', function () {
     let targets = ['1234-1231', '1234-1230'];
 
     this.obniz.message(targets, 'pressed');
@@ -31,7 +28,7 @@ describe('obniz', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('message receive', function() {
+  it('message receive', function () {
     this.obniz.onmessage = sinon.stub();
 
     testUtil.receiveJson(this.obniz, [
@@ -51,7 +48,7 @@ describe('obniz', function() {
     expect(this.obniz.onmessage.getCall(0).args[1]).to.be.equal('1234-5678');
   });
 
-  it('message receive2', function() {
+  it('message receive2', function () {
     this.obniz.onmessage = sinon.stub();
 
     testUtil.receiveJson(this.obniz, [
@@ -76,7 +73,7 @@ describe('obniz', function() {
     expect(this.obniz.onmessage.getCall(0).args[1]).to.be.equal(null);
   });
 
-  it('resetOnDisconnect', function() {
+  it('resetOnDisconnect', function () {
     this.obniz.resetOnDisconnect(false);
     expect(this.obniz).send([
       { ws: { reset_obniz_on_ws_disconnection: false } },
@@ -84,26 +81,7 @@ describe('obniz', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('ready', async function() {
-    await wait(1);
-    this.obniz.onconnect = sinon.stub();
-    testUtil.receiveJson(this.obniz, [
-      { ws: { ready: true, obniz: { firmware: '1.0.3' } } },
-    ]);
-    await wait(1);
-
-    expect(this.obniz.onconnect.callCount).to.be.equal(1);
-    expect(this.obniz.onconnect.getCall(0).args.length).to.be.equal(1);
-    expect(this.obniz.onconnect.getCall(0).args[0]).to.be.equal(this.obniz);
-
-    expect(this.obniz).send([
-      { ws: { reset_obniz_on_ws_disconnection: true } },
-    ]);
-
-    expect(this.obniz).to.be.finished;
-  });
-
-  it('warning', function() {
+  it('warning', function () {
     this.obniz.warning = sinon.stub();
     testUtil.receiveJson(this.obniz, [
       {
@@ -125,7 +103,7 @@ describe('obniz', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('error', function() {
+  it('error', function () {
     let error = this.obniz.error;
     this.obniz.error = sinon.stub();
     testUtil.receiveJson(this.obniz, [
@@ -149,7 +127,7 @@ describe('obniz', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('unknown part', function() {
+  it('unknown part', function () {
     expect(() => {
       this.obniz.wired('unknown parts', { anode: 0, cathode: 1 });
     }).throws;
@@ -157,7 +135,7 @@ describe('obniz', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('free i2c', function() {
+  it('free i2c', function () {
     let i2c = this.obniz.getFreeI2C();
     expect(i2c).to.be.equal(this.obniz.i2c0);
 
@@ -168,7 +146,7 @@ describe('obniz', function() {
     expect(i2c2).to.be.equal(this.obniz.i2c0);
   });
 
-  it('free pwm', function() {
+  it('free pwm', function () {
     let pwm0 = this.obniz.getFreePwm();
     expect(pwm0).to.be.equal(this.obniz.pwm0);
 
@@ -194,7 +172,7 @@ describe('obniz', function() {
     expect(pwm6).to.be.equal(this.obniz.pwm4);
   });
 
-  it('free spi', function() {
+  it('free spi', function () {
     let spi0 = this.obniz.getFreeSpi();
     expect(spi0).to.be.equal(this.obniz.spi0);
 
@@ -208,7 +186,7 @@ describe('obniz', function() {
     expect(spi2).to.be.equal(this.obniz.spi1);
   });
 
-  it('free Uart', function() {
+  it('free Uart', function () {
     let uart0 = this.obniz.getFreeUart();
     expect(uart0).to.be.equal(this.obniz.uart0);
 
@@ -222,8 +200,7 @@ describe('obniz', function() {
     expect(uart).to.be.equal(this.obniz.uart0);
   });
 
-  function wait(ms){
-    return new Promise(resolve => setTimeout(resolve,ms));
+  function wait(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 });
-

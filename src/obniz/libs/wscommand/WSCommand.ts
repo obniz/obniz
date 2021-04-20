@@ -5,7 +5,8 @@
 
 import WSSchema from './WSSchema';
 
-const commandClasses: any = {};
+type WSCommandConstructor = new () => WSCommand;
+const commandClasses: { [key: string]: WSCommandConstructor } = {};
 export default abstract class WSCommand {
   static get schema() {
     return WSSchema;
@@ -19,7 +20,7 @@ export default abstract class WSCommand {
     return WSCommandNotFoundError;
   }
 
-  public static addCommandClass(name: any, classObj: any) {
+  public static addCommandClass(name: string, classObj: WSCommandConstructor) {
     commandClasses[name] = classObj;
   }
 
@@ -123,7 +124,7 @@ export default abstract class WSCommand {
   public ioNotUsed: number;
   public COMMAND_FUNC_ID_ERROR: number;
 
-  protected abstract module: number;
+  public abstract module: number;
   private parsed?: (module: number, func: number, payload: Uint8Array) => void;
 
   constructor() {

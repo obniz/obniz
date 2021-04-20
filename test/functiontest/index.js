@@ -1,6 +1,7 @@
 let path = require('path');
 let ejs = require('ejs');
 let expect = require('chai').expect;
+require('./testUtil');
 
 global.appRoot = path.resolve(__dirname + '/../../') + '/';
 

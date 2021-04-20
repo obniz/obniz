@@ -145,8 +145,8 @@ class ObnizDevice extends ObnizUIs_1.default {
     _callOnConnect() {
         super._callOnConnect();
     }
-    notifyToModule(obj) {
-        super.notifyToModule(obj);
+    _notifyToModule(obj) {
+        super._notifyToModule(obj);
         // notify messaging
         if (typeof obj.message === 'object' && this.onmessage) {
             this._runUserCreatedFunction(this.onmessage, obj.message.data, obj.message.from);

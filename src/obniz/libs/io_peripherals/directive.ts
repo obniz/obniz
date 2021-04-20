@@ -137,10 +137,9 @@ export default class Directive extends ComponentAbstract {
       const operation: DirectiveAnimationFrameFunction = state.state;
 
       // dry run. and get json commands
-      (this.Obniz as any).sendPool = [];
+      this.Obniz.startCommandPool();
       operation(i);
-      const pooledJsonArray: any = (this.Obniz as any).sendPool;
-      (this.Obniz as any).sendPool = null;
+      const pooledJsonArray = this.Obniz.endCommandPool();
       states.push({
         duration,
         state: pooledJsonArray,

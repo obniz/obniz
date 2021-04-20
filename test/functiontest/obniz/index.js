@@ -6,8 +6,8 @@ let sinon = require('sinon');
 let path = require('path');
 
 let testUtil = require('../testUtil.js');
-chai.use(require('chai-like'));
-chai.use(testUtil.obnizAssert);
+
+chai.use(testUtil.obnizAssert.bind(testUtil));
 
 const getPort = require('get-port');
 
@@ -18,11 +18,12 @@ describe('obniz.index', function () {
 
   afterEach(function () {});
 
-  it('instance', function () {
+  it('instance', async function () {
     sinon.stub(console, 'error');
     sinon.stub(console, 'log');
     let obniz = testUtil.createObniz(3000, 'OBNIZ_ID_HERE');
     expect(obniz).to.be.obniz;
+    await wait(10);
     sinon.assert.calledOnce(console.error);
     sinon.assert.calledWith(console.error, 'invalid obniz id');
     console.error.restore(); // Unwraps the spy
@@ -121,61 +122,67 @@ describe('obniz.index', function () {
       });
   });
 
-  if (testUtil.needBrowserTest()) {
-    it('browser', function () {
-      this.timeout(20000);
-      let port1, port2, port3, server1, server2, server3;
+  it('browser', function () {
+    if (!testUtil.needBrowserTest()) {
+      this.skip();
+      return;
+    }
+    this.timeout(200 * 1000);
+    let port1, port2, port3, server1, server2, server3;
 
-      return getPort()
-        .then(function (p) {
-          port1 = p;
-          // console.log(new Date(), 'use port ' + port1);
-          server1 = testUtil.createServer(port1);
-          return getPort();
-        })
-        .then(function (p) {
-          port2 = p;
-          // console.log(new Date(), 'use port ' + port2);
-          server2 = testUtil.createServer(port2);
-          return getPort();
-        })
-        .then(function (p) {
-          port3 = p;
-          // console.log(new Date(), 'use port ' + port3);
-          server3 = testUtil.createServer(port3);
+    return getPort()
+      .then(function (p) {
+        port1 = p;
+        // console.log(new Date(), 'use port ' + port1);
+        server1 = testUtil.createServer(port1);
+        return getPort();
+      })
+      .then(function (p) {
+        port2 = p;
+        // console.log(new Date(), 'use port ' + port2);
+        server2 = testUtil.createServer(port2);
+        return getPort();
+      })
+      .then(function (p) {
+        port3 = p;
+        // console.log(new Date(), 'use port ' + port3);
+        server3 = testUtil.createServer(port3);
 
-          server2.on('connection', function () {
-            setTimeout(function () {
-              let val = [{ ws: { redirect: 'ws://localhost:' + port3 } }];
-              server2.clients.values().next().value.send(JSON.stringify(val));
-            }, 10);
-          });
-
-          return;
-        })
-        .then(function () {
-          return testUtil.ejs(path.resolve(__dirname, 'index.ejs'), {
-            port1,
-            port2,
-            port3,
-          });
-        })
-        .then(function (val) {
-          expect(val.failures).to.equal(0);
-          return wait(waitMs);
-        })
-        .then(function () {
-          server1.close();
-          server2.close();
-          server3.close();
+        server1.on('connection', function () {
+          // console.log(new Date(), 'server1 connected');
         });
-    });
-  }
+
+        server2.on('connection', function () {
+          // console.log(new Date(), 'server2 connected');
+          setTimeout(function () {
+            let val = [{ ws: { redirect: 'ws://localhost:' + port3 } }];
+            server2.clients.values().next().value.send(JSON.stringify(val));
+          }, 10);
+        });
+
+        return;
+      })
+      .then(function () {
+        return testUtil.ejs(path.resolve(__dirname, 'index.ejs'), {
+          port1,
+          port2,
+          port3,
+        });
+      })
+      .then(function (val) {
+        expect(val.failures).to.equal(0);
+        return wait(waitMs);
+      })
+      .then(function () {
+        server1.close();
+        server2.close();
+        server3.close();
+      });
+  });
 
   it('compress', function () {
-    return new Promise((resolve) => {
-      testUtil.setupObnizPromise(this, resolve, { binary: true });
-    })
+    return testUtil
+      .setupObnizPromise(this, null, { binary: true })
       .then(() => {
         expect(this.obniz).to.be.obniz;
         expect(this.obniz).to.be.finished; // input queue
@@ -190,9 +197,7 @@ describe('obniz.index', function () {
         expect(this.obniz).sendBinary(new Uint8Array([2, 0, 2, 1, 1]));
         expect(this.obniz).to.be.finished;
 
-        return new Promise((resolve) => {
-          testUtil.releaseObnizePromise(this, resolve);
-        });
+        return testUtil.releaseObnizePromise(this);
       })
       .then(function () {
         return Promise.resolve();
@@ -202,9 +207,8 @@ describe('obniz.index', function () {
   it('onconnect', function () {
     let called = false;
     let called2 = false;
-    return new Promise((resolve) => {
-      testUtil.setupNotConnectedYetObnizPromise(this, resolve);
-    })
+    return testUtil
+      .setupNotConnectedYetObnizPromise(this)
       .then(() => {
         expect(this.obniz).to.be.obniz;
         expect(this.obniz).to.be.finished; // input queue
@@ -231,9 +235,7 @@ describe('obniz.index', function () {
         });
       })
       .then(() => {
-        return new Promise((resolve) => {
-          testUtil.releaseObnizePromise(this, resolve);
-        });
+        return testUtil.releaseObnizePromise(this);
       })
       .then(() => {
         expect(called).to.be.true;
@@ -243,9 +245,8 @@ describe('obniz.index', function () {
 
   it('metadata', function () {
     let metadata = null;
-    return new Promise((resolve) => {
-      testUtil.setupNotConnectedYetObnizPromise(this, resolve);
-    })
+    return testUtil
+      .setupNotConnectedYetObnizPromise(this)
       .then(() => {
         expect(this.obniz).to.be.obniz;
         expect(this.obniz).to.be.finished; // input queue
@@ -270,9 +271,7 @@ describe('obniz.index', function () {
         });
       })
       .then(() => {
-        return new Promise((resolve) => {
-          testUtil.releaseObnizePromise(this, resolve);
-        });
+        return testUtil.releaseObnizePromise(this);
       })
       .then(() => {
         expect(metadata.description).to.equal('data');
@@ -282,9 +281,7 @@ describe('obniz.index', function () {
   it('onclose', async () => {
     let called = false;
     let called2 = false;
-    await new Promise((resolve) => {
-      testUtil.setupNotConnectedYetObnizPromise(this, resolve);
-    });
+    await testUtil.setupNotConnectedYetObnizPromise(this);
 
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).to.be.finished; // input queue
@@ -309,21 +306,16 @@ describe('obniz.index', function () {
     await wait(10);
     expect(called).to.be.false;
 
-    // wsOnClose wrapped by stub
-    this.obniz.wsOnClose.wrappedMethod.bind(this.obniz)();
+    this.obniz.wsOnClose();
 
     expect(called).to.be.true;
     expect(called2).to.be.true;
 
-    await new Promise((resolve) => {
-      testUtil.releaseObnizePromise(this, resolve);
-    });
+    await testUtil.releaseObnizePromise(this);
   });
 
   it('closeWait', async () => {
-    await new Promise((resolve) => {
-      testUtil.setupNotConnectedYetObnizPromise(this, resolve);
-    });
+    await testUtil.setupNotConnectedYetObnizPromise(this);
 
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).to.be.finished; // input queue
@@ -343,21 +335,16 @@ describe('obniz.index', function () {
 
     let p = this.obniz.closeWait();
 
-    // wsOnClose wrapped by stub
-    this.obniz.wsOnClose.wrappedMethod.bind(this.obniz)();
+    this.obniz.wsOnClose();
 
     await p;
 
-    await new Promise((resolve) => {
-      testUtil.releaseObnizePromise(this, resolve);
-    });
+    await testUtil.releaseObnizePromise(this);
   });
 
   it('onloop', async () => {
     let called = false;
-    await new Promise((resolve) => {
-      testUtil.setupNotConnectedYetObnizPromise(this, resolve);
-    });
+    await testUtil.setupNotConnectedYetObnizPromise(this);
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).to.be.finished; // input queue
 
@@ -386,19 +373,15 @@ describe('obniz.index', function () {
     expect(this.obniz).to.be.finished;
     await pingPongWait(this.obniz);
 
-    await new Promise((resolve) => {
-      this.obniz.onloop = null;
-      testUtil.releaseObnizePromise(this, resolve);
-    });
+    this.obniz.onloop = null;
+    await testUtil.releaseObnizePromise(this);
 
     expect(called).to.be.true;
   });
 
   it('onloop in onconnect', async () => {
     let called = false;
-    await new Promise((resolve) => {
-      testUtil.setupNotConnectedYetObnizPromise(this, resolve);
-    });
+    await testUtil.setupNotConnectedYetObnizPromise(this);
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).to.be.finished; // input queue
 
@@ -430,10 +413,8 @@ describe('obniz.index', function () {
     await wait(10);
     await pingPongWait(this.obniz);
 
-    await new Promise((resolve) => {
-      this.obniz.onloop = null;
-      testUtil.releaseObnizePromise(this, resolve);
-    });
+    this.obniz.onloop = null;
+    await testUtil.releaseObnizePromise(this);
 
     expect(called).to.be.true;
   });
@@ -441,9 +422,7 @@ describe('obniz.index', function () {
   it('double repeat', async () => {
     let called = false;
     let called2 = false;
-    await new Promise((resolve) => {
-      testUtil.setupNotConnectedYetObnizPromise(this, resolve);
-    });
+    await testUtil.setupNotConnectedYetObnizPromise(this);
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).to.be.finished; // input queue
 
@@ -478,20 +457,15 @@ describe('obniz.index', function () {
 
     await wait(10);
 
-    await new Promise((resolve) => {
-      this.obniz.onloop = null;
-      testUtil.releaseObnizePromise(this, resolve);
-    });
+    this.obniz.onloop = null;
+    await testUtil.releaseObnizePromise(this);
 
     expect(called).to.be.false;
     expect(called2).to.be.true;
   });
 
   it('double repeat in onconnect', async () => {
-    await new Promise((resolve) => {
-      testUtil.setupNotConnectedYetObnizPromise(this, resolve);
-    });
-
+    await testUtil.setupNotConnectedYetObnizPromise(this);
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).to.be.finished; // input queue
 
@@ -529,19 +503,16 @@ describe('obniz.index', function () {
 
     await wait(510);
 
-    await new Promise((resolve) => {
-      this.obniz.onloop = null;
-      testUtil.releaseObnizePromise(this, resolve);
-    });
+    this.obniz.onloop = null;
+    await testUtil.releaseObnizePromise(this);
 
     expect(4 <= count && count <= 6).to.be.true;
   });
 
   it('connect_repeat', function () {
     let results = true;
-    return new Promise((resolve) => {
-      testUtil.setupNotConnectedYetObnizPromise(this, resolve);
-    })
+    return testUtil
+      .setupNotConnectedYetObnizPromise(this)
       .then(() => {
         expect(this.obniz).to.be.obniz;
         expect(this.obniz).to.be.finished; // input queue
@@ -573,10 +544,8 @@ describe('obniz.index', function () {
         });
       })
       .then(() => {
-        return new Promise((resolve) => {
-          this.obniz.onloop = null;
-          testUtil.releaseObnizePromise(this, resolve);
-        });
+        this.obniz.onloop = null;
+        return testUtil.releaseObnizePromise(this);
       })
       .then(() => {
         expect(results).to.be.true;
@@ -585,9 +554,8 @@ describe('obniz.index', function () {
 
   it('connect_onloop', function () {
     let results = true;
-    return new Promise((resolve) => {
-      testUtil.setupNotConnectedYetObnizPromise(this, resolve);
-    })
+    return testUtil
+      .setupNotConnectedYetObnizPromise(this)
       .then(() => {
         expect(this.obniz).to.be.obniz;
         expect(this.obniz).to.be.finished; // input queue
@@ -619,10 +587,8 @@ describe('obniz.index', function () {
         });
       })
       .then(() => {
-        return new Promise((resolve) => {
-          this.obniz.onloop = null;
-          testUtil.releaseObnizePromise(this, resolve);
-        });
+        this.obniz.onloop = null;
+        return testUtil.releaseObnizePromise(this);
       })
       .then(() => {
         expect(results).to.be.true;
@@ -631,9 +597,8 @@ describe('obniz.index', function () {
 
   it('connectWait', function () {
     let called = false;
-    return new Promise((resolve) => {
-      testUtil.setupNotConnectedYetObnizPromise(this, resolve);
-    })
+    return testUtil
+      .setupNotConnectedYetObnizPromise(this)
       .then(() => {
         expect(this.obniz).to.be.obniz;
         expect(this.obniz).to.be.finished; // input queue
@@ -657,9 +622,7 @@ describe('obniz.index', function () {
         });
       })
       .then(() => {
-        return new Promise((resolve) => {
-          testUtil.releaseObnizePromise(this, resolve);
-        });
+        return testUtil.releaseObnizePromise(this);
       })
       .then(() => {
         expect(called).to.be.true;
@@ -668,9 +631,8 @@ describe('obniz.index', function () {
 
   it('connectWaitTimeout', function () {
     let called = false;
-    return new Promise((resolve) => {
-      testUtil.setupNotConnectedYetObnizPromise(this, resolve);
-    })
+    return testUtil
+      .setupNotConnectedYetObnizPromise(this)
       .then(() => {
         expect(this.obniz).to.be.obniz;
         expect(this.obniz).to.be.finished; // input queue
@@ -696,9 +658,7 @@ describe('obniz.index', function () {
         });
       })
       .then(() => {
-        return new Promise((resolve) => {
-          testUtil.releaseObnizePromise(this, resolve);
-        });
+        return testUtil.releaseObnizePromise(this);
       })
       .then(() => {
         expect(called).to.be.true;
@@ -712,7 +672,9 @@ describe('obniz.index', function () {
     const server = testUtil.createServer(port);
     // console.log(new Date(), 'server created');
 
+    let connectionCount = 0;
     server.on('connection', (c) => {
+      connectionCount++;
       let val = [
         {
           ws: {
@@ -728,9 +690,10 @@ describe('obniz.index', function () {
     const obniz = testUtil.createObniz(port, '11111111');
     // console.log(new Date(), 'obniz created');
     expect(obniz).to.be.obniz;
-    await wait(waitMs * 3);
+    await pollClientNumWait(server, 1);
 
     expect(server.clients.size, 'before server not connected').to.equal(1);
+    expect(connectionCount).to.equal(1);
 
     // console.log(new Date(), 'server connected');
     await wait(1);
@@ -740,27 +703,16 @@ describe('obniz.index', function () {
     });
 
     server.clients.values().next().value.close();
-    // wsOnClose wrapped by stub
-    obniz.wsOnClose.wrappedMethod.bind(obniz)();
-    await wait(100);
+    obniz.wsOnClose();
     await onclosePromise;
-    // console.log(new Date(), 'server closed');
-    expect(server.clients.size, 'before server not connected').to.equal(0);
+    // console.log(new Date(), 'server closed', server.clients.size);
+    await pollClientNumWait(server, 0);
+    // expect(server.clients.size, 'server closed').to.equal(0);
     // console.log(new Date(), 'waiting');
-    await Promise.race([
-      wait(5 * 1000),
-      new Promise((resolve) => {
-        const hop = () => {
-          if (server.clients.size === 1) {
-            resolve();
-          } else {
-            setTimeout(hop, 1);
-          }
-        };
-      }),
-    ]);
+    await pollClientNumWait(server, 1);
     // console.log(new Date(), 'raceds');
     expect(server.clients.size, 'before server not connected').to.equal(1);
+    expect(connectionCount).to.equal(2);
     obniz.close();
     server.close();
   }).timeout(20 * 1000);
@@ -788,7 +740,7 @@ describe('obniz.index', function () {
     // console.log(new Date(), 'obniz created');
     expect(obniz).to.be.obniz;
 
-    await wait(waitMs * 3);
+    await pollClientNumWait(server, 1, 5000);
 
     expect(server.clients.size, 'before server not connected').to.equal(1);
     // console.log(new Date(), 'server connected');
@@ -800,35 +752,42 @@ describe('obniz.index', function () {
     });
 
     server.clients.values().next().value.close();
-    // wsOnClose wrapped by stub
-    obniz.wsOnClose.wrappedMethod.bind(obniz)();
+    obniz.wsOnClose();
     await wait(100);
     await onclosePromise;
-    // console.log(new Date(), 'server closed');
+    // console.log(new Date(), 'server closed', obniz.connectionState);
     await obniz.closeWait();
-
+    // console.log(new Date(), 'close Wait');
+    await pollClientNumWait(server, 0);
     expect(server.clients.size, 'before server not connected').to.equal(0);
-    await Promise.race([
-      wait(5 * 1000),
-      new Promise((resolve) => {
-        const hop = () => {
-          if (server.clients.size === 1) {
-            resolve();
-          } else {
-            setTimeout(hop, 1);
-          }
-        };
-      }),
-    ]);
+    await pollClientNumWait(server, 1).catch(() => {
+      /* allow timeout */
+    });
     expect(server.clients.size, 'before server not connected').to.equal(0);
     obniz.close();
     server.close();
-  }).timeout(20 * 1000);
+  }).timeout(30 * 1000);
 
   function wait(ms) {
     return new Promise((resolve) => {
       setTimeout(resolve, ms);
     });
+  }
+
+  function pollClientNumWait(server, num, timeout = 1000) {
+    return Promise.race([
+      new Promise((resolve) => {
+        const hop = () => {
+          if (server.clients.size === num) {
+            resolve();
+          } else {
+            setTimeout(hop, 1);
+          }
+        };
+        hop();
+      }),
+      wait(timeout),
+    ]);
   }
 
   async function pingPongWait(obniz) {
