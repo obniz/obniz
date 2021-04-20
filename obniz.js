@@ -25668,15 +25668,6 @@ class UA1200BLE {
             };
         });
     }
-    _readFLOAT_LE(buffer, index) {
-        const data = buffer.readUInt32LE(index);
-        let mantissa = data & 0x00ffffff;
-        if ((mantissa & 0x00800000) > 0) {
-            mantissa = -1 * (~(mantissa - 0x01) & 0x00ffffff);
-        }
-        const exponential = data >> 24;
-        return mantissa * Math.pow(10, exponential);
-    }
     _readSFLOAT_LE(buffer, index) {
         // convert SFLOAT Little Endian (not sfloat!) to numerical value
         const data = buffer.readUInt16LE(index);
@@ -25856,15 +25847,6 @@ class UA651BLE {
             };
         });
     }
-    _readFLOAT_LE(buffer, index) {
-        const data = buffer.readUInt32LE(index);
-        let mantissa = data & 0x00ffffff;
-        if ((mantissa & 0x00800000) > 0) {
-            mantissa = -1 * (~(mantissa - 0x01) & 0x00ffffff);
-        }
-        const exponential = data >> 24;
-        return mantissa * Math.pow(10, exponential);
-    }
     _readSFLOAT_LE(buffer, index) {
         const data = buffer.readUInt16LE(index);
         let mantissa = data & 0x0fff;
@@ -25915,6 +25897,19 @@ class UA651BLE {
             // Pulse Rate Flag
             result.PulseRate = this._readSFLOAT_LE(buf, index);
             index += 2;
+        }
+        if (flags & 0x08) {
+            // UserIdFlag
+            index += 1;
+        }
+        if (flags & 0x10) {
+            // UserIdFlag
+            const ms = buf[index];
+            result.bodyMoved = (ms & 0b1) !== 0;
+            result.cuffFitLoose = (ms & 0b10) !== 0;
+            result.irregularPulseDetected = (ms & 0b100) !== 0;
+            result.improperMeasurement = (ms & 0b100000) !== 0;
+            index += 1;
         }
         return result;
     }
@@ -71471,7 +71466,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
+module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
 
 /***/ }),
 
