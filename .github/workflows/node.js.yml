@@ -5,33 +5,40 @@ on: [push, pull_request]
 jobs:
   build-test:
     runs-on: ubuntu-18.04
+
     env:
       TZ: Asia/Tokyo
-        
+
     strategy:
       matrix:
         node-version: [10.x, 11.x, 12.x, 13.x, 14.x, 15.x]
+
     steps:
-        - uses: actions/checkout@v2
-        - name: Use Node.js ${{ matrix.node-version }}
-          uses: actions/setup-node@v1
-          with:
-            node-version: ${{ matrix.node-version }}
-        - run: npm ci
-        - name: Build
-          run: npm run build --if-present
-        - name: Test
-          run: npm test || npm test || npm test
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build --if-present
+
+      - name: Test
+        run: npm test || npm test || npm test
 
   slack-notify:
-    if: always()
-    needs: [build-test]
     name: workflow notification to slack
     runs-on: ubuntu-latest
+    needs: [build-test]
+    if: always()
     steps:
       - uses: come25136/workflow-notification-for-slack@1.0.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          name: 'obniz.js CI'
+          name: "obniz.js CI"
           icon_url: ${{ secrets.SLACK_ICON_URL }}
