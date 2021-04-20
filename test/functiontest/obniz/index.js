@@ -675,7 +675,9 @@ describe('obniz.index', function () {
     const server = testUtil.createServer(port);
     // console.log(new Date(), 'server created');
 
+    let connectionCount = 0;
     server.on('connection', (c) => {
+      connectionCount++;
       let val = [
         {
           ws: {
@@ -694,6 +696,7 @@ describe('obniz.index', function () {
     await pollClientNumWait(server, 1);
 
     expect(server.clients.size, 'before server not connected').to.equal(1);
+    expect(connectionCount).to.equal(1);
 
     // console.log(new Date(), 'server connected');
     await wait(1);
@@ -707,11 +710,12 @@ describe('obniz.index', function () {
     await onclosePromise;
     console.log(new Date(), 'server closed', server.clients.size);
     await pollClientNumWait(server, 0);
-    expect(server.clients.size, 'before server not connected').to.equal(0);
+    // expect(server.clients.size, 'server closed').to.equal(0);
     // console.log(new Date(), 'waiting');
     await pollClientNumWait(server, 1);
     // console.log(new Date(), 'raceds');
     expect(server.clients.size, 'before server not connected').to.equal(1);
+    expect(connectionCount).to.equal(2);
     obniz.close();
     server.close();
   }).timeout(20 * 1000);
