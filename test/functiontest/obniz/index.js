@@ -133,13 +133,13 @@ describe('obniz.index', function () {
     return getPort()
       .then(function (p) {
         port1 = p;
-        console.log(new Date(), 'use port ' + port1);
+        // console.log(new Date(), 'use port ' + port1);
         server1 = testUtil.createServer(port1);
         return getPort();
       })
       .then(function (p) {
         port2 = p;
-        console.log(new Date(), 'use port ' + port2);
+        // console.log(new Date(), 'use port ' + port2);
         server2 = testUtil.createServer(port2);
         return getPort();
       })
@@ -149,11 +149,11 @@ describe('obniz.index', function () {
         server3 = testUtil.createServer(port3);
 
         server1.on('connection', function () {
-          console.log(new Date(), 'server1 connected');
+          // console.log(new Date(), 'server1 connected');
         });
 
         server2.on('connection', function () {
-          console.log(new Date(), 'server2 connected');
+          // console.log(new Date(), 'server2 connected');
           setTimeout(function () {
             let val = [{ ws: { redirect: 'ws://localhost:' + port3 } }];
             server2.clients.values().next().value.send(JSON.stringify(val));
@@ -184,7 +184,6 @@ describe('obniz.index', function () {
     return testUtil
       .setupObnizPromise(this, null, { binary: true })
       .then(() => {
-        console.warn('next');
         expect(this.obniz).to.be.obniz;
         expect(this.obniz).to.be.finished; // input queue
 
@@ -195,14 +194,12 @@ describe('obniz.index', function () {
         });
       })
       .then(() => {
-        console.warn('next2');
         expect(this.obniz).sendBinary(new Uint8Array([2, 0, 2, 1, 1]));
         expect(this.obniz).to.be.finished;
 
         return testUtil.releaseObnizePromise(this);
       })
       .then(function () {
-        console.warn('resolve');
         return Promise.resolve();
       });
   });
@@ -708,7 +705,7 @@ describe('obniz.index', function () {
     server.clients.values().next().value.close();
     obniz.wsOnClose();
     await onclosePromise;
-    console.log(new Date(), 'server closed', server.clients.size);
+    // console.log(new Date(), 'server closed', server.clients.size);
     await pollClientNumWait(server, 0);
     // expect(server.clients.size, 'server closed').to.equal(0);
     // console.log(new Date(), 'waiting');
@@ -758,9 +755,9 @@ describe('obniz.index', function () {
     obniz.wsOnClose();
     await wait(100);
     await onclosePromise;
-    console.log(new Date(), 'server closed', obniz.connectionState);
+    // console.log(new Date(), 'server closed', obniz.connectionState);
     await obniz.closeWait();
-    console.log(new Date(), 'close Wait');
+    // console.log(new Date(), 'close Wait');
     await pollClientNumWait(server, 0);
     expect(server.clients.size, 'before server not connected').to.equal(0);
     await pollClientNumWait(server, 1).catch(() => {
