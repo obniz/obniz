@@ -3830,6 +3830,9 @@ class ObnizParts extends ObnizConnection_1.default {
      * @param options
      */
     wired(partsName, options) {
+        if (this.connectionState !== 'connected') {
+            throw new Error('obniz.wired can only be used after connection');
+        }
         const Parts = ObnizParts.getPartsClass(partsName);
         if (!Parts) {
             throw new Error('No such a parts [' + partsName + '] found');

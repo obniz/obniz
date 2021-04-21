@@ -9,7 +9,7 @@ describe('command', function () {
   });
 
   afterEach(async function () {
-    await testUtil.releaseObnizePromise(this);
+    await testUtil.releaseObnizPromise(this);
   });
 
   it('debug error format', function () {

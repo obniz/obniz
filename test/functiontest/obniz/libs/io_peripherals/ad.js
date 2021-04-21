@@ -9,7 +9,7 @@ describe('obniz.libs.ad', function () {
     await testUtil.setupObnizPromise(this);
   });
   afterEach(async function () {
-    await testUtil.releaseObnizePromise(this);
+    await testUtil.releaseObnizPromise(this);
   });
 
   it('getAD', function () {

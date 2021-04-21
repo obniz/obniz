@@ -88,7 +88,7 @@ class TestUtil {
     stub.send = this.sinon.stub();
     stub.close = this.sinon.stub();
     stub.removeAllListeners = this.sinon.stub();
-    stub.readyState = 1;
+    stub.readyState = 0;
 
     this.sinon
       .stub(this.Obniz.prototype, '_createCloudSocket')
@@ -98,7 +98,6 @@ class TestUtil {
     obj.obniz = this.createObniz(100, '12345678', options);
     obj.obniz.error = this.sinon.stub();
     await new Promise((r) => setTimeout(r, 1));
-    obj.obniz.wsOnOpen();
 
     this.serverDataCount = 0;
   }
@@ -144,7 +143,7 @@ class TestUtil {
     await new Promise((r) => setTimeout(r, 1));
   }
 
-  async releaseObnizePromise(obj) {
+  async releaseObnizPromise(obj) {
     obj.obniz._close();
     obj.obniz = null;
     this.Obniz.prototype._createCloudSocket.restore();

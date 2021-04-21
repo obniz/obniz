@@ -197,7 +197,7 @@ describe('obniz.index', function () {
         expect(this.obniz).sendBinary(new Uint8Array([2, 0, 2, 1, 1]));
         expect(this.obniz).to.be.finished;
 
-        return testUtil.releaseObnizePromise(this);
+        return testUtil.releaseObnizPromise(this);
       })
       .then(function () {
         return Promise.resolve();
@@ -235,7 +235,7 @@ describe('obniz.index', function () {
         });
       })
       .then(() => {
-        return testUtil.releaseObnizePromise(this);
+        return testUtil.releaseObnizPromise(this);
       })
       .then(() => {
         expect(called).to.be.true;
@@ -271,7 +271,7 @@ describe('obniz.index', function () {
         });
       })
       .then(() => {
-        return testUtil.releaseObnizePromise(this);
+        return testUtil.releaseObnizPromise(this);
       })
       .then(() => {
         expect(metadata.description).to.equal('data');
@@ -311,7 +311,7 @@ describe('obniz.index', function () {
     expect(called).to.be.true;
     expect(called2).to.be.true;
 
-    await testUtil.releaseObnizePromise(this);
+    await testUtil.releaseObnizPromise(this);
   });
 
   it('closeWait', async () => {
@@ -339,7 +339,7 @@ describe('obniz.index', function () {
 
     await p;
 
-    await testUtil.releaseObnizePromise(this);
+    await testUtil.releaseObnizPromise(this);
   });
 
   it('onloop', async () => {
@@ -374,7 +374,7 @@ describe('obniz.index', function () {
     await pingPongWait(this.obniz);
 
     this.obniz.onloop = null;
-    await testUtil.releaseObnizePromise(this);
+    await testUtil.releaseObnizPromise(this);
 
     expect(called).to.be.true;
   });
@@ -414,7 +414,7 @@ describe('obniz.index', function () {
     await pingPongWait(this.obniz);
 
     this.obniz.onloop = null;
-    await testUtil.releaseObnizePromise(this);
+    await testUtil.releaseObnizPromise(this);
 
     expect(called).to.be.true;
   });
@@ -458,7 +458,7 @@ describe('obniz.index', function () {
     await wait(10);
 
     this.obniz.onloop = null;
-    await testUtil.releaseObnizePromise(this);
+    await testUtil.releaseObnizPromise(this);
 
     expect(called).to.be.false;
     expect(called2).to.be.true;
@@ -504,7 +504,7 @@ describe('obniz.index', function () {
     await wait(510);
 
     this.obniz.onloop = null;
-    await testUtil.releaseObnizePromise(this);
+    await testUtil.releaseObnizPromise(this);
 
     expect(4 <= count && count <= 6).to.be.true;
   });
@@ -545,7 +545,7 @@ describe('obniz.index', function () {
       })
       .then(() => {
         this.obniz.onloop = null;
-        return testUtil.releaseObnizePromise(this);
+        return testUtil.releaseObnizPromise(this);
       })
       .then(() => {
         expect(results).to.be.true;
@@ -588,7 +588,7 @@ describe('obniz.index', function () {
       })
       .then(() => {
         this.obniz.onloop = null;
-        return testUtil.releaseObnizePromise(this);
+        return testUtil.releaseObnizPromise(this);
       })
       .then(() => {
         expect(results).to.be.true;
@@ -622,7 +622,7 @@ describe('obniz.index', function () {
         });
       })
       .then(() => {
-        return testUtil.releaseObnizePromise(this);
+        return testUtil.releaseObnizPromise(this);
       })
       .then(() => {
         expect(called).to.be.true;
@@ -658,7 +658,7 @@ describe('obniz.index', function () {
         });
       })
       .then(() => {
-        return testUtil.releaseObnizePromise(this);
+        return testUtil.releaseObnizPromise(this);
       })
       .then(() => {
         expect(called).to.be.true;

@@ -8,7 +8,7 @@ describe('obniz.libs.spi', function () {
     await testUtil.setupObnizPromise(this);
   });
   afterEach(async function () {
-    await testUtil.releaseObnizePromise(this);
+    await testUtil.releaseObnizPromise(this);
   });
 
   it('start', function () {
