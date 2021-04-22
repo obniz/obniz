@@ -36,6 +36,7 @@ import MiniBreeze, { MiniBreezeOptions } from '../parts/Ble/MiniBreeze';
 import MT_500BT, { MT_500BTOptions } from '../parts/Ble/MT_500BT';
 import PLS_01BT, { PLS_01BTOptions } from '../parts/Ble/PLS_01BT';
 import REX_BTPM25V, { REX_BTPM25VOptions } from '../parts/Ble/REX_BTPM25V';
+import RS_BTEVS1, { RS_BTEVS1Options } from '../parts/Ble/RS_BTEVS1';
 import RS_BTWATTCH2, { RS_BTWATTCH2Options } from '../parts/Ble/RS_BTWATTCH2';
 import RS_Seek3, { RS_Seek3Options } from '../parts/Ble/RS_SEEK3';
 import SCBTGAAAC, { SCBTGAAACOptions } from '../parts/Ble/scbtgaaac';
@@ -477,6 +478,7 @@ export interface PartsList {
   iBS04: { class: IBS04; options: IBS04Options };
   iBS04i: { class: IBS04I; options: IBS04IOptions };
   MINEW_S1: { class: MINEW_S1; options: MINEW_S1Options };
+  RS_BTEVS1: { class: RS_BTEVS1; options: RS_BTEVS1Options };
   RS_Seek3: { class: RS_Seek3; options: RS_Seek3Options };
   REX_BTPM25V: { class: REX_BTPM25V; options: REX_BTPM25VOptions };
   PLS_01BT: { class: PLS_01BT; options: PLS_01BTOptions };
