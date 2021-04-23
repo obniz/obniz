@@ -111,6 +111,7 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.sht20.sht20.html#getdata" class="tsd-kind-icon">get<wbr>Data</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.sht20.sht20.html#getdatawait" class="tsd-kind-icon">get<wbr>Data<wbr>Wait</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.sht20.sht20.html#gethumidwait" class="tsd-kind-icon">get<wbr>Humid<wbr>Wait</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.sht20.sht20.html#gettempwait" class="tsd-kind-icon">get<wbr>Temp<wbr>Wait</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.sht20.sht20.html#wired" class="tsd-kind-icon">wired</a></li>
@@ -132,7 +133,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:29</li>
+									<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:31</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="parts.sht20.sht20.html" class="tsd-signature-type">SHT20</a></h4>
@@ -148,7 +149,7 @@
 					<div class="tsd-signature tsd-kind-icon">address<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:26</li>
+							<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:28</li>
 						</ul>
 					</aside>
 				</section>
@@ -158,7 +159,7 @@
 					<div class="tsd-signature tsd-kind-icon">commands<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{}</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:25</li>
+							<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:27</li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -176,7 +177,7 @@
 					<div class="tsd-signature tsd-kind-icon">io<wbr>Keys<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:24</li>
+							<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:26</li>
 						</ul>
 					</aside>
 				</section>
@@ -186,7 +187,7 @@
 					<div class="tsd-signature tsd-kind-icon">keys<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:21</li>
+							<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:23</li>
 						</ul>
 					</aside>
 				</section>
@@ -196,7 +197,7 @@
 					<div class="tsd-signature tsd-kind-icon">params<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:22</li>
+							<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:24</li>
 						</ul>
 					</aside>
 				</section>
@@ -206,7 +207,7 @@
 					<div class="tsd-signature tsd-kind-icon">required<wbr>Keys<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:20</li>
+							<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:22</li>
 						</ul>
 					</aside>
 				</section>
@@ -223,7 +224,38 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:55</li>
+									<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:61</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<dl class="tsd-comment-tags">
+									<dt>deprecated</dt>
+									<dd></dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>command: <span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">]</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getdatawait" class="tsd-anchor"></a>
+					<h3>get<wbr>Data<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Data<wbr>Wait<span class="tsd-signature-symbol">(</span>command<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:65</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -246,7 +278,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:77</li>
+									<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:87</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -263,7 +295,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:68</li>
+									<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:78</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -280,7 +312,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:42</li>
+									<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:44</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -303,7 +335,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:14</li>
+									<li>Defined in src/parts/TemperatureSensor/i2c/SHT20/index.ts:16</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/obnizcore.obnizpartsinfo.html" class="tsd-signature-type">ObnizPartsInfo</a></h4>
@@ -350,6 +382,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="parts.sht20.sht20.html#getdata" class="tsd-kind-icon">get<wbr>Data</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="parts.sht20.sht20.html#getdatawait" class="tsd-kind-icon">get<wbr>Data<wbr>Wait</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="parts.sht20.sht20.html#gethumidwait" class="tsd-kind-icon">get<wbr>Humid<wbr>Wait</a>
