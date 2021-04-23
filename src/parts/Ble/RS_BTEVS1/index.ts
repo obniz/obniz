@@ -2,9 +2,15 @@
  * @packageDocumentation
  * @module Parts.RS_BTEVS1
  */
+/* eslint non-ascii: 0 */
 
-import Obniz, { BleRemoteCharacteristic, BleRemotePeripheral } from '../../../obniz';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import Obniz, {
+  BleRemoteCharacteristic,
+  BleRemotePeripheral,
+} from '../../../obniz';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface RS_BTEVS1Options {}
 
@@ -34,54 +40,54 @@ const PM2_5_CONCENTRATION_MODE = ['Mass', 'Number'] as const;
 export interface RS_BTEVS1_Config {
   /**
    * Temperature notification interval [ms] (10,000~3,600,000) (Initial value: 10,000ms)
-   * 
+   *
    * 温度通知間隔[ms] (10,000~3,600,000) (初期値: 10,000ms)
    */
   tempInterval: number;
   /**
    * PM2.5 notification interval [ms] (10,000~3,600,000) (Initial value: 10,000ms)
-   * 
+   *
    * PM2.5通知間隔[ms] (10,000~3,600,000) (初期値: 10,000ms)
    */
   pm2_5Interval: number;
   /**
    * CO2 notification interval [ms] (10,000~3,600,000) (Initial value: 10,000ms)
-   * 
+   *
    * CO2通知間隔[ms] (10,000~3,600,000) (初期値: 10,000ms)
    */
   co2Interval: number;
   /**
    * Temperature sensor measurement operation setting (initial value: Disable)
-   * 
+   *
    * 温度センサー計測動作設定 (初期値: 無効)
    */
   tempMeasureOperation: boolean;
   /**
    * PM2.5 sensor measurement operation setting (initial value: Disable)
-   * 
+   *
    * PM2.5センサー計測動作設定 (初期値: 無効)
    */
   pm2_5MeasureOperation: boolean;
   /**
    * CO2 sensor measurement operation setting (initial value: Disable)
-   * 
+   *
    * CO2センサー計測動作設定 (初期値: 無効)
    */
   co2MeasureOperation: boolean;
   /**
    * Display setting for 10 LEDs (Disable | PM2.5 | CO2) (initial value: Disable)
-   * 
+   *
    * 10連LEDへの表示設定 (Disable | PM2.5 | CO2) (初期値: 無効)
    */
   ledDisplay: typeof LED_DISPLAY_MODE[number];
-  /** 
+  /**
    * Advertisement Beacon Settings (Initial Value: Disable)
-   * 
+   *
    * アドバタイズビーコン設定 (初期値: 無効)
    */
   advertisementBeacon: boolean;
   /** PM2.5 mass concentration / number concentration mode setting (Mass | Number) (initial value: Number)
-   * 
+   *
    * PM2.5質量濃度/個数濃度モード設定 (Mass | Number) (初期値: 個数濃度)
    */
   pm2_5ConcentrationMode: typeof PM2_5_CONCENTRATION_MODE[number];
@@ -118,25 +124,30 @@ export default class RS_BTEVS1 implements ObnizPartsInterface {
 
   /**
    * Determine if it is RS-BTEVS1
-   * 
+   *
    * RS-BTEVS1かどうか判定
-   * 
+   *
    * @param peripheral Instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
    * @returns Whether it is RS-BTEVS1 RS-BTEVS1かどうか
    */
   public static isDevice(peripheral: BleRemotePeripheral): boolean {
-    return peripheral.localName !== null && peripheral.localName.indexOf('BTEVS') === 0;
+    return (
+      peripheral.localName !== null &&
+      peripheral.localName.indexOf('BTEVS') === 0
+    );
   }
 
   /**
    * Get advertising data
-   * 
+   *
    * アドバタイジングデータを取得
-   * 
+   *
    * @param peripheral Instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
    * @returns RS-BTEVS1 advertising data RS-BTEVS1のアドバタイジングデータ
    */
-  public static getData(peripheral: BleRemotePeripheral): RS_BTEVS1_AdvData | null {
+  public static getData(
+    peripheral: BleRemotePeripheral
+  ): RS_BTEVS1_AdvData | null {
     if (!RS_BTEVS1.isDevice(peripheral)) {
       return null;
     }
@@ -148,7 +159,7 @@ export default class RS_BTEVS1 implements ObnizPartsInterface {
       pm5_0: buf.readUInt8(15),
       pm10_0: buf.readUInt8(16),
       temp: buf.readUInt8(17),
-      humid: buf.readUInt8(18)
+      humid: buf.readUInt8(18),
     };
     return data;
   }
@@ -156,13 +167,37 @@ export default class RS_BTEVS1 implements ObnizPartsInterface {
   /** RS-BTEVS1 sample advertising data RS-BTEVS1のサンプルのアドバタイジングデータ */
   private static deviceAdv: number[] = [
     /* LEN TYPE VALUE */
-    0x03, 0x19, 0x40, 0x05,
-    0x02, 0x01, 0x05,
-    0x0B, 0xFF, 0x00, 0xFF,
-    -1, -1, // CO2
-    -1, -1, -1, -1, // PM2.5
-    -1, -1, // Temp
-    0x0B, 0x08, 0x42, 0x54, 0x45, 0x56, 0x53, 0x2D, -1, -1, -1, -1 // localName
+    0x03,
+    0x19,
+    0x40,
+    0x05,
+    0x02,
+    0x01,
+    0x05,
+    0x0b,
+    0xff,
+    0x00,
+    0xff,
+    -1,
+    -1, // CO2
+    -1,
+    -1,
+    -1,
+    -1, // PM2.5
+    -1,
+    -1, // Temp
+    0x0b,
+    0x08,
+    0x42,
+    0x54,
+    0x45,
+    0x56,
+    0x53,
+    0x2d,
+    -1,
+    -1,
+    -1,
+    -1, // localName
   ];
 
   public keys: string[] = [];
@@ -172,7 +207,9 @@ export default class RS_BTEVS1 implements ObnizPartsInterface {
   /** Event handler for button ボタンのイベントハンドラー */
   public onButtonPressed: ((pressed: boolean) => void) | null = null;
   /** Event handler for temperature sensor 温度センサーのイベントハンドラー */
-  public onTempMeasured: ((temp: number, humidity: number) => void) | null = null;
+  public onTempMeasured:
+    | ((temp: number, humidity: number) => void)
+    | null = null;
   /** Event handler for co2 sensor CO2センサーのイベントハンドラー */
   public onCo2Measured: ((co2: number) => void) | null = null;
   /** Event handler for PM2.5 sensor PM2.5センサーのイベントハンドラー */
@@ -253,7 +290,7 @@ export default class RS_BTEVS1 implements ObnizPartsInterface {
 
   /**
    * Get device settings デバイスの設定を取得
-   * 
+   *
    * @returns Instance of RS_BTEVS1_Config RS_BTEVS1_Configのインスタンス
    */
   public async getConfigWait(): Promise<RS_BTEVS1_Config> {
@@ -273,30 +310,49 @@ export default class RS_BTEVS1 implements ObnizPartsInterface {
       co2Interval: buf.readUInt32LE(4),
       pm2_5Interval: buf.readUInt32LE(8),
       tempInterval: buf.readUInt32LE(12),
-    }
-  } 
+    };
+  }
 
   /**
    * Write device settings, blanks write initial values
-   * 
+   *
    * デバイス設定の書き込み、空欄は初期値を書き込み
-   * 
+   *
    * @param config Instance of RS_BTEVS1_Config RS_BTEVS1_Configのインスタンス
    * @returns Write result 書き込み結果
    */
-  public async setConfigWait(config: Partial<RS_BTEVS1_Config>): Promise<boolean> {
+  public async setConfigWait(
+    config: Partial<RS_BTEVS1_Config>
+  ): Promise<boolean> {
     if (!this._configCharacteristic) {
       throw new Error('device is not connected');
     }
     const buf = Buffer.alloc(16);
-    buf.writeUInt8(PM2_5_CONCENTRATION_MODE.indexOf(config.pm2_5ConcentrationMode && PM2_5_CONCENTRATION_MODE.indexOf(config.pm2_5ConcentrationMode) >= 0 ? config.pm2_5ConcentrationMode : 'Number'), 0);
+    buf.writeUInt8(
+      PM2_5_CONCENTRATION_MODE.indexOf(
+        config.pm2_5ConcentrationMode &&
+          PM2_5_CONCENTRATION_MODE.indexOf(config.pm2_5ConcentrationMode) >= 0
+          ? config.pm2_5ConcentrationMode
+          : 'Number'
+      ),
+      0
+    );
     buf.writeUInt8(config.advertisementBeacon ? 1 : 0, 1);
-    buf.writeUInt8(LED_DISPLAY_MODE.indexOf(config.ledDisplay && LED_DISPLAY_MODE.indexOf(config.ledDisplay) >= 0 ? config.ledDisplay : 'Disable'), 2);
-    buf.writeUInt8(0
-      + (config.co2MeasureOperation ? 0b001 : 0)
-      + (config.pm2_5MeasureOperation ? 0b010 : 0)
-      + (config.tempMeasureOperation ? 0b100 : 0),
-    3);
+    buf.writeUInt8(
+      LED_DISPLAY_MODE.indexOf(
+        config.ledDisplay && LED_DISPLAY_MODE.indexOf(config.ledDisplay) >= 0
+          ? config.ledDisplay
+          : 'Disable'
+      ),
+      2
+    );
+    buf.writeUInt8(
+      0 +
+        (config.co2MeasureOperation ? 0b001 : 0) +
+        (config.pm2_5MeasureOperation ? 0b010 : 0) +
+        (config.tempMeasureOperation ? 0b100 : 0),
+      3
+    );
     buf.writeUInt32LE(config.co2Interval ?? 10000, 4);
     buf.writeUInt32LE(config.pm2_5Interval ?? 10000, 8);
     buf.writeUInt32LE(config.tempInterval ?? 10000, 12);
@@ -305,11 +361,11 @@ export default class RS_BTEVS1 implements ObnizPartsInterface {
 
   /**
    * Start reading the temperature sensor
-   * 
+   *
    * 温度センサーの読み取りを開始
    */
   public async tempMeasureStartWait() {
-    //await this._measureStartWait(this._tempCharacteristic);
+    // await this._measureStartWait(this._tempCharacteristic);
     if (!this._tempCharacteristic) {
       throw new Error('device is not connected');
     }
@@ -322,11 +378,11 @@ export default class RS_BTEVS1 implements ObnizPartsInterface {
 
   /**
    * Start reading the co2 sensor
-   * 
+   *
    * CO2センサーの読み取りを開始
    */
   public async co2MeasureStartWait() {
-    //await this._measureStartWait(this._co2Characteristic);
+    // await this._measureStartWait(this._co2Characteristic);
     if (!this._co2Characteristic) {
       throw new Error('device is not connected');
     }
@@ -339,11 +395,11 @@ export default class RS_BTEVS1 implements ObnizPartsInterface {
 
   /**
    * Start reading the PM2.5 sensor
-   * 
+   *
    * PM2.5センサーの読み取りを開始
    */
   public async pm2_5MeasureStartWait() {
-    //await this._measureStartWait(this._pm2_5Characteristic);
+    // await this._measureStartWait(this._pm2_5Characteristic);
     if (!this._pm2_5Characteristic) {
       throw new Error('device is not connected');
     }
@@ -356,19 +412,19 @@ export default class RS_BTEVS1 implements ObnizPartsInterface {
         mass_pm5: buf.readFloatLE(8),
         mass_pm10: buf.readFloatLE(12),
         number_pm0_5: buf.readFloatLE(16), // 1パケット=20バイトしか来ない
-        //number_pm1: buf.readFloatLE(20),
-        //number_pm2_5: buf.readFloatLE(24),
-        //number_pm5: buf.readFloatLE(28),
-        //number_pm10: buf.readFloatLE(32),
+        // number_pm1: buf.readFloatLE(20),
+        // number_pm2_5: buf.readFloatLE(24),
+        // number_pm5: buf.readFloatLE(28),
+        // number_pm10: buf.readFloatLE(32),
       });
     });
   }
 
   /**
    * Send 1 to Descriptor of Characteristic argument
-   * 
+   *
    * 引数のCharacteristicのDescriptorに1を送信
-   * 
+   *
    * @param char Instance of BleRemoteCharacteristic BleRemoteCharacteristicのインスタンス
    */
   private async _measureStartWait(char: BleRemoteCharacteristic | null) {

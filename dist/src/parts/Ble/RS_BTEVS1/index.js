@@ -3,6 +3,7 @@
  * @packageDocumentation
  * @module Parts.RS_BTEVS1
  */
+/* eslint non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const LED_DISPLAY_MODE = ['Disable', 'PM2.5', 'CO2'];
 const PM2_5_CONCENTRATION_MODE = ['Mass', 'Number'];
@@ -52,7 +53,8 @@ class RS_BTEVS1 {
      * @returns Whether it is RS-BTEVS1 RS-BTEVS1かどうか
      */
     static isDevice(peripheral) {
-        return peripheral.localName !== null && peripheral.localName.indexOf('BTEVS') === 0;
+        return (peripheral.localName !== null &&
+            peripheral.localName.indexOf('BTEVS') === 0);
     }
     /**
      * Get advertising data
@@ -74,7 +76,7 @@ class RS_BTEVS1 {
             pm5_0: buf.readUInt8(15),
             pm10_0: buf.readUInt8(16),
             temp: buf.readUInt8(17),
-            humid: buf.readUInt8(18)
+            humid: buf.readUInt8(18),
         };
         return data;
     }
@@ -159,13 +161,18 @@ class RS_BTEVS1 {
             throw new Error('device is not connected');
         }
         const buf = Buffer.alloc(16);
-        buf.writeUInt8(PM2_5_CONCENTRATION_MODE.indexOf(config.pm2_5ConcentrationMode && PM2_5_CONCENTRATION_MODE.indexOf(config.pm2_5ConcentrationMode) >= 0 ? config.pm2_5ConcentrationMode : 'Number'), 0);
+        buf.writeUInt8(PM2_5_CONCENTRATION_MODE.indexOf(config.pm2_5ConcentrationMode &&
+            PM2_5_CONCENTRATION_MODE.indexOf(config.pm2_5ConcentrationMode) >= 0
+            ? config.pm2_5ConcentrationMode
+            : 'Number'), 0);
         buf.writeUInt8(config.advertisementBeacon ? 1 : 0, 1);
-        buf.writeUInt8(LED_DISPLAY_MODE.indexOf(config.ledDisplay && LED_DISPLAY_MODE.indexOf(config.ledDisplay) >= 0 ? config.ledDisplay : 'Disable'), 2);
-        buf.writeUInt8(0
-            + (config.co2MeasureOperation ? 0b001 : 0)
-            + (config.pm2_5MeasureOperation ? 0b010 : 0)
-            + (config.tempMeasureOperation ? 0b100 : 0), 3);
+        buf.writeUInt8(LED_DISPLAY_MODE.indexOf(config.ledDisplay && LED_DISPLAY_MODE.indexOf(config.ledDisplay) >= 0
+            ? config.ledDisplay
+            : 'Disable'), 2);
+        buf.writeUInt8(0 +
+            (config.co2MeasureOperation ? 0b001 : 0) +
+            (config.pm2_5MeasureOperation ? 0b010 : 0) +
+            (config.tempMeasureOperation ? 0b100 : 0), 3);
         buf.writeUInt32LE((_a = config.co2Interval, (_a !== null && _a !== void 0 ? _a : 10000)), 4);
         buf.writeUInt32LE((_b = config.pm2_5Interval, (_b !== null && _b !== void 0 ? _b : 10000)), 8);
         buf.writeUInt32LE((_c = config.tempInterval, (_c !== null && _c !== void 0 ? _c : 10000)), 12);
@@ -177,7 +184,7 @@ class RS_BTEVS1 {
      * 温度センサーの読み取りを開始
      */
     async tempMeasureStartWait() {
-        //await this._measureStartWait(this._tempCharacteristic);
+        // await this._measureStartWait(this._tempCharacteristic);
         if (!this._tempCharacteristic) {
             throw new Error('device is not connected');
         }
@@ -194,7 +201,7 @@ class RS_BTEVS1 {
      * CO2センサーの読み取りを開始
      */
     async co2MeasureStartWait() {
-        //await this._measureStartWait(this._co2Characteristic);
+        // await this._measureStartWait(this._co2Characteristic);
         if (!this._co2Characteristic) {
             throw new Error('device is not connected');
         }
@@ -211,7 +218,7 @@ class RS_BTEVS1 {
      * PM2.5センサーの読み取りを開始
      */
     async pm2_5MeasureStartWait() {
-        //await this._measureStartWait(this._pm2_5Characteristic);
+        // await this._measureStartWait(this._pm2_5Characteristic);
         if (!this._pm2_5Characteristic) {
             throw new Error('device is not connected');
         }
@@ -250,11 +257,35 @@ exports.default = RS_BTEVS1;
 /** RS-BTEVS1 sample advertising data RS-BTEVS1のサンプルのアドバタイジングデータ */
 RS_BTEVS1.deviceAdv = [
     /* LEN TYPE VALUE */
-    0x03, 0x19, 0x40, 0x05,
-    0x02, 0x01, 0x05,
-    0x0B, 0xFF, 0x00, 0xFF,
-    -1, -1,
-    -1, -1, -1, -1,
-    -1, -1,
-    0x0B, 0x08, 0x42, 0x54, 0x45, 0x56, 0x53, 0x2D, -1, -1, -1, -1 // localName
+    0x03,
+    0x19,
+    0x40,
+    0x05,
+    0x02,
+    0x01,
+    0x05,
+    0x0b,
+    0xff,
+    0x00,
+    0xff,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    0x0b,
+    0x08,
+    0x42,
+    0x54,
+    0x45,
+    0x56,
+    0x53,
+    0x2d,
+    -1,
+    -1,
+    -1,
+    -1,
 ];

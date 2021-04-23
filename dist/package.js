@@ -86,7 +86,7 @@ module.exports = {
     "eslint": "^7.4.0",
     "eslint-config-prettier": "^3.6.0",
     "eslint-plugin-jasmine": "^2.10.1",
-    "eslint-plugin-jsdoc": "^32.2.0",
+    "eslint-plugin-jsdoc": "^32.3.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "eslint-plugin-prettier": "^3.3.1",
     "espower-typescript": "^9.0.2",
