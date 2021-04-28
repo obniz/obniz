@@ -2078,6 +2078,7 @@ class ObnizComponents extends ObnizParts_1.default {
      * @param io
      */
     getIO(io) {
+        this.throwErrorIfOffline();
         if (!this.isValidIO(io)) {
             throw new Error('io ' + io + ' is not valid io');
         }
@@ -2089,6 +2090,7 @@ class ObnizComponents extends ObnizParts_1.default {
      * @param io
      */
     getAD(io) {
+        this.throwErrorIfOffline();
         if (!this.isValidIO(io)) {
             throw new Error('ad ' + io + ' is not valid io');
         }
@@ -2322,6 +2324,7 @@ class ObnizComponents extends ObnizParts_1.default {
         }
     }
     _getFreePeripheralUnit(peripheral) {
+        this.throwErrorIfOffline();
         for (const key of this._allComponentKeys) {
             if (key.indexOf(peripheral) === 0) {
                 /* "io" for "io0" */
@@ -2822,8 +2825,9 @@ class ObnizConnection extends eventemitter3_1.default {
             await this._connectCloudWait(desired_server);
             try {
                 const localConnectTimeout = new Promise((resolve, reject) => {
+                    const localConnectTimeoutError = new Error('Cannot use local_connect because the connection was timeouted');
                     setTimeout(() => {
-                        reject(new Error('Cannot use local_connect because the connection was timeouted'));
+                        reject(localConnectTimeoutError);
                     }, 3000);
                 });
                 await Promise.race([localConnectTimeout, this._connectLocalWait()]);
@@ -3308,6 +3312,11 @@ class ObnizConnection extends eventemitter3_1.default {
                 }
             }
         }, 0);
+    }
+    throwErrorIfOffline() {
+        if (this.connectionState !== 'connected') {
+            throw new ObnizError_1.ObnizOfflineError();
+        }
     }
 }
 exports.default = ObnizConnection;
@@ -7387,17 +7396,19 @@ class BleRemotePeripheral {
                 resolve();
                 return;
             }
+            const cuttingFailedError = new Error(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`);
             this.emitter.once('statusupdate', (params) => {
                 clearTimeout(timeoutTimer);
                 if (params.status === 'disconnected') {
                     resolve(true); // for compatibility
                 }
                 else {
-                    reject(new Error(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`));
+                    reject(cuttingFailedError);
                 }
             });
+            const timeoutError = new ObnizError_1.ObnizTimeoutError(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`);
             const timeoutTimer = setTimeout(() => {
-                reject(new ObnizError_1.ObnizTimeoutError(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`));
+                reject(timeoutError);
             }, 90 * 1000);
             this.obnizBle.centralBindings.disconnect(this.address);
         });
@@ -8800,21 +8811,23 @@ class ObnizBLEHci {
                 reject(new ObnizError_1.ObnizOfflineError());
                 return;
             }
+            const offlineError = new ObnizError_1.ObnizOfflineError();
             onObnizClosed = () => {
                 onObnizClosed = null;
                 clearListeners();
-                reject(new ObnizError_1.ObnizOfflineError());
+                reject(offlineError);
             };
             this.Obniz.once('close', onObnizClosed);
             let onTimeout;
             if (option.onTimeout) {
+                const timeoutError = new ObnizError_1.ObnizTimeoutError(option.waitingFor);
                 onTimeout = () => {
                     timeoutHandler = null;
                     clearListeners();
                     option
                         .onTimeout()
                         .then(() => {
-                        reject(new ObnizError_1.ObnizTimeoutError(option.waitingFor));
+                        reject(timeoutError);
                     })
                         .catch((e) => {
                         reject(e);
@@ -8822,10 +8835,11 @@ class ObnizBLEHci {
                 };
             }
             else {
+                const timeoutError = new ObnizError_1.ObnizTimeoutError(option.waitingFor);
                 onTimeout = () => {
                     timeoutHandler = null;
                     clearListeners();
-                    reject(new ObnizError_1.ObnizTimeoutError(option.waitingFor));
+                    reject(timeoutError);
                 };
             }
             timeoutHandler = setTimeout(onTimeout, option.timeout);
@@ -44849,7 +44863,6 @@ class Keyestudio_TemperatureSensor {
     wired(obniz) {
         this.obniz = obniz;
         obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
-        obniz.getIO(this.params.signal).pull('0v');
         this.ad = obniz.getAD(this.params.signal);
         this.ad.start((voltage) => {
             this.temp = this.calc(voltage);

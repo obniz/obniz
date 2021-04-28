@@ -476,8 +476,9 @@ class ObnizConnection extends eventemitter3_1.default {
             await this._connectCloudWait(desired_server);
             try {
                 const localConnectTimeout = new Promise((resolve, reject) => {
+                    const localConnectTimeoutError = new Error('Cannot use local_connect because the connection was timeouted');
                     setTimeout(() => {
-                        reject(new Error('Cannot use local_connect because the connection was timeouted'));
+                        reject(localConnectTimeoutError);
                     }, 3000);
                 });
                 await Promise.race([localConnectTimeout, this._connectLocalWait()]);
@@ -962,6 +963,11 @@ class ObnizConnection extends eventemitter3_1.default {
                 }
             }
         }, 0);
+    }
+    throwErrorIfOffline() {
+        if (this.connectionState !== 'connected') {
+            throw new ObnizError_1.ObnizOfflineError();
+        }
     }
 }
 exports.default = ObnizConnection;
