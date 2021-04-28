@@ -150,7 +150,7 @@ export default class ObnizBLEHci {
     };
 
     const successPromise = promise.then(
-      (result: any) => {
+      (result: T) => {
         clearListeners();
         return result;
       },
@@ -160,38 +160,41 @@ export default class ObnizBLEHci {
       }
     );
 
-    const errorPromise = new Promise((resolve, reject) => {
+    const errorPromise: Promise<T> = new Promise((resolve, reject) => {
       if (this.Obniz.connectionState !== 'connected') {
         reject(new ObnizOfflineError());
         return;
       }
 
+      const offlineError = new ObnizOfflineError();
       onObnizClosed = () => {
         onObnizClosed = null;
         clearListeners();
-        reject(new ObnizOfflineError());
+        reject(offlineError);
       };
       this.Obniz.once('close', onObnizClosed);
 
       let onTimeout;
       if (option.onTimeout) {
+        const timeoutError = new ObnizTimeoutError(option.waitingFor);
         onTimeout = () => {
           timeoutHandler = null;
           clearListeners();
           option
             .onTimeout()
             .then(() => {
-              reject(new ObnizTimeoutError(option.waitingFor));
+              reject(timeoutError);
             })
             .catch((e: Error) => {
               reject(e);
             });
         };
       } else {
+        const timeoutError = new ObnizTimeoutError(option.waitingFor);
         onTimeout = () => {
           timeoutHandler = null;
           clearListeners();
-          reject(new ObnizTimeoutError(option.waitingFor));
+          reject(timeoutError);
         };
       }
       timeoutHandler = setTimeout(onTimeout, option.timeout);
