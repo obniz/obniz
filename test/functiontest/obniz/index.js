@@ -348,8 +348,9 @@ describe('obniz.index', function () {
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).to.be.finished; // input queue
 
-    this.obniz.onloop = function () {
+    this.obniz.onloop = async () => {
       called = true;
+      await wait(1000);
     };
     testUtil.receiveJson(this.obniz, [
       {
@@ -362,6 +363,7 @@ describe('obniz.index', function () {
       },
     ]);
 
+    await wait(10);
     expect(this.obniz).send([
       {
         ws: {
@@ -370,8 +372,8 @@ describe('obniz.index', function () {
       },
     ]);
 
-    expect(this.obniz).to.be.finished;
     await pingPongWait(this.obniz);
+    expect(this.obniz).to.be.finished;
 
     this.obniz.onloop = null;
     await testUtil.releaseObnizPromise(this);
