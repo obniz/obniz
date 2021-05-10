@@ -136,21 +136,23 @@ class ObnizBLEHci {
                 reject(new ObnizError_1.ObnizOfflineError());
                 return;
             }
+            const offlineError = new ObnizError_1.ObnizOfflineError();
             onObnizClosed = () => {
                 onObnizClosed = null;
                 clearListeners();
-                reject(new ObnizError_1.ObnizOfflineError());
+                reject(offlineError);
             };
             this.Obniz.once('close', onObnizClosed);
             let onTimeout;
             if (option.onTimeout) {
+                const timeoutError = new ObnizError_1.ObnizTimeoutError(option.waitingFor);
                 onTimeout = () => {
                     timeoutHandler = null;
                     clearListeners();
                     option
                         .onTimeout()
                         .then(() => {
-                        reject(new ObnizError_1.ObnizTimeoutError(option.waitingFor));
+                        reject(timeoutError);
                     })
                         .catch((e) => {
                         reject(e);
@@ -158,10 +160,11 @@ class ObnizBLEHci {
                 };
             }
             else {
+                const timeoutError = new ObnizError_1.ObnizTimeoutError(option.waitingFor);
                 onTimeout = () => {
                     timeoutHandler = null;
                     clearListeners();
-                    reject(new ObnizError_1.ObnizTimeoutError(option.waitingFor));
+                    reject(timeoutError);
                 };
             }
             timeoutHandler = setTimeout(onTimeout, option.timeout);

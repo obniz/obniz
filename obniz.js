@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.15.0-alpha.0",
+  "version": "3.15.0-alpha.1",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -163,10 +163,8 @@ module.exports = {
     "@types/node-fetch": "^2.5.4",
     "@types/semver": "^6.2.0",
     "@types/sinon": "^7.5.1",
-    "@types/tv4": "^1.2.29",
     "@types/webpack-env": "^1.15.0",
     "@types/window-or-global": "^1.0.0",
-    "@types/ws": "^6.0.4",
     "@typescript-eslint/eslint-plugin": "^4.15.2",
     "@typescript-eslint/eslint-plugin-tslint": "^4.15.2",
     "@typescript-eslint/parser": "^4.15.2",
@@ -229,6 +227,8 @@ module.exports = {
     "yaml-loader": "^0.5.0"
   },
   "dependencies": {
+    "@types/tv4": "^1.2.29",
+    "@types/ws": "^6.0.4",
     "eventemitter3": "^3.1.2",
     "js-yaml": "^3.13.1",
     "node-dir": "^0.1.17",
@@ -2079,6 +2079,7 @@ class ObnizComponents extends ObnizParts_1.default {
      * @param io
      */
     getIO(io) {
+        this.throwErrorIfOffline();
         if (!this.isValidIO(io)) {
             throw new Error('io ' + io + ' is not valid io');
         }
@@ -2090,6 +2091,7 @@ class ObnizComponents extends ObnizParts_1.default {
      * @param io
      */
     getAD(io) {
+        this.throwErrorIfOffline();
         if (!this.isValidIO(io)) {
             throw new Error('ad ' + io + ' is not valid io');
         }
@@ -2323,6 +2325,7 @@ class ObnizComponents extends ObnizParts_1.default {
         }
     }
     _getFreePeripheralUnit(peripheral) {
+        this.throwErrorIfOffline();
         for (const key of this._allComponentKeys) {
             if (key.indexOf(peripheral) === 0) {
                 /* "io" for "io0" */
@@ -2823,8 +2826,9 @@ class ObnizConnection extends eventemitter3_1.default {
             await this._connectCloudWait(desired_server);
             try {
                 const localConnectTimeout = new Promise((resolve, reject) => {
+                    const localConnectTimeoutError = new Error('Cannot use local_connect because the connection was timeouted');
                     setTimeout(() => {
-                        reject(new Error('Cannot use local_connect because the connection was timeouted'));
+                        reject(localConnectTimeoutError);
                     }, 3000);
                 });
                 await Promise.race([localConnectTimeout, this._connectLocalWait()]);
@@ -3309,6 +3313,11 @@ class ObnizConnection extends eventemitter3_1.default {
                 }
             }
         }, 0);
+    }
+    throwErrorIfOffline() {
+        if (this.connectionState !== 'connected') {
+            throw new ObnizError_1.ObnizOfflineError();
+        }
     }
 }
 exports.default = ObnizConnection;
@@ -7388,17 +7397,19 @@ class BleRemotePeripheral {
                 resolve();
                 return;
             }
+            const cuttingFailedError = new Error(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`);
             this.emitter.once('statusupdate', (params) => {
                 clearTimeout(timeoutTimer);
                 if (params.status === 'disconnected') {
                     resolve(true); // for compatibility
                 }
                 else {
-                    reject(new Error(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`));
+                    reject(cuttingFailedError);
                 }
             });
+            const timeoutError = new ObnizError_1.ObnizTimeoutError(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`);
             const timeoutTimer = setTimeout(() => {
-                reject(new ObnizError_1.ObnizTimeoutError(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`));
+                reject(timeoutError);
             }, 90 * 1000);
             this.obnizBle.centralBindings.disconnect(this.address);
         });
@@ -8801,21 +8812,23 @@ class ObnizBLEHci {
                 reject(new ObnizError_1.ObnizOfflineError());
                 return;
             }
+            const offlineError = new ObnizError_1.ObnizOfflineError();
             onObnizClosed = () => {
                 onObnizClosed = null;
                 clearListeners();
-                reject(new ObnizError_1.ObnizOfflineError());
+                reject(offlineError);
             };
             this.Obniz.once('close', onObnizClosed);
             let onTimeout;
             if (option.onTimeout) {
+                const timeoutError = new ObnizError_1.ObnizTimeoutError(option.waitingFor);
                 onTimeout = () => {
                     timeoutHandler = null;
                     clearListeners();
                     option
                         .onTimeout()
                         .then(() => {
-                        reject(new ObnizError_1.ObnizTimeoutError(option.waitingFor));
+                        reject(timeoutError);
                     })
                         .catch((e) => {
                         reject(e);
@@ -8823,10 +8836,11 @@ class ObnizBLEHci {
                 };
             }
             else {
+                const timeoutError = new ObnizError_1.ObnizTimeoutError(option.waitingFor);
                 onTimeout = () => {
                     timeoutHandler = null;
                     clearListeners();
-                    reject(new ObnizError_1.ObnizTimeoutError(option.waitingFor));
+                    reject(timeoutError);
                 };
             }
             timeoutHandler = setTimeout(onTimeout, option.timeout);
@@ -22423,7 +22437,6 @@ var map = {
 	"./Ble/UT201BLE/index.js": "./dist/src/parts/Ble/UT201BLE/index.js",
 	"./Ble/abstract/services/batteryService.js": "./dist/src/parts/Ble/abstract/services/batteryService.js",
 	"./Ble/abstract/services/genericAccess.js": "./dist/src/parts/Ble/abstract/services/genericAccess.js",
-	"./Ble/cir415a/index.js": "./dist/src/parts/Ble/cir415a/index.js",
 	"./Ble/iBS01/index.js": "./dist/src/parts/Ble/iBS01/index.js",
 	"./Ble/iBS01G/index.js": "./dist/src/parts/Ble/iBS01G/index.js",
 	"./Ble/iBS01H/index.js": "./dist/src/parts/Ble/iBS01H/index.js",
@@ -26568,339 +26581,6 @@ class BleGenericAccess {
 }
 exports.default = BleGenericAccess;
 
-
-/***/ }),
-
-/***/ "./dist/src/parts/Ble/cir415a/index.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(Buffer) {
-/**
- * @packageDocumentation
- * @module Parts.cir415a
- */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const crypto_1 = __importDefault(__webpack_require__("./node_modules/crypto-browserify/index.js"));
-class cir415a {
-    constructor(peripheral) {
-        this.onNotify = null;
-        this.onAuthenticated = null;
-        this.onCardTouch = null;
-        this._peripheral = null;
-        this._authenticated = false;
-        this.masterKey = [
-            0x41,
-            0x43,
-            0x52,
-            0x31,
-            0x32,
-            0x35,
-            0x35,
-            0x55,
-            0x2d,
-            0x4a,
-            0x31,
-            0x20,
-            0x41,
-            0x75,
-            0x74,
-            0x68,
-        ];
-        this.sessionKey = [];
-        this.randomDeviceNumber = [];
-        this.randomNumber = [
-            0,
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14,
-            15,
-        ];
-        this._uuids = {
-            service: '3C4AFFF0-4783-3DE5-A983-D348718EF133',
-            writeChar: '3C4AFFF1-4783-3DE5-A983-D348718EF133',
-            readChar: '3C4AFFF2-4783-3DE5-A983-D348718EF133',
-        };
-        this.readData = [];
-        this.readChar = null;
-        if (peripheral && !cir415a.isDevice(peripheral)) {
-            throw new Error('peripheral is not cir415a');
-        }
-        this._peripheral = peripheral;
-        this._authenticated = false;
-    }
-    static info() {
-        return {
-            name: 'cir415a',
-        };
-    }
-    static isDevice(peripheral) {
-        var _a;
-        return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf('ACR1255U-J1-')) === 0;
-    }
-    async connectWait() {
-        if (!this._peripheral) {
-            throw new Error('peripheral is not cir415a');
-        }
-        if (!this._peripheral.connected) {
-            this._peripheral.ondisconnect = (reason) => {
-                if (typeof this.ondisconnect === 'function') {
-                    this.ondisconnect(reason);
-                }
-            };
-            await this._peripheral.connectWait();
-            this.randomDeviceNumber = [];
-            this.readData = [];
-        }
-        const service = this._peripheral.getService(this._uuids.service);
-        this.readChar = service.getCharacteristic(this._uuids.writeChar);
-        await service
-            .getCharacteristic(this._uuids.readChar)
-            .registerNotifyWait(async (data) => {
-            await this.readPacketWait(data);
-        });
-        await this.writeBleWait([0x6b, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x45, 0x00], null); // auth step.1
-    }
-    async disconnectWait() {
-        if (this._peripheral && this._peripheral.connected) {
-            await this._peripheral.disconnectWait();
-        }
-    }
-    /**
-     * @deprecated
-     * @param data
-     */
-    write(data) {
-        return this.writeWait(data);
-    }
-    async writeWait(data) {
-        if (!this._authenticated) {
-            throw new Error('cir415a no authenticate');
-        }
-        if (data.length % 16 !== 0) {
-            const l = 16 - (data.length % 16);
-            for (let i = 0; i < l; i++) {
-                data.push(0xff);
-            }
-        }
-        await this.writeBleWait(data, this.sessionKey);
-    }
-    setMasterKey(key) {
-        if (key.length !== 16) {
-            throw new Error('setMasterKey length error');
-        }
-        this.masterKey = key;
-    }
-    async setAutoPollingWait(enable) {
-        if (!this._authenticated) {
-            throw new Error('cir415a no authenticate');
-        }
-        await this.writeWait([
-            0x6b,
-            0x00,
-            0x05,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0xe0,
-            0x00,
-            0x00,
-            0x40,
-            enable ? 0x01 : 0x00,
-        ]);
-    }
-    /**
-     * @deprecated
-     * @param data
-     */
-    writeADPU(data) {
-        return this.writeADPUWait(data);
-    }
-    async writeADPUWait(data) {
-        if (!this._authenticated) {
-            throw new Error('cir415a no authenticate');
-        }
-        await this.writeWait([
-            0x6f,
-            (data.length & 0xff00) >> 8,
-            data.length & 0x00ff,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-        ].concat(data));
-    }
-    async readPacketWait(data) {
-        this.readData = this.readData.concat(data);
-        if (this.readData[0] !== 0x05) {
-            this.readData = [];
-        }
-        const dLength = ((this.readData[1] & 0xff) << 8) | (this.readData[2] & 0x00ff);
-        if (this.readData.length - 5 < dLength) {
-            // lack data length
-            return;
-        }
-        if (this.readData[dLength + 4] === 0x0a) {
-            // last packet check
-            data = this.readData.slice(0, dLength + 5);
-            await this.parseBlePacketWait(data);
-            if (this.readData.length > dLength + 5) {
-                // more data
-                this.readData = this.readData.slice(dLength + 5);
-                await this.readPacketWait([]);
-            }
-            else {
-                // delete data
-                this.readData = [];
-            }
-        }
-        else {
-            // console.log("error data");
-            this.readData = [];
-        }
-    }
-    encrypt(data, key) {
-        const c = crypto_1.default.createCipheriv('aes-128-cbc', Buffer.from(key), new Uint8Array(16));
-        c.setAutoPadding(false);
-        let t = c.update(Buffer.from(data), undefined, 'hex');
-        t += c.final('hex');
-        return Array.from(Buffer.from(t, 'hex'));
-    }
-    decrypt(data, key) {
-        const dec = crypto_1.default.createDecipheriv('aes-128-cbc', Buffer.from(key), new Uint8Array(16));
-        dec.setAutoPadding(false);
-        let t = dec.update(Buffer.from(data), 'binary', 'binary');
-        t += dec.final('binary');
-        const d = Array.from(Buffer.from(t));
-        const list = [];
-        for (let i = 0; i < d.length; i++) {
-            list.push(d[i] >= 194 ? ((d[i] & 0b00000011) << 6) | (d[++i] & 0b00111111) : d[i]);
-        }
-        return list;
-    }
-    async parseBlePacketWait(data) {
-        switch (data[3]) {
-            case 0x83:
-                if (!this._authenticated) {
-                    if (this.randomDeviceNumber.length <= 0) {
-                        // auth step.2
-                        let randomDevice = [];
-                        for (let i = 15; i < data.length - 2; i++) {
-                            randomDevice.push(data[i]);
-                        }
-                        this.randomDeviceNumber = randomDevice;
-                        randomDevice = this.decrypt(randomDevice, this.masterKey);
-                        this.sessionKey = randomDevice
-                            .slice(0, 8)
-                            .concat(this.randomNumber.slice(0, 8));
-                        randomDevice = this.decrypt(this.randomNumber.concat(randomDevice), this.masterKey);
-                        let sendPacket = [
-                            0x6b,
-                            0x00,
-                            0x25,
-                            0x00,
-                            0x00,
-                            0x00,
-                            0x00,
-                            0xe0,
-                            0x00,
-                            0x00,
-                            0x46,
-                            0x00,
-                        ];
-                        sendPacket = sendPacket.concat(randomDevice);
-                        await this.writeBleWait(sendPacket, null);
-                        return;
-                        // auth step.3
-                    }
-                    else {
-                        // auth step.4
-                        let randomDevice = [];
-                        for (let i = 15; i < data.length - 2; i++) {
-                            randomDevice.push(data[i]);
-                        }
-                        randomDevice = this.decrypt(randomDevice, this.masterKey);
-                        if (this.arrayMatch(this.randomNumber, randomDevice)) {
-                            this._authenticated = true;
-                            if (this.onAuthenticated) {
-                                this.onAuthenticated();
-                            }
-                        }
-                        return;
-                    }
-                }
-                break;
-        }
-        const d = this.decrypt(data.slice(3, data.length - 2), this.sessionKey);
-        const dLen = (((d[1] & 0xff) << 8) | (d[2] & 0x00ff)) + 7; // command Data Form 7 length
-        const dt = d.slice(0, dLen);
-        switch (dt[0]) {
-            case 0x50:
-                if (this.onCardTouch) {
-                    this.onCardTouch(dt[5] === 3);
-                }
-                break;
-        }
-        if (this.onNotify) {
-            this.onNotify(dt);
-        }
-    }
-    async writeBleWait(data, key) {
-        let packet = [0x05, (data.length & 0xff00) >> 8, data.length & 0x00ff];
-        let checksum = 0;
-        for (let i = 0; i < data.length; i++) {
-            if (i === 6) {
-                continue; // check sum
-            }
-            checksum = (checksum ^ data[i]) & 0xff;
-        }
-        data[6] = checksum;
-        if (key !== null) {
-            data = this.encrypt(data, key);
-        }
-        packet = packet.concat(data);
-        checksum = 0;
-        for (let i = 1; i < packet.length; i++) {
-            checksum = (checksum ^ packet[i]) & 0xff;
-        }
-        packet.push(checksum);
-        packet.push(0x0a);
-        for (let i = 0; i < packet.length / 20; i++) {
-            const d = packet.slice(i * 20, (i + 1) * 20);
-            await this.readChar.writeWait(d);
-        }
-    }
-    arrayMatch(array1, array2) {
-        if (array1.length === array2.length) {
-            for (let i = 0; i < array1.length; i++) {
-                if (array1[i] === array2[i]) {
-                    break;
-                }
-                return false;
-            }
-            return true;
-        }
-        return false;
-    }
-}
-exports.default = cir415a;
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -44850,7 +44530,6 @@ class Keyestudio_TemperatureSensor {
     wired(obniz) {
         this.obniz = obniz;
         obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
-        obniz.getIO(this.params.signal).pull('0v');
         this.ad = obniz.getAD(this.params.signal);
         this.ad.start((voltage) => {
             this.temp = this.calc(voltage);
@@ -71859,7 +71538,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
+module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
 
 /***/ }),
 

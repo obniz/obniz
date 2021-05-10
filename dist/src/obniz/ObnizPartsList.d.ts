@@ -6,7 +6,6 @@ import USB, { USBOptions } from '../parts/Accessory/USB';
 import HX711, { Hx711Options } from '../parts/ADConverter/hx711';
 import Puls08M5stickcS, { Puls08M5stickcSOptions } from '../parts/Biological/PULSE08-M5STICKC-S';
 import OMRON_2JCIE, { OMRON_2JCIEOptions } from '../parts/Ble/2jcie';
-import cir415a, { cir415aOptions } from '../parts/Ble/cir415a';
 import ENERTALK_TOUCH, { ENERTALK_TOUCHOptions } from '../parts/Ble/ENERTALK';
 import HEM_6233T, { HEM_6233TOptions } from '../parts/Ble/HEM_6233T';
 import HEM_9200T, { HEM_9200TOptions } from '../parts/Ble/HEM_9200T';
@@ -727,10 +726,6 @@ export interface PartsList {
     ENERTALK_TOUCH: {
         class: ENERTALK_TOUCH;
         options: ENERTALK_TOUCHOptions;
-    };
-    cir415a: {
-        class: cir415a;
-        options: cir415aOptions;
     };
     TM530: {
         class: TM530;

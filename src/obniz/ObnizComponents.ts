@@ -292,6 +292,7 @@ export default abstract class ObnizComponents extends ObnizParts {
    * @param io
    */
   public getIO(io: number): PeripheralIO {
+    this.throwErrorIfOffline();
     if (!this.isValidIO(io)) {
       throw new Error('io ' + io + ' is not valid io');
     }
@@ -304,6 +305,7 @@ export default abstract class ObnizComponents extends ObnizParts {
    * @param io
    */
   public getAD(io: number): PeripheralAD {
+    this.throwErrorIfOffline();
     if (!this.isValidIO(io)) {
       throw new Error('ad ' + io + ' is not valid io');
     }
@@ -573,6 +575,7 @@ export default abstract class ObnizComponents extends ObnizParts {
   }
 
   protected _getFreePeripheralUnit(peripheral: PeripheralName): any {
+    this.throwErrorIfOffline();
     for (const key of this._allComponentKeys) {
       if (key.indexOf(peripheral) === 0) {
         /* "io" for "io0" */

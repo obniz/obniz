@@ -9,7 +9,6 @@ import Puls08M5stickcS, {
   Puls08M5stickcSOptions,
 } from '../parts/Biological/PULSE08-M5STICKC-S';
 import OMRON_2JCIE, { OMRON_2JCIEOptions } from '../parts/Ble/2jcie';
-import cir415a, { cir415aOptions } from '../parts/Ble/cir415a';
 import ENERTALK_TOUCH, { ENERTALK_TOUCHOptions } from '../parts/Ble/ENERTALK';
 import HEM_6233T, { HEM_6233TOptions } from '../parts/Ble/HEM_6233T';
 import HEM_9200T, { HEM_9200TOptions } from '../parts/Ble/HEM_9200T';
@@ -483,7 +482,6 @@ export interface PartsList {
   REX_BTPM25V: { class: REX_BTPM25V; options: REX_BTPM25VOptions };
   PLS_01BT: { class: PLS_01BT; options: PLS_01BTOptions };
   ENERTALK_TOUCH: { class: ENERTALK_TOUCH; options: ENERTALK_TOUCHOptions };
-  cir415a: { class: cir415a; options: cir415aOptions };
   TM530: { class: TM530; options: TM530Options };
   TM551: { class: TM551; options: TM551Options };
   toio_CoreCube: { class: Toio_CoreCube; options: Toio_CoreCubeOptions };

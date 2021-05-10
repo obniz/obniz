@@ -1,6 +1,6 @@
 module.exports = {
   "name": "obniz",
-  "version": "3.15.0-alpha.0",
+  "version": "3.15.0-alpha.1",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -70,10 +70,8 @@ module.exports = {
     "@types/node-fetch": "^2.5.4",
     "@types/semver": "^6.2.0",
     "@types/sinon": "^7.5.1",
-    "@types/tv4": "^1.2.29",
     "@types/webpack-env": "^1.15.0",
     "@types/window-or-global": "^1.0.0",
-    "@types/ws": "^6.0.4",
     "@typescript-eslint/eslint-plugin": "^4.15.2",
     "@typescript-eslint/eslint-plugin-tslint": "^4.15.2",
     "@typescript-eslint/parser": "^4.15.2",
@@ -136,6 +134,8 @@ module.exports = {
     "yaml-loader": "^0.5.0"
   },
   "dependencies": {
+    "@types/tv4": "^1.2.29",
+    "@types/ws": "^6.0.4",
     "eventemitter3": "^3.1.2",
     "js-yaml": "^3.13.1",
     "node-dir": "^0.1.17",
