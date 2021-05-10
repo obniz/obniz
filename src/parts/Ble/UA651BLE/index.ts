@@ -20,6 +20,11 @@ export interface UA651BLEResult {
   SystolicPressure_kPa?: number; // ex) 17.6Kpa -> 0xB0 = 176, 0xF0
   DiastolicPressure_kPa?: number;
   MeanArterialPressure_kPa?: number;
+  bodyMoved?: boolean;
+  cuffFitLoose?: boolean;
+  irregularPulseDetected?: boolean;
+  improperMeasurement?: boolean;
+  PulseRate?: number;
   date?: {
     // Time Stamp ex) 2013/8/26 9:10:20 -> 0xDD 0x07 0x08 0x1A 0x09 0x0A 0x14
     year: number;
@@ -29,7 +34,6 @@ export interface UA651BLEResult {
     minute: number;
     second: number;
   };
-  PulseRate?: number;
 }
 
 export default class UA651BLE implements ObnizPartsBleInterface {
@@ -104,16 +108,6 @@ export default class UA651BLE implements ObnizPartsBleInterface {
     });
   }
 
-  private _readFLOAT_LE(buffer: Buffer, index: number) {
-    const data = buffer.readUInt32LE(index);
-    let mantissa = data & 0x00ffffff;
-    if ((mantissa & 0x00800000) > 0) {
-      mantissa = -1 * (~(mantissa - 0x01) & 0x00ffffff);
-    }
-    const exponential = data >> 24;
-    return mantissa * Math.pow(10, exponential);
-  }
-
   private _readSFLOAT_LE(buffer: Buffer, index: number) {
     const data = buffer.readUInt16LE(index);
     let mantissa = data & 0x0fff;
@@ -166,6 +160,19 @@ export default class UA651BLE implements ObnizPartsBleInterface {
       // Pulse Rate Flag
       result.PulseRate = this._readSFLOAT_LE(buf, index);
       index += 2;
+    }
+    if (flags & 0x08) {
+      // UserIdFlag
+      index += 1;
+    }
+    if (flags & 0x10) {
+      // UserIdFlag
+      const ms = buf[index];
+      result.bodyMoved = (ms & 0b1) !== 0;
+      result.cuffFitLoose = (ms & 0b10) !== 0;
+      result.irregularPulseDetected = (ms & 0b100) !== 0;
+      result.improperMeasurement = (ms & 0b100000) !== 0;
+      index += 1;
     }
 
     return result;
