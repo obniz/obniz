@@ -9,7 +9,7 @@ describe('ble.hci', function () {
   });
 
   afterEach(async function () {
-    await testUtil.releaseObnizePromise(this);
+    await testUtil.releaseObnizPromise(this);
   });
 
   it('send', function () {

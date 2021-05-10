@@ -9,7 +9,7 @@ describe('message.log', function () {
   });
 
   afterEach(async function () {
-    await testUtil.releaseObnizePromise(this);
+    await testUtil.releaseObnizPromise(this);
   });
 
   it('message', function () {

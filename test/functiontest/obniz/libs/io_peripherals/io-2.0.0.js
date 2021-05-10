@@ -8,7 +8,7 @@ describe('obniz.libs.io', function () {
   });
 
   afterEach(async function () {
-    await testUtil.releaseObnizePromise(this);
+    await testUtil.releaseObnizPromise(this);
   });
 
   it('ioAnimation 2_0_0 registrate', function () {

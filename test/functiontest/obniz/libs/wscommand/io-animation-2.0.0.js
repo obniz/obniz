@@ -12,7 +12,7 @@ describe('io.animation2_0_0', function () {
   });
 
   afterEach(async function () {
-    await testUtil.releaseObnizePromise(this);
+    await testUtil.releaseObnizPromise(this);
   });
 
   it('request ioAnimation', function () {

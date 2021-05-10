@@ -86,6 +86,9 @@ export default abstract class ObnizParts extends ObnizConnection {
     partsName: K,
     options?: PartsList[K]['options']
   ): PartsList[K]['class'] {
+    if (this.connectionState !== 'connected') {
+      throw new Error('obniz.wired can only be used after connection');
+    }
     const Parts: any = ObnizParts.getPartsClass(partsName);
     if (!Parts) {
       throw new Error('No such a parts [' + partsName + '] found');

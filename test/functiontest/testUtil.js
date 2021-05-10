@@ -88,29 +88,6 @@ class TestUtil {
     stub.send = this.sinon.stub();
     stub.close = this.sinon.stub();
     stub.removeAllListeners = this.sinon.stub();
-    stub.readyState = 1;
-
-    this.sinon
-      .stub(this.Obniz.prototype, '_createCloudSocket')
-      .callsFake(() => {
-        return stub;
-      });
-    obj.obniz = this.createObniz(100, '12345678', options);
-    obj.obniz.error = this.sinon.stub();
-    await new Promise((r) => setTimeout(r, 1));
-    obj.obniz.wsOnOpen();
-
-    this.serverDataCount = 0;
-  }
-
-  async setupObnizPromise(obj, done, options) {
-    options = options || {};
-    let stub = this.sinon.stub();
-    stub.on = this.sinon.stub();
-    stub.send = this.sinon.stub();
-    stub.close = this.sinon.stub();
-    stub.removeAllListeners = this.sinon.stub();
-    stub.readyState = 1;
 
     this.sinon
       .stub(this.Obniz.prototype, '_createCloudSocket')
@@ -121,8 +98,15 @@ class TestUtil {
     obj.obniz = this.createObniz(100, '12345678', options);
     obj.obniz.error = this.sinon.stub();
     await new Promise((r) => setTimeout(r, 1));
-    obj.obniz.wsOnOpen();
-    obj.obniz.wsOnMessage(
+
+    stub.readyState = 0;
+    this.serverDataCount = 0;
+  }
+
+  async connectObniz(obniz, options = {}) {
+    obniz.socket.readyState = 1;
+    obniz.wsOnOpen();
+    obniz.wsOnMessage(
       JSON.stringify([
         {
           ws: {
@@ -134,17 +118,21 @@ class TestUtil {
         },
       ])
     );
-    this.serverDataCount = 0;
 
-    this.expect(obj.obniz).send([
+    this.expect(obniz).send([
       { ws: { reset_obniz_on_ws_disconnection: true } },
     ]);
-    this.expect(obj.obniz).to.be.finished;
+    this.expect(obniz).to.be.finished;
+  }
+
+  async setupObnizPromise(obj, done, options) {
+    await this.setupNotConnectedYetObnizPromise(obj, () => {}, options);
+    await this.connectObniz(obj.obniz, options);
 
     await new Promise((r) => setTimeout(r, 1));
   }
 
-  async releaseObnizePromise(obj) {
+  async releaseObnizPromise(obj) {
     obj.obniz._close();
     obj.obniz = null;
     this.Obniz.prototype._createCloudSocket.restore();
@@ -198,6 +186,7 @@ class TestUtil {
       setTimeout(wait, 10);
     });
   }
+
   receiveJson(obniz, jsonVal) {
     if (testUtil.isNode()) {
       let validator = require('./obnizJsonValidator');

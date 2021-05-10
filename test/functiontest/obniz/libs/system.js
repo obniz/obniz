@@ -9,7 +9,7 @@ describe('obniz.libs.system', function () {
   });
 
   afterEach(async function () {
-    await testUtil.releaseObnizePromise(this);
+    await testUtil.releaseObnizPromise(this);
   });
 
   it('ping', function () {

@@ -9,7 +9,7 @@ describe('ws', function () {
   });
 
   afterEach(async function () {
-    await testUtil.releaseObnizePromise(this);
+    await testUtil.releaseObnizPromise(this);
   });
 
   it('reset obniz on ws disconnection', function () {

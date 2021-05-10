@@ -9,7 +9,7 @@ describe('switch', function () {
   });
 
   afterEach(async function () {
-    await testUtil.releaseObnizePromise(this);
+    await testUtil.releaseObnizPromise(this);
   });
 
   it('response test no.1', function () {

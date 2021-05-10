@@ -8,7 +8,7 @@ describe('tcp.log', function () {
   });
 
   afterEach(async function () {
-    await testUtil.releaseObnizePromise(this);
+    await testUtil.releaseObnizPromise(this);
   });
 
   it('tcp connect', function () {
