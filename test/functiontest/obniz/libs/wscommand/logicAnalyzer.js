@@ -9,7 +9,7 @@ describe('logicAnalyzer.log', function () {
   });
 
   afterEach(async function () {
-    await testUtil.releaseObnizePromise(this);
+    await testUtil.releaseObnizPromise(this);
   });
 
   it('request test no.0', function () {

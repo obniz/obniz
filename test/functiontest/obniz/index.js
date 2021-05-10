@@ -352,25 +352,9 @@ describe('obniz.index', function () {
       called = true;
       await wait(1000);
     };
-    testUtil.receiveJson(this.obniz, [
-      {
-        ws: {
-          ready: true,
-          obniz: {
-            firmware: '1.0.3',
-          },
-        },
-      },
-    ]);
 
-    await wait(10);
-    expect(this.obniz).send([
-      {
-        ws: {
-          reset_obniz_on_ws_disconnection: true,
-        },
-      },
-    ]);
+    testUtil.connectObniz(this.obniz);
+    expect(this.obniz).to.be.finished;
 
     await pingPongWait(this.obniz);
     expect(this.obniz).to.be.finished;
@@ -392,25 +376,8 @@ describe('obniz.index', function () {
         called = true;
       };
     };
-    testUtil.receiveJson(this.obniz, [
-      {
-        ws: {
-          ready: true,
-          obniz: {
-            firmware: '1.0.3',
-          },
-        },
-      },
-    ]);
-
-    expect(this.obniz).send([
-      {
-        ws: {
-          reset_obniz_on_ws_disconnection: true,
-        },
-      },
-    ]);
-
+    expect(this.obniz).to.be.finished;
+    testUtil.connectObniz(this.obniz);
     expect(this.obniz).to.be.finished;
     await wait(10);
     await pingPongWait(this.obniz);
@@ -438,25 +405,8 @@ describe('obniz.index', function () {
     this.obniz.repeat(function () {
       called2 = true;
     });
-    testUtil.receiveJson(this.obniz, [
-      {
-        ws: {
-          ready: true,
-          obniz: {
-            firmware: '1.0.3',
-          },
-        },
-      },
-    ]);
 
-    expect(this.obniz).send([
-      {
-        ws: {
-          reset_obniz_on_ws_disconnection: true,
-        },
-      },
-    ]);
-
+    testUtil.connectObniz(this.obniz);
     await wait(10);
 
     this.obniz.onloop = null;
@@ -484,25 +434,8 @@ describe('obniz.index', function () {
         count++;
       }, 100);
     };
-    testUtil.receiveJson(this.obniz, [
-      {
-        ws: {
-          ready: true,
-          obniz: {
-            firmware: '1.0.3',
-          },
-        },
-      },
-    ]);
 
-    expect(this.obniz).send([
-      {
-        ws: {
-          reset_obniz_on_ws_disconnection: true,
-        },
-      },
-    ]);
-
+    testUtil.connectObniz(this.obniz);
     await wait(510);
 
     this.obniz.onloop = null;
@@ -530,16 +463,8 @@ describe('obniz.index', function () {
           results = results && called === true;
           called = true;
         });
-        testUtil.receiveJson(this.obniz, [
-          {
-            ws: {
-              ready: true,
-              obniz: {
-                firmware: '1.0.3',
-              },
-            },
-          },
-        ]);
+
+        testUtil.connectObniz(this.obniz);
 
         return new Promise((resolve) => {
           setTimeout(resolve, 500);
@@ -822,6 +747,6 @@ describe('obniz.index', function () {
         },
       },
     ]);
-    await wait(10);
+    await wait(1);
   }
 });

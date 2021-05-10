@@ -8,7 +8,7 @@ describe('obniz.libs.pwm', function () {
     await testUtil.setupObnizPromise(this);
   });
   afterEach(async function () {
-    await testUtil.releaseObnizePromise(this);
+    await testUtil.releaseObnizPromise(this);
   });
 
   it('getpwm', function () {
