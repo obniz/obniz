@@ -538,6 +538,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
             let canvas = document.getElementById(identifier);
             if (canvas) {
                 this._canvas = canvas;
+                this._reset_canvas();
             }
             else {
                 canvas = document.createElement('canvas');

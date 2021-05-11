@@ -92,16 +92,12 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.15.0-alpha.1",
+  "version": "3.15.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
   "files": [
     "dist",
-    "src",
-    "!src/**/*.png",
-    "!src/**/*.jpeg",
-    "!src/**/*.jpg",
     "index.js",
     "obniz.js"
   ],
@@ -236,9 +232,6 @@ module.exports = {
     "semver": "^5.7.0",
     "tv4": "^1.3.0",
     "ws": "^6.1.4"
-  },
-  "optionalDependencies": {
-    "canvas": "^2.7.0"
   },
   "bugs": {
     "url": "https://forum.obniz.com"
@@ -13881,6 +13874,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
             let canvas = document.getElementById(identifier);
             if (canvas) {
                 this._canvas = canvas;
+                this._reset_canvas();
             }
             else {
                 canvas = document.createElement('canvas');
