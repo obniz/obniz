@@ -1,6 +1,8 @@
 # RS_BTWATTCH2
 This is a power consumption meter for electrical outlets made by RATOC Systems, Inc. and can be turned on and off.
 
+![](./image.jpg)
+
 This device needs to be paired in advance. Press the button on the device for 3 seconds, and when the LED flashes, it is in pairing mode.
 In the program
 
