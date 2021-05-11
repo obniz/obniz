@@ -582,6 +582,7 @@ export default class Display extends ComponentAbstract {
       let canvas: any = document.getElementById(identifier);
       if (canvas) {
         this._canvas = canvas;
+        this._reset_canvas();
       } else {
         canvas = document.createElement('canvas');
         canvas.setAttribute('id', identifier);
