@@ -6,10 +6,6 @@ module.exports = {
   "types": "./dist/src/obniz/index.d.ts",
   "files": [
     "dist",
-    "src",
-    "!src/**/*.png",
-    "!src/**/*.jpeg",
-    "!src/**/*.jpg",
     "index.js",
     "obniz.js"
   ],
