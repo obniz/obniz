@@ -3,8 +3,8 @@
  * @module ObnizCore.Components
  */
 
-import Obniz from "../../index";
-import { ComponentAbstract } from "../ComponentAbstact";
+import Obniz from '../../index';
+import { ComponentAbstract } from '../ComponentAbstact';
 
 /**
  * @category Peripherals
@@ -39,7 +39,7 @@ export default class PeripheralAD extends ComponentAbstract {
     super(obniz);
     this.id = id;
 
-    this.on("/response/ad/get", (obj) => {
+    this.on('/response/ad/get', (obj) => {
       this.value = obj;
       this.Obniz._runUserCreatedFunction(this.onchange, obj);
     });
@@ -54,13 +54,14 @@ export default class PeripheralAD extends ComponentAbstract {
    *  console.log("changed to "+voltage+" v")
    * });
    * ```
+   *
    * @param callback  called when voltage gets changed.
    * @param callback.voltage  voltage
    */
   public start(callback?: (voltage: number) => void) {
     this.onchange = callback;
     const obj: any = {};
-    obj["ad" + this.id] = {
+    obj['ad' + this.id] = {
       stream: true,
     };
     this.Obniz.send(obj);
@@ -83,10 +84,10 @@ export default class PeripheralAD extends ComponentAbstract {
    */
   public async getWait(): Promise<number> {
     const obj: any = {};
-    obj["ad" + this.id] = {
+    obj['ad' + this.id] = {
       stream: false,
     };
-    const data = await this.sendAndReceiveJsonWait(obj, "/response/ad/get");
+    const data = await this.sendAndReceiveJsonWait(obj, '/response/ad/get');
     return data;
   }
 
@@ -100,7 +101,7 @@ export default class PeripheralAD extends ComponentAbstract {
   public end() {
     this.onchange = undefined;
     const obj: any = {};
-    obj["ad" + this.id] = null;
+    obj['ad' + this.id] = null;
     this.Obniz.send(obj);
     return;
   }
@@ -110,7 +111,7 @@ export default class PeripheralAD extends ComponentAbstract {
    * @private
    */
   public schemaBasePath(): string {
-    return "ad" + this.id;
+    return 'ad' + this.id;
   }
 
   /**

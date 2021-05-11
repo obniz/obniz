@@ -3,11 +3,13 @@
  * @module Parts.AMG8833
  */
 
-import Obniz from "../../../../obniz";
-import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
+import Obniz from '../../../../obniz';
+import PeripheralI2C from '../../../../obniz/libs/io_peripherals/i2c';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
-import { I2cPartsAbstractOptions } from "../../../i2cParts";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../../obniz/ObnizPartsInterface';
+import { I2cPartsAbstractOptions } from '../../../i2cParts';
 
 export interface AMG8833Options extends I2cPartsAbstractOptions {
   address?: number;
@@ -16,7 +18,7 @@ export interface AMG8833Options extends I2cPartsAbstractOptions {
 export default class AMG8833 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "AMG8833",
+      name: 'AMG8833',
     };
   }
 
@@ -32,9 +34,9 @@ export default class AMG8833 implements ObnizPartsInterface {
 
   constructor() {
     this.requiredKeys = [];
-    this.keys = ["vcc", "gnd", "sda", "scl", "address"];
+    this.keys = ['vcc', 'gnd', 'sda', 'scl', 'address'];
 
-    this.ioKeys = ["vcc", "gnd", "sda", "scl"];
+    this.ioKeys = ['vcc', 'gnd', 'sda', 'scl'];
     this.commands = {};
     this.commands.mode_normal = [0x00, 0x00];
     this.commands.reset_flag = [0x01, 0x30];
@@ -53,7 +55,7 @@ export default class AMG8833 implements ObnizPartsInterface {
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
     this.address = 0x69;
     if (this.params.address === 0x69) {
@@ -61,11 +63,11 @@ export default class AMG8833 implements ObnizPartsInterface {
     } else if (this.params.address === 0x68) {
       this.address = 0x68;
     } else if (this.params.address !== undefined) {
-      throw new Error("address must be 0x68 or 0x69");
+      throw new Error('address must be 0x68 or 0x69');
     }
 
     this.params.clock = this.params.clock || 400 * 1000; // for i2c
-    this.params.mode = this.params.mode || "master"; // for i2c
+    this.params.mode = this.params.mode || 'master'; // for i2c
     this.params.pull = this.params.pull || null; // for i2c
     this.i2c = obniz.getI2CWithConfig(this.params);
     this.obniz.wait(50);
@@ -83,7 +85,7 @@ export default class AMG8833 implements ObnizPartsInterface {
       pixelAddrL = 0x80 + pixel * 2;
       pixelAddrH = 0x81 + pixel * 2;
     } else {
-      throw new Error("pixel number must be range of 0 to 63");
+      throw new Error('pixel number must be range of 0 to 63');
     }
     this.i2c.write(this.address, [pixelAddrL]);
     const dataL: any = await this.i2c.readWait(this.address, 1);

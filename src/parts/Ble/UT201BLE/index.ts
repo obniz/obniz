@@ -3,11 +3,13 @@
  * @module Parts.UT201BLE
  */
 
-import BleRemoteCharacteristic from "../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic";
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
-import BleBatteryService from "../abstract/services/batteryService";
-import BleGenericAccess from "../abstract/services/genericAccess";
+import BleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, {
+  ObnizPartsBleInfo,
+} from '../../../obniz/ObnizPartsBleInterface';
+import BleBatteryService from '../abstract/services/batteryService';
+import BleGenericAccess from '../abstract/services/genericAccess';
 
 export interface UT201BLEOptions {}
 
@@ -28,12 +30,14 @@ export interface UT201BLEResult {
 export default class UT201BLE implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: "UT201BLE",
+      name: 'UT201BLE',
     };
   }
 
   public static isDevice(peripheral: BleRemotePeripheral) {
-    return peripheral.localName && peripheral.localName.startsWith("A&D_UT201BLE_");
+    return (
+      peripheral.localName && peripheral.localName.startsWith('A&D_UT201BLE_')
+    );
   }
 
   public onNotify?: (co2: number) => void;
@@ -43,9 +47,12 @@ export default class UT201BLE implements ObnizPartsBleInterface {
   public batteryService?: BleBatteryService;
   private _timezoneOffsetMinute: number;
 
-  constructor(peripheral: BleRemotePeripheral | null, timezoneOffsetMinute: number) {
+  constructor(
+    peripheral: BleRemotePeripheral | null,
+    timezoneOffsetMinute: number
+  ) {
     if (!peripheral || !UT201BLE.isDevice(peripheral)) {
-      throw new Error("peripheral is not UT201BLE");
+      throw new Error('peripheral is not UT201BLE');
     }
     this._peripheral = peripheral;
     this._timezoneOffsetMinute = timezoneOffsetMinute;
@@ -53,10 +60,10 @@ export default class UT201BLE implements ObnizPartsBleInterface {
 
   public async pairingWait(): Promise<string | null> {
     if (!this._peripheral) {
-      throw new Error("UT201BLE not found");
+      throw new Error('UT201BLE not found');
     }
     this._peripheral.ondisconnect = (reason: any) => {
-      if (typeof this.ondisconnect === "function") {
+      if (typeof this.ondisconnect === 'function') {
         this.ondisconnect(reason);
       }
     };
@@ -71,7 +78,7 @@ export default class UT201BLE implements ObnizPartsBleInterface {
 
     const { timeChar, customServiceChar } = this._getChars();
 
-    await this._writeTimeChar(this._timezoneOffsetMinute);
+    await this._writeTimeCharWait(this._timezoneOffsetMinute);
 
     await customServiceChar.writeWait([2, 1, 3]); // disconnect req
     return key;
@@ -79,7 +86,7 @@ export default class UT201BLE implements ObnizPartsBleInterface {
 
   public async getDataWait(pairingKeys?: string): Promise<UT201BLEResult[]> {
     if (!this._peripheral) {
-      throw new Error("UT201BLE not found");
+      throw new Error('UT201BLE not found');
     }
 
     await this._peripheral.connectWait({
@@ -90,10 +97,14 @@ export default class UT201BLE implements ObnizPartsBleInterface {
 
     return await new Promise(async (resolve, reject) => {
       if (!this._peripheral) {
-        throw new Error("UT201BLE not found");
+        throw new Error('UT201BLE not found');
       }
       const results: UT201BLEResult[] = [];
-      const { temperatureMeasurementChar, timeChar, customServiceChar } = this._getChars();
+      const {
+        temperatureMeasurementChar,
+        timeChar,
+        customServiceChar,
+      } = this._getChars();
 
       this._peripheral.ondisconnect = (reason: any) => {
         resolve(results);
@@ -101,7 +112,7 @@ export default class UT201BLE implements ObnizPartsBleInterface {
 
       await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
 
-      await this._writeTimeChar(this._timezoneOffsetMinute);
+      await this._writeTimeCharWait(this._timezoneOffsetMinute);
 
       await temperatureMeasurementChar.registerNotifyWait((data: number[]) => {
         results.push(this._analyzeData(data));
@@ -148,20 +159,20 @@ export default class UT201BLE implements ObnizPartsBleInterface {
     }
     if (flags & 0x04) {
       const types = [
-        "unknown",
-        "Armpit",
-        "Body",
-        "Ear",
-        "Finger",
-        "Gastro-intestinal Tract",
-        "Mouth",
-        "Rectum",
-        "Toe",
-        "Tympanum",
+        'unknown',
+        'Armpit',
+        'Body',
+        'Ear',
+        'Finger',
+        'Gastro-intestinal Tract',
+        'Mouth',
+        'Rectum',
+        'Toe',
+        'Tympanum',
       ];
       const value = buf.readUInt8(index);
       index++;
-      result.temperatureType = types[value] || "unknown";
+      result.temperatureType = types[value] || 'unknown';
     }
 
     return result;
@@ -169,16 +180,18 @@ export default class UT201BLE implements ObnizPartsBleInterface {
 
   private _getChars() {
     if (!this._peripheral) {
-      throw new Error("UT201BLE not found");
+      throw new Error('UT201BLE not found');
     }
 
     const temperatureMeasurementChar: BleRemoteCharacteristic = this._peripheral
-      .getService("1809")!
-      .getCharacteristic("2A1C")!;
-    const timeChar = this._peripheral.getService("1809")!.getCharacteristic("2A08")!;
+      .getService('1809')!
+      .getCharacteristic('2A1C')!;
+    const timeChar = this._peripheral
+      .getService('1809')!
+      .getCharacteristic('2A08')!;
     const customServiceChar = this._peripheral
-      .getService("233bf0005a341b6d975c000d5690abe4")!
-      .getCharacteristic("233bf0015a341b6d975c000d5690abe4")!;
+      .getService('233bf0005a341b6d975c000d5690abe4')!
+      .getCharacteristic('233bf0015a341b6d975c000d5690abe4')!;
 
     return {
       temperatureMeasurementChar,
@@ -187,7 +200,7 @@ export default class UT201BLE implements ObnizPartsBleInterface {
     };
   }
 
-  private async _writeTimeChar(timeOffsetMinute: number) {
+  private async _writeTimeCharWait(timeOffsetMinute: number) {
     const { timeChar } = this._getChars();
 
     const date = new Date();

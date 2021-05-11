@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from "./WSCommand";
+import WSCommand from './WSCommand';
 
 class WSCommandSPI extends WSCommand {
   public module: any;
@@ -38,7 +38,7 @@ class WSCommandSPI extends WSCommand {
     const clock: any = params.clock;
 
     if (clk === null && mosi === null && miso === null) {
-      throw new Error("spi: master mode require one of clk/mosi/miso");
+      throw new Error('spi: master mode require one of clk/mosi/miso');
     }
 
     if (clk === null) {
@@ -89,17 +89,22 @@ class WSCommandSPI extends WSCommand {
 
   public parseFromJson(json: any) {
     for (let i = 0; i < 2; i++) {
-      const module: any = json["spi" + i];
+      const module: any = json['spi' + i];
       if (module === undefined) {
         continue;
       }
 
       const schemaData: any = [
-        { uri: "/request/spi/init_master", onValid: this.initMaster },
-        { uri: "/request/spi/write", onValid: this.write },
-        { uri: "/request/spi/deinit", onValid: this.deinit },
+        { uri: '/request/spi/init_master', onValid: this.initMaster },
+        { uri: '/request/spi/write', onValid: this.write },
+        { uri: '/request/spi/deinit', onValid: this.deinit },
       ];
-      const res: any = this.validateCommandSchema(schemaData, module, "spi" + i, i);
+      const res: any = this.validateCommandSchema(
+        schemaData,
+        module,
+        'spi' + i,
+        i
+      );
 
       if (res.valid === 0) {
         if (res.invalidButLike.length > 0) {
@@ -120,7 +125,7 @@ class WSCommandSPI extends WSCommand {
       for (let i = 0; i < arr.length; i++) {
         arr[i] = payload[i + 1];
       }
-      objToSend["spi" + module_index] = {
+      objToSend['spi' + module_index] = {
         data: arr,
       };
     } else {

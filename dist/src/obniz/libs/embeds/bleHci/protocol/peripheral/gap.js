@@ -33,7 +33,10 @@ class Gap extends eventemitter3_1.default {
         this._advertiseState = null;
     }
     async startAdvertisingWait(name, serviceUuids) {
-        debug("startAdvertising: name = " + name + ", serviceUuids = " + JSON.stringify(serviceUuids, null, 2));
+        debug('startAdvertising: name = ' +
+            name +
+            ', serviceUuids = ' +
+            JSON.stringify(serviceUuids, null, 2));
         let advertisementDataLength = 3;
         let scanDataLength = 0;
         const serviceUuids16bit = [];
@@ -96,7 +99,7 @@ class Gap extends eventemitter3_1.default {
         await this.startAdvertisingWithEIRDataWait(advertisementData, scanData);
     }
     async startAdvertisingIBeaconWait(data) {
-        debug("startAdvertisingIBeacon: data = " + data.toString("hex"));
+        debug('startAdvertisingIBeacon: data = ' + data.toString('hex'));
         const dataLength = data.length;
         const manufacturerDataLength = 4 + dataLength;
         const advertisementDataLength = 5 + manufacturerDataLength;
@@ -118,17 +121,17 @@ class Gap extends eventemitter3_1.default {
     async startAdvertisingWithEIRDataWait(advertisementData, scanData) {
         advertisementData = advertisementData || Buffer.alloc(0);
         scanData = scanData || Buffer.alloc(0);
-        debug("startAdvertisingWithEIRData: advertisement data = " +
-            advertisementData.toString("hex") +
-            ", scan data = " +
-            scanData.toString("hex"));
+        debug('startAdvertisingWithEIRData: advertisement data = ' +
+            advertisementData.toString('hex') +
+            ', scan data = ' +
+            scanData.toString('hex'));
         if (advertisementData.length > 31) {
-            throw new Error("Advertisement data is over maximum limit of 31 bytes");
+            throw new Error('Advertisement data is over maximum limit of 31 bytes');
         }
         else if (scanData.length > 31) {
-            throw new Error("Scan data is over maximum limit of 31 bytes");
+            throw new Error('Scan data is over maximum limit of 31 bytes');
         }
-        this._advertiseState = "starting";
+        this._advertiseState = 'starting';
         const p1 = this._hci.setScanResponseDataWait(scanData);
         const p2 = this._hci.setAdvertisingDataWait(advertisementData);
         await Promise.all([p1, p2]);
@@ -137,22 +140,22 @@ class Gap extends eventemitter3_1.default {
         const p5 = this._hci.setAdvertisingDataWait(advertisementData);
         await Promise.all([p3, p4, p5]);
         const status = await p3;
-        if (this._advertiseState === "starting") {
-            this._advertiseState = "started";
+        if (this._advertiseState === 'starting') {
+            this._advertiseState = 'started';
             if (status) {
-                throw new Error(hci_1.default.STATUS_MAPPER[status] || "Unknown (" + status + ")");
+                throw new Error(hci_1.default.STATUS_MAPPER[status] || 'Unknown (' + status + ')');
             }
         }
-        else if (this._advertiseState === "stopping") {
-            this._advertiseState = "stopped";
+        else if (this._advertiseState === 'stopping') {
+            this._advertiseState = 'stopped';
         }
     }
     async restartAdvertisingWait() {
-        this._advertiseState = "restarting";
+        this._advertiseState = 'restarting';
         await this._hci.setAdvertiseEnableWait(true);
     }
     async stopAdvertisingWait() {
-        this._advertiseState = "stopping";
+        this._advertiseState = 'stopping';
         await this._hci.setAdvertiseEnableWait(false);
     }
 }

@@ -2,6 +2,7 @@
 
 
 CO2 concentration sensor output through the UART.
+![](image.jpg)
 
 This sensor needs to be heated. The value will not be stable for about 3 minutes after heating.
 

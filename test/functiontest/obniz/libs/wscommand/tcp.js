@@ -2,19 +2,16 @@ let chai = require('chai');
 let expect = chai.expect;
 let testUtil = require('../../../testUtil.js');
 
-chai.use(require('chai-like'));
-chai.use(testUtil.obnizAssert);
-
-describe('tcp.log', function() {
-  beforeEach(function(done) {
-    return testUtil.setupObnizPromise(this, done, { binary: true });
+describe('tcp.log', function () {
+  beforeEach(async function () {
+    await testUtil.setupObnizPromise(this, null, { binary: true });
   });
 
-  afterEach(function(done) {
-    return testUtil.releaseObnizePromise(this, done);
+  afterEach(async function () {
+    await testUtil.releaseObnizPromise(this);
   });
 
-  it('tcp connect', function() {
+  it('tcp connect', function () {
     let requestJson = [
       {
         tcp0: {
@@ -40,7 +37,7 @@ describe('tcp.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -49,7 +46,7 @@ describe('tcp.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('tcp disconnect', function() {
+  it('tcp disconnect', function () {
     let requestJson = [
       {
         tcp0: {
@@ -72,7 +69,7 @@ describe('tcp.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -81,7 +78,7 @@ describe('tcp.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('tcp write', function() {
+  it('tcp write', function () {
     let requestJson = [
       {
         tcp0: {
@@ -106,7 +103,7 @@ describe('tcp.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -115,16 +112,18 @@ describe('tcp.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('tcp response', function() {
+  it('tcp response', function () {
     let responseBinaryString = '0d 04 03 00 12 98';
     let expectJson = [{ tcp0: { read: { data: [18, 152] } } }];
 
-    let binaryArray = responseBinaryString.split(' ').map(function(val, index) {
-      return parseInt(val, 16);
-    });
+    let binaryArray = responseBinaryString
+      .split(' ')
+      .map(function (val, index) {
+        return parseInt(val, 16);
+      });
     let binary = new Uint8Array(binaryArray);
 
-    let json = this.obniz.binary2Json(binary);
+    let json = this.obniz._binary2Json(binary);
 
     let isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;

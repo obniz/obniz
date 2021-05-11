@@ -4,11 +4,11 @@
  * @ignore
  */
 /// <reference types="node" />
-import EventEmitter from "eventemitter3";
-import { Handle } from "../../bleTypes";
-import Hci from "../hci";
-import Smp from "./smp";
-declare type AclStreamEventTypes = "data" | "end" | "encrypt" | "encryptFail";
+import EventEmitter from 'eventemitter3';
+import { Handle } from '../../bleTypes';
+import Hci from '../hci';
+import Smp from './smp';
+declare type AclStreamEventTypes = 'data' | 'end' | 'encrypt' | 'encryptFail';
 /**
  *
  * @ignore

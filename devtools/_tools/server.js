@@ -29,7 +29,7 @@ gulp.task('server', function jsonSchemaForVar() {
     response.sendFile(path.join(__dirname, '../../obniz.js'));
   });
 
-  app.listen(port, err => {
+  app.listen(port, (err) => {
     if (err) {
       return console.log('something bad happened', err);
     }
@@ -120,7 +120,7 @@ gulp.task('jsonSchemaDoc', function jsonSchemaForVar(callback) {
       )
       .pipe(rename('websocket/' + one.replace('/', '_') + '.md'))
       .pipe(gulp.dest(docPath))
-      .on('end', function() {
+      .on('end', function () {
         onEnd(one);
       });
 
@@ -141,13 +141,13 @@ gulp.task('jsonSchemaDoc', function jsonSchemaForVar(callback) {
       )
       .pipe(rename('websocket/' + one.replace('/', '_') + '-ja.md'))
       .pipe(gulp.dest(docPath))
-      .on('end', function() {
+      .on('end', function () {
         onEnd(one + '-ja');
       });
   }
 });
 
-gulp.task('tsc:copy:statics', function(done) {
+gulp.task('tsc:copy:statics', function (done) {
   return gulp
     .src([
       path.join(__dirname, '../../src/**/*.yml'),
@@ -155,13 +155,13 @@ gulp.task('tsc:copy:statics', function(done) {
       path.join(__dirname, '../../src/**/*.css'),
     ])
     .pipe(gulp.dest(path.join(__dirname, '../../dist/src')))
-    .on('end', function() {
+    .on('end', function () {
       console.log('static file copy compiled!');
       done();
     });
 });
 
-gulp.task('tsc:copy:package.json', function(done) {
+gulp.task('tsc:copy:package.json', function (done) {
   return gulp
     .src([path.join(__dirname, '../../package.json')])
     .pipe(
@@ -171,7 +171,7 @@ gulp.task('tsc:copy:package.json', function(done) {
       })
     )
     .pipe(gulp.dest(path.join(__dirname, '../../dist')))
-    .on('end', function() {
+    .on('end', function () {
       console.log('static file copy compiled!');
       done();
     });
@@ -181,12 +181,12 @@ gulp.task(
   gulp.parallel('tsc:copy:statics', 'tsc:copy:package.json')
 );
 
-gulp.task('tsc:compile', function(done) {
+gulp.task('tsc:compile', function (done) {
   return tsProject
     .src()
     .pipe(tsProject())
     .pipe(gulp.dest('dist'))
-    .on('end', function() {
+    .on('end', function () {
       console.log('tsc compiled!');
       done();
     });
@@ -202,7 +202,7 @@ gulp.task('obniz.js', function obnizJsBuild(done) {
     .pipe(webpackStream(webpackConfig, webpack))
     .pipe(rename('obniz.js'))
     .pipe(gulp.dest(path.join(__dirname, '../../')))
-    .on('end', function() {
+    .on('end', function () {
       console.log('obniz.js compiled!');
       done();
     });
@@ -229,7 +229,7 @@ gulp.task('readMe', function readMeBuild(done) {
     .pipe(gulp_ejs())
     .pipe(rename({ extname: '.md' }))
     .pipe(gulp.dest(partsPath))
-    .on('end', function() {
+    .on('end', function () {
       console.log('ejs compiled!');
       done();
     });

@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module Parts.DPS310
  */
-import Obniz from "../../../obniz";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface DPS310Options {
 }
 export default class DPS310 implements ObnizPartsInterface {
@@ -46,7 +46,7 @@ export default class DPS310 implements ObnizPartsInterface {
     private readByteBitfieldWait;
     private readBlockWait;
     private writeByteWait;
-    private writeByteBitfield;
+    private writeByteBitfieldWait;
     private setOpModeDetailWait;
     private setOpModeWait;
     private standbyWait;

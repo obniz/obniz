@@ -2,10 +2,10 @@
  * @packageDocumentation
  * @module Parts.AK8963
  */
-import Obniz from "../../../obniz";
-import { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-import i2cCompass, { compassUnit, I2cCompassAbstractOptions } from "../../i2cCompass";
-import { I2cInfo, Xyz } from "../../i2cParts";
+import Obniz from '../../../obniz';
+import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import i2cCompass, { compassUnit, I2cCompassAbstractOptions } from '../../i2cCompass';
+import { I2cInfo, Xyz } from '../../i2cParts';
 export interface AK8963Options extends I2cCompassAbstractOptions {
     adc_cycle?: number;
 }

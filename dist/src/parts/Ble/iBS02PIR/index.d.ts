@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module Parts.iBS02PIR
  */
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
 export interface IBS02PIROptions {
 }
 export interface IBS02PIR_Data {

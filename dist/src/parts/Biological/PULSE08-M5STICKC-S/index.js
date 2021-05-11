@@ -6,13 +6,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Puls08M5stickcS {
     constructor() {
-        this.keys = ["vcc", "gnd", "tx", "rx"];
-        this.requiredKeys = ["tx", "rx"];
+        this.keys = ['vcc', 'gnd', 'tx', 'rx'];
+        this.requiredKeys = ['tx', 'rx'];
         this.delimiter = 0x0a;
     }
     static info() {
         return {
-            name: "Puls08M5stickcS",
+            name: 'Puls08M5stickcS',
         };
     }
     onbpmupdate(bpm) {
@@ -23,7 +23,7 @@ class Puls08M5stickcS {
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.uart = obniz.getFreeUart();
         this.uart.start({ tx: this.params.tx, rx: this.params.rx, baud: 19200 });
         this.receivingData = [];
@@ -37,8 +37,8 @@ class Puls08M5stickcS {
                 }
                 else {
                     const row = this.receivingData;
-                    if (row[0] === "#".charCodeAt(0)) {
-                        row[0] = " ".charCodeAt(0);
+                    if (row[0] === '#'.charCodeAt(0)) {
+                        row[0] = ' '.charCodeAt(0);
                         const str = this.decode(row);
                         const val = parseInt(str);
                         const bpm = val > 0 ? 60000 / val : null;
@@ -58,7 +58,7 @@ class Puls08M5stickcS {
         };
     }
     decode(data) {
-        return Buffer.from(data).toString("utf8");
+        return Buffer.from(data).toString('utf8');
         // if (typeof TextDecoder !== 'undefined') {
         //   let enc = new TextDecoder('utf-8');
         //   let arr = new Uint8Array(data);
@@ -69,9 +69,9 @@ class Puls08M5stickcS {
         // throw new Error('cannot decode');
     }
     init() {
-        this.uart.send("@OF30");
+        this.uart.send('@OF30');
         this.uart.send(0x0a);
-        this.uart.send("@RG2");
+        this.uart.send('@RG2');
         this.uart.send(0x0a);
     }
 }

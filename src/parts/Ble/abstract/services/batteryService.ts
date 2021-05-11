@@ -3,7 +3,7 @@
  * @module Parts.abstract.services
  */
 
-import BleRemoteService from "../../../../obniz/libs/embeds/bleHci/bleRemoteService";
+import BleRemoteService from '../../../../obniz/libs/embeds/bleHci/bleRemoteService';
 
 export default class BleBatteryService {
   private _service: BleRemoteService;
@@ -13,7 +13,7 @@ export default class BleBatteryService {
   }
 
   public async getBatteryLevelWait(): Promise<number | null> {
-    const char = this._service.getCharacteristic("2A19");
+    const char = this._service.getCharacteristic('2A19');
     if (!char) {
       return null;
     }

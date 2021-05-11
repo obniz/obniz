@@ -14,17 +14,27 @@ class SNx4HC595_IO {
         this.chip.output(this.id, value);
     }
 }
-// tslint:disable:max-classes-per-file
+/* eslint max-classes-per-file: 0 */
 class SNx4HC595 {
     constructor() {
         /* http://www.ti.com/lit/ds/symlink/sn74hc595.pdf */
-        this.keys = ["gnd", "vcc", "ser", "srclk", "rclk", "oe", "srclr", "io_num", "enabled"];
-        this.requiredKeys = ["ser", "srclk", "rclk"];
+        this.keys = [
+            'gnd',
+            'vcc',
+            'ser',
+            'srclk',
+            'rclk',
+            'oe',
+            'srclr',
+            'io_num',
+            'enabled',
+        ];
+        this.requiredKeys = ['ser', 'srclk', 'rclk'];
         this.autoFlash = true;
     }
     static info() {
         return {
-            name: "SNx4HC595",
+            name: 'SNx4HC595',
         };
     }
     wired(obniz) {
@@ -35,7 +45,7 @@ class SNx4HC595 {
         this.io_ser.output(false);
         this.io_srclk.output(false);
         this.io_rclk.output(false);
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         if (this.obniz.isValidIO(this.params.srclr)) {
             this.io_srclr = this.obniz.getIO(this.params.srclr);
             this.io_srclr.output(true);
@@ -44,14 +54,15 @@ class SNx4HC595 {
             this.io_oe = this.obniz.getIO(this.params.oe);
             this.io_oe.output(true);
         }
-        if (this.obniz.isValidIO(this.params.vcc) || this.obniz.isValidIO(this.params.gnd)) {
+        if (this.obniz.isValidIO(this.params.vcc) ||
+            this.obniz.isValidIO(this.params.gnd)) {
             this.obniz.wait(100);
         }
-        if (typeof this.params.io_num !== "number") {
+        if (typeof this.params.io_num !== 'number') {
             this.params.io_num = 8;
         }
         this.ioNum(this.params.io_num);
-        if (typeof this.params.enabled !== "boolean") {
+        if (typeof this.params.enabled !== 'boolean') {
             this.params.enabled = true;
         }
         if (this.io_oe && this.params.enabled) {
@@ -59,7 +70,7 @@ class SNx4HC595 {
         }
     }
     ioNum(num) {
-        if (typeof num === "number" && this._io_num !== num) {
+        if (typeof num === 'number' && this._io_num !== num) {
             this._io_num = num;
             this.io = [];
             for (let i = 0; i < num; i++) {
@@ -68,15 +79,15 @@ class SNx4HC595 {
             this.flush();
         }
         else {
-            throw new Error("io num should be a number");
+            throw new Error('io num should be a number');
         }
     }
     isValidIO(io) {
-        return typeof io === "number" && io >= 0 && io < this._io_num;
+        return typeof io === 'number' && io >= 0 && io < this._io_num;
     }
     getIO(io) {
         if (!this.isValidIO(io)) {
-            throw new Error("io " + io + " is not valid io");
+            throw new Error('io ' + io + ' is not valid io');
         }
         return this.io[io];
     }
@@ -88,8 +99,8 @@ class SNx4HC595 {
         }
     }
     onece(operation) {
-        if (typeof operation !== "function") {
-            throw new Error("please provide function");
+        if (typeof operation !== 'function') {
+            throw new Error('please provide function');
         }
         const lastValue = this.autoFlash;
         this.autoFlash = false;

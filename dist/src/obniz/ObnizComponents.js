@@ -34,6 +34,7 @@ class ObnizComponents extends ObnizParts_1.default {
     }
     /**
      * Output pin Vcc and Gnd
+     *
      * @param vcc
      * @param gnd
      * @param drive
@@ -54,43 +55,48 @@ class ObnizComponents extends ObnizParts_1.default {
     }
     /**
      * Get IO module from pin no
+     *
      * @param io
      */
     getIO(io) {
+        this.throwErrorIfOffline();
         if (!this.isValidIO(io)) {
-            throw new Error("io " + io + " is not valid io");
+            throw new Error('io ' + io + ' is not valid io');
         }
-        return this["io" + io];
+        return this['io' + io];
     }
     /**
      * GET AD module from pin no
+     *
      * @param io
      */
     getAD(io) {
+        this.throwErrorIfOffline();
         if (!this.isValidIO(io)) {
-            throw new Error("ad " + io + " is not valid io");
+            throw new Error('ad ' + io + ' is not valid io');
         }
-        return this["ad" + io];
+        return this['ad' + io];
     }
     /**
      * It returns unused PWM module.
      */
     getFreePwm() {
-        return this._getFreePeripheralUnit("pwm");
+        return this._getFreePeripheralUnit('pwm');
     }
     /**
      * It returns unused I2C module.
      */
     getFreeI2C() {
-        return this._getFreePeripheralUnit("i2c");
+        return this._getFreePeripheralUnit('i2c');
     }
     /**
      * It returns setuped I2C module .
+     *
      * @param config
      */
     getI2CWithConfig(config) {
-        if (typeof config !== "object") {
-            throw new Error("getI2CWithConfig need config arg");
+        if (typeof config !== 'object') {
+            throw new Error('getI2CWithConfig need config arg');
         }
         if (config.i2c) {
             return config.i2c;
@@ -103,15 +109,16 @@ class ObnizComponents extends ObnizParts_1.default {
      * It returns unused SPI module.
      */
     getFreeSpi() {
-        return this._getFreePeripheralUnit("spi");
+        return this._getFreePeripheralUnit('spi');
     }
     /**
      * It returns setuped SPI module.
+     *
      * @param config
      */
     getSpiWithConfig(config) {
-        if (typeof config !== "object") {
-            throw new Error("getSpiWithConfig need config arg");
+        if (typeof config !== 'object') {
+            throw new Error('getSpiWithConfig need config arg');
         }
         if (config.spi) {
             return config.spi;
@@ -124,19 +131,20 @@ class ObnizComponents extends ObnizParts_1.default {
      * It returns unused UART module.
      */
     getFreeUart() {
-        return this._getFreePeripheralUnit("uart");
+        return this._getFreePeripheralUnit('uart');
     }
     /**
      * It returns unused TCP module.
      */
     getFreeTcp() {
-        return this._getFreePeripheralUnit("tcp");
+        return this._getFreePeripheralUnit('tcp');
     }
     hasExtraInterface(interfaceName) {
         return !!this.getExtraInterface(interfaceName);
     }
     getExtraInterface(interfaceName) {
-        if (this._hwDefinition.extraInterface && this._hwDefinition.extraInterface[interfaceName]) {
+        if (this._hwDefinition.extraInterface &&
+            this._hwDefinition.extraInterface[interfaceName]) {
             return this._hwDefinition.extraInterface[interfaceName];
         }
         return null;
@@ -157,7 +165,7 @@ class ObnizComponents extends ObnizParts_1.default {
         }
         this._hwDefinition = hw_1.default.getDefinitionFor(this.hw);
         if (!this._hwDefinition) {
-            throw new Error(`unkown hw ${this.hw}`);
+            throw new Error(`unkown hw ${this.hw || ''}`);
         }
         const hw_peripherals = this._hwDefinition.peripherals;
         this._hw_peripherals = hw_peripherals;
@@ -215,9 +223,9 @@ class ObnizComponents extends ObnizParts_1.default {
                     const Class = embeds_map[key];
                     this[key] = new Class(this, hw_embeds[key]);
                     this._allComponentKeys.push(key);
-                    if (typeof this[key].debugHandler === "function") {
+                    if (typeof this[key].debugHandler === 'function') {
                         this[key].debugHandler = (text) => {
-                            this.print_debug(text);
+                            this._print_debug(text);
                         };
                     }
                 }
@@ -247,13 +255,13 @@ class ObnizComponents extends ObnizParts_1.default {
         }
     }
     _resetComponents() {
-        this.print_debug("components state resets");
+        this._print_debug('components state resets');
         for (const key of this._allComponentKeys) {
             this[key]._reset();
         }
     }
-    notifyToModule(obj) {
-        super.notifyToModule(obj);
+    _notifyToModule(obj) {
+        super._notifyToModule(obj);
         for (const key of this._allComponentKeys) {
             const targetComponent = this[key];
             if (targetComponent instanceof ComponentAbstact_1.ComponentAbstract) {
@@ -263,8 +271,8 @@ class ObnizComponents extends ObnizParts_1.default {
                 }
             }
             else {
-                if (key === "logicAnalyzer") {
-                    if (obj.hasOwnProperty("logic_analyzer")) {
+                if (key === 'logicAnalyzer') {
+                    if (obj.hasOwnProperty('logic_analyzer')) {
                         this.logicAnalyzer.notified(obj.logic_analyzer);
                     }
                     continue;
@@ -276,8 +284,8 @@ class ObnizComponents extends ObnizParts_1.default {
             }
         }
     }
-    handleSystemCommand(wsObj) {
-        super.handleSystemCommand(wsObj);
+    _handleSystemCommand(wsObj) {
+        super._handleSystemCommand(wsObj);
         // ping pong
         if (wsObj.pong) {
             for (const callback of this.pongObservers) {
@@ -297,11 +305,12 @@ class ObnizComponents extends ObnizParts_1.default {
         }
     }
     _getFreePeripheralUnit(peripheral) {
+        this.throwErrorIfOffline();
         for (const key of this._allComponentKeys) {
             if (key.indexOf(peripheral) === 0) {
                 /* "io" for "io0" */
                 const obj = this[key];
-                if (typeof obj === "object" && !obj.isUsed()) {
+                if (typeof obj === 'object' && !obj.isUsed()) {
                     obj.used = true;
                     return obj;
                 }

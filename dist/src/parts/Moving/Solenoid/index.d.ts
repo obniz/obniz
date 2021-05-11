@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module Parts.Solenoid
  */
-import Obniz from "../../../obniz";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface SolenoidOptions {
     signal: number;
     gnd?: number;

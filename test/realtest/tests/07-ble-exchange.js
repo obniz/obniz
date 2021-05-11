@@ -2,11 +2,11 @@ const config = require('../config.js');
 
 let obnizA, checkBoard;
 
-describe('7-ble-exchange', function() {
+describe('7-ble-exchange', function () {
   this.timeout(30000);
 
-  before(async function() {
-    await new Promise(resolve => {
+  before(async function () {
+    await new Promise((resolve) => {
       config.waitForConenct(() => {
         obnizA = config.obnizA; //exchange A<->B
         checkBoard = config.checkBoard;
@@ -17,7 +17,7 @@ describe('7-ble-exchange', function() {
     await checkBoard.ble.initWait();
   });
 
-  it('simple ad', async function() {
+  it('simple ad', async function () {
     let service = new obnizA.ble.service({
       uuid: '0000',
     });
@@ -28,7 +28,7 @@ describe('7-ble-exchange', function() {
 
     let found = false;
     let expectedValue = [2, 1, 6, 3, 2, 0, 0];
-    checkBoard.ble.scan.onfind = function(peripheral) {
+    checkBoard.ble.scan.onfind = function (peripheral) {
       // console.log(peripheral.adv_data.length + ": " + peripheral.localName());
       if (peripheral.adv_data.length === expectedValue.length) {
         // console.log(peripheral.adv_data);
@@ -51,7 +51,7 @@ describe('7-ble-exchange', function() {
     obnizA.ble.peripheral.end();
   });
 
-  it('ad localname', async function() {
+  it('ad localname', async function () {
     let service = new obnizA.ble.service({
       uuid: '0001',
     });
@@ -66,7 +66,7 @@ describe('7-ble-exchange', function() {
 
     let found = false;
     // let expectedValue = [2, 1, 6, 3, 2, 1, 0];
-    checkBoard.ble.scan.onfind = function(peripheral) {
+    checkBoard.ble.scan.onfind = function (peripheral) {
       if (peripheral.localName === localName) {
         console.log(
           'FOUND! ' + peripheral.address + ' ' + peripheral.localName
@@ -87,7 +87,7 @@ describe('7-ble-exchange', function() {
 });
 
 function wait(ms) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 }

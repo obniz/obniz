@@ -26,15 +26,15 @@ class AclStream extends eventemitter3_1.default {
     }
     push(cid, data) {
         if (data) {
-            this.emit("data", cid, data);
+            this.emit('data', cid, data);
         }
     }
     end() {
-        this.emit("end");
+        this.emit('end');
     }
     pushEncrypt(encrypt) {
         this.encrypted = encrypt ? true : false;
-        this.emit("encryptChange", this.encrypted);
+        this.emit('encryptChange', this.encrypted);
     }
 }
 exports.default = AclStream;

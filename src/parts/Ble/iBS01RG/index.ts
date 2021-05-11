@@ -43,8 +43,10 @@
  * @module Parts.iBS01RG
  */
 
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, {
+  ObnizPartsBleInfo,
+} from '../../../obniz/ObnizPartsBleInterface';
 
 export interface IBS01RGOptions {}
 
@@ -64,7 +66,7 @@ export interface IBS01RG_Data {
 export default class IBS01RG implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: "iBS01RG",
+      name: 'iBS01RG',
     };
   }
 
@@ -91,13 +93,24 @@ export default class IBS01RG implements ObnizPartsBleInterface {
     const accelArray: IBS01RG_Acceleration_Data[] = [];
     for (let i = 0; i < 3; i++) {
       accelArray.push({
-        x: ObnizPartsBleInterface.signed16FromBinary(peripheral.adv_data[12 + i * 6], peripheral.adv_data[11 + i * 6]),
-        y: ObnizPartsBleInterface.signed16FromBinary(peripheral.adv_data[14 + i * 6], peripheral.adv_data[13 + i * 6]),
-        z: ObnizPartsBleInterface.signed16FromBinary(peripheral.adv_data[16 + i * 6], peripheral.adv_data[15 + i * 6]),
+        x: ObnizPartsBleInterface.signed16FromBinary(
+          peripheral.adv_data[12 + i * 6],
+          peripheral.adv_data[11 + i * 6]
+        ),
+        y: ObnizPartsBleInterface.signed16FromBinary(
+          peripheral.adv_data[14 + i * 6],
+          peripheral.adv_data[13 + i * 6]
+        ),
+        z: ObnizPartsBleInterface.signed16FromBinary(
+          peripheral.adv_data[16 + i * 6],
+          peripheral.adv_data[15 + i * 6]
+        ),
       });
     }
     const data: IBS01RG_Data = {
-      battery: (peripheral.adv_data[9] + (peripheral.adv_data[10] & 0x0f) * 256) * 0.01,
+      battery:
+        (peripheral.adv_data[9] + (peripheral.adv_data[10] & 0x0f) * 256) *
+        0.01,
       active: Boolean((peripheral.adv_data[10] & 0x10) >> 4),
       button: Boolean((peripheral.adv_data[10] & 0x20) >> 5),
       acceleration: accelArray,

@@ -6,12 +6,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_EARTH {
     constructor() {
-        this.keys = ["vcc", "aout", "dout", "gnd", "grove"];
+        this.keys = ['vcc', 'aout', 'dout', 'gnd', 'grove'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "Grove_EARTH",
+            name: 'Grove_EARTH',
         };
     }
     wired(obniz) {
@@ -22,7 +22,7 @@ class Grove_EARTH {
             this.io = groveIOs.digital;
         }
         else {
-            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
             this.ad = obniz.getAD(this.params.aout);
             this.io = obniz.getIO(this.params.dout);
         }

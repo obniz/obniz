@@ -12,7 +12,7 @@ const path = require("path");
 exports.default = (directory, recursive, regExp) => {
     // Assume absolute path by default
     let basepath = directory;
-    if (directory[0] === ".") {
+    if (directory[0] === '.') {
         // Relative path
         let dir = __dirname;
         if (baseDir) {
@@ -33,7 +33,7 @@ exports.default = (directory, recursive, regExp) => {
         return file.match(regExp || /\.(json|js)$/);
     })
         .map((file) => {
-        return path.join(".", file.slice(basepath.length + 1));
+        return path.join('.', file.slice(basepath.length + 1));
     });
     const context = (key) => {
         const modulePath = context.resolve(key);
@@ -41,10 +41,10 @@ exports.default = (directory, recursive, regExp) => {
             return require(modulePath);
         }
         else if (/\.(yaml|yml)$/.test(modulePath)) {
-            return yaml.safeLoad(fs.readFileSync(modulePath, "utf8"));
+            return yaml.safeLoad(fs.readFileSync(modulePath, 'utf8'));
         }
         else {
-            throw new Error("unknown type");
+            throw new Error('unknown type');
         }
     };
     context.resolve = (key) => {

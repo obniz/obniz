@@ -3,7 +3,7 @@
  * @module ObnizCore.Components
  */
 /// <reference types="node" />
-import Obniz from "../../index";
+import Obniz from '../../index';
 /**
  * @param PluginReceiveCallbackFunction.data
  * received data

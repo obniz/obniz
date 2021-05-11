@@ -7,22 +7,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class UA651BLE {
     constructor(peripheral, timezoneOffsetMinute) {
         if (!peripheral) {
-            throw new Error("no peripheral");
+            throw new Error('no peripheral');
         }
         this._peripheral = peripheral;
         this._timezoneOffsetMinute = timezoneOffsetMinute;
     }
     static info() {
         return {
-            name: "UA651BLE",
+            name: 'UA651BLE',
         };
     }
     static isDevice(peripheral) {
-        return peripheral.localName && peripheral.localName.startsWith("A&D_UA-651BLE_");
+        return (peripheral.localName && peripheral.localName.startsWith('A&D_UA-651BLE_'));
     }
     async getDataWait() {
         if (!this._peripheral) {
-            throw new Error("UA651BLE not found");
+            throw new Error('UA651BLE not found');
         }
         if (!this._peripheral.connected) {
             this._peripheral.ondisconnect = (reason) => {
@@ -34,12 +34,12 @@ class UA651BLE {
         }
         return await new Promise(async (resolve, reject) => {
             if (!this._peripheral) {
-                throw new Error("UA651BLE not found");
+                throw new Error('UA651BLE not found');
             }
             const results = [];
-            const { bloodPressureMeasurementChar, timeChar, customServiceChar } = this._getChars();
+            const { bloodPressureMeasurementChar, timeChar, customServiceChar, } = this._getChars();
             await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
-            await this._writeTimeChar(this._timezoneOffsetMinute);
+            await this._writeTimeCharWait(this._timezoneOffsetMinute);
             await bloodPressureMeasurementChar.registerNotifyWait((data) => {
                 results.push(this._analyzeData(data));
             });
@@ -50,15 +50,6 @@ class UA651BLE {
                 }
             };
         });
-    }
-    _readFLOAT_LE(buffer, index) {
-        const data = buffer.readUInt32LE(index);
-        let mantissa = data & 0x00ffffff;
-        if ((mantissa & 0x00800000) > 0) {
-            mantissa = -1 * (~(mantissa - 0x01) & 0x00ffffff);
-        }
-        const exponential = data >> 24;
-        return mantissa * Math.pow(10, exponential);
     }
     _readSFLOAT_LE(buffer, index) {
         const data = buffer.readUInt16LE(index);
@@ -111,26 +102,41 @@ class UA651BLE {
             result.PulseRate = this._readSFLOAT_LE(buf, index);
             index += 2;
         }
+        if (flags & 0x08) {
+            // UserIdFlag
+            index += 1;
+        }
+        if (flags & 0x10) {
+            // UserIdFlag
+            const ms = buf[index];
+            result.bodyMoved = (ms & 0b1) !== 0;
+            result.cuffFitLoose = (ms & 0b10) !== 0;
+            result.irregularPulseDetected = (ms & 0b100) !== 0;
+            result.improperMeasurement = (ms & 0b100000) !== 0;
+            index += 1;
+        }
         return result;
     }
     _getChars() {
         if (!this._peripheral) {
-            throw new Error("UA651BLE not found");
+            throw new Error('UA651BLE not found');
         }
         const bloodPressureMeasurementChar = this._peripheral
-            .getService("1810")
-            .getCharacteristic("2A35");
-        const timeChar = this._peripheral.getService("1810").getCharacteristic("2A08");
+            .getService('1810')
+            .getCharacteristic('2A35');
+        const timeChar = this._peripheral
+            .getService('1810')
+            .getCharacteristic('2A08');
         const customServiceChar = this._peripheral
-            .getService("233bf0005a341b6d975c000d5690abe4") // Primary Service Custom Service(pp.14)
-            .getCharacteristic("233bf0015a341b6d975c000d5690abe4"); // Custom Characteristic(pp.14)
+            .getService('233bf0005a341b6d975c000d5690abe4') // Primary Service Custom Service(pp.14)
+            .getCharacteristic('233bf0015a341b6d975c000d5690abe4'); // Custom Characteristic(pp.14)
         return {
             bloodPressureMeasurementChar,
             timeChar,
             customServiceChar,
         };
     }
-    async _writeTimeChar(timeOffsetMinute) {
+    async _writeTimeCharWait(timeOffsetMinute) {
         const { timeChar } = this._getChars();
         const date = new Date();
         date.setTime(Date.now() + 1000 * 60 * timeOffsetMinute);

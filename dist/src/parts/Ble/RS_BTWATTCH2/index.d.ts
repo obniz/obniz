@@ -2,19 +2,19 @@
  * @packageDocumentation
  * @module Parts.RS_BTWATTCH2
  */
-import Obniz from "../../../obniz";
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface RS_BTWATTCH2Options {
     /** by default, this parts will set date at connectWait() */
     rtcAutoset: boolean;
 }
 export interface RS_BTWATTCH2RealtimeData {
-    /** Voltage (unit v) 計測された電圧(v) */
+    /** measured voltage (unit v)  */
     vrms: number;
-    /** Amp (unit A) 消費電流(A) */
+    /** Amp (unit A) */
     irms: number;
-    /** Watt (unit W) 消費電力(W) */
+    /** Watt (unit W)  */
     wa: number;
     /** Current Power State (Relay State) */
     powerState: boolean;
@@ -25,6 +25,7 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     /**
      * Check found peripheral is part of this parts
+     *
      * @param peripheral
      */
     static isDevice(peripheral: BleRemotePeripheral): boolean | "" | null;
@@ -40,6 +41,7 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
     private _waitings;
     /**
      * Constructor. Provide option at this time
+     *
      * @param peripheral
      * @param options
      */
@@ -62,12 +64,19 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
      */
     disconnectWait(): Promise<void>;
     /**
-     * Seting Time on device clock
+     * @deprecated
      * @param date
      */
     setRTC(date?: Date): Promise<void>;
     /**
+     * Setting Time on device clock
+     *
+     * @param date
+     */
+    setRTCWait(date?: Date): Promise<void>;
+    /**
      * Set Relay ON/OFF
+     *
      * @param isOn
      */
     setPowerStateWait(isOn: boolean): Promise<void>;
@@ -81,7 +90,7 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
     getRealTimeDataWait(): Promise<RS_BTWATTCH2RealtimeData>;
     private _pushData;
     private _onRecieved;
-    private _transaction;
+    private _transactionWait;
     private _createData;
     private _GetCRC8;
 }

@@ -2,19 +2,17 @@ let chai = require('chai');
 let expect = chai.expect;
 
 let testUtil = require('../../../testUtil.js');
-chai.use(require('chai-like'));
-chai.use(testUtil.obnizAssert);
 
-describe('ws', function() {
-  beforeEach(function(done) {
-    return testUtil.setupObnizPromise(this, done, { binary: true });
+describe('ws', function () {
+  beforeEach(async function () {
+    await testUtil.setupObnizPromise(this, null, { binary: true });
   });
 
-  afterEach(function(done) {
-    return testUtil.releaseObnizePromise(this, done);
+  afterEach(async function () {
+    await testUtil.releaseObnizPromise(this);
   });
 
-  it('reset obniz on ws disconnection', function() {
+  it('reset obniz on ws disconnection', function () {
     let requestJson = [
       {
         ws: {
@@ -36,18 +34,20 @@ describe('ws', function() {
     expect(compress).to.be.equal(null);
   });
 
-  it('response test no.6', function() {
+  it('response test no.6', function () {
     let responseBinaryString = '04 03 0b 01 00 69 61 73 64 66 61 73 64 66';
     let expectJson = [
       { uart1: { data: [0, 105, 97, 115, 100, 102, 97, 115, 100, 102] } },
     ];
 
-    let binaryArray = responseBinaryString.split(' ').map(function(val, index) {
-      return parseInt(val, 16);
-    });
+    let binaryArray = responseBinaryString
+      .split(' ')
+      .map(function (val, index) {
+        return parseInt(val, 16);
+      });
     let binary = new Uint8Array(binaryArray);
 
-    let json = this.obniz.binary2Json(binary);
+    let json = this.obniz._binary2Json(binary);
 
     let isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -55,13 +55,13 @@ describe('ws', function() {
     expect(json).to.be.deep.equal(expectJson);
   });
 
-  it('ready formtat', function() {
+  it('ready formtat', function () {
     let expectJson = [{ ws: { ready: true } }];
     let isValidCommand = testUtil.isValidCommandResponseJson(expectJson);
     expect(isValidCommand.valid).to.be.true;
   });
 
-  it('redirect formtat', function() {
+  it('redirect formtat', function () {
     let expectJson = [{ ws: { redirect: 'wss://some_server.com' } }];
     let isValidCommand = testUtil.isValidCommandResponseJson(expectJson);
     expect(isValidCommand.valid).to.be.true;

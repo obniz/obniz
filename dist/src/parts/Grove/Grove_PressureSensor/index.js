@@ -6,12 +6,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_PressureSensor {
     constructor() {
-        this.keys = ["vcc", "gnd", "output", "grove"];
+        this.keys = ['vcc', 'gnd', 'output', 'grove'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "Grove_PressureSensor",
+            name: 'Grove_PressureSensor',
         };
     }
     onchange(value) { }
@@ -21,7 +21,7 @@ class Grove_PressureSensor {
             this.ad = groveAd.primary;
         }
         else {
-            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
             this.ad = obniz.getAD(this.params.output);
         }
         this.ad.start((value) => {

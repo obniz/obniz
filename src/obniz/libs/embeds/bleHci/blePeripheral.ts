@@ -2,13 +2,13 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import { ObnizOfflineError } from "../../../ObnizError";
-import ObnizBLE from "./ble";
-import BleHelper from "./bleHelper";
-import BleService from "./bleService";
-import { BleDeviceAddress, BleServiceDefine, UUID } from "./bleTypes";
+import { ObnizOfflineError } from '../../../ObnizError';
+import ObnizBLE from './ble';
+import BleHelper from './bleHelper';
+import BleService from './bleService';
+import { BleDeviceAddress, BleServiceDefine, UUID } from './bleTypes';
 
-export type BleConnectionState = "connected" | "disconnected";
+export type BleConnectionState = 'connected' | 'disconnected';
 
 export interface BleConnectionUpdateParam {
   address: BleDeviceAddress;
@@ -56,7 +56,7 @@ export default class BlePeripheral {
       this.currentConnectedDeviceAddress = null;
       this.obnizBle.Obniz._runUserCreatedFunction(this.onconnectionupdates, {
         address,
-        status: "disconnected",
+        status: 'disconnected',
         reason: new ObnizOfflineError(),
       });
     }
@@ -105,6 +105,7 @@ export default class BlePeripheral {
 
     this._updateServices();
   }
+
   /**
    * @ignore
    * @private
@@ -120,6 +121,7 @@ export default class BlePeripheral {
 
   /**
    * Get service by UUID
+   *
    * @param uuid
    */
   public getService(uuid: UUID): BleService | null {
@@ -138,6 +140,7 @@ export default class BlePeripheral {
 
   /**
    * Terminate service by UUID
+   *
    * @param uuid
    */
   public removeService(uuid: UUID) {
@@ -171,7 +174,9 @@ export default class BlePeripheral {
    */
   public findCharacteristic(param: any) {
     const serviceUuid: any = BleHelper.uuidFilter(param.service_uuid);
-    const characteristicUuid: any = BleHelper.uuidFilter(param.characteristic_uuid);
+    const characteristicUuid: any = BleHelper.uuidFilter(
+      param.characteristic_uuid
+    );
     const s: any = this.getService(serviceUuid);
     if (s) {
       return s.getCharacteristic(characteristicUuid);

@@ -3,11 +3,13 @@
  * @module Parts.JoyStick
  */
 
-import Obniz from "../../../obniz";
-import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
+import Obniz from '../../../obniz';
+import PeripheralAD from '../../../obniz/libs/io_peripherals/ad';
+import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface JoyStickOptions {
   sw: number;
@@ -20,7 +22,7 @@ export interface JoyStickOptions {
 export default class JoyStick implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "JoyStick",
+      name: 'JoyStick',
     };
   }
 
@@ -46,23 +48,23 @@ export default class JoyStick implements ObnizPartsInterface {
   private ad_y!: PeripheralAD;
 
   constructor() {
-    this.keys = ["sw", "y", "x", "vcc", "gnd", "i2c"];
-    this.requiredKeys = ["sw", "y", "x"];
-    this.pins = this.keys || ["sw", "y", "x", "vcc", "gnd"];
-    this.pinname = { sw: "sw12" };
-    this.shortName = "joyS";
+    this.keys = ['sw', 'y', 'x', 'vcc', 'gnd', 'i2c'];
+    this.requiredKeys = ['sw', 'y', 'x'];
+    this.pins = this.keys || ['sw', 'y', 'x', 'vcc', 'gnd'];
+    this.pinname = { sw: 'sw12' };
+    this.shortName = 'joyS';
   }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
 
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
     this.io_sig_sw = obniz.getIO(this.params.sw);
     this.ad_x = obniz.getAD(this.params.x);
     this.ad_y = obniz.getAD(this.params.y);
 
-    this.io_sig_sw.pull("5v");
+    this.io_sig_sw.pull('5v');
 
     this.ad_x.start((value: number) => {
       this.positionX = value / 5.0;

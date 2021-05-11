@@ -8,16 +8,16 @@ class Potentiometer {
     constructor() {
         this.vcc_voltage = 5.0;
         this.position = 0;
-        this.keys = ["pin0", "pin1", "pin2"];
-        this.requiredKeys = ["pin0", "pin1", "pin2"];
+        this.keys = ['pin0', 'pin1', 'pin2'];
+        this.requiredKeys = ['pin0', 'pin1', 'pin2'];
     }
     static info() {
         return {
-            name: "Potentiometer",
+            name: 'Potentiometer',
         };
     }
     wired(obniz) {
-        this.obniz.setVccGnd(this.params.pin0, this.params.pin2, "5v");
+        this.obniz.setVccGnd(this.params.pin0, this.params.pin2, '5v');
         this.ad = obniz.getAD(this.params.pin1);
         obniz.getAD(this.params.pin0).start((value) => {
             this.vcc_voltage = value;

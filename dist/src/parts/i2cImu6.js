@@ -11,16 +11,18 @@ const i2cParts_1 = __importDefault(require("./i2cParts"));
 class I2cImu6Abstract extends i2cParts_1.default {
     constructor() {
         super(...arguments);
-        this.accel_so = "2g";
-        this.gyro_so = "250dps";
-        this.accel_sf = "g";
-        this.gyro_sf = "dps";
+        this.accel_so = '2g';
+        this.gyro_so = '250dps';
+        this.accel_sf = 'g';
+        this.gyro_sf = 'dps';
     }
     static _accelS(value, accel_so, accel_sf) {
-        return (value / I2cImu6Abstract.scales.accel.so[accel_so]) * I2cImu6Abstract.scales.accel.sf[accel_sf];
+        return ((value / I2cImu6Abstract.scales.accel.so[accel_so]) *
+            I2cImu6Abstract.scales.accel.sf[accel_sf]);
     }
     static _gyroS(value, gyro_so, gyro_sf) {
-        return (value / I2cImu6Abstract.scales.gyro.so[gyro_so]) * I2cImu6Abstract.scales.gyro.sf[gyro_sf];
+        return ((value / I2cImu6Abstract.scales.gyro.so[gyro_so]) *
+            I2cImu6Abstract.scales.gyro.sf[gyro_sf]);
     }
     async getAccelWait() {
         const adc = await this.getAccelAdcWait();
@@ -41,7 +43,7 @@ class I2cImu6Abstract extends i2cParts_1.default {
             gyroscope: this.calcGyro(adc.gyroscope),
             temperature: this.calcTemp(adc.temperature),
         };
-        if ("compass" in adc) {
+        if ('compass' in adc) {
             ret.compass = adc.compass;
         }
         return ret;
@@ -136,10 +138,10 @@ exports.default = I2cImu6Abstract;
 I2cImu6Abstract.scales = {
     accel: {
         so: {
-            "2g": 16384,
-            "4g": 8192,
-            "8g": 4096,
-            "16g": 2048,
+            '2g': 16384,
+            '4g': 8192,
+            '8g': 4096,
+            '16g': 2048,
         },
         sf: {
             m_s2: 9.80665,
@@ -149,11 +151,11 @@ I2cImu6Abstract.scales = {
     },
     gyro: {
         so: {
-            "125dps": 262.144,
-            "250dps": 131.072,
-            "500dps": 65.536,
-            "1000dps": 32.768,
-            "2000dps": 16.384,
+            '125dps': 262.144,
+            '250dps': 131.072,
+            '500dps': 65.536,
+            '1000dps': 32.768,
+            '2000dps': 16.384,
         },
         sf: {
             dps: 1,

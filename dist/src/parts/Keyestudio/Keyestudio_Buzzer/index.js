@@ -6,23 +6,23 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Keyestudio_Buzzer {
     constructor() {
-        this.keys = ["signal", "gnd", "vcc"];
-        this.requiredKeys = ["signal"];
+        this.keys = ['signal', 'gnd', 'vcc'];
+        this.requiredKeys = ['signal'];
     }
     static info() {
         return {
-            name: "Keyestudio_Buzzer",
+            name: 'Keyestudio_Buzzer',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.pwm = obniz.getFreePwm();
         this.pwm.start({ io: this.params.signal });
     }
     play(freq) {
-        if (typeof freq !== "number") {
-            throw new Error("freq must be a number");
+        if (typeof freq !== 'number') {
+            throw new Error('freq must be a number');
         }
         freq = Math.floor(freq);
         if (freq > 0) {

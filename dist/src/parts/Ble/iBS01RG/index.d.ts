@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module Parts.iBS01RG
  */
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
 export interface IBS01RGOptions {
 }
 export interface IBS01RG_Acceleration_Data {

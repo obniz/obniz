@@ -2,19 +2,21 @@ let chai = require('chai');
 let expect = chai.expect;
 
 let testUtil = require('../../../testUtil.js');
-chai.use(require('chai-like'));
-chai.use(testUtil.obnizAssert);
 
-describe('obniz.libs.display', function() {
-  beforeEach(function(done) {
-    return testUtil.setupObnizPromise(this, done);
+describe('obniz.libs.display', function () {
+  beforeEach(async function () {
+    await testUtil.setupObnizPromise(this);
+    if (this.obniz.isNode) {
+      // disable node-canvas
+      this.obniz.display._ctx = () => {};
+    }
   });
 
-  afterEach(function(done) {
-    return testUtil.releaseObnizePromise(this, done);
+  afterEach(async function () {
+    await testUtil.releaseObnizPromise(this);
   });
 
-  it('clear', function() {
+  it('clear', function () {
     if (this.obniz.isNode) {
       this.obniz.display.clear();
       expect(this.obniz).to.be.obniz;
@@ -23,22 +25,25 @@ describe('obniz.libs.display', function() {
     }
   });
 
-  // if (this.obniz.isNode) {
-  //   it("print",  function () {
-  //     this.obniz.display.print("Hello!!");
-  //     expect(this.obniz).to.be.obniz;
-  //     expect(this.obniz).send([{display:{text:"Hello!!"}}]);
-  //     expect(this.obniz).to.be.finished;
-  //   });
-  //   it("print_bool",  function () {
-  //     this.obniz.display.print(true);
-  //     expect(this.obniz).to.be.obniz;
-  //     expect(this.obniz).send([{display:{text:"true"}}]);
-  //     expect(this.obniz).to.be.finished;
-  //   });
-  // }
+  it('print', function () {
+    if (this.obniz.isNode) {
+      this.obniz.display.print('Hello!!');
+      expect(this.obniz).to.be.obniz;
+      expect(this.obniz).send([{ display: { text: 'Hello!!' } }]);
+      expect(this.obniz).to.be.finished;
+    }
+  });
 
-  it('qr', function() {
+  it('print_bool', function () {
+    if (this.obniz.isNode) {
+      this.obniz.display.print(true);
+      expect(this.obniz).to.be.obniz;
+      expect(this.obniz).send([{ display: { text: 'true' } }]);
+      expect(this.obniz).to.be.finished;
+    }
+  });
+
+  it('qr', function () {
     this.obniz.display.qr('https://obniz.io');
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send([
@@ -52,7 +57,7 @@ describe('obniz.libs.display', function() {
     ]);
     expect(this.obniz).to.be.finished;
   });
-  it('qr-low', function() {
+  it('qr-low', function () {
     this.obniz.display.qr('HELLO!', 'L');
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send([
@@ -67,7 +72,7 @@ describe('obniz.libs.display', function() {
     ]);
     expect(this.obniz).to.be.finished;
   });
-  it('qr-high', function() {
+  it('qr-high', function () {
     this.obniz.display.qr('p8baerv9uber:q', 'H');
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send([
@@ -83,14 +88,14 @@ describe('obniz.libs.display', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('setPinName', function() {
+  it('setPinName', function () {
     this.obniz.display.setPinName(0, 'io', 'input');
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send([
       {
         display: {
           pin_assign: {
-            '0': {
+            0: {
               module_name: 'io',
               pin_name: 'input',
             },
@@ -101,7 +106,7 @@ describe('obniz.libs.display', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('setPinNames', function() {
+  it('setPinNames', function () {
     expect(this.obniz).to.be.obniz;
     this.obniz.display.setPinNames('io', {
       1: 'input',
@@ -111,11 +116,11 @@ describe('obniz.libs.display', function() {
       {
         display: {
           pin_assign: {
-            '1': {
+            1: {
               module_name: 'io',
               pin_name: 'input',
             },
-            '2': {
+            2: {
               module_name: 'io',
               pin_name: 'output',
             },
@@ -126,7 +131,7 @@ describe('obniz.libs.display', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('raw', function() {
+  it('raw', function () {
     expect(this.obniz).to.be.obniz;
 
     this.obniz.display.raw([
@@ -2190,7 +2195,7 @@ describe('obniz.libs.display', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('text', function() {
+  it('text', function () {
     let isNode = typeof window === 'undefined';
     if (!isNode) {
       this.skip();

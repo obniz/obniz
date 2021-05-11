@@ -2,7 +2,8 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from "./WSCommand";
+import WSCommand from './WSCommand';
+
 class WSCommandTcp extends WSCommand {
   public module: any;
   public _MaxPort: any;
@@ -30,7 +31,9 @@ class WSCommandTcp extends WSCommand {
   }
 
   public connect(params: any, index: any) {
-    const domain: any = new Uint8Array(Buffer.from(params.connect.domain, "utf8"));
+    const domain: any = new Uint8Array(
+      Buffer.from(params.connect.domain, 'utf8')
+    );
     const buf: any = new Uint8Array(domain.length + 3);
     buf[0] = index;
     buf[1] = 0xff && params.connect.port >> 8;
@@ -57,17 +60,22 @@ class WSCommandTcp extends WSCommand {
 
   public parseFromJson(json: any) {
     for (let i = 0; i < this._MaxPort; i++) {
-      const module: any = json["tcp" + i];
+      const module: any = json['tcp' + i];
       if (module === undefined) {
         continue;
       }
 
       const schemaData: any = [
-        { uri: "/request/tcp/connect", onValid: this.connect },
-        { uri: "/request/tcp/disconnect", onValid: this.disconnect },
-        { uri: "/request/tcp/write", onValid: this.write },
+        { uri: '/request/tcp/connect', onValid: this.connect },
+        { uri: '/request/tcp/disconnect', onValid: this.disconnect },
+        { uri: '/request/tcp/write', onValid: this.write },
       ];
-      const res: any = this.validateCommandSchema(schemaData, module, "tcp" + i, i);
+      const res: any = this.validateCommandSchema(
+        schemaData,
+        module,
+        'tcp' + i,
+        i
+      );
 
       if (res.valid === 0) {
         if (res.invalidButLike.length > 0) {
@@ -82,26 +90,26 @@ class WSCommandTcp extends WSCommand {
   public notifyFromBinary(objToSend: any, func: any, payload: any) {
     switch (func) {
       case this._CommandConnect: {
-        let state: any = "Error";
+        let state: any = 'Error';
         switch (payload[1]) {
           case 0:
-            state = "ok";
+            state = 'ok';
             break;
           case 1:
-            state = "Port Used";
+            state = 'Port Used';
             break;
           case 2:
-            state = "Port Area Error";
+            state = 'Port Area Error';
             break;
           case 3:
-            state = "Lookup Error";
+            state = 'Lookup Error';
             break;
           case 4:
-            state = "Error";
+            state = 'Error';
             break;
         }
         const module_index: any = payload[0];
-        objToSend["tcp" + module_index] = {
+        objToSend['tcp' + module_index] = {
           connect: {
             message: state,
             code: payload[1],
@@ -112,14 +120,14 @@ class WSCommandTcp extends WSCommand {
       case this._CommandConnection:
         if (payload.length === 2 && payload[1] === 0) {
           const module_index: any = payload[0];
-          objToSend["tcp" + module_index] = {
+          objToSend['tcp' + module_index] = {
             connection: {
               connected: true,
             },
           };
         } else {
           const module_index: any = payload[0];
-          objToSend["tcp" + module_index] = {
+          objToSend['tcp' + module_index] = {
             connection: {
               connected: false,
             },
@@ -133,7 +141,7 @@ class WSCommandTcp extends WSCommand {
           for (let i = 0; i < arr.length; i++) {
             arr[i] = payload[i + 1];
           }
-          objToSend["tcp" + module_index] = {
+          objToSend['tcp' + module_index] = {
             read: {
               data: arr,
             },

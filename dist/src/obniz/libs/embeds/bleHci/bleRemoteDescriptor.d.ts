@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import BleRemoteCharacteristic from "./bleRemoteCharacteristic";
-import BleRemoteValueAttributeAbstract from "./bleRemoteValueAttributeAbstract";
+import BleRemoteCharacteristic from './bleRemoteCharacteristic';
+import BleRemoteValueAttributeAbstract from './bleRemoteValueAttributeAbstract';
 /**
  * @category Use as Central
  */

@@ -11,20 +11,20 @@ const i2cCompass_1 = __importDefault(require("../../i2cCompass"));
 class HMC5883L extends i2cCompass_1.default {
     constructor() {
         super();
-        this.defaultUnit = "G";
+        this.defaultUnit = 'G';
         this.i2cinfo = {
             address: 0x1e,
             clock: 100000,
-            voltage: "3v",
-            pull: "3v",
+            voltage: '3v',
+            pull: '3v',
         };
         this.sf = this.defaultUnit;
         this.so = HMC5883L.scales[1];
-        this.range = "8G";
+        this.range = '8G';
     }
     static info() {
         return {
-            name: "HMC5883L",
+            name: 'HMC5883L',
         };
     }
     wired(obniz) {
@@ -41,15 +41,17 @@ class HMC5883L extends i2cCompass_1.default {
     }
     async getAdcWait() {
         const raw = await this.readWait(HMC5883L.commands.x_MSB, 6);
-        return HMC5883L.charArrayToXyz(raw, "b");
+        return HMC5883L.charArrayToXyz(raw, 'b');
     }
     setRange(index) {
         this.write(HMC5883L.commands.config_b, index << 5);
         this.so = HMC5883L.scales[index];
     }
-    // legacy
-    async get() {
-        return await this.getWait();
+    /**
+     * @deprecated
+     */
+    get() {
+        return this.getWait();
     }
 }
 exports.default = HMC5883L;
@@ -60,4 +62,13 @@ HMC5883L.commands = {
     x_MSB: 0x03,
     status: 0x09,
 };
-HMC5883L.scales = [1 / 1370, 1 / 1090, 1 / 820, 1 / 660, 1 / 440, 1 / 390, 1 / 330, 1 / 230];
+HMC5883L.scales = [
+    1 / 1370,
+    1 / 1090,
+    1 / 820,
+    1 / 660,
+    1 / 440,
+    1 / 390,
+    1 / 330,
+    1 / 230,
+];

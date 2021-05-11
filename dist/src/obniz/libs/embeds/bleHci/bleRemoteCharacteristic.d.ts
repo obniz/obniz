@@ -1,7 +1,7 @@
-import BleRemoteDescriptor from "./bleRemoteDescriptor";
-import BleRemoteService from "./bleRemoteService";
-import BleRemoteValueAttributeAbstract from "./bleRemoteValueAttributeAbstract";
-import { BleAttributePropery, UUID } from "./bleTypes";
+import BleRemoteDescriptor from './bleRemoteDescriptor';
+import BleRemoteService from './bleRemoteService';
+import BleRemoteValueAttributeAbstract from './bleRemoteValueAttributeAbstract';
+import { BleAttributePropery, UUID } from './bleTypes';
 /**
  * @category Use as Central
  */
@@ -125,6 +125,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
      *   console.error(e);
      * }
      * ```
+     *
      * @param uuid
      */
     getDescriptor(uuid: UUID): BleRemoteDescriptor | null;
@@ -237,11 +238,13 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
     unregisterNotifyWait(): Promise<void>;
     /**
      * Use readWait() instead from 3.5.0
+     *
      * @deprecated
      */
     read(): void;
     /**
      * Use writeWait() instead from 3.5.0
+     *
      * @deprecated
      */
     write(array: number[], needResponse?: boolean): void;

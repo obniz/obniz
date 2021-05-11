@@ -46,6 +46,7 @@ class ObnizBLEHci {
     }
     /**
      * write HCI command to HCI module
+     *
      * @param hciCommand
      */
     write(hciCommand) {
@@ -72,7 +73,7 @@ class ObnizBLEHci {
                 this.Obniz._runUserCreatedFunction(this.onread, obj.read.data);
             }
             for (const eventName in this._eventHandlerQueue) {
-                if (typeof eventName !== "string" || !eventName.startsWith("[")) {
+                if (typeof eventName !== 'string' || !eventName.startsWith('[')) {
                     continue;
                 }
                 if (this._eventHandlerQueue[eventName].length === 0) {
@@ -90,6 +91,7 @@ class ObnizBLEHci {
     }
     /**
      * Callback on HCI command received.
+     *
      * @param data
      */
     onread(data) { }
@@ -116,7 +118,7 @@ class ObnizBLEHci {
         let onObnizClosed = null;
         let timeoutHandler = null;
         const clearListeners = () => {
-            this.Obniz.off("close", onObnizClosed);
+            this.Obniz.off('close', onObnizClosed);
             if (timeoutHandler) {
                 clearTimeout(timeoutHandler);
                 timeoutHandler = null;
@@ -130,25 +132,27 @@ class ObnizBLEHci {
             throw reason;
         });
         const errorPromise = new Promise((resolve, reject) => {
-            if (this.Obniz.connectionState !== "connected") {
+            if (this.Obniz.connectionState !== 'connected') {
                 reject(new ObnizError_1.ObnizOfflineError());
                 return;
             }
+            const offlineError = new ObnizError_1.ObnizOfflineError();
             onObnizClosed = () => {
                 onObnizClosed = null;
                 clearListeners();
-                reject(new ObnizError_1.ObnizOfflineError());
+                reject(offlineError);
             };
-            this.Obniz.once("close", onObnizClosed);
+            this.Obniz.once('close', onObnizClosed);
             let onTimeout;
             if (option.onTimeout) {
+                const timeoutError = new ObnizError_1.ObnizTimeoutError(option.waitingFor);
                 onTimeout = () => {
                     timeoutHandler = null;
                     clearListeners();
                     option
                         .onTimeout()
                         .then(() => {
-                        reject(new ObnizError_1.ObnizTimeoutError(option.waitingFor));
+                        reject(timeoutError);
                     })
                         .catch((e) => {
                         reject(e);
@@ -156,10 +160,11 @@ class ObnizBLEHci {
                 };
             }
             else {
+                const timeoutError = new ObnizError_1.ObnizTimeoutError(option.waitingFor);
                 onTimeout = () => {
                     timeoutHandler = null;
                     clearListeners();
-                    reject(new ObnizError_1.ObnizTimeoutError(option.waitingFor));
+                    reject(timeoutError);
                 };
             }
             timeoutHandler = setTimeout(onTimeout, option.timeout);
@@ -176,8 +181,9 @@ class ObnizBLEHci {
     }
     onceQueue(binaryFilter, func) {
         const eventName = this.encodeBinaryFilter(binaryFilter);
-        this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName] || [];
-        if (typeof func === "function") {
+        this._eventHandlerQueue[eventName] =
+            this._eventHandlerQueue[eventName] || [];
+        if (typeof func === 'function') {
             this._eventHandlerQueue[eventName].push(func);
         }
     }

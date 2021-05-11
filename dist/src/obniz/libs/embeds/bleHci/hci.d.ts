@@ -27,6 +27,7 @@ export default class ObnizBLEHci {
     end(): void;
     /**
      * write HCI command to HCI module
+     *
      * @param hciCommand
      */
     write(hciCommand: number[]): void;
@@ -37,6 +38,7 @@ export default class ObnizBLEHci {
     notified(obj: any): void;
     /**
      * Callback on HCI command received.
+     *
      * @param data
      */
     onread(data: any): void;

@@ -3,10 +3,12 @@
  * @module Parts.RS_BTWATTCH2
  */
 
-import Obniz from "../../../obniz";
-import BleRemoteCharacteristic from "../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic";
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import BleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface RS_BTWATTCH2Options {
   /** by default, this parts will set date at connectWait() */
@@ -14,13 +16,13 @@ export interface RS_BTWATTCH2Options {
 }
 
 export interface RS_BTWATTCH2RealtimeData {
-  /** Voltage (unit v) 計測された電圧(v) */
+  /** measured voltage (unit v)  */
   vrms: number;
 
-  /** Amp (unit A) 消費電流(A) */
+  /** Amp (unit A) */
   irms: number;
 
-  /** Watt (unit W) 消費電力(W) */
+  /** Watt (unit W)  */
   wa: number;
 
   /** Current Power State (Relay State) */
@@ -33,22 +35,24 @@ export interface RS_BTWATTCH2RealtimeData {
 export default class RS_BTWATTCH2 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "RS_BTWATTCH2",
+      name: 'RS_BTWATTCH2',
     };
   }
 
   /**
    * Check found peripheral is part of this parts
+   *
    * @param peripheral
    */
   public static isDevice(peripheral: BleRemotePeripheral) {
     return (
       peripheral.localName &&
-      (peripheral.localName.indexOf("BTWATTCH2_") >= 0 || peripheral.localName.indexOf("btwattch2_") >= 0)
+      (peripheral.localName.indexOf('BTWATTCH2_') >= 0 ||
+        peripheral.localName.indexOf('btwattch2_') >= 0)
     );
   }
 
-  public keys: string[] = ["rtcAutoset"];
+  public keys: string[] = ['rtcAutoset'];
 
   public requiredKeys: string[] = [];
   public params: any;
@@ -67,12 +71,13 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
 
   /**
    * Constructor. Provide option at this time
+   *
    * @param peripheral
    * @param options
    */
   constructor(peripheral: BleRemotePeripheral, options?: RS_BTWATTCH2Options) {
     if (peripheral && !RS_BTWATTCH2.isDevice(peripheral)) {
-      throw new Error("peripheral is not RS_BTWATTCH2");
+      throw new Error('peripheral is not RS_BTWATTCH2');
     }
     this._peripheral = peripheral;
     this.params = options || {};
@@ -85,7 +90,7 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
    * Check if device is under paring mode(over 3 seconds button pressing)
    */
   public isPairingMode() {
-    return this._peripheral.localName!.indexOf("BTWATTCH2_") < 0;
+    return this._peripheral.localName!.indexOf('BTWATTCH2_') < 0;
   }
 
   /**
@@ -93,15 +98,15 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
    */
   public async firstPairingWait(): Promise<string> {
     if (!this._peripheral) {
-      throw new Error("No Peripheral Found");
+      throw new Error('No Peripheral Found');
     }
     if (this.isPairingMode() === false) {
       throw new Error(
-        `peripheral is not pairing mode. Press Pairing Button on device over 3 seconds. LED will start blinking then it is under pairing mode.`,
+        `peripheral is not pairing mode. Press Pairing Button on device over 3 seconds. LED will start blinking then it is under pairing mode.`
       );
     }
     this._peripheral.ondisconnect = (reason: any) => {
-      if (typeof this.ondisconnect === "function") {
+      if (typeof this.ondisconnect === 'function') {
         this.ondisconnect(reason);
       }
     };
@@ -143,34 +148,46 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
    */
   public async connectWait(keys: string) {
     if (!keys) {
-      throw new Error(`You should get keys before. call firstPairingWait() to get keys and provide this`);
+      throw new Error(
+        `You should get keys before. call firstPairingWait() to get keys and provide this`
+      );
     }
     if (this.isPairingMode()) {
-      throw new Error(`peripheral is pairing mode. Unplug and plug it again to change to normal mode.`);
+      throw new Error(
+        `peripheral is pairing mode. Unplug and plug it again to change to normal mode.`
+      );
     }
     await this._peripheral.connectWait();
     await this._peripheral.pairingWait({
       keys,
     });
     this._peripheral.ondisconnect = (reason: any) => {
-      if (typeof this.ondisconnect === "function") {
+      if (typeof this.ondisconnect === 'function') {
         this.ondisconnect(reason);
       }
     };
-    const service = this._peripheral.getService("6e400001b5a3f393e0a9e50e24dcca9e");
+    const service = this._peripheral.getService(
+      '6e400001b5a3f393e0a9e50e24dcca9e'
+    );
     if (!service) {
       throw new Error(`no serivce found`);
     }
-    this._rxFromTargetCharacteristic = service.getCharacteristic("6e400003b5a3f393e0a9e50e24dcca9e")!;
-    this._txToTargetCharacteristic = service.getCharacteristic("6e400002b5a3f393e0a9e50e24dcca9e")!;
+    this._rxFromTargetCharacteristic = service.getCharacteristic(
+      '6e400003b5a3f393e0a9e50e24dcca9e'
+    )!;
+    this._txToTargetCharacteristic = service.getCharacteristic(
+      '6e400002b5a3f393e0a9e50e24dcca9e'
+    )!;
 
     try {
-      await this._rxFromTargetCharacteristic.registerNotifyWait((data: number[]) => {
-        this._pushData(data);
-      });
+      await this._rxFromTargetCharacteristic.registerNotifyWait(
+        (data: number[]) => {
+          this._pushData(data);
+        }
+      );
 
       if (this.params.rtcAutoset !== false) {
-        await this.setRTC();
+        await this.setRTCWait();
       }
     } catch (e) {
       try {
@@ -193,14 +210,23 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
   }
 
   /**
-   * Seting Time on device clock
+   * @deprecated
    * @param date
    */
-  public async setRTC(date?: Date) {
+  public setRTC(date?: Date) {
+    return this.setRTCWait(date);
+  }
+
+  /**
+   * Setting Time on device clock
+   *
+   * @param date
+   */
+  public async setRTCWait(date?: Date) {
     if (!date) {
       date = new Date();
     }
-    const ret = await this._transaction([
+    const ret = await this._transactionWait([
       0x01,
       date.getSeconds(),
       date.getMinutes(),
@@ -219,10 +245,11 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
 
   /**
    * Set Relay ON/OFF
+   *
    * @param isOn
    */
   public async setPowerStateWait(isOn: boolean) {
-    const ret = await this._transaction([0xa7, isOn ? 0x01 : 0x00]);
+    const ret = await this._transactionWait([0xa7, isOn ? 0x01 : 0x00]);
     if (ret.length !== 3) {
       throw new Error(`communiation error`);
     }
@@ -242,7 +269,7 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
    * Getting All of realtime data
    */
   public async getRealTimeDataWait(): Promise<RS_BTWATTCH2RealtimeData> {
-    const ret = await this._transaction([0x08]);
+    const ret = await this._transactionWait([0x08]);
     if (ret.length !== 27) {
       throw new Error(`communiation error`);
     }
@@ -281,7 +308,15 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
     wa /= Math.pow(2, 24);
     obj.wa = wa;
 
-    obj.date = new Date(1900 + ret[25], ret[24], ret[23], ret[22], ret[21], ret[20], 0);
+    obj.date = new Date(
+      1900 + ret[25],
+      ret[24],
+      ret[23],
+      ret[22],
+      ret[21],
+      ret[20],
+      0
+    );
 
     return obj as RS_BTWATTCH2RealtimeData;
   }
@@ -319,7 +354,7 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
     one.resolve(data);
   }
 
-  private async _transaction(data: number[]): Promise<number[]> {
+  private async _transactionWait(data: number[]): Promise<number[]> {
     return await new Promise(async (resolve, reject) => {
       const timeout = setTimeout(() => {
         reject(new Error(`Timed out for waiting`));

@@ -7,23 +7,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class ArduCAMMini {
     constructor() {
         this.keys = [
-            "cs",
-            "mosi",
-            "miso",
-            "sclk",
-            "gnd",
-            "vcc",
-            "sda",
-            "scl",
-            "spi",
-            "i2c",
-            "spi_frequency",
-            "spi_drive",
-            "module_version",
+            'cs',
+            'mosi',
+            'miso',
+            'sclk',
+            'gnd',
+            'vcc',
+            'sda',
+            'scl',
+            'spi',
+            'i2c',
+            'spi_frequency',
+            'spi_drive',
+            'module_version',
         ];
-        this.requiredKeys = ["cs"];
+        this.requiredKeys = ['cs'];
         this.ioKeys = this.keys;
-        this.displayName = "Cam";
+        this.displayName = 'Cam';
         this.regs = {
             ARDUCHIP_TEST1: 0x00,
             ARDUCHIP_MODE: 0x02,
@@ -637,26 +637,24 @@ class ArduCAMMini {
     }
     static info() {
         return {
-            name: "ArduCAMMini",
+            name: 'ArduCAMMini',
         };
     }
     wired(obniz) {
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.io_cs = obniz.getIO(this.params.cs);
         this.io_cs.output(true);
         obniz.wait(100);
         this.sensor_addr = 0x30; // i2c
         this.params.module_version = this.params.module_version || 0;
-        this.params.mode = this.params.mode || "master";
-        this.params.drive = this.params.spi_drive || "3v";
+        this.params.mode = this.params.mode || 'master';
+        this.params.drive = this.params.spi_drive || '3v';
         this.params.frequency = this.params.spi_frequency || 4 * 1000 * 1000;
         this.params.clk = this.params.sclk;
         this.spi = this.obniz.getSpiWithConfig(this.params);
-        this.params.sda = this.params.sda;
-        this.params.scl = this.params.scl;
         this.params.clock = this.params.clock || 100 * 1000;
-        this.params.mode = "master";
-        this.params.pull = "5v";
+        this.params.mode = 'master';
+        this.params.pull = '5v';
         this.i2c = obniz.getI2CWithConfig(this.params);
     }
     spi_write(addr, byteData) {
@@ -695,7 +693,7 @@ class ArduCAMMini {
         this.spi_write_reg(this.regs.ARDUCHIP_TEST1, testVal);
         const val = await this.spi_read_regWait(this.regs.ARDUCHIP_TEST1);
         if (val !== testVal) {
-            throw new Error("spi bus fail");
+            throw new Error('spi bus fail');
         }
     }
     setMode(mode) {
@@ -704,8 +702,8 @@ class ArduCAMMini {
             CAM2LCD: 0x01,
             LCD2MCU: 0x02,
         };
-        if (typeof modes[mode] !== "number") {
-            throw new Error("unknown mode. options are " + modes);
+        if (typeof modes[mode] !== 'number') {
+            throw new Error('unknown mode. options are ' + modes);
         }
         this.spi_write_reg(this.regs.ARDUCHIP_MODE, modes[mode]);
     }
@@ -725,19 +723,19 @@ class ArduCAMMini {
         this.i2c_regs_write(this.configs.OV2640_JPEG);
         this.i2c_byte_write(0xff, 0x01);
         this.i2c_byte_write(0x15, 0x00);
-        this.setSize("320x240");
+        this.setSize('320x240');
     }
     async startupWait() {
         await this.spi_pingpongWait();
-        this.setMode("MCU2LCD");
+        this.setMode('MCU2LCD');
         const chipid = await this.getChipIdWait();
         if (chipid !== 0x2642 && chipid !== 0x2641) {
-            throw new Error("unknown chip " + chipid);
+            throw new Error('unknown chip ' + chipid);
         }
         this.init();
     }
     async takeWait(size) {
-        if (typeof size === "string" && this._size !== size) {
+        if (typeof size === 'string' && this._size !== size) {
             this.setSize(size);
             this.obniz.wait(1000);
         }
@@ -756,22 +754,22 @@ class ArduCAMMini {
             return;
         }
         const map = {
-            "160x120": this.configs.OV2640_160x120_JPEG,
-            "176x144": this.configs.OV2640_176x144_JPEG,
-            "320x240": this.configs.OV2640_320x240_JPEG,
-            "352x288": this.configs.OV2640_352x288_JPEG,
-            "640x480": this.configs.OV2640_640x480_JPEG,
-            "800x600": this.configs.OV2640_800x600_JPEG,
-            "1024x768": this.configs.OV2640_1024x768_JPEG,
-            "1280x960": this.configs.OV2640_1280x960_JPEG,
-            "1600x1200": this.configs.OV2640_1600x1200_JPEG,
+            '160x120': this.configs.OV2640_160x120_JPEG,
+            '176x144': this.configs.OV2640_176x144_JPEG,
+            '320x240': this.configs.OV2640_320x240_JPEG,
+            '352x288': this.configs.OV2640_352x288_JPEG,
+            '640x480': this.configs.OV2640_640x480_JPEG,
+            '800x600': this.configs.OV2640_800x600_JPEG,
+            '1024x768': this.configs.OV2640_1024x768_JPEG,
+            '1280x960': this.configs.OV2640_1280x960_JPEG,
+            '1600x1200': this.configs.OV2640_1600x1200_JPEG,
         };
         if (map[string]) {
             this._size = string;
             this.i2c_regs_write(map[string]);
         }
         else {
-            throw new Error("unsupported size options are " + Object.keys(map));
+            throw new Error('unsupported size options are ' + Object.keys(map));
         }
     }
     updateFIFO(data) {
@@ -823,7 +821,7 @@ class ArduCAMMini {
         return buf;
     }
     arrayToBase64(array) {
-        return Buffer.from(array).toString("base64");
+        return Buffer.from(array).toString('base64');
     }
 }
 exports.default = ArduCAMMini;

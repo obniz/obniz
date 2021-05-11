@@ -10,7 +10,7 @@ class IBS01 {
     }
     static info() {
         return {
-            name: "iBS01",
+            name: 'iBS01',
         };
     }
     static isDevice(peripheral) {
@@ -38,21 +38,9 @@ class IBS01 {
         const data = {
             battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
             button: false,
-            moving: false,
-            hall_sensor: false,
-            fall: false,
         };
-        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+        if (peripheral.adv_data[11] & 0b0001) {
             data.button = true;
-        }
-        if (Boolean(peripheral.adv_data[11] & 0b0010)) {
-            data.moving = true;
-        }
-        if (Boolean(peripheral.adv_data[11] & 0b0100)) {
-            data.hall_sensor = true;
-        }
-        if (Boolean(peripheral.adv_data[11] & 0b1000)) {
-            data.fall = true;
         }
         return data;
     }
@@ -77,7 +65,7 @@ IBS01.deviceAdv = [
     -1,
     -1,
     -1,
-    -1,
+    0x03,
     -1,
     -1,
     -1,

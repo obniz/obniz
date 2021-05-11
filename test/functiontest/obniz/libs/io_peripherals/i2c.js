@@ -3,19 +3,16 @@ let expect = chai.expect;
 let sinon = require('sinon');
 
 let testUtil = require('../../../testUtil.js');
-chai.use(require('chai-like'));
-chai.use(testUtil.obnizAssert);
 
-describe('obniz.libs.i2c', function() {
-  beforeEach(function(done) {
-    return testUtil.setupObnizPromise(this, done);
+describe('obniz.libs.i2c', function () {
+  beforeEach(async function () {
+    await testUtil.setupObnizPromise(this);
+  });
+  afterEach(async function () {
+    await testUtil.releaseObnizPromise(this);
   });
 
-  afterEach(function(done) {
-    return testUtil.releaseObnizePromise(this, done);
-  });
-
-  it('start', function() {
+  it('start', function () {
     this.obniz.i2c0.start({
       mode: 'master',
       sda: 2,
@@ -33,7 +30,7 @@ describe('obniz.libs.i2c', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('startWithGnd', function() {
+  it('startWithGnd', function () {
     this.obniz.i2c0.start({
       mode: 'master',
       sda: 2,
@@ -51,7 +48,7 @@ describe('obniz.libs.i2c', function() {
       {
         display: {
           pin_assign: {
-            '0': {
+            0: {
               module_name: 'i2c0',
               pin_name: 'gnd',
             },
@@ -65,7 +62,7 @@ describe('obniz.libs.i2c', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('end', function() {
+  it('end', function () {
     this.obniz.i2c0.start({
       mode: 'master',
       sda: 2,
@@ -85,7 +82,7 @@ describe('obniz.libs.i2c', function() {
     expect(this.obniz).send([{ i2c0: null }]);
   });
 
-  it('write', function() {
+  it('write', function () {
     this.obniz.i2c0.start({
       mode: 'master',
       sda: 2,
@@ -107,7 +104,7 @@ describe('obniz.libs.i2c', function() {
     ]);
   });
 
-  it.skip('write10bit', function() {
+  it.skip('write10bit', function () {
     this.obniz.i2c0.start({
       mode: 'master',
       sda: 2,
@@ -135,7 +132,7 @@ describe('obniz.libs.i2c', function() {
     ]);
   });
 
-  it('readWait', function() {
+  it('readWait', function () {
     this.obniz.i2c0.start({
       mode: 'master',
       sda: 2,
@@ -152,7 +149,7 @@ describe('obniz.libs.i2c', function() {
     ]);
 
     let r = this.obniz.i2c0.readWait(0x50, 3).then(
-      function(value) {
+      function (value) {
         expect(value).to.be.deep.equal([0x61, 0xf2, 0x1f]);
         expect(this.obniz).to.be.finished;
       }.bind(this)
@@ -160,7 +157,7 @@ describe('obniz.libs.i2c', function() {
 
     expect(this.obniz).send([{ i2c0: { address: 0x50, read: 3 } }]);
     setTimeout(
-      function() {
+      function () {
         testUtil.receiveJson(this.obniz, [
           { i2c0: { mode: 'master', address: 0x50, data: [0x61, 0xf2, 0x1f] } },
         ]);
@@ -170,7 +167,7 @@ describe('obniz.libs.i2c', function() {
     return r;
   });
 
-  it.skip('readWait invalid length', function() {
+  it.skip('readWait invalid length', function () {
     this.obniz.i2c0.start({
       mode: 'master',
       sda: 2,
@@ -187,7 +184,7 @@ describe('obniz.libs.i2c', function() {
     ]);
 
     let r = this.obniz.i2c0.readWait(0x50, 3).then(
-      function(value) {
+      function (value) {
         expect(value).to.lengthOf(3);
         expect(this.obniz).to.be.finished;
       }.bind(this)
@@ -195,7 +192,7 @@ describe('obniz.libs.i2c', function() {
 
     expect(this.obniz).send([{ i2c0: { address: 0x50, read: 3 } }]);
     setTimeout(
-      function() {
+      function () {
         testUtil.receiveJson(this.obniz, [
           { i2c0: { address: 0x50, data: [0x61, 0xf2] } },
         ]);
@@ -204,7 +201,7 @@ describe('obniz.libs.i2c', function() {
     );
     return r;
   });
-  it.skip('readWait withothers', function() {
+  it.skip('readWait withothers', function () {
     this.obniz.i2c0.start({
       mode: 'master',
       sda: 2,
@@ -221,7 +218,7 @@ describe('obniz.libs.i2c', function() {
     ]);
 
     let r = this.obniz.i2c0.readWait(0x50, 3).then(
-      function(value) {
+      function (value) {
         expect(value).to.be.deep.equal([0x61, 0xf2, 0x1f]);
         expect(this.obniz).to.be.finished;
       }.bind(this)
@@ -229,7 +226,7 @@ describe('obniz.libs.i2c', function() {
 
     expect(this.obniz).send([{ i2c0: { address: 0x50, read: 3 } }]);
     setTimeout(
-      function() {
+      function () {
         testUtil.receiveJson(this.obniz, [
           { i2c0: { address: 0x51, data: [0xaa, 0xbb, 0xcc] } },
         ]);
@@ -242,7 +239,7 @@ describe('obniz.libs.i2c', function() {
     return r;
   });
 
-  it.skip('readWait10bit', function() {
+  it.skip('readWait10bit', function () {
     this.obniz.i2c0.start({
       mode: 'master',
       sda: 2,
@@ -259,7 +256,7 @@ describe('obniz.libs.i2c', function() {
     ]);
 
     let r = this.obniz.i2c0.read10bitWait(0x50, 3).then(
-      function(value) {
+      function (value) {
         expect(value).to.be.deep.equal([0x61, 0xf2, 0x1f]);
         expect(this.obniz).to.be.finished;
       }.bind(this)
@@ -269,7 +266,7 @@ describe('obniz.libs.i2c', function() {
       { i2c0: { address: 0x50, address_type: '10bit', read: 3 } },
     ]);
     setTimeout(
-      function() {
+      function () {
         testUtil.receiveJson(this.obniz, [
           { i2c0: { address: 0x50, data: [0x61, 0xf2, 0x1f] } },
         ]);
@@ -279,7 +276,7 @@ describe('obniz.libs.i2c', function() {
     return r;
   });
 
-  it('slave start', function() {
+  it('slave start', function () {
     this.obniz.i2c0.start({
       mode: 'slave',
       sda: 2,
@@ -297,7 +294,7 @@ describe('obniz.libs.i2c', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('slave data get', function() {
+  it('slave data get', function () {
     this.obniz.i2c0.start({
       mode: 'slave',
       sda: 2,
@@ -338,7 +335,7 @@ describe('obniz.libs.i2c', function() {
     expect(address).to.be.deep.equal(1);
   });
 
-  it('slave data another data', function() {
+  it('slave data another data', function () {
     this.obniz.i2c0.start({
       mode: 'slave',
       sda: 2,

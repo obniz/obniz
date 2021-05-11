@@ -6,10 +6,10 @@
   <script src="https://obniz.io/js/jquery-3.2.1.min.js"></script>
   <script src="https://unpkg.com/obniz@1.11.0/obniz.js" crossorigin="anonymous"></script>
   <style>
-    html {
-      font-family: sans-serif;
-      font-size: 12pt;
-    }
+      html {
+          font-family: sans-serif;
+          font-size: 12pt;
+      }
   </style>
 </head>
 <body>
@@ -210,7 +210,7 @@
             var y = Math.round((canvasHeight - scaledHeight) / 2);
             context.drawImage(image, x, y, scaledWidth, scaledHeight);
             let info = `original size: W${image.naturalWidth} x H${image.naturalHeight} \n` +
-                `  scaled size: W${scaledWidth} x H${scaledHeight}`;
+              `  scaled size: W${scaledWidth} x H${scaledHeight}`;
             $("#img").text(info);
 
             lcd.fillScreen(0);

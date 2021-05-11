@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module Parts.MH_Z19B
  */
-import Obniz from "../../../obniz";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface MH_Z19BOptions {
     vcc?: number;
     gnd?: number;

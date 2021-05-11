@@ -2,22 +2,20 @@ let chai = require('chai');
 let expect = chai.expect;
 
 let testUtil = require('../../../testUtil.js');
-chai.use(require('chai-like'));
-chai.use(testUtil.obnizAssert);
 
-describe('io.animation2_0_0', function() {
-  beforeEach(function(done) {
-    return testUtil.setupObnizPromise(this, done, {
+describe('io.animation2_0_0', function () {
+  beforeEach(async function () {
+    await testUtil.setupObnizPromise(this, null, {
       binary: true,
       __firmware_ver: '2.0.0',
     });
   });
 
-  afterEach(function(done) {
-    return testUtil.releaseObnizePromise(this, done);
+  afterEach(async function () {
+    await testUtil.releaseObnizPromise(this);
   });
 
-  it('request ioAnimation', function() {
+  it('request ioAnimation', function () {
     compressTest(
       this.obniz,
       [
@@ -40,7 +38,7 @@ describe('io.animation2_0_0', function() {
     );
   });
 
-  it('request ioAnimation single array format', function() {
+  it('request ioAnimation single array format', function () {
     compressTest(
       this.obniz,
       [
@@ -63,7 +61,7 @@ describe('io.animation2_0_0', function() {
     );
   });
 
-  it('request ioAnimation multiple array format', function() {
+  it('request ioAnimation multiple array format', function () {
     compressTest(
       this.obniz,
       [
@@ -86,7 +84,7 @@ describe('io.animation2_0_0', function() {
     );
   });
 
-  it('request ioAnimation registrate', function() {
+  it('request ioAnimation registrate', function () {
     compressTest(
       this.obniz,
       [
@@ -109,7 +107,7 @@ describe('io.animation2_0_0', function() {
     );
   });
 
-  it('request ioAnimation count down', function() {
+  it('request ioAnimation count down', function () {
     compressTest(
       this.obniz,
       [
@@ -133,7 +131,7 @@ describe('io.animation2_0_0', function() {
     );
   });
 
-  it('request ioAnimation count down registrate', function() {
+  it('request ioAnimation count down registrate', function () {
     compressTest(
       this.obniz,
       [
@@ -157,7 +155,7 @@ describe('io.animation2_0_0', function() {
     );
   });
 
-  it('request ioAnimation-pause', function() {
+  it('request ioAnimation-pause', function () {
     compressTest(
       this.obniz,
       [{ io: { animation: { name: 'animation-1', status: 'pause' } } }],
@@ -165,7 +163,7 @@ describe('io.animation2_0_0', function() {
     );
   });
 
-  it('request ioAnimation-pause', function() {
+  it('request ioAnimation-pause', function () {
     compressTest(
       this.obniz,
       [{ io: { animation: { name: 'anim', status: 'pause' } } }],
@@ -173,7 +171,7 @@ describe('io.animation2_0_0', function() {
     );
   });
 
-  it('request ioAnimation-resume', function() {
+  it('request ioAnimation-resume', function () {
     compressTest(
       this.obniz,
       [{ io: { animation: { name: 'a', status: 'resume' } } }],
@@ -181,16 +179,18 @@ describe('io.animation2_0_0', function() {
     );
   });
 
-  it('response ioAnimation notify', function() {
+  it('response ioAnimation notify', function () {
     let responseBinaryString = '01 03 04 00 01 31 00';
     let expectJson = [{ io: { animation: { name: '1', status: 'finish' } } }];
 
-    let binaryArray = responseBinaryString.split(' ').map(function(val, index) {
-      return parseInt(val, 16);
-    });
+    let binaryArray = responseBinaryString
+      .split(' ')
+      .map(function (val, index) {
+        return parseInt(val, 16);
+      });
     let binary = new Uint8Array(binaryArray);
 
-    let json = this.obniz.binary2Json(binary);
+    let json = this.obniz._binary2Json(binary);
 
     let isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -202,7 +202,7 @@ describe('io.animation2_0_0', function() {
 function compressTest(obniz, requestJson, expecteBinarystrings) {
   let binaryArray = expecteBinarystrings[0]
     .split(' ')
-    .map(function(val, index) {
+    .map(function (val, index) {
       return parseInt(val, 16);
     });
   let binary = new Uint8Array(binaryArray);

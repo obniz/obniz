@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from "./WSCommand";
+import WSCommand from './WSCommand';
 
 class WSCommandMeasurement extends WSCommand {
   public module: any;
@@ -22,7 +22,7 @@ class WSCommandMeasurement extends WSCommand {
 
   public echo(params: any) {
     const triggerIO: any = params.echo.io_pulse;
-    const triggerPosNeg: any = params.echo.pulse === "negative" ? false : true;
+    const triggerPosNeg: any = params.echo.pulse === 'negative' ? false : true;
     const triggerWidthUs: any = Math.floor(params.echo.pulse_width * 1000);
     const echoIO: any = params.echo.io_echo;
     const responseCount: any = params.echo.measure_edges;
@@ -51,8 +51,10 @@ class WSCommandMeasurement extends WSCommand {
     if (module === undefined) {
       return;
     }
-    const schemaData: any = [{ uri: "/request/measure/echo", onValid: this.echo }];
-    const res: any = this.validateCommandSchema(schemaData, module, "measure");
+    const schemaData: any = [
+      { uri: '/request/measure/echo', onValid: this.echo },
+    ];
+    const res: any = this.validateCommandSchema(schemaData, module, 'measure');
 
     if (res.valid === 0) {
       if (res.invalidButLike.length > 0) {

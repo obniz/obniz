@@ -1,6 +1,6 @@
-import Obniz from "../../../dist/src/obniz/index";
+import Obniz from '../../../dist/src/obniz/index';
 
-const OBNIZ_ID = "1234-5678";
+const OBNIZ_ID = '1234-5678';
 
 /**
  * https://obniz.io/ja/sdk/parts/HMC5883L/README.md
@@ -9,7 +9,7 @@ class HMC5883LTest {
   public init() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const compass = obniz.wired("HMC5883L", { gnd: 1, sda: 2, scl: 3 });
+      const compass = obniz.wired('HMC5883L', { gnd: 1, sda: 2, scl: 3 });
       compass.init();
     };
   }
@@ -17,7 +17,7 @@ class HMC5883LTest {
   public get() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const compass = obniz.wired("HMC5883L", { gnd: 1, sda: 2, scl: 3 });
+      const compass = obniz.wired('HMC5883L', { gnd: 1, sda: 2, scl: 3 });
       compass.init();
       while (true) {
         const obj = await compass.get();

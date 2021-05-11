@@ -3,14 +3,14 @@
  * @module ObnizCore.Components
  */
 
-import Obniz from "../../index";
-import { ComponentAbstract } from "../ComponentAbstact";
-import PeripheralAD from "./ad";
-import { DriveType } from "./common";
-import PeripheralI2C from "./i2c";
-import PeripheralIO from "./io";
-import PeripheralPWM from "./pwm";
-import PeripheralUART from "./uart";
+import Obniz from '../../index';
+import { ComponentAbstract } from '../ComponentAbstact';
+import PeripheralAD from './ad';
+import { DriveType } from './common';
+import PeripheralI2C from './i2c';
+import PeripheralIO from './io';
+import PeripheralPWM from './pwm';
+import PeripheralUART from './uart';
 
 export interface PeripheralGroveParams {
   pin1: number;
@@ -19,14 +19,20 @@ export interface PeripheralGroveParams {
   gnd?: number;
 }
 
-export type PeripheralGroveType = "digital" | "analog" | "analog-digital" | "i2c" | "uart" | "pwm";
-export type GrovePinOption = "default" | "secondaryOnly";
+export type PeripheralGroveType =
+  | 'digital'
+  | 'analog'
+  | 'analog-digital'
+  | 'i2c'
+  | 'uart'
+  | 'pwm';
+export type GrovePinOption = 'default' | 'secondaryOnly';
 /**
  * @category Peripherals
  */
 export default class PeripheralGrove extends ComponentAbstract {
   public no: number;
-  public used: boolean = false;
+  public used = false;
   private _params: PeripheralGroveParams;
   private _current: {
     type?: PeripheralGroveType;
@@ -44,70 +50,98 @@ export default class PeripheralGrove extends ComponentAbstract {
   }
 
   public getDigital(
-    drive: DriveType = "5v",
-    pinOption: GrovePinOption = "default",
+    drive: DriveType = '5v',
+    pinOption: GrovePinOption = 'default'
   ): { primary: PeripheralIO; secondary?: PeripheralIO } {
-    this.useWithType("digital", drive);
-    const primary = this.Obniz.isValidIO(this._params.pin1) ? this.Obniz.getIO(this._params.pin1) : undefined;
-    const secondary = this.Obniz.isValidIO(this._params.pin2) ? this.Obniz.getIO(this._params.pin2) : undefined;
+    this.useWithType('digital', drive);
+    const primary = this.Obniz.isValidIO(this._params.pin1)
+      ? this.Obniz.getIO(this._params.pin1)
+      : undefined;
+    const secondary = this.Obniz.isValidIO(this._params.pin2)
+      ? this.Obniz.getIO(this._params.pin2)
+      : undefined;
 
     if (!primary) {
       // required
-      throw new Error("grove digital primary pin " + this._params.pin1 + " is not valid io");
+      throw new Error(
+        'grove digital primary pin ' + this._params.pin1 + ' is not valid io'
+      );
     }
-    if (pinOption === "default" && !primary) {
+    if (pinOption === 'default' && !primary) {
       // required
-      throw new Error("grove digital primary pin " + this._params.pin1 + " is not valid io");
+      throw new Error(
+        'grove digital primary pin ' + this._params.pin1 + ' is not valid io'
+      );
     }
 
-    if (pinOption === "secondaryOnly" && !secondary) {
+    if (pinOption === 'secondaryOnly' && !secondary) {
       // required
-      throw new Error("grove digital secondary pin " + this._params.pin2 + " is not valid io");
+      throw new Error(
+        'grove digital secondary pin ' + this._params.pin2 + ' is not valid io'
+      );
     }
     return { primary, secondary };
   }
 
   public getAnalog(
-    drive: DriveType = "5v",
-    pinOption: GrovePinOption = "default",
+    drive: DriveType = '5v',
+    pinOption: GrovePinOption = 'default'
   ): { primary?: PeripheralAD; secondary?: PeripheralAD } {
-    this.useWithType("analog", drive);
-    const primary = this.Obniz.isValidAD(this._params.pin1) ? this.Obniz.getAD(this._params.pin1) : undefined;
-    const secondary = this.Obniz.isValidAD(this._params.pin2) ? this.Obniz.getAD(this._params.pin2) : undefined;
+    this.useWithType('analog', drive);
+    const primary = this.Obniz.isValidAD(this._params.pin1)
+      ? this.Obniz.getAD(this._params.pin1)
+      : undefined;
+    const secondary = this.Obniz.isValidAD(this._params.pin2)
+      ? this.Obniz.getAD(this._params.pin2)
+      : undefined;
 
-    if (pinOption === "default" && !primary) {
+    if (pinOption === 'default' && !primary) {
       // required
-      throw new Error("grove analog primary pin " + this._params.pin1 + " is not valid io");
+      throw new Error(
+        'grove analog primary pin ' + this._params.pin1 + ' is not valid io'
+      );
     }
-    if (pinOption === "secondaryOnly" && !secondary) {
+    if (pinOption === 'secondaryOnly' && !secondary) {
       // required
-      throw new Error("grove analog secondary pin " + this._params.pin2 + " is not valid io");
+      throw new Error(
+        'grove analog secondary pin ' + this._params.pin2 + ' is not valid io'
+      );
     }
     return { primary, secondary };
   }
 
-  public getAnalogDigital(drive: DriveType = "5v"): { analog: PeripheralAD; digital: PeripheralIO } {
-    this.useWithType("analog-digital", drive);
-    const analog = this.Obniz.isValidAD(this._params.pin1) ? this.Obniz.getAD(this._params.pin1) : undefined;
-    const digital = this.Obniz.isValidIO(this._params.pin2) ? this.Obniz.getIO(this._params.pin2) : undefined;
+  public getAnalogDigital(
+    drive: DriveType = '5v'
+  ): { analog: PeripheralAD; digital: PeripheralIO } {
+    this.useWithType('analog-digital', drive);
+    const analog = this.Obniz.isValidAD(this._params.pin1)
+      ? this.Obniz.getAD(this._params.pin1)
+      : undefined;
+    const digital = this.Obniz.isValidIO(this._params.pin2)
+      ? this.Obniz.getIO(this._params.pin2)
+      : undefined;
 
     if (!analog) {
       // required
-      throw new Error("grove analog pin " + this._params.pin1 + " is not valid io");
+      throw new Error(
+        'grove analog pin ' + this._params.pin1 + ' is not valid io'
+      );
     }
 
     if (!digital) {
       // required
-      throw new Error("grove digital pin " + this._params.pin2 + " is not valid io");
+      throw new Error(
+        'grove digital pin ' + this._params.pin2 + ' is not valid io'
+      );
     }
     return { analog, digital };
   }
 
-  public getI2c(frequency: number, drive: DriveType = "5v"): PeripheralI2C {
-    this.useWithType("i2c", drive);
+  public getI2c(frequency: number, drive: DriveType = '5v'): PeripheralI2C {
+    this.useWithType('i2c', drive);
     if (!this._current.i2c) {
       this._current.i2c = this.Obniz.getI2CWithConfig({
-        mode: "master",
+        mode: 'master',
         sda: this._params.pin2,
         scl: this._params.pin1,
         clock: frequency,
@@ -116,8 +150,8 @@ export default class PeripheralGrove extends ComponentAbstract {
     return this._current.i2c;
   }
 
-  public getUart(baud: number, drive: DriveType = "5v"): PeripheralUART {
-    this.useWithType("uart", drive);
+  public getUart(baud: number, drive: DriveType = '5v'): PeripheralUART {
+    this.useWithType('uart', drive);
     this._current.uart = this.Obniz.getFreeUart();
     this._current.uart.start({
       rx: this._params.pin1,
@@ -128,8 +162,8 @@ export default class PeripheralGrove extends ComponentAbstract {
     return this._current.uart;
   }
 
-  public getPwm(drive: DriveType = "5v"): PeripheralPWM {
-    this.useWithType("pwm", drive);
+  public getPwm(drive: DriveType = '5v'): PeripheralPWM {
+    this.useWithType('pwm', drive);
     this._current.pwm = this.Obniz.getFreePwm();
     this._current.pwm.start({
       io: this._params.pin1,
@@ -150,14 +184,14 @@ export default class PeripheralGrove extends ComponentAbstract {
     if (this._current.i2c) {
       this._current.i2c.end();
     }
-    if (this._current.type === "analog") {
+    if (this._current.type === 'analog') {
       if (this.Obniz.isValidAD(this._params.pin1)) {
         this.Obniz.getAD(this._params.pin1).end();
       }
       if (this.Obniz.isValidAD(this._params.pin2)) {
         this.Obniz.getAD(this._params.pin2).end();
       }
-    } else if (this._current.type === "analog-digital") {
+    } else if (this._current.type === 'analog-digital') {
       if (this.Obniz.isValidAD(this._params.pin1)) {
         this.Obniz.getAD(this._params.pin1).end();
       }
@@ -182,8 +216,8 @@ export default class PeripheralGrove extends ComponentAbstract {
 
   private useWithType(type: PeripheralGroveType, drive: DriveType) {
     if (this.used) {
-      if (this._current.type !== "i2c" || this._current.drive !== drive) {
-        throw new Error("Grove pins are already used.");
+      if (this._current.type !== 'i2c' || this._current.drive !== drive) {
+        throw new Error('Grove pins are already used.');
       }
     }
     this.used = true;

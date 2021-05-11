@@ -3,10 +3,12 @@
  * @module Parts.MH_Z19B
  */
 
-import Obniz from "../../../obniz";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
+import PeripheralUART from '../../../obniz/libs/io_peripherals/uart';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface MH_Z19BOptions {
   vcc?: number;
@@ -18,7 +20,7 @@ export interface MH_Z19BOptions {
 export default class MH_Z19B implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "MH_Z19B",
+      name: 'MH_Z19B',
     };
   }
 
@@ -42,12 +44,12 @@ export default class MH_Z19B implements ObnizPartsInterface {
   private uart!: PeripheralUART;
 
   constructor() {
-    this.keys = ["vcc", "gnd", "sensor_tx", "sensor_rx"];
-    this.requiredKeys = ["sensor_tx", "sensor_rx"];
+    this.keys = ['vcc', 'gnd', 'sensor_tx', 'sensor_rx'];
+    this.requiredKeys = ['sensor_tx', 'sensor_rx'];
 
     this.ioKeys = this.keys;
-    this.displayName = "co2";
-    this.displayIoNames = { sensor_tx: "sensorTx", rx: "sensorRx" };
+    this.displayName = 'co2';
+    this.displayIoNames = { sensor_tx: 'sensorTx', rx: 'sensorRx' };
 
     this.rxbuf = Buffer.alloc(9);
 
@@ -74,7 +76,7 @@ export default class MH_Z19B implements ObnizPartsInterface {
     this.my_tx = this.params.sensor_rx;
     this.my_rx = this.params.sensor_tx;
 
-    this.obniz.setVccGnd(this.vcc, this.gnd, "5v");
+    this.obniz.setVccGnd(this.vcc, this.gnd, '5v');
     this.uart = obniz.getFreeUart();
     this.uart.start({
       tx: this.my_tx,
@@ -84,7 +86,7 @@ export default class MH_Z19B implements ObnizPartsInterface {
   }
 
   public heatWait(seconds?: number): Promise<void> {
-    if (typeof seconds === "number" && seconds > 0) {
+    if (typeof seconds === 'number' && seconds > 0) {
       seconds *= 1000;
     } else {
       seconds = 3 * 60 * 1000;
@@ -108,7 +110,7 @@ export default class MH_Z19B implements ObnizPartsInterface {
           resolve(val);
         } else {
           reject(undefined);
-          console.log("cannot receive data");
+          console.log('cannot receive data');
         }
       } catch (e) {
         reject(e);
@@ -117,34 +119,44 @@ export default class MH_Z19B implements ObnizPartsInterface {
   }
 
   public calibrateZero() {
-    let command: Buffer | number[];
-    command = this.makeRequestCmd("CalibZ", [0x00, 0x00, 0x00, 0x00, 0x00]);
+    const command: Buffer | number[] = this.makeRequestCmd('CalibZ', [
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+    ]);
     this.uart.send(command);
-    console.log("send a Zero Calibration command");
+    // console.log('send a Zero Calibration command');
   }
 
-  public calibrateSpan(ppm: number = 2000) {
+  public calibrateSpan(ppm = 2000) {
     if (ppm < 1000) {
       return;
     }
 
-    let command: Buffer | number[];
     const span_byte: Buffer = Buffer.alloc(2);
     span_byte[0] = ppm / 256;
     span_byte[1] = ppm % 256;
-    command = this.makeRequestCmd("CalibS", [span_byte[0], span_byte[1], 0x00, 0x00, 0x00]);
+    const command: Buffer | number[] = this.makeRequestCmd('CalibS', [
+      span_byte[0],
+      span_byte[1],
+      0x00,
+      0x00,
+      0x00,
+    ]);
     this.uart.send(command);
-    console.log("send a Span Calibration command");
+    // console.log('send a Span Calibration command');
   }
 
-  public setAutoCalibration(autoCalibration: boolean = true) {
+  public setAutoCalibration(autoCalibration = true) {
     let command: Buffer | number[];
     if (autoCalibration) {
-      command = this.makeRequestCmd("ACBOnOff", [0xa0, 0x00, 0x00, 0x00, 0x00]);
-      console.log("set an Auto Calibration ON");
+      command = this.makeRequestCmd('ACBOnOff', [0xa0, 0x00, 0x00, 0x00, 0x00]);
+      console.log('set an Auto Calibration ON');
     } else {
-      command = this.makeRequestCmd("ACBOnOff", [0x00, 0x00, 0x00, 0x00, 0x00]);
-      console.log("set an Auto Calibration OFF");
+      command = this.makeRequestCmd('ACBOnOff', [0x00, 0x00, 0x00, 0x00, 0x00]);
+      console.log('set an Auto Calibration OFF');
     }
     this.uart.send(command);
   }
@@ -152,17 +164,17 @@ export default class MH_Z19B implements ObnizPartsInterface {
   public setDetectionRange(range: number) {
     let command: Buffer | number[];
     if (range in this.rangeType) {
-      command = this.makeRequestCmd("RangeSet", this.rangeType[range]);
-      console.log("Configured Range : " + String(range));
+      command = this.makeRequestCmd('RangeSet', this.rangeType[range]);
+      console.log('Configured Range : ' + String(range));
     } else {
-      console.log("invalid range value");
-      command = this.makeRequestCmd("RangeSet", this.rangeType[5000]);
+      console.log('invalid range value');
+      command = this.makeRequestCmd('RangeSet', this.rangeType[5000]);
     }
     this.uart.send(command);
   }
 
   private checkSum(res8: Buffer): number {
-    let sum: number = 0;
+    let sum = 0;
     for (let i = 1; i < 8; i++) {
       sum += res8[i];
     }
@@ -170,7 +182,10 @@ export default class MH_Z19B implements ObnizPartsInterface {
     return sum;
   }
 
-  private makeRequestCmd(mode: string, databox: number[] = [0x00, 0x00, 0x00, 0x00, 0x00]): Buffer | number[] {
+  private makeRequestCmd(
+    mode: string,
+    databox: number[] = [0x00, 0x00, 0x00, 0x00, 0x00]
+  ): Buffer | number[] {
     const _buffer: Buffer = Buffer.alloc(9);
     _buffer[0] = 0xff;
     _buffer[1] = 0x01;
@@ -183,20 +198,25 @@ export default class MH_Z19B implements ObnizPartsInterface {
   }
 
   private requestReadConcentraiton() {
-    let command: Buffer | number[];
-    command = this.makeRequestCmd("Read", [0x00, 0x00, 0x00, 0x00, 0x00]);
+    const command: Buffer | number[] = this.makeRequestCmd('Read', [
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+    ]);
     // console.log("being sent request command");
     // console.log(command);
     this.uart.send(command);
   }
 
   private getCO2Concentration(data: number[]): number {
-    let co2Concentration: number = 0;
+    let co2Concentration = 0;
     const status: boolean = this.checkResponseData(data);
     if (status) {
       co2Concentration = this.rxbuf[2] * 256 + this.rxbuf[3];
     } else {
-      console.log("checksum error");
+      console.log('checksum error');
     }
     this.rxbuf = [];
     return co2Concentration;

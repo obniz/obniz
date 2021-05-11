@@ -6,11 +6,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class MH_Z19B {
     constructor() {
-        this.keys = ["vcc", "gnd", "sensor_tx", "sensor_rx"];
-        this.requiredKeys = ["sensor_tx", "sensor_rx"];
+        this.keys = ['vcc', 'gnd', 'sensor_tx', 'sensor_rx'];
+        this.requiredKeys = ['sensor_tx', 'sensor_rx'];
         this.ioKeys = this.keys;
-        this.displayName = "co2";
-        this.displayIoNames = { sensor_tx: "sensorTx", rx: "sensorRx" };
+        this.displayName = 'co2';
+        this.displayIoNames = { sensor_tx: 'sensorTx', rx: 'sensorRx' };
         this.rxbuf = Buffer.alloc(9);
         this.modes = {
             Read: 0x86,
@@ -27,7 +27,7 @@ class MH_Z19B {
     }
     static info() {
         return {
-            name: "MH_Z19B",
+            name: 'MH_Z19B',
         };
     }
     wired(obniz) {
@@ -36,7 +36,7 @@ class MH_Z19B {
         this.gnd = this.params.gnd;
         this.my_tx = this.params.sensor_rx;
         this.my_rx = this.params.sensor_tx;
-        this.obniz.setVccGnd(this.vcc, this.gnd, "5v");
+        this.obniz.setVccGnd(this.vcc, this.gnd, '5v');
         this.uart = obniz.getFreeUart();
         this.uart.start({
             tx: this.my_tx,
@@ -45,7 +45,7 @@ class MH_Z19B {
         });
     }
     heatWait(seconds) {
-        if (typeof seconds === "number" && seconds > 0) {
+        if (typeof seconds === 'number' && seconds > 0) {
             seconds *= 1000;
         }
         else {
@@ -69,7 +69,7 @@ class MH_Z19B {
                 }
                 else {
                     reject(undefined);
-                    console.log("cannot receive data");
+                    console.log('cannot receive data');
                 }
             }
             catch (e) {
@@ -78,44 +78,54 @@ class MH_Z19B {
         });
     }
     calibrateZero() {
-        let command;
-        command = this.makeRequestCmd("CalibZ", [0x00, 0x00, 0x00, 0x00, 0x00]);
+        const command = this.makeRequestCmd('CalibZ', [
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+        ]);
         this.uart.send(command);
-        console.log("send a Zero Calibration command");
+        // console.log('send a Zero Calibration command');
     }
     calibrateSpan(ppm = 2000) {
         if (ppm < 1000) {
             return;
         }
-        let command;
         const span_byte = Buffer.alloc(2);
         span_byte[0] = ppm / 256;
         span_byte[1] = ppm % 256;
-        command = this.makeRequestCmd("CalibS", [span_byte[0], span_byte[1], 0x00, 0x00, 0x00]);
+        const command = this.makeRequestCmd('CalibS', [
+            span_byte[0],
+            span_byte[1],
+            0x00,
+            0x00,
+            0x00,
+        ]);
         this.uart.send(command);
-        console.log("send a Span Calibration command");
+        // console.log('send a Span Calibration command');
     }
     setAutoCalibration(autoCalibration = true) {
         let command;
         if (autoCalibration) {
-            command = this.makeRequestCmd("ACBOnOff", [0xa0, 0x00, 0x00, 0x00, 0x00]);
-            console.log("set an Auto Calibration ON");
+            command = this.makeRequestCmd('ACBOnOff', [0xa0, 0x00, 0x00, 0x00, 0x00]);
+            console.log('set an Auto Calibration ON');
         }
         else {
-            command = this.makeRequestCmd("ACBOnOff", [0x00, 0x00, 0x00, 0x00, 0x00]);
-            console.log("set an Auto Calibration OFF");
+            command = this.makeRequestCmd('ACBOnOff', [0x00, 0x00, 0x00, 0x00, 0x00]);
+            console.log('set an Auto Calibration OFF');
         }
         this.uart.send(command);
     }
     setDetectionRange(range) {
         let command;
         if (range in this.rangeType) {
-            command = this.makeRequestCmd("RangeSet", this.rangeType[range]);
-            console.log("Configured Range : " + String(range));
+            command = this.makeRequestCmd('RangeSet', this.rangeType[range]);
+            console.log('Configured Range : ' + String(range));
         }
         else {
-            console.log("invalid range value");
-            command = this.makeRequestCmd("RangeSet", this.rangeType[5000]);
+            console.log('invalid range value');
+            command = this.makeRequestCmd('RangeSet', this.rangeType[5000]);
         }
         this.uart.send(command);
     }
@@ -139,8 +149,13 @@ class MH_Z19B {
         return Array.from(_buffer);
     }
     requestReadConcentraiton() {
-        let command;
-        command = this.makeRequestCmd("Read", [0x00, 0x00, 0x00, 0x00, 0x00]);
+        const command = this.makeRequestCmd('Read', [
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+        ]);
         // console.log("being sent request command");
         // console.log(command);
         this.uart.send(command);
@@ -152,7 +167,7 @@ class MH_Z19B {
             co2Concentration = this.rxbuf[2] * 256 + this.rxbuf[3];
         }
         else {
-            console.log("checksum error");
+            console.log('checksum error');
         }
         this.rxbuf = [];
         return co2Concentration;

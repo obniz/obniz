@@ -3,9 +3,11 @@
  * @module Parts.Keyestudio_Button
  */
 
-import Obniz from "../../../obniz";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface Keyestudio_ButtonOptions {
   signal: number;
@@ -16,7 +18,7 @@ export interface Keyestudio_ButtonOptions {
 export default class Keyestudio_Button implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "Keyestudio_Button",
+      name: 'Keyestudio_Button',
     };
   }
 
@@ -32,8 +34,8 @@ export default class Keyestudio_Button implements ObnizPartsInterface {
   private io_supply?: PeripheralIO;
 
   constructor() {
-    this.keys = ["signal", "gnd", "vcc"];
-    this.requiredKeys = ["signal"];
+    this.keys = ['signal', 'gnd', 'vcc'];
+    this.requiredKeys = ['signal'];
   }
 
   public onChangeForStateWait = (pressed: boolean) => {};
@@ -51,7 +53,7 @@ export default class Keyestudio_Button implements ObnizPartsInterface {
       this.io_supply.output(false);
     }
 
-    this.io_signal.pull("5v");
+    this.io_signal.pull('5v');
 
     this.io_signal.input((value: boolean) => {
       this.isPressed = value;

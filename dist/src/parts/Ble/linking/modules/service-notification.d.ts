@@ -7,14 +7,14 @@ export default class LinkingServiceNotification {
     SERVICE_ID: number;
     SERVICE_NAME: string;
     MESSAGE_NAME_MAP: {
-        "00": string;
-        "01": string;
-        "02": string;
-        "03": string;
-        "04": string;
-        "05": string;
-        "06": string;
-        "07": string;
+        '00': string;
+        '01': string;
+        '02': string;
+        '03': string;
+        '04': string;
+        '05': string;
+        '06': string;
+        '07': string;
     };
     private _WRITE_MESSAGE_ID_MAP;
     private _NOTIFY_CATEGORY_NAME_ID_MAP;

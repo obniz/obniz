@@ -3,19 +3,16 @@ let expect = chai.expect;
 let sinon = require('sinon');
 
 let testUtil = require('../../../testUtil.js');
-chai.use(require('chai-like'));
-chai.use(testUtil.obnizAssert);
 
-describe('obniz.libs.measure', function() {
-  beforeEach(function(done) {
-    return testUtil.setupObnizPromise(this, done);
+describe('obniz.libs.measure', function () {
+  beforeEach(async function () {
+    await testUtil.setupObnizPromise(this);
+  });
+  afterEach(async function () {
+    await testUtil.releaseObnizPromise(this);
   });
 
-  afterEach(function(done) {
-    return testUtil.releaseObnizePromise(this, done);
-  });
-
-  it('echo', function() {
+  it('echo', function () {
     this.obniz.measure.echo({
       io_pulse: 1, // io for generate pulse
       io_echo: 2, // io to be measured
@@ -42,7 +39,7 @@ describe('obniz.libs.measure', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('echo response', function() {
+  it('echo response', function () {
     let stub = sinon.stub();
     this.obniz.measure.echo({
       io_pulse: 1, // io for generate pulse

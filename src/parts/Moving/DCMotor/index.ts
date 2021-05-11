@@ -3,10 +3,12 @@
  * @module Parts.DCMotor
  */
 
-import Obniz from "../../../obniz";
-import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
+import Obniz from '../../../obniz';
+import PeripheralPWM from '../../../obniz/libs/io_peripherals/pwm';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface DCMotorOptions {
   forward: number;
@@ -16,7 +18,7 @@ export interface DCMotorOptions {
 export default class DCMotor implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "DCMotor",
+      name: 'DCMotor',
     };
   }
 
@@ -31,8 +33,8 @@ export default class DCMotor implements ObnizPartsInterface {
   public pwm2!: PeripheralPWM;
 
   constructor() {
-    this.keys = ["forward", "back"];
-    this.requiredKeys = ["forward", "back"];
+    this.keys = ['forward', 'back'];
+    this.requiredKeys = ['forward', 'back'];
   }
 
   public wired(obniz: Obniz) {

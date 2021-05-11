@@ -2,15 +2,15 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import BleLocalAttributeAbstract from "./bleLocalAttributeAbstract";
+import BleLocalAttributeAbstract from './bleLocalAttributeAbstract';
 
 /**
  * @category Use as Peripheral
  */
-export default class BleLocalValueAttributeAbstract<ParentClass, ChildrenClass> extends BleLocalAttributeAbstract<
+export default class BleLocalValueAttributeAbstract<
   ParentClass,
   ChildrenClass
-> {
+> extends BleLocalAttributeAbstract<ParentClass, ChildrenClass> {
   constructor(params: any) {
     super(params);
   }
@@ -29,7 +29,7 @@ export default class BleLocalValueAttributeAbstract<ParentClass, ChildrenClass> 
    */
   public async writeWait(data: any): Promise<boolean> {
     this.data = data;
-    this.notifyFromServer("onwrite", { result: "success" });
+    this.notifyFromServer('onwrite', { result: 'success' });
     return true;
   }
 
@@ -46,7 +46,7 @@ export default class BleLocalValueAttributeAbstract<ParentClass, ChildrenClass> 
    * ```
    */
   public async readWait(): Promise<number[]> {
-    this.notifyFromServer("onread", { data: this.data });
+    this.notifyFromServer('onread', { data: this.data });
     return this.data;
   }
 
@@ -59,11 +59,15 @@ export default class BleLocalValueAttributeAbstract<ParentClass, ChildrenClass> 
     super.notifyFromServer(notifyName, params);
     this.emitter.emit(notifyName, params);
     switch (notifyName) {
-      case "onwritefromremote": {
-        this._runUserCreatedFunction(this.onwritefromremote, params.address, Array.from(params.data));
+      case 'onwritefromremote': {
+        this._runUserCreatedFunction(
+          this.onwritefromremote,
+          params.address,
+          Array.from(params.data)
+        );
         break;
       }
-      case "onreadfromremote": {
+      case 'onreadfromremote': {
         this._runUserCreatedFunction(this.onreadfromremote, params.address);
         break;
       }

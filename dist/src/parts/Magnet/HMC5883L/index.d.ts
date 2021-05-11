@@ -2,10 +2,10 @@
  * @packageDocumentation
  * @module Parts.HMC5883L
  */
-import Obniz from "../../../obniz";
-import { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-import i2cCompass, { compassUnit, I2cCompassAbstractOptions } from "../../i2cCompass";
-import { I2cInfo, Xyz } from "../../i2cParts";
+import Obniz from '../../../obniz';
+import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import i2cCompass, { compassUnit, I2cCompassAbstractOptions } from '../../i2cCompass';
+import { I2cInfo, Xyz } from '../../i2cParts';
 export interface HMC5883LOptions extends I2cCompassAbstractOptions {
 }
 export default class HMC5883L extends i2cCompass {
@@ -23,5 +23,8 @@ export default class HMC5883L extends i2cCompass {
     reset(): void;
     getAdcWait(): Promise<Xyz>;
     setRange(index: number): void;
+    /**
+     * @deprecated
+     */
     get(): Promise<Xyz>;
 }

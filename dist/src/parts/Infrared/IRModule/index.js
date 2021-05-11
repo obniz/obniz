@@ -6,12 +6,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class IRModule {
     constructor() {
-        this.keys = ["recv", "vcc", "send", "gnd"];
-        this.requiredKeys = ["recv", "send"];
+        this.keys = ['recv', 'vcc', 'send', 'gnd'];
+        this.requiredKeys = ['recv', 'send'];
     }
     static info() {
         return {
-            name: "IRModule",
+            name: 'IRModule',
         };
     }
     get dataSymbolLength() {
@@ -23,22 +23,22 @@ class IRModule {
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         if (!obniz.isValidIO(this.params.recv)) {
-            throw new Error("recv is not valid io");
+            throw new Error('recv is not valid io');
         }
         if (!obniz.isValidIO(this.params.send)) {
-            throw new Error("send is not valid io");
+            throw new Error('send is not valid io');
         }
-        this.sensor = obniz.wired("IRSensor", {
+        this.sensor = obniz.wired('IRSensor', {
             output: this.params.recv,
         });
-        this.setGetterSetter("sensor", "duration");
-        this.setGetterSetter("sensor", "dataInverted");
-        this.setGetterSetter("sensor", "cutTail");
-        this.setGetterSetter("sensor", "output_pullup");
-        this.setGetterSetter("sensor", "ondetect");
-        this.led = obniz.wired("InfraredLED", {
+        this.setGetterSetter('sensor', 'duration');
+        this.setGetterSetter('sensor', 'dataInverted');
+        this.setGetterSetter('sensor', 'cutTail');
+        this.setGetterSetter('sensor', 'output_pullup');
+        this.setGetterSetter('sensor', 'ondetect');
+        this.led = obniz.wired('InfraredLED', {
             anode: this.params.send,
         });
     }

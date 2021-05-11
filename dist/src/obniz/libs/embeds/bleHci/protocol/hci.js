@@ -82,14 +82,14 @@ var COMMANDS;
 /**
  * @ignore
  */
-const STATUS_MAPPER = require("./hci-status");
+const STATUS_MAPPER = require('./hci-status');
 /**
  * @ignore
  */
 class Hci extends eventemitter3_1.default {
     constructor(obnizHci) {
         super();
-        this._state = "poweredOff";
+        this._state = 'poweredOff';
         this._aclStreamObservers = {};
         /**
          * @ignore
@@ -97,8 +97,8 @@ class Hci extends eventemitter3_1.default {
          */
         this.debugHandler = () => { };
         this._obnizHci = obnizHci;
-        this._obnizHci.Obniz.on("disconnect", () => {
-            this.stateChange("poweredOff");
+        this._obnizHci.Obniz.on('disconnect', () => {
+            this.stateChange('poweredOff');
         });
         this._socket = {
             write: (data) => {
@@ -115,7 +115,7 @@ class Hci extends eventemitter3_1.default {
      * @private
      */
     _reset() {
-        this.stateChange("poweredOff");
+        this.stateChange('poweredOff');
         this.resetBuffers();
     }
     async initWait() {
@@ -123,14 +123,14 @@ class Hci extends eventemitter3_1.default {
     }
     setEventMask() {
         const cmd = Buffer.alloc(12);
-        const eventMask = Buffer.from("fffffbff07f8bf3d", "hex");
+        const eventMask = Buffer.from('fffffbff07f8bf3d', 'hex');
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
         cmd.writeUInt16LE(COMMANDS.SET_EVENT_MASK_CMD, 1);
         // length
         cmd.writeUInt8(eventMask.length, 3);
         eventMask.copy(cmd, 4);
-        this.debug("set event mask - writing: " + cmd.toString("hex"));
+        this.debug('set event mask - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
     }
     async resetWait() {
@@ -142,12 +142,12 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(0x00, 3);
         const p = this.readCmdCompleteEventWait(COMMANDS.RESET_CMD);
-        this.debug("reset - writing: " + cmd.toString("hex"));
+        this.debug('reset - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const resetResult = await p;
         this.setEventMask();
         this.setLeEventMask();
-        const { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer } = await this.readLocalVersionWait();
+        const { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer, } = await this.readLocalVersionWait();
         this.debug(`localVersion ${hciVer} ${hciRev} ${lmpVer} ${manufacturer} ${lmpSubVer}`);
         this.writeLeHostSupported();
         await this.readLeHostSupportedWait();
@@ -157,10 +157,10 @@ class Hci extends eventemitter3_1.default {
         if (bufsize) {
             this.debug(`Buffer Mtu=${bufsize.aclMtu} aclMaxInProgress=${bufsize.aclMaxInProgress}`);
         }
-        if (this._state !== "poweredOn") {
+        if (this._state !== 'poweredOn') {
             await this.setScanEnabledWait(false, true);
             await this.setScanParametersWait(false);
-            this.stateChange("poweredOn");
+            this.stateChange('poweredOn');
         }
     }
     resetBuffers() {
@@ -176,7 +176,7 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(0x0, 3);
         const p = this.readCmdCompleteEventWait(COMMANDS.READ_LOCAL_VERSION_CMD);
-        this.debug("read local version - writing: " + cmd.toString("hex"));
+        this.debug('read local version - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const data = await p;
         const hciVer = data.result.readUInt8(0);
@@ -197,24 +197,24 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(0x0, 3);
         const p = this.readCmdCompleteEventWait(COMMANDS.READ_BD_ADDR_CMD);
-        this.debug("read bd addr - writing: " + cmd.toString("hex"));
+        this.debug('read bd addr - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const data = await p;
-        this.addressType = "public";
-        this.address = bleHelper_1.default.buffer2reversedHex(data.result, ":");
-        this.debug("address = " + this.address);
+        this.addressType = 'public';
+        this.address = bleHelper_1.default.buffer2reversedHex(data.result, ':');
+        this.debug('address = ' + this.address);
         return this.address;
     }
     setLeEventMask() {
         const cmd = Buffer.alloc(12);
-        const leEventMask = Buffer.from("1f00000000000000", "hex");
+        const leEventMask = Buffer.from('1f00000000000000', 'hex');
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
         cmd.writeUInt16LE(COMMANDS.LE_SET_EVENT_MASK_CMD, 1);
         // length
         cmd.writeUInt8(leEventMask.length, 3);
         leEventMask.copy(cmd, 4);
-        this.debug("set le event mask - writing: " + cmd.toString("hex"));
+        this.debug('set le event mask - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
     }
     async readLeHostSupportedWait() {
@@ -225,14 +225,14 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(0x00, 3);
         const p = this.readCmdCompleteEventWait(COMMANDS.READ_LE_HOST_SUPPORTED_CMD);
-        this.debug("read LE host supported - writing: " + cmd.toString("hex"));
+        this.debug('read LE host supported - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const data = await p;
         if (data.status === 0) {
             const le = data.result.readUInt8(0);
             const simul = data.result.readUInt8(1);
-            this.debug("\t\t\tle = " + le);
-            this.debug("\t\t\tsimul = " + simul);
+            this.debug('\t\t\tle = ' + le);
+            this.debug('\t\t\tsimul = ' + simul);
         }
         return data;
     }
@@ -246,7 +246,7 @@ class Hci extends eventemitter3_1.default {
         // data
         cmd.writeUInt8(0x01, 4); // le
         cmd.writeUInt8(0x00, 5); // simul
-        this.debug("write LE host supported - writing: " + cmd.toString("hex"));
+        this.debug('write LE host supported - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
     }
     async setScanParametersWait(isActiveScan) {
@@ -263,7 +263,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(0x00, 9); // own address type: 0 -> public, 1 -> random
         cmd.writeUInt8(0x00, 10); // filter: 0 -> all event types
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_PARAMETERS_CMD);
-        this.debug("set scan parameters - writing: " + cmd.toString("hex"));
+        this.debug('set scan parameters - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const data = await p;
         return data.status;
@@ -278,7 +278,7 @@ class Hci extends eventemitter3_1.default {
         // data
         cmd.writeUInt8(enabled ? 0x01 : 0x00, 4); // enable: 0 -> disabled, 1 -> enabled
         cmd.writeUInt8(filterDuplicates ? 0x01 : 0x00, 5); // 0x01 => filter enabled, 0x00 => filter disable
-        this.debug("set scan enabled - writing: " + cmd.toString("hex"));
+        this.debug('set scan enabled - writing: ' + cmd.toString('hex'));
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_ENABLE_CMD);
         this._socket.write(cmd);
         const data = await p;
@@ -295,8 +295,8 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(0x0010, 4); // interval
         cmd.writeUInt16LE(0x0010, 6); // window
         cmd.writeUInt8(0x00, 8); // initiator filter
-        cmd.writeUInt8(addressType === "random" ? 0x01 : 0x00, 9); // peer address type
-        bleHelper_1.default.hex2reversedBuffer(address, ":").copy(cmd, 10); // peer address
+        cmd.writeUInt8(addressType === 'random' ? 0x01 : 0x00, 9); // peer address type
+        bleHelper_1.default.hex2reversedBuffer(address, ':').copy(cmd, 10); // peer address
         cmd.writeUInt8(0x00, 16); // own address type
         cmd.writeUInt16LE(0x0009, 17); // min interval 9 * 1.25 msec => 7.5msec (close to android)
         cmd.writeUInt16LE(0x0018, 19); // max interval 24 * 1.25 msec => 30msec (close to ios)
@@ -304,7 +304,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(0x0190, 23); // supervision timeout 4sec // cmd.writeUInt16LE(0x00c8, 23);
         cmd.writeUInt16LE(0x0000, 25); // min ce length
         cmd.writeUInt16LE(0x0000, 27); // max ce length
-        this.debug("create le conn - writing: " + cmd.toString("hex"));
+        this.debug('create le conn - writing: ' + cmd.toString('hex'));
         const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, {
             timeout,
         });
@@ -319,14 +319,13 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(COMMANDS.LE_CREATE_CONN_CANCEL_CMD, 1);
         // length
         cmd.writeUInt8(0x0, 3);
-        /*
-         * 成功すると0x00 失敗で 0x01~0xFFが帰る
-         * 特に接続処理中じゃない場合は 0x0x(command disallowed)がかえる
-         * キャンセルに成功してその応答が来たあとには
-         * LE Connection Complete or an HCI_LE_Enhanced_Connection_Complete event
-         * のどちらかがちゃんと返る
+        /**
+         * On success, 0x00 is returned. On failure, 0x01~0xFF is returned.
+         * If the connection is not being processed, 0x0x (command disallowed) will be returned.
+         * After a successful cancellation and response, either LE_Connection_Complete or
+         * an HCI_LE_Enhanced_Connection_Complete event will be returned.
          */
-        this.debug("create le conn cancel - writing: " + cmd.toString("hex"));
+        this.debug('create le conn cancel - writing: ' + cmd.toString('hex'));
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_CREATE_CONN_CANCEL_CMD);
         this._socket.write(cmd);
         const { status } = await p;
@@ -349,7 +348,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(Math.floor(supervisionTimeout / 10), 12); // supervision timeout
         cmd.writeUInt16LE(0x0000, 14); // min ce length
         cmd.writeUInt16LE(0x0000, 16); // max ce length
-        this.debug("conn update le - writing: " + cmd.toString("hex"));
+        this.debug('conn update le - writing: ' + cmd.toString('hex'));
         const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE);
         this._socket.write(cmd);
         const { status, data } = await p;
@@ -361,10 +360,10 @@ class Hci extends eventemitter3_1.default {
         const interval = data.readUInt16LE(2) * 1.25;
         const latency = data.readUInt16LE(4); // TODO: multiplier?
         const supervisionTimeout = data.readUInt16LE(6) * 10;
-        this.debug("\t\t\thandle = " + handle);
-        this.debug("\t\t\tinterval = " + interval);
-        this.debug("\t\t\tlatency = " + latency);
-        this.debug("\t\t\tsupervision timeout = " + supervisionTimeout);
+        this.debug('\t\t\thandle = ' + handle);
+        this.debug('\t\t\tinterval = ' + interval);
+        this.debug('\t\t\tlatency = ' + latency);
+        this.debug('\t\t\tsupervision timeout = ' + supervisionTimeout);
         return { status, handle, interval, latency, supervisionTimeout };
     }
     async startLeEncryptionWait(handle, random, diversifier, key) {
@@ -381,12 +380,12 @@ class Hci extends eventemitter3_1.default {
         key.copy(cmd, 16);
         // console.log("start le encryption - writing: " + cmd.toString("hex"));
         const p1 = this._obnizHci.readWait([COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_ENCRYPT_CHANGE], {
-            waitingFor: "EVT_ENCRYPT_CHANGE",
+            waitingFor: 'EVT_ENCRYPT_CHANGE',
         });
         const p2 = this._obnizHci.readWait([COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_ENCRYPTION_KEY_REFRESH_COMPLETE], {
-            waitingFor: "EVT_ENCRYPTION_KEY_REFRESH_COMPLETE",
+            waitingFor: 'EVT_ENCRYPTION_KEY_REFRESH_COMPLETE',
         });
-        this.debug("start le encryption - writing: " + cmd.toString("hex"));
+        this.debug('start le encryption - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const data = await Promise.race([p1, p2]);
         // const data = await p1;
@@ -401,9 +400,9 @@ class Hci extends eventemitter3_1.default {
             }
             const encHandle = data.readUInt16LE(4);
             const encrypt = data.readUInt8(6);
-            this.debug("\t\thandle = " + encHandle);
-            this.debug("\t\tencrypt = " + encrypt);
-            this.emit("encryptChange", encHandle, encrypt);
+            this.debug('\t\thandle = ' + encHandle);
+            this.debug('\t\tencrypt = ' + encrypt);
+            this.emit('encryptChange', encHandle, encrypt);
             return encrypt;
         }
         else if (data[1] === COMMANDS.EVT_ENCRYPTION_KEY_REFRESH_COMPLETE) {
@@ -415,10 +414,10 @@ class Hci extends eventemitter3_1.default {
                 throw new Error(`le encryption event EVT_ENCRYPTION_KEY_REFRESH_COMPLETE failed with error ${status}`);
             }
             const encHandle = data.readUInt16LE(4);
-            this.debug("\t\thandle = " + encHandle);
-            return "refresh";
+            this.debug('\t\thandle = ' + encHandle);
+            return 'refresh';
         }
-        throw new Error("Never Happend");
+        throw new Error('Never Happend');
     }
     disconnect(handle, reason) {
         const cmd = Buffer.alloc(7);
@@ -431,7 +430,7 @@ class Hci extends eventemitter3_1.default {
         // data
         cmd.writeUInt16LE(handle, 4); // handle
         cmd.writeUInt8(reason, 6); // reason
-        this.debug("disconnect - writing: " + cmd.toString("hex"));
+        this.debug('disconnect - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
     }
     async readRssiWait(handle) {
@@ -443,16 +442,19 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(0x02, 3);
         // data
         cmd.writeUInt16LE(handle, 4); // handle
-        const p = this.readCmdCompleteEventWait(COMMANDS.READ_RSSI_CMD, [handle & 0xff, (handle >> 8) & 0xff]);
-        this.debug("read rssi - writing: " + cmd.toString("hex"));
+        const p = this.readCmdCompleteEventWait(COMMANDS.READ_RSSI_CMD, [
+            handle & 0xff,
+            (handle >> 8) & 0xff,
+        ]);
+        this.debug('read rssi - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const data = await p;
         if (handle !== data.result.readUInt16LE(0)) {
-            throw new Error("handle is different");
+            throw new Error('handle is different');
         }
         const rssi = data.result.readInt8(2);
-        this.debug("\t\t\thandle = " + handle);
-        this.debug("\t\t\trssi = " + rssi);
+        this.debug('\t\t\thandle = ' + handle);
+        this.debug('\t\t\trssi = ' + rssi);
         return rssi;
     }
     async setAdvertisingParametersWait() {
@@ -462,18 +464,20 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD, 1);
         // length
         cmd.writeUInt8(15, 3);
-        const advertisementInterval = Math.floor((process.env.BLENO_ADVERTISING_INTERVAL ? parseFloat(process.env.BLENO_ADVERTISING_INTERVAL) : 100) * 1.6);
+        const advertisementInterval = Math.floor((process.env.BLENO_ADVERTISING_INTERVAL
+            ? parseFloat(process.env.BLENO_ADVERTISING_INTERVAL)
+            : 100) * 1.6);
         // data
         cmd.writeUInt16LE(advertisementInterval, 4); // min interval
         cmd.writeUInt16LE(advertisementInterval, 6); // max interval
         cmd.writeUInt8(0x00, 8); // adv type
         cmd.writeUInt8(0x00, 9); // own addr typ
         cmd.writeUInt8(0x00, 10); // direct addr type
-        Buffer.from("000000000000", "hex").copy(cmd, 11); // direct addr
+        Buffer.from('000000000000', 'hex').copy(cmd, 11); // direct addr
         cmd.writeUInt8(0x07, 17);
         cmd.writeUInt8(0x00, 18);
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD);
-        this.debug("set advertisement parameters - writing: " + cmd.toString("hex"));
+        this.debug('set advertisement parameters - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const data = await p;
         // this.emit("stateChange", "poweredOn"); // TODO : really need?
@@ -491,7 +495,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(data.length, 4);
         data.copy(cmd, 5);
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISING_DATA_CMD);
-        this.debug("set advertisement data - writing: " + cmd.toString("hex"));
+        this.debug('set advertisement data - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const result = await p;
         return result.status;
@@ -508,7 +512,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(data.length, 4);
         data.copy(cmd, 5);
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_RESPONSE_DATA_CMD);
-        this.debug("set scan response data - writing: " + cmd.toString("hex"));
+        this.debug('set scan response data - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const result = await p;
         return result.status;
@@ -523,7 +527,7 @@ class Hci extends eventemitter3_1.default {
         // data
         cmd.writeUInt8(enabled ? 0x01 : 0x00, 4); // enable: 0 -> disabled, 1 -> enabled
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISE_ENABLE_CMD);
-        this.debug("set advertise enable - writing: " + cmd.toString("hex"));
+        this.debug('set advertise enable - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const data = await p;
         return data.status;
@@ -536,7 +540,7 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(0x0, 3);
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_READ_BUFFER_SIZE_CMD);
-        this.debug("le read buffer size - writing: " + cmd.toString("hex"));
+        this.debug('le read buffer size - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const data = await p;
         if (!data.status) {
@@ -551,7 +555,7 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(0x0, 3);
         const p = this.readCmdCompleteEventWait(COMMANDS.READ_BUFFER_SIZE_CMD);
-        this.debug("read buffer size - writing: " + cmd.toString("hex"));
+        this.debug('read buffer size - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const data = await p;
         if (!data.status) {
@@ -559,8 +563,8 @@ class Hci extends eventemitter3_1.default {
             const aclMaxInProgress = data.result.readUInt16LE(3);
             // sanity
             if (aclMtu && aclMaxInProgress) {
-                this.debug("br/edr acl mtu = " + aclMtu);
-                this.debug("br/edr acl max pkts = " + aclMaxInProgress);
+                this.debug('br/edr acl mtu = ' + aclMtu);
+                this.debug('br/edr acl max pkts = ' + aclMaxInProgress);
                 this._aclMtu = aclMtu;
                 this._aclMaxInProgress = aclMaxInProgress;
                 return { aclMtu, aclMaxInProgress };
@@ -595,7 +599,7 @@ class Hci extends eventemitter3_1.default {
         this.pushAclOutQueue();
     }
     pushAclOutQueue() {
-        this.debug("pushAclOutQueue");
+        this.debug('pushAclOutQueue');
         let inProgress = 0;
         for (const handle in this._handleAclsInProgress) {
             inProgress += this._handleAclsInProgress[handle];
@@ -606,16 +610,21 @@ class Hci extends eventemitter3_1.default {
             this.writeOneAclDataPkt();
         }
         if (inProgress >= this._aclMaxInProgress && this._aclOutQueue.length) {
-            this.debug("acl out queue congested");
-            this.debug("\tin progress = " + inProgress);
-            this.debug("\twaiting = " + this._aclOutQueue.length);
+            this.debug('acl out queue congested');
+            this.debug('\tin progress = ' + inProgress);
+            this.debug('\twaiting = ' + this._aclOutQueue.length);
         }
     }
     writeOneAclDataPkt() {
-        this.debug("writeOneAclDataPkt");
+        this.debug('writeOneAclDataPkt');
         const pkt = this._aclOutQueue.shift();
         this._handleAclsInProgress[pkt.handle]++;
-        this.debug("write acl data pkt frag " + pkt.fragId + " handle " + pkt.handle + " - writing: " + pkt.pkt.toString("hex"));
+        this.debug('write acl data pkt frag ' +
+            pkt.fragId +
+            ' handle ' +
+            pkt.handle +
+            ' - writing: ' +
+            pkt.pkt.toString('hex'));
         this._socket.write(pkt.pkt);
     }
     writeAclDataPkt(handle, cid, data) {
@@ -627,21 +636,24 @@ class Hci extends eventemitter3_1.default {
         pkt.writeUInt16LE(data.length, 5); // data length 2  for l2cap
         pkt.writeUInt16LE(cid, 7);
         data.copy(pkt, 9);
-        this.debug("write acl data pkt - writing: " + pkt.toString("hex"));
+        this.debug('write acl data pkt - writing: ' + pkt.toString('hex'));
         this._socket.write(pkt);
     }
-    async longTermKeyRequestNegativeReply(handle) {
-        throw new Error("TODO: no checked");
-        const cmd = Buffer.alloc(5);
-        // header
-        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(COMMANDS.LE_LTK_NEG_REPLY_CMD, 1);
-        // length
-        cmd.writeUInt16LE(handle, 3);
-        const p = this.readCmdCompleteEventWait(COMMANDS.LE_LTK_NEG_REPLY_CMD);
-        this._socket.write(cmd);
-        const data = await p;
-        return data.status;
+    async longTermKeyRequestNegativeReplyWait(handle) {
+        throw new Error('TODO: no checked');
+        // const cmd = Buffer.alloc(5);
+        //
+        // // header
+        // cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        // cmd.writeUInt16LE(COMMANDS.LE_LTK_NEG_REPLY_CMD, 1);
+        //
+        // // length
+        // cmd.writeUInt16LE(handle, 3);
+        //
+        // const p = this.readCmdCompleteEventWait(COMMANDS.LE_LTK_NEG_REPLY_CMD);
+        // this._socket.write(cmd);
+        // const data = await p;
+        // return data.status;
     }
     processLeMetaEvent(eventType, status, data) {
         if (eventType === COMMANDS.EVT_LE_ADVERTISING_REPORT) {
@@ -654,31 +666,31 @@ class Hci extends eventemitter3_1.default {
             }
         }
         else if (eventType === COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE) {
-            const { handle, interval, latency, supervisionTimeout } = this.processLeConnUpdateComplete(status, data);
-            this.emit("leConnUpdateComplete", status, handle, interval, latency, supervisionTimeout);
+            const { handle, interval, latency, supervisionTimeout, } = this.processLeConnUpdateComplete(status, data);
+            this.emit('leConnUpdateComplete', status, handle, interval, latency, supervisionTimeout);
         }
     }
     processLeConnComplete(status, data, onConnectCallback) {
         const handle = data.readUInt16LE(0);
         const role = data.readUInt8(2);
-        const addressType = data.readUInt8(3) === 0x01 ? "random" : "public";
-        const address = bleHelper_1.default.buffer2reversedHex(data.slice(4, 10), ":");
+        const addressType = data.readUInt8(3) === 0x01 ? 'random' : 'public';
+        const address = bleHelper_1.default.buffer2reversedHex(data.slice(4, 10), ':');
         const interval = data.readUInt16LE(10) * 1.25;
         const latency = data.readUInt16LE(12); // TODO: multiplier?
         const supervisionTimeout = data.readUInt16LE(14) * 10;
         const masterClockAccuracy = data.readUInt8(16); // TODO: multiplier?
-        this.debug("\t\t\thandle = " + handle);
-        this.debug("\t\t\trole = " + role);
-        this.debug("\t\t\taddress type = " + addressType);
-        this.debug("\t\t\taddress = " + address);
-        this.debug("\t\t\tinterval = " + interval);
-        this.debug("\t\t\tlatency = " + latency);
-        this.debug("\t\t\tsupervision timeout = " + supervisionTimeout);
-        this.debug("\t\t\tmaster clock accuracy = " + masterClockAccuracy);
+        this.debug('\t\t\thandle = ' + handle);
+        this.debug('\t\t\trole = ' + role);
+        this.debug('\t\t\taddress type = ' + addressType);
+        this.debug('\t\t\taddress = ' + address);
+        this.debug('\t\t\tinterval = ' + interval);
+        this.debug('\t\t\tlatency = ' + latency);
+        this.debug('\t\t\tsupervision timeout = ' + supervisionTimeout);
+        this.debug('\t\t\tmaster clock accuracy = ' + masterClockAccuracy);
         this._handleAclsInProgress[handle] = 0;
         if (role === 1) {
             // only slave, emit
-            this.emit("leConnComplete", status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy);
+            this.emit('leConnComplete', status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy);
         }
         const result = {
             status,
@@ -691,7 +703,7 @@ class Hci extends eventemitter3_1.default {
             supervisionTimeout,
             masterClockAccuracy,
         };
-        if (typeof onConnectCallback === "function") {
+        if (typeof onConnectCallback === 'function') {
             onConnectCallback(result);
         }
         return result;
@@ -699,24 +711,24 @@ class Hci extends eventemitter3_1.default {
     processLeAdvertisingReport(count, data) {
         for (let i = 0; i < count; i++) {
             const type = data.readUInt8(0);
-            const addressType = data.readUInt8(1) === 0x01 ? "random" : "public";
-            const address = bleHelper_1.default.buffer2reversedHex(data.slice(2, 8), ":");
+            const addressType = data.readUInt8(1) === 0x01 ? 'random' : 'public';
+            const address = bleHelper_1.default.buffer2reversedHex(data.slice(2, 8), ':');
             const eirLength = data.readUInt8(8);
             const eir = data.slice(9, eirLength + 9);
             const rssi = data.readInt8(eirLength + 9);
-            this.debug("\t\t\ttype = " + type);
-            this.debug("\t\t\taddress = " + address);
-            this.debug("\t\t\taddress type = " + addressType);
-            this.debug("\t\t\teir = " + eir.toString("hex"));
-            this.debug("\t\t\trssi = " + rssi);
-            this.emit("leAdvertisingReport", 0, type, address, addressType, eir, rssi);
+            this.debug('\t\t\ttype = ' + type);
+            this.debug('\t\t\taddress = ' + address);
+            this.debug('\t\t\taddress type = ' + addressType);
+            this.debug('\t\t\teir = ' + eir.toString('hex'));
+            this.debug('\t\t\trssi = ' + rssi);
+            this.emit('leAdvertisingReport', 0, type, address, addressType, eir, rssi);
             data = data.slice(eirLength + 10);
         }
     }
     processCmdStatusEvent(cmd, status) {
         if (cmd === COMMANDS.LE_CREATE_CONN_CMD) {
             if (status !== 0) {
-                this.emit("leConnComplete", status);
+                this.emit('leConnComplete', status);
             }
         }
     }
@@ -725,27 +737,31 @@ class Hci extends eventemitter3_1.default {
         const aclMaxInProgress = result.readUInt8(2);
         if (!aclMtu) {
             // as per Bluetooth specs
-            this.debug("falling back to br/edr buffer size");
+            this.debug('falling back to br/edr buffer size');
             return await this.readBufferSizeWait();
         }
         else {
-            this.debug("le acl mtu = " + aclMtu);
-            this.debug("le acl max in progress = " + aclMaxInProgress);
+            this.debug('le acl mtu = ' + aclMtu);
+            this.debug('le acl max in progress = ' + aclMaxInProgress);
             this._aclMtu = aclMtu;
             this._aclMaxInProgress = aclMaxInProgress;
         }
     }
     stateChange(state) {
         this._state = state;
-        this.emit("stateChange", state);
+        this.emit('stateChange', state);
     }
     async readAclStreamWait(handle, cid, firstData, timeout) {
         return await this._obnizHci.timeoutPromiseWrapper(new Promise((resolve) => {
             const key = (cid << 8) + firstData;
-            this._aclStreamObservers[handle] = this._aclStreamObservers[handle] || [];
+            this._aclStreamObservers[handle] =
+                this._aclStreamObservers[handle] || [];
             this._aclStreamObservers[handle][key] = []; // reset: queue is not supported
             this._aclStreamObservers[handle][key].push(resolve);
-        }), { timeout, waitingFor: `readAclStream handle:${handle} cid:${cid} firstData:${firstData}` });
+        }), {
+            timeout,
+            waitingFor: `readAclStream handle:${handle} cid:${cid} firstData:${firstData}`,
+        });
     }
     async readLeMetaEventWait(eventType, options) {
         const filter = this.createLeMetaEventFilter(eventType);
@@ -782,7 +798,14 @@ class Hci extends eventemitter3_1.default {
         return { eventType, subEventType, ncmd, cmd, status, result };
     }
     createCmdCompleteEventFilter(cmd) {
-        return [COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_CMD_COMPLETE, -1, -1, (cmd >> 0) & 0xff, (cmd >> 8) & 0xff];
+        return [
+            COMMANDS.HCI_EVENT_PKT,
+            COMMANDS.EVT_CMD_COMPLETE,
+            -1,
+            -1,
+            (cmd >> 0) & 0xff,
+            (cmd >> 8) & 0xff,
+        ];
     }
     debug(...args) {
         this.debugHandler(`${args[0]}`);
@@ -794,11 +817,11 @@ class Hci extends eventemitter3_1.default {
             const cid = data.readUInt16LE(7);
             const length = data.readUInt16LE(5);
             const pktData = data.slice(9);
-            this.debug("\t\tcid = " + cid);
+            this.debug('\t\tcid = ' + cid);
             if (length === pktData.length) {
-                this.debug("\t\thandle = " + handle);
-                this.debug("\t\tdata = " + pktData.toString("hex"));
-                this.emit("aclDataPkt", handle, cid, pktData);
+                this.debug('\t\thandle = ' + handle);
+                this.debug('\t\tdata = ' + pktData.toString('hex'));
+                this.emit('aclDataPkt', handle, cid, pktData);
                 const key = (cid << 8) + pktData.readUInt8(0);
                 if (this._aclStreamObservers[handle] &&
                     this._aclStreamObservers[handle][key] &&
@@ -819,10 +842,15 @@ class Hci extends eventemitter3_1.default {
             if (!this._handleBuffers[handle] || !this._handleBuffers[handle].data) {
                 return;
             }
-            this._handleBuffers[handle].data = Buffer.concat([this._handleBuffers[handle].data, data.slice(5)]);
-            if (this._handleBuffers[handle].data.length === this._handleBuffers[handle].length) {
-                this.emit("aclDataPkt", handle, this._handleBuffers[handle].cid, this._handleBuffers[handle].data);
-                const key = (this._handleBuffers[handle].cid << 8) + this._handleBuffers[handle].data.readUInt8(0);
+            this._handleBuffers[handle].data = Buffer.concat([
+                this._handleBuffers[handle].data,
+                data.slice(5),
+            ]);
+            if (this._handleBuffers[handle].data.length ===
+                this._handleBuffers[handle].length) {
+                this.emit('aclDataPkt', handle, this._handleBuffers[handle].cid, this._handleBuffers[handle].data);
+                const key = (this._handleBuffers[handle].cid << 8) +
+                    this._handleBuffers[handle].data.readUInt8(0);
                 if (this._aclStreamObservers[handle] &&
                     this._aclStreamObservers[handle][key] &&
                     this._aclStreamObservers[handle][key].length > 0) {
@@ -835,12 +863,12 @@ class Hci extends eventemitter3_1.default {
     }
     onHciEventData(data) {
         const subEventType = data.readUInt8(1);
-        this.debug("\tsub event type = 0x" + subEventType.toString(16));
+        this.debug('\tsub event type = 0x' + subEventType.toString(16));
         if (subEventType === COMMANDS.EVT_DISCONN_COMPLETE) {
             const handle = data.readUInt16LE(4);
             const reason = data.readUInt8(6);
-            this.debug("\t\thandle = " + handle);
-            this.debug("\t\treason = " + reason);
+            this.debug('\t\thandle = ' + handle);
+            this.debug('\t\treason = ' + reason);
             delete this._handleAclsInProgress[handle];
             const aclOutQueue = [];
             let discarded = 0;
@@ -853,26 +881,26 @@ class Hci extends eventemitter3_1.default {
                 }
             }
             if (discarded) {
-                this.debug("\t\tacls discarded = " + discarded);
+                this.debug('\t\tacls discarded = ' + discarded);
             }
             this._aclOutQueue = aclOutQueue;
             this.pushAclOutQueue();
-            this.emit("disconnComplete", handle, reason);
+            this.emit('disconnComplete', handle, reason);
         }
         else if (subEventType === COMMANDS.EVT_ENCRYPT_CHANGE) {
             const status = data.readUInt8(3);
             const handle = data.readUInt16LE(4);
             const encrypt = data.readUInt8(6);
             if (status === 0) {
-                this.debug("\t\thandle = " + handle);
-                this.debug("\t\tencrypt = " + encrypt);
-                this.emit("encryptChange", handle, encrypt);
+                this.debug('\t\thandle = ' + handle);
+                this.debug('\t\tencrypt = ' + encrypt);
+                this.emit('encryptChange', handle, encrypt);
             }
             else {
-                this.debug("\t\tencrypt status = " + status);
-                this.debug("\t\thandle = " + handle);
-                this.debug("\t\tencrypt = " + encrypt);
-                this.emit("encryptChange", handle, encrypt);
+                this.debug('\t\tencrypt status = ' + status);
+                this.debug('\t\thandle = ' + handle);
+                this.debug('\t\tencrypt = ' + encrypt);
+                this.emit('encryptChange', handle, encrypt);
             }
         }
         else if (subEventType === COMMANDS.EVT_CMD_COMPLETE) {
@@ -881,17 +909,17 @@ class Hci extends eventemitter3_1.default {
         else if (subEventType === COMMANDS.EVT_CMD_STATUS) {
             const status = data.readUInt8(3);
             const cmd = data.readUInt16LE(5);
-            this.debug("\t\tstatus = " + status);
-            this.debug("\t\tcmd = " + cmd);
+            this.debug('\t\tstatus = ' + status);
+            this.debug('\t\tcmd = ' + cmd);
             this.processCmdStatusEvent(cmd, status);
         }
         else if (subEventType === COMMANDS.EVT_LE_META_EVENT) {
             const leMetaEventType = data.readUInt8(3);
             const leMetaEventStatus = data.readUInt8(4);
             const leMetaEventData = data.slice(5);
-            this.debug("\t\tLE meta event type = " + leMetaEventType);
-            this.debug("\t\tLE meta event status = " + leMetaEventStatus);
-            this.debug("\t\tLE meta event data = " + leMetaEventData.toString("hex"));
+            this.debug('\t\tLE meta event type = ' + leMetaEventType);
+            this.debug('\t\tLE meta event status = ' + leMetaEventStatus);
+            this.debug('\t\tLE meta event data = ' + leMetaEventData.toString('hex'));
             this.processLeMetaEvent(leMetaEventType, leMetaEventStatus, leMetaEventData);
         }
         else if (subEventType === COMMANDS.EVT_NUMBER_OF_COMPLETED_PACKETS) {
@@ -899,10 +927,10 @@ class Hci extends eventemitter3_1.default {
             for (let i = 0; i < handles; i++) {
                 const handle = data.readUInt16LE(4 + i * 4);
                 const pkts = data.readUInt16LE(6 + i * 4);
-                this.debug("\thandle = " + handle);
-                this.debug("\t\tcompleted = " + pkts);
+                this.debug('\thandle = ' + handle);
+                this.debug('\t\tcompleted = ' + pkts);
                 if (this._handleAclsInProgress[handle] === undefined) {
-                    this.debug("\t\talready closed");
+                    this.debug('\t\talready closed');
                     continue;
                 }
                 if (pkts > this._handleAclsInProgress[handle]) {
@@ -912,16 +940,16 @@ class Hci extends eventemitter3_1.default {
                 else {
                     this._handleAclsInProgress[handle] -= pkts;
                 }
-                this.debug("\t\tin progress = " + this._handleAclsInProgress[handle]);
+                this.debug('\t\tin progress = ' + this._handleAclsInProgress[handle]);
             }
             this.pushAclOutQueue();
         }
     }
     onSocketData(array) {
         const data = Buffer.from(array);
-        this.debug("onSocketData: " + data.toString("hex"));
+        this.debug('onSocketData: ' + data.toString('hex'));
         const eventType = data.readUInt8(0);
-        this.debug("\tevent type = 0x" + eventType.toString(16));
+        this.debug('\tevent type = 0x' + eventType.toString(16));
         if (COMMANDS.HCI_EVENT_PKT === eventType) {
             this.onHciEventData(data);
         }

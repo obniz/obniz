@@ -8,19 +8,18 @@ class Keyestudio_TemperatureSensor {
         this.sum = 0;
         this.init_count = 0;
         this.count = 0;
-        this.keys = ["vcc", "gnd", "signal"];
-        this.requiredKeys = ["signal"];
-        this.drive = "5v";
+        this.keys = ['vcc', 'gnd', 'signal'];
+        this.requiredKeys = ['signal'];
+        this.drive = '5v';
     }
     static info() {
         return {
-            name: "Keyestudio_TemperatureSensor",
+            name: 'Keyestudio_TemperatureSensor',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
         obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
-        obniz.getIO(this.params.signal).pull("0v");
         this.ad = obniz.getAD(this.params.signal);
         this.ad.start((voltage) => {
             this.temp = this.calc(voltage);

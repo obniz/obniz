@@ -3,9 +3,11 @@
  * @module Parts.HC-SR04
  */
 
-import Obniz from "../../../obniz";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface HCSR04Options {
   gnd?: number;
@@ -14,18 +16,18 @@ export interface HCSR04Options {
   vcc: number;
 }
 
-export type HCSR04UnitType = "mm" | "inch";
+export type HCSR04UnitType = 'mm' | 'inch';
 
 export default class HCSR04 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "HC-SR04",
+      name: 'HC-SR04',
     };
   }
 
   public keys: string[];
   public requiredKeys: string[];
-  public _unit: HCSR04UnitType = "mm";
+  public _unit: HCSR04UnitType = 'mm';
   public reset_alltime = false;
   public temp = 15;
   public obniz!: Obniz;
@@ -35,14 +37,14 @@ export default class HCSR04 implements ObnizPartsInterface {
   public echo!: number;
 
   constructor() {
-    this.keys = ["vcc", "trigger", "echo", "gnd"];
-    this.requiredKeys = ["vcc", "trigger", "echo"];
+    this.keys = ['vcc', 'trigger', 'echo', 'gnd'];
+    this.requiredKeys = ['vcc', 'trigger', 'echo'];
   }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
 
-    obniz.setVccGnd(null, this.params.gnd, "5v");
+    obniz.setVccGnd(null, this.params.gnd, '5v');
 
     this.vccIO = obniz.getIO(this.params.vcc);
     if (obniz.isValidIO(this.params.trigger) === false) {
@@ -54,7 +56,7 @@ export default class HCSR04 implements ObnizPartsInterface {
     this.trigger = this.params.trigger;
     this.echo = this.params.echo;
 
-    this.vccIO.drive("5v");
+    this.vccIO.drive('5v');
     this.vccIO.output(true);
     this.obniz.wait(100);
   }
@@ -63,7 +65,7 @@ export default class HCSR04 implements ObnizPartsInterface {
     this.obniz.measure!.echo({
       io_pulse: this.trigger,
       io_echo: this.echo,
-      pulse: "positive",
+      pulse: 'positive',
       pulse_width: 0.011,
       measure_edges: 3,
       timeout: (10 / 340) * 1000,
@@ -79,13 +81,14 @@ export default class HCSR04 implements ObnizPartsInterface {
           // HCSR04's output of io_echo is initially high when trigger is finshed
           if (edges[i].edge === true) {
             const time: any = (edges[i + 1].timing - edges[i].timing) / 1000; // (1/4000 * 8) + is needed??
-            distance = (time / 2) * 20.055 * Math.sqrt(this.temp + 273.15) * 1000;
-            if (this._unit === "inch") {
+            distance =
+              (time / 2) * 20.055 * Math.sqrt(this.temp + 273.15) * 1000;
+            if (this._unit === 'inch') {
               distance = distance * 0.0393701;
             }
           }
         }
-        if (typeof callback === "function") {
+        if (typeof callback === 'function') {
           callback(distance);
         }
       },
@@ -101,12 +104,12 @@ export default class HCSR04 implements ObnizPartsInterface {
   }
 
   public unit(unit: HCSR04UnitType) {
-    if (unit === "mm") {
-      this._unit = "mm";
-    } else if (unit === "inch") {
-      this._unit = "inch";
+    if (unit === 'mm') {
+      this._unit = 'mm';
+    } else if (unit === 'inch') {
+      this._unit = 'inch';
     } else {
-      throw new Error("HCSR04: unknown unit " + unit);
+      throw new Error('HCSR04: unknown unit ' + unit);
     }
   }
 }

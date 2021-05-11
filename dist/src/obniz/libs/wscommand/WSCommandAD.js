@@ -28,15 +28,15 @@ class WSCommandAD extends WSCommand_1.default {
     }
     parseFromJson(json) {
         for (let i = 0; i < 40; i++) {
-            const module = json["ad" + i];
+            const module = json['ad' + i];
             if (module === undefined) {
                 continue;
             }
             const schemaData = [
-                { uri: "/request/ad/deinit", onValid: this.deinit },
-                { uri: "/request/ad/get", onValid: this.get },
+                { uri: '/request/ad/deinit', onValid: this.deinit },
+                { uri: '/request/ad/get', onValid: this.get },
             ];
-            const res = this.validateCommandSchema(schemaData, module, "ad" + i, i);
+            const res = this.validateCommandSchema(schemaData, module, 'ad' + i, i);
             if (res.valid === 0) {
                 if (res.invalidButLike.length > 0) {
                     throw new Error(res.invalidButLike[0].message);
@@ -68,7 +68,7 @@ class WSCommandAD extends WSCommand_1.default {
                     value = (payload[i + 1] << 8) + payload[i + 2];
                     value = value / 100.0;
                 }
-                objToSend["ad" + payload[i]] = value;
+                objToSend['ad' + payload[i]] = value;
             }
         }
         else {

@@ -1,6 +1,5 @@
 /**
  * @fileoverview Rule to forbid writing non-ASCII characters.
- * @author amagitakayosi
  */
 
 'use strict';
@@ -20,7 +19,7 @@ let ALLOWED_TOKENS = []; //['RegularExpression', 'String'];
 // Rule Definition
 //------------------------------------------------------------------------------
 
-module.exports = function(context) {
+module.exports = function (context) {
   let configuration = context.options[0] || {};
   let allowedChars = configuration.allowedChars || '';
   let allowedCharsRegExp = new RegExp('[' + allowedChars + ']+', 'g');
@@ -49,20 +48,20 @@ module.exports = function(context) {
 
       let sourceCode = context.getSourceCode();
       let tokens = sourceCode.getTokens(node);
-      tokens.forEach(function(token) {
+      tokens.forEach(function (token) {
         let results = check(token);
         errors.push(...results);
       });
 
       if (ALLOWED_TOKENS.indexOf('Comment') === -1) {
         let tokens = sourceCode.getAllComments();
-        tokens.forEach(function(token) {
+        tokens.forEach(function (token) {
           let results = check(token);
           errors.push(...results);
         });
       }
 
-      errors.forEach(function(error) {
+      errors.forEach(function (error) {
         context.report(
           node,
           {

@@ -2,12 +2,13 @@
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-import Obniz from "../../index";
-import { ComponentAbstract } from "../ComponentAbstact";
-import { DriveType, PullType } from "./common";
+import Obniz from '../../index';
+import { ComponentAbstract } from '../ComponentAbstact';
+import { DriveType, PullType } from './common';
 /**
  * General purpose IO
  * This is available on each io (for obniz Board series, it's io0 to io11)
+ *
  * @category Peripherals
  */
 export default class PeripheralIO extends ComponentAbstract {

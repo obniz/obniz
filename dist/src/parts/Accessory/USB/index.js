@@ -2,16 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class USB {
     constructor() {
-        this.keys = ["vcc", "gnd"];
-        this.requiredKeys = ["vcc", "gnd"];
+        this.keys = ['vcc', 'gnd'];
+        this.requiredKeys = ['vcc', 'gnd'];
         this.displayIoNames = {
-            vcc: "vcc",
-            gnd: "gnd",
+            vcc: 'vcc',
+            gnd: 'gnd',
         };
     }
     static info() {
         return {
-            name: "USB",
+            name: 'USB',
         };
     }
     wired(obniz) {

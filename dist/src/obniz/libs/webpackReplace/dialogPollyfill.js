@@ -8,5 +8,5 @@ exports.default = {
     dialogPolyfill: {
         registerDialog: (dialog) => { },
     },
-    css: "",
+    css: '',
 };

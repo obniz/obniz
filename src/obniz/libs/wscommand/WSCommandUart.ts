@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from "./WSCommand";
+import WSCommand from './WSCommand';
 
 class WSCommandUart extends WSCommand {
   public module: any;
@@ -46,22 +46,22 @@ class WSCommandUart extends WSCommand {
     } else if (params.stop === 0) {
       buf[7] = 0;
     } else {
-      throw new Error("uart: invalid stop bits");
+      throw new Error('uart: invalid stop bits');
     }
 
     buf[8] = params.bits;
 
-    if (params.parity === "even") {
+    if (params.parity === 'even') {
       buf[9] = 2;
-    } else if (params.parity === "odd") {
+    } else if (params.parity === 'odd') {
       buf[9] = 3;
     }
 
-    if (params.flowcontrol === "rts") {
+    if (params.flowcontrol === 'rts') {
       buf[10] = 2;
-    } else if (params.flowcontrol === "cts") {
+    } else if (params.flowcontrol === 'cts') {
       buf[10] = 3;
-    } else if (params.flowcontrol === "rts-cts") {
+    } else if (params.flowcontrol === 'rts-cts') {
       buf[10] = 4;
     }
 
@@ -91,16 +91,21 @@ class WSCommandUart extends WSCommand {
   public parseFromJson(json: any) {
     // 0~2
     for (let i = 0; i < 3; i++) {
-      const module: any = json["uart" + i];
+      const module: any = json['uart' + i];
       if (module === undefined) {
         continue;
       }
       const schemaData: any = [
-        { uri: "/request/uart/init", onValid: this.init },
-        { uri: "/request/uart/send", onValid: this.send },
-        { uri: "/request/uart/deinit", onValid: this.deinit },
+        { uri: '/request/uart/init', onValid: this.init },
+        { uri: '/request/uart/send', onValid: this.send },
+        { uri: '/request/uart/deinit', onValid: this.deinit },
       ];
-      const res: any = this.validateCommandSchema(schemaData, module, "uart" + i, i);
+      const res: any = this.validateCommandSchema(
+        schemaData,
+        module,
+        'uart' + i,
+        i
+      );
 
       if (res.valid === 0) {
         if (res.invalidButLike.length > 0) {
@@ -120,7 +125,7 @@ class WSCommandUart extends WSCommand {
         arr[i] = payload[i + 1];
       }
 
-      objToSend["uart" + module_index] = {
+      objToSend['uart' + module_index] = {
         data: arr,
       };
     } else {

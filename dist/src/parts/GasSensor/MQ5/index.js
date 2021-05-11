@@ -11,7 +11,7 @@ const MQGas_1 = __importDefault(require("../MQGas"));
 class MQ5 extends MQGas_1.default {
     static info() {
         return {
-            name: "MQ5",
+            name: 'MQ5',
         };
     }
     constructor() {

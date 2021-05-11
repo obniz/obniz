@@ -8,13 +8,13 @@ class Grove_RotaryAngleSensor {
     constructor() {
         // public vcc_voltage = 5.0;
         this.position = 0;
-        this.keys = ["vcc", "gnd", "signal", "grove"];
+        this.keys = ['vcc', 'gnd', 'signal', 'grove'];
         this.requiredKeys = [];
-        this.drive = "5v";
+        this.drive = '5v';
     }
     static info() {
         return {
-            name: "Grove_RotaryAngleSensor",
+            name: 'Grove_RotaryAngleSensor',
         };
     }
     wired(obniz) {

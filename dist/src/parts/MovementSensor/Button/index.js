@@ -8,13 +8,13 @@ class Button {
     constructor() {
         this.isPressed = null;
         this.onchange = null;
-        this.keys = ["signal", "gnd", "pull"];
-        this.requiredKeys = ["signal"];
+        this.keys = ['signal', 'gnd', 'pull'];
+        this.requiredKeys = ['signal'];
         this.onChangeForStateWait = () => { };
     }
     static info() {
         return {
-            name: "Button",
+            name: 'Button',
         };
     }
     wired(obniz) {
@@ -24,14 +24,14 @@ class Button {
             this.io_supply.output(false);
         }
         // start input
-        if (this.params.pull === "3v") {
-            this.io_signal.pull("3v");
+        if (this.params.pull === '3v') {
+            this.io_signal.pull('3v');
         }
-        else if (this.params.pull === "0v") {
-            this.io_signal.pull("0v");
+        else if (this.params.pull === '0v') {
+            this.io_signal.pull('0v');
         }
         else {
-            this.io_signal.pull("5v");
+            this.io_signal.pull('5v');
         }
         this.io_signal.input((value) => {
             this.isPressed = value === false;

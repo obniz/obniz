@@ -6,23 +6,23 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class LED {
     constructor() {
-        this.keys = ["anode", "cathode"];
+        this.keys = ['anode', 'cathode'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "LED",
+            name: 'LED',
         };
     }
     wired(obniz) {
-        function getIO(io) {
-            if (io && typeof io === "object") {
-                if (typeof io.output === "function") {
+        const getIO = (io) => {
+            if (io && typeof io === 'object') {
+                if (typeof io.output === 'function') {
                     return io;
                 }
             }
             return obniz.getIO(io);
-        }
+        };
         this.obniz = obniz;
         if (this.obniz.isValidIO(this.params.anode)) {
             this.io_anode = getIO(this.params.anode);
@@ -30,7 +30,7 @@ class LED {
         if (this.obniz.isValidIO(this.params.cathode)) {
             this.io_cathode = getIO(this.params.cathode);
         }
-        this.animationName = "Led-" + this.params.anode;
+        this.animationName = 'Led-' + this.params.anode;
         this.off();
     }
     on() {
@@ -50,7 +50,7 @@ class LED {
         }
     }
     endBlink() {
-        this.obniz.io.animation(this.animationName, "pause");
+        this.obniz.io.animation(this.animationName, 'pause');
     }
     blink(interval) {
         if (!interval) {
@@ -72,7 +72,7 @@ class LED {
                 },
             },
         ];
-        this.obniz.io.animation(this.animationName, "loop", frames);
+        this.obniz.io.animation(this.animationName, 'loop', frames);
     }
     _on() {
         if (this.io_anode && this.io_cathode) {

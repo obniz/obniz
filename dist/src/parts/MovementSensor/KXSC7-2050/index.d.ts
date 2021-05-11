@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module Parts.KXSC7-2050
  */
-import Obniz from "../../../obniz";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface KXSC7_2050Options {
 }
 export default class KXSC7_2050 implements ObnizPartsInterface {
@@ -20,5 +20,6 @@ export default class KXSC7_2050 implements ObnizPartsInterface {
     onchangey: any;
     onchangez: any;
     constructor();
-    wired(obniz: any): Promise<void>;
+    wired(obniz: any): void;
+    initWait(): Promise<void>;
 }

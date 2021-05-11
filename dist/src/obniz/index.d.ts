@@ -1,2 +1,2 @@
-import { Obniz } from "./Obniz";
+import { Obniz } from './Obniz';
 export = Obniz;

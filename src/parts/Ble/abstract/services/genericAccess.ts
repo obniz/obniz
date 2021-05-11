@@ -3,7 +3,7 @@
  * @module Parts.abstract.services
  */
 
-import BleRemoteService from "../../../../obniz/libs/embeds/bleHci/bleRemoteService";
+import BleRemoteService from '../../../../obniz/libs/embeds/bleHci/bleRemoteService';
 
 export default class BleGenericAccess {
   private _service: BleRemoteService;
@@ -13,7 +13,7 @@ export default class BleGenericAccess {
   }
 
   public async getDeviceNameWait(): Promise<string | null> {
-    const char = this._service.getCharacteristic("2A00");
+    const char = this._service.getCharacteristic('2A00');
     if (!char) {
       return null;
     }

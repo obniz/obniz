@@ -9,12 +9,12 @@ class Keyestudio_Button {
         this.isPressed = null;
         this.onchange = null;
         this.onChangeForStateWait = (pressed) => { };
-        this.keys = ["signal", "gnd", "vcc"];
-        this.requiredKeys = ["signal"];
+        this.keys = ['signal', 'gnd', 'vcc'];
+        this.requiredKeys = ['signal'];
     }
     static info() {
         return {
-            name: "Keyestudio_Button",
+            name: 'Keyestudio_Button',
         };
     }
     wired(obniz) {
@@ -27,7 +27,7 @@ class Keyestudio_Button {
             this.io_supply = obniz.getIO(this.params.gnd);
             this.io_supply.output(false);
         }
-        this.io_signal.pull("5v");
+        this.io_signal.pull('5v');
         this.io_signal.input((value) => {
             this.isPressed = value;
             if (this.onchange) {

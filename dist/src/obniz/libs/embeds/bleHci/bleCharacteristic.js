@@ -41,7 +41,7 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
         super(obj);
         this._maxValueSize = null;
         this._updateValueCallback = null;
-        if (!Array.isArray(obj.properties) && typeof obj.properties === "string") {
+        if (!Array.isArray(obj.properties) && typeof obj.properties === 'string') {
             this.properties = [obj.properties];
         }
         else {
@@ -52,7 +52,7 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
      * @ignore
      */
     get parentName() {
-        return "service";
+        return 'service';
     }
     /**
      * @ignore
@@ -64,7 +64,7 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
      * @ignore
      */
     get childrenName() {
-        return "descriptors";
+        return 'descriptors';
     }
     /**
      * Get descriptor array
@@ -74,6 +74,7 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
     }
     /**
      * Add new descriptor
+     *
      * @param desc
      */
     addDescriptor(desc) {
@@ -81,6 +82,7 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
     }
     /**
      * Get descriptor
+     *
      * @param uuid
      */
     getDescriptor(uuid) {
@@ -110,6 +112,7 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
     }
     /**
      * Add property
+     *
      * @param param
      */
     addProperty(param) {
@@ -119,6 +122,7 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
     }
     /**
      * Remove property
+     *
      * @param param
      */
     removeProperty(param) {
@@ -147,20 +151,20 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
             return result;
         }
         switch (name) {
-            case "subscribe":
+            case 'subscribe':
                 this._onSubscribe(...params);
                 return true;
-            case "unsubscribe":
+            case 'unsubscribe':
                 this._onUnsubscribe();
                 return true;
-            case "notify":
+            case 'notify':
                 this._onNotify();
                 return true;
-            case "indicate":
+            case 'indicate':
                 this._onIndicate();
                 return true;
             default:
-                throw new Error("unknown emit");
+                throw new Error('unknown emit');
         }
     }
     /**

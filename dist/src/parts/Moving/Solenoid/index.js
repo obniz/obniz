@@ -6,12 +6,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Solenoid {
     constructor() {
-        this.keys = ["gnd", "signal"];
-        this.requiredKeys = ["signal"];
+        this.keys = ['gnd', 'signal'];
+        this.requiredKeys = ['signal'];
     }
     static info() {
         return {
-            name: "Solenoid",
+            name: 'Solenoid',
         };
     }
     wired(obniz) {
@@ -31,14 +31,14 @@ class Solenoid {
     }
     click(time_msec) {
         this.on();
-        if (typeof time_msec !== "number") {
+        if (typeof time_msec !== 'number') {
             time_msec = 100;
         }
         this.obniz.wait(time_msec);
         this.off();
     }
     doubleClick(time_msec) {
-        if (typeof time_msec !== "number") {
+        if (typeof time_msec !== 'number') {
             time_msec = 100;
         }
         this.click(time_msec);

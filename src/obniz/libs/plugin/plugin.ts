@@ -3,15 +3,18 @@
  * @module ObnizCore.Components
  */
 
-import semver from "semver";
-import Obniz from "../../index";
-import ObnizUtil from "../utils/util";
+import semver from 'semver';
+import Obniz from '../../index';
+import ObnizUtil from '../utils/util';
 
 /**
  * @param PluginReceiveCallbackFunction.data
  * received data
  */
-type PluginReceiveCallbackFunction = (data: number[], str: string | null) => void;
+type PluginReceiveCallbackFunction = (
+  data: number[],
+  str: string | null
+) => void;
 
 export default class Plugin {
   /**
@@ -45,7 +48,7 @@ export default class Plugin {
    *
    */
   public send(data: string | number | number[] | Buffer) {
-    if (semver.lt(this.Obniz.firmware_ver!, "3.4.0")) {
+    if (semver.lt(this.Obniz.firmware_ver!, '3.4.0')) {
       throw new Error(`Please update obniz firmware >= 3.4.0`);
     }
 
@@ -53,14 +56,14 @@ export default class Plugin {
     if (data === undefined) {
       return;
     }
-    if (typeof data === "number") {
+    if (typeof data === 'number') {
       data = [data];
     }
     if (this.Obniz.isNode && data instanceof Buffer) {
       send_data = [...data];
     } else if (data.constructor === Array) {
       send_data = data;
-    } else if (typeof data === "string") {
+    } else if (typeof data === 'string') {
       const buf: any = Buffer.from(data);
       send_data = [...buf];
     }

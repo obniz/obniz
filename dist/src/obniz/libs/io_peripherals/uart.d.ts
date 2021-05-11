@@ -3,12 +3,12 @@
  * @module ObnizCore.Components
  */
 /// <reference types="node" />
-import Obniz from "../../index";
-import { ComponentAbstract } from "../ComponentAbstact";
-import { BitType, DriveType, FlowControlType, ParityType, PullType, StopBitType } from "./common";
+import Obniz from '../../index';
+import { ComponentAbstract } from '../ComponentAbstact';
+import { BitType, DriveType, FlowControlType, ParityType, PullType, StopBitType } from './common';
 export interface PeripheralUARTOptions {
     /**
-     *  Pin no of tx is used for sending data from obniz Board to parts.
+     * Pin no of tx is used for sending data from obniz Board to parts.
      */
     tx: number;
     /**
@@ -60,6 +60,7 @@ export interface PeripheralUARTOptions {
 }
 /**
  * Uart module
+ *
  * @category Peripherals
  */
 export default class PeripheralUART extends ComponentAbstract {
@@ -97,6 +98,7 @@ export default class PeripheralUART extends ComponentAbstract {
      * It starts uart on io tx, rx.
      *
      * You can start uart without much configuration. Just use as below.
+     *
      * @param params
      */
     start(params: PeripheralUARTOptions): void;
@@ -125,6 +127,7 @@ export default class PeripheralUART extends ComponentAbstract {
      * obniz.uart0.send(0x11);
      * obniz.uart0.send([0x11, 0x45, 0x44]);
      * ```
+     *
      * @param data
      */
     send(data: string | number | number[] | Buffer): void;
@@ -162,6 +165,7 @@ export default class PeripheralUART extends ComponentAbstract {
      *   await obniz.wait(10);  //wait for 10ms
      * }
      * ```
+     *
      * @return received data. If not exist data, return [].
      */
     readBytes(): number[];

@@ -14,7 +14,7 @@ class IBS01T {
     }
     static info() {
         return {
-            name: "iBS01T",
+            name: 'iBS01T',
         };
     }
     static isDevice(peripheral) {
@@ -43,17 +43,17 @@ class IBS01T {
             button: false,
             moving: false,
             reed: false,
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) / 100.0,
-            temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) / 100.0,
+            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
+            temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
             humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[15], peripheral.adv_data[14]),
         };
-        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+        if (peripheral.adv_data[11] & 0b0001) {
             d.button = true;
         }
-        if (Boolean(peripheral.adv_data[11] & 0b0010)) {
+        if (peripheral.adv_data[11] & 0b0010) {
             d.moving = true;
         }
-        if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+        if (peripheral.adv_data[11] & 0b0100) {
             d.reed = true;
         }
         return d;
@@ -79,7 +79,7 @@ IBS01T.deviceAdv = [
     -1,
     -1,
     -1,
-    -1,
+    0x05,
     -1,
     -1,
     -1,

@@ -9,7 +9,7 @@
  * Released under the MIT license
  * Date: 2017-04-13
  * ---------------------------------------------------------------- */
-"use strict";
+'use strict';
 Object.defineProperty(exports, "__esModule", { value: true });
 class LinkingIEEE754 {
     static read(n, slen, elen, flen) {

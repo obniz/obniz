@@ -14,8 +14,8 @@ class MPU6886 extends MPU6050_1.default {
         this.i2cinfo = {
             address: 0x68,
             clock: 100000,
-            voltage: "3v",
-            pull: "3v",
+            voltage: '3v',
+            pull: '3v',
         };
         MPU6050_1.default.commands.accel_intel_ctrl = 0x69;
         MPU6050_1.default.commands.accel_config2 = 0x1d;
@@ -23,7 +23,7 @@ class MPU6886 extends MPU6050_1.default {
     }
     static info() {
         return {
-            name: "MPU6886",
+            name: 'MPU6886',
         };
     }
     init() {

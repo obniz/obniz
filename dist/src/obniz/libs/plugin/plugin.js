@@ -25,14 +25,14 @@ class Plugin {
      *
      */
     send(data) {
-        if (semver_1.default.lt(this.Obniz.firmware_ver, "3.4.0")) {
+        if (semver_1.default.lt(this.Obniz.firmware_ver, '3.4.0')) {
             throw new Error(`Please update obniz firmware >= 3.4.0`);
         }
         let send_data = null;
         if (data === undefined) {
             return;
         }
-        if (typeof data === "number") {
+        if (typeof data === 'number') {
             data = [data];
         }
         if (this.Obniz.isNode && data instanceof Buffer) {
@@ -41,7 +41,7 @@ class Plugin {
         else if (data.constructor === Array) {
             send_data = data;
         }
-        else if (typeof data === "string") {
+        else if (typeof data === 'string') {
             const buf = Buffer.from(data);
             send_data = [...buf];
         }

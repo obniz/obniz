@@ -7,7 +7,7 @@ const AnalogTemperatureSensor_1 = __importDefault(require("../AnalogTemperatureS
 class LMT87 extends AnalogTemperatureSensor_1.default {
     static info() {
         return {
-            name: "LMT87",
+            name: 'LMT87',
         };
     }
     calc(voltage) {

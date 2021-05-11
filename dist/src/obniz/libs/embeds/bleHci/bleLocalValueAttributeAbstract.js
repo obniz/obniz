@@ -29,7 +29,7 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
      */
     async writeWait(data) {
         this.data = data;
-        this.notifyFromServer("onwrite", { result: "success" });
+        this.notifyFromServer('onwrite', { result: 'success' });
         return true;
     }
     /**
@@ -45,7 +45,7 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
      * ```
      */
     async readWait() {
-        this.notifyFromServer("onread", { data: this.data });
+        this.notifyFromServer('onread', { data: this.data });
         return this.data;
     }
     /**
@@ -57,11 +57,11 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
         super.notifyFromServer(notifyName, params);
         this.emitter.emit(notifyName, params);
         switch (notifyName) {
-            case "onwritefromremote": {
+            case 'onwritefromremote': {
                 this._runUserCreatedFunction(this.onwritefromremote, params.address, Array.from(params.data));
                 break;
             }
-            case "onreadfromremote": {
+            case 'onreadfromremote': {
                 this._runUserCreatedFunction(this.onreadfromremote, params.address);
                 break;
             }

@@ -4,18 +4,18 @@ const config = require('../config.js');
 
 let obnizA, checkBoard, check_io;
 
-describe('5-spi', function() {
+describe('5-spi', function () {
   this.timeout(30000);
 
-  before(function() {
-    return new Promise(resolve => {
+  before(function () {
+    return new Promise((resolve) => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
         checkBoard = config.checkBoard;
         check_io = config.check_io.filter(
-          io =>
+          (io) =>
             io.obniz === 'obnizA' &&
-            io.mode.some(mode => mode === 'digitalWrite')
+            io.mode.some((mode) => mode === 'digitalWrite')
         );
         resolve();
       });
@@ -37,7 +37,7 @@ describe('5-spi', function() {
     }
   });
 
-  it('send-receive', async function() {
+  it('send-receive', async function () {
     let spi0 = checkBoard.getFreeSpi();
     spi0.start({
       mode: 'master',
@@ -74,7 +74,7 @@ describe('5-spi', function() {
     obnizA.getIO(check_io[2].obniz_io).input();
   });
 
-  it('send-receive 26Mhz@3vz', async function() {
+  it('send-receive 26Mhz@3vz', async function () {
     let spi0 = checkBoard.getFreeSpi();
     spi0.start({
       mode: 'master',
@@ -112,7 +112,7 @@ describe('5-spi', function() {
     obnizA.getIO(check_io[2].obniz_io).input();
   });
 
-  it('two port at same time', async function() {
+  it('two port at same time', async function () {
     if (check_io.length < 6 || checkBoard.spi0 || checkBoard.spi1) {
       expect(true).to.be.true;
       return;

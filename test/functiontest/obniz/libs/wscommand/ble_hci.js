@@ -2,24 +2,22 @@ const chai = require('chai');
 let expect = chai.expect;
 
 const testUtil = require('../../../testUtil.js');
-chai.use(require('chai-like'));
-chai.use(testUtil.obnizAssert);
 
-describe('ble.hci', function() {
-  beforeEach(function(done) {
-    return testUtil.setupObnizPromise(this, done, { binary: true });
+describe('ble.hci', function () {
+  beforeEach(async function () {
+    await testUtil.setupObnizPromise(this, null, { binary: true });
   });
 
-  afterEach(function(done) {
-    return testUtil.releaseObnizePromise(this, done);
+  afterEach(async function () {
+    await testUtil.releaseObnizPromise(this);
   });
 
-  it('send', function() {
+  it('send', function () {
     let sendBinaryString = ['04 00 0d 00 00 01 00 00 25 80 01 07 00 00 00 00'];
     let binaryArray = sendBinaryString
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     let requestJson = [{ ble: { hci: { write: binaryArray } } }];
@@ -29,9 +27,9 @@ describe('ble.hci', function() {
     testUtil.checkJsonToBinary(requestJson, expecteBinaryStrings, this);
   });
 
-  it('read', function() {
+  it('read', function () {
     let recvBinaryString = '04 00 0d 00 00 01 00 00 25 80 01 07 00 00 00 00';
-    let recvBinary = recvBinaryString.split(' ').map(function(val, index) {
+    let recvBinary = recvBinaryString.split(' ').map(function (val, index) {
       return parseInt(val, 16);
     });
 
@@ -39,12 +37,14 @@ describe('ble.hci', function() {
       'b 2c 10 04 00 0d 00 00 01 00 00 25 80 01 07 00 00 00 00';
     let expectJson = [{ ble: { hci: { read: { data: recvBinary } } } }];
 
-    let binaryArray = responseBinaryString.split(' ').map(function(val, index) {
-      return parseInt(val, 16);
-    });
+    let binaryArray = responseBinaryString
+      .split(' ')
+      .map(function (val, index) {
+        return parseInt(val, 16);
+      });
     let binary = new Uint8Array(binaryArray);
 
-    let json = this.obniz.binary2Json(binary);
+    let json = this.obniz._binary2Json(binary);
 
     let isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;

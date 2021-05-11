@@ -2,10 +2,10 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import BleDescriptor from "./bleDescriptor";
-import BleLocalValueAttributeAbstract from "./bleLocalValueAttributeAbstract";
-import BleService from "./bleService";
-import { BleAttributePropery, BleCharacteristicDefine, BleDescriptorDefine, BleDeviceAddress, UUID } from "./bleTypes";
+import BleDescriptor from './bleDescriptor';
+import BleLocalValueAttributeAbstract from './bleLocalValueAttributeAbstract';
+import BleService from './bleService';
+import { BleAttributePropery, BleCharacteristicDefine, BleDescriptorDefine, BleDeviceAddress, UUID } from './bleTypes';
 /**
  * @category Use as Peripheral
  */
@@ -89,11 +89,13 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<Bl
     constructor(obj: BleCharacteristicDefine);
     /**
      * Add new descriptor
+     *
      * @param desc
      */
     addDescriptor(desc: BleDescriptorDefine | BleDescriptor): BleDescriptor;
     /**
      * Get descriptor
+     *
      * @param uuid
      */
     getDescriptor(uuid: UUID): BleDescriptor | null;
@@ -107,11 +109,13 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<Bl
     toBufferObj(): any;
     /**
      * Add property
+     *
      * @param param
      */
     addProperty(param: BleAttributePropery): void;
     /**
      * Remove property
+     *
      * @param param
      */
     removeProperty(param: BleAttributePropery): void;

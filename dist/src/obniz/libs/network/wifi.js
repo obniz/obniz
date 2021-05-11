@@ -23,7 +23,7 @@ class WiFi {
      *
      */
     scanWait() {
-        if (semver_1.default.lt(this.Obniz.firmware_ver, "3.3.0")) {
+        if (semver_1.default.lt(this.Obniz.firmware_ver, '3.3.0')) {
             throw new Error(`Please update obniz firmware >= 3.3.0`);
         }
         this.connectObservers = [];

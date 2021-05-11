@@ -6,12 +6,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_Speaker {
     constructor() {
-        this.keys = ["vcc", "gnd", "signal", "grove"];
+        this.keys = ['vcc', 'gnd', 'signal', 'grove'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "Grove_Speaker",
+            name: 'Grove_Speaker',
         };
     }
     onchange(value) { }
@@ -21,14 +21,14 @@ class Grove_Speaker {
         }
         else {
             this.obniz = obniz;
-            this.obniz.setVccGnd(null, this.params.gnd, "5v");
+            this.obniz.setVccGnd(null, this.params.gnd, '5v');
             this.pwm = obniz.getFreePwm();
             this.pwm.start({ io: this.params.signal });
         }
     }
     play(frequency) {
-        if (typeof frequency !== "number") {
-            throw new Error("freq must be a number");
+        if (typeof frequency !== 'number') {
+            throw new Error('freq must be a number');
         }
         frequency = Math.floor(frequency); // temporary
         if (frequency > 0) {

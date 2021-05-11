@@ -1,7 +1,7 @@
-import ObnizBLE from "./ble";
-import BleService from "./bleService";
-import { BleDeviceAddress, BleServiceDefine, UUID } from "./bleTypes";
-export declare type BleConnectionState = "connected" | "disconnected";
+import ObnizBLE from './ble';
+import BleService from './bleService';
+import { BleDeviceAddress, BleServiceDefine, UUID } from './bleTypes';
+export declare type BleConnectionState = 'connected' | 'disconnected';
 export interface BleConnectionUpdateParam {
     address: BleDeviceAddress;
     status: BleConnectionState;
@@ -73,11 +73,13 @@ export default class BlePeripheral {
     setJson(json: any): void;
     /**
      * Get service by UUID
+     *
      * @param uuid
      */
     getService(uuid: UUID): BleService | null;
     /**
      * Terminate service by UUID
+     *
      * @param uuid
      */
     removeService(uuid: UUID): void;

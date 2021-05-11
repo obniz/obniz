@@ -2,19 +2,17 @@ let chai = require('chai');
 let expect = chai.expect;
 
 let testUtil = require('../../../testUtil.js');
-chai.use(require('chai-like'));
-chai.use(testUtil.obnizAssert);
 
-describe('pwm.log', function() {
-  beforeEach(function(done) {
-    return testUtil.setupObnizPromise(this, done, { binary: true });
+describe('pwm.log', function () {
+  beforeEach(async function () {
+    await testUtil.setupObnizPromise(this, null, { binary: true });
   });
 
-  afterEach(function(done) {
-    return testUtil.releaseObnizePromise(this, done);
+  afterEach(async function () {
+    await testUtil.releaseObnizPromise(this);
   });
 
-  it('request test no.0', function() {
+  it('request test no.0', function () {
     let requestJson = [{ pwm0: { io: 11 } }];
     let expecteBinaryStrings = ['03 00 02 00 0b'];
 
@@ -31,7 +29,7 @@ describe('pwm.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -40,7 +38,7 @@ describe('pwm.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.1', function() {
+  it('request test no.1', function () {
     let requestJson = [{ pwm0: { freq: 1000 } }];
     let expecteBinaryStrings = ['03 02 05 00 00 00 03 e8'];
 
@@ -57,7 +55,7 @@ describe('pwm.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -66,7 +64,7 @@ describe('pwm.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.2', function() {
+  it('request test no.2', function () {
     let requestJson = [{ pwm0: { pulse: 0.5 } }];
     let expecteBinaryStrings = ['03 03 05 00 00 00 01 f4'];
 
@@ -83,7 +81,7 @@ describe('pwm.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -92,7 +90,7 @@ describe('pwm.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.3', function() {
+  it('request test no.3', function () {
     let requestJson = [{ pwm0: null }];
     let expecteBinaryStrings = ['03 01 01 00'];
 
@@ -109,7 +107,7 @@ describe('pwm.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -118,7 +116,7 @@ describe('pwm.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.4', function() {
+  it('request test no.4', function () {
     let requestJson = [{ pwm0: { io: 10 } }];
     let expecteBinaryStrings = ['03 00 02 00 0a'];
 
@@ -135,7 +133,7 @@ describe('pwm.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -144,7 +142,7 @@ describe('pwm.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.5', function() {
+  it('request test no.5', function () {
     let requestJson = [{ pwm0: { freq: 200 } }];
     let expecteBinaryStrings = ['03 02 05 00 00 00 00 c8'];
 
@@ -161,7 +159,7 @@ describe('pwm.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -170,7 +168,7 @@ describe('pwm.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.6', function() {
+  it('request test no.6', function () {
     let requestJson = [{ pwm1: { io: 1 } }];
     let expecteBinaryStrings = ['03 00 02 01 01'];
 
@@ -187,7 +185,7 @@ describe('pwm.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -196,7 +194,7 @@ describe('pwm.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.7', function() {
+  it('request test no.7', function () {
     let requestJson = [{ pwm1: { freq: 38000 } }];
     let expecteBinaryStrings = ['03 02 05 01 00 00 94 70'];
 
@@ -213,7 +211,7 @@ describe('pwm.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -222,7 +220,7 @@ describe('pwm.log', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.8', function() {
+  it('request test no.8', function () {
     let requestJson = [
       {
         pwm1: {
@@ -1044,7 +1042,7 @@ describe('pwm.log', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);

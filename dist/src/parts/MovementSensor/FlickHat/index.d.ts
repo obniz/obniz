@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @module Parts.FlickHat
  */
-import Obniz from "../../../obniz";
-import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface FlickHatOptions {
     vcc?: number;
     sda: number;
@@ -15,8 +15,8 @@ export interface FlickHatOptions {
     led1?: number;
     led2?: number;
 }
-export declare type FlickHat_Direction = "west" | "east" | "north" | "south";
-export declare type FlickHat_Direction2 = "west" | "east" | "north" | "south" | "center";
+export declare type FlickHat_Direction = 'west' | 'east' | 'north' | 'south';
+export declare type FlickHat_Direction2 = 'west' | 'east' | 'north' | 'south' | 'center';
 export interface FlickHat_XYZ {
     x: number;
     y: number;
@@ -24,26 +24,26 @@ export interface FlickHat_XYZ {
     seq: number;
 }
 export interface FlickHat_Gesture {
-    action: "gesture";
+    action: 'gesture';
     from: FlickHat_Direction;
     to: FlickHat_Direction;
     seq: number;
     raw: any;
 }
 export interface FlickHat_Touch {
-    action: "touch";
+    action: 'touch';
     positions: FlickHat_Direction2[];
     seq: number;
     raw: any;
 }
 export interface FlickHat_Tap {
-    action: "tap";
+    action: 'tap';
     positions: FlickHat_Direction2[];
     seq: number;
     raw: any;
 }
 export interface FlickHat_DoubleTap {
-    action: "doubletap";
+    action: 'doubletap';
     positions: FlickHat_Direction2[];
     seq: number;
     raw: any;
@@ -86,7 +86,17 @@ export default class FlickHat implements ObnizPartsInterface {
     protected obniz: Obniz;
     constructor();
     wired(obniz: Obniz): void;
-    start(callback: (fwInfo: any) => void): Promise<void>;
+    /**
+     * @deprecated
+     * @param callback
+     */
+    start(callback?: (fwInfo: any) => void): Promise<void>;
+    startWait(callback?: (fwInfo: any) => void): Promise<void>;
     _dataArray2string(data: any): any;
+    /**
+     * @deprecated
+     * @param timeout
+     */
     polling(timeout?: any): Promise<void>;
+    pollingWait(timeout?: any): Promise<void>;
 }

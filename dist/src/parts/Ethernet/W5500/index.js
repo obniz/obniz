@@ -3,6 +3,8 @@
  * @packageDocumentation
  * @module Parts.W5500
  */
+/* eslint max-classes-per-file: 0 */
+/* eslint non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 // Block select bit (BSB)
 // ブロック選択ビット(BSB)
@@ -10,16 +12,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const BSB_COMMON = 0;
 /**
  * 01/05/09/13/17/21/25/29 Socket 0\~7 register ソケット 0\~7 レジスタ
+ *
  * @param socketId ソケットID
  */
 const BSB_SOCKET_REGISTER = (socketId) => socketId * 4 + 1;
 /**
  * 02/06/10/14/18/22/26/30 Socket 0\~7 TX buffer ソケット 0\~7 TXバッファ
+ *
  * @param socketId ソケットID
  */
 const BSB_SOCKET_TX_BUFFER = (socketId) => socketId * 4 + 2;
 /**
  * 03/07/11/15/19/23/27/31 Socket 0\~7 RX buffer ソケット 0\~7 RXバッファ
+ *
  * @param socketId ソケットID
  */
 const BSB_SOCKET_RX_BUFFER = (socketId) => socketId * 4 + 3;
@@ -130,27 +135,27 @@ const COMMON_UNREACHABLE_PORT = 0x002c;
  *
  * - Reset
  *
- *   Reset the internal physical layer, need to set this bit to 0 and then back to 1
+ * Reset the internal physical layer, need to set this bit to 0 and then back to 1
  *
- *   内部の物理層をリセット、このビットを0にした後、1に戻す必要がある
+ * 内部の物理層をリセット、このビットを0にした後、1に戻す必要がある
  *
  * - OperationMode
  *
- *   1: Use the following 3-bit settings 次の3bitの設定を使用
+ * 1: Use the following 3-bit settings 次の3bitの設定を使用
  *
- *   0: Follow the hardware pin settings ハードウェアピンの設定に従う
+ * 0: Follow the hardware pin settings ハードウェアピンの設定に従う
  *
  * - ConfigBit
  *
- *   The default setting for both hardware pins and registers is 111
+ * The default setting for both hardware pins and registers is 111
  *
- *   ハードウェアピン、レジスタともに初期設定は111
+ * ハードウェアピン、レジスタともに初期設定は111
  *
- *   - 000  10BT Half duplex 半二重 / 001  10BT Full duplex 全二重
- *   - 010 100BT Half duplex 半二重 / 011 100BT Full duplex 全二重
- *   - 100 100BT Half duplex enable auto negotiation 半二重 自動ネゴシエーションオン
- *   - 110 Power Off Mode 電源オフモード
- *   - 111 All available & Enable auto negotiation 全て使用可能 自動ネゴシエーションオン
+ * - 000  10BT Half duplex 半二重 / 001  10BT Full duplex 全二重
+ * - 010 100BT Half duplex 半二重 / 011 100BT Full duplex 全二重
+ * - 100 100BT Half duplex enable auto negotiation 半二重 自動ネゴシエーションオン
+ * - 110 Power Off Mode 電源オフモード
+ * - 111 All available & Enable auto negotiation 全て使用可能 自動ネゴシエーションオン
  *
  * - Duplex  1: Full duplex 全二重 0: Half duplex 半二重
  * - Speed  1: 100Mbps 0: 10Mbps
@@ -262,7 +267,7 @@ const SOCKET_KEEP_ALIVE_TIMER = 0x002f;
 /** Wait Xms Xミリ秒待つ @hidden */
 const sleep = (msec) => new Promise((resolve) => setTimeout(resolve, msec));
 /** [43, 227, 213] => '2BE3D5' @hidden */
-const byteString = (bytes) => bytes.map((n) => ("00" + n.toString(16).toUpperCase()).slice(-2)).join("");
+const byteString = (bytes) => bytes.map((n) => ('00' + n.toString(16).toUpperCase()).slice(-2)).join('');
 /** W5500 type definitions and constants W5500の型定義や定数 */
 var W5500Parts;
 (function (W5500Parts) {
@@ -308,12 +313,12 @@ class W5500 {
          * 常に書き込み時に転送チェックを行わない
          */
         this.forceNoCheckWrite = false;
-        this.keys = ["frequency", "reset", "mosi", "miso", "sclk", "cs"];
+        this.keys = ['frequency', 'reset', 'mosi', 'miso', 'sclk', 'cs'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "W5500",
+            name: 'W5500',
         };
     }
     wired(obniz) {
@@ -323,8 +328,8 @@ class W5500 {
         this.params.mosi = this.params.mosi || 23;
         this.params.miso = this.params.miso || 19;
         this.params.clk = this.params.clk || 18;
-        this.params.drive = "3v";
-        this.params.mode = "master";
+        this.params.drive = '3v';
+        this.params.mode = 'master';
         this.spi = this.params.spi || this.obniz.getSpiWithConfig(this.params);
         this.spiStatus = true;
         this.resetPin = this.obniz.getIO(this.params.reset || 12);
@@ -334,6 +339,7 @@ class W5500 {
      * Initialize W5500 and write common settings
      *
      * W5500を初期化、共通設定の書き込み
+     *
      * @param config W5500 config W5500の設定内容
      * @return Write result 書き込み結果
      */
@@ -343,7 +349,7 @@ class W5500 {
         // Use fixed length data mode 固定長通信の使用
         this.fdm = config.fdm === true;
         // SPI chip select SPIのセレクト
-        this.csPin.drive("3v");
+        this.csPin.drive('3v');
         this.csPin.output(!this.fdm);
         // Mode setting モード設定
         let result = await this.setModeWait(config);
@@ -370,19 +376,28 @@ class W5500 {
             result = result && (await this.setRetryCountWait(config.retryCount));
         }
         if (config.linkControlProtocolRequestTimer) {
-            result = result && (await this.setPPPLinkControlProtocolRequestTimerWait(config.linkControlProtocolRequestTimer));
+            result =
+                result &&
+                    (await this.setPPPLinkControlProtocolRequestTimerWait(config.linkControlProtocolRequestTimer));
         }
         if (config.linkControlProtocolMagicNumber) {
-            result = result && (await this.setPPPLinkControlProtocolMagicNumberWait(config.linkControlProtocolMagicNumber));
+            result =
+                result &&
+                    (await this.setPPPLinkControlProtocolMagicNumberWait(config.linkControlProtocolMagicNumber));
         }
         if (config.pppoeDestMACAddress) {
-            result = result && (await this.setPPPoEMacAddressWait(config.pppoeDestMACAddress));
+            result =
+                result &&
+                    (await this.setPPPoEMacAddressWait(config.pppoeDestMACAddress));
         }
         if (config.pppoeSessionID) {
-            result = result && (await this.setPPPoESessionIDWait(config.pppoeSessionID));
+            result =
+                result && (await this.setPPPoESessionIDWait(config.pppoeSessionID));
         }
         if (config.pppoeMaxSegmentSize) {
-            result = result && (await this.setPPPoEMaxSegmentSizeWait(config.pppoeMaxSegmentSize));
+            result =
+                result &&
+                    (await this.setPPPoEMaxSegmentSizeWait(config.pppoeMaxSegmentSize));
         }
         if (config.phyConfig) {
             result = result && (await this.setPhysicalConfigWait(config.phyConfig));
@@ -390,16 +405,16 @@ class W5500 {
         this.forceNoCheckWrite = config.forceNoCheckWrite === true;
         // Interrupt handlers 割り込みハンドラー設定
         if (config.onIPConflictInterrupt) {
-            this.setInterruptHandler("IPConflict", config.onIPConflictInterrupt);
+            this.setInterruptHandler('IPConflict', config.onIPConflictInterrupt);
         }
         if (config.onDestUnreachInterrupt) {
-            this.setInterruptHandler("DestUnreach", config.onDestUnreachInterrupt);
+            this.setInterruptHandler('DestUnreach', config.onDestUnreachInterrupt);
         }
         if (config.onPPPoECloseInterrupt) {
-            this.setInterruptHandler("PPPoEClose", config.onPPPoECloseInterrupt);
+            this.setInterruptHandler('PPPoEClose', config.onPPPoECloseInterrupt);
         }
         if (config.onMagicPacketInterrupt) {
-            this.setInterruptHandler("MagicPacket", config.onMagicPacketInterrupt);
+            this.setInterruptHandler('MagicPacket', config.onMagicPacketInterrupt);
         }
         if (config.onAllInterrupt) {
             this.setAllInterruptHandler(config.onAllInterrupt);
@@ -428,6 +443,7 @@ class W5500 {
      * 特定の割り込みをキャッチするハンドラーを設定
      *
      * 実際にキャッチするにはcheckInterrupt()を定期的に実行
+     *
      * @param name Name of the interrupt to get 取得する割り込みの名前 (IPConflict | DestUnreach | PPPoEClose | MagicPacket)
      * @param handler Callback function, extra is only when name=DestUnreach
      *
@@ -444,6 +460,7 @@ class W5500 {
      * 全ての割り込みをキャッチするハンドラーを設定
      *
      * 実際にキャッチするにはcheckInterrupt()を定期的に実行
+     *
      * @param handler Callback function, name is the name of the interrupt received, extra is only when name=DestUnreach
      *
      * コールバック関数、nameには受け取った割り込み名が入ります、extraはname=DestUnreachのときのみ
@@ -455,6 +472,7 @@ class W5500 {
      * Wait until the connection with the router is established
      *
      * ルーターとの接続が確立されるまで待機
+     *
      * @return Physical layer status 物理層のステータス
      */
     async waitLinkUpWait() {
@@ -472,12 +490,13 @@ class W5500 {
      * Get an instance of W5500Socket, generate if necessary
      *
      * W5500Socketのインスタンスを取得、必要ならば生成
+     *
      * @param socketId Socket ID (0\~7) ソケットID (0\~7)
      * @return Instance of W5500Socket W5500Socketのインスタンス
      */
     getSocket(socketId) {
         if (socketId < 0 || socketId > 7) {
-            throw new Error("Socket id must take a value between 0 and 7.");
+            throw new Error('Socket id must take a value between 0 and 7.');
         }
         if (!this.socketList[socketId]) {
             this.socketList[socketId] = new W5500Socket(socketId, this);
@@ -488,6 +507,7 @@ class W5500 {
      * Create an instance of W5500Socket in the frame of the unused socket
      *
      * 使っていないソケットの枠にW5500Socketのインスタンスを生成
+     *
      * @return Instance of W5500Socket W5500Socketのインスタンス
      */
     getNewSocket() {
@@ -506,6 +526,7 @@ class W5500 {
      * Whether SPI is available
      *
      * SPIが利用可能かどうか
+     *
      * @return SPI status SPIのステータス
      */
     getSpiStatus() {
@@ -517,7 +538,7 @@ class W5500 {
      * W5500をハードウェア的にリセット
      */
     async hardResetWait() {
-        this.resetPin.drive("3v");
+        this.resetPin.drive('3v');
         this.resetPin.output(false);
         await sleep(10); // > 500ns
         this.resetPin.output(true);
@@ -525,6 +546,7 @@ class W5500 {
     }
     /**
      * Set mode モードを設定
+     *
      * @param config WakeOnLAN(WoL), PingBlock, PPPoE and ForceARP
      * @return Write result 書き込み結果
      */
@@ -538,6 +560,7 @@ class W5500 {
      * Set IPv4 address of default gateway
      *
      * デフォルトゲートウェイのIPv4アドレスを設定
+     *
      * @param ip IPv4 address IPv4アドレス
      * @return Write result 書き込み結果
      */
@@ -546,6 +569,7 @@ class W5500 {
     }
     /**
      * Set subnet mask サブネットマスクを設定
+     *
      * @param mask Subnet mask サブネットマスク
      * @return Write result 書き込み結果
      */
@@ -554,6 +578,7 @@ class W5500 {
     }
     /**
      * Set MAC address MACアドレスを設定
+     *
      * @param mac MAC address MACアドレス
      * @return Write result 書き込み結果
      */
@@ -562,6 +587,7 @@ class W5500 {
     }
     /**
      * Set local IPv4 address ローカルIPv4アドレスを設定
+     *
      * @param ip IPv4 address IPv4アドレス
      * @return Write result 書き込み結果
      */
@@ -580,6 +606,7 @@ class W5500 {
      * ソケットの割り込みもチェックします
      *
      * 割り込みがあった場合、事前に設定されたhandlerを呼び出します
+     *
      * @param disableAllSocketCheck When it's true, do not call checkInterruptWait() for all sockets
      *
      * trueの時、全ソケットのcheckInterrupt()呼び出しを行いません
@@ -596,8 +623,9 @@ class W5500 {
             // リセット
             await this.numWriteWait(COMMON_INTERRUPT, BSB_COMMON, interrupt);
         }
-        const msgList = Object.keys(W5500Parts.InterruptFlags).filter((msg) => (interrupt & W5500Parts.InterruptFlags[msg]) !== 0);
-        const extra = msgList.indexOf("DestUnreach") >= 0
+        const msgList = Object.keys(W5500Parts.InterruptFlags).filter((msg) => (interrupt & W5500Parts.InterruptFlags[msg]) !==
+            0);
+        const extra = msgList.indexOf('DestUnreach') >= 0
             ? new W5500Parts.DestInfo(await this.getUnreachableIP(), await this.getUnreachablePort())
             : undefined;
         if (disableAllSocketCheck !== false) {
@@ -615,13 +643,14 @@ class W5500 {
                 await handler(this, extra);
             }
             if (this.allInterruptHandler !== undefined) {
-                await this.allInterruptHandler(this, msg, msg === "DestUnreach" ? extra : undefined);
+                await this.allInterruptHandler(this, msg, msg === 'DestUnreach' ? extra : undefined);
             }
         }
         return this.spiStatus;
     }
     /**
      * Set interrupt mask 割り込みマスクを設定
+     *
      * @param mask Mask マスク
      * @return Write result 書き込み結果
      */
@@ -630,6 +659,7 @@ class W5500 {
     }
     /**
      * Set retry interval (Initial value: 200ms) 再試行間隔を設定 (初期値: 200ms)
+     *
      * @param time Retry interval (in 0.2ms increments) 再試行間隔 (0.2ms刻み) (0\~6553.5ms)
      * @return Write result 書き込み結果
      */
@@ -638,6 +668,7 @@ class W5500 {
     }
     /**
      * Set retry count (Initial value: 8 times) 再試行回数を設定 (初期値: 8回)
+     *
      * @param count retry count 再試行回数 (0\~255)
      * @return Write result 書き込み結果
      */
@@ -648,6 +679,7 @@ class W5500 {
      * Set time to send echo request for Link Control Protocol
      *
      * LinkControlプロトコルのechoリクエストを送っている時間を設定
+     *
      * @param time time (in 25ms increments) 時間 (25ms刻み) (0\~6375ms)
      * @return Write result 書き込み結果
      */
@@ -658,6 +690,7 @@ class W5500 {
      * Set 1 byte of the 4 bytes magic number of the Link Control protocol echo request
      *
      * LinkControlプロトコルのechoリクエストの4bytesマジックナンバーの1byteを設定
+     *
      * @param num Magic number マジックナンバー
      * @return Write result 書き込み結果
      */
@@ -666,6 +699,7 @@ class W5500 {
     }
     /**
      * Set MAC address of PPPoE server PPPoEサーバーのMACアドレスを設定
+     *
      * @param mac MAC address MACアドレス
      * @return Write result 書き込み結果
      */
@@ -674,6 +708,7 @@ class W5500 {
     }
     /**
      * Set session ID of PPPoE server PPPoEサーバーのセッションIDを設定
+     *
      * @param id Session ID セッションID
      * @return Write result 書き込み結果
      */
@@ -682,6 +717,7 @@ class W5500 {
     }
     /**
      * Set maximum receiving unit size of PPPoE PPPoEの最大受信ユニットサイズを設定
+     *
      * @param size Unit size ユニットサイズ
      * @return Write result 書き込み結果
      */
@@ -692,6 +728,7 @@ class W5500 {
      * Get the IPv4 address when the destination could not be reached
      *
      * 宛先に到達できなかった時のIPv4アドレスを取得
+     *
      * @return IPv4 address IPv4アドレス
      */
     getUnreachableIP() {
@@ -701,6 +738,7 @@ class W5500 {
      * Get the port number when the destination could not be reached
      *
      * 宛先に到達できなかった時のポート番号を取得
+     *
      * @return Port number ポート番号
      */
     getUnreachablePort() {
@@ -708,6 +746,7 @@ class W5500 {
     }
     /**
      * Get physical layer status 物理層のステータス取得
+     *
      * @return Physical layer status 物理層のステータス
      */
     async getPhysicalStatusWait() {
@@ -720,6 +759,7 @@ class W5500 {
     }
     /**
      * Set physical layer config 物理層の設定
+     *
      * @param config Physical layer config 物理層の設定内容
      * @return Write result 書き込み結果
      */
@@ -745,6 +785,7 @@ class W5500 {
     }
     /**
      * Get chip version チップバージョンの取得
+     *
      * @return Chip version チップバージョン
      */
     getVersion() {
@@ -754,6 +795,7 @@ class W5500 {
      * Write after validating the IPv4 address of the character string
      *
      * 文字列のIPv4アドレスをバリデーションチェックしてから書き込み
+     *
      * @param address Start address of write destination 書き込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param ip IPv4 address IPv4アドレス
@@ -761,12 +803,13 @@ class W5500 {
      * @hidden
      */
     ipWriteWait(address, bsb, ip) {
-        return this.addressWriteWait(address, bsb, ip, "IP Address", "123.234.0.1", ".", 4, 10);
+        return this.addressWriteWait(address, bsb, ip, 'IP Address', '123.234.0.1', '.', 4, 10);
     }
     /**
      * Write after validating the MAC address of the character string
      *
      * 文字列のMACアドレスをバリデーションチェックしてから書き込み
+     *
      * @param address Start address of write destination 書き込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param mac MAC address MACアドレス
@@ -774,7 +817,7 @@ class W5500 {
      * @hidden
      */
     macWriteWait(address, bsb, mac) {
-        return this.addressWriteWait(address, bsb, mac, "MAC Address", "12:34:56:78:90:AB", ":", 6, 16);
+        return this.addressWriteWait(address, bsb, mac, 'MAC Address', '12:34:56:78:90:AB', ':', 6, 16);
     }
     /**
      * Writing large data
@@ -788,6 +831,7 @@ class W5500 {
      * FDMのとき、長さが4より大きいときに使用
      *
      * VDMのとき、長さが1021より大きいときに使用
+     *
      * @param address Start address of write destination 書き込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param data Raw byte data Raw byte data バイト列データ
@@ -800,7 +844,9 @@ class W5500 {
         let result = true;
         for (let i = 0; i < data.length; i += maxLength) {
             const size = i + maxLength <= data.length ? maxLength : data.length - i;
-            result = result && (await this.writeWait(address + i, bsb, data.slice(i, i + size), noWait));
+            result =
+                result &&
+                    (await this.writeWait(address + i, bsb, data.slice(i, i + size), noWait));
         }
         return result;
     }
@@ -808,6 +854,7 @@ class W5500 {
      * Writing a value to the area for one address
      *
      * 1アドレス分の領域への値の書き込み
+     *
      * @param address Start address of write destination 書き込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param num Value 値 (0\~255)
@@ -821,6 +868,7 @@ class W5500 {
      * Writing a value to the area for two addresses
      *
      * 2アドレス分の領域への値の書き込み
+     *
      * @param address Start address of write destination 書き込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param num Value 値 (0\~65535)
@@ -832,13 +880,14 @@ class W5500 {
     }
     /**
      * Read IPv4 address data IPv4アドレスデータの読み込み
+     *
      * @param address Start address of read destination 読み込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @return IPv4 address IPv4アドレス
      * @hidden
      */
     async ipReadWait(address, bsb) {
-        return (await this.readWait(address, bsb, 4)).join(".");
+        return (await this.readWait(address, bsb, 4)).join('.');
     }
     /**
      * Reading large data
@@ -852,6 +901,7 @@ class W5500 {
      * FDMのとき、長さが4より大きいときに使用
      *
      * VDMのとき、長さが1021より大きいときに使用
+     *
      * @param address Start address of read destination 読み込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param length Data length (byte length) データの長さ (バイト長)
@@ -871,6 +921,7 @@ class W5500 {
      * Reading values from the area for one address
      *
      * 1アドレス分の領域からの値の読み込み
+     *
      * @param address Start address of read destination 読み込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @return Value 値 (0\~255)
@@ -884,6 +935,7 @@ class W5500 {
      * Reading values from the area for two addresses
      *
      * 2アドレス分の領域からの値の読み込み
+     *
      * @param address Start address of read destination 読み込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @return Value 値 (0\~65535)
@@ -897,6 +949,7 @@ class W5500 {
      * Validate and write the address based on the definition
      *
      * アドレスを定義に基づいてバリデーションチェックして書き込み
+     *
      * @param address Start address of write destination 書き込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param val String of the address to write 書き込むアドレスの文字列
@@ -908,11 +961,11 @@ class W5500 {
      * @hidden
      */
     async addressWriteWait(address, bsb, val, name, example, splitVal, length, radix) {
-        if (typeof val !== "string") {
+        if (typeof val !== 'string') {
             throw new Error(`Given ${name} must be string.`);
         }
         const valList = val.split(splitVal).map((addr) => parseInt(addr, radix));
-        if (valList.filter((addr) => typeof addr === "number").length !== length) {
+        if (valList.filter((addr) => typeof addr === 'number').length !== length) {
             throw new Error(`${name} format must be '${example}'.`);
         }
         if (length > 4 && this.fdm) {
@@ -936,6 +989,7 @@ class W5500 {
      * FDMのとき、長さは4まで
      *
      * VDMのとき、長さは1021まで
+     *
      * @param address Start address of write destination 書き込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param data Raw byte data バイト列データ
@@ -945,29 +999,29 @@ class W5500 {
      */
     async writeWait(address, bsb, data, noWait) {
         if (!Array.isArray(data)) {
-            throw new Error("Given data must be array.");
+            throw new Error('Given data must be array.');
         }
         if (data.length === 3 && this.fdm) {
             data[3] = 0;
         }
         if (data.length === 0) {
-            throw new Error("Given data is empty.");
+            throw new Error('Given data is empty.');
         }
         if (data.length > 4 && this.fdm) {
-            throw new Error("Given data length must be 1, 2 or 4.");
+            throw new Error('Given data length must be 1, 2 or 4.');
         }
         if (data.length > 1021 && !this.fdm) {
-            throw new Error("Given data length must be 1021 or less.");
+            throw new Error('Given data length must be 1021 or less.');
         }
         if (data.filter((addr) => 0x00 <= addr && addr <= 0xff).length !== data.length) {
-            throw new Error("Given data field must take a value between 0(0x00) and 255(0xFF).");
+            throw new Error('Given data field must take a value between 0(0x00) and 255(0xFF).');
         }
         if (this.forceNoCheckWrite === true && noWait === undefined) {
             noWait = true;
         }
-        const result = await this.sendWait(address, bsb, "Write", data, noWait);
-        if (typeof result === "object") {
-            throw new Error("Unexpected Result");
+        const result = await this.sendWait(address, bsb, 'Write', data, noWait);
+        if (typeof result === 'object') {
+            throw new Error('Unexpected Result');
         }
         else {
             return result;
@@ -977,6 +1031,7 @@ class W5500 {
      * Reading normal data
      *
      * 通常データの読み込み
+     *
      * @param address Start address of read destination 読み込み先の先頭アドレス
      * @param bsb Block select bit ブロック選択ビット
      * @param length Data length (byte length) データの長さ (バイト長)
@@ -984,9 +1039,9 @@ class W5500 {
      * @hidden
      */
     async readWait(address, bsb, length) {
-        const result = await this.sendWait(address, bsb, "Read", Array(length).fill(0));
-        if (typeof result === "boolean") {
-            throw new Error("Unexpected Result");
+        const result = await this.sendWait(address, bsb, 'Read', Array(length).fill(0));
+        if (typeof result === 'boolean') {
+            throw new Error('Unexpected Result');
         }
         else {
             return result;
@@ -996,6 +1051,7 @@ class W5500 {
      * 読み書き共通のメソッド、返却されたデータを検証
      *
      * Common read / write method, verify returned data
+     *
      * @param address Start address of operation destination 操作先の先頭アドレス (0x0000\~0xFFFF)
      * @param bsb Block select bit ブロック選択ビット (0b00000\~0b11111)
      * @param mode Read or write 読み込みか書き込みか (Read|Write)
@@ -1010,7 +1066,9 @@ class W5500 {
         const write = [
             (address & 0xff00) >> 8,
             address & 0x00ff,
-            (bsb << 3) + (mode === "Write" ? 0b0100 : 0b0000) + (this.fdm ? (data.length < 4 ? data.length : 0b11) : 0),
+            (bsb << 3) +
+                (mode === 'Write' ? 0b0100 : 0b0000) +
+                (this.fdm ? (data.length < 4 ? data.length : 0b11) : 0),
             ...data,
         ];
         if (!this.fdm && this.csPin) {
@@ -1022,14 +1080,14 @@ class W5500 {
             this.csPin.output(true);
             this.csPin.output(false);
         }
-        if (typeof result === "undefined") {
+        if (typeof result === 'undefined') {
             return true;
         }
         if (result[0] === 1 && result[1] === 2 && result[2] === 3) {
-            return mode === "Write" ? true : result.slice(3);
+            return mode === 'Write' ? true : result.slice(3);
         }
         else {
-            throw new Error(`${mode} Error\n address: 0x${("0000" + address.toString(16).toUpperCase()).slice(-4)}  bsb: ${bsb}\n send: 0x${byteString(write)}\n receive: 0x${byteString(result)}\n`);
+            throw new Error(`${mode} Error\n address: 0x${('0000' + address.toString(16).toUpperCase()).slice(-4)}  bsb: ${bsb}\n send: 0x${byteString(write)}\n receive: 0x${byteString(result)}\n`);
         }
     }
 }
@@ -1116,6 +1174,7 @@ class W5500Socket {
      * Write the socket settings and open the socket (Connect / Listen is also executed for TCP)
      *
      * ソケット設定の書き込みをし、ソケットをOpenに(TCPの時はConnect/Listenも実行)
+     *
      * @param config Socket config ソケットの設定内容
      * @return Write result 書き込み結果
      */
@@ -1145,31 +1204,31 @@ class W5500Socket {
             result = result && (await this.setTXBufferSizeWait(config.txBufferSize));
         }
         // Open socket ソケットのオープン
-        result = result && (await this.sendCommandWait("Open"));
-        if (this.protocol === "TCPClient") {
-            result = result && (await this.sendCommandWait("Connect"));
+        result = result && (await this.sendCommandWait('Open'));
+        if (this.protocol === 'TCPClient') {
+            result = result && (await this.sendCommandWait('Connect'));
         }
-        if (this.protocol === "TCPServer") {
-            result = result && (await this.sendCommandWait("Listen"));
+        if (this.protocol === 'TCPServer') {
+            result = result && (await this.sendCommandWait('Listen'));
         }
         // Remember the value of rxReadDataPointer in advance
         // 事前にrxReadDataPointerの値を記憶
         this.rxReadDataPointer = await this.getRXReadDataPointerWait();
         // Interrupt handler settings 割り込みハンドラー設定
         if (config.onSendOKInterrupt) {
-            this.setInterruptHandler("SendOK", config.onSendOKInterrupt);
+            this.setInterruptHandler('SendOK', config.onSendOKInterrupt);
         }
         if (config.onTimeoutInterrupt) {
-            this.setInterruptHandler("Timeout", config.onTimeoutInterrupt);
+            this.setInterruptHandler('Timeout', config.onTimeoutInterrupt);
         }
         if (config.onReceiveDataInterrupt) {
-            this.setInterruptHandler("ReceiveData", config.onReceiveDataInterrupt);
+            this.setInterruptHandler('ReceiveData', config.onReceiveDataInterrupt);
         }
         if (config.onDisconnectInterrupt) {
-            this.setInterruptHandler("Disconnect", config.onDisconnectInterrupt);
+            this.setInterruptHandler('Disconnect', config.onDisconnectInterrupt);
         }
         if (config.onConnectSuccessInterrupt) {
-            this.setInterruptHandler("ConnectSuccess", config.onConnectSuccessInterrupt);
+            this.setInterruptHandler('ConnectSuccess', config.onConnectSuccessInterrupt);
         }
         if (config.onAllInterrupt) {
             this.setAllInterruptHandler(config.onAllInterrupt);
@@ -1181,20 +1240,21 @@ class W5500Socket {
      */
     async finalizeWait() {
         switch (this.protocol) {
-            case "TCPClient":
-                await this.sendCommandWait("Disconnect");
-                while ((await this.getStatusWait()) !== "Closed") { }
+            case 'TCPClient':
+                await this.sendCommandWait('Disconnect');
+                while ((await this.getStatusWait()) !== 'Closed') { }
                 break;
-            case "TCPServer":
-                await this.sendCommandWait("Disconnect");
-            case "UDP":
-                await this.sendCommandWait("Close");
+            case 'TCPServer':
+                await this.sendCommandWait('Disconnect');
+            case 'UDP':
+                await this.sendCommandWait('Close');
                 break;
         }
         this.protocol = null;
     }
     /**
      * Send data データを送信
+     *
      * @param data Raw byte data or string to send 送信するバイトデータまたは文字列
      * @return Write result 書き込み結果
      */
@@ -1203,6 +1263,7 @@ class W5500Socket {
     }
     /**
      * Send data, no write check データを送信、書き込みチェックなし
+     *
      * @param data Raw byte data or string to send 送信するバイトデータまたは文字列
      * @return Write result 書き込み結果
      */
@@ -1211,6 +1272,7 @@ class W5500Socket {
     }
     /**
      * Read the received data 受信されたデータを読取
+     *
      * @return Raw byte data or string to receive 受信データまたは文字列
      */
     async receiveDataWait() {
@@ -1219,8 +1281,10 @@ class W5500Socket {
         const data = await this.ethernet.bigReadWait(this.rxReadDataPointer, BSB_SOCKET_RX_BUFFER(this.id), rxRecieveSize);
         this.rxReadDataPointer += rxRecieveSize;
         await this.setRXReadDataPointerWait(this.rxReadDataPointer);
-        await this.sendCommandWait("Receive");
-        return this.stringMode ? new TextDecoder().decode(Uint8Array.from(data)) : data;
+        await this.sendCommandWait('Receive');
+        return this.stringMode
+            ? new TextDecoder().decode(Uint8Array.from(data))
+            : data;
     }
     /**
      * Set a handler to catch a specific interrupt
@@ -1230,6 +1294,7 @@ class W5500Socket {
      * 特定の割り込みをキャッチするハンドラーを設定
      *
      * 実際にキャッチするにはcheckInterrupt()を定期的に実行
+     *
      * @param name The name of the interrupt to get 取得する割り込みの名前 (SendOK | Timeout | ReceiveData | Disconnect | ConnectSuccess)
      * @param handler Callback function, extra is only when name=ReceiveData and when name=ConnectSuccess and protocol=TCPServer
      *
@@ -1246,6 +1311,7 @@ class W5500Socket {
      * 全ての割り込みをキャッチするハンドラーを設定
      *
      * 実際にキャッチするにはcheckInterrupt()を定期的に実行
+     *
      * @param handler Callback function, name is the type of interrupt, extra is only when name=ReceiveData and when name=ConnectSuccess and protocol=TCPServer
      *
      * コールバック関数、nameは割り込みの種類、extraはname=ReceiveDataの時とname=ConnectSuccessかつprotocol=TCPServerの時のみ
@@ -1255,6 +1321,7 @@ class W5500Socket {
     }
     /**
      * Get the current protocol 現在のプロトコルを取得
+     *
      * @return Protocol プロトコル
      */
     getProtocol() {
@@ -1262,6 +1329,7 @@ class W5500Socket {
     }
     /**
      * Set mode モードを設定
+     *
      * @param config Multicast, BroardcastBlock, NoDelayACK, MulticastVer1, UnicastBlock and Protocol
      * @return Write result 書き込み結果
      */
@@ -1270,16 +1338,30 @@ class W5500Socket {
         this.stringMode = config.stringMode || false;
         return this.ethernet.numWriteWait(SOCKET_MODE, BSB_SOCKET_REGISTER(this.id), config.protocol === null
             ? 0
-            : 0b10000000 * (config.multicast === true && config.protocol === "UDP" ? 1 : 0) +
-                0b01000000 * (config.broardcastBlock === true && config.protocol === "UDP" ? 1 : 0) +
-                0b00100000 * (config.noDelayACK === true && config.protocol.indexOf("TCP") >= 0 ? 1 : 0) +
-                0b00100000 * (config.multicastVer1 === true && config.protocol === "UDP" ? 1 : 0) +
-                0b00010000 * (config.unicastBlock === true && config.protocol === "UDP" ? 1 : 0) +
-                0b00000001 * (config.protocol.indexOf("TCP") >= 0 ? 1 : 0) +
-                0b00000010 * (config.protocol === "UDP" ? 1 : 0));
+            : 0b10000000 *
+                (config.multicast === true && config.protocol === 'UDP' ? 1 : 0) +
+                0b01000000 *
+                    (config.broardcastBlock === true && config.protocol === 'UDP'
+                        ? 1
+                        : 0) +
+                0b00100000 *
+                    (config.noDelayACK === true && config.protocol.indexOf('TCP') >= 0
+                        ? 1
+                        : 0) +
+                0b00100000 *
+                    (config.multicastVer1 === true && config.protocol === 'UDP'
+                        ? 1
+                        : 0) +
+                0b00010000 *
+                    (config.unicastBlock === true && config.protocol === 'UDP'
+                        ? 1
+                        : 0) +
+                0b00000001 * (config.protocol.indexOf('TCP') >= 0 ? 1 : 0) +
+                0b00000010 * (config.protocol === 'UDP' ? 1 : 0));
     }
     /**
      * Send command コマンドを送信
+     *
      * @param command Command コマンド
      * @return Write result 書き込み結果
      */
@@ -1289,12 +1371,12 @@ class W5500Socket {
             throw new Error(`Unknown Command '${command}'.`);
         }
         if (this.protocol === null) {
-            throw new Error("Must set Socket Mode before send the command.");
+            throw new Error('Must set Socket Mode before send the command.');
         }
-        if (this.protocol.indexOf("TCP") >= 0 && 0x20 < code && code < 0x30) {
+        if (this.protocol.indexOf('TCP') >= 0 && 0x20 < code && code < 0x30) {
             throw new Error(`'${command}' command is only available in UDP mode.`);
         }
-        if (this.protocol === "UDP" && 0x01 < code && code < 0x10) {
+        if (this.protocol === 'UDP' && 0x01 < code && code < 0x10) {
             throw new Error(`'${command}' command is only available in TCP mode.`);
         }
         return await this.ethernet.numWriteWait(SOCKET_COMMAND, BSB_SOCKET_REGISTER(this.id), code);
@@ -1307,6 +1389,7 @@ class W5500Socket {
      * 割り込みをチェック
      *
      * 割り込みがあった場合、事前に設定されたhandlerを呼び出します
+     *
      * @return Then whether you can check for interrupts
      *
      * 次に割り込みをチェックできるかどうか
@@ -1322,11 +1405,13 @@ class W5500Socket {
         else {
             await this.ethernet.numWriteWait(SOCKET_INTERRUPT, BSB_SOCKET_REGISTER(this.id), interrupt);
         } // リセット
-        const msgList = Object.keys(W5500SocketParts.InterruptFlags).filter((msg) => (interrupt & W5500SocketParts.InterruptFlags[msg]) !== 0);
+        const msgList = Object.keys(W5500SocketParts.InterruptFlags).filter((msg) => (interrupt &
+            W5500SocketParts.InterruptFlags[msg]) !==
+            0);
         for (const m in msgList) {
             const msg = msgList[m];
             const handler = this.interruptHandlers[msg];
-            if (msg === "Timeout") {
+            if (msg === 'Timeout') {
                 this.protocol = null;
             }
             console.info(`Found Interrupt on Socket ${this.id}: ${msg}\n`);
@@ -1334,10 +1419,10 @@ class W5500Socket {
                 continue;
             }
             let extra;
-            if (msg === "ReceiveData") {
+            if (msg === 'ReceiveData') {
                 extra = await this.receiveDataWait();
             }
-            if (msg === "ConnectSuccess" && this.protocol === "TCPServer") {
+            if (msg === 'ConnectSuccess' && this.protocol === 'TCPServer') {
                 extra = new W5500Parts.DestInfo(await this.getDestIPWait(), await this.getDestPortWait());
             }
             if (handler !== undefined) {
@@ -1352,15 +1437,19 @@ class W5500Socket {
     }
     /**
      * Get Status ステータスを取得
+     *
      * @return Status ステータス
      */
     async getStatusWait() {
         const status = await this.ethernet.numReadWait(SOCKET_STATUS, BSB_SOCKET_REGISTER(this.id));
         const index = Object.values(W5500SocketParts.StatusCodes).indexOf(status);
-        return index < 0 ? "UNKNOWN" : Object.keys(W5500SocketParts.StatusCodes)[index];
+        return index < 0
+            ? 'UNKNOWN'
+            : Object.keys(W5500SocketParts.StatusCodes)[index];
     }
     /**
      * Set the connection source port 接続元ポートを設定
+     *
      * @param port Port number ポート番号
      * @return Write result 書き込み結果
      */
@@ -1371,6 +1460,7 @@ class W5500Socket {
      * Set the MAC address of the connection destination (only if required by UDP)
      *
      * 接続先のMACアドレスを設定(UDPで必要な場合のみ)
+     *
      * @param mac MAC address MACアドレス
      * @return Write result 書き込み結果
      */
@@ -1381,6 +1471,7 @@ class W5500Socket {
      * Set the IPv4 address of the connection destination
      *
      * 接続先のIPv4アドレスを設定
+     *
      * @param ip IPv4 address IPv4アドレス
      * @return Write result 書き込み結果
      */
@@ -1391,6 +1482,7 @@ class W5500Socket {
      * Get the IPv4 address of the connection source (only for TCP server)
      *
      * 接続元のIPv4アドレスを取得(TCPサーバーのときのみ)
+     *
      * @return IPv4 address IPv4アドレス
      */
     getDestIPWait() {
@@ -1400,6 +1492,7 @@ class W5500Socket {
      * Set the port number of the connection destination
      *
      * 接続先のポート番号を設定
+     *
      * @param port Port number ポート番号
      * @return Write result 書き込み結果
      */
@@ -1410,6 +1503,7 @@ class W5500Socket {
      * Get the port number of the connection source (only for TCP server)
      *
      * 接続元のポート番号を取得(TCPサーバーのときのみ)
+     *
      * @return Port number ポート番号
      */
     getDestPortWait() {
@@ -1419,6 +1513,7 @@ class W5500Socket {
      * Set maximum segment size (only if required by TCP)
      *
      * 最大セグメントサイズを設定(TCPで必要な場合のみ)
+     *
      * @param size 最大セグメントサイズ
      * @return Write result 書き込み結果
      */
@@ -1427,6 +1522,7 @@ class W5500Socket {
     }
     /**
      * Set IP service type IPサービスタイプを設定
+     *
      * @param type IP service type IPサービスタイプ (1byte)
      * @return Write result 書き込み結果
      */
@@ -1435,6 +1531,7 @@ class W5500Socket {
     }
     /**
      * Set TTL TTLを設定
+     *
      * @param ttl TTL (0\~65535)
      * @return Write result 書き込み結果
      */
@@ -1443,6 +1540,7 @@ class W5500Socket {
     }
     /**
      * Set buffer size バッファサイズを設定
+     *
      * @param size Buffer size バッファサイズ(KB)
      * @param address Start address of write destination 書き込み先の先頭アドレス
      * @return Write result 書き込み結果
@@ -1450,12 +1548,13 @@ class W5500Socket {
      */
     setBufferSizeWait(size, address) {
         if ([0, 1, 2, 4, 8, 16].indexOf(size) < 0) {
-            throw new Error("Given buffer size must be 0, 1, 2, 4, 8 or 16.");
+            throw new Error('Given buffer size must be 0, 1, 2, 4, 8 or 16.');
         }
         return this.ethernet.numWriteWait(address, BSB_SOCKET_REGISTER(this.id), size);
     }
     /**
      * Set receive buffer size 受信バッファサイズを設定
+     *
      * @param size Buffer size (KB) only to the power of 2, up to 16
      *
      * バッファサイズ(KB) 2の累乗のみ、16まで
@@ -1466,6 +1565,7 @@ class W5500Socket {
     }
     /**
      * Set send buffer size 送信バッファサイズを設定
+     *
      * @param size Buffer size (KB) only to the power of 2, up to 16
      *
      * バッファサイズ(KB) 2の累乗のみ、16まで
@@ -1476,6 +1576,7 @@ class W5500Socket {
     }
     /**
      * Get free size of send buffer 送信バッファの空きサイズを取得
+     *
      * @return Free size 空きサイズ
      */
     getTXFreeSizeWait() {
@@ -1485,6 +1586,7 @@ class W5500Socket {
      * Get the write start address of the send buffer
      *
      * 送信バッファの書き込み開始アドレスを取得
+     *
      * @return Address アドレス
      */
     getTXReadPointerWait() {
@@ -1494,6 +1596,7 @@ class W5500Socket {
      * Set the next write start address of the send buffer
      *
      * 送信バッファの次の書き込み開始アドレスを設定
+     *
      * @param pointer Address アドレス
      * @return Write result 書き込み結果
      */
@@ -1502,6 +1605,7 @@ class W5500Socket {
     }
     /**
      * Get the length of received data 受信データの長さを取得
+     *
      * @return Length 長さ
      */
     getRXReceiveSizeWait() {
@@ -1511,6 +1615,7 @@ class W5500Socket {
      * Get the read start address of the receive buffer
      *
      * 受信バッファの読み込み開始アドレスを取得
+     *
      * @return Address アドレス
      */
     getRXReadDataPointerWait() {
@@ -1520,6 +1625,7 @@ class W5500Socket {
      * Set the next read start address of the receive buffer
      *
      * 受信バッファの次の読み込み開始アドレスを設定
+     *
      * @param pointer Address アドレス
      * @return Write result 書き込み結果
      */
@@ -1530,6 +1636,7 @@ class W5500Socket {
      * Get the write start address of the receive buffer
      *
      * 受信バッファの書き込み開始アドレスを取得
+     *
      * @return Address アドレス
      */
     getRXWritePointerWait() {
@@ -1537,6 +1644,7 @@ class W5500Socket {
     }
     /**
      * Set IP header fragment IPヘッダーのフラグメントを設定
+     *
      * @param fragment IP header fragment IPヘッダーのフラグメント (0x0000\~0xFFFF)
      * @return Write result 書き込み結果
      */
@@ -1547,6 +1655,7 @@ class W5500Socket {
      * Set keep-alive transmission interval (only if TCP requires)
      *
      * keep-aliveの送信間隔を設定(TCPで必要な場合のみ)
+     *
      * @param time keep-alive transmission interval (sec) (0\~1275)
      *
      * keep-alive 送信間隔(秒)(0\~1275)
@@ -1557,6 +1666,7 @@ class W5500Socket {
     }
     /**
      * Send data データを送信
+     *
      * @param data Raw byte data to send or string 送信するバイトデータまたは文字列
      * @param noWait Do not use spi.writeWait() when writing data
      *
@@ -1564,11 +1674,13 @@ class W5500Socket {
      * @hidden
      */
     async sendDataBaseWait(data, noWait) {
-        const d = typeof data === "string" ? Array.from(new TextEncoder().encode(data)) : data;
+        const d = typeof data === 'string'
+            ? Array.from(new TextEncoder().encode(data))
+            : data;
         const txReadPointer = await this.getTXReadPointerWait();
         const result = await this.ethernet.bigWriteWait(txReadPointer, BSB_SOCKET_TX_BUFFER(this.id), d, noWait);
         await this.setTXWritePointerWait(txReadPointer + d.length);
-        await this.sendCommandWait("Send");
+        await this.sendCommandWait('Send');
         return result;
     }
 }

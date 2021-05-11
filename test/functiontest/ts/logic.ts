@@ -1,6 +1,6 @@
-import Obniz from "../../../dist/src/obniz/index";
+import Obniz from '../../../dist/src/obniz/index';
 
-const OBNIZ_ID = "1234-5678";
+const OBNIZ_ID = '1234-5678';
 
 /**
  * https://obniz.io/ja/sdk/parts/SNx4HC595/README.md
@@ -9,7 +9,7 @@ class SNx4HC595Test {
   public ioNum() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const ioext = obniz.wired("SNx4HC595", {
+      const ioext = obniz.wired('SNx4HC595', {
         gnd: 0,
         vcc: 1,
         ser: 2,
@@ -24,7 +24,7 @@ class SNx4HC595Test {
   public output() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const ioext = obniz.wired("SNx4HC595", {
+      const ioext = obniz.wired('SNx4HC595', {
         gnd: 0,
         vcc: 1,
         ser: 2,
@@ -40,7 +40,7 @@ class SNx4HC595Test {
   public onece() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const ioext = obniz.wired("SNx4HC595", {
+      const ioext = obniz.wired('SNx4HC595', {
         gnd: 0,
         vcc: 1,
         ser: 2,
@@ -58,7 +58,7 @@ class SNx4HC595Test {
   public getIO() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const ioext = obniz.wired("SNx4HC595", {
+      const ioext = obniz.wired('SNx4HC595', {
         gnd: 0,
         vcc: 1,
         ser: 2,
@@ -70,12 +70,12 @@ class SNx4HC595Test {
       io1.output(true);
 
       const io2 = ioext.getIO(2);
-      const led = obniz.wired("LED", { anode: io2 });
+      const led = obniz.wired('LED', { anode: io2 });
       led.blink();
 
       const io3 = ioext.getIO(3);
       const io4 = ioext.getIO(4);
-      const seg = obniz.wired("7SegmentLED", {
+      const seg = obniz.wired('7SegmentLED', {
         a: io3,
         b: io4,
         c: 5,
@@ -92,7 +92,7 @@ class SNx4HC595Test {
   public setEnable() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const ioext = obniz.wired("SNx4HC595", {
+      const ioext = obniz.wired('SNx4HC595', {
         gnd: 0,
         vcc: 1,
         ser: 2,

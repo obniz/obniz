@@ -4,15 +4,15 @@ const config = require('../config.js');
 
 let obnizA, checkBoard, check_io;
 
-describe('6-i2c-exchange', function() {
+describe('6-i2c-exchange', function () {
   this.timeout(10000);
 
-  before(function() {
-    return new Promise(resolve => {
+  before(function () {
+    return new Promise((resolve) => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
         checkBoard = config.checkBoard;
-        check_io = config.check_io.filter(io => io.obniz === 'obnizA');
+        check_io = config.check_io.filter((io) => io.obniz === 'obnizA');
         resolve();
       });
     });
@@ -27,7 +27,7 @@ describe('6-i2c-exchange', function() {
     }
   });
 
-  it('1k data', async function() {
+  it('1k data', async function () {
     const sender = checkBoard.getFreeI2C();
     sender.start({
       mode: 'master',
@@ -55,7 +55,7 @@ describe('6-i2c-exchange', function() {
     sender.write(0x50, data);
 
     let received = [];
-    receiver.onwritten = function(arrived) {
+    receiver.onwritten = function (arrived) {
       received.push(...arrived);
     };
 
@@ -70,7 +70,7 @@ describe('6-i2c-exchange', function() {
     sender.end();
   });
 
-  it('1k data again', async function() {
+  it('1k data again', async function () {
     const sender = checkBoard.getFreeI2C();
     sender.start({
       mode: 'master',
@@ -98,7 +98,7 @@ describe('6-i2c-exchange', function() {
     sender.write(0x50, data);
 
     let received = [];
-    receiver.onwritten = function(arrived) {
+    receiver.onwritten = function (arrived) {
       received.push(...arrived);
     };
 
@@ -113,7 +113,7 @@ describe('6-i2c-exchange', function() {
     sender.end();
   });
 
-  it('1k data counter direction', async function() {
+  it('1k data counter direction', async function () {
     const sender = obnizA.getFreeI2C();
     sender.start({
       mode: 'master',
@@ -141,7 +141,7 @@ describe('6-i2c-exchange', function() {
     sender.write(0x50, data);
 
     let received = [];
-    receiver.onwritten = function(arrived) {
+    receiver.onwritten = function (arrived) {
       received.push(...arrived);
     };
 
@@ -162,7 +162,7 @@ describe('6-i2c-exchange', function() {
 });
 
 function wait(ms) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 }

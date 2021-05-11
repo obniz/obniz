@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @ignore
  */
-import dialogPolyfill from "dialog-polyfill";
+import dialogPolyfill from 'dialog-polyfill';
 declare const _default: {
     dialogPolyfill: typeof dialogPolyfill;
     css: any;

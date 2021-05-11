@@ -21,7 +21,7 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      * @ignore
      */
     get parentName() {
-        return "peripheral";
+        return 'peripheral';
     }
     /**
      * @ignore
@@ -33,7 +33,7 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      * @ignore
      */
     get childrenName() {
-        return "characteristics";
+        return 'characteristics';
     }
     /**
      * It contains characteristics in a service.
@@ -101,6 +101,7 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      *   console.error(e);
      * }
      * ```
+     *
      * @param uuid
      */
     getCharacteristic(uuid) {
@@ -184,13 +185,13 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      * @ignore
      */
     async readWait() {
-        throw new Error("cannot read service");
+        throw new Error('cannot read service');
     }
     /**
      * @ignore
      */
     async writeWait() {
-        throw new Error("cannot write service");
+        throw new Error('cannot write service');
     }
 }
 exports.default = BleRemoteService;

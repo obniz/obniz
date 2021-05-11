@@ -15,7 +15,7 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
      * @ignore
      */
     get parentName() {
-        return "characteristic";
+        return 'characteristic';
     }
     /**
      * Read data from descriptor.
@@ -75,7 +75,7 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
      */
     async writeWait(data) {
         await this.characteristic.service.peripheral.obnizBle.centralBindings.writeValueWait(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid, Buffer.from(data));
-        this._runUserCreatedFunction(this.onwrite, "success");
+        this._runUserCreatedFunction(this.onwrite, 'success');
         return true;
     }
     /**

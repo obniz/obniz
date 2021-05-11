@@ -11,28 +11,28 @@ class REX_BTPM25V {
         this.onbuttonpressed = null;
         this._peripheral = null;
         this._uuids = {
-            service: "00001523-1212-EFDE-1523-785FEABCD123",
-            buttonChar: "000000A1-1212-EFDE-1523-785FEABCD123",
-            continuousMeasurementChar: "000000A5-1212-EFDE-1523-785FEABCD123",
-            oneShotMeasurementChar: "000000A8-1212-EFDE-1523-785FEABCD123",
-            ledChar: "000000A9-1212-EFDE-1523-785FEABCD123",
+            service: '00001523-1212-EFDE-1523-785FEABCD123',
+            buttonChar: '000000A1-1212-EFDE-1523-785FEABCD123',
+            continuousMeasurementChar: '000000A5-1212-EFDE-1523-785FEABCD123',
+            oneShotMeasurementChar: '000000A8-1212-EFDE-1523-785FEABCD123',
+            ledChar: '000000A9-1212-EFDE-1523-785FEABCD123',
         };
         this._oneShotMeasurementCharacteristic = null;
         this._continuousMeasurementCharacteristic = null;
         this._ledCharacteristic = null;
         this._buttonCharacteristic = null;
         if (peripheral && !REX_BTPM25V.isDevice(peripheral)) {
-            throw new Error("peripheral is not RS_Seek3");
+            throw new Error('peripheral is not RS_Seek3');
         }
         this._peripheral = peripheral;
     }
     static info() {
         return {
-            name: "REX_BTPM25V",
+            name: 'REX_BTPM25V',
         };
     }
     static isDevice(peripheral) {
-        if (peripheral.localName !== "PM25V") {
+        if (peripheral.localName !== 'PM25V') {
             return false;
         }
         return true;
@@ -41,10 +41,10 @@ class REX_BTPM25V {
     wired(obniz) { }
     async connectWait() {
         if (!this._peripheral) {
-            throw new Error("RS_Seek3 is not find.");
+            throw new Error('RS_Seek3 is not find.');
         }
         this._peripheral.ondisconnect = (reason) => {
-            if (typeof this.ondisconnect === "function") {
+            if (typeof this.ondisconnect === 'function') {
                 this.ondisconnect(reason);
             }
         };
@@ -55,13 +55,15 @@ class REX_BTPM25V {
         this._continuousMeasurementCharacteristic = this._peripheral
             .getService(this._uuids.service)
             .getCharacteristic(this._uuids.continuousMeasurementChar);
-        this._ledCharacteristic = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.ledChar);
+        this._ledCharacteristic = this._peripheral
+            .getService(this._uuids.service)
+            .getCharacteristic(this._uuids.ledChar);
         this._buttonCharacteristic = this._peripheral
             .getService(this._uuids.service)
             .getCharacteristic(this._uuids.buttonChar);
         if (this._buttonCharacteristic) {
             this._buttonCharacteristic.registerNotify((data) => {
-                if (typeof this.onbuttonpressed === "function") {
+                if (typeof this.onbuttonpressed === 'function') {
                     this.onbuttonpressed(data[0] === 1);
                 }
             });
@@ -73,7 +75,7 @@ class REX_BTPM25V {
     }
     async measureOneShotWait() {
         if (!this._oneShotMeasurementCharacteristic) {
-            throw new Error("device is not connected");
+            throw new Error('device is not connected');
         }
         const sendData = new Array(20);
         sendData[0] = 0x01;
@@ -82,23 +84,30 @@ class REX_BTPM25V {
     }
     async measureOneShotExtWait() {
         if (!this._oneShotMeasurementCharacteristic) {
-            throw new Error("device is not connected");
+            throw new Error('device is not connected');
         }
         const sendData = new Array(20);
         sendData[0] = 0x10;
         const data = await this._sendAndReceiveWait(this._oneShotMeasurementCharacteristic, sendData);
         return this._analyzeResultExt(data);
     }
-    async getLedMode() {
+    getLedMode() {
+        return this.getLedModeWait();
+    }
+    async getLedModeWait() {
         if (!this._ledCharacteristic) {
-            throw new Error("device is not connected");
+            throw new Error('device is not connected');
         }
-        const data = this._sendAndReceiveWait(this._ledCharacteristic, [0xff, 0x00]);
+        const data = this._sendAndReceiveWait(this._ledCharacteristic, [
+            0xff,
+            0x00,
+        ]);
     }
     _sendAndReceiveWait(char, data) {
         return new Promise((resolve) => {
-            char.registerNotify(resolve);
-            char.write(data);
+            char.registerNotifyWait(resolve).then(() => {
+                return char.writeWait(data);
+            });
         });
     }
     _analyzeResult(data) {
@@ -128,17 +137,26 @@ class REX_BTPM25V {
         };
     }
     _bitValue(buffer, location) {
-        const startLoc = { byte: Math.floor(location.start / 8), bit: location.start % 8 };
-        const endLoc = { byte: Math.floor(location.end / 8), bit: location.end % 8 };
+        const startLoc = {
+            byte: Math.floor(location.start / 8),
+            bit: location.start % 8,
+        };
+        const endLoc = {
+            byte: Math.floor(location.end / 8),
+            bit: location.end % 8,
+        };
         let result = 0;
-        result = buffer.readUInt8(endLoc.byte) & (~(0xff << (endLoc.bit + 1)) & 0xff);
+        result =
+            buffer.readUInt8(endLoc.byte) & (~(0xff << (endLoc.bit + 1)) & 0xff);
         if (startLoc.byte === endLoc.byte) {
             return result >> startLoc.bit;
         }
         for (let byte = endLoc.byte - 1; byte > startLoc.byte; byte--) {
             result = result << (8 + buffer.readInt8(byte));
         }
-        result = (result << (8 - startLoc.bit)) + (buffer.readUInt8(startLoc.byte) >> startLoc.bit);
+        result =
+            (result << (8 - startLoc.bit)) +
+                (buffer.readUInt8(startLoc.byte) >> startLoc.bit);
         return result;
     }
     _analyzeResultExt(data) {

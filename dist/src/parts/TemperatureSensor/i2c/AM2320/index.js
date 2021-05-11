@@ -6,20 +6,20 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class AM2320 {
     constructor() {
-        this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
+        this.keys = ['vcc', 'gnd', 'sda', 'scl', 'i2c'];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "AM2320",
+            name: 'AM2320',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.address = 0x5c;
-        this.params.pull = "5v";
-        this.params.mode = "master";
+        this.params.pull = '5v';
+        this.params.mode = 'master';
         this.params.clock = this.params.clock || 100 * 1000;
         this.i2c = obniz.getI2CWithConfig(this.params);
     }

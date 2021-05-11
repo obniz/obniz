@@ -48,10 +48,10 @@ class WSCommandLogicAnalyzer extends WSCommand_1.default {
             return;
         }
         const schemaData = [
-            { uri: "/request/logicAnalyzer/init", onValid: this.init },
-            { uri: "/request/logicAnalyzer/deinit", onValid: this.deinit },
+            { uri: '/request/logicAnalyzer/init', onValid: this.init },
+            { uri: '/request/logicAnalyzer/deinit', onValid: this.deinit },
         ];
-        const res = this.validateCommandSchema(schemaData, module, "logic_analyzer");
+        const res = this.validateCommandSchema(schemaData, module, 'logic_analyzer');
         if (res.valid === 0) {
             if (res.invalidButLike.length > 0) {
                 throw new Error(res.invalidButLike[0].message);

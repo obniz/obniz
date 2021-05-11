@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @module Parts.Keyestudio_TemperatureSensor
  */
-import Obniz from "../../../obniz";
-import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralAD from '../../../obniz/libs/io_peripherals/ad';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface Keyestudio_TemperatureSensorOptions {
     vcc?: number;
     signal: number;

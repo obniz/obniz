@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-import Obniz from "../../index";
-import { ComponentAbstract } from "../ComponentAbstact";
+import Obniz from '../../index';
+import { ComponentAbstract } from '../ComponentAbstact';
 export interface LogicAnalyzerOptions {
     /**
      * target pin no
@@ -109,6 +109,7 @@ export default class LogicAnalyzer extends ComponentAbstract {
      *   console.log(array);
      * }
      * ```
+     *
      * @param params
      */
     start(params: LogicAnalyzerOptions | LogicAnalyzerOptionsExt): void;

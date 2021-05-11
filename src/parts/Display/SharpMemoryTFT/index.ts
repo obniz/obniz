@@ -3,10 +3,12 @@
  * @module Parts.SharpMemoryTFT
  */
 
-import Obniz from "../../../obniz";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
+import PeripheralSPI from '../../../obniz/libs/io_peripherals/spi';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface SharpMemoryTFTOptions {
   vcc?: number;
@@ -26,7 +28,7 @@ export interface SharpMemoryTFTOptions {
 export default class SharpMemoryTFT implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "SharpMemoryTFT",
+      name: 'SharpMemoryTFT',
     };
   }
 
@@ -56,21 +58,21 @@ export default class SharpMemoryTFT implements ObnizPartsInterface {
 
   constructor() {
     this.keys = [
-      "vcc",
-      "gnd",
-      "vcc_a",
-      "gnd_a",
-      "sclk",
-      "mosi",
-      "cs",
-      "disp",
-      "extcomin",
-      "extmode",
-      "width",
-      "height",
+      'vcc',
+      'gnd',
+      'vcc_a',
+      'gnd_a',
+      'sclk',
+      'mosi',
+      'cs',
+      'disp',
+      'extcomin',
+      'extmode',
+      'width',
+      'height',
     ];
 
-    this.requiredKeys = ["sclk", "mosi", "cs", "width", "height"];
+    this.requiredKeys = ['sclk', 'mosi', 'cs', 'width', 'height'];
 
     this._canvas = null;
     this._reset();
@@ -90,13 +92,13 @@ export default class SharpMemoryTFT implements ObnizPartsInterface {
       this.io_extmode.output(false);
     }
 
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-    obniz.setVccGnd(this.params.vcc_a, this.params.gnd_a, "5v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    obniz.setVccGnd(this.params.vcc_a, this.params.gnd_a, '5v');
 
-    this.params.mode = "master";
+    this.params.mode = 'master';
     this.params.frequency = 1000 * 1000;
     this.params.clk = this.params.sclk;
-    this.params.drive = "5v"; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
+    this.params.drive = '5v'; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
     this.spi = this.obniz.getSpiWithConfig(this.params);
 
     this.width = this.params.width;
@@ -170,9 +172,11 @@ export default class SharpMemoryTFT implements ObnizPartsInterface {
 
   public warnCanvasAvailability() {
     if (this.obniz.isNode) {
-      throw new Error("MemoryDisplay require node-canvas to draw rich contents. see more detail on docs");
+      throw new Error(
+        'MemoryDisplay require node-canvas to draw rich contents. see more detail on docs'
+      );
     } else {
-      throw new Error("MemoryDisplay cant create canvas element to body");
+      throw new Error('MemoryDisplay cant create canvas element to body');
     }
   }
 
@@ -182,32 +186,32 @@ export default class SharpMemoryTFT implements ObnizPartsInterface {
     }
     if (this.obniz.isNode) {
       try {
-        const { createCanvas } = require("canvas");
+        const { createCanvas } = require('canvas');
         this._canvas = createCanvas(this.width, this.height);
       } catch (e) {
         // this.warnCanvasAvailability();
         return null;
       }
     } else {
-      const identifier = "MemoryDispCanvas-" + this.obniz.id;
+      const identifier = 'MemoryDispCanvas-' + this.obniz.id;
       let canvas: any = document.getElementById(identifier);
       if (!canvas) {
-        canvas = document.createElement("canvas");
-        canvas.setAttribute("id", identifier);
-        canvas.style.visibility = "hidden";
+        canvas = document.createElement('canvas');
+        canvas.setAttribute('id', identifier);
+        canvas.style.visibility = 'hidden';
         canvas.width = this.width;
         canvas.height = this.height;
-        canvas.style["-webkit-font-smoothing"] = "none";
-        const body = document.getElementsByTagName("body")[0];
+        canvas.style['-webkit-font-smoothing'] = 'none';
+        const body = document.getElementsByTagName('body')[0];
         body.appendChild(canvas);
       }
       this._canvas = canvas;
     }
-    const ctx: CanvasRenderingContext2D = this._canvas.getContext("2d");
-    ctx.fillStyle = "#FFF";
+    const ctx: CanvasRenderingContext2D = this._canvas.getContext('2d');
+    ctx.fillStyle = '#FFF';
     ctx.fillRect(0, 0, this.width, this.height);
-    ctx.fillStyle = "#000";
-    ctx.strokeStyle = "#000";
+    ctx.fillStyle = '#000';
+    ctx.strokeStyle = '#000';
     this._pos.x = 0;
     this._pos.y = 0;
     this.fontSize = 16;
@@ -217,19 +221,19 @@ export default class SharpMemoryTFT implements ObnizPartsInterface {
 
   public _ctx(): CanvasRenderingContext2D {
     const canvas = this._preparedCanvas();
-    return canvas.getContext("2d");
+    return canvas.getContext('2d');
   }
 
   public font(font: string, size: number) {
     const ctx = this._ctx();
-    if (typeof size !== "number") {
+    if (typeof size !== 'number') {
       size = 16;
     }
-    if (typeof font !== "string") {
-      font = "Arial";
+    if (typeof font !== 'string') {
+      font = 'Arial';
     }
     this.fontSize = size;
-    ctx.font = "" + size + "px " + font;
+    ctx.font = '' + size + 'px ' + font;
   }
 
   public clear() {
@@ -237,10 +241,10 @@ export default class SharpMemoryTFT implements ObnizPartsInterface {
     this._pos.x = 0;
     this._pos.y = 0;
     if (ctx) {
-      ctx.fillStyle = "#fff";
+      ctx.fillStyle = '#fff';
       ctx.fillRect(0, 0, this.width, this.height);
-      ctx.fillStyle = "#000";
-      ctx.strokeStyle = "#000";
+      ctx.fillStyle = '#000';
+      ctx.strokeStyle = '#000';
       this.draw(ctx);
     } else {
       this.sendClear();
@@ -249,10 +253,10 @@ export default class SharpMemoryTFT implements ObnizPartsInterface {
 
   public pos(x: number, y: number) {
     this._ctx(); // crete first
-    if (typeof x === "number") {
+    if (typeof x === 'number') {
       this._pos.x = x;
     }
-    if (typeof y === "number") {
+    if (typeof y === 'number') {
       this._pos.y = y;
     }
     return this._pos;
@@ -288,7 +292,13 @@ export default class SharpMemoryTFT implements ObnizPartsInterface {
     }
   }
 
-  public rect(x: number, y: number, width: number, height: number, mustFill: boolean) {
+  public rect(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    mustFill: boolean
+  ) {
     const ctx = this._ctx();
     if (ctx) {
       if (mustFill) {
@@ -339,7 +349,8 @@ export default class SharpMemoryTFT implements ObnizPartsInterface {
     const data = imageData.data;
 
     for (let i = 0; i < data.length; i += 4) {
-      const brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+      const brightness =
+        0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
       const index = Math.floor(i / 4);
       const line = Math.floor(index / this.width);
       const col = Math.floor((index - line * this.width) / 8);

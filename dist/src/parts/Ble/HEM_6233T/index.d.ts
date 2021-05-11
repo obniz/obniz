@@ -2,18 +2,18 @@
  * @packageDocumentation
  * @module Parts.HEM_6233T
  */
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface from "../../../obniz/ObnizPartsBleInterface";
-import { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
+import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface HEM_6233TOptions {
 }
-export declare type HEM_6233TMesurementStatus = "BodyMovementDetection" | "CuffFitDetection" | "IrregularPulseDetection" | "PulseRateRangeDetection" | "MeasurementPositionDetection";
+export declare type HEM_6233TMesurementStatus = 'BodyMovementDetection' | 'CuffFitDetection' | 'IrregularPulseDetection' | 'PulseRateRangeDetection' | 'MeasurementPositionDetection';
 export interface HEM_6233TResult {
     bloodPressure?: {
         systolic: number;
         diastolic: number;
         meanArterialPressure: number;
-        unit: "mmHg";
+        unit: 'mmHg';
     };
     date?: {
         year: number;

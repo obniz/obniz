@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-import Obniz from "../../index";
-import { ComponentAbstract } from "../ComponentAbstact";
+import Obniz from '../../index';
+import { ComponentAbstract } from '../ComponentAbstact';
 /**
  * @category Peripherals
  */
@@ -38,6 +38,7 @@ export default class PeripheralAD extends ComponentAbstract {
      *  console.log("changed to "+voltage+" v")
      * });
      * ```
+     *
      * @param callback  called when voltage gets changed.
      * @param callback.voltage  voltage
      */

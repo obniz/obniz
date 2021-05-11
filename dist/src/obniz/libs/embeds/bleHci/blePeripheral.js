@@ -29,7 +29,7 @@ class BlePeripheral {
             this.currentConnectedDeviceAddress = null;
             this.obnizBle.Obniz._runUserCreatedFunction(this.onconnectionupdates, {
                 address,
-                status: "disconnected",
+                status: 'disconnected',
                 reason: new ObnizError_1.ObnizOfflineError(),
             });
         }
@@ -89,6 +89,7 @@ class BlePeripheral {
     }
     /**
      * Get service by UUID
+     *
      * @param uuid
      */
     getService(uuid) {
@@ -105,6 +106,7 @@ class BlePeripheral {
     }
     /**
      * Terminate service by UUID
+     *
      * @param uuid
      */
     removeService(uuid) {

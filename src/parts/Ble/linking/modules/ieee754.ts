@@ -10,7 +10,7 @@
  * Released under the MIT license
  * Date: 2017-04-13
  * ---------------------------------------------------------------- */
-"use strict";
+'use strict';
 
 export default class LinkingIEEE754 {
   public static read(n: number, slen: number, elen: number, flen: number) {

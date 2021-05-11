@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from "./WSCommand";
+import WSCommand from './WSCommand';
 
 class WSCommandLogicAnalyzer extends WSCommand {
   public module: any;
@@ -58,16 +58,22 @@ class WSCommandLogicAnalyzer extends WSCommand {
       return;
     }
     const schemaData: any = [
-      { uri: "/request/logicAnalyzer/init", onValid: this.init },
-      { uri: "/request/logicAnalyzer/deinit", onValid: this.deinit },
+      { uri: '/request/logicAnalyzer/init', onValid: this.init },
+      { uri: '/request/logicAnalyzer/deinit', onValid: this.deinit },
     ];
-    const res: any = this.validateCommandSchema(schemaData, module, "logic_analyzer");
+    const res: any = this.validateCommandSchema(
+      schemaData,
+      module,
+      'logic_analyzer'
+    );
 
     if (res.valid === 0) {
       if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
       } else {
-        throw new this.WSCommandNotFoundError(`[logic_analyzer]unknown command`);
+        throw new this.WSCommandNotFoundError(
+          `[logic_analyzer]unknown command`
+        );
       }
     }
   }

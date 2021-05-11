@@ -47,7 +47,7 @@ class WSCommand {
             length_type = 2;
         }
         else {
-            throw new Error("too big payload");
+            throw new Error('too big payload');
         }
         let length_extra_bytse = length_type === 0 ? 0 : length_type === 1 ? 1 : 3;
         const header_length = 3 + length_extra_bytse;
@@ -55,7 +55,8 @@ class WSCommand {
         let index = 0;
         result[index++] = module & 0x7f;
         result[index++] = func;
-        result[index++] = (length_type << 6) | (payload_length >> (length_extra_bytse * 8));
+        result[index++] =
+            (length_type << 6) | (payload_length >> (length_extra_bytse * 8));
         while (length_extra_bytse > 0) {
             length_extra_bytse--;
             result[index++] = payload_length >> (length_extra_bytse * 8);
@@ -73,17 +74,17 @@ class WSCommand {
             return null;
         }
         if (buf.byteLength < 3) {
-            throw new Error("something wrong. buf less than 3");
+            throw new Error('something wrong. buf less than 3');
         }
         if (buf[0] & 0x80) {
-            throw new Error("reserved bit 1");
+            throw new Error('reserved bit 1');
         }
         const module = 0x7f & buf[0];
         const func = buf[1];
         const length_type = (buf[2] >> 6) & 0x3;
         const length_extra_bytse = length_type === 0 ? 0 : length_type === 1 ? 1 : 3;
         if (length_type === 4) {
-            throw new Error("invalid length");
+            throw new Error('invalid length');
         }
         let length = (buf[2] & 0x3f) << (length_extra_bytse * 8);
         let index = 3;
@@ -102,7 +103,7 @@ class WSCommand {
     }
     static compress(wscommands, json) {
         let ret = null;
-        function append(module, func, payload) {
+        const append = (module, func, payload) => {
             const frame = WSCommand.framed(module, func, payload);
             if (ret) {
                 const combined = new Uint8Array(ret.length + frame.length);
@@ -113,7 +114,7 @@ class WSCommand {
             else {
                 ret = frame;
             }
-        }
+        };
         for (const wscommand of wscommands) {
             wscommand.parsed = append;
             wscommand.parseFromJson(json);
@@ -168,7 +169,7 @@ class WSCommand {
         objToSend[module_key].error = obj;
     }
     isValidIO(io) {
-        return typeof io === "number" && 0 <= io && io <= 11;
+        return typeof io === 'number' && 0 <= io && io <= 11;
     }
     getSchema(uri) {
         // chack isFirst
@@ -227,17 +228,18 @@ class WSCommand {
         const messages = [];
         for (const error of validateError.errors) {
             if (error.code === WSSchema_1.default.errorCodes.INVALID_TYPE) {
-                if (error.params.type === "object" || error.params.expected === "object") {
+                if (error.params.type === 'object' ||
+                    error.params.expected === 'object') {
                     return false;
                 }
             }
             else if (badErrorCodes.includes(error.code)) {
                 return false;
             }
-            const path = rootPath + (error.dataPath || "").replace(/\//g, ".");
+            const path = rootPath + (error.dataPath || '').replace(/\//g, '.');
             messages.push(`[${path}]${error.message}`);
         }
-        return messages.join(";");
+        return messages.join(';');
     }
     filter(commandUri, json) {
         const schema = this.getSchema(commandUri);
@@ -251,22 +253,22 @@ class WSCommand {
         if (json === undefined) {
             return schema.default;
         }
-        if (schema.type === "string" ||
-            schema.type === "integer" ||
-            schema.type === "boolean" ||
-            schema.type === "number" ||
-            schema.type === "null" ||
-            schema.filter === "pass_all") {
+        if (schema.type === 'string' ||
+            schema.type === 'integer' ||
+            schema.type === 'boolean' ||
+            schema.type === 'number' ||
+            schema.type === 'null' ||
+            schema.filter === 'pass_all') {
             return json;
         }
-        if (schema.type === "array") {
+        if (schema.type === 'array') {
             const results = [];
             for (const key in json) {
                 results[key] = this._filterSchema(schema.items, json[key]);
             }
             return results;
         }
-        if (schema.type === "object") {
+        if (schema.type === 'object') {
             const results = {};
             for (const key in schema.properties) {
                 results[key] = this._filterSchema(schema.properties[key], json[key]);
@@ -281,10 +283,10 @@ class WSCommand {
             }
             return results;
         }
-        throw Error("unknown json schema type");
+        throw Error('unknown json schema type');
     }
 }
 exports.default = WSCommand;
-// tslint:disable:max-classes-per-file
+/* eslint max-classes-per-file: 0 */
 class WSCommandNotFoundError extends Error {
 }

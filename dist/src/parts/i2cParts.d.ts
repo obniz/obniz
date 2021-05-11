@@ -2,10 +2,10 @@
  * @packageDocumentation
  * @module Parts
  */
-import Obniz from "../obniz";
-import { DriveType, PullType } from "../obniz/libs/io_peripherals/common";
-import PeripheralI2C from "../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface from "../obniz/ObnizPartsInterface";
+import Obniz from '../obniz';
+import { DriveType, PullType } from '../obniz/libs/io_peripherals/common';
+import PeripheralI2C from '../obniz/libs/io_peripherals/i2c';
+import ObnizPartsInterface from '../obniz/ObnizPartsInterface';
 export interface Xyz {
     x: number;
     y: number;

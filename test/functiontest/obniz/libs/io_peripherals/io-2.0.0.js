@@ -1,24 +1,22 @@
 let chai = require('chai');
 let expect = chai.expect;
 let testUtil = require('../../../testUtil.js');
-chai.use(require('chai-like'));
-chai.use(testUtil.obnizAssert);
 
-describe('obniz.libs.io', function() {
-  beforeEach(function(done) {
-    return testUtil.setupObnizPromise(this, done, { __firmware_ver: '2.0.0' });
+describe('obniz.libs.io', function () {
+  beforeEach(async function () {
+    await testUtil.setupObnizPromise(this, null, { __firmware_ver: '2.0.0' });
   });
 
-  afterEach(function(done) {
-    return testUtil.releaseObnizePromise(this, done);
+  afterEach(async function () {
+    await testUtil.releaseObnizPromise(this);
   });
 
-  it('ioAnimation 2_0_0 registrate', function() {
+  it('ioAnimation 2_0_0 registrate', function () {
     let obniz = this.obniz;
     this.obniz.io.animation('animation-1', 'registrate', [
       {
         duration: 10,
-        state: function(index) {
+        state: function (index) {
           // index = 0
           obniz.io0.output(false);
           obniz.io1.output(true);
@@ -26,7 +24,7 @@ describe('obniz.libs.io', function() {
       },
       {
         duration: 10,
-        state: function(index) {
+        state: function (index) {
           // index = 1
           obniz.io0.output(true);
           obniz.io1.output(false);
@@ -57,7 +55,7 @@ describe('obniz.libs.io', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('ioAnimation 2_0_0 countdown', function() {
+  it('ioAnimation 2_0_0 countdown', function () {
     let obniz = this.obniz;
     this.obniz.io.animation(
       'animation-1',
@@ -65,7 +63,7 @@ describe('obniz.libs.io', function() {
       [
         {
           duration: 10,
-          state: function(index) {
+          state: function (index) {
             // index = 0
             obniz.io0.output(false);
             obniz.io1.output(true);
@@ -73,7 +71,7 @@ describe('obniz.libs.io', function() {
         },
         {
           duration: 10,
-          state: function(index) {
+          state: function (index) {
             // index = 1
             obniz.io0.output(true);
             obniz.io1.output(false);

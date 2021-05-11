@@ -11,7 +11,7 @@ const AnalogTemperatureSensor_1 = __importDefault(require("../AnalogTemperatureS
 class S8100B extends AnalogTemperatureSensor_1.default {
     static info() {
         return {
-            name: "S8100B",
+            name: 'S8100B',
         };
     }
     calc(voltage) {

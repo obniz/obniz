@@ -23,8 +23,8 @@ class WSCommandWiFi extends WSCommand_1.default {
         if (module === undefined) {
             return;
         }
-        const schemaData = [{ uri: "/request/wifi/scan", onValid: this.scan }];
-        const res = this.validateCommandSchema(schemaData, module, "wifi");
+        const schemaData = [{ uri: '/request/wifi/scan', onValid: this.scan }];
+        const res = this.validateCommandSchema(schemaData, module, 'wifi');
         if (res.valid === 0) {
             if (res.invalidButLike.length > 0) {
                 throw new Error(res.invalidButLike[0].message);
@@ -46,8 +46,8 @@ class WSCommandWiFi extends WSCommand_1.default {
                 })(ScanState || (ScanState = {}));
                 let mode = ScanState.SCAN_SSID_LEN;
                 let tmpIndex = 0;
-                let ssid = "";
-                let macAddress = "";
+                let ssid = '';
+                let macAddress = '';
                 let rssi = 0;
                 const scanArray = [];
                 for (let i = 0; i < payload.length; i++) {
@@ -79,8 +79,8 @@ class WSCommandWiFi extends WSCommand_1.default {
                                 macAddress,
                                 rssi,
                             });
-                            ssid = "";
-                            macAddress = "";
+                            ssid = '';
+                            macAddress = '';
                             rssi = 0;
                             break;
                     }

@@ -15,7 +15,7 @@ class Keyestudio_HT16K33 extends MatrixLED_HT16K33_1.default {
     }
     static info() {
         return {
-            name: "Keyestudio_HT16K33",
+            name: 'Keyestudio_HT16K33',
         };
     }
     wired(obniz) {

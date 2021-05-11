@@ -8,11 +8,11 @@ class Grove_GPS {
     constructor() {
         this._latitude = 0;
         this._longitude = 0;
-        this.keys = ["tx", "rx", "vcc", "gnd", "grove"];
+        this.keys = ['tx', 'rx', 'vcc', 'gnd', 'grove'];
         this.requiredKeys = [];
         this.ioKeys = this.keys;
-        this.displayName = "gps";
-        this.displayIoNames = { tx: "tx", rx: "rx" };
+        this.displayName = 'gps';
+        this.displayIoNames = { tx: 'tx', rx: 'rx' };
     }
     // -------------------
     get latitude() {
@@ -23,16 +23,16 @@ class Grove_GPS {
     }
     static info() {
         return {
-            name: "Grove_GPS",
+            name: 'Grove_GPS',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
         if (this.params.grove) {
-            this.uart = this.params.grove.getUart(9600, "5v");
+            this.uart = this.params.grove.getUart(9600, '5v');
         }
         else {
-            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
             this.uart = obniz.getFreeUart();
             this.uart.start({
                 tx: this.params.tx,
@@ -52,7 +52,7 @@ class Grove_GPS {
             GPVTG: 0x0010,
             GPZDA: 0x0020,
         };
-        this.gpsInfo.status = "V";
+        this.gpsInfo.status = 'V';
         this.gpsInfo.sentences = new Set(); // Set specifying sentence of MNEA from which data have been obtained
         this.gpsInfo.satelliteInfo = {
             satellites: [],
@@ -68,12 +68,12 @@ class Grove_GPS {
                 this.uart.received.splice(0, pos + 1);
                 let str = this.uart.tryConvertString(results);
                 if (str === null) {
-                    str = "";
+                    str = '';
                 }
                 return str;
             }
         }
-        return "";
+        return '';
     }
     getEditedData() {
         let n;
@@ -83,24 +83,24 @@ class Grove_GPS {
         this.editedData.enable = false;
         this.editedData.GPGSV = new Array(4);
         while (sentence.length > 0) {
-            const part = sentence.split(",");
-            if (sentence.slice(-4, -3) !== ",") {
+            const part = sentence.split(',');
+            if (sentence.slice(-4, -3) !== ',') {
                 const st = part[part.length - 1].slice(0, -3);
                 part.push(part[part.length - 1].slice(-3));
                 part[part.length - 2] = st;
             }
-            this.editedData.sentence = part.join(",");
+            this.editedData.sentence = part.join(',');
             switch (part[0]) {
-                case "$GPGGA":
+                case '$GPGGA':
                     this.editedData.GPGGA = part;
                     break;
-                case "$GPGLL":
+                case '$GPGLL':
                     this.editedData.GPGLL = part;
                     break;
-                case "$GPGSA":
+                case '$GPGSA':
                     this.editedData.GPGSA = part;
                     break;
-                case "$GPGSV":
+                case '$GPGSV':
                     n = Number(part[2]);
                     if (n > this.editedData.GPGSV.length) {
                         while (n > this.editedData.GPGSV.length) {
@@ -109,27 +109,27 @@ class Grove_GPS {
                     }
                     this.editedData.GPGSV[n - 1] = part;
                     break;
-                case "$GPRMC":
+                case '$GPRMC':
                     this.editedData.GPRMC = part;
                     break;
-                case "$GPVTG":
+                case '$GPVTG':
                     this.editedData.GPVTG = part;
                     break;
-                case "$GPZDA":
+                case '$GPZDA':
                     this.editedData.GPZDA = part;
                     utc =
                         part[4] +
-                            "/" +
+                            '/' +
                             part[3] +
-                            "/" +
+                            '/' +
                             part[2] +
-                            " " +
+                            ' ' +
                             part[1].substring(0, 2) +
-                            ":" +
+                            ':' +
                             part[1].substring(2, 4) +
-                            ":" +
+                            ':' +
                             part[1].substring(4, 6) +
-                            " +00:00";
+                            ' +00:00';
                     this.editedData.timestamp = new Date(utc);
                     break;
                 default:
@@ -145,7 +145,7 @@ class Grove_GPS {
         const NMEA_SATINSENTENCE = 4;
         const NMEA_MAXSAT = 12;
         editedData = editedData || this.getEditedData();
-        this.gpsInfo.status = "V";
+        this.gpsInfo.status = 'V';
         if (editedData.enable) {
             if (editedData.GPGGA) {
                 const gga = editedData.GPGGA;
@@ -153,9 +153,9 @@ class Grove_GPS {
                 this.gpsInfo.hdop = parseFloat(gga[8]); // Horizontal Dilution of Precision (HDOP)
                 this.gpsInfo.altitude = parseFloat(gga[9]); // Antenna Altitude meters above mean sea level
                 const latitude = this.nmea2dd(parseFloat(gga[2]));
-                this.gpsInfo.latitude = gga[3] === "N" ? latitude : -latitude;
+                this.gpsInfo.latitude = gga[3] === 'N' ? latitude : -latitude;
                 const longitude = this.nmea2dd(parseFloat(gga[4]));
-                this.gpsInfo.longitude = gga[5] === "E" ? longitude : -longitude;
+                this.gpsInfo.longitude = gga[5] === 'E' ? longitude : -longitude;
                 this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPGGA);
             }
             if (editedData.GPGSV) {
@@ -170,7 +170,10 @@ class Grove_GPS {
                         }
                         this.gpsInfo.satelliteInfo.inView = sat_count;
                         let nsat = (pack_index - 1) * NMEA_SATINSENTENCE;
-                        nsat = nsat + NMEA_SATINSENTENCE > sat_count ? sat_count - nsat : NMEA_SATINSENTENCE;
+                        nsat =
+                            nsat + NMEA_SATINSENTENCE > sat_count
+                                ? sat_count - nsat
+                                : NMEA_SATINSENTENCE;
                         for (let isat = 0; isat < nsat; ++isat) {
                             const isi = (pack_index - 1) * NMEA_SATINSENTENCE + isat;
                             if (this.gpsInfo.satelliteInfo.satellites.length <= isi) {
@@ -212,9 +215,9 @@ class Grove_GPS {
                 const rmc = editedData.GPRMC;
                 this.gpsInfo.status = rmc[2]; // Status Active or Void
                 const latitude = this.nmea2dd(parseFloat(rmc[3]));
-                this.gpsInfo.latitude = rmc[4] === "N" ? latitude : -latitude;
+                this.gpsInfo.latitude = rmc[4] === 'N' ? latitude : -latitude;
                 const longitude = this.nmea2dd(parseFloat(rmc[5]));
-                this.gpsInfo.longitude = rmc[6] === "E" ? longitude : -longitude;
+                this.gpsInfo.longitude = rmc[6] === 'E' ? longitude : -longitude;
                 const NMEA_TUD_KNOTS = 1.852; // 1knot=1.852km/h
                 this.gpsInfo.speed = parseFloat(rmc[7]) * NMEA_TUD_KNOTS; // unit: km/h
                 this.gpsInfo.direction = rmc[8];
@@ -236,15 +239,15 @@ class Grove_GPS {
     }
     _mneaTo(format, value) {
         let result = this.nmea2dd(value);
-        if (typeof format === "string") {
+        if (typeof format === 'string') {
             switch (format.toUpperCase()) {
-                case "DMS":
+                case 'DMS':
                     result = this.nmea2dms(value);
                     break;
-                case "DM":
+                case 'DM':
                     result = this.nmea2dm(value);
                     break;
-                case "S":
+                case 'S':
                     result = this.nmea2s(value);
                     break;
                 default:
@@ -260,37 +263,37 @@ class Grove_GPS {
     }
     status2string(status) {
         status = status || this.status;
-        if (status === "A") {
-            return "Active";
+        if (status === 'A') {
+            return 'Active';
         }
-        if (status === "V") {
-            return "Void";
+        if (status === 'V') {
+            return 'Void';
         }
         return status;
     }
     fixMode2string(fixMode) {
         fixMode = fixMode || this.fixMode;
         if (fixMode === 1) {
-            return "Fix not available";
+            return 'Fix not available';
         }
         if (fixMode === 2) {
-            return "2D";
+            return '2D';
         }
         if (fixMode === 3) {
-            return "3D";
+            return '3D';
         }
         return fixMode;
     }
     gpsQuality2string(gpsQuality) {
         gpsQuality = gpsQuality || this.gpsQuality;
         if (gpsQuality === 0) {
-            return "Invalid";
+            return 'Invalid';
         }
         if (gpsQuality === 1) {
-            return "GPS fix";
+            return 'GPS fix';
         }
         if (gpsQuality === 2) {
-            return "DGPS fix";
+            return 'DGPS fix';
         }
         return gpsQuality;
     }
@@ -301,14 +304,14 @@ class Grove_GPS {
         const d = Math.floor(val / 100);
         const m = Math.floor((val / 100.0 - d) * 100.0);
         const s = ((val / 100.0 - d) * 100.0 - m) * 60;
-        return d + "°" + m + "'" + s.toFixed(1) + '"';
+        return d + '°' + m + "'" + s.toFixed(1) + '"';
     }
     nmea2dm(val) {
         // NMEA format to DM format string (999° 99.9999')
         val = parseFloat(val);
         const d = Math.floor(val / 100.0);
         const m = (val / 100.0 - d) * 100.0;
-        return d + "°" + m.toFixed(4) + "'";
+        return d + '°' + m.toFixed(4) + "'";
     }
     nmea2dd(val) {
         // NMEA format to DD format decimal (999.999999)

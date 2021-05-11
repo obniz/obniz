@@ -2,10 +2,12 @@
  * @packageDocumentation
  * @module Parts.Keyestudio_TemperatureSensor
  */
-import Obniz from "../../../obniz";
-import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
+import Obniz from '../../../obniz';
+import PeripheralAD from '../../../obniz/libs/io_peripherals/ad';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface Keyestudio_TemperatureSensorOptions {
   vcc?: number;
@@ -13,10 +15,11 @@ export interface Keyestudio_TemperatureSensorOptions {
   gnd?: number;
 }
 
-export default class Keyestudio_TemperatureSensor implements ObnizPartsInterface {
+export default class Keyestudio_TemperatureSensor
+  implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "Keyestudio_TemperatureSensor",
+      name: 'Keyestudio_TemperatureSensor',
     };
   }
 
@@ -30,22 +33,21 @@ export default class Keyestudio_TemperatureSensor implements ObnizPartsInterface
 
   private temp = 0;
 
-  private temperature: number = 0;
+  private temperature = 0;
   private tempArray: number[] = new Array(100);
-  private sum: number = 0;
-  private init_count: number = 0;
-  private count: number = 0;
+  private sum = 0;
+  private init_count = 0;
+  private count = 0;
 
   constructor() {
-    this.keys = ["vcc", "gnd", "signal"];
-    this.requiredKeys = ["signal"];
-    this.drive = "5v";
+    this.keys = ['vcc', 'gnd', 'signal'];
+    this.requiredKeys = ['signal'];
+    this.drive = '5v';
   }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
     obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
-    obniz.getIO(this.params.signal).pull("0v");
     this.ad = obniz.getAD(this.params.signal);
 
     this.ad.start((voltage: any) => {

@@ -3,18 +3,20 @@
  * @module Parts.MCP4725
  */
 
-import Obniz from "../../../obniz";
-import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
+import Obniz from '../../../obniz';
+import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-import { I2cPartsAbstractOptions } from "../../i2cParts";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
+import { I2cPartsAbstractOptions } from '../../i2cParts';
 
 export interface MCP4725Options extends I2cPartsAbstractOptions {}
 
 export default class MCP4725 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "MCP4725",
+      name: 'MCP4725',
     };
   }
 
@@ -34,17 +36,17 @@ export default class MCP4725 implements ObnizPartsInterface {
   private _vcc_voltage = 5.0;
 
   constructor() {
-    this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
+    this.keys = ['vcc', 'gnd', 'sda', 'scl', 'i2c'];
     this.requiredKeys = [];
     this.address = 0x60;
   }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     this.params.clock = 400000;
-    this.params.pull = "5v";
-    this.params.mode = "master";
+    this.params.pull = '5v';
+    this.params.mode = 'master';
     this.i2c = this.obniz.getI2CWithConfig(this.params);
     this.obniz.wait(100);
   }

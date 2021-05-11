@@ -3,9 +3,11 @@
  * @module Parts.WS2811
  */
 
-import Obniz from "../../../obniz";
-import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralSPI from '../../../obniz/libs/io_peripherals/spi';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface WS2811Options {
   gnd?: number;
@@ -16,7 +18,7 @@ export interface WS2811Options {
 export default class WS2811 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "WS2811",
+      name: 'WS2811',
     };
   }
 
@@ -103,19 +105,19 @@ export default class WS2811 implements ObnizPartsInterface {
   protected obniz!: Obniz;
 
   constructor() {
-    this.keys = ["din", "vcc", "gnd"];
-    this.requiredKeys = ["din"];
+    this.keys = ['din', 'vcc', 'gnd'];
+    this.requiredKeys = ['din'];
   }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
 
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
-    this.params.mode = "master";
+    this.params.mode = 'master';
     this.params.frequency = 2 * 1000 * 1000;
     this.params.mosi = this.params.din;
-    this.params.drive = "5v"; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
+    this.params.drive = '5v'; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
     this.spi = this.obniz.getSpiWithConfig(this.params);
   }
 
@@ -127,20 +129,24 @@ export default class WS2811 implements ObnizPartsInterface {
     this.spi.write(WS2811._generateHsvColor(hue, saturation, value));
   }
 
-  public rgbs(array: Array<[number, number, number]>) {
+  public rgbs(array: [number, number, number][]) {
     let bytes: number[] = [];
     for (let i = 0; i < array.length; i++) {
       const oneArray: number[] = array[i];
-      bytes = bytes.concat(WS2811._generateColor(oneArray[0], oneArray[1], oneArray[2]));
+      bytes = bytes.concat(
+        WS2811._generateColor(oneArray[0], oneArray[1], oneArray[2])
+      );
     }
     this.spi.write(bytes);
   }
 
-  public hsvs(array: Array<[number, number, number]>) {
+  public hsvs(array: [number, number, number][]) {
     let bytes: number[] = [];
     for (let i = 0; i < array.length; i++) {
       const oneArray = array[i];
-      bytes = bytes.concat(WS2811._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]));
+      bytes = bytes.concat(
+        WS2811._generateHsvColor(oneArray[0], oneArray[1], oneArray[2])
+      );
     }
     this.spi.write(bytes);
   }

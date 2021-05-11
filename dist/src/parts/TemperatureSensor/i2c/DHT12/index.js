@@ -14,13 +14,13 @@ class DHT12 extends i2cParts_1.default {
         this.i2cinfo = {
             address: 0x5c,
             clock: 100000,
-            voltage: "3v",
-            pull: "3v",
+            voltage: '3v',
+            pull: '3v',
         };
     }
     static info() {
         return {
-            name: "DHT12",
+            name: 'DHT12',
         };
     }
     i2cInfo() {

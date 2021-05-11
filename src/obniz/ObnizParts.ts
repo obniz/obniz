@@ -3,11 +3,11 @@
  * @module ObnizCore
  */
 
-import ObnizUtil from "./libs/utils/util";
-import ObnizConnection from "./ObnizConnection";
-import { ObnizOptions } from "./ObnizOptions";
-import ObnizPartsInterface from "./ObnizPartsInterface";
-import { PartsList } from "./ObnizPartsList";
+import ObnizUtil from './libs/utils/util';
+import ObnizConnection from './ObnizConnection';
+import { ObnizOptions } from './ObnizOptions';
+import ObnizPartsInterface from './ObnizPartsInterface';
+import { PartsList } from './ObnizPartsList';
 
 /**
  * @ignore
@@ -25,19 +25,25 @@ export default abstract class ObnizParts extends ObnizConnection {
 
   /**
    * Register Parts class
+   *
    * @param arg0 Parts class
    * @param arg1 param for parts
    */
   public static PartsRegistrate(arg0: typeof ObnizPartsInterface, arg1?: any) {
-    if (arg0 && typeof arg0.info === "function" && typeof arg0.info().name === "string") {
+    if (
+      arg0 &&
+      typeof arg0.info === 'function' &&
+      typeof arg0.info().name === 'string'
+    ) {
       _parts[arg0.info().name] = arg0;
-    } else if (typeof arg0 === "string" && typeof arg1 === "object") {
+    } else if (typeof arg0 === 'string' && typeof arg1 === 'object') {
       _parts[arg0] = arg1;
     }
   }
 
   /**
    * Get parts class.
+   *
    * @param name string
    * @constructor
    */
@@ -54,18 +60,20 @@ export default abstract class ObnizParts extends ObnizConnection {
 
   /**
    * Check the param is valid io pin no.
+   *
    * @param io
    */
   public isValidIO(io: any): boolean {
-    return typeof io === "number" && (this as any)["io" + io] !== null;
+    return typeof io === 'number' && (this as any)['io' + io] !== null;
   }
 
   /**
    * Check the param is valid ad pin no.
+   *
    * @param ad
    */
   public isValidAD(ad: any): boolean {
-    return typeof ad === "number" && (this as any)["ad" + ad] !== null;
+    return typeof ad === 'number' && (this as any)['ad' + ad] !== null;
   }
 
   /**
@@ -74,10 +82,16 @@ export default abstract class ObnizParts extends ObnizConnection {
    * @param partsName
    * @param options
    */
-  public wired<K extends keyof PartsList>(partsName: K, options?: PartsList[K]["options"]): PartsList[K]["class"] {
+  public wired<K extends keyof PartsList>(
+    partsName: K,
+    options?: PartsList[K]['options']
+  ): PartsList[K]['class'] {
+    if (this.connectionState !== 'connected') {
+      throw new Error('obniz.wired can only be used after connection');
+    }
     const Parts: any = ObnizParts.getPartsClass(partsName);
     if (!Parts) {
-      throw new Error("No such a parts [" + partsName + "] found");
+      throw new Error('No such a parts [' + partsName + '] found');
     }
     const parts = new Parts();
     const args: any = Array.from(arguments);
@@ -90,7 +104,9 @@ export default abstract class ObnizParts extends ObnizConnection {
       if (parts.requiredKeys) {
         const err: any = ObnizUtil._requiredKeys(args[1], parts.requiredKeys);
         if (err) {
-          throw new Error(partsName + " wired param '" + err + "' required, but not found ");
+          throw new Error(
+            partsName + " wired param '" + err + "' required, but not found "
+          );
         }
       }
       parts.params = ObnizUtil._keyFilter(args[1], parts.keys);

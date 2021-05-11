@@ -1,4 +1,4 @@
-import WSCommand from "./WSCommand";
+import WSCommand from './WSCommand';
 declare class WSCommandBle extends WSCommand {
     module: any;
     uuidLength: any;

@@ -13,4 +13,4 @@ properties:
       message:
         type: string
         description: "io warning"
-        example : "Heavy output"
+        example: "Heavy output"

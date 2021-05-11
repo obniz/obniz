@@ -21,10 +21,10 @@ class Mgmt {
         this._hci = hciProtocol;
     }
     nSocketData(data) {
-        debug("on data ->" + data.toString("hex"));
+        debug('on data ->' + data.toString('hex'));
     }
     nSocketError(error) {
-        debug("on error ->" + error.message);
+        debug('on error ->' + error.message);
     }
     ddLongTermKey(address, addressType, authenticated, master, ediv, rand, key) {
         const ltkInfo = Buffer.alloc(LTK_INFO_SIZE);

@@ -3,9 +3,11 @@
  * @module Parts.YG1006
  */
 
-import Obniz from "../../../obniz";
-import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralAD from '../../../obniz/libs/io_peripherals/ad';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface YG1006Options {
   signal: number;
@@ -16,7 +18,7 @@ export interface YG1006Options {
 export default class YG1006 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "YG1006",
+      name: 'YG1006',
     };
   }
 
@@ -31,13 +33,13 @@ export default class YG1006 implements ObnizPartsInterface {
   private signal!: PeripheralAD;
 
   constructor() {
-    this.keys = ["signal", "vcc", "gnd"];
-    this.requiredKeys = ["signal"];
+    this.keys = ['signal', 'vcc', 'gnd'];
+    this.requiredKeys = ['signal'];
   }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     this.signal = this.obniz.getAD(this.params.signal);
     this.signal.start((value: number) => {
       if (this.onchange) {

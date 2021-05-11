@@ -1,7 +1,7 @@
-import WSCommand from "./WSCommand";
+import WSCommand from './WSCommand';
 export default class WSCommandDirective extends WSCommand {
     availableCommands: any;
-    protected module: number;
+    module: number;
     protected _CommandRegistrate: number;
     protected _CommandPause: number;
     protected _CommandResume: number;

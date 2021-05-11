@@ -6,12 +6,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class WS2811 {
     constructor() {
-        this.keys = ["din", "vcc", "gnd"];
-        this.requiredKeys = ["din"];
+        this.keys = ['din', 'vcc', 'gnd'];
+        this.requiredKeys = ['din'];
     }
     static info() {
         return {
-            name: "WS2811",
+            name: 'WS2811',
         };
     }
     static _generateFromByte(val) {
@@ -84,11 +84,11 @@ class WS2811 {
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.params.mode = "master";
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+        this.params.mode = 'master';
         this.params.frequency = 2 * 1000 * 1000;
         this.params.mosi = this.params.din;
-        this.params.drive = "5v"; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
+        this.params.drive = '5v'; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
         this.spi = this.obniz.getSpiWithConfig(this.params);
     }
     rgb(red, green, blue) {

@@ -2,19 +2,17 @@ let chai = require('chai');
 let expect = chai.expect;
 
 let testUtil = require('../../testUtil.js');
-chai.use(require('chai-like'));
-chai.use(testUtil.obnizAssert);
 
-describe('obniz.libs.system', function() {
-  beforeEach(function(done) {
-    return testUtil.setupObnizPromise(this, done);
+describe('obniz.libs.system', function () {
+  beforeEach(async function () {
+    await testUtil.setupObnizPromise(this);
   });
 
-  afterEach(function(done) {
-    return testUtil.releaseObnizePromise(this, done);
+  afterEach(async function () {
+    await testUtil.releaseObnizPromise(this);
   });
 
-  it('ping', function() {
+  it('ping', function () {
     let unixtime = 1522840296917;
     let rand = 4553670;
     this.obniz.pingWait(unixtime, rand);
@@ -28,7 +26,7 @@ describe('obniz.libs.system', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('pingPong', function() {
+  it('pingPong', function () {
     let unixtime = 1522840296917;
     let rand = 4553670;
     let resolved = false;
@@ -59,37 +57,37 @@ describe('obniz.libs.system', function() {
     return promise;
   });
 
-  it('keepWrokingAtOffline', function() {
+  it('keepWrokingAtOffline', function () {
     this.obniz.keepWorkingAtOffline(true);
     expect(this.obniz).send([{ system: { keep_working_at_offline: true } }]);
     expect(this.obniz).to.be.finished;
   });
 
-  it('reboot', function() {
+  it('reboot', function () {
     this.obniz.reboot(true);
     expect(this.obniz).send([{ system: { reboot: true } }]);
     expect(this.obniz).to.be.finished;
   });
 
-  it('reset', function() {
+  it('reset', function () {
     this.obniz.reset(true);
     expect(this.obniz).send([{ system: { reset: true } }]);
     expect(this.obniz).to.be.finished;
   });
 
-  it('selfCheck', function() {
+  it('selfCheck', function () {
     this.obniz.selfCheck(true);
     expect(this.obniz).send([{ system: { self_check: true } }]);
     expect(this.obniz).to.be.finished;
   });
 
-  it('wait', function() {
+  it('wait', function () {
     this.obniz.wait(500);
     expect(this.obniz).send([{ system: { wait: 500 } }]);
     expect(this.obniz).to.be.finished;
   });
 
-  it('wait delay', function() {
+  it('wait delay', function () {
     function wait(ms) {
       return new Promise((resolve, reject) => {
         setTimeout(reject, ms);
@@ -101,7 +99,7 @@ describe('obniz.libs.system', function() {
     return promise;
   });
 
-  it('wait delay2', function() {
+  it('wait delay2', function () {
     function wait(ms) {
       return new Promise((resolve, reject) => {
         setTimeout(resolve, ms);
@@ -118,7 +116,7 @@ describe('obniz.libs.system', function() {
     return promise;
   });
 
-  it('sleep', function() {
+  it('sleep', function () {
     let date = new Date();
     date.setHours(date.getHours() + 1, 0, 0, 0);
     let now = new Date();
@@ -129,7 +127,7 @@ describe('obniz.libs.system', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('sleep2', function() {
+  it('sleep2', function () {
     let date = new Date();
     date.setMonth(date.getMonth() + 1);
     let now = new Date();
@@ -140,25 +138,25 @@ describe('obniz.libs.system', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('sleepSeconds', function() {
+  it('sleepSeconds', function () {
     this.obniz.sleepSeconds(300);
     expect(this.obniz).send([{ system: { sleep_seconds: 300 } }]);
     expect(this.obniz).to.be.finished;
   });
 
-  it('sleepMinute', function() {
+  it('sleepMinute', function () {
     this.obniz.sleepMinute(5);
     expect(this.obniz).send([{ system: { sleep_minute: 5 } }]);
     expect(this.obniz).to.be.finished;
   });
 
-  it('sleepIoTrigger', function() {
+  it('sleepIoTrigger', function () {
     this.obniz.sleepIoTrigger(true);
     expect(this.obniz).send([{ system: { sleep_io_trigger: true } }]);
     expect(this.obniz).to.be.finished;
   });
 
-  it('closeAndReconnect', async function() {
+  it('closeAndReconnect', async function () {
     const before = this.obniz.io0;
     before.output(true);
     expect(before.value).to.be.true;

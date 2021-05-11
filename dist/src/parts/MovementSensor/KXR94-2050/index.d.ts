@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module Parts.KXR94-2050
  */
-import Obniz from "../../../obniz";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface KXR94_2050Options {
     x: number;
     y: number;

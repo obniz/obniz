@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-import Obniz from "../../index";
-import { ComponentAbstract } from "../ComponentAbstact";
+import Obniz from '../../index';
+import { ComponentAbstract } from '../ComponentAbstact';
 export interface ObnizMeasureResult {
     edge: boolean;
     timing: number;
@@ -21,9 +21,10 @@ export interface ObnizMeasureOptions {
     io_pulse: number;
     /**
      * "positive" or "negative"
+     *
      * @category Pulse generation
      */
-    pulse: "positive" | "negative";
+    pulse: 'positive' | 'negative';
     /**
      * pulse duration in values between ms. 0.001 to 1000.
      *
@@ -32,16 +33,19 @@ export interface ObnizMeasureOptions {
     pulse_width: number;
     /**
      * io for measuring response. Please use with 'measure_edges' params.
+     *
      * @category Response measurement
      */
     io_echo: number;
     /**
      * maximum number of edges to detect. 1 to 4.
+     *
      * @category Response measurement
      */
     measure_edges: number;
     /**
      * timeout in ms, and default is 1000. 0.001 to 1000.
+     *
      * @category Response measurement
      */
     timeout?: number;
@@ -71,6 +75,7 @@ export interface ObnizMeasureOptions {
 }
 /**
  * The measure module provides hardware level measurement.
+ *
  * @category Measurement
  */
 export default class ObnizMeasure extends ComponentAbstract {

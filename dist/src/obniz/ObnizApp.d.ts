@@ -33,7 +33,7 @@ export default class ObnizApp {
      *
      */
     static done(arg: {
-        status: "success" | "error";
+        status: 'success' | 'error';
         text: string;
     }): void;
     /**

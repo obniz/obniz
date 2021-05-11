@@ -2,10 +2,10 @@
  * @packageDocumentation
  * @module Parts.UA1200BLE
  */
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
-import BleBatteryService from "../abstract/services/batteryService";
-import BleGenericAccess from "../abstract/services/genericAccess";
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
+import BleBatteryService from '../abstract/services/batteryService';
+import BleGenericAccess from '../abstract/services/genericAccess';
 export interface UA1200BLEOptions {
 }
 export interface UA1200BLEResult {
@@ -15,6 +15,11 @@ export interface UA1200BLEResult {
     SystolicPressure_kPa?: number;
     DiastolicPressure_kPa?: number;
     MeanArterialPressure_kPa?: number;
+    bodyMoved?: boolean;
+    cuffFitLoose?: boolean;
+    irregularPulseDetected?: boolean;
+    improperMeasurement?: boolean;
+    PulseRate?: number;
     date?: {
         year: number;
         month: number;
@@ -23,7 +28,6 @@ export interface UA1200BLEResult {
         minute: number;
         second: number;
     };
-    PulseRate?: number;
 }
 export default class UA1200BLE implements ObnizPartsBleInterface {
     static info(): ObnizPartsBleInfo;
@@ -39,10 +43,9 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
     constructor(peripheral: BleRemotePeripheral | null, timezoneOffsetMinute: number);
     pairingWait(): Promise<string | null>;
     getDataWait(): Promise<UA1200BLEResult[]>;
-    private _readFLOAT_LE;
     private _readSFLOAT_LE;
     private _analyzeData;
     private _getCharsCoopMode;
     private _getCharsSingleMode;
-    private _writeTimeChar;
+    private _writeTimeCharWait;
 }

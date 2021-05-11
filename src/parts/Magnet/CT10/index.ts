@@ -3,9 +3,11 @@
  * @module Parts.CT10
  */
 
-import Obniz from "../../../obniz";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface CT10Options {
   signal: number;
@@ -16,7 +18,7 @@ export interface CT10Options {
 export default class CT10 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "CT10",
+      name: 'CT10',
     };
   }
 
@@ -32,8 +34,8 @@ export default class CT10 implements ObnizPartsInterface {
   public onchange: ((near: boolean) => void) | null = null;
 
   constructor() {
-    this.keys = ["signal", "gnd", "vcc"];
-    this.requiredKeys = ["signal"];
+    this.keys = ['signal', 'gnd', 'vcc'];
+    this.requiredKeys = ['signal'];
 
     this.onChangeForStateWait = () => {};
   }
@@ -51,7 +53,7 @@ export default class CT10 implements ObnizPartsInterface {
       this.io_supply.output(false);
     }
 
-    this.io_signal.pull("0v");
+    this.io_signal.pull('0v');
 
     this.io_signal.input((value: boolean) => {
       this.isNear = value;

@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import ObnizBLE from "./ble";
-import BleAdvertisementBuilder from "./bleAdvertisementBuilder";
-import { BleAdvertisementData, BleScanResponseData } from "./bleTypes";
+import ObnizBLE from './ble';
+import BleAdvertisementBuilder from './bleAdvertisementBuilder';
+import { BleAdvertisementData, BleScanResponseData } from './bleTypes';
 /**
  * @category Use as Peripheral
  */
@@ -53,7 +53,7 @@ export default class BleAdvertisement {
      */
     endWait(): Promise<void>;
     /**
-     *  @deprecated  replaced by {@link #endWait()}
+     * @deprecated  replaced by {@link #endWait()}
      */
     end(): void;
     /**
@@ -90,6 +90,7 @@ export default class BleAdvertisement {
      *
      * obniz.ble.advertisement.start();
      * ```
+     *
      * @param json
      */
     setAdvData(json: BleAdvertisementData): void;
@@ -120,6 +121,7 @@ export default class BleAdvertisement {
      *
      * obniz.ble.advertisement.start();
      * ```
+     *
      * @param json
      */
     setScanRespData(json: BleScanResponseData): void;

@@ -1,13 +1,15 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-Object.defineProperty(exports, "__esModule", { value: true });
+/* eslint non-ascii:0 */
 const ComponentAbstact_1 = require("../ComponentAbstact");
 /**
  * Here we will show letters and pictures on display on obniz Board.
  * ![](media://obniz_display_sphere.gif)
+ *
  * @category Embeds
  */
 class Display extends ComponentAbstact_1.ComponentAbstract {
@@ -18,7 +20,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
         this._pos = { x: 0, y: 0 };
         this._colorDepthCapabilities = [1];
         this._colorDepth = 1;
-        this._color = "#000";
+        this._color = '#000';
         this._paper_white = true;
         this._raw_alternate = false;
         this.width = info.width;
@@ -55,14 +57,14 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
      */
     font(font, size) {
         const ctx = this._ctx();
-        if (typeof size !== "number") {
+        if (typeof size !== 'number') {
             size = 16;
         }
-        if (typeof font !== "string") {
-            font = "Arial";
+        if (typeof font !== 'string') {
+            font = 'Arial';
         }
         this.fontSize = size;
-        ctx.font = "" + +" " + size + "px " + font;
+        ctx.font = '' + +' ' + size + 'px ' + font;
     }
     /**
      * Setting color for fill/stroke style for further rendering.
@@ -106,7 +108,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
         this._pos.y = 0;
         if (ctx) {
             const currentFillStyle = ctx.fillStyle;
-            ctx.fillStyle = this._paper_white ? "#FFF" : "#000";
+            ctx.fillStyle = this._paper_white ? '#FFF' : '#000';
             ctx.fillRect(0, 0, this.width, this.height);
             ctx.fillStyle = currentFillStyle;
             this.draw(ctx);
@@ -129,15 +131,16 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
      * obniz.display.print("YES. こんにちは");
      * ```
      * ![](media://obniz_display_pos.jpg)
-     *  @param x
-     *  @param y
+     *
+     * @param x
+     * @param y
      */
     pos(x, y) {
         this._ctx(); // crete first
-        if (typeof x === "number") {
+        if (typeof x === 'number') {
             this._pos.x = x;
         }
-        if (typeof y === "number") {
+        if (typeof y === 'number') {
             this._pos.y = y;
         }
         return this._pos;
@@ -157,7 +160,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
      * ```
      * ![](media://obniz_display_print.jpg)
      *
-     *  @param text Text to display. With browser, UTF8 string is available. (It does not work with node.js. Please use display.draw())
+     * @param text Text to display. With browser, UTF8 string is available. (It does not work with node.js. Please use display.draw())
      */
     print(text) {
         const ctx = this._ctx();
@@ -169,7 +172,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
         else {
             const obj = {};
             obj.display = {
-                text: "" + text,
+                text: '' + text,
             };
             this.Obniz.send(obj);
         }
@@ -293,6 +296,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
      * // Javascript Example
      * obniz.display.qr("https://obniz.io")
      * ```
+     *
      * @param text
      * @param correction
      */
@@ -474,6 +478,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
      * }
      * obniz.display.drawing(true);
      * ```
+     *
      * @param autoFlush
      */
     drawing(autoFlush) {
@@ -484,30 +489,30 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
         }
     }
     schemaBasePath() {
-        return "display";
+        return 'display';
     }
     _reset() {
         this.autoFlush = true;
         // reset to default
         this._pos = { x: 0, y: 0 };
-        this._color = this._paper_white ? "#000" : "#FFF";
+        this._color = this._paper_white ? '#000' : '#FFF';
         this.fontSize = this.height > 200 ? 32 : 16;
         this._colorDepth = this._colorDepthCapabilities[this._colorDepthCapabilities.length - 1];
         this._reset_canvas();
     }
     warnCanvasAvailability() {
         if (this.Obniz.isNode) {
-            throw new Error("obniz.js require node-canvas to draw rich contents. see more detail on docs");
+            throw new Error('obniz.js require node-canvas to draw rich contents. see more detail on docs');
         }
         else {
-            throw new Error("obniz.js cant create canvas element to body");
+            throw new Error('obniz.js cant create canvas element to body');
         }
     }
     _reset_canvas() {
         // reset canvas
         if (this._canvas) {
-            const ctx = this._canvas.getContext("2d");
-            ctx.fillStyle = this._paper_white ? "#FFF" : "#000";
+            const ctx = this._canvas.getContext('2d');
+            ctx.fillStyle = this._paper_white ? '#FFF' : '#000';
             ctx.fillRect(0, 0, this.width, this.height);
             ctx.fillStyle = this._color;
             ctx.strokeStyle = this._color;
@@ -520,7 +525,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
         }
         if (this.Obniz.isNode) {
             try {
-                const { createCanvas } = require("canvas");
+                const { createCanvas } = require('canvas');
                 this._canvas = createCanvas(this.width, this.height);
             }
             catch (e) {
@@ -529,22 +534,23 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
             }
         }
         else {
-            const identifier = "obnizcanvas-" + this.Obniz.id;
+            const identifier = 'obnizcanvas-' + this.Obniz.id;
             let canvas = document.getElementById(identifier);
             if (canvas) {
                 this._canvas = canvas;
+                this._reset_canvas();
             }
             else {
-                canvas = document.createElement("canvas");
-                canvas.setAttribute("id", identifier);
-                canvas.style.visibility = "hidden";
+                canvas = document.createElement('canvas');
+                canvas.setAttribute('id', identifier);
+                canvas.style.visibility = 'hidden';
                 canvas.width = this.width;
                 canvas.height = this.height;
                 if (this._colorDepthCapabilities.length === 1) {
                     // for monochro display
-                    canvas.style["-webkit-font-smoothing"] = "none";
+                    canvas.style['-webkit-font-smoothing'] = 'none';
                 }
-                const body = document.getElementsByTagName("body")[0];
+                const body = document.getElementsByTagName('body')[0];
                 body.appendChild(canvas);
                 this._canvas = canvas;
                 this._reset_canvas();
@@ -555,7 +561,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
     _ctx() {
         const canvas = this._preparedCanvas();
         if (canvas) {
-            return canvas.getContext("2d");
+            return canvas.getContext('2d');
         }
     }
     _draw(ctx) {
@@ -567,7 +573,9 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
                 const red = data[pixel_index * 4];
                 const green = data[pixel_index * 4 + 1];
                 const blue = data[pixel_index * 4 + 2];
-                const hexColor = (((red >> 3) & 0x1f) << 11) | (((green >> 2) & 0x3f) << 5) | (((blue >> 3) & 0x1f) << 0);
+                const hexColor = (((red >> 3) & 0x1f) << 11) |
+                    (((green >> 2) & 0x3f) << 5) |
+                    (((blue >> 3) & 0x1f) << 0);
                 raw[pixel_index * 2] = (hexColor >> 8) & 0xff;
                 raw[pixel_index * 2 + 1] = hexColor & 0xff;
             }

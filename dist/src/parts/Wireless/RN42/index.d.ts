@@ -2,16 +2,16 @@
  * @packageDocumentation
  * @module Parts.RN42
  */
-import Obniz from "../../../obniz";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface RN42Options {
     tx: number;
     rx: number;
     gnd?: number;
 }
-export declare type RN42Config_Mode = "slave" | "master" | "trigger" | "auto-connect-master" | "auto-connect-dtr" | "auto-connect-any" | "pairing";
-export declare type RN42Config_Profile = "SPP" | "DUN-DCE" | "DUN-DTE" | "MDM-SPP" | "SPP-DUN-DCE" | "APL" | "HID";
-export declare type RN42Config_Auth = "open" | "ssp-keyboard" | "just-work" | "pincode";
+export declare type RN42Config_Mode = 'slave' | 'master' | 'trigger' | 'auto-connect-master' | 'auto-connect-dtr' | 'auto-connect-any' | 'pairing';
+export declare type RN42Config_Profile = 'SPP' | 'DUN-DCE' | 'DUN-DTE' | 'MDM-SPP' | 'SPP-DUN-DCE' | 'APL' | 'HID';
+export declare type RN42Config_Auth = 'open' | 'ssp-keyboard' | 'just-work' | 'pincode';
 export declare type RN43Config_Power = 16 | 12 | 8 | 4 | 0 | -4 | -8;
 export interface RN42Config {
     display_name?: string;

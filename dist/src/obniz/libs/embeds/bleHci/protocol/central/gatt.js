@@ -58,49 +58,49 @@ var ATT;
     ATT.CID = 0x0004;
 })(ATT || (ATT = {}));
 const ATT_OP_READABLES = {
-    0x01: "OP_ERROR",
-    0x02: "OP_MTU_REQ",
-    0x03: "OP_MTU_RESP",
-    0x04: "OP_FIND_INFO_REQ",
-    0x05: "OP_FIND_INFO_RESP",
-    0x08: "OP_READ_BY_TYPE_REQ",
-    0x09: "OP_READ_BY_TYPE_RESP",
-    0x0a: "OP_READ_REQ",
-    0x0b: "OP_READ_RESP",
-    0x0c: "OP_READ_BLOB_REQ",
-    0x0d: "OP_READ_BLOB_RESP",
-    0x10: "OP_READ_BY_GROUP_REQ",
-    0x11: "OP_READ_BY_GROUP_RESP",
-    0x12: "OP_WRITE_REQ",
-    0x13: "OP_WRITE_RESP",
-    0x16: "OP_PREPARE_WRITE_REQ",
-    0x17: "OP_PREPARE_WRITE_RESP",
-    0x18: "OP_EXECUTE_WRITE_REQ",
-    0x19: "OP_EXECUTE_WRITE_RESP",
-    0x1b: "OP_HANDLE_NOTIFY",
-    0x1d: "OP_HANDLE_IND",
-    0x1e: "OP_HANDLE_CNF",
-    0x52: "OP_WRITE_CMD",
+    0x01: 'OP_ERROR',
+    0x02: 'OP_MTU_REQ',
+    0x03: 'OP_MTU_RESP',
+    0x04: 'OP_FIND_INFO_REQ',
+    0x05: 'OP_FIND_INFO_RESP',
+    0x08: 'OP_READ_BY_TYPE_REQ',
+    0x09: 'OP_READ_BY_TYPE_RESP',
+    0x0a: 'OP_READ_REQ',
+    0x0b: 'OP_READ_RESP',
+    0x0c: 'OP_READ_BLOB_REQ',
+    0x0d: 'OP_READ_BLOB_RESP',
+    0x10: 'OP_READ_BY_GROUP_REQ',
+    0x11: 'OP_READ_BY_GROUP_RESP',
+    0x12: 'OP_WRITE_REQ',
+    0x13: 'OP_WRITE_RESP',
+    0x16: 'OP_PREPARE_WRITE_REQ',
+    0x17: 'OP_PREPARE_WRITE_RESP',
+    0x18: 'OP_EXECUTE_WRITE_REQ',
+    0x19: 'OP_EXECUTE_WRITE_RESP',
+    0x1b: 'OP_HANDLE_NOTIFY',
+    0x1d: 'OP_HANDLE_IND',
+    0x1e: 'OP_HANDLE_CNF',
+    0x52: 'OP_WRITE_CMD',
 };
 const ATT_ECODE_READABLES = {
-    0x00: "ECODE_SUCCESS",
-    0x01: "ECODE_INVALID_HANDLE",
-    0x02: "ECODE_READ_NOT_PERM",
-    0x03: "ECODE_WRITE_NOT_PERM",
-    0x04: "ECODE_INVALID_PDU",
-    0x05: "ECODE_AUTHENTICATION",
-    0x06: "ECODE_REQ_NOT_SUPP",
-    0x07: "ECODE_INVALID_OFFSET",
-    0x08: "ECODE_AUTHORIZATION",
-    0x09: "ECODE_PREP_QUEUE_FULL",
-    0x0a: "ECODE_ATTR_NOT_FOUND",
-    0x0b: "ECODE_ATTR_NOT_LONG",
-    0x0c: "ECODE_INSUFF_ENCR_KEY_SIZE",
-    0x0d: "ECODE_INVAL_ATTR_VALUE_LEN",
-    0x0e: "ECODE_UNLIKELY",
-    0x0f: "ECODE_INSUFF_ENC",
-    0x10: "ECODE_UNSUPP_GRP_TYPE",
-    0x11: "ECODE_INSUFF_RESOURCES",
+    0x00: 'ECODE_SUCCESS',
+    0x01: 'ECODE_INVALID_HANDLE',
+    0x02: 'ECODE_READ_NOT_PERM',
+    0x03: 'ECODE_WRITE_NOT_PERM',
+    0x04: 'ECODE_INVALID_PDU',
+    0x05: 'ECODE_AUTHENTICATION',
+    0x06: 'ECODE_REQ_NOT_SUPP',
+    0x07: 'ECODE_INVALID_OFFSET',
+    0x08: 'ECODE_AUTHORIZATION',
+    0x09: 'ECODE_PREP_QUEUE_FULL',
+    0x0a: 'ECODE_ATTR_NOT_FOUND',
+    0x0b: 'ECODE_ATTR_NOT_LONG',
+    0x0c: 'ECODE_INSUFF_ENCR_KEY_SIZE',
+    0x0d: 'ECODE_INVAL_ATTR_VALUE_LEN',
+    0x0e: 'ECODE_UNLIKELY',
+    0x0f: 'ECODE_INSUFF_ENC',
+    0x10: 'ECODE_UNSUPP_GRP_TYPE',
+    0x11: 'ECODE_INSUFF_RESOURCES',
 };
 /**
  * @ignore
@@ -129,19 +129,19 @@ class Gatt extends eventemitter3_1.default {
         this._commandQueue = [];
         this._commandPromises = [];
         this._mtu = 23;
-        this._security = "low";
+        this._security = 'low';
         this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
         this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
-        this._aclStream.on("data", this.onAclStreamDataBinded);
-        this._aclStream.on("end", this.onAclStreamEndBinded);
+        this._aclStream.on('data', this.onAclStreamDataBinded);
+        this._aclStream.on('end', this.onAclStreamEndBinded);
     }
     async encryptWait(options) {
         const result = await this._serialPromiseQueueWait(async () => {
             const encrypt = await this._aclStream.encryptWait(options);
             if (encrypt === 0) {
-                throw new Error("Encript failed");
+                throw new Error('Encrypt failed');
             }
-            this._security = "medium";
+            this._security = 'medium';
             return this._aclStream._smp.getKeys();
         });
         return result;
@@ -150,7 +150,7 @@ class Gatt extends eventemitter3_1.default {
         this._aclStream.setEncryptOption(options);
     }
     onEnd(reason) {
-        this.emit("end", reason);
+        this.emit('end', reason);
     }
     async exchangeMtuWait(mtu) {
         this._aclStream
@@ -167,7 +167,7 @@ class Gatt extends eventemitter3_1.default {
                 return;
             }
             const requestMtu = mtuRequestData.readUInt16LE(1);
-            debug(this._address + ": receive OP_MTU_REQ. new MTU is " + requestMtu);
+            debug(this._address + ': receive OP_MTU_REQ. new MTU is ' + requestMtu);
             this._mtu = requestMtu;
             this._execNoRespCommandWait(this.mtuResponse(mtu));
         })
@@ -179,7 +179,7 @@ class Gatt extends eventemitter3_1.default {
         const data = await this._execCommandWait(this.mtuRequest(mtu), ATT.OP_MTU_RESP);
         const opcode = data[0];
         const newMtu = data.readUInt16LE(1);
-        debug(this._address + ": new MTU is " + newMtu);
+        debug(this._address + ': new MTU is ' + newMtu);
         this._mtu = newMtu;
         return this._mtu;
     }
@@ -187,10 +187,7 @@ class Gatt extends eventemitter3_1.default {
         const services = [];
         let startHandle = 0x0001;
         while (1) {
-            const data = await this._execCommandWait(this.readByGroupRequest(startHandle, 0xffff, GATT.PRIM_SVC_UUID), [
-                ATT.OP_READ_BY_GROUP_RESP,
-                ATT.OP_ERROR,
-            ]);
+            const data = await this._execCommandWait(this.readByGroupRequest(startHandle, 0xffff, GATT.PRIM_SVC_UUID), [ATT.OP_READ_BY_GROUP_RESP, ATT.OP_ERROR]);
             const opcode = data[0];
             let i = 0;
             if (opcode === ATT.OP_READ_BY_GROUP_RESP) {
@@ -206,7 +203,8 @@ class Gatt extends eventemitter3_1.default {
                     });
                 }
             }
-            if (opcode !== ATT.OP_READ_BY_GROUP_RESP || services[services.length - 1].endHandle === 0xffff) {
+            if (opcode !== ATT.OP_READ_BY_GROUP_RESP ||
+                services[services.length - 1].endHandle === 0xffff) {
                 const serviceUuids = [];
                 for (i = 0; i < services.length; i++) {
                     if (uuids.length === 0 || uuids.indexOf(services[i].uuid) !== -1) {
@@ -241,10 +239,12 @@ class Gatt extends eventemitter3_1.default {
                 }
             }
             if (opcode !== ATT.OP_READ_BY_TYPE_RESP ||
-                includedServices[includedServices.length - 1].endHandle === service.endHandle) {
+                includedServices[includedServices.length - 1].endHandle ===
+                    service.endHandle) {
                 const includedServiceUuids = [];
                 for (i = 0; i < includedServices.length; i++) {
-                    if (uuids.length === 0 || uuids.indexOf(includedServices[i].uuid) !== -1) {
+                    if (uuids.length === 0 ||
+                        uuids.indexOf(includedServices[i].uuid) !== -1) {
                         includedServiceUuids.push(includedServices[i].uuid);
                     }
                 }
@@ -256,7 +256,8 @@ class Gatt extends eventemitter3_1.default {
     async discoverCharacteristicsWait(serviceUuid, characteristicUuids) {
         const service = this.getService(serviceUuid);
         const characteristics = [];
-        this._characteristics[serviceUuid] = this._characteristics[serviceUuid] || {};
+        this._characteristics[serviceUuid] =
+            this._characteristics[serviceUuid] || {};
         this._descriptors[serviceUuid] = this._descriptors[serviceUuid] || {};
         let startHandle = service.startHandle;
         while (1) {
@@ -279,7 +280,8 @@ class Gatt extends eventemitter3_1.default {
                 }
             }
             if (opcode !== ATT.OP_READ_BY_TYPE_RESP ||
-                characteristics[characteristics.length - 1].valueHandle === service.endHandle) {
+                characteristics[characteristics.length - 1].valueHandle ===
+                    service.endHandle) {
                 const characteristicsDiscovered = [];
                 for (i = 0; i < characteristics.length; i++) {
                     const properties = characteristics[i].properties;
@@ -288,37 +290,40 @@ class Gatt extends eventemitter3_1.default {
                         uuid: characteristics[i].uuid,
                     };
                     if (i !== 0) {
-                        characteristics[i - 1].endHandle = characteristics[i].startHandle - 1;
+                        characteristics[i - 1].endHandle =
+                            characteristics[i].startHandle - 1;
                     }
                     if (i === characteristics.length - 1) {
                         characteristics[i].endHandle = service.endHandle;
                     }
-                    this._characteristics[serviceUuid][characteristics[i].uuid] = characteristics[i];
+                    this._characteristics[serviceUuid][characteristics[i].uuid] =
+                        characteristics[i];
                     if (properties & 0x01) {
-                        characteristic.properties.push("broadcast");
+                        characteristic.properties.push('broadcast');
                     }
                     if (properties & 0x02) {
-                        characteristic.properties.push("read");
+                        characteristic.properties.push('read');
                     }
                     if (properties & 0x04) {
-                        characteristic.properties.push("writeWithoutResponse");
+                        characteristic.properties.push('writeWithoutResponse');
                     }
                     if (properties & 0x08) {
-                        characteristic.properties.push("write");
+                        characteristic.properties.push('write');
                     }
                     if (properties & 0x10) {
-                        characteristic.properties.push("notify");
+                        characteristic.properties.push('notify');
                     }
                     if (properties & 0x20) {
-                        characteristic.properties.push("indicate");
+                        characteristic.properties.push('indicate');
                     }
                     if (properties & 0x40) {
-                        characteristic.properties.push("authenticatedSignedWrites");
+                        characteristic.properties.push('authenticatedSignedWrites');
                     }
                     if (properties & 0x80) {
-                        characteristic.properties.push("extendedProperties");
+                        characteristic.properties.push('extendedProperties');
                     }
-                    if (characteristicUuids.length === 0 || characteristicUuids.indexOf(characteristic.uuid) !== -1) {
+                    if (characteristicUuids.length === 0 ||
+                        characteristicUuids.indexOf(characteristic.uuid) !== -1) {
                         characteristicsDiscovered.push(characteristic);
                     }
                 }
@@ -339,14 +344,15 @@ class Gatt extends eventemitter3_1.default {
                 data = await this._execCommandWait(this.readBlobRequest(characteristic.valueHandle, readData.length), ATT.OP_READ_BLOB_RESP);
             }
             const opcode = data[0];
-            readData = Buffer.from(readData.toString("hex") + data.slice(1).toString("hex"), "hex");
+            readData = Buffer.from(readData.toString('hex') + data.slice(1).toString('hex'), 'hex');
             if (data.length === this._mtu) {
-                continue;
             }
             else {
                 return readData;
             }
         }
+        // never reach
+        // eslint-disable-next-line no-unreachable
         return readData;
     }
     async writeWait(serviceUuid, characteristicUuid, data, withoutResponse) {
@@ -384,7 +390,7 @@ class Gatt extends eventemitter3_1.default {
         let value = null;
         let handle = null;
         try {
-            value = await this.readValueWait(serviceUuid, characteristicUuid, "2902");
+            value = await this.readValueWait(serviceUuid, characteristicUuid, '2902');
         }
         catch (e) {
             // retry
@@ -419,10 +425,10 @@ class Gatt extends eventemitter3_1.default {
             _data = await this._execCommandWait(this.writeRequest(handle, valueBuffer, false), ATT.OP_WRITE_RESP);
         }
         else {
-            _data = await this.writeValueWait(serviceUuid, characteristicUuid, "2902", valueBuffer);
+            _data = await this.writeValueWait(serviceUuid, characteristicUuid, '2902', valueBuffer);
         }
         const _opcode = _data && _data[0];
-        debug("set notify write results: " + (_opcode === ATT.OP_WRITE_RESP));
+        debug('set notify write results: ' + (_opcode === ATT.OP_WRITE_RESP));
     }
     async discoverDescriptorsWait(serviceUuid, characteristicUuid) {
         const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
@@ -430,10 +436,7 @@ class Gatt extends eventemitter3_1.default {
         this._descriptors[serviceUuid][characteristicUuid] = {};
         let startHandle = characteristic.valueHandle + 1;
         while (1) {
-            const data = await this._execCommandWait(this.findInfoRequest(startHandle, characteristic.endHandle), [
-                ATT.OP_FIND_INFO_RESP,
-                ATT.OP_ERROR,
-            ]);
+            const data = await this._execCommandWait(this.findInfoRequest(startHandle, characteristic.endHandle), [ATT.OP_FIND_INFO_RESP, ATT.OP_ERROR]);
             const opcode = data[0];
             let i = 0;
             if (opcode === ATT.OP_FIND_INFO_RESP) {
@@ -445,7 +448,8 @@ class Gatt extends eventemitter3_1.default {
                     });
                 }
             }
-            if (opcode !== ATT.OP_FIND_INFO_RESP || descriptors[descriptors.length - 1].handle === characteristic.endHandle) {
+            if (opcode !== ATT.OP_FIND_INFO_RESP ||
+                descriptors[descriptors.length - 1].handle === characteristic.endHandle) {
                 const descriptorUuids = [];
                 for (i = 0; i < descriptors.length; i++) {
                     descriptorUuids.push(descriptors[i].uuid);
@@ -455,7 +459,8 @@ class Gatt extends eventemitter3_1.default {
             }
             startHandle = descriptors[descriptors.length - 1].handle + 1;
         }
-        // never reached
+        // never reach
+        // eslint-disable-next-line no-unreachable
         return [];
     }
     async readValueWait(serviceUuid, characteristicUuid, descriptorUuid) {
@@ -487,33 +492,34 @@ class Gatt extends eventemitter3_1.default {
         if (data[0] === ATT.OP_HANDLE_NOTIFY || data[0] === ATT.OP_HANDLE_IND) {
             const valueHandle = data.readUInt16LE(1);
             const valueData = data.slice(3);
-            this.emit("handleNotify", this._address, valueHandle, valueData);
+            this.emit('handleNotify', this._address, valueHandle, valueData);
             if (data[0] === ATT.OP_HANDLE_IND) {
                 // background
                 this._execNoRespCommandWait(this.handleConfirmation()).then(() => {
-                    this.emit("handleConfirmation", this._address, valueHandle);
+                    this.emit('handleConfirmation', this._address, valueHandle);
                 });
             }
             for (const serviceUuid in this._services) {
                 for (const characteristicUuid in this._characteristics[serviceUuid]) {
-                    if (this._characteristics[serviceUuid][characteristicUuid].valueHandle === valueHandle) {
-                        this.emit("notification", this._address, serviceUuid, characteristicUuid, valueData);
+                    if (this._characteristics[serviceUuid][characteristicUuid]
+                        .valueHandle === valueHandle) {
+                        this.emit('notification', this._address, serviceUuid, characteristicUuid, valueData);
                     }
                 }
             }
         }
     }
     onAclStreamEnd() {
-        this._aclStream.removeListener("data", this.onAclStreamDataBinded);
-        this._aclStream.removeListener("end", this.onAclStreamEndBinded);
+        this._aclStream.removeListener('data', this.onAclStreamDataBinded);
+        this._aclStream.removeListener('end', this.onAclStreamEndBinded);
     }
     writeAtt(data) {
         const opCode = data[0];
-        const handle = data.length > 3 ? data.readUInt16LE(1) : "none";
+        const handle = data.length > 3 ? data.readUInt16LE(1) : 'none';
         debug(`ATT: opCode=${opCode}(${ATT_OP_READABLES[opCode]}) handle=${handle} address=` +
             this._address +
-            ": write: " +
-            data.toString("hex"));
+            ': write: ' +
+            data.toString('hex'));
         this._aclStream.write(ATT.CID, data);
     }
     errorResponse(opcode, handle, status) {
@@ -634,7 +640,8 @@ class Gatt extends eventemitter3_1.default {
         return this._services[serviceUuid];
     }
     getCharacteristic(serviceUuid, characteristicUuid) {
-        if (!this._characteristics[serviceUuid] || !this._characteristics[serviceUuid][characteristicUuid]) {
+        if (!this._characteristics[serviceUuid] ||
+            !this._characteristics[serviceUuid][characteristicUuid]) {
             throw new ObnizError_1.ObnizBleUnknownCharacteristicError(this._address, serviceUuid, characteristicUuid);
         }
         return this._characteristics[serviceUuid][characteristicUuid];
@@ -674,7 +681,7 @@ class Gatt extends eventemitter3_1.default {
         const onfinish = () => {
             this._commandPromises = this._commandPromises.filter((e) => e !== resultPromise);
             if (disconnectReject) {
-                this.off("end", disconnectReject);
+                this.off('end', disconnectReject);
             }
         };
         let disconnectReject = null;
@@ -700,14 +707,16 @@ class Gatt extends eventemitter3_1.default {
                 onfinish();
                 reject(reason);
             };
-            this.on("end", disconnectReject);
+            this.on('end', disconnectReject);
         });
         const resultPromise = Promise.race([doPromise, disconnectPromise]);
         this._commandPromises.push(resultPromise);
         return resultPromise;
     }
     _execCommandWait(buffer, waitOpcode) {
-        const waitOpcodes = Array.isArray(waitOpcode) ? waitOpcode : [waitOpcode];
+        const waitOpcodes = Array.isArray(waitOpcode)
+            ? waitOpcode
+            : [waitOpcode];
         let errorHandle = true;
         if (!waitOpcodes.includes(ATT.OP_ERROR)) {
             waitOpcodes.push(ATT.OP_ERROR);
@@ -729,7 +738,7 @@ class Gatt extends eventemitter3_1.default {
                     if ((errCode === ATT.ECODE_AUTHENTICATION ||
                         errCode === ATT.ECODE_AUTHORIZATION ||
                         errCode === ATT.ECODE_INSUFF_ENC) &&
-                        this._security !== "medium") {
+                        this._security !== 'medium') {
                         // retry after encrypt
                         debug(`ATT: going to encrypt and try it later.`);
                         await this._aclStream.encryptWait();
@@ -744,8 +753,9 @@ class Gatt extends eventemitter3_1.default {
                 }
                 return data;
             }
-        }).catch((reason) => {
-            throw reason;
+            // unreachable here
+            // eslint-disable-next-line no-unreachable
+            return Buffer.from([]);
         });
     }
     _execNoRespCommandWait(buffer) {

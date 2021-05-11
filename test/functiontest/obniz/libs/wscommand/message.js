@@ -2,19 +2,17 @@ let chai = require('chai');
 let expect = chai.expect;
 
 let testUtil = require('../../../testUtil.js');
-chai.use(require('chai-like'));
-chai.use(testUtil.obnizAssert);
 
-describe('message.log', function() {
-  beforeEach(function(done) {
-    return testUtil.setupObnizPromise(this, done, { binary: true });
+describe('message.log', function () {
+  beforeEach(async function () {
+    await testUtil.setupObnizPromise(this, null, { binary: true });
   });
 
-  afterEach(function(done) {
-    return testUtil.releaseObnizePromise(this, done);
+  afterEach(async function () {
+    await testUtil.releaseObnizPromise(this);
   });
 
-  it('message', function() {
+  it('message', function () {
     let requestJson = [{ message: { to: ['1111-1111'], data: 'pressed' } }];
 
     expect(requestJson.length).to.be.equal(1);
@@ -29,13 +27,13 @@ describe('message.log', function() {
     expect(compress).to.be.null; // use server command
   });
 
-  it('receive formtat', function() {
+  it('receive formtat', function () {
     let expectJson = [{ message: { from: '1111-1111', data: 'pressed' } }];
     let isValidCommand = testUtil.isValidCommandResponseJson(expectJson);
     expect(isValidCommand.valid).to.be.true;
   });
 
-  it('receive formtat null', function() {
+  it('receive formtat null', function () {
     let expectJson = [{ message: { from: null, data: 'pressed' } }];
     let isValidCommand = testUtil.isValidCommandResponseJson(expectJson);
     expect(isValidCommand.valid).to.be.true;

@@ -6,29 +6,21 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Keyestudio_TrafficLight {
     constructor() {
-        this.keys = ["gnd", "green", "yellow", "red"];
-        this.requiredKeys = ["green", "yellow", "red"];
-        this.state = "red";
+        this.keys = ['gnd', 'green', 'yellow', 'red'];
+        this.requiredKeys = ['green', 'yellow', 'red'];
+        this.state = 'red';
     }
     static info() {
         return {
-            name: "Keyestudio_TrafficLight",
+            name: 'Keyestudio_TrafficLight',
         };
     }
     wired(obniz) {
-        function getIO(io) {
-            if (io && typeof io === "object") {
-                if (typeof io.output === "function") {
-                    return io;
-                }
-            }
-            return obniz.getIO(io);
-        }
         this.obniz = obniz;
-        obniz.setVccGnd(null, this.params.gnd, "5v");
-        this.green = obniz.wired("LED", { anode: this.params.green });
-        this.yellow = obniz.wired("LED", { anode: this.params.yellow });
-        this.red = obniz.wired("LED", { anode: this.params.red });
+        obniz.setVccGnd(null, this.params.gnd, '5v');
+        this.green = obniz.wired('LED', { anode: this.params.green });
+        this.yellow = obniz.wired('LED', { anode: this.params.yellow });
+        this.red = obniz.wired('LED', { anode: this.params.red });
     }
     single(led) {
         this.green.off();
@@ -36,30 +28,30 @@ class Keyestudio_TrafficLight {
         this.red.off();
         this.state = led;
         switch (led) {
-            case "green":
+            case 'green':
                 this.green.on();
                 break;
-            case "yellow":
+            case 'yellow':
                 this.yellow.on();
                 break;
-            case "red":
+            case 'red':
             default:
                 this.red.on();
-                this.state = "red";
+                this.state = 'red';
                 break;
         }
     }
     next() {
         switch (this.state) {
-            case "green":
-                this.single("yellow");
+            case 'green':
+                this.single('yellow');
                 break;
-            case "yellow":
-                this.single("red");
+            case 'yellow':
+                this.single('red');
                 break;
-            case "red":
+            case 'red':
             default:
-                this.single("green");
+                this.single('green');
                 break;
         }
     }

@@ -11,13 +11,15 @@ const MCP4725_1 = __importDefault(require("../../DAConverter/MCP4725"));
 class M5StickC_DAC extends MCP4725_1.default {
     static info() {
         return {
-            name: "M5StickC_DAC",
+            name: 'M5StickC_DAC',
         };
     }
     wired(obniz) {
-        if (!this.obniz.isValidIO(this.params.sda) && !this.obniz.isValidIO(this.params.scl) && !this.params.i2c) {
-            if (this.obniz.hasExtraInterface("m5stickc_hat")) {
-                const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
+        if (!this.obniz.isValidIO(this.params.sda) &&
+            !this.obniz.isValidIO(this.params.scl) &&
+            !this.params.i2c) {
+            if (this.obniz.hasExtraInterface('m5stickc_hat')) {
+                const hatI2c = this.obniz.getExtraInterface('m5stickc_hat').i2c;
                 this.params.sda = hatI2c.sda;
                 this.params.scl = hatI2c.scl;
             }

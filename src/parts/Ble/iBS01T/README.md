@@ -1,5 +1,6 @@
 # iBS01T
-temperature & humidity made by INGICS.
+
+temperature & humiditys sensor made by INGICS.
 
 Support device
 

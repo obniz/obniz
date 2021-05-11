@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module Parts.MPU6500
  */
-import { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-import MPU6050, { MPU6050Options } from "../MPU6050";
+import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import MPU6050, { MPU6050Options } from '../MPU6050';
 export interface MPU6500Options extends MPU6050Options {
 }
 export default class MPU6500 extends MPU6050 {

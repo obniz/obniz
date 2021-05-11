@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from "./WSCommand";
+import WSCommand from './WSCommand';
 declare class WSCommandI2C extends WSCommand {
     module: any;
     _CommandInit: any;

@@ -2,19 +2,17 @@ let chai = require('chai');
 let expect = chai.expect;
 
 let testUtil = require('../../../testUtil.js');
-chai.use(require('chai-like'));
-chai.use(testUtil.obnizAssert);
 
-describe('measure', function() {
-  beforeEach(function(done) {
-    return testUtil.setupObnizPromise(this, done, { binary: true });
+describe('measure', function () {
+  beforeEach(async function () {
+    await testUtil.setupObnizPromise(this, null, { binary: true });
   });
 
-  afterEach(function(done) {
-    return testUtil.releaseObnizePromise(this, done);
+  afterEach(async function () {
+    await testUtil.releaseObnizPromise(this);
   });
 
-  it('measure', function() {
+  it('measure', function () {
     let requestJson = [
       {
         measure: {
@@ -46,7 +44,7 @@ describe('measure', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -55,16 +53,18 @@ describe('measure', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('response', function() {
+  it('response', function () {
     let responseBinaryString = 'c 0 1 0';
     let expectJson = [{ measure: { echo: [] } }];
 
-    let binaryArray = responseBinaryString.split(' ').map(function(val, index) {
-      return parseInt(val, 16);
-    });
+    let binaryArray = responseBinaryString
+      .split(' ')
+      .map(function (val, index) {
+        return parseInt(val, 16);
+      });
     let binary = new Uint8Array(binaryArray);
 
-    let json = this.obniz.binary2Json(binary);
+    let json = this.obniz._binary2Json(binary);
 
     let isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -72,7 +72,7 @@ describe('measure', function() {
     expect(json).to.be.deep.equal(expectJson);
   });
 
-  it('response2', function() {
+  it('response2', function () {
     let responseBinaryString = 'c 0 c 2 1 1 2 3 1 0 0 0 1 0 0';
     let expectJson = [
       {
@@ -91,12 +91,14 @@ describe('measure', function() {
       },
     ];
 
-    let binaryArray = responseBinaryString.split(' ').map(function(val, index) {
-      return parseInt(val, 16);
-    });
+    let binaryArray = responseBinaryString
+      .split(' ')
+      .map(function (val, index) {
+        return parseInt(val, 16);
+      });
     let binary = new Uint8Array(binaryArray);
 
-    let json = this.obniz.binary2Json(binary);
+    let json = this.obniz._binary2Json(binary);
 
     let isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;

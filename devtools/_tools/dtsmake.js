@@ -6,7 +6,7 @@ const execSync = require('child_process').execSync;
 
 function camelCase(str) {
   str = str.charAt(0).toLowerCase() + str.slice(1);
-  return str.replace(/[-_](.)/g, function(match, group1) {
+  return str.replace(/[-_](.)/g, function (match, group1) {
     return group1.toUpperCase();
   });
 }
@@ -14,7 +14,7 @@ function camelCase(str) {
 // eslint-disable-next-line no-unused-vars
 function snakeCase(str) {
   let camel = camelCase(str);
-  return camel.replace(/[A-Z]/g, function(s) {
+  return camel.replace(/[A-Z]/g, function (s) {
     return '_' + s.charAt(0).toLowerCase();
   });
 }
@@ -27,17 +27,17 @@ function pascalCase(str) {
 
 const relativePath = './src/';
 
-async function createDtsOnDir(relativePath) {
+async function createDtsOnDirWait(relativePath) {
   const root_directory = path.resolve(__dirname, '../../', relativePath);
 
   let file_list = fs.readdirSync(root_directory);
 
   //build
   _.chain(file_list)
-    .filter(function(file) {
+    .filter(function (file) {
       return file.match(/.*\.js$/);
     })
-    .each(function(file) {
+    .each(function (file) {
       let fullpath = path.resolve(__dirname, '../../', relativePath, file);
       let dtsFilePath = fullpath.replace('.js', '.d.ts');
       try {
@@ -59,14 +59,14 @@ async function createDtsOnDir(relativePath) {
 
   // Recurse on directories
   _.chain(file_list)
-    .filter(function(file) {
+    .filter(function (file) {
       let file_path = path.resolve(root_directory, file);
       return fs.lstatSync(file_path).isDirectory();
     })
-    .each(function(file) {
+    .each(function (file) {
       let file_path = path.resolve(root_directory, file);
-      createDtsOnDir(file_path);
+      createDtsOnDirWait(file_path);
     });
 }
 
-createDtsOnDir(relativePath);
+createDtsOnDirWait(relativePath);

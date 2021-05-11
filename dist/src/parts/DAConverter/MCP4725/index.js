@@ -11,21 +11,21 @@ class MCP4725 {
             WRITEDACEEPROM: 0x60,
         };
         this._vcc_voltage = 5.0;
-        this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
+        this.keys = ['vcc', 'gnd', 'sda', 'scl', 'i2c'];
         this.requiredKeys = [];
         this.address = 0x60;
     }
     static info() {
         return {
-            name: "MCP4725",
+            name: 'MCP4725',
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
         this.params.clock = 400000;
-        this.params.pull = "5v";
-        this.params.mode = "master";
+        this.params.pull = '5v';
+        this.params.mode = 'master';
         this.i2c = this.obniz.getI2CWithConfig(this.params);
         this.obniz.wait(100);
     }

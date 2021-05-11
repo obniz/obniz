@@ -12,19 +12,19 @@ class StepperMotor {
         this.milliMeterStepCount = 1;
         this.ios = [];
         this._stepInstructions = {
-            "1": [
+            '1': [
                 [0, 1, 1, 1],
                 [1, 0, 1, 1],
                 [1, 1, 0, 1],
                 [1, 1, 1, 0],
             ],
-            "2": [
+            '2': [
                 [0, 0, 1, 1],
                 [1, 0, 0, 1],
                 [1, 1, 0, 0],
                 [0, 1, 1, 0],
             ],
-            "1-2": [
+            '1-2': [
                 [0, 1, 1, 1],
                 [0, 0, 1, 1],
                 [1, 0, 1, 1],
@@ -35,13 +35,13 @@ class StepperMotor {
                 [0, 1, 1, 0],
             ],
         };
-        this._stepType = "2";
-        this.keys = ["a", "b", "aa", "bb", "common"];
-        this.requiredKeys = ["a", "b", "aa", "bb"];
+        this._stepType = '2';
+        this.keys = ['a', 'b', 'aa', 'bb', 'common'];
+        this.requiredKeys = ['a', 'b', 'aa', 'bb'];
     }
     static info() {
         return {
-            name: "StepperMotor",
+            name: 'StepperMotor',
         };
     }
     wired(obniz) {
@@ -49,10 +49,10 @@ class StepperMotor {
         if (obniz.isValidIO(this.params.common)) {
             this.common = obniz.getIO(this.params.common);
             this.common.output(true);
-            this.type = "unipolar";
+            this.type = 'unipolar';
         }
         else {
-            this.type = "bipolar";
+            this.type = 'bipolar';
         }
         this.ios = [];
         this.ios.push(obniz.getIO(this.params.a));
@@ -61,8 +61,8 @@ class StepperMotor {
         this.ios.push(obniz.getIO(this.params.bb));
     }
     async stepWait(step_count) {
-        if (typeof step_count !== "number") {
-            throw new Error("must provide number");
+        if (typeof step_count !== 'number') {
+            throw new Error('must provide number');
         }
         step_count = Math.round(step_count);
         if (step_count === 0) {
@@ -142,7 +142,7 @@ class StepperMotor {
     stepType(stepType) {
         const newType = this._stepInstructions[stepType];
         if (!newType) {
-            throw new Error("unknown step type " + stepType);
+            throw new Error('unknown step type ' + stepType);
         }
         this._stepType = stepType;
     }

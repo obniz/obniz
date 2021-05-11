@@ -12,6 +12,7 @@ const ComponentAbstact_1 = require("../ComponentAbstact");
 const util_1 = __importDefault(require("../utils/util"));
 /**
  * It is General Purpose SPI
+ *
  * @category Peripherals
  */
 class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
@@ -41,39 +42,44 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
      * @param params spi parameters
      */
     start(params) {
-        const err = util_1.default._requiredKeys(params, ["mode", "frequency"]);
+        const err = util_1.default._requiredKeys(params, ['mode', 'frequency']);
         if (err) {
             throw new Error("spi start param '" + err + "' required, but not found ");
         }
         this.params = util_1.default._keyFilter(params, [
-            "mode",
-            "clk",
-            "mosi",
-            "miso",
-            "frequency",
-            "drive",
-            "pull",
-            "gnd",
+            'mode',
+            'clk',
+            'mosi',
+            'miso',
+            'frequency',
+            'drive',
+            'pull',
+            'gnd',
         ]);
         const obj = {};
-        const ioKeys = ["clk", "mosi", "miso", "gnd"];
+        const ioKeys = [
+            'clk',
+            'mosi',
+            'miso',
+            'gnd',
+        ];
         for (const key of ioKeys) {
             if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
                 throw new Error("spi start param '" + key + "' are to be valid io no");
             }
         }
-        obj["spi" + this.id] = {
+        obj['spi' + this.id] = {
             mode: this.params.mode,
             clock: this.params.frequency,
         };
         if (this.params.clk !== undefined) {
-            obj["spi" + this.id].clk = this.params.clk;
+            obj['spi' + this.id].clk = this.params.clk;
         }
         if (this.params.mosi !== undefined) {
-            obj["spi" + this.id].mosi = this.params.mosi;
+            obj['spi' + this.id].mosi = this.params.mosi;
         }
         if (this.params.miso !== undefined) {
-            obj["spi" + this.id].miso = this.params.miso;
+            obj['spi' + this.id].miso = this.params.miso;
         }
         if (this.params.drive) {
             if (this.params.clk !== undefined) {
@@ -88,13 +94,13 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
         }
         else {
             if (this.params.clk !== undefined) {
-                this.Obniz.getIO(this.params.clk).drive("5v");
+                this.Obniz.getIO(this.params.clk).drive('5v');
             }
             if (this.params.mosi !== undefined) {
-                this.Obniz.getIO(this.params.mosi).drive("5v");
+                this.Obniz.getIO(this.params.mosi).drive('5v');
             }
             if (this.params.miso !== undefined) {
-                this.Obniz.getIO(this.params.miso).drive("5v");
+                this.Obniz.getIO(this.params.miso).drive('5v');
             }
         }
         if (this.params.pull) {
@@ -122,9 +128,9 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
         if (this.params.gnd !== undefined) {
             this.Obniz.getIO(this.params.gnd).output(false);
             const ioNames = {};
-            ioNames[this.params.gnd] = "gnd";
+            ioNames[this.params.gnd] = 'gnd';
             if (this.Obniz.display) {
-                this.Obniz.display.setPinNames("spi" + this.id, ioNames);
+                this.Obniz.display.setPinNames('spi' + this.id, ioNames);
             }
         }
         this.used = true;
@@ -149,15 +155,15 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
         if (!this.used) {
             throw new Error(`spi${this.id} is not started`);
         }
-        if (semver_1.default.lte(this.Obniz.firmware_ver, "1.0.2") && data.length > 32) {
+        if (semver_1.default.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
             throw new Error(`with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`);
         }
         const obj = {};
-        obj["spi" + this.id] = {
+        obj['spi' + this.id] = {
             data,
             read: true,
         };
-        const receiveData = await this.sendAndReceiveJsonWait(obj, "/response/spi/read");
+        const receiveData = await this.sendAndReceiveJsonWait(obj, '/response/spi/read');
         return receiveData.data;
     }
     /**
@@ -175,16 +181,15 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
         if (!this.used) {
             throw new Error(`spi${this.id} is not started`);
         }
-        if (semver_1.default.lte(this.Obniz.firmware_ver, "1.0.2") && data.length > 32) {
+        if (semver_1.default.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
             throw new Error(`with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`);
         }
-        const self = this;
         const obj = {};
-        obj["spi" + self.id] = {
+        obj['spi' + this.id] = {
             data,
             read: false,
         };
-        self.Obniz.send(obj);
+        this.Obniz.send(obj);
     }
     /**
      * @ignore
@@ -207,11 +212,10 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
      * - False : getFreeSpi will return this object
      */
     end(reuse) {
-        const self = this;
         const obj = {};
-        obj["spi" + self.id] = null;
+        obj['spi' + this.id] = null;
         this.params = null;
-        self.Obniz.send(obj);
+        this.Obniz.send(obj);
         if (!reuse) {
             this.used = false;
         }
@@ -221,7 +225,7 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
      * @private
      */
     schemaBasePath() {
-        return "spi" + this.id;
+        return 'spi' + this.id;
     }
     /**
      * @ignore

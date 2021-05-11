@@ -7,34 +7,37 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class RS_BTWATTCH2 {
     /**
      * Constructor. Provide option at this time
+     *
      * @param peripheral
      * @param options
      */
     constructor(peripheral, options) {
-        this.keys = ["rtcAutoset"];
+        this.keys = ['rtcAutoset'];
         this.requiredKeys = [];
         // parsing
         this._totalSize = -1;
         this._received = [];
         this._waitings = [];
         if (peripheral && !RS_BTWATTCH2.isDevice(peripheral)) {
-            throw new Error("peripheral is not RS_BTWATTCH2");
+            throw new Error('peripheral is not RS_BTWATTCH2');
         }
         this._peripheral = peripheral;
         this.params = options || {};
     }
     static info() {
         return {
-            name: "RS_BTWATTCH2",
+            name: 'RS_BTWATTCH2',
         };
     }
     /**
      * Check found peripheral is part of this parts
+     *
      * @param peripheral
      */
     static isDevice(peripheral) {
         return (peripheral.localName &&
-            (peripheral.localName.indexOf("BTWATTCH2_") >= 0 || peripheral.localName.indexOf("btwattch2_") >= 0));
+            (peripheral.localName.indexOf('BTWATTCH2_') >= 0 ||
+                peripheral.localName.indexOf('btwattch2_') >= 0));
     }
     // @ts-ignore
     wired(obniz) { }
@@ -42,20 +45,20 @@ class RS_BTWATTCH2 {
      * Check if device is under paring mode(over 3 seconds button pressing)
      */
     isPairingMode() {
-        return this._peripheral.localName.indexOf("BTWATTCH2_") < 0;
+        return this._peripheral.localName.indexOf('BTWATTCH2_') < 0;
     }
     /**
      * get pairing key
      */
     async firstPairingWait() {
         if (!this._peripheral) {
-            throw new Error("No Peripheral Found");
+            throw new Error('No Peripheral Found');
         }
         if (this.isPairingMode() === false) {
             throw new Error(`peripheral is not pairing mode. Press Pairing Button on device over 3 seconds. LED will start blinking then it is under pairing mode.`);
         }
         this._peripheral.ondisconnect = (reason) => {
-            if (typeof this.ondisconnect === "function") {
+            if (typeof this.ondisconnect === 'function') {
                 this.ondisconnect(reason);
             }
         };
@@ -108,22 +111,22 @@ class RS_BTWATTCH2 {
             keys,
         });
         this._peripheral.ondisconnect = (reason) => {
-            if (typeof this.ondisconnect === "function") {
+            if (typeof this.ondisconnect === 'function') {
                 this.ondisconnect(reason);
             }
         };
-        const service = this._peripheral.getService("6e400001b5a3f393e0a9e50e24dcca9e");
+        const service = this._peripheral.getService('6e400001b5a3f393e0a9e50e24dcca9e');
         if (!service) {
             throw new Error(`no serivce found`);
         }
-        this._rxFromTargetCharacteristic = service.getCharacteristic("6e400003b5a3f393e0a9e50e24dcca9e");
-        this._txToTargetCharacteristic = service.getCharacteristic("6e400002b5a3f393e0a9e50e24dcca9e");
+        this._rxFromTargetCharacteristic = service.getCharacteristic('6e400003b5a3f393e0a9e50e24dcca9e');
+        this._txToTargetCharacteristic = service.getCharacteristic('6e400002b5a3f393e0a9e50e24dcca9e');
         try {
             await this._rxFromTargetCharacteristic.registerNotifyWait((data) => {
                 this._pushData(data);
             });
             if (this.params.rtcAutoset !== false) {
-                await this.setRTC();
+                await this.setRTCWait();
             }
         }
         catch (e) {
@@ -146,14 +149,22 @@ class RS_BTWATTCH2 {
         await this._peripheral.disconnectWait();
     }
     /**
-     * Seting Time on device clock
+     * @deprecated
      * @param date
      */
-    async setRTC(date) {
+    setRTC(date) {
+        return this.setRTCWait(date);
+    }
+    /**
+     * Setting Time on device clock
+     *
+     * @param date
+     */
+    async setRTCWait(date) {
         if (!date) {
             date = new Date();
         }
-        const ret = await this._transaction([
+        const ret = await this._transactionWait([
             0x01,
             date.getSeconds(),
             date.getMinutes(),
@@ -171,10 +182,11 @@ class RS_BTWATTCH2 {
     }
     /**
      * Set Relay ON/OFF
+     *
      * @param isOn
      */
     async setPowerStateWait(isOn) {
-        const ret = await this._transaction([0xa7, isOn ? 0x01 : 0x00]);
+        const ret = await this._transactionWait([0xa7, isOn ? 0x01 : 0x00]);
         if (ret.length !== 3) {
             throw new Error(`communiation error`);
         }
@@ -192,7 +204,7 @@ class RS_BTWATTCH2 {
      * Getting All of realtime data
      */
     async getRealTimeDataWait() {
-        const ret = await this._transaction([0x08]);
+        const ret = await this._transactionWait([0x08]);
         if (ret.length !== 27) {
             throw new Error(`communiation error`);
         }
@@ -258,7 +270,7 @@ class RS_BTWATTCH2 {
         }
         one.resolve(data);
     }
-    async _transaction(data) {
+    async _transactionWait(data) {
         return await new Promise(async (resolve, reject) => {
             const timeout = setTimeout(() => {
                 reject(new Error(`Timed out for waiting`));

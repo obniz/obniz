@@ -4,10 +4,10 @@
  *
  * @ignore
  */
-import AclStream from "./acl-stream";
-import EventEmitter from "eventemitter3";
-import { BleDeviceAddress, UUID } from "../../bleTypes";
-declare type GattEventTypes = "notification" | "handleConfirmation" | "handleNotify" | "end";
+import AclStream from './acl-stream';
+import EventEmitter from 'eventemitter3';
+import { BleDeviceAddress, UUID } from '../../bleTypes';
+declare type GattEventTypes = 'notification' | 'handleConfirmation' | 'handleNotify' | 'end';
 /**
  * @ignore
  */

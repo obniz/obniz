@@ -72,7 +72,7 @@ class obnizJsonValidator {
     let commands = []
       .concat(this.command(/^\/request\//))
       .concat(this.command(/^\/response\//));
-    commands = commands.filter(elm => {
+    commands = commands.filter((elm) => {
       let schema = tv4.getSchema(elm);
       if (schema['anyOf']) {
         return false;
@@ -126,17 +126,17 @@ class obnizJsonValidator {
   checkResults(type, prefix) {
     let results = [];
     this.useCommands[type] = this.useCommands[type] || [];
-    let useCommandUnique = this.useCommands[type].filter(function(x, i, self) {
+    let useCommandUnique = this.useCommands[type].filter(function (x, i, self) {
       return self.indexOf(x) === i;
     });
     let allCommands = this.commandAll();
     useCommandUnique = useCommandUnique
-      .filter(elm => {
+      .filter((elm) => {
         return allCommands.indexOf(elm) !== -1;
       })
       .sort();
 
-    let unusedCommand = this.commandAll().filter(elm => {
+    let unusedCommand = this.commandAll().filter((elm) => {
       return useCommandUnique.indexOf(elm) === -1;
     });
 

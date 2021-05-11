@@ -6,37 +6,37 @@
   <script src="https://obniz.io/js/jquery-3.2.1.min.js"></script>
   <script src="https://unpkg.com/obniz@latest/obniz.js" crossorigin="anonymous"></script>
   <style>
-    .opps {
-      padding: 1em 0.5em;
-      text-align: center;
-      text-decoration: none;
-      color: silver;
-      border: 2px solid silver;
-      font-size: 24px;
-      display: inline-block;
-      border-radius: 6em;
-      margin: 10px;
-    }
+      .opps {
+          padding: 1em 0.5em;
+          text-align: center;
+          text-decoration: none;
+          color: silver;
+          border: 2px solid silver;
+          font-size: 24px;
+          display: inline-block;
+          border-radius: 6em;
+          margin: 10px;
+      }
 
-    .opps1After {
-      background-color: red;
-      color: white;
-      border: 4px solid white;
-    }
+      .opps1After {
+          background-color: red;
+          color: white;
+          border: 4px solid white;
+      }
 
-    .flexbox {
-      display: -webkit-box; /* Chrome 4-20, Firefox 2-21, Safari 3.1-6.0 */
-      display: -webkit-flex; /* Chrome 21-27 */
-      display: -moz-box; /* Firefox 2-21 */
-      display: -ms-flexbox; /* IE9 */
-      display: flex;
-    }
+      .flexbox {
+          display: -webkit-box; /* Chrome 4-20, Firefox 2-21, Safari 3.1-6.0 */
+          display: -webkit-flex; /* Chrome 21-27 */
+          display: -moz-box; /* Firefox 2-21 */
+          display: -ms-flexbox; /* IE9 */
+          display: flex;
+      }
 
-    .flex-start {
-      -webkit-align-items: flex-start;
-      -ms-flex-align: start;
-      align-items: flex-start;
-    }
+      .flex-start {
+          -webkit-align-items: flex-start;
+          -ms-flex-align: start;
+          align-items: flex-start;
+      }
   </style>
 </head>
 <body style="background-color: white;">
@@ -124,11 +124,11 @@
 
     function localDatetime(d) {
       let local = d.getFullYear() + "."
-          + d2(d.getMonth() + 1) + "."
-          + d2(d.getDate()) + " "
-          + d2(d.getHours()) + ":"
-          + d2(d.getMinutes()) + ":"
-          + d2(d.getSeconds());
+        + d2(d.getMonth() + 1) + "."
+        + d2(d.getDate()) + " "
+        + d2(d.getHours()) + ":"
+        + d2(d.getMinutes()) + ":"
+        + d2(d.getSeconds());
       return local;
     }
 
@@ -156,23 +156,23 @@
       }
       if (info.status === "A") {
         var inf = "gpsInfo\n" +
-            `  utc: ${info.utc}\n` +
-            `  status: ${info.status} [${gps.status2string(info.status)}]\t// Active or Void\n` +
-            `  fixMode: ${info.fixMode} [${gps.fixMode2string(info.fixMode)}]\t// 1:Fix not available, 2:2D, 3:3D\n` +
-            `  gpsQuality: ${info.gpsQuality} [${gps.gpsQuality2string(info.gpsQuality)}]\t// 0:Invalid, 1:GPS fix, 2:DGPS fix\n` +
-            `  latitude: ${info.latitude}\n` +
-            `  longitude: ${info.longitude}\n` +
-            `  pdop: ${info.pdop}\t// PDOP: Position Dilution of Precision\n` +
-            `  hdop: ${info.hdop}\t// HDOP: Horizontal Dilution of Precision\n` +
-            `  vdop: ${info.vdop}\t// VDOP: Vertical Dilution of Position\n` +
-            `  altitude: ${info.altitude}[M]\n` +
-            `  declination: ${info.declination}\t// Magnetic declination\n` +
-            `  direction: ${info.direction}\n` +
-            `  speed: ${info.speed}[km/h]\n` +
-            "  satelliteInfo:\n" +
-            `    inUse: ${info.satelliteInfo.inUse}\n` +
-            `    inView: ${info.satelliteInfo.inView}\n` +
-            `    satellites: Array (${info.satelliteInfo.satellites.length})\n`;
+          `  utc: ${info.utc}\n` +
+          `  status: ${info.status} [${gps.status2string(info.status)}]\t// Active or Void\n` +
+          `  fixMode: ${info.fixMode} [${gps.fixMode2string(info.fixMode)}]\t// 1:Fix not available, 2:2D, 3:3D\n` +
+          `  gpsQuality: ${info.gpsQuality} [${gps.gpsQuality2string(info.gpsQuality)}]\t// 0:Invalid, 1:GPS fix, 2:DGPS fix\n` +
+          `  latitude: ${info.latitude}\n` +
+          `  longitude: ${info.longitude}\n` +
+          `  pdop: ${info.pdop}\t// PDOP: Position Dilution of Precision\n` +
+          `  hdop: ${info.hdop}\t// HDOP: Horizontal Dilution of Precision\n` +
+          `  vdop: ${info.vdop}\t// VDOP: Vertical Dilution of Position\n` +
+          `  altitude: ${info.altitude}[M]\n` +
+          `  declination: ${info.declination}\t// Magnetic declination\n` +
+          `  direction: ${info.direction}\n` +
+          `  speed: ${info.speed}[km/h]\n` +
+          "  satelliteInfo:\n" +
+          `    inUse: ${info.satelliteInfo.inUse}\n` +
+          `    inView: ${info.satelliteInfo.inView}\n` +
+          `    satellites: Array (${info.satelliteInfo.satellites.length})\n`;
         for (let n = 0; n < info.satelliteInfo.satellites.length; n++) {
           let sat = info.satelliteInfo.satellites[n];
           inf += `      [${n}]: {id: ${sat.id},\televation: ${sat.elevation},\tazimuth: ${sat.azimuth},\tsnr: ${sat.snr}[dB],\tinUse: ${sat.inUse}, }\n`;
@@ -368,7 +368,7 @@
         if (info.utc) $("#timestamp").text(localDatetime(info.utc) + " (JST)");
       } else {
         var inf = "gpsInfo\n" +
-            `  status: ${info.status} [${gps.status2string(info.status)}]\t// Active or Void\n`;
+          `  status: ${info.status} [${gps.status2string(info.status)}]\t// Active or Void\n`;
         $("#text1").text(inf);
       }
 

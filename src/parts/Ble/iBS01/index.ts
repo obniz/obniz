@@ -3,23 +3,22 @@
  * @module Parts.iBS01
  */
 
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, {
+  ObnizPartsBleInfo,
+} from '../../../obniz/ObnizPartsBleInterface';
 
 export interface IBS01Options {}
 
 export interface IBS01_Data {
   battery: number;
   button: boolean;
-  moving: boolean;
-  hall_sensor: boolean;
-  fall: boolean;
 }
 
 export default class IBS01 implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: "iBS01",
+      name: 'iBS01',
     };
   }
 
@@ -51,22 +50,10 @@ export default class IBS01 implements ObnizPartsBleInterface {
     const data: IBS01_Data = {
       battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
       button: false,
-      moving: false,
-      hall_sensor: false,
-      fall: false,
     };
 
-    if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+    if (peripheral.adv_data[11] & 0b0001) {
       data.button = true;
-    }
-    if (Boolean(peripheral.adv_data[11] & 0b0010)) {
-      data.moving = true;
-    }
-    if (Boolean(peripheral.adv_data[11] & 0b0100)) {
-      data.hall_sensor = true;
-    }
-    if (Boolean(peripheral.adv_data[11] & 0b1000)) {
-      data.fall = true;
     }
     return data;
   }
@@ -90,7 +77,7 @@ export default class IBS01 implements ObnizPartsBleInterface {
     -1, // reserved
     -1, // reserved
     -1, // reserved
-    -1, // reserved
+    0x03, // subtype
     -1, // reserved
     -1, // reserved
     -1, // reserved

@@ -2,12 +2,12 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import EventEmitter from "eventemitter3";
-import ObnizBLE from "./ble";
-import BleRemoteCharacteristic from "./bleRemoteCharacteristic";
-import BleRemoteService from "./bleRemoteService";
-import { BleDeviceAddress, BleDeviceAddressType, BleDeviceType, BleEventType, UUID } from "./bleTypes";
-import { SmpEncryptOptions } from "./protocol/central/smp";
+import EventEmitter from 'eventemitter3';
+import ObnizBLE from './ble';
+import BleRemoteCharacteristic from './bleRemoteCharacteristic';
+import BleRemoteService from './bleRemoteService';
+import { BleDeviceAddress, BleDeviceAddressType, BleDeviceType, BleEventType, UUID } from './bleTypes';
+import { SmpEncryptOptions } from './protocol/central/smp';
 /**
  * The return values are shown below.
  *
@@ -347,6 +347,7 @@ export default class BleRemotePeripheral {
     _connectSetting: BleConnectSetting;
     /**
      * Indicating this peripheral is found by scan or set from software.
+     *
      * @ignore
      */
     discoverdOnRemote: boolean | undefined;
@@ -365,7 +366,7 @@ export default class BleRemotePeripheral {
      */
     setParams(dic: any): void;
     /**
-     *  @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
+     * @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
      */
     connect(setting?: BleConnectSetting): void;
     /**
@@ -428,7 +429,7 @@ export default class BleRemotePeripheral {
      */
     connectWait(setting?: BleConnectSetting): Promise<void>;
     /**
-     *  @deprecated replaced by {@link #disconnectWait()}
+     * @deprecated replaced by {@link #disconnectWait()}
      */
     disconnect(): void;
     /**
@@ -488,6 +489,7 @@ export default class BleRemotePeripheral {
      *   console.error(e);
      * }
      * ```
+     *
      * @param uuid
      */
     getService(uuid: UUID): BleRemoteService | null;
@@ -588,6 +590,7 @@ export default class BleRemotePeripheral {
      * ```
      *
      * Go to [[BlePairingOptions]] to see more option.
+     *
      * @param options BlePairingOptions
      */
     pairingWait(options?: BlePairingOptions): Promise<string>;

@@ -41,29 +41,29 @@ flick.led2.blink(100);
 LED1(赤)、LED2(緑)の制御は[LEDライブラリ](https://obniz.io/sdk/parts/LED/README.md)を参照してください。
 
 
-## [await] start({callbackFwInfo})
+## [await] startWait({callbackFwInfo})
 
 Flick Hatをリセットして使用できる状態にします。Flick Hatのファームウェア情報を受け取る場合は、引数にコールバック関数を指定します。
 
 ```javascript
 // Javascript Example
 let flickhat = obniz.wired("FlickHat", { vcc: 0, sda: 1, scl: 2, reset: 3, ts: 4, gnd: 5 });
-await flickhat.start(function(fwinfo) {
+await flickhat.startWait(function(fwinfo) {
   console.log(fwinfo.fwVersion); //1.3.14;p:HillstarV01;x: ;DSP:ID9000r2963;i:B;f:22500;nMsg;s:Rel_1_3_prer1784:NM;
 });
 ```
 
 
-## [await] polling({timeout})
+## [await] pollingWait({timeout})
 
 Flick Hatをポーリングします。定期的に呼び出す必要があるため、タイマーループまたはobniz Boardのアイドルループ内で呼び出します。引数`timeout`は、ジェスチャー情報が何も無い場合に監視ループする最大時間をミリ秒で指定します。省略値は3000ms(3秒)です。（`ts`ピンが`high(true)`から`low(false)`に変化することを監視している）
 
 ```javascript
 // Javascript Example
 let flickhat = obniz.wired("FlickHat", { vcc: 0, sda: 1, scl: 2, reset: 3, ts: 4, gnd: 5 });
-await flickhat.start();
+await flickhat.startWait();
 obniz.repeat(async function() {
-  await flick.polling(1000)); //1秒
+  await flick.pollingWait(1000)); //1秒
 }, 100);
 ```
 
@@ -190,8 +190,8 @@ flickhat.ondoubletap = function(doubletap) {
 flickhat.onairwheel = function(airwheel) {
   console.log(airwheel); // { delta: 22.5, rotation: 2, seq: 99, raw:・・・ }
 }
-await flickhat.start();
+await flickhat.startWait();
 obniz.repeat(async function() {
-  await flick.polling();
+  await flick.pollingWait();
 }, 100);
 ```

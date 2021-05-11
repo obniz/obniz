@@ -3,23 +3,30 @@
  * @module Parts.UA651BLE
  */
 
-import BleRemoteCharacteristic from "../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic";
-import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
-import BleBatteryService from "../abstract/services/batteryService";
-import BleGenericAccess from "../abstract/services/genericAccess";
+import BleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface, {
+  ObnizPartsBleInfo,
+} from '../../../obniz/ObnizPartsBleInterface';
+import BleBatteryService from '../abstract/services/batteryService';
+import BleGenericAccess from '../abstract/services/genericAccess';
 
 export interface UA651BLEOptions {}
 
 export interface UA651BLEResult {
-  SystolicPressure_mmHg?: number; // ex) 128mmHg → 0x80 = 128, 0x00
+  SystolicPressure_mmHg?: number; // ex) 128mmHg -> 0x80 = 128, 0x00
   DiastolicPressure_mmHg?: number;
   MeanArterialPressure_mmHg?: number;
-  SystolicPressure_kPa?: number; // ex) 17.6Kpa → 0xB0 = 176, 0xF0
+  SystolicPressure_kPa?: number; // ex) 17.6Kpa -> 0xB0 = 176, 0xF0
   DiastolicPressure_kPa?: number;
   MeanArterialPressure_kPa?: number;
+  bodyMoved?: boolean;
+  cuffFitLoose?: boolean;
+  irregularPulseDetected?: boolean;
+  improperMeasurement?: boolean;
+  PulseRate?: number;
   date?: {
-    // Time Stamp ex) 2013/8/26 9:10:20 → 0xDD 0x07 0x08 0x1A 0x09 0x0A 0x14
+    // Time Stamp ex) 2013/8/26 9:10:20 -> 0xDD 0x07 0x08 0x1A 0x09 0x0A 0x14
     year: number;
     month: number;
     day: number;
@@ -27,18 +34,19 @@ export interface UA651BLEResult {
     minute: number;
     second: number;
   };
-  PulseRate?: number;
 }
 
 export default class UA651BLE implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: "UA651BLE",
+      name: 'UA651BLE',
     };
   }
 
   public static isDevice(peripheral: BleRemotePeripheral) {
-    return peripheral.localName && peripheral.localName.startsWith("A&D_UA-651BLE_");
+    return (
+      peripheral.localName && peripheral.localName.startsWith('A&D_UA-651BLE_')
+    );
   }
 
   public onNotify?: (co2: number) => void;
@@ -48,9 +56,12 @@ export default class UA651BLE implements ObnizPartsBleInterface {
   public batteryService?: BleBatteryService;
   private _timezoneOffsetMinute: number;
 
-  constructor(peripheral: BleRemotePeripheral | null, timezoneOffsetMinute: number) {
+  constructor(
+    peripheral: BleRemotePeripheral | null,
+    timezoneOffsetMinute: number
+  ) {
     if (!peripheral) {
-      throw new Error("no peripheral");
+      throw new Error('no peripheral');
     }
     this._peripheral = peripheral;
     this._timezoneOffsetMinute = timezoneOffsetMinute;
@@ -58,7 +69,7 @@ export default class UA651BLE implements ObnizPartsBleInterface {
 
   public async getDataWait(): Promise<UA651BLEResult[]> {
     if (!this._peripheral) {
-      throw new Error("UA651BLE not found");
+      throw new Error('UA651BLE not found');
     }
     if (!this._peripheral.connected) {
       this._peripheral.ondisconnect = (reason) => {
@@ -71,17 +82,23 @@ export default class UA651BLE implements ObnizPartsBleInterface {
 
     return await new Promise(async (resolve, reject) => {
       if (!this._peripheral) {
-        throw new Error("UA651BLE not found");
+        throw new Error('UA651BLE not found');
       }
       const results: UA651BLEResult[] = [];
-      const { bloodPressureMeasurementChar, timeChar, customServiceChar } = this._getChars();
+      const {
+        bloodPressureMeasurementChar,
+        timeChar,
+        customServiceChar,
+      } = this._getChars();
 
       await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
-      await this._writeTimeChar(this._timezoneOffsetMinute);
+      await this._writeTimeCharWait(this._timezoneOffsetMinute);
 
-      await bloodPressureMeasurementChar.registerNotifyWait((data: number[]) => {
-        results.push(this._analyzeData(data));
-      });
+      await bloodPressureMeasurementChar.registerNotifyWait(
+        (data: number[]) => {
+          results.push(this._analyzeData(data));
+        }
+      );
       this._peripheral.ondisconnect = (reason) => {
         resolve(results);
         if (this.ondisconnect) {
@@ -89,16 +106,6 @@ export default class UA651BLE implements ObnizPartsBleInterface {
         }
       };
     });
-  }
-
-  private _readFLOAT_LE(buffer: Buffer, index: number) {
-    const data = buffer.readUInt32LE(index);
-    let mantissa = data & 0x00ffffff;
-    if ((mantissa & 0x00800000) > 0) {
-      mantissa = -1 * (~(mantissa - 0x01) & 0x00ffffff);
-    }
-    const exponential = data >> 24;
-    return mantissa * Math.pow(10, exponential);
   }
 
   private _readSFLOAT_LE(buffer: Buffer, index: number) {
@@ -154,22 +161,37 @@ export default class UA651BLE implements ObnizPartsBleInterface {
       result.PulseRate = this._readSFLOAT_LE(buf, index);
       index += 2;
     }
+    if (flags & 0x08) {
+      // UserIdFlag
+      index += 1;
+    }
+    if (flags & 0x10) {
+      // UserIdFlag
+      const ms = buf[index];
+      result.bodyMoved = (ms & 0b1) !== 0;
+      result.cuffFitLoose = (ms & 0b10) !== 0;
+      result.irregularPulseDetected = (ms & 0b100) !== 0;
+      result.improperMeasurement = (ms & 0b100000) !== 0;
+      index += 1;
+    }
 
     return result;
   }
 
   private _getChars() {
     if (!this._peripheral) {
-      throw new Error("UA651BLE not found");
+      throw new Error('UA651BLE not found');
     }
 
     const bloodPressureMeasurementChar: BleRemoteCharacteristic = this._peripheral
-      .getService("1810")!
-      .getCharacteristic("2A35")!;
-    const timeChar = this._peripheral.getService("1810")!.getCharacteristic("2A08")!;
+      .getService('1810')!
+      .getCharacteristic('2A35')!;
+    const timeChar = this._peripheral
+      .getService('1810')!
+      .getCharacteristic('2A08')!;
     const customServiceChar = this._peripheral
-      .getService("233bf0005a341b6d975c000d5690abe4")! // Primary Service Custom Service(pp.14)
-      .getCharacteristic("233bf0015a341b6d975c000d5690abe4")!; // Custom Characteristic(pp.14)
+      .getService('233bf0005a341b6d975c000d5690abe4')! // Primary Service Custom Service(pp.14)
+      .getCharacteristic('233bf0015a341b6d975c000d5690abe4')!; // Custom Characteristic(pp.14)
 
     return {
       bloodPressureMeasurementChar,
@@ -178,7 +200,7 @@ export default class UA651BLE implements ObnizPartsBleInterface {
     };
   }
 
-  private async _writeTimeChar(timeOffsetMinute: number) {
+  private async _writeTimeCharWait(timeOffsetMinute: number) {
     const { timeChar } = this._getChars();
 
     const date = new Date();

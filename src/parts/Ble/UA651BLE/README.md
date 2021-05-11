@@ -63,15 +63,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const data = await device.getDataWait();
     
     console.log(data);
-    // {
-    // SystolicPressure_mmHg?: number;
-    // DiastolicPressure_mmHg?: number;
-    // MeanArterialPressure_mmHg?: number;
-    // SystolicPressure_kPa?: number;
-    // DiastolicPressure_kPa?: number;
-    // MeanArterialPressure_kPa?: number;
-    // PulseRate?: number;
-    //   }
   }
 };
 await obniz.ble.scan.startWait();
@@ -81,14 +72,20 @@ await obniz.ble.scan.startWait();
 
 Output format is here. Blood pressure data is in mmHg or kPa format, and Pulse rate data is in pulse/min format.
 
+[https://obniz.github.io/obniz/obnizjs/interfaces/parts.ua651ble.ua651bleresult.html](https://obniz.github.io/obniz/obnizjs/interfaces/parts.ua651ble.ua651bleresult.html)
+
 ```json
 {
-  SystolicPressure_mmHg?: number;
+  SystolicPressure_mmHg?: number; // ex) 128mmHg → 0x80 = 128, 0x00
   DiastolicPressure_mmHg?: number;
   MeanArterialPressure_mmHg?: number;
-  SystolicPressure_kPa?: number;
+  SystolicPressure_kPa?: number; // ex) 17.6Kpa → 0xB0 = 176, 0xF0
   DiastolicPressure_kPa?: number;
   MeanArterialPressure_kPa?: number;
+  bodyMoved?: number;
+  cuffFitLoose?: boolean;
+  irregularPulseDetected?: boolean;
+  improperMeasurement?: boolean;
   PulseRate?: number;
 }
 ```

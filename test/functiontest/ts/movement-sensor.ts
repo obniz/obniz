@@ -1,7 +1,7 @@
 /* tslint:disable:class-name max-classes-per-file */
-import Obniz from "../../../dist/src/obniz/index";
+import Obniz from '../../../dist/src/obniz/index';
 
-const OBNIZ_ID = "1234-5678";
+const OBNIZ_ID = '1234-5678';
 
 /**
  * https://obniz.io/ja/sdk/parts/Button/README.md
@@ -10,9 +10,9 @@ class ButtonTest {
   public onchange() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const button = obniz.wired("Button", { signal: 0, gnd: 1 });
+      const button = obniz.wired('Button', { signal: 0, gnd: 1 });
       button.onchange = (pressed) => {
-        console.log("pressed:" + pressed);
+        console.log('pressed:' + pressed);
       };
     };
   }
@@ -20,20 +20,20 @@ class ButtonTest {
   public isPressedWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const button = obniz.wired("Button", { signal: 0, gnd: 1 });
+      const button = obniz.wired('Button', { signal: 0, gnd: 1 });
       const pressed = await button.isPressedWait();
-      console.log("Pressed = " + pressed);
+      console.log('Pressed = ' + pressed);
     };
   }
 
   public stateWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const button = obniz.wired("Button", { signal: 0, gnd: 1 });
+      const button = obniz.wired('Button', { signal: 0, gnd: 1 });
       await button.stateWait(true);
-      console.log("button pushed!");
+      console.log('button pushed!');
       await button.stateWait(false);
-      console.log("button released");
+      console.log('button released');
     };
   }
 }
@@ -47,9 +47,9 @@ class HC_SR505Test {
   public onchange() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const sensor = obniz.wired("HC-SR505", { vcc: 0, signal: 1, gnd: 2 });
+      const sensor = obniz.wired('HC-SR505', { vcc: 0, signal: 1, gnd: 2 });
       sensor.onchange = (val) => {
-        console.log(val ? "Moving Something!" : "Nothing moving");
+        console.log(val ? 'Moving Something!' : 'Nothing moving');
       };
     };
   }
@@ -57,9 +57,9 @@ class HC_SR505Test {
   public getWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const sensor = obniz.wired("HC-SR505", { vcc: 0, signal: 1, gnd: 2 });
+      const sensor = obniz.wired('HC-SR505', { vcc: 0, signal: 1, gnd: 2 });
       const val = await sensor.getWait();
-      console.log(val ? "Moving Something!" : "Nothing moving");
+      console.log(val ? 'Moving Something!' : 'Nothing moving');
     };
   }
 }
@@ -71,7 +71,7 @@ class JoyStickTest {
   public onchange() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const joystick = obniz.wired("JoyStick", {
+      const joystick = obniz.wired('JoyStick', {
         gnd: 4,
         sw: 0,
         y: 1,
@@ -91,7 +91,7 @@ class JoyStickTest {
   public onchangesw() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const joystick = obniz.wired("JoyStick", {
+      const joystick = obniz.wired('JoyStick', {
         gnd: 4,
         sw: 0,
         y: 1,
@@ -107,7 +107,7 @@ class JoyStickTest {
   public isPressedWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const joystick = obniz.wired("JoyStick", {
+      const joystick = obniz.wired('JoyStick', {
         gnd: 4,
         sw: 0,
         y: 1,
@@ -116,7 +116,7 @@ class JoyStickTest {
       });
       const isPressed = await joystick.isPressedWait();
       if (isPressed) {
-        console.log("PRESSED");
+        console.log('PRESSED');
       }
     };
   }
@@ -124,7 +124,7 @@ class JoyStickTest {
   public getWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const joystick = obniz.wired("JoyStick", {
+      const joystick = obniz.wired('JoyStick', {
         gnd: 4,
         sw: 0,
         y: 1,
@@ -134,7 +134,7 @@ class JoyStickTest {
       const x = await joystick.getXWait();
       const y = await joystick.getYWait();
 
-      console.log("x:" + x + " y:" + y);
+      console.log('x:' + x + ' y:' + y);
     };
   }
 }
@@ -146,7 +146,7 @@ class KXR94_2050Test {
   public onChange() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const sensor = obniz.wired("KXR94-2050", {
+      const sensor = obniz.wired('KXR94-2050', {
         vcc: 0,
         gnd: 1,
         x: 2,
@@ -157,21 +157,21 @@ class KXR94_2050Test {
       });
 
       sensor.onChange = (values) => {
-        console.log("x:" + values.x);
-        console.log("y:" + values.y);
-        console.log("z:" + values.z);
+        console.log('x:' + values.x);
+        console.log('y:' + values.y);
+        console.log('z:' + values.z);
       };
 
       sensor.onChangeX = (value) => {
-        console.log("x:" + value);
+        console.log('x:' + value);
       };
 
       sensor.onChangeY = (value) => {
-        console.log("y:" + value);
+        console.log('y:' + value);
       };
 
       sensor.onChangeZ = (value) => {
-        console.log("z:" + value);
+        console.log('z:' + value);
       };
     };
   }
@@ -179,7 +179,7 @@ class KXR94_2050Test {
   public get() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const sensor = obniz.wired("KXR94-2050", {
+      const sensor = obniz.wired('KXR94-2050', {
         vcc: 0,
         gnd: 1,
         x: 2,
@@ -191,9 +191,9 @@ class KXR94_2050Test {
 
       while (true) {
         const values = sensor.get();
-        console.log("x:" + values.x);
-        console.log("y:" + values.y);
-        console.log("z:" + values.z);
+        console.log('x:' + values.x);
+        console.log('y:' + values.y);
+        console.log('z:' + values.z);
         await obniz.wait(30);
       }
     };
@@ -202,7 +202,7 @@ class KXR94_2050Test {
   public getWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const sensor = obniz.wired("KXR94-2050", {
+      const sensor = obniz.wired('KXR94-2050', {
         vcc: 0,
         gnd: 1,
         x: 2,
@@ -214,9 +214,9 @@ class KXR94_2050Test {
 
       while (true) {
         const values = await sensor.getWait();
-        console.log("x:" + values.x);
-        console.log("y:" + values.y);
-        console.log("z:" + values.z);
+        console.log('x:' + values.x);
+        console.log('y:' + values.y);
+        console.log('z:' + values.z);
       }
     };
   }
@@ -231,9 +231,9 @@ class PaPIRsVZTest {
   public onchange() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const sensor = obniz.wired("PaPIRsVZ", { gnd: 0, signal: 1, vcc: 2 });
+      const sensor = obniz.wired('PaPIRsVZ', { gnd: 0, signal: 1, vcc: 2 });
       sensor.onchange = (val) => {
-        console.log(val ? "Moving Something!" : "Nothing moving");
+        console.log(val ? 'Moving Something!' : 'Nothing moving');
       };
     };
   }
@@ -246,9 +246,9 @@ class PotentiometerTest {
   public onchange() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const meter = obniz.wired("Potentiometer", { pin0: 0, pin1: 1, pin2: 2 });
+      const meter = obniz.wired('Potentiometer', { pin0: 0, pin1: 1, pin2: 2 });
       meter.onchange = (position) => {
-        console.log("position: " + position);
+        console.log('position: ' + position);
       };
     };
   }

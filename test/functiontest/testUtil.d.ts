@@ -5,7 +5,7 @@ interface ObnizTestUtil {
   createObniz: any;
   setupNotConnectedYetObnizPromise: any;
   setupObnizPromise: any;
-  releaseObnizePromise: any;
+  releaseObnizPromise: any;
   waitForWebsocketCall: any;
   receiveJson: any;
   isValidCommandRequestJson: any;

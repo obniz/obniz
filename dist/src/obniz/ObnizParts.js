@@ -23,19 +23,23 @@ class ObnizParts extends ObnizConnection_1.default {
     }
     /**
      * Register Parts class
+     *
      * @param arg0 Parts class
      * @param arg1 param for parts
      */
     static PartsRegistrate(arg0, arg1) {
-        if (arg0 && typeof arg0.info === "function" && typeof arg0.info().name === "string") {
+        if (arg0 &&
+            typeof arg0.info === 'function' &&
+            typeof arg0.info().name === 'string') {
             _parts[arg0.info().name] = arg0;
         }
-        else if (typeof arg0 === "string" && typeof arg1 === "object") {
+        else if (typeof arg0 === 'string' && typeof arg1 === 'object') {
             _parts[arg0] = arg1;
         }
     }
     /**
      * Get parts class.
+     *
      * @param name string
      * @constructor
      */
@@ -50,17 +54,19 @@ class ObnizParts extends ObnizConnection_1.default {
     }
     /**
      * Check the param is valid io pin no.
+     *
      * @param io
      */
     isValidIO(io) {
-        return typeof io === "number" && this["io" + io] !== null;
+        return typeof io === 'number' && this['io' + io] !== null;
     }
     /**
      * Check the param is valid ad pin no.
+     *
      * @param ad
      */
     isValidAD(ad) {
-        return typeof ad === "number" && this["ad" + ad] !== null;
+        return typeof ad === 'number' && this['ad' + ad] !== null;
     }
     /**
      * Setup Parts of parts library
@@ -69,9 +75,12 @@ class ObnizParts extends ObnizConnection_1.default {
      * @param options
      */
     wired(partsName, options) {
+        if (this.connectionState !== 'connected') {
+            throw new Error('obniz.wired can only be used after connection');
+        }
         const Parts = ObnizParts.getPartsClass(partsName);
         if (!Parts) {
-            throw new Error("No such a parts [" + partsName + "] found");
+            throw new Error('No such a parts [' + partsName + '] found');
         }
         const parts = new Parts();
         const args = Array.from(arguments);

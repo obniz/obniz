@@ -1,6 +1,25 @@
 {
   "env": {
-
-    "mocha": true
-  }
+    "mocha": true,
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "rules": {
+    "async-function-name": "off",
+    "non-ascii": "off",
+    "prefer-arrow/prefer-arrow-functions": "warn",
+    "max-classes-per-file": "off",
+    "no-unused-vars": "warn"
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/*.ts"
+      ],
+      "rules": {
+        "@typescript-eslint/require-await": "warn"
+      }
+    }
+  ]
 }

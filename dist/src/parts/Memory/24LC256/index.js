@@ -6,16 +6,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class _24LC256 {
     constructor() {
-        this.requiredKeys = ["address"];
-        this.keys = ["sda", "scl", "clock", "pull", "i2c", "address"];
+        this.requiredKeys = ['address'];
+        this.keys = ['sda', 'scl', 'clock', 'pull', 'i2c', 'address'];
     }
     static info() {
         return {
-            name: "24LC256",
+            name: '24LC256',
         };
     }
     wired(obniz) {
-        this.params.mode = this.params.mode || "master"; // for i2c
+        this.params.mode = this.params.mode || 'master'; // for i2c
         this.params.clock = this.params.clock || 400 * 1000; // for i2c
         this.i2c = obniz.getI2CWithConfig(this.params);
     }

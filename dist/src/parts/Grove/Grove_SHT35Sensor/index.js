@@ -14,27 +14,27 @@ class Grove_SHT35Sensor {
         this.ERROR_COMM = -2;
         this.ERROR_OTHERS = -128;
         this.launched = false;
-        this.keys = ["gnd", "vcc", "sda", "scl", "grove"];
+        this.keys = ['gnd', 'vcc', 'sda', 'scl', 'grove'];
         this.requiredKeys = [];
         this.ioKeys = this.keys;
-        this.displayName = "GroveSHT35";
-        this.displayIoNames = { sda: "sda", scl: "scl" };
+        this.displayName = 'GroveSHT35';
+        this.displayIoNames = { sda: 'sda', scl: 'scl' };
     }
     static info() {
         return {
-            name: "Grove_SHT35Sensor",
+            name: 'Grove_SHT35Sensor',
         };
     }
     wired(obniz) {
         if (this.params.grove) {
-            this.i2c = this.params.grove.getI2c(400000, "5v");
+            this.i2c = this.params.grove.getI2c(400000, '5v');
         }
         else {
             this.vcc = this.params.vcc;
             this.gnd = this.params.gnd;
-            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
             this.params.clock = 400000;
-            this.params.mode = "master";
+            this.params.mode = 'master';
             this.i2c = obniz.getI2CWithConfig(this.params);
         }
         this.obniz.wait(100);

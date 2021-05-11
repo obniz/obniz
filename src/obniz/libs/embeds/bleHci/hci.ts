@@ -3,7 +3,11 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 
-import { ObnizOfflineError, ObnizParameterError, ObnizTimeoutError } from "../../../ObnizError";
+import {
+  ObnizOfflineError,
+  ObnizParameterError,
+  ObnizTimeoutError,
+} from '../../../ObnizError';
 
 export type EventHandler = (...args: any) => any;
 
@@ -58,6 +62,7 @@ export default class ObnizBLEHci {
 
   /**
    * write HCI command to HCI module
+   *
    * @param hciCommand
    */
   public write(hciCommand: number[]) {
@@ -85,7 +90,7 @@ export default class ObnizBLEHci {
       }
 
       for (const eventName in this._eventHandlerQueue) {
-        if (typeof eventName !== "string" || !eventName.startsWith("[")) {
+        if (typeof eventName !== 'string' || !eventName.startsWith('[')) {
           continue;
         }
         if (this._eventHandlerQueue[eventName].length === 0) {
@@ -105,6 +110,7 @@ export default class ObnizBLEHci {
 
   /**
    * Callback on HCI command received.
+   *
    * @param data
    */
   public onread(data: any) {}
@@ -117,7 +123,10 @@ export default class ObnizBLEHci {
    * @param option.timeout Timeout number in seconds. If not specified. default timeout is applied. If null specified, never timeout.
    * @param option.waitingFor Readable description of command for waiting. Printed when Error or timeout occured.
    */
-  public timeoutPromiseWrapper<T>(promise: Promise<T>, option?: any): Promise<T> {
+  public timeoutPromiseWrapper<T>(
+    promise: Promise<T>,
+    option?: any
+  ): Promise<T> {
     option = option || {};
     if (option.timeout === null) {
       option.timeout = null;
@@ -130,10 +139,10 @@ export default class ObnizBLEHci {
     option.waitingFor = option.waitingFor || undefined;
 
     let onObnizClosed: null | (() => void) = null;
-    let timeoutHandler: null | NodeJS.Timeout = null;
+    let timeoutHandler: null | ReturnType<typeof setTimeout> = null;
 
     const clearListeners = () => {
-      this.Obniz.off("close", onObnizClosed);
+      this.Obniz.off('close', onObnizClosed);
       if (timeoutHandler) {
         clearTimeout(timeoutHandler);
         timeoutHandler = null;
@@ -141,51 +150,54 @@ export default class ObnizBLEHci {
     };
 
     const successPromise = promise.then(
-      (result: any) => {
+      (result: T) => {
         clearListeners();
         return result;
       },
       (reason: any) => {
         clearListeners();
         throw reason;
-      },
+      }
     );
 
-    const errorPromise = new Promise((resolve, reject) => {
-      if (this.Obniz.connectionState !== "connected") {
+    const errorPromise: Promise<T> = new Promise((resolve, reject) => {
+      if (this.Obniz.connectionState !== 'connected') {
         reject(new ObnizOfflineError());
         return;
       }
 
+      const offlineError = new ObnizOfflineError();
       onObnizClosed = () => {
         onObnizClosed = null;
         clearListeners();
-        reject(new ObnizOfflineError());
+        reject(offlineError);
       };
-      this.Obniz.once("close", onObnizClosed);
+      this.Obniz.once('close', onObnizClosed);
 
       let onTimeout;
       if (option.onTimeout) {
+        const timeoutError = new ObnizTimeoutError(option.waitingFor);
         onTimeout = () => {
           timeoutHandler = null;
           clearListeners();
           option
             .onTimeout()
             .then(() => {
-              reject(new ObnizTimeoutError(option.waitingFor));
+              reject(timeoutError);
             })
             .catch((e: Error) => {
               reject(e);
             });
         };
       } else {
+        const timeoutError = new ObnizTimeoutError(option.waitingFor);
         onTimeout = () => {
           timeoutHandler = null;
           clearListeners();
-          reject(new ObnizTimeoutError(option.waitingFor));
+          reject(timeoutError);
         };
       }
-      timeoutHandler = setTimeout(onTimeout, option!.timeout);
+      timeoutHandler = setTimeout(onTimeout, option.timeout);
     });
 
     if (option.timeout !== null) {
@@ -199,14 +211,15 @@ export default class ObnizBLEHci {
       new Promise((resolve) => {
         this.onceQueue(binaryFilter, resolve);
       }),
-      option,
+      option
     );
   }
 
   protected onceQueue(binaryFilter: number[], func: EventHandler) {
     const eventName = this.encodeBinaryFilter(binaryFilter);
-    this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName] || [];
-    if (typeof func === "function") {
+    this._eventHandlerQueue[eventName] =
+      this._eventHandlerQueue[eventName] || [];
+    if (typeof func === 'function') {
       this._eventHandlerQueue[eventName].push(func);
     }
   }

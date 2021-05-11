@@ -3,12 +3,14 @@
  * @module Parts.Grove_EARTHOptionsA
  */
 
-import Obniz from "../../../obniz";
-import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
-import PeripheralGrove from "../../../obniz/libs/io_peripherals/grove";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
+import Obniz from '../../../obniz';
+import PeripheralAD from '../../../obniz/libs/io_peripherals/ad';
+import PeripheralGrove from '../../../obniz/libs/io_peripherals/grove';
+import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
 
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface Grove_EARTHOptionsA {
   vcc?: number;
@@ -26,7 +28,7 @@ export type Grove_EARTHOptions = Grove_EARTHOptionsA | Grove_EARTHOptionsB;
 export default class Grove_EARTH implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "Grove_EARTH",
+      name: 'Grove_EARTH',
     };
   }
 
@@ -43,7 +45,7 @@ export default class Grove_EARTH implements ObnizPartsInterface {
   private io!: PeripheralIO;
 
   constructor() {
-    this.keys = ["vcc", "aout", "dout", "gnd", "grove"];
+    this.keys = ['vcc', 'aout', 'dout', 'gnd', 'grove'];
     this.requiredKeys = [];
   }
 
@@ -54,7 +56,7 @@ export default class Grove_EARTH implements ObnizPartsInterface {
       this.ad = groveIOs.analog;
       this.io = groveIOs.digital;
     } else {
-      this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+      this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
       this.ad = obniz.getAD(this.params.aout);
       this.io = obniz.getIO(this.params.dout);
     }

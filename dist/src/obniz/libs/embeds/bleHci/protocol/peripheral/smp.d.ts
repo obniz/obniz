@@ -3,8 +3,8 @@
  *
  * @ignore
  */
-import EventEmitter from "eventemitter3";
-declare type SmpEventTypes = "fail";
+import EventEmitter from 'eventemitter3';
+declare type SmpEventTypes = 'fail';
 /**
  * @ignore
  */

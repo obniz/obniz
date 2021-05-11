@@ -3,10 +3,12 @@
  * @module Parts.Grove_WaterLevelSensor
  */
 
-import Obniz from "../../../obniz";
-import PeripheralGrove from "../../../obniz/libs/io_peripherals/grove";
-import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import Obniz from '../../../obniz';
+import PeripheralGrove from '../../../obniz/libs/io_peripherals/grove';
+import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from '../../../obniz/ObnizPartsInterface';
 
 export interface Grove_WaterLevelSensorOptionsA {
   gnd?: number;
@@ -19,12 +21,14 @@ interface Grove_WaterLevelSensorOptionsB {
   grove: PeripheralGrove;
 }
 
-export type Grove_WaterLevelSensorOptions = Grove_WaterLevelSensorOptionsA | Grove_WaterLevelSensorOptionsB;
+export type Grove_WaterLevelSensorOptions =
+  | Grove_WaterLevelSensorOptionsA
+  | Grove_WaterLevelSensorOptionsB;
 
 export default class Grove_WaterLevelSensor implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "Grove_WaterLevelSensor",
+      name: 'Grove_WaterLevelSensor',
     };
   }
 
@@ -52,11 +56,11 @@ export default class Grove_WaterLevelSensor implements ObnizPartsInterface {
   private previous_val: number;
 
   constructor() {
-    this.keys = ["gnd", "vcc", "sda", "scl", "grove"];
+    this.keys = ['gnd', 'vcc', 'sda', 'scl', 'grove'];
     this.requiredKeys = [];
     this.ioKeys = this.keys;
-    this.displayName = "WaterLevel";
-    this.displayIoNames = { sda: "sda", scl: "scl" };
+    this.displayName = 'WaterLevel';
+    this.displayIoNames = { sda: 'sda', scl: 'scl' };
 
     this.THRESHOLD = 100;
     this.ATTINY1_HIGH_ADDR = 0x78;
@@ -65,21 +69,23 @@ export default class Grove_WaterLevelSensor implements ObnizPartsInterface {
     this.previous_val = 0;
   }
 
-  public async wired(obniz: Obniz) {
-    // Grove_3AxisAccelerometer の I2C 参考
+  public wired(obniz: Obniz) {
     if (this.params.grove) {
-      this.i2c = this.params.grove.getI2c(400000, "5v");
+      this.i2c = this.params.grove.getI2c(400000, '5v');
     } else {
       this.vcc = this.params.vcc;
       this.gnd = this.params.gnd;
-      this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+      this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
       this.params.clock = 400000;
-      this.params.mode = "master";
+      this.params.mode = 'master';
 
       this.i2c = obniz.getI2CWithConfig(this.params);
     }
-    this.obniz.wait(100);
+    this.initWait();
+  }
+
+  async initWait() {
     // power on
     while (true) {
       const current_val: number = await this.getWait();
@@ -89,20 +95,21 @@ export default class Grove_WaterLevelSensor implements ObnizPartsInterface {
         }
         this.previous_val = current_val;
       }
-      this.obniz.wait(this.check_interval_ms);
+      await this.obniz.wait(this.check_interval_ms);
     }
   }
 
-  // Grove_JoyStick 参考
   public async getWait(): Promise<number> {
-    let water_level_mm: number;
-    const water_level_step: number = 5; // 5 mm step
+    const water_level_step = 5; // 5 mm step
 
-    const high_data: any[] = await this.i2c.readWait(this.ATTINY1_HIGH_ADDR, 12);
+    const high_data: any[] = await this.i2c.readWait(
+      this.ATTINY1_HIGH_ADDR,
+      12
+    );
     const low_data: any[] = await this.i2c.readWait(this.ATTINY2_LOW_ADDR, 8);
 
     let i: number;
-    let touch_val: number = 0;
+    let touch_val = 0;
     for (i = 0; i < 8; i++) {
       if (low_data[i] > this.THRESHOLD) {
         touch_val |= 1 << i;
@@ -114,13 +121,13 @@ export default class Grove_WaterLevelSensor implements ObnizPartsInterface {
       }
     }
 
-    let trig_section: number = 0;
+    let trig_section = 0;
     while (touch_val & 0x01) {
       trig_section++;
       touch_val >>= 1;
     }
 
-    water_level_mm = trig_section * water_level_step;
+    const water_level_mm = trig_section * water_level_step;
 
     return water_level_mm;
   }

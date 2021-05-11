@@ -1,7 +1,7 @@
-import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
-import BleRemoteCharacteristic from "./bleRemoteCharacteristic";
-import BleRemotePeripheral from "./bleRemotePeripheral";
-import { UUID } from "./bleTypes";
+import BleRemoteAttributeAbstract from './bleRemoteAttributeAbstract';
+import BleRemoteCharacteristic from './bleRemoteCharacteristic';
+import BleRemotePeripheral from './bleRemotePeripheral';
+import { UUID } from './bleTypes';
 /**
  * @category Use as Central
  */
@@ -87,6 +87,7 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
      *   console.error(e);
      * }
      * ```
+     *
      * @param uuid
      */
     getCharacteristic(uuid: UUID): BleRemoteCharacteristic | null;

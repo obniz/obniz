@@ -3,7 +3,7 @@
  *
  * @ignore
  */
-import Hci from "../hci";
+import Hci from '../hci';
 /**
  * @ignore
  */

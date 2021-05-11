@@ -40,22 +40,22 @@ class WSCommandUart extends WSCommand_1.default {
             buf[7] = 0;
         }
         else {
-            throw new Error("uart: invalid stop bits");
+            throw new Error('uart: invalid stop bits');
         }
         buf[8] = params.bits;
-        if (params.parity === "even") {
+        if (params.parity === 'even') {
             buf[9] = 2;
         }
-        else if (params.parity === "odd") {
+        else if (params.parity === 'odd') {
             buf[9] = 3;
         }
-        if (params.flowcontrol === "rts") {
+        if (params.flowcontrol === 'rts') {
             buf[10] = 2;
         }
-        else if (params.flowcontrol === "cts") {
+        else if (params.flowcontrol === 'cts') {
             buf[10] = 3;
         }
-        else if (params.flowcontrol === "rts-cts") {
+        else if (params.flowcontrol === 'rts-cts') {
             buf[10] = 4;
         }
         if (params.rts !== null) {
@@ -80,16 +80,16 @@ class WSCommandUart extends WSCommand_1.default {
     parseFromJson(json) {
         // 0~2
         for (let i = 0; i < 3; i++) {
-            const module = json["uart" + i];
+            const module = json['uart' + i];
             if (module === undefined) {
                 continue;
             }
             const schemaData = [
-                { uri: "/request/uart/init", onValid: this.init },
-                { uri: "/request/uart/send", onValid: this.send },
-                { uri: "/request/uart/deinit", onValid: this.deinit },
+                { uri: '/request/uart/init', onValid: this.init },
+                { uri: '/request/uart/send', onValid: this.send },
+                { uri: '/request/uart/deinit', onValid: this.deinit },
             ];
-            const res = this.validateCommandSchema(schemaData, module, "uart" + i, i);
+            const res = this.validateCommandSchema(schemaData, module, 'uart' + i, i);
             if (res.valid === 0) {
                 if (res.invalidButLike.length > 0) {
                     throw new Error(res.invalidButLike[0].message);
@@ -107,7 +107,7 @@ class WSCommandUart extends WSCommand_1.default {
             for (let i = 0; i < arr.length; i++) {
                 arr[i] = payload[i + 1];
             }
-            objToSend["uart" + module_index] = {
+            objToSend['uart' + module_index] = {
                 data: arr,
             };
         }

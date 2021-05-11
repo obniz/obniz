@@ -1,4 +1,4 @@
-import WSCommand from "./WSCommand";
+import WSCommand from './WSCommand';
 declare class WSCommandWiFi extends WSCommand {
     module: any;
     _CommandScan: any;

@@ -2,19 +2,17 @@ let chai = require('chai');
 let expect = chai.expect;
 
 let testUtil = require('../../../testUtil.js');
-chai.use(require('chai-like'));
-chai.use(testUtil.obnizAssert);
 
-describe('display', function() {
-  beforeEach(function(done) {
-    return testUtil.setupObnizPromise(this, done, { binary: true });
+describe('display', function () {
+  beforeEach(async function () {
+    await testUtil.setupObnizPromise(this, null, { binary: true });
   });
 
-  afterEach(function(done) {
-    return testUtil.releaseObnizePromise(this, done);
+  afterEach(async function () {
+    await testUtil.releaseObnizPromise(this);
   });
 
-  it('request test no.0', function() {
+  it('request test no.0', function () {
     let requestJson = [{ display: { clear: true } }];
     let expecteBinaryStrings = ['08 00 00'];
 
@@ -31,7 +29,7 @@ describe('display', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -40,7 +38,7 @@ describe('display', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.2', function() {
+  it('request test no.2', function () {
     let requestJson = [{ display: { text: 'Pushing' } }];
     let expecteBinaryStrings = ['08 01 07 50 75 73 68 69 6e 67'];
 
@@ -57,7 +55,7 @@ describe('display', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -66,7 +64,7 @@ describe('display', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.4', function() {
+  it('request test no.4', function () {
     let requestJson = [{ display: { clear: true } }];
     let expecteBinaryStrings = ['08 00 00'];
 
@@ -83,7 +81,7 @@ describe('display', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -92,16 +90,18 @@ describe('display', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('response test no.5', function() {
+  it('response test no.5', function () {
     let responseBinaryString = '09 00 01 03';
     let expectJson = [{ switch: { state: 'right' } }];
 
-    let binaryArray = responseBinaryString.split(' ').map(function(val, index) {
-      return parseInt(val, 16);
-    });
+    let binaryArray = responseBinaryString
+      .split(' ')
+      .map(function (val, index) {
+        return parseInt(val, 16);
+      });
     let binary = new Uint8Array(binaryArray);
 
-    let json = this.obniz.binary2Json(binary);
+    let json = this.obniz._binary2Json(binary);
 
     let isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -109,7 +109,7 @@ describe('display', function() {
     expect(json).to.be.deep.equal(expectJson);
   });
 
-  it('request test no.6', function() {
+  it('request test no.6', function () {
     let requestJson = [{ display: { clear: true } }];
     let expecteBinaryStrings = ['08 00 00'];
 
@@ -126,7 +126,7 @@ describe('display', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -135,7 +135,7 @@ describe('display', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('qr', function() {
+  it('qr', function () {
     const requestJson = [
       {
         display: {
@@ -1187,7 +1187,7 @@ describe('display', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.8', function() {
+  it('request test no.8', function () {
     let requestJson = [{ display: { clear: true } }];
     let expecteBinaryStrings = ['08 00 00'];
 
@@ -1204,7 +1204,7 @@ describe('display', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -1213,7 +1213,7 @@ describe('display', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.10', function() {
+  it('request test no.10', function () {
     let requestJson = [{ display: { clear: true } }];
     let expecteBinaryStrings = ['08 00 00'];
 
@@ -1230,7 +1230,7 @@ describe('display', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -1239,7 +1239,7 @@ describe('display', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.12', function() {
+  it('request test no.12', function () {
     let requestJson = [{ display: { clear: true } }];
     let expecteBinaryStrings = ['08 00 00'];
 
@@ -1256,7 +1256,7 @@ describe('display', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -1265,7 +1265,7 @@ describe('display', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.14', function() {
+  it('request test no.14', function () {
     let requestJson = [{ display: { text: 'Pushing' } }];
     let expecteBinaryStrings = ['08 01 07 50 75 73 68 69 6e 67'];
 
@@ -1282,7 +1282,7 @@ describe('display', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -1291,7 +1291,7 @@ describe('display', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.16', function() {
+  it('request test no.16', function () {
     let requestJson = [{ display: { clear: true } }];
     let expecteBinaryStrings = ['08 00 00'];
 
@@ -1308,7 +1308,7 @@ describe('display', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -1317,7 +1317,7 @@ describe('display', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.17', function() {
+  it('request test no.17', function () {
     let requestJson = [{ display: { clear: true } }];
     let expecteBinaryStrings = ['08 00 00'];
 
@@ -1334,7 +1334,7 @@ describe('display', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -1343,7 +1343,7 @@ describe('display', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.21', function() {
+  it('request test no.21', function () {
     let requestJson = [{ display: { clear: true } }];
     let expecteBinaryStrings = ['08 00 00'];
 
@@ -1360,7 +1360,7 @@ describe('display', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -1369,7 +1369,7 @@ describe('display', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('request test no.23', function() {
+  it('request test no.23', function () {
     let requestJson = [
       {
         display: {
@@ -2419,7 +2419,7 @@ describe('display', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -2428,12 +2428,12 @@ describe('display', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('pin name', function() {
+  it('pin name', function () {
     let requestJson = [
       {
         display: {
           pin_assign: {
-            '0': {
+            0: {
               module_name: 'io',
               pin_name: 'output',
             },
@@ -2456,7 +2456,7 @@ describe('display', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
@@ -2465,7 +2465,7 @@ describe('display', function() {
     expect(compress).to.be.deep.equal(binary);
   });
 
-  it('pin name2', function() {
+  it('pin name2', function () {
     let requestJson = [
       {
         display: {
@@ -2474,7 +2474,7 @@ describe('display', function() {
               module_name: 'io',
               pin_name: 'output',
             },
-            '8': {
+            8: {
               module_name: 'pwm',
             },
             10: {
@@ -2501,7 +2501,7 @@ describe('display', function() {
     let binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
-      .map(function(val, index) {
+      .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);

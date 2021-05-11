@@ -4,13 +4,13 @@
  * @ignore
  */
 
-import EventEmitter from "eventemitter3";
+import EventEmitter from 'eventemitter3';
 
-import { ObnizBlePairingRejectByRemoteError } from "../../../../../ObnizError";
-import BleHelper from "../../bleHelper";
-import { BleDeviceAddress, BleDeviceAddressType } from "../../bleTypes";
-import AclStream from "./acl-stream";
-import crypto from "./crypto";
+import { ObnizBlePairingRejectByRemoteError } from '../../../../../ObnizError';
+import BleHelper from '../../bleHelper';
+import { BleDeviceAddress, BleDeviceAddressType } from '../../bleTypes';
+import AclStream from './acl-stream';
+import crypto from './crypto';
 
 /**
  * @ignore
@@ -30,7 +30,7 @@ namespace SMP {
 /**
  * @ignore
  */
-type SmpEventTypes = "masterIdent" | "ltk" | "fail" | "end";
+type SmpEventTypes = 'masterIdent' | 'ltk' | 'fail' | 'end';
 
 /**
  * @ignore
@@ -85,21 +85,21 @@ class Smp extends EventEmitter<SmpEventTypes> {
     localAddressType: BleDeviceAddressType,
     localAddress: BleDeviceAddress,
     remoteAddressType: BleDeviceAddressType,
-    remoteAddress: BleDeviceAddress,
+    remoteAddress: BleDeviceAddress
   ) {
     super();
     this._aclStream = aclStream;
 
-    this._iat = Buffer.from([localAddressType === "random" ? 0x01 : 0x00]);
-    this._ia = BleHelper.hex2reversedBuffer(localAddress, ":");
-    this._rat = Buffer.from([remoteAddressType === "random" ? 0x01 : 0x00]);
-    this._ra = BleHelper.hex2reversedBuffer(remoteAddress, ":");
+    this._iat = Buffer.from([localAddressType === 'random' ? 0x01 : 0x00]);
+    this._ia = BleHelper.hex2reversedBuffer(localAddress, ':');
+    this._rat = Buffer.from([remoteAddressType === 'random' ? 0x01 : 0x00]);
+    this._ra = BleHelper.hex2reversedBuffer(remoteAddress, ':');
 
     this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
     this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
 
-    this._aclStream.on("data", this.onAclStreamDataBinded);
-    this._aclStream.on("end", this.onAclStreamEndBinded);
+    this._aclStream.on('data', this.onAclStreamDataBinded);
+    this._aclStream.on('end', this.onAclStreamEndBinded);
   }
 
   public debugHandler: any = () => {};
@@ -107,7 +107,11 @@ class Smp extends EventEmitter<SmpEventTypes> {
   public async pairingWithKeyWait(key: string) {
     this.debug(`Pairing using keys ${key}`);
     this.setKeys(key);
-    const encResult = await this._aclStream.onSmpLtkWait(this._ltk, this._rand, this._ediv);
+    const encResult = await this._aclStream.onSmpLtkWait(
+      this._ltk,
+      this._rand,
+      this._ediv
+    );
     return encResult;
   }
 
@@ -129,7 +133,7 @@ class Smp extends EventEmitter<SmpEventTypes> {
     await this.sendPairingRequestWait();
     this.debug(`Waiting Pairing Response`);
     const pairingResponse = await this._readWait(SMP.PAIRING_RESPONSE);
-    await this.handlePairingResponse(pairingResponse);
+    await this.handlePairingResponseWait(pairingResponse);
     this.debug(`Waiting Pairing Confirm`);
     const confirm = await this._readWait(SMP.PAIRING_CONFIRM, 60 * 1000); // 60sec timeout
     this.handlePairingConfirm(confirm);
@@ -168,13 +172,13 @@ class Smp extends EventEmitter<SmpEventTypes> {
   }
 
   public onAclStreamEnd() {
-    this._aclStream.removeListener("data", this.onAclStreamDataBinded);
-    this._aclStream.removeListener("end", this.onAclStreamEndBinded);
+    this._aclStream.removeListener('data', this.onAclStreamDataBinded);
+    this._aclStream.removeListener('end', this.onAclStreamEndBinded);
 
-    this.emit("end");
+    this.emit('end');
   }
 
-  public async handlePairingResponse(data: any) {
+  public async handlePairingResponseWait(data: any) {
     this._pres = data;
 
     if (this.isPasskeyMode()) {
@@ -188,7 +192,7 @@ class Smp extends EventEmitter<SmpEventTypes> {
 
       this._tk = Buffer.from(passkey);
     } else {
-      this._tk = Buffer.from("00000000000000000000000000000000", "hex");
+      this._tk = Buffer.from('00000000000000000000000000000000', 'hex');
     }
 
     this._r = crypto.r();
@@ -196,8 +200,17 @@ class Smp extends EventEmitter<SmpEventTypes> {
     this.write(
       Buffer.concat([
         Buffer.from([SMP.PAIRING_CONFIRM]),
-        crypto.c1(this._tk, this._r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
-      ]),
+        crypto.c1(
+          this._tk,
+          this._r,
+          this._pres,
+          this._preq,
+          this._iat,
+          this._ia,
+          this._rat,
+          this._ra
+        ),
+      ])
     );
   }
 
@@ -212,12 +225,21 @@ class Smp extends EventEmitter<SmpEventTypes> {
     let encResult = null;
     const pcnf: any = Buffer.concat([
       Buffer.from([SMP.PAIRING_CONFIRM]),
-      crypto.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
+      crypto.c1(
+        this._tk,
+        r,
+        this._pres,
+        this._preq,
+        this._iat,
+        this._ia,
+        this._rat,
+        this._ra
+      ),
     ]);
 
-    if (this._pcnf.toString("hex") === pcnf.toString("hex")) {
+    if (this._pcnf.toString('hex') === pcnf.toString('hex')) {
       if (this._stk !== null) {
-        console.error("second stk");
+        console.error('second stk');
       }
       this._stk = crypto.s1(this._tk, r, this._r);
 
@@ -226,19 +248,19 @@ class Smp extends EventEmitter<SmpEventTypes> {
     } else {
       this.write(Buffer.from([SMP.PAIRING_RANDOM, SMP.PAIRING_CONFIRM]));
 
-      this.emit("fail", 0);
-      throw new Error("Encryption pcnf error");
+      this.emit('fail', 0);
+      throw new Error('Encryption pcnf error');
     }
     return encResult;
   }
 
   public handlePairingFailed(data: Buffer) {
-    this.emit("fail", data.readUInt8(1));
+    this.emit('fail', data.readUInt8(1));
   }
 
   public handleEncryptInfo(data: any) {
     this._ltk = data.slice(1);
-    this.emit("ltk", this._ltk);
+    this.emit('ltk', this._ltk);
   }
 
   public handleMasterIdent(data: any) {
@@ -247,7 +269,7 @@ class Smp extends EventEmitter<SmpEventTypes> {
 
     this._ediv = ediv;
     this._rand = rand;
-    this.emit("masterIdent", ediv, rand);
+    this.emit('masterIdent', ediv, rand);
   }
 
   public write(data: any) {
@@ -267,34 +289,34 @@ class Smp extends EventEmitter<SmpEventTypes> {
   }
 
   public setKeys(keyStringBase64: string) {
-    const keyString = Buffer.from(keyStringBase64, "base64").toString("ascii");
+    const keyString = Buffer.from(keyStringBase64, 'base64').toString('ascii');
     this.debug(`restored keys ${keyString}`);
     const keys = JSON.parse(keyString);
-    this._stk = Buffer.from(keys.stk, "hex");
-    this._preq = Buffer.from(keys.preq, "hex");
-    this._pres = Buffer.from(keys.pres, "hex");
-    this._tk = Buffer.from(keys.tk, "hex");
-    this._r = Buffer.from(keys.r, "hex");
-    this._pcnf = Buffer.from(keys.pcnf, "hex");
-    this._ltk = Buffer.from(keys.ltk, "hex");
-    this._ediv = Buffer.from(keys.ediv, "hex");
-    this._rand = Buffer.from(keys.rand, "hex");
+    this._stk = Buffer.from(keys.stk, 'hex');
+    this._preq = Buffer.from(keys.preq, 'hex');
+    this._pres = Buffer.from(keys.pres, 'hex');
+    this._tk = Buffer.from(keys.tk, 'hex');
+    this._r = Buffer.from(keys.r, 'hex');
+    this._pcnf = Buffer.from(keys.pcnf, 'hex');
+    this._ltk = Buffer.from(keys.ltk, 'hex');
+    this._ediv = Buffer.from(keys.ediv, 'hex');
+    this._rand = Buffer.from(keys.rand, 'hex');
   }
 
   public getKeys() {
     const keys = {
-      stk: this._stk.toString("hex"),
-      preq: this._preq.toString("hex"),
-      pres: this._pres.toString("hex"),
-      tk: this._tk.toString("hex"),
-      r: this._r.toString("hex"),
-      pcnf: this._pcnf.toString("hex"),
-      ltk: this._ltk.toString("hex"),
-      ediv: this._ediv.toString("hex"),
-      rand: this._rand.toString("hex"),
+      stk: this._stk.toString('hex'),
+      preq: this._preq.toString('hex'),
+      pres: this._pres.toString('hex'),
+      tk: this._tk.toString('hex'),
+      r: this._r.toString('hex'),
+      pcnf: this._pcnf.toString('hex'),
+      ltk: this._ltk.toString('hex'),
+      ediv: this._ediv.toString('hex'),
+      rand: this._rand.toString('hex'),
     };
     const jsonString = JSON.stringify(keys);
-    const keyString = Buffer.from(jsonString, "ascii").toString("base64");
+    const keyString = Buffer.from(jsonString, 'ascii').toString('base64');
     return keyString;
   }
 
@@ -333,12 +355,15 @@ class Smp extends EventEmitter<SmpEventTypes> {
   }
 
   private _readWait(flag: number, timeout?: number): Promise<Buffer> {
-    return Promise.race([this._aclStream.readWait(SMP.CID, flag, timeout), this._pairingFailReject()]);
+    return Promise.race([
+      this._aclStream.readWait(SMP.CID, flag, timeout),
+      this._pairingFailReject(),
+    ]);
   }
 
   private _pairingFailReject(): Promise<Buffer> {
     return new Promise((resolve, reject) => {
-      this.on("fail", (reason) => {
+      this.on('fail', (reason) => {
         reject(new ObnizBlePairingRejectByRemoteError(reason));
       });
     });

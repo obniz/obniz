@@ -10,7 +10,7 @@ class SCBTGAAAC {
     }
     static info() {
         return {
-            name: "SCBTGAAAC",
+            name: 'SCBTGAAAC',
         };
     }
     static isDevice(peripheral) {
@@ -18,22 +18,30 @@ class SCBTGAAAC {
     }
     static getData(peripheral) {
         const data = SCBTGAAAC.searchTypeVal(peripheral.advertise_data_rows, 0xff);
-        if (!data || data[0] !== 0x31 || data[1] !== 0x07 || data[2] !== 0x02 || data[3] !== 0x15 || data.length !== 25) {
+        if (!data ||
+            data[0] !== 0x31 ||
+            data[1] !== 0x07 ||
+            data[2] !== 0x02 ||
+            data[3] !== 0x15 ||
+            data.length !== 25) {
             return null;
         }
         const uuidData = data.slice(4, 20);
-        let uuid = "";
+        let uuid = '';
         for (let i = 0; i < uuidData.length; i++) {
-            uuid = uuid + ("00" + uuidData[i].toString(16)).slice(-2);
-            if (i === 4 - 1 || i === 4 + 2 - 1 || i === 4 + 2 * 2 - 1 || i === 4 + 2 * 3 - 1) {
-                uuid += "-";
+            uuid = uuid + ('00' + uuidData[i].toString(16)).slice(-2);
+            if (i === 4 - 1 ||
+                i === 4 + 2 - 1 ||
+                i === 4 + 2 * 2 - 1 ||
+                i === 4 + 2 * 3 - 1) {
+                uuid += '-';
             }
         }
         const major = (data[20] << 8) + data[21];
         const minor = (data[22] << 8) + data[23];
         const power = data[24];
-        if (uuid === "5d490d6c-7eb9-474e-8160-45bde999119a" && major === 3) {
-            return `03-${("00000" + minor).slice(-5)}`;
+        if (uuid === '5d490d6c-7eb9-474e-8160-45bde999119a' && major === 3) {
+            return `03-${('00000' + minor).slice(-5)}`;
         }
         return null;
     }

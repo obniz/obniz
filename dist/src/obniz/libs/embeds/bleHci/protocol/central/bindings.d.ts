@@ -4,9 +4,9 @@
  * @ignore
  */
 /// <reference types="node" />
-import EventEmitter from "eventemitter3";
-import { BleDeviceAddress, BleDeviceAddressType, Handle, UUID } from "../../bleTypes";
-declare type NobleBindingsEventType = "discover" | "disconnect" | "stateChange" | "notification" | "handleNotify";
+import EventEmitter from 'eventemitter3';
+import { BleDeviceAddress, BleDeviceAddressType, Handle, UUID } from '../../bleTypes';
+declare type NobleBindingsEventType = 'discover' | 'disconnect' | 'stateChange' | 'notification' | 'handleNotify';
 /**
  * @ignore
  */

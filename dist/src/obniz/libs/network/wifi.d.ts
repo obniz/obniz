@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-import Obniz from "../../index";
+import Obniz from '../../index';
 export default class WiFi {
     private Obniz;
     private connectObservers;

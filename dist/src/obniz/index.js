@@ -1,19 +1,19 @@
 "use strict";
 const Obniz_1 = require("./Obniz");
-/*===================*/
+/* ===================*/
 /* Utils */
-/*===================*/
+/* ===================*/
 try {
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
         if (window && window.parent && window.parent.userAppLoaded) {
             window.parent.userAppLoaded(window);
         }
-        function showObnizDebugError(err) {
+        window.showObnizDebugError = (err) => {
             // eslint-disable-line
             if (window.parent && window.parent.logger) {
                 window.parent.logger.onObnizError(err);
             }
-        }
+        };
     }
 }
 catch (e) {
@@ -24,9 +24,9 @@ catch (e) {
         console.error(e);
     }
 }
-/*===================*/
+/* ===================*/
 /* ReadParts */
-/*===================*/
+/* ===================*/
 /**
  * @ignore
  */
@@ -38,7 +38,7 @@ if (requireContext.setBaseDir) {
 /**
  * @ignore
  */
-const context = require.context("../parts", true, /\.js$/);
+const context = require.context('../parts', true, /\.js$/);
 /* webpack loader */
 for (const path of context.keys()) {
     const anParts = context(path);
