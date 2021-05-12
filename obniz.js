@@ -2502,6 +2502,7 @@ class ObnizConnection extends eventemitter3_1.default {
             return true;
         }
         if (!this.autoConnect) {
+            // only try once
             try {
                 await this.tryWsConnectOnceWait();
                 return true;
@@ -2814,28 +2815,23 @@ class ObnizConnection extends eventemitter3_1.default {
         this._disconnectCloudRequest();
     }
     async tryWsConnectOnceWait(desired_server) {
+        this.connectionState = 'connecting';
+        await this._connectCloudWait(desired_server);
         try {
-            this.connectionState = 'connecting';
-            await this._connectCloudWait(desired_server);
-            try {
-                const localConnectTimeout = new Promise((resolve, reject) => {
-                    const localConnectTimeoutError = new Error('Cannot use local_connect because the connection was timeouted');
-                    setTimeout(() => {
-                        reject(localConnectTimeoutError);
-                    }, 3000);
-                });
-                await Promise.race([localConnectTimeout, this._connectLocalWait()]);
-            }
-            catch (e) {
-                // cannot connect local
-                this.error(e);
-                this._disconnectLocal();
-            }
-            this._callOnConnect();
+            const localConnectTimeout = new Promise((resolve, reject) => {
+                const localConnectTimeoutError = new Error('Cannot use local_connect because the connection was timeouted');
+                setTimeout(() => {
+                    reject(localConnectTimeoutError);
+                }, 3000);
+            });
+            await Promise.race([localConnectTimeout, this._connectLocalWait()]);
         }
         catch (e) {
+            // cannot connect local
             this.error(e);
+            this._disconnectLocal();
         }
+        this._callOnConnect();
     }
     _connectCloudWait(desired_server) {
         let server = this.options.obniz_server;
@@ -3246,7 +3242,6 @@ class ObnizConnection extends eventemitter3_1.default {
             }
             catch (e) {
                 // cannot connect
-                console.error(e);
                 this._startAutoConnectLoopInBackground();
             }
         }, tryAfter);
