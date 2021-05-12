@@ -367,6 +367,7 @@ export default abstract class ObnizConnection extends EventEmitter<
     }
 
     if (!this.autoConnect) {
+      // only try once
       try {
         await this.tryWsConnectOnceWait();
         return true;
@@ -717,29 +718,25 @@ export default abstract class ObnizConnection extends EventEmitter<
   }
 
   protected async tryWsConnectOnceWait(desired_server?: string) {
+    this.connectionState = 'connecting';
+    await this._connectCloudWait(desired_server);
     try {
-      this.connectionState = 'connecting';
-      await this._connectCloudWait(desired_server);
-      try {
-        const localConnectTimeout = new Promise((resolve, reject) => {
-          const localConnectTimeoutError = new Error(
-            'Cannot use local_connect because the connection was timeouted'
-          );
-          setTimeout(() => {
-            reject(localConnectTimeoutError);
-          }, 3000);
-        });
+      const localConnectTimeout = new Promise((resolve, reject) => {
+        const localConnectTimeoutError = new Error(
+          'Cannot use local_connect because the connection was timeouted'
+        );
+        setTimeout(() => {
+          reject(localConnectTimeoutError);
+        }, 3000);
+      });
 
-        await Promise.race([localConnectTimeout, this._connectLocalWait()]);
-      } catch (e) {
-        // cannot connect local
-        this.error(e);
-        this._disconnectLocal();
-      }
-      this._callOnConnect();
+      await Promise.race([localConnectTimeout, this._connectLocalWait()]);
     } catch (e) {
+      // cannot connect local
       this.error(e);
+      this._disconnectLocal();
     }
+    this._callOnConnect();
   }
 
   protected _connectCloudWait(desired_server?: string) {
@@ -1199,7 +1196,6 @@ export default abstract class ObnizConnection extends EventEmitter<
         await this.tryWsConnectOnceWait();
       } catch (e) {
         // cannot connect
-        console.error(e);
         this._startAutoConnectLoopInBackground();
       }
     }, tryAfter);
