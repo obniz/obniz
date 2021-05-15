@@ -1,4 +1,6 @@
 const path = require('path');
+const rulesDirPlugin = require('eslint-plugin-rulesdir');
+rulesDirPlugin.RULES_DIR = 'devtools/eslint/rule';
 
 let tsRules = {
   'prettier/prettier': [
@@ -25,13 +27,13 @@ let tsRules = {
     },
   ],
   'no-var': 'error',
-  'non-ascii': [
+  'rulesdir/non-ascii': [
     'error',
     {
       allowedChars: '°',
     },
   ],
-  'async-function-name': ['error'],
+  'rulesdir/async-function-name': ['error'],
   '@typescript-eslint/adjacent-overload-signatures': 'error',
   '@typescript-eslint/array-type': [
     'error',
@@ -414,7 +416,7 @@ module.exports = {
     ecmaVersion: 2017,
   },
   extends: ['eslint:recommended', 'plugin:prettier/recommended'],
-  plugins: ['eslint-plugin-jsdoc', 'eslint-plugin-prefer-arrow'],
+  plugins: ['rulesdir', 'eslint-plugin-jsdoc', 'eslint-plugin-prefer-arrow'],
   rules: {
     'prettier/prettier': [
       'error',
@@ -438,13 +440,13 @@ module.exports = {
       },
     ],
     'no-var': 'error',
-    'non-ascii': [
+    'rulesdir/non-ascii': [
       'error',
       {
         allowedChars: '°',
       },
     ],
-    'async-function-name': ['error'],
+    'rulesdir/async-function-name': ['error'],
   },
   overrides: [
     {
