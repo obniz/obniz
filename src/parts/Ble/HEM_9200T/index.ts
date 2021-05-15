@@ -104,17 +104,18 @@ export default class HEM_9200T implements ObnizPartsBleInterface {
     // console.log("paired");
 
     const results: any[] = [];
-    return await new Promise(async (resolve, reject) => {
+    const waitDisconnect = new Promise<HEM_9200TResult[]>((resolve, reject) => {
       this._peripheral!.ondisconnect = (reason: any) => {
         resolve(results);
       };
-      await this.subscribeWait('1805', '2A2B'); // current time
-      await this.subscribeWait('180F', '2A19'); // battery level
-      await this.subscribeWait('1810', '2A35', async (data: any) => {
-        // console.log(data);
-        results.push(this._analyzeData(data));
-      }); // blood pressure
     });
+    await this.subscribeWait('1805', '2A2B'); // current time
+    await this.subscribeWait('180F', '2A19'); // battery level
+    await this.subscribeWait('1810', '2A35', async (data: any) => {
+      // console.log(data);
+      results.push(this._analyzeData(data));
+    }); // blood pressure
+    return await waitDisconnect;
   }
 
   public async subscribeWait(service: string, char: string, callback?: any) {

@@ -11,7 +11,7 @@ import { Inertia6, Xyz } from '../../i2cImu6';
 import AK8963, { AK8963Options } from '../AK8963';
 import MPU6500, { MPU6500Options } from '../MPU6500';
 
-export interface MPU9250Options extends MPU6500Options {}
+export type MPU9250Options = MPU6500Options;
 
 export default class MPU9250 extends MPU6500 {
   public static info(): ObnizPartsInfo {

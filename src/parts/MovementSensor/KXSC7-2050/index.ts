@@ -8,6 +8,7 @@ import ObnizPartsInterface, {
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface KXSC7_2050Options {}
 
 export default class KXSC7_2050 implements ObnizPartsInterface {

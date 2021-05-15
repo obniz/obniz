@@ -9,7 +9,9 @@ import Hci from '../hci';
 /**
  * @ignore
  */
-const debug: any = () => {};
+const debug: any = () => {
+  // do nothing.
+};
 
 /**
  * @ignore

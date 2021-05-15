@@ -109,8 +109,7 @@ export default abstract class I2cPartsAbstract implements ObnizPartsInterface {
       if (typeof this.params[k] === 'undefined') {
         this.params[k] = this.i2cinfo[k];
       } else {
-        // @ts-ignore
-        this.i2cinfo[k] = this.params[k];
+        this.i2cinfo[k] = this.params[k] as never;
       }
     });
     obniz.setVccGnd(this.params.vcc, this.params.gnd, this.params.voltage);

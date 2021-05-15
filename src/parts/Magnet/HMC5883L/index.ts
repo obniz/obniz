@@ -13,7 +13,7 @@ import i2cCompass, {
 } from '../../i2cCompass';
 import { I2cInfo, Xyz } from '../../i2cParts';
 
-export interface HMC5883LOptions extends I2cCompassAbstractOptions {}
+export type HMC5883LOptions = I2cCompassAbstractOptions;
 
 export default class HMC5883L extends i2cCompass {
   public static info(): ObnizPartsInfo {

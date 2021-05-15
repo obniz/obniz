@@ -2,9 +2,10 @@
  * @packageDocumentation
  * @ignore
  */
-const yaml: any = require('js-yaml');
+import yaml from 'js-yaml';
 
 export default (source: any) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const self: any = this; // eslint-disable-line @typescript-eslint/no-this-alias
   if (self.cacheable) {

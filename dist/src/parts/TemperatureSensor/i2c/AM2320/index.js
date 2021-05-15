@@ -25,7 +25,9 @@ class AM2320 {
     }
     async getAllWait() {
         const i2cOnerror = this.i2c.onerror;
-        this.i2c.onerror = () => { };
+        this.i2c.onerror = () => {
+            // do nothing.
+        };
         this.i2c.write(this.address, [0]); // wake
         this.obniz.wait(2);
         this.i2c.write(this.address, [0x03, 0x00, 0x04]);

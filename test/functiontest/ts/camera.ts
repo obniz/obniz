@@ -8,7 +8,7 @@ const OBNIZ_ID = '1234-5678';
  * https://obniz.io/ja/sdk/parts/ArduCAMMini/README.md
  */
 class ArduCAMMiniTest {
-  public async startupWait1() {
+  public async startup1Wait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.io11!.output(true);
     const cam = obniz.wired('ArduCAMMini', {
@@ -30,7 +30,7 @@ class ArduCAMMiniTest {
     cam.init();
   }
 
-  public async startupWait2() {
+  public async startup2Wait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.io11!.output(true);
     const cam = obniz.wired('ArduCAMMini', {
@@ -63,7 +63,7 @@ class ArduCAMMiniTest {
     const jpegData = await cam.takeWait('1024x768');
   }
 
-  public async arrayToBase64() {
+  public async arrayToBase64Wait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.io11!.output(true);
     const cam = obniz.wired('ArduCAMMini', {
@@ -85,7 +85,7 @@ class ArduCAMMiniTest {
     elm.src = 'data:image/jpeg;base64, ' + base64;
   }
 
-  public async setMode() {
+  public async setModeWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.io11!.output(true);
     const cam = obniz.wired('ArduCAMMini', {
@@ -136,7 +136,7 @@ class ArduCAMMiniTest {
     }
   }
 
-  public async init() {
+  public async initWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.io11!.output(true);
     const cam = obniz.wired('ArduCAMMini', {
@@ -153,7 +153,7 @@ class ArduCAMMiniTest {
     cam.init();
   }
 
-  public async setSize() {
+  public async setSizeWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.io11!.output(true);
     const cam = obniz.wired('ArduCAMMini', {
@@ -171,7 +171,7 @@ class ArduCAMMiniTest {
     obniz.wait(1000);
   }
 
-  public async flushFIFO() {
+  public async flushFIFOWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.io11!.output(true);
     const cam = obniz.wired('ArduCAMMini', {
@@ -196,7 +196,7 @@ class ArduCAMMiniTest {
     const jpegData = await cam.readFIFOWait();
   }
 
-  public async startCapture() {
+  public async startCaptureWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.io11!.output(true);
     const cam = obniz.wired('ArduCAMMini', {

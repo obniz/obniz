@@ -33,7 +33,9 @@ export default class PT550 implements ObnizPartsInterface {
     this.requiredKeys = ['signal'];
   }
 
-  public onchange(value: number) {}
+  public onchange(value: number) {
+    // do nothing.
+  }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;

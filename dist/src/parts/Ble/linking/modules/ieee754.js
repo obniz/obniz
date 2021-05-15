@@ -42,6 +42,5 @@ class LinkingIEEE754 {
             return NaN;
         }
     }
-    constructor() { }
 }
 exports.default = LinkingIEEE754;

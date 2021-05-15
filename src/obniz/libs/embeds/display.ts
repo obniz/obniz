@@ -2,7 +2,6 @@
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-/* eslint non-ascii:0 */
 import { ComponentAbstract } from '../ComponentAbstact';
 
 /**
@@ -141,6 +140,7 @@ export default class Display extends ComponentAbstract {
     }
   }
 
+  // eslint-disable-next-line rulesdir/non-ascii
   /**
    * (This does not work with node.js. Please use display.draw())
    * It changes the display position of a text. If you are using print() to display a text, position it to top left.
@@ -166,6 +166,7 @@ export default class Display extends ComponentAbstract {
     return this._pos;
   }
 
+  // eslint-disable-next-line rulesdir/non-ascii
   /**
    * Print text on display.
    *
@@ -571,6 +572,7 @@ export default class Display extends ComponentAbstract {
     }
     if (this.Obniz.isNode) {
       try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
         const { createCanvas } = require('canvas');
         this._canvas = createCanvas(this.width, this.height);
       } catch (e) {

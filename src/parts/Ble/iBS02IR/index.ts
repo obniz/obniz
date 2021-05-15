@@ -74,6 +74,4 @@ export default class IBS02IR implements ObnizPartsBleInterface {
   ];
 
   public _peripheral: BleRemotePeripheral | null = null;
-
-  constructor() {}
 }

@@ -63,7 +63,7 @@ describe('4-uart', function () {
     const sender = checkBoard.getFreeUart();
     sender.start({ tx: check_io[0].board_io, rx: check_io[1].board_io });
 
-    const text = 'こんにちは'; //eslint-disable-line non-ascii
+    const text = 'こんにちは'; //eslint-disable-line rulesdir/non-ascii
     let received = '';
     sender.send(' ');
     await checkBoard.pingWait();

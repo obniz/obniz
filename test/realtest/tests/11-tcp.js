@@ -256,7 +256,7 @@ async function getServerDataWait(port, domain, writeData) {
   client.connect({ port: port, host: domain }, () => {
     client.write(writeData);
   });
-  return new Promise(function (resolve, reject) {
+  return new Promise(function (resolve) {
     client.on('data', (data) => {
       resolve(data);
     });

@@ -14,7 +14,9 @@ class Grove_PressureSensor {
             name: 'Grove_PressureSensor',
         };
     }
-    onchange(value) { }
+    onchange(value) {
+        // do nothing.
+    }
     wired(obniz) {
         if (this.params.grove) {
             const groveAd = this.params.grove.getAnalog();

@@ -1,5 +1,5 @@
 'use strict';
-/* eslint-disable non-ascii */
+/* eslint-disable rulesdir/non-ascii */
 
 let RuleTester = require('eslint').RuleTester;
 let tester = new RuleTester();

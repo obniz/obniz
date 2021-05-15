@@ -11,7 +11,7 @@ import ObnizPartsInterface, {
 } from '../../../obniz/ObnizPartsInterface';
 import { I2cPartsAbstractOptions } from '../../i2cParts';
 
-export interface M5StickC_ADCOptions extends I2cPartsAbstractOptions {}
+export type M5StickC_ADCOptions = I2cPartsAbstractOptions;
 
 export default class M5StickC_ADC implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {

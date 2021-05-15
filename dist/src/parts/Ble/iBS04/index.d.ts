@@ -16,5 +16,4 @@ export default class IBS04 implements ObnizPartsBleInterface {
     static getData(peripheral: BleRemotePeripheral): IBS04_Data | null;
     private static deviceAdv;
     _peripheral: BleRemotePeripheral | null;
-    constructor();
 }

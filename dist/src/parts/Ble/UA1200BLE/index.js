@@ -80,24 +80,26 @@ class UA1200BLE {
             }
         };
         await this._peripheral.connectWait();
-        return await new Promise(async (resolve, reject) => {
-            if (!this._peripheral) {
-                throw new Error('UA1200BLE not found');
-            }
-            const results = [];
-            // Advertise mode (BP-00 or BP-01 in pp.7)
-            // const { bloodPressureMeasurementChar, customServiceChar } = this._getCharsCoopMode();
-            // await customServiceChar.writeWait([2, 0, 0xe1]);
-            // bloodPressureMeasurementChar.registerNotifyWait((data: number[]) => {
-            //   results.push(this._analyzeData(data));
-            // });
-            // await this._writeTimeCharWait(this._timezoneOffsetMinute);
-            // await this._writeCCCDChar();
-            const { bloodPressureMeasurementChar, timeChar, } = this._getCharsSingleMode();
-            await this._writeTimeCharWait(this._timezoneOffsetMinute);
-            await bloodPressureMeasurementChar.registerNotifyWait((data) => {
-                results.push(this._analyzeData(data));
-            });
+        if (!this._peripheral) {
+            throw new Error('UA1200BLE not found');
+        }
+        const results = [];
+        // Advertise mode (BP-00 or BP-01 in pp.7)
+        // const { bloodPressureMeasurementChar, customServiceChar } = this._getCharsCoopMode();
+        // await customServiceChar.writeWait([2, 0, 0xe1]);
+        // bloodPressureMeasurementChar.registerNotifyWait((data: number[]) => {
+        //   results.push(this._analyzeData(data));
+        // });
+        // await this._writeTimeCharWait(this._timezoneOffsetMinute);
+        // await this._writeCCCDChar();
+        const { bloodPressureMeasurementChar, timeChar, } = this._getCharsSingleMode();
+        await this._writeTimeCharWait(this._timezoneOffsetMinute);
+        await bloodPressureMeasurementChar.registerNotifyWait((data) => {
+            results.push(this._analyzeData(data));
+        });
+        return await new Promise((resolve, reject) => {
+            if (!this._peripheral)
+                return;
             this._peripheral.ondisconnect = (reason) => {
                 resolve(results);
                 if (this.ondisconnect) {

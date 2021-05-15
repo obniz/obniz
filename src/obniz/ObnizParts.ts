@@ -94,6 +94,7 @@ export default abstract class ObnizParts extends ObnizConnection {
       throw new Error('No such a parts [' + partsName + '] found');
     }
     const parts = new Parts();
+    // eslint-disable-next-line prefer-rest-params
     const args: any = Array.from(arguments);
     args.shift();
     args.unshift(this);
@@ -112,7 +113,7 @@ export default abstract class ObnizParts extends ObnizConnection {
       parts.params = ObnizUtil._keyFilter(args[1], parts.keys);
     }
     parts.obniz = this;
-    parts.wired.apply(parts, args);
+    parts.wired(...args);
     if (parts.keys || parts.ioKeys) {
       const keys: any = parts.ioKeys || parts.keys;
       const displayPartsName: any = parts.displayName || partsName;

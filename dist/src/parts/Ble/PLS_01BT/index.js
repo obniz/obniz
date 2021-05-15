@@ -33,8 +33,9 @@ class PLS_01BT {
         }
         return false;
     }
-    // @ts-ignore
-    wired(obniz) { }
+    wired(obniz) {
+        // do nothing.
+    }
     async connectWait() {
         if (!this._peripheral) {
             throw new Error('PLS_01BT is not find.');

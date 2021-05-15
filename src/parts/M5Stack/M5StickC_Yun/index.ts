@@ -13,7 +13,7 @@ import { I2cPartsAbstractOptions } from '../../i2cParts';
 import BMP280 from '../../PressureSensor/BMP280';
 import SHT20 from '../../TemperatureSensor/i2c/SHT20';
 
-export interface M5StickC_YunOptions extends I2cPartsAbstractOptions {}
+export type M5StickC_YunOptions = I2cPartsAbstractOptions;
 
 export default class M5StickC_Yun implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {

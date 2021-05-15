@@ -123,6 +123,8 @@ class MINEW_S1 {
         }
         return true;
     }
-    wired(obniz) { }
+    wired(obniz) {
+        // do nothing.
+    }
 }
 exports.default = MINEW_S1;

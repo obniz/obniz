@@ -32,17 +32,19 @@ class UA651BLE {
             };
             await this._peripheral.connectWait();
         }
-        return await new Promise(async (resolve, reject) => {
-            if (!this._peripheral) {
-                throw new Error('UA651BLE not found');
-            }
-            const results = [];
-            const { bloodPressureMeasurementChar, timeChar, customServiceChar, } = this._getChars();
-            await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
-            await this._writeTimeCharWait(this._timezoneOffsetMinute);
-            await bloodPressureMeasurementChar.registerNotifyWait((data) => {
-                results.push(this._analyzeData(data));
-            });
+        if (!this._peripheral) {
+            throw new Error('UA651BLE not found');
+        }
+        const results = [];
+        const { bloodPressureMeasurementChar, timeChar, customServiceChar, } = this._getChars();
+        await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
+        await this._writeTimeCharWait(this._timezoneOffsetMinute);
+        await bloodPressureMeasurementChar.registerNotifyWait((data) => {
+            results.push(this._analyzeData(data));
+        });
+        return await new Promise((resolve, reject) => {
+            if (!this._peripheral)
+                return;
             this._peripheral.ondisconnect = (reason) => {
                 resolve(results);
                 if (this.ondisconnect) {

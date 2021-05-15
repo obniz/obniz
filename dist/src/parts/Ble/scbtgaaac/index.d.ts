@@ -12,5 +12,4 @@ export default class SCBTGAAAC implements ObnizPartsBleInterface {
     static getData(peripheral: BleRemotePeripheral): string | null;
     private static searchTypeVal;
     _peripheral: null | BleRemotePeripheral;
-    constructor();
 }

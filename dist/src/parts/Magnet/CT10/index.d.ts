@@ -24,5 +24,5 @@ export default class CT10 implements ObnizPartsInterface {
     constructor();
     wired(obniz: Obniz): void;
     isNearWait(): Promise<boolean>;
-    stateWait(isNear: boolean): Promise<any>;
+    stateWait(isNear: boolean): Promise<void>;
 }

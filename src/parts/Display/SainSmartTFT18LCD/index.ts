@@ -234,6 +234,7 @@ export default class SainSmartTFT18LCD implements ObnizPartsInterface {
   public print_debug(v: any) {
     if (this.debugprint) {
       console.log(
+        // eslint-disable-next-line prefer-rest-params
         'SainSmartTFT18LCD: ' + Array.prototype.slice.call(arguments).join('')
       );
     }
@@ -241,7 +242,7 @@ export default class SainSmartTFT18LCD implements ObnizPartsInterface {
 
   public _deadSleep(waitMsec: number) {
     const startMsec: any = new Date();
-    while ((new Date() as any) - startMsec < waitMsec) {}
+    while ((new Date() as any) - startMsec < waitMsec);
   }
 
   public _reset() {

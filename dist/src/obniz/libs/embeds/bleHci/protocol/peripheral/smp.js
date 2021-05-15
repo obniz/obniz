@@ -12,6 +12,7 @@ const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const bleHelper_1 = __importDefault(require("../../bleHelper"));
 const crypto_1 = __importDefault(require("./crypto"));
 const mgmt_1 = __importDefault(require("./mgmt"));
+// eslint-disable-next-line @typescript-eslint/no-namespace
 var SMP;
 (function (SMP) {
     SMP.CID = 0x0006;

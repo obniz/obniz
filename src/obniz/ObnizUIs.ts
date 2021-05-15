@@ -200,7 +200,6 @@ export default class ObnizUIs extends ObnizSystemMethods {
       ObnizUIs._promptWaiting = false;
 
       if (result && result.length > 0) {
-        // @ts-ignore
         callback(result);
       }
       this._promptNext();

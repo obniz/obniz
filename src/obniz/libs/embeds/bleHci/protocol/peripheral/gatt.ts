@@ -7,7 +7,9 @@ import BleHelper from '../../bleHelper';
 import AclStream from './acl-stream';
 
 // var debug = require('debug')('gatt');
-const debug: any = () => {};
+const debug: any = () => {
+  // do nothing.
+};
 
 import EventEmitter from 'eventemitter3';
 
@@ -16,6 +18,7 @@ import EventEmitter from 'eventemitter3';
 /**
  * @ignore
  */
+// eslint-disable-next-line @typescript-eslint/no-namespace
 namespace ATT {
   export const OP_ERROR = 0x01;
   export const OP_MTU_REQ = 0x02;
@@ -71,6 +74,7 @@ namespace ATT {
 /**
  * @ignore
  */
+// eslint-disable-next-line @typescript-eslint/no-namespace
 namespace GATT {
   export const PRIM_SVC_UUID = 0x2800;
   export const INCLUDE_UUID = 0x2802;

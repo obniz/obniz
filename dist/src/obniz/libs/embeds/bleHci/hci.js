@@ -94,7 +94,9 @@ class ObnizBLEHci {
      *
      * @param data
      */
-    onread(data) { }
+    onread(data) {
+        // do nothing.
+    }
     /**
      * @ignore
      * @private

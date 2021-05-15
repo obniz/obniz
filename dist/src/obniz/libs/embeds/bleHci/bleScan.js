@@ -46,7 +46,9 @@ class BleScan {
     start(target = {}, settings = {}) {
         console.log(`start() is deprecated since 3.5.0. Use startWait() instead`);
         this.startWait(target, settings)
-            .then(() => { })
+            .then(() => {
+            // do nothing.
+        })
             .catch((e) => {
             throw e;
         });
@@ -211,7 +213,9 @@ class BleScan {
     end() {
         console.log(`end() is deprecated since 3.5.0. Use endWait() instead`);
         this.endWait()
-            .then(() => { })
+            .then(() => {
+            // do nothing.
+        })
             .catch((e) => {
             throw e;
         });

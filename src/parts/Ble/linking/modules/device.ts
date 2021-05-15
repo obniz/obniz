@@ -84,7 +84,9 @@ export default class LinkingDevice {
     }
     let onprogress = this.onconnectprogress;
     if (!this._isFunction(this.onconnectprogress)) {
-      onprogress = () => {};
+      onprogress = () => {
+        // do nothing.
+      };
     }
     const peripheral = this._peripheral;
     onprogress({ step: 1, desc: 'CONNECTING' });
@@ -537,17 +539,21 @@ export default class LinkingDevice {
   }
 
   public write(message_name: any, params?: any) {
-    return new Promise(async (resolve, reject) => {
-      const buf = this._LinkingService.createRequest(message_name, params);
-      if (!buf) {
-        reject(new Error('The specified parameters are invalid.'));
-      }
+    return this.writeWait(message_name, params);
+  }
 
-      const timer = setTimeout(() => {
-        this._onresponse = null;
-        reject(new Error('Timeout'));
-      }, this._write_response_timeout);
+  public async writeWait(message_name: any, params?: any) {
+    const buf = this._LinkingService.createRequest(message_name, params);
+    if (!buf) {
+      new Error('The specified parameters are invalid.');
+    }
 
+    const timer = setTimeout(() => {
+      this._onresponse = null;
+      new Error('Timeout');
+    }, this._write_response_timeout);
+
+    const waitResponse = new Promise((resolve, reject) => {
       this._onresponse = (res: any) => {
         if (res.messageName === message_name + '_RESP') {
           this._onresponse = null;
@@ -557,18 +563,16 @@ export default class LinkingDevice {
             res.data = data;
             resolve(res);
           } else {
-            reject(new Error('Unknown response'));
+            new Error('Unknown response');
           }
         }
       };
-
-      try {
-        // console.log("linking write ", buf, message_name, JSON.stringify(params, null, 2));
-        await this.char_write!.writeWait(buf, true);
-      } catch (e) {
-        reject(e);
-      }
     });
+
+    // console.log("linking write ", buf, message_name, JSON.stringify(params, null, 2));
+    await this.char_write!.writeWait(buf, true);
+
+    return await waitResponse;
   }
 
   public _margeResponsePrameters(res: any) {

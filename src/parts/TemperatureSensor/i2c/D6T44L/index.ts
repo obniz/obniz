@@ -11,7 +11,7 @@ import ObnizPartsInterface, {
 } from '../../../../obniz/ObnizPartsInterface';
 import { I2cPartsAbstractOptions } from '../../../i2cParts';
 
-export interface D6T44LOptions extends I2cPartsAbstractOptions {}
+export type D6T44LOptions = I2cPartsAbstractOptions;
 
 class D6T44L implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {

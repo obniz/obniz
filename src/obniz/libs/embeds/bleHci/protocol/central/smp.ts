@@ -15,6 +15,7 @@ import crypto from './crypto';
 /**
  * @ignore
  */
+// eslint-disable-next-line @typescript-eslint/no-namespace
 namespace SMP {
   export const CID = 0x0006;
   export const PAIRING_REQUEST = 0x01;
@@ -102,7 +103,9 @@ class Smp extends EventEmitter<SmpEventTypes> {
     this._aclStream.on('end', this.onAclStreamEndBinded);
   }
 
-  public debugHandler: any = () => {};
+  public debugHandler: any = () => {
+    // do nothing.
+  };
 
   public async pairingWithKeyWait(key: string) {
     this.debug(`Pairing using keys ${key}`);
@@ -278,7 +281,9 @@ class Smp extends EventEmitter<SmpEventTypes> {
 
   public handleSecurityRequest(data: any) {
     this.pairingWait()
-      .then(() => {})
+      .then(() => {
+        // do nothing.
+      })
       .catch((e) => {
         if (this._options && this._options.onPairingFailed) {
           this._options.onPairingFailed(e);

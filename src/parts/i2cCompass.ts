@@ -7,7 +7,7 @@ import i2cParts, { I2cPartsAbstractOptions, Xyz } from './i2cParts';
 
 export type compassUnit = 'uT' | 'G' | 'mT' | 'T' | 'mG' | 'kG' | 'uG';
 
-export interface I2cCompassAbstractOptions extends I2cPartsAbstractOptions {}
+export type I2cCompassAbstractOptions = I2cPartsAbstractOptions;
 
 export default abstract class I2cCompassAbstract extends i2cParts {
   public static async calibrateWait() {

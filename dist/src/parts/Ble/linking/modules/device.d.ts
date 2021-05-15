@@ -56,6 +56,7 @@ export default class LinkingDevice {
     _clean(): Promise<void>;
     _cleanWait(): Promise<void>;
     write(message_name: any, params?: any): Promise<unknown>;
+    writeWait(message_name: any, params?: any): Promise<unknown>;
     _margeResponsePrameters(res: any): any;
     _initServices(): void;
     /**

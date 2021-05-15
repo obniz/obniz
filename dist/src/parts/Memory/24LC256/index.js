@@ -24,7 +24,7 @@ class _24LC256 {
         const array = [];
         array.push((address >> 8) & 0xff);
         array.push(address & 0xff);
-        array.push.apply(array, data);
+        array.push(...data);
         this.i2c.write(0x50, array);
         this.obniz.wait(4 + 1); // write cycle time = 4ms for 24XX00, 1.5ms for 24C01C, 24C02C
     }

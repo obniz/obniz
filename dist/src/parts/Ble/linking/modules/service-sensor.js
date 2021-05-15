@@ -56,7 +56,9 @@ class LinkingServiceSensor {
                 parameters.push(p);
             }
         }
-        catch (e) { }
+        catch (e) {
+            // do nothing.
+        }
         return parameters;
     }
     _parseParameter(pid, buf, sensor_type) {

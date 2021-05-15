@@ -63,7 +63,7 @@ describe('4-uart-exchange', function () {
     const sender = obnizA.getFreeUart();
     sender.start({ tx: check_io[1].obniz_io, rx: check_io[0].obniz_io });
 
-    const text = 'こんにちは'; //eslint-disable-line non-ascii
+    const text = 'こんにちは'; //eslint-disable-line rulesdir/non-ascii
     let received = '';
     sender.send(' ');
     await obnizA.pingWait();

@@ -10,12 +10,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const bleHelper_1 = __importDefault(require("../../bleHelper"));
 // var debug = require('debug')('gatt');
-const debug = () => { };
+const debug = () => {
+    // do nothing.
+};
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 /* eslint-disable no-unused-vars */
 /**
  * @ignore
  */
+// eslint-disable-next-line @typescript-eslint/no-namespace
 var ATT;
 (function (ATT) {
     ATT.OP_ERROR = 0x01;
@@ -69,6 +72,7 @@ var ATT;
 /**
  * @ignore
  */
+// eslint-disable-next-line @typescript-eslint/no-namespace
 var GATT;
 (function (GATT) {
     GATT.PRIM_SVC_UUID = 0x2800;

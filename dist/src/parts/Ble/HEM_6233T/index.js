@@ -21,7 +21,9 @@ class HEM_6233T {
         };
     }
     static isDevice(peripheral) {
-        if (peripheral.localName && peripheral.localName.startsWith('BLESmart_')) {
+        if (peripheral.localName &&
+            peripheral.localName.startsWith('BLESmart_') &&
+            peripheral.localName === '004C') {
             return true;
         }
         return false;
@@ -37,37 +39,38 @@ class HEM_6233T {
             },
         });
         const results = [];
-        return await new Promise(async (resolve, reject) => {
+        const waitDisconnect = new Promise((resolve, reject) => {
             this._peripheral.ondisconnect = (reason) => {
                 resolve(results);
             };
-            await this.subscribeWait('1805', '2A2B'); // current time
-            await this.subscribeWait('180F', '2A19', async () => {
-                // send command (unknown meaning)
-                // In the command meaning, it should send to central from peripheral, but send to peripheral...?
-                this._peripheral.obnizBle.hci.write([
-                    0x02,
-                    0x00,
-                    0x00,
-                    0x09,
-                    0x00,
-                    0x05,
-                    0x00,
-                    0x04,
-                    0x00,
-                    0x01,
-                    0x06,
-                    0x01,
-                    0x00,
-                    0x0a,
-                ]);
-                this._writeTimeCharWait(this._timezoneOffsetMinute);
-            }); // battery Level
-            await this.subscribeWait('1810', '2A35', async (data) => {
-                console.error('SUCCESS', data);
-                results.push(this._analyzeData(data));
-            }); // blood pressure
         });
+        await this.subscribeWait('1805', '2A2B'); // current time
+        await this.subscribeWait('180F', '2A19', async () => {
+            // send command (unknown meaning)
+            // In the command meaning, it should send to central from peripheral, but send to peripheral...?
+            this._peripheral.obnizBle.hci.write([
+                0x02,
+                0x00,
+                0x00,
+                0x09,
+                0x00,
+                0x05,
+                0x00,
+                0x04,
+                0x00,
+                0x01,
+                0x06,
+                0x01,
+                0x00,
+                0x0a,
+            ]);
+            this._writeTimeCharWait(this._timezoneOffsetMinute);
+        }); // battery Level
+        await this.subscribeWait('1810', '2A35', async (data) => {
+            console.error('SUCCESS', data);
+            results.push(this._analyzeData(data));
+        }); // blood pressure
+        return await waitDisconnect;
     }
     async subscribeWait(service, char, callback) {
         if (!this._peripheral) {

@@ -81,7 +81,7 @@ class TestUtil {
     });
   }
 
-  async setupNotConnectedYetObnizPromise(obj, done, options) {
+  async setupNotConnectedYetObnizWait(obj, done, options) {
     options = options || {};
     let stub = this.sinon.stub();
     stub.on = this.sinon.stub();
@@ -103,7 +103,7 @@ class TestUtil {
     this.serverDataCount = 0;
   }
 
-  async connectObniz(obniz, options = {}) {
+  connectObniz(obniz, options = {}) {
     obniz.socket.readyState = 1;
     obniz.wsOnOpen();
     obniz.wsOnMessage(
@@ -125,14 +125,14 @@ class TestUtil {
     this.expect(obniz).to.be.finished;
   }
 
-  async setupObnizPromise(obj, done, options) {
+  async setupObnizWait(obj, done, options) {
     await this.setupNotConnectedYetObnizPromise(obj, () => {}, options);
     await this.connectObniz(obj.obniz, options);
 
     await new Promise((r) => setTimeout(r, 1));
   }
 
-  async releaseObnizPromise(obj) {
+  async releaseObnizWait(obj) {
     obj.obniz._close();
     obj.obniz = null;
     this.Obniz.prototype._createCloudSocket.restore();

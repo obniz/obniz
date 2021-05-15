@@ -1,18 +1,22 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @packageDocumentation
  * @ignore
  */
-const yaml = require('js-yaml');
+const js_yaml_1 = __importDefault(require("js-yaml"));
 exports.default = (source) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const self = this; // eslint-disable-line @typescript-eslint/no-this-alias
     if (self.cacheable) {
         self.cacheable();
     }
     try {
-        const src = yaml.safeLoad(source);
+        const src = js_yaml_1.default.safeLoad(source);
         const excludeKeys = ['example', 'description'];
         const res = filter(src, excludeKeys);
         // console.log("src",src);

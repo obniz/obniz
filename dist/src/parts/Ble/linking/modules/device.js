@@ -73,7 +73,9 @@ class LinkingDevice {
         }
         let onprogress = this.onconnectprogress;
         if (!this._isFunction(this.onconnectprogress)) {
-            onprogress = () => { };
+            onprogress = () => {
+                // do nothing.
+            };
         }
         const peripheral = this._peripheral;
         onprogress({ step: 1, desc: 'CONNECTING' });
@@ -525,15 +527,18 @@ class LinkingDevice {
         }
     }
     write(message_name, params) {
-        return new Promise(async (resolve, reject) => {
-            const buf = this._LinkingService.createRequest(message_name, params);
-            if (!buf) {
-                reject(new Error('The specified parameters are invalid.'));
-            }
-            const timer = setTimeout(() => {
-                this._onresponse = null;
-                reject(new Error('Timeout'));
-            }, this._write_response_timeout);
+        return this.writeWait(message_name, params);
+    }
+    async writeWait(message_name, params) {
+        const buf = this._LinkingService.createRequest(message_name, params);
+        if (!buf) {
+            new Error('The specified parameters are invalid.');
+        }
+        const timer = setTimeout(() => {
+            this._onresponse = null;
+            new Error('Timeout');
+        }, this._write_response_timeout);
+        const waitResponse = new Promise((resolve, reject) => {
             this._onresponse = (res) => {
                 if (res.messageName === message_name + '_RESP') {
                     this._onresponse = null;
@@ -544,18 +549,14 @@ class LinkingDevice {
                         resolve(res);
                     }
                     else {
-                        reject(new Error('Unknown response'));
+                        new Error('Unknown response');
                     }
                 }
             };
-            try {
-                // console.log("linking write ", buf, message_name, JSON.stringify(params, null, 2));
-                await this.char_write.writeWait(buf, true);
-            }
-            catch (e) {
-                reject(e);
-            }
         });
+        // console.log("linking write ", buf, message_name, JSON.stringify(params, null, 2));
+        await this.char_write.writeWait(buf, true);
+        return await waitResponse;
     }
     _margeResponsePrameters(res) {
         if (!res) {

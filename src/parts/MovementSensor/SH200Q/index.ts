@@ -18,7 +18,7 @@ export type SH200QGyroRange =
   | '1000dps'
   | '2000dps';
 
-export interface SH200QOptions extends I2cPartsAbstractOptions {}
+export type SH200QOptions = I2cPartsAbstractOptions;
 
 export default class SH200Q extends I2cImu6 {
   public static commands = {
@@ -71,6 +71,10 @@ export default class SH200Q extends I2cImu6 {
 
   public wired(obniz: Obniz) {
     super.wired(obniz);
+  }
+
+  public _reset() {
+    // do nothing.
   }
 
   public async whoamiWait(): Promise<number> {
@@ -181,8 +185,7 @@ export default class SH200Q extends I2cImu6 {
         SH200Q.commands.gyro_range,
         SH200Q.commands.gyro_fs_sel[gyro_range]
       );
-      // @ts-ignore
-      this.gyro_so = gyro_range;
+      this.gyro_so = gyro_range as gyroRange;
     } else {
       throw new Error(
         `Invalid gyro range. Valid values are: ${Object.keys(

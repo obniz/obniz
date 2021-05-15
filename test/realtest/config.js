@@ -88,6 +88,7 @@ function reboot(done) {
   }, 10000); // wait for reboot
 }
 
+// eslint-disable-next-line no-unused-vars
 function connectTwoObniz(done, params) {
   let local_connect = process.env.LOCAL_CONNECT === 'false' ? false : true;
   checkBoard = new Obniz(checkBoard_ID, { local_connect }); //obniz_server: "ws://stg.obniz.io",obniz_server: "ws://oooo.ngrok.io"
