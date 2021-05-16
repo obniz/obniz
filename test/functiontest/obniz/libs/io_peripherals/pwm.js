@@ -1,7 +1,7 @@
-let chai = require('chai');
-let expect = chai.expect;
+const chai = require('chai');
+const expect = chai.expect;
 
-let testUtil = require(global.appRoot + '/test/functiontest/testUtil.js');
+const testUtil = require(global.appRoot + '/test/functiontest/testUtil.js');
 
 describe('obniz.libs.pwm', function () {
   beforeEach(async function () {
@@ -12,15 +12,15 @@ describe('obniz.libs.pwm', function () {
   });
 
   it('getpwm', function () {
-    let pwm = this.obniz.getFreePwm();
+    const pwm = this.obniz.getFreePwm();
 
     expect(this.obniz).to.be.finished;
     expect(pwm).to.be.equal(this.obniz.pwm0);
   });
 
   it('getpwm double', function () {
-    let pwm1 = this.obniz.getFreePwm();
-    let pwm2 = this.obniz.getFreePwm();
+    const pwm1 = this.obniz.getFreePwm();
+    const pwm2 = this.obniz.getFreePwm();
 
     expect(this.obniz).to.be.finished;
     expect(pwm1).to.be.equal(this.obniz.pwm0);
@@ -28,7 +28,7 @@ describe('obniz.libs.pwm', function () {
   });
 
   it('getpwm released', function () {
-    let pwm1 = this.obniz.getFreePwm();
+    const pwm1 = this.obniz.getFreePwm();
     expect(pwm1).to.be.equal(this.obniz.pwm0);
     pwm1.start({ io: 11 });
     expect(this.obniz).send([{ io11: { output_type: 'push-pull5v' } }]);
@@ -38,13 +38,13 @@ describe('obniz.libs.pwm', function () {
     pwm1.end();
     expect(this.obniz).send([{ pwm0: null }]);
 
-    let pwm2 = this.obniz.getFreePwm();
+    const pwm2 = this.obniz.getFreePwm();
     expect(pwm2).to.be.equal(this.obniz.pwm0);
     expect(this.obniz).to.be.finished;
   });
 
   it('start io', function () {
-    let pwm = this.obniz.getFreePwm();
+    const pwm = this.obniz.getFreePwm();
     pwm.start({ io: 11 });
 
     expect(this.obniz).send([{ io11: { output_type: 'push-pull5v' } }]);
@@ -55,7 +55,7 @@ describe('obniz.libs.pwm', function () {
   });
 
   it('start io with drive-pull', function () {
-    let pwm = this.obniz.getFreePwm();
+    const pwm = this.obniz.getFreePwm();
     pwm.start({ io: 11, drive: 'open-drain', pull: '5v' });
 
     expect(this.obniz).send([{ io11: { output_type: 'open-drain' } }]);
@@ -66,7 +66,7 @@ describe('obniz.libs.pwm', function () {
   });
 
   it('start io invalid', function () {
-    let pwm = this.obniz.getFreePwm();
+    const pwm = this.obniz.getFreePwm();
 
     expect(function () {
       pwm.start({ io: 15 });
@@ -77,7 +77,7 @@ describe('obniz.libs.pwm', function () {
   });
 
   it('freq', function () {
-    let pwm = this.obniz.getFreePwm();
+    const pwm = this.obniz.getFreePwm();
     pwm.start({ io: 10 });
     expect(this.obniz).send([{ io10: { output_type: 'push-pull5v' } }]);
     expect(this.obniz).send([{ io10: { pull_type: 'float' } }]);
@@ -90,7 +90,7 @@ describe('obniz.libs.pwm', function () {
   });
 
   it('pulse', function () {
-    let pwm = this.obniz.getFreePwm();
+    const pwm = this.obniz.getFreePwm();
     pwm.start({ io: 9 });
     expect(this.obniz).send([{ io9: { output_type: 'push-pull5v' } }]);
     expect(this.obniz).send([{ io9: { pull_type: 'float' } }]);
@@ -105,7 +105,7 @@ describe('obniz.libs.pwm', function () {
   });
 
   it('duty', function () {
-    let pwm = this.obniz.getFreePwm();
+    const pwm = this.obniz.getFreePwm();
     pwm.start({ io: 9 });
     expect(this.obniz).send([{ io9: { output_type: 'push-pull5v' } }]);
     expect(this.obniz).send([{ io9: { pull_type: 'float' } }]);
@@ -120,7 +120,7 @@ describe('obniz.libs.pwm', function () {
   });
 
   it('modulate', function () {
-    let pwm = this.obniz.getFreePwm();
+    const pwm = this.obniz.getFreePwm();
     pwm.start({ io: 11 }); // start pwm. output at io11
     expect(this.obniz).send([{ io11: { output_type: 'push-pull5v' } }]);
     expect(this.obniz).send([{ io11: { pull_type: 'float' } }]);
@@ -166,7 +166,7 @@ describe('obniz.libs.pwm', function () {
   });
 
   it('end', function () {
-    let pwm = this.obniz.getFreePwm();
+    const pwm = this.obniz.getFreePwm();
     pwm.start({ io: 11 });
     expect(this.obniz).send([{ io11: { output_type: 'push-pull5v' } }]);
     expect(this.obniz).send([{ io11: { pull_type: 'float' } }]);

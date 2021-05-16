@@ -1,7 +1,7 @@
-let chai = require('chai');
-let expect = chai.expect;
+const chai = require('chai');
+const expect = chai.expect;
 
-let testUtil = require('../../testUtil.js');
+const testUtil = require('../../testUtil.js');
 
 describe('led', function () {
   beforeEach(async function () {
@@ -90,7 +90,7 @@ describe('led', function () {
   });
 
   it('on', function () {
-    let led = this.obniz.wired('LED', { anode: 0, cathode: 1 });
+    const led = this.obniz.wired('LED', { anode: 0, cathode: 1 });
 
     expect(this.obniz).send([
       {

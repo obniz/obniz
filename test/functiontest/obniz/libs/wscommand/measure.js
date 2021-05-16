@@ -1,7 +1,7 @@
-let chai = require('chai');
-let expect = chai.expect;
+const chai = require('chai');
+const expect = chai.expect;
 
-let testUtil = require('../../../testUtil.js');
+const testUtil = require('../../../testUtil.js');
 
 describe('measure', function () {
   beforeEach(async function () {
@@ -13,7 +13,7 @@ describe('measure', function () {
   });
 
   it('measure', function () {
-    let requestJson = [
+    const requestJson = [
       {
         measure: {
           echo: {
@@ -27,54 +27,54 @@ describe('measure', function () {
         },
       },
     ];
-    let expecteBinaryStrings = [
+    const expecteBinaryStrings = [
       '0c 00 0d 00 00 01 00 07 A1 20 01 02 00 0f 42 40',
     ];
 
     expect(requestJson.length).to.be.equal(1);
 
-    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    let compress = this.obniz.constructor.WSCommand.compress(
+    const compress = this.obniz.constructor.WSCommand.compress(
       this.obniz.wscommands,
       requestJson[0]
     );
 
-    let binaryArray = expecteBinaryStrings
+    const binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
     expect(compress).to.be.deep.equal(binary);
   });
 
   it('response', function () {
-    let responseBinaryString = 'c 0 1 0';
-    let expectJson = [{ measure: { echo: [] } }];
+    const responseBinaryString = 'c 0 1 0';
+    const expectJson = [{ measure: { echo: [] } }];
 
-    let binaryArray = responseBinaryString
+    const binaryArray = responseBinaryString
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
-    let json = this.obniz._binary2Json(binary);
+    const json = this.obniz._binary2Json(binary);
 
-    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
 
     expect(json).to.be.deep.equal(expectJson);
   });
 
   it('response2', function () {
-    let responseBinaryString = 'c 0 c 2 1 1 2 3 1 0 0 0 1 0 0';
-    let expectJson = [
+    const responseBinaryString = 'c 0 c 2 1 1 2 3 1 0 0 0 1 0 0';
+    const expectJson = [
       {
         measure: {
           echo: [
@@ -91,16 +91,16 @@ describe('measure', function () {
       },
     ];
 
-    let binaryArray = responseBinaryString
+    const binaryArray = responseBinaryString
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
-    let json = this.obniz._binary2Json(binary);
+    const json = this.obniz._binary2Json(binary);
 
-    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
 
     expect(json).to.be.deep.equal(expectJson);

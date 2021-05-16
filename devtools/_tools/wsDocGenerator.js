@@ -1,16 +1,16 @@
 'use strict';
-let tv4 = require('tv4');
-let fs = require('fs');
+const tv4 = require('tv4');
+const fs = require('fs');
 const ejs = require('ejs');
-let through = require('through2');
-let PluginError = require('plugin-error');
-let PLUGIN_NAME = 'wsDocGenerator';
+const through = require('through2');
+const PluginError = require('plugin-error');
+const PLUGIN_NAME = 'wsDocGenerator';
 
-module.exports = function (docfilePath, moduleName) {
+module.exports = (docfilePath, moduleName) => {
   /**
    * @this {Transform}
    */
-  let transform = function (file, encoding, callback) {
+  const transform = function (file, encoding, callback) {
     if (file.isNull()) {
       this.push(file);
       return callback(null, file);
@@ -24,7 +24,7 @@ module.exports = function (docfilePath, moduleName) {
       return callback();
     }
     if (file.isBuffer()) {
-      let contents = String(file.contents);
+      const contents = String(file.contents);
       let output;
       try {
         output = convert(contents, docfilePath, moduleName);
@@ -45,14 +45,15 @@ module.exports = function (docfilePath, moduleName) {
   return through.obj(transform);
 };
 
-let convert = function (str, docfilePath, moduleName) {
+const convert = (str, docfilePath, moduleName) => {
   let wsSchema;
-  eval(str.substring(3)); //let wsSchema = [ [....} ]
-  for (let schema of wsSchema) {
+  // eslint-disable-next-line no-eval
+  eval(str.substring(3)); // let wsSchema = [ [....} ]
+  for (const schema of wsSchema) {
     tv4.addSchema(schema);
   }
 
-  let docTemplate = fs.readFileSync(docfilePath, 'utf8');
+  const docTemplate = fs.readFileSync(docfilePath, 'utf8');
   //
   // let list = [
   //   'ws',
@@ -73,31 +74,31 @@ let convert = function (str, docfilePath, moduleName) {
   //   'message',
   //   'debug',
   // ];
-  let md = [];
+  const md = [];
 
-  let param = { formatter, conditions, jsonExample };
+  const param = { formatter, conditions, jsonExample };
   param.defines = {};
 
-  let moduleParams = { name: moduleName, methods: [] };
-  for (let methodType of ['request', 'response']) {
-    let groupUri = '/' + methodType + '/' + moduleName;
-    let groupSchema = tv4.getSchema(groupUri);
+  const moduleParams = { name: moduleName, methods: [] };
+  for (const methodType of ['request', 'response']) {
+    const groupUri = '/' + methodType + '/' + moduleName;
+    const groupSchema = tv4.getSchema(groupUri);
     if (!groupSchema) continue;
-    let commands = groupSchema.anyOf.map((elm) => {
+    const commands = groupSchema.anyOf.map((elm) => {
       return elm['$ref'];
     });
 
-    let methodParams = {
+    const methodParams = {
       uri: groupUri,
       schema: groupSchema,
       method: methodType,
       commands: [],
     };
-    for (let command of commands) {
-      let schema = tv4.getSchema(command);
-      let basePath = groupSchema.basePath;
-      let name = command.split('/').pop();
-      let commandParam = {
+    for (const command of commands) {
+      const schema = tv4.getSchema(command);
+      const basePath = groupSchema.basePath;
+      const name = command.split('/').pop();
+      const commandParam = {
         uri: command,
         schema,
         name,
@@ -109,20 +110,20 @@ let convert = function (str, docfilePath, moduleName) {
   }
   param.module = moduleParams;
 
-  function sortOnKeys(dict) {
-    let sorted = [];
-    for (let key in dict) {
+  const sortOnKeys = (dict) => {
+    const sorted = [];
+    for (const key in dict) {
       sorted[sorted.length] = key;
     }
     sorted.sort();
 
-    let tempDict = {};
+    const tempDict = {};
     for (let i = 0; i < sorted.length; i++) {
       tempDict[sorted[i]] = dict[sorted[i]];
     }
 
     return tempDict;
-  }
+  };
 
   param.defines = sortOnKeys(param.defines);
 
@@ -131,14 +132,14 @@ let convert = function (str, docfilePath, moduleName) {
   return md.join('\n');
 };
 
-function formatter(obj) {
+const formatter = (obj) => {
   let str = JSON.stringify(obj, null, 0);
   str = str.split(',').join(', ');
   return str;
-}
+};
 
-function conditions(schema) {
-  let results = [];
+const conditions = (schema) => {
+  const results = [];
 
   if (schema.required) {
     results.push('required');
@@ -146,7 +147,7 @@ function conditions(schema) {
     results.push('default `' + schema.default + '`');
   }
   if (schema.enum) {
-    if (schema.enum.length == 1) {
+    if (schema.enum.length === 1) {
       results.push('const `' + formatter(schema.enum[0], true) + '`');
     } else {
       results.push(
@@ -185,18 +186,18 @@ function conditions(schema) {
     results.push('items<br/>' + conditions(schema.items));
   }
 
-  if (results.length == 0) return '&nbsp;';
+  if (results.length === 0) return '&nbsp;';
   return '<ul><li>' + results.join('</li><li>') + '</li></ul>';
-}
+};
 
-function rangeString(min, max, val, exclusiveMin, exclusiveMax) {
+const rangeString = (min, max, val, exclusiveMin, exclusiveMax) => {
   if (min === max && min !== undefined && !exclusiveMin && !exclusiveMax) {
     return `${val} = ${min}`;
   }
 
   val = val || 'value';
-  let left = '',
-    right = '';
+  let left = '';
+  let right = '';
   if (min !== undefined) {
     left = min;
     if (exclusiveMin) {
@@ -215,11 +216,11 @@ function rangeString(min, max, val, exclusiveMin, exclusiveMax) {
     right += max;
   }
   return `${left}${val}${right}`;
-}
+};
 
-function jsonExample(params, schema) {
+const jsonExample = (params, schema) => {
   let jsonObj = {};
-  let exampleRotate = {};
+  const exampleRotate = {};
   if (schema.commandExample !== undefined) {
     if (Array.isArray(schema.commandExample)) {
       jsonObj = schema.commandExample[0];
@@ -227,8 +228,8 @@ function jsonExample(params, schema) {
       jsonObj = schema.commandExample;
     }
   } else {
-    for (let param of params) {
-      let path = param.path;
+    for (const param of params) {
+      const path = param.path;
       let value;
       if (param.schema.example !== undefined) {
         if (Array.isArray(value)) {
@@ -238,7 +239,7 @@ function jsonExample(params, schema) {
         }
       } else if (param.example !== undefined) {
         if (Array.isArray(param.example)) {
-          let index = exampleRotate[param.ref] || 0;
+          const index = exampleRotate[param.ref] || 0;
           exampleRotate[param.ref] = index + 1;
           value = param.example[index % param.example.length];
         } else {
@@ -260,9 +261,9 @@ function jsonExample(params, schema) {
         param.schema.type === 'integer' ||
         param.schema.type === 'number'
       ) {
-        let min = param.schema.minimum || 0;
-        let max = param.schema.maximum || 1000;
-        let multipleOf = param.schema.multipleOf || 1;
+        const min = param.schema.minimum || 0;
+        const max = param.schema.maximum || 1000;
+        const multipleOf = param.schema.multipleOf || 1;
         value = Math.floor((min + max) / 2 / multipleOf) * multipleOf;
         // }else if(param.schema.type === "string"){
         //
@@ -277,7 +278,7 @@ function jsonExample(params, schema) {
       }
 
       let obj = jsonObj;
-      let pathParts = path.split('.');
+      const pathParts = path.split('.');
       for (let i = 0; i < pathParts.length; i++) {
         if (i === pathParts.length - 1) {
           if (pathParts[i].endsWith('[]')) {
@@ -303,34 +304,34 @@ function jsonExample(params, schema) {
   }
 
   let str = JSON.stringify([jsonObj], null, 4);
-  let reg1 = /\n\s+(\d+,)$/gm;
+  const reg1 = /\n\s+(\d+,)$/gm;
   str = str.replace(reg1, (match, val) => {
     return val + ' ';
   });
 
-  let reg2 = /\s*\n\s*(\d+)\n\s*]/gm;
+  const reg2 = /\s*\n\s*(\d+)\n\s*]/gm;
   str = str.replace(reg2, (match, val) => {
     return ' ' + val + ']';
   });
   return str;
-}
+};
 
-function requestParams(schema, base, needDefs) {
-  let results = [];
+const requestParams = (schema, base, needDefs) => {
+  const results = [];
   _checkSchema(schema, base, true, results, needDefs);
   return results;
-}
+};
 
-function _checkSchema(schema, path, required, results, needDefs) {
+const _checkSchema = (schema, path, required, results, needDefs) => {
   if (schema['$ref']) {
     schema.required = required;
-    let row = {
-      path: path,
+    const row = {
+      path,
       type: schema['$ref'].split('/').pop(),
       ref: schema['$ref'].split('/').pop(),
-      schema: schema,
+      schema,
     };
-    let ref = tv4.getSchema(schema['$ref']);
+    const ref = tv4.getSchema(schema['$ref']);
     if (ref) {
       needDefs[row.type] = ref;
       if (ref.example !== undefined) {
@@ -349,24 +350,24 @@ function _checkSchema(schema, path, required, results, needDefs) {
     schema.type === 'null'
   ) {
     schema.required = required;
-    let row = {
-      path: path,
+    const row = {
+      path,
       type: schema.type,
-      schema: schema,
+      schema,
     };
     results.push(row);
     return;
   }
 
   if (schema.type === 'array') {
-    let required = schema.minItems > 0;
+    const required = schema.minItems > 0;
     _checkSchema(schema.items, path + '[]', required, results, needDefs);
     return;
   }
 
   if (schema.type === 'object') {
-    for (let key in schema.properties) {
-      let required = schema.required && schema.required.includes(key);
+    for (const key in schema.properties) {
+      const required = schema.required && schema.required.includes(key);
       _checkSchema(
         schema.properties[key],
         path + '.' + key,
@@ -382,7 +383,7 @@ function _checkSchema(schema, path, required, results, needDefs) {
         if (typeof key !== 'string') {
           key = key[0];
         }
-        for (let pattern in schema.patternProperties) {
+        for (const pattern in schema.patternProperties) {
           if (new RegExp(pattern).test(key)) {
             _checkSchema(
               schema.patternProperties[pattern],
@@ -400,10 +401,10 @@ function _checkSchema(schema, path, required, results, needDefs) {
     }
     if (!schema.properties && !schema.patternProperties) {
       schema.required = required;
-      let row = {
-        path: path,
+      const row = {
+        path,
         type: 'object',
-        schema: schema,
+        schema,
       };
       results.push(row);
     }
@@ -416,10 +417,10 @@ function _checkSchema(schema, path, required, results, needDefs) {
     //   oneSchema.type = type;
     //   _checkSchema(oneSchema, path, false, oneResult, needDefs);
     // }
-    let row = {
-      path: path,
+    const row = {
+      path,
       type: schema.type,
-      schema: schema,
+      schema,
     };
     results.push(row);
     return;
@@ -427,17 +428,17 @@ function _checkSchema(schema, path, required, results, needDefs) {
 
   if (schema.type === undefined) {
     schema.required = required;
-    let row = {
-      path: path,
+    const row = {
+      path,
       type: 'anyType',
-      schema: schema,
+      schema,
     };
     results.push(row);
     return;
   }
 
   throw Error('unknown json schema type');
-}
+};
 
 // //test
 // const gulp_yaml = require('gulp-yaml');

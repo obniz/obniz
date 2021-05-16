@@ -1,5 +1,5 @@
-let Obniz = require('../../index');
-let tv4 = Obniz.WSCommand.schema;
+const Obniz = require('../../index');
+const tv4 = Obniz.WSCommand.schema;
 
 class obnizJsonValidator {
   constructor() {
@@ -11,7 +11,7 @@ class obnizJsonValidator {
     // var schema = tv4.getSchema("/request");
     // return tv4.validateMultiple(requestJson, schema);
 
-    let commands = this.matchCommands(requestJson, 'request');
+    const commands = this.matchCommands(requestJson, 'request');
     if (commands.length === 0) {
       return {
         valid: false,
@@ -38,7 +38,7 @@ class obnizJsonValidator {
     // var schema = tv4.getSchema("/response");
     // return tv4.validateMultiple(requestJson, schema);
 
-    let commands = this.matchCommands(requestJson, 'response');
+    const commands = this.matchCommands(requestJson, 'response');
     if (commands.length === 0) {
       return {
         valid: false,
@@ -73,7 +73,7 @@ class obnizJsonValidator {
       .concat(this.command(/^\/request\//))
       .concat(this.command(/^\/response\//));
     commands = commands.filter((elm) => {
-      let schema = tv4.getSchema(elm);
+      const schema = tv4.getSchema(elm);
       if (schema['anyOf']) {
         return false;
       } else if (schema['deprecated']) {
@@ -95,21 +95,24 @@ class obnizJsonValidator {
   }
 
   matchCommands(json, type) {
-    let baseTv4 = tv4.freshApi();
+    const baseTv4 = tv4.freshApi();
     baseTv4.addSchema(tv4.getSchema('/'));
 
-    let baseResults = baseTv4.validateMultiple(json, tv4.getSchema('/' + type));
+    const baseResults = baseTv4.validateMultiple(
+      json,
+      tv4.getSchema('/' + type)
+    );
 
-    let matched = [];
+    const matched = [];
 
-    for (let targetUri of baseResults.missing) {
-      let reg = new RegExp('^' + targetUri);
-      let targets = this.command(reg);
-      for (let commands of json) {
-        for (let commandKey of Object.keys(commands)) {
-          let command = commands[commandKey];
-          for (let target of targets) {
-            let results = baseTv4.validateMultiple(
+    for (const targetUri of baseResults.missing) {
+      const reg = new RegExp('^' + targetUri);
+      const targets = this.command(reg);
+      for (const commands of json) {
+        for (const commandKey of Object.keys(commands)) {
+          const command = commands[commandKey];
+          for (const target of targets) {
+            const results = baseTv4.validateMultiple(
               command,
               tv4.getSchema(target)
             );
@@ -124,19 +127,19 @@ class obnizJsonValidator {
   }
 
   checkResults(type, prefix) {
-    let results = [];
+    const results = [];
     this.useCommands[type] = this.useCommands[type] || [];
     let useCommandUnique = this.useCommands[type].filter(function (x, i, self) {
       return self.indexOf(x) === i;
     });
-    let allCommands = this.commandAll();
+    const allCommands = this.commandAll();
     useCommandUnique = useCommandUnique
       .filter((elm) => {
         return allCommands.indexOf(elm) !== -1;
       })
       .sort();
 
-    let unusedCommand = this.commandAll().filter((elm) => {
+    const unusedCommand = this.commandAll().filter((elm) => {
       return useCommandUnique.indexOf(elm) === -1;
     });
 
@@ -153,7 +156,7 @@ class obnizJsonValidator {
 
     if (unusedCommand.length > 0) {
       results.push('not tested(exclude:deprecated):');
-      for (let command of unusedCommand) {
+      for (const command of unusedCommand) {
         results.push('\t' + command);
       }
     }

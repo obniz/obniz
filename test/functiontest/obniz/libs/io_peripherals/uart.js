@@ -1,8 +1,8 @@
-let chai = require('chai');
-let expect = chai.expect;
-let sinon = require('sinon');
+const chai = require('chai');
+const expect = chai.expect;
+const sinon = require('sinon');
 
-let testUtil = require('../../../testUtil.js');
+const testUtil = require('../../../testUtil.js');
 
 describe('obniz.libs.uart', function () {
   beforeEach(async function () {
@@ -96,7 +96,7 @@ describe('obniz.libs.uart', function () {
     expect(this.obniz).send([{ io1: { pull_type: 'float' } }]);
     expect(this.obniz).send([{ io0: { pull_type: 'float' } }]);
     expect(this.obniz).send([{ uart0: { tx: 0, rx: 1 } }]);
-    let stub = sinon.stub();
+    const stub = sinon.stub();
     this.obniz.uart0.onreceive = stub;
 
     testUtil.receiveJson(this.obniz, [{ uart0: { data: [78, 105, 99, 101] } }]);

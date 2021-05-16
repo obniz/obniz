@@ -1,7 +1,7 @@
-let chai = require('chai');
-let expect = chai.expect;
+const chai = require('chai');
+const expect = chai.expect;
 
-let testUtil = require('../../testUtil.js');
+const testUtil = require('../../testUtil.js');
 
 describe('obniz.libs.system', function () {
   beforeEach(async function () {
@@ -25,7 +25,7 @@ describe('obniz.libs.system', function () {
   });
 
   it('wired-before-connection', async function () {
-    //reset and create offline obniz
+    // reset and create offline obniz
     await testUtil.releaseObnizPromise(this);
     await testUtil.setupNotConnectedYetObnizPromise(this);
 

@@ -2,86 +2,6 @@ const path = require('path');
 const rulesDirPlugin = require('eslint-plugin-rulesdir');
 rulesDirPlugin.RULES_DIR = 'devtools/eslint/rule';
 
-let tsRules = {
-  'prettier/prettier': [
-    'error',
-    {
-      singleQuote: true,
-      trailingComma: 'es5',
-    },
-  ],
-  'no-inner-declarations': 'warn',
-  'no-constant-condition': [
-    'error',
-    {
-      checkLoops: false,
-    },
-  ],
-  'no-var': 'error',
-  'rulesdir/non-ascii': [
-    'error',
-    {
-      allowedChars: '°',
-    },
-  ],
-  'rulesdir/async-function-name': ['error'],
-  '@typescript-eslint/array-type': [
-    'error',
-    {
-      default: 'array',
-    },
-  ],
-  '@typescript-eslint/consistent-type-assertions': 'error',
-  '@typescript-eslint/dot-notation': 'error',
-  '@typescript-eslint/no-shadow': [
-    'error',
-    {
-      hoist: 'all',
-    },
-  ],
-  '@typescript-eslint/no-unused-expressions': 'error',
-  '@typescript-eslint/restrict-plus-operands': 'warn',
-  '@typescript-eslint/prefer-function-type': 'error',
-  '@typescript-eslint/unified-signatures': 'error',
-  eqeqeq: ['error', 'smart'],
-  'jsdoc/check-alignment': 'error',
-  'jsdoc/check-indentation': 'error',
-  'jsdoc/newline-after-description': 'error',
-  'max-classes-per-file': ['error', 1],
-  'new-parens': 'error',
-  'no-eval': 'error',
-  'no-new-wrappers': 'error',
-  'no-throw-literal': 'error',
-  'no-trailing-spaces': 'error',
-  'no-undef-init': 'error',
-  'object-shorthand': 'error',
-  'one-var': ['error', 'never'],
-  'prefer-arrow/prefer-arrow-functions': 'error',
-  'prefer-const': 'error',
-  'spaced-comment': [
-    'error',
-    'always',
-    {
-      markers: ['/'],
-    },
-  ],
-  // '@typescript-eslint/tslint/config': [
-  //   'error',
-  //   {
-  //     rules: {
-  //       prettier: [
-  //         true,
-  //         {
-  //           trailingComma: 'all',
-  //           arrowParens: 'always',
-  //           quoteProps: 'consistent',
-  //           printWidth: 120,
-  //         },
-  //       ],
-  //     },
-  //   },
-  // ],
-};
 module.exports = {
   root: true,
   env: {
@@ -102,9 +22,9 @@ module.exports = {
         trailingComma: 'es5',
       },
     ],
-    'no-constant-condition': 'off',
-    'no-inner-declarations': 'warn',
-    'no-var': 'error',
+    'jsdoc/check-alignment': 'error',
+    'jsdoc/check-indentation': 'error',
+    'jsdoc/newline-after-description': 'error',
     'rulesdir/non-ascii': [
       'error',
       {
@@ -112,6 +32,33 @@ module.exports = {
       },
     ],
     'rulesdir/async-function-name': ['error'],
+    'prefer-arrow/prefer-arrow-functions': 'error',
+    eqeqeq: ['error', 'smart'],
+    'max-classes-per-file': ['error', 1],
+    'new-parens': 'error',
+    'no-inner-declarations': 'warn',
+    'no-constant-condition': [
+      'error',
+      {
+        checkLoops: false,
+      },
+    ],
+    'no-eval': 'error',
+    'no-new-wrappers': 'error',
+    'no-throw-literal': 'error',
+    'no-trailing-spaces': 'error',
+    'no-undef-init': 'error',
+    'no-var': 'error',
+    'object-shorthand': 'error',
+    'one-var': ['error', 'never'],
+    'prefer-const': 'error',
+    'spaced-comment': [
+      'error',
+      'always',
+      {
+        markers: ['/'],
+      },
+    ],
   },
   overrides: [
     {
@@ -129,18 +76,27 @@ module.exports = {
         project: path.join(__dirname, 'tsconfig.eslint.json'),
         sourceType: 'module',
       },
-      plugins: [
-        'rulesdir',
-        'eslint-plugin-jsdoc',
-        'eslint-plugin-prefer-arrow',
-        '@typescript-eslint',
-      ],
-      rules: tsRules,
-    },
-    {
-      files: ['src/parts/Ble/**/*.ts'],
+      plugins: ['@typescript-eslint'],
       rules: {
-        '@typescript-eslint/no-empty-interface': 'off',
+        '@typescript-eslint/array-type': [
+          'error',
+          {
+            default: 'array',
+          },
+        ],
+        '@typescript-eslint/consistent-type-assertions': 'error',
+        'dot-notation': 'off',
+        '@typescript-eslint/dot-notation': 'error',
+        'no-shadow': 'off',
+        '@typescript-eslint/no-shadow': [
+          'error',
+          {
+            hoist: 'all',
+          },
+        ],
+        'no-unused-expressions': 'off',
+        '@typescript-eslint/no-unused-expressions': 'error',
+        '@typescript-eslint/unified-signatures': 'error',
       },
     },
   ],

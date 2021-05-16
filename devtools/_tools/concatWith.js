@@ -1,14 +1,14 @@
 'use strict';
 
-let through = require('through2');
-let path = require('path');
-let File = require('vinyl');
-let PluginError = require('plugin-error');
-let PLUGIN_NAME = 'concatWith';
+const through = require('through2');
+const path = require('path');
+const File = require('vinyl');
+const PluginError = require('plugin-error');
+const PLUGIN_NAME = 'concatWith';
 
 // file can be a vinyl file object or a string
 // when a string it will construct a new one
-module.exports = function (file, opt) {
+module.exports = (file, opt) => {
   if (!file) {
     throw new Error('gulp-concat: Missing file option');
   }
@@ -27,7 +27,7 @@ module.exports = function (file, opt) {
 
   let latestFile;
   let latestMod;
-  let stringList = [];
+  const stringList = [];
 
   // let fileName;
   // if (typeof file === 'string') {
@@ -66,7 +66,7 @@ module.exports = function (file, opt) {
 
   function endStream(cb) {
     // no files passed in, no file goes out
-    if (stringList.length == 0 || !latestFile) {
+    if (stringList.length === 0 || !latestFile) {
       cb();
       return;
     }

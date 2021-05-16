@@ -1,8 +1,8 @@
-let chai = require('chai');
-let expect = chai.expect;
-let sinon = require('sinon');
+const chai = require('chai');
+const expect = chai.expect;
+const sinon = require('sinon');
 
-let testUtil = require('../../../testUtil.js');
+const testUtil = require('../../../testUtil.js');
 
 describe('obniz.libs.measure', function () {
   beforeEach(async function () {
@@ -40,7 +40,7 @@ describe('obniz.libs.measure', function () {
   });
 
   it('echo response', function () {
-    let stub = sinon.stub();
+    const stub = sinon.stub();
     this.obniz.measure.echo({
       io_pulse: 1, // io for generate pulse
       io_echo: 2, // io to be measured

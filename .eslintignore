@@ -1,12 +1,7 @@
 obniz.js
-coverage/*
 node_modules/*
 temp/*
 dist/*
 docs/*
-test.js
-test-*.js
-test/test-*.js
-test/test-*.ts
 examples/*
 devtools/typedocTheme/*

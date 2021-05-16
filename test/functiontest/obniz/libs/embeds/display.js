@@ -1,7 +1,7 @@
-let chai = require('chai');
-let expect = chai.expect;
+const chai = require('chai');
+const expect = chai.expect;
 
-let testUtil = require('../../../testUtil.js');
+const testUtil = require('../../../testUtil.js');
 
 describe('obniz.libs.display', function () {
   beforeEach(async function () {
@@ -2196,7 +2196,7 @@ describe('obniz.libs.display', function () {
   });
 
   it('text', function () {
-    let isNode = typeof window === 'undefined';
+    const isNode = typeof window === 'undefined';
     if (!isNode) {
       this.skip();
       return;

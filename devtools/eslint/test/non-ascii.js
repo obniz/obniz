@@ -1,8 +1,8 @@
 'use strict';
 /* eslint-disable rulesdir/non-ascii */
 
-let RuleTester = require('eslint').RuleTester;
-let tester = new RuleTester();
+const RuleTester = require('eslint').RuleTester;
+const tester = new RuleTester();
 
 tester.run('non-ascii', require('../rule/non-ascii'), {
   valid: [

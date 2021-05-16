@@ -1,7 +1,7 @@
-let chai = require('chai');
-let expect = chai.expect;
+const chai = require('chai');
+const expect = chai.expect;
 
-let testUtil = require(global.appRoot + '/test/functiontest/testUtil.js');
+const testUtil = require(global.appRoot + '/test/functiontest/testUtil.js');
 
 describe('switch', function () {
   beforeEach(async function () {
@@ -13,197 +13,197 @@ describe('switch', function () {
   });
 
   it('response test no.1', function () {
-    let responseBinaryString = '09 00 01 01';
-    let expectJson = [{ switch: { state: 'push' } }];
+    const responseBinaryString = '09 00 01 01';
+    const expectJson = [{ switch: { state: 'push' } }];
 
-    let binaryArray = responseBinaryString
+    const binaryArray = responseBinaryString
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
-    let json = this.obniz._binary2Json(binary);
+    const json = this.obniz._binary2Json(binary);
 
-    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
 
     expect(json).to.be.deep.equal(expectJson);
   });
 
   it('response test no.3', function () {
-    let responseBinaryString = '09 00 01 00';
-    let expectJson = [{ switch: { state: 'none' } }];
+    const responseBinaryString = '09 00 01 00';
+    const expectJson = [{ switch: { state: 'none' } }];
 
-    let binaryArray = responseBinaryString
+    const binaryArray = responseBinaryString
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
-    let json = this.obniz._binary2Json(binary);
+    const json = this.obniz._binary2Json(binary);
 
-    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
 
     expect(json).to.be.deep.equal(expectJson);
   });
 
   it('response test no.5', function () {
-    let responseBinaryString = '09 00 01 03';
-    let expectJson = [{ switch: { state: 'right' } }];
+    const responseBinaryString = '09 00 01 03';
+    const expectJson = [{ switch: { state: 'right' } }];
 
-    let binaryArray = responseBinaryString
+    const binaryArray = responseBinaryString
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
-    let json = this.obniz._binary2Json(binary);
+    const json = this.obniz._binary2Json(binary);
 
-    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
 
     expect(json).to.be.deep.equal(expectJson);
   });
 
   it('response test no.7', function () {
-    let responseBinaryString = '09 00 01 00';
-    let expectJson = [{ switch: { state: 'none' } }];
+    const responseBinaryString = '09 00 01 00';
+    const expectJson = [{ switch: { state: 'none' } }];
 
-    let binaryArray = responseBinaryString
+    const binaryArray = responseBinaryString
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
-    let json = this.obniz._binary2Json(binary);
+    const json = this.obniz._binary2Json(binary);
 
-    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
 
     expect(json).to.be.deep.equal(expectJson);
   });
 
   it('response test no.9', function () {
-    let responseBinaryString = '09 00 01 02';
-    let expectJson = [{ switch: { state: 'left' } }];
+    const responseBinaryString = '09 00 01 02';
+    const expectJson = [{ switch: { state: 'left' } }];
 
-    let binaryArray = responseBinaryString
+    const binaryArray = responseBinaryString
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
-    let json = this.obniz._binary2Json(binary);
+    const json = this.obniz._binary2Json(binary);
 
-    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
 
     expect(json).to.be.deep.equal(expectJson);
   });
 
   it('response test no.11', function () {
-    let responseBinaryString = '09 00 01 00';
-    let expectJson = [{ switch: { state: 'none' } }];
+    const responseBinaryString = '09 00 01 00';
+    const expectJson = [{ switch: { state: 'none' } }];
 
-    let binaryArray = responseBinaryString
+    const binaryArray = responseBinaryString
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
-    let json = this.obniz._binary2Json(binary);
+    const json = this.obniz._binary2Json(binary);
 
-    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
 
     expect(json).to.be.deep.equal(expectJson);
   });
 
   it('response test no.13', function () {
-    let responseBinaryString = '09 00 01 01';
-    let expectJson = [{ switch: { state: 'push' } }];
+    const responseBinaryString = '09 00 01 01';
+    const expectJson = [{ switch: { state: 'push' } }];
 
-    let binaryArray = responseBinaryString
+    const binaryArray = responseBinaryString
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
-    let json = this.obniz._binary2Json(binary);
+    const json = this.obniz._binary2Json(binary);
 
-    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
 
     expect(json).to.be.deep.equal(expectJson);
   });
 
   it('response test no.15', function () {
-    let responseBinaryString = '09 00 01 00';
-    let expectJson = [{ switch: { state: 'none' } }];
+    const responseBinaryString = '09 00 01 00';
+    const expectJson = [{ switch: { state: 'none' } }];
 
-    let binaryArray = responseBinaryString
+    const binaryArray = responseBinaryString
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
-    let json = this.obniz._binary2Json(binary);
+    const json = this.obniz._binary2Json(binary);
 
-    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
 
     expect(json).to.be.deep.equal(expectJson);
   });
 
   it('request test no.18', function () {
-    let requestJson = [{ switch: 'get' }];
-    let expecteBinaryStrings = ['09 01 00'];
+    const requestJson = [{ switch: 'get' }];
+    const expecteBinaryStrings = ['09 01 00'];
 
     expect(requestJson.length).to.be.equal(1);
 
-    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    let compress = this.obniz.constructor.WSCommand.compress(
+    const compress = this.obniz.constructor.WSCommand.compress(
       this.obniz.wscommands,
       requestJson[0]
     );
 
-    let binaryArray = expecteBinaryStrings
+    const binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
     expect(compress).to.be.deep.equal(binary);
   });
 
   it('response test no.19', function () {
-    let responseBinaryString = '09 01 01 00';
-    let expectJson = [{ switch: { state: 'none', action: 'get' } }];
+    const responseBinaryString = '09 01 01 00';
+    const expectJson = [{ switch: { state: 'none', action: 'get' } }];
 
-    let binaryArray = responseBinaryString
+    const binaryArray = responseBinaryString
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
-    let json = this.obniz._binary2Json(binary);
+    const json = this.obniz._binary2Json(binary);
 
-    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
 
     expect(json).to.be.deep.equal(expectJson);

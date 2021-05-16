@@ -1,7 +1,7 @@
-let chai = require('chai');
-let expect = chai.expect;
+const chai = require('chai');
+const expect = chai.expect;
 
-let testUtil = require('../../testUtil.js');
+const testUtil = require('../../testUtil.js');
 
 describe('obniz.libs.system', function () {
   beforeEach(async function () {
@@ -13,8 +13,8 @@ describe('obniz.libs.system', function () {
   });
 
   it('ping', function () {
-    let unixtime = 1522840296917;
-    let rand = 4553670;
+    const unixtime = 1522840296917;
+    const rand = 4553670;
     this.obniz.pingWait(unixtime, rand);
     expect(this.obniz).send([
       {
@@ -27,10 +27,10 @@ describe('obniz.libs.system', function () {
   });
 
   it('pingPong', function () {
-    let unixtime = 1522840296917;
-    let rand = 4553670;
+    const unixtime = 1522840296917;
+    const rand = 4553670;
     let resolved = false;
-    let promise = this.obniz.pingWait(unixtime, rand).then(() => {
+    const promise = this.obniz.pingWait(unixtime, rand).then(() => {
       resolved = true;
     });
     expect(this.obniz).send([
@@ -93,7 +93,7 @@ describe('obniz.libs.system', function () {
         setTimeout(reject, ms);
       });
     }
-    let promise = Promise.race([this.obniz.wait(500), wait(501)]);
+    const promise = Promise.race([this.obniz.wait(500), wait(501)]);
     expect(this.obniz).send([{ system: { wait: 500 } }]);
     expect(this.obniz).to.be.finished;
     return promise;
@@ -105,7 +105,7 @@ describe('obniz.libs.system', function () {
         setTimeout(resolve, ms);
       });
     }
-    let promise = Promise.race([
+    const promise = Promise.race([
       this.obniz.wait(500).then(() => {
         return Promise.reject('too early');
       }),
@@ -117,9 +117,9 @@ describe('obniz.libs.system', function () {
   });
 
   it('sleep', function () {
-    let date = new Date();
+    const date = new Date();
     date.setHours(date.getHours() + 1, 0, 0, 0);
-    let now = new Date();
+    const now = new Date();
     this.obniz.sleep(date);
     expect(this.obniz).send([
       { system: { sleep_seconds: Math.floor((date - now) / 1000) } },
@@ -128,9 +128,9 @@ describe('obniz.libs.system', function () {
   });
 
   it('sleep2', function () {
-    let date = new Date();
+    const date = new Date();
     date.setMonth(date.getMonth() + 1);
-    let now = new Date();
+    const now = new Date();
     this.obniz.sleep(date);
     expect(this.obniz).send([
       { system: { sleep_minute: Math.floor((date - now) / 1000 / 60) } },

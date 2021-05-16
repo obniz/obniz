@@ -1,17 +1,17 @@
 'no_html_test_build';
 
-let chai = require('chai');
-let expect = chai.expect;
-let sinon = require('sinon');
-let path = require('path');
+const chai = require('chai');
+const expect = chai.expect;
+const sinon = require('sinon');
+const path = require('path');
 
-let testUtil = require('../testUtil.js');
+const testUtil = require('../testUtil.js');
 
 chai.use(testUtil.obnizAssert.bind(testUtil));
 
 const getPort = require('get-port');
 
-let waitMs = 50;
+const waitMs = 50;
 
 describe('obniz.index', function () {
   beforeEach(function () {});
@@ -21,7 +21,7 @@ describe('obniz.index', function () {
   it('instance', async function () {
     sinon.stub(console, 'error');
     sinon.stub(console, 'log');
-    let obniz = testUtil.createObniz(3000, 'OBNIZ_ID_HERE');
+    const obniz = testUtil.createObniz(3000, 'OBNIZ_ID_HERE');
     expect(obniz).to.be.obniz;
     await wait(10);
     sinon.assert.calledOnce(console.error);
@@ -31,16 +31,16 @@ describe('obniz.index', function () {
   });
 
   it('connect', function () {
-    let port = undefined;
-    let server = undefined;
-    let obniz = undefined;
+    let port;
+    let server;
+    let obniz;
     return getPort()
       .then(function (p) {
         port = p;
         server = testUtil.createServer(port);
         // console.log(new Date(), 'use port ' + port);
 
-        let result = new Promise(function (resolve) {
+        const result = new Promise(function (resolve) {
           server.on('connection', function () {
             resolve();
           });
@@ -61,7 +61,11 @@ describe('obniz.index', function () {
   });
 
   it('soft_redirect', function () {
-    let port, server, port2, server2, obniz;
+    let port;
+    let server;
+    let port2;
+    let server2;
+    let obniz;
 
     return getPort()
       .then(function (p) {
@@ -75,7 +79,7 @@ describe('obniz.index', function () {
         // console.log(new Date(), 'use port ' + port2);
         server2 = testUtil.createServer(port2);
 
-        let result = new Promise(function (resolve) {
+        const result = new Promise(function (resolve) {
           server.on('connection', function () {
             resolve();
           });
@@ -90,17 +94,17 @@ describe('obniz.index', function () {
       })
       .then(function () {
         expect(server.clients.size, 'before server not connected').to.equal(1);
-        let result = new Promise(function (resolve) {
+        const result = new Promise(function (resolve) {
           server2.on('connection', function () {
             resolve();
           });
         });
 
-        let val = [{ ws: { redirect: 'ws://localhost:' + port2 } }];
+        const val = [{ ws: { redirect: 'ws://localhost:' + port2 } }];
 
         if (testUtil.isNode()) {
-          let validator = require('../obnizJsonValidator');
-          let results = validator.responseValidate(val, 'json');
+          const validator = require('../obnizJsonValidator');
+          const results = validator.responseValidate(val, 'json');
           require('chai').expect(results.valid, results.errors).to.be.true;
         }
 
@@ -128,7 +132,12 @@ describe('obniz.index', function () {
       return;
     }
     this.timeout(200 * 1000);
-    let port1, port2, port3, server1, server2, server3;
+    let port1;
+    let port2;
+    let port3;
+    let server1;
+    let server2;
+    let server3;
 
     return getPort()
       .then(function (p) {
@@ -155,7 +164,7 @@ describe('obniz.index', function () {
         server2.on('connection', function () {
           // console.log(new Date(), 'server2 connected');
           setTimeout(function () {
-            let val = [{ ws: { redirect: 'ws://localhost:' + port3 } }];
+            const val = [{ ws: { redirect: 'ws://localhost:' + port3 } }];
             server2.clients.values().next().value.send(JSON.stringify(val));
           }, 10);
         });
@@ -302,7 +311,7 @@ describe('obniz.index', function () {
         },
       },
     ]);
-    //connected
+    // connected
     await wait(10);
     expect(called).to.be.false;
 
@@ -330,10 +339,10 @@ describe('obniz.index', function () {
         },
       },
     ]);
-    //connected
+    // connected
     await wait(10);
 
-    let p = this.obniz.closeWait();
+    const p = this.obniz.closeWait();
 
     this.obniz.wsOnClose();
 
@@ -602,7 +611,7 @@ describe('obniz.index', function () {
     let connectionCount = 0;
     server.on('connection', (c) => {
       connectionCount++;
-      let val = [
+      const val = [
         {
           ws: {
             ready: true,
@@ -625,7 +634,7 @@ describe('obniz.index', function () {
     // console.log(new Date(), 'server connected');
     await wait(1);
 
-    let onclosePromise = new Promise((resolve) => {
+    const onclosePromise = new Promise((resolve) => {
       obniz.onclose = resolve;
     });
 
@@ -651,7 +660,7 @@ describe('obniz.index', function () {
     // console.log(new Date(), 'server created');
 
     server.on('connection', (c) => {
-      let val = [
+      const val = [
         {
           ws: {
             ready: true,
@@ -674,7 +683,7 @@ describe('obniz.index', function () {
 
     await wait(1);
 
-    let onclosePromise = new Promise((resolve) => {
+    const onclosePromise = new Promise((resolve) => {
       obniz.onclose = resolve;
     });
 
@@ -739,7 +748,7 @@ describe('obniz.index', function () {
       {
         system: {
           pong: {
-            key: key,
+            key,
             obnizTime: 1591354603572,
             pingServerTime: 1591354601594,
             pongServerTime: 1591354601771,

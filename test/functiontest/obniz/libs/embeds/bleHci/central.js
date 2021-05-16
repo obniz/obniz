@@ -1,8 +1,8 @@
-let chai = require('chai');
-let expect = chai.expect;
-let sinon = require('sinon');
+const chai = require('chai');
+const expect = chai.expect;
+const sinon = require('sinon');
 
-let testUtil = require('../../../../testUtil.js');
+const testUtil = require('../../../../testUtil.js');
 
 describe('ble-hci-central', function () {
   beforeEach(async function () {
@@ -24,11 +24,11 @@ describe('ble-hci-central', function () {
   });
 
   it('write', function () {
-    let commands = [
+    const commands = [
       [0x01, 0x03, 0x0c, 0x0], // reset
     ];
 
-    for (let command of commands) {
+    for (const command of commands) {
       this.obniz.ble.hci.write(command);
       expect(this.obniz).send([
         {
@@ -44,17 +44,17 @@ describe('ble-hci-central', function () {
   });
 
   it('read', function () {
-    let stub = sinon.stub();
+    const stub = sinon.stub();
 
     this.obniz.ble.hci.onread = stub;
 
-    let results = [
+    const results = [
       { ble: { hci: { read: { data: [0, 1, 2, 3, 4, 5, 22, 1] } } } },
     ];
     testUtil.receiveJson(this.obniz, results);
 
     sinon.assert.callCount(stub, 1);
-    let data = stub.getCall(0).args[0];
+    const data = stub.getCall(0).args[0];
     expect(Array.isArray(data)).to.be.true;
 
     expect(data).to.be.deep.equal([0, 1, 2, 3, 4, 5, 22, 1]);

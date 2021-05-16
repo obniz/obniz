@@ -1,7 +1,7 @@
-let chai = require('chai');
-let expect = chai.expect;
+const chai = require('chai');
+const expect = chai.expect;
 
-let testUtil = require('../../../testUtil.js');
+const testUtil = require('../../../testUtil.js');
 
 describe('display', function () {
   beforeEach(async function () {
@@ -13,124 +13,124 @@ describe('display', function () {
   });
 
   it('request test no.0', function () {
-    let requestJson = [{ display: { clear: true } }];
-    let expecteBinaryStrings = ['08 00 00'];
+    const requestJson = [{ display: { clear: true } }];
+    const expecteBinaryStrings = ['08 00 00'];
 
     expect(requestJson.length).to.be.equal(1);
 
-    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    let compress = this.obniz.constructor.WSCommand.compress(
+    const compress = this.obniz.constructor.WSCommand.compress(
       this.obniz.wscommands,
       requestJson[0]
     );
 
-    let binaryArray = expecteBinaryStrings
+    const binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
     expect(compress).to.be.deep.equal(binary);
   });
 
   it('request test no.2', function () {
-    let requestJson = [{ display: { text: 'Pushing' } }];
-    let expecteBinaryStrings = ['08 01 07 50 75 73 68 69 6e 67'];
+    const requestJson = [{ display: { text: 'Pushing' } }];
+    const expecteBinaryStrings = ['08 01 07 50 75 73 68 69 6e 67'];
 
     expect(requestJson.length).to.be.equal(1);
 
-    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    let compress = this.obniz.constructor.WSCommand.compress(
+    const compress = this.obniz.constructor.WSCommand.compress(
       this.obniz.wscommands,
       requestJson[0]
     );
 
-    let binaryArray = expecteBinaryStrings
+    const binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
     expect(compress).to.be.deep.equal(binary);
   });
 
   it('request test no.4', function () {
-    let requestJson = [{ display: { clear: true } }];
-    let expecteBinaryStrings = ['08 00 00'];
+    const requestJson = [{ display: { clear: true } }];
+    const expecteBinaryStrings = ['08 00 00'];
 
     expect(requestJson.length).to.be.equal(1);
 
-    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    let compress = this.obniz.constructor.WSCommand.compress(
+    const compress = this.obniz.constructor.WSCommand.compress(
       this.obniz.wscommands,
       requestJson[0]
     );
 
-    let binaryArray = expecteBinaryStrings
+    const binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
     expect(compress).to.be.deep.equal(binary);
   });
 
   it('response test no.5', function () {
-    let responseBinaryString = '09 00 01 03';
-    let expectJson = [{ switch: { state: 'right' } }];
+    const responseBinaryString = '09 00 01 03';
+    const expectJson = [{ switch: { state: 'right' } }];
 
-    let binaryArray = responseBinaryString
+    const binaryArray = responseBinaryString
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
-    let json = this.obniz._binary2Json(binary);
+    const json = this.obniz._binary2Json(binary);
 
-    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
 
     expect(json).to.be.deep.equal(expectJson);
   });
 
   it('request test no.6', function () {
-    let requestJson = [{ display: { clear: true } }];
-    let expecteBinaryStrings = ['08 00 00'];
+    const requestJson = [{ display: { clear: true } }];
+    const expecteBinaryStrings = ['08 00 00'];
 
     expect(requestJson.length).to.be.equal(1);
 
-    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    let compress = this.obniz.constructor.WSCommand.compress(
+    const compress = this.obniz.constructor.WSCommand.compress(
       this.obniz.wscommands,
       requestJson[0]
     );
 
-    let binaryArray = expecteBinaryStrings
+    const binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
     expect(compress).to.be.deep.equal(binary);
   });
@@ -1174,203 +1174,203 @@ describe('display', function () {
       0,
     ];
 
-    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    let compress = this.obniz.constructor.WSCommand.compress(
+    const compress = this.obniz.constructor.WSCommand.compress(
       this.obniz.wscommands,
       requestJson[0]
     );
 
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
     expect(compress).to.be.deep.equal(binary);
   });
 
   it('request test no.8', function () {
-    let requestJson = [{ display: { clear: true } }];
-    let expecteBinaryStrings = ['08 00 00'];
+    const requestJson = [{ display: { clear: true } }];
+    const expecteBinaryStrings = ['08 00 00'];
 
     expect(requestJson.length).to.be.equal(1);
 
-    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    let compress = this.obniz.constructor.WSCommand.compress(
+    const compress = this.obniz.constructor.WSCommand.compress(
       this.obniz.wscommands,
       requestJson[0]
     );
 
-    let binaryArray = expecteBinaryStrings
+    const binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
     expect(compress).to.be.deep.equal(binary);
   });
 
   it('request test no.10', function () {
-    let requestJson = [{ display: { clear: true } }];
-    let expecteBinaryStrings = ['08 00 00'];
+    const requestJson = [{ display: { clear: true } }];
+    const expecteBinaryStrings = ['08 00 00'];
 
     expect(requestJson.length).to.be.equal(1);
 
-    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    let compress = this.obniz.constructor.WSCommand.compress(
+    const compress = this.obniz.constructor.WSCommand.compress(
       this.obniz.wscommands,
       requestJson[0]
     );
 
-    let binaryArray = expecteBinaryStrings
+    const binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
     expect(compress).to.be.deep.equal(binary);
   });
 
   it('request test no.12', function () {
-    let requestJson = [{ display: { clear: true } }];
-    let expecteBinaryStrings = ['08 00 00'];
+    const requestJson = [{ display: { clear: true } }];
+    const expecteBinaryStrings = ['08 00 00'];
 
     expect(requestJson.length).to.be.equal(1);
 
-    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    let compress = this.obniz.constructor.WSCommand.compress(
+    const compress = this.obniz.constructor.WSCommand.compress(
       this.obniz.wscommands,
       requestJson[0]
     );
 
-    let binaryArray = expecteBinaryStrings
+    const binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
     expect(compress).to.be.deep.equal(binary);
   });
 
   it('request test no.14', function () {
-    let requestJson = [{ display: { text: 'Pushing' } }];
-    let expecteBinaryStrings = ['08 01 07 50 75 73 68 69 6e 67'];
+    const requestJson = [{ display: { text: 'Pushing' } }];
+    const expecteBinaryStrings = ['08 01 07 50 75 73 68 69 6e 67'];
 
     expect(requestJson.length).to.be.equal(1);
 
-    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    let compress = this.obniz.constructor.WSCommand.compress(
+    const compress = this.obniz.constructor.WSCommand.compress(
       this.obniz.wscommands,
       requestJson[0]
     );
 
-    let binaryArray = expecteBinaryStrings
+    const binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
     expect(compress).to.be.deep.equal(binary);
   });
 
   it('request test no.16', function () {
-    let requestJson = [{ display: { clear: true } }];
-    let expecteBinaryStrings = ['08 00 00'];
+    const requestJson = [{ display: { clear: true } }];
+    const expecteBinaryStrings = ['08 00 00'];
 
     expect(requestJson.length).to.be.equal(1);
 
-    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    let compress = this.obniz.constructor.WSCommand.compress(
+    const compress = this.obniz.constructor.WSCommand.compress(
       this.obniz.wscommands,
       requestJson[0]
     );
 
-    let binaryArray = expecteBinaryStrings
+    const binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
     expect(compress).to.be.deep.equal(binary);
   });
 
   it('request test no.17', function () {
-    let requestJson = [{ display: { clear: true } }];
-    let expecteBinaryStrings = ['08 00 00'];
+    const requestJson = [{ display: { clear: true } }];
+    const expecteBinaryStrings = ['08 00 00'];
 
     expect(requestJson.length).to.be.equal(1);
 
-    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    let compress = this.obniz.constructor.WSCommand.compress(
+    const compress = this.obniz.constructor.WSCommand.compress(
       this.obniz.wscommands,
       requestJson[0]
     );
 
-    let binaryArray = expecteBinaryStrings
+    const binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
     expect(compress).to.be.deep.equal(binary);
   });
 
   it('request test no.21', function () {
-    let requestJson = [{ display: { clear: true } }];
-    let expecteBinaryStrings = ['08 00 00'];
+    const requestJson = [{ display: { clear: true } }];
+    const expecteBinaryStrings = ['08 00 00'];
 
     expect(requestJson.length).to.be.equal(1);
 
-    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    let compress = this.obniz.constructor.WSCommand.compress(
+    const compress = this.obniz.constructor.WSCommand.compress(
       this.obniz.wscommands,
       requestJson[0]
     );
 
-    let binaryArray = expecteBinaryStrings
+    const binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
     expect(compress).to.be.deep.equal(binary);
   });
 
   it('request test no.23', function () {
-    let requestJson = [
+    const requestJson = [
       {
         display: {
           raw: [
@@ -2402,34 +2402,34 @@ describe('display', function () {
         },
       },
     ];
-    let expecteBinaryStrings = [
+    const expecteBinaryStrings = [
       '8 3 44 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 60 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 60 0 0 0 0 0 0 6 0 0 0 0 0 0 0 0 f0 0 0 0 0 0 0 6 0 0 0 0 0 0 0 0 f0 0 0 0 0 0 0 6 0 0 0 0 0 0 0 1 98 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 98 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 8 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 c c 0 c0 f8 6 3c 6 6 78 0 0 0 0 0 3 c c 0 c3 fe 6 fe 6 6 f8 0 0 0 0 0 6 6 6 1 87 7 7 87 6 7 80 0 0 0 0 0 6 6 6 1 8c 3 7 3 86 7 0 0 0 0 0 0 c 7 3 3 c 1 87 1 86 7 0 0 0 0 0 0 c 3 3 3 18 1 86 1 86 6 0 0 0 0 0 0 c 3 3 3 1f ff 86 1 86 6 0 0 0 0 0 0 1f ff 81 86 1f ff 86 1 86 6 0 0 0 0 0 0 1f ff 81 86 18 0 6 1 86 6 0 0 0 0 0 0 30 0 c0 cc 18 0 6 1 86 6 0 0 0 0 0 0 30 0 c0 cc c 0 6 1 86 6 0 0 0 0 0 0 60 0 60 cc e 1 6 1 86 6 0 0 0 0 0 0 60 0 60 78 7 3 86 1 86 6 0 0 0 0 0 0 60 0 60 78 3 ff 6 1 86 6 0 0 0 0 0 0 c0 0 30 30 0 fc 6 1 86 6 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0',
     ];
 
     expect(requestJson.length).to.be.equal(1);
 
-    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    let compress = this.obniz.constructor.WSCommand.compress(
+    const compress = this.obniz.constructor.WSCommand.compress(
       this.obniz.wscommands,
       requestJson[0]
     );
 
-    let binaryArray = expecteBinaryStrings
+    const binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
     expect(compress).to.be.deep.equal(binary);
   });
 
   it('pin name', function () {
-    let requestJson = [
+    const requestJson = [
       {
         display: {
           pin_assign: {
@@ -2441,32 +2441,32 @@ describe('display', function () {
         },
       },
     ];
-    let expecteBinaryStrings = ['8 5 0a 0 69 6F 20 6F 75 74 70 75 74'];
+    const expecteBinaryStrings = ['8 5 0a 0 69 6F 20 6F 75 74 70 75 74'];
 
     expect(requestJson.length).to.be.equal(1);
 
-    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    let compress = this.obniz.constructor.WSCommand.compress(
+    const compress = this.obniz.constructor.WSCommand.compress(
       this.obniz.wscommands,
       requestJson[0]
     );
 
-    let binaryArray = expecteBinaryStrings
+    const binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
     expect(compress).to.be.deep.equal(binary);
   });
 
   it('pin name2', function () {
-    let requestJson = [
+    const requestJson = [
       {
         display: {
           pin_assign: {
@@ -2484,28 +2484,28 @@ describe('display', function () {
         },
       },
     ];
-    let expecteBinaryStrings = [
+    const expecteBinaryStrings = [
       '8 5 0a 0 69 6f 20 6f 75 74 70 75 74 8 5 6 8 70 77 6D 20 3F 8 5 8 a 3f 20 69 6E 70 75 74',
     ];
 
     expect(requestJson.length).to.be.equal(1);
 
-    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    let compress = this.obniz.constructor.WSCommand.compress(
+    const compress = this.obniz.constructor.WSCommand.compress(
       this.obniz.wscommands,
       requestJson[0]
     );
 
-    let binaryArray = expecteBinaryStrings
+    const binaryArray = expecteBinaryStrings
       .join(' ')
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
     expect(binaryArray.length).to.be.above(2);
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
     expect(compress).to.be.deep.equal(binary);
   });

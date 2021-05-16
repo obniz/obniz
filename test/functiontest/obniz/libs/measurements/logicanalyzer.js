@@ -1,8 +1,8 @@
-let chai = require('chai');
-let expect = chai.expect;
-let sinon = require('sinon');
+const chai = require('chai');
+const expect = chai.expect;
+const sinon = require('sinon');
 
-let testUtil = require('../../../testUtil.js');
+const testUtil = require('../../../testUtil.js');
 
 describe('obniz.libs.logicanalyser', function () {
   beforeEach(async function () {
@@ -65,7 +65,7 @@ describe('obniz.libs.logicanalyser', function () {
   });
 
   it('onmeasured', function () {
-    let stub = sinon.stub();
+    const stub = sinon.stub();
     this.obniz.logicAnalyzer.start({
       io: 1,
       interval: 0.1,
@@ -85,7 +85,7 @@ describe('obniz.libs.logicanalyser', function () {
       },
     ]);
     this.obniz.logicAnalyzer.onmeasured = stub;
-    let data = [
+    const data = [
       0,
       0,
       0,
@@ -583,7 +583,7 @@ describe('obniz.libs.logicanalyser', function () {
       0,
       1,
     ];
-    testUtil.receiveJson(this.obniz, [{ logic_analyzer: { data: data } }]);
+    testUtil.receiveJson(this.obniz, [{ logic_analyzer: { data } }]);
 
     sinon.assert.callCount(stub, 1);
     expect(stub.getCall(0).args[0]).to.be.deep.equal(data);

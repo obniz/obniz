@@ -1,8 +1,8 @@
-let chai = require('chai');
-let expect = chai.expect;
-let sinon = require('sinon');
+const chai = require('chai');
+const expect = chai.expect;
+const sinon = require('sinon');
 
-let testUtil = require('../../../../../test/functiontest/testUtil.js');
+const testUtil = require('../../../../../test/functiontest/testUtil.js');
 
 describe('obniz.libs.ad', function () {
   beforeEach(async function () {
@@ -13,10 +13,10 @@ describe('obniz.libs.ad', function () {
   });
 
   it('getAD', function () {
-    let ad0 = this.obniz.getAD(0);
+    const ad0 = this.obniz.getAD(0);
     expect(ad0.id).to.be.equal(0);
 
-    let ad11 = this.obniz.getAD(11);
+    const ad11 = this.obniz.getAD(11);
     expect(ad11.id).to.be.equal(11);
 
     expect(function () {
@@ -31,7 +31,7 @@ describe('obniz.libs.ad', function () {
   });
 
   it('start', function () {
-    let stub = sinon.stub();
+    const stub = sinon.stub();
     this.obniz.ad0.start(stub);
 
     expect(this.obniz).send([{ ad0: { stream: true } }]);
@@ -39,7 +39,7 @@ describe('obniz.libs.ad', function () {
   });
 
   it('value', function () {
-    let stub = sinon.stub();
+    const stub = sinon.stub();
     this.obniz.ad0.start(stub);
     expect(this.obniz).send([{ ad0: { stream: true } }]);
 
@@ -55,7 +55,7 @@ describe('obniz.libs.ad', function () {
   });
 
   it('onchange', function () {
-    let stub = sinon.stub();
+    const stub = sinon.stub();
     this.obniz.ad1.start();
     this.obniz.ad1.onchange = stub;
     expect(this.obniz).send([{ ad1: { stream: true } }]);

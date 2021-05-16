@@ -1,8 +1,8 @@
-let chai = require('chai');
-let expect = chai.expect;
-let sinon = require('sinon');
+const chai = require('chai');
+const expect = chai.expect;
+const sinon = require('sinon');
 
-let testUtil = require('../../../../testUtil.js');
+const testUtil = require('../../../../testUtil.js');
 
 describe('ble-security', function () {
   beforeEach(async function () {
@@ -23,17 +23,17 @@ describe('ble-security', function () {
   });
 
   it('read', function () {
-    let stub = sinon.stub();
+    const stub = sinon.stub();
 
     this.obniz.ble.hci.onread = stub;
 
-    let results = [
+    const results = [
       { ble: { hci: { read: { data: [0, 1, 2, 3, 4, 5, 22, 1] } } } },
     ];
     testUtil.receiveJson(this.obniz, results);
 
     sinon.assert.callCount(stub, 1);
-    let data = stub.getCall(0).args[0];
+    const data = stub.getCall(0).args[0];
     expect(Array.isArray(data)).to.be.true;
 
     expect(data).to.be.deep.equal([0, 1, 2, 3, 4, 5, 22, 1]);
@@ -41,7 +41,7 @@ describe('ble-security', function () {
   });
 
   it('error', function () {
-    let error = this.obniz.error;
+    const error = this.obniz.error;
     this.obniz.error = sinon.stub();
     testUtil.receiveJson(this.obniz, [
       {
@@ -73,7 +73,7 @@ describe('ble-security', function () {
   });
 
   it('error2', function () {
-    let error = this.obniz.error;
+    const error = this.obniz.error;
     this.obniz.error = sinon.stub();
     testUtil.receiveJson(this.obniz, [
       {

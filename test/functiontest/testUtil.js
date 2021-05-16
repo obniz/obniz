@@ -53,9 +53,9 @@ class TestUtil {
   }
 
   createServer(port, velify) {
-    let wss = new this.WSServer({
+    const wss = new this.WSServer({
       host: 'localhost',
-      port: port,
+      port,
       clientTracking: true,
     });
 
@@ -73,17 +73,17 @@ class TestUtil {
   }
 
   createObniz(port, obnizId, options) {
-    let binary =
+    const binary =
       options && options.binary !== undefined ? options.binary : false;
     return new this.Obniz(obnizId, {
       obniz_server: 'ws://localhost:' + port,
-      binary: binary,
+      binary,
     });
   }
 
   async setupNotConnectedYetObnizWait(obj, done, options) {
     options = options || {};
-    let stub = this.sinon.stub();
+    const stub = this.sinon.stub();
     stub.on = this.sinon.stub();
     stub.send = this.sinon.stub();
     stub.close = this.sinon.stub();
@@ -171,7 +171,7 @@ class TestUtil {
   waitForWebsocketCall(obj, n) {
     return new Promise(function (resolve, reject) {
       let count = 100;
-      let wait = function () {
+      const wait = function () {
         if (obj.onServerMessage.callCount >= n) {
           resolve();
         } else {
@@ -189,8 +189,8 @@ class TestUtil {
 
   receiveJson(obniz, jsonVal) {
     if (testUtil.isNode()) {
-      let validator = require('./obnizJsonValidator');
-      let results = validator.responseValidate(jsonVal, 'json');
+      const validator = require('./obnizJsonValidator');
+      const results = validator.responseValidate(jsonVal, 'json');
       require('chai').expect(results.valid, results.errors).to.be.true;
     }
 
@@ -199,42 +199,42 @@ class TestUtil {
 
   isValidCommandRequestJson(jsonVal) {
     if (testUtil.isNode()) {
-      let validator = require('./obnizJsonValidator');
-      let results = validator.requestValidate(jsonVal, 'wscommand');
+      const validator = require('./obnizJsonValidator');
+      const results = validator.requestValidate(jsonVal, 'wscommand');
       require('chai').expect(results.valid, results.errors).to.be.true;
       return results;
     }
 
-    //browser
+    // browser
     return { valid: true };
   }
 
   isValidCommandResponseJson(jsonVal) {
     if (testUtil.isNode()) {
-      let validator = require('./obnizJsonValidator');
-      let results = validator.responseValidate(jsonVal, 'wscommand');
+      const validator = require('./obnizJsonValidator');
+      const results = validator.responseValidate(jsonVal, 'wscommand');
       require('chai').expect(results.valid, results.errors).to.be.true;
       return results;
     }
-    //browser
+    // browser
     return { valid: true };
   }
 
   obnizAssert(_chai, utils) {
-    let self = this;
+    const self = this;
     _chai.Assertion.addProperty('obniz', function () {
-      let obj = utils.flag(this, 'object');
+      const obj = utils.flag(this, 'object');
       new _chai.Assertion(obj).to.be.instanceof(self.Obniz);
     });
 
     _chai.Assertion.addMethod('send', function (expected) {
-      let count = self.serverDataCount;
+      const count = self.serverDataCount;
       self.serverDataCount++;
 
-      let obniz = utils.flag(this, 'object');
-      let stub = obniz.socket.send;
+      const obniz = utils.flag(this, 'object');
+      const stub = obniz.socket.send;
 
-      let message =
+      const message =
         '[obniz.send] no more send data. (called ' +
         stub.callCount +
         ' times, but you expect ' +
@@ -247,30 +247,30 @@ class TestUtil {
         stub.args[count][0],
         '[obniz.send]invalid json'
       ).is.json;
-      let val = JSON.parse(stub.args[count][0]);
+      const val = JSON.parse(stub.args[count][0]);
       if (typeof expected === 'function') {
-        let result = expected(val);
+        const result = expected(val);
         _chai.assert.isOk(result, 'function is not match value');
       } else {
         new _chai.Assertion(val).to.deep.equal(expected);
       }
 
       if (testUtil.isNode()) {
-        let validator = require('./obnizJsonValidator');
-        let validateErrors = validator.requestValidate(val, 'json');
+        const validator = require('./obnizJsonValidator');
+        const validateErrors = validator.requestValidate(val, 'json');
         new _chai.Assertion(validateErrors.valid, validateErrors.errors).to.be
           .true;
       }
     });
 
     _chai.Assertion.addMethod('sendBinary', function (expected) {
-      let count = self.serverDataCount;
+      const count = self.serverDataCount;
       self.serverDataCount++;
 
-      let obniz = utils.flag(this, 'object');
-      let stub = obniz.socket.send;
+      const obniz = utils.flag(this, 'object');
+      const stub = obniz.socket.send;
 
-      let message =
+      const message =
         '[obniz.send] no more send data. (called ' +
         stub.callCount +
         ' times, but you expect ' +
@@ -283,8 +283,8 @@ class TestUtil {
     });
 
     _chai.Assertion.addProperty('finished', function (expected) {
-      let obniz = utils.flag(this, 'object');
-      let stub = obniz.socket.send;
+      const obniz = utils.flag(this, 'object');
+      const stub = obniz.socket.send;
       let message =
         '[obniz.send] not finished. (send: called ' +
         stub.callCount +
@@ -295,7 +295,7 @@ class TestUtil {
         self.serverDataCount
       );
 
-      let errorStub = obniz.error;
+      const errorStub = obniz.error;
       message =
         '[obniz.send] not finished. (error: called ' +
         errorStub.callCount +
@@ -308,13 +308,13 @@ class TestUtil {
     });
 
     _chai.Assertion.addMethod('error', function (expected) {
-      let count = self.errorDataCount;
+      const count = self.errorDataCount;
       self.errorDataCount++;
 
-      let obniz = utils.flag(this, 'object');
-      let stub = obniz.error;
+      const obniz = utils.flag(this, 'object');
+      const stub = obniz.error;
 
-      let message =
+      const message =
         '[obniz.error] no more error data. (called ' +
         stub.callCount +
         ' times, but you expect ' +
@@ -328,7 +328,7 @@ class TestUtil {
     });
 
     _chai.Assertion.addProperty('json', function (expected) {
-      let string = utils.flag(this, 'object');
+      const string = utils.flag(this, 'object');
       new _chai.Assertion(string).is.string;
       let resolve = null;
       try {
@@ -346,7 +346,7 @@ class TestUtil {
       throw new Error('TestUtil.browser only support nodejs');
     }
     url = 'file://' + url;
-    let options = {
+    const options = {
       url,
       ignoreConsole: true,
     };
@@ -375,9 +375,9 @@ class TestUtil {
     if (!this.isNode()) {
       throw new Error('TestUtil.ejs only support nodejs');
     }
-    let data = this.fs.readFileSync(url, 'utf8');
-    let html = this.ejsInstance.render(data, param);
-    let newFilename =
+    const data = this.fs.readFileSync(url, 'utf8');
+    const html = this.ejsInstance.render(data, param);
+    const newFilename =
       this.path.dirname(url) +
       this.path.sep +
       this.path.basename(url).replace('.', '_') +
@@ -431,10 +431,10 @@ class TestUtil {
 
     this.expect(requestJson.length).to.be.equal(1);
 
-    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     this.expect(isValidCommand.valid).to.be.true;
 
-    let compress = self.obniz.constructor.WSCommand.compress(
+    const compress = self.obniz.constructor.WSCommand.compress(
       self.obniz.wscommands,
       requestJson[0]
     );
@@ -443,16 +443,16 @@ class TestUtil {
   }
 
   checkBinaryToJson(responseBinaryString, expectedJson, self) {
-    let binaryArray = responseBinaryString
+    const binaryArray = responseBinaryString
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
-    let json = self.obniz._binary2Json(binary);
+    const json = self.obniz._binary2Json(binary);
 
-    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    const isValidCommand = testUtil.isValidCommandResponseJson(json);
     this.expect(isValidCommand.valid).to.be.true;
 
     this.expect(json).to.be.deep.equal(expectedJson);
