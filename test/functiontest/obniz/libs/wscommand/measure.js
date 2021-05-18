@@ -5,11 +5,11 @@ const testUtil = require('../../../testUtil.js');
 
 describe('measure', function () {
   beforeEach(async function () {
-    await testUtil.setupObnizPromise(this, null, { binary: true });
+    await testUtil.setupObnizWait(this, null, { binary: true });
   });
 
   afterEach(async function () {
-    await testUtil.releaseObnizPromise(this);
+    await testUtil.releaseObnizWait(this);
   });
 
   it('measure', function () {

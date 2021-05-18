@@ -5,15 +5,15 @@ const testUtil = require('../../../testUtil.js');
 
 describe('obniz.libs.display', function () {
   beforeEach(async function () {
-    await testUtil.setupObnizPromise(this);
+    await testUtil.setupObnizWait(this);
     if (this.obniz.isNode) {
       // disable node-canvas
-      this.obniz.display._ctx = () => {};
+      this.obniz.display._ctx = () => { };
     }
   });
 
   afterEach(async function () {
-    await testUtil.releaseObnizPromise(this);
+    await testUtil.releaseObnizWait(this);
   });
 
   it('clear', function () {

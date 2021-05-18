@@ -5,11 +5,11 @@ const testUtil = require('../../testUtil.js');
 
 describe('obniz.libs.system', function () {
   beforeEach(async function () {
-    await testUtil.setupObnizPromise(this);
+    await testUtil.setupObnizWait(this);
   });
 
   afterEach(async function () {
-    await testUtil.releaseObnizPromise(this);
+    await testUtil.releaseObnizWait(this);
   });
 
   it('wired', function () {
@@ -26,8 +26,8 @@ describe('obniz.libs.system', function () {
 
   it('wired-before-connection', async function () {
     // reset and create offline obniz
-    await testUtil.releaseObnizPromise(this);
-    await testUtil.setupNotConnectedYetObnizPromise(this);
+    await testUtil.releaseObnizWait(this);
+    await testUtil.setupNotConnectedYetObnizWait(this);
 
     expect(() => {
       this.obniz.wired('DCMotor', { forward: 0, back: 1 });

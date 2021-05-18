@@ -4,11 +4,11 @@ const testUtil = require('../../../testUtil.js');
 
 describe('ble.security', function () {
   beforeEach(async function () {
-    await testUtil.setupObnizPromise(this, null, { binary: true });
+    await testUtil.setupObnizWait(this, null, { binary: true });
   });
 
   afterEach(async function () {
-    await testUtil.releaseObnizPromise(this);
+    await testUtil.releaseObnizWait(this);
   });
 
   it('auth', function () {

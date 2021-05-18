@@ -6,10 +6,10 @@ const testUtil = require('../../../testUtil.js');
 
 describe('obniz.libs.uart', function () {
   beforeEach(async function () {
-    await testUtil.setupObnizPromise(this);
+    await testUtil.setupObnizWait(this);
   });
   afterEach(async function () {
-    await testUtil.releaseObnizPromise(this);
+    await testUtil.releaseObnizWait(this);
   });
 
   it('start', function () {

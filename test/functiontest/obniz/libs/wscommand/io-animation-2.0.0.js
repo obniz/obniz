@@ -5,14 +5,14 @@ const testUtil = require('../../../testUtil.js');
 
 describe('io.animation2_0_0', function () {
   beforeEach(async function () {
-    await testUtil.setupObnizPromise(this, null, {
+    await testUtil.setupObnizWait(this, null, {
       binary: true,
       __firmware_ver: '2.0.0',
     });
   });
 
   afterEach(async function () {
-    await testUtil.releaseObnizPromise(this);
+    await testUtil.releaseObnizWait(this);
   });
 
   it('request ioAnimation', function () {

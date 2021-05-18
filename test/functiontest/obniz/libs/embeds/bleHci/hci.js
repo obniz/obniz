@@ -6,11 +6,11 @@ const testUtil = require('../../../../testUtil.js');
 
 describe('ble-security', function () {
   beforeEach(async function () {
-    await testUtil.setupObnizPromise(this, null, { __firmware_ver: '3.0.0' });
+    await testUtil.setupObnizWait(this, null, { __firmware_ver: '3.0.0' });
   });
 
   afterEach(async function () {
-    await testUtil.releaseObnizPromise(this);
+    await testUtil.releaseObnizWait(this);
   });
 
   it('write', function () {

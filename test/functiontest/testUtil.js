@@ -1,3 +1,5 @@
+/* globals sinon, Obniz, chai */
+
 class TestUtil {
   constructor() {
     if (this.isNode()) {
@@ -18,11 +20,8 @@ class TestUtil {
 
       this.MochaChrome = require('mocha-chrome');
     } else {
-      // eslint-disable-next-line no-undef
       this.sinon = sinon;
-      // eslint-disable-next-line no-undef
       this.Obniz = Obniz;
-      // eslint-disable-next-line no-undef
       this.chai = chai;
       this.expect = this.chai.expect;
 
@@ -60,11 +59,11 @@ class TestUtil {
     });
 
     if (velify === null || velify === undefined || velify === true) {
-      wss.verifyClient = function (info, accept) {
+      wss.verifyClient = (info, accept) => {
         accept(true);
       };
     } else {
-      wss.verifyClient = function (info, accept) {
+      wss.verifyClient = (info, accept) => {
         accept(false, velify.statusCode, velify.message);
       };
     }
@@ -126,7 +125,7 @@ class TestUtil {
   }
 
   async setupObnizWait(obj, done, options) {
-    await this.setupNotConnectedYetObnizPromise(obj, () => {}, options);
+    await this.setupNotConnectedYetObnizWait(obj, () => { }, options);
     await this.connectObniz(obj.obniz, options);
 
     await new Promise((r) => setTimeout(r, 1));
@@ -169,9 +168,9 @@ class TestUtil {
   }
 
   waitForWebsocketCall(obj, n) {
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
       let count = 100;
-      const wait = function () {
+      const wait = () => {
         if (obj.onServerMessage.callCount >= n) {
           resolve();
         } else {
@@ -363,10 +362,10 @@ class TestUtil {
 
     return runner
       .connect()
-      .then(function () {
+      .then(() => {
         return runner.run();
       })
-      .then(function () {
+      .then(() => {
         return result;
       });
   }
@@ -384,14 +383,14 @@ class TestUtil {
       '.html';
 
     return new Promise((resolve, reject) => {
-      this.fs.writeFile(newFilename, html, function (err) {
+      this.fs.writeFile(newFilename, html, (err) => {
         if (err) {
           reject(err);
         } else {
           resolve();
         }
       });
-    }).then(function () {
+    }).then(() => {
       return testUtil.browser(newFilename);
     });
   }
@@ -421,7 +420,7 @@ class TestUtil {
       binary = binary.join(' ');
     }
     if (typeof binary === 'string') {
-      binary = binary.split(' ').map(function (val, index) {
+      binary = binary.split(' ').map((val) => {
         return parseInt(val, 16);
       });
 
@@ -443,11 +442,9 @@ class TestUtil {
   }
 
   checkBinaryToJson(responseBinaryString, expectedJson, self) {
-    const binaryArray = responseBinaryString
-      .split(' ')
-      .map(function (val, index) {
-        return parseInt(val, 16);
-      });
+    const binaryArray = responseBinaryString.split(' ').map((val) => {
+      return parseInt(val, 16);
+    });
     const binary = new Uint8Array(binaryArray);
 
     const json = self.obniz._binary2Json(binary);

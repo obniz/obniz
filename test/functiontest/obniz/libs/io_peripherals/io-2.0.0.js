@@ -4,11 +4,11 @@ const testUtil = require('../../../testUtil.js');
 
 describe('obniz.libs.io', function () {
   beforeEach(async function () {
-    await testUtil.setupObnizPromise(this, null, { __firmware_ver: '2.0.0' });
+    await testUtil.setupObnizWait(this, null, { __firmware_ver: '2.0.0' });
   });
 
   afterEach(async function () {
-    await testUtil.releaseObnizPromise(this);
+    await testUtil.releaseObnizWait(this);
   });
 
   it('ioAnimation 2_0_0 registrate', function () {

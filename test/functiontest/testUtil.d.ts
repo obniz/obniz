@@ -3,9 +3,9 @@ interface ObnizTestUtil {
   isNode: any;
   createServer: any;
   createObniz: any;
-  setupNotConnectedYetObnizPromise: any;
-  setupObnizPromise: any;
-  releaseObnizPromise: any;
+  setupNotConnectedYetObnizWait: any;
+  setupObnizWait: any;
+  releaseObnizWait: any;
   waitForWebsocketCall: any;
   receiveJson: any;
   isValidCommandRequestJson: any;
