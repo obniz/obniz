@@ -10,7 +10,7 @@ You can use it with [fritzing](http://fritzing.org/home/).
 
 ## How to use
 
-1. Download [obniz.fzpz](https://github.com/obniz/obniz/raw/dev/fritzing/obniz.fzpz)
+1. Download [obniz.fzpz](https://github.com/obniz/obniz/raw/master/devtools/fritzing/obniz.fzpz)
 2. Start fritzing app.
 3. Select File -> Open and select obniz.fzpz.
 4. You can use obniz from "My Parts" in fritzing parts view.
