@@ -4602,7 +4602,7 @@ for (const path of context.keys()) {
     if (anParts.info) {
         Obniz_1.Obniz.PartsRegistrate(anParts);
     }
-    else if (anParts.default.info) {
+    else if (anParts.default && anParts.default.info) {
         // for ts "export default"
         Obniz_1.Obniz.PartsRegistrate(anParts.default);
     }
@@ -22424,11 +22424,10 @@ var map = {
 	"./Ble/RS_BTIREX2/index.js": "./dist/src/parts/Ble/RS_BTIREX2/index.js",
 	"./Ble/RS_BTWATTCH2/index.js": "./dist/src/parts/Ble/RS_BTWATTCH2/index.js",
 	"./Ble/RS_SEEK3/index.js": "./dist/src/parts/Ble/RS_SEEK3/index.js",
+	"./Ble/TR4x/index.js": "./dist/src/parts/Ble/TR4x/index.js",
 	"./Ble/UA1200BLE/index.js": "./dist/src/parts/Ble/UA1200BLE/index.js",
 	"./Ble/UA651BLE/index.js": "./dist/src/parts/Ble/UA651BLE/index.js",
 	"./Ble/UT201BLE/index.js": "./dist/src/parts/Ble/UT201BLE/index.js",
-	"./Ble/abstract/services/batteryService.js": "./dist/src/parts/Ble/abstract/services/batteryService.js",
-	"./Ble/abstract/services/genericAccess.js": "./dist/src/parts/Ble/abstract/services/genericAccess.js",
 	"./Ble/iBS01/index.js": "./dist/src/parts/Ble/iBS01/index.js",
 	"./Ble/iBS01G/index.js": "./dist/src/parts/Ble/iBS01G/index.js",
 	"./Ble/iBS01H/index.js": "./dist/src/parts/Ble/iBS01H/index.js",
@@ -22457,6 +22456,9 @@ var map = {
 	"./Ble/tm551/index.js": "./dist/src/parts/Ble/tm551/index.js",
 	"./Ble/toio_corecube/index.js": "./dist/src/parts/Ble/toio_corecube/index.js",
 	"./Ble/uprism/index.js": "./dist/src/parts/Ble/uprism/index.js",
+	"./Ble/utils/advertisement/advertismentAnalyzer.js": "./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js",
+	"./Ble/utils/services/batteryService.js": "./dist/src/parts/Ble/utils/services/batteryService.js",
+	"./Ble/utils/services/genericAccess.js": "./dist/src/parts/Ble/utils/services/genericAccess.js",
 	"./Camera/ArduCAMMini/index.js": "./dist/src/parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./dist/src/parts/Camera/JpegSerialCam/index.js",
 	"./ColorSensor/PT550/index.js": "./dist/src/parts/ColorSensor/PT550/index.js",
@@ -23087,7 +23089,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/abstract/services/batteryService.js"));
+const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/services/batteryService.js"));
 class ENERTALK_TOUCH {
     constructor(peripheral) {
         this.keys = [];
@@ -23785,8 +23787,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/abstract/services/batteryService.js"));
-const genericAccess_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/abstract/services/genericAccess.js"));
+const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/services/batteryService.js"));
+const genericAccess_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/services/genericAccess.js"));
 class Logtta_CO2 {
     constructor(peripheral) {
         if (peripheral && !Logtta_CO2.isDevice(peripheral)) {
@@ -25954,6 +25956,70 @@ exports.default = RS_Seek3;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/TR4x/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.TR4
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+class Tr4 {
+    constructor() {
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: 'TR4x',
+        };
+    }
+    static isDevice(peripheral) {
+        return Tr4._deviceAdvAnalyzer.validate(peripheral.adv_data);
+    }
+    static getData(peripheral) {
+        if (!Tr4.isDevice(peripheral)) {
+            return null;
+        }
+        const measureData = Tr4._deviceAdvAnalyzer.getData(peripheral.adv_data, 'manufacture', 'measureData');
+        if (!measureData) {
+            return null;
+        }
+        if (measureData[0] === 0xee && measureData[1] === 0xee) {
+            // sensor error
+            return null;
+        }
+        const temperatureRaw = Buffer.from(measureData).readInt16LE(0);
+        return {
+            temperature: (temperatureRaw - 1000) / 10,
+        };
+    }
+}
+exports.default = Tr4;
+Tr4._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
+    .addTarget('flag', [0x02, 0x01, 0x06])
+    .groupStart('manufacture')
+    .addTarget('length', [0x1b])
+    .addTarget('type', [0xff])
+    .addTarget('companyId', [0x92, 0x03])
+    .addTargetByLength('deviceSerial', 4)
+    .addTarget('security', [-1])
+    .addTarget('formatNo', [1])
+    .addTarget('measureData', [-1, -1])
+    .addTarget('reserved', [-1, -1])
+    .addTarget('battery', [5])
+    .addTargetByLength('reserved2', 13) // from datasheet length=14, but device send length=13
+    .groupEnd()
+    // local name adv is exist, but cannot use for filter
+    .groupStart('localName')
+    .groupEnd();
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/UA1200BLE/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -26516,63 +26582,6 @@ class UT201BLE {
 exports.default = UT201BLE;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
-
-/***/ }),
-
-/***/ "./dist/src/parts/Ble/abstract/services/batteryService.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * @packageDocumentation
- * @module Parts.abstract.services
- */
-Object.defineProperty(exports, "__esModule", { value: true });
-class BleBatteryService {
-    constructor(service) {
-        this._service = service;
-    }
-    async getBatteryLevelWait() {
-        const char = this._service.getCharacteristic('2A19');
-        if (!char) {
-            return null;
-        }
-        return await char.readNumberWait();
-    }
-    getBatteryLevel() {
-        return this.getBatteryLevelWait();
-    }
-}
-exports.default = BleBatteryService;
-
-
-/***/ }),
-
-/***/ "./dist/src/parts/Ble/abstract/services/genericAccess.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * @packageDocumentation
- * @module Parts.abstract.services
- */
-Object.defineProperty(exports, "__esModule", { value: true });
-class BleGenericAccess {
-    constructor(service) {
-        this._service = service;
-    }
-    async getDeviceNameWait() {
-        const char = this._service.getCharacteristic('2A00');
-        if (!char) {
-            return null;
-        }
-        return await char.readTextWait();
-    }
-}
-exports.default = BleGenericAccess;
-
 
 /***/ }),
 
@@ -32542,6 +32551,158 @@ class uPRISM {
     }
 }
 exports.default = uPRISM;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class BleAdvBinaryAnalyzer {
+    constructor(parent) {
+        this._target = [];
+        this._parent = parent;
+    }
+    addTarget(name, filter) {
+        this._target.push({ name, filter });
+        return this;
+    }
+    addTargetByLength(name, length) {
+        this._target.push({ name, filter: new Array(length).fill(-1) });
+        return this;
+    }
+    addGroup(name, group) {
+        this._target.push({ name, filter: group });
+        return this;
+    }
+    groupStart(name) {
+        const filter = new BleAdvBinaryAnalyzer(this);
+        this._target.push({ name, filter });
+        return filter;
+    }
+    groupEnd() {
+        if (!this._parent) {
+            throw new Error('Cannot call parent of root');
+        }
+        return this._parent;
+    }
+    flat() {
+        return this._target.reduce((acc, val) => {
+            if (val.filter instanceof BleAdvBinaryAnalyzer) {
+                return [...acc, ...val.filter.flat()];
+            }
+            return [...acc, ...val.filter];
+        }, []);
+    }
+    length() {
+        return this.flat().length;
+    }
+    validate(target) {
+        const flat = this.flat();
+        if (flat.length > target.length) {
+            return false;
+        }
+        for (let index = 0; index < flat.length; index++) {
+            if (flat[index] === -1) {
+                continue;
+            }
+            if (target[index] === flat[index]) {
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
+    getData(target, ...names) {
+        if (!this.validate(target)) {
+            return null;
+        }
+        if (!names || names.length === 0) {
+            return target;
+        }
+        let index = 0;
+        for (const one of this._target) {
+            if (one.name === names[0]) {
+                if (one.filter instanceof BleAdvBinaryAnalyzer) {
+                    const newTarget = target.slice(index, index + one.filter.length());
+                    return one.filter.getData(newTarget, ...names.slice(1));
+                }
+                else {
+                    const newTarget = target.slice(index, index + one.filter.length);
+                    return newTarget;
+                }
+            }
+            if (one.filter instanceof BleAdvBinaryAnalyzer) {
+                index += one.filter.length();
+            }
+            else {
+                index += one.filter.length;
+            }
+        }
+        return null;
+    }
+}
+exports.BleAdvBinaryAnalyzer = BleAdvBinaryAnalyzer;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/utils/services/batteryService.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.utils.services
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class BleBatteryService {
+    constructor(service) {
+        this._service = service;
+    }
+    async getBatteryLevelWait() {
+        const char = this._service.getCharacteristic('2A19');
+        if (!char) {
+            return null;
+        }
+        return await char.readNumberWait();
+    }
+    getBatteryLevel() {
+        return this.getBatteryLevelWait();
+    }
+}
+exports.default = BleBatteryService;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/utils/services/genericAccess.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.utils.services
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class BleGenericAccess {
+    constructor(service) {
+        this._service = service;
+    }
+    async getDeviceNameWait() {
+        const char = this._service.getCharacteristic('2A00');
+        if (!char) {
+            return null;
+        }
+        return await char.readTextWait();
+    }
+}
+exports.default = BleGenericAccess;
 
 
 /***/ }),

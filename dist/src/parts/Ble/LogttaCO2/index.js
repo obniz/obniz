@@ -7,8 +7,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const batteryService_1 = __importDefault(require("../abstract/services/batteryService"));
-const genericAccess_1 = __importDefault(require("../abstract/services/genericAccess"));
+const batteryService_1 = __importDefault(require("../utils/services/batteryService"));
+const genericAccess_1 = __importDefault(require("../utils/services/genericAccess"));
 class Logtta_CO2 {
     constructor(peripheral) {
         if (peripheral && !Logtta_CO2.isDevice(peripheral)) {

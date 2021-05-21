@@ -1,7 +1,7 @@
 "use strict";
 /**
  * @packageDocumentation
- * @module Parts.abstract.services
+ * @module Parts.utils.services
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 class BleGenericAccess {

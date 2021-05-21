@@ -4,8 +4,8 @@
  */
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
-import BleBatteryService from '../abstract/services/batteryService';
-import BleGenericAccess from '../abstract/services/genericAccess';
+import BleBatteryService from '../utils/services/batteryService';
+import BleGenericAccess from '../utils/services/genericAccess';
 export interface UA1200BLEOptions {
 }
 export interface UA1200BLEResult {

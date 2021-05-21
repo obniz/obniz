@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * @module Parts.abstract.services
+ * @module Parts.utils.services
  */
 import BleRemoteService from '../../../../obniz/libs/embeds/bleHci/bleRemoteService';
 export default class BleGenericAccess {
