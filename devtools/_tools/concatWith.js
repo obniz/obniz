@@ -8,7 +8,8 @@ const PLUGIN_NAME = 'concatWith';
 
 // file can be a vinyl file object or a string
 // when a string it will construct a new one
-module.exports = (file, opt) => {
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
+module.exports = function (file, opt) {
   if (!file) {
     throw new Error('gulp-concat: Missing file option');
   }

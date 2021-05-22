@@ -6,7 +6,8 @@ const through = require('through2');
 const PluginError = require('plugin-error');
 const PLUGIN_NAME = 'wsDocGenerator';
 
-module.exports = (docfilePath, moduleName) => {
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
+module.exports = function (docfilePath, moduleName) {
   /**
    * @this {Transform}
    */

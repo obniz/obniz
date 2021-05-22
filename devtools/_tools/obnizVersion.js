@@ -2,7 +2,8 @@ const through = require('through2');
 const PluginError = require('plugin-error');
 const PLUGIN_NAME = 'obnizVersion';
 
-module.exports = () => {
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
+module.exports = function () {
   /**
    * @this {Transform}
    */
