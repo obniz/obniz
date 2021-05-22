@@ -22,8 +22,8 @@ class HEM_6233T {
     }
     static isDevice(peripheral) {
         if (peripheral.localName &&
-            peripheral.localName.startsWith('BLESmart_') &&
-            peripheral.localName === '004C') {
+            (peripheral.localName.startsWith('BLESmart_') ||
+                peripheral.localName.startsWith('BLEsmart_'))) {
             return true;
         }
         return false;
@@ -67,7 +67,7 @@ class HEM_6233T {
             this._writeTimeCharWait(this._timezoneOffsetMinute);
         }); // battery Level
         await this.subscribeWait('1810', '2A35', async (data) => {
-            console.error('SUCCESS', data);
+            // console.log('SUCCESS', data);
             results.push(this._analyzeData(data));
         }); // blood pressure
         return await waitDisconnect;

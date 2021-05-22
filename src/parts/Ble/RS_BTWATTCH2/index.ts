@@ -355,7 +355,7 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
 
   private async _transactionWait(data: number[]): Promise<number[]> {
     const timeout = setTimeout(() => {
-      new Error(`Timed out for waiting`);
+      throw new Error(`Timed out for waiting`);
     }, 30 * 1000);
     try {
       const waitData = new Promise<number[]>((resolve, reject) => {

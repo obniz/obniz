@@ -8,7 +8,7 @@ describe('obniz.libs.display', function () {
     await testUtil.setupObnizWait(this);
     if (this.obniz.isNode) {
       // disable node-canvas
-      this.obniz.display._ctx = () => { };
+      this.obniz.display._ctx = () => {};
     }
   });
 

@@ -125,7 +125,7 @@ class TestUtil {
   }
 
   async setupObnizWait(obj, done, options) {
-    await this.setupNotConnectedYetObnizWait(obj, () => { }, options);
+    await this.setupNotConnectedYetObnizWait(obj, () => {}, options);
     await this.connectObniz(obj.obniz, options);
 
     await new Promise((r) => setTimeout(r, 1));

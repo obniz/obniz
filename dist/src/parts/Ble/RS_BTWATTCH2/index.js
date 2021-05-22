@@ -271,7 +271,7 @@ class RS_BTWATTCH2 {
     }
     async _transactionWait(data) {
         const timeout = setTimeout(() => {
-            new Error(`Timed out for waiting`);
+            throw new Error(`Timed out for waiting`);
         }, 30 * 1000);
         try {
             const waitData = new Promise((resolve, reject) => {

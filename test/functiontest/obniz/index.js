@@ -14,9 +14,9 @@ const getPort = require('get-port');
 const waitMs = 50;
 
 describe('obniz.index', function () {
-  beforeEach(function () { });
+  beforeEach(function () {});
 
-  afterEach(function () { });
+  afterEach(function () {});
 
   it('instance', async function () {
     sinon.stub(console, 'error');

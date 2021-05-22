@@ -23306,8 +23306,8 @@ class HEM_6233T {
     }
     static isDevice(peripheral) {
         if (peripheral.localName &&
-            peripheral.localName.startsWith('BLESmart_') &&
-            peripheral.localName === '004C') {
+            (peripheral.localName.startsWith('BLESmart_') ||
+                peripheral.localName.startsWith('BLEsmart_'))) {
             return true;
         }
         return false;
@@ -23351,7 +23351,7 @@ class HEM_6233T {
             this._writeTimeCharWait(this._timezoneOffsetMinute);
         }); // battery Level
         await this.subscribeWait('1810', '2A35', async (data) => {
-            console.error('SUCCESS', data);
+            // console.log('SUCCESS', data);
             results.push(this._analyzeData(data));
         }); // blood pressure
         return await waitDisconnect;
@@ -25668,7 +25668,7 @@ class RS_BTWATTCH2 {
     }
     async _transactionWait(data) {
         const timeout = setTimeout(() => {
-            new Error(`Timed out for waiting`);
+            throw new Error(`Timed out for waiting`);
         }, 30 * 1000);
         try {
             const waitData = new Promise((resolve, reject) => {
@@ -28783,11 +28783,11 @@ class LinkingDevice {
     async writeWait(message_name, params) {
         const buf = this._LinkingService.createRequest(message_name, params);
         if (!buf) {
-            new Error('The specified parameters are invalid.');
+            throw new Error('The specified parameters are invalid.');
         }
         const timer = setTimeout(() => {
             this._onresponse = null;
-            new Error('Timeout');
+            throw new Error('Timeout');
         }, this._write_response_timeout);
         const waitResponse = new Promise((resolve, reject) => {
             this._onresponse = (res) => {
@@ -28800,7 +28800,7 @@ class LinkingDevice {
                         resolve(res);
                     }
                     else {
-                        new Error('Unknown response');
+                        throw new Error('Unknown response');
                     }
                 }
             };

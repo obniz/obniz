@@ -545,12 +545,12 @@ export default class LinkingDevice {
   public async writeWait(message_name: any, params?: any) {
     const buf = this._LinkingService.createRequest(message_name, params);
     if (!buf) {
-      new Error('The specified parameters are invalid.');
+      throw new Error('The specified parameters are invalid.');
     }
 
     const timer = setTimeout(() => {
       this._onresponse = null;
-      new Error('Timeout');
+      throw new Error('Timeout');
     }, this._write_response_timeout);
 
     const waitResponse = new Promise((resolve, reject) => {
@@ -563,7 +563,7 @@ export default class LinkingDevice {
             res.data = data;
             resolve(res);
           } else {
-            new Error('Unknown response');
+            throw new Error('Unknown response');
           }
         }
       };
