@@ -55,11 +55,9 @@ class RS_BTWATTCH2 {
         if (!this._peripheral) {
             throw new Error('No Peripheral Found');
         }
-        /* if (this.isPairingMode() === false) {
-          throw new Error(
-            `peripheral is not pairing mode. Press Pairing Button on device over 3 seconds. LED will start blinking then it is under pairing mode.`
-          );
-        }*/
+        if (this.isPairingMode() === false) {
+            throw new Error(`peripheral is not pairing mode. Press Pairing Button on device over 3 seconds. LED will start blinking then it is under pairing mode.`);
+        }
         this._peripheral.ondisconnect = (reason) => {
             if (typeof this.ondisconnect === 'function') {
                 this.ondisconnect(reason);
