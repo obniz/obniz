@@ -83,5 +83,28 @@ class BleAdvBinaryAnalyzer {
         }
         return null;
     }
+    getAllData(target) {
+        if (!this.validate(target)) {
+            return null;
+        }
+        const result = {};
+        let index = 0;
+        for (const one of this._target) {
+            if (one.filter instanceof BleAdvBinaryAnalyzer) {
+                const newTarget = target.slice(index, index + one.filter.length());
+                result[one.name] = one.filter.getAllData(newTarget);
+            }
+            else {
+                result[one.name] = target.slice(index, index + one.filter.length);
+            }
+            if (one.filter instanceof BleAdvBinaryAnalyzer) {
+                index += one.filter.length();
+            }
+            else {
+                index += one.filter.length;
+            }
+        }
+        return result;
+    }
 }
 exports.BleAdvBinaryAnalyzer = BleAdvBinaryAnalyzer;

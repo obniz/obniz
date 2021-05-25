@@ -15,4 +15,5 @@ export declare class BleAdvBinaryAnalyzer {
     length(): number;
     validate(target: number[]): boolean;
     getData(target: number[], ...names: string[]): number[] | null;
+    getAllData(target: number[]): any | null;
 }
