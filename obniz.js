@@ -27240,10 +27240,14 @@ class IBS03 {
         const data = {
             battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
             button: false,
+            moving: false,
             hall_sensor: false,
         };
         if (peripheral.adv_data[11] & 0b0001) {
             data.button = true;
+        }
+        if (peripheral.adv_data[11] & 0b0010) {
+            data.moving = true;
         }
         if (peripheral.adv_data[11] & 0b0100) {
             data.hall_sensor = true;
