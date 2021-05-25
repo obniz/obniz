@@ -26595,15 +26595,19 @@ class IBS01 {
             name: 'iBS01',
         };
     }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
+    static isDevice(peripheral, strictCheck = false) {
+        const deviceAdv = [...this.deviceAdv];
+        if (strictCheck) {
+            deviceAdv[18] = 0x03;
+        }
+        if (deviceAdv.length > peripheral.adv_data.length) {
             return false;
         }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
+        for (let index = 0; index < deviceAdv.length; index++) {
+            if (deviceAdv[index] === -1) {
                 continue;
             }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+            if (peripheral.adv_data[index] === deviceAdv[index]) {
                 continue;
             }
             return false;
@@ -26613,8 +26617,8 @@ class IBS01 {
             peripheral.adv_data[14] === 0xff &&
             peripheral.adv_data[15] === 0xff);
     }
-    static getData(peripheral) {
-        if (!IBS01.isDevice(peripheral)) {
+    static getData(peripheral, strictCheck) {
+        if (!IBS01.isDevice(peripheral, strictCheck)) {
             return null;
         }
         const data = {
@@ -26982,15 +26986,19 @@ class IBS01T {
             name: 'iBS01T',
         };
     }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
+    static isDevice(peripheral, strictCheck = false) {
+        const deviceAdv = [...this.deviceAdv];
+        if (strictCheck) {
+            deviceAdv[18] = 0x05;
+        }
+        if (deviceAdv.length > peripheral.adv_data.length) {
             return false;
         }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
+        for (let index = 0; index < deviceAdv.length; index++) {
+            if (deviceAdv[index] === -1) {
                 continue;
             }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+            if (peripheral.adv_data[index] === deviceAdv[index]) {
                 continue;
             }
             return false;
@@ -27000,8 +27008,8 @@ class IBS01T {
             peripheral.adv_data[14] === 0xff &&
             peripheral.adv_data[15] === 0xff);
     }
-    static getData(peripheral) {
-        if (!IBS01T.isDevice(peripheral)) {
+    static getData(peripheral, strictCheck) {
+        if (!IBS01T.isDevice(peripheral, strictCheck)) {
             return null;
         }
         const d = {
@@ -27044,7 +27052,7 @@ IBS01T.deviceAdv = [
     -1,
     -1,
     -1,
-    0x05,
+    -1,
     -1,
     -1,
     -1,
