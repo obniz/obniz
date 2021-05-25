@@ -9,6 +9,9 @@ export interface IBS01Options {
 export interface IBS01_Data {
     battery: number;
     button: boolean;
+    moving: boolean;
+    hall_sensor: boolean;
+    fall: boolean;
 }
 export default class IBS01 implements ObnizPartsBleInterface {
     static info(): ObnizPartsBleInfo;
