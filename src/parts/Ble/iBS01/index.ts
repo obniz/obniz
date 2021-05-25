@@ -92,7 +92,7 @@ export default class IBS01 implements ObnizPartsBleInterface {
     -1, // reserved
     -1, // reserved
     -1, // reserved
-    0x03, // subtype
+    -1, // subtype will be 0x03, but ignore for comability
     -1, // reserved
     -1, // reserved
     -1, // reserved
