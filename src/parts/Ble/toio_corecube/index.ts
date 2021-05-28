@@ -61,7 +61,9 @@ export default class Toio_CoreCube implements ObnizPartsInterface {
     this.peripheral = peripheral;
   }
 
-  public wired(obniz: Obniz): void {}
+  public wired(obniz: Obniz): void {
+    // do nothing.
+  }
 
   public async connectWait(timeout: number) {
     if (!this.peripheral) {

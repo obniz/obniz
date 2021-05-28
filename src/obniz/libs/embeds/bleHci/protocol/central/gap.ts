@@ -8,7 +8,9 @@
 /**
  * @ignore
  */
-const debug: any = () => {};
+const debug: any = () => {
+  // do nothing.
+};
 
 import EventEmitter from 'eventemitter3';
 import { ObnizBleScanStartError } from '../../../../../ObnizError';

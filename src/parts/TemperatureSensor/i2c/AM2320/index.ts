@@ -15,7 +15,7 @@ import ObnizPartsInterface, {
 } from '../../../../obniz/ObnizPartsInterface';
 import { I2cPartsAbstractOptions } from '../../../i2cParts';
 
-export interface AM2320Options extends I2cPartsAbstractOptions {}
+export type AM2320Options = I2cPartsAbstractOptions;
 
 export default class AM2320 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
@@ -52,7 +52,9 @@ export default class AM2320 implements ObnizPartsInterface {
     humidity: number;
   }> {
     const i2cOnerror: any = this.i2c.onerror;
-    this.i2c.onerror = () => {};
+    this.i2c.onerror = () => {
+      // do nothing.
+    };
     this.i2c.write(this.address, [0]); // wake
     this.obniz.wait(2);
     this.i2c.write(this.address, [0x03, 0x00, 0x04]);

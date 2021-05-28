@@ -13,12 +13,12 @@ const useIp = config.LOCAL_IP;
 
 let checkBoard;
 const MAX_TCP_CONNECTION = 8;
-let tcpArray = [];
+const tcpArray = [];
 
 describe('11-tcp', function () {
   this.timeout(30000);
 
-  before(function () {
+  before(() => {
     return new Promise((resolve) => {
       config.waitForConenct(async () => {
         checkBoard = config.checkBoard;
@@ -26,7 +26,7 @@ describe('11-tcp', function () {
         //   console.log(state);
         // };
         for (let i = 0; i < MAX_TCP_CONNECTION; i++) {
-          let tcp = checkBoard['tcp' + i];
+          const tcp = checkBoard['tcp' + i];
           if (tcp.isUsed()) {
             tcp.close();
             await checkBoard.pingWait();
@@ -39,7 +39,7 @@ describe('11-tcp', function () {
 
   afterEach(async () => {
     for (let i = 0; i < MAX_TCP_CONNECTION; i++) {
-      let tcp = checkBoard['tcp' + i];
+      const tcp = checkBoard['tcp' + i];
       if (tcp.isUsed()) {
         tcp.close();
         await checkBoard.pingWait();
@@ -47,36 +47,36 @@ describe('11-tcp', function () {
     }
   });
 
-  it('tcp connect error', async function () {
-    let res = await checkBoard.tcp0.connectWait(80, 'obniz.i');
+  it('tcp connect error', async () => {
+    const res = await checkBoard.tcp0.connectWait(80, 'obniz.i');
     expect(res).to.deep.within(3, 4);
     await checkBoard.pingWait();
     checkBoard.tcp0.close();
-    //close wait
+    // close wait
     while (checkBoard.tcp0.isUsed()) {
       await wait(10);
     }
   });
 
-  it('tcp connect ok', async function () {
-    let res = await checkBoard.tcp0.connectWait(80, 'obniz.io');
+  it('tcp connect ok', async () => {
+    const res = await checkBoard.tcp0.connectWait(80, 'obniz.io');
     await checkBoard.pingWait();
     expect(res).to.deep.equal(0);
     checkBoard.tcp0.close();
 
     await checkBoard.pingWait();
-    //close wait
+    // close wait
     while (checkBoard.tcp0.isUsed()) {
       await wait(10);
     }
   });
 
-  it('tcp socket close', async function () {
+  it('tcp socket close', async () => {
     let socketState;
     socketState = checkBoard.tcp0.isUsed();
     expect(socketState, 'socket start').to.be.false;
 
-    let res = await checkBoard.tcp0.connectWait(80, 'obniz.io');
+    const res = await checkBoard.tcp0.connectWait(80, 'obniz.io');
     expect(res).to.deep.equal(0);
 
     socketState = checkBoard.tcp0.isUsed();
@@ -87,10 +87,10 @@ describe('11-tcp', function () {
     await checkBoard.tcp0.readWait();
     // let boardData = await checkBoard.tcp0.readWait();
     // boardData = new TextDecoder('utf-8').decode(new Uint8Array(boardData));
-    //console.log(boardData);
+    // console.log(boardData);
 
     await checkBoard.pingWait();
-    //close wait
+    // close wait
     while (checkBoard.tcp0.isUsed()) {
       await wait(10);
     }
@@ -98,13 +98,13 @@ describe('11-tcp', function () {
     socketState = checkBoard.tcp0.isUsed();
     expect(socketState, 'socket close').to.be.false;
 
-    //close wait
+    // close wait
     while (checkBoard.tcp0.isUsed()) {
       await wait(10);
     }
   });
 
-  it('tcp get', async function () {
+  it('tcp get', async () => {
     await checkBoard.tcp0.connectWait(80, 'obniz.io');
     checkBoard.tcp0.write(
       'GET / HTTP/1.0\r\n' + 'Connection:close\r\n' + 'Host:obniz.io\r\n\r\n'
@@ -115,15 +115,15 @@ describe('11-tcp', function () {
       'GET / HTTP/1.0\r\n' + 'Connection:close\r\n' + 'Host:obniz.io\r\n\r\n'
     );
     jsData = new TextDecoder('utf-8').decode(bodyParser(jsData));
-    //console.log(jsData);
+    // console.log(jsData);
 
     let boardData = await checkBoard.tcp0.readWait();
     boardData = new TextDecoder('utf-8').decode(bodyParser(boardData));
-    //console.log(boardData);
+    // console.log(boardData);
     expect(boardData).to.be.equals(jsData);
 
     await checkBoard.pingWait();
-    //close wait
+    // close wait
     while (checkBoard.tcp0.isUsed()) {
       await wait(10);
     }
@@ -143,7 +143,7 @@ describe('11-tcp', function () {
     );
     let boardData = await checkBoard.tcp0.readWait();
     boardData = new TextDecoder('utf-8').decode(bodyParser(boardData));
-    //console.log(boardData);
+    // console.log(boardData);
     let jsData = await getServerDataWait(
       3001,
       useIp,
@@ -157,7 +157,7 @@ describe('11-tcp', function () {
     expect(boardData).to.be.equals(jsData);
 
     await checkBoard.pingWait();
-    //close wait
+    // close wait
     while (checkBoard.tcp0.isUsed()) {
       await wait(10);
     }
@@ -178,7 +178,7 @@ describe('11-tcp', function () {
     let boardData = [];
     checkBoard.tcp0.onreceive = (data) => {
       boardData = boardData.concat(data);
-      //console.log(boardData.length);
+      // console.log(boardData.length);
     };
     await checkBoard.pingWait();
     while (checkBoard.tcp0.isUsed()) {
@@ -201,7 +201,7 @@ describe('11-tcp', function () {
     expect(boardData).to.deep.equals(jsData);
 
     await checkBoard.pingWait();
-    //close wait
+    // close wait
     while (checkBoard.tcp0.isUsed()) {
       await wait(10);
     }
@@ -244,41 +244,41 @@ describe('11-tcp', function () {
     }
 
     await checkBoard.pingWait();
-    //close wait
+    // close wait
     while (checkBoard.tcp0.isUsed()) {
       await wait(10);
     }
   });
 });
 
-async function getServerDataWait(port, domain, writeData) {
-  let client = new net.Socket();
-  client.connect({ port: port, host: domain }, () => {
+const getServerDataWait = async (port, domain, writeData) => {
+  const client = new net.Socket();
+  client.connect({ port, host: domain }, () => {
     client.write(writeData);
   });
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve) => {
     client.on('data', (data) => {
       resolve(data);
     });
   });
-}
+};
 
-function wait(ms) {
+const wait = (ms) => {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
-}
+};
 
-function bodyParser(data) {
+const bodyParser = (data) => {
   data = new Uint8Array(data);
   let lfpos = data.indexOf(0x0a);
-  while (lfpos != -1) {
-    let nextpos = data.indexOf(0x0a, lfpos + 1);
-    if (nextpos - lfpos == 2) {
+  while (lfpos !== -1) {
+    const nextpos = data.indexOf(0x0a, lfpos + 1);
+    if (nextpos - lfpos === 2) {
       return data.slice(nextpos + 1);
     }
     lfpos = nextpos;
   }
   console.error('body notfound');
   return null;
-}
+};

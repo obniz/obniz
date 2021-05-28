@@ -13,6 +13,7 @@ import {
 import BleHelper from '../bleHelper';
 import { BleDeviceAddress, BleDeviceAddressType, Handle } from '../bleTypes';
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 namespace COMMANDS {
   export const HCI_COMMAND_PKT = 0x01;
   export const HCI_ACLDATA_PKT = 0x02;
@@ -111,10 +112,7 @@ namespace COMMANDS {
   export const HCI_OE_USER_ENDED_CONNECTION = 0x13;
 }
 
-/**
- * @ignore
- */
-const STATUS_MAPPER = require('./hci-status');
+import STATUS_MAPPER from './hci-status.json';
 
 type HciEventTypes =
   // central
@@ -185,7 +183,9 @@ class Hci extends EventEmitter<HciEventTypes> {
    * @ignore
    * @private
    */
-  public debugHandler: any = () => {};
+  public debugHandler: any = () => {
+    // do nothing.
+  };
 
   public async initWait() {
     await this.resetWait();

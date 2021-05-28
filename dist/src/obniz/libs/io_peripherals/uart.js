@@ -27,7 +27,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
                 if (!this.received) {
                     this.received = [];
                 }
-                this.received.push.apply(this.received, obj.data);
+                this.received.push(...obj.data);
             }
         });
         this._reset();
@@ -64,6 +64,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
                 throw new Error("uart start param '" + key + "' are to be valid io no");
             }
         }
+        // eslint-disable-next-line no-prototype-builtins
         if (this.params.hasOwnProperty('drive')) {
             this.Obniz.getIO(this.params.rx).drive(this.params.drive);
             this.Obniz.getIO(this.params.tx).drive(this.params.drive);
@@ -72,6 +73,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
             this.Obniz.getIO(this.params.rx).drive('5v');
             this.Obniz.getIO(this.params.tx).drive('5v');
         }
+        // eslint-disable-next-line no-prototype-builtins
         if (this.params.hasOwnProperty('pull')) {
             this.Obniz.getIO(this.params.rx).pull(this.params.pull);
             this.Obniz.getIO(this.params.tx).pull(this.params.pull);
@@ -80,6 +82,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
             this.Obniz.getIO(this.params.rx).pull(null);
             this.Obniz.getIO(this.params.tx).pull(null);
         }
+        // eslint-disable-next-line no-prototype-builtins
         if (this.params.hasOwnProperty('gnd')) {
             this.Obniz.getIO(this.params.gnd).output(false);
             const ioNames = {};

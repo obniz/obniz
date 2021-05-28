@@ -5,6 +5,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 function default_1(source) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const self = this; // eslint-disable-line @typescript-eslint/no-this-alias
     if (self.cacheable) {

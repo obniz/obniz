@@ -4,69 +4,69 @@ const fs = require('fs');
 const path = require('path');
 const execSync = require('child_process').execSync;
 
-function camelCase(str) {
+const camelCase = (str) => {
   str = str.charAt(0).toLowerCase() + str.slice(1);
-  return str.replace(/[-_](.)/g, function (match, group1) {
+  return str.replace(/[-_](.)/g, (match, group1) => {
     return group1.toUpperCase();
   });
-}
+};
 
 // eslint-disable-next-line no-unused-vars
-function snakeCase(str) {
-  let camel = camelCase(str);
-  return camel.replace(/[A-Z]/g, function (s) {
+const snakeCase = (str) => {
+  const camel = camelCase(str);
+  return camel.replace(/[A-Z]/g, (s) => {
     return '_' + s.charAt(0).toLowerCase();
   });
-}
+};
 
 // eslint-disable-next-line no-unused-vars
-function pascalCase(str) {
-  let camel = camelCase(str);
+const pascalCase = (str) => {
+  const camel = camelCase(str);
   return camel.charAt(0).toUpperCase() + camel.slice(1);
-}
+};
 
 const relativePath = './src/';
 
-async function createDtsOnDirWait(relativePath) {
+const createDtsOnDirWait = async (relativePath) => {
   const root_directory = path.resolve(__dirname, '../../', relativePath);
 
   let file_list = fs.readdirSync(root_directory);
 
-  //build
+  // build
   _.chain(file_list)
-    .filter(function (file) {
+    .filter((file) => {
       return file.match(/.*\.js$/);
     })
-    .each(function (file) {
-      let fullpath = path.resolve(__dirname, '../../', relativePath, file);
-      let dtsFilePath = fullpath.replace('.js', '.d.ts');
+    .each((file) => {
+      const fullpath = path.resolve(__dirname, '../../', relativePath, file);
+      const dtsFilePath = fullpath.replace('.js', '.d.ts');
       try {
         if (fs.existsSync(dtsFilePath)) {
           return;
         }
       } catch (err) {
-        //nothing
+        // nothing
       }
 
-      let moduleName = path.basename(file, path.extname(file));
-      let command = `cd ${root_directory} && dtsmake -e -S "es6" -s ${file} -M ${moduleName} -n ${moduleName}`;
+      const moduleName = path.basename(file, path.extname(file));
+      const command = `cd ${root_directory} && dtsmake -e -S "es6" -s ${file} -M ${moduleName} -n ${moduleName}`;
       const result = execSync(command).toString();
       console.log(result);
     });
 
-  //refresh
+  // refresh
   file_list = fs.readdirSync(root_directory);
 
   // Recurse on directories
   _.chain(file_list)
-    .filter(function (file) {
-      let file_path = path.resolve(root_directory, file);
+    .filter((file) => {
+      const file_path = path.resolve(root_directory, file);
       return fs.lstatSync(file_path).isDirectory();
     })
-    .each(function (file) {
-      let file_path = path.resolve(root_directory, file);
+    .each((file) => {
+      const file_path = path.resolve(root_directory, file);
       createDtsOnDirWait(file_path);
     });
-}
+};
 
 createDtsOnDirWait(relativePath);

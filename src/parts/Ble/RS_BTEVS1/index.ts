@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module Parts.RS_BTEVS1
  */
-/* eslint non-ascii: 0 */
+/* eslint rulesdir/non-ascii: 0 */
 
 import Obniz, {
   BleRemoteCharacteristic,
@@ -241,7 +241,9 @@ export default class RS_BTEVS1 implements ObnizPartsInterface {
     this._peripheral = peripheral;
   }
 
-  public wired(obniz: Obniz): void {}
+  public wired(obniz: Obniz): void {
+    // do nothing.
+  }
 
   /**
    * Connect to device デバイスに接続
@@ -285,6 +287,8 @@ export default class RS_BTEVS1 implements ObnizPartsInterface {
    * Disconnect from device デバイスから切断
    */
   public async disconnectWait() {
+    if (this._buttonCharacteristic)
+      await this._buttonCharacteristic?.unregisterNotifyWait();
     await this._peripheral!.disconnectWait();
   }
 

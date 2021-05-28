@@ -14,7 +14,9 @@ class Grove_LightSensor {
             name: 'Grove_LightSensor',
         };
     }
-    onchange(value) { }
+    onchange(value) {
+        // do nothing.
+    }
     wired(obniz) {
         if (this.params.grove) {
             const groveAd = this.params.grove.getAnalog();

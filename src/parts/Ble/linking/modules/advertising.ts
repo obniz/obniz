@@ -183,6 +183,4 @@ export default class LinkingAdvertising {
     res.serviceId = service_id;
     return res;
   }
-
-  constructor() {}
 }

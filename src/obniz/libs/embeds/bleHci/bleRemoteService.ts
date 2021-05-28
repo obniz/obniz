@@ -203,7 +203,9 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<
    * @ignore
    * @param characteristic
    */
-  public ondiscovercharacteristic(characteristic: BleRemoteCharacteristic) {}
+  public ondiscovercharacteristic(characteristic: BleRemoteCharacteristic) {
+    // do nothing.
+  }
 
   /**
    * @ignore
@@ -211,7 +213,9 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<
    */
   public ondiscovercharacteristicfinished(
     characteristics: BleRemoteCharacteristic[]
-  ) {}
+  ) {
+    // do nothing.
+  }
 
   /**
    * @ignore

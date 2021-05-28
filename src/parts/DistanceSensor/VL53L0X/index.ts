@@ -11,7 +11,7 @@ import ObnizPartsInterface, {
 } from '../../../obniz/ObnizPartsInterface';
 import { I2cPartsAbstractOptions } from '../../i2cParts';
 
-export interface VL53L0XOptions extends I2cPartsAbstractOptions {}
+export type VL53L0XOptions = I2cPartsAbstractOptions;
 
 export default class VL53L0X implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {

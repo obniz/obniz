@@ -287,7 +287,9 @@ export default class Grove_GestureSensor implements ObnizPartsInterface {
     this.requiredKeys = [];
   }
 
-  public onchange(value: string) {}
+  public onchange(value: string) {
+    // do nothing.
+  }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;

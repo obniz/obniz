@@ -48,7 +48,9 @@ export default class AnalogTemperatureSensor implements ObnizPartsInterface {
     return this.temp;
   }
 
-  public onchange(temp: number) {}
+  public onchange(temp: number) {
+    // do nothing.
+  }
 
   public calc(voltage: any) {
     return 0;

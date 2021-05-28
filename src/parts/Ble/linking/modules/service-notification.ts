@@ -50,8 +50,6 @@ export default class LinkingServiceNotification {
   };
   private _device: any = {};
 
-  constructor() {}
-
   public setDeviceInfo(info: any) {
     this._device = info;
   }
@@ -77,7 +75,9 @@ export default class LinkingServiceNotification {
           notify_cateogry_id = p.id;
         }
       }
-    } catch (e) {}
+    } catch (e) {
+      // do nothing.
+    }
     return parameters;
   }
 

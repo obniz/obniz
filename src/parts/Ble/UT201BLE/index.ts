@@ -95,29 +95,32 @@ export default class UT201BLE implements ObnizPartsBleInterface {
       },
     });
 
-    return await new Promise(async (resolve, reject) => {
-      if (!this._peripheral) {
-        throw new Error('UT201BLE not found');
-      }
-      const results: UT201BLEResult[] = [];
-      const {
-        temperatureMeasurementChar,
-        timeChar,
-        customServiceChar,
-      } = this._getChars();
+    if (!this._peripheral) {
+      throw new Error('UT201BLE not found');
+    }
+    const results: UT201BLEResult[] = [];
+    const {
+      temperatureMeasurementChar,
+      timeChar,
+      customServiceChar,
+    } = this._getChars();
 
+    const waitDisconnect = new Promise<UT201BLEResult[]>((resolve, reject) => {
+      if (!this._peripheral) return;
       this._peripheral.ondisconnect = (reason: any) => {
         resolve(results);
       };
-
-      await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
-
-      await this._writeTimeCharWait(this._timezoneOffsetMinute);
-
-      await temperatureMeasurementChar.registerNotifyWait((data: number[]) => {
-        results.push(this._analyzeData(data));
-      });
     });
+
+    await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
+
+    await this._writeTimeCharWait(this._timezoneOffsetMinute);
+
+    await temperatureMeasurementChar.registerNotifyWait((data: number[]) => {
+      results.push(this._analyzeData(data));
+    });
+
+    return await waitDisconnect;
   }
 
   private _readFloatLE(buffer: Buffer, index: number) {

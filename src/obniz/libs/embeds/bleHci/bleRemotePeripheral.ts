@@ -438,6 +438,7 @@ export default class BleRemotePeripheral {
   public setParams(dic: any) {
     this.advertise_data_rows = null;
     for (const key in dic) {
+      // eslint-disable-next-line no-prototype-builtins
       if (dic.hasOwnProperty(key) && this.keys.includes(key)) {
         (this as any)[key] = dic[key];
       }

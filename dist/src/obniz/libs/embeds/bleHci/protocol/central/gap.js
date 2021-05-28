@@ -12,7 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @ignore
  */
-const debug = () => { };
+const debug = () => {
+    // do nothing.
+};
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const ObnizError_1 = require("../../../../../ObnizError");
 const bleHelper_1 = __importDefault(require("../../bleHelper"));

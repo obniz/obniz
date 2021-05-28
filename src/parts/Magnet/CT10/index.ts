@@ -37,7 +37,9 @@ export default class CT10 implements ObnizPartsInterface {
     this.keys = ['signal', 'gnd', 'vcc'];
     this.requiredKeys = ['signal'];
 
-    this.onChangeForStateWait = () => {};
+    this.onChangeForStateWait = () => {
+      // do nothing.
+    };
   }
 
   public wired(obniz: Obniz) {
@@ -68,11 +70,13 @@ export default class CT10 implements ObnizPartsInterface {
     return await this.io_signal.inputWait();
   }
 
-  public stateWait(isNear: boolean): Promise<any> {
-    return new Promise((resolve) => {
+  public stateWait(isNear: boolean): Promise<void> {
+    return new Promise<void>((resolve) => {
       this.onChangeForStateWait = (near: boolean) => {
         if (isNear === near) {
-          this.onChangeForStateWait = () => {};
+          this.onChangeForStateWait = () => {
+            // do nothing.
+          };
           resolve();
         }
       };

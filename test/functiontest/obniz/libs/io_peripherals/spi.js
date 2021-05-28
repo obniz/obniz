@@ -1,14 +1,14 @@
-let chai = require('chai');
-let expect = chai.expect;
+const chai = require('chai');
+const expect = chai.expect;
 
-let testUtil = require('../../../testUtil.js');
+const testUtil = require('../../../testUtil.js');
 
 describe('obniz.libs.spi', function () {
   beforeEach(async function () {
-    await testUtil.setupObnizPromise(this);
+    await testUtil.setupObnizWait(this);
   });
   afterEach(async function () {
-    await testUtil.releaseObnizPromise(this);
+    await testUtil.releaseObnizWait(this);
   });
 
   it('start', function () {
@@ -82,7 +82,7 @@ describe('obniz.libs.spi', function () {
       { spi0: { clk: 0, clock: 1000000, miso: 2, mode: 'master' } },
     ]);
 
-    let r = this.obniz.spi0.writeWait([0x12, 0x98]).then(
+    const r = this.obniz.spi0.writeWait([0x12, 0x98]).then(
       function (value) {
         expect(value).to.be.deep.equal([0x61, 0xf2]);
         expect(this.obniz).to.be.finished;
@@ -100,7 +100,7 @@ describe('obniz.libs.spi', function () {
   });
 
   it('write over 32 to <1.0.3', async function () {
-    let firmver_ver = this.obniz.firmware_ver;
+    const firmver_ver = this.obniz.firmware_ver;
     this.obniz.firmware_ver = '1.0.2';
     this.obniz.spi0.start({
       clk: 0,
@@ -116,7 +116,7 @@ describe('obniz.libs.spi', function () {
       { spi0: { clk: 0, clock: 1000000, miso: 2, mode: 'master' } },
     ]);
 
-    let data = [];
+    const data = [];
     for (let i = 0; i < 33; i++) {
       data.push(i);
     }
@@ -133,7 +133,7 @@ describe('obniz.libs.spi', function () {
   });
 
   it('write over 32 to >=1.0.3', function () {
-    let firmver_ver = this.obniz.firmware_ver;
+    const firmver_ver = this.obniz.firmware_ver;
     this.obniz.firmware_ver = '1.0.3';
     this.obniz.spi0.start({
       clk: 0,
@@ -149,22 +149,22 @@ describe('obniz.libs.spi', function () {
       { spi0: { clk: 0, clock: 1000000, miso: 2, mode: 'master' } },
     ]);
 
-    let data = [];
+    const data = [];
     for (let i = 0; i < 33; i++) {
       data.push(i);
     }
 
-    let r = this.obniz.spi0.writeWait(data).then(
+    const r = this.obniz.spi0.writeWait(data).then(
       function (value) {
         expect(value).to.be.deep.equal(data);
         expect(this.obniz).to.be.finished;
       }.bind(this)
     );
 
-    expect(this.obniz).send([{ spi0: { data: data, read: true } }]);
+    expect(this.obniz).send([{ spi0: { data, read: true } }]);
     setTimeout(
       function () {
-        testUtil.receiveJson(this.obniz, [{ spi0: { data: data } }]);
+        testUtil.receiveJson(this.obniz, [{ spi0: { data } }]);
       }.bind(this),
       10
     );
@@ -190,7 +190,7 @@ describe('obniz.libs.spi', function () {
       { spi0: { clk: 0, clock: 1000000, miso: 2, mode: 'master', mosi: 1 } },
     ]);
 
-    let r = this.obniz.spi0.writeWait([0x12, 0x98]).then(
+    const r = this.obniz.spi0.writeWait([0x12, 0x98]).then(
       function (value) {
         expect(value).to.be.deep.equal([0x61, 0xf2]);
         expect(this.obniz).to.be.finished;

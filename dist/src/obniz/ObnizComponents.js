@@ -266,17 +266,20 @@ class ObnizComponents extends ObnizParts_1.default {
             const targetComponent = this[key];
             if (targetComponent instanceof ComponentAbstact_1.ComponentAbstract) {
                 const basePath = targetComponent.schemaBasePath();
+                // eslint-disable-next-line no-prototype-builtins
                 if (basePath && obj.hasOwnProperty(basePath)) {
                     targetComponent.notifyFromObniz(obj[basePath]);
                 }
             }
             else {
                 if (key === 'logicAnalyzer') {
+                    // eslint-disable-next-line no-prototype-builtins
                     if (obj.hasOwnProperty('logic_analyzer')) {
                         this.logicAnalyzer.notified(obj.logic_analyzer);
                     }
                     continue;
                 }
+                // eslint-disable-next-line no-prototype-builtins
                 if (obj.hasOwnProperty(key)) {
                     /* because of nullable */
                     targetComponent.notified(obj[key]);

@@ -174,7 +174,9 @@ export default class PeripheralGrove extends ComponentAbstract {
   /**
    * @ignore
    */
-  public _reset() {}
+  public _reset() {
+    // do nothing.
+  }
 
   public end() {
     this.used = false;

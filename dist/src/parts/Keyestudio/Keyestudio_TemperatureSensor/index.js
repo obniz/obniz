@@ -31,7 +31,9 @@ class Keyestudio_TemperatureSensor {
         this.temp = this.calc(voltage);
         return this.temp;
     }
-    onchange(temp) { }
+    onchange(temp) {
+        // do nothing.
+    }
     calc(voltage) {
         this.temperature = voltage * 100; // Temp(Celsius) = [AD Voltage] * 100;
         if (this.init_count < 100) {

@@ -37,7 +37,8 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
          * @ignore
          */
         this._initialized = false;
-        this.debugHandler = () => { };
+        // eslint-disable-next-line
+        this.debugHandler = (text) => { };
         this.hci = new hci_1.default(obniz);
         this.service = bleService_1.default;
         this.characteristic = bleCharacteristic_1.default;
@@ -340,7 +341,9 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     schemaBasePath() {
         return 'ble';
     }
-    onStateChange() { }
+    onStateChange() {
+        // do nothing.
+    }
     findPeripheral(address) {
         for (const key in this.remotePeripherals) {
             if (this.remotePeripherals[key].address === address) {

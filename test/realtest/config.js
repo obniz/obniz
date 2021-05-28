@@ -1,10 +1,10 @@
 const Obniz = require('../../index.js');
 
-//TCP Command Test
-//Express server used your pc IP Address
+// TCP Command Test
+// Express server used your pc IP Address
 const LOCAL_IP = '';
 
-//Select Test Board
+// Select Test Board
 
 let json = require('./board/obniz_1y_check_io.json');
 
@@ -28,7 +28,7 @@ if (process.env.OBNIZ_DEVICE === 'devkitc') {
 
 let checkBoard_ID = process.env.OBNIZ_ID;
 if (!checkBoard_ID) {
-  //test device
+  // test device
   if (json.name === 'ESP32 Dev Kit') {
     checkBoard_ID = '32106175';
   } else if (json.name === 'M5STICK C') {
@@ -49,10 +49,12 @@ if (!checkBoard_ID) {
 const obnizA_ID = process.env.OBNIZA_ID || '54371148';
 const obnizB_ID = process.env.OBNIZB_ID || '10803935';
 
-let obnizA, obnizB, checkBoard;
+let obnizA;
+let obnizB;
+let checkBoard;
 const check_io = json.io;
 
-function waitForConenct(done) {
+const waitForConenct = (done) => {
   if (
     (obnizA === undefined && json.board.some((board) => board === 'obnizA')) ||
     (obnizB === undefined && json.board.some((board) => board === 'obnizB')) ||
@@ -62,9 +64,9 @@ function waitForConenct(done) {
   } else {
     done();
   }
-}
+};
 
-function reboot(done) {
+const reboot = (done) => {
   if (obnizA !== undefined) {
     obnizA.reboot();
     obnizA.close();
@@ -86,11 +88,12 @@ function reboot(done) {
   setTimeout(() => {
     waitForConenct(done);
   }, 10000); // wait for reboot
-}
+};
 
-function connectTwoObniz(done, params) {
-  let local_connect = process.env.LOCAL_CONNECT === 'false' ? false : true;
-  checkBoard = new Obniz(checkBoard_ID, { local_connect }); //obniz_server: "ws://stg.obniz.io",obniz_server: "ws://oooo.ngrok.io"
+// eslint-disable-next-line no-unused-vars
+const connectTwoObniz = (done, params) => {
+  const local_connect = process.env.LOCAL_CONNECT === 'false' ? false : true;
+  checkBoard = new Obniz(checkBoard_ID, { local_connect }); // obniz_server: "ws://stg.obniz.io",obniz_server: "ws://oooo.ngrok.io"
   checkBoard.onconnect = () => {
     if (process.env.DEBUG) {
       checkBoard.debugprint = true;
@@ -115,7 +118,7 @@ function connectTwoObniz(done, params) {
       };
     } else {
       if (json.board.some((board) => board === 'obnizB')) {
-        obnizB = new Obniz(obnizB_ID, { local_connect: local_connect });
+        obnizB = new Obniz(obnizB_ID, { local_connect });
         if (process.env.DEBUG) {
           obnizB.debugprint = true;
         }
@@ -125,26 +128,26 @@ function connectTwoObniz(done, params) {
       }
     }
   };
-}
+};
 
-function getDevice(device) {
+const getDevice = (device) => {
   if (device === 'checkBoard') {
     return checkBoard;
   } else if (device === 'obnizB') {
     return obnizB;
   }
   return obnizA;
-}
+};
 
-function close(obniz) {
-  if (obniz == obnizA) {
+const close = (obniz) => {
+  if (obniz === obnizA) {
     obnizA.close();
     obnizA = undefined;
-  } else if (obniz == obnizB) {
+  } else if (obniz === obnizB) {
     obnizB.close();
     obnizB = undefined;
   }
-}
+};
 
 module.exports = {
   waitForConenct,

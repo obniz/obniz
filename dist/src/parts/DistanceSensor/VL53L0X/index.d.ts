@@ -6,8 +6,7 @@ import Obniz from '../../../obniz';
 import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
 import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 import { I2cPartsAbstractOptions } from '../../i2cParts';
-export interface VL53L0XOptions extends I2cPartsAbstractOptions {
-}
+export declare type VL53L0XOptions = I2cPartsAbstractOptions;
 export default class VL53L0X implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     requiredKeys: string[];

@@ -20,5 +20,4 @@ export default class LinkingAdvertising {
         beaconDataList: any[];
     } | null;
     static _parseBeaconServiceData(buf: any): any;
-    constructor();
 }

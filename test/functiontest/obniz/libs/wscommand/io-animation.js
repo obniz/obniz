@@ -1,15 +1,15 @@
-let chai = require('chai');
-let expect = chai.expect;
+const chai = require('chai');
+const expect = chai.expect;
 
-let testUtil = require('../../../testUtil.js');
+const testUtil = require('../../../testUtil.js');
 
 describe('io.animation', function () {
   beforeEach(async function () {
-    await testUtil.setupObnizPromise(this, null, { binary: true });
+    await testUtil.setupObnizWait(this, null, { binary: true });
   });
 
   afterEach(async function () {
-    await testUtil.releaseObnizPromise(this);
+    await testUtil.releaseObnizWait(this);
   });
 
   it('request ioAnimation', function () {
@@ -107,19 +107,19 @@ describe('io.animation', function () {
 });
 
 function compressTest(obniz, requestJson, expecteBinarystrings) {
-  let binaryArray = expecteBinarystrings[0]
+  const binaryArray = expecteBinarystrings[0]
     .split(' ')
     .map(function (val, index) {
       return parseInt(val, 16);
     });
-  let binary = new Uint8Array(binaryArray);
+  const binary = new Uint8Array(binaryArray);
 
   expect(requestJson.length).to.be.equal(1);
 
-  let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+  const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
   expect(isValidCommand.valid).to.be.true;
 
-  let compress = obniz.constructor.WSCommand.compress(
+  const compress = obniz.constructor.WSCommand.compress(
     obniz.wscommands,
     requestJson[0]
   );

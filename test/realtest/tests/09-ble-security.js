@@ -1,12 +1,13 @@
 const config = require('../config.js');
 const chai = require('chai');
 const expect = chai.expect;
-let obnizA, checkBoard;
+let obnizA;
+let checkBoard;
 
 describe('9-ble-security', function () {
   this.timeout(30000);
 
-  beforeEach(function () {
+  beforeEach(() => {
     console.error('reboot start');
     return new Promise((resolve) => {
       config.reboot(() => {
@@ -17,9 +18,9 @@ describe('9-ble-security', function () {
       }, false);
     });
   });
-  it('dummy for reboot', async function () {});
+  it('dummy for reboot', async () => {});
 
-  it('security', async function () {
+  it('security', async () => {
     if (checkBoard.ble.hci) {
       return;
     }
@@ -27,7 +28,7 @@ describe('9-ble-security', function () {
     await obnizA.ble.initWait();
     checkBoard.ble.security.setModeLevel(1, 2);
 
-    let SPDIService = new checkBoard.ble.service({
+    const SPDIService = new checkBoard.ble.service({
       uuid: 'E625601E-9E55-4597-A598-76018A0D293D',
       characteristics: [
         {
@@ -46,13 +47,13 @@ describe('9-ble-security', function () {
 
     checkBoard.ble.peripheral.addService(SPDIService);
 
-    let advDataFromService = SPDIService.advData;
+    const advDataFromService = SPDIService.advData;
     advDataFromService.localName = 'OBNIZ';
     checkBoard.ble.advertisement.setAdvData(advDataFromService);
     checkBoard.ble.advertisement.start();
     // console.error('start adv');
 
-    let peripheral = await obnizA.ble.scan.startOneWait({
+    const peripheral = await obnizA.ble.scan.startOneWait({
       uuids: [SPDIService.uuid],
     });
     // console.log(peripheral);
@@ -60,7 +61,7 @@ describe('9-ble-security', function () {
     await new Promise((r) => {
       setTimeout(r, 1000);
     });
-    let data = await peripheral
+    const data = await peripheral
       .getService('E625601E-9E55-4597-A598-76018A0D293D')
       .getCharacteristic('26E2B12B-85F0-4F3F-9FDD-91D114270E6E')
       .readWait();

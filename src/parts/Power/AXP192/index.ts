@@ -9,7 +9,7 @@ import ObnizPartsInterface, {
 } from '../../../obniz/ObnizPartsInterface';
 import { I2cPartsAbstractOptions } from '../../../parts/i2cParts';
 
-export interface AXP192Options extends I2cPartsAbstractOptions {}
+export type AXP192Options = I2cPartsAbstractOptions;
 
 export default class AXP192 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {

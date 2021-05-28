@@ -44,7 +44,6 @@ class I2cPartsAbstract {
                 this.params[k] = this.i2cinfo[k];
             }
             else {
-                // @ts-ignore
                 this.i2cinfo[k] = this.params[k];
             }
         });

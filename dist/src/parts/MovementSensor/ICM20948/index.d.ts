@@ -5,8 +5,7 @@
 import Obniz from '../../../obniz';
 import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from '../../i2cParts';
-export interface ICM20948Options extends I2cPartsAbstractOptions {
-}
+export declare type ICM20948Options = I2cPartsAbstractOptions;
 export default class ICM20948 extends i2cParts implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     g: number;

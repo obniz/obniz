@@ -9,7 +9,7 @@ import AnalogTemperatureSensor, {
   AnalogTemperatureSensorOptions,
 } from '../AnalogTemperatureSensor';
 
-export interface MCP9700Options extends AnalogTemperatureSensorOptions {}
+export type MCP9700Options = AnalogTemperatureSensorOptions;
 
 export default class MCP9700
   extends AnalogTemperatureSensor

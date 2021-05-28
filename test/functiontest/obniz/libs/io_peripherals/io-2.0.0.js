@@ -1,22 +1,22 @@
-let chai = require('chai');
-let expect = chai.expect;
-let testUtil = require('../../../testUtil.js');
+const chai = require('chai');
+const expect = chai.expect;
+const testUtil = require('../../../testUtil.js');
 
 describe('obniz.libs.io', function () {
   beforeEach(async function () {
-    await testUtil.setupObnizPromise(this, null, { __firmware_ver: '2.0.0' });
+    await testUtil.setupObnizWait(this, null, { __firmware_ver: '2.0.0' });
   });
 
   afterEach(async function () {
-    await testUtil.releaseObnizPromise(this);
+    await testUtil.releaseObnizWait(this);
   });
 
   it('ioAnimation 2_0_0 registrate', function () {
-    let obniz = this.obniz;
+    const obniz = this.obniz;
     this.obniz.io.animation('animation-1', 'registrate', [
       {
         duration: 10,
-        state: function (index) {
+        state(index) {
           // index = 0
           obniz.io0.output(false);
           obniz.io1.output(true);
@@ -24,7 +24,7 @@ describe('obniz.libs.io', function () {
       },
       {
         duration: 10,
-        state: function (index) {
+        state(index) {
           // index = 1
           obniz.io0.output(true);
           obniz.io1.output(false);
@@ -56,14 +56,14 @@ describe('obniz.libs.io', function () {
   });
 
   it('ioAnimation 2_0_0 countdown', function () {
-    let obniz = this.obniz;
+    const obniz = this.obniz;
     this.obniz.io.animation(
       'animation-1',
       'loop',
       [
         {
           duration: 10,
-          state: function (index) {
+          state(index) {
             // index = 0
             obniz.io0.output(false);
             obniz.io1.output(true);
@@ -71,7 +71,7 @@ describe('obniz.libs.io', function () {
         },
         {
           duration: 10,
-          state: function (index) {
+          state(index) {
             // index = 1
             obniz.io0.output(true);
             obniz.io1.output(false);

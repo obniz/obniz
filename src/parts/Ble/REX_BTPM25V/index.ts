@@ -53,8 +53,9 @@ export default class REX_BTPM25V implements ObnizPartsInterface {
     this._peripheral = peripheral;
   }
 
-  // @ts-ignore
-  public wired(obniz: Obniz): void {}
+  public wired(obniz: Obniz): void {
+    // do nothing.
+  }
 
   public async connectWait() {
     if (!this._peripheral) {

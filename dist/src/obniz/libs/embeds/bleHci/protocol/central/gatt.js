@@ -4,7 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 // let debug = require('debug')('att');
-const debug = () => { };
+const debug = () => {
+    // do nothing.
+};
 /* eslint-disable no-unused-vars */
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const ObnizError_1 = require("../../../../../ObnizError");
@@ -12,6 +14,7 @@ const bleHelper_1 = __importDefault(require("../../bleHelper"));
 /**
  * @ignore
  */
+// eslint-disable-next-line @typescript-eslint/no-namespace
 var ATT;
 (function (ATT) {
     ATT.OP_ERROR = 0x01;
@@ -105,6 +108,7 @@ const ATT_ECODE_READABLES = {
 /**
  * @ignore
  */
+// eslint-disable-next-line @typescript-eslint/no-namespace
 var GATT;
 (function (GATT) {
     GATT.PRIM_SVC_UUID = 0x2800;
@@ -346,6 +350,7 @@ class Gatt extends eventemitter3_1.default {
             const opcode = data[0];
             readData = Buffer.from(readData.toString('hex') + data.slice(1).toString('hex'), 'hex');
             if (data.length === this._mtu) {
+                // do nothing.
             }
             else {
                 return readData;

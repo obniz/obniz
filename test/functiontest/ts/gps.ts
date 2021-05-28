@@ -1,3 +1,5 @@
+/* eslint-disable rulesdir/non-ascii */
+
 import Obniz from '../../../dist/src/obniz/index';
 
 const OBNIZ_ID = '1234-5678';

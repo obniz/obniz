@@ -372,8 +372,10 @@ export class M5StickC extends ObnizDevice {
     const onerror = i2c.onerror;
     this.imu = this.wired(imuName, { i2c });
 
-    // @ts-ignore
-    this.imu._reset = () => {};
+    // eslint-disable-next-line
+    this.imu._reset = () => {
+      // do nothing.
+    };
     const p1 = this.imu.whoamiWait();
     const p2 = new Promise((resolve, reject) => {
       i2c.onerror = reject;
@@ -426,7 +428,6 @@ export class M5StickC extends ObnizDevice {
   }
 
   protected _prepareComponents() {
-    // @ts-ignore
     super._prepareComponents();
 
     if (this.hw !== 'm5stickc') {

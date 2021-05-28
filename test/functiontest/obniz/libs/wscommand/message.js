@@ -1,26 +1,26 @@
-let chai = require('chai');
-let expect = chai.expect;
+const chai = require('chai');
+const expect = chai.expect;
 
-let testUtil = require('../../../testUtil.js');
+const testUtil = require('../../../testUtil.js');
 
 describe('message.log', function () {
   beforeEach(async function () {
-    await testUtil.setupObnizPromise(this, null, { binary: true });
+    await testUtil.setupObnizWait(this, null, { binary: true });
   });
 
   afterEach(async function () {
-    await testUtil.releaseObnizPromise(this);
+    await testUtil.releaseObnizWait(this);
   });
 
   it('message', function () {
-    let requestJson = [{ message: { to: ['1111-1111'], data: 'pressed' } }];
+    const requestJson = [{ message: { to: ['1111-1111'], data: 'pressed' } }];
 
     expect(requestJson.length).to.be.equal(1);
 
-    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    let compress = this.obniz.constructor.WSCommand.compress(
+    const compress = this.obniz.constructor.WSCommand.compress(
       this.obniz.wscommands,
       requestJson[0]
     );
@@ -28,14 +28,14 @@ describe('message.log', function () {
   });
 
   it('receive formtat', function () {
-    let expectJson = [{ message: { from: '1111-1111', data: 'pressed' } }];
-    let isValidCommand = testUtil.isValidCommandResponseJson(expectJson);
+    const expectJson = [{ message: { from: '1111-1111', data: 'pressed' } }];
+    const isValidCommand = testUtil.isValidCommandResponseJson(expectJson);
     expect(isValidCommand.valid).to.be.true;
   });
 
   it('receive formtat null', function () {
-    let expectJson = [{ message: { from: null, data: 'pressed' } }];
-    let isValidCommand = testUtil.isValidCommandResponseJson(expectJson);
+    const expectJson = [{ message: { from: null, data: 'pressed' } }];
+    const isValidCommand = testUtil.isValidCommandResponseJson(expectJson);
     expect(isValidCommand.valid).to.be.true;
   });
 });

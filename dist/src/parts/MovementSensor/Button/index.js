@@ -10,7 +10,9 @@ class Button {
         this.onchange = null;
         this.keys = ['signal', 'gnd', 'pull'];
         this.requiredKeys = ['signal'];
-        this.onChangeForStateWait = () => { };
+        this.onChangeForStateWait = () => {
+            // do nothing.
+        };
     }
     static info() {
         return {
@@ -49,7 +51,9 @@ class Button {
         return new Promise((resolve, reject) => {
             this.onChangeForStateWait = (pressed) => {
                 if (isPressed === pressed) {
-                    this.onChangeForStateWait = () => { };
+                    this.onChangeForStateWait = () => {
+                        // do nothing.
+                    };
                     resolve();
                 }
             };

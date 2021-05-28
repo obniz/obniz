@@ -1,0 +1,10 @@
+{
+  "env": {
+    "mocha": true
+  },
+  "rules": {
+    "prefer-arrow/prefer-arrow-functions": "warn",
+    "max-classes-per-file": "off",
+    "no-unused-vars": "warn"
+  }
+}

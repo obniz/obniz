@@ -1,18 +1,18 @@
-let chai = require('chai');
-let expect = chai.expect;
+const chai = require('chai');
+const expect = chai.expect;
 
-let testUtil = require('../../../testUtil.js');
+const testUtil = require('../../../testUtil.js');
 
 describe('io.animation2_0_0', function () {
   beforeEach(async function () {
-    await testUtil.setupObnizPromise(this, null, {
+    await testUtil.setupObnizWait(this, null, {
       binary: true,
       __firmware_ver: '2.0.0',
     });
   });
 
   afterEach(async function () {
-    await testUtil.releaseObnizPromise(this);
+    await testUtil.releaseObnizWait(this);
   });
 
   it('request ioAnimation', function () {
@@ -180,19 +180,19 @@ describe('io.animation2_0_0', function () {
   });
 
   it('response ioAnimation notify', function () {
-    let responseBinaryString = '01 03 04 00 01 31 00';
-    let expectJson = [{ io: { animation: { name: '1', status: 'finish' } } }];
+    const responseBinaryString = '01 03 04 00 01 31 00';
+    const expectJson = [{ io: { animation: { name: '1', status: 'finish' } } }];
 
-    let binaryArray = responseBinaryString
+    const binaryArray = responseBinaryString
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
-    let json = this.obniz._binary2Json(binary);
+    const json = this.obniz._binary2Json(binary);
 
-    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
 
     expect(json).to.be.deep.equal(expectJson);
@@ -200,19 +200,19 @@ describe('io.animation2_0_0', function () {
 });
 
 function compressTest(obniz, requestJson, expecteBinarystrings) {
-  let binaryArray = expecteBinarystrings[0]
+  const binaryArray = expecteBinarystrings[0]
     .split(' ')
     .map(function (val, index) {
       return parseInt(val, 16);
     });
-  let binary = new Uint8Array(binaryArray);
+  const binary = new Uint8Array(binaryArray);
 
   expect(requestJson.length).to.be.equal(1);
 
-  let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+  const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
   expect(isValidCommand.valid).to.be.true;
 
-  let compress = obniz.constructor.WSCommand.compress(
+  const compress = obniz.constructor.WSCommand.compress(
     obniz.wscommands,
     requestJson[0]
   );

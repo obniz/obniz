@@ -9,7 +9,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 // let debug = require('debug')('signaling');
-const debug = () => { };
+const debug = () => {
+    // do nothing.
+};
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 /**
  * @ignore

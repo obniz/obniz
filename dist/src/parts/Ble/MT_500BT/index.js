@@ -50,8 +50,9 @@ class MT_500BT {
         const cnkey = (((ifuid ^ 0xb452) << 3) & 0xffff) | ((ifuid ^ 0xb452) >> (16 - 3));
         return cnkey;
     }
-    // @ts-ignore
-    wired(obniz) { }
+    wired(obniz) {
+        // do nothing.
+    }
     async connectWait() {
         if (!this._peripheral) {
             throw new Error('MT-500BT is not find.');

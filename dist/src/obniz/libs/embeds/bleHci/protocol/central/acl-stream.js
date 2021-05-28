@@ -18,7 +18,9 @@ const smp_1 = __importDefault(require("./smp"));
 class AclStream extends eventemitter3_1.default {
     constructor(hci, handle, localAddressType, localAddress, remoteAddressType, remoteAddress) {
         super();
-        this.debugHandler = () => { };
+        this.debugHandler = () => {
+            // do nothing.
+        };
         this._hci = hci;
         this._handle = handle;
         this._smp = new smp_1.default(this, localAddressType, localAddress, remoteAddressType, remoteAddress);
@@ -75,7 +77,9 @@ class AclStream extends eventemitter3_1.default {
         this._smp.removeListener('fail', this.onSmpFailBinded);
         this._smp.removeListener('end', this.onSmpEndBinded);
     }
-    startEncrypt(option) { }
+    startEncrypt(option) {
+        // do nothing.
+    }
     debug(text) {
         this.debugHandler(`AclStream: ${text}`);
     }

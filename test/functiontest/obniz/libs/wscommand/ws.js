@@ -1,19 +1,19 @@
-let chai = require('chai');
-let expect = chai.expect;
+const chai = require('chai');
+const expect = chai.expect;
 
-let testUtil = require('../../../testUtil.js');
+const testUtil = require('../../../testUtil.js');
 
 describe('ws', function () {
   beforeEach(async function () {
-    await testUtil.setupObnizPromise(this, null, { binary: true });
+    await testUtil.setupObnizWait(this, null, { binary: true });
   });
 
   afterEach(async function () {
-    await testUtil.releaseObnizPromise(this);
+    await testUtil.releaseObnizWait(this);
   });
 
   it('reset obniz on ws disconnection', function () {
-    let requestJson = [
+    const requestJson = [
       {
         ws: {
           reset_obniz_on_ws_disconnection: false,
@@ -23,10 +23,10 @@ describe('ws', function () {
 
     expect(requestJson.length).to.be.equal(1);
 
-    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    let compress = this.obniz.constructor.WSCommand.compress(
+    const compress = this.obniz.constructor.WSCommand.compress(
       this.obniz.wscommands,
       requestJson[0]
     );
@@ -35,35 +35,35 @@ describe('ws', function () {
   });
 
   it('response test no.6', function () {
-    let responseBinaryString = '04 03 0b 01 00 69 61 73 64 66 61 73 64 66';
-    let expectJson = [
+    const responseBinaryString = '04 03 0b 01 00 69 61 73 64 66 61 73 64 66';
+    const expectJson = [
       { uart1: { data: [0, 105, 97, 115, 100, 102, 97, 115, 100, 102] } },
     ];
 
-    let binaryArray = responseBinaryString
+    const binaryArray = responseBinaryString
       .split(' ')
       .map(function (val, index) {
         return parseInt(val, 16);
       });
-    let binary = new Uint8Array(binaryArray);
+    const binary = new Uint8Array(binaryArray);
 
-    let json = this.obniz._binary2Json(binary);
+    const json = this.obniz._binary2Json(binary);
 
-    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
 
     expect(json).to.be.deep.equal(expectJson);
   });
 
   it('ready formtat', function () {
-    let expectJson = [{ ws: { ready: true } }];
-    let isValidCommand = testUtil.isValidCommandResponseJson(expectJson);
+    const expectJson = [{ ws: { ready: true } }];
+    const isValidCommand = testUtil.isValidCommandResponseJson(expectJson);
     expect(isValidCommand.valid).to.be.true;
   });
 
   it('redirect formtat', function () {
-    let expectJson = [{ ws: { redirect: 'wss://some_server.com' } }];
-    let isValidCommand = testUtil.isValidCommandResponseJson(expectJson);
+    const expectJson = [{ ws: { redirect: 'wss://some_server.com' } }];
+    const isValidCommand = testUtil.isValidCommandResponseJson(expectJson);
     expect(isValidCommand.valid).to.be.true;
   });
 });

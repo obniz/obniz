@@ -38,7 +38,9 @@ export default class Keyestudio_Button implements ObnizPartsInterface {
     this.requiredKeys = ['signal'];
   }
 
-  public onChangeForStateWait = (pressed: boolean) => {};
+  public onChangeForStateWait = (pressed: boolean) => {
+    // do nothing.
+  };
 
   public wired(obniz: Obniz) {
     this.io_signal = obniz.getIO(this.params.signal);
@@ -72,7 +74,9 @@ export default class Keyestudio_Button implements ObnizPartsInterface {
     return new Promise((resolve, reject) => {
       this.onChangeForStateWait = (pressed: any) => {
         if (isPressed === pressed) {
-          this.onChangeForStateWait = () => {};
+          this.onChangeForStateWait = () => {
+            // do nothing.
+          };
           resolve();
         }
       };

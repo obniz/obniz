@@ -10,7 +10,7 @@ import AnalogTemperatureSensor, {
   AnalogTemperatureSensorOptions,
 } from '../AnalogTemperatureSensor';
 
-export interface S8120COptions extends AnalogTemperatureSensorOptions {}
+export type S8120COptions = AnalogTemperatureSensorOptions;
 
 export default class S8120C
   extends AnalogTemperatureSensor
