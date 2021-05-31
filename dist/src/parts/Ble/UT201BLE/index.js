@@ -51,21 +51,24 @@ class UT201BLE {
                 keys: pairingKeys,
             },
         });
-        return await new Promise(async (resolve, reject) => {
-            if (!this._peripheral) {
-                throw new Error('UT201BLE not found');
-            }
-            const results = [];
-            const { temperatureMeasurementChar, timeChar, customServiceChar, } = this._getChars();
+        if (!this._peripheral) {
+            throw new Error('UT201BLE not found');
+        }
+        const results = [];
+        const { temperatureMeasurementChar, timeChar, customServiceChar, } = this._getChars();
+        const waitDisconnect = new Promise((resolve, reject) => {
+            if (!this._peripheral)
+                return;
             this._peripheral.ondisconnect = (reason) => {
                 resolve(results);
             };
-            await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
-            await this._writeTimeCharWait(this._timezoneOffsetMinute);
-            await temperatureMeasurementChar.registerNotifyWait((data) => {
-                results.push(this._analyzeData(data));
-            });
         });
+        await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
+        await this._writeTimeCharWait(this._timezoneOffsetMinute);
+        await temperatureMeasurementChar.registerNotifyWait((data) => {
+            results.push(this._analyzeData(data));
+        });
+        return await waitDisconnect;
     }
     _readFloatLE(buffer, index) {
         const data = buffer.readUInt32LE(index);

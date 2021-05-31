@@ -33,8 +33,9 @@ class RS_Seek3 {
         }
         return true;
     }
-    // @ts-ignore
-    wired(obniz) { }
+    wired(obniz) {
+        // do nothing.
+    }
     async connectWait() {
         if (!this._peripheral) {
             throw new Error('RS_Seek3 is not find.');

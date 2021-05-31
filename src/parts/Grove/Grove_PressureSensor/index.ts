@@ -45,7 +45,9 @@ export default class Grove_PressureSensor implements ObnizPartsInterface {
     this.requiredKeys = [];
   }
 
-  public onchange(value: number) {}
+  public onchange(value: number) {
+    // do nothing.
+  }
 
   public wired(obniz: Obniz) {
     if (this.params.grove) {

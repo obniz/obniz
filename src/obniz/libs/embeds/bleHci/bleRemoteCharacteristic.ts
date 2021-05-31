@@ -300,7 +300,9 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    *
    */
   public async unregisterNotifyWait(): Promise<void> {
-    this.onnotify = () => {};
+    this.onnotify = () => {
+      // do nothing.
+    };
 
     await this.service.peripheral.obnizBle.centralBindings.notifyWait(
       this.service.peripheral.address,

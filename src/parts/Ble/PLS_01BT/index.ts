@@ -56,8 +56,9 @@ export default class PLS_01BT implements ObnizPartsInterface {
     this._peripheral = peripheral;
   }
 
-  // @ts-ignore
-  public wired(obniz: Obniz): void {}
+  public wired(obniz: Obniz): void {
+    // do nothing.
+  }
 
   public async connectWait() {
     if (!this._peripheral) {

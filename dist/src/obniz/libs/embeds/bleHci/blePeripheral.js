@@ -170,6 +170,8 @@ class BlePeripheral {
      * @ignore
      * @param error
      */
-    onerror(error) { }
+    onerror(error) {
+        // do nothing.
+    }
 }
 exports.default = BlePeripheral;

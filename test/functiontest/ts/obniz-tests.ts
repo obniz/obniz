@@ -1,3 +1,4 @@
+/* eslint-disable rulesdir/non-ascii */
 /* tslint:disable:class-name max-classes-per-file */
 import Obniz from '../../../dist/src/obniz/index';
 import ObnizBoard from '../../../dist/src/obniz/libs/hw/obnizBoard';
@@ -88,6 +89,7 @@ class DisplayTest {
 
       // 3. running with node.js
       //    npm install canvas. ( version 2.0.0 or later required )
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const { createCanvas } = require('canvas');
       const canvas = createCanvas(128, 64);
       const ctx3 = canvas.getContext('2d');
@@ -281,7 +283,7 @@ class IOTest {
   public input() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.io0!.input((value) => {
+      obniz.io0!.input((value: any) => {
         console.log('changed to ' + value);
       });
     };

@@ -1,19 +1,19 @@
-let chai = require('chai');
-let expect = chai.expect;
-let sinon = require('sinon');
+const chai = require('chai');
+const expect = chai.expect;
+const sinon = require('sinon');
 
-let testUtil = require('../../../testUtil.js');
+const testUtil = require('../../../testUtil.js');
 
 describe('obniz.libs.switch', function () {
   beforeEach(async function () {
-    await testUtil.setupObnizPromise(this);
+    await testUtil.setupObnizWait(this);
   });
   afterEach(async function () {
-    await testUtil.releaseObnizPromise(this);
+    await testUtil.releaseObnizWait(this);
   });
 
   it('onchange', function () {
-    let stub = sinon.stub();
+    const stub = sinon.stub();
     this.obniz.switch.onchange = stub;
     expect(this.obniz).to.be.obniz;
     sinon.assert.callCount(stub, 0);
@@ -27,7 +27,7 @@ describe('obniz.libs.switch', function () {
   });
 
   it.skip('not value changd  , but it detect action:get on onchange func', function () {
-    let stub = sinon.stub();
+    const stub = sinon.stub();
     this.obniz.switch.onchange = stub;
     expect(this.obniz).to.be.obniz;
     sinon.assert.callCount(stub, 0);

@@ -1,11 +1,13 @@
 const config = require('../config.js');
 
-let obnizA, checkBoard, check_io;
+let obnizA;
+let checkBoard;
+let check_io;
 
 describe('4-uart', function () {
   this.timeout(20000);
 
-  before(function () {
+  before(() => {
     return new Promise((resolve) => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
@@ -31,7 +33,7 @@ describe('4-uart', function () {
     }
   });
 
-  it('short string tx rx', async function () {
+  it('short string tx rx', async () => {
     const receiver = obnizA.getFreeUart();
     receiver.start({ tx: check_io[1].obniz_io, rx: check_io[0].obniz_io });
     await obnizA.pingWait();
@@ -50,20 +52,20 @@ describe('4-uart', function () {
           break;
         }
       }
-      await wait(1); //wait for 10ms
+      await wait(1); // wait for 10ms
     }
     receiver.end();
     sender.end();
   });
 
-  it('short utf8 tx rx', async function () {
+  it('short utf8 tx rx', async () => {
     const receiver = obnizA.getFreeUart();
     receiver.start({ tx: check_io[1].obniz_io, rx: check_io[0].obniz_io });
     await obnizA.pingWait();
     const sender = checkBoard.getFreeUart();
     sender.start({ tx: check_io[0].board_io, rx: check_io[1].board_io });
 
-    const text = 'こんにちは'; //eslint-disable-line non-ascii
+    const text = 'こんにちは'; // eslint-disable-line rulesdir/non-ascii
     let received = '';
     sender.send(' ');
     await checkBoard.pingWait();
@@ -75,13 +77,13 @@ describe('4-uart', function () {
           break;
         }
       }
-      await wait(1); //wait for 10ms
+      await wait(1); // wait for 10ms
     }
     receiver.end();
     sender.end();
   });
 
-  it('long string tx rx 9600', async function () {
+  it('long string tx rx 9600', async () => {
     const receiver = obnizA.getFreeUart();
     receiver.start({
       tx: check_io[1].obniz_io,
@@ -111,14 +113,14 @@ describe('4-uart', function () {
           break;
         }
       }
-      await wait(1); //wait for 10ms
+      await wait(1); // wait for 10ms
     }
 
     receiver.end();
     sender.end();
   });
 
-  it('long string tx rx 115200', async function () {
+  it('long string tx rx 115200', async () => {
     const receiver = obnizA.getFreeUart();
     receiver.start({
       tx: check_io[1].obniz_io,
@@ -148,14 +150,14 @@ describe('4-uart', function () {
           break;
         }
       }
-      await wait(1); //wait for 10ms
+      await wait(1); // wait for 10ms
     }
 
     receiver.end();
     sender.end();
   });
 
-  it('long binary tx rx 115200', async function () {
+  it('long binary tx rx 115200', async () => {
     const receiver = obnizA.getFreeUart();
     receiver.start({
       tx: check_io[1].obniz_io,
@@ -170,11 +172,11 @@ describe('4-uart', function () {
       baud: 115200,
     });
 
-    let data = [];
+    const data = [];
     for (let i = 0; i < 4096; i++) {
       data.push(i % 256);
     }
-    let received = [];
+    const received = [];
     sender.send(data);
     while (1) {
       if (receiver.isDataExists()) {
@@ -183,14 +185,14 @@ describe('4-uart', function () {
           break;
         }
       }
-      await wait(1); //wait for 10ms
+      await wait(1); // wait for 10ms
     }
 
     receiver.end();
     sender.end();
   });
 
-  it('two port at same time', async function () {
+  it('two port at same time', async () => {
     const receiver0 = obnizA.getFreeUart();
     receiver0.start({
       tx: check_io[1].obniz_io,
@@ -250,7 +252,7 @@ describe('4-uart', function () {
       if (found === 2) {
         break;
       }
-      await wait(1); //wait for 10ms
+      await wait(1); // wait for 10ms
     }
 
     receiver0.end();
@@ -260,8 +262,8 @@ describe('4-uart', function () {
   });
 });
 
-function wait(ms) {
+const wait = (ms) => {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
-}
+};

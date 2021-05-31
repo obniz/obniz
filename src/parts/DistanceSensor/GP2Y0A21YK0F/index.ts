@@ -73,16 +73,10 @@ export default class GP2Y0A21YK0F implements ObnizPartsInterface {
     return distance;
   }
 
-  public getWait(): Promise<number> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const val = await this.ad_signal.getWait();
-        const distance = this._volt2distance(val);
-        resolve(distance);
-      } catch (e) {
-        reject(e);
-      }
-    });
+  public async getWait(): Promise<number> {
+    const val = await this.ad_signal.getWait();
+    const distance = this._volt2distance(val);
+    return distance;
   }
 
   public unit(unit: GP2Y0A21YK0FUnitType) {

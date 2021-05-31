@@ -43,7 +43,9 @@ class LinkingServiceProperty {
                 parameters.push(this._parseParameter(pid, pvalue_buf));
             }
         }
-        catch (e) { }
+        catch (e) {
+            // do nothing.
+        }
         return parameters;
     }
     _parseParameter(pid, buf) {

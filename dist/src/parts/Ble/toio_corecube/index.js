@@ -43,7 +43,9 @@ class Toio_CoreCube {
             return false;
         }
     }
-    wired(obniz) { }
+    wired(obniz) {
+        // do nothing.
+    }
     async connectWait(timeout) {
         if (!this.peripheral) {
             throw new Error('RS_Seek3 is not find.');

@@ -134,12 +134,16 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
      * @ignore
      * @param param
      */
-    addPermission(param) { }
+    addPermission(param) {
+        // do nothing.
+    }
     /**
      * @ignore
      * @param param
      */
-    removePermission(param) { }
+    removePermission(param) {
+        // do nothing.
+    }
     /**
      * @ignore
      * @param name
@@ -190,12 +194,16 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
      * @ignore
      * @private
      */
-    _onNotify() { }
+    _onNotify() {
+        // do nothing.
+    }
     /**
      * @ignore
      * @private
      */
-    _onIndicate() { }
+    _onIndicate() {
+        // do nothing.
+    }
     /**
      * This sends notify to the connected central.
      *

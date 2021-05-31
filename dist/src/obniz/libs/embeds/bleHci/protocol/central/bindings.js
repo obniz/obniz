@@ -22,7 +22,9 @@ const signaling_1 = __importDefault(require("./signaling"));
 class NobleBindings extends eventemitter3_1.default {
     constructor(hciProtocol) {
         super();
-        this.debugHandler = () => { };
+        this.debugHandler = () => {
+            // do nothing.
+        };
         this._hci = hciProtocol;
         this._gap = new gap_1.default(this._hci);
         this._state = null;
@@ -276,7 +278,9 @@ class NobleBindings extends eventemitter3_1.default {
     onConnectionParameterUpdateWait(handle, minInterval, maxInterval, latency, supervisionTimeout) {
         this._hci
             .connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout)
-            .then(() => { })
+            .then(() => {
+            // do nothing.
+        })
             .catch((e) => {
             // TODO:
             // This must passed to Obniz class.

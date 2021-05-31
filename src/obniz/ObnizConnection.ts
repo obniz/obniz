@@ -6,6 +6,7 @@
 import EventEmitter from 'eventemitter3';
 import wsClient from 'ws';
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import packageJson from '../../package'; // pakcage.js will be created from package.json on build.
 import WSCommand from './libs/wscommand';
@@ -772,7 +773,7 @@ export default abstract class ObnizConnection extends EventEmitter<
     }
     this._print_debug('connecting to ' + url);
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       const release = () => {
         if (redirect) {
           this.off('_cloudConnectRedirect', redirect);
@@ -946,7 +947,9 @@ export default abstract class ObnizConnection extends EventEmitter<
   /**
    * This function will be called before obniz.onconnect called;
    */
-  protected _beforeOnConnect() {}
+  protected _beforeOnConnect() {
+    // do nothing.
+  }
 
   protected _callOnConnect() {
     this.connectionState = 'connected';
@@ -1096,7 +1099,9 @@ export default abstract class ObnizConnection extends EventEmitter<
     }
   }
 
-  protected _handleSystemCommand(wsObj: any) {}
+  protected _handleSystemCommand(wsObj: any) {
+    // do nothing.
+  }
 
   protected _binary2Json(binary: any) {
     let data = new Uint8Array(binary);

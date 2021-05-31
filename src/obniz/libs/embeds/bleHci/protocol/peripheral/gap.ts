@@ -10,7 +10,9 @@ import BleHelper from '../../bleHelper';
 /**
  * @ignore
  */
-const debug: any = () => {};
+const debug: any = () => {
+  // do nothing.
+};
 import EventEmitter from 'eventemitter3';
 import Hci from '../hci';
 

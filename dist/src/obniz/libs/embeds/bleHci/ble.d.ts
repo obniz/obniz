@@ -72,7 +72,7 @@ export default class ObnizBLE extends ComponentAbstract {
     private _initialized;
     constructor(obniz: Obniz);
     notifyFromObniz(json: any): void;
-    debugHandler: any;
+    debugHandler: (text: string) => void;
     /**
      * Initialize BLE module. You need call this first everything before.
      * This throws if device is not supported device.

@@ -89,6 +89,8 @@ class MiniBreeze {
         }
         return true;
     }
-    wired(obniz) { }
+    wired(obniz) {
+        // do nothing.
+    }
 }
 exports.default = MiniBreeze;

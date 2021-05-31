@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 /**
  * @packageDocumentation
  * @module Parts.W5500
  */
 /* eslint max-classes-per-file: 0 */
-/* eslint non-ascii: 0 */
+/* eslint rulesdir/non-ascii: 0 */
 
 import Obniz from '../../../obniz';
 import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
@@ -1760,10 +1761,12 @@ export class W5500Socket {
     switch (this.protocol) {
       case 'TCPClient':
         await this.sendCommandWait('Disconnect');
-        while ((await this.getStatusWait()) !== 'Closed') {}
+        while ((await this.getStatusWait()) !== 'Closed');
         break;
       case 'TCPServer':
         await this.sendCommandWait('Disconnect');
+        await this.sendCommandWait('Close');
+        break;
       case 'UDP':
         await this.sendCommandWait('Close');
         break;

@@ -3,7 +3,8 @@ const expect = chai.expect;
 const config = require('../config.js');
 chai.use(require('chai-like'));
 
-let obnizA, checkBoard;
+let obnizA;
+let checkBoard;
 
 describe('8-ble-exchange', function () {
   this.timeout(120000);
@@ -12,18 +13,18 @@ describe('8-ble-exchange', function () {
     await new Promise((resolve) => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
-        checkBoard = config.checkBoard; //exchange A<->B
+        checkBoard = config.checkBoard; // exchange A<->B
         resolve();
       });
     });
     await obnizA.ble.initWait();
     await checkBoard.ble.initWait();
-    let service = new obnizA.ble.service({ uuid: 'FFF0' });
-    let characteristic = new obnizA.ble.characteristic({
+    const service = new obnizA.ble.service({ uuid: 'FFF0' });
+    const characteristic = new obnizA.ble.characteristic({
       uuid: 'FFF1',
       text: 'Hi',
     });
-    let descriptor = new obnizA.ble.descriptor({
+    const descriptor = new obnizA.ble.descriptor({
       uuid: '2901',
       text: 'hello wrold characteristic',
     });
@@ -31,14 +32,14 @@ describe('8-ble-exchange', function () {
     characteristic.addProperty('write');
     characteristic.addPermission('read');
     characteristic.addPermission('write');
-    let characteristic2 = new obnizA.ble.characteristic({
+    const characteristic2 = new obnizA.ble.characteristic({
       uuid: 'FFF2',
       data: [101, 51, 214],
     });
     characteristic2.addProperty('read');
     characteristic2.addPermission('read');
 
-    let characteristic3 = new obnizA.ble.characteristic({
+    const characteristic3 = new obnizA.ble.characteristic({
       uuid: 'FFF3',
       value: 92,
       descriptors: [
@@ -53,7 +54,7 @@ describe('8-ble-exchange', function () {
     characteristic3.addProperty('write');
     characteristic3.addProperty('notify');
 
-    let characteristic4 = new obnizA.ble.characteristic({
+    const characteristic4 = new obnizA.ble.characteristic({
       uuid: 'FFF4',
       data: [0, 1, 2, 3, 4],
     });
@@ -66,13 +67,13 @@ describe('8-ble-exchange', function () {
     service.addCharacteristic(characteristic4);
 
     obnizA.ble.peripheral.addService(service);
-    let ad = service.advData;
+    const ad = service.advData;
     obnizA.ble.advertisement.setAdvData(ad);
     obnizA.ble.advertisement.start();
     // console.log('service created');
     await obnizA.pingWait();
     // console.log('scannning');
-    let peripheral = await checkBoard.ble.scan.startOneWait({
+    const peripheral = await checkBoard.ble.scan.startOneWait({
       uuids: ['FFF0'],
     });
     if (!peripheral) {
@@ -95,18 +96,18 @@ describe('8-ble-exchange', function () {
   });
 
   it('discover', async () => {
-    let services = await this.peripheral.discoverAllServicesWait();
+    const services = await this.peripheral.discoverAllServicesWait();
 
-    let results = [];
-    for (let service of services) {
-      let charas = await service.discoverAllCharacteristicsWait();
+    const results = [];
+    for (const service of services) {
+      const charas = await service.discoverAllCharacteristicsWait();
 
-      for (let chara of charas) {
+      for (const chara of charas) {
         if (chara.canRead()) {
           chara.data = await chara.readWait();
         }
-        let descrs = await chara.discoverAllDescriptorsWait();
-        for (let descr of descrs) {
+        const descrs = await chara.discoverAllDescriptorsWait();
+        for (const descr of descrs) {
           descr.data = await descr.readWait();
         }
       }
@@ -114,7 +115,7 @@ describe('8-ble-exchange', function () {
     }
 
     // remove device information (default added at ESP32)
-    let filteredResults = results.filter(
+    const filteredResults = results.filter(
       (e) => !['1801', '1800'].includes(e.uuid)
     );
     expect(filteredResults).like([
@@ -185,20 +186,20 @@ describe('8-ble-exchange', function () {
   });
 
   it('create write', async () => {
-    let chara = this.peripheral.getService('fff0').getCharacteristic('fff1');
+    const chara = this.peripheral.getService('fff0').getCharacteristic('fff1');
     expect(chara.canWrite()).to.be.equal(true);
     expect(chara.canWriteWithoutResponse()).to.be.equal(false);
     expect(chara.canRead()).to.be.equal(true);
     expect(chara.canNotify()).to.be.equal(false);
     expect(chara.canIndicate()).to.be.equal(false);
-    let result = await chara.writeTextWait('hello');
+    const result = await chara.writeTextWait('hello');
     expect(result).to.be.equal(true);
-    let data = await chara.readWait();
+    const data = await chara.readWait();
     expect(data).to.be.deep.equal([104, 101, 108, 108, 111]);
   });
 
   it('create write error', async () => {
-    let chara = this.peripheral.getService('fff0').getCharacteristic('fff2');
+    const chara = this.peripheral.getService('fff0').getCharacteristic('fff2');
     expect(chara.canWrite()).to.be.equal(false);
     expect(chara.canWriteWithoutResponse()).to.be.equal(false);
     expect(chara.canRead()).to.be.equal(true);
@@ -213,7 +214,7 @@ describe('8-ble-exchange', function () {
     }
     expect(isErrored).to.be.equal(true);
     // console.log('read');
-    let data = await chara.readWait();
+    const data = await chara.readWait();
     expect(data).to.be.deep.equal([101, 51, 214]);
     // console.log('finished');
   });
@@ -234,7 +235,7 @@ describe('8-ble-exchange', function () {
   it('nofify', async () => {
     // console.log('start!');
     let notifyed = false;
-    let targetChara = this.peripheral
+    const targetChara = this.peripheral
       .getService('FFF0')
       .getCharacteristic('FFF3');
     expect(targetChara.canWrite()).to.be.equal(true);
@@ -243,9 +244,9 @@ describe('8-ble-exchange', function () {
     expect(targetChara.canNotify()).to.be.equal(true);
     expect(targetChara.canIndicate()).to.be.equal(false);
 
-    let p1 = new Promise((resolve) => {
+    const p1 = new Promise((resolve) => {
       (async () => {
-        await targetChara.registerNotifyWait(function (data) {
+        await targetChara.registerNotifyWait((data) => {
           // console.log('notify!' + data.join(','));
           if (data.length === 1 && data[0] === 92) {
             notifyed = true;
@@ -259,8 +260,8 @@ describe('8-ble-exchange', function () {
         this.service.getCharacteristic('FFF3').notify();
       })();
     });
-    let p2 = new Promise(function (resolve) {
-      setTimeout(function () {
+    const p2 = new Promise((resolve) => {
+      setTimeout(() => {
         // console.log('timeout!');
         resolve();
       }, 20000);
@@ -270,17 +271,17 @@ describe('8-ble-exchange', function () {
   });
 
   it('unknown service error', async () => {
-    let service = this.peripheral.getService('FF00');
+    const service = this.peripheral.getService('FF00');
     expect(service).to.be.null;
   });
 
   it('unknown char error', async () => {
-    let char = this.peripheral.getService('FFF0').getCharacteristic('FF00');
+    const char = this.peripheral.getService('FFF0').getCharacteristic('FF00');
     expect(char).to.be.null;
   });
 
   it('unknown desc error', async () => {
-    let desc = this.peripheral
+    const desc = this.peripheral
       .getService('fff0')
       .getCharacteristic('fff1')
       .getDescriptor('2902');
@@ -288,7 +289,7 @@ describe('8-ble-exchange', function () {
   });
 
   it('close', async () => {
-    let p = new Promise((resolve) => {
+    const p = new Promise((resolve) => {
       obnizA.ble.peripheral.onconnectionupdates = (data) => {
         // console.log('onconnectionupdates ' + data);
         if (data.status === 'disconnected') {

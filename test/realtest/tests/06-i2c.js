@@ -2,12 +2,14 @@ const chai = require('chai');
 const expect = chai.expect;
 const config = require('../config.js');
 
-let obnizA, checkBoard, check_io;
+let obnizA;
+let checkBoard;
+let check_io;
 
 describe('6-i2c', function () {
   this.timeout(10000);
 
-  before(function () {
+  before(() => {
     return new Promise((resolve) => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
@@ -26,7 +28,7 @@ describe('6-i2c', function () {
     }
   });
 
-  it('1k data', async function () {
+  it('1k data', async () => {
     const sender = obnizA.getFreeI2C();
     sender.start({
       mode: 'master',
@@ -47,14 +49,14 @@ describe('6-i2c', function () {
     });
     await checkBoard.pingWait();
 
-    let data = [];
+    const data = [];
     for (let i = 0; i < 1024; i++) {
       data.push(i % 256);
     }
     sender.write(0x50, data);
 
-    let received = [];
-    receiver.onwritten = function (arrived) {
+    const received = [];
+    receiver.onwritten = (arrived) => {
       received.push(...arrived);
     };
 
@@ -63,13 +65,13 @@ describe('6-i2c', function () {
         expect(received).to.deep.equal(data);
         break;
       }
-      await wait(1); //wait for 10ms
+      await wait(1); // wait for 10ms
     }
     receiver.end();
     sender.end();
   });
 
-  it('1k data again', async function () {
+  it('1k data again', async () => {
     const sender = obnizA.getFreeI2C();
     sender.start({
       mode: 'master',
@@ -90,14 +92,14 @@ describe('6-i2c', function () {
     });
     await checkBoard.pingWait();
 
-    let data = [];
+    const data = [];
     for (let i = 0; i < 1024; i++) {
       data.push(i % 256);
     }
     sender.write(0x50, data);
 
-    let received = [];
-    receiver.onwritten = function (arrived) {
+    const received = [];
+    receiver.onwritten = (arrived) => {
       received.push(...arrived);
     };
 
@@ -106,13 +108,13 @@ describe('6-i2c', function () {
         expect(received).to.deep.equal(data);
         break;
       }
-      await wait(1); //wait for 10ms
+      await wait(1); // wait for 10ms
     }
     receiver.end();
     sender.end();
   });
 
-  it('1k data counter direction', async function () {
+  it('1k data counter direction', async () => {
     const sender = checkBoard.getFreeI2C();
     sender.start({
       mode: 'master',
@@ -133,14 +135,14 @@ describe('6-i2c', function () {
     });
     await obnizA.pingWait();
 
-    let data = [];
+    const data = [];
     for (let i = 0; i < 1024; i++) {
       data.push(i % 256);
     }
     sender.write(0x50, data);
 
-    let received = [];
-    receiver.onwritten = function (arrived) {
+    const received = [];
+    receiver.onwritten = (arrived) => {
       received.push(...arrived);
     };
 
@@ -149,7 +151,7 @@ describe('6-i2c', function () {
         expect(received).to.deep.equal(data);
         break;
       }
-      await wait(1); //wait for 10ms
+      await wait(1); // wait for 10ms
     }
     receiver.end();
     sender.end();
@@ -160,8 +162,8 @@ describe('6-i2c', function () {
   });
 });
 
-function wait(ms) {
+const wait = (ms) => {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
-}
+};

@@ -16,7 +16,7 @@ const ts = require('gulp-typescript');
 const app = express();
 const port = 3100;
 
-gulp.task('server', function jsonSchemaForVar() {
+gulp.task('server', () => {
   app.get('/', (request, response) => {
     response.send('Hello from Express!');
   });
@@ -56,13 +56,13 @@ if (!tv4Path) {
 
 const tsProject = ts.createProject(tsConfigPath);
 
-gulp.task('jsonSchemaDoc', function jsonSchemaForVar(callback) {
+gulp.task('jsonSchemaDoc', (callback) => {
   const baseSchemaSrcPath = path.join(
     __dirname,
     '../../src/json_schema/index.yml'
   );
 
-  let list = [
+  const list = [
     'ws',
     'system',
     'io',
@@ -84,10 +84,10 @@ gulp.task('jsonSchemaDoc', function jsonSchemaForVar(callback) {
     'debug',
   ];
 
-  let wait_max = list.length * 2;
+  const wait_max = list.length * 2;
   let wait_count = 0;
 
-  function onEnd(one) {
+  const onEnd = (one) => {
     wait_count++;
 
     console.log(`jsonSchemaDoc compiled! ${wait_count}/${wait_max}  : ${one} `);
@@ -95,9 +95,9 @@ gulp.task('jsonSchemaDoc', function jsonSchemaForVar(callback) {
     if (wait_max === wait_count) {
       callback();
     }
-  }
+  };
 
-  for (let one of list) {
+  for (const one of list) {
     const srcPath = path.join(
       __dirname,
       '../../src/json_schema/*/' + one + '/*.yml'
@@ -120,7 +120,7 @@ gulp.task('jsonSchemaDoc', function jsonSchemaForVar(callback) {
       )
       .pipe(rename('websocket/' + one.replace('/', '_') + '.md'))
       .pipe(gulp.dest(docPath))
-      .on('end', function () {
+      .on('end', () => {
         onEnd(one);
       });
 
@@ -141,13 +141,13 @@ gulp.task('jsonSchemaDoc', function jsonSchemaForVar(callback) {
       )
       .pipe(rename('websocket/' + one.replace('/', '_') + '-ja.md'))
       .pipe(gulp.dest(docPath))
-      .on('end', function () {
+      .on('end', () => {
         onEnd(one + '-ja');
       });
   }
 });
 
-gulp.task('tsc:copy:statics', function (done) {
+gulp.task('tsc:copy:statics', (done) => {
   return gulp
     .src([
       path.join(__dirname, '../../src/**/*.yml'),
@@ -155,13 +155,13 @@ gulp.task('tsc:copy:statics', function (done) {
       path.join(__dirname, '../../src/**/*.css'),
     ])
     .pipe(gulp.dest(path.join(__dirname, '../../dist/src')))
-    .on('end', function () {
+    .on('end', () => {
       console.log('static file copy compiled!');
       done();
     });
 });
 
-gulp.task('tsc:copy:package.json', function (done) {
+gulp.task('tsc:copy:package.json', (done) => {
   return gulp
     .src([path.join(__dirname, '../../package.json')])
     .pipe(
@@ -171,7 +171,7 @@ gulp.task('tsc:copy:package.json', function (done) {
       })
     )
     .pipe(gulp.dest(path.join(__dirname, '../../dist')))
-    .on('end', function () {
+    .on('end', () => {
       console.log('static file copy compiled!');
       done();
     });
@@ -181,12 +181,12 @@ gulp.task(
   gulp.parallel('tsc:copy:statics', 'tsc:copy:package.json')
 );
 
-gulp.task('tsc:compile', function (done) {
+gulp.task('tsc:compile', (done) => {
   return tsProject
     .src()
     .pipe(tsProject())
     .pipe(gulp.dest('dist'))
-    .on('end', function () {
+    .on('end', () => {
       console.log('tsc compiled!');
       done();
     });
@@ -194,7 +194,7 @@ gulp.task('tsc:compile', function (done) {
 
 gulp.task('tsc', gulp.parallel('tsc:compile', 'tsc:copy'));
 
-gulp.task('obniz.js', function obnizJsBuild(done) {
+gulp.task('obniz.js', (done) => {
   const webpackConfig = require('../webpack.config.js');
   return gulp
     .src(obnizMain)
@@ -202,7 +202,7 @@ gulp.task('obniz.js', function obnizJsBuild(done) {
     .pipe(webpackStream(webpackConfig, webpack))
     .pipe(rename('obniz.js'))
     .pipe(gulp.dest(path.join(__dirname, '../../')))
-    .on('end', function () {
+    .on('end', () => {
       console.log('obniz.js compiled!');
       done();
     });
@@ -222,20 +222,20 @@ gulp.task('obniz.js', function obnizJsBuild(done) {
 //     });
 // });
 
-gulp.task('readMe', function readMeBuild(done) {
+gulp.task('readMe', (done) => {
   return gulp
     .src(path.join(partsPath, '/**/README*.ejs'))
     .pipe(plumber({ errorHandler: reportError }))
     .pipe(gulp_ejs())
     .pipe(rename({ extname: '.md' }))
     .pipe(gulp.dest(partsPath))
-    .on('end', function () {
+    .on('end', () => {
       console.log('ejs compiled!');
       done();
     });
 });
 
-function reportError(error) {
+const reportError = (error) => {
   let report = '';
   report += 'TASK:' + ' [' + error.plugin + ']\n';
   report += 'MESSAGE:' + ' ' + error.message + '\n';
@@ -246,7 +246,7 @@ function reportError(error) {
     report += 'LINE:' + ' ' + error.lineNumber + '\n';
   }
   console.error(report);
-}
+};
 
 gulp.task('watch', () => {
   gulp.watch([schemaSrcPath], gulp.task('jsonSchemaDoc'));

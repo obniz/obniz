@@ -4,8 +4,7 @@
  */
 import ObnizPartsInterface, { ObnizPartsInfo } from '../../../../obniz/ObnizPartsInterface';
 import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from '../../../i2cParts';
-export interface DHT12Options extends I2cPartsAbstractOptions {
-}
+export declare type DHT12Options = I2cPartsAbstractOptions;
 export default class DHT12 extends i2cParts implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     i2cinfo: I2cInfo;

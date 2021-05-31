@@ -9,7 +9,6 @@ export default class LinkingServiceProperty {
     MESSAGE_NAME_MAP: any;
     private _WRITE_MESSAGE_ID_MAP;
     private _device;
-    constructor();
     setDeviceInfo(info: any): void;
     parsePayload(pnum: any, buf: any): any[];
     _parseParameter(pid: any, buf: any): any;

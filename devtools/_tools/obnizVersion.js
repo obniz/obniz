@@ -1,12 +1,13 @@
-let through = require('through2');
-let PluginError = require('plugin-error');
-let PLUGIN_NAME = 'obnizVersion';
+const through = require('through2');
+const PluginError = require('plugin-error');
+const PLUGIN_NAME = 'obnizVersion';
 
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
 module.exports = function () {
   /**
    * @this {Transform}
    */
-  let transform = function (file, encoding, callback) {
+  const transform = function (file, encoding, callback) {
     if (file.isNull()) {
       this.push(file);
       return callback(null, file);
@@ -21,9 +22,9 @@ module.exports = function () {
     }
 
     if (file.isBuffer()) {
-      let contents = String(file.contents);
+      const contents = String(file.contents);
 
-      let packageJson = JSON.parse(contents);
+      const packageJson = JSON.parse(contents);
       let output = '';
       if (packageJson.version) {
         output = `var _obniz_js_version = "${packageJson.version}";\n`;

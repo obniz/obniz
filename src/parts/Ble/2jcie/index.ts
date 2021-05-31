@@ -99,44 +99,44 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     if (peripheral.localName && peripheral.localName.indexOf('IM') >= 0) {
       return {
         temperature:
-          ObnizPartsBleInterface.signed16FromBinary(adv_data[8], adv_data[9]) *
+          ObnizPartsBleInterface.signed16FromBinary(adv_data[9], adv_data[8]) *
           0.01,
         relative_humidity:
           ObnizPartsBleInterface.signed16FromBinary(
-            adv_data[10],
-            adv_data[11]
+            adv_data[11],
+            adv_data[10]
           ) * 0.01,
         light:
           ObnizPartsBleInterface.signed16FromBinary(
-            adv_data[12],
-            adv_data[13]
+            adv_data[13],
+            adv_data[12]
           ) * 1,
         uv_index:
           ObnizPartsBleInterface.signed16FromBinary(
-            adv_data[14],
-            adv_data[15]
+            adv_data[15],
+            adv_data[14]
           ) * 0.01,
         barometric_pressure:
           ObnizPartsBleInterface.signed16FromBinary(
-            adv_data[16],
-            adv_data[17]
+            adv_data[17],
+            adv_data[16]
           ) * 0.1,
         sound_noise:
           ObnizPartsBleInterface.signed16FromBinary(
-            adv_data[18],
-            adv_data[19]
+            adv_data[19],
+            adv_data[18]
           ) * 0.01,
         acceleration_x: ObnizPartsBleInterface.signed16FromBinary(
-          adv_data[20],
-          adv_data[21]
+          adv_data[21],
+          adv_data[20]
         ),
         acceleration_y: ObnizPartsBleInterface.signed16FromBinary(
-          adv_data[22],
-          adv_data[23]
+          adv_data[23],
+          adv_data[22]
         ),
         acceleration_z: ObnizPartsBleInterface.signed16FromBinary(
-          adv_data[24],
-          adv_data[25]
+          adv_data[25],
+          adv_data[24]
         ),
         battery: (adv_data[26] + 100) / 100,
       };

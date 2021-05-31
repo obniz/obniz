@@ -13,6 +13,21 @@ export interface IBS01Options {}
 export interface IBS01_Data {
   battery: number;
   button: boolean;
+
+  /**
+   * @deprecated use iBS01H library
+   */
+  moving: boolean;
+
+  /**
+   * @deprecated use iBS01H or iBS01G library
+   */
+  hall_sensor: boolean;
+
+  /**
+   * @deprecated use iBS01G library
+   */
+  fall: boolean;
 }
 
 export default class IBS01 implements ObnizPartsBleInterface {
@@ -22,15 +37,22 @@ export default class IBS01 implements ObnizPartsBleInterface {
     };
   }
 
-  public static isDevice(peripheral: BleRemotePeripheral): boolean {
-    if (this.deviceAdv.length > peripheral.adv_data.length) {
+  public static isDevice(
+    peripheral: BleRemotePeripheral,
+    strictCheck = false
+  ): boolean {
+    const deviceAdv = [...this.deviceAdv];
+    if (strictCheck) {
+      deviceAdv[18] = 0x03;
+    }
+    if (deviceAdv.length > peripheral.adv_data.length) {
       return false;
     }
-    for (let index = 0; index < this.deviceAdv.length; index++) {
-      if (this.deviceAdv[index] === -1) {
+    for (let index = 0; index < deviceAdv.length; index++) {
+      if (deviceAdv[index] === -1) {
         continue;
       }
-      if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+      if (peripheral.adv_data[index] === deviceAdv[index]) {
         continue;
       }
       return false;
@@ -43,17 +65,32 @@ export default class IBS01 implements ObnizPartsBleInterface {
     );
   }
 
-  public static getData(peripheral: BleRemotePeripheral): IBS01_Data | null {
-    if (!IBS01.isDevice(peripheral)) {
+  public static getData(
+    peripheral: BleRemotePeripheral,
+    strictCheck?: boolean
+  ): IBS01_Data | null {
+    if (!IBS01.isDevice(peripheral, strictCheck)) {
       return null;
     }
     const data: IBS01_Data = {
       battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
       button: false,
+      moving: false,
+      hall_sensor: false,
+      fall: false,
     };
 
     if (peripheral.adv_data[11] & 0b0001) {
       data.button = true;
+    }
+    if (peripheral.adv_data[11] & 0b0010) {
+      data.moving = true;
+    }
+    if (peripheral.adv_data[11] & 0b0100) {
+      data.hall_sensor = true;
+    }
+    if (peripheral.adv_data[11] & 0b1000) {
+      data.fall = true;
     }
     return data;
   }
@@ -77,13 +114,11 @@ export default class IBS01 implements ObnizPartsBleInterface {
     -1, // reserved
     -1, // reserved
     -1, // reserved
-    0x03, // subtype
+    -1, // subtype will be 0x03, but ignore for compatibility. Use 0x03 if set strictCheck.
     -1, // reserved
     -1, // reserved
     -1, // reserved
   ];
 
   public _peripheral: BleRemotePeripheral | null = null;
-
-  constructor() {}
 }

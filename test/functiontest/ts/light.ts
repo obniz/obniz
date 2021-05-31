@@ -90,7 +90,7 @@ class FullColorLED {
     };
   }
 
-  public async stopgradation() {
+  public async stopgradationWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
       const led = obniz.wired('FullColorLED', {

@@ -186,6 +186,7 @@ export default class SharpMemoryTFT implements ObnizPartsInterface {
     }
     if (this.obniz.isNode) {
       try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
         const { createCanvas } = require('canvas');
         this._canvas = createCanvas(this.width, this.height);
       } catch (e) {

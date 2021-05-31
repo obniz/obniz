@@ -3,7 +3,9 @@ const expect = chai.expect;
 
 const config = require('../config.js');
 
-let checkBoard, check_output_io, check_input_io;
+let checkBoard;
+let check_output_io;
+let check_input_io;
 describe('0-ad', function () {
   this.timeout(15000);
 
@@ -75,15 +77,22 @@ describe('0-ad', function () {
   });
 });
 
-async function ioInRangeWait(out_dev, out_io, in_dev, in_io, out_val, range) {
+const ioInRangeWait = async (
+  out_dev,
+  out_io,
+  in_dev,
+  in_io,
+  out_val,
+  range
+) => {
   out_dev.getIO(out_io).end();
   out_dev.getIO(out_io).drive('3v');
   out_dev.getIO(out_io).output(out_val);
   await out_dev.pingWait();
-  let voltage = await in_dev.getAD(in_io).getWait();
+  const voltage = await in_dev.getAD(in_io).getWait();
   expect(
     voltage,
     `expected io${out_io} -> io${in_io} ${voltage} is ${range[0]} ~ ${range[1]}`
   ).to.be.within(range[0], range[1]);
   out_dev.getIO(out_io).end();
-}
+};

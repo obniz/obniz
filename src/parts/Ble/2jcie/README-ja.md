@@ -1,7 +1,7 @@
 # 2JCIE
 OMRON社製の環境センサです。電池で動作し、温度、湿度、照度、UV、気圧、騒音、加速度、VOCを計測できます。
 
-2JCIE-BU01(バッグ形状)と2JCIE-BL01(USB接続)の2種類の形状が存在します(加えてそれぞれにモードが存在します)。それぞれ取得できるデータや対応する関数が異なっているため、ご確認の上お使いください。
+2JCIE-BL01(バッグ形状)と2JCIE-BU01(USB接続)の2種類の形状が存在します(加えてそれぞれにモードが存在します)。それぞれ取得できるデータや対応する関数が異なっているため、ご確認の上お使いください。
 
 ![](image.jpg)
 
@@ -27,7 +27,7 @@ await obniz.ble.scan.startWait();
 advertisementからデータを取得(そのようにモード設定されたデバイスのみ発信しています)
 デバイスの種類により取得できる値が異なります。デバイスの設定でも変更が可能です。
 
-2JCIE-BU01(バッグ形状)の`IM`というlocalNameを持つadvertisementの場合
+2JCIE-BL01(バッグ形状)の`IM`というlocalNameを持つadvertisementの場合
 
 - temperature: 温度(degC)
 - relative_humidity: 湿度(%RH)
@@ -40,7 +40,7 @@ advertisementからデータを取得(そのようにモード設定されたデ
 - acceleration_z: 加速度
 - battery: バッテリー電圧(V)
 
-2JCIE-BL01(USB接続)の`Rbt`というlocalNameを持つadvertisementの場合
+2JCIE-BU01(USB接続)の`Rbt`というlocalNameを持つadvertisementの場合
 
 - temperature: 温度(degC)
 - relative_humidity: 湿度(%RH)
@@ -100,8 +100,8 @@ if(results){
 センサに接続します。自動的にデバイスを検索しますが、見つからなかった場合はエラーをthrowします。  
 以下の形状&モードに対応しています。
 
-* 2JCIE-BU01(バッグ形状)の`Env`というlocalNameを持つモード
-* 2JCIE-BL01(USB接続)の`Rbt`というlocalNameを持つモード
+* 2JCIE-BL01(バッグ形状)の`Env`というlocalNameを持つモード
+* 2JCIE-BU01(USB接続)の`Rbt`というlocalNameを持つモード
 
 ```javascript
 // Javascript Example
@@ -149,7 +149,7 @@ if(results){
 
 
 ## [await]getLatestDataWait()
-2JCIE-BU01(バッグ形状)のセンサの最新のデータを取得します。
+2JCIE-BL01(バッグ形状)のセンサの最新のデータを取得します。
 
 ```javascript
 // Javascript Example
@@ -192,7 +192,7 @@ if(results){
 ```
 
 ## [await]getLatestSensorDataUSBWait()
-2JCIE-BL01(USB接続)のセンサの最新の値データを取得します。
+2JCIE-BU01(USB接続)のセンサの最新の値データを取得します。
 
 ```javascript
 // Javascript Example
@@ -234,7 +234,7 @@ if(results){
 
 
 ## [await]getLatestCalculationDataUSBWait()
-2JCIE-BL01(USB接続)のセンサの最新の指標データや加速度データを取得します。
+2JCIE-BU01(USB接続)のセンサの最新の指標データや加速度データを取得します。
 
 ```javascript
 // Javascript Example

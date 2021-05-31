@@ -109,7 +109,9 @@ class PeripheralGrove extends ComponentAbstact_1.ComponentAbstract {
     /**
      * @ignore
      */
-    _reset() { }
+    _reset() {
+        // do nothing.
+    }
     end() {
         this.used = false;
         if (this._current.uart) {

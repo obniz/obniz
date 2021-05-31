@@ -26,8 +26,6 @@ export default class LinkingServiceProperty {
   };
   private _device: any = {};
 
-  constructor() {}
-
   public setDeviceInfo(info: any) {
     this._device = info;
   }
@@ -46,7 +44,9 @@ export default class LinkingServiceProperty {
         offset += plen;
         parameters.push(this._parseParameter(pid, pvalue_buf));
       }
-    } catch (e) {}
+    } catch (e) {
+      // do nothing.
+    }
     return parameters;
   }
 

@@ -54,7 +54,9 @@ export default class AclStream extends EventEmitter<AclStreamEventTypes> {
     this._smp.on('end', this.onSmpEndBinded);
   }
 
-  public debugHandler: any = () => {};
+  public debugHandler: any = () => {
+    // do nothing.
+  };
 
   public async encryptWait(options?: any) {
     const encrpytResult = await this._smp.pairingWait(options);
@@ -130,7 +132,9 @@ export default class AclStream extends EventEmitter<AclStreamEventTypes> {
     this._smp.removeListener('end', this.onSmpEndBinded);
   }
 
-  public startEncrypt(option: any) {}
+  public startEncrypt(option: any) {
+    // do nothing.
+  }
 
   private debug(text: any) {
     this.debugHandler(`AclStream: ${text}`);

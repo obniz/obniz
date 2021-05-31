@@ -8,30 +8,30 @@
  * ASCII characters.
  */
 
-let ASCII_REGEXP = new RegExp('([^\x00-\x7F]+)', 'g'); // eslint-disable-line no-control-regex
+const ASCII_REGEXP = new RegExp('([^\x00-\x7F]+)', 'g'); // eslint-disable-line no-control-regex
 
 /**
  * Allowed types of token for non-ASCII characters.
  */
-let ALLOWED_TOKENS = []; //['RegularExpression', 'String'];
+const ALLOWED_TOKENS = []; // ['RegularExpression', 'String'];
 
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 // Rule Definition
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 
-module.exports = function (context) {
-  let configuration = context.options[0] || {};
-  let allowedChars = configuration.allowedChars || '';
-  let allowedCharsRegExp = new RegExp('[' + allowedChars + ']+', 'g');
+module.exports = (context) => {
+  const configuration = context.options[0] || {};
+  const allowedChars = configuration.allowedChars || '';
+  const allowedCharsRegExp = new RegExp('[' + allowedChars + ']+', 'g');
 
-  function check(token) {
-    let errors = [];
+  const check = (token) => {
+    const errors = [];
 
     if (ALLOWED_TOKENS.indexOf(token.type) !== -1) {
       return;
     }
-    let value = token.value;
-    let matches = value.replace(allowedCharsRegExp, '').match(ASCII_REGEXP);
+    const value = token.value;
+    const matches = value.replace(allowedCharsRegExp, '').match(ASCII_REGEXP);
     if (matches) {
       errors.push({
         line: token.loc.start.line,
@@ -40,28 +40,28 @@ module.exports = function (context) {
       });
     }
     return errors;
-  }
+  };
 
   return {
-    Program: function checkForForbiddenCharacters(node) {
-      let errors = [];
+    Program: (node) => {
+      const errors = [];
 
-      let sourceCode = context.getSourceCode();
-      let tokens = sourceCode.getTokens(node);
-      tokens.forEach(function (token) {
-        let results = check(token);
+      const sourceCode = context.getSourceCode();
+      const tokens = sourceCode.getTokens(node);
+      tokens.forEach((token) => {
+        const results = check(token);
         errors.push(...results);
       });
 
       if (ALLOWED_TOKENS.indexOf('Comment') === -1) {
-        let tokens = sourceCode.getAllComments();
-        tokens.forEach(function (token) {
-          let results = check(token);
+        const tokens = sourceCode.getAllComments();
+        tokens.forEach((token) => {
+          const results = check(token);
           errors.push(...results);
         });
       }
 
-      errors.forEach(function (error) {
+      errors.forEach((error) => {
         context.report(
           node,
           {

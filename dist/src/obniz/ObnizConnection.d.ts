@@ -353,7 +353,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     protected wsOnError(event: any): void;
     protected wsOnUnexpectedResponse(req: any, res?: any): void;
     protected tryWsConnectOnceWait(desired_server?: string): Promise<void>;
-    protected _connectCloudWait(desired_server?: string): Promise<unknown>;
+    protected _connectCloudWait(desired_server?: string): Promise<void>;
     protected _createCloudSocket(url: string): wsClient;
     protected _connectLocalWait(): Promise<unknown> | undefined;
     protected _disconnectLocal(): void;

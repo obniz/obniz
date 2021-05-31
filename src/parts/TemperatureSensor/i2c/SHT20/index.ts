@@ -10,7 +10,7 @@ import ObnizPartsInterface, {
 } from '../../../../obniz/ObnizPartsInterface';
 import { I2cPartsAbstractOptions } from '../../../i2cParts';
 
-export interface SHT20Options extends I2cPartsAbstractOptions {}
+export type SHT20Options = I2cPartsAbstractOptions;
 
 export default class SHT20 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {

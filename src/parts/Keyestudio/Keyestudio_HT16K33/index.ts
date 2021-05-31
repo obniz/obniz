@@ -9,7 +9,7 @@ import MatrixLED_HT16K33, {
   MatrixLED_HT16K33Options,
 } from '../../Display/MatrixLED_HT16K33';
 
-export interface Keyestudio_HT16K33Options extends MatrixLED_HT16K33Options {}
+export type Keyestudio_HT16K33Options = MatrixLED_HT16K33Options;
 
 export default class Keyestudio_HT16K33 extends MatrixLED_HT16K33 {
   public static info(): ObnizPartsInfo {

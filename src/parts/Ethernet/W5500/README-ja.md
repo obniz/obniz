@@ -8,12 +8,12 @@ W5500には1つのRJ-45コネクタを接続でき、最大100Mbpsでの通信�
 まず始めにW5500のピンアサインを指定して、wiredメソッドに渡してください。
 
 ```javascript
-var ethernet = obniz.wired('W5500', { reset: 12, mosi: 23, miso: 19, sclk: 18, cs: 33 });
+var ethernet = obniz.wired('W5500', { reset: 12, mosi: 23, miso: 19, clk: 18, cs: 33 });
 ```
 
 M5社の出しているW5500スタックの場合は以下の配線となります。(なおSPIがディスプレイと共有のため、obnizOS for M5Stackでなく obnizOS for esp32を利用する必要があります)
 ```javascript
-var ethernet = obniz.wired('W5500', { reset: 13, mosi: 23, miso: 19, sclk: 18, cs: 26 });
+var ethernet = obniz.wired('W5500', { reset: 13, mosi: 23, miso: 19, clk: 18, cs: 26 });
 ```
 
 
@@ -113,7 +113,7 @@ await ethernet.waitLinkUpWait();
 ## TCP(クライアント)でHTTP通信
 
 ```javascript
-var ethernet = obniz.wired('W5500', { reset: 12, mosi: 23, miso: 19, sclk: 18, cs: 33 });
+var ethernet = obniz.wired('W5500', { reset: 12, mosi: 23, miso: 19, clk: 18, cs: 33 });
 console.log('開始');
 await ethernet.initWait({
   gatewayIP: '192.168.8.1',
@@ -158,7 +158,7 @@ while (await ethernet.checkInterruptWait());
 ## UDPでNTP通信(あくまで動作確認のみ)
 
 ```javascript
-var ethernet = obniz.wired('W5500', { reset: 12, mosi: 23, miso: 19, sclk: 18, cs: 33 });
+var ethernet = obniz.wired('W5500', { reset: 12, mosi: 23, miso: 19, clk: 18, cs: 33 });
 console.log('開始');
 await ethernet.initWait({
   gatewayIP: '192.168.8.1',

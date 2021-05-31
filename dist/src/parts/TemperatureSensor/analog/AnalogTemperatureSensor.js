@@ -21,7 +21,9 @@ class AnalogTemperatureSensor {
         this.temp = this.calc(voltage);
         return this.temp;
     }
-    onchange(temp) { }
+    onchange(temp) {
+        // do nothing.
+    }
     calc(voltage) {
         return 0;
     }

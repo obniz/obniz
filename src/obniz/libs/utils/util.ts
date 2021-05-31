@@ -49,6 +49,7 @@ class ObnizUtil {
   public static dataArray2string(data: number[]): string | null {
     let string: any = null;
     try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const StringDecoder: any = require('string_decoder').StringDecoder;
       if (StringDecoder) {
         string = new StringDecoder('utf8').write(Buffer.from(data));
@@ -132,6 +133,7 @@ class ObnizUtil {
   public createCanvasContext(width: number, height: number) {
     if (this.obniz.isNode) {
       try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
         const { createCanvas } = require('canvas');
         const canvas = createCanvas(width, height);
         const ctx: any = canvas.getContext('2d');

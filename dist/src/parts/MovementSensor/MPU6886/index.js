@@ -31,5 +31,8 @@ class MPU6886 extends MPU6050_1.default {
         this.obniz.wait(1);
         this.write(MPU6050_1.default.commands.accel_config2, 0x00);
     }
+    _reset() {
+        // do nothing.
+    }
 }
 exports.default = MPU6886;

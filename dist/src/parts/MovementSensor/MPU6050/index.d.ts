@@ -6,8 +6,7 @@ import Obniz from '../../../obniz';
 import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 import I2cImu6, { accelRange, gyroRange, I2cImu6AbstractOptions, Inertia6, Xyz } from '../../i2cImu6';
 import { I2cInfo } from '../../i2cParts';
-export interface MPU6050Options extends I2cImu6AbstractOptions {
-}
+export declare type MPU6050Options = I2cImu6AbstractOptions;
 export default class MPU6050 extends I2cImu6 {
     static info(): ObnizPartsInfo;
     protected static commands: any;

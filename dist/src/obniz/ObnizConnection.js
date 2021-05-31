@@ -9,6 +9,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const ws_1 = __importDefault(require("ws"));
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const package_1 = __importDefault(require("../../package")); // pakcage.js will be created from package.json on build.
 const wscommand_1 = __importDefault(require("./libs/wscommand"));
@@ -673,7 +674,9 @@ class ObnizConnection extends eventemitter3_1.default {
     /**
      * This function will be called before obniz.onconnect called;
      */
-    _beforeOnConnect() { }
+    _beforeOnConnect() {
+        // do nothing.
+    }
     _callOnConnect() {
         this.connectionState = 'connected';
         const currentTime = new Date().getTime();
@@ -808,7 +811,9 @@ class ObnizConnection extends eventemitter3_1.default {
             this.emit('_cloudConnectRedirect', host);
         }
     }
-    _handleSystemCommand(wsObj) { }
+    _handleSystemCommand(wsObj) {
+        // do nothing.
+    }
     _binary2Json(binary) {
         let data = new Uint8Array(binary);
         const json = [];

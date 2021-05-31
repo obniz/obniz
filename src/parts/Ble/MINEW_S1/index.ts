@@ -165,5 +165,7 @@ export default class MINEW_S1 implements ObnizPartsBleInterface {
   public requiredKeys: string[] = [];
   public params: any = {};
 
-  public wired(obniz: Obniz): void {}
+  public wired(obniz: Obniz): void {
+    // do nothing.
+  }
 }

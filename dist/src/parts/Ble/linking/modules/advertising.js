@@ -212,6 +212,5 @@ class LinkingAdvertising {
         res.serviceId = service_id;
         return res;
     }
-    constructor() { }
 }
 exports.default = LinkingAdvertising;

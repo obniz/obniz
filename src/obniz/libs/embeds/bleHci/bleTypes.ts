@@ -109,4 +109,5 @@ export interface BleServiceDefine {
   characteristics?: (BleCharacteristicDefine | BleCharacteristic)[];
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface BlePeripheralDefine {}

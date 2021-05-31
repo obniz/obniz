@@ -5,8 +5,7 @@
 import Obniz from '../../../obniz';
 import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 import { I2cPartsAbstractOptions } from '../../../parts/i2cParts';
-export interface AXP192Options extends I2cPartsAbstractOptions {
-}
+export declare type AXP192Options = I2cPartsAbstractOptions;
 export default class AXP192 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     requiredKeys: string[];

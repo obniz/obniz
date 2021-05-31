@@ -180,7 +180,8 @@ export default class ObnizBLE extends ComponentAbstract {
     }
   }
 
-  public debugHandler: any = () => {};
+  // eslint-disable-next-line
+  public debugHandler = (text: string): void => {};
 
   /**
    * Initialize BLE module. You need call this first everything before.
@@ -407,7 +408,9 @@ export default class ObnizBLE extends ComponentAbstract {
     return 'ble';
   }
 
-  protected onStateChange() {}
+  protected onStateChange() {
+    // do nothing.
+  }
 
   protected findPeripheral(address: BleDeviceAddress) {
     for (const key in this.remotePeripherals) {
@@ -532,7 +535,7 @@ export default class ObnizBLE extends ComponentAbstract {
     }
   }
 
-  private debug(text: any) {
+  private debug(text: string) {
     this.debugHandler(text);
   }
 }

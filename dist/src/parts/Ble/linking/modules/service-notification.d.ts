@@ -19,7 +19,6 @@ export default class LinkingServiceNotification {
     private _WRITE_MESSAGE_ID_MAP;
     private _NOTIFY_CATEGORY_NAME_ID_MAP;
     private _device;
-    constructor();
     setDeviceInfo(info: any): void;
     parsePayload(pnum: any, buf: any): any[];
     _parseParameter(pid: any, buf: any, notify_cateogory_id?: any): any;

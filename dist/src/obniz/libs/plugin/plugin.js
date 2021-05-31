@@ -51,7 +51,9 @@ class Plugin {
      * @ignore
      * @private
      */
-    _reset() { }
+    _reset() {
+        // do nothing.
+    }
     /**
      * @ignore
      * @param obj

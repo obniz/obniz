@@ -6,8 +6,7 @@ import Obniz from '../../../../obniz';
 import PeripheralI2C from '../../../../obniz/libs/io_peripherals/i2c';
 import ObnizPartsInterface, { ObnizPartsInfo } from '../../../../obniz/ObnizPartsInterface';
 import { I2cPartsAbstractOptions } from '../../../i2cParts';
-export interface D6T44LOptions extends I2cPartsAbstractOptions {
-}
+export declare type D6T44LOptions = I2cPartsAbstractOptions;
 declare class D6T44L implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     requiredKeys: string[];

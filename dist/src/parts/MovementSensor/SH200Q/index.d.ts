@@ -8,8 +8,7 @@ import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 import I2cImu6, { Inertia6, Xyz } from '../../i2cImu6';
 export declare type SH200QAccelRange = '4g' | '8g' | '16g';
 export declare type SH200QGyroRange = '125dps' | '250dps' | '500dps' | '1000dps' | '2000dps';
-export interface SH200QOptions extends I2cPartsAbstractOptions {
-}
+export declare type SH200QOptions = I2cPartsAbstractOptions;
 export default class SH200Q extends I2cImu6 {
     static commands: {
         whoami: number;
@@ -45,6 +44,7 @@ export default class SH200Q extends I2cImu6 {
     i2cinfo: I2cInfo;
     constructor();
     wired(obniz: Obniz): void;
+    _reset(): void;
     whoamiWait(): Promise<number>;
     initWait(): Promise<void>;
     setConfig(accelerometer_range: number, gyroscope_range: number): void;

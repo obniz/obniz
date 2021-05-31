@@ -26,15 +26,22 @@ export default class IBS01T implements ObnizPartsBleInterface {
     };
   }
 
-  public static isDevice(peripheral: BleRemotePeripheral): boolean {
-    if (this.deviceAdv.length > peripheral.adv_data.length) {
+  public static isDevice(
+    peripheral: BleRemotePeripheral,
+    strictCheck = false
+  ): boolean {
+    const deviceAdv = [...this.deviceAdv];
+    if (strictCheck) {
+      deviceAdv[18] = 0x05;
+    }
+    if (deviceAdv.length > peripheral.adv_data.length) {
       return false;
     }
-    for (let index = 0; index < this.deviceAdv.length; index++) {
-      if (this.deviceAdv[index] === -1) {
+    for (let index = 0; index < deviceAdv.length; index++) {
+      if (deviceAdv[index] === -1) {
         continue;
       }
-      if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+      if (peripheral.adv_data[index] === deviceAdv[index]) {
         continue;
       }
       return false;
@@ -47,8 +54,11 @@ export default class IBS01T implements ObnizPartsBleInterface {
     );
   }
 
-  public static getData(peripheral: BleRemotePeripheral): IBS01T_Data | null {
-    if (!IBS01T.isDevice(peripheral)) {
+  public static getData(
+    peripheral: BleRemotePeripheral,
+    strictCheck?: boolean
+  ): IBS01T_Data | null {
+    if (!IBS01T.isDevice(peripheral, strictCheck)) {
       return null;
     }
     const d: IBS01T_Data = {
@@ -98,13 +108,11 @@ export default class IBS01T implements ObnizPartsBleInterface {
     -1, // humid
     -1, // reserved
     -1, // reserved
-    0x05, // subtype
+    -1, // subtype will be 0x05, but ignore for compatibility
     -1, // reserved
     -1, // reserved
     -1, // reserved
   ];
 
   public _peripheral: BleRemotePeripheral | null = null;
-
-  constructor() {}
 }

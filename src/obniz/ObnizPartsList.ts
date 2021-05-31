@@ -271,6 +271,7 @@ import ADT7310, {
 } from '../parts/TemperatureSensor/spi/ADT7310';
 import RN42, { RN42Options } from '../parts/Wireless/RN42';
 import XBee, { XBeeOptions } from '../parts/Wireless/XBee';
+import EXVital, { EXVital_Options } from '../parts/Ble/EXVital';
 
 export interface PartsList {
   LED: { class: LED; options: LEDOptions };
@@ -516,4 +517,5 @@ export interface PartsList {
   };
   UA651BLE: { class: UA651BLE; options: UA651BLEOptions };
   UA1200BLE: { class: UA1200BLE; options: UA1200BLEOptions };
+  EXVital: { class: EXVital; options: EXVital_Options };
 }

@@ -168,6 +168,7 @@ import SHT31, { SHT31Options } from '../parts/TemperatureSensor/i2c/SHT31';
 import ADT7310, { ADT7310Options } from '../parts/TemperatureSensor/spi/ADT7310';
 import RN42, { RN42Options } from '../parts/Wireless/RN42';
 import XBee, { XBeeOptions } from '../parts/Wireless/XBee';
+import EXVital, { EXVital_Options } from '../parts/Ble/EXVital';
 export interface PartsList {
     LED: {
         class: LED;
@@ -832,5 +833,9 @@ export interface PartsList {
     UA1200BLE: {
         class: UA1200BLE;
         options: UA1200BLEOptions;
+    };
+    EXVital: {
+        class: EXVital;
+        options: EXVital_Options;
     };
 }

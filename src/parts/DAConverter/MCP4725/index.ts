@@ -11,7 +11,7 @@ import ObnizPartsInterface, {
 } from '../../../obniz/ObnizPartsInterface';
 import { I2cPartsAbstractOptions } from '../../i2cParts';
 
-export interface MCP4725Options extends I2cPartsAbstractOptions {}
+export type MCP4725Options = I2cPartsAbstractOptions;
 
 export default class MCP4725 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
