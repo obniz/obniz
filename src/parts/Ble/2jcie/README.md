@@ -1,7 +1,7 @@
 # 2JCIE
 enviroment sensor made by OMRON. Battery powered. Temperature, Humidity, Brightness, UV, Air Pressure, Sound Level, Acceleration, VOC.
 
-The 2JCIE-BU01 (bag shape) and 2JCIE-BL01 (USB connection) are available in two different shapes (and each has its mode). (Also, each of them has its mode.) The data that can be acquired and the corresponding functions are different for each of them, so please check before using them.
+The 2JCIE-BL01 (bag shape) and 2JCIE-BU01 (USB connection) are available in two different shapes (and each has its mode). (Also, each of them has its mode.) The data that can be acquired and the corresponding functions are different for each of them, so please check before using them.
 
 ![](image.jpg)
 
@@ -26,7 +26,7 @@ await obniz.ble.scan.startWait();
 
 Get a data from advertisement
 
-2In case of advertisement with localName `IM` of JCIE-BU01 (bag shape)
+2In case of advertisement with localName `IM` of 2JCIE-BL01 (bag shape)
 
 - temperature: (degC)
 - relative_humidity: (%RH)
@@ -39,7 +39,7 @@ Get a data from advertisement
 - acceleration_z: 
 - battery: (V)
 
-2In case of advertisement with localName `Rbt` of JCIE-BL01 (USB connection)
+2In case of advertisement with localName `Rbt` of 2JCIE-BU01 (USB connection)
 
 - temperature: (degC)
 - relative_humidity: (%RH)
@@ -99,8 +99,8 @@ if(results){
 Connect to the device.Search device automatically, but if not found, throw error.
 The following shapes & modes are supported.  
 
-* 2JCIE-BU01 (bag shape) mode with localName `Env`
-* 2JCIE-BL01 (USB connection) mode with localName `Rbt`
+* 2JCIE-BL01 (bag shape) mode with localName `Env`
+* 2JCIE-BU01 (USB connection) mode with localName `Rbt`
 
 
 ```javascript
@@ -149,7 +149,7 @@ if(results){
 
 
 ## [await]getLatestDataWait()
-Get the latest data of the sensor of 2JCIE-BU01 (bag shape).
+Get the latest data of the sensor of 2JCIE-BL01 (bag shape).
 
 ```javascript
 // Javascript Example
@@ -192,7 +192,7 @@ The return format is below.
 ```
 
 ## [await]getLatestSensorDataUSBWait()
-Get the latest sensor data from 2JCIE-BL01 (USB connection).
+Get the latest sensor data from 2JCIE-BU01 (USB connection).
 
 ```javascript
 // Javascript Example
@@ -234,7 +234,7 @@ The return format is below.
 
 
 ## [await]getLatestCalculationDataUSBWait()
-Get the latest index data and acceleration data from 2JCIE-BL01 (USB connection).
+Get the latest index data and acceleration data from 2JCIE-BU01 (USB connection).
 
 ```javascript
 // Javascript Example
