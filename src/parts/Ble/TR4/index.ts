@@ -20,7 +20,7 @@ export interface Tr4_Data {
 export default class Tr4 implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: 'TR4x',
+      name: 'TR4',
     };
   }
 
@@ -73,6 +73,4 @@ export default class Tr4 implements ObnizPartsBleInterface {
     .groupEnd();
 
   public _peripheral: BleRemotePeripheral | null = null;
-
-  constructor() {}
 }

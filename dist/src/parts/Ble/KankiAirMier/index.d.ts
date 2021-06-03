@@ -19,5 +19,4 @@ export default class KankiAirMier implements ObnizPartsBleInterface {
     static getData(peripheral: BleRemotePeripheral): KankiAirMier_Data | null;
     private static _deviceAdvAnalyzer;
     _peripheral: BleRemotePeripheral | null;
-    constructor();
 }

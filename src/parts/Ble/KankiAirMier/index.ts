@@ -79,6 +79,4 @@ export default class KankiAirMier implements ObnizPartsBleInterface {
     .groupEnd();
 
   public _peripheral: BleRemotePeripheral | null = null;
-
-  constructor() {}
 }

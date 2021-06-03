@@ -15,5 +15,4 @@ export default class Tr4 implements ObnizPartsBleInterface {
     static getData(peripheral: BleRemotePeripheral): Tr4_Data | null;
     private static _deviceAdvAnalyzer;
     _peripheral: BleRemotePeripheral | null;
-    constructor();
 }

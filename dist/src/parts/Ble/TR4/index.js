@@ -11,7 +11,7 @@ class Tr4 {
     }
     static info() {
         return {
-            name: 'TR4x',
+            name: 'TR4',
         };
     }
     static isDevice(peripheral) {

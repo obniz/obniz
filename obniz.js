@@ -22510,7 +22510,7 @@ var map = {
 	"./Ble/RS_BTIREX2/index.js": "./dist/src/parts/Ble/RS_BTIREX2/index.js",
 	"./Ble/RS_BTWATTCH2/index.js": "./dist/src/parts/Ble/RS_BTWATTCH2/index.js",
 	"./Ble/RS_SEEK3/index.js": "./dist/src/parts/Ble/RS_SEEK3/index.js",
-	"./Ble/TR4x/index.js": "./dist/src/parts/Ble/TR4x/index.js",
+	"./Ble/TR4/index.js": "./dist/src/parts/Ble/TR4/index.js",
 	"./Ble/UA1200BLE/index.js": "./dist/src/parts/Ble/UA1200BLE/index.js",
 	"./Ble/UA651BLE/index.js": "./dist/src/parts/Ble/UA651BLE/index.js",
 	"./Ble/UT201BLE/index.js": "./dist/src/parts/Ble/UT201BLE/index.js",
@@ -22993,16 +22993,16 @@ class OMRON_2JCIE {
         const adv_data = peripheral.adv_data;
         if (peripheral.localName && peripheral.localName.indexOf('IM') >= 0) {
             return {
-                temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[8], adv_data[9]) *
+                temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[9], adv_data[8]) *
                     0.01,
-                relative_humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[10], adv_data[11]) * 0.01,
-                light: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[12], adv_data[13]) * 1,
-                uv_index: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[14], adv_data[15]) * 0.01,
-                barometric_pressure: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[16], adv_data[17]) * 0.1,
-                sound_noise: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[18], adv_data[19]) * 0.01,
-                acceleration_x: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[20], adv_data[21]),
-                acceleration_y: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[22], adv_data[23]),
-                acceleration_z: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[24], adv_data[25]),
+                relative_humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[11], adv_data[10]) * 0.01,
+                light: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[13], adv_data[12]) * 1,
+                uv_index: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[15], adv_data[14]) * 0.01,
+                barometric_pressure: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[17], adv_data[16]) * 0.1,
+                sound_noise: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[19], adv_data[18]) * 0.01,
+                acceleration_x: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[21], adv_data[20]),
+                acceleration_y: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[23], adv_data[22]),
+                acceleration_z: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[25], adv_data[24]),
                 battery: (adv_data[26] + 100) / 100,
             };
         }
@@ -26232,7 +26232,7 @@ exports.default = RS_Seek3;
 
 /***/ }),
 
-/***/ "./dist/src/parts/Ble/TR4x/index.js":
+/***/ "./dist/src/parts/Ble/TR4/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26249,7 +26249,7 @@ class Tr4 {
     }
     static info() {
         return {
-            name: 'TR4x',
+            name: 'TR4',
         };
     }
     static isDevice(peripheral) {
@@ -72069,7 +72069,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
+module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
 
 /***/ }),
 

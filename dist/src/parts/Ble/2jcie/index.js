@@ -38,16 +38,16 @@ class OMRON_2JCIE {
         const adv_data = peripheral.adv_data;
         if (peripheral.localName && peripheral.localName.indexOf('IM') >= 0) {
             return {
-                temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[8], adv_data[9]) *
+                temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[9], adv_data[8]) *
                     0.01,
-                relative_humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[10], adv_data[11]) * 0.01,
-                light: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[12], adv_data[13]) * 1,
-                uv_index: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[14], adv_data[15]) * 0.01,
-                barometric_pressure: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[16], adv_data[17]) * 0.1,
-                sound_noise: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[18], adv_data[19]) * 0.01,
-                acceleration_x: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[20], adv_data[21]),
-                acceleration_y: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[22], adv_data[23]),
-                acceleration_z: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[24], adv_data[25]),
+                relative_humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[11], adv_data[10]) * 0.01,
+                light: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[13], adv_data[12]) * 1,
+                uv_index: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[15], adv_data[14]) * 0.01,
+                barometric_pressure: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[17], adv_data[16]) * 0.1,
+                sound_noise: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[19], adv_data[18]) * 0.01,
+                acceleration_x: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[21], adv_data[20]),
+                acceleration_y: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[23], adv_data[22]),
+                acceleration_z: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[25], adv_data[24]),
                 battery: (adv_data[26] + 100) / 100,
             };
         }
