@@ -6,8 +6,7 @@ import Obniz from '../../../obniz';
 import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 import i2cCompass, { compassUnit, I2cCompassAbstractOptions } from '../../i2cCompass';
 import { I2cInfo, Xyz } from '../../i2cParts';
-export interface HMC5883LOptions extends I2cCompassAbstractOptions {
-}
+export declare type HMC5883LOptions = I2cCompassAbstractOptions;
 export default class HMC5883L extends i2cCompass {
     static info(): ObnizPartsInfo;
     private static commands;

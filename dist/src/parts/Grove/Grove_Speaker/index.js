@@ -14,7 +14,9 @@ class Grove_Speaker {
             name: 'Grove_Speaker',
         };
     }
-    onchange(value) { }
+    onchange(value) {
+        // do nothing.
+    }
     wired(obniz) {
         if (this.params.grove) {
             this.pwm = this.params.grove.getPwm();

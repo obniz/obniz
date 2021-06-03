@@ -49,17 +49,10 @@ class GP2Y0A21YK0F {
         }
         return distance;
     }
-    getWait() {
-        return new Promise(async (resolve, reject) => {
-            try {
-                const val = await this.ad_signal.getWait();
-                const distance = this._volt2distance(val);
-                resolve(distance);
-            }
-            catch (e) {
-                reject(e);
-            }
-        });
+    async getWait() {
+        const val = await this.ad_signal.getWait();
+        const distance = this._volt2distance(val);
+        return distance;
     }
     unit(unit) {
         if (unit === 'mm') {

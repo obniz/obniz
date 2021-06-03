@@ -102,11 +102,15 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
   /**
    * @ignore
    */
-  public ondiscover(child: any): void {}
+  public ondiscover(child: any): void {
+    // do nothing.
+  }
 
   /**
    * @ignore
    * @param children
    */
-  public ondiscoverfinished(children: any): void {}
+  public ondiscoverfinished(children: any): void {
+    // do nothing.
+  }
 }

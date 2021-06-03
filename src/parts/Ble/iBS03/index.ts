@@ -13,6 +13,7 @@ export interface IBS03Options {}
 export interface IBS03_Data {
   battery: number;
   button: boolean;
+  moving: boolean;
   hall_sensor: boolean;
 }
 
@@ -46,11 +47,15 @@ export default class IBS03 implements ObnizPartsBleInterface {
     const data: IBS03_Data = {
       battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
       button: false,
+      moving: false,
       hall_sensor: false,
     };
 
     if (peripheral.adv_data[11] & 0b0001) {
       data.button = true;
+    }
+    if (peripheral.adv_data[11] & 0b0010) {
+      data.moving = true;
     }
     if (peripheral.adv_data[11] & 0b0100) {
       data.hall_sensor = true;
@@ -84,6 +89,4 @@ export default class IBS03 implements ObnizPartsBleInterface {
   ];
 
   public _peripheral: BleRemotePeripheral | null = null;
-
-  constructor() {}
 }

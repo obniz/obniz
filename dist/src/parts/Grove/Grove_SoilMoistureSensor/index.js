@@ -14,7 +14,9 @@ class Grove_SoilMoistureSensor {
             name: 'Grove_SoilMoistureSensor',
         };
     }
-    onchange(value) { }
+    onchange(value) {
+        // do nothing.
+    }
     wired(obniz) {
         if (this.params.grove) {
             const groveAd = this.params.grove.getAnalog();

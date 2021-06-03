@@ -1,6 +1,6 @@
 module.exports = {
   "name": "obniz",
-  "version": "3.15.1",
+  "version": "3.16.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -32,7 +32,7 @@ module.exports = {
     "lint-ts": "eslint --fix 'src/**/*.ts' 'test/**/*.ts' --rulesdir devtools/eslint/rule  --quiet",
     "lint-test": "mocha $NODE_DEBUG_OPTION ./devtools/eslint/test/**/*.js",
     "precommit": "lint-staged && npm run build && git add dist && git add obniz.js",
-    "prepare": "npm run build",
+    "prepublishOnly": "npm run build",
     "clean": "rimraf ./dist ./obniz.js ./obniz.d.ts"
   },
   "lint-staged": {
@@ -84,6 +84,7 @@ module.exports = {
     "eslint-plugin-jsdoc": "^32.2.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-rulesdir": "^0.2.0",
     "espower-typescript": "^9.0.2",
     "express": "^4.17.1",
     "get-port": "^4.0.0",

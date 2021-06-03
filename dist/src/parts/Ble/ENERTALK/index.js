@@ -7,7 +7,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const batteryService_1 = __importDefault(require("../abstract/services/batteryService"));
+const batteryService_1 = __importDefault(require("../utils/services/batteryService"));
 class ENERTALK_TOUCH {
     constructor(peripheral) {
         this.keys = [];

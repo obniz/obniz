@@ -44,5 +44,4 @@ export default class Logtta_Accel implements ObnizPartsBleInterface {
     static getAccelData(peripheral: BleRemotePeripheral): Logtta_Accel_AccelData | null;
     private static deviceAdv;
     _peripheral: BleRemotePeripheral | null;
-    constructor();
 }

@@ -533,16 +533,19 @@ export default abstract class ObnizComponents extends ObnizParts {
       const targetComponent = (this as any)[key];
       if (targetComponent instanceof ComponentAbstract) {
         const basePath = targetComponent.schemaBasePath();
+        // eslint-disable-next-line no-prototype-builtins
         if (basePath && obj.hasOwnProperty(basePath)) {
           targetComponent.notifyFromObniz(obj[basePath]);
         }
       } else {
         if (key === 'logicAnalyzer') {
+          // eslint-disable-next-line no-prototype-builtins
           if (obj.hasOwnProperty('logic_analyzer')) {
             (this as any).logicAnalyzer.notified(obj.logic_analyzer);
           }
           continue;
         }
+        // eslint-disable-next-line no-prototype-builtins
         if (obj.hasOwnProperty(key)) {
           /* because of nullable */
           targetComponent.notified(obj[key]);

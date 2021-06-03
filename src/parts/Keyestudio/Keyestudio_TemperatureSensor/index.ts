@@ -62,7 +62,9 @@ export default class Keyestudio_TemperatureSensor
     return this.temp;
   }
 
-  public onchange(temp: number) {}
+  public onchange(temp: number) {
+    // do nothing.
+  }
 
   protected calc(voltage: any) {
     this.temperature = voltage * 100; // Temp(Celsius) = [AD Voltage] * 100;

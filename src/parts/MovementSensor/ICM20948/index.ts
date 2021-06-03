@@ -10,7 +10,7 @@ import ObnizPartsInterface, {
 import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from '../../i2cParts';
 import AK09916, { AK09916Options } from '../AK09916/index';
 
-export interface ICM20948Options extends I2cPartsAbstractOptions {}
+export type ICM20948Options = I2cPartsAbstractOptions;
 
 export default class ICM20948 extends i2cParts implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {

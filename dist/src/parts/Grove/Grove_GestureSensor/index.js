@@ -257,7 +257,9 @@ class Grove_GestureSensor {
             name: 'Grove_GestureSensor',
         };
     }
-    onchange(value) { }
+    onchange(value) {
+        // do nothing.
+    }
     wired(obniz) {
         this.obniz = obniz;
         const speed = 400000;

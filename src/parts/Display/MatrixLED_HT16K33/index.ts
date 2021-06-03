@@ -10,7 +10,7 @@ import ObnizPartsInterface, {
 } from '../../../obniz/ObnizPartsInterface';
 import { I2cPartsAbstractOptions } from '../../i2cParts';
 
-export interface MatrixLED_HT16K33Options extends I2cPartsAbstractOptions {}
+export type MatrixLED_HT16K33Options = I2cPartsAbstractOptions;
 
 export default class MatrixLED_HT16K33 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {

@@ -44,12 +44,15 @@ class ST7735S {
     }
     print_debug(v) {
         if (this.debugprint) {
-            console.log('SainSmartTFT18LCD: ' + Array.prototype.slice.call(arguments).join(''));
+            console.log(
+            // eslint-disable-next-line prefer-rest-params
+            'SainSmartTFT18LCD: ' + Array.prototype.slice.call(arguments).join(''));
         }
     }
     _deadSleep(waitMsec) {
         const startMsec = new Date();
-        while (new Date() - startMsec < waitMsec) { }
+        while (new Date() - startMsec < waitMsec)
+            ;
     }
     _reset() {
         this.io_res.output(false);

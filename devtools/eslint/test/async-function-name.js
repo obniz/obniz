@@ -1,8 +1,8 @@
 'use strict';
 /* eslint-disable non-ascii */
 
-let RuleTester = require('eslint').RuleTester;
-let tester = new RuleTester();
+const RuleTester = require('eslint').RuleTester;
+const tester = new RuleTester();
 
 tester.run('async-function-name', require('../rule/async-function-name'), {
   valid: [

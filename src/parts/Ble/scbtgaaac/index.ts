@@ -71,6 +71,4 @@ export default class SCBTGAAAC implements ObnizPartsBleInterface {
   }
 
   public _peripheral: null | BleRemotePeripheral = null;
-
-  constructor() {}
 }

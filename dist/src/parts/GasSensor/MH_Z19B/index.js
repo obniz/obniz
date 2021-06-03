@@ -55,27 +55,20 @@ class MH_Z19B {
             setTimeout(resolve, seconds);
         });
     }
-    getWait() {
-        return new Promise(async (resolve, reject) => {
-            try {
-                await this.requestReadConcentraiton();
-                await this.obniz.wait(10);
-                if (this.uart.isDataExists()) {
-                    const data = this.uart.readBytes();
-                    // console.log("received data");
-                    // console.log(data);
-                    const val = await this.getCO2Concentration(data);
-                    resolve(val);
-                }
-                else {
-                    reject(undefined);
-                    console.log('cannot receive data');
-                }
-            }
-            catch (e) {
-                reject(e);
-            }
-        });
+    async getWait() {
+        await this.requestReadConcentraiton();
+        await this.obniz.wait(10);
+        if (this.uart.isDataExists()) {
+            const data = this.uart.readBytes();
+            // console.log("received data");
+            // console.log(data);
+            const val = await this.getCO2Concentration(data);
+            return val;
+        }
+        else {
+            console.log('cannot receive data');
+            throw new Error('cannot receive data');
+        }
     }
     calibrateZero() {
         const command = this.makeRequestCmd('CalibZ', [

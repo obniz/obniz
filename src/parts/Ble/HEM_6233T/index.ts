@@ -44,7 +44,11 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
   }
 
   public static isDevice(peripheral: BleRemotePeripheral) {
-    if (peripheral.localName && peripheral.localName.startsWith('BLESmart_')) {
+    if (
+      peripheral.localName &&
+      (peripheral.localName.startsWith('BLESmart_') ||
+        peripheral.localName.startsWith('BLEsmart_'))
+    ) {
       return true;
     }
     return false;
@@ -79,46 +83,47 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
     });
 
     const results: any[] = [];
-    return await new Promise(async (resolve, reject) => {
+    const waitDisconnect = new Promise<HEM_6233TResult[]>((resolve, reject) => {
       this._peripheral!.ondisconnect = (reason: any) => {
         resolve(results);
       };
-      await this.subscribeWait('1805', '2A2B'); // current time
-      await this.subscribeWait('180F', '2A19', async () => {
-        // send command (unknown meaning)
-        // In the command meaning, it should send to central from peripheral, but send to peripheral...?
-        this._peripheral!.obnizBle.hci.write([
-          0x02, // acl data
-
-          0x00,
-          0x00, // handle : 0  + flags : First Non-Automatically-Flushable packet  / ACL_START_NO_FLUSH
-
-          0x09,
-          0x00, // data length for acl : 9
-
-          0x05,
-          0x00, // data length for l2cap : 5
-
-          0x04,
-          0x00, // cid : 4 = ATT
-
-          0x01, // opCode : 1 = OP_ERROR
-
-          0x06, // error opcode : 6 = Find By Type Value Request
-
-          0x01,
-          0x00, // handle : 1 = ???
-
-          0x0a, // error code : 10 = Attribute Not Found
-        ]);
-
-        this._writeTimeCharWait(this._timezoneOffsetMinute);
-      }); // battery Level
-      await this.subscribeWait('1810', '2A35', async (data: number[]) => {
-        console.error('SUCCESS', data);
-        results.push(this._analyzeData(data));
-      }); // blood pressure
     });
+    await this.subscribeWait('1805', '2A2B'); // current time
+    await this.subscribeWait('180F', '2A19', async () => {
+      // send command (unknown meaning)
+      // In the command meaning, it should send to central from peripheral, but send to peripheral...?
+      this._peripheral!.obnizBle.hci.write([
+        0x02, // acl data
+
+        0x00,
+        0x00, // handle : 0  + flags : First Non-Automatically-Flushable packet  / ACL_START_NO_FLUSH
+
+        0x09,
+        0x00, // data length for acl : 9
+
+        0x05,
+        0x00, // data length for l2cap : 5
+
+        0x04,
+        0x00, // cid : 4 = ATT
+
+        0x01, // opCode : 1 = OP_ERROR
+
+        0x06, // error opcode : 6 = Find By Type Value Request
+
+        0x01,
+        0x00, // handle : 1 = ???
+
+        0x0a, // error code : 10 = Attribute Not Found
+      ]);
+
+      this._writeTimeCharWait(this._timezoneOffsetMinute);
+    }); // battery Level
+    await this.subscribeWait('1810', '2A35', async (data: number[]) => {
+      // console.log('SUCCESS', data);
+      results.push(this._analyzeData(data));
+    }); // blood pressure
+    return await waitDisconnect;
   }
 
   public async subscribeWait(service: string, char: string, callback?: any) {

@@ -36,7 +36,9 @@ export default class Button implements ObnizPartsInterface {
     this.keys = ['signal', 'gnd', 'pull'];
     this.requiredKeys = ['signal'];
 
-    this.onChangeForStateWait = () => {};
+    this.onChangeForStateWait = () => {
+      // do nothing.
+    };
   }
 
   public wired(obniz: Obniz) {
@@ -71,10 +73,12 @@ export default class Button implements ObnizPartsInterface {
   }
 
   public stateWait(isPressed: boolean) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       this.onChangeForStateWait = (pressed: any) => {
         if (isPressed === pressed) {
-          this.onChangeForStateWait = () => {};
+          this.onChangeForStateWait = () => {
+            // do nothing.
+          };
           resolve();
         }
       };

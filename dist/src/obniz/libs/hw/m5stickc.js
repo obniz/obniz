@@ -30,8 +30,10 @@ class M5StickC extends ObnizDevice_1.default {
         const i2c = this._m5i2c;
         const onerror = i2c.onerror;
         this.imu = this.wired(imuName, { i2c });
-        // @ts-ignore
-        this.imu._reset = () => { };
+        // eslint-disable-next-line
+        this.imu._reset = () => {
+            // do nothing.
+        };
         const p1 = this.imu.whoamiWait();
         const p2 = new Promise((resolve, reject) => {
             i2c.onerror = reject;
@@ -78,7 +80,6 @@ class M5StickC extends ObnizDevice_1.default {
         this.led.off();
     }
     _prepareComponents() {
-        // @ts-ignore
         super._prepareComponents();
         if (this.hw !== 'm5stickc') {
             throw new Error('Obniz.M5StickC only support ObnizOS for M5StickC. Your device is not ObnizOS for M5StickC.');

@@ -96,26 +96,20 @@ export default class MH_Z19B implements ObnizPartsInterface {
     });
   }
 
-  public getWait(): Promise<number> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await this.requestReadConcentraiton();
-        await this.obniz.wait(10);
-        if (this.uart.isDataExists()) {
-          const data: number[] = this.uart.readBytes();
-          // console.log("received data");
-          // console.log(data);
+  public async getWait(): Promise<number> {
+    await this.requestReadConcentraiton();
+    await this.obniz.wait(10);
+    if (this.uart.isDataExists()) {
+      const data: number[] = this.uart.readBytes();
+      // console.log("received data");
+      // console.log(data);
 
-          const val: number = await this.getCO2Concentration(data);
-          resolve(val);
-        } else {
-          reject(undefined);
-          console.log('cannot receive data');
-        }
-      } catch (e) {
-        reject(e);
-      }
-    });
+      const val: number = await this.getCO2Concentration(data);
+      return val;
+    } else {
+      console.log('cannot receive data');
+      throw new Error('cannot receive data');
+    }
   }
 
   public calibrateZero() {

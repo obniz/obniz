@@ -8,7 +8,9 @@ class Keyestudio_Button {
     constructor() {
         this.isPressed = null;
         this.onchange = null;
-        this.onChangeForStateWait = (pressed) => { };
+        this.onChangeForStateWait = (pressed) => {
+            // do nothing.
+        };
         this.keys = ['signal', 'gnd', 'vcc'];
         this.requiredKeys = ['signal'];
     }
@@ -43,7 +45,9 @@ class Keyestudio_Button {
         return new Promise((resolve, reject) => {
             this.onChangeForStateWait = (pressed) => {
                 if (isPressed === pressed) {
-                    this.onChangeForStateWait = () => { };
+                    this.onChangeForStateWait = () => {
+                        // do nothing.
+                    };
                     resolve();
                 }
             };

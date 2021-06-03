@@ -22,6 +22,9 @@ class SH200Q extends i2cImu6_1.default {
     wired(obniz) {
         super.wired(obniz);
     }
+    _reset() {
+        // do nothing.
+    }
     async whoamiWait() {
         const result = await this.readWait(SH200Q.commands.whoami, 1);
         return result[0];
@@ -105,7 +108,6 @@ class SH200Q extends i2cImu6_1.default {
     setGyroRange(gyro_range) {
         if (gyro_range in SH200Q.commands.gyro_fs_sel) {
             this.write(SH200Q.commands.gyro_range, SH200Q.commands.gyro_fs_sel[gyro_range]);
-            // @ts-ignore
             this.gyro_so = gyro_range;
         }
         else {

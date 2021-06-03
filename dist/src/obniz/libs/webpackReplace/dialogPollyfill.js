@@ -6,7 +6,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = {
     dialogPolyfill: {
-        registerDialog: (dialog) => { },
+        registerDialog: (dialog) => {
+            // do nothing.
+        },
     },
     css: '',
 };

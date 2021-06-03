@@ -39,8 +39,9 @@ class RS_BTWATTCH2 {
             (peripheral.localName.indexOf('BTWATTCH2_') >= 0 ||
                 peripheral.localName.indexOf('btwattch2_') >= 0));
     }
-    // @ts-ignore
-    wired(obniz) { }
+    wired(obniz) {
+        // do nothing.
+    }
     /**
      * Check if device is under paring mode(over 3 seconds button pressing)
      */
@@ -62,39 +63,37 @@ class RS_BTWATTCH2 {
                 this.ondisconnect(reason);
             }
         };
-        return await new Promise(async (resolve, reject) => {
-            try {
-                let gotKeys;
-                await this._peripheral.connectWait({
-                    pairingOption: {
-                        onPairedCallback: (keys) => {
-                            gotKeys = keys;
-                        },
-                        onPairingFailed: (e) => {
-                            reject(e);
-                        },
+        try {
+            let gotKeys;
+            await this._peripheral.connectWait({
+                pairingOption: {
+                    onPairedCallback: (keys) => {
+                        gotKeys = keys;
                     },
-                });
-                if (!gotKeys) {
-                    const keys = await this._peripheral.pairingWait();
-                    gotKeys = keys;
-                }
-                await this._peripheral.disconnectWait();
-                resolve(gotKeys);
+                    onPairingFailed: (e) => {
+                        throw e;
+                    },
+                },
+            });
+            if (!gotKeys) {
+                const keys = await this._peripheral.pairingWait();
+                gotKeys = keys;
             }
-            catch (e) {
-                try {
-                    if (this._peripheral.connected) {
-                        await this._peripheral.disconnectWait();
-                    }
+            await this._peripheral.disconnectWait();
+            return gotKeys;
+        }
+        catch (e) {
+            try {
+                if (this._peripheral.connected) {
+                    await this._peripheral.disconnectWait();
                 }
-                catch (disconErr) {
-                    // ignore when disconnection failed.
-                    console.log(disconErr);
-                }
-                reject(e);
             }
-        });
+            catch (disconErr) {
+                // ignore when disconnection failed.
+                console.log(disconErr);
+            }
+            throw e;
+        }
     }
     /**
      * Connect to the target device regarding pairing key
@@ -271,11 +270,14 @@ class RS_BTWATTCH2 {
         one.resolve(data);
     }
     async _transactionWait(data) {
-        return await new Promise(async (resolve, reject) => {
-            const timeout = setTimeout(() => {
-                reject(new Error(`Timed out for waiting`));
-            }, 30 * 1000);
-            try {
+        let timeoutFunc = null;
+        const timeout = setTimeout(() => {
+            if (timeoutFunc)
+                timeoutFunc('Timed out for waiting');
+        }, 30 * 1000);
+        try {
+            const waitData = new Promise((resolve, reject) => {
+                timeoutFunc = reject;
                 this._waitings.push({
                     command: data[0],
                     resolve: (received) => {
@@ -287,14 +289,15 @@ class RS_BTWATTCH2 {
                         reject(e);
                     },
                 });
-                const send = this._createData(data);
-                await this._txToTargetCharacteristic.writeWait(send);
-            }
-            catch (e) {
-                clearTimeout(timeout);
-                reject(e);
-            }
-        });
+            });
+            const send = this._createData(data);
+            await this._txToTargetCharacteristic.writeWait(send);
+            return await waitData;
+        }
+        catch (e) {
+            clearTimeout(timeout);
+            throw e;
+        }
     }
     _createData(data) {
         const cmd = Buffer.alloc(data.length + 4);

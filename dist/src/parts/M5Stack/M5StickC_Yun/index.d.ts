@@ -8,8 +8,7 @@ import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsIn
 import { I2cPartsAbstractOptions } from '../../i2cParts';
 import BMP280 from '../../PressureSensor/BMP280';
 import SHT20 from '../../TemperatureSensor/i2c/SHT20';
-export interface M5StickC_YunOptions extends I2cPartsAbstractOptions {
-}
+export declare type M5StickC_YunOptions = I2cPartsAbstractOptions;
 export default class M5StickC_Yun implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     private static _generateHsvColor;

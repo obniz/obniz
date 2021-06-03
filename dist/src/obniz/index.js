@@ -45,7 +45,7 @@ for (const path of context.keys()) {
     if (anParts.info) {
         Obniz_1.Obniz.PartsRegistrate(anParts);
     }
-    else if (anParts.default.info) {
+    else if (anParts.default && anParts.default.info) {
         // for ts "export default"
         Obniz_1.Obniz.PartsRegistrate(anParts.default);
     }

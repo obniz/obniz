@@ -21,5 +21,5 @@ export default class Button implements ObnizPartsInterface {
     constructor();
     wired(obniz: Obniz): void;
     isPressedWait(): Promise<boolean>;
-    stateWait(isPressed: boolean): Promise<unknown>;
+    stateWait(isPressed: boolean): Promise<void>;
 }

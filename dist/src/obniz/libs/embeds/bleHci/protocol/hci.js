@@ -10,6 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const ObnizError_1 = require("../../../../ObnizError");
 const bleHelper_1 = __importDefault(require("../bleHelper"));
+// eslint-disable-next-line @typescript-eslint/no-namespace
 var COMMANDS;
 (function (COMMANDS) {
     COMMANDS.HCI_COMMAND_PKT = 0x01;
@@ -79,10 +80,7 @@ var COMMANDS;
     COMMANDS.LE_LTK_NEG_REPLY_CMD = COMMANDS.OCF_LE_LTK_NEG_REPLY | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.HCI_OE_USER_ENDED_CONNECTION = 0x13;
 })(COMMANDS || (COMMANDS = {}));
-/**
- * @ignore
- */
-const STATUS_MAPPER = require('./hci-status');
+const hci_status_json_1 = __importDefault(require("./hci-status.json"));
 /**
  * @ignore
  */
@@ -95,7 +93,9 @@ class Hci extends eventemitter3_1.default {
          * @ignore
          * @private
          */
-        this.debugHandler = () => { };
+        this.debugHandler = () => {
+            // do nothing.
+        };
         this._obnizHci = obnizHci;
         this._obnizHci.Obniz.on('disconnect', () => {
             this.stateChange('poweredOff');
@@ -958,5 +958,5 @@ class Hci extends eventemitter3_1.default {
         }
     }
 }
-Hci.STATUS_MAPPER = STATUS_MAPPER;
+Hci.STATUS_MAPPER = hci_status_json_1.default;
 exports.default = Hci;

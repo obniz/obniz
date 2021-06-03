@@ -8,8 +8,8 @@ import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeri
 import ObnizPartsBleInterface, {
   ObnizPartsBleInfo,
 } from '../../../obniz/ObnizPartsBleInterface';
-import BleBatteryService from '../abstract/services/batteryService';
-import BleGenericAccess from '../abstract/services/genericAccess';
+import BleBatteryService from '../utils/services/batteryService';
+import BleGenericAccess from '../utils/services/genericAccess';
 
 export interface UA651BLEOptions {}
 
@@ -80,25 +80,25 @@ export default class UA651BLE implements ObnizPartsBleInterface {
       await this._peripheral.connectWait();
     }
 
-    return await new Promise(async (resolve, reject) => {
-      if (!this._peripheral) {
-        throw new Error('UA651BLE not found');
-      }
-      const results: UA651BLEResult[] = [];
-      const {
-        bloodPressureMeasurementChar,
-        timeChar,
-        customServiceChar,
-      } = this._getChars();
+    if (!this._peripheral) {
+      throw new Error('UA651BLE not found');
+    }
+    const results: UA651BLEResult[] = [];
+    const {
+      bloodPressureMeasurementChar,
+      timeChar,
+      customServiceChar,
+    } = this._getChars();
 
-      await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
-      await this._writeTimeCharWait(this._timezoneOffsetMinute);
+    await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
+    await this._writeTimeCharWait(this._timezoneOffsetMinute);
 
-      await bloodPressureMeasurementChar.registerNotifyWait(
-        (data: number[]) => {
-          results.push(this._analyzeData(data));
-        }
-      );
+    await bloodPressureMeasurementChar.registerNotifyWait((data: number[]) => {
+      results.push(this._analyzeData(data));
+    });
+
+    return await new Promise((resolve, reject) => {
+      if (!this._peripheral) return;
       this._peripheral.ondisconnect = (reason) => {
         resolve(results);
         if (this.ondisconnect) {

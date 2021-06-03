@@ -53,7 +53,9 @@ class HEM_9200T {
         // const key = await this._peripheral.pairingWait({ passkeyCallback });
         // console.log("paired");
         const results = [];
-        return await new Promise(async (resolve, reject) => {
+        // TODO: check alternative method
+        // eslint-disable-next-line no-async-promise-executor
+        return await new Promise(async (resolve) => {
             this._peripheral.ondisconnect = (reason) => {
                 resolve(results);
             };
@@ -64,6 +66,18 @@ class HEM_9200T {
                 results.push(this._analyzeData(data));
             }); // blood pressure
         });
+        /* const waitDisconnect = new Promise<HEM_9200TResult[]>((resolve, reject) => {
+          this._peripheral!.ondisconnect = (reason: any) => {
+            resolve(results);
+          };
+        });
+        await this.subscribeWait('1805', '2A2B'); // current time
+        await this.subscribeWait('180F', '2A19'); // battery level
+        await this.subscribeWait('1810', '2A35', async (data: any) => {
+          // console.log(data);
+          results.push(this._analyzeData(data));
+        }); // blood pressure
+        return await waitDisconnect;*/
     }
     async subscribeWait(service, char, callback) {
         if (!this._peripheral) {

@@ -9,6 +9,7 @@ import ObnizPartsInterface, {
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DPS310Options {}
 
 export default class DPS310 implements ObnizPartsInterface {

@@ -18,5 +18,4 @@ export default class TM551 implements ObnizPartsBleInterface {
     static getData(peripheral: BleRemotePeripheral): TM551_Data | null;
     private static deviceAdv;
     _peripheral: BleRemotePeripheral | null;
-    constructor();
 }

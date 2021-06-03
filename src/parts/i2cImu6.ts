@@ -23,7 +23,7 @@ export interface Inertia6 {
   temperature?: number | null;
 }
 
-export interface I2cImu6AbstractOptions extends I2cPartsAbstractOptions {}
+export type I2cImu6AbstractOptions = I2cPartsAbstractOptions;
 
 export default abstract class I2cImu6Abstract extends i2cParts {
   // d/so*sf

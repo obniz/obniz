@@ -340,7 +340,6 @@ export class M5StackBasic extends ObnizDevice {
   }
 
   protected _prepareComponents() {
-    // @ts-ignore
     super._prepareComponents();
 
     if (this.hw !== 'm5stack_basic') {

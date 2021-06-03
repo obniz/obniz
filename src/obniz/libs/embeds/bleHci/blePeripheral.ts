@@ -213,5 +213,7 @@ export default class BlePeripheral {
    * @ignore
    * @param error
    */
-  public onerror(error: any) {}
+  public onerror(error: any) {
+    // do nothing.
+  }
 }

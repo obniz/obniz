@@ -75,7 +75,9 @@ export default class Plugin {
    * @ignore
    * @private
    */
-  public _reset() {}
+  public _reset() {
+    // do nothing.
+  }
 
   /**
    * @ignore

@@ -10,7 +10,7 @@ import ObnizPartsInterface, {
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 
-export interface MPU6886Options extends MPU6050Options {}
+export type MPU6886Options = MPU6050Options;
 
 export default class MPU6886 extends MPU6050 {
   public static info(): ObnizPartsInfo {
@@ -38,5 +38,9 @@ export default class MPU6886 extends MPU6050 {
     super.init();
     this.obniz.wait(1);
     this.write(MPU6050.commands.accel_config2, 0x00);
+  }
+
+  public _reset() {
+    // do nothing.
   }
 }

@@ -6,7 +6,9 @@
 import AclStream from './acl-stream';
 
 // let debug = require('debug')('att');
-const debug: any = () => {};
+const debug: any = () => {
+  // do nothing.
+};
 
 /* eslint-disable no-unused-vars */
 
@@ -40,6 +42,7 @@ interface GattCharacteristics {
 /**
  * @ignore
  */
+// eslint-disable-next-line @typescript-eslint/no-namespace
 namespace ATT {
   export const OP_ERROR: any = 0x01;
   export const OP_MTU_REQ: any = 0x02;
@@ -137,6 +140,7 @@ const ATT_ECODE_READABLES: { [_: number]: string } = {
 /**
  * @ignore
  */
+// eslint-disable-next-line @typescript-eslint/no-namespace
 namespace GATT {
   export const PRIM_SVC_UUID = 0x2800;
   export const INCLUDE_UUID = 0x2802;
@@ -507,6 +511,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
       );
 
       if (data.length === this._mtu) {
+        // do nothing.
       } else {
         return readData;
       }

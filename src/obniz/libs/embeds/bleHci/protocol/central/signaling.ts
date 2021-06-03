@@ -4,7 +4,9 @@
  * @ignore
  */
 // let debug = require('debug')('signaling');
-const debug: any = () => {};
+const debug: any = () => {
+  // do nothing.
+};
 
 import EventEmitter from 'eventemitter3';
 

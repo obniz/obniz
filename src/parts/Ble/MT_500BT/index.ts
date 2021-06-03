@@ -12,7 +12,7 @@ import ObnizUtil from '../../../obniz/libs/utils/util';
 import ObnizPartsInterface, {
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
-import BleGenericAccess from '../abstract/services/genericAccess';
+import BleGenericAccess from '../utils/services/genericAccess';
 
 export interface MT_500BTOptions {}
 
@@ -73,8 +73,9 @@ export default class MT_500BT implements ObnizPartsInterface {
     this._emitter = new EventEmitter();
   }
 
-  // @ts-ignore
-  public wired(obniz: Obniz): void {}
+  public wired(obniz: Obniz): void {
+    // do nothing.
+  }
 
   public async connectWait() {
     if (!this._peripheral) {

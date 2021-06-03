@@ -4,12 +4,12 @@
 
 'use strict';
 
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 // Rule Definition
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 
-module.exports = function (context) {
-  function checkName(node, identifier = null) {
+module.exports = (context) => {
+  const checkName = (node, identifier = null) => {
     if (!identifier) {
       identifier = node.id;
     }
@@ -31,7 +31,7 @@ module.exports = function (context) {
       },
       `Async function name "${functionName}" without suffix "Wait" was found.`
     );
-  }
+  };
 
   return {
     FunctionDeclaration: checkName,

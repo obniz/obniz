@@ -2,12 +2,14 @@ const chai = require('chai');
 const expect = chai.expect;
 const config = require('../config.js');
 
-let obnizA, checkBoard, check_io;
+let obnizA;
+let checkBoard;
+let check_io;
 
 describe('5-spi', function () {
   this.timeout(30000);
 
-  before(function () {
+  before(() => {
     return new Promise((resolve) => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
@@ -37,8 +39,8 @@ describe('5-spi', function () {
     }
   });
 
-  it('send-receive', async function () {
-    let spi0 = checkBoard.getFreeSpi();
+  it('send-receive', async () => {
+    const spi0 = checkBoard.getFreeSpi();
     spi0.start({
       mode: 'master',
       clk: check_io[0].board_io,
@@ -74,8 +76,8 @@ describe('5-spi', function () {
     obnizA.getIO(check_io[2].obniz_io).input();
   });
 
-  it('send-receive 26Mhz@3vz', async function () {
-    let spi0 = checkBoard.getFreeSpi();
+  it('send-receive 26Mhz@3vz', async () => {
+    const spi0 = checkBoard.getFreeSpi();
     spi0.start({
       mode: 'master',
       clk: check_io[0].board_io,
@@ -112,13 +114,13 @@ describe('5-spi', function () {
     obnizA.getIO(check_io[2].obniz_io).input();
   });
 
-  it('two port at same time', async function () {
+  it('two port at same time', async () => {
     if (check_io.length < 6 || checkBoard.spi0 || checkBoard.spi1) {
       expect(true).to.be.true;
       return;
     }
-    let spi0 = checkBoard.getFreeSpi();
-    let spi1 = checkBoard.getFreeSpi();
+    const spi0 = checkBoard.getFreeSpi();
+    const spi1 = checkBoard.getFreeSpi();
     spi0.start({
       mode: 'master',
       clk: check_io[0].board_io,
@@ -139,16 +141,16 @@ describe('5-spi', function () {
     obnizA.getIO(check_io[5].obniz_io).drive('3v');
     obnizA.getIO(check_io[5].obniz_io).output(true);
     await obnizA.pingWait();
-    let data = [];
-    let expected0 = [];
-    let expected1 = [];
+    const data = [];
+    const expected0 = [];
+    const expected1 = [];
     for (let i = 0; i < 1024; i++) {
       data.push(0xcc);
       expected0.push(0);
       expected1.push(255);
     }
-    let ret0 = await spi0.writeWait(data);
-    let ret1 = await spi1.writeWait(data);
+    const ret0 = await spi0.writeWait(data);
+    const ret1 = await spi1.writeWait(data);
     expect(ret0).to.deep.equal(expected0);
     expect(ret1).to.deep.equal(expected1);
 

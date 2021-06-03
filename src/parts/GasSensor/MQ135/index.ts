@@ -4,7 +4,7 @@
  */
 import MQGas, { MQGasSensorOptions } from '../MQGas';
 
-export interface MQ135Options extends MQGasSensorOptions {}
+export type MQ135Options = MQGasSensorOptions;
 
 export default class MQ135 extends MQGas {
   public static info() {

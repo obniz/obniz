@@ -45,7 +45,9 @@ export default class Grove_MicroSwitch implements ObnizPartsInterface {
     this.requiredKeys = [];
   }
 
-  public onChangeForStateWait = (pressed: boolean) => {};
+  public onChangeForStateWait = (pressed: boolean) => {
+    // do nothing.
+  };
 
   public wired(obniz: Obniz) {
     if (this.params.grove) {
@@ -75,7 +77,9 @@ export default class Grove_MicroSwitch implements ObnizPartsInterface {
     return new Promise((resolve, reject) => {
       this.onChangeForStateWait = (pressed: any) => {
         if (isPressed === pressed) {
-          this.onChangeForStateWait = () => {};
+          this.onChangeForStateWait = () => {
+            // do nothing.
+          };
           resolve();
         }
       };

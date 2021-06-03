@@ -3,7 +3,7 @@
  * @packageDocumentation
  * @module Parts.RS_BTEVS1
  */
-/* eslint non-ascii: 0 */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const LED_DISPLAY_MODE = ['Disable', 'PM2.5', 'CO2'];
 const PM2_5_CONCENTRATION_MODE = ['Mass', 'Number'];
@@ -80,7 +80,9 @@ class RS_BTEVS1 {
         };
         return data;
     }
-    wired(obniz) { }
+    wired(obniz) {
+        // do nothing.
+    }
     /**
      * Connect to device デバイスに接続
      */
@@ -121,6 +123,9 @@ class RS_BTEVS1 {
      * Disconnect from device デバイスから切断
      */
     async disconnectWait() {
+        var _a;
+        if (this._buttonCharacteristic)
+            await ((_a = this._buttonCharacteristic) === null || _a === void 0 ? void 0 : _a.unregisterNotifyWait());
         await this._peripheral.disconnectWait();
     }
     /**

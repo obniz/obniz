@@ -9,7 +9,7 @@ import AnalogTemperatureSensor, {
   AnalogTemperatureSensorOptions,
 } from '../AnalogTemperatureSensor';
 
-export interface LM61Options extends AnalogTemperatureSensorOptions {}
+export type LM61Options = AnalogTemperatureSensorOptions;
 
 export default class LM61
   extends AnalogTemperatureSensor

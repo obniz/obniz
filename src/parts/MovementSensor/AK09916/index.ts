@@ -11,7 +11,7 @@ import ObnizPartsInterface, {
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 
-export interface AK09916Options extends I2cPartsAbstractOptions {}
+export type AK09916Options = I2cPartsAbstractOptions;
 
 export default class AK09916 extends i2cParts implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {

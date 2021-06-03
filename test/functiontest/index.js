@@ -1,6 +1,6 @@
-let path = require('path');
-let ejs = require('ejs');
-let expect = require('chai').expect;
+const path = require('path');
+const ejs = require('ejs');
+const expect = require('chai').expect;
 require('./testUtil');
 
 global.appRoot = path.resolve(__dirname + '/../../') + '/';
@@ -15,18 +15,18 @@ process.on('exit', () => {
 describe('all', function () {
   require('mocha-directory')();
 
-  let testUtil = require(global.appRoot + '/test/functiontest/testUtil.js');
-  let _ = require('underscore');
-  let fs = require('fs');
+  const testUtil = require(global.appRoot + '/test/functiontest/testUtil.js');
+  const _ = require('underscore');
+  const fs = require('fs');
 
-  let exclude = [
+  const exclude = [
     //  path.resolve(__dirname, './index.js'),
   ];
 
-  let recursiveTestImport = function (root_directory) {
+  const recursiveTestImport = function (root_directory) {
     let file_list = fs.readdirSync(root_directory);
 
-    //build
+    // build
     _.chain(file_list)
       .filter(function (file) {
         return !file.match(/^\..*/);
@@ -47,28 +47,28 @@ describe('all', function () {
         return !exclude.includes(file);
       })
       .each(function (file) {
-        let src = fs.readFileSync(file, 'utf8');
-        let describeIndex = src.search('describe');
-        let noTestIndex = src.search('no_html_test_build');
+        const src = fs.readFileSync(file, 'utf8');
+        const describeIndex = src.search('describe');
+        const noTestIndex = src.search('no_html_test_build');
         if (describeIndex < 0) return;
         if (noTestIndex >= 0) return;
-        let template = fs.readFileSync(
+        const template = fs.readFileSync(
           global.appRoot + '/test/functiontest/testTemplate.ejs',
           'utf8'
         );
-        let param = {
+        const param = {
           appRoot: global.appRoot,
           describe: src.substring(describeIndex),
         };
 
-        let html = ejs.render(template, param);
+        const html = ejs.render(template, param);
 
-        let newFilename = file.replace('.js', '') + '.html';
+        const newFilename = file.replace('.js', '') + '.html';
 
         fs.writeFileSync(newFilename, html);
       });
 
-    //refresh
+    // refresh
     file_list = fs.readdirSync(root_directory);
 
     // Run files
@@ -92,8 +92,8 @@ describe('all', function () {
         return !exclude.includes(file);
       })
       .each(function (file) {
-        let basename = path.basename(file, '.html');
-        let relativePath = path.relative(__dirname, file);
+        const basename = path.basename(file, '.html');
+        const relativePath = path.relative(__dirname, file);
 
         describe(basename, function () {
           this.timeout(60000);
@@ -109,11 +109,11 @@ describe('all', function () {
     // Recurse on directories
     _.chain(file_list)
       .filter(function (file) {
-        let file_path = path.resolve(root_directory, file);
+        const file_path = path.resolve(root_directory, file);
         return fs.lstatSync(file_path).isDirectory();
       })
       .each(function (file) {
-        let file_path = path.resolve(root_directory, file);
+        const file_path = path.resolve(root_directory, file);
         describe(file, function () {
           recursiveTestImport(file_path);
         });

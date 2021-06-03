@@ -1,15 +1,15 @@
-let chai = require('chai');
-let expect = chai.expect;
-let sinon = require('sinon');
+const chai = require('chai');
+const expect = chai.expect;
+const sinon = require('sinon');
 
-let testUtil = require('../../../testUtil.js');
+const testUtil = require('../../../testUtil.js');
 
 describe('obniz.libs.i2c', function () {
   beforeEach(async function () {
-    await testUtil.setupObnizPromise(this);
+    await testUtil.setupObnizWait(this);
   });
   afterEach(async function () {
-    await testUtil.releaseObnizPromise(this);
+    await testUtil.releaseObnizWait(this);
   });
 
   it('start', function () {
@@ -148,7 +148,7 @@ describe('obniz.libs.i2c', function () {
       { i2c0: { clock: 100000, sda: 2, scl: 3, mode: 'master' } },
     ]);
 
-    let r = this.obniz.i2c0.readWait(0x50, 3).then(
+    const r = this.obniz.i2c0.readWait(0x50, 3).then(
       function (value) {
         expect(value).to.be.deep.equal([0x61, 0xf2, 0x1f]);
         expect(this.obniz).to.be.finished;
@@ -183,7 +183,7 @@ describe('obniz.libs.i2c', function () {
       { i2c0: { clock: 100000, sda: 2, scl: 3, mode: 'master' } },
     ]);
 
-    let r = this.obniz.i2c0.readWait(0x50, 3).then(
+    const r = this.obniz.i2c0.readWait(0x50, 3).then(
       function (value) {
         expect(value).to.lengthOf(3);
         expect(this.obniz).to.be.finished;
@@ -217,7 +217,7 @@ describe('obniz.libs.i2c', function () {
       { i2c0: { clock: 100000, sda: 2, scl: 3, mode: 'master' } },
     ]);
 
-    let r = this.obniz.i2c0.readWait(0x50, 3).then(
+    const r = this.obniz.i2c0.readWait(0x50, 3).then(
       function (value) {
         expect(value).to.be.deep.equal([0x61, 0xf2, 0x1f]);
         expect(this.obniz).to.be.finished;
@@ -255,7 +255,7 @@ describe('obniz.libs.i2c', function () {
       { i2c0: { clock: 100000, sda: 2, scl: 3, mode: 'master' } },
     ]);
 
-    let r = this.obniz.i2c0.read10bitWait(0x50, 3).then(
+    const r = this.obniz.i2c0.read10bitWait(0x50, 3).then(
       function (value) {
         expect(value).to.be.deep.equal([0x61, 0xf2, 0x1f]);
         expect(this.obniz).to.be.finished;
@@ -328,10 +328,10 @@ describe('obniz.libs.i2c', function () {
     expect(this.obniz.i2c0.onwritten.callCount).to.be.equal(1);
     expect(this.obniz.i2c0.onwritten.getCall(0).args.length).to.be.equal(2);
 
-    let data = this.obniz.i2c0.onwritten.getCall(0).args[0];
+    const data = this.obniz.i2c0.onwritten.getCall(0).args[0];
     expect(data).to.be.deep.equal([16, 34, 242]);
 
-    let address = this.obniz.i2c0.onwritten.getCall(0).args[1];
+    const address = this.obniz.i2c0.onwritten.getCall(0).args[1];
     expect(address).to.be.deep.equal(1);
   });
 
@@ -369,10 +369,10 @@ describe('obniz.libs.i2c', function () {
     expect(this.obniz.i2c0.onwritten.callCount).to.be.equal(1);
     expect(this.obniz.i2c0.onwritten.getCall(0).args.length).to.be.equal(2);
 
-    let data = this.obniz.i2c0.onwritten.getCall(0).args[0];
+    const data = this.obniz.i2c0.onwritten.getCall(0).args[0];
     expect(data).to.be.deep.equal([16, 34, 242]);
 
-    let address = this.obniz.i2c0.onwritten.getCall(0).args[1];
+    const address = this.obniz.i2c0.onwritten.getCall(0).args[1];
     expect(address).to.be.deep.equal(2);
   });
 });

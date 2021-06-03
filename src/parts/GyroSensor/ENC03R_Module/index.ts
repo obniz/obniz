@@ -64,19 +64,15 @@ export default class ENC03R_Module implements ObnizPartsInterface {
     });
   }
 
-  public get1Wait(): Promise<number> {
-    return new Promise(async (resolve) => {
-      const value: number = await this.ad0.getWait();
-      this.sens1 = (value - 1.45) / this.Sens;
-      resolve(this.sens1);
-    });
+  public async get1Wait(): Promise<number> {
+    const value: number = await this.ad0.getWait();
+    this.sens1 = (value - 1.45) / this.Sens;
+    return this.sens1;
   }
 
-  public get2Wait(): Promise<number> {
-    return new Promise(async (resolve) => {
-      const value: number = await this.ad1.getWait();
-      this.sens2 = (value - 1.35) / this.Sens;
-      resolve(this.sens2);
-    });
+  public async get2Wait(): Promise<number> {
+    const value: number = await this.ad1.getWait();
+    this.sens2 = (value - 1.35) / this.Sens;
+    return this.sens2;
   }
 }

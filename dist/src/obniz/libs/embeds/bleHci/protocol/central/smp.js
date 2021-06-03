@@ -15,6 +15,7 @@ const crypto_1 = __importDefault(require("./crypto"));
 /**
  * @ignore
  */
+// eslint-disable-next-line @typescript-eslint/no-namespace
 var SMP;
 (function (SMP) {
     SMP.CID = 0x0006;
@@ -36,7 +37,9 @@ class Smp extends eventemitter3_1.default {
         this._stk = null;
         this._ltk = null;
         this._options = undefined;
-        this.debugHandler = () => { };
+        this.debugHandler = () => {
+            // do nothing.
+        };
         this._aclStream = aclStream;
         this._iat = Buffer.from([localAddressType === 'random' ? 0x01 : 0x00]);
         this._ia = bleHelper_1.default.hex2reversedBuffer(localAddress, ':');
@@ -174,7 +177,9 @@ class Smp extends eventemitter3_1.default {
     }
     handleSecurityRequest(data) {
         this.pairingWait()
-            .then(() => { })
+            .then(() => {
+            // do nothing.
+        })
             .catch((e) => {
             if (this._options && this._options.onPairingFailed) {
                 this._options.onPairingFailed(e);

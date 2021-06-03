@@ -95,7 +95,9 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     this._connectPromises = [];
   }
 
-  public debugHandler: any = () => {};
+  public debugHandler: any = () => {
+    // do nothing.
+  };
 
   public addPeripheralData(uuid: UUID, addressType: BleDeviceAddressType) {
     if (!this._addresses[uuid]) {
@@ -533,7 +535,9 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
         latency,
         supervisionTimeout
       )
-      .then(() => {})
+      .then(() => {
+        // do nothing.
+      })
       .catch((e) => {
         // TODO:
         // This must passed to Obniz class.

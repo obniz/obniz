@@ -34,8 +34,9 @@ class RS_BTIREX2 {
         }
         return false;
     }
-    // @ts-ignore
-    wired(obniz) { }
+    wired(obniz) {
+        // do nothing.
+    }
     async connectWait() {
         if (!this._peripheral) {
             throw new Error('RS_BTIREX2 is not find.');

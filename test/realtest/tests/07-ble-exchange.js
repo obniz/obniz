@@ -1,14 +1,15 @@
 const config = require('../config.js');
 
-let obnizA, checkBoard;
+let obnizA;
+let checkBoard;
 
 describe('7-ble-exchange', function () {
   this.timeout(30000);
 
-  before(async function () {
+  before(async () => {
     await new Promise((resolve) => {
       config.waitForConenct(() => {
-        obnizA = config.obnizA; //exchange A<->B
+        obnizA = config.obnizA; // exchange A<->B
         checkBoard = config.checkBoard;
         resolve();
       });
@@ -17,18 +18,18 @@ describe('7-ble-exchange', function () {
     await checkBoard.ble.initWait();
   });
 
-  it('simple ad', async function () {
-    let service = new obnizA.ble.service({
+  it('simple ad', async () => {
+    const service = new obnizA.ble.service({
       uuid: '0000',
     });
     obnizA.ble.peripheral.addService(service);
-    let ad = service.advData;
+    const ad = service.advData;
     obnizA.ble.advertisement.setAdvData(ad);
     obnizA.ble.advertisement.start();
 
     let found = false;
-    let expectedValue = [2, 1, 6, 3, 2, 0, 0];
-    checkBoard.ble.scan.onfind = function (peripheral) {
+    const expectedValue = [2, 1, 6, 3, 2, 0, 0];
+    checkBoard.ble.scan.onfind = (peripheral) => {
       // console.log(peripheral.adv_data.length + ": " + peripheral.localName());
       if (peripheral.adv_data.length === expectedValue.length) {
         // console.log(peripheral.adv_data);
@@ -51,22 +52,22 @@ describe('7-ble-exchange', function () {
     obnizA.ble.peripheral.end();
   });
 
-  it('ad localname', async function () {
-    let service = new obnizA.ble.service({
+  it('ad localname', async () => {
+    const service = new obnizA.ble.service({
       uuid: '0001',
     });
     obnizA.ble.peripheral.addService(service);
-    let ad = service.advData;
+    const ad = service.advData;
     const localName = '' + new Date().getTime();
     obnizA.ble.advertisement.setScanRespData({
-      localName: localName,
+      localName,
     });
     obnizA.ble.advertisement.setAdvData(ad);
     obnizA.ble.advertisement.start();
 
     let found = false;
     // let expectedValue = [2, 1, 6, 3, 2, 1, 0];
-    checkBoard.ble.scan.onfind = function (peripheral) {
+    checkBoard.ble.scan.onfind = (peripheral) => {
       if (peripheral.localName === localName) {
         console.log(
           'FOUND! ' + peripheral.address + ' ' + peripheral.localName
@@ -86,8 +87,8 @@ describe('7-ble-exchange', function () {
   });
 });
 
-function wait(ms) {
+const wait = (ms) => {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
-}
+};

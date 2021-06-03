@@ -113,7 +113,9 @@ export default class ObnizBLEHci {
    *
    * @param data
    */
-  public onread(data: any) {}
+  public onread(data: any) {
+    // do nothing.
+  }
 
   /**
    * @ignore

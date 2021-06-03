@@ -13,7 +13,9 @@ const bleHelper_1 = __importDefault(require("../../bleHelper"));
 /**
  * @ignore
  */
-const debug = () => { };
+const debug = () => {
+    // do nothing.
+};
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const hci_1 = __importDefault(require("../hci"));
 /**
