@@ -25,6 +25,7 @@ import IBS03T, { IBS03TOptions } from '../parts/Ble/iBS03T';
 import IBS03TP, { IBS03TPOptions } from '../parts/Ble/iBS03TP';
 import IBS04, { IBS04Options } from '../parts/Ble/iBS04';
 import IBS04I, { IBS04IOptions } from '../parts/Ble/iBS04i';
+import KankiAirMier, { KankiAirMierOptions } from '../parts/Ble/KankiAirMier';
 import Linking, { LinkingOptions } from '../parts/Ble/linking';
 import Logtta_Accel, { Logtta_AccelOptions } from '../parts/Ble/LogttaAccel';
 import Logtta_AD, { Logtta_ADOptions } from '../parts/Ble/LogttaAD';
@@ -44,6 +45,7 @@ import TM551, { TM551Options } from '../parts/Ble/tm551';
 import Toio_CoreCube, {
   Toio_CoreCubeOptions,
 } from '../parts/Ble/toio_corecube';
+import Tr4, { Tr4Options } from '../parts/Ble/TR4';
 import UA1200BLE, { UA1200BLEOptions } from '../parts/Ble/UA1200BLE';
 import UA651BLE, { UA651BLEOptions } from '../parts/Ble/UA651BLE';
 import uPRISM, { uPRISMOptions } from '../parts/Ble/uprism';
@@ -477,6 +479,8 @@ export interface PartsList {
   iBS03TP: { class: IBS03TP; options: IBS03TPOptions };
   iBS04: { class: IBS04; options: IBS04Options };
   iBS04i: { class: IBS04I; options: IBS04IOptions };
+  TR4x: { class: Tr4; options: Tr4Options };
+  KankiAirMier: { class: KankiAirMier; options: KankiAirMierOptions };
   MINEW_S1: { class: MINEW_S1; options: MINEW_S1Options };
   RS_BTEVS1: { class: RS_BTEVS1; options: RS_BTEVS1Options };
   RS_Seek3: { class: RS_Seek3; options: RS_Seek3Options };

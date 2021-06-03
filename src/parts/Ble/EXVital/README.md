@@ -2,6 +2,7 @@
 
 Wearable activity meter for BLE communication made by WHERE
 
+![](./image.jpg)
 
 ## Data acquisition
 

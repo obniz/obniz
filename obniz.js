@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.15.2-alpha.0",
+  "version": "3.16.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -124,7 +124,7 @@ module.exports = {
     "lint-ts": "eslint --fix 'src/**/*.ts' 'test/**/*.ts' --rulesdir devtools/eslint/rule  --quiet",
     "lint-test": "mocha $NODE_DEBUG_OPTION ./devtools/eslint/test/**/*.js",
     "precommit": "lint-staged && npm run build && git add dist && git add obniz.js",
-    "prepare": "npm run build",
+    "prepublishOnly": "npm run build",
     "clean": "rimraf ./dist ./obniz.js ./obniz.d.ts"
   },
   "lint-staged": {
@@ -4611,7 +4611,7 @@ for (const path of context.keys()) {
     if (anParts.info) {
         Obniz_1.Obniz.PartsRegistrate(anParts);
     }
-    else if (anParts.default.info) {
+    else if (anParts.default && anParts.default.info) {
         // for ts "export default"
         Obniz_1.Obniz.PartsRegistrate(anParts.default);
     }
@@ -22496,6 +22496,7 @@ var map = {
 	"./Ble/EXVital/index.js": "./dist/src/parts/Ble/EXVital/index.js",
 	"./Ble/HEM_6233T/index.js": "./dist/src/parts/Ble/HEM_6233T/index.js",
 	"./Ble/HEM_9200T/index.js": "./dist/src/parts/Ble/HEM_9200T/index.js",
+	"./Ble/KankiAirMier/index.js": "./dist/src/parts/Ble/KankiAirMier/index.js",
 	"./Ble/LogttaAD/index.js": "./dist/src/parts/Ble/LogttaAD/index.js",
 	"./Ble/LogttaAccel/index.js": "./dist/src/parts/Ble/LogttaAccel/index.js",
 	"./Ble/LogttaCO2/index.js": "./dist/src/parts/Ble/LogttaCO2/index.js",
@@ -22509,11 +22510,10 @@ var map = {
 	"./Ble/RS_BTIREX2/index.js": "./dist/src/parts/Ble/RS_BTIREX2/index.js",
 	"./Ble/RS_BTWATTCH2/index.js": "./dist/src/parts/Ble/RS_BTWATTCH2/index.js",
 	"./Ble/RS_SEEK3/index.js": "./dist/src/parts/Ble/RS_SEEK3/index.js",
+	"./Ble/TR4/index.js": "./dist/src/parts/Ble/TR4/index.js",
 	"./Ble/UA1200BLE/index.js": "./dist/src/parts/Ble/UA1200BLE/index.js",
 	"./Ble/UA651BLE/index.js": "./dist/src/parts/Ble/UA651BLE/index.js",
 	"./Ble/UT201BLE/index.js": "./dist/src/parts/Ble/UT201BLE/index.js",
-	"./Ble/abstract/services/batteryService.js": "./dist/src/parts/Ble/abstract/services/batteryService.js",
-	"./Ble/abstract/services/genericAccess.js": "./dist/src/parts/Ble/abstract/services/genericAccess.js",
 	"./Ble/iBS01/index.js": "./dist/src/parts/Ble/iBS01/index.js",
 	"./Ble/iBS01G/index.js": "./dist/src/parts/Ble/iBS01G/index.js",
 	"./Ble/iBS01H/index.js": "./dist/src/parts/Ble/iBS01H/index.js",
@@ -22542,6 +22542,9 @@ var map = {
 	"./Ble/tm551/index.js": "./dist/src/parts/Ble/tm551/index.js",
 	"./Ble/toio_corecube/index.js": "./dist/src/parts/Ble/toio_corecube/index.js",
 	"./Ble/uprism/index.js": "./dist/src/parts/Ble/uprism/index.js",
+	"./Ble/utils/advertisement/advertismentAnalyzer.js": "./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js",
+	"./Ble/utils/services/batteryService.js": "./dist/src/parts/Ble/utils/services/batteryService.js",
+	"./Ble/utils/services/genericAccess.js": "./dist/src/parts/Ble/utils/services/genericAccess.js",
 	"./Camera/ArduCAMMini/index.js": "./dist/src/parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./dist/src/parts/Camera/JpegSerialCam/index.js",
 	"./ColorSensor/PT550/index.js": "./dist/src/parts/ColorSensor/PT550/index.js",
@@ -22990,16 +22993,16 @@ class OMRON_2JCIE {
         const adv_data = peripheral.adv_data;
         if (peripheral.localName && peripheral.localName.indexOf('IM') >= 0) {
             return {
-                temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[8], adv_data[9]) *
+                temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[9], adv_data[8]) *
                     0.01,
-                relative_humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[10], adv_data[11]) * 0.01,
-                light: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[12], adv_data[13]) * 1,
-                uv_index: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[14], adv_data[15]) * 0.01,
-                barometric_pressure: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[16], adv_data[17]) * 0.1,
-                sound_noise: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[18], adv_data[19]) * 0.01,
-                acceleration_x: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[20], adv_data[21]),
-                acceleration_y: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[22], adv_data[23]),
-                acceleration_z: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[24], adv_data[25]),
+                relative_humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[11], adv_data[10]) * 0.01,
+                light: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[13], adv_data[12]) * 1,
+                uv_index: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[15], adv_data[14]) * 0.01,
+                barometric_pressure: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[17], adv_data[16]) * 0.1,
+                sound_noise: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[19], adv_data[18]) * 0.01,
+                acceleration_x: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[21], adv_data[20]),
+                acceleration_y: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[23], adv_data[22]),
+                acceleration_z: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[25], adv_data[24]),
                 battery: (adv_data[26] + 100) / 100,
             };
         }
@@ -23172,7 +23175,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/abstract/services/batteryService.js"));
+const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/services/batteryService.js"));
 class ENERTALK_TOUCH {
     constructor(peripheral) {
         this.keys = [];
@@ -23733,6 +23736,69 @@ exports.default = HEM_9200T;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/KankiAirMier/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.KankiAirMier
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+class KankiAirMier {
+    constructor() {
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: 'KankiAirMier',
+        };
+    }
+    static isDevice(peripheral) {
+        return KankiAirMier._deviceAdvAnalyzer.validate(peripheral.adv_data);
+    }
+    static getData(peripheral) {
+        if (!KankiAirMier.isDevice(peripheral)) {
+            return null;
+        }
+        const allData = KankiAirMier._deviceAdvAnalyzer.getAllData(peripheral.adv_data);
+        const temperatureRaw = Buffer.from(allData.manufacture.temperature).readInt16LE(0);
+        const co2Raw = Buffer.from(allData.manufacture.co2).readInt16LE(0);
+        const humidityRaw = Buffer.from(allData.manufacture.humidity).readInt16LE(0);
+        const sequenceNumber = allData.manufacture.sequence[0] >> 5;
+        const deviceName = Buffer.from(allData.manufacture.deviceName).toString('utf8');
+        return {
+            co2: co2Raw,
+            temperature: temperatureRaw / 10,
+            humidity: humidityRaw / 10,
+            sequenceNumber,
+            deviceName,
+        };
+    }
+}
+exports.default = KankiAirMier;
+KankiAirMier._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
+    .groupStart('manufacture')
+    .addTarget('length', [0x1e])
+    .addTarget('type', [0xff])
+    .addTarget('companyId', [0x9e, 0x09])
+    .addTarget('appearance', [0x01])
+    .addTarget('co2', [-1, -1])
+    .addTarget('temperature', [-1, -1])
+    .addTarget('humidity', [-1, -1])
+    .addTarget('battery', [0xfe])
+    .addTarget('interval', [0x02, 0x00])
+    .addTarget('sequence', [-1])
+    .addTarget('firmwareVersion', [-1])
+    .addTargetByLength('deviceName', 15) // from datasheet length=14, but device send length=13
+    .groupEnd();
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/LogttaAD/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -23980,8 +24046,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/abstract/services/batteryService.js"));
-const genericAccess_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/abstract/services/genericAccess.js"));
+const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/services/batteryService.js"));
+const genericAccess_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/services/genericAccess.js"));
 class Logtta_CO2 {
     constructor(peripheral) {
         if (peripheral && !Logtta_CO2.isDevice(peripheral)) {
@@ -26166,6 +26232,70 @@ exports.default = RS_Seek3;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/TR4/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.TR4
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+class Tr4 {
+    constructor() {
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: 'TR4',
+        };
+    }
+    static isDevice(peripheral) {
+        return Tr4._deviceAdvAnalyzer.validate(peripheral.adv_data);
+    }
+    static getData(peripheral) {
+        if (!Tr4.isDevice(peripheral)) {
+            return null;
+        }
+        const measureData = Tr4._deviceAdvAnalyzer.getData(peripheral.adv_data, 'manufacture', 'measureData');
+        if (!measureData) {
+            return null;
+        }
+        if (measureData[0] === 0xee && measureData[1] === 0xee) {
+            // sensor error
+            return null;
+        }
+        const temperatureRaw = Buffer.from(measureData).readInt16LE(0);
+        return {
+            temperature: (temperatureRaw - 1000) / 10,
+        };
+    }
+}
+exports.default = Tr4;
+Tr4._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
+    .addTarget('flag', [0x02, 0x01, 0x06])
+    .groupStart('manufacture')
+    .addTarget('length', [0x1b])
+    .addTarget('type', [0xff])
+    .addTarget('companyId', [0x92, 0x03])
+    .addTargetByLength('deviceSerial', 4)
+    .addTarget('security', [-1])
+    .addTarget('formatNo', [1])
+    .addTarget('measureData', [-1, -1])
+    .addTarget('reserved', [-1, -1])
+    .addTarget('battery', [5])
+    .addTargetByLength('reserved2', 13) // from datasheet length=14, but device send length=13
+    .groupEnd()
+    // local name adv is exist, but cannot use for filter
+    .groupStart('localName')
+    .groupEnd();
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/UA1200BLE/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -26735,63 +26865,6 @@ class UT201BLE {
 exports.default = UT201BLE;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
-
-/***/ }),
-
-/***/ "./dist/src/parts/Ble/abstract/services/batteryService.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * @packageDocumentation
- * @module Parts.abstract.services
- */
-Object.defineProperty(exports, "__esModule", { value: true });
-class BleBatteryService {
-    constructor(service) {
-        this._service = service;
-    }
-    async getBatteryLevelWait() {
-        const char = this._service.getCharacteristic('2A19');
-        if (!char) {
-            return null;
-        }
-        return await char.readNumberWait();
-    }
-    getBatteryLevel() {
-        return this.getBatteryLevelWait();
-    }
-}
-exports.default = BleBatteryService;
-
-
-/***/ }),
-
-/***/ "./dist/src/parts/Ble/abstract/services/genericAccess.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * @packageDocumentation
- * @module Parts.abstract.services
- */
-Object.defineProperty(exports, "__esModule", { value: true });
-class BleGenericAccess {
-    constructor(service) {
-        this._service = service;
-    }
-    async getDeviceNameWait() {
-        const char = this._service.getCharacteristic('2A00');
-        if (!char) {
-            return null;
-        }
-        return await char.readTextWait();
-    }
-}
-exports.default = BleGenericAccess;
-
 
 /***/ }),
 
@@ -32796,6 +32869,181 @@ class uPRISM {
     }
 }
 exports.default = uPRISM;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class BleAdvBinaryAnalyzer {
+    constructor(parent) {
+        this._target = [];
+        this._parent = parent;
+    }
+    addTarget(name, filter) {
+        this._target.push({ name, filter });
+        return this;
+    }
+    addTargetByLength(name, length) {
+        this._target.push({ name, filter: new Array(length).fill(-1) });
+        return this;
+    }
+    addGroup(name, group) {
+        this._target.push({ name, filter: group });
+        return this;
+    }
+    groupStart(name) {
+        const filter = new BleAdvBinaryAnalyzer(this);
+        this._target.push({ name, filter });
+        return filter;
+    }
+    groupEnd() {
+        if (!this._parent) {
+            throw new Error('Cannot call parent of root');
+        }
+        return this._parent;
+    }
+    flat() {
+        return this._target.reduce((acc, val) => {
+            if (val.filter instanceof BleAdvBinaryAnalyzer) {
+                return [...acc, ...val.filter.flat()];
+            }
+            return [...acc, ...val.filter];
+        }, []);
+    }
+    length() {
+        return this.flat().length;
+    }
+    validate(target) {
+        const flat = this.flat();
+        if (flat.length > target.length) {
+            return false;
+        }
+        for (let index = 0; index < flat.length; index++) {
+            if (flat[index] === -1) {
+                continue;
+            }
+            if (target[index] === flat[index]) {
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
+    getData(target, ...names) {
+        if (!this.validate(target)) {
+            return null;
+        }
+        if (!names || names.length === 0) {
+            return target;
+        }
+        let index = 0;
+        for (const one of this._target) {
+            if (one.name === names[0]) {
+                if (one.filter instanceof BleAdvBinaryAnalyzer) {
+                    const newTarget = target.slice(index, index + one.filter.length());
+                    return one.filter.getData(newTarget, ...names.slice(1));
+                }
+                else {
+                    const newTarget = target.slice(index, index + one.filter.length);
+                    return newTarget;
+                }
+            }
+            if (one.filter instanceof BleAdvBinaryAnalyzer) {
+                index += one.filter.length();
+            }
+            else {
+                index += one.filter.length;
+            }
+        }
+        return null;
+    }
+    getAllData(target) {
+        if (!this.validate(target)) {
+            return null;
+        }
+        const result = {};
+        let index = 0;
+        for (const one of this._target) {
+            if (one.filter instanceof BleAdvBinaryAnalyzer) {
+                const newTarget = target.slice(index, index + one.filter.length());
+                result[one.name] = one.filter.getAllData(newTarget);
+            }
+            else {
+                result[one.name] = target.slice(index, index + one.filter.length);
+            }
+            if (one.filter instanceof BleAdvBinaryAnalyzer) {
+                index += one.filter.length();
+            }
+            else {
+                index += one.filter.length;
+            }
+        }
+        return result;
+    }
+}
+exports.BleAdvBinaryAnalyzer = BleAdvBinaryAnalyzer;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/utils/services/batteryService.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.utils.services
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class BleBatteryService {
+    constructor(service) {
+        this._service = service;
+    }
+    async getBatteryLevelWait() {
+        const char = this._service.getCharacteristic('2A19');
+        if (!char) {
+            return null;
+        }
+        return await char.readNumberWait();
+    }
+    getBatteryLevel() {
+        return this.getBatteryLevelWait();
+    }
+}
+exports.default = BleBatteryService;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/utils/services/genericAccess.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.utils.services
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class BleGenericAccess {
+    constructor(service) {
+        this._service = service;
+    }
+    async getDeviceNameWait() {
+        const char = this._service.getCharacteristic('2A00');
+        if (!char) {
+            return null;
+        }
+        return await char.readTextWait();
+    }
+}
+exports.default = BleGenericAccess;
 
 
 /***/ }),
@@ -71821,7 +72069,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
+module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
 
 /***/ }),
 

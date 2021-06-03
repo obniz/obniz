@@ -7,7 +7,7 @@ import BleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemote
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import BleRemoteService from '../../../obniz/libs/embeds/bleHci/bleRemoteService';
 import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
-import BleGenericAccess from '../abstract/services/genericAccess';
+import BleGenericAccess from '../utils/services/genericAccess';
 export interface MT_500BTOptions {
 }
 export default class MT_500BT implements ObnizPartsInterface {
