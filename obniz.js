@@ -124,7 +124,7 @@ module.exports = {
     "lint-ts": "eslint --fix 'src/**/*.ts' 'test/**/*.ts' --rulesdir devtools/eslint/rule  --quiet",
     "lint-test": "mocha $NODE_DEBUG_OPTION ./devtools/eslint/test/**/*.js",
     "precommit": "lint-staged && npm run build && git add dist && git add obniz.js",
-    "prepare": "npm run build",
+    "prepublishOnly": "npm run build",
     "clean": "rimraf ./dist ./obniz.js ./obniz.d.ts"
   },
   "lint-staged": {
