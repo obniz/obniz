@@ -52,6 +52,7 @@ export default class Logtta_Accel implements ObnizPartsBleInterface {
   }
 
   public static isDevice(peripheral: BleRemotePeripheral): boolean {
+    if (!peripheral.advertise_data_rows) throw new Error('');
     const advertise = peripheral.advertise_data_rows.filter((adv: number[]) => {
       let find = false;
       if (this.deviceAdv.length > adv.length) {

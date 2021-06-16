@@ -14,6 +14,8 @@ class Logtta_Accel {
         };
     }
     static isDevice(peripheral) {
+        if (!peripheral.advertise_data_rows)
+            throw new Error('');
         const advertise = peripheral.advertise_data_rows.filter((adv) => {
             let find = false;
             if (this.deviceAdv.length > adv.length) {

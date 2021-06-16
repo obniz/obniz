@@ -3,105 +3,56 @@
  * @module Parts.iBS04i
  */
 
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, {
-  ObnizPartsBleInfo,
+import { IBeacon } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import {
+  iBeaconCompanyID,
+  iBeaconData,
+  ObnizBleBeaconStruct,
+  ObnizPartsBle,
+  PartsType,
 } from '../../../obniz/ObnizPartsBleInterface';
+import { BaseIBS } from '../iBS';
 
 export interface IBS04IOptions {}
 
-export interface IBS04I_Data {
+export interface IBS04I_Data extends IBeacon {
   battery: number;
   button: boolean;
-  uuid: string;
-  major: number;
-  minor: number;
-  power: number;
-  rssi: number;
-  address: string;
+  user: number;
 }
 
-export default class IBS04I implements ObnizPartsBleInterface {
-  public static info(): ObnizPartsBleInfo {
-    return {
-      name: 'iBS04i',
-    };
-  }
+export default class IBS04I extends BaseIBS<IBS04I_Data> {
+  public static readonly PartsName: PartsType = 'iBS04i';
 
-  public static isDevice(peripheral: BleRemotePeripheral): boolean {
-    return IBS04I.getDeviceArray(peripheral) !== null;
-  }
+  protected static readonly CompanyID = iBeaconCompanyID;
 
-  public static getData(peripheral: BleRemotePeripheral): IBS04I_Data | null {
-    const adv = IBS04I.getDeviceArray(peripheral);
-    if (adv === null) {
-      return null;
-    }
-    const data: IBS04I_Data = {
-      battery: (adv[5] + adv[6] * 256) * 0.01,
-      button: Boolean(adv[7]),
-      uuid: peripheral.iBeacon!.uuid,
-      major: peripheral.iBeacon!.major,
-      minor: peripheral.iBeacon!.minor,
-      power: peripheral.iBeacon!.power,
-      rssi: peripheral.iBeacon!.rssi,
-      address: peripheral.address,
-    };
-    return data;
-  }
+  protected static readonly CompanyID_ScanResponse = BaseIBS.CompanyID;
 
-  private static deviceAdv: number[] = [
-    0xff,
-    0x0d, // Manufacturer vendor code
-    0x00, // Manufacturer vendor code
-    0x83, // Magic code
-    0xbc, // Magic code
-    -1, // Battery
-    -1, // Battery
-    -1, // Event
-    0xff, // reserved
-    0xff, // reserved
-    0xff, // reserved
-    0xff, // reserved
-    0x00, // user
-    -1, // user
-    0x18, // subType
-    -1, // reserved
-    -1, // reserved
-    -1, // reserved
-  ];
+  public static readonly BeaconDataStruct: ObnizBleBeaconStruct<IBS04I_Data> = {
+    battery: {
+      ...BaseIBS.Config.battery,
+      scanResponse: true,
+    },
+    button: {
+      ...BaseIBS.Config.button,
+      scanResponse: true,
+    },
+    reserved: {
+      index: 5,
+      length: 4,
+      type: 'check',
+      data: [0xff, 0xff, 0xff, 0xff],
+      scanResponse: true,
+    },
+    user: {
+      index: 9,
+      length: 2,
+      type: 'unsignedNumLE',
+      scanResponse: true,
+    },
+    ...BaseIBS.getUniqueData(4, 0x18, 0, true),
+    ...iBeaconData,
+  };
 
-  private static getDeviceArray(
-    peripheral: BleRemotePeripheral
-  ): number[] | null {
-    const advertise = peripheral.advertise_data_rows.filter((adv: number[]) => {
-      let find = false;
-      if (this.deviceAdv.length > adv.length) {
-        return find;
-      }
-      for (let index = 0; index < this.deviceAdv.length; index++) {
-        if (this.deviceAdv[index] === -1) {
-          continue;
-        }
-        if (adv[index] === this.deviceAdv[index]) {
-          find = true;
-          continue;
-        }
-        find = false;
-        break;
-      }
-      return find;
-    });
-    if (advertise.length !== 1) {
-      return null;
-    }
-    const type = advertise[0][14];
-    if (type !== 24) {
-      // is not ibs04i
-      return null;
-    }
-    return advertise[0];
-  }
-
-  public _peripheral: BleRemotePeripheral | null = null;
+  protected static = IBS04I as typeof ObnizPartsBle;
 }

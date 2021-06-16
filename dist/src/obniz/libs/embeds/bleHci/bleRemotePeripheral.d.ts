@@ -265,6 +265,8 @@ export default class BleRemotePeripheral {
      * ```
      */
     localName: string | null;
+    manufacturerSpecificData: number[] | null;
+    manufacturerSpecificDataInScanResponse: number[] | null;
     /**
      * This returns iBeacon data if the peripheral has it. If none, it will return null.
      *
@@ -323,8 +325,15 @@ export default class BleRemotePeripheral {
     /**
      * Raw data of advertisement
      *
+     * @deprecated
      */
-    advertise_data_rows: any;
+    advertise_data_rows: number[][] | null;
+    protected advertisingDataRows: {
+        [key: number]: number[];
+    };
+    protected scanResponseDataRows: {
+        [key: number]: number[];
+    };
     /**
      * @ignore
      */
@@ -596,8 +605,9 @@ export default class BleRemotePeripheral {
     pairingWait(options?: BlePairingOptions): Promise<string>;
     setPairingOption(options: BlePairingOptions): void;
     protected analyseAdvertisement(): void;
-    protected searchTypeVal(type: any): any[] | undefined;
+    protected searchTypeVal(type: number, fromScanResponseData?: boolean): number[] | undefined;
     protected setLocalName(): void;
+    protected setManufacturerSpecificData(): void;
     protected setIBeacon(): void;
     protected _addServiceUuids(results: UUID[], data: any, bit: any): void;
 }

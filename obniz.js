@@ -3894,7 +3894,9 @@ exports.default = ObnizParts;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/* eslint-disable max-classes-per-file */
+/* eslint-disable rulesdir/non-ascii */
 /**
  * @packageDocumentation
  * @module ObnizCore
@@ -3945,7 +3947,383 @@ class ObnizPartsBleInterface {
     }
 }
 exports.default = ObnizPartsBleInterface;
+class UniqueAdData {
+}
+exports.UniqueAdData = UniqueAdData;
+const ObnizPartsBleModeList = ['Beacon', 'Connectable', 'Pairing'];
+exports.notMatchDeviceError = new Error("isn't target device.");
+exports.uint = (value) => {
+    let val = 0;
+    value.forEach((v, i) => (val += v << (i * 8)));
+    return val;
+};
+exports.uint16 = (value) => {
+    return (value[1] << 8) | value[0];
+};
+exports.uint16BE = (value) => exports.uint16(value.reverse());
+exports.int16 = (value) => {
+    let val = exports.uint16(value);
+    if ((val & 0x8000) !== 0) {
+        val -= 0x10000;
+    }
+    return val;
+};
+exports.int16BE = (value) => exports.int16(value.reverse());
+exports.unsigned16FromBinary = (high, low) => {
+    return (high << 8) | low;
+};
+/**
+ * Utility function for reading 2 byte to signed number.
+ */
+exports.signed16FromBinary = (high, low) => {
+    let val = exports.unsigned16FromBinary(high, low);
+    if ((val & 0x8000) !== 0) {
+        val -= 0x10000;
+    }
+    return val;
+};
+/**
+ * Utility function for reading 4 byte to signed number.
+ */
+exports.signed32FromBinary = (byte3, byte2, byte1, byte0) => {
+    let val = (byte3 << (8 * 3)) | (byte2 << (8 * 2)) | (byte1 << (8 * 1)) | byte0;
+    if ((val & 0x80000000) !== 0) {
+        val -= 0x100000000;
+    }
+    return val;
+};
+class ObnizPartsBle {
+    constructor(peripheral, mode) {
+        /**
+         * NEED IMPLEMENTATION
+         */
+        this.static = ObnizPartsBle;
+        if (!mode) {
+            const m = this.static.getDeviceMode(peripheral);
+            if (!m)
+                throw exports.notMatchDeviceError;
+            else
+                mode = m;
+        }
+        this.mode = mode;
+        this.peripheral = peripheral;
+        this.beaconData = this.peripheral.manufacturerSpecificData;
+        if (this.beaconData)
+            this.beaconData = this.beaconData.slice(2);
+        this.beaconDataInScanResponse = this.peripheral.manufacturerSpecificDataInScanResponse;
+        if (this.beaconDataInScanResponse)
+            this.beaconDataInScanResponse = this.beaconDataInScanResponse.slice(2);
+        this.peripheral.ondisconnect = (reason) => {
+            if (this._onDisconnect)
+                this._onDisconnect(reason);
+            if (this.onDisconnect)
+                this.onDisconnect(reason);
+        };
+    }
+    /**
+     * Information of parts.
+     * name: PartsName
+     */
+    static info() {
+        return { name: this.PartsName };
+    }
+    /**
+     * @deprecated
+     */
+    static isDevice(peripheral) {
+        return this.getDeviceMode(peripheral) !== null;
+    }
+    static getDeviceMode(peripheral) {
+        const result = (this.AvailableBleMode instanceof Array
+            ? this.AvailableBleMode
+            : [this.AvailableBleMode])
+            .map((mode) => this.isDeviceWithMode(peripheral, mode) ? mode : undefined)
+            .find((mode) => mode);
+        return (result !== null && result !== void 0 ? result : null);
+    }
+    static isDeviceWithMode(peripheral, mode) {
+        var _a;
+        if (typeof this.AvailableBleMode === 'string'
+            ? this.AvailableBleMode !== mode
+            : !this.AvailableBleMode.includes(mode))
+            return false;
+        if (this.Address) {
+            const defaultAddress = this.Address instanceof RegExp ? this.Address : this.Address[mode];
+            if (defaultAddress === undefined ||
+                !defaultAddress.test(peripheral.address))
+                return false;
+        }
+        if (this.LocalName) {
+            const defaultLocalName = this.LocalName instanceof RegExp
+                ? this.LocalName
+                : this.LocalName[mode];
+            if (defaultLocalName === undefined ||
+                !defaultLocalName.test((_a = peripheral.localName, (_a !== null && _a !== void 0 ? _a : 'null'))))
+                return false;
+        }
+        if (!this.checkManufacturerSpecificData(mode, peripheral.manufacturerSpecificData, this.CompanyID, false))
+            return false;
+        if (!this.checkManufacturerSpecificData(mode, peripheral.manufacturerSpecificDataInScanResponse, this.CompanyID_ScanResponse, true))
+            return false;
+        return true;
+    }
+    static checkManufacturerSpecificData(mode, beaconData, companyID, inScanResponse) {
+        if (companyID !== undefined) {
+            const defaultCompanyID = companyID instanceof Array || companyID === null
+                ? companyID
+                : companyID[mode];
+            if (!(defaultCompanyID === null && beaconData === null) &&
+                (defaultCompanyID === undefined ||
+                    defaultCompanyID === null ||
+                    beaconData === null ||
+                    defaultCompanyID[0] !== beaconData[0] ||
+                    defaultCompanyID[1] !== beaconData[1]))
+                return false;
+        }
+        if (this.BeaconDataStruct !== undefined) {
+            const defaultBeaconDataStruct = (this.BeaconDataStruct !== null &&
+                (this.BeaconDataStruct.Beacon ||
+                    this.BeaconDataStruct.Connectable ||
+                    this.BeaconDataStruct.Pairing)
+                ? this.BeaconDataStruct[mode]
+                : this.BeaconDataStruct);
+            if (defaultBeaconDataStruct === undefined ||
+                defaultBeaconDataStruct === null ||
+                Object.values(defaultBeaconDataStruct).filter((config) => {
+                    var _a, _b;
+                    return inScanResponse === (_a = config.scanResponse, (_a !== null && _a !== void 0 ? _a : false)) &&
+                        config.type === 'check' &&
+                        ((beaconData !== null && beaconData !== void 0 ? beaconData : []))
+                            .slice(2 + config.index, 2 + config.index + (_b = config.length, (_b !== null && _b !== void 0 ? _b : 1)))
+                            .filter((d, i) => {
+                            var _a;
+                            return d !==
+                                (typeof config.data === 'number'
+                                    ? [config.data]
+                                    : (_a = config.data, (_a !== null && _a !== void 0 ? _a : [])))[i];
+                        }).length !== 0;
+                }).length !== 0)
+                return false;
+        }
+        return true;
+    }
+    /**
+     * アドバタイジングデータを連想配列に成形
+     * Form advertising data into an associative array
+     */
+    // public static getData: (peripheral: BleRemotePeripheral | null) => unknown;
+    /**
+     * Utility function for reading 1byte fixed point number
+     */
+    static readFraction(byte) {
+        let result = 0;
+        let mask = 0b10000000;
+        let num = 0.5;
+        for (let i = 0; i < 8; i++) {
+            if (byte & mask) {
+                result += num;
+            }
+            num /= 2.0;
+            mask >>= 1;
+        }
+        return result;
+    }
+    /**
+     * アドバタイジングデータを連想配列に成形
+     * 利用可能なモード: Beacon, Connectable(一部のみ)
+     * Form advertising data into an associative array
+     * Available modes: Beacon, Connectable(only part)
+     */
+    getData() {
+        if (!this.static.BeaconDataStruct)
+            throw new Error('Data analysis is not defined.');
+        if (!this.beaconData)
+            throw new Error('Manufacturer specific data is null.');
+        const defaultBeaconDataStruct = (this.static.BeaconDataStruct.Beacon ||
+            this.static.BeaconDataStruct.Connectable ||
+            this.static.BeaconDataStruct.Pairing
+            ? this.static.BeaconDataStruct[this.mode]
+            : this.static.BeaconDataStruct);
+        if (defaultBeaconDataStruct === null)
+            throw new Error('Data analysis is not defined.');
+        return Object.fromEntries(Object.entries(defaultBeaconDataStruct)
+            .map(([name, c]) => {
+            var _a, _b, _c, _d, _e;
+            if (c.type === 'check')
+                return [];
+            const config = c;
+            if (!(config.scanResponse
+                ? this.beaconDataInScanResponse
+                : this.beaconData))
+                throw new Error('manufacturerSpecificData is null.');
+            const data = (_a = (config.scanResponse
+                ? this.beaconDataInScanResponse
+                : this.beaconData), (_a !== null && _a !== void 0 ? _a : [])).slice(config.index, config.index + (_b = config.length, (_b !== null && _b !== void 0 ? _b : 1)));
+            if (config.type.indexOf('bool') === 0)
+                return [name, (data[0] & parseInt(config.type.slice(4), 2)) > 0];
+            else if (config.type === 'string')
+                return [name, Buffer.from(data).toString()];
+            else if (config.type === 'xyz') {
+                if (!config.length)
+                    config.length = 6;
+                if (config.length % 6 !== 0)
+                    return [];
+                else if (config.length === 6)
+                    return [name, this.getTriaxial(data)];
+                else
+                    return [
+                        name,
+                        [...Array(config.length / 6).keys()].map((v) => this.getTriaxial(data.slice(v * 6, (v + 1) * 6))),
+                    ];
+            }
+            else if (config.type === 'custom')
+                if (!config.func)
+                    return [];
+                else
+                    return [name, config.func(data, this.peripheral)];
+            else {
+                const multi = (_c = config.multiple, (_c !== null && _c !== void 0 ? _c : 1));
+                const num = exports.uint(config.type.indexOf('BE') > 0 ? data.reverse() : data);
+                return [
+                    name,
+                    (num -
+                        (config.type.indexOf('u') !== 0 &&
+                            (num & (0x8 << ((_d = config.length, (_d !== null && _d !== void 0 ? _d : 1)) * 8 - 4))) !== 0
+                            ? 0x1 << ((_e = config.length, (_e !== null && _e !== void 0 ? _e : 1)) * 8)
+                            : 0)) *
+                        multi,
+                ];
+            }
+        })
+            .filter((v) => v[0]));
+    }
+    getTriaxial(data) {
+        return {
+            x: exports.int16(data.slice(0, 2)),
+            y: exports.int16(data.slice(2, 4)),
+            z: exports.int16(data.slice(4, 6)),
+        };
+    }
+    /**
+     * 任意のサービスから任意のキャラクタリスクを取得
+     *
+     * @param serviceUuid サービスUUID
+     * @param characteristicUuid キャラクタリスクUUID
+     * @returns 該当するものがあればキャラクタリスク、なければnull
+     */
+    getChar(serviceUuid, characteristicUuid) {
+        const service = this.peripheral.getService(serviceUuid);
+        if (!service)
+            return null;
+        return service.getCharacteristic(characteristicUuid);
+    }
+    /**
+     * 任意のサービスの任意のキャラクタリスクからデータを読み取り
+     *
+     * @param serviceUuid サービスUUID
+     * @param characteristicUuid キャラクタリスクUUID
+     * @returns 該当するものがあればデータ読み取り結果、なければnull
+     */
+    async readCharWait(serviceUuid, characteristicUuid) {
+        const characteristic = this.getChar(serviceUuid, characteristicUuid);
+        if (!characteristic)
+            return null;
+        return await characteristic.readWait();
+    }
+    /**
+     * 任意のサービスの任意のキャラクタリスクへデータを書き込み
+     *
+     * @param serviceUuid サービスUUID
+     * @param characteristicUuid キャラクタリスクUUID
+     * @param data 書き込むデータ
+     * @returns 該当するものがあればデータ書き込み結果、なければfalse
+     */
+    async writeCharWait(serviceUuid, characteristicUuid, data) {
+        const characteristic = this.getChar(serviceUuid, characteristicUuid);
+        if (!characteristic)
+            return false;
+        return await characteristic.writeWait(data);
+    }
+    /**
+     * 任意のサービスの任意のキャラクタリスクへ通知を登録
+     *
+     * @param serviceUuid サービスUUID
+     * @param characteristicUuid キャラクタリスクUUID
+     * @param callback データが来たとき呼ばれる関数
+     * @returns 該当するものがあればtrue、なければfalse
+     */
+    async subscribeWait(serviceUuid, characteristicUuid, callback) {
+        const characteristic = this.getChar(serviceUuid, characteristicUuid);
+        if (!characteristic)
+            return false;
+        await characteristic.registerNotifyWait((callback !== null && callback !== void 0 ? callback : (() => {
+            // do nothing.
+        })));
+        return true;
+    }
+}
+exports.ObnizPartsBle = ObnizPartsBle;
+/**
+ * 標準でisDevice()の条件として使用
+ * Used as a condition of isDevice() by default
+ */
+ObnizPartsBle.Address = undefined;
+/**
+ * 標準でisDevice()の条件として使用
+ * Used as a condition of isDevice() by default
+ */
+ObnizPartsBle.LocalName = undefined;
+/**
+ * 標準でisDevice()の条件として使用
+ * Used as a condition of isDevice() by default
+ */
+ObnizPartsBle.CompanyID = undefined;
+/**
+ * 標準でisDevice()の条件として使用
+ * Used as a condition of isDevice() by default
+ */
+ObnizPartsBle.CompanyID_ScanResponse = undefined;
+exports.iBeaconCompanyID = [0x4c, 0x00];
+exports.iBeaconData = 
+// length !== 25
+{
+    type: {
+        index: 0,
+        length: 2,
+        type: 'check',
+        data: [0x02, 0x15],
+    },
+    uuid: {
+        index: 2,
+        length: 16,
+        type: 'custom',
+        func: (data) => data
+            .map((d, i) => ([2, 3, 4, 5].includes(i / 2) ? '-' : '') +
+            ('00' + d.toString(16)).slice(-2))
+            .join(''),
+    },
+    major: {
+        index: 18,
+        length: 2,
+        type: 'unsignedNumBE',
+    },
+    minor: {
+        index: 20,
+        length: 2,
+        type: 'unsignedNumBE',
+    },
+    power: {
+        index: 22,
+        type: 'numLE',
+    },
+    rssi: {
+        index: 0,
+        type: 'custom',
+        func: (d, p) => { var _a; return _a = p.rssi, (_a !== null && _a !== void 0 ? _a : 0); },
+    },
+};
 
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -7185,6 +7563,8 @@ const bleRemoteService_1 = __importDefault(__webpack_require__("./dist/src/obniz
  */
 class BleRemotePeripheral {
     constructor(obnizBle, address) {
+        this.advertisingDataRows = {};
+        this.scanResponseDataRows = {};
         /**
          * @ignore
          */
@@ -7213,6 +7593,8 @@ class BleRemotePeripheral {
         // this.adv_data = null;
         this.scan_resp = null;
         this.localName = null;
+        this.manufacturerSpecificData = null;
+        this.manufacturerSpecificDataInScanResponse = null;
         this.iBeacon = null;
         this._services = [];
         this.emitter = new eventemitter3_1.default();
@@ -7665,59 +8047,58 @@ class BleRemotePeripheral {
         this.obnizBle.centralBindings.setPairingOption(this.address, options);
     }
     analyseAdvertisement() {
-        if (!this.advertise_data_rows) {
-            this.advertise_data_rows = [];
-            if (this.adv_data) {
-                for (let i = 0; i < this.adv_data.length; i++) {
-                    const length = this.adv_data[i];
-                    const arr = new Array(length);
-                    for (let j = 0; j < length; j++) {
-                        arr[j] = this.adv_data[i + j + 1];
-                    }
-                    this.advertise_data_rows.push(arr);
-                    i = i + length;
+        if (this.advertise_data_rows)
+            return;
+        this.advertise_data_rows = [];
+        if (this.adv_data) {
+            for (let i = 0; i < this.adv_data.length; i++) {
+                const length = this.adv_data[i];
+                const arr = new Array(length);
+                for (let j = 0; j < length; j++) {
+                    arr[j] = this.adv_data[i + j + 1];
                 }
+                this.advertise_data_rows.push(arr);
+                this.advertisingDataRows[this.adv_data[i + 1]] = this.adv_data.slice(i + 2, i + length + 1);
+                i = i + length;
             }
-            if (this.scan_resp) {
-                for (let i = 0; i < this.scan_resp.length; i++) {
-                    const length = this.scan_resp[i];
-                    const arr = new Array(length);
-                    for (let j = 0; j < length; j++) {
-                        arr[j] = this.scan_resp[i + j + 1];
-                    }
-                    this.advertise_data_rows.push(arr);
-                    i = i + length;
-                }
-            }
-            this.setLocalName();
-            this.setIBeacon();
         }
+        if (this.scan_resp) {
+            for (let i = 0; i < this.scan_resp.length; i++) {
+                const length = this.scan_resp[i];
+                const arr = new Array(length);
+                for (let j = 0; j < length; j++) {
+                    arr[j] = this.scan_resp[i + j + 1];
+                }
+                this.advertise_data_rows.push(arr);
+                this.scanResponseDataRows[this.scan_resp[i + 1]] = this.scan_resp.slice(i + 2, i + length + 1);
+                i = i + length;
+            }
+        }
+        this.setLocalName();
+        this.setManufacturerSpecificData();
+        this.setIBeacon();
     }
-    searchTypeVal(type) {
+    searchTypeVal(type, fromScanResponseData = false) {
         this.analyseAdvertisement();
-        for (let i = 0; i < this.advertise_data_rows.length; i++) {
-            if (this.advertise_data_rows[i][0] === type) {
-                const results = [].concat(this.advertise_data_rows[i]);
-                results.shift();
-                return results;
-            }
-        }
-        return undefined;
+        if (this.advertisingDataRows[type] && !fromScanResponseData)
+            return this.advertisingDataRows[type];
+        else if (this.scanResponseDataRows[type])
+            return this.scanResponseDataRows[type];
+        else
+            return undefined;
     }
     setLocalName() {
-        let data = this.searchTypeVal(0x09);
-        if (!data) {
-            data = this.searchTypeVal(0x08);
-        }
-        if (!data) {
-            this.localName = null;
-        }
-        else {
-            this.localName = String.fromCharCode.apply(null, data);
-        }
+        var _a;
+        const data = (_a = this.searchTypeVal(0x09), (_a !== null && _a !== void 0 ? _a : this.searchTypeVal(0x08)));
+        this.localName = data ? String.fromCharCode.apply(null, data) : null;
+    }
+    setManufacturerSpecificData() {
+        var _a, _b;
+        this.manufacturerSpecificData = (_a = this.searchTypeVal(0xff), (_a !== null && _a !== void 0 ? _a : null));
+        this.manufacturerSpecificDataInScanResponse = (_b = this.searchTypeVal(0xff, true), (_b !== null && _b !== void 0 ? _b : null));
     }
     setIBeacon() {
-        const data = this.searchTypeVal(0xff);
+        const data = this.manufacturerSpecificData;
         if (!data ||
             data[0] !== 0x4c ||
             data[1] !== 0x00 ||
@@ -22514,6 +22895,7 @@ var map = {
 	"./Ble/UA1200BLE/index.js": "./dist/src/parts/Ble/UA1200BLE/index.js",
 	"./Ble/UA651BLE/index.js": "./dist/src/parts/Ble/UA651BLE/index.js",
 	"./Ble/UT201BLE/index.js": "./dist/src/parts/Ble/UT201BLE/index.js",
+	"./Ble/iBS/index.js": "./dist/src/parts/Ble/iBS/index.js",
 	"./Ble/iBS01/index.js": "./dist/src/parts/Ble/iBS01/index.js",
 	"./Ble/iBS01G/index.js": "./dist/src/parts/Ble/iBS01G/index.js",
 	"./Ble/iBS01H/index.js": "./dist/src/parts/Ble/iBS01H/index.js",
@@ -23911,6 +24293,8 @@ class Logtta_Accel {
         };
     }
     static isDevice(peripheral) {
+        if (!peripheral.advertise_data_rows)
+            throw new Error('');
         const advertise = peripheral.advertise_data_rows.filter((adv) => {
             let find = false;
             if (this.deviceAdv.length > adv.length) {
@@ -24046,132 +24430,78 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js");
 const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/services/batteryService.js"));
 const genericAccess_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/services/genericAccess.js"));
-class Logtta_CO2 {
-    constructor(peripheral) {
-        if (peripheral && !Logtta_CO2.isDevice(peripheral)) {
-            throw new Error('peripheral is not Logtta CO2');
-        }
-        this._peripheral = peripheral;
+class Logtta_CO2 extends ObnizPartsBleInterface_1.ObnizPartsBle {
+    constructor() {
+        super(...arguments);
+        this.static = Logtta_CO2;
     }
-    static info() {
-        return {
-            name: 'Logtta_CO2',
-        };
+    /**
+     * not used
+     *
+     * @returns name
+     */
+    getName() {
+        const data = this.peripheral.adv_data.slice(16, this.peripheral.adv_data.slice(16).indexOf(0) + 16);
+        return data.map((d) => String.fromCharCode(d)).join('');
     }
-    static isDevice(peripheral) {
-        return peripheral.localName === 'CO2 Sensor';
-    }
-    static isAdvDevice(peripheral) {
-        if (peripheral.adv_data.length !== 31) {
-            return false;
-        }
-        const data = peripheral.adv_data;
-        if (data[5] !== 0x10 ||
-            data[6] !== 0x05 ||
-            data[7] !== 0x02 ||
-            data[16] !== 0x43 ||
-            data[17] !== 0x4f ||
-            data[18] !== 0x32) {
-            // CompanyID, Apperance, "C" "O" "2"
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!this.isAdvDevice(peripheral)) {
-            return null;
-        }
-        const data = peripheral.adv_data;
-        const alert = data[15];
-        const interval = (data[13] << 8) | data[14];
-        const advData = {
-            battery: data[12],
-            co2: (data[8] << 8) | data[9],
-            interval,
-            address: peripheral.address,
-        };
-        return advData;
-    }
-    static getName(data) {
-        let name = '';
-        for (let i = 16; i < data.length; i++) {
-            if (data[i] === 0) {
-                break;
-            }
-            name += String.fromCharCode(data[i]);
-        }
-        return name;
-    }
-    static get_uuid(uuid) {
+    static getUuid(uuid) {
         return `31f3${uuid}-bd1c-46b1-91e4-f57abcf7d449`;
     }
     async connectWait() {
-        if (!this._peripheral) {
-            throw new Error('Logtta CO2 not found');
+        if (!this.peripheral.connected) {
+            await this.peripheral.connectWait();
         }
-        if (!this._peripheral.connected) {
-            this._peripheral.ondisconnect = (reason) => {
-                if (typeof this.ondisconnect === 'function') {
-                    this.ondisconnect(reason);
-                }
-            };
-            await this._peripheral.connectWait();
-            const service1800 = this._peripheral.getService('1800');
-            if (service1800) {
-                this.genericAccess = new genericAccess_1.default(service1800);
-            }
-            const service180F = this._peripheral.getService('180F');
-            if (service180F) {
-                this.batteryService = new batteryService_1.default(service180F);
-            }
+        const service1800 = this.peripheral.getService('1800');
+        if (service1800) {
+            this.genericAccess = new genericAccess_1.default(service1800);
+        }
+        const service180F = this.peripheral.getService('180F');
+        if (service180F) {
+            this.batteryService = new batteryService_1.default(service180F);
         }
     }
     async disconnectWait() {
-        if (this._peripheral && this._peripheral.connected) {
-            await this._peripheral.disconnectWait();
-        }
-    }
-    async getWait() {
-        if (!(this._peripheral && this._peripheral.connected)) {
-            return null;
-        }
-        const c = this._peripheral
-            .getService(Logtta_CO2.get_uuid('AB20'))
-            .getCharacteristic(Logtta_CO2.get_uuid('AB21'));
-        const data = await c.readWait();
-        return data[0] * 256 + data[1];
-    }
-    async startNotifyWait() {
-        if (!(this._peripheral && this._peripheral.connected)) {
+        if (!this.peripheral.connected) {
             return;
         }
-        const c = this._peripheral
-            .getService(Logtta_CO2.get_uuid('AB20'))
-            .getCharacteristic(Logtta_CO2.get_uuid('AB21'));
-        await c.registerNotifyWait((data) => {
+        await this.peripheral.disconnectWait();
+    }
+    async getWait() {
+        if (!this.peripheral.connected) {
+            return null;
+        }
+        const data = await this.readCharWait(Logtta_CO2.getUuid('AB20'), Logtta_CO2.getUuid('AB21'));
+        return data ? ObnizPartsBleInterface_1.uint16BE(data) : null;
+    }
+    async startNotifyWait(callback) {
+        if (!this.peripheral.connected) {
+            return false;
+        }
+        // TODO: delete if
+        if (callback)
+            this.onNotify = callback;
+        return await this.subscribeWait(Logtta_CO2.getUuid('AB20'), Logtta_CO2.getUuid('AB21'), (data) => {
             if (this.onNotify) {
-                this.onNotify(data[0] * 256 + data[1]);
+                this.onNotify(ObnizPartsBleInterface_1.uint16BE(data));
             }
         });
     }
     async authPinCodeWait(code) {
-        if (!(this._peripheral && this._peripheral.connected)) {
-            return;
+        if (!this.peripheral.connected) {
+            return false;
         }
         if (code.length !== 4) {
             throw new Error('Invalid length auth code');
         }
-        const data = [0];
+        const data = [0]; // TODO: number[]?
         for (let i = 0; i < code.length; i += 2) {
             data.push((this.checkNumber(code.charAt(i)) << 4) |
                 this.checkNumber(code.charAt(i + 1)));
         }
-        const c = this._peripheral
-            .getService(Logtta_CO2.get_uuid('AB20'))
-            .getCharacteristic(Logtta_CO2.get_uuid('AB30'));
-        await c.writeWait(data);
+        return this.writeCharWait(Logtta_CO2.getUuid('AB20'), Logtta_CO2.getUuid('AB30'), data);
     }
     /**
      * @deprecated
@@ -24181,18 +24511,10 @@ class Logtta_CO2 {
         return this.setBeaconModeWait(enable);
     }
     async setBeaconModeWait(enable) {
-        if (!(this._peripheral && this._peripheral.connected)) {
-            return;
+        if (!this.peripheral.connected) {
+            return false;
         }
-        const c = this._peripheral
-            .getService(Logtta_CO2.get_uuid('AB20'))
-            .getCharacteristic(Logtta_CO2.get_uuid('AB2D'));
-        if (enable) {
-            await c.writeWait([1]);
-        }
-        else {
-            await c.writeWait([0]);
-        }
+        return this.writeCharWait(Logtta_CO2.getUuid('AB20'), Logtta_CO2.getUuid('AB2D'), [enable ? 1 : 0]);
     }
     checkNumber(data) {
         if (data >= '0' && data <= '9') {
@@ -24202,8 +24524,55 @@ class Logtta_CO2 {
             throw new Error(`authorization code can only be entered from 0-9.input word : ${data}`);
         }
     }
+    /**
+     * @deprecated
+     */
+    static getData(peripheral) {
+        if (this.getDeviceMode(peripheral) !== 'Beacon') {
+            return null;
+        }
+        const dev = new this(peripheral, 'Beacon');
+        return dev.getData();
+    }
 }
 exports.default = Logtta_CO2;
+Logtta_CO2.PartsName = 'Logtta_CO2';
+Logtta_CO2.AvailableBleMode = [
+    'Connectable',
+    'Beacon',
+];
+Logtta_CO2.LocalName = {
+    Connectable: /CO2 Sensor/,
+    Beacon: /null/,
+};
+Logtta_CO2.CompanyID = {
+    Connectable: null,
+    Beacon: [0x10, 0x05],
+};
+Logtta_CO2.BeaconDataStruct = {
+    Connectable: null,
+    Beacon: {
+        appearance: {
+            index: 0,
+            type: 'check',
+            data: 0x02,
+        },
+        co2: {
+            index: 1,
+            length: 2,
+            type: 'unsignedNumBE',
+        },
+        battery: {
+            index: 5,
+            type: 'unsignedNumBE',
+        },
+        interval: {
+            index: 6,
+            length: 2,
+            type: 'unsignedNumBE',
+        },
+    },
+};
 
 
 /***/ }),
@@ -26868,6 +27237,108 @@ exports.default = UT201BLE;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/iBS/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js");
+const magic = {
+    1: [0x80, 0xbc],
+    1.1: [0x81, 0xbc],
+    2: [0x82, 0xbc],
+    3: [0x83, 0xbc],
+    4: [0x83, 0xbc],
+};
+class BaseIBS extends ObnizPartsBleInterface_1.ObnizPartsBle {
+    static getUniqueData(series, subtype, addLength, scanResponse) {
+        return {
+            magic: {
+                index: 0,
+                length: 2,
+                type: 'check',
+                data: magic[series],
+                scanResponse,
+            },
+            subtype: {
+                index: 11 + ((addLength !== null && addLength !== void 0 ? addLength : 0)),
+                type: 'check',
+                data: subtype,
+                scanResponse,
+            },
+        };
+    }
+    /**
+     * @deprecated
+     */
+    static getData(peripheral) {
+        if (!this.isDevice(peripheral)) {
+            return null;
+        }
+        const lib = new this(peripheral, 'Beacon');
+        return lib.getData();
+    }
+}
+exports.BaseIBS = BaseIBS;
+BaseIBS.AvailableBleMode = 'Beacon';
+BaseIBS.Address = undefined;
+BaseIBS.LocalName = undefined;
+BaseIBS.CompanyID = [0x0d, 0x00];
+BaseIBS.Config = {
+    battery: {
+        index: 2,
+        length: 2,
+        type: 'unsignedNumLE',
+        multiple: 0.01,
+    },
+    button: {
+        index: 4,
+        type: 'bool0001',
+    },
+    moving: {
+        index: 4,
+        type: 'bool0010',
+    },
+    /** HallSensor / Reed / Event */
+    event: {
+        index: 4,
+        type: 'bool0100',
+    },
+    fall: {
+        index: 4,
+        type: 'bool1000',
+    },
+    acceleration: {
+        index: 4,
+        length: 18,
+        type: 'xyz',
+    },
+    temperature: {
+        index: 5,
+        length: 2,
+        type: 'numLE',
+        multiple: 0.01,
+    },
+    humidity: {
+        index: 7,
+        length: 2,
+        type: 'numLE',
+    },
+};
+class BaseIBS01 extends BaseIBS {
+}
+exports.BaseIBS01 = BaseIBS01;
+BaseIBS01.CompanyID = [0x59, 0x00];
+exports.default = BaseIBS;
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/iBS01/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -26878,88 +27349,24 @@ exports.default = UT201BLE;
  * @module Parts.iBS01
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-class IBS01 {
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+class IBS01 extends iBS_1.BaseIBS01 {
     constructor() {
-        this._peripheral = null;
+        super(...arguments);
+        this.static = IBS01;
     }
-    static info() {
-        return {
-            name: 'iBS01',
-        };
-    }
+    /**
+     * @deprecated
+     */
     static isDevice(peripheral, strictCheck = false) {
-        const deviceAdv = [...this.deviceAdv];
-        if (strictCheck) {
-            deviceAdv[18] = 0x03;
-        }
-        if (deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < deviceAdv.length; index++) {
-            if (deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return (peripheral.adv_data[12] === 0xff &&
-            peripheral.adv_data[13] === 0xff &&
-            peripheral.adv_data[14] === 0xff &&
-            peripheral.adv_data[15] === 0xff);
-    }
-    static getData(peripheral, strictCheck) {
-        if (!IBS01.isDevice(peripheral, strictCheck)) {
-            return null;
-        }
-        const data = {
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            button: false,
-            moving: false,
-            hall_sensor: false,
-            fall: false,
-        };
-        if (peripheral.adv_data[11] & 0b0001) {
-            data.button = true;
-        }
-        if (peripheral.adv_data[11] & 0b0010) {
-            data.moving = true;
-        }
-        if (peripheral.adv_data[11] & 0b0100) {
-            data.hall_sensor = true;
-        }
-        if (peripheral.adv_data[11] & 0b1000) {
-            data.fall = true;
-        }
-        return data;
+        if (!strictCheck)
+            delete this.BeaconDataStruct.magic;
+        return this.getDeviceMode(peripheral) !== null;
     }
 }
 exports.default = IBS01;
-IBS01.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x59,
-    0x00,
-    0x80,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-];
+IBS01.PartsName = 'iBS01';
+IBS01.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS01.Config.battery, button: iBS_1.BaseIBS01.Config.button, moving: iBS_1.BaseIBS01.Config.moving, hall_sensor: iBS_1.BaseIBS01.Config.event, fall: iBS_1.BaseIBS01.Config.fall }, iBS_1.BaseIBS01.getUniqueData(1, 0x03));
 
 
 /***/ }),
@@ -26974,80 +27381,16 @@ IBS01.deviceAdv = [
  * @module Parts.iBS01G
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-class IBS01G {
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+class IBS01G extends iBS_1.BaseIBS01 {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS01G',
-        };
-    }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return (peripheral.adv_data[12] === 0xff &&
-            peripheral.adv_data[13] === 0xff &&
-            peripheral.adv_data[14] === 0xff &&
-            peripheral.adv_data[15] === 0xff);
-    }
-    static getData(peripheral) {
-        if (!IBS01G.isDevice(peripheral)) {
-            return null;
-        }
-        const data = {
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            button: false,
-            moving: false,
-            fall: false,
-        };
-        if (peripheral.adv_data[11] & 0b0001) {
-            data.button = true;
-        }
-        if (peripheral.adv_data[11] & 0b0010) {
-            data.moving = true;
-        }
-        if (peripheral.adv_data[11] & 0b1000) {
-            data.fall = true;
-        }
-        return data;
+        super(...arguments);
+        this.static = IBS01G;
     }
 }
 exports.default = IBS01G;
-IBS01G.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x59,
-    0x00,
-    0x80,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    0x06,
-    -1,
-    -1,
-    -1,
-];
+IBS01G.PartsName = 'iBS01G';
+IBS01G.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS01.Config.battery, button: iBS_1.BaseIBS01.Config.button, moving: iBS_1.BaseIBS01.Config.moving, fall: iBS_1.BaseIBS01.Config.fall }, iBS_1.BaseIBS01.getUniqueData(1, 0x06));
 
 
 /***/ }),
@@ -27062,76 +27405,16 @@ IBS01G.deviceAdv = [
  * @module Parts.iBS01H
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-class IBS01H {
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+class IBS01H extends iBS_1.BaseIBS01 {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS01H',
-        };
-    }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return (peripheral.adv_data[12] === 0xff &&
-            peripheral.adv_data[13] === 0xff &&
-            peripheral.adv_data[14] === 0xff &&
-            peripheral.adv_data[15] === 0xff);
-    }
-    static getData(peripheral) {
-        if (!IBS01H.isDevice(peripheral)) {
-            return null;
-        }
-        const data = {
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            button: false,
-            hall_sensor: false,
-        };
-        if (peripheral.adv_data[11] & 0b0001) {
-            data.button = true;
-        }
-        if (peripheral.adv_data[11] & 0b0100) {
-            data.hall_sensor = true;
-        }
-        return data;
+        super(...arguments);
+        this.static = IBS01H;
     }
 }
 exports.default = IBS01H;
-IBS01H.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x59,
-    0x00,
-    0x80,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    0x04,
-    -1,
-    -1,
-    -1,
-];
+IBS01H.PartsName = 'iBS01H';
+IBS01H.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS01.Config.battery, button: iBS_1.BaseIBS01.Config.button, hall_sensor: iBS_1.BaseIBS01.Config.event }, iBS_1.BaseIBS01.getUniqueData(1, 0x04));
 
 
 /***/ }),
@@ -27141,116 +27424,28 @@ IBS01H.deviceAdv = [
 
 "use strict";
 
-//
-//   const accelArray: IBS01RG_Acceleration_Data[] = [];
-//   for (let i = 0; i < 3; i++) {
-//     accelArray.push({
-//       x: IBS01RG.signed16FromBinary(advertise[0][7 + i * 6], advertise[0][8 + i * 6]),
-//       y: IBS01RG.signed16FromBinary(advertise[0][9 + i * 6], advertise[0][10 + i * 6]),
-//       z: IBS01RG.signed16FromBinary(advertise[0][11 + i * 6], advertise[0][12 + i * 6]),
-//     });
-//   }
-//   console.log((advertise[0][6] & 0x0f) * 0xff);
-//   console.log((advertise[0][6] & 0x30) >> 4);
-//   const data: IBS01RG_Data = {
-//     battery: (advertise[0][5] + (advertise[0][6] & 0x0f) * 256) * 0.01,
-//     active: Boolean((advertise[0][6] & 0x10) >> 4),
-//     button: Boolean((advertise[0][6] & 0x20) >> 5),
-//     acceleration: accelArray,
-//     address: peripheral.address,
-//   };
-//   // console.log(`battery ${data.battery}V event ${data.event});
-//   if (this.onNotification) {
-//     this.onNotification(data);
-//   }
-//
-//   if (this.onChangeButton) {
-//     const button: boolean = Boolean((advertise[0][6] & 0x20) >> 5);
-//     if (button !== this.oldButtonFlg) {
-//       this.onChangeButton(button, peripheral.address);
-//       this.oldButtonFlg = button;
-//     }
-//   }
-//
-//   if (this.onChangeActive) {
-//     const actived: boolean = Boolean((advertise[0][6] & 0x10) >> 4);
-//     if (actived !== this.oldActiveFlg) {
-//       this.onChangeActive(actived, peripheral.address);
-//       this.oldActiveFlg = actived;
-//     }
-//   }
-// };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
+/**
+ * @packageDocumentation
+ * @module Parts.iBS01RG
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
-class IBS01RG {
+const ObnizPartsBleInterface_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js");
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+class IBS01RG extends iBS_1.BaseIBS01 {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS01RG',
-        };
-    }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!IBS01RG.isDevice(peripheral)) {
-            return null;
-        }
-        const accelArray = [];
-        for (let i = 0; i < 3; i++) {
-            accelArray.push({
-                x: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[12 + i * 6], peripheral.adv_data[11 + i * 6]),
-                y: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[14 + i * 6], peripheral.adv_data[13 + i * 6]),
-                z: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[16 + i * 6], peripheral.adv_data[15 + i * 6]),
-            });
-        }
-        const data = {
-            battery: (peripheral.adv_data[9] + (peripheral.adv_data[10] & 0x0f) * 256) *
-                0.01,
-            active: Boolean((peripheral.adv_data[10] & 0x10) >> 4),
-            button: Boolean((peripheral.adv_data[10] & 0x20) >> 5),
-            acceleration: accelArray,
-        };
-        return data;
+        super(...arguments);
+        this.static = IBS01RG;
     }
 }
 exports.default = IBS01RG;
-IBS01RG.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x19,
-    0xff,
-    0x59,
-    0x00,
-    0x81,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-];
+IBS01RG.PartsName = 'iBS01RG';
+IBS01RG.BeaconDataStruct = {
+    battery: Object.assign(Object.assign({}, iBS_1.BaseIBS01.Config.battery), { type: 'custom', func: (data) => ObnizPartsBleInterface_1.uint([data[0], data[1] & 0x0f]) * 0.01 }),
+    active: Object.assign(Object.assign({}, iBS_1.BaseIBS01.Config.event), { type: 'bool00010000' }),
+    button: Object.assign(Object.assign({}, iBS_1.BaseIBS01.Config.button), { type: 'bool00100000' }),
+    acceleration: iBS_1.BaseIBS01.Config.acceleration,
+    magic: iBS_1.BaseIBS01.getUniqueData(1.1, -1).magic,
+};
 
 
 /***/ }),
@@ -27264,91 +27459,17 @@ IBS01RG.deviceAdv = [
  * @packageDocumentation
  * @module Parts.iBS01T
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
-class IBS01T {
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+class IBS01T extends iBS_1.BaseIBS01 {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS01T',
-        };
-    }
-    static isDevice(peripheral, strictCheck = false) {
-        const deviceAdv = [...this.deviceAdv];
-        if (strictCheck) {
-            deviceAdv[18] = 0x05;
-        }
-        if (deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < deviceAdv.length; index++) {
-            if (deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return !(peripheral.adv_data[12] === 0xff &&
-            peripheral.adv_data[13] === 0xff &&
-            peripheral.adv_data[14] === 0xff &&
-            peripheral.adv_data[15] === 0xff);
-    }
-    static getData(peripheral, strictCheck) {
-        if (!IBS01T.isDevice(peripheral, strictCheck)) {
-            return null;
-        }
-        const d = {
-            button: false,
-            moving: false,
-            reed: false,
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
-            humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[15], peripheral.adv_data[14]),
-        };
-        if (peripheral.adv_data[11] & 0b0001) {
-            d.button = true;
-        }
-        if (peripheral.adv_data[11] & 0b0010) {
-            d.moving = true;
-        }
-        if (peripheral.adv_data[11] & 0b0100) {
-            d.reed = true;
-        }
-        return d;
+        super(...arguments);
+        this.static = IBS01T;
     }
 }
 exports.default = IBS01T;
-IBS01T.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x59,
-    0x00,
-    0x80,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-];
+IBS01T.PartsName = 'iBS01T';
+IBS01T.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS01.Config.battery, button: iBS_1.BaseIBS01.Config.button, moving: iBS_1.BaseIBS01.Config.moving, reed: iBS_1.BaseIBS01.Config.event, temperature: iBS_1.BaseIBS01.Config.temperature, humidity: iBS_1.BaseIBS01.Config.humidity }, iBS_1.BaseIBS01.getUniqueData(1, 0x05));
 
 
 /***/ }),
@@ -27363,65 +27484,16 @@ IBS01T.deviceAdv = [
  * @module Parts.iBS02IR
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-class IBS02IR {
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+class IBS02IR extends iBS_1.BaseIBS {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS02IR',
-        };
-    }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!IBS02IR.isDevice(peripheral)) {
-            return null;
-        }
-        return {
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            event: Boolean(peripheral.adv_data[11] & 0b100),
-        };
+        super(...arguments);
+        this.static = IBS02IR;
     }
 }
 exports.default = IBS02IR;
-IBS02IR.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x0d,
-    0x00,
-    0x82,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    0x02,
-    -1,
-    -1,
-    -1,
-];
+IBS02IR.PartsName = 'iBS02IR';
+IBS02IR.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS.Config.battery, event: iBS_1.BaseIBS.Config.event }, iBS_1.BaseIBS.getUniqueData(2, 0x02));
 
 
 /***/ }),
@@ -27436,65 +27508,16 @@ IBS02IR.deviceAdv = [
  * @module Parts.iBS02PIR
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-class IBS02PIR {
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+class IBS02PIR extends iBS_1.BaseIBS {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS02PIR',
-        };
-    }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!IBS02PIR.isDevice(peripheral)) {
-            return null;
-        }
-        return {
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            event: Boolean(peripheral.adv_data[11] & 0b100),
-        };
+        super(...arguments);
+        this.static = IBS02PIR;
     }
 }
 exports.default = IBS02PIR;
-IBS02PIR.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x0d,
-    0x00,
-    0x82,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    0x01,
-    -1,
-    -1,
-    -1,
-];
+IBS02PIR.PartsName = 'iBS02PIR';
+IBS02PIR.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS.Config.battery, event: iBS_1.BaseIBS.Config.event }, iBS_1.BaseIBS.getUniqueData(2, 0x01));
 
 
 /***/ }),
@@ -27509,77 +27532,16 @@ IBS02PIR.deviceAdv = [
  * @module Parts.iBS03
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-class IBS03 {
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+class IBS03 extends iBS_1.BaseIBS {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS03',
-        };
-    }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!IBS03.isDevice(peripheral)) {
-            return null;
-        }
-        const data = {
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            button: false,
-            moving: false,
-            hall_sensor: false,
-        };
-        if (peripheral.adv_data[11] & 0b0001) {
-            data.button = true;
-        }
-        if (peripheral.adv_data[11] & 0b0010) {
-            data.moving = true;
-        }
-        if (peripheral.adv_data[11] & 0b0100) {
-            data.hall_sensor = true;
-        }
-        return data;
+        super(...arguments);
+        this.static = IBS03;
     }
 }
 exports.default = IBS03;
-IBS03.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x0d,
-    0x00,
-    0x83,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    0x10,
-    -1,
-    -1,
-    -1,
-];
+IBS03.PartsName = 'iBS03';
+IBS03.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS.Config.battery, button: iBS_1.BaseIBS.Config.button, moving: iBS_1.BaseIBS.Config.moving, hall_sensor: iBS_1.BaseIBS.Config.event }, iBS_1.BaseIBS.getUniqueData(3, 0x10));
 
 
 /***/ }),
@@ -27594,77 +27556,16 @@ IBS03.deviceAdv = [
  * @module Parts.iBS03G
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-class IBS03G {
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+class IBS03G extends iBS_1.BaseIBS {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS03G',
-        };
-    }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!IBS03G.isDevice(peripheral)) {
-            return null;
-        }
-        const data = {
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            button: false,
-            moving: false,
-            fall: false,
-        };
-        if (peripheral.adv_data[11] & 0b0001) {
-            data.button = true;
-        }
-        if (peripheral.adv_data[11] & 0b0010) {
-            data.moving = true;
-        }
-        if (peripheral.adv_data[11] & 0b1000) {
-            data.fall = true;
-        }
-        return data;
+        super(...arguments);
+        this.static = IBS03G;
     }
 }
 exports.default = IBS03G;
-IBS03G.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x0d,
-    0x00,
-    0x83,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    0x16,
-    -1,
-    -1,
-    -1,
-];
+IBS03G.PartsName = 'iBS03G';
+IBS03G.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS.Config.battery, button: iBS_1.BaseIBS.Config.button, moving: iBS_1.BaseIBS.Config.moving, fall: iBS_1.BaseIBS.Config.fall }, iBS_1.BaseIBS.getUniqueData(3, 0x16));
 
 
 /***/ }),
@@ -27678,83 +27579,17 @@ IBS03G.deviceAdv = [
  * @packageDocumentation
  * @module Parts.iBS03T
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
-class IBS03T {
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+class IBS03T extends iBS_1.BaseIBS {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS03T',
-        };
-    }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!IBS03T.isDevice(peripheral)) {
-            return null;
-        }
-        const data = {
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            button: false,
-            moving: false,
-            hall_sensor: false,
-            temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
-        };
-        if (peripheral.adv_data[11] & 0b0001) {
-            data.button = true;
-        }
-        if (peripheral.adv_data[11] & 0b0010) {
-            data.moving = true;
-        }
-        if (peripheral.adv_data[11] & 0b0100) {
-            data.hall_sensor = true;
-        }
-        return data;
+        super(...arguments);
+        this.static = IBS03T;
     }
 }
 exports.default = IBS03T;
-IBS03T.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x0d,
-    0x00,
-    0x83,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    0x15,
-    -1,
-    -1,
-    -1,
-];
+IBS03T.PartsName = 'iBS03T';
+IBS03T.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS.Config.battery, button: iBS_1.BaseIBS.Config.button, moving: iBS_1.BaseIBS.Config.moving, hall_sensor: iBS_1.BaseIBS.Config.event, temperature: iBS_1.BaseIBS.Config.temperature }, iBS_1.BaseIBS.getUniqueData(3, 0x15));
 
 
 /***/ }),
@@ -27768,84 +27603,17 @@ IBS03T.deviceAdv = [
  * @packageDocumentation
  * @module Parts.iBS03TP
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
-class IBS03TP {
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+class IBS03TP extends iBS_1.BaseIBS {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS03TP',
-        };
-    }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!IBS03TP.isDevice(peripheral)) {
-            return null;
-        }
-        const data = {
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            button: false,
-            moving: false,
-            hall_sensor: false,
-            temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
-            probe_temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[15], peripheral.adv_data[14]) * 0.01,
-        };
-        if (peripheral.adv_data[11] & 0b0001) {
-            data.button = true;
-        }
-        if (peripheral.adv_data[11] & 0b0010) {
-            data.moving = true;
-        }
-        if (peripheral.adv_data[11] & 0b0100) {
-            data.hall_sensor = true;
-        }
-        return data;
+        super(...arguments);
+        this.static = IBS03TP;
     }
 }
 exports.default = IBS03TP;
-IBS03TP.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x0d,
-    0x00,
-    0x83,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    0x17,
-    -1,
-    -1,
-    -1,
-];
+IBS03TP.PartsName = 'iBS03TP';
+IBS03TP.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS.Config.battery, button: iBS_1.BaseIBS.Config.button, moving: iBS_1.BaseIBS.Config.moving, hall_sensor: iBS_1.BaseIBS.Config.event, temperature: iBS_1.BaseIBS.Config.temperature, probe_temperature: Object.assign(Object.assign({}, iBS_1.BaseIBS.Config.temperature), { index: 7 }) }, iBS_1.BaseIBS.getUniqueData(3, 0x17));
 
 
 /***/ }),
@@ -27860,69 +27628,16 @@ IBS03TP.deviceAdv = [
  * @module Parts.iBS04
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-class IBS04 {
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+class IBS04 extends iBS_1.BaseIBS {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS04',
-        };
-    }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!IBS04.isDevice(peripheral)) {
-            return null;
-        }
-        const data = {
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            button: false,
-        };
-        if (peripheral.adv_data[11] & 0b0001) {
-            data.button = true;
-        }
-        return data;
+        super(...arguments);
+        this.static = IBS04;
     }
 }
 exports.default = IBS04;
-IBS04.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x0d,
-    0x00,
-    0x83,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    0x19,
-    -1,
-    -1,
-    -1,
-];
+IBS04.PartsName = 'iBS04';
+IBS04.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS.Config.battery, button: iBS_1.BaseIBS.Config.button }, iBS_1.BaseIBS.getUniqueData(4, 0x19));
 
 
 /***/ }),
@@ -27937,86 +27652,30 @@ IBS04.deviceAdv = [
  * @module Parts.iBS04i
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-class IBS04I {
+const ObnizPartsBleInterface_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js");
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+class IBS04I extends iBS_1.BaseIBS {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS04i',
-        };
-    }
-    static isDevice(peripheral) {
-        return IBS04I.getDeviceArray(peripheral) !== null;
-    }
-    static getData(peripheral) {
-        const adv = IBS04I.getDeviceArray(peripheral);
-        if (adv === null) {
-            return null;
-        }
-        const data = {
-            battery: (adv[5] + adv[6] * 256) * 0.01,
-            button: Boolean(adv[7]),
-            uuid: peripheral.iBeacon.uuid,
-            major: peripheral.iBeacon.major,
-            minor: peripheral.iBeacon.minor,
-            power: peripheral.iBeacon.power,
-            rssi: peripheral.iBeacon.rssi,
-            address: peripheral.address,
-        };
-        return data;
-    }
-    static getDeviceArray(peripheral) {
-        const advertise = peripheral.advertise_data_rows.filter((adv) => {
-            let find = false;
-            if (this.deviceAdv.length > adv.length) {
-                return find;
-            }
-            for (let index = 0; index < this.deviceAdv.length; index++) {
-                if (this.deviceAdv[index] === -1) {
-                    continue;
-                }
-                if (adv[index] === this.deviceAdv[index]) {
-                    find = true;
-                    continue;
-                }
-                find = false;
-                break;
-            }
-            return find;
-        });
-        if (advertise.length !== 1) {
-            return null;
-        }
-        const type = advertise[0][14];
-        if (type !== 24) {
-            // is not ibs04i
-            return null;
-        }
-        return advertise[0];
+        super(...arguments);
+        this.static = IBS04I;
     }
 }
 exports.default = IBS04I;
-IBS04I.deviceAdv = [
-    0xff,
-    0x0d,
-    0x00,
-    0x83,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    0xff,
-    0xff,
-    0xff,
-    0xff,
-    0x00,
-    -1,
-    0x18,
-    -1,
-    -1,
-    -1,
-];
+IBS04I.PartsName = 'iBS04i';
+IBS04I.CompanyID = ObnizPartsBleInterface_1.iBeaconCompanyID;
+IBS04I.CompanyID_ScanResponse = iBS_1.BaseIBS.CompanyID;
+IBS04I.BeaconDataStruct = Object.assign(Object.assign({ battery: Object.assign(Object.assign({}, iBS_1.BaseIBS.Config.battery), { scanResponse: true }), button: Object.assign(Object.assign({}, iBS_1.BaseIBS.Config.button), { scanResponse: true }), reserved: {
+        index: 5,
+        length: 4,
+        type: 'check',
+        data: [0xff, 0xff, 0xff, 0xff],
+        scanResponse: true,
+    }, user: {
+        index: 9,
+        length: 2,
+        type: 'unsignedNumLE',
+        scanResponse: true,
+    } }, iBS_1.BaseIBS.getUniqueData(4, 0x18, 0, true)), ObnizPartsBleInterface_1.iBeaconData);
 
 
 /***/ }),
@@ -72069,7 +71728,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
+module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
 
 /***/ }),
 

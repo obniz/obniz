@@ -3,9 +3,15 @@
  * @module Parts.Logtta_CO2
  */
 
+// eslint-disable-next-line max-classes-per-file
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, {
-  ObnizPartsBleInfo,
+import {
+  ObnizBleBeaconStruct,
+  ObnizPartsBle,
+  ObnizPartsBleCompareWithMode,
+  ObnizPartsBleMode,
+  PartsType,
+  uint16BE,
 } from '../../../obniz/ObnizPartsBleInterface';
 import BleBatteryService from '../utils/services/batteryService';
 import BleGenericAccess from '../utils/services/genericAccess';
@@ -16,188 +22,182 @@ export interface Logtta_CO2_Adv_Data {
   co2: number;
   battery: number;
   interval: number;
-  address: string;
+  // address: string;
 }
 
-export default class Logtta_CO2 implements ObnizPartsBleInterface {
-  public static info(): ObnizPartsBleInfo {
-    return {
-      name: 'Logtta_CO2',
-    };
+export default class Logtta_CO2 extends ObnizPartsBle<Logtta_CO2_Adv_Data> {
+  public static readonly PartsName: PartsType = 'Logtta_CO2';
+
+  public static readonly AvailableBleMode: ObnizPartsBleMode[] = [
+    'Connectable',
+    'Beacon',
+  ];
+
+  protected static readonly LocalName = {
+    Connectable: /CO2 Sensor/,
+    Beacon: /null/,
+  };
+
+  protected static readonly CompanyID = {
+    Connectable: null,
+    Beacon: [0x10, 0x05],
+  };
+
+  public static readonly BeaconDataStruct: ObnizPartsBleCompareWithMode<ObnizBleBeaconStruct<Logtta_CO2_Adv_Data> | null> = {
+    Connectable: null,
+    Beacon: {
+      appearance: {
+        index: 0,
+        type: 'check',
+        data: 0x02,
+      },
+      co2: {
+        index: 1,
+        length: 2,
+        type: 'unsignedNumBE',
+      },
+      battery: {
+        index: 5,
+        type: 'unsignedNumBE',
+      },
+      interval: {
+        index: 6,
+        length: 2,
+        type: 'unsignedNumBE',
+      },
+      /* alert: {
+        index: 7,
+        type: 'uint8',
+      },
+      name: {
+        index: 8,
+        length: 15,
+        type: 'string',
+      } */
+    },
+  };
+
+  protected static = Logtta_CO2 as typeof ObnizPartsBle;
+
+  /**
+   * not used
+   *
+   * @returns name
+   */
+  protected getName(): string {
+    const data = this.peripheral.adv_data.slice(
+      16,
+      this.peripheral.adv_data.slice(16).indexOf(0) + 16
+    );
+    return data.map((d) => String.fromCharCode(d)).join('');
   }
 
-  public static isDevice(peripheral: BleRemotePeripheral) {
-    return peripheral.localName === 'CO2 Sensor';
-  }
-
-  public static isAdvDevice(peripheral: BleRemotePeripheral) {
-    if (peripheral.adv_data.length !== 31) {
-      return false;
-    }
-    const data = peripheral.adv_data;
-    if (
-      data[5] !== 0x10 ||
-      data[6] !== 0x05 ||
-      data[7] !== 0x02 ||
-      data[16] !== 0x43 ||
-      data[17] !== 0x4f ||
-      data[18] !== 0x32
-    ) {
-      // CompanyID, Apperance, "C" "O" "2"
-      return false;
-    }
-    return true;
-  }
-
-  public static getData(
-    peripheral: BleRemotePeripheral
-  ): Logtta_CO2_Adv_Data | null {
-    if (!this.isAdvDevice(peripheral)) {
-      return null;
-    }
-    const data = peripheral.adv_data;
-    const alert: number = data[15];
-    const interval: number = (data[13] << 8) | data[14];
-    const advData: Logtta_CO2_Adv_Data = {
-      battery: data[12],
-      co2: (data[8] << 8) | data[9],
-      interval,
-      address: peripheral.address,
-    };
-    return advData;
-  }
-
-  private static getName(data: number[]) {
-    let name = '';
-    for (let i = 16; i < data.length; i++) {
-      if (data[i] === 0) {
-        break;
-      }
-      name += String.fromCharCode(data[i]);
-    }
-    return name;
-  }
-
-  private static get_uuid(uuid: string): string {
+  protected static getUuid(uuid: string): string {
     return `31f3${uuid}-bd1c-46b1-91e4-f57abcf7d449`;
   }
 
   public onNotify?: (co2: number) => void;
-  public _peripheral: BleRemotePeripheral | null;
-  public ondisconnect?: (reason: any) => void;
   public genericAccess?: BleGenericAccess;
   public batteryService?: BleBatteryService;
 
-  constructor(peripheral: BleRemotePeripheral | null) {
-    if (peripheral && !Logtta_CO2.isDevice(peripheral)) {
-      throw new Error('peripheral is not Logtta CO2');
+  public async connectWait(): Promise<void> {
+    if (!this.peripheral.connected) {
+      await this.peripheral.connectWait();
     }
-    this._peripheral = peripheral;
-  }
 
-  public async connectWait() {
-    if (!this._peripheral) {
-      throw new Error('Logtta CO2 not found');
+    const service1800 = this.peripheral.getService('1800');
+    if (service1800) {
+      this.genericAccess = new BleGenericAccess(service1800);
     }
-    if (!this._peripheral.connected) {
-      this._peripheral.ondisconnect = (reason: any) => {
-        if (typeof this.ondisconnect === 'function') {
-          this.ondisconnect(reason);
-        }
-      };
-      await this._peripheral.connectWait();
-
-      const service1800 = this._peripheral.getService('1800');
-      if (service1800) {
-        this.genericAccess = new BleGenericAccess(service1800);
-      }
-      const service180F = this._peripheral.getService('180F');
-      if (service180F) {
-        this.batteryService = new BleBatteryService(service180F);
-      }
+    const service180F = this.peripheral.getService('180F');
+    if (service180F) {
+      this.batteryService = new BleBatteryService(service180F);
     }
   }
 
-  public async disconnectWait() {
-    if (this._peripheral && this._peripheral.connected) {
-      await this._peripheral.disconnectWait();
+  public async disconnectWait(): Promise<void> {
+    if (!this.peripheral.connected) {
+      return;
     }
+    await this.peripheral.disconnectWait();
   }
 
   public async getWait(): Promise<number | null> {
-    if (!(this._peripheral && this._peripheral.connected)) {
+    if (!this.peripheral.connected) {
       return null;
     }
 
-    const c = this._peripheral
-      .getService(Logtta_CO2.get_uuid('AB20'))!
-      .getCharacteristic(Logtta_CO2.get_uuid('AB21'));
-    const data: number[] = await c!.readWait();
-    return data[0] * 256 + data[1];
+    const data = await this.readCharWait(
+      Logtta_CO2.getUuid('AB20'),
+      Logtta_CO2.getUuid('AB21')
+    );
+    return data ? uint16BE(data) : null;
   }
 
-  public async startNotifyWait() {
-    if (!(this._peripheral && this._peripheral.connected)) {
-      return;
+  public async startNotifyWait(
+    callback: (co2: number) => void
+  ): Promise<boolean> {
+    if (!this.peripheral.connected) {
+      return false;
     }
 
-    const c = this._peripheral
-      .getService(Logtta_CO2.get_uuid('AB20'))!
-      .getCharacteristic(Logtta_CO2.get_uuid('AB21'));
-
-    await c!.registerNotifyWait((data: number[]) => {
-      if (this.onNotify) {
-        this.onNotify(data[0] * 256 + data[1]);
+    // TODO: delete if
+    if (callback) this.onNotify = callback;
+    return await this.subscribeWait(
+      Logtta_CO2.getUuid('AB20'),
+      Logtta_CO2.getUuid('AB21'),
+      (data: number[]) => {
+        if (this.onNotify) {
+          this.onNotify(uint16BE(data));
+        }
       }
-    });
+    );
   }
 
-  public async authPinCodeWait(code: string) {
-    if (!(this._peripheral && this._peripheral.connected)) {
-      return;
+  public async authPinCodeWait(code: string): Promise<boolean> {
+    if (!this.peripheral.connected) {
+      return false;
     }
 
     if (code.length !== 4) {
       throw new Error('Invalid length auth code');
     }
 
-    const data: [number] = [0];
+    const data: [number] = [0]; // TODO: number[]?
     for (let i = 0; i < code.length; i += 2) {
       data.push(
         (this.checkNumber(code.charAt(i)) << 4) |
           this.checkNumber(code.charAt(i + 1))
       );
     }
-    const c = this._peripheral
-      .getService(Logtta_CO2.get_uuid('AB20'))!
-      .getCharacteristic(Logtta_CO2.get_uuid('AB30'));
-    await c!.writeWait(data);
+    return this.writeCharWait(
+      Logtta_CO2.getUuid('AB20'),
+      Logtta_CO2.getUuid('AB30'),
+      data
+    );
   }
 
   /**
    * @deprecated
    * @param enable
    */
-  public setBeaconMode(enable: boolean) {
+  public setBeaconMode(enable: boolean): Promise<boolean> {
     return this.setBeaconModeWait(enable);
   }
 
-  public async setBeaconModeWait(enable: boolean) {
-    if (!(this._peripheral && this._peripheral.connected)) {
-      return;
+  public async setBeaconModeWait(enable: boolean): Promise<boolean> {
+    if (!this.peripheral.connected) {
+      return false;
     }
 
-    const c = this._peripheral
-      .getService(Logtta_CO2.get_uuid('AB20'))!
-      .getCharacteristic(Logtta_CO2.get_uuid('AB2D'));
-    if (enable) {
-      await c!.writeWait([1]);
-    } else {
-      await c!.writeWait([0]);
-    }
+    return this.writeCharWait(
+      Logtta_CO2.getUuid('AB20'),
+      Logtta_CO2.getUuid('AB2D'),
+      [enable ? 1 : 0]
+    );
   }
 
-  private checkNumber(data: string) {
+  protected checkNumber(data: string): number {
     if (data >= '0' && data <= '9') {
       return parseInt(data, 10);
     } else {
@@ -205,5 +205,18 @@ export default class Logtta_CO2 implements ObnizPartsBleInterface {
         `authorization code can only be entered from 0-9.input word : ${data}`
       );
     }
+  }
+
+  /**
+   * @deprecated
+   */
+  public static getData(
+    peripheral: BleRemotePeripheral
+  ): Logtta_CO2_Adv_Data | null {
+    if (this.getDeviceMode(peripheral) !== 'Beacon') {
+      return null;
+    }
+    const dev = new this(peripheral, 'Beacon');
+    return dev.getData();
   }
 }
