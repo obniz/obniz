@@ -20,7 +20,7 @@ export interface IBS02IR_Data {
 export default class IBS02IR extends BaseIBS<IBS02IR_Data> {
   public static readonly PartsName: PartsType = 'iBS02IR';
 
-  public static readonly BeaconDataStruct: ObnizBleBeaconStruct<IBS02IR_Data> = {
+  protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<IBS02IR_Data> = {
     battery: BaseIBS.Config.battery,
     event: BaseIBS.Config.event,
     ...BaseIBS.getUniqueData(2, 0x02),

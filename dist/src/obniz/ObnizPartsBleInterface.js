@@ -6,6 +6,7 @@
  * @module ObnizCore
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizError_1 = require("./ObnizError");
 class ObnizPartsBleInterface {
     constructor() {
         /**
@@ -51,28 +52,24 @@ class ObnizPartsBleInterface {
     }
 }
 exports.default = ObnizPartsBleInterface;
-class UniqueAdData {
-}
-exports.UniqueAdData = UniqueAdData;
 const ObnizPartsBleModeList = ['Beacon', 'Connectable', 'Pairing'];
-exports.notMatchDeviceError = new Error("isn't target device.");
+exports.notMatchDeviceError = new Error('Is NOT target device.');
 exports.uint = (value) => {
     let val = 0;
     value.forEach((v, i) => (val += v << (i * 8)));
     return val;
 };
-exports.uint16 = (value) => {
-    return (value[1] << 8) | value[0];
+exports.int = (value) => {
+    const num = exports.uint(value);
+    return (num -
+        ((num & (0x8 << (value.length * 8 - 4))) !== 0
+            ? value.length && value.length >= 28
+                ? 0x10000000 * 2 ** (value.length - 28)
+                : 0x1 << (value.length * 8)
+            : 0));
 };
-exports.uint16BE = (value) => exports.uint16(value.reverse());
-exports.int16 = (value) => {
-    let val = exports.uint16(value);
-    if ((val & 0x8000) !== 0) {
-        val -= 0x10000;
-    }
-    return val;
-};
-exports.int16BE = (value) => exports.int16(value.reverse());
+exports.uintBE = (value) => exports.uint(value.reverse());
+exports.intBE = (value) => exports.int(value.reverse());
 exports.unsigned16FromBinary = (high, low) => {
     return (high << 8) | low;
 };
@@ -102,27 +99,15 @@ class ObnizPartsBle {
          * NEED IMPLEMENTATION
          */
         this.static = ObnizPartsBle;
-        if (!mode) {
-            const m = this.static.getDeviceMode(peripheral);
-            if (!m)
-                throw exports.notMatchDeviceError;
-            else
-                mode = m;
-        }
-        this.mode = mode;
+        this._mode = mode;
         this.peripheral = peripheral;
+        this.address = peripheral.address;
         this.beaconData = this.peripheral.manufacturerSpecificData;
         if (this.beaconData)
             this.beaconData = this.beaconData.slice(2);
         this.beaconDataInScanResponse = this.peripheral.manufacturerSpecificDataInScanResponse;
         if (this.beaconDataInScanResponse)
             this.beaconDataInScanResponse = this.beaconDataInScanResponse.slice(2);
-        this.peripheral.ondisconnect = (reason) => {
-            if (this._onDisconnect)
-                this._onDisconnect(reason);
-            if (this.onDisconnect)
-                this.onDisconnect(reason);
-        };
     }
     /**
      * Information of parts.
@@ -137,6 +122,14 @@ class ObnizPartsBle {
     static isDevice(peripheral) {
         return this.getDeviceMode(peripheral) !== null;
     }
+    /**
+     * Get Peripheral Mode.
+     *
+     * ペリフェラルのモードを取得
+     *
+     * @param peripheral BleRemotePeripheral
+     * @returns If the corresponding device is that mode, it must be null if not applicable 該当するデバイスならばそのモード、該当しなければnull
+     */
     static getDeviceMode(peripheral) {
         const result = (this.AvailableBleMode instanceof Array
             ? this.AvailableBleMode
@@ -145,6 +138,15 @@ class ObnizPartsBle {
             .find((mode) => mode);
         return (result !== null && result !== void 0 ? result : null);
     }
+    /**
+     * Check if peripherals and modes match the library.
+     *
+     * ペリフェラルとモードがライブラリと合致するかチェック
+     *
+     * @param peripheral BleRemotePeripheral
+     * @param mode Beacon | Connectable | Pairing
+     * @returns Whether to match 合致するかどうか
+     */
     static isDeviceWithMode(peripheral, mode) {
         var _a;
         if (typeof this.AvailableBleMode === 'string'
@@ -212,10 +214,25 @@ class ObnizPartsBle {
         return true;
     }
     /**
+     * Form advertising data into an associative array.
+     *
      * アドバタイジングデータを連想配列に成形
-     * Form advertising data into an associative array
+     *
+     * @deprecated
      */
-    // public static getData: (peripheral: BleRemotePeripheral | null) => unknown;
+    static getData(peripheral) {
+        const mode = this.getDeviceMode(peripheral);
+        if (!mode)
+            return null;
+        const lib = new this(peripheral, mode);
+        try {
+            return lib.getData();
+        }
+        catch (e) {
+            console.error(e);
+            return null;
+        }
+    }
     /**
      * Utility function for reading 1byte fixed point number
      */
@@ -232,6 +249,17 @@ class ObnizPartsBle {
         }
         return result;
     }
+    get mode() {
+        return this._mode;
+    }
+    checkMode(force = false) {
+        if (this.mode && !force)
+            return this.mode;
+        const mode = this.static.getDeviceMode(this.peripheral);
+        if (!mode)
+            throw exports.notMatchDeviceError;
+        return (this._mode = mode);
+    }
     /**
      * アドバタイジングデータを連想配列に成形
      * 利用可能なモード: Beacon, Connectable(一部のみ)
@@ -239,6 +267,7 @@ class ObnizPartsBle {
      * Available modes: Beacon, Connectable(only part)
      */
     getData() {
+        this.checkMode();
         if (!this.static.BeaconDataStruct)
             throw new Error('Data analysis is not defined.');
         if (!this.beaconData)
@@ -252,7 +281,7 @@ class ObnizPartsBle {
             throw new Error('Data analysis is not defined.');
         return Object.fromEntries(Object.entries(defaultBeaconDataStruct)
             .map(([name, c]) => {
-            var _a, _b, _c, _d, _e;
+            var _a, _b, _c;
             if (c.type === 'check')
                 return [];
             const config = c;
@@ -287,106 +316,156 @@ class ObnizPartsBle {
                     return [name, config.func(data, this.peripheral)];
             else {
                 const multi = (_c = config.multiple, (_c !== null && _c !== void 0 ? _c : 1));
-                const num = exports.uint(config.type.indexOf('BE') > 0 ? data.reverse() : data);
-                return [
-                    name,
-                    (num -
-                        (config.type.indexOf('u') !== 0 &&
-                            (num & (0x8 << ((_d = config.length, (_d !== null && _d !== void 0 ? _d : 1)) * 8 - 4))) !== 0
-                            ? 0x1 << ((_e = config.length, (_e !== null && _e !== void 0 ? _e : 1)) * 8)
-                            : 0)) *
-                        multi,
-                ];
+                const num = (config.type.indexOf('u') === 0 ? exports.uint : exports.int)(config.type.indexOf('BE') >= 0 ? data.reverse() : data);
+                return [name, num * multi];
             }
         })
             .filter((v) => v[0]));
     }
     getTriaxial(data) {
         return {
-            x: exports.int16(data.slice(0, 2)),
-            y: exports.int16(data.slice(2, 4)),
-            z: exports.int16(data.slice(4, 6)),
+            x: exports.int(data.slice(0, 2)),
+            y: exports.int(data.slice(2, 4)),
+            z: exports.int(data.slice(4, 6)),
         };
-    }
-    /**
-     * 任意のサービスから任意のキャラクタリスクを取得
-     *
-     * @param serviceUuid サービスUUID
-     * @param characteristicUuid キャラクタリスクUUID
-     * @returns 該当するものがあればキャラクタリスク、なければnull
-     */
-    getChar(serviceUuid, characteristicUuid) {
-        const service = this.peripheral.getService(serviceUuid);
-        if (!service)
-            return null;
-        return service.getCharacteristic(characteristicUuid);
-    }
-    /**
-     * 任意のサービスの任意のキャラクタリスクからデータを読み取り
-     *
-     * @param serviceUuid サービスUUID
-     * @param characteristicUuid キャラクタリスクUUID
-     * @returns 該当するものがあればデータ読み取り結果、なければnull
-     */
-    async readCharWait(serviceUuid, characteristicUuid) {
-        const characteristic = this.getChar(serviceUuid, characteristicUuid);
-        if (!characteristic)
-            return null;
-        return await characteristic.readWait();
-    }
-    /**
-     * 任意のサービスの任意のキャラクタリスクへデータを書き込み
-     *
-     * @param serviceUuid サービスUUID
-     * @param characteristicUuid キャラクタリスクUUID
-     * @param data 書き込むデータ
-     * @returns 該当するものがあればデータ書き込み結果、なければfalse
-     */
-    async writeCharWait(serviceUuid, characteristicUuid, data) {
-        const characteristic = this.getChar(serviceUuid, characteristicUuid);
-        if (!characteristic)
-            return false;
-        return await characteristic.writeWait(data);
-    }
-    /**
-     * 任意のサービスの任意のキャラクタリスクへ通知を登録
-     *
-     * @param serviceUuid サービスUUID
-     * @param characteristicUuid キャラクタリスクUUID
-     * @param callback データが来たとき呼ばれる関数
-     * @returns 該当するものがあればtrue、なければfalse
-     */
-    async subscribeWait(serviceUuid, characteristicUuid, callback) {
-        const characteristic = this.getChar(serviceUuid, characteristicUuid);
-        if (!characteristic)
-            return false;
-        await characteristic.registerNotifyWait((callback !== null && callback !== void 0 ? callback : (() => {
-            // do nothing.
-        })));
-        return true;
     }
 }
 exports.ObnizPartsBle = ObnizPartsBle;
 /**
+ * Used as a condition of isDevice() by default.
+ *
  * 標準でisDevice()の条件として使用
- * Used as a condition of isDevice() by default
  */
 ObnizPartsBle.Address = undefined;
 /**
+ * Used as a condition of isDevice() by default.
+ *
  * 標準でisDevice()の条件として使用
- * Used as a condition of isDevice() by default
  */
 ObnizPartsBle.LocalName = undefined;
 /**
+ * Used as a condition of isDevice() by default.
+ *
  * 標準でisDevice()の条件として使用
- * Used as a condition of isDevice() by default
  */
 ObnizPartsBle.CompanyID = undefined;
 /**
+ * Used as a condition of isDevice() by default.
+ *
  * 標準でisDevice()の条件として使用
- * Used as a condition of isDevice() by default
  */
 ObnizPartsBle.CompanyID_ScanResponse = undefined;
+class ObnizPartsBleConnectable extends ObnizPartsBle {
+    constructor(peripheral, mode) {
+        super(peripheral, mode);
+        this.peripheral.ondisconnect = async (reason) => {
+            await this.beforeOnDisconnectWait(reason);
+            if (this.ondisconnect)
+                await this.ondisconnect(reason);
+        };
+    }
+    /**
+     * Connect to peripherals with validation.
+     *
+     * バリデーションのあるペリフェラルへの接続
+     *
+     * @param keys: Key acquired when pairing previously 以前にペアリングしたときに取得されたキー
+     */
+    async connectWait(keys) {
+        // TODO: Enable Validation
+        // if (this.mode !== 'Connectable')
+        //   throw new Error(
+        //     `Connection can only be used in connectable mode, the current mode is ${this.mode}`
+        //   );
+        await this.peripheral.connectWait({
+            pairingOption: {
+                keys,
+            },
+        });
+    }
+    /**
+     * Disconnect from peripheral.
+     *
+     * ペリフェラルから切断
+     */
+    async disconnectWait() {
+        await this.peripheral.disconnectWait();
+    }
+    /**
+     * Check if connected.
+     *
+     * 接続しているかどうかチェック
+     *
+     * @param connected Connection status (default: true)
+     */
+    checkConnected(connected = true) {
+        if (this.peripheral.connected !== connected)
+            throw new Error(connected
+                ? 'Peripheral is NOT connected!!'
+                : 'Peripheral IS connected!!');
+    }
+    /**
+     * Get any characteristic from any service.
+     *
+     * 任意のサービスから任意のキャラクタリスティックを取得
+     *
+     * @param serviceUuid Service UUID
+     * @param characteristicUuid Characteristic UUID
+     * @returns Instance of BleRemoteCharacteristic
+     */
+    getChar(serviceUuid, characteristicUuid) {
+        const service = this.peripheral.getService(serviceUuid);
+        if (!service)
+            throw new ObnizError_1.ObnizBleUnknownServiceError(this.peripheral.address, serviceUuid);
+        const char = service.getCharacteristic(characteristicUuid);
+        if (!char)
+            throw new ObnizError_1.ObnizBleUnknownCharacteristicError(this.peripheral.address, serviceUuid, characteristicUuid);
+        return char;
+    }
+    /**
+     * Read data from any characteristic of any service.
+     *
+     * 任意のサービスの任意のキャラクタリスティックからデータを読み取り
+     *
+     * @param serviceUuid Service UUID
+     * @param characteristicUuid Characteristic UUID
+     * @returns Data read result データ読み取り結果
+     */
+    async readCharWait(serviceUuid, characteristicUuid) {
+        const char = this.getChar(serviceUuid, characteristicUuid);
+        return await char.readWait();
+    }
+    /**
+     * Write data to any characteristic of any service.
+     *
+     * 任意のサービスの任意のキャラクタリスティックへデータを書き込み
+     *
+     * @param serviceUuid Service UUID
+     * @param characteristicUuid Characteristic UUID
+     * @param data Write data
+     * @returns Data write result
+     */
+    async writeCharWait(serviceUuid, characteristicUuid, data, needResponse) {
+        const characteristic = this.getChar(serviceUuid, characteristicUuid);
+        return await characteristic.writeWait(data, needResponse);
+    }
+    /**
+     * Register notification to any characteristic of any service.
+     *
+     * 任意のサービスの任意のキャラクタリスティックへ通知を登録
+     *
+     * @param serviceUuid Service UUID
+     * @param characteristicUuid Characteristic UUID
+     * @param callback It is called when data comes
+     */
+    async subscribeWait(serviceUuid, characteristicUuid, callback) {
+        const characteristic = this.getChar(serviceUuid, characteristicUuid);
+        await characteristic.registerNotifyWait((callback !== null && callback !== void 0 ? callback : (() => {
+            // do nothing.
+        })));
+    }
+}
+exports.ObnizPartsBleConnectable = ObnizPartsBleConnectable;
 exports.iBeaconCompanyID = [0x4c, 0x00];
 exports.iBeaconData = 
 // length !== 25

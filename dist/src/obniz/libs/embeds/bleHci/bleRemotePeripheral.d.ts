@@ -63,32 +63,20 @@ export interface BleConnectSetting {
      */
     autoDiscovery?: boolean;
     /**
-     * Piring Option
+     * Pairing Option
      *
-     * true : auto discover services/characteristics/descriptors on connection established.
-     * false : don't discover automatically. Please manually.
-     *
-     * Default is true;
-     *
-     * If set false, you should manually discover services/characteristics/descriptors;
-     *
-     * ```javascript
-     * // Javascript Example
-     * await obniz.ble.initWait({});
-     * obniz.ble.scan.onfind = function(peripheral){
-     *   if(peripheral.localName == "my peripheral"){
-     *      await peripheral.connectWait({autoDiscovery:false});
-     *      console.log("success");
-     *      await peripheral.discoverAllServicesWait(); //manually discover
-     *      let service = peripheral.getService("1800");
-     *
-     *   }
-     * }
-     * await obniz.ble.scan.startWait();
-     * ```
-     *
+     * keys: Key acquired when pairing previously.
+     * onPairedCallback: A function that contains keys called when pairing is successful.
      */
     pairingOption?: BlePairingOptions;
+    /**
+     * Force Connect
+     *
+     * If you want to try to connect even when the connected flag is true.
+     *
+     * Default: true
+     */
+    forceConnect?: boolean;
 }
 /**
  * Pairing options

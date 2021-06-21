@@ -3,7 +3,6 @@
  * @module Parts.iBS
  */
 
-import { BleRemotePeripheral } from '../../../obniz';
 import {
   ObnizBleBeaconStructCheck,
   ObnizBleBeaconStructNormal,
@@ -38,14 +37,11 @@ type PresetConfigName =
   | 'fall'
   | 'acceleration'
   | 'temperature'
-  | 'humidity';
+  | 'humidity'
+  | 'user';
 
 export class BaseIBS<S> extends ObnizPartsBle<S> {
   public static readonly AvailableBleMode: ObnizPartsBleMode = 'Beacon';
-
-  protected static readonly Address = undefined;
-
-  protected static readonly LocalName = undefined;
 
   protected static readonly CompanyID = [0x0d, 0x00];
 
@@ -114,18 +110,12 @@ export class BaseIBS<S> extends ObnizPartsBle<S> {
       length: 2,
       type: 'numLE',
     },
+    user: {
+      index: 9,
+      length: 2,
+      type: 'unsignedNumLE',
+    },
   };
-
-  /**
-   * @deprecated
-   */
-  public static getData(peripheral: BleRemotePeripheral): unknown | null {
-    if (!this.isDevice(peripheral)) {
-      return null;
-    }
-    const lib = new this(peripheral, 'Beacon');
-    return lib.getData();
-  }
 }
 
 export class BaseIBS01<S> extends BaseIBS<S> {

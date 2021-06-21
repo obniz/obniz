@@ -16,6 +16,6 @@ export interface IBS03TP_Data {
 }
 export default class IBS03TP extends BaseIBS<IBS03TP_Data> {
     static readonly PartsName: PartsType;
-    static readonly BeaconDataStruct: ObnizBleBeaconStruct<IBS03TP_Data>;
+    protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<IBS03TP_Data>;
     protected static: typeof ObnizPartsBle;
 }

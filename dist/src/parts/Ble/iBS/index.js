@@ -30,21 +30,9 @@ class BaseIBS extends ObnizPartsBleInterface_1.ObnizPartsBle {
             },
         };
     }
-    /**
-     * @deprecated
-     */
-    static getData(peripheral) {
-        if (!this.isDevice(peripheral)) {
-            return null;
-        }
-        const lib = new this(peripheral, 'Beacon');
-        return lib.getData();
-    }
 }
 exports.BaseIBS = BaseIBS;
 BaseIBS.AvailableBleMode = 'Beacon';
-BaseIBS.Address = undefined;
-BaseIBS.LocalName = undefined;
 BaseIBS.CompanyID = [0x0d, 0x00];
 BaseIBS.Config = {
     battery: {
@@ -85,6 +73,11 @@ BaseIBS.Config = {
         index: 7,
         length: 2,
         type: 'numLE',
+    },
+    user: {
+        index: 9,
+        length: 2,
+        type: 'unsignedNumLE',
     },
 };
 class BaseIBS01 extends BaseIBS {
