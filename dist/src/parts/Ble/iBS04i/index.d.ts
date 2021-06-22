@@ -4,17 +4,17 @@
  */
 import { IBeacon } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import { ObnizBleBeaconStruct, ObnizPartsBle, PartsType } from '../../../obniz/ObnizPartsBleInterface';
-import { BaseIBS } from '../iBS';
-export interface IBS04IOptions {
+import { BaseiBS } from '../iBS';
+export interface iBS04IOptions {
 }
-export interface IBS04I_Data extends IBeacon {
+export interface iBS04I_Data extends IBeacon {
     battery: number;
     button: boolean;
 }
-export default class IBS04I extends BaseIBS<IBS04I_Data> {
+export default class iBS04I extends BaseiBS<iBS04I_Data> {
     static readonly PartsName: PartsType;
     protected static readonly CompanyID: number[];
     protected static readonly CompanyID_ScanResponse: number[];
-    protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<IBS04I_Data>;
-    protected static: typeof ObnizPartsBle;
+    protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS04I_Data>;
+    protected readonly static: typeof ObnizPartsBle;
 }

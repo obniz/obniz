@@ -1,3 +1,4 @@
+/* eslint-disable rulesdir/ble-check */
 /**
  * @packageDocumentation
  * @module Parts.iBS
@@ -40,7 +41,7 @@ type PresetConfigName =
   | 'humidity'
   | 'user';
 
-export class BaseIBS<S> extends ObnizPartsBle<S> {
+export class BaseiBS<S> extends ObnizPartsBle<S> {
   public static readonly AvailableBleMode: ObnizPartsBleMode = 'Beacon';
 
   protected static readonly CompanyID = [0x0d, 0x00];
@@ -118,8 +119,8 @@ export class BaseIBS<S> extends ObnizPartsBle<S> {
   };
 }
 
-export class BaseIBS01<S> extends BaseIBS<S> {
+export class BaseiBS01<S> extends BaseiBS<S> {
   protected static readonly CompanyID = [0x59, 0x00];
 }
 
-export default BaseIBS;
+export default BaseiBS;

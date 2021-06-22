@@ -5,12 +5,12 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = require("../iBS");
-class IBS03T extends iBS_1.BaseIBS {
+class iBS03T extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
-        this.static = IBS03T;
+        this.static = iBS03T;
     }
 }
-exports.default = IBS03T;
-IBS03T.PartsName = 'iBS03T';
-IBS03T.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS.Config.battery, button: iBS_1.BaseIBS.Config.button, moving: iBS_1.BaseIBS.Config.moving, hall_sensor: iBS_1.BaseIBS.Config.event, temperature: iBS_1.BaseIBS.Config.temperature }, iBS_1.BaseIBS.getUniqueData(3, 0x15));
+exports.default = iBS03T;
+iBS03T.PartsName = 'iBS03T';
+iBS03T.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, button: iBS_1.BaseiBS.Config.button, moving: iBS_1.BaseiBS.Config.moving, hall_sensor: iBS_1.BaseiBS.Config.event, temperature: iBS_1.BaseiBS.Config.temperature }, iBS_1.BaseiBS.getUniqueData(3, 0x15));

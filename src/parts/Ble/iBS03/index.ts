@@ -8,27 +8,27 @@ import {
   ObnizPartsBle,
   PartsType,
 } from '../../../obniz/ObnizPartsBleInterface';
-import { BaseIBS } from '../iBS';
+import { BaseiBS } from '../iBS';
 
-export interface IBS03Options {}
+export interface iBS03Options {}
 
-export interface IBS03_Data {
+export interface iBS03_Data {
   battery: number;
   button: boolean;
   moving: boolean;
   hall_sensor: boolean;
 }
 
-export default class IBS03 extends BaseIBS<IBS03_Data> {
+export default class iBS03 extends BaseiBS<iBS03_Data> {
   public static readonly PartsName: PartsType = 'iBS03';
 
-  protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<IBS03_Data> = {
-    battery: BaseIBS.Config.battery,
-    button: BaseIBS.Config.button,
-    moving: BaseIBS.Config.moving,
-    hall_sensor: BaseIBS.Config.event,
-    ...BaseIBS.getUniqueData(3, 0x10),
+  protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS03_Data> = {
+    battery: BaseiBS.Config.battery,
+    button: BaseiBS.Config.button,
+    moving: BaseiBS.Config.moving,
+    hall_sensor: BaseiBS.Config.event,
+    ...BaseiBS.getUniqueData(3, 0x10),
   };
 
-  protected static = IBS03 as typeof ObnizPartsBle;
+  protected readonly static = iBS03 as typeof ObnizPartsBle;
 }

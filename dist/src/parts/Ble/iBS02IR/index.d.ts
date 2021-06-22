@@ -3,15 +3,15 @@
  * @module Parts.iBS02IR
  */
 import { ObnizBleBeaconStruct, ObnizPartsBle, PartsType } from '../../../obniz/ObnizPartsBleInterface';
-import { BaseIBS } from '../iBS';
-export interface IBS02IROptions {
+import { BaseiBS } from '../iBS';
+export interface iBS02IROptions {
 }
-export interface IBS02IR_Data {
+export interface iBS02IR_Data {
     battery: number;
     event: boolean;
 }
-export default class IBS02IR extends BaseIBS<IBS02IR_Data> {
+export default class iBS02IR extends BaseiBS<iBS02IR_Data> {
     static readonly PartsName: PartsType;
-    protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<IBS02IR_Data>;
-    protected static: typeof ObnizPartsBle;
+    protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS02IR_Data>;
+    protected readonly static: typeof ObnizPartsBle;
 }

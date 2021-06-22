@@ -3,17 +3,17 @@
  * @module Parts.iBS01RG
  */
 import { ObnizBleBeaconStruct, ObnizPartsBle, PartsType, Triaxial } from '../../../obniz/ObnizPartsBleInterface';
-import { BaseIBS01 } from '../iBS';
-export interface IBS01RGOptions {
+import { BaseiBS01 } from '../iBS';
+export interface iBS01RGOptions {
 }
-export interface IBS01RG_Data {
+export interface iBS01RG_Data {
     battery: number;
     active: boolean;
     button: boolean;
     acceleration: Triaxial[];
 }
-export default class IBS01RG extends BaseIBS01<IBS01RG_Data> {
+export default class iBS01RG extends BaseiBS01<iBS01RG_Data> {
     static readonly PartsName: PartsType;
-    protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<IBS01RG_Data>;
-    protected static: typeof ObnizPartsBle;
+    protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS01RG_Data>;
+    protected readonly static: typeof ObnizPartsBle;
 }

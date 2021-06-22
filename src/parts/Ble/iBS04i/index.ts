@@ -11,34 +11,34 @@ import {
   ObnizPartsBle,
   PartsType,
 } from '../../../obniz/ObnizPartsBleInterface';
-import { BaseIBS } from '../iBS';
+import { BaseiBS } from '../iBS';
 
-export interface IBS04IOptions {}
+export interface iBS04IOptions {}
 
-export interface IBS04I_Data extends IBeacon {
+export interface iBS04I_Data extends IBeacon {
   battery: number;
   button: boolean;
 }
 
-export default class IBS04I extends BaseIBS<IBS04I_Data> {
+export default class iBS04I extends BaseiBS<iBS04I_Data> {
   public static readonly PartsName: PartsType = 'iBS04i';
 
   protected static readonly CompanyID = iBeaconCompanyID;
 
-  protected static readonly CompanyID_ScanResponse = BaseIBS.CompanyID;
+  protected static readonly CompanyID_ScanResponse = BaseiBS.CompanyID;
 
-  protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<IBS04I_Data> = {
+  protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS04I_Data> = {
     battery: {
-      ...BaseIBS.Config.battery,
+      ...BaseiBS.Config.battery,
       scanResponse: true,
     },
     button: {
-      ...BaseIBS.Config.button,
+      ...BaseiBS.Config.button,
       scanResponse: true,
     },
-    ...BaseIBS.getUniqueData(4, 0x18, 0, true),
+    ...BaseiBS.getUniqueData(4, 0x18, 0, true),
     ...iBeaconData,
   };
 
-  protected static = IBS04I as typeof ObnizPartsBle;
+  protected readonly static = iBS04I as typeof ObnizPartsBle;
 }

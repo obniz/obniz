@@ -1,4 +1,5 @@
 "use strict";
+/* eslint-disable rulesdir/ble-check */
 /**
  * @packageDocumentation
  * @module Parts.iBS
@@ -12,7 +13,7 @@ const magic = {
     3: [0x83, 0xbc],
     4: [0x83, 0xbc],
 };
-class BaseIBS extends ObnizPartsBleInterface_1.ObnizPartsBle {
+class BaseiBS extends ObnizPartsBleInterface_1.ObnizPartsBle {
     static getUniqueData(series, subtype, addLength, scanResponse) {
         return {
             magic: {
@@ -31,10 +32,10 @@ class BaseIBS extends ObnizPartsBleInterface_1.ObnizPartsBle {
         };
     }
 }
-exports.BaseIBS = BaseIBS;
-BaseIBS.AvailableBleMode = 'Beacon';
-BaseIBS.CompanyID = [0x0d, 0x00];
-BaseIBS.Config = {
+exports.BaseiBS = BaseiBS;
+BaseiBS.AvailableBleMode = 'Beacon';
+BaseiBS.CompanyID = [0x0d, 0x00];
+BaseiBS.Config = {
     battery: {
         index: 2,
         length: 2,
@@ -80,8 +81,8 @@ BaseIBS.Config = {
         type: 'unsignedNumLE',
     },
 };
-class BaseIBS01 extends BaseIBS {
+class BaseiBS01 extends BaseiBS {
 }
-exports.BaseIBS01 = BaseIBS01;
-BaseIBS01.CompanyID = [0x59, 0x00];
-exports.default = BaseIBS;
+exports.BaseiBS01 = BaseiBS01;
+BaseiBS01.CompanyID = [0x59, 0x00];
+exports.default = BaseiBS;

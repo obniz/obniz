@@ -24604,7 +24604,7 @@ class Logtta_CO2 extends ObnizPartsBleInterface_1.ObnizPartsBleConnectable {
         if (this.authenticated)
             return true;
         if (typeof code === 'string')
-            code = parseInt(code);
+            code = parseInt(code); // TODO: delete string type
         this.authenticated = await this.sendPinCodeWait('Authentication', code);
         return this.authenticated;
     }
@@ -24657,22 +24657,6 @@ class Logtta_CO2 extends ObnizPartsBleInterface_1.ObnizPartsBleConnectable {
     getUuid(uuid) {
         return `31f3${uuid}-bd1c-46b1-91e4-f57abcf7d449`;
     }
-    /**
-     * @deprecated
-     */
-    static getData(peripheral) {
-        if (this.getDeviceMode(peripheral) !== 'Beacon') {
-            return null;
-        }
-        const dev = new this(peripheral, 'Beacon');
-        try {
-            return dev.getData();
-        }
-        catch (e) {
-            console.error(e);
-            return null;
-        }
-    }
 }
 exports.default = Logtta_CO2;
 Logtta_CO2.PartsName = 'Logtta_CO2';
@@ -24684,47 +24668,41 @@ Logtta_CO2.LocalName = {
     Connectable: /CO2 Sensor/,
     Beacon: /null/,
 };
-Logtta_CO2.CompanyID = {
-    Connectable: null,
-    Beacon: [0x10, 0x05],
-};
+Logtta_CO2.CompanyID = [0x10, 0x05];
 Logtta_CO2.BeaconDataStruct = {
-    Connectable: null,
-    Beacon: {
-        appearance: {
-            index: 0,
-            type: 'check',
-            data: 0x02,
-        },
-        co2: {
-            index: 1,
-            length: 2,
-            type: 'unsignedNumBE',
-        },
-        battery: {
-            index: 5,
-            type: 'unsignedNumBE',
-        },
-        interval: {
-            index: 6,
-            length: 2,
-            type: 'unsignedNumBE',
-        },
-        /* alert: {
-          index: 7,
-          type: 'uint8',
-        },
-        name: {
-          index: 8,
-          length: 15,
-          type: 'string',
-        } */
-        // TODO: delete
-        address: {
-            index: 0,
-            type: 'custom',
-            func: (data, peripheral) => peripheral.address,
-        },
+    appearance: {
+        index: 0,
+        type: 'check',
+        data: 0x02,
+    },
+    co2: {
+        index: 1,
+        length: 2,
+        type: 'unsignedNumBE',
+    },
+    battery: {
+        index: 5,
+        type: 'unsignedNumBE',
+    },
+    interval: {
+        index: 6,
+        length: 2,
+        type: 'unsignedNumBE',
+    },
+    /* alert: {
+      index: 7,
+      type: 'uint8',
+    },
+    name: {
+      index: 8,
+      length: 15,
+      type: 'string',
+    } */
+    // TODO: delete
+    address: {
+        index: 0,
+        type: 'custom',
+        func: (data, peripheral) => peripheral.address,
     },
 };
 
@@ -27396,6 +27374,7 @@ exports.default = UT201BLE;
 
 "use strict";
 
+/* eslint-disable rulesdir/ble-check */
 /**
  * @packageDocumentation
  * @module Parts.iBS
@@ -27409,7 +27388,7 @@ const magic = {
     3: [0x83, 0xbc],
     4: [0x83, 0xbc],
 };
-class BaseIBS extends ObnizPartsBleInterface_1.ObnizPartsBle {
+class BaseiBS extends ObnizPartsBleInterface_1.ObnizPartsBle {
     static getUniqueData(series, subtype, addLength, scanResponse) {
         return {
             magic: {
@@ -27428,10 +27407,10 @@ class BaseIBS extends ObnizPartsBleInterface_1.ObnizPartsBle {
         };
     }
 }
-exports.BaseIBS = BaseIBS;
-BaseIBS.AvailableBleMode = 'Beacon';
-BaseIBS.CompanyID = [0x0d, 0x00];
-BaseIBS.Config = {
+exports.BaseiBS = BaseiBS;
+BaseiBS.AvailableBleMode = 'Beacon';
+BaseiBS.CompanyID = [0x0d, 0x00];
+BaseiBS.Config = {
     battery: {
         index: 2,
         length: 2,
@@ -27477,11 +27456,11 @@ BaseIBS.Config = {
         type: 'unsignedNumLE',
     },
 };
-class BaseIBS01 extends BaseIBS {
+class BaseiBS01 extends BaseiBS {
 }
-exports.BaseIBS01 = BaseIBS01;
-BaseIBS01.CompanyID = [0x59, 0x00];
-exports.default = BaseIBS;
+exports.BaseiBS01 = BaseiBS01;
+BaseiBS01.CompanyID = [0x59, 0x00];
+exports.default = BaseiBS;
 
 
 /***/ }),
@@ -27502,22 +27481,22 @@ const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
  * Recommend use iBS01G, iBS01H, iBS01T
  * Use only if you are using an old iBS01 series sensor
  */
-class IBS01 extends iBS_1.BaseIBS01 {
+class iBS01 extends iBS_1.BaseiBS01 {
     constructor() {
         super(...arguments);
-        this.static = IBS01;
+        this.static = iBS01;
     }
 }
-exports.default = IBS01;
-IBS01.PartsName = 'iBS01';
-IBS01.BeaconDataStruct = {
-    battery: iBS_1.BaseIBS01.Config.battery,
-    button: iBS_1.BaseIBS01.Config.button,
-    moving: iBS_1.BaseIBS01.Config.moving,
-    hall_sensor: iBS_1.BaseIBS01.Config.event,
-    fall: iBS_1.BaseIBS01.Config.fall,
+exports.default = iBS01;
+iBS01.PartsName = 'iBS01';
+iBS01.BeaconDataStruct = {
+    battery: iBS_1.BaseiBS01.Config.battery,
+    button: iBS_1.BaseiBS01.Config.button,
+    moving: iBS_1.BaseiBS01.Config.moving,
+    hall_sensor: iBS_1.BaseiBS01.Config.event,
+    fall: iBS_1.BaseiBS01.Config.fall,
     // subtype=0x03 older version has no subtype
-    magic: iBS_1.BaseIBS01.getUniqueData(1, -1).magic,
+    magic: iBS_1.BaseiBS01.getUniqueData(1, -1).magic,
 };
 
 
@@ -27534,15 +27513,15 @@ IBS01.BeaconDataStruct = {
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
-class IBS01G extends iBS_1.BaseIBS01 {
+class iBS01G extends iBS_1.BaseiBS01 {
     constructor() {
         super(...arguments);
-        this.static = IBS01G;
+        this.static = iBS01G;
     }
 }
-exports.default = IBS01G;
-IBS01G.PartsName = 'iBS01G';
-IBS01G.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS01.Config.battery, button: iBS_1.BaseIBS01.Config.button, moving: iBS_1.BaseIBS01.Config.moving, fall: iBS_1.BaseIBS01.Config.fall }, iBS_1.BaseIBS01.getUniqueData(1, 0x06));
+exports.default = iBS01G;
+iBS01G.PartsName = 'iBS01G';
+iBS01G.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS01.Config.battery, button: iBS_1.BaseiBS01.Config.button, moving: iBS_1.BaseiBS01.Config.moving, fall: iBS_1.BaseiBS01.Config.fall }, iBS_1.BaseiBS01.getUniqueData(1, 0x06));
 
 
 /***/ }),
@@ -27558,15 +27537,15 @@ IBS01G.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS01.Config.batter
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
-class IBS01H extends iBS_1.BaseIBS01 {
+class iBS01H extends iBS_1.BaseiBS01 {
     constructor() {
         super(...arguments);
-        this.static = IBS01H;
+        this.static = iBS01H;
     }
 }
-exports.default = IBS01H;
-IBS01H.PartsName = 'iBS01H';
-IBS01H.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS01.Config.battery, button: iBS_1.BaseIBS01.Config.button, hall_sensor: iBS_1.BaseIBS01.Config.event }, iBS_1.BaseIBS01.getUniqueData(1, 0x04));
+exports.default = iBS01H;
+iBS01H.PartsName = 'iBS01H';
+iBS01H.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS01.Config.battery, button: iBS_1.BaseiBS01.Config.button, hall_sensor: iBS_1.BaseiBS01.Config.event }, iBS_1.BaseiBS01.getUniqueData(1, 0x04));
 
 
 /***/ }),
@@ -27583,20 +27562,20 @@ IBS01H.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS01.Config.batter
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js");
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
-class IBS01RG extends iBS_1.BaseIBS01 {
+class iBS01RG extends iBS_1.BaseiBS01 {
     constructor() {
         super(...arguments);
-        this.static = IBS01RG;
+        this.static = iBS01RG;
     }
 }
-exports.default = IBS01RG;
-IBS01RG.PartsName = 'iBS01RG';
-IBS01RG.BeaconDataStruct = {
-    battery: Object.assign(Object.assign({}, iBS_1.BaseIBS01.Config.battery), { type: 'custom', func: (data) => ObnizPartsBleInterface_1.uint([data[0], data[1] & 0x0f]) * 0.01 }),
-    active: Object.assign(Object.assign({}, iBS_1.BaseIBS01.Config.event), { type: 'bool00010000' }),
-    button: Object.assign(Object.assign({}, iBS_1.BaseIBS01.Config.button), { type: 'bool00100000' }),
-    acceleration: iBS_1.BaseIBS01.Config.acceleration,
-    magic: iBS_1.BaseIBS01.getUniqueData(1.1, -1).magic,
+exports.default = iBS01RG;
+iBS01RG.PartsName = 'iBS01RG';
+iBS01RG.BeaconDataStruct = {
+    battery: Object.assign(Object.assign({}, iBS_1.BaseiBS01.Config.battery), { type: 'custom', func: (data) => ObnizPartsBleInterface_1.uint([data[0], data[1] & 0x0f]) * 0.01 }),
+    active: Object.assign(Object.assign({}, iBS_1.BaseiBS01.Config.event), { type: 'bool00010000' }),
+    button: Object.assign(Object.assign({}, iBS_1.BaseiBS01.Config.button), { type: 'bool00100000' }),
+    acceleration: iBS_1.BaseiBS01.Config.acceleration,
+    magic: iBS_1.BaseiBS01.getUniqueData(1.1, -1).magic,
 };
 
 
@@ -27613,15 +27592,15 @@ IBS01RG.BeaconDataStruct = {
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
-class IBS01T extends iBS_1.BaseIBS01 {
+class iBS01T extends iBS_1.BaseiBS01 {
     constructor() {
         super(...arguments);
-        this.static = IBS01T;
+        this.static = iBS01T;
     }
 }
-exports.default = IBS01T;
-IBS01T.PartsName = 'iBS01T';
-IBS01T.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS01.Config.battery, button: iBS_1.BaseIBS01.Config.button, moving: iBS_1.BaseIBS01.Config.moving, reed: iBS_1.BaseIBS01.Config.event, temperature: iBS_1.BaseIBS01.Config.temperature, humidity: iBS_1.BaseIBS01.Config.humidity }, iBS_1.BaseIBS01.getUniqueData(1, 0x05));
+exports.default = iBS01T;
+iBS01T.PartsName = 'iBS01T';
+iBS01T.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS01.Config.battery, button: iBS_1.BaseiBS01.Config.button, moving: iBS_1.BaseiBS01.Config.moving, reed: iBS_1.BaseiBS01.Config.event, temperature: iBS_1.BaseiBS01.Config.temperature, humidity: iBS_1.BaseiBS01.Config.humidity }, iBS_1.BaseiBS01.getUniqueData(1, 0x05));
 
 
 /***/ }),
@@ -27637,15 +27616,15 @@ IBS01T.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS01.Config.batter
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
-class IBS02IR extends iBS_1.BaseIBS {
+class iBS02IR extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
-        this.static = IBS02IR;
+        this.static = iBS02IR;
     }
 }
-exports.default = IBS02IR;
-IBS02IR.PartsName = 'iBS02IR';
-IBS02IR.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS.Config.battery, event: iBS_1.BaseIBS.Config.event }, iBS_1.BaseIBS.getUniqueData(2, 0x02));
+exports.default = iBS02IR;
+iBS02IR.PartsName = 'iBS02IR';
+iBS02IR.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, event: iBS_1.BaseiBS.Config.event }, iBS_1.BaseiBS.getUniqueData(2, 0x02));
 
 
 /***/ }),
@@ -27661,15 +27640,15 @@ IBS02IR.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS.Config.battery
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
-class IBS02PIR extends iBS_1.BaseIBS {
+class iBS02PIR extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
-        this.static = IBS02PIR;
+        this.static = iBS02PIR;
     }
 }
-exports.default = IBS02PIR;
-IBS02PIR.PartsName = 'iBS02PIR';
-IBS02PIR.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS.Config.battery, event: iBS_1.BaseIBS.Config.event }, iBS_1.BaseIBS.getUniqueData(2, 0x01));
+exports.default = iBS02PIR;
+iBS02PIR.PartsName = 'iBS02PIR';
+iBS02PIR.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, event: iBS_1.BaseiBS.Config.event }, iBS_1.BaseiBS.getUniqueData(2, 0x01));
 
 
 /***/ }),
@@ -27685,15 +27664,15 @@ IBS02PIR.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS.Config.batter
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
-class IBS03 extends iBS_1.BaseIBS {
+class iBS03 extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
-        this.static = IBS03;
+        this.static = iBS03;
     }
 }
-exports.default = IBS03;
-IBS03.PartsName = 'iBS03';
-IBS03.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS.Config.battery, button: iBS_1.BaseIBS.Config.button, moving: iBS_1.BaseIBS.Config.moving, hall_sensor: iBS_1.BaseIBS.Config.event }, iBS_1.BaseIBS.getUniqueData(3, 0x10));
+exports.default = iBS03;
+iBS03.PartsName = 'iBS03';
+iBS03.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, button: iBS_1.BaseiBS.Config.button, moving: iBS_1.BaseiBS.Config.moving, hall_sensor: iBS_1.BaseiBS.Config.event }, iBS_1.BaseiBS.getUniqueData(3, 0x10));
 
 
 /***/ }),
@@ -27709,15 +27688,15 @@ IBS03.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS.Config.battery, 
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
-class IBS03G extends iBS_1.BaseIBS {
+class iBS03G extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
-        this.static = IBS03G;
+        this.static = iBS03G;
     }
 }
-exports.default = IBS03G;
-IBS03G.PartsName = 'iBS03G';
-IBS03G.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS.Config.battery, button: iBS_1.BaseIBS.Config.button, moving: iBS_1.BaseIBS.Config.moving, fall: iBS_1.BaseIBS.Config.fall }, iBS_1.BaseIBS.getUniqueData(3, 0x16));
+exports.default = iBS03G;
+iBS03G.PartsName = 'iBS03G';
+iBS03G.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, button: iBS_1.BaseiBS.Config.button, moving: iBS_1.BaseiBS.Config.moving, fall: iBS_1.BaseiBS.Config.fall }, iBS_1.BaseiBS.getUniqueData(3, 0x16));
 
 
 /***/ }),
@@ -27733,15 +27712,15 @@ IBS03G.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS.Config.battery,
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
-class IBS03T extends iBS_1.BaseIBS {
+class iBS03T extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
-        this.static = IBS03T;
+        this.static = iBS03T;
     }
 }
-exports.default = IBS03T;
-IBS03T.PartsName = 'iBS03T';
-IBS03T.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS.Config.battery, button: iBS_1.BaseIBS.Config.button, moving: iBS_1.BaseIBS.Config.moving, hall_sensor: iBS_1.BaseIBS.Config.event, temperature: iBS_1.BaseIBS.Config.temperature }, iBS_1.BaseIBS.getUniqueData(3, 0x15));
+exports.default = iBS03T;
+iBS03T.PartsName = 'iBS03T';
+iBS03T.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, button: iBS_1.BaseiBS.Config.button, moving: iBS_1.BaseiBS.Config.moving, hall_sensor: iBS_1.BaseiBS.Config.event, temperature: iBS_1.BaseiBS.Config.temperature }, iBS_1.BaseiBS.getUniqueData(3, 0x15));
 
 
 /***/ }),
@@ -27757,15 +27736,15 @@ IBS03T.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS.Config.battery,
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
-class IBS03TP extends iBS_1.BaseIBS {
+class iBS03TP extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
-        this.static = IBS03TP;
+        this.static = iBS03TP;
     }
 }
-exports.default = IBS03TP;
-IBS03TP.PartsName = 'iBS03TP';
-IBS03TP.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS.Config.battery, button: iBS_1.BaseIBS.Config.button, moving: iBS_1.BaseIBS.Config.moving, hall_sensor: iBS_1.BaseIBS.Config.event, temperature: iBS_1.BaseIBS.Config.temperature, probe_temperature: Object.assign(Object.assign({}, iBS_1.BaseIBS.Config.temperature), { index: 7 }) }, iBS_1.BaseIBS.getUniqueData(3, 0x17));
+exports.default = iBS03TP;
+iBS03TP.PartsName = 'iBS03TP';
+iBS03TP.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, button: iBS_1.BaseiBS.Config.button, moving: iBS_1.BaseiBS.Config.moving, hall_sensor: iBS_1.BaseiBS.Config.event, temperature: iBS_1.BaseiBS.Config.temperature, probe_temperature: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.temperature), { index: 7 }) }, iBS_1.BaseiBS.getUniqueData(3, 0x17));
 
 
 /***/ }),
@@ -27781,15 +27760,15 @@ IBS03TP.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS.Config.battery
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
-class IBS04 extends iBS_1.BaseIBS {
+class iBS04 extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
-        this.static = IBS04;
+        this.static = iBS04;
     }
 }
-exports.default = IBS04;
-IBS04.PartsName = 'iBS04';
-IBS04.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS.Config.battery, button: iBS_1.BaseIBS.Config.button }, iBS_1.BaseIBS.getUniqueData(4, 0x19));
+exports.default = iBS04;
+iBS04.PartsName = 'iBS04';
+iBS04.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, button: iBS_1.BaseiBS.Config.button }, iBS_1.BaseiBS.getUniqueData(4, 0x19));
 
 
 /***/ }),
@@ -27806,17 +27785,17 @@ IBS04.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseIBS.Config.battery, 
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js");
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
-class IBS04I extends iBS_1.BaseIBS {
+class iBS04I extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
-        this.static = IBS04I;
+        this.static = iBS04I;
     }
 }
-exports.default = IBS04I;
-IBS04I.PartsName = 'iBS04i';
-IBS04I.CompanyID = ObnizPartsBleInterface_1.iBeaconCompanyID;
-IBS04I.CompanyID_ScanResponse = iBS_1.BaseIBS.CompanyID;
-IBS04I.BeaconDataStruct = Object.assign(Object.assign({ battery: Object.assign(Object.assign({}, iBS_1.BaseIBS.Config.battery), { scanResponse: true }), button: Object.assign(Object.assign({}, iBS_1.BaseIBS.Config.button), { scanResponse: true }) }, iBS_1.BaseIBS.getUniqueData(4, 0x18, 0, true)), ObnizPartsBleInterface_1.iBeaconData);
+exports.default = iBS04I;
+iBS04I.PartsName = 'iBS04i';
+iBS04I.CompanyID = ObnizPartsBleInterface_1.iBeaconCompanyID;
+iBS04I.CompanyID_ScanResponse = iBS_1.BaseiBS.CompanyID;
+iBS04I.BeaconDataStruct = Object.assign(Object.assign({ battery: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.battery), { scanResponse: true }), button: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.button), { scanResponse: true }) }, iBS_1.BaseiBS.getUniqueData(4, 0x18, 0, true)), ObnizPartsBleInterface_1.iBeaconData);
 
 
 /***/ }),

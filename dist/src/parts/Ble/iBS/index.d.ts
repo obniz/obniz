@@ -11,7 +11,7 @@ declare const magic: {
     4: number[];
 };
 declare type PresetConfigName = 'battery' | 'button' | 'moving' | 'event' | 'fall' | 'acceleration' | 'temperature' | 'humidity' | 'user';
-export declare class BaseIBS<S> extends ObnizPartsBle<S> {
+export declare class BaseiBS<S> extends ObnizPartsBle<S> {
     static readonly AvailableBleMode: ObnizPartsBleMode;
     protected static readonly CompanyID: number[];
     protected static getUniqueData(series: keyof typeof magic, subtype: number, addLength?: number, scanResponse?: boolean): {
@@ -21,7 +21,7 @@ export declare class BaseIBS<S> extends ObnizPartsBle<S> {
         [key in PresetConfigName]: ObnizBleBeaconStructNormal<unknown, never>;
     };
 }
-export declare class BaseIBS01<S> extends BaseIBS<S> {
+export declare class BaseiBS01<S> extends BaseiBS<S> {
     protected static readonly CompanyID: number[];
 }
-export default BaseIBS;
+export default BaseiBS;

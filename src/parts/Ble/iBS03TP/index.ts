@@ -8,11 +8,11 @@ import {
   ObnizPartsBle,
   PartsType,
 } from '../../../obniz/ObnizPartsBleInterface';
-import { BaseIBS } from '../iBS';
+import { BaseiBS } from '../iBS';
 
-export interface IBS03TPOptions {}
+export interface iBS03TPOptions {}
 
-export interface IBS03TP_Data {
+export interface iBS03TP_Data {
   battery: number;
   button: boolean;
   moving: boolean;
@@ -21,21 +21,21 @@ export interface IBS03TP_Data {
   probe_temperature: number;
 }
 
-export default class IBS03TP extends BaseIBS<IBS03TP_Data> {
+export default class iBS03TP extends BaseiBS<iBS03TP_Data> {
   public static readonly PartsName: PartsType = 'iBS03TP';
 
-  protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<IBS03TP_Data> = {
-    battery: BaseIBS.Config.battery,
-    button: BaseIBS.Config.button,
-    moving: BaseIBS.Config.moving,
-    hall_sensor: BaseIBS.Config.event,
-    temperature: BaseIBS.Config.temperature,
+  protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS03TP_Data> = {
+    battery: BaseiBS.Config.battery,
+    button: BaseiBS.Config.button,
+    moving: BaseiBS.Config.moving,
+    hall_sensor: BaseiBS.Config.event,
+    temperature: BaseiBS.Config.temperature,
     probe_temperature: {
-      ...BaseIBS.Config.temperature,
+      ...BaseiBS.Config.temperature,
       index: 7,
     },
-    ...BaseIBS.getUniqueData(3, 0x17),
+    ...BaseiBS.getUniqueData(3, 0x17),
   };
 
-  protected static = IBS03TP as typeof ObnizPartsBle;
+  protected readonly static = iBS03TP as typeof ObnizPartsBle;
 }

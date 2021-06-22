@@ -3,11 +3,9 @@
  * @module Parts.Logtta_CO2
  */
 
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import {
   ObnizBleBeaconStruct,
   ObnizPartsBle,
-  ObnizPartsBleCompareWithMode,
   ObnizPartsBleConnectable,
   ObnizPartsBleMode,
   PartsType,
@@ -51,48 +49,42 @@ export default class Logtta_CO2 extends ObnizPartsBleConnectable<
     Beacon: /null/,
   };
 
-  protected static readonly CompanyID = {
-    Connectable: null,
-    Beacon: [0x10, 0x05],
-  };
+  protected static readonly CompanyID = [0x10, 0x05];
 
-  protected static readonly BeaconDataStruct: ObnizPartsBleCompareWithMode<ObnizBleBeaconStruct<Logtta_CO2_Data> | null> = {
-    Connectable: null,
-    Beacon: {
-      appearance: {
-        index: 0,
-        type: 'check',
-        data: 0x02,
-      },
-      co2: {
-        index: 1,
-        length: 2,
-        type: 'unsignedNumBE',
-      },
-      battery: {
-        index: 5,
-        type: 'unsignedNumBE',
-      },
-      interval: {
-        index: 6,
-        length: 2,
-        type: 'unsignedNumBE',
-      },
-      /* alert: {
-        index: 7,
-        type: 'uint8',
-      },
-      name: {
-        index: 8,
-        length: 15,
-        type: 'string',
-      } */
-      // TODO: delete
-      address: {
-        index: 0,
-        type: 'custom',
-        func: (data, peripheral) => peripheral.address,
-      },
+  protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<Logtta_CO2_Data> = {
+    appearance: {
+      index: 0,
+      type: 'check',
+      data: 0x02,
+    },
+    co2: {
+      index: 1,
+      length: 2,
+      type: 'unsignedNumBE',
+    },
+    battery: {
+      index: 5,
+      type: 'unsignedNumBE',
+    },
+    interval: {
+      index: 6,
+      length: 2,
+      type: 'unsignedNumBE',
+    },
+    /* alert: {
+      index: 7,
+      type: 'uint8',
+    },
+    name: {
+      index: 8,
+      length: 15,
+      type: 'string',
+    } */
+    // TODO: delete
+    address: {
+      index: 0,
+      type: 'custom',
+      func: (data, peripheral) => peripheral.address,
     },
   };
 
@@ -173,7 +165,7 @@ export default class Logtta_CO2 extends ObnizPartsBleConnectable<
     }
     if (this.authenticated) return true;
 
-    if (typeof code === 'string') code = parseInt(code);
+    if (typeof code === 'string') code = parseInt(code); // TODO: delete string type
     this.authenticated = await this.sendPinCodeWait('Authentication', code);
     return this.authenticated;
   }
@@ -245,23 +237,5 @@ export default class Logtta_CO2 extends ObnizPartsBleConnectable<
 
   protected getUuid(uuid: string): string {
     return `31f3${uuid}-bd1c-46b1-91e4-f57abcf7d449`;
-  }
-
-  /**
-   * @deprecated
-   */
-  public static getData(
-    peripheral: BleRemotePeripheral
-  ): Logtta_CO2_Data | null {
-    if (this.getDeviceMode(peripheral) !== 'Beacon') {
-      return null;
-    }
-    const dev = new this(peripheral, 'Beacon');
-    try {
-      return dev.getData();
-    } catch (e) {
-      console.error(e);
-      return null;
-    }
   }
 }

@@ -3,10 +3,10 @@
  * @module Parts.iBS01
  */
 import { ObnizBleBeaconStruct, ObnizPartsBle, PartsType } from '../../../obniz/ObnizPartsBleInterface';
-import { BaseIBS01 } from '../iBS';
-export interface IBS01Options {
+import { BaseiBS01 } from '../iBS';
+export interface iBS01Options {
 }
-export interface IBS01_Data {
+export interface iBS01_Data {
     battery: number;
     button: boolean;
     /**
@@ -27,8 +27,8 @@ export interface IBS01_Data {
  * Recommend use iBS01G, iBS01H, iBS01T
  * Use only if you are using an old iBS01 series sensor
  */
-export default class IBS01 extends BaseIBS01<IBS01_Data> {
+export default class iBS01 extends BaseiBS01<iBS01_Data> {
     static readonly PartsName: PartsType;
-    protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<IBS01_Data>;
-    protected static: typeof ObnizPartsBle;
+    protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS01_Data>;
+    protected readonly static: typeof ObnizPartsBle;
 }
