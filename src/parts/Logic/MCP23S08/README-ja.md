@@ -4,7 +4,12 @@ SPIのI/Oエクスパンダで、1端子ごとに入出力の切り替えが可�
 
 wired, 利用について詳しくは[リファレンス](https://obniz.github.io/obniz/obnizjs/classes/parts.mcp23s08.mcp23s08.html)を参照ください
 
-利用例
+
+## DEMO
+
+[Optial In and Relay DEMO](https://codesandbox.io/s/obniz-plc-relay-iele2?file=/index.html)
+
+## Example
 
 ```Javascript
 // Javascript Example

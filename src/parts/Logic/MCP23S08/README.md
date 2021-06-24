@@ -4,7 +4,11 @@ SPI base I/O Expander
 
 See [Reference](https://obniz.github.io/obniz/obnizjs/classes/parts.mcp23s08.mcp23s08.html)
 
-Example
+## DEMO
+
+[Optial In and Relay DEMO](https://codesandbox.io/s/obniz-plc-relay-iele2?file=/index.html)
+
+## Example
 
 ```Javascript
 // Javascript Example
