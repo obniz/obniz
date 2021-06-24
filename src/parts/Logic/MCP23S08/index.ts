@@ -10,6 +10,8 @@ import ObnizPartsInterface, {
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 
+/* eslint max-classes-per-file: 0 */
+
 export interface MCP23S08Options {
   vcc: number;
   gnd: number;
@@ -35,30 +37,14 @@ class MCP23S08_IO {
     this.chip.output(this.id, value);
   }
 
+  public async outputWait(value: any) {
+    await this.chip.outputWait(this.id, value);
+  }
+
   public async inputWait() {
     return await this.chip.inputWait(this.id);
   }
 }
-
-export const MCP23S08_IO_DIRECTION = {
-  OUTPUT: false,
-  INPUT: true,
-};
-export const MCP23S08_REGISTER = {
-  IODIR: 0x00,
-  IPOL: 0x01,
-  GPINTEN: 0x02,
-  DEFVAL: 0x03,
-  INTCON: 0x04,
-  IOCON: 0x05,
-  GPPU: 0x06,
-  INTF: 0x07,
-  INTCAP: 0x08,
-  GPIO: 0x09,
-  OLAT: 0x0a,
-};
-
-/* eslint max-classes-per-file: 0 */
 
 export default class MCP23S08 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
@@ -66,6 +52,25 @@ export default class MCP23S08 implements ObnizPartsInterface {
       name: 'MCP23S08',
     };
   }
+
+  public static MCP23S08_IO_DIRECTION = {
+    OUTPUT: false,
+    INPUT: true,
+  };
+
+  public static MCP23S08_REGISTER = {
+    IODIR: 0x00,
+    IPOL: 0x01,
+    GPINTEN: 0x02,
+    DEFVAL: 0x03,
+    INTCON: 0x04,
+    IOCON: 0x05,
+    GPPU: 0x06,
+    INTF: 0x07,
+    INTCAP: 0x08,
+    GPIO: 0x09,
+    OLAT: 0x0a,
+  };
 
   public keys: string[];
   public requiredKeys: string[];
@@ -117,8 +122,12 @@ export default class MCP23S08 implements ObnizPartsInterface {
    * Initialize all ios. set direction=input.
    */
   public async initWait() {
-    await this.writeWait(MCP23S08_REGISTER.IODIR, 0xff); // input
-    for (let i = MCP23S08_REGISTER.IPOL; i <= MCP23S08_REGISTER.OLAT; i++) {
+    await this.writeWait(MCP23S08.MCP23S08_REGISTER.IODIR, 0xff); // input
+    for (
+      let i = MCP23S08.MCP23S08_REGISTER.IPOL;
+      i <= MCP23S08.MCP23S08_REGISTER.OLAT;
+      i++
+    ) {
       await this.writeWait(i, 0x00);
     }
     await this.flushWait('direction');
@@ -196,12 +205,26 @@ export default class MCP23S08 implements ObnizPartsInterface {
   }
 
   /**
+   * async version of output();
+   *
+   * @param id
+   * @param value
+   */
+  public async outputWait(id: number, value: boolean) {
+    value = value === true;
+    this.ios[id].value = value;
+    await this.flushWait();
+  }
+
+  /**
    * Read current all GPIO value.
    */
   public async readAllGPIOWait() {
-    const ret = await this.readWait(MCP23S08_REGISTER.GPIO);
+    const ret = await this.readWait(MCP23S08.MCP23S08_REGISTER.GPIO);
     for (let i = 0; i < 8; i++) {
-      this.ios[i].value = (ret & (1 << i)) !== 0;
+      if (this.ios[i].direction === MCP23S08.MCP23S08_IO_DIRECTION.INPUT) {
+        this.ios[i].value = (ret & (1 << i)) !== 0;
+      }
     }
   }
 
@@ -218,8 +241,11 @@ export default class MCP23S08 implements ObnizPartsInterface {
 
   public async flushWait(type = 'gpio') {
     const keys: any = {
-      gpio: { key: 'value', address: MCP23S08_REGISTER.GPIO },
-      direction: { key: 'direction', address: MCP23S08_REGISTER.IODIR },
+      gpio: { key: 'value', address: MCP23S08.MCP23S08_REGISTER.GPIO },
+      direction: {
+        key: 'direction',
+        address: MCP23S08.MCP23S08_REGISTER.IODIR,
+      },
     };
     const key = keys[type].key;
     const address = keys[type].address;
@@ -231,13 +257,16 @@ export default class MCP23S08 implements ObnizPartsInterface {
     }
     await this.writeWait(address, value);
     // console.log("write",value);
-    // console.log(await this.readWait(MCP23S08_REGISTER.OLAT), await this.readWait(MCP23S08_REGISTER.GPIO));
+    // console.log(await this.readWait(MCP23S08.MCP23S08_REGISTER.OLAT), await this.readWait(MCP23S08.MCP23S08_REGISTER.GPIO));
   }
 
   public flush(type = 'gpio') {
     const keys: any = {
-      gpio: { key: 'value', address: MCP23S08_REGISTER.GPIO },
-      direction: { key: 'direction', address: MCP23S08_REGISTER.IODIR },
+      gpio: { key: 'value', address: MCP23S08.MCP23S08_REGISTER.GPIO },
+      direction: {
+        key: 'direction',
+        address: MCP23S08.MCP23S08_REGISTER.IODIR,
+      },
     };
     const key = keys[type].key;
     const address = keys[type].address;
@@ -249,6 +278,6 @@ export default class MCP23S08 implements ObnizPartsInterface {
     }
     this.write(address, value);
     // console.log("write",value);
-    // console.log(await this.readWait(MCP23S08_REGISTER.OLAT), await this.readWait(MCP23S08_REGISTER.GPIO));
+    // console.log(await this.readWait(MCP23S08.MCP23S08_REGISTER.OLAT), await this.readWait(MCP23S08.MCP23S08_REGISTER.GPIO));
   }
 }

@@ -45778,28 +45778,13 @@ class MCP23S08_IO {
     output(value) {
         this.chip.output(this.id, value);
     }
+    async outputWait(value) {
+        await this.chip.outputWait(this.id, value);
+    }
     async inputWait() {
         return await this.chip.inputWait(this.id);
     }
 }
-exports.MCP23S08_IO_DIRECTION = {
-    OUTPUT: false,
-    INPUT: true,
-};
-exports.MCP23S08_REGISTER = {
-    IODIR: 0x00,
-    IPOL: 0x01,
-    GPINTEN: 0x02,
-    DEFVAL: 0x03,
-    INTCON: 0x04,
-    IOCON: 0x05,
-    GPPU: 0x06,
-    INTF: 0x07,
-    INTCAP: 0x08,
-    GPIO: 0x09,
-    OLAT: 0x0a,
-};
-/* eslint max-classes-per-file: 0 */
 class MCP23S08 {
     constructor() {
         this.ios = [];
@@ -45831,8 +45816,8 @@ class MCP23S08 {
      * Initialize all ios. set direction=input.
      */
     async initWait() {
-        await this.writeWait(exports.MCP23S08_REGISTER.IODIR, 0xff); // input
-        for (let i = exports.MCP23S08_REGISTER.IPOL; i <= exports.MCP23S08_REGISTER.OLAT; i++) {
+        await this.writeWait(MCP23S08.MCP23S08_REGISTER.IODIR, 0xff); // input
+        for (let i = MCP23S08.MCP23S08_REGISTER.IPOL; i <= MCP23S08.MCP23S08_REGISTER.OLAT; i++) {
             await this.writeWait(i, 0x00);
         }
         await this.flushWait('direction');
@@ -45904,12 +45889,25 @@ class MCP23S08 {
         this.flush();
     }
     /**
+     * async version of output();
+     *
+     * @param id
+     * @param value
+     */
+    async outputWait(id, value) {
+        value = value === true;
+        this.ios[id].value = value;
+        await this.flushWait();
+    }
+    /**
      * Read current all GPIO value.
      */
     async readAllGPIOWait() {
-        const ret = await this.readWait(exports.MCP23S08_REGISTER.GPIO);
+        const ret = await this.readWait(MCP23S08.MCP23S08_REGISTER.GPIO);
         for (let i = 0; i < 8; i++) {
-            this.ios[i].value = (ret & (1 << i)) !== 0;
+            if (this.ios[i].direction === MCP23S08.MCP23S08_IO_DIRECTION.INPUT) {
+                this.ios[i].value = (ret & (1 << i)) !== 0;
+            }
         }
     }
     /**
@@ -45924,8 +45922,11 @@ class MCP23S08 {
     }
     async flushWait(type = 'gpio') {
         const keys = {
-            gpio: { key: 'value', address: exports.MCP23S08_REGISTER.GPIO },
-            direction: { key: 'direction', address: exports.MCP23S08_REGISTER.IODIR },
+            gpio: { key: 'value', address: MCP23S08.MCP23S08_REGISTER.GPIO },
+            direction: {
+                key: 'direction',
+                address: MCP23S08.MCP23S08_REGISTER.IODIR,
+            },
         };
         const key = keys[type].key;
         const address = keys[type].address;
@@ -45937,12 +45938,15 @@ class MCP23S08 {
         }
         await this.writeWait(address, value);
         // console.log("write",value);
-        // console.log(await this.readWait(MCP23S08_REGISTER.OLAT), await this.readWait(MCP23S08_REGISTER.GPIO));
+        // console.log(await this.readWait(MCP23S08.MCP23S08_REGISTER.OLAT), await this.readWait(MCP23S08.MCP23S08_REGISTER.GPIO));
     }
     flush(type = 'gpio') {
         const keys = {
-            gpio: { key: 'value', address: exports.MCP23S08_REGISTER.GPIO },
-            direction: { key: 'direction', address: exports.MCP23S08_REGISTER.IODIR },
+            gpio: { key: 'value', address: MCP23S08.MCP23S08_REGISTER.GPIO },
+            direction: {
+                key: 'direction',
+                address: MCP23S08.MCP23S08_REGISTER.IODIR,
+            },
         };
         const key = keys[type].key;
         const address = keys[type].address;
@@ -45954,10 +45958,27 @@ class MCP23S08 {
         }
         this.write(address, value);
         // console.log("write",value);
-        // console.log(await this.readWait(MCP23S08_REGISTER.OLAT), await this.readWait(MCP23S08_REGISTER.GPIO));
+        // console.log(await this.readWait(MCP23S08.MCP23S08_REGISTER.OLAT), await this.readWait(MCP23S08.MCP23S08_REGISTER.GPIO));
     }
 }
 exports.default = MCP23S08;
+MCP23S08.MCP23S08_IO_DIRECTION = {
+    OUTPUT: false,
+    INPUT: true,
+};
+MCP23S08.MCP23S08_REGISTER = {
+    IODIR: 0x00,
+    IPOL: 0x01,
+    GPINTEN: 0x02,
+    DEFVAL: 0x03,
+    INTCON: 0x04,
+    IOCON: 0x05,
+    GPPU: 0x06,
+    INTF: 0x07,
+    INTCAP: 0x08,
+    GPIO: 0x09,
+    OLAT: 0x0a,
+};
 
 
 /***/ }),

@@ -20,27 +20,28 @@ declare class MCP23S08_IO {
     value: boolean;
     constructor(chip: any, id: any);
     output(value: any): void;
+    outputWait(value: any): Promise<void>;
     inputWait(): Promise<any>;
 }
-export declare const MCP23S08_IO_DIRECTION: {
-    OUTPUT: boolean;
-    INPUT: boolean;
-};
-export declare const MCP23S08_REGISTER: {
-    IODIR: number;
-    IPOL: number;
-    GPINTEN: number;
-    DEFVAL: number;
-    INTCON: number;
-    IOCON: number;
-    GPPU: number;
-    INTF: number;
-    INTCAP: number;
-    GPIO: number;
-    OLAT: number;
-};
 export default class MCP23S08 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
+    static MCP23S08_IO_DIRECTION: {
+        OUTPUT: boolean;
+        INPUT: boolean;
+    };
+    static MCP23S08_REGISTER: {
+        IODIR: number;
+        IPOL: number;
+        GPINTEN: number;
+        DEFVAL: number;
+        INTCON: number;
+        IOCON: number;
+        GPPU: number;
+        INTF: number;
+        INTCAP: number;
+        GPIO: number;
+        OLAT: number;
+    };
     keys: string[];
     requiredKeys: string[];
     params: any;
@@ -107,6 +108,13 @@ export default class MCP23S08 implements ObnizPartsInterface {
      * @param value boolean. true or false
      */
     output(id: number, value: boolean): void;
+    /**
+     * async version of output();
+     *
+     * @param id
+     * @param value
+     */
+    outputWait(id: number, value: boolean): Promise<void>;
     /**
      * Read current all GPIO value.
      */
