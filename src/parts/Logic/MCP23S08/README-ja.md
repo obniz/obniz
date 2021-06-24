@@ -31,12 +31,10 @@ mcp.flushWait("direction"); // or mcp.flush("direction"); for no wait.
 mcp.io4.output(true); // io4 of MCP23S08 is now ON.
 
 // Read current input value.
-obniz.onloop = async () => {
-  await mcp.readAllGPIOWait();
-  console.log(`io0=${mcp.io0.value}`);
-  console.log(`io1=${mcp.io1.value}`);
-  console.log(`io2=${mcp.io2.value}`);
-  console.log(`io3=${mcp.io3.value}`);
-}
+await mcp.readAllGPIOWait();
+console.log(`io0=${mcp.io0.value}`);
+console.log(`io1=${mcp.io1.value}`);
+console.log(`io2=${mcp.io2.value}`);
+console.log(`io3=${mcp.io3.value}`);
 
 ```
