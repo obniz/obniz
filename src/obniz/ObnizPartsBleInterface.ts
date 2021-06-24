@@ -202,6 +202,24 @@ export class ObnizPartsBle<S> {
    *
    * 標準でisDevice()の条件として使用
    */
+  protected static readonly BeaconDataLength?: ObnizPartsBleCompare<
+    number | null
+  > = undefined;
+
+  /**
+   * Used as a condition of isDevice() by default.
+   *
+   * 標準でisDevice()の条件として使用
+   */
+  protected static readonly BeaconDataLength_ScanResponse?: ObnizPartsBleCompare<
+    number | null
+  > = undefined;
+
+  /**
+   * Used as a condition of isDevice() by default.
+   *
+   * 標準でisDevice()の条件として使用
+   */
   protected static readonly CompanyID?: ObnizPartsBleCompare<
     number[] | null
   > = undefined;
@@ -298,6 +316,7 @@ export class ObnizPartsBle<S> {
       !this.checkManufacturerSpecificData(
         mode,
         peripheral.manufacturerSpecificData,
+        this.BeaconDataLength,
         this.CompanyID,
         false
       )
@@ -308,6 +327,7 @@ export class ObnizPartsBle<S> {
       !this.checkManufacturerSpecificData(
         mode,
         peripheral.manufacturerSpecificDataInScanResponse,
+        this.BeaconDataLength_ScanResponse,
         this.CompanyID_ScanResponse,
         true
       )
@@ -320,23 +340,49 @@ export class ObnizPartsBle<S> {
   private static checkManufacturerSpecificData(
     mode: ObnizPartsBleMode,
     beaconData: number[] | null,
+    beaconDataLength: ObnizPartsBleCompare<number | null> | undefined,
     companyID: ObnizPartsBleCompare<number[] | null> | undefined,
     inScanResponse: boolean
   ): boolean {
     if (companyID !== undefined) {
       const defaultCompanyID =
-        companyID instanceof Array || companyID === null
+        companyID instanceof Array ||
+        companyID === null ||
+        companyID === undefined
           ? companyID
           : companyID[mode];
-      if (
-        !(defaultCompanyID === null && beaconData === null) &&
-        (defaultCompanyID === undefined ||
-          defaultCompanyID === null ||
-          beaconData === null ||
-          defaultCompanyID[0] !== beaconData[0] ||
-          defaultCompanyID[1] !== beaconData[1])
-      )
-        return false;
+      if (defaultCompanyID !== undefined) {
+        if (defaultCompanyID === null && beaconData !== null) return false;
+        if (defaultCompanyID !== null && beaconData === null) return false;
+        if (
+          defaultCompanyID !== null &&
+          beaconData !== null &&
+          (defaultCompanyID[0] !== beaconData[0] ||
+            defaultCompanyID[1] !== beaconData[1])
+        )
+          return false;
+      }
+    }
+
+    if (beaconDataLength !== undefined) {
+      const defaultBeaconDataLength =
+        typeof beaconDataLength === 'number' ||
+        beaconDataLength === null ||
+        beaconDataLength === undefined
+          ? beaconDataLength
+          : beaconDataLength[mode];
+      if (defaultBeaconDataLength !== undefined) {
+        if (defaultBeaconDataLength === null && beaconData !== null)
+          return false;
+        if (defaultBeaconDataLength !== null && beaconData === null)
+          return false;
+        if (
+          defaultBeaconDataLength !== null &&
+          beaconData !== null &&
+          beaconData.length + 1 !== defaultBeaconDataLength
+        )
+          return false;
+      }
     }
 
     if (this.BeaconDataStruct !== undefined) {
@@ -345,26 +391,34 @@ export class ObnizPartsBle<S> {
         this.BeaconDataStruct.Connectable ||
         this.BeaconDataStruct.Pairing)
         ? this.BeaconDataStruct[mode]
-        : this.BeaconDataStruct) as ObnizBleBeaconStruct<unknown> | null;
-      if (
-        defaultBeaconDataStruct === undefined ||
-        defaultBeaconDataStruct === null ||
-        Object.values(defaultBeaconDataStruct).filter(
-          (config) =>
-            inScanResponse === (config.scanResponse ?? false) &&
-            config.type === 'check' &&
-            (beaconData ?? [])
-              .slice(2 + config.index, 2 + config.index + (config.length ?? 1))
-              .filter(
-                (d, i) =>
-                  d !==
-                  (typeof config.data === 'number'
-                    ? [config.data]
-                    : config.data ?? [])[i]
-              ).length !== 0
-        ).length !== 0
-      )
-        return false;
+        : this.BeaconDataStruct) as
+        | ObnizBleBeaconStruct<unknown>
+        | null
+        | undefined;
+      if (defaultBeaconDataStruct !== undefined) {
+        if (
+          defaultBeaconDataStruct !== null &&
+          beaconData !== null &&
+          Object.values(defaultBeaconDataStruct).filter(
+            (config) =>
+              inScanResponse === (config.scanResponse ?? false) &&
+              config.type === 'check' &&
+              beaconData
+                .slice(
+                  2 + config.index,
+                  2 + config.index + (config.length ?? 1)
+                )
+                .filter(
+                  (d, i) =>
+                    d !==
+                    (typeof config.data === 'number'
+                      ? [config.data]
+                      : config.data ?? [])[i]
+                ).length !== 0
+          ).length !== 0
+        )
+          return false;
+      }
     }
     return true;
   }

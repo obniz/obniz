@@ -13,6 +13,7 @@ declare const magic: {
 declare type PresetConfigName = 'battery' | 'button' | 'moving' | 'event' | 'fall' | 'acceleration' | 'temperature' | 'humidity' | 'user';
 export declare class BaseiBS<S> extends ObnizPartsBle<S> {
     static readonly AvailableBleMode: ObnizPartsBleMode;
+    protected static readonly BeaconDataLength: number;
     protected static readonly CompanyID: number[];
     protected static getUniqueData(series: keyof typeof magic, subtype: number, addLength?: number, scanResponse?: boolean): {
         [key in 'magic' | 'subtype']: ObnizBleBeaconStructCheck;

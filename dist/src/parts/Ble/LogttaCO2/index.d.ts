@@ -7,22 +7,22 @@ import BleBatteryService from '../utils/services/batteryService';
 import BleGenericAccess from '../utils/services/genericAccess';
 export interface Logtta_CO2Options {
 }
-/** @deprecated */
-export declare type Logtta_CO2_Adv_Data = Logtta_CO2_Data;
 export interface Logtta_CO2_Data {
     co2: number;
     battery: number;
     interval: number;
     address: string;
 }
+export declare type Logtta_CO2_Connected_Data = number;
 declare type PinCodeType = 'Authentication' | 'Rewrite';
-export default class Logtta_CO2 extends ObnizPartsBleConnectable<Logtta_CO2_Data, number> {
+export default class Logtta_CO2 extends ObnizPartsBleConnectable<Logtta_CO2_Data, Logtta_CO2_Connected_Data> {
     static readonly PartsName: PartsType;
     static readonly AvailableBleMode: ObnizPartsBleMode[];
     protected static readonly LocalName: {
         Connectable: RegExp;
         Beacon: RegExp;
     };
+    protected static readonly BeaconDataLength = 27;
     protected static readonly CompanyID: number[];
     protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<Logtta_CO2_Data>;
     protected readonly static: typeof ObnizPartsBle;

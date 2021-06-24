@@ -99,6 +99,18 @@ export declare class ObnizPartsBle<S> {
      *
      * 標準でisDevice()の条件として使用
      */
+    protected static readonly BeaconDataLength?: ObnizPartsBleCompare<number | null>;
+    /**
+     * Used as a condition of isDevice() by default.
+     *
+     * 標準でisDevice()の条件として使用
+     */
+    protected static readonly BeaconDataLength_ScanResponse?: ObnizPartsBleCompare<number | null>;
+    /**
+     * Used as a condition of isDevice() by default.
+     *
+     * 標準でisDevice()の条件として使用
+     */
     protected static readonly CompanyID?: ObnizPartsBleCompare<number[] | null>;
     /**
      * Used as a condition of isDevice() by default.

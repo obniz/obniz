@@ -167,24 +167,47 @@ class ObnizPartsBle {
                 !defaultLocalName.test((_a = peripheral.localName, (_a !== null && _a !== void 0 ? _a : 'null'))))
                 return false;
         }
-        if (!this.checkManufacturerSpecificData(mode, peripheral.manufacturerSpecificData, this.CompanyID, false))
+        if (!this.checkManufacturerSpecificData(mode, peripheral.manufacturerSpecificData, this.BeaconDataLength, this.CompanyID, false))
             return false;
-        if (!this.checkManufacturerSpecificData(mode, peripheral.manufacturerSpecificDataInScanResponse, this.CompanyID_ScanResponse, true))
+        if (!this.checkManufacturerSpecificData(mode, peripheral.manufacturerSpecificDataInScanResponse, this.BeaconDataLength_ScanResponse, this.CompanyID_ScanResponse, true))
             return false;
         return true;
     }
-    static checkManufacturerSpecificData(mode, beaconData, companyID, inScanResponse) {
+    static checkManufacturerSpecificData(mode, beaconData, beaconDataLength, companyID, inScanResponse) {
         if (companyID !== undefined) {
-            const defaultCompanyID = companyID instanceof Array || companyID === null
+            const defaultCompanyID = companyID instanceof Array ||
+                companyID === null ||
+                companyID === undefined
                 ? companyID
                 : companyID[mode];
-            if (!(defaultCompanyID === null && beaconData === null) &&
-                (defaultCompanyID === undefined ||
-                    defaultCompanyID === null ||
-                    beaconData === null ||
-                    defaultCompanyID[0] !== beaconData[0] ||
-                    defaultCompanyID[1] !== beaconData[1]))
-                return false;
+            if (defaultCompanyID !== undefined) {
+                if (defaultCompanyID === null && beaconData !== null)
+                    return false;
+                if (defaultCompanyID !== null && beaconData === null)
+                    return false;
+                if (defaultCompanyID !== null &&
+                    beaconData !== null &&
+                    (defaultCompanyID[0] !== beaconData[0] ||
+                        defaultCompanyID[1] !== beaconData[1]))
+                    return false;
+            }
+        }
+        if (beaconDataLength !== undefined) {
+            const defaultBeaconDataLength = typeof beaconDataLength === 'number' ||
+                beaconDataLength === null ||
+                beaconDataLength === undefined
+                ? beaconDataLength
+                : beaconDataLength[mode];
+            if (defaultBeaconDataLength !== undefined) {
+                if (defaultBeaconDataLength === null && beaconData !== null)
+                    return false;
+                if (defaultBeaconDataLength !== null && beaconData === null)
+                    return false;
+                if (defaultBeaconDataLength !== null &&
+                    beaconData !== null &&
+                    beaconData.length + 1 !== defaultBeaconDataLength)
+                    return false;
+            }
         }
         if (this.BeaconDataStruct !== undefined) {
             const defaultBeaconDataStruct = (this.BeaconDataStruct !== null &&
@@ -193,23 +216,25 @@ class ObnizPartsBle {
                     this.BeaconDataStruct.Pairing)
                 ? this.BeaconDataStruct[mode]
                 : this.BeaconDataStruct);
-            if (defaultBeaconDataStruct === undefined ||
-                defaultBeaconDataStruct === null ||
-                Object.values(defaultBeaconDataStruct).filter((config) => {
-                    var _a, _b;
-                    return inScanResponse === (_a = config.scanResponse, (_a !== null && _a !== void 0 ? _a : false)) &&
-                        config.type === 'check' &&
-                        ((beaconData !== null && beaconData !== void 0 ? beaconData : []))
-                            .slice(2 + config.index, 2 + config.index + (_b = config.length, (_b !== null && _b !== void 0 ? _b : 1)))
-                            .filter((d, i) => {
-                            var _a;
-                            return d !==
-                                (typeof config.data === 'number'
-                                    ? [config.data]
-                                    : (_a = config.data, (_a !== null && _a !== void 0 ? _a : [])))[i];
-                        }).length !== 0;
-                }).length !== 0)
-                return false;
+            if (defaultBeaconDataStruct !== undefined) {
+                if (defaultBeaconDataStruct !== null &&
+                    beaconData !== null &&
+                    Object.values(defaultBeaconDataStruct).filter((config) => {
+                        var _a, _b;
+                        return inScanResponse === (_a = config.scanResponse, (_a !== null && _a !== void 0 ? _a : false)) &&
+                            config.type === 'check' &&
+                            beaconData
+                                .slice(2 + config.index, 2 + config.index + (_b = config.length, (_b !== null && _b !== void 0 ? _b : 1)))
+                                .filter((d, i) => {
+                                var _a;
+                                return d !==
+                                    (typeof config.data === 'number'
+                                        ? [config.data]
+                                        : (_a = config.data, (_a !== null && _a !== void 0 ? _a : [])))[i];
+                            }).length !== 0;
+                    }).length !== 0)
+                    return false;
+            }
         }
         return true;
     }
@@ -343,6 +368,18 @@ ObnizPartsBle.Address = undefined;
  * 標準でisDevice()の条件として使用
  */
 ObnizPartsBle.LocalName = undefined;
+/**
+ * Used as a condition of isDevice() by default.
+ *
+ * 標準でisDevice()の条件として使用
+ */
+ObnizPartsBle.BeaconDataLength = undefined;
+/**
+ * Used as a condition of isDevice() by default.
+ *
+ * 標準でisDevice()の条件として使用
+ */
+ObnizPartsBle.BeaconDataLength_ScanResponse = undefined;
 /**
  * Used as a condition of isDevice() by default.
  *

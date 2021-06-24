@@ -14,6 +14,7 @@ class iBS01RG extends iBS_1.BaseiBS01 {
 }
 exports.default = iBS01RG;
 iBS01RG.PartsName = 'iBS01RG';
+iBS01RG.BeaconDataLength = 0x19;
 iBS01RG.BeaconDataStruct = {
     battery: Object.assign(Object.assign({}, iBS_1.BaseiBS01.Config.battery), { type: 'custom', func: (data) => ObnizPartsBleInterface_1.uint([data[0], data[1] & 0x0f]) * 0.01 }),
     active: Object.assign(Object.assign({}, iBS_1.BaseiBS01.Config.event), { type: 'bool00010000' }),

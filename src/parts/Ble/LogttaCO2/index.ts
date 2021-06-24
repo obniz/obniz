@@ -16,15 +16,14 @@ import BleGenericAccess from '../utils/services/genericAccess';
 
 export interface Logtta_CO2Options {}
 
-/** @deprecated */
-export type Logtta_CO2_Adv_Data = Logtta_CO2_Data;
-
 export interface Logtta_CO2_Data {
   co2: number;
   battery: number;
   interval: number;
   address: string; // TODO: delete
 }
+
+export type Logtta_CO2_Connected_Data = number;
 
 type PinCodeType = 'Authentication' | 'Rewrite';
 
@@ -35,7 +34,7 @@ const PinCodeFlag: { [type in PinCodeType]: number } = {
 
 export default class Logtta_CO2 extends ObnizPartsBleConnectable<
   Logtta_CO2_Data,
-  number
+  Logtta_CO2_Connected_Data
 > {
   public static readonly PartsName: PartsType = 'Logtta_CO2';
 
@@ -48,6 +47,8 @@ export default class Logtta_CO2 extends ObnizPartsBleConnectable<
     Connectable: /CO2 Sensor/,
     Beacon: /null/,
   };
+
+  protected static readonly BeaconDataLength = 0x1b;
 
   protected static readonly CompanyID = [0x10, 0x05];
 
@@ -72,11 +73,11 @@ export default class Logtta_CO2 extends ObnizPartsBleConnectable<
       type: 'unsignedNumBE',
     },
     /* alert: {
-      index: 7,
+      index: 8,
       type: 'uint8',
     },
     name: {
-      index: 8,
+      index: 9,
       length: 15,
       type: 'string',
     } */

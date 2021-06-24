@@ -44,6 +44,8 @@ type PresetConfigName =
 export class BaseiBS<S> extends ObnizPartsBle<S> {
   public static readonly AvailableBleMode: ObnizPartsBleMode = 'Beacon';
 
+  protected static readonly BeaconDataLength: number = 0x12;
+
   protected static readonly CompanyID = [0x0d, 0x00];
 
   protected static getUniqueData(

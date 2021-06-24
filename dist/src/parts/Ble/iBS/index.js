@@ -34,6 +34,7 @@ class BaseiBS extends ObnizPartsBleInterface_1.ObnizPartsBle {
 }
 exports.BaseiBS = BaseiBS;
 BaseiBS.AvailableBleMode = 'Beacon';
+BaseiBS.BeaconDataLength = 0x12;
 BaseiBS.CompanyID = [0x0d, 0x00];
 BaseiBS.Config = {
     battery: {

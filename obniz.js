@@ -4082,24 +4082,47 @@ class ObnizPartsBle {
                 !defaultLocalName.test((_a = peripheral.localName, (_a !== null && _a !== void 0 ? _a : 'null'))))
                 return false;
         }
-        if (!this.checkManufacturerSpecificData(mode, peripheral.manufacturerSpecificData, this.CompanyID, false))
+        if (!this.checkManufacturerSpecificData(mode, peripheral.manufacturerSpecificData, this.BeaconDataLength, this.CompanyID, false))
             return false;
-        if (!this.checkManufacturerSpecificData(mode, peripheral.manufacturerSpecificDataInScanResponse, this.CompanyID_ScanResponse, true))
+        if (!this.checkManufacturerSpecificData(mode, peripheral.manufacturerSpecificDataInScanResponse, this.BeaconDataLength_ScanResponse, this.CompanyID_ScanResponse, true))
             return false;
         return true;
     }
-    static checkManufacturerSpecificData(mode, beaconData, companyID, inScanResponse) {
+    static checkManufacturerSpecificData(mode, beaconData, beaconDataLength, companyID, inScanResponse) {
         if (companyID !== undefined) {
-            const defaultCompanyID = companyID instanceof Array || companyID === null
+            const defaultCompanyID = companyID instanceof Array ||
+                companyID === null ||
+                companyID === undefined
                 ? companyID
                 : companyID[mode];
-            if (!(defaultCompanyID === null && beaconData === null) &&
-                (defaultCompanyID === undefined ||
-                    defaultCompanyID === null ||
-                    beaconData === null ||
-                    defaultCompanyID[0] !== beaconData[0] ||
-                    defaultCompanyID[1] !== beaconData[1]))
-                return false;
+            if (defaultCompanyID !== undefined) {
+                if (defaultCompanyID === null && beaconData !== null)
+                    return false;
+                if (defaultCompanyID !== null && beaconData === null)
+                    return false;
+                if (defaultCompanyID !== null &&
+                    beaconData !== null &&
+                    (defaultCompanyID[0] !== beaconData[0] ||
+                        defaultCompanyID[1] !== beaconData[1]))
+                    return false;
+            }
+        }
+        if (beaconDataLength !== undefined) {
+            const defaultBeaconDataLength = typeof beaconDataLength === 'number' ||
+                beaconDataLength === null ||
+                beaconDataLength === undefined
+                ? beaconDataLength
+                : beaconDataLength[mode];
+            if (defaultBeaconDataLength !== undefined) {
+                if (defaultBeaconDataLength === null && beaconData !== null)
+                    return false;
+                if (defaultBeaconDataLength !== null && beaconData === null)
+                    return false;
+                if (defaultBeaconDataLength !== null &&
+                    beaconData !== null &&
+                    beaconData.length + 1 !== defaultBeaconDataLength)
+                    return false;
+            }
         }
         if (this.BeaconDataStruct !== undefined) {
             const defaultBeaconDataStruct = (this.BeaconDataStruct !== null &&
@@ -4108,23 +4131,25 @@ class ObnizPartsBle {
                     this.BeaconDataStruct.Pairing)
                 ? this.BeaconDataStruct[mode]
                 : this.BeaconDataStruct);
-            if (defaultBeaconDataStruct === undefined ||
-                defaultBeaconDataStruct === null ||
-                Object.values(defaultBeaconDataStruct).filter((config) => {
-                    var _a, _b;
-                    return inScanResponse === (_a = config.scanResponse, (_a !== null && _a !== void 0 ? _a : false)) &&
-                        config.type === 'check' &&
-                        ((beaconData !== null && beaconData !== void 0 ? beaconData : []))
-                            .slice(2 + config.index, 2 + config.index + (_b = config.length, (_b !== null && _b !== void 0 ? _b : 1)))
-                            .filter((d, i) => {
-                            var _a;
-                            return d !==
-                                (typeof config.data === 'number'
-                                    ? [config.data]
-                                    : (_a = config.data, (_a !== null && _a !== void 0 ? _a : [])))[i];
-                        }).length !== 0;
-                }).length !== 0)
-                return false;
+            if (defaultBeaconDataStruct !== undefined) {
+                if (defaultBeaconDataStruct !== null &&
+                    beaconData !== null &&
+                    Object.values(defaultBeaconDataStruct).filter((config) => {
+                        var _a, _b;
+                        return inScanResponse === (_a = config.scanResponse, (_a !== null && _a !== void 0 ? _a : false)) &&
+                            config.type === 'check' &&
+                            beaconData
+                                .slice(2 + config.index, 2 + config.index + (_b = config.length, (_b !== null && _b !== void 0 ? _b : 1)))
+                                .filter((d, i) => {
+                                var _a;
+                                return d !==
+                                    (typeof config.data === 'number'
+                                        ? [config.data]
+                                        : (_a = config.data, (_a !== null && _a !== void 0 ? _a : [])))[i];
+                            }).length !== 0;
+                    }).length !== 0)
+                    return false;
+            }
         }
         return true;
     }
@@ -4258,6 +4283,18 @@ ObnizPartsBle.Address = undefined;
  * 標準でisDevice()の条件として使用
  */
 ObnizPartsBle.LocalName = undefined;
+/**
+ * Used as a condition of isDevice() by default.
+ *
+ * 標準でisDevice()の条件として使用
+ */
+ObnizPartsBle.BeaconDataLength = undefined;
+/**
+ * Used as a condition of isDevice() by default.
+ *
+ * 標準でisDevice()の条件として使用
+ */
+ObnizPartsBle.BeaconDataLength_ScanResponse = undefined;
 /**
  * Used as a condition of isDevice() by default.
  *
@@ -24668,6 +24705,7 @@ Logtta_CO2.LocalName = {
     Connectable: /CO2 Sensor/,
     Beacon: /null/,
 };
+Logtta_CO2.BeaconDataLength = 0x1b;
 Logtta_CO2.CompanyID = [0x10, 0x05];
 Logtta_CO2.BeaconDataStruct = {
     appearance: {
@@ -24679,6 +24717,200 @@ Logtta_CO2.BeaconDataStruct = {
         index: 1,
         length: 2,
         type: 'unsignedNumBE',
+    },
+    battery: {
+        index: 5,
+        type: 'unsignedNumBE',
+    },
+    interval: {
+        index: 6,
+        length: 2,
+        type: 'unsignedNumBE',
+    },
+    /* alert: {
+      index: 8,
+      type: 'uint8',
+    },
+    name: {
+      index: 9,
+      length: 15,
+      type: 'string',
+    } */
+    // TODO: delete
+    address: {
+        index: 0,
+        type: 'custom',
+        func: (data, peripheral) => peripheral.address,
+    },
+};
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/LogttaTemp/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Logtta_TH
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js");
+const PinCodeFlag = {
+    Authentication: 0x00,
+    Rewrite: 0x01,
+};
+class Logtta_TH extends ObnizPartsBleInterface_1.ObnizPartsBleConnectable {
+    constructor() {
+        super(...arguments);
+        this.static = Logtta_TH;
+        this.authenticated = false;
+    }
+    static parseTemperatureData(data, func = ObnizPartsBleInterface_1.uint) {
+        return (func(data) / 0x10000) * 175.72 - 46.85;
+    }
+    static parseHumidityData(data, func = ObnizPartsBleInterface_1.uint) {
+        return (func(data) / 0x10000) * 125 - 6;
+    }
+    async beforeOnDisconnectWait() {
+        this.authenticated = false;
+    }
+    async getDataWait() {
+        this.checkConnected();
+        const data = await this.readCharWait(this.getUuid('AA20'), this.getUuid('AA21'));
+        return {
+            temperature: Logtta_TH.parseTemperatureData(data.slice(0, 2), ObnizPartsBleInterface_1.uintBE),
+            humidity: Logtta_TH.parseHumidityData(data.slice(0, 2), ObnizPartsBleInterface_1.uintBE),
+        };
+    }
+    /** @deprecated */
+    async getAllWait() {
+        try {
+            return await this.getDataWait();
+        }
+        catch (_a) {
+            return null;
+        }
+    }
+    async getTemperatureWait() {
+        return (await this.getDataWait()).temperature;
+    }
+    async getHumidityWait() {
+        return (await this.getDataWait()).humidity;
+    }
+    async startNotifyWait(callback) {
+        // TODO: delete try-catch
+        try {
+            this.checkConnected();
+        }
+        catch (e) {
+            console.error(e);
+            return;
+        }
+        // TODO: delete if
+        if (callback)
+            this.onNotify = callback;
+        return await this.subscribeWait(this.getUuid('AB20'), this.getUuid('AB21'), (data) => {
+            if (this.onNotify) {
+                this.onNotify({
+                    temperature: Logtta_TH.parseTemperatureData(data.slice(0, 2), ObnizPartsBleInterface_1.uintBE),
+                    humidity: Logtta_TH.parseHumidityData(data.slice(0, 2), ObnizPartsBleInterface_1.uintBE),
+                });
+            }
+        });
+    }
+    async authPinCodeWait(code) {
+        // TODO: delete try-catch
+        try {
+            this.checkConnected();
+        }
+        catch (e) {
+            console.error(e);
+            return false;
+        }
+        if (this.authenticated)
+            return true;
+        if (typeof code === 'string')
+            code = parseInt(code); // TODO: delete string type
+        this.authenticated = await this.sendPinCodeWait('Authentication', code);
+        return this.authenticated;
+    }
+    async sendPinCodeWait(type, code) {
+        if (code < 0 || code > 9999)
+            throw new Error(`Authorization code can only be entered from 0000~9999. input: ${code}`);
+        return await this.writeCharWait(this.getUuid('AA20'), this.getUuid('AA30'), [
+            PinCodeFlag[type],
+            Math.floor(code / 1000) % 10 | Math.floor(code / 100) % 10,
+            Math.floor(code / 10) % 10 | Math.floor(code / 1) % 10,
+        ]);
+    }
+    checkAuthenticated() {
+        if (!this.authenticated)
+            throw new Error('Certification is required, execute authPinCodeWait() in advance.');
+    }
+    /**
+     * @deprecated
+     * @param enable
+     */
+    setBeaconMode(enable) {
+        return this.setBeaconModeWait(enable);
+    }
+    async setBeaconModeWait(enable) {
+        // TODO: delete try-catch
+        try {
+            this.checkConnected();
+            this.checkAuthenticated();
+        }
+        catch (e) {
+            console.error(e);
+            return false;
+        }
+        return this.writeCharWait(this.getUuid('AA20'), this.getUuid('AA2D'), [
+            enable ? 1 : 0,
+        ]);
+    }
+    getName() {
+        const array = this.peripheral.adv_data.slice(16);
+        return array
+            .slice(0, array.indexOf(0) + 1)
+            .map((d) => String.fromCharCode(d))
+            .join('');
+    }
+    getUuid(uuid) {
+        return `f7ee${uuid}-276e-4165-aa69-7e3de7fc627e`;
+    }
+}
+exports.default = Logtta_TH;
+Logtta_TH.PartsName = 'Logtta_TH';
+Logtta_TH.AvailableBleMode = [
+    'Connectable',
+    'Beacon',
+];
+Logtta_TH.LocalName = {
+    Connectable: /TH Sensor/,
+    Beacon: /null/,
+};
+Logtta_TH.BeaconDataLength = 0x1b;
+Logtta_TH.CompanyID = [0x10, 0x05];
+Logtta_TH.BeaconDataStruct = {
+    appearance: {
+        index: 0,
+        type: 'check',
+        data: 0x01,
+    },
+    temperature: {
+        index: 1,
+        length: 2,
+        type: 'custom',
+        func: (data) => Logtta_TH.parseTemperatureData(data),
+    },
+    humidity: {
+        index: 3,
+        length: 2,
+        type: 'custom',
+        func: (data) => Logtta_TH.parseHumidityData(data),
     },
     battery: {
         index: 5,
@@ -24705,180 +24937,6 @@ Logtta_CO2.BeaconDataStruct = {
         func: (data, peripheral) => peripheral.address,
     },
 };
-
-
-/***/ }),
-
-/***/ "./dist/src/parts/Ble/LogttaTemp/index.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * @packageDocumentation
- * @module Parts.Logtta_TH
- */
-Object.defineProperty(exports, "__esModule", { value: true });
-class Logtta_TH {
-    constructor(peripheral) {
-        if (peripheral && !Logtta_TH.isDevice(peripheral)) {
-            throw new Error('peripheral is not logtta TH');
-        }
-        this._peripheral = peripheral;
-    }
-    static info() {
-        return {
-            name: 'Logtta_TH',
-        };
-    }
-    static isDevice(peripheral) {
-        return peripheral.localName === 'TH Sensor';
-    }
-    static isAdvDevice(peripheral) {
-        if (peripheral.adv_data.length !== 31) {
-            return false;
-        }
-        const data = peripheral.adv_data;
-        if (data[5] !== 0x10 ||
-            data[6] !== 0x05 ||
-            data[7] !== 0x01 ||
-            data[16] !== 0x54 ||
-            data[17] !== 0x48) {
-            // CompanyID, Apperance, "T" "H"
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!this.isAdvDevice(peripheral)) {
-            return null;
-        }
-        const data = peripheral.adv_data;
-        const alert = data[15];
-        const interval = (data[13] << 8) | data[14];
-        const advData = {
-            battery: data[12],
-            temperature: (((data[8] << 8) | data[9]) / 65536) * 175.72 - 46.85,
-            humidity: (((data[10] << 8) | data[11]) / 65536) * 125 - 6,
-            interval,
-            address: peripheral.address,
-        };
-        return advData;
-    }
-    static getName(data) {
-        let name = '';
-        for (let i = 16; i < data.length; i++) {
-            if (data[i] === 0) {
-                break;
-            }
-            name += String.fromCharCode(data[i]);
-        }
-        return name;
-    }
-    static get_uuid(uuid) {
-        return `f7ee${uuid}-276e-4165-aa69-7e3de7fc627e`;
-    }
-    async connectWait() {
-        if (!this._peripheral) {
-            throw new Error('Logtta TH not found');
-        }
-        if (!this._peripheral.connected) {
-            this._peripheral.ondisconnect = (reason) => {
-                if (typeof this.ondisconnect === 'function') {
-                    this.ondisconnect(reason);
-                }
-            };
-            await this._peripheral.connectWait();
-        }
-    }
-    async disconnectWait() {
-        if (this._peripheral && this._peripheral.connected) {
-            await this._peripheral.disconnectWait();
-        }
-    }
-    async getAllWait() {
-        if (!(this._peripheral && this._peripheral.connected)) {
-            return null;
-        }
-        const c = this._peripheral
-            .getService(Logtta_TH.get_uuid('AA20'))
-            .getCharacteristic(Logtta_TH.get_uuid('AA21'));
-        const data = await c.readWait();
-        return {
-            temperature: (((data[0] << 8) | data[1]) / 65536) * 175.72 - 46.85,
-            humidity: (((data[2] << 8) | data[3]) / 65536) * 125 - 6,
-        };
-    }
-    async getTemperatureWait() {
-        return (await this.getAllWait()).temperature;
-    }
-    async getHumidityWait() {
-        return (await this.getAllWait()).humidity;
-    }
-    async startNotifyWait() {
-        if (!(this._peripheral && this._peripheral.connected)) {
-            return;
-        }
-        const c = this._peripheral
-            .getService(Logtta_TH.get_uuid('AA20'))
-            .getCharacteristic(Logtta_TH.get_uuid('AA21'));
-        await c.registerNotifyWait((data) => {
-            if (this.onNotify) {
-                this.onNotify({
-                    temperature: (((data[0] << 8) | data[1]) / 65536) * 175.72 - 46.85,
-                    humidity: (((data[2] << 8) | data[3]) / 65536) * 125 - 6,
-                });
-            }
-        });
-    }
-    async authPinCodeWait(code) {
-        if (!(this._peripheral && this._peripheral.connected)) {
-            return;
-        }
-        if (code.length !== 4) {
-            throw new Error('Invalid length auth code');
-        }
-        const data = [0];
-        for (let i = 0; i < code.length; i += 2) {
-            data.push((this.checkNumber(code.charAt(i)) << 4) |
-                this.checkNumber(code.charAt(i + 1)));
-        }
-        const c = this._peripheral
-            .getService(Logtta_TH.get_uuid('AA20'))
-            .getCharacteristic(Logtta_TH.get_uuid('AA30'));
-        await c.writeWait(data);
-    }
-    /**
-     * @deprecated
-     * @param enable
-     */
-    setBeaconMode(enable) {
-        return this.setBeaconModeWait(enable);
-    }
-    async setBeaconModeWait(enable) {
-        if (!(this._peripheral && this._peripheral.connected)) {
-            return;
-        }
-        const c = this._peripheral
-            .getService(Logtta_TH.get_uuid('AA20'))
-            .getCharacteristic(Logtta_TH.get_uuid('AA2D'));
-        if (enable) {
-            await c.writeWait([1]);
-        }
-        else {
-            await c.writeWait([0]);
-        }
-    }
-    checkNumber(data) {
-        if (data >= '0' && data <= '9') {
-            return parseInt(data, 10);
-        }
-        else {
-            throw new Error(`authorization code can only be entered from 0-9.input word : ${data}`);
-        }
-    }
-}
-exports.default = Logtta_TH;
 
 
 /***/ }),
@@ -27409,6 +27467,7 @@ class BaseiBS extends ObnizPartsBleInterface_1.ObnizPartsBle {
 }
 exports.BaseiBS = BaseiBS;
 BaseiBS.AvailableBleMode = 'Beacon';
+BaseiBS.BeaconDataLength = 0x12;
 BaseiBS.CompanyID = [0x0d, 0x00];
 BaseiBS.Config = {
     battery: {
@@ -27521,6 +27580,7 @@ class iBS01G extends iBS_1.BaseiBS01 {
 }
 exports.default = iBS01G;
 iBS01G.PartsName = 'iBS01G';
+iBS01G.BeaconDataLength = 0x19;
 iBS01G.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS01.Config.battery, button: iBS_1.BaseiBS01.Config.button, moving: iBS_1.BaseiBS01.Config.moving, fall: iBS_1.BaseiBS01.Config.fall }, iBS_1.BaseiBS01.getUniqueData(1, 0x06));
 
 
@@ -27570,6 +27630,7 @@ class iBS01RG extends iBS_1.BaseiBS01 {
 }
 exports.default = iBS01RG;
 iBS01RG.PartsName = 'iBS01RG';
+iBS01RG.BeaconDataLength = 0x19;
 iBS01RG.BeaconDataStruct = {
     battery: Object.assign(Object.assign({}, iBS_1.BaseiBS01.Config.battery), { type: 'custom', func: (data) => ObnizPartsBleInterface_1.uint([data[0], data[1] & 0x0f]) * 0.01 }),
     active: Object.assign(Object.assign({}, iBS_1.BaseiBS01.Config.event), { type: 'bool00010000' }),
@@ -27785,17 +27846,19 @@ iBS04.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, 
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js");
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
-class iBS04I extends iBS_1.BaseiBS {
+class iBS04i extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
-        this.static = iBS04I;
+        this.static = iBS04i;
     }
 }
-exports.default = iBS04I;
-iBS04I.PartsName = 'iBS04i';
-iBS04I.CompanyID = ObnizPartsBleInterface_1.iBeaconCompanyID;
-iBS04I.CompanyID_ScanResponse = iBS_1.BaseiBS.CompanyID;
-iBS04I.BeaconDataStruct = Object.assign(Object.assign({ battery: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.battery), { scanResponse: true }), button: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.button), { scanResponse: true }) }, iBS_1.BaseiBS.getUniqueData(4, 0x18, 0, true)), ObnizPartsBleInterface_1.iBeaconData);
+exports.default = iBS04i;
+iBS04i.PartsName = 'iBS04i';
+iBS04i.CompanyID = ObnizPartsBleInterface_1.iBeaconCompanyID;
+iBS04i.CompanyID_ScanResponse = iBS_1.BaseiBS.CompanyID;
+iBS04i.BeaconDataLength = 0x1a;
+iBS04i.BeaconDataLength_ScanResponse = 0x12;
+iBS04i.BeaconDataStruct = Object.assign(Object.assign({ battery: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.battery), { scanResponse: true }), button: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.button), { scanResponse: true }) }, iBS_1.BaseiBS.getUniqueData(4, 0x18, 0, true)), ObnizPartsBleInterface_1.iBeaconData);
 
 
 /***/ }),

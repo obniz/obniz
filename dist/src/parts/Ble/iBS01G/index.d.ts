@@ -14,6 +14,7 @@ export interface iBS01G_Data {
 }
 export default class iBS01G extends BaseiBS01<iBS01G_Data> {
     static readonly PartsName: PartsType;
+    protected static readonly BeaconDataLength = 25;
     protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS01G_Data>;
     protected readonly static: typeof ObnizPartsBle;
 }

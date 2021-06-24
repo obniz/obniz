@@ -144,6 +144,7 @@ Logtta_CO2.LocalName = {
     Connectable: /CO2 Sensor/,
     Beacon: /null/,
 };
+Logtta_CO2.BeaconDataLength = 0x1b;
 Logtta_CO2.CompanyID = [0x10, 0x05];
 Logtta_CO2.BeaconDataStruct = {
     appearance: {
@@ -166,11 +167,11 @@ Logtta_CO2.BeaconDataStruct = {
         type: 'unsignedNumBE',
     },
     /* alert: {
-      index: 7,
+      index: 8,
       type: 'uint8',
     },
     name: {
-      index: 8,
+      index: 9,
       length: 15,
       type: 'string',
     } */

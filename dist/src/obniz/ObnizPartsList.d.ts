@@ -21,7 +21,7 @@ import iBS03G, { iBS03GOptions } from '../parts/Ble/iBS03G';
 import iBS03T, { iBS03TOptions } from '../parts/Ble/iBS03T';
 import iBS03TP, { iBS03TPOptions } from '../parts/Ble/iBS03TP';
 import iBS04, { iBS04Options } from '../parts/Ble/iBS04';
-import iBS04I, { iBS04IOptions } from '../parts/Ble/iBS04i';
+import iBS04i, { iBS04iOptions } from '../parts/Ble/iBS04i';
 import KankiAirMier, { KankiAirMierOptions } from '../parts/Ble/KankiAirMier';
 import Linking, { LinkingOptions } from '../parts/Ble/linking';
 import Logtta_Accel, { Logtta_AccelOptions } from '../parts/Ble/LogttaAccel';
@@ -703,8 +703,8 @@ export interface PartsList {
         options: iBS04Options;
     };
     iBS04i: {
-        class: iBS04I;
-        options: iBS04IOptions;
+        class: iBS04i;
+        options: iBS04iOptions;
     };
     TR4x: {
         class: Tr4;
