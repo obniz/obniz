@@ -21,6 +21,7 @@ import IBS02IR, { IBS02IROptions } from '../parts/Ble/iBS02IR';
 import IBS02PIR, { IBS02PIROptions } from '../parts/Ble/iBS02PIR';
 import IBS03, { IBS03Options } from '../parts/Ble/iBS03';
 import IBS03G, { IBS03GOptions } from '../parts/Ble/iBS03G';
+import IBS03R, { IBS03ROptions } from '../parts/Ble/iBS03R';
 import IBS03T, { IBS03TOptions } from '../parts/Ble/iBS03T';
 import IBS03TP, { IBS03TPOptions } from '../parts/Ble/iBS03TP';
 import IBS04, { IBS04Options } from '../parts/Ble/iBS04';
@@ -479,6 +480,7 @@ export interface PartsList {
   iBS03TP: { class: IBS03TP; options: IBS03TPOptions };
   iBS04: { class: IBS04; options: IBS04Options };
   iBS04i: { class: IBS04I; options: IBS04IOptions };
+  iBS03R: { class: IBS03R; options: IBS03ROptions };
   TR4x: { class: Tr4; options: Tr4Options };
   KankiAirMier: { class: KankiAirMier; options: KankiAirMierOptions };
   MINEW_S1: { class: MINEW_S1; options: MINEW_S1Options };
