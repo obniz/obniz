@@ -7,7 +7,11 @@ import BleRemotePeripheral from './libs/embeds/bleHci/bleRemotePeripheral';
 import ObnizUtil from './libs/utils/util';
 import ObnizConnection from './ObnizConnection';
 import { ObnizOptions } from './ObnizOptions';
-import { ObnizPartsBle, ObnizPartsBleMode } from './ObnizPartsBleInterface';
+import {
+  ObnizPartsBle,
+  ObnizPartsBleMode,
+  ObnizPartsBleProps,
+} from './ObnizPartsBleAbstract';
 import ObnizPartsInterface from './ObnizPartsInterface';
 import { PartsList } from './ObnizPartsList';
 
@@ -15,6 +19,12 @@ import { PartsList } from './ObnizPartsList';
  * @ignore
  */
 const _parts: { [key: string]: unknown } = {};
+
+export interface Triaxial {
+  x: number;
+  y: number;
+  z: number;
+}
 
 export default abstract class ObnizParts extends ObnizConnection {
   /**
@@ -159,7 +169,7 @@ export default abstract class ObnizParts extends ObnizConnection {
     if (result.length === 0 || !result[0][0] || !result[0][1]) return null;
     const [name, mode] = result[0];
 
-    const parts = new (_parts[name] as typeof ObnizPartsBle)(
+    const parts = new (_parts[name] as ObnizPartsBleProps)(
       peripheral,
       mode as ObnizPartsBleMode
     );

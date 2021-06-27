@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module Parts.iBS01T
  */
-import { ObnizBleBeaconStruct, ObnizPartsBle, PartsType } from '../../../obniz/ObnizPartsBleInterface';
+import { ObnizBleBeaconStruct } from '../../../obniz/ObnizPartsBleAbstract';
 import { BaseiBS01 } from '../iBS';
 export interface iBS01TOptions {
 }
@@ -15,7 +15,7 @@ export interface iBS01T_Data {
     humidity: number;
 }
 export default class iBS01T extends BaseiBS01<iBS01T_Data> {
-    static readonly PartsName: PartsType;
-    protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS01T_Data>;
-    protected readonly static: typeof ObnizPartsBle;
+    static readonly PartsName = "iBS01T";
+    static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS01T_Data>;
+    protected readonly staticClass: typeof iBS01T;
 }

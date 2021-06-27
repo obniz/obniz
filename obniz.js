@@ -3909,64 +3909,15 @@ exports.default = ObnizParts;
 
 /***/ }),
 
-/***/ "./dist/src/obniz/ObnizPartsBleInterface.js":
+/***/ "./dist/src/obniz/ObnizPartsBleAbstract.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
-/* eslint-disable max-classes-per-file */
 /* eslint-disable rulesdir/non-ascii */
-/**
- * @packageDocumentation
- * @module ObnizCore
- */
+/* eslint-disable max-classes-per-file */
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
-class ObnizPartsBleInterface {
-    constructor() {
-        /**
-         * Internally Used function for connection required devices
-         */
-        this._peripheral = null;
-    }
-    /**
-     * Utility function for reading 2 byte to signed number.
-     */
-    static signed16FromBinary(high, low) {
-        let val = (high << 8) | low;
-        if ((val & 0x8000) !== 0) {
-            val = val - 0x10000;
-        }
-        return val;
-    }
-    /**
-     * Utility function for reading 4 byte to signed number.
-     */
-    static signed32FromBinary(byte3, byte2, byte1, byte0) {
-        let val = (byte3 << (8 * 3)) | (byte2 << (8 * 2)) | (byte1 << (8 * 1)) | byte0;
-        if ((val & 0x80000000) !== 0) {
-            val = val - 0x100000000;
-        }
-        return val;
-    }
-    /**
-     * Utility function for reading 1byte fixed point number
-     */
-    static readFraction(byte) {
-        let result = 0;
-        let mask = 0b10000000;
-        let num = 0.5;
-        for (let i = 0; i < 8; i++) {
-            if (byte & mask) {
-                result += num;
-            }
-            num /= 2.0;
-            mask >>= 1;
-        }
-        return result;
-    }
-}
-exports.default = ObnizPartsBleInterface;
 const ObnizPartsBleModeList = ['Beacon', 'Connectable', 'Pairing'];
 exports.notMatchDeviceError = new Error('Is NOT target device.');
 exports.uint = (value) => {
@@ -3985,35 +3936,8 @@ exports.int = (value) => {
 };
 exports.uintBE = (value) => exports.uint(value.reverse());
 exports.intBE = (value) => exports.int(value.reverse());
-exports.unsigned16FromBinary = (high, low) => {
-    return (high << 8) | low;
-};
-/**
- * Utility function for reading 2 byte to signed number.
- */
-exports.signed16FromBinary = (high, low) => {
-    let val = exports.unsigned16FromBinary(high, low);
-    if ((val & 0x8000) !== 0) {
-        val -= 0x10000;
-    }
-    return val;
-};
-/**
- * Utility function for reading 4 byte to signed number.
- */
-exports.signed32FromBinary = (byte3, byte2, byte1, byte0) => {
-    let val = (byte3 << (8 * 3)) | (byte2 << (8 * 2)) | (byte1 << (8 * 1)) | byte0;
-    if ((val & 0x80000000) !== 0) {
-        val -= 0x100000000;
-    }
-    return val;
-};
 class ObnizPartsBle {
     constructor(peripheral, mode) {
-        /**
-         * NEED IMPLEMENTATION
-         */
-        this.static = ObnizPartsBle;
         this._mode = mode;
         this.peripheral = peripheral;
         this.address = peripheral.address;
@@ -4032,6 +3956,14 @@ class ObnizPartsBle {
         return { name: this.PartsName };
     }
     /**
+     * Available BLE modes (Beacon | Connectable | Pairing)
+     *
+     * 利用可能なBLEのモード (Beacon | Connectable | Pairing)
+     */
+    static getAvailableBleMode() {
+        return this.AvailableBleMode;
+    }
+    /**
      * @deprecated
      */
     static isDevice(peripheral) {
@@ -4046,9 +3978,10 @@ class ObnizPartsBle {
      * @returns If the corresponding device is that mode, it must be null if not applicable 該当するデバイスならばそのモード、該当しなければnull
      */
     static getDeviceMode(peripheral) {
-        const result = (this.AvailableBleMode instanceof Array
-            ? this.AvailableBleMode
-            : [this.AvailableBleMode])
+        const availableBleMode = this.getAvailableBleMode();
+        const result = (availableBleMode instanceof Array
+            ? availableBleMode
+            : [availableBleMode])
             .map((mode) => this.isDeviceWithMode(peripheral, mode) ? mode : undefined)
             .find((mode) => mode);
         return (result !== null && result !== void 0 ? result : null);
@@ -4064,9 +3997,10 @@ class ObnizPartsBle {
      */
     static isDeviceWithMode(peripheral, mode) {
         var _a;
-        if (typeof this.AvailableBleMode === 'string'
-            ? this.AvailableBleMode !== mode
-            : !this.AvailableBleMode.includes(mode))
+        const availableBleMode = this.getAvailableBleMode();
+        if (typeof availableBleMode === 'string'
+            ? availableBleMode !== mode
+            : !availableBleMode.includes(mode))
             return false;
         if (this.Address) {
             const defaultAddress = this.Address instanceof RegExp ? this.Address : this.Address[mode];
@@ -4173,29 +4107,13 @@ class ObnizPartsBle {
             return null;
         }
     }
-    /**
-     * Utility function for reading 1byte fixed point number
-     */
-    static readFraction(byte) {
-        let result = 0;
-        let mask = 0b10000000;
-        let num = 0.5;
-        for (let i = 0; i < 8; i++) {
-            if (byte & mask) {
-                result += num;
-            }
-            num /= 2.0;
-            mask >>= 1;
-        }
-        return result;
-    }
     get mode() {
         return this._mode;
     }
     checkMode(force = false) {
         if (this.mode && !force)
             return this.mode;
-        const mode = this.static.getDeviceMode(this.peripheral);
+        const mode = this.staticClass.getDeviceMode(this.peripheral);
         if (!mode)
             throw exports.notMatchDeviceError;
         return (this._mode = mode);
@@ -4208,15 +4126,15 @@ class ObnizPartsBle {
      */
     getData() {
         this.checkMode();
-        if (!this.static.BeaconDataStruct)
+        if (!this.staticClass.BeaconDataStruct)
             throw new Error('Data analysis is not defined.');
         if (!this.beaconData)
             throw new Error('Manufacturer specific data is null.');
-        const defaultBeaconDataStruct = (this.static.BeaconDataStruct.Beacon ||
-            this.static.BeaconDataStruct.Connectable ||
-            this.static.BeaconDataStruct.Pairing
-            ? this.static.BeaconDataStruct[this.mode]
-            : this.static.BeaconDataStruct);
+        const defaultBeaconDataStruct = (this.staticClass.BeaconDataStruct.Beacon ||
+            this.staticClass.BeaconDataStruct.Connectable ||
+            this.staticClass.BeaconDataStruct.Pairing
+            ? this.staticClass.BeaconDataStruct[this.mode]
+            : this.staticClass.BeaconDataStruct);
         if (defaultBeaconDataStruct === null)
             throw new Error('Data analysis is not defined.');
         return Object.fromEntries(Object.entries(defaultBeaconDataStruct)
@@ -4459,6 +4377,67 @@ exports.iBeaconData =
 };
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/obniz/ObnizPartsBleInterface.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* eslint-disable max-classes-per-file */
+/* eslint-disable rulesdir/non-ascii */
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class ObnizPartsBleInterface {
+    constructor() {
+        /**
+         * Internally Used function for connection required devices
+         */
+        this._peripheral = null;
+    }
+    /**
+     * Utility function for reading 2 byte to signed number.
+     */
+    static signed16FromBinary(high, low) {
+        let val = (high << 8) | low;
+        if ((val & 0x8000) !== 0) {
+            val = val - 0x10000;
+        }
+        return val;
+    }
+    /**
+     * Utility function for reading 4 byte to signed number.
+     */
+    static signed32FromBinary(byte3, byte2, byte1, byte0) {
+        let val = (byte3 << (8 * 3)) | (byte2 << (8 * 2)) | (byte1 << (8 * 1)) | byte0;
+        if ((val & 0x80000000) !== 0) {
+            val = val - 0x100000000;
+        }
+        return val;
+    }
+    /**
+     * Utility function for reading 1byte fixed point number
+     */
+    static readFraction(byte) {
+        let result = 0;
+        let mask = 0b10000000;
+        let num = 0.5;
+        for (let i = 0; i < 8; i++) {
+            if (byte & mask) {
+                result += num;
+            }
+            num /= 2.0;
+            mask >>= 1;
+        }
+        return result;
+    }
+}
+exports.default = ObnizPartsBleInterface;
+
 
 /***/ }),
 
@@ -24568,17 +24547,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js");
+const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
 const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/services/batteryService.js"));
 const genericAccess_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/services/genericAccess.js"));
 const PinCodeFlag = {
     Authentication: 0x00,
     Rewrite: 0x01,
 };
-class Logtta_CO2 extends ObnizPartsBleInterface_1.ObnizPartsBleConnectable {
+class Logtta_CO2 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     constructor() {
         super(...arguments);
-        this.static = Logtta_CO2;
+        this.staticClass = Logtta_CO2;
         this.authenticated = false;
     }
     async connectWait(keys) {
@@ -24600,7 +24579,7 @@ class Logtta_CO2 extends ObnizPartsBleInterface_1.ObnizPartsBleConnectable {
     async getDataWait() {
         this.checkConnected();
         const data = await this.readCharWait(this.getUuid('AB20'), this.getUuid('AB21'));
-        return ObnizPartsBleInterface_1.uintBE(data);
+        return ObnizPartsBleAbstract_1.uintBE(data);
     }
     /** @deprecated */
     async getWait() {
@@ -24625,7 +24604,7 @@ class Logtta_CO2 extends ObnizPartsBleInterface_1.ObnizPartsBleConnectable {
             this.onNotify = callback;
         return await this.subscribeWait(this.getUuid('AB20'), this.getUuid('AB21'), (data) => {
             if (this.onNotify) {
-                this.onNotify(ObnizPartsBleInterface_1.uintBE(data));
+                this.onNotify(ObnizPartsBleAbstract_1.uintBE(data));
             }
         });
     }
@@ -24705,42 +24684,51 @@ Logtta_CO2.LocalName = {
     Connectable: /CO2 Sensor/,
     Beacon: /null/,
 };
-Logtta_CO2.BeaconDataLength = 0x1b;
-Logtta_CO2.CompanyID = [0x10, 0x05];
+Logtta_CO2.BeaconDataLength = {
+    Connectable: undefined,
+    Beacon: 0x1b,
+};
+Logtta_CO2.CompanyID = {
+    Connectable: undefined,
+    Beacon: [0x10, 0x05],
+};
 Logtta_CO2.BeaconDataStruct = {
-    appearance: {
-        index: 0,
-        type: 'check',
-        data: 0x02,
-    },
-    co2: {
-        index: 1,
-        length: 2,
-        type: 'unsignedNumBE',
-    },
-    battery: {
-        index: 5,
-        type: 'unsignedNumBE',
-    },
-    interval: {
-        index: 6,
-        length: 2,
-        type: 'unsignedNumBE',
-    },
-    /* alert: {
-      index: 8,
-      type: 'uint8',
-    },
-    name: {
-      index: 9,
-      length: 15,
-      type: 'string',
-    } */
-    // TODO: delete
-    address: {
-        index: 0,
-        type: 'custom',
-        func: (data, peripheral) => peripheral.address,
+    Connectable: undefined,
+    Beacon: {
+        appearance: {
+            index: 0,
+            type: 'check',
+            data: 0x02,
+        },
+        co2: {
+            index: 1,
+            length: 2,
+            type: 'unsignedNumBE',
+        },
+        battery: {
+            index: 5,
+            type: 'unsignedNumBE',
+        },
+        interval: {
+            index: 6,
+            length: 2,
+            type: 'unsignedNumBE',
+        },
+        /* alert: {
+          index: 8,
+          type: 'uint8',
+        },
+        name: {
+          index: 9,
+          length: 15,
+          type: 'string',
+        } */
+        // TODO: delete
+        address: {
+            index: 0,
+            type: 'custom',
+            func: (data, peripheral) => peripheral.address,
+        },
     },
 };
 
@@ -24757,21 +24745,21 @@ Logtta_CO2.BeaconDataStruct = {
  * @module Parts.Logtta_TH
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js");
+const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
 const PinCodeFlag = {
     Authentication: 0x00,
     Rewrite: 0x01,
 };
-class Logtta_TH extends ObnizPartsBleInterface_1.ObnizPartsBleConnectable {
+class Logtta_TH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     constructor() {
         super(...arguments);
-        this.static = Logtta_TH;
+        this.staticClass = Logtta_TH;
         this.authenticated = false;
     }
-    static parseTemperatureData(data, func = ObnizPartsBleInterface_1.uint) {
+    static parseTemperatureData(data, func = ObnizPartsBleAbstract_1.uint) {
         return (func(data) / 0x10000) * 175.72 - 46.85;
     }
-    static parseHumidityData(data, func = ObnizPartsBleInterface_1.uint) {
+    static parseHumidityData(data, func = ObnizPartsBleAbstract_1.uint) {
         return (func(data) / 0x10000) * 125 - 6;
     }
     async beforeOnDisconnectWait() {
@@ -24781,8 +24769,8 @@ class Logtta_TH extends ObnizPartsBleInterface_1.ObnizPartsBleConnectable {
         this.checkConnected();
         const data = await this.readCharWait(this.getUuid('AA20'), this.getUuid('AA21'));
         return {
-            temperature: Logtta_TH.parseTemperatureData(data.slice(0, 2), ObnizPartsBleInterface_1.uintBE),
-            humidity: Logtta_TH.parseHumidityData(data.slice(0, 2), ObnizPartsBleInterface_1.uintBE),
+            temperature: Logtta_TH.parseTemperatureData(data.slice(0, 2), ObnizPartsBleAbstract_1.uintBE),
+            humidity: Logtta_TH.parseHumidityData(data.slice(0, 2), ObnizPartsBleAbstract_1.uintBE),
         };
     }
     /** @deprecated */
@@ -24815,8 +24803,8 @@ class Logtta_TH extends ObnizPartsBleInterface_1.ObnizPartsBleConnectable {
         return await this.subscribeWait(this.getUuid('AB20'), this.getUuid('AB21'), (data) => {
             if (this.onNotify) {
                 this.onNotify({
-                    temperature: Logtta_TH.parseTemperatureData(data.slice(0, 2), ObnizPartsBleInterface_1.uintBE),
-                    humidity: Logtta_TH.parseHumidityData(data.slice(0, 2), ObnizPartsBleInterface_1.uintBE),
+                    temperature: Logtta_TH.parseTemperatureData(data.slice(0, 2), ObnizPartsBleAbstract_1.uintBE),
+                    humidity: Logtta_TH.parseHumidityData(data.slice(0, 2), ObnizPartsBleAbstract_1.uintBE),
                 });
             }
         });
@@ -27432,13 +27420,12 @@ exports.default = UT201BLE;
 
 "use strict";
 
-/* eslint-disable rulesdir/ble-check */
 /**
  * @packageDocumentation
  * @module Parts.iBS
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js");
+const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
 const magic = {
     1: [0x80, 0xbc],
     1.1: [0x81, 0xbc],
@@ -27446,7 +27433,7 @@ const magic = {
     3: [0x83, 0xbc],
     4: [0x83, 0xbc],
 };
-class BaseiBS extends ObnizPartsBleInterface_1.ObnizPartsBle {
+class BaseiBS extends ObnizPartsBleAbstract_1.ObnizPartsBle {
     static getUniqueData(series, subtype, addLength, scanResponse) {
         return {
             magic: {
@@ -27543,7 +27530,7 @@ const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
 class iBS01 extends iBS_1.BaseiBS01 {
     constructor() {
         super(...arguments);
-        this.static = iBS01;
+        this.staticClass = iBS01;
     }
 }
 exports.default = iBS01;
@@ -27575,7 +27562,7 @@ const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
 class iBS01G extends iBS_1.BaseiBS01 {
     constructor() {
         super(...arguments);
-        this.static = iBS01G;
+        this.staticClass = iBS01G;
     }
 }
 exports.default = iBS01G;
@@ -27600,7 +27587,7 @@ const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
 class iBS01H extends iBS_1.BaseiBS01 {
     constructor() {
         super(...arguments);
-        this.static = iBS01H;
+        this.staticClass = iBS01H;
     }
 }
 exports.default = iBS01H;
@@ -27620,19 +27607,19 @@ iBS01H.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS01.Config.batter
  * @module Parts.iBS01RG
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js");
+const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
 class iBS01RG extends iBS_1.BaseiBS01 {
     constructor() {
         super(...arguments);
-        this.static = iBS01RG;
+        this.staticClass = iBS01RG;
     }
 }
 exports.default = iBS01RG;
 iBS01RG.PartsName = 'iBS01RG';
 iBS01RG.BeaconDataLength = 0x19;
 iBS01RG.BeaconDataStruct = {
-    battery: Object.assign(Object.assign({}, iBS_1.BaseiBS01.Config.battery), { type: 'custom', func: (data) => ObnizPartsBleInterface_1.uint([data[0], data[1] & 0x0f]) * 0.01 }),
+    battery: Object.assign(Object.assign({}, iBS_1.BaseiBS01.Config.battery), { type: 'custom', func: (data) => ObnizPartsBleAbstract_1.uint([data[0], data[1] & 0x0f]) * 0.01 }),
     active: Object.assign(Object.assign({}, iBS_1.BaseiBS01.Config.event), { type: 'bool00010000' }),
     button: Object.assign(Object.assign({}, iBS_1.BaseiBS01.Config.button), { type: 'bool00100000' }),
     acceleration: iBS_1.BaseiBS01.Config.acceleration,
@@ -27656,7 +27643,7 @@ const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
 class iBS01T extends iBS_1.BaseiBS01 {
     constructor() {
         super(...arguments);
-        this.static = iBS01T;
+        this.staticClass = iBS01T;
     }
 }
 exports.default = iBS01T;
@@ -27680,7 +27667,7 @@ const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
 class iBS02IR extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
-        this.static = iBS02IR;
+        this.staticClass = iBS02IR;
     }
 }
 exports.default = iBS02IR;
@@ -27704,7 +27691,7 @@ const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
 class iBS02PIR extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
-        this.static = iBS02PIR;
+        this.staticClass = iBS02PIR;
     }
 }
 exports.default = iBS02PIR;
@@ -27728,7 +27715,7 @@ const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
 class iBS03 extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
-        this.static = iBS03;
+        this.staticClass = iBS03;
     }
 }
 exports.default = iBS03;
@@ -27752,7 +27739,7 @@ const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
 class iBS03G extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
-        this.static = iBS03G;
+        this.staticClass = iBS03G;
     }
 }
 exports.default = iBS03G;
@@ -27776,7 +27763,7 @@ const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
 class iBS03T extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
-        this.static = iBS03T;
+        this.staticClass = iBS03T;
     }
 }
 exports.default = iBS03T;
@@ -27800,7 +27787,7 @@ const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
 class iBS03TP extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
-        this.static = iBS03TP;
+        this.staticClass = iBS03TP;
     }
 }
 exports.default = iBS03TP;
@@ -27824,7 +27811,7 @@ const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
 class iBS04 extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
-        this.static = iBS04;
+        this.staticClass = iBS04;
     }
 }
 exports.default = iBS04;
@@ -27844,21 +27831,21 @@ iBS04.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, 
  * @module Parts.iBS04i
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js");
+const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
 class iBS04i extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
-        this.static = iBS04i;
+        this.staticClass = iBS04i;
     }
 }
 exports.default = iBS04i;
 iBS04i.PartsName = 'iBS04i';
-iBS04i.CompanyID = ObnizPartsBleInterface_1.iBeaconCompanyID;
+iBS04i.CompanyID = ObnizPartsBleAbstract_1.iBeaconCompanyID;
 iBS04i.CompanyID_ScanResponse = iBS_1.BaseiBS.CompanyID;
 iBS04i.BeaconDataLength = 0x1a;
-iBS04i.BeaconDataLength_ScanResponse = 0x12;
-iBS04i.BeaconDataStruct = Object.assign(Object.assign({ battery: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.battery), { scanResponse: true }), button: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.button), { scanResponse: true }) }, iBS_1.BaseiBS.getUniqueData(4, 0x18, 0, true)), ObnizPartsBleInterface_1.iBeaconData);
+iBS04i.BeaconDataLength_ScanResponse = iBS_1.BaseiBS.BeaconDataLength;
+iBS04i.BeaconDataStruct = Object.assign(Object.assign({ battery: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.battery), { scanResponse: true }), button: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.button), { scanResponse: true }) }, iBS_1.BaseiBS.getUniqueData(4, 0x18, 0, true)), ObnizPartsBleAbstract_1.iBeaconData);
 
 
 /***/ }),

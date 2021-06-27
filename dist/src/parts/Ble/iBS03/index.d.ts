@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module Parts.iBS03
  */
-import { ObnizBleBeaconStruct, ObnizPartsBle, PartsType } from '../../../obniz/ObnizPartsBleInterface';
+import { ObnizBleBeaconStruct } from '../../../obniz/ObnizPartsBleAbstract';
 import { BaseiBS } from '../iBS';
 export interface iBS03Options {
 }
@@ -13,7 +13,7 @@ export interface iBS03_Data {
     hall_sensor: boolean;
 }
 export default class iBS03 extends BaseiBS<iBS03_Data> {
-    static readonly PartsName: PartsType;
-    protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS03_Data>;
-    protected readonly static: typeof ObnizPartsBle;
+    static readonly PartsName = "iBS03";
+    static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS03_Data>;
+    protected readonly staticClass: typeof iBS03;
 }

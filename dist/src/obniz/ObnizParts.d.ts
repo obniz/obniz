@@ -5,9 +5,14 @@
 import BleRemotePeripheral from './libs/embeds/bleHci/bleRemotePeripheral';
 import ObnizConnection from './ObnizConnection';
 import { ObnizOptions } from './ObnizOptions';
-import { ObnizPartsBle } from './ObnizPartsBleInterface';
+import { ObnizPartsBle } from './ObnizPartsBleAbstract';
 import ObnizPartsInterface from './ObnizPartsInterface';
 import { PartsList } from './ObnizPartsList';
+export interface Triaxial {
+    x: number;
+    y: number;
+    z: number;
+}
 export default abstract class ObnizParts extends ObnizConnection {
     /**
      * @ignore

@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module Parts.iBS04
  */
-import { ObnizBleBeaconStruct, ObnizPartsBle, PartsType } from '../../../obniz/ObnizPartsBleInterface';
+import { ObnizBleBeaconStruct } from '../../../obniz/ObnizPartsBleAbstract';
 import { BaseiBS } from '../iBS';
 export interface iBS04Options {
 }
@@ -11,7 +11,7 @@ export interface iBS04_Data {
     button: boolean;
 }
 export default class iBS04 extends BaseiBS<iBS04_Data> {
-    static readonly PartsName: PartsType;
-    protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS04_Data>;
-    protected readonly static: typeof ObnizPartsBle;
+    static readonly PartsName = "iBS04";
+    static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS04_Data>;
+    protected readonly staticClass: typeof iBS04;
 }

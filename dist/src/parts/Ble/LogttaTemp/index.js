@@ -4,21 +4,21 @@
  * @module Parts.Logtta_TH
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = require("../../../obniz/ObnizPartsBleInterface");
+const ObnizPartsBleAbstract_1 = require("../../../obniz/ObnizPartsBleAbstract");
 const PinCodeFlag = {
     Authentication: 0x00,
     Rewrite: 0x01,
 };
-class Logtta_TH extends ObnizPartsBleInterface_1.ObnizPartsBleConnectable {
+class Logtta_TH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     constructor() {
         super(...arguments);
-        this.static = Logtta_TH;
+        this.staticClass = Logtta_TH;
         this.authenticated = false;
     }
-    static parseTemperatureData(data, func = ObnizPartsBleInterface_1.uint) {
+    static parseTemperatureData(data, func = ObnizPartsBleAbstract_1.uint) {
         return (func(data) / 0x10000) * 175.72 - 46.85;
     }
-    static parseHumidityData(data, func = ObnizPartsBleInterface_1.uint) {
+    static parseHumidityData(data, func = ObnizPartsBleAbstract_1.uint) {
         return (func(data) / 0x10000) * 125 - 6;
     }
     async beforeOnDisconnectWait() {
@@ -28,8 +28,8 @@ class Logtta_TH extends ObnizPartsBleInterface_1.ObnizPartsBleConnectable {
         this.checkConnected();
         const data = await this.readCharWait(this.getUuid('AA20'), this.getUuid('AA21'));
         return {
-            temperature: Logtta_TH.parseTemperatureData(data.slice(0, 2), ObnizPartsBleInterface_1.uintBE),
-            humidity: Logtta_TH.parseHumidityData(data.slice(0, 2), ObnizPartsBleInterface_1.uintBE),
+            temperature: Logtta_TH.parseTemperatureData(data.slice(0, 2), ObnizPartsBleAbstract_1.uintBE),
+            humidity: Logtta_TH.parseHumidityData(data.slice(0, 2), ObnizPartsBleAbstract_1.uintBE),
         };
     }
     /** @deprecated */
@@ -62,8 +62,8 @@ class Logtta_TH extends ObnizPartsBleInterface_1.ObnizPartsBleConnectable {
         return await this.subscribeWait(this.getUuid('AB20'), this.getUuid('AB21'), (data) => {
             if (this.onNotify) {
                 this.onNotify({
-                    temperature: Logtta_TH.parseTemperatureData(data.slice(0, 2), ObnizPartsBleInterface_1.uintBE),
-                    humidity: Logtta_TH.parseHumidityData(data.slice(0, 2), ObnizPartsBleInterface_1.uintBE),
+                    temperature: Logtta_TH.parseTemperatureData(data.slice(0, 2), ObnizPartsBleAbstract_1.uintBE),
+                    humidity: Logtta_TH.parseHumidityData(data.slice(0, 2), ObnizPartsBleAbstract_1.uintBE),
                 });
             }
         });

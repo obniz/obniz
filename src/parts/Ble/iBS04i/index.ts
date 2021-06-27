@@ -8,9 +8,7 @@ import {
   iBeaconCompanyID,
   iBeaconData,
   ObnizBleBeaconStruct,
-  ObnizPartsBle,
-  PartsType,
-} from '../../../obniz/ObnizPartsBleInterface';
+} from '../../../obniz/ObnizPartsBleAbstract';
 import { BaseiBS } from '../iBS';
 
 export interface iBS04iOptions {}
@@ -21,17 +19,18 @@ export interface iBS04i_Data extends IBeacon {
 }
 
 export default class iBS04i extends BaseiBS<iBS04i_Data> {
-  public static readonly PartsName: PartsType = 'iBS04i';
+  public static readonly PartsName = 'iBS04i';
 
-  protected static readonly CompanyID = iBeaconCompanyID;
+  public static readonly CompanyID = iBeaconCompanyID;
 
-  protected static readonly CompanyID_ScanResponse = BaseiBS.CompanyID;
+  public static readonly CompanyID_ScanResponse = BaseiBS.CompanyID;
 
-  protected static readonly BeaconDataLength = 0x1a;
+  public static readonly BeaconDataLength = 0x1a;
 
-  protected static readonly BeaconDataLength_ScanResponse = 0x12;
+  public static readonly BeaconDataLength_ScanResponse =
+    BaseiBS.BeaconDataLength;
 
-  protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS04i_Data> = {
+  public static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS04i_Data> = {
     battery: {
       ...BaseiBS.Config.battery,
       scanResponse: true,
@@ -44,5 +43,5 @@ export default class iBS04i extends BaseiBS<iBS04i_Data> {
     ...iBeaconData,
   };
 
-  protected readonly static = iBS04i as typeof ObnizPartsBle;
+  protected readonly staticClass = iBS04i;
 }

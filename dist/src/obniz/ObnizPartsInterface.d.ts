@@ -3,9 +3,14 @@
  * @module ObnizCore
  */
 import Obniz from './index';
+import { PartsType } from './ObnizPartsList';
 export interface ObnizPartsInfo {
     name: string;
     datasheet?: any;
+}
+export interface ObnizPartsProps {
+    info(): ObnizPartsInfo;
+    PartsName: PartsType;
 }
 export default abstract class ObnizPartsInterface {
     static info: () => ObnizPartsInfo;

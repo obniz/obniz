@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module Parts.Logtta_TH
  */
-import { ObnizBleBeaconStruct, ObnizPartsBle, ObnizPartsBleCompare, ObnizPartsBleConnectable, ObnizPartsBleMode } from '../../../obniz/ObnizPartsBleInterface';
+import { ObnizBleBeaconStruct, ObnizPartsBleConnectable, ObnizPartsBleMode } from '../../../obniz/ObnizPartsBleAbstract';
 export interface Logtta_THOptions {
 }
 export interface Logtta_TH_Data {
@@ -20,13 +20,16 @@ declare type PinCodeType = 'Authentication' | 'Rewrite';
 export default class Logtta_TH extends ObnizPartsBleConnectable<Logtta_TH_Data, Logtta_TH_Connected_Data> {
     static readonly PartsName = "Logtta_TH";
     static readonly AvailableBleMode: ObnizPartsBleMode[];
-    protected static readonly LocalName: ObnizPartsBleCompare<RegExp>;
-    protected static readonly BeaconDataLength = 27;
-    protected static readonly CompanyID: number[];
-    protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<Logtta_TH_Data>;
+    static readonly LocalName: {
+        Connectable: RegExp;
+        Beacon: RegExp;
+    };
+    static readonly BeaconDataLength = 27;
+    static readonly CompanyID: number[];
+    static readonly BeaconDataStruct: ObnizBleBeaconStruct<Logtta_TH_Data>;
     protected static parseTemperatureData(data: number[], func?: (value: number[]) => number): number;
     protected static parseHumidityData(data: number[], func?: (value: number[]) => number): number;
-    protected readonly static: typeof ObnizPartsBle;
+    protected readonly staticClass: typeof Logtta_TH;
     protected authenticated: boolean;
     onNotify?: (data: Logtta_TH_Connected_Data) => void;
     protected beforeOnDisconnectWait(): Promise<void>;

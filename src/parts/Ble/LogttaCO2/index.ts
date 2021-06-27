@@ -5,12 +5,11 @@
 
 import {
   ObnizBleBeaconStruct,
-  ObnizPartsBle,
+  ObnizPartsBleCompare,
   ObnizPartsBleConnectable,
   ObnizPartsBleMode,
-  PartsType,
   uintBE,
-} from '../../../obniz/ObnizPartsBleInterface';
+} from '../../../obniz/ObnizPartsBleAbstract';
 import BleBatteryService from '../utils/services/batteryService';
 import BleGenericAccess from '../utils/services/genericAccess';
 
@@ -36,60 +35,71 @@ export default class Logtta_CO2 extends ObnizPartsBleConnectable<
   Logtta_CO2_Data,
   Logtta_CO2_Connected_Data
 > {
-  public static readonly PartsName: PartsType = 'Logtta_CO2';
+  public static readonly PartsName = 'Logtta_CO2';
 
   public static readonly AvailableBleMode: ObnizPartsBleMode[] = [
     'Connectable',
     'Beacon',
   ];
 
-  protected static readonly LocalName = {
+  public static readonly LocalName = {
     Connectable: /CO2 Sensor/,
     Beacon: /null/,
   };
 
-  protected static readonly BeaconDataLength = 0x1b;
+  public static readonly BeaconDataLength = {
+    Connectable: undefined,
+    Beacon: 0x1b,
+  };
 
-  protected static readonly CompanyID = [0x10, 0x05];
+  public static readonly CompanyID = {
+    Connectable: undefined,
+    Beacon: [0x10, 0x05],
+  };
 
-  protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<Logtta_CO2_Data> = {
-    appearance: {
-      index: 0,
-      type: 'check',
-      data: 0x02,
-    },
-    co2: {
-      index: 1,
-      length: 2,
-      type: 'unsignedNumBE',
-    },
-    battery: {
-      index: 5,
-      type: 'unsignedNumBE',
-    },
-    interval: {
-      index: 6,
-      length: 2,
-      type: 'unsignedNumBE',
-    },
-    /* alert: {
-      index: 8,
-      type: 'uint8',
-    },
-    name: {
-      index: 9,
-      length: 15,
-      type: 'string',
-    } */
-    // TODO: delete
-    address: {
-      index: 0,
-      type: 'custom',
-      func: (data, peripheral) => peripheral.address,
+  public static readonly BeaconDataStruct: ObnizPartsBleCompare<
+    ObnizBleBeaconStruct<Logtta_CO2_Data>
+  > = {
+    Connectable: undefined,
+    Beacon: {
+      appearance: {
+        index: 0,
+        type: 'check',
+        data: 0x02,
+      },
+      co2: {
+        index: 1,
+        length: 2,
+        type: 'unsignedNumBE',
+      },
+      battery: {
+        index: 5,
+        type: 'unsignedNumBE',
+      },
+      interval: {
+        index: 6,
+        length: 2,
+        type: 'unsignedNumBE',
+      },
+      /* alert: {
+        index: 8,
+        type: 'uint8',
+      },
+      name: {
+        index: 9,
+        length: 15,
+        type: 'string',
+      } */
+      // TODO: delete
+      address: {
+        index: 0,
+        type: 'custom',
+        func: (data, peripheral) => peripheral.address,
+      },
     },
   };
 
-  protected readonly static = Logtta_CO2 as typeof ObnizPartsBle;
+  protected readonly staticClass = Logtta_CO2;
 
   protected authenticated = false;
   public onNotify?: (co2: number) => void;

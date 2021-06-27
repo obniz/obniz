@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module Parts.iBS03TP
  */
-import { ObnizBleBeaconStruct, ObnizPartsBle, PartsType } from '../../../obniz/ObnizPartsBleInterface';
+import { ObnizBleBeaconStruct } from '../../../obniz/ObnizPartsBleAbstract';
 import { BaseiBS } from '../iBS';
 export interface iBS03TPOptions {
 }
@@ -15,7 +15,7 @@ export interface iBS03TP_Data {
     probe_temperature: number;
 }
 export default class iBS03TP extends BaseiBS<iBS03TP_Data> {
-    static readonly PartsName: PartsType;
-    protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS03TP_Data>;
-    protected readonly static: typeof ObnizPartsBle;
+    static readonly PartsName = "iBS03TP";
+    static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS03TP_Data>;
+    protected readonly staticClass: typeof iBS03TP;
 }

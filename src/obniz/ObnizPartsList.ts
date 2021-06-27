@@ -273,6 +273,8 @@ import RN42, { RN42Options } from '../parts/Wireless/RN42';
 import XBee, { XBeeOptions } from '../parts/Wireless/XBee';
 import EXVital, { EXVital_Options } from '../parts/Ble/EXVital';
 
+export type PartsType = keyof PartsList;
+
 export interface PartsList {
   LED: { class: LED; options: LEDOptions };
   FullColorLED: { class: FullColorLED; options: FullColorLEDOptions };

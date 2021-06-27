@@ -8,7 +8,7 @@ const iBS_1 = require("../iBS");
 class iBS02PIR extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
-        this.static = iBS02PIR;
+        this.staticClass = iBS02PIR;
     }
 }
 exports.default = iBS02PIR;

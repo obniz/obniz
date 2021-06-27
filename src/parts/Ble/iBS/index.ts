@@ -1,4 +1,3 @@
-/* eslint-disable rulesdir/ble-check */
 /**
  * @packageDocumentation
  * @module Parts.iBS
@@ -8,8 +7,7 @@ import {
   ObnizBleBeaconStructCheck,
   ObnizBleBeaconStructNormal,
   ObnizPartsBle,
-  ObnizPartsBleMode,
-} from '../../../obniz/ObnizPartsBleInterface';
+} from '../../../obniz/ObnizPartsBleAbstract';
 
 const magic = {
   1: [0x80, 0xbc],
@@ -41,12 +39,12 @@ type PresetConfigName =
   | 'humidity'
   | 'user';
 
-export class BaseiBS<S> extends ObnizPartsBle<S> {
-  public static readonly AvailableBleMode: ObnizPartsBleMode = 'Beacon';
+export abstract class BaseiBS<S> extends ObnizPartsBle<S> {
+  public static readonly AvailableBleMode = 'Beacon';
 
-  protected static readonly BeaconDataLength: number = 0x12;
+  public static readonly BeaconDataLength: number = 0x12;
 
-  protected static readonly CompanyID = [0x0d, 0x00];
+  public static readonly CompanyID = [0x0d, 0x00];
 
   protected static getUniqueData(
     series: keyof typeof magic,
@@ -71,7 +69,7 @@ export class BaseiBS<S> extends ObnizPartsBle<S> {
     };
   }
 
-  protected static readonly Config: {
+  public static readonly Config: {
     [key in PresetConfigName]: ObnizBleBeaconStructNormal<unknown, never>;
   } = {
     battery: {
@@ -121,8 +119,8 @@ export class BaseiBS<S> extends ObnizPartsBle<S> {
   };
 }
 
-export class BaseiBS01<S> extends BaseiBS<S> {
-  protected static readonly CompanyID = [0x59, 0x00];
+export abstract class BaseiBS01<S> extends BaseiBS<S> {
+  public static readonly CompanyID = [0x59, 0x00];
 }
 
 export default BaseiBS;

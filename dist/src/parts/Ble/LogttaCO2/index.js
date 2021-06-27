@@ -7,17 +7,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = require("../../../obniz/ObnizPartsBleInterface");
+const ObnizPartsBleAbstract_1 = require("../../../obniz/ObnizPartsBleAbstract");
 const batteryService_1 = __importDefault(require("../utils/services/batteryService"));
 const genericAccess_1 = __importDefault(require("../utils/services/genericAccess"));
 const PinCodeFlag = {
     Authentication: 0x00,
     Rewrite: 0x01,
 };
-class Logtta_CO2 extends ObnizPartsBleInterface_1.ObnizPartsBleConnectable {
+class Logtta_CO2 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     constructor() {
         super(...arguments);
-        this.static = Logtta_CO2;
+        this.staticClass = Logtta_CO2;
         this.authenticated = false;
     }
     async connectWait(keys) {
@@ -39,7 +39,7 @@ class Logtta_CO2 extends ObnizPartsBleInterface_1.ObnizPartsBleConnectable {
     async getDataWait() {
         this.checkConnected();
         const data = await this.readCharWait(this.getUuid('AB20'), this.getUuid('AB21'));
-        return ObnizPartsBleInterface_1.uintBE(data);
+        return ObnizPartsBleAbstract_1.uintBE(data);
     }
     /** @deprecated */
     async getWait() {
@@ -64,7 +64,7 @@ class Logtta_CO2 extends ObnizPartsBleInterface_1.ObnizPartsBleConnectable {
             this.onNotify = callback;
         return await this.subscribeWait(this.getUuid('AB20'), this.getUuid('AB21'), (data) => {
             if (this.onNotify) {
-                this.onNotify(ObnizPartsBleInterface_1.uintBE(data));
+                this.onNotify(ObnizPartsBleAbstract_1.uintBE(data));
             }
         });
     }
@@ -144,41 +144,50 @@ Logtta_CO2.LocalName = {
     Connectable: /CO2 Sensor/,
     Beacon: /null/,
 };
-Logtta_CO2.BeaconDataLength = 0x1b;
-Logtta_CO2.CompanyID = [0x10, 0x05];
+Logtta_CO2.BeaconDataLength = {
+    Connectable: undefined,
+    Beacon: 0x1b,
+};
+Logtta_CO2.CompanyID = {
+    Connectable: undefined,
+    Beacon: [0x10, 0x05],
+};
 Logtta_CO2.BeaconDataStruct = {
-    appearance: {
-        index: 0,
-        type: 'check',
-        data: 0x02,
-    },
-    co2: {
-        index: 1,
-        length: 2,
-        type: 'unsignedNumBE',
-    },
-    battery: {
-        index: 5,
-        type: 'unsignedNumBE',
-    },
-    interval: {
-        index: 6,
-        length: 2,
-        type: 'unsignedNumBE',
-    },
-    /* alert: {
-      index: 8,
-      type: 'uint8',
-    },
-    name: {
-      index: 9,
-      length: 15,
-      type: 'string',
-    } */
-    // TODO: delete
-    address: {
-        index: 0,
-        type: 'custom',
-        func: (data, peripheral) => peripheral.address,
+    Connectable: undefined,
+    Beacon: {
+        appearance: {
+            index: 0,
+            type: 'check',
+            data: 0x02,
+        },
+        co2: {
+            index: 1,
+            length: 2,
+            type: 'unsignedNumBE',
+        },
+        battery: {
+            index: 5,
+            type: 'unsignedNumBE',
+        },
+        interval: {
+            index: 6,
+            length: 2,
+            type: 'unsignedNumBE',
+        },
+        /* alert: {
+          index: 8,
+          type: 'uint8',
+        },
+        name: {
+          index: 9,
+          length: 15,
+          type: 'string',
+        } */
+        // TODO: delete
+        address: {
+            index: 0,
+            type: 'custom',
+            func: (data, peripheral) => peripheral.address,
+        },
     },
 };

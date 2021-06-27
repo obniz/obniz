@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module Parts.Logtta_CO2
  */
-import { ObnizBleBeaconStruct, ObnizPartsBle, ObnizPartsBleConnectable, ObnizPartsBleMode, PartsType } from '../../../obniz/ObnizPartsBleInterface';
+import { ObnizBleBeaconStruct, ObnizPartsBleCompare, ObnizPartsBleConnectable, ObnizPartsBleMode } from '../../../obniz/ObnizPartsBleAbstract';
 import BleBatteryService from '../utils/services/batteryService';
 import BleGenericAccess from '../utils/services/genericAccess';
 export interface Logtta_CO2Options {
@@ -16,16 +16,22 @@ export interface Logtta_CO2_Data {
 export declare type Logtta_CO2_Connected_Data = number;
 declare type PinCodeType = 'Authentication' | 'Rewrite';
 export default class Logtta_CO2 extends ObnizPartsBleConnectable<Logtta_CO2_Data, Logtta_CO2_Connected_Data> {
-    static readonly PartsName: PartsType;
+    static readonly PartsName = "Logtta_CO2";
     static readonly AvailableBleMode: ObnizPartsBleMode[];
-    protected static readonly LocalName: {
+    static readonly LocalName: {
         Connectable: RegExp;
         Beacon: RegExp;
     };
-    protected static readonly BeaconDataLength = 27;
-    protected static readonly CompanyID: number[];
-    protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<Logtta_CO2_Data>;
-    protected readonly static: typeof ObnizPartsBle;
+    static readonly BeaconDataLength: {
+        Connectable: undefined;
+        Beacon: number;
+    };
+    static readonly CompanyID: {
+        Connectable: undefined;
+        Beacon: number[];
+    };
+    static readonly BeaconDataStruct: ObnizPartsBleCompare<ObnizBleBeaconStruct<Logtta_CO2_Data>>;
+    protected readonly staticClass: typeof Logtta_CO2;
     protected authenticated: boolean;
     onNotify?: (co2: number) => void;
     genericAccess?: BleGenericAccess;

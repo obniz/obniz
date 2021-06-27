@@ -1,11 +1,10 @@
 "use strict";
-/* eslint-disable rulesdir/ble-check */
 /**
  * @packageDocumentation
  * @module Parts.iBS
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = require("../../../obniz/ObnizPartsBleInterface");
+const ObnizPartsBleAbstract_1 = require("../../../obniz/ObnizPartsBleAbstract");
 const magic = {
     1: [0x80, 0xbc],
     1.1: [0x81, 0xbc],
@@ -13,7 +12,7 @@ const magic = {
     3: [0x83, 0xbc],
     4: [0x83, 0xbc],
 };
-class BaseiBS extends ObnizPartsBleInterface_1.ObnizPartsBle {
+class BaseiBS extends ObnizPartsBleAbstract_1.ObnizPartsBle {
     static getUniqueData(series, subtype, addLength, scanResponse) {
         return {
             magic: {

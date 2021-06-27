@@ -2,6 +2,6 @@
   "rules": {
     "@typescript-eslint/no-empty-interface": "off",
     "max-classes-per-file": "off",
-    "rulesdir/ble-check": "error"
+    "rulesdir/parts-name": "error"
   }
 }

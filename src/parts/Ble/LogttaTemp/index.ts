@@ -5,13 +5,11 @@
 
 import {
   ObnizBleBeaconStruct,
-  ObnizPartsBle,
-  ObnizPartsBleCompare,
   ObnizPartsBleConnectable,
   ObnizPartsBleMode,
   uint,
   uintBE,
-} from '../../../obniz/ObnizPartsBleInterface';
+} from '../../../obniz/ObnizPartsBleAbstract';
 
 export interface Logtta_THOptions {}
 
@@ -46,16 +44,16 @@ export default class Logtta_TH extends ObnizPartsBleConnectable<
     'Beacon',
   ];
 
-  protected static readonly LocalName: ObnizPartsBleCompare<RegExp> = {
+  public static readonly LocalName = {
     Connectable: /TH Sensor/,
     Beacon: /null/,
   };
 
-  protected static readonly BeaconDataLength = 0x1b;
+  public static readonly BeaconDataLength = 0x1b;
 
-  protected static readonly CompanyID = [0x10, 0x05];
+  public static readonly CompanyID = [0x10, 0x05];
 
-  protected static readonly BeaconDataStruct: ObnizBleBeaconStruct<Logtta_TH_Data> = {
+  public static readonly BeaconDataStruct: ObnizBleBeaconStruct<Logtta_TH_Data> = {
     appearance: {
       index: 0,
       type: 'check',
@@ -107,7 +105,7 @@ export default class Logtta_TH extends ObnizPartsBleConnectable<
     return (func(data) / 0x10000) * 125 - 6;
   }
 
-  protected readonly static = Logtta_TH as typeof ObnizPartsBle;
+  protected readonly staticClass = Logtta_TH;
 
   protected authenticated = false;
   public onNotify?: (data: Logtta_TH_Connected_Data) => void;
