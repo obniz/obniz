@@ -22493,6 +22493,7 @@ var map = {
 	"./Biological/PULSE08-M5STICKC-S/index.js": "./dist/src/parts/Biological/PULSE08-M5STICKC-S/index.js",
 	"./Ble/2jcie/index.js": "./dist/src/parts/Ble/2jcie/index.js",
 	"./Ble/ENERTALK/index.js": "./dist/src/parts/Ble/ENERTALK/index.js",
+	"./Ble/EXTxx/index.js": "./dist/src/parts/Ble/EXTxx/index.js",
 	"./Ble/EXVital/index.js": "./dist/src/parts/Ble/EXVital/index.js",
 	"./Ble/HEM_6233T/index.js": "./dist/src/parts/Ble/HEM_6233T/index.js",
 	"./Ble/HEM_9200T/index.js": "./dist/src/parts/Ble/HEM_9200T/index.js",
@@ -23282,6 +23283,100 @@ exports.default = ENERTALK_TOUCH;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/EXTxx/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.EXTxx
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+class EXTxx extends ObnizPartsBleInterface_1.default {
+    constructor(peripheral) {
+        super();
+        this._peripheral = peripheral;
+    }
+    static info() {
+        return {
+            name: 'EXTxx',
+        };
+    }
+    getData() {
+        var _a;
+        const advData = (_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.adv_data;
+        if (!advData)
+            throw new Error('advData is null');
+        return {
+            uuid: advData
+                .slice(6, 22)
+                .map((d, i) => ([2, 3, 4, 5].includes(i / 2) ? '-' : '') +
+                ('00' + d.toString(16)).slice(-2))
+                .join(''),
+            major: unsigned16(advData.slice(22, 24)),
+            minor: unsigned16(advData.slice(24, 26)),
+            power: advData[26],
+            battery: advData[27],
+        };
+    }
+    static getData(peripheral) {
+        if (!EXTxx.isDevice(peripheral)) {
+            return null;
+        }
+        const dev = new EXTxx(peripheral);
+        return dev.getData();
+    }
+    static isDevice(peripheral) {
+        return (this.DefaultAdvData.filter((d, i) => d !== -1 && d !== peripheral.adv_data[i]).length === 0 &&
+            this.DefaultAdvData.length === peripheral.adv_data.length);
+    }
+}
+exports.default = EXTxx;
+EXTxx.PartsName = 'EXTxx';
+EXTxx.AvailableBleMode = 'Beacon';
+EXTxx.DefaultAdvData = [
+    0x1c,
+    0xff,
+    0xf5,
+    0x03,
+    0x02,
+    0x15,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    0x00,
+];
+const unsigned16 = (value) => {
+    return (value[0] << 8) | value[1];
+};
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/EXVital/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -23302,6 +23397,11 @@ class EXVital extends ObnizPartsBleInterface_1.default {
         super();
         this.advData = (_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.adv_data;
         this._peripheral = peripheral;
+    }
+    static info() {
+        return {
+            name: 'EXVital',
+        };
     }
     getData() {
         if (!this.advData)
@@ -23329,9 +23429,7 @@ class EXVital extends ObnizPartsBleInterface_1.default {
         return dev.getData();
     }
     static isDevice(peripheral) {
-        return (peripheral.adv_data
-            .map((d, i) => d === -1 || d === peripheral.adv_data[i])
-            .filter((r) => r === true).length === this.DefaultAdvData.length &&
+        return (this.DefaultAdvData.filter((d, i) => d !== -1 && d !== peripheral.adv_data[i]).length === 0 &&
             this.DefaultAdvData.length === peripheral.adv_data.length);
     }
 }
@@ -72069,7 +72167,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
+module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
 
 /***/ }),
 
