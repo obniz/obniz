@@ -174,6 +174,7 @@ import LED, { LEDOptions } from '../parts/Light/LED';
 import WS2811, { WS2811Options } from '../parts/Light/WS2811';
 import WS2812, { WS2812Options } from '../parts/Light/WS2812';
 import WS2812B, { WS2812BOptions } from '../parts/Light/WS2812B';
+import MCP23S08, { MCP23S08Options } from '../parts/Logic/MCP23S08';
 import SNx4HC595, { SNx4HC595Options } from '../parts/Logic/SNx4HC595';
 import M5StickC_ADC, {
   M5StickC_ADCOptions,
@@ -324,6 +325,7 @@ export interface PartsList {
   MQ9: { class: MQ9; options: MQ9Options };
   MQ135: { class: MQ135; options: MQ135Options };
   MH_Z19B: { class: MH_Z19B; options: MH_Z19BOptions };
+  MCP23S08: { class: MCP23S08; options: MCP23S08Options };
   SNx4HC595: { class: SNx4HC595; options: SNx4HC595Options };
   USB: { class: USB; options: USBOptions };
   RN42: { class: RN42; options: RN42Options };
