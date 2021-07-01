@@ -4,7 +4,7 @@
  */
 import { IBeacon } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import { ObnizBleBeaconStruct } from '../../../obniz/ObnizPartsBleAbstract';
-import { BaseiBS } from '../iBS';
+import { BaseiBS } from '../utils/abstracts/iBS';
 export interface iBS04iOptions {
 }
 export interface iBS04i_Data extends IBeacon {

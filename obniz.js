@@ -23042,7 +23042,6 @@ var map = {
 	"./Ble/UA1200BLE/index.js": "./dist/src/parts/Ble/UA1200BLE/index.js",
 	"./Ble/UA651BLE/index.js": "./dist/src/parts/Ble/UA651BLE/index.js",
 	"./Ble/UT201BLE/index.js": "./dist/src/parts/Ble/UT201BLE/index.js",
-	"./Ble/iBS/index.js": "./dist/src/parts/Ble/iBS/index.js",
 	"./Ble/iBS01/index.js": "./dist/src/parts/Ble/iBS01/index.js",
 	"./Ble/iBS01G/index.js": "./dist/src/parts/Ble/iBS01G/index.js",
 	"./Ble/iBS01H/index.js": "./dist/src/parts/Ble/iBS01H/index.js",
@@ -23072,6 +23071,7 @@ var map = {
 	"./Ble/toio_corecube/index.js": "./dist/src/parts/Ble/toio_corecube/index.js",
 	"./Ble/uprism/index.js": "./dist/src/parts/Ble/uprism/index.js",
 	"./Ble/utils/abstracts/Logtta.js": "./dist/src/parts/Ble/utils/abstracts/Logtta.js",
+	"./Ble/utils/abstracts/iBS.js": "./dist/src/parts/Ble/utils/abstracts/iBS.js",
 	"./Ble/utils/advertisement/advertismentAnalyzer.js": "./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js",
 	"./Ble/utils/services/batteryService.js": "./dist/src/parts/Ble/utils/services/batteryService.js",
 	"./Ble/utils/services/genericAccess.js": "./dist/src/parts/Ble/utils/services/genericAccess.js",
@@ -27392,102 +27392,6 @@ exports.default = UT201BLE;
 
 /***/ }),
 
-/***/ "./dist/src/parts/Ble/iBS/index.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * @packageDocumentation
- * @module Parts.iBS
- */
-Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
-const magic = {
-    1: [0x80, 0xbc],
-    1.1: [0x81, 0xbc],
-    2: [0x82, 0xbc],
-    3: [0x83, 0xbc],
-    4: [0x83, 0xbc],
-};
-class BaseiBS extends ObnizPartsBleAbstract_1.ObnizPartsBle {
-    static getUniqueData(series, subtype, addLength, scanResponse) {
-        return {
-            magic: {
-                index: 0,
-                length: 2,
-                type: 'check',
-                data: magic[series],
-                scanResponse,
-            },
-            subtype: {
-                index: 11 + ((addLength !== null && addLength !== void 0 ? addLength : 0)),
-                type: 'check',
-                data: subtype,
-                scanResponse,
-            },
-        };
-    }
-}
-exports.BaseiBS = BaseiBS;
-BaseiBS.AvailableBleMode = 'Beacon';
-BaseiBS.BeaconDataLength = 0x12;
-BaseiBS.CompanyID = [0x0d, 0x00];
-BaseiBS.Config = {
-    battery: {
-        index: 2,
-        length: 2,
-        type: 'unsignedNumLE',
-        multiple: 0.01,
-    },
-    button: {
-        index: 4,
-        type: 'bool0001',
-    },
-    moving: {
-        index: 4,
-        type: 'bool0010',
-    },
-    /** HallSensor / Reed / Event */
-    event: {
-        index: 4,
-        type: 'bool0100',
-    },
-    fall: {
-        index: 4,
-        type: 'bool1000',
-    },
-    acceleration: {
-        index: 4,
-        length: 18,
-        type: 'xyz',
-    },
-    temperature: {
-        index: 5,
-        length: 2,
-        type: 'numLE',
-        multiple: 0.01,
-    },
-    humidity: {
-        index: 7,
-        length: 2,
-        type: 'numLE',
-    },
-    user: {
-        index: 9,
-        length: 2,
-        type: 'unsignedNumLE',
-    },
-};
-class BaseiBS01 extends BaseiBS {
-}
-exports.BaseiBS01 = BaseiBS01;
-BaseiBS01.CompanyID = [0x59, 0x00];
-exports.default = BaseiBS;
-
-
-/***/ }),
-
 /***/ "./dist/src/parts/Ble/iBS01/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -27498,7 +27402,7 @@ exports.default = BaseiBS;
  * @module Parts.iBS01
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
 /**
  * @deprecated
  * Recommend use iBS01G, iBS01H, iBS01T
@@ -27535,7 +27439,7 @@ iBS01.BeaconDataStruct = {
  * @module Parts.iBS01G
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
 class iBS01G extends iBS_1.BaseiBS01 {
     constructor() {
         super(...arguments);
@@ -27560,7 +27464,7 @@ iBS01G.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS01.Config.batter
  * @module Parts.iBS01H
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
 class iBS01H extends iBS_1.BaseiBS01 {
     constructor() {
         super(...arguments);
@@ -27585,7 +27489,7 @@ iBS01H.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS01.Config.batter
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
-const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
 class iBS01RG extends iBS_1.BaseiBS01 {
     constructor() {
         super(...arguments);
@@ -27616,7 +27520,7 @@ iBS01RG.BeaconDataStruct = {
  * @module Parts.iBS01T
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
 class iBS01T extends iBS_1.BaseiBS01 {
     constructor() {
         super(...arguments);
@@ -27640,7 +27544,7 @@ iBS01T.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS01.Config.batter
  * @module Parts.iBS02IR
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
 class iBS02IR extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
@@ -27664,7 +27568,7 @@ iBS02IR.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery
  * @module Parts.iBS02PIR
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
 class iBS02PIR extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
@@ -27688,7 +27592,7 @@ iBS02PIR.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.batter
  * @module Parts.iBS03
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
 class iBS03 extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
@@ -27712,7 +27616,7 @@ iBS03.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, 
  * @module Parts.iBS03G
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
 class iBS03G extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
@@ -27736,7 +27640,7 @@ iBS03G.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery,
  * @module Parts.iBS03T
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
 class iBS03T extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
@@ -27760,7 +27664,7 @@ iBS03T.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery,
  * @module Parts.iBS03TP
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
 class iBS03TP extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
@@ -27784,7 +27688,7 @@ iBS03TP.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery
  * @module Parts.iBS04
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
 class iBS04 extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
@@ -27809,7 +27713,7 @@ iBS04.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, 
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
-const iBS_1 = __webpack_require__("./dist/src/parts/Ble/iBS/index.js");
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
 class iBS04i extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
@@ -32816,6 +32720,102 @@ Logtta.CompanyID = {
     Connectable: null,
     Beacon: [0x10, 0x05],
 };
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/utils/abstracts/iBS.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
+const magic = {
+    1: [0x80, 0xbc],
+    1.1: [0x81, 0xbc],
+    2: [0x82, 0xbc],
+    3: [0x83, 0xbc],
+    4: [0x83, 0xbc],
+};
+class BaseiBS extends ObnizPartsBleAbstract_1.ObnizPartsBle {
+    static getUniqueData(series, subtype, addLength, scanResponse) {
+        return {
+            magic: {
+                index: 0,
+                length: 2,
+                type: 'check',
+                data: magic[series],
+                scanResponse,
+            },
+            subtype: {
+                index: 11 + ((addLength !== null && addLength !== void 0 ? addLength : 0)),
+                type: 'check',
+                data: subtype,
+                scanResponse,
+            },
+        };
+    }
+}
+exports.BaseiBS = BaseiBS;
+BaseiBS.AvailableBleMode = 'Beacon';
+BaseiBS.BeaconDataLength = 0x12;
+BaseiBS.CompanyID = [0x0d, 0x00];
+BaseiBS.Config = {
+    battery: {
+        index: 2,
+        length: 2,
+        type: 'unsignedNumLE',
+        multiple: 0.01,
+    },
+    button: {
+        index: 4,
+        type: 'bool0001',
+    },
+    moving: {
+        index: 4,
+        type: 'bool0010',
+    },
+    /** HallSensor / Reed / Event */
+    event: {
+        index: 4,
+        type: 'bool0100',
+    },
+    fall: {
+        index: 4,
+        type: 'bool1000',
+    },
+    acceleration: {
+        index: 4,
+        length: 18,
+        type: 'xyz',
+    },
+    temperature: {
+        index: 5,
+        length: 2,
+        type: 'numLE',
+        multiple: 0.01,
+    },
+    humidity: {
+        index: 7,
+        length: 2,
+        type: 'numLE',
+    },
+    user: {
+        index: 9,
+        length: 2,
+        type: 'unsignedNumLE',
+    },
+};
+class BaseiBS01 extends BaseiBS {
+}
+exports.BaseiBS01 = BaseiBS01;
+BaseiBS01.CompanyID = [0x59, 0x00];
+exports.default = BaseiBS;
 
 
 /***/ }),

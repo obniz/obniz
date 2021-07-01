@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module Parts.iBS
  */
-import { ObnizBleBeaconStructCheck, ObnizBleBeaconStructNormal, ObnizPartsBle } from '../../../obniz/ObnizPartsBleAbstract';
+import { ObnizBleBeaconStructCheck, ObnizBleBeaconStructNormal, ObnizPartsBle } from '../../../../obniz/ObnizPartsBleAbstract';
 declare const magic: {
     1: number[];
     1.1: number[];

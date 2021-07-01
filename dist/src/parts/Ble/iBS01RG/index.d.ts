@@ -4,7 +4,7 @@
  */
 import { Triaxial } from '../../../obniz/ObnizParts';
 import { ObnizBleBeaconStruct } from '../../../obniz/ObnizPartsBleAbstract';
-import { BaseiBS01 } from '../iBS';
+import { BaseiBS01 } from '../utils/abstracts/iBS';
 export interface iBS01RGOptions {
 }
 export interface iBS01RG_Data {

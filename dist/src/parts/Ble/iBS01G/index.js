@@ -4,7 +4,7 @@
  * @module Parts.iBS01G
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const iBS_1 = require("../iBS");
+const iBS_1 = require("../utils/abstracts/iBS");
 class iBS01G extends iBS_1.BaseiBS01 {
     constructor() {
         super(...arguments);

@@ -8,7 +8,7 @@ import {
   ObnizBleBeaconStruct,
   uint,
 } from '../../../obniz/ObnizPartsBleAbstract';
-import { BaseiBS01 } from '../iBS';
+import { BaseiBS01 } from '../utils/abstracts/iBS';
 
 export interface iBS01RGOptions {}
 

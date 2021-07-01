@@ -3,7 +3,7 @@
  * @module Parts.iBS02IR
  */
 import { ObnizBleBeaconStruct } from '../../../obniz/ObnizPartsBleAbstract';
-import { BaseiBS } from '../iBS';
+import { BaseiBS } from '../utils/abstracts/iBS';
 export interface iBS02IROptions {
 }
 export interface iBS02IR_Data {

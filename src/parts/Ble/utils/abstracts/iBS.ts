@@ -7,7 +7,7 @@ import {
   ObnizBleBeaconStructCheck,
   ObnizBleBeaconStructNormal,
   ObnizPartsBle,
-} from '../../../obniz/ObnizPartsBleAbstract';
+} from '../../../../obniz/ObnizPartsBleAbstract';
 
 const magic = {
   1: [0x80, 0xbc],

@@ -5,7 +5,7 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = require("../../../obniz/ObnizPartsBleAbstract");
-const iBS_1 = require("../iBS");
+const iBS_1 = require("../utils/abstracts/iBS");
 class iBS04i extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);

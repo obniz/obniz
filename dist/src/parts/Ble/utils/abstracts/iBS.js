@@ -4,7 +4,7 @@
  * @module Parts.iBS
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleAbstract_1 = require("../../../obniz/ObnizPartsBleAbstract");
+const ObnizPartsBleAbstract_1 = require("../../../../obniz/ObnizPartsBleAbstract");
 const magic = {
     1: [0x80, 0xbc],
     1.1: [0x81, 0xbc],

@@ -9,7 +9,7 @@ import {
   iBeaconData,
   ObnizBleBeaconStruct,
 } from '../../../obniz/ObnizPartsBleAbstract';
-import { BaseiBS } from '../iBS';
+import { BaseiBS } from '../utils/abstracts/iBS';
 
 export interface iBS04iOptions {}
 
