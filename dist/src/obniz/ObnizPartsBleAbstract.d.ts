@@ -51,11 +51,13 @@ export interface ObnizPartsBleProps extends ObnizPartsProps {
     readonly AvailableBleMode: ObnizPartsBleMode | ObnizPartsBleMode[];
     readonly Address?: ObnizPartsBleCompare<RegExp>;
     readonly LocalName?: ObnizPartsBleCompare<RegExp>;
+    readonly ServiceUuids?: ObnizPartsBleCompare<string | string[] | null>;
     readonly BeaconDataLength?: ObnizPartsBleCompare<number | null>;
     readonly BeaconDataLength_ScanResponse?: ObnizPartsBleCompare<number | null>;
     readonly CompanyID?: ObnizPartsBleCompare<number[] | null>;
     readonly CompanyID_ScanResponse?: ObnizPartsBleCompare<number[] | null>;
     readonly BeaconDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown> | null>;
+    getServiceUuids(mode: ObnizPartsBleMode): string[] | null | undefined;
     getDeviceMode(peripheral: BleRemotePeripheral): ObnizPartsBleMode | null;
     new (peripheral: BleRemotePeripheral, mode: ObnizPartsBleMode): ObnizPartsBle<unknown>;
 }
@@ -70,7 +72,7 @@ export declare abstract class ObnizPartsBle<S> {
      *
      * 利用可能なBLEのモード (Beacon | Connectable | Pairing)
      */
-    static getAvailableBleMode(): ObnizPartsBleMode | ObnizPartsBleMode[];
+    static getAvailableBleMode(): ObnizPartsBleMode[];
     /**
      * Used as a condition of isDevice() by default.
      *
@@ -83,6 +85,13 @@ export declare abstract class ObnizPartsBle<S> {
      * 標準でisDevice()の条件として使用
      */
     static readonly LocalName?: ObnizPartsBleCompare<RegExp>;
+    /**
+     * Used as a condition of isDevice() by default.
+     *
+     * 標準でisDevice()の条件として使用
+     */
+    static readonly ServiceUuids?: ObnizPartsBleCompare<string | string[] | null>;
+    static getServiceUuids(mode: ObnizPartsBleMode): string[] | null | undefined;
     /**
      * Used as a condition of isDevice() by default.
      *
@@ -147,10 +156,7 @@ export declare abstract class ObnizPartsBle<S> {
      * @deprecated
      */
     static getData(peripheral: BleRemotePeripheral): unknown | null;
-    /**
-     * Internally Used function for connection required devices
-     */
-    protected readonly peripheral: BleRemotePeripheral;
+    readonly peripheral: BleRemotePeripheral;
     readonly address: string;
     readonly beaconData: number[] | null;
     readonly beaconDataInScanResponse: number[] | null;

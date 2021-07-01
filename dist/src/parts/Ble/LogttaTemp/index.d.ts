@@ -2,12 +2,12 @@
  * @packageDocumentation
  * @module Parts.Logtta_TH
  */
-import { ObnizBleBeaconStruct, ObnizPartsBleConnectable, ObnizPartsBleMode } from '../../../obniz/ObnizPartsBleAbstract';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { ObnizBleBeaconStruct, ObnizPartsBleCompare, ObnizPartsBleMode } from '../../../obniz/ObnizPartsBleAbstract';
+import Logtta from '../utils/abstracts/Logtta';
 export interface Logtta_THOptions {
 }
-export interface Logtta_TH_Data {
-    temperature: number;
-    humidity: number;
+export interface Logtta_TH_Data extends Logtta_TH_Connected_Data {
     battery: number;
     interval: number;
     address: string;
@@ -16,39 +16,30 @@ export interface Logtta_TH_Connected_Data {
     temperature: number;
     humidity: number;
 }
-declare type PinCodeType = 'Authentication' | 'Rewrite';
-export default class Logtta_TH extends ObnizPartsBleConnectable<Logtta_TH_Data, Logtta_TH_Connected_Data> {
+export default class Logtta_TH extends Logtta<Logtta_TH_Data, Logtta_TH_Connected_Data> {
     static readonly PartsName = "Logtta_TH";
     static readonly AvailableBleMode: ObnizPartsBleMode[];
     static readonly LocalName: {
-        Connectable: RegExp;
+        Connectable: undefined;
         Beacon: RegExp;
     };
-    static readonly BeaconDataLength = 27;
-    static readonly CompanyID: number[];
-    static readonly BeaconDataStruct: ObnizBleBeaconStruct<Logtta_TH_Data>;
+    static readonly ServiceUuids: {
+        Connectable: string;
+        Beacon: null;
+    };
+    static readonly BeaconDataStruct: ObnizPartsBleCompare<ObnizBleBeaconStruct<Logtta_TH_Data> | null>;
     protected static parseTemperatureData(data: number[], func?: (value: number[]) => number): number;
     protected static parseHumidityData(data: number[], func?: (value: number[]) => number): number;
+    /** @deprecated */
+    static isDevice(peripheral: BleRemotePeripheral): boolean;
+    /** @deprecated */
+    static isAdvDevice(peripheral: BleRemotePeripheral): boolean;
     protected readonly staticClass: typeof Logtta_TH;
-    protected authenticated: boolean;
-    onNotify?: (data: Logtta_TH_Connected_Data) => void;
-    protected beforeOnDisconnectWait(): Promise<void>;
-    getDataWait(): Promise<Logtta_TH_Connected_Data>;
     /** @deprecated */
     getAllWait(): Promise<Logtta_TH_Connected_Data | null>;
     getTemperatureWait(): Promise<number>;
     getHumidityWait(): Promise<number>;
-    startNotifyWait(callback: (data: Logtta_TH_Connected_Data) => void): Promise<void>;
-    authPinCodeWait(code: string | number): Promise<boolean>;
-    protected sendPinCodeWait(type: PinCodeType, code: number): Promise<boolean>;
-    protected checkAuthenticated(): void;
-    /**
-     * @deprecated
-     * @param enable
-     */
+    /** @deprecated */
     setBeaconMode(enable: boolean): Promise<boolean>;
-    setBeaconModeWait(enable: boolean): Promise<boolean>;
-    protected getName(): string;
-    protected getUuid(uuid: string): string;
+    protected parseData(data: number[]): Logtta_TH_Connected_Data;
 }
-export {};

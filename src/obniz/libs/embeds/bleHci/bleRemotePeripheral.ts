@@ -812,8 +812,8 @@ export default class BleRemotePeripheral {
     this._addServiceUuids(results, this.searchTypeVal(0x03), 16);
     this._addServiceUuids(results, this.searchTypeVal(0x04), 32);
     this._addServiceUuids(results, this.searchTypeVal(0x05), 32);
-    this._addServiceUuids(results, this.searchTypeVal(0x06), 64);
-    this._addServiceUuids(results, this.searchTypeVal(0x07), 64);
+    this._addServiceUuids(results, this.searchTypeVal(0x06), 128);
+    this._addServiceUuids(results, this.searchTypeVal(0x07), 128);
     return results;
   }
 

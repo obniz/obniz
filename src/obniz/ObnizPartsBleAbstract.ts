@@ -103,11 +103,13 @@ export interface ObnizPartsBleProps extends ObnizPartsProps {
   readonly AvailableBleMode: ObnizPartsBleMode | ObnizPartsBleMode[];
   readonly Address?: ObnizPartsBleCompare<RegExp>;
   readonly LocalName?: ObnizPartsBleCompare<RegExp>;
+  readonly ServiceUuids?: ObnizPartsBleCompare<string | string[] | null>;
   readonly BeaconDataLength?: ObnizPartsBleCompare<number | null>;
   readonly BeaconDataLength_ScanResponse?: ObnizPartsBleCompare<number | null>;
   readonly CompanyID?: ObnizPartsBleCompare<number[] | null>;
   readonly CompanyID_ScanResponse?: ObnizPartsBleCompare<number[] | null>;
   readonly BeaconDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown> | null>;
+  getServiceUuids(mode: ObnizPartsBleMode): string[] | null | undefined;
   getDeviceMode(peripheral: BleRemotePeripheral): ObnizPartsBleMode | null;
   new (
     peripheral: BleRemotePeripheral,
@@ -129,8 +131,12 @@ export abstract class ObnizPartsBle<S> {
    *
    * 利用可能なBLEのモード (Beacon | Connectable | Pairing)
    */
-  public static getAvailableBleMode(): ObnizPartsBleMode | ObnizPartsBleMode[] {
-    return ((this as unknown) as ObnizPartsBleProps).AvailableBleMode;
+  public static getAvailableBleMode(): ObnizPartsBleMode[] {
+    const availableBleMode = ((this as unknown) as ObnizPartsBleProps)
+      .AvailableBleMode;
+    return availableBleMode instanceof Array
+      ? availableBleMode
+      : [availableBleMode];
   }
 
   /**
@@ -146,6 +152,28 @@ export abstract class ObnizPartsBle<S> {
    * 標準でisDevice()の条件として使用
    */
   public static readonly LocalName?: ObnizPartsBleCompare<RegExp> = undefined;
+
+  /**
+   * Used as a condition of isDevice() by default.
+   *
+   * 標準でisDevice()の条件として使用
+   */
+  public static readonly ServiceUuids?: ObnizPartsBleCompare<
+    string | string[] | null
+  > = undefined;
+
+  public static getServiceUuids(
+    mode: ObnizPartsBleMode
+  ): string[] | null | undefined {
+    const uuids =
+      this.ServiceUuids instanceof Array ||
+      typeof this.ServiceUuids === 'string' ||
+      this.ServiceUuids === null ||
+      this.ServiceUuids === undefined
+        ? this.ServiceUuids
+        : this.ServiceUuids[mode];
+    return typeof uuids === 'string' ? [uuids] : uuids;
+  }
 
   /**
    * Used as a condition of isDevice() by default.
@@ -210,16 +238,13 @@ export abstract class ObnizPartsBle<S> {
   public static getDeviceMode(
     peripheral: BleRemotePeripheral
   ): ObnizPartsBleMode | null {
-    const availableBleMode = this.getAvailableBleMode();
-    const result = (availableBleMode instanceof Array
-      ? availableBleMode
-      : [availableBleMode]
-    )
-      .map((mode) =>
-        this.isDeviceWithMode(peripheral, mode) ? mode : undefined
-      )
-      .find((mode) => mode);
-    return result ?? null;
+    return (
+      this.getAvailableBleMode()
+        .map((mode) =>
+          this.isDeviceWithMode(peripheral, mode) ? mode : undefined
+        )
+        .find((mode) => mode) ?? null
+    );
   }
 
   /**
@@ -235,33 +260,43 @@ export abstract class ObnizPartsBle<S> {
     peripheral: BleRemotePeripheral,
     mode: ObnizPartsBleMode
   ): boolean {
-    const availableBleMode = this.getAvailableBleMode();
-    if (
-      typeof availableBleMode === 'string'
-        ? availableBleMode !== mode
-        : !availableBleMode.includes(mode)
-    )
-      return false;
+    if (!this.getAvailableBleMode().includes(mode)) return false;
 
     if (this.Address) {
       const defaultAddress =
         this.Address instanceof RegExp ? this.Address : this.Address[mode];
       if (
-        defaultAddress === undefined ||
+        defaultAddress !== undefined &&
         !defaultAddress.test(peripheral.address)
       )
         return false;
     }
+
     if (this.LocalName) {
       const defaultLocalName =
         this.LocalName instanceof RegExp
           ? this.LocalName
           : this.LocalName[mode];
       if (
-        defaultLocalName === undefined ||
+        defaultLocalName !== undefined &&
         !defaultLocalName.test(peripheral.localName ?? 'null')
       )
         return false;
+    }
+
+    if (this.ServiceUuids) {
+      const defaultServiceUuids = this.getServiceUuids(mode);
+      if (defaultServiceUuids !== undefined) {
+        const uuids = peripheral.advertisementServiceUuids();
+        if (defaultServiceUuids === null && uuids.length !== 0) return false;
+        if (defaultServiceUuids !== null && uuids.length === 0) return false;
+        if (
+          defaultServiceUuids !== null &&
+          defaultServiceUuids.filter((u) => !uuids.includes(u.toLowerCase()))
+            .length !== 0
+        )
+          return false;
+      }
     }
 
     if (
@@ -394,10 +429,7 @@ export abstract class ObnizPartsBle<S> {
     }
   }
 
-  /**
-   * Internally Used function for connection required devices
-   */
-  protected readonly peripheral: BleRemotePeripheral;
+  public readonly peripheral: BleRemotePeripheral;
 
   public readonly address: string;
 
@@ -474,7 +506,10 @@ export abstract class ObnizPartsBle<S> {
           if (config.type.indexOf('bool') === 0)
             return [name, (data[0] & parseInt(config.type.slice(4), 2)) > 0];
           else if (config.type === 'string')
-            return [name, Buffer.from(data).toString()];
+            return [
+              name,
+              Buffer.from(data.slice(0, data.indexOf(0))).toString(),
+            ];
           else if (config.type === 'xyz') {
             if (!config.length) config.length = 6;
             if (config.length % 6 !== 0) return [];

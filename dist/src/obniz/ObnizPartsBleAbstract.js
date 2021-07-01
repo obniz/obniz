@@ -46,7 +46,20 @@ class ObnizPartsBle {
      * 利用可能なBLEのモード (Beacon | Connectable | Pairing)
      */
     static getAvailableBleMode() {
-        return this.AvailableBleMode;
+        const availableBleMode = this
+            .AvailableBleMode;
+        return availableBleMode instanceof Array
+            ? availableBleMode
+            : [availableBleMode];
+    }
+    static getServiceUuids(mode) {
+        const uuids = this.ServiceUuids instanceof Array ||
+            typeof this.ServiceUuids === 'string' ||
+            this.ServiceUuids === null ||
+            this.ServiceUuids === undefined
+            ? this.ServiceUuids
+            : this.ServiceUuids[mode];
+        return typeof uuids === 'string' ? [uuids] : uuids;
     }
     /**
      * @deprecated
@@ -63,13 +76,10 @@ class ObnizPartsBle {
      * @returns If the corresponding device is that mode, it must be null if not applicable 該当するデバイスならばそのモード、該当しなければnull
      */
     static getDeviceMode(peripheral) {
-        const availableBleMode = this.getAvailableBleMode();
-        const result = (availableBleMode instanceof Array
-            ? availableBleMode
-            : [availableBleMode])
+        var _a;
+        return (_a = this.getAvailableBleMode()
             .map((mode) => this.isDeviceWithMode(peripheral, mode) ? mode : undefined)
-            .find((mode) => mode);
-        return (result !== null && result !== void 0 ? result : null);
+            .find((mode) => mode), (_a !== null && _a !== void 0 ? _a : null));
     }
     /**
      * Check if peripherals and modes match the library.
@@ -82,14 +92,11 @@ class ObnizPartsBle {
      */
     static isDeviceWithMode(peripheral, mode) {
         var _a;
-        const availableBleMode = this.getAvailableBleMode();
-        if (typeof availableBleMode === 'string'
-            ? availableBleMode !== mode
-            : !availableBleMode.includes(mode))
+        if (!this.getAvailableBleMode().includes(mode))
             return false;
         if (this.Address) {
             const defaultAddress = this.Address instanceof RegExp ? this.Address : this.Address[mode];
-            if (defaultAddress === undefined ||
+            if (defaultAddress !== undefined &&
                 !defaultAddress.test(peripheral.address))
                 return false;
         }
@@ -97,9 +104,23 @@ class ObnizPartsBle {
             const defaultLocalName = this.LocalName instanceof RegExp
                 ? this.LocalName
                 : this.LocalName[mode];
-            if (defaultLocalName === undefined ||
+            if (defaultLocalName !== undefined &&
                 !defaultLocalName.test((_a = peripheral.localName, (_a !== null && _a !== void 0 ? _a : 'null'))))
                 return false;
+        }
+        if (this.ServiceUuids) {
+            const defaultServiceUuids = this.getServiceUuids(mode);
+            if (defaultServiceUuids !== undefined) {
+                const uuids = peripheral.advertisementServiceUuids();
+                if (defaultServiceUuids === null && uuids.length !== 0)
+                    return false;
+                if (defaultServiceUuids !== null && uuids.length === 0)
+                    return false;
+                if (defaultServiceUuids !== null &&
+                    defaultServiceUuids.filter((u) => !uuids.includes(u.toLowerCase()))
+                        .length !== 0)
+                    return false;
+            }
         }
         if (!this.checkManufacturerSpecificData(mode, peripheral.manufacturerSpecificData, this.BeaconDataLength, this.CompanyID, false))
             return false;
@@ -238,7 +259,10 @@ class ObnizPartsBle {
             if (config.type.indexOf('bool') === 0)
                 return [name, (data[0] & parseInt(config.type.slice(4), 2)) > 0];
             else if (config.type === 'string')
-                return [name, Buffer.from(data).toString()];
+                return [
+                    name,
+                    Buffer.from(data.slice(0, data.indexOf(0))).toString(),
+                ];
             else if (config.type === 'xyz') {
                 if (!config.length)
                     config.length = 6;
@@ -286,6 +310,12 @@ ObnizPartsBle.Address = undefined;
  * 標準でisDevice()の条件として使用
  */
 ObnizPartsBle.LocalName = undefined;
+/**
+ * Used as a condition of isDevice() by default.
+ *
+ * 標準でisDevice()の条件として使用
+ */
+ObnizPartsBle.ServiceUuids = undefined;
 /**
  * Used as a condition of isDevice() by default.
  *
