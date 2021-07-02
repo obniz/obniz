@@ -1,321 +1,157 @@
-# Logtta TH
+# Logtta_TH
 
-BLE Connectable Temperaterue Sensor
+Temperature and humidity sensor by UNI-ELECTRONICS
+
+Official product introduction page is [here](http://www.uni-elec.co.jp/logtta_page.html)
 
 ![](image.jpg)
 
-![](image2.jpg)
+## Available modes
 
+- Beacon mode
+- Connectable mode
 
+## Beacon data (getData())
 
-## getPartsClass(name)
+- battery: Battery level (%)
+- temperature: Temperature (℃)
+- humidity: Humidity (%)
+- interval: Transmission interval (sec)
+
+## Connected data (getDataWait())
+
+- temperature: Temperature (℃)
+- humidity: Humidity (%)
+
+## Use case (Beacon mode)
 
 ```javascript
-// Javascript Example
-const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
-```
-
-## isDevice(BleRemotePeripheral)
-
-Returns true if a device was found.
-
-```javascript
-// Javascript Example
+// Javascript
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (Logtta_TH.isDevice(p)) {
-        console.log("find");
-    }
+obniz.ble.scan.onfind = (peripheral) => {
+  // Get operation mode, it becomes null when not Logtta_TH
+  const mode = Logtta_TH.getDeviceMode(peripheral);
+  if (mode === 'Beacon') {
+    // Generate an instance
+    const device = new Logtta_TH(peripheral, mode);
+    // Get data and output to the console
+    console.log(device.getData());
+  }
 };
 await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
 
-## new Logtta_TH(peripheral)
+## Use case (Connectable mode)
 
-Create an instance based on the advertisement information received by BLE.
+### Connect then get data & battery remaining once
 
-```javascript
-// Javascript Example
-const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (Logtta_TH.isDevice(peripheral) ) {
-    console.log("device find");
-    const device = new Logtta_TH(peripheral);
-  }
-};
-await obniz.ble.scan.startWait();
-
-```
-
-
-## [await]connectWait()
-
-Connect to the device.
+Use `batteryService.getBatteryLevelWait()` to get battery levels in percentages.
 
 ```javascript
-// Javascript Example
+// Javascript
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (Logtta_TH.isDevice(peripheral)) {
-    console.log("find");
-    const device = new Logtta_TH(peripheral);
-    device.ondisconnect = (reason) => {
-      console.log(reason)
+obniz.ble.scan.onfind = (peripheral) => {
+  // Get operation mode, it becomes null when not Logtta_TH
+  const mode = Logtta_TH.getDeviceMode(peripheral);
+  if (mode === 'Connectable') {
+    // Generate an instance
+    const device = new Logtta_TH(peripheral, mode);
+    console.log(`Connecting to Logtta_TH[${device.address}]`);
+
+    // Connect to the device
+    await device.connectWait();
+    console.log(`Connected to Logtta_TH[${device.address}]`);
+
+    // Get data from the device
+    const data = await device.getDataWait();
+    console.log(`Logtta_TH[${device.address}]: ${data.temperature}℃`);
+    console.log(`Logtta_TH[${device.address}]: ${data.humidity}%`);
+
+    if (device.batteryService) {
+      // Get battery level from the device
+      const batteryLevel = await device.batteryService.getBatteryLevelWait();
+      // Output battery remaining amount
+      console.log(`Logtta_TH[${device.address}]: BatteryLevel ${batteryLevel}%`);
     }
-    await device.connectWait();
-    console.log("connected");
-  }
-};
-await obniz.ble.scan.startWait();
-```
 
-
-## [await]disconnectWait()
-
-Disonnect to the device.
-
-```javascript
-// Javascript Example
-const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (Logtta_TH.isDevice(peripheral) ) {
-    console.log("find");
-    const device = new Logtta_TH(peripheral);
-    await device.connectWait();
-    console.log("connected");
+    // Disconnect from the device
     await device.disconnectWait();
-    console.log("disconnected");
+    console.log(`Disconnected from Logtta_TH[${device.address}]`);
   }
 };
 await obniz.ble.scan.startWait();
 ```
 
+### Connect then regularly get data
 
-## onNotify =  function (data){}
-
-When data is received, return the data in a callback function.
-
-Called every time data comes from the device after starting `` startNotifyWait () ``.
+Use `startNotifyWait()` to wait for data from the device always.
 
 ```javascript
-// Javascript Example
+// Javascript
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (Logtta_TH.isDevice(peripheral)) {
-    console.log("find");
-    const device = new Logtta_TH(peripheral);
+obniz.ble.scan.onfind = (peripheral) => {
+  // Get operation mode, it becomes null when not Logtta_TH
+  const mode = Logtta_TH.getDeviceMode(peripheral);
+  if (mode === 'Connectable') {
+    // Generate an instance
+    const device = new Logtta_TH(peripheral, mode);
+    console.log(`Connecting to Logtta_TH[${device.address}]`);
+
+    // Connect to the device
     await device.connectWait();
-    console.log("connected");
-    device.onNotify = (data) => {
-        console.log(`temperature ${data.temperature} humidity ${data.humidity}`);
-    };
-    await device.startNotifyWait();
+    console.log(`Connected to Logtta_TH[${device.address}]`);
+
+    // Start waiting for data from the device
+    device.startNotifyWait((data) => {
+      console.log(`Logtta_TH[${device.address}]: ${data.temperature}℃`);
+      console.log(`Logtta_TH[${device.address}]: ${data.humidity}%`);
+    });
   }
 };
 await obniz.ble.scan.startWait();
 ```
 
-## startNotifyWait()
+### Connect then activate beacon mode
 
-Instructs to start sending sensor data.
+Use `setBeaconModeWait()` to  control the valid invalidity of the mode that periodically disseminates beacons.
 
-```javascript
-// Javascript Example
-const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (Logtta_TH.isDevice(peripheral)) {
-    console.log("find");
-    const device = new Logtta_TH(peripheral);
-    await device.connectWait();
-    console.log("connected");
-    device.onNotify = (data) => {
-        console.log(`temperature ${data.temperature} humidity ${data.humidity}`);
-    };
-    await device.startNotifyWait();
-  }
-};
-await obniz.ble.scan.startWait();
-```
+Disconnecting after setting it is effective.
 
+Before need use `authPinCodeWait()` to authenticate with the device. (Default authentication code: 0000)
 
-## [await]getAllWait()
-
-Get All Data from device.
+To disable beacon mode, it is necessary to press and hold the button on the device for more than 2 seconds.
 
 ```javascript
-// Javascript Example
+// Javascript
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (Logtta_TH.isDevice(peripheral)) {
-    console.log("find");
-    const device = new Logtta_TH(peripheral);
+obniz.ble.scan.onfind = (peripheral) => {
+  // Get operation mode, it becomes null when not Logtta_TH
+  const mode = Logtta_TH.getDeviceMode(peripheral);
+  if (mode === 'Connectable') {
+    // Generate an instance
+    const device = new Logtta_TH(peripheral, mode);
+    console.log(`Connecting to Logtta_TH[${device.address}]`);
+
+    // Connect to the device
     await device.connectWait();
-    console.log("connected");
-    
-    const data = await device.getAllWait();
-    console.log(`temperature ${data.temperature} humidity ${data.humidity}`);
-  }
-};
-await obniz.ble.scan.startWait();
-```
+    console.log(`Connected to Logtta_TH[${device.address}]`);
 
-The format is below.
+    // Send authentication code
+    await device.authPinCodeWait(0000);
+    console.log(`Logtta_TH[${device.address}]: Sent auth pin code`);
 
-```json
-// example response
-{
-  "temperature": 20,
-  "humidity": 30, 
-}
-```
-
-## [await]getTemperatureWait()
-
-Get celsius temperature Data from device.
-
-```javascript
-// Javascript Example
-const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (Logtta_TH.isDevice(peripheral)) {
-    console.log("find");
-    const device = new Logtta_TH(peripheral);
-    await device.connectWait();
-    console.log("connected");
-    
-    const temperature = await device.getTemperatureWait();
-    console.log(`temperature ${temperature}`);
-  }
-};
-await obniz.ble.scan.startWait();
-```
-
-
-## [await]getHumidityWait()
-
-Get humidity Data from device. 0-100.
-
-```javascript
-// Javascript Example
-const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (Logtta_TH.isDevice(peripheral)) {
-    console.log("find");
-    const device = new Logtta_TH(peripheral);
-    await device.connectWait();
-    console.log("connected");
-    
-    const humidity = await device.getHumidityWait();
-    console.log(`humidity ${humidity}`);
-  }
-};
-await obniz.ble.scan.startWait();
-```
-
-
-
-## [await]authPinCodeWait(pin)
-
-Authenticate with the device. The default value is 0000.
-
-```javascript
-// Javascript Example
-const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (Logtta_TH.isDevice(peripheral) ) {
-    console.log("find");
-    const device = new Logtta_TH(peripheral);
-    await device.connectWait();
-    console.log("connected");
-    await device.authPinCodeWait("0000");
-    console.log("authPinCodeWait");
-  }
-};
-await obniz.ble.scan.startWait();
-
-```
-
-## [await]setBeaconModeWait(enable)
-
-Run the device and authentication in advance.
-
-You can control the enable/disable of the mode that periodically sends out beacons.
-
-It becomes effective after the setting is made and then disconnected.
-
-To exit beacon mode, you must press and hold the button on the device for at least 2 seconds For more information, please click on the link below to view the document. For more information, please click on the link below to view the document.
-http://www.uni-elec.co.jp/logtta_page.html
-
-```javascript
-// Javascript Example
-const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (Logtta_TH.isDevice(peripheral) ) {
-    console.log("find");
-    const device = new Logtta_TH(peripheral);
-    await device.connectWait();
-    console.log("connected");
-    await device.authPinCodeWait("0000");
-    console.log("authPinCodeWait");
+    // Enable beacon mode
     await device.setBeaconModeWait(true);
-    console.log("authPinCodeWait");
+    console.log(`Logtta_TH[${device.address}]: Enabled beacon mode`);
+
+    // Disconnect from the device
     await device.disconnectWait();
-    console.log("disconnected");
+    console.log(`Disconnected from Logtta_TH[${device.address}]`);
   }
 };
 await obniz.ble.scan.startWait();
-
-```
-
-
-## isAdvDevice(BleRemotePeripheral)
-
-If it finds the device it is advertizing, it returns true.
-
-```javascript
-// Javascript Example
-const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (Logtta_TH.isAdvDevice(p)) {
-        console.log("found");
-    }
-};
-await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
-
-```
-
-## getData(BleRemotePeripheral)
-
-Returns the information of the device if it is found. Returns Null if the device was not found.
-
-- battery : battery voltage(0-100)
-- address : MacAddress
-- temperature: temperature (Celsius)
-- humidity: humidity(0-100)
-- interval : transmission interval(seconds)
-
-
-```javascript
-// Javascript Example
-const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (Logtta_TH.isAdvDevice(p)) {
-        let data = Logtta_TH.getData(p);
-        console.log(data);
-    }
-};
-await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```

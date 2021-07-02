@@ -7,13 +7,14 @@ import { ObnizBleBeaconStruct, ObnizPartsBleCompare } from '../../../obniz/Obniz
 import Logtta from '../utils/abstracts/Logtta';
 export interface Logtta_CO2Options {
 }
-export interface Logtta_CO2_Data {
-    co2: number;
+export interface Logtta_CO2_Data extends Logtta_CO2_Connected_Data {
     battery: number;
     interval: number;
     address: string;
 }
-export declare type Logtta_CO2_Connected_Data = number;
+export interface Logtta_CO2_Connected_Data {
+    co2: number;
+}
 export default class Logtta_CO2 extends Logtta<Logtta_CO2_Data, Logtta_CO2_Connected_Data> {
     static readonly PartsName = "Logtta_CO2";
     static readonly ServiceUuids: {
@@ -26,6 +27,8 @@ export default class Logtta_CO2 extends Logtta<Logtta_CO2_Data, Logtta_CO2_Conne
     /** @deprecated */
     static isAdvDevice(peripheral: BleRemotePeripheral): boolean;
     protected readonly staticClass: typeof Logtta_CO2;
+    protected callbackFlag: boolean;
+    startNotifyWait(callback: (data: Logtta_CO2_Connected_Data) => void): Promise<void>;
     /** @deprecated */
     getWait(): Promise<number | null>;
     /** @deprecated */

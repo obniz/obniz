@@ -24707,6 +24707,9 @@ class Logtta_CO2 extends Logtta_1.default {
     constructor() {
         super(...arguments);
         this.staticClass = Logtta_CO2;
+        // TODO: delete
+        // In order to maintain compatibility, when callback is placed from arguments, the behavior of the document street
+        this.callbackFlag = false;
     }
     /** @deprecated */
     static isDevice(peripheral) {
@@ -24716,10 +24719,33 @@ class Logtta_CO2 extends Logtta_1.default {
     static isAdvDevice(peripheral) {
         return this.getDeviceMode(peripheral) === 'Beacon';
     }
+    async startNotifyWait(callback) {
+        // TODO: delete try-catch
+        try {
+            this.checkConnected();
+        }
+        catch (e) {
+            console.error(e);
+            return;
+        }
+        // TODO: delete if
+        if (callback) {
+            this.callbackFlag = true;
+            this.onNotify = callback;
+        }
+        return await this.subscribeWait(this.serviceUuid, this.getCharUuid(0x21), (data) => {
+            if (this.onNotify) {
+                if (this.callbackFlag)
+                    this.onNotify(this.parseData(data));
+                else
+                    this.onNotify(this.parseData(data).co2);
+            }
+        });
+    }
     /** @deprecated */
     async getWait() {
         try {
-            return await this.getDataWait();
+            return (await this.getDataWait()).co2;
         }
         catch (_a) {
             return null;
@@ -24730,7 +24756,9 @@ class Logtta_CO2 extends Logtta_1.default {
         return this.setBeaconModeWait(enable);
     }
     parseData(data) {
-        return ObnizPartsBleAbstract_1.uintBE(data);
+        return {
+            co2: ObnizPartsBleAbstract_1.uintBE(data),
+        };
     }
 }
 exports.default = Logtta_CO2;

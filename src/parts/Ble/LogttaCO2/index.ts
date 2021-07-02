@@ -13,14 +13,15 @@ import Logtta from '../utils/abstracts/Logtta';
 
 export interface Logtta_CO2Options {}
 
-export interface Logtta_CO2_Data {
-  co2: number;
+export interface Logtta_CO2_Data extends Logtta_CO2_Connected_Data {
   battery: number;
   interval: number;
   address: string; // TODO: delete
 }
 
-export type Logtta_CO2_Connected_Data = number;
+export interface Logtta_CO2_Connected_Data {
+  co2: number;
+}
 
 export default class Logtta_CO2 extends Logtta<
   Logtta_CO2_Data,
@@ -85,10 +86,45 @@ export default class Logtta_CO2 extends Logtta<
 
   protected readonly staticClass = Logtta_CO2;
 
+  // TODO: delete
+  // In order to maintain compatibility, when callback is placed from arguments, the behavior of the document street
+  protected callbackFlag = false;
+
+  public async startNotifyWait(
+    callback: (data: Logtta_CO2_Connected_Data) => void
+  ): Promise<void> {
+    // TODO: delete try-catch
+    try {
+      this.checkConnected();
+    } catch (e) {
+      console.error(e);
+      return;
+    }
+
+    // TODO: delete if
+    if (callback) {
+      this.callbackFlag = true;
+      this.onNotify = callback;
+    }
+    return await this.subscribeWait(
+      this.serviceUuid,
+      this.getCharUuid(0x21),
+      (data: number[]) => {
+        if (this.onNotify) {
+          if (this.callbackFlag) this.onNotify(this.parseData(data));
+          else
+            this.onNotify(
+              (this.parseData(data).co2 as unknown) as Logtta_CO2_Connected_Data
+            );
+        }
+      }
+    );
+  }
+
   /** @deprecated */
   public async getWait(): Promise<number | null> {
     try {
-      return await this.getDataWait();
+      return (await this.getDataWait()).co2;
     } catch {
       return null;
     }
@@ -100,6 +136,8 @@ export default class Logtta_CO2 extends Logtta<
   }
 
   protected parseData(data: number[]): Logtta_CO2_Connected_Data {
-    return uintBE(data);
+    return {
+      co2: uintBE(data),
+    };
   }
 }

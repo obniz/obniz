@@ -18,7 +18,7 @@ export interface Logtta_THOptions {}
 export interface Logtta_TH_Data extends Logtta_TH_Connected_Data {
   battery: number;
   interval: number;
-  address: string;
+  address: string; // TODO: delete
 }
 
 export interface Logtta_TH_Connected_Data {
