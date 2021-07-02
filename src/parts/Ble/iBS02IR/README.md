@@ -1,54 +1,33 @@
 # iBS02IR
 
-iBS02IR by INGICS. Using infrared, It detect obstacles.
-
-Support device
-
-- iBS02IR
+Obstacle detection sensor by INGICS
 
 ![](image.jpg)
 
+## Available modes
 
-## getPartsClass(name)
+- Beacon mode
+
+## Beacon data (getData())
+
+- battery: Battery voltage
+- event: True when the sensor reacts
+
+## Use case
 
 ```javascript
-// Javascript Example
-const IBS02 = Obniz.getPartsClass('iBS02IR');
-```
-
-## isDevice(BleRemotePeripheral)
-
-Returns true if a device was found.
-
-```javascript
-// Javascript Example
-const IBS02 = Obniz.getPartsClass('iBS02IR');
+// Javascript
+const iBS02IR = Obniz.getPartsClass('iBS02IR');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (IBS02.isDevice(p)) {
-        let data = IBS02.getData(p);
-        console.log(data);
-    }
-};
-await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
-```
-
-## getData(BleRemotePeripheral)
-
-Returns device information if found. Returns Null if not found.
-
-- battery : Battery voltage
-- event : True when sensor read
-
-```javascript
-// Javascript Example
-const IBS02 = Obniz.getPartsClass('iBS02IR');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (IBS02.isDevice(p)) {
-        let data = IBS02.getData(p);
-        console.log(data);
-    }
+obniz.ble.scan.onfind = (peripheral) => {
+  // Get operation mode, it becomes null when not iBS02IR
+  const mode = iBS02IR.getDeviceMode(peripheral);
+  if (mode) {
+    // Generate an instance
+    const device = new iBS02IR(peripheral, mode);
+    // Get data and output to the console
+    console.log(device.getData());
+  }
 };
 await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```

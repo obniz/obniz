@@ -1,54 +1,33 @@
 # iBS04
-INGICS社製のBLEを利用しビーコンを発信するデバイスです。
 
-サポートデバイス
-
-- iBS04
+INGICS社製のビーコン
 
 ![](image.jpg)
 
+## Available modes
 
-## getPartsClass(name)
+- Beacon mode
+
+## Beacon data (getData())
+
+- battery: Battery voltage
+- button: True when you press the button
+
+## Use case
 
 ```javascript
-// Javascript Example
-const IBS04 = Obniz.getPartsClass('iBS04');
-```
-
-## isDevice(BleRemotePeripheral)
-
-デバイスを発見した場合、trueを返します。
-
-```javascript
-// Javascript Example
-const IBS04 = Obniz.getPartsClass('iBS04');
+// Javascript
+const iBS04 = Obniz.getPartsClass('iBS04');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (IBS04.isDevice(p)) {
-        let data = IBS04.getData(p);
-        console.log(data);
-    }
+obniz.ble.scan.onfind = (peripheral) => {
+  // Get operation mode, it becomes null when not iBS04
+  const mode = iBS04.getDeviceMode(peripheral);
+  if (mode) {
+    // Generate an instance
+    const device = new iBS04(peripheral, mode);
+    // Get data and output to the console
+    console.log(device.getData());
+  }
 };
 await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
-
-## getData(BleRemotePeripheral)
-
-発見した場合にデバイスの情報を返します。発見できなかった場合にはNullを返します。
-
-- battery : 電池電圧
-- button : ボタンを押すとtrue
-
-```javascript
-// Javascript Example
-const IBS04 = Obniz.getPartsClass('iBS04');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (IBS04.isDevice(p)) {
-        let data = IBS04.getData(p);
-        console.log(data);
-    }
-};
-await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
-```
-

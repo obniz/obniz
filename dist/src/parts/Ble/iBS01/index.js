@@ -7,7 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = require("../utils/abstracts/iBS");
 /**
  * @deprecated
- * Recommend use iBS01G, iBS01H, iBS01T
+ * Recommend use iBS01G, iBS01H
  * Use only if you are using an old iBS01 series sensor
  */
 class iBS01 extends iBS_1.BaseiBS01 {
