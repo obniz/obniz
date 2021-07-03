@@ -1,32 +1,27 @@
 /**
  * @packageDocumentation
- * @module Parts.EXVital
+ * @module Parts.EXTxx
  */
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
 import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
-export interface EXVital_Options {
+export interface EXTxx_Options {
 }
-export interface EXVital_Data {
+export declare type EXTxx_Type = 'wBeacon' | 'BatteryLevelNotification';
+export interface EXTxx_Data {
+    uuid: string;
     major: number;
     minor: number;
     power: number;
-    diastolic_pressure: number;
-    systolic_pressure: number;
-    arm_temp: number;
-    body_temp: number;
-    heart_rate: number;
     battery: number;
-    steps: number;
 }
-export default class EXVital extends ObnizPartsBleInterface {
+export default class EXTxx extends ObnizPartsBleInterface {
     static info(): ObnizPartsInfo;
-    static readonly partsName = "EXVital";
-    static readonly availableBleMode = "Beacon";
-    protected advData: number[] | undefined;
+    static readonly PartsName = "EXTxx";
+    static readonly AvailableBleMode = "Beacon";
     protected static DefaultAdvData: number[];
-    getData(): EXVital_Data;
-    static getData(peripheral: BleRemotePeripheral): EXVital_Data | null;
+    getData(): EXTxx_Data;
+    static getData(peripheral: BleRemotePeripheral): EXTxx_Data | null;
     constructor(peripheral: BleRemotePeripheral);
     static isDevice(peripheral: BleRemotePeripheral): boolean;
 }

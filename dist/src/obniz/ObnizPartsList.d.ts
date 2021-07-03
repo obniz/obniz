@@ -109,6 +109,7 @@ import LED, { LEDOptions } from '../parts/Light/LED';
 import WS2811, { WS2811Options } from '../parts/Light/WS2811';
 import WS2812, { WS2812Options } from '../parts/Light/WS2812';
 import WS2812B, { WS2812BOptions } from '../parts/Light/WS2812B';
+import MCP23S08, { MCP23S08Options } from '../parts/Logic/MCP23S08';
 import SNx4HC595, { SNx4HC595Options } from '../parts/Logic/SNx4HC595';
 import M5StickC_ADC, { M5StickC_ADCOptions } from '../parts/M5Stack/M5StickC_ADC';
 import M5StickC_DAC, { M5StickC_DACOptions } from '../parts/M5Stack/M5StickC_DAC';
@@ -310,6 +311,10 @@ export interface PartsList {
     MH_Z19B: {
         class: MH_Z19B;
         options: MH_Z19BOptions;
+    };
+    MCP23S08: {
+        class: MCP23S08;
+        options: MCP23S08Options;
     };
     SNx4HC595: {
         class: SNx4HC595;

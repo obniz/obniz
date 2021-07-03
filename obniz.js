@@ -23021,6 +23021,7 @@ var map = {
 	"./Biological/PULSE08-M5STICKC-S/index.js": "./dist/src/parts/Biological/PULSE08-M5STICKC-S/index.js",
 	"./Ble/2jcie/index.js": "./dist/src/parts/Ble/2jcie/index.js",
 	"./Ble/ENERTALK/index.js": "./dist/src/parts/Ble/ENERTALK/index.js",
+	"./Ble/EXTxx/index.js": "./dist/src/parts/Ble/EXTxx/index.js",
 	"./Ble/EXVital/index.js": "./dist/src/parts/Ble/EXVital/index.js",
 	"./Ble/HEM_6233T/index.js": "./dist/src/parts/Ble/HEM_6233T/index.js",
 	"./Ble/HEM_9200T/index.js": "./dist/src/parts/Ble/HEM_9200T/index.js",
@@ -23141,6 +23142,7 @@ var map = {
 	"./Light/WS2811/index.js": "./dist/src/parts/Light/WS2811/index.js",
 	"./Light/WS2812/index.js": "./dist/src/parts/Light/WS2812/index.js",
 	"./Light/WS2812B/index.js": "./dist/src/parts/Light/WS2812B/index.js",
+	"./Logic/MCP23S08/index.js": "./dist/src/parts/Logic/MCP23S08/index.js",
 	"./Logic/SNx4HC595/index.js": "./dist/src/parts/Logic/SNx4HC595/index.js",
 	"./M5Stack/M5StickC_ADC/index.js": "./dist/src/parts/M5Stack/M5StickC_ADC/index.js",
 	"./M5Stack/M5StickC_DAC/index.js": "./dist/src/parts/M5Stack/M5StickC_DAC/index.js",
@@ -23812,6 +23814,100 @@ exports.default = ENERTALK_TOUCH;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/EXTxx/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.EXTxx
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+class EXTxx extends ObnizPartsBleInterface_1.default {
+    constructor(peripheral) {
+        super();
+        this._peripheral = peripheral;
+    }
+    static info() {
+        return {
+            name: 'EXTxx',
+        };
+    }
+    getData() {
+        var _a;
+        const advData = (_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.adv_data;
+        if (!advData)
+            throw new Error('advData is null');
+        return {
+            uuid: advData
+                .slice(6, 22)
+                .map((d, i) => ([2, 3, 4, 5].includes(i / 2) ? '-' : '') +
+                ('00' + d.toString(16)).slice(-2))
+                .join(''),
+            major: unsigned16(advData.slice(22, 24)),
+            minor: unsigned16(advData.slice(24, 26)),
+            power: advData[26],
+            battery: advData[27],
+        };
+    }
+    static getData(peripheral) {
+        if (!EXTxx.isDevice(peripheral)) {
+            return null;
+        }
+        const dev = new EXTxx(peripheral);
+        return dev.getData();
+    }
+    static isDevice(peripheral) {
+        return (this.DefaultAdvData.filter((d, i) => d !== -1 && d !== peripheral.adv_data[i]).length === 0 &&
+            this.DefaultAdvData.length === peripheral.adv_data.length);
+    }
+}
+exports.default = EXTxx;
+EXTxx.PartsName = 'EXTxx';
+EXTxx.AvailableBleMode = 'Beacon';
+EXTxx.DefaultAdvData = [
+    0x1c,
+    0xff,
+    0xf5,
+    0x03,
+    0x02,
+    0x15,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    0x00,
+];
+const unsigned16 = (value) => {
+    return (value[0] << 8) | value[1];
+};
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/EXVital/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -23832,6 +23928,11 @@ class EXVital extends ObnizPartsBleInterface_1.default {
         super();
         this.advData = (_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.adv_data;
         this._peripheral = peripheral;
+    }
+    static info() {
+        return {
+            name: 'EXVital',
+        };
     }
     getData() {
         if (!this.advData)
@@ -23859,9 +23960,7 @@ class EXVital extends ObnizPartsBleInterface_1.default {
         return dev.getData();
     }
     static isDevice(peripheral) {
-        return (peripheral.adv_data
-            .map((d, i) => d === -1 || d === peripheral.adv_data[i])
-            .filter((r) => r === true).length === this.DefaultAdvData.length &&
+        return (this.DefaultAdvData.filter((d, i) => d !== -1 && d !== peripheral.adv_data[i]).length === 0 &&
             this.DefaultAdvData.length === peripheral.adv_data.length);
     }
 }
@@ -45728,6 +45827,231 @@ class WS2812B {
     }
 }
 exports.default = WS2812B;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Logic/MCP23S08/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.MCP23S08
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class MCP23S08_IO {
+    constructor(chip, id) {
+        this.chip = chip;
+        this.id = id;
+        this.value = false;
+        this.direction = true; // true is input. false is output
+    }
+    output(value) {
+        this.chip.output(this.id, value);
+    }
+    async outputWait(value) {
+        await this.chip.outputWait(this.id, value);
+    }
+    async inputWait() {
+        return await this.chip.inputWait(this.id);
+    }
+}
+class MCP23S08 {
+    constructor() {
+        this.ios = [];
+        this.keys = ['vcc', 'gnd', 'frequency', 'mosi', 'miso', 'clk', 'spi', 'cs'];
+        this.requiredKeys = ['cs'];
+    }
+    static info() {
+        return {
+            name: 'MCP23S08',
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+        this.params.mode = this.params.mode || 'master';
+        this.params.frequency = this.params.frequency || 500000;
+        this.spi = this.obniz.getSpiWithConfig(this.params);
+        this.csPin = obniz.getIO(this.params.cs);
+        this.readSlaveAddress = 0b01000001;
+        this.writeSlaveAddress = 0b01000000;
+        this.ios = [];
+        for (let i = 0; i < 8; i++) {
+            const io = new MCP23S08_IO(this, i);
+            this.ios.push(io);
+            this['io' + i] = io;
+        }
+    }
+    /**
+     * Initialize all ios. set direction=input.
+     */
+    async initWait() {
+        await this.writeWait(MCP23S08.MCP23S08_REGISTER.IODIR, 0xff); // input
+        for (let i = MCP23S08.MCP23S08_REGISTER.IPOL; i <= MCP23S08.MCP23S08_REGISTER.OLAT; i++) {
+            await this.writeWait(i, 0x00);
+        }
+        await this.flushWait('direction');
+        await this.flushWait('gpio');
+    }
+    /**
+     * Read byte from address
+     *
+     * @param address internal register address
+     * @returns readed value of address
+     */
+    async readWait(address) {
+        this.csPin.output(false);
+        await this.spi.writeWait([this.readSlaveAddress, address]);
+        const ret = await this.spi.writeWait([0x00]);
+        this.csPin.output(true);
+        return ret[0];
+    }
+    /**
+     * Write byte to address. It will wait until success response receive
+     *
+     * @param address internal register address
+     * @param data
+     */
+    async writeWait(address, data) {
+        this.csPin.output(false);
+        await this.spi.writeWait([this.writeSlaveAddress, address, data]);
+        this.csPin.output(true);
+    }
+    /**
+     * Write byte to address without wait.
+     *
+     * @param address internal register address
+     * @param data
+     */
+    write(address, data) {
+        this.csPin.output(false);
+        this.spi.write([this.writeSlaveAddress, address, data]);
+        this.csPin.output(true);
+    }
+    /**
+     * Bulk write to addresses
+     *
+     * @param address start address
+     * @param data
+     */
+    async writeBulkWait(address, data) {
+        this.csPin.output(false);
+        await this.spi.writeWait([this.writeSlaveAddress, address, ...data]);
+        this.csPin.output(true);
+    }
+    /**
+     * set output value for io. It will apply immidiately.
+     * This function never change direction. set direction output before.
+     * If you want to hold some changes and flush once.
+     * ```
+     * use following examle steps
+     * this.io0.value = true;
+     * this.io1.value = true;
+     * this.flush("gpio");
+     * ```
+     *
+     * @param id io address. 0-7
+     * @param value boolean. true or false
+     */
+    output(id, value) {
+        value = value === true;
+        this.ios[id].value = value;
+        this.flush();
+    }
+    /**
+     * async version of output();
+     *
+     * @param id
+     * @param value
+     */
+    async outputWait(id, value) {
+        value = value === true;
+        this.ios[id].value = value;
+        await this.flushWait();
+    }
+    /**
+     * Read current all GPIO value.
+     */
+    async readAllGPIOWait() {
+        const ret = await this.readWait(MCP23S08.MCP23S08_REGISTER.GPIO);
+        for (let i = 0; i < 8; i++) {
+            if (this.ios[i].direction === MCP23S08.MCP23S08_IO_DIRECTION.INPUT) {
+                this.ios[i].value = (ret & (1 << i)) !== 0;
+            }
+        }
+    }
+    /**
+     * Read current all GPIO value and return single io value.
+     *
+     * @param id io 0-7
+     * @returns GPIO value
+     */
+    async inputWait(id) {
+        await this.readAllGPIOWait();
+        return this.ios[id].value;
+    }
+    async flushWait(type = 'gpio') {
+        const keys = {
+            gpio: { key: 'value', address: MCP23S08.MCP23S08_REGISTER.GPIO },
+            direction: {
+                key: 'direction',
+                address: MCP23S08.MCP23S08_REGISTER.IODIR,
+            },
+        };
+        const key = keys[type].key;
+        const address = keys[type].address;
+        let value = 0;
+        for (let i = 0; i < 8; i++) {
+            if (this.ios[i][key]) {
+                value = value | (1 << i);
+            }
+        }
+        await this.writeWait(address, value);
+        // console.log("write",value);
+        // console.log(await this.readWait(MCP23S08.MCP23S08_REGISTER.OLAT), await this.readWait(MCP23S08.MCP23S08_REGISTER.GPIO));
+    }
+    flush(type = 'gpio') {
+        const keys = {
+            gpio: { key: 'value', address: MCP23S08.MCP23S08_REGISTER.GPIO },
+            direction: {
+                key: 'direction',
+                address: MCP23S08.MCP23S08_REGISTER.IODIR,
+            },
+        };
+        const key = keys[type].key;
+        const address = keys[type].address;
+        let value = 0;
+        for (let i = 0; i < 8; i++) {
+            if (this.ios[i][key]) {
+                value = value | (1 << i);
+            }
+        }
+        this.write(address, value);
+        // console.log("write",value);
+        // console.log(await this.readWait(MCP23S08.MCP23S08_REGISTER.OLAT), await this.readWait(MCP23S08.MCP23S08_REGISTER.GPIO));
+    }
+}
+exports.default = MCP23S08;
+MCP23S08.MCP23S08_IO_DIRECTION = {
+    OUTPUT: false,
+    INPUT: true,
+};
+MCP23S08.MCP23S08_REGISTER = {
+    IODIR: 0x00,
+    IPOL: 0x01,
+    GPINTEN: 0x02,
+    DEFVAL: 0x03,
+    INTCON: 0x04,
+    IOCON: 0x05,
+    GPPU: 0x06,
+    INTF: 0x07,
+    INTCAP: 0x08,
+    GPIO: 0x09,
+    OLAT: 0x0a,
+};
 
 
 /***/ }),
