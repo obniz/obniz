@@ -176,9 +176,8 @@ class Gatt extends eventemitter3_1.default {
             this._execNoRespCommandWait(this.mtuResponse(mtu));
         })
             .catch((e) => {
-            // TODO:
-            // This must passed to Obniz class.
-            console.error(e);
+            // ignore timeout error
+            // console.error(e);
         });
         const data = await this._execCommandWait(this.mtuRequest(mtu), ATT.OP_MTU_RESP);
         const opcode = data[0];

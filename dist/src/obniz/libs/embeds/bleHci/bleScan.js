@@ -26,6 +26,9 @@ class BleScan {
         this.scanSettings = {};
         this.scanedPeripherals = [];
         this._timeoutTimer = undefined;
+        this.obnizBle.Obniz.on('_close', () => {
+            this.clearTimeoutTimer();
+        });
     }
     /**
      * @ignore
