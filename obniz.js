@@ -8156,6 +8156,8 @@ class BleScan {
         settings.duplicate = !!settings.duplicate;
         settings.filterOnDevice = !!settings.filterOnDevice;
         settings.activeScan = settings.activeScan !== false;
+        settings.waitBothAdvertisementAndScanResponse =
+            settings.waitBothAdvertisementAndScanResponse !== false;
         this.scanSettings = settings;
         target = target || {};
         this.scanTarget.binary = target.binary;
@@ -8324,14 +8326,17 @@ class BleScan {
                     (!peripheral.scan_resp || peripheral.scan_resp.length === 0);
                 // wait for adv_data + scan resp
                 // 10 seconds timeout
-                if (alreadyGotCompleteAdveData || nonConnectable || maybeAdvOnly) {
+                if (alreadyGotCompleteAdveData ||
+                    nonConnectable ||
+                    maybeAdvOnly ||
+                    this.scanSettings.waitBothAdvertisementAndScanResponse === false) {
                     this._removeDelayNotifyTimer(peripheral.address);
                     this._notifyOnFind(peripheral);
                 }
                 else {
                     const timer = setTimeout(() => {
                         this._notifyOnFind(peripheral);
-                    }, 10000);
+                    }, 10 * 1000);
                     this._delayNotifyTimers.push({ timer, peripheral });
                 }
                 break;
