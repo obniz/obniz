@@ -181,6 +181,9 @@ export default class BleScan {
 
     this.scanedPeripherals = [];
     this._timeoutTimer = undefined;
+    this.obnizBle.Obniz.on('_close', () => {
+      this.clearTimeoutTimer();
+    });
   }
 
   /**

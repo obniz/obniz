@@ -4731,7 +4731,7 @@ class ComponentAbstract extends eventemitter3_1.default {
                 else {
                     this.off(schemaPath, onDataReceived);
                 }
-                if (typeof timeoutHandler === 'number') {
+                if (timeoutHandler !== undefined) {
                     clearTimeout(timeoutHandler);
                     timeoutHandler = undefined;
                 }
