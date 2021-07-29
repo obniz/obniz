@@ -269,6 +269,7 @@ class BleScan {
                 if (alreadyGotCompleteAdveData ||
                     nonConnectable ||
                     maybeAdvOnly ||
+                    this.scanSettings.activeScan === false || // only receive adv
                     this.scanSettings.waitBothAdvertisementAndScanResponse === false) {
                     this._removeDelayNotifyTimer(peripheral.address);
                     this._notifyOnFind(peripheral);
