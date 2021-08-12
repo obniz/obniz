@@ -1,5 +1,5 @@
 # 2JCIE
-enviroment sensor made by OMRON. Battery powered. Temperature, Humidity, Brightness, UV, Air Pressure, Sound Level, Acceleration, VOC.
+environment sensor made by OMRON. Battery powered. Temperature, Humidity, Brightness, UV, Air Pressure, Sound Level, Acceleration, VOC.
 
 The 2JCIE-BL01 (bag shape) and 2JCIE-BU01 (USB connection) are available in two different shapes (and each has its mode). (Also, each of them has its mode.) The data that can be acquired and the corresponding functions are different for each of them, so please check before using them.
 
@@ -263,7 +263,7 @@ The return format is below.
 //example response
 {
   sequence_number: 0,
-  disconfort_index: 68.78,
+  discomfort_index: 68.78,
   heatstroke_risk_factor: 18.29, //degC
   vibration_information: "NONE",
   si_value: 0, //kine

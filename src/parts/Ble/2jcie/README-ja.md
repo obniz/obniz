@@ -34,7 +34,7 @@ advertisementからデータを取得(そのようにモード設定されたデ
 - light: 照度(lx)
 - uv_index: 紫外線強度
 - barometric_pressure: 気圧(hPa)
-- soud_noise: 騒音(dB)
+- sound_noise: 騒音(dB)
 - acceleration_x: 加速度
 - acceleration_y: 加速度
 - acceleration_z: 加速度
@@ -46,7 +46,7 @@ advertisementからデータを取得(そのようにモード設定されたデ
 - relative_humidity: 湿度(%RH)
 - light: 照度(lx)
 - barometric_pressure: 気圧(hPa)
-- soud_noise: 騒音(dB)
+- sound_noise: 騒音(dB)
 - etvoc: eTVOC(ppb)
 - eco2: 等価CO2濃度(ppm)
 
@@ -66,14 +66,14 @@ await obniz.ble.scan.startWait();
 ```
 
 ```javascript
-// Example of "Rbt" pakcet
+// Example of "Rbt" packet
 {
     barometric_pressure: 1015.755
     eco2: 719
     etvoc: 48
     light: 241
     relative_humidity: 30.46
-    soud_noise: 77.52
+    sound_noise: 77.52
     temperature: 24.16
 }
 ```
@@ -183,7 +183,7 @@ if(results){
   light: 75, //lx
   uv_index: 0.02, 
   barometric_pressure: 1010.4000000000001, // hPa
-  soud_noise: 39.42, //dB
+  sound_noise: 39.42, //dB
   discomfort_index: 68.75,  
   heatstroke_risk_factor: 19,  //degC
   battery_voltage: 30.12  // V
@@ -225,7 +225,7 @@ if(results){
   relative_humidity: 46.46, //%RH
   light: 75, //lx
   barometric_pressure: 1010.4000000000001, // hPa
-  soud_noise: 39.42, //dB
+  sound_noise: 39.42, //dB
   etvoc: 1463,	//ppb
   eco2: 2353	//ppm
 }
@@ -263,7 +263,7 @@ if(results){
 //example response
 {
   sequence_number: 0,
-  disconfort_index: 68.78,
+  discomfort_index: 68.78,
   heatstroke_risk_factor: 18.29, //degC
   vibration_information: "NONE",
   si_value: 0, //kine
