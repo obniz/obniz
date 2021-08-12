@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module Parts.EXVital
  */
+/* eslint rulesdir/non-ascii: 0 */
 
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
@@ -24,6 +25,7 @@ export interface EXVital_Data {
   steps: number;
 }
 
+/** EXVital management class EXVitalを管理するクラス */
 export default class EXVital extends ObnizPartsBleInterface {
   public static info(): ObnizPartsInfo {
     return {
@@ -52,7 +54,7 @@ export default class EXVital extends ObnizPartsBleInterface {
     -1, // Major number
     -1, // Minor number
     -1, // Minor number
-    -1, // Mesuared power
+    -1, // Measured power
     -1, // Diastolic pressure
     -1, // Systolic pressure
     -1, // Arm temp
@@ -68,6 +70,25 @@ export default class EXVital extends ObnizPartsBleInterface {
     -1, // Steps
   ];
 
+  /**
+   * (with instantiation) Get a data from the beacon
+   *
+   * (インスタンス化する場合) ビーコンからデータを取得
+   *
+   * @returns received data from the beacon ビーコンから受け取ったデータ
+   *
+   * `contents 中身`
+   * - major: iBeacon major
+   * - minor: iBeacon minor
+   * - power: iBeacon power
+   * - diastolic_pressure: diastolic pressure 最低血圧
+   * - systolic_pressure: systolic pressure 最高血圧
+   * - arm_temp: arm temp 腕温度
+   * - body_temp: body temp 体温
+   * - heart_rate: heart rate 心拍数
+   * - battery: battery voltage バッテリー電圧
+   * - steps: number of steps 歩数
+   */
   public getData(): EXVital_Data {
     if (!this.advData) throw new Error('advData is null');
     return {
@@ -86,6 +107,27 @@ export default class EXVital extends ObnizPartsBleInterface {
     };
   }
 
+  /**
+   * (without instantiation) Get a data from the beacon
+   *
+   * (インスタンス化しない場合) ビーコンからデータを取得
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns received data from the beacon ビーコンから受け取ったデータ
+   *
+   * `contents 中身`
+   * - major: iBeacon major
+   * - minor: iBeacon minor
+   * - power: iBeacon power
+   * - diastolic_pressure: diastolic pressure 最低血圧
+   * - systolic_pressure: systolic pressure 最高血圧
+   * - arm_temp: arm temp 腕温度
+   * - body_temp: body temp 体温
+   * - heart_rate: heart rate 心拍数
+   * - battery: battery voltage バッテリー電圧
+   * - steps: number of steps 歩数
+   */
   public static getData(peripheral: BleRemotePeripheral): EXVital_Data | null {
     if (!EXVital.isDevice(peripheral)) {
       return null;
@@ -99,6 +141,17 @@ export default class EXVital extends ObnizPartsBleInterface {
     this._peripheral = peripheral;
   }
 
+  /**
+   * verify that the received peripheral is from the EXVital
+   *
+   * 受け取ったperipheralがEXVitalのものかどうか確認する
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns Whether it is the EXVital
+   *
+   * EXVitalかどうか
+   */
   public static isDevice(peripheral: BleRemotePeripheral): boolean {
     return (
       this.DefaultAdvData.filter(
