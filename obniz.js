@@ -23156,17 +23156,17 @@ class OMRON_2JCIE {
         return val;
     }
     /**
-     * @deprecated Please use {@linkcode getLatestDataWait}
+     * @deprecated Please use {@linkplain getLatestDataWait}
      *
-     * {@linkcode getLatestDataWait} の使用を推奨
+     * {@linkplain getLatestDataWait} の使用を推奨
      */
     async getLatestDataBAGWait() {
         return this.getLatestDataWait();
     }
     /**
-     * @deprecated Please use {@linkcode getLatestDataWait}
+     * @deprecated Please use {@linkplain getLatestDataWait}
      *
-     * {@linkcode getLatestDataWait} の使用を推奨
+     * {@linkplain getLatestDataWait} の使用を推奨
      */
     getLatestData() {
         return this.getLatestDataWait();
@@ -23213,9 +23213,9 @@ class OMRON_2JCIE {
         return json;
     }
     /**
-     * @deprecated Please use {@linkcode getLatestSensorDataUSBWait}
+     * @deprecated Please use {@linkplain getLatestSensorDataUSBWait}
      *
-     * {@linkcode getLatestSensorDataUSBWait} の使用を推奨
+     * {@linkplain getLatestSensorDataUSBWait} の使用を推奨
      */
     getLatestSensorDataUSB() {
         return this.getLatestSensorDataUSBWait();
@@ -23258,9 +23258,9 @@ class OMRON_2JCIE {
         return json;
     }
     /**
-     * @deprecated Please use {@linkcode getLatestCalculationDataUSBWait}
+     * @deprecated Please use {@linkplain getLatestCalculationDataUSBWait}
      *
-     * {@linkcode getLatestCalculationDataUSBWait} の使用を推奨
+     * {@linkplain getLatestCalculationDataUSBWait} の使用を推奨
      */
     getLatestCalculationDataUSB() {
         return this.getLatestCalculationDataUSBWait();

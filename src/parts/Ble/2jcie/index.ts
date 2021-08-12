@@ -268,7 +268,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     return this._peripheral;
   }
 
-  public omron_uuid(uuid: string, type: string): string | any {
+  private omron_uuid(uuid: string, type: string): string | any {
     if (type === 'BAG') {
       return `0C4C${uuid}-7700-46F4-AA96D5E974E32A54`;
     } else if (type === 'USB') {
@@ -319,7 +319,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     }
   }
 
-  public signedNumberFromBinary(data: number[]) {
+  private signedNumberFromBinary(data: number[]) {
     // little endian
     let val: number = data[data.length - 1] & 0x7f;
     for (let i = data.length - 2; i >= 0; i--) {
@@ -331,7 +331,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     return val;
   }
 
-  public unsignedNumberFromBinary(data: number[]) {
+  private unsignedNumberFromBinary(data: number[]) {
     // little endian
     let val: number = data[data.length - 1];
     for (let i = data.length - 2; i >= 0; i--) {
@@ -341,18 +341,18 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
   }
 
   /**
-   * @deprecated Please use {@linkcode getLatestDataWait}
+   * @deprecated Please use {@linkplain getLatestDataWait}
    *
-   * {@linkcode getLatestDataWait} の使用を推奨
+   * {@linkplain getLatestDataWait} の使用を推奨
    */
   public async getLatestDataBAGWait(): Promise<OMRON_2JCIE_Data> {
     return this.getLatestDataWait();
   }
 
   /**
-   * @deprecated Please use {@linkcode getLatestDataWait}
+   * @deprecated Please use {@linkplain getLatestDataWait}
    *
-   * {@linkcode getLatestDataWait} の使用を推奨
+   * {@linkplain getLatestDataWait} の使用を推奨
    */
   public getLatestData(): Promise<OMRON_2JCIE_Data> {
     return this.getLatestDataWait();
@@ -407,9 +407,9 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
   }
 
   /**
-   * @deprecated Please use {@linkcode getLatestSensorDataUSBWait}
+   * @deprecated Please use {@linkplain getLatestSensorDataUSBWait}
    *
-   * {@linkcode getLatestSensorDataUSBWait} の使用を推奨
+   * {@linkplain getLatestSensorDataUSBWait} の使用を推奨
    */
   public getLatestSensorDataUSB(): Promise<OMRON_2JCIE_USBSenData> {
     return this.getLatestSensorDataUSBWait();
@@ -459,9 +459,9 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
   }
 
   /**
-   * @deprecated Please use {@linkcode getLatestCalculationDataUSBWait}
+   * @deprecated Please use {@linkplain getLatestCalculationDataUSBWait}
    *
-   * {@linkcode getLatestCalculationDataUSBWait} の使用を推奨
+   * {@linkplain getLatestCalculationDataUSBWait} の使用を推奨
    */
   public getLatestCalculationDataUSB(): Promise<OMRON_2JCIE_USBCalData> {
     return this.getLatestCalculationDataUSBWait();

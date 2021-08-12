@@ -126,7 +126,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
      * 見つかった場合: BleRemotePeripheralのインスタンス / 見つからなかった場合: null
      */
     findWait(): Promise<any>;
-    omron_uuid(uuid: string, type: string): string | any;
+    private omron_uuid;
     /**
      * (Search for the device and) connect the sensor
      *
@@ -147,18 +147,18 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
      * センサから切断
      */
     disconnectWait(): Promise<void>;
-    signedNumberFromBinary(data: number[]): number;
-    unsignedNumberFromBinary(data: number[]): number;
+    private signedNumberFromBinary;
+    private unsignedNumberFromBinary;
     /**
-     * @deprecated Please use {@linkcode getLatestDataWait}
+     * @deprecated Please use {@linkplain getLatestDataWait}
      *
-     * {@linkcode getLatestDataWait} の使用を推奨
+     * {@linkplain getLatestDataWait} の使用を推奨
      */
     getLatestDataBAGWait(): Promise<OMRON_2JCIE_Data>;
     /**
-     * @deprecated Please use {@linkcode getLatestDataWait}
+     * @deprecated Please use {@linkplain getLatestDataWait}
      *
-     * {@linkcode getLatestDataWait} の使用を推奨
+     * {@linkplain getLatestDataWait} の使用を推奨
      */
     getLatestData(): Promise<OMRON_2JCIE_Data>;
     /**
@@ -186,9 +186,9 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
      */
     getLatestDataWait(): Promise<OMRON_2JCIE_Data>;
     /**
-     * @deprecated Please use {@linkcode getLatestSensorDataUSBWait}
+     * @deprecated Please use {@linkplain getLatestSensorDataUSBWait}
      *
-     * {@linkcode getLatestSensorDataUSBWait} の使用を推奨
+     * {@linkplain getLatestSensorDataUSBWait} の使用を推奨
      */
     getLatestSensorDataUSB(): Promise<OMRON_2JCIE_USBSenData>;
     /**
@@ -214,9 +214,9 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
      */
     getLatestSensorDataUSBWait(): Promise<OMRON_2JCIE_USBSenData>;
     /**
-     * @deprecated Please use {@linkcode getLatestCalculationDataUSBWait}
+     * @deprecated Please use {@linkplain getLatestCalculationDataUSBWait}
      *
-     * {@linkcode getLatestCalculationDataUSBWait} の使用を推奨
+     * {@linkplain getLatestCalculationDataUSBWait} の使用を推奨
      */
     getLatestCalculationDataUSB(): Promise<OMRON_2JCIE_USBCalData>;
     /**
