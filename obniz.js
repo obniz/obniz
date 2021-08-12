@@ -23327,6 +23327,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/services/batteryService.js"));
+/** ENERTALK TOUCH management class ENERTALK TOUCHを管理するクラス */
 class ENERTALK_TOUCH {
     constructor(peripheral) {
         this.keys = [];
@@ -23495,11 +23496,13 @@ exports.default = ENERTALK_TOUCH;
  * @packageDocumentation
  * @module Parts.EXTxx
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+/** EXTxx management class EXTxxを管理するクラス */
 class EXTxx extends ObnizPartsBleInterface_1.default {
     constructor(peripheral) {
         super();
@@ -23510,6 +23513,20 @@ class EXTxx extends ObnizPartsBleInterface_1.default {
             name: 'EXTxx',
         };
     }
+    /**
+     * (with instantiation) Get a data from the beacon
+     *
+     * (インスタンス化する場合) ビーコンからデータを取得
+     *
+     * @returns received data from the beacon ビーコンから受け取ったデータ
+     *
+     * `contents 中身`
+     * - uuid: iBeacon uuid
+     * - major: iBeacon major
+     * - minor: iBeacon minor
+     * - power: iBeacon power
+     * - battery: remaining battery 電池残量
+     */
     getData() {
         var _a;
         const advData = (_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.adv_data;
@@ -23527,6 +23544,22 @@ class EXTxx extends ObnizPartsBleInterface_1.default {
             battery: advData[27],
         };
     }
+    /**
+     * (without instantiation) Get a data from the beacon
+     *
+     * (インスタンス化しない場合) ビーコンからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the beacon ビーコンから受け取ったデータ
+     *
+     * `contents 中身`
+     * - uuid: iBeacon uuid
+     * - major: iBeacon major
+     * - minor: iBeacon minor
+     * - power: iBeacon power
+     * - battery: remaining battery 電池残量
+     */
     static getData(peripheral) {
         if (!EXTxx.isDevice(peripheral)) {
             return null;
@@ -23534,6 +23567,17 @@ class EXTxx extends ObnizPartsBleInterface_1.default {
         const dev = new EXTxx(peripheral);
         return dev.getData();
     }
+    /**
+     * verify that the received peripheral is from the EXTxx
+     *
+     * 受け取ったperipheralがEXTxxのものかどうか確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the EXTxx
+     *
+     * EXTxxかどうか
+     */
     static isDevice(peripheral) {
         return (this.DefaultAdvData.filter((d, i) => d !== -1 && d !== peripheral.adv_data[i]).length === 0 &&
             this.DefaultAdvData.length === peripheral.adv_data.length);

@@ -8,6 +8,7 @@ import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 import BleBatteryService from '../utils/services/batteryService';
 export interface ENERTALK_TOUCHOptions {
 }
+/** ENERTALK TOUCH management class ENERTALK TOUCHを管理するクラス */
 export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
     static info(): ObnizPartsInfo;
     /**

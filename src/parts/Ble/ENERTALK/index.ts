@@ -14,6 +14,7 @@ import BleBatteryService from '../utils/services/batteryService';
 
 export interface ENERTALK_TOUCHOptions {}
 
+/** ENERTALK TOUCH management class ENERTALK TOUCHを管理するクラス */
 export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
   public static info(): ObnizPartsInfo {
     return {
