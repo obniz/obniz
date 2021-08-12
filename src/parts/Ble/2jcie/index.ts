@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module Parts.OMRON_2JCIE
  */
+/* eslint rulesdir/non-ascii: 0 */
 
 import Obniz from '../../../obniz';
 import bleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
@@ -28,7 +29,7 @@ export interface OMRON_2JCIE_Data {
 }
 
 export interface OMRON_2JCIE_USBSenData {
-  seqence_number: number;
+  sequence_number: number;
   temperature: number;
   relative_humidity: number;
   light: number;
@@ -84,13 +85,13 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
 
   /**
    * verify that the received peripheral is from the 2JCIE Environmental Sensor series of OMRON
-   * 
+   *
    * 受け取ったperipheralがOMRON 環境センサ 2JCIEシリーズのものかどうか確認する
-   * 
+   *
    * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
-   * 
+   *
    * @returns Whether it is the 2JCIE Environmental Sensor series of OMRON
-   * 
+   *
    * OMRON 環境センサ 2JCIEシリーズかどうか
    */
   public static isDevice(peripheral: BleRemotePeripheral) {
@@ -103,25 +104,25 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
 
   /**
    * Get a data from advertisement mode of the 2JCIE Environmental Sensor series of OMRON
-   * 
+   *
    * advertisementモードのOMRON 環境センサ 2JCIEシリーズからデータを取得
-   * 
+   *
    * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
-   * 
+   *
    * @returns received data from the sensor センサから受け取ったデータ
-   * 
+   *
    * `2JCIE-BL01(BAG type バッグ形状) localName: IM`
    * - temperature: temperature(degC) 温度(degC)
    * - relative_humidity: humidity(%RH) 湿度(%RH)
    * - light: illuminance(lx) 照度(lx)
-   * - uv_index: ultraviolet ray intensity　紫外線強度
+   * - uv_index: ultraviolet ray intensity 紫外線強度
    * - barometric_pressure: barometric pressure(hPa) 気圧(hPa)
    * - sound_noise: noise(dB) 騒音(dB)
    * - acceleration_x: x acceleration 加速度x
    * - acceleration_y: y acceleration 加速度y
    * - acceleration_z: z acceleration 加速度z
    * - battery: battery voltage(V) バッテリー電圧(V)
-   * 
+   *
    * `2JCIE-BU01(USB connection USB接続) localName: Rbt`
    * - temperature: temperature(degC) 温度(degC)
    * - relative_humidity: humidity(%RH) 湿度(%RH)
@@ -249,10 +250,11 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
 
   /**
    * Search for the 2JCIE Environmental Sensor series of OMRON
-   * 
+   *
    * OMRON 環境センサ 2JCIEシリーズを検索
+   *
    * @returns if found: Instance of BleRemotePeripheral / if not found: null
-   * 
+   *
    * 見つかった場合: BleRemotePeripheralのインスタンス / 見つからなかった場合: null
    */
   public async findWait(): Promise<any> {
@@ -278,13 +280,13 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
 
   /**
    * (Search for the device and) connect the sensor
-   * 
+   *
    * Throw an error if the device is not found
-   * 
+   *
    * (デバイスを検索し、)センサへ接続
-   * 
+   *
    * デバイスが見つからなかった場合はエラーをthrow
-   * 
+   *
    * `supported types&modes 対応形状&モード`
    * - 2JCIE-BL01(BAG type バッグ形状) localName: Env
    * - 2JCIE-BU01(USB connection USB接続) localName: Rbt
@@ -308,7 +310,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
 
   /**
    * Disconnect from the sensor
-   * 
+   *
    * センサから切断
    */
   public async disconnectWait() {
@@ -340,7 +342,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
 
   /**
    * @deprecated Please use {@linkcode getLatestDataWait}
-   * 
+   *
    * {@linkcode getLatestDataWait} の使用を推奨
    */
   public async getLatestDataBAGWait(): Promise<OMRON_2JCIE_Data> {
@@ -349,7 +351,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
 
   /**
    * @deprecated Please use {@linkcode getLatestDataWait}
-   * 
+   *
    * {@linkcode getLatestDataWait} の使用を推奨
    */
   public getLatestData(): Promise<OMRON_2JCIE_Data> {
@@ -358,11 +360,11 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
 
   /**
    * Get the latest data from the 2JCIE-BL01(BAG type) sensor
-   * 
+   *
    * 2JCIE-BL01(バッグ形状)のセンサの最新のデータを取得
-   * 
+   *
    * @returns received data from the sensor センサから受け取ったデータ
-   * 
+   *
    * `example response 返り値例`
    * ```
    * {
@@ -370,7 +372,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
    *   temperature: 22.91,   //degC
    *   relative_humidity: 46.46, //%RH
    *   light: 75, //lx
-   *   uv_index: 0.02, 
+   *   uv_index: 0.02,
    *   barometric_pressure: 1010.4000000000001, // hPa
    *   sound_noise: 39.42, //dB
    *   discomfort_index: 68.75,
@@ -406,7 +408,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
 
   /**
    * @deprecated Please use {@linkcode getLatestSensorDataUSBWait}
-   * 
+   *
    * {@linkcode getLatestSensorDataUSBWait} の使用を推奨
    */
   public getLatestSensorDataUSB(): Promise<OMRON_2JCIE_USBSenData> {
@@ -415,11 +417,11 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
 
   /**
    * Get the latest data from the 2JCIE-BU01(USB connection) sensor
-   * 
+   *
    * 2JCIE-BU01(USB接続)のセンサの最新のデータを取得
-   * 
+   *
    * @returns received data from the sensor センサから受け取ったデータ
-   * 
+   *
    * `example response 返り値例`
    * ```
    * {
@@ -442,7 +444,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     )!.getCharacteristic(this.omron_uuid('5012', 'USB'))!;
     const data: number[] = await c.readWait();
     const json: any = {
-      seqence_number: data[0],
+      sequence_number: data[0],
       temperature: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
       relative_humidity: this.signedNumberFromBinary(data.slice(3, 5)) * 0.01,
       light: this.signedNumberFromBinary(data.slice(5, 7)) * 1,
@@ -458,7 +460,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
 
   /**
    * @deprecated Please use {@linkcode getLatestCalculationDataUSBWait}
-   * 
+   *
    * {@linkcode getLatestCalculationDataUSBWait} の使用を推奨
    */
   public getLatestCalculationDataUSB(): Promise<OMRON_2JCIE_USBCalData> {
@@ -467,11 +469,11 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
 
   /**
    * Get the latest index data and acceleration data from the 2JCIE-BU01(USB connection) sensor
-   * 
+   *
    * 2JCIE-BU01(USB接続)のセンサの最新の指標データや加速度データを取得
-   * 
+   *
    * @returns received data from the sensor センサから受け取ったデータ
-   * 
+   *
    * `example response 返り値例`
    * ```
    * {
