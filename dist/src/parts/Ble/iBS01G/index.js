@@ -3,7 +3,9 @@
  * @packageDocumentation
  * @module Parts.iBS01G
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** iBS01G management class iBS01Gを管理するクラス */
 class IBS01G {
     constructor() {
         this._peripheral = null;
@@ -13,6 +15,17 @@ class IBS01G {
             name: 'iBS01G',
         };
     }
+    /**
+     * verify that the received peripheral is from the iBS01G
+     *
+     * 受け取ったPeripheralがiBS01Gのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the iBS01G
+     *
+     * iBS01Gかどうか
+     */
     static isDevice(peripheral) {
         if (this.deviceAdv.length > peripheral.adv_data.length) {
             return false;
@@ -31,6 +44,15 @@ class IBS01G {
             peripheral.adv_data[14] === 0xff &&
             peripheral.adv_data[15] === 0xff);
     }
+    /**
+     * Get a data from the iBS01G
+     *
+     * iBS01Gからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the iBS01G iBS01Gから受け取ったデータ
+     */
     static getData(peripheral) {
         if (!IBS01G.isDevice(peripheral)) {
             return null;
