@@ -3,7 +3,9 @@
  * @packageDocumentation
  * @module Parts.HEM-9200T
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** HEM_9200T management class HEM_9200Tを管理するクラス */
 class HEM_9200T {
     constructor(peripheral, options = {}) {
         this.keys = [];
@@ -21,6 +23,17 @@ class HEM_9200T {
             name: 'HEM_9200T',
         };
     }
+    /**
+     * verify that the received peripheral is from the HEM_9200T
+     *
+     * 受け取ったPeripheralがHEM_9200Tのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the HEM_9200T
+     *
+     * HEM_9200Tかどうか
+     */
     static isDevice(peripheral) {
         if (peripheral.localName &&
             (peripheral.localName.startsWith('BLESmart_') ||
@@ -29,6 +42,17 @@ class HEM_9200T {
         }
         return false;
     }
+    /**
+     * Connect to the device, get data, and then disconnect from the device
+     *
+     * You can get only data that the device has not yet sent
+     *
+     * デバイスに接続しデータを取得後、デバイスとの接続を切断
+     *
+     * 取得できるデータはデバイスが未送信のデータのみです
+     *
+     * @returns received data from the HEM_9200T HEM_9200Tから受け取ったデータ
+     */
     async getDataWait() {
         if (!this._peripheral) {
             throw new Error('HEM_9200T is not find.');
@@ -49,7 +73,7 @@ class HEM_9200T {
         //   return pass;
         // };
         // // pairing with user input passkey.
-        // console.log("connnected. pairing...");
+        // console.log("connected. pairing...");
         // const key = await this._peripheral.pairingWait({ passkeyCallback });
         // console.log("paired");
         const results = [];
@@ -79,6 +103,18 @@ class HEM_9200T {
         }); // blood pressure
         return await waitDisconnect;*/
     }
+    /**
+     * Execute a callback function when data is received from any service characteristic
+     *
+     * 任意のサービス・キャラクタティスティックからデータを受け取ると、コールバック関数を実行
+     *
+     * @param service service サービス
+     *
+     * @param char characteristic キャラクタリスティック
+     *
+     * @param callback callback function when received data
+     * データを受け取ったときのコールバック関数
+     */
     async subscribeWait(service, char, callback) {
         if (!this._peripheral) {
             throw new Error('HEM_9200T is not find.');

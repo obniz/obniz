@@ -72,6 +72,13 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>HEM_9200T management class HEM_9200Tを管理するクラス</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -129,7 +136,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/HEM_9200T/index.ts:68</li>
+									<li>Defined in src/parts/Ble/HEM_9200T/index.ts:123</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -154,7 +161,7 @@
 					<div class="tsd-signature tsd-kind-icon">_peripheral<span class="tsd-signature-symbol">:</span> <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> = null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/HEM_9200T/index.ts:66</li>
+							<li>Defined in src/parts/Ble/HEM_9200T/index.ts:121</li>
 						</ul>
 					</aside>
 				</section>
@@ -164,7 +171,7 @@
 					<div class="tsd-signature tsd-kind-icon">keys<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/HEM_9200T/index.ts:63</li>
+							<li>Defined in src/parts/Ble/HEM_9200T/index.ts:118</li>
 						</ul>
 					</aside>
 				</section>
@@ -174,7 +181,7 @@
 					<div class="tsd-signature tsd-kind-icon">params<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/HEM_9200T/index.ts:65</li>
+							<li>Defined in src/parts/Ble/HEM_9200T/index.ts:120</li>
 						</ul>
 					</aside>
 				</section>
@@ -184,7 +191,7 @@
 					<div class="tsd-signature tsd-kind-icon">required<wbr>Keys<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/HEM_9200T/index.ts:64</li>
+							<li>Defined in src/parts/Ble/HEM_9200T/index.ts:119</li>
 						</ul>
 					</aside>
 				</section>
@@ -201,10 +208,19 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/HEM_9200T/index.ts:82</li>
+									<li>Defined in src/parts/Ble/HEM_9200T/index.ts:148</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Connect to the device, get data, and then disconnect from the device</p>
+								</div>
+								<p>You can get only data that the device has not yet sent</p>
+								<p>デバイスに接続しデータを取得後、デバイスとの接続を切断</p>
+								<p>取得できるデータはデバイスが未送信のデータのみです</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/parts.hem_9200t.hem_9200tresult.html" class="tsd-signature-type">HEM_9200TResult</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>received data from the HEM_9200T HEM_9200Tから受け取ったデータ</p>
 						</li>
 					</ul>
 				</section>
@@ -218,19 +234,35 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/HEM_9200T/index.ts:134</li>
+									<li>Defined in src/parts/Ble/HEM_9200T/index.ts:212</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Execute a callback function when data is received from any service characteristic</p>
+								</div>
+								<p>任意のサービス・キャラクタティスティックからデータを受け取ると、コールバック関数を実行</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>service: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>service サービス</p>
+									</div>
 								</li>
 								<li>
 									<h5>char: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>characteristic キャラクタリスティック</p>
+									</div>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> callback: <span class="tsd-signature-type">any</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>callback function when received data
+										データを受け取ったときのコールバック関数</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -247,7 +279,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/HEM_9200T/index.ts:46</li>
+									<li>Defined in src/parts/Ble/HEM_9200T/index.ts:91</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/obnizcore.obnizpartsinfo.html" class="tsd-signature-type">ObnizPartsInfo</a></h4>
@@ -264,16 +296,27 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/HEM_9200T/index.ts:52</li>
+									<li>Defined in src/parts/Ble/HEM_9200T/index.ts:107</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>verify that the received peripheral is from the HEM_9200T</p>
+								</div>
+								<p>受け取ったPeripheralがHEM_9200Tのものかどうかを確認する</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>instance of BleRemotePeripheral BleRemotePeripheralのインスタンス</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<p>Whether it is the HEM_9200T</p>
+							<p>HEM_9200Tかどうか</p>
 						</li>
 					</ul>
 				</section>
@@ -332,7 +375,7 @@
 						<a href="../interfaces/parts.hem_9200t.hem_9200tresult.html" class="tsd-kind-icon">HEM_<wbr>9200TResult</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/parts.hem_9200t.html#hem_9200tmesurementstatus" class="tsd-kind-icon">HEM_<wbr>9200TMesurement<wbr>Status</a>
+						<a href="../modules/parts.hem_9200t.html#hem_9200tmeasurementstatus" class="tsd-kind-icon">HEM_<wbr>9200TMeasurement<wbr>Status</a>
 					</li>
 				</ul>
 			</nav>

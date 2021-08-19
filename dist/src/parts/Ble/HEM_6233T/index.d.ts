@@ -9,9 +9,9 @@ export interface HEM_6233TOptions {
 }
 export declare type HEM_6233TMeasurementStatus = 'BodyMovementDetection' | 'CuffFitDetection' | 'IrregularPulseDetection' | 'PulseRateRangeDetection' | 'MeasurementPositionDetection';
 /**
- * advertisement data from HEM_6233T
+ * data from HEM_6233T
  *
- * HEM_6233Tからのadvertisementデータ
+ * HEM_6233Tからのデータ
  */
 export interface HEM_6233TResult {
     /**
