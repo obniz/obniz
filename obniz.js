@@ -23011,25 +23011,13 @@ class OMRON_2JCIE {
      * @returns received data from the sensor センサから受け取ったデータ
      *
      * `2JCIE-BL01(BAG type バッグ形状) localName: IM`
-     * - temperature: temperature(degC) 温度(degC)
-     * - relative_humidity: humidity(%RH) 湿度(%RH)
-     * - light: illuminance(lx) 照度(lx)
-     * - uv_index: ultraviolet ray intensity 紫外線強度
-     * - barometric_pressure: barometric pressure(hPa) 気圧(hPa)
-     * - sound_noise: noise(dB) 騒音(dB)
-     * - acceleration_x: x acceleration 加速度x
-     * - acceleration_y: y acceleration 加速度y
-     * - acceleration_z: z acceleration 加速度z
-     * - battery: battery voltage(V) バッテリー電圧(V)
+     *
+     * → {@linkplain OMRON_2JCIE_AdvData}
+     *
      *
      * `2JCIE-BU01(USB connection USB接続) localName: Rbt`
-     * - temperature: temperature(degC) 温度(degC)
-     * - relative_humidity: humidity(%RH) 湿度(%RH)
-     * - light: illuminance(lx) 照度(lx)
-     * - barometric_pressure: barometric pressure(hPa) 気圧(hPa)
-     * - sound_noise: noise(dB) 騒音(dB)
-     * - etvoc: eTVOC(ppb)
-     * - eco2: equivalent CO2(ppm) 等価CO2濃度(ppm)
+     *
+     * → {@linkplain OMRON_2JCIE_AdvSensorData}
      */
     static getData(peripheral) {
         const adv_data = peripheral.adv_data;
@@ -23178,21 +23166,6 @@ class OMRON_2JCIE {
      *
      * @returns received data from the sensor センサから受け取ったデータ
      *
-     * `example response 返り値例`
-     * ```
-     * {
-     *   row_number: 0,
-     *   temperature: 22.91,   //degC
-     *   relative_humidity: 46.46, //%RH
-     *   light: 75, //lx
-     *   uv_index: 0.02,
-     *   barometric_pressure: 1010.4000000000001, // hPa
-     *   sound_noise: 39.42, //dB
-     *   discomfort_index: 68.75,
-     *   heatstroke_risk_factor: 19,  //degC
-     *   battery_voltage: 30.12  // V
-     * }
-     * ```
      */
     async getLatestDataWait() {
         await this.connectWait();
@@ -23226,20 +23199,6 @@ class OMRON_2JCIE {
      * 2JCIE-BU01(USB接続)のセンサの最新のデータを取得
      *
      * @returns received data from the sensor センサから受け取ったデータ
-     *
-     * `example response 返り値例`
-     * ```
-     * {
-     *   sequence_number: 0,
-     *   temperature: 22.91,   //degC
-     *   relative_humidity: 46.46, //%RH
-     *   light: 75, //lx
-     *   barometric_pressure: 1010.4000000000001, // hPa
-     *   sound_noise: 39.42, //dB
-     *   etvoc: 1463,	//ppb
-     *   eco2: 2353	//ppm
-     * }
-     * ```
      */
     async getLatestSensorDataUSBWait() {
         await this.connectWait();
@@ -23271,22 +23230,6 @@ class OMRON_2JCIE {
      * 2JCIE-BU01(USB接続)のセンサの最新の指標データや加速度データを取得
      *
      * @returns received data from the sensor センサから受け取ったデータ
-     *
-     * `example response 返り値例`
-     * ```
-     * {
-     *   sequence_number: 0,
-     *   discomfort_index: 68.78,
-     *   heatstroke_risk_factor: 18.29, //degC
-     *   vibration_information: "NONE",
-     *   si_value: 0, //kine
-     *   pga: 0, //gal
-     *   seismic_intensity: 0,
-     *   acceleration_x: 185	//gal
-     *   acceleration_y: -9915	//gal
-     *   acceleration_z: -191	//gal
-     * }
-     * ```
      */
     async getLatestCalculationDataUSBWait() {
         await this.connectWait();

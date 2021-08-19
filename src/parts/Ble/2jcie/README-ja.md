@@ -38,7 +38,7 @@ advertisementからデータを取得(そのようにモード設定されたデ
 - acceleration_x: 加速度
 - acceleration_y: 加速度
 - acceleration_z: 加速度
-- battery: バッテリー電圧(V)
+- battery: バッテリー電圧(mV)
 
 2JCIE-BU01(USB接続)の`Rbt`というlocalNameを持つadvertisementの場合
 
@@ -182,11 +182,11 @@ if(results){
   relative_humidity: 46.46, //%RH
   light: 75, //lx
   uv_index: 0.02, 
-  barometric_pressure: 1010.4000000000001, // hPa
+  barometric_pressure: 1010.4, // hPa
   sound_noise: 39.42, //dB
   discomfort_index: 68.75,  
   heatstroke_risk_factor: 19,  //degC
-  battery_voltage: 30.12  // V
+  battery_voltage: 30.12  // mV
 }
 
 ```
@@ -224,7 +224,7 @@ if(results){
   temperature: 22.91,   //degC
   relative_humidity: 46.46, //%RH
   light: 75, //lx
-  barometric_pressure: 1010.4000000000001, // hPa
+  barometric_pressure: 1010.4, // hPa
   sound_noise: 39.42, //dB
   etvoc: 1463,	//ppb
   eco2: 2353	//ppm

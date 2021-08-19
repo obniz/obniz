@@ -33,11 +33,11 @@ Get a data from advertisement
 - light: (lx)
 - uv_index: 
 - barometric_pressure: (hPa)
-- soud_noise: (dB)
+- sound_noise: (dB)
 - acceleration_x: 
 - acceleration_y: 
 - acceleration_z: 
-- battery: (V)
+- battery: (mV)
 
 2In case of advertisement with localName `Rbt` of 2JCIE-BU01 (USB connection)
 
@@ -45,7 +45,7 @@ Get a data from advertisement
 - relative_humidity: (%RH)
 - light: (lx)
 - barometric_pressure: (hPa)
-- soud_noise: (dB)
+- sound_noise: (dB)
 - etvoc: eTVOC(ppb)
 - eco2: CO2 (ppm)
 
@@ -64,14 +64,14 @@ await obniz.ble.scan.startWait();
 ```
 
 ```javascript
-// Example of "Rbt" pakcet
+// Example of "Rbt" packet
 {
     barometric_pressure: 1015.755
     eco2: 719
     etvoc: 48
     light: 241
     relative_humidity: 30.46
-    soud_noise: 77.52
+    sound_noise: 77.52
     temperature: 24.16
 }
 ```
@@ -182,11 +182,11 @@ The return format is below.
   relative_humidity: 46.46, //%RH
   light: 75, //lx
   uv_index: 0.02, 
-  barometric_pressure: 1010.4000000000001, // hPa
-  soud_noise: 39.42, //dB
+  barometric_pressure: 1010.4, // hPa
+  sound_noise: 39.42, //dB
   discomfort_index: 68.75,  
   heatstroke_risk_factor: 19,  //degC
-  battery_voltage: 30.12  // V
+  battery_voltage: 30.12  // mV
 }
 
 ```
@@ -224,8 +224,8 @@ The return format is below.
   temperature: 22.91,   //degC
   relative_humidity: 46.46, //%RH
   light: 75, //lx
-  barometric_pressure: 1010.4000000000001, // hPa
-  soud_noise: 39.42, //dB
+  barometric_pressure: 1010.4, // hPa
+  sound_noise: 39.42, //dB
   etvoc: 1463,	//ppb
   eco2: 2353	//ppm
 }
