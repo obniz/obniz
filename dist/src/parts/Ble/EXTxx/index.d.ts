@@ -8,11 +8,21 @@ import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface EXTxx_Options {
 }
 export declare type EXTxx_Type = 'wBeacon' | 'BatteryLevelNotification';
+/**
+ * advertisement data from EXTxx
+ *
+ * EXTxxからのadvertisementデータ
+ */
 export interface EXTxx_Data {
+    /** iBeacon uuid */
     uuid: string;
+    /** iBeacon major */
     major: number;
+    /** iBeacon minor */
     minor: number;
+    /** iBeacon power */
     power: number;
+    /** remaining battery 電池残量 */
     battery: number;
 }
 /** EXTxx management class EXTxxを管理するクラス */
@@ -27,13 +37,6 @@ export default class EXTxx extends ObnizPartsBleInterface {
      * (インスタンス化する場合) ビーコンからデータを取得
      *
      * @returns received data from the beacon ビーコンから受け取ったデータ
-     *
-     * `contents 中身`
-     * - uuid: iBeacon uuid
-     * - major: iBeacon major
-     * - minor: iBeacon minor
-     * - power: iBeacon power
-     * - battery: remaining battery 電池残量
      */
     getData(): EXTxx_Data;
     /**
@@ -44,13 +47,6 @@ export default class EXTxx extends ObnizPartsBleInterface {
      * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
      *
      * @returns received data from the beacon ビーコンから受け取ったデータ
-     *
-     * `contents 中身`
-     * - uuid: iBeacon uuid
-     * - major: iBeacon major
-     * - minor: iBeacon minor
-     * - power: iBeacon power
-     * - battery: remaining battery 電池残量
      */
     static getData(peripheral: BleRemotePeripheral): EXTxx_Data | null;
     constructor(peripheral: BleRemotePeripheral);

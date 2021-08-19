@@ -23478,13 +23478,6 @@ class EXTxx extends ObnizPartsBleInterface_1.default {
      * (インスタンス化する場合) ビーコンからデータを取得
      *
      * @returns received data from the beacon ビーコンから受け取ったデータ
-     *
-     * `contents 中身`
-     * - uuid: iBeacon uuid
-     * - major: iBeacon major
-     * - minor: iBeacon minor
-     * - power: iBeacon power
-     * - battery: remaining battery 電池残量
      */
     getData() {
         var _a;
@@ -23511,13 +23504,6 @@ class EXTxx extends ObnizPartsBleInterface_1.default {
      * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
      *
      * @returns received data from the beacon ビーコンから受け取ったデータ
-     *
-     * `contents 中身`
-     * - uuid: iBeacon uuid
-     * - major: iBeacon major
-     * - minor: iBeacon minor
-     * - power: iBeacon power
-     * - battery: remaining battery 電池残量
      */
     static getData(peripheral) {
         if (!EXTxx.isDevice(peripheral)) {
