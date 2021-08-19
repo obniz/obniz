@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module Parts.HEM_6233T
  */
+/* eslint rulesdir/non-ascii: 0 */
 
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
@@ -9,20 +10,33 @@ import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 
 export interface HEM_6233TOptions {}
 
-export type HEM_6233TMesurementStatus =
+export type HEM_6233TMeasurementStatus =
   | 'BodyMovementDetection'
   | 'CuffFitDetection'
   | 'IrregularPulseDetection'
   | 'PulseRateRangeDetection'
   | 'MeasurementPositionDetection';
 
+/**
+ * advertisement data from HEM_6233T
+ *
+ * HEM_6233Tからのadvertisementデータ
+ */
 export interface HEM_6233TResult {
+  /**
+   * Blood pressure 血圧
+   *
+   * - Systolic pressure 最低血圧 (Range 範囲: 25-280)
+   * - Diastolic pressure 最高血圧 (Range 範囲: 25-280)
+   * - Mean arterial pressure 平均血圧 (Range 範囲: 25-280)
+   */
   bloodPressure?: {
     systolic: number;
     diastolic: number;
     meanArterialPressure: number;
     unit: 'mmHg';
   };
+  /** Time 時刻 */
   date?: {
     year: number;
     month: number;
@@ -31,11 +45,36 @@ export interface HEM_6233TResult {
     minute: number;
     second: number;
   };
+  /** Pulse rate value 脈拍値*/
   pulseRate?: number;
+  /** User ID ユーザID */
   userId?: number;
-  measurementStatus?: HEM_6233TMesurementStatus[];
+  /**
+   * Measurement status 測定状態
+   *
+   * [0] Body Movement Detection Flag 体動検知
+   *
+   * 0: Stable 静止 / 1: Moved 運動
+   *
+   *
+   * [1] Cuff Fit Detection Flag 袖口へのフィット具合
+   *
+   * 0: Fit properly 適正 / 1: Too loose 緩い
+   *
+   *
+   * [2] Irregular Pulse Detection Flag 不整脈検出
+   *
+   * 0: Normal 通常 / 1: Irregular 異常
+   *
+   *
+   * [5] Measurement Position Detection Flag 測定位置検出
+   *
+   * 0: Proper 適正 / 1: Improper 適正でない
+   */
+  measurementStatus?: HEM_6233TMeasurementStatus[];
 }
 
+/** HEM_6233T management class HEM_6233Tを管理するクラス */
 export default class HEM_6233T implements ObnizPartsBleInterface {
   public static info(): ObnizPartsInfo {
     return {
@@ -43,6 +82,17 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
     };
   }
 
+  /**
+   * verify that the received peripheral is from the HEM_6233T
+   *
+   * 受け取ったPeripheralがHEM_6233Tのものかどうかを確認する
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns Whether it is the HEM_6233T
+   *
+   * HEM_6233Tかどうか
+   */
   public static isDevice(peripheral: BleRemotePeripheral) {
     if (
       peripheral.localName &&
@@ -60,6 +110,13 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
   public _peripheral: BleRemotePeripheral | null = null;
   private _timezoneOffsetMinute: number;
 
+  /**
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @param timezoneOffsetMinute difference from UTC (Unit: minutes) 協定世界時との差(単位: 分)
+   *
+   */
   constructor(
     peripheral: BleRemotePeripheral | null,
     timezoneOffsetMinute: number
@@ -71,6 +128,19 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
     this._timezoneOffsetMinute = timezoneOffsetMinute;
   }
 
+  /**
+   * Connect to the device, get data, and then disconnect from the device
+   *
+   * You can get only data that the device has not yet sent
+   *
+   * デバイスに接続しデータを取得後、デバイスとの接続を切断
+   *
+   * 取得できるデータはデバイスが未送信のデータのみです
+   *
+   * @param pairingKeys pairing keys (optional) ペアリングキー (任意)
+   *
+   * @returns received data from the HEM_6233T HEM_6233Tから受け取ったデータ
+   */
   public async getDataWait(pairingKeys?: string): Promise<HEM_6233TResult[]> {
     if (!this._peripheral) {
       throw new Error('HEM_6233T is not find.');
@@ -126,6 +196,18 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
     return await waitDisconnect;
   }
 
+  /**
+   * Execute a callback function when data is received from any service characteristic
+   *
+   * 任意のサービス・キャラクタティスティックからデータを受け取ると、コールバック関数を実行
+   *
+   * @param service service サービス
+   *
+   * @param char characteristic キャラクタリスティック
+   *
+   * @param callback callback function when received data
+   * データを受け取ったときのコールバック関数
+   */
   public async subscribeWait(service: string, char: string, callback?: any) {
     if (!this._peripheral) {
       throw new Error('HEM_6233T is not find.');
@@ -140,6 +222,13 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
     });
   }
 
+  /**
+   * Set the current time
+   *
+   * 現在時刻を設定
+   *
+   * @param timeOffsetMinute difference from UTC (Unit: minutes) 協定世界時との差(単位: 分)
+   */
   public async _writeTimeCharWait(timeOffsetMinute: number) {
     if (!this._peripheral) {
       throw new Error('HEM_6233T is not find.');
@@ -224,19 +313,19 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
       index += 1;
     }
     if (flags & 0x10) {
-      const statusFlag: { [_: number]: HEM_6233TMesurementStatus } = {
+      const statusFlag: { [_: number]: HEM_6233TMeasurementStatus } = {
         0x01: 'BodyMovementDetection',
         0x02: 'CuffFitDetection',
         0x04: 'IrregularPulseDetection',
         0x08: 'PulseRateRangeDetection',
         0x10: 'MeasurementPositionDetection',
       };
-      const mesurementStatus = buf.readUInt16LE(index);
+      const measurementStatus = buf.readUInt16LE(index);
       index++;
       result.measurementStatus = [];
 
       for (const f in statusFlag) {
-        if (+f & mesurementStatus) {
+        if (+f & measurementStatus) {
           result.measurementStatus.push(statusFlag[f]);
         }
       }

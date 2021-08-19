@@ -3,8 +3,17 @@
  * @packageDocumentation
  * @module Parts.HEM_6233T
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** HEM_6233T management class HEM_6233Tを管理するクラス */
 class HEM_6233T {
+    /**
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @param timezoneOffsetMinute difference from UTC (Unit: minutes) 協定世界時との差(単位: 分)
+     *
+     */
     constructor(peripheral, timezoneOffsetMinute) {
         this.keys = [];
         this.requiredKeys = [];
@@ -20,6 +29,17 @@ class HEM_6233T {
             name: 'HEM_6233T',
         };
     }
+    /**
+     * verify that the received peripheral is from the HEM_6233T
+     *
+     * 受け取ったPeripheralがHEM_6233Tのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the HEM_6233T
+     *
+     * HEM_6233Tかどうか
+     */
     static isDevice(peripheral) {
         if (peripheral.localName &&
             (peripheral.localName.startsWith('BLESmart_') ||
@@ -28,6 +48,19 @@ class HEM_6233T {
         }
         return false;
     }
+    /**
+     * Connect to the device, get data, and then disconnect from the device
+     *
+     * You can get only data that the device has not yet sent
+     *
+     * デバイスに接続しデータを取得後、デバイスとの接続を切断
+     *
+     * 取得できるデータはデバイスが未送信のデータのみです
+     *
+     * @param pairingKeys pairing keys (optional) ペアリングキー (任意)
+     *
+     * @returns received data from the HEM_6233T HEM_6233Tから受け取ったデータ
+     */
     async getDataWait(pairingKeys) {
         if (!this._peripheral) {
             throw new Error('HEM_6233T is not find.');
@@ -72,6 +105,18 @@ class HEM_6233T {
         }); // blood pressure
         return await waitDisconnect;
     }
+    /**
+     * Execute a callback function when data is received from any service characteristic
+     *
+     * 任意のサービス・キャラクタティスティックからデータを受け取ると、コールバック関数を実行
+     *
+     * @param service service サービス
+     *
+     * @param char characteristic キャラクタリスティック
+     *
+     * @param callback callback function when received data
+     * データを受け取ったときのコールバック関数
+     */
     async subscribeWait(service, char, callback) {
         if (!this._peripheral) {
             throw new Error('HEM_6233T is not find.');
@@ -85,6 +130,13 @@ class HEM_6233T {
             }
         });
     }
+    /**
+     * Set the current time
+     *
+     * 現在時刻を設定
+     *
+     * @param timeOffsetMinute difference from UTC (Unit: minutes) 協定世界時との差(単位: 分)
+     */
     async _writeTimeCharWait(timeOffsetMinute) {
         if (!this._peripheral) {
             throw new Error('HEM_6233T is not find.');
@@ -167,11 +219,11 @@ class HEM_6233T {
                 0x08: 'PulseRateRangeDetection',
                 0x10: 'MeasurementPositionDetection',
             };
-            const mesurementStatus = buf.readUInt16LE(index);
+            const measurementStatus = buf.readUInt16LE(index);
             index++;
             result.measurementStatus = [];
             for (const f in statusFlag) {
-                if (+f & mesurementStatus) {
+                if (+f & measurementStatus) {
                     result.measurementStatus.push(statusFlag[f]);
                 }
             }
