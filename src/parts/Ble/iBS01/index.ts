@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module Parts.iBS01
  */
+/* eslint rulesdir/non-ascii: 0 */
 
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import ObnizPartsBleInterface, {
@@ -10,8 +11,19 @@ import ObnizPartsBleInterface, {
 
 export interface IBS01Options {}
 
+/**
+ * advertisement data from IBS01
+ *
+ * IBS01からのadvertisementデータ
+ */
 export interface IBS01_Data {
+  /** battery 電池電圧 */
   battery: number;
+  /**
+   * button state ボタンの状態
+   *
+   * true: pressed 押された状態 / false: not pressed 押されていない状態
+   */
   button: boolean;
 
   /**
@@ -30,6 +42,7 @@ export interface IBS01_Data {
   fall: boolean;
 }
 
+/** iBS01 management class iBS01を管理するクラス */
 export default class IBS01 implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
@@ -37,6 +50,21 @@ export default class IBS01 implements ObnizPartsBleInterface {
     };
   }
 
+  /**
+   * verify that the received peripheral is from the iBS01
+   *
+   * 受け取ったPeripheralがiBS01のものかどうかを確認する
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @param strictCheck Whether do strict check
+   *
+   * strictCheckをするかどうか
+   *
+   * @returns Whether it is the iBS01
+   *
+   * iBS01かどうか
+   */
   public static isDevice(
     peripheral: BleRemotePeripheral,
     strictCheck = false
@@ -65,6 +93,19 @@ export default class IBS01 implements ObnizPartsBleInterface {
     );
   }
 
+  /**
+   * Get a data from the iBS01
+   *
+   * iBS01からデータを取得
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @param strictCheck Whether do strict check
+   *
+   * strictCheckをするかどうか
+   *
+   * @returns received data from the iBS01 iBS01から受け取ったデータ
+   */
   public static getData(
     peripheral: BleRemotePeripheral,
     strictCheck?: boolean

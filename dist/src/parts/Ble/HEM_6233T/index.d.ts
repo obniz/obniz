@@ -101,7 +101,7 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
      *
      * 取得できるデータはデバイスが未送信のデータのみです
      *
-     * @param pairingKeys pairing keys (optional) ペアリングキー (任意)
+     * @param pairingKeys pairing keys ペアリングキー
      *
      * @returns received data from the HEM_6233T HEM_6233Tから受け取ったデータ
      */
