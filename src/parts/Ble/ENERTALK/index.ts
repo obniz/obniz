@@ -125,6 +125,10 @@ export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
    * センサから温度データを取得
    *
    * @returns temperature value 温度の値
+   *
+   * Range 範囲: -1000~5000
+   *
+   * (Unit 単位: 0.01 degC)
    */
   public async getTemperatureWait() {
     if (!this._temperatureChar) {
@@ -142,6 +146,10 @@ export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
    * センサから湿度データを取得
    *
    * @returns humidity value 湿度の値
+   *
+   * Range 範囲: 0~100
+   *
+   * (Unit 単位: 1 %RH)
    */
   public async getHumidityWait() {
     if (!this._humidityChar) {
@@ -159,6 +167,10 @@ export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
    * センサから照度データを取得
    *
    * @returns illumination value 照度の値
+   *
+   * Range 範囲: 0~65535
+   *
+   * (Unit 単位: 1 lx)
    */
   public async getIlluminationWait() {
     if (!this._illuminanceChar) {
@@ -177,6 +189,10 @@ export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
    * センサから加速度データを取得
    *
    * @returns acceleration values 加速度の値
+   *
+   * Range 範囲: -2000~2000
+   *
+   * (Unit 単位: 1 mg)
    */
   public async getAccelerometerWait() {
     if (!this._accelerometerChar) {

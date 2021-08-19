@@ -23364,6 +23364,10 @@ class ENERTALK_TOUCH {
      * センサから温度データを取得
      *
      * @returns temperature value 温度の値
+     *
+     * Range 範囲: -1000~5000
+     *
+     * (Unit 単位: 0.01 degC)
      */
     async getTemperatureWait() {
         if (!this._temperatureChar) {
@@ -23380,6 +23384,10 @@ class ENERTALK_TOUCH {
      * センサから湿度データを取得
      *
      * @returns humidity value 湿度の値
+     *
+     * Range 範囲: 0~100
+     *
+     * (Unit 単位: 1 %RH)
      */
     async getHumidityWait() {
         if (!this._humidityChar) {
@@ -23395,6 +23403,10 @@ class ENERTALK_TOUCH {
      * センサから照度データを取得
      *
      * @returns illumination value 照度の値
+     *
+     * Range 範囲: 0~65535
+     *
+     * (Unit 単位: 1 lx)
      */
     async getIlluminationWait() {
         if (!this._illuminanceChar) {
@@ -23411,6 +23423,10 @@ class ENERTALK_TOUCH {
      * センサから加速度データを取得
      *
      * @returns acceleration values 加速度の値
+     *
+     * Range 範囲: -2000~2000
+     *
+     * (Unit 単位: 1 mg)
      */
     async getAccelerometerWait() {
         if (!this._accelerometerChar) {
