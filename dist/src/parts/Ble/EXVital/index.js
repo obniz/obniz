@@ -28,18 +28,6 @@ class EXVital extends ObnizPartsBleInterface_1.default {
      * (インスタンス化する場合) ビーコンからデータを取得
      *
      * @returns received data from the beacon ビーコンから受け取ったデータ
-     *
-     * `contents 中身`
-     * - major: iBeacon major
-     * - minor: iBeacon minor
-     * - power: iBeacon power
-     * - diastolic_pressure: diastolic pressure 最低血圧
-     * - systolic_pressure: systolic pressure 最高血圧
-     * - arm_temp: arm temp 腕温度
-     * - body_temp: body temp 体温
-     * - heart_rate: heart rate 心拍数
-     * - battery: battery voltage バッテリー電圧
-     * - steps: number of steps 歩数
      */
     getData() {
         if (!this.advData)
@@ -67,18 +55,6 @@ class EXVital extends ObnizPartsBleInterface_1.default {
      * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
      *
      * @returns received data from the beacon ビーコンから受け取ったデータ
-     *
-     * `contents 中身`
-     * - major: iBeacon major
-     * - minor: iBeacon minor
-     * - power: iBeacon power
-     * - diastolic_pressure: diastolic pressure 最低血圧
-     * - systolic_pressure: systolic pressure 最高血圧
-     * - arm_temp: arm temp 腕温度
-     * - body_temp: body temp 体温
-     * - heart_rate: heart rate 心拍数
-     * - battery: battery voltage バッテリー電圧
-     * - steps: number of steps 歩数
      */
     static getData(peripheral) {
         if (!EXVital.isDevice(peripheral)) {

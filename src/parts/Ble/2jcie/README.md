@@ -37,7 +37,7 @@ Get a data from advertisement
 - acceleration_x: 
 - acceleration_y: 
 - acceleration_z: 
-- battery: (mV)
+- battery: (V)
 
 2In case of advertisement with localName `Rbt` of 2JCIE-BU01 (USB connection)
 

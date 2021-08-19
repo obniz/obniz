@@ -10,18 +10,76 @@ import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 
 export interface EXVital_Options {}
 
+/**
+ * advertisement data from EXVital
+ *
+ * EXTVitalからのadvertisementデータ
+ */
 export interface EXVital_Data {
+  /** iBeacon major */
   major: number;
+  /** iBeacon minor */
   minor: number;
+  /** iBeacon power */
   power: number;
+  /**
+   * diastolic pressure 最低血圧
+   *
+   * Range 範囲: 75~160
+   *
+   * (Unit 単位: 1 mmHg)
+   */
   diastolic_pressure: number;
+  /**
+   * systolic pressure 最高血圧
+   *
+   * Range 範囲: 75-160
+   *
+   * (Unit 単位: 1 mmHg)
+   *
+   */
   systolic_pressure: number;
+  /**
+   * arm temp 腕温度
+   *
+   * Range 範囲: 26~40
+   *
+   * (Unit 単位: 0.1 degC)
+   */
   arm_temp: number;
+  /**
+   * body temp 体温
+   *
+   * Range 範囲: 33~38
+   *
+   * (Unit 単位: 0.1 degC)
+   */
   body_temp: number;
+  /**
+   * heart rate 心拍数
+   *
+   * Range 範囲: 45~225
+   *
+   * (Unit 単位: 1 bpm)
+   */
   heart_rate: number;
   // blood_oxygen: number;
   // fall: boolean;
+  /**
+   * battery voltage バッテリー電圧
+   *
+   * Range 範囲: 3.2~4.2
+   *
+   * (Unit 単位: V)
+   */
   battery: number;
+  /**
+   * number of steps 歩数
+   *
+   * Range 範囲: 0~65535
+   *
+   * (Unit 単位: 1 step 1 歩)
+   */
   steps: number;
 }
 
@@ -76,18 +134,6 @@ export default class EXVital extends ObnizPartsBleInterface {
    * (インスタンス化する場合) ビーコンからデータを取得
    *
    * @returns received data from the beacon ビーコンから受け取ったデータ
-   *
-   * `contents 中身`
-   * - major: iBeacon major
-   * - minor: iBeacon minor
-   * - power: iBeacon power
-   * - diastolic_pressure: diastolic pressure 最低血圧
-   * - systolic_pressure: systolic pressure 最高血圧
-   * - arm_temp: arm temp 腕温度
-   * - body_temp: body temp 体温
-   * - heart_rate: heart rate 心拍数
-   * - battery: battery voltage バッテリー電圧
-   * - steps: number of steps 歩数
    */
   public getData(): EXVital_Data {
     if (!this.advData) throw new Error('advData is null');
@@ -115,18 +161,6 @@ export default class EXVital extends ObnizPartsBleInterface {
    * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
    *
    * @returns received data from the beacon ビーコンから受け取ったデータ
-   *
-   * `contents 中身`
-   * - major: iBeacon major
-   * - minor: iBeacon minor
-   * - power: iBeacon power
-   * - diastolic_pressure: diastolic pressure 最低血圧
-   * - systolic_pressure: systolic pressure 最高血圧
-   * - arm_temp: arm temp 腕温度
-   * - body_temp: body temp 体温
-   * - heart_rate: heart rate 心拍数
-   * - battery: battery voltage バッテリー電圧
-   * - steps: number of steps 歩数
    */
   public static getData(peripheral: BleRemotePeripheral): EXVital_Data | null {
     if (!EXVital.isDevice(peripheral)) {

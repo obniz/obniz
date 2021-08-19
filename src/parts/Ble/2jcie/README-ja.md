@@ -38,7 +38,7 @@ advertisementからデータを取得(そのようにモード設定されたデ
 - acceleration_x: 加速度
 - acceleration_y: 加速度
 - acceleration_z: 加速度
-- battery: バッテリー電圧(mV)
+- battery: バッテリー電圧(V)
 
 2JCIE-BU01(USB接続)の`Rbt`というlocalNameを持つadvertisementの場合
 
@@ -186,7 +186,7 @@ if(results){
   sound_noise: 39.42, //dB
   discomfort_index: 68.75,  
   heatstroke_risk_factor: 19,  //degC
-  battery_voltage: 30.12  // mV
+  battery_voltage: 30.12  // V
 }
 
 ```

@@ -72,7 +72,7 @@ export interface OMRON_2JCIE_Data {
     /**
      * Battery voltage 電池電圧
      *
-     * (Unit 単位: 1 mV)
+     * (Unit 単位: 1 V)
      */
     battery_voltage: number;
 }
@@ -263,7 +263,7 @@ export interface OMRON_2JCIE_AdvData {
     /**
      * Battery voltage 電池電圧
      *
-     * (Unit 単位: 1 mV)
+     * (Unit 単位: 1 V)
      */
     battery: number;
 }
