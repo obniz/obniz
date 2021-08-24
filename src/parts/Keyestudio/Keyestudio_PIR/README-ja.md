@@ -8,6 +8,7 @@ Keyestudio社製のモーションセンサ(PIRセンサ)です。人や動物�
 ## wired(obniz, {signal [,vcc, gnd]})
 
 obniz Boardと接続します。
+
 name | type | required | default | description
 --- | --- | --- | --- | ---
 signal | `number(obniz Board io)` | yes |  &nbsp; | signal センサの値を示す端子(s pin of Keyestudio)
