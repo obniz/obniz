@@ -175,6 +175,7 @@ export default class Display extends ComponentAbstract {
   // eslint-disable-next-line rulesdir/non-ascii
   /**
    * Print text on display.
+   *
    * If you are using node.js and text is included characters out of ASCII code range, node-canvas is required.
    *
    * ```javascript
@@ -190,27 +191,23 @@ export default class Display extends ComponentAbstract {
    * ![](media://obniz_display_print.jpg)
    *
    * @param text Text to display. With browser, UTF8 string is available.
-   * @param useCanvas Sets whether or not to force the use of canvas when text is only characters included in ASCII code range. This will be ignored if canvas is not available.
    */
-  public print(text: string, useCanvas = false) {
+  public print(text: string) {
     const ctx = this._ctx(false);
-    // eslint-disable-next-line no-control-regex
-    if (text.match(/^[\x00-\x7F]*$/)) {
-      if (!useCanvas || (useCanvas && !ctx)) {
-        const obj: any = {};
-        obj.display = {
-          text: '' + text,
-        };
-        this.Obniz.send(obj);
-        return;
-      }
-    }
     if (ctx) {
       ctx.fillText(text, this._pos.x, this._pos.y + this.fontSize);
       this.draw(ctx);
       this._pos.y += this.fontSize;
     } else {
-      this.warnCanvasAvailability();
+      // eslint-disable-next-line no-control-regex
+      if (!text.match(/^[\x00-\x7F]*$/)) {
+        this.warnCanvasAvailability();
+      }
+      const obj: any = {};
+      obj.display = {
+        text: '' + text,
+      };
+      this.Obniz.send(obj);
     }
   }
 
@@ -552,7 +549,7 @@ export default class Display extends ComponentAbstract {
   private warnCanvasAvailability() {
     if (this.Obniz.isNode) {
       throw new Error(
-        'obniz.js require node-canvas to draw rich contents. see more detail on docs'
+        'obniz.js require node-canvas to draw rich contents or characters out of ASCII code range. see more detail on docs'
       );
     } else {
       throw new Error('obniz.js cant create canvas element to body');

@@ -109,6 +109,7 @@ export default class Display extends ComponentAbstract {
     };
     /**
      * Print text on display.
+     *
      * If you are using node.js and text is included characters out of ASCII code range, node-canvas is required.
      *
      * ```javascript
@@ -124,9 +125,8 @@ export default class Display extends ComponentAbstract {
      * ![](media://obniz_display_print.jpg)
      *
      * @param text Text to display. With browser, UTF8 string is available.
-     * @param useCanvas Sets whether or not to force the use of canvas when text is only characters included in ASCII code range. This will be ignored if canvas is not available.
      */
-    print(text: string, useCanvas?: boolean): void;
+    print(text: string): void;
     /**
      * Draw a line between two points.
      * If you are using node.js, node-canvas is required.
