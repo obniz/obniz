@@ -48,10 +48,9 @@ export default class Display extends ComponentAbstract {
   }
 
   /**
-   * (It does not work with node.js. Please use display.draw())
-   *
    * This changes the font.
    * The options for fontFamily and fontSize depend on your browser.
+   * If you are using node.js, node-canvas is required.
    *
    * The default font is Arial 16px.
    * If you set the parameter to null, you will be using the default font.
@@ -72,19 +71,22 @@ export default class Display extends ComponentAbstract {
    * @param size size of font
    */
   public font(font: string | null, size?: number) {
-    const ctx: any = this._ctx();
-    if (typeof size !== 'number') {
-      size = 16;
+    const ctx: any = this._ctx(true);
+    if (ctx) {
+      if (typeof size !== 'number') {
+        size = 16;
+      }
+      if (typeof font !== 'string') {
+        font = 'Arial';
+      }
+      this.fontSize = size;
+      ctx.font = '' + +' ' + size + 'px ' + font;
     }
-    if (typeof font !== 'string') {
-      font = 'Arial';
-    }
-    this.fontSize = size;
-    ctx.font = '' + +' ' + size + 'px ' + font;
   }
 
   /**
    * Setting color for fill/stroke style for further rendering.
+   * If you are using node.js, node-canvas is required.
    *
    * ```javascript
    * obniz.display.color('#FF0000');
@@ -96,10 +98,12 @@ export default class Display extends ComponentAbstract {
    * @param color css acceptable color definition
    */
   public setColor(color: string) {
-    this._color = color;
-    const ctx: any = this._ctx();
-    ctx.fillStyle = this._color;
-    ctx.strokeStyle = this._color;
+    const ctx: any = this._ctx(true);
+    if (ctx) {
+      this._color = color;
+      ctx.fillStyle = this._color;
+      ctx.strokeStyle = this._color;
+    }
   }
 
   /**
@@ -116,13 +120,14 @@ export default class Display extends ComponentAbstract {
 
   /**
    * Clear the display.
+   *
    * ```javascript
    * // Javascript Example
    * obniz.display.clear();
    * ```
    */
   public clear() {
-    const ctx: any = this._ctx();
+    const ctx: any = this._ctx(false);
     this._pos.x = 0;
     this._pos.y = 0;
     if (ctx) {
@@ -142,8 +147,9 @@ export default class Display extends ComponentAbstract {
 
   // eslint-disable-next-line rulesdir/non-ascii
   /**
-   * (This does not work with node.js. Please use display.draw())
    * It changes the display position of a text. If you are using print() to display a text, position it to top left.
+   *
+   * If you are using node.js, node-canvas is required.
    *
    * ```javascript
    * // Javascript Example
@@ -156,7 +162,7 @@ export default class Display extends ComponentAbstract {
    * @param y
    */
   public pos(x: number, y: number) {
-    this._ctx(); // crete first
+    this._ctx(true); // crete first
     if (typeof x === 'number') {
       this._pos.x = x;
     }
@@ -169,6 +175,7 @@ export default class Display extends ComponentAbstract {
   // eslint-disable-next-line rulesdir/non-ascii
   /**
    * Print text on display.
+   * If you are using node.js and text is included characters out of ASCII code range, node-canvas is required.
    *
    * ```javascript
    * // Javascript Example
@@ -182,28 +189,34 @@ export default class Display extends ComponentAbstract {
    * ```
    * ![](media://obniz_display_print.jpg)
    *
-   * @param text Text to display. With browser, UTF8 string is available. (It does not work with node.js. Please use display.draw())
+   * @param text Text to display. With browser, UTF8 string is available.
+   * @param useCanvas Sets whether or not to force the use of canvas when text is only characters included in ASCII code range. This will be ignored if canvas is not available.
    */
-  public print(text: string) {
-    const ctx = this._ctx();
+  public print(text: string, useCanvas = false) {
+    const ctx = this._ctx(false);
+    // eslint-disable-next-line no-control-regex
+    if (text.match(/^[\x00-\x7F]*$/)) {
+      if (!useCanvas || (useCanvas && !ctx)) {
+        const obj: any = {};
+        obj.display = {
+          text: '' + text,
+        };
+        this.Obniz.send(obj);
+        return;
+      }
+    }
     if (ctx) {
       ctx.fillText(text, this._pos.x, this._pos.y + this.fontSize);
       this.draw(ctx);
       this._pos.y += this.fontSize;
     } else {
-      const obj: any = {};
-      obj.display = {
-        text: '' + text,
-      };
-      this.Obniz.send(obj);
+      this.warnCanvasAvailability();
     }
   }
 
   /**
-   * (It does not work with node.js. Please use display.draw())
-   *
-   *
-   * Now we draw a line between two points.
+   * Draw a line between two points.
+   * If you are using node.js, node-canvas is required.
    *
    * ```javascript
    * // Javascript Example
@@ -225,23 +238,19 @@ export default class Display extends ComponentAbstract {
    * @param y_1
    */
   public line(x_0: number, y_0: number, x_1: number, y_1: number) {
-    const ctx: any = this._ctx();
+    const ctx: any = this._ctx(true);
     if (ctx) {
       ctx.beginPath();
       ctx.moveTo(x_0, y_0);
       ctx.lineTo(x_1, y_1);
       ctx.stroke();
       this.draw(ctx);
-    } else {
-      this.warnCanvasAvailability();
     }
   }
 
   /**
-   * (It does not work with node.js. Please use display.draw())
-   *
-   *
-   * This draws a rectangle.
+   * Draw a rectangle.
+   * If you are using node.js, node-canvas is required.
    *
    * ```javascript
    * // Javascript Example
@@ -262,7 +271,7 @@ export default class Display extends ComponentAbstract {
     height: number,
     mustFill?: boolean
   ) {
-    const ctx: any = this._ctx();
+    const ctx: any = this._ctx(true);
     if (ctx) {
       if (mustFill) {
         ctx.fillRect(x, y, width, height);
@@ -270,15 +279,12 @@ export default class Display extends ComponentAbstract {
         ctx.strokeRect(x, y, width, height);
       }
       this.draw(ctx);
-    } else {
-      this.warnCanvasAvailability();
     }
   }
 
   /**
-   * (It does not work with node.js. Please use display.draw())
-   *
-   * This draws a circle.
+   * Draw a circle.
+   * If you are using node.js, node-canvas is required.
    *
    * ```javascript
    * // Javascript Example
@@ -292,7 +298,7 @@ export default class Display extends ComponentAbstract {
    * @param mustFill
    */
   public circle(x: number, y: number, r: number, mustFill?: boolean) {
-    const ctx: any = this._ctx();
+    const ctx: any = this._ctx(true);
     if (ctx) {
       ctx.beginPath();
       ctx.arc(x, y, r, 0, Math.PI * 2);
@@ -302,8 +308,6 @@ export default class Display extends ComponentAbstract {
         ctx.stroke();
       }
       this.draw(ctx);
-    } else {
-      this.warnCanvasAvailability();
     }
   }
 
@@ -501,6 +505,7 @@ export default class Display extends ComponentAbstract {
   /**
    * You can specify to transfer the displayed data or not.
    * This affects only the functions that use canvas like clear/print/line/rect/circle/draw.
+   * If you are using node.js, node-canvas is required.
    *
    * Use false to stop updating display and true to restart updating.
    *
@@ -522,7 +527,7 @@ export default class Display extends ComponentAbstract {
    */
   public drawing(autoFlush: boolean) {
     this.autoFlush = !!autoFlush;
-    const ctx: any = this._ctx();
+    const ctx: any = this._ctx(true);
     if (ctx) {
       this.draw(ctx);
     }
@@ -576,8 +581,7 @@ export default class Display extends ComponentAbstract {
         const { createCanvas } = require('canvas');
         this._canvas = createCanvas(this.width, this.height);
       } catch (e) {
-        // this.warnCanvasAvailability();
-        return null;
+        return undefined;
       }
     } else {
       const identifier: any = 'obnizcanvas-' + this.Obniz.id;
@@ -605,11 +609,15 @@ export default class Display extends ComponentAbstract {
     return this._canvas;
   }
 
-  private _ctx() {
+  private _ctx(required = false) {
     const canvas: any = this._preparedCanvas();
     if (canvas) {
       return canvas.getContext('2d');
     }
+    if (required) {
+      this.warnCanvasAvailability();
+    }
+    return undefined;
   }
 
   private _draw(ctx: CanvasRenderingContext2D) {

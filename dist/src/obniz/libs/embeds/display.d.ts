@@ -33,10 +33,9 @@ export default class Display extends ComponentAbstract {
     private _raw_alternate;
     constructor(obniz: any, info: any);
     /**
-     * (It does not work with node.js. Please use display.draw())
-     *
      * This changes the font.
      * The options for fontFamily and fontSize depend on your browser.
+     * If you are using node.js, node-canvas is required.
      *
      * The default font is Arial 16px.
      * If you set the parameter to null, you will be using the default font.
@@ -59,6 +58,7 @@ export default class Display extends ComponentAbstract {
     font(font: string | null, size?: number): void;
     /**
      * Setting color for fill/stroke style for further rendering.
+     * If you are using node.js, node-canvas is required.
      *
      * ```javascript
      * obniz.display.color('#FF0000');
@@ -81,6 +81,7 @@ export default class Display extends ComponentAbstract {
     getColor(): string;
     /**
      * Clear the display.
+     *
      * ```javascript
      * // Javascript Example
      * obniz.display.clear();
@@ -88,8 +89,9 @@ export default class Display extends ComponentAbstract {
      */
     clear(): void;
     /**
-     * (This does not work with node.js. Please use display.draw())
      * It changes the display position of a text. If you are using print() to display a text, position it to top left.
+     *
+     * If you are using node.js, node-canvas is required.
      *
      * ```javascript
      * // Javascript Example
@@ -107,6 +109,7 @@ export default class Display extends ComponentAbstract {
     };
     /**
      * Print text on display.
+     * If you are using node.js and text is included characters out of ASCII code range, node-canvas is required.
      *
      * ```javascript
      * // Javascript Example
@@ -120,14 +123,13 @@ export default class Display extends ComponentAbstract {
      * ```
      * ![](media://obniz_display_print.jpg)
      *
-     * @param text Text to display. With browser, UTF8 string is available. (It does not work with node.js. Please use display.draw())
+     * @param text Text to display. With browser, UTF8 string is available.
+     * @param useCanvas Sets whether or not to force the use of canvas when text is only characters included in ASCII code range. This will be ignored if canvas is not available.
      */
-    print(text: string): void;
+    print(text: string, useCanvas?: boolean): void;
     /**
-     * (It does not work with node.js. Please use display.draw())
-     *
-     *
-     * Now we draw a line between two points.
+     * Draw a line between two points.
+     * If you are using node.js, node-canvas is required.
      *
      * ```javascript
      * // Javascript Example
@@ -150,10 +152,8 @@ export default class Display extends ComponentAbstract {
      */
     line(x_0: number, y_0: number, x_1: number, y_1: number): void;
     /**
-     * (It does not work with node.js. Please use display.draw())
-     *
-     *
-     * This draws a rectangle.
+     * Draw a rectangle.
+     * If you are using node.js, node-canvas is required.
      *
      * ```javascript
      * // Javascript Example
@@ -169,9 +169,8 @@ export default class Display extends ComponentAbstract {
      */
     rect(x: number, y: number, width: number, height: number, mustFill?: boolean): void;
     /**
-     * (It does not work with node.js. Please use display.draw())
-     *
-     * This draws a circle.
+     * Draw a circle.
+     * If you are using node.js, node-canvas is required.
      *
      * ```javascript
      * // Javascript Example
@@ -308,6 +307,7 @@ export default class Display extends ComponentAbstract {
     /**
      * You can specify to transfer the displayed data or not.
      * This affects only the functions that use canvas like clear/print/line/rect/circle/draw.
+     * If you are using node.js, node-canvas is required.
      *
      * Use false to stop updating display and true to restart updating.
      *
