@@ -13583,7 +13583,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
         }
         else {
             // eslint-disable-next-line no-control-regex
-            if (!text.match(/^[\x00-\x7F]*$/)) {
+            if (!text.toString().match(/^[\x00-\x7F]*$/)) {
                 this.warnCanvasAvailability();
             }
             const obj = {};

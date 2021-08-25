@@ -200,7 +200,7 @@ export default class Display extends ComponentAbstract {
       this._pos.y += this.fontSize;
     } else {
       // eslint-disable-next-line no-control-regex
-      if (!text.match(/^[\x00-\x7F]*$/)) {
+      if (!text.toString().match(/^[\x00-\x7F]*$/)) {
         this.warnCanvasAvailability();
       }
       const obj: any = {};
