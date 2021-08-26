@@ -28520,7 +28520,9 @@ IBS03TP.deviceAdv = [
  * @packageDocumentation
  * @module Parts.iBS04
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** iBS04 management class iBS04を管理するクラス */
 class IBS04 {
     constructor() {
         this._peripheral = null;
@@ -28530,6 +28532,17 @@ class IBS04 {
             name: 'iBS04',
         };
     }
+    /**
+     * Verify that the received peripheral is from the iBS04
+     *
+     * 受け取ったPeripheralがiBS04のものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the iBS04
+     *
+     * iBS04かどうか
+     */
     static isDevice(peripheral) {
         if (this.deviceAdv.length > peripheral.adv_data.length) {
             return false;
@@ -28545,6 +28558,16 @@ class IBS04 {
         }
         return true;
     }
+    /**
+     * Get a data from the iBS04
+     *
+     * iBS04からデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the iBS04 iBS04から受け取ったデータ
+     *
+     */
     static getData(peripheral) {
         if (!IBS04.isDevice(peripheral)) {
             return null;
