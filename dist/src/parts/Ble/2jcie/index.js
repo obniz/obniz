@@ -29,7 +29,7 @@ class OMRON_2JCIE {
         };
     }
     /**
-     * verify that the received peripheral is from the 2JCIE Environmental Sensor series of OMRON
+     * Verify that the received peripheral is from the 2JCIE Environmental Sensor series of OMRON
      *
      * 受け取ったperipheralがOMRON 環境センサ 2JCIEシリーズのものかどうか確認する
      *

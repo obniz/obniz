@@ -16,7 +16,7 @@ class IBS01G {
         };
     }
     /**
-     * verify that the received peripheral is from the iBS01G
+     * Verify that the received peripheral is from the iBS01G
      *
      * 受け取ったPeripheralがiBS01Gのものかどうかを確認する
      *

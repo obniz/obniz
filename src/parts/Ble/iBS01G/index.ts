@@ -17,7 +17,7 @@ export interface IBS01GOptions {}
  * IBS01Gからのadvertisementデータ
  */
 export interface IBS01G_Data {
-  /** battery 電池電圧 (V) */
+  /** battery 電池電圧 (Unit 単位: 0.01 V) */
   battery: number;
   /**
    * button state ボタンの状態
@@ -40,7 +40,7 @@ export default class IBS01G implements ObnizPartsBleInterface {
   }
 
   /**
-   * verify that the received peripheral is from the iBS01G
+   * Verify that the received peripheral is from the iBS01G
    *
    * 受け取ったPeripheralがiBS01Gのものかどうかを確認する
    *

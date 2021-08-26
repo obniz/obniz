@@ -24,7 +24,7 @@ class HEM_9200T {
         };
     }
     /**
-     * verify that the received peripheral is from the HEM_9200T
+     * Verify that the received peripheral is from the HEM_9200T
      *
      * 受け取ったPeripheralがHEM_9200Tのものかどうかを確認する
      *

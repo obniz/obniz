@@ -3,11 +3,13 @@
  * @packageDocumentation
  * @module Parts.iBS01T
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
+/** iBS01T management class iBS01Tを管理するクラス */
 class IBS01T {
     constructor() {
         this._peripheral = null;
@@ -17,6 +19,21 @@ class IBS01T {
             name: 'iBS01T',
         };
     }
+    /**
+     * Verify that the received peripheral is from the iBS01T
+     *
+     * 受け取ったPeripheralがiBS01Tのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @param strictCheck Whether do strict check
+     *
+     * strictCheckをするかどうか
+     *
+     * @returns Whether it is the iBS01T
+     *
+     * iBS01Tかどうか
+     */
     static isDevice(peripheral, strictCheck = false) {
         const deviceAdv = [...this.deviceAdv];
         if (strictCheck) {
@@ -39,6 +56,17 @@ class IBS01T {
             peripheral.adv_data[14] === 0xff &&
             peripheral.adv_data[15] === 0xff);
     }
+    /**
+     * Get a data from the iBS01T
+     *
+     * iBS0Tからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @param strictCheck Whether do strict check strictCheckをするかどうか
+     *
+     * @returns received data from the iBS01T iBS01Tから受け取ったデータ
+     */
     static getData(peripheral, strictCheck) {
         if (!IBS01T.isDevice(peripheral, strictCheck)) {
             return null;

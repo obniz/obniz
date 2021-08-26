@@ -61,7 +61,7 @@ class EXTxx extends ObnizPartsBleInterface_1.default {
         return dev.getData();
     }
     /**
-     * verify that the received peripheral is from the EXTxx
+     * Verify that the received peripheral is from the EXTxx
      *
      * 受け取ったperipheralがEXTxxのものかどうか確認する
      *

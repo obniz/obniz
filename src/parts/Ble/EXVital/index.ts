@@ -176,7 +176,7 @@ export default class EXVital extends ObnizPartsBleInterface {
   }
 
   /**
-   * verify that the received peripheral is from the EXVital
+   * Verify that the received peripheral is from the EXVital
    *
    * 受け取ったperipheralがEXVitalのものかどうか確認する
    *

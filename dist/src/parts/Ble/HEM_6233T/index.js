@@ -30,7 +30,7 @@ class HEM_6233T {
         };
     }
     /**
-     * verify that the received peripheral is from the HEM_6233T
+     * Verify that the received peripheral is from the HEM_6233T
      *
      * 受け取ったPeripheralがHEM_6233Tのものかどうかを確認する
      *

@@ -64,7 +64,7 @@ class EXVital extends ObnizPartsBleInterface_1.default {
         return dev.getData();
     }
     /**
-     * verify that the received peripheral is from the EXVital
+     * Verify that the received peripheral is from the EXVital
      *
      * 受け取ったperipheralがEXVitalのものかどうか確認する
      *

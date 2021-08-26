@@ -68,7 +68,7 @@ export interface HEM_6233TResult {
 export default class HEM_6233T implements ObnizPartsBleInterface {
     static info(): ObnizPartsInfo;
     /**
-     * verify that the received peripheral is from the HEM_6233T
+     * Verify that the received peripheral is from the HEM_6233T
      *
      * 受け取ったPeripheralがHEM_6233Tのものかどうかを確認する
      *

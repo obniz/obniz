@@ -23,7 +23,7 @@ export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
   }
 
   /**
-   * verify that the received peripheral is from the ENERTALK TOUCH
+   * Verify that the received peripheral is from the ENERTALK TOUCH
    *
    * 受け取ったperipheralがENERTALK TOUCHのものかどうか確認する
    *

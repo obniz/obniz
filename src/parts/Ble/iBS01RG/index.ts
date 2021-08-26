@@ -71,7 +71,7 @@ export interface IBS01RG_Acceleration_Data {
  * IBS01RGからのadvertisementデータ
  */
 export interface IBS01RG_Data {
-  /** battery 電源電圧 (V) */
+  /** battery 電源電圧 (Unit 単位: 0.01 V) */
   battery: number;
   /** active or inactive アクティブか非アクティブか */
   active: boolean;
@@ -94,7 +94,7 @@ export default class IBS01RG implements ObnizPartsBleInterface {
   }
 
   /**
-   * verify that the received peripheral is from the iBS01RG
+   * Verify that the received peripheral is from the iBS01RG
    *
    * 受け取ったPeripheralがiBS01RGのものかどうかを確認する
    *

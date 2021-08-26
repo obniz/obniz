@@ -124,7 +124,7 @@ export default class EXTxx extends ObnizPartsBleInterface {
   }
 
   /**
-   * verify that the received peripheral is from the EXTxx
+   * Verify that the received peripheral is from the EXTxx
    *
    * 受け取ったperipheralがEXTxxのものかどうか確認する
    *

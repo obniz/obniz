@@ -22986,7 +22986,7 @@ class OMRON_2JCIE {
         };
     }
     /**
-     * verify that the received peripheral is from the 2JCIE Environmental Sensor series of OMRON
+     * Verify that the received peripheral is from the 2JCIE Environmental Sensor series of OMRON
      *
      * 受け取ったperipheralがOMRON 環境センサ 2JCIEシリーズのものかどうか確認する
      *
@@ -23300,7 +23300,7 @@ class ENERTALK_TOUCH {
         };
     }
     /**
-     * verify that the received peripheral is from the ENERTALK TOUCH
+     * Verify that the received peripheral is from the ENERTALK TOUCH
      *
      * 受け取ったperipheralがENERTALK TOUCHのものかどうか確認する
      *
@@ -23513,7 +23513,7 @@ class EXTxx extends ObnizPartsBleInterface_1.default {
         return dev.getData();
     }
     /**
-     * verify that the received peripheral is from the EXTxx
+     * Verify that the received peripheral is from the EXTxx
      *
      * 受け取ったperipheralがEXTxxのものかどうか確認する
      *
@@ -23639,7 +23639,7 @@ class EXVital extends ObnizPartsBleInterface_1.default {
         return dev.getData();
     }
     /**
-     * verify that the received peripheral is from the EXVital
+     * Verify that the received peripheral is from the EXVital
      *
      * 受け取ったperipheralがEXVitalのものかどうか確認する
      *
@@ -23730,7 +23730,7 @@ class HEM_6233T {
         };
     }
     /**
-     * verify that the received peripheral is from the HEM_6233T
+     * Verify that the received peripheral is from the HEM_6233T
      *
      * 受け取ったPeripheralがHEM_6233Tのものかどうかを確認する
      *
@@ -23967,7 +23967,7 @@ class HEM_9200T {
         };
     }
     /**
-     * verify that the received peripheral is from the HEM_9200T
+     * Verify that the received peripheral is from the HEM_9200T
      *
      * 受け取ったPeripheralがHEM_9200Tのものかどうかを確認する
      *
@@ -27297,7 +27297,7 @@ class IBS01 {
         };
     }
     /**
-     * verify that the received peripheral is from the iBS01
+     * Verify that the received peripheral is from the iBS01
      *
      * 受け取ったPeripheralがiBS01のものかどうかを確認する
      *
@@ -27423,7 +27423,7 @@ class IBS01G {
         };
     }
     /**
-     * verify that the received peripheral is from the iBS01G
+     * Verify that the received peripheral is from the iBS01G
      *
      * 受け取ったPeripheralがiBS01Gのものかどうかを確認する
      *
@@ -27533,7 +27533,7 @@ class IBS01H {
         };
     }
     /**
-     * verify that the received peripheral is from the iBS01H
+     * Verify that the received peripheral is from the iBS01H
      *
      * 受け取ったPeripheralがiBS01Hのものかどうかを確認する
      *
@@ -27677,7 +27677,7 @@ class IBS01RG {
         };
     }
     /**
-     * verify that the received peripheral is from the iBS01RG
+     * Verify that the received peripheral is from the iBS01RG
      *
      * 受け取ったPeripheralがiBS01RGのものかどうかを確認する
      *
@@ -27766,11 +27766,13 @@ IBS01RG.deviceAdv = [
  * @packageDocumentation
  * @module Parts.iBS01T
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+/** iBS01T management class iBS01Tを管理するクラス */
 class IBS01T {
     constructor() {
         this._peripheral = null;
@@ -27780,6 +27782,21 @@ class IBS01T {
             name: 'iBS01T',
         };
     }
+    /**
+     * Verify that the received peripheral is from the iBS01T
+     *
+     * 受け取ったPeripheralがiBS01Tのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @param strictCheck Whether do strict check
+     *
+     * strictCheckをするかどうか
+     *
+     * @returns Whether it is the iBS01T
+     *
+     * iBS01Tかどうか
+     */
     static isDevice(peripheral, strictCheck = false) {
         const deviceAdv = [...this.deviceAdv];
         if (strictCheck) {
@@ -27802,6 +27819,17 @@ class IBS01T {
             peripheral.adv_data[14] === 0xff &&
             peripheral.adv_data[15] === 0xff);
     }
+    /**
+     * Get a data from the iBS01T
+     *
+     * iBS0Tからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @param strictCheck Whether do strict check strictCheckをするかどうか
+     *
+     * @returns received data from the iBS01T iBS01Tから受け取ったデータ
+     */
     static getData(peripheral, strictCheck) {
         if (!IBS01T.isDevice(peripheral, strictCheck)) {
             return null;

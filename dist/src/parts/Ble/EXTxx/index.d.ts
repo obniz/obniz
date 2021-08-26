@@ -51,7 +51,7 @@ export default class EXTxx extends ObnizPartsBleInterface {
     static getData(peripheral: BleRemotePeripheral): EXTxx_Data | null;
     constructor(peripheral: BleRemotePeripheral);
     /**
-     * verify that the received peripheral is from the EXTxx
+     * Verify that the received peripheral is from the EXTxx
      *
      * 受け取ったperipheralがEXTxxのものかどうか確認する
      *

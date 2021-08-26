@@ -76,7 +76,7 @@ export interface HEM_9200TOptions {
 export default class HEM_9200T implements ObnizPartsBleInterface {
     static info(): ObnizPartsInfo;
     /**
-     * verify that the received peripheral is from the HEM_9200T
+     * Verify that the received peripheral is from the HEM_9200T
      *
      * 受け取ったPeripheralがHEM_9200Tのものかどうかを確認する
      *

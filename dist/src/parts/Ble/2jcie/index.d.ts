@@ -320,7 +320,7 @@ export interface OMRON_2JCIE_AdvSensorData {
 export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     static info(): ObnizPartsInfo;
     /**
-     * verify that the received peripheral is from the 2JCIE Environmental Sensor series of OMRON
+     * Verify that the received peripheral is from the 2JCIE Environmental Sensor series of OMRON
      *
      * 受け取ったperipheralがOMRON 環境センサ 2JCIEシリーズのものかどうか確認する
      *

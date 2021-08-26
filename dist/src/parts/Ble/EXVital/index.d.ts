@@ -104,7 +104,7 @@ export default class EXVital extends ObnizPartsBleInterface {
     static getData(peripheral: BleRemotePeripheral): EXVital_Data | null;
     constructor(peripheral: BleRemotePeripheral);
     /**
-     * verify that the received peripheral is from the EXVital
+     * Verify that the received peripheral is from the EXVital
      *
      * 受け取ったperipheralがEXVitalのものかどうか確認する
      *

@@ -16,7 +16,7 @@ class IBS01 {
         };
     }
     /**
-     * verify that the received peripheral is from the iBS01
+     * Verify that the received peripheral is from the iBS01
      *
      * 受け取ったPeripheralがiBS01のものかどうかを確認する
      *

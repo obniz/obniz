@@ -12,7 +12,7 @@ export interface IBS01HOptions {
  * IBS01Hからのadvertisementデータ
  */
 export interface IBS01H_Data {
-    /** battery 電池電圧 (V) */
+    /** battery 電池電圧 (Unit 単位: 0.01 V) */
     battery: number;
     /**
      * button state ボタンの状態
@@ -27,7 +27,7 @@ export interface IBS01H_Data {
 export default class IBS01H implements ObnizPartsBleInterface {
     static info(): ObnizPartsBleInfo;
     /**
-     * verify that the received peripheral is from the iBS01H
+     * Verify that the received peripheral is from the iBS01H
      *
      * 受け取ったPeripheralがiBS01Hのものかどうかを確認する
      *
