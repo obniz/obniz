@@ -27520,7 +27520,9 @@ IBS01G.deviceAdv = [
  * @packageDocumentation
  * @module Parts.iBS01H
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** iBS01H management class iBS01Hを管理するクラス */
 class IBS01H {
     constructor() {
         this._peripheral = null;
@@ -27530,6 +27532,17 @@ class IBS01H {
             name: 'iBS01H',
         };
     }
+    /**
+     * verify that the received peripheral is from the iBS01H
+     *
+     * 受け取ったPeripheralがiBS01Hのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the iBS01H
+     *
+     * iBS01Hかどうか
+     */
     static isDevice(peripheral) {
         if (this.deviceAdv.length > peripheral.adv_data.length) {
             return false;
@@ -27548,6 +27561,15 @@ class IBS01H {
             peripheral.adv_data[14] === 0xff &&
             peripheral.adv_data[15] === 0xff);
     }
+    /**
+     * Get a data from the iBS01H
+     *
+     * iBS01Hからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the iBS01H iBS01Hから受け取ったデータ
+     */
     static getData(peripheral) {
         if (!IBS01H.isDevice(peripheral)) {
             return null;
