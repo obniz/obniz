@@ -89,7 +89,7 @@ export default class IBS01T implements ObnizPartsBleInterface {
   /**
    * Get a data from the iBS01T
    *
-   * iBS0Tからデータを取得
+   * iBS01Tからデータを取得
    *
    * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
    *

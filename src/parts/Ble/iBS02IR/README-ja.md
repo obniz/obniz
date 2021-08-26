@@ -53,7 +53,8 @@ obniz.ble.scan.onfind = (p) => {
 await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
 
-
+<!-- 該当する関数が見当たらない&英語版readmeにはないのでコメントアウトしました -->
+<!--
 # iBS02IR
 INGICS社製の温湿度センサーです。
 
@@ -120,3 +121,4 @@ ibs02ir.scan();
 let ibs02ir = obniz.wired('iBS02IR');
 ibs02ir.end();
 ```
+-->
