@@ -3,7 +3,9 @@
  * @packageDocumentation
  * @module Parts.iBS02PIR
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** iBS02PIR management class iBS02PIRを管理するクラス */
 class IBS02PIR {
     constructor() {
         this._peripheral = null;
@@ -13,6 +15,17 @@ class IBS02PIR {
             name: 'iBS02PIR',
         };
     }
+    /**
+     * Verify that the received peripheral is from the iBS02PIR
+     *
+     * 受け取ったPeripheralがiBS02PIRのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the iBS02PIR
+     *
+     * iBS02PIRかどうか
+     */
     static isDevice(peripheral) {
         if (this.deviceAdv.length > peripheral.adv_data.length) {
             return false;
@@ -28,6 +41,15 @@ class IBS02PIR {
         }
         return true;
     }
+    /**
+     * Get a data from the iBS02PIR
+     *
+     * iBS02PIRからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the iBS02PIR iBS02PIRから受け取ったデータ
+     */
     static getData(peripheral) {
         if (!IBS02PIR.isDevice(peripheral)) {
             return null;
