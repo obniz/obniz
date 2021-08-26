@@ -43,6 +43,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
+/** iBS01RG management class iBS01RGを管理するクラス */
 class IBS01RG {
     constructor() {
         this._peripheral = null;
@@ -52,6 +53,17 @@ class IBS01RG {
             name: 'iBS01RG',
         };
     }
+    /**
+     * verify that the received peripheral is from the iBS01RG
+     *
+     * 受け取ったPeripheralがiBS01RGのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the iBS01RG
+     *
+     * iBS01RGかどうか
+     */
     static isDevice(peripheral) {
         if (this.deviceAdv.length > peripheral.adv_data.length) {
             return false;
@@ -67,6 +79,15 @@ class IBS01RG {
         }
         return true;
     }
+    /**
+     * Get a data from the iBS01RG
+     *
+     * iBS01RGからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the iBS01RG iBS01RGから受け取ったデータ
+     */
     static getData(peripheral) {
         if (!IBS01RG.isDevice(peripheral)) {
             return null;

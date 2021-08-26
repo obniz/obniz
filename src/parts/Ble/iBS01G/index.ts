@@ -17,7 +17,7 @@ export interface IBS01GOptions {}
  * IBS01Gからのadvertisementデータ
  */
 export interface IBS01G_Data {
-  /** battery 電池電圧 (V)*/
+  /** battery 電池電圧 (V) */
   battery: number;
   /**
    * button state ボタンの状態
