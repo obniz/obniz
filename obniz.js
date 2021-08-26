@@ -28296,11 +28296,13 @@ IBS03G.deviceAdv = [
  * @packageDocumentation
  * @module Parts.iBS03T
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+/** iBS03T management class iBS03Tを管理するクラス */
 class IBS03T {
     constructor() {
         this._peripheral = null;
@@ -28310,6 +28312,16 @@ class IBS03T {
             name: 'iBS03T',
         };
     }
+    /**
+     * Verify that the received peripheral is from the iBS03T
+     *
+     * 受け取ったPeripheralがiBS03Tのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     * @returns Whether it is the iBS03T
+     *
+     * iBS03Tかどうか
+     */
     static isDevice(peripheral) {
         if (this.deviceAdv.length > peripheral.adv_data.length) {
             return false;
@@ -28325,6 +28337,15 @@ class IBS03T {
         }
         return true;
     }
+    /**
+     * Get a data from the iBS03T
+     *
+     * iBS03Tからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the iBS03T iBS03Tから受け取ったデータ
+     */
     static getData(peripheral) {
         if (!IBS03T.isDevice(peripheral)) {
             return null;
