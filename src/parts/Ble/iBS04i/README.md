@@ -43,6 +43,7 @@ Returns device information if found. Returns Null if not found.
 - minor : iBeacon　minor
 - power : iBeacon　power
 - rssi :  Signal strength
+- address : BLE address
 
 ```javascript
 // Javascript Example

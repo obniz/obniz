@@ -41,6 +41,7 @@ await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 - minor : iBeacon　minor
 - power : iBeacon　power
 - rssi : 電波強度
+- address : BLEのアドレス
 
 ```javascript
 // Javascript Example
