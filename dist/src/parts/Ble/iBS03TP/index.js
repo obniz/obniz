@@ -3,11 +3,13 @@
  * @packageDocumentation
  * @module Parts.iBS03TP
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
+/** iBS03TP management class iBS03TPを管理するクラス */
 class IBS03TP {
     constructor() {
         this._peripheral = null;
@@ -17,6 +19,17 @@ class IBS03TP {
             name: 'iBS03TP',
         };
     }
+    /**
+     * Verify that the received peripheral is from the iBS03TP
+     *
+     * 受け取ったPeripheralがiBS03TPのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the iBS03TP
+     *
+     * iBS03TPかどうか
+     */
     static isDevice(peripheral) {
         if (this.deviceAdv.length > peripheral.adv_data.length) {
             return false;
@@ -32,6 +45,15 @@ class IBS03TP {
         }
         return true;
     }
+    /**
+     * Get a data from the iBS03TP
+     *
+     * iBS03TPからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the iBS03TP iBS03TPから受け取ったデータ
+     */
     static getData(peripheral) {
         if (!IBS03TP.isDevice(peripheral)) {
             return null;
