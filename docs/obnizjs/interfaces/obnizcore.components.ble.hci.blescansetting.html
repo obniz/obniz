@@ -97,6 +97,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blescansetting.html#duplicate" class="tsd-kind-icon">duplicate</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blescansetting.html#duration" class="tsd-kind-icon">duration</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blescansetting.html#filterondevice" class="tsd-kind-icon">filter<wbr>OnDevice</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blescansetting.html#waitbothadvertisementandscanresponse" class="tsd-kind-icon">wait<wbr>Both<wbr>Advertisement<wbr>And<wbr>Scan<wbr>Response</a></li>
 							</ul>
 						</section>
 					</div>
@@ -184,6 +185,24 @@
 <span class="hljs-keyword">await</span> obniz.ble.scan.startWait(target, setting);</code></pre>
 					</div>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="waitbothadvertisementandscanresponse" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> wait<wbr>Both<wbr>Advertisement<wbr>And<wbr>Scan<wbr>Response</h3>
+					<div class="tsd-signature tsd-kind-icon">wait<wbr>Both<wbr>Advertisement<wbr>And<wbr>Scan<wbr>Response<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:129</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>If only one of advertisement and scanResponse is coming, wait until both come.</p>
+						</div>
+						<p>True : wait for other data come until 10 seconds
+						False : don&#39;t wait and notify immediately. some parameters will be null.</p>
+						<p>default : true</p>
+					</div>
+				</section>
 			</section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -212,6 +231,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="obnizcore.components.ble.hci.blescansetting.html#filterondevice" class="tsd-kind-icon">filter<wbr>OnDevice</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.components.ble.hci.blescansetting.html#waitbothadvertisementandscanresponse" class="tsd-kind-icon">wait<wbr>Both<wbr>Advertisement<wbr>And<wbr>Scan<wbr>Response</a>
 							</li>
 						</ul>
 					</li>

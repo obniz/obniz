@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.16.0",
+  "version": "3.17.0-alpha.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -2806,6 +2806,7 @@ class ObnizConnection extends eventemitter3_1.default {
         if (this.autoConnect) {
             this._startAutoConnectLoopInBackground();
         }
+        this._stopPingLoopInBackground();
     }
     wsOnError(event) {
         this._print_debug(`ws onerror event=${event}`);
@@ -2823,13 +2824,17 @@ class ObnizConnection extends eventemitter3_1.default {
         this.connectionState = 'connecting';
         await this._connectCloudWait(desired_server);
         try {
+            let localConnectTimeoutRef;
             const localConnectTimeout = new Promise((resolve, reject) => {
                 const localConnectTimeoutError = new Error('Cannot use local_connect because the connection was timeouted');
-                setTimeout(() => {
+                localConnectTimeoutRef = setTimeout(() => {
                     reject(localConnectTimeoutError);
                 }, 3000);
             });
             await Promise.race([localConnectTimeout, this._connectLocalWait()]);
+            if (localConnectTimeoutRef) {
+                clearTimeout(localConnectTimeoutRef);
+            }
         }
         catch (e) {
             // cannot connect local
@@ -3310,6 +3315,12 @@ class ObnizConnection extends eventemitter3_1.default {
                 }
             }
         }, 0);
+    }
+    _stopPingLoopInBackground() {
+        if (this._nextPingTimeout) {
+            clearTimeout(this._nextPingTimeout);
+            this._nextPingTimeout = null;
+        }
     }
     throwErrorIfOffline() {
         if (this.connectionState !== 'connected') {
@@ -4720,7 +4731,7 @@ class ComponentAbstract extends eventemitter3_1.default {
                 else {
                     this.off(schemaPath, onDataReceived);
                 }
-                if (typeof timeoutHandler === 'number') {
+                if (timeoutHandler !== undefined) {
                     clearTimeout(timeoutHandler);
                     timeoutHandler = undefined;
                 }
@@ -8075,6 +8086,9 @@ class BleScan {
         this.scanSettings = {};
         this.scanedPeripherals = [];
         this._timeoutTimer = undefined;
+        this.obnizBle.Obniz.on('_close', () => {
+            this.clearTimeoutTimer();
+        });
     }
     /**
      * @ignore
@@ -8142,6 +8156,8 @@ class BleScan {
         settings.duplicate = !!settings.duplicate;
         settings.filterOnDevice = !!settings.filterOnDevice;
         settings.activeScan = settings.activeScan !== false;
+        settings.waitBothAdvertisementAndScanResponse =
+            settings.waitBothAdvertisementAndScanResponse !== false;
         this.scanSettings = settings;
         target = target || {};
         this.scanTarget.binary = target.binary;
@@ -8310,14 +8326,18 @@ class BleScan {
                     (!peripheral.scan_resp || peripheral.scan_resp.length === 0);
                 // wait for adv_data + scan resp
                 // 10 seconds timeout
-                if (alreadyGotCompleteAdveData || nonConnectable || maybeAdvOnly) {
+                if (alreadyGotCompleteAdveData ||
+                    nonConnectable ||
+                    maybeAdvOnly ||
+                    this.scanSettings.activeScan === false || // only receive adv
+                    this.scanSettings.waitBothAdvertisementAndScanResponse === false) {
                     this._removeDelayNotifyTimer(peripheral.address);
                     this._notifyOnFind(peripheral);
                 }
                 else {
                     const timer = setTimeout(() => {
                         this._notifyOnFind(peripheral);
-                    }, 10000);
+                    }, 10 * 1000);
                     this._delayNotifyTimers.push({ timer, peripheral });
                 }
                 break;
@@ -9860,9 +9880,8 @@ class Gatt extends eventemitter3_1.default {
             this._execNoRespCommandWait(this.mtuResponse(mtu));
         })
             .catch((e) => {
-            // TODO:
-            // This must passed to Obniz class.
-            console.error(e);
+            // ignore timeout error
+            // console.error(e);
         });
         const data = await this._execCommandWait(this.mtuRequest(mtu), ATT.OP_MTU_RESP);
         const opcode = data[0];
@@ -72393,7 +72412,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
+module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
 
 /***/ }),
 
