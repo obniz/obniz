@@ -3,14 +3,17 @@
  * @packageDocumentation
  * @module Parts.Linking
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const advertising_1 = __importDefault(require("./modules/advertising"));
 const device_1 = __importDefault(require("./modules/device"));
+/** products supporting Linking management class Linking対応製品を管理するクラス */
 class Linking {
     constructor(params) {
+        /** not used */
         this.PRIMARY_SERVICE_UUID_LIST = [
             'b3b3690150d34044808d50835b13a6cd',
             'fe4e',
@@ -18,7 +21,7 @@ class Linking {
         this.initialized = false;
         this.keys = [];
         this.requiredKeys = [];
-        this.periperal = null;
+        this.peripheral = null;
         this.onadvertisement = null;
         this.ondiscover = null;
         // Private properties
@@ -42,22 +45,55 @@ class Linking {
         this.obniz = obniz;
     }
     /**
+     * Use {@linkplain initWait}
+     *
+     * {@linkplain initWait} を使ってください
+     *
      * @deprecated
      */
     init() {
         return this.initWait();
     }
+    /**
+     * Initialize BLE module
+     *
+     * BLEを初期化
+     */
     async initWait() {
         await this.obniz.ble.initWait();
         this.initialized = true;
     }
     /**
+     * Use {@linkplain discoverWait}
+     *
+     * {@linkplain discoverWait} を使ってください
+     *
      * @deprecated
      * @param p
      */
     discover(p) {
         return this.discoverWait(p);
     }
+    /**
+     * Search for devices with specified parameters
+     *
+     * 指定したパラメータのデバイスを探索
+     *
+     * @param p Parameters for device デバイスに関するパラメータ
+     *
+     * ```
+     * {
+     *   duration?: number;  //searching duration 探索時間
+     *   nameFilter?: string;  //device name デバイスの名前
+     *   idFilter?: string;  //(not used) device ID デバイスのID
+     *   quick?: boolean; //quick mode with no searching duration 探索待ち時間のないクイックモード
+     * }
+     * ```
+     *
+     * @returns Array of device objects found {@linkplain LinkingDevice}
+     *
+     * 見つかったデバイスオブジェクトの配列 {@linkplain LinkingDevice}
+     */
     discoverWait(p) {
         this._checkInitialized();
         let duration = 5000;
@@ -152,6 +188,11 @@ class Linking {
         this.obniz.ble.scan.startWait();
         this._discover_status = true;
     }
+    /**
+     * Finish scanning device
+     *
+     * デバイスのスキャンを終了
+     */
     stopScan() {
         if (this._discover_status === true) {
             this._discover_status = false;
@@ -162,6 +203,22 @@ class Linking {
             this.obniz.ble.scan.endWait();
         }
     }
+    /**
+     * Start scanning the device
+     *
+     * デバイスのスキャンを開始
+     *
+     * @param p Parameters for device デバイスに関するパラメータ
+     *
+     * ```
+     * {
+     *   duration?: number;  //searching duration 探索時間
+     *   nameFilter?: string;  //device name デバイスの名前
+     *   idFilter?: string;  //(not used) device ID デバイスのID
+     *   quick?: boolean; //quick mode with no searching duration 探索待ち時間のないクイックモード
+     * }
+     * ```
+     */
     startScan(p) {
         this._checkInitialized();
         let name_filter = '';

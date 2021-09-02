@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module Parts.Linking
  */
+/* eslint rulesdir/non-ascii: 0 */
 
 /* ------------------------------------------------------------------
  * node-linking - linking.js
@@ -20,6 +21,7 @@ import LinkingDevice from './modules/device';
 
 export interface LinkingOptions {}
 
+/** products supporting Linking management class Linking対応製品を管理するクラス */
 export default class Linking {
   public static info(): ObnizPartsInfo {
     return {
@@ -29,19 +31,20 @@ export default class Linking {
 
   public onadvertisement: any;
   public ondiscover: any;
+  /** not used */
   public PRIMARY_SERVICE_UUID_LIST = [
     'b3b3690150d34044808d50835b13a6cd',
     'fe4e',
   ];
-  public _discover_status: any;
-  public _discover_wait: any;
-  public _discover_timer: any;
-  public _peripherals: any;
+  private _discover_status: any;
+  private _discover_wait: any;
+  private _discover_timer: any;
+  private _peripherals: any;
   public initialized = false;
 
   public keys: string[];
   public requiredKeys: string[];
-  public periperal: bleRemotePeripheral | null;
+  public peripheral: bleRemotePeripheral | null;
   public obniz!: Obniz;
 
   public get LinkingAdvertising() {
@@ -55,7 +58,7 @@ export default class Linking {
   constructor(params: any) {
     this.keys = [];
     this.requiredKeys = [];
-    this.periperal = null;
+    this.peripheral = null;
 
     this.onadvertisement = null;
     this.ondiscover = null;
@@ -72,18 +75,31 @@ export default class Linking {
   }
 
   /**
+   * Use {@linkplain initWait}
+   *
+   * {@linkplain initWait} を使ってください
+   *
    * @deprecated
    */
   public init() {
     return this.initWait();
   }
 
+  /**
+   * Initialize BLE module
+   *
+   * BLEを初期化
+   */
   public async initWait() {
     await this.obniz.ble!.initWait();
     this.initialized = true;
   }
 
   /**
+   * Use {@linkplain discoverWait}
+   *
+   * {@linkplain discoverWait} を使ってください
+   *
    * @deprecated
    * @param p
    */
@@ -91,6 +107,26 @@ export default class Linking {
     return this.discoverWait(p);
   }
 
+  /**
+   * Search for devices with specified parameters
+   *
+   * 指定したパラメータのデバイスを探索
+   *
+   * @param p Parameters for device デバイスに関するパラメータ
+   *
+   * ```
+   * {
+   *   duration?: number;  //searching duration 探索時間
+   *   nameFilter?: string;  //device name デバイスの名前
+   *   idFilter?: string;  //(not used) device ID デバイスのID
+   *   quick?: boolean; //quick mode with no searching duration 探索待ち時間のないクイックモード
+   * }
+   * ```
+   *
+   * @returns Array of device objects found {@linkplain LinkingDevice}
+   *
+   * 見つかったデバイスオブジェクトの配列 {@linkplain LinkingDevice}
+   */
   public discoverWait(p: any): Promise<any[]> {
     this._checkInitialized();
 
@@ -197,6 +233,11 @@ export default class Linking {
     this._discover_status = true;
   }
 
+  /**
+   * Finish scanning device
+   *
+   * デバイスのスキャンを終了
+   */
   public stopScan() {
     if (this._discover_status === true) {
       this._discover_status = false;
@@ -208,6 +249,22 @@ export default class Linking {
     }
   }
 
+  /**
+   * Start scanning the device
+   *
+   * デバイスのスキャンを開始
+   *
+   * @param p Parameters for device デバイスに関するパラメータ
+   *
+   * ```
+   * {
+   *   duration?: number;  //searching duration 探索時間
+   *   nameFilter?: string;  //device name デバイスの名前
+   *   idFilter?: string;  //(not used) device ID デバイスのID
+   *   quick?: boolean; //quick mode with no searching duration 探索待ち時間のないクイックモード
+   * }
+   * ```
+   */
   public startScan(p: any) {
     this._checkInitialized();
     let name_filter = '';
