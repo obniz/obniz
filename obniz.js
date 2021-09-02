@@ -24329,7 +24329,9 @@ exports.default = Logtta_AD;
  * @packageDocumentation
  * @module Parts.Logtta_Accel
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** Logtta_Accel management class Logtta_Accelを管理するクラス */
 class Logtta_Accel {
     constructor() {
         this._peripheral = null;
@@ -24339,6 +24341,17 @@ class Logtta_Accel {
             name: 'Logtta_Accel',
         };
     }
+    /**
+     * Verify that the received peripheral is from the Logtta_Accel
+     *
+     * 受け取ったPeripheralがLogtta_Accelのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Logtta_Accel
+     *
+     * Logtta_Accelかどうか
+     */
     static isDevice(peripheral) {
         const advertise = peripheral.advertise_data_rows.filter((adv) => {
             let find = false;
@@ -24360,6 +24373,21 @@ class Logtta_Accel {
         });
         return advertise.length !== 0;
     }
+    /**
+     * Get a scan data from the Logtta_Accel
+     *
+     * Note: work only in beacon mode
+     *
+     * Logtta_Accelからスキャンデータを取得
+     *
+     * 注: ビーコンモードのときのみ動作
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns scan data from Logtta_Accel
+     *
+     * Logtta_Accelから受け取ったスキャンデータ
+     */
     static getScanData(peripheral) {
         if (!Logtta_Accel.isDevice(peripheral)) {
             return null;
@@ -24409,6 +24437,21 @@ class Logtta_Accel {
         }
         return null;
     }
+    /**
+     * Get a acceleration data from the Logtta_Accel
+     *
+     * Note: work only in beacon mode
+     *
+     * Logtta_Accelから加速度データを取得
+     *
+     * 注: ビーコンモードのときのみ動作
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns acceleration data from Logtta_Accel
+     *
+     * Logtta_Accelから受け取った加速度データ
+     */
     static getAccelData(peripheral) {
         if (!Logtta_Accel.isDevice(peripheral)) {
             return null;

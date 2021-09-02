@@ -72,6 +72,13 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Logtta_Accel management class Logtta_Accelを管理するクラス</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -116,7 +123,7 @@
 					<div class="tsd-signature tsd-kind-icon">_peripheral<span class="tsd-signature-symbol">:</span> <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> = null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/LogttaAccel/index.ts:190</li>
+							<li>Defined in src/parts/Ble/LogttaAccel/index.ts:297</li>
 						</ul>
 					</aside>
 				</section>
@@ -133,16 +140,29 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaAccel/index.ts:134</li>
+									<li>Defined in src/parts/Ble/LogttaAccel/index.ts:241</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get a acceleration data from the Logtta_Accel</p>
+								</div>
+								<p>Note: work only in beacon mode</p>
+								<p>Logtta_Accelから加速度データを取得</p>
+								<p>注: ビーコンモードのときのみ動作</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>instance of BleRemotePeripheral BleRemotePeripheralのインスタンス</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/parts.logtta_accel.logtta_accel_acceldata.html" class="tsd-signature-type">Logtta_Accel_AccelData</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h4>
+							<p>acceleration data from Logtta_Accel</p>
+							<p>Logtta_Accelから受け取った加速度データ</p>
 						</li>
 					</ul>
 				</section>
@@ -156,16 +176,29 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaAccel/index.ts:76</li>
+									<li>Defined in src/parts/Ble/LogttaAccel/index.ts:168</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get a scan data from the Logtta_Accel</p>
+								</div>
+								<p>Note: work only in beacon mode</p>
+								<p>Logtta_Accelからスキャンデータを取得</p>
+								<p>注: ビーコンモードのときのみ動作</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>instance of BleRemotePeripheral BleRemotePeripheralのインスタンス</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/parts.logtta_accel.logtta_accel_scandata.html" class="tsd-signature-type">Logtta_Accel_ScanData</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h4>
+							<p>scan data from Logtta_Accel</p>
+							<p>Logtta_Accelから受け取ったスキャンデータ</p>
 						</li>
 					</ul>
 				</section>
@@ -179,7 +212,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaAccel/index.ts:48</li>
+									<li>Defined in src/parts/Ble/LogttaAccel/index.ts:114</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/obnizcore.obnizpartsbleinfo.html" class="tsd-signature-type">ObnizPartsBleInfo</a></h4>
@@ -196,16 +229,27 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaAccel/index.ts:54</li>
+									<li>Defined in src/parts/Ble/LogttaAccel/index.ts:131</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Verify that the received peripheral is from the Logtta_Accel</p>
+								</div>
+								<p>受け取ったPeripheralがLogtta_Accelのものかどうかを確認する</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>instance of BleRemotePeripheral BleRemotePeripheralのインスタンス</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<p>Whether it is the Logtta_Accel</p>
+							<p>Logtta_Accelかどうか</p>
 						</li>
 					</ul>
 				</section>
