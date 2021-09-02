@@ -72,6 +72,13 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Logtta_AD management class Logtta_ADを管理するクラス</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -133,7 +140,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaAD/index.ts:38</li>
+									<li>Defined in src/parts/Ble/LogttaAD/index.ts:67</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -155,7 +162,7 @@
 					<div class="tsd-signature tsd-kind-icon">_peripheral<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/LogttaAD/index.ts:37</li>
+							<li>Defined in src/parts/Ble/LogttaAD/index.ts:66</li>
 						</ul>
 					</aside>
 				</section>
@@ -165,7 +172,7 @@
 					<div class="tsd-signature tsd-kind-icon">on<wbr>Notify<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><a href="../interfaces/parts.logtta_ad.logtta_ad_data.html" class="tsd-signature-type">Logtta_AD_Data</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/LogttaAD/index.ts:36</li>
+							<li>Defined in src/parts/Ble/LogttaAD/index.ts:65</li>
 						</ul>
 					</aside>
 				</section>
@@ -175,7 +182,7 @@
 					<div class="tsd-signature tsd-kind-icon">ondisconnect<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>reason<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/LogttaAD/index.ts:38</li>
+							<li>Defined in src/parts/Ble/LogttaAD/index.ts:67</li>
 						</ul>
 					</aside>
 				</section>
@@ -192,9 +199,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaAD/index.ts:47</li>
+									<li>Defined in src/parts/Ble/LogttaAD/index.ts:81</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Connect to the Logtta_AD</p>
+								</div>
+								<p>Logtta_ADに接続</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
@@ -209,9 +222,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaAD/index.ts:61</li>
+									<li>Defined in src/parts/Ble/LogttaAD/index.ts:100</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Disconnect from the Logtta_AD</p>
+								</div>
+								<p>Logtta_ADとの接続を解除</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
@@ -226,10 +245,18 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaAD/index.ts:67</li>
+									<li>Defined in src/parts/Ble/LogttaAD/index.ts:115</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get all data available from the Logtta_AD</p>
+								</div>
+								<p>Logtta_ADから取得可能なデータを全て取得</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/parts.logtta_ad.logtta_ad_data.html" class="tsd-signature-type">Logtta_AD_Data</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>all data available from the Logtta_AD</p>
+							<p>Logtta_ADから受け取った全てのデータ</p>
 						</li>
 					</ul>
 				</section>
@@ -243,10 +270,18 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaAD/index.ts:83</li>
+									<li>Defined in src/parts/Ble/LogttaAD/index.ts:140</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get the current value from the Logtta_AD</p>
+								</div>
+								<p>Logtta_ADから電流値を取得</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>the current value from the Logtta_AD</p>
+							<p>Logtta_ADから受け取った電流値</p>
 						</li>
 					</ul>
 				</section>
@@ -260,10 +295,18 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaAD/index.ts:91</li>
+									<li>Defined in src/parts/Ble/LogttaAD/index.ts:166</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get the count data from the Logtta_AD</p>
+								</div>
+								<p>Logtta_ADからカウントデータを取得</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>the count data from the Logtta_AD</p>
+							<p>Logtta_ADから受け取ったカウントデータ</p>
 						</li>
 					</ul>
 				</section>
@@ -277,10 +320,18 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaAD/index.ts:87</li>
+									<li>Defined in src/parts/Ble/LogttaAD/index.ts:153</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get the voltage value from the Logtta_AD</p>
+								</div>
+								<p>Logtta_ADから電圧値を取得</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>the voltage value from the Logtta_AD</p>
+							<p>Logtta_ADから受け取った電圧値</p>
 						</li>
 					</ul>
 				</section>
@@ -294,9 +345,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaAD/index.ts:95</li>
+									<li>Defined in src/parts/Ble/LogttaAD/index.ts:177</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Notify when the data have got from the Logtta_AD</p>
+								</div>
+								<p>センサからデータを取得したとき通知</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
@@ -311,7 +368,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaAD/index.ts:22</li>
+									<li>Defined in src/parts/Ble/LogttaAD/index.ts:40</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/obnizcore.obnizpartsbleinfo.html" class="tsd-signature-type">ObnizPartsBleInfo</a></h4>
@@ -328,16 +385,27 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaAD/index.ts:28</li>
+									<li>Defined in src/parts/Ble/LogttaAD/index.ts:57</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Verify that the received peripheral is from the Logtta_AD</p>
+								</div>
+								<p>受け取ったPeripheralがLogtta_ADのものかどうかを確認する</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>instance of BleRemotePeripheral BleRemotePeripheralのインスタンス</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<p>Whether it is the Logtta_AD</p>
+							<p>Logtta_ADかどうか</p>
 						</li>
 					</ul>
 				</section>
