@@ -14152,6 +14152,13 @@ exports.default = ObnizSwitch;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/hw/cc3235mod.json":
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"22\":{},\"23\":{},\"24\":{},\"25\":{},\"28\":{},\"29\":{},\"30\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/hw/encored.json":
 /***/ (function(module) {
 
@@ -14215,6 +14222,9 @@ class HW {
         }
         else if (hw === 'encored_lte') {
             return __webpack_require__("./dist/src/obniz/libs/hw/encored_lte.json");
+        }
+        else if (hw === 'cc3235mod') {
+            return __webpack_require__("./dist/src/obniz/libs/hw/cc3235mod.json");
         }
         else {
             // default
