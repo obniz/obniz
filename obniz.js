@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.17.0-alpha.0",
+  "version": "3.17.0-alpha.1",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -5115,6 +5115,9 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * @ignore
      */
     warningIfNotInitialize() {
+        if (this.Obniz.connectionState !== 'connected') {
+            throw new ObnizError_1.ObnizOfflineError();
+        }
         if (!this._initialized && this._initializeWarning) {
             this._initializeWarning = true;
             this.Obniz.warning({
@@ -9327,7 +9330,7 @@ class NobleBindings extends eventemitter3_1.default {
             .catch((e) => {
             // TODO:
             // This must passed to Obniz class.
-            console.error(e);
+            // console.error(e);
         });
         // this.onLeConnUpdateComplete(); is nop
     }
