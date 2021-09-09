@@ -25148,11 +25148,13 @@ exports.default = Logtta_TH;
  * @packageDocumentation
  * @module Parts.MINEW_S1_HT
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+/** MINEW_S1 management class MINEW_S1を管理するクラス */
 class MINEW_S1 {
     constructor() {
         this._peripheral = null;
@@ -25164,6 +25166,25 @@ class MINEW_S1 {
     static info() {
         return { name: 'MINEW_S1' };
     }
+    /**
+     * Verify that the received peripheral is from the MINEW_S1
+     *
+     * 受け取ったPeripheralがMINEW_S1のものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @param macAddress (optional: If you want to specify a MAC address) MAC address
+     *
+     * (任意: MACアドレスを指定したい場合) MACアドレス
+     *
+     * @returns Whether it is the MINEW_S1
+     *
+     * MINEW_S1かどうか
+     *
+     * true: HT Sensor SLOT / Info SLOT
+     *
+     * false: iBeacon SLOT / UID SLOT / URL SLOT / TLM SLOT / other advertisements
+     */
     static isDevice(peripheral, macAddress = null) {
         if (!this._hasPrefix(peripheral)) {
             return false;
@@ -25177,6 +25198,17 @@ class MINEW_S1 {
         }
         return true;
     }
+    /**
+     * Get device information data from the MINEW_S1
+     *
+     * MINEW_S1からのデバイス情報データを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received device information data from the MINEW_S1
+     *
+     * MINEW_S1から受け取ったデバイス情報データ
+     */
     static getInfoData(peripheral) {
         if (!this._hasPrefix(peripheral)) {
             return null;
@@ -25206,6 +25238,17 @@ class MINEW_S1 {
             macAddress,
         };
     }
+    /**
+     * Get temperature and humidity data from the MINEW_S1
+     *
+     * MINEW_S1からの温湿度データを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received temperature and humidity data from the MINEW_S1
+     *
+     * MINEW_S1から受け取った温湿度データ
+     */
     static getHTData(peripheral) {
         if (!this._hasPrefix(peripheral)) {
             return null;
