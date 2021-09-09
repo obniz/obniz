@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module Parts.MT_500BT
  */
+/* eslint rulesdir/non-ascii: 0 */
 
 import EventEmitter from 'eventemitter3';
 import Obniz from '../../../obniz';
@@ -16,6 +17,7 @@ import BleGenericAccess from '../utils/services/genericAccess';
 
 export interface MT_500BTOptions {}
 
+/** MT_500BT management class MT_500BTを管理するクラス */
 export default class MT_500BT implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
@@ -23,6 +25,17 @@ export default class MT_500BT implements ObnizPartsInterface {
     };
   }
 
+  /**
+   * Verify that the received peripheral is from the MT_500BT
+   *
+   * 受け取ったPeripheralがMT_500BTのものかどうかを確認する
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns Whether it is the MT_500BT
+   *
+   * MT_500BTかどうか
+   */
   public static isDevice(peripheral: BleRemotePeripheral): boolean {
     if (peripheral.localName && peripheral.localName.startsWith('MT-500')) {
       return true;
@@ -30,6 +43,15 @@ export default class MT_500BT implements ObnizPartsInterface {
     return false;
   }
 
+  /**
+   * Get IFUID from the lcalName
+   *
+   * localNameからIFUIDを取得
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns IFUID
+   */
   public static getIFUID(peripheral: BleRemotePeripheral): number | null {
     if (!this.isDevice(peripheral) || peripheral.localName!.length < 12) {
       return null;
@@ -38,6 +60,15 @@ export default class MT_500BT implements ObnizPartsInterface {
     return Buffer.from(hexStr, 'hex').readUInt16BE(0);
   }
 
+  /**
+   * Decrypt CNKEY from IFUID
+   *
+   * IFUIDからCNKEYを復号
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns decrypted CNKEY 復号されたされたCNKEY
+   */
   public static getCNKey(peripheral: BleRemotePeripheral): number | null {
     const ifuid = this.getIFUID(peripheral);
     if (ifuid === null) {
@@ -77,6 +108,11 @@ export default class MT_500BT implements ObnizPartsInterface {
     // do nothing.
   }
 
+  /**
+   * Connect (and authenticate) the sensor
+   *
+   * センサへ接続(+ センサの認証)
+   */
   public async connectWait() {
     if (!this._peripheral) {
       throw new Error('MT-500BT is not find.');
@@ -120,6 +156,11 @@ export default class MT_500BT implements ObnizPartsInterface {
     }
   }
 
+  /**
+   * Send the communication start command
+   *
+   * 通信開始コマンドを送信
+   */
   public async startCommunicationCommandWait() {
     const cnkey = '' + MT_500BT.getCNKey(this._peripheral); // to string
     const CNKeyBuf = Buffer.from(cnkey, 'utf8');
@@ -131,6 +172,29 @@ export default class MT_500BT implements ObnizPartsInterface {
     }
   }
 
+  /**
+   * Get device information from the MT_500BT
+   *
+   * MT_500BTからのデバイス情報データ取得
+   *
+   * @returns received device information data from the MT_500BT
+   *
+   * MT_500BTからのデバイス情報データ
+   *
+   * ```
+   * {
+   *
+   * cls: device type デバイスタイプ
+   *
+   * ('Pulse rate meter', 'SpO2(BO)', 'Thermometer', 'SpO2(MP)', 'Blood pressure meter'),
+   *
+   * dvnm: product information 製品情報,
+   *
+   * swif: detailed information 詳細情報
+   *
+   * }
+   * ```
+   */
   public async getDeviceInformationWait(): Promise<any> {
     const res1 = await this._sendDataReplyWait(
       this._createCommand(0x00, [0x01])
@@ -194,6 +258,33 @@ export default class MT_500BT implements ObnizPartsInterface {
   //   }
   // }
 
+  /**
+   * Get temperature and humidity data from the MT_500BT
+   *
+   * MT_500BTから温湿度データを取得
+   *
+   * @returns received temperature and humidity data from the MT_500BT
+   *
+   * MT_500BTからの温湿度データ
+   *
+   * ```
+   * {
+   *
+   * timestamp: timestamp タイムスタンプ,
+   *
+   * temperature: {
+   *
+   *   body: body temperature 体温,
+   *
+   *   material: material temperature 物体温度,
+   *
+   *   air: air temperature 気温
+   *
+   *   }
+   *
+   * }
+   * ```
+   */
   public async getTemperatureWait(): Promise<any> {
     const res = await this._sendDataReplyWait(this._createCommand(0x80));
     const year =
@@ -228,6 +319,11 @@ export default class MT_500BT implements ObnizPartsInterface {
     };
   }
 
+  /**
+   * Disconnect from the sensor
+   *
+   * センサから切断
+   */
   public async disconnectWait() {
     if (!this._peripheral) {
       throw new Error('MT-500BT is not find.');

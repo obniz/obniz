@@ -25329,12 +25329,14 @@ exports.default = MINEW_S1;
  * @packageDocumentation
  * @module Parts.MT_500BT
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+/** MT_500BT management class MT_500BTを管理するクラス */
 class MT_500BT {
     constructor(peripheral) {
         this.keys = [];
@@ -25355,12 +25357,32 @@ class MT_500BT {
             name: 'MT_500BT',
         };
     }
+    /**
+     * Verify that the received peripheral is from the MT_500BT
+     *
+     * 受け取ったPeripheralがMT_500BTのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the MT_500BT
+     *
+     * MT_500BTかどうか
+     */
     static isDevice(peripheral) {
         if (peripheral.localName && peripheral.localName.startsWith('MT-500')) {
             return true;
         }
         return false;
     }
+    /**
+     * Get IFUID from the lcalName
+     *
+     * localNameからIFUIDを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns IFUID
+     */
     static getIFUID(peripheral) {
         if (!this.isDevice(peripheral) || peripheral.localName.length < 12) {
             return null;
@@ -25368,6 +25390,15 @@ class MT_500BT {
         const hexStr = peripheral.localName.slice(7, 11);
         return Buffer.from(hexStr, 'hex').readUInt16BE(0);
     }
+    /**
+     * Decrypt CNKEY from IFUID
+     *
+     * IFUIDからCNKEYを復号
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns decrypted CNKEY 復号されたされたCNKEY
+     */
     static getCNKey(peripheral) {
         const ifuid = this.getIFUID(peripheral);
         if (ifuid === null) {
@@ -25379,6 +25410,11 @@ class MT_500BT {
     wired(obniz) {
         // do nothing.
     }
+    /**
+     * Connect (and authenticate) the sensor
+     *
+     * センサへ接続(+ センサの認証)
+     */
     async connectWait() {
         if (!this._peripheral) {
             throw new Error('MT-500BT is not find.');
@@ -25419,6 +25455,11 @@ class MT_500BT {
             await this.disconnectWait();
         }
     }
+    /**
+     * Send the communication start command
+     *
+     * 通信開始コマンドを送信
+     */
     async startCommunicationCommandWait() {
         const cnkey = '' + MT_500BT.getCNKey(this._peripheral); // to string
         const CNKeyBuf = Buffer.from(cnkey, 'utf8');
@@ -25429,6 +25470,29 @@ class MT_500BT {
             throw new Error('StartCommunicationError ' + res.readUInt8(2));
         }
     }
+    /**
+     * Get device information from the MT_500BT
+     *
+     * MT_500BTからのデバイス情報データ取得
+     *
+     * @returns received device information data from the MT_500BT
+     *
+     * MT_500BTからのデバイス情報データ
+     *
+     * ```
+     * {
+     *
+     * cls: device type デバイスタイプ
+     *
+     * ('Pulse rate meter', 'SpO2(BO)', 'Thermometer', 'SpO2(MP)', 'Blood pressure meter'),
+     *
+     * dvnm: product information 製品情報,
+     *
+     * swif: detailed information 詳細情報
+     *
+     * }
+     * ```
+     */
     async getDeviceInformationWait() {
         const res1 = await this._sendDataReplyWait(this._createCommand(0x00, [0x01]));
         const res2 = await this._sendDataReplyWait(this._createCommand(0x00, [0x02]));
@@ -25484,6 +25548,33 @@ class MT_500BT {
     //     throw new Error("setDatetimeWait error " + res.readUInt8(3));
     //   }
     // }
+    /**
+     * Get temperature and humidity data from the MT_500BT
+     *
+     * MT_500BTから温湿度データを取得
+     *
+     * @returns received temperature and humidity data from the MT_500BT
+     *
+     * MT_500BTからの温湿度データ
+     *
+     * ```
+     * {
+     *
+     * timestamp: timestamp タイムスタンプ,
+     *
+     * temperature: {
+     *
+     *   body: body temperature 体温,
+     *
+     *   material: material temperature 物体温度,
+     *
+     *   air: air temperature 気温
+     *
+     *   }
+     *
+     * }
+     * ```
+     */
     async getTemperatureWait() {
         const res = await this._sendDataReplyWait(this._createCommand(0x80));
         const year = res.readUInt8(3) !== 0xff ? res.readUInt8(3) + 2000 : undefined;
@@ -25511,6 +25602,11 @@ class MT_500BT {
             },
         };
     }
+    /**
+     * Disconnect from the sensor
+     *
+     * センサから切断
+     */
     async disconnectWait() {
         if (!this._peripheral) {
             throw new Error('MT-500BT is not find.');
