@@ -25572,7 +25572,9 @@ exports.default = MT_500BT;
  * @packageDocumentation
  * @module Parts.MiniBreeze
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** MiniBreeze management class MiniBreezeを管理するクラス */
 class MiniBreeze {
     constructor() {
         this._peripheral = null;
@@ -25584,6 +25586,9 @@ class MiniBreeze {
     static info() {
         return { name: 'MiniBreeze' };
     }
+    /**
+     * @returns object of gas types list ガスタイプの一覧のオブジェクト
+     */
     static gasType() {
         return {
             0: 'none',
@@ -25596,6 +25601,9 @@ class MiniBreeze {
             8: 'PM10',
         };
     }
+    /**
+     * @returns object of battery status list バッテリーの状態の一覧のオブジェクト
+     */
     static status() {
         return {
             0: 'BatteryEmpty',
@@ -25604,12 +25612,34 @@ class MiniBreeze {
             3: 'BatteryCharging',
         };
     }
+    /**
+     * Verify that the received peripheral is from the MiniBreeze
+     *
+     * 受け取ったPeripheralがMiniBreezeのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the MiniBreeze
+     *
+     * MiniBreezeかどうか
+     */
     static isDevice(peripheral) {
         if (peripheral.adv_data.length !== 31 || !this._hasPrefix(peripheral)) {
             return false;
         }
         return true;
     }
+    /**
+     * Get a data from the MiniBreeze
+     *
+     * MiniBreezeからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the MiniBreeze
+     *
+     * MiniBreezeから受け取ったデータ
+     */
     static getData(peripheral) {
         if (!this._hasPrefix(peripheral)) {
             return null;

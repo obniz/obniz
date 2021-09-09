@@ -72,6 +72,14 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>advertisement data from MiniBreeze</p>
+					</div>
+					<p>MiniBreezeからのadvertisementデータ</p>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -107,9 +115,14 @@
 					<div class="tsd-signature tsd-kind-icon">dev<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/MiniBreeze/index.ts:32</li>
+							<li>Defined in src/parts/Ble/MiniBreeze/index.ts:58</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>device name デバイスの名前</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="gastype" class="tsd-anchor"></a>
@@ -117,9 +130,14 @@
 					<div class="tsd-signature tsd-kind-icon">gas<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"none"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"HCHO"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"CO"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"CO2"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"Rn"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"PM1.0"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"PM2.5"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"PM10"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"unknown"</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/MiniBreeze/index.ts:12</li>
+							<li>Defined in src/parts/Ble/MiniBreeze/index.ts:19</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>gas type ガスタイプ</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="humidity" class="tsd-anchor"></a>
@@ -127,9 +145,15 @@
 					<div class="tsd-signature tsd-kind-icon">humidity<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/MiniBreeze/index.ts:24</li>
+							<li>Defined in src/parts/Ble/MiniBreeze/index.ts:45</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>relative humidity 湿度</p>
+						</div>
+						<p>Range 範囲: 0~100 (Unit 単位: 1%RH)</p>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="sensval" class="tsd-anchor"></a>
@@ -137,9 +161,15 @@
 					<div class="tsd-signature tsd-kind-icon">sens<wbr>Val<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/MiniBreeze/index.ts:22</li>
+							<li>Defined in src/parts/Ble/MiniBreeze/index.ts:33</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>gas sensor value ガスセンサの値
+							(Unit 単位: ppm or ug/m3)</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="status" class="tsd-anchor"></a>
@@ -147,9 +177,14 @@
 					<div class="tsd-signature tsd-kind-icon">status<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"BatteryEmpty"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"BatteryLow"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"BatteryNormal"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"BatteryCharging"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"Invalid"</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/MiniBreeze/index.ts:26</li>
+							<li>Defined in src/parts/Ble/MiniBreeze/index.ts:51</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>battery status バッテリーの状態</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="temperature" class="tsd-anchor"></a>
@@ -157,9 +192,15 @@
 					<div class="tsd-signature tsd-kind-icon">temperature<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/MiniBreeze/index.ts:23</li>
+							<li>Defined in src/parts/Ble/MiniBreeze/index.ts:39</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>temperature 温度</p>
+						</div>
+						<p>Range 範囲: -99~99 (Unit 単位: 1 degC)</p>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="version" class="tsd-anchor"></a>
@@ -167,9 +208,14 @@
 					<div class="tsd-signature tsd-kind-icon">version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/MiniBreeze/index.ts:25</li>
+							<li>Defined in src/parts/Ble/MiniBreeze/index.ts:47</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Firmware version ファームウェアのバージョン</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
