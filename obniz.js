@@ -9330,7 +9330,7 @@ class NobleBindings extends eventemitter3_1.default {
             .catch((e) => {
             // TODO:
             // This must passed to Obniz class.
-            console.error(e);
+            // console.error(e);
         });
         // this.onLeConnUpdateComplete(); is nop
     }
