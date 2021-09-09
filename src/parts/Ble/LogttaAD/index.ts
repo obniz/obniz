@@ -170,7 +170,7 @@ export default class Logtta_AD implements ObnizPartsBleInterface {
   /**
    * Notify when the data have got from the Logtta_AD
    *
-   * センサからデータを取得したとき通知
+   * Logtta_ADからデータを取得したとき通知
    *
    * @returns
    */

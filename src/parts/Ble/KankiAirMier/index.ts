@@ -23,19 +23,19 @@ export interface KankiAirMier_Data {
   /**
    * CO2 concentration CO2濃度
    *
-   * Range 範囲 0~10000 (Unit 単位: 1 ppm)
+   * Range 範囲: 0~10000 (Unit 単位: 1 ppm)
    */
   co2: number;
-  /** temperature 温度 (Unit 単位: 0.1 degC)*/
+  /** temperature 温度 (Unit 単位: 0.1 degC) */
   temperature: number;
-  /** relative humidity 相対湿度 (Unit 単位: 0.1 %RH)*/
+  /** relative humidity 相対湿度 (Unit 単位: 0.1 %RH) */
   humidity: number;
   /**
    * sequence number (count up each time remeasuring)
    *
    * シーケンス番号 (再計測のたびにカウントアップする)
    *
-   * Range 範囲 1~7
+   * Range 範囲: 1~7
    *
    * 0 at startup, repeat 1~7 thereafter
    *

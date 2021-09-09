@@ -72,6 +72,13 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Logtta_CO2 management class Logtta_CO2を管理するクラス</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -137,7 +144,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:89</li>
+									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:149</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -159,7 +166,7 @@
 					<div class="tsd-signature tsd-kind-icon">_peripheral<span class="tsd-signature-symbol">:</span> <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:86</li>
+							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:146</li>
 						</ul>
 					</aside>
 				</section>
@@ -169,7 +176,7 @@
 					<div class="tsd-signature tsd-kind-icon">battery<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="parts.utils.services.blebatteryservice.html" class="tsd-signature-type">BleBatteryService</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:89</li>
+							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:149</li>
 						</ul>
 					</aside>
 				</section>
@@ -179,7 +186,7 @@
 					<div class="tsd-signature tsd-kind-icon">generic<wbr>Access<span class="tsd-signature-symbol">:</span> <a href="parts.utils.services.blegenericaccess.html" class="tsd-signature-type">BleGenericAccess</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:88</li>
+							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:148</li>
 						</ul>
 					</aside>
 				</section>
@@ -189,7 +196,7 @@
 					<div class="tsd-signature tsd-kind-icon">on<wbr>Notify<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>co2<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:85</li>
+							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:145</li>
 						</ul>
 					</aside>
 				</section>
@@ -199,7 +206,7 @@
 					<div class="tsd-signature tsd-kind-icon">ondisconnect<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>reason<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:87</li>
+							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:147</li>
 						</ul>
 					</aside>
 				</section>
@@ -216,13 +223,23 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:155</li>
+									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:252</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Authenticate with the sensor using pin code</p>
+								</div>
+								<p>ピンコードによってセンサと認証</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>code: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>pin code (default: &quot;0000&quot;)</p>
+										<p>ピンコード (デフォルト: &quot;0000&quot;)</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -239,9 +256,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:98</li>
+									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:163</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Connect the sensor</p>
+								</div>
+								<p>センサへ接続</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
@@ -256,9 +279,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:121</li>
+									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:191</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Disconnect from the sensor</p>
+								</div>
+								<p>センサとの接続を切断</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
@@ -273,10 +302,18 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:127</li>
+									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:206</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get CO2 concentration data with connected state</p>
+								</div>
+								<p>接続している状態でCO2濃度データを取得</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>CO2 concentration data from the Logtta_CO2</p>
+							<p>Logtta_CO2から受け取ったCO2濃度データ</p>
 						</li>
 					</ul>
 				</section>
@@ -290,13 +327,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:181</li>
+									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:282</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<dl class="tsd-comment-tags">
 									<dt>deprecated</dt>
-									<dd></dd>
+									<dd><p>Please use <a href="parts.logtta_co2.logtta_co2.html#setbeaconmodewait">setBeaconModeWait</a></p>
+										<p><a href="parts.logtta_co2.logtta_co2.html#setbeaconmodewait">setBeaconModeWait</a> の使用を推奨</p>
+									</dd>
 								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -304,6 +343,7 @@
 								<li>
 									<h5>enable: <span class="tsd-signature-type">boolean</span></h5>
 									<div class="tsd-comment tsd-typography">
+										<p>enable the beacon mode or not ビーコンモードを有効にするかどうか</p>
 									</div>
 								</li>
 							</ul>
@@ -321,13 +361,29 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:185</li>
+									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:309</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Set enable / disable for beacon mode (periodic beacon transmission)</p>
+								</div>
+								<p>Call this function after authenticating with the sensor</p>
+								<p>After setting, disconnect once to enable it</p>
+								<p>To stop beacon mode, you need to hold the button on the sensor for more than 2 seconds</p>
+								<p>(For more detail, please see <a href="http://www.uni-elec.co.jp/logtta_page.html">http://www.uni-elec.co.jp/logtta_page.html</a> )</p>
+								<p>ビーコンモード(定期的なビーコン発信)の有効/無効の設定</p>
+								<p>センサとの認証を済ませた状態で実行してください</p>
+								<p>設定後に切断した後から有効になります</p>
+								<p>ビーコンモードの終了は、デバイスのボタンを2秒以上長押しする操作が必要です(詳しくは <a href="http://www.uni-elec.co.jp/logtta_page.html">http://www.uni-elec.co.jp/logtta_page.html</a> )</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>enable: <span class="tsd-signature-type">boolean</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>enable the beacon mode or not ビーコンモードを有効にするかどうか</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -344,9 +400,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:139</li>
+									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:225</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Notify when the CO2 concentration data have got from the Logtta_CO2 with connected state</p>
+								</div>
+								<p>接続している状態でLogtta_CO2からCO2濃度データを取得したとき通知</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
@@ -361,16 +423,27 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:52</li>
+									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:112</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get a data from the Logtta_CO2 advertisement</p>
+								</div>
+								<p>Logtta_CO2のadvertisementからデータを取得</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>instance of BleRemotePeripheral BleRemotePeripheralのインスタンス</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/parts.logtta_co2.logtta_co2_adv_data.html" class="tsd-signature-type">Logtta_CO2_Adv_Data</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h4>
+							<p>received data from the Logtta_CO2 advertisement</p>
+							<p>Logtta_CO2のadvertisementからのデータ</p>
 						</li>
 					</ul>
 				</section>
@@ -384,7 +457,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:23</li>
+									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:50</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/obnizcore.obnizpartsbleinfo.html" class="tsd-signature-type">ObnizPartsBleInfo</a></h4>
@@ -401,16 +474,27 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:33</li>
+									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:82</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Verify that the received advertisement is from the Logtta_CO2</p>
+								</div>
+								<p>受け取ったAdvertisementがLogtta_CO2のものかどうか確認する</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>instance of BleRemotePeripheral BleRemotePeripheralのインスタンス</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<p>Whether it is the Logtta_CO2</p>
+							<p>Logtta_CO2かどうか</p>
 						</li>
 					</ul>
 				</section>
@@ -424,16 +508,27 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:29</li>
+									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:67</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Verify that the received peripheral is from the Logtta_CO2</p>
+								</div>
+								<p>受け取ったPeripheralがLogtta_CO2のものかどうかを確認する</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>instance of BleRemotePeripheral BleRemotePeripheralのインスタンス</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<p>Whether it is the Logtta_CO2</p>
+							<p>Logtta_CO2かどうか</p>
 						</li>
 					</ul>
 				</section>
