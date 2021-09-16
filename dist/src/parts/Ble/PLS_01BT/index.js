@@ -10,6 +10,11 @@ class PLS_01BT {
     constructor(peripheral) {
         this.keys = [];
         this.requiredKeys = [];
+        /**
+         * Callback when receiving the measured data
+         *
+         * 計測結果を受け取ったときにコールバック
+         */
         this.onmeasured = null;
         this._uuids = {
             service: 'CDEACB80-5235-4C07-8846-93A37EE6B86D',
@@ -50,9 +55,9 @@ class PLS_01BT {
         // do nothing.
     }
     /**
-     * Connect the sensor and notify when the data have got from the PLS_01BT
+     * Connect the sensor
      *
-     * センサへ接続し、PLS_01BTからデータを取得したとき通知
+     * センサへ接続
      */
     async connectWait() {
         if (!this._peripheral) {

@@ -50,6 +50,11 @@ export default class PLS_01BT implements ObnizPartsInterface {
     keys: string[];
     requiredKeys: string[];
     params: any;
+    /**
+     * Callback when receiving the measured data
+     *
+     * 計測結果を受け取ったときにコールバック
+     */
     onmeasured: ((result: PLS_01BTResult) => void) | null;
     ondisconnect?: (reason: any) => void;
     private _uuids;
@@ -59,9 +64,9 @@ export default class PLS_01BT implements ObnizPartsInterface {
     constructor(peripheral: BleRemotePeripheral | null);
     wired(obniz: Obniz): void;
     /**
-     * Connect the sensor and notify when the data have got from the PLS_01BT
+     * Connect the sensor
      *
-     * センサへ接続し、PLS_01BTからデータを取得したとき通知
+     * センサへ接続
      */
     connectWait(): Promise<void>;
     /**

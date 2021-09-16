@@ -71,6 +71,11 @@ export default class PLS_01BT implements ObnizPartsInterface {
   public keys: string[] = [];
   public requiredKeys: string[] = [];
   public params: any;
+  /**
+   * Callback when receiving the measured data
+   *
+   * 計測結果を受け取ったときにコールバック
+   */
   public onmeasured: ((result: PLS_01BTResult) => void) | null = null;
   public ondisconnect?: (reason: any) => void;
 
@@ -94,9 +99,9 @@ export default class PLS_01BT implements ObnizPartsInterface {
   }
 
   /**
-   * Connect the sensor and notify when the data have got from the PLS_01BT
+   * Connect the sensor
    *
-   * センサへ接続し、PLS_01BTからデータを取得したとき通知
+   * センサへ接続
    */
   public async connectWait() {
     if (!this._peripheral) {

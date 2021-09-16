@@ -127,7 +127,7 @@ export interface OMRON_2JCIE_USBSenData {
    */
   sound_noise: number;
   /**
-   * eTCOC (equivalent Total Volatile Organic Compound)
+   * eTVOC (equivalent Total Volatile Organic Compound)
    *
    * Range 範囲: 0~32767 (Unit 単位: 1 ppb)
    */
