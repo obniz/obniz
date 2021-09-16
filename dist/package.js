@@ -1,6 +1,6 @@
 module.exports = {
   "name": "obniz",
-  "version": "3.17.0-alpha.3",
+  "version": "3.17.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
