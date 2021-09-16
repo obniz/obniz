@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module Parts.RS_Seek3
  */
+/* eslint rulesdir/non-ascii: 0 */
 
 import Obniz from '../../../obniz';
 import BleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
@@ -13,6 +14,7 @@ import ObnizPartsInterface, {
 
 export interface RS_Seek3Options {}
 
+/** RS_Seek3 management class RS_Seek3を管理するクラス */
 export default class RS_Seek3 implements ObnizPartsBleInterface {
   public static info(): ObnizPartsInfo {
     return {
@@ -20,6 +22,17 @@ export default class RS_Seek3 implements ObnizPartsBleInterface {
     };
   }
 
+  /**
+   * Verify that the received peripheral is from the RS_Seek3
+   *
+   * 受け取ったPeripheralがRS_Seek3のものかどうかを確認する
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns Whether it is the RS_Seek3
+   *
+   * RS_Seek3かどうか
+   */
   public static isDevice(peripheral: BleRemotePeripheral) {
     if (peripheral.localName !== 'Seek3') {
       return false;
@@ -30,6 +43,11 @@ export default class RS_Seek3 implements ObnizPartsBleInterface {
   public keys: string[] = [];
   public requiredKeys: string[] = [];
   public params: any;
+  /**
+   * Callback when the button is pressed
+   *
+   * ボタンが押されたときにコールバック
+   */
   public onpressed: (() => void) | null = null;
   public _peripheral: BleRemotePeripheral | null = null;
   public ondisconnect?: (reason: any) => void;
@@ -53,6 +71,11 @@ export default class RS_Seek3 implements ObnizPartsBleInterface {
     // do nothing.
   }
 
+  /**
+   * Connect the sensor
+   *
+   * センサへ接続
+   */
   public async connectWait() {
     if (!this._peripheral) {
       throw new Error('RS_Seek3 is not find.');
@@ -79,10 +102,29 @@ export default class RS_Seek3 implements ObnizPartsBleInterface {
     }
   }
 
+  /**
+   * Disconnect from the sensor
+   *
+   * センサから切断
+   */
   public async disconnectWait() {
     await this._peripheral?.disconnectWait();
   }
 
+  /**
+   *
+   * @returns
+   *
+   * ```
+   * {
+   *
+   * temperature: temperature 温度,
+   *
+   * humidity: humidity 湿度
+   *
+   * }
+   * ```
+   */
   public async getTempHumidWait(): Promise<{
     temperature: number;
     humidity: number;
