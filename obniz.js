@@ -26677,13 +26677,24 @@ exports.default = RS_BTIREX2;
  * @packageDocumentation
  * @module Parts.RS_BTWATTCH2
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** RS_BTWATTCH2 management class RS_BTWATTCH2を管理するクラス */
 class RS_BTWATTCH2 {
     /**
-     * Constructor. Provide option at this time
+     * Constructor.
      *
-     * @param peripheral
-     * @param options
+     * If you want to change the RTC auto-configuration option from the default,
+     *
+     * set it as an argument at this time.
+     *
+     * コンストラクタ
+     *
+     * RTC自動設定オプションをデフォルトから変更する場合は、このタイミングで引数に設定
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @param options set auto RTC or not RTC自動設定の有無
      */
     constructor(peripheral, options) {
         this.keys = ['rtcAutoset'];
@@ -26704,9 +26715,15 @@ class RS_BTWATTCH2 {
         };
     }
     /**
-     * Check found peripheral is part of this parts
+     * Verify that the received peripheral is from the RS_BTWATTCH2
      *
-     * @param peripheral
+     * 受け取ったPeripheralがRS_BTWATTCH2のものかどうか確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the RS_BTWATTCH2
+     *
+     * RS_BTWATTCH2かどうか
      */
     static isDevice(peripheral) {
         return (peripheral.localName &&
@@ -26717,13 +26734,23 @@ class RS_BTWATTCH2 {
         // do nothing.
     }
     /**
-     * Check if device is under paring mode(over 3 seconds button pressing)
+     * Check if device is under pairing mode(over 3 seconds button pressing)
+     *
+     * デバイスがペアリングモード中であることを検出する (3秒間本体のボタンを押してください)
+     *
+     * @returns Whether there is a device under pairing mode
+     *
+     * ペアリングモード中のデバイスがあるかどうか
      */
     isPairingMode() {
         return this._peripheral.localName.indexOf('BTWATTCH2_') < 0;
     }
     /**
-     * get pairing key
+     * Get the pairing key under pairing mode
+     *
+     * ペアリングモード中にペアリングキーを取得
+     *
+     * @returns pairing key ペアリングキー
      */
     async firstPairingWait() {
         if (!this._peripheral) {
@@ -26770,7 +26797,11 @@ class RS_BTWATTCH2 {
         }
     }
     /**
-     * Connect to the target device regarding pairing key
+     * Connect to the target device with pairing key
+     *
+     * ペアリングキーを用いてデバイスと接続
+     *
+     * @param keys pairing key ペアリングキー
      */
     async connectWait(keys) {
         if (!keys) {
@@ -26790,7 +26821,7 @@ class RS_BTWATTCH2 {
         };
         const service = this._peripheral.getService('6e400001b5a3f393e0a9e50e24dcca9e');
         if (!service) {
-            throw new Error(`no serivce found`);
+            throw new Error(`no service found`);
         }
         this._rxFromTargetCharacteristic = service.getCharacteristic('6e400003b5a3f393e0a9e50e24dcca9e');
         this._txToTargetCharacteristic = service.getCharacteristic('6e400002b5a3f393e0a9e50e24dcca9e');
@@ -26817,21 +26848,28 @@ class RS_BTWATTCH2 {
     }
     /**
      * Disconnect from the device
+     *
+     * デバイスとの接続を切断
      */
     async disconnectWait() {
         await this._peripheral.disconnectWait();
     }
     /**
-     * @deprecated
+     * @deprecated Please use {@linkplain setRTCWait}
+     *
+     * {@linkplain setRTCWait} の使用を推奨
+     *
      * @param date
      */
     setRTC(date) {
         return this.setRTCWait(date);
     }
     /**
-     * Setting Time on device clock
+     * Set device RTC (date)
      *
-     * @param date
+     * デバイスのRTC(日時)の設定
+     *
+     * @param date instance of Date Dateのインスタンス
      */
     async setRTCWait(date) {
         if (!date) {
@@ -26847,39 +26885,55 @@ class RS_BTWATTCH2 {
             date.getFullYear() - 1900,
         ]);
         if (ret.length !== 2) {
-            throw new Error(`communiation error`);
+            throw new Error(`communication error`);
         }
         if (ret[1] !== 0x00) {
             throw new Error(`set rtc failed`);
         }
     }
     /**
-     * Set Relay ON/OFF
+     * Set relay ON/OFF
      *
-     * @param isOn
+     * リレーのON/OFFを設定する
+     *
+     * @param isOn set relay or not
+     *
+     * リレーを設定するかどうか
      */
     async setPowerStateWait(isOn) {
         const ret = await this._transactionWait([0xa7, isOn ? 0x01 : 0x00]);
         if (ret.length !== 3) {
-            throw new Error(`communiation error`);
+            throw new Error(`communication error`);
         }
         if (ret[1] === 0x01) {
             throw new Error(`set power failed`);
         }
     }
     /**
-     * Getting Current Relay State;
+     * Get current relay state
+     *
+     * 現在のリレーの状態を取得
+     *
+     * @returns the relay in set or not
+     *
+     * リレーが設定されているかどうか
      */
     async getPowerStateWait() {
         return (await this.getRealTimeDataWait()).powerState;
     }
     /**
-     * Getting All of realtime data
+     * Get realtime measurement data(voltage[Vrms]・electric current[Irms]・electric power[Wa]) and relay state
+     *
+     * リアルタイム計測データ(電圧[Vrms]・電流[Irms]・電力[Wa])とリレーの状態を取得
+     *
+     * @returns received realtime measurement data and relay state
+     *
+     * 受けとったリアルタイム計測データとリレーの状態
      */
     async getRealTimeDataWait() {
         const ret = await this._transactionWait([0x08]);
         if (ret.length !== 27) {
-            throw new Error(`communiation error`);
+            throw new Error(`communication error`);
         }
         if (ret[1] !== 0x00) {
             throw new Error(`get data failed`);
@@ -26927,12 +26981,12 @@ class RS_BTWATTCH2 {
         this._received.push(...data);
         if (this._received.length === this._totalSize + 1) {
             this._received.pop(); // => CRC
-            this._onRecieved(this._received);
+            this._onReceived(this._received);
             this._received = [];
             this._totalSize = -1;
         }
     }
-    _onRecieved(data) {
+    _onReceived(data) {
         const one = this._waitings.shift();
         if (!one) {
             return;
