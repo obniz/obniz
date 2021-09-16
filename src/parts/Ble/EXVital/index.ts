@@ -5,6 +5,7 @@
 
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
+import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 
 export interface EXVital_Options {}
 
@@ -24,6 +25,12 @@ export interface EXVital_Data {
 }
 
 export default class EXVital extends ObnizPartsBleInterface {
+  public static info(): ObnizPartsInfo {
+    return {
+      name: 'EXVital',
+    };
+  }
+
   public static readonly partsName = 'EXVital';
 
   public static readonly availableBleMode = 'Beacon';
@@ -94,9 +101,9 @@ export default class EXVital extends ObnizPartsBleInterface {
 
   public static isDevice(peripheral: BleRemotePeripheral): boolean {
     return (
-      peripheral.adv_data
-        .map((d, i) => d === -1 || d === peripheral.adv_data[i])
-        .filter((r) => r === true).length === this.DefaultAdvData.length &&
+      this.DefaultAdvData.filter(
+        (d, i) => d !== -1 && d !== peripheral.adv_data[i]
+      ).length === 0 &&
       this.DefaultAdvData.length === peripheral.adv_data.length
     );
   }

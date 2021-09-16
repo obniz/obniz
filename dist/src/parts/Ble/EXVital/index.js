@@ -15,6 +15,11 @@ class EXVital extends ObnizPartsBleInterface_1.default {
         this.advData = (_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.adv_data;
         this._peripheral = peripheral;
     }
+    static info() {
+        return {
+            name: 'EXVital',
+        };
+    }
     getData() {
         if (!this.advData)
             throw new Error('advData is null');
@@ -41,9 +46,7 @@ class EXVital extends ObnizPartsBleInterface_1.default {
         return dev.getData();
     }
     static isDevice(peripheral) {
-        return (peripheral.adv_data
-            .map((d, i) => d === -1 || d === peripheral.adv_data[i])
-            .filter((r) => r === true).length === this.DefaultAdvData.length &&
+        return (this.DefaultAdvData.filter((d, i) => d !== -1 && d !== peripheral.adv_data[i]).length === 0 &&
             this.DefaultAdvData.length === peripheral.adv_data.length);
     }
 }

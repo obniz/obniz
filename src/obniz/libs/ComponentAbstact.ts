@@ -144,7 +144,7 @@ export abstract class ComponentAbstract<
         } else {
           this.off(schemaPath as any, onDataReceived);
         }
-        if (typeof timeoutHandler === 'number') {
+        if (timeoutHandler !== undefined) {
           clearTimeout(timeoutHandler);
           timeoutHandler = undefined;
         }

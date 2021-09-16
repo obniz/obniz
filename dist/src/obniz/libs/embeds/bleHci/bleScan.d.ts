@@ -97,6 +97,15 @@ export interface BleScanSetting {
      *
      */
     filterOnDevice?: boolean;
+    /**
+     * If only one of advertisement and scanResponse is coming, wait until both come.
+     *
+     * True : wait for other data come until 10 seconds
+     * False : don't wait and notify immediately. some parameters will be null.
+     *
+     * default : true
+     */
+    waitBothAdvertisementAndScanResponse?: boolean;
 }
 declare type BleScanState = 'stopped' | 'stopping' | 'started' | 'starting';
 /**

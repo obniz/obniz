@@ -21,6 +21,7 @@ import IBS02IR, { IBS02IROptions } from '../parts/Ble/iBS02IR';
 import IBS02PIR, { IBS02PIROptions } from '../parts/Ble/iBS02PIR';
 import IBS03, { IBS03Options } from '../parts/Ble/iBS03';
 import IBS03G, { IBS03GOptions } from '../parts/Ble/iBS03G';
+import IBS03R, { IBS03ROptions } from '../parts/Ble/iBS03R';
 import IBS03T, { IBS03TOptions } from '../parts/Ble/iBS03T';
 import IBS03TP, { IBS03TPOptions } from '../parts/Ble/iBS03TP';
 import IBS04, { IBS04Options } from '../parts/Ble/iBS04';
@@ -174,6 +175,7 @@ import LED, { LEDOptions } from '../parts/Light/LED';
 import WS2811, { WS2811Options } from '../parts/Light/WS2811';
 import WS2812, { WS2812Options } from '../parts/Light/WS2812';
 import WS2812B, { WS2812BOptions } from '../parts/Light/WS2812B';
+import MCP23S08, { MCP23S08Options } from '../parts/Logic/MCP23S08';
 import SNx4HC595, { SNx4HC595Options } from '../parts/Logic/SNx4HC595';
 import M5StickC_ADC, {
   M5StickC_ADCOptions,
@@ -324,6 +326,7 @@ export interface PartsList {
   MQ9: { class: MQ9; options: MQ9Options };
   MQ135: { class: MQ135; options: MQ135Options };
   MH_Z19B: { class: MH_Z19B; options: MH_Z19BOptions };
+  MCP23S08: { class: MCP23S08; options: MCP23S08Options };
   SNx4HC595: { class: SNx4HC595; options: SNx4HC595Options };
   USB: { class: USB; options: USBOptions };
   RN42: { class: RN42; options: RN42Options };
@@ -479,6 +482,7 @@ export interface PartsList {
   iBS03TP: { class: IBS03TP; options: IBS03TPOptions };
   iBS04: { class: IBS04; options: IBS04Options };
   iBS04i: { class: IBS04I; options: IBS04IOptions };
+  iBS03R: { class: IBS03R; options: IBS03ROptions };
   TR4x: { class: Tr4; options: Tr4Options };
   KankiAirMier: { class: KankiAirMier; options: KankiAirMierOptions };
   MINEW_S1: { class: MINEW_S1; options: MINEW_S1Options };
