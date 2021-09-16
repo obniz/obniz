@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module Parts.RS_BTIREX2
+ */
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 // not working

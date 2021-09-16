@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module Parts.RS_BTIREX2
+ */
 /* eslint rulesdir/non-ascii: 0 */
 
 import Obniz from '../../../obniz';
