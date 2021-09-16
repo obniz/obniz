@@ -7,6 +7,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const LED_DISPLAY_MODE = ['Disable', 'PM2.5', 'CO2'];
 const PM2_5_CONCENTRATION_MODE = ['Mass', 'Number'];
+/** RS_BTEVS1 management class RS_BTEVS1を管理するクラス */
 class RS_BTEVS1 {
     constructor(peripheral) {
         this.keys = [];
