@@ -3,12 +3,14 @@
  * @packageDocumentation
  * @module Parts.PLS_01BT
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** PLS_01BT management class PLS_01BTを管理するクラス */
 class PLS_01BT {
     constructor(peripheral) {
         this.keys = [];
         this.requiredKeys = [];
-        this.onmesured = null;
+        this.onmeasured = null;
         this._uuids = {
             service: 'CDEACB80-5235-4C07-8846-93A37EE6B86D',
             rxChar: 'CDEACB81-5235-4C07-8846-93A37EE6B86D',
@@ -26,6 +28,17 @@ class PLS_01BT {
             name: 'PLS_01BT',
         };
     }
+    /**
+     * Verify that the received peripheral is from the PLS_01BT
+     *
+     * 受け取ったPeripheralがPLS_01BTのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the PLS_01BT
+     *
+     * PLS_01BTかどうか
+     */
     static isDevice(peripheral) {
         if (peripheral.localName &&
             peripheral.localName.startsWith('My Oximeter')) {
@@ -36,6 +49,11 @@ class PLS_01BT {
     wired(obniz) {
         // do nothing.
     }
+    /**
+     * Connect the sensor and notify when the data have got from the PLS_01BT
+     *
+     * センサへ接続し、PLS_01BTからデータを取得したとき通知
+     */
     async connectWait() {
         if (!this._peripheral) {
             throw new Error('PLS_01BT is not find.');
@@ -58,8 +76,8 @@ class PLS_01BT {
                     const pulseRate = data[1];
                     const bloodOxygenLevel = data[2];
                     const perfusionIndex = data[3];
-                    if (this.onmesured) {
-                        this.onmesured({
+                    if (this.onmeasured) {
+                        this.onmeasured({
                             pulseRate,
                             bloodOxygenLevel,
                             perfusionIndex,
@@ -69,6 +87,11 @@ class PLS_01BT {
             }
         });
     }
+    /**
+     * Disconnect from the sensor
+     *
+     * センサから切断
+     */
     async disconnectWait() {
         if (!this._peripheral) {
             throw new Error('PLS_01BT is not find.');

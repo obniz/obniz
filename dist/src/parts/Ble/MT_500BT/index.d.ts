@@ -26,7 +26,7 @@ export default class MT_500BT implements ObnizPartsInterface {
      */
     static isDevice(peripheral: BleRemotePeripheral): boolean;
     /**
-     * Get IFUID from the lcalName
+     * Get IFUID from the localName
      *
      * localNameからIFUIDを取得
      *

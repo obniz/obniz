@@ -49,7 +49,7 @@ class MT_500BT {
         return false;
     }
     /**
-     * Get IFUID from the lcalName
+     * Get IFUID from the localName
      *
      * localNameからIFUIDを取得
      *

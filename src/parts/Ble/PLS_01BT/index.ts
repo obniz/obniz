@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module Parts.PLS_01BT
  */
+/* eslint rulesdir/non-ascii: 0 */
 
 import Obniz from '../../../obniz';
 import BleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
@@ -10,14 +11,35 @@ import ObnizPartsInterface, {
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 
+/**
+ * data from PLS_01BT
+ *
+ * PLS_01BTからのデータ
+ */
 export interface PLS_01BTResult {
+  /**
+   * pulse rate 脈拍数
+   *
+   * Range 範囲: 25~250 (Unit 単位: 1 bpm)
+   */
   pulseRate: number;
+  /**
+   * blood oxygen level 血中酸素濃度
+   *
+   * Range 範囲: 35~100 (Unit 単位 1 %)
+   */
   bloodOxygenLevel: number;
+  /**
+   * perfusion index 灌流指数
+   *
+   * Range 範囲: 0~200
+   */
   perfusionIndex: number;
 }
 
 export interface PLS_01BTOptions {}
 
+/** PLS_01BT management class PLS_01BTを管理するクラス */
 export default class PLS_01BT implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
@@ -25,6 +47,17 @@ export default class PLS_01BT implements ObnizPartsInterface {
     };
   }
 
+  /**
+   * Verify that the received peripheral is from the PLS_01BT
+   *
+   * 受け取ったPeripheralがPLS_01BTのものかどうかを確認する
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns Whether it is the PLS_01BT
+   *
+   * PLS_01BTかどうか
+   */
   public static isDevice(peripheral: BleRemotePeripheral) {
     if (
       peripheral.localName &&
@@ -38,7 +71,7 @@ export default class PLS_01BT implements ObnizPartsInterface {
   public keys: string[] = [];
   public requiredKeys: string[] = [];
   public params: any;
-  public onmesured: ((result: PLS_01BTResult) => void) | null = null;
+  public onmeasured: ((result: PLS_01BTResult) => void) | null = null;
   public ondisconnect?: (reason: any) => void;
 
   private _uuids = {
@@ -60,6 +93,11 @@ export default class PLS_01BT implements ObnizPartsInterface {
     // do nothing.
   }
 
+  /**
+   * Connect the sensor and notify when the data have got from the PLS_01BT
+   *
+   * センサへ接続し、PLS_01BTからデータを取得したとき通知
+   */
   public async connectWait() {
     if (!this._peripheral) {
       throw new Error('PLS_01BT is not find.');
@@ -84,8 +122,8 @@ export default class PLS_01BT implements ObnizPartsInterface {
           const pulseRate = data[1];
           const bloodOxygenLevel = data[2];
           const perfusionIndex = data[3];
-          if (this.onmesured) {
-            this.onmesured({
+          if (this.onmeasured) {
+            this.onmeasured({
               pulseRate,
               bloodOxygenLevel,
               perfusionIndex,
@@ -96,6 +134,11 @@ export default class PLS_01BT implements ObnizPartsInterface {
     });
   }
 
+  /**
+   * Disconnect from the sensor
+   *
+   * センサから切断
+   */
   public async disconnectWait() {
     if (!this._peripheral) {
       throw new Error('PLS_01BT is not find.');
