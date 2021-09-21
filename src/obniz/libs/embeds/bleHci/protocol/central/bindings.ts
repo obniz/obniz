@@ -541,7 +541,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
       .catch((e) => {
         // TODO:
         // This must passed to Obniz class.
-        console.error(e);
+        // console.error(e);
       });
     // this.onLeConnUpdateComplete(); is nop
   }

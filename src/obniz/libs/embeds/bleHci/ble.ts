@@ -395,6 +395,9 @@ export default class ObnizBLE extends ComponentAbstract {
    * @ignore
    */
   public warningIfNotInitialize() {
+    if (this.Obniz.connectionState !== 'connected') {
+      throw new ObnizOfflineError();
+    }
     if (!this._initialized && this._initializeWarning) {
       this._initializeWarning = true;
       this.Obniz.warning({

@@ -15,6 +15,7 @@ import PeripheralSPI from './libs/io_peripherals/spi';
 import PeripheralUART from './libs/io_peripherals/uart';
 import LogicAnalyzer from './libs/measurements/logicanalyzer';
 import ObnizMeasure from './libs/measurements/measure';
+import WiFi from './libs/network/wifi';
 import Plugin from './libs/plugin/plugin';
 import ObnizParts from './ObnizParts';
 import { ObnizOptions } from './ObnizOptions';
@@ -187,6 +188,10 @@ export default abstract class ObnizComponents extends ObnizParts {
      * @category Embeds
      */
     ble?: ObnizHciBLE;
+    /**
+     * @category network
+     */
+    wifi?: WiFi;
     /**
      * @category plugin
      */

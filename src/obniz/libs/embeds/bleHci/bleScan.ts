@@ -117,6 +117,16 @@ export interface BleScanSetting {
    *
    */
   filterOnDevice?: boolean;
+
+  /**
+   * If only one of advertisement and scanResponse is coming, wait until both come.
+   *
+   * True : wait for other data come until 10 seconds
+   * False : don't wait and notify immediately. some parameters will be null.
+   *
+   * default : true
+   */
+  waitBothAdvertisementAndScanResponse?: boolean;
 }
 
 type BleScanState = 'stopped' | 'stopping' | 'started' | 'starting';
@@ -181,6 +191,9 @@ export default class BleScan {
 
     this.scanedPeripherals = [];
     this._timeoutTimer = undefined;
+    this.obnizBle.Obniz.on('_close', () => {
+      this.clearTimeoutTimer();
+    });
   }
 
   /**
@@ -260,6 +273,8 @@ export default class BleScan {
     settings.duplicate = !!settings.duplicate;
     settings.filterOnDevice = !!settings.filterOnDevice;
     settings.activeScan = settings.activeScan !== false;
+    settings.waitBothAdvertisementAndScanResponse =
+      settings.waitBothAdvertisementAndScanResponse !== false;
     this.scanSettings = settings;
 
     target = target || {};
@@ -462,13 +477,19 @@ export default class BleScan {
 
         // wait for adv_data + scan resp
         // 10 seconds timeout
-        if (alreadyGotCompleteAdveData || nonConnectable || maybeAdvOnly) {
+        if (
+          alreadyGotCompleteAdveData ||
+          nonConnectable ||
+          maybeAdvOnly ||
+          this.scanSettings.activeScan === false || // only receive adv
+          this.scanSettings.waitBothAdvertisementAndScanResponse === false
+        ) {
           this._removeDelayNotifyTimer(peripheral.address);
           this._notifyOnFind(peripheral);
         } else {
           const timer = setTimeout(() => {
             this._notifyOnFind(peripheral);
-          }, 10000);
+          }, 10 * 1000);
           this._delayNotifyTimers.push({ timer, peripheral });
         }
         break;

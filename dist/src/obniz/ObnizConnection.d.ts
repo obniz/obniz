@@ -378,6 +378,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     private _startAutoConnectLoopInBackground;
     private _stopAutoConnectLoopInBackground;
     private _startPingLoopInBackground;
+    _stopPingLoopInBackground(): void;
     protected throwErrorIfOffline(): void;
 }
 export {};

@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.16.0",
+  "version": "3.17.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -2806,6 +2806,7 @@ class ObnizConnection extends eventemitter3_1.default {
         if (this.autoConnect) {
             this._startAutoConnectLoopInBackground();
         }
+        this._stopPingLoopInBackground();
     }
     wsOnError(event) {
         this._print_debug(`ws onerror event=${event}`);
@@ -2823,13 +2824,17 @@ class ObnizConnection extends eventemitter3_1.default {
         this.connectionState = 'connecting';
         await this._connectCloudWait(desired_server);
         try {
+            let localConnectTimeoutRef;
             const localConnectTimeout = new Promise((resolve, reject) => {
                 const localConnectTimeoutError = new Error('Cannot use local_connect because the connection was timeouted');
-                setTimeout(() => {
+                localConnectTimeoutRef = setTimeout(() => {
                     reject(localConnectTimeoutError);
                 }, 3000);
             });
             await Promise.race([localConnectTimeout, this._connectLocalWait()]);
+            if (localConnectTimeoutRef) {
+                clearTimeout(localConnectTimeoutRef);
+            }
         }
         catch (e) {
             // cannot connect local
@@ -3310,6 +3315,12 @@ class ObnizConnection extends eventemitter3_1.default {
                 }
             }
         }, 0);
+    }
+    _stopPingLoopInBackground() {
+        if (this._nextPingTimeout) {
+            clearTimeout(this._nextPingTimeout);
+            this._nextPingTimeout = null;
+        }
     }
     throwErrorIfOffline() {
         if (this.connectionState !== 'connected') {
@@ -5242,7 +5253,7 @@ class ComponentAbstract extends eventemitter3_1.default {
                 else {
                     this.off(schemaPath, onDataReceived);
                 }
-                if (typeof timeoutHandler === 'number') {
+                if (timeoutHandler !== undefined) {
                     clearTimeout(timeoutHandler);
                     timeoutHandler = undefined;
                 }
@@ -5626,6 +5637,9 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * @ignore
      */
     warningIfNotInitialize() {
+        if (this.Obniz.connectionState !== 'connected') {
+            throw new ObnizError_1.ObnizOfflineError();
+        }
         if (!this._initialized && this._initializeWarning) {
             this._initializeWarning = true;
             this.Obniz.warning({
@@ -8603,6 +8617,9 @@ class BleScan {
         this.scanSettings = {};
         this.scanedPeripherals = [];
         this._timeoutTimer = undefined;
+        this.obnizBle.Obniz.on('_close', () => {
+            this.clearTimeoutTimer();
+        });
     }
     /**
      * @ignore
@@ -8670,6 +8687,8 @@ class BleScan {
         settings.duplicate = !!settings.duplicate;
         settings.filterOnDevice = !!settings.filterOnDevice;
         settings.activeScan = settings.activeScan !== false;
+        settings.waitBothAdvertisementAndScanResponse =
+            settings.waitBothAdvertisementAndScanResponse !== false;
         this.scanSettings = settings;
         target = target || {};
         this.scanTarget.binary = target.binary;
@@ -8838,14 +8857,18 @@ class BleScan {
                     (!peripheral.scan_resp || peripheral.scan_resp.length === 0);
                 // wait for adv_data + scan resp
                 // 10 seconds timeout
-                if (alreadyGotCompleteAdveData || nonConnectable || maybeAdvOnly) {
+                if (alreadyGotCompleteAdveData ||
+                    nonConnectable ||
+                    maybeAdvOnly ||
+                    this.scanSettings.activeScan === false || // only receive adv
+                    this.scanSettings.waitBothAdvertisementAndScanResponse === false) {
                     this._removeDelayNotifyTimer(peripheral.address);
                     this._notifyOnFind(peripheral);
                 }
                 else {
                     const timer = setTimeout(() => {
                         this._notifyOnFind(peripheral);
-                    }, 10000);
+                    }, 10 * 1000);
                     this._delayNotifyTimers.push({ timer, peripheral });
                 }
                 break;
@@ -9835,7 +9858,7 @@ class NobleBindings extends eventemitter3_1.default {
             .catch((e) => {
             // TODO:
             // This must passed to Obniz class.
-            console.error(e);
+            // console.error(e);
         });
         // this.onLeConnUpdateComplete(); is nop
     }
@@ -10388,9 +10411,8 @@ class Gatt extends eventemitter3_1.default {
             this._execNoRespCommandWait(this.mtuResponse(mtu));
         })
             .catch((e) => {
-            // TODO:
-            // This must passed to Obniz class.
-            console.error(e);
+            // ignore timeout error
+            // console.error(e);
         });
         const data = await this._execCommandWait(this.mtuRequest(mtu), ATT.OP_MTU_RESP);
         const opcode = data[0];
@@ -13962,10 +13984,9 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
         this._reset();
     }
     /**
-     * (It does not work with node.js. Please use display.draw())
-     *
      * This changes the font.
      * The options for fontFamily and fontSize depend on your browser.
+     * If you are using node.js, node-canvas is required.
      *
      * The default font is Arial 16px.
      * If you set the parameter to null, you will be using the default font.
@@ -13986,18 +14007,21 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
      * @param size size of font
      */
     font(font, size) {
-        const ctx = this._ctx();
-        if (typeof size !== 'number') {
-            size = 16;
+        const ctx = this._ctx(true);
+        if (ctx) {
+            if (typeof size !== 'number') {
+                size = 16;
+            }
+            if (typeof font !== 'string') {
+                font = 'Arial';
+            }
+            this.fontSize = size;
+            ctx.font = '' + +' ' + size + 'px ' + font;
         }
-        if (typeof font !== 'string') {
-            font = 'Arial';
-        }
-        this.fontSize = size;
-        ctx.font = '' + +' ' + size + 'px ' + font;
     }
     /**
      * Setting color for fill/stroke style for further rendering.
+     * If you are using node.js, node-canvas is required.
      *
      * ```javascript
      * obniz.display.color('#FF0000');
@@ -14009,10 +14033,12 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
      * @param color css acceptable color definition
      */
     setColor(color) {
-        this._color = color;
-        const ctx = this._ctx();
-        ctx.fillStyle = this._color;
-        ctx.strokeStyle = this._color;
+        const ctx = this._ctx(true);
+        if (ctx) {
+            this._color = color;
+            ctx.fillStyle = this._color;
+            ctx.strokeStyle = this._color;
+        }
     }
     /**
      * Getting color for fill/stroke style for further rendering.
@@ -14027,13 +14053,14 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
     }
     /**
      * Clear the display.
+     *
      * ```javascript
      * // Javascript Example
      * obniz.display.clear();
      * ```
      */
     clear() {
-        const ctx = this._ctx();
+        const ctx = this._ctx(false);
         this._pos.x = 0;
         this._pos.y = 0;
         if (ctx) {
@@ -14053,8 +14080,9 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
     }
     // eslint-disable-next-line rulesdir/non-ascii
     /**
-     * (This does not work with node.js. Please use display.draw())
      * It changes the display position of a text. If you are using print() to display a text, position it to top left.
+     *
+     * If you are using node.js, node-canvas is required.
      *
      * ```javascript
      * // Javascript Example
@@ -14067,7 +14095,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
      * @param y
      */
     pos(x, y) {
-        this._ctx(); // crete first
+        this._ctx(true); // crete first
         if (typeof x === 'number') {
             this._pos.x = x;
         }
@@ -14079,6 +14107,8 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
     // eslint-disable-next-line rulesdir/non-ascii
     /**
      * Print text on display.
+     *
+     * If you are using node.js and text is included characters out of ASCII code range, node-canvas is required.
      *
      * ```javascript
      * // Javascript Example
@@ -14092,16 +14122,20 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
      * ```
      * ![](media://obniz_display_print.jpg)
      *
-     * @param text Text to display. With browser, UTF8 string is available. (It does not work with node.js. Please use display.draw())
+     * @param text Text to display. With browser, UTF8 string is available.
      */
     print(text) {
-        const ctx = this._ctx();
+        const ctx = this._ctx(false);
         if (ctx) {
             ctx.fillText(text, this._pos.x, this._pos.y + this.fontSize);
             this.draw(ctx);
             this._pos.y += this.fontSize;
         }
         else {
+            // eslint-disable-next-line no-control-regex
+            if (!text.toString().match(/^[\x00-\x7F]*$/)) {
+                this.warnCanvasAvailability();
+            }
             const obj = {};
             obj.display = {
                 text: '' + text,
@@ -14110,10 +14144,8 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
         }
     }
     /**
-     * (It does not work with node.js. Please use display.draw())
-     *
-     *
-     * Now we draw a line between two points.
+     * Draw a line between two points.
+     * If you are using node.js, node-canvas is required.
      *
      * ```javascript
      * // Javascript Example
@@ -14135,7 +14167,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
      * @param y_1
      */
     line(x_0, y_0, x_1, y_1) {
-        const ctx = this._ctx();
+        const ctx = this._ctx(true);
         if (ctx) {
             ctx.beginPath();
             ctx.moveTo(x_0, y_0);
@@ -14143,15 +14175,10 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
             ctx.stroke();
             this.draw(ctx);
         }
-        else {
-            this.warnCanvasAvailability();
-        }
     }
     /**
-     * (It does not work with node.js. Please use display.draw())
-     *
-     *
-     * This draws a rectangle.
+     * Draw a rectangle.
+     * If you are using node.js, node-canvas is required.
      *
      * ```javascript
      * // Javascript Example
@@ -14166,7 +14193,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
      * @param mustFill
      */
     rect(x, y, width, height, mustFill) {
-        const ctx = this._ctx();
+        const ctx = this._ctx(true);
         if (ctx) {
             if (mustFill) {
                 ctx.fillRect(x, y, width, height);
@@ -14176,14 +14203,10 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
             }
             this.draw(ctx);
         }
-        else {
-            this.warnCanvasAvailability();
-        }
     }
     /**
-     * (It does not work with node.js. Please use display.draw())
-     *
-     * This draws a circle.
+     * Draw a circle.
+     * If you are using node.js, node-canvas is required.
      *
      * ```javascript
      * // Javascript Example
@@ -14197,7 +14220,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
      * @param mustFill
      */
     circle(x, y, r, mustFill) {
-        const ctx = this._ctx();
+        const ctx = this._ctx(true);
         if (ctx) {
             ctx.beginPath();
             ctx.arc(x, y, r, 0, Math.PI * 2);
@@ -14208,9 +14231,6 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
                 ctx.stroke();
             }
             this.draw(ctx);
-        }
-        else {
-            this.warnCanvasAvailability();
         }
     }
     /**
@@ -14394,6 +14414,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
     /**
      * You can specify to transfer the displayed data or not.
      * This affects only the functions that use canvas like clear/print/line/rect/circle/draw.
+     * If you are using node.js, node-canvas is required.
      *
      * Use false to stop updating display and true to restart updating.
      *
@@ -14415,7 +14436,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
      */
     drawing(autoFlush) {
         this.autoFlush = !!autoFlush;
-        const ctx = this._ctx();
+        const ctx = this._ctx(true);
         if (ctx) {
             this.draw(ctx);
         }
@@ -14434,7 +14455,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
     }
     warnCanvasAvailability() {
         if (this.Obniz.isNode) {
-            throw new Error('obniz.js require node-canvas to draw rich contents. see more detail on docs');
+            throw new Error('obniz.js require node-canvas to draw rich contents or characters out of ASCII code range. see more detail on docs');
         }
         else {
             throw new Error('obniz.js cant create canvas element to body');
@@ -14462,8 +14483,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
                 this._canvas = createCanvas(this.width, this.height);
             }
             catch (e) {
-                // this.warnCanvasAvailability();
-                return null;
+                return undefined;
             }
         }
         else {
@@ -14491,11 +14511,15 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
         }
         return this._canvas;
     }
-    _ctx() {
+    _ctx(required = false) {
         const canvas = this._preparedCanvas();
         if (canvas) {
             return canvas.getContext('2d');
         }
+        if (required) {
+            this.warnCanvasAvailability();
+        }
+        return undefined;
     }
     _draw(ctx) {
         const raw = new Array((this.width * this.height * this._colorDepth) / 8);
@@ -23052,6 +23076,7 @@ var map = {
 	"./Ble/iBS02PIR/index.js": "./dist/src/parts/Ble/iBS02PIR/index.js",
 	"./Ble/iBS03/index.js": "./dist/src/parts/Ble/iBS03/index.js",
 	"./Ble/iBS03G/index.js": "./dist/src/parts/Ble/iBS03G/index.js",
+	"./Ble/iBS03R/index.js": "./dist/src/parts/Ble/iBS03R/index.js",
 	"./Ble/iBS03T/index.js": "./dist/src/parts/Ble/iBS03T/index.js",
 	"./Ble/iBS03TP/index.js": "./dist/src/parts/Ble/iBS03TP/index.js",
 	"./Ble/iBS04/index.js": "./dist/src/parts/Ble/iBS04/index.js",
@@ -27753,6 +27778,91 @@ class iBS03G extends iBS_1.BaseiBS {
 exports.default = iBS03G;
 iBS03G.PartsName = 'iBS03G';
 iBS03G.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, button: iBS_1.BaseiBS.Config.button, moving: iBS_1.BaseiBS.Config.moving, fall: iBS_1.BaseiBS.Config.fall }, iBS_1.BaseiBS.getUniqueData(3, 0x16));
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/iBS03R/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS04i
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class IBS03R {
+    constructor() {
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: 'iBS03R',
+        };
+    }
+    static isDevice(peripheral) {
+        return IBS03R.getDeviceArray(peripheral) !== null;
+    }
+    static getData(peripheral) {
+        const adv = IBS03R.getDeviceArray(peripheral);
+        if (adv === null) {
+            return null;
+        }
+        const data = {
+            battery: (adv[5] + adv[6] * 256) * 0.01,
+            button: Boolean(adv[7]),
+            distance: adv[10] + adv[11] * 256,
+            address: peripheral.address,
+        };
+        return data;
+    }
+    static getDeviceArray(peripheral) {
+        const advertise = peripheral.advertise_data_rows.filter((adv) => {
+            let find = false;
+            if (this.deviceAdv.length > adv.length) {
+                return find;
+            }
+            for (let index = 0; index < this.deviceAdv.length; index++) {
+                if (this.deviceAdv[index] === -1) {
+                    continue;
+                }
+                if (adv[index] === this.deviceAdv[index]) {
+                    find = true;
+                    continue;
+                }
+                find = false;
+                break;
+            }
+            return find;
+        });
+        if (advertise.length !== 1) {
+            return null;
+        }
+        return advertise[0];
+    }
+}
+exports.default = IBS03R;
+IBS03R.deviceAdv = [
+    0xff,
+    0x0d,
+    0x00,
+    0x83,
+    0xbc,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    0x13,
+    -1,
+    -1,
+    -1,
+];
 
 
 /***/ }),
@@ -72368,7 +72478,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
+module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
 
 /***/ }),
 
