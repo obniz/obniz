@@ -67,24 +67,26 @@ export default class IBS03R implements ObnizPartsBleInterface {
   private static getDeviceArray(
     peripheral: BleRemotePeripheral
   ): number[] | null {
-    const advertise = peripheral.advertise_data_rows.filter((adv: number[]) => {
-      let find = false;
-      if (this.deviceAdv.length > adv.length) {
-        return find;
-      }
-      for (let index = 0; index < this.deviceAdv.length; index++) {
-        if (this.deviceAdv[index] === -1) {
-          continue;
-        }
-        if (adv[index] === this.deviceAdv[index]) {
-          find = true;
-          continue;
-        }
-        find = false;
-        break;
-      }
-      return find;
-    });
+    const advertise = !peripheral.advertise_data_rows
+      ? []
+      : peripheral.advertise_data_rows.filter((adv: number[]) => {
+          let find = false;
+          if (this.deviceAdv.length > adv.length) {
+            return find;
+          }
+          for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+              continue;
+            }
+            if (adv[index] === this.deviceAdv[index]) {
+              find = true;
+              continue;
+            }
+            find = false;
+            break;
+          }
+          return find;
+        });
     if (advertise.length !== 1) {
       return null;
     }
