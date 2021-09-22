@@ -4,8 +4,6 @@
 
 ![](image.jpg)
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/CYoMmMoa3ao" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-
 ```html
 <!-- HTML Example -->
 <html>
@@ -39,7 +37,7 @@ obniz.onconnect = async function () {
 ## wire(obniz, {vcc, cam_tx, cam_rx, gnd})
 電源とUARTを接続します。cam_txはカメラ側のtxと言う意味です。
 
-このカメラの電源はobniz Board以外から供給する方法がおすすめです。
+このカメラの電源はobniz Board以外から供給する方法がおすすめです。  
 obniz Boardから電源を供給する場合は過電流に気をつける必要があります。
 電源は以下のように供給して下さい
 
@@ -52,7 +50,8 @@ obniz Boardから電源を供給する場合は過電流に気をつける必要
 ![](wire.jpg)
 
 
-![](wired.png)
+![](wired-v2.png)
+
 **製品によってピンの配置が異なる場合がありますのでご注意ください**
 
 ```Javascript
