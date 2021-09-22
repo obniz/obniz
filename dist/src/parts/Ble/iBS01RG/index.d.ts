@@ -2,25 +2,20 @@
  * @packageDocumentation
  * @module Parts.iBS01RG
  */
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
-export interface IBS01RGOptions {
+import { Triaxial } from '../../../obniz/ObnizParts';
+import { ObnizBleBeaconStruct } from '../../../obniz/ObnizPartsBleAbstract';
+import { BaseiBS01 } from '../utils/abstracts/iBS';
+export interface iBS01RGOptions {
 }
-export interface IBS01RG_Acceleration_Data {
-    x: number;
-    y: number;
-    z: number;
-}
-export interface IBS01RG_Data {
+export interface iBS01RG_Data {
     battery: number;
     active: boolean;
     button: boolean;
-    acceleration: IBS01RG_Acceleration_Data[];
+    acceleration: Triaxial[];
 }
-export default class IBS01RG implements ObnizPartsBleInterface {
-    static info(): ObnizPartsBleInfo;
-    static isDevice(peripheral: BleRemotePeripheral): boolean;
-    static getData(peripheral: BleRemotePeripheral): IBS01RG_Data | null;
-    private static deviceAdv;
-    _peripheral: BleRemotePeripheral | null;
+export default class iBS01RG extends BaseiBS01<iBS01RG_Data> {
+    static readonly PartsName = "iBS01RG";
+    static readonly BeaconDataLength = 25;
+    static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS01RG_Data>;
+    protected readonly staticClass: typeof iBS01RG;
 }

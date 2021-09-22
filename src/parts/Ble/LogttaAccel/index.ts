@@ -3,13 +3,36 @@
  * @module Parts.Logtta_Accel
  */
 
-import Obniz from '../../../obniz';
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, {
-  ObnizPartsBleInfo,
-} from '../../../obniz/ObnizPartsBleInterface';
+import { Triaxial } from '../../../obniz/ObnizParts';
+import {
+  ObnizBleBeaconStruct,
+  ObnizPartsBleCompare,
+  uint,
+} from '../../../obniz/ObnizPartsBleAbstract';
+import Logtta from '../utils/abstracts/Logtta';
 
 export interface Logtta_AccelOptions {}
+
+export interface Logtta_Accel_Data {
+  revision: number;
+  sequence: number;
+  battery: number;
+  name: string;
+  setting: {
+    temp_cycle: number;
+    accel_sampling: number;
+    hpf: boolean;
+    accel_range: number;
+    accel_axis: Logtta_Accel_Axis;
+    accel_resolution: number;
+  };
+  temperature: number;
+  humidity: number;
+  alert: number[];
+  accel_peak: Triaxial;
+  accel_rms: Triaxial;
+}
 
 export interface Logtta_Accel_ScanData {
   revision: number;
@@ -44,35 +67,180 @@ export interface Logtta_Accel_AccelData {
   };
 }
 
-export default class Logtta_Accel implements ObnizPartsBleInterface {
-  public static info(): ObnizPartsBleInfo {
-    return {
-      name: 'Logtta_Accel',
-    };
+export type Logtta_Accel_Axis = (keyof Triaxial)[];
+
+/** Only support in beacon mode */
+export default class Logtta_Accel extends Logtta<Logtta_Accel_Data, unknown> {
+  public static readonly PartsName = 'Logtta_Accel';
+
+  public static readonly AvailableBleMode = 'Beacon';
+
+  public static readonly ServiceUuids = {
+    Connectable: 'c2de0000-a6c7-437f-8538-54e07f7845df',
+    Beacon: null,
+  };
+
+  public static readonly BeaconDataLength = {
+    Connectable: undefined,
+    Beacon: 0x1e,
+  };
+
+  public static readonly BeaconDataLength_ScanResponse = {
+    Connectable: undefined,
+    Beacon: 0x1e,
+  };
+
+  public static readonly CompanyID = {
+    Connectable: undefined,
+    Beacon: [0x10, 0x05],
+  };
+
+  public static readonly CompanyID_ScanResponse = {
+    Connectable: undefined,
+    Beacon: [0x10, 0x05],
+  };
+
+  public static readonly BeaconDataStruct: ObnizPartsBleCompare<ObnizBleBeaconStruct<Logtta_Accel_Data> | null> = {
+    Connectable: null,
+    Beacon: {
+      appearance: {
+        index: 0,
+        type: 'check',
+        data: 0x05,
+      },
+      revision: {
+        index: 1,
+        type: 'unsignedNumLE',
+      },
+      sequence: {
+        index: 2,
+        type: 'unsignedNumLE',
+      },
+      battery: {
+        index: 3,
+        type: 'unsignedNumLE',
+      },
+      name: {
+        index: 4,
+        length: 8,
+        type: 'string',
+      },
+      setting: {
+        index: 12,
+        length: 6,
+        type: 'custom',
+        func: (data) => ({
+          temp_cycle: uint(data.slice(0, 2)),
+          accel_sampling: Logtta_Accel.parseAccelSamplingData(data[2]),
+          hpf: (data[3] & 0b00010000) > 0,
+          accel_range: Logtta_Accel.parseAccelRangeData(data[3]),
+          accel_axis: Logtta_Accel.parseAccelAxis(data[4]),
+          accel_resolution: data[5],
+        }),
+      },
+      temperature: {
+        index: 18,
+        length: 2,
+        type: 'custom',
+        func: (data) => (uint(data) / 0x10000) * 175 - 45,
+      },
+      humidity: {
+        index: 20,
+        length: 2,
+        type: 'custom',
+        func: (data) => (uint(data) / 0x10000) * 100,
+      },
+      alert: {
+        index: 22,
+        length: 2,
+        type: 'custom',
+        func: (data) => [
+          (data[0] & 0b11110000) >> 4,
+          data[0] & 0b00001111,
+          (data[1] & 0b11110000) >> 4,
+          data[1] & 0b00001111,
+        ],
+      },
+      appearance_sr: {
+        index: 0,
+        type: 'check',
+        data: 0x05,
+        scanResponse: true,
+      },
+      accel_peak: {
+        index: 0,
+        length: 24,
+        type: 'custom',
+        func: (data, peripheral) => {
+          if (!peripheral.manufacturerSpecificData)
+            throw new Error('Manufacturer specific data is null.');
+
+          const range = Logtta_Accel.parseAccelRangeData(
+            peripheral.manufacturerSpecificData[17]
+          );
+          const resolution = peripheral.manufacturerSpecificData[19];
+
+          return (Object.fromEntries(
+            ['x', 'y', 'z'].map((key, i) => [
+              key,
+              (uint(data.slice(i * 8, i * 8 + 2)) / (2 ** resolution - 1)) *
+                range,
+            ])
+          ) as unknown) as Triaxial;
+        },
+        scanResponse: true,
+      },
+      accel_rms: {
+        index: 0,
+        length: 24,
+        type: 'custom',
+        func: (data, peripheral) => {
+          if (!peripheral.manufacturerSpecificData)
+            throw new Error('Manufacturer specific data is null.');
+
+          const range = Logtta_Accel.parseAccelRangeData(
+            peripheral.manufacturerSpecificData[17]
+          );
+          const resolution = peripheral.manufacturerSpecificData[19];
+          const n =
+            Logtta_Accel.parseAccelSamplingData(
+              peripheral.manufacturerSpecificData[16]
+            ) * uint(peripheral.manufacturerSpecificData.slice(14, 16));
+
+          return (Object.fromEntries(
+            ['x', 'y', 'z'].map((key, i) => [
+              key,
+              (range / (2 ** resolution - 1)) *
+                Math.sqrt(uint(data.slice(i * 8 + 2, i * 8 + 8)) / n),
+            ])
+          ) as unknown) as Triaxial;
+        },
+        scanResponse: true,
+      },
+    },
+  };
+
+  protected static parseAccelSamplingData(data: number): number {
+    return 50 * 2 ** (4 - data);
   }
 
-  public static isDevice(peripheral: BleRemotePeripheral): boolean {
-    const advertise = peripheral.advertise_data_rows.filter((adv: number[]) => {
-      let find = false;
-      if (this.deviceAdv.length > adv.length) {
-        return find;
-      }
-      for (let index = 0; index < this.deviceAdv.length; index++) {
-        if (this.deviceAdv[index] === -1) {
-          continue;
-        }
-        if (adv[index] === this.deviceAdv[index]) {
-          find = true;
-          continue;
-        }
-        find = false;
-        break;
-      }
-      return find;
-    });
-    return advertise.length !== 0;
+  protected static parseAccelRangeData(data: number): number {
+    return 2 ** ((data & 0b00000011) + 1) * 1000 * 1000;
   }
 
+  protected static parseAccelAxis(data: number): Logtta_Accel_Axis {
+    return ['z', 'y', 'x'].filter(
+      (key, i) => (data & (2 ** i)) > 0
+    ) as Logtta_Accel_Axis;
+  }
+
+  protected readonly staticClass = Logtta_Accel;
+
+  protected parseData(data: number[]): unknown {
+    return data;
+  }
+
+  /** @deprecated */
   public static getScanData(
     peripheral: BleRemotePeripheral
   ): Logtta_Accel_ScanData | null {
@@ -131,6 +299,7 @@ export default class Logtta_Accel implements ObnizPartsBleInterface {
     return null;
   }
 
+  /** @deprecated */
   public static getAccelData(
     peripheral: BleRemotePeripheral
   ): Logtta_Accel_AccelData | null {
@@ -179,13 +348,4 @@ export default class Logtta_Accel implements ObnizPartsBleInterface {
     }
     return null;
   }
-
-  private static deviceAdv: number[] = [
-    0xff, // Manufacturer vendor code
-    0x10, // Manufacturer vendor code
-    0x05, // Magic code
-    0x05, // Magic code
-  ];
-
-  public _peripheral: BleRemotePeripheral | null = null;
 }

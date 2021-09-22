@@ -3,82 +3,92 @@
  * @packageDocumentation
  * @module Parts.Logtta_AD
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class Logtta_AD {
-    constructor(peripheral) {
-        if (peripheral && !Logtta_AD.isDevice(peripheral)) {
-            throw new Error('peripheral is not logtta AD');
-        }
-        this._peripheral = peripheral;
+const ObnizPartsBleAbstract_1 = require("../../../obniz/ObnizPartsBleAbstract");
+const Logtta_1 = __importDefault(require("../utils/abstracts/Logtta"));
+class Logtta_AD extends Logtta_1.default {
+    constructor() {
+        super(...arguments);
+        this.staticClass = Logtta_AD;
     }
-    static info() {
-        return {
-            name: 'Logtta_AD',
-        };
-    }
+    /** @deprecated */
     static isDevice(peripheral) {
-        return peripheral.localName === 'Analog';
+        return this.getDeviceMode(peripheral) === 'Connectable';
     }
-    static get_uuid(uuid) {
-        return `4e43${uuid}-6687-4f3c-a1c3-1c327583f29d`;
+    static parseAmpereData(data, func = ObnizPartsBleAbstract_1.uint) {
+        return (16 / 916) * func(data);
     }
-    async connectWait() {
-        if (!this._peripheral) {
-            throw new Error('Logtta AD not found');
-        }
-        if (!this._peripheral.connected) {
-            this._peripheral.ondisconnect = (reason) => {
-                if (typeof this.ondisconnect === 'function') {
-                    this.ondisconnect(reason);
-                }
-            };
-            await this._peripheral.connectWait();
-        }
-    }
-    async disconnectWait() {
-        if (this._peripheral && this._peripheral.connected) {
-            await this._peripheral.disconnectWait();
-        }
-    }
-    async getAllWait() {
-        if (!(this._peripheral && this._peripheral.connected)) {
-            return null;
-        }
-        const c = this._peripheral
-            .getService(Logtta_AD.get_uuid('AE20'))
-            .getCharacteristic(Logtta_AD.get_uuid('AE21'));
-        const data = await c.readWait();
-        return {
-            ampere: (((data[0] << 8) | data[1]) * 916) / 16,
-            volt: (((data[0] << 8) | data[1]) * 916) / 4,
-            count: (data[2] << 8) | data[3],
-        };
+    static parseVoltData(data, func = ObnizPartsBleAbstract_1.uint) {
+        return (4 / 916) * func(data);
     }
     async getAmpereWait() {
-        return (await this.getAllWait()).ampere;
+        return (await this.getDataWait()).ampere;
     }
     async getVoltWait() {
-        return (await this.getAllWait()).volt;
+        return (await this.getDataWait()).volt;
     }
     async getCountWait() {
-        return (await this.getAllWait()).count;
+        return (await this.getDataWait()).count;
     }
-    async startNotifyWait() {
-        if (!(this._peripheral && this._peripheral.connected)) {
-            return;
+    /** @deprecated */
+    async getAllWait() {
+        try {
+            return await this.getDataWait();
         }
-        const c = this._peripheral
-            .getService(Logtta_AD.get_uuid('AE20'))
-            .getCharacteristic(Logtta_AD.get_uuid('AE21'));
-        await c.registerNotifyWait((data) => {
-            if (this.onNotify) {
-                this.onNotify({
-                    ampere: (16 / 916) * ((data[0] << 8) | data[1]),
-                    volt: (4 / 916) * ((data[0] << 8) | data[1]),
-                    count: (data[2] << 8) | data[3],
-                });
-            }
-        });
+        catch (_a) {
+            return null;
+        }
+    }
+    parseData(data) {
+        return {
+            ampere: this.staticClass.parseAmpereData(data.slice(0, 2), ObnizPartsBleAbstract_1.uintBE),
+            volt: this.staticClass.parseVoltData(data.slice(0, 2), ObnizPartsBleAbstract_1.uintBE),
+            count: ObnizPartsBleAbstract_1.uintBE(data.slice(2, 4)),
+        };
     }
 }
 exports.default = Logtta_AD;
+Logtta_AD.PartsName = 'Logtta_AD';
+Logtta_AD.ServiceUuids = {
+    Connectable: '4e43ae20-6687-4f3c-a1c3-1c327583f29d',
+    Beacon: null,
+};
+Logtta_AD.BeaconDataStruct = {
+    Connectable: null,
+    Beacon: {
+        appearance: {
+            index: 0,
+            type: 'check',
+            data: 0x04,
+        },
+        ampere: {
+            index: 1,
+            length: 2,
+            type: 'custom',
+            func: (data) => Logtta_AD.parseAmpereData(data, ObnizPartsBleAbstract_1.uintBE),
+        },
+        volt: {
+            index: 1,
+            length: 2,
+            type: 'custom',
+            func: (data) => Logtta_AD.parseVoltData(data, ObnizPartsBleAbstract_1.uintBE),
+        },
+        count: {
+            index: 3,
+            length: 2,
+            type: 'unsignedNumBE',
+        },
+        battery: {
+            index: 5,
+            type: 'unsignedNumBE',
+        },
+        interval: {
+            index: 6,
+            length: 2,
+            type: 'unsignedNumBE',
+        },
+    },
+};

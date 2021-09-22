@@ -1,58 +1,40 @@
 # iBS04i
-beacon advertising device made by INGICS.
 
-Support device
-
-- iBS04i
+Beacon by INGICS (It conforms to iBeacon)
 
 ![](image.jpg)
 
+## Available modes
 
-## getPartsClass(name)
+- Beacon mode
+
+## Beacon data (getData())
+
+- battery: Battery voltage
+- button: True when you press the button
+- uuid: iBeacon　UUID
+- major: iBeacon　major
+- minor: iBeacon　minor
+- power: iBeacon　power
+- rssi: Signal strength
+
+## Use case
 
 ```javascript
-// Javascript Example
-const IBS04I = Obniz.getPartsClass('iBS04i');
-```
-
-## isDevice(BleRemotePeripheral)
-
-Returns true if a device was found.
-
-```javascript
-// Javascript Example
-const IBS04I = Obniz.getPartsClass('iBS04i');
+// Javascript
+const iBS04i = Obniz.getPartsClass('iBS04i');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (IBS04I.isDevice(p)) {
-        let data = IBS04I.getData(p);
-        console.log(data);
-    }
-};
-await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
-```
-
-## getData(BleRemotePeripheral)
-
-Returns device information if found. Returns Null if not found.
-
-- battery : Battery voltage
-- button : Button pressed: true
-- uuid : iBeacon　UUID
-- major : iBeacon　major
-- minor : iBeacon　minor
-- power : iBeacon　power
-- rssi :  Signal strength
-
-```javascript
-// Javascript Example
-const IBS04I = Obniz.getPartsClass('iBS04i');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (IBS04I.isDevice(p)) {
-        let data = IBS04I.getData(p);
-        console.log(data);
-    }
+obniz.ble.scan.onfind = (peripheral) => {
+  // Get operation mode, it becomes null when not iBS04i
+  const mode = iBS04i.getDeviceMode(peripheral);
+  if (mode) {
+    // Generate an instance
+    const device = new iBS04i(peripheral, mode);
+    // Get data and output to the console
+    console.log(device.getData());
+    // Output iBeacon information to the console
+    console.log(peripheral.iBeacon);
+  }
 };
 await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```

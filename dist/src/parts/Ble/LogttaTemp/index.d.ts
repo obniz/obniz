@@ -3,43 +3,43 @@
  * @module Parts.Logtta_TH
  */
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
+import { ObnizBleBeaconStruct, ObnizPartsBleCompare, ObnizPartsBleMode } from '../../../obniz/ObnizPartsBleAbstract';
+import Logtta from '../utils/abstracts/Logtta';
 export interface Logtta_THOptions {
 }
-export interface Logtta_TH_Data {
-    temperature: number;
-    humidity: number;
-}
-export interface Logtta_TH_Adv_Data {
-    temperature: number;
-    humidity: number;
+export interface Logtta_TH_Data extends Logtta_TH_Connected_Data {
     battery: number;
     interval: number;
     address: string;
 }
-export default class Logtta_TH implements ObnizPartsBleInterface {
-    static info(): ObnizPartsBleInfo;
+export interface Logtta_TH_Connected_Data {
+    temperature: number;
+    humidity: number;
+}
+export default class Logtta_TH extends Logtta<Logtta_TH_Data, Logtta_TH_Connected_Data> {
+    static readonly PartsName = "Logtta_TH";
+    static readonly AvailableBleMode: ObnizPartsBleMode[];
+    static readonly LocalName: {
+        Connectable: undefined;
+        Beacon: RegExp;
+    };
+    static readonly ServiceUuids: {
+        Connectable: string;
+        Beacon: null;
+    };
+    static readonly BeaconDataStruct: ObnizPartsBleCompare<ObnizBleBeaconStruct<Logtta_TH_Data> | null>;
+    protected static parseTemperatureData(data: number[], func?: (value: number[]) => number): number;
+    protected static parseHumidityData(data: number[], func?: (value: number[]) => number): number;
+    /** @deprecated */
     static isDevice(peripheral: BleRemotePeripheral): boolean;
+    /** @deprecated */
     static isAdvDevice(peripheral: BleRemotePeripheral): boolean;
-    static getData(peripheral: BleRemotePeripheral): Logtta_TH_Adv_Data | null;
-    private static getName;
-    private static get_uuid;
-    onNotify?: (data: Logtta_TH_Data) => void;
-    _peripheral: null | BleRemotePeripheral;
-    ondisconnect?: (reason: any) => void;
-    constructor(peripheral: BleRemotePeripheral | null);
-    connectWait(): Promise<void>;
-    disconnectWait(): Promise<void>;
-    getAllWait(): Promise<Logtta_TH_Data | null>;
+    protected readonly staticClass: typeof Logtta_TH;
+    /** @deprecated */
+    getAllWait(): Promise<Logtta_TH_Connected_Data | null>;
     getTemperatureWait(): Promise<number>;
     getHumidityWait(): Promise<number>;
-    startNotifyWait(): Promise<void>;
-    authPinCodeWait(code: string): Promise<void>;
-    /**
-     * @deprecated
-     * @param enable
-     */
-    setBeaconMode(enable: boolean): Promise<void>;
-    setBeaconModeWait(enable: boolean): Promise<void>;
-    private checkNumber;
+    /** @deprecated */
+    setBeaconMode(enable: boolean): Promise<boolean>;
+    protected parseData(data: number[]): Logtta_TH_Connected_Data;
 }

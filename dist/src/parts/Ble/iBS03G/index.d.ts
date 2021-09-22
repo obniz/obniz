@@ -2,20 +2,18 @@
  * @packageDocumentation
  * @module Parts.iBS03G
  */
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
-export interface IBS03GOptions {
+import { ObnizBleBeaconStruct } from '../../../obniz/ObnizPartsBleAbstract';
+import { BaseiBS } from '../utils/abstracts/iBS';
+export interface iBS03GOptions {
 }
-export interface IBS03G_Data {
+export interface iBS03G_Data {
     battery: number;
     button: boolean;
     moving: boolean;
     fall: boolean;
 }
-export default class IBS03G implements ObnizPartsBleInterface {
-    static info(): ObnizPartsBleInfo;
-    static isDevice(peripheral: BleRemotePeripheral): boolean;
-    static getData(peripheral: BleRemotePeripheral): IBS03G_Data | null;
-    private static deviceAdv;
-    _peripheral: BleRemotePeripheral | null;
+export default class iBS03G extends BaseiBS<iBS03G_Data> {
+    static readonly PartsName = "iBS03G";
+    static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS03G_Data>;
+    protected readonly staticClass: typeof iBS03G;
 }

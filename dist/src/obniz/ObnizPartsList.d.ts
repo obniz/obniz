@@ -9,20 +9,20 @@ import OMRON_2JCIE, { OMRON_2JCIEOptions } from '../parts/Ble/2jcie';
 import ENERTALK_TOUCH, { ENERTALK_TOUCHOptions } from '../parts/Ble/ENERTALK';
 import HEM_6233T, { HEM_6233TOptions } from '../parts/Ble/HEM_6233T';
 import HEM_9200T, { HEM_9200TOptions } from '../parts/Ble/HEM_9200T';
-import IBS01, { IBS01Options } from '../parts/Ble/iBS01';
-import IBS01G, { IBS01GOptions } from '../parts/Ble/iBS01G';
-import IBS01H, { IBS01HOptions } from '../parts/Ble/iBS01H';
-import IBS01RG, { IBS01RGOptions } from '../parts/Ble/iBS01RG';
-import IBS01T, { IBS01TOptions } from '../parts/Ble/iBS01T';
-import IBS02IR, { IBS02IROptions } from '../parts/Ble/iBS02IR';
-import IBS02PIR, { IBS02PIROptions } from '../parts/Ble/iBS02PIR';
-import IBS03, { IBS03Options } from '../parts/Ble/iBS03';
-import IBS03G, { IBS03GOptions } from '../parts/Ble/iBS03G';
+import IBS01, { iBS01Options } from '../parts/Ble/iBS01';
+import IBS01G, { iBS01GOptions } from '../parts/Ble/iBS01G';
+import IBS01H, { iBS01HOptions } from '../parts/Ble/iBS01H';
+import IBS01RG, { iBS01RGOptions } from '../parts/Ble/iBS01RG';
+import IBS01T, { iBS01TOptions } from '../parts/Ble/iBS01T';
+import IBS02IR, { iBS02IROptions } from '../parts/Ble/iBS02IR';
+import IBS02PIR, { iBS02PIROptions } from '../parts/Ble/iBS02PIR';
+import IBS03, { iBS03Options } from '../parts/Ble/iBS03';
+import IBS03G, { iBS03GOptions } from '../parts/Ble/iBS03G';
 import IBS03R, { IBS03ROptions } from '../parts/Ble/iBS03R';
-import IBS03T, { IBS03TOptions } from '../parts/Ble/iBS03T';
-import IBS03TP, { IBS03TPOptions } from '../parts/Ble/iBS03TP';
-import IBS04, { IBS04Options } from '../parts/Ble/iBS04';
-import IBS04I, { IBS04IOptions } from '../parts/Ble/iBS04i';
+import IBS03T, { iBS03TOptions } from '../parts/Ble/iBS03T';
+import IBS03TP, { iBS03TPOptions } from '../parts/Ble/iBS03TP';
+import IBS04, { iBS04Options } from '../parts/Ble/iBS04';
+import IBS04I, { iBS04iOptions } from '../parts/Ble/iBS04i';
 import KankiAirMier, { KankiAirMierOptions } from '../parts/Ble/KankiAirMier';
 import Linking, { LinkingOptions } from '../parts/Ble/linking';
 import Logtta_Accel, { Logtta_AccelOptions } from '../parts/Ble/LogttaAccel';
@@ -171,6 +171,7 @@ import ADT7310, { ADT7310Options } from '../parts/TemperatureSensor/spi/ADT7310'
 import RN42, { RN42Options } from '../parts/Wireless/RN42';
 import XBee, { XBeeOptions } from '../parts/Wireless/XBee';
 import EXVital, { EXVital_Options } from '../parts/Ble/EXVital';
+export declare type PartsType = keyof PartsList;
 export interface PartsList {
     LED: {
         class: LED;
@@ -662,55 +663,55 @@ export interface PartsList {
     };
     iBS01: {
         class: IBS01;
-        options: IBS01Options;
+        options: iBS01Options;
     };
     iBS01G: {
         class: IBS01G;
-        options: IBS01GOptions;
+        options: iBS01GOptions;
     };
     iBS01H: {
         class: IBS01H;
-        options: IBS01HOptions;
+        options: iBS01HOptions;
     };
     iBS01RG: {
         class: IBS01RG;
-        options: IBS01RGOptions;
+        options: iBS01RGOptions;
     };
     iBS01T: {
         class: IBS01T;
-        options: IBS01TOptions;
+        options: iBS01TOptions;
     };
     iBS02IR: {
         class: IBS02IR;
-        options: IBS02IROptions;
+        options: iBS02IROptions;
     };
     iBS02PIR: {
         class: IBS02PIR;
-        options: IBS02PIROptions;
+        options: iBS02PIROptions;
     };
     iBS03: {
         class: IBS03;
-        options: IBS03Options;
+        options: iBS03Options;
     };
     iBS03G: {
         class: IBS03G;
-        options: IBS03GOptions;
+        options: iBS03GOptions;
     };
     iBS03T: {
         class: IBS03T;
-        options: IBS03TOptions;
+        options: iBS03TOptions;
     };
     iBS03TP: {
         class: IBS03TP;
-        options: IBS03TPOptions;
+        options: iBS03TPOptions;
     };
     iBS04: {
         class: IBS04;
-        options: IBS04Options;
+        options: iBS04Options;
     };
     iBS04i: {
         class: IBS04I;
-        options: IBS04IOptions;
+        options: iBS04iOptions;
     };
     iBS03R: {
         class: IBS03R;

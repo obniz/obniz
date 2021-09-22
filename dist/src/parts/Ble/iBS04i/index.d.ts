@@ -2,25 +2,21 @@
  * @packageDocumentation
  * @module Parts.iBS04i
  */
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
-export interface IBS04IOptions {
+import { IBeacon } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { ObnizBleBeaconStruct } from '../../../obniz/ObnizPartsBleAbstract';
+import { BaseiBS } from '../utils/abstracts/iBS';
+export interface iBS04iOptions {
 }
-export interface IBS04I_Data {
+export interface iBS04i_Data extends IBeacon {
     battery: number;
     button: boolean;
-    uuid: string;
-    major: number;
-    minor: number;
-    power: number;
-    rssi: number;
-    address: string;
 }
-export default class IBS04I implements ObnizPartsBleInterface {
-    static info(): ObnizPartsBleInfo;
-    static isDevice(peripheral: BleRemotePeripheral): boolean;
-    static getData(peripheral: BleRemotePeripheral): IBS04I_Data | null;
-    private static deviceAdv;
-    private static getDeviceArray;
-    _peripheral: BleRemotePeripheral | null;
+export default class iBS04i extends BaseiBS<iBS04i_Data> {
+    static readonly PartsName = "iBS04i";
+    static readonly CompanyID: number[];
+    static readonly CompanyID_ScanResponse: number[];
+    static readonly BeaconDataLength = 26;
+    static readonly BeaconDataLength_ScanResponse: number;
+    static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS04i_Data>;
+    protected readonly staticClass: typeof iBS04i;
 }

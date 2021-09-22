@@ -4,62 +4,13 @@
  * @module Parts.iBS02PIR
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-class IBS02PIR {
+const iBS_1 = require("../utils/abstracts/iBS");
+class iBS02PIR extends iBS_1.BaseiBS {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS02PIR',
-        };
-    }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!IBS02PIR.isDevice(peripheral)) {
-            return null;
-        }
-        return {
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            event: Boolean(peripheral.adv_data[11] & 0b100),
-        };
+        super(...arguments);
+        this.staticClass = iBS02PIR;
     }
 }
-exports.default = IBS02PIR;
-IBS02PIR.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x0d,
-    0x00,
-    0x82,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    0x01,
-    -1,
-    -1,
-    -1,
-];
+exports.default = iBS02PIR;
+iBS02PIR.PartsName = 'iBS02PIR';
+iBS02PIR.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, event: iBS_1.BaseiBS.Config.event }, iBS_1.BaseiBS.getUniqueData(2, 0x01));

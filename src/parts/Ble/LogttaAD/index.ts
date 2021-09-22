@@ -3,112 +3,126 @@
  * @module Parts.Logtta_AD
  */
 
-import Obniz from '../../../obniz';
-import bleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, {
-  ObnizPartsBleInfo,
-} from '../../../obniz/ObnizPartsBleInterface';
+import {
+  ObnizBleBeaconStruct,
+  ObnizPartsBleCompare,
+  uint,
+  uintBE,
+} from '../../../obniz/ObnizPartsBleAbstract';
+import Logtta from '../utils/abstracts/Logtta';
 
 export interface Logtta_ADOptions {}
 
-export interface Logtta_AD_Data {
+export interface Logtta_AD_Data extends Logtta_AD_Connected_Data {
+  battery: number;
+  interval: number;
+}
+
+export interface Logtta_AD_Connected_Data {
   ampere: number;
   volt: number;
   count: number;
 }
 
-export default class Logtta_AD implements ObnizPartsBleInterface {
-  public static info(): ObnizPartsBleInfo {
-    return {
-      name: 'Logtta_AD',
-    };
+export default class Logtta_AD extends Logtta<
+  Logtta_AD_Data,
+  Logtta_AD_Connected_Data
+> {
+  public static readonly PartsName = 'Logtta_AD';
+
+  public static readonly ServiceUuids = {
+    Connectable: '4e43ae20-6687-4f3c-a1c3-1c327583f29d',
+    Beacon: null,
+  };
+
+  public static readonly BeaconDataStruct: ObnizPartsBleCompare<ObnizBleBeaconStruct<Logtta_AD_Data> | null> = {
+    Connectable: null,
+    Beacon: {
+      appearance: {
+        index: 0,
+        type: 'check',
+        data: 0x04,
+      },
+      ampere: {
+        index: 1,
+        length: 2,
+        type: 'custom',
+        func: (data) => Logtta_AD.parseAmpereData(data, uintBE),
+      },
+      volt: {
+        index: 1,
+        length: 2,
+        type: 'custom',
+        func: (data) => Logtta_AD.parseVoltData(data, uintBE),
+      },
+      count: {
+        index: 3,
+        length: 2,
+        type: 'unsignedNumBE',
+      },
+      battery: {
+        index: 5,
+        type: 'unsignedNumBE',
+      },
+      interval: {
+        index: 6,
+        length: 2,
+        type: 'unsignedNumBE',
+      },
+      /* alert: {
+        index: 8,
+        type: 'uint8',
+      },
+      name: {
+        index: 9,
+        length: 15,
+        type: 'string',
+      } */
+    },
+  };
+
+  /** @deprecated */
+  public static isDevice(peripheral: BleRemotePeripheral): boolean {
+    return this.getDeviceMode(peripheral) === 'Connectable';
   }
 
-  public static isDevice(peripheral: BleRemotePeripheral) {
-    return peripheral.localName === 'Analog';
+  protected static parseAmpereData(data: number[], func = uint): number {
+    return (16 / 916) * func(data);
   }
 
-  private static get_uuid(uuid: string): string {
-    return `4e43${uuid}-6687-4f3c-a1c3-1c327583f29d`;
+  protected static parseVoltData(data: number[], func = uint): number {
+    return (4 / 916) * func(data);
   }
 
-  public onNotify?: (data: Logtta_AD_Data) => void;
-  public _peripheral: null | BleRemotePeripheral;
-  public ondisconnect?: (reason: any) => void;
-
-  constructor(peripheral: BleRemotePeripheral | null) {
-    if (peripheral && !Logtta_AD.isDevice(peripheral)) {
-      throw new Error('peripheral is not logtta AD');
-    }
-    this._peripheral = peripheral;
-  }
-
-  public async connectWait() {
-    if (!this._peripheral) {
-      throw new Error('Logtta AD not found');
-    }
-    if (!this._peripheral.connected) {
-      this._peripheral.ondisconnect = (reason: any) => {
-        if (typeof this.ondisconnect === 'function') {
-          this.ondisconnect(reason);
-        }
-      };
-      await this._peripheral.connectWait();
-    }
-  }
-
-  public async disconnectWait() {
-    if (this._peripheral && this._peripheral.connected) {
-      await this._peripheral.disconnectWait();
-    }
-  }
-
-  public async getAllWait(): Promise<Logtta_AD_Data | null> {
-    if (!(this._peripheral && this._peripheral.connected)) {
-      return null;
-    }
-
-    const c = this._peripheral
-      .getService(Logtta_AD.get_uuid('AE20'))!
-      .getCharacteristic(Logtta_AD.get_uuid('AE21'));
-    const data: number[] = await c!.readWait();
-    return {
-      ampere: (((data[0] << 8) | data[1]) * 916) / 16,
-      volt: (((data[0] << 8) | data[1]) * 916) / 4,
-      count: (data[2] << 8) | data[3],
-    };
-  }
+  protected readonly staticClass = Logtta_AD;
 
   public async getAmpereWait(): Promise<number> {
-    return (await this.getAllWait())!.ampere;
+    return (await this.getDataWait()).ampere;
   }
 
   public async getVoltWait(): Promise<number> {
-    return (await this.getAllWait())!.volt;
+    return (await this.getDataWait()).volt;
   }
 
   public async getCountWait(): Promise<number> {
-    return (await this.getAllWait())!.count;
+    return (await this.getDataWait()).count;
   }
 
-  public async startNotifyWait() {
-    if (!(this._peripheral && this._peripheral.connected)) {
-      return;
+  /** @deprecated */
+  public async getAllWait(): Promise<Logtta_AD_Connected_Data | null> {
+    try {
+      return await this.getDataWait();
+    } catch {
+      return null;
     }
+  }
 
-    const c = this._peripheral
-      .getService(Logtta_AD.get_uuid('AE20'))!
-      .getCharacteristic(Logtta_AD.get_uuid('AE21'));
-
-    await c!.registerNotifyWait((data: number[]) => {
-      if (this.onNotify) {
-        this.onNotify({
-          ampere: (16 / 916) * ((data[0] << 8) | data[1]),
-          volt: (4 / 916) * ((data[0] << 8) | data[1]),
-          count: (data[2] << 8) | data[3],
-        });
-      }
-    });
+  protected parseData(data: number[]): Logtta_AD_Connected_Data {
+    return {
+      ampere: this.staticClass.parseAmpereData(data.slice(0, 2), uintBE),
+      volt: this.staticClass.parseVoltData(data.slice(0, 2), uintBE),
+      count: uintBE(data.slice(2, 4)),
+    };
   }
 }

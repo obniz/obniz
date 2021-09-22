@@ -2,19 +2,17 @@
  * @packageDocumentation
  * @module Parts.iBS01H
  */
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
-export interface IBS01HOptions {
+import { ObnizBleBeaconStruct } from '../../../obniz/ObnizPartsBleAbstract';
+import { BaseiBS01 } from '../utils/abstracts/iBS';
+export interface iBS01HOptions {
 }
-export interface IBS01H_Data {
+export interface iBS01H_Data {
     battery: number;
     button: boolean;
     hall_sensor: boolean;
 }
-export default class IBS01H implements ObnizPartsBleInterface {
-    static info(): ObnizPartsBleInfo;
-    static isDevice(peripheral: BleRemotePeripheral): boolean;
-    static getData(peripheral: BleRemotePeripheral): IBS01H_Data | null;
-    private static deviceAdv;
-    _peripheral: BleRemotePeripheral | null;
+export default class iBS01H extends BaseiBS01<iBS01H_Data> {
+    static readonly PartsName = "iBS01H";
+    static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS01H_Data>;
+    protected readonly staticClass: typeof iBS01H;
 }

@@ -1,4 +1,6 @@
 "use strict";
+/* eslint-disable max-classes-per-file */
+/* eslint-disable rulesdir/non-ascii */
 /**
  * @packageDocumentation
  * @module ObnizCore

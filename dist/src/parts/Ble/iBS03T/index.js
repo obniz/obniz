@@ -3,80 +3,14 @@
  * @packageDocumentation
  * @module Parts.iBS03T
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
-class IBS03T {
+const iBS_1 = require("../utils/abstracts/iBS");
+class iBS03T extends iBS_1.BaseiBS {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS03T',
-        };
-    }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!IBS03T.isDevice(peripheral)) {
-            return null;
-        }
-        const data = {
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            button: false,
-            moving: false,
-            hall_sensor: false,
-            temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
-        };
-        if (peripheral.adv_data[11] & 0b0001) {
-            data.button = true;
-        }
-        if (peripheral.adv_data[11] & 0b0010) {
-            data.moving = true;
-        }
-        if (peripheral.adv_data[11] & 0b0100) {
-            data.hall_sensor = true;
-        }
-        return data;
+        super(...arguments);
+        this.staticClass = iBS03T;
     }
 }
-exports.default = IBS03T;
-IBS03T.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x0d,
-    0x00,
-    0x83,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    0x15,
-    -1,
-    -1,
-    -1,
-];
+exports.default = iBS03T;
+iBS03T.PartsName = 'iBS03T';
+iBS03T.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, button: iBS_1.BaseiBS.Config.button, moving: iBS_1.BaseiBS.Config.moving, hall_sensor: iBS_1.BaseiBS.Config.event, temperature: iBS_1.BaseiBS.Config.temperature }, iBS_1.BaseiBS.getUniqueData(3, 0x15));

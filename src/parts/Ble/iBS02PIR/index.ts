@@ -3,75 +3,24 @@
  * @module Parts.iBS02PIR
  */
 
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, {
-  ObnizPartsBleInfo,
-} from '../../../obniz/ObnizPartsBleInterface';
+import { ObnizBleBeaconStruct } from '../../../obniz/ObnizPartsBleAbstract';
+import { BaseiBS } from '../utils/abstracts/iBS';
 
-export interface IBS02PIROptions {}
+export interface iBS02PIROptions {}
 
-export interface IBS02PIR_Data {
-  event: boolean;
+export interface iBS02PIR_Data {
   battery: number;
+  event: boolean;
 }
 
-export default class IBS02PIR implements ObnizPartsBleInterface {
-  public static info(): ObnizPartsBleInfo {
-    return {
-      name: 'iBS02PIR',
-    };
-  }
+export default class iBS02PIR extends BaseiBS<iBS02PIR_Data> {
+  public static readonly PartsName = 'iBS02PIR';
 
-  public static isDevice(peripheral: BleRemotePeripheral): boolean {
-    if (this.deviceAdv.length > peripheral.adv_data.length) {
-      return false;
-    }
-    for (let index = 0; index < this.deviceAdv.length; index++) {
-      if (this.deviceAdv[index] === -1) {
-        continue;
-      }
-      if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-        continue;
-      }
-      return false;
-    }
-    return true;
-  }
+  public static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS02PIR_Data> = {
+    battery: BaseiBS.Config.battery,
+    event: BaseiBS.Config.event,
+    ...BaseiBS.getUniqueData(2, 0x01),
+  };
 
-  public static getData(peripheral: BleRemotePeripheral): IBS02PIR_Data | null {
-    if (!IBS02PIR.isDevice(peripheral)) {
-      return null;
-    }
-    return {
-      battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-      event: Boolean(peripheral.adv_data[11] & 0b100),
-    };
-  }
-
-  private static deviceAdv: number[] = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x0d, // Manufacturer vendor code
-    0x00, // Manufacturer vendor code
-    0x82, // Magic code
-    0xbc, // Magic code
-    -1, // Battery
-    -1, // Battery
-    -1, // Event
-    -1, // reserved
-    -1, // reserved
-    -1, // reserved
-    -1, // reserved
-    -1, // reserved
-    -1, // reserved
-    0x01, // sub type
-    -1, // reserved
-    -1, // reserved
-    -1, // reserved
-  ];
-
-  public _peripheral: BleRemotePeripheral | null = null;
+  protected readonly staticClass = iBS02PIR;
 }
