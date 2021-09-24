@@ -49143,6 +49143,10 @@ class DCMotor {
     constructor() {
         this.keys = ['forward', 'back'];
         this.requiredKeys = ['forward', 'back'];
+        this.status = {
+            direction: null,
+            power: 30,
+        };
     }
     static info() {
         return {
@@ -49150,19 +49154,12 @@ class DCMotor {
         };
     }
     wired(obniz) {
-        this.status = {
-            direction: null,
-            power: null,
-        };
-        this.pwm1_io_num = this.params.forward;
-        this.pwm2_io_num = this.params.back;
-        this.pwm1 = obniz.getFreePwm();
-        this.pwm1.start({ io: this.pwm1_io_num });
-        this.pwm1.freq(100000);
-        this.pwm2 = obniz.getFreePwm();
-        this.pwm2.start({ io: this.pwm2_io_num });
-        this.pwm2.freq(100000);
-        this.power(30);
+        this.obniz = obniz;
+        this.forward_io_num = this.params.forward;
+        this.back_io_num = this.params.back;
+        this.pwm = obniz.getFreePwm();
+        this.setPwmGnd(this.forward_io_num, this.back_io_num);
+        this.power(this.status.power);
     }
     // Module functions
     forward() {
@@ -49176,8 +49173,7 @@ class DCMotor {
             return;
         }
         this.status.direction = null;
-        this.pwm1.duty(0);
-        this.pwm2.duty(0);
+        this.pwm.duty(0);
     }
     move(forward) {
         if (forward) {
@@ -49202,18 +49198,22 @@ class DCMotor {
         }
         this.status.power = power;
         if (this.status.direction === null) {
-            this.pwm1.duty(0);
-            this.pwm2.duty(0);
+            this.pwm.duty(0);
             return;
         }
-        if (this.status.direction) {
-            this.pwm1.duty(power);
-            this.pwm2.duty(0);
-        }
-        else {
-            this.pwm1.duty(0);
-            this.pwm2.duty(power);
-        }
+        const pwm_io = this.status.direction
+            ? this.forward_io_num
+            : this.back_io_num;
+        const gnd_io = this.status.direction
+            ? this.back_io_num
+            : this.forward_io_num;
+        this.setPwmGnd(pwm_io, gnd_io);
+        this.pwm.duty(power);
+    }
+    setPwmGnd(pwm_io, gnd_io) {
+        this.pwm.start({ io: pwm_io });
+        this.pwm.freq(100000);
+        this.obniz.getIO(gnd_io).output(false);
     }
 }
 exports.default = DCMotor;

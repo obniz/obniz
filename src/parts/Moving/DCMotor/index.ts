@@ -15,6 +15,11 @@ export interface DCMotorOptions {
   back: number;
 }
 
+export interface DCMotorStatus {
+  direction: boolean | null;
+  power: number;
+}
+
 export default class DCMotor implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
@@ -24,35 +29,32 @@ export default class DCMotor implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public status: any;
-  public pwm1_io_num: any;
+  public status: DCMotorStatus;
   public params: any;
-  public pwm2_io_num: any;
 
-  public pwm1!: PeripheralPWM;
-  public pwm2!: PeripheralPWM;
+  public forward_io_num: any;
+  public back_io_num: any;
+
+  public pwm!: PeripheralPWM;
+  public obniz!: Obniz;
 
   constructor() {
     this.keys = ['forward', 'back'];
     this.requiredKeys = ['forward', 'back'];
+    this.status = {
+      direction: null,
+      power: 30,
+    };
   }
 
   public wired(obniz: Obniz) {
-    this.status = {
-      direction: null,
-      power: null,
-    };
+    this.obniz = obniz;
+    this.forward_io_num = this.params.forward;
+    this.back_io_num = this.params.back;
 
-    this.pwm1_io_num = this.params.forward;
-    this.pwm2_io_num = this.params.back;
-
-    this.pwm1 = obniz.getFreePwm();
-    this.pwm1.start({ io: this.pwm1_io_num });
-    this.pwm1.freq(100000);
-    this.pwm2 = obniz.getFreePwm();
-    this.pwm2.start({ io: this.pwm2_io_num });
-    this.pwm2.freq(100000);
-    this.power(30);
+    this.pwm = obniz.getFreePwm();
+    this.setPwmGnd(this.forward_io_num, this.back_io_num);
+    this.power(this.status.power);
   }
 
   // Module functions
@@ -70,8 +72,7 @@ export default class DCMotor implements ObnizPartsInterface {
       return;
     }
     this.status.direction = null;
-    this.pwm1.duty(0);
-    this.pwm2.duty(0);
+    this.pwm.duty(0);
   }
 
   public move(forward: any) {
@@ -91,22 +92,31 @@ export default class DCMotor implements ObnizPartsInterface {
     this.power(power);
   }
 
-  public power(power?: any) {
+  public power(power?: number) {
     if (power === undefined) {
       return this.status.power;
     }
     this.status.power = power;
+
     if (this.status.direction === null) {
-      this.pwm1.duty(0);
-      this.pwm2.duty(0);
+      this.pwm.duty(0);
       return;
     }
-    if (this.status.direction) {
-      this.pwm1.duty(power);
-      this.pwm2.duty(0);
-    } else {
-      this.pwm1.duty(0);
-      this.pwm2.duty(power);
-    }
+
+    const pwm_io = this.status.direction
+      ? this.forward_io_num
+      : this.back_io_num;
+    const gnd_io = this.status.direction
+      ? this.back_io_num
+      : this.forward_io_num;
+
+    this.setPwmGnd(pwm_io, gnd_io);
+    this.pwm.duty(power);
+  }
+
+  private setPwmGnd(pwm_io: number, gnd_io: number) {
+    this.pwm.start({ io: pwm_io });
+    this.pwm.freq(100000);
+    this.obniz.getIO(gnd_io).output(false);
   }
 }
