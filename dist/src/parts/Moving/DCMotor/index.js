@@ -23,16 +23,24 @@ class DCMotor {
         this.forward_io_num = this.params.forward;
         this.back_io_num = this.params.back;
         this.pwm = obniz.getFreePwm();
-        this.setPwmGnd(this.forward_io_num, this.back_io_num);
-        this.power(this.status.power);
+        this.setPwmGndPin(this.forward_io_num, this.back_io_num);
     }
     // Module functions
+    /**
+     * Start rotation to the forward direction.
+     */
     forward() {
         this.move(true);
     }
+    /**
+     * Start rotation to the reverse direction.
+     */
     reverse() {
         this.move(false);
     }
+    /**
+     * Stop rotation.
+     */
     stop() {
         if (this.status.direction === null) {
             return;
@@ -40,31 +48,22 @@ class DCMotor {
         this.status.direction = null;
         this.pwm.duty(0);
     }
+    /**
+     * Start rotation by specifying rotation direction.
+     *
+     * @param forward true is forward rotation, and false is reverse rotation.
+     */
     move(forward) {
-        if (forward) {
-            if (this.status.direction === true) {
+        if (forward === undefined) {
+            if (this.status.direction === null) {
                 return;
             }
-            this.status.direction = true;
         }
         else {
-            if (this.status.direction === false) {
+            if (this.status.direction === forward) {
                 return;
             }
-            this.status.direction = false;
-        }
-        const power = this.power();
-        this.power(0);
-        this.power(power);
-    }
-    power(power) {
-        if (power === undefined) {
-            return this.status.power;
-        }
-        this.status.power = power;
-        if (this.status.direction === null) {
-            this.pwm.duty(0);
-            return;
+            this.status.direction = forward;
         }
         const pwm_io = this.status.direction
             ? this.forward_io_num
@@ -72,10 +71,21 @@ class DCMotor {
         const gnd_io = this.status.direction
             ? this.back_io_num
             : this.forward_io_num;
-        this.setPwmGnd(pwm_io, gnd_io);
-        this.pwm.duty(power);
+        this.setPwmGndPin(pwm_io, gnd_io);
+        this.pwm.duty(this.status.power);
     }
-    setPwmGnd(pwm_io, gnd_io) {
+    /**
+     * Set the motor power.
+     *
+     * @param power Specify between 0 and 100.
+     */
+    power(power) {
+        this.status.power = power;
+        if (this.status.direction !== null) {
+            this.move();
+        }
+    }
+    setPwmGndPin(pwm_io, gnd_io) {
         var _a, _b;
         this.pwm.start({ io: pwm_io });
         this.pwm.freq(100000);

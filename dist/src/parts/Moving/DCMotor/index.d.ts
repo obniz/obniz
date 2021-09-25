@@ -25,10 +25,29 @@ export default class DCMotor implements ObnizPartsInterface {
     obniz: Obniz;
     constructor();
     wired(obniz: Obniz): void;
+    /**
+     * Start rotation to the forward direction.
+     */
     forward(): void;
+    /**
+     * Start rotation to the reverse direction.
+     */
     reverse(): void;
+    /**
+     * Stop rotation.
+     */
     stop(): void;
-    move(forward: any): void;
-    power(power?: number): number | undefined;
-    private setPwmGnd;
+    /**
+     * Start rotation by specifying rotation direction.
+     *
+     * @param forward true is forward rotation, and false is reverse rotation.
+     */
+    move(forward?: boolean): void;
+    /**
+     * Set the motor power.
+     *
+     * @param power Specify between 0 and 100.
+     */
+    power(power: number): void;
+    private setPwmGndPin;
 }
