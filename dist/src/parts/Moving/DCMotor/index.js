@@ -82,7 +82,7 @@ class DCMotor {
     power(power) {
         this.status.power = power;
         if (this.status.direction !== null) {
-            this.move();
+            this.pwm.duty(this.status.power);
         }
     }
     setPwmGndPin(pwm_io, gnd_io) {

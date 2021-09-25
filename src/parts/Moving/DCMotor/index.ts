@@ -119,7 +119,7 @@ export default class DCMotor implements ObnizPartsInterface {
   public power(power: number): void {
     this.status.power = power;
     if (this.status.direction !== null) {
-      this.move();
+      this.pwm.duty(this.status.power);
     }
   }
 
