@@ -49211,9 +49211,12 @@ class DCMotor {
         this.pwm.duty(power);
     }
     setPwmGnd(pwm_io, gnd_io) {
+        var _a, _b;
         this.pwm.start({ io: pwm_io });
         this.pwm.freq(100000);
+        (_a = this.obniz.display) === null || _a === void 0 ? void 0 : _a.setPinName(pwm_io, 'DCMotor', 'pwm');
         this.obniz.getIO(gnd_io).output(false);
+        (_b = this.obniz.display) === null || _b === void 0 ? void 0 : _b.setPinName(gnd_io, 'DCMotor', 'gnd');
     }
 }
 exports.default = DCMotor;

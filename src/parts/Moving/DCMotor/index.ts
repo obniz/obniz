@@ -117,6 +117,8 @@ export default class DCMotor implements ObnizPartsInterface {
   private setPwmGnd(pwm_io: number, gnd_io: number) {
     this.pwm.start({ io: pwm_io });
     this.pwm.freq(100000);
+    this.obniz.display?.setPinName(pwm_io, 'DCMotor', 'pwm');
     this.obniz.getIO(gnd_io).output(false);
+    this.obniz.display?.setPinName(gnd_io, 'DCMotor', 'gnd');
   }
 }
