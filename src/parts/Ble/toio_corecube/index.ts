@@ -33,7 +33,8 @@ export default class Toio_CoreCube implements ObnizPartsInterface {
    * Toio_CoreCubeかどうか
    */
   public static isDevice(peripheral: BleRemotePeripheral) {
-    if (peripheral.localName === 'toio Core Cube') {
+    // if (peripheral.localName === 'toio Core Cube') {
+    if (peripheral.localName?.indexOf('toio Core Cube') !== -1) {
       return true;
     } else {
       return false;
@@ -137,7 +138,7 @@ export default class Toio_CoreCube implements ObnizPartsInterface {
    * センサから切断
    */
   public async disconnectWait() {
-    await this.peripheral?.disconnect();
+    await this.peripheral?.disconnectWait();
   }
 
   /**

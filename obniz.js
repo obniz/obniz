@@ -34182,7 +34182,9 @@ class Toio_CoreCube {
      * Toio_CoreCubeかどうか
      */
     static isDevice(peripheral) {
-        if (peripheral.localName === 'toio Core Cube') {
+        var _a;
+        // if (peripheral.localName === 'toio Core Cube') {
+        if (((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf('toio Core Cube')) !== -1) {
             return true;
         }
         else {
@@ -34246,7 +34248,7 @@ class Toio_CoreCube {
      */
     async disconnectWait() {
         var _a;
-        await ((_a = this.peripheral) === null || _a === void 0 ? void 0 : _a.disconnect());
+        await ((_a = this.peripheral) === null || _a === void 0 ? void 0 : _a.disconnectWait());
     }
     /**
      * Get the absolute position and angle of Toio_CoreCube
