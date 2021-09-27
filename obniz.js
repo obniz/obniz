@@ -34030,11 +34030,13 @@ TM530.deviceAdv = [
  * @packageDocumentation
  * @module Parts.TM551
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+/** TM511 management class TM511を管理するクラス */
 class TM551 {
     constructor() {
         this._peripheral = null;
@@ -34044,6 +34046,17 @@ class TM551 {
             name: 'TM551',
         };
     }
+    /**
+     * Verify that the received peripheral is from the TM511
+     *
+     * 受け取ったPeripheralがTM511のものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the TM511
+     *
+     * TM511かどうか
+     */
     static isDevice(peripheral) {
         if (this.deviceAdv.length > peripheral.adv_data.length) {
             return false;
@@ -34059,6 +34072,15 @@ class TM551 {
         }
         return true;
     }
+    /**
+     * Get a data from the TM511
+     *
+     * TM511からのデータ取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the TM511 TM511から受け取ったデータ
+     */
     static getData(peripheral) {
         if (!TM551.isDevice(peripheral)) {
             return null;
