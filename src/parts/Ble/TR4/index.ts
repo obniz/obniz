@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module Parts.TR4
  */
+/* eslint rulesdir/non-ascii: 0 */
 
 // import {BleRemotePeripheral, ObnizPartsBleInterface, ObnizPartsBleInfo} from 'obniz';
 
@@ -17,6 +18,7 @@ export interface Tr4_Data {
   temperature: number;
 }
 
+/** Tr4 series management class Tr4シリーズを管理するクラス */
 export default class Tr4 implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
@@ -24,10 +26,38 @@ export default class Tr4 implements ObnizPartsBleInterface {
     };
   }
 
+  /**
+   * Verify that the received peripheral is from the Tr4
+   *
+   * 受け取ったPeripheralがTr4のものかどうかを確認する
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns Whether it is the Tr4
+   *
+   * Tr4かどうか
+   */
   public static isDevice(peripheral: BleRemotePeripheral): boolean {
     return Tr4._deviceAdvAnalyzer.validate(peripheral.adv_data);
   }
 
+  /**
+   * Get a data from the Tr4
+   *
+   * Tr4からデータを取得
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns received data from the Tr4 Tr4から受け取ったデータ
+   *
+   * ```
+   * {
+   *
+   * temperature: temperature 温度 (Unit 単位: 0.1 degC)
+   *
+   * }
+   * ```
+   */
   public static getData(peripheral: BleRemotePeripheral): Tr4_Data | null {
     if (!Tr4.isDevice(peripheral)) {
       return null;

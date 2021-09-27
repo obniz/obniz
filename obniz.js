@@ -27444,8 +27444,10 @@ exports.default = RS_Seek3;
  * @packageDocumentation
  * @module Parts.TR4
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+/** Tr4 series management class Tr4シリーズを管理するクラス */
 class Tr4 {
     constructor() {
         this._peripheral = null;
@@ -27455,9 +27457,37 @@ class Tr4 {
             name: 'TR4',
         };
     }
+    /**
+     * Verify that the received peripheral is from the Tr4
+     *
+     * 受け取ったPeripheralがTr4のものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Tr4
+     *
+     * Tr4かどうか
+     */
     static isDevice(peripheral) {
         return Tr4._deviceAdvAnalyzer.validate(peripheral.adv_data);
     }
+    /**
+     * Get a data from the Tr4
+     *
+     * Tr4からデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the Tr4 Tr4から受け取ったデータ
+     *
+     * ```
+     * {
+     *
+     * temperature: temperature 温度 (Unit 単位: 0.1 degC)
+     *
+     * }
+     * ```
+     */
     static getData(peripheral) {
         if (!Tr4.isDevice(peripheral)) {
             return null;
