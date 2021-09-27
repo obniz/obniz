@@ -37,6 +37,8 @@ class UA651BLE {
      * Get data from the UA651BLE
      *
      * UA651BLEからデータを取得
+     *
+     * @returns data from the UA651BLE UA651BLEから受け取ったデータ
      */
     async getDataWait() {
         if (!this._peripheral) {

@@ -27538,7 +27538,9 @@ Tr4._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
  * @packageDocumentation
  * @module Parts.UA1200BLE
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** UA1200BLE management class UA1200BLEを管理するクラス */
 class UA1200BLE {
     constructor(peripheral, timezoneOffsetMinute) {
         if (!peripheral || !UA1200BLE.isDevice(peripheral)) {
@@ -27552,9 +27554,35 @@ class UA1200BLE {
             name: 'UA1200BLE',
         };
     }
+    /**
+     * Verify that the received peripheral is from the UA1200BLE
+     *
+     * 受け取ったPeripheralがUA1200BLEのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is UA1200BLE
+     *
+     * UA1200BLEかどうか
+     */
     static isDevice(peripheral) {
         return (peripheral.localName && peripheral.localName.startsWith('UA-1200BLE_'));
     }
+    /**
+     * Judge whether it is cooperation mode
+     *
+     * (When in cooperation mode, no data exists even when connected)
+     *
+     * 連携モードかどうかの判定
+     *
+     * (連携モードのときは接続してもデータが存在しません)
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is cooperation mode or not
+     *
+     * 連携モードかどうか
+     */
     static isCooperationMode(peripheral) {
         const peripheralHex = peripheral.adv_data
             .map((e) => e.toString(16))
@@ -27584,6 +27612,13 @@ class UA1200BLE {
         ].join('');
         return peripheralHex.indexOf(peripheralArray) > -1;
     }
+    /**
+     * Pair with the device
+     *
+     * デバイスとペアリング
+     *
+     * @returns pairing key ペアリングキー
+     */
     async pairingWait() {
         if (!this._peripheral) {
             throw new Error('UA1200BLE not found');
@@ -27605,6 +27640,13 @@ class UA1200BLE {
         await customServiceChar.writeWait([2, 1, 3]); // disconnect req
         return key;
     }
+    /**
+     * Get data from the UA1200BLE
+     *
+     * UA1200BLEからデータを取得
+     *
+     * @returns data from the UA1200BLE UA1200BLEから受け取ったデータ
+     */
     async getDataWait() {
         if (!this._peripheral) {
             throw new Error('UA1200BLE not found');
@@ -27808,6 +27850,8 @@ class UA651BLE {
      * Get data from the UA651BLE
      *
      * UA651BLEからデータを取得
+     *
+     * @returns data from the UA651BLE UA651BLEから受け取ったデータ
      */
     async getDataWait() {
         if (!this._peripheral) {

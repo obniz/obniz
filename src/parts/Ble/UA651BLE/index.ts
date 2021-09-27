@@ -46,7 +46,7 @@ export interface UA651BLEResult {
   SystolicPressure_kPa?: number; // ex) 17.6Kpa -> 0xB0 = 176, 0xF0
   /** diastolic pressure 最低血圧 (Unit 単位: 0.1 kPa) */
   DiastolicPressure_kPa?: number;
-  /** mean arterial pressure 平均血圧 (Unit 単位; 0.1 kPa) */
+  /** mean arterial pressure 平均血圧 (Unit 単位: 0.1 kPa) */
   MeanArterialPressure_kPa?: number;
   /** body moved or not 体が動いたかどうか */
   bodyMoved?: boolean;
@@ -121,6 +121,8 @@ export default class UA651BLE implements ObnizPartsBleInterface {
    * Get data from the UA651BLE
    *
    * UA651BLEからデータを取得
+   *
+   * @returns data from the UA651BLE UA651BLEから受け取ったデータ
    */
   public async getDataWait(): Promise<UA651BLEResult[]> {
     if (!this._peripheral) {
