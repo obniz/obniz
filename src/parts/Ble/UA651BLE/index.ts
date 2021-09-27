@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module Parts.UA651BLE
  */
+/* eslint rulesdir/non-ascii: 0 */
 
 import BleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
@@ -13,18 +14,55 @@ import BleGenericAccess from '../utils/services/genericAccess';
 
 export interface UA651BLEOptions {}
 
+/**
+ * blood pressure data from UA651BLE
+ *
+ * (blood pressure will return either mmHg or kPa unit)
+ *
+ * UA651BLEからの血圧データ
+ *
+ * (血圧はmmHg形式化かkPa形式のどちらかが返ってきます)
+ */
 export interface UA651BLEResult {
+  /**
+   * systolic pressure 最高血圧
+   *
+   * Range 範囲: 0~299 (Unit 単位: 1 mmHg)
+   */
   SystolicPressure_mmHg?: number; // ex) 128mmHg -> 0x80 = 128, 0x00
+  /**
+   * diastolic pressure 最低血圧
+   *
+   * Range 範囲: 0~299 (Unit 単位: 1 mmHg)
+   */
   DiastolicPressure_mmHg?: number;
+  /**
+   * mean arterial pressure 平均血圧
+   *
+   * Range 範囲: 0~299 (Unit 単位: 1 mmHg)
+   */
   MeanArterialPressure_mmHg?: number;
+  /** systolic pressure 最高血圧 (Unit 単位: 0.1 kPa) */
   SystolicPressure_kPa?: number; // ex) 17.6Kpa -> 0xB0 = 176, 0xF0
+  /** diastolic pressure 最低血圧 (Unit 単位: 0.1 kPa) */
   DiastolicPressure_kPa?: number;
+  /** mean arterial pressure 平均血圧 (Unit 単位; 0.1 kPa) */
   MeanArterialPressure_kPa?: number;
+  /** body moved or not 体が動いたかどうか */
   bodyMoved?: boolean;
+  /** cuff is loose or not カフが緩いかどうか */
   cuffFitLoose?: boolean;
+  /** irregular pulse detected or not 不整脈が検出されたかどうか */
   irregularPulseDetected?: boolean;
+  /** measurement position is improper or not 測定位置が不適切であるか */
   improperMeasurement?: boolean;
+  /**
+   * pulse rate 脈拍数
+   *
+   * Range 範囲: 40~180 (Unit 単位: 1 bpm)
+   */
   PulseRate?: number;
+  /** timestamp タイムスタンプ */
   date?: {
     // Time Stamp ex) 2013/8/26 9:10:20 -> 0xDD 0x07 0x08 0x1A 0x09 0x0A 0x14
     year: number;
@@ -36,6 +74,7 @@ export interface UA651BLEResult {
   };
 }
 
+/** UA651BLE management class UA651BLEを管理するクラス */
 export default class UA651BLE implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
@@ -43,6 +82,17 @@ export default class UA651BLE implements ObnizPartsBleInterface {
     };
   }
 
+  /**
+   * Verify that the received peripheral is from the UA651BLE
+   *
+   * 受け取ったPeripheralがUA651BLEのものかどうかを確認する
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns Whether it is UA651BLE
+   *
+   * UA651BLEかどうか
+   */
   public static isDevice(peripheral: BleRemotePeripheral) {
     return (
       peripheral.localName && peripheral.localName.startsWith('A&D_UA-651BLE_')
@@ -67,6 +117,11 @@ export default class UA651BLE implements ObnizPartsBleInterface {
     this._timezoneOffsetMinute = timezoneOffsetMinute;
   }
 
+  /**
+   * Get data from the UA651BLE
+   *
+   * UA651BLEからデータを取得
+   */
   public async getDataWait(): Promise<UA651BLEResult[]> {
     if (!this._peripheral) {
       throw new Error('UA651BLE not found');
