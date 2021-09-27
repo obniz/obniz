@@ -93,8 +93,11 @@ class RS_Seek3 {
         await ((_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.disconnectWait());
     }
     /**
+     * Get temperature and humidity data from the RS_SEEK3
      *
-     * @returns
+     * RS_SEEK3から温湿度データを取得
+     *
+     * @returns temperature and humidity data 温湿度データ
      *
      * ```
      * {

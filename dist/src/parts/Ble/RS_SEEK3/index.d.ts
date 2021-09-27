@@ -52,8 +52,11 @@ export default class RS_Seek3 implements ObnizPartsBleInterface {
      */
     disconnectWait(): Promise<void>;
     /**
+     * Get temperature and humidity data from the RS_SEEK3
      *
-     * @returns
+     * RS_SEEK3から温湿度データを取得
+     *
+     * @returns temperature and humidity data 温湿度データ
      *
      * ```
      * {
