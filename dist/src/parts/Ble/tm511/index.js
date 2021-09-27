@@ -1,7 +1,7 @@
 "use strict";
 /**
  * @packageDocumentation
- * @module Parts.TM551
+ * @module Parts.TM511
  */
 /* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
@@ -10,13 +10,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
 /** TM511 management class TM511を管理するクラス */
-class TM551 {
+class TM511 {
     constructor() {
         this._peripheral = null;
     }
     static info() {
         return {
-            name: 'TM551',
+            name: 'TM511',
         };
     }
     /**
@@ -55,7 +55,7 @@ class TM551 {
      * @returns received data from the TM511 TM511から受け取ったデータ
      */
     static getData(peripheral) {
-        if (!TM551.isDevice(peripheral)) {
+        if (!TM511.isDevice(peripheral)) {
             return null;
         }
         const data = {
@@ -70,8 +70,8 @@ class TM551 {
         return data;
     }
 }
-exports.default = TM551;
-TM551.deviceAdv = [
+exports.default = TM511;
+TM511.deviceAdv = [
     0x02,
     0x01,
     0x06,

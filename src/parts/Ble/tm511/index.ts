@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * @module Parts.TM551
+ * @module Parts.TM511
  */
 /* eslint rulesdir/non-ascii: 0 */
 
@@ -9,14 +9,14 @@ import ObnizPartsBleInterface, {
   ObnizPartsBleInfo,
 } from '../../../obniz/ObnizPartsBleInterface';
 
-export interface TM551Options {}
+export interface TM511Options {}
 
 /**
  * advertisement data from TM511
  *
  * TM511からのadvertisementデータ
  */
-export interface TM551_Data {
+export interface TM511_Data {
   /**
    * battery バッテリー
    */
@@ -36,10 +36,10 @@ export interface TM551_Data {
 }
 
 /** TM511 management class TM511を管理するクラス */
-export default class TM551 implements ObnizPartsBleInterface {
+export default class TM511 implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: 'TM551',
+      name: 'TM511',
     };
   }
 
@@ -79,11 +79,11 @@ export default class TM551 implements ObnizPartsBleInterface {
    *
    * @returns received data from the TM511 TM511から受け取ったデータ
    */
-  public static getData(peripheral: BleRemotePeripheral): TM551_Data | null {
-    if (!TM551.isDevice(peripheral)) {
+  public static getData(peripheral: BleRemotePeripheral): TM511_Data | null {
+    if (!TM511.isDevice(peripheral)) {
       return null;
     }
-    const data: TM551_Data = {
+    const data: TM511_Data = {
       battery: peripheral.adv_data[13],
       x:
         peripheral.adv_data[14] +

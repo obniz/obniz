@@ -41,7 +41,7 @@ import RS_BTWATTCH2, { RS_BTWATTCH2Options } from '../parts/Ble/RS_BTWATTCH2';
 import RS_Seek3, { RS_Seek3Options } from '../parts/Ble/RS_SEEK3';
 import SCBTGAAAC, { SCBTGAAACOptions } from '../parts/Ble/scbtgaaac';
 import TM530, { TM530Options } from '../parts/Ble/tm530';
-import TM551, { TM551Options } from '../parts/Ble/tm551';
+import TM511, { TM511Options } from '../parts/Ble/tm511';
 import Toio_CoreCube, {
   Toio_CoreCubeOptions,
 } from '../parts/Ble/toio_corecube';
@@ -490,7 +490,7 @@ export interface PartsList {
   PLS_01BT: { class: PLS_01BT; options: PLS_01BTOptions };
   ENERTALK_TOUCH: { class: ENERTALK_TOUCH; options: ENERTALK_TOUCHOptions };
   TM530: { class: TM530; options: TM530Options };
-  TM551: { class: TM551; options: TM551Options };
+  TM511: { class: TM511; options: TM511Options };
   toio_CoreCube: { class: Toio_CoreCube; options: Toio_CoreCubeOptions };
   UT201BLE: { class: UT201BLE; options: UT201BLEOptions };
   HEM_6233T: { class: HEM_6233T; options: HEM_6233TOptions };

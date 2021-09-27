@@ -1,17 +1,17 @@
 /**
  * @packageDocumentation
- * @module Parts.TM551
+ * @module Parts.TM511
  */
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
-export interface TM551Options {
+export interface TM511Options {
 }
 /**
  * advertisement data from TM511
  *
  * TM511からのadvertisementデータ
  */
-export interface TM551_Data {
+export interface TM511_Data {
     /**
      * battery バッテリー
      */
@@ -30,7 +30,7 @@ export interface TM551_Data {
     z: number;
 }
 /** TM511 management class TM511を管理するクラス */
-export default class TM551 implements ObnizPartsBleInterface {
+export default class TM511 implements ObnizPartsBleInterface {
     static info(): ObnizPartsBleInfo;
     /**
      * Verify that the received peripheral is from the TM511
@@ -53,7 +53,7 @@ export default class TM551 implements ObnizPartsBleInterface {
      *
      * @returns received data from the TM511 TM511から受け取ったデータ
      */
-    static getData(peripheral: BleRemotePeripheral): TM551_Data | null;
+    static getData(peripheral: BleRemotePeripheral): TM511_Data | null;
     private static deviceAdv;
     _peripheral: BleRemotePeripheral | null;
 }
