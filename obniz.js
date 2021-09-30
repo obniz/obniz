@@ -34579,11 +34579,13 @@ exports.default = Toio_CoreCube;
  * @packageDocumentation
  * @module Parts.uPRISM
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+/** uPRISM management class uPRISMを管理するクラス */
 class uPRISM {
     constructor(peripheral) {
         this._peripheral = null;
@@ -34607,10 +34609,26 @@ class uPRISM {
             name: 'uPRISM',
         };
     }
+    /**
+     * Verify that the received peripheral is from the uPRISM
+     *
+     * 受け取ったPeripheralがuPRISMのものかどうか確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the uPRISM
+     *
+     * uPRISMかどうか
+     */
     static isDevice(peripheral) {
         var _a;
         return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf('uPrism_')) === 0;
     }
+    /**
+     * Connect the sensor
+     *
+     * センサへ接続
+     */
     async connectWait() {
         if (!this._peripheral) {
             throw new Error('peripheral is not uPRISM');
@@ -34624,11 +34642,27 @@ class uPRISM {
             await this._peripheral.connectWait();
         }
     }
+    /**
+     * Disconnect from the sensor
+     *
+     * センサから切断
+     */
     async disconnectWait() {
         if (this._peripheral && this._peripheral.connected) {
             await this._peripheral.disconnectWait();
         }
     }
+    /**
+     * Set the range of values for the accelerometer
+     *
+     * uPRISM measures a set range with 4,096 steps of resolution
+     *
+     * 加速度センサーの値の範囲を設定
+     *
+     * uPRISMは設定された範囲を4096段階の分解能で計測します
+     *
+     * @param range range of values for the accelerometer 加速度センサーの値の範囲
+     */
     setAccelRange(range) {
         switch (range) {
             case '2g':
@@ -34645,6 +34679,11 @@ class uPRISM {
                 break;
         }
     }
+    /**
+     * Start notifying when the data have got from the uPRISM with connected state
+     *
+     * 接続状態でuPRISMからデータを取得したときの通知を開始
+     */
     async startNotifyWait() {
         if (!this._peripheral || !this._peripheral.connected) {
             throw new Error('peripheral not connected uPRISM');
@@ -34722,6 +34761,13 @@ class uPRISM {
             }
         });
     }
+    /**
+     * Stop data notification
+     *
+     * データの通知を停止
+     *
+     * @returns
+     */
     async stopNotifyWait() {
         if (!(this._peripheral && this._peripheral.connected)) {
             return;
