@@ -15,7 +15,7 @@ export interface UA1200BLEOptions {
  *
  * UA1200BLEからの血圧データ
  *
- * (血圧はmmHg形式化かkPa形式のどちらかが返ってきます)
+ * (血圧はmmHg形式かkPa形式のどちらかが返ってきます)
  */
 export interface UA1200BLEResult {
     /**
