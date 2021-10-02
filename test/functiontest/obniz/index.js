@@ -364,6 +364,8 @@ describe('obniz.index', function () {
     testUtil.connectObniz(this.obniz);
     expect(this.obniz).to.be.finished;
 
+    await wait(1000);
+
     await pingPongWait(this.obniz);
     expect(this.obniz).to.be.finished;
 
