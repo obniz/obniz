@@ -195,7 +195,6 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     protected _connectionRetryCount: number;
     private _sendPool;
     private _onConnectCalled;
-    private _repeatInterval;
     private _nextLoopTimeout;
     private _nextPingTimeout;
     private _nextAutoConnectLoopTimeout;
@@ -352,7 +351,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
      * @param interval  default 100. It mean 100ms interval loop.
      * @deprecated
      */
-    repeat(callback: any, interval?: any): void;
+    repeat(callback: any, interval?: number): void;
     abstract pingWait(unixtime?: number, rand?: number, forceGlobalNetwork?: boolean): Promise<void>;
     protected _close(): void;
     protected wsOnOpen(): void;

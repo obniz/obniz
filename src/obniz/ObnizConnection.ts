@@ -235,7 +235,6 @@ export default abstract class ObnizConnection extends EventEmitter<
   protected _connectionRetryCount: number;
   private _sendPool: any[] | null = null;
   private _onConnectCalled: boolean;
-  private _repeatInterval = 0;
   private _nextLoopTimeout: ReturnType<typeof setTimeout> | null = null;
   private _nextPingTimeout: ReturnType<typeof setTimeout> | null = null;
   private _nextAutoConnectLoopTimeout: ReturnType<
@@ -638,14 +637,9 @@ export default abstract class ObnizConnection extends EventEmitter<
    * @param interval  default 100. It mean 100ms interval loop.
    * @deprecated
    */
-  public repeat(callback: any, interval?: any) {
-    if (this.onloop) {
-      this.onloop = callback;
-      this._repeatInterval = interval || this._repeatInterval || 100;
-      return;
-    }
+  public repeat(callback: any, interval?: number) {
     this.onloop = callback;
-    this._repeatInterval = interval || 100;
+    this._loopInterval = interval || this._loopInterval;
   }
 
   public abstract pingWait(

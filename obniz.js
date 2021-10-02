@@ -2372,7 +2372,6 @@ class ObnizConnection extends eventemitter3_1.default {
         this._sendQueue = null;
         this._waitForLocalConnectReadyTimer = null;
         this._sendPool = null;
-        this._repeatInterval = 0;
         this._nextLoopTimeout = null;
         this._nextPingTimeout = null;
         this._nextAutoConnectLoopTimeout = null;
@@ -2753,13 +2752,8 @@ class ObnizConnection extends eventemitter3_1.default {
      * @deprecated
      */
     repeat(callback, interval) {
-        if (this.onloop) {
-            this.onloop = callback;
-            this._repeatInterval = interval || this._repeatInterval || 100;
-            return;
-        }
         this.onloop = callback;
-        this._repeatInterval = interval || 100;
+        this._loopInterval = interval || this._loopInterval;
     }
     _close() {
         this._stopLoopInBackground();
