@@ -3200,6 +3200,10 @@ class ObnizConnection extends eventemitter3_1.default {
     _startLoopInBackground() {
         this._stopLoopInBackground();
         const loop = async () => {
+            if (this._nextLoopTimeout) {
+                clearTimeout(this._nextLoopTimeout);
+            }
+            this._nextLoopTimeout = null;
             if (this.connectionState !== 'connected')
                 return;
             try {

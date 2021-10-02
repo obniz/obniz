@@ -1146,6 +1146,10 @@ export default abstract class ObnizConnection extends EventEmitter<
   private _startLoopInBackground() {
     this._stopLoopInBackground();
     const loop = async () => {
+      if (this._nextLoopTimeout) {
+        clearTimeout(this._nextLoopTimeout);
+      }
+      this._nextLoopTimeout = null;
       if (this.connectionState !== 'connected') return;
       try {
         if (typeof this.onloop === 'function') {
