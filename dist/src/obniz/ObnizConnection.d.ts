@@ -202,6 +202,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     private _lastDataReceivedAt;
     private _autoConnectTimeout?;
     private _localConnectIp;
+    private _loopInterval;
     constructor(id: string, options?: ObnizOptions);
     get autoConnect(): boolean;
     set autoConnect(val: boolean);
@@ -337,6 +338,12 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
      * @private
      */
     _runUserCreatedFunction(func?: (..._args: any) => any, ...args: any[]): any;
+    /**
+     * Sets the execution interval of onLoop function.
+     *
+     * @param interval interval of execution in milliseconds.
+     */
+    setLoopInterval(interval: number): void;
     /**
      * Set onloop function. Use onloop property instead. This is deprecated function.
      *

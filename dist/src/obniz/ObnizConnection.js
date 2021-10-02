@@ -31,6 +31,7 @@ class ObnizConnection extends eventemitter3_1.default {
         this._nextAutoConnectLoopTimeout = null;
         this._lastDataReceivedAt = 0;
         this._localConnectIp = null;
+        this._loopInterval = 1000;
         this.isNode = typeof window === 'undefined';
         this.id = id;
         this.socket = null;
@@ -387,6 +388,14 @@ class ObnizConnection extends eventemitter3_1.default {
             });
         }
         return promise;
+    }
+    /**
+     * Sets the execution interval of onLoop function.
+     *
+     * @param interval interval of execution in milliseconds.
+     */
+    setLoopInterval(interval) {
+        this._loopInterval = interval;
     }
     /**
      * Set onloop function. Use onloop property instead. This is deprecated function.
@@ -842,38 +851,26 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     _startLoopInBackground() {
         this._stopLoopInBackground();
-        this._nextLoopTimeout = setTimeout(async () => {
-            if (this._nextLoopTimeout) {
-                clearTimeout(this._nextLoopTimeout);
-            }
-            this._nextLoopTimeout = null;
-            if (this.connectionState === 'connected') {
-                try {
-                    if (typeof this.onloop === 'function') {
-                        await this.pingWait();
-                        const prom = this.onloop(this);
-                        if (prom instanceof Promise) {
-                            await prom;
-                        }
-                    }
-                }
-                catch (e) {
-                    console.error(`obniz.js handled Exception inside of obniz.repeat() function`);
-                    console.error(e);
-                }
-                finally {
-                    if (this.connectionState === 'connected') {
-                        if (!this._nextLoopTimeout) {
-                            let interval = this._repeatInterval;
-                            if (typeof this.onloop !== 'function') {
-                                interval = 100;
-                            }
-                            this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), interval);
-                        }
+        const loop = async () => {
+            if (this.connectionState !== 'connected')
+                return;
+            try {
+                if (typeof this.onloop === 'function') {
+                    const prom = this.onloop(this);
+                    if (prom instanceof Promise) {
+                        await prom;
                     }
                 }
             }
-        }, 0);
+            catch (e) {
+                console.error(`obniz.js handled Exception inside of obniz.onloop function`);
+                console.error(e);
+            }
+            finally {
+                this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), this._loopInterval);
+            }
+        };
+        this._nextLoopTimeout = setTimeout(loop, 0);
     }
     _stopLoopInBackground() {
         if (this._nextLoopTimeout) {
