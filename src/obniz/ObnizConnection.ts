@@ -623,6 +623,7 @@ export default abstract class ObnizConnection extends EventEmitter<
 
   /**
    * Sets the execution interval of onLoop function.
+   * Changes will be reflected after the next onloop is executed.
    *
    * @param interval interval of execution in milliseconds.
    */

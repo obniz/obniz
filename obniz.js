@@ -2738,6 +2738,7 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     /**
      * Sets the execution interval of onLoop function.
+     * Changes will be reflected after the next onloop is executed.
      *
      * @param interval interval of execution in milliseconds.
      */

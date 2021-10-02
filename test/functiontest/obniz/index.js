@@ -359,7 +359,6 @@ describe('obniz.index', function () {
 
     this.obniz.onloop = async () => {
       called = true;
-      await wait(1000);
     };
 
     testUtil.connectObniz(this.obniz);
