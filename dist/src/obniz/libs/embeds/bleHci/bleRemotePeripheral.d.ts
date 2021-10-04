@@ -77,6 +77,15 @@ export interface BleConnectSetting {
      * Default: true
      */
     forceConnect?: boolean;
+    /**
+     * Request mtu value.
+     *
+     * If you want to try exchange specific mtu value, set this value.
+     * If set null, skip mtu exchange sequence.
+     *
+     * Default : 256
+     */
+    mtu?: null | number;
 }
 /**
  * Pairing options

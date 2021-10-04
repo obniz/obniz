@@ -90,6 +90,16 @@ export interface BleConnectSetting {
    * Default: true
    */
   forceConnect?: boolean;
+
+  /**
+   * Request mtu value.
+   *
+   * If you want to try exchange specific mtu value, set this value.
+   * If set null, skip mtu exchange sequence.
+   *
+   * Default : 256
+   */
+  mtu?: null | number;
 }
 
 /**
@@ -517,13 +527,20 @@ export default class BleRemotePeripheral {
     this._connectSetting = setting || {};
     this._connectSetting.autoDiscovery =
       this._connectSetting.autoDiscovery !== false;
+    this._connectSetting.mtu =
+      this._connectSetting.mtu === undefined ? 256 : this._connectSetting.mtu;
     await this.obnizBle.scan.endWait();
+
     try {
-      await this.obnizBle.centralBindings.connectWait(this.address, () => {
-        if (this._connectSetting.pairingOption) {
-          this.setPairingOption(this._connectSetting.pairingOption);
+      await this.obnizBle.centralBindings.connectWait(
+        this.address,
+        this._connectSetting.mtu,
+        () => {
+          if (this._connectSetting.pairingOption) {
+            this.setPairingOption(this._connectSetting.pairingOption);
+          }
         }
-      });
+      );
     } catch (e) {
       if (e instanceof ObnizTimeoutError) {
         await this.obnizBle.resetWait();
