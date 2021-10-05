@@ -21,6 +21,22 @@ import LinkingDevice from './modules/device';
 
 export interface LinkingOptions {}
 
+/**
+ * Argument parameters for device
+ *
+ * デバイスに関する引数パラメータ
+ */
+export interface LinkingParams {
+  /** searching duration 探索時間 */
+  duration?: number;
+  /** device name デバイスの名前 */
+  nameFilter?: string;
+  /** (not used) device ID デバイスのID */
+  idFilter?: string;
+  /** quick mode with no searching duration 探索待ち時間のないクイックモード */
+  quick?: boolean;
+}
+
 /** products supporting Linking management class Linking対応製品を管理するクラス */
 export default class Linking {
   public static info(): ObnizPartsInfo {
@@ -103,7 +119,7 @@ export default class Linking {
    * @deprecated
    * @param p
    */
-  public discover(p: any): Promise<any[]> {
+  public discover(p: LinkingParams): Promise<any[]> {
     return this.discoverWait(p);
   }
 
@@ -114,20 +130,11 @@ export default class Linking {
    *
    * @param p Parameters for device デバイスに関するパラメータ
    *
-   * ```
-   * {
-   *   duration?: number;  //searching duration 探索時間
-   *   nameFilter?: string;  //device name デバイスの名前
-   *   idFilter?: string;  //(not used) device ID デバイスのID
-   *   quick?: boolean; //quick mode with no searching duration 探索待ち時間のないクイックモード
-   * }
-   * ```
-   *
    * @returns Array of device objects found {@linkplain LinkingDevice}
    *
    * 見つかったデバイスオブジェクトの配列 {@linkplain LinkingDevice}
    */
-  public discoverWait(p: any): Promise<any[]> {
+  public discoverWait(p: LinkingParams): Promise<any[]> {
     this._checkInitialized();
 
     let duration = 5000;
@@ -135,19 +142,19 @@ export default class Linking {
     let id_filter = '';
     let quick = false;
     if (p && typeof p === 'object') {
-      if ('duration' in p && typeof p.duration === 'number') {
+      if (p.duration !== undefined && p.duration !== null) {
         duration = p.duration;
         if (duration < 1000) {
           duration = 1000;
         }
       }
-      if ('nameFilter' in p && typeof (p.nameFilter === 'string')) {
+      if (p.nameFilter !== undefined && p.nameFilter !== null) {
         name_filter = p.nameFilter;
       }
-      if ('idFilter' in p && typeof (p.idFilter === 'string')) {
+      if (p.idFilter !== undefined && p.idFilter !== null) {
         id_filter = p.idFilter;
       }
-      if ('quick' in p && typeof (p.quick === 'boolean')) {
+      if (p.quick !== undefined && p.quick !== null) {
         quick = p.quick;
       }
     }
@@ -255,25 +262,16 @@ export default class Linking {
    * デバイスのスキャンを開始
    *
    * @param p Parameters for device デバイスに関するパラメータ
-   *
-   * ```
-   * {
-   *   duration?: number;  //searching duration 探索時間
-   *   nameFilter?: string;  //device name デバイスの名前
-   *   idFilter?: string;  //(not used) device ID デバイスのID
-   *   quick?: boolean; //quick mode with no searching duration 探索待ち時間のないクイックモード
-   * }
-   * ```
    */
-  public startScan(p: any) {
+  public startScan(p: LinkingParams) {
     this._checkInitialized();
     let name_filter = '';
     let id_filter = '';
     if (p && typeof p === 'object') {
-      if ('nameFilter' in p && typeof (p.nameFilter === 'string')) {
+      if (p.nameFilter !== undefined && p.nameFilter !== null) {
         name_filter = p.nameFilter;
       }
-      if ('idFilter' in p && typeof (p.idFilter === 'string')) {
+      if (p.idFilter !== undefined && p.idFilter !== null) {
         id_filter = p.idFilter;
       }
     }

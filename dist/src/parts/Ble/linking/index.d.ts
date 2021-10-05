@@ -9,6 +9,21 @@ import LinkingAdvertising from './modules/advertising';
 import LinkingDevice from './modules/device';
 export interface LinkingOptions {
 }
+/**
+ * Argument parameters for device
+ *
+ * デバイスに関する引数パラメータ
+ */
+export interface LinkingParams {
+    /** searching duration 探索時間 */
+    duration?: number;
+    /** device name デバイスの名前 */
+    nameFilter?: string;
+    /** (not used) device ID デバイスのID */
+    idFilter?: string;
+    /** quick mode with no searching duration 探索待ち時間のないクイックモード */
+    quick?: boolean;
+}
 /** products supporting Linking management class Linking対応製品を管理するクラス */
 export default class Linking {
     static info(): ObnizPartsInfo;
@@ -51,7 +66,7 @@ export default class Linking {
      * @deprecated
      * @param p
      */
-    discover(p: any): Promise<any[]>;
+    discover(p: LinkingParams): Promise<any[]>;
     /**
      * Search for devices with specified parameters
      *
@@ -59,20 +74,11 @@ export default class Linking {
      *
      * @param p Parameters for device デバイスに関するパラメータ
      *
-     * ```
-     * {
-     *   duration?: number;  //searching duration 探索時間
-     *   nameFilter?: string;  //device name デバイスの名前
-     *   idFilter?: string;  //(not used) device ID デバイスのID
-     *   quick?: boolean; //quick mode with no searching duration 探索待ち時間のないクイックモード
-     * }
-     * ```
-     *
      * @returns Array of device objects found {@linkplain LinkingDevice}
      *
      * 見つかったデバイスオブジェクトの配列 {@linkplain LinkingDevice}
      */
-    discoverWait(p: any): Promise<any[]>;
+    discoverWait(p: LinkingParams): Promise<any[]>;
     _checkInitialized(): void;
     _discoveredDevice(peripheral: bleRemotePeripheral, name_filter: any, id_filter: any): LinkingDevice | null;
     _scanDevices(): void;
@@ -88,15 +94,6 @@ export default class Linking {
      * デバイスのスキャンを開始
      *
      * @param p Parameters for device デバイスに関するパラメータ
-     *
-     * ```
-     * {
-     *   duration?: number;  //searching duration 探索時間
-     *   nameFilter?: string;  //device name デバイスの名前
-     *   idFilter?: string;  //(not used) device ID デバイスのID
-     *   quick?: boolean; //quick mode with no searching duration 探索待ち時間のないクイックモード
-     * }
-     * ```
      */
-    startScan(p: any): void;
+    startScan(p: LinkingParams): void;
 }

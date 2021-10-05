@@ -29247,15 +29247,6 @@ class Linking {
      *
      * @param p Parameters for device デバイスに関するパラメータ
      *
-     * ```
-     * {
-     *   duration?: number;  //searching duration 探索時間
-     *   nameFilter?: string;  //device name デバイスの名前
-     *   idFilter?: string;  //(not used) device ID デバイスのID
-     *   quick?: boolean; //quick mode with no searching duration 探索待ち時間のないクイックモード
-     * }
-     * ```
-     *
      * @returns Array of device objects found {@linkplain LinkingDevice}
      *
      * 見つかったデバイスオブジェクトの配列 {@linkplain LinkingDevice}
@@ -29267,19 +29258,19 @@ class Linking {
         let id_filter = '';
         let quick = false;
         if (p && typeof p === 'object') {
-            if ('duration' in p && typeof p.duration === 'number') {
+            if (p.duration !== undefined && p.duration !== null) {
                 duration = p.duration;
                 if (duration < 1000) {
                     duration = 1000;
                 }
             }
-            if ('nameFilter' in p && typeof (p.nameFilter === 'string')) {
+            if (p.nameFilter !== undefined && p.nameFilter !== null) {
                 name_filter = p.nameFilter;
             }
-            if ('idFilter' in p && typeof (p.idFilter === 'string')) {
+            if (p.idFilter !== undefined && p.idFilter !== null) {
                 id_filter = p.idFilter;
             }
-            if ('quick' in p && typeof (p.quick === 'boolean')) {
+            if (p.quick !== undefined && p.quick !== null) {
                 quick = p.quick;
             }
         }
@@ -29375,25 +29366,16 @@ class Linking {
      * デバイスのスキャンを開始
      *
      * @param p Parameters for device デバイスに関するパラメータ
-     *
-     * ```
-     * {
-     *   duration?: number;  //searching duration 探索時間
-     *   nameFilter?: string;  //device name デバイスの名前
-     *   idFilter?: string;  //(not used) device ID デバイスのID
-     *   quick?: boolean; //quick mode with no searching duration 探索待ち時間のないクイックモード
-     * }
-     * ```
      */
     startScan(p) {
         this._checkInitialized();
         let name_filter = '';
         let id_filter = '';
         if (p && typeof p === 'object') {
-            if ('nameFilter' in p && typeof (p.nameFilter === 'string')) {
+            if (p.nameFilter !== undefined && p.nameFilter !== null) {
                 name_filter = p.nameFilter;
             }
-            if ('idFilter' in p && typeof (p.idFilter === 'string')) {
+            if (p.idFilter !== undefined && p.idFilter !== null) {
                 id_filter = p.idFilter;
             }
         }
