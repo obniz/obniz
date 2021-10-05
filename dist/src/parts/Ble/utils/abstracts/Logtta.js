@@ -15,12 +15,20 @@ const PinCodeFlag = {
     Authentication: 0x00,
     Rewrite: 0x01,
 };
+/** abstract class common to the Logtta series Logttaシリーズ共通の抽象クラス */
 class Logtta extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     constructor(peripheral, mode) {
         super(peripheral, mode);
         this.serviceUuid = '';
         this.authenticated = false;
     }
+    /**
+     * Connect to the services of a device
+     *
+     * デバイスのサービスに接続
+     *
+     * @param keys Key acquired when pairing previously 以前にペアリングしたときに取得されたキー
+     */
     async connectWait(keys) {
         var _a;
         this.serviceUuid = (_a = this.staticClass.getServiceUuids('Connectable'), (_a !== null && _a !== void 0 ? _a : [
@@ -41,11 +49,27 @@ class Logtta extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         this.genericAccess = undefined;
         this.batteryService = undefined;
     }
+    /**
+     * Get data with connected state
+     *
+     * 接続状態でデータを取得
+     *
+     * @returns received value from each sensor それぞれのセンサから取得した値
+     */
     async getDataWait() {
         this.checkConnected();
         const data = await this.readCharWait(this.serviceUuid, this.getCharUuid(0x21));
         return this.parseData(data);
     }
+    /**
+     * Notify when the data have got from the device with connected state
+     *
+     * 接続状態でデータを取得したとき通知
+     *
+     * @param callback callback function コールバック関数
+     *
+     * @returns
+     */
     async startNotifyWait(callback) {
         // TODO: delete try-catch
         try {
@@ -64,6 +88,15 @@ class Logtta extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
             }
         });
     }
+    /**
+     * Authorize PIN code
+     *
+     * ピンコードを認証
+     *
+     * @param code PIN code ピンコード
+     *
+     * @returns Whether authentication was/is passed 認証が通った/通っているかどうか
+     */
     async authPinCodeWait(code) {
         // TODO: delete try-catch
         try {
@@ -93,6 +126,15 @@ class Logtta extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         if (!this.authenticated)
             throw new Error('Certification is required, execute authPinCodeWait() in advance.');
     }
+    /**
+     * Set / unset to Beacon Mode
+     *
+     * ビーコンモードに設定/解除
+     *
+     * @param enable enable / disable 有効 / 無効
+     *
+     * @returns data write result
+     */
     async setBeaconModeWait(enable) {
         // TODO: delete try-catch
         try {

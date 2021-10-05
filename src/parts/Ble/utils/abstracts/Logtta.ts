@@ -20,6 +20,7 @@ const PinCodeFlag: { [type in PinCodeType]: number } = {
   Rewrite: 0x01,
 };
 
+/** abstract class common to the Logtta series Logttaシリーズ共通の抽象クラス */
 export default abstract class Logtta<S, T> extends ObnizPartsBleConnectable<
   S,
   T
@@ -55,6 +56,13 @@ export default abstract class Logtta<S, T> extends ObnizPartsBleConnectable<
     super(peripheral, mode);
   }
 
+  /**
+   * Connect to the services of a device
+   *
+   * デバイスのサービスに接続
+   *
+   * @param keys Key acquired when pairing previously 以前にペアリングしたときに取得されたキー
+   */
   public async connectWait(keys?: string): Promise<void> {
     this.serviceUuid = (this.staticClass.getServiceUuids('Connectable') ?? [
       '',
@@ -77,6 +85,13 @@ export default abstract class Logtta<S, T> extends ObnizPartsBleConnectable<
     this.batteryService = undefined;
   }
 
+  /**
+   * Get data with connected state
+   *
+   * 接続状態でデータを取得
+   *
+   * @returns received value from each sensor それぞれのセンサから取得した値
+   */
   public async getDataWait(): Promise<T> {
     this.checkConnected();
 
@@ -87,6 +102,15 @@ export default abstract class Logtta<S, T> extends ObnizPartsBleConnectable<
     return this.parseData(data);
   }
 
+  /**
+   * Notify when the data have got from the device with connected state
+   *
+   * 接続状態でデータを取得したとき通知
+   *
+   * @param callback callback function コールバック関数
+   *
+   * @returns
+   */
   public async startNotifyWait(callback: (data: T) => void): Promise<void> {
     // TODO: delete try-catch
     try {
@@ -109,6 +133,15 @@ export default abstract class Logtta<S, T> extends ObnizPartsBleConnectable<
     );
   }
 
+  /**
+   * Authorize PIN code
+   *
+   * ピンコードを認証
+   *
+   * @param code PIN code ピンコード
+   *
+   * @returns Whether authentication was/is passed 認証が通った/通っているかどうか
+   */
   public async authPinCodeWait(code: string | number): Promise<boolean> {
     // TODO: delete try-catch
     try {
@@ -147,6 +180,15 @@ export default abstract class Logtta<S, T> extends ObnizPartsBleConnectable<
       );
   }
 
+  /**
+   * Set / unset to Beacon Mode
+   *
+   * ビーコンモードに設定/解除
+   *
+   * @param enable enable / disable 有効 / 無効
+   *
+   * @returns data write result
+   */
   public async setBeaconModeWait(enable: boolean): Promise<boolean> {
     // TODO: delete try-catch
     try {

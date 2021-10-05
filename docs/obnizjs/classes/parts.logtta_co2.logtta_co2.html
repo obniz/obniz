@@ -176,7 +176,7 @@
 								<p>Inherited from <a href="parts.logtta.logtta.html">Logtta</a>.<a href="parts.logtta.logtta.html#constructor">constructor</a></p>
 								<p>Overrides <a href="_obniz_obnizpartsbleabstract_.obnizpartsbleconnectable.html">ObnizPartsBleConnectable</a>.<a href="_obniz_obnizpartsbleabstract_.obnizpartsbleconnectable.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:52</li>
+									<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:53</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -213,7 +213,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="parts.logtta.logtta.html">Logtta</a>.<a href="parts.logtta.logtta.html#batteryservice">batteryService</a></p>
 						<ul>
-							<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:52</li>
+							<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:53</li>
 						</ul>
 					</aside>
 				</section>
@@ -246,7 +246,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="parts.logtta.logtta.html">Logtta</a>.<a href="parts.logtta.logtta.html#genericaccess">genericAccess</a></p>
 						<ul>
-							<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:51</li>
+							<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:52</li>
 						</ul>
 					</aside>
 				</section>
@@ -257,7 +257,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="parts.logtta.logtta.html">Logtta</a>.<a href="parts.logtta.logtta.html#onnotify">onNotify</a></p>
 						<ul>
-							<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:50</li>
+							<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:51</li>
 						</ul>
 					</aside>
 				</section>
@@ -318,7 +318,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="parts.logtta.logtta.html">Logtta</a>.<a href="parts.logtta.logtta.html#availableblemode">AvailableBleMode</a></p>
 						<ul>
-							<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:27</li>
+							<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:28</li>
 						</ul>
 					</aside>
 				</section>
@@ -401,16 +401,26 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="parts.logtta.logtta.html">Logtta</a>.<a href="parts.logtta.logtta.html#authpincodewait">authPinCodeWait</a></p>
 								<ul>
-									<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:112</li>
+									<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:145</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Authorize PIN code</p>
+								</div>
+								<p>ピンコードを認証</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>code: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>PIN code ピンコード</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>Whether authentication was/is passed 認証が通った/通っているかどうか</p>
 						</li>
 					</ul>
 				</section>
@@ -450,13 +460,22 @@
 								<p>Inherited from <a href="parts.logtta.logtta.html">Logtta</a>.<a href="parts.logtta.logtta.html#connectwait">connectWait</a></p>
 								<p>Overrides <a href="_obniz_obnizpartsbleabstract_.obnizpartsbleconnectable.html">ObnizPartsBleConnectable</a>.<a href="_obniz_obnizpartsbleabstract_.obnizpartsbleconnectable.html#connectwait">connectWait</a></p>
 								<ul>
-									<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:58</li>
+									<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:66</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Connect to the services of a device</p>
+								</div>
+								<p>デバイスのサービスに接続</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> keys: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Key acquired when pairing previously 以前にペアリングしたときに取得されたキー</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -525,10 +544,17 @@
 								<p>Inherited from <a href="parts.logtta.logtta.html">Logtta</a>.<a href="parts.logtta.logtta.html#getdatawait">getDataWait</a></p>
 								<p>Overrides <a href="_obniz_obnizpartsbleabstract_.obnizpartsbleconnectable.html">ObnizPartsBleConnectable</a>.<a href="_obniz_obnizpartsbleabstract_.obnizpartsbleconnectable.html#getdatawait">getDataWait</a></p>
 								<ul>
-									<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:80</li>
+									<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:95</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get data with connected state</p>
+								</div>
+								<p>接続状態でデータを取得</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/parts.logtta_co2.logtta_co2_connected_data.html" class="tsd-signature-type">Logtta_CO2_Connected_Data</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>received value from each sensor それぞれのセンサから取得した値</p>
 						</li>
 					</ul>
 				</section>
@@ -611,16 +637,26 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="parts.logtta.logtta.html">Logtta</a>.<a href="parts.logtta.logtta.html#setbeaconmodewait">setBeaconModeWait</a></p>
 								<ul>
-									<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:150</li>
+									<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:192</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Set / unset to Beacon Mode</p>
+								</div>
+								<p>ビーコンモードに設定/解除</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>enable: <span class="tsd-signature-type">boolean</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>enable / disable 有効 / 無効</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>data write result</p>
 						</li>
 					</ul>
 				</section>
@@ -936,7 +972,7 @@
 						<p>Inherited from <a href="parts.logtta.logtta.html">Logtta</a>.<a href="parts.logtta.logtta.html#beacondatalength">BeaconDataLength</a></p>
 						<p>Overrides <a href="_obniz_obnizpartsbleabstract_.obnizpartsble.html">ObnizPartsBle</a>.<a href="_obniz_obnizpartsbleabstract_.obnizpartsble.html#beacondatalength">BeaconDataLength</a></p>
 						<ul>
-							<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:36</li>
+							<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:37</li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
@@ -945,7 +981,7 @@
 						<div class="tsd-signature tsd-kind-icon">Beacon<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 27</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:40</li>
+								<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:41</li>
 							</ul>
 						</aside>
 					</section>
@@ -955,7 +991,7 @@
 						<div class="tsd-signature tsd-kind-icon">Connectable<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> = null</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:39</li>
+								<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:40</li>
 							</ul>
 						</aside>
 					</section>
@@ -1205,7 +1241,7 @@
 						<p>Inherited from <a href="parts.logtta.logtta.html">Logtta</a>.<a href="parts.logtta.logtta.html#companyid">CompanyID</a></p>
 						<p>Overrides <a href="_obniz_obnizpartsbleabstract_.obnizpartsble.html">ObnizPartsBle</a>.<a href="_obniz_obnizpartsbleabstract_.obnizpartsble.html#companyid">CompanyID</a></p>
 						<ul>
-							<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:43</li>
+							<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:44</li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
@@ -1214,7 +1250,7 @@
 						<div class="tsd-signature tsd-kind-icon">Beacon<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = [0x10, 0x05]</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:45</li>
+								<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:46</li>
 							</ul>
 						</aside>
 					</section>
@@ -1224,7 +1260,7 @@
 						<div class="tsd-signature tsd-kind-icon">Connectable<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> = null</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:44</li>
+								<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:45</li>
 							</ul>
 						</aside>
 					</section>
@@ -1237,7 +1273,7 @@
 						<p>Inherited from <a href="parts.logtta.logtta.html">Logtta</a>.<a href="parts.logtta.logtta.html#localname">LocalName</a></p>
 						<p>Overrides <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#localname">LocalName</a></p>
 						<ul>
-							<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:31</li>
+							<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:32</li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
@@ -1246,7 +1282,7 @@
 						<div class="tsd-signature tsd-kind-icon">Beacon<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol"> = /null/</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:33</li>
+								<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:34</li>
 							</ul>
 						</aside>
 					</section>
@@ -1256,7 +1292,7 @@
 						<div class="tsd-signature tsd-kind-icon">Connectable<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> = undefined</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:32</li>
+								<li>Defined in src/parts/Ble/utils/abstracts/Logtta.ts:33</li>
 							</ul>
 						</aside>
 					</section>
