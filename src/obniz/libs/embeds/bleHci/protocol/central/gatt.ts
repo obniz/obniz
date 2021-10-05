@@ -240,9 +240,8 @@ class Gatt extends EventEmitter<GattEventTypes> {
         this._execNoRespCommandWait(this.mtuResponse(mtu));
       })
       .catch((e) => {
-        // TODO:
-        // This must passed to Obniz class.
-        console.error(e);
+        // ignore timeout error
+        // console.error(e);
       });
 
     const data = await this._execCommandWait(

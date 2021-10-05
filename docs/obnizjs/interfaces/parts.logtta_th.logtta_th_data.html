@@ -75,16 +75,21 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>data from Logtta_TH(Logtta_Temp) with connected state</p>
+						<p>data from Logtta_TH(Logtta_Temp)</p>
 					</div>
-					<p>接続した状態でのLogtta_TH(Logtta_Temp)からのデータ</p>
+					<p>Logtta_TH(Logtta_Temp)からのデータ</p>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Logtta_TH_Data</span>
+						<a href="parts.logtta_th.logtta_th_connected_data.html" class="tsd-signature-type">Logtta_TH_Connected_Data</a>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">Logtta_TH_Data</span>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -95,8 +100,11 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.logtta_th.logtta_th_data.html#humidity" class="tsd-kind-icon">humidity</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.logtta_th.logtta_th_data.html#temperature" class="tsd-kind-icon">temperature</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.logtta_th.logtta_th_data.html#address" class="tsd-kind-icon">address</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.logtta_th.logtta_th_data.html#battery" class="tsd-kind-icon">battery</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="parts.logtta_th.logtta_th_data.html#humidity" class="tsd-kind-icon">humidity</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.logtta_th.logtta_th_data.html#interval" class="tsd-kind-icon">interval</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="parts.logtta_th.logtta_th_data.html#temperature" class="tsd-kind-icon">temperature</a></li>
 							</ul>
 						</section>
 					</div>
@@ -105,12 +113,45 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="address" class="tsd-anchor"></a>
+					<h3>address</h3>
+					<div class="tsd-signature tsd-kind-icon">address<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/LogttaTemp/index.ts:41</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>BLE address BLEアドレス</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="battery" class="tsd-anchor"></a>
+					<h3>battery</h3>
+					<div class="tsd-signature tsd-kind-icon">battery<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/LogttaTemp/index.ts:33</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>remaining battery 電池残量</p>
+						</div>
+						<p>Range 範囲: 0~100 (Unit 単位: 1 %)</p>
+						<p>254: USB power supply USB給電</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="humidity" class="tsd-anchor"></a>
 					<h3>humidity</h3>
 					<div class="tsd-signature tsd-kind-icon">humidity<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="parts.logtta_th.logtta_th_data.html">Logtta_TH_Data</a>.<a href="parts.logtta_th.logtta_th_data.html#humidity">humidity</a></p>
 						<ul>
-							<li>Defined in src/parts/Ble/LogttaTemp/index.ts:31</li>
+							<li>Defined in src/parts/Ble/LogttaTemp/index.ts:61</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -121,12 +162,29 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="interval" class="tsd-anchor"></a>
+					<h3>interval</h3>
+					<div class="tsd-signature tsd-kind-icon">interval<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/LogttaTemp/index.ts:39</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>measurement interval 測定周期</p>
+						</div>
+						<p>Range 範囲: 1~2100 (Unit 単位: 1 s)</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="temperature" class="tsd-anchor"></a>
 					<h3>temperature</h3>
 					<div class="tsd-signature tsd-kind-icon">temperature<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="parts.logtta_th.logtta_th_data.html">Logtta_TH_Data</a>.<a href="parts.logtta_th.logtta_th_data.html#temperature">temperature</a></p>
 						<ul>
-							<li>Defined in src/parts/Ble/LogttaTemp/index.ts:25</li>
+							<li>Defined in src/parts/Ble/LogttaTemp/index.ts:55</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -155,7 +213,7 @@
 						<a href="parts.logtta_th.logtta_thoptions.html" class="tsd-kind-icon">Logtta_<wbr>THOptions</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="parts.logtta_th.logtta_th_adv_data.html" class="tsd-kind-icon">Logtta_<wbr>TH_<wbr><wbr>Adv_<wbr><wbr>Data</a>
+						<a href="parts.logtta_th.logtta_th_connected_data.html" class="tsd-kind-icon">Logtta_<wbr>TH_<wbr><wbr>Connected_<wbr><wbr>Data</a>
 					</li>
 				</ul>
 				<ul class="current">
@@ -163,9 +221,18 @@
 						<a href="parts.logtta_th.logtta_th_data.html" class="tsd-kind-icon">Logtta_<wbr>TH_<wbr><wbr>Data</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.logtta_th.logtta_th_data.html#address" class="tsd-kind-icon">address</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.logtta_th.logtta_th_data.html#battery" class="tsd-kind-icon">battery</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="parts.logtta_th.logtta_th_data.html#humidity" class="tsd-kind-icon">humidity</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.logtta_th.logtta_th_data.html#interval" class="tsd-kind-icon">interval</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="parts.logtta_th.logtta_th_data.html#temperature" class="tsd-kind-icon">temperature</a>
 							</li>
 						</ul>

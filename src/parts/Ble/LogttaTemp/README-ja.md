@@ -1,326 +1,159 @@
-# Logtta TH
+# Logtta_TH
 
-BLE経由で利用できる温度センサーです。フレキシブルケーブルで冷蔵庫の庫内温度などを計測できます。
+ユニ電子製の温湿度センサー
 
-温度と湿度を計測でき、バッテリー残量を知ることもできます。
-
-また、接続して値を取得するモードと、advertisementで値を取得するモードの２つがあります。
+公式製品紹介ページは[こちら](http://www.uni-elec.co.jp/logtta_page.html)
 
 ![](image.jpg)
 
 ![](image2.jpg)
 
+## 対応モード
 
+- ビーコンモード
+- 接続可能モード
 
-## getPartsClass(name)
+## ビーコンデータ(getData())
+
+- battery: 電池残量(%)
+- temperature: 温度(℃)
+- humidity: 湿度(%)
+- interval: 送信間隔(秒)
+
+## 接続時のデータ(getDataWait())
+
+- temperature: 温度(℃)
+- humidity: 湿度(%)
+
+## 使用例(ビーコンモード)
 
 ```javascript
-// Javascript Example
-const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
-```
-
-## isDevice(BleRemotePeripheral)
-
-デバイスを見つけたらtrueを返します。
-
-```javascript
-// Javascript Example
+// Javascript
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (Logtta_TH.isDevice(p)) {
-        console.log("find");
-    }
+obniz.ble.scan.onfind = (peripheral) => {
+  // 動作モードを取得、Logtta_THでないときはnullに
+  const mode = Logtta_TH.getDeviceMode(peripheral);
+  if (mode === 'Beacon') {
+    // インスタンスを生成
+    const device = new Logtta_TH(peripheral, mode);
+    // データを取得し、コンソールに出力
+    console.log(device.getData());
+  }
 };
 await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
 
-## new Logtta_TH(peripheral)
+## 使用例(接続可能モード)
 
-アドバタイズ情報からインスタンスを生成します。
+### 接続して1回だけデータ取得＆電池残量取得
 
-```javascript
-// Javascript Example
-const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (Logtta_TH.isDevice(peripheral) ) {
-    console.log("device find");
-    const device = new Logtta_TH(peripheral);
-  }
-};
-await obniz.ble.scan.startWait();
-
-```
-
-
-## [await]connectWait()
-
-デバイスと接続します。
+`batteryService.getBatteryLevelWait()`を使用して電池残量をパーセント単位で取得できます。
 
 ```javascript
-// Javascript Example
+// Javascript
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (Logtta_TH.isDevice(peripheral)) {
-    console.log("find");
-    const device = new Logtta_TH(peripheral);
-    device.ondisconnect = (reason) => {
-      console.log(reason)
+obniz.ble.scan.onfind = (peripheral) => {
+  // 動作モードを取得、Logtta_THでないときはnullに
+  const mode = Logtta_TH.getDeviceMode(peripheral);
+  if (mode === 'Connectable') {
+    // インスタンスを生成
+    const device = new Logtta_TH(peripheral, mode);
+    console.log(`Connecting to Logtta_TH[${device.address}]`);
+
+    // デバイスに接続
+    await device.connectWait();
+    console.log(`Connected to Logtta_TH[${device.address}]`);
+
+    // デバイスからデータ取得
+    const data = await device.getDataWait();
+    console.log(`Logtta_TH[${device.address}]: ${data.temperature}℃`);
+    console.log(`Logtta_TH[${device.address}]: ${data.humidity}%`);
+
+    if (device.batteryService) {
+      // デバイスから電池残量を取得
+      const batteryLevel = await device.batteryService.getBatteryLevelWait();
+      // 電池残量を出力
+      console.log(`Logtta_TH[${device.address}]: BatteryLevel ${batteryLevel}%`);
     }
-    await device.connectWait();
-    console.log("connected");
-  }
-};
-await obniz.ble.scan.startWait();
 
-```
-
-
-## [await]disconnectWait()
-
-デバイスとの接続を切断します。
-
-```javascript
-// Javascript Example
-const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (Logtta_TH.isDevice(peripheral) ) {
-    console.log("find");
-    const device = new Logtta_TH(peripheral);
-    await device.connectWait();
-    console.log("connected");
+    // デバイスから切断
     await device.disconnectWait();
-    console.log("disconnected");
-  }
-};
-await obniz.ble.scan.startWait();
-
-```
-
-
-## onNotify =  function (data){}
-
-データを受信したら、そのデータをコールバック関数で返します。
-
-``startNotifyWait()``を開始した後にデバイスからデータが来るたびに呼び出されます。
-
-```javascript
-// Javascript Example
-const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (Logtta_TH.isDevice(peripheral)) {
-    console.log("find");
-    const device = new Logtta_TH(peripheral);
-    await device.connectWait();
-    console.log("connected");
-    device.onNotify = (data) => {
-        console.log(`temperature ${data.temperature} humidity ${data.humidity}`);
-    };
-    await device.startNotifyWait();
+    console.log(`Disconnected from Logtta_TH[${device.address}]`);
   }
 };
 await obniz.ble.scan.startWait();
 ```
 
-## startNotifyWait()
+### 接続して定期的にデータ取得
 
-Notifyを開始します。
+`startNotifyWait()`を使用してデバイスからのデータを常に待ち受けることができます。
 
 ```javascript
-// Javascript Example
+// Javascript
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (Logtta_TH.isDevice(peripheral)) {
-    console.log("find");
-    const device = new Logtta_TH(peripheral);
+obniz.ble.scan.onfind = (peripheral) => {
+  // 動作モードを取得、Logtta_THでないときはnullに
+  const mode = Logtta_TH.getDeviceMode(peripheral);
+  if (mode === 'Connectable') {
+    // インスタンスを生成
+    const device = new Logtta_TH(peripheral, mode);
+    console.log(`Connecting to Logtta_TH[${device.address}]`);
+
+    // デバイスに接続
     await device.connectWait();
-    console.log("connected");
-    device.onNotify = (data) => {
-        console.log(`temperature ${data.temperature} humidity ${data.humidity}`);
-    };
-    await device.startNotifyWait();
+    console.log(`Connected Logtta_TH[${device.address}]`);
+
+    // デバイスからのデータの待ち受けを開始
+    device.startNotifyWait((data) => {
+      console.log(`Logtta_TH[${device.address}]: ${data.temperature}℃`);
+      console.log(`Logtta_TH[${device.address}]: ${data.humidity}%`);
+    });
   }
 };
 await obniz.ble.scan.startWait();
 ```
 
+### 接続してビーコンモードを有効化
 
-## [await]getAllWait()
+`setBeaconModeWait()`を使用して定期的にビーコンを発信するモードの有効無効を制御できます。
 
-デバイスで取得できるすべての情報を取得します。
+設定後に切断すると有効になります。
 
-```javascript
-// Javascript Example
-const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (Logtta_TH.isDevice(peripheral)) {
-    console.log("find");
-    const device = new Logtta_TH(peripheral);
-    await device.connectWait();
-    console.log("connected");
-    
-    const data = await device.getAllWait();
-    console.log(`temperature ${data.temperature} humidity ${data.humidity}`);
-  }
-};
-await obniz.ble.scan.startWait();
-```
+事前に`authPinCodeWait()`を使用してデバイスと認証する必要があります。(デフォルト認証コード: 0000)
 
-データフォーマットは次の通りです。
-
-```json
-// example response
-{
-  "temperature": 20,
-  "humidity": 30, 
-}
-```
-
-## [await]getTemperatureWait()
-
-デバイスから温度データを取得できます。
+ビーコンモードを終了する場合、デバイスにあるボタンを2秒以上長押しする操作が必要になります。
 
 ```javascript
-// Javascript Example
+// Javascript
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (Logtta_TH.isDevice(peripheral)) {
-    console.log("find");
-    const device = new Logtta_TH(peripheral);
+obniz.ble.scan.onfind = (peripheral) => {
+  // 動作モードを取得、Logtta_THでないときはnullに
+  const mode = Logtta_TH.getDeviceMode(peripheral);
+  if (mode === 'Connectable') {
+    // インスタンスを生成
+    const device = new Logtta_TH(peripheral, mode);
+    console.log(`Connecting to Logtta_TH[${device.address}]`);
+
+    // デバイスに接続
     await device.connectWait();
-    console.log("connected");
-    
-    const temperature = await device.getTemperatureWait();
-    console.log(`temperature ${temperature}`);
-  }
-};
-await obniz.ble.scan.startWait();
-```
+    console.log(`Connected to Logtta_TH[${device.address}]`);
 
+    // 認証コードを送信
+    await device.authPinCodeWait(0000);
+    console.log(`Logtta_TH[${device.address}]: Sent auth pin code`);
 
-## [await]getHumidityWait()
+    // ビーコンモードに有効化
+    await device.setBeaconModeWait(true);
+    console.log(`Logtta_TH[${device.address}]: Enabled beacon mode`);
 
-デバイスから湿度データを取得できます。
-
-```javascript
-// Javascript Example
-const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (Logtta_TH.isDevice(peripheral)) {
-    console.log("find");
-    const device = new Logtta_TH(peripheral);
-    await device.connectWait();
-    console.log("connected");
-    
-    const humidity = await device.getHumidityWait();
-    console.log(`humidity ${humidity}`);
-  }
-};
-await obniz.ble.scan.startWait();
-```
-
-
-## [await]authPinCodeWait(pin)
-
-デバイスと認証を行います。デフォルト値は0000です。
-
-```javascript
-// Javascript Example
-const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (Logtta_TH.isDevice(peripheral) ) {
-    console.log("find");
-    const device = new Logtta_TH(peripheral);
-    await device.connectWait();
-    console.log("connected");
-    await device.authPinCodeWait("0000");
-    console.log("authPinCodeWait");
-  }
-};
-await obniz.ble.scan.startWait();
-
-```
-
-## [await]setBeaconMode(enable)
-
-デバイスと認証をあらかじめ済ませた状態で実行してください。
-
-定期的にビーコンを発信するモードの有効無効を制御できます。
-
-設定後に切断した後から有効になります。
-
-ビーコンモードを終了する場合、デバイスにあるボタンを2秒以上長押しする操作が必要になります。詳しくは下記のリンクよりドキュメントをご覧ください。
-http://www.uni-elec.co.jp/logtta_page.html
-
-```javascript
-// Javascript Example
-const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (Logtta_TH.isDevice(peripheral) ) {
-    console.log("find");
-    const device = new Logtta_TH(peripheral);
-    await device.connectWait();
-    console.log("connected");
-    await device.authPinCodeWait("0000");
-    console.log("authPinCodeWait");
-    await device.setBeaconMode(true);
-    console.log("authPinCodeWait");
+    // デバイスから切断
     await device.disconnectWait();
-    console.log("disconnected");
+    console.log(`Disconnected from Logtta_TH[${device.address}]`);
   }
 };
 await obniz.ble.scan.startWait();
-
-```
-
-
-## isAdvDevice(BleRemotePeripheral)
-
-アドバタイジングしているデバイスを発見した場合、trueを返します。
-
-```javascript
-// Javascript Example
-const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (Logtta_TH.isAdvDevice(p)) {
-        console.log("found");
-    }
-};
-await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
-
-```
-
-## getData(BleRemotePeripheral)
-
-発見した場合にデバイスの情報を返します。発見できなかった場合にはNullを返します。
-
-- battery : バッテリの電圧(0-100)
-- address : MacAddress
-- temperature: 温度(セルシウス温度)
-- humidity: 湿度(0-100)
-- interval : 送信間隔(秒)
-
-
-```javascript
-// Javascript Example
-const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (Logtta_TH.isAdvDevice(p)) {
-        let data = Logtta_TH.getData(p);
-        console.log(data);
-    }
-};
-await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```

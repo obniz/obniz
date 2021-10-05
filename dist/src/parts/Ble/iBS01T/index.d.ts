@@ -2,16 +2,16 @@
  * @packageDocumentation
  * @module Parts.iBS01T
  */
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
-export interface IBS01TOptions {
+import { ObnizBleBeaconStruct } from '../../../obniz/ObnizPartsBleAbstract';
+import { BaseiBS01 } from '../utils/abstracts/iBS';
+export interface iBS01TOptions {
 }
 /**
- * advertisement data from IBS01T
+ * advertisement data from iBS01T
  *
- * IBS01Tからのadvertisementデータ
+ * iBS01Tからのadvertisementデータ
  */
-export interface IBS01T_Data {
+export interface iBS01T_Data {
     /**
      * button state ボタンの状態
      *
@@ -30,36 +30,8 @@ export interface IBS01T_Data {
     humidity: number;
 }
 /** iBS01T management class iBS01Tを管理するクラス */
-export default class IBS01T implements ObnizPartsBleInterface {
-    static info(): ObnizPartsBleInfo;
-    /**
-     * Verify that the received peripheral is from the iBS01T
-     *
-     * 受け取ったPeripheralがiBS01Tのものかどうかを確認する
-     *
-     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
-     *
-     * @param strictCheck Whether do strict check
-     *
-     * strictCheckをするかどうか
-     *
-     * @returns Whether it is the iBS01T
-     *
-     * iBS01Tかどうか
-     */
-    static isDevice(peripheral: BleRemotePeripheral, strictCheck?: boolean): boolean;
-    /**
-     * Get a data from the iBS01T
-     *
-     * iBS01Tからデータを取得
-     *
-     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
-     *
-     * @param strictCheck Whether do strict check strictCheckをするかどうか
-     *
-     * @returns received data from the iBS01T iBS01Tから受け取ったデータ
-     */
-    static getData(peripheral: BleRemotePeripheral, strictCheck?: boolean): IBS01T_Data | null;
-    private static deviceAdv;
-    _peripheral: BleRemotePeripheral | null;
+export default class iBS01T extends BaseiBS01<iBS01T_Data> {
+    static readonly PartsName = "iBS01T";
+    static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS01T_Data>;
+    protected readonly staticClass: typeof iBS01T;
 }

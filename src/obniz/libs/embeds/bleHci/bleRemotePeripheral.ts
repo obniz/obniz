@@ -75,32 +75,21 @@ export interface BleConnectSetting {
   autoDiscovery?: boolean;
 
   /**
-   * Piring Option
+   * Pairing Option
    *
-   * true : auto discover services/characteristics/descriptors on connection established.
-   * false : don't discover automatically. Please manually.
-   *
-   * Default is true;
-   *
-   * If set false, you should manually discover services/characteristics/descriptors;
-   *
-   * ```javascript
-   * // Javascript Example
-   * await obniz.ble.initWait({});
-   * obniz.ble.scan.onfind = function(peripheral){
-   *   if(peripheral.localName == "my peripheral"){
-   *      await peripheral.connectWait({autoDiscovery:false});
-   *      console.log("success");
-   *      await peripheral.discoverAllServicesWait(); //manually discover
-   *      let service = peripheral.getService("1800");
-   *
-   *   }
-   * }
-   * await obniz.ble.scan.startWait();
-   * ```
-   *
+   * keys: Key acquired when pairing previously.
+   * onPairedCallback: A function that contains keys called when pairing is successful.
    */
   pairingOption?: BlePairingOptions;
+
+  /**
+   * Force Connect
+   *
+   * If you want to try to connect even when the connected flag is true.
+   *
+   * Default: true
+   */
+  forceConnect?: boolean;
 }
 
 /**
@@ -292,6 +281,10 @@ export default class BleRemotePeripheral {
    */
   public localName: string | null;
 
+  public manufacturerSpecificData: number[] | null;
+
+  public manufacturerSpecificDataInScanResponse: number[] | null;
+
   /**
    * This returns iBeacon data if the peripheral has it. If none, it will return null.
    *
@@ -353,8 +346,13 @@ export default class BleRemotePeripheral {
   /**
    * Raw data of advertisement
    *
+   * @deprecated
    */
-  public advertise_data_rows!: any;
+  public advertise_data_rows!: number[][] | null;
+
+  protected advertisingDataRows: { [key: number]: number[] } = {};
+
+  protected scanResponseDataRows: { [key: number]: number[] } = {};
 
   /**
    * @ignore
@@ -411,6 +409,8 @@ export default class BleRemotePeripheral {
     // this.adv_data = null;
     this.scan_resp = null;
     this.localName = null;
+    this.manufacturerSpecificData = null;
+    this.manufacturerSpecificDataInScanResponse = null;
     this.iBeacon = null;
 
     this._services = [];
@@ -513,6 +513,7 @@ export default class BleRemotePeripheral {
    *
    */
   public async connectWait(setting?: BleConnectSetting): Promise<void> {
+    if (this.connected && setting?.forceConnect === false) return;
     this._connectSetting = setting || {};
     this._connectSetting.autoDiscovery =
       this._connectSetting.autoDiscovery !== false;
@@ -811,8 +812,8 @@ export default class BleRemotePeripheral {
     this._addServiceUuids(results, this.searchTypeVal(0x03), 16);
     this._addServiceUuids(results, this.searchTypeVal(0x04), 32);
     this._addServiceUuids(results, this.searchTypeVal(0x05), 32);
-    this._addServiceUuids(results, this.searchTypeVal(0x06), 64);
-    this._addServiceUuids(results, this.searchTypeVal(0x07), 64);
+    this._addServiceUuids(results, this.searchTypeVal(0x06), 128);
+    this._addServiceUuids(results, this.searchTypeVal(0x07), 128);
     return results;
   }
 
@@ -875,62 +876,70 @@ export default class BleRemotePeripheral {
     this.obnizBle.centralBindings.setPairingOption(this.address, options);
   }
 
-  protected analyseAdvertisement() {
-    if (!this.advertise_data_rows) {
-      this.advertise_data_rows = [];
-      if (this.adv_data) {
-        for (let i = 0; i < this.adv_data.length; i++) {
-          const length = this.adv_data[i];
-          const arr = new Array(length);
-          for (let j = 0; j < length; j++) {
-            arr[j] = this.adv_data[i + j + 1];
-          }
-          this.advertise_data_rows.push(arr);
-          i = i + length;
+  protected analyseAdvertisement(): void {
+    if (this.advertise_data_rows) return;
+
+    this.advertise_data_rows = [];
+    if (this.adv_data) {
+      for (let i = 0; i < this.adv_data.length; i++) {
+        const length = this.adv_data[i];
+        const arr = new Array<number>(length);
+        for (let j = 0; j < length; j++) {
+          arr[j] = this.adv_data[i + j + 1];
         }
+        this.advertise_data_rows.push(arr);
+        this.advertisingDataRows[this.adv_data[i + 1]] = this.adv_data.slice(
+          i + 2,
+          i + length + 1
+        );
+        i = i + length;
       }
-      if (this.scan_resp) {
-        for (let i = 0; i < this.scan_resp.length; i++) {
-          const length = this.scan_resp[i];
-          const arr = new Array(length);
-          for (let j = 0; j < length; j++) {
-            arr[j] = this.scan_resp[i + j + 1];
-          }
-          this.advertise_data_rows.push(arr);
-          i = i + length;
-        }
-      }
-      this.setLocalName();
-      this.setIBeacon();
     }
+    if (this.scan_resp) {
+      for (let i = 0; i < this.scan_resp.length; i++) {
+        const length = this.scan_resp[i];
+        const arr = new Array<number>(length);
+        for (let j = 0; j < length; j++) {
+          arr[j] = this.scan_resp[i + j + 1];
+        }
+        this.advertise_data_rows.push(arr);
+        this.scanResponseDataRows[this.scan_resp[i + 1]] = this.scan_resp.slice(
+          i + 2,
+          i + length + 1
+        );
+        i = i + length;
+      }
+    }
+    this.setLocalName();
+    this.setManufacturerSpecificData();
+    this.setIBeacon();
   }
 
-  protected searchTypeVal(type: any): any[] | undefined {
+  protected searchTypeVal(
+    type: number,
+    fromScanResponseData = false
+  ): number[] | undefined {
     this.analyseAdvertisement();
-    for (let i = 0; i < this.advertise_data_rows.length; i++) {
-      if (this.advertise_data_rows[i][0] === type) {
-        const results = [].concat(this.advertise_data_rows[i]);
-        results.shift();
-        return results;
-      }
-    }
-    return undefined;
+    if (this.advertisingDataRows[type] && !fromScanResponseData)
+      return this.advertisingDataRows[type];
+    else if (this.scanResponseDataRows[type])
+      return this.scanResponseDataRows[type];
+    else return undefined;
   }
 
-  protected setLocalName() {
-    let data = this.searchTypeVal(0x09);
-    if (!data) {
-      data = this.searchTypeVal(0x08);
-    }
-    if (!data) {
-      this.localName = null;
-    } else {
-      this.localName = String.fromCharCode.apply(null, data);
-    }
+  protected setLocalName(): void {
+    const data = this.searchTypeVal(0x09) ?? this.searchTypeVal(0x08);
+    this.localName = data ? String.fromCharCode.apply(null, data) : null;
   }
 
-  protected setIBeacon() {
-    const data = this.searchTypeVal(0xff);
+  protected setManufacturerSpecificData(): void {
+    this.manufacturerSpecificData = this.searchTypeVal(0xff) ?? null;
+    this.manufacturerSpecificDataInScanResponse =
+      this.searchTypeVal(0xff, true) ?? null;
+  }
+
+  protected setIBeacon(): void {
+    const data = this.manufacturerSpecificData;
     if (
       !data ||
       data[0] !== 0x4c ||

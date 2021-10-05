@@ -4,19 +4,17 @@
  */
 /* eslint rulesdir/non-ascii: 0 */
 
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, {
-  ObnizPartsBleInfo,
-} from '../../../obniz/ObnizPartsBleInterface';
+import { ObnizBleBeaconStruct } from '../../../obniz/ObnizPartsBleAbstract';
+import { BaseiBS } from '../utils/abstracts/iBS';
 
-export interface IBS03TPOptions {}
+export interface iBS03TPOptions {}
 
 /**
- * advertisement data from IBS03TP
+ * advertisement data from iBS03TP
  *
- * IBS03TPからのadvertisementデータ
+ * iBS03TPからのadvertisementデータ
  */
-export interface IBS03TP_Data {
+export interface iBS03TP_Data {
   /** battery 電源電圧 (Unit 単位: 0.01 V) */
   battery: number;
   /**
@@ -36,106 +34,21 @@ export interface IBS03TP_Data {
 }
 
 /** iBS03TP management class iBS03TPを管理するクラス */
-export default class IBS03TP implements ObnizPartsBleInterface {
-  public static info(): ObnizPartsBleInfo {
-    return {
-      name: 'iBS03TP',
-    };
-  }
+export default class iBS03TP extends BaseiBS<iBS03TP_Data> {
+  public static readonly PartsName = 'iBS03TP';
 
-  /**
-   * Verify that the received peripheral is from the iBS03TP
-   *
-   * 受け取ったPeripheralがiBS03TPのものかどうかを確認する
-   *
-   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
-   *
-   * @returns Whether it is the iBS03TP
-   *
-   * iBS03TPかどうか
-   */
-  public static isDevice(peripheral: BleRemotePeripheral): boolean {
-    if (this.deviceAdv.length > peripheral.adv_data.length) {
-      return false;
-    }
-    for (let index = 0; index < this.deviceAdv.length; index++) {
-      if (this.deviceAdv[index] === -1) {
-        continue;
-      }
-      if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-        continue;
-      }
-      return false;
-    }
-    return true;
-  }
+  public static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS03TP_Data> = {
+    battery: BaseiBS.Config.battery,
+    button: BaseiBS.Config.button,
+    moving: BaseiBS.Config.moving,
+    hall_sensor: BaseiBS.Config.event,
+    temperature: BaseiBS.Config.temperature,
+    probe_temperature: {
+      ...BaseiBS.Config.temperature,
+      index: 7,
+    },
+    ...BaseiBS.getUniqueData(3, 0x17),
+  };
 
-  /**
-   * Get a data from the iBS03TP
-   *
-   * iBS03TPからデータを取得
-   *
-   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
-   *
-   * @returns received data from the iBS03TP iBS03TPから受け取ったデータ
-   */
-  public static getData(peripheral: BleRemotePeripheral): IBS03TP_Data | null {
-    if (!IBS03TP.isDevice(peripheral)) {
-      return null;
-    }
-    const data: IBS03TP_Data = {
-      battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-      button: false,
-      moving: false,
-      hall_sensor: false,
-      temperature:
-        ObnizPartsBleInterface.signed16FromBinary(
-          peripheral.adv_data[13],
-          peripheral.adv_data[12]
-        ) * 0.01,
-      probe_temperature:
-        ObnizPartsBleInterface.signed16FromBinary(
-          peripheral.adv_data[15],
-          peripheral.adv_data[14]
-        ) * 0.01,
-    };
-
-    if (peripheral.adv_data[11] & 0b0001) {
-      data.button = true;
-    }
-    if (peripheral.adv_data[11] & 0b0010) {
-      data.moving = true;
-    }
-    if (peripheral.adv_data[11] & 0b0100) {
-      data.hall_sensor = true;
-    }
-    return data;
-  }
-
-  private static deviceAdv: number[] = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x0d, // Manufacturer vendor code
-    0x00, // Manufacturer vendor code
-    0x83, // Magic code
-    0xbc, // Magic code
-    -1, // Battery
-    -1, // Battery
-    -1, // Event
-    -1, // reserved
-    -1, // reserved
-    -1, // reserved
-    -1, // reserved
-    -1, // user
-    -1, // user
-    0x17, // subType
-    -1, // reserved
-    -1, // reserved
-    -1, // reserved
-  ];
-
-  public _peripheral: BleRemotePeripheral | null = null;
+  protected readonly staticClass = iBS03TP;
 }

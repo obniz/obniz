@@ -243,6 +243,11 @@ export default abstract class ObnizComponents extends ObnizParts {
   public ble?: ObnizHciBLE;
 
   /**
+   * @category network
+   */
+  public wifi?: WiFi;
+
+  /**
    * @category plugin
    */
   public plugin?: Plugin;

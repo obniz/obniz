@@ -2,16 +2,17 @@
  * @packageDocumentation
  * @module Parts.iBS04i
  */
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
-export interface IBS04IOptions {
+import { IBeacon } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { ObnizBleBeaconStruct } from '../../../obniz/ObnizPartsBleAbstract';
+import { BaseiBS } from '../utils/abstracts/iBS';
+export interface iBS04iOptions {
 }
 /**
- * advertisement data from IBS04i
+ * advertisement data from iBS04i
  *
- * IBS04iからのadvertisementデータ
+ * iBS04iからのadvertisementデータ
  */
-export interface IBS04I_Data {
+export interface iBS04i_Data extends IBeacon {
     /** battery 電源電圧 (Unit 単位: 0.01 V) */
     battery: number;
     /**
@@ -20,46 +21,14 @@ export interface IBS04I_Data {
      * true: pressed 押された状態 / false: not pressed 押されていない状態
      */
     button: boolean;
-    /** iBeacon UUID */
-    uuid: string;
-    /** iBeacon major */
-    major: number;
-    /** iBeacon minor */
-    minor: number;
-    /** iBeacon power */
-    power: number;
-    /**
-     * RSSI(Received Signal Strength Indicator) 電波強度 (Unit 単位: dBm) */
-    rssi: number;
-    /** BLE address BLEのアドレス */
-    address: string;
 }
 /** iBS04i management class iBS04iを管理するクラス */
-export default class IBS04I implements ObnizPartsBleInterface {
-    static info(): ObnizPartsBleInfo;
-    /**
-     * Verify that the received peripheral is from the iBS04i
-     *
-     * 受け取ったPeripheralがiBS04iのものかどうかを確認する
-     *
-     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
-     *
-     * @returns Whether it is the iBS04i
-     *
-     * iBS04iかどうか
-     */
-    static isDevice(peripheral: BleRemotePeripheral): boolean;
-    /**
-     * Get a data from the iBS04i
-     *
-     * iBS04iからデータを取得
-     *
-     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
-     *
-     * @returns received data from the iBS04i iBS04iから受け取ったデータ
-     */
-    static getData(peripheral: BleRemotePeripheral): IBS04I_Data | null;
-    private static deviceAdv;
-    private static getDeviceArray;
-    _peripheral: BleRemotePeripheral | null;
+export default class iBS04i extends BaseiBS<iBS04i_Data> {
+    static readonly PartsName = "iBS04i";
+    static readonly CompanyID: number[];
+    static readonly CompanyID_ScanResponse: number[];
+    static readonly BeaconDataLength = 26;
+    static readonly BeaconDataLength_ScanResponse: number;
+    static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS04i_Data>;
+    protected readonly staticClass: typeof iBS04i;
 }

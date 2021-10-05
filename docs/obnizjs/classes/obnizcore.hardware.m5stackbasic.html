@@ -168,6 +168,10 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="obnizcore.hardware.m5stackbasic.html#uart0" class="tsd-kind-icon">uart0</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="obnizcore.hardware.m5stackbasic.html#uart1" class="tsd-kind-icon">uart1</a></li>
 							</ul>
+							<h3>network Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.hardware.m5stackbasic.html#wifi" class="tsd-kind-icon">wifi</a></li>
+							</ul>
 							<h3>plugin Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.hardware.m5stackbasic.html#plugin" class="tsd-kind-icon">plugin</a></li>
@@ -183,6 +187,7 @@
 						<section class="tsd-index-section tsd-is-inherited">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.hardware.m5stackbasic.html#_stoppingloopinbackground" class="tsd-kind-icon">_stop<wbr>Ping<wbr>Loop<wbr>InBackground</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.hardware.m5stackbasic.html#addlistener" class="tsd-kind-icon">add<wbr>Listener</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.hardware.m5stackbasic.html#close" class="tsd-kind-icon">close</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.hardware.m5stackbasic.html#closewait" class="tsd-kind-icon">close<wbr>Wait</a></li>
@@ -228,6 +233,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.hardware.m5stackbasic.html#wait" class="tsd-kind-icon">wait</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-inherited"><a href="obnizcore.hardware.m5stackbasic.html#wired" class="tsd-kind-icon">wired</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="obnizcore.hardware.m5stackbasic.html#partsregistrate" class="tsd-kind-icon">Parts<wbr>Registrate</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="obnizcore.hardware.m5stackbasic.html#getbleparts" class="tsd-kind-icon">get<wbr>Ble<wbr>Parts</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-inherited tsd-is-static"><a href="obnizcore.hardware.m5stackbasic.html#getpartsclass" class="tsd-kind-icon">get<wbr>Parts<wbr>Class</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="obnizcore.hardware.m5stackbasic.html#isipaddress" class="tsd-kind-icon">is<wbr>IpAddress</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="obnizcore.hardware.m5stackbasic.html#isvalidobnizid" class="tsd-kind-icon">is<wbr>Valid<wbr>Obniz<wbr>Id</a></li>
@@ -1168,6 +1174,22 @@ obniz.onconnect = <span class="hljs-function"><span class="hljs-keyword">functio
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
+				<h2>network Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="wifi" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> wifi</h3>
+					<div class="tsd-signature tsd-kind-icon">wifi<span class="tsd-signature-symbol">:</span> <a href="obnizcore.components.wifi.html" class="tsd-signature-type">WiFi</a></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="obnizcore.obnizcomponents.html">ObnizComponents</a>.<a href="obnizcore.obnizcomponents.html#wifi">wifi</a></p>
+						<ul>
+							<li>Defined in src/obniz/ObnizComponents.ts:248</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>plugin Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="plugin" class="tsd-anchor"></a>
@@ -1176,7 +1198,7 @@ obniz.onconnect = <span class="hljs-function"><span class="hljs-keyword">functio
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="obnizcore.obnizcomponents.html">ObnizComponents</a>.<a href="obnizcore.obnizcomponents.html#plugin">plugin</a></p>
 						<ul>
-							<li>Defined in src/obniz/ObnizComponents.ts:248</li>
+							<li>Defined in src/obniz/ObnizComponents.ts:253</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -1245,6 +1267,24 @@ obniz.onconnect = <span class="hljs-function"><span class="hljs-keyword">functio
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="_stoppingloopinbackground" class="tsd-anchor"></a>
+					<h3>_stop<wbr>Ping<wbr>Loop<wbr>InBackground</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">_stop<wbr>Ping<wbr>Loop<wbr>InBackground<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="obnizcore.obnizconnection.html">ObnizConnection</a>.<a href="obnizcore.obnizconnection.html#_stoppingloopinbackground">_stopPingLoopInBackground</a></p>
+								<ul>
+									<li>Defined in src/obniz/ObnizConnection.ts:1274</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a name="addlistener" class="tsd-anchor"></a>
 					<h3>add<wbr>Listener</h3>
@@ -1522,7 +1562,7 @@ obniz.io0.output(<span class="hljs-literal">true</span>);
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="obnizcore.obnizcomponents.html">ObnizComponents</a>.<a href="obnizcore.obnizcomponents.html#getad">getAD</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizComponents.ts:307</li>
+									<li>Defined in src/obniz/ObnizComponents.ts:312</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1553,7 +1593,7 @@ obniz.io0.output(<span class="hljs-literal">true</span>);
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="obnizcore.obnizcomponents.html">ObnizComponents</a>.<a href="obnizcore.obnizcomponents.html#getextrainterface">getExtraInterface</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizComponents.ts:388</li>
+									<li>Defined in src/obniz/ObnizComponents.ts:393</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1577,7 +1617,7 @@ obniz.io0.output(<span class="hljs-literal">true</span>);
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="obnizcore.obnizcomponents.html">ObnizComponents</a>.<a href="obnizcore.obnizcomponents.html#getfreei2c">getFreeI2C</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizComponents.ts:325</li>
+									<li>Defined in src/obniz/ObnizComponents.ts:330</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1600,7 +1640,7 @@ obniz.io0.output(<span class="hljs-literal">true</span>);
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="obnizcore.obnizcomponents.html">ObnizComponents</a>.<a href="obnizcore.obnizcomponents.html#getfreepwm">getFreePwm</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizComponents.ts:318</li>
+									<li>Defined in src/obniz/ObnizComponents.ts:323</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1623,7 +1663,7 @@ obniz.io0.output(<span class="hljs-literal">true</span>);
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="obnizcore.obnizcomponents.html">ObnizComponents</a>.<a href="obnizcore.obnizcomponents.html#getfreespi">getFreeSpi</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizComponents.ts:349</li>
+									<li>Defined in src/obniz/ObnizComponents.ts:354</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1646,7 +1686,7 @@ obniz.io0.output(<span class="hljs-literal">true</span>);
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="obnizcore.obnizcomponents.html">ObnizComponents</a>.<a href="obnizcore.obnizcomponents.html#getfreetcp">getFreeTcp</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizComponents.ts:380</li>
+									<li>Defined in src/obniz/ObnizComponents.ts:385</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1669,7 +1709,7 @@ obniz.io0.output(<span class="hljs-literal">true</span>);
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="obnizcore.obnizcomponents.html">ObnizComponents</a>.<a href="obnizcore.obnizcomponents.html#getfreeuart">getFreeUart</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizComponents.ts:373</li>
+									<li>Defined in src/obniz/ObnizComponents.ts:378</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1692,7 +1732,7 @@ obniz.io0.output(<span class="hljs-literal">true</span>);
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="obnizcore.obnizcomponents.html">ObnizComponents</a>.<a href="obnizcore.obnizcomponents.html#geti2cwithconfig">getI2CWithConfig</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizComponents.ts:334</li>
+									<li>Defined in src/obniz/ObnizComponents.ts:339</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1723,7 +1763,7 @@ obniz.io0.output(<span class="hljs-literal">true</span>);
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="obnizcore.obnizcomponents.html">ObnizComponents</a>.<a href="obnizcore.obnizcomponents.html#getio">getIO</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizComponents.ts:294</li>
+									<li>Defined in src/obniz/ObnizComponents.ts:299</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1754,7 +1794,7 @@ obniz.io0.output(<span class="hljs-literal">true</span>);
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="obnizcore.obnizcomponents.html">ObnizComponents</a>.<a href="obnizcore.obnizcomponents.html#getspiwithconfig">getSpiWithConfig</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizComponents.ts:358</li>
+									<li>Defined in src/obniz/ObnizComponents.ts:363</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1785,7 +1825,7 @@ obniz.io0.output(<span class="hljs-literal">true</span>);
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="obnizcore.obnizcomponents.html">ObnizComponents</a>.<a href="obnizcore.obnizcomponents.html#hasextrainterface">hasExtraInterface</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizComponents.ts:384</li>
+									<li>Defined in src/obniz/ObnizComponents.ts:389</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1809,7 +1849,7 @@ obniz.io0.output(<span class="hljs-literal">true</span>);
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="obnizcore.obnizparts.html">ObnizParts</a>.<a href="obnizcore.obnizparts.html#isvalidad">isValidAD</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizParts.ts:75</li>
+									<li>Defined in src/obniz/ObnizParts.ts:87</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1840,7 +1880,7 @@ obniz.io0.output(<span class="hljs-literal">true</span>);
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="obnizcore.obnizparts.html">ObnizParts</a>.<a href="obnizcore.obnizparts.html#isvalidio">isValidIO</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizParts.ts:66</li>
+									<li>Defined in src/obniz/ObnizParts.ts:78</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2406,7 +2446,7 @@ obniz.resetOnDisconnect(<span class="hljs-literal">false</span>);</code></pre>
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="obnizcore.obnizcomponents.html">ObnizComponents</a>.<a href="obnizcore.obnizcomponents.html#setvccgnd">setVccGnd</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizComponents.ts:269</li>
+									<li>Defined in src/obniz/ObnizComponents.ts:274</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2655,7 +2695,7 @@ led.off();
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="obnizcore.obnizparts.html">ObnizParts</a>.<a href="obnizcore.obnizparts.html#wired">wired</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizParts.ts:85</li>
+									<li>Defined in src/obniz/ObnizParts.ts:97</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2695,7 +2735,7 @@ led.off();
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="obnizcore.obnizparts.html">ObnizParts</a>.<a href="obnizcore.obnizparts.html#partsregistrate">PartsRegistrate</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizParts.ts:32</li>
+									<li>Defined in src/obniz/ObnizParts.ts:44</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2722,6 +2762,30 @@ led.off();
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="getbleparts" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> get<wbr>Ble<wbr>Parts</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Ble<wbr>Parts<span class="tsd-signature-symbol">(</span>peripheral<span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_obniz_obnizpartsbleabstract_.obnizpartsble.html" class="tsd-signature-type">ObnizPartsBle</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="obnizcore.obnizparts.html">ObnizParts</a>.<a href="obnizcore.obnizparts.html#getbleparts">getBleParts</a></p>
+								<ul>
+									<li>Defined in src/obniz/ObnizParts.ts:151</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="_obniz_obnizpartsbleabstract_.obnizpartsble.html" class="tsd-signature-type">ObnizPartsBle</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-inherited tsd-is-static">
 					<a name="getpartsclass" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> get<wbr>Parts<wbr>Class</h3>
@@ -2733,7 +2797,7 @@ led.off();
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="obnizcore.obnizparts.html">ObnizParts</a>.<a href="obnizcore.obnizparts.html#getpartsclass">getPartsClass</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizParts.ts:50</li>
+									<li>Defined in src/obniz/ObnizParts.ts:62</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -3012,6 +3076,9 @@ led.off();
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
 								<a href="obnizcore.hardware.m5stackbasic.html#uart1" class="tsd-kind-icon">uart1</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="obnizcore.hardware.m5stackbasic.html#wifi" class="tsd-kind-icon">wifi</a>
+							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 								<a href="obnizcore.hardware.m5stackbasic.html#prefixed" class="tsd-kind-icon">prefixed</a>
 							</li>
@@ -3020,6 +3087,9 @@ led.off();
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 								<a href="obnizcore.hardware.m5stackbasic.html#version" class="tsd-kind-icon">version</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="obnizcore.hardware.m5stackbasic.html#_stoppingloopinbackground" class="tsd-kind-icon">_stop<wbr>Ping<wbr>Loop<wbr>InBackground</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="obnizcore.hardware.m5stackbasic.html#addlistener" class="tsd-kind-icon">add<wbr>Listener</a>
@@ -3155,6 +3225,9 @@ led.off();
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 								<a href="obnizcore.hardware.m5stackbasic.html#partsregistrate" class="tsd-kind-icon">Parts<wbr>Registrate</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+								<a href="obnizcore.hardware.m5stackbasic.html#getbleparts" class="tsd-kind-icon">get<wbr>Ble<wbr>Parts</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-inherited tsd-is-static">
 								<a href="obnizcore.hardware.m5stackbasic.html#getpartsclass" class="tsd-kind-icon">get<wbr>Parts<wbr>Class</a>

@@ -2,16 +2,16 @@
  * @packageDocumentation
  * @module Parts.iBS03T
  */
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
-export interface IBS03TOptions {
+import { ObnizBleBeaconStruct } from '../../../obniz/ObnizPartsBleAbstract';
+import { BaseiBS } from '../utils/abstracts/iBS';
+export interface iBS03TOptions {
 }
 /**
- * advertisement data from IBS03T
+ * advertisement data from iBS03T
  *
- * IBS03Tからのadvertisementデータ
+ * iBS03Tからのadvertisementデータ
  */
-export interface IBS03T_Data {
+export interface iBS03T_Data {
     /** battery 電源電圧 (Unit 単位: 0.01 V) */
     battery: number;
     /**
@@ -28,29 +28,8 @@ export interface IBS03T_Data {
     temperature: number;
 }
 /** iBS03T management class iBS03Tを管理するクラス */
-export default class IBS03T implements ObnizPartsBleInterface {
-    static info(): ObnizPartsBleInfo;
-    /**
-     * Verify that the received peripheral is from the iBS03T
-     *
-     * 受け取ったPeripheralがiBS03Tのものかどうかを確認する
-     *
-     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
-     * @returns Whether it is the iBS03T
-     *
-     * iBS03Tかどうか
-     */
-    static isDevice(peripheral: BleRemotePeripheral): boolean;
-    /**
-     * Get a data from the iBS03T
-     *
-     * iBS03Tからデータを取得
-     *
-     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
-     *
-     * @returns received data from the iBS03T iBS03Tから受け取ったデータ
-     */
-    static getData(peripheral: BleRemotePeripheral): IBS03T_Data | null;
-    private static deviceAdv;
-    _peripheral: BleRemotePeripheral | null;
+export default class iBS03T extends BaseiBS<iBS03T_Data> {
+    static readonly PartsName = "iBS03T";
+    static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS03T_Data>;
+    protected readonly staticClass: typeof iBS03T;
 }

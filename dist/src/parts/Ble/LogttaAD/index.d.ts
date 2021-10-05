@@ -3,7 +3,8 @@
  * @module Parts.Logtta_AD
  */
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
+import { ObnizBleBeaconStruct, ObnizPartsBleCompare } from '../../../obniz/ObnizPartsBleAbstract';
+import Logtta from '../utils/abstracts/Logtta';
 export interface Logtta_ADOptions {
 }
 /**
@@ -11,7 +12,28 @@ export interface Logtta_ADOptions {
  *
  * Logtta_ADからの受け取ったデータ
  */
-export interface Logtta_AD_Data {
+export interface Logtta_AD_Data extends Logtta_AD_Connected_Data {
+    /**
+     * remaining battery 電池残量
+     *
+     * Range 範囲: 0~100 (Unit 単位: 1 %)
+     *
+     * 254: USB power supply USB給電
+     */
+    battery: number;
+    /**
+     * measurement interval 測定周期
+     *
+     * Range 範囲: 1~2100 (Unit 単位: 1 s)
+     */
+    interval: number;
+}
+/**
+ * the current value and voltage value data from Logtta_AD
+ *
+ * Logtta_ADからの電流電圧受け取ったデータ
+ */
+export interface Logtta_AD_Connected_Data {
     /**
      * 電流値 current value
      *
@@ -28,9 +50,16 @@ export interface Logtta_AD_Data {
     count: number;
 }
 /** Logtta_AD management class Logtta_ADを管理するクラス */
-export default class Logtta_AD implements ObnizPartsBleInterface {
-    static info(): ObnizPartsBleInfo;
+export default class Logtta_AD extends Logtta<Logtta_AD_Data, Logtta_AD_Connected_Data> {
+    static readonly PartsName = "Logtta_AD";
+    static readonly ServiceUuids: {
+        Connectable: string;
+        Beacon: null;
+    };
+    static readonly BeaconDataStruct: ObnizPartsBleCompare<ObnizBleBeaconStruct<Logtta_AD_Data> | null>;
     /**
+     * @deprecated
+     *
      * Verify that the received peripheral is from the Logtta_AD
      *
      * 受け取ったPeripheralがLogtta_ADのものかどうかを確認する
@@ -42,33 +71,9 @@ export default class Logtta_AD implements ObnizPartsBleInterface {
      * Logtta_ADかどうか
      */
     static isDevice(peripheral: BleRemotePeripheral): boolean;
-    private static get_uuid;
-    onNotify?: (data: Logtta_AD_Data) => void;
-    _peripheral: null | BleRemotePeripheral;
-    ondisconnect?: (reason: any) => void;
-    constructor(peripheral: BleRemotePeripheral | null);
-    /**
-     * Connect to the Logtta_AD
-     *
-     * Logtta_ADに接続
-     */
-    connectWait(): Promise<void>;
-    /**
-     * Disconnect from the Logtta_AD
-     *
-     * Logtta_ADとの接続を解除
-     */
-    disconnectWait(): Promise<void>;
-    /**
-     * Get all data available from the Logtta_AD
-     *
-     * Logtta_ADから取得可能なデータを全て取得
-     *
-     * @returns all data available from the Logtta_AD
-     *
-     * Logtta_ADから受け取った全てのデータ
-     */
-    getAllWait(): Promise<Logtta_AD_Data | null>;
+    protected static parseAmpereData(data: number[], func?: (value: number[]) => number): number;
+    protected static parseVoltData(data: number[], func?: (value: number[]) => number): number;
+    protected readonly staticClass: typeof Logtta_AD;
     /**
      * Get the current value from the Logtta_AD
      *
@@ -100,11 +105,16 @@ export default class Logtta_AD implements ObnizPartsBleInterface {
      */
     getCountWait(): Promise<number>;
     /**
-     * Notify when the data have got from the Logtta_AD
+     * @deprecated
      *
-     * Logtta_ADからデータを取得したとき通知
+     * Get all data available from the Logtta_AD
      *
-     * @returns
+     * Logtta_ADから取得可能なデータを全て取得
+     *
+     * @returns all data available from the Logtta_AD
+     *
+     * Logtta_ADから受け取った全てのデータ
      */
-    startNotifyWait(): Promise<void>;
+    getAllWait(): Promise<Logtta_AD_Connected_Data | null>;
+    protected parseData(data: number[]): Logtta_AD_Connected_Data;
 }

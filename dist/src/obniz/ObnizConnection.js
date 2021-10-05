@@ -459,6 +459,7 @@ class ObnizConnection extends eventemitter3_1.default {
         if (this.autoConnect) {
             this._startAutoConnectLoopInBackground();
         }
+        this._stopPingLoopInBackground();
     }
     wsOnError(event) {
         this._print_debug(`ws onerror event=${event}`);
@@ -476,13 +477,17 @@ class ObnizConnection extends eventemitter3_1.default {
         this.connectionState = 'connecting';
         await this._connectCloudWait(desired_server);
         try {
+            let localConnectTimeoutRef;
             const localConnectTimeout = new Promise((resolve, reject) => {
                 const localConnectTimeoutError = new Error('Cannot use local_connect because the connection was timeouted');
-                setTimeout(() => {
+                localConnectTimeoutRef = setTimeout(() => {
                     reject(localConnectTimeoutError);
                 }, 3000);
             });
             await Promise.race([localConnectTimeout, this._connectLocalWait()]);
+            if (localConnectTimeoutRef) {
+                clearTimeout(localConnectTimeoutRef);
+            }
         }
         catch (e) {
             // cannot connect local
@@ -963,6 +968,12 @@ class ObnizConnection extends eventemitter3_1.default {
                 }
             }
         }, 0);
+    }
+    _stopPingLoopInBackground() {
+        if (this._nextPingTimeout) {
+            clearTimeout(this._nextPingTimeout);
+            this._nextPingTimeout = null;
+        }
     }
     throwErrorIfOffline() {
         if (this.connectionState !== 'connected') {

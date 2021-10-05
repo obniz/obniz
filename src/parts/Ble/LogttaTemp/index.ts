@@ -4,51 +4,25 @@
  */
 /* eslint rulesdir/non-ascii: 0 */
 
+import { deprecate } from 'util';
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, {
-  ObnizPartsBleInfo,
-} from '../../../obniz/ObnizPartsBleInterface';
+import {
+  ObnizBleBeaconStruct,
+  ObnizPartsBleCompare,
+  ObnizPartsBleMode,
+  uint,
+  uintBE,
+} from '../../../obniz/ObnizPartsBleAbstract';
+import Logtta from '../utils/abstracts/Logtta';
 
 export interface Logtta_THOptions {}
 
 /**
- * data from Logtta_TH(Logtta_Temp) with connected state
+ * data from Logtta_TH(Logtta_Temp)
  *
- * 接続した状態でのLogtta_TH(Logtta_Temp)からのデータ
+ * Logtta_TH(Logtta_Temp)からのデータ
  */
-export interface Logtta_TH_Data {
-  /**
-   * temperature 温度
-   *
-   * Range 範囲: -20~60 (Unit 単位: degC)
-   */
-  temperature: number;
-  /**
-   * relative humidity 湿度
-   *
-   * Range 範囲 0~100 (Unit 単位: %RH)
-   */
-  humidity: number;
-}
-
-/**
- * advertisement data from Logtta_TH(Logtta_Temp)
- *
- * Logtta_TH(Logtta_Temp)からのadvertisementデータ
- */
-export interface Logtta_TH_Adv_Data {
-  /**
-   * temperature 温度
-   *
-   * Range 範囲: -20~60 (Unit 単位: degC)
-   */
-  temperature: number;
-  /**
-   * relative humidity 湿度
-   *
-   * Range 範囲 0~100 (Unit 単位: %RH)
-   */
-  humidity: number;
+export interface Logtta_TH_Data extends Logtta_TH_Connected_Data {
   /**
    * remaining battery 電池残量
    *
@@ -64,7 +38,27 @@ export interface Logtta_TH_Adv_Data {
    */
   interval: number;
   /** BLE address BLEアドレス */
-  address: string;
+  address: string; // TODO: delete
+}
+
+/**
+ * temperature and humidity data from Logtta_TH(Logtta_Temp)
+ *
+ * Logtta_TH(Logtta_Temp)からの音湿度データ
+ */
+export interface Logtta_TH_Connected_Data {
+  /**
+   * temperature 温度
+   *
+   * Range 範囲: -20~60 (Unit 単位: degC)
+   */
+  temperature: number;
+  /**
+   * relative humidity 湿度
+   *
+   * Range 範囲 0~100 (Unit 単位: %RH)
+   */
+  humidity: number;
 }
 
 /**
@@ -72,14 +66,85 @@ export interface Logtta_TH_Adv_Data {
  *
  * Logtta_TH(Logtta_Temp)を管理するクラス
  */
-export default class Logtta_TH implements ObnizPartsBleInterface {
-  public static info(): ObnizPartsBleInfo {
-    return {
-      name: 'Logtta_TH',
-    };
+export default class Logtta_TH extends Logtta<
+  Logtta_TH_Data,
+  Logtta_TH_Connected_Data
+> {
+  public static readonly PartsName = 'Logtta_TH';
+
+  public static readonly AvailableBleMode: ObnizPartsBleMode[] = [
+    'Connectable',
+    'Beacon',
+  ];
+
+  public static readonly LocalName = {
+    Connectable: undefined,
+    Beacon: /null/,
+  };
+
+  public static readonly ServiceUuids = {
+    Connectable: 'f7eeaa20-276e-4165-aa69-7e3de7fc627e',
+    Beacon: null,
+  };
+
+  public static readonly BeaconDataStruct: ObnizPartsBleCompare<ObnizBleBeaconStruct<Logtta_TH_Data> | null> = {
+    Connectable: null,
+    Beacon: {
+      appearance: {
+        index: 0,
+        type: 'check',
+        data: 0x01,
+      },
+      temperature: {
+        index: 1,
+        length: 2,
+        type: 'custom',
+        func: (data) => Logtta_TH.parseTemperatureData(data, uintBE),
+      },
+      humidity: {
+        index: 3,
+        length: 2,
+        type: 'custom',
+        func: (data) => Logtta_TH.parseHumidityData(data, uintBE),
+      },
+      battery: {
+        index: 5,
+        type: 'unsignedNumBE',
+      },
+      interval: {
+        index: 6,
+        length: 2,
+        type: 'unsignedNumBE',
+      },
+      /* alert: {
+        index: 7,
+        type: 'uint8',
+      },
+      name: {
+        index: 8,
+        length: 15,
+        type: 'string',
+      } */
+      // TODO: delete
+      address: {
+        index: 0,
+        type: 'custom',
+        func: (data, peripheral) => peripheral.address,
+      },
+    },
+  };
+
+  protected static parseTemperatureData(data: number[], func = uint): number {
+    return (func(data) / 0x10000) * 175.72 - 46.85;
+  }
+
+  protected static parseHumidityData(data: number[], func = uint): number {
+    return (func(data) / 0x10000) * 125 - 6;
   }
 
   /**
+   * @deprecated
+   *
    * Verify that the received peripheral is from the Logtta_TH(Logtta_Temp)
    *
    * 受け取ったPeripheralがLogtta_TH(Logtta_Temp)のものかどうかを確認する
@@ -90,14 +155,16 @@ export default class Logtta_TH implements ObnizPartsBleInterface {
    *
    * Logtta_TH(Logtta_Temp)かどうか
    */
-  public static isDevice(peripheral: BleRemotePeripheral) {
-    return peripheral.localName === 'TH Sensor';
+  public static isDevice(peripheral: BleRemotePeripheral): boolean {
+    return this.getDeviceMode(peripheral) === 'Connectable';
   }
 
   /**
-   * Verify that the received advertisement is from the Logtta_TH(Logtta_Temp)
+   * @deprecated
    *
-   * 受け取ったAdvertisementがLogtta_TH(Logtta_Temp)のものかどうか確認する
+   * Verify that the received advertisement is from the Logtta_TH(Logtta_Temp) (in Beacon Mode)
+   *
+   * 受け取ったAdvertisementがLogtta_TH(Logtta_Temp)のものかどうか確認する(ビーコンモード中)
    *
    * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
    *
@@ -105,132 +172,29 @@ export default class Logtta_TH implements ObnizPartsBleInterface {
    *
    * Logtta_TH(Logtta_Temp)かどうか
    */
-  public static isAdvDevice(peripheral: BleRemotePeripheral) {
-    if (peripheral.adv_data.length !== 31) {
-      return false;
-    }
-    const data = peripheral.adv_data;
-    if (
-      data[5] !== 0x10 ||
-      data[6] !== 0x05 ||
-      data[7] !== 0x01 ||
-      data[16] !== 0x54 ||
-      data[17] !== 0x48
-    ) {
-      // CompanyID, Appearance, "T" "H"
-      return false;
-    }
-    return true;
+  public static isAdvDevice(peripheral: BleRemotePeripheral): boolean {
+    return this.getDeviceMode(peripheral) === 'Beacon';
   }
 
+  protected readonly staticClass = Logtta_TH;
+
   /**
-   * Get a data from the Logtta_TH(Logtta_Temp) advertisement
+   * @deprecated
    *
-   * Logtta_TH(Logtta_Temp)のadvertisementからデータを取得
+   * Get all data with connected state
    *
-   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   * 接続している状態で全てのデータを取得
    *
-   * @returns received data from the Logtta_TH(Logtta_Temp) advertisement
+   * @returns all data from the Logtta_TH(Logtta_Temp)
    *
-   * Logtta_TH(Logtta_Temp)のadvertisementからのデータ
+   * Logtta_TH(Logtta_Temp)から受け取った全てのデータ
    */
-  public static getData(
-    peripheral: BleRemotePeripheral
-  ): Logtta_TH_Adv_Data | null {
-    if (!this.isAdvDevice(peripheral)) {
+  public async getAllWait(): Promise<Logtta_TH_Connected_Data | null> {
+    try {
+      return await this.getDataWait();
+    } catch {
       return null;
     }
-    const data = peripheral.adv_data;
-    const alert: number = data[15];
-    const interval: number = (data[13] << 8) | data[14];
-    const advData: Logtta_TH_Adv_Data = {
-      battery: data[12],
-      temperature: (((data[8] << 8) | data[9]) / 65536) * 175.72 - 46.85,
-      humidity: (((data[10] << 8) | data[11]) / 65536) * 125 - 6,
-      interval,
-      address: peripheral.address,
-    };
-    return advData;
-  }
-
-  private static getName(data: number[]) {
-    let name = '';
-    for (let i = 16; i < data.length; i++) {
-      if (data[i] === 0) {
-        break;
-      }
-      name += String.fromCharCode(data[i]);
-    }
-    return name;
-  }
-
-  private static get_uuid(uuid: string): string {
-    return `f7ee${uuid}-276e-4165-aa69-7e3de7fc627e`;
-  }
-
-  public onNotify?: (data: Logtta_TH_Data) => void;
-  public _peripheral: null | BleRemotePeripheral;
-  public ondisconnect?: (reason: any) => void;
-
-  constructor(peripheral: BleRemotePeripheral | null) {
-    if (peripheral && !Logtta_TH.isDevice(peripheral)) {
-      throw new Error('peripheral is not logtta TH');
-    }
-    this._peripheral = peripheral;
-  }
-
-  /**
-   * Connect the sensor
-   *
-   * センサへ接続
-   */
-  public async connectWait() {
-    if (!this._peripheral) {
-      throw new Error('Logtta TH not found');
-    }
-    if (!this._peripheral.connected) {
-      this._peripheral.ondisconnect = (reason: any) => {
-        if (typeof this.ondisconnect === 'function') {
-          this.ondisconnect(reason);
-        }
-      };
-      await this._peripheral.connectWait();
-    }
-  }
-
-  /**
-   * Disconnect from the sensor
-   *
-   * センサとの接続を切断
-   */
-  public async disconnectWait() {
-    if (this._peripheral && this._peripheral.connected) {
-      await this._peripheral.disconnectWait();
-    }
-  }
-
-  /**
-   * Get the both temperature and humidity data with connected state
-   *
-   * 接続している状態で温度と湿度の両方のデータを取得
-   *
-   * @returns both temperature and humidity data from the Logtta_TH(Logtta_Temp)
-   *
-   * Logtta_TH(Logtta_Temp)から受け取った温度と湿度の両方のデータ
-   */
-  public async getAllWait(): Promise<Logtta_TH_Data | null> {
-    if (!(this._peripheral && this._peripheral.connected)) {
-      return null;
-    }
-
-    const c = this._peripheral
-      .getService(Logtta_TH.get_uuid('AA20'))!
-      .getCharacteristic(Logtta_TH.get_uuid('AA21'));
-    const data: number[] = await c!.readWait();
-    return {
-      temperature: (((data[0] << 8) | data[1]) / 65536) * 175.72 - 46.85,
-      humidity: (((data[2] << 8) | data[3]) / 65536) * 125 - 6,
-    };
   }
 
   /**
@@ -243,7 +207,7 @@ export default class Logtta_TH implements ObnizPartsBleInterface {
    * Logtta_TH(Logtta_Temp)から受け取った温度データ
    */
   public async getTemperatureWait(): Promise<number> {
-    return (await this.getAllWait())!.temperature;
+    return (await this.getDataWait()).temperature;
   }
 
   /**
@@ -256,80 +220,12 @@ export default class Logtta_TH implements ObnizPartsBleInterface {
    * Logtta_TH(Logtta_Temp)から受け取った湿度データ
    */
   public async getHumidityWait(): Promise<number> {
-    return (await this.getAllWait())!.humidity;
+    return (await this.getDataWait()).humidity;
   }
 
   /**
-   * Notify when the data have got from the Logtta_TH(Logtta_Temp) with connected state
+   * @deprecated
    *
-   * 接続している状態でLogtta_TH(Logtta_Temp)からデータを取得したとき通知
-   *
-   * @returns
-   */
-  public async startNotifyWait() {
-    if (!(this._peripheral && this._peripheral.connected)) {
-      return;
-    }
-
-    const c = this._peripheral
-      .getService(Logtta_TH.get_uuid('AA20'))!
-      .getCharacteristic(Logtta_TH.get_uuid('AA21'));
-
-    await c!.registerNotifyWait((data: number[]) => {
-      if (this.onNotify) {
-        this.onNotify({
-          temperature: (((data[0] << 8) | data[1]) / 65536) * 175.72 - 46.85,
-          humidity: (((data[2] << 8) | data[3]) / 65536) * 125 - 6,
-        });
-      }
-    });
-  }
-
-  /**
-   * Authenticate with the sensor using pin code
-   *
-   * ピンコードによってセンサと認証
-   *
-   * @param code pin code (default: "0000")
-   *
-   * ピンコード (デフォルト: "0000")
-   *
-   * @returns
-   */
-  public async authPinCodeWait(code: string) {
-    if (!(this._peripheral && this._peripheral.connected)) {
-      return;
-    }
-
-    if (code.length !== 4) {
-      throw new Error('Invalid length auth code');
-    }
-
-    const data: [number] = [0];
-    for (let i = 0; i < code.length; i += 2) {
-      data.push(
-        (this.checkNumber(code.charAt(i)) << 4) |
-          this.checkNumber(code.charAt(i + 1))
-      );
-    }
-    const c = this._peripheral
-      .getService(Logtta_TH.get_uuid('AA20'))!
-      .getCharacteristic(Logtta_TH.get_uuid('AA30'));
-    await c!.writeWait(data);
-  }
-
-  /**
-   * @deprecated Please use {@linkplain setBeaconModeWait}
-   *
-   * {@linkplain setBeaconModeWait} の使用を推奨
-   *
-   * @param enable enable the beacon mode or not ビーコンモードを有効にするかどうか
-   */
-  public setBeaconMode(enable: boolean) {
-    return this.setBeaconModeWait(enable);
-  }
-
-  /**
    * Set enable / disable for beacon mode (periodic beacon transmission)
    *
    * Call this function after authenticating with the sensor
@@ -352,28 +248,14 @@ export default class Logtta_TH implements ObnizPartsBleInterface {
    *
    * @returns
    */
-  public async setBeaconModeWait(enable: boolean) {
-    if (!(this._peripheral && this._peripheral.connected)) {
-      return;
-    }
-
-    const c = this._peripheral
-      .getService(Logtta_TH.get_uuid('AA20'))!
-      .getCharacteristic(Logtta_TH.get_uuid('AA2D'));
-    if (enable) {
-      await c!.writeWait([1]);
-    } else {
-      await c!.writeWait([0]);
-    }
+  public setBeaconMode(enable: boolean): Promise<boolean> {
+    return this.setBeaconModeWait(enable);
   }
 
-  private checkNumber(data: string) {
-    if (data >= '0' && data <= '9') {
-      return parseInt(data, 10);
-    } else {
-      throw new Error(
-        `authorization code can only be entered from 0-9.input word : ${data}`
-      );
-    }
+  protected parseData(data: number[]): Logtta_TH_Connected_Data {
+    return {
+      temperature: Logtta_TH.parseTemperatureData(data.slice(0, 2)),
+      humidity: Logtta_TH.parseHumidityData(data.slice(2, 4)),
+    };
   }
 }

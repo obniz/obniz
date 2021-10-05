@@ -1,56 +1,35 @@
 # iBS01RG
 
-acceleration sensor by INGICS.
-
-Support device
-
-- iBS01RG
+3-axis acceleration sensor by INGICS
 
 ![](image.jpg)
 
+## Available modes
 
-## getPartsClass(name)
+- Beacon mode
+
+## Beacon data (getData())
+
+- battery: Battery voltage
+- button: True when you press the button
+- active: True when moved
+- acceleration: X, Y, Z axis of acceleration
+
+## Use case
 
 ```javascript
-// Javascript Example
-const IBS01RG = Obniz.getPartsClass('iBS01RG');
-```
-
-## isDevice(BleRemotePeripheral)
-
-Returns true if a device was found.
-
-```javascript
-// Javascript Example
-const IBS01RG = Obniz.getPartsClass('iBS01RG');
+// Javascript
+const iBS01RG = Obniz.getPartsClass('iBS01RG');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (IBS01RG.isDevice(p)) {
-        let data = IBS01RG.getData(p);
-        console.log(data);
-    }
-};
-await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
-```
-
-## getData(BleRemotePeripheral)
-
-Returns device information if found. Returns Null if not found.
-
-- battery : Battery voltage
-- button : button status
-- active : active status
-- acceleration : acceleration array
-
-```javascript
-// Javascript Example
-const IBS01RG = Obniz.getPartsClass('iBS01RG');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (IBS01RG.isDevice(p)) {
-        let data = IBS01RG.getData(p);
-        console.log(data);
-    }
+obniz.ble.scan.onfind = (peripheral) => {
+  // Get operation mode, it becomes null when not iBS01RG
+  const mode = iBS01RG.getDeviceMode(peripheral);
+  if (mode) {
+    // Generate an instance
+    const device = new iBS01RG(peripheral, mode);
+    // Get data and output to the console
+    console.log(device.getData());
+  }
 };
 await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
