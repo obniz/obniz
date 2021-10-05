@@ -85,7 +85,7 @@ export interface BleConnectSetting {
      *
      * Default : 256
      */
-    mtu?: null | number;
+    mtuRequest?: null | number;
 }
 /**
  * Pairing options
