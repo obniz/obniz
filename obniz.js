@@ -49143,6 +49143,10 @@ class DCMotor {
     constructor() {
         this.keys = ['forward', 'back'];
         this.requiredKeys = ['forward', 'back'];
+        this.status = {
+            direction: null,
+            power: 30,
+        };
     }
     static info() {
         return {
@@ -49150,70 +49154,81 @@ class DCMotor {
         };
     }
     wired(obniz) {
-        this.status = {
-            direction: null,
-            power: null,
-        };
-        this.pwm1_io_num = this.params.forward;
-        this.pwm2_io_num = this.params.back;
-        this.pwm1 = obniz.getFreePwm();
-        this.pwm1.start({ io: this.pwm1_io_num });
-        this.pwm1.freq(100000);
-        this.pwm2 = obniz.getFreePwm();
-        this.pwm2.start({ io: this.pwm2_io_num });
-        this.pwm2.freq(100000);
-        this.power(30);
+        this.obniz = obniz;
+        this.forward_io_num = this.params.forward;
+        this.back_io_num = this.params.back;
+        this.pwm = obniz.getFreePwm();
+        this.setPwmGndPin(this.forward_io_num, this.back_io_num);
     }
     // Module functions
+    /**
+     * Start rotation to the forward direction.
+     */
     forward() {
         this.move(true);
     }
+    /**
+     * Start rotation to the reverse direction.
+     */
     reverse() {
         this.move(false);
     }
+    /**
+     * Stop rotation.
+     */
     stop() {
         if (this.status.direction === null) {
             return;
         }
         this.status.direction = null;
-        this.pwm1.duty(0);
-        this.pwm2.duty(0);
+        this.pwm.duty(0);
     }
+    /**
+     * Start rotation by specifying rotation direction.
+     *
+     * @param forward true is forward rotation, and false is reverse rotation.
+     */
     move(forward) {
-        if (forward) {
-            if (this.status.direction === true) {
+        if (forward === undefined) {
+            if (this.status.direction === null) {
                 return;
             }
-            this.status.direction = true;
         }
         else {
-            if (this.status.direction === false) {
+            if (this.status.direction === forward) {
                 return;
             }
-            this.status.direction = false;
+            this.status.direction = forward;
         }
-        const power = this.power();
-        this.power(0);
-        this.power(power);
+        const pwm_io = this.status.direction
+            ? this.forward_io_num
+            : this.back_io_num;
+        const gnd_io = this.status.direction
+            ? this.back_io_num
+            : this.forward_io_num;
+        this.setPwmGndPin(pwm_io, gnd_io);
+        this.pwm.duty(this.status.power);
     }
+    /**
+     * Set the motor power.
+     *
+     * @param power Specify between 0 and 100.
+     */
     power(power) {
-        if (power === undefined) {
-            return this.status.power;
-        }
         this.status.power = power;
-        if (this.status.direction === null) {
-            this.pwm1.duty(0);
-            this.pwm2.duty(0);
-            return;
+        if (this.status.direction !== null) {
+            this.pwm.duty(this.status.power);
         }
-        if (this.status.direction) {
-            this.pwm1.duty(power);
-            this.pwm2.duty(0);
-        }
-        else {
-            this.pwm1.duty(0);
-            this.pwm2.duty(power);
-        }
+    }
+    setPwmGndPin(pwm_io, gnd_io) {
+        var _a;
+        this.pwm.start({ io: pwm_io });
+        this.pwm.freq(100000);
+        this.obniz.getIO(gnd_io).output(false);
+        (_a = this.obniz.display) === null || _a === void 0 ? void 0 : _a.setPinNames(DCMotor.info().name, {
+            [this.forward_io_num]: 'forward',
+            [this.back_io_num]: 'back',
+        });
     }
 }
 exports.default = DCMotor;
@@ -72480,7 +72495,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
+module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
 
 /***/ }),
 
