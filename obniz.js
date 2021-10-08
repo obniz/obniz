@@ -316,12 +316,12 @@ var map = {
 	"./request/io/output_detail.yml": "./dist/src/json_schema/request/io/output_detail.yml",
 	"./request/io/output_type.yml": "./dist/src/json_schema/request/io/output_type.yml",
 	"./request/io/pull_type.yml": "./dist/src/json_schema/request/io/pull_type.yml",
-	"./request/ioanimation/changeState.yml": "./dist/src/json_schema/request/ioanimation/changeState.yml",
-	"./request/ioanimation/index.yml": "./dist/src/json_schema/request/ioanimation/index.yml",
-	"./request/ioanimation/init.yml": "./dist/src/json_schema/request/ioanimation/init.yml",
-	"./request/logicanalyzer/deinit.yml": "./dist/src/json_schema/request/logicanalyzer/deinit.yml",
-	"./request/logicanalyzer/index.yml": "./dist/src/json_schema/request/logicanalyzer/index.yml",
-	"./request/logicanalyzer/init.yml": "./dist/src/json_schema/request/logicanalyzer/init.yml",
+	"./request/ioAnimation/changeState.yml": "./dist/src/json_schema/request/ioAnimation/changeState.yml",
+	"./request/ioAnimation/index.yml": "./dist/src/json_schema/request/ioAnimation/index.yml",
+	"./request/ioAnimation/init.yml": "./dist/src/json_schema/request/ioAnimation/init.yml",
+	"./request/logicAnalyzer/deinit.yml": "./dist/src/json_schema/request/logicAnalyzer/deinit.yml",
+	"./request/logicAnalyzer/index.yml": "./dist/src/json_schema/request/logicAnalyzer/index.yml",
+	"./request/logicAnalyzer/init.yml": "./dist/src/json_schema/request/logicAnalyzer/init.yml",
 	"./request/measure/echo.yml": "./dist/src/json_schema/request/measure/echo.yml",
 	"./request/measure/index.yml": "./dist/src/json_schema/request/measure/index.yml",
 	"./request/message/index.yml": "./dist/src/json_schema/request/message/index.yml",
@@ -894,42 +894,42 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/request/ioanimation/changeState.yml":
+/***/ "./dist/src/json_schema/request/ioAnimation/changeState.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/changeState","type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","enum":["pause","resume"]}}}}}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/request/ioanimation/index.yml":
+/***/ "./dist/src/json_schema/request/ioAnimation/index.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation","basePath":"io","anyOf":[{"$ref":"/request/ioAnimation/init"},{"$ref":"/request/ioAnimation/changeState"}]}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/request/ioanimation/init.yml":
+/***/ "./dist/src/json_schema/request/ioAnimation/init.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/init","commandExample":{"io":{"animation":{"name":"animation-1","status":"loop","states":[{"duration":500,"state":{"io0":true}},{"duration":500,"state":{"io0":false}}]}}},"type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status","states"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"repeat":{"type":"integer","minLength":1,"maxLength":4294967295,"default":"undefined"},"status":{"type":"string","default":"loop","enum":["loop","registrate"]},"states":{"type":"array","default":[],"items":{"type":"object","required":["duration","state"],"additionalProperties":false,"properties":{"duration":{"type":"integer","minimum":0,"maximum":60000},"state":{"type":["object","array"],"filter":"pass_all"}}}}}}}}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/request/logicanalyzer/deinit.yml":
+/***/ "./dist/src/json_schema/request/logicAnalyzer/deinit.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/logicAnalyzer/deinit","type":"null"}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/request/logicanalyzer/index.yml":
+/***/ "./dist/src/json_schema/request/logicAnalyzer/index.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/logicAnalyzer","basePath":"logic_analyzer","anyOf":[{"$ref":"/request/logicAnalyzer/init"},{"$ref":"/request/logicAnalyzer/deinit"}]}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/request/logicanalyzer/init.yml":
+/***/ "./dist/src/json_schema/request/logicAnalyzer/init.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/logicAnalyzer/init","exampleDescription":"With below sample code, you will receive only data which start with 'false, false, false' 3bit.","type":"object","required":["io","interval","duration"],"properties":{"io":{"type":"array","minItems":1,"maxItems":1,"items":{"$ref":"/pinSetting"}},"interval":{"type":"number","minimum":0,"exclusiveMinimum":true},"duration":{"type":"integer","minimum":0,"exclusiveMinimum":true},"trigger":{"type":"object","additionalProperties":false,"required":["value","samples"],"default":{"value":false,"samples":0},"properties":{"value":{"type":"boolean","default":false},"samples":{"type":"integer","minimum":0,"default":0}}}}}

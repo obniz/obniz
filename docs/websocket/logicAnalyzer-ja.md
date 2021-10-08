@@ -62,41 +62,7 @@ With below sample code, you will receive only data which start with &#39;false, 
 
 
 
-##  response: <a name="-response-logicanalyzer-data">data</a>
-
-
-
-
-| path | type | conditions  | description |
-|:---- |:---- |:---- |:---- |
-| `logic_analyzer.data` | [bitArray](#bitarray)  | <ul><li>required</li></ul> | &nbsp; |
-
-
-
-```
-//Response Example
-[
-    {
-        "logic_analyzer": {
-            "data": [0, 1, 1, 0, 0, 1, 1, 0]
-        }
-    }
-]
-```
-
-
-
-
-
-
 # type defines
-
-
-
-##  <a name="bitarray">bitArray</a>
-| type | conditions | examples | description |
-|:----|:----|:----|:----|
-| array | <ul><li>items<br/><ul><li>0 &le; value &le; 1</li></ul></li></ul>  |  <ul><li>`[0, 1, 1, 0, 0, 1, 1, 0]`</li><li>`[0, 0, 1, 0, 0, 0, 0, 0]`</li></ul> | Binary data array represented in 0 1.&nbsp; |
 
 
 
