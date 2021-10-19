@@ -27937,7 +27937,7 @@ class iBS03T_RH extends iBS_1.BaseiBS {
 }
 exports.default = iBS03T_RH;
 iBS03T_RH.PartsName = 'iBS03T_RH';
-iBS03T_RH.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, button: iBS_1.BaseiBS.Config.button, moving: iBS_1.BaseiBS.Config.moving, hall_sensor: iBS_1.BaseiBS.Config.event, temperature: iBS_1.BaseiBS.Config.temperature, humidity: iBS_1.BaseiBS.Config.humidity }, iBS_1.BaseiBS.getUniqueData(3, 0x15));
+iBS03T_RH.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, button: iBS_1.BaseiBS.Config.button, moving: iBS_1.BaseiBS.Config.moving, hall_sensor: iBS_1.BaseiBS.Config.event, temperature: iBS_1.BaseiBS.Config.temperature, humidity: iBS_1.BaseiBS.Config.humidity }, iBS_1.BaseiBS.getUniqueData(3, 0x14));
 
 
 /***/ }),
