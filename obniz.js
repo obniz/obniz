@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.18.0-alpha.1",
+  "version": "3.18.0-alpha.2",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -32810,7 +32810,7 @@ class uPRISM {
                         ((data[8] << 16) | (data[7] << 8) | data[6]) / 128;
                     this.readData.uvi = data[9] / 16;
                     this.readData.pressure =
-                        (data[13] << 16) | (data[12] << 8) | data[11];
+                        ((data[13] << 16) | (data[12] << 8) | data[11]) / 100;
                     this.readData.time.day = data[16];
                     this.readData.time.month = data[17];
                     this.readData.time.year = data[18];
