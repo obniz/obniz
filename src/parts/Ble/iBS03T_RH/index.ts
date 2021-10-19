@@ -27,7 +27,7 @@ export default class iBS03T_RH extends BaseiBS<iBS03T_RH_Data> {
     hall_sensor: BaseiBS.Config.event,
     temperature: BaseiBS.Config.temperature,
     humidity: BaseiBS.Config.humidity,
-    ...BaseiBS.getUniqueData(3, 0x15),
+    ...BaseiBS.getUniqueData(3, 0x14),
   };
 
   protected readonly staticClass = iBS03T_RH;
