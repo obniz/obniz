@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>IBS04I_Data | obniz</title>
+	<title>iBS04i_Data | obniz</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -62,10 +62,10 @@
 					<a href="../modules/parts.ibs04i.html">iBS04i</a>
 				</li>
 				<li>
-					<a href="parts.ibs04i.ibs04i_data.html">IBS04I_Data</a>
+					<a href="parts.ibs04i.ibs04i_data.html">iBS04i_Data</a>
 				</li>
 			</ul>
-			<h1>Interface IBS04I_Data</h1>
+			<h1>Interface iBS04i_Data</h1>
 		</div>
 	</div>
 </header>
@@ -76,7 +76,12 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">IBS04I_Data</span>
+						<a href="obnizcore.components.ble.hci.ibeacon.html" class="tsd-signature-type">IBeacon</a>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">iBS04i_Data</span>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -87,14 +92,13 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.ibs04i.ibs04i_data.html#address" class="tsd-kind-icon">address</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.ibs04i.ibs04i_data.html#battery" class="tsd-kind-icon">battery</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.ibs04i.ibs04i_data.html#button" class="tsd-kind-icon">button</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.ibs04i.ibs04i_data.html#major" class="tsd-kind-icon">major</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.ibs04i.ibs04i_data.html#minor" class="tsd-kind-icon">minor</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.ibs04i.ibs04i_data.html#power" class="tsd-kind-icon">power</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.ibs04i.ibs04i_data.html#rssi" class="tsd-kind-icon">rssi</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.ibs04i.ibs04i_data.html#uuid" class="tsd-kind-icon">uuid</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="parts.ibs04i.ibs04i_data.html#major" class="tsd-kind-icon">major</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="parts.ibs04i.ibs04i_data.html#minor" class="tsd-kind-icon">minor</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="parts.ibs04i.ibs04i_data.html#power" class="tsd-kind-icon">power</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="parts.ibs04i.ibs04i_data.html#rssi" class="tsd-kind-icon">rssi</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="parts.ibs04i.ibs04i_data.html#uuid" class="tsd-kind-icon">uuid</a></li>
 							</ul>
 						</section>
 					</div>
@@ -103,22 +107,12 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="address" class="tsd-anchor"></a>
-					<h3>address</h3>
-					<div class="tsd-signature tsd-kind-icon">address<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in src/parts/Ble/iBS04i/index.ts:21</li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="battery" class="tsd-anchor"></a>
 					<h3>battery</h3>
 					<div class="tsd-signature tsd-kind-icon">battery<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/iBS04i/index.ts:14</li>
+							<li>Defined in src/parts/Ble/iBS04i/index.ts:17</li>
 						</ul>
 					</aside>
 				</section>
@@ -128,59 +122,69 @@
 					<div class="tsd-signature tsd-kind-icon">button<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/iBS04i/index.ts:15</li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="major" class="tsd-anchor"></a>
-					<h3>major</h3>
-					<div class="tsd-signature tsd-kind-icon">major<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in src/parts/Ble/iBS04i/index.ts:17</li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="minor" class="tsd-anchor"></a>
-					<h3>minor</h3>
-					<div class="tsd-signature tsd-kind-icon">minor<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
 							<li>Defined in src/parts/Ble/iBS04i/index.ts:18</li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="major" class="tsd-anchor"></a>
+					<h3>major</h3>
+					<div class="tsd-signature tsd-kind-icon">major<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="obnizcore.components.ble.hci.ibeacon.html">IBeacon</a>.<a href="obnizcore.components.ble.hci.ibeacon.html#major">major</a></p>
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:39</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="minor" class="tsd-anchor"></a>
+					<h3>minor</h3>
+					<div class="tsd-signature tsd-kind-icon">minor<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="obnizcore.components.ble.hci.ibeacon.html">IBeacon</a>.<a href="obnizcore.components.ble.hci.ibeacon.html#minor">minor</a></p>
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:40</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="power" class="tsd-anchor"></a>
 					<h3>power</h3>
 					<div class="tsd-signature tsd-kind-icon">power<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="obnizcore.components.ble.hci.ibeacon.html">IBeacon</a>.<a href="obnizcore.components.ble.hci.ibeacon.html#power">power</a></p>
 						<ul>
-							<li>Defined in src/parts/Ble/iBS04i/index.ts:19</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:41</li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="rssi" class="tsd-anchor"></a>
 					<h3>rssi</h3>
 					<div class="tsd-signature tsd-kind-icon">rssi<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="obnizcore.components.ble.hci.ibeacon.html">IBeacon</a>.<a href="obnizcore.components.ble.hci.ibeacon.html#rssi">rssi</a></p>
 						<ul>
-							<li>Defined in src/parts/Ble/iBS04i/index.ts:20</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:42</li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="uuid" class="tsd-anchor"></a>
 					<h3>uuid</h3>
-					<div class="tsd-signature tsd-kind-icon">uuid<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<div class="tsd-signature tsd-kind-icon">uuid<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.components.ble.hci.html#uuid" class="tsd-signature-type">UUID</a></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="obnizcore.components.ble.hci.ibeacon.html">IBeacon</a>.<a href="obnizcore.components.ble.hci.ibeacon.html#uuid">uuid</a></p>
 						<ul>
-							<li>Defined in src/parts/Ble/iBS04i/index.ts:16</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:38</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>hex string</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -198,7 +202,7 @@
 						<a href="../classes/parts.ibs04i.ibs03r.html" class="tsd-kind-icon">IBS03R</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/parts.ibs04i.ibs04i.html" class="tsd-kind-icon">IBS04I</a>
+						<a href="../classes/parts.ibs04i.ibs04i.html" class="tsd-kind-icon">iBS04i</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="parts.ibs04i.ibs03roptions.html" class="tsd-kind-icon">IBS03ROptions</a>
@@ -207,35 +211,32 @@
 						<a href="parts.ibs04i.ibs03r_data.html" class="tsd-kind-icon">IBS03<wbr>R_<wbr><wbr>Data</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="parts.ibs04i.ibs04ioptions.html" class="tsd-kind-icon">IBS04IOptions</a>
+						<a href="parts.ibs04i.ibs04ioptions.html" class="tsd-kind-icon">iBS04i<wbr>Options</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="parts.ibs04i.ibs04i_data.html" class="tsd-kind-icon">IBS04<wbr>I_<wbr><wbr>Data</a>
+						<a href="parts.ibs04i.ibs04i_data.html" class="tsd-kind-icon">iBS04i_<wbr><wbr>Data</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="parts.ibs04i.ibs04i_data.html#address" class="tsd-kind-icon">address</a>
-							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="parts.ibs04i.ibs04i_data.html#battery" class="tsd-kind-icon">battery</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="parts.ibs04i.ibs04i_data.html#button" class="tsd-kind-icon">button</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="parts.ibs04i.ibs04i_data.html#major" class="tsd-kind-icon">major</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="parts.ibs04i.ibs04i_data.html#minor" class="tsd-kind-icon">minor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="parts.ibs04i.ibs04i_data.html#power" class="tsd-kind-icon">power</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="parts.ibs04i.ibs04i_data.html#rssi" class="tsd-kind-icon">rssi</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="parts.ibs04i.ibs04i_data.html#uuid" class="tsd-kind-icon">uuid</a>
 							</li>
 						</ul>
