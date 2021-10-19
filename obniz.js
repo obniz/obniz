@@ -23079,6 +23079,7 @@ var map = {
 	"./Ble/iBS03R/index.js": "./dist/src/parts/Ble/iBS03R/index.js",
 	"./Ble/iBS03T/index.js": "./dist/src/parts/Ble/iBS03T/index.js",
 	"./Ble/iBS03TP/index.js": "./dist/src/parts/Ble/iBS03TP/index.js",
+	"./Ble/iBS03T_RH/index.js": "./dist/src/parts/Ble/iBS03T_RH/index.js",
 	"./Ble/iBS04/index.js": "./dist/src/parts/Ble/iBS04/index.js",
 	"./Ble/iBS04i/index.js": "./dist/src/parts/Ble/iBS04i/index.js",
 	"./Ble/linking/index.js": "./dist/src/parts/Ble/linking/index.js",
@@ -27913,6 +27914,30 @@ class iBS03TP extends iBS_1.BaseiBS {
 exports.default = iBS03TP;
 iBS03TP.PartsName = 'iBS03TP';
 iBS03TP.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, button: iBS_1.BaseiBS.Config.button, moving: iBS_1.BaseiBS.Config.moving, hall_sensor: iBS_1.BaseiBS.Config.event, temperature: iBS_1.BaseiBS.Config.temperature, probe_temperature: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.temperature), { index: 7 }) }, iBS_1.BaseiBS.getUniqueData(3, 0x17));
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/iBS03T_RH/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS03T_RH
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+class iBS03T_RH extends iBS_1.BaseiBS {
+    constructor() {
+        super(...arguments);
+        this.staticClass = iBS03T_RH;
+    }
+}
+exports.default = iBS03T_RH;
+iBS03T_RH.PartsName = 'iBS03T_RH';
+iBS03T_RH.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, button: iBS_1.BaseiBS.Config.button, moving: iBS_1.BaseiBS.Config.moving, hall_sensor: iBS_1.BaseiBS.Config.event, temperature: iBS_1.BaseiBS.Config.temperature, humidity: iBS_1.BaseiBS.Config.humidity }, iBS_1.BaseiBS.getUniqueData(3, 0x15));
 
 
 /***/ }),
@@ -32785,7 +32810,7 @@ class uPRISM {
                         ((data[8] << 16) | (data[7] << 8) | data[6]) / 128;
                     this.readData.uvi = data[9] / 16;
                     this.readData.pressure =
-                        (data[13] << 16) | (data[12] << 8) | data[11];
+                        ((data[13] << 16) | (data[12] << 8) | data[11]) / 100;
                     this.readData.time.day = data[16];
                     this.readData.time.month = data[17];
                     this.readData.time.year = data[18];
