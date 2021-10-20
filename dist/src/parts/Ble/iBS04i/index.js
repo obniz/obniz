@@ -3,9 +3,11 @@
  * @packageDocumentation
  * @module Parts.iBS04i
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = require("../../../obniz/ObnizPartsBleAbstract");
 const iBS_1 = require("../utils/abstracts/iBS");
+/** iBS04i management class iBS04iを管理するクラス */
 class iBS04i extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);

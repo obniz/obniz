@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>TM551 | obniz</title>
+	<title>Logtta_TH_Connected_Data | obniz</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,36 +56,89 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="parts.html">Parts</a>
+					<a href="../modules/parts.html">Parts</a>
 				</li>
 				<li>
-					<a href="parts.tm551.html">TM551</a>
+					<a href="../modules/parts.logtta_th.html">Logtta_TH</a>
+				</li>
+				<li>
+					<a href="parts.logtta_th.logtta_th_connected_data.html">Logtta_TH_Connected_Data</a>
 				</li>
 			</ul>
-			<h1>External module TM551</h1>
+			<h1>Interface Logtta_TH_Connected_Data</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>temperature and humidity data from Logtta_TH(Logtta_Temp)</p>
+					</div>
+					<p>Logtta_TH(Logtta_Temp)からの音湿度データ</p>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">Logtta_TH_Connected_Data</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<a href="parts.logtta_th.logtta_th_data.html" class="tsd-signature-type">Logtta_TH_Data</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Classes</h3>
+							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/parts.tm551.tm551.html" class="tsd-kind-icon">TM551</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.logtta_th.logtta_th_connected_data.html#humidity" class="tsd-kind-icon">humidity</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.logtta_th.logtta_th_connected_data.html#temperature" class="tsd-kind-icon">temperature</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section ">
-							<h3>Interfaces</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/parts.tm551.tm551options.html" class="tsd-kind-icon">TM551<wbr>Options</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/parts.tm551.tm551_data.html" class="tsd-kind-icon">TM551_<wbr><wbr>Data</a></li>
-							</ul>
-						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="humidity" class="tsd-anchor"></a>
+					<h3>humidity</h3>
+					<div class="tsd-signature tsd-kind-icon">humidity<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/LogttaTemp/index.ts:61</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>relative humidity 湿度</p>
+						</div>
+						<p>Range 範囲 0~100 (Unit 単位: %RH)</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="temperature" class="tsd-anchor"></a>
+					<h3>temperature</h3>
+					<div class="tsd-signature tsd-kind-icon">temperature<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/LogttaTemp/index.ts:55</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>temperature 温度</p>
+						</div>
+						<p>Range 範囲: -20~60 (Unit 単位: degC)</p>
 					</div>
 				</section>
 			</section>
@@ -101,13 +154,28 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/parts.tm551.tm551.html" class="tsd-kind-icon">TM551</a>
+						<a href="../classes/parts.logtta_th.logtta_th.html" class="tsd-kind-icon">Logtta_<wbr>TH</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/parts.tm551.tm551options.html" class="tsd-kind-icon">TM551<wbr>Options</a>
+						<a href="parts.logtta_th.logtta_thoptions.html" class="tsd-kind-icon">Logtta_<wbr>THOptions</a>
 					</li>
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="parts.logtta_th.logtta_th_connected_data.html" class="tsd-kind-icon">Logtta_<wbr>TH_<wbr><wbr>Connected_<wbr><wbr>Data</a>
+						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.logtta_th.logtta_th_connected_data.html#humidity" class="tsd-kind-icon">humidity</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.logtta_th.logtta_th_connected_data.html#temperature" class="tsd-kind-icon">temperature</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/parts.tm551.tm551_data.html" class="tsd-kind-icon">TM551_<wbr><wbr>Data</a>
+						<a href="parts.logtta_th.logtta_th_data.html" class="tsd-kind-icon">Logtta_<wbr>TH_<wbr><wbr>Data</a>
 					</li>
 				</ul>
 			</nav>

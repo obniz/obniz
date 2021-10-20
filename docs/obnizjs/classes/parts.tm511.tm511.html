@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Logtta_TH_Adv_Data | obniz</title>
+	<title>TM511 | obniz</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -59,25 +59,38 @@
 					<a href="../modules/parts.html">Parts</a>
 				</li>
 				<li>
-					<a href="../modules/parts.logtta_th.html">Logtta_TH</a>
+					<a href="../modules/parts.tm511.html">TM511</a>
 				</li>
 				<li>
-					<a href="parts.logtta_th.logtta_th_adv_data.html">Logtta_TH_Adv_Data</a>
+					<a href="parts.tm511.tm511.html">TM511</a>
 				</li>
 			</ul>
-			<h1>Interface Logtta_TH_Adv_Data</h1>
+			<h1>Class TM511</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>TM511 management class TM511を管理するクラス</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Logtta_TH_Adv_Data</span>
+						<span class="target">TM511</span>
 					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel">
+				<h3>Implements</h3>
+				<ul class="tsd-hierarchy">
+					<li><a href="obnizcore.obnizpartsbleinterface.html" class="tsd-signature-type">ObnizPartsBleInterface</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -87,11 +100,15 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.logtta_th.logtta_th_adv_data.html#address" class="tsd-kind-icon">address</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.logtta_th.logtta_th_adv_data.html#battery" class="tsd-kind-icon">battery</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.logtta_th.logtta_th_adv_data.html#humidity" class="tsd-kind-icon">humidity</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.logtta_th.logtta_th_adv_data.html#interval" class="tsd-kind-icon">interval</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.logtta_th.logtta_th_adv_data.html#temperature" class="tsd-kind-icon">temperature</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="parts.tm511.tm511.html#_peripheral" class="tsd-kind-icon">_peripheral</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="parts.tm511.tm511.html#getdata" class="tsd-kind-icon">get<wbr>Data</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="parts.tm511.tm511.html#info" class="tsd-kind-icon">info</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="parts.tm511.tm511.html#isdevice" class="tsd-kind-icon">is<wbr>Device</a></li>
 							</ul>
 						</section>
 					</div>
@@ -99,55 +116,102 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="address" class="tsd-anchor"></a>
-					<h3>address</h3>
-					<div class="tsd-signature tsd-kind-icon">address<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_peripheral" class="tsd-anchor"></a>
+					<h3>_peripheral</h3>
+					<div class="tsd-signature tsd-kind-icon">_peripheral<span class="tsd-signature-symbol">:</span> <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> = null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/LogttaTemp/index.ts:23</li>
+							<li>Defined in src/parts/Ble/tm511/index.ts:124</li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="battery" class="tsd-anchor"></a>
-					<h3>battery</h3>
-					<div class="tsd-signature tsd-kind-icon">battery<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in src/parts/Ble/LogttaTemp/index.ts:21</li>
-						</ul>
-					</aside>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="getdata" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> get<wbr>Data</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Data<span class="tsd-signature-symbol">(</span>peripheral<span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/parts.tm511.tm511_data.html" class="tsd-signature-type">TM511_Data</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in src/parts/Ble/tm511/index.ts:82</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get a data from the TM511</p>
+								</div>
+								<p>TM511からのデータ取得</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>instance of BleRemotePeripheral BleRemotePeripheralのインスタンス</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/parts.tm511.tm511_data.html" class="tsd-signature-type">TM511_Data</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h4>
+							<p>received data from the TM511 TM511から受け取ったデータ</p>
+						</li>
+					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="humidity" class="tsd-anchor"></a>
-					<h3>humidity</h3>
-					<div class="tsd-signature tsd-kind-icon">humidity<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in src/parts/Ble/LogttaTemp/index.ts:20</li>
-						</ul>
-					</aside>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="info" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> info</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">info<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/obnizcore.obnizpartsbleinfo.html" class="tsd-signature-type">ObnizPartsBleInfo</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in src/parts/Ble/tm511/index.ts:40</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/obnizcore.obnizpartsbleinfo.html" class="tsd-signature-type">ObnizPartsBleInfo</a></h4>
+						</li>
+					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="interval" class="tsd-anchor"></a>
-					<h3>interval</h3>
-					<div class="tsd-signature tsd-kind-icon">interval<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in src/parts/Ble/LogttaTemp/index.ts:22</li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="temperature" class="tsd-anchor"></a>
-					<h3>temperature</h3>
-					<div class="tsd-signature tsd-kind-icon">temperature<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in src/parts/Ble/LogttaTemp/index.ts:19</li>
-						</ul>
-					</aside>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="isdevice" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> is<wbr>Device</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Device<span class="tsd-signature-symbol">(</span>peripheral<span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in src/parts/Ble/tm511/index.ts:57</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Verify that the received peripheral is from the TM511</p>
+								</div>
+								<p>受け取ったPeripheralがTM511のものかどうかを確認する</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>instance of BleRemotePeripheral BleRemotePeripheralのインスタンス</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<p>Whether it is the TM511</p>
+							<p>TM511かどうか</p>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -161,38 +225,32 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/parts.logtta_th.logtta_th.html" class="tsd-kind-icon">Logtta_<wbr>TH</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="parts.logtta_th.logtta_thoptions.html" class="tsd-kind-icon">Logtta_<wbr>THOptions</a>
-					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="parts.logtta_th.logtta_th_adv_data.html" class="tsd-kind-icon">Logtta_<wbr>TH_<wbr><wbr>Adv_<wbr><wbr>Data</a>
+					<li class="current tsd-kind-class tsd-parent-kind-external-module">
+						<a href="parts.tm511.tm511.html" class="tsd-kind-icon">TM511</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="parts.logtta_th.logtta_th_adv_data.html#address" class="tsd-kind-icon">address</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="parts.tm511.tm511.html#_peripheral" class="tsd-kind-icon">_peripheral</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="parts.logtta_th.logtta_th_adv_data.html#battery" class="tsd-kind-icon">battery</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="parts.tm511.tm511.html#getdata" class="tsd-kind-icon">get<wbr>Data</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="parts.logtta_th.logtta_th_adv_data.html#humidity" class="tsd-kind-icon">humidity</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="parts.tm511.tm511.html#info" class="tsd-kind-icon">info</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="parts.logtta_th.logtta_th_adv_data.html#interval" class="tsd-kind-icon">interval</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="parts.logtta_th.logtta_th_adv_data.html#temperature" class="tsd-kind-icon">temperature</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="parts.tm511.tm511.html#isdevice" class="tsd-kind-icon">is<wbr>Device</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="parts.logtta_th.logtta_th_data.html" class="tsd-kind-icon">Logtta_<wbr>TH_<wbr><wbr>Data</a>
+						<a href="../interfaces/parts.tm511.tm511options.html" class="tsd-kind-icon">TM511<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/parts.tm511.tm511_data.html" class="tsd-kind-icon">TM511_<wbr><wbr>Data</a>
 					</li>
 				</ul>
 			</nav>

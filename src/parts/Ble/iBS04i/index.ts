@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module Parts.iBS04i
  */
+/* eslint rulesdir/non-ascii: 0 */
 
 import { IBeacon } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import {
@@ -13,11 +14,23 @@ import { BaseiBS } from '../utils/abstracts/iBS';
 
 export interface iBS04iOptions {}
 
+/**
+ * advertisement data from iBS04i
+ *
+ * iBS04iからのadvertisementデータ
+ */
 export interface iBS04i_Data extends IBeacon {
+  /** battery 電源電圧 (Unit 単位: 0.01 V) */
   battery: number;
+  /**
+   * button state ボタンの状態
+   *
+   * true: pressed 押された状態 / false: not pressed 押されていない状態
+   */
   button: boolean;
 }
 
+/** iBS04i management class iBS04iを管理するクラス */
 export default class iBS04i extends BaseiBS<iBS04i_Data> {
   public static readonly PartsName = 'iBS04i';
 

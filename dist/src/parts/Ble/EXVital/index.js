@@ -3,11 +3,13 @@
  * @packageDocumentation
  * @module Parts.EXVital
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
+/** EXVital management class EXVitalを管理するクラス */
 class EXVital extends ObnizPartsBleInterface_1.default {
     constructor(peripheral) {
         var _a;
@@ -20,6 +22,13 @@ class EXVital extends ObnizPartsBleInterface_1.default {
             name: 'EXVital',
         };
     }
+    /**
+     * (with instantiation) Get a data from the beacon
+     *
+     * (インスタンス化する場合) ビーコンからデータを取得
+     *
+     * @returns received data from the beacon ビーコンから受け取ったデータ
+     */
     getData() {
         if (!this.advData)
             throw new Error('advData is null');
@@ -38,6 +47,15 @@ class EXVital extends ObnizPartsBleInterface_1.default {
             steps: unsigned16(this.advData.slice(26, 28)),
         };
     }
+    /**
+     * (without instantiation) Get a data from the beacon
+     *
+     * (インスタンス化しない場合) ビーコンからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the beacon ビーコンから受け取ったデータ
+     */
     static getData(peripheral) {
         if (!EXVital.isDevice(peripheral)) {
             return null;
@@ -45,6 +63,17 @@ class EXVital extends ObnizPartsBleInterface_1.default {
         const dev = new EXVital(peripheral);
         return dev.getData();
     }
+    /**
+     * Verify that the received peripheral is from the EXVital
+     *
+     * 受け取ったperipheralがEXVitalのものかどうか確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the EXVital
+     *
+     * EXVitalかどうか
+     */
     static isDevice(peripheral) {
         return (this.DefaultAdvData.filter((d, i) => d !== -1 && d !== peripheral.adv_data[i]).length === 0 &&
             this.DefaultAdvData.length === peripheral.adv_data.length);

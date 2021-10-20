@@ -3,8 +3,10 @@
  * @packageDocumentation
  * @module Parts.iBS01T
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = require("../utils/abstracts/iBS");
+/** iBS01T management class iBS01Tを管理するクラス */
 class iBS01T extends iBS_1.BaseiBS01 {
     constructor() {
         super(...arguments);

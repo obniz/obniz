@@ -13,7 +13,7 @@ Waterproof temperature sensor by INGICS.
 - battery: Battery voltage
 - button: True when you press the button
 - moving: True when moved
-- fall: True when falling
+- hall_sensor : True when the magnet approaches
 - temperature: Temperature (℃)
 
 ## Use case

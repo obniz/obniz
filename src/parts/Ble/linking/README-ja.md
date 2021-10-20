@@ -1,6 +1,6 @@
 # Linking Devices
 
-[Linking Devices](https://ssl.braveridge.com/store/html/products/list.php?category_id=7) の共通ライブラリです。
+[Linking Devices](https://store.braveridge.com/products/list?category_id=7) の共通ライブラリです。
 
 ![](image.jpg)
 
@@ -23,8 +23,8 @@ Linkingの親クラスをobnizのデバイスに登録し、Linkingデバイス�
 ```javascript
 // Javascript Example
 const linking = obniz.wired("Linking");
-await linking.init();
-const device_list = await linking.discover({
+await linking.initWait();
+const device_list = await linking.discoverWait({
   duration: 5000,
   nameFilter: "Tomoru"
 });
@@ -51,8 +51,8 @@ await device.services.led.turnOn("Red", "Pattern1");
 ```javascript
 // Javascript Example
 const linking = obniz.wired("Linking");
-await linking.init();
-const device_list = await linking.discover({
+await linking.initWait();
+const device_list = await linking.discoverWait({
   duration: 5000,
   nameFilter: "Tomoru"
 });
@@ -81,8 +81,8 @@ await device.connect({
 const keys = "xxxxxx"; //stored keys
 
 const linking = obniz.wired("Linking");
-await linking.init();
-const device_list = await linking.discover({
+await linking.initWait();
+const device_list = await linking.discoverWait({
   duration: 5000,
   nameFilter: "Tomoru"
 });

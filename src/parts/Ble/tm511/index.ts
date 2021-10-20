@@ -1,29 +1,59 @@
 /**
  * @packageDocumentation
- * @module Parts.TM551
+ * @module Parts.TM511
  */
+/* eslint rulesdir/non-ascii: 0 */
 
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import ObnizPartsBleInterface, {
   ObnizPartsBleInfo,
 } from '../../../obniz/ObnizPartsBleInterface';
 
-export interface TM551Options {}
+export interface TM511Options {}
 
-export interface TM551_Data {
+/**
+ * advertisement data from TM511
+ *
+ * TM511からのadvertisementデータ
+ */
+export interface TM511_Data {
+  /**
+   * battery バッテリー
+   */
   battery: number;
+  /**
+   * X-axis acceleration X軸加速度
+   */
   x: number;
+  /**
+   * Y-axis acceleration Y軸加速度
+   */
   y: number;
+  /**
+   * Z-axis acceleration Z軸加速度
+   */
   z: number;
 }
 
-export default class TM551 implements ObnizPartsBleInterface {
+/** TM511 management class TM511を管理するクラス */
+export default class TM511 implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: 'TM551',
+      name: 'TM511',
     };
   }
 
+  /**
+   * Verify that the received peripheral is from the TM511
+   *
+   * 受け取ったPeripheralがTM511のものかどうかを確認する
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns Whether it is the TM511
+   *
+   * TM511かどうか
+   */
   public static isDevice(peripheral: BleRemotePeripheral): boolean {
     if (this.deviceAdv.length > peripheral.adv_data.length) {
       return false;
@@ -40,11 +70,20 @@ export default class TM551 implements ObnizPartsBleInterface {
     return true;
   }
 
-  public static getData(peripheral: BleRemotePeripheral): TM551_Data | null {
-    if (!TM551.isDevice(peripheral)) {
+  /**
+   * Get a data from the TM511
+   *
+   * TM511からのデータ取得
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns received data from the TM511 TM511から受け取ったデータ
+   */
+  public static getData(peripheral: BleRemotePeripheral): TM511_Data | null {
+    if (!TM511.isDevice(peripheral)) {
       return null;
     }
-    const data: TM551_Data = {
+    const data: TM511_Data = {
       battery: peripheral.adv_data[13],
       x:
         peripheral.adv_data[14] +

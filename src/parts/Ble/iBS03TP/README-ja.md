@@ -10,12 +10,13 @@ INGICS社製のプローブ付き防水温度センサー
 
 ## ビーコンデータ(getData())
 
-- battery: 電池電圧
-- button: ボタンを押すとtrue
-- moving: 動くとtrue
-- fall: 落下するとtrue
-- temperature: 本体側の温度(℃)
-- probe_temperature: プローブ側の温度(℃)
+- battery : 電池電圧
+- button : ボタンを押すとtrue
+- moving : 動くとtrue
+- hall_sensor : 磁石が近づくとtrue
+- temperature : 本体側の温度(℃)
+- probe_temperature : プローブの温度
+
 
 ## 使用例
 

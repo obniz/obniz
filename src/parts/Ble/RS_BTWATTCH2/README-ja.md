@@ -33,7 +33,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const keys = '';
     await checker.connectWait(keys);
     console.log('connected');
-    // get cunnret relay state
+    // get current relay state
     const status = await checker.getPowerStateWait();
     console.log(`status ${status}`);
     // change to ON
@@ -49,4 +49,4 @@ await obniz.ble.scan.startWait();
 
 各関数について詳しくは下記をご覧ください。
 
-[リファレンス](https://obniz.github.io/obniz/obnizjs/interfaces/parts.rs_btwattch2.rs_btwattch2.html)
+[リファレンス](https://obniz.github.io/obniz/obnizjs/classes/parts.rs_btwattch2.rs_btwattch2.html)

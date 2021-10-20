@@ -3,7 +3,9 @@
  * @packageDocumentation
  * @module Parts.iBS04i
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** iBS03R management class iBS03Rを管理するクラス */
 class IBS03R {
     constructor() {
         this._peripheral = null;
@@ -13,9 +15,29 @@ class IBS03R {
             name: 'iBS03R',
         };
     }
+    /**
+     * Verify that the received peripheral is from the iBS03R
+     *
+     * 受け取ったPeripheralがiBS03Rのものかどうか確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the iBS03R
+     *
+     * iBS03Rかどうか
+     */
     static isDevice(peripheral) {
         return IBS03R.getDeviceArray(peripheral) !== null;
     }
+    /**
+     * Get a data from the iBS03R
+     *
+     * iBS03Rからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the iBS03R iBS03Rから受け取ったデータ
+     */
     static getData(peripheral) {
         const adv = IBS03R.getDeviceArray(peripheral);
         if (adv === null) {

@@ -3,6 +3,7 @@
  * @packageDocumentation
  * @module Parts.iBS
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = require("../../../../obniz/ObnizPartsBleAbstract");
 const magic = {
@@ -12,6 +13,7 @@ const magic = {
     3: [0x83, 0xbc],
     4: [0x83, 0xbc],
 };
+/** abstract class common to the iBS series iBSシリーズ共通の抽象クラス */
 class BaseiBS extends ObnizPartsBleAbstract_1.ObnizPartsBle {
     static getUniqueData(series, subtype, addLength, scanResponse) {
         return {
@@ -81,6 +83,7 @@ BaseiBS.Config = {
         type: 'unsignedNumLE',
     },
 };
+/** abstract class for iBS iBS01のための抽象クラス */
 class BaseiBS01 extends BaseiBS {
 }
 exports.BaseiBS01 = BaseiBS01;
