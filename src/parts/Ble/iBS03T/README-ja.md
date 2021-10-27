@@ -13,7 +13,7 @@ INGICS社製の防水温度センサー
 - battery: 電池電圧
 - button: ボタンを押すとtrue
 - moving: 動くとtrue
-- fall: 落下するとtrue
+- hall_sensor : 磁石が近づくとtrue
 - temperature: 温度(℃)
 
 ## 使用例

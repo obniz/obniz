@@ -10,12 +10,12 @@ Waterproof temperature sensor by INGICS.
 
 ## Beacon data (getData())
 
-- battery: Battery voltage
-- button: True when you press the button
-- moving: True when moved
-- fall: True when falling
-- temperature: Body side temperature (℃)
-- probe_temperature: Probe side temperature (℃)
+- battery : Battery voltage
+- button : True when button is pressed
+- moving : True when moving
+- hall_sensor : True when the magnet approaches
+- temperature : Body side temperature (℃)
+- probe_temperature : Probe side temperature (℃)
 
 ## Use case
 

@@ -72,6 +72,13 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Tr4 series management class Tr4シリーズを管理するクラス</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -115,7 +122,7 @@
 					<div class="tsd-signature tsd-kind-icon">_peripheral<span class="tsd-signature-symbol">:</span> <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> = null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/TR4/index.ts:75</li>
+							<li>Defined in src/parts/Ble/TR4/index.ts:105</li>
 						</ul>
 					</aside>
 				</section>
@@ -132,16 +139,31 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/TR4/index.ts:31</li>
+									<li>Defined in src/parts/Ble/TR4/index.ts:61</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get a data from the Tr4</p>
+								</div>
+								<p>Tr4からデータを取得</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>instance of BleRemotePeripheral BleRemotePeripheralのインスタンス</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/parts.tr4.tr4_data.html" class="tsd-signature-type">Tr4_Data</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h4>
+							<p>received data from the Tr4 Tr4から受け取ったデータ</p>
+							<pre><code>{
+
+<span class="hljs-attribute">temperature</span>: temperature 温度 (Unit 単位: <span class="hljs-number">0.1</span> degC)
+
+}</code></pre>
 						</li>
 					</ul>
 				</section>
@@ -155,7 +177,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/TR4/index.ts:21</li>
+									<li>Defined in src/parts/Ble/TR4/index.ts:23</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/obnizcore.obnizpartsbleinfo.html" class="tsd-signature-type">ObnizPartsBleInfo</a></h4>
@@ -172,16 +194,27 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/TR4/index.ts:27</li>
+									<li>Defined in src/parts/Ble/TR4/index.ts:40</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Verify that the received peripheral is from the Tr4</p>
+								</div>
+								<p>受け取ったPeripheralがTr4のものかどうかを確認する</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>instance of BleRemotePeripheral BleRemotePeripheralのインスタンス</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<p>Whether it is the Tr4</p>
+							<p>Tr4かどうか</p>
 						</li>
 					</ul>
 				</section>

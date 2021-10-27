@@ -3,11 +3,18 @@
  * @packageDocumentation
  * @module Parts.REX_BTPM25V
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** REX_BTPM25V management class REX_BTPM25Vを管理するクラス */
 class REX_BTPM25V {
     constructor(peripheral) {
         this.keys = [];
         this.requiredKeys = [];
+        /**
+         * Callback when the button is pressed
+         *
+         * ボタンが押されたときにコールバック
+         */
         this.onbuttonpressed = null;
         this._peripheral = null;
         this._uuids = {
@@ -22,7 +29,7 @@ class REX_BTPM25V {
         this._ledCharacteristic = null;
         this._buttonCharacteristic = null;
         if (peripheral && !REX_BTPM25V.isDevice(peripheral)) {
-            throw new Error('peripheral is not RS_Seek3');
+            throw new Error('peripheral is not REX_BTPM25V');
         }
         this._peripheral = peripheral;
     }
@@ -31,6 +38,17 @@ class REX_BTPM25V {
             name: 'REX_BTPM25V',
         };
     }
+    /**
+     * Verify that the received peripheral is from the REX_BTPM25V
+     *
+     * 受け取ったPeripheralがREX_BTPM25Vのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the REX_BTPM25V
+     *
+     * REX_BTPM25Vかどうか
+     */
     static isDevice(peripheral) {
         if (peripheral.localName !== 'PM25V') {
             return false;
@@ -40,9 +58,14 @@ class REX_BTPM25V {
     wired(obniz) {
         // do nothing.
     }
+    /**
+     * Connect the sensor
+     *
+     * センサへ接続
+     */
     async connectWait() {
         if (!this._peripheral) {
-            throw new Error('RS_Seek3 is not find.');
+            throw new Error('REX_BTPM25V is not find.');
         }
         this._peripheral.ondisconnect = (reason) => {
             if (typeof this.ondisconnect === 'function') {
@@ -70,10 +93,43 @@ class REX_BTPM25V {
             });
         }
     }
+    /**
+     * Disconnect from the sensor
+     *
+     * センサから切断
+     */
     async disconnectWait() {
         var _a;
         await ((_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.disconnectWait());
     }
+    /**
+     * Do one shot measurement
+     *
+     * ワンショット計測
+     *
+     * @returns one shot measurement data ワンショット計測データ
+     *
+     * ```
+     * {
+     *
+     * pm2_5: PM2.5 concentration PM2.5濃度 (25~1000 [ug/m3]),
+     *
+     * pm10: PM10 concentration M10濃度 (25~1000 [ug/m3]),
+     *
+     * barometricPressure: barometric pressure 気圧 (300~1100 [hPa]),
+     *
+     * temperature: temperature 温度 (-20~85 [degC]),
+     *
+     * humidity: relative humidity 湿度 (10~70 [%RH]),
+     *
+     * lux: illuminance 照度 (0~65535 [lx]),
+     *
+     * mode: mode flag モードフラグ (0: 連続計測, 1: 最新計測データ, 3: ワンショット)
+     *
+     * }
+     * ```
+     *
+     */
     async measureOneShotWait() {
         if (!this._oneShotMeasurementCharacteristic) {
             throw new Error('device is not connected');
@@ -83,6 +139,37 @@ class REX_BTPM25V {
         const data = await this._sendAndReceiveWait(this._oneShotMeasurementCharacteristic, sendData);
         return this._analyzeResult(data);
     }
+    /**
+     * Do extended one shot measurement
+     *
+     * 拡張ワンショット計測
+     *
+     * @returns one extended shot measurement data 拡張ワンショット計測データ
+     *
+     * ```
+     * {
+     *
+     * pm2_5: PM2.5 concentration PM2.5濃度 (25~1000 [ug/m3]),
+     *
+     * pm10: PM10 concentration M10濃度 (25~1000 [ug/m3]),
+     *
+     * barometricPressure: barometric pressure 気圧 (300.0~1100.0 [hPa]),
+     *
+     * temperature: temperature 温度 (-20.0~85.0 [degC]),
+     *
+     * humidity: relative humidity 湿度 (0.0~100.0 [%RH]),
+     *
+     * lux: illuminance 照度 (0~65534 [lx]),
+     *
+     * tvoc: TVOC (Total Volatile Organic Compounds) (0~1187 [ppb])
+     *
+     * eco2: eCO2 (equivalent CO2) 等価CO2濃度 (400~8190 [ppm])
+     *
+     * uv: UV Index (0~11)
+     *
+     * }
+     * ```
+     */
     async measureOneShotExtWait() {
         if (!this._oneShotMeasurementCharacteristic) {
             throw new Error('device is not connected');
@@ -92,9 +179,37 @@ class REX_BTPM25V {
         const data = await this._sendAndReceiveWait(this._oneShotMeasurementCharacteristic, sendData);
         return this._analyzeResultExt(data);
     }
+    /**
+     * @deprecated Please use {@linkplain getLedModeWait}
+     *
+     * {@linkplain getLedModeWait} の使用を推奨
+     *
+     * @returns
+     */
     getLedMode() {
         return this.getLedModeWait();
     }
+    /**
+     * Get LED mode LEDモードの取得
+     *
+     * @returns current LED mode 現在のLEDモード
+     *
+     * 0: off 消灯
+     *
+     * 1: PM2.5 mode PM2.5モード
+     *
+     * 2: PM10 mode PM10モード
+     *
+     * 3: VOC mode VOCモード
+     *
+     * 4: UV mode UVモード
+     *
+     * 5: temperature mode 温度モード
+     *
+     * 6: humidity mode 湿度モード
+     *
+     * 128: power LED 電源LED
+     */
     async getLedModeWait() {
         if (!this._ledCharacteristic) {
             throw new Error('device is not connected');

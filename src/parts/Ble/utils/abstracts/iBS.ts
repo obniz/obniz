@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module Parts.iBS
  */
+/* eslint rulesdir/non-ascii: 0 */
 
 import {
   ObnizBleBeaconStructCheck,
@@ -39,6 +40,7 @@ type PresetConfigName =
   | 'humidity'
   | 'user';
 
+/** abstract class common to the iBS series iBSシリーズ共通の抽象クラス */
 export abstract class BaseiBS<S> extends ObnizPartsBle<S> {
   public static readonly AvailableBleMode = 'Beacon';
 
@@ -119,6 +121,7 @@ export abstract class BaseiBS<S> extends ObnizPartsBle<S> {
   };
 }
 
+/** abstract class for iBS iBS01のための抽象クラス */
 export abstract class BaseiBS01<S> extends BaseiBS<S> {
   public static readonly CompanyID = [0x59, 0x00];
 }

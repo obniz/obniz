@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module Parts.OMRON_2JCIE
  */
+/* eslint rulesdir/non-ascii: 0 */
 
 import Obniz from '../../../obniz';
 import bleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
@@ -14,66 +15,320 @@ import ObnizPartsInterface, {
 
 export interface OMRON_2JCIEOptions {}
 
+/**
+ * the latest data from the 2JCIE-BL01(BAG type)
+ *
+ * 2JCIE-BL01(バッグ形状)の最新のデータ
+ */
 export interface OMRON_2JCIE_Data {
+  /**
+   * Row number 行番号
+   * - With Data Recording データ保存有: Range 範囲 0~12
+   *
+   * - Without Data Recording データ保存なし: Range 範囲 0~255
+   */
   row_number: number;
+  /**
+   * Temperature 気温
+   *
+   * (Unit 単位: 0.01 degC)
+   */
   temperature: number;
+  /**
+   * Relative Humidity 相対湿度
+   *
+   * (Unit 単位: 0.01 %RH)
+   */
   relative_humidity: number;
+  /**
+   * Light 照度
+   *
+   * (Unit 単位: 1 lx)
+   */
   light: number;
+  /**
+   * UV Index
+   *
+   * (Unit 単位: 0.01)
+   */
   uv_index: number;
+  /**
+   * Barometric Pressure 気圧
+   *
+   * (Unit 単位: 0.1 hPa)
+   */
   barometric_pressure: number;
+  /**
+   * Sound noise 騒音
+   *
+   * (Unit 単位: 0.01 dB)
+   */
   sound_noise: number;
+  /**
+   * Discomfort Index 不快指数
+   *
+   * (Unit 単位: 0.01)
+   */
   discomfort_index: number;
+  /**
+   * Heatstroke risk factor 熱中症危険度
+   *
+   * (Unit 単位: 0.01 degC)
+   */
   heatstroke_risk_factor: number;
+  /**
+   * Battery voltage 電池電圧
+   *
+   * (Unit 単位: 1 V)
+   */
   battery_voltage: number;
 }
 
+/**
+ * the latest data from the 2JCIE-BU01(USB connection)
+ *
+ * 2JCIE-BU01(USB接続)のセンサの最新のデータ
+ */
 export interface OMRON_2JCIE_USBSenData {
-  seqence_number: number;
+  /**
+   * Sequence number 行番号
+   *
+   * Range 範囲: 0~255
+   */
+  sequence_number: number;
+  /**
+   * Temperature 気温
+   *
+   * Range 範囲: -40~120 (Unit 単位: 0.01 degC)
+   */
   temperature: number;
+  /**
+   * Relative humidity 相対湿度
+   *
+   * Range 範囲: 0~100 (Unit 単位: 0.01 %RH)
+   */
   relative_humidity: number;
+  /**
+   * Ambient light 照度
+   *
+   * Range 範囲: 0~30000 (Unit 単位: 1 lx)
+   */
   light: number;
+  /**
+   * Barometric pressure
+   *
+   * Range 範囲: 300~1100 (Unit 単位: 0.001 hPa)
+   */
   barometric_pressure: number;
+  /**
+   * Sound noise 騒音
+   *
+   * Range 範囲: 33~120 (Unit 単位: 0.01 dB)
+   */
   sound_noise: number;
+  /**
+   * eTVOC (equivalent Total Volatile Organic Compound)
+   *
+   * Range 範囲: 0~32767 (Unit 単位: 1 ppb)
+   */
   etvoc: number;
+  /**
+   * eCO2 (equivalent CO2) 等価CO2濃度
+   *
+   * Range 範囲: 400~32767 (Unit 単位: 1 ppm)
+   */
   eco2: number;
 }
 
+/**
+ * the latest index data and acceleration data from the 2JCIE-BU01(USB connection)
+ *
+ * 2JCIE-BU01(USB接続)のセンサの最新の指標データや加速度データ
+ */
 export interface OMRON_2JCIE_USBCalData {
+  /**
+   * Sequence number 行番号
+   *
+   * Range 範囲: 0~255
+   */
   sequence_number: number;
-  disconfort_index: number;
+  /**
+   * Discomfort Index 不快指数
+   *
+   * Range 範囲: 0~100 (Unit 単位: 0.01)
+   */
+  discomfort_index: number;
+  /**
+   * Heatstroke risk factor 熱中症危険度
+   *
+   * Range 範囲: -40~125 (Unit 単位: 0.01 degC)
+   */
   heatstroke_risk_factor: number;
+  /**
+   * Vibration information 振動情報
+   *
+   * - 0: NONE
+   * - 1: during vibration (Earthquake judgment in progress)
+   * - 2: during earthquake
+   */
   vibration_information: number;
+  /**
+   * SI Value SI値
+   *
+   * Range 範囲: 0~6553.5 (Unit 単位: 0.1 kine)
+   */
   si_value: number;
+  /**
+   * PGA (peak ground acceleration)
+   *
+   * Range 範囲: 0~6553.5 (Unit 単位: 0.1 gal)
+   */
   pga: number;
+  /**
+   * Seismic intensity 震度相当値
+   *
+   * Range 範囲: 0~65.535 (Unit 単位: 0.001)
+   */
   seismic_intensity: number;
+  /**
+   * Acceleration (X-axis) 加速度(X軸)
+   *
+   * Range 範囲: -2000~2000 (Unit 単位: 0.1 gal)
+   */
   acceleration_x: number;
+  /**
+   * Acceleration (Y-axis) 加速度(Y軸)
+   *
+   * Range 範囲: -2000~2000 (Unit 単位: 0.1 gal)
+   */
   acceleration_y: number;
+  /**
+   * Acceleration (Z-axis) 加速度(Z軸)
+   *
+   * Range 範囲: -2000~2000 (Unit 単位: 0.1 gal)
+   */
   acceleration_z: number;
 }
 
+/**
+ * data from advertisement mode of the 2JCIE-BL01(BAG type)
+ *
+ * advertisementモードの2JCIE-BL01(バッグ形状)からのデータ
+ */
 export interface OMRON_2JCIE_AdvData {
+  /**
+   * Temperature 気温
+   *
+   * (Unit 単位: 0.01 degC)
+   */
   temperature: number;
+  /**
+   * Relative Humidity 相対湿度
+   *
+   * (Unit 単位: 0.01 %RH)
+   */
   relative_humidity: number;
+  /**
+   * Light 照度
+   *
+   * (Unit 単位: 1 lx)
+   */
   light: number;
+  /**
+   * UV Index
+   *
+   * (Unit 単位: 0.01)
+   */
   uv_index: number;
+  /**
+   * Barometric Pressure 気圧
+   *
+   * (Unit 単位: 0.1 hPa)
+   */
   barometric_pressure: number;
+  /**
+   * Sound noise 騒音
+   *
+   * (Unit 単位: 0.01 dB)
+   */
   sound_noise: number;
+  /**
+   * Acceleration (X-axis) 加速度(X軸)
+   *
+   * (Unit 単位: 0.1 gal)
+   */
   acceleration_x: number;
+  /**
+   * Acceleration (Y-axis) 加速度(Y軸)
+   *
+   * (Unit 単位: 0.1 gal)
+   */
   acceleration_y: number;
+  /**
+   * Acceleration (Z-axis) 加速度(Z軸)
+   *
+   * (Unit 単位: 0.1 gal)
+   */
   acceleration_z: number;
+  /**
+   * Battery voltage 電池電圧
+   *
+   * (Unit 単位: 1 V)
+   */
   battery: number;
 }
 
+/**
+ * data from advertisement mode of the 2JCIE-BU01(USB connection)
+ *
+ * advertisementモードの2JCIE-BU01(USB接続)からのデータ
+ */
 export interface OMRON_2JCIE_AdvSensorData {
+  /**
+   * Temperature 気温
+   *
+   * Range 範囲: -40~120 (Unit 単位: 0.01 degC)
+   */
   temperature: number;
+  /**
+   * Relative humidity 相対湿度
+   *
+   * Range 範囲: 0~100 (Unit 単位: 0.01 %RH)
+   */
   relative_humidity: number;
+  /**
+   * Ambient light 照度
+   *
+   * Range 範囲: 0~30000 (Unit 単位: 1 lx)
+   */
   light: number;
+  /**
+   * Barometric pressure
+   *
+   * Range 範囲: 300~1100 (Unit 単位: 0.001 hPa)
+   */
   barometric_pressure: number;
+  /**
+   * Sound noise 騒音
+   *
+   * Range 範囲: 33~120 (Unit 単位: 0.01 dB)
+   */
   sound_noise: number;
+  /**
+   * eTCOC (equivalent Total Volatile Organic Compound)
+   *
+   * Range 範囲: 0~32767 (Unit 単位: 1 ppb)
+   */
   etvoc: number;
+  /**
+   * eCO2 (equivalent CO2) 等価CO2濃度
+   *
+   * Range 範囲: 400~32767 (Unit 単位: 1 ppm)
+   */
   eco2: number;
 }
 
+/** 2JCIE management class 2JCIEを管理するクラス */
 export default class OMRON_2JCIE implements ObnizPartsBleInterface {
   public static info(): ObnizPartsInfo {
     return {
@@ -81,6 +336,17 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     };
   }
 
+  /**
+   * Verify that the received peripheral is from the 2JCIE Environmental Sensor series of OMRON
+   *
+   * 受け取ったperipheralがOMRON 環境センサ 2JCIEシリーズのものかどうか確認する
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns Whether it is the 2JCIE Environmental Sensor series of OMRON
+   *
+   * OMRON 環境センサ 2JCIEシリーズかどうか
+   */
   public static isDevice(peripheral: BleRemotePeripheral) {
     return (
       (peripheral.localName && peripheral.localName.indexOf('Env') >= 0) ||
@@ -90,7 +356,22 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
   }
 
   /**
-   * Get a datas from advertisement mode of OMRON 2JCIE
+   * Get a data from advertisement mode of the 2JCIE Environmental Sensor series of OMRON
+   *
+   * advertisementモードのOMRON 環境センサ 2JCIEシリーズからデータを取得
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns received data from the sensor センサから受け取ったデータ
+   *
+   * `2JCIE-BL01(BAG type バッグ形状) localName: IM`
+   *
+   * → {@linkplain OMRON_2JCIE_AdvData}
+   *
+   *
+   * `2JCIE-BU01(USB connection USB接続) localName: Rbt`
+   *
+   * → {@linkplain OMRON_2JCIE_AdvSensorData}
    */
   public static getData(
     peripheral: BleRemotePeripheral
@@ -193,7 +474,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
 
   private vibrationState: { [index: number]: string } = {
     0x00: 'NONE',
-    0x01: 'druing vibration (Earthquake judgment in progress)',
+    0x01: 'during vibration (Earthquake judgment in progress)',
     0x02: 'during earthquake',
   };
 
@@ -208,6 +489,15 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     this.obniz = obniz;
   }
 
+  /**
+   * Search for the 2JCIE Environmental Sensor series of OMRON
+   *
+   * OMRON 環境センサ 2JCIEシリーズを検索
+   *
+   * @returns if found: Instance of BleRemotePeripheral / if not found: null
+   *
+   * 見つかった場合: BleRemotePeripheralのインスタンス / 見つからなかった場合: null
+   */
   public async findWait(): Promise<any> {
     const target: any = {
       localName: ['Env', 'Rbt'],
@@ -219,7 +509,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     return this._peripheral;
   }
 
-  public omron_uuid(uuid: string, type: string): string | any {
+  private omron_uuid(uuid: string, type: string): string | any {
     if (type === 'BAG') {
       return `0C4C${uuid}-7700-46F4-AA96D5E974E32A54`;
     } else if (type === 'USB') {
@@ -229,6 +519,19 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     }
   }
 
+  /**
+   * (Search for the device and) connect the sensor
+   *
+   * Throw an error if the device is not found
+   *
+   * (デバイスを検索し、)センサへ接続
+   *
+   * デバイスが見つからなかった場合はエラーをthrow
+   *
+   * `supported types&modes 対応形状&モード`
+   * - 2JCIE-BL01(BAG type バッグ形状) localName: Env
+   * - 2JCIE-BU01(USB connection USB接続) localName: Rbt
+   */
   public async connectWait() {
     if (!this._peripheral) {
       await this.findWait();
@@ -246,14 +549,19 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     }
   }
 
+  /**
+   * Disconnect from the sensor
+   *
+   * センサから切断
+   */
   public async disconnectWait() {
     if (this._peripheral && this._peripheral.connected) {
       await this._peripheral.disconnectWait();
     }
   }
 
-  public signedNumberFromBinary(data: number[]) {
-    // little adian
+  private signedNumberFromBinary(data: number[]) {
+    // little endian
     let val: number = data[data.length - 1] & 0x7f;
     for (let i = data.length - 2; i >= 0; i--) {
       val = val * 256 + data[i];
@@ -264,8 +572,8 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     return val;
   }
 
-  public unsignedNumberFromBinary(data: number[]) {
-    // little adian
+  private unsignedNumberFromBinary(data: number[]) {
+    // little endian
     let val: number = data[data.length - 1];
     for (let i = data.length - 2; i >= 0; i--) {
       val = val * 256 + data[i];
@@ -273,17 +581,32 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     return val;
   }
 
+  /**
+   * @deprecated Please use {@linkplain getLatestDataWait}
+   *
+   * {@linkplain getLatestDataWait} の使用を推奨
+   */
   public async getLatestDataBAGWait(): Promise<OMRON_2JCIE_Data> {
     return this.getLatestDataWait();
   }
 
   /**
-   * @deprecated
+   * @deprecated Please use {@linkplain getLatestDataWait}
+   *
+   * {@linkplain getLatestDataWait} の使用を推奨
    */
   public getLatestData(): Promise<OMRON_2JCIE_Data> {
     return this.getLatestDataWait();
   }
 
+  /**
+   * Get the latest data from the 2JCIE-BL01(BAG type) sensor
+   *
+   * 2JCIE-BL01(バッグ形状)のセンサの最新のデータを取得
+   *
+   * @returns received data from the sensor センサから受け取ったデータ
+   *
+   */
   public async getLatestDataWait(): Promise<OMRON_2JCIE_Data> {
     await this.connectWait();
 
@@ -309,9 +632,22 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     return json;
   }
 
+  /**
+   * @deprecated Please use {@linkplain getLatestSensorDataUSBWait}
+   *
+   * {@linkplain getLatestSensorDataUSBWait} の使用を推奨
+   */
   public getLatestSensorDataUSB(): Promise<OMRON_2JCIE_USBSenData> {
     return this.getLatestSensorDataUSBWait();
   }
+
+  /**
+   * Get the latest data from the 2JCIE-BU01(USB connection) sensor
+   *
+   * 2JCIE-BU01(USB接続)のセンサの最新のデータを取得
+   *
+   * @returns received data from the sensor センサから受け取ったデータ
+   */
   public async getLatestSensorDataUSBWait(): Promise<OMRON_2JCIE_USBSenData> {
     await this.connectWait();
 
@@ -320,7 +656,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     )!.getCharacteristic(this.omron_uuid('5012', 'USB'))!;
     const data: number[] = await c.readWait();
     const json: any = {
-      seqence_number: data[0],
+      sequence_number: data[0],
       temperature: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
       relative_humidity: this.signedNumberFromBinary(data.slice(3, 5)) * 0.01,
       light: this.signedNumberFromBinary(data.slice(5, 7)) * 1,
@@ -335,12 +671,21 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
   }
 
   /**
-   * @deprecated
+   * @deprecated Please use {@linkplain getLatestCalculationDataUSBWait}
+   *
+   * {@linkplain getLatestCalculationDataUSBWait} の使用を推奨
    */
   public getLatestCalculationDataUSB(): Promise<OMRON_2JCIE_USBCalData> {
     return this.getLatestCalculationDataUSBWait();
   }
 
+  /**
+   * Get the latest index data and acceleration data from the 2JCIE-BU01(USB connection) sensor
+   *
+   * 2JCIE-BU01(USB接続)のセンサの最新の指標データや加速度データを取得
+   *
+   * @returns received data from the sensor センサから受け取ったデータ
+   */
   public async getLatestCalculationDataUSBWait(): Promise<OMRON_2JCIE_USBCalData> {
     await this.connectWait();
 
@@ -350,7 +695,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
     const data: number[] = await c.readWait();
     const json: any = {
       sequence_number: data[0],
-      disconfort_index: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
+      discomfort_index: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
       heatstroke_risk_factor:
         this.signedNumberFromBinary(data.slice(3, 5)) * 0.01,
       vibration_information: this.vibrationState[data[5]],

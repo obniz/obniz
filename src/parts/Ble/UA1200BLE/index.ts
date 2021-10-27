@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module Parts.UA1200BLE
  */
+/* eslint rulesdir/non-ascii: 0 */
 
 import BleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
@@ -13,18 +14,55 @@ import BleGenericAccess from '../utils/services/genericAccess';
 
 export interface UA1200BLEOptions {}
 
+/**
+ * blood pressure data from UA651BLE
+ *
+ * (blood pressure will return either mmHg or kPa unit)
+ *
+ * UA1200BLEからの血圧データ
+ *
+ * (血圧はmmHg形式かkPa形式のどちらかが返ってきます)
+ */
 export interface UA1200BLEResult {
+  /**
+   * systolic pressure 最高血圧
+   *
+   * Range 範囲: 0~299 (Unit 単位: 1 mmHg)
+   */
   SystolicPressure_mmHg?: number; // ex) 128mmHg -> 0x80 = 128, 0x00
+  /**
+   * diastolic pressure 最低血圧
+   *
+   * Range 範囲: 0~299 (Unit 単位: 1 mmHg)
+   */
   DiastolicPressure_mmHg?: number;
+  /**
+   * mean arterial pressure 平均血圧
+   *
+   * Range 範囲: 0~299 (Unit 単位: 1 mmHg)
+   */
   MeanArterialPressure_mmHg?: number;
+  /** systolic pressure 最高血圧 (Unit 単位: 0.1 kPa) */
   SystolicPressure_kPa?: number; // ex) 17.6Kpa -> 0xB0 = 176, 0xF0
+  /** diastolic pressure 最低血圧 (Unit 単位: 0.1 kPa) */
   DiastolicPressure_kPa?: number;
+  /** mean arterial pressure 平均血圧 (Unit 単位: 0.1 kPa) */
   MeanArterialPressure_kPa?: number;
+  /** body moved or not 体が動いたかどうか */
   bodyMoved?: boolean;
+  /** cuff is loose or not カフが緩いかどうか */
   cuffFitLoose?: boolean;
+  /** irregular pulse detected or not 不整脈が検出されたかどうか */
   irregularPulseDetected?: boolean;
+  /** measurement position is improper or not 測定位置が不適切であるか */
   improperMeasurement?: boolean;
+  /**
+   * pulse rate 脈拍数
+   *
+   * Range 範囲: 40~180 (Unit 単位: 1 bpm)
+   */
   PulseRate?: number;
+  /** timestamp タイムスタンプ */
   date?: {
     // Time Stamp ex) 2013/8/26 9:10:20 -> 0xDD 0x07 0x08 0x1A 0x09 0x0A 0x14
     year: number;
@@ -36,6 +74,7 @@ export interface UA1200BLEResult {
   };
 }
 
+/** UA1200BLE management class UA1200BLEを管理するクラス */
 export default class UA1200BLE implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
@@ -43,12 +82,38 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
     };
   }
 
+  /**
+   * Verify that the received peripheral is from the UA1200BLE
+   *
+   * 受け取ったPeripheralがUA1200BLEのものかどうかを確認する
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns Whether it is UA1200BLE
+   *
+   * UA1200BLEかどうか
+   */
   public static isDevice(peripheral: BleRemotePeripheral) {
     return (
       peripheral.localName && peripheral.localName.startsWith('UA-1200BLE_')
     );
   }
 
+  /**
+   * Judge whether it is cooperation mode
+   *
+   * (When in cooperation mode, no data exists even when connected)
+   *
+   * 連携モードかどうかの判定
+   *
+   * (連携モードのときは接続してもデータが存在しません)
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns Whether it is cooperation mode or not
+   *
+   * 連携モードかどうか
+   */
   public static isCooperationMode(peripheral: BleRemotePeripheral) {
     const peripheralHex = peripheral.adv_data
       .map((e) => e.toString(16))
@@ -104,6 +169,13 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
     this._timezoneOffsetMinute = timezoneOffsetMinute;
   }
 
+  /**
+   * Pair with the device
+   *
+   * デバイスとペアリング
+   *
+   * @returns pairing key ペアリングキー
+   */
   public async pairingWait(): Promise<string | null> {
     if (!this._peripheral) {
       throw new Error('UA1200BLE not found');
@@ -128,6 +200,13 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
     return key;
   }
 
+  /**
+   * Get data from the UA1200BLE
+   *
+   * UA1200BLEからデータを取得
+   *
+   * @returns data from the UA1200BLE UA1200BLEから受け取ったデータ
+   */
   public async getDataWait(): Promise<UA1200BLEResult[]> {
     if (!this._peripheral) {
       throw new Error('UA1200BLE not found');

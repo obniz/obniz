@@ -2,7 +2,7 @@
 
 
 This is a series of temperature sensors for BLE communication manufactured by T and D.
-It supports TR41, TR52, and TR45.
+It supports TR41, TR42, and TR45.
 
 ![](./image.jpg)
 

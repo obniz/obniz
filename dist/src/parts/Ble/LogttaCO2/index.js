@@ -3,12 +3,14 @@
  * @packageDocumentation
  * @module Parts.Logtta_CO2
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = require("../../../obniz/ObnizPartsBleAbstract");
 const Logtta_1 = __importDefault(require("../utils/abstracts/Logtta"));
+/** Logtta_CO2 management class Logtta_CO2を管理するクラス */
 class Logtta_CO2 extends Logtta_1.default {
     constructor() {
         super(...arguments);
@@ -17,14 +19,45 @@ class Logtta_CO2 extends Logtta_1.default {
         // In order to maintain compatibility, when callback is placed from arguments, the behavior of the document street
         this.callbackFlag = false;
     }
-    /** @deprecated */
+    /**
+     * @deprecated
+     *
+     * Verify that the received peripheral is from the Logtta_CO2
+     *
+     * 受け取ったPeripheralがLogtta_CO2のものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Logtta_CO2
+     *
+     * Logtta_CO2かどうか
+     */
     static isDevice(peripheral) {
         return this.getDeviceMode(peripheral) === 'Connectable';
     }
-    /** @deprecated */
+    /**
+     * @deprecated
+     *
+     * Verify that the received advertisement is from the Logtta_CO2 (in Beacon Mode)
+     *
+     * 受け取ったAdvertisementがLogtta_CO2のものかどうか確認する(ビーコンモード中)
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Logtta_CO2
+     *
+     * Logtta_CO2かどうか
+     */
     static isAdvDevice(peripheral) {
         return this.getDeviceMode(peripheral) === 'Beacon';
     }
+    /**
+     * Notify when the CO2 concentration data have got from the Logtta_CO2 with connected state
+     *
+     * 接続している状態でLogtta_CO2からCO2濃度データを取得したとき通知
+     *
+     * @returns
+     */
     async startNotifyWait(callback) {
         // TODO: delete try-catch
         try {
@@ -48,7 +81,17 @@ class Logtta_CO2 extends Logtta_1.default {
             }
         });
     }
-    /** @deprecated */
+    /**
+     * @deprecated
+     *
+     * Get CO2 concentration data with connected state
+     *
+     * 接続している状態でCO2濃度データを取得
+     *
+     * @returns CO2 concentration data from the Logtta_CO2
+     *
+     * Logtta_CO2から受け取ったCO2濃度データ
+     */
     async getWait() {
         try {
             return (await this.getDataWait()).co2;
@@ -57,7 +100,31 @@ class Logtta_CO2 extends Logtta_1.default {
             return null;
         }
     }
-    /** @deprecated */
+    /**
+     * @deprecated
+     *
+     * Set enable / disable for beacon mode (periodic beacon transmission)
+     *
+     * Call this function after authenticating with the sensor
+     *
+     * After setting, disconnect once to enable it
+     *
+     * To stop beacon mode, you need to hold the button on the sensor for more than 2 seconds
+     *
+     * (For more detail, please see http://www.uni-elec.co.jp/logtta_page.html )
+     *
+     * ビーコンモード(定期的なビーコン発信)の有効/無効の設定
+     *
+     * センサとの認証を済ませた状態で実行してください
+     *
+     * 設定後に切断した後から有効になります
+     *
+     * ビーコンモードの終了は、デバイスのボタンを2秒以上長押しする操作が必要です(詳しくは http://www.uni-elec.co.jp/logtta_page.html )
+     *
+     * @param enable enable the beacon mode or not ビーコンモードを有効にするかどうか
+     *
+     * @returns
+     */
     setBeaconMode(enable) {
         return this.setBeaconModeWait(enable);
     }

@@ -85,6 +85,6 @@ await obniz.ble.scan.startWait();
   };
   pulseRate?: number;
   userId?: number;
-  measurementStatus?: HEM_6233TMesurementStatus[];
+  measurementStatus?: HEM_6233TMeasurementStatus[];
 }
 ```

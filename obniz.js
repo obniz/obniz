@@ -23093,8 +23093,8 @@ var map = {
 	"./Ble/linking/modules/service-setting.js": "./dist/src/parts/Ble/linking/modules/service-setting.js",
 	"./Ble/linking/modules/service.js": "./dist/src/parts/Ble/linking/modules/service.js",
 	"./Ble/scbtgaaac/index.js": "./dist/src/parts/Ble/scbtgaaac/index.js",
+	"./Ble/tm511/index.js": "./dist/src/parts/Ble/tm511/index.js",
 	"./Ble/tm530/index.js": "./dist/src/parts/Ble/tm530/index.js",
-	"./Ble/tm551/index.js": "./dist/src/parts/Ble/tm551/index.js",
 	"./Ble/toio_corecube/index.js": "./dist/src/parts/Ble/toio_corecube/index.js",
 	"./Ble/uprism/index.js": "./dist/src/parts/Ble/uprism/index.js",
 	"./Ble/utils/abstracts/Logtta.js": "./dist/src/parts/Ble/utils/abstracts/Logtta.js",
@@ -23516,17 +23516,19 @@ exports.default = Puls08M5stickcS;
  * @packageDocumentation
  * @module Parts.OMRON_2JCIE
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+/** 2JCIE management class 2JCIEを管理するクラス */
 class OMRON_2JCIE {
     constructor(peripheral) {
         this._peripheral = null;
         this.vibrationState = {
             0x00: 'NONE',
-            0x01: 'druing vibration (Earthquake judgment in progress)',
+            0x01: 'during vibration (Earthquake judgment in progress)',
             0x02: 'during earthquake',
         };
         if (peripheral && !OMRON_2JCIE.isDevice(peripheral)) {
@@ -23539,13 +23541,39 @@ class OMRON_2JCIE {
             name: '2JCIE',
         };
     }
+    /**
+     * Verify that the received peripheral is from the 2JCIE Environmental Sensor series of OMRON
+     *
+     * 受け取ったperipheralがOMRON 環境センサ 2JCIEシリーズのものかどうか確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the 2JCIE Environmental Sensor series of OMRON
+     *
+     * OMRON 環境センサ 2JCIEシリーズかどうか
+     */
     static isDevice(peripheral) {
         return ((peripheral.localName && peripheral.localName.indexOf('Env') >= 0) ||
             (peripheral.localName && peripheral.localName.indexOf('IM') >= 0) ||
             (peripheral.localName && peripheral.localName.indexOf('Rbt') >= 0));
     }
     /**
-     * Get a datas from advertisement mode of OMRON 2JCIE
+     * Get a data from advertisement mode of the 2JCIE Environmental Sensor series of OMRON
+     *
+     * advertisementモードのOMRON 環境センサ 2JCIEシリーズからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the sensor センサから受け取ったデータ
+     *
+     * `2JCIE-BL01(BAG type バッグ形状) localName: IM`
+     *
+     * → {@linkplain OMRON_2JCIE_AdvData}
+     *
+     *
+     * `2JCIE-BU01(USB connection USB接続) localName: Rbt`
+     *
+     * → {@linkplain OMRON_2JCIE_AdvSensorData}
      */
     static getData(peripheral) {
         const adv_data = peripheral.adv_data;
@@ -23585,6 +23613,15 @@ class OMRON_2JCIE {
     wired(obniz) {
         this.obniz = obniz;
     }
+    /**
+     * Search for the 2JCIE Environmental Sensor series of OMRON
+     *
+     * OMRON 環境センサ 2JCIEシリーズを検索
+     *
+     * @returns if found: Instance of BleRemotePeripheral / if not found: null
+     *
+     * 見つかった場合: BleRemotePeripheralのインスタンス / 見つからなかった場合: null
+     */
     async findWait() {
         const target = {
             localName: ['Env', 'Rbt'],
@@ -23604,6 +23641,19 @@ class OMRON_2JCIE {
             return undefined;
         }
     }
+    /**
+     * (Search for the device and) connect the sensor
+     *
+     * Throw an error if the device is not found
+     *
+     * (デバイスを検索し、)センサへ接続
+     *
+     * デバイスが見つからなかった場合はエラーをthrow
+     *
+     * `supported types&modes 対応形状&モード`
+     * - 2JCIE-BL01(BAG type バッグ形状) localName: Env
+     * - 2JCIE-BU01(USB connection USB接続) localName: Rbt
+     */
     async connectWait() {
         if (!this._peripheral) {
             await this.findWait();
@@ -23620,13 +23670,18 @@ class OMRON_2JCIE {
             await this._peripheral.connectWait();
         }
     }
+    /**
+     * Disconnect from the sensor
+     *
+     * センサから切断
+     */
     async disconnectWait() {
         if (this._peripheral && this._peripheral.connected) {
             await this._peripheral.disconnectWait();
         }
     }
     signedNumberFromBinary(data) {
-        // little adian
+        // little endian
         let val = data[data.length - 1] & 0x7f;
         for (let i = data.length - 2; i >= 0; i--) {
             val = val * 256 + data[i];
@@ -23637,22 +23692,37 @@ class OMRON_2JCIE {
         return val;
     }
     unsignedNumberFromBinary(data) {
-        // little adian
+        // little endian
         let val = data[data.length - 1];
         for (let i = data.length - 2; i >= 0; i--) {
             val = val * 256 + data[i];
         }
         return val;
     }
+    /**
+     * @deprecated Please use {@linkplain getLatestDataWait}
+     *
+     * {@linkplain getLatestDataWait} の使用を推奨
+     */
     async getLatestDataBAGWait() {
         return this.getLatestDataWait();
     }
     /**
-     * @deprecated
+     * @deprecated Please use {@linkplain getLatestDataWait}
+     *
+     * {@linkplain getLatestDataWait} の使用を推奨
      */
     getLatestData() {
         return this.getLatestDataWait();
     }
+    /**
+     * Get the latest data from the 2JCIE-BL01(BAG type) sensor
+     *
+     * 2JCIE-BL01(バッグ形状)のセンサの最新のデータを取得
+     *
+     * @returns received data from the sensor センサから受け取ったデータ
+     *
+     */
     async getLatestDataWait() {
         await this.connectWait();
         const c = this._peripheral.getService(this.omron_uuid('3000', 'BAG')).getCharacteristic(this.omron_uuid('3001', 'BAG'));
@@ -23671,15 +23741,27 @@ class OMRON_2JCIE {
         };
         return json;
     }
+    /**
+     * @deprecated Please use {@linkplain getLatestSensorDataUSBWait}
+     *
+     * {@linkplain getLatestSensorDataUSBWait} の使用を推奨
+     */
     getLatestSensorDataUSB() {
         return this.getLatestSensorDataUSBWait();
     }
+    /**
+     * Get the latest data from the 2JCIE-BU01(USB connection) sensor
+     *
+     * 2JCIE-BU01(USB接続)のセンサの最新のデータを取得
+     *
+     * @returns received data from the sensor センサから受け取ったデータ
+     */
     async getLatestSensorDataUSBWait() {
         await this.connectWait();
         const c = this._peripheral.getService(this.omron_uuid('5010', 'USB')).getCharacteristic(this.omron_uuid('5012', 'USB'));
         const data = await c.readWait();
         const json = {
-            seqence_number: data[0],
+            sequence_number: data[0],
             temperature: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
             relative_humidity: this.signedNumberFromBinary(data.slice(3, 5)) * 0.01,
             light: this.signedNumberFromBinary(data.slice(5, 7)) * 1,
@@ -23691,18 +23773,27 @@ class OMRON_2JCIE {
         return json;
     }
     /**
-     * @deprecated
+     * @deprecated Please use {@linkplain getLatestCalculationDataUSBWait}
+     *
+     * {@linkplain getLatestCalculationDataUSBWait} の使用を推奨
      */
     getLatestCalculationDataUSB() {
         return this.getLatestCalculationDataUSBWait();
     }
+    /**
+     * Get the latest index data and acceleration data from the 2JCIE-BU01(USB connection) sensor
+     *
+     * 2JCIE-BU01(USB接続)のセンサの最新の指標データや加速度データを取得
+     *
+     * @returns received data from the sensor センサから受け取ったデータ
+     */
     async getLatestCalculationDataUSBWait() {
         await this.connectWait();
         const c = this._peripheral.getService(this.omron_uuid('5010', 'USB')).getCharacteristic(this.omron_uuid('5013', 'USB'));
         const data = await c.readWait();
         const json = {
             sequence_number: data[0],
-            disconfort_index: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
+            discomfort_index: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
             heatstroke_risk_factor: this.signedNumberFromBinary(data.slice(3, 5)) * 0.01,
             vibration_information: this.vibrationState[data[5]],
             si_value: this.unsignedNumberFromBinary(data.slice(6, 8)) * 0.1,
@@ -23729,11 +23820,13 @@ exports.default = OMRON_2JCIE;
  * @packageDocumentation
  * @module Parts.ENERTALK_TOUCH
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/services/batteryService.js"));
+/** ENERTALK TOUCH management class ENERTALK TOUCHを管理するクラス */
 class ENERTALK_TOUCH {
     constructor(peripheral) {
         this.keys = [];
@@ -23762,12 +23855,32 @@ class ENERTALK_TOUCH {
             name: 'ENERTALK_TOUCH',
         };
     }
+    /**
+     * Verify that the received peripheral is from the ENERTALK TOUCH
+     *
+     * 受け取ったperipheralがENERTALK TOUCHのものかどうか確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the ENERTALK TOUCH
+     *
+     * ENERTALK TOUCHかどうか
+     */
     static isDevice(peripheral) {
         if (peripheral.localName && peripheral.localName.startsWith('ensensor_')) {
             return true;
         }
         return false;
     }
+    /**
+     * Connect the sensor
+     *
+     * Throw an error if the device is not found
+     *
+     * センサへ接続
+     *
+     * デバイスが見つからなかった場合はエラーをthrow
+     */
     async connectWait() {
         if (!this._peripheral) {
             throw new Error('ENERTALK_TOUCH is not find.');
@@ -23792,10 +23905,26 @@ class ENERTALK_TOUCH {
             this.batteryService = new batteryService_1.default(service180F);
         }
     }
+    /**
+     * Disconnect from the sensor
+     *
+     * センサから切断
+     */
     async disconnectWait() {
         var _a;
         await ((_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.disconnectWait());
     }
+    /**
+     * Get the temperature data from the sensor
+     *
+     * センサから温度データを取得
+     *
+     * @returns temperature value 温度の値
+     *
+     * Range 範囲: -1000~5000
+     *
+     * (Unit 単位: 0.01 degC)
+     */
     async getTemperatureWait() {
         if (!this._temperatureChar) {
             throw new Error('device is not connected');
@@ -23805,6 +23934,17 @@ class ENERTALK_TOUCH {
         const temp = buf.readInt16BE(0) / 100;
         return temp;
     }
+    /**
+     * Get the humidity data from the sensor
+     *
+     * センサから湿度データを取得
+     *
+     * @returns humidity value 湿度の値
+     *
+     * Range 範囲: 0~100
+     *
+     * (Unit 単位: 1 %RH)
+     */
     async getHumidityWait() {
         if (!this._humidityChar) {
             throw new Error('device is not connected');
@@ -23813,6 +23953,17 @@ class ENERTALK_TOUCH {
         const humidity = humidityData[0];
         return humidity;
     }
+    /**
+     * Get the illumination data from the sensor
+     *
+     * センサから照度データを取得
+     *
+     * @returns illumination value 照度の値
+     *
+     * Range 範囲: 0~65535
+     *
+     * (Unit 単位: 1 lx)
+     */
     async getIlluminationWait() {
         if (!this._illuminanceChar) {
             throw new Error('device is not connected');
@@ -23822,6 +23973,17 @@ class ENERTALK_TOUCH {
         const illuminance = buf.readInt16BE(0);
         return illuminance;
     }
+    /**
+     * Get the acceleration data from the sensor
+     *
+     * センサから加速度データを取得
+     *
+     * @returns acceleration values 加速度の値
+     *
+     * Range 範囲: -2000~2000
+     *
+     * (Unit 単位: 1 mg)
+     */
     async getAccelerometerWait() {
         if (!this._accelerometerChar) {
             throw new Error('device is not connected');
@@ -23849,11 +24011,13 @@ exports.default = ENERTALK_TOUCH;
  * @packageDocumentation
  * @module Parts.EXTxx
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+/** EXTxx management class EXTxxを管理するクラス */
 class EXTxx extends ObnizPartsBleInterface_1.default {
     constructor(peripheral) {
         super();
@@ -23864,6 +24028,13 @@ class EXTxx extends ObnizPartsBleInterface_1.default {
             name: 'EXTxx',
         };
     }
+    /**
+     * (with instantiation) Get a data from the beacon
+     *
+     * (インスタンス化する場合) ビーコンからデータを取得
+     *
+     * @returns received data from the beacon ビーコンから受け取ったデータ
+     */
     getData() {
         var _a;
         const advData = (_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.adv_data;
@@ -23881,6 +24052,15 @@ class EXTxx extends ObnizPartsBleInterface_1.default {
             battery: advData[27],
         };
     }
+    /**
+     * (without instantiation) Get a data from the beacon
+     *
+     * (インスタンス化しない場合) ビーコンからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the beacon ビーコンから受け取ったデータ
+     */
     static getData(peripheral) {
         if (!EXTxx.isDevice(peripheral)) {
             return null;
@@ -23888,6 +24068,17 @@ class EXTxx extends ObnizPartsBleInterface_1.default {
         const dev = new EXTxx(peripheral);
         return dev.getData();
     }
+    /**
+     * Verify that the received peripheral is from the EXTxx
+     *
+     * 受け取ったperipheralがEXTxxのものかどうか確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the EXTxx
+     *
+     * EXTxxかどうか
+     */
     static isDevice(peripheral) {
         return (this.DefaultAdvData.filter((d, i) => d !== -1 && d !== peripheral.adv_data[i]).length === 0 &&
             this.DefaultAdvData.length === peripheral.adv_data.length);
@@ -23943,11 +24134,13 @@ const unsigned16 = (value) => {
  * @packageDocumentation
  * @module Parts.EXVital
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+/** EXVital management class EXVitalを管理するクラス */
 class EXVital extends ObnizPartsBleInterface_1.default {
     constructor(peripheral) {
         super();
@@ -23958,6 +24151,13 @@ class EXVital extends ObnizPartsBleInterface_1.default {
             name: 'EXVital',
         };
     }
+    /**
+     * (with instantiation) Get a data from the beacon
+     *
+     * (インスタンス化する場合) ビーコンからデータを取得
+     *
+     * @returns received data from the beacon ビーコンから受け取ったデータ
+     */
     getData() {
         var _a;
         const advData = (_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.adv_data;
@@ -23978,6 +24178,15 @@ class EXVital extends ObnizPartsBleInterface_1.default {
             steps: unsigned16(advData.slice(26, 28)),
         };
     }
+    /**
+     * (without instantiation) Get a data from the beacon
+     *
+     * (インスタンス化しない場合) ビーコンからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the beacon ビーコンから受け取ったデータ
+     */
     static getData(peripheral) {
         if (!EXVital.isDevice(peripheral)) {
             return null;
@@ -23985,6 +24194,17 @@ class EXVital extends ObnizPartsBleInterface_1.default {
         const dev = new EXVital(peripheral);
         return dev.getData();
     }
+    /**
+     * Verify that the received peripheral is from the EXVital
+     *
+     * 受け取ったperipheralがEXVitalのものかどうか確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the EXVital
+     *
+     * EXVitalかどうか
+     */
     static isDevice(peripheral) {
         return (this.DefaultAdvData.filter((d, i) => d !== -1 && d !== peripheral.adv_data[i]).length === 0 &&
             this.DefaultAdvData.length === peripheral.adv_data.length);
@@ -24039,8 +24259,17 @@ const unsigned16 = (value) => {
  * @packageDocumentation
  * @module Parts.HEM_6233T
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** HEM_6233T management class HEM_6233Tを管理するクラス */
 class HEM_6233T {
+    /**
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @param timezoneOffsetMinute difference from UTC (Unit: minutes) 協定世界時との差(単位: 分)
+     *
+     */
     constructor(peripheral, timezoneOffsetMinute) {
         this.keys = [];
         this.requiredKeys = [];
@@ -24056,6 +24285,17 @@ class HEM_6233T {
             name: 'HEM_6233T',
         };
     }
+    /**
+     * Verify that the received peripheral is from the HEM_6233T
+     *
+     * 受け取ったPeripheralがHEM_6233Tのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the HEM_6233T
+     *
+     * HEM_6233Tかどうか
+     */
     static isDevice(peripheral) {
         if (peripheral.localName &&
             (peripheral.localName.startsWith('BLESmart_') ||
@@ -24064,6 +24304,19 @@ class HEM_6233T {
         }
         return false;
     }
+    /**
+     * Connect to the device, get data, and then disconnect from the device
+     *
+     * You can get only data that the device has not yet sent
+     *
+     * デバイスに接続しデータを取得後、デバイスとの接続を切断
+     *
+     * 取得できるデータはデバイスが未送信のデータのみです
+     *
+     * @param pairingKeys pairing keys ペアリングキー
+     *
+     * @returns received data from the HEM_6233T HEM_6233Tから受け取ったデータ
+     */
     async getDataWait(pairingKeys) {
         if (!this._peripheral) {
             throw new Error('HEM_6233T is not find.');
@@ -24108,6 +24361,18 @@ class HEM_6233T {
         }); // blood pressure
         return await waitDisconnect;
     }
+    /**
+     * Execute a callback function when data is received from any service characteristic
+     *
+     * 任意のサービス・キャラクタティスティックからデータを受け取ると、コールバック関数を実行
+     *
+     * @param service service サービス
+     *
+     * @param char characteristic キャラクタリスティック
+     *
+     * @param callback callback function when received data
+     * データを受け取ったときのコールバック関数
+     */
     async subscribeWait(service, char, callback) {
         if (!this._peripheral) {
             throw new Error('HEM_6233T is not find.');
@@ -24121,6 +24386,13 @@ class HEM_6233T {
             }
         });
     }
+    /**
+     * Set the current time
+     *
+     * 現在時刻を設定
+     *
+     * @param timeOffsetMinute difference from UTC (Unit: minutes) 協定世界時との差(単位: 分)
+     */
     async _writeTimeCharWait(timeOffsetMinute) {
         if (!this._peripheral) {
             throw new Error('HEM_6233T is not find.');
@@ -24203,11 +24475,11 @@ class HEM_6233T {
                 0x08: 'PulseRateRangeDetection',
                 0x10: 'MeasurementPositionDetection',
             };
-            const mesurementStatus = buf.readUInt16LE(index);
+            const measurementStatus = buf.readUInt16LE(index);
             index++;
             result.measurementStatus = [];
             for (const f in statusFlag) {
-                if (+f & mesurementStatus) {
+                if (+f & measurementStatus) {
                     result.measurementStatus.push(statusFlag[f]);
                 }
             }
@@ -24230,7 +24502,9 @@ exports.default = HEM_6233T;
  * @packageDocumentation
  * @module Parts.HEM-9200T
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** HEM_9200T management class HEM_9200Tを管理するクラス */
 class HEM_9200T {
     constructor(peripheral, options = {}) {
         this.keys = [];
@@ -24248,6 +24522,17 @@ class HEM_9200T {
             name: 'HEM_9200T',
         };
     }
+    /**
+     * Verify that the received peripheral is from the HEM_9200T
+     *
+     * 受け取ったPeripheralがHEM_9200Tのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the HEM_9200T
+     *
+     * HEM_9200Tかどうか
+     */
     static isDevice(peripheral) {
         if (peripheral.localName &&
             (peripheral.localName.startsWith('BLESmart_') ||
@@ -24256,6 +24541,17 @@ class HEM_9200T {
         }
         return false;
     }
+    /**
+     * Connect to the device, get data, and then disconnect from the device
+     *
+     * You can get only data that the device has not yet sent
+     *
+     * デバイスに接続しデータを取得後、デバイスとの接続を切断
+     *
+     * 取得できるデータはデバイスが未送信のデータのみです
+     *
+     * @returns received data from the HEM_9200T HEM_9200Tから受け取ったデータ
+     */
     async getDataWait() {
         if (!this._peripheral) {
             throw new Error('HEM_9200T is not find.');
@@ -24276,7 +24572,7 @@ class HEM_9200T {
         //   return pass;
         // };
         // // pairing with user input passkey.
-        // console.log("connnected. pairing...");
+        // console.log("connected. pairing...");
         // const key = await this._peripheral.pairingWait({ passkeyCallback });
         // console.log("paired");
         const results = [];
@@ -24306,6 +24602,18 @@ class HEM_9200T {
         }); // blood pressure
         return await waitDisconnect;*/
     }
+    /**
+     * Execute a callback function when data is received from any service characteristic
+     *
+     * 任意のサービス・キャラクタティスティックからデータを受け取ると、コールバック関数を実行
+     *
+     * @param service service サービス
+     *
+     * @param char characteristic キャラクタリスティック
+     *
+     * @param callback callback function when received data
+     * データを受け取ったときのコールバック関数
+     */
     async subscribeWait(service, char, callback) {
         if (!this._peripheral) {
             throw new Error('HEM_9200T is not find.');
@@ -24400,8 +24708,10 @@ exports.default = HEM_9200T;
  * @packageDocumentation
  * @module Parts.KankiAirMier
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+/** Kanki AirMier management class 換気エアミエルを管理するクラス */
 class KankiAirMier {
     constructor() {
         this._peripheral = null;
@@ -24411,9 +24721,29 @@ class KankiAirMier {
             name: 'KankiAirMier',
         };
     }
+    /**
+     * Verify that the received peripheral is from the Kanki AirMier
+     *
+     * 受け取ったPeripheralが換気エアミエルのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Kanki AirMier
+     *
+     * 換気エアミエルかどうか
+     */
     static isDevice(peripheral) {
         return KankiAirMier._deviceAdvAnalyzer.validate(peripheral.adv_data);
     }
+    /**
+     * Get a data from the Kanki AirMier
+     *
+     * 換気エアミエルからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the Kanki AirMier 換気エアミエルから受け取ったデータ
+     */
     static getData(peripheral) {
         if (!KankiAirMier.isDevice(peripheral)) {
             return null;
@@ -24463,18 +24793,32 @@ KankiAirMier._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyze
  * @packageDocumentation
  * @module Parts.Logtta_AD
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
 const Logtta_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/abstracts/Logtta.js"));
+/** Logtta_AD management class Logtta_ADを管理するクラス */
 class Logtta_AD extends Logtta_1.default {
     constructor() {
         super(...arguments);
         this.staticClass = Logtta_AD;
     }
-    /** @deprecated */
+    /**
+     * @deprecated
+     *
+     * Verify that the received peripheral is from the Logtta_AD
+     *
+     * 受け取ったPeripheralがLogtta_ADのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Logtta_AD
+     *
+     * Logtta_ADかどうか
+     */
     static isDevice(peripheral) {
         return this.getDeviceMode(peripheral) === 'Connectable';
     }
@@ -24484,16 +24828,53 @@ class Logtta_AD extends Logtta_1.default {
     static parseVoltData(data, func = ObnizPartsBleAbstract_1.uint) {
         return (4 / 916) * func(data);
     }
+    /**
+     * Get the current value from the Logtta_AD
+     *
+     * Logtta_ADから電流値を取得
+     *
+     * @returns the current value from the Logtta_AD
+     *
+     * Logtta_ADから受け取った電流値
+     */
     async getAmpereWait() {
         return (await this.getDataWait()).ampere;
     }
+    /**
+     * Get the voltage value from the Logtta_AD
+     *
+     * Logtta_ADから電圧値を取得
+     *
+     * @returns the voltage value from the Logtta_AD
+     *
+     * Logtta_ADから受け取った電圧値
+     */
     async getVoltWait() {
         return (await this.getDataWait()).volt;
     }
+    /**
+     * Get the count data from the Logtta_AD
+     *
+     * Logtta_ADからカウントデータを取得
+     *
+     * @returns the count data from the Logtta_AD
+     *
+     * Logtta_ADから受け取ったカウントデータ
+     */
     async getCountWait() {
         return (await this.getDataWait()).count;
     }
-    /** @deprecated */
+    /**
+     * @deprecated
+     *
+     * Get all data available from the Logtta_AD
+     *
+     * Logtta_ADから取得可能なデータを全て取得
+     *
+     * @returns all data available from the Logtta_AD
+     *
+     * Logtta_ADから受け取った全てのデータ
+     */
     async getAllWait() {
         try {
             return await this.getDataWait();
@@ -24565,13 +24946,20 @@ Logtta_AD.BeaconDataStruct = {
  * @packageDocumentation
  * @module Parts.Logtta_Accel
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
 const Logtta_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/abstracts/Logtta.js"));
-/** Only support in beacon mode */
+/**
+ * Logtta_Accel management class Logtta_Accelを管理するクラス
+ *
+ * Only support in beacon mode
+ *
+ * ビーコンモードのときのみ動作します
+ */
 class Logtta_Accel extends Logtta_1.default {
     constructor() {
         super(...arguments);
@@ -24589,7 +24977,23 @@ class Logtta_Accel extends Logtta_1.default {
     parseData(data) {
         return data;
     }
-    /** @deprecated */
+    /**
+     * @deprecated
+     *
+     * Get a scan data from the Logtta_Accel
+     *
+     * Note: work only in beacon mode
+     *
+     * Logtta_Accelからスキャンデータを取得
+     *
+     * 注: ビーコンモードのときのみ動作
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns scan data from Logtta_Accel
+     *
+     * Logtta_Accelから受け取ったスキャンデータ
+     */
     static getScanData(peripheral) {
         if (!Logtta_Accel.isDevice(peripheral)) {
             return null;
@@ -24639,7 +25043,23 @@ class Logtta_Accel extends Logtta_1.default {
         }
         return null;
     }
-    /** @deprecated */
+    /**
+     * @deprecated
+     *
+     * Get a acceleration data from the Logtta_Accel
+     *
+     * Note: work only in beacon mode
+     *
+     * Logtta_Accelから加速度データを取得
+     *
+     * 注: ビーコンモードのときのみ動作
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns acceleration data from Logtta_Accel
+     *
+     * Logtta_Accelから受け取った加速度データ
+     */
     static getAccelData(peripheral) {
         if (!Logtta_Accel.isDevice(peripheral)) {
             return null;
@@ -24822,12 +25242,14 @@ Logtta_Accel.BeaconDataStruct = {
  * @packageDocumentation
  * @module Parts.Logtta_CO2
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
 const Logtta_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/abstracts/Logtta.js"));
+/** Logtta_CO2 management class Logtta_CO2を管理するクラス */
 class Logtta_CO2 extends Logtta_1.default {
     constructor() {
         super(...arguments);
@@ -24836,14 +25258,45 @@ class Logtta_CO2 extends Logtta_1.default {
         // In order to maintain compatibility, when callback is placed from arguments, the behavior of the document street
         this.callbackFlag = false;
     }
-    /** @deprecated */
+    /**
+     * @deprecated
+     *
+     * Verify that the received peripheral is from the Logtta_CO2
+     *
+     * 受け取ったPeripheralがLogtta_CO2のものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Logtta_CO2
+     *
+     * Logtta_CO2かどうか
+     */
     static isDevice(peripheral) {
         return this.getDeviceMode(peripheral) === 'Connectable';
     }
-    /** @deprecated */
+    /**
+     * @deprecated
+     *
+     * Verify that the received advertisement is from the Logtta_CO2 (in Beacon Mode)
+     *
+     * 受け取ったAdvertisementがLogtta_CO2のものかどうか確認する(ビーコンモード中)
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Logtta_CO2
+     *
+     * Logtta_CO2かどうか
+     */
     static isAdvDevice(peripheral) {
         return this.getDeviceMode(peripheral) === 'Beacon';
     }
+    /**
+     * Notify when the CO2 concentration data have got from the Logtta_CO2 with connected state
+     *
+     * 接続している状態でLogtta_CO2からCO2濃度データを取得したとき通知
+     *
+     * @returns
+     */
     async startNotifyWait(callback) {
         // TODO: delete try-catch
         try {
@@ -24867,7 +25320,17 @@ class Logtta_CO2 extends Logtta_1.default {
             }
         });
     }
-    /** @deprecated */
+    /**
+     * @deprecated
+     *
+     * Get CO2 concentration data with connected state
+     *
+     * 接続している状態でCO2濃度データを取得
+     *
+     * @returns CO2 concentration data from the Logtta_CO2
+     *
+     * Logtta_CO2から受け取ったCO2濃度データ
+     */
     async getWait() {
         try {
             return (await this.getDataWait()).co2;
@@ -24876,7 +25339,31 @@ class Logtta_CO2 extends Logtta_1.default {
             return null;
         }
     }
-    /** @deprecated */
+    /**
+     * @deprecated
+     *
+     * Set enable / disable for beacon mode (periodic beacon transmission)
+     *
+     * Call this function after authenticating with the sensor
+     *
+     * After setting, disconnect once to enable it
+     *
+     * To stop beacon mode, you need to hold the button on the sensor for more than 2 seconds
+     *
+     * (For more detail, please see http://www.uni-elec.co.jp/logtta_page.html )
+     *
+     * ビーコンモード(定期的なビーコン発信)の有効/無効の設定
+     *
+     * センサとの認証を済ませた状態で実行してください
+     *
+     * 設定後に切断した後から有効になります
+     *
+     * ビーコンモードの終了は、デバイスのボタンを2秒以上長押しする操作が必要です(詳しくは http://www.uni-elec.co.jp/logtta_page.html )
+     *
+     * @param enable enable the beacon mode or not ビーコンモードを有効にするかどうか
+     *
+     * @returns
+     */
     setBeaconMode(enable) {
         return this.setBeaconModeWait(enable);
     }
@@ -24944,12 +25431,18 @@ Logtta_CO2.BeaconDataStruct = {
  * @packageDocumentation
  * @module Parts.Logtta_TH
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
 const Logtta_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/abstracts/Logtta.js"));
+/**
+ * Logtta_TH(Logtta_Temp) management class
+ *
+ * Logtta_TH(Logtta_Temp)を管理するクラス
+ */
 class Logtta_TH extends Logtta_1.default {
     constructor() {
         super(...arguments);
@@ -24961,15 +25454,49 @@ class Logtta_TH extends Logtta_1.default {
     static parseHumidityData(data, func = ObnizPartsBleAbstract_1.uint) {
         return (func(data) / 0x10000) * 125 - 6;
     }
-    /** @deprecated */
+    /**
+     * @deprecated
+     *
+     * Verify that the received peripheral is from the Logtta_TH(Logtta_Temp)
+     *
+     * 受け取ったPeripheralがLogtta_TH(Logtta_Temp)のものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Logtta_TH(Logtta_Temp)
+     *
+     * Logtta_TH(Logtta_Temp)かどうか
+     */
     static isDevice(peripheral) {
         return this.getDeviceMode(peripheral) === 'Connectable';
     }
-    /** @deprecated */
+    /**
+     * @deprecated
+     *
+     * Verify that the received advertisement is from the Logtta_TH(Logtta_Temp) (in Beacon Mode)
+     *
+     * 受け取ったAdvertisementがLogtta_TH(Logtta_Temp)のものかどうか確認する(ビーコンモード中)
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Logtta_TH(Logtta_Temp)
+     *
+     * Logtta_TH(Logtta_Temp)かどうか
+     */
     static isAdvDevice(peripheral) {
         return this.getDeviceMode(peripheral) === 'Beacon';
     }
-    /** @deprecated */
+    /**
+     * @deprecated
+     *
+     * Get all data with connected state
+     *
+     * 接続している状態で全てのデータを取得
+     *
+     * @returns all data from the Logtta_TH(Logtta_Temp)
+     *
+     * Logtta_TH(Logtta_Temp)から受け取った全てのデータ
+     */
     async getAllWait() {
         try {
             return await this.getDataWait();
@@ -24978,13 +25505,55 @@ class Logtta_TH extends Logtta_1.default {
             return null;
         }
     }
+    /**
+     * Get the temperature data with connected state
+     *
+     * 接続している状態で温度のデータを取得
+     *
+     * @returns temperature data from the Logtta_TH(Logtta_Temp)
+     *
+     * Logtta_TH(Logtta_Temp)から受け取った温度データ
+     */
     async getTemperatureWait() {
         return (await this.getDataWait()).temperature;
     }
+    /**
+     * Get the humidity data with connected state
+     *
+     * 接続している状態で湿度のデータを取得
+     *
+     * @returns humidity data from the Logtta_TH(Logtta_Temp)
+     *
+     * Logtta_TH(Logtta_Temp)から受け取った湿度データ
+     */
     async getHumidityWait() {
         return (await this.getDataWait()).humidity;
     }
-    /** @deprecated */
+    /**
+     * @deprecated
+     *
+     * Set enable / disable for beacon mode (periodic beacon transmission)
+     *
+     * Call this function after authenticating with the sensor
+     *
+     * After setting, disconnect once to enable it
+     *
+     * To stop beacon mode, you need to hold the button on the sensor for more than 2 seconds
+     *
+     * (For more detail, please see http://www.uni-elec.co.jp/logtta_page.html )
+     *
+     * ビーコンモード(定期的なビーコン発信)の有効/無効の設定
+     *
+     * センサとの認証を済ませた状態で実行してください
+     *
+     * 設定後に切断した後から有効になります
+     *
+     * ビーコンモードの終了は、デバイスのボタンを2秒以上長押しする操作が必要です(詳しくは http://www.uni-elec.co.jp/logtta_page.html )
+     *
+     * @param enable enable the beacon mode or not ビーコンモードを有効にするかどうか
+     *
+     * @returns
+     */
     setBeaconMode(enable) {
         return this.setBeaconModeWait(enable);
     }
@@ -25068,11 +25637,13 @@ Logtta_TH.BeaconDataStruct = {
  * @packageDocumentation
  * @module Parts.MINEW_S1_HT
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+/** MINEW_S1 management class MINEW_S1を管理するクラス */
 class MINEW_S1 {
     constructor() {
         this._peripheral = null;
@@ -25084,6 +25655,25 @@ class MINEW_S1 {
     static info() {
         return { name: 'MINEW_S1' };
     }
+    /**
+     * Verify that the received peripheral is from the MINEW_S1
+     *
+     * 受け取ったPeripheralがMINEW_S1のものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @param macAddress (optional: If you want to specify a MAC address) MAC address
+     *
+     * (任意: MACアドレスを指定したい場合) MACアドレス
+     *
+     * @returns Whether it is the MINEW_S1
+     *
+     * MINEW_S1かどうか
+     *
+     * true: HT Sensor SLOT / Info SLOT
+     *
+     * false: iBeacon SLOT / UID SLOT / URL SLOT / TLM SLOT / other advertisements
+     */
     static isDevice(peripheral, macAddress = null) {
         if (!this._hasPrefix(peripheral)) {
             return false;
@@ -25097,6 +25687,17 @@ class MINEW_S1 {
         }
         return true;
     }
+    /**
+     * Get device information data from the MINEW_S1
+     *
+     * MINEW_S1からのデバイス情報データを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received device information data from the MINEW_S1
+     *
+     * MINEW_S1から受け取ったデバイス情報データ
+     */
     static getInfoData(peripheral) {
         if (!this._hasPrefix(peripheral)) {
             return null;
@@ -25126,6 +25727,17 @@ class MINEW_S1 {
             macAddress,
         };
     }
+    /**
+     * Get temperature and humidity data from the MINEW_S1
+     *
+     * MINEW_S1からの温湿度データを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received temperature and humidity data from the MINEW_S1
+     *
+     * MINEW_S1から受け取った温湿度データ
+     */
     static getHTData(peripheral) {
         if (!this._hasPrefix(peripheral)) {
             return null;
@@ -25206,12 +25818,14 @@ exports.default = MINEW_S1;
  * @packageDocumentation
  * @module Parts.MT_500BT
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+/** MT_500BT management class MT_500BTを管理するクラス */
 class MT_500BT {
     constructor(peripheral) {
         this.keys = [];
@@ -25232,12 +25846,32 @@ class MT_500BT {
             name: 'MT_500BT',
         };
     }
+    /**
+     * Verify that the received peripheral is from the MT_500BT
+     *
+     * 受け取ったPeripheralがMT_500BTのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the MT_500BT
+     *
+     * MT_500BTかどうか
+     */
     static isDevice(peripheral) {
         if (peripheral.localName && peripheral.localName.startsWith('MT-500')) {
             return true;
         }
         return false;
     }
+    /**
+     * Get IFUID from the localName
+     *
+     * localNameからIFUIDを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns IFUID
+     */
     static getIFUID(peripheral) {
         if (!this.isDevice(peripheral) || peripheral.localName.length < 12) {
             return null;
@@ -25245,6 +25879,15 @@ class MT_500BT {
         const hexStr = peripheral.localName.slice(7, 11);
         return Buffer.from(hexStr, 'hex').readUInt16BE(0);
     }
+    /**
+     * Decrypt CNKEY from IFUID
+     *
+     * IFUIDからCNKEYを復号
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns decrypted CNKEY 復号されたされたCNKEY
+     */
     static getCNKey(peripheral) {
         const ifuid = this.getIFUID(peripheral);
         if (ifuid === null) {
@@ -25256,6 +25899,11 @@ class MT_500BT {
     wired(obniz) {
         // do nothing.
     }
+    /**
+     * Connect (and authenticate) the sensor
+     *
+     * センサへ接続(+ センサの認証)
+     */
     async connectWait() {
         if (!this._peripheral) {
             throw new Error('MT-500BT is not find.');
@@ -25296,6 +25944,11 @@ class MT_500BT {
             await this.disconnectWait();
         }
     }
+    /**
+     * Send the communication start command
+     *
+     * 通信開始コマンドを送信
+     */
     async startCommunicationCommandWait() {
         const cnkey = '' + MT_500BT.getCNKey(this._peripheral); // to string
         const CNKeyBuf = Buffer.from(cnkey, 'utf8');
@@ -25306,6 +25959,29 @@ class MT_500BT {
             throw new Error('StartCommunicationError ' + res.readUInt8(2));
         }
     }
+    /**
+     * Get device information from the MT_500BT
+     *
+     * MT_500BTからのデバイス情報データ取得
+     *
+     * @returns received device information data from the MT_500BT
+     *
+     * MT_500BTからのデバイス情報データ
+     *
+     * ```
+     * {
+     *
+     * cls: device type デバイスタイプ
+     *
+     * ('Pulse rate meter', 'SpO2(BO)', 'Thermometer', 'SpO2(MP)', 'Blood pressure meter'),
+     *
+     * dvnm: product information 製品情報,
+     *
+     * swif: detailed information 詳細情報
+     *
+     * }
+     * ```
+     */
     async getDeviceInformationWait() {
         const res1 = await this._sendDataReplyWait(this._createCommand(0x00, [0x01]));
         const res2 = await this._sendDataReplyWait(this._createCommand(0x00, [0x02]));
@@ -25361,6 +26037,33 @@ class MT_500BT {
     //     throw new Error("setDatetimeWait error " + res.readUInt8(3));
     //   }
     // }
+    /**
+     * Get temperature and humidity data from the MT_500BT
+     *
+     * MT_500BTから温湿度データを取得
+     *
+     * @returns received temperature and humidity data from the MT_500BT
+     *
+     * MT_500BTからの温湿度データ
+     *
+     * ```
+     * {
+     *
+     * timestamp: timestamp タイムスタンプ,
+     *
+     * temperature: {
+     *
+     *   body: body temperature 体温,
+     *
+     *   material: material temperature 物体温度,
+     *
+     *   air: air temperature 気温
+     *
+     *   }
+     *
+     * }
+     * ```
+     */
     async getTemperatureWait() {
         const res = await this._sendDataReplyWait(this._createCommand(0x80));
         const year = res.readUInt8(3) !== 0xff ? res.readUInt8(3) + 2000 : undefined;
@@ -25388,6 +26091,11 @@ class MT_500BT {
             },
         };
     }
+    /**
+     * Disconnect from the sensor
+     *
+     * センサから切断
+     */
     async disconnectWait() {
         if (!this._peripheral) {
             throw new Error('MT-500BT is not find.');
@@ -25449,7 +26157,9 @@ exports.default = MT_500BT;
  * @packageDocumentation
  * @module Parts.MiniBreeze
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** MiniBreeze management class MiniBreezeを管理するクラス */
 class MiniBreeze {
     constructor() {
         this._peripheral = null;
@@ -25461,6 +26171,9 @@ class MiniBreeze {
     static info() {
         return { name: 'MiniBreeze' };
     }
+    /**
+     * @returns object of gas types list ガスタイプの一覧のオブジェクト
+     */
     static gasType() {
         return {
             0: 'none',
@@ -25473,6 +26186,9 @@ class MiniBreeze {
             8: 'PM10',
         };
     }
+    /**
+     * @returns object of battery status list バッテリーの状態の一覧のオブジェクト
+     */
     static status() {
         return {
             0: 'BatteryEmpty',
@@ -25481,12 +26197,34 @@ class MiniBreeze {
             3: 'BatteryCharging',
         };
     }
+    /**
+     * Verify that the received peripheral is from the MiniBreeze
+     *
+     * 受け取ったPeripheralがMiniBreezeのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the MiniBreeze
+     *
+     * MiniBreezeかどうか
+     */
     static isDevice(peripheral) {
         if (peripheral.adv_data.length !== 31 || !this._hasPrefix(peripheral)) {
             return false;
         }
         return true;
     }
+    /**
+     * Get a data from the MiniBreeze
+     *
+     * MiniBreezeからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the MiniBreeze
+     *
+     * MiniBreezeから受け取ったデータ
+     */
     static getData(peripheral) {
         if (!this._hasPrefix(peripheral)) {
             return null;
@@ -25554,12 +26292,19 @@ exports.default = MiniBreeze;
  * @packageDocumentation
  * @module Parts.PLS_01BT
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** PLS_01BT management class PLS_01BTを管理するクラス */
 class PLS_01BT {
     constructor(peripheral) {
         this.keys = [];
         this.requiredKeys = [];
-        this.onmesured = null;
+        /**
+         * Callback when receiving the measured data
+         *
+         * 計測結果を受け取ったときにコールバック
+         */
+        this.onmeasured = null;
         this._uuids = {
             service: 'CDEACB80-5235-4C07-8846-93A37EE6B86D',
             rxChar: 'CDEACB81-5235-4C07-8846-93A37EE6B86D',
@@ -25577,6 +26322,17 @@ class PLS_01BT {
             name: 'PLS_01BT',
         };
     }
+    /**
+     * Verify that the received peripheral is from the PLS_01BT
+     *
+     * 受け取ったPeripheralがPLS_01BTのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the PLS_01BT
+     *
+     * PLS_01BTかどうか
+     */
     static isDevice(peripheral) {
         if (peripheral.localName &&
             peripheral.localName.startsWith('My Oximeter')) {
@@ -25587,6 +26343,11 @@ class PLS_01BT {
     wired(obniz) {
         // do nothing.
     }
+    /**
+     * Connect the sensor
+     *
+     * センサへ接続
+     */
     async connectWait() {
         if (!this._peripheral) {
             throw new Error('PLS_01BT is not find.');
@@ -25609,8 +26370,8 @@ class PLS_01BT {
                     const pulseRate = data[1];
                     const bloodOxygenLevel = data[2];
                     const perfusionIndex = data[3];
-                    if (this.onmesured) {
-                        this.onmesured({
+                    if (this.onmeasured) {
+                        this.onmeasured({
                             pulseRate,
                             bloodOxygenLevel,
                             perfusionIndex,
@@ -25620,6 +26381,11 @@ class PLS_01BT {
             }
         });
     }
+    /**
+     * Disconnect from the sensor
+     *
+     * センサから切断
+     */
     async disconnectWait() {
         if (!this._peripheral) {
             throw new Error('PLS_01BT is not find.');
@@ -25641,11 +26407,18 @@ exports.default = PLS_01BT;
  * @packageDocumentation
  * @module Parts.REX_BTPM25V
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** REX_BTPM25V management class REX_BTPM25Vを管理するクラス */
 class REX_BTPM25V {
     constructor(peripheral) {
         this.keys = [];
         this.requiredKeys = [];
+        /**
+         * Callback when the button is pressed
+         *
+         * ボタンが押されたときにコールバック
+         */
         this.onbuttonpressed = null;
         this._peripheral = null;
         this._uuids = {
@@ -25660,7 +26433,7 @@ class REX_BTPM25V {
         this._ledCharacteristic = null;
         this._buttonCharacteristic = null;
         if (peripheral && !REX_BTPM25V.isDevice(peripheral)) {
-            throw new Error('peripheral is not RS_Seek3');
+            throw new Error('peripheral is not REX_BTPM25V');
         }
         this._peripheral = peripheral;
     }
@@ -25669,6 +26442,17 @@ class REX_BTPM25V {
             name: 'REX_BTPM25V',
         };
     }
+    /**
+     * Verify that the received peripheral is from the REX_BTPM25V
+     *
+     * 受け取ったPeripheralがREX_BTPM25Vのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the REX_BTPM25V
+     *
+     * REX_BTPM25Vかどうか
+     */
     static isDevice(peripheral) {
         if (peripheral.localName !== 'PM25V') {
             return false;
@@ -25678,9 +26462,14 @@ class REX_BTPM25V {
     wired(obniz) {
         // do nothing.
     }
+    /**
+     * Connect the sensor
+     *
+     * センサへ接続
+     */
     async connectWait() {
         if (!this._peripheral) {
-            throw new Error('RS_Seek3 is not find.');
+            throw new Error('REX_BTPM25V is not find.');
         }
         this._peripheral.ondisconnect = (reason) => {
             if (typeof this.ondisconnect === 'function') {
@@ -25708,10 +26497,43 @@ class REX_BTPM25V {
             });
         }
     }
+    /**
+     * Disconnect from the sensor
+     *
+     * センサから切断
+     */
     async disconnectWait() {
         var _a;
         await ((_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.disconnectWait());
     }
+    /**
+     * Do one shot measurement
+     *
+     * ワンショット計測
+     *
+     * @returns one shot measurement data ワンショット計測データ
+     *
+     * ```
+     * {
+     *
+     * pm2_5: PM2.5 concentration PM2.5濃度 (25~1000 [ug/m3]),
+     *
+     * pm10: PM10 concentration M10濃度 (25~1000 [ug/m3]),
+     *
+     * barometricPressure: barometric pressure 気圧 (300~1100 [hPa]),
+     *
+     * temperature: temperature 温度 (-20~85 [degC]),
+     *
+     * humidity: relative humidity 湿度 (10~70 [%RH]),
+     *
+     * lux: illuminance 照度 (0~65535 [lx]),
+     *
+     * mode: mode flag モードフラグ (0: 連続計測, 1: 最新計測データ, 3: ワンショット)
+     *
+     * }
+     * ```
+     *
+     */
     async measureOneShotWait() {
         if (!this._oneShotMeasurementCharacteristic) {
             throw new Error('device is not connected');
@@ -25721,6 +26543,37 @@ class REX_BTPM25V {
         const data = await this._sendAndReceiveWait(this._oneShotMeasurementCharacteristic, sendData);
         return this._analyzeResult(data);
     }
+    /**
+     * Do extended one shot measurement
+     *
+     * 拡張ワンショット計測
+     *
+     * @returns one extended shot measurement data 拡張ワンショット計測データ
+     *
+     * ```
+     * {
+     *
+     * pm2_5: PM2.5 concentration PM2.5濃度 (25~1000 [ug/m3]),
+     *
+     * pm10: PM10 concentration M10濃度 (25~1000 [ug/m3]),
+     *
+     * barometricPressure: barometric pressure 気圧 (300.0~1100.0 [hPa]),
+     *
+     * temperature: temperature 温度 (-20.0~85.0 [degC]),
+     *
+     * humidity: relative humidity 湿度 (0.0~100.0 [%RH]),
+     *
+     * lux: illuminance 照度 (0~65534 [lx]),
+     *
+     * tvoc: TVOC (Total Volatile Organic Compounds) (0~1187 [ppb])
+     *
+     * eco2: eCO2 (equivalent CO2) 等価CO2濃度 (400~8190 [ppm])
+     *
+     * uv: UV Index (0~11)
+     *
+     * }
+     * ```
+     */
     async measureOneShotExtWait() {
         if (!this._oneShotMeasurementCharacteristic) {
             throw new Error('device is not connected');
@@ -25730,9 +26583,37 @@ class REX_BTPM25V {
         const data = await this._sendAndReceiveWait(this._oneShotMeasurementCharacteristic, sendData);
         return this._analyzeResultExt(data);
     }
+    /**
+     * @deprecated Please use {@linkplain getLedModeWait}
+     *
+     * {@linkplain getLedModeWait} の使用を推奨
+     *
+     * @returns
+     */
     getLedMode() {
         return this.getLedModeWait();
     }
+    /**
+     * Get LED mode LEDモードの取得
+     *
+     * @returns current LED mode 現在のLEDモード
+     *
+     * 0: off 消灯
+     *
+     * 1: PM2.5 mode PM2.5モード
+     *
+     * 2: PM10 mode PM10モード
+     *
+     * 3: VOC mode VOCモード
+     *
+     * 4: UV mode UVモード
+     *
+     * 5: temperature mode 温度モード
+     *
+     * 6: humidity mode 湿度モード
+     *
+     * 128: power LED 電源LED
+     */
     async getLedModeWait() {
         if (!this._ledCharacteristic) {
             throw new Error('device is not connected');
@@ -25860,6 +26741,7 @@ exports.default = REX_BTPM25V;
 Object.defineProperty(exports, "__esModule", { value: true });
 const LED_DISPLAY_MODE = ['Disable', 'PM2.5', 'CO2'];
 const PM2_5_CONCENTRATION_MODE = ['Mass', 'Number'];
+/** RS_BTEVS1 management class RS_BTEVS1を管理するクラス */
 class RS_BTEVS1 {
     constructor(peripheral) {
         this.keys = [];
@@ -26161,12 +27043,19 @@ RS_BTEVS1.deviceAdv = [
  * @packageDocumentation
  * @module Parts.RS_BTIREX2
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 // not working
+/** 【NOT WORKING】 RS_BTIREX2 management class RS_BTIREX2を管理するクラス */
 class RS_BTIREX2 {
     constructor(peripheral) {
         this.keys = [];
         this.requiredKeys = [];
+        /**
+         * Callback when the button is pressed
+         *
+         * ボタンが押されたときにコールバック
+         */
         this.onbuttonpressed = null;
         this._uuids = {
             service: '6e400001-b5a3-f393-e0a9-e50e24dcca9e',
@@ -26186,6 +27075,17 @@ class RS_BTIREX2 {
             name: 'RS_BTIREX2',
         };
     }
+    /**
+     * Verify that the received peripheral is from the RS_BTIREX2
+     *
+     * 受け取ったPeripheralがRS_BTIREX2のものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the RS_BTIREX2
+     *
+     * RS_BTIREX2かどうか
+     */
     static isDevice(peripheral) {
         if (peripheral.localName && peripheral.localName.startsWith('BTIR')) {
             return true;
@@ -26195,6 +27095,11 @@ class RS_BTIREX2 {
     wired(obniz) {
         // do nothing.
     }
+    /**
+     * Connect the sensor
+     *
+     * センサへ接続
+     */
     async connectWait() {
         if (!this._peripheral) {
             throw new Error('RS_BTIREX2 is not find.');
@@ -26213,6 +27118,17 @@ class RS_BTIREX2 {
             .getService(this._uuids.service)
             .getCharacteristic(this._uuids.txChar);
     }
+    /**
+     * Make and send a command
+     *
+     * コマンドの作成と送信
+     *
+     * @param payload payload ペイロード
+     *
+     * @param crc CRC of the payload ペイロードのCRC
+     *
+     * @returns
+     */
     _sendAndReceiveWait(payload, crc = 0xb6) {
         if (!this._rxCharacteristic || !this._txCharacteristic) {
             throw new Error('device is not connected');
@@ -26250,13 +27166,24 @@ exports.default = RS_BTIREX2;
  * @packageDocumentation
  * @module Parts.RS_BTWATTCH2
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** RS_BTWATTCH2 management class RS_BTWATTCH2を管理するクラス */
 class RS_BTWATTCH2 {
     /**
-     * Constructor. Provide option at this time
+     * Constructor.
      *
-     * @param peripheral
-     * @param options
+     * If you want to change the RTC auto-configuration option from the default,
+     *
+     * set it as an argument at this time.
+     *
+     * コンストラクタ
+     *
+     * RTC自動設定オプションをデフォルトから変更する場合は、このタイミングで引数に設定
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @param options set auto RTC or not RTC自動設定の有無
      */
     constructor(peripheral, options) {
         this.keys = ['rtcAutoset'];
@@ -26277,9 +27204,15 @@ class RS_BTWATTCH2 {
         };
     }
     /**
-     * Check found peripheral is part of this parts
+     * Verify that the received peripheral is from the RS_BTWATTCH2
      *
-     * @param peripheral
+     * 受け取ったPeripheralがRS_BTWATTCH2のものかどうか確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the RS_BTWATTCH2
+     *
+     * RS_BTWATTCH2かどうか
      */
     static isDevice(peripheral) {
         return (peripheral.localName &&
@@ -26290,13 +27223,23 @@ class RS_BTWATTCH2 {
         // do nothing.
     }
     /**
-     * Check if device is under paring mode(over 3 seconds button pressing)
+     * Check if device is under pairing mode(over 3 seconds button pressing)
+     *
+     * デバイスがペアリングモード中であることを検出する (3秒間本体のボタンを押してください)
+     *
+     * @returns Whether there is a device under pairing mode
+     *
+     * ペアリングモード中のデバイスがあるかどうか
      */
     isPairingMode() {
         return this._peripheral.localName.indexOf('BTWATTCH2_') < 0;
     }
     /**
-     * get pairing key
+     * Get the pairing key under pairing mode
+     *
+     * ペアリングモード中にペアリングキーを取得
+     *
+     * @returns pairing key ペアリングキー
      */
     async firstPairingWait() {
         if (!this._peripheral) {
@@ -26343,7 +27286,11 @@ class RS_BTWATTCH2 {
         }
     }
     /**
-     * Connect to the target device regarding pairing key
+     * Connect to the target device with pairing key
+     *
+     * ペアリングキーを用いてデバイスと接続
+     *
+     * @param keys pairing key ペアリングキー
      */
     async connectWait(keys) {
         if (!keys) {
@@ -26363,7 +27310,7 @@ class RS_BTWATTCH2 {
         };
         const service = this._peripheral.getService('6e400001b5a3f393e0a9e50e24dcca9e');
         if (!service) {
-            throw new Error(`no serivce found`);
+            throw new Error(`no service found`);
         }
         this._rxFromTargetCharacteristic = service.getCharacteristic('6e400003b5a3f393e0a9e50e24dcca9e');
         this._txToTargetCharacteristic = service.getCharacteristic('6e400002b5a3f393e0a9e50e24dcca9e');
@@ -26390,21 +27337,28 @@ class RS_BTWATTCH2 {
     }
     /**
      * Disconnect from the device
+     *
+     * デバイスとの接続を切断
      */
     async disconnectWait() {
         await this._peripheral.disconnectWait();
     }
     /**
-     * @deprecated
+     * @deprecated Please use {@linkplain setRTCWait}
+     *
+     * {@linkplain setRTCWait} の使用を推奨
+     *
      * @param date
      */
     setRTC(date) {
         return this.setRTCWait(date);
     }
     /**
-     * Setting Time on device clock
+     * Set device RTC (date)
      *
-     * @param date
+     * デバイスのRTC(日時)の設定
+     *
+     * @param date instance of Date Dateのインスタンス
      */
     async setRTCWait(date) {
         if (!date) {
@@ -26420,39 +27374,55 @@ class RS_BTWATTCH2 {
             date.getFullYear() - 1900,
         ]);
         if (ret.length !== 2) {
-            throw new Error(`communiation error`);
+            throw new Error(`communication error`);
         }
         if (ret[1] !== 0x00) {
             throw new Error(`set rtc failed`);
         }
     }
     /**
-     * Set Relay ON/OFF
+     * Set relay ON/OFF
      *
-     * @param isOn
+     * リレーのON/OFFを設定する
+     *
+     * @param isOn set relay or not
+     *
+     * リレーを設定するかどうか
      */
     async setPowerStateWait(isOn) {
         const ret = await this._transactionWait([0xa7, isOn ? 0x01 : 0x00]);
         if (ret.length !== 3) {
-            throw new Error(`communiation error`);
+            throw new Error(`communication error`);
         }
         if (ret[1] === 0x01) {
             throw new Error(`set power failed`);
         }
     }
     /**
-     * Getting Current Relay State;
+     * Get current relay state
+     *
+     * 現在のリレーの状態を取得
+     *
+     * @returns the relay in set or not
+     *
+     * リレーが設定されているかどうか
      */
     async getPowerStateWait() {
         return (await this.getRealTimeDataWait()).powerState;
     }
     /**
-     * Getting All of realtime data
+     * Get realtime measurement data(voltage[Vrms]・electric current[Irms]・electric power[Wa]) and relay state
+     *
+     * リアルタイム計測データ(電圧[Vrms]・電流[Irms]・電力[Wa])とリレーの状態を取得
+     *
+     * @returns received realtime measurement data and relay state
+     *
+     * 受けとったリアルタイム計測データとリレーの状態
      */
     async getRealTimeDataWait() {
         const ret = await this._transactionWait([0x08]);
         if (ret.length !== 27) {
-            throw new Error(`communiation error`);
+            throw new Error(`communication error`);
         }
         if (ret[1] !== 0x00) {
             throw new Error(`get data failed`);
@@ -26500,12 +27470,12 @@ class RS_BTWATTCH2 {
         this._received.push(...data);
         if (this._received.length === this._totalSize + 1) {
             this._received.pop(); // => CRC
-            this._onRecieved(this._received);
+            this._onReceived(this._received);
             this._received = [];
             this._totalSize = -1;
         }
     }
-    _onRecieved(data) {
+    _onReceived(data) {
         const one = this._waitings.shift();
         if (!one) {
             return;
@@ -26835,11 +27805,18 @@ exports.default = RS_BTWATTCH2;
  * @packageDocumentation
  * @module Parts.RS_Seek3
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** RS_Seek3 management class RS_Seek3を管理するクラス */
 class RS_Seek3 {
     constructor(peripheral) {
         this.keys = [];
         this.requiredKeys = [];
+        /**
+         * Callback when the button is pressed
+         *
+         * ボタンが押されたときにコールバック
+         */
         this.onpressed = null;
         this._peripheral = null;
         this._uuids = {
@@ -26859,6 +27836,17 @@ class RS_Seek3 {
             name: 'RS_Seek3',
         };
     }
+    /**
+     * Verify that the received peripheral is from the RS_Seek3
+     *
+     * 受け取ったPeripheralがRS_Seek3のものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the RS_Seek3
+     *
+     * RS_Seek3かどうか
+     */
     static isDevice(peripheral) {
         if (peripheral.localName !== 'Seek3') {
             return false;
@@ -26868,6 +27856,11 @@ class RS_Seek3 {
     wired(obniz) {
         // do nothing.
     }
+    /**
+     * Connect the sensor
+     *
+     * センサへ接続
+     */
     async connectWait() {
         if (!this._peripheral) {
             throw new Error('RS_Seek3 is not find.');
@@ -26892,10 +27885,32 @@ class RS_Seek3 {
             });
         }
     }
+    /**
+     * Disconnect from the sensor
+     *
+     * センサから切断
+     */
     async disconnectWait() {
         var _a;
         await ((_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.disconnectWait());
     }
+    /**
+     * Get temperature and humidity data from the RS_SEEK3
+     *
+     * RS_SEEK3から温湿度データを取得
+     *
+     * @returns temperature and humidity data 温湿度データ
+     *
+     * ```
+     * {
+     *
+     * temperature: temperature 温度,
+     *
+     * humidity: humidity 湿度
+     *
+     * }
+     * ```
+     */
     async getTempHumidWait() {
         if (!this._tempHumidCharacteristic) {
             throw new Error('device is not connected');
@@ -26918,8 +27933,10 @@ exports.default = RS_Seek3;
  * @packageDocumentation
  * @module Parts.TR4
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+/** Tr4 series management class Tr4シリーズを管理するクラス */
 class Tr4 {
     constructor() {
         this._peripheral = null;
@@ -26929,9 +27946,37 @@ class Tr4 {
             name: 'TR4',
         };
     }
+    /**
+     * Verify that the received peripheral is from the Tr4
+     *
+     * 受け取ったPeripheralがTr4のものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Tr4
+     *
+     * Tr4かどうか
+     */
     static isDevice(peripheral) {
         return Tr4._deviceAdvAnalyzer.validate(peripheral.adv_data);
     }
+    /**
+     * Get a data from the Tr4
+     *
+     * Tr4からデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the Tr4 Tr4から受け取ったデータ
+     *
+     * ```
+     * {
+     *
+     * temperature: temperature 温度 (Unit 単位: 0.1 degC)
+     *
+     * }
+     * ```
+     */
     static getData(peripheral) {
         if (!Tr4.isDevice(peripheral)) {
             return null;
@@ -26982,7 +28027,9 @@ Tr4._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
  * @packageDocumentation
  * @module Parts.UA1200BLE
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** UA1200BLE management class UA1200BLEを管理するクラス */
 class UA1200BLE {
     constructor(peripheral, timezoneOffsetMinute) {
         if (!peripheral || !UA1200BLE.isDevice(peripheral)) {
@@ -26996,9 +28043,35 @@ class UA1200BLE {
             name: 'UA1200BLE',
         };
     }
+    /**
+     * Verify that the received peripheral is from the UA1200BLE
+     *
+     * 受け取ったPeripheralがUA1200BLEのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is UA1200BLE
+     *
+     * UA1200BLEかどうか
+     */
     static isDevice(peripheral) {
         return (peripheral.localName && peripheral.localName.startsWith('UA-1200BLE_'));
     }
+    /**
+     * Judge whether it is cooperation mode
+     *
+     * (When in cooperation mode, no data exists even when connected)
+     *
+     * 連携モードかどうかの判定
+     *
+     * (連携モードのときは接続してもデータが存在しません)
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is cooperation mode or not
+     *
+     * 連携モードかどうか
+     */
     static isCooperationMode(peripheral) {
         const peripheralHex = peripheral.adv_data
             .map((e) => e.toString(16))
@@ -27028,6 +28101,13 @@ class UA1200BLE {
         ].join('');
         return peripheralHex.indexOf(peripheralArray) > -1;
     }
+    /**
+     * Pair with the device
+     *
+     * デバイスとペアリング
+     *
+     * @returns pairing key ペアリングキー
+     */
     async pairingWait() {
         if (!this._peripheral) {
             throw new Error('UA1200BLE not found');
@@ -27049,6 +28129,13 @@ class UA1200BLE {
         await customServiceChar.writeWait([2, 1, 3]); // disconnect req
         return key;
     }
+    /**
+     * Get data from the UA1200BLE
+     *
+     * UA1200BLEからデータを取得
+     *
+     * @returns data from the UA1200BLE UA1200BLEから受け取ったデータ
+     */
     async getDataWait() {
         if (!this._peripheral) {
             throw new Error('UA1200BLE not found');
@@ -27218,7 +28305,9 @@ exports.default = UA1200BLE;
  * @packageDocumentation
  * @module Parts.UA651BLE
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** UA651BLE management class UA651BLEを管理するクラス */
 class UA651BLE {
     constructor(peripheral, timezoneOffsetMinute) {
         if (!peripheral) {
@@ -27232,9 +28321,27 @@ class UA651BLE {
             name: 'UA651BLE',
         };
     }
+    /**
+     * Verify that the received peripheral is from the UA651BLE
+     *
+     * 受け取ったPeripheralがUA651BLEのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is UA651BLE
+     *
+     * UA651BLEかどうか
+     */
     static isDevice(peripheral) {
         return (peripheral.localName && peripheral.localName.startsWith('A&D_UA-651BLE_'));
     }
+    /**
+     * Get data from the UA651BLE
+     *
+     * UA651BLEからデータを取得
+     *
+     * @returns data from the UA651BLE UA651BLEから受け取ったデータ
+     */
     async getDataWait() {
         if (!this._peripheral) {
             throw new Error('UA651BLE not found');
@@ -27383,7 +28490,9 @@ exports.default = UA651BLE;
  * @packageDocumentation
  * @module Parts.UT201BLE
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** UT201BLE management class UT201BLEを管理するクラス */
 class UT201BLE {
     constructor(peripheral, timezoneOffsetMinute) {
         if (!peripheral || !UT201BLE.isDevice(peripheral)) {
@@ -27397,9 +28506,27 @@ class UT201BLE {
             name: 'UT201BLE',
         };
     }
+    /**
+     * Verify that the received peripheral is from the UT201BLE
+     *
+     * 受け取ったPeripheralがUT201BLEのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is UT201BLE
+     *
+     * UT201BLEかどうか
+     */
     static isDevice(peripheral) {
         return (peripheral.localName && peripheral.localName.startsWith('A&D_UT201BLE_'));
     }
+    /**
+     * Pair with the device
+     *
+     * デバイスとペアリング
+     *
+     * @returns pairing key ペアリングキー
+     */
     async pairingWait() {
         if (!this._peripheral) {
             throw new Error('UT201BLE not found');
@@ -27422,6 +28549,15 @@ class UT201BLE {
         await customServiceChar.writeWait([2, 1, 3]); // disconnect req
         return key;
     }
+    /**
+     * Get data from the UT201BLE
+     *
+     * UT201BLEからデータを取得
+     *
+     * @param pairingKeys pairing key ペアリングキー
+     *
+     * @returns data from the UT201BLE UT201BLEから受け取ったデータ
+     */
     async getDataWait(pairingKeys) {
         if (!this._peripheral) {
             throw new Error('UT201BLE not found');
@@ -27554,12 +28690,21 @@ exports.default = UT201BLE;
  * @packageDocumentation
  * @module Parts.iBS01
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
 /**
  * @deprecated
+ *
+ * iBS01 management class iBS01を管理するクラス
+ *
  * Recommend use iBS01G, iBS01H
+ *
  * Use only if you are using an old iBS01 series sensor
+ *
+ * iBS01G, iBS01H の使用を推奨
+ *
+ * 旧iBS01シリーズのセンサを使用している場合のみお使いください
  */
 class iBS01 extends iBS_1.BaseiBS01 {
     constructor() {
@@ -27591,8 +28736,10 @@ iBS01.BeaconDataStruct = {
  * @packageDocumentation
  * @module Parts.iBS01G
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS01G management class iBS01Gを管理するクラス */
 class iBS01G extends iBS_1.BaseiBS01 {
     constructor() {
         super(...arguments);
@@ -27616,8 +28763,10 @@ iBS01G.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS01.Config.batter
  * @packageDocumentation
  * @module Parts.iBS01H
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS01H management class iBS01Hを管理するクラス */
 class iBS01H extends iBS_1.BaseiBS01 {
     constructor() {
         super(...arguments);
@@ -27640,6 +28789,7 @@ iBS01H.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS01.Config.batter
  * @packageDocumentation
  * @module Parts.iBS01RG
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
@@ -27672,8 +28822,10 @@ iBS01RG.BeaconDataStruct = {
  * @packageDocumentation
  * @module Parts.iBS01T
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS01T management class iBS01Tを管理するクラス */
 class iBS01T extends iBS_1.BaseiBS01 {
     constructor() {
         super(...arguments);
@@ -27696,8 +28848,10 @@ iBS01T.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS01.Config.batter
  * @packageDocumentation
  * @module Parts.iBS02IR
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS02IR management class iBS02IRを管理するクラス */
 class iBS02IR extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
@@ -27720,8 +28874,10 @@ iBS02IR.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery
  * @packageDocumentation
  * @module Parts.iBS02PIR
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS02PIR management class iBS02PIRを管理するクラス */
 class iBS02PIR extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
@@ -27744,8 +28900,10 @@ iBS02PIR.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.batter
  * @packageDocumentation
  * @module Parts.iBS03
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS03 management class iBS03を管理するクラス */
 class iBS03 extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
@@ -27768,8 +28926,10 @@ iBS03.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, 
  * @packageDocumentation
  * @module Parts.iBS03G
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS03G management class iBS03Gを管理するクラス */
 class iBS03G extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
@@ -27792,7 +28952,9 @@ iBS03G.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery,
  * @packageDocumentation
  * @module Parts.iBS04i
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** iBS03R management class iBS03Rを管理するクラス */
 class IBS03R {
     constructor() {
         this._peripheral = null;
@@ -27802,9 +28964,29 @@ class IBS03R {
             name: 'iBS03R',
         };
     }
+    /**
+     * Verify that the received peripheral is from the iBS03R
+     *
+     * 受け取ったPeripheralがiBS03Rのものかどうか確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the iBS03R
+     *
+     * iBS03Rかどうか
+     */
     static isDevice(peripheral) {
         return IBS03R.getDeviceArray(peripheral) !== null;
     }
+    /**
+     * Get a data from the iBS03R
+     *
+     * iBS03Rからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the iBS03R iBS03Rから受け取ったデータ
+     */
     static getData(peripheral) {
         const adv = IBS03R.getDeviceArray(peripheral);
         if (adv === null) {
@@ -27879,8 +29061,10 @@ IBS03R.deviceAdv = [
  * @packageDocumentation
  * @module Parts.iBS03T
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS03T management class iBS03Tを管理するクラス */
 class iBS03T extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
@@ -27903,8 +29087,10 @@ iBS03T.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery,
  * @packageDocumentation
  * @module Parts.iBS03TP
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS03TP management class iBS03TPを管理するクラス */
 class iBS03TP extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
@@ -27951,8 +29137,10 @@ iBS03T_RH.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.batte
  * @packageDocumentation
  * @module Parts.iBS04
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS04 management class iBS04を管理するクラス */
 class iBS04 extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
@@ -27975,9 +29163,11 @@ iBS04.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, 
  * @packageDocumentation
  * @module Parts.iBS04i
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS04i management class iBS04iを管理するクラス */
 class iBS04i extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
@@ -28004,14 +29194,17 @@ iBS04i.BeaconDataStruct = Object.assign(Object.assign({ battery: Object.assign(O
  * @packageDocumentation
  * @module Parts.Linking
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const advertising_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/advertising.js"));
 const device_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/device.js"));
+/** products supporting Linking management class Linking対応製品を管理するクラス */
 class Linking {
     constructor(params) {
+        /** not used */
         this.PRIMARY_SERVICE_UUID_LIST = [
             'b3b3690150d34044808d50835b13a6cd',
             'fe4e',
@@ -28019,7 +29212,7 @@ class Linking {
         this.initialized = false;
         this.keys = [];
         this.requiredKeys = [];
-        this.periperal = null;
+        this.peripheral = null;
         this.onadvertisement = null;
         this.ondiscover = null;
         // Private properties
@@ -28043,22 +29236,46 @@ class Linking {
         this.obniz = obniz;
     }
     /**
+     * Use {@linkplain initWait}
+     *
+     * {@linkplain initWait} を使ってください
+     *
      * @deprecated
      */
     init() {
         return this.initWait();
     }
+    /**
+     * Initialize BLE module
+     *
+     * BLEを初期化
+     */
     async initWait() {
         await this.obniz.ble.initWait();
         this.initialized = true;
     }
     /**
+     * Use {@linkplain discoverWait}
+     *
+     * {@linkplain discoverWait} を使ってください
+     *
      * @deprecated
      * @param p
      */
     discover(p) {
         return this.discoverWait(p);
     }
+    /**
+     * Search for devices with specified parameters
+     *
+     * 指定したパラメータのデバイスを探索
+     *
+     * @param p Parameters for device デバイスに関するパラメータ
+     *
+     * @returns Array of device objects found {@linkplain LinkingDevice}
+     *
+     * 見つかったデバイスオブジェクトの配列 {@linkplain LinkingDevice}
+     */
     discoverWait(p) {
         this._checkInitialized();
         let duration = 5000;
@@ -28066,19 +29283,19 @@ class Linking {
         let id_filter = '';
         let quick = false;
         if (p && typeof p === 'object') {
-            if ('duration' in p && typeof p.duration === 'number') {
+            if (p.duration !== undefined && p.duration !== null) {
                 duration = p.duration;
                 if (duration < 1000) {
                     duration = 1000;
                 }
             }
-            if ('nameFilter' in p && typeof (p.nameFilter === 'string')) {
+            if (p.nameFilter !== undefined && p.nameFilter !== null) {
                 name_filter = p.nameFilter;
             }
-            if ('idFilter' in p && typeof (p.idFilter === 'string')) {
+            if (p.idFilter !== undefined && p.idFilter !== null) {
                 id_filter = p.idFilter;
             }
-            if ('quick' in p && typeof (p.quick === 'boolean')) {
+            if (p.quick !== undefined && p.quick !== null) {
                 quick = p.quick;
             }
         }
@@ -28153,6 +29370,11 @@ class Linking {
         this.obniz.ble.scan.startWait();
         this._discover_status = true;
     }
+    /**
+     * Finish scanning device
+     *
+     * デバイスのスキャンを終了
+     */
     stopScan() {
         if (this._discover_status === true) {
             this._discover_status = false;
@@ -28163,15 +29385,22 @@ class Linking {
             this.obniz.ble.scan.endWait();
         }
     }
+    /**
+     * Start scanning the device
+     *
+     * デバイスのスキャンを開始
+     *
+     * @param p Parameters for device デバイスに関するパラメータ
+     */
     startScan(p) {
         this._checkInitialized();
         let name_filter = '';
         let id_filter = '';
         if (p && typeof p === 'object') {
-            if ('nameFilter' in p && typeof (p.nameFilter === 'string')) {
+            if (p.nameFilter !== undefined && p.nameFilter !== null) {
                 name_filter = p.nameFilter;
             }
-            if ('idFilter' in p && typeof (p.idFilter === 'string')) {
+            if (p.idFilter !== undefined && p.idFilter !== null) {
                 id_filter = p.idFilter;
             }
         }
@@ -32256,7 +33485,9 @@ exports.default = LinkingService;
  * @packageDocumentation
  * @module Parts.SCBTGAAAC
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** SCBTGAAAC management class SCBTGAAACを管理するクラス */
 class SCBTGAAAC {
     constructor() {
         this._peripheral = null;
@@ -32266,9 +33497,33 @@ class SCBTGAAAC {
             name: 'SCBTGAAAC',
         };
     }
+    /**
+     * Verify that the received peripheral is from the SCBTGAAAC
+     *
+     * 受け取ったPeripheralがSCBTGAAACのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the SCBTGAAAC
+     *
+     * SCBTGAAACかどうか
+     */
     static isDevice(peripheral) {
         return SCBTGAAAC.getData(peripheral) !== null;
     }
+    /**
+     * Get leakage data from the SCBTGAAAC
+     *
+     * Get advertisement sent out by generating power at the leak
+     *
+     * SCBTGAAACから漏水データを取得する
+     *
+     * 漏水で発電することによって発信されたadvertisementを取得します
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns device name デバイス名
+     */
     static getData(peripheral) {
         const data = SCBTGAAAC.searchTypeVal(peripheral.advertise_data_rows, 0xff);
         if (!data ||
@@ -32314,29 +33569,42 @@ exports.default = SCBTGAAAC;
 
 /***/ }),
 
-/***/ "./dist/src/parts/Ble/tm530/index.js":
+/***/ "./dist/src/parts/Ble/tm511/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 /**
  * @packageDocumentation
- * @module Parts.TM530
+ * @module Parts.TM511
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
-class TM530 {
+/** TM511 management class TM511を管理するクラス */
+class TM511 {
     constructor() {
         this._peripheral = null;
     }
     static info() {
         return {
-            name: 'TM530',
+            name: 'TM511',
         };
     }
+    /**
+     * Verify that the received peripheral is from the TM511
+     *
+     * 受け取ったPeripheralがTM511のものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the TM511
+     *
+     * TM511かどうか
+     */
     static isDevice(peripheral) {
         if (this.deviceAdv.length > peripheral.adv_data.length) {
             return false;
@@ -32352,6 +33620,118 @@ class TM530 {
         }
         return true;
     }
+    /**
+     * Get a data from the TM511
+     *
+     * TM511からのデータ取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the TM511 TM511から受け取ったデータ
+     */
+    static getData(peripheral) {
+        if (!TM511.isDevice(peripheral)) {
+            return null;
+        }
+        const data = {
+            battery: peripheral.adv_data[13],
+            x: peripheral.adv_data[14] +
+                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[15]),
+            y: peripheral.adv_data[16] +
+                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[17]),
+            z: peripheral.adv_data[18] +
+                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[19]),
+        };
+        return data;
+    }
+}
+exports.default = TM511;
+TM511.deviceAdv = [
+    0x02,
+    0x01,
+    0x06,
+    0x03,
+    0x03,
+    0xe1,
+    0xff,
+    -1,
+    -1,
+    -1,
+    -1,
+    0xa1,
+    0x03,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+];
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/tm530/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.TM530
+ */
+/* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+/** TM530 management class TM530を管理するクラス */
+class TM530 {
+    constructor() {
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: 'TM530',
+        };
+    }
+    /**
+     * Verify that the received peripheral is from the TM530
+     *
+     * 受け取ったPeripheralがTM530のものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the TM530
+     *
+     * TM530かどうか
+     */
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
+        }
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
+    /**
+     * Get a data from the TM530
+     *
+     * TM530からデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the TM530 TM530から受け取ったデータ
+     */
     static getData(peripheral) {
         if (!TM530.isDevice(peripheral)) {
             return null;
@@ -32391,87 +33771,6 @@ TM530.deviceAdv = [
 
 /***/ }),
 
-/***/ "./dist/src/parts/Ble/tm551/index.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * @packageDocumentation
- * @module Parts.TM551
- */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
-class TM551 {
-    constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'TM551',
-        };
-    }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!TM551.isDevice(peripheral)) {
-            return null;
-        }
-        const data = {
-            battery: peripheral.adv_data[13],
-            x: peripheral.adv_data[14] +
-                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[15]),
-            y: peripheral.adv_data[16] +
-                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[17]),
-            z: peripheral.adv_data[18] +
-                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[19]),
-        };
-        return data;
-    }
-}
-exports.default = TM551;
-TM551.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x03,
-    0x03,
-    0xe1,
-    0xff,
-    -1,
-    -1,
-    -1,
-    -1,
-    0xa1,
-    0x03,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-];
-
-
-/***/ }),
-
 /***/ "./dist/src/parts/Ble/toio_corecube/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -32481,7 +33780,9 @@ TM551.deviceAdv = [
  * @packageDocumentation
  * @module Parts.Toio_CoreCube
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** Toio_CoreCube management class Toio_CoreCubeを管理するクラス */
 class Toio_CoreCube {
     constructor(peripheral) {
         this.peripheral = null;
@@ -32504,7 +33805,7 @@ class Toio_CoreCube {
         this._motorCharacteristic = null;
         this._batteryCharacteristic = null;
         if (peripheral && !Toio_CoreCube.isDevice(peripheral)) {
-            throw new Error('peripheral is not RS_Seek3');
+            throw new Error('peripheral is not Toio_CoreCube');
         }
         this.peripheral = peripheral;
     }
@@ -32513,8 +33814,21 @@ class Toio_CoreCube {
             name: 'toio_CoreCube',
         };
     }
+    /**
+     * Verify that the received peripheral is from the Toio_CoreCube
+     *
+     * 受け取ったPeripheralがToio_CoreCubeのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Toio_CoreCube
+     *
+     * Toio_CoreCubeかどうか
+     */
     static isDevice(peripheral) {
-        if (peripheral.localName === 'toio Core Cube') {
+        var _a;
+        // if (peripheral.localName === 'toio Core Cube') {
+        if (((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf('toio Core Cube')) !== -1) {
             return true;
         }
         else {
@@ -32524,9 +33838,18 @@ class Toio_CoreCube {
     wired(obniz) {
         // do nothing.
     }
+    /**
+     * Connect to the device
+     *
+     * デバイスに接続
+     *
+     * @param timeout (not used)
+     *
+     * @returns
+     */
     async connectWait(timeout) {
         if (!this.peripheral) {
-            throw new Error('RS_Seek3 is not find.');
+            throw new Error('Toio_CoreCube is not find.');
         }
         this.peripheral.ondisconnect = (reason) => {
             if (typeof this.ondisconnect === 'function') {
@@ -32562,10 +33885,44 @@ class Toio_CoreCube {
         }
         return 0;
     }
+    /**
+     * Disconnect from the sensor
+     *
+     * センサから切断
+     */
     async disconnectWait() {
         var _a;
-        await ((_a = this.peripheral) === null || _a === void 0 ? void 0 : _a.disconnect());
+        await ((_a = this.peripheral) === null || _a === void 0 ? void 0 : _a.disconnectWait());
     }
+    /**
+     * Get the absolute position and angle of Toio_CoreCube
+     *
+     * (For more detail, please see https://toio.github.io/toio-spec/docs/ble_id )
+     *
+     * Toio_CoreCubeが存在している絶対位置や角度を取得
+     *
+     * (詳細は https://toio.github.io/toio-spec/docs/ble_id を参照してください。)
+     *
+     * @returns absolute position data 絶対位置データ
+     *
+     * ```
+     * {
+     *
+     * posX: X coordinate value of the center of the cube キューブ中心のx座標 (Position ID),
+     *
+     * posY: Y coordinate value of the center of the cube キューブ中心のY座標 (Position ID),
+     *
+     * angle: angle value of the center of the cube キューブの角度 (Range 範囲: 0~360 deg),
+     *
+     * posSensorX: X coordinate value of the identification sensor 読み取りセンサーのX座標 (Position ID),
+     *
+     * posSensorY: Y coordinate value of the identification sensor 読み取りセンサーのY座標 (Position ID),
+     *
+     * posSensorAngle: angle value of the identification sensor 読み取りセンサーの角度 (Range 範囲: 0~360 deg)
+     *
+     * }
+     * ```
+     */
     async getPositionWait() {
         const readData = await this._positionCharacteristic.readWait();
         return {
@@ -32577,15 +33934,47 @@ class Toio_CoreCube {
             posSensorAngle: (readData[12] << 8) | readData[11],
         };
     }
+    /**
+     * Get motion detection data from the Toio_CoreCube
+     *
+     * Toio_CoreCubeからのモーション検出データを取得
+     *
+     * @returns motion detection data モーション検出データ
+     *
+     * ```
+     * {
+     *
+     * isHorizon: horizontal or not 水平かどうか,
+     *
+     * isCollision: detect collision or not 衝突検知したかどうか,
+     *
+     * isDoubletap: detect double tap or not ダブルタップ検出したかどうか,
+     *
+     * attitude: posture 姿勢
+     *
+     * (1: top faces upward 天面が上, 2: bottom faces upward 底面が上, 3: rear side faces upward 背面が上, 4: front side faces upward 正面が上. 5: right side faces upward 右側面が上, 6: left side faces upward 左側面が上)
+     *
+     * }
+     * ```
+     */
     async getMotionWait() {
         const readData = await this._motionCharacteristic.readWait();
         return {
             isHorizon: readData[1] === 1,
             isCollision: readData[2] === 1,
             isDoubletap: readData[3] === 1,
-            atitude: readData[4],
+            attitude: readData[4],
         };
     }
+    /**
+     * Get button state from the Toio_CoreCube
+     *
+     * Toio_CoreCubeのボタンの状態を取得
+     *
+     * @returns Whether the button is pressed
+     *
+     * ボタンが押されたかどうか
+     */
     async getButtonStateWait() {
         const readData = await this._buttonCharacteristic.readWait();
         if (readData[1] === 0x80) {
@@ -32595,10 +33984,36 @@ class Toio_CoreCube {
             return false;
         }
     }
+    /**
+     * Get the remaining battery power of the Toio_CoreCube
+     *
+     * Toio_CoreCubeのバッテリー残量を取得
+     *
+     * @returns remaining battery power バッテリー残量
+     *
+     * Range 範囲 0~100 (Unit 単位: 10 %)
+     */
     async getBatteryStateWait() {
         const readData = await this._batteryCharacteristic.readWait();
         return readData[0];
     }
+    /**
+     * Turn the wheel to move the Toio_CoreCube
+     *
+     * タイヤを回してToio_CoreCubeを動かす
+     *
+     * @param _leftWheelPower left wheel power 左側のタイヤ出力 (Range 範囲: -255~255)
+     *
+     * a positive value rotates forward, a negative value rotates backward
+     *
+     * 正の値は前方、負の値は後方へ回転
+     *
+     * @param _rightWheelPower right wheel power 左側のタイヤ出力 (Range 範囲: -255~255)
+     *
+     * a positive value rotates forward, a negative value rotates backward
+     *
+     * 正の値は前方、負の値は後方へ回転
+     */
     async moveAroundWait(_leftWheelPower = 0, _rightWheelPower = 0) {
         const constraintWheelPower = (wheelPower) => {
             // NOTE: Power is limited belong 0 to 255. And minus value is backward.
@@ -32633,8 +34048,39 @@ class Toio_CoreCube {
             Math.abs(rightWheelPower),
         ]);
     }
-    async movePositionWait(timeoutSec = 5, moveType = 0, maxWheelPower = 30, wheelPowerType = 30, targetPosX = 0, targetPosY = 0, targetAngle = 0) {
-        const parceNumber = (pos) => {
+    /**
+     * Directs the Toio_CoreCube to the specified Position ID
+     *
+     * (For more detail, please see https://toio.github.io/toio-spec/en/docs/ble_motor/#motor-control-with-target-specified )
+     *
+     * Toio_CoreCubeを指定したPosition IDへ移動
+     *
+     * (詳細は https://toio.github.io/toio-spec/docs/ble_motor#%E7%9B%AE%E6%A8%99%E6%8C%87%E5%AE%9A%E4%BB%98%E3%81%8D%E3%83%A2%E3%83%BC%E3%82%BF%E3%83%BC%E5%88%B6%E5%BE%A1 を参照してください)
+     *
+     * @param timeoutSec timeout タイムアウト (Unit 単位: 1 sec)
+     *
+     * @param moveType method of movement 移動タイプ
+     *
+     * (0: move while rotating 回転しながら移動, 1: move while rotating without moving backwards 後退せず回転しながら移動, 2: move after rotating 回転してから移動)
+     *
+     * @param maxWheelPower maximum motor speed モーターの最大速度 (Range 範囲 10~255)
+     *
+     * @param wheelPowerType speed change type 速度変化タイプ
+     *
+     * (0: constant 速度一定, 1: gradual acceleration 徐々に加速, 2: gradual deceleration 徐々に減速, 3: accelerate to the midpoint and decelerate to the target point 中間地点まで加速し目標地点まで減速)
+     *
+     * @param targetPosX target point X coordinates 目標地点のX座標 ([Position ID](https://toio.github.io/toio-spec/docs/hardware_position_id))
+     *
+     * Range 範囲: 0~65535 (65535: same as for write operation 書き込み操作時と同じ)
+     *
+     * @param targetPosY target point Y coordinates 目標地点のY座標 ([Position ID](https://toio.github.io/toio-spec/docs/hardware_position_id))
+     *
+     * Range 範囲: 0~65535 (65535: same as for write operation 書き込み操作時と同じ)
+     *
+     * @param targetAngle angle of the cube at the target point 目標地点でのキューブの角度
+     */
+    async movePositionWait(timeoutSec = 5, moveType = 0, maxWheelPower = 30, wheelPowerType = 0, targetPosX = 0, targetPosY = 0, targetAngle = 0) {
+        const parseNumber = (pos) => {
             // NOTE: Pos is must hove belong 0 to 65535.
             if (pos > 65535) {
                 pos = 65535;
@@ -32651,9 +34097,9 @@ class Toio_CoreCube {
             };
             return obj;
         };
-        const posXObj = parceNumber(targetPosX);
-        const posYObj = parceNumber(targetPosY);
-        const targetAngleObj = parceNumber(targetAngle);
+        const posXObj = parseNumber(targetPosX);
+        const posYObj = parseNumber(targetPosY);
+        const targetAngleObj = parseNumber(targetAngle);
         await this._motorCharacteristic.writeWait([
             0x03,
             0x00,
@@ -32685,11 +34131,13 @@ exports.default = Toio_CoreCube;
  * @packageDocumentation
  * @module Parts.uPRISM
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+/** uPRISM management class uPRISMを管理するクラス */
 class uPRISM {
     constructor(peripheral) {
         this._peripheral = null;
@@ -32713,10 +34161,26 @@ class uPRISM {
             name: 'uPRISM',
         };
     }
+    /**
+     * Verify that the received peripheral is from the uPRISM
+     *
+     * 受け取ったPeripheralがuPRISMのものかどうか確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the uPRISM
+     *
+     * uPRISMかどうか
+     */
     static isDevice(peripheral) {
         var _a;
         return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf('uPrism_')) === 0;
     }
+    /**
+     * Connect the sensor
+     *
+     * センサへ接続
+     */
     async connectWait() {
         if (!this._peripheral) {
             throw new Error('peripheral is not uPRISM');
@@ -32730,11 +34194,27 @@ class uPRISM {
             await this._peripheral.connectWait();
         }
     }
+    /**
+     * Disconnect from the sensor
+     *
+     * センサから切断
+     */
     async disconnectWait() {
         if (this._peripheral && this._peripheral.connected) {
             await this._peripheral.disconnectWait();
         }
     }
+    /**
+     * Set the range of values for the accelerometer
+     *
+     * uPRISM measures a set range with 4,096 steps of resolution
+     *
+     * 加速度センサーの値の範囲を設定
+     *
+     * uPRISMは設定された範囲を4096段階の分解能で計測します
+     *
+     * @param range range of values for the accelerometer 加速度センサーの値の範囲
+     */
     setAccelRange(range) {
         switch (range) {
             case '2g':
@@ -32751,6 +34231,11 @@ class uPRISM {
                 break;
         }
     }
+    /**
+     * Start notifying when the data have got from the uPRISM with connected state
+     *
+     * 接続状態でuPRISMからデータを取得したときの通知を開始
+     */
     async startNotifyWait() {
         if (!this._peripheral || !this._peripheral.connected) {
             throw new Error('peripheral not connected uPRISM');
@@ -32828,6 +34313,13 @@ class uPRISM {
             }
         });
     }
+    /**
+     * Stop data notification
+     *
+     * データの通知を停止
+     *
+     * @returns
+     */
     async stopNotifyWait() {
         if (!(this._peripheral && this._peripheral.connected)) {
             return;
@@ -32854,8 +34346,9 @@ exports.default = uPRISM;
 
 /**
  * @packageDocumentation
- * @module Parts.Logtta_TH
+ * @module Parts.Logtta
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -32867,12 +34360,20 @@ const PinCodeFlag = {
     Authentication: 0x00,
     Rewrite: 0x01,
 };
+/** abstract class common to the Logtta series Logttaシリーズ共通の抽象クラス */
 class Logtta extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     constructor(peripheral, mode) {
         super(peripheral, mode);
         this.serviceUuid = '';
         this.authenticated = false;
     }
+    /**
+     * Connect to the services of a device
+     *
+     * デバイスのサービスに接続
+     *
+     * @param keys Key acquired when pairing previously 以前にペアリングしたときに取得されたキー
+     */
     async connectWait(keys) {
         var _a;
         this.serviceUuid = (_a = this.staticClass.getServiceUuids('Connectable'), (_a !== null && _a !== void 0 ? _a : [
@@ -32893,11 +34394,27 @@ class Logtta extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         this.genericAccess = undefined;
         this.batteryService = undefined;
     }
+    /**
+     * Get data with connected state
+     *
+     * 接続状態でデータを取得
+     *
+     * @returns received value from each sensor それぞれのセンサから取得した値
+     */
     async getDataWait() {
         this.checkConnected();
         const data = await this.readCharWait(this.serviceUuid, this.getCharUuid(0x21));
         return this.parseData(data);
     }
+    /**
+     * Notify when the data have got from the device with connected state
+     *
+     * 接続状態でデータを取得したとき通知
+     *
+     * @param callback callback function コールバック関数
+     *
+     * @returns
+     */
     async startNotifyWait(callback) {
         // TODO: delete try-catch
         try {
@@ -32916,6 +34433,15 @@ class Logtta extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
             }
         });
     }
+    /**
+     * Authorize PIN code
+     *
+     * ピンコードを認証
+     *
+     * @param code PIN code ピンコード
+     *
+     * @returns Whether authentication was/is passed 認証が通った/通っているかどうか
+     */
     async authPinCodeWait(code) {
         // TODO: delete try-catch
         try {
@@ -32945,6 +34471,15 @@ class Logtta extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         if (!this.authenticated)
             throw new Error('Certification is required, execute authPinCodeWait() in advance.');
     }
+    /**
+     * Set / unset to Beacon Mode
+     *
+     * ビーコンモードに設定/解除
+     *
+     * @param enable enable / disable 有効 / 無効
+     *
+     * @returns data write result
+     */
     async setBeaconModeWait(enable) {
         // TODO: delete try-catch
         try {
@@ -32997,6 +34532,7 @@ Logtta.CompanyID = {
  * @packageDocumentation
  * @module Parts.iBS
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
 const magic = {
@@ -33006,6 +34542,7 @@ const magic = {
     3: [0x83, 0xbc],
     4: [0x83, 0xbc],
 };
+/** abstract class common to the iBS series iBSシリーズ共通の抽象クラス */
 class BaseiBS extends ObnizPartsBleAbstract_1.ObnizPartsBle {
     static getUniqueData(series, subtype, addLength, scanResponse) {
         return {
@@ -33075,6 +34612,7 @@ BaseiBS.Config = {
         type: 'unsignedNumLE',
     },
 };
+/** abstract class for iBS iBS01のための抽象クラス */
 class BaseiBS01 extends BaseiBS {
 }
 exports.BaseiBS01 = BaseiBS01;

@@ -72,6 +72,13 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>EXTxx management class EXTxxを管理するクラス</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -131,7 +138,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/EXTxx/index.ts:91</li>
+									<li>Defined in src/parts/Ble/EXTxx/index.ts:119</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -185,7 +192,7 @@
 					<div class="tsd-signature tsd-kind-icon">Available<wbr>Ble<wbr>Mode<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"Beacon"</span><span class="tsd-signature-symbol"> = &quot;Beacon&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/EXTxx/index.ts:32</li>
+							<li>Defined in src/parts/Ble/EXTxx/index.ts:44</li>
 						</ul>
 					</aside>
 				</section>
@@ -195,7 +202,7 @@
 					<div class="tsd-signature tsd-kind-icon">Parts<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"EXTxx"</span><span class="tsd-signature-symbol"> = &quot;EXTxx&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/EXTxx/index.ts:30</li>
+							<li>Defined in src/parts/Ble/EXTxx/index.ts:42</li>
 						</ul>
 					</aside>
 				</section>
@@ -212,10 +219,17 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/EXTxx/index.ts:66</li>
+									<li>Defined in src/parts/Ble/EXTxx/index.ts:85</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>(with instantiation) Get a data from the beacon</p>
+								</div>
+								<p>(インスタンス化する場合) ビーコンからデータを取得</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/parts.extxx.extxx_data.html" class="tsd-signature-type">EXTxx_Data</a></h4>
+							<p>received data from the beacon ビーコンから受け取ったデータ</p>
 						</li>
 					</ul>
 				</section>
@@ -229,16 +243,26 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/EXTxx/index.ts:85</li>
+									<li>Defined in src/parts/Ble/EXTxx/index.ts:113</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>(without instantiation) Get a data from the beacon</p>
+								</div>
+								<p>(インスタンス化しない場合) ビーコンからデータを取得</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>instance of BleRemotePeripheral BleRemotePeripheralのインスタンス</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/parts.extxx.extxx_data.html" class="tsd-signature-type">EXTxx_Data</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h4>
+							<p>received data from the beacon ビーコンから受け取ったデータ</p>
 						</li>
 					</ul>
 				</section>
@@ -253,7 +277,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="obnizcore.obnizpartsbleinterface.html">ObnizPartsBleInterface</a>.<a href="obnizcore.obnizpartsbleinterface.html#info">info</a></p>
 								<ul>
-									<li>Defined in src/parts/Ble/EXTxx/index.ts:24</li>
+									<li>Defined in src/parts/Ble/EXTxx/index.ts:36</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/obnizcore.obnizpartsinfo.html" class="tsd-signature-type">ObnizPartsInfo</a></h4>
@@ -271,16 +295,27 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="obnizcore.obnizpartsbleinterface.html">ObnizPartsBleInterface</a>.<a href="obnizcore.obnizpartsbleinterface.html#isdevice">isDevice</a></p>
 								<ul>
-									<li>Defined in src/parts/Ble/EXTxx/index.ts:98</li>
+									<li>Defined in src/parts/Ble/EXTxx/index.ts:137</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Verify that the received peripheral is from the EXTxx</p>
+								</div>
+								<p>受け取ったperipheralがEXTxxのものかどうか確認する</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>instance of BleRemotePeripheral BleRemotePeripheralのインスタンス</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<p>Whether it is the EXTxx</p>
+							<p>EXTxxかどうか</p>
 						</li>
 					</ul>
 				</section>

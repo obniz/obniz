@@ -3,6 +3,7 @@
  * @packageDocumentation
  * @module Parts.iBS01RG
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = require("../../../obniz/ObnizPartsBleAbstract");
 const iBS_1 = require("../utils/abstracts/iBS");
