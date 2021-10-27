@@ -35,8 +35,6 @@ export default class EXVital extends ObnizPartsBleInterface {
 
   public static readonly availableBleMode = 'Beacon';
 
-  protected advData = this._peripheral?.adv_data;
-
   protected static DefaultAdvData = [
     0x02,
     0x01,
@@ -69,20 +67,21 @@ export default class EXVital extends ObnizPartsBleInterface {
   ];
 
   public getData(): EXVital_Data {
-    if (!this.advData) throw new Error('advData is null');
+    const advData = this._peripheral?.adv_data;
+    if (!advData) throw new Error('advData is null');
     return {
-      major: unsigned16(this.advData.slice(11, 13)),
-      minor: unsigned16(this.advData.slice(13, 15)),
-      power: this.advData[14],
-      diastolic_pressure: this.advData[15],
-      systolic_pressure: this.advData[16],
-      arm_temp: unsigned16(this.advData.slice(17, 19)) * 0.1,
-      body_temp: unsigned16(this.advData.slice(19, 21)) * 0.1,
-      heart_rate: this.advData[21],
-      // blood_oxygen: this.advData[22],
-      // fall: this.advData[23] > 0,
-      battery: unsigned16(this.advData.slice(24, 26)) * 0.001,
-      steps: unsigned16(this.advData.slice(26, 28)),
+      major: unsigned16(advData.slice(11, 13)),
+      minor: unsigned16(advData.slice(13, 15)),
+      power: advData[14],
+      diastolic_pressure: advData[15],
+      systolic_pressure: advData[16],
+      arm_temp: unsigned16(advData.slice(17, 19)) * 0.1,
+      body_temp: unsigned16(advData.slice(19, 21)) * 0.1,
+      heart_rate: advData[21],
+      // blood_oxygen: advData[22],
+      // fall: advData[23] > 0,
+      battery: unsigned16(advData.slice(24, 26)) * 0.001,
+      steps: unsigned16(advData.slice(26, 28)),
     };
   }
 

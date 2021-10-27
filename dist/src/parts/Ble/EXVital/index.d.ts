@@ -23,7 +23,6 @@ export default class EXVital extends ObnizPartsBleInterface {
     static info(): ObnizPartsInfo;
     static readonly partsName = "EXVital";
     static readonly availableBleMode = "Beacon";
-    protected advData: number[] | undefined;
     protected static DefaultAdvData: number[];
     getData(): EXVital_Data;
     static getData(peripheral: BleRemotePeripheral): EXVital_Data | null;
