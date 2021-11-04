@@ -176,6 +176,12 @@ export default class BleRemotePeripheral {
      */
     connected: boolean;
     /**
+     * This returns connection completion time with a connected state.
+     *
+     * If not connected, returns null.
+     */
+    connected_timestamp: Date | null;
+    /**
      *
      */
     device_type: BleDeviceType | null;
