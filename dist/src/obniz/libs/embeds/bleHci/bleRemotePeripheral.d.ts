@@ -180,7 +180,7 @@ export default class BleRemotePeripheral {
      *
      * If not connected, returns null.
      */
-    connected_timestamp: Date | null;
+    connected_at: Date | null;
     /**
      *
      */

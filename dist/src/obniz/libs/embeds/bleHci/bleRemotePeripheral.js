@@ -40,7 +40,7 @@ class BleRemotePeripheral {
         this.obnizBle = obnizBle;
         this.address = address;
         this.connected = false;
-        this.connected_timestamp = null;
+        this.connected_at = null;
         this.device_type = null;
         this.address_type = null;
         this.ble_event_type = null;
@@ -200,7 +200,7 @@ class BleRemotePeripheral {
             throw e;
         }
         this.connected = true;
-        this.connected_timestamp = new Date();
+        this.connected_at = new Date();
         try {
             if (this._connectSetting.autoDiscovery) {
                 await this.discoverAllHandlesWait();
@@ -429,7 +429,7 @@ class BleRemotePeripheral {
                 if (params.status === 'disconnected') {
                     const pre = this.connected;
                     this.connected = false;
-                    this.connected_timestamp = null;
+                    this.connected_at = null;
                     if (pre) {
                         this.obnizBle.Obniz._runUserCreatedFunction(this.ondisconnect, params.reason);
                         this.emitter.emit('disconnect', params.reason);

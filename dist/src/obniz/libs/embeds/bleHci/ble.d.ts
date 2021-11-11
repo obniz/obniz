@@ -160,7 +160,7 @@ export default class ObnizBLE extends ComponentAbstract {
      *
      * @returns connected peripherals
      */
-    getConnectedPeripherals(): BleRemotePeripheral[] | null;
+    getConnectedPeripherals(): BleRemotePeripheral[];
     /**
      * @ignore
      */

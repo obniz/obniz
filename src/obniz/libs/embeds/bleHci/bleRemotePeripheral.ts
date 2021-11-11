@@ -201,7 +201,7 @@ export default class BleRemotePeripheral {
    *
    * If not connected, returns null.
    */
-  public connected_timestamp: Date | null;
+  public connected_at: Date | null;
 
   /**
    *
@@ -408,7 +408,7 @@ export default class BleRemotePeripheral {
     this.obnizBle = obnizBle;
     this.address = address;
     this.connected = false;
-    this.connected_timestamp = null;
+    this.connected_at = null;
 
     this.device_type = null;
     this.address_type = null;
@@ -542,7 +542,7 @@ export default class BleRemotePeripheral {
       throw e;
     }
     this.connected = true;
-    this.connected_timestamp = new Date();
+    this.connected_at = new Date();
     try {
       if (this._connectSetting.autoDiscovery) {
         await this.discoverAllHandlesWait();
@@ -799,7 +799,7 @@ export default class BleRemotePeripheral {
         if (params.status === 'disconnected') {
           const pre = this.connected;
           this.connected = false;
-          this.connected_timestamp = null;
+          this.connected_at = null;
           if (pre) {
             this.obnizBle.Obniz._runUserCreatedFunction(
               this.ondisconnect,

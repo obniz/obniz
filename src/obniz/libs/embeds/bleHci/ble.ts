@@ -413,7 +413,7 @@ export default class ObnizBLE extends ComponentAbstract {
    *
    * @returns connected peripherals
    */
-  public getConnectedPeripherals(): BleRemotePeripheral[] | null {
+  public getConnectedPeripherals(): BleRemotePeripheral[] {
     const connectedPeripherals: BleRemotePeripheral[] = [];
     for (const elm of this.remotePeripherals) {
       if (elm.connected) {
