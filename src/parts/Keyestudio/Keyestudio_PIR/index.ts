@@ -50,4 +50,8 @@ export default class Keyestudio_PIR implements ObnizPartsInterface {
       }
     });
   }
+
+  public async getWait(): Promise<boolean> {
+    return await this.io_signal.inputWait();
+  }
 }

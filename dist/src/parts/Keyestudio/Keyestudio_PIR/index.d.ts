@@ -20,4 +20,5 @@ export default class Keyestudio_PIR implements ObnizPartsInterface {
     protected obniz: Obniz;
     constructor();
     wired(obniz: Obniz): void;
+    getWait(): Promise<boolean>;
 }
