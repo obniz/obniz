@@ -266,6 +266,12 @@ export default class BleScan {
     settings: BleScanSetting = {}
   ) {
     this.obnizBle.warningIfNotInitialize();
+    if (this.isContainingBleScanSettingProperty(target)) {
+      this.obnizBle.Obniz.warning({
+        alert: 'warning',
+        message: `Unexpected arguments. It might be contained the second argument keys. Please check object keys and order of 'obniz.ble.getWait()' arguments. `,
+      });
+    }
     this.state = 'starting';
 
     const timeout: number | null =
@@ -768,6 +774,21 @@ export default class BleScan {
       if (deviceAddress === peripheral.address) {
         return true;
       }
+    }
+    return false;
+  }
+
+  private isContainingBleScanSettingProperty(arg: any): arg is BleScanSetting {
+    if (arg === null) {
+      return false;
+    } else if (
+      'duration' in arg ||
+      'duplicate' in arg ||
+      'activeScan' in arg ||
+      'filterOnDevice' in arg ||
+      'waitBothAdvertisementAndScanResponse' in arg
+    ) {
+      return true;
     }
     return false;
   }

@@ -8682,6 +8682,12 @@ class BleScan {
      */
     async startWait(target = {}, settings = {}) {
         this.obnizBle.warningIfNotInitialize();
+        if (this.isContainingBleScanSettingProperty(target)) {
+            this.obnizBle.Obniz.warning({
+                alert: 'warning',
+                message: `Unexpected arguments. It might be contained the second argument keys. Please check object keys and order of 'obniz.ble.getWait()' arguments. `,
+            });
+        }
         this.state = 'starting';
         const timeout = settings.duration === undefined ? 30 : settings.duration;
         settings.duplicate = !!settings.duplicate;
@@ -9109,6 +9115,19 @@ class BleScan {
             if (deviceAddress === peripheral.address) {
                 return true;
             }
+        }
+        return false;
+    }
+    isContainingBleScanSettingProperty(arg) {
+        if (arg === null) {
+            return false;
+        }
+        else if ('duration' in arg ||
+            'duplicate' in arg ||
+            'activeScan' in arg ||
+            'filterOnDevice' in arg ||
+            'waitBothAdvertisementAndScanResponse' in arg) {
+            return true;
         }
         return false;
     }
