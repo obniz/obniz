@@ -3,13 +3,20 @@
  * @packageDocumentation
  * @module Parts.Logtta_Accel
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = require("../../../obniz/ObnizPartsBleAbstract");
 const Logtta_1 = __importDefault(require("../utils/abstracts/Logtta"));
-/** Only support in beacon mode */
+/**
+ * Logtta_Accel management class Logtta_Accelを管理するクラス
+ *
+ * Only support in beacon mode
+ *
+ * ビーコンモードのときのみ動作します
+ */
 class Logtta_Accel extends Logtta_1.default {
     constructor() {
         super(...arguments);
@@ -27,7 +34,23 @@ class Logtta_Accel extends Logtta_1.default {
     parseData(data) {
         return data;
     }
-    /** @deprecated */
+    /**
+     * @deprecated
+     *
+     * Get a scan data from the Logtta_Accel
+     *
+     * Note: work only in beacon mode
+     *
+     * Logtta_Accelからスキャンデータを取得
+     *
+     * 注: ビーコンモードのときのみ動作
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns scan data from Logtta_Accel
+     *
+     * Logtta_Accelから受け取ったスキャンデータ
+     */
     static getScanData(peripheral) {
         if (!Logtta_Accel.isDevice(peripheral)) {
             return null;
@@ -77,7 +100,23 @@ class Logtta_Accel extends Logtta_1.default {
         }
         return null;
     }
-    /** @deprecated */
+    /**
+     * @deprecated
+     *
+     * Get a acceleration data from the Logtta_Accel
+     *
+     * Note: work only in beacon mode
+     *
+     * Logtta_Accelから加速度データを取得
+     *
+     * 注: ビーコンモードのときのみ動作
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns acceleration data from Logtta_Accel
+     *
+     * Logtta_Accelから受け取った加速度データ
+     */
     static getAccelData(peripheral) {
         if (!Logtta_Accel.isDevice(peripheral)) {
             return null;

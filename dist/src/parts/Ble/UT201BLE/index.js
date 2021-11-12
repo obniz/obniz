@@ -3,7 +3,9 @@
  * @packageDocumentation
  * @module Parts.UT201BLE
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** UT201BLE management class UT201BLEを管理するクラス */
 class UT201BLE {
     constructor(peripheral, timezoneOffsetMinute) {
         if (!peripheral || !UT201BLE.isDevice(peripheral)) {
@@ -17,9 +19,27 @@ class UT201BLE {
             name: 'UT201BLE',
         };
     }
+    /**
+     * Verify that the received peripheral is from the UT201BLE
+     *
+     * 受け取ったPeripheralがUT201BLEのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is UT201BLE
+     *
+     * UT201BLEかどうか
+     */
     static isDevice(peripheral) {
         return (peripheral.localName && peripheral.localName.startsWith('A&D_UT201BLE_'));
     }
+    /**
+     * Pair with the device
+     *
+     * デバイスとペアリング
+     *
+     * @returns pairing key ペアリングキー
+     */
     async pairingWait() {
         if (!this._peripheral) {
             throw new Error('UT201BLE not found');
@@ -42,6 +62,15 @@ class UT201BLE {
         await customServiceChar.writeWait([2, 1, 3]); // disconnect req
         return key;
     }
+    /**
+     * Get data from the UT201BLE
+     *
+     * UT201BLEからデータを取得
+     *
+     * @param pairingKeys pairing key ペアリングキー
+     *
+     * @returns data from the UT201BLE UT201BLEから受け取ったデータ
+     */
     async getDataWait(pairingKeys) {
         if (!this._peripheral) {
             throw new Error('UT201BLE not found');

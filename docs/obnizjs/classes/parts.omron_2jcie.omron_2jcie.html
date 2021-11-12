@@ -72,6 +72,13 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>2JCIE management class 2JCIEを管理するクラス</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -118,9 +125,6 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.omron_2jcie.omron_2jcie.html#getlatestdatawait" class="tsd-kind-icon">get<wbr>Latest<wbr>Data<wbr>Wait</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.omron_2jcie.omron_2jcie.html#getlatestsensordatausb" class="tsd-kind-icon">get<wbr>Latest<wbr>Sensor<wbr>DataUSB</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.omron_2jcie.omron_2jcie.html#getlatestsensordatausbwait" class="tsd-kind-icon">get<wbr>Latest<wbr>Sensor<wbr>DataUSBWait</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.omron_2jcie.omron_2jcie.html#omron_uuid" class="tsd-kind-icon">omron_<wbr>uuid</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.omron_2jcie.omron_2jcie.html#signednumberfrombinary" class="tsd-kind-icon">signed<wbr>Number<wbr>From<wbr>Binary</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.omron_2jcie.omron_2jcie.html#unsignednumberfrombinary" class="tsd-kind-icon">unsigned<wbr>Number<wbr>From<wbr>Binary</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.omron_2jcie.omron_2jcie.html#wired" class="tsd-kind-icon">wired</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="parts.omron_2jcie.omron_2jcie.html#getdata" class="tsd-kind-icon">get<wbr>Data</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="parts.omron_2jcie.omron_2jcie.html#info" class="tsd-kind-icon">info</a></li>
@@ -142,7 +146,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/2jcie/index.ts:198</li>
+									<li>Defined in src/parts/Ble/2jcie/index.ts:479</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -164,7 +168,7 @@
 					<div class="tsd-signature tsd-kind-icon">_peripheral<span class="tsd-signature-symbol">:</span> <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> = null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/2jcie/index.ts:189</li>
+							<li>Defined in src/parts/Ble/2jcie/index.ts:470</li>
 						</ul>
 					</aside>
 				</section>
@@ -174,7 +178,7 @@
 					<div class="tsd-signature tsd-kind-icon">obniz<span class="tsd-signature-symbol">:</span> <a href="obnizcore.obniz.html" class="tsd-signature-type">Obniz</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/2jcie/index.ts:190</li>
+							<li>Defined in src/parts/Ble/2jcie/index.ts:471</li>
 						</ul>
 					</aside>
 				</section>
@@ -184,7 +188,7 @@
 					<div class="tsd-signature tsd-kind-icon">ondisconnect<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>reason<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/2jcie/index.ts:192</li>
+							<li>Defined in src/parts/Ble/2jcie/index.ts:473</li>
 						</ul>
 					</aside>
 				</section>
@@ -194,7 +198,7 @@
 					<div class="tsd-signature tsd-kind-icon">params<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/2jcie/index.ts:191</li>
+							<li>Defined in src/parts/Ble/2jcie/index.ts:472</li>
 						</ul>
 					</aside>
 				</section>
@@ -211,9 +215,22 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/2jcie/index.ts:232</li>
+									<li>Defined in src/parts/Ble/2jcie/index.ts:535</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>(Search for the device and) connect the sensor</p>
+								</div>
+								<p>Throw an error if the device is not found</p>
+								<p>(デバイスを検索し、)センサへ接続</p>
+								<p>デバイスが見つからなかった場合はエラーをthrow</p>
+								<p><code>supported types&amp;modes 対応形状&amp;モード</code></p>
+								<ul>
+									<li>2JCIE-BL01(BAG type バッグ形状) localName: Env</li>
+									<li>2JCIE-BU01(USB connection USB接続) localName: Rbt</li>
+								</ul>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
@@ -228,9 +245,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/2jcie/index.ts:249</li>
+									<li>Defined in src/parts/Ble/2jcie/index.ts:557</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Disconnect from the sensor</p>
+								</div>
+								<p>センサから切断</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
@@ -245,10 +268,18 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/2jcie/index.ts:211</li>
+									<li>Defined in src/parts/Ble/2jcie/index.ts:501</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Search for the 2JCIE Environmental Sensor series of OMRON</p>
+								</div>
+								<p>OMRON 環境センサ 2JCIEシリーズを検索</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>if found: Instance of BleRemotePeripheral / if not found: null</p>
+							<p>見つかった場合: BleRemotePeripheralのインスタンス / 見つからなかった場合: null</p>
 						</li>
 					</ul>
 				</section>
@@ -262,13 +293,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/2jcie/index.ts:340</li>
+									<li>Defined in src/parts/Ble/2jcie/index.ts:678</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<dl class="tsd-comment-tags">
 									<dt>deprecated</dt>
-									<dd></dd>
+									<dd><p>Please use <a href="parts.omron_2jcie.omron_2jcie.html#getlatestcalculationdatausbwait">getLatestCalculationDataUSBWait</a></p>
+										<p><a href="parts.omron_2jcie.omron_2jcie.html#getlatestcalculationdatausbwait">getLatestCalculationDataUSBWait</a> の使用を推奨</p>
+									</dd>
 								</dl>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/parts.omron_2jcie.omron_2jcie_usbcaldata.html" class="tsd-signature-type">OMRON_2JCIE_USBCalData</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -285,10 +318,17 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/2jcie/index.ts:344</li>
+									<li>Defined in src/parts/Ble/2jcie/index.ts:689</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get the latest index data and acceleration data from the 2JCIE-BU01(USB connection) sensor</p>
+								</div>
+								<p>2JCIE-BU01(USB接続)のセンサの最新の指標データや加速度データを取得</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/parts.omron_2jcie.omron_2jcie_usbcaldata.html" class="tsd-signature-type">OMRON_2JCIE_USBCalData</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>received data from the sensor センサから受け取ったデータ</p>
 						</li>
 					</ul>
 				</section>
@@ -302,13 +342,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/2jcie/index.ts:283</li>
+									<li>Defined in src/parts/Ble/2jcie/index.ts:598</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<dl class="tsd-comment-tags">
 									<dt>deprecated</dt>
-									<dd></dd>
+									<dd><p>Please use <a href="parts.omron_2jcie.omron_2jcie.html#getlatestdatawait">getLatestDataWait</a></p>
+										<p><a href="parts.omron_2jcie.omron_2jcie.html#getlatestdatawait">getLatestDataWait</a> の使用を推奨</p>
+									</dd>
 								</dl>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/parts.omron_2jcie.omron_2jcie_data.html" class="tsd-signature-type">OMRON_2JCIE_Data</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -325,9 +367,17 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/2jcie/index.ts:276</li>
+									<li>Defined in src/parts/Ble/2jcie/index.ts:589</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<dl class="tsd-comment-tags">
+									<dt>deprecated</dt>
+									<dd><p>Please use <a href="parts.omron_2jcie.omron_2jcie.html#getlatestdatawait">getLatestDataWait</a></p>
+										<p><a href="parts.omron_2jcie.omron_2jcie.html#getlatestdatawait">getLatestDataWait</a> の使用を推奨</p>
+									</dd>
+								</dl>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/parts.omron_2jcie.omron_2jcie_data.html" class="tsd-signature-type">OMRON_2JCIE_Data</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
@@ -342,10 +392,17 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/2jcie/index.ts:287</li>
+									<li>Defined in src/parts/Ble/2jcie/index.ts:610</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get the latest data from the 2JCIE-BL01(BAG type) sensor</p>
+								</div>
+								<p>2JCIE-BL01(バッグ形状)のセンサの最新のデータを取得</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/parts.omron_2jcie.omron_2jcie_data.html" class="tsd-signature-type">OMRON_2JCIE_Data</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>received data from the sensor センサから受け取ったデータ</p>
 						</li>
 					</ul>
 				</section>
@@ -359,9 +416,17 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/2jcie/index.ts:312</li>
+									<li>Defined in src/parts/Ble/2jcie/index.ts:640</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<dl class="tsd-comment-tags">
+									<dt>deprecated</dt>
+									<dd><p>Please use <a href="parts.omron_2jcie.omron_2jcie.html#getlatestsensordatausbwait">getLatestSensorDataUSBWait</a></p>
+										<p><a href="parts.omron_2jcie.omron_2jcie.html#getlatestsensordatausbwait">getLatestSensorDataUSBWait</a> の使用を推奨</p>
+									</dd>
+								</dl>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/parts.omron_2jcie.omron_2jcie_usbsendata.html" class="tsd-signature-type">OMRON_2JCIE_USBSenData</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
@@ -376,82 +441,17 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/2jcie/index.ts:315</li>
+									<li>Defined in src/parts/Ble/2jcie/index.ts:651</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get the latest data from the 2JCIE-BU01(USB connection) sensor</p>
+								</div>
+								<p>2JCIE-BU01(USB接続)のセンサの最新のデータを取得</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/parts.omron_2jcie.omron_2jcie_usbsendata.html" class="tsd-signature-type">OMRON_2JCIE_USBSenData</a><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="omron_uuid" class="tsd-anchor"></a>
-					<h3>omron_<wbr>uuid</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">omron_<wbr>uuid<span class="tsd-signature-symbol">(</span>uuid<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">any</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in src/parts/Ble/2jcie/index.ts:222</li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>uuid: <span class="tsd-signature-type">string</span></h5>
-								</li>
-								<li>
-									<h5>type: <span class="tsd-signature-type">string</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">any</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="signednumberfrombinary" class="tsd-anchor"></a>
-					<h3>signed<wbr>Number<wbr>From<wbr>Binary</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">signed<wbr>Number<wbr>From<wbr>Binary<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in src/parts/Ble/2jcie/index.ts:255</li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>data: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="unsignednumberfrombinary" class="tsd-anchor"></a>
-					<h3>unsigned<wbr>Number<wbr>From<wbr>Binary</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">unsigned<wbr>Number<wbr>From<wbr>Binary<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in src/parts/Ble/2jcie/index.ts:267</li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>data: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+							<p>received data from the sensor センサから受け取ったデータ</p>
 						</li>
 					</ul>
 				</section>
@@ -465,7 +465,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/2jcie/index.ts:207</li>
+									<li>Defined in src/parts/Ble/2jcie/index.ts:488</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -488,21 +488,30 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/2jcie/index.ts:95</li>
+									<li>Defined in src/parts/Ble/2jcie/index.ts:376</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Get a datas from advertisement mode of OMRON 2JCIE</p>
+									<p>Get a data from advertisement mode of the 2JCIE Environmental Sensor series of OMRON</p>
 								</div>
+								<p>advertisementモードのOMRON 環境センサ 2JCIEシリーズからデータを取得</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>instance of BleRemotePeripheral BleRemotePeripheralのインスタンス</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/parts.omron_2jcie.omron_2jcie_advdata.html" class="tsd-signature-type">OMRON_2JCIE_AdvData</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/parts.omron_2jcie.omron_2jcie_advsensordata.html" class="tsd-signature-type">OMRON_2JCIE_AdvSensorData</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h4>
+							<p>received data from the sensor センサから受け取ったデータ</p>
+							<p><code>2JCIE-BL01(BAG type バッグ形状) localName: IM</code></p>
+							<p>→ <a href="../interfaces/parts.omron_2jcie.omron_2jcie_advdata.html">OMRON_2JCIE_AdvData</a></p>
+							<p><code>2JCIE-BU01(USB connection USB接続) localName: Rbt</code></p>
+							<p>→ <a href="../interfaces/parts.omron_2jcie.omron_2jcie_advsensordata.html">OMRON_2JCIE_AdvSensorData</a></p>
 						</li>
 					</ul>
 				</section>
@@ -516,7 +525,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/2jcie/index.ts:78</li>
+									<li>Defined in src/parts/Ble/2jcie/index.ts:333</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/obnizcore.obnizpartsinfo.html" class="tsd-signature-type">ObnizPartsInfo</a></h4>
@@ -533,16 +542,27 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/2jcie/index.ts:84</li>
+									<li>Defined in src/parts/Ble/2jcie/index.ts:350</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Verify that the received peripheral is from the 2JCIE Environmental Sensor series of OMRON</p>
+								</div>
+								<p>受け取ったperipheralがOMRON 環境センサ 2JCIEシリーズのものかどうか確認する</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>instance of BleRemotePeripheral BleRemotePeripheralのインスタンス</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">""</span></h4>
+							<p>Whether it is the 2JCIE Environmental Sensor series of OMRON</p>
+							<p>OMRON 環境センサ 2JCIEシリーズかどうか</p>
 						</li>
 					</ul>
 				</section>
@@ -607,15 +627,6 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="parts.omron_2jcie.omron_2jcie.html#getlatestsensordatausbwait" class="tsd-kind-icon">get<wbr>Latest<wbr>Sensor<wbr>DataUSBWait</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="parts.omron_2jcie.omron_2jcie.html#omron_uuid" class="tsd-kind-icon">omron_<wbr>uuid</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="parts.omron_2jcie.omron_2jcie.html#signednumberfrombinary" class="tsd-kind-icon">signed<wbr>Number<wbr>From<wbr>Binary</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="parts.omron_2jcie.omron_2jcie.html#unsignednumberfrombinary" class="tsd-kind-icon">unsigned<wbr>Number<wbr>From<wbr>Binary</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="parts.omron_2jcie.omron_2jcie.html#wired" class="tsd-kind-icon">wired</a>

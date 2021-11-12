@@ -72,6 +72,16 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>body temperature data from UT201BLE</p>
+					</div>
+					<p>(body temperature will be returned in either Fahrenheit or Celsius format)</p>
+					<p>UT201BLEからの体温データ</p>
+					<p>(体温はFahrenheit形式かCelsius形式のどちらかが返ってきます)</p>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -104,9 +114,15 @@
 					<div class="tsd-signature tsd-kind-icon">celsius<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/UT201BLE/index.ts:18</li>
+							<li>Defined in src/parts/Ble/UT201BLE/index.ts:38</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>body temperature in Celsius format Celsius形式の体温</p>
+						</div>
+						<p>Range 範囲: 32.00~42.00 (Unit 単位: 0.01 degC)</p>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="date" class="tsd-anchor"></a>
@@ -114,9 +130,14 @@
 					<div class="tsd-signature tsd-kind-icon">date<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>day<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>hour<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>minute<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>month<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>second<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>year<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/UT201BLE/index.ts:19</li>
+							<li>Defined in src/parts/Ble/UT201BLE/index.ts:40</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>timestamp タイムスタンプ</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="fahrenheit" class="tsd-anchor"></a>
@@ -124,9 +145,15 @@
 					<div class="tsd-signature tsd-kind-icon">fahrenheit<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/UT201BLE/index.ts:17</li>
+							<li>Defined in src/parts/Ble/UT201BLE/index.ts:32</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>body temperature in Fahrenheit format Fahrenheit形式の体温</p>
+						</div>
+						<p>(Unit 単位: 0.1 degF)</p>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="temperaturetype" class="tsd-anchor"></a>
@@ -134,9 +161,15 @@
 					<div class="tsd-signature tsd-kind-icon">temperature<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/UT201BLE/index.ts:27</li>
+							<li>Defined in src/parts/Ble/UT201BLE/index.ts:53</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>part where body temperature was measured 体温の計測部位</p>
+						</div>
+						<p>Value 値: &#39;unknown&#39; | &#39;Armpit&#39; | &#39;Body&#39; | &#39;Ear&#39; | &#39;Finger&#39; | &#39;Gastro-intestinal Tract&#39; | &#39;Mouth&#39; | &#39;Rectum&#39; | &#39;Toe&#39; | &#39;Tympanum&#39;</p>
+					</div>
 				</section>
 			</section>
 		</div>

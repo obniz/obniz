@@ -3,7 +3,9 @@
  * @packageDocumentation
  * @module Parts.UA651BLE
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** UA651BLE management class UA651BLEを管理するクラス */
 class UA651BLE {
     constructor(peripheral, timezoneOffsetMinute) {
         if (!peripheral) {
@@ -17,9 +19,27 @@ class UA651BLE {
             name: 'UA651BLE',
         };
     }
+    /**
+     * Verify that the received peripheral is from the UA651BLE
+     *
+     * 受け取ったPeripheralがUA651BLEのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is UA651BLE
+     *
+     * UA651BLEかどうか
+     */
     static isDevice(peripheral) {
         return (peripheral.localName && peripheral.localName.startsWith('A&D_UA-651BLE_'));
     }
+    /**
+     * Get data from the UA651BLE
+     *
+     * UA651BLEからデータを取得
+     *
+     * @returns data from the UA651BLE UA651BLEから受け取ったデータ
+     */
     async getDataWait() {
         if (!this._peripheral) {
             throw new Error('UA651BLE not found');

@@ -39,7 +39,7 @@ import RS_BTWATTCH2, { RS_BTWATTCH2Options } from '../parts/Ble/RS_BTWATTCH2';
 import RS_Seek3, { RS_Seek3Options } from '../parts/Ble/RS_SEEK3';
 import SCBTGAAAC, { SCBTGAAACOptions } from '../parts/Ble/scbtgaaac';
 import TM530, { TM530Options } from '../parts/Ble/tm530';
-import TM551, { TM551Options } from '../parts/Ble/tm551';
+import TM511, { TM511Options } from '../parts/Ble/tm511';
 import Toio_CoreCube, { Toio_CoreCubeOptions } from '../parts/Ble/toio_corecube';
 import Tr4, { Tr4Options } from '../parts/Ble/TR4';
 import UA1200BLE, { UA1200BLEOptions } from '../parts/Ble/UA1200BLE';
@@ -171,6 +171,7 @@ import ADT7310, { ADT7310Options } from '../parts/TemperatureSensor/spi/ADT7310'
 import RN42, { RN42Options } from '../parts/Wireless/RN42';
 import XBee, { XBeeOptions } from '../parts/Wireless/XBee';
 import EXVital, { EXVital_Options } from '../parts/Ble/EXVital';
+import iBS03T_RH, { iBS03T_RHOptions } from '../parts/Ble/iBS03T_RH';
 export declare type PartsType = keyof PartsList;
 export interface PartsList {
     LED: {
@@ -701,6 +702,10 @@ export interface PartsList {
         class: IBS03T;
         options: iBS03TOptions;
     };
+    iBS03T_RH: {
+        class: iBS03T_RH;
+        options: iBS03T_RHOptions;
+    };
     iBS03TP: {
         class: IBS03TP;
         options: iBS03TPOptions;
@@ -753,9 +758,9 @@ export interface PartsList {
         class: TM530;
         options: TM530Options;
     };
-    TM551: {
-        class: TM551;
-        options: TM551Options;
+    TM511: {
+        class: TM511;
+        options: TM511Options;
     };
     toio_CoreCube: {
         class: Toio_CoreCube;

@@ -72,6 +72,14 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>data from Logtta_CO2</p>
+					</div>
+					<p>Logtta_CO2から受け取ったデータ</p>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -109,9 +117,14 @@
 					<div class="tsd-signature tsd-kind-icon">address<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:19</li>
+							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:38</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>BLE address BLEアドレス</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="battery" class="tsd-anchor"></a>
@@ -119,9 +132,16 @@
 					<div class="tsd-signature tsd-kind-icon">battery<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:17</li>
+							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:30</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>remaining battery 電池残量</p>
+						</div>
+						<p>Range 範囲: 0~100 (Unit 単位: 1 %)</p>
+						<p>254: USB power supply USB給電</p>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="co2" class="tsd-anchor"></a>
@@ -130,9 +150,16 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="parts.logtta_co2.logtta_co2_data.html">Logtta_CO2_Data</a>.<a href="parts.logtta_co2.logtta_co2_data.html#co2">co2</a></p>
 						<ul>
-							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:23</li>
+							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:54</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>CO2 concentration CO2濃度</p>
+						</div>
+						<p>Range 範囲: 0~65535 (Unit 単位: 1 ppm)</p>
+						<p>(supported value カタログ値: 0~2000)</p>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="interval" class="tsd-anchor"></a>
@@ -140,9 +167,15 @@
 					<div class="tsd-signature tsd-kind-icon">interval<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:18</li>
+							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:36</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>measurement interval 測定周期</p>
+						</div>
+						<p>Range 範囲: 1~2100 (Unit 単位: 1 s)</p>
+					</div>
 				</section>
 			</section>
 		</div>

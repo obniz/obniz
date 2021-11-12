@@ -3,8 +3,10 @@
  * @packageDocumentation
  * @module Parts.iBS02PIR
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = require("../utils/abstracts/iBS");
+/** iBS02PIR management class iBS02PIRを管理するクラス */
 class iBS02PIR extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);

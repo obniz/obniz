@@ -144,3 +144,17 @@ await cam.startWait({baud: 38400});
 const jpegData = await cam.takeWait();
 document.getElementById("image").src = "data:image/png;base64," + cam.arrayToBase64(jpegData);
 ```
+
+node.js で動作している場合は、fsとBufferを用いてファイルに出力できます。  
+下記の例では `output.jpg` が出力されます。
+
+```Javascript
+obniz.io6.output(true);
+obniz.io9.output(false);
+var cam = obniz.wired("JpegSerialCam", {vcc:0, cam_tx:1, cam_rx:2, gnd:3});
+await cam.startWait({baud: 38400});
+const jpegData = await cam.takeWait();
+fs.writeFile("output.jpg", Buffer.from(cam.arrayToBase64(jpegData), "base64") , (err) => {
+  if (err) console.log(err);
+});
+```

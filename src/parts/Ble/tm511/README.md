@@ -1,20 +1,20 @@
-# TM551
+# TM511
 
-BLEで利用できる加速度センサーです。
+BLE enabled acceleration sensor.
 
 ![](image.jpg)
 
 ## isDevice(BleRemotePeripheral)
 
-デバイスを発見した場合、trueを返します。
+Returns true if a device was found.
 
 ```javascript
 // Javascript Example
-const TM551 = Obniz.getPartsClass('TM551');
+const TM511 = Obniz.getPartsClass('TM511');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (TM551.isDevice(p)) {
-        const data = TM551.getData(p);
+    if (TM511.isDevice(p)) {
+        const data = TM511.getData(p);
         console.log(data);
     }
 };
@@ -23,18 +23,18 @@ await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 
 ## getData(BleRemotePeripheral)
 
-advertisementがTM551のものであった場合その中身からデータを読み取ります
+Reading a acceleration data from BLE advertisement
 
-- x,y,z 加速度データ
-- battery 電池残量
+- x,y,z Acceleration
+- battery Battery Level
 
 ```javascript
 // Javascript Example
-const TM551 = Obniz.getPartsClass('TM551');
+const TM511 = Obniz.getPartsClass('TM511');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = (p) => {
-    if (TM551.isDevice(p)) {
-        const data = TM551.getData(p);
+    if (TM511.isDevice(p)) {
+        const data = TM511.getData(p);
         console.log(data);
     }
 };

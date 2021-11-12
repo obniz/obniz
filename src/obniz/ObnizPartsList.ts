@@ -43,7 +43,7 @@ import RS_BTWATTCH2, { RS_BTWATTCH2Options } from '../parts/Ble/RS_BTWATTCH2';
 import RS_Seek3, { RS_Seek3Options } from '../parts/Ble/RS_SEEK3';
 import SCBTGAAAC, { SCBTGAAACOptions } from '../parts/Ble/scbtgaaac';
 import TM530, { TM530Options } from '../parts/Ble/tm530';
-import TM551, { TM551Options } from '../parts/Ble/tm551';
+import TM511, { TM511Options } from '../parts/Ble/tm511';
 import Toio_CoreCube, {
   Toio_CoreCubeOptions,
 } from '../parts/Ble/toio_corecube';
@@ -275,6 +275,7 @@ import ADT7310, {
 import RN42, { RN42Options } from '../parts/Wireless/RN42';
 import XBee, { XBeeOptions } from '../parts/Wireless/XBee';
 import EXVital, { EXVital_Options } from '../parts/Ble/EXVital';
+import iBS03T_RH, { iBS03T_RHOptions } from '../parts/Ble/iBS03T_RH';
 
 export type PartsType = keyof PartsList;
 
@@ -482,6 +483,7 @@ export interface PartsList {
   iBS03: { class: IBS03; options: iBS03Options };
   iBS03G: { class: IBS03G; options: iBS03GOptions };
   iBS03T: { class: IBS03T; options: iBS03TOptions };
+  iBS03T_RH: { class: iBS03T_RH; options: iBS03T_RHOptions };
   iBS03TP: { class: IBS03TP; options: iBS03TPOptions };
   iBS04: { class: IBS04; options: iBS04Options };
   iBS04i: { class: IBS04I; options: iBS04iOptions };
@@ -495,7 +497,7 @@ export interface PartsList {
   PLS_01BT: { class: PLS_01BT; options: PLS_01BTOptions };
   ENERTALK_TOUCH: { class: ENERTALK_TOUCH; options: ENERTALK_TOUCHOptions };
   TM530: { class: TM530; options: TM530Options };
-  TM551: { class: TM551; options: TM551Options };
+  TM511: { class: TM511; options: TM511Options };
   toio_CoreCube: { class: Toio_CoreCube; options: Toio_CoreCubeOptions };
   UT201BLE: { class: UT201BLE; options: UT201BLEOptions };
   HEM_6233T: { class: HEM_6233T; options: HEM_6233TOptions };

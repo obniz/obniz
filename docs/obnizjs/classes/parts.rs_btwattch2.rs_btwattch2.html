@@ -72,6 +72,13 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>RS_BTWATTCH2 management class RS_BTWATTCH2を管理するクラス</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -138,23 +145,33 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:70</li>
+									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:108</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Constructor. Provide option at this time</p>
+									<p>Constructor.</p>
 								</div>
+								<p>If you want to change the RTC auto-configuration option from the default,</p>
+								<p>set it as an argument at this time.</p>
+								<p>コンストラクタ</p>
+								<p>RTC自動設定オプションをデフォルトから変更する場合は、このタイミングで引数に設定</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>instance of BleRemotePeripheral BleRemotePeripheralのインスタンス</p>
+										</div>
+									</div>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="../interfaces/parts.rs_btwattch2.rs_btwattch2options.html" class="tsd-signature-type">RS_BTWATTCH2Options</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<div class="lead">
+											<p>set auto RTC or not RTC自動設定の有無</p>
 										</div>
 									</div>
 								</li>
@@ -172,7 +189,7 @@
 					<div class="tsd-signature tsd-kind-icon">_peripheral<span class="tsd-signature-symbol">:</span> <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:60</li>
+							<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:98</li>
 						</ul>
 					</aside>
 				</section>
@@ -182,7 +199,7 @@
 					<div class="tsd-signature tsd-kind-icon">keys<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = [&#x27;rtcAutoset&#x27;]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:55</li>
+							<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:93</li>
 						</ul>
 					</aside>
 				</section>
@@ -192,7 +209,7 @@
 					<div class="tsd-signature tsd-kind-icon">ondisconnect<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>reason<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:61</li>
+							<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:99</li>
 						</ul>
 					</aside>
 				</section>
@@ -202,7 +219,7 @@
 					<div class="tsd-signature tsd-kind-icon">params<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:58</li>
+							<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:96</li>
 						</ul>
 					</aside>
 				</section>
@@ -212,7 +229,7 @@
 					<div class="tsd-signature tsd-kind-icon">required<wbr>Keys<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:57</li>
+							<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:95</li>
 						</ul>
 					</aside>
 				</section>
@@ -229,18 +246,22 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:148</li>
+									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:209</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Connect to the target device regarding pairing key</p>
+									<p>Connect to the target device with pairing key</p>
 								</div>
+								<p>ペアリングキーを用いてデバイスと接続</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>keys: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>pairing key ペアリングキー</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -257,13 +278,14 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:207</li>
+									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:270</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Disconnect from the device</p>
 								</div>
+								<p>デバイスとの接続を切断</p>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
@@ -279,15 +301,17 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:100</li>
+									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:157</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>get pairing key</p>
+									<p>Get the pairing key under pairing mode</p>
 								</div>
+								<p>ペアリングモード中にペアリングキーを取得</p>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>pairing key ペアリングキー</p>
 						</li>
 					</ul>
 				</section>
@@ -301,15 +325,18 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:263</li>
+									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:341</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Getting Current Relay State;</p>
+									<p>Get current relay state</p>
 								</div>
+								<p>現在のリレーの状態を取得</p>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>the relay in set or not</p>
+							<p>リレーが設定されているかどうか</p>
 						</li>
 					</ul>
 				</section>
@@ -323,15 +350,18 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:270</li>
+									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:354</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Getting All of realtime data</p>
+									<p>Get realtime measurement data(voltage[Vrms]・electric current[Irms]・electric power[Wa]) and relay state</p>
 								</div>
+								<p>リアルタイム計測データ(電圧[Vrms]・電流[Irms]・電力[Wa])とリレーの状態を取得</p>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/parts.rs_btwattch2.rs_btwattch2realtimedata.html" class="tsd-signature-type">RS_BTWATTCH2RealtimeData</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>received realtime measurement data and relay state</p>
+							<p>受けとったリアルタイム計測データとリレーの状態</p>
 						</li>
 					</ul>
 				</section>
@@ -345,15 +375,18 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:93</li>
+									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:146</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Check if device is under paring mode(over 3 seconds button pressing)</p>
+									<p>Check if device is under pairing mode(over 3 seconds button pressing)</p>
 								</div>
+								<p>デバイスがペアリングモード中であることを検出する (3秒間本体のボタンを押してください)</p>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<p>Whether there is a device under pairing mode</p>
+							<p>ペアリングモード中のデバイスがあるかどうか</p>
 						</li>
 					</ul>
 				</section>
@@ -367,19 +400,22 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:250</li>
+									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:322</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Set Relay ON/OFF</p>
+									<p>Set relay ON/OFF</p>
 								</div>
+								<p>リレーのON/OFFを設定する</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>isOn: <span class="tsd-signature-type">boolean</span></h5>
 									<div class="tsd-comment tsd-typography">
+										<p>set relay or not</p>
+										<p>リレーを設定するかどうか</p>
 									</div>
 								</li>
 							</ul>
@@ -397,13 +433,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:215</li>
+									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:281</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<dl class="tsd-comment-tags">
 									<dt>deprecated</dt>
-									<dd></dd>
+									<dd><p>Please use <a href="parts.rs_btwattch2.rs_btwattch2.html#setrtcwait">setRTCWait</a></p>
+										<p><a href="parts.rs_btwattch2.rs_btwattch2.html#setrtcwait">setRTCWait</a> の使用を推奨</p>
+									</dd>
 								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -428,19 +466,21 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:224</li>
+									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:292</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Setting Time on device clock</p>
+									<p>Set device RTC (date)</p>
 								</div>
+								<p>デバイスのRTC(日時)の設定</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> date: <span class="tsd-signature-type">Date</span></h5>
 									<div class="tsd-comment tsd-typography">
+										<p>instance of Date Dateのインスタンス</p>
 									</div>
 								</li>
 							</ul>
@@ -458,7 +498,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:86</li>
+									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:133</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -481,7 +521,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:36</li>
+									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:68</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/obnizcore.obnizpartsinfo.html" class="tsd-signature-type">ObnizPartsInfo</a></h4>
@@ -498,23 +538,27 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:47</li>
+									<li>Defined in src/parts/Ble/RS_BTWATTCH2/index.ts:85</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Check found peripheral is part of this parts</p>
+									<p>Verify that the received peripheral is from the RS_BTWATTCH2</p>
 								</div>
+								<p>受け取ったPeripheralがRS_BTWATTCH2のものかどうか確認する</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
 									<div class="tsd-comment tsd-typography">
+										<p>instance of BleRemotePeripheral BleRemotePeripheralのインスタンス</p>
 									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">""</span></h4>
+							<p>Whether it is the RS_BTWATTCH2</p>
+							<p>RS_BTWATTCH2かどうか</p>
 						</li>
 					</ul>
 				</section>

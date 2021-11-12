@@ -2,7 +2,9 @@
  * @packageDocumentation
  * @module Parts.Logtta_TH
  */
+/* eslint rulesdir/non-ascii: 0 */
 
+import { deprecate } from 'util';
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import {
   ObnizBleBeaconStruct,
@@ -15,17 +17,55 @@ import Logtta from '../utils/abstracts/Logtta';
 
 export interface Logtta_THOptions {}
 
+/**
+ * data from Logtta_TH(Logtta_Temp)
+ *
+ * Logtta_TH(Logtta_Temp)からのデータ
+ */
 export interface Logtta_TH_Data extends Logtta_TH_Connected_Data {
+  /**
+   * remaining battery 電池残量
+   *
+   * Range 範囲: 0~100 (Unit 単位: 1 %)
+   *
+   * 254: USB power supply USB給電
+   */
   battery: number;
+  /**
+   * measurement interval 測定周期
+   *
+   * Range 範囲: 1~2100 (Unit 単位: 1 s)
+   */
   interval: number;
+  /** BLE address BLEアドレス */
   address: string; // TODO: delete
 }
 
+/**
+ * temperature and humidity data from Logtta_TH(Logtta_Temp)
+ *
+ * Logtta_TH(Logtta_Temp)からの音湿度データ
+ */
 export interface Logtta_TH_Connected_Data {
+  /**
+   * temperature 温度
+   *
+   * Range 範囲: -20~60 (Unit 単位: degC)
+   */
   temperature: number;
+  /**
+   * relative humidity 湿度
+   *
+   * Range 範囲 0~100 (Unit 単位: %RH)
+   */
   humidity: number;
 }
 
+/**
+ * Logtta_TH(Logtta_Temp) management class
+ *
+ * Logtta_TH(Logtta_Temp)を管理するクラス
+ */
 export default class Logtta_TH extends Logtta<
   Logtta_TH_Data,
   Logtta_TH_Connected_Data
@@ -102,19 +142,53 @@ export default class Logtta_TH extends Logtta<
     return (func(data) / 0x10000) * 125 - 6;
   }
 
-  /** @deprecated */
+  /**
+   * @deprecated
+   *
+   * Verify that the received peripheral is from the Logtta_TH(Logtta_Temp)
+   *
+   * 受け取ったPeripheralがLogtta_TH(Logtta_Temp)のものかどうかを確認する
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns Whether it is the Logtta_TH(Logtta_Temp)
+   *
+   * Logtta_TH(Logtta_Temp)かどうか
+   */
   public static isDevice(peripheral: BleRemotePeripheral): boolean {
     return this.getDeviceMode(peripheral) === 'Connectable';
   }
 
-  /** @deprecated */
+  /**
+   * @deprecated
+   *
+   * Verify that the received advertisement is from the Logtta_TH(Logtta_Temp) (in Beacon Mode)
+   *
+   * 受け取ったAdvertisementがLogtta_TH(Logtta_Temp)のものかどうか確認する(ビーコンモード中)
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns Whether it is the Logtta_TH(Logtta_Temp)
+   *
+   * Logtta_TH(Logtta_Temp)かどうか
+   */
   public static isAdvDevice(peripheral: BleRemotePeripheral): boolean {
     return this.getDeviceMode(peripheral) === 'Beacon';
   }
 
   protected readonly staticClass = Logtta_TH;
 
-  /** @deprecated */
+  /**
+   * @deprecated
+   *
+   * Get all data with connected state
+   *
+   * 接続している状態で全てのデータを取得
+   *
+   * @returns all data from the Logtta_TH(Logtta_Temp)
+   *
+   * Logtta_TH(Logtta_Temp)から受け取った全てのデータ
+   */
   public async getAllWait(): Promise<Logtta_TH_Connected_Data | null> {
     try {
       return await this.getDataWait();
@@ -123,15 +197,57 @@ export default class Logtta_TH extends Logtta<
     }
   }
 
+  /**
+   * Get the temperature data with connected state
+   *
+   * 接続している状態で温度のデータを取得
+   *
+   * @returns temperature data from the Logtta_TH(Logtta_Temp)
+   *
+   * Logtta_TH(Logtta_Temp)から受け取った温度データ
+   */
   public async getTemperatureWait(): Promise<number> {
     return (await this.getDataWait()).temperature;
   }
 
+  /**
+   * Get the humidity data with connected state
+   *
+   * 接続している状態で湿度のデータを取得
+   *
+   * @returns humidity data from the Logtta_TH(Logtta_Temp)
+   *
+   * Logtta_TH(Logtta_Temp)から受け取った湿度データ
+   */
   public async getHumidityWait(): Promise<number> {
     return (await this.getDataWait()).humidity;
   }
 
-  /** @deprecated */
+  /**
+   * @deprecated
+   *
+   * Set enable / disable for beacon mode (periodic beacon transmission)
+   *
+   * Call this function after authenticating with the sensor
+   *
+   * After setting, disconnect once to enable it
+   *
+   * To stop beacon mode, you need to hold the button on the sensor for more than 2 seconds
+   *
+   * (For more detail, please see http://www.uni-elec.co.jp/logtta_page.html )
+   *
+   * ビーコンモード(定期的なビーコン発信)の有効/無効の設定
+   *
+   * センサとの認証を済ませた状態で実行してください
+   *
+   * 設定後に切断した後から有効になります
+   *
+   * ビーコンモードの終了は、デバイスのボタンを2秒以上長押しする操作が必要です(詳しくは http://www.uni-elec.co.jp/logtta_page.html )
+   *
+   * @param enable enable the beacon mode or not ビーコンモードを有効にするかどうか
+   *
+   * @returns
+   */
   public setBeaconMode(enable: boolean): Promise<boolean> {
     return this.setBeaconModeWait(enable);
   }

@@ -3,8 +3,10 @@
  * @packageDocumentation
  * @module Parts.KankiAirMier
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const advertismentAnalyzer_1 = require("../utils/advertisement/advertismentAnalyzer");
+/** Kanki AirMier management class 換気エアミエルを管理するクラス */
 class KankiAirMier {
     constructor() {
         this._peripheral = null;
@@ -14,9 +16,29 @@ class KankiAirMier {
             name: 'KankiAirMier',
         };
     }
+    /**
+     * Verify that the received peripheral is from the Kanki AirMier
+     *
+     * 受け取ったPeripheralが換気エアミエルのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Kanki AirMier
+     *
+     * 換気エアミエルかどうか
+     */
     static isDevice(peripheral) {
         return KankiAirMier._deviceAdvAnalyzer.validate(peripheral.adv_data);
     }
+    /**
+     * Get a data from the Kanki AirMier
+     *
+     * 換気エアミエルからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the Kanki AirMier 換気エアミエルから受け取ったデータ
+     */
     static getData(peripheral) {
         if (!KankiAirMier.isDevice(peripheral)) {
             return null;
