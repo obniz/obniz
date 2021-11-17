@@ -184,9 +184,13 @@ class BleRemotePeripheral {
         this._connectSetting = setting || {};
         this._connectSetting.autoDiscovery =
             this._connectSetting.autoDiscovery !== false;
+        this._connectSetting.mtuRequest =
+            this._connectSetting.mtuRequest === undefined
+                ? 256
+                : this._connectSetting.mtuRequest;
         await this.obnizBle.scan.endWait();
         try {
-            await this.obnizBle.centralBindings.connectWait(this.address, () => {
+            await this.obnizBle.centralBindings.connectWait(this.address, this._connectSetting.mtuRequest, () => {
                 if (this._connectSetting.pairingOption) {
                     this.setPairingOption(this._connectSetting.pairingOption);
                 }
