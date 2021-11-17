@@ -46767,6 +46767,9 @@ class Keyestudio_PIR {
             }
         });
     }
+    async getWait() {
+        return await this.io_signal.inputWait();
+    }
 }
 exports.default = Keyestudio_PIR;
 
