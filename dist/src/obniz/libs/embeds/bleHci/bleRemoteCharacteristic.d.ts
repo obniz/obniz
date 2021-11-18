@@ -133,7 +133,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
      * This sets a callback function to receive notify when it comes from periperal.
      * To receive notify, you need to register on CCCD Descriptor(0x2902).
      *
-     * More infomation of BLE/CCCD is available at [bluetooth.com](https://www.bluetooth.com/specifications/gatt/descriptors/).
+     * More information of BLE/CCCD is available at [bluetooth.com](https://www.bluetooth.com/specifications/gatt/descriptors/).
      *
      * ```javascript
      * await obniz.ble.initWait();
@@ -194,7 +194,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
      * let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
      *
      * char.onregisternotify = function() {
-     *  console.log("register finshed")
+     *  console.log("register finished")
      *  char.unregisterNotify();
      * }
      *
@@ -324,7 +324,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
      * Discover services.
      *
      * If connect setting param 'autoDiscovery' is true(default),
-     * services are automatically disvocer on connection established.
+     * services are automatically discover on connection established.
      *
      *
      * ```javascript

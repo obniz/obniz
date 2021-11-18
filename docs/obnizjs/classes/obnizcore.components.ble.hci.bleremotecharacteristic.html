@@ -496,7 +496,7 @@
 									<p>Discover services.</p>
 								</div>
 								<p>If connect setting param &#39;autoDiscovery&#39; is true(default),
-								services are automatically disvocer on connection established.</p>
+								services are automatically discover on connection established.</p>
 								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
 <span class="hljs-keyword">await</span> obniz.ble.initWait({});
 obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">peripheral</span>)</span>{
@@ -743,7 +743,7 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 									<p>This sets a callback function to receive notify when it comes from periperal.
 									To receive notify, you need to register on CCCD Descriptor(0x2902).</p>
 								</div>
-								<p>More infomation of BLE/CCCD is available at <a href="https://www.bluetooth.com/specifications/gatt/descriptors/">bluetooth.com</a>.</p>
+								<p>More information of BLE/CCCD is available at <a href="https://www.bluetooth.com/specifications/gatt/descriptors/">bluetooth.com</a>.</p>
 								<pre><code class="language-javascript"><span class="hljs-keyword">await</span> obniz.ble.initWait();
 <span class="hljs-keyword">var</span> target = {
  <span class="hljs-attr">localName</span>: <span class="hljs-string">"obniz-notify"</span>
@@ -880,7 +880,7 @@ char.registerNotify( <span class="hljs-function"><span class="hljs-keyword">func
 <span class="hljs-keyword">let</span> char = peripheral.getService(<span class="hljs-string">'fff0'</span>).getCharacteristic( <span class="hljs-string">'fff1'</span>);
 
 char.onregisternotify = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
- <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"register finshed"</span>)
+ <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"register finished"</span>)
  char.unregisterNotify();
 }
 
