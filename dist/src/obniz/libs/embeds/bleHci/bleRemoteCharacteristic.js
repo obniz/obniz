@@ -3,10 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.Hci
- */
 const ObnizError_1 = require("../../../ObnizError");
 const bleRemoteDescriptor_1 = __importDefault(require("./bleRemoteDescriptor"));
 const bleRemoteValueAttributeAbstract_1 = __importDefault(require("./bleRemoteValueAttributeAbstract"));
@@ -222,9 +218,9 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      *
      * var peripheral = await obniz.ble.scan.startOneWait(target);
      * await peripheral.connectWait();
-     * let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
+     * let char = peripheral.getService('fff0').getCharacteristic('fff1');
      *
-     * await char.registerNotifyWait( function(data){
+     * await char.registerNotifyWait(function(data){
      *   console.log("notify with data " + data.join(','));
      * });
      * await char.unregisterNotifyWait();
@@ -238,6 +234,32 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
         };
         await this.service.peripheral.obnizBle.centralBindings.notifyWait(this.service.peripheral.address, this.service.uuid, this.uuid, false);
         this._runUserCreatedFunction(this.onunregisternotify);
+    }
+    /**
+     * Wait for notification and return data when it arrives.
+     *
+     * ```javascript
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   localName: "obniz-notify"
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * await peripheral.connectWait();
+     * let char = peripheral.getService('fff0').getCharacteristic('fff1');
+     *
+     * let data = await c.getNotifyWait();
+     * console.log("notify with data " + data.join(','));
+     * ```
+     *
+     * @returns data from notification of the device
+     */
+    async getNotifyWait() {
+        return new Promise((resolve) => {
+            this.registerNotifyWait((data) => {
+                resolve(data);
+            });
+        });
     }
     /**
      * Use readWait() instead from 3.5.0

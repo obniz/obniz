@@ -225,9 +225,9 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
      *
      * var peripheral = await obniz.ble.scan.startOneWait(target);
      * await peripheral.connectWait();
-     * let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
+     * let char = peripheral.getService('fff0').getCharacteristic('fff1');
      *
-     * await char.registerNotifyWait( function(data){
+     * await char.registerNotifyWait(function(data){
      *   console.log("notify with data " + data.join(','));
      * });
      * await char.unregisterNotifyWait();
@@ -236,6 +236,26 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
      *
      */
     unregisterNotifyWait(): Promise<void>;
+    /**
+     * Wait for notification and return data when it arrives.
+     *
+     * ```javascript
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   localName: "obniz-notify"
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * await peripheral.connectWait();
+     * let char = peripheral.getService('fff0').getCharacteristic('fff1');
+     *
+     * let data = await c.getNotifyWait();
+     * console.log("notify with data " + data.join(','));
+     * ```
+     *
+     * @returns data from notification of the device
+     */
+    getNotifyWait(): Promise<any>;
     /**
      * Use readWait() instead from 3.5.0
      *
