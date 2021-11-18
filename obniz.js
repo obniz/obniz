@@ -8685,7 +8685,7 @@ class BleScan {
         if (this.isContainingBleScanSettingProperty(target)) {
             this.obnizBle.Obniz.warning({
                 alert: 'warning',
-                message: `Unexpected arguments. It might be contained the second argument keys. Please check object keys and order of 'obniz.ble.getWait()' arguments. `,
+                message: `Unexpected arguments. It might be contained the second argument keys. Please check object keys and order of 'startWait()' / 'startOneWait()' / 'startAllWait()' arguments. `,
             });
         }
         this.state = 'starting';
