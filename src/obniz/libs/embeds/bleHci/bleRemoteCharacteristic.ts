@@ -2,7 +2,6 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import { throws } from 'assert';
 import { ObnizDeprecatedFunctionError } from '../../../ObnizError';
 import BleRemoteDescriptor from './bleRemoteDescriptor';
 import BleRemoteService from './bleRemoteService';
