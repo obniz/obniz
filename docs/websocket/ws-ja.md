@@ -66,6 +66,8 @@ target device information
 | `ws.obniz.metadata` |  string  | &nbsp; | device metadata user set on cloud&nbsp; |
 | `ws.obniz.connected_network.online_at` |  number  | <ul><li>required</li></ul> | Epoch Unix Timestamp (seconds) at device become online on the cloud&nbsp; |
 | `ws.obniz.connected_network.net` |  string  | &nbsp; | Current connected network type. Defined in setting json&nbsp; |
+| `ws.obniz.connected_network.local_ip` |  string  | &nbsp; | Local IP if exist&nbsp; |
+| `ws.obniz.connected_network.global_ip` |  string  | &nbsp; | Global IP if exist&nbsp; |
 | `ws.obniz.connected_network.wifi.ssid` |  string  | <ul><li>required</li></ul> | Current connected Accespoint SSID&nbsp; |
 | `ws.obniz.connected_network.wifi.mac_address` |  string  | <ul><li>required</li></ul> | Current connected Accespoint MacAddress&nbsp; |
 | `ws.obniz.connected_network.wifi.rssi` |  number  | <ul><li>required</li></ul> | Current RSSI for connected Accesspoint. RSSI is mesured only on connection timing&nbsp; |
@@ -89,6 +91,8 @@ target device information
                 "connected_network": {
                     "online_at": 1637685862,
                     "net": "wirelesslan",
+                    "local_ip": "192.168.0.100",
+                    "global_ip": "201.200.199.198",
                     "wifi": {
                         "ssid": "obniz-wifi",
                         "mac_address": "0123456789AB",
