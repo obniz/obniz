@@ -77,7 +77,7 @@ properties:
             required: [mesh_id, parent_obniz_id, root_obniz_id, layer, rssi]
             additionalProperties: false
             properties:
-              mesh_id:
+              meshid:
                 type: string
                 example: "012345678901"
                 description: "MESH ID of Currently joined MESH network"

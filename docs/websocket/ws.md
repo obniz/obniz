@@ -71,7 +71,7 @@ target device information
 | `ws.obniz.connected_network.wifi.ssid` |  string  | <ul><li>required</li></ul> | Current connected Accespoint SSID&nbsp; |
 | `ws.obniz.connected_network.wifi.mac_address` |  string  | <ul><li>required</li></ul> | Current connected Accespoint MacAddress&nbsp; |
 | `ws.obniz.connected_network.wifi.rssi` |  number  | <ul><li>required</li></ul> | Current RSSI for connected Accesspoint. RSSI is mesured only on connection timing&nbsp; |
-| `ws.obniz.connected_network.wifimesh.mesh_id` |  string  | <ul><li>required</li></ul> | MESH ID of Currently joined MESH network&nbsp; |
+| `ws.obniz.connected_network.wifimesh.meshid` |  string  | &nbsp; | MESH ID of Currently joined MESH network&nbsp; |
 | `ws.obniz.connected_network.wifimesh.parent_obniz_id` |  string  | <ul><li>required</li></ul> | Id of parent node&nbsp; |
 | `ws.obniz.connected_network.wifimesh.root_obniz_id` |  string  | <ul><li>required</li></ul> | Id of parent node&nbsp; |
 | `ws.obniz.connected_network.wifimesh.layer` |  number  | <ul><li>required</li></ul> | Depth of MESH network. layer=1 is root node of a network.&nbsp; |
@@ -99,7 +99,7 @@ target device information
                         "rssi": "-40"
                     },
                     "wifimesh": {
-                        "mesh_id": "012345678901",
+                        "meshid": "012345678901",
                         "parent_obniz_id": "0000-0000",
                         "root_obniz_id": "0000-0000",
                         "layer": 1,
