@@ -1716,7 +1716,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./dist/src/json_schema/response/ws/obniz.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws/obniz","type":"object","required":["obniz"],"properties":{"obniz":{"type":"object","required":["hw","firmware"],"additionalProperties":false,"properties":{"hw":{"type":"string"},"firmware":{"type":"string"},"metadata":{"type":"string"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws/obniz","type":"object","required":["obniz"],"properties":{"obniz":{"type":"object","required":["hw","firmware"],"additionalProperties":false,"properties":{"hw":{"type":"string"},"firmware":{"type":"string"},"metadata":{"type":"string"},"connected_network":{"type":"object","required":["online_at","current_net"],"additionalProperties":false,"properties":{"online_at":{"type":"number"},"net":{"type":"string"},"local_ip":{"type":"string"},"global_ip":{"type":"string"},"wifi":{"type":"object","required":["ssid","mac_address","rssi"],"additionalProperties":false,"properties":{"ssid":{"type":"string"},"mac_address":{"type":"string"},"rssi":{"type":"number"}}},"wifimesh":{"type":"object","required":["mesh_id","parent_obniz_id","root_obniz_id","layer","rssi"],"additionalProperties":false,"properties":{"mesh_id":{"type":"string"},"parent_obniz_id":{"type":"string"},"root_obniz_id":{"type":"string"},"layer":{"type":"number"},"rssi":{"type":"number"}}}}}}}}}
 
 /***/ }),
 
@@ -3118,8 +3118,9 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     _handleWSCommand(wsObj) {
         if (wsObj.ready) {
-            this.firmware_ver = wsObj.obniz.firmware;
-            this.hw = wsObj.obniz.hw;
+            const wsObniz = wsObj.obniz;
+            this.firmware_ver = wsObniz.firmware;
+            this.hw = wsObniz.hw;
             if (!this.hw) {
                 this.hw = 'obnizb1';
             }
@@ -3135,13 +3136,16 @@ class ObnizConnection extends eventemitter3_1.default {
             if (this.options.reset_obniz_on_ws_disconnection) {
                 this.resetOnDisconnect(true);
             }
-            if (wsObj.obniz.metadata) {
+            if (wsObniz.metadata) {
                 try {
                     this.metadata = JSON.parse(wsObj.obniz.metadata);
                 }
                 catch (e) {
                     // ignore parsing error.
                 }
+            }
+            if (wsObniz.connected_network) {
+                this.connected_network = wsObniz.connected_network;
             }
             if (wsObj.local_connect && wsObj.local_connect.ip) {
                 this._localConnectIp = wsObj.local_connect.ip;

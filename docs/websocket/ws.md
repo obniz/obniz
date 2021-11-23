@@ -64,6 +64,16 @@ target device information
 | `ws.obniz.hw` |  string  | <ul><li>required</li></ul> | Hardware Identifier String of target device&nbsp; |
 | `ws.obniz.firmware` |  string  | <ul><li>required</li></ul> | Installed firmware version of target device&nbsp; |
 | `ws.obniz.metadata` |  string  | &nbsp; | device metadata user set on cloud&nbsp; |
+| `ws.obniz.connected_network.online_at` |  number  | <ul><li>required</li></ul> | Epoch Unix Timestamp (seconds) at device become online on the cloud&nbsp; |
+| `ws.obniz.connected_network.net` |  string  | &nbsp; | Current connected network type. Defined in setting json&nbsp; |
+| `ws.obniz.connected_network.wifi.ssid` |  string  | <ul><li>required</li></ul> | Current connected Accespoint SSID&nbsp; |
+| `ws.obniz.connected_network.wifi.mac_address` |  string  | <ul><li>required</li></ul> | Current connected Accespoint MacAddress&nbsp; |
+| `ws.obniz.connected_network.wifi.rssi` |  number  | <ul><li>required</li></ul> | Current RSSI for connected Accesspoint. RSSI is mesured only on connection timing&nbsp; |
+| `ws.obniz.connected_network.wifimesh.mesh_id` |  string  | <ul><li>required</li></ul> | MESH ID of Currently joined MESH network&nbsp; |
+| `ws.obniz.connected_network.wifimesh.parent_obniz_id` |  string  | <ul><li>required</li></ul> | Id of parent node&nbsp; |
+| `ws.obniz.connected_network.wifimesh.root_obniz_id` |  string  | <ul><li>required</li></ul> | Id of parent node&nbsp; |
+| `ws.obniz.connected_network.wifimesh.layer` |  number  | <ul><li>required</li></ul> | Depth of MESH network. layer=1 is root node of a network.&nbsp; |
+| `ws.obniz.connected_network.wifimesh.rssi` |  number  | <ul><li>required</li></ul> | Current RSSI for connected Accesspoint.&nbsp; |
 
 
 
@@ -75,7 +85,23 @@ target device information
             "obniz": {
                 "hw": "obnizb1",
                 "firmware": "2.0.0",
-                "metadata": "{\"description\":\"At My Office\"}"
+                "metadata": "{\"description\":\"At My Office\"}",
+                "connected_network": {
+                    "online_at": 1637685862,
+                    "net": "wirelesslan",
+                    "wifi": {
+                        "ssid": "obniz-wifi",
+                        "mac_address": "0123456789AB",
+                        "rssi": "-40"
+                    },
+                    "wifimesh": {
+                        "mesh_id": "012345678901",
+                        "parent_obniz_id": "0000-0000",
+                        "root_obniz_id": "0000-0000",
+                        "layer": 1,
+                        "rssi": "-40"
+                    }
+                }
             }
         }
     }
