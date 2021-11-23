@@ -162,7 +162,7 @@ await obniz.ble.scan.startWait();
 ```
 
 Output example is this. 
-This atitude is based on [here](https://toio.github.io/toio-spec/docs/ble_sensor#%E5%A7%BF%E5%8B%A2%E6%A4%9C%E5%87%BA).
+This attitude is based on [here](https://toio.github.io/toio-spec/docs/ble_sensor#%E5%A7%BF%E5%8B%A2%E6%A4%9C%E5%87%BA).
 
 ```
 
@@ -170,7 +170,7 @@ This atitude is based on [here](https://toio.github.io/toio-spec/docs/ble_sensor
   isHorizon : false, // Detects horizontal(true:Horizontal/false:Not horizontal).
   isCollision : false,  // Detects Collision(true:Collisioned/false:Not Collisioned).
   isDoubletap : false,// Detects double tap for cube(true:Double Taped/false:Not double tapped).
-  atitude : 3, // Please see adove link.
+  attitude : 3, // Please see above link.
 }
 ```
 

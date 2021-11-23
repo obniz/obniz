@@ -288,6 +288,7 @@ export default class BleScan {
     private isBinaryTarget;
     private isUuidTarget;
     private isDeviceAddressTarget;
+    private isContainingBleScanSettingProperty;
     private _clearDelayNotifyTimer;
     private _removeDelayNotifyTimer;
 }

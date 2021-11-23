@@ -2,20 +2,32 @@
  * @packageDocumentation
  * @module Parts.iBS03G
  */
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
-export interface IBS03GOptions {
+import { ObnizBleBeaconStruct } from '../../../obniz/ObnizPartsBleAbstract';
+import { BaseiBS } from '../utils/abstracts/iBS';
+export interface iBS03GOptions {
 }
-export interface IBS03G_Data {
+/**
+ * advertisement data from iBS03G
+ *
+ * iBS03Gからのadvertisementデータ
+ */
+export interface iBS03G_Data {
+    /** battery 電池電圧 (Unit 単位: 0.01 V) */
     battery: number;
+    /**
+     * button state ボタンの状態
+     *
+     * true: pressed 押された状態 / false: not pressed 押されていない状態
+     */
     button: boolean;
+    /** moving or not 動いているかどうか */
     moving: boolean;
+    /** fallen or not 落ちたかどうか */
     fall: boolean;
 }
-export default class IBS03G implements ObnizPartsBleInterface {
-    static info(): ObnizPartsBleInfo;
-    static isDevice(peripheral: BleRemotePeripheral): boolean;
-    static getData(peripheral: BleRemotePeripheral): IBS03G_Data | null;
-    private static deviceAdv;
-    _peripheral: BleRemotePeripheral | null;
+/** iBS03G management class iBS03Gを管理するクラス */
+export default class iBS03G extends BaseiBS<iBS03G_Data> {
+    static readonly PartsName = "iBS03G";
+    static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS03G_Data>;
+    protected readonly staticClass: typeof iBS03G;
 }

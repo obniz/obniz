@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module Parts.ENERTALK_TOUCH
  */
+/* eslint rulesdir/non-ascii: 0 */
 
 import Obniz from '../../../obniz';
 import BleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
@@ -13,6 +14,7 @@ import BleBatteryService from '../utils/services/batteryService';
 
 export interface ENERTALK_TOUCHOptions {}
 
+/** ENERTALK TOUCH management class ENERTALK TOUCHを管理するクラス */
 export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
   public static info(): ObnizPartsInfo {
     return {
@@ -20,6 +22,17 @@ export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
     };
   }
 
+  /**
+   * Verify that the received peripheral is from the ENERTALK TOUCH
+   *
+   * 受け取ったperipheralがENERTALK TOUCHのものかどうか確認する
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns Whether it is the ENERTALK TOUCH
+   *
+   * ENERTALK TOUCHかどうか
+   */
   public static isDevice(peripheral: BleRemotePeripheral) {
     if (peripheral.localName && peripheral.localName.startsWith('ensensor_')) {
       return true;
@@ -55,6 +68,15 @@ export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
     this._peripheral = peripheral;
   }
 
+  /**
+   * Connect the sensor
+   *
+   * Throw an error if the device is not found
+   *
+   * センサへ接続
+   *
+   * デバイスが見つからなかった場合はエラーをthrow
+   */
   public async connectWait() {
     if (!this._peripheral) {
       throw new Error('ENERTALK_TOUCH is not find.');
@@ -88,10 +110,26 @@ export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
     }
   }
 
+  /**
+   * Disconnect from the sensor
+   *
+   * センサから切断
+   */
   public async disconnectWait() {
     await this._peripheral?.disconnectWait();
   }
 
+  /**
+   * Get the temperature data from the sensor
+   *
+   * センサから温度データを取得
+   *
+   * @returns temperature value 温度の値
+   *
+   * Range 範囲: -1000~5000
+   *
+   * (Unit 単位: 0.01 degC)
+   */
   public async getTemperatureWait() {
     if (!this._temperatureChar) {
       throw new Error('device is not connected');
@@ -102,6 +140,17 @@ export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
     return temp;
   }
 
+  /**
+   * Get the humidity data from the sensor
+   *
+   * センサから湿度データを取得
+   *
+   * @returns humidity value 湿度の値
+   *
+   * Range 範囲: 0~100
+   *
+   * (Unit 単位: 1 %RH)
+   */
   public async getHumidityWait() {
     if (!this._humidityChar) {
       throw new Error('device is not connected');
@@ -112,6 +161,17 @@ export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
     return humidity;
   }
 
+  /**
+   * Get the illumination data from the sensor
+   *
+   * センサから照度データを取得
+   *
+   * @returns illumination value 照度の値
+   *
+   * Range 範囲: 0~65535
+   *
+   * (Unit 単位: 1 lx)
+   */
   public async getIlluminationWait() {
     if (!this._illuminanceChar) {
       throw new Error('device is not connected');
@@ -123,6 +183,17 @@ export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
     return illuminance;
   }
 
+  /**
+   * Get the acceleration data from the sensor
+   *
+   * センサから加速度データを取得
+   *
+   * @returns acceleration values 加速度の値
+   *
+   * Range 範囲: -2000~2000
+   *
+   * (Unit 単位: 1 mg)
+   */
   public async getAccelerometerWait() {
     if (!this._accelerometerChar) {
       throw new Error('device is not connected');

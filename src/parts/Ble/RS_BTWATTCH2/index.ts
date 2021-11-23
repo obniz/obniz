@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module Parts.RS_BTWATTCH2
  */
+/* eslint rulesdir/non-ascii: 0 */
 
 import Obniz from '../../../obniz';
 import BleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
@@ -10,28 +11,59 @@ import ObnizPartsInterface, {
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 
+/**
+ * settings to be set at instantiation
+ *
+ * インスタンス化する際に設定するオプション(任意)
+ */
 export interface RS_BTWATTCH2Options {
-  /** by default, this parts will set date at connectWait() */
+  /**
+   * Set the RTC (date) automatically or not
+   *
+   * By default, automatically set in {@linkplain connectWait}
+   *
+   * RTC(日時)を自動設定するか否か
+   *
+   * デフォルトでは {@linkplain connectWait} 内で自動的に設定するようになっています
+   */
   rtcAutoset: boolean;
 }
 
+/**
+ * data from the RS_BTWATTCH2
+ *
+ * RS_BTWATTCH2からのデータ
+ */
 export interface RS_BTWATTCH2RealtimeData {
-  /** measured voltage (unit v)  */
+  /**
+   * measured voltage 電圧の実効値
+   *
+   * (Unit 単位: V)
+   */
   vrms: number;
 
-  /** Amp (unit A) */
+  /**
+   * measured current 電流の実効値
+   *
+   * (Unit 単位: A)
+   */
   irms: number;
 
-  /** Watt (unit W)  */
+  /**
+   * electric power 電力
+   *
+   * (Unit 単位: W)
+   */
   wa: number;
 
-  /** Current Power State (Relay State) */
+  /** Current Power State (Relay State) 現在の電力供給の状態(リレーの状態) */
   powerState: boolean;
 
-  /** Reported time from device */
+  /** Reported time from device デバイスからの日時情報*/
   date: Date;
 }
 
+/** RS_BTWATTCH2 management class RS_BTWATTCH2を管理するクラス */
 export default class RS_BTWATTCH2 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
@@ -40,9 +72,15 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
   }
 
   /**
-   * Check found peripheral is part of this parts
+   * Verify that the received peripheral is from the RS_BTWATTCH2
    *
-   * @param peripheral
+   * 受け取ったPeripheralがRS_BTWATTCH2のものかどうか確認する
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns Whether it is the RS_BTWATTCH2
+   *
+   * RS_BTWATTCH2かどうか
    */
   public static isDevice(peripheral: BleRemotePeripheral) {
     return (
@@ -70,10 +108,19 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
   private _waitings: any[] = [];
 
   /**
-   * Constructor. Provide option at this time
+   * Constructor.
    *
-   * @param peripheral
-   * @param options
+   * If you want to change the RTC auto-configuration option from the default,
+   *
+   * set it as an argument at this time.
+   *
+   * コンストラクタ
+   *
+   * RTC自動設定オプションをデフォルトから変更する場合は、このタイミングで引数に設定
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @param options set auto RTC or not RTC自動設定の有無
    */
   constructor(peripheral: BleRemotePeripheral, options?: RS_BTWATTCH2Options) {
     if (peripheral && !RS_BTWATTCH2.isDevice(peripheral)) {
@@ -88,14 +135,24 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
   }
 
   /**
-   * Check if device is under paring mode(over 3 seconds button pressing)
+   * Check if device is under pairing mode(over 3 seconds button pressing)
+   *
+   * デバイスがペアリングモード中であることを検出する (3秒間本体のボタンを押してください)
+   *
+   * @returns Whether there is a device under pairing mode
+   *
+   * ペアリングモード中のデバイスがあるかどうか
    */
   public isPairingMode() {
     return this._peripheral.localName!.indexOf('BTWATTCH2_') < 0;
   }
 
   /**
-   * get pairing key
+   * Get the pairing key under pairing mode
+   *
+   * ペアリングモード中にペアリングキーを取得
+   *
+   * @returns pairing key ペアリングキー
    */
   public async firstPairingWait(): Promise<string> {
     if (!this._peripheral) {
@@ -143,7 +200,11 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
   }
 
   /**
-   * Connect to the target device regarding pairing key
+   * Connect to the target device with pairing key
+   *
+   * ペアリングキーを用いてデバイスと接続
+   *
+   * @param keys pairing key ペアリングキー
    */
   public async connectWait(keys: string) {
     if (!keys) {
@@ -169,7 +230,7 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
       '6e400001b5a3f393e0a9e50e24dcca9e'
     );
     if (!service) {
-      throw new Error(`no serivce found`);
+      throw new Error(`no service found`);
     }
     this._rxFromTargetCharacteristic = service.getCharacteristic(
       '6e400003b5a3f393e0a9e50e24dcca9e'
@@ -203,13 +264,18 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
 
   /**
    * Disconnect from the device
+   *
+   * デバイスとの接続を切断
    */
   public async disconnectWait() {
     await this._peripheral.disconnectWait();
   }
 
   /**
-   * @deprecated
+   * @deprecated Please use {@linkplain setRTCWait}
+   *
+   * {@linkplain setRTCWait} の使用を推奨
+   *
    * @param date
    */
   public setRTC(date?: Date) {
@@ -217,9 +283,11 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
   }
 
   /**
-   * Setting Time on device clock
+   * Set device RTC (date)
    *
-   * @param date
+   * デバイスのRTC(日時)の設定
+   *
+   * @param date instance of Date Dateのインスタンス
    */
   public async setRTCWait(date?: Date) {
     if (!date) {
@@ -235,7 +303,7 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
       date.getFullYear() - 1900,
     ]);
     if (ret.length !== 2) {
-      throw new Error(`communiation error`);
+      throw new Error(`communication error`);
     }
     if (ret[1] !== 0x00) {
       throw new Error(`set rtc failed`);
@@ -243,14 +311,18 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
   }
 
   /**
-   * Set Relay ON/OFF
+   * Set relay ON/OFF
    *
-   * @param isOn
+   * リレーのON/OFFを設定する
+   *
+   * @param isOn set relay or not
+   *
+   * リレーを設定するかどうか
    */
   public async setPowerStateWait(isOn: boolean) {
     const ret = await this._transactionWait([0xa7, isOn ? 0x01 : 0x00]);
     if (ret.length !== 3) {
-      throw new Error(`communiation error`);
+      throw new Error(`communication error`);
     }
     if (ret[1] === 0x01) {
       throw new Error(`set power failed`);
@@ -258,19 +330,31 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
   }
 
   /**
-   * Getting Current Relay State;
+   * Get current relay state
+   *
+   * 現在のリレーの状態を取得
+   *
+   * @returns the relay in set or not
+   *
+   * リレーが設定されているかどうか
    */
   public async getPowerStateWait(): Promise<boolean> {
     return (await this.getRealTimeDataWait()).powerState;
   }
 
   /**
-   * Getting All of realtime data
+   * Get realtime measurement data(voltage[Vrms]・electric current[Irms]・electric power[Wa]) and relay state
+   *
+   * リアルタイム計測データ(電圧[Vrms]・電流[Irms]・電力[Wa])とリレーの状態を取得
+   *
+   * @returns received realtime measurement data and relay state
+   *
+   * 受けとったリアルタイム計測データとリレーの状態
    */
   public async getRealTimeDataWait(): Promise<RS_BTWATTCH2RealtimeData> {
     const ret = await this._transactionWait([0x08]);
     if (ret.length !== 27) {
-      throw new Error(`communiation error`);
+      throw new Error(`communication error`);
     }
     if (ret[1] !== 0x00) {
       throw new Error(`get data failed`);
@@ -335,13 +419,13 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
     this._received.push(...data);
     if (this._received.length === this._totalSize + 1) {
       this._received.pop(); // => CRC
-      this._onRecieved(this._received);
+      this._onReceived(this._received);
       this._received = [];
       this._totalSize = -1;
     }
   }
 
-  private _onRecieved(data: number[]) {
+  private _onReceived(data: number[]) {
     const one: any = this._waitings.shift();
     if (!one) {
       return;

@@ -29,7 +29,7 @@ declare class Gatt extends EventEmitter<GattEventTypes> {
     encryptWait(options: any): Promise<string>;
     setEncryptOption(options: any): void;
     onEnd(reason: any): void;
-    exchangeMtuWait(mtu: any): Promise<any>;
+    exchangeMtuWait(mtu: number | null): Promise<any>;
     discoverServicesWait(uuids: any): Promise<any>;
     discoverIncludedServicesWait(serviceUuid: UUID, uuids: UUID[]): Promise<any>;
     discoverCharacteristicsWait(serviceUuid: UUID, characteristicUuids: any): Promise<any>;

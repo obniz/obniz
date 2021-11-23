@@ -1,54 +1,33 @@
-# iBS04
-beacon advertising device made by INGICS.
+# iBS04i
 
-Support device
-
-- iBS04
+Beacon by INGICS
 
 ![](image.jpg)
 
+## Available modes
 
-## getPartsClass(name)
+- Beacon mode
+
+## Beacon data (getData())
+
+- battery: Battery voltage
+- button: True when you press the button
+
+## Use case
 
 ```javascript
-// Javascript Example
-const IBS04 = Obniz.getPartsClass('iBS04');
-```
-
-## isDevice(BleRemotePeripheral)
-
-Returns true if a device was found.
-
-```javascript
-// Javascript Example
-const IBS04 = Obniz.getPartsClass('iBS04');
+// Javascript
+const iBS04i = Obniz.getPartsClass('iBS04i');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (IBS04.isDevice(p)) {
-        let data = IBS04.getData(p);
-        console.log(data);
-    }
-};
-await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
-```
-
-## getData(BleRemotePeripheral)
-
-Returns device information if found. Returns Null if not found.
-
-- battery : Battery voltage
-- button : True when button is pressed
-
-
-```javascript
-// Javascript Example
-const IBS04 = Obniz.getPartsClass('iBS04');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (IBS04.isDevice(p)) {
-        let data = IBS04.getData(p);
-        console.log(data);
-    }
+obniz.ble.scan.onfind = (peripheral) => {
+  // Get operation mode, it becomes null when not iBS04i
+  const mode = iBS04i.getDeviceMode(peripheral);
+  if (mode) {
+    // Generate an instance
+    const device = new iBS04i(peripheral, mode);
+    // Get data and output to the console
+    console.log(device.getData());
+  }
 };
 await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```

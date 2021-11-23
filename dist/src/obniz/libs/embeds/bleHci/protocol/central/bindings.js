@@ -73,7 +73,7 @@ class NobleBindings extends eventemitter3_1.default {
     async stopScanningWait() {
         await this._gap.stopScanningWait();
     }
-    async connectWait(peripheralUuid, onConnectCallback) {
+    async connectWait(peripheralUuid, mtu, onConnectCallback) {
         const address = this._addresses[peripheralUuid];
         const addressType = this._addresseTypes[peripheralUuid];
         if (!address) {
@@ -92,7 +92,7 @@ class NobleBindings extends eventemitter3_1.default {
                     onConnectCallback();
                 }
             }); // connection timeout for 90 secs.
-            return await this._gatts[conResult.handle].exchangeMtuWait(256);
+            return await this._gatts[conResult.handle].exchangeMtuWait(mtu);
         })
             .then(() => {
             this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
@@ -284,7 +284,7 @@ class NobleBindings extends eventemitter3_1.default {
             .catch((e) => {
             // TODO:
             // This must passed to Obniz class.
-            console.error(e);
+            // console.error(e);
         });
         // this.onLeConnUpdateComplete(); is nop
     }

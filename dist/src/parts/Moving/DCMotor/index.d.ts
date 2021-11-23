@@ -9,21 +9,45 @@ export interface DCMotorOptions {
     forward: number;
     back: number;
 }
+export interface DCMotorStatus {
+    direction: boolean | null;
+    power: number;
+}
 export default class DCMotor implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
-    status: any;
-    pwm1_io_num: any;
+    status: DCMotorStatus;
     params: any;
-    pwm2_io_num: any;
-    pwm1: PeripheralPWM;
-    pwm2: PeripheralPWM;
+    forward_io_num: any;
+    back_io_num: any;
+    pwm: PeripheralPWM;
+    obniz: Obniz;
     constructor();
     wired(obniz: Obniz): void;
+    /**
+     * Start rotation to the forward direction.
+     */
     forward(): void;
+    /**
+     * Start rotation to the reverse direction.
+     */
     reverse(): void;
+    /**
+     * Stop rotation.
+     */
     stop(): void;
-    move(forward: any): void;
-    power(power?: any): any;
+    /**
+     * Start rotation by specifying rotation direction.
+     *
+     * @param forward true is forward rotation, and false is reverse rotation.
+     */
+    move(forward?: boolean): void;
+    /**
+     * Set the motor power.
+     *
+     * @param power Specify between 0 and 100.
+     */
+    power(power: number): void;
+    private setPwmGndPin;
 }

@@ -60,7 +60,6 @@ export default abstract class ObnizConnection extends EventEmitter<
    *
    * ```javascript
    * var obniz = new Obniz('1234-5678');
-   * obniz.debugprint = true
    * obniz.onconnect = async function() {
    *  obniz.io0.output(true);
    * }
@@ -78,7 +77,6 @@ export default abstract class ObnizConnection extends EventEmitter<
    *
    * ```javascript
    * var obniz = new Obniz('1234-5678');
-   * obniz.debugprint = true
    * obniz.onconnect = async function() {
    *   console.log(obniz.hw) // ex. "obnizb1"
    * }
@@ -91,7 +89,6 @@ export default abstract class ObnizConnection extends EventEmitter<
    *
    * ```javascript
    * var obniz = new Obniz('1234-5678');
-   * obniz.debugprint = true
    * obniz.onconnect = async function() {
    *   console.log(obniz.firmware_ver) // ex. "2.0.0"
    * }
@@ -104,13 +101,25 @@ export default abstract class ObnizConnection extends EventEmitter<
    *
    * ```javascript
    * var obniz = new Obniz('1234-5678');
-   * obniz.debugprint = true
    * obniz.onconnect = async function() {
    *   console.log(obniz.metadata.description) // value for "description"
    * }
    * ```
    */
   public metadata?: { [key: string]: string };
+
+  /**
+   * Target obniz device's connected network information.
+   * This could be changed when obniz device connect another netowrk.
+   *
+   * ```javascript
+   * var obniz = new Obniz('1234-5678');
+   * obniz.onconnect = async function() {
+   *   console.log(obniz.connected_network.online_at) // online since in unix time.
+   * }
+   * ```
+   */
+  public connected_network?: { [key: string]: string };
 
   /**
    * Is node.js environment or not.
@@ -762,7 +771,7 @@ export default abstract class ObnizConnection extends EventEmitter<
       url = `ws://${this.id}/`;
     }
 
-    const query: any = [];
+    const query = [];
     if ((this.constructor as typeof ObnizConnection).version) {
       query.push(
         'obnizjs=' + (this.constructor as typeof ObnizConnection).version
@@ -1047,7 +1056,7 @@ export default abstract class ObnizConnection extends EventEmitter<
     }
   }
 
-  protected _canConnectToInsecure() {
+  protected _canConnectToInsecure(): boolean {
     if (this.isNode) {
       return true;
     } else {
@@ -1055,16 +1064,17 @@ export default abstract class ObnizConnection extends EventEmitter<
     }
   }
 
-  protected _handleWSCommand(wsObj: any) {
+  protected _handleWSCommand(wsObj: any): void {
     if (wsObj.ready) {
-      this.firmware_ver = wsObj.obniz.firmware;
-      this.hw = wsObj.obniz.hw;
+      const wsObniz = wsObj.obniz;
+      this.firmware_ver = wsObniz.firmware;
+      this.hw = wsObniz.hw;
       if (!this.hw) {
         this.hw = 'obnizb1';
       }
       if (this.wscommands) {
         for (let i = 0; i < this.wscommands.length; i++) {
-          const command: any = this.wscommands[i];
+          const command = this.wscommands[i];
           command.setHw({
             hw: this.hw, // hard coding
             firmware: this.firmware_ver,
@@ -1074,12 +1084,15 @@ export default abstract class ObnizConnection extends EventEmitter<
       if (this.options.reset_obniz_on_ws_disconnection) {
         (this as any).resetOnDisconnect(true);
       }
-      if (wsObj.obniz.metadata) {
+      if (wsObniz.metadata) {
         try {
           this.metadata = JSON.parse(wsObj.obniz.metadata);
         } catch (e) {
           // ignore parsing error.
         }
+      }
+      if (wsObniz.connected_network) {
+        this.connected_network = wsObniz.connected_network;
       }
 
       if (wsObj.local_connect && wsObj.local_connect.ip) {
@@ -1111,13 +1124,13 @@ export default abstract class ObnizConnection extends EventEmitter<
 
   protected _binary2Json(binary: any) {
     let data = new Uint8Array(binary);
-    const json: any = [];
+    const json = [];
     while (data !== null) {
       const frame = WSCommand.dequeueOne(data);
       if (!frame) {
         break;
       }
-      const obj: any = {};
+      const obj = {};
       for (let i = 0; i < this.wscommands.length; i++) {
         const command = this.wscommands[i];
         if (command.module === frame.module) {
@@ -1187,7 +1200,7 @@ export default abstract class ObnizConnection extends EventEmitter<
 
     if (this._connectionRetryCount > 15) {
       tryAfter = (this._connectionRetryCount - 15) * 1000;
-      const Limit: any = this.isNode ? 60 * 1000 : 10 * 1000;
+      const Limit = this.isNode ? 60 * 1000 : 10 * 1000;
       if (tryAfter > Limit) {
         tryAfter = Limit;
       }
@@ -1271,14 +1284,14 @@ export default abstract class ObnizConnection extends EventEmitter<
     }, 0);
   }
 
-  _stopPingLoopInBackground() {
+  _stopPingLoopInBackground(): void {
     if (this._nextPingTimeout) {
       clearTimeout(this._nextPingTimeout);
       this._nextPingTimeout = null;
     }
   }
 
-  protected throwErrorIfOffline() {
+  protected throwErrorIfOffline(): void {
     if (this.connectionState !== 'connected') {
       throw new ObnizOfflineError();
     }

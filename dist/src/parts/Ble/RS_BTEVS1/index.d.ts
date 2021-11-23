@@ -102,6 +102,7 @@ export interface RS_BTEVS1_Pm2_5 {
     /** PM10.0 [#/m3] */
     number_pm10?: number;
 }
+/** RS_BTEVS1 management class RS_BTEVS1を管理するクラス */
 export default class RS_BTEVS1 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     /**

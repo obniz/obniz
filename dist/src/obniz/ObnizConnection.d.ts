@@ -32,7 +32,6 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
      *
      * ```javascript
      * var obniz = new Obniz('1234-5678');
-     * obniz.debugprint = true
      * obniz.onconnect = async function() {
      *  obniz.io0.output(true);
      * }
@@ -48,7 +47,6 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
      *
      * ```javascript
      * var obniz = new Obniz('1234-5678');
-     * obniz.debugprint = true
      * obniz.onconnect = async function() {
      *   console.log(obniz.hw) // ex. "obnizb1"
      * }
@@ -60,7 +58,6 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
      *
      * ```javascript
      * var obniz = new Obniz('1234-5678');
-     * obniz.debugprint = true
      * obniz.onconnect = async function() {
      *   console.log(obniz.firmware_ver) // ex. "2.0.0"
      * }
@@ -72,13 +69,26 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
      *
      * ```javascript
      * var obniz = new Obniz('1234-5678');
-     * obniz.debugprint = true
      * obniz.onconnect = async function() {
      *   console.log(obniz.metadata.description) // value for "description"
      * }
      * ```
      */
     metadata?: {
+        [key: string]: string;
+    };
+    /**
+     * Target obniz device's connected network information.
+     * This could be changed when obniz device connect another netowrk.
+     *
+     * ```javascript
+     * var obniz = new Obniz('1234-5678');
+     * obniz.onconnect = async function() {
+     *   console.log(obniz.connected_network.online_at) // online since in unix time.
+     * }
+     * ```
+     */
+    connected_network?: {
         [key: string]: string;
     };
     /**
@@ -372,7 +382,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     protected _canConnectToInsecure(): boolean;
     protected _handleWSCommand(wsObj: any): void;
     protected _handleSystemCommand(wsObj: any): void;
-    protected _binary2Json(binary: any): any;
+    protected _binary2Json(binary: any): {}[];
     private _startLoopInBackground;
     private _stopLoopInBackground;
     private _startAutoConnectLoopInBackground;

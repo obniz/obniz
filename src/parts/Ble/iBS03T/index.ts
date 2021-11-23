@@ -2,97 +2,47 @@
  * @packageDocumentation
  * @module Parts.iBS03T
  */
+/* eslint rulesdir/non-ascii: 0 */
 
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, {
-  ObnizPartsBleInfo,
-} from '../../../obniz/ObnizPartsBleInterface';
+import { ObnizBleBeaconStruct } from '../../../obniz/ObnizPartsBleAbstract';
+import { BaseiBS } from '../utils/abstracts/iBS';
 
-export interface IBS03TOptions {}
+export interface iBS03TOptions {}
 
-export interface IBS03T_Data {
+/**
+ * advertisement data from iBS03T
+ *
+ * iBS03Tからのadvertisementデータ
+ */
+export interface iBS03T_Data {
+  /** battery 電源電圧 (Unit 単位: 0.01 V) */
   battery: number;
+  /**
+   * button state ボタンの状態
+   *
+   * true: pressed 押された状態 / false: not pressed 押されていない状態
+   */
   button: boolean;
+  /** moving or not 動いているかどうか */
   moving: boolean;
+  /** magnet nearby or not 近くに磁石があるかどうか */
   hall_sensor: boolean;
+  /** temperature 温度 (Unit 単位: 0.01 degC)*/
   temperature: number;
 }
 
-export default class IBS03T implements ObnizPartsBleInterface {
-  public static info(): ObnizPartsBleInfo {
-    return {
-      name: 'iBS03T',
-    };
-  }
+/** iBS03T management class iBS03Tを管理するクラス */
+export default class iBS03T extends BaseiBS<iBS03T_Data> {
+  public static readonly PartsName = 'iBS03T';
 
-  public static isDevice(peripheral: BleRemotePeripheral): boolean {
-    if (this.deviceAdv.length > peripheral.adv_data.length) {
-      return false;
-    }
-    for (let index = 0; index < this.deviceAdv.length; index++) {
-      if (this.deviceAdv[index] === -1) {
-        continue;
-      }
-      if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-        continue;
-      }
-      return false;
-    }
-    return true;
-  }
+  public static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS03T_Data> = {
+    battery: BaseiBS.Config.battery,
+    button: BaseiBS.Config.button,
+    moving: BaseiBS.Config.moving,
+    hall_sensor: BaseiBS.Config.event,
+    temperature: BaseiBS.Config.temperature,
+    ...BaseiBS.getUniqueData(3, 0x15),
+  };
 
-  public static getData(peripheral: BleRemotePeripheral): IBS03T_Data | null {
-    if (!IBS03T.isDevice(peripheral)) {
-      return null;
-    }
-    const data: IBS03T_Data = {
-      battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-      button: false,
-      moving: false,
-      hall_sensor: false,
-      temperature:
-        ObnizPartsBleInterface.signed16FromBinary(
-          peripheral.adv_data[13],
-          peripheral.adv_data[12]
-        ) * 0.01,
-    };
-
-    if (peripheral.adv_data[11] & 0b0001) {
-      data.button = true;
-    }
-    if (peripheral.adv_data[11] & 0b0010) {
-      data.moving = true;
-    }
-    if (peripheral.adv_data[11] & 0b0100) {
-      data.hall_sensor = true;
-    }
-    return data;
-  }
-
-  private static deviceAdv: number[] = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x0d, // Manufacturer vendor code
-    0x00, // Manufacturer vendor code
-    0x83, // Magic code
-    0xbc, // Magic code
-    -1, // Battery
-    -1, // Battery
-    -1, // Event
-    -1, // reserved
-    -1, // reserved
-    -1, // reserved
-    -1, // reserved
-    -1, // user
-    -1, // user
-    0x15, // subType
-    -1, // reserved
-    -1, // reserved
-    -1, // reserved
-  ];
-
-  public _peripheral: BleRemotePeripheral | null = null;
+  protected readonly staticClass = iBS03T;
 }

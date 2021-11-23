@@ -163,7 +163,7 @@ await obniz.ble.scan.startWait();
 
 出力形式は次のとおりです。
 
-atitudeは[toio コア キューブ仕様の姿勢検出](https://toio.github.io/toio-spec/docs/ble_sensor#%E5%A7%BF%E5%8B%A2%E6%A4%9C%E5%87%BA)を参照してください。
+attitudeは[toio コア キューブ仕様の姿勢検出](https://toio.github.io/toio-spec/docs/ble_sensor#%E5%A7%BF%E5%8B%A2%E6%A4%9C%E5%87%BA)を参照してください。
 
 ```
 
@@ -171,7 +171,7 @@ atitudeは[toio コア キューブ仕様の姿勢検出](https://toio.github.io
   isHorizon : false, // 水平検出(true:水平/false:水平ではない)
   isCollision : false,  // 衝突検出(true:衝突/false:衝突なし)
   isDoubletap : false,// ダブルタップ検出(true:ダブルタップされた/false:ダブルタップなし)
-  atitude : 3, // 上述リンク参照
+  attitude : 3, // 上述リンク参照
 }
 ```
 

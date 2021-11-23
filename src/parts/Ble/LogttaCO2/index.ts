@@ -2,208 +2,239 @@
  * @packageDocumentation
  * @module Parts.Logtta_CO2
  */
+/* eslint rulesdir/non-ascii: 0 */
 
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, {
-  ObnizPartsBleInfo,
-} from '../../../obniz/ObnizPartsBleInterface';
-import BleBatteryService from '../utils/services/batteryService';
-import BleGenericAccess from '../utils/services/genericAccess';
+import {
+  ObnizBleBeaconStruct,
+  ObnizPartsBleCompare,
+  uintBE,
+} from '../../../obniz/ObnizPartsBleAbstract';
+import Logtta from '../utils/abstracts/Logtta';
 
 export interface Logtta_CO2Options {}
 
-export interface Logtta_CO2_Adv_Data {
-  co2: number;
+/**
+ * data from Logtta_CO2
+ *
+ * Logtta_CO2から受け取ったデータ
+ */
+export interface Logtta_CO2_Data extends Logtta_CO2_Connected_Data {
+  /**
+   * remaining battery 電池残量
+   *
+   * Range 範囲: 0~100 (Unit 単位: 1 %)
+   *
+   * 254: USB power supply USB給電
+   */
   battery: number;
+  /**
+   * measurement interval 測定周期
+   *
+   * Range 範囲: 1~2100 (Unit 単位: 1 s)
+   */
   interval: number;
-  address: string;
+  /** BLE address BLEアドレス */
+  address: string; // TODO: delete
 }
 
-export default class Logtta_CO2 implements ObnizPartsBleInterface {
-  public static info(): ObnizPartsBleInfo {
-    return {
-      name: 'Logtta_CO2',
-    };
-  }
+/**
+ * CO2 concentration data from Logtta_CO2
+ *
+ * Logtta_CO2からのCO2濃度データ
+ */
+export interface Logtta_CO2_Connected_Data {
+  /**
+   * CO2 concentration CO2濃度
+   *
+   * Range 範囲: 0~65535 (Unit 単位: 1 ppm)
+   *
+   * (supported value カタログ値: 0~2000)
+   */
+  co2: number;
+}
 
-  public static isDevice(peripheral: BleRemotePeripheral) {
-    return peripheral.localName === 'CO2 Sensor';
-  }
+/** Logtta_CO2 management class Logtta_CO2を管理するクラス */
+export default class Logtta_CO2 extends Logtta<
+  Logtta_CO2_Data,
+  Logtta_CO2_Connected_Data
+> {
+  public static readonly PartsName = 'Logtta_CO2';
 
-  public static isAdvDevice(peripheral: BleRemotePeripheral) {
-    if (peripheral.adv_data.length !== 31) {
-      return false;
-    }
-    const data = peripheral.adv_data;
-    if (
-      data[5] !== 0x10 ||
-      data[6] !== 0x05 ||
-      data[7] !== 0x02 ||
-      data[16] !== 0x43 ||
-      data[17] !== 0x4f ||
-      data[18] !== 0x32
-    ) {
-      // CompanyID, Apperance, "C" "O" "2"
-      return false;
-    }
-    return true;
-  }
+  public static readonly ServiceUuids = {
+    Connectable: '31f3ab20-bd1c-46b1-91e4-f57abcf7d449',
+    Beacon: null,
+  };
 
-  public static getData(
-    peripheral: BleRemotePeripheral
-  ): Logtta_CO2_Adv_Data | null {
-    if (!this.isAdvDevice(peripheral)) {
-      return null;
-    }
-    const data = peripheral.adv_data;
-    const alert: number = data[15];
-    const interval: number = (data[13] << 8) | data[14];
-    const advData: Logtta_CO2_Adv_Data = {
-      battery: data[12],
-      co2: (data[8] << 8) | data[9],
-      interval,
-      address: peripheral.address,
-    };
-    return advData;
-  }
+  public static readonly BeaconDataStruct: ObnizPartsBleCompare<ObnizBleBeaconStruct<Logtta_CO2_Data> | null> = {
+    Connectable: null,
+    Beacon: {
+      appearance: {
+        index: 0,
+        type: 'check',
+        data: 0x02,
+      },
+      co2: {
+        index: 1,
+        length: 2,
+        type: 'unsignedNumBE',
+      },
+      battery: {
+        index: 5,
+        type: 'unsignedNumBE',
+      },
+      interval: {
+        index: 6,
+        length: 2,
+        type: 'unsignedNumBE',
+      },
+      /* alert: {
+        index: 8,
+        type: 'uint8',
+      },
+      name: {
+        index: 9,
+        length: 15,
+        type: 'string',
+      } */
+      // TODO: delete
+      address: {
+        index: 0,
+        type: 'custom',
+        func: (data, peripheral) => peripheral.address,
+      },
+    },
+  };
 
-  private static getName(data: number[]) {
-    let name = '';
-    for (let i = 16; i < data.length; i++) {
-      if (data[i] === 0) {
-        break;
-      }
-      name += String.fromCharCode(data[i]);
-    }
-    return name;
-  }
-
-  private static get_uuid(uuid: string): string {
-    return `31f3${uuid}-bd1c-46b1-91e4-f57abcf7d449`;
-  }
-
-  public onNotify?: (co2: number) => void;
-  public _peripheral: BleRemotePeripheral | null;
-  public ondisconnect?: (reason: any) => void;
-  public genericAccess?: BleGenericAccess;
-  public batteryService?: BleBatteryService;
-
-  constructor(peripheral: BleRemotePeripheral | null) {
-    if (peripheral && !Logtta_CO2.isDevice(peripheral)) {
-      throw new Error('peripheral is not Logtta CO2');
-    }
-    this._peripheral = peripheral;
-  }
-
-  public async connectWait() {
-    if (!this._peripheral) {
-      throw new Error('Logtta CO2 not found');
-    }
-    if (!this._peripheral.connected) {
-      this._peripheral.ondisconnect = (reason: any) => {
-        if (typeof this.ondisconnect === 'function') {
-          this.ondisconnect(reason);
-        }
-      };
-      await this._peripheral.connectWait();
-
-      const service1800 = this._peripheral.getService('1800');
-      if (service1800) {
-        this.genericAccess = new BleGenericAccess(service1800);
-      }
-      const service180F = this._peripheral.getService('180F');
-      if (service180F) {
-        this.batteryService = new BleBatteryService(service180F);
-      }
-    }
-  }
-
-  public async disconnectWait() {
-    if (this._peripheral && this._peripheral.connected) {
-      await this._peripheral.disconnectWait();
-    }
-  }
-
-  public async getWait(): Promise<number | null> {
-    if (!(this._peripheral && this._peripheral.connected)) {
-      return null;
-    }
-
-    const c = this._peripheral
-      .getService(Logtta_CO2.get_uuid('AB20'))!
-      .getCharacteristic(Logtta_CO2.get_uuid('AB21'));
-    const data: number[] = await c!.readWait();
-    return data[0] * 256 + data[1];
-  }
-
-  public async startNotifyWait() {
-    if (!(this._peripheral && this._peripheral.connected)) {
-      return;
-    }
-
-    const c = this._peripheral
-      .getService(Logtta_CO2.get_uuid('AB20'))!
-      .getCharacteristic(Logtta_CO2.get_uuid('AB21'));
-
-    await c!.registerNotifyWait((data: number[]) => {
-      if (this.onNotify) {
-        this.onNotify(data[0] * 256 + data[1]);
-      }
-    });
-  }
-
-  public async authPinCodeWait(code: string) {
-    if (!(this._peripheral && this._peripheral.connected)) {
-      return;
-    }
-
-    if (code.length !== 4) {
-      throw new Error('Invalid length auth code');
-    }
-
-    const data: [number] = [0];
-    for (let i = 0; i < code.length; i += 2) {
-      data.push(
-        (this.checkNumber(code.charAt(i)) << 4) |
-          this.checkNumber(code.charAt(i + 1))
-      );
-    }
-    const c = this._peripheral
-      .getService(Logtta_CO2.get_uuid('AB20'))!
-      .getCharacteristic(Logtta_CO2.get_uuid('AB30'));
-    await c!.writeWait(data);
+  /**
+   * @deprecated
+   *
+   * Verify that the received peripheral is from the Logtta_CO2
+   *
+   * 受け取ったPeripheralがLogtta_CO2のものかどうかを確認する
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns Whether it is the Logtta_CO2
+   *
+   * Logtta_CO2かどうか
+   */
+  public static isDevice(peripheral: BleRemotePeripheral): boolean {
+    return this.getDeviceMode(peripheral) === 'Connectable';
   }
 
   /**
    * @deprecated
-   * @param enable
+   *
+   * Verify that the received advertisement is from the Logtta_CO2 (in Beacon Mode)
+   *
+   * 受け取ったAdvertisementがLogtta_CO2のものかどうか確認する(ビーコンモード中)
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns Whether it is the Logtta_CO2
+   *
+   * Logtta_CO2かどうか
    */
-  public setBeaconMode(enable: boolean) {
-    return this.setBeaconModeWait(enable);
+  public static isAdvDevice(peripheral: BleRemotePeripheral): boolean {
+    return this.getDeviceMode(peripheral) === 'Beacon';
   }
 
-  public async setBeaconModeWait(enable: boolean) {
-    if (!(this._peripheral && this._peripheral.connected)) {
+  protected readonly staticClass = Logtta_CO2;
+
+  // TODO: delete
+  // In order to maintain compatibility, when callback is placed from arguments, the behavior of the document street
+  protected callbackFlag = false;
+
+  /**
+   * Notify when the CO2 concentration data have got from the Logtta_CO2 with connected state
+   *
+   * 接続している状態でLogtta_CO2からCO2濃度データを取得したとき通知
+   *
+   * @returns
+   */
+  public async startNotifyWait(
+    callback: (data: Logtta_CO2_Connected_Data) => void
+  ): Promise<void> {
+    // TODO: delete try-catch
+    try {
+      this.checkConnected();
+    } catch (e) {
+      console.error(e);
       return;
     }
 
-    const c = this._peripheral
-      .getService(Logtta_CO2.get_uuid('AB20'))!
-      .getCharacteristic(Logtta_CO2.get_uuid('AB2D'));
-    if (enable) {
-      await c!.writeWait([1]);
-    } else {
-      await c!.writeWait([0]);
+    // TODO: delete if
+    if (callback) {
+      this.callbackFlag = true;
+      this.onNotify = callback;
+    }
+    return await this.subscribeWait(
+      this.serviceUuid,
+      this.getCharUuid(0x21),
+      (data: number[]) => {
+        if (this.onNotify) {
+          if (this.callbackFlag) this.onNotify(this.parseData(data));
+          else
+            this.onNotify(
+              (this.parseData(data).co2 as unknown) as Logtta_CO2_Connected_Data
+            );
+        }
+      }
+    );
+  }
+
+  /**
+   * @deprecated
+   *
+   * Get CO2 concentration data with connected state
+   *
+   * 接続している状態でCO2濃度データを取得
+   *
+   * @returns CO2 concentration data from the Logtta_CO2
+   *
+   * Logtta_CO2から受け取ったCO2濃度データ
+   */
+  public async getWait(): Promise<number | null> {
+    try {
+      return (await this.getDataWait()).co2;
+    } catch {
+      return null;
     }
   }
 
-  private checkNumber(data: string) {
-    if (data >= '0' && data <= '9') {
-      return parseInt(data, 10);
-    } else {
-      throw new Error(
-        `authorization code can only be entered from 0-9.input word : ${data}`
-      );
-    }
+  /**
+   * @deprecated
+   *
+   * Set enable / disable for beacon mode (periodic beacon transmission)
+   *
+   * Call this function after authenticating with the sensor
+   *
+   * After setting, disconnect once to enable it
+   *
+   * To stop beacon mode, you need to hold the button on the sensor for more than 2 seconds
+   *
+   * (For more detail, please see http://www.uni-elec.co.jp/logtta_page.html )
+   *
+   * ビーコンモード(定期的なビーコン発信)の有効/無効の設定
+   *
+   * センサとの認証を済ませた状態で実行してください
+   *
+   * 設定後に切断した後から有効になります
+   *
+   * ビーコンモードの終了は、デバイスのボタンを2秒以上長押しする操作が必要です(詳しくは http://www.uni-elec.co.jp/logtta_page.html )
+   *
+   * @param enable enable the beacon mode or not ビーコンモードを有効にするかどうか
+   *
+   * @returns
+   */
+  public setBeaconMode(enable: boolean): Promise<boolean> {
+    return this.setBeaconModeWait(enable);
+  }
+
+  protected parseData(data: number[]): Logtta_CO2_Connected_Data {
+    return {
+      co2: uintBE(data),
+    };
   }
 }

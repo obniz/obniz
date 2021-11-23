@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module Parts.UT201BLE
  */
+/* eslint rulesdir/non-ascii: 0 */
 
 import BleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
@@ -13,9 +14,29 @@ import BleGenericAccess from '../utils/services/genericAccess';
 
 export interface UT201BLEOptions {}
 
+/**
+ * body temperature data from UT201BLE
+ *
+ * (body temperature will be returned in either Fahrenheit or Celsius format)
+ *
+ * UT201BLEからの体温データ
+ *
+ * (体温はFahrenheit形式かCelsius形式のどちらかが返ってきます)
+ */
 export interface UT201BLEResult {
+  /**
+   * body temperature in Fahrenheit format Fahrenheit形式の体温
+   *
+   * (Unit 単位: 0.1 degF)
+   */
   fahrenheit?: number;
+  /**
+   * body temperature in Celsius format Celsius形式の体温
+   *
+   * Range 範囲: 32.00~42.00 (Unit 単位: 0.01 degC)
+   */
   celsius?: number;
+  /** timestamp タイムスタンプ */
   date?: {
     year: number;
     month: number;
@@ -24,9 +45,15 @@ export interface UT201BLEResult {
     minute: number;
     second: number;
   };
+  /**
+   * part where body temperature was measured 体温の計測部位
+   *
+   * Value 値: 'unknown' | 'Armpit' | 'Body' | 'Ear' | 'Finger' | 'Gastro-intestinal Tract' | 'Mouth' | 'Rectum' | 'Toe' | 'Tympanum'
+   */
   temperatureType?: string;
 }
 
+/** UT201BLE management class UT201BLEを管理するクラス */
 export default class UT201BLE implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
@@ -34,6 +61,17 @@ export default class UT201BLE implements ObnizPartsBleInterface {
     };
   }
 
+  /**
+   * Verify that the received peripheral is from the UT201BLE
+   *
+   * 受け取ったPeripheralがUT201BLEのものかどうかを確認する
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns Whether it is UT201BLE
+   *
+   * UT201BLEかどうか
+   */
   public static isDevice(peripheral: BleRemotePeripheral) {
     return (
       peripheral.localName && peripheral.localName.startsWith('A&D_UT201BLE_')
@@ -58,6 +96,13 @@ export default class UT201BLE implements ObnizPartsBleInterface {
     this._timezoneOffsetMinute = timezoneOffsetMinute;
   }
 
+  /**
+   * Pair with the device
+   *
+   * デバイスとペアリング
+   *
+   * @returns pairing key ペアリングキー
+   */
   public async pairingWait(): Promise<string | null> {
     if (!this._peripheral) {
       throw new Error('UT201BLE not found');
@@ -84,6 +129,15 @@ export default class UT201BLE implements ObnizPartsBleInterface {
     return key;
   }
 
+  /**
+   * Get data from the UT201BLE
+   *
+   * UT201BLEからデータを取得
+   *
+   * @param pairingKeys pairing key ペアリングキー
+   *
+   * @returns data from the UT201BLE UT201BLEから受け取ったデータ
+   */
   public async getDataWait(pairingKeys?: string): Promise<UT201BLEResult[]> {
     if (!this._peripheral) {
       throw new Error('UT201BLE not found');

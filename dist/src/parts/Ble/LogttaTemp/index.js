@@ -3,164 +3,196 @@
  * @packageDocumentation
  * @module Parts.Logtta_TH
  */
+/* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class Logtta_TH {
-    constructor(peripheral) {
-        if (peripheral && !Logtta_TH.isDevice(peripheral)) {
-            throw new Error('peripheral is not logtta TH');
-        }
-        this._peripheral = peripheral;
+const ObnizPartsBleAbstract_1 = require("../../../obniz/ObnizPartsBleAbstract");
+const Logtta_1 = __importDefault(require("../utils/abstracts/Logtta"));
+/**
+ * Logtta_TH(Logtta_Temp) management class
+ *
+ * Logtta_TH(Logtta_Temp)を管理するクラス
+ */
+class Logtta_TH extends Logtta_1.default {
+    constructor() {
+        super(...arguments);
+        this.staticClass = Logtta_TH;
     }
-    static info() {
-        return {
-            name: 'Logtta_TH',
-        };
+    static parseTemperatureData(data, func = ObnizPartsBleAbstract_1.uint) {
+        return (func(data) / 0x10000) * 175.72 - 46.85;
     }
-    static isDevice(peripheral) {
-        return peripheral.localName === 'TH Sensor';
-    }
-    static isAdvDevice(peripheral) {
-        if (peripheral.adv_data.length !== 31) {
-            return false;
-        }
-        const data = peripheral.adv_data;
-        if (data[5] !== 0x10 ||
-            data[6] !== 0x05 ||
-            data[7] !== 0x01 ||
-            data[16] !== 0x54 ||
-            data[17] !== 0x48) {
-            // CompanyID, Apperance, "T" "H"
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!this.isAdvDevice(peripheral)) {
-            return null;
-        }
-        const data = peripheral.adv_data;
-        const alert = data[15];
-        const interval = (data[13] << 8) | data[14];
-        const advData = {
-            battery: data[12],
-            temperature: (((data[8] << 8) | data[9]) / 65536) * 175.72 - 46.85,
-            humidity: (((data[10] << 8) | data[11]) / 65536) * 125 - 6,
-            interval,
-            address: peripheral.address,
-        };
-        return advData;
-    }
-    static getName(data) {
-        let name = '';
-        for (let i = 16; i < data.length; i++) {
-            if (data[i] === 0) {
-                break;
-            }
-            name += String.fromCharCode(data[i]);
-        }
-        return name;
-    }
-    static get_uuid(uuid) {
-        return `f7ee${uuid}-276e-4165-aa69-7e3de7fc627e`;
-    }
-    async connectWait() {
-        if (!this._peripheral) {
-            throw new Error('Logtta TH not found');
-        }
-        if (!this._peripheral.connected) {
-            this._peripheral.ondisconnect = (reason) => {
-                if (typeof this.ondisconnect === 'function') {
-                    this.ondisconnect(reason);
-                }
-            };
-            await this._peripheral.connectWait();
-        }
-    }
-    async disconnectWait() {
-        if (this._peripheral && this._peripheral.connected) {
-            await this._peripheral.disconnectWait();
-        }
-    }
-    async getAllWait() {
-        if (!(this._peripheral && this._peripheral.connected)) {
-            return null;
-        }
-        const c = this._peripheral
-            .getService(Logtta_TH.get_uuid('AA20'))
-            .getCharacteristic(Logtta_TH.get_uuid('AA21'));
-        const data = await c.readWait();
-        return {
-            temperature: (((data[0] << 8) | data[1]) / 65536) * 175.72 - 46.85,
-            humidity: (((data[2] << 8) | data[3]) / 65536) * 125 - 6,
-        };
-    }
-    async getTemperatureWait() {
-        return (await this.getAllWait()).temperature;
-    }
-    async getHumidityWait() {
-        return (await this.getAllWait()).humidity;
-    }
-    async startNotifyWait() {
-        if (!(this._peripheral && this._peripheral.connected)) {
-            return;
-        }
-        const c = this._peripheral
-            .getService(Logtta_TH.get_uuid('AA20'))
-            .getCharacteristic(Logtta_TH.get_uuid('AA21'));
-        await c.registerNotifyWait((data) => {
-            if (this.onNotify) {
-                this.onNotify({
-                    temperature: (((data[0] << 8) | data[1]) / 65536) * 175.72 - 46.85,
-                    humidity: (((data[2] << 8) | data[3]) / 65536) * 125 - 6,
-                });
-            }
-        });
-    }
-    async authPinCodeWait(code) {
-        if (!(this._peripheral && this._peripheral.connected)) {
-            return;
-        }
-        if (code.length !== 4) {
-            throw new Error('Invalid length auth code');
-        }
-        const data = [0];
-        for (let i = 0; i < code.length; i += 2) {
-            data.push((this.checkNumber(code.charAt(i)) << 4) |
-                this.checkNumber(code.charAt(i + 1)));
-        }
-        const c = this._peripheral
-            .getService(Logtta_TH.get_uuid('AA20'))
-            .getCharacteristic(Logtta_TH.get_uuid('AA30'));
-        await c.writeWait(data);
+    static parseHumidityData(data, func = ObnizPartsBleAbstract_1.uint) {
+        return (func(data) / 0x10000) * 125 - 6;
     }
     /**
      * @deprecated
-     * @param enable
+     *
+     * Verify that the received peripheral is from the Logtta_TH(Logtta_Temp)
+     *
+     * 受け取ったPeripheralがLogtta_TH(Logtta_Temp)のものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Logtta_TH(Logtta_Temp)
+     *
+     * Logtta_TH(Logtta_Temp)かどうか
+     */
+    static isDevice(peripheral) {
+        return this.getDeviceMode(peripheral) === 'Connectable';
+    }
+    /**
+     * @deprecated
+     *
+     * Verify that the received advertisement is from the Logtta_TH(Logtta_Temp) (in Beacon Mode)
+     *
+     * 受け取ったAdvertisementがLogtta_TH(Logtta_Temp)のものかどうか確認する(ビーコンモード中)
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Logtta_TH(Logtta_Temp)
+     *
+     * Logtta_TH(Logtta_Temp)かどうか
+     */
+    static isAdvDevice(peripheral) {
+        return this.getDeviceMode(peripheral) === 'Beacon';
+    }
+    /**
+     * @deprecated
+     *
+     * Get all data with connected state
+     *
+     * 接続している状態で全てのデータを取得
+     *
+     * @returns all data from the Logtta_TH(Logtta_Temp)
+     *
+     * Logtta_TH(Logtta_Temp)から受け取った全てのデータ
+     */
+    async getAllWait() {
+        try {
+            return await this.getDataWait();
+        }
+        catch (_a) {
+            return null;
+        }
+    }
+    /**
+     * Get the temperature data with connected state
+     *
+     * 接続している状態で温度のデータを取得
+     *
+     * @returns temperature data from the Logtta_TH(Logtta_Temp)
+     *
+     * Logtta_TH(Logtta_Temp)から受け取った温度データ
+     */
+    async getTemperatureWait() {
+        return (await this.getDataWait()).temperature;
+    }
+    /**
+     * Get the humidity data with connected state
+     *
+     * 接続している状態で湿度のデータを取得
+     *
+     * @returns humidity data from the Logtta_TH(Logtta_Temp)
+     *
+     * Logtta_TH(Logtta_Temp)から受け取った湿度データ
+     */
+    async getHumidityWait() {
+        return (await this.getDataWait()).humidity;
+    }
+    /**
+     * @deprecated
+     *
+     * Set enable / disable for beacon mode (periodic beacon transmission)
+     *
+     * Call this function after authenticating with the sensor
+     *
+     * After setting, disconnect once to enable it
+     *
+     * To stop beacon mode, you need to hold the button on the sensor for more than 2 seconds
+     *
+     * (For more detail, please see http://www.uni-elec.co.jp/logtta_page.html )
+     *
+     * ビーコンモード(定期的なビーコン発信)の有効/無効の設定
+     *
+     * センサとの認証を済ませた状態で実行してください
+     *
+     * 設定後に切断した後から有効になります
+     *
+     * ビーコンモードの終了は、デバイスのボタンを2秒以上長押しする操作が必要です(詳しくは http://www.uni-elec.co.jp/logtta_page.html )
+     *
+     * @param enable enable the beacon mode or not ビーコンモードを有効にするかどうか
+     *
+     * @returns
      */
     setBeaconMode(enable) {
         return this.setBeaconModeWait(enable);
     }
-    async setBeaconModeWait(enable) {
-        if (!(this._peripheral && this._peripheral.connected)) {
-            return;
-        }
-        const c = this._peripheral
-            .getService(Logtta_TH.get_uuid('AA20'))
-            .getCharacteristic(Logtta_TH.get_uuid('AA2D'));
-        if (enable) {
-            await c.writeWait([1]);
-        }
-        else {
-            await c.writeWait([0]);
-        }
-    }
-    checkNumber(data) {
-        if (data >= '0' && data <= '9') {
-            return parseInt(data, 10);
-        }
-        else {
-            throw new Error(`authorization code can only be entered from 0-9.input word : ${data}`);
-        }
+    parseData(data) {
+        return {
+            temperature: Logtta_TH.parseTemperatureData(data.slice(0, 2)),
+            humidity: Logtta_TH.parseHumidityData(data.slice(2, 4)),
+        };
     }
 }
 exports.default = Logtta_TH;
+Logtta_TH.PartsName = 'Logtta_TH';
+Logtta_TH.AvailableBleMode = [
+    'Connectable',
+    'Beacon',
+];
+Logtta_TH.LocalName = {
+    Connectable: undefined,
+    Beacon: /null/,
+};
+Logtta_TH.ServiceUuids = {
+    Connectable: 'f7eeaa20-276e-4165-aa69-7e3de7fc627e',
+    Beacon: null,
+};
+Logtta_TH.BeaconDataStruct = {
+    Connectable: null,
+    Beacon: {
+        appearance: {
+            index: 0,
+            type: 'check',
+            data: 0x01,
+        },
+        temperature: {
+            index: 1,
+            length: 2,
+            type: 'custom',
+            func: (data) => Logtta_TH.parseTemperatureData(data, ObnizPartsBleAbstract_1.uintBE),
+        },
+        humidity: {
+            index: 3,
+            length: 2,
+            type: 'custom',
+            func: (data) => Logtta_TH.parseHumidityData(data, ObnizPartsBleAbstract_1.uintBE),
+        },
+        battery: {
+            index: 5,
+            type: 'unsignedNumBE',
+        },
+        interval: {
+            index: 6,
+            length: 2,
+            type: 'unsignedNumBE',
+        },
+        /* alert: {
+          index: 7,
+          type: 'uint8',
+        },
+        name: {
+          index: 8,
+          length: 15,
+          type: 'string',
+        } */
+        // TODO: delete
+        address: {
+            index: 0,
+            type: 'custom',
+            func: (data, peripheral) => peripheral.address,
+        },
+    },
+};

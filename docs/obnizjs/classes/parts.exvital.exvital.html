@@ -72,6 +72,13 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>EXVital management class EXVitalを管理するクラス</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -131,7 +138,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/EXVital/index.ts:95</li>
+									<li>Defined in src/parts/Ble/EXVital/index.ts:170</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -154,7 +161,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="obnizcore.obnizpartsbleinterface.html">ObnizPartsBleInterface</a>.<a href="obnizcore.obnizpartsbleinterface.html#_peripheral">_peripheral</a></p>
 						<ul>
-							<li>Defined in src/obniz/ObnizPartsBleInterface.ts:73</li>
+							<li>Defined in src/obniz/ObnizPartsBleInterface.ts:75</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -170,7 +177,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="obnizcore.obnizpartsbleinterface.html">ObnizPartsBleInterface</a>.<a href="obnizcore.obnizpartsbleinterface.html#ondisconnect">ondisconnect</a></p>
 						<ul>
-							<li>Defined in src/obniz/ObnizPartsBleInterface.ts:78</li>
+							<li>Defined in src/obniz/ObnizPartsBleInterface.ts:80</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -185,7 +192,7 @@
 					<div class="tsd-signature tsd-kind-icon">available<wbr>Ble<wbr>Mode<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"Beacon"</span><span class="tsd-signature-symbol"> = &quot;Beacon&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/EXVital/index.ts:36</li>
+							<li>Defined in src/parts/Ble/EXVital/index.ts:96</li>
 						</ul>
 					</aside>
 				</section>
@@ -195,7 +202,7 @@
 					<div class="tsd-signature tsd-kind-icon">parts<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"EXVital"</span><span class="tsd-signature-symbol"> = &quot;EXVital&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/EXVital/index.ts:34</li>
+							<li>Defined in src/parts/Ble/EXVital/index.ts:94</li>
 						</ul>
 					</aside>
 				</section>
@@ -212,10 +219,17 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/EXVital/index.ts:71</li>
+									<li>Defined in src/parts/Ble/EXVital/index.ts:136</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>(with instantiation) Get a data from the beacon</p>
+								</div>
+								<p>(インスタンス化する場合) ビーコンからデータを取得</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/parts.exvital.exvital_data.html" class="tsd-signature-type">EXVital_Data</a></h4>
+							<p>received data from the beacon ビーコンから受け取ったデータ</p>
 						</li>
 					</ul>
 				</section>
@@ -229,16 +243,26 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/EXVital/index.ts:89</li>
+									<li>Defined in src/parts/Ble/EXVital/index.ts:164</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>(without instantiation) Get a data from the beacon</p>
+								</div>
+								<p>(インスタンス化しない場合) ビーコンからデータを取得</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>instance of BleRemotePeripheral BleRemotePeripheralのインスタンス</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/parts.exvital.exvital_data.html" class="tsd-signature-type">EXVital_Data</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h4>
+							<p>received data from the beacon ビーコンから受け取ったデータ</p>
 						</li>
 					</ul>
 				</section>
@@ -253,7 +277,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="obnizcore.obnizpartsbleinterface.html">ObnizPartsBleInterface</a>.<a href="obnizcore.obnizpartsbleinterface.html#info">info</a></p>
 								<ul>
-									<li>Defined in src/parts/Ble/EXVital/index.ts:28</li>
+									<li>Defined in src/parts/Ble/EXVital/index.ts:88</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/obnizcore.obnizpartsinfo.html" class="tsd-signature-type">ObnizPartsInfo</a></h4>
@@ -271,16 +295,27 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="obnizcore.obnizpartsbleinterface.html">ObnizPartsBleInterface</a>.<a href="obnizcore.obnizpartsbleinterface.html#isdevice">isDevice</a></p>
 								<ul>
-									<li>Defined in src/parts/Ble/EXVital/index.ts:102</li>
+									<li>Defined in src/parts/Ble/EXVital/index.ts:188</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Verify that the received peripheral is from the EXVital</p>
+								</div>
+								<p>受け取ったperipheralがEXVitalのものかどうか確認する</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>instance of BleRemotePeripheral BleRemotePeripheralのインスタンス</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<p>Whether it is the EXVital</p>
+							<p>EXVitalかどうか</p>
 						</li>
 					</ul>
 				</section>
@@ -295,7 +330,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="obnizcore.obnizpartsbleinterface.html">ObnizPartsBleInterface</a>.<a href="obnizcore.obnizpartsbleinterface.html#readfraction">readFraction</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleInterface.ts:56</li>
+									<li>Defined in src/obniz/ObnizPartsBleInterface.ts:58</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -324,7 +359,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="obnizcore.obnizpartsbleinterface.html">ObnizPartsBleInterface</a>.<a href="obnizcore.obnizpartsbleinterface.html#signed16frombinary">signed16FromBinary</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleInterface.ts:28</li>
+									<li>Defined in src/obniz/ObnizPartsBleInterface.ts:30</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -356,7 +391,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="obnizcore.obnizpartsbleinterface.html">ObnizPartsBleInterface</a>.<a href="obnizcore.obnizpartsbleinterface.html#signed32frombinary">signed32FromBinary</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleInterface.ts:39</li>
+									<li>Defined in src/obniz/ObnizPartsBleInterface.ts:41</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">

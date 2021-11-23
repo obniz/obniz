@@ -101,6 +101,8 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.bleconnectsetting.html#autodiscovery" class="tsd-kind-icon">auto<wbr>Discovery</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.bleconnectsetting.html#forceconnect" class="tsd-kind-icon">force<wbr>Connect</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.bleconnectsetting.html#mturequest" class="tsd-kind-icon">mtu<wbr>Request</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.bleconnectsetting.html#pairingoption" class="tsd-kind-icon">pairing<wbr>Option</a></li>
 							</ul>
 						</section>
@@ -141,34 +143,55 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="forceconnect" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> force<wbr>Connect</h3>
+					<div class="tsd-signature tsd-kind-icon">force<wbr>Connect<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:92</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Force Connect</p>
+						</div>
+						<p>If you want to try to connect even when the connected flag is true.</p>
+						<p>Default: true</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="mturequest" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> mtu<wbr>Request</h3>
+					<div class="tsd-signature tsd-kind-icon">mtu<wbr>Request<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:102</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Request mtu value.</p>
+						</div>
+						<p>If you want to try exchange specific mtu value, set this value.
+						If set null, skip mtu exchange sequence.</p>
+						<p>Default : 256</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="pairingoption" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> pairing<wbr>Option</h3>
 					<div class="tsd-signature tsd-kind-icon">pairing<wbr>Option<span class="tsd-signature-symbol">:</span> <a href="obnizcore.components.ble.hci.blepairingoptions.html" class="tsd-signature-type">BlePairingOptions</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:103</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:83</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Piring Option</p>
+							<p>Pairing Option</p>
 						</div>
-						<p>true : auto discover services/characteristics/descriptors on connection established.
-						false : don&#39;t discover automatically. Please manually.</p>
-						<p>Default is true;</p>
-						<p>If set false, you should manually discover services/characteristics/descriptors;</p>
-						<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
-<span class="hljs-keyword">await</span> obniz.ble.initWait({});
-obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">peripheral</span>)</span>{
-  <span class="hljs-keyword">if</span>(peripheral.localName == <span class="hljs-string">"my peripheral"</span>){
-     <span class="hljs-keyword">await</span> peripheral.connectWait({<span class="hljs-attr">autoDiscovery</span>:<span class="hljs-literal">false</span>});
-     <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"success"</span>);
-     <span class="hljs-keyword">await</span> peripheral.discoverAllServicesWait(); <span class="hljs-comment">//manually discover</span>
-     <span class="hljs-keyword">let</span> service = peripheral.getService(<span class="hljs-string">"1800"</span>);
-
-  }
-}
-<span class="hljs-keyword">await</span> obniz.ble.scan.startWait();</code></pre>
+						<p>keys: Key acquired when pairing previously.
+						onPairedCallback: A function that contains keys called when pairing is successful.</p>
 					</div>
 				</section>
 			</section>
@@ -190,6 +213,12 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="obnizcore.components.ble.hci.bleconnectsetting.html#autodiscovery" class="tsd-kind-icon">auto<wbr>Discovery</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.components.ble.hci.bleconnectsetting.html#forceconnect" class="tsd-kind-icon">force<wbr>Connect</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.components.ble.hci.bleconnectsetting.html#mturequest" class="tsd-kind-icon">mtu<wbr>Request</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="obnizcore.components.ble.hci.bleconnectsetting.html#pairingoption" class="tsd-kind-icon">pairing<wbr>Option</a>

@@ -72,11 +72,24 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>data from Logtta_AD</p>
+					</div>
+					<p>Logtta_ADからの受け取ったデータ</p>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Logtta_AD_Data</span>
+						<a href="parts.logtta_ad.logtta_ad_connected_data.html" class="tsd-signature-type">Logtta_AD_Connected_Data</a>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">Logtta_AD_Data</span>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -87,9 +100,11 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.logtta_ad.logtta_ad_data.html#ampere" class="tsd-kind-icon">ampere</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.logtta_ad.logtta_ad_data.html#count" class="tsd-kind-icon">count</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.logtta_ad.logtta_ad_data.html#volt" class="tsd-kind-icon">volt</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="parts.logtta_ad.logtta_ad_data.html#ampere" class="tsd-kind-icon">ampere</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.logtta_ad.logtta_ad_data.html#battery" class="tsd-kind-icon">battery</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="parts.logtta_ad.logtta_ad_data.html#count" class="tsd-kind-icon">count</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.logtta_ad.logtta_ad_data.html#interval" class="tsd-kind-icon">interval</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="parts.logtta_ad.logtta_ad_data.html#volt" class="tsd-kind-icon">volt</a></li>
 							</ul>
 						</section>
 					</div>
@@ -97,35 +112,88 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="ampere" class="tsd-anchor"></a>
 					<h3>ampere</h3>
 					<div class="tsd-signature tsd-kind-icon">ampere<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="parts.logtta_ad.logtta_ad_data.html">Logtta_AD_Data</a>.<a href="parts.logtta_ad.logtta_ad_data.html#ampere">ampere</a></p>
 						<ul>
-							<li>Defined in src/parts/Ble/LogttaAD/index.ts:16</li>
+							<li>Defined in src/parts/Ble/LogttaAD/index.ts:51</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>電流値 current value</p>
+						</div>
+						<p>Range 範囲: 4~20 (Unit 単位: 1 mA)</p>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="battery" class="tsd-anchor"></a>
+					<h3>battery</h3>
+					<div class="tsd-signature tsd-kind-icon">battery<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/LogttaAD/index.ts:31</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>remaining battery 電池残量</p>
+						</div>
+						<p>Range 範囲: 0~100 (Unit 単位: 1 %)</p>
+						<p>254: USB power supply USB給電</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="count" class="tsd-anchor"></a>
 					<h3>count</h3>
 					<div class="tsd-signature tsd-kind-icon">count<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="parts.logtta_ad.logtta_ad_data.html">Logtta_AD_Data</a>.<a href="parts.logtta_ad.logtta_ad_data.html#count">count</a></p>
 						<ul>
-							<li>Defined in src/parts/Ble/LogttaAD/index.ts:18</li>
+							<li>Defined in src/parts/Ble/LogttaAD/index.ts:59</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>count data カウントデータ</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="interval" class="tsd-anchor"></a>
+					<h3>interval</h3>
+					<div class="tsd-signature tsd-kind-icon">interval<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/LogttaAD/index.ts:37</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>measurement interval 測定周期</p>
+						</div>
+						<p>Range 範囲: 1~2100 (Unit 単位: 1 s)</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="volt" class="tsd-anchor"></a>
 					<h3>volt</h3>
 					<div class="tsd-signature tsd-kind-icon">volt<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="parts.logtta_ad.logtta_ad_data.html">Logtta_AD_Data</a>.<a href="parts.logtta_ad.logtta_ad_data.html#volt">volt</a></p>
 						<ul>
-							<li>Defined in src/parts/Ble/LogttaAD/index.ts:17</li>
+							<li>Defined in src/parts/Ble/LogttaAD/index.ts:57</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>電圧値 voltage value</p>
+						</div>
+						<p>Range 範囲: 1~5 (Unit 単位: 1 mV)</p>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -145,18 +213,27 @@
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="parts.logtta_ad.logtta_adoptions.html" class="tsd-kind-icon">Logtta_<wbr>ADOptions</a>
 					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="parts.logtta_ad.logtta_ad_connected_data.html" class="tsd-kind-icon">Logtta_<wbr>AD_<wbr><wbr>Connected_<wbr><wbr>Data</a>
+					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="parts.logtta_ad.logtta_ad_data.html" class="tsd-kind-icon">Logtta_<wbr>AD_<wbr><wbr>Data</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="parts.logtta_ad.logtta_ad_data.html#ampere" class="tsd-kind-icon">ampere</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.logtta_ad.logtta_ad_data.html#battery" class="tsd-kind-icon">battery</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="parts.logtta_ad.logtta_ad_data.html#count" class="tsd-kind-icon">count</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.logtta_ad.logtta_ad_data.html#interval" class="tsd-kind-icon">interval</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="parts.logtta_ad.logtta_ad_data.html#volt" class="tsd-kind-icon">volt</a>
 							</li>
 						</ul>

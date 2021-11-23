@@ -327,9 +327,43 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         return peripheral;
     }
     /**
+     * Return connected peripherals.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * let target = {
+     *   localName: "Blank"
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(peripheral) {
+     *   try {
+     *     await peripheral.connectWait();
+     *   } catch(e) {
+     *     console.error(e);
+     *   }
+     * }
+     * console.log(obniz.ble.getConnectedPeripherals());
+     * ```
+     *
+     * @returns connected peripherals
+     */
+    getConnectedPeripherals() {
+        const connectedPeripherals = [];
+        for (const elm of this.remotePeripherals) {
+            if (elm.connected) {
+                connectedPeripherals.push(elm);
+            }
+        }
+        return connectedPeripherals;
+    }
+    /**
      * @ignore
      */
     warningIfNotInitialize() {
+        if (this.Obniz.connectionState !== 'connected') {
+            throw new ObnizError_1.ObnizOfflineError();
+        }
         if (!this._initialized && this._initializeWarning) {
             this._initializeWarning = true;
             this.Obniz.warning({

@@ -86,6 +86,6 @@ Output format is here.
   };
   pulseRate?: number;
   userId?: number;
-  measurementStatus?: HEM_6233TMesurementStatus[];
+  measurementStatus?: HEM_6233TMeasurementStatus[];
 }
 ```

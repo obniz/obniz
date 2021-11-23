@@ -72,6 +72,13 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>uPRISM management class uPRISMを管理するクラス</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -131,7 +138,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/uprism/index.ts:66</li>
+									<li>Defined in src/parts/Ble/uprism/index.ts:144</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -153,7 +160,7 @@
 					<div class="tsd-signature tsd-kind-icon">_peripheral<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol"> = null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/uprism/index.ts:54</li>
+							<li>Defined in src/parts/Ble/uprism/index.ts:123</li>
 						</ul>
 					</aside>
 				</section>
@@ -163,9 +170,17 @@
 					<div class="tsd-signature tsd-kind-icon">on<wbr>Notify<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><a href="../interfaces/parts.uprism.uprism_data.html" class="tsd-signature-type">uPRISM_Data</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/uprism/index.ts:57</li>
+							<li>Defined in src/parts/Ble/uprism/index.ts:135</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Event handler for receiving data</p>
+						</div>
+						<p>return data in callback after running <a href="parts.uprism.uprism.html#startnotifywait">startNotifyWait</a></p>
+						<p>データ取得のイベントハンドラー</p>
+						<p><a href="parts.uprism.uprism.html#startnotifywait">startNotifyWait</a> を実行後コールバックでデータを返す</p>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="ondisconnect" class="tsd-anchor"></a>
@@ -173,7 +188,7 @@
 					<div class="tsd-signature tsd-kind-icon">ondisconnect<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>reason<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/uprism/index.ts:55</li>
+							<li>Defined in src/parts/Ble/uprism/index.ts:124</li>
 						</ul>
 					</aside>
 				</section>
@@ -190,9 +205,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/uprism/index.ts:78</li>
+									<li>Defined in src/parts/Ble/uprism/index.ts:161</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Connect the sensor</p>
+								</div>
+								<p>センサへ接続</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
@@ -207,9 +228,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/uprism/index.ts:92</li>
+									<li>Defined in src/parts/Ble/uprism/index.ts:180</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Disconnect from the sensor</p>
+								</div>
+								<p>センサから切断</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
@@ -224,13 +251,24 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/uprism/index.ts:98</li>
+									<li>Defined in src/parts/Ble/uprism/index.ts:197</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Set the range of values for the accelerometer</p>
+								</div>
+								<p>uPRISM measures a set range with 4,096 steps of resolution</p>
+								<p>加速度センサーの値の範囲を設定</p>
+								<p>uPRISMは設定された範囲を4096段階の分解能で計測します</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>range: <a href="../modules/parts.uprism.html#accelrangetype" class="tsd-signature-type">AccelRangeType</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>range of values for the accelerometer 加速度センサーの値の範囲</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -247,9 +285,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/uprism/index.ts:115</li>
+									<li>Defined in src/parts/Ble/uprism/index.ts:219</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Start notifying when the data have got from the uPRISM with connected state</p>
+								</div>
+								<p>接続状態でuPRISMからデータを取得したときの通知を開始</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
@@ -264,9 +308,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/uprism/index.ts:202</li>
+									<li>Defined in src/parts/Ble/uprism/index.ts:313</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Stop data notification</p>
+								</div>
+								<p>データの通知を停止</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
@@ -281,7 +331,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/uprism/index.ts:44</li>
+									<li>Defined in src/parts/Ble/uprism/index.ts:102</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/obnizcore.obnizpartsbleinfo.html" class="tsd-signature-type">ObnizPartsBleInfo</a></h4>
@@ -298,16 +348,27 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/uprism/index.ts:50</li>
+									<li>Defined in src/parts/Ble/uprism/index.ts:119</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Verify that the received peripheral is from the uPRISM</p>
+								</div>
+								<p>受け取ったPeripheralがuPRISMのものかどうか確認する</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>instance of BleRemotePeripheral BleRemotePeripheralのインスタンス</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<p>Whether it is the uPRISM</p>
+							<p>uPRISMかどうか</p>
 						</li>
 					</ul>
 				</section>

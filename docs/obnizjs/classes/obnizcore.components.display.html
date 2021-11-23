@@ -314,14 +314,14 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:294</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:297</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>(It does not work with node.js. Please use display.draw())</p>
+									<p>Draw a circle.
+									If you are using node.js, node-canvas is required.</p>
 								</div>
-								<p>This draws a circle.</p>
 								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
 obniz.display.circle(<span class="hljs-number">40</span>, <span class="hljs-number">30</span>, <span class="hljs-number">20</span>);
 obniz.display.circle(<span class="hljs-number">90</span>, <span class="hljs-number">30</span>, <span class="hljs-number">20</span>, <span class="hljs-literal">true</span>); <span class="hljs-comment">// filled circle</span></code></pre>
@@ -357,15 +357,15 @@ obniz.display.circle(<span class="hljs-number">90</span>, <span class="hljs-numb
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:124</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:129</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Clear the display.</p>
-									<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
-obniz.display.clear();</code></pre>
 								</div>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+obniz.display.clear();</code></pre>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
@@ -381,7 +381,7 @@ obniz.display.clear();</code></pre>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:495</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:496</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -446,13 +446,14 @@ obniz.display.draw(ctx);</code></pre>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:523</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:525</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>You can specify to transfer the displayed data or not.
-									This affects only the functions that use canvas like clear/print/line/rect/circle/draw.</p>
+										This affects only the functions that use canvas like clear/print/line/rect/circle/draw.
+									If you are using node.js, node-canvas is required.</p>
 								</div>
 								<p>Use false to stop updating display and true to restart updating.</p>
 								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
@@ -572,15 +573,15 @@ obniz.display.drawing(<span class="hljs-literal">true</span>);</code></pre>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:74</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:73</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>(It does not work with node.js. Please use display.draw())</p>
+									<p>This changes the font.
+										The options for fontFamily and fontSize depend on your browser.
+									If you are using node.js, node-canvas is required.</p>
 								</div>
-								<p>This changes the font.
-								The options for fontFamily and fontSize depend on your browser.</p>
 								<p>The default font is Arial 16px.
 								If you set the parameter to null, you will be using the default font.</p>
 								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
@@ -622,7 +623,7 @@ obniz.display.font(<span class="hljs-string">'Avenir'</span>) <span class="hljs-
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:113</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:117</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -645,7 +646,7 @@ obniz.display.font(<span class="hljs-string">'Avenir'</span>) <span class="hljs-
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:404</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:405</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -668,14 +669,14 @@ obniz.display.font(<span class="hljs-string">'Avenir'</span>) <span class="hljs-
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:227</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:237</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>(It does not work with node.js. Please use display.draw())</p>
+									<p>Draw a line between two points.
+									If you are using node.js, node-canvas is required.</p>
 								</div>
-								<p>Now we draw a line between two points.</p>
 								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
 obniz.display.line(<span class="hljs-number">30</span>, <span class="hljs-number">30</span>, <span class="hljs-number">100</span>, <span class="hljs-number">30</span>);
 obniz.display.rect(<span class="hljs-number">20</span>, <span class="hljs-number">20</span>, <span class="hljs-number">20</span>, <span class="hljs-number">20</span>);
@@ -903,14 +904,14 @@ obniz.display.circle(<span class="hljs-number">50</span>, <span class="hljs-numb
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:158</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:164</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>(This does not work with node.js. Please use display.draw())
-									It changes the display position of a text. If you are using print() to display a text, position it to top left.</p>
+									<p>It changes the display position of a text. If you are using print() to display a text, position it to top left.</p>
 								</div>
+								<p>If you are using node.js, node-canvas is required.</p>
 								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
 obniz.display.pos(<span class="hljs-number">0</span>,<span class="hljs-number">30</span>);
 obniz.display.print(<span class="hljs-string">"YES. こんにちは"</span>);</code></pre>
@@ -949,13 +950,14 @@ obniz.display.print(<span class="hljs-string">"YES. こんにちは"</span>);</c
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:187</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:195</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Print text on display.</p>
 								</div>
+								<p>If you are using node.js and text is included characters out of ASCII code range, node-canvas is required.</p>
 								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
 obniz.display.print(<span class="hljs-string">"Hello!"</span>);</code></pre>
 								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
@@ -968,7 +970,7 @@ obniz.display.print(<span class="hljs-string">"Hello World🧡"</span>)</code></
 								<li>
 									<h5>text: <span class="tsd-signature-type">string</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>Text to display. With browser, UTF8 string is available. (It does not work with node.js. Please use display.draw())</p>
+										<p>Text to display. With browser, UTF8 string is available.</p>
 									</div>
 								</li>
 							</ul>
@@ -986,7 +988,7 @@ obniz.display.print(<span class="hljs-string">"Hello World🧡"</span>)</code></
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:329</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:330</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1029,7 +1031,7 @@ obniz.display.qr(<span class="hljs-string">"https://obniz.io"</span>)</code></pr
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:358</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:359</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1067,14 +1069,14 @@ obniz.display.qr(<span class="hljs-string">"https://obniz.io"</span>)</code></pr
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:258</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:264</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>(It does not work with node.js. Please use display.draw())</p>
+									<p>Draw a rectangle.
+									If you are using node.js, node-canvas is required.</p>
 								</div>
-								<p>This draws a rectangle.</p>
 								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
 obniz.display.rect(<span class="hljs-number">10</span>, <span class="hljs-number">10</span>, <span class="hljs-number">20</span>, <span class="hljs-number">20</span>);
 obniz.display.rect(<span class="hljs-number">20</span>, <span class="hljs-number">20</span>, <span class="hljs-number">20</span>, <span class="hljs-number">20</span>, <span class="hljs-literal">true</span>); <span class="hljs-comment">// filled rect</span></code></pre>
@@ -1181,7 +1183,7 @@ obniz.display.rect(<span class="hljs-number">20</span>, <span class="hljs-number
 							<aside class="tsd-sources">
 								<p>Overrides <a href="obnizcore.components.componentabstract.html">ComponentAbstract</a>.<a href="obnizcore.components.componentabstract.html#schemabasepath">schemaBasePath</a></p>
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:531</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:533</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -1198,12 +1200,13 @@ obniz.display.rect(<span class="hljs-number">20</span>, <span class="hljs-number
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:98</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:100</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Setting color for fill/stroke style for further rendering.</p>
+									<p>Setting color for fill/stroke style for further rendering.
+									If you are using node.js, node-canvas is required.</p>
 								</div>
 								<pre><code class="language-javascript">obniz.display.color(<span class="hljs-string">'#FF0000'</span>);
 obniz.display.rect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">10</span>, <span class="hljs-number">10</span>, <span class="hljs-literal">false</span>)
@@ -1233,7 +1236,7 @@ obniz.display.rect(<span class="hljs-number">0</span>, <span class="hljs-number"
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:382</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:383</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">

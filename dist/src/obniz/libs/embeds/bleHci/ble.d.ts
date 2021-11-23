@@ -139,6 +139,29 @@ export default class ObnizBLE extends ComponentAbstract {
      */
     directConnectWait(address: BleDeviceAddress, addressType: BleDeviceAddressType): Promise<BleRemotePeripheral>;
     /**
+     * Return connected peripherals.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * let target = {
+     *   localName: "Blank"
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(peripheral) {
+     *   try {
+     *     await peripheral.connectWait();
+     *   } catch(e) {
+     *     console.error(e);
+     *   }
+     * }
+     * console.log(obniz.ble.getConnectedPeripherals());
+     * ```
+     *
+     * @returns connected peripherals
+     */
+    getConnectedPeripherals(): BleRemotePeripheral[];
+    /**
      * @ignore
      */
     warningIfNotInitialize(): void;

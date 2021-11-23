@@ -72,6 +72,13 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>UA651BLE management class UA651BLEを管理するクラス</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -129,7 +136,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/UA651BLE/index.ts:57</li>
+									<li>Defined in src/parts/Ble/UA651BLE/index.ts:107</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -154,7 +161,7 @@
 					<div class="tsd-signature tsd-kind-icon">_peripheral<span class="tsd-signature-symbol">:</span> <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/UA651BLE/index.ts:53</li>
+							<li>Defined in src/parts/Ble/UA651BLE/index.ts:103</li>
 						</ul>
 					</aside>
 				</section>
@@ -164,7 +171,7 @@
 					<div class="tsd-signature tsd-kind-icon">battery<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="parts.utils.services.blebatteryservice.html" class="tsd-signature-type">BleBatteryService</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/UA651BLE/index.ts:56</li>
+							<li>Defined in src/parts/Ble/UA651BLE/index.ts:106</li>
 						</ul>
 					</aside>
 				</section>
@@ -174,7 +181,7 @@
 					<div class="tsd-signature tsd-kind-icon">generic<wbr>Access<span class="tsd-signature-symbol">:</span> <a href="parts.utils.services.blegenericaccess.html" class="tsd-signature-type">BleGenericAccess</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/UA651BLE/index.ts:55</li>
+							<li>Defined in src/parts/Ble/UA651BLE/index.ts:105</li>
 						</ul>
 					</aside>
 				</section>
@@ -184,7 +191,7 @@
 					<div class="tsd-signature tsd-kind-icon">on<wbr>Notify<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>co2<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/UA651BLE/index.ts:52</li>
+							<li>Defined in src/parts/Ble/UA651BLE/index.ts:102</li>
 						</ul>
 					</aside>
 				</section>
@@ -194,7 +201,7 @@
 					<div class="tsd-signature tsd-kind-icon">ondisconnect<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>reason<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/UA651BLE/index.ts:54</li>
+							<li>Defined in src/parts/Ble/UA651BLE/index.ts:104</li>
 						</ul>
 					</aside>
 				</section>
@@ -211,10 +218,17 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/UA651BLE/index.ts:70</li>
+									<li>Defined in src/parts/Ble/UA651BLE/index.ts:127</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get data from the UA651BLE</p>
+								</div>
+								<p>UA651BLEからデータを取得</p>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/parts.ua651ble.ua651bleresult.html" class="tsd-signature-type">UA651BLEResult</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>data from the UA651BLE UA651BLEから受け取ったデータ</p>
 						</li>
 					</ul>
 				</section>
@@ -228,7 +242,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/UA651BLE/index.ts:40</li>
+									<li>Defined in src/parts/Ble/UA651BLE/index.ts:79</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/obnizcore.obnizpartsbleinfo.html" class="tsd-signature-type">ObnizPartsBleInfo</a></h4>
@@ -245,16 +259,27 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/UA651BLE/index.ts:46</li>
+									<li>Defined in src/parts/Ble/UA651BLE/index.ts:96</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Verify that the received peripheral is from the UA651BLE</p>
+								</div>
+								<p>受け取ったPeripheralがUA651BLEのものかどうかを確認する</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>instance of BleRemotePeripheral BleRemotePeripheralのインスタンス</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">""</span></h4>
+							<p>Whether it is UA651BLE</p>
+							<p>UA651BLEかどうか</p>
 						</li>
 					</ul>
 				</section>
