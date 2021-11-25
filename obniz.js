@@ -7301,7 +7301,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * This sets a callback function to receive notify when it comes from periperal.
      * To receive notify, you need to register on CCCD Descriptor(0x2902).
      *
-     * More infomation of BLE/CCCD is available at [bluetooth.com](https://www.bluetooth.com/specifications/gatt/descriptors/).
+     * More information of BLE/CCCD is available at [bluetooth.com](https://www.bluetooth.com/specifications/gatt/descriptors/).
      *
      * ```javascript
      * await obniz.ble.initWait();
@@ -7371,7 +7371,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
      *
      * char.onregisternotify = function() {
-     *  console.log("register finshed")
+     *  console.log("register finished")
      *  char.unregisterNotify();
      * }
      *
@@ -7405,9 +7405,9 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      *
      * var peripheral = await obniz.ble.scan.startOneWait(target);
      * await peripheral.connectWait();
-     * let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
+     * let char = peripheral.getService('fff0').getCharacteristic('fff1');
      *
-     * await char.registerNotifyWait( function(data){
+     * await char.registerNotifyWait(function(data){
      *   console.log("notify with data " + data.join(','));
      * });
      * await char.unregisterNotifyWait();
@@ -7421,6 +7421,32 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
         };
         await this.service.peripheral.obnizBle.centralBindings.notifyWait(this.service.peripheral.address, this.service.uuid, this.uuid, false);
         this._runUserCreatedFunction(this.onunregisternotify);
+    }
+    /**
+     * Wait for notification and return data when it arrives.
+     *
+     * ```javascript
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   localName: "obniz-notify"
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * await peripheral.connectWait();
+     * let char = peripheral.getService('fff0').getCharacteristic('fff1');
+     *
+     * let data = await c.getNotifyWait();
+     * console.log("notify with data " + data.join(','));
+     * ```
+     *
+     * @returns data from notification of the device
+     */
+    async getNotifyWait() {
+        return new Promise((resolve) => {
+            this.registerNotifyWait((data) => {
+                resolve(data);
+            });
+        });
     }
     /**
      * Use readWait() instead from 3.5.0
@@ -7506,7 +7532,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * Discover services.
      *
      * If connect setting param 'autoDiscovery' is true(default),
-     * services are automatically disvocer on connection established.
+     * services are automatically discover on connection established.
      *
      *
      * ```javascript
@@ -74123,7 +74149,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
+module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
 
 /***/ }),
 
