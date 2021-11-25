@@ -26,8 +26,8 @@ export default class ObnizUIs extends ObnizSystemMethods {
     protected _promptOne(filled: any, callback: any): void;
     protected showAlertUI(obj: any): void;
     protected getDebugDoms(): {
-        loaderDom: any;
-        debugDom: any;
+        loaderDom: Element | null;
+        debugDom: Element | null;
         statusDom: any;
     } | undefined;
     protected _callOnConnect(): void;

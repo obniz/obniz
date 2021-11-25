@@ -5052,6 +5052,9 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
             return;
         }
         const doms = this.getDebugDoms();
+        if (!doms) {
+            return;
+        }
         if (doms.loaderDom) {
             doms.loaderDom.style.display = 'block';
         }
@@ -16020,6 +16023,10 @@ const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/
 class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
         super(obniz);
+        /**
+         * @ignore
+         */
+        this.used = false;
         this.id = id;
         this._reset();
     }
@@ -16892,11 +16899,7 @@ class LogicAnalyzer extends ComponentAbstact_1.ComponentAbstract {
      * @param params
      */
     start(params) {
-        const err = util_1.default._requiredKeys(params, [
-            'io',
-            'interval',
-            'duration',
-        ]);
+        const err = util_1.default._requiredKeys(params, ['io', 'interval', 'duration']);
         if (err) {
             throw new Error("LogicAnalyzer start param '" + err + "' required, but not found ");
         }
@@ -16932,8 +16935,9 @@ class LogicAnalyzer extends ComponentAbstact_1.ComponentAbstract {
      * ```
      */
     end() {
-        const obj = {};
-        obj.logic_analyzer = null;
+        const obj = {
+            logic_analyzer: null,
+        };
         this.Obniz.send(obj);
         return;
     }
@@ -19306,7 +19310,7 @@ class WSCommand {
             length_extra_bytse--;
             result[index++] = payload_length >> (length_extra_bytse * 8);
         }
-        if (payload_length === 0) {
+        if (payload_length === 0 || !payload) {
             return result;
         }
         else {
@@ -19314,6 +19318,12 @@ class WSCommand {
             return result;
         }
     }
+    /**
+     * Dequeue a next wscommands from binary array.
+     *
+     * @param buf binary array received from obniz cloud.
+     * @returns chunk
+     */
     static dequeueOne(buf) {
         if (!buf || buf.byteLength === 0) {
             return null;
@@ -19385,6 +19395,7 @@ class WSCommand {
             const err = {
                 module: this.module,
                 _args: [...payload],
+                message: ``,
             };
             if (payload.byteLength === 3) {
                 err.err0 = payload[0];
@@ -20978,7 +20989,7 @@ class WSCommandDirective extends WSCommand_1.default {
         const nameArray = util_1.default.string2dataArray(params.animation.name);
         let frame;
         let offset = 0;
-        if (semver.lt(this._hw.firmware, '2.0.0')) {
+        if (semver.lt(this._hw.firmware || '1.0.0', '2.0.0')) {
             // < 2.0.0
             frame = new Uint8Array(1 + nameArray.length + 1);
             // name //
@@ -21762,7 +21773,7 @@ class WSCommandMeasurement extends WSCommand_1.default {
         const echoIO = params.echo.io_echo;
         const responseCount = params.echo.measure_edges;
         let timeoutUs = params.echo.timeout * 1000;
-        timeoutUs = parseInt(timeoutUs);
+        timeoutUs = Math.floor(timeoutUs);
         const buf = new Uint8Array(13);
         buf[0] = 0;
         buf[1] = triggerIO;
@@ -21784,9 +21795,7 @@ class WSCommandMeasurement extends WSCommand_1.default {
         if (module === undefined) {
             return;
         }
-        const schemaData = [
-            { uri: '/request/measure/echo', onValid: this.echo },
-        ];
+        const schemaData = [{ uri: '/request/measure/echo', onValid: this.echo }];
         const res = this.validateCommandSchema(schemaData, module, 'measure');
         if (res.valid === 0) {
             if (res.invalidButLike.length > 0) {
@@ -21800,7 +21809,7 @@ class WSCommandMeasurement extends WSCommand_1.default {
     notifyFromBinary(objToSend, func, payload) {
         if (func === this._CommandMeasurementEcho) {
             let index = 0;
-            const count = parseInt(payload[index++]);
+            const count = payload[index++];
             const array = [];
             for (let i = 0; i < count; i++) {
                 let timing;
@@ -21977,9 +21986,7 @@ class WSCommandPlugin extends WSCommand_1.default {
         if (module === undefined) {
             return;
         }
-        const schemaData = [
-            { uri: '/request/plugin/send', onValid: this.send },
-        ];
+        const schemaData = [{ uri: '/request/plugin/send', onValid: this.send }];
         const res = this.validateCommandSchema(schemaData, module, 'plugin');
         if (res.valid === 0) {
             if (res.invalidButLike.length > 0) {
@@ -22176,7 +22183,7 @@ class WSCommandSwitch extends WSCommand_1.default {
     notifyFromBinary(objToSend, func, payload) {
         if ((func === this._CommandOnece || func === this._CommandNotifyValue) &&
             payload.byteLength === 1) {
-            const state = parseInt(payload[0]);
+            const state = payload[0];
             const states = ['none', 'push', 'left', 'right'];
             objToSend.switch = {
                 state: states[state],

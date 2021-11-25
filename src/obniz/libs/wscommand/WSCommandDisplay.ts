@@ -16,10 +16,6 @@ class WSCommandDisplay extends WSCommand {
   public _CommandSetPinName = 5;
   public _CommandDrawCampusRawColors = 6;
 
-  public sendCommand: any;
-  public validateCommandSchema: any;
-  public WSCommandNotFoundError: any;
-
   // Commands
 
   public clear(params: any) {
@@ -30,7 +26,7 @@ class WSCommandDisplay extends WSCommand {
     this.sendCommand(this._CommandPrint, buf);
   }
 
-  public printText(text: any) {
+  public printText(text: string) {
     const buf = Buffer.from(text, 'utf8');
     const result = new Uint8Array(buf);
     this.print(result);
@@ -49,18 +45,18 @@ class WSCommandDisplay extends WSCommand {
   }
 
   public qr(params: any) {
-    const text: any = params.qr.text;
-    const correctionLevel: any = params.qr.correction || 'M';
+    const text = params.qr.text;
+    const correctionLevel = params.qr.correction || 'M';
 
-    const typeNumber: any = 0; // auto detect type.
-    const qr: any = qrcode(typeNumber, correctionLevel);
+    const typeNumber = 0; // auto detect type.
+    const qr = qrcode(typeNumber, correctionLevel);
     qr.addData(text);
     qr.make();
-    let size: any = qr.getModuleCount();
+    let size = qr.getModuleCount();
     if (size) {
       size *= 2;
-      const modules: any = qr.getModules();
-      const vram: any = new Uint8Array(1024);
+      const modules = qr.getModules();
+      const vram = new Uint8Array(1024);
       vram.fill(0);
 
       for (let row = 0; row < 2; row++) {
@@ -111,7 +107,7 @@ class WSCommandDisplay extends WSCommand {
   }
 
   public drawIOState(val: boolean) {
-    const buf: any = new Uint8Array([!val ? 1 : 0]);
+    const buf = new Uint8Array([!val ? 1 : 0]);
     this.sendCommand(this._CommandDrawIOState, buf);
   }
 
@@ -138,19 +134,19 @@ class WSCommandDisplay extends WSCommand {
   }
 
   public parseFromJson(json: any) {
-    const module: any = json.display;
+    const module = json.display;
     if (module === undefined) {
       return;
     }
 
-    const schemaData: any = [
+    const schemaData = [
       { uri: '/request/display/clear', onValid: this.clear },
       { uri: '/request/display/text', onValid: this.text },
       { uri: '/request/display/raw', onValid: this.raw },
       { uri: '/request/display/pin_assign', onValid: this.pinName },
       { uri: '/request/display/qr', onValid: this.qr },
     ];
-    const res: any = this.validateCommandSchema(schemaData, module, 'display');
+    const res = this.validateCommandSchema(schemaData, module, 'display');
 
     if (res.valid === 0) {
       if (res.invalidButLike.length > 0) {

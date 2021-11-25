@@ -140,11 +140,7 @@ export default class LogicAnalyzer extends ComponentAbstract {
    * @param params
    */
   public start(params: LogicAnalyzerOptions | LogicAnalyzerOptionsExt) {
-    const err: any = ObnizUtil._requiredKeys(params, [
-      'io',
-      'interval',
-      'duration',
-    ]);
+    const err = ObnizUtil._requiredKeys(params, ['io', 'interval', 'duration']);
     if (err) {
       throw new Error(
         "LogicAnalyzer start param '" + err + "' required, but not found "
@@ -185,8 +181,9 @@ export default class LogicAnalyzer extends ComponentAbstract {
    * ```
    */
   public end() {
-    const obj: any = {};
-    obj.logic_analyzer = null;
+    const obj = {
+      logic_analyzer: null,
+    };
     this.Obniz.send(obj);
     return;
   }

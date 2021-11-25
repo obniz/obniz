@@ -18,6 +18,10 @@ const util_1 = __importDefault(require("../utils/util"));
 class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
         super(obniz);
+        /**
+         * @ignore
+         */
+        this.used = false;
         this.id = id;
         this._reset();
     }

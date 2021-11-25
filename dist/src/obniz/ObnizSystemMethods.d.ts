@@ -40,7 +40,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
      *
      * @param msec
      */
-    wait(msec: any): Promise<void>;
+    wait(msec: number): Promise<void>;
     /**
      * This forces the obniz Board to go back to the initial state when the power was just turned on.
      *
@@ -97,7 +97,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
      *
      * @param reset
      */
-    resetOnDisconnect(reset: any): void;
+    resetOnDisconnect(reset: boolean): void;
     /**
      * Action only with obniz Board 1Y.
      *
@@ -110,7 +110,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
      *
      * @param sec up to 64800 seconds (18 hours).
      */
-    sleepSeconds(sec: any): void;
+    sleepSeconds(sec: number): void;
     /**
      * Action only with obniz Board 1Y.
      *
@@ -125,7 +125,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
      *
      * @param minute up to 64800 minutes(45 days ).
      */
-    sleepMinute(minute: any): void;
+    sleepMinute(minute: number): void;
     /**
      * Action only with obniz Board 1Y.
      *
@@ -158,7 +158,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
      * - true: Rise (LOW -> HIGH)
      * - false: Falling  (HIGH -> LOW)
      */
-    sleepIoTrigger(trigger: any): void;
+    sleepIoTrigger(trigger: boolean): void;
     /**
      * Ping to obniz device and wait pong response.
      *

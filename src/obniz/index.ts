@@ -40,10 +40,10 @@ if (requireContext.setBaseDir) {
 /**
  * @ignore
  */
-const context: any = require.context('../parts', true, /\.js$/);
+const context = require.context('../parts', true, /\.js$/);
 /* webpack loader */
 for (const path of context.keys()) {
-  const anParts: any = context(path);
+  const anParts = context(path);
   if (anParts.info) {
     Obniz.PartsRegistrate(anParts);
   } else if (anParts.default && anParts.default.info) {

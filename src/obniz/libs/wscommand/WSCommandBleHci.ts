@@ -33,23 +33,23 @@ class WSCommandBleHci {
   }
 
   public init(params: any, module?: any) {
-    const buf: any = new Uint8Array(0);
+    const buf = new Uint8Array(0);
     this._delegate.sendCommand(this._CommandHCIInit, buf);
   }
 
   public deinit(params: any, module?: any) {
-    const buf: any = new Uint8Array(0);
+    const buf = new Uint8Array(0);
     this._delegate.sendCommand(this._CommandHCIDeinit, buf);
   }
 
   public send(params: any, module?: any) {
-    const buf: any = new Uint8Array(params.hci.write.length);
+    const buf = new Uint8Array(params.hci.write.length);
     buf.set(params.hci.write);
     this._delegate.sendCommand(this._CommandHCISend, buf);
   }
 
   public recv(objToSend: any, payload?: any) {
-    const arr: any = new Array(payload.byteLength);
+    const arr = new Array(payload.byteLength);
     for (let i = 0; i < arr.length; i++) {
       arr[i] = payload[i];
     }
@@ -70,7 +70,7 @@ class WSCommandBleHci {
       ];
       sendData.push(...one);
     });
-    const buf: any = new Uint8Array(sendData.length);
+    const buf = new Uint8Array(sendData.length);
     buf.set(sendData);
     this._delegate.sendCommand(this._CommandHCIAdvertisementFilter, buf);
   }

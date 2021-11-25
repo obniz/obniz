@@ -8,12 +8,9 @@ declare class WSCommandDisplay extends WSCommand {
     _CommandDrawIOState: number;
     _CommandSetPinName: number;
     _CommandDrawCampusRawColors: number;
-    sendCommand: any;
-    validateCommandSchema: any;
-    WSCommandNotFoundError: any;
     clear(params: any): void;
     print(buf: Uint8Array): void;
-    printText(text: any): void;
+    printText(text: string): void;
     text(params: any): void;
     raw(params: any): void;
     qr(params: any): void;

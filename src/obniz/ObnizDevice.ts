@@ -174,7 +174,7 @@ export default class ObnizDevice extends ObnizUIs {
    * @param message message data
    */
   public message(target: string | string[], message: string) {
-    let targets: any = [];
+    let targets = [];
     if (typeof target === 'string') {
       targets.push(target);
     } else {
@@ -205,12 +205,12 @@ export default class ObnizDevice extends ObnizUIs {
     // debug
     if (typeof obj.debug === 'object') {
       if (obj.debug.warning) {
-        const msg: any = 'Warning: ' + obj.debug.warning.message;
+        const msg = 'Warning: ' + obj.debug.warning.message;
         this.warning({ alert: 'warning', message: msg });
       }
 
       if (obj.debug.error) {
-        const msg: any = 'Error: ' + obj.debug.error.message;
+        const msg = 'Error: ' + obj.debug.error.message;
         this.error({ alert: 'error', message: msg });
       }
       if (this.ondebug) {

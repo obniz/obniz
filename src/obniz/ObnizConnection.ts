@@ -370,7 +370,7 @@ export default abstract class ObnizConnection extends EventEmitter<
    */
   public async connectWait(option?: { timeout?: number }): Promise<boolean> {
     option = option || {};
-    const timeout: any = option.timeout || null;
+    const timeout = option.timeout || null;
 
     if (this.connectionState === 'connected') {
       return true;
@@ -635,7 +635,7 @@ export default abstract class ObnizConnection extends EventEmitter<
    * @param interval  default 100. It mean 100ms interval loop.
    * @deprecated
    */
-  public repeat(callback: any, interval?: any) {
+  public repeat(callback: any, interval?: number) {
     if (this.onloop) {
       this.onloop = callback;
       this._repeatInterval = interval || this._repeatInterval || 100;
@@ -691,7 +691,7 @@ export default abstract class ObnizConnection extends EventEmitter<
       }
     } catch (e) {
       console.error(e);
-      this.error(e);
+      this.error(e as any);
     }
   }
 
@@ -749,7 +749,7 @@ export default abstract class ObnizConnection extends EventEmitter<
       }
     } catch (e) {
       // cannot connect local
-      this.error(e);
+      this.error(e as any);
       this._disconnectLocal();
     }
     this._callOnConnect();

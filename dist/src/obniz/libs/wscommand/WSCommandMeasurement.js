@@ -22,7 +22,7 @@ class WSCommandMeasurement extends WSCommand_1.default {
         const echoIO = params.echo.io_echo;
         const responseCount = params.echo.measure_edges;
         let timeoutUs = params.echo.timeout * 1000;
-        timeoutUs = parseInt(timeoutUs);
+        timeoutUs = Math.floor(timeoutUs);
         const buf = new Uint8Array(13);
         buf[0] = 0;
         buf[1] = triggerIO;
@@ -44,9 +44,7 @@ class WSCommandMeasurement extends WSCommand_1.default {
         if (module === undefined) {
             return;
         }
-        const schemaData = [
-            { uri: '/request/measure/echo', onValid: this.echo },
-        ];
+        const schemaData = [{ uri: '/request/measure/echo', onValid: this.echo }];
         const res = this.validateCommandSchema(schemaData, module, 'measure');
         if (res.valid === 0) {
             if (res.invalidButLike.length > 0) {
@@ -60,7 +58,7 @@ class WSCommandMeasurement extends WSCommand_1.default {
     notifyFromBinary(objToSend, func, payload) {
         if (func === this._CommandMeasurementEcho) {
             let index = 0;
-            const count = parseInt(payload[index++]);
+            const count = payload[index++];
             const array = [];
             for (let i = 0; i < count; i++) {
                 let timing;

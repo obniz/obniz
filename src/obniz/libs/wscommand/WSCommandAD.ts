@@ -5,14 +5,11 @@
 import WSCommand from './WSCommand';
 
 class WSCommandAD extends WSCommand {
-  public module: any;
-  public _CommandInitNormalInterval: any;
-  public _CommandDeinit: any;
-  public _CommandNotifyValue: any;
-  public _CommandDoOnece: any;
-  public sendCommand: any;
-  public validateCommandSchema: any;
-  public WSCommandNotFoundError: any;
+  public module: number;
+  public _CommandInitNormalInterval: number;
+  public _CommandDeinit: number;
+  public _CommandNotifyValue: number;
+  public _CommandDoOnece: number;
 
   constructor() {
     super();
@@ -27,7 +24,7 @@ class WSCommandAD extends WSCommand {
   // Commands
 
   public get(params: any, no: any) {
-    const buf: any = new Uint8Array([no]);
+    const buf = new Uint8Array([no]);
     this.sendCommand(
       params.stream ? this._CommandInitNormalInterval : this._CommandDoOnece,
       buf
@@ -35,27 +32,22 @@ class WSCommandAD extends WSCommand {
   }
 
   public deinit(params: any, no: any) {
-    const buf: any = new Uint8Array([no]);
+    const buf = new Uint8Array([no]);
     this.sendCommand(this._CommandDeinit, buf);
   }
 
   public parseFromJson(json: any) {
     for (let i = 0; i < 40; i++) {
-      const module: any = json['ad' + i];
+      const module = json['ad' + i];
       if (module === undefined) {
         continue;
       }
 
-      const schemaData: any = [
+      const schemaData = [
         { uri: '/request/ad/deinit', onValid: this.deinit },
         { uri: '/request/ad/get', onValid: this.get },
       ];
-      const res: any = this.validateCommandSchema(
-        schemaData,
-        module,
-        'ad' + i,
-        i
-      );
+      const res = this.validateCommandSchema(schemaData, module, 'ad' + i, i);
 
       if (res.valid === 0) {
         if (res.invalidButLike.length > 0) {
@@ -67,10 +59,10 @@ class WSCommandAD extends WSCommand {
     }
   }
 
-  public notifyFromBinary(objToSend: any, func: any, payload: any) {
+  public notifyFromBinary(objToSend: any, func: number, payload: Uint8Array) {
     if (func === this._CommandNotifyValue) {
       for (let i = 0; i + 2 < payload.byteLength; i += 3) {
-        let value: any;
+        let value: number;
         if (payload[i + 1] & 0x80) {
           // 10bit mode
           value = ((payload[i + 1] & 0x03) << 8) + payload[i + 2]; // 0x0000 to 0x3FF;

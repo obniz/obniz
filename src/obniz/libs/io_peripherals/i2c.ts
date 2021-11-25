@@ -88,7 +88,7 @@ class PeripheralI2C extends ComponentAbstract {
     });
 
     this.on('/response/i2c/error', (obj) => {
-      const message: any = `i2c${this.id}: ${obj.error.message}`;
+      const message = `i2c${this.id}: ${obj.error.message}`;
       if (typeof this.onerror === 'function') {
         this.Obniz._runUserCreatedFunction(this.onerror, new Error(message));
       } else {
@@ -144,7 +144,7 @@ class PeripheralI2C extends ComponentAbstract {
    * @param arg
    */
   public start(arg: PeripheralI2COptions) {
-    const err: any = ObnizUtil._requiredKeys(arg, ['mode', 'sda', 'scl']);
+    const err = ObnizUtil._requiredKeys(arg, ['mode', 'sda', 'scl']);
     if (err) {
       throw new Error("I2C start param '" + err + "' required, but not found ");
     }
@@ -154,7 +154,7 @@ class PeripheralI2C extends ComponentAbstract {
       'scl',
       'pull',
       'gnd',
-    ]);
+    ]) as PeripheralI2CState;
 
     const ioKeys: (keyof PeripheralI2CState)[] = ['sda', 'scl', 'gnd'];
     for (const key of ioKeys) {

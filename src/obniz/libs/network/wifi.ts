@@ -54,7 +54,7 @@ export default class WiFi {
   public notified(obj: any) {
     if (obj.scan) {
       /* Connectino state update. response of connect(), close from destination, response from */
-      const callback: any = this.connectObservers.shift();
+      const callback = this.connectObservers.shift();
       if (callback) {
         callback(obj.scan);
       }
