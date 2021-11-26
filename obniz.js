@@ -23170,6 +23170,7 @@ var map = {
 	"./Ble/iBS03T_RH/index.js": "./dist/src/parts/Ble/iBS03T_RH/index.js",
 	"./Ble/iBS04/index.js": "./dist/src/parts/Ble/iBS04/index.js",
 	"./Ble/iBS04i/index.js": "./dist/src/parts/Ble/iBS04i/index.js",
+	"./Ble/iBS05H/index.js": "./dist/src/parts/Ble/iBS05H/index.js",
 	"./Ble/linking/index.js": "./dist/src/parts/Ble/linking/index.js",
 	"./Ble/linking/modules/advertising.js": "./dist/src/parts/Ble/linking/modules/advertising.js",
 	"./Ble/linking/modules/device.js": "./dist/src/parts/Ble/linking/modules/device.js",
@@ -29273,6 +29274,33 @@ iBS04i.BeaconDataStruct = Object.assign(Object.assign({ battery: Object.assign(O
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/iBS05H/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS05H
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS05H management class iBS05Hを管理するクラス */
+class iBS05H extends iBS_1.BaseiBS {
+    constructor() {
+        super(...arguments);
+        this.staticClass = iBS05H;
+    }
+}
+exports.default = iBS05H;
+iBS05H.PartsName = 'iBS05H';
+iBS05H.CompanyID = [0x2c, 0x08];
+iBS05H.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, hall_sensor: iBS_1.BaseiBS.Config.event, count: iBS_1.BaseiBS.Config.count }, iBS_1.BaseiBS.getUniqueData(5, 0x31));
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/linking/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -34629,6 +34657,7 @@ const magic = {
     2: [0x82, 0xbc],
     3: [0x83, 0xbc],
     4: [0x83, 0xbc],
+    5: [0x83, 0xbc],
 };
 /** abstract class common to the iBS series iBSシリーズ共通の抽象クラス */
 class BaseiBS extends ObnizPartsBleAbstract_1.ObnizPartsBle {
@@ -34693,6 +34722,11 @@ BaseiBS.Config = {
         index: 7,
         length: 2,
         type: 'numLE',
+    },
+    count: {
+        index: 7,
+        length: 2,
+        type: 'unsignedNumLE',
     },
     user: {
         index: 9,

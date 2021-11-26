@@ -16,6 +16,7 @@ const magic = {
   2: [0x82, 0xbc],
   3: [0x83, 0xbc],
   4: [0x83, 0xbc],
+  5: [0x83, 0xbc],
 };
 
 // battery:     [9, 11, false, 0.01]
@@ -38,6 +39,7 @@ type PresetConfigName =
   | 'acceleration'
   | 'temperature'
   | 'humidity'
+  | 'count'
   | 'user';
 
 /** abstract class common to the iBS series iBSシリーズ共通の抽象クラス */
@@ -112,6 +114,11 @@ export abstract class BaseiBS<S> extends ObnizPartsBle<S> {
       index: 7,
       length: 2,
       type: 'numLE',
+    },
+    count: {
+      index: 7,
+      length: 2,
+      type: 'unsignedNumLE',
     },
     user: {
       index: 9,
