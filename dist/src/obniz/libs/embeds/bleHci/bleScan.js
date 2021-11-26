@@ -107,7 +107,11 @@ class BleScan {
         this.scanSettings = settings;
         target = target || {};
         this.scanTarget.binary = target.binary;
-        this.scanTarget.deviceAddress = target.deviceAddress;
+        if (target && target.deviceAddress) {
+            this.scanTarget.deviceAddress = this._arrayWrapper(target.deviceAddress).map((elm) => {
+                return bleHelper_1.default.deviceAddressFilter(elm);
+            });
+        }
         this.scanTarget.localName = target.localName;
         this.scanTarget.localNamePrefix = target.localNamePrefix;
         this.scanTarget.uuids = [];

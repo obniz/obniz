@@ -285,7 +285,13 @@ export default class BleScan {
 
     target = target || {};
     this.scanTarget.binary = target.binary;
-    this.scanTarget.deviceAddress = target.deviceAddress;
+    if (target && target.deviceAddress) {
+      this.scanTarget.deviceAddress = this._arrayWrapper(
+        target.deviceAddress
+      ).map((elm: UUID) => {
+        return BleHelper.deviceAddressFilter(elm);
+      });
+    }
     this.scanTarget.localName = target.localName;
     this.scanTarget.localNamePrefix = target.localNamePrefix;
     this.scanTarget.uuids = [];
