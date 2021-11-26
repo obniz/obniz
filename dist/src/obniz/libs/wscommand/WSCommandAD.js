@@ -54,7 +54,7 @@ class WSCommandAD extends WSCommand_1.default {
                 if (this._hw.hw === 'cc3235mod') {
                     // 12bit mode
                     value = ((payload[i + 1] & 0x0f) << 8) + payload[i + 2]; // 0x0000 to 0x3FF;
-                    value = (3.3 * value) / 4095.0; // 4095.0 ===0xFFF // vdd is not always
+                    value = (1.467 * value) / 4095.0; // 4095.0 ===0xFFF // vdd is not always
                     value = Math.round(value * 1000) / 1000;
                 }
                 else {
