@@ -276,6 +276,7 @@ import RN42, { RN42Options } from '../parts/Wireless/RN42';
 import XBee, { XBeeOptions } from '../parts/Wireless/XBee';
 import EXVital, { EXVital_Options } from '../parts/Ble/EXVital';
 import iBS03T_RH, { iBS03T_RHOptions } from '../parts/Ble/iBS03T_RH';
+import iBS05H, { iBS05HOptions } from '../parts/Ble/iBS05H';
 
 export type PartsType = keyof PartsList;
 
@@ -488,6 +489,7 @@ export interface PartsList {
   iBS04: { class: IBS04; options: iBS04Options };
   iBS04i: { class: IBS04I; options: iBS04iOptions };
   iBS03R: { class: IBS03R; options: IBS03ROptions };
+  iBS05H: { class: iBS05H; options: iBS05HOptions };
   TR4x: { class: Tr4; options: Tr4Options };
   KankiAirMier: { class: KankiAirMier; options: KankiAirMierOptions };
   MINEW_S1: { class: MINEW_S1; options: MINEW_S1Options };

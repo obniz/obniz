@@ -12,6 +12,7 @@ const magic = {
     2: [0x82, 0xbc],
     3: [0x83, 0xbc],
     4: [0x83, 0xbc],
+    5: [0x83, 0xbc],
 };
 /** abstract class common to the iBS series iBSシリーズ共通の抽象クラス */
 class BaseiBS extends ObnizPartsBleAbstract_1.ObnizPartsBle {
@@ -76,6 +77,11 @@ BaseiBS.Config = {
         index: 7,
         length: 2,
         type: 'numLE',
+    },
+    count: {
+        index: 7,
+        length: 2,
+        type: 'unsignedNumLE',
     },
     user: {
         index: 9,
