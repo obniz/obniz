@@ -11610,7 +11610,7 @@ class Hci extends eventemitter3_1.default {
         const { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer, } = await this.readLocalVersionWait();
         this.debug(`localVersion ${hciVer} ${hciRev} ${lmpVer} ${manufacturer} ${lmpSubVer}`);
         this.writeLeHostSupported();
-        await this.readLeHostSupportedWait();
+        // await this.readLeHostSupportedWait();
         const addr = await this.readBdAddrWait();
         this.debug(`BdAddr=${addr}`);
         const bufsize = await this.leReadBufferSizeWait();
