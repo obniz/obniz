@@ -20,6 +20,52 @@ export interface ObnizErrorMessage {
   message: string;
 }
 
+interface ConnectedNetworkWiFi {
+  ssid: string;
+  mac_address: string;
+  rssi: number;
+}
+
+interface ConnectedNetworkWiFiMESH {
+  meshid: string;
+  parent_obniz_id?: string;
+  root_obniz_id: string;
+  layer: number;
+  rssi: number;
+}
+
+export interface ConnectedNetwork {
+  /**
+   * Epoch Unix Timestamp (seconds) at device become online on the cloud
+   */
+  online_at: number;
+
+  /**
+   * Current connected network type. Defined in setting json
+   */
+  net?: string;
+
+  /**
+   * Local IP if exist
+   */
+  local_ip?: string;
+
+  /**
+   * Global IP if exist
+   */
+  global_ip?: string;
+
+  /**
+   * Wi-Fi information when net is wirelesslan
+   */
+  wifi?: ConnectedNetworkWiFi;
+
+  /**
+   * Wi-Fi MESH information when net is wifimesh
+   */
+  wifimesh?: ConnectedNetworkWiFiMESH;
+}
+
 /**
  * @ignore
  *
@@ -119,7 +165,7 @@ export default abstract class ObnizConnection extends EventEmitter<
    * }
    * ```
    */
-  public connected_network?: { [key: string]: string };
+  public connected_network?: ConnectedNetwork;
 
   /**
    * Is node.js environment or not.
