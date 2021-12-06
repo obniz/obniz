@@ -55,6 +55,7 @@ namespace COMMANDS {
   export const OGF_LE_CTL = 0x08;
   export const OCF_LE_SET_EVENT_MASK = 0x0001;
   export const OCF_LE_READ_BUFFER_SIZE = 0x0002;
+  export const OCF_LE_SET_RANDOM_ADDRESS = 0x0005;
   export const OCF_LE_SET_ADVERTISING_PARAMETERS = 0x0006;
   export const OCF_LE_SET_ADVERTISING_DATA = 0x0008;
   export const OCF_LE_SET_SCAN_RESPONSE_DATA = 0x0009;
@@ -64,6 +65,8 @@ namespace COMMANDS {
   export const OCF_LE_CREATE_CONN = 0x000d;
   export const OCF_LE_CREATE_CONN_CANCEL = 0x000e;
   export const OCF_LE_CONN_UPDATE = 0x0013;
+  export const OCF_LE_ENCRYPT = 0x0017;
+  export const OCF_LE_RAND = 0x0018;
   export const OCF_LE_START_ENCRYPTION = 0x0019;
   export const OCF_LE_LTK_NEG_REPLY = 0x001b;
 
@@ -88,6 +91,8 @@ namespace COMMANDS {
     OCF_LE_SET_EVENT_MASK | (OGF_LE_CTL << 10);
   export const LE_READ_BUFFER_SIZE_CMD =
     OCF_LE_READ_BUFFER_SIZE | (OGF_LE_CTL << 10);
+  export const LE_SET_RANDOM_ADDRESS_CMD =
+    OCF_LE_SET_RANDOM_ADDRESS | (OGF_LE_CTL << 10);
   export const LE_SET_SCAN_PARAMETERS_CMD =
     OCF_LE_SET_SCAN_PARAMETERS | (OGF_LE_CTL << 10);
   export const LE_SET_SCAN_ENABLE_CMD =
@@ -100,6 +105,8 @@ namespace COMMANDS {
     OCF_LE_START_ENCRYPTION | (OGF_LE_CTL << 10);
   export const LE_SET_ADVERTISING_PARAMETERS_CMD =
     OCF_LE_SET_ADVERTISING_PARAMETERS | (OGF_LE_CTL << 10);
+  export const LE_ENCRYPT_CMD = OCF_LE_ENCRYPT | (OGF_LE_CTL << 10);
+  export const LE_RAND_CMD = OCF_LE_RAND | (OGF_LE_CTL << 10);
 
   export const LE_SET_ADVERTISING_DATA_CMD =
     OCF_LE_SET_ADVERTISING_DATA | (OGF_LE_CTL << 10);
@@ -225,6 +232,7 @@ class Hci extends EventEmitter<HciEventTypes> {
     this._socket.write(cmd);
 
     const resetResult = await p;
+    await this.readLeHostSupportedWait();
     this.setEventMask();
     this.setLeEventMask();
     const {
@@ -248,6 +256,7 @@ class Hci extends EventEmitter<HciEventTypes> {
       );
     }
 
+    await this.setRandomDeviceAddressWait();
     if (this._state !== 'poweredOn') {
       await this.setScanEnabledWait(false, true);
       await this.setScanParametersWait(false);
@@ -259,6 +268,69 @@ class Hci extends EventEmitter<HciEventTypes> {
     this._handleAclsInProgress = {};
     this._handleBuffers = {};
     this._aclOutQueue = [];
+  }
+
+  public async setRandomDeviceAddressWait() {
+    await this.leRandWait();
+    // await this.leEncryptWait();
+    await this.leSetRandomAddressWait(Buffer.from('FF5544332211', 'hex'));
+  }
+
+  public async leEncryptWait(key: Buffer, plainTextData: Buffer) {
+    const cmd = Buffer.alloc(4 + 16 + 16);
+
+    // header
+    cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+    cmd.writeUInt16LE(COMMANDS.LE_ENCRYPT_CMD, 1);
+
+    // length
+    cmd.writeUInt8(0x0, 3);
+
+    key.copy(cmd, 4);
+    plainTextData.copy(cmd, 4 + 16);
+
+    const p = this.readCmdCompleteEventWait(COMMANDS.LE_ENCRYPT_CMD);
+    this.debug('le encrypt - writing: ' + cmd.toString('hex'));
+    this._socket.write(cmd);
+    const data = await p;
+    const encryptedData = data.result;
+
+    return { encryptedData };
+  }
+
+  public async leRandWait() {
+    const cmd = Buffer.alloc(4);
+
+    // header
+    cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+    cmd.writeUInt16LE(COMMANDS.LE_RAND_CMD, 1);
+
+    // length
+    cmd.writeUInt8(0x0, 3);
+
+    const p = this.readCmdCompleteEventWait(COMMANDS.LE_RAND_CMD);
+    this.debug('le rand - writing: ' + cmd.toString('hex'));
+    this._socket.write(cmd);
+    const data = await p;
+    const randomNumber = data.result;
+
+    return { randomNumber };
+  }
+
+  public async leSetRandomAddressWait(randomAddress: Buffer) {
+    const cmd = Buffer.alloc(4 + 6);
+
+    // header
+    cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+    cmd.writeUInt16LE(COMMANDS.LE_SET_RANDOM_ADDRESS_CMD, 1);
+
+    // length
+    cmd.writeUInt8(0x0, 3);
+    randomAddress.copy(cmd, 4);
+    const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_RANDOM_ADDRESS_CMD);
+    this.debug('le set random address - writing: ' + cmd.toString('hex'));
+    this._socket.write(cmd);
+    const data = await p;
   }
 
   public async readLocalVersionWait() {
