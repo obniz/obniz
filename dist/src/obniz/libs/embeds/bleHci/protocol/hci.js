@@ -151,7 +151,7 @@ class Hci extends eventemitter3_1.default {
         this.debug('reset - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const resetResult = await p;
-        await this.readLeHostSupportedWait();
+        // await this.readLeHostSupportedWait();
         this.setEventMask();
         this.setLeEventMask();
         const { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer, } = await this.readLocalVersionWait();

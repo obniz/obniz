@@ -232,7 +232,7 @@ class Hci extends EventEmitter<HciEventTypes> {
     this._socket.write(cmd);
 
     const resetResult = await p;
-    await this.readLeHostSupportedWait();
+    // await this.readLeHostSupportedWait();
     this.setEventMask();
     this.setLeEventMask();
     const {
