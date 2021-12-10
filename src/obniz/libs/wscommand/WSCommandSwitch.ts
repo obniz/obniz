@@ -5,12 +5,9 @@
 import WSCommand from './WSCommand';
 
 class WSCommandSwitch extends WSCommand {
-  public module: any;
-  public _CommandNotifyValue: any;
-  public _CommandOnece: any;
-  public sendCommand: any;
-  public validateCommandSchema: any;
-  public WSCommandNotFoundError: any;
+  public module: number;
+  public _CommandNotifyValue: number;
+  public _CommandOnece: number;
 
   constructor() {
     super();
@@ -23,17 +20,17 @@ class WSCommandSwitch extends WSCommand {
   // Commands
 
   public get(params: any) {
-    const buf: any = new Uint8Array(0);
+    const buf = new Uint8Array(0);
     this.sendCommand(this._CommandOnece, buf);
   }
 
   public parseFromJson(json: any) {
-    const module: any = json.switch;
+    const module = json.switch;
     if (module === undefined) {
       return;
     }
-    const schemaData: any = [{ uri: '/request/switch/get', onValid: this.get }];
-    const res: any = this.validateCommandSchema(schemaData, module, 'switch');
+    const schemaData = [{ uri: '/request/switch/get', onValid: this.get }];
+    const res = this.validateCommandSchema(schemaData, module, 'switch');
 
     if (res.valid === 0) {
       if (res.invalidButLike.length > 0) {
@@ -44,13 +41,13 @@ class WSCommandSwitch extends WSCommand {
     }
   }
 
-  public notifyFromBinary(objToSend: any, func: any, payload: any) {
+  public notifyFromBinary(objToSend: any, func: number, payload: Uint8Array) {
     if (
       (func === this._CommandOnece || func === this._CommandNotifyValue) &&
       payload.byteLength === 1
     ) {
-      const state: any = parseInt(payload[0]);
-      const states: any = ['none', 'push', 'left', 'right'];
+      const state = payload[0];
+      const states = ['none', 'push', 'left', 'right'];
       objToSend.switch = {
         state: states[state],
       };

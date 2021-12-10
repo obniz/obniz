@@ -1,6 +1,6 @@
 import WSCommand from './WSCommand';
 export default class WSCommandDirective extends WSCommand {
-    availableCommands: any;
+    availableCommands: any[];
     module: number;
     protected _CommandRegistrate: number;
     protected _CommandPause: number;
@@ -10,5 +10,5 @@ export default class WSCommandDirective extends WSCommand {
     init(params: any, originalParams: any): void;
     changeState(params: any): void;
     parseFromJson(json: any): void;
-    notifyFromBinary(objToSend: any, func: any, payload: any): void;
+    notifyFromBinary(objToSend: any, func: number, payload: Uint8Array): void;
 }

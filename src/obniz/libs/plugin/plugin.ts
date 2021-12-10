@@ -52,7 +52,7 @@ export default class Plugin {
       throw new Error(`Please update obniz firmware >= 3.4.0`);
     }
 
-    let send_data: any = null;
+    let send_data = null;
     if (data === undefined) {
       return;
     }
@@ -64,7 +64,7 @@ export default class Plugin {
     } else if (data.constructor === Array) {
       send_data = data;
     } else if (typeof data === 'string') {
-      const buf: any = Buffer.from(data);
+      const buf = Buffer.from(data);
       send_data = [...buf];
     }
 

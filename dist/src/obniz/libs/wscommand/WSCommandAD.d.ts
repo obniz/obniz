@@ -4,18 +4,15 @@
  */
 import WSCommand from './WSCommand';
 declare class WSCommandAD extends WSCommand {
-    module: any;
-    _CommandInitNormalInterval: any;
-    _CommandDeinit: any;
-    _CommandNotifyValue: any;
-    _CommandDoOnece: any;
-    sendCommand: any;
-    validateCommandSchema: any;
-    WSCommandNotFoundError: any;
+    module: number;
+    _CommandInitNormalInterval: number;
+    _CommandDeinit: number;
+    _CommandNotifyValue: number;
+    _CommandDoOnece: number;
     constructor();
     get(params: any, no: any): void;
     deinit(params: any, no: any): void;
     parseFromJson(json: any): void;
-    notifyFromBinary(objToSend: any, func: any, payload: any): void;
+    notifyFromBinary(objToSend: any, func: number, payload: Uint8Array): void;
 }
 export default WSCommandAD;

@@ -4,21 +4,17 @@
  */
 import WSCommand from './WSCommand';
 declare class WSCommandSystem extends WSCommand {
-    module: any;
-    _CommandReboot: any;
-    _CommandReset: any;
-    _CommandSelfCheck: any;
-    _CommandWait: any;
-    _CommandResetOnDisconnect: any;
-    _CommandPingPong: any;
-    _CommandVCC: any;
-    _CommandSleepSeconds: any;
-    _CommandSleepMinute: any;
-    _CommandSleepIoTrigger: any;
-    sendCommand: any;
-    validateCommandSchema: any;
-    WSCommandNotFoundError: any;
-    envelopWarning: any;
+    module: number;
+    _CommandReboot: number;
+    _CommandReset: number;
+    _CommandSelfCheck: number;
+    _CommandWait: number;
+    _CommandResetOnDisconnect: number;
+    _CommandPingPong: number;
+    _CommandVCC: number;
+    _CommandSleepSeconds: number;
+    _CommandSleepMinute: number;
+    _CommandSleepIoTrigger: number;
     constructor();
     reboot(params: any): void;
     reset(params: any): void;
@@ -29,7 +25,7 @@ declare class WSCommandSystem extends WSCommand {
     resetOnDisconnect(mustReset: any): void;
     parseFromJson(json: any): void;
     pong(objToSend: any, payload: any): void;
-    notifyFromBinary(objToSend: any, func: any, payload: any): void;
+    notifyFromBinary(objToSend: any, func: number, payload: Uint8Array): void;
     sleepSeconds(params: any): void;
     sleepMinute(params: any): void;
     sleepIoTrigger(params: any): void;

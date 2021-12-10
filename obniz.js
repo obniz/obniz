@@ -1716,7 +1716,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./dist/src/json_schema/response/ws/obniz.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws/obniz","type":"object","required":["obniz"],"properties":{"obniz":{"type":"object","required":["hw","firmware"],"additionalProperties":false,"properties":{"hw":{"type":"string"},"firmware":{"type":"string"},"metadata":{"type":"string"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws/obniz","type":"object","required":["obniz"],"properties":{"obniz":{"type":"object","required":["hw","firmware"],"additionalProperties":false,"properties":{"hw":{"type":"string"},"firmware":{"type":"string"},"metadata":{"type":"string"},"connected_network":{"type":"object","required":["online_at","current_net"],"additionalProperties":false,"properties":{"online_at":{"type":"number"},"net":{"type":"string"},"local_ip":{"type":"string"},"global_ip":{"type":"string"},"wifi":{"type":"object","required":["ssid","mac_address","rssi"],"additionalProperties":false,"properties":{"ssid":{"type":"string"},"mac_address":{"type":"string"},"rssi":{"type":"number"}}},"wifimesh":{"type":"object","required":["mesh_id","parent_obniz_id","root_obniz_id","layer","rssi"],"additionalProperties":false,"properties":{"meshid":{"type":"string"},"parent_obniz_id":{"type":"string"},"root_obniz_id":{"type":"string"},"layer":{"type":"number"},"rssi":{"type":"number"}}}}}}}}}
 
 /***/ }),
 
@@ -3118,8 +3118,9 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     _handleWSCommand(wsObj) {
         if (wsObj.ready) {
-            this.firmware_ver = wsObj.obniz.firmware;
-            this.hw = wsObj.obniz.hw;
+            const wsObniz = wsObj.obniz;
+            this.firmware_ver = wsObniz.firmware;
+            this.hw = wsObniz.hw;
             if (!this.hw) {
                 this.hw = 'obnizb1';
             }
@@ -3135,13 +3136,16 @@ class ObnizConnection extends eventemitter3_1.default {
             if (this.options.reset_obniz_on_ws_disconnection) {
                 this.resetOnDisconnect(true);
             }
-            if (wsObj.obniz.metadata) {
+            if (wsObniz.metadata) {
                 try {
                     this.metadata = JSON.parse(wsObj.obniz.metadata);
                 }
                 catch (e) {
                     // ignore parsing error.
                 }
+            }
+            if (wsObniz.connected_network) {
+                this.connected_network = wsObniz.connected_network;
             }
             if (wsObj.local_connect && wsObj.local_connect.ip) {
                 this._localConnectIp = wsObj.local_connect.ip;
@@ -5048,6 +5052,9 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
             return;
         }
         const doms = this.getDebugDoms();
+        if (!doms) {
+            return;
+        }
         if (doms.loaderDom) {
             doms.loaderDom.style.display = 'block';
         }
@@ -14778,6 +14785,13 @@ exports.default = ObnizSwitch;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/hw/cc3235mod.json":
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"22\":{},\"23\":{},\"24\":{},\"25\":{},\"28\":{},\"29\":{},\"30\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"22\":{},\"23\":{},\"24\":{},\"25\":{},\"28\":{},\"29\":{},\"30\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/hw/encored.json":
 /***/ (function(module) {
 
@@ -14841,6 +14855,9 @@ class HW {
         }
         else if (hw === 'encored_lte') {
             return __webpack_require__("./dist/src/obniz/libs/hw/encored_lte.json");
+        }
+        else if (hw === 'cc3235mod') {
+            return __webpack_require__("./dist/src/obniz/libs/hw/cc3235mod.json");
         }
         else {
             // default
@@ -16039,6 +16056,10 @@ const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/
 class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
         super(obniz);
+        /**
+         * @ignore
+         */
+        this.used = false;
         this.id = id;
         this._reset();
     }
@@ -16911,11 +16932,7 @@ class LogicAnalyzer extends ComponentAbstact_1.ComponentAbstract {
      * @param params
      */
     start(params) {
-        const err = util_1.default._requiredKeys(params, [
-            'io',
-            'interval',
-            'duration',
-        ]);
+        const err = util_1.default._requiredKeys(params, ['io', 'interval', 'duration']);
         if (err) {
             throw new Error("LogicAnalyzer start param '" + err + "' required, but not found ");
         }
@@ -16951,8 +16968,9 @@ class LogicAnalyzer extends ComponentAbstact_1.ComponentAbstract {
      * ```
      */
     end() {
-        const obj = {};
-        obj.logic_analyzer = null;
+        const obj = {
+            logic_analyzer: null,
+        };
         this.Obniz.send(obj);
         return;
     }
@@ -19325,7 +19343,7 @@ class WSCommand {
             length_extra_bytse--;
             result[index++] = payload_length >> (length_extra_bytse * 8);
         }
-        if (payload_length === 0) {
+        if (payload_length === 0 || !payload) {
             return result;
         }
         else {
@@ -19333,6 +19351,12 @@ class WSCommand {
             return result;
         }
     }
+    /**
+     * Dequeue a next wscommands from binary array.
+     *
+     * @param buf binary array received from obniz cloud.
+     * @returns chunk
+     */
     static dequeueOne(buf) {
         if (!buf || buf.byteLength === 0) {
             return null;
@@ -19404,6 +19428,7 @@ class WSCommand {
             const err = {
                 module: this.module,
                 _args: [...payload],
+                message: ``,
             };
             if (payload.byteLength === 3) {
                 err.err0 = payload[0];
@@ -19615,22 +19640,30 @@ class WSCommandAD extends WSCommand_1.default {
         if (func === this._CommandNotifyValue) {
             for (let i = 0; i + 2 < payload.byteLength; i += 3) {
                 let value;
-                if (payload[i + 1] & 0x80) {
-                    // 10bit mode
-                    value = ((payload[i + 1] & 0x03) << 8) + payload[i + 2]; // 0x0000 to 0x3FF;
-                    value = (5.0 * value) / 1023.0; // 1023.0 ===0x3FF
-                    value = Math.round(value * 1000) / 1000;
-                }
-                else if (payload[i + 1] & 0x40) {
+                if (this._hw.hw === 'cc3235mod') {
                     // 12bit mode
                     value = ((payload[i + 1] & 0x0f) << 8) + payload[i + 2]; // 0x0000 to 0x3FF;
-                    value = (3.3 * value) / 4095.0; // 4095.0 ===0xFFF // vdd is not always 3.3v but...
+                    value = (1.467 * value) / 4095.0; // 4095.0 ===0xFFF // vdd is not always
                     value = Math.round(value * 1000) / 1000;
                 }
                 else {
-                    // unsigned 100 times mode. (0 to 500 from 0v to 5v).
-                    value = (payload[i + 1] << 8) + payload[i + 2];
-                    value = value / 100.0;
+                    if (payload[i + 1] & 0x80) {
+                        // 10bit mode
+                        value = ((payload[i + 1] & 0x03) << 8) + payload[i + 2]; // 0x0000 to 0x3FF;
+                        value = (5.0 * value) / 1023.0; // 1023.0 ===0x3FF
+                        value = Math.round(value * 1000) / 1000;
+                    }
+                    else if (payload[i + 1] & 0x40) {
+                        // 12bit mode
+                        value = ((payload[i + 1] & 0x0f) << 8) + payload[i + 2]; // 0x0000 to 0x3FF;
+                        value = (3.3 * value) / 4095.0; // 4095.0 ===0xFFF // vdd is not always 3.3v but...
+                        value = Math.round(value * 1000) / 1000;
+                    }
+                    else {
+                        // unsigned 100 times mode. (0 to 500 from 0v to 5v).
+                        value = (payload[i + 1] << 8) + payload[i + 2];
+                        value = value / 100.0;
+                    }
                 }
                 objToSend['ad' + payload[i]] = value;
             }
@@ -20997,7 +21030,7 @@ class WSCommandDirective extends WSCommand_1.default {
         const nameArray = util_1.default.string2dataArray(params.animation.name);
         let frame;
         let offset = 0;
-        if (semver.lt(this._hw.firmware, '2.0.0')) {
+        if (semver.lt(this._hw.firmware || '1.0.0', '2.0.0')) {
             // < 2.0.0
             frame = new Uint8Array(1 + nameArray.length + 1);
             // name //
@@ -21781,7 +21814,7 @@ class WSCommandMeasurement extends WSCommand_1.default {
         const echoIO = params.echo.io_echo;
         const responseCount = params.echo.measure_edges;
         let timeoutUs = params.echo.timeout * 1000;
-        timeoutUs = parseInt(timeoutUs);
+        timeoutUs = Math.floor(timeoutUs);
         const buf = new Uint8Array(13);
         buf[0] = 0;
         buf[1] = triggerIO;
@@ -21803,9 +21836,7 @@ class WSCommandMeasurement extends WSCommand_1.default {
         if (module === undefined) {
             return;
         }
-        const schemaData = [
-            { uri: '/request/measure/echo', onValid: this.echo },
-        ];
+        const schemaData = [{ uri: '/request/measure/echo', onValid: this.echo }];
         const res = this.validateCommandSchema(schemaData, module, 'measure');
         if (res.valid === 0) {
             if (res.invalidButLike.length > 0) {
@@ -21819,7 +21850,7 @@ class WSCommandMeasurement extends WSCommand_1.default {
     notifyFromBinary(objToSend, func, payload) {
         if (func === this._CommandMeasurementEcho) {
             let index = 0;
-            const count = parseInt(payload[index++]);
+            const count = payload[index++];
             const array = [];
             for (let i = 0; i < count; i++) {
                 let timing;
@@ -21996,9 +22027,7 @@ class WSCommandPlugin extends WSCommand_1.default {
         if (module === undefined) {
             return;
         }
-        const schemaData = [
-            { uri: '/request/plugin/send', onValid: this.send },
-        ];
+        const schemaData = [{ uri: '/request/plugin/send', onValid: this.send }];
         const res = this.validateCommandSchema(schemaData, module, 'plugin');
         if (res.valid === 0) {
             if (res.invalidButLike.length > 0) {
@@ -22195,7 +22224,7 @@ class WSCommandSwitch extends WSCommand_1.default {
     notifyFromBinary(objToSend, func, payload) {
         if ((func === this._CommandOnece || func === this._CommandNotifyValue) &&
             payload.byteLength === 1) {
-            const state = parseInt(payload[0]);
+            const state = payload[0];
             const states = ['none', 'push', 'left', 'right'];
             objToSend.switch = {
                 state: states[state],

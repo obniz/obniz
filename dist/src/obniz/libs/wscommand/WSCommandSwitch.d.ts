@@ -4,15 +4,12 @@
  */
 import WSCommand from './WSCommand';
 declare class WSCommandSwitch extends WSCommand {
-    module: any;
-    _CommandNotifyValue: any;
-    _CommandOnece: any;
-    sendCommand: any;
-    validateCommandSchema: any;
-    WSCommandNotFoundError: any;
+    module: number;
+    _CommandNotifyValue: number;
+    _CommandOnece: number;
     constructor();
     get(params: any): void;
     parseFromJson(json: any): void;
-    notifyFromBinary(objToSend: any, func: any, payload: any): void;
+    notifyFromBinary(objToSend: any, func: number, payload: Uint8Array): void;
 }
 export default WSCommandSwitch;

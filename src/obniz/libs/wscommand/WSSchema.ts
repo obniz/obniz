@@ -18,13 +18,13 @@ tv4.defineKeyword('uniqueKeys', ((
   if (!Array.isArray(value)) {
     return null;
   }
-  const targets: any = [];
+  const targets = [];
   for (const key of value) {
     if (data[key] !== null && data[key] !== undefined) {
       targets.push(data[key]);
     }
   }
-  const duplicated: any = targets.filter((x: any, i: any, self: any) => {
+  const duplicated = targets.filter((x: any, i: any, self: any) => {
     return self.indexOf(x) !== self.lastIndexOf(x);
   });
   if (duplicated.length > 0) {
@@ -36,7 +36,7 @@ tv4.defineKeyword('uniqueKeys', ((
   return null;
 }) as any);
 
-const wsSchema: any = [];
+const wsSchema = [];
 import replaceContext from '../webpackReplace/require-context';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -50,9 +50,9 @@ if (require.context && require.context.setBaseDir) {
   // @ts-ignore
   require.context.setBaseDir(__dirname);
 }
-const context: any = require.context('../../../json_schema', true, /\.yml$/);
+const context = require.context('../../../json_schema', true, /\.yml$/);
 for (const path of context.keys()) {
-  const oneSchema: any = context(path);
+  const oneSchema = context(path);
   wsSchema.push(oneSchema);
 }
 

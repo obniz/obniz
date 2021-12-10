@@ -771,8 +771,9 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     _handleWSCommand(wsObj) {
         if (wsObj.ready) {
-            this.firmware_ver = wsObj.obniz.firmware;
-            this.hw = wsObj.obniz.hw;
+            const wsObniz = wsObj.obniz;
+            this.firmware_ver = wsObniz.firmware;
+            this.hw = wsObniz.hw;
             if (!this.hw) {
                 this.hw = 'obnizb1';
             }
@@ -788,13 +789,16 @@ class ObnizConnection extends eventemitter3_1.default {
             if (this.options.reset_obniz_on_ws_disconnection) {
                 this.resetOnDisconnect(true);
             }
-            if (wsObj.obniz.metadata) {
+            if (wsObniz.metadata) {
                 try {
                     this.metadata = JSON.parse(wsObj.obniz.metadata);
                 }
                 catch (e) {
                     // ignore parsing error.
                 }
+            }
+            if (wsObniz.connected_network) {
+                this.connected_network = wsObniz.connected_network;
             }
             if (wsObj.local_connect && wsObj.local_connect.ip) {
                 this._localConnectIp = wsObj.local_connect.ip;

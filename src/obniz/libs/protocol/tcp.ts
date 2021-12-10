@@ -99,7 +99,7 @@ export default class Tcp extends ComponentAbstract {
     });
     this.on('/response/tcp/read', (obj) => {
       this.Obniz._runUserCreatedFunction(this.onreceive, obj.read.data);
-      const callback: any = this.readObservers.shift();
+      const callback = this.readObservers.shift();
       if (callback) {
         callback(obj.read.data);
       }
@@ -110,7 +110,7 @@ export default class Tcp extends ComponentAbstract {
       if (obj.connect.code !== 0) {
         this.Obniz._runUserCreatedFunction(this.onerror, obj.connect);
       }
-      const callback: any = this.connectObservers.shift();
+      const callback = this.connectObservers.shift();
       if (callback) {
         callback(obj.connect.code);
       }
@@ -193,13 +193,13 @@ export default class Tcp extends ComponentAbstract {
       data = [data];
     }
 
-    let send_data: any = null;
+    let send_data = null;
     if (this.Obniz.isNode && data instanceof Buffer) {
       send_data = [...data];
     } else if (data.constructor === Array) {
       send_data = data;
     } else if (typeof data === 'string') {
-      const buf: any = Buffer.from(data);
+      const buf = Buffer.from(data);
       send_data = [...buf];
     }
     const obj: any = {};

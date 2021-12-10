@@ -5,11 +5,8 @@
 import WSCommand from './WSCommand';
 
 class WSCommandMeasurement extends WSCommand {
-  public module: any;
-  public _CommandMeasurementEcho: any;
-  public sendCommand: any;
-  public validateCommandSchema: any;
-  public WSCommandNotFoundError: any;
+  public module: number;
+  public _CommandMeasurementEcho: number;
 
   constructor() {
     super();
@@ -21,15 +18,15 @@ class WSCommandMeasurement extends WSCommand {
   // Commands
 
   public echo(params: any) {
-    const triggerIO: any = params.echo.io_pulse;
-    const triggerPosNeg: any = params.echo.pulse === 'negative' ? false : true;
-    const triggerWidthUs: any = Math.floor(params.echo.pulse_width * 1000);
-    const echoIO: any = params.echo.io_echo;
-    const responseCount: any = params.echo.measure_edges;
-    let timeoutUs: any = params.echo.timeout * 1000;
-    timeoutUs = parseInt(timeoutUs);
+    const triggerIO = params.echo.io_pulse;
+    const triggerPosNeg = params.echo.pulse === 'negative' ? false : true;
+    const triggerWidthUs = Math.floor(params.echo.pulse_width * 1000);
+    const echoIO = params.echo.io_echo;
+    const responseCount = params.echo.measure_edges;
+    let timeoutUs = params.echo.timeout * 1000;
+    timeoutUs = Math.floor(timeoutUs);
 
-    const buf: any = new Uint8Array(13);
+    const buf = new Uint8Array(13);
     buf[0] = 0;
     buf[1] = triggerIO;
     buf[2] = triggerPosNeg ? 1 : 0;
@@ -47,14 +44,12 @@ class WSCommandMeasurement extends WSCommand {
   }
 
   public parseFromJson(json: any) {
-    const module: any = json.measure;
+    const module = json.measure;
     if (module === undefined) {
       return;
     }
-    const schemaData: any = [
-      { uri: '/request/measure/echo', onValid: this.echo },
-    ];
-    const res: any = this.validateCommandSchema(schemaData, module, 'measure');
+    const schemaData = [{ uri: '/request/measure/echo', onValid: this.echo }];
+    const res = this.validateCommandSchema(schemaData, module, 'measure');
 
     if (res.valid === 0) {
       if (res.invalidButLike.length > 0) {
@@ -65,14 +60,14 @@ class WSCommandMeasurement extends WSCommand {
     }
   }
 
-  public notifyFromBinary(objToSend: any, func: any, payload: any) {
+  public notifyFromBinary(objToSend: any, func: number, payload: Uint8Array) {
     if (func === this._CommandMeasurementEcho) {
-      let index: any = 0;
-      const count: any = parseInt(payload[index++]);
-      const array: any = [];
+      let index = 0;
+      const count = payload[index++];
+      const array = [];
       for (let i = 0; i < count; i++) {
-        let timing: any;
-        const edge: any = payload[index++] > 0 ? true : false;
+        let timing;
+        const edge = payload[index++] > 0 ? true : false;
         timing = payload[index++] << (8 * 3);
         timing += payload[index++] << (8 * 2);
         timing += payload[index++] << 8;

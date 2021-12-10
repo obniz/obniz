@@ -4,11 +4,11 @@
  */
 import WSCommand from './WSCommand';
 
-const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH: any = 1;
-const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW: any = 2;
-const COMMAND_IO_ERRORS_IO_TOO_LOW: any = 3;
-const COMMAND_IO_ERRORS_IO_TOO_HIGH: any = 4;
-const COMMAND_IO_ERRORS_IO_FORCE_RELEASED: any = 0xf0;
+const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH = 1;
+const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW = 2;
+const COMMAND_IO_ERRORS_IO_TOO_LOW = 3;
+const COMMAND_IO_ERRORS_IO_TOO_HIGH = 4;
+const COMMAND_IO_ERRORS_IO_FORCE_RELEASED = 0xf0;
 
 const COMMAND_IO_ERROR_MESSAGES: any = {
   0: 'unknown error',
@@ -30,19 +30,13 @@ const COMMAND_IO_MUTEX_NAMES: any = {
 };
 
 class WSCommandIO extends WSCommand {
-  public module: any;
-  public _CommandOutput: any;
-  public _CommandInputStream: any;
-  public _CommandInputOnece: any;
-  public _CommandOutputType: any;
-  public _CommandPullResisterType: any;
-  public _CommandEnd: any;
-  public sendCommand: any;
-  public validateCommandSchema: any;
-  public WSCommandNotFoundError: any;
-  public COMMAND_FUNC_ID_ERROR: any;
-  public envelopWarning: any;
-  public envelopError: any;
+  public module: number;
+  public _CommandOutput: number;
+  public _CommandInputStream: number;
+  public _CommandInputOnece: number;
+  public _CommandOutputType: number;
+  public _CommandPullResisterType: number;
+  public _CommandEnd: number;
 
   constructor() {
     super();
@@ -59,22 +53,22 @@ class WSCommandIO extends WSCommand {
   // Commands
 
   public output(value: any, id: any) {
-    const buf: any = new Uint8Array([id, value]);
+    const buf = new Uint8Array([id, value]);
     this.sendCommand(this._CommandOutput, buf);
   }
 
   public outputDetail(params: any, id: any) {
-    const buf: any = new Uint8Array([id, params.value]);
+    const buf = new Uint8Array([id, params.value]);
     this.sendCommand(this._CommandOutput, buf);
   }
 
   public input(params: any, id: any) {
-    const buf: any = new Uint8Array([id]);
+    const buf = new Uint8Array([id]);
     this.sendCommand(this._CommandInputOnece, buf);
   }
 
   public inputDetail(params: any, id: any) {
-    const buf: any = new Uint8Array([id]);
+    const buf = new Uint8Array([id]);
     this.sendCommand(
       params.stream ? this._CommandInputStream : this._CommandInputOnece,
       buf
@@ -82,7 +76,7 @@ class WSCommandIO extends WSCommand {
   }
 
   public outputType(params: any, id: any) {
-    const buf: any = new Uint8Array(2);
+    const buf = new Uint8Array(2);
     buf[0] = id;
     if (params.output_type === 'push-pull5v') {
       buf[1] = 0;
@@ -97,7 +91,7 @@ class WSCommandIO extends WSCommand {
   }
 
   public pullType(params: any, id: any) {
-    const buf: any = new Uint8Array(2);
+    const buf = new Uint8Array(2);
     buf[0] = id;
     if (params.pull_type === 'float') {
       buf[1] = 0;
@@ -114,18 +108,18 @@ class WSCommandIO extends WSCommand {
   }
 
   public deinit(params: any, id: any) {
-    const buf: any = new Uint8Array([id]);
+    const buf = new Uint8Array([id]);
     this.sendCommand(this._CommandEnd, buf);
   }
 
   public parseFromJson(json: any) {
     for (let i = 0; i < 40; i++) {
-      const module: any = json['io' + i];
+      const module = json['io' + i];
       if (module === undefined) {
         continue;
       }
 
-      const schemaData: any = [
+      const schemaData = [
         { uri: '/request/io/input', onValid: this.input },
         { uri: '/request/io/input_detail', onValid: this.inputDetail },
         { uri: '/request/io/output', onValid: this.output },
@@ -134,12 +128,7 @@ class WSCommandIO extends WSCommand {
         { uri: '/request/io/pull_type', onValid: this.pullType },
         { uri: '/request/io/deinit', onValid: this.deinit },
       ];
-      const res: any = this.validateCommandSchema(
-        schemaData,
-        module,
-        'io' + i,
-        i
-      );
+      const res = this.validateCommandSchema(schemaData, module, 'io' + i, i);
 
       if (res.valid === 0) {
         if (res.invalidButLike.length > 0) {
@@ -151,16 +140,16 @@ class WSCommandIO extends WSCommand {
     }
   }
 
-  public notifyFromBinary(objToSend: any, func: any, payload: any) {
+  public notifyFromBinary(objToSend: any, func: number, payload: Uint8Array) {
     if (func === this._CommandInputStream || func === this._CommandInputOnece) {
       for (let i = 0; i < payload.byteLength; i += 2) {
         objToSend['io' + payload[i]] = payload[i + 1] > 0;
       }
     } else if (func === this.COMMAND_FUNC_ID_ERROR && payload.byteLength >= 4) {
       // const esperr = payload[0];
-      const err: any = payload[1];
+      const err = payload[1];
       // const ref_func_id = payload[2];
-      const module_index: any = payload[3];
+      const module_index = payload[3];
 
       if (
         err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH ||
@@ -180,8 +169,8 @@ class WSCommandIO extends WSCommand {
         err === COMMAND_IO_ERRORS_IO_FORCE_RELEASED &&
         payload.byteLength >= 6
       ) {
-        const oldMutexOwner: any = payload[4];
-        const newMutexOwner: any = payload[5];
+        const oldMutexOwner = payload[4];
+        const newMutexOwner = payload[5];
         this.envelopWarning(objToSend, 'debug', {
           message: `io${module_index} binded "${COMMAND_IO_MUTEX_NAMES[oldMutexOwner]}" was stopped. "${COMMAND_IO_MUTEX_NAMES[newMutexOwner]}" have started using this io.`,
         });
