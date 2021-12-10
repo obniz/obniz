@@ -12,6 +12,9 @@ export declare type BleBinary = number[];
 export interface BleScanTarget {
     /**
      * Service UUID for scan. Provide.
+     *
+     * up to 20 UUIDs (recommended)
+     *
      * Attention: iBeacon uuid is not service uuid. If you want to filter iBeacon. use binary filter
      */
     uuids?: UUID[];
