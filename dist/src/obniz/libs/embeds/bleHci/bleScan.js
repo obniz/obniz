@@ -105,6 +105,7 @@ class BleScan {
         settings.waitBothAdvertisementAndScanResponse =
             settings.waitBothAdvertisementAndScanResponse !== false;
         this.scanSettings = settings;
+        this.scanTarget = {};
         target = target || {};
         this.scanTarget.binary = target.binary;
         if (target && target.deviceAddress) {
