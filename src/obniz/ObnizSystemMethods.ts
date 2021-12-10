@@ -45,7 +45,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
    *
    * @param msec
    */
-  public wait(msec: any): Promise<void> {
+  public wait(msec: number): Promise<void> {
     if (msec < 0) {
       msec = 0;
     } else if (msec > 60 * 1000) {
@@ -124,7 +124,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
    *
    * @param reset
    */
-  public resetOnDisconnect(reset: any) {
+  public resetOnDisconnect(reset: boolean) {
     this.send(
       { ws: { reset_obniz_on_ws_disconnection: reset } },
       { connect_check: false }
@@ -143,7 +143,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
    *
    * @param sec up to 64800 seconds (18 hours).
    */
-  public sleepSeconds(sec: any) {
+  public sleepSeconds(sec: number) {
     if (sec < 1) {
       // min 1s
       sec = 1;
@@ -168,7 +168,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
    *
    * @param minute up to 64800 minutes(45 days ).
    */
-  public sleepMinute(minute: any) {
+  public sleepMinute(minute: number) {
     if (minute < 1) {
       // min 1m
       minute = 1;
@@ -198,9 +198,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
     if (!(date instanceof Date)) {
       throw new Error('Date instance argument required');
     }
-    let sleepTime: any = Math.floor(
-      ((date as any) - (new Date() as any)) / 1000
-    );
+    let sleepTime = Math.floor(((date as any) - (new Date() as any)) / 1000);
     this._print_debug(`sleep time : ${sleepTime}s`);
     if (sleepTime <= 0) {
       throw new Error(`past sleep time : ${sleepTime}s`);
@@ -234,7 +232,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
    * - true: Rise (LOW -> HIGH)
    * - false: Falling  (HIGH -> LOW)
    */
-  public sleepIoTrigger(trigger: any) {
+  public sleepIoTrigger(trigger: boolean) {
     if (typeof trigger !== 'boolean') {
       throw new Error('sleepIoTrigger need boolean arg');
     }
@@ -260,10 +258,10 @@ export default class ObnizSystemMethods extends ObnizComponents {
     forceGlobalNetwork?: boolean
   ): Promise<void> {
     unixtime = unixtime || new Date().getTime();
-    const upper: any = Math.floor(unixtime / Math.pow(2, 32));
-    const lower: any = unixtime - upper * Math.pow(2, 32);
+    const upper = Math.floor(unixtime / Math.pow(2, 32));
+    const lower = unixtime - upper * Math.pow(2, 32);
     rand = rand || Math.floor(Math.random() * Math.pow(2, 4));
-    const buf: any = [];
+    const buf: number[] = [];
 
     buf.push((upper >>> (8 * 3)) & 0xff);
     buf.push((upper >>> (8 * 2)) & 0xff);
@@ -278,7 +276,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
     buf.push((rand >>> (8 * 1)) & 0xff);
     buf.push((rand >>> (8 * 0)) & 0xff);
 
-    const obj: any = {
+    const obj = {
       system: {
         ping: {
           key: buf,
@@ -289,35 +287,35 @@ export default class ObnizSystemMethods extends ObnizComponents {
     this.send(obj, { local_connect: forceGlobalNetwork ? false : true });
 
     return new Promise((resolve: any) => {
-      const callback: any = (systemObj: any) => {
+      const callback = (systemObj: any) => {
         for (let i = 0; i < buf.length; i++) {
           if (buf[i] !== systemObj.pong.key[i]) {
             return;
           }
         }
         this.removePongObserver(callback);
-        const _upper: any =
+        const _upper =
           ((systemObj.pong.key[0] << (8 * 3)) >>> 0) +
           ((systemObj.pong.key[1] << (8 * 2)) >>> 0) +
           ((systemObj.pong.key[2] << (8 * 1)) >>> 0) +
           ((systemObj.pong.key[3] << (8 * 0)) >>> 0);
-        const _lower: any =
+        const _lower =
           ((systemObj.pong.key[4] << (8 * 3)) >>> 0) +
           ((systemObj.pong.key[5] << (8 * 2)) >>> 0) +
           ((systemObj.pong.key[6] << (8 * 1)) >>> 0) +
           ((systemObj.pong.key[7] << (8 * 0)) >>> 0);
-        const obnizJsPingUnixtime: any = _upper * Math.pow(2, 32) + _lower;
-        const obnizJsPongUnixtime: any = new Date().getTime();
-        const allTime: any = obnizJsPongUnixtime - obnizJsPingUnixtime;
-        const timeJs2server: any =
+        const obnizJsPingUnixtime = _upper * Math.pow(2, 32) + _lower;
+        const obnizJsPongUnixtime = new Date().getTime();
+        const allTime = obnizJsPongUnixtime - obnizJsPingUnixtime;
+        const timeJs2server =
           systemObj.pong.pingServerTime - obnizJsPingUnixtime;
-        const timeServer2Obniz: any =
+        const timeServer2Obniz =
           systemObj.pong.obnizTime - systemObj.pong.pingServerTime;
-        const timeObniz2Server: any =
+        const timeObniz2Server =
           systemObj.pong.pongServerTime - systemObj.pong.obnizTime;
-        const timeServer2Js: any =
+        const timeServer2Js =
           obnizJsPongUnixtime - systemObj.pong.pongServerTime;
-        const str: any = `ping ${allTime}ms (js --[${timeJs2server}ms]--> server --[${timeServer2Obniz}ms]--> obniz --[${timeObniz2Server}ms]--> server --[${timeServer2Js}ms]--> js)`;
+        const str = `ping ${allTime}ms (js --[${timeJs2server}ms]--> server --[${timeServer2Obniz}ms]--> obniz --[${timeObniz2Server}ms]--> server --[${timeServer2Js}ms]--> js)`;
 
         this._print_debug(str);
         resolve(str);

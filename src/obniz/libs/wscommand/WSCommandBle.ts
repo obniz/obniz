@@ -7,49 +7,50 @@ import WSCommand from './WSCommand';
 import WSCommandBleHci from './WSCommandBleHci';
 
 class WSCommandBle extends WSCommand {
-  public module: any;
-  public uuidLength: any;
-  public _CommandSetAdvData: any;
-  public _CommandSetScanRespData: any;
-  public _CommandStartAdv: any;
-  public _CommandStopAdv: any;
-  public _CommandScan: any;
-  public _CommandStartScan: any;
-  public _CommandStopScan: any;
-  public _CommandScanResults: any;
-  public _CommandConnect: any;
-  public _CommandServices: any;
-  public _CommandCharacteristics: any;
-  public _CommandWriteCharacteristics: any;
-  public _CommandReadCharacteristics: any;
-  public _CommandRegisterNotifyCharacteristic: any;
-  public _CommandUnregisterNotifyCharacteristic: any;
-  public _CommandDescriptors: any;
-  public _CommandWriteDescriptor: any;
-  public _CommandReadDescriptor: any;
-  public _CommandNotifyCharacteristic: any;
-  public _CommandSetDeviceName: any;
-  public _CommandServerStartPeripheral: any;
-  public _CommandServerNotifyConnect: any;
-  public _CommandServerAddService: any;
-  public _CommandServerAddCharacteristic: any;
-  public _CommandServerAddDescriptor: any;
-  public _CommandServerWriteCharavteristicValue: any;
-  public _CommandServerReadCharavteristicValue: any;
-  public _CommandServerNotifyWriteCharavteristicValue: any;
-  public _CommandServerNotifyReadCharavteristicValue: any;
-  public _CommandServerWriteDescriptorValue: any;
-  public _CommandServerReadDescriptorValue: any;
-  public _CommandServerNotifyWriteDescriptorValue: any;
-  public _CommandServerNotifyReadDescriptorValue: any;
-  public _CommandServerNotifyCharavteristic: any;
-  public _CommandServerStartStopService: any;
-  public _CommandSecuritySetAuth: any;
-  public _CommandSecuritySetEncryptionLevel: any;
-  public _CommandSecuritySetEnableKeyTypes: any;
-  public _CommandSecuritySetKeyMaxSize: any;
-  public _CommandSecuritySetIOCapability: any;
-  public _CommandSecurityClearBondingDevices: any;
+  public module: number;
+  public uuidLength: number;
+  public _CommandSetAdvData: number;
+  public _CommandSetScanRespData: number;
+  public _CommandStartAdv: number;
+  public _CommandStopAdv: number;
+  public _CommandScan: number;
+  public _CommandStartScan: number;
+  public _CommandStopScan: number;
+  public _CommandScanResults: number;
+  public _CommandConnect: number;
+  public _CommandServices: number;
+  public _CommandCharacteristics: number;
+  public _CommandWriteCharacteristics: number;
+  public _CommandReadCharacteristics: number;
+  public _CommandRegisterNotifyCharacteristic: number;
+  public _CommandUnregisterNotifyCharacteristic: number;
+  public _CommandDescriptors: number;
+  public _CommandWriteDescriptor: number;
+  public _CommandReadDescriptor: number;
+  public _CommandNotifyCharacteristic: number;
+  public _CommandSetDeviceName: number;
+  public _CommandServerStartPeripheral: number;
+  public _CommandServerNotifyConnect: number;
+  public _CommandServerAddService: number;
+  public _CommandServerAddCharacteristic: number;
+  public _CommandServerAddDescriptor: number;
+  public _CommandServerWriteCharavteristicValue: number;
+  public _CommandServerReadCharavteristicValue: number;
+  public _CommandServerNotifyWriteCharavteristicValue: number;
+  public _CommandServerNotifyReadCharavteristicValue: number;
+  public _CommandServerWriteDescriptorValue: number;
+  public _CommandServerReadDescriptorValue: number;
+  public _CommandServerNotifyWriteDescriptorValue: number;
+  public _CommandServerNotifyReadDescriptorValue: number;
+  public _CommandServerNotifyCharavteristic: number;
+  public _CommandServerStartStopService: number;
+  public _CommandSecuritySetAuth: number;
+  public _CommandSecuritySetEncryptionLevel: number;
+  public _CommandSecuritySetEnableKeyTypes: number;
+  public _CommandSecuritySetKeyMaxSize: number;
+  public _CommandSecuritySetIOCapability: number;
+  public _CommandSecurityClearBondingDevices: number;
+
   public _CommandScanResultsDevice: any;
   public _CommandScanResultsDeviceAddress: any;
   public _CommandScanResultsEvet: any;
@@ -60,11 +61,6 @@ class WSCommandBle extends WSCommand {
   public _securityEncryotionLevels: any;
   public _securityKeyTypes: any;
   public hciCommand: any;
-  public sendCommand: any;
-  public validateCommandSchema: any;
-  public WSCommandNotFoundError: any;
-  public COMMAND_FUNC_ID_ERROR: any;
-  public envelopError: any;
 
   constructor() {
     super();
@@ -937,7 +933,7 @@ class WSCommandBle extends WSCommand {
     ];
 
     schemaData.push(...this.hciCommand.schemaData());
-    const res: any = this.validateCommandSchema(schemaData, module, 'ble');
+    const res = this.validateCommandSchema(schemaData, module, 'ble');
     if (res.valid === 0) {
       if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
@@ -947,7 +943,7 @@ class WSCommandBle extends WSCommand {
     }
   }
 
-  public notifyFromBinary(objToSend: any, func: any, payload: any) {
+  public notifyFromBinary(objToSend: any, func: number, payload: Uint8Array) {
     const funcList: any = {};
     funcList[this._CommandScanResults] = this.notifyFromBinaryScanResponse.bind(
       this

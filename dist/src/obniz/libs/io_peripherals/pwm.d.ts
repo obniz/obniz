@@ -34,7 +34,7 @@ export default class PeripheralPWM extends ComponentAbstract implements PWMInter
     /**
      * @ignore
      */
-    used: any;
+    used: boolean;
     private id;
     private state;
     private params;
@@ -106,7 +106,7 @@ export default class PeripheralPWM extends ComponentAbstract implements PWMInter
     /**
      * @ignore
      */
-    isUsed(): any;
+    isUsed(): boolean;
     /**
      * It stops pwm and releases io.
      *

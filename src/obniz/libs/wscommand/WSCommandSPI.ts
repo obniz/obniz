@@ -5,15 +5,12 @@
 import WSCommand from './WSCommand';
 
 class WSCommandSPI extends WSCommand {
-  public module: any;
-  public _CommandInit: any;
-  public _CommandDeinit: any;
-  public _CommandWriteRead: any;
-  public _CommandWrite: any;
+  public module: number;
+  public _CommandInit: number;
+  public _CommandDeinit: number;
+  public _CommandWriteRead: number;
+  public _CommandWrite: number;
   public ioNotUsed: any;
-  public sendCommand: any;
-  public validateCommandSchema: any;
-  public WSCommandNotFoundError: any;
 
   constructor() {
     super();
@@ -28,14 +25,14 @@ class WSCommandSPI extends WSCommand {
   // Commands
 
   public initMaster(params: any, module: any) {
-    const mode: any = 0; // master mode
+    const mode = 0; // master mode
 
-    let clk: any = params.clk;
-    let mosi: any = params.mosi;
-    let miso: any = params.miso;
-    let cs: any = params.cs;
+    let clk = params.clk;
+    let mosi = params.mosi;
+    let miso = params.miso;
+    let cs = params.cs;
 
-    const clock: any = params.clock;
+    const clock = params.clock;
 
     if (clk === null && mosi === null && miso === null) {
       throw new Error('spi: master mode require one of clk/mosi/miso');
@@ -54,7 +51,7 @@ class WSCommandSPI extends WSCommand {
       cs = this.ioNotUsed;
     }
 
-    const buf: any = new Uint8Array(11);
+    const buf = new Uint8Array(11);
     buf[0] = module;
     buf[1] = mode;
     buf[2] = clk;
@@ -72,12 +69,12 @@ class WSCommandSPI extends WSCommand {
   }
 
   public deinit(params: any, module: any) {
-    const buf: any = new Uint8Array([module]);
+    const buf = new Uint8Array([module]);
     this.sendCommand(this._CommandDeinit, buf);
   }
 
   public write(params: any, module: any) {
-    const buf: any = new Uint8Array(1 + params.data.length);
+    const buf = new Uint8Array(1 + params.data.length);
     buf[0] = module;
     buf.set(params.data, 1);
     if (params.read) {
@@ -89,22 +86,17 @@ class WSCommandSPI extends WSCommand {
 
   public parseFromJson(json: any) {
     for (let i = 0; i < 2; i++) {
-      const module: any = json['spi' + i];
+      const module = json['spi' + i];
       if (module === undefined) {
         continue;
       }
 
-      const schemaData: any = [
+      const schemaData = [
         { uri: '/request/spi/init_master', onValid: this.initMaster },
         { uri: '/request/spi/write', onValid: this.write },
         { uri: '/request/spi/deinit', onValid: this.deinit },
       ];
-      const res: any = this.validateCommandSchema(
-        schemaData,
-        module,
-        'spi' + i,
-        i
-      );
+      const res = this.validateCommandSchema(schemaData, module, 'spi' + i, i);
 
       if (res.valid === 0) {
         if (res.invalidButLike.length > 0) {
@@ -116,12 +108,12 @@ class WSCommandSPI extends WSCommand {
     }
   }
 
-  public notifyFromBinary(objToSend: any, func: any, payload: any) {
+  public notifyFromBinary(objToSend: any, func: number, payload: Uint8Array) {
     if (func === this._CommandWriteRead && payload.byteLength > 1) {
-      const module_index: any = payload[0];
+      const module_index = payload[0];
       // var received = payload.slice(1);
 
-      const arr: any = new Array(payload.byteLength - 1);
+      const arr = new Array(payload.byteLength - 1);
       for (let i = 0; i < arr.length; i++) {
         arr[i] = payload[i + 1];
       }

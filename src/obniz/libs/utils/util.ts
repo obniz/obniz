@@ -10,7 +10,7 @@ class ObnizUtil {
    * @private
    */
   public static _keyFilter(params: any, keys: any) {
-    let filterdParams: any = {};
+    let filterdParams = {};
     if (typeof params !== 'object') {
       return filterdParams;
     }
@@ -46,13 +46,13 @@ class ObnizUtil {
    *
    * @param data
    */
-  public static dataArray2string(data: number[]): string | null {
-    let string: any = null;
+  public static dataArray2string(data: Uint8Array | number[]): string | null {
+    let string = null;
     try {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const StringDecoder: any = require('string_decoder').StringDecoder;
+      const StringDecoder = require('string_decoder').StringDecoder;
       if (StringDecoder) {
-        string = new StringDecoder('utf8').write(Buffer.from(data));
+        string = new StringDecoder('utf8').write(Buffer.from(data as any));
       }
     } catch (e) {
       // this.obniz.error(e);
@@ -66,7 +66,7 @@ class ObnizUtil {
    * @param str
    */
   public static string2dataArray(str: string) {
-    const buf: any = Buffer.from(str);
+    const buf = Buffer.from(str);
     return [...buf];
   }
 
@@ -136,7 +136,7 @@ class ObnizUtil {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const { createCanvas } = require('canvas');
         const canvas = createCanvas(width, height);
-        const ctx: any = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d');
         return ctx;
       } catch (e) {
         throw new Error(
@@ -148,10 +148,10 @@ class ObnizUtil {
       canvas.width = width;
       canvas.height = height;
       canvas.style['-webkit-font-smoothing'] = 'none';
-      const body: any = document.getElementsByTagName('body')[0];
+      const body = document.getElementsByTagName('body')[0];
       body.appendChild(canvas);
 
-      const ctx: any = canvas.getContext('2d');
+      const ctx = canvas.getContext('2d');
       return ctx;
     }
   }

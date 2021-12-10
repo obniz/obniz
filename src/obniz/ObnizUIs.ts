@@ -43,7 +43,7 @@ export default class ObnizUIs extends ObnizSystemMethods {
       return false;
     }
     str = str.replace('-', '');
-    let id: any = parseInt(str);
+    let id: number | null = parseInt(str);
     if (isNaN(id)) {
       id = null;
     }
@@ -65,7 +65,7 @@ export default class ObnizUIs extends ObnizSystemMethods {
       if (this.isNode || !this.options.obnizid_dialog) {
         this.error({ alert: 'error', message: 'invalid obniz id' });
       } else {
-        const filled: any = _ReadCookie('obniz-last-used') || '';
+        const filled = _ReadCookie('obniz-last-used') || '';
         this.prompt(filled, (obnizid: any) => {
           this.id = obnizid;
           this.tryWsConnectOnceWait(desired_server);
@@ -210,7 +210,7 @@ export default class ObnizUIs extends ObnizSystemMethods {
     if (this.isNode || !document.getElementById(this.options.debug_dom_id)) {
       return;
     }
-    const dom: any = `
+    const dom = `
     <div style="background-color:${
       obj.alert === 'warning' ? '#ffee35' : '#ff7b34'
     }">${obj.message}</div>`;
@@ -223,10 +223,8 @@ export default class ObnizUIs extends ObnizSystemMethods {
     if (this.isNode) {
       return;
     }
-    const loaderDom: any = document.querySelector('#loader');
-    const debugDom: any = document.querySelector(
-      '#' + this.options.debug_dom_id
-    );
+    const loaderDom = document.querySelector('#loader');
+    const debugDom = document.querySelector('#' + this.options.debug_dom_id);
     let statusDom: any = document.querySelector(
       '#' + this.options.debug_dom_id + ' #online-status'
     );
@@ -258,8 +256,8 @@ export default class ObnizUIs extends ObnizSystemMethods {
       return;
     }
 
-    const isConnected: any = this.socket && this.socket.readyState === 1;
-    const isConnectedLocally: any =
+    const isConnected = this.socket && this.socket.readyState === 1;
+    const isConnectedLocally =
       this.socket_local && this.socket_local.readyState === 1;
     if (isConnected && isConnectedLocally) {
       this.showOnLine(true);
@@ -293,8 +291,10 @@ export default class ObnizUIs extends ObnizSystemMethods {
     if (this.isNode) {
       return;
     }
-
     const doms: any = this.getDebugDoms();
+    if (!doms) {
+      return;
+    }
     if (doms.loaderDom) {
       doms.loaderDom.style.display = 'block';
     }
@@ -310,11 +310,11 @@ export default class ObnizUIs extends ObnizSystemMethods {
  *
  * @ignore
  */
-const _ReadCookie = (name: any) => {
-  const nameEQ: any = name + '=';
-  const ca: any = document.cookie.split(';');
+const _ReadCookie = (name: string) => {
+  const nameEQ = name + '=';
+  const ca = document.cookie.split(';');
   for (let i = 0; i < ca.length; i++) {
-    let c: any = ca[i];
+    let c = ca[i];
     while (c.charAt(0) === ' ') {
       c = c.substring(1, c.length);
     }

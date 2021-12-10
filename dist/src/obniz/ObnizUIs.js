@@ -248,6 +248,9 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
             return;
         }
         const doms = this.getDebugDoms();
+        if (!doms) {
+            return;
+        }
         if (doms.loaderDom) {
             doms.loaderDom.style.display = 'block';
         }

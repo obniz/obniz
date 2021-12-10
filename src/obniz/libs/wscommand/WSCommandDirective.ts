@@ -9,7 +9,7 @@ import CommandIO from './WSCommandIO';
 import CommandPWM from './WSCommandPWM';
 
 export default class WSCommandDirective extends WSCommand {
-  public availableCommands: any;
+  public availableCommands: any[];
 
   public module: number;
   protected _CommandRegistrate: number;
@@ -31,11 +31,11 @@ export default class WSCommandDirective extends WSCommand {
 
   // Commands
 
-  public init(params: any, originalParams: any) {
-    const nameArray: any = ObnizUtil.string2dataArray(params.animation.name);
-    let frame: any;
-    let offset: any = 0;
-    if (semver.lt(this._hw.firmware, '2.0.0')) {
+  public init(params: any, originalParams: any): void {
+    const nameArray = ObnizUtil.string2dataArray(params.animation.name);
+    let frame: Uint8Array;
+    let offset = 0;
+    if (semver.lt(this._hw.firmware || '1.0.0', '2.0.0')) {
       // < 2.0.0
       frame = new Uint8Array(1 + nameArray.length + 1);
       // name //
@@ -57,9 +57,9 @@ export default class WSCommandDirective extends WSCommand {
       offset += nameArray.length;
       frame[offset++] = 0; // null string
       // type and count //
-      let type: any = 0;
+      let type = 0;
 
-      let repeat_count: any = 0;
+      let repeat_count = 0;
       if (params.animation.status === 'loop') {
         type = 1; // auto start
       }
@@ -74,25 +74,25 @@ export default class WSCommandDirective extends WSCommand {
       frame[offset++] = repeat_count;
     }
 
-    const commandJsonArray: any = params.animation.states;
+    const commandJsonArray = params.animation.states;
 
     for (let i = 0; i < commandJsonArray.length; i++) {
-      const obj: any = commandJsonArray[i];
-      const duration: any = Math.floor(obj.duration * 1000);
-      const state: any = obj.state;
+      const obj = commandJsonArray[i];
+      const duration = Math.floor(obj.duration * 1000);
+      const state = obj.state;
 
       // Dry run commands
-      let parsedCommands: any = JSON.parse(JSON.stringify(state));
+      let parsedCommands = JSON.parse(JSON.stringify(state));
       if (!Array.isArray(parsedCommands)) {
         parsedCommands = [parsedCommands];
       }
-      let compressed: any = null;
+      let compressed: Uint8Array | null = null;
       for (
-        let commandIndex: any = 0;
+        let commandIndex = 0;
         commandIndex < parsedCommands.length;
         commandIndex++
       ) {
-        const _frame: any = WSCommand.compress(
+        const _frame = WSCommand.compress(
           this.availableCommands,
           parsedCommands[commandIndex]
         );
@@ -102,7 +102,7 @@ export default class WSCommandDirective extends WSCommand {
           );
         }
         if (compressed) {
-          const _combined: any = new Uint8Array(
+          const _combined: Uint8Array = new Uint8Array(
             compressed.length + _frame.length
           );
           _combined.set(compressed, 0);
@@ -117,9 +117,9 @@ export default class WSCommandDirective extends WSCommand {
           '[io.animation.states.state]only io or pwm commands. Pleave provide state at least one of them.'
         );
       }
-      const length: any = compressed.byteLength;
+      const length = compressed.byteLength;
 
-      const commandHeader: any = new Uint8Array(8);
+      const commandHeader = new Uint8Array(8);
       commandHeader[0] = length >> (8 * 3);
       commandHeader[1] = length >> (8 * 2);
       commandHeader[2] = length >> (8 * 1);
@@ -129,7 +129,7 @@ export default class WSCommandDirective extends WSCommand {
       commandHeader[6] = duration >> (8 * 1);
       commandHeader[7] = duration;
 
-      const combined: any = new Uint8Array(
+      const combined = new Uint8Array(
         frame.byteLength + commandHeader.byteLength + compressed.byteLength
       );
       combined.set(frame, 0);
@@ -147,17 +147,17 @@ export default class WSCommandDirective extends WSCommand {
     this.sendCommand(this._CommandRegistrate, frame);
   }
 
-  public changeState(params: any) {
+  public changeState(params: any): void {
     if (params.animation.status === 'resume') {
-      const nameArray: any = ObnizUtil.string2dataArray(params.animation.name);
-      const frame: any = new Uint8Array(nameArray.length + 2);
+      const nameArray = ObnizUtil.string2dataArray(params.animation.name);
+      const frame = new Uint8Array(nameArray.length + 2);
       frame[0] = nameArray.length + 1;
       frame.set(nameArray, 1);
       frame[frame.byteLength - 1] = 0;
       this.sendCommand(this._CommandResume, frame);
     } else if (params.animation.status === 'pause') {
-      const nameArray: any = ObnizUtil.string2dataArray(params.animation.name);
-      const frame: any = new Uint8Array(nameArray.length + 2);
+      const nameArray = ObnizUtil.string2dataArray(params.animation.name);
+      const frame = new Uint8Array(nameArray.length + 2);
       frame[0] = nameArray.length + 1;
       frame.set(nameArray, 1);
       frame[frame.byteLength - 1] = 0;
@@ -165,8 +165,8 @@ export default class WSCommandDirective extends WSCommand {
     }
   }
 
-  public parseFromJson(json: any) {
-    let parentCommandNotFound: any = false;
+  public parseFromJson(json: any): void {
+    let parentCommandNotFound = false;
     try {
       super.parseFromJson(json);
     } catch (err) {
@@ -177,35 +177,34 @@ export default class WSCommandDirective extends WSCommand {
       }
     }
 
-    const module: any = json.io;
+    const module = json.io;
     if (module === undefined) {
       return;
     }
 
-    const schemaData: any = [
+    const schemaData = [
       { uri: '/request/ioAnimation/init', onValid: this.init },
       { uri: '/request/ioAnimation/changeState', onValid: this.changeState },
     ];
-    const res: any = this.validateCommandSchema(
-      schemaData,
-      module,
-      'io',
-      module
-    );
+    const res = this.validateCommandSchema(schemaData, module, 'io', module);
 
     if (res.valid === 0 && parentCommandNotFound) {
       if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
       } else {
-        const WSCommandNotFoundError: any = this.WSCommandNotFoundError;
+        const WSCommandNotFoundError = this.WSCommandNotFoundError;
         throw new WSCommandNotFoundError(`[io.animation]unknown command`);
       }
     }
   }
 
-  public notifyFromBinary(objToSend: any, func: any, payload: any) {
+  public notifyFromBinary(
+    objToSend: any,
+    func: number,
+    payload: Uint8Array
+  ): void {
     if (func === this._CommandNotify) {
-      const name: any = ObnizUtil.dataArray2string(
+      const name = ObnizUtil.dataArray2string(
         payload.slice(2, payload.byteLength - 1)
       ); // remove null string
 

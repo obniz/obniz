@@ -84,11 +84,7 @@ class LogicAnalyzer extends ComponentAbstact_1.ComponentAbstract {
      * @param params
      */
     start(params) {
-        const err = util_1.default._requiredKeys(params, [
-            'io',
-            'interval',
-            'duration',
-        ]);
+        const err = util_1.default._requiredKeys(params, ['io', 'interval', 'duration']);
         if (err) {
             throw new Error("LogicAnalyzer start param '" + err + "' required, but not found ");
         }
@@ -124,8 +120,9 @@ class LogicAnalyzer extends ComponentAbstact_1.ComponentAbstract {
      * ```
      */
     end() {
-        const obj = {};
-        obj.logic_analyzer = null;
+        const obj = {
+            logic_analyzer: null,
+        };
         this.Obniz.send(obj);
         return;
     }

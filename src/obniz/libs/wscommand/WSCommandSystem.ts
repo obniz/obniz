@@ -5,21 +5,17 @@
 import WSCommand from './WSCommand';
 
 class WSCommandSystem extends WSCommand {
-  public module: any;
-  public _CommandReboot: any;
-  public _CommandReset: any;
-  public _CommandSelfCheck: any;
-  public _CommandWait: any;
-  public _CommandResetOnDisconnect: any;
-  public _CommandPingPong: any;
-  public _CommandVCC: any;
-  public _CommandSleepSeconds: any;
-  public _CommandSleepMinute: any;
-  public _CommandSleepIoTrigger: any;
-  public sendCommand: any;
-  public validateCommandSchema: any;
-  public WSCommandNotFoundError: any;
-  public envelopWarning: any;
+  public module: number;
+  public _CommandReboot: number;
+  public _CommandReset: number;
+  public _CommandSelfCheck: number;
+  public _CommandWait: number;
+  public _CommandResetOnDisconnect: number;
+  public _CommandPingPong: number;
+  public _CommandVCC: number;
+  public _CommandSleepSeconds: number;
+  public _CommandSleepMinute: number;
+  public _CommandSleepIoTrigger: number;
 
   constructor() {
     super();
@@ -54,8 +50,8 @@ class WSCommandSystem extends WSCommand {
   }
 
   public wait(params: any) {
-    const msec: any = params.wait;
-    const buf: any = new Uint8Array([msec >> 8, msec]);
+    const msec = params.wait;
+    const buf = new Uint8Array([msec >> 8, msec]);
     this.sendCommand(this._CommandWait, buf);
   }
 
@@ -64,10 +60,10 @@ class WSCommandSystem extends WSCommand {
   }
 
   public ping(params: any) {
-    const unixtime: any = new Date().getTime();
-    const buf: any = new Uint8Array(params.ping.key.length + 8);
-    const upper: any = Math.floor(unixtime / Math.pow(2, 32));
-    const lower: any = unixtime - upper * Math.pow(2, 32);
+    const unixtime = new Date().getTime();
+    const buf = new Uint8Array(params.ping.key.length + 8);
+    const upper = Math.floor(unixtime / Math.pow(2, 32));
+    const lower = unixtime - upper * Math.pow(2, 32);
     buf[0] = upper >> (8 * 3);
     buf[1] = upper >> (8 * 2);
     buf[2] = upper >> (8 * 1);
@@ -84,17 +80,17 @@ class WSCommandSystem extends WSCommand {
   }
 
   public resetOnDisconnect(mustReset: any) {
-    const buf: any = new Uint8Array([mustReset ? 1 : 0]);
+    const buf = new Uint8Array([mustReset ? 1 : 0]);
     this.sendCommand(this._CommandResetOnDisconnect, buf);
   }
 
   public parseFromJson(json: any) {
-    const module: any = json.system;
+    const module = json.system;
     if (module === undefined) {
       return;
     }
 
-    const schemaData: any = [
+    const schemaData = [
       { uri: '/request/system/reboot', onValid: this.reboot },
       { uri: '/request/system/reset', onValid: this.reset },
       { uri: '/request/system/wait', onValid: this.wait },
@@ -108,7 +104,7 @@ class WSCommandSystem extends WSCommand {
       { uri: '/request/system/sleepMinute', onValid: this.sleepMinute },
       { uri: '/request/system/sleepIoTrigger', onValid: this.sleepIoTrigger },
     ];
-    const res: any = this.validateCommandSchema(schemaData, module, 'system');
+    const res = this.validateCommandSchema(schemaData, module, 'system');
 
     if (res.valid === 0) {
       if (res.invalidButLike.length > 0) {
@@ -121,15 +117,15 @@ class WSCommandSystem extends WSCommand {
 
   public pong(objToSend: any, payload: any) {
     objToSend.system = objToSend.system || {};
-    const pongServerTime: any = new Date().getTime();
+    const pongServerTime = new Date().getTime();
 
     if (payload.length >= 16) {
       payload = Buffer.from(payload);
-      const obnizTime: any =
+      const obnizTime =
         payload.readUIntBE(0, 4) * Math.pow(2, 32) + payload.readUIntBE(4, 4);
-      const pingServerTime: any =
+      const pingServerTime =
         payload.readUIntBE(8, 4) * Math.pow(2, 32) + payload.readUIntBE(12, 4);
-      const key: any = [];
+      const key = [];
       for (let i = 16; i < payload.length; i++) {
         key.push(payload[i]);
       }
@@ -146,11 +142,11 @@ class WSCommandSystem extends WSCommand {
     }
   }
 
-  public notifyFromBinary(objToSend: any, func: any, payload: any) {
+  public notifyFromBinary(objToSend: any, func: number, payload: Uint8Array) {
     switch (func) {
       case this._CommandVCC:
         if (payload.byteLength === 3) {
-          let value: any = (payload[1] << 8) + payload[2];
+          let value = (payload[1] << 8) + payload[2];
           value = value / 100.0;
           this.envelopWarning(objToSend, 'debug', {
             message: `Low Voltage ${value}v. connect obniz to more powerful USB.`,
@@ -170,25 +166,25 @@ class WSCommandSystem extends WSCommand {
   }
 
   public sleepSeconds(params: any) {
-    const sec: any = params.sleep_seconds;
-    const buf: any = new Uint8Array([sec >> 8, sec]);
+    const sec = params.sleep_seconds;
+    const buf = new Uint8Array([sec >> 8, sec]);
     this.sendCommand(this._CommandSleepSeconds, buf);
   }
 
   public sleepMinute(params: any) {
-    const minute: any = params.sleep_minute;
-    const buf: any = new Uint8Array([minute >> 8, minute]);
+    const minute = params.sleep_minute;
+    const buf = new Uint8Array([minute >> 8, minute]);
     this.sendCommand(this._CommandSleepMinute, buf);
   }
 
   public sleepIoTrigger(params: any) {
-    let trigger: any = params.sleep_io_trigger;
+    let trigger = params.sleep_io_trigger;
     if (trigger === true) {
       trigger = 1;
     } else {
       trigger = 0;
     }
-    const buf: any = new Uint8Array([trigger]);
+    const buf = new Uint8Array([trigger]);
     this.sendCommand(this._CommandSleepIoTrigger, buf);
   }
 }

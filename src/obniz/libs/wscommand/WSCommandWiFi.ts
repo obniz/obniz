@@ -6,11 +6,8 @@ import JsonBinaryConverter from './jsonBinaryConverter';
 import WSCommand from './WSCommand';
 
 class WSCommandWiFi extends WSCommand {
-  public module: any;
-  public _CommandScan: any;
-  public sendCommand: any;
-  public validateCommandSchema: any;
-  public WSCommandNotFoundError: any;
+  public module: number;
+  public _CommandScan: number;
 
   constructor() {
     super();
@@ -24,13 +21,13 @@ class WSCommandWiFi extends WSCommand {
   }
 
   public parseFromJson(json: any) {
-    const module: any = json.wifi;
+    const module = json.wifi;
     if (module === undefined) {
       return;
     }
 
-    const schemaData: any = [{ uri: '/request/wifi/scan', onValid: this.scan }];
-    const res: any = this.validateCommandSchema(schemaData, module, 'wifi');
+    const schemaData = [{ uri: '/request/wifi/scan', onValid: this.scan }];
+    const res = this.validateCommandSchema(schemaData, module, 'wifi');
 
     if (res.valid === 0) {
       if (res.invalidButLike.length > 0) {
@@ -41,7 +38,7 @@ class WSCommandWiFi extends WSCommand {
     }
   }
 
-  public notifyFromBinary(objToSend: any, func: any, payload: any) {
+  public notifyFromBinary(objToSend: any, func: number, payload: Uint8Array) {
     switch (func) {
       case this._CommandScan: {
         enum ScanState {

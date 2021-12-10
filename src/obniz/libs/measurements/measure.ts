@@ -133,7 +133,7 @@ export default class ObnizMeasure extends ComponentAbstract {
    * @param params
    */
   public echo(params: ObnizMeasureOptions) {
-    const err: any = ObnizUtil._requiredKeys(params, [
+    const err = ObnizUtil._requiredKeys(params, [
       'io_pulse',
       'pulse',
       'pulse_width',

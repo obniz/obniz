@@ -27,7 +27,7 @@ class WSCommandDirective extends WSCommand_1.default {
         const nameArray = util_1.default.string2dataArray(params.animation.name);
         let frame;
         let offset = 0;
-        if (semver.lt(this._hw.firmware, '2.0.0')) {
+        if (semver.lt(this._hw.firmware || '1.0.0', '2.0.0')) {
             // < 2.0.0
             frame = new Uint8Array(1 + nameArray.length + 1);
             // name //
