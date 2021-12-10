@@ -384,6 +384,13 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
      */
     _runUserCreatedFunction(func?: (..._args: any) => any, ...args: any[]): any;
     /**
+     * Sets the execution interval of onLoop function.
+     * Changes will be reflected after the next onloop is executed.
+     *
+     * @param interval interval of execution in milliseconds.
+     */
+    setLoopInterval(interval: number): void;
+    /**
      * Set onloop function. Use onloop property instead. This is deprecated function.
      *
      * @param callback
