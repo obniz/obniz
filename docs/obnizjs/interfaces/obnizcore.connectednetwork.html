@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ObnizPartsBleInfo | obniz</title>
+	<title>ConnectedNetwork | obniz</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -59,10 +59,10 @@
 					<a href="../modules/obnizcore.html">ObnizCore</a>
 				</li>
 				<li>
-					<a href="obnizcore.obnizpartsbleinfo.html">ObnizPartsBleInfo</a>
+					<a href="obnizcore.connectednetwork.html">ConnectedNetwork</a>
 				</li>
 			</ul>
-			<h1>Interface ObnizPartsBleInfo</h1>
+			<h1>Interface ConnectedNetwork</h1>
 		</div>
 	</div>
 </header>
@@ -73,7 +73,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">ObnizPartsBleInfo</span>
+						<span class="target">ConnectedNetwork</span>
 					</li>
 				</ul>
 			</section>
@@ -84,8 +84,12 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.obnizpartsbleinfo.html#datasheet" class="tsd-kind-icon">datasheet</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.obnizpartsbleinfo.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.connectednetwork.html#global_ip" class="tsd-kind-icon">global_<wbr>ip</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.connectednetwork.html#local_ip" class="tsd-kind-icon">local_<wbr>ip</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.connectednetwork.html#net" class="tsd-kind-icon">net</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.connectednetwork.html#online_at" class="tsd-kind-icon">online_<wbr>at</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.connectednetwork.html#wifi" class="tsd-kind-icon">wifi</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.connectednetwork.html#wifimesh" class="tsd-kind-icon">wifimesh</a></li>
 							</ul>
 						</section>
 					</div>
@@ -94,24 +98,94 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="datasheet" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> datasheet</h3>
-					<div class="tsd-signature tsd-kind-icon">datasheet<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<a name="global_ip" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> global_<wbr>ip</h3>
+					<div class="tsd-signature tsd-kind-icon">global_<wbr>ip<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/ObnizPartsBleInterface.ts:12</li>
+							<li>Defined in src/obniz/ObnizConnection.ts:56</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Global IP if exist</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="name" class="tsd-anchor"></a>
-					<h3>name</h3>
-					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="local_ip" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> local_<wbr>ip</h3>
+					<div class="tsd-signature tsd-kind-icon">local_<wbr>ip<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/ObnizPartsBleInterface.ts:11</li>
+							<li>Defined in src/obniz/ObnizConnection.ts:51</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Local IP if exist</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="net" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> net</h3>
+					<div class="tsd-signature tsd-kind-icon">net<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/ObnizConnection.ts:46</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Current connected network type. Defined in setting json</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="online_at" class="tsd-anchor"></a>
+					<h3>online_<wbr>at</h3>
+					<div class="tsd-signature tsd-kind-icon">online_<wbr>at<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/ObnizConnection.ts:41</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Epoch Unix Timestamp (seconds) at device become online on the cloud</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="wifi" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> wifi</h3>
+					<div class="tsd-signature tsd-kind-icon">wifi<span class="tsd-signature-symbol">:</span> <a href="obnizcore.connectednetworkwifi.html" class="tsd-signature-type">ConnectedNetworkWiFi</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/ObnizConnection.ts:61</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Wi-Fi information when net is wirelesslan</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="wifimesh" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> wifimesh</h3>
+					<div class="tsd-signature tsd-kind-icon">wifimesh<span class="tsd-signature-symbol">:</span> <a href="obnizcore.connectednetworkwifimesh.html" class="tsd-signature-type">ConnectedNetworkWiFiMESH</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/ObnizConnection.ts:66</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Wi-Fi MESH information when net is wifimesh</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -173,9 +247,33 @@
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="../classes/obnizcore.obnizutil.html" class="tsd-kind-icon">Obniz<wbr>Util</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="obnizcore.connectednetwork.html" class="tsd-kind-icon">Connected<wbr>Network</a>
+						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.connectednetwork.html#global_ip" class="tsd-kind-icon">global_<wbr>ip</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.connectednetwork.html#local_ip" class="tsd-kind-icon">local_<wbr>ip</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.connectednetwork.html#net" class="tsd-kind-icon">net</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.connectednetwork.html#online_at" class="tsd-kind-icon">online_<wbr>at</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.connectednetwork.html#wifi" class="tsd-kind-icon">wifi</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.connectednetwork.html#wifimesh" class="tsd-kind-icon">wifimesh</a>
+							</li>
+						</ul>
 					</li>
+				</ul>
+				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="obnizcore.connectednetworkwifi.html" class="tsd-kind-icon">Connected<wbr>Network<wbr>WiFi</a>
 					</li>
@@ -188,21 +286,9 @@
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="obnizcore.obnizoptions.html" class="tsd-kind-icon">Obniz<wbr>Options</a>
 					</li>
-				</ul>
-				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="obnizcore.obnizpartsbleinfo.html" class="tsd-kind-icon">Obniz<wbr>Parts<wbr>Ble<wbr>Info</a>
-						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="obnizcore.obnizpartsbleinfo.html#datasheet" class="tsd-kind-icon">datasheet</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="obnizcore.obnizpartsbleinfo.html#name" class="tsd-kind-icon">name</a>
-							</li>
-						</ul>
 					</li>
-				</ul>
-				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="obnizcore.obnizpartsinfo.html" class="tsd-kind-icon">Obniz<wbr>Parts<wbr>Info</a>
 					</li>
