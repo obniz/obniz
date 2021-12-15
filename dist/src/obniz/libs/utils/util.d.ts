@@ -9,7 +9,7 @@ declare class ObnizUtil {
      * @param keys
      * @private
      */
-    static _keyFilter(params: any, keys: any): any;
+    static _keyFilter(params: any, keys: any): {};
     /**
      * @ignore
      * @return {String} key name of not found.
@@ -20,13 +20,13 @@ declare class ObnizUtil {
      *
      * @param data
      */
-    static dataArray2string(data: number[]): string | null;
+    static dataArray2string(data: Uint8Array | number[]): string | null;
     /**
      * convert from string to data array
      *
      * @param str
      */
-    static string2dataArray(str: string): any[];
+    static string2dataArray(str: string): number[];
     /**
      * @ignore
      * @param data

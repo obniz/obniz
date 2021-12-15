@@ -88,7 +88,7 @@ export default class PeripheralIO extends ComponentAbstract {
     if (typeof drive !== 'string') {
       throw new Error('please specify drive methods in string');
     }
-    let output_type: any = '';
+    let output_type = '';
     switch (drive) {
       case '5v':
         output_type = 'push-pull5v';

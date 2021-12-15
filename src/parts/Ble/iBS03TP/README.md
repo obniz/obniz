@@ -1,55 +1,37 @@
 # iBS03TP
 
-waterproof temperature sensor made by INGICS.
-
-Support device
-
-- iBS03TP
+Waterproof temperature sensor by INGICS.
 
 ![](image.jpg)
 
+## Available modes
 
-## getPartsClass(name)
+- Beacon mode
 
-```javascript
-// Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03TP');
-```
-
-## isDevice(BleRemotePeripheral)
-
-Returns true if a device was found.
-
-```javascript
-// Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03TP');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (IBS03.isDevice(p)) {
-        let data = IBS03.getData(p);
-        console.log(data);
-    }
-};
-await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
-```
-
-## getData(BleRemotePeripheral)
-
-Returns device information if found. Returns Null if not found.
+## Beacon data (getData())
 
 - battery : Battery voltage
-- temperature : temperature(℃)
+- button : True when button is pressed
+- moving : True when moving
+- hall_sensor : True when the magnet approaches
+- temperature : Body side temperature (℃)
+- probe_temperature : Probe side temperature (℃)
 
+## Use case
 
 ```javascript
-// Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03TP');
+// Javascript
+const iBS03TP = Obniz.getPartsClass('iBS03TP');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (IBS03.isDevice(p)) {
-        let data = IBS03.getData(p);
-        console.log(data);
-    }
+obniz.ble.scan.onfind = (peripheral) => {
+  // Get operation mode, it becomes null when not iBS03TP
+  const mode = iBS03TP.getDeviceMode(peripheral);
+  if (mode) {
+    // Generate an instance
+    const device = new iBS03TP(peripheral, mode);
+    // Get data and output to the console
+    console.log(device.getData());
+  }
 };
 await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```

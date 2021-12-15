@@ -118,7 +118,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * This sets a callback function to receive notify when it comes from periperal.
      * To receive notify, you need to register on CCCD Descriptor(0x2902).
      *
-     * More infomation of BLE/CCCD is available at [bluetooth.com](https://www.bluetooth.com/specifications/gatt/descriptors/).
+     * More information of BLE/CCCD is available at [bluetooth.com](https://www.bluetooth.com/specifications/gatt/descriptors/).
      *
      * ```javascript
      * await obniz.ble.initWait();
@@ -188,7 +188,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
      *
      * char.onregisternotify = function() {
-     *  console.log("register finshed")
+     *  console.log("register finished")
      *  char.unregisterNotify();
      * }
      *
@@ -222,9 +222,9 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      *
      * var peripheral = await obniz.ble.scan.startOneWait(target);
      * await peripheral.connectWait();
-     * let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
+     * let char = peripheral.getService('fff0').getCharacteristic('fff1');
      *
-     * await char.registerNotifyWait( function(data){
+     * await char.registerNotifyWait(function(data){
      *   console.log("notify with data " + data.join(','));
      * });
      * await char.unregisterNotifyWait();
@@ -238,6 +238,32 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
         };
         await this.service.peripheral.obnizBle.centralBindings.notifyWait(this.service.peripheral.address, this.service.uuid, this.uuid, false);
         this._runUserCreatedFunction(this.onunregisternotify);
+    }
+    /**
+     * Wait for notification and return data when it arrives.
+     *
+     * ```javascript
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   localName: "obniz-notify"
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * await peripheral.connectWait();
+     * let char = peripheral.getService('fff0').getCharacteristic('fff1');
+     *
+     * let data = await c.getNotifyWait();
+     * console.log("notify with data " + data.join(','));
+     * ```
+     *
+     * @returns data from notification of the device
+     */
+    async getNotifyWait() {
+        return new Promise((resolve) => {
+            this.registerNotifyWait((data) => {
+                resolve(data);
+            });
+        });
     }
     /**
      * Use readWait() instead from 3.5.0
@@ -323,7 +349,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * Discover services.
      *
      * If connect setting param 'autoDiscovery' is true(default),
-     * services are automatically disvocer on connection established.
+     * services are automatically discover on connection established.
      *
      *
      * ```javascript

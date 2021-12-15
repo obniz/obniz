@@ -21,6 +21,8 @@ export default class HW {
       return require('./encored.json');
     } else if (hw === 'encored_lte') {
       return require('./encored_lte.json');
+    } else if (hw === 'cc3235mod') {
+      return require('./cc3235mod.json');
     } else {
       // default
       return require('./esp32w.json');

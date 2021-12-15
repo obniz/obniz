@@ -15,6 +15,11 @@ export interface DCMotorOptions {
   back: number;
 }
 
+export interface DCMotorStatus {
+  direction: boolean | null;
+  power: number;
+}
+
 export default class DCMotor implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
@@ -24,89 +29,107 @@ export default class DCMotor implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public status: any;
-  public pwm1_io_num: any;
+  public status: DCMotorStatus;
   public params: any;
-  public pwm2_io_num: any;
 
-  public pwm1!: PeripheralPWM;
-  public pwm2!: PeripheralPWM;
+  public forward_io_num: any;
+  public back_io_num: any;
+
+  public pwm!: PeripheralPWM;
+  public obniz!: Obniz;
 
   constructor() {
     this.keys = ['forward', 'back'];
     this.requiredKeys = ['forward', 'back'];
+    this.status = {
+      direction: null,
+      power: 30,
+    };
   }
 
   public wired(obniz: Obniz) {
-    this.status = {
-      direction: null,
-      power: null,
-    };
+    this.obniz = obniz;
+    this.forward_io_num = this.params.forward;
+    this.back_io_num = this.params.back;
 
-    this.pwm1_io_num = this.params.forward;
-    this.pwm2_io_num = this.params.back;
-
-    this.pwm1 = obniz.getFreePwm();
-    this.pwm1.start({ io: this.pwm1_io_num });
-    this.pwm1.freq(100000);
-    this.pwm2 = obniz.getFreePwm();
-    this.pwm2.start({ io: this.pwm2_io_num });
-    this.pwm2.freq(100000);
-    this.power(30);
+    this.pwm = obniz.getFreePwm();
+    this.setPwmGndPin(this.forward_io_num, this.back_io_num);
   }
 
   // Module functions
 
-  public forward() {
+  /**
+   * Start rotation to the forward direction.
+   */
+  public forward(): void {
     this.move(true);
   }
 
-  public reverse() {
+  /**
+   * Start rotation to the reverse direction.
+   */
+  public reverse(): void {
     this.move(false);
   }
 
-  public stop() {
+  /**
+   * Stop rotation.
+   */
+  public stop(): void {
     if (this.status.direction === null) {
       return;
     }
     this.status.direction = null;
-    this.pwm1.duty(0);
-    this.pwm2.duty(0);
+    this.pwm.duty(0);
   }
 
-  public move(forward: any) {
-    if (forward) {
-      if (this.status.direction === true) {
+  /**
+   * Start rotation by specifying rotation direction.
+   *
+   * @param forward true is forward rotation, and false is reverse rotation.
+   */
+  public move(forward?: boolean): void {
+    if (forward === undefined) {
+      if (this.status.direction === null) {
         return;
       }
-      this.status.direction = true;
     } else {
-      if (this.status.direction === false) {
+      if (this.status.direction === forward) {
         return;
       }
-      this.status.direction = false;
+      this.status.direction = forward;
     }
-    const power: any = this.power();
-    this.power(0);
-    this.power(power);
+
+    const pwm_io = this.status.direction
+      ? this.forward_io_num
+      : this.back_io_num;
+    const gnd_io = this.status.direction
+      ? this.back_io_num
+      : this.forward_io_num;
+
+    this.setPwmGndPin(pwm_io, gnd_io);
+    this.pwm.duty(this.status.power);
   }
 
-  public power(power?: any) {
-    if (power === undefined) {
-      return this.status.power;
-    }
+  /**
+   * Set the motor power.
+   *
+   * @param power Specify between 0 and 100.
+   */
+  public power(power: number): void {
     this.status.power = power;
-    if (this.status.direction === null) {
-      this.pwm1.duty(0);
-      this.pwm2.duty(0);
-      return;
+    if (this.status.direction !== null) {
+      this.pwm.duty(this.status.power);
     }
-    if (this.status.direction) {
-      this.pwm1.duty(power);
-      this.pwm2.duty(0);
-    } else {
-      this.pwm1.duty(0);
-      this.pwm2.duty(power);
-    }
+  }
+
+  private setPwmGndPin(pwm_io: number, gnd_io: number) {
+    this.pwm.start({ io: pwm_io });
+    this.pwm.freq(100000);
+    this.obniz.getIO(gnd_io).output(false);
+    this.obniz.display?.setPinNames(DCMotor.info().name, {
+      [this.forward_io_num]: 'forward',
+      [this.back_io_num]: 'back',
+    });
   }
 }

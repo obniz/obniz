@@ -25,7 +25,7 @@ class ObnizConnection extends eventemitter3_1.default {
         this._sendQueue = null;
         this._waitForLocalConnectReadyTimer = null;
         this._sendPool = null;
-        this._repeatInterval = 0;
+        this._repeatInterval = 100;
         this._nextLoopTimeout = null;
         this._nextPingTimeout = null;
         this._nextAutoConnectLoopTimeout = null;
@@ -387,6 +387,15 @@ class ObnizConnection extends eventemitter3_1.default {
             });
         }
         return promise;
+    }
+    /**
+     * Sets the execution interval of onLoop function.
+     * Changes will be reflected after the next onloop is executed.
+     *
+     * @param interval interval of execution in milliseconds.
+     */
+    setLoopInterval(interval) {
+        this._repeatInterval = interval;
     }
     /**
      * Set onloop function. Use onloop property instead. This is deprecated function.
@@ -771,8 +780,9 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     _handleWSCommand(wsObj) {
         if (wsObj.ready) {
-            this.firmware_ver = wsObj.obniz.firmware;
-            this.hw = wsObj.obniz.hw;
+            const wsObniz = wsObj.obniz;
+            this.firmware_ver = wsObniz.firmware;
+            this.hw = wsObniz.hw;
             if (!this.hw) {
                 this.hw = 'obnizb1';
             }
@@ -788,13 +798,16 @@ class ObnizConnection extends eventemitter3_1.default {
             if (this.options.reset_obniz_on_ws_disconnection) {
                 this.resetOnDisconnect(true);
             }
-            if (wsObj.obniz.metadata) {
+            if (wsObniz.metadata) {
                 try {
                     this.metadata = JSON.parse(wsObj.obniz.metadata);
                 }
                 catch (e) {
                     // ignore parsing error.
                 }
+            }
+            if (wsObniz.connected_network) {
+                this.connected_network = wsObniz.connected_network;
             }
             if (wsObj.local_connect && wsObj.local_connect.ip) {
                 this._localConnectIp = wsObj.local_connect.ip;
@@ -847,29 +860,30 @@ class ObnizConnection extends eventemitter3_1.default {
                 clearTimeout(this._nextLoopTimeout);
             }
             this._nextLoopTimeout = null;
-            if (this.connectionState === 'connected') {
-                try {
-                    if (typeof this.onloop === 'function') {
-                        await this.pingWait();
-                        const prom = this.onloop(this);
-                        if (prom instanceof Promise) {
-                            await prom;
-                        }
+            if (this.connectionState !== 'connected') {
+                return;
+            }
+            try {
+                if (typeof this.onloop === 'function') {
+                    // await this.pingWait();
+                    const prom = this.onloop(this);
+                    if (prom instanceof Promise) {
+                        await prom;
                     }
                 }
-                catch (e) {
-                    console.error(`obniz.js handled Exception inside of obniz.repeat() function`);
-                    console.error(e);
-                }
-                finally {
-                    if (this.connectionState === 'connected') {
-                        if (!this._nextLoopTimeout) {
-                            let interval = this._repeatInterval;
-                            if (typeof this.onloop !== 'function') {
-                                interval = 100;
-                            }
-                            this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), interval);
+            }
+            catch (e) {
+                console.error(`obniz.js handled Exception inside of obniz.onloop function`);
+                console.error(e);
+            }
+            finally {
+                if (this.connectionState === 'connected') {
+                    if (!this._nextLoopTimeout) {
+                        let interval = this._repeatInterval;
+                        if (typeof this.onloop !== 'function') {
+                            interval = 100;
                         }
+                        this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), interval);
                     }
                 }
             }

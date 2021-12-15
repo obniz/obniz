@@ -3,8 +3,6 @@ JpegCamera PTC06
 
 ![](image.jpg)
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/CYoMmMoa3ao" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-
 ```html
 <!-- HTML Example -->
 <html>
@@ -39,7 +37,7 @@ obniz.onconnect = async function () {
 connect PowerSupply and UART.
 cam_tx measn transmit from camera.
 
-We recommend to supply power to an arducam from other power resource.
+We recommend to supply power to an arducam from other power resource.  
 You should pay attention over current detection when using an obniz Board as poewr supply.
 Supply methods are
 
@@ -52,7 +50,7 @@ This document use io5 and io11 to supply a vcc.
 ![](wire.jpg)
 
 
-![](wired.png)
+![](wired-v2.png)
 **Please note that the arrangement depends on the product**
 
 ```Javascript
@@ -145,4 +143,18 @@ var cam = obniz.wired("JpegSerialCam", {vcc:0, cam_tx:1, cam_rx:2, gnd:3});
 await cam.startWait({baud: 38400});
 const jpegData = await cam.takeWait();
 document.getElementById("image").src = "data:image/png;base64," + cam.arrayToBase64(jpegData);
+```
+
+If you are running on node.js, you can use fs and Buffer to output to a file.  
+In the example below, `output.jpg` will be output.
+
+```Javascript
+obniz.io6.output(true);
+obniz.io9.output(false);
+var cam = obniz.wired("JpegSerialCam", {vcc:0, cam_tx:1, cam_rx:2, gnd:3});
+await cam.startWait({baud: 38400});
+const jpegData = await cam.takeWait();
+fs.writeFile("output.jpg", Buffer.from(cam.arrayToBase64(jpegData), "base64") , (err) => {
+  if (err) console.log(err);
+});
 ```

@@ -1,5 +1,5 @@
 # 2JCIE
-enviroment sensor made by OMRON. Battery powered. Temperature, Humidity, Brightness, UV, Air Pressure, Sound Level, Acceleration, VOC.
+environment sensor made by OMRON. Battery powered. Temperature, Humidity, Brightness, UV, Air Pressure, Sound Level, Acceleration, VOC.
 
 The 2JCIE-BL01 (bag shape) and 2JCIE-BU01 (USB connection) are available in two different shapes (and each has its mode). (Also, each of them has its mode.) The data that can be acquired and the corresponding functions are different for each of them, so please check before using them.
 
@@ -33,7 +33,7 @@ Get a data from advertisement
 - light: (lx)
 - uv_index: 
 - barometric_pressure: (hPa)
-- soud_noise: (dB)
+- sound_noise: (dB)
 - acceleration_x: 
 - acceleration_y: 
 - acceleration_z: 
@@ -45,7 +45,7 @@ Get a data from advertisement
 - relative_humidity: (%RH)
 - light: (lx)
 - barometric_pressure: (hPa)
-- soud_noise: (dB)
+- sound_noise: (dB)
 - etvoc: eTVOC(ppb)
 - eco2: CO2 (ppm)
 
@@ -64,14 +64,14 @@ await obniz.ble.scan.startWait();
 ```
 
 ```javascript
-// Example of "Rbt" pakcet
+// Example of "Rbt" packet
 {
     barometric_pressure: 1015.755
     eco2: 719
     etvoc: 48
     light: 241
     relative_humidity: 30.46
-    soud_noise: 77.52
+    sound_noise: 77.52
     temperature: 24.16
 }
 ```
@@ -182,11 +182,11 @@ The return format is below.
   relative_humidity: 46.46, //%RH
   light: 75, //lx
   uv_index: 0.02, 
-  barometric_pressure: 1010.4000000000001, // hPa
-  soud_noise: 39.42, //dB
+  barometric_pressure: 1010.4, // hPa
+  sound_noise: 39.42, //dB
   discomfort_index: 68.75,  
   heatstroke_risk_factor: 19,  //degC
-  battery_voltage: 30.12  // V
+  battery_voltage: 30.12  // mV
 }
 
 ```
@@ -224,8 +224,8 @@ The return format is below.
   temperature: 22.91,   //degC
   relative_humidity: 46.46, //%RH
   light: 75, //lx
-  barometric_pressure: 1010.4000000000001, // hPa
-  soud_noise: 39.42, //dB
+  barometric_pressure: 1010.4, // hPa
+  sound_noise: 39.42, //dB
   etvoc: 1463,	//ppb
   eco2: 2353	//ppm
 }
@@ -263,7 +263,7 @@ The return format is below.
 //example response
 {
   sequence_number: 0,
-  disconfort_index: 68.78,
+  discomfort_index: 68.78,
   heatstroke_risk_factor: 18.29, //degC
   vibration_information: "NONE",
   si_value: 0, //kine

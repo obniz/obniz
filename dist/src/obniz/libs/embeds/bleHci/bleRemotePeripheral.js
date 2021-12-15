@@ -17,6 +17,8 @@ const bleRemoteService_1 = __importDefault(require("./bleRemoteService"));
  */
 class BleRemotePeripheral {
     constructor(obnizBle, address) {
+        this.advertisingDataRows = {};
+        this.scanResponseDataRows = {};
         /**
          * @ignore
          */
@@ -38,6 +40,7 @@ class BleRemotePeripheral {
         this.obnizBle = obnizBle;
         this.address = address;
         this.connected = false;
+        this.connected_at = null;
         this.device_type = null;
         this.address_type = null;
         this.ble_event_type = null;
@@ -45,6 +48,8 @@ class BleRemotePeripheral {
         // this.adv_data = null;
         this.scan_resp = null;
         this.localName = null;
+        this.manufacturerSpecificData = null;
+        this.manufacturerSpecificDataInScanResponse = null;
         this.iBeacon = null;
         this._services = [];
         this.emitter = new eventemitter3_1.default();
@@ -173,12 +178,19 @@ class BleRemotePeripheral {
      *
      */
     async connectWait(setting) {
+        var _a;
+        if (this.connected && ((_a = setting) === null || _a === void 0 ? void 0 : _a.forceConnect) === false)
+            return;
         this._connectSetting = setting || {};
         this._connectSetting.autoDiscovery =
             this._connectSetting.autoDiscovery !== false;
+        this._connectSetting.mtuRequest =
+            this._connectSetting.mtuRequest === undefined
+                ? 256
+                : this._connectSetting.mtuRequest;
         await this.obnizBle.scan.endWait();
         try {
-            await this.obnizBle.centralBindings.connectWait(this.address, () => {
+            await this.obnizBle.centralBindings.connectWait(this.address, this._connectSetting.mtuRequest, () => {
                 if (this._connectSetting.pairingOption) {
                     this.setPairingOption(this._connectSetting.pairingOption);
                 }
@@ -192,6 +204,7 @@ class BleRemotePeripheral {
             throw e;
         }
         this.connected = true;
+        this.connected_at = new Date();
         try {
             if (this._connectSetting.autoDiscovery) {
                 await this.discoverAllHandlesWait();
@@ -420,6 +433,7 @@ class BleRemotePeripheral {
                 if (params.status === 'disconnected') {
                     const pre = this.connected;
                     this.connected = false;
+                    this.connected_at = null;
                     if (pre) {
                         this.obnizBle.Obniz._runUserCreatedFunction(this.ondisconnect, params.reason);
                         this.emitter.emit('disconnect', params.reason);
@@ -438,8 +452,8 @@ class BleRemotePeripheral {
         this._addServiceUuids(results, this.searchTypeVal(0x03), 16);
         this._addServiceUuids(results, this.searchTypeVal(0x04), 32);
         this._addServiceUuids(results, this.searchTypeVal(0x05), 32);
-        this._addServiceUuids(results, this.searchTypeVal(0x06), 64);
-        this._addServiceUuids(results, this.searchTypeVal(0x07), 64);
+        this._addServiceUuids(results, this.searchTypeVal(0x06), 128);
+        this._addServiceUuids(results, this.searchTypeVal(0x07), 128);
         return results;
     }
     /**
@@ -497,59 +511,58 @@ class BleRemotePeripheral {
         this.obnizBle.centralBindings.setPairingOption(this.address, options);
     }
     analyseAdvertisement() {
-        if (!this.advertise_data_rows) {
-            this.advertise_data_rows = [];
-            if (this.adv_data) {
-                for (let i = 0; i < this.adv_data.length; i++) {
-                    const length = this.adv_data[i];
-                    const arr = new Array(length);
-                    for (let j = 0; j < length; j++) {
-                        arr[j] = this.adv_data[i + j + 1];
-                    }
-                    this.advertise_data_rows.push(arr);
-                    i = i + length;
+        if (this.advertise_data_rows)
+            return;
+        this.advertise_data_rows = [];
+        if (this.adv_data) {
+            for (let i = 0; i < this.adv_data.length; i++) {
+                const length = this.adv_data[i];
+                const arr = new Array(length);
+                for (let j = 0; j < length; j++) {
+                    arr[j] = this.adv_data[i + j + 1];
                 }
+                this.advertise_data_rows.push(arr);
+                this.advertisingDataRows[this.adv_data[i + 1]] = this.adv_data.slice(i + 2, i + length + 1);
+                i = i + length;
             }
-            if (this.scan_resp) {
-                for (let i = 0; i < this.scan_resp.length; i++) {
-                    const length = this.scan_resp[i];
-                    const arr = new Array(length);
-                    for (let j = 0; j < length; j++) {
-                        arr[j] = this.scan_resp[i + j + 1];
-                    }
-                    this.advertise_data_rows.push(arr);
-                    i = i + length;
-                }
-            }
-            this.setLocalName();
-            this.setIBeacon();
         }
+        if (this.scan_resp) {
+            for (let i = 0; i < this.scan_resp.length; i++) {
+                const length = this.scan_resp[i];
+                const arr = new Array(length);
+                for (let j = 0; j < length; j++) {
+                    arr[j] = this.scan_resp[i + j + 1];
+                }
+                this.advertise_data_rows.push(arr);
+                this.scanResponseDataRows[this.scan_resp[i + 1]] = this.scan_resp.slice(i + 2, i + length + 1);
+                i = i + length;
+            }
+        }
+        this.setLocalName();
+        this.setManufacturerSpecificData();
+        this.setIBeacon();
     }
-    searchTypeVal(type) {
+    searchTypeVal(type, fromScanResponseData = false) {
         this.analyseAdvertisement();
-        for (let i = 0; i < this.advertise_data_rows.length; i++) {
-            if (this.advertise_data_rows[i][0] === type) {
-                const results = [].concat(this.advertise_data_rows[i]);
-                results.shift();
-                return results;
-            }
-        }
-        return undefined;
+        if (this.advertisingDataRows[type] && !fromScanResponseData)
+            return this.advertisingDataRows[type];
+        else if (this.scanResponseDataRows[type])
+            return this.scanResponseDataRows[type];
+        else
+            return undefined;
     }
     setLocalName() {
-        let data = this.searchTypeVal(0x09);
-        if (!data) {
-            data = this.searchTypeVal(0x08);
-        }
-        if (!data) {
-            this.localName = null;
-        }
-        else {
-            this.localName = String.fromCharCode.apply(null, data);
-        }
+        var _a;
+        const data = (_a = this.searchTypeVal(0x09), (_a !== null && _a !== void 0 ? _a : this.searchTypeVal(0x08)));
+        this.localName = data ? String.fromCharCode.apply(null, data) : null;
+    }
+    setManufacturerSpecificData() {
+        var _a, _b;
+        this.manufacturerSpecificData = (_a = this.searchTypeVal(0xff), (_a !== null && _a !== void 0 ? _a : null));
+        this.manufacturerSpecificDataInScanResponse = (_b = this.searchTypeVal(0xff, true), (_b !== null && _b !== void 0 ? _b : null));
     }
     setIBeacon() {
-        const data = this.searchTypeVal(0xff);
+        const data = this.manufacturerSpecificData;
         if (!data ||
             data[0] !== 0x4c ||
             data[1] !== 0x00 ||

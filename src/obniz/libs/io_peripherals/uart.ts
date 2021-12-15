@@ -124,7 +124,7 @@ export default class PeripheralUART extends ComponentAbstract {
 
     this.on('/response/uart/receive', (obj) => {
       if (this.onreceive) {
-        const string: any = this.tryConvertString(obj.data);
+        const string = this.tryConvertString(obj.data);
         this.Obniz._runUserCreatedFunction(this.onreceive, obj.data, string);
       } else {
         if (!this.received) {
@@ -144,7 +144,7 @@ export default class PeripheralUART extends ComponentAbstract {
    * @param params
    */
   public start(params: PeripheralUARTOptions) {
-    const err: any = ObnizUtil._requiredKeys(params, ['tx', 'rx']);
+    const err = ObnizUtil._requiredKeys(params, ['tx', 'rx']);
     if (err) {
       throw new Error(
         "uart start param '" + err + "' required, but not found "
@@ -165,7 +165,7 @@ export default class PeripheralUART extends ComponentAbstract {
       'gnd',
     ]);
 
-    const ioKeys: any = ['rx', 'tx', 'rts', 'cts', 'gnd'];
+    const ioKeys = ['rx', 'tx', 'rts', 'cts', 'gnd'];
     for (const key of ioKeys) {
       if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
         throw new Error("uart start param '" + key + "' are to be valid io no");
@@ -201,7 +201,7 @@ export default class PeripheralUART extends ComponentAbstract {
     }
 
     const obj: any = {};
-    const sendParams: any = ObnizUtil._keyFilter(this.params, [
+    const sendParams = ObnizUtil._keyFilter(this.params, [
       'tx',
       'rx',
       'baud',
@@ -250,7 +250,7 @@ export default class PeripheralUART extends ComponentAbstract {
     if (!this.used) {
       throw new Error(`uart${this.id} is not started`);
     }
-    let send_data: any = null;
+    let send_data = null;
     if (data === undefined) {
       return;
     }
@@ -262,7 +262,7 @@ export default class PeripheralUART extends ComponentAbstract {
     } else if (data.constructor === Array) {
       send_data = data;
     } else if (typeof data === 'string') {
-      const buf: any = Buffer.from(data);
+      const buf = Buffer.from(data);
       send_data = [...buf];
     }
     const obj: any = {};
@@ -341,7 +341,7 @@ export default class PeripheralUART extends ComponentAbstract {
    * @return received data. If not exist data, return null.
    */
   public readByte(): number | null {
-    const results: any = [];
+    const results = [];
     if (this.isDataExists()) {
       return results.unshift();
     }
@@ -368,7 +368,7 @@ export default class PeripheralUART extends ComponentAbstract {
   public readText(): string | null {
     let string: string | null = null;
     if (this.isDataExists()) {
-      const data: any = this.readBytes();
+      const data = this.readBytes();
       string = this.tryConvertString(data);
     }
     this.received = [];

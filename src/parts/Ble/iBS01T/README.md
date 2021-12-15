@@ -1,58 +1,37 @@
 # iBS01T
 
-temperature & humiditys sensor made by INGICS.
-
-Support device
-
-- iBS01T
+Temperature & humidity sensor by INGICS
 
 ![](image.jpg)
 
+## Available modes
 
-## getPartsClass(name)
+- Beacon mode
+
+## Beacon data (getData())
+
+- battery: Battery voltage
+- button: True when you press the button
+- moving: True when moved
+- reed: True when reed bit 1
+- temperature: Temperature (℃)
+- humidity: Humidity (%)
+
+## Use case
 
 ```javascript
-// Javascript Example
-const IBS01T = Obniz.getPartsClass('iBS01T');
-```
-
-## isDevice(BleRemotePeripheral)
-
-Returns true if a device was found.
-
-```javascript
-// Javascript Example
-let IBS01T = Obniz.getPartsClass('iBS01T');
+// Javascript
+const iBS01T = Obniz.getPartsClass('iBS01T');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (IBS01T.isDevice(p)) {
-        let data = IBS01T.getData(p);
-        console.log(data);
-    }
-};
-await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
-```
-
-## getData(BleRemotePeripheral)
-
-Returns device information if found. Returns Null if not found.
-
-- battery : Battery voltage
-- button : True when button is pressed
-- moving : True when moving
-- reed : True when reed bit 1
-- temperature : temperature(℃)
-- humidity : humidity (%)
-
-```javascript
-// Javascript Example
-let IBS01T = Obniz.getPartsClass('iBS01T');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (IBS01T.isDevice(p)) {
-        let data = IBS01T.getData(p);
-        console.log(data);
-    }
+obniz.ble.scan.onfind = (peripheral) => {
+  // Get operation mode, it becomes null when not iBS01T
+  const mode = iBS01T.getDeviceMode(peripheral);
+  if (mode) {
+    // Generate an instance
+    const device = new iBS01T(peripheral, mode);
+    // Get data and output to the console
+    console.log(device.getData());
+  }
 };
 await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```

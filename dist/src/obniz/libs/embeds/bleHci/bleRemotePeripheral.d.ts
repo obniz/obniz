@@ -63,32 +63,29 @@ export interface BleConnectSetting {
      */
     autoDiscovery?: boolean;
     /**
-     * Piring Option
+     * Pairing Option
      *
-     * true : auto discover services/characteristics/descriptors on connection established.
-     * false : don't discover automatically. Please manually.
-     *
-     * Default is true;
-     *
-     * If set false, you should manually discover services/characteristics/descriptors;
-     *
-     * ```javascript
-     * // Javascript Example
-     * await obniz.ble.initWait({});
-     * obniz.ble.scan.onfind = function(peripheral){
-     *   if(peripheral.localName == "my peripheral"){
-     *      await peripheral.connectWait({autoDiscovery:false});
-     *      console.log("success");
-     *      await peripheral.discoverAllServicesWait(); //manually discover
-     *      let service = peripheral.getService("1800");
-     *
-     *   }
-     * }
-     * await obniz.ble.scan.startWait();
-     * ```
-     *
+     * keys: Key acquired when pairing previously.
+     * onPairedCallback: A function that contains keys called when pairing is successful.
      */
     pairingOption?: BlePairingOptions;
+    /**
+     * Force Connect
+     *
+     * If you want to try to connect even when the connected flag is true.
+     *
+     * Default: true
+     */
+    forceConnect?: boolean;
+    /**
+     * Request mtu value.
+     *
+     * If you want to try exchange specific mtu value, set this value.
+     * If set null, skip mtu exchange sequence.
+     *
+     * Default : 256
+     */
+    mtuRequest?: null | number;
 }
 /**
  * Pairing options
@@ -188,6 +185,12 @@ export default class BleRemotePeripheral {
      */
     connected: boolean;
     /**
+     * This returns connection completion time with a connected state.
+     *
+     * If not connected, returns null.
+     */
+    connected_at: Date | null;
+    /**
      *
      */
     device_type: BleDeviceType | null;
@@ -265,6 +268,8 @@ export default class BleRemotePeripheral {
      * ```
      */
     localName: string | null;
+    manufacturerSpecificData: number[] | null;
+    manufacturerSpecificDataInScanResponse: number[] | null;
     /**
      * This returns iBeacon data if the peripheral has it. If none, it will return null.
      *
@@ -323,8 +328,15 @@ export default class BleRemotePeripheral {
     /**
      * Raw data of advertisement
      *
+     * @deprecated
      */
-    advertise_data_rows: any;
+    advertise_data_rows: number[][] | null;
+    protected advertisingDataRows: {
+        [key: number]: number[];
+    };
+    protected scanResponseDataRows: {
+        [key: number]: number[];
+    };
     /**
      * @ignore
      */
@@ -596,8 +608,9 @@ export default class BleRemotePeripheral {
     pairingWait(options?: BlePairingOptions): Promise<string>;
     setPairingOption(options: BlePairingOptions): void;
     protected analyseAdvertisement(): void;
-    protected searchTypeVal(type: any): any[] | undefined;
+    protected searchTypeVal(type: number, fromScanResponseData?: boolean): number[] | undefined;
     protected setLocalName(): void;
+    protected setManufacturerSpecificData(): void;
     protected setIBeacon(): void;
     protected _addServiceUuids(results: UUID[], data: any, bit: any): void;
 }

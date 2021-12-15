@@ -24,6 +24,9 @@ export type BleBinary = number[];
 export interface BleScanTarget {
   /**
    * Service UUID for scan. Provide.
+   *
+   * up to 20 UUIDs (recommended)
+   *
    * Attention: iBeacon uuid is not service uuid. If you want to filter iBeacon. use binary filter
    */
   uuids?: UUID[];
@@ -266,6 +269,12 @@ export default class BleScan {
     settings: BleScanSetting = {}
   ) {
     this.obnizBle.warningIfNotInitialize();
+    if (this.isContainingBleScanSettingProperty(target)) {
+      this.obnizBle.Obniz.warning({
+        alert: 'warning',
+        message: `Unexpected arguments. It might be contained the second argument keys. Please check object keys and order of 'startWait()' / 'startOneWait()' / 'startAllWait()' arguments. `,
+      });
+    }
     this.state = 'starting';
 
     const timeout: number | null =
@@ -277,9 +286,16 @@ export default class BleScan {
       settings.waitBothAdvertisementAndScanResponse !== false;
     this.scanSettings = settings;
 
+    this.scanTarget = {};
     target = target || {};
     this.scanTarget.binary = target.binary;
-    this.scanTarget.deviceAddress = target.deviceAddress;
+    if (target && target.deviceAddress) {
+      this.scanTarget.deviceAddress = this._arrayWrapper(
+        target.deviceAddress
+      ).map((elm: UUID) => {
+        return BleHelper.deviceAddressFilter(elm);
+      });
+    }
     this.scanTarget.localName = target.localName;
     this.scanTarget.localNamePrefix = target.localNamePrefix;
     this.scanTarget.uuids = [];
@@ -768,6 +784,21 @@ export default class BleScan {
       if (deviceAddress === peripheral.address) {
         return true;
       }
+    }
+    return false;
+  }
+
+  private isContainingBleScanSettingProperty(arg: any): arg is BleScanSetting {
+    if (arg === null) {
+      return false;
+    } else if (
+      'duration' in arg ||
+      'duplicate' in arg ||
+      'activeScan' in arg ||
+      'filterOnDevice' in arg ||
+      'waitBothAdvertisementAndScanResponse' in arg
+    ) {
+      return true;
     }
     return false;
   }

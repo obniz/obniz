@@ -359,14 +359,12 @@ describe('obniz.index', function () {
 
     this.obniz.onloop = async () => {
       called = true;
-      await wait(1000);
     };
 
     testUtil.connectObniz(this.obniz);
     expect(this.obniz).to.be.finished;
 
-    await pingPongWait(this.obniz);
-    expect(this.obniz).to.be.finished;
+    await wait(10);
 
     this.obniz.onloop = null;
     await testUtil.releaseObnizWait(this);
@@ -389,7 +387,6 @@ describe('obniz.index', function () {
     testUtil.connectObniz(this.obniz);
     expect(this.obniz).to.be.finished;
     await wait(10);
-    await pingPongWait(this.obniz);
 
     this.obniz.onloop = null;
     await testUtil.releaseObnizWait(this);

@@ -4,14 +4,11 @@
  */
 import WSCommand from './WSCommand';
 declare class WSCommandMeasurement extends WSCommand {
-    module: any;
-    _CommandMeasurementEcho: any;
-    sendCommand: any;
-    validateCommandSchema: any;
-    WSCommandNotFoundError: any;
+    module: number;
+    _CommandMeasurementEcho: number;
     constructor();
     echo(params: any): void;
     parseFromJson(json: any): void;
-    notifyFromBinary(objToSend: any, func: any, payload: any): void;
+    notifyFromBinary(objToSend: any, func: number, payload: Uint8Array): void;
 }
 export default WSCommandMeasurement;

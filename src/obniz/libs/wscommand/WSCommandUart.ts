@@ -5,14 +5,11 @@
 import WSCommand from './WSCommand';
 
 class WSCommandUart extends WSCommand {
-  public module: any;
-  public _CommandInit: any;
-  public _CommandDeinit: any;
-  public _CommandSend: any;
-  public _CommandRecv: any;
-  public sendCommand: any;
-  public validateCommandSchema: any;
-  public WSCommandNotFoundError: any;
+  public module: number;
+  public _CommandInit: number;
+  public _CommandDeinit: number;
+  public _CommandSend: number;
+  public _CommandRecv: number;
 
   constructor() {
     super();
@@ -27,7 +24,7 @@ class WSCommandUart extends WSCommand {
   // Commands
 
   public init(params: any, module: any) {
-    const buf: any = new Uint8Array(13);
+    const buf = new Uint8Array(13);
     buf[0] = module;
     buf[1] = parseInt(params.tx);
     buf[2] = parseInt(params.rx);
@@ -76,13 +73,13 @@ class WSCommandUart extends WSCommand {
   }
 
   public deinit(params: any, module: any) {
-    const buf: any = new Uint8Array(1);
+    const buf = new Uint8Array(1);
     buf[0] = module;
     this.sendCommand(this._CommandDeinit, buf);
   }
 
   public send(params: any, module: any) {
-    const buf: any = new Uint8Array(1 + params.data.length);
+    const buf = new Uint8Array(1 + params.data.length);
     buf[0] = module;
     buf.set(params.data, 1);
     this.sendCommand(this._CommandSend, buf);
@@ -91,21 +88,16 @@ class WSCommandUart extends WSCommand {
   public parseFromJson(json: any) {
     // 0~2
     for (let i = 0; i < 3; i++) {
-      const module: any = json['uart' + i];
+      const module = json['uart' + i];
       if (module === undefined) {
         continue;
       }
-      const schemaData: any = [
+      const schemaData = [
         { uri: '/request/uart/init', onValid: this.init },
         { uri: '/request/uart/send', onValid: this.send },
         { uri: '/request/uart/deinit', onValid: this.deinit },
       ];
-      const res: any = this.validateCommandSchema(
-        schemaData,
-        module,
-        'uart' + i,
-        i
-      );
+      const res = this.validateCommandSchema(schemaData, module, 'uart' + i, i);
 
       if (res.valid === 0) {
         if (res.invalidButLike.length > 0) {
@@ -117,10 +109,10 @@ class WSCommandUart extends WSCommand {
     }
   }
 
-  public notifyFromBinary(objToSend: any, func: any, payload: any) {
+  public notifyFromBinary(objToSend: any, func: number, payload: Uint8Array) {
     if (func === this._CommandRecv && payload.byteLength > 1) {
-      const module_index: any = payload[0];
-      const arr: any = new Array(payload.byteLength - 1);
+      const module_index = payload[0];
+      const arr = new Array(payload.byteLength - 1);
       for (let i = 0; i < arr.length; i++) {
         arr[i] = payload[i + 1];
       }

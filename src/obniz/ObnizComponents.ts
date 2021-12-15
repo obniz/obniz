@@ -367,7 +367,7 @@ export default abstract class ObnizComponents extends ObnizParts {
     if (config.spi) {
       return config.spi;
     }
-    const spi: any = this.getFreeSpi();
+    const spi = this.getFreeSpi();
     spi.start(config);
     return spi;
   }
@@ -422,11 +422,11 @@ export default abstract class ObnizComponents extends ObnizParts {
       throw new Error(`unkown hw ${this.hw || ''}`);
     }
 
-    const hw_peripherals: any = this._hwDefinition.peripherals;
+    const hw_peripherals = this._hwDefinition.peripherals;
     this._hw_peripherals = hw_peripherals;
-    const hw_embeds: any = this._hwDefinition.embeds;
-    const hw_protocol: any = this._hwDefinition.protocol;
-    const hw_network: any = this._hwDefinition.network;
+    const hw_embeds = this._hwDefinition.embeds;
+    const hw_protocol = this._hwDefinition.protocol;
+    const hw_network = this._hwDefinition.network;
 
     const shared_map: any = {
       io: PeripheralDirective,
@@ -445,7 +445,7 @@ export default abstract class ObnizComponents extends ObnizParts {
       grove: PeripheralGrove,
     };
 
-    const ble: any = ObnizHciBLE;
+    const ble = ObnizHciBLE;
 
     const embeds_map: any = {
       display: Display,
@@ -462,7 +462,7 @@ export default abstract class ObnizComponents extends ObnizParts {
     };
 
     for (const key in shared_map) {
-      const Class: any = shared_map[key];
+      const Class = shared_map[key];
       (this as any)[key] = new Class(this);
       this._allComponentKeys.push(key);
     }
@@ -470,8 +470,8 @@ export default abstract class ObnizComponents extends ObnizParts {
     if (hw_peripherals) {
       for (const key in peripheral_map) {
         if (hw_peripherals[key]) {
-          const units: any = hw_peripherals[key].units;
-          const Class: any = peripheral_map[key];
+          const units = hw_peripherals[key].units;
+          const Class = peripheral_map[key];
           for (const unitId in units) {
             const unitIdNumber = parseInt(unitId);
             (this as any)[key + unitIdNumber] = new Class(
@@ -488,7 +488,7 @@ export default abstract class ObnizComponents extends ObnizParts {
     if (hw_embeds) {
       for (const key in embeds_map) {
         if (hw_embeds[key]) {
-          const Class: any = embeds_map[key];
+          const Class = embeds_map[key];
           (this as any)[key] = new Class(this, hw_embeds[key]);
           this._allComponentKeys.push(key);
           if (typeof (this as any)[key].debugHandler === 'function') {
@@ -503,8 +503,8 @@ export default abstract class ObnizComponents extends ObnizParts {
     if (hw_protocol) {
       for (const key in protocol_map) {
         if (hw_protocol[key]) {
-          const units: any = hw_protocol[key].units;
-          const Class: any = protocol_map[key];
+          const units = hw_protocol[key].units;
+          const Class = protocol_map[key];
           for (const unitId in units) {
             const unitIdNumber = parseInt(unitId);
             (this as any)[key + unitIdNumber] = new Class(this, unitIdNumber);
@@ -517,7 +517,7 @@ export default abstract class ObnizComponents extends ObnizParts {
     if (hw_network) {
       for (const key in network_map) {
         if (hw_network[key]) {
-          const Class: any = network_map[key];
+          const Class = network_map[key];
           (this as any)[key] = new Class(this, hw_embeds[key]);
           this._allComponentKeys.push(key);
         }
@@ -577,7 +577,7 @@ export default abstract class ObnizComponents extends ObnizParts {
 
   protected removePongObserver(callback: any) {
     if (this.pongObservers.includes(callback)) {
-      const index: any = this.pongObservers.indexOf(callback);
+      const index = this.pongObservers.indexOf(callback);
       this.pongObservers.splice(index, 1);
     }
   }
@@ -587,7 +587,7 @@ export default abstract class ObnizComponents extends ObnizParts {
     for (const key of this._allComponentKeys) {
       if (key.indexOf(peripheral) === 0) {
         /* "io" for "io0" */
-        const obj: any = (this as any)[key];
+        const obj = (this as any)[key];
         if (typeof obj === 'object' && !obj.isUsed()) {
           obj.used = true;
           return obj;

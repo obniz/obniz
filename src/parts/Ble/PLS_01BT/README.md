@@ -87,7 +87,7 @@ await obniz.ble.scan.startWait();
 ```
 
 
-## onmesured
+## onmeasured
 Called when the measurement is complete. Usually called once a second.
 
 ```javascript
@@ -100,7 +100,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const device = new PLS_01BT(peripheral);
     await device.connectWait();
     console.log("connected");
-    device.onmesured = (data) => {
+    device.onmeasured = (data) => {
       console.log(data);
     };
   }

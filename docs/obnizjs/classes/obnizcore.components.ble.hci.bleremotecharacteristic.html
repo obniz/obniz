@@ -134,6 +134,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.bleremotecharacteristic.html#canwritewithoutresponse" class="tsd-kind-icon">can<wbr>Write<wbr>Without<wbr>Response</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.bleremotecharacteristic.html#discoveralldescriptorswait" class="tsd-kind-icon">discover<wbr>All<wbr>Descriptors<wbr>Wait</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.bleremotecharacteristic.html#getdescriptor" class="tsd-kind-icon">get<wbr>Descriptor</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.bleremotecharacteristic.html#getnotifywait" class="tsd-kind-icon">get<wbr>Notify<wbr>Wait</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.bleremotecharacteristic.html#read" class="tsd-kind-icon">read</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="obnizcore.components.ble.hci.bleremotecharacteristic.html#readnumberwait" class="tsd-kind-icon">read<wbr>Number<wbr>Wait</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="obnizcore.components.ble.hci.bleremotecharacteristic.html#readtextwait" class="tsd-kind-icon">read<wbr>Text<wbr>Wait</a></li>
@@ -355,7 +356,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.ts:475</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.ts:502</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -377,7 +378,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.ts:510</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.ts:537</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -399,7 +400,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.ts:482</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.ts:509</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -421,7 +422,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.ts:489</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.ts:516</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -443,7 +444,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.ts:496</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.ts:523</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -465,7 +466,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.ts:503</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.ts:530</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -487,7 +488,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.ts:438</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.ts:465</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -495,7 +496,7 @@
 									<p>Discover services.</p>
 								</div>
 								<p>If connect setting param &#39;autoDiscovery&#39; is true(default),
-								services are automatically disvocer on connection established.</p>
+								services are automatically discover on connection established.</p>
 								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
 <span class="hljs-keyword">await</span> obniz.ble.initWait({});
 obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">peripheral</span>)</span>{
@@ -572,6 +573,40 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getnotifywait" class="tsd-anchor"></a>
+					<h3>get<wbr>Notify<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Notify<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.ts:335</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Wait for notification and return data when it arrives.</p>
+								</div>
+								<pre><code class="language-javascript">
+<span class="hljs-keyword">await</span> obniz.ble.initWait();
+<span class="hljs-keyword">var</span> target = {
+  <span class="hljs-attr">localName</span>: <span class="hljs-string">"obniz-notify"</span>
+};
+<span class="hljs-keyword">var</span> peripheral = <span class="hljs-keyword">await</span> obniz.ble.scan.startOneWait(target);
+<span class="hljs-keyword">await</span> peripheral.connectWait();
+<span class="hljs-keyword">let</span> char = peripheral.getService(<span class="hljs-string">'fff0'</span>).getCharacteristic(<span class="hljs-string">'fff1'</span>);
+
+<span class="hljs-keyword">let</span> data = <span class="hljs-keyword">await</span> c.getNotifyWait();
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"notify with data "</span> + data.join(<span class="hljs-string">','</span>));</code></pre>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>data from notification of the device</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="read" class="tsd-anchor"></a>
 					<h3>read</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -581,7 +616,7 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.ts:321</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.ts:348</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -661,7 +696,7 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 							<aside class="tsd-sources">
 								<p>Overrides BleAttributeAbstract.readWait</p>
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.ts:399</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.ts:426</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -708,7 +743,7 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 									<p>This sets a callback function to receive notify when it comes from periperal.
 									To receive notify, you need to register on CCCD Descriptor(0x2902).</p>
 								</div>
-								<p>More infomation of BLE/CCCD is available at <a href="https://www.bluetooth.com/specifications/gatt/descriptors/">bluetooth.com</a>.</p>
+								<p>More information of BLE/CCCD is available at <a href="https://www.bluetooth.com/specifications/gatt/descriptors/">bluetooth.com</a>.</p>
 								<pre><code class="language-javascript"><span class="hljs-keyword">await</span> obniz.ble.initWait();
 <span class="hljs-keyword">var</span> target = {
  <span class="hljs-attr">localName</span>: <span class="hljs-string">"obniz-notify"</span>
@@ -845,7 +880,7 @@ char.registerNotify( <span class="hljs-function"><span class="hljs-keyword">func
 <span class="hljs-keyword">let</span> char = peripheral.getService(<span class="hljs-string">'fff0'</span>).getCharacteristic( <span class="hljs-string">'fff1'</span>);
 
 char.onregisternotify = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
- <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"register finshed"</span>)
+ <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"register finished"</span>)
  char.unregisterNotify();
 }
 
@@ -894,9 +929,9 @@ char.registerNotify( <span class="hljs-function"><span class="hljs-keyword">func
 
 <span class="hljs-keyword">var</span> peripheral = <span class="hljs-keyword">await</span> obniz.ble.scan.startOneWait(target);
 <span class="hljs-keyword">await</span> peripheral.connectWait();
-<span class="hljs-keyword">let</span> char = peripheral.getService(<span class="hljs-string">'fff0'</span>).getCharacteristic( <span class="hljs-string">'fff1'</span>);
+<span class="hljs-keyword">let</span> char = peripheral.getService(<span class="hljs-string">'fff0'</span>).getCharacteristic(<span class="hljs-string">'fff1'</span>);
 
-<span class="hljs-keyword">await</span> char.registerNotifyWait( <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>)</span>{
+<span class="hljs-keyword">await</span> char.registerNotifyWait(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>)</span>{
   <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"notify with data "</span> + data.join(<span class="hljs-string">','</span>));
 });
 <span class="hljs-keyword">await</span> char.unregisterNotifyWait();
@@ -916,7 +951,7 @@ char.registerNotify( <span class="hljs-function"><span class="hljs-keyword">func
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.ts:330</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.ts:357</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1026,7 +1061,7 @@ char.registerNotify( <span class="hljs-function"><span class="hljs-keyword">func
 							<aside class="tsd-sources">
 								<p>Overrides BleAttributeAbstract.writeWait</p>
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.ts:360</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.ts:387</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1133,6 +1168,9 @@ char.registerNotify( <span class="hljs-function"><span class="hljs-keyword">func
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="obnizcore.components.ble.hci.bleremotecharacteristic.html#getdescriptor" class="tsd-kind-icon">get<wbr>Descriptor</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="obnizcore.components.ble.hci.bleremotecharacteristic.html#getnotifywait" class="tsd-kind-icon">get<wbr>Notify<wbr>Wait</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="obnizcore.components.ble.hci.bleremotecharacteristic.html#read" class="tsd-kind-icon">read</a>

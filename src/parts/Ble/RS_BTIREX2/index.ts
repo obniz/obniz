@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module Parts.RS_BTIREX2
  */
+/* eslint rulesdir/non-ascii: 0 */
 
 import Obniz from '../../../obniz';
 import BleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
@@ -13,6 +14,7 @@ import ObnizPartsInterface, {
 export interface RS_BTIREX2Options {}
 
 // not working
+/** 【NOT WORKING】 RS_BTIREX2 management class RS_BTIREX2を管理するクラス */
 export default class RS_BTIREX2 implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
@@ -20,6 +22,17 @@ export default class RS_BTIREX2 implements ObnizPartsInterface {
     };
   }
 
+  /**
+   * Verify that the received peripheral is from the RS_BTIREX2
+   *
+   * 受け取ったPeripheralがRS_BTIREX2のものかどうかを確認する
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns Whether it is the RS_BTIREX2
+   *
+   * RS_BTIREX2かどうか
+   */
   public static isDevice(peripheral: BleRemotePeripheral) {
     if (peripheral.localName && peripheral.localName.startsWith('BTIR')) {
       return true;
@@ -30,6 +43,11 @@ export default class RS_BTIREX2 implements ObnizPartsInterface {
   public keys: string[] = [];
   public requiredKeys: string[] = [];
   public params: any;
+  /**
+   * Callback when the button is pressed
+   *
+   * ボタンが押されたときにコールバック
+   */
   public onbuttonpressed: ((pressed: boolean) => void) | null = null;
 
   private _uuids = {
@@ -52,6 +70,11 @@ export default class RS_BTIREX2 implements ObnizPartsInterface {
     // do nothing.
   }
 
+  /**
+   * Connect the sensor
+   *
+   * センサへ接続
+   */
   public async connectWait() {
     if (!this._peripheral) {
       throw new Error('RS_BTIREX2 is not find.');
@@ -72,6 +95,17 @@ export default class RS_BTIREX2 implements ObnizPartsInterface {
       .getCharacteristic(this._uuids.txChar);
   }
 
+  /**
+   * Make and send a command
+   *
+   * コマンドの作成と送信
+   *
+   * @param payload payload ペイロード
+   *
+   * @param crc CRC of the payload ペイロードのCRC
+   *
+   * @returns
+   */
   public _sendAndReceiveWait(payload: number[], crc = 0xb6): Promise<number[]> {
     if (!this._rxCharacteristic || !this._txCharacteristic) {
       throw new Error('device is not connected');

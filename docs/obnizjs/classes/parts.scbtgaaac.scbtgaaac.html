@@ -72,6 +72,13 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>SCBTGAAAC management class SCBTGAAACを管理するクラス</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -115,7 +122,7 @@
 					<div class="tsd-signature tsd-kind-icon">_peripheral<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol"> = null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/scbtgaaac/index.ts:73</li>
+							<li>Defined in src/parts/Ble/scbtgaaac/index.ts:99</li>
 						</ul>
 					</aside>
 				</section>
@@ -132,16 +139,28 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/scbtgaaac/index.ts:24</li>
+									<li>Defined in src/parts/Ble/scbtgaaac/index.ts:50</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get leakage data from the SCBTGAAAC</p>
+								</div>
+								<p>Get advertisement sent out by generating power at the leak</p>
+								<p>SCBTGAAACから漏水データを取得する</p>
+								<p>漏水で発電することによって発信されたadvertisementを取得します</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>instance of BleRemotePeripheral BleRemotePeripheralのインスタンス</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h4>
+							<p>device name デバイス名</p>
 						</li>
 					</ul>
 				</section>
@@ -155,7 +174,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/scbtgaaac/index.ts:14</li>
+									<li>Defined in src/parts/Ble/scbtgaaac/index.ts:16</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/obnizcore.obnizpartsbleinfo.html" class="tsd-signature-type">ObnizPartsBleInfo</a></h4>
@@ -172,16 +191,27 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/scbtgaaac/index.ts:20</li>
+									<li>Defined in src/parts/Ble/scbtgaaac/index.ts:33</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Verify that the received peripheral is from the SCBTGAAAC</p>
+								</div>
+								<p>受け取ったPeripheralがSCBTGAAACのものかどうかを確認する</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>instance of BleRemotePeripheral BleRemotePeripheralのインスタンス</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<p>Whether it is the SCBTGAAAC</p>
+							<p>SCBTGAAACかどうか</p>
 						</li>
 					</ul>
 				</section>

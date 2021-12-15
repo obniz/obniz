@@ -2,19 +2,30 @@
  * @packageDocumentation
  * @module Parts.iBS01H
  */
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
-export interface IBS01HOptions {
+import { ObnizBleBeaconStruct } from '../../../obniz/ObnizPartsBleAbstract';
+import { BaseiBS01 } from '../utils/abstracts/iBS';
+export interface iBS01HOptions {
 }
-export interface IBS01H_Data {
+/**
+ * advertisement data from iBS01H
+ *
+ * iBS01Hからのadvertisementデータ
+ */
+export interface iBS01H_Data {
+    /** battery 電池電圧 (Unit 単位: 0.01 V) */
     battery: number;
+    /**
+     * button state ボタンの状態
+     *
+     * true: pressed 押された状態 / false: not pressed 押されていない状態
+     */
     button: boolean;
+    /** magnet nearby or not 近くに磁石があるかどうか */
     hall_sensor: boolean;
 }
-export default class IBS01H implements ObnizPartsBleInterface {
-    static info(): ObnizPartsBleInfo;
-    static isDevice(peripheral: BleRemotePeripheral): boolean;
-    static getData(peripheral: BleRemotePeripheral): IBS01H_Data | null;
-    private static deviceAdv;
-    _peripheral: BleRemotePeripheral | null;
+/** iBS01H management class iBS01Hを管理するクラス */
+export default class iBS01H extends BaseiBS01<iBS01H_Data> {
+    static readonly PartsName = "iBS01H";
+    static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS01H_Data>;
+    protected readonly staticClass: typeof iBS01H;
 }

@@ -1,57 +1,35 @@
 # iBS03G
 
-waterproof moving and falling sensor by INGICS.
-
-Support device
-
-- iBS03G
+Waterproof moving and falling detection sensor by INGICS
 
 ![](image.jpg)
 
+## Available modes
 
-## getPartsClass(name)
+- Beacon mode
+
+## Beacon data (getData())
+
+- battery: Battery voltage
+- button: True when you press the button
+- moving: True when moved
+- fall: True when falling
+
+## Use case
 
 ```javascript
-// Javascript Example
-const IBS03G = Obniz.getPartsClass('iBS03G');
-```
-
-## isDevice(BleRemotePeripheral)
-
-Returns true if a device was found.
-
-```javascript
-// Javascript Example
-const IBS03G = Obniz.getPartsClass('iBS03G');
+// Javascript
+const iBS03G = Obniz.getPartsClass('iBS03G');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (IBS03G.isDevice(p)) {
-        let data = IBS03G.getData(p);
-        console.log(data);
-    }
-};
-await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
-```
-
-## getData(BleRemotePeripheral)
-
-Returns device information if found. Returns Null if not found.
-
-- battery : Battery voltage
-- button : True when button is pressed
-- moving : True when moving
-- fall : True when falling
-
-
-```javascript
-// Javascript Example
-const IBS03G = Obniz.getPartsClass('iBS03G');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (IBS03G.isDevice(p)) {
-        let data = IBS03G.getData(p);
-        console.log(data);
-    }
+obniz.ble.scan.onfind = (peripheral) => {
+  // Get operation mode, it becomes null when not iBS03G
+  const mode = iBS03G.getDeviceMode(peripheral);
+  if (mode) {
+    // Generate an instance
+    const device = new iBS03G(peripheral, mode);
+    // Get data and output to the console
+    console.log(device.getData());
+  }
 };
 await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```

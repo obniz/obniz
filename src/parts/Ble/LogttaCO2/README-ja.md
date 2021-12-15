@@ -1,295 +1,159 @@
-# Logtta CO2
+# Logtta_CO2
 
-Logtta CO2 を使用できます。
+ユニ電子製のCO2濃度センサー
 
-CO2濃度を取得できます。
+公式製品紹介ページは[こちら](http://www.uni-elec.co.jp/logtta_page.html)
 
 ![](image.jpg)
 
+## 対応モード
 
+- ビーコンモード
+- 接続可能モード
 
-## getPartsClass(name)
+## ビーコンデータ(getData())
+
+- battery: 電池残量(%)またはUSB電源駆動(254)
+- co2: CO2濃度(ppm)
+- interval: 送信間隔(秒)
+
+## 接続時のデータ(getDataWait())
+
+- co2: CO2濃度(ppm)
+
+## 使用例(ビーコンモード)
 
 ```javascript
-// Javascript Example
-const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
-```
-
-## isDevice(BleRemotePeripheral)
-
-デバイスを発見した場合、trueを返します。
-
-```javascript
-// Javascript Example
-const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
+// Javascript
+const Logtta_CO2 = Obniz.getPartsClass('Logtta_CO2');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (LOGTTA_CO2.isDevice(p)) {
-        console.log("find");
-    }
+obniz.ble.scan.onfind = (peripheral) => {
+  // 動作モードを取得、Logtta_CO2でないときはnullに
+  const mode = Logtta_CO2.getDeviceMode(peripheral);
+  if (mode === 'Beacon') {
+    // インスタンスを生成
+    const device = new Logtta_CO2(peripheral, mode);
+    // データを取得し、コンソールに出力
+    console.log(device.getData());
+  }
 };
 await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
 
-## new Logtta_CO2(peripheral)
+## 使用例(接続可能モード)
 
-BLEが受信した広告情報に基づいてインスタンスを作成します。
+### 接続して1回だけデータ取得＆電池残量取得
 
+`batteryService.getBatteryLevelWait()`を使用して電池残量を取得できます。
 
-```javascript
-// Javascript Example
-const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (LOGTTA_CO2.isDevice(peripheral) ) {
-    console.log("device find");
-    const device = new LOGTTA_CO2(peripheral);
-  }
-};
-await obniz.ble.scan.startWait();
-
-```
-
-
-## [await]connectWait()
-
-デバイスに接続します。
-
+値が254の時はUSB電源駆動、それ以外は電池駆動で残量がパーセント単位で返ってきます。
 
 ```javascript
-// Javascript Example
-const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
+// Javascript
+const Logtta_CO2 = Obniz.getPartsClass('Logtta_CO2');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (LOGTTA_CO2.isDevice(peripheral)) {
-    console.log("find");
-    const device = new LOGTTA_CO2(peripheral);
-    device.ondisconnect = (reason) => {
-      console.log(reason)
+obniz.ble.scan.onfind = (peripheral) => {
+  // 動作モードを取得、Logtta_CO2でないときはnullに
+  const mode = Logtta_CO2.getDeviceMode(peripheral);
+  if (mode === 'Connectable') {
+    // インスタンスを生成
+    const device = new Logtta_CO2(peripheral, mode);
+    console.log(`Connecting to Logtta_CO2[${device.address}]`);
+
+    // デバイスに接続
+    await device.connectWait();
+    console.log(`Connected to Logtta_CO2[${device.address}]`);
+
+    // デバイスからデータ取得
+    const data = await device.getDataWait();
+    console.log(`Logtta_CO2[${device.address}]: ${data.co2}ppm`);
+
+    if (device.batteryService) {
+      // デバイスから電池残量を取得
+      const batteryLevel = await device.batteryService.getBatteryLevelWait();
+      // 254の時はUSB電源駆動と出力
+      if (batteryLevel === 254)
+        console.log(`Logtta_CO2[${device.address}]: USB power supply`);
+      // 254以外の時は電池残量を出力
+      else
+        console.log(`Logtta_CO2[${device.address}]: BatteryLevel ${batteryLevel}%`);
     }
-    await device.connectWait();
-    console.log("connected");
-  }
-};
-await obniz.ble.scan.startWait();
 
-```
-
-
-## [await]disconnectWait()
-
-デバイスとの接続を切断します。
-
-```javascript
-// Javascript Example
-const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (LOGTTA_CO2.isDevice(peripheral) ) {
-    console.log("find");
-    const device = new LOGTTA_CO2(peripheral);
-    await device.connectWait();
-    console.log("connected");
+    // デバイスから切断
     await device.disconnectWait();
-    console.log("disconnected");
-  }
-};
-await obniz.ble.scan.startWait();
-
-```
-
-
-## onNotify =  function (data){}
-
-データを受信したら、そのデータをコールバック関数で返します。
-
-``startNotifyWait()``を開始した後にデバイスからデータが来るたびに呼び出されます。
-
-```javascript
-// Javascript Example
-const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (LOGTTA_CO2.isDevice(peripheral)) {
-    console.log("find");
-    const device = new LOGTTA_CO2(peripheral);
-    await device.connectWait();
-    console.log("connected");
-        device.onNotify = (co2) => {
-            console.log(`CO2 ${co2}ppm`);
-        };
-    device.startNotifyWait();
+    console.log(`Disconnected from Logtta_CO2[${device.address}]`);
   }
 };
 await obniz.ble.scan.startWait();
 ```
 
-## startNotifyWait()
+### 接続して定期的にデータ取得
 
-Notifyを開始します。
+`startNotifyWait()`を使用してデバイスからのデータを常に待ち受けることができます。
 
 ```javascript
-// Javascript Example
-const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
+// Javascript
+const Logtta_CO2 = Obniz.getPartsClass('Logtta_CO2');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (LOGTTA_CO2.isDevice(peripheral)) {
-    console.log("find");
-    const device = new LOGTTA_CO2(peripheral);
+obniz.ble.scan.onfind = (peripheral) => {
+  // 動作モードを取得、Logtta_CO2でないときはnullに
+  const mode = Logtta_CO2.getDeviceMode(peripheral);
+  if (mode === 'Connectable') {
+    // インスタンスを生成
+    const device = new Logtta_CO2(peripheral, mode);
+    console.log(`Connecting to Logtta_CO2[${device.address}]`);
+
+    // デバイスに接続
     await device.connectWait();
-    console.log("connected");
-    device.onNotify = (co2) => {
-        console.log(`CO2 ${co2}ppm`);
-    };
-    device.startNotifyWait();
+    console.log(`Connected Logtta_CO2[${device.address}]`);
+
+    // デバイスからのデータの待ち受けを開始
+    device.startNotifyWait((data) => {
+      console.log(`Logtta_CO2[${device.address}]: ${data.co2}ppm`);
+    });
   }
 };
 await obniz.ble.scan.startWait();
 ```
 
+### 接続してビーコンモードを有効化
 
-## [await]getWait()
+`setBeaconModeWait()`を使用して定期的にビーコンを発信するモードの有効無効を制御できます。
 
-CO2濃度を取得できます。値はppmです。
+設定後に切断すると有効になります。
 
-```javascript
-// Javascript Example
-const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (LOGTTA_CO2.isDevice(peripheral)) {
-    console.log("find");
-    const device = new LOGTTA_CO2(peripheral);
-    await device.connectWait();
-    console.log("connected");
-    
-    const co2 = await device.getWait();
-    console.log(`CO2 ${co2}ppm`);
-  }
-};
-await obniz.ble.scan.startWait();
-```
+事前に`authPinCodeWait()`を使用してデバイスと認証する必要があります。(デフォルト認証コード: 0000)
 
-
-
-## [await]batteryService.getBatteryLevelWait()
-
-バッテリー残量を取得します。
-
-- USB電源につながっている場合は254が返ります
-- 電池駆動している場合は、残量に応じて0-100[%]が返ります
-
+ビーコンモードを終了する場合、デバイスにあるボタンを2秒以上長押しする操作が必要になります。
 
 ```javascript
-// Javascript Example
-const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
+// Javascript
+const Logtta_CO2 = Obniz.getPartsClass('Logtta_CO2');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (LOGTTA_CO2.isDevice(peripheral)) {
-    console.log("find");
-    const device = new LOGTTA_CO2(peripheral);
+obniz.ble.scan.onfind = (peripheral) => {
+  // 動作モードを取得、Logtta_CO2でないときはnullに
+  const mode = Logtta_CO2.getDeviceMode(peripheral);
+  if (mode === 'Connectable') {
+    // インスタンスを生成
+    const device = new Logtta_CO2(peripheral, mode);
+    console.log(`Connecting to Logtta_CO2[${device.address}]`);
+
+    // デバイスに接続
     await device.connectWait();
-    console.log("connected");
-    
-    const batteryLevel = await device.batteryService.getBatteryLevelWait();
-    console.log(`batteryLevel ${batteryLevel}% `);
-  }
-};
-await obniz.ble.scan.startWait();
-```
+    console.log(`Connected to Logtta_CO2[${device.address}]`);
 
-## [await]authPinCodeWait(pin)
+    // 認証コードを送信
+    await device.authPinCodeWait(0000);
+    console.log(`Logtta_CO2[${device.address}]: Sent auth pin code`);
 
-デバイスと認証を行います。デフォルト値は0000です。
-
-```javascript
-// Javascript Example
-const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (LOGTTA_CO2.isDevice(peripheral) ) {
-    console.log("find");
-    const device = new LOGTTA_CO2(peripheral);
-    await device.connectWait();
-    console.log("connected");
-    await device.authPinCodeWait("0000");
-    console.log("authPinCodeWait");
-  }
-};
-await obniz.ble.scan.startWait();
-
-```
-
-## [await]setBeaconModeWait(enable)
-
-デバイスと認証をあらかじめ済ませた状態で実行してください。
-
-定期的にビーコンを発信するモードの有効無効を制御できます。
-
-設定後に切断した後から有効になります。
-
-ビーコンモードを終了する場合、デバイスにあるボタンを2秒以上長押しする操作が必要になります。詳しくは下記のリンクよりドキュメントをご覧ください。
-http://www.uni-elec.co.jp/logtta_page.html
-
-```javascript
-// Javascript Example
-const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (LOGTTA_CO2.isDevice(peripheral) ) {
-    console.log("find");
-    const device = new LOGTTA_CO2(peripheral);
-    await device.connectWait();
-    console.log("connected");
-    await device.authPinCodeWait("0000");
-    console.log("authPinCodeWait");
+    // ビーコンモードに有効化
     await device.setBeaconModeWait(true);
-    console.log("authPinCodeWait");
+    console.log(`Logtta_CO2[${device.address}]: Enabled beacon mode`);
+
+    // デバイスから切断
     await device.disconnectWait();
-    console.log("disconnected");
+    console.log(`Disconnected from Logtta_CO2[${device.address}]`);
   }
 };
 await obniz.ble.scan.startWait();
-
-```
-
-
-## isAdvDevice(BleRemotePeripheral)
-
-アドバタイジングしているデバイスを発見した場合、trueを返します。
-
-```javascript
-// Javascript Example
-const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (LOGTTA_CO2.isAdvDevice(p)) {
-        console.log("found");
-    }
-};
-await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
-
-```
-
-## getData(BleRemotePeripheral)
-
-発見した場合にデバイスの情報を返します。発見できなかった場合にはNullを返します。
-
-- battery : バッテリの電圧(0-100)
-- address : MacAddress
-- co2 : co2濃度(ppm)
-- interval : 送信間隔(秒)
-
-
-```javascript
-// Javascript Example
-const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (LOGTTA_CO2.isAdvDevice(p)) {
-        let data = LOGTTA_CO2.getData(p);
-        console.log(data);
-    }
-};
-await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```

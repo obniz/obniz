@@ -33,7 +33,7 @@ declare class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     addPeripheralData(uuid: UUID, addressType: BleDeviceAddressType): void;
     startScanningWait(serviceUuids: any, allowDuplicates: any, activeScan: boolean): Promise<void>;
     stopScanningWait(): Promise<void>;
-    connectWait(peripheralUuid: any, onConnectCallback?: any): Promise<void>;
+    connectWait(peripheralUuid: any, mtu: number | null, onConnectCallback?: any): Promise<void>;
     disconnect(peripheralUuid: any): void;
     updateRssiWait(peripheralUuid: UUID): Promise<number>;
     onStateChange(state: any): void;

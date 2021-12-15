@@ -1,3 +1,4 @@
+
 # PLS_01BT
 株式会社カスタム社製の　酸素飽和度メータです
 ![](./image.jpg)
@@ -86,7 +87,7 @@ await obniz.ble.scan.startWait();
 ```
 
 
-## onmesured
+## onmeasured
 計測が完了した際によばれます。通常1秒に1度呼ばれます
 
 ```javascript
@@ -99,7 +100,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const device = new PLS_01BT(peripheral);
     await device.connectWait();
     console.log("connected");
-    device.onmesured = (data) => {
+    device.onmeasured = (data) => {
       console.log(data);
     };
   }

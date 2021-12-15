@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.17.0",
+  "version": "3.18.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -316,12 +316,12 @@ var map = {
 	"./request/io/output_detail.yml": "./dist/src/json_schema/request/io/output_detail.yml",
 	"./request/io/output_type.yml": "./dist/src/json_schema/request/io/output_type.yml",
 	"./request/io/pull_type.yml": "./dist/src/json_schema/request/io/pull_type.yml",
-	"./request/ioanimation/changeState.yml": "./dist/src/json_schema/request/ioanimation/changeState.yml",
-	"./request/ioanimation/index.yml": "./dist/src/json_schema/request/ioanimation/index.yml",
-	"./request/ioanimation/init.yml": "./dist/src/json_schema/request/ioanimation/init.yml",
-	"./request/logicanalyzer/deinit.yml": "./dist/src/json_schema/request/logicanalyzer/deinit.yml",
-	"./request/logicanalyzer/index.yml": "./dist/src/json_schema/request/logicanalyzer/index.yml",
-	"./request/logicanalyzer/init.yml": "./dist/src/json_schema/request/logicanalyzer/init.yml",
+	"./request/ioAnimation/changeState.yml": "./dist/src/json_schema/request/ioAnimation/changeState.yml",
+	"./request/ioAnimation/index.yml": "./dist/src/json_schema/request/ioAnimation/index.yml",
+	"./request/ioAnimation/init.yml": "./dist/src/json_schema/request/ioAnimation/init.yml",
+	"./request/logicAnalyzer/deinit.yml": "./dist/src/json_schema/request/logicAnalyzer/deinit.yml",
+	"./request/logicAnalyzer/index.yml": "./dist/src/json_schema/request/logicAnalyzer/index.yml",
+	"./request/logicAnalyzer/init.yml": "./dist/src/json_schema/request/logicAnalyzer/init.yml",
 	"./request/measure/echo.yml": "./dist/src/json_schema/request/measure/echo.yml",
 	"./request/measure/index.yml": "./dist/src/json_schema/request/measure/index.yml",
 	"./request/message/index.yml": "./dist/src/json_schema/request/message/index.yml",
@@ -408,10 +408,10 @@ var map = {
 	"./response/io/get.yml": "./dist/src/json_schema/response/io/get.yml",
 	"./response/io/index.yml": "./dist/src/json_schema/response/io/index.yml",
 	"./response/io/warning.yml": "./dist/src/json_schema/response/io/warning.yml",
-	"./response/ioanimation/index.yml": "./dist/src/json_schema/response/ioanimation/index.yml",
-	"./response/ioanimation/notify.yml": "./dist/src/json_schema/response/ioanimation/notify.yml",
-	"./response/logicanalyzer/data.yml": "./dist/src/json_schema/response/logicanalyzer/data.yml",
-	"./response/logicanalyzer/index.yml": "./dist/src/json_schema/response/logicanalyzer/index.yml",
+	"./response/ioAnimation/index.yml": "./dist/src/json_schema/response/ioAnimation/index.yml",
+	"./response/ioAnimation/notify.yml": "./dist/src/json_schema/response/ioAnimation/notify.yml",
+	"./response/logicAnalyzer/data.yml": "./dist/src/json_schema/response/logicAnalyzer/data.yml",
+	"./response/logicAnalyzer/index.yml": "./dist/src/json_schema/response/logicAnalyzer/index.yml",
 	"./response/measure/echo.yml": "./dist/src/json_schema/response/measure/echo.yml",
 	"./response/measure/index.yml": "./dist/src/json_schema/response/measure/index.yml",
 	"./response/message/index.yml": "./dist/src/json_schema/response/message/index.yml",
@@ -894,42 +894,42 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/request/ioanimation/changeState.yml":
+/***/ "./dist/src/json_schema/request/ioAnimation/changeState.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/changeState","type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","enum":["pause","resume"]}}}}}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/request/ioanimation/index.yml":
+/***/ "./dist/src/json_schema/request/ioAnimation/index.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation","basePath":"io","anyOf":[{"$ref":"/request/ioAnimation/init"},{"$ref":"/request/ioAnimation/changeState"}]}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/request/ioanimation/init.yml":
+/***/ "./dist/src/json_schema/request/ioAnimation/init.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/init","commandExample":{"io":{"animation":{"name":"animation-1","status":"loop","states":[{"duration":500,"state":{"io0":true}},{"duration":500,"state":{"io0":false}}]}}},"type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status","states"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"repeat":{"type":"integer","minLength":1,"maxLength":4294967295,"default":"undefined"},"status":{"type":"string","default":"loop","enum":["loop","registrate"]},"states":{"type":"array","default":[],"items":{"type":"object","required":["duration","state"],"additionalProperties":false,"properties":{"duration":{"type":"integer","minimum":0,"maximum":60000},"state":{"type":["object","array"],"filter":"pass_all"}}}}}}}}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/request/logicanalyzer/deinit.yml":
+/***/ "./dist/src/json_schema/request/logicAnalyzer/deinit.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/logicAnalyzer/deinit","type":"null"}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/request/logicanalyzer/index.yml":
+/***/ "./dist/src/json_schema/request/logicAnalyzer/index.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/logicAnalyzer","basePath":"logic_analyzer","anyOf":[{"$ref":"/request/logicAnalyzer/init"},{"$ref":"/request/logicAnalyzer/deinit"}]}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/request/logicanalyzer/init.yml":
+/***/ "./dist/src/json_schema/request/logicAnalyzer/init.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/logicAnalyzer/init","exampleDescription":"With below sample code, you will receive only data which start with 'false, false, false' 3bit.","type":"object","required":["io","interval","duration"],"properties":{"io":{"type":"array","minItems":1,"maxItems":1,"items":{"$ref":"/pinSetting"}},"interval":{"type":"number","minimum":0,"exclusiveMinimum":true},"duration":{"type":"integer","minimum":0,"exclusiveMinimum":true},"trigger":{"type":"object","additionalProperties":false,"required":["value","samples"],"default":{"value":false,"samples":0},"properties":{"value":{"type":"boolean","default":false},"samples":{"type":"integer","minimum":0,"default":0}}}}}
@@ -1538,28 +1538,28 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/ioanimation/index.yml":
+/***/ "./dist/src/json_schema/response/ioAnimation/index.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ioAnimation","basePath":"io","anyOf":[{"$ref":"/response/ioAnimation/notify"}]}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/ioanimation/notify.yml":
+/***/ "./dist/src/json_schema/response/ioAnimation/notify.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ioAnimation/notify","type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status"],"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","enum":["finish"]}}}}}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/logicanalyzer/data.yml":
+/***/ "./dist/src/json_schema/response/logicAnalyzer/data.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/logicAnalyzer/data","type":"object","required":["data"],"properties":{"data":{"$ref":"/bitArray"}}}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/logicanalyzer/index.yml":
+/***/ "./dist/src/json_schema/response/logicAnalyzer/index.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/logicAnalyzer","basePath":"logic_analyzer","anyOf":[{"$ref":"/response/logicAnalyzer/data"}]}
@@ -1716,7 +1716,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./dist/src/json_schema/response/ws/obniz.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws/obniz","type":"object","required":["obniz"],"properties":{"obniz":{"type":"object","required":["hw","firmware"],"additionalProperties":false,"properties":{"hw":{"type":"string"},"firmware":{"type":"string"},"metadata":{"type":"string"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws/obniz","type":"object","required":["obniz"],"properties":{"obniz":{"type":"object","required":["hw","firmware"],"additionalProperties":false,"properties":{"hw":{"type":"string"},"firmware":{"type":"string"},"metadata":{"type":"string"},"connected_network":{"type":"object","required":["online_at","current_net"],"additionalProperties":false,"properties":{"online_at":{"type":"number"},"net":{"type":"string"},"local_ip":{"type":"string"},"global_ip":{"type":"string"},"wifi":{"type":"object","required":["ssid","mac_address","rssi"],"additionalProperties":false,"properties":{"ssid":{"type":"string"},"mac_address":{"type":"string"},"rssi":{"type":"number"}}},"wifimesh":{"type":"object","required":["mesh_id","parent_obniz_id","root_obniz_id","layer","rssi"],"additionalProperties":false,"properties":{"meshid":{"type":"string"},"parent_obniz_id":{"type":"string"},"root_obniz_id":{"type":"string"},"layer":{"type":"number"},"rssi":{"type":"number"}}}}}}}}}
 
 /***/ }),
 
@@ -2372,7 +2372,7 @@ class ObnizConnection extends eventemitter3_1.default {
         this._sendQueue = null;
         this._waitForLocalConnectReadyTimer = null;
         this._sendPool = null;
-        this._repeatInterval = 0;
+        this._repeatInterval = 100;
         this._nextLoopTimeout = null;
         this._nextPingTimeout = null;
         this._nextAutoConnectLoopTimeout = null;
@@ -2734,6 +2734,15 @@ class ObnizConnection extends eventemitter3_1.default {
             });
         }
         return promise;
+    }
+    /**
+     * Sets the execution interval of onLoop function.
+     * Changes will be reflected after the next onloop is executed.
+     *
+     * @param interval interval of execution in milliseconds.
+     */
+    setLoopInterval(interval) {
+        this._repeatInterval = interval;
     }
     /**
      * Set onloop function. Use onloop property instead. This is deprecated function.
@@ -3118,8 +3127,9 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     _handleWSCommand(wsObj) {
         if (wsObj.ready) {
-            this.firmware_ver = wsObj.obniz.firmware;
-            this.hw = wsObj.obniz.hw;
+            const wsObniz = wsObj.obniz;
+            this.firmware_ver = wsObniz.firmware;
+            this.hw = wsObniz.hw;
             if (!this.hw) {
                 this.hw = 'obnizb1';
             }
@@ -3135,13 +3145,16 @@ class ObnizConnection extends eventemitter3_1.default {
             if (this.options.reset_obniz_on_ws_disconnection) {
                 this.resetOnDisconnect(true);
             }
-            if (wsObj.obniz.metadata) {
+            if (wsObniz.metadata) {
                 try {
                     this.metadata = JSON.parse(wsObj.obniz.metadata);
                 }
                 catch (e) {
                     // ignore parsing error.
                 }
+            }
+            if (wsObniz.connected_network) {
+                this.connected_network = wsObniz.connected_network;
             }
             if (wsObj.local_connect && wsObj.local_connect.ip) {
                 this._localConnectIp = wsObj.local_connect.ip;
@@ -3194,29 +3207,30 @@ class ObnizConnection extends eventemitter3_1.default {
                 clearTimeout(this._nextLoopTimeout);
             }
             this._nextLoopTimeout = null;
-            if (this.connectionState === 'connected') {
-                try {
-                    if (typeof this.onloop === 'function') {
-                        await this.pingWait();
-                        const prom = this.onloop(this);
-                        if (prom instanceof Promise) {
-                            await prom;
-                        }
+            if (this.connectionState !== 'connected') {
+                return;
+            }
+            try {
+                if (typeof this.onloop === 'function') {
+                    // await this.pingWait();
+                    const prom = this.onloop(this);
+                    if (prom instanceof Promise) {
+                        await prom;
                     }
                 }
-                catch (e) {
-                    console.error(`obniz.js handled Exception inside of obniz.repeat() function`);
-                    console.error(e);
-                }
-                finally {
-                    if (this.connectionState === 'connected') {
-                        if (!this._nextLoopTimeout) {
-                            let interval = this._repeatInterval;
-                            if (typeof this.onloop !== 'function') {
-                                interval = 100;
-                            }
-                            this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), interval);
+            }
+            catch (e) {
+                console.error(`obniz.js handled Exception inside of obniz.onloop function`);
+                console.error(e);
+            }
+            finally {
+                if (this.connectionState === 'connected') {
+                    if (!this._nextLoopTimeout) {
+                        let interval = this._repeatInterval;
+                        if (typeof this.onloop !== 'function') {
+                            interval = 100;
                         }
+                        this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), interval);
                     }
                 }
             }
@@ -3895,9 +3909,529 @@ class ObnizParts extends ObnizConnection_1.default {
         }
         return parts;
     }
+    static getBleParts(peripheral) {
+        const result = Object.entries(_parts)
+            .filter(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ([, p]) => p.AvailableBleMode !== undefined &&
+            typeof p.getDeviceMode === 'function')
+            .map(([n, p]) => [
+            n,
+            p.getDeviceMode(peripheral),
+        ])
+            .filter(([, m]) => m !== null)
+            // Hiring with long library names
+            .sort(([na], [nb]) => ((nb !== null && nb !== void 0 ? nb : '')).length - ((na !== null && na !== void 0 ? na : '')).length);
+        if (result.length === 0 || !result[0][0] || !result[0][1])
+            return null;
+        const [name, mode] = result[0];
+        const parts = new _parts[name](peripheral, mode);
+        return parts;
+    }
 }
 exports.default = ObnizParts;
 
+
+/***/ }),
+
+/***/ "./dist/src/obniz/ObnizPartsBleAbstract.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/* eslint-disable rulesdir/non-ascii */
+/* eslint-disable max-classes-per-file */
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
+const ObnizPartsBleModeList = ['Beacon', 'Connectable', 'Pairing'];
+exports.notMatchDeviceError = new Error('Is NOT target device.');
+exports.uint = (value) => {
+    let val = 0;
+    value.forEach((v, i) => (val += v << (i * 8)));
+    return val;
+};
+exports.int = (value) => {
+    const num = exports.uint(value);
+    return (num -
+        ((num & (0x8 << (value.length * 8 - 4))) !== 0
+            ? value.length && value.length >= 28
+                ? 0x10000000 * 2 ** (value.length - 28)
+                : 0x1 << (value.length * 8)
+            : 0));
+};
+exports.uintBE = (value) => exports.uint(value.reverse());
+exports.intBE = (value) => exports.int(value.reverse());
+class ObnizPartsBle {
+    constructor(peripheral, mode) {
+        this._mode = mode;
+        this.peripheral = peripheral;
+        this.address = peripheral.address;
+        this.beaconData = this.peripheral.manufacturerSpecificData;
+        if (this.beaconData)
+            this.beaconData = this.beaconData.slice(2);
+        this.beaconDataInScanResponse = this.peripheral.manufacturerSpecificDataInScanResponse;
+        if (this.beaconDataInScanResponse)
+            this.beaconDataInScanResponse = this.beaconDataInScanResponse.slice(2);
+    }
+    /**
+     * Information of parts.
+     * name: PartsName
+     */
+    static info() {
+        return { name: this.PartsName };
+    }
+    /**
+     * Available BLE modes (Beacon | Connectable | Pairing)
+     *
+     * 利用可能なBLEのモード (Beacon | Connectable | Pairing)
+     */
+    static getAvailableBleMode() {
+        const availableBleMode = this
+            .AvailableBleMode;
+        return availableBleMode instanceof Array
+            ? availableBleMode
+            : [availableBleMode];
+    }
+    static getServiceUuids(mode) {
+        const uuids = this.ServiceUuids instanceof Array ||
+            typeof this.ServiceUuids === 'string' ||
+            this.ServiceUuids === null ||
+            this.ServiceUuids === undefined
+            ? this.ServiceUuids
+            : this.ServiceUuids[mode];
+        return typeof uuids === 'string' ? [uuids] : uuids;
+    }
+    /**
+     * @deprecated
+     */
+    static isDevice(peripheral) {
+        return this.getDeviceMode(peripheral) !== null;
+    }
+    /**
+     * Get Peripheral Mode.
+     *
+     * ペリフェラルのモードを取得
+     *
+     * @param peripheral BleRemotePeripheral
+     * @returns If the corresponding device is that mode, it must be null if not applicable 該当するデバイスならばそのモード、該当しなければnull
+     */
+    static getDeviceMode(peripheral) {
+        var _a;
+        return (_a = this.getAvailableBleMode()
+            .map((mode) => this.isDeviceWithMode(peripheral, mode) ? mode : undefined)
+            .find((mode) => mode), (_a !== null && _a !== void 0 ? _a : null));
+    }
+    /**
+     * Check if peripherals and modes match the library.
+     *
+     * ペリフェラルとモードがライブラリと合致するかチェック
+     *
+     * @param peripheral BleRemotePeripheral
+     * @param mode Beacon | Connectable | Pairing
+     * @returns Whether to match 合致するかどうか
+     */
+    static isDeviceWithMode(peripheral, mode) {
+        var _a;
+        if (!this.getAvailableBleMode().includes(mode))
+            return false;
+        if (this.Address) {
+            const defaultAddress = this.Address instanceof RegExp ? this.Address : this.Address[mode];
+            if (defaultAddress !== undefined &&
+                !defaultAddress.test(peripheral.address))
+                return false;
+        }
+        if (this.LocalName) {
+            const defaultLocalName = this.LocalName instanceof RegExp
+                ? this.LocalName
+                : this.LocalName[mode];
+            if (defaultLocalName !== undefined &&
+                !defaultLocalName.test((_a = peripheral.localName, (_a !== null && _a !== void 0 ? _a : 'null'))))
+                return false;
+        }
+        if (this.ServiceUuids) {
+            const defaultServiceUuids = this.getServiceUuids(mode);
+            if (defaultServiceUuids !== undefined) {
+                const uuids = peripheral.advertisementServiceUuids();
+                if (defaultServiceUuids === null && uuids.length !== 0)
+                    return false;
+                if (defaultServiceUuids !== null && uuids.length === 0)
+                    return false;
+                if (defaultServiceUuids !== null &&
+                    defaultServiceUuids.filter((u) => !uuids.includes(u.toLowerCase()))
+                        .length !== 0)
+                    return false;
+            }
+        }
+        if (!this.checkManufacturerSpecificData(mode, peripheral.manufacturerSpecificData, this.BeaconDataLength, this.CompanyID, false))
+            return false;
+        if (!this.checkManufacturerSpecificData(mode, peripheral.manufacturerSpecificDataInScanResponse, this.BeaconDataLength_ScanResponse, this.CompanyID_ScanResponse, true))
+            return false;
+        return true;
+    }
+    static checkManufacturerSpecificData(mode, beaconData, beaconDataLength, companyID, inScanResponse) {
+        if (companyID !== undefined) {
+            const defaultCompanyID = companyID instanceof Array ||
+                companyID === null ||
+                companyID === undefined
+                ? companyID
+                : companyID[mode];
+            if (defaultCompanyID !== undefined) {
+                if (defaultCompanyID === null && beaconData !== null)
+                    return false;
+                if (defaultCompanyID !== null && beaconData === null)
+                    return false;
+                if (defaultCompanyID !== null &&
+                    beaconData !== null &&
+                    (defaultCompanyID[0] !== beaconData[0] ||
+                        defaultCompanyID[1] !== beaconData[1]))
+                    return false;
+            }
+        }
+        if (beaconDataLength !== undefined) {
+            const defaultBeaconDataLength = typeof beaconDataLength === 'number' ||
+                beaconDataLength === null ||
+                beaconDataLength === undefined
+                ? beaconDataLength
+                : beaconDataLength[mode];
+            if (defaultBeaconDataLength !== undefined) {
+                if (defaultBeaconDataLength === null && beaconData !== null)
+                    return false;
+                if (defaultBeaconDataLength !== null && beaconData === null)
+                    return false;
+                if (defaultBeaconDataLength !== null &&
+                    beaconData !== null &&
+                    beaconData.length + 1 !== defaultBeaconDataLength)
+                    return false;
+            }
+        }
+        if (this.BeaconDataStruct !== undefined) {
+            const defaultBeaconDataStruct = (this.BeaconDataStruct !== null &&
+                (this.BeaconDataStruct.Beacon ||
+                    this.BeaconDataStruct.Connectable ||
+                    this.BeaconDataStruct.Pairing)
+                ? this.BeaconDataStruct[mode]
+                : this.BeaconDataStruct);
+            if (defaultBeaconDataStruct !== undefined) {
+                if (defaultBeaconDataStruct !== null &&
+                    beaconData !== null &&
+                    Object.values(defaultBeaconDataStruct).filter((config) => {
+                        var _a, _b;
+                        return inScanResponse === (_a = config.scanResponse, (_a !== null && _a !== void 0 ? _a : false)) &&
+                            config.type === 'check' &&
+                            beaconData
+                                .slice(2 + config.index, 2 + config.index + (_b = config.length, (_b !== null && _b !== void 0 ? _b : 1)))
+                                .filter((d, i) => {
+                                var _a;
+                                return d !==
+                                    (typeof config.data === 'number'
+                                        ? [config.data]
+                                        : (_a = config.data, (_a !== null && _a !== void 0 ? _a : [])))[i];
+                            }).length !== 0;
+                    }).length !== 0)
+                    return false;
+            }
+        }
+        return true;
+    }
+    /**
+     * Form advertising data into an associative array.
+     *
+     * アドバタイジングデータを連想配列に成形
+     *
+     * @deprecated
+     */
+    static getData(peripheral) {
+        const mode = this.getDeviceMode(peripheral);
+        if (!mode)
+            return null;
+        const lib = new this(peripheral, mode);
+        try {
+            return lib.getData();
+        }
+        catch (e) {
+            console.error(e);
+            return null;
+        }
+    }
+    get mode() {
+        return this._mode;
+    }
+    checkMode(force = false) {
+        if (this.mode && !force)
+            return this.mode;
+        const mode = this.staticClass.getDeviceMode(this.peripheral);
+        if (!mode)
+            throw exports.notMatchDeviceError;
+        return (this._mode = mode);
+    }
+    /**
+     * アドバタイジングデータを連想配列に成形
+     * 利用可能なモード: Beacon, Connectable(一部のみ)
+     * Form advertising data into an associative array
+     * Available modes: Beacon, Connectable(only part)
+     */
+    getData() {
+        this.checkMode();
+        if (!this.staticClass.BeaconDataStruct)
+            throw new Error('Data analysis is not defined.');
+        if (!this.beaconData)
+            throw new Error('Manufacturer specific data is null.');
+        const defaultBeaconDataStruct = (this.staticClass.BeaconDataStruct.Beacon ||
+            this.staticClass.BeaconDataStruct.Connectable ||
+            this.staticClass.BeaconDataStruct.Pairing
+            ? this.staticClass.BeaconDataStruct[this.mode]
+            : this.staticClass.BeaconDataStruct);
+        if (defaultBeaconDataStruct === null)
+            throw new Error('Data analysis is not defined.');
+        return Object.fromEntries(Object.entries(defaultBeaconDataStruct)
+            .map(([name, c]) => {
+            var _a, _b, _c;
+            if (c.type === 'check')
+                return [];
+            const config = c;
+            if (!(config.scanResponse
+                ? this.beaconDataInScanResponse
+                : this.beaconData))
+                throw new Error('manufacturerSpecificData is null.');
+            const data = (_a = (config.scanResponse
+                ? this.beaconDataInScanResponse
+                : this.beaconData), (_a !== null && _a !== void 0 ? _a : [])).slice(config.index, config.index + (_b = config.length, (_b !== null && _b !== void 0 ? _b : 1)));
+            if (config.type.indexOf('bool') === 0)
+                return [name, (data[0] & parseInt(config.type.slice(4), 2)) > 0];
+            else if (config.type === 'string')
+                return [
+                    name,
+                    Buffer.from(data.slice(0, data.indexOf(0))).toString(),
+                ];
+            else if (config.type === 'xyz') {
+                if (!config.length)
+                    config.length = 6;
+                if (config.length % 6 !== 0)
+                    return [];
+                else if (config.length === 6)
+                    return [name, this.getTriaxial(data)];
+                else
+                    return [
+                        name,
+                        [...Array(config.length / 6).keys()].map((v) => this.getTriaxial(data.slice(v * 6, (v + 1) * 6))),
+                    ];
+            }
+            else if (config.type === 'custom')
+                if (!config.func)
+                    return [];
+                else
+                    return [name, config.func(data, this.peripheral)];
+            else {
+                const multi = (_c = config.multiple, (_c !== null && _c !== void 0 ? _c : 1));
+                const num = (config.type.indexOf('u') === 0 ? exports.uint : exports.int)(config.type.indexOf('BE') >= 0 ? data.reverse() : data);
+                return [name, num * multi];
+            }
+        })
+            .filter((v) => v[0]));
+    }
+    getTriaxial(data) {
+        return {
+            x: exports.int(data.slice(0, 2)),
+            y: exports.int(data.slice(2, 4)),
+            z: exports.int(data.slice(4, 6)),
+        };
+    }
+}
+exports.ObnizPartsBle = ObnizPartsBle;
+/**
+ * Used as a condition of isDevice() by default.
+ *
+ * 標準でisDevice()の条件として使用
+ */
+ObnizPartsBle.Address = undefined;
+/**
+ * Used as a condition of isDevice() by default.
+ *
+ * 標準でisDevice()の条件として使用
+ */
+ObnizPartsBle.LocalName = undefined;
+/**
+ * Used as a condition of isDevice() by default.
+ *
+ * 標準でisDevice()の条件として使用
+ */
+ObnizPartsBle.ServiceUuids = undefined;
+/**
+ * Used as a condition of isDevice() by default.
+ *
+ * 標準でisDevice()の条件として使用
+ */
+ObnizPartsBle.BeaconDataLength = undefined;
+/**
+ * Used as a condition of isDevice() by default.
+ *
+ * 標準でisDevice()の条件として使用
+ */
+ObnizPartsBle.BeaconDataLength_ScanResponse = undefined;
+/**
+ * Used as a condition of isDevice() by default.
+ *
+ * 標準でisDevice()の条件として使用
+ */
+ObnizPartsBle.CompanyID = undefined;
+/**
+ * Used as a condition of isDevice() by default.
+ *
+ * 標準でisDevice()の条件として使用
+ */
+ObnizPartsBle.CompanyID_ScanResponse = undefined;
+class ObnizPartsBleConnectable extends ObnizPartsBle {
+    constructor(peripheral, mode) {
+        super(peripheral, mode);
+        this.peripheral.ondisconnect = async (reason) => {
+            await this.beforeOnDisconnectWait(reason);
+            if (this.ondisconnect)
+                await this.ondisconnect(reason);
+        };
+    }
+    /**
+     * Connect to peripherals with validation.
+     *
+     * バリデーションのあるペリフェラルへの接続
+     *
+     * @param keys: Key acquired when pairing previously 以前にペアリングしたときに取得されたキー
+     */
+    async connectWait(keys) {
+        // TODO: Enable Validation
+        // if (this.mode !== 'Connectable')
+        //   throw new Error(
+        //     `Connection can only be used in connectable mode, the current mode is ${this.mode}`
+        //   );
+        await this.peripheral.connectWait({
+            pairingOption: {
+                keys,
+            },
+        });
+    }
+    /**
+     * Disconnect from peripheral.
+     *
+     * ペリフェラルから切断
+     */
+    async disconnectWait() {
+        await this.peripheral.disconnectWait();
+    }
+    /**
+     * Check if connected.
+     *
+     * 接続しているかどうかチェック
+     *
+     * @param connected Connection status (default: true)
+     */
+    checkConnected(connected = true) {
+        if (this.peripheral.connected !== connected)
+            throw new Error(connected
+                ? 'Peripheral is NOT connected!!'
+                : 'Peripheral IS connected!!');
+    }
+    /**
+     * Get any characteristic from any service.
+     *
+     * 任意のサービスから任意のキャラクタリスティックを取得
+     *
+     * @param serviceUuid Service UUID
+     * @param characteristicUuid Characteristic UUID
+     * @returns Instance of BleRemoteCharacteristic
+     */
+    getChar(serviceUuid, characteristicUuid) {
+        const service = this.peripheral.getService(serviceUuid);
+        if (!service)
+            throw new ObnizError_1.ObnizBleUnknownServiceError(this.peripheral.address, serviceUuid);
+        const char = service.getCharacteristic(characteristicUuid);
+        if (!char)
+            throw new ObnizError_1.ObnizBleUnknownCharacteristicError(this.peripheral.address, serviceUuid, characteristicUuid);
+        return char;
+    }
+    /**
+     * Read data from any characteristic of any service.
+     *
+     * 任意のサービスの任意のキャラクタリスティックからデータを読み取り
+     *
+     * @param serviceUuid Service UUID
+     * @param characteristicUuid Characteristic UUID
+     * @returns Data read result データ読み取り結果
+     */
+    async readCharWait(serviceUuid, characteristicUuid) {
+        const char = this.getChar(serviceUuid, characteristicUuid);
+        return await char.readWait();
+    }
+    /**
+     * Write data to any characteristic of any service.
+     *
+     * 任意のサービスの任意のキャラクタリスティックへデータを書き込み
+     *
+     * @param serviceUuid Service UUID
+     * @param characteristicUuid Characteristic UUID
+     * @param data Write data
+     * @returns Data write result
+     */
+    async writeCharWait(serviceUuid, characteristicUuid, data, needResponse) {
+        const characteristic = this.getChar(serviceUuid, characteristicUuid);
+        return await characteristic.writeWait(data, needResponse);
+    }
+    /**
+     * Register notification to any characteristic of any service.
+     *
+     * 任意のサービスの任意のキャラクタリスティックへ通知を登録
+     *
+     * @param serviceUuid Service UUID
+     * @param characteristicUuid Characteristic UUID
+     * @param callback It is called when data comes
+     */
+    async subscribeWait(serviceUuid, characteristicUuid, callback) {
+        const characteristic = this.getChar(serviceUuid, characteristicUuid);
+        await characteristic.registerNotifyWait((callback !== null && callback !== void 0 ? callback : (() => {
+            // do nothing.
+        })));
+    }
+}
+exports.ObnizPartsBleConnectable = ObnizPartsBleConnectable;
+exports.iBeaconCompanyID = [0x4c, 0x00];
+exports.iBeaconData = 
+// length !== 25
+{
+    type: {
+        index: 0,
+        length: 2,
+        type: 'check',
+        data: [0x02, 0x15],
+    },
+    uuid: {
+        index: 2,
+        length: 16,
+        type: 'custom',
+        func: (data) => data
+            .map((d, i) => ([2, 3, 4, 5].includes(i / 2) ? '-' : '') +
+            ('00' + d.toString(16)).slice(-2))
+            .join(''),
+    },
+    major: {
+        index: 18,
+        length: 2,
+        type: 'unsignedNumBE',
+    },
+    minor: {
+        index: 20,
+        length: 2,
+        type: 'unsignedNumBE',
+    },
+    power: {
+        index: 22,
+        type: 'numLE',
+    },
+    rssi: {
+        index: 0,
+        type: 'custom',
+        func: (d, p) => { var _a; return _a = p.rssi, (_a !== null && _a !== void 0 ? _a : 0); },
+    },
+};
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -3906,6 +4440,8 @@ exports.default = ObnizParts;
 
 "use strict";
 
+/* eslint-disable max-classes-per-file */
+/* eslint-disable rulesdir/non-ascii */
 /**
  * @packageDocumentation
  * @module ObnizCore
@@ -4526,6 +5062,9 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
             return;
         }
         const doms = this.getDebugDoms();
+        if (!doms) {
+            return;
+        }
         if (doms.loaderDom) {
             doms.loaderDom.style.display = 'block';
         }
@@ -5110,6 +5649,37 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         this.centralBindings.addPeripheralData(address, addressType);
         await peripheral.connectWait();
         return peripheral;
+    }
+    /**
+     * Return connected peripherals.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * let target = {
+     *   localName: "Blank"
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(peripheral) {
+     *   try {
+     *     await peripheral.connectWait();
+     *   } catch(e) {
+     *     console.error(e);
+     *   }
+     * }
+     * console.log(obniz.ble.getConnectedPeripherals());
+     * ```
+     *
+     * @returns connected peripherals
+     */
+    getConnectedPeripherals() {
+        const connectedPeripherals = [];
+        for (const elm of this.remotePeripherals) {
+            if (elm.connected) {
+                connectedPeripherals.push(elm);
+            }
+        }
+        return connectedPeripherals;
     }
     /**
      * @ignore
@@ -6137,6 +6707,9 @@ class BleHelper {
     uuidFilter(uuid) {
         return uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
     }
+    deviceAddressFilter(uuid) {
+        return uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
+    }
     toCamelCase(str) {
         str = str.charAt(0).toLowerCase() + str.slice(1);
         return str.replace(/[-_](.)/g, (match, group1) => {
@@ -6748,7 +7321,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * This sets a callback function to receive notify when it comes from periperal.
      * To receive notify, you need to register on CCCD Descriptor(0x2902).
      *
-     * More infomation of BLE/CCCD is available at [bluetooth.com](https://www.bluetooth.com/specifications/gatt/descriptors/).
+     * More information of BLE/CCCD is available at [bluetooth.com](https://www.bluetooth.com/specifications/gatt/descriptors/).
      *
      * ```javascript
      * await obniz.ble.initWait();
@@ -6818,7 +7391,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
      *
      * char.onregisternotify = function() {
-     *  console.log("register finshed")
+     *  console.log("register finished")
      *  char.unregisterNotify();
      * }
      *
@@ -6852,9 +7425,9 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      *
      * var peripheral = await obniz.ble.scan.startOneWait(target);
      * await peripheral.connectWait();
-     * let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
+     * let char = peripheral.getService('fff0').getCharacteristic('fff1');
      *
-     * await char.registerNotifyWait( function(data){
+     * await char.registerNotifyWait(function(data){
      *   console.log("notify with data " + data.join(','));
      * });
      * await char.unregisterNotifyWait();
@@ -6868,6 +7441,32 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
         };
         await this.service.peripheral.obnizBle.centralBindings.notifyWait(this.service.peripheral.address, this.service.uuid, this.uuid, false);
         this._runUserCreatedFunction(this.onunregisternotify);
+    }
+    /**
+     * Wait for notification and return data when it arrives.
+     *
+     * ```javascript
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   localName: "obniz-notify"
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * await peripheral.connectWait();
+     * let char = peripheral.getService('fff0').getCharacteristic('fff1');
+     *
+     * let data = await c.getNotifyWait();
+     * console.log("notify with data " + data.join(','));
+     * ```
+     *
+     * @returns data from notification of the device
+     */
+    async getNotifyWait() {
+        return new Promise((resolve) => {
+            this.registerNotifyWait((data) => {
+                resolve(data);
+            });
+        });
     }
     /**
      * Use readWait() instead from 3.5.0
@@ -6953,7 +7552,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * Discover services.
      *
      * If connect setting param 'autoDiscovery' is true(default),
-     * services are automatically disvocer on connection established.
+     * services are automatically discover on connection established.
      *
      *
      * ```javascript
@@ -7199,6 +7798,8 @@ const bleRemoteService_1 = __importDefault(__webpack_require__("./dist/src/obniz
  */
 class BleRemotePeripheral {
     constructor(obnizBle, address) {
+        this.advertisingDataRows = {};
+        this.scanResponseDataRows = {};
         /**
          * @ignore
          */
@@ -7220,6 +7821,7 @@ class BleRemotePeripheral {
         this.obnizBle = obnizBle;
         this.address = address;
         this.connected = false;
+        this.connected_at = null;
         this.device_type = null;
         this.address_type = null;
         this.ble_event_type = null;
@@ -7227,6 +7829,8 @@ class BleRemotePeripheral {
         // this.adv_data = null;
         this.scan_resp = null;
         this.localName = null;
+        this.manufacturerSpecificData = null;
+        this.manufacturerSpecificDataInScanResponse = null;
         this.iBeacon = null;
         this._services = [];
         this.emitter = new eventemitter3_1.default();
@@ -7355,12 +7959,19 @@ class BleRemotePeripheral {
      *
      */
     async connectWait(setting) {
+        var _a;
+        if (this.connected && ((_a = setting) === null || _a === void 0 ? void 0 : _a.forceConnect) === false)
+            return;
         this._connectSetting = setting || {};
         this._connectSetting.autoDiscovery =
             this._connectSetting.autoDiscovery !== false;
+        this._connectSetting.mtuRequest =
+            this._connectSetting.mtuRequest === undefined
+                ? 256
+                : this._connectSetting.mtuRequest;
         await this.obnizBle.scan.endWait();
         try {
-            await this.obnizBle.centralBindings.connectWait(this.address, () => {
+            await this.obnizBle.centralBindings.connectWait(this.address, this._connectSetting.mtuRequest, () => {
                 if (this._connectSetting.pairingOption) {
                     this.setPairingOption(this._connectSetting.pairingOption);
                 }
@@ -7374,6 +7985,7 @@ class BleRemotePeripheral {
             throw e;
         }
         this.connected = true;
+        this.connected_at = new Date();
         try {
             if (this._connectSetting.autoDiscovery) {
                 await this.discoverAllHandlesWait();
@@ -7602,6 +8214,7 @@ class BleRemotePeripheral {
                 if (params.status === 'disconnected') {
                     const pre = this.connected;
                     this.connected = false;
+                    this.connected_at = null;
                     if (pre) {
                         this.obnizBle.Obniz._runUserCreatedFunction(this.ondisconnect, params.reason);
                         this.emitter.emit('disconnect', params.reason);
@@ -7620,8 +8233,8 @@ class BleRemotePeripheral {
         this._addServiceUuids(results, this.searchTypeVal(0x03), 16);
         this._addServiceUuids(results, this.searchTypeVal(0x04), 32);
         this._addServiceUuids(results, this.searchTypeVal(0x05), 32);
-        this._addServiceUuids(results, this.searchTypeVal(0x06), 64);
-        this._addServiceUuids(results, this.searchTypeVal(0x07), 64);
+        this._addServiceUuids(results, this.searchTypeVal(0x06), 128);
+        this._addServiceUuids(results, this.searchTypeVal(0x07), 128);
         return results;
     }
     /**
@@ -7679,59 +8292,58 @@ class BleRemotePeripheral {
         this.obnizBle.centralBindings.setPairingOption(this.address, options);
     }
     analyseAdvertisement() {
-        if (!this.advertise_data_rows) {
-            this.advertise_data_rows = [];
-            if (this.adv_data) {
-                for (let i = 0; i < this.adv_data.length; i++) {
-                    const length = this.adv_data[i];
-                    const arr = new Array(length);
-                    for (let j = 0; j < length; j++) {
-                        arr[j] = this.adv_data[i + j + 1];
-                    }
-                    this.advertise_data_rows.push(arr);
-                    i = i + length;
+        if (this.advertise_data_rows)
+            return;
+        this.advertise_data_rows = [];
+        if (this.adv_data) {
+            for (let i = 0; i < this.adv_data.length; i++) {
+                const length = this.adv_data[i];
+                const arr = new Array(length);
+                for (let j = 0; j < length; j++) {
+                    arr[j] = this.adv_data[i + j + 1];
                 }
+                this.advertise_data_rows.push(arr);
+                this.advertisingDataRows[this.adv_data[i + 1]] = this.adv_data.slice(i + 2, i + length + 1);
+                i = i + length;
             }
-            if (this.scan_resp) {
-                for (let i = 0; i < this.scan_resp.length; i++) {
-                    const length = this.scan_resp[i];
-                    const arr = new Array(length);
-                    for (let j = 0; j < length; j++) {
-                        arr[j] = this.scan_resp[i + j + 1];
-                    }
-                    this.advertise_data_rows.push(arr);
-                    i = i + length;
-                }
-            }
-            this.setLocalName();
-            this.setIBeacon();
         }
+        if (this.scan_resp) {
+            for (let i = 0; i < this.scan_resp.length; i++) {
+                const length = this.scan_resp[i];
+                const arr = new Array(length);
+                for (let j = 0; j < length; j++) {
+                    arr[j] = this.scan_resp[i + j + 1];
+                }
+                this.advertise_data_rows.push(arr);
+                this.scanResponseDataRows[this.scan_resp[i + 1]] = this.scan_resp.slice(i + 2, i + length + 1);
+                i = i + length;
+            }
+        }
+        this.setLocalName();
+        this.setManufacturerSpecificData();
+        this.setIBeacon();
     }
-    searchTypeVal(type) {
+    searchTypeVal(type, fromScanResponseData = false) {
         this.analyseAdvertisement();
-        for (let i = 0; i < this.advertise_data_rows.length; i++) {
-            if (this.advertise_data_rows[i][0] === type) {
-                const results = [].concat(this.advertise_data_rows[i]);
-                results.shift();
-                return results;
-            }
-        }
-        return undefined;
+        if (this.advertisingDataRows[type] && !fromScanResponseData)
+            return this.advertisingDataRows[type];
+        else if (this.scanResponseDataRows[type])
+            return this.scanResponseDataRows[type];
+        else
+            return undefined;
     }
     setLocalName() {
-        let data = this.searchTypeVal(0x09);
-        if (!data) {
-            data = this.searchTypeVal(0x08);
-        }
-        if (!data) {
-            this.localName = null;
-        }
-        else {
-            this.localName = String.fromCharCode.apply(null, data);
-        }
+        var _a;
+        const data = (_a = this.searchTypeVal(0x09), (_a !== null && _a !== void 0 ? _a : this.searchTypeVal(0x08)));
+        this.localName = data ? String.fromCharCode.apply(null, data) : null;
+    }
+    setManufacturerSpecificData() {
+        var _a, _b;
+        this.manufacturerSpecificData = (_a = this.searchTypeVal(0xff), (_a !== null && _a !== void 0 ? _a : null));
+        this.manufacturerSpecificDataInScanResponse = (_b = this.searchTypeVal(0xff, true), (_b !== null && _b !== void 0 ? _b : null));
     }
     setIBeacon() {
-        const data = this.searchTypeVal(0xff);
+        const data = this.manufacturerSpecificData;
         if (!data ||
             data[0] !== 0x4c ||
             data[1] !== 0x00 ||
@@ -8154,6 +8766,12 @@ class BleScan {
      */
     async startWait(target = {}, settings = {}) {
         this.obnizBle.warningIfNotInitialize();
+        if (this.isContainingBleScanSettingProperty(target)) {
+            this.obnizBle.Obniz.warning({
+                alert: 'warning',
+                message: `Unexpected arguments. It might be contained the second argument keys. Please check object keys and order of 'startWait()' / 'startOneWait()' / 'startAllWait()' arguments. `,
+            });
+        }
         this.state = 'starting';
         const timeout = settings.duration === undefined ? 30 : settings.duration;
         settings.duplicate = !!settings.duplicate;
@@ -8162,9 +8780,14 @@ class BleScan {
         settings.waitBothAdvertisementAndScanResponse =
             settings.waitBothAdvertisementAndScanResponse !== false;
         this.scanSettings = settings;
+        this.scanTarget = {};
         target = target || {};
         this.scanTarget.binary = target.binary;
-        this.scanTarget.deviceAddress = target.deviceAddress;
+        if (target && target.deviceAddress) {
+            this.scanTarget.deviceAddress = this._arrayWrapper(target.deviceAddress).map((elm) => {
+                return bleHelper_1.default.deviceAddressFilter(elm);
+            });
+        }
         this.scanTarget.localName = target.localName;
         this.scanTarget.localNamePrefix = target.localNamePrefix;
         this.scanTarget.uuids = [];
@@ -8581,6 +9204,19 @@ class BleScan {
             if (deviceAddress === peripheral.address) {
                 return true;
             }
+        }
+        return false;
+    }
+    isContainingBleScanSettingProperty(arg) {
+        if (arg === null) {
+            return false;
+        }
+        else if ('duration' in arg ||
+            'duplicate' in arg ||
+            'activeScan' in arg ||
+            'filterOnDevice' in arg ||
+            'waitBothAdvertisementAndScanResponse' in arg) {
+            return true;
         }
         return false;
     }
@@ -9119,7 +9755,7 @@ class NobleBindings extends eventemitter3_1.default {
     async stopScanningWait() {
         await this._gap.stopScanningWait();
     }
-    async connectWait(peripheralUuid, onConnectCallback) {
+    async connectWait(peripheralUuid, mtu, onConnectCallback) {
         const address = this._addresses[peripheralUuid];
         const addressType = this._addresseTypes[peripheralUuid];
         if (!address) {
@@ -9138,7 +9774,7 @@ class NobleBindings extends eventemitter3_1.default {
                     onConnectCallback();
                 }
             }); // connection timeout for 90 secs.
-            return await this._gatts[conResult.handle].exchangeMtuWait(256);
+            return await this._gatts[conResult.handle].exchangeMtuWait(mtu);
         })
             .then(() => {
             this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
@@ -9886,11 +10522,16 @@ class Gatt extends eventemitter3_1.default {
             // ignore timeout error
             // console.error(e);
         });
-        const data = await this._execCommandWait(this.mtuRequest(mtu), ATT.OP_MTU_RESP);
-        const opcode = data[0];
-        const newMtu = data.readUInt16LE(1);
-        debug(this._address + ': new MTU is ' + newMtu);
-        this._mtu = newMtu;
+        if (mtu === null) {
+            debug(this._address + ': no exchange MTU : ' + this._mtu);
+        }
+        else {
+            const data = await this._execCommandWait(this.mtuRequest(mtu), ATT.OP_MTU_RESP);
+            const opcode = data[0];
+            const newMtu = data.readUInt16LE(1);
+            debug(this._address + ': new MTU is ' + newMtu);
+            this._mtu = newMtu;
+        }
         return this._mtu;
     }
     async discoverServicesWait(uuids) {
@@ -11583,7 +12224,7 @@ class Hci extends eventemitter3_1.default {
             this.debug('\t\t\taddress = ' + address);
             this.debug('\t\t\taddress type = ' + addressType);
             this.debug('\t\t\teir = ' + eir.toString('hex'));
-            this.debug('\t\t\trssi = ' + rssi);
+            this.debug('\t\t\trssi =  ' + rssi);
             this.emit('leAdvertisingReport', 0, type, address, addressType, eir, rssi);
             data = data.slice(eirLength + 10);
         }
@@ -14155,6 +14796,13 @@ exports.default = ObnizSwitch;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/hw/cc3235mod.json":
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"22\":{},\"23\":{},\"24\":{},\"25\":{},\"28\":{},\"29\":{},\"30\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"22\":{},\"23\":{},\"24\":{},\"25\":{},\"28\":{},\"29\":{},\"30\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/hw/encored.json":
 /***/ (function(module) {
 
@@ -14218,6 +14866,9 @@ class HW {
         }
         else if (hw === 'encored_lte') {
             return __webpack_require__("./dist/src/obniz/libs/hw/encored_lte.json");
+        }
+        else if (hw === 'cc3235mod') {
+            return __webpack_require__("./dist/src/obniz/libs/hw/cc3235mod.json");
         }
         else {
             // default
@@ -15416,6 +16067,10 @@ const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/
 class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
         super(obniz);
+        /**
+         * @ignore
+         */
+        this.used = false;
         this.id = id;
         this._reset();
     }
@@ -16288,11 +16943,7 @@ class LogicAnalyzer extends ComponentAbstact_1.ComponentAbstract {
      * @param params
      */
     start(params) {
-        const err = util_1.default._requiredKeys(params, [
-            'io',
-            'interval',
-            'duration',
-        ]);
+        const err = util_1.default._requiredKeys(params, ['io', 'interval', 'duration']);
         if (err) {
             throw new Error("LogicAnalyzer start param '" + err + "' required, but not found ");
         }
@@ -16328,8 +16979,9 @@ class LogicAnalyzer extends ComponentAbstact_1.ComponentAbstract {
      * ```
      */
     end() {
-        const obj = {};
-        obj.logic_analyzer = null;
+        const obj = {
+            logic_analyzer: null,
+        };
         this.Obniz.send(obj);
         return;
     }
@@ -18702,7 +19354,7 @@ class WSCommand {
             length_extra_bytse--;
             result[index++] = payload_length >> (length_extra_bytse * 8);
         }
-        if (payload_length === 0) {
+        if (payload_length === 0 || !payload) {
             return result;
         }
         else {
@@ -18710,6 +19362,12 @@ class WSCommand {
             return result;
         }
     }
+    /**
+     * Dequeue a next wscommands from binary array.
+     *
+     * @param buf binary array received from obniz cloud.
+     * @returns chunk
+     */
     static dequeueOne(buf) {
         if (!buf || buf.byteLength === 0) {
             return null;
@@ -18781,6 +19439,7 @@ class WSCommand {
             const err = {
                 module: this.module,
                 _args: [...payload],
+                message: ``,
             };
             if (payload.byteLength === 3) {
                 err.err0 = payload[0];
@@ -18992,22 +19651,30 @@ class WSCommandAD extends WSCommand_1.default {
         if (func === this._CommandNotifyValue) {
             for (let i = 0; i + 2 < payload.byteLength; i += 3) {
                 let value;
-                if (payload[i + 1] & 0x80) {
-                    // 10bit mode
-                    value = ((payload[i + 1] & 0x03) << 8) + payload[i + 2]; // 0x0000 to 0x3FF;
-                    value = (5.0 * value) / 1023.0; // 1023.0 ===0x3FF
-                    value = Math.round(value * 1000) / 1000;
-                }
-                else if (payload[i + 1] & 0x40) {
+                if (this._hw.hw === 'cc3235mod') {
                     // 12bit mode
                     value = ((payload[i + 1] & 0x0f) << 8) + payload[i + 2]; // 0x0000 to 0x3FF;
-                    value = (3.3 * value) / 4095.0; // 4095.0 ===0xFFF // vdd is not always 3.3v but...
+                    value = (1.467 * value) / 4095.0; // 4095.0 ===0xFFF // vdd is not always
                     value = Math.round(value * 1000) / 1000;
                 }
                 else {
-                    // unsigned 100 times mode. (0 to 500 from 0v to 5v).
-                    value = (payload[i + 1] << 8) + payload[i + 2];
-                    value = value / 100.0;
+                    if (payload[i + 1] & 0x80) {
+                        // 10bit mode
+                        value = ((payload[i + 1] & 0x03) << 8) + payload[i + 2]; // 0x0000 to 0x3FF;
+                        value = (5.0 * value) / 1023.0; // 1023.0 ===0x3FF
+                        value = Math.round(value * 1000) / 1000;
+                    }
+                    else if (payload[i + 1] & 0x40) {
+                        // 12bit mode
+                        value = ((payload[i + 1] & 0x0f) << 8) + payload[i + 2]; // 0x0000 to 0x3FF;
+                        value = (3.3 * value) / 4095.0; // 4095.0 ===0xFFF // vdd is not always 3.3v but...
+                        value = Math.round(value * 1000) / 1000;
+                    }
+                    else {
+                        // unsigned 100 times mode. (0 to 500 from 0v to 5v).
+                        value = (payload[i + 1] << 8) + payload[i + 2];
+                        value = value / 100.0;
+                    }
                 }
                 objToSend['ad' + payload[i]] = value;
             }
@@ -20374,7 +21041,7 @@ class WSCommandDirective extends WSCommand_1.default {
         const nameArray = util_1.default.string2dataArray(params.animation.name);
         let frame;
         let offset = 0;
-        if (semver.lt(this._hw.firmware, '2.0.0')) {
+        if (semver.lt(this._hw.firmware || '1.0.0', '2.0.0')) {
             // < 2.0.0
             frame = new Uint8Array(1 + nameArray.length + 1);
             // name //
@@ -21158,7 +21825,7 @@ class WSCommandMeasurement extends WSCommand_1.default {
         const echoIO = params.echo.io_echo;
         const responseCount = params.echo.measure_edges;
         let timeoutUs = params.echo.timeout * 1000;
-        timeoutUs = parseInt(timeoutUs);
+        timeoutUs = Math.floor(timeoutUs);
         const buf = new Uint8Array(13);
         buf[0] = 0;
         buf[1] = triggerIO;
@@ -21180,9 +21847,7 @@ class WSCommandMeasurement extends WSCommand_1.default {
         if (module === undefined) {
             return;
         }
-        const schemaData = [
-            { uri: '/request/measure/echo', onValid: this.echo },
-        ];
+        const schemaData = [{ uri: '/request/measure/echo', onValid: this.echo }];
         const res = this.validateCommandSchema(schemaData, module, 'measure');
         if (res.valid === 0) {
             if (res.invalidButLike.length > 0) {
@@ -21196,7 +21861,7 @@ class WSCommandMeasurement extends WSCommand_1.default {
     notifyFromBinary(objToSend, func, payload) {
         if (func === this._CommandMeasurementEcho) {
             let index = 0;
-            const count = parseInt(payload[index++]);
+            const count = payload[index++];
             const array = [];
             for (let i = 0; i < count; i++) {
                 let timing;
@@ -21373,9 +22038,7 @@ class WSCommandPlugin extends WSCommand_1.default {
         if (module === undefined) {
             return;
         }
-        const schemaData = [
-            { uri: '/request/plugin/send', onValid: this.send },
-        ];
+        const schemaData = [{ uri: '/request/plugin/send', onValid: this.send }];
         const res = this.validateCommandSchema(schemaData, module, 'plugin');
         if (res.valid === 0) {
             if (res.invalidButLike.length > 0) {
@@ -21572,7 +22235,7 @@ class WSCommandSwitch extends WSCommand_1.default {
     notifyFromBinary(objToSend, func, payload) {
         if ((func === this._CommandOnece || func === this._CommandNotifyValue) &&
             payload.byteLength === 1) {
-            const state = parseInt(payload[0]);
+            const state = payload[0];
             const states = ['none', 'push', 'left', 'right'];
             objToSend.switch = {
                 state: states[state],
@@ -22551,8 +23214,10 @@ var map = {
 	"./Ble/iBS03R/index.js": "./dist/src/parts/Ble/iBS03R/index.js",
 	"./Ble/iBS03T/index.js": "./dist/src/parts/Ble/iBS03T/index.js",
 	"./Ble/iBS03TP/index.js": "./dist/src/parts/Ble/iBS03TP/index.js",
+	"./Ble/iBS03T_RH/index.js": "./dist/src/parts/Ble/iBS03T_RH/index.js",
 	"./Ble/iBS04/index.js": "./dist/src/parts/Ble/iBS04/index.js",
 	"./Ble/iBS04i/index.js": "./dist/src/parts/Ble/iBS04i/index.js",
+	"./Ble/iBS05H/index.js": "./dist/src/parts/Ble/iBS05H/index.js",
 	"./Ble/linking/index.js": "./dist/src/parts/Ble/linking/index.js",
 	"./Ble/linking/modules/advertising.js": "./dist/src/parts/Ble/linking/modules/advertising.js",
 	"./Ble/linking/modules/device.js": "./dist/src/parts/Ble/linking/modules/device.js",
@@ -22564,10 +23229,12 @@ var map = {
 	"./Ble/linking/modules/service-setting.js": "./dist/src/parts/Ble/linking/modules/service-setting.js",
 	"./Ble/linking/modules/service.js": "./dist/src/parts/Ble/linking/modules/service.js",
 	"./Ble/scbtgaaac/index.js": "./dist/src/parts/Ble/scbtgaaac/index.js",
+	"./Ble/tm511/index.js": "./dist/src/parts/Ble/tm511/index.js",
 	"./Ble/tm530/index.js": "./dist/src/parts/Ble/tm530/index.js",
-	"./Ble/tm551/index.js": "./dist/src/parts/Ble/tm551/index.js",
 	"./Ble/toio_corecube/index.js": "./dist/src/parts/Ble/toio_corecube/index.js",
 	"./Ble/uprism/index.js": "./dist/src/parts/Ble/uprism/index.js",
+	"./Ble/utils/abstracts/Logtta.js": "./dist/src/parts/Ble/utils/abstracts/Logtta.js",
+	"./Ble/utils/abstracts/iBS.js": "./dist/src/parts/Ble/utils/abstracts/iBS.js",
 	"./Ble/utils/advertisement/advertismentAnalyzer.js": "./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js",
 	"./Ble/utils/services/batteryService.js": "./dist/src/parts/Ble/utils/services/batteryService.js",
 	"./Ble/utils/services/genericAccess.js": "./dist/src/parts/Ble/utils/services/genericAccess.js",
@@ -22985,17 +23652,19 @@ exports.default = Puls08M5stickcS;
  * @packageDocumentation
  * @module Parts.OMRON_2JCIE
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+/** 2JCIE management class 2JCIEを管理するクラス */
 class OMRON_2JCIE {
     constructor(peripheral) {
         this._peripheral = null;
         this.vibrationState = {
             0x00: 'NONE',
-            0x01: 'druing vibration (Earthquake judgment in progress)',
+            0x01: 'during vibration (Earthquake judgment in progress)',
             0x02: 'during earthquake',
         };
         if (peripheral && !OMRON_2JCIE.isDevice(peripheral)) {
@@ -23008,13 +23677,39 @@ class OMRON_2JCIE {
             name: '2JCIE',
         };
     }
+    /**
+     * Verify that the received peripheral is from the 2JCIE Environmental Sensor series of OMRON
+     *
+     * 受け取ったperipheralがOMRON 環境センサ 2JCIEシリーズのものかどうか確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the 2JCIE Environmental Sensor series of OMRON
+     *
+     * OMRON 環境センサ 2JCIEシリーズかどうか
+     */
     static isDevice(peripheral) {
         return ((peripheral.localName && peripheral.localName.indexOf('Env') >= 0) ||
             (peripheral.localName && peripheral.localName.indexOf('IM') >= 0) ||
             (peripheral.localName && peripheral.localName.indexOf('Rbt') >= 0));
     }
     /**
-     * Get a datas from advertisement mode of OMRON 2JCIE
+     * Get a data from advertisement mode of the 2JCIE Environmental Sensor series of OMRON
+     *
+     * advertisementモードのOMRON 環境センサ 2JCIEシリーズからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the sensor センサから受け取ったデータ
+     *
+     * `2JCIE-BL01(BAG type バッグ形状) localName: IM`
+     *
+     * → {@linkplain OMRON_2JCIE_AdvData}
+     *
+     *
+     * `2JCIE-BU01(USB connection USB接続) localName: Rbt`
+     *
+     * → {@linkplain OMRON_2JCIE_AdvSensorData}
      */
     static getData(peripheral) {
         const adv_data = peripheral.adv_data;
@@ -23054,6 +23749,15 @@ class OMRON_2JCIE {
     wired(obniz) {
         this.obniz = obniz;
     }
+    /**
+     * Search for the 2JCIE Environmental Sensor series of OMRON
+     *
+     * OMRON 環境センサ 2JCIEシリーズを検索
+     *
+     * @returns if found: Instance of BleRemotePeripheral / if not found: null
+     *
+     * 見つかった場合: BleRemotePeripheralのインスタンス / 見つからなかった場合: null
+     */
     async findWait() {
         const target = {
             localName: ['Env', 'Rbt'],
@@ -23073,6 +23777,19 @@ class OMRON_2JCIE {
             return undefined;
         }
     }
+    /**
+     * (Search for the device and) connect the sensor
+     *
+     * Throw an error if the device is not found
+     *
+     * (デバイスを検索し、)センサへ接続
+     *
+     * デバイスが見つからなかった場合はエラーをthrow
+     *
+     * `supported types&modes 対応形状&モード`
+     * - 2JCIE-BL01(BAG type バッグ形状) localName: Env
+     * - 2JCIE-BU01(USB connection USB接続) localName: Rbt
+     */
     async connectWait() {
         if (!this._peripheral) {
             await this.findWait();
@@ -23089,13 +23806,18 @@ class OMRON_2JCIE {
             await this._peripheral.connectWait();
         }
     }
+    /**
+     * Disconnect from the sensor
+     *
+     * センサから切断
+     */
     async disconnectWait() {
         if (this._peripheral && this._peripheral.connected) {
             await this._peripheral.disconnectWait();
         }
     }
     signedNumberFromBinary(data) {
-        // little adian
+        // little endian
         let val = data[data.length - 1] & 0x7f;
         for (let i = data.length - 2; i >= 0; i--) {
             val = val * 256 + data[i];
@@ -23106,22 +23828,37 @@ class OMRON_2JCIE {
         return val;
     }
     unsignedNumberFromBinary(data) {
-        // little adian
+        // little endian
         let val = data[data.length - 1];
         for (let i = data.length - 2; i >= 0; i--) {
             val = val * 256 + data[i];
         }
         return val;
     }
+    /**
+     * @deprecated Please use {@linkplain getLatestDataWait}
+     *
+     * {@linkplain getLatestDataWait} の使用を推奨
+     */
     async getLatestDataBAGWait() {
         return this.getLatestDataWait();
     }
     /**
-     * @deprecated
+     * @deprecated Please use {@linkplain getLatestDataWait}
+     *
+     * {@linkplain getLatestDataWait} の使用を推奨
      */
     getLatestData() {
         return this.getLatestDataWait();
     }
+    /**
+     * Get the latest data from the 2JCIE-BL01(BAG type) sensor
+     *
+     * 2JCIE-BL01(バッグ形状)のセンサの最新のデータを取得
+     *
+     * @returns received data from the sensor センサから受け取ったデータ
+     *
+     */
     async getLatestDataWait() {
         await this.connectWait();
         const c = this._peripheral.getService(this.omron_uuid('3000', 'BAG')).getCharacteristic(this.omron_uuid('3001', 'BAG'));
@@ -23140,15 +23877,27 @@ class OMRON_2JCIE {
         };
         return json;
     }
+    /**
+     * @deprecated Please use {@linkplain getLatestSensorDataUSBWait}
+     *
+     * {@linkplain getLatestSensorDataUSBWait} の使用を推奨
+     */
     getLatestSensorDataUSB() {
         return this.getLatestSensorDataUSBWait();
     }
+    /**
+     * Get the latest data from the 2JCIE-BU01(USB connection) sensor
+     *
+     * 2JCIE-BU01(USB接続)のセンサの最新のデータを取得
+     *
+     * @returns received data from the sensor センサから受け取ったデータ
+     */
     async getLatestSensorDataUSBWait() {
         await this.connectWait();
         const c = this._peripheral.getService(this.omron_uuid('5010', 'USB')).getCharacteristic(this.omron_uuid('5012', 'USB'));
         const data = await c.readWait();
         const json = {
-            seqence_number: data[0],
+            sequence_number: data[0],
             temperature: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
             relative_humidity: this.signedNumberFromBinary(data.slice(3, 5)) * 0.01,
             light: this.signedNumberFromBinary(data.slice(5, 7)) * 1,
@@ -23160,18 +23909,27 @@ class OMRON_2JCIE {
         return json;
     }
     /**
-     * @deprecated
+     * @deprecated Please use {@linkplain getLatestCalculationDataUSBWait}
+     *
+     * {@linkplain getLatestCalculationDataUSBWait} の使用を推奨
      */
     getLatestCalculationDataUSB() {
         return this.getLatestCalculationDataUSBWait();
     }
+    /**
+     * Get the latest index data and acceleration data from the 2JCIE-BU01(USB connection) sensor
+     *
+     * 2JCIE-BU01(USB接続)のセンサの最新の指標データや加速度データを取得
+     *
+     * @returns received data from the sensor センサから受け取ったデータ
+     */
     async getLatestCalculationDataUSBWait() {
         await this.connectWait();
         const c = this._peripheral.getService(this.omron_uuid('5010', 'USB')).getCharacteristic(this.omron_uuid('5013', 'USB'));
         const data = await c.readWait();
         const json = {
             sequence_number: data[0],
-            disconfort_index: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
+            discomfort_index: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
             heatstroke_risk_factor: this.signedNumberFromBinary(data.slice(3, 5)) * 0.01,
             vibration_information: this.vibrationState[data[5]],
             si_value: this.unsignedNumberFromBinary(data.slice(6, 8)) * 0.1,
@@ -23198,11 +23956,13 @@ exports.default = OMRON_2JCIE;
  * @packageDocumentation
  * @module Parts.ENERTALK_TOUCH
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/services/batteryService.js"));
+/** ENERTALK TOUCH management class ENERTALK TOUCHを管理するクラス */
 class ENERTALK_TOUCH {
     constructor(peripheral) {
         this.keys = [];
@@ -23231,12 +23991,32 @@ class ENERTALK_TOUCH {
             name: 'ENERTALK_TOUCH',
         };
     }
+    /**
+     * Verify that the received peripheral is from the ENERTALK TOUCH
+     *
+     * 受け取ったperipheralがENERTALK TOUCHのものかどうか確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the ENERTALK TOUCH
+     *
+     * ENERTALK TOUCHかどうか
+     */
     static isDevice(peripheral) {
         if (peripheral.localName && peripheral.localName.startsWith('ensensor_')) {
             return true;
         }
         return false;
     }
+    /**
+     * Connect the sensor
+     *
+     * Throw an error if the device is not found
+     *
+     * センサへ接続
+     *
+     * デバイスが見つからなかった場合はエラーをthrow
+     */
     async connectWait() {
         if (!this._peripheral) {
             throw new Error('ENERTALK_TOUCH is not find.');
@@ -23261,10 +24041,26 @@ class ENERTALK_TOUCH {
             this.batteryService = new batteryService_1.default(service180F);
         }
     }
+    /**
+     * Disconnect from the sensor
+     *
+     * センサから切断
+     */
     async disconnectWait() {
         var _a;
         await ((_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.disconnectWait());
     }
+    /**
+     * Get the temperature data from the sensor
+     *
+     * センサから温度データを取得
+     *
+     * @returns temperature value 温度の値
+     *
+     * Range 範囲: -1000~5000
+     *
+     * (Unit 単位: 0.01 degC)
+     */
     async getTemperatureWait() {
         if (!this._temperatureChar) {
             throw new Error('device is not connected');
@@ -23274,6 +24070,17 @@ class ENERTALK_TOUCH {
         const temp = buf.readInt16BE(0) / 100;
         return temp;
     }
+    /**
+     * Get the humidity data from the sensor
+     *
+     * センサから湿度データを取得
+     *
+     * @returns humidity value 湿度の値
+     *
+     * Range 範囲: 0~100
+     *
+     * (Unit 単位: 1 %RH)
+     */
     async getHumidityWait() {
         if (!this._humidityChar) {
             throw new Error('device is not connected');
@@ -23282,6 +24089,17 @@ class ENERTALK_TOUCH {
         const humidity = humidityData[0];
         return humidity;
     }
+    /**
+     * Get the illumination data from the sensor
+     *
+     * センサから照度データを取得
+     *
+     * @returns illumination value 照度の値
+     *
+     * Range 範囲: 0~65535
+     *
+     * (Unit 単位: 1 lx)
+     */
     async getIlluminationWait() {
         if (!this._illuminanceChar) {
             throw new Error('device is not connected');
@@ -23291,6 +24109,17 @@ class ENERTALK_TOUCH {
         const illuminance = buf.readInt16BE(0);
         return illuminance;
     }
+    /**
+     * Get the acceleration data from the sensor
+     *
+     * センサから加速度データを取得
+     *
+     * @returns acceleration values 加速度の値
+     *
+     * Range 範囲: -2000~2000
+     *
+     * (Unit 単位: 1 mg)
+     */
     async getAccelerometerWait() {
         if (!this._accelerometerChar) {
             throw new Error('device is not connected');
@@ -23318,11 +24147,13 @@ exports.default = ENERTALK_TOUCH;
  * @packageDocumentation
  * @module Parts.EXTxx
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+/** EXTxx management class EXTxxを管理するクラス */
 class EXTxx extends ObnizPartsBleInterface_1.default {
     constructor(peripheral) {
         super();
@@ -23333,6 +24164,13 @@ class EXTxx extends ObnizPartsBleInterface_1.default {
             name: 'EXTxx',
         };
     }
+    /**
+     * (with instantiation) Get a data from the beacon
+     *
+     * (インスタンス化する場合) ビーコンからデータを取得
+     *
+     * @returns received data from the beacon ビーコンから受け取ったデータ
+     */
     getData() {
         var _a;
         const advData = (_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.adv_data;
@@ -23350,6 +24188,15 @@ class EXTxx extends ObnizPartsBleInterface_1.default {
             battery: advData[27],
         };
     }
+    /**
+     * (without instantiation) Get a data from the beacon
+     *
+     * (インスタンス化しない場合) ビーコンからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the beacon ビーコンから受け取ったデータ
+     */
     static getData(peripheral) {
         if (!EXTxx.isDevice(peripheral)) {
             return null;
@@ -23357,6 +24204,17 @@ class EXTxx extends ObnizPartsBleInterface_1.default {
         const dev = new EXTxx(peripheral);
         return dev.getData();
     }
+    /**
+     * Verify that the received peripheral is from the EXTxx
+     *
+     * 受け取ったperipheralがEXTxxのものかどうか確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the EXTxx
+     *
+     * EXTxxかどうか
+     */
     static isDevice(peripheral) {
         return (this.DefaultAdvData.filter((d, i) => d !== -1 && d !== peripheral.adv_data[i]).length === 0 &&
             this.DefaultAdvData.length === peripheral.adv_data.length);
@@ -23412,16 +24270,16 @@ const unsigned16 = (value) => {
  * @packageDocumentation
  * @module Parts.EXVital
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+/** EXVital management class EXVitalを管理するクラス */
 class EXVital extends ObnizPartsBleInterface_1.default {
     constructor(peripheral) {
-        var _a;
         super();
-        this.advData = (_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.adv_data;
         this._peripheral = peripheral;
     }
     static info() {
@@ -23429,24 +24287,42 @@ class EXVital extends ObnizPartsBleInterface_1.default {
             name: 'EXVital',
         };
     }
+    /**
+     * (with instantiation) Get a data from the beacon
+     *
+     * (インスタンス化する場合) ビーコンからデータを取得
+     *
+     * @returns received data from the beacon ビーコンから受け取ったデータ
+     */
     getData() {
-        if (!this.advData)
+        var _a;
+        const advData = (_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.adv_data;
+        if (!advData)
             throw new Error('advData is null');
         return {
-            major: unsigned16(this.advData.slice(11, 13)),
-            minor: unsigned16(this.advData.slice(13, 15)),
-            power: this.advData[14],
-            diastolic_pressure: this.advData[15],
-            systolic_pressure: this.advData[16],
-            arm_temp: unsigned16(this.advData.slice(17, 19)) * 0.1,
-            body_temp: unsigned16(this.advData.slice(19, 21)) * 0.1,
-            heart_rate: this.advData[21],
-            // blood_oxygen: this.advData[22],
-            // fall: this.advData[23] > 0,
-            battery: unsigned16(this.advData.slice(24, 26)) * 0.001,
-            steps: unsigned16(this.advData.slice(26, 28)),
+            major: unsigned16(advData.slice(11, 13)),
+            minor: unsigned16(advData.slice(13, 15)),
+            power: advData[14],
+            diastolic_pressure: advData[15],
+            systolic_pressure: advData[16],
+            arm_temp: unsigned16(advData.slice(17, 19)) * 0.1,
+            body_temp: unsigned16(advData.slice(19, 21)) * 0.1,
+            heart_rate: advData[21],
+            // blood_oxygen: advData[22],
+            // fall: advData[23] > 0,
+            battery: unsigned16(advData.slice(24, 26)) * 0.001,
+            steps: unsigned16(advData.slice(26, 28)),
         };
     }
+    /**
+     * (without instantiation) Get a data from the beacon
+     *
+     * (インスタンス化しない場合) ビーコンからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the beacon ビーコンから受け取ったデータ
+     */
     static getData(peripheral) {
         if (!EXVital.isDevice(peripheral)) {
             return null;
@@ -23454,6 +24330,17 @@ class EXVital extends ObnizPartsBleInterface_1.default {
         const dev = new EXVital(peripheral);
         return dev.getData();
     }
+    /**
+     * Verify that the received peripheral is from the EXVital
+     *
+     * 受け取ったperipheralがEXVitalのものかどうか確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the EXVital
+     *
+     * EXVitalかどうか
+     */
     static isDevice(peripheral) {
         return (this.DefaultAdvData.filter((d, i) => d !== -1 && d !== peripheral.adv_data[i]).length === 0 &&
             this.DefaultAdvData.length === peripheral.adv_data.length);
@@ -23508,8 +24395,17 @@ const unsigned16 = (value) => {
  * @packageDocumentation
  * @module Parts.HEM_6233T
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** HEM_6233T management class HEM_6233Tを管理するクラス */
 class HEM_6233T {
+    /**
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @param timezoneOffsetMinute difference from UTC (Unit: minutes) 協定世界時との差(単位: 分)
+     *
+     */
     constructor(peripheral, timezoneOffsetMinute) {
         this.keys = [];
         this.requiredKeys = [];
@@ -23525,6 +24421,17 @@ class HEM_6233T {
             name: 'HEM_6233T',
         };
     }
+    /**
+     * Verify that the received peripheral is from the HEM_6233T
+     *
+     * 受け取ったPeripheralがHEM_6233Tのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the HEM_6233T
+     *
+     * HEM_6233Tかどうか
+     */
     static isDevice(peripheral) {
         if (peripheral.localName &&
             (peripheral.localName.startsWith('BLESmart_') ||
@@ -23533,6 +24440,19 @@ class HEM_6233T {
         }
         return false;
     }
+    /**
+     * Connect to the device, get data, and then disconnect from the device
+     *
+     * You can get only data that the device has not yet sent
+     *
+     * デバイスに接続しデータを取得後、デバイスとの接続を切断
+     *
+     * 取得できるデータはデバイスが未送信のデータのみです
+     *
+     * @param pairingKeys pairing keys ペアリングキー
+     *
+     * @returns received data from the HEM_6233T HEM_6233Tから受け取ったデータ
+     */
     async getDataWait(pairingKeys) {
         if (!this._peripheral) {
             throw new Error('HEM_6233T is not find.');
@@ -23577,6 +24497,18 @@ class HEM_6233T {
         }); // blood pressure
         return await waitDisconnect;
     }
+    /**
+     * Execute a callback function when data is received from any service characteristic
+     *
+     * 任意のサービス・キャラクタティスティックからデータを受け取ると、コールバック関数を実行
+     *
+     * @param service service サービス
+     *
+     * @param char characteristic キャラクタリスティック
+     *
+     * @param callback callback function when received data
+     * データを受け取ったときのコールバック関数
+     */
     async subscribeWait(service, char, callback) {
         if (!this._peripheral) {
             throw new Error('HEM_6233T is not find.');
@@ -23590,6 +24522,13 @@ class HEM_6233T {
             }
         });
     }
+    /**
+     * Set the current time
+     *
+     * 現在時刻を設定
+     *
+     * @param timeOffsetMinute difference from UTC (Unit: minutes) 協定世界時との差(単位: 分)
+     */
     async _writeTimeCharWait(timeOffsetMinute) {
         if (!this._peripheral) {
             throw new Error('HEM_6233T is not find.');
@@ -23672,11 +24611,11 @@ class HEM_6233T {
                 0x08: 'PulseRateRangeDetection',
                 0x10: 'MeasurementPositionDetection',
             };
-            const mesurementStatus = buf.readUInt16LE(index);
+            const measurementStatus = buf.readUInt16LE(index);
             index++;
             result.measurementStatus = [];
             for (const f in statusFlag) {
-                if (+f & mesurementStatus) {
+                if (+f & measurementStatus) {
                     result.measurementStatus.push(statusFlag[f]);
                 }
             }
@@ -23699,7 +24638,9 @@ exports.default = HEM_6233T;
  * @packageDocumentation
  * @module Parts.HEM-9200T
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** HEM_9200T management class HEM_9200Tを管理するクラス */
 class HEM_9200T {
     constructor(peripheral, options = {}) {
         this.keys = [];
@@ -23717,6 +24658,17 @@ class HEM_9200T {
             name: 'HEM_9200T',
         };
     }
+    /**
+     * Verify that the received peripheral is from the HEM_9200T
+     *
+     * 受け取ったPeripheralがHEM_9200Tのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the HEM_9200T
+     *
+     * HEM_9200Tかどうか
+     */
     static isDevice(peripheral) {
         if (peripheral.localName &&
             (peripheral.localName.startsWith('BLESmart_') ||
@@ -23725,6 +24677,17 @@ class HEM_9200T {
         }
         return false;
     }
+    /**
+     * Connect to the device, get data, and then disconnect from the device
+     *
+     * You can get only data that the device has not yet sent
+     *
+     * デバイスに接続しデータを取得後、デバイスとの接続を切断
+     *
+     * 取得できるデータはデバイスが未送信のデータのみです
+     *
+     * @returns received data from the HEM_9200T HEM_9200Tから受け取ったデータ
+     */
     async getDataWait() {
         if (!this._peripheral) {
             throw new Error('HEM_9200T is not find.');
@@ -23745,7 +24708,7 @@ class HEM_9200T {
         //   return pass;
         // };
         // // pairing with user input passkey.
-        // console.log("connnected. pairing...");
+        // console.log("connected. pairing...");
         // const key = await this._peripheral.pairingWait({ passkeyCallback });
         // console.log("paired");
         const results = [];
@@ -23775,6 +24738,18 @@ class HEM_9200T {
         }); // blood pressure
         return await waitDisconnect;*/
     }
+    /**
+     * Execute a callback function when data is received from any service characteristic
+     *
+     * 任意のサービス・キャラクタティスティックからデータを受け取ると、コールバック関数を実行
+     *
+     * @param service service サービス
+     *
+     * @param char characteristic キャラクタリスティック
+     *
+     * @param callback callback function when received data
+     * データを受け取ったときのコールバック関数
+     */
     async subscribeWait(service, char, callback) {
         if (!this._peripheral) {
             throw new Error('HEM_9200T is not find.');
@@ -23869,8 +24844,10 @@ exports.default = HEM_9200T;
  * @packageDocumentation
  * @module Parts.KankiAirMier
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+/** Kanki AirMier management class 換気エアミエルを管理するクラス */
 class KankiAirMier {
     constructor() {
         this._peripheral = null;
@@ -23880,9 +24857,29 @@ class KankiAirMier {
             name: 'KankiAirMier',
         };
     }
+    /**
+     * Verify that the received peripheral is from the Kanki AirMier
+     *
+     * 受け取ったPeripheralが換気エアミエルのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Kanki AirMier
+     *
+     * 換気エアミエルかどうか
+     */
     static isDevice(peripheral) {
         return KankiAirMier._deviceAdvAnalyzer.validate(peripheral.adv_data);
     }
+    /**
+     * Get a data from the Kanki AirMier
+     *
+     * 換気エアミエルからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the Kanki AirMier 換気エアミエルから受け取ったデータ
+     */
     static getData(peripheral) {
         if (!KankiAirMier.isDevice(peripheral)) {
             return null;
@@ -23932,85 +24929,146 @@ KankiAirMier._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyze
  * @packageDocumentation
  * @module Parts.Logtta_AD
  */
+/* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class Logtta_AD {
-    constructor(peripheral) {
-        if (peripheral && !Logtta_AD.isDevice(peripheral)) {
-            throw new Error('peripheral is not logtta AD');
-        }
-        this._peripheral = peripheral;
+const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
+const Logtta_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/abstracts/Logtta.js"));
+/** Logtta_AD management class Logtta_ADを管理するクラス */
+class Logtta_AD extends Logtta_1.default {
+    constructor() {
+        super(...arguments);
+        this.staticClass = Logtta_AD;
     }
-    static info() {
-        return {
-            name: 'Logtta_AD',
-        };
-    }
+    /**
+     * @deprecated
+     *
+     * Verify that the received peripheral is from the Logtta_AD
+     *
+     * 受け取ったPeripheralがLogtta_ADのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Logtta_AD
+     *
+     * Logtta_ADかどうか
+     */
     static isDevice(peripheral) {
-        return peripheral.localName === 'Analog';
+        return this.getDeviceMode(peripheral) === 'Connectable';
     }
-    static get_uuid(uuid) {
-        return `4e43${uuid}-6687-4f3c-a1c3-1c327583f29d`;
+    static parseAmpereData(data, func = ObnizPartsBleAbstract_1.uint) {
+        return (16 / 916) * func(data);
     }
-    async connectWait() {
-        if (!this._peripheral) {
-            throw new Error('Logtta AD not found');
-        }
-        if (!this._peripheral.connected) {
-            this._peripheral.ondisconnect = (reason) => {
-                if (typeof this.ondisconnect === 'function') {
-                    this.ondisconnect(reason);
-                }
-            };
-            await this._peripheral.connectWait();
-        }
+    static parseVoltData(data, func = ObnizPartsBleAbstract_1.uint) {
+        return (4 / 916) * func(data);
     }
-    async disconnectWait() {
-        if (this._peripheral && this._peripheral.connected) {
-            await this._peripheral.disconnectWait();
-        }
+    /**
+     * Get the current value from the Logtta_AD
+     *
+     * Logtta_ADから電流値を取得
+     *
+     * @returns the current value from the Logtta_AD
+     *
+     * Logtta_ADから受け取った電流値
+     */
+    async getAmpereWait() {
+        return (await this.getDataWait()).ampere;
     }
+    /**
+     * Get the voltage value from the Logtta_AD
+     *
+     * Logtta_ADから電圧値を取得
+     *
+     * @returns the voltage value from the Logtta_AD
+     *
+     * Logtta_ADから受け取った電圧値
+     */
+    async getVoltWait() {
+        return (await this.getDataWait()).volt;
+    }
+    /**
+     * Get the count data from the Logtta_AD
+     *
+     * Logtta_ADからカウントデータを取得
+     *
+     * @returns the count data from the Logtta_AD
+     *
+     * Logtta_ADから受け取ったカウントデータ
+     */
+    async getCountWait() {
+        return (await this.getDataWait()).count;
+    }
+    /**
+     * @deprecated
+     *
+     * Get all data available from the Logtta_AD
+     *
+     * Logtta_ADから取得可能なデータを全て取得
+     *
+     * @returns all data available from the Logtta_AD
+     *
+     * Logtta_ADから受け取った全てのデータ
+     */
     async getAllWait() {
-        if (!(this._peripheral && this._peripheral.connected)) {
+        try {
+            return await this.getDataWait();
+        }
+        catch (_a) {
             return null;
         }
-        const c = this._peripheral
-            .getService(Logtta_AD.get_uuid('AE20'))
-            .getCharacteristic(Logtta_AD.get_uuid('AE21'));
-        const data = await c.readWait();
+    }
+    parseData(data) {
         return {
-            ampere: (((data[0] << 8) | data[1]) * 916) / 16,
-            volt: (((data[0] << 8) | data[1]) * 916) / 4,
-            count: (data[2] << 8) | data[3],
+            ampere: this.staticClass.parseAmpereData(data.slice(0, 2), ObnizPartsBleAbstract_1.uintBE),
+            volt: this.staticClass.parseVoltData(data.slice(0, 2), ObnizPartsBleAbstract_1.uintBE),
+            count: ObnizPartsBleAbstract_1.uintBE(data.slice(2, 4)),
         };
-    }
-    async getAmpereWait() {
-        return (await this.getAllWait()).ampere;
-    }
-    async getVoltWait() {
-        return (await this.getAllWait()).volt;
-    }
-    async getCountWait() {
-        return (await this.getAllWait()).count;
-    }
-    async startNotifyWait() {
-        if (!(this._peripheral && this._peripheral.connected)) {
-            return;
-        }
-        const c = this._peripheral
-            .getService(Logtta_AD.get_uuid('AE20'))
-            .getCharacteristic(Logtta_AD.get_uuid('AE21'));
-        await c.registerNotifyWait((data) => {
-            if (this.onNotify) {
-                this.onNotify({
-                    ampere: (16 / 916) * ((data[0] << 8) | data[1]),
-                    volt: (4 / 916) * ((data[0] << 8) | data[1]),
-                    count: (data[2] << 8) | data[3],
-                });
-            }
-        });
     }
 }
 exports.default = Logtta_AD;
+Logtta_AD.PartsName = 'Logtta_AD';
+Logtta_AD.ServiceUuids = {
+    Connectable: '4e43ae20-6687-4f3c-a1c3-1c327583f29d',
+    Beacon: null,
+};
+Logtta_AD.BeaconDataStruct = {
+    Connectable: null,
+    Beacon: {
+        appearance: {
+            index: 0,
+            type: 'check',
+            data: 0x04,
+        },
+        ampere: {
+            index: 1,
+            length: 2,
+            type: 'custom',
+            func: (data) => Logtta_AD.parseAmpereData(data, ObnizPartsBleAbstract_1.uintBE),
+        },
+        volt: {
+            index: 1,
+            length: 2,
+            type: 'custom',
+            func: (data) => Logtta_AD.parseVoltData(data, ObnizPartsBleAbstract_1.uintBE),
+        },
+        count: {
+            index: 3,
+            length: 2,
+            type: 'unsignedNumBE',
+        },
+        battery: {
+            index: 5,
+            type: 'unsignedNumBE',
+        },
+        interval: {
+            index: 6,
+            length: 2,
+            type: 'unsignedNumBE',
+        },
+    },
+};
 
 
 /***/ }),
@@ -24024,37 +25082,54 @@ exports.default = Logtta_AD;
  * @packageDocumentation
  * @module Parts.Logtta_Accel
  */
+/* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class Logtta_Accel {
+const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
+const Logtta_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/abstracts/Logtta.js"));
+/**
+ * Logtta_Accel management class Logtta_Accelを管理するクラス
+ *
+ * Only support in beacon mode
+ *
+ * ビーコンモードのときのみ動作します
+ */
+class Logtta_Accel extends Logtta_1.default {
     constructor() {
-        this._peripheral = null;
+        super(...arguments);
+        this.staticClass = Logtta_Accel;
     }
-    static info() {
-        return {
-            name: 'Logtta_Accel',
-        };
+    static parseAccelSamplingData(data) {
+        return 50 * 2 ** (4 - data);
     }
-    static isDevice(peripheral) {
-        const advertise = peripheral.advertise_data_rows.filter((adv) => {
-            let find = false;
-            if (this.deviceAdv.length > adv.length) {
-                return find;
-            }
-            for (let index = 0; index < this.deviceAdv.length; index++) {
-                if (this.deviceAdv[index] === -1) {
-                    continue;
-                }
-                if (adv[index] === this.deviceAdv[index]) {
-                    find = true;
-                    continue;
-                }
-                find = false;
-                break;
-            }
-            return find;
-        });
-        return advertise.length !== 0;
+    static parseAccelRangeData(data) {
+        return 2 ** ((data & 0b00000011) + 1) * 1000 * 1000;
     }
+    static parseAccelAxis(data) {
+        return ['z', 'y', 'x'].filter((key, i) => (data & (2 ** i)) > 0);
+    }
+    parseData(data) {
+        return data;
+    }
+    /**
+     * @deprecated
+     *
+     * Get a scan data from the Logtta_Accel
+     *
+     * Note: work only in beacon mode
+     *
+     * Logtta_Accelからスキャンデータを取得
+     *
+     * 注: ビーコンモードのときのみ動作
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns scan data from Logtta_Accel
+     *
+     * Logtta_Accelから受け取ったスキャンデータ
+     */
     static getScanData(peripheral) {
         if (!Logtta_Accel.isDevice(peripheral)) {
             return null;
@@ -24104,6 +25179,23 @@ class Logtta_Accel {
         }
         return null;
     }
+    /**
+     * @deprecated
+     *
+     * Get a acceleration data from the Logtta_Accel
+     *
+     * Note: work only in beacon mode
+     *
+     * Logtta_Accelから加速度データを取得
+     *
+     * 注: ビーコンモードのときのみ動作
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns acceleration data from Logtta_Accel
+     *
+     * Logtta_Accelから受け取った加速度データ
+     */
     static getAccelData(peripheral) {
         if (!Logtta_Accel.isDevice(peripheral)) {
             return null;
@@ -24147,12 +25239,132 @@ class Logtta_Accel {
     }
 }
 exports.default = Logtta_Accel;
-Logtta_Accel.deviceAdv = [
-    0xff,
-    0x10,
-    0x05,
-    0x05,
-];
+Logtta_Accel.PartsName = 'Logtta_Accel';
+Logtta_Accel.AvailableBleMode = 'Beacon';
+Logtta_Accel.ServiceUuids = {
+    Connectable: 'c2de0000-a6c7-437f-8538-54e07f7845df',
+    Beacon: null,
+};
+Logtta_Accel.BeaconDataLength = {
+    Connectable: undefined,
+    Beacon: 0x1e,
+};
+Logtta_Accel.BeaconDataLength_ScanResponse = {
+    Connectable: undefined,
+    Beacon: 0x1e,
+};
+Logtta_Accel.CompanyID = {
+    Connectable: undefined,
+    Beacon: [0x10, 0x05],
+};
+Logtta_Accel.CompanyID_ScanResponse = {
+    Connectable: undefined,
+    Beacon: [0x10, 0x05],
+};
+Logtta_Accel.BeaconDataStruct = {
+    Connectable: null,
+    Beacon: {
+        appearance: {
+            index: 0,
+            type: 'check',
+            data: 0x05,
+        },
+        revision: {
+            index: 1,
+            type: 'unsignedNumLE',
+        },
+        sequence: {
+            index: 2,
+            type: 'unsignedNumLE',
+        },
+        battery: {
+            index: 3,
+            type: 'unsignedNumLE',
+        },
+        name: {
+            index: 4,
+            length: 8,
+            type: 'string',
+        },
+        setting: {
+            index: 12,
+            length: 6,
+            type: 'custom',
+            func: (data) => ({
+                temp_cycle: ObnizPartsBleAbstract_1.uint(data.slice(0, 2)),
+                accel_sampling: Logtta_Accel.parseAccelSamplingData(data[2]),
+                hpf: (data[3] & 0b00010000) > 0,
+                accel_range: Logtta_Accel.parseAccelRangeData(data[3]),
+                accel_axis: Logtta_Accel.parseAccelAxis(data[4]),
+                accel_resolution: data[5],
+            }),
+        },
+        temperature: {
+            index: 18,
+            length: 2,
+            type: 'custom',
+            func: (data) => (ObnizPartsBleAbstract_1.uint(data) / 0x10000) * 175 - 45,
+        },
+        humidity: {
+            index: 20,
+            length: 2,
+            type: 'custom',
+            func: (data) => (ObnizPartsBleAbstract_1.uint(data) / 0x10000) * 100,
+        },
+        alert: {
+            index: 22,
+            length: 2,
+            type: 'custom',
+            func: (data) => [
+                (data[0] & 0b11110000) >> 4,
+                data[0] & 0b00001111,
+                (data[1] & 0b11110000) >> 4,
+                data[1] & 0b00001111,
+            ],
+        },
+        appearance_sr: {
+            index: 0,
+            type: 'check',
+            data: 0x05,
+            scanResponse: true,
+        },
+        accel_peak: {
+            index: 0,
+            length: 24,
+            type: 'custom',
+            func: (data, peripheral) => {
+                if (!peripheral.manufacturerSpecificData)
+                    throw new Error('Manufacturer specific data is null.');
+                const range = Logtta_Accel.parseAccelRangeData(peripheral.manufacturerSpecificData[17]);
+                const resolution = peripheral.manufacturerSpecificData[19];
+                return Object.fromEntries(['x', 'y', 'z'].map((key, i) => [
+                    key,
+                    (ObnizPartsBleAbstract_1.uint(data.slice(i * 8, i * 8 + 2)) / (2 ** resolution - 1)) *
+                        range,
+                ]));
+            },
+            scanResponse: true,
+        },
+        accel_rms: {
+            index: 0,
+            length: 24,
+            type: 'custom',
+            func: (data, peripheral) => {
+                if (!peripheral.manufacturerSpecificData)
+                    throw new Error('Manufacturer specific data is null.');
+                const range = Logtta_Accel.parseAccelRangeData(peripheral.manufacturerSpecificData[17]);
+                const resolution = peripheral.manufacturerSpecificData[19];
+                const n = Logtta_Accel.parseAccelSamplingData(peripheral.manufacturerSpecificData[16]) * ObnizPartsBleAbstract_1.uint(peripheral.manufacturerSpecificData.slice(14, 16));
+                return Object.fromEntries(['x', 'y', 'z'].map((key, i) => [
+                    key,
+                    (range / (2 ** resolution - 1)) *
+                        Math.sqrt(ObnizPartsBleAbstract_1.uint(data.slice(i * 8 + 2, i * 8 + 8)) / n),
+                ]));
+            },
+            scanResponse: true,
+        },
+    },
+};
 
 
 /***/ }),
@@ -24166,168 +25378,182 @@ Logtta_Accel.deviceAdv = [
  * @packageDocumentation
  * @module Parts.Logtta_CO2
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/services/batteryService.js"));
-const genericAccess_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/services/genericAccess.js"));
-class Logtta_CO2 {
-    constructor(peripheral) {
-        if (peripheral && !Logtta_CO2.isDevice(peripheral)) {
-            throw new Error('peripheral is not Logtta CO2');
-        }
-        this._peripheral = peripheral;
-    }
-    static info() {
-        return {
-            name: 'Logtta_CO2',
-        };
-    }
-    static isDevice(peripheral) {
-        return peripheral.localName === 'CO2 Sensor';
-    }
-    static isAdvDevice(peripheral) {
-        if (peripheral.adv_data.length !== 31) {
-            return false;
-        }
-        const data = peripheral.adv_data;
-        if (data[5] !== 0x10 ||
-            data[6] !== 0x05 ||
-            data[7] !== 0x02 ||
-            data[16] !== 0x43 ||
-            data[17] !== 0x4f ||
-            data[18] !== 0x32) {
-            // CompanyID, Apperance, "C" "O" "2"
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!this.isAdvDevice(peripheral)) {
-            return null;
-        }
-        const data = peripheral.adv_data;
-        const alert = data[15];
-        const interval = (data[13] << 8) | data[14];
-        const advData = {
-            battery: data[12],
-            co2: (data[8] << 8) | data[9],
-            interval,
-            address: peripheral.address,
-        };
-        return advData;
-    }
-    static getName(data) {
-        let name = '';
-        for (let i = 16; i < data.length; i++) {
-            if (data[i] === 0) {
-                break;
-            }
-            name += String.fromCharCode(data[i]);
-        }
-        return name;
-    }
-    static get_uuid(uuid) {
-        return `31f3${uuid}-bd1c-46b1-91e4-f57abcf7d449`;
-    }
-    async connectWait() {
-        if (!this._peripheral) {
-            throw new Error('Logtta CO2 not found');
-        }
-        if (!this._peripheral.connected) {
-            this._peripheral.ondisconnect = (reason) => {
-                if (typeof this.ondisconnect === 'function') {
-                    this.ondisconnect(reason);
-                }
-            };
-            await this._peripheral.connectWait();
-            const service1800 = this._peripheral.getService('1800');
-            if (service1800) {
-                this.genericAccess = new genericAccess_1.default(service1800);
-            }
-            const service180F = this._peripheral.getService('180F');
-            if (service180F) {
-                this.batteryService = new batteryService_1.default(service180F);
-            }
-        }
-    }
-    async disconnectWait() {
-        if (this._peripheral && this._peripheral.connected) {
-            await this._peripheral.disconnectWait();
-        }
-    }
-    async getWait() {
-        if (!(this._peripheral && this._peripheral.connected)) {
-            return null;
-        }
-        const c = this._peripheral
-            .getService(Logtta_CO2.get_uuid('AB20'))
-            .getCharacteristic(Logtta_CO2.get_uuid('AB21'));
-        const data = await c.readWait();
-        return data[0] * 256 + data[1];
-    }
-    async startNotifyWait() {
-        if (!(this._peripheral && this._peripheral.connected)) {
-            return;
-        }
-        const c = this._peripheral
-            .getService(Logtta_CO2.get_uuid('AB20'))
-            .getCharacteristic(Logtta_CO2.get_uuid('AB21'));
-        await c.registerNotifyWait((data) => {
-            if (this.onNotify) {
-                this.onNotify(data[0] * 256 + data[1]);
-            }
-        });
-    }
-    async authPinCodeWait(code) {
-        if (!(this._peripheral && this._peripheral.connected)) {
-            return;
-        }
-        if (code.length !== 4) {
-            throw new Error('Invalid length auth code');
-        }
-        const data = [0];
-        for (let i = 0; i < code.length; i += 2) {
-            data.push((this.checkNumber(code.charAt(i)) << 4) |
-                this.checkNumber(code.charAt(i + 1)));
-        }
-        const c = this._peripheral
-            .getService(Logtta_CO2.get_uuid('AB20'))
-            .getCharacteristic(Logtta_CO2.get_uuid('AB30'));
-        await c.writeWait(data);
+const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
+const Logtta_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/abstracts/Logtta.js"));
+/** Logtta_CO2 management class Logtta_CO2を管理するクラス */
+class Logtta_CO2 extends Logtta_1.default {
+    constructor() {
+        super(...arguments);
+        this.staticClass = Logtta_CO2;
+        // TODO: delete
+        // In order to maintain compatibility, when callback is placed from arguments, the behavior of the document street
+        this.callbackFlag = false;
     }
     /**
      * @deprecated
-     * @param enable
+     *
+     * Verify that the received peripheral is from the Logtta_CO2
+     *
+     * 受け取ったPeripheralがLogtta_CO2のものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Logtta_CO2
+     *
+     * Logtta_CO2かどうか
+     */
+    static isDevice(peripheral) {
+        return this.getDeviceMode(peripheral) === 'Connectable';
+    }
+    /**
+     * @deprecated
+     *
+     * Verify that the received advertisement is from the Logtta_CO2 (in Beacon Mode)
+     *
+     * 受け取ったAdvertisementがLogtta_CO2のものかどうか確認する(ビーコンモード中)
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Logtta_CO2
+     *
+     * Logtta_CO2かどうか
+     */
+    static isAdvDevice(peripheral) {
+        return this.getDeviceMode(peripheral) === 'Beacon';
+    }
+    /**
+     * Notify when the CO2 concentration data have got from the Logtta_CO2 with connected state
+     *
+     * 接続している状態でLogtta_CO2からCO2濃度データを取得したとき通知
+     *
+     * @returns
+     */
+    async startNotifyWait(callback) {
+        // TODO: delete try-catch
+        try {
+            this.checkConnected();
+        }
+        catch (e) {
+            console.error(e);
+            return;
+        }
+        // TODO: delete if
+        if (callback) {
+            this.callbackFlag = true;
+            this.onNotify = callback;
+        }
+        return await this.subscribeWait(this.serviceUuid, this.getCharUuid(0x21), (data) => {
+            if (this.onNotify) {
+                if (this.callbackFlag)
+                    this.onNotify(this.parseData(data));
+                else
+                    this.onNotify(this.parseData(data).co2);
+            }
+        });
+    }
+    /**
+     * @deprecated
+     *
+     * Get CO2 concentration data with connected state
+     *
+     * 接続している状態でCO2濃度データを取得
+     *
+     * @returns CO2 concentration data from the Logtta_CO2
+     *
+     * Logtta_CO2から受け取ったCO2濃度データ
+     */
+    async getWait() {
+        try {
+            return (await this.getDataWait()).co2;
+        }
+        catch (_a) {
+            return null;
+        }
+    }
+    /**
+     * @deprecated
+     *
+     * Set enable / disable for beacon mode (periodic beacon transmission)
+     *
+     * Call this function after authenticating with the sensor
+     *
+     * After setting, disconnect once to enable it
+     *
+     * To stop beacon mode, you need to hold the button on the sensor for more than 2 seconds
+     *
+     * (For more detail, please see http://www.uni-elec.co.jp/logtta_page.html )
+     *
+     * ビーコンモード(定期的なビーコン発信)の有効/無効の設定
+     *
+     * センサとの認証を済ませた状態で実行してください
+     *
+     * 設定後に切断した後から有効になります
+     *
+     * ビーコンモードの終了は、デバイスのボタンを2秒以上長押しする操作が必要です(詳しくは http://www.uni-elec.co.jp/logtta_page.html )
+     *
+     * @param enable enable the beacon mode or not ビーコンモードを有効にするかどうか
+     *
+     * @returns
      */
     setBeaconMode(enable) {
         return this.setBeaconModeWait(enable);
     }
-    async setBeaconModeWait(enable) {
-        if (!(this._peripheral && this._peripheral.connected)) {
-            return;
-        }
-        const c = this._peripheral
-            .getService(Logtta_CO2.get_uuid('AB20'))
-            .getCharacteristic(Logtta_CO2.get_uuid('AB2D'));
-        if (enable) {
-            await c.writeWait([1]);
-        }
-        else {
-            await c.writeWait([0]);
-        }
-    }
-    checkNumber(data) {
-        if (data >= '0' && data <= '9') {
-            return parseInt(data, 10);
-        }
-        else {
-            throw new Error(`authorization code can only be entered from 0-9.input word : ${data}`);
-        }
+    parseData(data) {
+        return {
+            co2: ObnizPartsBleAbstract_1.uintBE(data),
+        };
     }
 }
 exports.default = Logtta_CO2;
+Logtta_CO2.PartsName = 'Logtta_CO2';
+Logtta_CO2.ServiceUuids = {
+    Connectable: '31f3ab20-bd1c-46b1-91e4-f57abcf7d449',
+    Beacon: null,
+};
+Logtta_CO2.BeaconDataStruct = {
+    Connectable: null,
+    Beacon: {
+        appearance: {
+            index: 0,
+            type: 'check',
+            data: 0x02,
+        },
+        co2: {
+            index: 1,
+            length: 2,
+            type: 'unsignedNumBE',
+        },
+        battery: {
+            index: 5,
+            type: 'unsignedNumBE',
+        },
+        interval: {
+            index: 6,
+            length: 2,
+            type: 'unsignedNumBE',
+        },
+        /* alert: {
+          index: 8,
+          type: 'uint8',
+        },
+        name: {
+          index: 9,
+          length: 15,
+          type: 'string',
+        } */
+        // TODO: delete
+        address: {
+            index: 0,
+            type: 'custom',
+            func: (data, peripheral) => peripheral.address,
+        },
+    },
+};
 
 
 /***/ }),
@@ -24341,167 +25567,199 @@ exports.default = Logtta_CO2;
  * @packageDocumentation
  * @module Parts.Logtta_TH
  */
+/* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class Logtta_TH {
-    constructor(peripheral) {
-        if (peripheral && !Logtta_TH.isDevice(peripheral)) {
-            throw new Error('peripheral is not logtta TH');
-        }
-        this._peripheral = peripheral;
+const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
+const Logtta_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/abstracts/Logtta.js"));
+/**
+ * Logtta_TH(Logtta_Temp) management class
+ *
+ * Logtta_TH(Logtta_Temp)を管理するクラス
+ */
+class Logtta_TH extends Logtta_1.default {
+    constructor() {
+        super(...arguments);
+        this.staticClass = Logtta_TH;
     }
-    static info() {
-        return {
-            name: 'Logtta_TH',
-        };
+    static parseTemperatureData(data, func = ObnizPartsBleAbstract_1.uint) {
+        return (func(data) / 0x10000) * 175.72 - 46.85;
     }
-    static isDevice(peripheral) {
-        return peripheral.localName === 'TH Sensor';
-    }
-    static isAdvDevice(peripheral) {
-        if (peripheral.adv_data.length !== 31) {
-            return false;
-        }
-        const data = peripheral.adv_data;
-        if (data[5] !== 0x10 ||
-            data[6] !== 0x05 ||
-            data[7] !== 0x01 ||
-            data[16] !== 0x54 ||
-            data[17] !== 0x48) {
-            // CompanyID, Apperance, "T" "H"
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!this.isAdvDevice(peripheral)) {
-            return null;
-        }
-        const data = peripheral.adv_data;
-        const alert = data[15];
-        const interval = (data[13] << 8) | data[14];
-        const advData = {
-            battery: data[12],
-            temperature: (((data[8] << 8) | data[9]) / 65536) * 175.72 - 46.85,
-            humidity: (((data[10] << 8) | data[11]) / 65536) * 125 - 6,
-            interval,
-            address: peripheral.address,
-        };
-        return advData;
-    }
-    static getName(data) {
-        let name = '';
-        for (let i = 16; i < data.length; i++) {
-            if (data[i] === 0) {
-                break;
-            }
-            name += String.fromCharCode(data[i]);
-        }
-        return name;
-    }
-    static get_uuid(uuid) {
-        return `f7ee${uuid}-276e-4165-aa69-7e3de7fc627e`;
-    }
-    async connectWait() {
-        if (!this._peripheral) {
-            throw new Error('Logtta TH not found');
-        }
-        if (!this._peripheral.connected) {
-            this._peripheral.ondisconnect = (reason) => {
-                if (typeof this.ondisconnect === 'function') {
-                    this.ondisconnect(reason);
-                }
-            };
-            await this._peripheral.connectWait();
-        }
-    }
-    async disconnectWait() {
-        if (this._peripheral && this._peripheral.connected) {
-            await this._peripheral.disconnectWait();
-        }
-    }
-    async getAllWait() {
-        if (!(this._peripheral && this._peripheral.connected)) {
-            return null;
-        }
-        const c = this._peripheral
-            .getService(Logtta_TH.get_uuid('AA20'))
-            .getCharacteristic(Logtta_TH.get_uuid('AA21'));
-        const data = await c.readWait();
-        return {
-            temperature: (((data[0] << 8) | data[1]) / 65536) * 175.72 - 46.85,
-            humidity: (((data[2] << 8) | data[3]) / 65536) * 125 - 6,
-        };
-    }
-    async getTemperatureWait() {
-        return (await this.getAllWait()).temperature;
-    }
-    async getHumidityWait() {
-        return (await this.getAllWait()).humidity;
-    }
-    async startNotifyWait() {
-        if (!(this._peripheral && this._peripheral.connected)) {
-            return;
-        }
-        const c = this._peripheral
-            .getService(Logtta_TH.get_uuid('AA20'))
-            .getCharacteristic(Logtta_TH.get_uuid('AA21'));
-        await c.registerNotifyWait((data) => {
-            if (this.onNotify) {
-                this.onNotify({
-                    temperature: (((data[0] << 8) | data[1]) / 65536) * 175.72 - 46.85,
-                    humidity: (((data[2] << 8) | data[3]) / 65536) * 125 - 6,
-                });
-            }
-        });
-    }
-    async authPinCodeWait(code) {
-        if (!(this._peripheral && this._peripheral.connected)) {
-            return;
-        }
-        if (code.length !== 4) {
-            throw new Error('Invalid length auth code');
-        }
-        const data = [0];
-        for (let i = 0; i < code.length; i += 2) {
-            data.push((this.checkNumber(code.charAt(i)) << 4) |
-                this.checkNumber(code.charAt(i + 1)));
-        }
-        const c = this._peripheral
-            .getService(Logtta_TH.get_uuid('AA20'))
-            .getCharacteristic(Logtta_TH.get_uuid('AA30'));
-        await c.writeWait(data);
+    static parseHumidityData(data, func = ObnizPartsBleAbstract_1.uint) {
+        return (func(data) / 0x10000) * 125 - 6;
     }
     /**
      * @deprecated
-     * @param enable
+     *
+     * Verify that the received peripheral is from the Logtta_TH(Logtta_Temp)
+     *
+     * 受け取ったPeripheralがLogtta_TH(Logtta_Temp)のものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Logtta_TH(Logtta_Temp)
+     *
+     * Logtta_TH(Logtta_Temp)かどうか
+     */
+    static isDevice(peripheral) {
+        return this.getDeviceMode(peripheral) === 'Connectable';
+    }
+    /**
+     * @deprecated
+     *
+     * Verify that the received advertisement is from the Logtta_TH(Logtta_Temp) (in Beacon Mode)
+     *
+     * 受け取ったAdvertisementがLogtta_TH(Logtta_Temp)のものかどうか確認する(ビーコンモード中)
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Logtta_TH(Logtta_Temp)
+     *
+     * Logtta_TH(Logtta_Temp)かどうか
+     */
+    static isAdvDevice(peripheral) {
+        return this.getDeviceMode(peripheral) === 'Beacon';
+    }
+    /**
+     * @deprecated
+     *
+     * Get all data with connected state
+     *
+     * 接続している状態で全てのデータを取得
+     *
+     * @returns all data from the Logtta_TH(Logtta_Temp)
+     *
+     * Logtta_TH(Logtta_Temp)から受け取った全てのデータ
+     */
+    async getAllWait() {
+        try {
+            return await this.getDataWait();
+        }
+        catch (_a) {
+            return null;
+        }
+    }
+    /**
+     * Get the temperature data with connected state
+     *
+     * 接続している状態で温度のデータを取得
+     *
+     * @returns temperature data from the Logtta_TH(Logtta_Temp)
+     *
+     * Logtta_TH(Logtta_Temp)から受け取った温度データ
+     */
+    async getTemperatureWait() {
+        return (await this.getDataWait()).temperature;
+    }
+    /**
+     * Get the humidity data with connected state
+     *
+     * 接続している状態で湿度のデータを取得
+     *
+     * @returns humidity data from the Logtta_TH(Logtta_Temp)
+     *
+     * Logtta_TH(Logtta_Temp)から受け取った湿度データ
+     */
+    async getHumidityWait() {
+        return (await this.getDataWait()).humidity;
+    }
+    /**
+     * @deprecated
+     *
+     * Set enable / disable for beacon mode (periodic beacon transmission)
+     *
+     * Call this function after authenticating with the sensor
+     *
+     * After setting, disconnect once to enable it
+     *
+     * To stop beacon mode, you need to hold the button on the sensor for more than 2 seconds
+     *
+     * (For more detail, please see http://www.uni-elec.co.jp/logtta_page.html )
+     *
+     * ビーコンモード(定期的なビーコン発信)の有効/無効の設定
+     *
+     * センサとの認証を済ませた状態で実行してください
+     *
+     * 設定後に切断した後から有効になります
+     *
+     * ビーコンモードの終了は、デバイスのボタンを2秒以上長押しする操作が必要です(詳しくは http://www.uni-elec.co.jp/logtta_page.html )
+     *
+     * @param enable enable the beacon mode or not ビーコンモードを有効にするかどうか
+     *
+     * @returns
      */
     setBeaconMode(enable) {
         return this.setBeaconModeWait(enable);
     }
-    async setBeaconModeWait(enable) {
-        if (!(this._peripheral && this._peripheral.connected)) {
-            return;
-        }
-        const c = this._peripheral
-            .getService(Logtta_TH.get_uuid('AA20'))
-            .getCharacteristic(Logtta_TH.get_uuid('AA2D'));
-        if (enable) {
-            await c.writeWait([1]);
-        }
-        else {
-            await c.writeWait([0]);
-        }
-    }
-    checkNumber(data) {
-        if (data >= '0' && data <= '9') {
-            return parseInt(data, 10);
-        }
-        else {
-            throw new Error(`authorization code can only be entered from 0-9.input word : ${data}`);
-        }
+    parseData(data) {
+        return {
+            temperature: Logtta_TH.parseTemperatureData(data.slice(0, 2)),
+            humidity: Logtta_TH.parseHumidityData(data.slice(2, 4)),
+        };
     }
 }
 exports.default = Logtta_TH;
+Logtta_TH.PartsName = 'Logtta_TH';
+Logtta_TH.AvailableBleMode = [
+    'Connectable',
+    'Beacon',
+];
+Logtta_TH.LocalName = {
+    Connectable: undefined,
+    Beacon: /null/,
+};
+Logtta_TH.ServiceUuids = {
+    Connectable: 'f7eeaa20-276e-4165-aa69-7e3de7fc627e',
+    Beacon: null,
+};
+Logtta_TH.BeaconDataStruct = {
+    Connectable: null,
+    Beacon: {
+        appearance: {
+            index: 0,
+            type: 'check',
+            data: 0x01,
+        },
+        temperature: {
+            index: 1,
+            length: 2,
+            type: 'custom',
+            func: (data) => Logtta_TH.parseTemperatureData(data, ObnizPartsBleAbstract_1.uintBE),
+        },
+        humidity: {
+            index: 3,
+            length: 2,
+            type: 'custom',
+            func: (data) => Logtta_TH.parseHumidityData(data, ObnizPartsBleAbstract_1.uintBE),
+        },
+        battery: {
+            index: 5,
+            type: 'unsignedNumBE',
+        },
+        interval: {
+            index: 6,
+            length: 2,
+            type: 'unsignedNumBE',
+        },
+        /* alert: {
+          index: 7,
+          type: 'uint8',
+        },
+        name: {
+          index: 8,
+          length: 15,
+          type: 'string',
+        } */
+        // TODO: delete
+        address: {
+            index: 0,
+            type: 'custom',
+            func: (data, peripheral) => peripheral.address,
+        },
+    },
+};
 
 
 /***/ }),
@@ -24515,11 +25773,13 @@ exports.default = Logtta_TH;
  * @packageDocumentation
  * @module Parts.MINEW_S1_HT
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+/** MINEW_S1 management class MINEW_S1を管理するクラス */
 class MINEW_S1 {
     constructor() {
         this._peripheral = null;
@@ -24531,6 +25791,25 @@ class MINEW_S1 {
     static info() {
         return { name: 'MINEW_S1' };
     }
+    /**
+     * Verify that the received peripheral is from the MINEW_S1
+     *
+     * 受け取ったPeripheralがMINEW_S1のものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @param macAddress (optional: If you want to specify a MAC address) MAC address
+     *
+     * (任意: MACアドレスを指定したい場合) MACアドレス
+     *
+     * @returns Whether it is the MINEW_S1
+     *
+     * MINEW_S1かどうか
+     *
+     * true: HT Sensor SLOT / Info SLOT
+     *
+     * false: iBeacon SLOT / UID SLOT / URL SLOT / TLM SLOT / other advertisements
+     */
     static isDevice(peripheral, macAddress = null) {
         if (!this._hasPrefix(peripheral)) {
             return false;
@@ -24544,6 +25823,17 @@ class MINEW_S1 {
         }
         return true;
     }
+    /**
+     * Get device information data from the MINEW_S1
+     *
+     * MINEW_S1からのデバイス情報データを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received device information data from the MINEW_S1
+     *
+     * MINEW_S1から受け取ったデバイス情報データ
+     */
     static getInfoData(peripheral) {
         if (!this._hasPrefix(peripheral)) {
             return null;
@@ -24573,6 +25863,17 @@ class MINEW_S1 {
             macAddress,
         };
     }
+    /**
+     * Get temperature and humidity data from the MINEW_S1
+     *
+     * MINEW_S1からの温湿度データを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received temperature and humidity data from the MINEW_S1
+     *
+     * MINEW_S1から受け取った温湿度データ
+     */
     static getHTData(peripheral) {
         if (!this._hasPrefix(peripheral)) {
             return null;
@@ -24653,12 +25954,14 @@ exports.default = MINEW_S1;
  * @packageDocumentation
  * @module Parts.MT_500BT
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+/** MT_500BT management class MT_500BTを管理するクラス */
 class MT_500BT {
     constructor(peripheral) {
         this.keys = [];
@@ -24679,12 +25982,32 @@ class MT_500BT {
             name: 'MT_500BT',
         };
     }
+    /**
+     * Verify that the received peripheral is from the MT_500BT
+     *
+     * 受け取ったPeripheralがMT_500BTのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the MT_500BT
+     *
+     * MT_500BTかどうか
+     */
     static isDevice(peripheral) {
         if (peripheral.localName && peripheral.localName.startsWith('MT-500')) {
             return true;
         }
         return false;
     }
+    /**
+     * Get IFUID from the localName
+     *
+     * localNameからIFUIDを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns IFUID
+     */
     static getIFUID(peripheral) {
         if (!this.isDevice(peripheral) || peripheral.localName.length < 12) {
             return null;
@@ -24692,6 +26015,15 @@ class MT_500BT {
         const hexStr = peripheral.localName.slice(7, 11);
         return Buffer.from(hexStr, 'hex').readUInt16BE(0);
     }
+    /**
+     * Decrypt CNKEY from IFUID
+     *
+     * IFUIDからCNKEYを復号
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns decrypted CNKEY 復号されたされたCNKEY
+     */
     static getCNKey(peripheral) {
         const ifuid = this.getIFUID(peripheral);
         if (ifuid === null) {
@@ -24703,6 +26035,11 @@ class MT_500BT {
     wired(obniz) {
         // do nothing.
     }
+    /**
+     * Connect (and authenticate) the sensor
+     *
+     * センサへ接続(+ センサの認証)
+     */
     async connectWait() {
         if (!this._peripheral) {
             throw new Error('MT-500BT is not find.');
@@ -24743,6 +26080,11 @@ class MT_500BT {
             await this.disconnectWait();
         }
     }
+    /**
+     * Send the communication start command
+     *
+     * 通信開始コマンドを送信
+     */
     async startCommunicationCommandWait() {
         const cnkey = '' + MT_500BT.getCNKey(this._peripheral); // to string
         const CNKeyBuf = Buffer.from(cnkey, 'utf8');
@@ -24753,6 +26095,29 @@ class MT_500BT {
             throw new Error('StartCommunicationError ' + res.readUInt8(2));
         }
     }
+    /**
+     * Get device information from the MT_500BT
+     *
+     * MT_500BTからのデバイス情報データ取得
+     *
+     * @returns received device information data from the MT_500BT
+     *
+     * MT_500BTからのデバイス情報データ
+     *
+     * ```
+     * {
+     *
+     * cls: device type デバイスタイプ
+     *
+     * ('Pulse rate meter', 'SpO2(BO)', 'Thermometer', 'SpO2(MP)', 'Blood pressure meter'),
+     *
+     * dvnm: product information 製品情報,
+     *
+     * swif: detailed information 詳細情報
+     *
+     * }
+     * ```
+     */
     async getDeviceInformationWait() {
         const res1 = await this._sendDataReplyWait(this._createCommand(0x00, [0x01]));
         const res2 = await this._sendDataReplyWait(this._createCommand(0x00, [0x02]));
@@ -24808,6 +26173,33 @@ class MT_500BT {
     //     throw new Error("setDatetimeWait error " + res.readUInt8(3));
     //   }
     // }
+    /**
+     * Get temperature and humidity data from the MT_500BT
+     *
+     * MT_500BTから温湿度データを取得
+     *
+     * @returns received temperature and humidity data from the MT_500BT
+     *
+     * MT_500BTからの温湿度データ
+     *
+     * ```
+     * {
+     *
+     * timestamp: timestamp タイムスタンプ,
+     *
+     * temperature: {
+     *
+     *   body: body temperature 体温,
+     *
+     *   material: material temperature 物体温度,
+     *
+     *   air: air temperature 気温
+     *
+     *   }
+     *
+     * }
+     * ```
+     */
     async getTemperatureWait() {
         const res = await this._sendDataReplyWait(this._createCommand(0x80));
         const year = res.readUInt8(3) !== 0xff ? res.readUInt8(3) + 2000 : undefined;
@@ -24835,6 +26227,11 @@ class MT_500BT {
             },
         };
     }
+    /**
+     * Disconnect from the sensor
+     *
+     * センサから切断
+     */
     async disconnectWait() {
         if (!this._peripheral) {
             throw new Error('MT-500BT is not find.');
@@ -24896,7 +26293,9 @@ exports.default = MT_500BT;
  * @packageDocumentation
  * @module Parts.MiniBreeze
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** MiniBreeze management class MiniBreezeを管理するクラス */
 class MiniBreeze {
     constructor() {
         this._peripheral = null;
@@ -24908,6 +26307,9 @@ class MiniBreeze {
     static info() {
         return { name: 'MiniBreeze' };
     }
+    /**
+     * @returns object of gas types list ガスタイプの一覧のオブジェクト
+     */
     static gasType() {
         return {
             0: 'none',
@@ -24920,6 +26322,9 @@ class MiniBreeze {
             8: 'PM10',
         };
     }
+    /**
+     * @returns object of battery status list バッテリーの状態の一覧のオブジェクト
+     */
     static status() {
         return {
             0: 'BatteryEmpty',
@@ -24928,12 +26333,34 @@ class MiniBreeze {
             3: 'BatteryCharging',
         };
     }
+    /**
+     * Verify that the received peripheral is from the MiniBreeze
+     *
+     * 受け取ったPeripheralがMiniBreezeのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the MiniBreeze
+     *
+     * MiniBreezeかどうか
+     */
     static isDevice(peripheral) {
         if (peripheral.adv_data.length !== 31 || !this._hasPrefix(peripheral)) {
             return false;
         }
         return true;
     }
+    /**
+     * Get a data from the MiniBreeze
+     *
+     * MiniBreezeからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the MiniBreeze
+     *
+     * MiniBreezeから受け取ったデータ
+     */
     static getData(peripheral) {
         if (!this._hasPrefix(peripheral)) {
             return null;
@@ -25001,12 +26428,19 @@ exports.default = MiniBreeze;
  * @packageDocumentation
  * @module Parts.PLS_01BT
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** PLS_01BT management class PLS_01BTを管理するクラス */
 class PLS_01BT {
     constructor(peripheral) {
         this.keys = [];
         this.requiredKeys = [];
-        this.onmesured = null;
+        /**
+         * Callback when receiving the measured data
+         *
+         * 計測結果を受け取ったときにコールバック
+         */
+        this.onmeasured = null;
         this._uuids = {
             service: 'CDEACB80-5235-4C07-8846-93A37EE6B86D',
             rxChar: 'CDEACB81-5235-4C07-8846-93A37EE6B86D',
@@ -25024,6 +26458,17 @@ class PLS_01BT {
             name: 'PLS_01BT',
         };
     }
+    /**
+     * Verify that the received peripheral is from the PLS_01BT
+     *
+     * 受け取ったPeripheralがPLS_01BTのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the PLS_01BT
+     *
+     * PLS_01BTかどうか
+     */
     static isDevice(peripheral) {
         if (peripheral.localName &&
             peripheral.localName.startsWith('My Oximeter')) {
@@ -25034,6 +26479,11 @@ class PLS_01BT {
     wired(obniz) {
         // do nothing.
     }
+    /**
+     * Connect the sensor
+     *
+     * センサへ接続
+     */
     async connectWait() {
         if (!this._peripheral) {
             throw new Error('PLS_01BT is not find.');
@@ -25056,8 +26506,8 @@ class PLS_01BT {
                     const pulseRate = data[1];
                     const bloodOxygenLevel = data[2];
                     const perfusionIndex = data[3];
-                    if (this.onmesured) {
-                        this.onmesured({
+                    if (this.onmeasured) {
+                        this.onmeasured({
                             pulseRate,
                             bloodOxygenLevel,
                             perfusionIndex,
@@ -25067,6 +26517,11 @@ class PLS_01BT {
             }
         });
     }
+    /**
+     * Disconnect from the sensor
+     *
+     * センサから切断
+     */
     async disconnectWait() {
         if (!this._peripheral) {
             throw new Error('PLS_01BT is not find.');
@@ -25088,11 +26543,18 @@ exports.default = PLS_01BT;
  * @packageDocumentation
  * @module Parts.REX_BTPM25V
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** REX_BTPM25V management class REX_BTPM25Vを管理するクラス */
 class REX_BTPM25V {
     constructor(peripheral) {
         this.keys = [];
         this.requiredKeys = [];
+        /**
+         * Callback when the button is pressed
+         *
+         * ボタンが押されたときにコールバック
+         */
         this.onbuttonpressed = null;
         this._peripheral = null;
         this._uuids = {
@@ -25107,7 +26569,7 @@ class REX_BTPM25V {
         this._ledCharacteristic = null;
         this._buttonCharacteristic = null;
         if (peripheral && !REX_BTPM25V.isDevice(peripheral)) {
-            throw new Error('peripheral is not RS_Seek3');
+            throw new Error('peripheral is not REX_BTPM25V');
         }
         this._peripheral = peripheral;
     }
@@ -25116,6 +26578,17 @@ class REX_BTPM25V {
             name: 'REX_BTPM25V',
         };
     }
+    /**
+     * Verify that the received peripheral is from the REX_BTPM25V
+     *
+     * 受け取ったPeripheralがREX_BTPM25Vのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the REX_BTPM25V
+     *
+     * REX_BTPM25Vかどうか
+     */
     static isDevice(peripheral) {
         if (peripheral.localName !== 'PM25V') {
             return false;
@@ -25125,9 +26598,14 @@ class REX_BTPM25V {
     wired(obniz) {
         // do nothing.
     }
+    /**
+     * Connect the sensor
+     *
+     * センサへ接続
+     */
     async connectWait() {
         if (!this._peripheral) {
-            throw new Error('RS_Seek3 is not find.');
+            throw new Error('REX_BTPM25V is not find.');
         }
         this._peripheral.ondisconnect = (reason) => {
             if (typeof this.ondisconnect === 'function') {
@@ -25155,10 +26633,43 @@ class REX_BTPM25V {
             });
         }
     }
+    /**
+     * Disconnect from the sensor
+     *
+     * センサから切断
+     */
     async disconnectWait() {
         var _a;
         await ((_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.disconnectWait());
     }
+    /**
+     * Do one shot measurement
+     *
+     * ワンショット計測
+     *
+     * @returns one shot measurement data ワンショット計測データ
+     *
+     * ```
+     * {
+     *
+     * pm2_5: PM2.5 concentration PM2.5濃度 (25~1000 [ug/m3]),
+     *
+     * pm10: PM10 concentration M10濃度 (25~1000 [ug/m3]),
+     *
+     * barometricPressure: barometric pressure 気圧 (300~1100 [hPa]),
+     *
+     * temperature: temperature 温度 (-20~85 [degC]),
+     *
+     * humidity: relative humidity 湿度 (10~70 [%RH]),
+     *
+     * lux: illuminance 照度 (0~65535 [lx]),
+     *
+     * mode: mode flag モードフラグ (0: 連続計測, 1: 最新計測データ, 3: ワンショット)
+     *
+     * }
+     * ```
+     *
+     */
     async measureOneShotWait() {
         if (!this._oneShotMeasurementCharacteristic) {
             throw new Error('device is not connected');
@@ -25168,6 +26679,37 @@ class REX_BTPM25V {
         const data = await this._sendAndReceiveWait(this._oneShotMeasurementCharacteristic, sendData);
         return this._analyzeResult(data);
     }
+    /**
+     * Do extended one shot measurement
+     *
+     * 拡張ワンショット計測
+     *
+     * @returns one extended shot measurement data 拡張ワンショット計測データ
+     *
+     * ```
+     * {
+     *
+     * pm2_5: PM2.5 concentration PM2.5濃度 (25~1000 [ug/m3]),
+     *
+     * pm10: PM10 concentration M10濃度 (25~1000 [ug/m3]),
+     *
+     * barometricPressure: barometric pressure 気圧 (300.0~1100.0 [hPa]),
+     *
+     * temperature: temperature 温度 (-20.0~85.0 [degC]),
+     *
+     * humidity: relative humidity 湿度 (0.0~100.0 [%RH]),
+     *
+     * lux: illuminance 照度 (0~65534 [lx]),
+     *
+     * tvoc: TVOC (Total Volatile Organic Compounds) (0~1187 [ppb])
+     *
+     * eco2: eCO2 (equivalent CO2) 等価CO2濃度 (400~8190 [ppm])
+     *
+     * uv: UV Index (0~11)
+     *
+     * }
+     * ```
+     */
     async measureOneShotExtWait() {
         if (!this._oneShotMeasurementCharacteristic) {
             throw new Error('device is not connected');
@@ -25177,9 +26719,37 @@ class REX_BTPM25V {
         const data = await this._sendAndReceiveWait(this._oneShotMeasurementCharacteristic, sendData);
         return this._analyzeResultExt(data);
     }
+    /**
+     * @deprecated Please use {@linkplain getLedModeWait}
+     *
+     * {@linkplain getLedModeWait} の使用を推奨
+     *
+     * @returns
+     */
     getLedMode() {
         return this.getLedModeWait();
     }
+    /**
+     * Get LED mode LEDモードの取得
+     *
+     * @returns current LED mode 現在のLEDモード
+     *
+     * 0: off 消灯
+     *
+     * 1: PM2.5 mode PM2.5モード
+     *
+     * 2: PM10 mode PM10モード
+     *
+     * 3: VOC mode VOCモード
+     *
+     * 4: UV mode UVモード
+     *
+     * 5: temperature mode 温度モード
+     *
+     * 6: humidity mode 湿度モード
+     *
+     * 128: power LED 電源LED
+     */
     async getLedModeWait() {
         if (!this._ledCharacteristic) {
             throw new Error('device is not connected');
@@ -25307,6 +26877,7 @@ exports.default = REX_BTPM25V;
 Object.defineProperty(exports, "__esModule", { value: true });
 const LED_DISPLAY_MODE = ['Disable', 'PM2.5', 'CO2'];
 const PM2_5_CONCENTRATION_MODE = ['Mass', 'Number'];
+/** RS_BTEVS1 management class RS_BTEVS1を管理するクラス */
 class RS_BTEVS1 {
     constructor(peripheral) {
         this.keys = [];
@@ -25608,12 +27179,19 @@ RS_BTEVS1.deviceAdv = [
  * @packageDocumentation
  * @module Parts.RS_BTIREX2
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 // not working
+/** 【NOT WORKING】 RS_BTIREX2 management class RS_BTIREX2を管理するクラス */
 class RS_BTIREX2 {
     constructor(peripheral) {
         this.keys = [];
         this.requiredKeys = [];
+        /**
+         * Callback when the button is pressed
+         *
+         * ボタンが押されたときにコールバック
+         */
         this.onbuttonpressed = null;
         this._uuids = {
             service: '6e400001-b5a3-f393-e0a9-e50e24dcca9e',
@@ -25633,6 +27211,17 @@ class RS_BTIREX2 {
             name: 'RS_BTIREX2',
         };
     }
+    /**
+     * Verify that the received peripheral is from the RS_BTIREX2
+     *
+     * 受け取ったPeripheralがRS_BTIREX2のものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the RS_BTIREX2
+     *
+     * RS_BTIREX2かどうか
+     */
     static isDevice(peripheral) {
         if (peripheral.localName && peripheral.localName.startsWith('BTIR')) {
             return true;
@@ -25642,6 +27231,11 @@ class RS_BTIREX2 {
     wired(obniz) {
         // do nothing.
     }
+    /**
+     * Connect the sensor
+     *
+     * センサへ接続
+     */
     async connectWait() {
         if (!this._peripheral) {
             throw new Error('RS_BTIREX2 is not find.');
@@ -25660,6 +27254,17 @@ class RS_BTIREX2 {
             .getService(this._uuids.service)
             .getCharacteristic(this._uuids.txChar);
     }
+    /**
+     * Make and send a command
+     *
+     * コマンドの作成と送信
+     *
+     * @param payload payload ペイロード
+     *
+     * @param crc CRC of the payload ペイロードのCRC
+     *
+     * @returns
+     */
     _sendAndReceiveWait(payload, crc = 0xb6) {
         if (!this._rxCharacteristic || !this._txCharacteristic) {
             throw new Error('device is not connected');
@@ -25697,13 +27302,24 @@ exports.default = RS_BTIREX2;
  * @packageDocumentation
  * @module Parts.RS_BTWATTCH2
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** RS_BTWATTCH2 management class RS_BTWATTCH2を管理するクラス */
 class RS_BTWATTCH2 {
     /**
-     * Constructor. Provide option at this time
+     * Constructor.
      *
-     * @param peripheral
-     * @param options
+     * If you want to change the RTC auto-configuration option from the default,
+     *
+     * set it as an argument at this time.
+     *
+     * コンストラクタ
+     *
+     * RTC自動設定オプションをデフォルトから変更する場合は、このタイミングで引数に設定
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @param options set auto RTC or not RTC自動設定の有無
      */
     constructor(peripheral, options) {
         this.keys = ['rtcAutoset'];
@@ -25724,9 +27340,15 @@ class RS_BTWATTCH2 {
         };
     }
     /**
-     * Check found peripheral is part of this parts
+     * Verify that the received peripheral is from the RS_BTWATTCH2
      *
-     * @param peripheral
+     * 受け取ったPeripheralがRS_BTWATTCH2のものかどうか確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the RS_BTWATTCH2
+     *
+     * RS_BTWATTCH2かどうか
      */
     static isDevice(peripheral) {
         return (peripheral.localName &&
@@ -25737,13 +27359,23 @@ class RS_BTWATTCH2 {
         // do nothing.
     }
     /**
-     * Check if device is under paring mode(over 3 seconds button pressing)
+     * Check if device is under pairing mode(over 3 seconds button pressing)
+     *
+     * デバイスがペアリングモード中であることを検出する (3秒間本体のボタンを押してください)
+     *
+     * @returns Whether there is a device under pairing mode
+     *
+     * ペアリングモード中のデバイスがあるかどうか
      */
     isPairingMode() {
         return this._peripheral.localName.indexOf('BTWATTCH2_') < 0;
     }
     /**
-     * get pairing key
+     * Get the pairing key under pairing mode
+     *
+     * ペアリングモード中にペアリングキーを取得
+     *
+     * @returns pairing key ペアリングキー
      */
     async firstPairingWait() {
         if (!this._peripheral) {
@@ -25790,7 +27422,11 @@ class RS_BTWATTCH2 {
         }
     }
     /**
-     * Connect to the target device regarding pairing key
+     * Connect to the target device with pairing key
+     *
+     * ペアリングキーを用いてデバイスと接続
+     *
+     * @param keys pairing key ペアリングキー
      */
     async connectWait(keys) {
         if (!keys) {
@@ -25810,7 +27446,7 @@ class RS_BTWATTCH2 {
         };
         const service = this._peripheral.getService('6e400001b5a3f393e0a9e50e24dcca9e');
         if (!service) {
-            throw new Error(`no serivce found`);
+            throw new Error(`no service found`);
         }
         this._rxFromTargetCharacteristic = service.getCharacteristic('6e400003b5a3f393e0a9e50e24dcca9e');
         this._txToTargetCharacteristic = service.getCharacteristic('6e400002b5a3f393e0a9e50e24dcca9e');
@@ -25837,21 +27473,28 @@ class RS_BTWATTCH2 {
     }
     /**
      * Disconnect from the device
+     *
+     * デバイスとの接続を切断
      */
     async disconnectWait() {
         await this._peripheral.disconnectWait();
     }
     /**
-     * @deprecated
+     * @deprecated Please use {@linkplain setRTCWait}
+     *
+     * {@linkplain setRTCWait} の使用を推奨
+     *
      * @param date
      */
     setRTC(date) {
         return this.setRTCWait(date);
     }
     /**
-     * Setting Time on device clock
+     * Set device RTC (date)
      *
-     * @param date
+     * デバイスのRTC(日時)の設定
+     *
+     * @param date instance of Date Dateのインスタンス
      */
     async setRTCWait(date) {
         if (!date) {
@@ -25867,39 +27510,55 @@ class RS_BTWATTCH2 {
             date.getFullYear() - 1900,
         ]);
         if (ret.length !== 2) {
-            throw new Error(`communiation error`);
+            throw new Error(`communication error`);
         }
         if (ret[1] !== 0x00) {
             throw new Error(`set rtc failed`);
         }
     }
     /**
-     * Set Relay ON/OFF
+     * Set relay ON/OFF
      *
-     * @param isOn
+     * リレーのON/OFFを設定する
+     *
+     * @param isOn set relay or not
+     *
+     * リレーを設定するかどうか
      */
     async setPowerStateWait(isOn) {
         const ret = await this._transactionWait([0xa7, isOn ? 0x01 : 0x00]);
         if (ret.length !== 3) {
-            throw new Error(`communiation error`);
+            throw new Error(`communication error`);
         }
         if (ret[1] === 0x01) {
             throw new Error(`set power failed`);
         }
     }
     /**
-     * Getting Current Relay State;
+     * Get current relay state
+     *
+     * 現在のリレーの状態を取得
+     *
+     * @returns the relay in set or not
+     *
+     * リレーが設定されているかどうか
      */
     async getPowerStateWait() {
         return (await this.getRealTimeDataWait()).powerState;
     }
     /**
-     * Getting All of realtime data
+     * Get realtime measurement data(voltage[Vrms]・electric current[Irms]・electric power[Wa]) and relay state
+     *
+     * リアルタイム計測データ(電圧[Vrms]・電流[Irms]・電力[Wa])とリレーの状態を取得
+     *
+     * @returns received realtime measurement data and relay state
+     *
+     * 受けとったリアルタイム計測データとリレーの状態
      */
     async getRealTimeDataWait() {
         const ret = await this._transactionWait([0x08]);
         if (ret.length !== 27) {
-            throw new Error(`communiation error`);
+            throw new Error(`communication error`);
         }
         if (ret[1] !== 0x00) {
             throw new Error(`get data failed`);
@@ -25947,12 +27606,12 @@ class RS_BTWATTCH2 {
         this._received.push(...data);
         if (this._received.length === this._totalSize + 1) {
             this._received.pop(); // => CRC
-            this._onRecieved(this._received);
+            this._onReceived(this._received);
             this._received = [];
             this._totalSize = -1;
         }
     }
-    _onRecieved(data) {
+    _onReceived(data) {
         const one = this._waitings.shift();
         if (!one) {
             return;
@@ -26282,11 +27941,18 @@ exports.default = RS_BTWATTCH2;
  * @packageDocumentation
  * @module Parts.RS_Seek3
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** RS_Seek3 management class RS_Seek3を管理するクラス */
 class RS_Seek3 {
     constructor(peripheral) {
         this.keys = [];
         this.requiredKeys = [];
+        /**
+         * Callback when the button is pressed
+         *
+         * ボタンが押されたときにコールバック
+         */
         this.onpressed = null;
         this._peripheral = null;
         this._uuids = {
@@ -26306,6 +27972,17 @@ class RS_Seek3 {
             name: 'RS_Seek3',
         };
     }
+    /**
+     * Verify that the received peripheral is from the RS_Seek3
+     *
+     * 受け取ったPeripheralがRS_Seek3のものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the RS_Seek3
+     *
+     * RS_Seek3かどうか
+     */
     static isDevice(peripheral) {
         if (peripheral.localName !== 'Seek3') {
             return false;
@@ -26315,6 +27992,11 @@ class RS_Seek3 {
     wired(obniz) {
         // do nothing.
     }
+    /**
+     * Connect the sensor
+     *
+     * センサへ接続
+     */
     async connectWait() {
         if (!this._peripheral) {
             throw new Error('RS_Seek3 is not find.');
@@ -26339,10 +28021,32 @@ class RS_Seek3 {
             });
         }
     }
+    /**
+     * Disconnect from the sensor
+     *
+     * センサから切断
+     */
     async disconnectWait() {
         var _a;
         await ((_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.disconnectWait());
     }
+    /**
+     * Get temperature and humidity data from the RS_SEEK3
+     *
+     * RS_SEEK3から温湿度データを取得
+     *
+     * @returns temperature and humidity data 温湿度データ
+     *
+     * ```
+     * {
+     *
+     * temperature: temperature 温度,
+     *
+     * humidity: humidity 湿度
+     *
+     * }
+     * ```
+     */
     async getTempHumidWait() {
         if (!this._tempHumidCharacteristic) {
             throw new Error('device is not connected');
@@ -26365,8 +28069,10 @@ exports.default = RS_Seek3;
  * @packageDocumentation
  * @module Parts.TR4
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+/** Tr4 series management class Tr4シリーズを管理するクラス */
 class Tr4 {
     constructor() {
         this._peripheral = null;
@@ -26376,9 +28082,37 @@ class Tr4 {
             name: 'TR4',
         };
     }
+    /**
+     * Verify that the received peripheral is from the Tr4
+     *
+     * 受け取ったPeripheralがTr4のものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Tr4
+     *
+     * Tr4かどうか
+     */
     static isDevice(peripheral) {
         return Tr4._deviceAdvAnalyzer.validate(peripheral.adv_data);
     }
+    /**
+     * Get a data from the Tr4
+     *
+     * Tr4からデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the Tr4 Tr4から受け取ったデータ
+     *
+     * ```
+     * {
+     *
+     * temperature: temperature 温度 (Unit 単位: 0.1 degC)
+     *
+     * }
+     * ```
+     */
     static getData(peripheral) {
         if (!Tr4.isDevice(peripheral)) {
             return null;
@@ -26429,7 +28163,9 @@ Tr4._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
  * @packageDocumentation
  * @module Parts.UA1200BLE
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** UA1200BLE management class UA1200BLEを管理するクラス */
 class UA1200BLE {
     constructor(peripheral, timezoneOffsetMinute) {
         if (!peripheral || !UA1200BLE.isDevice(peripheral)) {
@@ -26443,9 +28179,35 @@ class UA1200BLE {
             name: 'UA1200BLE',
         };
     }
+    /**
+     * Verify that the received peripheral is from the UA1200BLE
+     *
+     * 受け取ったPeripheralがUA1200BLEのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is UA1200BLE
+     *
+     * UA1200BLEかどうか
+     */
     static isDevice(peripheral) {
         return (peripheral.localName && peripheral.localName.startsWith('UA-1200BLE_'));
     }
+    /**
+     * Judge whether it is cooperation mode
+     *
+     * (When in cooperation mode, no data exists even when connected)
+     *
+     * 連携モードかどうかの判定
+     *
+     * (連携モードのときは接続してもデータが存在しません)
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is cooperation mode or not
+     *
+     * 連携モードかどうか
+     */
     static isCooperationMode(peripheral) {
         const peripheralHex = peripheral.adv_data
             .map((e) => e.toString(16))
@@ -26475,6 +28237,13 @@ class UA1200BLE {
         ].join('');
         return peripheralHex.indexOf(peripheralArray) > -1;
     }
+    /**
+     * Pair with the device
+     *
+     * デバイスとペアリング
+     *
+     * @returns pairing key ペアリングキー
+     */
     async pairingWait() {
         if (!this._peripheral) {
             throw new Error('UA1200BLE not found');
@@ -26496,6 +28265,13 @@ class UA1200BLE {
         await customServiceChar.writeWait([2, 1, 3]); // disconnect req
         return key;
     }
+    /**
+     * Get data from the UA1200BLE
+     *
+     * UA1200BLEからデータを取得
+     *
+     * @returns data from the UA1200BLE UA1200BLEから受け取ったデータ
+     */
     async getDataWait() {
         if (!this._peripheral) {
             throw new Error('UA1200BLE not found');
@@ -26665,7 +28441,9 @@ exports.default = UA1200BLE;
  * @packageDocumentation
  * @module Parts.UA651BLE
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** UA651BLE management class UA651BLEを管理するクラス */
 class UA651BLE {
     constructor(peripheral, timezoneOffsetMinute) {
         if (!peripheral) {
@@ -26679,9 +28457,27 @@ class UA651BLE {
             name: 'UA651BLE',
         };
     }
+    /**
+     * Verify that the received peripheral is from the UA651BLE
+     *
+     * 受け取ったPeripheralがUA651BLEのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is UA651BLE
+     *
+     * UA651BLEかどうか
+     */
     static isDevice(peripheral) {
         return (peripheral.localName && peripheral.localName.startsWith('A&D_UA-651BLE_'));
     }
+    /**
+     * Get data from the UA651BLE
+     *
+     * UA651BLEからデータを取得
+     *
+     * @returns data from the UA651BLE UA651BLEから受け取ったデータ
+     */
     async getDataWait() {
         if (!this._peripheral) {
             throw new Error('UA651BLE not found');
@@ -26830,7 +28626,9 @@ exports.default = UA651BLE;
  * @packageDocumentation
  * @module Parts.UT201BLE
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** UT201BLE management class UT201BLEを管理するクラス */
 class UT201BLE {
     constructor(peripheral, timezoneOffsetMinute) {
         if (!peripheral || !UT201BLE.isDevice(peripheral)) {
@@ -26844,9 +28642,27 @@ class UT201BLE {
             name: 'UT201BLE',
         };
     }
+    /**
+     * Verify that the received peripheral is from the UT201BLE
+     *
+     * 受け取ったPeripheralがUT201BLEのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is UT201BLE
+     *
+     * UT201BLEかどうか
+     */
     static isDevice(peripheral) {
         return (peripheral.localName && peripheral.localName.startsWith('A&D_UT201BLE_'));
     }
+    /**
+     * Pair with the device
+     *
+     * デバイスとペアリング
+     *
+     * @returns pairing key ペアリングキー
+     */
     async pairingWait() {
         if (!this._peripheral) {
             throw new Error('UT201BLE not found');
@@ -26869,6 +28685,15 @@ class UT201BLE {
         await customServiceChar.writeWait([2, 1, 3]); // disconnect req
         return key;
     }
+    /**
+     * Get data from the UT201BLE
+     *
+     * UT201BLEからデータを取得
+     *
+     * @param pairingKeys pairing key ペアリングキー
+     *
+     * @returns data from the UT201BLE UT201BLEから受け取ったデータ
+     */
     async getDataWait(pairingKeys) {
         if (!this._peripheral) {
             throw new Error('UT201BLE not found');
@@ -27001,89 +28826,39 @@ exports.default = UT201BLE;
  * @packageDocumentation
  * @module Parts.iBS01
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
-class IBS01 {
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/**
+ * @deprecated
+ *
+ * iBS01 management class iBS01を管理するクラス
+ *
+ * Recommend use iBS01G, iBS01H
+ *
+ * Use only if you are using an old iBS01 series sensor
+ *
+ * iBS01G, iBS01H の使用を推奨
+ *
+ * 旧iBS01シリーズのセンサを使用している場合のみお使いください
+ */
+class iBS01 extends iBS_1.BaseiBS01 {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS01',
-        };
-    }
-    static isDevice(peripheral, strictCheck = false) {
-        const deviceAdv = [...this.deviceAdv];
-        if (strictCheck) {
-            deviceAdv[18] = 0x03;
-        }
-        if (deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < deviceAdv.length; index++) {
-            if (deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return (peripheral.adv_data[12] === 0xff &&
-            peripheral.adv_data[13] === 0xff &&
-            peripheral.adv_data[14] === 0xff &&
-            peripheral.adv_data[15] === 0xff);
-    }
-    static getData(peripheral, strictCheck) {
-        if (!IBS01.isDevice(peripheral, strictCheck)) {
-            return null;
-        }
-        const data = {
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            button: false,
-            moving: false,
-            hall_sensor: false,
-            fall: false,
-        };
-        if (peripheral.adv_data[11] & 0b0001) {
-            data.button = true;
-        }
-        if (peripheral.adv_data[11] & 0b0010) {
-            data.moving = true;
-        }
-        if (peripheral.adv_data[11] & 0b0100) {
-            data.hall_sensor = true;
-        }
-        if (peripheral.adv_data[11] & 0b1000) {
-            data.fall = true;
-        }
-        return data;
+        super(...arguments);
+        this.staticClass = iBS01;
     }
 }
-exports.default = IBS01;
-IBS01.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x59,
-    0x00,
-    0x80,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-];
+exports.default = iBS01;
+iBS01.PartsName = 'iBS01';
+iBS01.BeaconDataStruct = {
+    battery: iBS_1.BaseiBS01.Config.battery,
+    button: iBS_1.BaseiBS01.Config.button,
+    moving: iBS_1.BaseiBS01.Config.moving,
+    hall_sensor: iBS_1.BaseiBS01.Config.event,
+    fall: iBS_1.BaseiBS01.Config.fall,
+    // subtype=0x03 older version has no subtype
+    magic: iBS_1.BaseiBS01.getUniqueData(1, -1).magic,
+};
 
 
 /***/ }),
@@ -27097,81 +28872,20 @@ IBS01.deviceAdv = [
  * @packageDocumentation
  * @module Parts.iBS01G
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
-class IBS01G {
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS01G management class iBS01Gを管理するクラス */
+class iBS01G extends iBS_1.BaseiBS01 {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS01G',
-        };
-    }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return (peripheral.adv_data[12] === 0xff &&
-            peripheral.adv_data[13] === 0xff &&
-            peripheral.adv_data[14] === 0xff &&
-            peripheral.adv_data[15] === 0xff);
-    }
-    static getData(peripheral) {
-        if (!IBS01G.isDevice(peripheral)) {
-            return null;
-        }
-        const data = {
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            button: false,
-            moving: false,
-            fall: false,
-        };
-        if (peripheral.adv_data[11] & 0b0001) {
-            data.button = true;
-        }
-        if (peripheral.adv_data[11] & 0b0010) {
-            data.moving = true;
-        }
-        if (peripheral.adv_data[11] & 0b1000) {
-            data.fall = true;
-        }
-        return data;
+        super(...arguments);
+        this.staticClass = iBS01G;
     }
 }
-exports.default = IBS01G;
-IBS01G.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x59,
-    0x00,
-    0x80,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    0x06,
-    -1,
-    -1,
-    -1,
-];
+exports.default = iBS01G;
+iBS01G.PartsName = 'iBS01G';
+iBS01G.BeaconDataLength = 0x19;
+iBS01G.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS01.Config.battery, button: iBS_1.BaseiBS01.Config.button, moving: iBS_1.BaseiBS01.Config.moving, fall: iBS_1.BaseiBS01.Config.fall }, iBS_1.BaseiBS01.getUniqueData(1, 0x06));
 
 
 /***/ }),
@@ -27185,77 +28899,19 @@ IBS01G.deviceAdv = [
  * @packageDocumentation
  * @module Parts.iBS01H
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
-class IBS01H {
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS01H management class iBS01Hを管理するクラス */
+class iBS01H extends iBS_1.BaseiBS01 {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS01H',
-        };
-    }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return (peripheral.adv_data[12] === 0xff &&
-            peripheral.adv_data[13] === 0xff &&
-            peripheral.adv_data[14] === 0xff &&
-            peripheral.adv_data[15] === 0xff);
-    }
-    static getData(peripheral) {
-        if (!IBS01H.isDevice(peripheral)) {
-            return null;
-        }
-        const data = {
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            button: false,
-            hall_sensor: false,
-        };
-        if (peripheral.adv_data[11] & 0b0001) {
-            data.button = true;
-        }
-        if (peripheral.adv_data[11] & 0b0100) {
-            data.hall_sensor = true;
-        }
-        return data;
+        super(...arguments);
+        this.staticClass = iBS01H;
     }
 }
-exports.default = IBS01H;
-IBS01H.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x59,
-    0x00,
-    0x80,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    0x04,
-    -1,
-    -1,
-    -1,
-];
+exports.default = iBS01H;
+iBS01H.PartsName = 'iBS01H';
+iBS01H.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS01.Config.battery, button: iBS_1.BaseiBS01.Config.button, hall_sensor: iBS_1.BaseiBS01.Config.event }, iBS_1.BaseiBS01.getUniqueData(1, 0x04));
 
 
 /***/ }),
@@ -27265,116 +28921,30 @@ IBS01H.deviceAdv = [
 
 "use strict";
 
-//
-//   const accelArray: IBS01RG_Acceleration_Data[] = [];
-//   for (let i = 0; i < 3; i++) {
-//     accelArray.push({
-//       x: IBS01RG.signed16FromBinary(advertise[0][7 + i * 6], advertise[0][8 + i * 6]),
-//       y: IBS01RG.signed16FromBinary(advertise[0][9 + i * 6], advertise[0][10 + i * 6]),
-//       z: IBS01RG.signed16FromBinary(advertise[0][11 + i * 6], advertise[0][12 + i * 6]),
-//     });
-//   }
-//   console.log((advertise[0][6] & 0x0f) * 0xff);
-//   console.log((advertise[0][6] & 0x30) >> 4);
-//   const data: IBS01RG_Data = {
-//     battery: (advertise[0][5] + (advertise[0][6] & 0x0f) * 256) * 0.01,
-//     active: Boolean((advertise[0][6] & 0x10) >> 4),
-//     button: Boolean((advertise[0][6] & 0x20) >> 5),
-//     acceleration: accelArray,
-//     address: peripheral.address,
-//   };
-//   // console.log(`battery ${data.battery}V event ${data.event});
-//   if (this.onNotification) {
-//     this.onNotification(data);
-//   }
-//
-//   if (this.onChangeButton) {
-//     const button: boolean = Boolean((advertise[0][6] & 0x20) >> 5);
-//     if (button !== this.oldButtonFlg) {
-//       this.onChangeButton(button, peripheral.address);
-//       this.oldButtonFlg = button;
-//     }
-//   }
-//
-//   if (this.onChangeActive) {
-//     const actived: boolean = Boolean((advertise[0][6] & 0x10) >> 4);
-//     if (actived !== this.oldActiveFlg) {
-//       this.onChangeActive(actived, peripheral.address);
-//       this.oldActiveFlg = actived;
-//     }
-//   }
-// };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
+/**
+ * @packageDocumentation
+ * @module Parts.iBS01RG
+ */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
-class IBS01RG {
+const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+class iBS01RG extends iBS_1.BaseiBS01 {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS01RG',
-        };
-    }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!IBS01RG.isDevice(peripheral)) {
-            return null;
-        }
-        const accelArray = [];
-        for (let i = 0; i < 3; i++) {
-            accelArray.push({
-                x: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[12 + i * 6], peripheral.adv_data[11 + i * 6]),
-                y: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[14 + i * 6], peripheral.adv_data[13 + i * 6]),
-                z: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[16 + i * 6], peripheral.adv_data[15 + i * 6]),
-            });
-        }
-        const data = {
-            battery: (peripheral.adv_data[9] + (peripheral.adv_data[10] & 0x0f) * 256) *
-                0.01,
-            active: Boolean((peripheral.adv_data[10] & 0x10) >> 4),
-            button: Boolean((peripheral.adv_data[10] & 0x20) >> 5),
-            acceleration: accelArray,
-        };
-        return data;
+        super(...arguments);
+        this.staticClass = iBS01RG;
     }
 }
-exports.default = IBS01RG;
-IBS01RG.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x19,
-    0xff,
-    0x59,
-    0x00,
-    0x81,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-];
+exports.default = iBS01RG;
+iBS01RG.PartsName = 'iBS01RG';
+iBS01RG.BeaconDataLength = 0x19;
+iBS01RG.BeaconDataStruct = {
+    battery: Object.assign(Object.assign({}, iBS_1.BaseiBS01.Config.battery), { type: 'custom', func: (data) => ObnizPartsBleAbstract_1.uint([data[0], data[1] & 0x0f]) * 0.01 }),
+    active: Object.assign(Object.assign({}, iBS_1.BaseiBS01.Config.event), { type: 'bool00010000' }),
+    button: Object.assign(Object.assign({}, iBS_1.BaseiBS01.Config.button), { type: 'bool00100000' }),
+    acceleration: iBS_1.BaseiBS01.Config.acceleration,
+    magic: iBS_1.BaseiBS01.getUniqueData(1.1, -1).magic,
+};
 
 
 /***/ }),
@@ -27388,91 +28958,19 @@ IBS01RG.deviceAdv = [
  * @packageDocumentation
  * @module Parts.iBS01T
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
-class IBS01T {
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS01T management class iBS01Tを管理するクラス */
+class iBS01T extends iBS_1.BaseiBS01 {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS01T',
-        };
-    }
-    static isDevice(peripheral, strictCheck = false) {
-        const deviceAdv = [...this.deviceAdv];
-        if (strictCheck) {
-            deviceAdv[18] = 0x05;
-        }
-        if (deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < deviceAdv.length; index++) {
-            if (deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return !(peripheral.adv_data[12] === 0xff &&
-            peripheral.adv_data[13] === 0xff &&
-            peripheral.adv_data[14] === 0xff &&
-            peripheral.adv_data[15] === 0xff);
-    }
-    static getData(peripheral, strictCheck) {
-        if (!IBS01T.isDevice(peripheral, strictCheck)) {
-            return null;
-        }
-        const d = {
-            button: false,
-            moving: false,
-            reed: false,
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
-            humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[15], peripheral.adv_data[14]),
-        };
-        if (peripheral.adv_data[11] & 0b0001) {
-            d.button = true;
-        }
-        if (peripheral.adv_data[11] & 0b0010) {
-            d.moving = true;
-        }
-        if (peripheral.adv_data[11] & 0b0100) {
-            d.reed = true;
-        }
-        return d;
+        super(...arguments);
+        this.staticClass = iBS01T;
     }
 }
-exports.default = IBS01T;
-IBS01T.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x59,
-    0x00,
-    0x80,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-];
+exports.default = iBS01T;
+iBS01T.PartsName = 'iBS01T';
+iBS01T.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS01.Config.battery, button: iBS_1.BaseiBS01.Config.button, moving: iBS_1.BaseiBS01.Config.moving, reed: iBS_1.BaseiBS01.Config.event, temperature: iBS_1.BaseiBS01.Config.temperature, humidity: iBS_1.BaseiBS01.Config.humidity }, iBS_1.BaseiBS01.getUniqueData(1, 0x05));
 
 
 /***/ }),
@@ -27486,66 +28984,19 @@ IBS01T.deviceAdv = [
  * @packageDocumentation
  * @module Parts.iBS02IR
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
-class IBS02IR {
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS02IR management class iBS02IRを管理するクラス */
+class iBS02IR extends iBS_1.BaseiBS {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS02IR',
-        };
-    }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!IBS02IR.isDevice(peripheral)) {
-            return null;
-        }
-        return {
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            event: Boolean(peripheral.adv_data[11] & 0b100),
-        };
+        super(...arguments);
+        this.staticClass = iBS02IR;
     }
 }
-exports.default = IBS02IR;
-IBS02IR.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x0d,
-    0x00,
-    0x82,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    0x02,
-    -1,
-    -1,
-    -1,
-];
+exports.default = iBS02IR;
+iBS02IR.PartsName = 'iBS02IR';
+iBS02IR.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, event: iBS_1.BaseiBS.Config.event }, iBS_1.BaseiBS.getUniqueData(2, 0x02));
 
 
 /***/ }),
@@ -27559,66 +29010,19 @@ IBS02IR.deviceAdv = [
  * @packageDocumentation
  * @module Parts.iBS02PIR
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
-class IBS02PIR {
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS02PIR management class iBS02PIRを管理するクラス */
+class iBS02PIR extends iBS_1.BaseiBS {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS02PIR',
-        };
-    }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!IBS02PIR.isDevice(peripheral)) {
-            return null;
-        }
-        return {
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            event: Boolean(peripheral.adv_data[11] & 0b100),
-        };
+        super(...arguments);
+        this.staticClass = iBS02PIR;
     }
 }
-exports.default = IBS02PIR;
-IBS02PIR.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x0d,
-    0x00,
-    0x82,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    0x01,
-    -1,
-    -1,
-    -1,
-];
+exports.default = iBS02PIR;
+iBS02PIR.PartsName = 'iBS02PIR';
+iBS02PIR.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, event: iBS_1.BaseiBS.Config.event }, iBS_1.BaseiBS.getUniqueData(2, 0x01));
 
 
 /***/ }),
@@ -27632,78 +29036,19 @@ IBS02PIR.deviceAdv = [
  * @packageDocumentation
  * @module Parts.iBS03
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
-class IBS03 {
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS03 management class iBS03を管理するクラス */
+class iBS03 extends iBS_1.BaseiBS {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS03',
-        };
-    }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!IBS03.isDevice(peripheral)) {
-            return null;
-        }
-        const data = {
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            button: false,
-            moving: false,
-            hall_sensor: false,
-        };
-        if (peripheral.adv_data[11] & 0b0001) {
-            data.button = true;
-        }
-        if (peripheral.adv_data[11] & 0b0010) {
-            data.moving = true;
-        }
-        if (peripheral.adv_data[11] & 0b0100) {
-            data.hall_sensor = true;
-        }
-        return data;
+        super(...arguments);
+        this.staticClass = iBS03;
     }
 }
-exports.default = IBS03;
-IBS03.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x0d,
-    0x00,
-    0x83,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    0x10,
-    -1,
-    -1,
-    -1,
-];
+exports.default = iBS03;
+iBS03.PartsName = 'iBS03';
+iBS03.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, button: iBS_1.BaseiBS.Config.button, moving: iBS_1.BaseiBS.Config.moving, hall_sensor: iBS_1.BaseiBS.Config.event }, iBS_1.BaseiBS.getUniqueData(3, 0x10));
 
 
 /***/ }),
@@ -27717,78 +29062,19 @@ IBS03.deviceAdv = [
  * @packageDocumentation
  * @module Parts.iBS03G
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
-class IBS03G {
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS03G management class iBS03Gを管理するクラス */
+class iBS03G extends iBS_1.BaseiBS {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS03G',
-        };
-    }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!IBS03G.isDevice(peripheral)) {
-            return null;
-        }
-        const data = {
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            button: false,
-            moving: false,
-            fall: false,
-        };
-        if (peripheral.adv_data[11] & 0b0001) {
-            data.button = true;
-        }
-        if (peripheral.adv_data[11] & 0b0010) {
-            data.moving = true;
-        }
-        if (peripheral.adv_data[11] & 0b1000) {
-            data.fall = true;
-        }
-        return data;
+        super(...arguments);
+        this.staticClass = iBS03G;
     }
 }
-exports.default = IBS03G;
-IBS03G.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x0d,
-    0x00,
-    0x83,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    0x16,
-    -1,
-    -1,
-    -1,
-];
+exports.default = iBS03G;
+iBS03G.PartsName = 'iBS03G';
+iBS03G.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, button: iBS_1.BaseiBS.Config.button, moving: iBS_1.BaseiBS.Config.moving, fall: iBS_1.BaseiBS.Config.fall }, iBS_1.BaseiBS.getUniqueData(3, 0x16));
 
 
 /***/ }),
@@ -27802,7 +29088,9 @@ IBS03G.deviceAdv = [
  * @packageDocumentation
  * @module Parts.iBS04i
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** iBS03R management class iBS03Rを管理するクラス */
 class IBS03R {
     constructor() {
         this._peripheral = null;
@@ -27812,9 +29100,29 @@ class IBS03R {
             name: 'iBS03R',
         };
     }
+    /**
+     * Verify that the received peripheral is from the iBS03R
+     *
+     * 受け取ったPeripheralがiBS03Rのものかどうか確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the iBS03R
+     *
+     * iBS03Rかどうか
+     */
     static isDevice(peripheral) {
         return IBS03R.getDeviceArray(peripheral) !== null;
     }
+    /**
+     * Get a data from the iBS03R
+     *
+     * iBS03Rからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the iBS03R iBS03Rから受け取ったデータ
+     */
     static getData(peripheral) {
         const adv = IBS03R.getDeviceArray(peripheral);
         if (adv === null) {
@@ -27829,24 +29137,26 @@ class IBS03R {
         return data;
     }
     static getDeviceArray(peripheral) {
-        const advertise = peripheral.advertise_data_rows.filter((adv) => {
-            let find = false;
-            if (this.deviceAdv.length > adv.length) {
+        const advertise = !peripheral.advertise_data_rows
+            ? []
+            : peripheral.advertise_data_rows.filter((adv) => {
+                let find = false;
+                if (this.deviceAdv.length > adv.length) {
+                    return find;
+                }
+                for (let index = 0; index < this.deviceAdv.length; index++) {
+                    if (this.deviceAdv[index] === -1) {
+                        continue;
+                    }
+                    if (adv[index] === this.deviceAdv[index]) {
+                        find = true;
+                        continue;
+                    }
+                    find = false;
+                    break;
+                }
                 return find;
-            }
-            for (let index = 0; index < this.deviceAdv.length; index++) {
-                if (this.deviceAdv[index] === -1) {
-                    continue;
-                }
-                if (adv[index] === this.deviceAdv[index]) {
-                    find = true;
-                    continue;
-                }
-                find = false;
-                break;
-            }
-            return find;
-        });
+            });
         if (advertise.length !== 1) {
             return null;
         }
@@ -27887,83 +29197,19 @@ IBS03R.deviceAdv = [
  * @packageDocumentation
  * @module Parts.iBS03T
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
-class IBS03T {
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS03T management class iBS03Tを管理するクラス */
+class iBS03T extends iBS_1.BaseiBS {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS03T',
-        };
-    }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!IBS03T.isDevice(peripheral)) {
-            return null;
-        }
-        const data = {
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            button: false,
-            moving: false,
-            hall_sensor: false,
-            temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
-        };
-        if (peripheral.adv_data[11] & 0b0001) {
-            data.button = true;
-        }
-        if (peripheral.adv_data[11] & 0b0010) {
-            data.moving = true;
-        }
-        if (peripheral.adv_data[11] & 0b0100) {
-            data.hall_sensor = true;
-        }
-        return data;
+        super(...arguments);
+        this.staticClass = iBS03T;
     }
 }
-exports.default = IBS03T;
-IBS03T.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x0d,
-    0x00,
-    0x83,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    0x15,
-    -1,
-    -1,
-    -1,
-];
+exports.default = iBS03T;
+iBS03T.PartsName = 'iBS03T';
+iBS03T.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, button: iBS_1.BaseiBS.Config.button, moving: iBS_1.BaseiBS.Config.moving, hall_sensor: iBS_1.BaseiBS.Config.event, temperature: iBS_1.BaseiBS.Config.temperature }, iBS_1.BaseiBS.getUniqueData(3, 0x15));
 
 
 /***/ }),
@@ -27977,84 +29223,43 @@ IBS03T.deviceAdv = [
  * @packageDocumentation
  * @module Parts.iBS03TP
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
-class IBS03TP {
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS03TP management class iBS03TPを管理するクラス */
+class iBS03TP extends iBS_1.BaseiBS {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS03TP',
-        };
-    }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!IBS03TP.isDevice(peripheral)) {
-            return null;
-        }
-        const data = {
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            button: false,
-            moving: false,
-            hall_sensor: false,
-            temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
-            probe_temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[15], peripheral.adv_data[14]) * 0.01,
-        };
-        if (peripheral.adv_data[11] & 0b0001) {
-            data.button = true;
-        }
-        if (peripheral.adv_data[11] & 0b0010) {
-            data.moving = true;
-        }
-        if (peripheral.adv_data[11] & 0b0100) {
-            data.hall_sensor = true;
-        }
-        return data;
+        super(...arguments);
+        this.staticClass = iBS03TP;
     }
 }
-exports.default = IBS03TP;
-IBS03TP.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x0d,
-    0x00,
-    0x83,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    0x17,
-    -1,
-    -1,
-    -1,
-];
+exports.default = iBS03TP;
+iBS03TP.PartsName = 'iBS03TP';
+iBS03TP.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, button: iBS_1.BaseiBS.Config.button, moving: iBS_1.BaseiBS.Config.moving, hall_sensor: iBS_1.BaseiBS.Config.event, temperature: iBS_1.BaseiBS.Config.temperature, probe_temperature: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.temperature), { index: 7 }) }, iBS_1.BaseiBS.getUniqueData(3, 0x17));
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/iBS03T_RH/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS03T_RH
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+class iBS03T_RH extends iBS_1.BaseiBS {
+    constructor() {
+        super(...arguments);
+        this.staticClass = iBS03T_RH;
+    }
+}
+exports.default = iBS03T_RH;
+iBS03T_RH.PartsName = 'iBS03T_RH';
+iBS03T_RH.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, button: iBS_1.BaseiBS.Config.button, moving: iBS_1.BaseiBS.Config.moving, hall_sensor: iBS_1.BaseiBS.Config.event, temperature: iBS_1.BaseiBS.Config.temperature, humidity: iBS_1.BaseiBS.Config.humidity }, iBS_1.BaseiBS.getUniqueData(3, 0x14));
 
 
 /***/ }),
@@ -28068,70 +29273,19 @@ IBS03TP.deviceAdv = [
  * @packageDocumentation
  * @module Parts.iBS04
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
-class IBS04 {
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS04 management class iBS04を管理するクラス */
+class iBS04 extends iBS_1.BaseiBS {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS04',
-        };
-    }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!IBS04.isDevice(peripheral)) {
-            return null;
-        }
-        const data = {
-            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
-            button: false,
-        };
-        if (peripheral.adv_data[11] & 0b0001) {
-            data.button = true;
-        }
-        return data;
+        super(...arguments);
+        this.staticClass = iBS04;
     }
 }
-exports.default = IBS04;
-IBS04.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x12,
-    0xff,
-    0x0d,
-    0x00,
-    0x83,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    0x19,
-    -1,
-    -1,
-    -1,
-];
+exports.default = iBS04;
+iBS04.PartsName = 'iBS04';
+iBS04.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, button: iBS_1.BaseiBS.Config.button }, iBS_1.BaseiBS.getUniqueData(4, 0x19));
 
 
 /***/ }),
@@ -28145,87 +29299,51 @@ IBS04.deviceAdv = [
  * @packageDocumentation
  * @module Parts.iBS04i
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
-class IBS04I {
+const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS04i management class iBS04iを管理するクラス */
+class iBS04i extends iBS_1.BaseiBS {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS04i',
-        };
-    }
-    static isDevice(peripheral) {
-        return IBS04I.getDeviceArray(peripheral) !== null;
-    }
-    static getData(peripheral) {
-        const adv = IBS04I.getDeviceArray(peripheral);
-        if (adv === null) {
-            return null;
-        }
-        const data = {
-            battery: (adv[5] + adv[6] * 256) * 0.01,
-            button: Boolean(adv[7]),
-            uuid: peripheral.iBeacon.uuid,
-            major: peripheral.iBeacon.major,
-            minor: peripheral.iBeacon.minor,
-            power: peripheral.iBeacon.power,
-            rssi: peripheral.iBeacon.rssi,
-            address: peripheral.address,
-        };
-        return data;
-    }
-    static getDeviceArray(peripheral) {
-        const advertise = peripheral.advertise_data_rows.filter((adv) => {
-            let find = false;
-            if (this.deviceAdv.length > adv.length) {
-                return find;
-            }
-            for (let index = 0; index < this.deviceAdv.length; index++) {
-                if (this.deviceAdv[index] === -1) {
-                    continue;
-                }
-                if (adv[index] === this.deviceAdv[index]) {
-                    find = true;
-                    continue;
-                }
-                find = false;
-                break;
-            }
-            return find;
-        });
-        if (advertise.length !== 1) {
-            return null;
-        }
-        const type = advertise[0][14];
-        if (type !== 24) {
-            // is not ibs04i
-            return null;
-        }
-        return advertise[0];
+        super(...arguments);
+        this.staticClass = iBS04i;
     }
 }
-exports.default = IBS04I;
-IBS04I.deviceAdv = [
-    0xff,
-    0x0d,
-    0x00,
-    0x83,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    0xff,
-    0xff,
-    0xff,
-    0xff,
-    0x00,
-    -1,
-    0x18,
-    -1,
-    -1,
-    -1,
-];
+exports.default = iBS04i;
+iBS04i.PartsName = 'iBS04i';
+iBS04i.CompanyID = ObnizPartsBleAbstract_1.iBeaconCompanyID;
+iBS04i.CompanyID_ScanResponse = iBS_1.BaseiBS.CompanyID;
+iBS04i.BeaconDataLength = 0x1a;
+iBS04i.BeaconDataLength_ScanResponse = iBS_1.BaseiBS.BeaconDataLength;
+iBS04i.BeaconDataStruct = Object.assign(Object.assign({ battery: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.battery), { scanResponse: true }), button: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.button), { scanResponse: true }) }, iBS_1.BaseiBS.getUniqueData(4, 0x18, 0, true)), ObnizPartsBleAbstract_1.iBeaconData);
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/iBS05H/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS05H
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS05H management class iBS05Hを管理するクラス */
+class iBS05H extends iBS_1.BaseiBS {
+    constructor() {
+        super(...arguments);
+        this.staticClass = iBS05H;
+    }
+}
+exports.default = iBS05H;
+iBS05H.PartsName = 'iBS05H';
+iBS05H.CompanyID = [0x2c, 0x08];
+iBS05H.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, hall_sensor: iBS_1.BaseiBS.Config.event, count: iBS_1.BaseiBS.Config.count }, iBS_1.BaseiBS.getUniqueData(5, 0x31));
 
 
 /***/ }),
@@ -28239,14 +29357,17 @@ IBS04I.deviceAdv = [
  * @packageDocumentation
  * @module Parts.Linking
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const advertising_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/advertising.js"));
 const device_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/device.js"));
+/** products supporting Linking management class Linking対応製品を管理するクラス */
 class Linking {
     constructor(params) {
+        /** not used */
         this.PRIMARY_SERVICE_UUID_LIST = [
             'b3b3690150d34044808d50835b13a6cd',
             'fe4e',
@@ -28254,7 +29375,7 @@ class Linking {
         this.initialized = false;
         this.keys = [];
         this.requiredKeys = [];
-        this.periperal = null;
+        this.peripheral = null;
         this.onadvertisement = null;
         this.ondiscover = null;
         // Private properties
@@ -28278,22 +29399,46 @@ class Linking {
         this.obniz = obniz;
     }
     /**
+     * Use {@linkplain initWait}
+     *
+     * {@linkplain initWait} を使ってください
+     *
      * @deprecated
      */
     init() {
         return this.initWait();
     }
+    /**
+     * Initialize BLE module
+     *
+     * BLEを初期化
+     */
     async initWait() {
         await this.obniz.ble.initWait();
         this.initialized = true;
     }
     /**
+     * Use {@linkplain discoverWait}
+     *
+     * {@linkplain discoverWait} を使ってください
+     *
      * @deprecated
      * @param p
      */
     discover(p) {
         return this.discoverWait(p);
     }
+    /**
+     * Search for devices with specified parameters
+     *
+     * 指定したパラメータのデバイスを探索
+     *
+     * @param p Parameters for device デバイスに関するパラメータ
+     *
+     * @returns Array of device objects found {@linkplain LinkingDevice}
+     *
+     * 見つかったデバイスオブジェクトの配列 {@linkplain LinkingDevice}
+     */
     discoverWait(p) {
         this._checkInitialized();
         let duration = 5000;
@@ -28301,19 +29446,19 @@ class Linking {
         let id_filter = '';
         let quick = false;
         if (p && typeof p === 'object') {
-            if ('duration' in p && typeof p.duration === 'number') {
+            if (p.duration !== undefined && p.duration !== null) {
                 duration = p.duration;
                 if (duration < 1000) {
                     duration = 1000;
                 }
             }
-            if ('nameFilter' in p && typeof (p.nameFilter === 'string')) {
+            if (p.nameFilter !== undefined && p.nameFilter !== null) {
                 name_filter = p.nameFilter;
             }
-            if ('idFilter' in p && typeof (p.idFilter === 'string')) {
+            if (p.idFilter !== undefined && p.idFilter !== null) {
                 id_filter = p.idFilter;
             }
-            if ('quick' in p && typeof (p.quick === 'boolean')) {
+            if (p.quick !== undefined && p.quick !== null) {
                 quick = p.quick;
             }
         }
@@ -28388,6 +29533,11 @@ class Linking {
         this.obniz.ble.scan.startWait();
         this._discover_status = true;
     }
+    /**
+     * Finish scanning device
+     *
+     * デバイスのスキャンを終了
+     */
     stopScan() {
         if (this._discover_status === true) {
             this._discover_status = false;
@@ -28398,15 +29548,22 @@ class Linking {
             this.obniz.ble.scan.endWait();
         }
     }
+    /**
+     * Start scanning the device
+     *
+     * デバイスのスキャンを開始
+     *
+     * @param p Parameters for device デバイスに関するパラメータ
+     */
     startScan(p) {
         this._checkInitialized();
         let name_filter = '';
         let id_filter = '';
         if (p && typeof p === 'object') {
-            if ('nameFilter' in p && typeof (p.nameFilter === 'string')) {
+            if (p.nameFilter !== undefined && p.nameFilter !== null) {
                 name_filter = p.nameFilter;
             }
-            if ('idFilter' in p && typeof (p.idFilter === 'string')) {
+            if (p.idFilter !== undefined && p.idFilter !== null) {
                 id_filter = p.idFilter;
             }
         }
@@ -32491,7 +33648,9 @@ exports.default = LinkingService;
  * @packageDocumentation
  * @module Parts.SCBTGAAAC
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** SCBTGAAAC management class SCBTGAAACを管理するクラス */
 class SCBTGAAAC {
     constructor() {
         this._peripheral = null;
@@ -32501,9 +33660,33 @@ class SCBTGAAAC {
             name: 'SCBTGAAAC',
         };
     }
+    /**
+     * Verify that the received peripheral is from the SCBTGAAAC
+     *
+     * 受け取ったPeripheralがSCBTGAAACのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the SCBTGAAAC
+     *
+     * SCBTGAAACかどうか
+     */
     static isDevice(peripheral) {
         return SCBTGAAAC.getData(peripheral) !== null;
     }
+    /**
+     * Get leakage data from the SCBTGAAAC
+     *
+     * Get advertisement sent out by generating power at the leak
+     *
+     * SCBTGAAACから漏水データを取得する
+     *
+     * 漏水で発電することによって発信されたadvertisementを取得します
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns device name デバイス名
+     */
     static getData(peripheral) {
         const data = SCBTGAAAC.searchTypeVal(peripheral.advertise_data_rows, 0xff);
         if (!data ||
@@ -32549,29 +33732,42 @@ exports.default = SCBTGAAAC;
 
 /***/ }),
 
-/***/ "./dist/src/parts/Ble/tm530/index.js":
+/***/ "./dist/src/parts/Ble/tm511/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 /**
  * @packageDocumentation
- * @module Parts.TM530
+ * @module Parts.TM511
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
-class TM530 {
+/** TM511 management class TM511を管理するクラス */
+class TM511 {
     constructor() {
         this._peripheral = null;
     }
     static info() {
         return {
-            name: 'TM530',
+            name: 'TM511',
         };
     }
+    /**
+     * Verify that the received peripheral is from the TM511
+     *
+     * 受け取ったPeripheralがTM511のものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the TM511
+     *
+     * TM511かどうか
+     */
     static isDevice(peripheral) {
         if (this.deviceAdv.length > peripheral.adv_data.length) {
             return false;
@@ -32587,6 +33783,118 @@ class TM530 {
         }
         return true;
     }
+    /**
+     * Get a data from the TM511
+     *
+     * TM511からのデータ取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the TM511 TM511から受け取ったデータ
+     */
+    static getData(peripheral) {
+        if (!TM511.isDevice(peripheral)) {
+            return null;
+        }
+        const data = {
+            battery: peripheral.adv_data[13],
+            x: peripheral.adv_data[14] +
+                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[15]),
+            y: peripheral.adv_data[16] +
+                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[17]),
+            z: peripheral.adv_data[18] +
+                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[19]),
+        };
+        return data;
+    }
+}
+exports.default = TM511;
+TM511.deviceAdv = [
+    0x02,
+    0x01,
+    0x06,
+    0x03,
+    0x03,
+    0xe1,
+    0xff,
+    -1,
+    -1,
+    -1,
+    -1,
+    0xa1,
+    0x03,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+];
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/tm530/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.TM530
+ */
+/* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+/** TM530 management class TM530を管理するクラス */
+class TM530 {
+    constructor() {
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: 'TM530',
+        };
+    }
+    /**
+     * Verify that the received peripheral is from the TM530
+     *
+     * 受け取ったPeripheralがTM530のものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the TM530
+     *
+     * TM530かどうか
+     */
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
+        }
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
+    /**
+     * Get a data from the TM530
+     *
+     * TM530からデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the TM530 TM530から受け取ったデータ
+     */
     static getData(peripheral) {
         if (!TM530.isDevice(peripheral)) {
             return null;
@@ -32626,87 +33934,6 @@ TM530.deviceAdv = [
 
 /***/ }),
 
-/***/ "./dist/src/parts/Ble/tm551/index.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * @packageDocumentation
- * @module Parts.TM551
- */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
-class TM551 {
-    constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'TM551',
-        };
-    }
-    static isDevice(peripheral) {
-        if (this.deviceAdv.length > peripheral.adv_data.length) {
-            return false;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-            if (this.deviceAdv[index] === -1) {
-                continue;
-            }
-            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
-                continue;
-            }
-            return false;
-        }
-        return true;
-    }
-    static getData(peripheral) {
-        if (!TM551.isDevice(peripheral)) {
-            return null;
-        }
-        const data = {
-            battery: peripheral.adv_data[13],
-            x: peripheral.adv_data[14] +
-                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[15]),
-            y: peripheral.adv_data[16] +
-                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[17]),
-            z: peripheral.adv_data[18] +
-                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[19]),
-        };
-        return data;
-    }
-}
-exports.default = TM551;
-TM551.deviceAdv = [
-    0x02,
-    0x01,
-    0x06,
-    0x03,
-    0x03,
-    0xe1,
-    0xff,
-    -1,
-    -1,
-    -1,
-    -1,
-    0xa1,
-    0x03,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-];
-
-
-/***/ }),
-
 /***/ "./dist/src/parts/Ble/toio_corecube/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -32716,7 +33943,9 @@ TM551.deviceAdv = [
  * @packageDocumentation
  * @module Parts.Toio_CoreCube
  */
+/* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+/** Toio_CoreCube management class Toio_CoreCubeを管理するクラス */
 class Toio_CoreCube {
     constructor(peripheral) {
         this.peripheral = null;
@@ -32739,7 +33968,7 @@ class Toio_CoreCube {
         this._motorCharacteristic = null;
         this._batteryCharacteristic = null;
         if (peripheral && !Toio_CoreCube.isDevice(peripheral)) {
-            throw new Error('peripheral is not RS_Seek3');
+            throw new Error('peripheral is not Toio_CoreCube');
         }
         this.peripheral = peripheral;
     }
@@ -32748,8 +33977,21 @@ class Toio_CoreCube {
             name: 'toio_CoreCube',
         };
     }
+    /**
+     * Verify that the received peripheral is from the Toio_CoreCube
+     *
+     * 受け取ったPeripheralがToio_CoreCubeのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Toio_CoreCube
+     *
+     * Toio_CoreCubeかどうか
+     */
     static isDevice(peripheral) {
-        if (peripheral.localName === 'toio Core Cube') {
+        var _a;
+        // if (peripheral.localName === 'toio Core Cube') {
+        if (((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf('toio Core Cube')) !== -1) {
             return true;
         }
         else {
@@ -32759,9 +34001,18 @@ class Toio_CoreCube {
     wired(obniz) {
         // do nothing.
     }
+    /**
+     * Connect to the device
+     *
+     * デバイスに接続
+     *
+     * @param timeout (not used)
+     *
+     * @returns
+     */
     async connectWait(timeout) {
         if (!this.peripheral) {
-            throw new Error('RS_Seek3 is not find.');
+            throw new Error('Toio_CoreCube is not find.');
         }
         this.peripheral.ondisconnect = (reason) => {
             if (typeof this.ondisconnect === 'function') {
@@ -32797,10 +34048,44 @@ class Toio_CoreCube {
         }
         return 0;
     }
+    /**
+     * Disconnect from the sensor
+     *
+     * センサから切断
+     */
     async disconnectWait() {
         var _a;
-        await ((_a = this.peripheral) === null || _a === void 0 ? void 0 : _a.disconnect());
+        await ((_a = this.peripheral) === null || _a === void 0 ? void 0 : _a.disconnectWait());
     }
+    /**
+     * Get the absolute position and angle of Toio_CoreCube
+     *
+     * (For more detail, please see https://toio.github.io/toio-spec/docs/ble_id )
+     *
+     * Toio_CoreCubeが存在している絶対位置や角度を取得
+     *
+     * (詳細は https://toio.github.io/toio-spec/docs/ble_id を参照してください。)
+     *
+     * @returns absolute position data 絶対位置データ
+     *
+     * ```
+     * {
+     *
+     * posX: X coordinate value of the center of the cube キューブ中心のx座標 (Position ID),
+     *
+     * posY: Y coordinate value of the center of the cube キューブ中心のY座標 (Position ID),
+     *
+     * angle: angle value of the center of the cube キューブの角度 (Range 範囲: 0~360 deg),
+     *
+     * posSensorX: X coordinate value of the identification sensor 読み取りセンサーのX座標 (Position ID),
+     *
+     * posSensorY: Y coordinate value of the identification sensor 読み取りセンサーのY座標 (Position ID),
+     *
+     * posSensorAngle: angle value of the identification sensor 読み取りセンサーの角度 (Range 範囲: 0~360 deg)
+     *
+     * }
+     * ```
+     */
     async getPositionWait() {
         const readData = await this._positionCharacteristic.readWait();
         return {
@@ -32812,15 +34097,47 @@ class Toio_CoreCube {
             posSensorAngle: (readData[12] << 8) | readData[11],
         };
     }
+    /**
+     * Get motion detection data from the Toio_CoreCube
+     *
+     * Toio_CoreCubeからのモーション検出データを取得
+     *
+     * @returns motion detection data モーション検出データ
+     *
+     * ```
+     * {
+     *
+     * isHorizon: horizontal or not 水平かどうか,
+     *
+     * isCollision: detect collision or not 衝突検知したかどうか,
+     *
+     * isDoubletap: detect double tap or not ダブルタップ検出したかどうか,
+     *
+     * attitude: posture 姿勢
+     *
+     * (1: top faces upward 天面が上, 2: bottom faces upward 底面が上, 3: rear side faces upward 背面が上, 4: front side faces upward 正面が上. 5: right side faces upward 右側面が上, 6: left side faces upward 左側面が上)
+     *
+     * }
+     * ```
+     */
     async getMotionWait() {
         const readData = await this._motionCharacteristic.readWait();
         return {
             isHorizon: readData[1] === 1,
             isCollision: readData[2] === 1,
             isDoubletap: readData[3] === 1,
-            atitude: readData[4],
+            attitude: readData[4],
         };
     }
+    /**
+     * Get button state from the Toio_CoreCube
+     *
+     * Toio_CoreCubeのボタンの状態を取得
+     *
+     * @returns Whether the button is pressed
+     *
+     * ボタンが押されたかどうか
+     */
     async getButtonStateWait() {
         const readData = await this._buttonCharacteristic.readWait();
         if (readData[1] === 0x80) {
@@ -32830,10 +34147,36 @@ class Toio_CoreCube {
             return false;
         }
     }
+    /**
+     * Get the remaining battery power of the Toio_CoreCube
+     *
+     * Toio_CoreCubeのバッテリー残量を取得
+     *
+     * @returns remaining battery power バッテリー残量
+     *
+     * Range 範囲 0~100 (Unit 単位: 10 %)
+     */
     async getBatteryStateWait() {
         const readData = await this._batteryCharacteristic.readWait();
         return readData[0];
     }
+    /**
+     * Turn the wheel to move the Toio_CoreCube
+     *
+     * タイヤを回してToio_CoreCubeを動かす
+     *
+     * @param _leftWheelPower left wheel power 左側のタイヤ出力 (Range 範囲: -255~255)
+     *
+     * a positive value rotates forward, a negative value rotates backward
+     *
+     * 正の値は前方、負の値は後方へ回転
+     *
+     * @param _rightWheelPower right wheel power 左側のタイヤ出力 (Range 範囲: -255~255)
+     *
+     * a positive value rotates forward, a negative value rotates backward
+     *
+     * 正の値は前方、負の値は後方へ回転
+     */
     async moveAroundWait(_leftWheelPower = 0, _rightWheelPower = 0) {
         const constraintWheelPower = (wheelPower) => {
             // NOTE: Power is limited belong 0 to 255. And minus value is backward.
@@ -32868,8 +34211,39 @@ class Toio_CoreCube {
             Math.abs(rightWheelPower),
         ]);
     }
-    async movePositionWait(timeoutSec = 5, moveType = 0, maxWheelPower = 30, wheelPowerType = 30, targetPosX = 0, targetPosY = 0, targetAngle = 0) {
-        const parceNumber = (pos) => {
+    /**
+     * Directs the Toio_CoreCube to the specified Position ID
+     *
+     * (For more detail, please see https://toio.github.io/toio-spec/en/docs/ble_motor/#motor-control-with-target-specified )
+     *
+     * Toio_CoreCubeを指定したPosition IDへ移動
+     *
+     * (詳細は https://toio.github.io/toio-spec/docs/ble_motor#%E7%9B%AE%E6%A8%99%E6%8C%87%E5%AE%9A%E4%BB%98%E3%81%8D%E3%83%A2%E3%83%BC%E3%82%BF%E3%83%BC%E5%88%B6%E5%BE%A1 を参照してください)
+     *
+     * @param timeoutSec timeout タイムアウト (Unit 単位: 1 sec)
+     *
+     * @param moveType method of movement 移動タイプ
+     *
+     * (0: move while rotating 回転しながら移動, 1: move while rotating without moving backwards 後退せず回転しながら移動, 2: move after rotating 回転してから移動)
+     *
+     * @param maxWheelPower maximum motor speed モーターの最大速度 (Range 範囲 10~255)
+     *
+     * @param wheelPowerType speed change type 速度変化タイプ
+     *
+     * (0: constant 速度一定, 1: gradual acceleration 徐々に加速, 2: gradual deceleration 徐々に減速, 3: accelerate to the midpoint and decelerate to the target point 中間地点まで加速し目標地点まで減速)
+     *
+     * @param targetPosX target point X coordinates 目標地点のX座標 ([Position ID](https://toio.github.io/toio-spec/docs/hardware_position_id))
+     *
+     * Range 範囲: 0~65535 (65535: same as for write operation 書き込み操作時と同じ)
+     *
+     * @param targetPosY target point Y coordinates 目標地点のY座標 ([Position ID](https://toio.github.io/toio-spec/docs/hardware_position_id))
+     *
+     * Range 範囲: 0~65535 (65535: same as for write operation 書き込み操作時と同じ)
+     *
+     * @param targetAngle angle of the cube at the target point 目標地点でのキューブの角度
+     */
+    async movePositionWait(timeoutSec = 5, moveType = 0, maxWheelPower = 30, wheelPowerType = 0, targetPosX = 0, targetPosY = 0, targetAngle = 0) {
+        const parseNumber = (pos) => {
             // NOTE: Pos is must hove belong 0 to 65535.
             if (pos > 65535) {
                 pos = 65535;
@@ -32886,9 +34260,9 @@ class Toio_CoreCube {
             };
             return obj;
         };
-        const posXObj = parceNumber(targetPosX);
-        const posYObj = parceNumber(targetPosY);
-        const targetAngleObj = parceNumber(targetAngle);
+        const posXObj = parseNumber(targetPosX);
+        const posYObj = parseNumber(targetPosY);
+        const targetAngleObj = parseNumber(targetAngle);
         await this._motorCharacteristic.writeWait([
             0x03,
             0x00,
@@ -32920,11 +34294,13 @@ exports.default = Toio_CoreCube;
  * @packageDocumentation
  * @module Parts.uPRISM
  */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+/** uPRISM management class uPRISMを管理するクラス */
 class uPRISM {
     constructor(peripheral) {
         this._peripheral = null;
@@ -32948,10 +34324,26 @@ class uPRISM {
             name: 'uPRISM',
         };
     }
+    /**
+     * Verify that the received peripheral is from the uPRISM
+     *
+     * 受け取ったPeripheralがuPRISMのものかどうか確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the uPRISM
+     *
+     * uPRISMかどうか
+     */
     static isDevice(peripheral) {
         var _a;
         return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf('uPrism_')) === 0;
     }
+    /**
+     * Connect the sensor
+     *
+     * センサへ接続
+     */
     async connectWait() {
         if (!this._peripheral) {
             throw new Error('peripheral is not uPRISM');
@@ -32965,11 +34357,27 @@ class uPRISM {
             await this._peripheral.connectWait();
         }
     }
+    /**
+     * Disconnect from the sensor
+     *
+     * センサから切断
+     */
     async disconnectWait() {
         if (this._peripheral && this._peripheral.connected) {
             await this._peripheral.disconnectWait();
         }
     }
+    /**
+     * Set the range of values for the accelerometer
+     *
+     * uPRISM measures a set range with 4,096 steps of resolution
+     *
+     * 加速度センサーの値の範囲を設定
+     *
+     * uPRISMは設定された範囲を4096段階の分解能で計測します
+     *
+     * @param range range of values for the accelerometer 加速度センサーの値の範囲
+     */
     setAccelRange(range) {
         switch (range) {
             case '2g':
@@ -32986,6 +34394,11 @@ class uPRISM {
                 break;
         }
     }
+    /**
+     * Start notifying when the data have got from the uPRISM with connected state
+     *
+     * 接続状態でuPRISMからデータを取得したときの通知を開始
+     */
     async startNotifyWait() {
         if (!this._peripheral || !this._peripheral.connected) {
             throw new Error('peripheral not connected uPRISM');
@@ -33045,7 +34458,7 @@ class uPRISM {
                         ((data[8] << 16) | (data[7] << 8) | data[6]) / 128;
                     this.readData.uvi = data[9] / 16;
                     this.readData.pressure =
-                        (data[13] << 16) | (data[12] << 8) | data[11];
+                        ((data[13] << 16) | (data[12] << 8) | data[11]) / 100;
                     this.readData.time.day = data[16];
                     this.readData.time.month = data[17];
                     this.readData.time.year = data[18];
@@ -33063,6 +34476,13 @@ class uPRISM {
             }
         });
     }
+    /**
+     * Stop data notification
+     *
+     * データの通知を停止
+     *
+     * @returns
+     */
     async stopNotifyWait() {
         if (!(this._peripheral && this._peripheral.connected)) {
             return;
@@ -33078,6 +34498,295 @@ class uPRISM {
     }
 }
 exports.default = uPRISM;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/utils/abstracts/Logtta.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Logtta
+ */
+/* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
+const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/services/batteryService.js"));
+const genericAccess_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/services/genericAccess.js"));
+const PinCodeFlag = {
+    Authentication: 0x00,
+    Rewrite: 0x01,
+};
+/** abstract class common to the Logtta series Logttaシリーズ共通の抽象クラス */
+class Logtta extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
+    constructor(peripheral, mode) {
+        super(peripheral, mode);
+        this.serviceUuid = '';
+        this.authenticated = false;
+    }
+    /**
+     * Connect to the services of a device
+     *
+     * デバイスのサービスに接続
+     *
+     * @param keys Key acquired when pairing previously 以前にペアリングしたときに取得されたキー
+     */
+    async connectWait(keys) {
+        var _a;
+        this.serviceUuid = (_a = this.staticClass.getServiceUuids('Connectable'), (_a !== null && _a !== void 0 ? _a : [
+            '',
+        ]))[0];
+        await super.connectWait(keys);
+        const service1800 = this.peripheral.getService('1800');
+        if (service1800) {
+            this.genericAccess = new genericAccess_1.default(service1800);
+        }
+        const service180F = this.peripheral.getService('180F');
+        if (service180F) {
+            this.batteryService = new batteryService_1.default(service180F);
+        }
+    }
+    async beforeOnDisconnectWait() {
+        this.authenticated = false;
+        this.genericAccess = undefined;
+        this.batteryService = undefined;
+    }
+    /**
+     * Get data with connected state
+     *
+     * 接続状態でデータを取得
+     *
+     * @returns received value from each sensor それぞれのセンサから取得した値
+     */
+    async getDataWait() {
+        this.checkConnected();
+        const data = await this.readCharWait(this.serviceUuid, this.getCharUuid(0x21));
+        return this.parseData(data);
+    }
+    /**
+     * Notify when the data have got from the device with connected state
+     *
+     * 接続状態でデータを取得したとき通知
+     *
+     * @param callback callback function コールバック関数
+     *
+     * @returns
+     */
+    async startNotifyWait(callback) {
+        // TODO: delete try-catch
+        try {
+            this.checkConnected();
+        }
+        catch (e) {
+            console.error(e);
+            return;
+        }
+        // TODO: delete if
+        if (callback)
+            this.onNotify = callback;
+        return await this.subscribeWait(this.serviceUuid, this.getCharUuid(0x21), (data) => {
+            if (this.onNotify) {
+                this.onNotify(this.parseData(data));
+            }
+        });
+    }
+    /**
+     * Authorize PIN code
+     *
+     * ピンコードを認証
+     *
+     * @param code PIN code ピンコード
+     *
+     * @returns Whether authentication was/is passed 認証が通った/通っているかどうか
+     */
+    async authPinCodeWait(code) {
+        // TODO: delete try-catch
+        try {
+            this.checkConnected();
+        }
+        catch (e) {
+            console.error(e);
+            return false;
+        }
+        if (this.authenticated)
+            return true;
+        if (typeof code === 'string')
+            code = parseInt(code); // TODO: delete string type
+        this.authenticated = await this.sendPinCodeWait('Authentication', code);
+        return this.authenticated;
+    }
+    async sendPinCodeWait(type, code) {
+        if (code < 0 || code > 9999)
+            throw new Error(`Authorization code can only be entered from 0000~9999. input: ${code}`);
+        return await this.writeCharWait(this.serviceUuid, this.getCharUuid(0x30), [
+            PinCodeFlag[type],
+            Math.floor(code / 1000) % 10 | Math.floor(code / 100) % 10,
+            Math.floor(code / 10) % 10 | Math.floor(code / 1) % 10,
+        ]);
+    }
+    checkAuthenticated() {
+        if (!this.authenticated)
+            throw new Error('Certification is required, execute authPinCodeWait() in advance.');
+    }
+    /**
+     * Set / unset to Beacon Mode
+     *
+     * ビーコンモードに設定/解除
+     *
+     * @param enable enable / disable 有効 / 無効
+     *
+     * @returns data write result
+     */
+    async setBeaconModeWait(enable) {
+        // TODO: delete try-catch
+        try {
+            this.checkConnected();
+            this.checkAuthenticated();
+        }
+        catch (e) {
+            console.error(e);
+            return false;
+        }
+        return this.writeCharWait(this.serviceUuid, this.getCharUuid(0x2d), [
+            enable ? 1 : 0,
+        ]);
+    }
+    getName() {
+        const array = this.peripheral.adv_data.slice(16);
+        return array
+            .slice(0, array.indexOf(0) + 1)
+            .map((d) => String.fromCharCode(d))
+            .join('');
+    }
+    getCharUuid(code) {
+        return `${this.serviceUuid.slice(0, 6)}${code.toString(16)}${this.serviceUuid.slice(8)}`;
+    }
+}
+exports.default = Logtta;
+Logtta.AvailableBleMode = ['Connectable', 'Beacon'];
+Logtta.LocalName = {
+    Connectable: undefined,
+    Beacon: /null/,
+};
+Logtta.BeaconDataLength = {
+    Connectable: null,
+    Beacon: 0x1b,
+};
+Logtta.CompanyID = {
+    Connectable: null,
+    Beacon: [0x10, 0x05],
+};
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/utils/abstracts/iBS.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
+const magic = {
+    1: [0x80, 0xbc],
+    1.1: [0x81, 0xbc],
+    2: [0x82, 0xbc],
+    3: [0x83, 0xbc],
+    4: [0x83, 0xbc],
+    5: [0x83, 0xbc],
+};
+/** abstract class common to the iBS series iBSシリーズ共通の抽象クラス */
+class BaseiBS extends ObnizPartsBleAbstract_1.ObnizPartsBle {
+    static getUniqueData(series, subtype, addLength, scanResponse) {
+        return {
+            magic: {
+                index: 0,
+                length: 2,
+                type: 'check',
+                data: magic[series],
+                scanResponse,
+            },
+            subtype: {
+                index: 11 + ((addLength !== null && addLength !== void 0 ? addLength : 0)),
+                type: 'check',
+                data: subtype,
+                scanResponse,
+            },
+        };
+    }
+}
+exports.BaseiBS = BaseiBS;
+BaseiBS.AvailableBleMode = 'Beacon';
+BaseiBS.BeaconDataLength = 0x12;
+BaseiBS.CompanyID = [0x0d, 0x00];
+BaseiBS.Config = {
+    battery: {
+        index: 2,
+        length: 2,
+        type: 'unsignedNumLE',
+        multiple: 0.01,
+    },
+    button: {
+        index: 4,
+        type: 'bool0001',
+    },
+    moving: {
+        index: 4,
+        type: 'bool0010',
+    },
+    /** HallSensor / Reed / Event */
+    event: {
+        index: 4,
+        type: 'bool0100',
+    },
+    fall: {
+        index: 4,
+        type: 'bool1000',
+    },
+    acceleration: {
+        index: 4,
+        length: 18,
+        type: 'xyz',
+    },
+    temperature: {
+        index: 5,
+        length: 2,
+        type: 'numLE',
+        multiple: 0.01,
+    },
+    humidity: {
+        index: 7,
+        length: 2,
+        type: 'numLE',
+    },
+    count: {
+        index: 7,
+        length: 2,
+        type: 'unsignedNumLE',
+    },
+    user: {
+        index: 9,
+        length: 2,
+        type: 'unsignedNumLE',
+    },
+};
+/** abstract class for iBS iBS01のための抽象クラス */
+class BaseiBS01 extends BaseiBS {
+}
+exports.BaseiBS01 = BaseiBS01;
+BaseiBS01.CompanyID = [0x59, 0x00];
+exports.default = BaseiBS;
 
 
 /***/ }),
@@ -45218,6 +46927,9 @@ class Keyestudio_PIR {
             }
         });
     }
+    async getWait() {
+        return await this.io_signal.inputWait();
+    }
 }
 exports.default = Keyestudio_PIR;
 
@@ -49166,6 +50878,10 @@ class DCMotor {
     constructor() {
         this.keys = ['forward', 'back'];
         this.requiredKeys = ['forward', 'back'];
+        this.status = {
+            direction: null,
+            power: 30,
+        };
     }
     static info() {
         return {
@@ -49173,70 +50889,81 @@ class DCMotor {
         };
     }
     wired(obniz) {
-        this.status = {
-            direction: null,
-            power: null,
-        };
-        this.pwm1_io_num = this.params.forward;
-        this.pwm2_io_num = this.params.back;
-        this.pwm1 = obniz.getFreePwm();
-        this.pwm1.start({ io: this.pwm1_io_num });
-        this.pwm1.freq(100000);
-        this.pwm2 = obniz.getFreePwm();
-        this.pwm2.start({ io: this.pwm2_io_num });
-        this.pwm2.freq(100000);
-        this.power(30);
+        this.obniz = obniz;
+        this.forward_io_num = this.params.forward;
+        this.back_io_num = this.params.back;
+        this.pwm = obniz.getFreePwm();
+        this.setPwmGndPin(this.forward_io_num, this.back_io_num);
     }
     // Module functions
+    /**
+     * Start rotation to the forward direction.
+     */
     forward() {
         this.move(true);
     }
+    /**
+     * Start rotation to the reverse direction.
+     */
     reverse() {
         this.move(false);
     }
+    /**
+     * Stop rotation.
+     */
     stop() {
         if (this.status.direction === null) {
             return;
         }
         this.status.direction = null;
-        this.pwm1.duty(0);
-        this.pwm2.duty(0);
+        this.pwm.duty(0);
     }
+    /**
+     * Start rotation by specifying rotation direction.
+     *
+     * @param forward true is forward rotation, and false is reverse rotation.
+     */
     move(forward) {
-        if (forward) {
-            if (this.status.direction === true) {
+        if (forward === undefined) {
+            if (this.status.direction === null) {
                 return;
             }
-            this.status.direction = true;
         }
         else {
-            if (this.status.direction === false) {
+            if (this.status.direction === forward) {
                 return;
             }
-            this.status.direction = false;
+            this.status.direction = forward;
         }
-        const power = this.power();
-        this.power(0);
-        this.power(power);
+        const pwm_io = this.status.direction
+            ? this.forward_io_num
+            : this.back_io_num;
+        const gnd_io = this.status.direction
+            ? this.back_io_num
+            : this.forward_io_num;
+        this.setPwmGndPin(pwm_io, gnd_io);
+        this.pwm.duty(this.status.power);
     }
+    /**
+     * Set the motor power.
+     *
+     * @param power Specify between 0 and 100.
+     */
     power(power) {
-        if (power === undefined) {
-            return this.status.power;
-        }
         this.status.power = power;
-        if (this.status.direction === null) {
-            this.pwm1.duty(0);
-            this.pwm2.duty(0);
-            return;
+        if (this.status.direction !== null) {
+            this.pwm.duty(this.status.power);
         }
-        if (this.status.direction) {
-            this.pwm1.duty(power);
-            this.pwm2.duty(0);
-        }
-        else {
-            this.pwm1.duty(0);
-            this.pwm2.duty(power);
-        }
+    }
+    setPwmGndPin(pwm_io, gnd_io) {
+        var _a;
+        this.pwm.start({ io: pwm_io });
+        this.pwm.freq(100000);
+        this.obniz.getIO(gnd_io).output(false);
+        (_a = this.obniz.display) === null || _a === void 0 ? void 0 : _a.setPinNames(DCMotor.info().name, {
+            [this.forward_io_num]: 'forward',
+            [this.back_io_num]: 'back',
+        });
     }
 }
 exports.default = DCMotor;

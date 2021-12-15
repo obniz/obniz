@@ -43,7 +43,7 @@ export default class PeripheralPWM
   /**
    * @ignore
    */
-  public used: any;
+  public used = false;
   private id: number;
   private state: any;
   private params: any;
@@ -75,14 +75,14 @@ export default class PeripheralPWM
    * @param params
    */
   public start(params: PeripheralPWMOptions) {
-    const err: any = ObnizUtil._requiredKeys(params, ['io']);
+    const err = ObnizUtil._requiredKeys(params, ['io']);
     if (err) {
       throw new Error("pwm start param '" + err + "' required, but not found ");
     }
     this.params = ObnizUtil._keyFilter(params, ['io', 'drive', 'pull']);
 
-    const io: any = this.params.io;
-    const ioObj: any = this.Obniz.getIO(io);
+    const io = this.params.io;
+    const ioObj = this.Obniz.getIO(io);
 
     ioObj.drive(this.params.drive || '5v');
     ioObj.pull(this.params.pull || null);

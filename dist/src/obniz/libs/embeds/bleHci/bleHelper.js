@@ -4,6 +4,9 @@ class BleHelper {
     uuidFilter(uuid) {
         return uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
     }
+    deviceAddressFilter(uuid) {
+        return uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
+    }
     toCamelCase(str) {
         str = str.charAt(0).toLowerCase() + str.slice(1);
         return str.replace(/[-_](.)/g, (match, group1) => {

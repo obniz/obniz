@@ -5,17 +5,12 @@
 import WSCommand from './WSCommand';
 
 class WSCommandI2C extends WSCommand {
-  public module: any;
-  public _CommandInit: any;
-  public _CommandDeinit: any;
-  public _CommandWrite: any;
-  public _CommandRead: any;
-  public _CommandSlvWritten: any;
-  public sendCommand: any;
-  public validateCommandSchema: any;
-  public WSCommandNotFoundError: any;
-  public COMMAND_FUNC_ID_ERROR: any;
-  public envelopError: any;
+  public module: number;
+  public _CommandInit: number;
+  public _CommandDeinit: number;
+  public _CommandWrite: number;
+  public _CommandRead: number;
+  public _CommandSlvWritten: number;
 
   constructor() {
     super();
@@ -31,12 +26,12 @@ class WSCommandI2C extends WSCommand {
   // Commands
 
   public initMaster(params: any, module: any) {
-    const mode: any = 0;
-    const sda: any = parseInt(params.sda);
-    const scl: any = parseInt(params.scl);
-    const clock: any = parseInt(params.clock);
+    const mode = 0;
+    const sda = parseInt(params.sda);
+    const scl = parseInt(params.scl);
+    const clock = parseInt(params.clock);
 
-    const buf: any = new Uint8Array(8);
+    const buf = new Uint8Array(8);
     buf[0] = module;
     buf[1] = mode;
     buf[2] = sda;
@@ -50,18 +45,18 @@ class WSCommandI2C extends WSCommand {
   }
 
   public initSlave(params: any, module: any) {
-    const mode: any = 1;
-    const sda: any = parseInt(params.sda);
-    const scl: any = parseInt(params.scl);
-    const clock: any = 0;
+    const mode = 1;
+    const sda = parseInt(params.sda);
+    const scl = parseInt(params.scl);
+    const clock = 0;
 
-    let addressLength: any = params.slave_address_length;
-    const address: any = params.slave_address;
+    let addressLength = params.slave_address_length;
+    const address = params.slave_address;
     if (address > 0x7f) {
       addressLength = 10;
     }
 
-    const buf: any = new Uint8Array(11);
+    const buf = new Uint8Array(11);
     buf[0] = module;
     buf[1] = mode;
     buf[2] = sda;
@@ -78,17 +73,17 @@ class WSCommandI2C extends WSCommand {
   }
 
   public deinit(params: any, module: any) {
-    const buf: any = new Uint8Array([module]);
+    const buf = new Uint8Array([module]);
     this.sendCommand(this._CommandDeinit, buf);
   }
 
   public write(params: any, module: any) {
-    let address: any = parseInt(params.address);
+    let address = parseInt(params.address);
 
     if (params.address_bits === 10 || address > 0x7f) {
       address = address | 0x8000; // mark 10bit mode
     }
-    const buf: any = new Uint8Array(3 + params.data.length);
+    const buf = new Uint8Array(3 + params.data.length);
     buf[0] = module;
     buf[1] = address >> 8;
     buf[2] = address;
@@ -97,13 +92,13 @@ class WSCommandI2C extends WSCommand {
   }
 
   public read(params: any, module: any) {
-    let address: any = parseInt(params.address);
+    let address = parseInt(params.address);
 
     if (params.address_bits === 10 || address > 0x7f) {
       address = address | 0x8000; // mark 10bit mode
     }
-    const read_length: any = params.read;
-    const buf: any = new Uint8Array(7);
+    const read_length = params.read;
+    const buf = new Uint8Array(7);
     buf[0] = module;
     buf[1] = address >> 8;
     buf[2] = address;
@@ -117,24 +112,19 @@ class WSCommandI2C extends WSCommand {
   public parseFromJson(json: any) {
     // 0
     for (let i = 0; i < 2; i++) {
-      const module: any = json['i2c' + i];
+      const module = json['i2c' + i];
       if (module === undefined) {
         continue;
       }
 
-      const schemaData: any = [
+      const schemaData = [
         { uri: '/request/i2c/init_master', onValid: this.initMaster },
         { uri: '/request/i2c/init_slave', onValid: this.initSlave },
         { uri: '/request/i2c/write', onValid: this.write },
         { uri: '/request/i2c/read', onValid: this.read },
         { uri: '/request/i2c/deinit', onValid: this.deinit },
       ];
-      const res: any = this.validateCommandSchema(
-        schemaData,
-        module,
-        'i2c' + i,
-        i
-      );
+      const res = this.validateCommandSchema(schemaData, module, 'i2c' + i, i);
 
       if (res.valid === 0) {
         if (res.invalidButLike.length > 0) {
@@ -146,12 +136,12 @@ class WSCommandI2C extends WSCommand {
     }
   }
 
-  public notifyFromBinary(objToSend: any, func: any, payload: any) {
+  public notifyFromBinary(objToSend: any, func: number, payload: Uint8Array) {
     if (func === this._CommandRead && payload.byteLength > 3) {
-      const module_index: any = payload[0];
-      const address: any = (payload[1] << 8) + payload[2];
+      const module_index = payload[0];
+      const address = (payload[1] << 8) + payload[2];
 
-      const arr: any = new Array(payload.byteLength - 3);
+      const arr = new Array(payload.byteLength - 3);
       for (let i = 0; i < arr.length; i++) {
         arr[i] = payload[i + 3];
       }
@@ -162,11 +152,11 @@ class WSCommandI2C extends WSCommand {
         data: arr,
       };
     } else if (func === this._CommandSlvWritten && payload.byteLength > 4) {
-      const module_index: any = payload[0];
+      const module_index = payload[0];
       // let address_bit_length = payload[1];
-      const address: any = (payload[2] << 8) + payload[3];
+      const address = (payload[2] << 8) + payload[3];
 
-      const arr: any = new Array(payload.byteLength - 4);
+      const arr = new Array(payload.byteLength - 4);
       for (let i = 0; i < arr.length; i++) {
         arr[i] = payload[i + 4];
       }
@@ -179,14 +169,14 @@ class WSCommandI2C extends WSCommand {
       };
     } else if (func === this.COMMAND_FUNC_ID_ERROR && payload.byteLength > 2) {
       // const _esperr = payload[0];
-      const err: any = payload[1];
-      const ref_func_id: any = payload[2];
+      const err = payload[1];
+      const ref_func_id = payload[2];
 
       if (
         ref_func_id === this._CommandWrite ||
         ref_func_id === this._CommandRead
       ) {
-        let reason: any =
+        let reason =
           '' +
           (ref_func_id === this._CommandWrite ? 'writing' : 'reading') +
           ' error. ';

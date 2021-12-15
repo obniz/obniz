@@ -61,7 +61,7 @@ class WSCommand {
             length_extra_bytse--;
             result[index++] = payload_length >> (length_extra_bytse * 8);
         }
-        if (payload_length === 0) {
+        if (payload_length === 0 || !payload) {
             return result;
         }
         else {
@@ -69,6 +69,12 @@ class WSCommand {
             return result;
         }
     }
+    /**
+     * Dequeue a next wscommands from binary array.
+     *
+     * @param buf binary array received from obniz cloud.
+     * @returns chunk
+     */
     static dequeueOne(buf) {
         if (!buf || buf.byteLength === 0) {
             return null;
@@ -140,6 +146,7 @@ class WSCommand {
             const err = {
                 module: this.module,
                 _args: [...payload],
+                message: ``,
             };
             if (payload.byteLength === 3) {
                 err.err0 = payload[0];

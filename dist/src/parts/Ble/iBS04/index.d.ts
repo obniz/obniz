@@ -2,18 +2,28 @@
  * @packageDocumentation
  * @module Parts.iBS04
  */
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
-export interface IBS04Options {
+import { ObnizBleBeaconStruct } from '../../../obniz/ObnizPartsBleAbstract';
+import { BaseiBS } from '../utils/abstracts/iBS';
+export interface iBS04Options {
 }
-export interface IBS04_Data {
+/**
+ * advertisement data from iBS04
+ *
+ * iBS04からのadvertisementデータ
+ */
+export interface iBS04_Data {
+    /** battery 電源電圧 (Unit 単位: 0.01 V) */
     battery: number;
+    /**
+     * button state ボタンの状態
+     *
+     * true: pressed 押された状態 / false: not pressed 押されていない状態
+     */
     button: boolean;
 }
-export default class IBS04 implements ObnizPartsBleInterface {
-    static info(): ObnizPartsBleInfo;
-    static isDevice(peripheral: BleRemotePeripheral): boolean;
-    static getData(peripheral: BleRemotePeripheral): IBS04_Data | null;
-    private static deviceAdv;
-    _peripheral: BleRemotePeripheral | null;
+/** iBS04 management class iBS04を管理するクラス */
+export default class iBS04 extends BaseiBS<iBS04_Data> {
+    static readonly PartsName = "iBS04";
+    static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS04_Data>;
+    protected readonly staticClass: typeof iBS04;
 }

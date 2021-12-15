@@ -1,6 +1,6 @@
 # Linking Devices
 
-Common Parts Library for [Linking Devices](https://ssl.braveridge.com/store/html/products/list.php?category_id=7)
+Common Parts Library for [Linking Devices](https://store.braveridge.com/products/list?category_id=7)
 
 ![](image.jpg)
 
@@ -19,13 +19,13 @@ Sizuku 6x [https://codesandbox.io/s/linking-acc-406cj](https://codesandbox.io/s/
 
 ## wired(obniz)
 
-Registrate lining parent class to an obniz device to search and connect linking devices.
+Register lining parent class to an obniz device to search and connect linking devices.
 
 ```javascript
 // Javascript Example
 const linking = obniz.wired("Linking");
-await linking.init();
-const device_list = await linking.discover({
+await linking.initWait();
+const device_list = await linking.discoverWait({
   duration: 5000,
   nameFilter: "Tomoru"
 });
@@ -52,8 +52,8 @@ If you want to save your pairing key, use onPairedCallback
 ```javascript
 // Javascript Example
 const linking = obniz.wired("Linking");
-await linking.init();
-const device_list = await linking.discover({
+await linking.initWait();
+const device_list = await linking.discoverWait({
   duration: 5000,
   nameFilter: "Tomoru"
 });
@@ -83,8 +83,8 @@ If you want to use a pairing key after the second connection, please specify a k
 const keys = "xxxxxx"; //stored keys
 
 const linking = obniz.wired("Linking");
-await linking.init();
-const device_list = await linking.discover({
+await linking.initWait();
+const device_list = await linking.discoverWait({
   duration: 5000,
   nameFilter: "Tomoru"
 });

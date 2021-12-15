@@ -220,7 +220,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
     this.emit('end', reason);
   }
 
-  public async exchangeMtuWait(mtu: any) {
+  public async exchangeMtuWait(mtu: number | null) {
     this._aclStream
       .readWait(ATT.CID, ATT.OP_MTU_REQ)
       .catch((e) => {
@@ -244,17 +244,18 @@ class Gatt extends EventEmitter<GattEventTypes> {
         // console.error(e);
       });
 
-    const data = await this._execCommandWait(
-      this.mtuRequest(mtu),
-      ATT.OP_MTU_RESP
-    );
-    const opcode = data[0];
-
-    const newMtu = data.readUInt16LE(1);
-
-    debug(this._address + ': new MTU is ' + newMtu);
-
-    this._mtu = newMtu;
+    if (mtu === null) {
+      debug(this._address + ': no exchange MTU : ' + this._mtu);
+    } else {
+      const data = await this._execCommandWait(
+        this.mtuRequest(mtu),
+        ATT.OP_MTU_RESP
+      );
+      const opcode = data[0];
+      const newMtu = data.readUInt16LE(1);
+      debug(this._address + ': new MTU is ' + newMtu);
+      this._mtu = newMtu;
+    }
 
     return this._mtu;
   }

@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module Parts.SCBTGAAAC
  */
+/* eslint rulesdir/non-ascii: 0 */
 
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import ObnizPartsBleInterface, {
@@ -10,6 +11,7 @@ import ObnizPartsBleInterface, {
 
 export interface SCBTGAAACOptions {}
 
+/** SCBTGAAAC management class SCBTGAAACを管理するクラス */
 export default class SCBTGAAAC implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
@@ -17,10 +19,34 @@ export default class SCBTGAAAC implements ObnizPartsBleInterface {
     };
   }
 
+  /**
+   * Verify that the received peripheral is from the SCBTGAAAC
+   *
+   * 受け取ったPeripheralがSCBTGAAACのものかどうかを確認する
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns Whether it is the SCBTGAAAC
+   *
+   * SCBTGAAACかどうか
+   */
   public static isDevice(peripheral: BleRemotePeripheral): boolean {
     return SCBTGAAAC.getData(peripheral) !== null;
   }
 
+  /**
+   * Get leakage data from the SCBTGAAAC
+   *
+   * Get advertisement sent out by generating power at the leak
+   *
+   * SCBTGAAACから漏水データを取得する
+   *
+   * 漏水で発電することによって発信されたadvertisementを取得します
+   *
+   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+   *
+   * @returns device name デバイス名
+   */
   public static getData(peripheral: BleRemotePeripheral): string | null {
     const data: any = SCBTGAAAC.searchTypeVal(
       peripheral.advertise_data_rows,

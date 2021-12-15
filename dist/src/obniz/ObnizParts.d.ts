@@ -2,10 +2,17 @@
  * @packageDocumentation
  * @module ObnizCore
  */
+import BleRemotePeripheral from './libs/embeds/bleHci/bleRemotePeripheral';
 import ObnizConnection from './ObnizConnection';
 import { ObnizOptions } from './ObnizOptions';
+import { ObnizPartsBle } from './ObnizPartsBleAbstract';
 import ObnizPartsInterface from './ObnizPartsInterface';
 import { PartsList } from './ObnizPartsList';
+export interface Triaxial {
+    x: number;
+    y: number;
+    z: number;
+}
 export default abstract class ObnizParts extends ObnizConnection {
     /**
      * @ignore
@@ -46,4 +53,5 @@ export default abstract class ObnizParts extends ObnizConnection {
      * @param options
      */
     wired<K extends keyof PartsList>(partsName: K, options?: PartsList[K]['options']): PartsList[K]['class'];
+    static getBleParts(peripheral: BleRemotePeripheral): ObnizPartsBle<unknown> | null;
 }

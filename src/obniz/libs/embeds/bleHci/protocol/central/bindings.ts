@@ -122,7 +122,11 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     await this._gap.stopScanningWait();
   }
 
-  public async connectWait(peripheralUuid: any, onConnectCallback?: any) {
+  public async connectWait(
+    peripheralUuid: any,
+    mtu: number | null,
+    onConnectCallback?: any
+  ) {
     const address = this._addresses[peripheralUuid];
     const addressType: any = this._addresseTypes[peripheralUuid];
     if (!address) {
@@ -158,7 +162,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
           }
         ); // connection timeout for 90 secs.
 
-        return await this._gatts[conResult.handle].exchangeMtuWait(256);
+        return await this._gatts[conResult.handle].exchangeMtuWait(mtu);
       })
       .then(
         () => {

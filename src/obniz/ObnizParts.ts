@@ -3,16 +3,28 @@
  * @module ObnizCore
  */
 
+import BleRemotePeripheral from './libs/embeds/bleHci/bleRemotePeripheral';
 import ObnizUtil from './libs/utils/util';
 import ObnizConnection from './ObnizConnection';
 import { ObnizOptions } from './ObnizOptions';
+import {
+  ObnizPartsBle,
+  ObnizPartsBleMode,
+  ObnizPartsBleProps,
+} from './ObnizPartsBleAbstract';
 import ObnizPartsInterface from './ObnizPartsInterface';
 import { PartsList } from './ObnizPartsList';
 
 /**
  * @ignore
  */
-const _parts: any = {};
+const _parts: { [key: string]: unknown } = {};
+
+export interface Triaxial {
+  x: number;
+  y: number;
+  z: number;
+}
 
 export default abstract class ObnizParts extends ObnizConnection {
   /**
@@ -89,13 +101,13 @@ export default abstract class ObnizParts extends ObnizConnection {
     if (this.connectionState !== 'connected') {
       throw new Error('obniz.wired can only be used after connection');
     }
-    const Parts: any = ObnizParts.getPartsClass(partsName);
+    const Parts = ObnizParts.getPartsClass(partsName);
     if (!Parts) {
       throw new Error('No such a parts [' + partsName + '] found');
     }
     const parts = new Parts();
     // eslint-disable-next-line prefer-rest-params
-    const args: any = Array.from(arguments);
+    const args = Array.from(arguments);
     args.shift();
     args.unshift(this);
     if (!args[1]) {
@@ -103,7 +115,7 @@ export default abstract class ObnizParts extends ObnizConnection {
     }
     if (parts.keys) {
       if (parts.requiredKeys) {
-        const err: any = ObnizUtil._requiredKeys(args[1], parts.requiredKeys);
+        const err = ObnizUtil._requiredKeys(args[1], parts.requiredKeys);
         if (err) {
           throw new Error(
             partsName + " wired param '" + err + "' required, but not found "
@@ -115,12 +127,12 @@ export default abstract class ObnizParts extends ObnizConnection {
     parts.obniz = this;
     parts.wired(...args);
     if (parts.keys || parts.ioKeys) {
-      const keys: any = parts.ioKeys || parts.keys;
-      const displayPartsName: any = parts.displayName || partsName;
+      const keys = parts.ioKeys || parts.keys;
+      const displayPartsName = parts.displayName || partsName;
       const ioNames: any = {};
       for (const index in keys) {
-        let pinName: any = keys[index];
-        const io: any = args[1][pinName];
+        let pinName = keys[index];
+        const io = args[1][pinName];
         if (this.isValidIO(io)) {
           if (parts.displayIoNames && parts.displayIoNames[pinName]) {
             pinName = parts.displayIoNames[pinName];
@@ -133,6 +145,34 @@ export default abstract class ObnizParts extends ObnizConnection {
         display.setPinNames(displayPartsName, ioNames);
       }
     }
+    return parts;
+  }
+
+  public static getBleParts(
+    peripheral: BleRemotePeripheral
+  ): ObnizPartsBle<unknown> | null {
+    const result = Object.entries(_parts)
+      .filter(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ([, p]: [string, any]) =>
+          p.AvailableBleMode !== undefined &&
+          typeof p.getDeviceMode === 'function'
+      )
+      .map(([n, p]) => [
+        n,
+        (p as typeof ObnizPartsBle).getDeviceMode(peripheral),
+      ])
+      .filter(([, m]) => m !== null)
+      // Hiring with long library names
+      .sort(([na], [nb]) => (nb ?? '').length - (na ?? '').length);
+
+    if (result.length === 0 || !result[0][0] || !result[0][1]) return null;
+    const [name, mode] = result[0];
+
+    const parts = new (_parts[name] as ObnizPartsBleProps)(
+      peripheral,
+      mode as ObnizPartsBleMode
+    );
     return parts;
   }
 }

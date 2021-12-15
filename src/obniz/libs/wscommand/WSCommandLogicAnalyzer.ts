@@ -5,13 +5,10 @@
 import WSCommand from './WSCommand';
 
 class WSCommandLogicAnalyzer extends WSCommand {
-  public module: any;
-  public _CommandInit: any;
-  public _CommandDeinit: any;
-  public _CommandRecv: any;
-  public sendCommand: any;
-  public validateCommandSchema: any;
-  public WSCommandNotFoundError: any;
+  public module: number;
+  public _CommandInit: number;
+  public _CommandDeinit: number;
+  public _CommandRecv: number;
 
   constructor() {
     super();
@@ -25,13 +22,13 @@ class WSCommandLogicAnalyzer extends WSCommand {
   // Commands
 
   public init(params: any) {
-    const io: any = params.io[0];
-    const intervalUsec: any = params.interval * 1000;
-    const durationUsec: any = params.duration * 1000;
+    const io = params.io[0];
+    const intervalUsec = params.interval * 1000;
+    const durationUsec = params.duration * 1000;
 
-    const matchValue: any = parseInt(params.trigger.value);
-    const matchCount: any = params.trigger.samples;
-    const buf: any = new Uint8Array(12);
+    const matchValue = parseInt(params.trigger.value);
+    const matchCount = params.trigger.samples;
+    const buf = new Uint8Array(12);
     buf[0] = 1;
     buf[1] = io;
     buf[2] = intervalUsec >> (8 * 3);
@@ -48,20 +45,20 @@ class WSCommandLogicAnalyzer extends WSCommand {
   }
 
   public deinit(params: any) {
-    const buf: any = new Uint8Array(0);
+    const buf = new Uint8Array(0);
     this.sendCommand(this._CommandDeinit, buf);
   }
 
   public parseFromJson(json: any) {
-    const module: any = json.logic_analyzer;
+    const module = json.logic_analyzer;
     if (module === undefined) {
       return;
     }
-    const schemaData: any = [
+    const schemaData = [
       { uri: '/request/logicAnalyzer/init', onValid: this.init },
       { uri: '/request/logicAnalyzer/deinit', onValid: this.deinit },
     ];
-    const res: any = this.validateCommandSchema(
+    const res = this.validateCommandSchema(
       schemaData,
       module,
       'logic_analyzer'
@@ -78,12 +75,12 @@ class WSCommandLogicAnalyzer extends WSCommand {
     }
   }
 
-  public notifyFromBinary(objToSend: any, func: any, payload: any) {
+  public notifyFromBinary(objToSend: any, func: number, payload: Uint8Array) {
     if (func === this._CommandRecv) {
-      const arr: any = new Array(payload.byteLength * 8);
-      let offset: any = 0;
+      const arr = new Array(payload.byteLength * 8);
+      let offset = 0;
       for (let i = 0; i < payload.byteLength; i++) {
-        const byte: any = payload[i];
+        const byte = payload[i];
         for (let bit = 0; bit < 8; bit++) {
           arr[offset] = byte & (0x80 >>> bit) ? 1 : 0;
           offset++;

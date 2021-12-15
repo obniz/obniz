@@ -91,6 +91,12 @@ class BleScan {
      */
     async startWait(target = {}, settings = {}) {
         this.obnizBle.warningIfNotInitialize();
+        if (this.isContainingBleScanSettingProperty(target)) {
+            this.obnizBle.Obniz.warning({
+                alert: 'warning',
+                message: `Unexpected arguments. It might be contained the second argument keys. Please check object keys and order of 'startWait()' / 'startOneWait()' / 'startAllWait()' arguments. `,
+            });
+        }
         this.state = 'starting';
         const timeout = settings.duration === undefined ? 30 : settings.duration;
         settings.duplicate = !!settings.duplicate;
@@ -99,9 +105,14 @@ class BleScan {
         settings.waitBothAdvertisementAndScanResponse =
             settings.waitBothAdvertisementAndScanResponse !== false;
         this.scanSettings = settings;
+        this.scanTarget = {};
         target = target || {};
         this.scanTarget.binary = target.binary;
-        this.scanTarget.deviceAddress = target.deviceAddress;
+        if (target && target.deviceAddress) {
+            this.scanTarget.deviceAddress = this._arrayWrapper(target.deviceAddress).map((elm) => {
+                return bleHelper_1.default.deviceAddressFilter(elm);
+            });
+        }
         this.scanTarget.localName = target.localName;
         this.scanTarget.localNamePrefix = target.localNamePrefix;
         this.scanTarget.uuids = [];
@@ -518,6 +529,19 @@ class BleScan {
             if (deviceAddress === peripheral.address) {
                 return true;
             }
+        }
+        return false;
+    }
+    isContainingBleScanSettingProperty(arg) {
+        if (arg === null) {
+            return false;
+        }
+        else if ('duration' in arg ||
+            'duplicate' in arg ||
+            'activeScan' in arg ||
+            'filterOnDevice' in arg ||
+            'waitBothAdvertisementAndScanResponse' in arg) {
+            return true;
         }
         return false;
     }

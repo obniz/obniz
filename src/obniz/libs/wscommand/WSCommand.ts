@@ -7,29 +7,80 @@ import WSSchema from './WSSchema';
 
 type WSCommandConstructor = new () => WSCommand;
 const commandClasses: { [key: string]: WSCommandConstructor } = {};
+
+interface WSError {
+  module: number;
+  _args: number[];
+  err0?: number;
+  err1?: number;
+  function?: number;
+  message: string;
+}
+
+interface PayloadChunk {
+  /**
+   * module number
+   */
+  module: number;
+
+  /**
+   * function index number
+   */
+  func: number;
+
+  /**
+   * payload for wscommand
+   */
+  payload: Uint8Array;
+
+  /**
+   * left binary array
+   */
+  next: Uint8Array;
+}
+
+interface HW {
+  /**
+   * hardware identifer. "esp32w"
+   */
+  hw: string | undefined;
+
+  /**
+   * version code of obnizOS. "3.1.0"
+   */
+  firmware: string | undefined;
+}
+
 export default abstract class WSCommand {
-  static get schema() {
+  static get schema(): any {
     return WSSchema;
   }
 
-  static get CommandClasses() {
+  static get CommandClasses(): { [key: string]: WSCommandConstructor } {
     return commandClasses;
   }
 
-  get WSCommandNotFoundError() {
+  get WSCommandNotFoundError(): any {
     return WSCommandNotFoundError;
   }
 
-  public static addCommandClass(name: string, classObj: WSCommandConstructor) {
+  public static addCommandClass(
+    name: string,
+    classObj: WSCommandConstructor
+  ): void {
     commandClasses[name] = classObj;
   }
 
-  public static framed(module: any, func: any, payload: any): Uint8Array {
-    let payload_length: any = 0;
+  public static framed(
+    module: number,
+    func: number,
+    payload: Uint8Array | null
+  ): Uint8Array {
+    let payload_length = 0;
     if (payload) {
       payload_length = payload.length;
     }
-    let length_type: any;
+    let length_type: 0 | 1 | 2;
     if (payload_length <= 0x3f) {
       length_type = 0;
     } else if (payload_length <= 0x3fff) {
@@ -39,11 +90,10 @@ export default abstract class WSCommand {
     } else {
       throw new Error('too big payload');
     }
-    let length_extra_bytse: any =
-      length_type === 0 ? 0 : length_type === 1 ? 1 : 3;
-    const header_length: any = 3 + length_extra_bytse;
-    const result: any = new Uint8Array(header_length + payload_length);
-    let index: any = 0;
+    let length_extra_bytse = length_type === 0 ? 0 : length_type === 1 ? 1 : 3;
+    const header_length = 3 + length_extra_bytse;
+    const result = new Uint8Array(header_length + payload_length);
+    let index = 0;
     result[index++] = module & 0x7f;
     result[index++] = func;
     result[index++] =
@@ -52,7 +102,7 @@ export default abstract class WSCommand {
       length_extra_bytse--;
       result[index++] = payload_length >> (length_extra_bytse * 8);
     }
-    if (payload_length === 0) {
+    if (payload_length === 0 || !payload) {
       return result;
     } else {
       result.set(payload, header_length);
@@ -60,7 +110,13 @@ export default abstract class WSCommand {
     }
   }
 
-  public static dequeueOne(buf: any) {
+  /**
+   * Dequeue a next wscommands from binary array.
+   *
+   * @param buf binary array received from obniz cloud.
+   * @returns chunk
+   */
+  public static dequeueOne(buf: Uint8Array): PayloadChunk | null {
     if (!buf || buf.byteLength === 0) {
       return null;
     }
@@ -70,17 +126,17 @@ export default abstract class WSCommand {
     if (buf[0] & 0x80) {
       throw new Error('reserved bit 1');
     }
-    const module: any = 0x7f & buf[0];
-    const func: any = buf[1];
-    const length_type: any = (buf[2] >> 6) & 0x3;
-    const length_extra_bytse: any =
+    const module = 0x7f & buf[0];
+    const func = buf[1];
+    const length_type = (buf[2] >> 6) & 0x3;
+    const length_extra_bytse =
       length_type === 0 ? 0 : length_type === 1 ? 1 : 3;
     if (length_type === 4) {
       throw new Error('invalid length');
     }
-    let length: any = (buf[2] & 0x3f) << (length_extra_bytse * 8);
-    let index: any = 3;
-    let shift: any = length_extra_bytse;
+    let length = (buf[2] & 0x3f) << (length_extra_bytse * 8);
+    let index = 3;
+    let shift = length_extra_bytse;
     while (shift > 0) {
       shift--;
       length += buf[index] << (shift * 8);
@@ -99,12 +155,16 @@ export default abstract class WSCommand {
   }
 
   public static compress(wscommands: any, json: any): Uint8Array | null {
-    let ret: any = null;
+    let ret: Uint8Array | null = null;
 
-    const append = (module: any, func: any, payload: any) => {
-      const frame: any = WSCommand.framed(module, func, payload);
+    const append = (
+      module: number,
+      func: number,
+      payload: Uint8Array | null
+    ) => {
+      const frame = WSCommand.framed(module, func, payload);
       if (ret) {
-        const combined: any = new Uint8Array(ret.length + frame.length);
+        const combined = new Uint8Array(ret.length + frame.length);
         combined.set(ret, 0);
         combined.set(frame, ret.length);
         ret = combined;
@@ -120,12 +180,16 @@ export default abstract class WSCommand {
     return ret;
   }
 
-  public _hw: any;
+  public _hw: HW;
   public ioNotUsed: number;
   public COMMAND_FUNC_ID_ERROR: number;
 
   public abstract module: number;
-  private parsed?: (module: number, func: number, payload: Uint8Array) => void;
+  private parsed?: (
+    module: number,
+    func: number,
+    payload: Uint8Array | null
+  ) => void;
 
   constructor() {
     this._hw = {
@@ -138,11 +202,11 @@ export default abstract class WSCommand {
     this.ioNotUsed = 0xff;
   }
 
-  public setHw(obj: any) {
+  public setHw(obj: HW): void {
     this._hw = obj;
   }
 
-  public sendCommand(func: any, payload: any) {
+  public sendCommand(func: number, payload: Uint8Array | null): void {
     if (this.parsed) {
       this.parsed(this.module, func, payload);
     }
@@ -152,14 +216,19 @@ export default abstract class WSCommand {
     // abstract
   }
 
-  public notifyFromBinary(objToSend: any, func: any, payload: any) {
+  public notifyFromBinary(
+    objToSend: { [key: string]: any },
+    func: number,
+    payload: Uint8Array
+  ): void {
     if (func === this.COMMAND_FUNC_ID_ERROR) {
       if (!objToSend.debug) {
         objToSend.debug = {};
       }
-      const err: any = {
+      const err: WSError = {
         module: this.module,
         _args: [...payload],
+        message: ``,
       };
 
       if (payload.byteLength === 3) {
@@ -176,25 +245,33 @@ export default abstract class WSCommand {
     }
   }
 
-  public envelopWarning(objToSend: any, module_key: any, obj: any) {
+  public envelopWarning(
+    objToSend: { [key: string]: any },
+    module_key: any,
+    obj: any
+  ): void {
     if (!objToSend[module_key]) {
       objToSend[module_key] = {};
     }
     objToSend[module_key].warning = obj;
   }
 
-  public envelopError(objToSend: any, module_key: any, obj: any) {
+  public envelopError(
+    objToSend: { [key: string]: any },
+    module_key: any,
+    obj: any
+  ): void {
     if (!objToSend[module_key]) {
       objToSend[module_key] = {};
     }
     objToSend[module_key].error = obj;
   }
 
-  public isValidIO(io: any) {
+  public isValidIO(io: number): boolean {
     return typeof io === 'number' && 0 <= io && io <= 11;
   }
 
-  public getSchema(uri: any) {
+  public getSchema(uri: any): any {
     // chack isFirst
 
     return WSSchema.getSchema(uri);
@@ -204,11 +281,11 @@ export default abstract class WSCommand {
     uriList: any,
     json: any,
     rootPath: any,
-    customArg: any
+    customArg?: any
   ) {
     const res: any = { valid: 0, invalid: 0, results: [], invalidButLike: [] };
     for (const oneRow of uriList) {
-      const errors: any = this.validate(oneRow.uri, json);
+      const errors = this.validate(oneRow.uri, json);
       res.results.push(errors);
       if (errors.valid) {
         res.valid++;
@@ -217,7 +294,7 @@ export default abstract class WSCommand {
         }
       } else {
         res.invalid++;
-        const message: any = this.onlyTypeErrorMessage(errors, rootPath);
+        const message = this.onlyTypeErrorMessage(errors, rootPath);
         if (message) {
           res.invalidButLike.push({ uri: oneRow.uri, message });
         }
@@ -228,13 +305,13 @@ export default abstract class WSCommand {
   }
 
   public validate(commandUri: any, json: any): WSSchema.MultiResult {
-    const schema: any = this.getSchema(commandUri);
-    const results: any = WSSchema.validateMultiple(json, schema);
+    const schema = this.getSchema(commandUri);
+    const results = WSSchema.validateMultiple(json, schema);
     return results;
   }
 
   public fastValidate(commandUri: any, json: any): boolean {
-    const schema: any = this.getSchema(commandUri);
+    const schema = this.getSchema(commandUri);
     const results: boolean = WSSchema.validate(json, schema);
     return results;
   }
@@ -247,7 +324,7 @@ export default abstract class WSCommand {
       return false;
     }
 
-    const badErrorCodes: any = [
+    const badErrorCodes = [
       WSSchema.errorCodes.ANY_OF_MISSING,
       WSSchema.errorCodes.ONE_OF_MISSING,
       WSSchema.errorCodes.ONE_OF_MULTIPLE,
@@ -259,7 +336,7 @@ export default abstract class WSCommand {
       WSSchema.errorCodes.KEYWORD_CUSTOM,
       WSSchema.errorCodes.UNKNOWN_PROPERTY,
     ];
-    const messages: any = [];
+    const messages = [];
     for (const error of validateError.errors) {
       if (error.code === WSSchema.errorCodes.INVALID_TYPE) {
         if (
@@ -272,20 +349,20 @@ export default abstract class WSCommand {
         return false;
       }
 
-      const path: any = rootPath + (error.dataPath || '').replace(/\//g, '.');
+      const path = rootPath + (error.dataPath || '').replace(/\//g, '.');
       messages.push(`[${path}]${error.message}`);
     }
     return messages.join(';');
   }
 
   public filter(commandUri: any, json: any) {
-    const schema: any = this.getSchema(commandUri);
+    const schema = this.getSchema(commandUri);
     return this._filterSchema(schema, json);
   }
 
   public _filterSchema(schema: any, json: any): any {
     if (schema.$ref) {
-      const refSchema: any = WSSchema.getSchema(schema.$ref);
+      const refSchema = WSSchema.getSchema(schema.$ref);
       return this._filterSchema(refSchema, json);
     }
 
@@ -319,7 +396,7 @@ export default abstract class WSCommand {
       }
 
       for (const pattern in schema.patternProperties) {
-        const reg: any = new RegExp(pattern);
+        const reg = new RegExp(pattern);
         for (const key of Object.keys(json)) {
           if (reg.test(key)) {
             results[key] = this._filterSchema(

@@ -2,30 +2,46 @@
  * @packageDocumentation
  * @module Parts.iBS01
  */
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
-export interface IBS01Options {
+import { ObnizBleBeaconStruct } from '../../../obniz/ObnizPartsBleAbstract';
+import { BaseiBS01 } from '../utils/abstracts/iBS';
+export interface iBS01Options {
 }
-export interface IBS01_Data {
+/**
+ * advertisement data from iBS01
+ *
+ * iBS01からのadvertisementデータ
+ */
+export interface iBS01_Data {
+    /** battery 電池電圧 (Unit 単位: 0.01 V) */
     battery: number;
+    /**
+     * button state ボタンの状態
+     *
+     * true: pressed 押された状態 / false: not pressed 押されていない状態
+     */
     button: boolean;
-    /**
-     * @deprecated use iBS01H library
-     */
+    /** moving or not 動いているかどうか (iBS01G only)*/
     moving: boolean;
-    /**
-     * @deprecated use iBS01H or iBS01G library
-     */
+    /** magnet nearby or not 近くに磁石があるかどうか (iBS01H only) */
     hall_sensor: boolean;
-    /**
-     * @deprecated use iBS01G library
-     */
+    /** fallen or not 落ちたかどうか (iBS01G only)*/
     fall: boolean;
 }
-export default class IBS01 implements ObnizPartsBleInterface {
-    static info(): ObnizPartsBleInfo;
-    static isDevice(peripheral: BleRemotePeripheral, strictCheck?: boolean): boolean;
-    static getData(peripheral: BleRemotePeripheral, strictCheck?: boolean): IBS01_Data | null;
-    private static deviceAdv;
-    _peripheral: BleRemotePeripheral | null;
+/**
+ * @deprecated
+ *
+ * iBS01 management class iBS01を管理するクラス
+ *
+ * Recommend use iBS01G, iBS01H
+ *
+ * Use only if you are using an old iBS01 series sensor
+ *
+ * iBS01G, iBS01H の使用を推奨
+ *
+ * 旧iBS01シリーズのセンサを使用している場合のみお使いください
+ */
+export default class iBS01 extends BaseiBS01<iBS01_Data> {
+    static readonly PartsName = "iBS01";
+    static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS01_Data>;
+    protected readonly staticClass: typeof iBS01;
 }
