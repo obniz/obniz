@@ -8693,7 +8693,7 @@ const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/e
  */
 class BleScan {
     constructor(obnizBle) {
-        this.state = 'stopping';
+        this.state = 'stopped';
         this._delayNotifyTimers = [];
         this.obnizBle = obnizBle;
         this.emitter = new eventemitter3_1.default();
@@ -8713,9 +8713,8 @@ class BleScan {
         this.scanTarget = {};
         this.scanSettings = {};
         this.scanedPeripherals = [];
-        this.state = 'stopping';
         this.clearTimeoutTimer();
-        this.finish(new Error(`Reset Occured while scanning.`));
+        this.finish(new Error(`Reset Occurred while scanning.`));
     }
     /**
      * Use startWait() instead.
@@ -8774,51 +8773,57 @@ class BleScan {
             });
         }
         this.state = 'starting';
-        const timeout = settings.duration === undefined ? 30 : settings.duration;
-        settings.duplicate = !!settings.duplicate;
-        settings.filterOnDevice = !!settings.filterOnDevice;
-        settings.activeScan = settings.activeScan !== false;
-        settings.waitBothAdvertisementAndScanResponse =
-            settings.waitBothAdvertisementAndScanResponse !== false;
-        this.scanSettings = settings;
-        this.scanTarget = {};
-        target = target || {};
-        this.scanTarget.binary = target.binary;
-        if (target && target.deviceAddress) {
-            this.scanTarget.deviceAddress = this._arrayWrapper(target.deviceAddress).map((elm) => {
-                return bleHelper_1.default.deviceAddressFilter(elm);
-            });
+        try {
+            const timeout = settings.duration === undefined ? 30 : settings.duration;
+            settings.duplicate = !!settings.duplicate;
+            settings.filterOnDevice = !!settings.filterOnDevice;
+            settings.activeScan = settings.activeScan !== false;
+            settings.waitBothAdvertisementAndScanResponse =
+                settings.waitBothAdvertisementAndScanResponse !== false;
+            this.scanSettings = settings;
+            this.scanTarget = {};
+            target = target || {};
+            this.scanTarget.binary = target.binary;
+            if (target && target.deviceAddress) {
+                this.scanTarget.deviceAddress = this._arrayWrapper(target.deviceAddress).map((elm) => {
+                    return bleHelper_1.default.deviceAddressFilter(elm);
+                });
+            }
+            this.scanTarget.localName = target.localName;
+            this.scanTarget.localNamePrefix = target.localNamePrefix;
+            this.scanTarget.uuids = [];
+            if (target && target.uuids) {
+                this.scanTarget.uuids = target.uuids.map((elm) => {
+                    return bleHelper_1.default.uuidFilter(elm);
+                });
+            }
+            this.scanedPeripherals = [];
+            this._clearDelayNotifyTimer();
+            if (settings.filterOnDevice) {
+                this._setTargetFilterOnDevice(this.scanTarget);
+            }
+            else {
+                this._setTargetFilterOnDevice({}); // clear
+            }
+            await this.obnizBle.centralBindings.startScanningWait(null, settings.duplicate, settings.activeScan);
+            this.clearTimeoutTimer();
+            if (timeout !== null) {
+                this._timeoutTimer = setTimeout(async () => {
+                    this._timeoutTimer = undefined;
+                    try {
+                        await this.endWait();
+                    }
+                    catch (e) {
+                        this.finish(e);
+                    }
+                }, timeout * 1000);
+            }
+            this.state = 'started';
         }
-        this.scanTarget.localName = target.localName;
-        this.scanTarget.localNamePrefix = target.localNamePrefix;
-        this.scanTarget.uuids = [];
-        if (target && target.uuids) {
-            this.scanTarget.uuids = target.uuids.map((elm) => {
-                return bleHelper_1.default.uuidFilter(elm);
-            });
+        catch (e) {
+            this.state = 'stopped';
+            throw e;
         }
-        this.scanedPeripherals = [];
-        this._clearDelayNotifyTimer();
-        if (settings.filterOnDevice) {
-            this._setTargetFilterOnDevice(this.scanTarget);
-        }
-        else {
-            this._setTargetFilterOnDevice({}); // clear
-        }
-        await this.obnizBle.centralBindings.startScanningWait(null, settings.duplicate, settings.activeScan);
-        this.clearTimeoutTimer();
-        if (timeout !== null) {
-            this._timeoutTimer = setTimeout(async () => {
-                this._timeoutTimer = undefined;
-                try {
-                    await this.endWait();
-                }
-                catch (e) {
-                    this.finish(e);
-                }
-            }, timeout * 1000);
-        }
-        this.state = 'started';
     }
     /**
      * This scans and returns the first peripheral that was found among the objects specified in the target.

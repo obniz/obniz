@@ -174,7 +174,7 @@ export default class BleScan {
    * ```
    */
   public onfind?: (peripheral: BleRemotePeripheral) => void;
-  public state: BleScanState = 'stopping';
+  public state: BleScanState = 'stopped';
   protected scanTarget: BleScanTarget;
   protected scanSettings: BleScanSetting;
   protected obnizBle: ObnizBLE;
@@ -207,10 +207,9 @@ export default class BleScan {
     this.scanTarget = {};
     this.scanSettings = {};
     this.scanedPeripherals = [];
-    this.state = 'stopping';
 
     this.clearTimeoutTimer();
-    this.finish(new Error(`Reset Occured while scanning.`));
+    this.finish(new Error(`Reset Occurred while scanning.`));
   }
 
   /**
@@ -277,60 +276,64 @@ export default class BleScan {
       });
     }
     this.state = 'starting';
+    try {
+      const timeout: number | null =
+        settings.duration === undefined ? 30 : settings.duration;
+      settings.duplicate = !!settings.duplicate;
+      settings.filterOnDevice = !!settings.filterOnDevice;
+      settings.activeScan = settings.activeScan !== false;
+      settings.waitBothAdvertisementAndScanResponse =
+        settings.waitBothAdvertisementAndScanResponse !== false;
+      this.scanSettings = settings;
 
-    const timeout: number | null =
-      settings.duration === undefined ? 30 : settings.duration;
-    settings.duplicate = !!settings.duplicate;
-    settings.filterOnDevice = !!settings.filterOnDevice;
-    settings.activeScan = settings.activeScan !== false;
-    settings.waitBothAdvertisementAndScanResponse =
-      settings.waitBothAdvertisementAndScanResponse !== false;
-    this.scanSettings = settings;
+      this.scanTarget = {};
+      target = target || {};
+      this.scanTarget.binary = target.binary;
+      if (target && target.deviceAddress) {
+        this.scanTarget.deviceAddress = this._arrayWrapper(
+          target.deviceAddress
+        ).map((elm: UUID) => {
+          return BleHelper.deviceAddressFilter(elm);
+        });
+      }
+      this.scanTarget.localName = target.localName;
+      this.scanTarget.localNamePrefix = target.localNamePrefix;
+      this.scanTarget.uuids = [];
+      if (target && target.uuids) {
+        this.scanTarget.uuids = target.uuids.map((elm: UUID) => {
+          return BleHelper.uuidFilter(elm);
+        });
+      }
+      this.scanedPeripherals = [];
+      this._clearDelayNotifyTimer();
+      if (settings.filterOnDevice) {
+        this._setTargetFilterOnDevice(this.scanTarget);
+      } else {
+        this._setTargetFilterOnDevice({}); // clear
+      }
+      await this.obnizBle.centralBindings.startScanningWait(
+        null,
+        settings.duplicate,
+        settings.activeScan
+      );
 
-    this.scanTarget = {};
-    target = target || {};
-    this.scanTarget.binary = target.binary;
-    if (target && target.deviceAddress) {
-      this.scanTarget.deviceAddress = this._arrayWrapper(
-        target.deviceAddress
-      ).map((elm: UUID) => {
-        return BleHelper.deviceAddressFilter(elm);
-      });
-    }
-    this.scanTarget.localName = target.localName;
-    this.scanTarget.localNamePrefix = target.localNamePrefix;
-    this.scanTarget.uuids = [];
-    if (target && target.uuids) {
-      this.scanTarget.uuids = target.uuids.map((elm: UUID) => {
-        return BleHelper.uuidFilter(elm);
-      });
-    }
-    this.scanedPeripherals = [];
-    this._clearDelayNotifyTimer();
-    if (settings.filterOnDevice) {
-      this._setTargetFilterOnDevice(this.scanTarget);
-    } else {
-      this._setTargetFilterOnDevice({}); // clear
-    }
-    await this.obnizBle.centralBindings.startScanningWait(
-      null,
-      settings.duplicate,
-      settings.activeScan
-    );
+      this.clearTimeoutTimer();
+      if (timeout !== null) {
+        this._timeoutTimer = setTimeout(async () => {
+          this._timeoutTimer = undefined;
+          try {
+            await this.endWait();
+          } catch (e) {
+            this.finish(e);
+          }
+        }, timeout * 1000);
+      }
 
-    this.clearTimeoutTimer();
-    if (timeout !== null) {
-      this._timeoutTimer = setTimeout(async () => {
-        this._timeoutTimer = undefined;
-        try {
-          await this.endWait();
-        } catch (e) {
-          this.finish(e);
-        }
-      }, timeout * 1000);
+      this.state = 'started';
+    } catch (e) {
+      this.state = 'stopped';
+      throw e;
     }
-
-    this.state = 'started';
   }
 
   /**
