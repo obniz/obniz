@@ -207,6 +207,7 @@ export default class BleScan {
     this.scanTarget = {};
     this.scanSettings = {};
     this.scanedPeripherals = [];
+    this.state = 'stopping';
 
     this.clearTimeoutTimer();
     this.finish(new Error(`Reset Occured while scanning.`));
