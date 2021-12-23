@@ -72,6 +72,8 @@ var COMMANDS;
     COMMANDS.OCF_LE_READ_WHITE_LIST_SIZE = 0x000f;
     COMMANDS.OCF_LE_CLEAR_WHITE_LIST = 0x0010;
     COMMANDS.OCF_LE_CONN_UPDATE = 0x0013;
+    COMMANDS.OCF_LE_ENCRYPT = 0x0017;
+    COMMANDS.OCF_LE_RAND = 0x0018;
     COMMANDS.OCF_LE_START_ENCRYPTION = 0x0019;
     COMMANDS.OCF_LE_LTK_NEG_REPLY = 0x001b;
     COMMANDS.OCF_LE_READ_SUPPORTED_STATES = 0x001c;
@@ -113,15 +115,17 @@ var COMMANDS;
     COMMANDS.LE_READ_BUFFER_SIZE_CMD = COMMANDS.OCF_LE_READ_BUFFER_SIZE | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_READ_LOCAL_SUPPORTED_FEATURES_CMD = COMMANDS.OCF_LE_READ_LOCAL_SUPPORTED_FEATURES | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_SET_RANDOM_ADDRESS_CMD = COMMANDS.OCF_LE_SET_RANDOM_ADDRESS | (COMMANDS.OGF_LE_CTL << 10);
-    COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD = COMMANDS.OCF_LE_SET_ADVERTISING_PARAMETERS | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_READ_ADVERTISING_CHANNEL_TX_POWER_CMD = COMMANDS.OCF_LE_READ_ADVERTISING_CHANNEL_TX_POWER | (COMMANDS.OGF_LE_CTL << 10);
-    COMMANDS.LE_SET_ADVERTISING_DATA_CMD = COMMANDS.OCF_LE_SET_ADVERTISING_DATA | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_SET_SCAN_PARAMETERS_CMD = COMMANDS.OCF_LE_SET_SCAN_PARAMETERS | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_SET_SCAN_ENABLE_CMD = COMMANDS.OCF_LE_SET_SCAN_ENABLE | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_CREATE_CONN_CMD = COMMANDS.OCF_LE_CREATE_CONN | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_CREATE_CONN_CANCEL_CMD = COMMANDS.OCF_LE_CREATE_CONN_CANCEL | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_CONN_UPDATE_CMD = COMMANDS.OCF_LE_CONN_UPDATE | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_START_ENCRYPTION_CMD = COMMANDS.OCF_LE_START_ENCRYPTION | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD = COMMANDS.OCF_LE_SET_ADVERTISING_PARAMETERS | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_ENCRYPT_CMD = COMMANDS.OCF_LE_ENCRYPT | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_RAND_CMD = COMMANDS.OCF_LE_RAND | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_ADVERTISING_DATA_CMD = COMMANDS.OCF_LE_SET_ADVERTISING_DATA | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_SET_SCAN_RESPONSE_DATA_CMD = COMMANDS.OCF_LE_SET_SCAN_RESPONSE_DATA | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_SET_ADVERTISE_ENABLE_CMD = COMMANDS.OCF_LE_SET_ADVERTISE_ENABLE | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_LTK_NEG_REPLY_CMD = COMMANDS.OCF_LE_LTK_NEG_REPLY | (COMMANDS.OGF_LE_CTL << 10);
@@ -203,6 +207,7 @@ class Hci extends eventemitter3_1.default {
         if (bufsize) {
             this.debug(`Buffer Mtu=${bufsize.aclMtu} aclMaxInProgress=${bufsize.aclMaxInProgress}`);
         }
+        await this.setRandomDeviceAddressWait();
         if (this._state !== 'poweredOn') {
             await this.setScanEnabledWait(false, true);
             await this.setScanParametersWait(false);
@@ -215,6 +220,54 @@ class Hci extends eventemitter3_1.default {
     async resetCommandWait() {
         const resetResult = await this.writeNoParamCommandWait(COMMANDS.RESET_CMD, 'reset');
         return resetResult;
+    }
+    async setRandomDeviceAddressWait() {
+        await this.leRandWait();
+        // await this.leEncryptWait();
+        await this.leSetRandomAddressWait(Buffer.from('FF5544332211', 'hex'));
+    }
+    async leEncryptWait(key, plainTextData) {
+        const cmd = Buffer.alloc(4 + 16 + 16);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_ENCRYPT_CMD, 1);
+        // length
+        cmd.writeUInt8(0x0, 3);
+        key.copy(cmd, 4);
+        plainTextData.copy(cmd, 4 + 16);
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_ENCRYPT_CMD);
+        this.debug('le encrypt - writing: ' + cmd.toString('hex'));
+        this._socket.write(cmd);
+        const data = await p;
+        const encryptedData = data.result;
+        return { encryptedData };
+    }
+    async leRandWait() {
+        const cmd = Buffer.alloc(4);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_RAND_CMD, 1);
+        // length
+        cmd.writeUInt8(0x0, 3);
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_RAND_CMD);
+        this.debug('le rand - writing: ' + cmd.toString('hex'));
+        this._socket.write(cmd);
+        const data = await p;
+        const randomNumber = data.result;
+        return { randomNumber };
+    }
+    async leSetRandomAddressWait(randomAddress) {
+        const cmd = Buffer.alloc(4 + 6);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_RANDOM_ADDRESS_CMD, 1);
+        // length
+        cmd.writeUInt8(0x0, 3);
+        randomAddress.copy(cmd, 4);
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_RANDOM_ADDRESS_CMD);
+        this.debug('le set random address - writing: ' + cmd.toString('hex'));
+        this._socket.write(cmd);
+        const data = await p;
     }
     async writeDefaultLinkPolicyCommandWait(mode) {
         const cmd = Buffer.alloc(5);

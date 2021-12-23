@@ -47,6 +47,14 @@ declare class Hci extends EventEmitter<HciEventTypes> {
         status: number;
         result: Buffer;
     }>;
+    setRandomDeviceAddressWait(): Promise<void>;
+    leEncryptWait(key: Buffer, plainTextData: Buffer): Promise<{
+        encryptedData: Buffer;
+    }>;
+    leRandWait(): Promise<{
+        randomNumber: Buffer;
+    }>;
+    leSetRandomAddressWait(randomAddress: Buffer): Promise<void>;
     writeDefaultLinkPolicyCommandWait(mode: 'enableRoleSwitch' | 'enableHoldMode' | 'enableSniffMode'): Promise<void>;
     resetBuffers(): void;
     readLocalVersionCommandWait(): Promise<{
