@@ -11541,13 +11541,26 @@ var COMMANDS;
     COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE = 0x03;
     COMMANDS.OGF_LINK_CTL = 0x01;
     COMMANDS.OCF_DISCONNECT = 0x0006;
+    COMMANDS.OGF_LINK_POLICY = 0x02;
+    COMMANDS.OGF_WRITE_DEFAULT_LINK_POLICY_SETTINGS = 0x0f;
     COMMANDS.OGF_HOST_CTL = 0x03;
     COMMANDS.OCF_SET_EVENT_MASK = 0x0001;
     COMMANDS.OCF_RESET = 0x0003;
+    COMMANDS.OCF_READ_LOCAL_NAME = 0x0014;
+    COMMANDS.OCF_WRITE_PAGE_TIMEOUT = 0x0018;
+    COMMANDS.OCF_WRITE_CLASS_OF_DEVICE = 0x0024;
+    COMMANDS.OCF_WRITE_INQUIRY_SCAN_TYPE = 0x0043;
+    COMMANDS.OCF_WRITE_INQUIRY_MODE = 0x0045;
+    COMMANDS.OCF_WRITE_PAGE_SCAN_TYPE = 0x0047;
+    COMMANDS.OCF_WRITE_SIMPLE_PAIRING_MODE = 0x0056;
+    COMMANDS.OCF_SET_EVENT_MASK_PAGE_2 = 0x0063;
     COMMANDS.OCF_READ_LE_HOST_SUPPORTED = 0x006c;
     COMMANDS.OCF_WRITE_LE_HOST_SUPPORTED = 0x006d;
     COMMANDS.OGF_INFO_PARAM = 0x04;
     COMMANDS.OCF_READ_LOCAL_VERSION = 0x0001;
+    COMMANDS.OCF_READ_LOCAL_SUPPORTED_COMMANDS = 0x0002;
+    COMMANDS.OCF_READ_LOCAL_SUPPORTED_FEATURES = 0x0003;
+    COMMANDS.OCF_READ_LOCAL_EXTENDED_FEATURES = 0x0004;
     COMMANDS.OCF_READ_BUFFER_SIZE = 0x0005;
     COMMANDS.OCF_READ_BD_ADDR = 0x0009;
     COMMANDS.OGF_STATUS_PARAM = 0x05;
@@ -11555,7 +11568,10 @@ var COMMANDS;
     COMMANDS.OGF_LE_CTL = 0x08;
     COMMANDS.OCF_LE_SET_EVENT_MASK = 0x0001;
     COMMANDS.OCF_LE_READ_BUFFER_SIZE = 0x0002;
+    COMMANDS.OCF_LE_READ_LOCAL_SUPPORTED_FEATURES = 0x0003;
+    COMMANDS.OCF_LE_SET_RANDOM_ADDRESS = 0x0005;
     COMMANDS.OCF_LE_SET_ADVERTISING_PARAMETERS = 0x0006;
+    COMMANDS.OCF_LE_READ_ADVERTISING_CHANNEL_TX_POWER = 0x0007;
     COMMANDS.OCF_LE_SET_ADVERTISING_DATA = 0x0008;
     COMMANDS.OCF_LE_SET_SCAN_RESPONSE_DATA = 0x0009;
     COMMANDS.OCF_LE_SET_ADVERTISE_ENABLE = 0x000a;
@@ -11563,31 +11579,72 @@ var COMMANDS;
     COMMANDS.OCF_LE_SET_SCAN_ENABLE = 0x000c;
     COMMANDS.OCF_LE_CREATE_CONN = 0x000d;
     COMMANDS.OCF_LE_CREATE_CONN_CANCEL = 0x000e;
+    COMMANDS.OCF_LE_READ_WHITE_LIST_SIZE = 0x000f;
+    COMMANDS.OCF_LE_CLEAR_WHITE_LIST = 0x0010;
     COMMANDS.OCF_LE_CONN_UPDATE = 0x0013;
     COMMANDS.OCF_LE_START_ENCRYPTION = 0x0019;
     COMMANDS.OCF_LE_LTK_NEG_REPLY = 0x001b;
+    COMMANDS.OCF_LE_READ_SUPPORTED_STATES = 0x001c;
+    COMMANDS.OCF_LE_READ_SUGGESTED_DEFAULT_DATA_LENGTH = 0x0023;
+    COMMANDS.OCF_LE_WRITE_SUGGESTED_DEFAULT_DATA_LENGTH = 0x0024;
+    COMMANDS.OCF_LE_CLEAR_RESOLVING_LIST = 0x0029;
+    COMMANDS.OCF_LE_READ_RESOLVING_LIST_SIZE = 0x002a;
+    COMMANDS.OCF_LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT = 0x002e;
+    COMMANDS.OCF_LE_READ_MAXIMUM_DATA_LENGTH = 0x002f;
+    COMMANDS.OCF_SET_DEFAULT_PHY = 0x0031;
+    /* OGF_LINK_CTL : 0x01 */
     COMMANDS.DISCONNECT_CMD = COMMANDS.OCF_DISCONNECT | (COMMANDS.OGF_LINK_CTL << 10);
+    /* OGF_LINK_POLICY: 0x02 */
+    COMMANDS.WRITE_DEFAULT_LINK_POLICY_SETTINGS_CMD = COMMANDS.OGF_WRITE_DEFAULT_LINK_POLICY_SETTINGS | (COMMANDS.OGF_LINK_POLICY << 10);
+    /* OGF_HOST_CTL : 0x03 */
     COMMANDS.SET_EVENT_MASK_CMD = COMMANDS.OCF_SET_EVENT_MASK | (COMMANDS.OGF_HOST_CTL << 10);
     COMMANDS.RESET_CMD = COMMANDS.OCF_RESET | (COMMANDS.OGF_HOST_CTL << 10);
+    COMMANDS.READ_LOCAL_NAME_CMD = COMMANDS.OCF_READ_LOCAL_NAME | (COMMANDS.OGF_HOST_CTL << 10);
+    COMMANDS.WRITE_PAGE_TIMEOUT_CMD = COMMANDS.OCF_WRITE_PAGE_TIMEOUT | (COMMANDS.OGF_HOST_CTL << 10);
+    COMMANDS.WRITE_CLASS_OF_DEVICE_CMD = COMMANDS.OCF_WRITE_CLASS_OF_DEVICE | (COMMANDS.OGF_HOST_CTL << 10);
+    COMMANDS.WRITE_INQUIRY_SCAN_TYPE_CMD = COMMANDS.OCF_WRITE_INQUIRY_SCAN_TYPE | (COMMANDS.OGF_HOST_CTL << 10);
+    COMMANDS.WRITE_INQUIRY_MODE_CMD = COMMANDS.OCF_WRITE_INQUIRY_MODE | (COMMANDS.OGF_HOST_CTL << 10);
+    COMMANDS.WRITE_PAGE_SCAN_TYPE_CMD = COMMANDS.OCF_WRITE_PAGE_SCAN_TYPE | (COMMANDS.OGF_HOST_CTL << 10);
+    COMMANDS.WRITE_SIMPLE_PAIRING_MODE_CMD = COMMANDS.OCF_WRITE_SIMPLE_PAIRING_MODE | (COMMANDS.OGF_HOST_CTL << 10);
+    COMMANDS.SET_EVENT_MASK_PAGE_2_CMD = COMMANDS.OCF_SET_EVENT_MASK_PAGE_2 | (COMMANDS.OGF_HOST_CTL << 10);
     COMMANDS.READ_LE_HOST_SUPPORTED_CMD = COMMANDS.OCF_READ_LE_HOST_SUPPORTED | (COMMANDS.OGF_HOST_CTL << 10);
     COMMANDS.WRITE_LE_HOST_SUPPORTED_CMD = COMMANDS.OCF_WRITE_LE_HOST_SUPPORTED | (COMMANDS.OGF_HOST_CTL << 10);
+    /* OGF_INFO_PARAM : 0x04 */
     COMMANDS.READ_LOCAL_VERSION_CMD = COMMANDS.OCF_READ_LOCAL_VERSION | (COMMANDS.OGF_INFO_PARAM << 10);
+    COMMANDS.READ_LOCAL_SUPPORTED_COMMANDS_CMD = COMMANDS.OCF_READ_LOCAL_SUPPORTED_COMMANDS | (COMMANDS.OGF_INFO_PARAM << 10);
+    COMMANDS.READ_LOCAL_SUPPORTED_FEATURES_CMD = COMMANDS.OCF_READ_LOCAL_SUPPORTED_FEATURES | (COMMANDS.OGF_INFO_PARAM << 10);
+    COMMANDS.READ_LOCAL_EXTENDED_FEATURES_CMD = COMMANDS.OCF_READ_LOCAL_EXTENDED_FEATURES | (COMMANDS.OGF_INFO_PARAM << 10);
     COMMANDS.READ_BUFFER_SIZE_CMD = COMMANDS.OCF_READ_BUFFER_SIZE | (COMMANDS.OGF_INFO_PARAM << 10);
     COMMANDS.READ_BD_ADDR_CMD = COMMANDS.OCF_READ_BD_ADDR | (COMMANDS.OGF_INFO_PARAM << 10);
+    /* OGF_STATUS_PARAM: 0x05 */
     COMMANDS.READ_RSSI_CMD = COMMANDS.OCF_READ_RSSI | (COMMANDS.OGF_STATUS_PARAM << 10);
+    /* OGF_LE_CTL: 0x08 */
     COMMANDS.LE_SET_EVENT_MASK_CMD = COMMANDS.OCF_LE_SET_EVENT_MASK | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_READ_BUFFER_SIZE_CMD = COMMANDS.OCF_LE_READ_BUFFER_SIZE | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_READ_LOCAL_SUPPORTED_FEATURES_CMD = COMMANDS.OCF_LE_READ_LOCAL_SUPPORTED_FEATURES | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_RANDOM_ADDRESS_CMD = COMMANDS.OCF_LE_SET_RANDOM_ADDRESS | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD = COMMANDS.OCF_LE_SET_ADVERTISING_PARAMETERS | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_READ_ADVERTISING_CHANNEL_TX_POWER_CMD = COMMANDS.OCF_LE_READ_ADVERTISING_CHANNEL_TX_POWER | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_ADVERTISING_DATA_CMD = COMMANDS.OCF_LE_SET_ADVERTISING_DATA | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_SET_SCAN_PARAMETERS_CMD = COMMANDS.OCF_LE_SET_SCAN_PARAMETERS | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_SET_SCAN_ENABLE_CMD = COMMANDS.OCF_LE_SET_SCAN_ENABLE | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_CREATE_CONN_CMD = COMMANDS.OCF_LE_CREATE_CONN | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_CREATE_CONN_CANCEL_CMD = COMMANDS.OCF_LE_CREATE_CONN_CANCEL | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_CONN_UPDATE_CMD = COMMANDS.OCF_LE_CONN_UPDATE | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_START_ENCRYPTION_CMD = COMMANDS.OCF_LE_START_ENCRYPTION | (COMMANDS.OGF_LE_CTL << 10);
-    COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD = COMMANDS.OCF_LE_SET_ADVERTISING_PARAMETERS | (COMMANDS.OGF_LE_CTL << 10);
-    COMMANDS.LE_SET_ADVERTISING_DATA_CMD = COMMANDS.OCF_LE_SET_ADVERTISING_DATA | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_SET_SCAN_RESPONSE_DATA_CMD = COMMANDS.OCF_LE_SET_SCAN_RESPONSE_DATA | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_SET_ADVERTISE_ENABLE_CMD = COMMANDS.OCF_LE_SET_ADVERTISE_ENABLE | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_LTK_NEG_REPLY_CMD = COMMANDS.OCF_LE_LTK_NEG_REPLY | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_READ_WHITE_LIST_SIZE_CMD = COMMANDS.OCF_LE_READ_WHITE_LIST_SIZE | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_CLEAR_WHITE_LIST_CMD = COMMANDS.OCF_LE_CLEAR_WHITE_LIST | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_READ_SUPPORTED_STATES_CMD = COMMANDS.OCF_LE_READ_SUPPORTED_STATES | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_READ_SUGGESTED_DEFAULT_DATA_LENGTH_CMD = COMMANDS.OCF_LE_READ_SUGGESTED_DEFAULT_DATA_LENGTH | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_WRITE_SUGGESTED_DEFAULT_DATA_LENGTH_CMD = COMMANDS.OCF_LE_WRITE_SUGGESTED_DEFAULT_DATA_LENGTH | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_CLEAR_RESOLVING_LIST_CMD = COMMANDS.OCF_LE_CLEAR_RESOLVING_LIST | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_READ_RESOLVING_LIST_SIZE_CMD = COMMANDS.OCF_LE_READ_RESOLVING_LIST_SIZE | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT_CMD = COMMANDS.OCF_LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_READ_MAXIMUM_DATA_LENGTH_CMD = COMMANDS.OCF_LE_READ_MAXIMUM_DATA_LENGTH | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.SET_DEFAULT_PHY_CMD = COMMANDS.OCF_SET_DEFAULT_PHY | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.HCI_OE_USER_ENDED_CONNECTION = 0x13;
 })(COMMANDS || (COMMANDS = {}));
 const hci_status_json_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci-status.json"));
@@ -11631,7 +11688,7 @@ class Hci extends eventemitter3_1.default {
     async initWait() {
         await this.resetWait();
     }
-    setEventMask() {
+    setEventMaskCommand() {
         const cmd = Buffer.alloc(12);
         const eventMask = Buffer.from('fffffbff07f8bf3d', 'hex');
         // header
@@ -11645,24 +11702,13 @@ class Hci extends eventemitter3_1.default {
     }
     async resetWait() {
         this._reset();
-        const cmd = Buffer.alloc(4);
-        // header
-        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(COMMANDS.OCF_RESET | (COMMANDS.OGF_HOST_CTL << 10), 1);
-        // length
-        cmd.writeUInt8(0x00, 3);
-        const p = this.readCmdCompleteEventWait(COMMANDS.RESET_CMD);
-        this.debug('reset - writing: ' + cmd.toString('hex'));
-        this._socket.write(cmd);
-        const resetResult = await p;
-        this.setEventMask();
-        this.setLeEventMask();
-        const { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer, } = await this.readLocalVersionWait();
-        this.debug(`localVersion ${hciVer} ${hciRev} ${lmpVer} ${manufacturer} ${lmpSubVer}`);
-        this.writeLeHostSupported();
+        await this.resetCommandWait();
+        this.setEventMaskCommand();
+        this.setLeEventMaskCommand();
+        const { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer, } = await this.readLocalVersionCommandWait();
+        this.writeLeHostSupportedCommand();
         await this.readLeHostSupportedWait();
         const addr = await this.readBdAddrWait();
-        this.debug(`BdAddr=${addr}`);
         const bufsize = await this.leReadBufferSizeWait();
         if (bufsize) {
             this.debug(`Buffer Mtu=${bufsize.aclMtu} aclMaxInProgress=${bufsize.aclMaxInProgress}`);
@@ -11673,22 +11719,32 @@ class Hci extends eventemitter3_1.default {
             this.stateChange('poweredOn');
         }
     }
+    resetForEsp32Wait() {
+        // todo
+    }
+    async resetCommandWait() {
+        const resetResult = await this.writeNoParamCommandWait(COMMANDS.RESET_CMD, 'reset');
+        return resetResult;
+    }
+    async writeDefaultLinkPolicyCommandWait(mode) {
+        const cmd = Buffer.alloc(5);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.WRITE_DEFAULT_LINK_POLICY_SETTINGS_CMD, 1);
+        // length
+        cmd.writeUInt8(0x01, 3);
+        const modeValue = mode === 'enableHoldMode' ? 1 : mode === 'enableSniffMode' ? 2 : 0;
+        cmd.writeUInt8(modeValue, 4);
+        this.debug('write default link policy - writing: ' + cmd.toString('hex'));
+        this._socket.write(cmd);
+    }
     resetBuffers() {
         this._handleAclsInProgress = {};
         this._handleBuffers = {};
         this._aclOutQueue = [];
     }
-    async readLocalVersionWait() {
-        const cmd = Buffer.alloc(4);
-        // header
-        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(COMMANDS.READ_LOCAL_VERSION_CMD, 1);
-        // length
-        cmd.writeUInt8(0x0, 3);
-        const p = this.readCmdCompleteEventWait(COMMANDS.READ_LOCAL_VERSION_CMD);
-        this.debug('read local version - writing: ' + cmd.toString('hex'));
-        this._socket.write(cmd);
-        const data = await p;
+    async readLocalVersionCommandWait() {
+        const data = await this.writeNoParamCommandWait(COMMANDS.READ_LOCAL_VERSION_CMD, 'read local version');
         const hciVer = data.result.readUInt8(0);
         const hciRev = data.result.readUInt16LE(1);
         const lmpVer = data.result.readInt8(3);
@@ -11697,25 +11753,187 @@ class Hci extends eventemitter3_1.default {
         if (hciVer < 0x06) {
             throw new ObnizError_1.ObnizBleUnsupportedHciError(0x06, hciVer);
         }
+        this.debug(`localVersion ${hciVer} ${hciRev} ${lmpVer} ${manufacturer} ${lmpSubVer}`);
         return { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer };
     }
-    async readBdAddrWait() {
-        const cmd = Buffer.alloc(4);
+    async readLocalNameCommandWait() {
+        const data = await this.writeNoParamCommandWait(COMMANDS.READ_LOCAL_NAME_CMD, 'read local name');
+        return data.result.toString('ascii');
+    }
+    async writePageTimeoutCommandWait(pageTimeout = 0x2000) {
+        const cmd = Buffer.alloc(6);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(COMMANDS.READ_BD_ADDR_CMD, 1);
+        cmd.writeUInt16LE(COMMANDS.WRITE_DEFAULT_LINK_POLICY_SETTINGS_CMD, 1);
         // length
-        cmd.writeUInt8(0x0, 3);
-        const p = this.readCmdCompleteEventWait(COMMANDS.READ_BD_ADDR_CMD);
-        this.debug('read bd addr - writing: ' + cmd.toString('hex'));
+        cmd.writeUInt8(0x02, 3);
+        cmd.writeUInt16LE(pageTimeout, 4);
+        this.debug('write page timeout - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
-        const data = await p;
+    }
+    async writeClassOfDeviceCommandWait(classOfDevice) {
+        const cmd = Buffer.alloc(7);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.WRITE_CLASS_OF_DEVICE_CMD, 1);
+        // length
+        cmd.writeUInt8(0x03, 3);
+        cmd.writeUInt8((classOfDevice >> 0) & 0xff, 4);
+        cmd.writeUInt8((classOfDevice >> 8) & 0xff, 5);
+        cmd.writeUInt8((classOfDevice >> 16) & 0xff, 6);
+        this.debug('write class of device - writing: ' + cmd.toString('hex'));
+        this._socket.write(cmd);
+    }
+    async writeInquiryScanTypeCommandWait(scanType) {
+        const data = await this.writeSingleParamCommandWait(COMMANDS.WRITE_INQUIRY_SCAN_TYPE_CMD, scanType, {
+            standardScan: 0x00,
+            interlacedScan: 0x01,
+        }, 'write inquiry mode type ');
+    }
+    async writeInquiryModeCommandWait(inquiryMode) {
+        const data = await this.writeSingleParamCommandWait(COMMANDS.WRITE_INQUIRY_MODE_CMD, inquiryMode, {
+            standardInquiryResultEventFormat: 0x00,
+            inquiryResultFormatWithRSSI: 0x01,
+            inquiryResultWithRSSIFormatOrExtendedInquiryResultFormat: 0x02,
+        }, 'write inquiry mode type ');
+    }
+    async writePageScanTypeCommandWait(pageScanType) {
+        const data = await this.writeSingleParamCommandWait(COMMANDS.WRITE_PAGE_SCAN_TYPE_CMD, pageScanType, {
+            standardScan: 0x00,
+            interlacedScan: 0x01,
+        }, 'write page scan type');
+    }
+    async writeSimplePairingModeCommandWait(simplePairingMode) {
+        const data = await this.writeSingleParamCommandWait(COMMANDS.WRITE_SIMPLE_PAIRING_MODE_CMD, simplePairingMode, {
+            disabled: 0x00,
+            enabled: 0x01,
+        }, 'write simple pairing mode');
+    }
+    setEventMaskPage2() {
+        const cmd = Buffer.alloc(12);
+        const leEventMask = Buffer.from('0000800000000000', 'hex');
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.SET_EVENT_MASK_PAGE_2_CMD, 1);
+        // length
+        cmd.writeUInt8(leEventMask.length, 3);
+        leEventMask.copy(cmd, 4);
+        this.debug('set le event mask page 2 - writing: ' + cmd.toString('hex'));
+        this._socket.write(cmd);
+    }
+    async readLocalSupportedCommandWait() {
+        const data = await this.writeNoParamCommandWait(COMMANDS.READ_LOCAL_SUPPORTED_COMMANDS_CMD, 'read local supported commands');
+        this.debug('supportedCommands = ' + data.result.toString('hex'));
+        return data.result;
+    }
+    async readLocalSupportedFeaturesCommandWait() {
+        const data = await this.writeNoParamCommandWait(COMMANDS.READ_LOCAL_SUPPORTED_FEATURES_CMD, 'read local supported features');
+        this.debug('supportedFeatures = ' + data.result.toString('hex'));
+        return data.result;
+    }
+    async readLocalExtendedFeaturesCommandWait(page) {
+        const cmd = Buffer.alloc(5);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.READ_LOCAL_EXTENDED_FEATURES_CMD, 1);
+        // length
+        cmd.writeUInt8(1, 3);
+        cmd.writeUInt8(page, 4);
+        const p = this.readCmdCompleteEventWait(COMMANDS.READ_LOCAL_EXTENDED_FEATURES_CMD);
+        this.debug(`read local extended features - writing: ${cmd.toString('hex')}`);
+        this._socket.write(cmd);
+        const resetResult = await p;
+        return resetResult.result;
+    }
+    async leClearWhiteListCommandWait() {
+        const data = await this.writeNoParamCommandWait(COMMANDS.LE_CLEAR_WHITE_LIST_CMD, 'le clear white list');
+        return data.result;
+    }
+    async leReadSupportedStatesCommandWait() {
+        const data = await this.writeNoParamCommandWait(COMMANDS.LE_READ_SUPPORTED_STATES_CMD, 'le read supported states');
+        return data.result;
+    }
+    async leReadSuggestedDefaultDataLengthCommandWait() {
+        const data = await this.writeNoParamCommandWait(COMMANDS.LE_READ_SUGGESTED_DEFAULT_DATA_LENGTH_CMD, 'le read suggested default data length');
+        return {
+            suggestedMaxTxOctets: data.result.readUInt16LE(0),
+            suggestedMaxTxTime: data.result.readUInt16LE(2),
+        };
+    }
+    async leWriteSuggestedDefaultDataLengthCommandWait(suggestedMaxTxOctets, suggestedMaxTxTime) {
+        const cmd = Buffer.alloc(8);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_WRITE_SUGGESTED_DEFAULT_DATA_LENGTH_CMD, 1);
+        // length
+        cmd.writeUInt8(4, 3);
+        cmd.writeUInt16LE(suggestedMaxTxOctets, 4);
+        cmd.writeUInt16LE(suggestedMaxTxTime, 6);
+        this.debug('le write suggested default data length - writing: ' + cmd.toString('hex'));
+        this._socket.write(cmd);
+    }
+    async leClearResolvingListCommandWait() {
+        const data = await this.writeNoParamCommandWait(COMMANDS.LE_CLEAR_RESOLVING_LIST_CMD, 'le clear resolving list');
+    }
+    async leReadResolvingListSizeCommandWait() {
+        const data = await this.writeNoParamCommandWait(COMMANDS.LE_READ_RESOLVING_LIST_SIZE_CMD, 'le read resolving list size');
+        return data.result.readInt8(0);
+    }
+    async leSetResolvablePrivateAddressTimeoutCommandWait(rpaTimeout) {
+        const cmd = Buffer.alloc(6);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT_CMD, 1);
+        // length
+        cmd.writeUInt8(2, 3);
+        cmd.writeUInt16LE(rpaTimeout, 4);
+        this.debug('le set resolvable private address timeout - writing: ' +
+            cmd.toString('hex'));
+        this._socket.write(cmd);
+    }
+    async leReadMaximumDataLengthCommandWait() {
+        const data = await this.writeNoParamCommandWait(COMMANDS.LE_READ_RESOLVING_LIST_SIZE_CMD, 'le read maximum data length');
+        return {
+            supportedMaxTxOctets: data.result.readUInt16LE(0),
+            supportedMaxTxTime: data.result.readUInt16LE(2),
+            supportedMaxRxOctets: data.result.readUInt16LE(4),
+            supportedMaxRxTime: data.result.readUInt16LE(6),
+        };
+    }
+    async leReadLocalSupportedFeaturesCommandWait() {
+        const data = await this.writeNoParamCommandWait(COMMANDS.LE_READ_LOCAL_SUPPORTED_FEATURES_CMD, 'le read local supported features');
+        this.debug('read local supported features = ' + data.result.toString('hex'));
+        return data.result;
+    }
+    async leSetDefaultPhyCommandWait(allPyhs, txPyhs, rxPyhs) {
+        const cmd = Buffer.alloc(7);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT_CMD, 1);
+        // length
+        cmd.writeUInt8(3, 3);
+        cmd.writeUInt8(allPyhs, 4);
+        cmd.writeUInt8(txPyhs, 5);
+        cmd.writeUInt8(rxPyhs, 6);
+        this.debug('le set default phy - writing: ' + cmd.toString('hex'));
+        this._socket.write(cmd);
+    }
+    async leReadAdvertisingPhysicalChannelTxPowerCommandWait() {
+        const data = await this.writeNoParamCommandWait(COMMANDS.LE_READ_ADVERTISING_CHANNEL_TX_POWER_CMD, 'le read advertising channel tx power');
+        return data.result.readInt8(0);
+    }
+    async leReadWhiteListSizeWait() {
+        const data = await this.writeNoParamCommandWait(COMMANDS.LE_READ_WHITE_LIST_SIZE_CMD, 'le read white list size');
+        return data.result.readUInt8(0);
+    }
+    async readBdAddrWait() {
+        const data = await this.writeNoParamCommandWait(COMMANDS.READ_BD_ADDR_CMD, 'read bd addr');
         this.addressType = 'public';
         this.address = bleHelper_1.default.buffer2reversedHex(data.result, ':');
         this.debug('address = ' + this.address);
         return this.address;
     }
-    setLeEventMask() {
+    setLeEventMaskCommand() {
         const cmd = Buffer.alloc(12);
         const leEventMask = Buffer.from('1f00000000000000', 'hex');
         // header
@@ -11728,16 +11946,7 @@ class Hci extends eventemitter3_1.default {
         this._socket.write(cmd);
     }
     async readLeHostSupportedWait() {
-        const cmd = Buffer.alloc(4);
-        // header
-        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(COMMANDS.READ_LE_HOST_SUPPORTED_CMD, 1);
-        // length
-        cmd.writeUInt8(0x00, 3);
-        const p = this.readCmdCompleteEventWait(COMMANDS.READ_LE_HOST_SUPPORTED_CMD);
-        this.debug('read LE host supported - writing: ' + cmd.toString('hex'));
-        this._socket.write(cmd);
-        const data = await p;
+        const data = await this.writeNoParamCommandWait(COMMANDS.READ_LE_HOST_SUPPORTED_CMD, 'read LE host supported');
         if (data.status === 0) {
             const le = data.result.readUInt8(0);
             const simul = data.result.readUInt8(1);
@@ -11746,7 +11955,7 @@ class Hci extends eventemitter3_1.default {
         }
         return data;
     }
-    writeLeHostSupported() {
+    writeLeHostSupportedCommand() {
         const cmd = Buffer.alloc(6);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -11823,22 +12032,7 @@ class Hci extends eventemitter3_1.default {
         return this.processLeConnComplete(status, data, onConnectCallback);
     }
     async createLeConnCancelWait() {
-        const cmd = Buffer.alloc(4);
-        // header
-        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(COMMANDS.LE_CREATE_CONN_CANCEL_CMD, 1);
-        // length
-        cmd.writeUInt8(0x0, 3);
-        /**
-         * On success, 0x00 is returned. On failure, 0x01~0xFF is returned.
-         * If the connection is not being processed, 0x0x (command disallowed) will be returned.
-         * After a successful cancellation and response, either LE_Connection_Complete or
-         * an HCI_LE_Enhanced_Connection_Complete event will be returned.
-         */
-        this.debug('create le conn cancel - writing: ' + cmd.toString('hex'));
-        const p = this.readCmdCompleteEventWait(COMMANDS.LE_CREATE_CONN_CANCEL_CMD);
-        this._socket.write(cmd);
-        const { status } = await p;
+        const { status } = await this.writeNoParamCommandWait(COMMANDS.LE_CREATE_CONN_CANCEL_CMD, 'create le conn cancel');
         if (status !== 0x00) {
             throw new ObnizError_1.ObnizBleHciStateError(status);
         }
@@ -12043,31 +12237,13 @@ class Hci extends eventemitter3_1.default {
         return data.status;
     }
     async leReadBufferSizeWait() {
-        const cmd = Buffer.alloc(4);
-        // header
-        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(COMMANDS.LE_READ_BUFFER_SIZE_CMD, 1);
-        // length
-        cmd.writeUInt8(0x0, 3);
-        const p = this.readCmdCompleteEventWait(COMMANDS.LE_READ_BUFFER_SIZE_CMD);
-        this.debug('le read buffer size - writing: ' + cmd.toString('hex'));
-        this._socket.write(cmd);
-        const data = await p;
+        const data = await this.writeNoParamCommandWait(COMMANDS.LE_READ_BUFFER_SIZE_CMD, 'le read buffer size ');
         if (!data.status) {
             return await this.processLeReadBufferSizeWait(data.result);
         }
     }
     async readBufferSizeWait() {
-        const cmd = Buffer.alloc(4);
-        // header
-        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(COMMANDS.READ_BUFFER_SIZE_CMD, 1);
-        // length
-        cmd.writeUInt8(0x0, 3);
-        const p = this.readCmdCompleteEventWait(COMMANDS.READ_BUFFER_SIZE_CMD);
-        this.debug('read buffer size - writing: ' + cmd.toString('hex'));
-        this._socket.write(cmd);
-        const data = await p;
+        const data = await this.writeNoParamCommandWait(COMMANDS.READ_BUFFER_SIZE_CMD, 'read buffer size');
         if (!data.status) {
             const aclMtu = data.result.readUInt16LE(0);
             const aclMaxInProgress = data.result.readUInt16LE(3);
@@ -12466,6 +12642,37 @@ class Hci extends eventemitter3_1.default {
         else if (COMMANDS.HCI_ACLDATA_PKT === eventType) {
             this.onHciAclData(data);
         }
+    }
+    async writeNoParamCommandWait(command, commandName) {
+        const cmd = Buffer.alloc(4);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(command, 1);
+        // length
+        cmd.writeUInt8(0x00, 3);
+        const p = this.readCmdCompleteEventWait(command);
+        this.debug(`${commandName} - writing: ${cmd.toString('hex')}`);
+        this._socket.write(cmd);
+        const resetResult = await p;
+        return resetResult;
+    }
+    async writeSingleParamCommandWait(command, param, options, commandName) {
+        const cmd = Buffer.alloc(5);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.WRITE_CLASS_OF_DEVICE_CMD, 1);
+        // length
+        cmd.writeUInt8(0x03, 3);
+        if (!(param in options)) {
+            throw new ObnizError_1.ObnizParameterError(`${param}`, `BLE HCI ${commandName} param`);
+        }
+        const val = options[param];
+        cmd.writeUInt8(val, 4);
+        const p = this.readCmdCompleteEventWait(command);
+        this.debug(`${commandName} - writing: ${cmd.toString('hex')}`);
+        this._socket.write(cmd);
+        const resetResult = await p;
+        return resetResult;
     }
 }
 Hci.STATUS_MAPPER = hci_status_json_1.default;
