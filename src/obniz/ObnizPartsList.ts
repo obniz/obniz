@@ -42,6 +42,7 @@ import RS_BTEVS1, { RS_BTEVS1Options } from '../parts/Ble/RS_BTEVS1';
 import RS_BTWATTCH2, { RS_BTWATTCH2Options } from '../parts/Ble/RS_BTWATTCH2';
 import RS_Seek3, { RS_Seek3Options } from '../parts/Ble/RS_SEEK3';
 import SCBTGAAAC, { SCBTGAAACOptions } from '../parts/Ble/scbtgaaac';
+import STM550B, { STM550B_Options } from '../parts/Ble/STM550B';
 import TM530, { TM530Options } from '../parts/Ble/tm530';
 import TM511, { TM511Options } from '../parts/Ble/tm511';
 import Toio_CoreCube, {
@@ -529,4 +530,5 @@ export interface PartsList {
   UA651BLE: { class: UA651BLE; options: UA651BLEOptions };
   UA1200BLE: { class: UA1200BLE; options: UA1200BLEOptions };
   EXVital: { class: EXVital; options: EXVital_Options };
+  STM550B: { class: STM550B; options: STM550B_Options };
 }

@@ -230,6 +230,7 @@ module.exports = {
     "js-yaml": "^3.13.1",
     "node-dir": "^0.1.17",
     "node-fetch": "^2.3.0",
+    "round-to": "^5.0.0",
     "semver": "^5.7.0",
     "tv4": "^1.3.0",
     "ws": "^6.1.4"
@@ -23204,6 +23205,7 @@ var map = {
 	"./Ble/RS_BTIREX2/index.js": "./dist/src/parts/Ble/RS_BTIREX2/index.js",
 	"./Ble/RS_BTWATTCH2/index.js": "./dist/src/parts/Ble/RS_BTWATTCH2/index.js",
 	"./Ble/RS_SEEK3/index.js": "./dist/src/parts/Ble/RS_SEEK3/index.js",
+	"./Ble/STM550B/index.js": "./dist/src/parts/Ble/STM550B/index.js",
 	"./Ble/TR4/index.js": "./dist/src/parts/Ble/TR4/index.js",
 	"./Ble/UA1200BLE/index.js": "./dist/src/parts/Ble/UA1200BLE/index.js",
 	"./Ble/UA651BLE/index.js": "./dist/src/parts/Ble/UA651BLE/index.js",
@@ -28063,6 +28065,164 @@ class RS_Seek3 {
 }
 exports.default = RS_Seek3;
 
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/STM550B/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.STM550B
+ */
+/* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
+const round_to_1 = __importDefault(__webpack_require__("./node_modules/round-to/index.js"));
+const dataSizeTable = {
+    0b00: 1,
+    0b01: 2,
+    0b10: 4,
+    0b11: 255,
+};
+const dataTypeTable = {
+    0x00: { type: 'temperature', encoding: 'numLE' },
+    0x01: { type: 'voltage', encoding: 'numLE' },
+    0x02: { type: 'energy_level', encoding: 'unsignedNumLE' },
+    0x04: { type: 'illumination_solar_cell', encoding: 'unsignedNumLE' },
+    0x05: { type: 'illumination_sensor', encoding: 'unsignedNumLE' },
+    0x06: { type: 'humidity', encoding: 'unsignedNumLE' },
+    // 0x0a : {type : 'acceleration_vector', encoding:""},
+    0x23: { type: 'magnet_contact', encoding: 'bool0001' },
+};
+const readData = (rawData, dataSize, encoding) => {
+    switch (encoding) {
+        case 'numBE':
+            if (dataSize === 1) {
+                return rawData.readInt8(0);
+            }
+            else if (dataSize === 2) {
+                return rawData.readInt16BE(0);
+            }
+            return rawData.readInt32BE(0);
+        case 'numLE':
+            if (dataSize === 1) {
+                return rawData.readInt8(0);
+            }
+            else if (dataSize === 2) {
+                return rawData.readInt16LE(0);
+            }
+            return rawData.readInt32LE(0);
+        case 'unsignedNumBE':
+            if (dataSize === 1) {
+                return rawData.readUInt8(0);
+            }
+            else if (dataSize === 2) {
+                return rawData.readUInt16BE(0);
+            }
+            return rawData.readUInt32BE(0);
+        case 'unsignedNumLE':
+            if (dataSize === 1) {
+                return rawData.readUInt8(0);
+            }
+            else if (dataSize === 2) {
+                return rawData.readUInt16LE(0);
+            }
+            return rawData.readUInt32LE(0);
+        case 'bool0001':
+            if (rawData.readUInt8(0) & 0x01) {
+                return true;
+            }
+            return false;
+    }
+};
+const findType = (type, multiple = 1, precision = 0) => {
+    return (data, peripheral) => {
+        const buf = Buffer.from(data);
+        for (let i = 0; i < buf.length;) {
+            const descriptor = buf.readUInt8(i);
+            const dataSizeType = (descriptor >> 6) & 0x03;
+            const dataSize = dataSizeTable[dataSizeType];
+            const dataTypeNumber = descriptor & 0x3f;
+            const dataType = dataTypeTable[dataTypeNumber];
+            if (!dataType || dataType.type !== type) {
+                i += dataSize + 1;
+                continue;
+            }
+            const rawData = buf.slice(i + 1, i + 1 + dataSize);
+            let result = readData(rawData, dataSize, dataType.encoding);
+            if (result && typeof result === 'number') {
+                result = round_to_1.default(result * multiple, precision);
+            }
+            return result;
+        }
+        return undefined;
+    };
+};
+/** iBS01T management class iBS01Tを管理するクラス */
+class STM550B extends ObnizPartsBleAbstract_1.ObnizPartsBle {
+    constructor(peripheral, mode) {
+        super(peripheral, mode);
+        this.staticClass = STM550B;
+    }
+}
+exports.default = STM550B;
+STM550B.PartsName = 'STM550B';
+STM550B.AvailableBleMode = 'Beacon';
+STM550B.BeaconDataStruct = {
+    temperature: {
+        index: 4,
+        length: 255,
+        type: 'custom',
+        func: findType('temperature', 0.01),
+    },
+    voltage: {
+        index: 4,
+        length: 255,
+        type: 'custom',
+        func: findType('voltage', 0.5),
+    },
+    energy_level: {
+        index: 4,
+        length: 255,
+        type: 'custom',
+        func: findType('energy_level', 0.5),
+    },
+    illumination_solar_cell: {
+        index: 4,
+        length: 255,
+        type: 'custom',
+        func: findType('illumination_solar_cell'),
+    },
+    illumination_sensor: {
+        index: 4,
+        length: 255,
+        type: 'custom',
+        func: findType('illumination_sensor'),
+    },
+    humidity: {
+        index: 4,
+        length: 255,
+        type: 'custom',
+        func: findType('humidity', 0.5),
+    },
+    magnet_contact: {
+        index: 7,
+        length: 255,
+        type: 'custom',
+        func: findType('magnet_contact'),
+    },
+};
+STM550B.CompanyID = {
+    Beacon: [0xda, 0x03],
+};
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -81891,6 +82051,48 @@ function fn5 (a, b, c, d, e, m, k, s) {
 }
 
 module.exports = RIPEMD160
+
+
+/***/ }),
+
+/***/ "./node_modules/round-to/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function round(method, number, precision) {
+	if (typeof number !== 'number') {
+		throw new TypeError('Expected value to be a number');
+	}
+
+	if (precision === Infinity) {
+		return number;
+	}
+
+	if (!Number.isInteger(precision)) {
+		throw new TypeError('Expected precision to be an integer');
+	}
+
+	const isRoundingAndNegative = method === 'round' && number < 0;
+	if (isRoundingAndNegative) {
+		number = Math.abs(number);
+	}
+
+	const power = 10 ** precision;
+
+	let result = Math[method](Number((number * power).toPrecision(15))) / power;
+
+	if (isRoundingAndNegative) {
+		result = -result;
+	}
+
+	return result;
+}
+
+module.exports = round.bind(undefined, 'round');
+module.exports.up = round.bind(undefined, 'ceil');
+module.exports.down = round.bind(undefined, 'floor');
 
 
 /***/ }),
