@@ -35,6 +35,7 @@ namespace COMMANDS {
   export const EVT_LE_CONN_COMPLETE = 0x01;
   export const EVT_LE_ADVERTISING_REPORT = 0x02;
   export const EVT_LE_CONN_UPDATE_COMPLETE = 0x03;
+  export const EVT_LE_ENHANCED_CONNECTION_COMPLETE = 0x0a;
 
   export const OGF_LINK_CTL = 0x01;
   export const OCF_DISCONNECT = 0x0006;
@@ -249,6 +250,13 @@ class Hci extends EventEmitter<HciEventTypes> {
       write: (data: any) => {
         const arr: any = Array.from(data);
         this._obnizHci.write(arr);
+        // console.log(
+        //   'SEND:',
+        //   Buffer.from(arr)
+        //     .toString('hex')
+        //     .match(/.{1,2}/g)!
+        //     .join(' ')
+        // );
       },
     };
     this._obnizHci.hciProtocolOnSocketData = this.onSocketData.bind(this);
@@ -278,9 +286,9 @@ class Hci extends EventEmitter<HciEventTypes> {
     await this.resetWait();
   }
 
-  public setEventMaskCommand() {
+  public setEventMaskCommand(mask: string) {
     const cmd = Buffer.alloc(12);
-    const eventMask = Buffer.from('fffffbff07f8bf3d', 'hex');
+    const eventMask = Buffer.from(mask, 'hex');
 
     // header
     cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -296,10 +304,14 @@ class Hci extends EventEmitter<HciEventTypes> {
   }
 
   public async resetWait(): Promise<void> {
+    await this.resetForEsp32Wait();
+  }
+
+  public async resetForOldObnizjsWait(): Promise<void> {
     this._reset();
     await this.resetCommandWait();
-    this.setEventMaskCommand();
-    this.setLeEventMaskCommand();
+    this.setEventMaskCommand('fffffbff07f8bf3d');
+    this.setLeEventMaskCommand('1f00000000000000');
     const {
       hciVer,
       hciRev,
@@ -326,8 +338,64 @@ class Hci extends EventEmitter<HciEventTypes> {
     }
   }
 
-  public resetForEsp32Wait() {
-    // todo
+  public async resetForEsp32Wait() {
+    this._reset();
+    await this.resetCommandWait();
+    const bufSize = await this.readBufferSizeWait();
+    const localVersion = await this.readLocalVersionCommandWait();
+    const addr = await this.readBdAddrWait();
+    const localSupportedCommands = await this.readLocalSupportedCommandWait();
+    const localExtendedFeatures = [
+      await this.readLocalExtendedFeaturesCommandWait(0),
+    ];
+    if (localExtendedFeatures[0].maximumPageNumber > 0) {
+      for (let i = 1; i <= localExtendedFeatures[0].maximumPageNumber; i++) {
+        localExtendedFeatures.push(
+          await this.readLocalExtendedFeaturesCommandWait(i)
+        );
+      }
+    }
+    await this.writeSimplePairingModeCommandWait('enabled');
+    this.writeLeHostSupportedCommand();
+    const whiteListSize = await this.leReadWhiteListSizeWait();
+    const leBufSize = await this.leReadBufferSizeWait();
+    if (leBufSize) {
+      this.debug(
+        `Buffer Mtu=${leBufSize.aclMtu} aclMaxInProgress=${leBufSize.aclMaxInProgress}`
+      );
+    }
+
+    const supportedStates = await this.leReadSupportedStatesCommandWait();
+    const localSupportedFeatures = await this.leReadLocalSupportedFeaturesCommandWait();
+    const resolvingListSize = await this.leReadResolvingListSizeCommandWait();
+    await this.leWriteSuggestedDefaultDataLengthCommandWait(0x00fb, 0x0848);
+    const defaultDataLength = await this.leReadSuggestedDefaultDataLengthCommandWait();
+
+    this.setLeEventMaskCommand('7f06000000000000');
+    this.setEventMaskCommand('FFFFFFFFFFFFBF3D');
+
+    // this.setLeEventMaskCommand('1f00000000000000');
+    // this.setEventMaskCommand('fffffbff07f8bf3d');
+
+    await this.leClearResolvingListCommandWait();
+    await this.leSetResolvablePrivateAddressTimeoutCommandWait(0x0384);
+    await this.writeInquiryModeCommandWait(
+      'inquiryResultWithRSSIFormatOrExtendedInquiryResultFormat'
+    );
+    await this.writePageScanTypeCommandWait('interlacedScan');
+    await this.writeInquiryScanTypeCommandWait('interlacedScan');
+    await this.writeClassOfDeviceCommandWait(0x2c0414);
+    await this.writePageTimeoutCommandWait(0x2000);
+    await this.writeDefaultLinkPolicyCommandWait(['enableSniffMode']);
+
+    const localName = await this.readLocalNameCommandWait();
+    this.debug('le localName ' + localName);
+
+    if (this._state !== 'poweredOn') {
+      await this.setScanEnabledWait(false, true);
+      await this.setScanParametersWait(false);
+      this.stateChange('poweredOn');
+    }
   }
 
   public async resetCommandWait() {
@@ -402,21 +470,28 @@ class Hci extends EventEmitter<HciEventTypes> {
   }
 
   public async writeDefaultLinkPolicyCommandWait(
-    mode: 'enableRoleSwitch' | 'enableHoldMode' | 'enableSniffMode'
+    mode: ('enableRoleSwitch' | 'enableHoldMode' | 'enableSniffMode')[]
   ) {
-    const cmd = Buffer.alloc(5);
+    const cmd = Buffer.alloc(6);
 
     // header
     cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
     cmd.writeUInt16LE(COMMANDS.WRITE_DEFAULT_LINK_POLICY_SETTINGS_CMD, 1);
 
     // length
-    cmd.writeUInt8(0x01, 3);
+    cmd.writeUInt8(0x02, 3);
+    let modeValue = 0;
+    if (mode.includes('enableRoleSwitch')) {
+      modeValue = modeValue | 0x01;
+    }
+    if (mode.includes('enableHoldMode')) {
+      modeValue = modeValue | 0x02;
+    }
+    if (mode.includes('enableSniffMode')) {
+      modeValue = modeValue | 0x04;
+    }
 
-    const modeValue =
-      mode === 'enableHoldMode' ? 1 : mode === 'enableSniffMode' ? 2 : 0;
-
-    cmd.writeUInt8(modeValue, 4);
+    cmd.writeUInt16LE(modeValue, 4);
     this.debug('write default link policy - writing: ' + cmd.toString('hex'));
     this._socket.write(cmd);
   }
@@ -460,7 +535,7 @@ class Hci extends EventEmitter<HciEventTypes> {
 
     // header
     cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
-    cmd.writeUInt16LE(COMMANDS.WRITE_DEFAULT_LINK_POLICY_SETTINGS_CMD, 1);
+    cmd.writeUInt16LE(COMMANDS.WRITE_PAGE_TIMEOUT_CMD, 1);
 
     // length
     cmd.writeUInt8(0x02, 3);
@@ -608,7 +683,11 @@ class Hci extends EventEmitter<HciEventTypes> {
 
     const resetResult = await p;
 
-    return resetResult.result;
+    return {
+      pageNumber: resetResult.result.readUInt8(0),
+      maximumPageNumber: resetResult.result.readUInt8(1),
+      extendedLmpFeatures: resetResult.result.slice(2),
+    };
   }
 
   public async leClearWhiteListCommandWait() {
@@ -781,9 +860,9 @@ class Hci extends EventEmitter<HciEventTypes> {
     return this.address;
   }
 
-  public setLeEventMaskCommand() {
+  public setLeEventMaskCommand(mask: string) {
     const cmd = Buffer.alloc(12);
-    const leEventMask = Buffer.from('1f00000000000000', 'hex');
+    const leEventMask = Buffer.from(mask, 'hex');
 
     // header
     cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -825,7 +904,7 @@ class Hci extends EventEmitter<HciEventTypes> {
 
     // data
     cmd.writeUInt8(0x01, 4); // le
-    cmd.writeUInt8(0x00, 5); // simul
+    cmd.writeUInt8(0x01, 5); // simul
 
     this.debug('write LE host supported - writing: ' + cmd.toString('hex'));
     this._socket.write(cmd);
@@ -911,13 +990,37 @@ class Hci extends EventEmitter<HciEventTypes> {
     cmd.writeUInt16LE(0x0000, 27); // max ce length
 
     this.debug('create le conn - writing: ' + cmd.toString('hex'));
-    const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, {
-      timeout,
-    });
-    this._socket.write(cmd);
 
-    const { status, data } = await p;
-    return this.processLeConnComplete(status, data, onConnectCallback);
+    const processConnectionCompletePromise = (async () => {
+      const { status, data } = await this.readLeMetaEventWait(
+        COMMANDS.EVT_LE_CONN_COMPLETE,
+        {
+          timeout,
+        }
+      );
+      return { status, data: this.parseConnectionCompleteEventData(data) };
+    })();
+
+    const processLeConnectionCompletePromise = (async () => {
+      const { status, data } = await this.readLeMetaEventWait(
+        COMMANDS.EVT_LE_ENHANCED_CONNECTION_COMPLETE,
+        {
+          timeout,
+        }
+      );
+      return { status, data: this.parseLeConnectionCompleteEventData(data) };
+    })();
+    this._socket.write(cmd);
+    const result = await Promise.race([
+      processConnectionCompletePromise,
+      processLeConnectionCompletePromise,
+    ]);
+
+    return this.processLeConnComplete(
+      result.status,
+      result.data,
+      onConnectCallback
+    );
   }
 
   public async createLeConnCancelWait() {
@@ -1364,6 +1467,11 @@ class Hci extends EventEmitter<HciEventTypes> {
       if (role === 1) {
         this.processLeConnComplete(status, data, undefined);
       }
+    } else if (eventType === COMMANDS.EVT_LE_ENHANCED_CONNECTION_COMPLETE) {
+      const role = data.readUInt8(2);
+      if (role === 1) {
+        this.processLeConnComplete(status, data, undefined);
+      }
     } else if (eventType === COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE) {
       const {
         handle,
@@ -1382,19 +1490,70 @@ class Hci extends EventEmitter<HciEventTypes> {
     }
   }
 
+  private parseConnectionCompleteEventData(data: Buffer) {
+    return {
+      handle: data.readUInt16LE(0) as Handle,
+      role: data.readUInt8(2),
+      addressType: (data.readUInt8(3) === 0x01
+        ? 'random'
+        : 'public') as BleDeviceAddressType,
+      address: BleHelper.buffer2reversedHex(
+        data.slice(4, 10),
+        ':'
+      ) as BleDeviceAddress,
+      interval: data.readUInt16LE(10) * 1.25,
+      latency: data.readUInt16LE(12), // TODO: multiplier?
+      supervisionTimeout: data.readUInt16LE(14) * 10,
+      masterClockAccuracy: data.readUInt8(16), // TODO: multiplier?
+    };
+  }
+
+  private parseLeConnectionCompleteEventData(data: Buffer) {
+    const addressTypeList: { [key: number]: BleDeviceAddressType } = {
+      0x00: 'public',
+      0x01: 'random',
+      0x02: 'rpa_public',
+      0x03: 'rpa_random',
+    };
+
+    return {
+      handle: data.readUInt16LE(0) as Handle,
+      role: data.readUInt8(2),
+      addressType: addressTypeList[data.readUInt8(3)] ?? 'undefined',
+      address: BleHelper.buffer2reversedHex(
+        data.slice(4, 10),
+        ':'
+      ) as BleDeviceAddress,
+      localResolvablePrivateAddress: BleHelper.buffer2reversedHex(
+        data.slice(10, 16),
+        ':'
+      ) as BleDeviceAddress,
+      peerResolvablePrivateAddress: BleHelper.buffer2reversedHex(
+        data.slice(16, 22),
+        ':'
+      ) as BleDeviceAddress,
+      interval: data.readUInt16LE(22) * 1.25,
+      latency: data.readUInt16LE(24), // TODO: multiplier?
+      supervisionTimeout: data.readUInt16LE(26) * 10,
+      masterClockAccuracy: data.readUInt8(28), // TODO: multiplier?
+    };
+  }
+
   public processLeConnComplete(
     status: any,
-    data: Buffer,
+    data:
+      | ReturnType<Hci['parseConnectionCompleteEventData']>
+      | ReturnType<Hci['parseLeConnectionCompleteEventData']>,
     onConnectCallback: any
   ) {
-    const handle: Handle = data.readUInt16LE(0);
-    const role = data.readUInt8(2);
-    const addressType = data.readUInt8(3) === 0x01 ? 'random' : 'public';
-    const address = BleHelper.buffer2reversedHex(data.slice(4, 10), ':');
-    const interval = data.readUInt16LE(10) * 1.25;
-    const latency = data.readUInt16LE(12); // TODO: multiplier?
-    const supervisionTimeout = data.readUInt16LE(14) * 10;
-    const masterClockAccuracy = data.readUInt8(16); // TODO: multiplier?
+    const handle: Handle = data.handle;
+    const role = data.role;
+    const addressType = data.addressType;
+    const address = data.address;
+    const interval = data.interval;
+    const latency = data.latency; // TODO: multiplier?
+    const supervisionTimeout = data.supervisionTimeout;
+    const masterClockAccuracy = data.masterClockAccuracy; // TODO: multiplier?
 
     this.debug('\t\t\thandle = ' + handle);
     this.debug('\t\t\trole = ' + role);
@@ -1752,6 +1911,14 @@ class Hci extends EventEmitter<HciEventTypes> {
     const data = Buffer.from(array);
     this.debug('onSocketData: ' + data.toString('hex'));
 
+    // console.log(
+    //   'RECV:',
+    //   data
+    //     .toString('hex')
+    //     .match(/.{1,2}/g)!
+    //     .join(' ')
+    // );
+
     const eventType = data.readUInt8(0);
 
     this.debug('\tevent type = 0x' + eventType.toString(16));
@@ -1788,10 +1955,10 @@ class Hci extends EventEmitter<HciEventTypes> {
 
     // header
     cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
-    cmd.writeUInt16LE(COMMANDS.WRITE_CLASS_OF_DEVICE_CMD, 1);
+    cmd.writeUInt16LE(command, 1);
 
     // length
-    cmd.writeUInt8(0x03, 3);
+    cmd.writeUInt8(0x01, 3);
     if (!(param in options)) {
       throw new ObnizParameterError(`${param}`, `BLE HCI ${commandName} param`);
     }
