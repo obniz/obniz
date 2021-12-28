@@ -1,0 +1,24 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/peripheral/characteristic_read"
+description: "read characteristic on own service"
+related: "/response/ble/peripheral/characteristic_read"
+deprecated: 3.0.0
+
+
+type: object
+required: [peripheral]
+properties:
+  peripheral:
+    type: object
+    required: [read_characteristic]
+    properties:
+      read_characteristic:
+        type: object
+        required: [service_uuid,characteristic_uuid]
+        additionalProperties: false
+        properties:
+          service_uuid: {$ref: "/uuid"}
+          characteristic_uuid: {$ref: "/uuid"}
+

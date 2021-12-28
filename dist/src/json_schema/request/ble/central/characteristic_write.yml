@@ -1,0 +1,22 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/central/characteristic_write"
+related:  "/response/ble/central/characteristic_write"
+deprecated: 3.0.0
+
+type: object
+required: [write_characteristic]
+properties:
+  write_characteristic:
+    type: object
+    required: [address,service_uuid,characteristic_uuid,data]
+    additionalProperties: false
+    properties:
+      address: {$ref: "/deviceAddress"}
+      service_uuid: {$ref: "/uuid"}
+      characteristic_uuid: {$ref: "/uuid"}
+      data: {$ref: "/dataArray"}
+      needResponse:
+        type: boolean
+        default: true

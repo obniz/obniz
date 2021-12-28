@@ -1,0 +1,103 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ws/obniz"
+description: "target device information"
+type: object
+required: [obniz]
+properties:
+  obniz:
+    type: object
+    required: [hw, firmware]
+    additionalProperties: false
+    properties:
+      hw:
+        type: string
+        example: "obnizb1"
+        description: "Hardware Identifier String of target device"
+
+      firmware:
+        type: string
+        example: "2.0.0"
+        description: "Installed firmware version of target device"
+
+      metadata:
+        type: string
+        example: "{\"description\":\"At My Office\"}"
+        description: "device metadata user set on cloud"
+
+      connected_network:
+        type: object
+        description: "Currently connected network information. RSSI can be got when network is Wi-Fi."
+        required: [online_at, current_net]
+        additionalProperties: false
+        properties:
+          online_at:
+            type: number
+            example: 1637685862
+            description: "Epoch Unix Timestamp (seconds) at device become online on the cloud"
+
+          net:
+            type: string
+            example: "wirelesslan"
+            description: "Current connected network type. Defined in setting json"
+
+          local_ip:
+            type: string
+            example: "192.168.0.100"
+            description: "Local IP if exist"
+
+          global_ip:
+            type: string
+            example: "201.200.199.198"
+            description: "Global IP if exist"
+
+          wifi:
+            type: object
+            required: [ssid, mac_address, rssi]
+            additionalProperties: false
+            properties:
+              ssid:
+                type: string
+                example: "obniz-wifi"
+                description: "Current connected Accespoint SSID"
+
+              mac_address:
+                type: string
+                example: "0123456789AB"
+                description: "Current connected Accespoint MacAddress"
+
+              rssi:
+                type: number
+                example: "-40"
+                description: "Current RSSI for connected Accesspoint. RSSI is mesured only on connection timing"
+
+          wifimesh:
+            type: object
+            required: [mesh_id, parent_obniz_id, root_obniz_id, layer, rssi]
+            additionalProperties: false
+            properties:
+              meshid:
+                type: string
+                example: "012345678901"
+                description: "MESH ID of Currently joined MESH network"
+
+              parent_obniz_id:
+                type: string
+                example: "0000-0000"
+                description: "Id of parent node"
+
+              root_obniz_id:
+                type: string
+                example: "0000-0000"
+                description: "Id of parent node"
+
+              layer:
+                type: number
+                example: 1
+                description: "Depth of MESH network. layer=1 is root node of a network."
+
+              rssi:
+                type: number
+                example: "-40"
+                description: "Current RSSI for connected Accesspoint."

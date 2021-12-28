@@ -1,0 +1,11 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/peripheral/advertisement_stop"
+deprecated: 3.0.0
+
+type: object
+required: [advertisement]
+properties:
+  advertisement:
+    type: "null"

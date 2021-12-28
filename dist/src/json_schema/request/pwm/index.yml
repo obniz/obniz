@@ -1,0 +1,13 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/pwm"
+basePath: "pwm0"
+description: "available 0 to 5"
+
+"anyOf":
+  - {$ref: "/request/pwm/init"}
+  - {$ref: "/request/pwm/freq"}
+  - {$ref: "/request/pwm/pulse"}
+  - {$ref: "/request/pwm/modulate"}
+  - {$ref: "/request/pwm/deinit"}

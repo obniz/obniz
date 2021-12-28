@@ -1,0 +1,16 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/i2c/error"
+
+type: object
+required: [error]
+properties:
+  error:
+    type: object
+    required: [message]
+    properties:
+      message:
+        type: string
+        description: "io warning"
+        example: "Heavy output"
