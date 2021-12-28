@@ -158,7 +158,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
                 throw new ObnizError_1.ObnizBleUnSupportedOSVersionError(this.Obniz.firmware_ver, MinHCIAvailableOS);
             }
             // force initialize on obnizOS < 3.2.0
-            if (semver_1.default.lt(this.Obniz.firmware_ver, '3.2.0')) {
+            if (semver_1.default.lt(semver_1.default.coerce(this.Obniz.firmware_ver), '3.2.0')) {
                 this.hci.init();
                 this.hci.end(); // disable once
                 this.hci.init();

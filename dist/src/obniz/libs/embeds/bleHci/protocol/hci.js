@@ -159,7 +159,7 @@ class Hci extends eventemitter3_1.default {
             // do nothing.
         };
         this._obnizHci = obnizHci;
-        this._obnizHci.Obniz.on('disconnect', () => {
+        this._obnizHci.Obniz.on('_close', () => {
             this.stateChange('poweredOff');
         });
         this._socket = {
@@ -203,7 +203,40 @@ class Hci extends eventemitter3_1.default {
         this._socket.write(cmd);
     }
     async resetWait() {
-        await this.resetForEsp32Wait();
+        if (this._obnizHci.Obniz.hw === 'cc3235mod') {
+            await this.resetForNrf52832Wait();
+        }
+        else {
+            await this.resetForEsp32Wait();
+        }
+    }
+    async resetForNrf52832Wait() {
+        this._reset();
+        await this.resetCommandWait();
+        const features = await this.readLocalSupportedFeaturesCommandWait();
+        const localVersion = await this.readLocalVersionCommandWait();
+        const addr = await this.readBdAddrWait();
+        const bufSize = await this.leReadBufferSizeWait();
+        const leFeatures = await this.leReadLocalSupportedFeaturesCommandWait();
+        const leSupportedStates = await this.leReadSupportedStatesCommandWait();
+        const supportedCommands = await this.readLocalSupportedCommandWait();
+        // this.setEventMaskCommand('fffffbff07f8bf3d');
+        // this.setLeEventMaskCommand('1f00000000000000');
+        this.setEventMaskCommand('90E8040200800020');
+        this.setLeEventMaskCommand('5F0E080000000000');
+        const txPower = await this.leReadAdvertisingPhysicalChannelTxPowerCommandWait();
+        const whiteListSize = await this.leReadWhiteListSizeWait();
+        await this.leClearWhiteListCommandWait();
+        const resolvingListSize = await this.leReadResolvingListSizeCommandWait();
+        await this.leClearResolvingListCommandWait();
+        await this.leSetResolvablePrivateAddressTimeoutCommandWait(0x0384);
+        const maximumDataLength = await this.leReadMaximumDataLengthCommandWait();
+        this.setEventMaskPage2('0000800000000000'); // TODO
+        const defaultDataLength = await this.leReadSuggestedDefaultDataLengthCommandWait();
+        // await this.leWriteSuggestedDefaultDataLengthCommandWait(0x00fb, 0x0a90);
+        await this.leSetDefaultPhyCommandWait(0, 0, 1);
+        // await this.setAdvertisingDataWait(Buffer.alloc(31));
+        await this.setRandomDeviceAddressWait();
     }
     async resetForOldObnizjsWait() {
         this._reset();
@@ -277,9 +310,9 @@ class Hci extends eventemitter3_1.default {
         return resetResult;
     }
     async setRandomDeviceAddressWait() {
-        await this.leRandWait();
+        // await this.leRandWait();
         // await this.leEncryptWait();
-        await this.leSetRandomAddressWait(Buffer.from('FF5544332211', 'hex'));
+        await this.leSetRandomAddressWait(Buffer.from([254, 117, 174, 251, 138, 21]));
     }
     async leEncryptWait(key, plainTextData) {
         const cmd = Buffer.alloc(4 + 16 + 16);
@@ -416,9 +449,9 @@ class Hci extends eventemitter3_1.default {
             enabled: 0x01,
         }, 'write simple pairing mode');
     }
-    setEventMaskPage2() {
+    setEventMaskPage2(mask) {
         const cmd = Buffer.alloc(12);
-        const leEventMask = Buffer.from('0000800000000000', 'hex');
+        const leEventMask = Buffer.from(mask, 'hex');
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
         cmd.writeUInt16LE(COMMANDS.SET_EVENT_MASK_PAGE_2_CMD, 1);
@@ -503,7 +536,7 @@ class Hci extends eventemitter3_1.default {
         this._socket.write(cmd);
     }
     async leReadMaximumDataLengthCommandWait() {
-        const data = await this.writeNoParamCommandWait(COMMANDS.LE_READ_RESOLVING_LIST_SIZE_CMD, 'le read maximum data length');
+        const data = await this.writeNoParamCommandWait(COMMANDS.LE_READ_MAXIMUM_DATA_LENGTH_CMD, 'le read maximum data length');
         return {
             supportedMaxTxOctets: data.result.readUInt16LE(0),
             supportedMaxTxTime: data.result.readUInt16LE(2),
@@ -516,16 +549,16 @@ class Hci extends eventemitter3_1.default {
         this.debug('read local supported features = ' + data.result.toString('hex'));
         return data.result;
     }
-    async leSetDefaultPhyCommandWait(allPyhs, txPyhs, rxPyhs) {
+    async leSetDefaultPhyCommandWait(allPhys, txPhys, rxPhys) {
         const cmd = Buffer.alloc(7);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(COMMANDS.LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT_CMD, 1);
+        cmd.writeUInt16LE(COMMANDS.SET_DEFAULT_PHY_CMD, 1);
         // length
         cmd.writeUInt8(3, 3);
-        cmd.writeUInt8(allPyhs, 4);
-        cmd.writeUInt8(txPyhs, 5);
-        cmd.writeUInt8(rxPyhs, 6);
+        cmd.writeUInt8(allPhys, 4);
+        cmd.writeUInt8(txPhys, 5);
+        cmd.writeUInt8(rxPhys, 6);
         this.debug('le set default phy - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
     }
@@ -590,7 +623,8 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(isActiveScan ? 0x01 : 0x00, 4); // type: 0 -> passive, 1 -> active
         cmd.writeUInt16LE(0x0010, 5); // internal, ms * 1.6
         cmd.writeUInt16LE(0x0010, 7); // window, ms * 1.6
-        cmd.writeUInt8(0x00, 9); // own address type: 0 -> public, 1 -> random
+        const addressType = this._obnizHci.Obniz.hw === 'cc3235mod' ? 0x01 : 0x00;
+        cmd.writeUInt8(addressType, 9); // own address type: 0 -> public, 1 -> random
         cmd.writeUInt8(0x00, 10); // filter: 0 -> all event types
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_PARAMETERS_CMD);
         this.debug('set scan parameters - writing: ' + cmd.toString('hex'));

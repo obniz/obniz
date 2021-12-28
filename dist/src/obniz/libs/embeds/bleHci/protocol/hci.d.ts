@@ -38,6 +38,7 @@ declare class Hci extends EventEmitter<HciEventTypes> {
     initWait(): Promise<void>;
     setEventMaskCommand(mask: string): void;
     resetWait(): Promise<void>;
+    resetForNrf52832Wait(): Promise<void>;
     resetForOldObnizjsWait(): Promise<void>;
     resetForEsp32Wait(): Promise<void>;
     resetCommandWait(): Promise<{
@@ -72,7 +73,7 @@ declare class Hci extends EventEmitter<HciEventTypes> {
     writeInquiryModeCommandWait(inquiryMode: 'standardInquiryResultEventFormat' | 'inquiryResultFormatWithRSSI' | 'inquiryResultWithRSSIFormatOrExtendedInquiryResultFormat'): Promise<void>;
     writePageScanTypeCommandWait(pageScanType: 'standardScan' | 'interlacedScan'): Promise<void>;
     writeSimplePairingModeCommandWait(simplePairingMode: 'disabled' | 'enabled'): Promise<void>;
-    setEventMaskPage2(): void;
+    setEventMaskPage2(mask: string): void;
     readLocalSupportedCommandWait(): Promise<Buffer>;
     readLocalSupportedFeaturesCommandWait(): Promise<Buffer>;
     readLocalExtendedFeaturesCommandWait(page: number): Promise<{
@@ -97,7 +98,7 @@ declare class Hci extends EventEmitter<HciEventTypes> {
         supportedMaxRxTime: number;
     }>;
     leReadLocalSupportedFeaturesCommandWait(): Promise<Buffer>;
-    leSetDefaultPhyCommandWait(allPyhs: number, txPyhs: number, rxPyhs: number): Promise<void>;
+    leSetDefaultPhyCommandWait(allPhys: number, txPhys: number, rxPhys: number): Promise<void>;
     leReadAdvertisingPhysicalChannelTxPowerCommandWait(): Promise<number>;
     leReadWhiteListSizeWait(): Promise<number>;
     readBdAddrWait(): Promise<any>;
