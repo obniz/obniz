@@ -114,7 +114,7 @@ declare class Hci extends EventEmitter<HciEventTypes> {
     writeLeHostSupportedCommand(): void;
     setScanParametersWait(isActiveScan: boolean): Promise<number>;
     setScanEnabledWait(enabled: boolean, filterDuplicates: boolean): Promise<number>;
-    createLeConnWait(address: BleDeviceAddress, addressType: BleDeviceAddressType, timeout: number | undefined, onConnectCallback: any): Promise<{
+    createLeConnWait(address: BleDeviceAddress, addressType: BleDeviceAddressType, timeout: number | undefined, onConnectCallback: any, parameterType?: 'obnizjs<3_18_0' | 'esp32'): Promise<{
         status: any;
         handle: number;
         role: number;

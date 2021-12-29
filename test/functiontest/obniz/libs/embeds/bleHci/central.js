@@ -208,6 +208,55 @@ describe('ble-hci-central', function () {
   });
 
 
+  it('connect and receive read requet', async function () {
+    this.timeout(10 * 1000);
+    await _initWaitTestWait(this.obniz);
+
+    /* eslint-disable */
+
+    //non filter
+    await _scanStartTestWait(this.obniz, {});
+
+    const peripheral = await _receiveAdvertisementTest(this.obniz, true, [4, 62, 37, 2, 1, 0, 1, 130, 168, 133, 213, 252, 115, 25, 2, 1, 26, 2, 10, 12, 7, 3, 240, 255, 241, 255, 0, 255, 10, 9, 111, 98, 110, 105, 122, 45, 66, 76, 69, 213]);
+    const connectStub = sinon.stub();
+    const disconnectStub = sinon.stub();
+    peripheral.onconnect = connectStub;
+    peripheral.ondisconnect = disconnectStub;
+
+    const p = peripheral.connectWait({ autoDiscovery: false, mtuRequest:null  });
+    await wait(0);
+
+    // scan stop
+    sendHciCommands(this.obniz, [1, 12, 32, 2, 0, 1]);
+    await receiveHciCommandsWait(this.obniz, [4, 14, 4, 5, 12, 32, 12]);
+    // connect req
+    sendHciCommands(this.obniz, [1, 13, 32, 25, 16, 0, 16, 0, 0, 1, 130, 168, 133, 213, 252, 115, 0, 9, 0, 24, 0, 1, 0, 144, 1, 0, 0, 0, 0]);
+
+    await wait(0);
+    sinon.assert.callCount(connectStub, 0);
+    sinon.assert.callCount(disconnectStub, 0);
+    // connection established
+    await receiveHciCommandsWait(this.obniz, [4, 62, 19, 1, 0, 0, 0, 0, 1, 130, 168, 133, 213, 252, 115, 12, 0, 0, 0, 200, 0, 0]);
+
+    await p;
+
+    await wait(0);
+
+    sinon.assert.callCount(connectStub, 1);
+    sinon.assert.callCount(disconnectStub, 0);
+
+
+
+    //disconnect
+    await receiveHciCommandsWait(this.obniz, [4, 5, 4, 0, 0, 0, 19]);
+
+    await wait(0);
+    sinon.assert.callCount(connectStub, 1);
+    sinon.assert.callCount(disconnectStub, 1);
+
+  });
+
+
   it('scan terminated', async function () {
     await _initWaitTestWait(this.obniz);
 

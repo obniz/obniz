@@ -11717,6 +11717,8 @@ class Hci extends eventemitter3_1.default {
         this._socket.write(cmd);
     }
     async resetWait() {
+        await this.resetForOldObnizjsWait();
+        return;
         if (this._obnizHci.Obniz.hw === 'cc3235mod') {
             await this.resetForNrf52832Wait();
         }
@@ -11765,7 +11767,7 @@ class Hci extends eventemitter3_1.default {
         if (bufsize) {
             this.debug(`Buffer Mtu=${bufsize.aclMtu} aclMaxInProgress=${bufsize.aclMaxInProgress}`);
         }
-        await this.setRandomDeviceAddressWait();
+        // await this.setRandomDeviceAddressWait();
         if (this._state !== 'poweredOn') {
             await this.setScanEnabledWait(false, true);
             await this.setScanParametersWait(false);
@@ -12122,7 +12124,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(0x02, 3);
         // data
         cmd.writeUInt8(0x01, 4); // le
-        cmd.writeUInt8(0x01, 5); // simul
+        cmd.writeUInt8(0x00, 5); // simul
         this.debug('write LE host supported - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
     }
@@ -12162,26 +12164,55 @@ class Hci extends eventemitter3_1.default {
         const data = await p;
         return data.status;
     }
-    async createLeConnWait(address, addressType, timeout = 90 * 1000, onConnectCallback) {
+    async createLeConnWait(address, addressType, timeout = 90 * 1000, onConnectCallback, parameterType = 'obnizjs<3_18_0') {
         const cmd = Buffer.alloc(29);
+        // 010d2019600030000000965d341a9ea0000a000c000000580202000000
+        // 010d2019600030000000965d341a9ea0000a000c000000580200000000
+        // bluedroid
+        // 01 0d 20 19 60 00 30 00 00 00  //
+        // 96 5d 34 1a 9e a0 00 0a 00 0c  // deviceaddr(6) own address type(1) minInterval(2) maxInterval(1)
+        // 00 00 00 58 02 00 00 00 00     // maxInterval(1) latency(2) supervision timeout(2)
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
         cmd.writeUInt16LE(COMMANDS.LE_CREATE_CONN_CMD, 1);
         // length
         cmd.writeUInt8(0x19, 3);
+        const parameter = parameterType === 'obnizjs<3_18_0'
+            ? {
+                interval: 0x0010,
+                window: 0x0010,
+                initiatorFilter: 0x00,
+                minInterval: 0x0009,
+                maxInterval: 0x0018,
+                latency: 0x0001,
+                supervisionTimeout: 0x0190,
+                minCeLength: 0x0000,
+                maxCeLength: 0x0000,
+            }
+            : {
+                interval: 0x0060,
+                window: 0x0030,
+                initiatorFilter: 0x00,
+                minInterval: 0x000a,
+                maxInterval: 0x000c,
+                latency: 0x0000,
+                supervisionTimeout: 0x0258,
+                minCeLength: 0x0000,
+                maxCeLength: 0x0000,
+            };
         // data
-        cmd.writeUInt16LE(0x0010, 4); // interval
-        cmd.writeUInt16LE(0x0010, 6); // window
-        cmd.writeUInt8(0x00, 8); // initiator filter
+        cmd.writeUInt16LE(parameter.interval, 4); // interval
+        cmd.writeUInt16LE(parameter.window, 6); // window
+        cmd.writeUInt8(parameter.initiatorFilter, 8); // initiator filter
         cmd.writeUInt8(addressType === 'random' ? 0x01 : 0x00, 9); // peer address type
         bleHelper_1.default.hex2reversedBuffer(address, ':').copy(cmd, 10); // peer address
         cmd.writeUInt8(0x00, 16); // own address type
-        cmd.writeUInt16LE(0x0009, 17); // min interval 9 * 1.25 msec => 7.5msec (close to android)
-        cmd.writeUInt16LE(0x0018, 19); // max interval 24 * 1.25 msec => 30msec (close to ios)
-        cmd.writeUInt16LE(0x0001, 21); // latency // cmd.writeUInt16LE(0x0000, 21);
-        cmd.writeUInt16LE(0x0190, 23); // supervision timeout 4sec // cmd.writeUInt16LE(0x00c8, 23);
-        cmd.writeUInt16LE(0x0000, 25); // min ce length
-        cmd.writeUInt16LE(0x0000, 27); // max ce length
+        cmd.writeUInt16LE(parameter.minInterval, 17); // min interval 9 * 1.25 msec => 7.5msec (close to android)
+        cmd.writeUInt16LE(parameter.maxInterval, 19); // max interval 24 * 1.25 msec => 30msec (close to ios)
+        cmd.writeUInt16LE(parameter.latency, 21); // latency // cmd.writeUInt16LE(0x0000, 21);
+        cmd.writeUInt16LE(parameter.supervisionTimeout, 23); // supervision timeout 4sec // cmd.writeUInt16LE(0x00c8, 23);
+        cmd.writeUInt16LE(parameter.minCeLength, 25); // min ce length
+        cmd.writeUInt16LE(parameter.maxCeLength, 27); // max ce length
         this.debug('create le conn - writing: ' + cmd.toString('hex'));
         const processConnectionCompletePromise = (async () => {
             const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, {
