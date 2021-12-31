@@ -1,6 +1,46 @@
 /// <reference types="node" />
+import { UUID } from '../../bleTypes';
 import AclStream from './acl-stream';
 import EventEmitter from 'eventemitter3';
+export declare type HandleIndex = number;
+interface GattServiceHandle {
+    type: 'service';
+    uuid: UUID;
+    attribute: any;
+    startHandle: HandleIndex;
+    endHandle: HandleIndex;
+}
+interface GattIncludedServiceHandle {
+    type: 'includedService';
+    uuid: UUID;
+    attribute: any;
+    startHandle: HandleIndex;
+    endHandle: HandleIndex;
+}
+interface GattCharacteristicHandle {
+    type: 'characteristic';
+    uuid: UUID;
+    attribute: any;
+    properties: any;
+    secure: number;
+    startHandle: HandleIndex;
+    valueHandle: HandleIndex;
+}
+interface GattCharacteristicValueHandle {
+    type: 'characteristicValue';
+    handle: HandleIndex;
+    value: any;
+}
+interface GattDescriptorHandle {
+    type: 'descriptor';
+    uuid: UUID;
+    attribute: any;
+    handle: HandleIndex;
+    value: Buffer;
+    properties: number;
+    secure: number;
+}
+declare type GattHandle = GattServiceHandle | GattIncludedServiceHandle | GattCharacteristicHandle | GattCharacteristicValueHandle | GattDescriptorHandle;
 declare type GattEventTypes = 'mtuChange';
 /**
  * @ignore
@@ -11,7 +51,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
     _preparedWriteRequest: any;
     onAclStreamDataBinded: any;
     onAclStreamEndBinded: any;
-    _handles: any;
+    _handles: GattHandle[];
     _aclStream?: AclStream;
     _lastIndicatedAttribute: any;
     constructor();
@@ -22,20 +62,20 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
     _reset(): void;
     setServices(services: any): void;
     setAclStream(aclStream: AclStream | undefined): void;
-    onAclStreamData(cid: any, data?: any): void;
+    onAclStreamData(cid: number, data: Buffer): void;
     onAclStreamEnd(): void;
-    send(data: any): void;
-    errorResponse(opcode: any, handle: any, status: any): Buffer;
-    handleRequest(request: any): void;
-    handleMtuRequest(request: any): Buffer;
-    handleFindInfoRequest(request: any): Buffer;
+    send(data: Buffer): void;
+    errorResponse(opcode: number, handle: HandleIndex, status: number): Buffer;
+    handleRequest(request: Buffer): void;
+    handleMtuRequest(request: Buffer): Buffer;
+    handleFindInfoRequest(request: Buffer): Buffer;
     handleFindByTypeRequest(request: any): Buffer;
     handleReadByGroupRequest(request: any): Buffer;
-    handleReadByTypeRequest(request: any): Buffer | null;
-    handleReadOrReadBlobRequest(request: any): Buffer | null;
-    handleWriteRequestOrCommand(request: any): Buffer | null;
-    handlePrepareWriteRequest(request: any): Buffer;
-    handleExecuteWriteRequest(request: any): Buffer | null;
-    handleConfirmation(request: any): void;
+    handleReadByTypeRequest(request: Buffer): Buffer | null;
+    handleReadOrReadBlobRequest(request: Buffer): Buffer | null;
+    handleWriteRequestOrCommand(request: Buffer): Buffer | null;
+    handlePrepareWriteRequest(request: Buffer): Buffer;
+    handleExecuteWriteRequest(request: Buffer): Buffer | null;
+    handleConfirmation(request: Buffer): void;
 }
 export {};

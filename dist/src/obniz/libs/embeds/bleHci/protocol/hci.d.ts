@@ -7,7 +7,7 @@ import EventEmitter from 'eventemitter3';
 import ObnizBLEHci from '../hci';
 import { BleDeviceAddress, BleDeviceAddressType, Handle } from '../bleTypes';
 declare type HciEventTypes = 'leAdvertisingReport' | 'leConnComplete' | 'stateChange' | 'leConnUpdateComplete' | 'disconnComplete' | 'encryptChange' | 'aclDataPkt';
-declare type HciState = 'poweredOn' | 'poweredOff';
+export declare type HciState = 'poweredOn' | 'poweredOff';
 /**
  * @ignore
  */

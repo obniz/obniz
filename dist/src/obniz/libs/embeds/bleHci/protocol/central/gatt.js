@@ -123,6 +123,9 @@ var GATT;
 class Gatt extends eventemitter3_1.default {
     constructor(address, aclStream) {
         super();
+        this._services = {};
+        this._characteristics = {};
+        this._descriptors = {};
         this._remoteMtuRequest = null;
         this._address = address;
         this._aclStream = aclStream;
@@ -173,7 +176,7 @@ class Gatt extends eventemitter3_1.default {
             const requestMtu = mtuRequestData.readUInt16LE(1);
             debug(this._address + ': receive OP_MTU_REQ. new MTU is ' + requestMtu);
             this._mtu = requestMtu;
-            this._execNoRespCommandWait(this.mtuResponse(mtu));
+            this._execNoRespCommandWait(this.mtuResponse(this._mtu));
         })
             .catch((e) => {
             // ignore timeout error
@@ -224,6 +227,7 @@ class Gatt extends eventemitter3_1.default {
             }
             startHandle = services[services.length - 1].endHandle + 1;
         }
+        throw new ObnizError_1.ObnizBleGattHandleError('unreachable code');
     }
     async discoverIncludedServicesWait(serviceUuid, uuids) {
         const service = this.getService(serviceUuid);
@@ -339,6 +343,7 @@ class Gatt extends eventemitter3_1.default {
             }
             startHandle = characteristics[characteristics.length - 1].valueHandle + 1;
         }
+        throw new ObnizError_1.ObnizBleGattHandleError('no reachable code');
     }
     async readWait(serviceUuid, characteristicUuid) {
         const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
@@ -395,11 +400,12 @@ class Gatt extends eventemitter3_1.default {
     }
     async notifyWait(serviceUuid, characteristicUuid, notify) {
         const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
-        // const descriptor: any = this.getDescriptor(serviceUuid, characteristicUuid, "2902");
-        let value = null;
+        // const descriptor = this.getDescriptor(serviceUuid, characteristicUuid, "2902");
+        let value;
         let handle = null;
         try {
-            value = await this.readValueWait(serviceUuid, characteristicUuid, '2902');
+            const buf = await this.readValueWait(serviceUuid, characteristicUuid, '2902');
+            value = buf.readUInt16LE(0);
         }
         catch (e) {
             // retry
@@ -516,6 +522,9 @@ class Gatt extends eventemitter3_1.default {
                     }
                 }
             }
+        }
+        else {
+            // TODO
         }
     }
     onAclStreamEnd() {

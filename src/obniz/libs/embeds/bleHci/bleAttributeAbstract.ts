@@ -8,6 +8,16 @@ import ObnizUtil from '../../utils/util';
 import BleHelper from './bleHelper';
 import { BleDeviceAddress, UUID } from './bleTypes';
 
+export type BleAttributeParentName =
+  | 'peripheral'
+  | 'service'
+  | 'characteristic';
+
+export type BleAttributeChildrenName =
+  | 'service'
+  | 'characteristics'
+  | 'descriptors';
+
 export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * @ignore
@@ -19,14 +29,14 @@ export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * @ignore
    */
-  get childrenName(): string | null {
+  get childrenName(): BleAttributeChildrenName | null {
     return null;
   }
 
   /**
    * @ignore
    */
-  get parentName(): string | null {
+  get parentName(): BleAttributeParentName | null {
     return null;
   }
 

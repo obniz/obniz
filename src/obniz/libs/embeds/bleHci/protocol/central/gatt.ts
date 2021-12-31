@@ -3,6 +3,8 @@
  *
  * @ignore
  */
+import BleCharacteristic from '../../bleCharacteristic';
+import { HandleIndex } from '../peripheral/gatt';
 import AclStream from './acl-stream';
 
 // let debug = require('debug')('att');
@@ -15,15 +17,18 @@ const debug: any = () => {
 import EventEmitter from 'eventemitter3';
 import {
   ObnizBleAttError,
+  ObnizBleGattHandleError,
   ObnizBleOpError,
   ObnizBleUnknownCharacteristicError,
   ObnizBleUnknownDescriptorError,
   ObnizBleUnknownServiceError,
+  ObnizError,
   ObnizTimeoutError,
 } from '../../../../../ObnizError';
 import BleHelper from '../../bleHelper';
 import BleRemoteService from '../../bleRemoteService';
 import { BleDeviceAddress, UUID } from '../../bleTypes';
+import { SmpEncryptOptions } from './smp';
 
 interface GattService {
   uuid: UUID;
@@ -39,55 +44,60 @@ interface GattCharacteristics {
   endHandle: number;
 }
 
+interface GattDescriptor {
+  uuid: UUID;
+  handle: number;
+}
+
 /**
  * @ignore
  */
 // eslint-disable-next-line @typescript-eslint/no-namespace
 namespace ATT {
-  export const OP_ERROR: any = 0x01;
-  export const OP_MTU_REQ: any = 0x02;
-  export const OP_MTU_RESP: any = 0x03;
-  export const OP_FIND_INFO_REQ: any = 0x04;
-  export const OP_FIND_INFO_RESP: any = 0x05;
-  export const OP_READ_BY_TYPE_REQ: any = 0x08;
-  export const OP_READ_BY_TYPE_RESP: any = 0x09;
-  export const OP_READ_REQ: any = 0x0a;
-  export const OP_READ_RESP: any = 0x0b;
-  export const OP_READ_BLOB_REQ: any = 0x0c;
-  export const OP_READ_BLOB_RESP: any = 0x0d;
-  export const OP_READ_BY_GROUP_REQ: any = 0x10;
-  export const OP_READ_BY_GROUP_RESP: any = 0x11;
-  export const OP_WRITE_REQ: any = 0x12;
-  export const OP_WRITE_RESP: any = 0x13;
-  export const OP_PREPARE_WRITE_REQ: any = 0x16;
-  export const OP_PREPARE_WRITE_RESP: any = 0x17;
-  export const OP_EXECUTE_WRITE_REQ: any = 0x18;
-  export const OP_EXECUTE_WRITE_RESP: any = 0x19;
-  export const OP_HANDLE_NOTIFY: any = 0x1b;
-  export const OP_HANDLE_IND: any = 0x1d;
-  export const OP_HANDLE_CNF: any = 0x1e;
-  export const OP_WRITE_CMD: any = 0x52;
+  export const OP_ERROR = 0x01;
+  export const OP_MTU_REQ = 0x02;
+  export const OP_MTU_RESP = 0x03;
+  export const OP_FIND_INFO_REQ = 0x04;
+  export const OP_FIND_INFO_RESP = 0x05;
+  export const OP_READ_BY_TYPE_REQ = 0x08;
+  export const OP_READ_BY_TYPE_RESP = 0x09;
+  export const OP_READ_REQ = 0x0a;
+  export const OP_READ_RESP = 0x0b;
+  export const OP_READ_BLOB_REQ = 0x0c;
+  export const OP_READ_BLOB_RESP = 0x0d;
+  export const OP_READ_BY_GROUP_REQ = 0x10;
+  export const OP_READ_BY_GROUP_RESP = 0x11;
+  export const OP_WRITE_REQ = 0x12;
+  export const OP_WRITE_RESP = 0x13;
+  export const OP_PREPARE_WRITE_REQ = 0x16;
+  export const OP_PREPARE_WRITE_RESP = 0x17;
+  export const OP_EXECUTE_WRITE_REQ = 0x18;
+  export const OP_EXECUTE_WRITE_RESP = 0x19;
+  export const OP_HANDLE_NOTIFY = 0x1b;
+  export const OP_HANDLE_IND = 0x1d;
+  export const OP_HANDLE_CNF = 0x1e;
+  export const OP_WRITE_CMD = 0x52;
 
-  export const ECODE_SUCCESS: any = 0x00;
-  export const ECODE_INVALID_HANDLE: any = 0x01;
-  export const ECODE_READ_NOT_PERM: any = 0x02;
-  export const ECODE_WRITE_NOT_PERM: any = 0x03;
-  export const ECODE_INVALID_PDU: any = 0x04;
-  export const ECODE_AUTHENTICATION: any = 0x05;
-  export const ECODE_REQ_NOT_SUPP: any = 0x06;
-  export const ECODE_INVALID_OFFSET: any = 0x07;
-  export const ECODE_AUTHORIZATION: any = 0x08;
-  export const ECODE_PREP_QUEUE_FULL: any = 0x09;
-  export const ECODE_ATTR_NOT_FOUND: any = 0x0a;
-  export const ECODE_ATTR_NOT_LONG: any = 0x0b;
-  export const ECODE_INSUFF_ENCR_KEY_SIZE: any = 0x0c;
-  export const ECODE_INVAL_ATTR_VALUE_LEN: any = 0x0d;
-  export const ECODE_UNLIKELY: any = 0x0e;
-  export const ECODE_INSUFF_ENC: any = 0x0f;
-  export const ECODE_UNSUPP_GRP_TYPE: any = 0x10;
-  export const ECODE_INSUFF_RESOURCES: any = 0x11;
+  export const ECODE_SUCCESS = 0x00;
+  export const ECODE_INVALID_HANDLE = 0x01;
+  export const ECODE_READ_NOT_PERM = 0x02;
+  export const ECODE_WRITE_NOT_PERM = 0x03;
+  export const ECODE_INVALID_PDU = 0x04;
+  export const ECODE_AUTHENTICATION = 0x05;
+  export const ECODE_REQ_NOT_SUPP = 0x06;
+  export const ECODE_INVALID_OFFSET = 0x07;
+  export const ECODE_AUTHORIZATION = 0x08;
+  export const ECODE_PREP_QUEUE_FULL = 0x09;
+  export const ECODE_ATTR_NOT_FOUND = 0x0a;
+  export const ECODE_ATTR_NOT_LONG = 0x0b;
+  export const ECODE_INSUFF_ENCR_KEY_SIZE = 0x0c;
+  export const ECODE_INVAL_ATTR_VALUE_LEN = 0x0d;
+  export const ECODE_UNLIKELY = 0x0e;
+  export const ECODE_INSUFF_ENC = 0x0f;
+  export const ECODE_UNSUPP_GRP_TYPE = 0x10;
+  export const ECODE_INSUFF_RESOURCES = 0x11;
 
-  export const CID: any = 0x0004;
+  export const CID = 0x0004;
 }
 
 const ATT_OP_READABLES: { [_: number]: string } = {
@@ -158,21 +168,30 @@ type GattEventTypes =
   | 'handleNotify'
   | 'end';
 
+interface CommandQueue {
+  buffer: Buffer;
+  callback?: () => void;
+  writeCallback?: () => void;
+}
 /**
  * @ignore
  */
 class Gatt extends EventEmitter<GattEventTypes> {
-  public onAclStreamDataBinded: any;
-  public onAclStreamEndBinded: any;
+  public onAclStreamDataBinded: (cid: number, data: Buffer) => void;
+  public onAclStreamEndBinded: () => void;
   private _address: BleDeviceAddress;
   private _aclStream: AclStream;
-  private _services: { [key: string]: GattService };
-  private _characteristics: any;
-  private _descriptors: any;
-  private _currentCommand: any;
-  private _commandQueue: any;
-  private _mtu: any;
-  private _security: any;
+  private _services: { [key in UUID]: GattService } = {};
+  private _characteristics: {
+    [skey in UUID]: { [ckey in UUID]: GattCharacteristics };
+  } = {};
+  private _descriptors: {
+    [skey in UUID]: { [ckey in UUID]: { [dkey in UUID]: GattDescriptor } };
+  } = {};
+  private _currentCommand: CommandQueue | null;
+  private _commandQueue: CommandQueue[];
+  private _mtu: number;
+  private _security: 'low' | 'medium';
   private _commandPromises: Promise<any>[];
 
   private _remoteMtuRequest: null | number = null;
@@ -200,7 +219,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
     this._aclStream.on('end', this.onAclStreamEndBinded);
   }
 
-  public async encryptWait(options: any): Promise<string> {
+  public async encryptWait(options: SmpEncryptOptions): Promise<string> {
     const result = await this._serialPromiseQueueWait<string>(async () => {
       const encrypt = await this._aclStream.encryptWait(options);
       if (encrypt === 0) {
@@ -212,7 +231,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
     return result;
   }
 
-  public setEncryptOption(options: any) {
+  public setEncryptOption(options: SmpEncryptOptions) {
     this._aclStream.setEncryptOption(options);
   }
 
@@ -237,7 +256,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
         const requestMtu = mtuRequestData.readUInt16LE(1);
         debug(this._address + ': receive OP_MTU_REQ. new MTU is ' + requestMtu);
         this._mtu = requestMtu;
-        this._execNoRespCommandWait(this.mtuResponse(mtu));
+        this._execNoRespCommandWait(this.mtuResponse(this._mtu));
       })
       .catch((e) => {
         // ignore timeout error
@@ -260,7 +279,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
     return this._mtu;
   }
 
-  public async discoverServicesWait(uuids: any): Promise<any> {
+  public async discoverServicesWait(uuids: UUID[]): Promise<UUID[]> {
     const services: GattService[] = [];
     let startHandle = 0x0001;
 
@@ -305,6 +324,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
       }
       startHandle = services[services.length - 1].endHandle + 1;
     }
+    throw new ObnizBleGattHandleError('unreachable code');
   }
 
   public async discoverIncludedServicesWait(serviceUuid: UUID, uuids: UUID[]) {
@@ -346,7 +366,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
         includedServices[includedServices.length - 1].endHandle ===
           service.endHandle
       ) {
-        const includedServiceUuids: any = [];
+        const includedServiceUuids = [];
 
         for (i = 0; i < includedServices.length; i++) {
           if (
@@ -365,7 +385,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
 
   public async discoverCharacteristicsWait(
     serviceUuid: UUID,
-    characteristicUuids: any
+    characteristicUuids: UUID[]
   ) {
     const service = this.getService(serviceUuid);
     const characteristics: GattCharacteristics[] = [];
@@ -385,12 +405,12 @@ class Gatt extends EventEmitter<GattEventTypes> {
         [ATT.OP_READ_BY_TYPE_RESP, ATT.OP_ERROR]
       );
 
-      const opcode: any = data[0];
-      let i: any = 0;
+      const opcode = data[0];
+      let i = 0;
 
       if (opcode === ATT.OP_READ_BY_TYPE_RESP) {
-        const type: any = data[1];
-        const num: any = (data.length - 2) / type;
+        const type = data[1];
+        const num = (data.length - 2) / type;
 
         for (i = 0; i < num; i++) {
           characteristics.push({
@@ -413,9 +433,9 @@ class Gatt extends EventEmitter<GattEventTypes> {
         characteristics[characteristics.length - 1].valueHandle ===
           service.endHandle
       ) {
-        const characteristicsDiscovered: any = [];
+        const characteristicsDiscovered = [];
         for (i = 0; i < characteristics.length; i++) {
-          const properties: any = characteristics[i].properties;
+          const properties = characteristics[i].properties;
 
           const characteristic: any = {
             properties: [],
@@ -478,18 +498,19 @@ class Gatt extends EventEmitter<GattEventTypes> {
       }
       startHandle = characteristics[characteristics.length - 1].valueHandle + 1;
     }
+    throw new ObnizBleGattHandleError('no reachable code');
   }
 
   public async readWait(
-    serviceUuid: any,
-    characteristicUuid: any
+    serviceUuid: UUID,
+    characteristicUuid: UUID
   ): Promise<Buffer> {
     const characteristic = this.getCharacteristic(
       serviceUuid,
       characteristicUuid
     );
 
-    let readData: any = Buffer.alloc(0);
+    let readData = Buffer.alloc(0);
     while (1) {
       let data;
       if (readData.length === 0) {
@@ -503,7 +524,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
           ATT.OP_READ_BLOB_RESP
         );
       }
-      const opcode: any = data[0];
+      const opcode = data[0];
 
       readData = Buffer.from(
         readData.toString('hex') + data.slice(1).toString('hex'),
@@ -522,12 +543,12 @@ class Gatt extends EventEmitter<GattEventTypes> {
   }
 
   public async writeWait(
-    serviceUuid: any,
-    characteristicUuid: any,
-    data: any,
-    withoutResponse: any
+    serviceUuid: UUID,
+    characteristicUuid: UUID,
+    data: Buffer,
+    withoutResponse: boolean
   ): Promise<void> {
-    const characteristic: any = this.getCharacteristic(
+    const characteristic = this.getCharacteristic(
       serviceUuid,
       characteristicUuid
     );
@@ -551,11 +572,11 @@ class Gatt extends EventEmitter<GattEventTypes> {
   }
 
   public async broadcastWait(
-    serviceUuid: any,
-    characteristicUuid: any,
-    broadcast: any
+    serviceUuid: UUID,
+    characteristicUuid: UUID,
+    broadcast: boolean
   ) {
-    const characteristic: any = this.getCharacteristic(
+    const characteristic = this.getCharacteristic(
       serviceUuid,
       characteristicUuid
     );
@@ -569,10 +590,10 @@ class Gatt extends EventEmitter<GattEventTypes> {
       ATT.OP_READ_BY_TYPE_RESP
     );
 
-    const opcode: any = data[0];
+    const opcode = data[0];
     // let type = data[1];
-    const handle: any = data.readUInt16LE(2);
-    let value: any = data.readUInt16LE(4);
+    const handle = data.readUInt16LE(2);
+    let value = data.readUInt16LE(4);
 
     if (broadcast) {
       value |= 0x0001;
@@ -580,7 +601,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
       value &= 0xfffe;
     }
 
-    const valueBuffer: any = Buffer.alloc(2);
+    const valueBuffer = Buffer.alloc(2);
     valueBuffer.writeUInt16LE(value, 0);
 
     const _data = await this._execCommandWait(
@@ -590,20 +611,25 @@ class Gatt extends EventEmitter<GattEventTypes> {
   }
 
   public async notifyWait(
-    serviceUuid: any,
-    characteristicUuid: any,
-    notify: any
+    serviceUuid: UUID,
+    characteristicUuid: UUID,
+    notify: boolean
   ): Promise<void> {
-    const characteristic: any = this.getCharacteristic(
+    const characteristic = this.getCharacteristic(
       serviceUuid,
       characteristicUuid
     );
-    // const descriptor: any = this.getDescriptor(serviceUuid, characteristicUuid, "2902");
+    // const descriptor = this.getDescriptor(serviceUuid, characteristicUuid, "2902");
 
-    let value: any = null;
-    let handle: any = null;
+    let value: number;
+    let handle = null;
     try {
-      value = await this.readValueWait(serviceUuid, characteristicUuid, '2902');
+      const buf = await this.readValueWait(
+        serviceUuid,
+        characteristicUuid,
+        '2902'
+      );
+      value = buf.readUInt16LE(0);
     } catch (e) {
       // retry
       const data = await this._execCommandWait(
@@ -615,14 +641,14 @@ class Gatt extends EventEmitter<GattEventTypes> {
         ATT.OP_READ_BY_TYPE_RESP
       );
 
-      const opcode: any = data[0];
+      const opcode = data[0];
       // let type = data[1];
       handle = data.readUInt16LE(2);
       value = data.readUInt16LE(4);
     }
 
-    const useNotify: any = characteristic.properties & 0x10;
-    const useIndicate: any = characteristic.properties & 0x20;
+    const useNotify = characteristic.properties & 0x10;
+    const useIndicate = characteristic.properties & 0x20;
 
     if (notify) {
       if (useNotify) {
@@ -638,7 +664,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
       }
     }
 
-    const valueBuffer: any = Buffer.alloc(2);
+    const valueBuffer = Buffer.alloc(2);
     valueBuffer.writeUInt16LE(value, 0);
 
     let _data = null;
@@ -657,19 +683,19 @@ class Gatt extends EventEmitter<GattEventTypes> {
       );
     }
 
-    const _opcode: any = _data && _data[0];
+    const _opcode = _data && _data[0];
     debug('set notify write results: ' + (_opcode === ATT.OP_WRITE_RESP));
   }
 
   public async discoverDescriptorsWait(
-    serviceUuid: any,
-    characteristicUuid: any
+    serviceUuid: UUID,
+    characteristicUuid: UUID
   ): Promise<UUID[]> {
     const characteristic = this.getCharacteristic(
       serviceUuid,
       characteristicUuid
     );
-    const descriptors = [];
+    const descriptors: GattDescriptor[] = [];
 
     this._descriptors[serviceUuid][characteristicUuid] = {};
     let startHandle = characteristic.valueHandle + 1;
@@ -717,11 +743,11 @@ class Gatt extends EventEmitter<GattEventTypes> {
   }
 
   public async readValueWait(
-    serviceUuid: any,
-    characteristicUuid: any,
-    descriptorUuid: any
+    serviceUuid: UUID,
+    characteristicUuid: UUID,
+    descriptorUuid: UUID
   ): Promise<Buffer> {
-    const descriptor: any = this.getDescriptor(
+    const descriptor = this.getDescriptor(
       serviceUuid,
       characteristicUuid,
       descriptorUuid
@@ -736,12 +762,12 @@ class Gatt extends EventEmitter<GattEventTypes> {
   }
 
   public async writeValueWait(
-    serviceUuid: any,
-    characteristicUuid: any,
-    descriptorUuid: any,
-    data: any
+    serviceUuid: UUID,
+    characteristicUuid: UUID,
+    descriptorUuid: UUID,
+    data: Buffer
   ): Promise<Buffer> {
-    const descriptor: any = this.getDescriptor(
+    const descriptor = this.getDescriptor(
       serviceUuid,
       characteristicUuid,
       descriptorUuid
@@ -753,7 +779,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
     );
   }
 
-  public async readHandleWait(handle: any): Promise<Buffer> {
+  public async readHandleWait(handle: HandleIndex): Promise<Buffer> {
     const data = await this._execCommandWait(
       this.readRequest(handle),
       ATT.OP_READ_RESP
@@ -761,7 +787,11 @@ class Gatt extends EventEmitter<GattEventTypes> {
     return data.slice(1);
   }
 
-  public async writeHandleWait(handle: any, data: any, withoutResponse: any) {
+  public async writeHandleWait(
+    handle: HandleIndex,
+    data: Buffer,
+    withoutResponse: boolean
+  ) {
     if (withoutResponse) {
       await this._execNoRespCommandWait(this.writeRequest(handle, data, true));
     } else {
@@ -772,15 +802,15 @@ class Gatt extends EventEmitter<GattEventTypes> {
     }
   }
 
-  private onAclStreamData(cid: any, data?: any) {
+  private onAclStreamData(cid: number, data: Buffer) {
     if (cid !== ATT.CID) {
       return;
     }
 
     // notify / indicate
     if (data[0] === ATT.OP_HANDLE_NOTIFY || data[0] === ATT.OP_HANDLE_IND) {
-      const valueHandle: any = data.readUInt16LE(1);
-      const valueData: any = data.slice(3);
+      const valueHandle = data.readUInt16LE(1);
+      const valueData = data.slice(3);
 
       this.emit('handleNotify', this._address, valueHandle, valueData);
 
@@ -807,6 +837,8 @@ class Gatt extends EventEmitter<GattEventTypes> {
           }
         }
       }
+    } else {
+      // TODO
     }
   }
 
@@ -828,8 +860,8 @@ class Gatt extends EventEmitter<GattEventTypes> {
     this._aclStream.write(ATT.CID, data);
   }
 
-  private errorResponse(opcode: any, handle: any, status: any) {
-    const buf: any = Buffer.alloc(5);
+  private errorResponse(opcode: number, handle: HandleIndex, status: number) {
+    const buf = Buffer.alloc(5);
 
     buf.writeUInt8(ATT.OP_ERROR, 0);
     buf.writeUInt8(opcode, 1);
@@ -839,8 +871,8 @@ class Gatt extends EventEmitter<GattEventTypes> {
     return buf;
   }
 
-  private mtuRequest(mtu: any) {
-    const buf: any = Buffer.alloc(3);
+  private mtuRequest(mtu: number) {
+    const buf = Buffer.alloc(3);
 
     buf.writeUInt8(ATT.OP_MTU_REQ, 0);
     buf.writeUInt16LE(mtu, 1);
@@ -848,8 +880,8 @@ class Gatt extends EventEmitter<GattEventTypes> {
     return buf;
   }
 
-  private mtuResponse(mtu: any) {
-    const buf: any = Buffer.alloc(3);
+  private mtuResponse(mtu: number) {
+    const buf = Buffer.alloc(3);
 
     buf.writeUInt8(ATT.OP_MTU_RESP, 0);
     buf.writeUInt16LE(mtu, 1);
@@ -860,7 +892,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
   private readByGroupRequest(
     startHandle: number,
     endHandle: number,
-    groupUuid: any
+    groupUuid: number
   ) {
     const buf = Buffer.alloc(7);
 
@@ -875,7 +907,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
   private readByTypeRequest(
     startHandle: number,
     endHandle: number,
-    groupUuid: any
+    groupUuid: number
   ) {
     const buf = Buffer.alloc(7);
 
@@ -887,8 +919,8 @@ class Gatt extends EventEmitter<GattEventTypes> {
     return buf;
   }
 
-  private readRequest(handle: any) {
-    const buf: any = Buffer.alloc(3);
+  private readRequest(handle: HandleIndex) {
+    const buf = Buffer.alloc(3);
 
     buf.writeUInt8(ATT.OP_READ_REQ, 0);
     buf.writeUInt16LE(handle, 1);
@@ -896,8 +928,8 @@ class Gatt extends EventEmitter<GattEventTypes> {
     return buf;
   }
 
-  private readBlobRequest(handle: any, offset: any) {
-    const buf: any = Buffer.alloc(5);
+  private readBlobRequest(handle: HandleIndex, offset: number) {
+    const buf = Buffer.alloc(5);
 
     buf.writeUInt8(ATT.OP_READ_BLOB_REQ, 0);
     buf.writeUInt16LE(handle, 1);
@@ -906,8 +938,8 @@ class Gatt extends EventEmitter<GattEventTypes> {
     return buf;
   }
 
-  private findInfoRequest(startHandle: any, endHandle: any) {
-    const buf: any = Buffer.alloc(5);
+  private findInfoRequest(startHandle: HandleIndex, endHandle: HandleIndex) {
+    const buf = Buffer.alloc(5);
 
     buf.writeUInt8(ATT.OP_FIND_INFO_REQ, 0);
     buf.writeUInt16LE(startHandle, 1);
@@ -916,8 +948,12 @@ class Gatt extends EventEmitter<GattEventTypes> {
     return buf;
   }
 
-  private writeRequest(handle: any, data: any, withoutResponse: any) {
-    const buf: any = Buffer.alloc(3 + data.length);
+  private writeRequest(
+    handle: HandleIndex,
+    data: Buffer,
+    withoutResponse: boolean
+  ) {
+    const buf = Buffer.alloc(3 + data.length);
 
     buf.writeUInt8(withoutResponse ? ATT.OP_WRITE_CMD : ATT.OP_WRITE_REQ, 0);
     buf.writeUInt16LE(handle, 1);
@@ -929,8 +965,12 @@ class Gatt extends EventEmitter<GattEventTypes> {
     return buf;
   }
 
-  private prepareWriteRequest(handle: any, offset: any, data: any) {
-    const buf: any = Buffer.alloc(5 + data.length);
+  private prepareWriteRequest(
+    handle: HandleIndex,
+    offset: number,
+    data: Buffer
+  ) {
+    const buf = Buffer.alloc(5 + data.length);
 
     buf.writeUInt8(ATT.OP_PREPARE_WRITE_REQ, 0);
     buf.writeUInt16LE(handle, 1);
@@ -943,8 +983,11 @@ class Gatt extends EventEmitter<GattEventTypes> {
     return buf;
   }
 
-  private executeWriteRequest(handle: any, cancelPreparedWrites?: any) {
-    const buf: any = Buffer.alloc(2);
+  private executeWriteRequest(
+    handle: HandleIndex,
+    cancelPreparedWrites?: boolean
+  ) {
+    const buf = Buffer.alloc(2);
 
     buf.writeUInt8(ATT.OP_EXECUTE_WRITE_REQ, 0);
     buf.writeUInt8(cancelPreparedWrites ? 0 : 1, 1);
@@ -953,7 +996,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
   }
 
   private handleConfirmation() {
-    const buf: any = Buffer.alloc(1);
+    const buf = Buffer.alloc(1);
 
     buf.writeUInt8(ATT.OP_HANDLE_CNF, 0);
 
@@ -962,29 +1005,29 @@ class Gatt extends EventEmitter<GattEventTypes> {
 
   /* Perform a "long write" as described Bluetooth Spec section 4.9.4 "Write Long Characteristic Values" */
   private async longWriteWait(
-    serviceUuid: any,
-    characteristicUuid: any,
-    data: any,
-    withoutResponse: any
+    serviceUuid: UUID,
+    characteristicUuid: UUID,
+    data: Buffer,
+    withoutResponse: boolean
   ) {
-    const characteristic: any = this.getCharacteristic(
+    const characteristic = this.getCharacteristic(
       serviceUuid,
       characteristicUuid
     );
-    const limit: any = this._mtu - 5;
+    const limit = this._mtu - 5;
 
     /* split into prepare-write chunks and queue them */
-    let offset: any = 0;
+    let offset = 0;
 
     while (offset < data.length) {
-      const end: any = offset + limit;
-      const chunk: any = data.slice(offset, end);
+      const end = offset + limit;
+      const chunk = data.slice(offset, end);
       const _resp = await this._execCommandWait(
         this.prepareWriteRequest(characteristic.valueHandle, offset, chunk),
         ATT.OP_PREPARE_WRITE_RESP
       );
 
-      const expected_length: any = chunk.length + 5;
+      const expected_length = chunk.length + 5;
 
       if (_resp.length !== expected_length) {
         /* the response should contain the data packet echoed back to the caller */
@@ -1033,9 +1076,9 @@ class Gatt extends EventEmitter<GattEventTypes> {
   }
 
   private getDescriptor(
-    serviceUuid: any,
-    characteristicUuid: any,
-    descriptorUuid: any
+    serviceUuid: UUID,
+    characteristicUuid: UUID,
+    descriptorUuid: UUID
   ) {
     if (
       !this._descriptors[serviceUuid] ||
@@ -1066,7 +1109,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
   private _runQueueCommand() {
     if (this._currentCommand === null) {
       while (this._commandQueue.length) {
-        this._currentCommand = this._commandQueue.shift();
+        this._currentCommand = this._commandQueue.shift() as CommandQueue;
 
         this.writeAtt(this._currentCommand.buffer);
         if (this._currentCommand.callback) {
@@ -1079,9 +1122,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
     }
   }
 
-  private _serialPromiseQueueWait<T>(
-    func: (...arg0: any) => Promise<T>
-  ): Promise<T> {
+  private _serialPromiseQueueWait<T>(func: () => Promise<T>): Promise<T> {
     const onfinish = () => {
       this._commandPromises = this._commandPromises.filter(
         (e) => e !== resultPromise
@@ -1091,7 +1132,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
       }
     };
 
-    let disconnectReject: any = null;
+    let disconnectReject: null | EventEmitter.ListenerFn = null;
     const doPromise = Promise.all(this._commandPromises)
       .catch((error) => {
         // nothing

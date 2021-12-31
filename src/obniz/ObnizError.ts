@@ -268,3 +268,9 @@ export class ObnizBleScanStartError extends ObnizError {
     );
   }
 }
+
+export class ObnizBleGattHandleError extends ObnizError {
+  constructor(msg: any) {
+    super(18, msg);
+  }
+}

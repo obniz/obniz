@@ -54,8 +54,8 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<
   /**
    * @ignore
    */
-  get parentName(): string | null {
-    return 'service';
+  get parentName() {
+    return 'service' as const;
   }
 
   /**
@@ -68,8 +68,8 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<
   /**
    * @ignore
    */
-  get childrenName(): string | null {
-    return 'descriptors';
+  get childrenName() {
+    return 'descriptors' as const;
   }
 
   /**
@@ -220,10 +220,21 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<
    * @param name
    * @param params
    */
-  public emit(name: any, ...params: any) {
-    const result: any = super.emit(name, ...params);
-    if (result) {
-      return result;
+  public emit(
+    name:
+      | 'readRequest'
+      | 'writeRequest'
+      | 'subscribe'
+      | 'unsubscribe'
+      | 'notify'
+      | 'indicate',
+    ...params: any
+  ) {
+    if (name === 'readRequest' || name === 'writeRequest') {
+      const result: any = super.emit(name, ...params);
+      if (result) {
+        return result;
+      }
     }
     switch (name) {
       case 'subscribe':

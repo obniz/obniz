@@ -18,11 +18,13 @@ import {
   Handle,
   UUID,
 } from '../../bleTypes';
-import Hci from '../hci';
+import Hci, { HciState } from '../hci';
+import { HandleIndex } from '../peripheral/gatt';
 import AclStream from './acl-stream';
 import Gap from './gap';
 import Gatt from './gatt';
 import Signaling from './signaling';
+import { SmpEncryptOptions } from './smp';
 
 type NobleBindingsEventType =
   // notify from peripheral
@@ -36,9 +38,9 @@ type NobleBindingsEventType =
  * @ignore
  */
 class NobleBindings extends EventEmitter<NobleBindingsEventType> {
-  public _connectable: any;
+  public _connectable: { [key: string]: boolean };
 
-  private _state: any;
+  private _state: HciState | null;
   private _addresses: { [uuid: string]: BleDeviceAddress };
   private _addresseTypes: { [uuid: string]: BleDeviceAddressType };
   private _handles: any;
@@ -47,7 +49,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   private _signalings: any;
   private _hci: Hci;
   private _gap: Gap;
-  private _scanServiceUuids: any;
+  private _scanServiceUuids: UUID[] | null = null;
   private _connectPromises: Promise<any>[];
 
   constructor(hciProtocol: any) {
@@ -109,11 +111,11 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   }
 
   public async startScanningWait(
-    serviceUuids: any,
-    allowDuplicates: any,
+    serviceUuids: UUID[],
+    allowDuplicates: boolean,
     activeScan: boolean
   ) {
-    this._scanServiceUuids = serviceUuids || [];
+    this._scanServiceUuids = serviceUuids ?? null;
 
     await this._gap.startScanningWait(allowDuplicates, activeScan);
   }
@@ -123,7 +125,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   }
 
   public async connectWait(
-    peripheralUuid: any,
+    peripheralUuid: BleDeviceAddress,
     mtu: number | null,
     onConnectCallback?: any
   ) {
@@ -191,59 +193,40 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     return rssi;
   }
 
-  public onStateChange(state: any) {
+  public onStateChange(state: HciState) {
     if (this._state === state) {
       return;
     }
     this._state = state;
-
-    if (state === 'unauthorized') {
-      console.log(
-        'noble warning: adapter state unauthorized, please run as root or with sudo'
-      );
-      console.log(
-        '               or see README for information on running without root/sudo:'
-      );
-      console.log(
-        '               https://github.com/sandeepmistry/noble#running-on-linux'
-      );
-    } else if (state === 'unsupported') {
-      console.log(
-        'noble warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).'
-      );
-      console.log('               Try to run with environment variable:');
-      console.log('               [sudo] NOBLE_HCI_DEVICE_ID=x node ...');
-    }
 
     this.emit('stateChange', state);
   }
 
   public onDiscover(
     status: any,
-    address?: any,
-    addressType?: any,
-    connectable?: any,
-    advertisement?: any,
-    rssi?: any
+    address: any,
+    addressType: any,
+    connectable: any,
+    advertisement: any,
+    rssi: number
   ) {
-    if (this._scanServiceUuids === undefined) {
+    if (this._scanServiceUuids === null) {
+      // scan not started ?
       return;
     }
 
-    let serviceUuids: any = advertisement.serviceUuids || [];
-    const serviceData: any = advertisement.serviceData || [];
-    let hasScanServiceUuids: any = this._scanServiceUuids.length === 0;
+    let serviceUuids = advertisement.serviceUuids || [];
+    const serviceData = advertisement.serviceData || [];
+    let hasScanServiceUuids = this._scanServiceUuids.length === 0;
 
     if (!hasScanServiceUuids) {
-      let i: any;
-
       serviceUuids = serviceUuids.slice();
 
-      for (i in serviceData) {
+      for (const i in serviceData) {
         serviceUuids.push(serviceData[i].uuid);
       }
 
-      for (i in serviceUuids) {
+      for (const i in serviceUuids) {
         hasScanServiceUuids =
           this._scanServiceUuids.indexOf(serviceUuids[i]) !== -1;
 
@@ -273,26 +256,24 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
 
   public onLeConnComplete(
     status: any,
-    handle?: any,
-    role?: any,
-    addressType?: any,
-    address?: BleDeviceAddress,
-    interval?: any,
-    latency?: any,
-    supervisionTimeout?: any,
-    masterClockAccuracy?: any
+    handle: any,
+    role: any,
+    addressType: any,
+    address: BleDeviceAddress,
+    interval: any,
+    latency: any,
+    supervisionTimeout: any,
+    masterClockAccuracy: any
   ) {
     if (role !== 0) {
       // not master, ignore
       return;
     }
 
-    let uuid: any = null;
-
     if (status !== 0) {
       throw new ObnizBleHciStateError(status);
     }
-    uuid = address!.split(':').join('').toLowerCase();
+    const uuid = address!.split(':').join('').toLowerCase();
 
     const aclStream: AclStream = new AclStream(
       this._hci,
@@ -326,7 +307,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   }
 
   public onDisconnComplete(handle: any, reason: number) {
-    const uuid: any = this._handles[handle];
+    const uuid = this._handles[handle];
 
     if (uuid) {
       const error = new ObnizBleHciStateError(reason, {
@@ -383,9 +364,9 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   }
 
   public async discoverCharacteristicsWait(
-    peripheralUuid: any,
-    serviceUuid: any,
-    characteristicUuids?: any
+    peripheralUuid: BleDeviceAddress,
+    serviceUuid: UUID,
+    characteristicUuids?: UUID[]
   ) {
     const gatt: Gatt = this.getGatt(peripheralUuid);
     const chars = await gatt.discoverCharacteristicsWait(
@@ -396,9 +377,9 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   }
 
   public async readWait(
-    peripheralUuid: any,
-    serviceUuid: any,
-    characteristicUuid: any
+    peripheralUuid: BleDeviceAddress,
+    serviceUuid: UUID,
+    characteristicUuid: UUID
   ): Promise<Buffer> {
     const gatt: Gatt = this.getGatt(peripheralUuid);
     const data = await gatt.readWait(serviceUuid, characteristicUuid);
@@ -406,11 +387,11 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   }
 
   public async writeWait(
-    peripheralUuid: any,
-    serviceUuid: any,
-    characteristicUuid: any,
-    data: any,
-    withoutResponse: any
+    peripheralUuid: BleDeviceAddress,
+    serviceUuid: UUID,
+    characteristicUuid: UUID,
+    data: Buffer,
+    withoutResponse: boolean
   ): Promise<void> {
     const gatt: Gatt = this.getGatt(peripheralUuid);
     await gatt.writeWait(
@@ -422,30 +403,30 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   }
 
   public async broadcastWait(
-    peripheralUuid: any,
-    serviceUuid: any,
-    characteristicUuid: any,
-    broadcast: any
+    peripheralUuid: BleDeviceAddress,
+    serviceUuid: UUID,
+    characteristicUuid: UUID,
+    broadcast: boolean
   ): Promise<void> {
     const gatt: Gatt = this.getGatt(peripheralUuid);
     await gatt.broadcastWait(serviceUuid, characteristicUuid, broadcast);
   }
 
   public async notifyWait(
-    peripheralUuid: any,
-    serviceUuid: any,
-    characteristicUuid: any,
-    notify: any
+    peripheralUuid: BleDeviceAddress,
+    serviceUuid: UUID,
+    characteristicUuid: UUID,
+    notify: boolean
   ) {
     const gatt: Gatt = this.getGatt(peripheralUuid);
     await gatt.notifyWait(serviceUuid, characteristicUuid, notify);
   }
 
   public onNotification(
-    address: any,
-    serviceUuid?: any,
-    characteristicUuid?: any,
-    data?: any
+    address: BleDeviceAddress,
+    serviceUuid?: UUID,
+    characteristicUuid?: UUID,
+    data?: Buffer
   ) {
     const uuid: any = address.split(':').join('').toLowerCase();
 
@@ -484,11 +465,11 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   }
 
   public async writeValueWait(
-    peripheralUuid: any,
-    serviceUuid: any,
-    characteristicUuid: any,
-    descriptorUuid: any,
-    data: any
+    peripheralUuid: BleDeviceAddress,
+    serviceUuid: UUID,
+    characteristicUuid: UUID,
+    descriptorUuid: UUID,
+    data: Buffer
   ) {
     const gatt: Gatt = this.getGatt(peripheralUuid);
     await gatt.writeValueWait(
@@ -500,8 +481,8 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   }
 
   public async readHandleWait(
-    peripheralUuid: any,
-    attHandle: any
+    peripheralUuid: BleDeviceAddress,
+    attHandle: HandleIndex
   ): Promise<Buffer> {
     const gatt: Gatt = this.getGatt(peripheralUuid);
     const data = await gatt.readHandleWait(attHandle);
@@ -509,16 +490,20 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   }
 
   public async writeHandleWait(
-    peripheralUuid: any,
-    attHandle: any,
-    data: any,
-    withoutResponse: any
+    peripheralUuid: BleDeviceAddress,
+    attHandle: HandleIndex,
+    data: Buffer,
+    withoutResponse: boolean
   ): Promise<void> {
     const gatt: Gatt = this.getGatt(peripheralUuid);
     await gatt.writeHandleWait(attHandle, data, withoutResponse);
   }
 
-  public onHandleNotify(address: any, handle?: any, data?: any) {
+  public onHandleNotify(
+    address: BleDeviceAddress,
+    handle?: HandleIndex,
+    data?: Buffer
+  ) {
     const uuid: any = address.split(':').join('').toLowerCase();
 
     this.emit('handleNotify', uuid, handle, data);
@@ -526,10 +511,10 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
 
   public onConnectionParameterUpdateWait(
     handle: Handle,
-    minInterval?: any,
-    maxInterval?: any,
-    latency?: any,
-    supervisionTimeout?: any
+    minInterval: number,
+    maxInterval: number,
+    latency: number,
+    supervisionTimeout: number
   ) {
     this._hci
       .connUpdateLeWait(
@@ -551,8 +536,8 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   }
 
   public async pairingWait(
-    peripheralUuid: any,
-    options?: any
+    peripheralUuid: BleDeviceAddress,
+    options?: SmpEncryptOptions
   ): Promise<string> {
     options = options || {};
     const gatt: Gatt = this.getGatt(peripheralUuid);
@@ -560,13 +545,16 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     return result;
   }
 
-  public setPairingOption(peripheralUuid: any, options: any) {
+  public setPairingOption(
+    peripheralUuid: BleDeviceAddress,
+    options: SmpEncryptOptions
+  ) {
     options = options || {};
     const gatt: Gatt = this.getGatt(peripheralUuid);
     gatt.setEncryptOption(options);
   }
 
-  private getGatt(peripheralUuid: any): Gatt {
+  private getGatt(peripheralUuid: BleDeviceAddress): Gatt {
     const handle = this._handles[peripheralUuid];
     const gatt: Gatt = this._gatts[handle];
 
@@ -576,7 +564,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     return gatt;
   }
 
-  private debug(text: any) {
+  private debug(text: string) {
     this.debugHandler(`${text}`);
   }
 }

@@ -22,6 +22,7 @@ const signaling_1 = __importDefault(require("./signaling"));
 class NobleBindings extends eventemitter3_1.default {
     constructor(hciProtocol) {
         super();
+        this._scanServiceUuids = null;
         this.debugHandler = () => {
             // do nothing.
         };
@@ -67,7 +68,7 @@ class NobleBindings extends eventemitter3_1.default {
         }
     }
     async startScanningWait(serviceUuids, allowDuplicates, activeScan) {
-        this._scanServiceUuids = serviceUuids || [];
+        this._scanServiceUuids = (serviceUuids !== null && serviceUuids !== void 0 ? serviceUuids : null);
         await this._gap.startScanningWait(allowDuplicates, activeScan);
     }
     async stopScanningWait() {
@@ -116,32 +117,22 @@ class NobleBindings extends eventemitter3_1.default {
             return;
         }
         this._state = state;
-        if (state === 'unauthorized') {
-            console.log('noble warning: adapter state unauthorized, please run as root or with sudo');
-            console.log('               or see README for information on running without root/sudo:');
-            console.log('               https://github.com/sandeepmistry/noble#running-on-linux');
-        }
-        else if (state === 'unsupported') {
-            console.log('noble warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).');
-            console.log('               Try to run with environment variable:');
-            console.log('               [sudo] NOBLE_HCI_DEVICE_ID=x node ...');
-        }
         this.emit('stateChange', state);
     }
     onDiscover(status, address, addressType, connectable, advertisement, rssi) {
-        if (this._scanServiceUuids === undefined) {
+        if (this._scanServiceUuids === null) {
+            // scan not started ?
             return;
         }
         let serviceUuids = advertisement.serviceUuids || [];
         const serviceData = advertisement.serviceData || [];
         let hasScanServiceUuids = this._scanServiceUuids.length === 0;
         if (!hasScanServiceUuids) {
-            let i;
             serviceUuids = serviceUuids.slice();
-            for (i in serviceData) {
+            for (const i in serviceData) {
                 serviceUuids.push(serviceData[i].uuid);
             }
-            for (i in serviceUuids) {
+            for (const i in serviceUuids) {
                 hasScanServiceUuids =
                     this._scanServiceUuids.indexOf(serviceUuids[i]) !== -1;
                 if (hasScanServiceUuids) {
@@ -162,11 +153,10 @@ class NobleBindings extends eventemitter3_1.default {
             // not master, ignore
             return;
         }
-        let uuid = null;
         if (status !== 0) {
             throw new ObnizError_1.ObnizBleHciStateError(status);
         }
-        uuid = address.split(':').join('').toLowerCase();
+        const uuid = address.split(':').join('').toLowerCase();
         const aclStream = new acl_stream_1.default(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
         aclStream.debugHandler = (text) => {
             this.debug(text);

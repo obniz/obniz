@@ -246,7 +246,12 @@ describe('ble-hci-central', function () {
     sinon.assert.callCount(disconnectStub, 0);
 
 
+    this.obniz.debugprint=true;
 
+    await receiveHciCommandsWait(this.obniz, [0x02, 0x00, 0x20, 0x0b, 0x00, 0x07, 0x00, 0x04, 0x00, 0x10, 0x01, 0x00, 0xff, 0xff, 0x00, 0x28]);
+
+
+    await wait(10);
     //disconnect
     await receiveHciCommandsWait(this.obniz, [4, 5, 4, 0, 0, 0, 19]);
 

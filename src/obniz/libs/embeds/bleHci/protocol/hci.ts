@@ -216,7 +216,7 @@ type HciEventTypes =
   | 'encryptChange'
   | 'aclDataPkt';
 
-type HciState = 'poweredOn' | 'poweredOff';
+export type HciState = 'poweredOn' | 'poweredOff';
 
 /**
  * @ignore

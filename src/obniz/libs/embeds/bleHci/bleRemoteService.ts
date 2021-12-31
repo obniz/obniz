@@ -27,8 +27,8 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<
   /**
    * @ignore
    */
-  get parentName(): string | null {
-    return 'peripheral';
+  get parentName() {
+    return 'peripheral' as const;
   }
 
   /**
@@ -41,8 +41,8 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<
   /**
    * @ignore
    */
-  get childrenName(): string | null {
-    return 'characteristics';
+  get childrenName() {
+    return 'characteristics' as const;
   }
 
   /**

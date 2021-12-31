@@ -39,7 +39,7 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<Bl
     /**
      * @ignore
      */
-    get parentName(): string | null;
+    get parentName(): "service";
     /**
      * @ignore
      */
@@ -47,7 +47,7 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<Bl
     /**
      * @ignore
      */
-    get childrenName(): string | null;
+    get childrenName(): "descriptors";
     /**
      * Service instance
      */
@@ -134,7 +134,7 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<Bl
      * @param name
      * @param params
      */
-    emit(name: any, ...params: any): any;
+    emit(name: 'readRequest' | 'writeRequest' | 'subscribe' | 'unsubscribe' | 'notify' | 'indicate', ...params: any): any;
     /**
      * @ignore
      * @param maxValueSize

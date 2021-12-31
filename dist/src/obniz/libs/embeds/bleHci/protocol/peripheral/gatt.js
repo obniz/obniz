@@ -8,6 +8,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  *
  * @ignore
  */
+const ObnizError_1 = require("../../../../../ObnizError");
 const bleHelper_1 = __importDefault(require("../../bleHelper"));
 // var debug = require('debug')('gatt');
 const debug = () => {
@@ -90,6 +91,7 @@ class Gatt extends eventemitter3_1.default {
         this.maxMtu = 256;
         this._mtu = 23;
         this._preparedWriteRequest = null;
+        this._handles = [];
         this._reset();
         this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
         this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
@@ -115,7 +117,7 @@ class Gatt extends eventemitter3_1.default {
             const service = allServices[i];
             handle++;
             const serviceHandle = handle;
-            this._handles[serviceHandle] = {
+            const serviceHandleData = {
                 type: 'service',
                 uuid: service.uuid,
                 attribute: service,
@@ -207,7 +209,7 @@ class Gatt extends eventemitter3_1.default {
                     };
                 }
             }
-            this._handles[serviceHandle].endHandle = handle;
+            this._handles[serviceHandle] = Object.assign(Object.assign({}, serviceHandleData), { endHandle: handle });
         }
         // const debugHandles = [];
         // for (let i = 0; i < this._handles.length; i++) {
@@ -247,13 +249,14 @@ class Gatt extends eventemitter3_1.default {
         this._aclStream.removeListener('data', this.onAclStreamDataBinded);
         this._aclStream.removeListener('end', this.onAclStreamEndBinded);
         for (let i = 0; i < this._handles.length; i++) {
-            if (this._handles[i] &&
-                this._handles[i].type === 'descriptor' &&
-                this._handles[i].uuid === '2902' &&
-                this._handles[i].value.readUInt16LE(0) !== 0) {
-                this._handles[i].value = Buffer.from([0x00, 0x00]);
-                if (this._handles[i].attribute && this._handles[i].attribute.emit) {
-                    this._handles[i].attribute.emit('unsubscribe');
+            const targetHandle = this._handles[i];
+            if (targetHandle && targetHandle.type === 'descriptor') {
+                if (targetHandle.uuid === '2902' &&
+                    targetHandle.value.readUInt16LE(0) !== 0) {
+                    targetHandle.value = Buffer.from([0x00, 0x00]);
+                    if (targetHandle.attribute && targetHandle.attribute.emit) {
+                        targetHandle.attribute.emit('unsubscribe');
+                    }
                 }
             }
         }
@@ -342,8 +345,7 @@ class Gatt extends eventemitter3_1.default {
         const endHandle = request.readUInt16LE(3);
         const infos = [];
         let uuid = null;
-        let i;
-        for (i = startHandle; i <= endHandle; i++) {
+        for (let i = startHandle; i <= endHandle; i++) {
             const handle = this._handles[i];
             if (!handle) {
                 break;
@@ -359,7 +361,11 @@ class Gatt extends eventemitter3_1.default {
                 uuid = '2803';
             }
             else if ('characteristicValue' === handle.type) {
-                uuid = this._handles[i - 1].uuid;
+                const targetHandle = this._handles[i - 1];
+                if (!targetHandle || targetHandle.type !== 'characteristic') {
+                    throw new ObnizError_1.ObnizBleGattHandleError('cannot find target handle');
+                }
+                uuid = targetHandle.uuid;
             }
             else if ('descriptor' === handle.type) {
                 uuid = handle.uuid;
@@ -374,7 +380,7 @@ class Gatt extends eventemitter3_1.default {
         if (infos.length) {
             const uuidSize = infos[0].uuid.length / 2;
             let numInfo = 1;
-            for (i = 1; i < infos.length; i++) {
+            for (let i = 1; i < infos.length; i++) {
                 if (infos[0].uuid.length !== infos[i].uuid.length) {
                     break;
                 }
@@ -386,7 +392,7 @@ class Gatt extends eventemitter3_1.default {
             response = Buffer.alloc(2 + numInfo * lengthPerInfo);
             response[0] = ATT.OP_FIND_INFO_RESP;
             response[1] = uuidSize === 2 ? 0x01 : 0x2;
-            for (i = 0; i < numInfo; i++) {
+            for (let i = 0; i < numInfo; i++) {
                 const info = infos[i];
                 response.writeUInt16LE(info.handle, 2 + i * lengthPerInfo);
                 uuid = bleHelper_1.default.hex2reversedBuffer(info.uuid);
@@ -454,8 +460,7 @@ class Gatt extends eventemitter3_1.default {
         if ('2800' === uuid || '2802' === uuid) {
             const services = [];
             const type = '2800' === uuid ? 'service' : 'includedService';
-            let i;
-            for (i = startHandle; i <= endHandle; i++) {
+            for (let i = startHandle; i <= endHandle; i++) {
                 const handle = this._handles[i];
                 if (!handle) {
                     break;
@@ -467,7 +472,7 @@ class Gatt extends eventemitter3_1.default {
             if (services.length) {
                 const uuidSize = services[0].uuid.length / 2;
                 let numServices = 1;
-                for (i = 1; i < services.length; i++) {
+                for (let i = 1; i < services.length; i++) {
                     if (services[0].uuid.length !== services[i].uuid.length) {
                         break;
                     }
@@ -479,7 +484,7 @@ class Gatt extends eventemitter3_1.default {
                 response = Buffer.alloc(2 + numServices * lengthPerService);
                 response[0] = ATT.OP_READ_BY_GROUP_RESP;
                 response[1] = lengthPerService;
-                for (i = 0; i < numServices; i++) {
+                for (let i = 0; i < numServices; i++) {
                     const service = services[i];
                     response.writeUInt16LE(service.startHandle, 2 + i * lengthPerService);
                     response.writeUInt16LE(service.endHandle, 2 + i * lengthPerService + 2);
@@ -504,8 +509,6 @@ class Gatt extends eventemitter3_1.default {
         const startHandle = request.readUInt16LE(1);
         const endHandle = request.readUInt16LE(3);
         const uuid = bleHelper_1.default.buffer2reversedHex(request.slice(5));
-        let i;
-        let handle;
         debug('read by type: startHandle = 0x' +
             startHandle.toString(16) +
             ', endHandle = 0x' +
@@ -514,8 +517,8 @@ class Gatt extends eventemitter3_1.default {
             uuid);
         if ('2803' === uuid) {
             const characteristics = [];
-            for (i = startHandle; i <= endHandle; i++) {
-                handle = this._handles[i];
+            for (let i = startHandle; i <= endHandle; i++) {
+                const handle = this._handles[i];
                 if (!handle) {
                     break;
                 }
@@ -526,7 +529,7 @@ class Gatt extends eventemitter3_1.default {
             if (characteristics.length) {
                 const uuidSize = characteristics[0].uuid.length / 2;
                 let numCharacteristics = 1;
-                for (i = 1; i < characteristics.length; i++) {
+                for (let i = 1; i < characteristics.length; i++) {
                     if (characteristics[0].uuid.length !== characteristics[i].uuid.length) {
                         break;
                     }
@@ -538,7 +541,7 @@ class Gatt extends eventemitter3_1.default {
                 response = Buffer.alloc(2 + numCharacteristics * lengthPerCharacteristic);
                 response[0] = ATT.OP_READ_BY_TYPE_RESP;
                 response[1] = lengthPerCharacteristic;
-                for (i = 0; i < numCharacteristics; i++) {
+                for (let i = 0; i < numCharacteristics; i++) {
                     const characteristic = characteristics[i];
                     response.writeUInt16LE(characteristic.startHandle, 2 + i * lengthPerCharacteristic);
                     response.writeUInt8(characteristic.properties, 2 + i * lengthPerCharacteristic + 2);
@@ -558,8 +561,8 @@ class Gatt extends eventemitter3_1.default {
             let handleAttribute = null;
             let valueHandle = null;
             let secure = false;
-            for (i = startHandle; i <= endHandle; i++) {
-                handle = this._handles[i];
+            for (let i = startHandle; i <= endHandle; i++) {
+                const handle = this._handles[i];
                 if (!handle) {
                     break;
                 }
@@ -588,7 +591,7 @@ class Gatt extends eventemitter3_1.default {
                             callbackResponse[0] = ATT.OP_READ_BY_TYPE_RESP;
                             callbackResponse[1] = dataLength + 2;
                             callbackResponse.writeUInt16LE(_valueHandle, 2);
-                            for (i = 0; i < dataLength; i++) {
+                            for (let i = 0; i < dataLength; i++) {
                                 callbackResponse[4 + i] = _data[i];
                             }
                         }
@@ -599,7 +602,11 @@ class Gatt extends eventemitter3_1.default {
                         this.send(callbackResponse);
                     };
                 })(valueHandle);
-                const data = this._handles[valueHandle].value;
+                const targetHandle = this._handles[valueHandle];
+                if (!targetHandle || targetHandle.type !== 'characteristicValue') {
+                    throw new ObnizError_1.ObnizBleGattHandleError('unknown characteristicValue handle');
+                }
+                const data = targetHandle.value;
                 if (data) {
                     callback(ATT.ECODE_SUCCESS, data);
                 }
@@ -622,11 +629,9 @@ class Gatt extends eventemitter3_1.default {
         const valueHandle = request.readUInt16LE(1);
         const offset = requestType === ATT.OP_READ_BLOB_REQ ? request.readUInt16LE(3) : 0;
         const handle = this._handles[valueHandle];
-        let i;
         if (handle) {
             let result = null;
             let data = null;
-            const handleType = handle.type;
             const callback = ((_requestType, _valueHandle) => {
                 return (_result, _data) => {
                     let callbackResponse = null;
@@ -637,7 +642,7 @@ class Gatt extends eventemitter3_1.default {
                             _requestType === ATT.OP_READ_BLOB_REQ
                                 ? ATT.OP_READ_BLOB_RESP
                                 : ATT.OP_READ_RESP;
-                        for (i = 0; i < dataLength; i++) {
+                        for (let i = 0; i < dataLength; i++) {
                             callbackResponse[1 + i] = _data[i];
                         }
                     }
@@ -648,30 +653,28 @@ class Gatt extends eventemitter3_1.default {
                     this.send(callbackResponse);
                 };
             })(requestType, valueHandle);
-            if (handleType === 'service' || handleType === 'includedService') {
+            if (handle.type === 'service' || handle.type === 'includedService') {
                 result = ATT.ECODE_SUCCESS;
                 data = bleHelper_1.default.hex2reversedBuffer(handle.uuid);
             }
-            else if (handleType === 'characteristic') {
+            else if (handle.type === 'characteristic') {
                 const uuid = bleHelper_1.default.hex2reversedBuffer(handle.uuid);
                 result = ATT.ECODE_SUCCESS;
                 data = Buffer.alloc(3 + uuid.length);
                 data.writeUInt8(handle.properties, 0);
                 data.writeUInt16LE(handle.valueHandle, 1);
-                for (i = 0; i < uuid.length; i++) {
+                for (let i = 0; i < uuid.length; i++) {
                     data[i + 3] = uuid[i];
                 }
             }
-            else if (handleType === 'characteristicValue' ||
-                handleType === 'descriptor') {
-                let handleProperties = handle.properties;
-                let handleSecure = handle.secure;
-                let handleAttribute = handle.attribute;
-                if (handleType === 'characteristicValue') {
-                    handleProperties = this._handles[valueHandle - 1].properties;
-                    handleSecure = this._handles[valueHandle - 1].secure;
-                    handleAttribute = this._handles[valueHandle - 1].attribute;
-                }
+            else if (handle.type === 'characteristicValue' ||
+                handle.type === 'descriptor') {
+                const targetHandle = handle.type === 'descriptor'
+                    ? handle
+                    : this._handles[valueHandle - 1];
+                const handleProperties = targetHandle.properties;
+                const handleSecure = targetHandle.secure;
+                const handleAttribute = targetHandle.attribute;
                 if (handleProperties & 0x02) {
                     if (handleSecure & 0x02 &&
                         !(this._aclStream && this._aclStream.encrypted)) {
@@ -724,6 +727,9 @@ class Gatt extends eventemitter3_1.default {
             if (handle.type === 'characteristicValue') {
                 handle = this._handles[valueHandle - 1];
             }
+            if (handle.type !== 'characteristic' && handle.type !== 'descriptor') {
+                throw new ObnizError_1.ObnizBleGattHandleError('Request handle type is not valid');
+            }
             const handleProperties = handle.properties;
             const handleSecure = handle.secure;
             if (handleProperties &&
@@ -747,7 +753,7 @@ class Gatt extends eventemitter3_1.default {
                     !(this._aclStream && this._aclStream.encrypted)) {
                     response = this.errorResponse(requestType, valueHandle, ATT.ECODE_AUTHENTICATION);
                 }
-                else if (handle.type === 'descriptor' || handle.uuid === '2902') {
+                else if (handle.type === 'descriptor' && handle.uuid === '2902') {
                     let result = null;
                     if (data.length !== 2) {
                         result = ATT.ECODE_INVAL_ATTR_VALUE_LEN;

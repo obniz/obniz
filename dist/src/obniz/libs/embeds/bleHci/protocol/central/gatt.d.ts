@@ -1,19 +1,16 @@
 /// <reference types="node" />
-/**
- * @packageDocumentation
- *
- * @ignore
- */
+import { HandleIndex } from '../peripheral/gatt';
 import AclStream from './acl-stream';
 import EventEmitter from 'eventemitter3';
 import { BleDeviceAddress, UUID } from '../../bleTypes';
+import { SmpEncryptOptions } from './smp';
 declare type GattEventTypes = 'notification' | 'handleConfirmation' | 'handleNotify' | 'end';
 /**
  * @ignore
  */
 declare class Gatt extends EventEmitter<GattEventTypes> {
-    onAclStreamDataBinded: any;
-    onAclStreamEndBinded: any;
+    onAclStreamDataBinded: (cid: number, data: Buffer) => void;
+    onAclStreamEndBinded: () => void;
     private _address;
     private _aclStream;
     private _services;
@@ -26,22 +23,22 @@ declare class Gatt extends EventEmitter<GattEventTypes> {
     private _commandPromises;
     private _remoteMtuRequest;
     constructor(address: BleDeviceAddress, aclStream: AclStream);
-    encryptWait(options: any): Promise<string>;
-    setEncryptOption(options: any): void;
+    encryptWait(options: SmpEncryptOptions): Promise<string>;
+    setEncryptOption(options: SmpEncryptOptions): void;
     onEnd(reason: any): void;
-    exchangeMtuWait(mtu: number | null): Promise<any>;
-    discoverServicesWait(uuids: any): Promise<any>;
-    discoverIncludedServicesWait(serviceUuid: UUID, uuids: UUID[]): Promise<any>;
-    discoverCharacteristicsWait(serviceUuid: UUID, characteristicUuids: any): Promise<any>;
-    readWait(serviceUuid: any, characteristicUuid: any): Promise<Buffer>;
-    writeWait(serviceUuid: any, characteristicUuid: any, data: any, withoutResponse: any): Promise<void>;
-    broadcastWait(serviceUuid: any, characteristicUuid: any, broadcast: any): Promise<void>;
-    notifyWait(serviceUuid: any, characteristicUuid: any, notify: any): Promise<void>;
-    discoverDescriptorsWait(serviceUuid: any, characteristicUuid: any): Promise<UUID[]>;
-    readValueWait(serviceUuid: any, characteristicUuid: any, descriptorUuid: any): Promise<Buffer>;
-    writeValueWait(serviceUuid: any, characteristicUuid: any, descriptorUuid: any, data: any): Promise<Buffer>;
-    readHandleWait(handle: any): Promise<Buffer>;
-    writeHandleWait(handle: any, data: any, withoutResponse: any): Promise<void>;
+    exchangeMtuWait(mtu: number | null): Promise<number>;
+    discoverServicesWait(uuids: UUID[]): Promise<UUID[]>;
+    discoverIncludedServicesWait(serviceUuid: UUID, uuids: UUID[]): Promise<string[] | undefined>;
+    discoverCharacteristicsWait(serviceUuid: UUID, characteristicUuids: UUID[]): Promise<any[]>;
+    readWait(serviceUuid: UUID, characteristicUuid: UUID): Promise<Buffer>;
+    writeWait(serviceUuid: UUID, characteristicUuid: UUID, data: Buffer, withoutResponse: boolean): Promise<void>;
+    broadcastWait(serviceUuid: UUID, characteristicUuid: UUID, broadcast: boolean): Promise<void>;
+    notifyWait(serviceUuid: UUID, characteristicUuid: UUID, notify: boolean): Promise<void>;
+    discoverDescriptorsWait(serviceUuid: UUID, characteristicUuid: UUID): Promise<UUID[]>;
+    readValueWait(serviceUuid: UUID, characteristicUuid: UUID, descriptorUuid: UUID): Promise<Buffer>;
+    writeValueWait(serviceUuid: UUID, characteristicUuid: UUID, descriptorUuid: UUID, data: Buffer): Promise<Buffer>;
+    readHandleWait(handle: HandleIndex): Promise<Buffer>;
+    writeHandleWait(handle: HandleIndex, data: Buffer, withoutResponse: boolean): Promise<void>;
     private onAclStreamData;
     private onAclStreamEnd;
     private writeAtt;

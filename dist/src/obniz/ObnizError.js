@@ -246,3 +246,9 @@ class ObnizBleScanStartError extends ObnizError {
     }
 }
 exports.ObnizBleScanStartError = ObnizBleScanStartError;
+class ObnizBleGattHandleError extends ObnizError {
+    constructor(msg) {
+        super(18, msg);
+    }
+}
+exports.ObnizBleGattHandleError = ObnizBleGattHandleError;

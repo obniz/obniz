@@ -32,11 +32,11 @@ export default class BleService extends BleLocalAttributeAbstract<null, BleChara
     /**
      * @ignore
      */
-    get parentName(): string | null;
+    get parentName(): "peripheral";
     /**
      * @ignore
      */
-    get childrenName(): string | null;
+    get childrenName(): "characteristics";
     /**
      * @ignore
      */
