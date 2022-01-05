@@ -22,7 +22,7 @@ import Hci, { HciState } from '../hci';
 import { HandleIndex } from '../peripheral/gatt';
 import AclStream from './acl-stream';
 import Gap from './gap';
-import Gatt from './gatt';
+import GattCentral from './gatt';
 import Signaling from './signaling';
 import { SmpEncryptOptions } from './smp';
 
@@ -44,7 +44,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   private _addresses: { [uuid: string]: BleDeviceAddress };
   private _addresseTypes: { [uuid: string]: BleDeviceAddressType };
   private _handles: any;
-  private _gatts: { [handle: string]: Gatt };
+  private _gatts: { [handle: string]: GattCentral };
   private _aclStreams: { [key: string]: AclStream };
   private _signalings: any;
   private _hci: Hci;
@@ -286,7 +286,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     aclStream.debugHandler = (text: any) => {
       this.debug(text);
     };
-    const gatt = new Gatt(address!, aclStream);
+    const gatt = new GattCentral(address!, aclStream);
     const signaling: any = new Signaling(handle, aclStream);
 
     this._gatts[uuid] = this._gatts[handle] = gatt;
@@ -343,7 +343,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   }
 
   public async discoverServicesWait(peripheralUuid: any, uuids?: any) {
-    const gatt: Gatt = this.getGatt(peripheralUuid);
+    const gatt: GattCentral = this.getGatt(peripheralUuid);
 
     const services = await gatt.discoverServicesWait(uuids || []);
     return services;
@@ -354,7 +354,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     serviceUuid: UUID,
     serviceUuids: UUID[]
   ) {
-    const gatt: Gatt = this.getGatt(peripheralUuid);
+    const gatt: GattCentral = this.getGatt(peripheralUuid);
 
     const services = gatt.discoverIncludedServicesWait(
       serviceUuid,
@@ -368,7 +368,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     serviceUuid: UUID,
     characteristicUuids?: UUID[]
   ) {
-    const gatt: Gatt = this.getGatt(peripheralUuid);
+    const gatt: GattCentral = this.getGatt(peripheralUuid);
     const chars = await gatt.discoverCharacteristicsWait(
       serviceUuid,
       characteristicUuids || []
@@ -381,7 +381,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     serviceUuid: UUID,
     characteristicUuid: UUID
   ): Promise<Buffer> {
-    const gatt: Gatt = this.getGatt(peripheralUuid);
+    const gatt: GattCentral = this.getGatt(peripheralUuid);
     const data = await gatt.readWait(serviceUuid, characteristicUuid);
     return data;
   }
@@ -393,7 +393,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     data: Buffer,
     withoutResponse: boolean
   ): Promise<void> {
-    const gatt: Gatt = this.getGatt(peripheralUuid);
+    const gatt: GattCentral = this.getGatt(peripheralUuid);
     await gatt.writeWait(
       serviceUuid,
       characteristicUuid,
@@ -408,7 +408,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     characteristicUuid: UUID,
     broadcast: boolean
   ): Promise<void> {
-    const gatt: Gatt = this.getGatt(peripheralUuid);
+    const gatt: GattCentral = this.getGatt(peripheralUuid);
     await gatt.broadcastWait(serviceUuid, characteristicUuid, broadcast);
   }
 
@@ -418,7 +418,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     characteristicUuid: UUID,
     notify: boolean
   ) {
-    const gatt: Gatt = this.getGatt(peripheralUuid);
+    const gatt: GattCentral = this.getGatt(peripheralUuid);
     await gatt.notifyWait(serviceUuid, characteristicUuid, notify);
   }
 
@@ -446,7 +446,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     serviceUuid: UUID,
     characteristicUuid: UUID
   ): Promise<UUID[]> {
-    const gatt: Gatt = this.getGatt(peripheralUuid);
+    const gatt: GattCentral = this.getGatt(peripheralUuid);
     return await gatt.discoverDescriptorsWait(serviceUuid, characteristicUuid);
   }
 
@@ -456,7 +456,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     characteristicUuid: UUID,
     descriptorUuid: UUID
   ): Promise<Buffer> {
-    const gatt: Gatt = this.getGatt(peripheralUuid);
+    const gatt: GattCentral = this.getGatt(peripheralUuid);
     return await gatt.readValueWait(
       serviceUuid,
       characteristicUuid,
@@ -471,7 +471,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     descriptorUuid: UUID,
     data: Buffer
   ) {
-    const gatt: Gatt = this.getGatt(peripheralUuid);
+    const gatt: GattCentral = this.getGatt(peripheralUuid);
     await gatt.writeValueWait(
       serviceUuid,
       characteristicUuid,
@@ -484,7 +484,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     peripheralUuid: BleDeviceAddress,
     attHandle: HandleIndex
   ): Promise<Buffer> {
-    const gatt: Gatt = this.getGatt(peripheralUuid);
+    const gatt: GattCentral = this.getGatt(peripheralUuid);
     const data = await gatt.readHandleWait(attHandle);
     return data;
   }
@@ -495,7 +495,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     data: Buffer,
     withoutResponse: boolean
   ): Promise<void> {
-    const gatt: Gatt = this.getGatt(peripheralUuid);
+    const gatt: GattCentral = this.getGatt(peripheralUuid);
     await gatt.writeHandleWait(attHandle, data, withoutResponse);
   }
 
@@ -540,7 +540,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     options?: SmpEncryptOptions
   ): Promise<string> {
     options = options || {};
-    const gatt: Gatt = this.getGatt(peripheralUuid);
+    const gatt: GattCentral = this.getGatt(peripheralUuid);
     const result = await gatt.encryptWait(options);
     return result;
   }
@@ -550,13 +550,13 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     options: SmpEncryptOptions
   ) {
     options = options || {};
-    const gatt: Gatt = this.getGatt(peripheralUuid);
+    const gatt: GattCentral = this.getGatt(peripheralUuid);
     gatt.setEncryptOption(options);
   }
 
-  private getGatt(peripheralUuid: BleDeviceAddress): Gatt {
+  private getGatt(peripheralUuid: BleDeviceAddress): GattCentral {
     const handle = this._handles[peripheralUuid];
-    const gatt: Gatt = this._gatts[handle];
+    const gatt: GattCentral = this._gatts[handle];
 
     if (!gatt) {
       throw new ObnizBleUnknownPeripheralError(peripheralUuid);

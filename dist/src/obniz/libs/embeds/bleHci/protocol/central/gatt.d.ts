@@ -8,7 +8,7 @@ declare type GattEventTypes = 'notification' | 'handleConfirmation' | 'handleNot
 /**
  * @ignore
  */
-declare class Gatt extends EventEmitter<GattEventTypes> {
+declare class GattCentral extends EventEmitter<GattEventTypes> {
     onAclStreamDataBinded: (cid: number, data: Buffer) => void;
     onAclStreamEndBinded: () => void;
     private _address;
@@ -21,7 +21,9 @@ declare class Gatt extends EventEmitter<GattEventTypes> {
     private _mtu;
     private _security;
     private _commandPromises;
+    private _gattCommon;
     private _remoteMtuRequest;
+    private _gattPeripheral;
     constructor(address: BleDeviceAddress, aclStream: AclStream);
     encryptWait(options: SmpEncryptOptions): Promise<string>;
     setEncryptOption(options: SmpEncryptOptions): void;
@@ -42,18 +44,6 @@ declare class Gatt extends EventEmitter<GattEventTypes> {
     private onAclStreamData;
     private onAclStreamEnd;
     private writeAtt;
-    private errorResponse;
-    private mtuRequest;
-    private mtuResponse;
-    private readByGroupRequest;
-    private readByTypeRequest;
-    private readRequest;
-    private readBlobRequest;
-    private findInfoRequest;
-    private writeRequest;
-    private prepareWriteRequest;
-    private executeWriteRequest;
-    private handleConfirmation;
     private longWriteWait;
     private getService;
     private getCharacteristic;
@@ -64,4 +54,4 @@ declare class Gatt extends EventEmitter<GattEventTypes> {
     private _execCommandWait;
     private _execNoRespCommandWait;
 }
-export default Gatt;
+export default GattCentral;

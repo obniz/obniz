@@ -208,7 +208,7 @@ describe('ble-hci-central', function () {
   });
 
 
-  it('connect and receive read requet', async function () {
+  it('connect and receive read request', async function () {
     this.timeout(10 * 1000);
     await _initWaitTestWait(this.obniz);
 
@@ -252,6 +252,13 @@ describe('ble-hci-central', function () {
 
 
     await wait(10);
+
+    let secondCommands = [
+      //Read by Group Type Response
+      [0x02, 0x00, 0x00, 0x12, 0x00, 0x0e, 0x00, 0x04, 0x00, 0x11, 0x06, 0x01, 0x00, 0x05, 0x00, 0x01, 0x18, 0x14, 0x00, 0xff, 0xff, 0x00, 0x18]
+    ];
+    sendMultiCommands(this.obniz, secondCommands);
+
     //disconnect
     await receiveHciCommandsWait(this.obniz, [4, 5, 4, 0, 0, 0, 19]);
 

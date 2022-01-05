@@ -11,6 +11,8 @@ import {
 } from '../../../../../ObnizError';
 import BleHelper from '../../bleHelper';
 import { UUID } from '../../bleTypes';
+import { ATT } from '../common/att';
+import { GattCommon } from '../common/gatt';
 import AclStream from './acl-stream';
 
 // var debug = require('debug')('gatt');
@@ -21,62 +23,6 @@ const debug: any = () => {
 import EventEmitter from 'eventemitter3';
 
 /* eslint-disable no-unused-vars */
-
-/**
- * @ignore
- */
-// eslint-disable-next-line @typescript-eslint/no-namespace
-namespace ATT {
-  export const OP_ERROR = 0x01;
-  export const OP_MTU_REQ = 0x02;
-  export const OP_MTU_RESP = 0x03;
-  export const OP_FIND_INFO_REQ = 0x04;
-  export const OP_FIND_INFO_RESP = 0x05;
-  export const OP_FIND_BY_TYPE_REQ = 0x06;
-  export const OP_FIND_BY_TYPE_RESP = 0x07;
-  export const OP_READ_BY_TYPE_REQ = 0x08;
-  export const OP_READ_BY_TYPE_RESP = 0x09;
-  export const OP_READ_REQ = 0x0a;
-  export const OP_READ_RESP = 0x0b;
-  export const OP_READ_BLOB_REQ = 0x0c;
-  export const OP_READ_BLOB_RESP = 0x0d;
-  export const OP_READ_MULTI_REQ = 0x0e;
-  export const OP_READ_MULTI_RESP = 0x0f;
-  export const OP_READ_BY_GROUP_REQ = 0x10;
-  export const OP_READ_BY_GROUP_RESP = 0x11;
-  export const OP_WRITE_REQ = 0x12;
-  export const OP_WRITE_RESP = 0x13;
-  export const OP_WRITE_CMD = 0x52;
-  export const OP_PREP_WRITE_REQ = 0x16;
-  export const OP_PREP_WRITE_RESP = 0x17;
-  export const OP_EXEC_WRITE_REQ = 0x18;
-  export const OP_EXEC_WRITE_RESP = 0x19;
-  export const OP_HANDLE_NOTIFY = 0x1b;
-  export const OP_HANDLE_IND = 0x1d;
-  export const OP_HANDLE_CNF = 0x1e;
-  export const OP_SIGNED_WRITE_CMD = 0xd2;
-
-  export const ECODE_SUCCESS = 0x00;
-  export const ECODE_INVALID_HANDLE = 0x01;
-  export const ECODE_READ_NOT_PERM = 0x02;
-  export const ECODE_WRITE_NOT_PERM = 0x03;
-  export const ECODE_INVALID_PDU = 0x04;
-  export const ECODE_AUTHENTICATION = 0x05;
-  export const ECODE_REQ_NOT_SUPP = 0x06;
-  export const ECODE_INVALID_OFFSET = 0x07;
-  export const ECODE_AUTHORIZATION = 0x08;
-  export const ECODE_PREP_QUEUE_FULL = 0x09;
-  export const ECODE_ATTR_NOT_FOUND = 0x0a;
-  export const ECODE_ATTR_NOT_LONG = 0x0b;
-  export const ECODE_INSUFF_ENCR_KEY_SIZE = 0x0c;
-  export const ECODE_INVAL_ATTR_VALUE_LEN = 0x0d;
-  export const ECODE_UNLIKELY = 0x0e;
-  export const ECODE_INSUFF_ENC = 0x0f;
-  export const ECODE_UNSUPP_GRP_TYPE = 0x10;
-  export const ECODE_INSUFF_RESOURCES = 0x11;
-
-  export const CID = 0x0004;
-}
 
 /**
  * @ignore
@@ -148,7 +94,7 @@ type GattEventTypes = 'mtuChange';
 /**
  * @ignore
  */
-export default class Gatt extends EventEmitter<GattEventTypes> {
+export default class GattPeripheral extends EventEmitter<GattEventTypes> {
   public maxMtu = 256;
   public _mtu = 23;
   public _preparedWriteRequest: any = null;
@@ -157,11 +103,13 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
   public _handles: GattHandle[] = [];
   public _aclStream?: AclStream;
   public _lastIndicatedAttribute: any;
+  private _gattCommon: GattCommon;
 
   constructor() {
     super();
 
     this._reset();
+    this._gattCommon = new GattCommon();
 
     this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
     this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
@@ -388,17 +336,6 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
     this._aclStream.write(ATT.CID, data);
   }
 
-  public errorResponse(opcode: number, handle: HandleIndex, status: number) {
-    const buf = Buffer.alloc(5);
-
-    buf.writeUInt8(ATT.OP_ERROR, 0);
-    buf.writeUInt8(opcode, 1);
-    buf.writeUInt16LE(handle, 2);
-    buf.writeUInt8(status, 4);
-
-    return buf;
-  }
-
   public handleRequest(request: Buffer) {
     debug('handing request: ' + request.toString('hex'));
 
@@ -436,11 +373,11 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
         response = this.handleWriteRequestOrCommand(request);
         break;
 
-      case ATT.OP_PREP_WRITE_REQ:
+      case ATT.OP_PREPARE_WRITE_REQ:
         response = this.handlePrepareWriteRequest(request);
         break;
 
-      case ATT.OP_EXEC_WRITE_REQ:
+      case ATT.OP_EXECUTE_WRITE_REQ:
         response = this.handleExecuteWriteRequest(request);
         break;
 
@@ -451,7 +388,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
       default:
       case ATT.OP_READ_MULTI_REQ:
       case ATT.OP_SIGNED_WRITE_CMD:
-        response = this.errorResponse(
+        response = this._gattCommon.errorResponse(
           requestType,
           0x0000,
           ATT.ECODE_REQ_NOT_SUPP
@@ -560,7 +497,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
         }
       }
     } else {
-      response = this.errorResponse(
+      response = this._gattCommon.errorResponse(
         ATT.OP_FIND_INFO_REQ,
         startHandle,
         ATT.ECODE_ATTR_NOT_FOUND
@@ -618,7 +555,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
         response.writeUInt16LE(handle.end, 1 + i * lengthPerHandle + 2);
       }
     } else {
-      response = this.errorResponse(
+      response = this._gattCommon.errorResponse(
         ATT.OP_FIND_BY_TYPE_REQ,
         startHandle,
         ATT.ECODE_ATTR_NOT_FOUND
@@ -695,14 +632,14 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
           }
         }
       } else {
-        response = this.errorResponse(
+        response = this._gattCommon.errorResponse(
           ATT.OP_READ_BY_GROUP_REQ,
           startHandle,
           ATT.ECODE_ATTR_NOT_FOUND
         );
       }
     } else {
-      response = this.errorResponse(
+      response = this._gattCommon.errorResponse(
         ATT.OP_READ_BY_GROUP_REQ,
         startHandle,
         ATT.ECODE_UNSUPP_GRP_TYPE
@@ -795,7 +732,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
           }
         }
       } else {
-        response = this.errorResponse(
+        response = this._gattCommon.errorResponse(
           ATT.OP_READ_BY_TYPE_REQ,
           startHandle,
           ATT.ECODE_ATTR_NOT_FOUND
@@ -826,7 +763,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
       }
 
       if (secure && !(this._aclStream && this._aclStream.encrypted)) {
-        response = this.errorResponse(
+        response = this._gattCommon.errorResponse(
           ATT.OP_READ_BY_TYPE_REQ,
           startHandle,
           ATT.ECODE_AUTHENTICATION
@@ -847,7 +784,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
                 callbackResponse[4 + i] = _data[i];
               }
             } else {
-              callbackResponse = this.errorResponse(
+              callbackResponse = this._gattCommon.errorResponse(
                 requestType,
                 _valueHandle,
                 result
@@ -876,7 +813,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
           callback(ATT.ECODE_UNLIKELY);
         }
       } else {
-        response = this.errorResponse(
+        response = this._gattCommon.errorResponse(
           ATT.OP_READ_BY_TYPE_REQ,
           startHandle,
           ATT.ECODE_ATTR_NOT_FOUND
@@ -917,7 +854,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
               callbackResponse[1 + i] = _data[i];
             }
           } else {
-            callbackResponse = this.errorResponse(
+            callbackResponse = this._gattCommon.errorResponse(
               _requestType,
               _valueHandle,
               _result
@@ -993,7 +930,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
         callback(result, data);
       }
     } else {
-      response = this.errorResponse(
+      response = this._gattCommon.errorResponse(
         requestType,
         valueHandle,
         ATT.ECODE_INVALID_HANDLE
@@ -1041,7 +978,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
               if (ATT.ECODE_SUCCESS === result) {
                 callbackResponse = Buffer.from([ATT.OP_WRITE_RESP]);
               } else {
-                callbackResponse = this.errorResponse(
+                callbackResponse = this._gattCommon.errorResponse(
                   _requestType,
                   _valueHandle,
                   result
@@ -1059,7 +996,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
           handleSecure & (withoutResponse ? 0x04 : 0x08) &&
           !(this._aclStream && this._aclStream.encrypted)
         ) {
-          response = this.errorResponse(
+          response = this._gattCommon.errorResponse(
             requestType,
             valueHandle,
             ATT.ECODE_AUTHENTICATION
@@ -1147,14 +1084,14 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
           );
         }
       } else {
-        response = this.errorResponse(
+        response = this._gattCommon.errorResponse(
           requestType,
           valueHandle,
           ATT.ECODE_WRITE_NOT_PERM
         );
       }
     } else {
-      response = this.errorResponse(
+      response = this._gattCommon.errorResponse(
         requestType,
         valueHandle,
         ATT.ECODE_INVALID_HANDLE
@@ -1186,14 +1123,14 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
             handleSecure & 0x08 &&
             !(this._aclStream && this._aclStream.encrypted)
           ) {
-            response = this.errorResponse(
+            response = this._gattCommon.errorResponse(
               requestType,
               valueHandle,
               ATT.ECODE_AUTHENTICATION
             );
           } else if (this._preparedWriteRequest) {
             if (this._preparedWriteRequest.handle !== handle) {
-              response = this.errorResponse(
+              response = this._gattCommon.errorResponse(
                 requestType,
                 valueHandle,
                 ATT.ECODE_UNLIKELY
@@ -1210,9 +1147,9 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
 
               response = Buffer.alloc(request.length);
               request.copy(response);
-              response[0] = ATT.OP_PREP_WRITE_RESP;
+              response[0] = ATT.OP_PREPARE_WRITE_RESP;
             } else {
-              response = this.errorResponse(
+              response = this._gattCommon.errorResponse(
                 requestType,
                 valueHandle,
                 ATT.ECODE_INVALID_OFFSET
@@ -1228,24 +1165,24 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
 
             response = Buffer.alloc(request.length);
             request.copy(response);
-            response[0] = ATT.OP_PREP_WRITE_RESP;
+            response[0] = ATT.OP_PREPARE_WRITE_RESP;
           }
         } else {
-          response = this.errorResponse(
+          response = this._gattCommon.errorResponse(
             requestType,
             valueHandle,
             ATT.ECODE_WRITE_NOT_PERM
           );
         }
       } else {
-        response = this.errorResponse(
+        response = this._gattCommon.errorResponse(
           requestType,
           valueHandle,
           ATT.ECODE_ATTR_NOT_LONG
         );
       }
     } else {
-      response = this.errorResponse(
+      response = this._gattCommon.errorResponse(
         requestType,
         valueHandle,
         ATT.ECODE_INVALID_HANDLE
@@ -1263,16 +1200,16 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
 
     if (this._preparedWriteRequest) {
       if (flag === 0x00) {
-        response = Buffer.from([ATT.OP_EXEC_WRITE_RESP]);
+        response = Buffer.from([ATT.OP_EXECUTE_WRITE_RESP]);
       } else if (flag === 0x01) {
         const callback = ((_requestType: number, _valueHandle: HandleIndex) => {
           return (result: number) => {
             let callbackResponse = null;
 
             if (ATT.ECODE_SUCCESS === result) {
-              callbackResponse = Buffer.from([ATT.OP_EXEC_WRITE_RESP]);
+              callbackResponse = Buffer.from([ATT.OP_EXECUTE_WRITE_RESP]);
             } else {
-              callbackResponse = this.errorResponse(
+              callbackResponse = this._gattCommon.errorResponse(
                 _requestType,
                 _valueHandle,
                 result
@@ -1295,12 +1232,20 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
           callback
         );
       } else {
-        response = this.errorResponse(requestType, 0x0000, ATT.ECODE_UNLIKELY);
+        response = this._gattCommon.errorResponse(
+          requestType,
+          0x0000,
+          ATT.ECODE_UNLIKELY
+        );
       }
 
       this._preparedWriteRequest = null;
     } else {
-      response = this.errorResponse(requestType, 0x0000, ATT.ECODE_UNLIKELY);
+      response = this._gattCommon.errorResponse(
+        requestType,
+        0x0000,
+        ATT.ECODE_UNLIKELY
+      );
     }
 
     return response;

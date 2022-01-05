@@ -17,7 +17,7 @@ import EventEmitter from 'eventemitter3';
 import { Handle } from '../../bleTypes';
 import AclStream from './acl-stream';
 import Gap from './gap';
-import Gatt from './gatt';
+import GattPeripheral from './gatt';
 
 type BlenoBindingsEventType =
   | 'stateChange'
@@ -33,7 +33,7 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
   public _advertising: any;
   public _hci: Hci;
   public _gap: Gap;
-  public _gatt: Gatt;
+  public _gatt: GattPeripheral;
   public _address: any;
   public _handle: Handle | null;
   private _aclStream: AclStream | null;
@@ -46,7 +46,7 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
 
     this._hci = hciProtocol;
     this._gap = new Gap(this._hci);
-    this._gatt = new Gatt();
+    this._gatt = new GattPeripheral();
 
     this._gatt.on('mtuChange', this.onMtuChange.bind(this));
 

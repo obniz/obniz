@@ -45,7 +45,7 @@ declare type GattEventTypes = 'mtuChange';
 /**
  * @ignore
  */
-export default class Gatt extends EventEmitter<GattEventTypes> {
+export default class GattPeripheral extends EventEmitter<GattEventTypes> {
     maxMtu: number;
     _mtu: number;
     _preparedWriteRequest: any;
@@ -54,6 +54,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
     _handles: GattHandle[];
     _aclStream?: AclStream;
     _lastIndicatedAttribute: any;
+    private _gattCommon;
     constructor();
     /**
      * @ignore
@@ -65,7 +66,6 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
     onAclStreamData(cid: number, data: Buffer): void;
     onAclStreamEnd(): void;
     send(data: Buffer): void;
-    errorResponse(opcode: number, handle: HandleIndex, status: number): Buffer;
     handleRequest(request: Buffer): void;
     handleMtuRequest(request: Buffer): Buffer;
     handleFindInfoRequest(request: Buffer): Buffer;
