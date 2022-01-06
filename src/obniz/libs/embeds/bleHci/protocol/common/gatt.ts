@@ -100,7 +100,7 @@ const ATT_ECODE_READABLES: { [_: number]: string } = {
 
 export class GattCommon {
   write() {
-    console.log('aa');
+    // nothing
   }
 
   errorResponse(opcode: number, handle: HandleIndex, status: number) {

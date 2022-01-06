@@ -96,7 +96,7 @@ const ATT_ECODE_READABLES = {
 };
 class GattCommon {
     write() {
-        console.log('aa');
+        // nothing
     }
     errorResponse(opcode, handle, status) {
         const buf = Buffer.alloc(5);

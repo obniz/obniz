@@ -86,13 +86,15 @@ class GattCentral extends eventemitter3_1.default {
             throw e;
         })
             .then((mtuRequestData) => {
-            console.error('mtu request received');
+            // console.error('mtu request received');
             if (!mtuRequestData) {
                 // throw timeout error and catched above
                 return;
             }
             const requestMtu = mtuRequestData.readUInt16LE(1);
-            console.log(this._address + ': receive OP_MTU_REQ. new MTU is ' + requestMtu);
+            // console.log(
+            //   this._address + ': receive OP_MTU_REQ. new MTU is ' + requestMtu
+            // );
             this._mtu = requestMtu;
             return this._execNoRespCommandWait(this._gattCommon.mtuResponse(this._mtu));
         })
@@ -469,7 +471,7 @@ class GattCentral extends eventemitter3_1.default {
             requestType === att_1.ATT.OP_HANDLE_CNF ||
             requestType === att_1.ATT.OP_READ_MULTI_REQ ||
             requestType === att_1.ATT.OP_SIGNED_WRITE_CMD) {
-            console.error('_gattPeripheral.handleRequest', requestType);
+            // console.error('_gattPeripheral.handleRequest', requestType);
             this._gattPeripheral.handleRequest(data);
         }
     }
