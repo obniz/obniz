@@ -1,1 +1,0 @@
-{"version":3,"file":"dialogPollyfill.js","sourceRoot":"","sources":["../../../../../src/obniz/libs/webpackReplace/dialogPollyfill.ts"],"names":[],"mappings":";AAAA;;;GAGG;;AAEH,kBAAe;IACb,cAAc,EAAE;QACd,cAAc,EAAE,CAAC,MAAW,EAAE,EAAE;YAC9B,cAAc;QAChB,CAAC;KACF;IACD,GAAG,EAAE,EAAE;CACR,CAAC"}
