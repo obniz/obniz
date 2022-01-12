@@ -135,7 +135,7 @@ class WSCommandBle extends WSCommand_1.default {
                 required: true,
                 endianness: 'little',
             },
-            { path: null, length: 1, type: 'char', default: false },
+            { path: null, length: 1, type: 'char', default: false }, // const val
         ];
         const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
         this.sendCommand(this._CommandConnect, buf);
@@ -149,7 +149,7 @@ class WSCommandBle extends WSCommand_1.default {
                 required: true,
                 endianness: 'little',
             },
-            { path: null, length: 1, type: 'char', default: true },
+            { path: null, length: 1, type: 'char', default: true }, // const val
         ];
         const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
         this.sendCommand(this._CommandConnect, buf);
@@ -472,7 +472,7 @@ class WSCommandBle extends WSCommand_1.default {
                 command: this._CommandServerStartStopService,
                 schema: [
                     { path: 'uuid', length: 18, type: 'uuid', required: true },
-                    { path: null, length: 1, type: 'char', default: 0 },
+                    { path: null, length: 1, type: 'char', default: 0 }, // const val
                 ],
             },
         };
@@ -529,7 +529,7 @@ class WSCommandBle extends WSCommand_1.default {
                 type: 'uuid',
                 required: true,
             },
-            { path: null, length: 1, type: 'char', default: 1 },
+            { path: null, length: 1, type: 'char', default: 1 }, // const val
         ];
         const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
         this.sendCommand(this._CommandServerStartStopService, buf);

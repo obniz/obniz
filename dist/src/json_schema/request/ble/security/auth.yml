@@ -4,7 +4,6 @@ $schema: http://json-schema.org/draft-04/schema#
 id: "/request/ble/security/auth"
 description: "ble auth settings"
 
-
 type: object
 required: [security]
 properties:
@@ -15,7 +14,7 @@ properties:
       auth:
         type: array
         default: [bonding]
-        minItems: 1,
+        minItems: 1
         items:
           type: string
           enum:

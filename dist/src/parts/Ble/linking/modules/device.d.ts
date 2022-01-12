@@ -31,7 +31,7 @@ export default class LinkingDevice {
      */
     connect(setting?: BleConnectSetting): Promise<void>;
     connectWait(setting?: BleConnectSetting): Promise<void>;
-    _wait(msec: number): Promise<unknown>;
+    _wait(msec: number): Promise<void>;
     _writeConfirmNotifyCategory(): Promise<unknown>;
     _writeGetSettingInformation(): Promise<unknown>;
     _writeGetSettingName(name: string): Promise<unknown>;

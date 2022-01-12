@@ -179,9 +179,9 @@ class RS_BTEVS1 {
             (config.co2MeasureOperation ? 0b001 : 0) +
             (config.pm2_5MeasureOperation ? 0b010 : 0) +
             (config.tempMeasureOperation ? 0b100 : 0), 3);
-        buf.writeUInt32LE((_a = config.co2Interval, (_a !== null && _a !== void 0 ? _a : 10000)), 4);
-        buf.writeUInt32LE((_b = config.pm2_5Interval, (_b !== null && _b !== void 0 ? _b : 10000)), 8);
-        buf.writeUInt32LE((_c = config.tempInterval, (_c !== null && _c !== void 0 ? _c : 10000)), 12);
+        buf.writeUInt32LE((_a = config.co2Interval) !== null && _a !== void 0 ? _a : 10000, 4);
+        buf.writeUInt32LE((_b = config.pm2_5Interval) !== null && _b !== void 0 ? _b : 10000, 8);
+        buf.writeUInt32LE((_c = config.tempInterval) !== null && _c !== void 0 ? _c : 10000, 12);
         return await this._configCharacteristic.writeWait(buf);
     }
     /**
@@ -237,7 +237,11 @@ class RS_BTEVS1 {
                 mass_pm2_5: buf.readFloatLE(4),
                 mass_pm5: buf.readFloatLE(8),
                 mass_pm10: buf.readFloatLE(12),
-                number_pm0_5: buf.readFloatLE(16),
+                number_pm0_5: buf.readFloatLE(16), // 1パケット=20バイトしか来ない
+                // number_pm1: buf.readFloatLE(20),
+                // number_pm2_5: buf.readFloatLE(24),
+                // number_pm5: buf.readFloatLE(28),
+                // number_pm10: buf.readFloatLE(32),
             });
         });
     }
@@ -293,5 +297,5 @@ RS_BTEVS1.deviceAdv = [
     -1,
     -1,
     -1,
-    -1,
+    -1, // localName
 ];

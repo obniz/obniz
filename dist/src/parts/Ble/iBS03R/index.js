@@ -97,5 +97,5 @@ IBS03R.deviceAdv = [
     0x13,
     -1,
     -1,
-    -1,
+    -1, // reserved
 ];

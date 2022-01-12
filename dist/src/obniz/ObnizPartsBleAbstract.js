@@ -2,15 +2,17 @@
 /* eslint-disable rulesdir/non-ascii */
 /* eslint-disable max-classes-per-file */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.iBeaconData = exports.iBeaconCompanyID = exports.ObnizPartsBleConnectable = exports.ObnizPartsBle = exports.intBE = exports.uintBE = exports.int = exports.uint = exports.notMatchDeviceError = void 0;
 const ObnizError_1 = require("./ObnizError");
 const ObnizPartsBleModeList = ['Beacon', 'Connectable', 'Pairing'];
 exports.notMatchDeviceError = new Error('Is NOT target device.');
-exports.uint = (value) => {
+const uint = (value) => {
     let val = 0;
     value.forEach((v, i) => (val += v << (i * 8)));
     return val;
 };
-exports.int = (value) => {
+exports.uint = uint;
+const int = (value) => {
     const num = exports.uint(value);
     return (num -
         ((num & (0x8 << (value.length * 8 - 4))) !== 0
@@ -19,8 +21,11 @@ exports.int = (value) => {
                 : 0x1 << (value.length * 8)
             : 0));
 };
-exports.uintBE = (value) => exports.uint(value.reverse());
-exports.intBE = (value) => exports.int(value.reverse());
+exports.int = int;
+const uintBE = (value) => exports.uint(value.reverse());
+exports.uintBE = uintBE;
+const intBE = (value) => exports.int(value.reverse());
+exports.intBE = intBE;
 class ObnizPartsBle {
     constructor(peripheral, mode) {
         this._mode = mode;
@@ -77,9 +82,9 @@ class ObnizPartsBle {
      */
     static getDeviceMode(peripheral) {
         var _a;
-        return (_a = this.getAvailableBleMode()
+        return ((_a = this.getAvailableBleMode()
             .map((mode) => this.isDeviceWithMode(peripheral, mode) ? mode : undefined)
-            .find((mode) => mode), (_a !== null && _a !== void 0 ? _a : null));
+            .find((mode) => mode)) !== null && _a !== void 0 ? _a : null);
     }
     /**
      * Check if peripherals and modes match the library.
@@ -105,7 +110,7 @@ class ObnizPartsBle {
                 ? this.LocalName
                 : this.LocalName[mode];
             if (defaultLocalName !== undefined &&
-                !defaultLocalName.test((_a = peripheral.localName, (_a !== null && _a !== void 0 ? _a : 'null'))))
+                !defaultLocalName.test((_a = peripheral.localName) !== null && _a !== void 0 ? _a : 'null'))
                 return false;
         }
         if (this.ServiceUuids) {
@@ -176,16 +181,16 @@ class ObnizPartsBle {
                     beaconData !== null &&
                     Object.values(defaultBeaconDataStruct).filter((config) => {
                         var _a, _b;
-                        return inScanResponse === (_a = config.scanResponse, (_a !== null && _a !== void 0 ? _a : false)) &&
+                        return inScanResponse === ((_a = config.scanResponse) !== null && _a !== void 0 ? _a : false) &&
                             config.type === 'check' &&
                             beaconData
-                                .slice(2 + config.index, 2 + config.index + (_b = config.length, (_b !== null && _b !== void 0 ? _b : 1)))
+                                .slice(2 + config.index, 2 + config.index + ((_b = config.length) !== null && _b !== void 0 ? _b : 1))
                                 .filter((d, i) => {
                                 var _a;
                                 return d !==
                                     (typeof config.data === 'number'
                                         ? [config.data]
-                                        : (_a = config.data, (_a !== null && _a !== void 0 ? _a : [])))[i];
+                                        : (_a = config.data) !== null && _a !== void 0 ? _a : [])[i];
                             }).length !== 0;
                     }).length !== 0)
                     return false;
@@ -253,9 +258,9 @@ class ObnizPartsBle {
                 ? this.beaconDataInScanResponse
                 : this.beaconData))
                 throw new Error('manufacturerSpecificData is null.');
-            const data = (_a = (config.scanResponse
+            const data = ((_a = (config.scanResponse
                 ? this.beaconDataInScanResponse
-                : this.beaconData), (_a !== null && _a !== void 0 ? _a : [])).slice(config.index, config.index + (_b = config.length, (_b !== null && _b !== void 0 ? _b : 1)));
+                : this.beaconData)) !== null && _a !== void 0 ? _a : []).slice(config.index, config.index + ((_b = config.length) !== null && _b !== void 0 ? _b : 1));
             if (config.type.indexOf('bool') === 0)
                 return [name, (data[0] & parseInt(config.type.slice(4), 2)) > 0];
             else if (config.type === 'string')
@@ -282,7 +287,7 @@ class ObnizPartsBle {
                 else
                     return [name, config.func(data, this.peripheral)];
             else {
-                const multi = (_c = config.multiple, (_c !== null && _c !== void 0 ? _c : 1));
+                const multi = (_c = config.multiple) !== null && _c !== void 0 ? _c : 1;
                 const num = (config.type.indexOf('u') === 0 ? exports.uint : exports.int)(config.type.indexOf('BE') >= 0 ? data.reverse() : data);
                 return [name, num * multi];
             }
@@ -445,9 +450,9 @@ class ObnizPartsBleConnectable extends ObnizPartsBle {
      */
     async subscribeWait(serviceUuid, characteristicUuid, callback) {
         const characteristic = this.getChar(serviceUuid, characteristicUuid);
-        await characteristic.registerNotifyWait((callback !== null && callback !== void 0 ? callback : (() => {
+        await characteristic.registerNotifyWait(callback !== null && callback !== void 0 ? callback : (() => {
             // do nothing.
-        })));
+        }));
     }
 }
 exports.ObnizPartsBleConnectable = ObnizPartsBleConnectable;
@@ -487,6 +492,6 @@ exports.iBeaconData =
     rssi: {
         index: 0,
         type: 'custom',
-        func: (d, p) => { var _a; return _a = p.rssi, (_a !== null && _a !== void 0 ? _a : 0); },
+        func: (d, p) => { var _a; return (_a = p.rssi) !== null && _a !== void 0 ? _a : 0; },
     },
 };

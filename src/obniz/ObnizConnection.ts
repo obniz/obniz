@@ -276,14 +276,14 @@ export default abstract class ObnizConnection extends EventEmitter<
    *
    */
   public connectionState: 'closed' | 'connecting' | 'connected' | 'closing';
-  protected socket: wsClient | null = null;
-  protected socket_local: wsClient | null = null;
+  protected socket?: wsClient | null = null;
+  protected socket_local?: wsClient | null = null;
   protected bufferdAmoundWarnBytes: number;
   protected options: Required<ObnizOptions>;
   protected wscommand: typeof WSCommand | null = null;
   protected wscommands: WSCommand[] = [];
   protected _sendQueueTimer: ReturnType<typeof setTimeout> | null = null;
-  protected _sendQueue: Uint8Array[] | null = null;
+  protected _sendQueue?: Uint8Array[] | null = null;
   protected _waitForLocalConnectReadyTimer: ReturnType<
     typeof setTimeout
   > | null = null;

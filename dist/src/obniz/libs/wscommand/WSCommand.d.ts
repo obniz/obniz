@@ -3,7 +3,8 @@
  * @ignore
  */
 /// <reference types="tv4" />
-import WSSchema from './WSSchema';
+import type { ErrorObject } from 'ajv/dist/types';
+import WSSchema, { ajv } from './WSSchema';
 declare type WSCommandConstructor = new () => WSCommand;
 interface PayloadChunk {
     /**
@@ -72,6 +73,11 @@ export default abstract class WSCommand {
     validateCommandSchema(uriList: any, json: any, rootPath: any, customArg?: any): any;
     validate(commandUri: any, json: any): WSSchema.MultiResult;
     fastValidate(commandUri: any, json: any): boolean;
+    validateAjv(commandUri: string, json: any): {
+        errors: ErrorObject<string, Record<string, any>, unknown>[];
+    };
+    fastValidateAjv(commandUri: string, json: any): boolean;
+    onlyTypeErrorMessageAjv(ajvInstance: typeof ajv, rootPath: string): string | boolean;
     onlyTypeErrorMessage(validateError: any, rootPath: any): string | boolean;
     filter(commandUri: any, json: any): any;
     _filterSchema(schema: any, json: any): any;

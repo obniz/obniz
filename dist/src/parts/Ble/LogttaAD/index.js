@@ -141,5 +141,14 @@ Logtta_AD.BeaconDataStruct = {
             length: 2,
             type: 'unsignedNumBE',
         },
+        /* alert: {
+          index: 8,
+          type: 'uint8',
+        },
+        name: {
+          index: 9,
+          length: 15,
+          type: 'string',
+        } */
     },
 };

@@ -3,7 +3,9 @@
  * @ignore
  */
 
-import WSSchema from './WSSchema';
+import type { AnyValidateFunction, ErrorObject } from 'ajv/dist/types';
+import WSSchema, { ajv, ajvMultiple } from './WSSchema';
+import now from 'performance-now';
 
 type WSCommandConstructor = new () => WSCommand;
 const commandClasses: { [key: string]: WSCommandConstructor } = {};
@@ -305,15 +307,82 @@ export default abstract class WSCommand {
   }
 
   public validate(commandUri: any, json: any): WSSchema.MultiResult {
+    // tv4
+    const _startTv4 = now();
     const schema = this.getSchema(commandUri);
     const results = WSSchema.validateMultiple(json, schema);
+    const _endTv4 = now();
+
+    // ajv
+    const _startAjv = now();
+    const ajvResult = this.validateAjv(commandUri, json);
+    const _endAjv = now();
+
+    // Comparison
+    const diffTv4Ns = _endTv4 - _startTv4;
+    const diffAjvNs = _endAjv - _startAjv;
+    console.log(
+      `tv4: ${diffTv4Ns.toFixed(4)}ms - ajv: ${diffAjvNs.toFixed(
+        4
+      )}ms [NORMAL] [${commandUri}]`
+    );
+
     return results;
   }
 
   public fastValidate(commandUri: any, json: any): boolean {
+    // tv4
+    const _startTv4 = now();
     const schema = this.getSchema(commandUri);
     const results: boolean = WSSchema.validate(json, schema);
+    const _endTv4 = now();
+
+    // ajv
+    const _startAjv = now();
+    const ajvResult = this.fastValidateAjv(commandUri, json);
+    const _endAjv = now();
+
+    // Comparison
+    const diffTv4Ns = _endTv4 - _startTv4;
+    const diffAjvNs = _endAjv - _startAjv;
+    console.log(
+      `tv4: ${diffTv4Ns.toFixed(4)}ms - ajv: ${diffAjvNs.toFixed(
+        4
+      )}ms [FAST  ] [${commandUri}]`
+    );
+
     return results;
+  }
+
+  public validateAjv(
+    commandUri: string,
+    json: any
+  ): { errors: ErrorObject<string, Record<string, any>, unknown>[] } {
+    const result = ajvMultiple.validate(commandUri, json);
+    const errors = ajvMultiple.errors;
+    return {
+      errors: errors ?? [],
+    };
+  }
+
+  public fastValidateAjv(commandUri: string, json: any): boolean {
+    const result = ajv.validate(commandUri, json);
+    return result;
+  }
+
+  public onlyTypeErrorMessageAjv(
+    ajvInstance: typeof ajv,
+    rootPath: string
+  ): string | boolean {
+    if (ajvInstance.errors === null || ajvInstance.errors === undefined) {
+      return true;
+    }
+    const messages: string[] = [];
+    for (const error of ajvInstance.errors) {
+      const path = rootPath + (error.instancePath ?? '').replace(/\//g, '.');
+      messages.push(`[${path}]${error.message ?? 'NO_MESSAGE'}`);
+    }
+    return messages.join(';');
   }
 
   public onlyTypeErrorMessage(validateError: any, rootPath: any) {

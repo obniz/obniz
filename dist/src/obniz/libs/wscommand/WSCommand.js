@@ -3,11 +3,31 @@
  * @packageDocumentation
  * @ignore
  */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const WSSchema_1 = __importDefault(require("./WSSchema"));
+const WSSchema_1 = __importStar(require("./WSSchema"));
+const performance_now_1 = __importDefault(require("performance-now"));
 const commandClasses = {};
 class WSCommand {
     constructor() {
@@ -204,14 +224,59 @@ class WSCommand {
         return res;
     }
     validate(commandUri, json) {
+        // tv4
+        const _startTv4 = performance_now_1.default();
         const schema = this.getSchema(commandUri);
         const results = WSSchema_1.default.validateMultiple(json, schema);
+        const _endTv4 = performance_now_1.default();
+        // ajv
+        const _startAjv = performance_now_1.default();
+        const ajvResult = this.validateAjv(commandUri, json);
+        const _endAjv = performance_now_1.default();
+        // Comparison
+        const diffTv4Ns = _endTv4 - _startTv4;
+        const diffAjvNs = _endAjv - _startAjv;
+        console.log(`tv4: ${diffTv4Ns.toFixed(4)}ms - ajv: ${diffAjvNs.toFixed(4)}ms [NORMAL] [${commandUri}]`);
         return results;
     }
     fastValidate(commandUri, json) {
+        // tv4
+        const _startTv4 = performance_now_1.default();
         const schema = this.getSchema(commandUri);
         const results = WSSchema_1.default.validate(json, schema);
+        const _endTv4 = performance_now_1.default();
+        // ajv
+        const _startAjv = performance_now_1.default();
+        const ajvResult = this.fastValidateAjv(commandUri, json);
+        const _endAjv = performance_now_1.default();
+        // Comparison
+        const diffTv4Ns = _endTv4 - _startTv4;
+        const diffAjvNs = _endAjv - _startAjv;
+        console.log(`tv4: ${diffTv4Ns.toFixed(4)}ms - ajv: ${diffAjvNs.toFixed(4)}ms [FAST  ] [${commandUri}]`);
         return results;
+    }
+    validateAjv(commandUri, json) {
+        const result = WSSchema_1.ajvMultiple.validate(commandUri, json);
+        const errors = WSSchema_1.ajvMultiple.errors;
+        return {
+            errors: errors !== null && errors !== void 0 ? errors : [],
+        };
+    }
+    fastValidateAjv(commandUri, json) {
+        const result = WSSchema_1.ajv.validate(commandUri, json);
+        return result;
+    }
+    onlyTypeErrorMessageAjv(ajvInstance, rootPath) {
+        var _a, _b;
+        if (ajvInstance.errors === null || ajvInstance.errors === undefined) {
+            return true;
+        }
+        const messages = [];
+        for (const error of ajvInstance.errors) {
+            const path = rootPath + ((_a = error.instancePath) !== null && _a !== void 0 ? _a : '').replace(/\//g, '.');
+            messages.push(`[${path}]${(_b = error.message) !== null && _b !== void 0 ? _b : 'NO_MESSAGE'}`);
+        }
+        return messages.join(';');
     }
     onlyTypeErrorMessage(validateError, rootPath) {
         if (validateError.valid) {
