@@ -19,6 +19,7 @@ import LogicAnalyzer from './libs/measurements/logicanalyzer';
 import ObnizMeasure from './libs/measurements/measure';
 import WiFi from './libs/network/wifi';
 import Plugin from './libs/plugin/plugin';
+import App from './libs/app';
 
 import TCP from './libs/protocol/tcp';
 
@@ -252,6 +253,11 @@ export default abstract class ObnizComponents extends ObnizParts {
    */
   public plugin?: Plugin;
 
+  /**
+   * @category app
+   */
+  public app?: App;
+
   protected _hwDefinition: any;
 
   protected pongObservers: any;
@@ -433,6 +439,7 @@ export default abstract class ObnizComponents extends ObnizParts {
       logicAnalyzer: LogicAnalyzer,
       measure: ObnizMeasure,
       plugin: Plugin,
+      app: App,
     };
 
     const peripheral_map: any = {

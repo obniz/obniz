@@ -1,0 +1,23 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/app/log"
+desccription: "Sending Application Log"
+
+type: object
+required: [level, text]
+properties:
+  level:
+    type: string
+    description: "Indicating Log Level."
+    example: "info"
+    enum:
+      - info
+      - error
+
+  text:
+    type: string
+    minLength: 0
+    maxLength: 1024
+    description: "Maximum 1kbytes of payload"
+    example: "ex)obniz device found sensors"

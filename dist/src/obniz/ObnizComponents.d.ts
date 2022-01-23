@@ -17,6 +17,7 @@ import LogicAnalyzer from './libs/measurements/logicanalyzer';
 import ObnizMeasure from './libs/measurements/measure';
 import WiFi from './libs/network/wifi';
 import Plugin from './libs/plugin/plugin';
+import App from './libs/app';
 import ObnizParts from './ObnizParts';
 import { ObnizOptions } from './ObnizOptions';
 export declare type PeripheralName = 'pwm' | 'uart' | 'spi' | 'i2c' | 'tcp';
@@ -196,6 +197,10 @@ export default abstract class ObnizComponents extends ObnizParts {
      * @category plugin
      */
     plugin?: Plugin;
+    /**
+     * @category app
+     */
+    app?: App;
     protected _hwDefinition: any;
     protected pongObservers: any;
     protected _allComponentKeys: any;

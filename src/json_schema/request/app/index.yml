@@ -1,0 +1,10 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/app"
+basePath: "app"
+description: "App command"
+
+"anyOf":
+  log: {$ref: "/request/app/log" }
+  status: {$ref: "/request/app/status" }

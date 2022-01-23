@@ -1,0 +1,23 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/app/status"
+desccription: "Setting Application Status"
+
+type: object
+required: [status, text]
+properties:
+  status:
+    type: string
+    description: "Indicating status is success or not"
+    example: "success"
+    enum:
+      - success
+      - error
+
+  text:
+    type: string
+    minLength: 0
+    maxLength: 1024
+    description: "Maximum 1kbytes of payload"
+    example: "Battery level is low"

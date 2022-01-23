@@ -258,6 +258,9 @@ var map = {
 	"./request/ad/deinit.yml": "./dist/src/json_schema/request/ad/deinit.yml",
 	"./request/ad/index.yml": "./dist/src/json_schema/request/ad/index.yml",
 	"./request/ad/input.yml": "./dist/src/json_schema/request/ad/input.yml",
+	"./request/app/index.yml": "./dist/src/json_schema/request/app/index.yml",
+	"./request/app/log.yml": "./dist/src/json_schema/request/app/log.yml",
+	"./request/app/status.yml": "./dist/src/json_schema/request/app/status.yml",
 	"./request/ble/central/characteristic_get.yml": "./dist/src/json_schema/request/ble/central/characteristic_get.yml",
 	"./request/ble/central/characteristic_read.yml": "./dist/src/json_schema/request/ble/central/characteristic_read.yml",
 	"./request/ble/central/characteristic_register_notify.yml": "./dist/src/json_schema/request/ble/central/characteristic_register_notify.yml",
@@ -408,10 +411,10 @@ var map = {
 	"./response/io/get.yml": "./dist/src/json_schema/response/io/get.yml",
 	"./response/io/index.yml": "./dist/src/json_schema/response/io/index.yml",
 	"./response/io/warning.yml": "./dist/src/json_schema/response/io/warning.yml",
-	"./response/ioAnimation/index.yml": "./dist/src/json_schema/response/ioAnimation/index.yml",
-	"./response/ioAnimation/notify.yml": "./dist/src/json_schema/response/ioAnimation/notify.yml",
-	"./response/logicAnalyzer/data.yml": "./dist/src/json_schema/response/logicAnalyzer/data.yml",
-	"./response/logicAnalyzer/index.yml": "./dist/src/json_schema/response/logicAnalyzer/index.yml",
+	"./response/ioanimation/index.yml": "./dist/src/json_schema/response/ioanimation/index.yml",
+	"./response/ioanimation/notify.yml": "./dist/src/json_schema/response/ioanimation/notify.yml",
+	"./response/logicanalyzer/data.yml": "./dist/src/json_schema/response/logicanalyzer/data.yml",
+	"./response/logicanalyzer/index.yml": "./dist/src/json_schema/response/logicanalyzer/index.yml",
 	"./response/measure/echo.yml": "./dist/src/json_schema/response/measure/echo.yml",
 	"./response/measure/index.yml": "./dist/src/json_schema/response/measure/index.yml",
 	"./response/message/index.yml": "./dist/src/json_schema/response/message/index.yml",
@@ -485,6 +488,27 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ad/get","related":"/response/ad/get","desription":"enable & start ad module at io.","type":"object","required":["stream"],"properties":{"stream":{"type":"boolean","default":false}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/app/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/app","basePath":"app","anyOf":{"log":{"$ref":"/request/app/log"},"status":{"$ref":"/request/app/status"}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/app/log.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/app/log","desccription":"Sending Application Log","type":"object","required":["level","text"],"properties":{"level":{"type":"string","enum":["info","error"]},"text":{"type":"string","minLength":0,"maxLength":1024}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/app/status.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/app/status","desccription":"Setting Application Status","type":"object","required":["status","text"],"properties":{"status":{"type":"string","enum":["success","error"]},"text":{"type":"string","minLength":0,"maxLength":1024}}}
 
 /***/ }),
 
@@ -834,7 +858,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./dist/src/json_schema/request/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c[0-1]$":{"$ref":"/request/i2c"},"^tcp[0-7]$":{"$ref":"/request/tcp"}},"properties":{"io":{"$ref":"/request/ioAnimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"measure":{"$ref":"/request/measure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"},"ws":{"$ref":"/request/ws"},"wifi":{"$ref":"/request/wifi"},"plugin":{"$ref":"/request/plugin"}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c[0-1]$":{"$ref":"/request/i2c"},"^tcp[0-7]$":{"$ref":"/request/tcp"}},"properties":{"io":{"$ref":"/request/ioAnimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"measure":{"$ref":"/request/measure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"},"ws":{"$ref":"/request/ws"},"wifi":{"$ref":"/request/wifi"},"plugin":{"$ref":"/request/plugin"},"app":{"$ref":"/request/app"}}}}
 
 /***/ }),
 
@@ -1538,28 +1562,28 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/ioAnimation/index.yml":
+/***/ "./dist/src/json_schema/response/ioanimation/index.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ioAnimation","basePath":"io","anyOf":[{"$ref":"/response/ioAnimation/notify"}]}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/ioAnimation/notify.yml":
+/***/ "./dist/src/json_schema/response/ioanimation/notify.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ioAnimation/notify","type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status"],"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","enum":["finish"]}}}}}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/logicAnalyzer/data.yml":
+/***/ "./dist/src/json_schema/response/logicanalyzer/data.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/logicAnalyzer/data","type":"object","required":["data"],"properties":{"data":{"$ref":"/bitArray"}}}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/logicAnalyzer/index.yml":
+/***/ "./dist/src/json_schema/response/logicanalyzer/index.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/logicAnalyzer","basePath":"logic_analyzer","anyOf":[{"$ref":"/response/logicAnalyzer/data"}]}
@@ -2035,6 +2059,7 @@ const logicanalyzer_1 = __importDefault(__webpack_require__("./dist/src/obniz/li
 const measure_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/measurements/measure.js"));
 const wifi_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/network/wifi.js"));
 const plugin_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/plugin/plugin.js"));
+const app_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/app/index.js"));
 const tcp_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/protocol/tcp.js"));
 const ObnizParts_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizParts.js"));
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
@@ -2191,6 +2216,7 @@ class ObnizComponents extends ObnizParts_1.default {
             logicAnalyzer: logicanalyzer_1.default,
             measure: measure_1.default,
             plugin: plugin_1.default,
+            app: app_1.default,
         };
         const peripheral_map = {
             io: io_1.default,
@@ -5314,6 +5340,114 @@ class ComponentAbstract extends eventemitter3_1.default {
     }
 }
 exports.ComponentAbstract = ComponentAbstract;
+
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/app/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class App {
+    constructor(obniz) {
+        this.Obniz = obniz;
+    }
+    /**
+     * Recording App log on obniz Cloud.
+     *
+     * @param text log text
+     * @returns none
+     */
+    log(text) {
+        return this._log_level('info', text);
+    }
+    /**
+     * Recording App error log on obniz Cloud.
+     *
+     * @param text log text
+     * @returns none
+     */
+    log_error(text) {
+        return this._log_level('error', text);
+    }
+    _log_level(level, text) {
+        let _text;
+        if (typeof text === 'string') {
+            _text = text;
+        }
+        else if (typeof text === 'number') {
+            _text = `${text}`;
+        }
+        else if (typeof text === 'object') {
+            if (text) {
+                _text = JSON.stringify(text);
+            }
+            else {
+                _text = `null`;
+            }
+        }
+        this.Obniz.send({
+            app: {
+                log: {
+                    level,
+                    text: _text,
+                },
+            },
+        });
+    }
+    /**
+     * Recording App log on obniz Cloud.
+     *
+     * @param text log text
+     * @returns none
+     */
+    status(status, text) {
+        let _text;
+        if (typeof text === 'string') {
+            _text = text;
+        }
+        else if (typeof text === 'number') {
+            _text = `${text}`;
+        }
+        else if (typeof text === 'object') {
+            if (text) {
+                _text = JSON.stringify(text);
+            }
+            else {
+                _text = `null`;
+            }
+        }
+        this.Obniz.send({
+            app: {
+                status: {
+                    status,
+                    text: _text,
+                },
+            },
+        });
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        // do nothing.
+    }
+    /**
+     * @ignore
+     * @param obj
+     */
+    notified(obj) {
+        // do nothing.
+    }
+}
+exports.default = App;
 
 
 /***/ }),
