@@ -46,6 +46,7 @@ export declare const uint: (value: number[]) => number;
 export declare const int: (value: number[]) => number;
 export declare const uintBE: (value: number[]) => number;
 export declare const intBE: (value: number[]) => number;
+export declare const uintToArray: (value: number, length?: number) => number[];
 export interface ObnizPartsBleProps extends ObnizPartsProps {
     readonly PartsName: PartsType;
     readonly AvailableBleMode: ObnizPartsBleMode | ObnizPartsBleMode[];
@@ -264,6 +265,15 @@ export declare abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsB
      * @param callback It is called when data comes
      */
     protected subscribeWait(serviceUuid: string, characteristicUuid: string, callback?: (data: number[]) => void | Promise<void>): Promise<void>;
+    /**
+     * Unregister notification to any characteristic of any service.
+     *
+     * 任意のサービスの任意のキャラクタリスティックから通知登録を削除
+     *
+     * @param serviceUuid Service UUID
+     * @param characteristicUuid Characteristic UUID
+     */
+    protected unsubscribeWait(serviceUuid: string, characteristicUuid: string): Promise<void>;
 }
 export declare const iBeaconCompanyID: number[];
 export declare const iBeaconData: ObnizBleBeaconStruct<IBeacon>;

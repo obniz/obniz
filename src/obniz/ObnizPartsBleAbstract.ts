@@ -98,6 +98,11 @@ export const uintBE = (value: number[]): number => uint(value.reverse());
 
 export const intBE = (value: number[]): number => int(value.reverse());
 
+export const uintToArray = (value: number, length = 2): number[] =>
+  new Array(length)
+    .fill(0)
+    .map((v, i) => value % (1 << ((i + 1) * 8)) >> (i * 8));
+
 export interface ObnizPartsBleProps extends ObnizPartsProps {
   readonly PartsName: PartsType;
   readonly AvailableBleMode: ObnizPartsBleMode | ObnizPartsBleMode[];
@@ -712,6 +717,22 @@ export abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsBle<S> {
           // do nothing.
         })
     );
+  }
+
+  /**
+   * Unregister notification to any characteristic of any service.
+   *
+   * 任意のサービスの任意のキャラクタリスティックから通知登録を削除
+   *
+   * @param serviceUuid Service UUID
+   * @param characteristicUuid Characteristic UUID
+   */
+  protected async unsubscribeWait(
+    serviceUuid: string,
+    characteristicUuid: string
+  ): Promise<void> {
+    const characteristic = this.getChar(serviceUuid, characteristicUuid);
+    await characteristic.unregisterNotifyWait();
   }
 }
 
