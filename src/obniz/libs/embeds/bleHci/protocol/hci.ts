@@ -304,12 +304,11 @@ class Hci extends EventEmitter<HciEventTypes> {
   }
 
   public async resetWait(): Promise<void> {
-    await this.resetForOldObnizjsWait();
-    return;
     if (this._obnizHci.Obniz.hw === 'cc3235mod') {
       await this.resetForNrf52832Wait();
     } else {
-      await this.resetForEsp32Wait();
+      await this.resetForOldObnizjsWait();
+      // await this.resetForEsp32Wait();
     }
   }
 

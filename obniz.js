@@ -11888,13 +11888,12 @@ class Hci extends eventemitter3_1.default {
         this._socket.write(cmd);
     }
     async resetWait() {
-        await this.resetForOldObnizjsWait();
-        return;
         if (this._obnizHci.Obniz.hw === 'cc3235mod') {
             await this.resetForNrf52832Wait();
         }
         else {
-            await this.resetForEsp32Wait();
+            await this.resetForOldObnizjsWait();
+            // await this.resetForEsp32Wait();
         }
     }
     async resetForNrf52832Wait() {
