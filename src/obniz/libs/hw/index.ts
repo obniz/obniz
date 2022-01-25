@@ -25,6 +25,8 @@ export default class HW {
       return require('./cc3235mod.json');
     } else if (hw === 'esp32c3') {
       return require('./esp32c3.json');
+    } else if (hw === 'blewifi_gw2') {
+      return require('./blewifi_gw2.json');
     } else {
       // default
       return require('./esp32w.json');
