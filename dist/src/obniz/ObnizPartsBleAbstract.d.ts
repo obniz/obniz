@@ -13,8 +13,8 @@ declare type BoolType = 'bool0001' | 'bool0010' | 'bool0100' | 'bool1000' | 'boo
 declare type OtherType = 'string' | 'xyz';
 declare type CustomType = 'custom';
 declare type CheckType = 'check';
-declare type NormalValueType = NumberType | BoolType | OtherType | CustomType;
-declare type ValueType = NormalValueType | CheckType;
+export declare type NormalValueType = NumberType | BoolType | OtherType | CustomType;
+export declare type ValueType = NormalValueType | CheckType;
 export declare type ObnizBleBeaconStruct<S> = {
     [key in keyof S]: ObnizBleBeaconStructNormal<S, key>;
 } & {

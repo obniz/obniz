@@ -17,8 +17,8 @@ export type BleDeviceType = 'ble' | 'dumo' | 'breder';
 export type BleDeviceAddressType =
   | 'public'
   | 'random'
-  | 'rpa_public'
-  | 'rpa_random';
+  | 'rpa_public' // Public Identity Address (Corresponds to Resolved Private Address)
+  | 'rpa_random'; // Random (static) Identity Address (Corresponds to Resolved Private Address)
 export type BleEventType =
   | 'connectable_advertisemnt'
   | 'connectable_directed_advertisemnt'

@@ -13,7 +13,7 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
     /**
      * @ignore
      */
-    get parentName(): string | null;
+    get parentName(): "characteristic";
     /**
      * Read data from descriptor.
      *

@@ -7,7 +7,7 @@ import Hci from '../hci';
 import EventEmitter from 'eventemitter3';
 import { Handle } from '../../bleTypes';
 import Gap from './gap';
-import Gatt from './gatt';
+import GattPeripheral from './gatt';
 declare type BlenoBindingsEventType = 'stateChange' | 'mtuChange' | 'accept' | 'disconnect';
 /**
  * @ignore
@@ -17,7 +17,7 @@ declare class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
     _advertising: any;
     _hci: Hci;
     _gap: Gap;
-    _gatt: Gatt;
+    _gatt: GattPeripheral;
     _address: any;
     _handle: Handle | null;
     private _aclStream;

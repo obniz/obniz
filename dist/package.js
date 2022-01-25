@@ -1,6 +1,6 @@
 module.exports = {
   "name": "obniz",
-  "version": "3.18.1-alpha.0",
+  "version": "3.18.1-alpha.3",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -138,6 +138,7 @@ module.exports = {
     "js-yaml": "^3.13.1",
     "node-dir": "^0.1.17",
     "node-fetch": "^2.3.0",
+    "round-to": "^5.0.0",
     "semver": "^5.7.0",
     "tv4": "^1.3.0",
     "ws": "^6.1.4"

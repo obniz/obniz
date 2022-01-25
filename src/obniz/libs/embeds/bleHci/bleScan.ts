@@ -312,7 +312,7 @@ export default class BleScan {
         this._setTargetFilterOnDevice({}); // clear
       }
       await this.obnizBle.centralBindings.startScanningWait(
-        null,
+        [],
         settings.duplicate,
         settings.activeScan
       );

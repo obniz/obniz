@@ -120,7 +120,10 @@ class ObnizBLEHci {
         let onObnizClosed = null;
         let timeoutHandler = null;
         const clearListeners = () => {
-            this.Obniz.off('close', onObnizClosed);
+            if (onObnizClosed) {
+                this.Obniz.off('close', onObnizClosed);
+                onObnizClosed = null;
+            }
             if (timeoutHandler) {
                 clearTimeout(timeoutHandler);
                 timeoutHandler = null;

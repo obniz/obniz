@@ -37,9 +37,9 @@ type OtherType = 'string' | 'xyz';
 type CustomType = 'custom';
 type CheckType = 'check';
 
-type NormalValueType = NumberType | BoolType | OtherType | CustomType;
+export type NormalValueType = NumberType | BoolType | OtherType | CustomType;
 
-type ValueType = NormalValueType | CheckType;
+export type ValueType = NormalValueType | CheckType;
 
 export type ObnizBleBeaconStruct<S> = {
   [key in keyof S]: ObnizBleBeaconStructNormal<S, key>;

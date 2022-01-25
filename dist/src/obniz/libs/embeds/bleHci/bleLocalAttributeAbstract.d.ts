@@ -1,10 +1,13 @@
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.Hci
- */
-import BleAttributeAbstract from './bleAttributeAbstract';
+import BleAttributeAbstract, { BleAttributeChildrenName } from './bleAttributeAbstract';
 import BleCharacteristic from './bleCharacteristic';
 import BleService from './bleService';
+import { UUID } from './bleTypes';
+export declare type BleLocalAttributeBufferObj<ChildrenName extends string> = {
+    [key in ChildrenName]: any;
+} & {
+    uuid: UUID;
+    emit: any;
+};
 /**
  * @category Use as Peripheral
  */
@@ -21,13 +24,13 @@ export default class BleLocalAttributeAbstract<ParentClass, ChildrenClass> exten
     /**
      * @ignore
      */
-    toBufferObj(): any;
+    toBufferObj(): BleLocalAttributeBufferObj<BleAttributeChildrenName>;
     /**
      * @ignore
      * @param name
      * @param params
      */
-    emit(name: any, ...params: any): boolean;
+    emit(name: 'readRequest' | 'writeRequest', ...params: any): boolean;
     /**
      * @ignore
      * @param offset
