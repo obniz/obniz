@@ -28654,7 +28654,7 @@ const dataTypeTable = {
     0x04: { type: 'illumination_solar_cell', encoding: 'unsignedNumLE' },
     0x05: { type: 'illumination_sensor', encoding: 'unsignedNumLE' },
     0x06: { type: 'humidity', encoding: 'unsignedNumLE' },
-    // 0x0a : {type : 'acceleration_vector', encoding:""},
+    0x0a: { type: 'acceleration_vector', encoding: 'unsignedNumLE_vector' },
     0x23: { type: 'magnet_contact', encoding: 'bool0001' },
 };
 const readData = (rawData, dataSize, encoding) => {
@@ -28696,7 +28696,16 @@ const readData = (rawData, dataSize, encoding) => {
                 return true;
             }
             return false;
+        case 'unsignedNumLE_vector':
+            return readAcceleVector(rawData.readUInt32LE(0));
     }
+};
+const readAcceleVector = (data) => {
+    const status = (data & 0xc0000000) >> 30;
+    const x = (data & 0x3ff00000) >> 20;
+    const y = (data & 0x000ffc00) >> 10;
+    const z = data & 0x000003ff;
+    return { x: (x - 512) / 100, y: (y - 512) / 100, z: (z - 512) / 100 };
 };
 const findType = (type, multiple = 1, precision = 0) => {
     return (data, peripheral) => {
@@ -28721,7 +28730,6 @@ const findType = (type, multiple = 1, precision = 0) => {
         return undefined;
     };
 };
-/** iBS01T management class iBS01Tを管理するクラス */
 class STM550B extends ObnizPartsBleAbstract_1.ObnizPartsBle {
     constructor(peripheral, mode) {
         super(peripheral, mode);
@@ -28773,6 +28781,12 @@ STM550B.BeaconDataStruct = {
         length: 255,
         type: 'custom',
         func: findType('magnet_contact'),
+    },
+    acceleration_vector: {
+        index: 7,
+        length: 255,
+        type: 'custom',
+        func: findType('acceleration_vector'),
     },
 };
 STM550B.CompanyID = {
@@ -74953,7 +74967,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
+module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
 
 /***/ }),
 
