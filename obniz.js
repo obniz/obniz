@@ -28654,7 +28654,7 @@ const dataTypeTable = {
     0x04: { type: 'illumination_solar_cell', encoding: 'unsignedNumLE' },
     0x05: { type: 'illumination_sensor', encoding: 'unsignedNumLE' },
     0x06: { type: 'humidity', encoding: 'unsignedNumLE' },
-    0x0a: { type: 'acceleration_vector', encoding: 'unsignedNumLE_vector' },
+    0x0a: { type: 'acceleration_vector', encoding: 'unsignedNumLE' },
     0x23: { type: 'magnet_contact', encoding: 'bool0001' },
 };
 const readData = (rawData, dataSize, encoding) => {
@@ -28690,14 +28690,15 @@ const readData = (rawData, dataSize, encoding) => {
             else if (dataSize === 2) {
                 return rawData.readUInt16LE(0);
             }
+            else if (dataSize === 4) {
+                return readAcceleVector(rawData.readUInt32LE(0));
+            }
             return rawData.readUInt32LE(0);
         case 'bool0001':
             if (rawData.readUInt8(0) & 0x01) {
                 return true;
             }
             return false;
-        case 'unsignedNumLE_vector':
-            return readAcceleVector(rawData.readUInt32LE(0));
     }
 };
 const readAcceleVector = (data) => {

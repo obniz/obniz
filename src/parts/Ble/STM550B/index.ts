@@ -61,10 +61,8 @@ const dataSizeTable: { [key: number]: number } = {
   0b11: 255,
 };
 
-type STM550BValueType = NormalValueType | 'unsignedNumLE_vector';
-
 const dataTypeTable: {
-  [key: number]: { type: keyof STM550B_Data; encoding: STM550BValueType };
+  [key: number]: { type: keyof STM550B_Data; encoding: NormalValueType };
 } = {
   0x00: { type: 'temperature', encoding: 'numLE' },
   0x01: { type: 'voltage', encoding: 'numLE' },
@@ -72,14 +70,14 @@ const dataTypeTable: {
   0x04: { type: 'illumination_solar_cell', encoding: 'unsignedNumLE' },
   0x05: { type: 'illumination_sensor', encoding: 'unsignedNumLE' },
   0x06: { type: 'humidity', encoding: 'unsignedNumLE' },
-  0x0a: { type: 'acceleration_vector', encoding: 'unsignedNumLE_vector' },
+  0x0a: { type: 'acceleration_vector', encoding: 'unsignedNumLE' },
   0x23: { type: 'magnet_contact', encoding: 'bool0001' },
 };
 
 const readData = (
   rawData: Buffer,
   dataSize: number,
-  encoding: STM550BValueType
+  encoding: NormalValueType
 ) => {
   switch (encoding) {
     case 'numBE':
@@ -111,6 +109,8 @@ const readData = (
         return rawData.readUInt8(0);
       } else if (dataSize === 2) {
         return rawData.readUInt16LE(0);
+      } else if (dataSize === 4) {
+        return readAcceleVector(rawData.readUInt32LE(0));
       }
       return rawData.readUInt32LE(0);
 
@@ -119,9 +119,6 @@ const readData = (
         return true as any;
       }
       return false as any;
-
-    case 'unsignedNumLE_vector':
-      return readAcceleVector(rawData.readUInt32LE(0));
   }
 };
 
