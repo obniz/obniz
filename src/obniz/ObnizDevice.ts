@@ -102,6 +102,12 @@ export default class ObnizDevice extends ObnizUIs {
    * @param msg
    */
   public warning(msg: any) {
+    if (this.onwarn) {
+      const sendError = msg instanceof Error ? msg : new Error(msg.message);
+      this.onwarn(this, sendError);
+      return;
+    }
+
     if (this.isNode) {
       console.error(msg);
     } else {
