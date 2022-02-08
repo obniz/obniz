@@ -54,7 +54,7 @@ await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 // Javascript
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (peripheral) => {
+obniz.ble.scan.onfind = async (peripheral) => {
   // 動作モードを取得、Logtta_THでないときはnullに
   const mode = Logtta_TH.getDeviceMode(peripheral);
   if (mode === 'Connectable') {
@@ -94,7 +94,7 @@ await obniz.ble.scan.startWait();
 // Javascript
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (peripheral) => {
+obniz.ble.scan.onfind = async (peripheral) => {
   // 動作モードを取得、Logtta_THでないときはnullに
   const mode = Logtta_TH.getDeviceMode(peripheral);
   if (mode === 'Connectable') {
@@ -130,7 +130,7 @@ await obniz.ble.scan.startWait();
 // Javascript
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (peripheral) => {
+obniz.ble.scan.onfind = async (peripheral) => {
   // 動作モードを取得、Logtta_THでないときはnullに
   const mode = Logtta_TH.getDeviceMode(peripheral);
   if (mode === 'Connectable') {
