@@ -6,13 +6,23 @@
  */
 
 import BleRemotePeripheral from './libs/embeds/bleHci/bleRemotePeripheral';
+import { Obniz } from './Obniz';
+import ObnizPartsInterface from './ObnizPartsInterface';
 
 export interface ObnizPartsBleInfo {
   name: string;
   datasheet?: any;
 }
 
-export default abstract class ObnizPartsBleInterface {
+export default class ObnizPartsBleInterface extends ObnizPartsInterface {
+  public keys: string[] = [];
+  public requiredKeys: string[] = [];
+  public ioKeys: string[] = [];
+
+  wired(obniz: Obniz) {
+    throw new Error(`BLE parts cannot wired`);
+  }
+
   /**
    * Information of parts.
    * name: key name of parts

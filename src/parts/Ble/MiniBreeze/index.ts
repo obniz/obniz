@@ -61,7 +61,7 @@ export interface MiniBreeze_InfoData {
 export interface MiniBreezeOptions {}
 
 /** MiniBreeze management class MiniBreezeを管理するクラス */
-export default class MiniBreeze implements ObnizPartsBleInterface {
+export default class MiniBreeze extends ObnizPartsBleInterface {
   public static info() {
     return { name: 'MiniBreeze' };
   }

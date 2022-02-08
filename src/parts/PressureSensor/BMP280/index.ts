@@ -23,7 +23,7 @@ export interface BMP280Options {
   i2c?: PeripheralI2C;
 }
 
-export default class BMP280 implements ObnizPartsInterface {
+export default class BMP280 extends ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
       name: 'BMP280',
@@ -49,6 +49,7 @@ export default class BMP280 implements ObnizPartsInterface {
   private _t_fine: any;
 
   constructor() {
+    super();
     this.requiredKeys = [];
     this.keys = [
       'vcore',

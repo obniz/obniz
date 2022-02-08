@@ -7,7 +7,7 @@ import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizP
 export interface SCBTGAAACOptions {
 }
 /** SCBTGAAAC management class SCBTGAAACを管理するクラス */
-export default class SCBTGAAAC implements ObnizPartsBleInterface {
+export default class SCBTGAAAC extends ObnizPartsBleInterface {
     static info(): ObnizPartsBleInfo;
     /**
      * Verify that the received peripheral is from the SCBTGAAAC

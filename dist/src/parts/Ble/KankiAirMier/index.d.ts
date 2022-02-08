@@ -38,7 +38,7 @@ export interface KankiAirMier_Data {
     deviceName: string;
 }
 /** Kanki AirMier management class 換気エアミエルを管理するクラス */
-export default class KankiAirMier implements ObnizPartsBleInterface {
+export default class KankiAirMier extends ObnizPartsBleInterface {
     static info(): ObnizPartsBleInfo;
     /**
      * Verify that the received peripheral is from the Kanki AirMier

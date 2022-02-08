@@ -4,10 +4,15 @@
  * @module Parts.HEM-9200T
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
 /** HEM_9200T management class HEM_9200Tを管理するクラス */
-class HEM_9200T {
+class HEM_9200T extends ObnizPartsBleInterface_1.default {
     constructor(peripheral, options = {}) {
+        super();
         this.keys = [];
         this.requiredKeys = [];
         this._peripheral = null;

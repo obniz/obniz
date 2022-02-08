@@ -19,7 +19,7 @@ export interface Tr4_Data {
 }
 
 /** Tr4 series management class Tr4シリーズを管理するクラス */
-export default class Tr4 implements ObnizPartsBleInterface {
+export default class Tr4 extends ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
       name: 'TR4',

@@ -15,7 +15,7 @@ import ObnizPartsInterface, {
 export interface RS_Seek3Options {}
 
 /** RS_Seek3 management class RS_Seek3を管理するクラス */
-export default class RS_Seek3 implements ObnizPartsBleInterface {
+export default class RS_Seek3 extends ObnizPartsBleInterface {
   public static info(): ObnizPartsInfo {
     return {
       name: 'RS_Seek3',
@@ -61,6 +61,7 @@ export default class RS_Seek3 implements ObnizPartsBleInterface {
   private _tempHumidCharacteristic: BleRemoteCharacteristic | null = null;
 
   constructor(peripheral: BleRemotePeripheral | null) {
+    super();
     if (peripheral && !RS_Seek3.isDevice(peripheral)) {
       throw new Error('peripheral is not RS_Seek3');
     }

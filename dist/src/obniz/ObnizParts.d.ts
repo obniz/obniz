@@ -7,7 +7,10 @@ import ObnizConnection from './ObnizConnection';
 import { ObnizOptions } from './ObnizOptions';
 import { ObnizPartsBle } from './ObnizPartsBleAbstract';
 import ObnizPartsInterface from './ObnizPartsInterface';
-import { PartsList } from './ObnizPartsList';
+import { PartsList, PartsType } from './ObnizPartsList';
+export interface PartsConstructor<P extends PartsType> {
+    new (): PartsList[P]['class'];
+}
 export interface Triaxial {
     x: number;
     y: number;
@@ -32,7 +35,7 @@ export default abstract class ObnizParts extends ObnizConnection {
      * @param name string
      * @constructor
      */
-    static getPartsClass<K extends keyof PartsList>(name: K): any;
+    static getPartsClass<K extends PartsType>(name: K): PartsConstructor<K>;
     constructor(id: string, options?: ObnizOptions);
     /**
      * Check the param is valid io pin no.
@@ -53,5 +56,5 @@ export default abstract class ObnizParts extends ObnizConnection {
      * @param options
      */
     wired<K extends keyof PartsList>(partsName: K, options?: PartsList[K]['options']): PartsList[K]['class'];
-    static getBleParts(peripheral: BleRemotePeripheral): ObnizPartsBle<unknown> | null;
+    static getBleParts(peripheral: BleRemotePeripheral): ObnizPartsBle<any> | null;
 }

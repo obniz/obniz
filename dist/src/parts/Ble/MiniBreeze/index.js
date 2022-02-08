@@ -4,10 +4,15 @@
  * @module Parts.MiniBreeze
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
 /** MiniBreeze management class MiniBreezeを管理するクラス */
-class MiniBreeze {
+class MiniBreeze extends ObnizPartsBleInterface_1.default {
     constructor() {
+        super(...arguments);
         this._peripheral = null;
         // non-wired device
         this.keys = [];

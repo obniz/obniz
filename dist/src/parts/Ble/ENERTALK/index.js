@@ -8,10 +8,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
 const batteryService_1 = __importDefault(require("../utils/services/batteryService"));
 /** ENERTALK TOUCH management class ENERTALK TOUCHを管理するクラス */
-class ENERTALK_TOUCH {
+class ENERTALK_TOUCH extends ObnizPartsBleInterface_1.default {
     constructor(peripheral) {
+        super();
         this.keys = [];
         this.requiredKeys = [];
         this.onbuttonpressed = null;

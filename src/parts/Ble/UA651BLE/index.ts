@@ -75,7 +75,7 @@ export interface UA651BLEResult {
 }
 
 /** UA651BLE management class UA651BLEを管理するクラス */
-export default class UA651BLE implements ObnizPartsBleInterface {
+export default class UA651BLE extends ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
       name: 'UA651BLE',
@@ -94,7 +94,7 @@ export default class UA651BLE implements ObnizPartsBleInterface {
    * UA651BLEかどうか
    */
   public static isDevice(peripheral: BleRemotePeripheral) {
-    return (
+    return !!(
       peripheral.localName && peripheral.localName.startsWith('A&D_UA-651BLE_')
     );
   }
@@ -110,6 +110,7 @@ export default class UA651BLE implements ObnizPartsBleInterface {
     peripheral: BleRemotePeripheral | null,
     timezoneOffsetMinute: number
   ) {
+    super();
     if (!peripheral) {
       throw new Error('no peripheral');
     }

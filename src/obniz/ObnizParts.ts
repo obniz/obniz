@@ -13,12 +13,16 @@ import {
   ObnizPartsBleProps,
 } from './ObnizPartsBleAbstract';
 import ObnizPartsInterface from './ObnizPartsInterface';
-import { PartsList } from './ObnizPartsList';
+import { PartsList, PartsType } from './ObnizPartsList';
+
+export interface PartsConstructor<P extends PartsType> {
+  new (): PartsList[P]['class'];
+}
 
 /**
  * @ignore
  */
-const _parts: { [key: string]: unknown } = {};
+const _parts: { [key: string]: PartsConstructor<any> } = {};
 
 export interface Triaxial {
   x: number;
@@ -47,7 +51,7 @@ export default abstract class ObnizParts extends ObnizConnection {
       typeof arg0.info === 'function' &&
       typeof arg0.info().name === 'string'
     ) {
-      _parts[arg0.info().name] = arg0;
+      _parts[arg0.info().name as string] = arg0 as any;
     } else if (typeof arg0 === 'string' && typeof arg1 === 'object') {
       _parts[arg0] = arg1;
     }
@@ -59,11 +63,13 @@ export default abstract class ObnizParts extends ObnizConnection {
    * @param name string
    * @constructor
    */
-  public static getPartsClass<K extends keyof PartsList>(name: K): any {
+  public static getPartsClass<K extends PartsType>(
+    name: K
+  ): PartsConstructor<K> {
     if (!_parts[name]) {
       throw new Error(`unknown parts [${name}]`);
     }
-    return _parts[name];
+    return _parts[name] as any;
   }
 
   constructor(id: string, options?: ObnizOptions) {
@@ -124,8 +130,8 @@ export default abstract class ObnizParts extends ObnizConnection {
       }
       parts.params = ObnizUtil._keyFilter(args[1], parts.keys);
     }
-    parts.obniz = this;
-    parts.wired(...args);
+    (parts as any).obniz = this;
+    (parts.wired as any)(...args);
     if (parts.keys || parts.ioKeys) {
       const keys = parts.ioKeys || parts.keys;
       const displayPartsName = parts.displayName || partsName;
@@ -150,7 +156,7 @@ export default abstract class ObnizParts extends ObnizConnection {
 
   public static getBleParts(
     peripheral: BleRemotePeripheral
-  ): ObnizPartsBle<unknown> | null {
+  ): ObnizPartsBle<any> | null {
     const result = Object.entries(_parts)
       .filter(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -160,16 +166,18 @@ export default abstract class ObnizParts extends ObnizConnection {
       )
       .map(([n, p]) => [
         n,
-        (p as typeof ObnizPartsBle).getDeviceMode(peripheral),
+        ((p as any) as typeof ObnizPartsBle).getDeviceMode(peripheral),
       ])
       .filter(([, m]) => m !== null)
       // Hiring with long library names
       .sort(([na], [nb]) => (nb ?? '').length - (na ?? '').length);
 
-    if (result.length === 0 || !result[0][0] || !result[0][1]) return null;
+    if (result.length === 0 || !result[0][0] || !result[0][1]) {
+      return null;
+    }
     const [name, mode] = result[0];
 
-    const parts = new (_parts[name] as ObnizPartsBleProps)(
+    const parts = new ((_parts[name] as any) as ObnizPartsBleProps)(
       peripheral,
       mode as ObnizPartsBleMode
     );

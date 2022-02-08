@@ -5,13 +5,24 @@
  * @packageDocumentation
  * @module ObnizCore
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class ObnizPartsBleInterface {
+const ObnizPartsInterface_1 = __importDefault(require("./ObnizPartsInterface"));
+class ObnizPartsBleInterface extends ObnizPartsInterface_1.default {
     constructor() {
+        super(...arguments);
+        this.keys = [];
+        this.requiredKeys = [];
+        this.ioKeys = [];
         /**
          * Internally Used function for connection required devices
          */
         this._peripheral = null;
+    }
+    wired(obniz) {
+        throw new Error(`BLE parts cannot wired`);
     }
     /**
      * Utility function for reading 2 byte to signed number.

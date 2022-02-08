@@ -4,11 +4,16 @@
  * @module Parts.TR4
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
 const advertismentAnalyzer_1 = require("../utils/advertisement/advertismentAnalyzer");
 /** Tr4 series management class Tr4シリーズを管理するクラス */
-class Tr4 {
+class Tr4 extends ObnizPartsBleInterface_1.default {
     constructor() {
+        super(...arguments);
         this._peripheral = null;
     }
     static info() {

@@ -329,7 +329,7 @@ export interface OMRON_2JCIE_AdvSensorData {
 }
 
 /** 2JCIE management class 2JCIEを管理するクラス */
-export default class OMRON_2JCIE implements ObnizPartsBleInterface {
+export default class OMRON_2JCIE extends ObnizPartsBleInterface {
   public static info(): ObnizPartsInfo {
     return {
       name: '2JCIE',
@@ -348,7 +348,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
    * OMRON 環境センサ 2JCIEシリーズかどうか
    */
   public static isDevice(peripheral: BleRemotePeripheral) {
-    return (
+    return !!(
       (peripheral.localName && peripheral.localName.indexOf('Env') >= 0) ||
       (peripheral.localName && peripheral.localName.indexOf('IM') >= 0) ||
       (peripheral.localName && peripheral.localName.indexOf('Rbt') >= 0)
@@ -479,6 +479,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
   };
 
   constructor(peripheral: BleRemotePeripheral | null) {
+    super();
     if (peripheral && !OMRON_2JCIE.isDevice(peripheral)) {
       throw new Error('peripheral is not OMRON_2JCIE');
     }

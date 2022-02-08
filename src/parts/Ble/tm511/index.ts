@@ -36,7 +36,7 @@ export interface TM511_Data {
 }
 
 /** TM511 management class TM511を管理するクラス */
-export default class TM511 implements ObnizPartsBleInterface {
+export default class TM511 extends ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
       name: 'TM511',

@@ -9,9 +9,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(require("../../../obniz/libs/utils/util"));
+const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
 /** MINEW_S1 management class MINEW_S1を管理するクラス */
-class MINEW_S1 {
+class MINEW_S1 extends ObnizPartsBleInterface_1.default {
     constructor() {
+        super(...arguments);
         this._peripheral = null;
         // non-wired device
         this.keys = [];

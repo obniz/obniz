@@ -91,7 +91,7 @@ export interface uPRISM_Data {
     pressure: number;
 }
 /** uPRISM management class uPRISMを管理するクラス */
-export default class uPRISM implements ObnizPartsBleInterface {
+export default class uPRISM extends ObnizPartsBleInterface {
     static info(): ObnizPartsBleInfo;
     /**
      * Verify that the received peripheral is from the uPRISM

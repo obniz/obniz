@@ -10,7 +10,7 @@ export interface Tr4_Data {
     temperature: number;
 }
 /** Tr4 series management class Tr4シリーズを管理するクラス */
-export default class Tr4 implements ObnizPartsBleInterface {
+export default class Tr4 extends ObnizPartsBleInterface {
     static info(): ObnizPartsBleInfo;
     /**
      * Verify that the received peripheral is from the Tr4

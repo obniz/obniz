@@ -32,7 +32,7 @@ export interface IBS03R_Data {
 }
 
 /** iBS03R management class iBS03Rを管理するクラス */
-export default class IBS03R implements ObnizPartsBleInterface {
+export default class IBS03R extends ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
       name: 'iBS03R',

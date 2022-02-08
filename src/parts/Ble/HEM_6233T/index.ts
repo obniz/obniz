@@ -75,7 +75,7 @@ export interface HEM_6233TResult {
 }
 
 /** HEM_6233T management class HEM_6233Tを管理するクラス */
-export default class HEM_6233T implements ObnizPartsBleInterface {
+export default class HEM_6233T extends ObnizPartsBleInterface {
   public static info(): ObnizPartsInfo {
     return {
       name: 'HEM_6233T',
@@ -121,6 +121,7 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
     peripheral: BleRemotePeripheral | null,
     timezoneOffsetMinute: number
   ) {
+    super();
     // if (peripheral && !HEM_6233T.isDevice(peripheral)) {
     //   throw new Error("peripheral is not HEM_6233T");
     // }

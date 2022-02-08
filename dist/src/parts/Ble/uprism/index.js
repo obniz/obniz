@@ -10,8 +10,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
 /** uPRISM management class uPRISMを管理するクラス */
-class uPRISM {
+class uPRISM extends ObnizPartsBleInterface_1.default {
     constructor(peripheral) {
+        super();
         this._peripheral = null;
         this.readIndex = -1;
         this.accelRange = 1024;

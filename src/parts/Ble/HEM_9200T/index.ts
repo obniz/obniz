@@ -87,7 +87,7 @@ export interface HEM_9200TOptions {
 }
 
 /** HEM_9200T management class HEM_9200Tを管理するクラス */
-export default class HEM_9200T implements ObnizPartsBleInterface {
+export default class HEM_9200T extends ObnizPartsBleInterface {
   public static info(): ObnizPartsInfo {
     return {
       name: 'HEM_9200T',
@@ -127,6 +127,7 @@ export default class HEM_9200T implements ObnizPartsBleInterface {
     peripheral: BleRemotePeripheral | null,
     options: HEM_9200TOptions = {}
   ) {
+    super();
     // if (peripheral && !HEM_9200T.isDevice(peripheral)) {
     //   throw new Error("peripheral is not HEM_9200T");
     // }

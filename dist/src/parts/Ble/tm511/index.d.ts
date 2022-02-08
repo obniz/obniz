@@ -30,7 +30,7 @@ export interface TM511_Data {
     z: number;
 }
 /** TM511 management class TM511を管理するクラス */
-export default class TM511 implements ObnizPartsBleInterface {
+export default class TM511 extends ObnizPartsBleInterface {
     static info(): ObnizPartsBleInfo;
     /**
      * Verify that the received peripheral is from the TM511

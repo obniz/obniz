@@ -10,8 +10,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
 /** 2JCIE management class 2JCIEを管理するクラス */
-class OMRON_2JCIE {
+class OMRON_2JCIE extends ObnizPartsBleInterface_1.default {
     constructor(peripheral) {
+        super();
         this._peripheral = null;
         this.vibrationState = {
             0x00: 'NONE',
@@ -40,7 +41,7 @@ class OMRON_2JCIE {
      * OMRON 環境センサ 2JCIEシリーズかどうか
      */
     static isDevice(peripheral) {
-        return ((peripheral.localName && peripheral.localName.indexOf('Env') >= 0) ||
+        return !!((peripheral.localName && peripheral.localName.indexOf('Env') >= 0) ||
             (peripheral.localName && peripheral.localName.indexOf('IM') >= 0) ||
             (peripheral.localName && peripheral.localName.indexOf('Rbt') >= 0));
     }

@@ -54,7 +54,7 @@ export interface UT201BLEResult {
 }
 
 /** UT201BLE management class UT201BLEを管理するクラス */
-export default class UT201BLE implements ObnizPartsBleInterface {
+export default class UT201BLE extends ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
       name: 'UT201BLE',
@@ -73,7 +73,7 @@ export default class UT201BLE implements ObnizPartsBleInterface {
    * UT201BLEかどうか
    */
   public static isDevice(peripheral: BleRemotePeripheral) {
-    return (
+    return !!(
       peripheral.localName && peripheral.localName.startsWith('A&D_UT201BLE_')
     );
   }
@@ -89,6 +89,7 @@ export default class UT201BLE implements ObnizPartsBleInterface {
     peripheral: BleRemotePeripheral | null,
     timezoneOffsetMinute: number
   ) {
+    super();
     if (!peripheral || !UT201BLE.isDevice(peripheral)) {
       throw new Error('peripheral is not UT201BLE');
     }

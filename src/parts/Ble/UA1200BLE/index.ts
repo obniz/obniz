@@ -75,7 +75,7 @@ export interface UA1200BLEResult {
 }
 
 /** UA1200BLE management class UA1200BLEを管理するクラス */
-export default class UA1200BLE implements ObnizPartsBleInterface {
+export default class UA1200BLE extends ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
       name: 'UA1200BLE',
@@ -94,7 +94,7 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
    * UA1200BLEかどうか
    */
   public static isDevice(peripheral: BleRemotePeripheral) {
-    return (
+    return !!(
       peripheral.localName && peripheral.localName.startsWith('UA-1200BLE_')
     );
   }
@@ -162,6 +162,7 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
     peripheral: BleRemotePeripheral | null,
     timezoneOffsetMinute: number
   ) {
+    super();
     if (!peripheral || !UA1200BLE.isDevice(peripheral)) {
       throw new Error('peripheral is not UA1200BLE');
     }

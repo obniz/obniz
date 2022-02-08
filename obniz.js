@@ -412,10 +412,10 @@ var map = {
 	"./response/io/get.yml": "./dist/src/json_schema/response/io/get.yml",
 	"./response/io/index.yml": "./dist/src/json_schema/response/io/index.yml",
 	"./response/io/warning.yml": "./dist/src/json_schema/response/io/warning.yml",
-	"./response/ioanimation/index.yml": "./dist/src/json_schema/response/ioanimation/index.yml",
-	"./response/ioanimation/notify.yml": "./dist/src/json_schema/response/ioanimation/notify.yml",
-	"./response/logicanalyzer/data.yml": "./dist/src/json_schema/response/logicanalyzer/data.yml",
-	"./response/logicanalyzer/index.yml": "./dist/src/json_schema/response/logicanalyzer/index.yml",
+	"./response/ioAnimation/index.yml": "./dist/src/json_schema/response/ioAnimation/index.yml",
+	"./response/ioAnimation/notify.yml": "./dist/src/json_schema/response/ioAnimation/notify.yml",
+	"./response/logicAnalyzer/data.yml": "./dist/src/json_schema/response/logicAnalyzer/data.yml",
+	"./response/logicAnalyzer/index.yml": "./dist/src/json_schema/response/logicAnalyzer/index.yml",
 	"./response/measure/echo.yml": "./dist/src/json_schema/response/measure/echo.yml",
 	"./response/measure/index.yml": "./dist/src/json_schema/response/measure/index.yml",
 	"./response/message/index.yml": "./dist/src/json_schema/response/message/index.yml",
@@ -1563,28 +1563,28 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/ioanimation/index.yml":
+/***/ "./dist/src/json_schema/response/ioAnimation/index.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ioAnimation","basePath":"io","anyOf":[{"$ref":"/response/ioAnimation/notify"}]}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/ioanimation/notify.yml":
+/***/ "./dist/src/json_schema/response/ioAnimation/notify.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ioAnimation/notify","type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status"],"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","enum":["finish"]}}}}}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/logicanalyzer/data.yml":
+/***/ "./dist/src/json_schema/response/logicAnalyzer/data.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/logicAnalyzer/data","type":"object","required":["data"],"properties":{"data":{"$ref":"/bitArray"}}}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/logicanalyzer/index.yml":
+/***/ "./dist/src/json_schema/response/logicAnalyzer/index.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/logicAnalyzer","basePath":"logic_analyzer","anyOf":[{"$ref":"/response/logicAnalyzer/data"}]}
@@ -3440,6 +3440,11 @@ class ObnizDevice extends ObnizUIs_1.default {
      * @param msg
      */
     warning(msg) {
+        if (this.onwarn) {
+            const sendError = msg instanceof Error ? msg : new Error(msg.message);
+            this.onwarn(this, sendError);
+            return;
+        }
         if (this.isNode) {
             console.error(msg);
         }
@@ -3955,8 +3960,9 @@ class ObnizParts extends ObnizConnection_1.default {
             .filter(([, m]) => m !== null)
             // Hiring with long library names
             .sort(([na], [nb]) => ((nb !== null && nb !== void 0 ? nb : '')).length - ((na !== null && na !== void 0 ? na : '')).length);
-        if (result.length === 0 || !result[0][0] || !result[0][1])
+        if (result.length === 0 || !result[0][0] || !result[0][1]) {
             return null;
+        }
         const [name, mode] = result[0];
         const parts = new _parts[name](peripheral, mode);
         return parts;
@@ -3974,8 +3980,12 @@ exports.default = ObnizParts;
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 /* eslint-disable rulesdir/non-ascii */
 /* eslint-disable max-classes-per-file */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 const ObnizPartsBleModeList = ['Beacon', 'Connectable', 'Pairing'];
 exports.notMatchDeviceError = new Error('Is NOT target device.');
 exports.uint = (value) => {
@@ -3997,8 +4007,9 @@ exports.intBE = (value) => exports.int(value.reverse());
 exports.uintToArray = (value, length = 2) => new Array(length)
     .fill(0)
     .map((v, i) => value % (1 << ((i + 1) * 8)) >> (i * 8));
-class ObnizPartsBle {
+class ObnizPartsBle extends ObnizPartsBleInterface_1.default {
     constructor(peripheral, mode) {
+        super();
         this._mode = mode;
         this.peripheral = peripheral;
         this.address = peripheral.address;
@@ -4014,7 +4025,7 @@ class ObnizPartsBle {
      * name: PartsName
      */
     static info() {
-        return { name: this.PartsName };
+        return { name: '' + this.PartsName };
     }
     /**
      * Available BLE modes (Beacon | Connectable | Pairing)
@@ -4494,13 +4505,24 @@ exports.iBeaconData =
  * @packageDocumentation
  * @module ObnizCore
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class ObnizPartsBleInterface {
+const ObnizPartsInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsInterface.js"));
+class ObnizPartsBleInterface extends ObnizPartsInterface_1.default {
     constructor() {
+        super(...arguments);
+        this.keys = [];
+        this.requiredKeys = [];
+        this.ioKeys = [];
         /**
          * Internally Used function for connection required devices
          */
         this._peripheral = null;
+    }
+    wired(obniz) {
+        throw new Error(`BLE parts cannot wired`);
     }
     /**
      * Utility function for reading 2 byte to signed number.
@@ -4540,6 +4562,23 @@ class ObnizPartsBleInterface {
     }
 }
 exports.default = ObnizPartsBleInterface;
+
+
+/***/ }),
+
+/***/ "./dist/src/obniz/ObnizPartsInterface.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class ObnizPartsInterface {
+}
+exports.default = ObnizPartsInterface;
 
 
 /***/ }),
@@ -24399,8 +24438,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 /** 2JCIE management class 2JCIEを管理するクラス */
-class OMRON_2JCIE {
+class OMRON_2JCIE extends ObnizPartsBleInterface_1.default {
     constructor(peripheral) {
+        super();
         this._peripheral = null;
         this.vibrationState = {
             0x00: 'NONE',
@@ -24429,7 +24469,7 @@ class OMRON_2JCIE {
      * OMRON 環境センサ 2JCIEシリーズかどうか
      */
     static isDevice(peripheral) {
-        return ((peripheral.localName && peripheral.localName.indexOf('Env') >= 0) ||
+        return !!((peripheral.localName && peripheral.localName.indexOf('Env') >= 0) ||
             (peripheral.localName && peripheral.localName.indexOf('IM') >= 0) ||
             (peripheral.localName && peripheral.localName.indexOf('Rbt') >= 0));
     }
@@ -24701,10 +24741,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/services/batteryService.js"));
 /** ENERTALK TOUCH management class ENERTALK TOUCHを管理するクラス */
-class ENERTALK_TOUCH {
+class ENERTALK_TOUCH extends ObnizPartsBleInterface_1.default {
     constructor(peripheral) {
+        super();
         this.keys = [];
         this.requiredKeys = [];
         this.onbuttonpressed = null;
@@ -25136,9 +25178,13 @@ const unsigned16 = (value) => {
  * @module Parts.HEM_6233T
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 /** HEM_6233T management class HEM_6233Tを管理するクラス */
-class HEM_6233T {
+class HEM_6233T extends ObnizPartsBleInterface_1.default {
     /**
      *
      * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
@@ -25147,6 +25193,7 @@ class HEM_6233T {
      *
      */
     constructor(peripheral, timezoneOffsetMinute) {
+        super();
         this.keys = [];
         this.requiredKeys = [];
         this._peripheral = null;
@@ -25379,10 +25426,15 @@ exports.default = HEM_6233T;
  * @module Parts.HEM-9200T
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 /** HEM_9200T management class HEM_9200Tを管理するクラス */
-class HEM_9200T {
+class HEM_9200T extends ObnizPartsBleInterface_1.default {
     constructor(peripheral, options = {}) {
+        super();
         this.keys = [];
         this.requiredKeys = [];
         this._peripheral = null;
@@ -25585,11 +25637,16 @@ exports.default = HEM_9200T;
  * @module Parts.KankiAirMier
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
 /** Kanki AirMier management class 換気エアミエルを管理するクラス */
-class KankiAirMier {
+class KankiAirMier extends ObnizPartsBleInterface_1.default {
     constructor() {
+        super(...arguments);
         this._peripheral = null;
     }
     static info() {
@@ -26519,9 +26576,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 /** MINEW_S1 management class MINEW_S1を管理するクラス */
-class MINEW_S1 {
+class MINEW_S1 extends ObnizPartsBleInterface_1.default {
     constructor() {
+        super(...arguments);
         this._peripheral = null;
         // non-wired device
         this.keys = [];
@@ -27034,10 +27093,15 @@ exports.default = MT_500BT;
  * @module Parts.MiniBreeze
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 /** MiniBreeze management class MiniBreezeを管理するクラス */
-class MiniBreeze {
+class MiniBreeze extends ObnizPartsBleInterface_1.default {
     constructor() {
+        super(...arguments);
         this._peripheral = null;
         // non-wired device
         this.keys = [];
@@ -28641,10 +28705,15 @@ exports.default = RS_BTWATTCH2;
  * @module Parts.RS_Seek3
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 /** RS_Seek3 management class RS_Seek3を管理するクラス */
-class RS_Seek3 {
+class RS_Seek3 extends ObnizPartsBleInterface_1.default {
     constructor(peripheral) {
+        super();
         this.keys = [];
         this.requiredKeys = [];
         /**
@@ -28942,11 +29011,16 @@ STM550B.CompanyID = {
  * @module Parts.TR4
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
 /** Tr4 series management class Tr4シリーズを管理するクラス */
-class Tr4 {
+class Tr4 extends ObnizPartsBleInterface_1.default {
     constructor() {
+        super(...arguments);
         this._peripheral = null;
     }
     static info() {
@@ -29036,10 +29110,15 @@ Tr4._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
  * @module Parts.UA1200BLE
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 /** UA1200BLE management class UA1200BLEを管理するクラス */
-class UA1200BLE {
+class UA1200BLE extends ObnizPartsBleInterface_1.default {
     constructor(peripheral, timezoneOffsetMinute) {
+        super();
         if (!peripheral || !UA1200BLE.isDevice(peripheral)) {
             throw new Error('peripheral is not UA1200BLE');
         }
@@ -29063,7 +29142,7 @@ class UA1200BLE {
      * UA1200BLEかどうか
      */
     static isDevice(peripheral) {
-        return (peripheral.localName && peripheral.localName.startsWith('UA-1200BLE_'));
+        return !!(peripheral.localName && peripheral.localName.startsWith('UA-1200BLE_'));
     }
     /**
      * Judge whether it is cooperation mode
@@ -29314,10 +29393,15 @@ exports.default = UA1200BLE;
  * @module Parts.UA651BLE
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 /** UA651BLE management class UA651BLEを管理するクラス */
-class UA651BLE {
+class UA651BLE extends ObnizPartsBleInterface_1.default {
     constructor(peripheral, timezoneOffsetMinute) {
+        super();
         if (!peripheral) {
             throw new Error('no peripheral');
         }
@@ -29341,7 +29425,7 @@ class UA651BLE {
      * UA651BLEかどうか
      */
     static isDevice(peripheral) {
-        return (peripheral.localName && peripheral.localName.startsWith('A&D_UA-651BLE_'));
+        return !!(peripheral.localName && peripheral.localName.startsWith('A&D_UA-651BLE_'));
     }
     /**
      * Get data from the UA651BLE
@@ -29499,10 +29583,15 @@ exports.default = UA651BLE;
  * @module Parts.UT201BLE
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 /** UT201BLE management class UT201BLEを管理するクラス */
-class UT201BLE {
+class UT201BLE extends ObnizPartsBleInterface_1.default {
     constructor(peripheral, timezoneOffsetMinute) {
+        super();
         if (!peripheral || !UT201BLE.isDevice(peripheral)) {
             throw new Error('peripheral is not UT201BLE');
         }
@@ -29526,7 +29615,7 @@ class UT201BLE {
      * UT201BLEかどうか
      */
     static isDevice(peripheral) {
-        return (peripheral.localName && peripheral.localName.startsWith('A&D_UT201BLE_'));
+        return !!(peripheral.localName && peripheral.localName.startsWith('A&D_UT201BLE_'));
     }
     /**
      * Pair with the device
@@ -29961,10 +30050,15 @@ iBS03G.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery,
  * @module Parts.iBS04i
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 /** iBS03R management class iBS03Rを管理するクラス */
-class IBS03R {
+class IBS03R extends ObnizPartsBleInterface_1.default {
     constructor() {
+        super(...arguments);
         this._peripheral = null;
     }
     static info() {
@@ -30234,11 +30328,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 const advertising_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/advertising.js"));
 const device_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/device.js"));
 /** products supporting Linking management class Linking対応製品を管理するクラス */
-class Linking {
+class Linking extends ObnizPartsBleInterface_1.default {
     constructor(params) {
+        super();
         /** not used */
         this.PRIMARY_SERVICE_UUID_LIST = [
             'b3b3690150d34044808d50835b13a6cd',
@@ -30266,9 +30362,6 @@ class Linking {
     }
     get LinkingDevice() {
         return device_1.default;
-    }
-    wired(obniz) {
-        this.obniz = obniz;
     }
     /**
      * Use {@linkplain initWait}
@@ -34521,10 +34614,15 @@ exports.default = LinkingService;
  * @module Parts.SCBTGAAAC
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 /** SCBTGAAAC management class SCBTGAAACを管理するクラス */
-class SCBTGAAAC {
+class SCBTGAAAC extends ObnizPartsBleInterface_1.default {
     constructor() {
+        super(...arguments);
         this._peripheral = null;
     }
     static info() {
@@ -34620,8 +34718,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 /** TM511 management class TM511を管理するクラス */
-class TM511 {
+class TM511 extends ObnizPartsBleInterface_1.default {
     constructor() {
+        super(...arguments);
         this._peripheral = null;
     }
     static info() {
@@ -34723,8 +34822,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 /** TM530 management class TM530を管理するクラス */
-class TM530 {
+class TM530 extends ObnizPartsBleInterface_1.default {
     constructor() {
+        super(...arguments);
         this._peripheral = null;
     }
     static info() {
@@ -35173,8 +35273,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 /** uPRISM management class uPRISMを管理するクラス */
-class uPRISM {
+class uPRISM extends ObnizPartsBleInterface_1.default {
     constructor(peripheral) {
+        super();
         this._peripheral = null;
         this.readIndex = -1;
         this.accelRange = 1024;
@@ -52531,9 +52632,14 @@ const LDO3_EN_MASK = 0xf7;
  * @packageDocumentation
  * @module Parts.BMP280
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class BMP280 {
+const ObnizPartsInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsInterface.js"));
+class BMP280 extends ObnizPartsInterface_1.default {
     constructor() {
+        super();
         this.requiredKeys = [];
         this.keys = [
             'vcore',

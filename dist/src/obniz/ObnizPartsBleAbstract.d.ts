@@ -1,5 +1,7 @@
 import BleRemoteCharacteristic from './libs/embeds/bleHci/bleRemoteCharacteristic';
 import BleRemotePeripheral, { IBeacon } from './libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface from './ObnizPartsBleInterface';
+import { ObnizPartsDataProperty } from './ObnizPartsDataProperty';
 import { ObnizPartsInfo, ObnizPartsProps } from './ObnizPartsInterface';
 import { PartsType } from './ObnizPartsList';
 declare const ObnizPartsBleModeList: readonly ["Beacon", "Connectable", "Pairing"];
@@ -60,9 +62,9 @@ export interface ObnizPartsBleProps extends ObnizPartsProps {
     readonly BeaconDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown> | null>;
     getServiceUuids(mode: ObnizPartsBleMode): string[] | null | undefined;
     getDeviceMode(peripheral: BleRemotePeripheral): ObnizPartsBleMode | null;
-    new (peripheral: BleRemotePeripheral, mode: ObnizPartsBleMode): ObnizPartsBle<unknown>;
+    new (peripheral: BleRemotePeripheral, mode: ObnizPartsBleMode): ObnizPartsBle<any>;
 }
-export declare abstract class ObnizPartsBle<S> {
+export declare abstract class ObnizPartsBle<S extends Partial<ObnizPartsDataProperty>> extends ObnizPartsBleInterface {
     /**
      * Information of parts.
      * name: PartsName

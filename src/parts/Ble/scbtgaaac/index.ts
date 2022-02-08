@@ -12,7 +12,7 @@ import ObnizPartsBleInterface, {
 export interface SCBTGAAACOptions {}
 
 /** SCBTGAAAC management class SCBTGAAACを管理するクラス */
-export default class SCBTGAAAC implements ObnizPartsBleInterface {
+export default class SCBTGAAAC extends ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
       name: 'SCBTGAAAC',

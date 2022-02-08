@@ -26,7 +26,7 @@ export interface TM530_Data {
     humidity: number;
 }
 /** TM530 management class TM530を管理するクラス */
-export default class TM530 implements ObnizPartsBleInterface {
+export default class TM530 extends ObnizPartsBleInterface {
     static info(): ObnizPartsBleInfo;
     /**
      * Verify that the received peripheral is from the TM530

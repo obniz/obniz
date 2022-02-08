@@ -3,9 +3,14 @@
  * @packageDocumentation
  * @module Parts.BMP280
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class BMP280 {
+const ObnizPartsInterface_1 = __importDefault(require("../../../obniz/ObnizPartsInterface"));
+class BMP280 extends ObnizPartsInterface_1.default {
     constructor() {
+        super();
         this.requiredKeys = [];
         this.keys = [
             'vcore',

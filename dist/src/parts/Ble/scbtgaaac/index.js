@@ -4,10 +4,15 @@
  * @module Parts.SCBTGAAAC
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
 /** SCBTGAAAC management class SCBTGAAACを管理するクラス */
-class SCBTGAAAC {
+class SCBTGAAAC extends ObnizPartsBleInterface_1.default {
     constructor() {
+        super(...arguments);
         this._peripheral = null;
     }
     static info() {

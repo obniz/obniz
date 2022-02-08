@@ -4,10 +4,15 @@
  * @module Parts.UA1200BLE
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
 /** UA1200BLE management class UA1200BLEを管理するクラス */
-class UA1200BLE {
+class UA1200BLE extends ObnizPartsBleInterface_1.default {
     constructor(peripheral, timezoneOffsetMinute) {
+        super();
         if (!peripheral || !UA1200BLE.isDevice(peripheral)) {
             throw new Error('peripheral is not UA1200BLE');
         }
@@ -31,7 +36,7 @@ class UA1200BLE {
      * UA1200BLEかどうか
      */
     static isDevice(peripheral) {
-        return (peripheral.localName && peripheral.localName.startsWith('UA-1200BLE_'));
+        return !!(peripheral.localName && peripheral.localName.startsWith('UA-1200BLE_'));
     }
     /**
      * Judge whether it is cooperation mode

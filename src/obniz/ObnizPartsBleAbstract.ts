@@ -10,6 +10,8 @@ import {
   ObnizBleUnknownServiceError,
 } from './ObnizError';
 import { Triaxial } from './ObnizParts';
+import ObnizPartsBleInterface from './ObnizPartsBleInterface';
+import { ObnizPartsDataProperty } from './ObnizPartsDataProperty';
 import { ObnizPartsInfo, ObnizPartsProps } from './ObnizPartsInterface';
 import { PartsType } from './ObnizPartsList';
 
@@ -119,16 +121,18 @@ export interface ObnizPartsBleProps extends ObnizPartsProps {
   new (
     peripheral: BleRemotePeripheral,
     mode: ObnizPartsBleMode
-  ): ObnizPartsBle<unknown>;
+  ): ObnizPartsBle<any>;
 }
 
-export abstract class ObnizPartsBle<S> {
+export abstract class ObnizPartsBle<
+  S extends Partial<ObnizPartsDataProperty>
+> extends ObnizPartsBleInterface {
   /**
    * Information of parts.
    * name: PartsName
    */
   public static info(): ObnizPartsInfo {
-    return { name: ((this as unknown) as ObnizPartsBleProps).PartsName };
+    return { name: '' + ((this as unknown) as ObnizPartsBleProps).PartsName };
   }
 
   /**
@@ -454,6 +458,7 @@ export abstract class ObnizPartsBle<S> {
   protected abstract readonly staticClass: ObnizPartsBleProps;
 
   constructor(peripheral: BleRemotePeripheral, mode: ObnizPartsBleMode) {
+    super();
     this._mode = mode;
     this.peripheral = peripheral;
     this.address = peripheral.address;

@@ -73,7 +73,7 @@ export interface HEM_9200TOptions {
     passkey?: number;
 }
 /** HEM_9200T management class HEM_9200Tを管理するクラス */
-export default class HEM_9200T implements ObnizPartsBleInterface {
+export default class HEM_9200T extends ObnizPartsBleInterface {
     static info(): ObnizPartsInfo;
     /**
      * Verify that the received peripheral is from the HEM_9200T

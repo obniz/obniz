@@ -197,6 +197,20 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
      */
     onloop?: (obniz: this) => void;
     /**
+     * If an warn occurs, the onerror function is called.
+     *
+     * ```javascript
+     * var obniz = new Obniz('1234-5678');
+     * obniz.onconnect = async function() {
+     *
+     * }
+     * obniz.onerror = async function(ob, error) {
+     *    console.error(error);
+     * }
+     * ```
+     */
+    onwarn?: (obniz: this, error: Error) => void;
+    /**
      * If an error occurs, the onerror function is called.
      *
      * ```javascript

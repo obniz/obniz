@@ -26,7 +26,7 @@ export interface IBS03R_Data {
     address: string;
 }
 /** iBS03R management class iBS03Rを管理するクラス */
-export default class IBS03R implements ObnizPartsBleInterface {
+export default class IBS03R extends ObnizPartsBleInterface {
     static info(): ObnizPartsBleInfo;
     /**
      * Verify that the received peripheral is from the iBS03R

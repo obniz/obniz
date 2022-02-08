@@ -9,7 +9,7 @@ import BleBatteryService from '../utils/services/batteryService';
 export interface ENERTALK_TOUCHOptions {
 }
 /** ENERTALK TOUCH management class ENERTALK TOUCHを管理するクラス */
-export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
+export default class ENERTALK_TOUCH extends ObnizPartsBleInterface {
     static info(): ObnizPartsInfo;
     /**
      * Verify that the received peripheral is from the ENERTALK TOUCH

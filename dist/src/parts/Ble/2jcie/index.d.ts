@@ -317,7 +317,7 @@ export interface OMRON_2JCIE_AdvSensorData {
     eco2: number;
 }
 /** 2JCIE management class 2JCIEを管理するクラス */
-export default class OMRON_2JCIE implements ObnizPartsBleInterface {
+export default class OMRON_2JCIE extends ObnizPartsBleInterface {
     static info(): ObnizPartsInfo;
     /**
      * Verify that the received peripheral is from the 2JCIE Environmental Sensor series of OMRON
@@ -330,7 +330,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
      *
      * OMRON 環境センサ 2JCIEシリーズかどうか
      */
-    static isDevice(peripheral: BleRemotePeripheral): boolean | "" | null;
+    static isDevice(peripheral: BleRemotePeripheral): boolean;
     /**
      * Get a data from advertisement mode of the 2JCIE Environmental Sensor series of OMRON
      *

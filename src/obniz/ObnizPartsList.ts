@@ -278,10 +278,17 @@ import XBee, { XBeeOptions } from '../parts/Wireless/XBee';
 import EXVital, { EXVital_Options } from '../parts/Ble/EXVital';
 import iBS03T_RH, { iBS03T_RHOptions } from '../parts/Ble/iBS03T_RH';
 import iBS05H, { iBS05HOptions } from '../parts/Ble/iBS05H';
+import ObnizPartsBleInterface from './ObnizPartsBleInterface';
+import ObnizPartsInterface from './ObnizPartsInterface';
 
-export type PartsType = keyof PartsList;
+type PartsListBase = {
+  [_: string]: {
+    class: ObnizPartsInterface;
+    options: any;
+  };
+};
 
-export interface PartsList {
+export interface PartsList extends PartsListBase {
   LED: { class: LED; options: LEDOptions };
   FullColorLED: { class: FullColorLED; options: FullColorLEDOptions };
   WS2811: { class: WS2811; options: WS2811Options };
@@ -532,3 +539,5 @@ export interface PartsList {
   EXVital: { class: EXVital; options: EXVital_Options };
   STM550B: { class: STM550B; options: STM550B_Options };
 }
+
+export type PartsType = keyof PartsList;

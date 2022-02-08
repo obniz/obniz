@@ -4,10 +4,15 @@
  * @module Parts.UT201BLE
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
 /** UT201BLE management class UT201BLEを管理するクラス */
-class UT201BLE {
+class UT201BLE extends ObnizPartsBleInterface_1.default {
     constructor(peripheral, timezoneOffsetMinute) {
+        super();
         if (!peripheral || !UT201BLE.isDevice(peripheral)) {
             throw new Error('peripheral is not UT201BLE');
         }
@@ -31,7 +36,7 @@ class UT201BLE {
      * UT201BLEかどうか
      */
     static isDevice(peripheral) {
-        return (peripheral.localName && peripheral.localName.startsWith('A&D_UT201BLE_'));
+        return !!(peripheral.localName && peripheral.localName.startsWith('A&D_UT201BLE_'));
     }
     /**
      * Pair with the device

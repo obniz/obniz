@@ -4,9 +4,13 @@
  * @module Parts.HEM_6233T
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
 /** HEM_6233T management class HEM_6233Tを管理するクラス */
-class HEM_6233T {
+class HEM_6233T extends ObnizPartsBleInterface_1.default {
     /**
      *
      * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
@@ -15,6 +19,7 @@ class HEM_6233T {
      *
      */
     constructor(peripheral, timezoneOffsetMinute) {
+        super();
         this.keys = [];
         this.requiredKeys = [];
         this._peripheral = null;

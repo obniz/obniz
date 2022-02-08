@@ -67,7 +67,7 @@ export interface UA1200BLEResult {
     };
 }
 /** UA1200BLE management class UA1200BLEを管理するクラス */
-export default class UA1200BLE implements ObnizPartsBleInterface {
+export default class UA1200BLE extends ObnizPartsBleInterface {
     static info(): ObnizPartsBleInfo;
     /**
      * Verify that the received peripheral is from the UA1200BLE
@@ -80,7 +80,7 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
      *
      * UA1200BLEかどうか
      */
-    static isDevice(peripheral: BleRemotePeripheral): boolean | "" | null;
+    static isDevice(peripheral: BleRemotePeripheral): boolean;
     /**
      * Judge whether it is cooperation mode
      *

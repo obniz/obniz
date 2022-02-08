@@ -175,7 +175,7 @@ export default class SainSmartTFT18LCD implements ObnizPartsInterface {
     height: number;
     writeBuffer: number[];
     color: PresetColor;
-    protected displayIoNames: {
+    displayIoNames: {
         [key: string]: string;
     };
     constructor();

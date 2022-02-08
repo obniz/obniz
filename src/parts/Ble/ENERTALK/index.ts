@@ -15,7 +15,7 @@ import BleBatteryService from '../utils/services/batteryService';
 export interface ENERTALK_TOUCHOptions {}
 
 /** ENERTALK TOUCH management class ENERTALK TOUCHを管理するクラス */
-export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
+export default class ENERTALK_TOUCH extends ObnizPartsBleInterface {
   public static info(): ObnizPartsInfo {
     return {
       name: 'ENERTALK_TOUCH',
@@ -62,6 +62,7 @@ export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
   private _accelerometerChar: BleRemoteCharacteristic | null = null;
 
   constructor(peripheral: BleRemotePeripheral | null) {
+    super();
     if (peripheral && !ENERTALK_TOUCH.isDevice(peripheral)) {
       throw new Error('peripheral is not ENERTALK_TOUCH');
     }

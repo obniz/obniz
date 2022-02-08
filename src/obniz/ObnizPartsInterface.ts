@@ -13,6 +13,7 @@ export interface ObnizPartsInfo {
 
 export interface ObnizPartsProps {
   info(): ObnizPartsInfo;
+
   PartsName: PartsType;
 }
 
@@ -22,7 +23,10 @@ export default abstract class ObnizPartsInterface {
   public abstract keys: string[];
   public abstract requiredKeys: string[];
   public abstract ioKeys?: string[];
+  public displayIoNames?: { [key: string]: string };
+  public displayName?: string;
+
   public params: any;
 
-  public abstract wired(obniz: Obniz): void;
+  public abstract wired(obniz: Obniz, ...args: any[]): void;
 }

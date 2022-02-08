@@ -4,10 +4,15 @@
  * @module Parts.RS_Seek3
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
 /** RS_Seek3 management class RS_Seek3を管理するクラス */
-class RS_Seek3 {
+class RS_Seek3 extends ObnizPartsBleInterface_1.default {
     constructor(peripheral) {
+        super();
         this.keys = [];
         this.requiredKeys = [];
         /**

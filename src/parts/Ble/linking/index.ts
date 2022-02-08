@@ -14,6 +14,7 @@
 
 import Obniz from '../../../obniz';
 import bleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
 import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 
 import LinkingAdvertising from './modules/advertising';
@@ -38,7 +39,7 @@ export interface LinkingParams {
 }
 
 /** products supporting Linking management class Linking対応製品を管理するクラス */
-export default class Linking {
+export default class Linking extends ObnizPartsBleInterface {
   public static info(): ObnizPartsInfo {
     return {
       name: 'Linking',
@@ -58,8 +59,6 @@ export default class Linking {
   private _peripherals: any;
   public initialized = false;
 
-  public keys: string[];
-  public requiredKeys: string[];
   public peripheral: bleRemotePeripheral | null;
   public obniz!: Obniz;
 
@@ -72,6 +71,7 @@ export default class Linking {
   }
 
   constructor(params: any) {
+    super();
     this.keys = [];
     this.requiredKeys = [];
     this.peripheral = null;
@@ -84,10 +84,6 @@ export default class Linking {
     this._discover_wait = 3000; // ms
     this._discover_timer = null;
     this._peripherals = {};
-  }
-
-  public wired(obniz: Obniz) {
-    this.obniz = obniz;
   }
 
   /**

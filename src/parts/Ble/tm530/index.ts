@@ -32,7 +32,7 @@ export interface TM530_Data {
 }
 
 /** TM530 management class TM530を管理するクラス */
-export default class TM530 implements ObnizPartsBleInterface {
+export default class TM530 extends ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
       name: 'TM530',

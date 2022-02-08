@@ -45,7 +45,7 @@ export interface MINEW_S1_InfoData {
 export interface MINEW_S1Options {
 }
 /** MINEW_S1 management class MINEW_S1を管理するクラス */
-export default class MINEW_S1 implements ObnizPartsBleInterface {
+export default class MINEW_S1 extends ObnizPartsBleInterface {
     static info(): {
         name: string;
     };

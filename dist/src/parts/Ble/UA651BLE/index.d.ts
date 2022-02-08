@@ -67,7 +67,7 @@ export interface UA651BLEResult {
     };
 }
 /** UA651BLE management class UA651BLEを管理するクラス */
-export default class UA651BLE implements ObnizPartsBleInterface {
+export default class UA651BLE extends ObnizPartsBleInterface {
     static info(): ObnizPartsBleInfo;
     /**
      * Verify that the received peripheral is from the UA651BLE
@@ -80,7 +80,7 @@ export default class UA651BLE implements ObnizPartsBleInterface {
      *
      * UA651BLEかどうか
      */
-    static isDevice(peripheral: BleRemotePeripheral): boolean | "" | null;
+    static isDevice(peripheral: BleRemotePeripheral): boolean;
     onNotify?: (co2: number) => void;
     _peripheral: BleRemotePeripheral | null;
     ondisconnect?: (reason: any) => void;

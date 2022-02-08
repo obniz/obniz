@@ -17,7 +17,7 @@ export interface BMP280Options {
     address?: number;
     i2c?: PeripheralI2C;
 }
-export default class BMP280 implements ObnizPartsInterface {
+export default class BMP280 extends ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     requiredKeys: string[];
     keys: string[];

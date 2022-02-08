@@ -1,8 +1,12 @@
 "use strict";
 /* eslint-disable rulesdir/non-ascii */
 /* eslint-disable max-classes-per-file */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizError_1 = require("./ObnizError");
+const ObnizPartsBleInterface_1 = __importDefault(require("./ObnizPartsBleInterface"));
 const ObnizPartsBleModeList = ['Beacon', 'Connectable', 'Pairing'];
 exports.notMatchDeviceError = new Error('Is NOT target device.');
 exports.uint = (value) => {
@@ -24,8 +28,9 @@ exports.intBE = (value) => exports.int(value.reverse());
 exports.uintToArray = (value, length = 2) => new Array(length)
     .fill(0)
     .map((v, i) => value % (1 << ((i + 1) * 8)) >> (i * 8));
-class ObnizPartsBle {
+class ObnizPartsBle extends ObnizPartsBleInterface_1.default {
     constructor(peripheral, mode) {
+        super();
         this._mode = mode;
         this.peripheral = peripheral;
         this.address = peripheral.address;
@@ -41,7 +46,7 @@ class ObnizPartsBle {
      * name: PartsName
      */
     static info() {
-        return { name: this.PartsName };
+        return { name: '' + this.PartsName };
     }
     /**
      * Available BLE modes (Beacon | Connectable | Pairing)

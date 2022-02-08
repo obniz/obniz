@@ -98,7 +98,7 @@ export interface uPRISM_Data {
 }
 
 /** uPRISM management class uPRISMを管理するクラス */
-export default class uPRISM implements ObnizPartsBleInterface {
+export default class uPRISM extends ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
       name: 'uPRISM',
@@ -144,6 +144,7 @@ export default class uPRISM implements ObnizPartsBleInterface {
   };
 
   constructor(peripheral: BleRemotePeripheral | null) {
+    super();
     if (peripheral === null) {
       throw new Error('peripheral is null');
     }

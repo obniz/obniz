@@ -17,6 +17,10 @@ export default abstract class ObnizPartsInterface {
     abstract keys: string[];
     abstract requiredKeys: string[];
     abstract ioKeys?: string[];
+    displayIoNames?: {
+        [key: string]: string;
+    };
+    displayName?: string;
     params: any;
-    abstract wired(obniz: Obniz): void;
+    abstract wired(obniz: Obniz, ...args: any[]): void;
 }

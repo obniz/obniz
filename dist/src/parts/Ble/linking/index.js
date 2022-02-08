@@ -8,11 +8,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
 const advertising_1 = __importDefault(require("./modules/advertising"));
 const device_1 = __importDefault(require("./modules/device"));
 /** products supporting Linking management class Linking対応製品を管理するクラス */
-class Linking {
+class Linking extends ObnizPartsBleInterface_1.default {
     constructor(params) {
+        super();
         /** not used */
         this.PRIMARY_SERVICE_UUID_LIST = [
             'b3b3690150d34044808d50835b13a6cd',
@@ -40,9 +42,6 @@ class Linking {
     }
     get LinkingDevice() {
         return device_1.default;
-    }
-    wired(obniz) {
-        this.obniz = obniz;
     }
     /**
      * Use {@linkplain initWait}

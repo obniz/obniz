@@ -9,7 +9,7 @@ import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface RS_Seek3Options {
 }
 /** RS_Seek3 management class RS_Seek3を管理するクラス */
-export default class RS_Seek3 implements ObnizPartsBleInterface {
+export default class RS_Seek3 extends ObnizPartsBleInterface {
     static info(): ObnizPartsInfo;
     /**
      * Verify that the received peripheral is from the RS_Seek3

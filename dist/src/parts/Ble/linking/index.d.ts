@@ -4,6 +4,7 @@
  */
 import Obniz from '../../../obniz';
 import bleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
 import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 import LinkingAdvertising from './modules/advertising';
 import LinkingDevice from './modules/device';
@@ -25,7 +26,7 @@ export interface LinkingParams {
     quick?: boolean;
 }
 /** products supporting Linking management class Linking対応製品を管理するクラス */
-export default class Linking {
+export default class Linking extends ObnizPartsBleInterface {
     static info(): ObnizPartsInfo;
     onadvertisement: any;
     ondiscover: any;
@@ -36,14 +37,11 @@ export default class Linking {
     private _discover_timer;
     private _peripherals;
     initialized: boolean;
-    keys: string[];
-    requiredKeys: string[];
     peripheral: bleRemotePeripheral | null;
     obniz: Obniz;
     get LinkingAdvertising(): typeof LinkingAdvertising;
     get LinkingDevice(): typeof LinkingDevice;
     constructor(params: any);
-    wired(obniz: Obniz): void;
     /**
      * Use {@linkplain initWait}
      *

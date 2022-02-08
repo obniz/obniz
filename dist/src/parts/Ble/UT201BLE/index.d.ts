@@ -47,7 +47,7 @@ export interface UT201BLEResult {
     temperatureType?: string;
 }
 /** UT201BLE management class UT201BLEを管理するクラス */
-export default class UT201BLE implements ObnizPartsBleInterface {
+export default class UT201BLE extends ObnizPartsBleInterface {
     static info(): ObnizPartsBleInfo;
     /**
      * Verify that the received peripheral is from the UT201BLE
@@ -60,7 +60,7 @@ export default class UT201BLE implements ObnizPartsBleInterface {
      *
      * UT201BLEかどうか
      */
-    static isDevice(peripheral: BleRemotePeripheral): boolean | "" | null;
+    static isDevice(peripheral: BleRemotePeripheral): boolean;
     onNotify?: (co2: number) => void;
     _peripheral: BleRemotePeripheral | null;
     ondisconnect?: (reason: any) => void;

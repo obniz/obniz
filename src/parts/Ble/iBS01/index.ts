@@ -5,6 +5,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { ObnizBleBeaconStruct } from '../../../obniz/ObnizPartsBleAbstract';
+import { ObnizPartsDataProperty } from '../../../obniz/ObnizPartsDataProperty';
 import { BaseiBS01 } from '../utils/abstracts/iBS';
 
 export interface iBS01Options {}
@@ -14,7 +15,11 @@ export interface iBS01Options {}
  *
  * iBS01からのadvertisementデータ
  */
-export interface iBS01_Data {
+export interface iBS01_Data
+  extends Pick<
+    ObnizPartsDataProperty,
+    'battery' | 'button' | 'moving' | 'hall_sensor' | 'fall'
+  > {
   /** battery 電池電圧 (Unit 単位: 0.01 V) */
   battery: number;
   /**

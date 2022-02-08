@@ -65,7 +65,7 @@ export interface HEM_6233TResult {
     measurementStatus?: HEM_6233TMeasurementStatus[];
 }
 /** HEM_6233T management class HEM_6233Tを管理するクラス */
-export default class HEM_6233T implements ObnizPartsBleInterface {
+export default class HEM_6233T extends ObnizPartsBleInterface {
     static info(): ObnizPartsInfo;
     /**
      * Verify that the received peripheral is from the HEM_6233T

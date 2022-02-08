@@ -47,7 +47,7 @@ export interface KankiAirMier_Data {
 }
 
 /** Kanki AirMier management class 換気エアミエルを管理するクラス */
-export default class KankiAirMier implements ObnizPartsBleInterface {
+export default class KankiAirMier extends ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
       name: 'KankiAirMier',
