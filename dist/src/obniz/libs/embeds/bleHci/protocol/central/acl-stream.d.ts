@@ -7,7 +7,7 @@
 import EventEmitter from 'eventemitter3';
 import { Handle } from '../../bleTypes';
 import Hci from '../hci';
-import Smp from './smp';
+import Smp, { SmpEncryptOptions } from './smp';
 declare type AclStreamEventTypes = 'data' | 'end' | 'encrypt' | 'encryptFail';
 /**
  *
@@ -21,8 +21,8 @@ export default class AclStream extends EventEmitter<AclStreamEventTypes> {
     onSmpEndBinded: any;
     constructor(hci: Hci, handle: Handle, localAddressType: any, localAddress: any, remoteAddressType: any, remoteAddress: any);
     debugHandler: any;
-    encryptWait(options?: any): Promise<string | number>;
-    setEncryptOption(options?: any): void;
+    encryptWait(options?: SmpEncryptOptions): Promise<string | number>;
+    setEncryptOption(options: SmpEncryptOptions): void;
     write(cid: any, data: any): void;
     readWait(cid: any, flag: number, timeout?: number): Promise<Buffer>;
     push(cid: number, data: Buffer): void;

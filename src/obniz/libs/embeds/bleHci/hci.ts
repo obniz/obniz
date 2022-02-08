@@ -3,6 +3,7 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 
+import ObnizDevice from '../../../ObnizDevice';
 import {
   ObnizOfflineError,
   ObnizParameterError,
@@ -12,7 +13,7 @@ import {
 export type EventHandler = (...args: any) => any;
 
 export default class ObnizBLEHci {
-  public Obniz: any;
+  public Obniz: ObnizDevice;
 
   /*
    * HCI level timeout should never occure. Response must be sent from a device.
@@ -24,7 +25,7 @@ export default class ObnizBLEHci {
 
   protected _eventHandlerQueue: { [key: string]: EventHandler[] } = {};
 
-  constructor(Obniz: any) {
+  constructor(Obniz: ObnizDevice) {
     this.Obniz = Obniz;
   }
 
@@ -144,7 +145,10 @@ export default class ObnizBLEHci {
     let timeoutHandler: null | ReturnType<typeof setTimeout> = null;
 
     const clearListeners = () => {
-      this.Obniz.off('close', onObnizClosed);
+      if (onObnizClosed) {
+        this.Obniz.off('close', onObnizClosed);
+        onObnizClosed = null;
+      }
       if (timeoutHandler) {
         clearTimeout(timeoutHandler);
         timeoutHandler = null;

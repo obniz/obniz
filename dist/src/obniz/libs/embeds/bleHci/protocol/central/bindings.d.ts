@@ -6,12 +6,17 @@
 /// <reference types="node" />
 import EventEmitter from 'eventemitter3';
 import { BleDeviceAddress, BleDeviceAddressType, Handle, UUID } from '../../bleTypes';
+import { HciState } from '../hci';
+import { HandleIndex } from '../peripheral/gatt';
+import { SmpEncryptOptions } from './smp';
 declare type NobleBindingsEventType = 'discover' | 'disconnect' | 'stateChange' | 'notification' | 'handleNotify';
 /**
  * @ignore
  */
 declare class NobleBindings extends EventEmitter<NobleBindingsEventType> {
-    _connectable: any;
+    _connectable: {
+        [key: string]: boolean;
+    };
     private _state;
     private _addresses;
     private _addresseTypes;
@@ -31,33 +36,33 @@ declare class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     _reset(): void;
     debugHandler: any;
     addPeripheralData(uuid: UUID, addressType: BleDeviceAddressType): void;
-    startScanningWait(serviceUuids: any, allowDuplicates: any, activeScan: boolean): Promise<void>;
+    startScanningWait(serviceUuids: UUID[], allowDuplicates: boolean, activeScan: boolean): Promise<void>;
     stopScanningWait(): Promise<void>;
-    connectWait(peripheralUuid: any, mtu: number | null, onConnectCallback?: any): Promise<void>;
+    connectWait(peripheralUuid: BleDeviceAddress, mtu: number | null, onConnectCallback?: any): Promise<void>;
     disconnect(peripheralUuid: any): void;
     updateRssiWait(peripheralUuid: UUID): Promise<number>;
-    onStateChange(state: any): void;
-    onDiscover(status: any, address?: any, addressType?: any, connectable?: any, advertisement?: any, rssi?: any): void;
-    onLeConnComplete(status: any, handle?: any, role?: any, addressType?: any, address?: BleDeviceAddress, interval?: any, latency?: any, supervisionTimeout?: any, masterClockAccuracy?: any): void;
+    onStateChange(state: HciState): void;
+    onDiscover(status: any, address: any, addressType: any, connectable: any, advertisement: any, rssi: number): void;
+    onLeConnComplete(status: any, handle: any, role: any, addressType: any, address: BleDeviceAddress, interval: any, latency: any, supervisionTimeout: any, masterClockAccuracy: any): void;
     onDisconnComplete(handle: any, reason: number): void;
     onAclDataPkt(handle: any, cid?: any, data?: any): void;
-    discoverServicesWait(peripheralUuid: any, uuids?: any): Promise<any>;
-    discoverIncludedServicesWait(peripheralUuid: string, serviceUuid: UUID, serviceUuids: UUID[]): Promise<any>;
-    discoverCharacteristicsWait(peripheralUuid: any, serviceUuid: any, characteristicUuids?: any): Promise<any>;
-    readWait(peripheralUuid: any, serviceUuid: any, characteristicUuid: any): Promise<Buffer>;
-    writeWait(peripheralUuid: any, serviceUuid: any, characteristicUuid: any, data: any, withoutResponse: any): Promise<void>;
-    broadcastWait(peripheralUuid: any, serviceUuid: any, characteristicUuid: any, broadcast: any): Promise<void>;
-    notifyWait(peripheralUuid: any, serviceUuid: any, characteristicUuid: any, notify: any): Promise<void>;
-    onNotification(address: any, serviceUuid?: any, characteristicUuid?: any, data?: any): void;
+    discoverServicesWait(peripheralUuid: any, uuids?: any): Promise<string[]>;
+    discoverIncludedServicesWait(peripheralUuid: string, serviceUuid: UUID, serviceUuids: UUID[]): Promise<string[] | undefined>;
+    discoverCharacteristicsWait(peripheralUuid: BleDeviceAddress, serviceUuid: UUID, characteristicUuids?: UUID[]): Promise<any[]>;
+    readWait(peripheralUuid: BleDeviceAddress, serviceUuid: UUID, characteristicUuid: UUID): Promise<Buffer>;
+    writeWait(peripheralUuid: BleDeviceAddress, serviceUuid: UUID, characteristicUuid: UUID, data: Buffer, withoutResponse: boolean): Promise<void>;
+    broadcastWait(peripheralUuid: BleDeviceAddress, serviceUuid: UUID, characteristicUuid: UUID, broadcast: boolean): Promise<void>;
+    notifyWait(peripheralUuid: BleDeviceAddress, serviceUuid: UUID, characteristicUuid: UUID, notify: boolean): Promise<void>;
+    onNotification(address: BleDeviceAddress, serviceUuid?: UUID, characteristicUuid?: UUID, data?: Buffer): void;
     discoverDescriptorsWait(peripheralUuid: UUID, serviceUuid: UUID, characteristicUuid: UUID): Promise<UUID[]>;
     readValueWait(peripheralUuid: UUID, serviceUuid: UUID, characteristicUuid: UUID, descriptorUuid: UUID): Promise<Buffer>;
-    writeValueWait(peripheralUuid: any, serviceUuid: any, characteristicUuid: any, descriptorUuid: any, data: any): Promise<void>;
-    readHandleWait(peripheralUuid: any, attHandle: any): Promise<Buffer>;
-    writeHandleWait(peripheralUuid: any, attHandle: any, data: any, withoutResponse: any): Promise<void>;
-    onHandleNotify(address: any, handle?: any, data?: any): void;
-    onConnectionParameterUpdateWait(handle: Handle, minInterval?: any, maxInterval?: any, latency?: any, supervisionTimeout?: any): void;
-    pairingWait(peripheralUuid: any, options?: any): Promise<string>;
-    setPairingOption(peripheralUuid: any, options: any): void;
+    writeValueWait(peripheralUuid: BleDeviceAddress, serviceUuid: UUID, characteristicUuid: UUID, descriptorUuid: UUID, data: Buffer): Promise<void>;
+    readHandleWait(peripheralUuid: BleDeviceAddress, attHandle: HandleIndex): Promise<Buffer>;
+    writeHandleWait(peripheralUuid: BleDeviceAddress, attHandle: HandleIndex, data: Buffer, withoutResponse: boolean): Promise<void>;
+    onHandleNotify(address: BleDeviceAddress, handle?: HandleIndex, data?: Buffer): void;
+    onConnectionParameterUpdateWait(handle: Handle, minInterval: number, maxInterval: number, latency: number, supervisionTimeout: number): void;
+    pairingWait(peripheralUuid: BleDeviceAddress, options?: SmpEncryptOptions): Promise<string>;
+    setPairingOption(peripheralUuid: BleDeviceAddress, options: SmpEncryptOptions): void;
     private getGatt;
     private debug;
 }

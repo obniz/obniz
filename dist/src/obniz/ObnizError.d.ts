@@ -86,3 +86,6 @@ export declare class ObnizBlePairingRejectByRemoteError extends ObnizError {
 export declare class ObnizBleScanStartError extends ObnizError {
     constructor(state: number, msg: any);
 }
+export declare class ObnizBleGattHandleError extends ObnizError {
+    constructor(msg: any);
+}

@@ -52,7 +52,7 @@ Use `batteryService.getBatteryLevelWait()` to get battery levels in percentages.
 // Javascript
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (peripheral) => {
+obniz.ble.scan.onfind = async (peripheral) => {
   // Get operation mode, it becomes null when not Logtta_TH
   const mode = Logtta_TH.getDeviceMode(peripheral);
   if (mode === 'Connectable') {
@@ -92,7 +92,7 @@ Use `startNotifyWait()` to wait for data from the device always.
 // Javascript
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (peripheral) => {
+obniz.ble.scan.onfind = async (peripheral) => {
   // Get operation mode, it becomes null when not Logtta_TH
   const mode = Logtta_TH.getDeviceMode(peripheral);
   if (mode === 'Connectable') {
@@ -128,7 +128,7 @@ To disable beacon mode, it is necessary to press and hold the button on the devi
 // Javascript
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (peripheral) => {
+obniz.ble.scan.onfind = async (peripheral) => {
   // Get operation mode, it becomes null when not Logtta_TH
   const mode = Logtta_TH.getDeviceMode(peripheral);
   if (mode === 'Connectable') {

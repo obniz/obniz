@@ -18,8 +18,8 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
   /**
    * @ignore
    */
-  get parentName(): string | null {
-    return 'service';
+  get parentName() {
+    return 'service' as const;
   }
 
   /**
@@ -33,8 +33,8 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * @ignore
    *
    */
-  get childrenName(): string | null {
-    return 'descriptors';
+  get childrenName() {
+    return 'descriptors' as const;
   }
 
   /**

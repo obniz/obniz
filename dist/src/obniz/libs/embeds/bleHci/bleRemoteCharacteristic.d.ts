@@ -9,7 +9,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
     /**
      * @ignore
      */
-    get parentName(): string | null;
+    get parentName(): "service";
     /**
      * @ignore
      */
@@ -18,7 +18,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
      * @ignore
      *
      */
-    get childrenName(): string | null;
+    get childrenName(): "descriptors";
     /**
      * It contains descriptors in a characteristic.
      * It was discovered when connection automatically.

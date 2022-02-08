@@ -560,7 +560,7 @@ obniz.onconnect = <span class="hljs-keyword">async</span> <span class="hljs-func
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="onerror" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> onerror</h3>
-					<div class="tsd-signature tsd-kind-icon">onerror<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>obniz<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span>, error<span class="tsd-signature-symbol">: </span><a href="obnizcore.errors.obnizerror.html#error" class="tsd-signature-type">Error</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
+					<div class="tsd-signature tsd-kind-icon">onerror<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>obniz<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span>, error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="obnizcore.obnizconnection.html">ObnizConnection</a>.<a href="obnizcore.obnizconnection.html#onerror">onerror</a></p>
 						<ul>
@@ -611,7 +611,7 @@ obniz.onloop = <span class="hljs-keyword">async</span> <span class="hljs-functio
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> prefixed</h3>
 					<div class="tsd-signature tsd-kind-icon">prefixed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from EventEmitter.prefixed</p>
+						<p>Inherited from <a href="obnizcore.obnizconnection.html">ObnizConnection</a>.<a href="obnizcore.obnizconnection.html#prefixed">prefixed</a></p>
 						<ul>
 							<li>Defined in node_modules/eventemitter3/index.d.ts:6</li>
 						</ul>
@@ -1205,12 +1205,12 @@ obniz.onloop = <span class="hljs-keyword">async</span> <span class="hljs-functio
 					<a name="addlistener" class="tsd-anchor"></a>
 					<h3>add<wbr>Listener</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Listener<span class="tsd-signature-symbol">(</span>event<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.html#obnizconnectioneventnames" class="tsd-signature-type">ObnizConnectionEventNames</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">ObnizConnectionEventNamesInternal</span>, fn<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ListenerFn</span>, context<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Listener<span class="tsd-signature-symbol">(</span>event<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.html#obnizconnectioneventnames" class="tsd-signature-type">ObnizConnectionEventNames</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">ObnizConnectionEventNamesInternal</span>, fn<span class="tsd-signature-symbol">: </span><a href="../interfaces/obnizcore.obnizconnection.listenerfn.html" class="tsd-signature-type">ListenerFn</a>, context<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from EventEmitter.addListener</p>
+								<p>Inherited from <a href="obnizcore.obnizconnection.html">ObnizConnection</a>.<a href="obnizcore.obnizconnection.html#addlistener">addListener</a></p>
 								<ul>
 									<li>Defined in node_modules/eventemitter3/index.d.ts:33</li>
 								</ul>
@@ -1221,7 +1221,7 @@ obniz.onloop = <span class="hljs-keyword">async</span> <span class="hljs-functio
 									<h5>event: <a href="../modules/obnizcore.html#obnizconnectioneventnames" class="tsd-signature-type">ObnizConnectionEventNames</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">ObnizConnectionEventNamesInternal</span></h5>
 								</li>
 								<li>
-									<h5>fn: <span class="tsd-signature-type">ListenerFn</span></h5>
+									<h5>fn: <a href="../interfaces/obnizcore.obnizconnection.listenerfn.html" class="tsd-signature-type">ListenerFn</a></h5>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> context: <span class="tsd-signature-type">any</span></h5>
@@ -1402,7 +1402,7 @@ obniz.io0.output(<span class="hljs-literal">true</span>);
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from EventEmitter.emit</p>
+								<p>Inherited from <a href="obnizcore.obnizconnection.html">ObnizConnection</a>.<a href="obnizcore.obnizconnection.html#emit">emit</a></p>
 								<ul>
 									<li>Defined in node_modules/eventemitter3/index.d.ts:27</li>
 								</ul>
@@ -1452,7 +1452,7 @@ obniz.io0.output(<span class="hljs-literal">true</span>);
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from EventEmitter.eventNames</p>
+								<p>Inherited from <a href="obnizcore.obnizconnection.html">ObnizConnection</a>.<a href="obnizcore.obnizconnection.html#eventnames">eventNames</a></p>
 								<ul>
 									<li>Defined in node_modules/eventemitter3/index.d.ts:12</li>
 								</ul>
@@ -1860,7 +1860,7 @@ obniz.keepWorkingAtOffline(<span class="hljs-literal">true</span>);</code></pre>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from EventEmitter.listenerCount</p>
+								<p>Inherited from <a href="obnizcore.obnizconnection.html">ObnizConnection</a>.<a href="obnizcore.obnizconnection.html#listenercount">listenerCount</a></p>
 								<ul>
 									<li>Defined in node_modules/eventemitter3/index.d.ts:22</li>
 								</ul>
@@ -1884,12 +1884,12 @@ obniz.keepWorkingAtOffline(<span class="hljs-literal">true</span>);</code></pre>
 					<a name="listeners" class="tsd-anchor"></a>
 					<h3>listeners</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">listeners<span class="tsd-signature-symbol">(</span>event<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.html#obnizconnectioneventnames" class="tsd-signature-type">ObnizConnectionEventNames</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">ObnizConnectionEventNamesInternal</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ListenerFn</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">listeners<span class="tsd-signature-symbol">(</span>event<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.html#obnizconnectioneventnames" class="tsd-signature-type">ObnizConnectionEventNames</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">ObnizConnectionEventNamesInternal</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/obnizcore.obnizconnection.listenerfn.html" class="tsd-signature-type">ListenerFn</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from EventEmitter.listeners</p>
+								<p>Inherited from <a href="obnizcore.obnizconnection.html">ObnizConnection</a>.<a href="obnizcore.obnizconnection.html#listeners">listeners</a></p>
 								<ul>
 									<li>Defined in node_modules/eventemitter3/index.d.ts:17</li>
 								</ul>
@@ -1905,7 +1905,7 @@ obniz.keepWorkingAtOffline(<span class="hljs-literal">true</span>);</code></pre>
 									<h5>event: <a href="../modules/obnizcore.html#obnizconnectioneventnames" class="tsd-signature-type">ObnizConnectionEventNames</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">ObnizConnectionEventNamesInternal</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ListenerFn</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/obnizcore.obnizconnection.listenerfn.html" class="tsd-signature-type">ListenerFn</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -1918,7 +1918,7 @@ obniz.keepWorkingAtOffline(<span class="hljs-literal">true</span>);</code></pre>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from EventEmitter.off</p>
+								<p>Inherited from <a href="obnizcore.obnizconnection.html">ObnizConnection</a>.<a href="obnizcore.obnizconnection.html#off">off</a></p>
 								<ul>
 									<li>Defined in node_modules/eventemitter3/index.d.ts:44</li>
 								</ul>
@@ -1946,12 +1946,12 @@ obniz.keepWorkingAtOffline(<span class="hljs-literal">true</span>);</code></pre>
 					<a name="on" class="tsd-anchor"></a>
 					<h3>on</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">on<span class="tsd-signature-symbol">(</span>event<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.html#obnizconnectioneventnames" class="tsd-signature-type">ObnizConnectionEventNames</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">ObnizConnectionEventNamesInternal</span>, fn<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ListenerFn</span>, context<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+						<li class="tsd-signature tsd-kind-icon">on<span class="tsd-signature-symbol">(</span>event<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.html#obnizconnectioneventnames" class="tsd-signature-type">ObnizConnectionEventNames</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">ObnizConnectionEventNamesInternal</span>, fn<span class="tsd-signature-symbol">: </span><a href="../interfaces/obnizcore.obnizconnection.listenerfn.html" class="tsd-signature-type">ListenerFn</a>, context<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from EventEmitter.on</p>
+								<p>Inherited from <a href="obnizcore.obnizconnection.html">ObnizConnection</a>.<a href="obnizcore.obnizconnection.html#on">on</a></p>
 								<ul>
 									<li>Defined in node_modules/eventemitter3/index.d.ts:32</li>
 								</ul>
@@ -1967,7 +1967,7 @@ obniz.keepWorkingAtOffline(<span class="hljs-literal">true</span>);</code></pre>
 									<h5>event: <a href="../modules/obnizcore.html#obnizconnectioneventnames" class="tsd-signature-type">ObnizConnectionEventNames</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">ObnizConnectionEventNamesInternal</span></h5>
 								</li>
 								<li>
-									<h5>fn: <span class="tsd-signature-type">ListenerFn</span></h5>
+									<h5>fn: <a href="../interfaces/obnizcore.obnizconnection.listenerfn.html" class="tsd-signature-type">ListenerFn</a></h5>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> context: <span class="tsd-signature-type">any</span></h5>
@@ -1981,12 +1981,12 @@ obniz.keepWorkingAtOffline(<span class="hljs-literal">true</span>);</code></pre>
 					<a name="once" class="tsd-anchor"></a>
 					<h3>once</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">once<span class="tsd-signature-symbol">(</span>event<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.html#obnizconnectioneventnames" class="tsd-signature-type">ObnizConnectionEventNames</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">ObnizConnectionEventNamesInternal</span>, fn<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ListenerFn</span>, context<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+						<li class="tsd-signature tsd-kind-icon">once<span class="tsd-signature-symbol">(</span>event<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.html#obnizconnectioneventnames" class="tsd-signature-type">ObnizConnectionEventNames</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">ObnizConnectionEventNamesInternal</span>, fn<span class="tsd-signature-symbol">: </span><a href="../interfaces/obnizcore.obnizconnection.listenerfn.html" class="tsd-signature-type">ListenerFn</a>, context<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from EventEmitter.once</p>
+								<p>Inherited from <a href="obnizcore.obnizconnection.html">ObnizConnection</a>.<a href="obnizcore.obnizconnection.html#once">once</a></p>
 								<ul>
 									<li>Defined in node_modules/eventemitter3/index.d.ts:38</li>
 								</ul>
@@ -2002,7 +2002,7 @@ obniz.keepWorkingAtOffline(<span class="hljs-literal">true</span>);</code></pre>
 									<h5>event: <a href="../modules/obnizcore.html#obnizconnectioneventnames" class="tsd-signature-type">ObnizConnectionEventNames</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">ObnizConnectionEventNamesInternal</span></h5>
 								</li>
 								<li>
-									<h5>fn: <span class="tsd-signature-type">ListenerFn</span></h5>
+									<h5>fn: <a href="../interfaces/obnizcore.obnizconnection.listenerfn.html" class="tsd-signature-type">ListenerFn</a></h5>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> context: <span class="tsd-signature-type">any</span></h5>
@@ -2089,7 +2089,7 @@ obniz.keepWorkingAtOffline(<span class="hljs-literal">true</span>);</code></pre>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from EventEmitter.removeAllListeners</p>
+								<p>Inherited from <a href="obnizcore.obnizconnection.html">ObnizConnection</a>.<a href="obnizcore.obnizconnection.html#removealllisteners">removeAllListeners</a></p>
 								<ul>
 									<li>Defined in node_modules/eventemitter3/index.d.ts:49</li>
 								</ul>
@@ -2118,7 +2118,7 @@ obniz.keepWorkingAtOffline(<span class="hljs-literal">true</span>);</code></pre>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from EventEmitter.removeListener</p>
+								<p>Inherited from <a href="obnizcore.obnizconnection.html">ObnizConnection</a>.<a href="obnizcore.obnizconnection.html#removelistener">removeListener</a></p>
 								<ul>
 									<li>Defined in node_modules/eventemitter3/index.d.ts:43</li>
 								</ul>
@@ -2745,12 +2745,18 @@ led.off();
 						<a href="../modules/_obniz_obnizpartsbleabstract_.html">&quot;obniz/<wbr>Obniz<wbr>Parts<wbr>Ble<wbr>Abstract&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
+						<a href="../modules/_obniz_libs_embeds_blehci_protocol_common_att_.html">&quot;obniz/libs/embeds/ble<wbr>Hci/protocol/common/att&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_obniz_libs_embeds_blehci_protocol_common_gatt_.html">&quot;obniz/libs/embeds/ble<wbr>Hci/protocol/common/gatt&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_parts_ble_utils_advertisement_advertismentanalyzer_.html">&quot;parts/<wbr>Ble/utils/advertisement/advertisment<wbr>Analyzer&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/obnizapp.html">Obniz<wbr>App</a>
 					</li>
-					<li class="current tsd-kind-external-module tsd-is-not-exported">
+					<li class="current tsd-kind-external-module">
 						<a href="../modules/obnizcore.html">Obniz<wbr>Core</a>
 					</li>
 					<li class=" tsd-kind-external-module tsd-is-not-exported">

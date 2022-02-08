@@ -4,6 +4,8 @@
  */
 import EventEmitter from 'eventemitter3';
 import { BleDeviceAddress, UUID } from './bleTypes';
+export declare type BleAttributeParentName = 'peripheral' | 'service' | 'characteristic';
+export declare type BleAttributeChildrenName = 'service' | 'characteristics' | 'descriptors';
 export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
     /**
      * @ignore
@@ -12,11 +14,11 @@ export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
     /**
      * @ignore
      */
-    get childrenName(): string | null;
+    get childrenName(): BleAttributeChildrenName | null;
     /**
      * @ignore
      */
-    get parentName(): string | null;
+    get parentName(): BleAttributeParentName | null;
     /**
      * It is uuid as string.
      *

@@ -7,7 +7,7 @@ import EventEmitter from 'eventemitter3';
 import ObnizBLEHci from '../hci';
 import { BleDeviceAddress, BleDeviceAddressType, Handle } from '../bleTypes';
 declare type HciEventTypes = 'leAdvertisingReport' | 'leConnComplete' | 'stateChange' | 'leConnUpdateComplete' | 'disconnComplete' | 'encryptChange' | 'aclDataPkt';
-declare type HciState = 'poweredOn' | 'poweredOff';
+export declare type HciState = 'poweredOn' | 'poweredOff';
 /**
  * @ignore
  */
@@ -36,18 +36,73 @@ declare class Hci extends EventEmitter<HciEventTypes> {
      */
     debugHandler: any;
     initWait(): Promise<void>;
-    setEventMask(): void;
+    setEventMaskCommand(mask: string): void;
     resetWait(): Promise<void>;
+    resetForNrf52832Wait(): Promise<void>;
+    resetForOldObnizjsWait(): Promise<void>;
+    resetForEsp32Wait(): Promise<void>;
+    resetCommandWait(): Promise<{
+        eventType: number;
+        subEventType: number;
+        ncmd: number;
+        cmd: number;
+        status: number;
+        result: Buffer;
+    }>;
+    setRandomDeviceAddressWait(): Promise<void>;
+    leEncryptWait(key: Buffer, plainTextData: Buffer): Promise<{
+        encryptedData: Buffer;
+    }>;
+    leRandWait(): Promise<{
+        randomNumber: Buffer;
+    }>;
+    leSetRandomAddressWait(randomAddress: Buffer): Promise<void>;
+    writeDefaultLinkPolicyCommandWait(mode: ('enableRoleSwitch' | 'enableHoldMode' | 'enableSniffMode')[]): Promise<void>;
     resetBuffers(): void;
-    readLocalVersionWait(): Promise<{
+    readLocalVersionCommandWait(): Promise<{
         hciVer: number;
         hciRev: number;
         lmpVer: number;
         manufacturer: number;
         lmpSubVer: number;
     }>;
+    readLocalNameCommandWait(): Promise<string>;
+    writePageTimeoutCommandWait(pageTimeout?: number): Promise<void>;
+    writeClassOfDeviceCommandWait(classOfDevice: number): Promise<void>;
+    writeInquiryScanTypeCommandWait(scanType: 'standardScan' | 'interlacedScan'): Promise<void>;
+    writeInquiryModeCommandWait(inquiryMode: 'standardInquiryResultEventFormat' | 'inquiryResultFormatWithRSSI' | 'inquiryResultWithRSSIFormatOrExtendedInquiryResultFormat'): Promise<void>;
+    writePageScanTypeCommandWait(pageScanType: 'standardScan' | 'interlacedScan'): Promise<void>;
+    writeSimplePairingModeCommandWait(simplePairingMode: 'disabled' | 'enabled'): Promise<void>;
+    setEventMaskPage2(mask: string): void;
+    readLocalSupportedCommandWait(): Promise<Buffer>;
+    readLocalSupportedFeaturesCommandWait(): Promise<Buffer>;
+    readLocalExtendedFeaturesCommandWait(page: number): Promise<{
+        pageNumber: number;
+        maximumPageNumber: number;
+        extendedLmpFeatures: Buffer;
+    }>;
+    leClearWhiteListCommandWait(): Promise<Buffer>;
+    leReadSupportedStatesCommandWait(): Promise<Buffer>;
+    leReadSuggestedDefaultDataLengthCommandWait(): Promise<{
+        suggestedMaxTxOctets: number;
+        suggestedMaxTxTime: number;
+    }>;
+    leWriteSuggestedDefaultDataLengthCommandWait(suggestedMaxTxOctets: number, suggestedMaxTxTime: number): Promise<void>;
+    leClearResolvingListCommandWait(): Promise<void>;
+    leReadResolvingListSizeCommandWait(): Promise<number>;
+    leSetResolvablePrivateAddressTimeoutCommandWait(rpaTimeout: number): Promise<void>;
+    leReadMaximumDataLengthCommandWait(): Promise<{
+        supportedMaxTxOctets: number;
+        supportedMaxTxTime: number;
+        supportedMaxRxOctets: number;
+        supportedMaxRxTime: number;
+    }>;
+    leReadLocalSupportedFeaturesCommandWait(): Promise<Buffer>;
+    leSetDefaultPhyCommandWait(allPhys: number, txPhys: number, rxPhys: number): Promise<void>;
+    leReadAdvertisingPhysicalChannelTxPowerCommandWait(): Promise<number>;
+    leReadWhiteListSizeWait(): Promise<number>;
     readBdAddrWait(): Promise<any>;
-    setLeEventMask(): void;
+    setLeEventMaskCommand(mask: string): void;
     readLeHostSupportedWait(): Promise<{
         eventType: number;
         subEventType: number;
@@ -56,14 +111,14 @@ declare class Hci extends EventEmitter<HciEventTypes> {
         status: number;
         result: Buffer;
     }>;
-    writeLeHostSupported(): void;
+    writeLeHostSupportedCommand(): void;
     setScanParametersWait(isActiveScan: boolean): Promise<number>;
     setScanEnabledWait(enabled: boolean, filterDuplicates: boolean): Promise<number>;
-    createLeConnWait(address: BleDeviceAddress, addressType: BleDeviceAddressType, timeout: number | undefined, onConnectCallback: any): Promise<{
+    createLeConnWait(address: BleDeviceAddress, addressType: BleDeviceAddressType, timeout: number | undefined, onConnectCallback: any, parameterType?: 'obnizjs<3_18_0' | 'esp32'): Promise<{
         status: any;
         handle: number;
         role: number;
-        addressType: string;
+        addressType: BleDeviceAddressType;
         address: string;
         interval: number;
         latency: number;
@@ -106,11 +161,13 @@ declare class Hci extends EventEmitter<HciEventTypes> {
     writeAclDataPkt(handle: Handle, cid: any, data: any): void;
     longTermKeyRequestNegativeReplyWait(handle: Handle): Promise<void>;
     processLeMetaEvent(eventType: any, status: any, data: any): void;
-    processLeConnComplete(status: any, data: Buffer, onConnectCallback: any): {
+    private parseConnectionCompleteEventData;
+    private parseLeConnectionCompleteEventData;
+    processLeConnComplete(status: any, data: ReturnType<Hci['parseConnectionCompleteEventData']> | ReturnType<Hci['parseLeConnectionCompleteEventData']>, onConnectCallback: any): {
         status: any;
         handle: number;
         role: number;
-        addressType: string;
+        addressType: BleDeviceAddressType;
         address: string;
         interval: number;
         latency: number;
@@ -144,5 +201,7 @@ declare class Hci extends EventEmitter<HciEventTypes> {
     private onHciAclData;
     private onHciEventData;
     private onSocketData;
+    private writeNoParamCommandWait;
+    private writeSingleParamCommandWait;
 }
 export default Hci;
