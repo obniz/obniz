@@ -6,7 +6,7 @@ The following sensors are built-in.
 
 - Temperature / humidity sensor (SENSIRION SHTC3)
 - CO2 sensor (SENSIRION SCD40)
-- PM2.5(0.5/1.0/5.0/10.0) sensor (SENSIRION SPS30)
+- PM2.5(0.5/1.0/4.0/10.0) sensor (SENSIRION SPS30)
 
 ## How to use
 
@@ -89,7 +89,7 @@ If you connect in advance and set `advertisementBeacon: true`, you can get a rou
 - CO2 [ppm]
 - PM1.0 [ug/m3]
 - PM2.5 [ug/m3]
-- PM5.0 [ug/m3]
+- PM4.0 [ug/m3]
 - PM10.0 [ug/m3]
 - Temperature [℃]
 - Humidity [%]

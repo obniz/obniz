@@ -170,6 +170,11 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
       index: 4,
       type: 'unsignedNumLE',
     },
+    pm5_0: {
+      // for compatibility
+      index: 4,
+      type: 'unsignedNumLE',
+    },
     pm10_0: {
       index: 5,
       type: 'unsignedNumLE',
@@ -245,6 +250,9 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
       pm2_5: buf.readFloatLE(9),
       pm4_0: buf.readFloatLE(13),
       pm10_0: buf.readFloatLE(17),
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore for compatibility
+      pm5_0: buf.readFloatLE(13),
     };
   }
 
