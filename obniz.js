@@ -23808,6 +23808,7 @@ var map = {
 	"./Ble/UA1200BLE/index.js": "./dist/src/parts/Ble/UA1200BLE/index.js",
 	"./Ble/UA651BLE/index.js": "./dist/src/parts/Ble/UA651BLE/index.js",
 	"./Ble/UT201BLE/index.js": "./dist/src/parts/Ble/UT201BLE/index.js",
+	"./Ble/VitalBand/index.js": "./dist/src/parts/Ble/VitalBand/index.js",
 	"./Ble/iBS01/index.js": "./dist/src/parts/Ble/iBS01/index.js",
 	"./Ble/iBS01G/index.js": "./dist/src/parts/Ble/iBS01G/index.js",
 	"./Ble/iBS01H/index.js": "./dist/src/parts/Ble/iBS01H/index.js",
@@ -28662,7 +28663,7 @@ const dataTypeTable = {
     0x04: { type: 'illumination_solar_cell', encoding: 'unsignedNumLE' },
     0x05: { type: 'illumination_sensor', encoding: 'unsignedNumLE' },
     0x06: { type: 'humidity', encoding: 'unsignedNumLE' },
-    // 0x0a : {type : 'acceleration_vector', encoding:""},
+    0x0a: { type: 'acceleration_vector', encoding: 'unsignedNumLE' },
     0x23: { type: 'magnet_contact', encoding: 'bool0001' },
 };
 const readData = (rawData, dataSize, encoding) => {
@@ -28698,6 +28699,9 @@ const readData = (rawData, dataSize, encoding) => {
             else if (dataSize === 2) {
                 return rawData.readUInt16LE(0);
             }
+            else if (dataSize === 4) {
+                return readAcceleVector(rawData.readUInt32LE(0));
+            }
             return rawData.readUInt32LE(0);
         case 'bool0001':
             if (rawData.readUInt8(0) & 0x01) {
@@ -28705,6 +28709,13 @@ const readData = (rawData, dataSize, encoding) => {
             }
             return false;
     }
+};
+const readAcceleVector = (data) => {
+    const status = (data & 0xc0000000) >> 30;
+    const x = (data & 0x3ff00000) >> 20;
+    const y = (data & 0x000ffc00) >> 10;
+    const z = data & 0x000003ff;
+    return { x: (x - 512) / 100, y: (y - 512) / 100, z: (z - 512) / 100 };
 };
 const findType = (type, multiple = 1, precision = 0) => {
     return (data, peripheral) => {
@@ -28729,7 +28740,6 @@ const findType = (type, multiple = 1, precision = 0) => {
         return undefined;
     };
 };
-/** iBS01T management class iBS01Tを管理するクラス */
 class STM550B extends ObnizPartsBleAbstract_1.ObnizPartsBle {
     constructor(peripheral, mode) {
         super(peripheral, mode);
@@ -28781,6 +28791,12 @@ STM550B.BeaconDataStruct = {
         length: 255,
         type: 'custom',
         func: findType('magnet_contact'),
+    },
+    acceleration_vector: {
+        index: 7,
+        length: 255,
+        type: 'custom',
+        func: findType('acceleration_vector'),
     },
 };
 STM550B.CompanyID = {
@@ -29545,6 +29561,80 @@ class UT201BLE {
 exports.default = UT201BLE;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/VitalBand/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.VitalBand
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
+class VitalBand extends ObnizPartsBleAbstract_1.ObnizPartsBle {
+    constructor() {
+        super(...arguments);
+        this.staticClass = VitalBand;
+    }
+}
+exports.default = VitalBand;
+VitalBand.AvailableBleMode = 'Beacon';
+VitalBand.PartsName = 'VitalBand';
+VitalBand.CompanyID = [0xff, 0xff];
+VitalBand.Config = {
+    SN: {
+        type: 'numBE',
+        index: 0,
+        length: 3,
+    },
+    heart_rate: {
+        type: 'numBE',
+        index: 3,
+    },
+    body_temp: {
+        type: 'numLE',
+        index: 4,
+        length: 2,
+        multiple: 0.01,
+    },
+    blood_pleasure_high: {
+        type: 'numBE',
+        index: 6,
+    },
+    blood_pleasure_low: {
+        type: 'numBE',
+        index: 7,
+    },
+    Sp02: {
+        type: 'numBE',
+        index: 8,
+    },
+    battery: {
+        type: 'numBE',
+        index: 9,
+    },
+    steps: {
+        type: 'numLE',
+        index: 10,
+        length: 3,
+    },
+};
+VitalBand.BeaconDataStruct = {
+    SN: VitalBand.Config.SN,
+    heart_rate: VitalBand.Config.heart_rate,
+    body_temp: VitalBand.Config.body_temp,
+    blood_pleasure_high: VitalBand.Config.blood_pleasure_high,
+    blood_pleasure_low: VitalBand.Config.blood_pleasure_low,
+    Sp02: VitalBand.Config.Sp02,
+    battery: VitalBand.Config.battery,
+    steps: VitalBand.Config.steps,
+};
+
 
 /***/ }),
 

@@ -47,6 +47,7 @@ import UA1200BLE, { UA1200BLEOptions } from '../parts/Ble/UA1200BLE';
 import UA651BLE, { UA651BLEOptions } from '../parts/Ble/UA651BLE';
 import uPRISM, { uPRISMOptions } from '../parts/Ble/uprism';
 import UT201BLE, { UT201BLEOptions } from '../parts/Ble/UT201BLE';
+import VitalBand, { VitalBandOptions } from '../parts/Ble/VitalBand';
 import ArduCAMMini, { ArduCAMMiniOptions } from '../parts/Camera/ArduCAMMini';
 import JpegSerialCam, { JpegSerialCamOptions } from '../parts/Camera/JpegSerialCam';
 import PT550, { PT550Options } from '../parts/ColorSensor/PT550';
@@ -775,6 +776,10 @@ export interface PartsList {
     UT201BLE: {
         class: UT201BLE;
         options: UT201BLEOptions;
+    };
+    VitalBand: {
+        class: VitalBand;
+        options: VitalBandOptions;
     };
     HEM_6233T: {
         class: HEM_6233T;

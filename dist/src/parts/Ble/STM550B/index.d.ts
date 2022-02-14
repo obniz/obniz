@@ -30,10 +30,15 @@ export interface STM550B_Data {
      * humidity 相対湿度  (Unit 単位: 0.5 % )
      */
     humidity?: number;
+    /** 加速度 x,y,z (単位: g, -5.12g 〜 5.12g) */
+    acceleration_vector?: {
+        x: number;
+        y: number;
+        z: number;
+    };
     /** magnet nearby or not 近くに磁石があるかどうか */
     magnet_contact?: boolean;
 }
-/** iBS01T management class iBS01Tを管理するクラス */
 export default class STM550B extends ObnizPartsBle<STM550B_Data> {
     static readonly PartsName = "STM550B";
     static AvailableBleMode: "Beacon";

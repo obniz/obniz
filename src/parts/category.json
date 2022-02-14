@@ -884,6 +884,10 @@
           "store": {}
         },
         {
+          "name": "VitalBand",
+          "store": {}
+        },
+        {
           "name": "toio_CoreCube",
           "store": {
             "toio": "https://toio.io/",
