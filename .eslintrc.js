@@ -1,6 +1,6 @@
 const path = require('path');
 const rulesDirPlugin = require('eslint-plugin-rulesdir');
-rulesDirPlugin.RULES_DIR = 'devtools/eslint/rule';
+rulesDirPlugin.RULES_DIR = path.join(__dirname, 'devtools/eslint/rule');
 
 module.exports = {
   root: true,
