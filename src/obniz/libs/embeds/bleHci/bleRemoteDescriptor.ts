@@ -21,8 +21,8 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
   /**
    * @ignore
    */
-  get parentName(): string | null {
-    return 'characteristic';
+  get parentName() {
+    return 'characteristic' as const;
   }
 
   /**

@@ -21,6 +21,9 @@ exports.int = (value) => {
 };
 exports.uintBE = (value) => exports.uint(value.reverse());
 exports.intBE = (value) => exports.int(value.reverse());
+exports.uintToArray = (value, length = 2) => new Array(length)
+    .fill(0)
+    .map((v, i) => value % (1 << ((i + 1) * 8)) >> (i * 8));
 class ObnizPartsBle {
     constructor(peripheral, mode) {
         this._mode = mode;
@@ -448,6 +451,18 @@ class ObnizPartsBleConnectable extends ObnizPartsBle {
         await characteristic.registerNotifyWait((callback !== null && callback !== void 0 ? callback : (() => {
             // do nothing.
         })));
+    }
+    /**
+     * Unregister notification to any characteristic of any service.
+     *
+     * 任意のサービスの任意のキャラクタリスティックから通知登録を削除
+     *
+     * @param serviceUuid Service UUID
+     * @param characteristicUuid Characteristic UUID
+     */
+    async unsubscribeWait(serviceUuid, characteristicUuid) {
+        const characteristic = this.getChar(serviceUuid, characteristicUuid);
+        await characteristic.unregisterNotifyWait();
     }
 }
 exports.ObnizPartsBleConnectable = ObnizPartsBleConnectable;

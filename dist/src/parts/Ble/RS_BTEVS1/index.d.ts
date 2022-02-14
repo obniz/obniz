@@ -2,20 +2,19 @@
  * @packageDocumentation
  * @module Parts.RS_BTEVS1
  */
-import Obniz, { BleRemotePeripheral } from '../../../obniz';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { ObnizPartsBleConnectable, ObnizPartsBleCompare, ObnizBleBeaconStruct, ObnizPartsBleMode } from '../../../obniz/ObnizPartsBleAbstract';
 export interface RS_BTEVS1Options {
 }
 /** RS-BTEVS1 advertising data RS-BTEVS1のアドバタイジングデータ */
-export interface RS_BTEVS1_AdvData {
+export interface RS_BTEVS1_Data {
     /** CO2 [ppm] */
     co2: number;
     /** PM1.0 [ug/m3] */
     pm1_0: number;
     /** PM2.5 [ug/m3] */
     pm2_5: number;
-    /** PM5.0 [ug/m3] */
-    pm5_0: number;
+    /** PM4.0 [ug/m3] */
+    pm4_0: number;
     /** PM10.0 [ug/m3] */
     pm10_0: number;
     /** temperature 温度 [℃] */
@@ -75,7 +74,9 @@ export interface RS_BTEVS1_Config {
      * アドバタイズビーコン設定 (初期値: 無効)
      */
     advertisementBeacon: boolean;
-    /** PM2.5 mass concentration / number concentration mode setting (Mass | Number) (initial value: Number)
+    /**
+     * @deprecated Rev. ~1.0.2
+     * PM2.5 mass concentration / number concentration mode setting (Mass | Number) (initial value: Number)
      *
      * PM2.5質量濃度/個数濃度モード設定 (Mass | Number) (初期値: 個数濃度)
      */
@@ -87,8 +88,8 @@ export interface RS_BTEVS1_Pm2_5 {
     mass_pm1: number;
     /** PM2.5 [ug/m3] */
     mass_pm2_5: number;
-    /** PM5.0 [ug/m3] */
-    mass_pm5: number;
+    /** PM4.0 [ug/m3] */
+    mass_pm4: number;
     /** PM10.0 [ug/m3] */
     mass_pm10: number;
     /** PM0.5 [#/m3] */
@@ -97,37 +98,23 @@ export interface RS_BTEVS1_Pm2_5 {
     number_pm1?: number;
     /** PM2.5 [#/m3] */
     number_pm2_5?: number;
-    /** PM5.0 [#/m3] */
-    number_pm5?: number;
+    /** PM4.0 [#/m3] */
+    number_pm4?: number;
     /** PM10.0 [#/m3] */
     number_pm10?: number;
 }
 /** RS_BTEVS1 management class RS_BTEVS1を管理するクラス */
-export default class RS_BTEVS1 implements ObnizPartsInterface {
-    static info(): ObnizPartsInfo;
+export default class RS_BTEVS1 extends ObnizPartsBleConnectable<RS_BTEVS1_Data, RS_BTEVS1_Data> {
+    static readonly AvailableBleMode: ObnizPartsBleMode | ObnizPartsBleMode[];
+    static readonly PartsName = "RS_BTEVS1";
     /**
-     * Determine if it is RS-BTEVS1
-     *
-     * RS-BTEVS1かどうか判定
-     *
-     * @param peripheral Instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
-     * @returns Whether it is RS-BTEVS1 RS-BTEVS1かどうか
+     * BTEVS-1234: ~1.0.2
+     * EVS-1234: 1.1.2~
      */
-    static isDevice(peripheral: BleRemotePeripheral): boolean;
-    /**
-     * Get advertising data
-     *
-     * アドバタイジングデータを取得
-     *
-     * @param peripheral Instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
-     * @returns RS-BTEVS1 advertising data RS-BTEVS1のアドバタイジングデータ
-     */
-    static getData(peripheral: BleRemotePeripheral): RS_BTEVS1_AdvData | null;
-    /** RS-BTEVS1 sample advertising data RS-BTEVS1のサンプルのアドバタイジングデータ */
-    private static deviceAdv;
-    keys: string[];
-    requiredKeys: string[];
-    params: any;
+    static readonly LocalName: RegExp;
+    static readonly CompanyID: ObnizPartsBleCompare<number[] | null>;
+    static readonly BeaconDataStruct: ObnizPartsBleCompare<ObnizBleBeaconStruct<RS_BTEVS1_Data> | null>;
+    protected staticClass: typeof RS_BTEVS1;
     /** Event handler for button ボタンのイベントハンドラー */
     onButtonPressed: ((pressed: boolean) => void) | null;
     /** Event handler for temperature sensor 温度センサーのイベントハンドラー */
@@ -136,26 +123,16 @@ export default class RS_BTEVS1 implements ObnizPartsInterface {
     onCo2Measured: ((co2: number) => void) | null;
     /** Event handler for PM2.5 sensor PM2.5センサーのイベントハンドラー */
     onPm2_5Measured: ((pm2_5: RS_BTEVS1_Pm2_5) => void) | null;
-    /** Instance of BleRemotePeripheral BleRemotePeripheralのインスタンス */
-    _peripheral: BleRemotePeripheral | null;
-    /** Event handler for disconnect 切断のイベントハンドラー */
-    ondisconnect?: (reason: any) => void;
-    private _uuids;
-    private _buttonCharacteristic;
-    private _configCharacteristic;
-    private _tempCharacteristic;
-    private _co2Characteristic;
-    private _pm2_5Characteristic;
-    constructor(peripheral: BleRemotePeripheral | null);
-    wired(obniz: Obniz): void;
+    protected readonly serviceUuid = "F9CC15234E0A49E58CF30007E819EA1E";
+    firmwareRevision: string;
     /**
-     * Connect to device デバイスに接続
+     * Connect to the services of a device
+     *
+     * デバイスのサービスに接続
      */
     connectWait(): Promise<void>;
-    /**
-     * Disconnect from device デバイスから切断
-     */
-    disconnectWait(): Promise<void>;
+    getDataWait(): Promise<RS_BTEVS1_Data>;
+    protected beforeOnDisconnectWait(): Promise<void>;
     /**
      * Get device settings デバイスの設定を取得
      *
@@ -172,30 +149,44 @@ export default class RS_BTEVS1 implements ObnizPartsInterface {
      */
     setConfigWait(config: Partial<RS_BTEVS1_Config>): Promise<boolean>;
     /**
+     * Change pairing LED flashing status
+     *
+     * ペアリングLEDの点滅状態の変更
+     *
+     * @param blink Whether it blinks 点滅するかどうか
+     * @returns Write result 書き込み結果
+     */
+    setModeLEDWait(blink: boolean): Promise<boolean>;
+    /**
+     * Start reading the button state
+     *
+     * ボタンの状態読み取りを開始
+     */
+    buttonChangeStartWait(): Promise<void>;
+    /**
+     * @deprecated
+     *
      * Start reading the temperature sensor
      *
      * 温度センサーの読み取りを開始
      */
     tempMeasureStartWait(): Promise<void>;
     /**
+     * @deprecated
+     *
      * Start reading the co2 sensor
      *
      * CO2センサーの読み取りを開始
      */
     co2MeasureStartWait(): Promise<void>;
     /**
+     * @deprecated
+     *
      * Start reading the PM2.5 sensor
      *
      * PM2.5センサーの読み取りを開始
      */
     pm2_5MeasureStartWait(): Promise<void>;
-    /**
-     * Send 1 to Descriptor of Characteristic argument
-     *
-     * 引数のCharacteristicのDescriptorに1を送信
-     *
-     * @param char Instance of BleRemoteCharacteristic BleRemoteCharacteristicのインスタンス
-     */
-    private _measureStartWait;
+    protected getCharUuid(code: number): string;
 }
 export {};

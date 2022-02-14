@@ -208,6 +208,68 @@ describe('ble-hci-central', function () {
   });
 
 
+  it('connect and receive read request', async function () {
+    this.timeout(10 * 1000);
+    await _initWaitTestWait(this.obniz);
+
+    /* eslint-disable */
+
+    //non filter
+    await _scanStartTestWait(this.obniz, {});
+
+    const peripheral = await _receiveAdvertisementTest(this.obniz, true, [4, 62, 37, 2, 1, 0, 1, 130, 168, 133, 213, 252, 115, 25, 2, 1, 26, 2, 10, 12, 7, 3, 240, 255, 241, 255, 0, 255, 10, 9, 111, 98, 110, 105, 122, 45, 66, 76, 69, 213]);
+    const connectStub = sinon.stub();
+    const disconnectStub = sinon.stub();
+    peripheral.onconnect = connectStub;
+    peripheral.ondisconnect = disconnectStub;
+
+    const p = peripheral.connectWait({ autoDiscovery: false, mtuRequest:null  });
+    await wait(0);
+
+    // scan stop
+    sendHciCommands(this.obniz, [1, 12, 32, 2, 0, 1]);
+    await receiveHciCommandsWait(this.obniz, [4, 14, 4, 5, 12, 32, 12]);
+    // connect req
+    sendHciCommands(this.obniz, [1, 13, 32, 25, 16, 0, 16, 0, 0, 1, 130, 168, 133, 213, 252, 115, 0, 9, 0, 24, 0, 1, 0, 144, 1, 0, 0, 0, 0]);
+
+    await wait(0);
+    sinon.assert.callCount(connectStub, 0);
+    sinon.assert.callCount(disconnectStub, 0);
+    // connection established
+    await receiveHciCommandsWait(this.obniz, [4, 62, 19, 1, 0, 0, 0, 0, 1, 130, 168, 133, 213, 252, 115, 12, 0, 0, 0, 200, 0, 0]);
+
+    await p;
+
+    await wait(0);
+
+    sinon.assert.callCount(connectStub, 1);
+    sinon.assert.callCount(disconnectStub, 0);
+
+
+    this.obniz.debugprint=true;
+
+    //Read by Group Type Request
+    await receiveHciCommandsWait(this.obniz, [0x02, 0x00, 0x20, 0x0b, 0x00, 0x07, 0x00, 0x04, 0x00, 0x10, 0x01, 0x00, 0xff, 0xff, 0x00, 0x28]);
+
+
+    await wait(10);
+
+    let secondCommands = [
+      //error response
+      [2,0,0,9,0,5,0,4,0,1,16,1,0,10],
+    ];
+    sendMultiCommands(this.obniz, secondCommands);
+
+    //disconnect
+    await receiveHciCommandsWait(this.obniz, [4, 5, 4, 0, 0, 0, 19]);
+
+    await wait(0);
+    sinon.assert.callCount(connectStub, 1);
+    sinon.assert.callCount(disconnectStub, 1);
+
+  });
+
+
   it('scan terminated', async function () {
     await _initWaitTestWait(this.obniz);
 
@@ -295,26 +357,26 @@ describe('ble-hci-central', function () {
     testUtil.receiveJson(obniz, results);
     await wait(0);
     let secondCommands = [
-      [0x01, 0x01, 0x0c, 0x08, 0xff, 0xff, 0xfb, 0xff, 0x07, 0xf8, 0xbf, 0x3d], //setEventMask
-      [0x01, 0x01, 0x20, 0x08, 0x1f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00], //setLeEventMask
+      [0x01, 0x01, 0x0c, 0x08, 0xff, 0xff, 0xfb, 0xff, 0x07, 0xf8, 0xbf, 0x3d], //setEventMaskCommand
+      [0x01, 0x01, 0x20, 0x08, 0x1f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00], //setLeEventMaskCommand
       [0x01, 0x01, 0x10, 0x00], //readLocalVersion
     ];
     sendMultiCommands(obniz, secondCommands);
     expect(obniz).to.be.finished;
     let response = [
-      [4, 14, 4, 5, 0x01, 0x0c, 0],  // setEventMask comp
-      [4, 14, 4, 5, 0x01, 0x20, 0], // setLeEventMask comp
+      [4, 14, 4, 5, 0x01, 0x0c, 0],  // setEventMaskCommand comp
+      [4, 14, 4, 5, 0x01, 0x20, 0], // setLeEventMaskCommand comp
       [4, 14, 12, 5, 0x01, 0x10, 0, 8, 14, 3, 8, 96, 0, 14, 3], //readLocalVersion comp
     ];
     await receiveMultiCommandsWait(obniz, response);
 
     sendMultiCommands(obniz, [
-      [0x01, 0x6d, 0x0c, 0x02, 0x01, 0x00], //writeLeHostSupported
+      [0x01, 0x6d, 0x0c, 0x02, 0x01, 0x00], //writeLeHostSupportedCommand
       [0x01, 0x6c, 0x0c, 0x00], //readLeHostSupported
     ]);
     expect(obniz).to.be.finished;
     await receiveMultiCommandsWait(obniz, [
-      [4, 14, 4, 5, 0x6d, 0x0c, 0], //writeLeHostSupported comp
+      [4, 14, 4, 5, 0x6d, 0x0c, 0], //writeLeHostSupportedCommand comp
       [4, 14, 6, 5, 0x6c, 0x0c, 0, 1, 0], //readLeHostSupported comp
     ]);
 

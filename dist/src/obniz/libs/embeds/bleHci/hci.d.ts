@@ -3,15 +3,16 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 /// <reference types="node" />
+import ObnizDevice from '../../../ObnizDevice';
 export declare type EventHandler = (...args: any) => any;
 export default class ObnizBLEHci {
-    Obniz: any;
+    Obniz: ObnizDevice;
     timeout: number;
     hciProtocolOnSocketData: any;
     protected _eventHandlerQueue: {
         [key: string]: EventHandler[];
     };
-    constructor(Obniz: any);
+    constructor(Obniz: ObnizDevice);
     /**
      * @ignore
      * @private
