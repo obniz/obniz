@@ -58,8 +58,8 @@ export default class BleDescriptor extends BleLocalValueAttributeAbstract<
   /**
    * @ignore
    */
-  get parentName(): string | null {
-    return 'characteristic';
+  get parentName() {
+    return 'characteristic' as const;
   }
 
   // public addPermission(param: any) {

@@ -14,7 +14,7 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
     /**
      * @ignore
      */
-    get parentName(): string | null;
+    get parentName(): "peripheral";
     /**
      * @ignore
      */
@@ -22,7 +22,7 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
     /**
      * @ignore
      */
-    get childrenName(): string | null;
+    get childrenName(): "characteristics";
     /**
      * It contains characteristics in a service.
      * It was discovered when connection automatically.

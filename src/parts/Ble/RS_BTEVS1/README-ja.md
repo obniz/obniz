@@ -6,7 +6,7 @@
 
 - 温湿度センサー(SENSIRION SHTC3)
 - CO2センサー(SENSIRION SCD40)
-- PM2.5(0.5/1.0/5.0/10.0)センサー(SENSIRION SPS30)
+- PM2.5(0.5/1.0/4.0/10.0)センサー(SENSIRION SPS30)
 
 ## 使用方法
 
@@ -89,10 +89,14 @@ await obniz.ble.scan.startWait();
 - CO2 [ppm]
 - PM1.0 [ug/m3]
 - PM2.5 [ug/m3]
-- PM5.0 [ug/m3]
+- PM4.0 [ug/m3]  （互換性のために）
 - PM10.0 [ug/m3]
 - 温度 [℃]
 - 湿度 [%]
+
+
+（obniz.js v3.18.0まではPM5.0 [ug/m3]がありましたが、こちらはPM4.0の間違いでした。
+互換性のために取得できるデータとしては残しています。）
 
 ```javascript
 const RS_BTEVS1 = Obniz.getPartsClass('RS_BTEVS1');

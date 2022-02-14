@@ -43,7 +43,7 @@ export default class BleDescriptor extends BleLocalValueAttributeAbstract<BleCha
     /**
      * @ignore
      */
-    get parentName(): string | null;
+    get parentName(): "characteristic";
     /**
      * @ignore
      */

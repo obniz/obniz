@@ -2,10 +2,14 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import BleAttributeAbstract from './bleAttributeAbstract';
+import EventEmitter from 'eventemitter3';
+import BleAttributeAbstract, {
+  BleAttributeChildrenName,
+} from './bleAttributeAbstract';
 import BleCharacteristic from './bleCharacteristic';
 import BleHelper from './bleHelper';
 import BleService from './bleService';
+import { UUID } from './bleTypes';
 
 /**
  * @ignore
@@ -18,6 +22,12 @@ enum BleResponseResult {
   UNLIKELY_ERROR = 0x0e,
 }
 
+export type BleLocalAttributeBufferObj<ChildrenName extends string> = {
+  [key in ChildrenName]: any;
+} & {
+  uuid: UUID;
+  emit: any;
+};
 /**
  * @category Use as Peripheral
  */
@@ -42,7 +52,7 @@ export default class BleLocalAttributeAbstract<
   /**
    * @ignore
    */
-  public toBufferObj() {
+  public toBufferObj(): BleLocalAttributeBufferObj<BleAttributeChildrenName> {
     const obj: any = {
       uuid: BleHelper.uuidFilter(this.uuid),
       emit: this.emit.bind(this),
@@ -61,7 +71,7 @@ export default class BleLocalAttributeAbstract<
    * @param name
    * @param params
    */
-  public emit(name: any, ...params: any) {
+  public emit(name: 'readRequest' | 'writeRequest', ...params: any) {
     switch (name) {
       case 'readRequest':
         this._onReadRequest(...(params as [any, any]));

@@ -150,9 +150,11 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
      * @param params
      */
     emit(name, ...params) {
-        const result = super.emit(name, ...params);
-        if (result) {
-            return result;
+        if (name === 'readRequest' || name === 'writeRequest') {
+            const result = super.emit(name, ...params);
+            if (result) {
+                return result;
+            }
         }
         switch (name) {
             case 'subscribe':

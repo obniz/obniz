@@ -56,15 +56,15 @@ export default class BleService extends BleLocalAttributeAbstract<
   /**
    * @ignore
    */
-  get parentName(): string | null {
-    return 'peripheral';
+  get parentName() {
+    return 'peripheral' as const;
   }
 
   /**
    * @ignore
    */
-  get childrenName(): string | null {
-    return 'characteristics';
+  get childrenName() {
+    return 'characteristics' as const;
   }
 
   /**

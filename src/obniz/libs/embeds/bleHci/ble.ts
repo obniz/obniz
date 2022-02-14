@@ -203,7 +203,7 @@ export default class ObnizBLE extends ComponentAbstract {
       }
 
       // force initialize on obnizOS < 3.2.0
-      if (semver.lt(this.Obniz.firmware_ver!, '3.2.0')) {
+      if (semver.lt(semver.coerce(this.Obniz.firmware_ver!)!, '3.2.0')) {
         this.hci.init();
         this.hci.end(); // disable once
         this.hci.init();

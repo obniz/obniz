@@ -9,7 +9,7 @@ import EventEmitter from 'eventemitter3';
 
 import { Handle } from '../../bleTypes';
 import Hci from '../hci';
-import Smp from './smp';
+import Smp, { SmpEncryptOptions } from './smp';
 
 type AclStreamEventTypes = 'data' | 'end' | 'encrypt' | 'encryptFail';
 
@@ -58,12 +58,12 @@ export default class AclStream extends EventEmitter<AclStreamEventTypes> {
     // do nothing.
   };
 
-  public async encryptWait(options?: any) {
+  public async encryptWait(options?: SmpEncryptOptions) {
     const encrpytResult = await this._smp.pairingWait(options);
     return encrpytResult;
   }
 
-  public setEncryptOption(options?: any) {
+  public setEncryptOption(options: SmpEncryptOptions) {
     const encrpytResult = this._smp.setPairingOption(options);
     return encrpytResult;
   }
