@@ -39,7 +39,7 @@ export interface STM550B_Data {
     /** magnet nearby or not 近くに磁石があるかどうか */
     magnet_contact?: boolean;
 }
-export default class STM550B extends ObnizPartsBle<STM550B_Data> {
+export default class STM550B extends ObnizPartsBle<keyof STM550B_Data> {
     static readonly PartsName = "STM550B";
     static AvailableBleMode: "Beacon";
     static readonly BeaconDataStruct: ObnizBleBeaconStruct<STM550B_Data>;

@@ -17,3 +17,4 @@ exports.default = iBS05H;
 iBS05H.PartsName = 'iBS05H';
 iBS05H.CompanyID = [0x2c, 0x08];
 iBS05H.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, hall_sensor: iBS_1.BaseiBS.Config.event, count: iBS_1.BaseiBS.Config.count }, iBS_1.BaseiBS.getUniqueData(5, 0x31));
+//# sourceMappingURL=index.js.map

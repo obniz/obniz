@@ -162,3 +162,4 @@ STM550B.BeaconDataStruct = {
 STM550B.CompanyID = {
     Beacon: [0xda, 0x03],
 };
+//# sourceMappingURL=index.js.map

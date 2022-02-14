@@ -199,3 +199,4 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
     }
 }
 exports.default = BleRemoteService;
+//# sourceMappingURL=bleRemoteService.js.map

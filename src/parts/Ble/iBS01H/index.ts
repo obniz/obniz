@@ -28,7 +28,7 @@ export interface iBS01H_Data {
 }
 
 /** iBS01H management class iBS01Hを管理するクラス */
-export default class iBS01H extends BaseiBS01<iBS01H_Data> {
+export default class iBS01H extends BaseiBS01<keyof Exclude<iBS01H_Data, undefined>, keyof iBS01H_Data> {
   public static readonly PartsName = 'iBS01H';
 
   public static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS01H_Data> = {
@@ -39,4 +39,6 @@ export default class iBS01H extends BaseiBS01<iBS01H_Data> {
   };
 
   protected readonly staticClass = iBS01H;
+
+
 }

@@ -5,7 +5,8 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { ObnizBleBeaconStruct } from '../../../obniz/ObnizPartsBleAbstract';
-import { ObnizPartsDataProperty } from '../../../obniz/ObnizPartsDataProperty';
+import { ObnizPartsDataPropertyBase } from '../../../obniz/ObnizPartsDataPropertyBase';
+import {iBS01H_Data} from "../iBS01H";
 import { BaseiBS01 } from '../utils/abstracts/iBS';
 
 export interface iBS01Options {}
@@ -17,11 +18,12 @@ export interface iBS01Options {}
  */
 export interface iBS01_Data
   extends Pick<
-    ObnizPartsDataProperty,
+    ObnizPartsDataPropertyBase,
     'battery' | 'button' | 'moving' | 'hall_sensor' | 'fall'
   > {
   /** battery 電池電圧 (Unit 単位: 0.01 V) */
   battery: number;
+
   /**
    * button state ボタンの状態
    *
@@ -49,7 +51,7 @@ export interface iBS01_Data
  *
  * 旧iBS01シリーズのセンサを使用している場合のみお使いください
  */
-export default class iBS01 extends BaseiBS01<iBS01_Data> {
+export default class iBS01 extends BaseiBS01<keyof Exclude<iBS01_Data, undefined>, keyof iBS01_Data>{
   public static readonly PartsName = 'iBS01';
 
   public static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS01_Data> = {

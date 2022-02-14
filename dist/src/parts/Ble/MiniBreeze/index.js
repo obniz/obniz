@@ -129,3 +129,4 @@ class MiniBreeze extends ObnizPartsBleInterface_1.default {
     }
 }
 exports.default = MiniBreeze;
+//# sourceMappingURL=index.js.map

@@ -79,3 +79,4 @@ KankiAirMier._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyze
     .addTarget('firmwareVersion', [-1])
     .addTargetByLength('deviceName', 15) // from datasheet length=14, but device send length=13
     .groupEnd();
+//# sourceMappingURL=index.js.map

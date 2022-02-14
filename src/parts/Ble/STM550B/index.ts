@@ -154,7 +154,7 @@ const findType = (type: keyof STM550B_Data, multiple = 1, precision = 0) => {
   };
 };
 
-export default class STM550B extends ObnizPartsBle<STM550B_Data> {
+export default class STM550B extends ObnizPartsBle<keyof STM550B_Data> {
   public static readonly PartsName = 'STM550B';
   public static AvailableBleMode = 'Beacon' as const;
 

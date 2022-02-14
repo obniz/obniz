@@ -173,3 +173,4 @@ class MINEW_S1 extends ObnizPartsBleInterface_1.default {
     }
 }
 exports.default = MINEW_S1;
+//# sourceMappingURL=index.js.map

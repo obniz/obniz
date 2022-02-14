@@ -182,3 +182,4 @@ class ENERTALK_TOUCH extends ObnizPartsBleInterface_1.default {
     }
 }
 exports.default = ENERTALK_TOUCH;
+//# sourceMappingURL=index.js.map

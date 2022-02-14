@@ -42,3 +42,4 @@ WSCommand_1.default.addCommandClass("WSCommandTcp", WSCommandTcp_1.default);
 WSCommand_1.default.addCommandClass("WSCommandWiFi", WSCommandWiFi_1.default);
 WSCommand_1.default.addCommandClass("WSCommandPlugin", WSCommandPlugin_1.default);
 exports.default = WSCommand_1.default;
+//# sourceMappingURL=index.js.map

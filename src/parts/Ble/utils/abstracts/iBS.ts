@@ -9,6 +9,7 @@ import {
   ObnizBleBeaconStructNormal,
   ObnizPartsBle,
 } from '../../../../obniz/ObnizPartsBleAbstract';
+import {ObnizPartsDataPropertyBase, ObnizPartsDataPropertyKey} from "../../../../obniz/ObnizPartsDataPropertyBase";
 
 const magic = {
   1: [0x80, 0xbc],
@@ -43,7 +44,7 @@ type PresetConfigName =
   | 'user';
 
 /** abstract class common to the iBS series iBSシリーズ共通の抽象クラス */
-export abstract class BaseiBS<S> extends ObnizPartsBle<S> {
+export abstract class BaseiBS<reqKey extends ObnizPartsDataPropertyKey, optionalKey extends ObnizPartsDataPropertyKey = never> extends ObnizPartsBle<reqKey,optionalKey> {
   public static readonly AvailableBleMode = 'Beacon';
 
   public static readonly BeaconDataLength: number = 0x12;
@@ -129,8 +130,9 @@ export abstract class BaseiBS<S> extends ObnizPartsBle<S> {
 }
 
 /** abstract class for iBS iBS01のための抽象クラス */
-export abstract class BaseiBS01<S> extends BaseiBS<S> {
+export abstract class BaseiBS01<reqKey extends ObnizPartsDataPropertyKey, optionalKey extends ObnizPartsDataPropertyKey = never> extends BaseiBS<reqKey,optionalKey> {
   public static readonly CompanyID = [0x59, 0x00];
 }
 
 export default BaseiBS;
+

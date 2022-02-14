@@ -83,3 +83,4 @@ class WSCommandMeasurement extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandMeasurement;
+//# sourceMappingURL=WSCommandMeasurement.js.map

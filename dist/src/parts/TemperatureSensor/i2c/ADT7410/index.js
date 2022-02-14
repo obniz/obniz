@@ -43,3 +43,4 @@ class ADT7410 {
     }
 }
 exports.default = ADT7410;
+//# sourceMappingURL=index.js.map

@@ -863,3 +863,4 @@ class GattPeripheral extends eventemitter3_1.default {
     }
 }
 exports.default = GattPeripheral;
+//# sourceMappingURL=gatt.js.map

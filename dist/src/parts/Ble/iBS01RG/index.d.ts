@@ -26,7 +26,7 @@ export interface iBS01RG_Data {
     /** acceleration (X, Y, Z axis) 加速度 (X, Y, Z軸)*/
     acceleration: Triaxial[];
 }
-export default class iBS01RG extends BaseiBS01<iBS01RG_Data> {
+export default class iBS01RG extends BaseiBS01<keyof Exclude<iBS01RG_Data, undefined>, keyof iBS01RG_Data> {
     static readonly PartsName = "iBS01RG";
     static readonly BeaconDataLength = 25;
     static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS01RG_Data>;

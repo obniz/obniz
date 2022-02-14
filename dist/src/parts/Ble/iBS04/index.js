@@ -16,3 +16,4 @@ class iBS04 extends iBS_1.BaseiBS {
 exports.default = iBS04;
 iBS04.PartsName = 'iBS04';
 iBS04.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, button: iBS_1.BaseiBS.Config.button }, iBS_1.BaseiBS.getUniqueData(4, 0x19));
+//# sourceMappingURL=index.js.map

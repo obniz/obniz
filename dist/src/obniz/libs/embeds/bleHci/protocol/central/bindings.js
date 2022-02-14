@@ -68,7 +68,7 @@ class NobleBindings extends eventemitter3_1.default {
         }
     }
     async startScanningWait(serviceUuids, allowDuplicates, activeScan) {
-        this._scanServiceUuids = (serviceUuids !== null && serviceUuids !== void 0 ? serviceUuids : null);
+        this._scanServiceUuids = serviceUuids !== null && serviceUuids !== void 0 ? serviceUuids : null;
         await this._gap.startScanningWait(allowDuplicates, activeScan);
     }
     async stopScanningWait() {
@@ -302,3 +302,4 @@ class NobleBindings extends eventemitter3_1.default {
     }
 }
 exports.default = NobleBindings;
+//# sourceMappingURL=bindings.js.map

@@ -11,7 +11,11 @@ import {
 } from './ObnizError';
 import { Triaxial } from './ObnizParts';
 import ObnizPartsBleInterface from './ObnizPartsBleInterface';
-import { ObnizPartsDataProperty } from './ObnizPartsDataProperty';
+import {
+  ObnizPartsDataProperty,
+  ObnizPartsDataPropertyBase,
+  ObnizPartsDataPropertyKey,
+} from './ObnizPartsDataPropertyBase';
 import { ObnizPartsInfo, ObnizPartsProps } from './ObnizPartsInterface';
 import { PartsType } from './ObnizPartsList';
 
@@ -116,8 +120,11 @@ export interface ObnizPartsBleProps extends ObnizPartsProps {
   readonly CompanyID?: ObnizPartsBleCompare<number[] | null>;
   readonly CompanyID_ScanResponse?: ObnizPartsBleCompare<number[] | null>;
   readonly BeaconDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown> | null>;
+
   getServiceUuids(mode: ObnizPartsBleMode): string[] | null | undefined;
+
   getDeviceMode(peripheral: BleRemotePeripheral): ObnizPartsBleMode | null;
+
   new (
     peripheral: BleRemotePeripheral,
     mode: ObnizPartsBleMode
@@ -125,7 +132,8 @@ export interface ObnizPartsBleProps extends ObnizPartsProps {
 }
 
 export abstract class ObnizPartsBle<
-  S extends Partial<ObnizPartsDataProperty>
+  reqKey extends ObnizPartsDataPropertyKey,
+  optionalKey extends ObnizPartsDataPropertyKey = never
 > extends ObnizPartsBleInterface {
   /**
    * Information of parts.
@@ -269,7 +277,9 @@ export abstract class ObnizPartsBle<
     peripheral: BleRemotePeripheral,
     mode: ObnizPartsBleMode
   ): boolean {
-    if (!this.getAvailableBleMode().includes(mode)) return false;
+    if (!this.getAvailableBleMode().includes(mode)) {
+      return false;
+    }
 
     if (this.Address) {
       const defaultAddress =
@@ -277,8 +287,9 @@ export abstract class ObnizPartsBle<
       if (
         defaultAddress !== undefined &&
         !defaultAddress.test(peripheral.address)
-      )
+      ) {
         return false;
+      }
     }
 
     if (this.LocalName) {
@@ -289,22 +300,28 @@ export abstract class ObnizPartsBle<
       if (
         defaultLocalName !== undefined &&
         !defaultLocalName.test(peripheral.localName ?? 'null')
-      )
+      ) {
         return false;
+      }
     }
 
     if (this.ServiceUuids) {
       const defaultServiceUuids = this.getServiceUuids(mode);
       if (defaultServiceUuids !== undefined) {
         const uuids = peripheral.advertisementServiceUuids();
-        if (defaultServiceUuids === null && uuids.length !== 0) return false;
-        if (defaultServiceUuids !== null && uuids.length === 0) return false;
+        if (defaultServiceUuids === null && uuids.length !== 0) {
+          return false;
+        }
+        if (defaultServiceUuids !== null && uuids.length === 0) {
+          return false;
+        }
         if (
           defaultServiceUuids !== null &&
           defaultServiceUuids.filter((u) => !uuids.includes(u.toLowerCase()))
             .length !== 0
-        )
+        ) {
           return false;
+        }
       }
     }
 
@@ -316,8 +333,9 @@ export abstract class ObnizPartsBle<
         this.CompanyID,
         false
       )
-    )
+    ) {
       return false;
+    }
 
     if (
       !this.checkManufacturerSpecificData(
@@ -327,8 +345,9 @@ export abstract class ObnizPartsBle<
         this.CompanyID_ScanResponse,
         true
       )
-    )
+    ) {
       return false;
+    }
 
     return true;
   }
@@ -348,15 +367,20 @@ export abstract class ObnizPartsBle<
           ? companyID
           : companyID[mode];
       if (defaultCompanyID !== undefined) {
-        if (defaultCompanyID === null && beaconData !== null) return false;
-        if (defaultCompanyID !== null && beaconData === null) return false;
+        if (defaultCompanyID === null && beaconData !== null) {
+          return false;
+        }
+        if (defaultCompanyID !== null && beaconData === null) {
+          return false;
+        }
         if (
           defaultCompanyID !== null &&
           beaconData !== null &&
           (defaultCompanyID[0] !== beaconData[0] ||
             defaultCompanyID[1] !== beaconData[1])
-        )
+        ) {
           return false;
+        }
       }
     }
 
@@ -368,16 +392,19 @@ export abstract class ObnizPartsBle<
           ? beaconDataLength
           : beaconDataLength[mode];
       if (defaultBeaconDataLength !== undefined) {
-        if (defaultBeaconDataLength === null && beaconData !== null)
+        if (defaultBeaconDataLength === null && beaconData !== null) {
           return false;
-        if (defaultBeaconDataLength !== null && beaconData === null)
+        }
+        if (defaultBeaconDataLength !== null && beaconData === null) {
           return false;
+        }
         if (
           defaultBeaconDataLength !== null &&
           beaconData !== null &&
           beaconData.length + 1 !== defaultBeaconDataLength
-        )
+        ) {
           return false;
+        }
       }
     }
 
@@ -412,8 +439,9 @@ export abstract class ObnizPartsBle<
                       : config.data ?? [])[i]
                 ).length !== 0
           ).length !== 0
-        )
+        ) {
           return false;
+        }
       }
     }
     return true;
@@ -428,7 +456,9 @@ export abstract class ObnizPartsBle<
    */
   public static getData(peripheral: BleRemotePeripheral): unknown | null {
     const mode = this.getDeviceMode(peripheral);
-    if (!mode) return null;
+    if (!mode) {
+      return null;
+    }
     const lib = new ((this as unknown) as ObnizPartsBleProps)(peripheral, mode);
     try {
       return lib.getData();
@@ -463,16 +493,23 @@ export abstract class ObnizPartsBle<
     this.peripheral = peripheral;
     this.address = peripheral.address;
     this.beaconData = this.peripheral.manufacturerSpecificData;
-    if (this.beaconData) this.beaconData = this.beaconData.slice(2);
+    if (this.beaconData) {
+      this.beaconData = this.beaconData.slice(2);
+    }
     this.beaconDataInScanResponse = this.peripheral.manufacturerSpecificDataInScanResponse;
-    if (this.beaconDataInScanResponse)
+    if (this.beaconDataInScanResponse) {
       this.beaconDataInScanResponse = this.beaconDataInScanResponse.slice(2);
+    }
   }
 
   public checkMode(force = false): ObnizPartsBleMode {
-    if (this.mode && !force) return this.mode;
+    if (this.mode && !force) {
+      return this.mode;
+    }
     const mode = this.staticClass.getDeviceMode(this.peripheral);
-    if (!mode) throw notMatchDeviceError;
+    if (!mode) {
+      throw notMatchDeviceError;
+    }
     return (this._mode = mode);
   }
 
@@ -482,59 +519,75 @@ export abstract class ObnizPartsBle<
    * Form advertising data into an associative array
    * Available modes: Beacon, Connectable(only part)
    */
-  public getData(): S {
+  public getData(): ObnizPartsDataProperty<reqKey, optionalKey> {
     this.checkMode();
-    if (!this.staticClass.BeaconDataStruct)
+    if (!this.staticClass.BeaconDataStruct) {
       throw new Error('Data analysis is not defined.');
-    if (!this.beaconData)
+    }
+    if (!this.beaconData) {
       throw new Error('Manufacturer specific data is null.');
+    }
 
     const defaultBeaconDataStruct = (this.staticClass.BeaconDataStruct.Beacon ||
     this.staticClass.BeaconDataStruct.Connectable ||
     this.staticClass.BeaconDataStruct.Pairing
       ? this.staticClass.BeaconDataStruct[this.mode]
-      : this.staticClass.BeaconDataStruct) as ObnizBleBeaconStruct<S> | null;
-    if (defaultBeaconDataStruct === null)
+      : this.staticClass.BeaconDataStruct) as ObnizBleBeaconStruct<
+      ObnizPartsDataProperty<reqKey, optionalKey>
+    > | null;
+    if (defaultBeaconDataStruct === null) {
       throw new Error('Data analysis is not defined.');
+    }
 
     return (Object.fromEntries(
       Object.entries(defaultBeaconDataStruct)
         .map(([name, c]) => {
-          if (c.type === 'check') return [];
+          if (c.type === 'check') {
+            return [];
+          }
           const config = c as ObnizBleBeaconStructNormal<unknown, never>;
           if (
             !(config.scanResponse
               ? this.beaconDataInScanResponse
               : this.beaconData)
-          )
+          ) {
             throw new Error('manufacturerSpecificData is null.');
+          }
           const data = (
             (config.scanResponse
               ? this.beaconDataInScanResponse
               : this.beaconData) ?? []
           ).slice(config.index, config.index + (config.length ?? 1));
-          if (config.type.indexOf('bool') === 0)
+          if (config.type.indexOf('bool') === 0) {
             return [name, (data[0] & parseInt(config.type.slice(4), 2)) > 0];
-          else if (config.type === 'string')
+          } else if (config.type === 'string') {
             return [
               name,
               Buffer.from(data.slice(0, data.indexOf(0))).toString(),
             ];
-          else if (config.type === 'xyz') {
-            if (!config.length) config.length = 6;
-            if (config.length % 6 !== 0) return [];
-            else if (config.length === 6) return [name, this.getTriaxial(data)];
-            else
+          } else if (config.type === 'xyz') {
+            if (!config.length) {
+              config.length = 6;
+            }
+            if (config.length % 6 !== 0) {
+              return [];
+            } else if (config.length === 6) {
+              return [name, this.getTriaxial(data)];
+            } else {
               return [
                 name,
                 [...Array(config.length / 6).keys()].map((v) =>
                   this.getTriaxial(data.slice(v * 6, (v + 1) * 6))
                 ),
               ];
-          } else if (config.type === 'custom')
-            if (!config.func) return [];
-            else return [name, config.func(data, this.peripheral)];
-          else {
+            }
+          } else if (config.type === 'custom') {
+            if (!config.func) {
+              return [];
+            } else {
+              return [name, config.func(data, this.peripheral)];
+            }
+          } else {
             const multi = config.multiple ?? 1;
             const num = (config.type.indexOf('u') === 0 ? uint : int)(
               config.type.indexOf('BE') >= 0 ? data.reverse() : data
@@ -543,7 +596,7 @@ export abstract class ObnizPartsBle<
           }
         })
         .filter((v) => v[0])
-    ) as unknown) as S;
+    ) as unknown) as ObnizPartsDataProperty<reqKey, optionalKey>;
   }
 
   private getTriaxial(data: number[]): Triaxial {
@@ -555,13 +608,18 @@ export abstract class ObnizPartsBle<
   }
 }
 
-export abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsBle<S> {
+export abstract class ObnizPartsBleConnectable<
+  S extends ObnizPartsDataPropertyKey,
+  T extends ObnizPartsDataPropertyKey
+> extends ObnizPartsBle<S> {
   constructor(peripheral: BleRemotePeripheral, mode: ObnizPartsBleMode) {
     super(peripheral, mode);
 
     this.peripheral.ondisconnect = async (reason: unknown) => {
       await this.beforeOnDisconnectWait(reason);
-      if (this.ondisconnect) await this.ondisconnect(reason);
+      if (this.ondisconnect) {
+        await this.ondisconnect(reason);
+      }
     };
   }
 
@@ -599,7 +657,7 @@ export abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsBle<S> {
    *
    * 接続中にデータを取得
    */
-  public abstract getDataWait(): Promise<T>;
+  public abstract getDataWait(): Promise<Pick<ObnizPartsDataPropertyBase, T>>;
 
   /**
    * onDisconnect callback function.
@@ -627,12 +685,13 @@ export abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsBle<S> {
    * @param connected Connection status (default: true)
    */
   protected checkConnected(connected = true): void {
-    if (this.peripheral.connected !== connected)
+    if (this.peripheral.connected !== connected) {
       throw new Error(
         connected
           ? 'Peripheral is NOT connected!!'
           : 'Peripheral IS connected!!'
       );
+    }
   }
 
   /**
@@ -649,18 +708,20 @@ export abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsBle<S> {
     characteristicUuid: string
   ): BleRemoteCharacteristic {
     const service = this.peripheral.getService(serviceUuid);
-    if (!service)
+    if (!service) {
       throw new ObnizBleUnknownServiceError(
         this.peripheral.address,
         serviceUuid
       );
+    }
     const char = service.getCharacteristic(characteristicUuid);
-    if (!char)
+    if (!char) {
       throw new ObnizBleUnknownCharacteristicError(
         this.peripheral.address,
         serviceUuid,
         characteristicUuid
       );
+    }
     return char;
   }
 

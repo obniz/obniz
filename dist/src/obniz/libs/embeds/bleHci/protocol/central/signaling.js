@@ -77,3 +77,4 @@ class Signaling extends eventemitter3_1.default {
     }
 }
 exports.default = Signaling;
+//# sourceMappingURL=signaling.js.map

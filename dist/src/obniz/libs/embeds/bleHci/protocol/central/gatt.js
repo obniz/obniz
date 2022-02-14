@@ -645,3 +645,4 @@ class GattCentral extends eventemitter3_1.default {
     }
 }
 exports.default = GattCentral;
+//# sourceMappingURL=gatt.js.map

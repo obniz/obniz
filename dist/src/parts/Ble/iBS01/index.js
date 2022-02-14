@@ -36,3 +36,4 @@ iBS01.BeaconDataStruct = {
     // subtype=0x03 older version has no subtype
     magic: iBS_1.BaseiBS01.getUniqueData(1, -1).magic,
 };
+//# sourceMappingURL=index.js.map

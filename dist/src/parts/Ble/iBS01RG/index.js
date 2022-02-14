@@ -23,3 +23,4 @@ iBS01RG.BeaconDataStruct = {
     acceleration: iBS_1.BaseiBS01.Config.acceleration,
     magic: iBS_1.BaseiBS01.getUniqueData(1.1, -1).magic,
 };
+//# sourceMappingURL=index.js.map

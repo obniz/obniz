@@ -225,3 +225,4 @@ class BMP280 extends ObnizPartsInterface_1.default {
     }
 }
 exports.default = BMP280;
+//# sourceMappingURL=index.js.map

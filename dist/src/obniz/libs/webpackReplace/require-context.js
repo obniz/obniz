@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.setBaseDir = void 0;
 /**
  * @packageDocumentation
  * @ignore
@@ -58,3 +59,4 @@ exports.default = (directory, recursive, regExp) => {
 exports.setBaseDir = (base) => {
     baseDir = base;
 };
+//# sourceMappingURL=require-context.js.map

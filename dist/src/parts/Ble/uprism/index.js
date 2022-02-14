@@ -208,3 +208,4 @@ class uPRISM extends ObnizPartsBleInterface_1.default {
     }
 }
 exports.default = uPRISM;
+//# sourceMappingURL=index.js.map

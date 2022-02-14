@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.GattCommon = void 0;
 /**
  * @ignore
  */
@@ -186,3 +187,4 @@ class GattCommon {
     }
 }
 exports.GattCommon = GattCommon;
+//# sourceMappingURL=gatt.js.map

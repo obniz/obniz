@@ -179,3 +179,4 @@ class UA651BLE extends ObnizPartsBleInterface_1.default {
     }
 }
 exports.default = UA651BLE;
+//# sourceMappingURL=index.js.map

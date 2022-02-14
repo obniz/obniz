@@ -62,3 +62,4 @@ class ObnizPartsBleInterface extends ObnizPartsInterface_1.default {
     }
 }
 exports.default = ObnizPartsBleInterface;
+//# sourceMappingURL=ObnizPartsBleInterface.js.map

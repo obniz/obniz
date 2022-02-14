@@ -272,3 +272,4 @@ class UA1200BLE extends ObnizPartsBleInterface_1.default {
     }
 }
 exports.default = UA1200BLE;
+//# sourceMappingURL=index.js.map

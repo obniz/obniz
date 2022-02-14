@@ -16,3 +16,4 @@ class iBS03TP extends iBS_1.BaseiBS {
 exports.default = iBS03TP;
 iBS03TP.PartsName = 'iBS03TP';
 iBS03TP.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, button: iBS_1.BaseiBS.Config.button, moving: iBS_1.BaseiBS.Config.moving, hall_sensor: iBS_1.BaseiBS.Config.event, temperature: iBS_1.BaseiBS.Config.temperature, probe_temperature: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.temperature), { index: 7 }) }, iBS_1.BaseiBS.getUniqueData(3, 0x17));
+//# sourceMappingURL=index.js.map

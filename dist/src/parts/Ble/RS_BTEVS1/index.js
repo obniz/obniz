@@ -105,9 +105,9 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
             (config.co2MeasureOperation ? 0b001 : 0) +
                 (config.pm2_5MeasureOperation ? 0b010 : 0) +
                 (config.tempMeasureOperation ? 0b100 : 0),
-            ...ObnizPartsBleAbstract_1.uintToArray((_a = config.co2Interval, (_a !== null && _a !== void 0 ? _a : 10000)), 4),
-            ...ObnizPartsBleAbstract_1.uintToArray((_b = config.pm2_5Interval, (_b !== null && _b !== void 0 ? _b : 10000)), 4),
-            ...ObnizPartsBleAbstract_1.uintToArray((_c = config.tempInterval, (_c !== null && _c !== void 0 ? _c : 10000)), 4),
+            ...ObnizPartsBleAbstract_1.uintToArray((_a = config.co2Interval) !== null && _a !== void 0 ? _a : 10000, 4),
+            ...ObnizPartsBleAbstract_1.uintToArray((_b = config.pm2_5Interval) !== null && _b !== void 0 ? _b : 10000, 4),
+            ...ObnizPartsBleAbstract_1.uintToArray((_c = config.tempInterval) !== null && _c !== void 0 ? _c : 10000, 4),
         ]);
     }
     /**
@@ -235,8 +235,8 @@ RS_BTEVS1.BeaconDataStruct = {
         multiple: 0.1,
         func: (data, p) => {
             var _a, _b, _c;
-            return (_b = (_a = p.manufacturerSpecificData) === null || _a === void 0 ? void 0 : _a.length, (_b !== null && _b !== void 0 ? _b : 0)) + 1 === 0x0b &&
-                (_c = p.localName, (_c !== null && _c !== void 0 ? _c : '')).startsWith('BT')
+            return ((_b = (_a = p.manufacturerSpecificData) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0) + 1 === 0x0b &&
+                ((_c = p.localName) !== null && _c !== void 0 ? _c : '').startsWith('BT')
                 ? data[0]
                 : ObnizPartsBleAbstract_1.int(data) * 0.1;
         },
@@ -247,10 +247,11 @@ RS_BTEVS1.BeaconDataStruct = {
         type: 'custom',
         func: (data, p) => {
             var _a, _b, _c;
-            return (_b = (_a = p.manufacturerSpecificData) === null || _a === void 0 ? void 0 : _a.length, (_b !== null && _b !== void 0 ? _b : 0)) + 1 === 0x0b &&
-                (_c = p.localName, (_c !== null && _c !== void 0 ? _c : '')).startsWith('BT')
+            return ((_b = (_a = p.manufacturerSpecificData) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0) + 1 === 0x0b &&
+                ((_c = p.localName) !== null && _c !== void 0 ? _c : '').startsWith('BT')
                 ? data[0]
                 : data[1];
         },
     },
 };
+//# sourceMappingURL=index.js.map

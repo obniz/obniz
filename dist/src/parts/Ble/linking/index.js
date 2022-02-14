@@ -234,3 +234,4 @@ class Linking extends ObnizPartsBleInterface_1.default {
     }
 }
 exports.default = Linking;
+//# sourceMappingURL=index.js.map

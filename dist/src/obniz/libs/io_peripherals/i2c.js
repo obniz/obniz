@@ -292,3 +292,4 @@ class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
     }
 }
 exports.default = PeripheralI2C;
+//# sourceMappingURL=i2c.js.map

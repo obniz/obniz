@@ -286,3 +286,4 @@ Logtta_Accel.BeaconDataStruct = {
         },
     },
 };
+//# sourceMappingURL=index.js.map

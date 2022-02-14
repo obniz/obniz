@@ -7,6 +7,7 @@
 /* eslint max-classes-per-file: 0 */
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.W5500Socket = exports.W5500SocketParts = exports.W5500 = exports.W5500Parts = void 0;
 // Block select bit (BSB)
 // ブロック選択ビット(BSB)
 /** 00 Common register 共通レジスタ */
@@ -1690,3 +1691,4 @@ class W5500Socket {
 }
 exports.W5500Socket = W5500Socket;
 exports.default = W5500;
+//# sourceMappingURL=index.js.map

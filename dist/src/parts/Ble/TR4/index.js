@@ -88,3 +88,4 @@ Tr4._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
     // local name adv is exist, but cannot use for filter
     .groupStart('localName')
     .groupEnd();
+//# sourceMappingURL=index.js.map

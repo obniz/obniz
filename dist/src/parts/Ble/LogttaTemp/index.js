@@ -196,3 +196,4 @@ Logtta_TH.BeaconDataStruct = {
         },
     },
 };
+//# sourceMappingURL=index.js.map

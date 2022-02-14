@@ -21,12 +21,12 @@ export interface iBS01G_Data {
      */
     button: boolean;
     /** moving or not 動いているかどうか */
-    moving: boolean;
+    moving: number;
     /** fallen or not 落ちたかどうか */
     fall: boolean;
 }
 /** iBS01G management class iBS01Gを管理するクラス */
-export default class iBS01G extends BaseiBS01<iBS01G_Data> {
+export default class iBS01G extends BaseiBS01<keyof iBS01G_Data> {
     static readonly PartsName = "iBS01G";
     static readonly BeaconDataLength = 25;
     static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS01G_Data>;

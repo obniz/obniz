@@ -1074,7 +1074,7 @@ class Hci extends eventemitter3_1.default {
         return {
             handle: data.readUInt16LE(0),
             role: data.readUInt8(2),
-            addressType: (_a = addressTypeList[data.readUInt8(3)], (_a !== null && _a !== void 0 ? _a : 'undefined')),
+            addressType: (_a = addressTypeList[data.readUInt8(3)]) !== null && _a !== void 0 ? _a : 'undefined',
             address: bleHelper_1.default.buffer2reversedHex(data.slice(4, 10), ':'),
             localResolvablePrivateAddress: bleHelper_1.default.buffer2reversedHex(data.slice(10, 16), ':'),
             peerResolvablePrivateAddress: bleHelper_1.default.buffer2reversedHex(data.slice(16, 22), ':'),
@@ -1412,3 +1412,4 @@ class Hci extends eventemitter3_1.default {
 }
 Hci.STATUS_MAPPER = hci_status_json_1.default;
 exports.default = Hci;
+//# sourceMappingURL=hci.js.map

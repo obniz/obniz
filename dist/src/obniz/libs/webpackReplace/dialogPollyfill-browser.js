@@ -13,3 +13,4 @@ const dialog_polyfill_1 = __importDefault(require("dialog-polyfill"));
 // @ts-ignore
 const dialog_polyfill_css_1 = __importDefault(require("dialog-polyfill/dist/dialog-polyfill.css"));
 exports.default = { dialogPolyfill: dialog_polyfill_1.default, css: dialog_polyfill_css_1.default };
+//# sourceMappingURL=dialogPollyfill-browser.js.map

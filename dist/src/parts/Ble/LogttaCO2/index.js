@@ -179,3 +179,4 @@ Logtta_CO2.BeaconDataStruct = {
         },
     },
 };
+//# sourceMappingURL=index.js.map

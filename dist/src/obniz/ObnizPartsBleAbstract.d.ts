@@ -1,7 +1,7 @@
 import BleRemoteCharacteristic from './libs/embeds/bleHci/bleRemoteCharacteristic';
 import BleRemotePeripheral, { IBeacon } from './libs/embeds/bleHci/bleRemotePeripheral';
 import ObnizPartsBleInterface from './ObnizPartsBleInterface';
-import { ObnizPartsDataProperty } from './ObnizPartsDataProperty';
+import { ObnizPartsDataProperty, ObnizPartsDataPropertyBase, ObnizPartsDataPropertyKey } from './ObnizPartsDataPropertyBase';
 import { ObnizPartsInfo, ObnizPartsProps } from './ObnizPartsInterface';
 import { PartsType } from './ObnizPartsList';
 declare const ObnizPartsBleModeList: readonly ["Beacon", "Connectable", "Pairing"];
@@ -64,7 +64,7 @@ export interface ObnizPartsBleProps extends ObnizPartsProps {
     getDeviceMode(peripheral: BleRemotePeripheral): ObnizPartsBleMode | null;
     new (peripheral: BleRemotePeripheral, mode: ObnizPartsBleMode): ObnizPartsBle<any>;
 }
-export declare abstract class ObnizPartsBle<S extends Partial<ObnizPartsDataProperty>> extends ObnizPartsBleInterface {
+export declare abstract class ObnizPartsBle<reqKey extends ObnizPartsDataPropertyKey, optionalKey extends ObnizPartsDataPropertyKey = never> extends ObnizPartsBleInterface {
     /**
      * Information of parts.
      * name: PartsName
@@ -177,10 +177,10 @@ export declare abstract class ObnizPartsBle<S extends Partial<ObnizPartsDataProp
      * Form advertising data into an associative array
      * Available modes: Beacon, Connectable(only part)
      */
-    getData(): S;
+    getData(): ObnizPartsDataProperty<reqKey, optionalKey>;
     private getTriaxial;
 }
-export declare abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsBle<S> {
+export declare abstract class ObnizPartsBleConnectable<S extends ObnizPartsDataPropertyKey, T extends ObnizPartsDataPropertyKey> extends ObnizPartsBle<S> {
     constructor(peripheral: BleRemotePeripheral, mode: ObnizPartsBleMode);
     /**
      * Connect to peripherals with validation.
@@ -201,7 +201,7 @@ export declare abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsB
      *
      * 接続中にデータを取得
      */
-    abstract getDataWait(): Promise<T>;
+    abstract getDataWait(): Promise<Pick<ObnizPartsDataPropertyBase, T>>;
     /**
      * onDisconnect callback function.
      *

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ATT_ECODE_READABLES = exports.ATT_OP_READABLES = exports.ATT = void 0;
 /**
  * @ignore
  */
@@ -99,3 +100,4 @@ exports.ATT_ECODE_READABLES = {
     0x10: 'ECODE_UNSUPP_GRP_TYPE',
     0x11: 'ECODE_INSUFF_RESOURCES',
 };
+//# sourceMappingURL=att.js.map

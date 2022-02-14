@@ -9,6 +9,7 @@ import {
   ObnizBleBeaconStruct,
   uint,
 } from '../../../obniz/ObnizPartsBleAbstract';
+import {iBS01H_Data} from "../iBS01H";
 import { BaseiBS01 } from '../utils/abstracts/iBS';
 
 export interface iBS01RGOptions {}
@@ -33,7 +34,7 @@ export interface iBS01RG_Data {
   acceleration: Triaxial[];
 }
 
-export default class iBS01RG extends BaseiBS01<iBS01RG_Data> {
+export default class iBS01RG extends BaseiBS01<keyof Exclude<iBS01RG_Data, undefined>, keyof iBS01RG_Data>{
   public static readonly PartsName = 'iBS01RG';
 
   public static readonly BeaconDataLength = 0x19;

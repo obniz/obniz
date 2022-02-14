@@ -257,3 +257,4 @@ class ICM20948 extends i2cParts_1.default {
     }
 }
 exports.default = ICM20948;
+//# sourceMappingURL=index.js.map
