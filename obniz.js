@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.18.1-alpha.3",
+  "version": "3.19.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -12735,13 +12735,15 @@ class Hci extends eventemitter3_1.default {
         else if (eventType === COMMANDS.EVT_LE_CONN_COMPLETE) {
             const role = data.readUInt8(2);
             if (role === 1) {
-                this.processLeConnComplete(status, data, undefined);
+                const connectionData = this.parseConnectionCompleteEventData(data);
+                this.processLeConnComplete(status, connectionData, undefined);
             }
         }
         else if (eventType === COMMANDS.EVT_LE_ENHANCED_CONNECTION_COMPLETE) {
             const role = data.readUInt8(2);
             if (role === 1) {
-                this.processLeConnComplete(status, data, undefined);
+                const connectionData = this.parseConnectionCompleteEventData(data);
+                this.processLeConnComplete(status, connectionData, undefined);
             }
         }
         else if (eventType === COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE) {

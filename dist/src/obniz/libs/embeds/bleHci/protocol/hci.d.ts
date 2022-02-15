@@ -160,7 +160,7 @@ declare class Hci extends EventEmitter<HciEventTypes> {
     writeOneAclDataPkt(): void;
     writeAclDataPkt(handle: Handle, cid: any, data: any): void;
     longTermKeyRequestNegativeReplyWait(handle: Handle): Promise<void>;
-    processLeMetaEvent(eventType: any, status: any, data: any): void;
+    processLeMetaEvent(eventType: any, status: any, data: Buffer): void;
     private parseConnectionCompleteEventData;
     private parseLeConnectionCompleteEventData;
     processLeConnComplete(status: any, data: ReturnType<Hci['parseConnectionCompleteEventData']> | ReturnType<Hci['parseLeConnectionCompleteEventData']>, onConnectCallback: any): {
