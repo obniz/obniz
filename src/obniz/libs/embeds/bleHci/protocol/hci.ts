@@ -1529,18 +1529,20 @@ class Hci extends EventEmitter<HciEventTypes> {
     // return data.status;
   }
 
-  public processLeMetaEvent(eventType: any, status: any, data: any) {
+  public processLeMetaEvent(eventType: any, status: any, data: Buffer) {
     if (eventType === COMMANDS.EVT_LE_ADVERTISING_REPORT) {
       this.processLeAdvertisingReport(status, data);
     } else if (eventType === COMMANDS.EVT_LE_CONN_COMPLETE) {
       const role = data.readUInt8(2);
       if (role === 1) {
-        this.processLeConnComplete(status, data, undefined);
+        const connectionData = this.parseConnectionCompleteEventData(data);
+        this.processLeConnComplete(status, connectionData, undefined);
       }
     } else if (eventType === COMMANDS.EVT_LE_ENHANCED_CONNECTION_COMPLETE) {
       const role = data.readUInt8(2);
       if (role === 1) {
-        this.processLeConnComplete(status, data, undefined);
+        const connectionData = this.parseConnectionCompleteEventData(data);
+        this.processLeConnComplete(status, connectionData, undefined);
       }
     } else if (eventType === COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE) {
       const {
