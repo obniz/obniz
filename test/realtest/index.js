@@ -12,6 +12,8 @@ describe('obniz', async () => {
   const files = fs.readdirSync(path.join(__dirname, 'tests'));
   files.sort();
   for (let i = 0; i < files.length; i++) {
+    if (process.env.INDEX !== undefined && Number(process.env.INDEX) !== i)
+      continue;
     if (files[i].indexOf('.js') >= 0) {
       require(path.join(__dirname, 'tests', files[i]));
       // test({obnizA, obnizB});

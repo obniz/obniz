@@ -1,0 +1,145 @@
+{
+  "name": "ESP32-C3 Dev Kit",
+  "board": [
+    "obnizA",
+    "obnizB"
+  ],
+  "sleep_test": false,
+  "io": [
+    {
+      "//": "InputDisabled&ADC1_0",
+      "board_io": 0,
+      "mode": [
+        "digitalRead",
+        "digitalWrite",
+        "analogRead"
+      ],
+      "obniz": "obnizA",
+      "obniz_io": 0
+    },
+    {
+      "//": "InputDisabled&ADC1_1",
+      "board_io": 1,
+      "mode": [
+        "digitalRead",
+        "digitalWrite",
+        "analogRead"
+      ],
+      "obniz": "obnizA",
+      "obniz_io": 1
+    },
+    {
+      "//": "BOOT&ADC1_2",
+      "board_io": 2,
+      "mode": [
+        "digitalRead",
+        "digitalWrite",
+        "analogRead"
+      ],
+      "obniz": "obnizA",
+      "obniz_io": 2
+    },
+    {
+      "//": "ADC1_3",
+      "board_io": 3,
+      "mode": [
+        "digitalRead",
+        "digitalWrite",
+        "analogRead"
+      ],
+      "obniz": "obnizA",
+      "obniz_io": 3
+    },
+    {
+      "//": "MTMS&ADC1_4",
+      "board_io": 4,
+      "mode": [
+        "digitalRead",
+        "digitalWrite",
+        "analogRead"
+      ],
+      "obniz": "obnizA",
+      "obniz_io": 4
+    },
+    {
+      "//": "MTDI&ADC2_0",
+      "board_io": 5,
+      "mode": [
+        "digitalRead",
+        "digitalWrite"
+      ],
+      "obniz": "obnizA",
+      "obniz_io": 5
+    },
+    {
+      "//": "MTCK",
+      "board_io": 6,
+      "mode": [
+        "digitalRead",
+        "digitalWrite"
+      ],
+      "obniz": "obnizA",
+      "obniz_io": 6
+    },
+    {
+      "//": "MTDO",
+      "board_io": 7,
+      "mode": [
+        "digitalRead",
+        "digitalWrite"
+      ],
+      "obniz": "obnizA",
+      "obniz_io": 7
+    },
+    {
+      "//": "LOG",
+      "board_io": 8,
+      "mode": [
+        "digitalRead",
+        "digitalWrite"
+      ],
+      "obniz": "obnizA",
+      "obniz_io": 8
+    },
+    {
+      "//": "BOOT",
+      "board_io": 9,
+      "mode": [
+        "digitalRead",
+        "digitalWrite"
+      ],
+      "obniz": "obnizA",
+      "obniz_io": 9
+    },
+    {
+      "//": "JTAG",
+      "board_io": 10,
+      "mode": [
+        "digitalRead",
+        "digitalWrite"
+      ],
+      "obniz": "obnizA",
+      "obniz_io": 10
+    },
+    {
+      "//": "USB_D-&InputDisabled",
+      "board_io": 18,
+      "mode": [
+        "digitalRead",
+        "digitalWrite"
+      ],
+      "obniz": "obnizB",
+      "obniz_io": 0
+    },
+    {
+      "//": "USB_D+&InputDisabled&USB_Weak_PullUp",
+      "board_io": 19,
+      "mode": [
+        "digitalRead",
+        "digitalWrite"
+      ],
+      "obniz": "obnizB",
+      "obniz_io": 1
+    }
+  ]
+}
