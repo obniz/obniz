@@ -5,6 +5,7 @@
 
 import BleRemotePeripheral from './libs/embeds/bleHci/bleRemotePeripheral';
 import ObnizUtil from './libs/utils/util';
+import { Obniz } from './Obniz';
 import ObnizConnection from './ObnizConnection';
 import { ObnizOptions } from './ObnizOptions';
 import {
@@ -13,12 +14,16 @@ import {
   ObnizPartsBleProps,
 } from './ObnizPartsBleAbstract';
 import ObnizPartsInterface from './ObnizPartsInterface';
-import { PartsList } from './ObnizPartsList';
+import { PartsList, PartsType } from './ObnizPartsList';
+import PartsClass = Obniz.PartsClass;
+import PartsInstance = Obniz.PartsInstance;
 
 /**
  * @ignore
  */
-const _parts: { [key: string]: unknown } = {};
+const _parts: {
+  [key: string]: PartsClass<any>;
+} = {};
 
 export interface Triaxial {
   x: number;
@@ -59,7 +64,7 @@ export default abstract class ObnizParts extends ObnizConnection {
    * @param name string
    * @constructor
    */
-  public static getPartsClass<K extends keyof PartsList>(name: K): any {
+  public static getPartsClass<K extends PartsType>(name: K): PartsClass<K> {
     if (!_parts[name]) {
       throw new Error(`unknown parts [${name}]`);
     }
@@ -97,7 +102,7 @@ export default abstract class ObnizParts extends ObnizConnection {
   public wired<K extends keyof PartsList>(
     partsName: K,
     options?: PartsList[K]['options']
-  ): PartsList[K]['class'] {
+  ): PartsInstance<K> {
     if (this.connectionState !== 'connected') {
       throw new Error('obniz.wired can only be used after connection');
     }
@@ -105,7 +110,7 @@ export default abstract class ObnizParts extends ObnizConnection {
     if (!Parts) {
       throw new Error('No such a parts [' + partsName + '] found');
     }
-    const parts = new Parts();
+    const parts = new (Parts as any)();
     // eslint-disable-next-line prefer-rest-params
     const args = Array.from(arguments);
     args.shift();
@@ -145,7 +150,7 @@ export default abstract class ObnizParts extends ObnizConnection {
         display.setPinNames(displayPartsName, ioNames);
       }
     }
-    return parts;
+    return parts as PartsInstance<K>;
   }
 
   public static getBleParts(
@@ -166,7 +171,9 @@ export default abstract class ObnizParts extends ObnizConnection {
       // Hiring with long library names
       .sort(([na], [nb]) => (nb ?? '').length - (na ?? '').length);
 
-    if (result.length === 0 || !result[0][0] || !result[0][1]) return null;
+    if (result.length === 0 || !result[0][0] || !result[0][1]) {
+      return null;
+    }
     const [name, mode] = result[0];
 
     const parts = new (_parts[name] as ObnizPartsBleProps)(

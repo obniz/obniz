@@ -252,6 +252,9 @@ export namespace Obniz {
   export type StopBitType = _StopBitType;
   export type UUID = _UUID;
 
-  export type Parts<K extends keyof PartsList> = PartsList[K]['class'];
+  export type PartsInstance<
+    K extends keyof PartsList
+  > = PartsList[K]['instance'];
+  export type PartsClass<K extends keyof PartsList> = PartsList[K]['class'];
   export type PartsOptions<K extends keyof PartsList> = PartsList[K]['options'];
 }
