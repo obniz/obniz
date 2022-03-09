@@ -29,3 +29,4 @@ items:
     ws: {$ref: "/response/ws"}
     wifi: {$ref: "/response/wifi"}
     plugin: {$ref: "/response/plugin"}
+    storage: {$ref: "/response/storage"}

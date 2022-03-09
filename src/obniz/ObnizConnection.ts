@@ -567,14 +567,14 @@ export default abstract class ObnizConnection extends EventEmitter<
         return;
       }
 
-      let sendData = JSON.stringify([obj]);
+      let sendData: string | Uint8Array = JSON.stringify([obj]);
       if (this.debugprint) {
         this._print_debug('send: ' + sendData);
       }
 
       /* compress */
       if (this.wscommand && options.local_connect) {
-        let compressed: any;
+        let compressed: Uint8Array | null;
         try {
           compressed = this.wscommand.compress(
             this.wscommands,
@@ -593,7 +593,7 @@ export default abstract class ObnizConnection extends EventEmitter<
           });
           this.error({
             alert: 'error',
-            message: sendData,
+            message: sendData as string,
           });
           throw e;
         }
