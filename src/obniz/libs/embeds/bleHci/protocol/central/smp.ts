@@ -25,8 +25,15 @@ namespace SMP {
   export const PAIRING_FAILED = 0x05;
   export const ENCRYPT_INFO = 0x06;
   export const MASTER_IDENT = 0x07;
+  export const IDENTITY_INFORMATION = 0x08;
+  export const IDENTITY_ADDRESS_INFORMATION = 0x09;
+  export const SIGNING_INFORMATION = 0x0a;
+  export const PAIRING_PUBLIC_KEY = 0x0c;
+  export const PAIRING_DHKEY_CHECK = 0x0d;
   export const SMP_SECURITY_REQUEST = 0x0b;
 }
+
+type BondingType = 'NoBonding' | 'Bonding';
 
 /**
  * @ignore
@@ -36,11 +43,23 @@ type SmpEventTypes = 'masterIdent' | 'ltk' | 'fail' | 'end';
 /**
  * @ignore
  */
+type SmpIoCapability =
+  | 'displayOnly'
+  | 'displayYesNo'
+  | 'keyboardOnly'
+  | 'keyboardDisplay'
+  | 'noInputNoOutput';
+
+/**
+ * @ignore
+ */
 export interface SmpEncryptOptions {
   /**
    * Stored pairing keys
    */
   keys?: string;
+
+  secureConnection?: boolean;
 
   /**
    * Callback function that call on pairing passkey required.
@@ -64,21 +83,21 @@ export interface SmpEncryptOptions {
  */
 class Smp extends EventEmitter<SmpEventTypes> {
   private _aclStream: AclStream;
-  private _iat: any;
-  private _ia: any;
-  private _rat: any;
-  private _ra: any;
+  private _iat: Buffer;
+  private _ia: Buffer;
+  private _rat: Buffer;
+  private _ra: Buffer;
   private onAclStreamDataBinded: any;
   private onAclStreamEndBinded: any;
-  private _preq: any;
-  private _pres: any;
-  private _tk: any;
-  private _r: any;
-  private _rand: any;
-  private _ediv: any;
-  private _pcnf: any;
-  private _stk: any = null;
-  private _ltk: any = null;
+  private _preq: Buffer | null = null;
+  private _pres: Buffer | null = null;
+  private _tk: Buffer | null = null;
+  private _r: Buffer | null = null;
+  private _rand: Buffer | null = null;
+  private _ediv: Buffer | null = null;
+  private _pcnf: Buffer | null = null;
+  private _stk: Buffer | null = null;
+  private _ltk: Buffer | null = null;
   private _options?: SmpEncryptOptions = undefined;
 
   constructor(
@@ -103,13 +122,19 @@ class Smp extends EventEmitter<SmpEventTypes> {
     this._aclStream.on('end', this.onAclStreamEndBinded);
   }
 
-  public debugHandler: any = () => {
+  public debugHandler: any = (...param: any[]) => {
     // do nothing.
+    console.log(...param);
   };
 
   public async pairingWithKeyWait(key: string) {
     this.debug(`Pairing using keys ${key}`);
     this.setKeys(key);
+    if (!this._ltk || !this._rand || !this._ediv) {
+      throw new Error('invalid keys');
+    }
+    console.log(this.parsePairingReqRsp(this._pres!));
+
     const encResult = await this._aclStream.onSmpLtkWait(
       this._ltk,
       this._rand,
@@ -132,40 +157,58 @@ class Smp extends EventEmitter<SmpEventTypes> {
       }
       return result;
     }
+    // phase 1 : Pairing Feature Exchange
     this.debug(`Going to Pairing`);
     await this.sendPairingRequestWait();
     this.debug(`Waiting Pairing Response`);
     const pairingResponse = await this._readWait(SMP.PAIRING_RESPONSE);
-    await this.handlePairingResponseWait(pairingResponse);
-    this.debug(`Waiting Pairing Confirm`);
-    const confirm = await this._readWait(SMP.PAIRING_CONFIRM, 60 * 1000); // 60sec timeout
-    this.handlePairingConfirm(confirm);
-    this.debug(`Waiting Pairing Random`);
-    const random = await this._readWait(SMP.PAIRING_RANDOM);
-    const encResultPromise = this.handlePairingRandomWait(random);
-    this.debug(`Got Pairing Encryption Result`);
+    this.debug(`Receive  Pairing Response ${pairingResponse.toString('hex')}`);
+    this._pres = pairingResponse;
 
-    const encInfoPromise = this._readWait(SMP.ENCRYPT_INFO);
-    const masterIdentPromise = this._readWait(SMP.MASTER_IDENT);
-    await Promise.all([encResultPromise, encInfoPromise, masterIdentPromise]);
-    const encResult = await encResultPromise;
-    const encInfo = await encInfoPromise;
-    const masterIdent = await masterIdentPromise;
-    this.handleEncryptInfo(encInfo);
-    this.handleMasterIdent(masterIdent);
+    if (this.isSecureConnectionMode()) {
+      // phase2 : (after receive PAIRING_RESPONSE)
+      await this.handlePairingResponseSecureConnectionWait();
+
+      console.log('paired');
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      console.log('awaited paired');
+    } else {
+      // phase2 : (after receive PAIRING_RESPONSE)
+      await this.handlePairingResponseLegacyPairingWait();
+      this.debug(`Waiting Pairing Confirm`);
+      const confirm = await this._readWait(SMP.PAIRING_CONFIRM, 60 * 1000); // 60sec timeout
+      this.handlePairingConfirm(confirm);
+
+      // phase3 : Transport Specific Key Distribution
+      this.debug(`Waiting Pairing Random`);
+      const random = await this._readWait(SMP.PAIRING_RANDOM);
+      const encResultPromise = this.handlePairingRandomWait(random);
+      this.debug(`Got Pairing Encryption Result`);
+
+      const encInfoPromise = this._readWait(SMP.ENCRYPT_INFO);
+      const masterIdentPromise = this._readWait(SMP.MASTER_IDENT);
+      await Promise.all([encResultPromise, encInfoPromise, masterIdentPromise]);
+      const encResult = await encResultPromise;
+      const encInfo = await encInfoPromise;
+      const masterIdent = await masterIdentPromise;
+      this.handleEncryptInfo(encInfo);
+      this.handleMasterIdent(masterIdent);
+      if (encResult === 0) {
+        throw new Error('Encrypt failed');
+      }
+    }
 
     if (this._options && this._options.onPairedCallback) {
       this._options.onPairedCallback(this.getKeys());
     }
-    return encResult;
   }
 
-  public onAclStreamData(cid: any, data?: any) {
+  public onAclStreamData(cid: number, data: Buffer) {
     if (cid !== SMP.CID) {
       return;
     }
 
-    const code: any = data.readUInt8(0);
+    const code = data.readUInt8(0);
     if (SMP.PAIRING_FAILED === code) {
       this.handlePairingFailed(data);
     } else if (SMP.SMP_SECURITY_REQUEST === code) {
@@ -181,9 +224,7 @@ class Smp extends EventEmitter<SmpEventTypes> {
     this.emit('end');
   }
 
-  public async handlePairingResponseWait(data: any) {
-    this._pres = data;
-
+  public async handlePairingResponseLegacyPairingWait() {
     if (this.isPasskeyMode()) {
       let passkeyNumber = 0;
       passkeyNumber = await this._options!.passkeyCallback!();
@@ -217,10 +258,130 @@ class Smp extends EventEmitter<SmpEventTypes> {
     );
   }
 
-  public handlePairingConfirm(data: any) {
+  public async handlePairingResponseSecureConnectionWait() {
+    // TODO: check peer device support sc.
+
+    // const passkeyBit = new Array<boolean>(20);
+    // for (let i = 0; i < 20; i++) {
+    //   passkeyBit[i] = (passkeyNumber >> i) & 0x1 ? true : false;
+    // }
+
+    const ecdh = crypto.createECDHKey();
+
+    const remoteKeyPromise = this._readWait(SMP.PAIRING_PUBLIC_KEY);
+
+    this.write(
+      Buffer.concat([Buffer.from([SMP.PAIRING_PUBLIC_KEY]), ecdh.x, ecdh.y])
+    );
+
+    const remoteKey = await remoteKeyPromise;
+
+    const peerPublicKey = {
+      x: remoteKey.slice(1, 33),
+      y: remoteKey.slice(33, 65),
+    };
+    this.debug('got remote public key');
+
+    const passkeyNumber = this.isPasskeyMode()
+      ? await this._options!.passkeyCallback!()
+      : 0;
+
+    this.debug(`PassKey=${passkeyNumber}`);
+
+    const rspConfirmBuffers = [];
+    const rspRandomBuffers = [];
+    const initRandomValue = crypto.randomBytes(16);
+    for (
+      let passkeyBitCounter = 0;
+      passkeyBitCounter < 20;
+      passkeyBitCounter++
+    ) {
+      console.log('here' + passkeyBitCounter);
+      const initConfirmValue = crypto.f4(
+        ecdh.x,
+        peerPublicKey.x,
+        initRandomValue,
+        ((passkeyNumber >> passkeyBitCounter) & 1) | 0x80
+      );
+
+      const remoteConfirmPromise = this._readWait(SMP.PAIRING_CONFIRM);
+      this.write(
+        Buffer.concat([Buffer.from([SMP.PAIRING_CONFIRM]), initConfirmValue])
+      );
+      console.log('write confirm' + passkeyBitCounter);
+      const buf = await remoteConfirmPromise;
+      console.log('get confirm' + passkeyBitCounter);
+      rspConfirmBuffers.push(buf.slice(1));
+
+      const remoteRamdomPromise = this._readWait(SMP.PAIRING_RANDOM);
+      this.write(
+        Buffer.concat([Buffer.from([SMP.PAIRING_RANDOM]), initRandomValue])
+      );
+      console.log('write random' + passkeyBitCounter);
+      const buf2 = await remoteRamdomPromise;
+      console.log('get random' + passkeyBitCounter);
+
+      rspRandomBuffers.push(buf2.slice(1));
+
+      console.log('finish' + passkeyBitCounter);
+    }
+
+    const res = crypto.generateLtkEaEb(
+      ecdh.ecdh,
+      peerPublicKey,
+      this._ia,
+      this._iat,
+      this._ra,
+      this._rat,
+      initRandomValue,
+      rspRandomBuffers[rspRandomBuffers.length - 1],
+      passkeyNumber,
+      0x10, // max key size
+      this._preq ? this._preq.slice(1, 4) : Buffer.alloc(3),
+      this._pres ? this._pres.slice(1, 4) : Buffer.alloc(3)
+    );
+    const remoteDhkeyPromise = this._readWait(SMP.PAIRING_DHKEY_CHECK);
+
+    this.write(Buffer.concat([Buffer.from([SMP.PAIRING_DHKEY_CHECK]), res.Ea]));
+    const buf3 = await remoteDhkeyPromise;
+    const Eb = buf3.slice(1);
+    console.log('got dhkey');
+
+    const irkPromise = this._readWait(SMP.IDENTITY_INFORMATION);
+    const bdAddrPromise = this._readWait(SMP.IDENTITY_ADDRESS_INFORMATION);
+
+    this._ltk = res.ltk;
+    this.emit('ltk', this._ltk);
+    await this._aclStream.onSmpStkWait(this._ltk);
+
+    const irkBuf = await irkPromise;
+    const bdAddrBuf = await bdAddrPromise;
+
+    // we dont have irk, so zero padding
+    this.write(
+      Buffer.concat([Buffer.from([SMP.IDENTITY_INFORMATION]), Buffer.alloc(16)])
+    );
+    this.write(
+      Buffer.concat([
+        Buffer.from([SMP.IDENTITY_ADDRESS_INFORMATION]),
+        this._iat,
+        this._ia,
+      ])
+    );
+    this._rand = Buffer.alloc(8);
+    this._ediv = Buffer.alloc(2);
+    return res.ltk;
+  }
+
+  public handlePairingConfirm(data: Buffer) {
     this._pcnf = data;
 
-    this.write(Buffer.concat([Buffer.from([SMP.PAIRING_RANDOM]), this._r]));
+    this.write(
+      Buffer.concat([
+        Buffer.from([SMP.PAIRING_RANDOM]),
+        this._r ?? Buffer.alloc(0),
+      ])
+    );
   }
 
   public async handlePairingRandomWait(data: any) {
@@ -240,7 +401,7 @@ class Smp extends EventEmitter<SmpEventTypes> {
       ),
     ]);
 
-    if (this._pcnf.toString('hex') === pcnf.toString('hex')) {
+    if (this._pcnf && this._pcnf.toString('hex') === pcnf.toString('hex')) {
       if (this._stk !== null) {
         console.error('second stk');
       }
@@ -297,32 +458,59 @@ class Smp extends EventEmitter<SmpEventTypes> {
     const keyString = Buffer.from(keyStringBase64, 'base64').toString('ascii');
     this.debug(`restored keys ${keyString}`);
     const keys = JSON.parse(keyString);
-    this._stk = Buffer.from(keys.stk, 'hex');
-    this._preq = Buffer.from(keys.preq, 'hex');
-    this._pres = Buffer.from(keys.pres, 'hex');
-    this._tk = Buffer.from(keys.tk, 'hex');
-    this._r = Buffer.from(keys.r, 'hex');
-    this._pcnf = Buffer.from(keys.pcnf, 'hex');
-    this._ltk = Buffer.from(keys.ltk, 'hex');
-    this._ediv = Buffer.from(keys.ediv, 'hex');
-    this._rand = Buffer.from(keys.rand, 'hex');
+    this._stk = keys.stk ? Buffer.from(keys.stk, 'hex') : null;
+    this._preq = keys.preq ? Buffer.from(keys.preq, 'hex') : null;
+    this._pres = keys.pres ? Buffer.from(keys.pres, 'hex') : null;
+    this._tk = keys.tk ? Buffer.from(keys.tk, 'hex') : null;
+    this._r = keys.r ? Buffer.from(keys.r, 'hex') : null;
+    this._pcnf = keys.pcnf ? Buffer.from(keys.pcnf, 'hex') : null;
+    this._ltk = keys.ltk ? Buffer.from(keys.ltk, 'hex') : null;
+    this._ediv = keys.ediv ? Buffer.from(keys.ediv, 'hex') : null;
+    this._rand = keys.rand ? Buffer.from(keys.rand, 'hex') : null;
   }
 
   public getKeys() {
     const keys = {
-      stk: this._stk.toString('hex'),
-      preq: this._preq.toString('hex'),
-      pres: this._pres.toString('hex'),
-      tk: this._tk.toString('hex'),
-      r: this._r.toString('hex'),
-      pcnf: this._pcnf.toString('hex'),
-      ltk: this._ltk.toString('hex'),
-      ediv: this._ediv.toString('hex'),
-      rand: this._rand.toString('hex'),
+      stk: this._stk ? this._stk.toString('hex') : null,
+      preq: this._preq ? this._preq.toString('hex') : null,
+      pres: this._pres ? this._pres.toString('hex') : null,
+      tk: this._tk ? this._tk.toString('hex') : null,
+      r: this._r ? this._r.toString('hex') : null,
+      pcnf: this._pcnf ? this._pcnf.toString('hex') : null,
+      ltk: this._ltk ? this._ltk.toString('hex') : null,
+      ediv: this._ediv ? this._ediv.toString('hex') : null,
+      rand: this._rand ? this._rand.toString('hex') : null,
     };
     const jsonString = JSON.stringify(keys);
     const keyString = Buffer.from(jsonString, 'ascii').toString('base64');
     return keyString;
+  }
+
+  private _generateAuthenticationRequirementsFlags(params: {
+    bonding: BondingType;
+    mitm: boolean;
+    secureConnection: boolean;
+    keypress: boolean;
+    ct2: boolean;
+  }) {
+    let result = 0x00;
+    if (params.bonding === 'Bonding') {
+      result |= 0x01;
+    }
+    if (params.mitm) {
+      result |= 0x04;
+    }
+    if (params.secureConnection) {
+      result |= 0x08;
+    }
+    if (params.keypress) {
+      result |= 0x10;
+    }
+    if (params.ct2) {
+      result |= 0x20;
+    }
+
+    return result;
   }
 
   private async sendPairingRequestWait() {
@@ -332,10 +520,16 @@ class Smp extends EventEmitter<SmpEventTypes> {
         SMP.PAIRING_REQUEST,
         0x02, // IO capability: Keyboard
         0x00, // OOB data: Authentication data not present
-        0x05, // Authentication requirement: Bonding - MITM
+        this._generateAuthenticationRequirementsFlags({
+          bonding: 'Bonding',
+          mitm: true,
+          ct2: false,
+          keypress: false,
+          secureConnection: this.isSecureConnectionMode(),
+        }), // Authentication requirement: Bonding - MITM
         0x10, // Max encryption key size
-        0x00, // Initiator key distribution: <none>
-        0x01, // Responder key distribution: EncKey
+        0x02, // Initiator key distribution: <none>  central ->  peripheral
+        0x02, // Responder key distribution: EncKey   peripheral -> central
       ]);
     } else {
       this.debug(`pair No Input and No Output`);
@@ -343,7 +537,13 @@ class Smp extends EventEmitter<SmpEventTypes> {
         SMP.PAIRING_REQUEST,
         0x03, // IO capability: NoInputNoOutput
         0x00, // OOB data: Authentication data not present
-        0x01, // Authentication requirement: Bonding - No MITM
+        this._generateAuthenticationRequirementsFlags({
+          bonding: 'Bonding',
+          mitm: false,
+          ct2: false,
+          keypress: false,
+          secureConnection: this.isSecureConnectionMode(),
+        }), // Authentication requirement: Bonding - No MITM
         0x10, // Max encryption key size
         0x00, // Initiator key distribution: <none>
         0x01, // Responder key distribution: EncKey
@@ -354,6 +554,13 @@ class Smp extends EventEmitter<SmpEventTypes> {
 
   private isPasskeyMode() {
     if (this._options && this._options.passkeyCallback) {
+      return true;
+    }
+    return false;
+  }
+
+  private isSecureConnectionMode() {
+    if (this._options && this._options.secureConnection) {
       return true;
     }
     return false;
@@ -375,7 +582,55 @@ class Smp extends EventEmitter<SmpEventTypes> {
   }
 
   private debug(text: any) {
-    this.debugHandler(`SMP: ${text}`);
+    console.log(`SMP: ${text}`);
+  }
+
+  private parsePairingReqRsp(data: Buffer) {
+    return {
+      ioCap: this.value2ioCapability(data[1]),
+      bondingFlags: ((data[3] & 3) === 0
+        ? 'NoBonding'
+        : 'Bonding') as BondingType,
+      mitm: (data[3] & 4) !== 0,
+      sc: (data[3] & 8) !== 0,
+      keypress: (data[3] & 16) !== 0,
+      maxKeySize: data[4],
+      initKeyDistr: {
+        encKey: (data[5] & 1) !== 0,
+        idKey: (data[5] & 2) !== 0,
+      },
+      rspKeyDistr: {
+        encKey: (data[6] & 1) !== 0,
+        idKey: (data[6] & 2) !== 0,
+      },
+    };
+  }
+
+  private ioCapability2value(capability: SmpIoCapability): number {
+    switch (capability) {
+      case 'displayOnly':
+        return 0x00;
+      case 'displayYesNo':
+        return 0x01;
+      case 'keyboardDisplay':
+        return 0x04;
+      case 'keyboardOnly':
+        return 0x02;
+    }
+    return 0x03;
+  }
+  private value2ioCapability(value: number): SmpIoCapability {
+    const map: { [key: number]: SmpIoCapability } = {
+      0x00: 'displayOnly',
+      0x01: 'displayYesNo',
+      0x02: 'keyboardOnly',
+      0x03: 'noInputNoOutput',
+      0x04: 'keyboardDisplay',
+    };
+    if (map[value]) {
+      return map[value];
+    }
+    throw new Error('unknown value');
   }
 }
 

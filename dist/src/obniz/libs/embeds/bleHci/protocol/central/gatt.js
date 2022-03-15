@@ -61,10 +61,7 @@ class GattCentral extends eventemitter3_1.default {
     }
     async encryptWait(options) {
         const result = await this._serialPromiseQueueWait(async () => {
-            const encrypt = await this._aclStream.encryptWait(options);
-            if (encrypt === 0) {
-                throw new Error('Encrypt failed');
-            }
+            await this._aclStream.encryptWait(options);
             this._security = 'medium';
             return this._aclStream._smp.getKeys();
         });
