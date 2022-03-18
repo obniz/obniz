@@ -15388,8 +15388,8 @@ class Storage extends ComponentAbstact_1.ComponentAbstract {
                 },
             },
         };
-        const dataRead = await this.sendAndReceiveJsonWait(obj, '/response/storage/read');
-        return dataRead;
+        const json = await this.sendAndReceiveJsonWait(obj, '/response/storage/read');
+        return json.storage.read;
     }
 }
 exports.default = Storage;
@@ -22959,6 +22959,26 @@ class WSCommandStorage extends WSCommand_1.default {
             }
             else {
                 throw new this.WSCommandNotFoundError('[storage]unknown commnad');
+            }
+        }
+    }
+    notifyFromBinary(objToSend, func, payload) {
+        switch (func) {
+            case this._CommandSave: {
+                super.notifyFromBinary(objToSend, func, payload);
+                break;
+            }
+            case this._CommandRead: {
+                // parse binary and build up json out of it
+                // binary format: lenFileName | bytesFileName | bytesData
+                const lenFileName = payload[0];
+                const bytesFileName = payload.slice(1, lenFileName + 1);
+                const bytesData = payload.slice(1 + bytesFileName.length);
+                objToSend.storage.read = bytesData;
+                break;
+            }
+            default: {
+                break;
             }
         }
     }

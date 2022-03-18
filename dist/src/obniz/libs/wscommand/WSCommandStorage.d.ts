@@ -17,4 +17,7 @@ export default class WSCommandStorage extends WSCommand {
     parseFromJson(json: {
         [k: string]: unknown;
     }): void;
+    notifyFromBinary(objToSend: {
+        [key: string]: any;
+    }, func: number, payload: Uint8Array): void;
 }

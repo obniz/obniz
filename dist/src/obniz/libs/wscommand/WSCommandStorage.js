@@ -60,5 +60,25 @@ class WSCommandStorage extends WSCommand_1.default {
             }
         }
     }
+    notifyFromBinary(objToSend, func, payload) {
+        switch (func) {
+            case this._CommandSave: {
+                super.notifyFromBinary(objToSend, func, payload);
+                break;
+            }
+            case this._CommandRead: {
+                // parse binary and build up json out of it
+                // binary format: lenFileName | bytesFileName | bytesData
+                const lenFileName = payload[0];
+                const bytesFileName = payload.slice(1, lenFileName + 1);
+                const bytesData = payload.slice(1 + bytesFileName.length);
+                objToSend.storage.read = bytesData;
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    }
 }
 exports.default = WSCommandStorage;

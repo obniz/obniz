@@ -32,10 +32,10 @@ export default class Storage extends ComponentAbstract {
         },
       },
     };
-    const dataRead = await this.sendAndReceiveJsonWait(
+    const json = await this.sendAndReceiveJsonWait(
       obj,
       '/response/storage/read'
     );
-    return dataRead;
+    return json.storage.read;
   }
 }
