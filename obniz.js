@@ -3054,11 +3054,11 @@ class ObnizConnection extends eventemitter3_1.default {
         this._startPingLoopInBackground();
         if (promise instanceof Promise) {
             promise.finally(() => {
-                this._startLoopInBackground();
+                this._startLoopInBackgroundWait();
             });
         }
         else {
-            this._startLoopInBackground();
+            this._startLoopInBackgroundWait();
         }
     }
     _print_debug(str) {
@@ -3202,7 +3202,7 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         return json;
     }
-    async _startLoopInBackground() {
+    async _startLoopInBackgroundWait() {
         this._stopLoopInBackground();
         if (this._isLoopProcessing || this.connectionState !== 'connected') {
             return;
@@ -3222,7 +3222,7 @@ class ObnizConnection extends eventemitter3_1.default {
             return;
         }
         const interval = typeof this.onloop === 'function' ? this._repeatInterval : 100;
-        this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), interval);
+        this._nextLoopTimeout = setTimeout(this._startLoopInBackgroundWait.bind(this), interval);
     }
     _stopLoopInBackground() {
         if (this._nextLoopTimeout) {

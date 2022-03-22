@@ -427,7 +427,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     protected _handleWSCommand(wsObj: any): void;
     protected _handleSystemCommand(wsObj: any): void;
     protected _binary2Json(binary: any): {}[];
-    private _startLoopInBackground;
+    private _startLoopInBackgroundWait;
     private _stopLoopInBackground;
     private _startAutoConnectLoopInBackground;
     private _stopAutoConnectLoopInBackground;

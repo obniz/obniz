@@ -1038,10 +1038,10 @@ export default abstract class ObnizConnection extends EventEmitter<
     this._startPingLoopInBackground();
     if (promise instanceof Promise) {
       promise.finally(() => {
-        this._startLoopInBackground();
+        this._startLoopInBackgroundWait();
       });
     } else {
-      this._startLoopInBackground();
+      this._startLoopInBackgroundWait();
     }
   }
 
@@ -1201,7 +1201,7 @@ export default abstract class ObnizConnection extends EventEmitter<
     return json;
   }
 
-  private async _startLoopInBackground() {
+  private async _startLoopInBackgroundWait() {
     this._stopLoopInBackground();
     if (this._isLoopProcessing || this.connectionState !== 'connected') {
       return;
@@ -1226,7 +1226,7 @@ export default abstract class ObnizConnection extends EventEmitter<
     const interval =
       typeof this.onloop === 'function' ? this._repeatInterval : 100;
     this._nextLoopTimeout = setTimeout(
-      this._startLoopInBackground.bind(this),
+      this._startLoopInBackgroundWait.bind(this),
       interval
     );
   }
