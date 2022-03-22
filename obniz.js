@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.19.1-0",
+  "version": "3.19.1-beta.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -15632,7 +15632,8 @@ module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"obnizb1\",\"peripherals\":{
 /***/ "./dist/src/obniz/libs/hw/obnizb2.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"obnizb2\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":true,\"width\":128,\"height\":64,\"color_depth\":[1]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+!(function webpackMissingModule() { var e = new Error("Cannot find module './obnizb2.json'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
+
 
 /***/ }),
 
