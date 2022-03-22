@@ -195,7 +195,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
      * ```
      *
      */
-    onloop?: (obniz: this) => void;
+    onloop?: (obniz: this) => void | Promise<void>;
     /**
      * If an error occurs, the onerror function is called.
      *
@@ -242,6 +242,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     private _sendPool;
     private _onConnectCalled;
     private _repeatInterval;
+    private _isLoopProcessing;
     private _nextLoopTimeout;
     private _nextPingTimeout;
     private _nextAutoConnectLoopTimeout;

@@ -409,10 +409,10 @@ var map = {
 	"./response/io/get.yml": "./dist/src/json_schema/response/io/get.yml",
 	"./response/io/index.yml": "./dist/src/json_schema/response/io/index.yml",
 	"./response/io/warning.yml": "./dist/src/json_schema/response/io/warning.yml",
-	"./response/ioAnimation/index.yml": "./dist/src/json_schema/response/ioAnimation/index.yml",
-	"./response/ioAnimation/notify.yml": "./dist/src/json_schema/response/ioAnimation/notify.yml",
-	"./response/logicAnalyzer/data.yml": "./dist/src/json_schema/response/logicAnalyzer/data.yml",
-	"./response/logicAnalyzer/index.yml": "./dist/src/json_schema/response/logicAnalyzer/index.yml",
+	"./response/ioanimation/index.yml": "./dist/src/json_schema/response/ioanimation/index.yml",
+	"./response/ioanimation/notify.yml": "./dist/src/json_schema/response/ioanimation/notify.yml",
+	"./response/logicanalyzer/data.yml": "./dist/src/json_schema/response/logicanalyzer/data.yml",
+	"./response/logicanalyzer/index.yml": "./dist/src/json_schema/response/logicanalyzer/index.yml",
 	"./response/measure/echo.yml": "./dist/src/json_schema/response/measure/echo.yml",
 	"./response/measure/index.yml": "./dist/src/json_schema/response/measure/index.yml",
 	"./response/message/index.yml": "./dist/src/json_schema/response/message/index.yml",
@@ -1539,28 +1539,28 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/ioAnimation/index.yml":
+/***/ "./dist/src/json_schema/response/ioanimation/index.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ioAnimation","basePath":"io","anyOf":[{"$ref":"/response/ioAnimation/notify"}]}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/ioAnimation/notify.yml":
+/***/ "./dist/src/json_schema/response/ioanimation/notify.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ioAnimation/notify","type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status"],"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","enum":["finish"]}}}}}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/logicAnalyzer/data.yml":
+/***/ "./dist/src/json_schema/response/logicanalyzer/data.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/logicAnalyzer/data","type":"object","required":["data"],"properties":{"data":{"$ref":"/bitArray"}}}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/logicAnalyzer/index.yml":
+/***/ "./dist/src/json_schema/response/logicanalyzer/index.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/logicAnalyzer","basePath":"logic_analyzer","anyOf":[{"$ref":"/response/logicAnalyzer/data"}]}
@@ -2374,6 +2374,7 @@ class ObnizConnection extends eventemitter3_1.default {
         this._waitForLocalConnectReadyTimer = null;
         this._sendPool = null;
         this._repeatInterval = 100;
+        this._isLoopProcessing = false;
         this._nextLoopTimeout = null;
         this._nextPingTimeout = null;
         this._nextAutoConnectLoopTimeout = null;
@@ -3201,41 +3202,27 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         return json;
     }
-    _startLoopInBackground() {
+    async _startLoopInBackground() {
         this._stopLoopInBackground();
-        this._nextLoopTimeout = setTimeout(async () => {
-            if (this._nextLoopTimeout) {
-                clearTimeout(this._nextLoopTimeout);
+        if (this._isLoopProcessing || this.connectionState !== 'connected') {
+            return;
+        }
+        this._isLoopProcessing = true;
+        try {
+            if (typeof this.onloop === 'function') {
+                await this.onloop(this);
             }
-            this._nextLoopTimeout = null;
-            if (this.connectionState !== 'connected') {
-                return;
-            }
-            try {
-                if (typeof this.onloop === 'function') {
-                    // await this.pingWait();
-                    const prom = this.onloop(this);
-                    if (prom instanceof Promise) {
-                        await prom;
-                    }
-                }
-            }
-            catch (e) {
-                console.error(`obniz.js handled Exception inside of obniz.onloop function`);
-                console.error(e);
-            }
-            finally {
-                if (this.connectionState === 'connected') {
-                    if (!this._nextLoopTimeout) {
-                        let interval = this._repeatInterval;
-                        if (typeof this.onloop !== 'function') {
-                            interval = 100;
-                        }
-                        this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), interval);
-                    }
-                }
-            }
-        }, 0);
+        }
+        catch (e) {
+            console.error(`obniz.js handled Exception inside of obniz.onloop function`);
+            console.error(e);
+        }
+        this._isLoopProcessing = false;
+        if (this._nextLoopTimeout || this.connectionState !== 'connected') {
+            return;
+        }
+        const interval = typeof this.onloop === 'function' ? this._repeatInterval : 100;
+        this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), interval);
     }
     _stopLoopInBackground() {
         if (this._nextLoopTimeout) {
