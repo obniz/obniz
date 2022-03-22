@@ -15191,6 +15191,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
                 // eslint-disable-next-line @typescript-eslint/no-var-requires
                 const { createCanvas } = __webpack_require__("./dist/src/obniz/libs/webpackReplace/canvas.js");
                 this._canvas = createCanvas(this.width, this.height);
+                this._reset_canvas();
             }
             catch (e) {
                 return undefined;

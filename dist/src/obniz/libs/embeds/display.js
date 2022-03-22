@@ -528,6 +528,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
                 // eslint-disable-next-line @typescript-eslint/no-var-requires
                 const { createCanvas } = require('canvas');
                 this._canvas = createCanvas(this.width, this.height);
+                this._reset_canvas();
             }
             catch (e) {
                 return undefined;
