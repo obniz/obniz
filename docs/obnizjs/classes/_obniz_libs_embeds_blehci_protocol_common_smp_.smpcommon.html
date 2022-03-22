@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ConnectedNetworkWiFiMESH | obniz</title>
+	<title>SmpCommon | obniz</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,13 +56,13 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/obnizcore.html">ObnizCore</a>
+					<a href="../modules/_obniz_libs_embeds_blehci_protocol_common_smp_.html">&quot;obniz/libs/embeds/bleHci/protocol/common/smp&quot;</a>
 				</li>
 				<li>
-					<a href="obnizcore.connectednetworkwifimesh.html">ConnectedNetworkWiFiMESH</a>
+					<a href="_obniz_libs_embeds_blehci_protocol_common_smp_.smpcommon.html">SmpCommon</a>
 				</li>
 			</ul>
-			<h1>Interface ConnectedNetworkWiFiMESH</h1>
+			<h1>Class SmpCommon</h1>
 		</div>
 	</div>
 </header>
@@ -73,7 +73,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">ConnectedNetworkWiFiMESH</span>
+						<span class="target">SmpCommon</span>
 					</li>
 				</ul>
 			</section>
@@ -81,70 +81,114 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section tsd-is-not-exported">
-							<h3>Properties</h3>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="obnizcore.connectednetworkwifimesh.html#layer" class="tsd-kind-icon">layer</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="obnizcore.connectednetworkwifimesh.html#meshid" class="tsd-kind-icon">meshid</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="obnizcore.connectednetworkwifimesh.html#parent_obniz_id" class="tsd-kind-icon">parent_<wbr>obniz_<wbr>id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="obnizcore.connectednetworkwifimesh.html#root_obniz_id" class="tsd-kind-icon">root_<wbr>obniz_<wbr>id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="obnizcore.connectednetworkwifimesh.html#rssi" class="tsd-kind-icon">rssi</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_obniz_libs_embeds_blehci_protocol_common_smp_.smpcommon.html#combinepairingparam" class="tsd-kind-icon">combine<wbr>Pairing<wbr>Param</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_obniz_libs_embeds_blehci_protocol_common_smp_.smpcommon.html#iocapability2value" class="tsd-kind-icon">io<wbr>Capability2value</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_obniz_libs_embeds_blehci_protocol_common_smp_.smpcommon.html#parsepairingreqrsp" class="tsd-kind-icon">parse<wbr>Pairing<wbr>Req<wbr>Rsp</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_obniz_libs_embeds_blehci_protocol_common_smp_.smpcommon.html#value2iocapability" class="tsd-kind-icon">value2io<wbr>Capability</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="layer" class="tsd-anchor"></a>
-					<h3>layer</h3>
-					<div class="tsd-signature tsd-kind-icon">layer<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in src/obniz/ObnizConnection.ts:33</li>
-						</ul>
-					</aside>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="combinepairingparam" class="tsd-anchor"></a>
+					<h3>combine<wbr>Pairing<wbr>Param</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">combine<wbr>Pairing<wbr>Param<span class="tsd-signature-symbol">(</span>a<span class="tsd-signature-symbol">: </span><a href="../interfaces/_obniz_libs_embeds_blehci_protocol_common_smp_.smppairingparam.html" class="tsd-signature-type">SmpPairingParam</a>, b<span class="tsd-signature-symbol">: </span><a href="../interfaces/_obniz_libs_embeds_blehci_protocol_common_smp_.smppairingparam.html" class="tsd-signature-type">SmpPairingParam</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_obniz_libs_embeds_blehci_protocol_common_smp_.smppairingcombinedparam.html" class="tsd-signature-type">SmpPairingCombinedParam</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in src/obniz/libs/embeds/bleHci/protocol/common/smp.ts:92</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>a: <a href="../interfaces/_obniz_libs_embeds_blehci_protocol_common_smp_.smppairingparam.html" class="tsd-signature-type">SmpPairingParam</a></h5>
+								</li>
+								<li>
+									<h5>b: <a href="../interfaces/_obniz_libs_embeds_blehci_protocol_common_smp_.smppairingparam.html" class="tsd-signature-type">SmpPairingParam</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_obniz_libs_embeds_blehci_protocol_common_smp_.smppairingcombinedparam.html" class="tsd-signature-type">SmpPairingCombinedParam</a></h4>
+						</li>
+					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="meshid" class="tsd-anchor"></a>
-					<h3>meshid</h3>
-					<div class="tsd-signature tsd-kind-icon">meshid<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in src/obniz/ObnizConnection.ts:30</li>
-						</ul>
-					</aside>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="iocapability2value" class="tsd-anchor"></a>
+					<h3>io<wbr>Capability2value</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">io<wbr>Capability2value<span class="tsd-signature-symbol">(</span>capability<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">SmpIoCapability</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in src/obniz/libs/embeds/bleHci/protocol/common/smp.ts:161</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>capability: <span class="tsd-signature-type">SmpIoCapability</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="parent_obniz_id" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> parent_<wbr>obniz_<wbr>id</h3>
-					<div class="tsd-signature tsd-kind-icon">parent_<wbr>obniz_<wbr>id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in src/obniz/ObnizConnection.ts:31</li>
-						</ul>
-					</aside>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="parsepairingreqrsp" class="tsd-anchor"></a>
+					<h3>parse<wbr>Pairing<wbr>Req<wbr>Rsp</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">parse<wbr>Pairing<wbr>Req<wbr>Rsp<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Buffer</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_obniz_libs_embeds_blehci_protocol_common_smp_.smppairingparam.html" class="tsd-signature-type">SmpPairingParam</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in src/obniz/libs/embeds/bleHci/protocol/common/smp.ts:73</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>data: <span class="tsd-signature-type">Buffer</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_obniz_libs_embeds_blehci_protocol_common_smp_.smppairingparam.html" class="tsd-signature-type">SmpPairingParam</a></h4>
+						</li>
+					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="root_obniz_id" class="tsd-anchor"></a>
-					<h3>root_<wbr>obniz_<wbr>id</h3>
-					<div class="tsd-signature tsd-kind-icon">root_<wbr>obniz_<wbr>id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in src/obniz/ObnizConnection.ts:32</li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="rssi" class="tsd-anchor"></a>
-					<h3>rssi</h3>
-					<div class="tsd-signature tsd-kind-icon">rssi<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in src/obniz/ObnizConnection.ts:34</li>
-						</ul>
-					</aside>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="value2iocapability" class="tsd-anchor"></a>
+					<h3>value2io<wbr>Capability</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">value2io<wbr>Capability<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">SmpIoCapability</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in src/obniz/libs/embeds/bleHci/protocol/common/smp.ts:175</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">SmpIoCapability</span></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -163,7 +207,7 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_obniz_libs_embeds_blehci_protocol_common_gatt_.html">&quot;obniz/libs/embeds/ble<wbr>Hci/protocol/common/gatt&quot;</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class="current tsd-kind-external-module">
 						<a href="../modules/_obniz_libs_embeds_blehci_protocol_common_smp_.html">&quot;obniz/libs/embeds/ble<wbr>Hci/protocol/common/smp&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -172,7 +216,7 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/obnizapp.html">Obniz<wbr>App</a>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/obnizcore.html">Obniz<wbr>Core</a>
 					</li>
 					<li class=" tsd-kind-external-module tsd-is-not-exported">
@@ -182,98 +226,41 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/obnizcore.obniz.html" class="tsd-kind-icon">Obniz</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/obnizcore.obnizapi.html" class="tsd-kind-icon">Obniz<wbr>Api</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/obnizcore.obnizcomponents.html" class="tsd-kind-icon">Obniz<wbr>Components</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/obnizcore.obnizconnection.html" class="tsd-kind-icon">Obniz<wbr>Connection</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/obnizcore.obnizdevice.html" class="tsd-kind-icon">Obniz<wbr>Device</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/obnizcore.obnizparts.html" class="tsd-kind-icon">Obniz<wbr>Parts</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/obnizcore.obnizpartsbleinterface.html" class="tsd-kind-icon">Obniz<wbr>Parts<wbr>Ble<wbr>Interface</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/obnizcore.obnizpartsinterface.html" class="tsd-kind-icon">Obniz<wbr>Parts<wbr>Interface</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/obnizcore.obnizsystemmethods.html" class="tsd-kind-icon">Obniz<wbr>System<wbr>Methods</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/obnizcore.obnizuis.html" class="tsd-kind-icon">ObnizUIs</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/obnizcore.obnizutil.html" class="tsd-kind-icon">Obniz<wbr>Util</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="obnizcore.connectednetwork.html" class="tsd-kind-icon">Connected<wbr>Network</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="obnizcore.connectednetworkwifi.html" class="tsd-kind-icon">Connected<wbr>Network<wbr>WiFi</a>
-					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="obnizcore.connectednetworkwifimesh.html" class="tsd-kind-icon">Connected<wbr>Network<wbr>WiFiMESH</a>
+					<li class="current tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_obniz_libs_embeds_blehci_protocol_common_smp_.smpcommon.html" class="tsd-kind-icon">Smp<wbr>Common</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="obnizcore.connectednetworkwifimesh.html#layer" class="tsd-kind-icon">layer</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_obniz_libs_embeds_blehci_protocol_common_smp_.smpcommon.html#combinepairingparam" class="tsd-kind-icon">combine<wbr>Pairing<wbr>Param</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="obnizcore.connectednetworkwifimesh.html#meshid" class="tsd-kind-icon">meshid</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_obniz_libs_embeds_blehci_protocol_common_smp_.smpcommon.html#iocapability2value" class="tsd-kind-icon">io<wbr>Capability2value</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="obnizcore.connectednetworkwifimesh.html#parent_obniz_id" class="tsd-kind-icon">parent_<wbr>obniz_<wbr>id</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_obniz_libs_embeds_blehci_protocol_common_smp_.smpcommon.html#parsepairingreqrsp" class="tsd-kind-icon">parse<wbr>Pairing<wbr>Req<wbr>Rsp</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="obnizcore.connectednetworkwifimesh.html#root_obniz_id" class="tsd-kind-icon">root_<wbr>obniz_<wbr>id</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="obnizcore.connectednetworkwifimesh.html#rssi" class="tsd-kind-icon">rssi</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_obniz_libs_embeds_blehci_protocol_common_smp_.smpcommon.html#value2iocapability" class="tsd-kind-icon">value2io<wbr>Capability</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="obnizcore.obnizerrormessage.html" class="tsd-kind-icon">Obniz<wbr>Error<wbr>Message</a>
+						<a href="../interfaces/_obniz_libs_embeds_blehci_protocol_common_smp_.smppairingcombinedparam.html" class="tsd-kind-icon">Smp<wbr>Pairing<wbr>Combined<wbr>Param</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="obnizcore.obnizoptions.html" class="tsd-kind-icon">Obniz<wbr>Options</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="obnizcore.obnizpartsbleinfo.html" class="tsd-kind-icon">Obniz<wbr>Parts<wbr>Ble<wbr>Info</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="obnizcore.obnizpartsinfo.html" class="tsd-kind-icon">Obniz<wbr>Parts<wbr>Info</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="obnizcore.obnizpartsprops.html" class="tsd-kind-icon">Obniz<wbr>Parts<wbr>Props</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="obnizcore.partslist.html" class="tsd-kind-icon">Parts<wbr>List</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="obnizcore.triaxial.html" class="tsd-kind-icon">Triaxial</a>
+						<a href="../interfaces/_obniz_libs_embeds_blehci_protocol_common_smp_.smppairingparam.html" class="tsd-kind-icon">Smp<wbr>Pairing<wbr>Param</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.html#obnizconnectioneventnames" class="tsd-kind-icon">Obniz<wbr>Connection<wbr>Event<wbr>Names</a>
+						<a href="../modules/_obniz_libs_embeds_blehci_protocol_common_smp_.html#bondingtype" class="tsd-kind-icon">Bonding<wbr>Type</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.html#partstype" class="tsd-kind-icon">Parts<wbr>Type</a>
+						<a href="../modules/_obniz_libs_embeds_blehci_protocol_common_smp_.html#smpassociationmodel" class="tsd-kind-icon">Smp<wbr>Association<wbr>Model</a>
 					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.html#peripheralname" class="tsd-kind-icon">Peripheral<wbr>Name</a>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
+						<a href="../modules/_obniz_libs_embeds_blehci_protocol_common_smp_.html#smpassociationmodelvalue" class="tsd-kind-icon">Smp<wbr>Association<wbr>Model<wbr>Value</a>
 					</li>
 				</ul>
 			</nav>
