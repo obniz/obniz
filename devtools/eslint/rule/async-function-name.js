@@ -16,6 +16,9 @@ module.exports = (context) => {
     if (!node.async || !identifier) {
       return;
     }
+    if (identifier.parent.accessibility === 'private') {
+      return;
+    }
     const functionName = identifier.name;
     if (!functionName) {
       return;
