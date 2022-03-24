@@ -79,8 +79,10 @@ export default class WSCommandStorage extends WSCommand {
         // binary format: lenFileName | bytesFileName | bytesData
         const lenFileName = payload[0];
         const bytesFileName = payload.slice(1, lenFileName + 1);
-        const bytesData = payload.slice(1 + bytesFileName.length);
-        objToSend.storage.read = bytesData;
+        const uBytesData = payload.slice(1 + bytesFileName.length);
+        objToSend.storage = {
+          read: Array.from(uBytesData),
+        };
         break;
       }
       default: {

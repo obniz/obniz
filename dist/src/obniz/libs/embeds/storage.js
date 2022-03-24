@@ -31,7 +31,7 @@ class Storage extends ComponentAbstact_1.ComponentAbstract {
             },
         };
         const json = await this.sendAndReceiveJsonWait(obj, '/response/storage/read');
-        return json.storage.read;
+        return json.read;
     }
 }
 exports.default = Storage;

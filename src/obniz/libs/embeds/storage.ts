@@ -36,6 +36,6 @@ export default class Storage extends ComponentAbstract {
       obj,
       '/response/storage/read'
     );
-    return json.storage.read;
+    return json.read;
   }
 }

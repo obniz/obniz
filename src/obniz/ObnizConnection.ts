@@ -583,7 +583,9 @@ export default abstract class ObnizConnection extends EventEmitter<
           if (compressed) {
             sendData = compressed;
             if (this.debugprintBinary) {
-              this.log('binalized: ' + new Uint8Array(compressed).toString());
+              this.log(
+                'binalized(send): ' + new Uint8Array(compressed).toString()
+              );
             }
           }
         } catch (e) {
@@ -733,7 +735,7 @@ export default abstract class ObnizConnection extends EventEmitter<
         json = JSON.parse(data);
       } else if (this.wscommands) {
         if (this.debugprintBinary) {
-          this.log('binalized: ' + new Uint8Array(data).toString());
+          this.log('binalized(recieve): ' + new Uint8Array(data).toString());
         }
         json = this._binary2Json(data);
       }

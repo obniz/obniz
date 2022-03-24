@@ -2694,7 +2694,7 @@ class ObnizConnection extends eventemitter3_1.default {
                     if (compressed) {
                         sendData = compressed;
                         if (this.debugprintBinary) {
-                            this.log('binalized: ' + new Uint8Array(compressed).toString());
+                            this.log('binalized(send): ' + new Uint8Array(compressed).toString());
                         }
                     }
                 }
@@ -2828,7 +2828,7 @@ class ObnizConnection extends eventemitter3_1.default {
             }
             else if (this.wscommands) {
                 if (this.debugprintBinary) {
-                    this.log('binalized: ' + new Uint8Array(data).toString());
+                    this.log('binalized(recieve): ' + new Uint8Array(data).toString());
                 }
                 json = this._binary2Json(data);
             }
@@ -15389,7 +15389,7 @@ class Storage extends ComponentAbstact_1.ComponentAbstract {
             },
         };
         const json = await this.sendAndReceiveJsonWait(obj, '/response/storage/read');
-        return json.storage.read;
+        return json.read;
     }
 }
 exports.default = Storage;
@@ -22973,8 +22973,10 @@ class WSCommandStorage extends WSCommand_1.default {
                 // binary format: lenFileName | bytesFileName | bytesData
                 const lenFileName = payload[0];
                 const bytesFileName = payload.slice(1, lenFileName + 1);
-                const bytesData = payload.slice(1 + bytesFileName.length);
-                objToSend.storage.read = bytesData;
+                const uBytesData = payload.slice(1 + bytesFileName.length);
+                objToSend.storage = {
+                    read: Array.from(uBytesData),
+                };
                 break;
             }
             default: {
