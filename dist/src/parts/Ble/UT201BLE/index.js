@@ -37,6 +37,7 @@ class UT201BLE {
         if (!this._peripheral) {
             throw new Error('UT201BLE not found');
         }
+        // adv_data[2]はFlagsで、bit0が1の場合Pairng Mode(Limited Discoverable Mode)
         if (this._peripheral.adv_data[2] === 5) {
             return true;
         }
