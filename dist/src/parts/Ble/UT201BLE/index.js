@@ -33,6 +33,17 @@ class UT201BLE {
     static isDevice(peripheral) {
         return (peripheral.localName && peripheral.localName.startsWith('A&D_UT201BLE_'));
     }
+    isPairingMode() {
+        if (!this._peripheral) {
+            throw new Error('UT201BLE not found');
+        }
+        if (this._peripheral.adv_data[2] === 5) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
     /**
      * Pair with the device
      *
