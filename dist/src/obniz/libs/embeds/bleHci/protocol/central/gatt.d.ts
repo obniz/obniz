@@ -2,7 +2,7 @@
 import { HandleIndex } from '../peripheral/gatt';
 import AclStream from './acl-stream';
 import EventEmitter from 'eventemitter3';
-import { BleDeviceAddress, UUID } from '../../bleTypes';
+import { BleDeviceAddressWithColon, UUID } from '../../bleTypes';
 import { SmpEncryptOptions } from './smp';
 declare type GattEventTypes = 'notification' | 'handleConfirmation' | 'handleNotify' | 'end';
 /**
@@ -24,7 +24,7 @@ declare class GattCentral extends EventEmitter<GattEventTypes> {
     private _gattCommon;
     private _remoteMtuRequest;
     private _gattPeripheral;
-    constructor(address: BleDeviceAddress, aclStream: AclStream);
+    constructor(address: BleDeviceAddressWithColon, aclStream: AclStream);
     encryptWait(options: SmpEncryptOptions): Promise<string>;
     setEncryptOption(options: SmpEncryptOptions): void;
     onEnd(reason: any): void;

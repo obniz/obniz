@@ -3,7 +3,6 @@
  *
  * @ignore
  */
-import BleCharacteristic from '../../bleCharacteristic';
 import { ATT, ATT_ECODE_READABLES, ATT_OP_READABLES } from '../common/att';
 import { GattCommon } from '../common/gatt';
 import GattPeripheral, { HandleIndex } from '../peripheral/gatt';
@@ -24,12 +23,10 @@ import {
   ObnizBleUnknownCharacteristicError,
   ObnizBleUnknownDescriptorError,
   ObnizBleUnknownServiceError,
-  ObnizError,
   ObnizTimeoutError,
 } from '../../../../../ObnizError';
 import BleHelper from '../../bleHelper';
-import BleRemoteService from '../../bleRemoteService';
-import { BleDeviceAddress, UUID } from '../../bleTypes';
+import { BleDeviceAddressWithColon, UUID } from '../../bleTypes';
 import { SmpEncryptOptions } from './smp';
 
 interface GattService {
@@ -84,7 +81,7 @@ interface CommandQueue {
 class GattCentral extends EventEmitter<GattEventTypes> {
   public onAclStreamDataBinded: (cid: number, data: Buffer) => void;
   public onAclStreamEndBinded: () => void;
-  private _address: BleDeviceAddress;
+  private _address: BleDeviceAddressWithColon;
   private _aclStream: AclStream;
   private _services: { [key in UUID]: GattService } = {};
   private _characteristics: {
@@ -103,7 +100,7 @@ class GattCentral extends EventEmitter<GattEventTypes> {
   private _remoteMtuRequest: null | number = null;
   private _gattPeripheral: GattPeripheral;
 
-  constructor(address: BleDeviceAddress, aclStream: AclStream) {
+  constructor(address: BleDeviceAddressWithColon, aclStream: AclStream) {
     super();
 
     this._address = address;

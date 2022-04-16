@@ -221,7 +221,7 @@ export default class BleRemotePeripheral {
   /**
    *
    */
-  public address_type: BleDeviceAddressType | null;
+  public address_type: BleDeviceAddressType;
 
   /**
    *
@@ -414,14 +414,18 @@ export default class BleRemotePeripheral {
   protected _services: BleRemoteService[];
   protected emitter: EventEmitter;
 
-  constructor(obnizBle: ObnizBLE, address: BleDeviceAddress) {
+  constructor(
+    obnizBle: ObnizBLE,
+    address: BleDeviceAddress,
+    address_type: BleDeviceAddressType
+  ) {
     this.obnizBle = obnizBle;
-    this.address = address;
+    this.address = address.split(':').join('');
+    this.address_type = address_type;
     this.connected = false;
     this.connected_at = null;
 
     this.device_type = null;
-    this.address_type = null;
     this.ble_event_type = null;
     this.rssi = null;
     // this.adv_data = null;
@@ -453,12 +457,12 @@ export default class BleRemotePeripheral {
    * @ignore
    * @param dic
    */
-  public setParams(dic: any) {
+  public setParams(dic: Record<string, unknown>): void {
     this.advertise_data_rows = null;
     for (const key in dic) {
       // eslint-disable-next-line no-prototype-builtins
-      if (dic.hasOwnProperty(key) && this.keys.includes(key)) {
-        (this as any)[key] = dic[key];
+      if (dic[key] && dic.hasOwnProperty(key) && this.keys.includes(key)) {
+        (this as typeof dic)[key] = dic[key];
       }
     }
     this.analyseAdvertisement();
@@ -544,6 +548,7 @@ export default class BleRemotePeripheral {
     try {
       await this.obnizBle.centralBindings.connectWait(
         this.address,
+        this.address_type,
         this._connectSetting.mtuRequest,
         () => {
           if (this._connectSetting.pairingOption) {
@@ -562,6 +567,7 @@ export default class BleRemotePeripheral {
     }
     this.connected = true;
     this.connected_at = new Date();
+    this.obnizBle.addConnectedPeripheral(this);
     try {
       if (this._connectSetting.autoDiscovery) {
         await this.discoverAllHandlesWait();
@@ -613,32 +619,34 @@ export default class BleRemotePeripheral {
    * }
    * ```
    */
-  public disconnectWait(): Promise<void> {
-    return new Promise((resolve: any, reject: any) => {
-      if (!this.connected) {
-        resolve();
-        return;
-      }
-      const cuttingFailedError = new Error(
-        `cutting connection to peripheral name=${this.localName} address=${this.address} was failed`
-      );
-      this.emitter.once('statusupdate', (params: any) => {
-        clearTimeout(timeoutTimer);
-        if (params.status === 'disconnected') {
-          resolve(true); // for compatibility
-        } else {
-          reject(cuttingFailedError);
+  public disconnectWait(): Promise<boolean> {
+    return new Promise(
+      (resolve: (result: boolean) => void, reject: (error: Error) => void) => {
+        if (!this.connected) {
+          resolve(false);
+          return;
         }
-      });
-      const timeoutError = new ObnizTimeoutError(
-        `cutting connection to peripheral name=${this.localName} address=${this.address} was failed`
-      );
-      const timeoutTimer = setTimeout(() => {
-        reject(timeoutError);
-      }, 90 * 1000);
+        const cuttingFailedError = new Error(
+          `cutting connection to peripheral name=${this.localName} address=${this.address} was failed`
+        );
+        this.emitter.once('statusupdate', (params: any) => {
+          clearTimeout(timeoutTimer);
+          if (params.status === 'disconnected') {
+            resolve(true); // for compatibility
+          } else {
+            reject(cuttingFailedError);
+          }
+        });
+        const timeoutError = new ObnizTimeoutError(
+          `cutting connection to peripheral name=${this.localName} address=${this.address} was failed`
+        );
+        const timeoutTimer = setTimeout(() => {
+          reject(timeoutError);
+        }, 90 * 1000);
 
-      this.obnizBle.centralBindings.disconnect(this.address);
-    });
+        this.obnizBle.centralBindings.disconnect(this.address);
+      }
+    );
   }
 
   /**

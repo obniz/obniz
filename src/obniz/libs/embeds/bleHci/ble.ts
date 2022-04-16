@@ -28,7 +28,12 @@ import BlePeripheral from './blePeripheral';
 import BleRemotePeripheral from './bleRemotePeripheral';
 import BleScan from './bleScan';
 import BleService from './bleService';
-import { BleDeviceAddress, BleDeviceAddressType, UUID } from './bleTypes';
+import {
+  BleDeviceAddress,
+  BleDeviceAddressType,
+  BleDiscoveryAdvertisement,
+  UUID,
+} from './bleTypes';
 
 /**
  * Use a obniz device as a BLE device.
@@ -105,7 +110,10 @@ export default class ObnizBLE extends ComponentAbstract {
   public advertisement!: BleAdvertisement;
   protected hciProtocol!: HciProtocol;
   protected _initializeWarning!: boolean;
-  protected remotePeripherals: BleRemotePeripheral[] = [];
+  protected connectedPeripherals: Record<
+    BleDeviceAddress,
+    BleRemotePeripheral
+  > = {};
 
   /**
    * @ignore
@@ -249,21 +257,21 @@ export default class ObnizBLE extends ComponentAbstract {
    * @ignore
    * @private
    */
-  public _reset() {
+  public _reset(): void {
     // reset state at first
     this._initialized = false;
     this._initializeWarning = true;
 
     // clear all found peripherals.
-    for (const p of this.remotePeripherals) {
-      if (p.connected) {
+    Object.values(this.connectedPeripherals)
+      .filter((p) => p.connected)
+      .forEach((p) =>
         p.notifyFromServer('statusupdate', {
           status: 'disconnected',
           reason: new ObnizOfflineError(),
-        });
-      }
-    }
-    this.remotePeripherals = [];
+        })
+      );
+    this.connectedPeripherals = {};
 
     // instantiate
     if (!this.peripheral) {
@@ -347,13 +355,13 @@ export default class ObnizBLE extends ComponentAbstract {
   public directConnect(
     address: BleDeviceAddress,
     addressType: BleDeviceAddressType
-  ) {
+  ): BleRemotePeripheral {
     // noinspection JSIgnoredPromiseFromCall
-    this.directConnectWait(address, addressType).catch((e) => {
+    const peripheral = new BleRemotePeripheral(this, address, addressType);
+    peripheral.connectWait().catch((e) => {
       // background
       this.Obniz.error(e);
     });
-    const peripheral = this.findPeripheral(address);
     return peripheral;
   }
 
@@ -380,13 +388,8 @@ export default class ObnizBLE extends ComponentAbstract {
   public async directConnectWait(
     address: BleDeviceAddress,
     addressType: BleDeviceAddressType
-  ) {
-    let peripheral = this.findPeripheral(address);
-    if (!peripheral) {
-      peripheral = new BleRemotePeripheral(this, address);
-      this.remotePeripherals.push(peripheral);
-    }
-    this.centralBindings.addPeripheralData(address, addressType);
+  ): Promise<BleRemotePeripheral> {
+    const peripheral = new BleRemotePeripheral(this, address, addressType);
     await peripheral.connectWait();
     return peripheral;
   }
@@ -414,13 +417,7 @@ export default class ObnizBLE extends ComponentAbstract {
    * @returns connected peripherals
    */
   public getConnectedPeripherals(): BleRemotePeripheral[] {
-    const connectedPeripherals: BleRemotePeripheral[] = [];
-    for (const elm of this.remotePeripherals) {
-      if (elm.connected) {
-        connectedPeripherals.push(elm);
-      }
-    }
-    return connectedPeripherals;
+    return Object.values(this.connectedPeripherals);
   }
 
   /**
@@ -443,37 +440,29 @@ export default class ObnizBLE extends ComponentAbstract {
     return 'ble';
   }
 
+  /**
+   * @ignore
+   */
+  public addConnectedPeripheral(peripheral: BleRemotePeripheral): void {
+    this.connectedPeripherals[peripheral.address] = peripheral;
+  }
+
   protected onStateChange() {
     // do nothing.
   }
 
-  protected findPeripheral(address: BleDeviceAddress) {
-    for (const key in this.remotePeripherals) {
-      if (this.remotePeripherals[key].address === address) {
-        return this.remotePeripherals[key];
-      }
-    }
-    return null;
-  }
-
   protected onDiscover(
-    uuid: any,
-    address?: any,
-    addressType?: any,
-    connectable?: any,
-    advertisement?: any,
-    rssi?: any
-  ) {
-    let val: BleRemotePeripheral | null = this.findPeripheral(uuid);
-    if (!val) {
-      val = new BleRemotePeripheral(this, uuid);
-      this.remotePeripherals.push(val);
-    }
+    address: BleDeviceAddress,
+    addressType: BleDeviceAddressType,
+    connectable: boolean,
+    advertisement: BleDiscoveryAdvertisement,
+    rssi: number
+  ): void {
+    const val = new BleRemotePeripheral(this, address, addressType);
     val.discoverdOnRemote = true;
 
-    const peripheralData: any = {
+    const peripheralData = {
       device_type: 'ble',
-      address_type: addressType,
       ble_event_type: connectable
         ? 'connectable_advertisemnt'
         : 'non_connectable_advertising',
@@ -487,12 +476,16 @@ export default class ObnizBLE extends ComponentAbstract {
     this.scan.notifyFromServer('onfind', val);
   }
 
-  protected onDisconnect(peripheralUuid: any, reason: ObnizBleHciStateError) {
-    const peripheral: any = this.findPeripheral(peripheralUuid);
+  protected onDisconnect(
+    address: BleDeviceAddress,
+    reason: ObnizBleHciStateError
+  ): void {
+    const peripheral = this.connectedPeripherals[address];
     peripheral.notifyFromServer('statusupdate', {
       status: 'disconnected',
       reason,
     });
+    delete this.connectedPeripherals[address];
   }
 
   //
@@ -520,21 +513,21 @@ export default class ObnizBLE extends ComponentAbstract {
   // }
 
   protected onNotification(
-    peripheralUuid: any,
-    serviceUuid?: any,
-    characteristicUuid?: any,
-    data?: any,
-    isNotification?: any,
-    isSuccess?: any
-  ) {
-    const peripheral: any = this.findPeripheral(peripheralUuid);
-    const characteristic: any = peripheral.findCharacteristic({
+    address: BleDeviceAddress,
+    serviceUuid: UUID,
+    characteristicUuid: UUID,
+    data: Buffer,
+    isNotification: boolean,
+    isSuccess: boolean
+  ): void {
+    const peripheral = this.connectedPeripherals[address];
+    const characteristic = peripheral.findCharacteristic({
       service_uuid: serviceUuid,
       characteristic_uuid: characteristicUuid,
     });
 
-    if (isNotification) {
-      const obj: any = {
+    if (characteristic && isNotification) {
+      const obj = {
         data: Array.from(data),
       };
       characteristic.notifyFromServer('onnotify', obj);

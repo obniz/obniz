@@ -2,12 +2,22 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
+/// <reference types="node" />
 import BleCharacteristic from './bleCharacteristic';
 import BleDescriptor from './bleDescriptor';
 /**
  * BLE UUID. Case is ignored. So aa00 and AA00 are the same.
  */
 export declare type UUID = string;
+/**
+ * BLE address with colon
+ * ex: 01:23:45:67:89:ab
+ */
+export declare type BleDeviceAddressWithColon = string;
+/**
+ * Usually used BLE address
+ * ex: 0123456789ab
+ */
 export declare type BleDeviceAddress = string;
 export declare type Handle = number;
 export declare type BleDeviceType = 'ble' | 'dumo' | 'breder';
@@ -25,6 +35,21 @@ export interface BleScanResponseData {
 }
 export interface BleAdvertisementData extends BleScanResponseData {
     flags?: BleAdvertisementFlag[];
+}
+export interface BleDiscoveryAdvertisement {
+    localName?: string;
+    txPowerLevel?: number;
+    manufacturerData?: Buffer;
+    serviceData: {
+        uuid: UUID;
+        data: Buffer;
+    }[];
+    serviceUuids: UUID[];
+    serviceSolicitationUuids: UUID[];
+    solicitationServiceUuids: UUID[];
+    advertisementRaw: unknown[];
+    scanResponseRaw: unknown[];
+    raw: unknown[];
 }
 export interface BleDescriptorDefine {
     /**

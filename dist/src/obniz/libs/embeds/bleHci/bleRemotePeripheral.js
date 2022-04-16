@@ -16,7 +16,7 @@ const bleRemoteService_1 = __importDefault(require("./bleRemoteService"));
  * @category Use as Central
  */
 class BleRemotePeripheral {
-    constructor(obnizBle, address) {
+    constructor(obnizBle, address, address_type) {
         this.advertisingDataRows = {};
         this.scanResponseDataRows = {};
         /**
@@ -38,11 +38,11 @@ class BleRemotePeripheral {
             'scan_resp',
         ];
         this.obnizBle = obnizBle;
-        this.address = address;
+        this.address = address.split(':').join('');
+        this.address_type = address_type;
         this.connected = false;
         this.connected_at = null;
         this.device_type = null;
-        this.address_type = null;
         this.ble_event_type = null;
         this.rssi = null;
         // this.adv_data = null;
@@ -106,7 +106,7 @@ class BleRemotePeripheral {
         this.advertise_data_rows = null;
         for (const key in dic) {
             // eslint-disable-next-line no-prototype-builtins
-            if (dic.hasOwnProperty(key) && this.keys.includes(key)) {
+            if (dic[key] && dic.hasOwnProperty(key) && this.keys.includes(key)) {
                 this[key] = dic[key];
             }
         }
@@ -190,7 +190,7 @@ class BleRemotePeripheral {
                 : this._connectSetting.mtuRequest;
         await this.obnizBle.scan.endWait();
         try {
-            await this.obnizBle.centralBindings.connectWait(this.address, this._connectSetting.mtuRequest, () => {
+            await this.obnizBle.centralBindings.connectWait(this.address, this.address_type, this._connectSetting.mtuRequest, () => {
                 if (this._connectSetting.pairingOption) {
                     this.setPairingOption(this._connectSetting.pairingOption);
                 }
@@ -205,6 +205,7 @@ class BleRemotePeripheral {
         }
         this.connected = true;
         this.connected_at = new Date();
+        this.obnizBle.addConnectedPeripheral(this);
         try {
             if (this._connectSetting.autoDiscovery) {
                 await this.discoverAllHandlesWait();
@@ -259,7 +260,7 @@ class BleRemotePeripheral {
     disconnectWait() {
         return new Promise((resolve, reject) => {
             if (!this.connected) {
-                resolve();
+                resolve(false);
                 return;
             }
             const cuttingFailedError = new Error(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`);

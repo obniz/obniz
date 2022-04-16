@@ -5,7 +5,7 @@
  */
 /// <reference types="node" />
 import EventEmitter from 'eventemitter3';
-import { BleDeviceAddress, BleDeviceAddressType } from '../../bleTypes';
+import { BleDeviceAddressType, BleDeviceAddressWithColon } from '../../bleTypes';
 import AclStream from './acl-stream';
 /**
  * @ignore
@@ -54,7 +54,7 @@ declare class Smp extends EventEmitter<SmpEventTypes> {
     private _stk;
     private _ltk;
     private _options?;
-    constructor(aclStream: AclStream, localAddressType: BleDeviceAddressType, localAddress: BleDeviceAddress, remoteAddressType: BleDeviceAddressType, remoteAddress: BleDeviceAddress);
+    constructor(aclStream: AclStream, localAddressType: BleDeviceAddressType, localAddress: BleDeviceAddressWithColon, remoteAddressType: BleDeviceAddressType, remoteAddress: BleDeviceAddressWithColon);
     debugHandler: any;
     pairingWithKeyWait(key: string): Promise<number | "refresh">;
     setPairingOption(options: SmpEncryptOptions): void;

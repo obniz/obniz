@@ -197,7 +197,7 @@ export default class BleRemotePeripheral {
     /**
      *
      */
-    address_type: BleDeviceAddressType | null;
+    address_type: BleDeviceAddressType;
     /**
      *
      */
@@ -366,7 +366,7 @@ export default class BleRemotePeripheral {
     protected keys: string[];
     protected _services: BleRemoteService[];
     protected emitter: EventEmitter;
-    constructor(obnizBle: ObnizBLE, address: BleDeviceAddress);
+    constructor(obnizBle: ObnizBLE, address: BleDeviceAddress, address_type: BleDeviceAddressType);
     /**
      * @ignore
      * @return {String} json value
@@ -376,7 +376,7 @@ export default class BleRemotePeripheral {
      * @ignore
      * @param dic
      */
-    setParams(dic: any): void;
+    setParams(dic: Record<string, unknown>): void;
     /**
      * @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
      */
@@ -471,7 +471,7 @@ export default class BleRemotePeripheral {
      * }
      * ```
      */
-    disconnectWait(): Promise<void>;
+    disconnectWait(): Promise<boolean>;
     /**
      * It returns a service which having specified uuid in [[services]].
      * Case is ignored. So aa00 and AA00 are the same.

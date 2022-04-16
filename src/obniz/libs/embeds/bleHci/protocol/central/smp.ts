@@ -8,7 +8,10 @@ import EventEmitter from 'eventemitter3';
 
 import { ObnizBlePairingRejectByRemoteError } from '../../../../../ObnizError';
 import BleHelper from '../../bleHelper';
-import { BleDeviceAddress, BleDeviceAddressType } from '../../bleTypes';
+import {
+  BleDeviceAddressType,
+  BleDeviceAddressWithColon,
+} from '../../bleTypes';
 import AclStream from './acl-stream';
 import crypto from './crypto';
 
@@ -84,9 +87,9 @@ class Smp extends EventEmitter<SmpEventTypes> {
   constructor(
     aclStream: AclStream,
     localAddressType: BleDeviceAddressType,
-    localAddress: BleDeviceAddress,
+    localAddress: BleDeviceAddressWithColon,
     remoteAddressType: BleDeviceAddressType,
-    remoteAddress: BleDeviceAddress
+    remoteAddress: BleDeviceAddressWithColon
   ) {
     super();
     this._aclStream = aclStream;

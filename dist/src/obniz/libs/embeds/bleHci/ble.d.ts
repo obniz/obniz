@@ -6,6 +6,7 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
+/// <reference types="node" />
 import ObnizBLEHci from './hci';
 import CentralBindings from './protocol/central/bindings';
 import HciProtocol from './protocol/hci';
@@ -20,7 +21,7 @@ import BlePeripheral from './blePeripheral';
 import BleRemotePeripheral from './bleRemotePeripheral';
 import BleScan from './bleScan';
 import BleService from './bleService';
-import { BleDeviceAddress, BleDeviceAddressType, UUID } from './bleTypes';
+import { BleDeviceAddress, BleDeviceAddressType, BleDiscoveryAdvertisement, UUID } from './bleTypes';
 /**
  * Use a obniz device as a BLE device.
  * Peripheral and Central mode are supported
@@ -65,7 +66,7 @@ export default class ObnizBLE extends ComponentAbstract {
     advertisement: BleAdvertisement;
     protected hciProtocol: HciProtocol;
     protected _initializeWarning: boolean;
-    protected remotePeripherals: BleRemotePeripheral[];
+    protected connectedPeripherals: Record<BleDeviceAddress, BleRemotePeripheral>;
     /**
      * @ignore
      */
@@ -116,7 +117,7 @@ export default class ObnizBLE extends ComponentAbstract {
      *
      * @deprecated replaced by {@link #directConnectWait()}
      */
-    directConnect(address: BleDeviceAddress, addressType: BleDeviceAddressType): BleRemotePeripheral | null;
+    directConnect(address: BleDeviceAddress, addressType: BleDeviceAddressType): BleRemotePeripheral;
     /**
      * Connect to peripheral without scanning, and wait to finish connecting.
      *
@@ -166,11 +167,14 @@ export default class ObnizBLE extends ComponentAbstract {
      */
     warningIfNotInitialize(): void;
     schemaBasePath(): string;
+    /**
+     * @ignore
+     */
+    addConnectedPeripheral(peripheral: BleRemotePeripheral): void;
     protected onStateChange(): void;
-    protected findPeripheral(address: BleDeviceAddress): BleRemotePeripheral | null;
-    protected onDiscover(uuid: any, address?: any, addressType?: any, connectable?: any, advertisement?: any, rssi?: any): void;
-    protected onDisconnect(peripheralUuid: any, reason: ObnizBleHciStateError): void;
-    protected onNotification(peripheralUuid: any, serviceUuid?: any, characteristicUuid?: any, data?: any, isNotification?: any, isSuccess?: any): void;
+    protected onDiscover(address: BleDeviceAddress, addressType: BleDeviceAddressType, connectable: boolean, advertisement: BleDiscoveryAdvertisement, rssi: number): void;
+    protected onDisconnect(address: BleDeviceAddress, reason: ObnizBleHciStateError): void;
+    protected onNotification(address: BleDeviceAddress, serviceUuid: UUID, characteristicUuid: UUID, data: Buffer, isNotification: boolean, isSuccess: boolean): void;
     protected onPeripheralStateChange(state: any): void;
     protected onPeripheralAccept(clientAddress: any): void;
     protected onPeripheralMtuChange(mtu: any): void;

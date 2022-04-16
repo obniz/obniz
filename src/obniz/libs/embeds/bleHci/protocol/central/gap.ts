@@ -15,6 +15,12 @@ const debug: any = () => {
 import EventEmitter from 'eventemitter3';
 import { ObnizBleScanStartError } from '../../../../../ObnizError';
 import BleHelper from '../../bleHelper';
+import {
+  BleDeviceAddressType,
+  BleDeviceAddressWithColon,
+  BleDiscoveryAdvertisement,
+  UUID,
+} from '../../bleTypes';
 import Hci from '../hci';
 
 type GapEventTypes = 'scanStop' | 'discover';
@@ -31,7 +37,18 @@ class Gap extends EventEmitter<GapEventTypes> {
     | 'stopping'
     | 'stopped' = null;
   public _scanFilterDuplicates: null | boolean = null;
-  public _discoveries: any = {};
+  public _discoveries: Record<
+    BleDeviceAddressWithColon,
+    {
+      address: BleDeviceAddressWithColon;
+      addressType: BleDeviceAddressType;
+      connectable: boolean;
+      advertisement: BleDiscoveryAdvertisement;
+      rssi: number;
+      count: number;
+      hasScanResponse: boolean;
+    }
+  > = {};
 
   constructor(hci: Hci) {
     super();
@@ -104,15 +121,15 @@ class Gap extends EventEmitter<GapEventTypes> {
   }
 
   public onHciLeAdvertisingReport(
-    status: any,
-    type?: any,
-    address?: any,
-    addressType?: any,
-    eir?: any,
-    rssi?: any
-  ) {
-    const previouslyDiscovered: any = !!this._discoveries[address];
-    const advertisement: any = previouslyDiscovered
+    status: 0,
+    type: number,
+    address: BleDeviceAddressWithColon,
+    addressType: BleDeviceAddressType,
+    eir: Buffer,
+    rssi: number
+  ): void {
+    const previouslyDiscovered = !!this._discoveries[address];
+    const advertisement = previouslyDiscovered
       ? this._discoveries[address].advertisement
       : {
           localName: undefined,
@@ -120,16 +137,17 @@ class Gap extends EventEmitter<GapEventTypes> {
           manufacturerData: undefined,
           serviceData: [],
           serviceUuids: [],
+          serviceSolicitationUuids: [],
           solicitationServiceUuids: [],
           advertisementRaw: [],
           scanResponseRaw: [],
           raw: [],
         };
 
-    let discoveryCount: any = previouslyDiscovered
+    let discoveryCount = previouslyDiscovered
       ? this._discoveries[address].count
       : 0;
-    let hasScanResponse: any = previouslyDiscovered
+    let hasScanResponse = previouslyDiscovered
       ? this._discoveries[address].hasScanResponse
       : false;
 
@@ -152,27 +170,27 @@ class Gap extends EventEmitter<GapEventTypes> {
 
     discoveryCount++;
 
-    let i: any = 0;
-    let j: any = 0;
-    let serviceUuid: any = null;
-    let serviceSolicitationUuid: any = null;
+    let i = 0;
+    let j = 0;
+    let serviceUuid: UUID | null = null;
+    let serviceSolicitationUuid: UUID | null = null;
 
     while (i + 1 < eir.length) {
-      const length: any = eir.readUInt8(i);
+      const length = eir.readUInt8(i);
 
       if (length < 1) {
         debug('invalid EIR data, length = ' + length);
         break;
       }
 
-      const eirType: any = eir.readUInt8(i + 1); // https://www.bluetooth.org/en-us/specification/assigned-numbers/generic-access-profile
+      const eirType = eir.readUInt8(i + 1); // https://www.bluetooth.org/en-us/specification/assigned-numbers/generic-access-profile
 
       if (i + length + 1 > eir.length) {
         debug('invalid EIR data, out of range of buffer length');
         break;
       }
 
-      const bytes: any = eir.slice(i + 2).slice(0, length - 1);
+      const bytes = eir.slice(i + 2).slice(0, length - 1);
 
       switch (eirType) {
         case 0x02: // Incomplete List of 16-bit Service Class UUID
@@ -241,10 +259,10 @@ class Gap extends EventEmitter<GapEventTypes> {
         }
         case 0x16: {
           // 16-bit Service Data, there can be multiple occurences
-          const serviceDataUuid: any = BleHelper.buffer2reversedHex(
+          const serviceDataUuid = BleHelper.buffer2reversedHex(
             bytes.slice(0, 2)
           );
-          const serviceData: any = bytes.slice(2, bytes.length);
+          const serviceData = bytes.slice(2, bytes.length);
 
           advertisement.serviceData.push({
             uuid: serviceDataUuid,
@@ -254,10 +272,10 @@ class Gap extends EventEmitter<GapEventTypes> {
         }
         case 0x20: {
           // 32-bit Service Data, there can be multiple occurences
-          const serviceData32Uuid: any = BleHelper.buffer2reversedHex(
+          const serviceData32Uuid = BleHelper.buffer2reversedHex(
             bytes.slice(0, 4)
           );
-          const serviceData32: any = bytes.slice(4, bytes.length);
+          const serviceData32 = bytes.slice(4, bytes.length);
 
           advertisement.serviceData.push({
             uuid: serviceData32Uuid,
@@ -268,10 +286,10 @@ class Gap extends EventEmitter<GapEventTypes> {
         case 0x21: {
           // 128-bit Service Data, there can be multiple occurences
 
-          const serviceData128Uuid: any = BleHelper.buffer2reversedHex(
+          const serviceData128Uuid = BleHelper.buffer2reversedHex(
             bytes.slice(0, 16)
           );
-          const serviceData128: any = bytes.slice(16, bytes.length);
+          const serviceData128 = bytes.slice(16, bytes.length);
 
           advertisement.serviceData.push({
             uuid: serviceData128Uuid,
@@ -304,7 +322,7 @@ class Gap extends EventEmitter<GapEventTypes> {
 
     debug('advertisement = ' + JSON.stringify(advertisement, null, 0));
 
-    const connectable: any =
+    const connectable =
       type === 0x04 && previouslyDiscovered
         ? this._discoveries[address].connectable
         : type !== 0x03;

@@ -5378,7 +5378,7 @@ const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/
 class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz) {
         super(obniz);
-        this.remotePeripherals = [];
+        this.connectedPeripherals = {};
         /**
          * @ignore
          */
@@ -5553,15 +5553,13 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         this._initialized = false;
         this._initializeWarning = true;
         // clear all found peripherals.
-        for (const p of this.remotePeripherals) {
-            if (p.connected) {
-                p.notifyFromServer('statusupdate', {
-                    status: 'disconnected',
-                    reason: new ObnizError_1.ObnizOfflineError(),
-                });
-            }
-        }
-        this.remotePeripherals = [];
+        Object.values(this.connectedPeripherals)
+            .filter((p) => p.connected)
+            .forEach((p) => p.notifyFromServer('statusupdate', {
+            status: 'disconnected',
+            reason: new ObnizError_1.ObnizOfflineError(),
+        }));
+        this.connectedPeripherals = {};
         // instantiate
         if (!this.peripheral) {
             this.peripheral = new blePeripheral_1.default(this);
@@ -5635,11 +5633,11 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      */
     directConnect(address, addressType) {
         // noinspection JSIgnoredPromiseFromCall
-        this.directConnectWait(address, addressType).catch((e) => {
+        const peripheral = new bleRemotePeripheral_1.default(this, address, addressType);
+        peripheral.connectWait().catch((e) => {
             // background
             this.Obniz.error(e);
         });
-        const peripheral = this.findPeripheral(address);
         return peripheral;
     }
     /**
@@ -5663,12 +5661,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * @param addressType "random" or "public"
      */
     async directConnectWait(address, addressType) {
-        let peripheral = this.findPeripheral(address);
-        if (!peripheral) {
-            peripheral = new bleRemotePeripheral_1.default(this, address);
-            this.remotePeripherals.push(peripheral);
-        }
-        this.centralBindings.addPeripheralData(address, addressType);
+        const peripheral = new bleRemotePeripheral_1.default(this, address, addressType);
         await peripheral.connectWait();
         return peripheral;
     }
@@ -5695,13 +5688,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * @returns connected peripherals
      */
     getConnectedPeripherals() {
-        const connectedPeripherals = [];
-        for (const elm of this.remotePeripherals) {
-            if (elm.connected) {
-                connectedPeripherals.push(elm);
-            }
-        }
-        return connectedPeripherals;
+        return Object.values(this.connectedPeripherals);
     }
     /**
      * @ignore
@@ -5721,27 +5708,20 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     schemaBasePath() {
         return 'ble';
     }
+    /**
+     * @ignore
+     */
+    addConnectedPeripheral(peripheral) {
+        this.connectedPeripherals[peripheral.address] = peripheral;
+    }
     onStateChange() {
         // do nothing.
     }
-    findPeripheral(address) {
-        for (const key in this.remotePeripherals) {
-            if (this.remotePeripherals[key].address === address) {
-                return this.remotePeripherals[key];
-            }
-        }
-        return null;
-    }
-    onDiscover(uuid, address, addressType, connectable, advertisement, rssi) {
-        let val = this.findPeripheral(uuid);
-        if (!val) {
-            val = new bleRemotePeripheral_1.default(this, uuid);
-            this.remotePeripherals.push(val);
-        }
+    onDiscover(address, addressType, connectable, advertisement, rssi) {
+        const val = new bleRemotePeripheral_1.default(this, address, addressType);
         val.discoverdOnRemote = true;
         const peripheralData = {
             device_type: 'ble',
-            address_type: addressType,
             ble_event_type: connectable
                 ? 'connectable_advertisemnt'
                 : 'non_connectable_advertising',
@@ -5752,12 +5732,13 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         val.setParams(peripheralData);
         this.scan.notifyFromServer('onfind', val);
     }
-    onDisconnect(peripheralUuid, reason) {
-        const peripheral = this.findPeripheral(peripheralUuid);
+    onDisconnect(address, reason) {
+        const peripheral = this.connectedPeripherals[address];
         peripheral.notifyFromServer('statusupdate', {
             status: 'disconnected',
             reason,
         });
+        delete this.connectedPeripherals[address];
     }
     //
     // protected onServicesDiscover(peripheralUuid: any, serviceUuids?: any) {
@@ -5780,13 +5761,13 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     //   }
     //   service.notifyFromServer("discoverfinished", {});
     // }
-    onNotification(peripheralUuid, serviceUuid, characteristicUuid, data, isNotification, isSuccess) {
-        const peripheral = this.findPeripheral(peripheralUuid);
+    onNotification(address, serviceUuid, characteristicUuid, data, isNotification, isSuccess) {
+        const peripheral = this.connectedPeripherals[address];
         const characteristic = peripheral.findCharacteristic({
             service_uuid: serviceUuid,
             characteristic_uuid: characteristicUuid,
         });
-        if (isNotification) {
+        if (characteristic && isNotification) {
             const obj = {
                 data: Array.from(data),
             };
@@ -7817,7 +7798,7 @@ const bleRemoteService_1 = __importDefault(__webpack_require__("./dist/src/obniz
  * @category Use as Central
  */
 class BleRemotePeripheral {
-    constructor(obnizBle, address) {
+    constructor(obnizBle, address, address_type) {
         this.advertisingDataRows = {};
         this.scanResponseDataRows = {};
         /**
@@ -7839,11 +7820,11 @@ class BleRemotePeripheral {
             'scan_resp',
         ];
         this.obnizBle = obnizBle;
-        this.address = address;
+        this.address = address.split(':').join('');
+        this.address_type = address_type;
         this.connected = false;
         this.connected_at = null;
         this.device_type = null;
-        this.address_type = null;
         this.ble_event_type = null;
         this.rssi = null;
         // this.adv_data = null;
@@ -7907,7 +7888,7 @@ class BleRemotePeripheral {
         this.advertise_data_rows = null;
         for (const key in dic) {
             // eslint-disable-next-line no-prototype-builtins
-            if (dic.hasOwnProperty(key) && this.keys.includes(key)) {
+            if (dic[key] && dic.hasOwnProperty(key) && this.keys.includes(key)) {
                 this[key] = dic[key];
             }
         }
@@ -7991,7 +7972,7 @@ class BleRemotePeripheral {
                 : this._connectSetting.mtuRequest;
         await this.obnizBle.scan.endWait();
         try {
-            await this.obnizBle.centralBindings.connectWait(this.address, this._connectSetting.mtuRequest, () => {
+            await this.obnizBle.centralBindings.connectWait(this.address, this.address_type, this._connectSetting.mtuRequest, () => {
                 if (this._connectSetting.pairingOption) {
                     this.setPairingOption(this._connectSetting.pairingOption);
                 }
@@ -8006,6 +7987,7 @@ class BleRemotePeripheral {
         }
         this.connected = true;
         this.connected_at = new Date();
+        this.obnizBle.addConnectedPeripheral(this);
         try {
             if (this._connectSetting.autoDiscovery) {
                 await this.discoverAllHandlesWait();
@@ -8060,7 +8042,7 @@ class BleRemotePeripheral {
     disconnectWait() {
         return new Promise((resolve, reject) => {
             if (!this.connected) {
-                resolve();
+                resolve(false);
                 return;
             }
             const cuttingFailedError = new Error(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`);
@@ -9722,7 +9704,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
-const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 const acl_stream_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/acl-stream.js"));
 const gap_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/gap.js"));
 const gatt_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/gatt.js"));
@@ -9740,17 +9721,15 @@ class NobleBindings extends eventemitter3_1.default {
         this._hci = hciProtocol;
         this._gap = new gap_1.default(this._hci);
         this._state = null;
-        this._addresses = {};
-        this._addresseTypes = {};
-        this._connectable = {};
         this._handles = {};
+        this._addresses = {};
         this._gatts = {};
         this._aclStreams = {};
         this._signalings = {};
         this._connectPromises = [];
         this._hci.on('stateChange', this.onStateChange.bind(this));
         this._hci.on('disconnComplete', this.onDisconnComplete.bind(this));
-        this._hci.on('aclDataPkt', this.onAclDataPkt.bind(this));
+        // this._hci.on('aclDataPkt', this.onAclDataPkt.bind(this));
         this._gap.on('discover', this.onDiscover.bind(this));
     }
     /**
@@ -9759,9 +9738,6 @@ class NobleBindings extends eventemitter3_1.default {
      */
     _reset() {
         this._state = null;
-        this._addresses = {};
-        this._addresseTypes = {};
-        this._connectable = {};
         this._handles = {};
         this._gatts = {};
         this._aclStreams = {};
@@ -9770,14 +9746,6 @@ class NobleBindings extends eventemitter3_1.default {
         // TODO: It must be canceled.
         this._connectPromises = [];
     }
-    addPeripheralData(uuid, addressType) {
-        if (!this._addresses[uuid]) {
-            const address = bleHelper_1.default.reverseHexString(uuid, ':');
-            this._addresses[uuid] = address;
-            this._addresseTypes[uuid] = addressType;
-            this._connectable[uuid] = true;
-        }
-    }
     async startScanningWait(serviceUuids, allowDuplicates, activeScan) {
         this._scanServiceUuids = (serviceUuids !== null && serviceUuids !== void 0 ? serviceUuids : null);
         await this._gap.startScanningWait(allowDuplicates, activeScan);
@@ -9785,11 +9753,17 @@ class NobleBindings extends eventemitter3_1.default {
     async stopScanningWait() {
         await this._gap.stopScanningWait();
     }
-    async connectWait(peripheralUuid, mtu, onConnectCallback) {
-        const address = this._addresses[peripheralUuid];
-        const addressType = this._addresseTypes[peripheralUuid];
+    /**
+     * Connect to BLE device
+     *
+     * @param peripheralDeviceAddress ex: 0123456789ab
+     * @param peripheralAddressType public | random | rpa_public | rpa_random
+     * @param mtu bytes
+     * @param onConnectCallback
+     */
+    async connectWait(address, addressType, mtu, onConnectCallback) {
         if (!address) {
-            throw new ObnizError_1.ObnizBleUnknownPeripheralError(peripheralUuid);
+            throw new ObnizError_1.ObnizBleUnknownPeripheralError(address);
         }
         // Block parall connection ongoing for ESP32 bug.
         const doPromise = Promise.all(this._connectPromises)
@@ -9804,7 +9778,7 @@ class NobleBindings extends eventemitter3_1.default {
                     onConnectCallback();
                 }
             }); // connection timeout for 90 secs.
-            return await this._gatts[conResult.handle].exchangeMtuWait(mtu);
+            return await this._gatts[address].exchangeMtuWait(mtu);
         })
             .then(() => {
             this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
@@ -9816,11 +9790,11 @@ class NobleBindings extends eventemitter3_1.default {
         this._connectPromises.push(doPromise);
         return doPromise;
     }
-    disconnect(peripheralUuid) {
-        this._hci.disconnect(this._handles[peripheralUuid]);
+    disconnect(address) {
+        this._hci.disconnect(this._handles[address]);
     }
-    async updateRssiWait(peripheralUuid) {
-        const rssi = await this._hci.readRssiWait(this._handles[peripheralUuid]);
+    async updateRssiWait(address) {
+        const rssi = await this._hci.readRssiWait(this._handles[address]);
         return rssi;
     }
     onStateChange(state) {
@@ -9830,7 +9804,7 @@ class NobleBindings extends eventemitter3_1.default {
         this._state = state;
         this.emit('stateChange', state);
     }
-    onDiscover(status, address, addressType, connectable, advertisement, rssi) {
+    onDiscover(status, addressWithColon, addressType, connectable, advertisement, rssi) {
         if (this._scanServiceUuids === null) {
             // scan not started ?
             return;
@@ -9852,14 +9826,11 @@ class NobleBindings extends eventemitter3_1.default {
             }
         }
         if (hasScanServiceUuids) {
-            const uuid = address.split(':').join('');
-            this._addresses[uuid] = address;
-            this._addresseTypes[uuid] = addressType;
-            this._connectable[uuid] = connectable;
-            this.emit('discover', uuid, address, addressType, connectable, advertisement, rssi);
+            const address = addressWithColon.split(':').join('');
+            this.emit('discover', address, addressType, connectable, advertisement, rssi);
         }
     }
-    onLeConnComplete(status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy) {
+    onLeConnComplete(status, handle, role, addressType, addressWithColon, interval, latency, supervisionTimeout, masterClockAccuracy) {
         if (role !== 0) {
             // not master, ignore
             return;
@@ -9867,40 +9838,38 @@ class NobleBindings extends eventemitter3_1.default {
         if (status !== 0) {
             throw new ObnizError_1.ObnizBleHciStateError(status);
         }
-        const uuid = address.split(':').join('').toLowerCase();
-        const aclStream = new acl_stream_1.default(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
+        const address = addressWithColon.split(':').join('').toLowerCase();
+        const aclStream = new acl_stream_1.default(this._hci, handle, this._hci.addressType, this._hci.address, addressType, addressWithColon);
         aclStream.debugHandler = (text) => {
             this.debug(text);
         };
-        const gatt = new gatt_1.default(address, aclStream);
+        const gatt = new gatt_1.default(addressWithColon, aclStream);
         const signaling = new signaling_1.default(handle, aclStream);
-        this._gatts[uuid] = this._gatts[handle] = gatt;
-        this._signalings[uuid] = this._signalings[handle] = signaling;
-        this._aclStreams[handle] = aclStream;
-        this._handles[uuid] = handle;
-        this._handles[handle] = uuid;
-        this._gatts[handle].on('notification', this.onNotification.bind(this));
-        this._gatts[handle].on('handleNotify', this.onHandleNotify.bind(this));
-        this._signalings[handle].on('connectionParameterUpdateRequest', this.onConnectionParameterUpdateWait.bind(this));
+        this._gatts[address] = gatt;
+        this._signalings[address] = signaling;
+        this._aclStreams[address] = aclStream;
+        this._handles[address] = handle;
+        this._addresses[handle] = address;
+        this._gatts[address].on('notification', this.onNotification.bind(this));
+        this._gatts[address].on('handleNotify', this.onHandleNotify.bind(this));
+        this._signalings[address].on('connectionParameterUpdateRequest', this.onConnectionParameterUpdateWait.bind(this));
         // public onMtu(address: any, mtu?: any) {}
     }
     onDisconnComplete(handle, reason) {
-        const uuid = this._handles[handle];
-        if (uuid) {
+        const address = this._addresses[handle];
+        if (address) {
             const error = new ObnizError_1.ObnizBleHciStateError(reason, {
-                peripheralAddress: uuid,
+                peripheralAddress: address,
             });
-            this._gatts[handle].onEnd(error);
-            this._gatts[handle].removeAllListeners();
-            this._signalings[handle].removeAllListeners();
-            delete this._gatts[uuid];
-            delete this._gatts[handle];
-            delete this._signalings[uuid];
-            delete this._signalings[handle];
-            delete this._aclStreams[handle];
-            delete this._handles[uuid];
-            delete this._handles[handle];
-            this.emit('disconnect', uuid, error); // TODO: handle reason?
+            this._gatts[address].onEnd(error);
+            this._gatts[address].removeAllListeners();
+            this._signalings[address].removeAllListeners();
+            delete this._gatts[address];
+            delete this._signalings[address];
+            delete this._aclStreams[address];
+            delete this._handles[address];
+            delete this._addresses[handle];
+            this.emit('disconnect', address, error); // TODO: handle reason?
         }
         else {
             // maybe disconnect as peripheral
@@ -9909,72 +9878,78 @@ class NobleBindings extends eventemitter3_1.default {
             // );
         }
     }
+    /** not used */
     onAclDataPkt(handle, cid, data) {
-        const aclStream = this._aclStreams[handle];
+        const address = this._addresses[handle];
+        const aclStream = this._aclStreams[address];
         if (aclStream) {
             aclStream.push(cid, data);
         }
     }
-    async discoverServicesWait(peripheralUuid, uuids) {
-        const gatt = this.getGatt(peripheralUuid);
+    async discoverServicesWait(address, uuids) {
+        const gatt = this.getGatt(address);
         const services = await gatt.discoverServicesWait(uuids || []);
         return services;
     }
-    async discoverIncludedServicesWait(peripheralUuid, serviceUuid, serviceUuids) {
-        const gatt = this.getGatt(peripheralUuid);
+    /** not used */
+    async discoverIncludedServicesWait(address, serviceUuid, serviceUuids) {
+        const gatt = this.getGatt(address);
         const services = gatt.discoverIncludedServicesWait(serviceUuid, serviceUuids || []);
         return services;
     }
-    async discoverCharacteristicsWait(peripheralUuid, serviceUuid, characteristicUuids) {
-        const gatt = this.getGatt(peripheralUuid);
+    async discoverCharacteristicsWait(address, serviceUuid, characteristicUuids) {
+        const gatt = this.getGatt(address);
         const chars = await gatt.discoverCharacteristicsWait(serviceUuid, characteristicUuids || []);
         return chars;
     }
-    async readWait(peripheralUuid, serviceUuid, characteristicUuid) {
-        const gatt = this.getGatt(peripheralUuid);
+    async readWait(address, serviceUuid, characteristicUuid) {
+        const gatt = this.getGatt(address);
         const data = await gatt.readWait(serviceUuid, characteristicUuid);
         return data;
     }
-    async writeWait(peripheralUuid, serviceUuid, characteristicUuid, data, withoutResponse) {
-        const gatt = this.getGatt(peripheralUuid);
+    async writeWait(address, serviceUuid, characteristicUuid, data, withoutResponse) {
+        const gatt = this.getGatt(address);
         await gatt.writeWait(serviceUuid, characteristicUuid, data, withoutResponse);
     }
-    async broadcastWait(peripheralUuid, serviceUuid, characteristicUuid, broadcast) {
-        const gatt = this.getGatt(peripheralUuid);
+    /** not used */
+    async broadcastWait(address, serviceUuid, characteristicUuid, broadcast) {
+        const gatt = this.getGatt(address);
         await gatt.broadcastWait(serviceUuid, characteristicUuid, broadcast);
     }
-    async notifyWait(peripheralUuid, serviceUuid, characteristicUuid, notify) {
-        const gatt = this.getGatt(peripheralUuid);
+    async notifyWait(address, serviceUuid, characteristicUuid, notify) {
+        const gatt = this.getGatt(address);
         await gatt.notifyWait(serviceUuid, characteristicUuid, notify);
     }
-    onNotification(address, serviceUuid, characteristicUuid, data) {
-        const uuid = address.split(':').join('').toLowerCase();
-        this.emit('notification', uuid, serviceUuid, characteristicUuid, data, true, true);
+    onNotification(addressWithColon, serviceUuid, characteristicUuid, data) {
+        const address = addressWithColon.split(':').join('').toLowerCase();
+        this.emit('notification', address, serviceUuid, characteristicUuid, data, true, true);
     }
-    async discoverDescriptorsWait(peripheralUuid, serviceUuid, characteristicUuid) {
-        const gatt = this.getGatt(peripheralUuid);
+    async discoverDescriptorsWait(address, serviceUuid, characteristicUuid) {
+        const gatt = this.getGatt(address);
         return await gatt.discoverDescriptorsWait(serviceUuid, characteristicUuid);
     }
-    async readValueWait(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid) {
-        const gatt = this.getGatt(peripheralUuid);
+    async readValueWait(address, serviceUuid, characteristicUuid, descriptorUuid) {
+        const gatt = this.getGatt(address);
         return await gatt.readValueWait(serviceUuid, characteristicUuid, descriptorUuid);
     }
-    async writeValueWait(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data) {
-        const gatt = this.getGatt(peripheralUuid);
+    async writeValueWait(address, serviceUuid, characteristicUuid, descriptorUuid, data) {
+        const gatt = this.getGatt(address);
         await gatt.writeValueWait(serviceUuid, characteristicUuid, descriptorUuid, data);
     }
-    async readHandleWait(peripheralUuid, attHandle) {
-        const gatt = this.getGatt(peripheralUuid);
+    /** not used */
+    async readHandleWait(address, attHandle) {
+        const gatt = this.getGatt(address);
         const data = await gatt.readHandleWait(attHandle);
         return data;
     }
-    async writeHandleWait(peripheralUuid, attHandle, data, withoutResponse) {
-        const gatt = this.getGatt(peripheralUuid);
+    /** not used */
+    async writeHandleWait(address, attHandle, data, withoutResponse) {
+        const gatt = this.getGatt(address);
         await gatt.writeHandleWait(attHandle, data, withoutResponse);
     }
-    onHandleNotify(address, handle, data) {
-        const uuid = address.split(':').join('').toLowerCase();
-        this.emit('handleNotify', uuid, handle, data);
+    onHandleNotify(addressWithColon, handle, data) {
+        const address = addressWithColon.split(':').join('').toLowerCase();
+        this.emit('handleNotify', address, handle, data);
     }
     onConnectionParameterUpdateWait(handle, minInterval, maxInterval, latency, supervisionTimeout) {
         this._hci
@@ -9989,22 +9964,21 @@ class NobleBindings extends eventemitter3_1.default {
         });
         // this.onLeConnUpdateComplete(); is nop
     }
-    async pairingWait(peripheralUuid, options) {
+    async pairingWait(address, options) {
         options = options || {};
-        const gatt = this.getGatt(peripheralUuid);
+        const gatt = this.getGatt(address);
         const result = await gatt.encryptWait(options);
         return result;
     }
-    setPairingOption(peripheralUuid, options) {
+    setPairingOption(address, options) {
         options = options || {};
-        const gatt = this.getGatt(peripheralUuid);
+        const gatt = this.getGatt(address);
         gatt.setEncryptOption(options);
     }
-    getGatt(peripheralUuid) {
-        const handle = this._handles[peripheralUuid];
-        const gatt = this._gatts[handle];
+    getGatt(address) {
+        const gatt = this._gatts[address];
         if (!gatt) {
-            throw new ObnizError_1.ObnizBleUnknownPeripheralError(peripheralUuid);
+            throw new ObnizError_1.ObnizBleUnknownPeripheralError(address);
         }
         return gatt;
     }
@@ -10183,6 +10157,7 @@ class Gap extends eventemitter3_1.default {
                 manufacturerData: undefined,
                 serviceData: [],
                 serviceUuids: [],
+                serviceSolicitationUuids: [],
                 solicitationServiceUuids: [],
                 advertisementRaw: [],
                 scanResponseRaw: [],
@@ -10365,6 +10340,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 const att_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/common/att.js");
 const gatt_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/common/gatt.js");
 const gatt_2 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/gatt.js"));
@@ -75065,7 +75045,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
+module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
 
 /***/ }),
 

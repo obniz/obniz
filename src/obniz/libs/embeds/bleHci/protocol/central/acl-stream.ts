@@ -7,7 +7,11 @@
 
 import EventEmitter from 'eventemitter3';
 
-import { Handle } from '../../bleTypes';
+import {
+  BleDeviceAddressType,
+  BleDeviceAddressWithColon,
+  Handle,
+} from '../../bleTypes';
 import Hci from '../hci';
 import Smp, { SmpEncryptOptions } from './smp';
 
@@ -27,10 +31,10 @@ export default class AclStream extends EventEmitter<AclStreamEventTypes> {
   constructor(
     hci: Hci,
     handle: Handle,
-    localAddressType: any,
-    localAddress: any,
-    remoteAddressType: any,
-    remoteAddress: any
+    localAddressType: BleDeviceAddressType,
+    localAddress: BleDeviceAddressWithColon,
+    remoteAddressType: BleDeviceAddressType,
+    remoteAddress: BleDeviceAddressWithColon
   ) {
     super();
     this._hci = hci;

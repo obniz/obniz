@@ -3,10 +3,10 @@
  * @packageDocumentation
  * @ignore
  */
-import { BleDeviceAddress, UUID } from './bleTypes';
+import { BleDeviceAddress, BleDeviceAddressWithColon, UUID } from './bleTypes';
 declare class BleHelper {
     uuidFilter(uuid: string | UUID): UUID;
-    deviceAddressFilter(uuid: string | BleDeviceAddress): BleDeviceAddress;
+    deviceAddressFilter(uuid: string | BleDeviceAddress | BleDeviceAddressWithColon): BleDeviceAddress;
     toCamelCase(str: string): string;
     toSnakeCase(str: string): string;
     buffer2reversedHex(buf: Buffer, sepalator?: string): string;

@@ -6,7 +6,7 @@ import BleHelper from './bleHelper';
 import BleRemoteAttributeAbstract from './bleRemoteAttributeAbstract';
 import BleRemoteCharacteristic from './bleRemoteCharacteristic';
 import BleRemotePeripheral from './bleRemotePeripheral';
-import { UUID } from './bleTypes';
+import { BleAttributePropery, UUID } from './bleTypes';
 
 /**
  * @category Use as Central
@@ -164,8 +164,8 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<
 
     for (const char of chars) {
       const uuid = char.uuid;
-      const properties = char.properties.map((e: string) =>
-        BleHelper.toSnakeCase(e)
+      const properties = char.properties.map(
+        (e: string) => BleHelper.toSnakeCase(e) as BleAttributePropery
       );
       let child = this.getChild(uuid);
       if (!child) {

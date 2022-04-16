@@ -10,6 +10,15 @@ import BleDescriptor from './bleDescriptor';
  * BLE UUID. Case is ignored. So aa00 and AA00 are the same.
  */
 export type UUID = string;
+/**
+ * BLE address with colon
+ * ex: 01:23:45:67:89:ab
+ */
+export type BleDeviceAddressWithColon = string;
+/**
+ * Usually used BLE address
+ * ex: 0123456789ab
+ */
 export type BleDeviceAddress = string;
 export type Handle = number;
 
@@ -52,6 +61,22 @@ export interface BleScanResponseData {
 
 export interface BleAdvertisementData extends BleScanResponseData {
   flags?: BleAdvertisementFlag[];
+}
+
+export interface BleDiscoveryAdvertisement {
+  localName?: string;
+  txPowerLevel?: number;
+  manufacturerData?: Buffer;
+  serviceData: {
+    uuid: UUID;
+    data: Buffer;
+  }[];
+  serviceUuids: UUID[];
+  serviceSolicitationUuids: UUID[];
+  solicitationServiceUuids: UUID[];
+  advertisementRaw: unknown[];
+  scanResponseRaw: unknown[];
+  raw: unknown[];
 }
 
 export interface BleDescriptorDefine {

@@ -3,6 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 const att_1 = require("../common/att");
 const gatt_1 = require("../common/gatt");
 const gatt_2 = __importDefault(require("../peripheral/gatt"));

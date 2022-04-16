@@ -92,6 +92,7 @@ class Gap extends eventemitter3_1.default {
                 manufacturerData: undefined,
                 serviceData: [],
                 serviceUuids: [],
+                serviceSolicitationUuids: [],
                 solicitationServiceUuids: [],
                 advertisementRaw: [],
                 scanResponseRaw: [],
