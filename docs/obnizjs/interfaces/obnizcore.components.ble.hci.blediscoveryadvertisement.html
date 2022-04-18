@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>BleScanResponseData | obniz</title>
+	<title>BleDiscoveryAdvertisement | obniz</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -68,10 +68,10 @@
 					<a href="../modules/obnizcore.components.ble.hci.html">Hci</a>
 				</li>
 				<li>
-					<a href="obnizcore.components.ble.hci.blescanresponsedata.html">BleScanResponseData</a>
+					<a href="obnizcore.components.ble.hci.blediscoveryadvertisement.html">BleDiscoveryAdvertisement</a>
 				</li>
 			</ul>
-			<h1>Interface BleScanResponseData</h1>
+			<h1>Interface BleDiscoveryAdvertisement</h1>
 		</div>
 	</div>
 </header>
@@ -82,12 +82,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">BleScanResponseData</span>
-						<ul class="tsd-hierarchy">
-							<li>
-								<a href="obnizcore.components.ble.hci.bleadvertisementdata.html" class="tsd-signature-type">BleAdvertisementData</a>
-							</li>
-						</ul>
+						<span class="target">BleDiscoveryAdvertisement</span>
 					</li>
 				</ul>
 			</section>
@@ -98,9 +93,16 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blescanresponsedata.html#localname" class="tsd-kind-icon">local<wbr>Name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blescanresponsedata.html#manufacturerdata" class="tsd-kind-icon">manufacturer<wbr>Data</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blescanresponsedata.html#serviceuuids" class="tsd-kind-icon">service<wbr>Uuids</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blediscoveryadvertisement.html#advertisementraw" class="tsd-kind-icon">advertisement<wbr>Raw</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blediscoveryadvertisement.html#localname" class="tsd-kind-icon">local<wbr>Name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blediscoveryadvertisement.html#manufacturerdata" class="tsd-kind-icon">manufacturer<wbr>Data</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blediscoveryadvertisement.html#raw" class="tsd-kind-icon">raw</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blediscoveryadvertisement.html#scanresponseraw" class="tsd-kind-icon">scan<wbr>Response<wbr>Raw</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blediscoveryadvertisement.html#servicedata" class="tsd-kind-icon">service<wbr>Data</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blediscoveryadvertisement.html#servicesolicitationuuids" class="tsd-kind-icon">service<wbr>Solicitation<wbr>Uuids</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blediscoveryadvertisement.html#serviceuuids" class="tsd-kind-icon">service<wbr>Uuids</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blediscoveryadvertisement.html#solicitationserviceuuids" class="tsd-kind-icon">solicitation<wbr>Service<wbr>Uuids</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blediscoveryadvertisement.html#txpowerlevel" class="tsd-kind-icon">tx<wbr>Power<wbr>Level</a></li>
 							</ul>
 						</section>
 					</div>
@@ -109,32 +111,102 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="advertisementraw" class="tsd-anchor"></a>
+					<h3>advertisement<wbr>Raw</h3>
+					<div class="tsd-signature tsd-kind-icon">advertisement<wbr>Raw<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:77</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="localname" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> local<wbr>Name</h3>
 					<div class="tsd-signature tsd-kind-icon">local<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:55</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:67</li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="manufacturerdata" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> manufacturer<wbr>Data</h3>
-					<div class="tsd-signature tsd-kind-icon">manufacturer<wbr>Data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>companyCode<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>data<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> }</span></div>
+					<div class="tsd-signature tsd-kind-icon">manufacturer<wbr>Data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Buffer</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:56</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:69</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="raw" class="tsd-anchor"></a>
+					<h3>raw</h3>
+					<div class="tsd-signature tsd-kind-icon">raw<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:79</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="scanresponseraw" class="tsd-anchor"></a>
+					<h3>scan<wbr>Response<wbr>Raw</h3>
+					<div class="tsd-signature tsd-kind-icon">scan<wbr>Response<wbr>Raw<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:78</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="servicedata" class="tsd-anchor"></a>
+					<h3>service<wbr>Data</h3>
+					<div class="tsd-signature tsd-kind-icon">service<wbr>Data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Buffer</span><span class="tsd-signature-symbol">; </span>uuid<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.components.ble.hci.html#uuid" class="tsd-signature-type">UUID</a><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:70</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="servicesolicitationuuids" class="tsd-anchor"></a>
+					<h3>service<wbr>Solicitation<wbr>Uuids</h3>
+					<div class="tsd-signature tsd-kind-icon">service<wbr>Solicitation<wbr>Uuids<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.components.ble.hci.html#uuid" class="tsd-signature-type">UUID</a><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:75</li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="serviceuuids" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> service<wbr>Uuids</h3>
+					<h3>service<wbr>Uuids</h3>
 					<div class="tsd-signature tsd-kind-icon">service<wbr>Uuids<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.components.ble.hci.html#uuid" class="tsd-signature-type">UUID</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:54</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:74</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="solicitationserviceuuids" class="tsd-anchor"></a>
+					<h3>solicitation<wbr>Service<wbr>Uuids</h3>
+					<div class="tsd-signature tsd-kind-icon">solicitation<wbr>Service<wbr>Uuids<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.components.ble.hci.html#uuid" class="tsd-signature-type">UUID</a><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:76</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="txpowerlevel" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> tx<wbr>Power<wbr>Level</h3>
+					<div class="tsd-signature tsd-kind-icon">tx<wbr>Power<wbr>Level<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:68</li>
 						</ul>
 					</aside>
 				</section>
@@ -153,16 +225,37 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="obnizcore.components.ble.hci.blescanresponsedata.html" class="tsd-kind-icon">Ble<wbr>Scan<wbr>Response<wbr>Data</a>
+						<a href="obnizcore.components.ble.hci.blediscoveryadvertisement.html" class="tsd-kind-icon">Ble<wbr>Discovery<wbr>Advertisement</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="obnizcore.components.ble.hci.blescanresponsedata.html#localname" class="tsd-kind-icon">local<wbr>Name</a>
+								<a href="obnizcore.components.ble.hci.blediscoveryadvertisement.html#advertisementraw" class="tsd-kind-icon">advertisement<wbr>Raw</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="obnizcore.components.ble.hci.blescanresponsedata.html#manufacturerdata" class="tsd-kind-icon">manufacturer<wbr>Data</a>
+								<a href="obnizcore.components.ble.hci.blediscoveryadvertisement.html#localname" class="tsd-kind-icon">local<wbr>Name</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="obnizcore.components.ble.hci.blescanresponsedata.html#serviceuuids" class="tsd-kind-icon">service<wbr>Uuids</a>
+								<a href="obnizcore.components.ble.hci.blediscoveryadvertisement.html#manufacturerdata" class="tsd-kind-icon">manufacturer<wbr>Data</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.components.ble.hci.blediscoveryadvertisement.html#raw" class="tsd-kind-icon">raw</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.components.ble.hci.blediscoveryadvertisement.html#scanresponseraw" class="tsd-kind-icon">scan<wbr>Response<wbr>Raw</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.components.ble.hci.blediscoveryadvertisement.html#servicedata" class="tsd-kind-icon">service<wbr>Data</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.components.ble.hci.blediscoveryadvertisement.html#servicesolicitationuuids" class="tsd-kind-icon">service<wbr>Solicitation<wbr>Uuids</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.components.ble.hci.blediscoveryadvertisement.html#serviceuuids" class="tsd-kind-icon">service<wbr>Uuids</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.components.ble.hci.blediscoveryadvertisement.html#solicitationserviceuuids" class="tsd-kind-icon">solicitation<wbr>Service<wbr>Uuids</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.components.ble.hci.blediscoveryadvertisement.html#txpowerlevel" class="tsd-kind-icon">tx<wbr>Power<wbr>Level</a>
 							</li>
 						</ul>
 					</li>
