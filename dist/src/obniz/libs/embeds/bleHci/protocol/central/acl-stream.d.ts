@@ -21,14 +21,14 @@ export default class AclStream extends EventEmitter<AclStreamEventTypes> {
     onSmpEndBinded: any;
     constructor(hci: Hci, handle: Handle, localAddressType: any, localAddress: any, remoteAddressType: any, remoteAddress: any);
     debugHandler: any;
-    encryptWait(options?: SmpEncryptOptions): Promise<string | number>;
+    encryptWait(options?: SmpEncryptOptions): Promise<void>;
     setEncryptOption(options: SmpEncryptOptions): void;
     write(cid: any, data: any): void;
     readWait(cid: any, flag: number, timeout?: number): Promise<Buffer>;
     push(cid: number, data: Buffer): void;
     end(): void;
     onSmpStkWait(stk: any): Promise<number | "refresh">;
-    onSmpLtkWait(ltk: any, random: Buffer, diversifier: Buffer): Promise<number | "refresh">;
+    onSmpLtkWait(ltk: Buffer, random: Buffer, diversifier: Buffer): Promise<number | "refresh">;
     onSmpFail(): void;
     onSmpEnd(): void;
     startEncrypt(option: any): void;

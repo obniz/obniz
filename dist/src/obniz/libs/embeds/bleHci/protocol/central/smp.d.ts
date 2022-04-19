@@ -19,6 +19,7 @@ export interface SmpEncryptOptions {
      * Stored pairing keys
      */
     keys?: string;
+    secureConnection?: boolean;
     /**
      * Callback function that call on pairing passkey required.
      */
@@ -58,11 +59,12 @@ declare class Smp extends EventEmitter<SmpEventTypes> {
     debugHandler: any;
     pairingWithKeyWait(key: string): Promise<number | "refresh">;
     setPairingOption(options: SmpEncryptOptions): void;
-    pairingWait(options?: SmpEncryptOptions): Promise<string | number>;
-    onAclStreamData(cid: any, data?: any): void;
+    pairingWait(options?: SmpEncryptOptions): Promise<number | "refresh" | undefined>;
+    onAclStreamData(cid: number, data: Buffer): void;
     onAclStreamEnd(): void;
-    handlePairingResponseWait(data: any): Promise<void>;
-    handlePairingConfirm(data: any): void;
+    handlePairingResponseLegacyPairingWait(): Promise<void>;
+    handlePairingResponseSecureConnectionWait(): Promise<Buffer>;
+    handlePairingConfirm(data: Buffer): void;
     handlePairingRandomWait(data: any): Promise<string | number>;
     handlePairingFailed(data: Buffer): void;
     handleEncryptInfo(data: any): void;
@@ -71,10 +73,15 @@ declare class Smp extends EventEmitter<SmpEventTypes> {
     handleSecurityRequest(data: any): void;
     setKeys(keyStringBase64: string): void;
     getKeys(): string;
+    private _generateAuthenticationRequirementsFlags;
     private sendPairingRequestWait;
     private isPasskeyMode;
+    private isSecureConnectionMode;
     private _readWait;
     private _pairingFailReject;
     private debug;
+    private parsePairingReqRsp;
+    private ioCapability2value;
+    private value2ioCapability;
 }
 export default Smp;
