@@ -51,7 +51,7 @@ class Smp extends eventemitter3_1.default {
         this._options = undefined;
         this.debugHandler = (...param) => {
             // do nothing.
-            console.log(...param);
+            // console.log(...param);
         };
         this._aclStream = aclStream;
         this._iat = Buffer.from([localAddressType === 'random' ? 0x01 : 0x00]);
