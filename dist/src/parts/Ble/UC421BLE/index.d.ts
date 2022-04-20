@@ -18,6 +18,26 @@ export interface UC421BLEWeightResult {
         second: number;
     };
 }
+export interface UC421BLEBodyCompositionResult {
+    bodyFatPercentage?: number;
+    basalMetabolismKj?: number;
+    muscleMass?: {
+        unit: 'kg' | 'lb';
+        value: number;
+    };
+    bodyWaterMass?: {
+        unit: 'kg' | 'lb';
+        value: number;
+    };
+    timestamp?: {
+        year: number;
+        month: number;
+        day: number;
+        hour: number;
+        minute: number;
+        second: number;
+    };
+}
 export declare type UserNo = number;
 export interface UC421BLEUserInfoData {
     email?: string;
@@ -43,6 +63,7 @@ export default class UC421BLE implements ObnizPartsBleInterface {
     updateUserInfoDataWait(userInfo: UC421BLEUserInfoData): Promise<void>;
     getUserInfoDataWait(): Promise<UC421BLEUserInfoData>;
     getWeightDataWait(): Promise<UC421BLEWeightResult[]>;
+    getBodyCompositionDataWait(): Promise<UC421BLEBodyCompositionResult[]>;
     private _toCcArr;
     private _getUserDataServiceWait;
     private _getWeightScaleServiceWait;
