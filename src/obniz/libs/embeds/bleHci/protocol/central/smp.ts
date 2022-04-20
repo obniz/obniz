@@ -124,7 +124,7 @@ class Smp extends EventEmitter<SmpEventTypes> {
 
   public debugHandler: any = (...param: any[]) => {
     // do nothing.
-    console.log(...param);
+    // console.log(...param);
   };
 
   public async pairingWithKeyWait(key: string) {
