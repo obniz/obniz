@@ -1,3 +1,4 @@
+import { EventEmitter } from 'eventemitter3';
 import { BleRemoteService, BleRemoteCharacteristic } from '../../../obniz';
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import ObnizPartsBleInterface, {
@@ -616,12 +617,18 @@ export default class UC421BLE implements ObnizPartsBleInterface {
     };
     if (!runningMode[mode]) throw new Error('Unknown mode passed in.');
 
+    const aAndDCustomNotificationChar = await this._getAAndDCustomNotificationCharWait();
     const aAndDCustomWriteReadChar = await this._getAAndDCustomWriteReadCharWait();
 
     const cmdDirectionPeriToObniz = 0x00;
     const cmdDirectionObnizToPeri = 0x01;
     const cmd = 0x05;
     const cmdId = 0x0a;
+
+    const evtEmitter = new EventEmitter();
+    const waitNotification = new Promise((res, rej) =>
+      evtEmitter.on('notified', res)
+    );
 
     const _analyzeData = (data: number[]) => {
       const lenNotifiedCmd = 0x04;
@@ -639,13 +646,16 @@ export default class UC421BLE implements ObnizPartsBleInterface {
         data[0] === lenNotifiedCmd &&
         data[1] === cmdDirectionPeriToObniz &&
         data[2] === cmd &&
-        data[3] === cmdId &&
-        data[4] !== resultOk
+        data[3] === cmdId
       ) {
-        throw new Error('Failed to change running mode.');
+        if (data[4] === resultOk) {
+          evtEmitter.emit('notified');
+        } else {
+          throw new Error('Failed to change running mode.');
+        }
       }
     };
-    await aAndDCustomWriteReadChar.registerNotifyWait(_analyzeData);
+    await aAndDCustomNotificationChar.registerNotifyWait(_analyzeData);
 
     const lenWriteCmd = 0x04;
     await aAndDCustomWriteReadChar.writeWait([
@@ -655,6 +665,8 @@ export default class UC421BLE implements ObnizPartsBleInterface {
       cmdId,
       runningMode[mode],
     ]);
+
+    await waitNotification;
   }
 
   public async setMedicalExamModeWait(mode: 'on' | 'off'): Promise<void> {
@@ -662,6 +674,7 @@ export default class UC421BLE implements ObnizPartsBleInterface {
     if (!(mode === 'on' || mode === 'off'))
       throw new Error("mode should be either 'on' or 'off'");
 
+    const aAndDCustomNotificationChar = await this._getAAndDCustomNotificationCharWait();
     const aAndDCustomWriteReadChar = await this._getAAndDCustomWriteReadCharWait();
 
     const cmdDirectionPeriToObniz = 0x00;
@@ -670,6 +683,11 @@ export default class UC421BLE implements ObnizPartsBleInterface {
     const cmdId = 0x28;
     const cmdOff = 0x00;
     const cmdOn = 0x01;
+
+    const evtEmitter = new EventEmitter();
+    const waitNotification = new Promise((res, rej) =>
+      evtEmitter.on('notified', res)
+    );
 
     const _analyzeData = (data: number[]) => {
       const lenNotifiedCmd = 0x04;
@@ -687,14 +705,17 @@ export default class UC421BLE implements ObnizPartsBleInterface {
         data[0] === lenNotifiedCmd &&
         data[1] === cmdDirectionPeriToObniz &&
         data[2] === cmd &&
-        data[3] === cmdId &&
-        data[4] !== resultOk
+        data[3] === cmdId
       ) {
-        throw new Error('Failed to set medical exam mode.');
+        if (data[4] === resultOk) {
+          evtEmitter.emit('notified');
+        } else {
+          throw new Error('Failed to set medical exam mode.');
+        }
       }
     };
 
-    await aAndDCustomWriteReadChar.registerNotifyWait(_analyzeData);
+    await aAndDCustomNotificationChar.registerNotifyWait(_analyzeData);
 
     const lenWriteCmd = 0x04;
     await aAndDCustomWriteReadChar.writeWait([
@@ -704,6 +725,34 @@ export default class UC421BLE implements ObnizPartsBleInterface {
       cmdId,
       mode === 'on' ? cmdOn : cmdOff,
     ]);
+
+    await waitNotification;
+  }
+
+  // temp use
+  public async getMedicalExamModeSettingWait(): Promise<
+    'on' | 'off' | 'failed'
+  > {
+    const aAndDCustomWriteReadChar = await this._getAAndDCustomWriteReadCharWait();
+    const aAndDCustomNotificationChar = await this._getAAndDCustomNotificationCharWait();
+
+    const evtEmitter = new EventEmitter();
+    const waitNotification = new Promise((res, rej) =>
+      evtEmitter.on('notified', res)
+    );
+
+    let setting: 'on' | 'off' | 'failed' = 'failed';
+    const _analyzeData = (data: number[]) => {
+      setting = data[4] === 0x01 ? 'on' : 'off';
+      evtEmitter.emit('notified');
+    };
+    await aAndDCustomNotificationChar.registerNotifyWait(_analyzeData);
+
+    await aAndDCustomWriteReadChar.writeWait([0x03, 0x01, 0x05, 0x29]);
+
+    await waitNotification;
+
+    return setting;
   }
 
   /*

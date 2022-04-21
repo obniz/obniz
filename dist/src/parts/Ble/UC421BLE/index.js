@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const eventemitter3_1 = require("eventemitter3");
 class UC421BLE {
     constructor(peripheral) {
         if (!peripheral || !UC421BLE.isDevice(peripheral)) {
@@ -467,11 +468,14 @@ class UC421BLE {
         };
         if (!runningMode[mode])
             throw new Error('Unknown mode passed in.');
+        const aAndDCustomNotificationChar = await this._getAAndDCustomNotificationCharWait();
         const aAndDCustomWriteReadChar = await this._getAAndDCustomWriteReadCharWait();
         const cmdDirectionPeriToObniz = 0x00;
         const cmdDirectionObnizToPeri = 0x01;
         const cmd = 0x05;
         const cmdId = 0x0a;
+        const evtEmitter = new eventemitter3_1.EventEmitter();
+        const waitNotification = new Promise((res, rej) => evtEmitter.on('notified', res));
         const _analyzeData = (data) => {
             const lenNotifiedCmd = 0x04;
             const resultOk = 0x00;
@@ -486,12 +490,16 @@ class UC421BLE {
                 data[0] === lenNotifiedCmd &&
                 data[1] === cmdDirectionPeriToObniz &&
                 data[2] === cmd &&
-                data[3] === cmdId &&
-                data[4] !== resultOk) {
-                throw new Error('Failed to change running mode.');
+                data[3] === cmdId) {
+                if (data[4] === resultOk) {
+                    evtEmitter.emit('notified');
+                }
+                else {
+                    throw new Error('Failed to change running mode.');
+                }
             }
         };
-        await aAndDCustomWriteReadChar.registerNotifyWait(_analyzeData);
+        await aAndDCustomNotificationChar.registerNotifyWait(_analyzeData);
         const lenWriteCmd = 0x04;
         await aAndDCustomWriteReadChar.writeWait([
             lenWriteCmd,
@@ -500,11 +508,13 @@ class UC421BLE {
             cmdId,
             runningMode[mode],
         ]);
+        await waitNotification;
     }
     async setMedicalExamModeWait(mode) {
         // NOTE: We have to go into 'setting' mode before configuring this mode.
         if (!(mode === 'on' || mode === 'off'))
             throw new Error("mode should be either 'on' or 'off'");
+        const aAndDCustomNotificationChar = await this._getAAndDCustomNotificationCharWait();
         const aAndDCustomWriteReadChar = await this._getAAndDCustomWriteReadCharWait();
         const cmdDirectionPeriToObniz = 0x00;
         const cmdDirectionObnizToPeri = 0x01;
@@ -512,6 +522,8 @@ class UC421BLE {
         const cmdId = 0x28;
         const cmdOff = 0x00;
         const cmdOn = 0x01;
+        const evtEmitter = new eventemitter3_1.EventEmitter();
+        const waitNotification = new Promise((res, rej) => evtEmitter.on('notified', res));
         const _analyzeData = (data) => {
             const lenNotifiedCmd = 0x04;
             const resultOk = 0x00;
@@ -526,12 +538,16 @@ class UC421BLE {
                 data[0] === lenNotifiedCmd &&
                 data[1] === cmdDirectionPeriToObniz &&
                 data[2] === cmd &&
-                data[3] === cmdId &&
-                data[4] !== resultOk) {
-                throw new Error('Failed to set medical exam mode.');
+                data[3] === cmdId) {
+                if (data[4] === resultOk) {
+                    evtEmitter.emit('notified');
+                }
+                else {
+                    throw new Error('Failed to set medical exam mode.');
+                }
             }
         };
-        await aAndDCustomWriteReadChar.registerNotifyWait(_analyzeData);
+        await aAndDCustomNotificationChar.registerNotifyWait(_analyzeData);
         const lenWriteCmd = 0x04;
         await aAndDCustomWriteReadChar.writeWait([
             lenWriteCmd,
@@ -540,6 +556,23 @@ class UC421BLE {
             cmdId,
             mode === 'on' ? cmdOn : cmdOff,
         ]);
+        await waitNotification;
+    }
+    // temp use
+    async getMedicalExamModeSettingWait() {
+        const aAndDCustomWriteReadChar = await this._getAAndDCustomWriteReadCharWait();
+        const aAndDCustomNotificationChar = await this._getAAndDCustomNotificationCharWait();
+        const evtEmitter = new eventemitter3_1.EventEmitter();
+        const waitNotification = new Promise((res, rej) => evtEmitter.on('notified', res));
+        let setting = 'failed';
+        const _analyzeData = (data) => {
+            setting = data[4] === 0x01 ? 'on' : 'off';
+            evtEmitter.emit('notified');
+        };
+        await aAndDCustomNotificationChar.registerNotifyWait(_analyzeData);
+        await aAndDCustomWriteReadChar.writeWait([0x03, 0x01, 0x05, 0x29]);
+        await waitNotification;
+        return setting;
     }
     /*
       PRIVSTE METHODS
