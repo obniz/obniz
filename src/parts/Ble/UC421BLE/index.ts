@@ -607,6 +607,105 @@ export default class UC421BLE implements ObnizPartsBleInterface {
     return results;
   }
 
+  public async changeRunningModeWait(
+    mode: 'measurement' | 'setting'
+  ): Promise<void> {
+    const runningMode = {
+      measurement: 0x02,
+      setting: 0x03,
+    };
+    if (!runningMode[mode]) throw new Error('Unknown mode passed in.');
+
+    const aAndDCustomWriteReadChar = await this._getAAndDCustomWriteReadCharWait();
+
+    const cmdDirectionPeriToObniz = 0x00;
+    const cmdDirectionObnizToPeri = 0x01;
+    const cmd = 0x05;
+    const cmdId = 0x0a;
+
+    const _analyzeData = (data: number[]) => {
+      const lenNotifiedCmd = 0x04;
+      const resultOk = 0x00;
+      const cmdOk = [
+        lenNotifiedCmd,
+        cmdDirectionPeriToObniz,
+        cmd,
+        cmdId,
+        resultOk,
+      ];
+
+      if (
+        data.length === cmdOk.length &&
+        data[0] === lenNotifiedCmd &&
+        data[1] === cmdDirectionPeriToObniz &&
+        data[2] === cmd &&
+        data[3] === cmdId &&
+        data[4] !== resultOk
+      ) {
+        throw new Error('Failed to change running mode.');
+      }
+    };
+    await aAndDCustomWriteReadChar.registerNotifyWait(_analyzeData);
+
+    const lenWriteCmd = 0x04;
+    await aAndDCustomWriteReadChar.writeWait([
+      lenWriteCmd,
+      cmdDirectionObnizToPeri,
+      cmd,
+      cmdId,
+      runningMode[mode],
+    ]);
+  }
+
+  public async setMedicalExamModeWait(mode: 'on' | 'off'): Promise<void> {
+    // NOTE: We have to go into 'setting' mode before configuring this mode.
+    if (!(mode === 'on' || mode === 'off'))
+      throw new Error("mode should be either 'on' or 'off'");
+
+    const aAndDCustomWriteReadChar = await this._getAAndDCustomWriteReadCharWait();
+
+    const cmdDirectionPeriToObniz = 0x00;
+    const cmdDirectionObnizToPeri = 0x01;
+    const cmd = 0x05;
+    const cmdId = 0x28;
+    const cmdOff = 0x00;
+    const cmdOn = 0x01;
+
+    const _analyzeData = (data: number[]) => {
+      const lenNotifiedCmd = 0x04;
+      const resultOk = 0x00;
+      const cmdOk = [
+        lenNotifiedCmd,
+        cmdDirectionPeriToObniz,
+        cmd,
+        cmdId,
+        resultOk,
+      ];
+
+      if (
+        data.length === cmdOk.length &&
+        data[0] === lenNotifiedCmd &&
+        data[1] === cmdDirectionPeriToObniz &&
+        data[2] === cmd &&
+        data[3] === cmdId &&
+        data[4] !== resultOk
+      ) {
+        throw new Error('Failed to set medical exam mode.');
+      }
+    };
+
+    await aAndDCustomWriteReadChar.registerNotifyWait(_analyzeData);
+
+    const lenWriteCmd = 0x04;
+    await aAndDCustomWriteReadChar.writeWait([
+      lenWriteCmd,
+      cmdDirectionObnizToPeri,
+      cmd,
+      cmdId,
+      mode === 'on' ? cmdOn : cmdOff,
+    ]);
+  }
+
   /*
     PRIVSTE METHODS
   */
@@ -639,6 +738,15 @@ export default class UC421BLE implements ObnizPartsBleInterface {
     if (!bodyCompositionService)
       throw new Error('Failed to get BodyCompositionService.');
     return bodyCompositionService;
+  }
+
+  private async _getAAndDCustomServiceWait(): Promise<BleRemoteService> {
+    const aAndDCustomService = this._peripheral!.getService(
+      '11127000-B364-11E4-AB27-0800200C9A66'
+    );
+    if (!aAndDCustomService)
+      throw new Error('Failed to get AAndDCustomService.');
+    return aAndDCustomService;
   }
 
   private async _getUserControlPointCharWait(): Promise<BleRemoteCharacteristic> {
@@ -713,5 +821,25 @@ export default class UC421BLE implements ObnizPartsBleInterface {
         'Failed to get Body Composition Measurement charactaristic.'
       );
     return bodyCompositionMeasurementChar;
+  }
+
+  private async _getAAndDCustomWriteReadCharWait(): Promise<BleRemoteCharacteristic> {
+    const aAndDCustomService = await this._getAAndDCustomServiceWait();
+    const aAndDCustomWriteReadChar = aAndDCustomService.getCharacteristic(
+      '11127001-B364-11E4-AB27-0800200C9A66'
+    );
+    if (!aAndDCustomWriteReadChar)
+      throw new Error('Failed to get A&D Custom Read Write charactaristic.');
+    return aAndDCustomWriteReadChar;
+  }
+
+  private async _getAAndDCustomNotificationCharWait(): Promise<BleRemoteCharacteristic> {
+    const aAndDCustomService = await this._getAAndDCustomServiceWait();
+    const aAndDCustomNotificationChar = aAndDCustomService.getCharacteristic(
+      '11127002-B364-11E4-AB27-0800200C9A66'
+    );
+    if (!aAndDCustomNotificationChar)
+      throw new Error('Failed to get A&D Custom Notification charactaristic.');
+    return aAndDCustomNotificationChar;
   }
 }
