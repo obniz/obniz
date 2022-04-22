@@ -15178,6 +15178,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
                 // eslint-disable-next-line @typescript-eslint/no-var-requires
                 const { createCanvas } = __webpack_require__("./dist/src/obniz/libs/webpackReplace/canvas.js");
                 this._canvas = createCanvas(this.width, this.height);
+                this._reset_canvas();
             }
             catch (e) {
                 return undefined;
@@ -15380,6 +15381,13 @@ exports.default = ObnizSwitch;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/hw/blewifi_gw2.json":
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"blewifi_gw2\",\"peripherals\":{\"io\":{\"units\":{}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{}},\"spi\":{\"units\":{}},\"i2c\":{\"units\":{}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":true,\"width\":200,\"height\":200,\"color_depth\":[1]},\"storage\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/hw/cc3235mod.json":
 /***/ (function(module) {
 
@@ -15463,6 +15471,9 @@ class HW {
         }
         else if (hw === 'esp32c3') {
             return __webpack_require__("./dist/src/obniz/libs/hw/esp32c3.json");
+        }
+        else if (hw === 'blewifi_gw2') {
+            return __webpack_require__("./dist/src/obniz/libs/hw/blewifi_gw2.json");
         }
         else {
             // default
@@ -75052,7 +75063,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
+module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
 
 /***/ }),
 
@@ -77952,7 +77963,9 @@ var global = getGlobal();
 module.exports = exports = global.fetch;
 
 // Needed for TypeScript and Webpack.
-exports.default = global.fetch.bind(global);
+if (global.fetch) {
+	exports.default = global.fetch.bind(global);
+}
 
 exports.Headers = global.Headers;
 exports.Request = global.Request;
