@@ -3916,8 +3916,9 @@ class ObnizParts extends ObnizConnection_1.default {
             .filter(([, m]) => m !== null)
             // Hiring with long library names
             .sort(([na], [nb]) => ((nb !== null && nb !== void 0 ? nb : '')).length - ((na !== null && na !== void 0 ? na : '')).length);
-        if (result.length === 0 || !result[0][0] || !result[0][1])
+        if (result.length === 0 || !result[0][0] || !result[0][1]) {
             return null;
+        }
         const [name, mode] = result[0];
         const parts = new _parts[name](peripheral, mode);
         return parts;
