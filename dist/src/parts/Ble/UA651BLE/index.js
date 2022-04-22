@@ -81,38 +81,33 @@ class UA651BLE {
      *
      * @returns data from the UA651BLE UA651BLEから受け取ったデータ
      */
-    async getDataWait() {
+    async getDataWait(pairingKeys) {
         if (!this._peripheral) {
             throw new Error('UA651BLE not found');
         }
-        if (!this._peripheral.connected) {
-            this._peripheral.ondisconnect = (reason) => {
-                if (this.ondisconnect) {
-                    this.ondisconnect(reason);
-                }
-            };
-            await this._peripheral.connectWait();
-        }
+        await this._peripheral.connectWait({
+            pairingOption: {
+                keys: pairingKeys,
+            },
+        });
         if (!this._peripheral) {
             throw new Error('UA651BLE not found');
         }
         const results = [];
         const { bloodPressureMeasurementChar, timeChar, customServiceChar, } = this._getChars();
+        const waitDisconnect = new Promise((resolve, reject) => {
+            if (!this._peripheral)
+                return;
+            this._peripheral.ondisconnect = (reason) => {
+                resolve(results);
+            };
+        });
         await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
         await this._writeTimeCharWait(this._timezoneOffsetMinute);
         await bloodPressureMeasurementChar.registerNotifyWait((data) => {
             results.push(this._analyzeData(data));
         });
-        return await new Promise((resolve, reject) => {
-            if (!this._peripheral)
-                return;
-            this._peripheral.ondisconnect = (reason) => {
-                resolve(results);
-                if (this.ondisconnect) {
-                    this.ondisconnect(reason);
-                }
-            };
-        });
+        return waitDisconnect;
     }
     _readSFLOAT_LE(buffer, index) {
         const data = buffer.readUInt16LE(index);
