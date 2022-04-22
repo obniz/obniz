@@ -117,6 +117,56 @@ export default class UA651BLE implements ObnizPartsBleInterface {
     this._timezoneOffsetMinute = timezoneOffsetMinute;
   }
 
+  public isPairingMode() {
+    if (!this._peripheral) {
+      throw new Error('UA651BLE not found');
+    }
+
+    // adv_data[2]はFlagsで、bit0が1の場合Pairng Mode(Limited Discoverable Mode)
+    if (this._peripheral.adv_data[2] === 5) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * Pair with the device
+   *
+   * デバイスとペアリング
+   *
+   * @returns pairing key ペアリングキー
+   */
+  public async pairingWait(): Promise<string | null> {
+    if (!this._peripheral) {
+      throw new Error('UA651BLE not found');
+    }
+    this._peripheral.ondisconnect = (reason: any) => {
+      if (typeof this.ondisconnect === 'function') {
+        this.ondisconnect(reason);
+      }
+    };
+    let key: string | null = null;
+    await this._peripheral.connectWait({
+      pairingOption: {
+        onPairedCallback: (pairingKey) => {
+          key = pairingKey;
+        },
+      },
+    });
+
+    const {
+      bloodPressureMeasurementChar,
+      timeChar,
+      customServiceChar,
+    } = this._getChars();
+
+    await this._writeTimeCharWait(this._timezoneOffsetMinute);
+
+    await customServiceChar.writeWait([2, 1, 3]); // disconnect req
+    return key;
+  }
+
   /**
    * Get data from the UA651BLE
    *
