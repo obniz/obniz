@@ -26,6 +26,7 @@ class ObnizConnection extends eventemitter3_1.default {
         this._waitForLocalConnectReadyTimer = null;
         this._sendPool = null;
         this._repeatInterval = 100;
+        this._isLoopProcessing = false;
         this._nextLoopTimeout = null;
         this._nextPingTimeout = null;
         this._nextAutoConnectLoopTimeout = null;
@@ -705,11 +706,11 @@ class ObnizConnection extends eventemitter3_1.default {
         this._startPingLoopInBackground();
         if (promise instanceof Promise) {
             promise.finally(() => {
-                this._startLoopInBackground();
+                this._startLoopInBackgroundWait();
             });
         }
         else {
-            this._startLoopInBackground();
+            this._startLoopInBackgroundWait();
         }
     }
     _print_debug(str) {
@@ -853,41 +854,27 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         return json;
     }
-    _startLoopInBackground() {
+    async _startLoopInBackgroundWait() {
         this._stopLoopInBackground();
-        this._nextLoopTimeout = setTimeout(async () => {
-            if (this._nextLoopTimeout) {
-                clearTimeout(this._nextLoopTimeout);
+        if (this._isLoopProcessing || this.connectionState !== 'connected') {
+            return;
+        }
+        this._isLoopProcessing = true;
+        try {
+            if (typeof this.onloop === 'function') {
+                await this.onloop(this);
             }
-            this._nextLoopTimeout = null;
-            if (this.connectionState !== 'connected') {
-                return;
-            }
-            try {
-                if (typeof this.onloop === 'function') {
-                    // await this.pingWait();
-                    const prom = this.onloop(this);
-                    if (prom instanceof Promise) {
-                        await prom;
-                    }
-                }
-            }
-            catch (e) {
-                console.error(`obniz.js handled Exception inside of obniz.onloop function`);
-                console.error(e);
-            }
-            finally {
-                if (this.connectionState === 'connected') {
-                    if (!this._nextLoopTimeout) {
-                        let interval = this._repeatInterval;
-                        if (typeof this.onloop !== 'function') {
-                            interval = 100;
-                        }
-                        this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), interval);
-                    }
-                }
-            }
-        }, 0);
+        }
+        catch (e) {
+            console.error(`obniz.js handled Exception inside of obniz.onloop function`);
+            console.error(e);
+        }
+        this._isLoopProcessing = false;
+        if (this._nextLoopTimeout || this.connectionState !== 'connected') {
+            return;
+        }
+        const interval = typeof this.onloop === 'function' ? this._repeatInterval : 100;
+        this._nextLoopTimeout = setTimeout(this._startLoopInBackgroundWait.bind(this), interval);
     }
     _stopLoopInBackground() {
         if (this._nextLoopTimeout) {
