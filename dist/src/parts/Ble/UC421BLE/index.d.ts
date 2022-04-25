@@ -57,6 +57,7 @@ export default class UC421BLE implements ObnizPartsBleInterface {
     _peripheral: BleRemotePeripheral | null;
     ondisconnect?: (reason: any) => void;
     constructor(peripheral: BleRemotePeripheral);
+    connectingWait(): Promise<void>;
     pairingWait(): Promise<string | null>;
     aquireNewUserNoWait(cc: number): Promise<UserNo>;
     authorizeUserWait(userNo: UserNo, cc: number): Promise<void>;

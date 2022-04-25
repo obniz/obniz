@@ -29706,6 +29706,17 @@ class UC421BLE {
     static isDevice(peripheral) {
         return (peripheral.localName && peripheral.localName.startsWith('UC-421BLE_'));
     }
+    async connectingWait() {
+        if (!this._peripheral) {
+            throw new Error('UC421BLE not found');
+        }
+        this._peripheral.ondisconnect = (reason) => {
+            if (typeof this.ondisconnect === 'function') {
+                this.ondisconnect(reason);
+            }
+        };
+        await this._peripheral.connectWait();
+    }
     async pairingWait() {
         if (!this._peripheral) {
             throw new Error('UC421BLE not found');
@@ -29770,6 +29781,8 @@ class UC421BLE {
         const responseValueErrorPayloadTooLong = 0x03;
         const responseValueErrorFailedThreeTimes = 0x04;
         const responseValueErrorCcMismatch = 0x05;
+        const evtEmitter = new eventemitter3_1.EventEmitter();
+        const waitNotification = new Promise((res, rej) => evtEmitter.on('notified', res));
         const _analyzeData = (data) => {
             const opcode = data[0];
             const requestedOpcode = data[1];
@@ -29777,6 +29790,7 @@ class UC421BLE {
             if (opcode === opcodeResponse && requestedOpcode === opcodeAuthorize) {
                 if (responseValue === responseValueSuccess) {
                     authorized = true;
+                    evtEmitter.emit('notified');
                 }
                 else {
                     switch (responseValue) {
@@ -29795,6 +29809,7 @@ class UC421BLE {
         const userControlPointChar = await this._getUserControlPointCharWait();
         await userControlPointChar.registerNotifyWait(_analyzeData);
         await userControlPointChar.writeWait([opcodeAuthorize, userNo, ...ccArr]);
+        await waitNotification;
         if (!authorized)
             throw new Error('Authorization failed.');
     }
@@ -29956,8 +29971,8 @@ class UC421BLE {
             const byteLenFlags = 1;
             offset += byteLenFlags;
             // get weight
-            const resolutionWeight = 0.005; // TODO: Get resolution.
-            const weightMass = buf.readUInt16LE(offset); // TODO: Error handling.
+            const resolutionWeight = measurementUnit === 'kg' ? 0.005 : 0.01;
+            const weightMass = buf.readUInt16LE(offset);
             const weight = weightMass * resolutionWeight;
             const byteLenWeight = 2;
             offset += byteLenWeight;
@@ -29982,7 +29997,6 @@ class UC421BLE {
                 const second = buf.readUInt8(offset);
                 const byteLenSecond = 1;
                 offset += byteLenSecond;
-                // TODO: Handle timestamp.
                 result.timestamp = {
                     year,
                     month,
@@ -29999,12 +30013,12 @@ class UC421BLE {
             }
             // get bmi
             if (bmiAndHeightPresent) {
-                const resolutionBmi = 0.1; // TODO: Get resolution.
+                const resolutionBmi = 0.1;
                 const bmiMass = buf.readUInt16LE(offset);
                 const bmi = bmiMass * resolutionBmi;
                 const byteLenBmi = 2;
                 offset += byteLenBmi;
-                const resolutionHeight = 0.1; // TODO: Get resolution.
+                const resolutionHeight = 0.1;
                 const heightMass = buf.readUInt16LE(offset);
                 const height = heightMass * resolutionHeight;
                 const byteLenHeight = 2;
@@ -30024,9 +30038,16 @@ class UC421BLE {
         if (!weightScaleCccd)
             throw new Error('Failed to get cccd of weight scale charactaristic.');
         // The data is notified as soon as cccd is enabled.
-        weightScaleCccd.writeWait([enableCccd]);
+        try {
+            await weightScaleCccd.writeWait([enableCccd]);
+        }
+        catch (e) {
+            // TODO: Error happens somehow...
+            // It says that authorization has not been done yet. But it's done actually and we can get the data as expected.
+            console.log('error of weightScaleCccd.writeWait', e);
+        }
         // NOTE: This is recommended in official doc, though don't know the necessity...
-        await new Promise((resolve, reject) => setTimeout(resolve, 500));
+        // await new Promise((resolve, reject) => setTimeout(resolve, 500));
         return await waitDisconnect;
     }
     async getBodyCompositionDataWait() {
@@ -30119,7 +30140,7 @@ class UC421BLE {
             }
             // mascle mass
             if (mascleMassPresent) {
-                const resolutionMascleMass = 0.005; // TODO: consider if the unit is 'kg' or 'lb'
+                const resolutionMascleMass = measurementUnit === 'kg' ? 0.005 : 0.01;
                 const mascleMassInt = buf.readUInt16LE(offset);
                 const mascleMassFloat = mascleMassInt * resolutionMascleMass;
                 const byteLenMascleMass = 2;
@@ -30128,7 +30149,7 @@ class UC421BLE {
             }
             // body water mass
             if (bodyWaterMassPresent) {
-                const resolutionBodyWaterMass = 0.005; // TODO: consider if the unit is 'kg' or 'lb'
+                const resolutionBodyWaterMass = measurementUnit === 'kg' ? 0.005 : 0.01;
                 const bodyWaterMassInt = buf.readUInt16LE(offset);
                 const bodyWaterMassFloat = bodyWaterMassInt * resolutionBodyWaterMass;
                 const byteLenBodyWaterMass = 2;
@@ -30267,6 +30288,7 @@ class UC421BLE {
     /*
       PRIVSTE METHODS
     */
+    // utils
     _toCcArr(cc) {
         if (cc < 0 || cc > 9999) {
             throw new Error('cc must be within the range from 0000 to 9999.');
@@ -30276,6 +30298,7 @@ class UC421BLE {
         const ccArr = Array.from(buf);
         return ccArr;
     }
+    // services
     async _getUserDataServiceWait() {
         const userDataService = this._peripheral.getService('181C');
         if (!userDataService)
@@ -30300,6 +30323,7 @@ class UC421BLE {
             throw new Error('Failed to get AAndDCustomService.');
         return aAndDCustomService;
     }
+    // charactaristics
     async _getUserControlPointCharWait() {
         const userDataService = await this._getUserDataServiceWait();
         const userControlPointChar = userDataService.getCharacteristic('2A9F');
