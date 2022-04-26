@@ -29763,6 +29763,7 @@ class UC421BLE {
             }
         };
         await this._peripheral.connectWait();
+        await this._setTimeWait();
     }
     async pairingWait() {
         if (!this._peripheral) {
@@ -29781,6 +29782,7 @@ class UC421BLE {
                 },
             },
         });
+        await this._setTimeWait();
         return key;
     }
     async aquireNewUserNoWait(cc) {
@@ -30339,7 +30341,64 @@ class UC421BLE {
         const ccArr = Array.from(buf);
         return ccArr;
     }
+    async _setTimeWait() {
+        const currentTimeChar = await this._getCurrentTimeCharWait();
+        const year = new Date().getFullYear();
+        const month = new Date().getMonth() + 1;
+        const day = new Date().getDate();
+        const hour = new Date().getHours();
+        const minute = new Date().getMinutes();
+        const second = new Date().getSeconds();
+        const dayOfWeek = 0x00; // fixed
+        const secondFraction = 0x00; // fixed
+        const adjustReason = 0b00000000; // 8 bits. Don't know the purpose of this param... No explanations about this on doc:(
+        const byteLenYear = 2;
+        const byteLenMonth = 1;
+        const byteLenDay = 1;
+        const byteLenHour = 1;
+        const byteLenMinute = 1;
+        const byteLenSecond = 1;
+        const byteLenDayOfWeek = 1;
+        const byteLenSecondFraction = 1;
+        const byteLenAdjustReason = 1;
+        const buf = Buffer.alloc(byteLenYear +
+            byteLenMonth +
+            byteLenDay +
+            byteLenHour +
+            byteLenMinute +
+            byteLenSecond +
+            byteLenDayOfWeek +
+            byteLenSecondFraction +
+            byteLenAdjustReason);
+        let offset = 0;
+        buf.writeUInt16LE(year, offset);
+        offset += byteLenYear;
+        buf.writeUInt8(month, offset);
+        offset += byteLenMonth;
+        buf.writeUInt8(day, offset);
+        offset += byteLenDay;
+        buf.writeUInt8(hour, offset);
+        offset += byteLenHour;
+        buf.writeUInt8(minute, offset);
+        offset += byteLenMinute;
+        buf.writeUInt8(second, offset);
+        offset += byteLenSecond;
+        buf.writeUInt8(dayOfWeek, offset);
+        offset += byteLenDayOfWeek;
+        buf.writeUInt8(secondFraction, offset);
+        offset += byteLenSecondFraction;
+        buf.writeUInt8(adjustReason, offset);
+        offset += byteLenAdjustReason;
+        const arrCurrentTime = Array.from(buf);
+        await currentTimeChar.writeWait(arrCurrentTime);
+    }
     // services
+    async _getCurrentTimeServiceWait() {
+        const currentTimeService = this._peripheral.getService('1805');
+        if (!currentTimeService)
+            throw new Error('Failed to get CurrentTimeService.');
+        return currentTimeService;
+    }
     async _getUserDataServiceWait() {
         const userDataService = this._peripheral.getService('181C');
         if (!userDataService)
@@ -30365,6 +30424,13 @@ class UC421BLE {
         return aAndDCustomService;
     }
     // charactaristics
+    async _getCurrentTimeCharWait() {
+        const currentTimeService = await this._getCurrentTimeServiceWait();
+        const currentTimeChar = currentTimeService.getCharacteristic('2A2B');
+        if (!currentTimeChar)
+            throw new Error('Failed to get CurrentTime charactaristic.');
+        return currentTimeChar;
+    }
     async _getUserControlPointCharWait() {
         const userDataService = await this._getUserDataServiceWait();
         const userControlPointChar = userDataService.getCharacteristic('2A9F');
