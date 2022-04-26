@@ -29947,13 +29947,18 @@ class UC421BLE {
         return userInfo;
     }
     async getWeightDataWait() {
-        const enableCccd = 0x01;
         const results = [];
-        const waitDisconnect = new Promise((resolve, reject) => {
-            if (!this._peripheral)
-                return;
-            this._peripheral.ondisconnect = (reason) => resolve(results);
-        });
+        const evtEmitter = new eventemitter3_1.EventEmitter();
+        const weightScaleChar = await this._getWeightScaleMeasurementCharWait();
+        const waitGettingAllData = new Promise((resolve, reject) => evtEmitter.on('gettingAllData', async () => {
+            await weightScaleChar.unregisterNotifyWait();
+            resolve(results);
+        }));
+        const emit = [
+            () => evtEmitter.emit('gettingAllData'),
+            500,
+        ];
+        let timeoutId = setTimeout(...emit);
         const _analyzeData = (data) => {
             const result = {};
             const buf = Buffer.from(data);
@@ -30029,26 +30034,12 @@ class UC421BLE {
             return result;
         };
         // weight
-        const weightScaleChar = await this._getWeightScaleMeasurementCharWait();
         await weightScaleChar.registerNotifyWait((data) => {
+            clearTimeout(timeoutId);
             results.push(_analyzeData(data));
+            timeoutId = setTimeout(...emit);
         });
-        // enable cccd
-        const weightScaleCccd = weightScaleChar.getDescriptor('2902');
-        if (!weightScaleCccd)
-            throw new Error('Failed to get cccd of weight scale charactaristic.');
-        // The data is notified as soon as cccd is enabled.
-        try {
-            await weightScaleCccd.writeWait([enableCccd]);
-        }
-        catch (e) {
-            // TODO: Error happens somehow...
-            // It says that authorization has not been done yet. But it's done actually and we can get the data as expected.
-            console.log('error of weightScaleCccd.writeWait', e);
-        }
-        // NOTE: This is recommended in official doc, though don't know the necessity...
-        // await new Promise((resolve, reject) => setTimeout(resolve, 500));
-        return await waitDisconnect;
+        return await waitGettingAllData;
     }
     async getBodyCompositionDataWait() {
         const enableCccd = 0x01;
@@ -30284,6 +30275,9 @@ class UC421BLE {
         await aAndDCustomWriteReadChar.writeWait([0x03, 0x01, 0x05, 0x29]);
         await waitNotification;
         return setting;
+    }
+    async disconnectWait() {
+        await this._peripheral.disconnectWait();
     }
     /*
       PRIVSTE METHODS

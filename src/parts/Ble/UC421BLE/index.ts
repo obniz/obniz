@@ -358,16 +358,25 @@ export default class UC421BLE implements ObnizPartsBleInterface {
   }
 
   public async getWeightDataWait(): Promise<UC421BLEWeightResult[]> {
-    const enableCccd = 0x01;
-
     const results: UC421BLEWeightResult[] = [];
 
-    const waitDisconnect = new Promise<UC421BLEWeightResult[]>(
-      (resolve, reject) => {
-        if (!this._peripheral) return;
-        this._peripheral!.ondisconnect = (reason: any) => resolve(results);
-      }
+    const evtEmitter = new EventEmitter();
+
+    const weightScaleChar = await this._getWeightScaleMeasurementCharWait();
+    const waitGettingAllData = new Promise<UC421BLEWeightResult[]>(
+      (resolve, reject) =>
+        evtEmitter.on('gettingAllData', async () => {
+          await weightScaleChar.unregisterNotifyWait();
+          resolve(results);
+        })
     );
+
+    const emit: [TimerHandler, number] = [
+      () => evtEmitter.emit('gettingAllData'),
+      500,
+    ];
+
+    let timeoutId = setTimeout(...emit);
 
     const _analyzeData = (data: number[]): UC421BLEWeightResult => {
       const result: UC421BLEWeightResult = {};
@@ -454,32 +463,17 @@ export default class UC421BLE implements ObnizPartsBleInterface {
         result.bmi = bmi;
         result.height = height;
       }
-
       return result;
     };
 
     // weight
-    const weightScaleChar = await this._getWeightScaleMeasurementCharWait();
     await weightScaleChar.registerNotifyWait((data: number[]) => {
+      clearTimeout(timeoutId);
       results.push(_analyzeData(data));
+      timeoutId = setTimeout(...emit);
     });
-    // enable cccd
-    const weightScaleCccd = weightScaleChar.getDescriptor('2902');
-    if (!weightScaleCccd)
-      throw new Error('Failed to get cccd of weight scale charactaristic.');
-    // The data is notified as soon as cccd is enabled.
-    try {
-      await weightScaleCccd.writeWait([enableCccd]);
-    } catch (e) {
-      // TODO: Error happens somehow...
-      // It says that authorization has not been done yet. But it's done actually and we can get the data as expected.
-      console.log('error of weightScaleCccd.writeWait', e);
-    }
 
-    // NOTE: This is recommended in official doc, though don't know the necessity...
-    // await new Promise((resolve, reject) => setTimeout(resolve, 500));
-
-    return await waitDisconnect;
+    return await waitGettingAllData;
   }
 
   public async getBodyCompositionDataWait(): Promise<
@@ -778,6 +772,10 @@ export default class UC421BLE implements ObnizPartsBleInterface {
     await waitNotification;
 
     return setting;
+  }
+
+  public async disconnectWait(): Promise<void> {
+    await this._peripheral!.disconnectWait();
   }
 
   /*

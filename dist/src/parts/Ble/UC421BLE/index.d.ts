@@ -68,6 +68,7 @@ export default class UC421BLE implements ObnizPartsBleInterface {
     changeRunningModeWait(mode: 'measurement' | 'setting'): Promise<void>;
     setMedicalExamModeWait(mode: 'on' | 'off'): Promise<void>;
     getMedicalExamModeSettingWait(): Promise<'on' | 'off' | 'failed'>;
+    disconnectWait(): Promise<void>;
     private _toCcArr;
     private _getUserDataServiceWait;
     private _getWeightScaleServiceWait;
