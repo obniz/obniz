@@ -29706,6 +29706,53 @@ class UC421BLE {
     static isDevice(peripheral) {
         return (peripheral.localName && peripheral.localName.startsWith('UC-421BLE_'));
     }
+    static getManufacturerSpecificDataFromAdv(peripheral) {
+        if (!this.isDevice(peripheral))
+            throw new Error('Peripheral is not UC-421BLE');
+        const manufacturerSpecificData = peripheral.manufacturerSpecificData;
+        let offset = 0;
+        const buf = Buffer.from(manufacturerSpecificData);
+        const companyCode = buf.readUInt16LE(offset);
+        const byteLenCompanyCode = 2;
+        offset += byteLenCompanyCode;
+        const opMode = buf.readUInt16LE(offset);
+        const bit0 = 0b000000001;
+        const bit1 = 0b000000010;
+        const bit2 = 0b000000100;
+        const bit3 = 0b000001000;
+        const bit4 = 0b000010000;
+        const bit5 = 0b000100000;
+        const bit6 = 0b001000000;
+        const bit7 = 0b010000000;
+        const bit8 = 0b100000000;
+        const runningMode = opMode & bit0 ? 'measurementWithoutApp' : 'measurementWithApp';
+        const isMedicalExamModeOn = opMode & bit1 ? true : false;
+        const isTimeSet = opMode & bit2 ? true : false;
+        const hasMemoryForUser1 = opMode & bit3 ? true : false;
+        const hasMemoryForUser2 = opMode & bit4 ? true : false;
+        const hasMemoryForUser3 = opMode & bit5 ? true : false;
+        const hasMemoryForUser4 = opMode & bit6 ? true : false;
+        const hasMemoryForUser5 = opMode & bit7 ? true : false;
+        const haveSeatsForNewUser = opMode & bit8 ? true : false;
+        const byteLenOpMode = 2;
+        offset += byteLenOpMode;
+        const id = buf.readUInt8(offset);
+        return {
+            companyCode,
+            opMode: {
+                runningMode,
+                isMedicalExamModeOn,
+                isTimeSet,
+                hasMemoryForUser1,
+                hasMemoryForUser2,
+                hasMemoryForUser3,
+                hasMemoryForUser4,
+                hasMemoryForUser5,
+                haveSeatsForNewUser,
+            },
+            id,
+        };
+    }
     async connectingWait() {
         if (!this._peripheral) {
             throw new Error('UC421BLE not found');

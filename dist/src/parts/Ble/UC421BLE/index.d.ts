@@ -51,9 +51,25 @@ export interface UC421BLEUserInfoData {
     gender?: 'male' | 'female' | 'unspecified';
     height?: number;
 }
+export interface UC421BLEManufacturerSpecificData {
+    companyCode: number;
+    opMode: {
+        runningMode: 'measurementWithApp' | 'measurementWithoutApp';
+        isMedicalExamModeOn: boolean;
+        isTimeSet: boolean;
+        hasMemoryForUser1: boolean;
+        hasMemoryForUser2: boolean;
+        hasMemoryForUser3: boolean;
+        hasMemoryForUser4: boolean;
+        hasMemoryForUser5: boolean;
+        haveSeatsForNewUser: boolean;
+    };
+    id: number;
+}
 export default class UC421BLE implements ObnizPartsBleInterface {
     static info(): ObnizPartsBleInfo;
     static isDevice(peripheral: BleRemotePeripheral): boolean | "" | null;
+    static getManufacturerSpecificDataFromAdv(peripheral: BleRemotePeripheral): UC421BLEManufacturerSpecificData;
     _peripheral: BleRemotePeripheral | null;
     ondisconnect?: (reason: any) => void;
     constructor(peripheral: BleRemotePeripheral);
