@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module ObnizCore
  */
+/// <reference types="node" />
 import EventEmitter from 'eventemitter3';
 import wsClient from 'ws';
 import WSCommand from './libs/wscommand';
@@ -55,6 +56,7 @@ export interface ConnectedNetwork {
  */
 declare type ObnizConnectionEventNamesInternal = '_close' | '_cloudConnectRedirect' | '_cloudConnectReady' | '_cloudConnectClose' | '_localConnectReady' | '_localConnectClose';
 export default abstract class ObnizConnection extends EventEmitter<ObnizConnectionEventNames | ObnizConnectionEventNamesInternal> {
+    private _measureTraffic;
     /**
      * obniz.js version
      */
@@ -402,7 +404,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     abstract pingWait(unixtime?: number, rand?: number, forceGlobalNetwork?: boolean): Promise<void>;
     protected _close(): void;
     protected wsOnOpen(): void;
-    protected wsOnMessage(data: any): void;
+    protected wsOnMessage(data: string | Buffer | ArrayBuffer | Buffer[]): void;
     protected wsOnClose(event: any): void;
     protected wsOnError(event: any): void;
     protected wsOnUnexpectedResponse(req: any, res?: any): void;
@@ -434,5 +436,28 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     private _startPingLoopInBackground;
     _stopPingLoopInBackground(): void;
     protected throwErrorIfOffline(): void;
+    startTrafficMeasurement(ceil?: number): void;
+    getTrafficData(): {
+        readByte: number;
+        readCount: number;
+        sendByte: number;
+        sendCount: number;
+        ceilByte: number;
+    };
+    resetTrafficMeasurement(): {
+        readByte: number;
+        readCount: number;
+        sendByte: number;
+        sendCount: number;
+        ceilByte: number;
+    } | null;
+    endTrafficMeasurement(): {
+        readByte: number;
+        readCount: number;
+        sendByte: number;
+        sendCount: number;
+        ceilByte: number;
+    };
+    private _calcTrafficSize;
 }
 export {};
