@@ -457,7 +457,8 @@ export default class UC421BLE implements ObnizPartsBleInterface {
 
     const evtEmitter = new EventEmitter();
     const waitGettingAllData = new Promise<UC421BLEWeightResult[]>((res, rej) =>
-      evtEmitter.on('assumeGettingAllData', async () => {
+      evtEmitter.on('noDataFor500ms', async () => {
+        // NOTE: We assume that all data has been notified if 500 ms passed with no data notified.
         await weightScaleChar.unregisterNotifyWait();
         res(results);
       })
@@ -552,16 +553,10 @@ export default class UC421BLE implements ObnizPartsBleInterface {
         return result;
       };
 
-      let timeout = setTimeout(
-        () => evtEmitter.emit('assumeGettingAllData'),
-        500
-      );
+      let timeout = setTimeout(() => evtEmitter.emit('noDataFor500ms'), 500);
       const resetTimeout = () => {
         clearTimeout(timeout);
-        timeout = setTimeout(
-          () => evtEmitter.emit('assumeGettingAllData'),
-          500
-        );
+        timeout = setTimeout(() => evtEmitter.emit('noDataFor500ms'), 500);
       };
 
       await weightScaleChar.registerNotifyWait((data: number[]) => {

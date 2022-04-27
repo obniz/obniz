@@ -318,7 +318,8 @@ class UC421BLE {
         const results = [];
         const weightScaleChar = await this._getWeightScaleMeasurementCharWait();
         const evtEmitter = new eventemitter3_1.EventEmitter();
-        const waitGettingAllData = new Promise((res, rej) => evtEmitter.on('assumeGettingAllData', async () => {
+        const waitGettingAllData = new Promise((res, rej) => evtEmitter.on('noDataFor500ms', async () => {
+            // NOTE: We assume that all data has been notified if 500 ms passed with no data notified.
             await weightScaleChar.unregisterNotifyWait();
             res(results);
         }));
@@ -397,10 +398,10 @@ class UC421BLE {
                 }
                 return result;
             };
-            let timeout = setTimeout(() => evtEmitter.emit('assumeGettingAllData'), 500);
+            let timeout = setTimeout(() => evtEmitter.emit('noDataFor500ms'), 500);
             const resetTimeout = () => {
                 clearTimeout(timeout);
-                timeout = setTimeout(() => evtEmitter.emit('assumeGettingAllData'), 500);
+                timeout = setTimeout(() => evtEmitter.emit('noDataFor500ms'), 500);
             };
             await weightScaleChar.registerNotifyWait((data) => {
                 resetTimeout();
