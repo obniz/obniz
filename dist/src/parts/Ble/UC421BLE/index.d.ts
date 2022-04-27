@@ -38,7 +38,10 @@ export interface UC421BLEBodyCompositionResult {
         second: number;
     };
 }
-export declare type UserNo = number;
+declare const arrUserNoType: readonly [1, 2, 3, 4, 5];
+declare const arrGuestUserNoType: readonly [99];
+export declare type UserNo = typeof arrUserNoType[number];
+export declare type GuestUserNo = typeof arrGuestUserNoType[number];
 export interface UC421BLEUserInfoData {
     email?: string;
     firstName?: string;
@@ -76,7 +79,7 @@ export default class UC421BLE implements ObnizPartsBleInterface {
     connectingWait(): Promise<void>;
     pairingWait(): Promise<string | null>;
     aquireNewUserNoWait(cc: number): Promise<UserNo>;
-    authorizeUserWait(userNo: UserNo, cc: number): Promise<void>;
+    authorizeUserWait(userNo: UserNo | GuestUserNo, cc: number): Promise<void>;
     updateUserInfoDataWait(userInfo: UC421BLEUserInfoData): Promise<void>;
     getUserInfoDataWait(): Promise<UC421BLEUserInfoData>;
     getWeightDataWait(): Promise<UC421BLEWeightResult[]>;
@@ -86,6 +89,7 @@ export default class UC421BLE implements ObnizPartsBleInterface {
     getMedicalExamModeSettingWait(): Promise<'on' | 'off' | 'failed'>;
     disconnectWait(): Promise<void>;
     private _toCcArr;
+    private _getAge;
     private _setTimeWait;
     private _getCurrentTimeServiceWait;
     private _getUserDataServiceWait;
@@ -105,3 +109,4 @@ export default class UC421BLE implements ObnizPartsBleInterface {
     private _getAAndDCustomWriteReadCharWait;
     private _getAAndDCustomNotificationCharWait;
 }
+export {};

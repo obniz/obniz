@@ -1,4 +1,5 @@
 import { EventEmitter } from 'eventemitter3';
+import moment from 'moment';
 import { BleRemoteService, BleRemoteCharacteristic } from '../../../obniz';
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import ObnizPartsBleInterface, {
@@ -46,7 +47,10 @@ export interface UC421BLEBodyCompositionResult {
   };
 }
 
-export type UserNo = number;
+const arrUserNoType = [1, 2, 3, 4, 5] as const;
+const arrGuestUserNoType = [99] as const;
+export type UserNo = typeof arrUserNoType[number];
+export type GuestUserNo = typeof arrGuestUserNoType[number];
 
 export interface UC421BLEUserInfoData {
   email?: string;
@@ -214,14 +218,14 @@ export default class UC421BLE implements ObnizPartsBleInterface {
 
       if (opcode === opcodeResponse && requestedOpcode === opcodeRegister) {
         if (responseValue === responseValueSuccess) {
-          const responseParameter = data[3];
+          const responseParameter = data[3] as UserNo;
           no = responseParameter;
         } else {
           switch (responseValue) {
             case responseValueErrorInvalidParameter:
               throw new Error('cc is too long or payload too big.');
             case responseValueErrorOperationFailed:
-              throw new Error('All user no are already used.');
+              throw new Error('All user No. are already used.');
             default:
               throw new Error('Unkonw response value.');
           }
@@ -237,9 +241,17 @@ export default class UC421BLE implements ObnizPartsBleInterface {
     return no;
   }
 
-  public async authorizeUserWait(userNo: UserNo, cc: number): Promise<void> {
+  public async authorizeUserWait(
+    userNo: UserNo | GuestUserNo,
+    cc: number
+  ): Promise<void> {
     let authorized = false;
 
+    const validUserNo = [...arrUserNoType, ...arrGuestUserNoType];
+    if (!validUserNo.includes(userNo))
+      throw new Error(
+        'UserNo must be 1-5 for a normal user or 99 for a guest user.'
+      );
     const ccArr = this._toCcArr(cc);
 
     const opcodeAuthorize = 0x02;
@@ -292,23 +304,19 @@ export default class UC421BLE implements ObnizPartsBleInterface {
   ): Promise<void> {
     const updateFunctions: (() => Promise<void>)[] = [];
 
-    // update check inputs
     if (userInfo.firstName) {
       const buf = Buffer.from(userInfo.firstName, 'utf-8');
-      const arr = Array.from(buf);
-      // validation, max 20 bytes
-      if (arr.length > 20)
+      if (buf.length > 20)
         throw new Error('The length of first name should be within 20 bytes.');
 
       const updateFirstName = async () => {
         const firstNameChar = await this._getFirstNameCharWait();
-        await firstNameChar.writeWait(arr);
+        await firstNameChar.writeWait(buf);
       };
       updateFunctions.push(updateFirstName);
     }
     if (userInfo.lastName) {
       const buf = Buffer.from(userInfo.lastName, 'utf-8');
-      // validation, max 20 bytes
       if (buf.length > 20)
         throw new Error('The length of last name should be within 20 bytes.');
 
@@ -320,7 +328,6 @@ export default class UC421BLE implements ObnizPartsBleInterface {
     }
     if (userInfo.email) {
       const buf = Buffer.from(userInfo.email, 'utf-8');
-      // validation, max 20 bytes
       if (buf.length > 16)
         throw new Error('The length of email should be within 16 bytes.');
 
@@ -332,7 +339,9 @@ export default class UC421BLE implements ObnizPartsBleInterface {
     }
     if (userInfo.birth) {
       const { year, month, day } = userInfo.birth;
-      // TODO: validate the values
+      const age = this._getAge(year, month, day);
+      if (age < 5 || age > 99)
+        throw new Error('Age must be within a range from 5 to 99.');
 
       // 1977, 1, 2 -> [0xB9, 0x07, 0x01, 0x02]
       const buf = Buffer.alloc(4);
@@ -370,9 +379,13 @@ export default class UC421BLE implements ObnizPartsBleInterface {
       updateFunctions.push(updateGender);
     }
     if (userInfo.height) {
+      const height = userInfo.height;
+      if (height < 90 || height > 220)
+        throw new Error('Height must be within a range from 90 to 220.');
+
       // Acceptable value ranges from 90 to 220.
       const buf = Buffer.alloc(2);
-      buf.writeUInt16LE(userInfo.height, 0);
+      buf.writeUInt16LE(height, 0);
       const arr = Array.from(buf);
 
       const updateHeight = async () => {
@@ -440,118 +453,124 @@ export default class UC421BLE implements ObnizPartsBleInterface {
   public async getWeightDataWait(): Promise<UC421BLEWeightResult[]> {
     const results: UC421BLEWeightResult[] = [];
 
-    const evtEmitter = new EventEmitter();
-
     const weightScaleChar = await this._getWeightScaleMeasurementCharWait();
-    const waitGettingAllData = new Promise<UC421BLEWeightResult[]>(
-      (resolve, reject) =>
-        evtEmitter.on('gettingAllData', async () => {
-          await weightScaleChar.unregisterNotifyWait();
-          resolve(results);
-        })
+
+    const evtEmitter = new EventEmitter();
+    const waitGettingAllData = new Promise<UC421BLEWeightResult[]>((res, rej) =>
+      evtEmitter.on('assumeGettingAllData', async () => {
+        await weightScaleChar.unregisterNotifyWait();
+        res(results);
+      })
     );
 
-    const emit: [TimerHandler, number] = [
-      () => evtEmitter.emit('gettingAllData'),
-      500,
-    ];
+    const startGettingAllData = async () => {
+      const _analyzeData = (data: number[]): UC421BLEWeightResult => {
+        const result: UC421BLEWeightResult = {};
 
-    let timeoutId = setTimeout(...emit);
+        const buf = Buffer.from(data);
+        let offset = 0;
 
-    const _analyzeData = (data: number[]): UC421BLEWeightResult => {
-      const result: UC421BLEWeightResult = {};
+        // flags
+        const flags = buf.readUInt8(offset);
+        const bit0 = 0b00000001;
+        const bit1 = 0b00000010;
+        const bit2 = 0b00000100;
+        const bit3 = 0b00001000;
+        const measurementUnit = flags & bit0 ? 'lb' : 'kg';
+        const timeStampPresent = flags & bit1 ? true : false;
+        const userIdPresent = flags & bit2 ? true : false;
+        const bmiAndHeightPresent = flags & bit3 ? true : false;
+        const byteLenFlags = 1;
+        offset += byteLenFlags;
 
-      const buf = Buffer.from(data);
-      let offset = 0;
+        // get weight
+        const resolutionWeight = measurementUnit === 'kg' ? 0.005 : 0.01;
+        const weightMass = buf.readUInt16LE(offset);
+        const weight = weightMass * resolutionWeight;
+        const byteLenWeight = 2;
+        offset += byteLenWeight;
 
-      // flags
-      const flags = buf.readUInt8(offset);
-      const bit0 = 0b00000001;
-      const bit1 = 0b00000010;
-      const bit2 = 0b00000100;
-      const bit3 = 0b00001000;
-      const measurementUnit = flags & bit0 ? 'lb' : 'kg';
-      const timeStampPresent = flags & bit1 ? true : false;
-      const userIdPresent = flags & bit2 ? true : false;
-      const bmiAndHeightPresent = flags & bit3 ? true : false;
-      const byteLenFlags = 1;
-      offset += byteLenFlags;
+        result.weight = { unit: measurementUnit, value: weight };
 
-      // get weight
-      const resolutionWeight = measurementUnit === 'kg' ? 0.005 : 0.01;
-      const weightMass = buf.readUInt16LE(offset);
-      const weight = weightMass * resolutionWeight;
-      const byteLenWeight = 2;
-      offset += byteLenWeight;
+        // get ts
+        if (timeStampPresent) {
+          const year = buf.readUInt16LE(offset);
+          const byteLenYear = 2;
+          offset += byteLenYear;
 
-      result.weight = { unit: measurementUnit, value: weight };
+          const month = buf.readUInt8(offset);
+          const byteLenMonth = 1;
+          offset += byteLenMonth;
 
-      // get ts
-      if (timeStampPresent) {
-        const year = buf.readUInt16LE(offset);
-        const byteLenYear = 2;
-        offset += byteLenYear;
+          const day = buf.readUInt8(offset);
+          const byteLenDay = 1;
+          offset += byteLenDay;
 
-        const month = buf.readUInt8(offset);
-        const byteLenMonth = 1;
-        offset += byteLenMonth;
+          const hour = buf.readUInt8(offset);
+          const byteLenHour = 1;
+          offset += byteLenHour;
 
-        const day = buf.readUInt8(offset);
-        const byteLenDay = 1;
-        offset += byteLenDay;
+          const minute = buf.readUInt8(offset);
+          const byteLenMinute = 1;
+          offset += byteLenMinute;
 
-        const hour = buf.readUInt8(offset);
-        const byteLenHour = 1;
-        offset += byteLenHour;
+          const second = buf.readUInt8(offset);
+          const byteLenSecond = 1;
+          offset += byteLenSecond;
 
-        const minute = buf.readUInt8(offset);
-        const byteLenMinute = 1;
-        offset += byteLenMinute;
+          result.timestamp = {
+            year,
+            month,
+            day,
+            hour,
+            minute,
+            second,
+          };
+        }
+        if (userIdPresent) {
+          // Do nothing about user id.
+          const byteLenUserId = 1;
+          offset += byteLenUserId;
+        }
+        // get bmi
+        if (bmiAndHeightPresent) {
+          const resolutionBmi = 0.1;
+          const bmiMass = buf.readUInt16LE(offset);
+          const bmi = bmiMass * resolutionBmi;
+          const byteLenBmi = 2;
+          offset += byteLenBmi;
 
-        const second = buf.readUInt8(offset);
-        const byteLenSecond = 1;
-        offset += byteLenSecond;
+          const resolutionHeight = 0.1;
+          const heightMass = buf.readUInt16LE(offset);
+          const height = heightMass * resolutionHeight;
+          const byteLenHeight = 2;
+          offset += byteLenHeight;
 
-        result.timestamp = {
-          year,
-          month,
-          day,
-          hour,
-          minute,
-          second,
-        };
-      }
-      if (userIdPresent) {
-        // Do nothing about user id.
-        const byteLenUserId = 1;
-        offset += byteLenUserId;
-      }
-      // get bmi
-      if (bmiAndHeightPresent) {
-        const resolutionBmi = 0.1;
-        const bmiMass = buf.readUInt16LE(offset);
-        const bmi = bmiMass * resolutionBmi;
-        const byteLenBmi = 2;
-        offset += byteLenBmi;
+          result.bmi = bmi;
+          result.height = height;
+        }
+        return result;
+      };
 
-        const resolutionHeight = 0.1;
-        const heightMass = buf.readUInt16LE(offset);
-        const height = heightMass * resolutionHeight;
-        const byteLenHeight = 2;
-        offset += byteLenHeight;
+      let timeout = setTimeout(
+        () => evtEmitter.emit('assumeGettingAllData'),
+        500
+      );
+      const resetTimeout = () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(
+          () => evtEmitter.emit('assumeGettingAllData'),
+          500
+        );
+      };
 
-        result.bmi = bmi;
-        result.height = height;
-      }
-      return result;
+      await weightScaleChar.registerNotifyWait((data: number[]) => {
+        resetTimeout();
+        results.push(_analyzeData(data));
+      });
     };
 
-    // weight
-    await weightScaleChar.registerNotifyWait((data: number[]) => {
-      clearTimeout(timeoutId);
-      results.push(_analyzeData(data));
-      timeoutId = setTimeout(...emit);
-    });
+    await startGettingAllData();
 
     return await waitGettingAllData;
   }
@@ -872,6 +891,16 @@ export default class UC421BLE implements ObnizPartsBleInterface {
     buf.writeUInt16LE(cc, 0);
     const ccArr = Array.from(buf);
     return ccArr;
+  }
+
+  private _getAge(year: number, month: number, day: number): number {
+    const yearStr = year.toString().padStart(4, '0');
+    const monthStr = month.toString().padStart(2, '0');
+    const dayStr = day.toString().padStart(2, '0');
+
+    const birthdayStr = `${yearStr}-${monthStr}-${dayStr}`;
+    const ageYears = moment().diff(birthdayStr, 'years');
+    return ageYears;
   }
 
   private async _setTimeWait(): Promise<void> {
