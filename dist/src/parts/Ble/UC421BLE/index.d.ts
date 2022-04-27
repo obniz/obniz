@@ -76,7 +76,7 @@ export default class UC421BLE implements ObnizPartsBleInterface {
     _peripheral: BleRemotePeripheral | null;
     ondisconnect?: (reason: any) => void;
     constructor(peripheral: BleRemotePeripheral);
-    connectingWait(): Promise<void>;
+    connectWait(): Promise<void>;
     pairingWait(): Promise<string | null>;
     aquireNewUserNoWait(cc: number): Promise<UserNo>;
     authorizeUserWait(userNo: UserNo | GuestUserNo, cc: number): Promise<void>;
@@ -86,7 +86,7 @@ export default class UC421BLE implements ObnizPartsBleInterface {
     getBodyCompositionDataWait(): Promise<UC421BLEBodyCompositionResult[]>;
     changeRunningModeWait(mode: 'measurement' | 'setting'): Promise<void>;
     setMedicalExamModeWait(mode: 'on' | 'off'): Promise<void>;
-    getMedicalExamModeSettingWait(): Promise<'on' | 'off' | 'failed'>;
+    isMedicalExamModeOnWait(): Promise<boolean>;
     disconnectWait(): Promise<void>;
     private _toCcArr;
     private _getAge;

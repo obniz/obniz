@@ -163,7 +163,7 @@ export default class UC421BLE implements ObnizPartsBleInterface {
     this._peripheral = peripheral;
   }
 
-  public async connectingWait(): Promise<void> {
+  public async connectWait(): Promise<void> {
     if (!this._peripheral) {
       throw new Error('UC421BLE not found');
     }
@@ -842,10 +842,7 @@ export default class UC421BLE implements ObnizPartsBleInterface {
     await waitNotification;
   }
 
-  // temp use
-  public async getMedicalExamModeSettingWait(): Promise<
-    'on' | 'off' | 'failed'
-  > {
+  public async isMedicalExamModeOnWait(): Promise<boolean> {
     const aAndDCustomWriteReadChar = await this._getAAndDCustomWriteReadCharWait();
     const aAndDCustomNotificationChar = await this._getAAndDCustomNotificationCharWait();
 
@@ -854,9 +851,9 @@ export default class UC421BLE implements ObnizPartsBleInterface {
       evtEmitter.on('notified', res)
     );
 
-    let setting: 'on' | 'off' | 'failed' = 'failed';
+    let isMedicalExamModeOn = false;
     const _analyzeData = (data: number[]) => {
-      setting = data[4] === 0x01 ? 'on' : 'off';
+      isMedicalExamModeOn = data[4] === 0x01 ? true : false;
       evtEmitter.emit('notified');
     };
     await aAndDCustomNotificationChar.registerNotifyWait(_analyzeData);
@@ -865,7 +862,7 @@ export default class UC421BLE implements ObnizPartsBleInterface {
 
     await waitNotification;
 
-    return setting;
+    return isMedicalExamModeOn;
   }
 
   public async disconnectWait(): Promise<void> {

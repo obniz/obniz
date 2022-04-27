@@ -69,7 +69,7 @@ class UC421BLE {
             id,
         };
     }
-    async connectingWait() {
+    async connectWait() {
         if (!this._peripheral) {
             throw new Error('UC421BLE not found');
         }
@@ -630,21 +630,20 @@ class UC421BLE {
         ]);
         await waitNotification;
     }
-    // temp use
-    async getMedicalExamModeSettingWait() {
+    async isMedicalExamModeOnWait() {
         const aAndDCustomWriteReadChar = await this._getAAndDCustomWriteReadCharWait();
         const aAndDCustomNotificationChar = await this._getAAndDCustomNotificationCharWait();
         const evtEmitter = new eventemitter3_1.EventEmitter();
         const waitNotification = new Promise((res, rej) => evtEmitter.on('notified', res));
-        let setting = 'failed';
+        let isMedicalExamModeOn = false;
         const _analyzeData = (data) => {
-            setting = data[4] === 0x01 ? 'on' : 'off';
+            isMedicalExamModeOn = data[4] === 0x01 ? true : false;
             evtEmitter.emit('notified');
         };
         await aAndDCustomNotificationChar.registerNotifyWait(_analyzeData);
         await aAndDCustomWriteReadChar.writeWait([0x03, 0x01, 0x05, 0x29]);
         await waitNotification;
-        return setting;
+        return isMedicalExamModeOn;
     }
     async disconnectWait() {
         await this._peripheral.disconnectWait();
