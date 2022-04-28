@@ -13,7 +13,7 @@ export interface UC421BLEWeightResult {
   weight?: {
     unit: 'kg' | 'lb';
     value: number;
-  };
+  } | null;
   bmi?: number;
   timestamp?: {
     year: number;
@@ -26,16 +26,16 @@ export interface UC421BLEWeightResult {
 }
 
 export interface UC421BLEBodyCompositionResult {
-  bodyFatPercentage?: number;
-  basalMetabolismKj?: number;
+  bodyFatPercentage?: number | null;
+  basalMetabolismKj?: number | null;
   muscleMass?: {
     unit: 'kg' | 'lb';
     value: number;
-  };
+  } | null;
   bodyWaterMass?: {
     unit: 'kg' | 'lb';
     value: number;
-  };
+  } | null;
 
   timestamp?: {
     year: number;
@@ -490,14 +490,19 @@ export default class UC421BLE implements ObnizPartsBleInterface {
         const byteLenFlags = 1;
         offset += byteLenFlags;
 
+        const errorValue = Buffer.from([0xff, 0xff]).readUInt16LE(0);
+
         // get weight
         const resolutionWeight = measurementUnit === 'kg' ? 0.005 : 0.01;
-        const weightMass = buf.readUInt16LE(offset);
-        const weight = weightMass * resolutionWeight;
+        const weightInt = buf.readUInt16LE(offset);
+        if (weightInt === errorValue) {
+          result.weight = null;
+        } else {
+          const weightFloat = weightInt * resolutionWeight;
+          result.weight = { unit: measurementUnit, value: weightFloat };
+        }
         const byteLenWeight = 2;
         offset += byteLenWeight;
-
-        result.weight = { unit: measurementUnit, value: weight };
 
         // get ts
         if (timeStampPresent) {
@@ -579,8 +584,6 @@ export default class UC421BLE implements ObnizPartsBleInterface {
   public async getBodyCompositionDataWait(): Promise<
     UC421BLEBodyCompositionResult[]
   > {
-    // const enableCccd = 0x01;
-
     const results: UC421BLEBodyCompositionResult[] = [];
 
     const bodyCompositionChar = await this._getBodyCompositionMeasurementCharWait();
@@ -597,7 +600,6 @@ export default class UC421BLE implements ObnizPartsBleInterface {
     const startGettingAllData = async () => {
       const _analyzeData = (data: number[]): UC421BLEBodyCompositionResult => {
         const result: UC421BLEBodyCompositionResult = {};
-        console.log(data);
 
         const buf = Buffer.from(data);
         let offset = 0;
@@ -636,15 +638,20 @@ export default class UC421BLE implements ObnizPartsBleInterface {
         const byteLenFlags = 2;
         offset += byteLenFlags;
 
+        const errorValue = Buffer.from([0xff, 0xff]).readUInt16LE(0);
+
         // body fat percentage
         const resolutionBodyFatPercentage = 0.1;
         const bodyFatPercentageInt = buf.readUInt16LE(offset);
-        const bodyFatPercentageFloat =
-          bodyFatPercentageInt * resolutionBodyFatPercentage;
+        if (bodyFatPercentageInt === errorValue) {
+          result.bodyFatPercentage = null;
+        } else {
+          const bodyFatPercentageFloat =
+            bodyFatPercentageInt * resolutionBodyFatPercentage;
+          result.bodyFatPercentage = bodyFatPercentageFloat;
+        }
         const byteLenBodyFatPercentage = 2;
         offset += byteLenBodyFatPercentage;
-
-        result.bodyFatPercentage = bodyFatPercentageFloat;
 
         // ts
         if (timeStampPresent) {
@@ -691,21 +698,30 @@ export default class UC421BLE implements ObnizPartsBleInterface {
         // basal metabolism
         if (basalMetabolismPresent) {
           const basalMetabolismInt = buf.readUInt16LE(offset); // resolution is 1
+          if (basalMetabolismInt === errorValue) {
+            result.basalMetabolismKj = null;
+          } else {
+            result.basalMetabolismKj = basalMetabolismInt;
+          }
           const byteLenBasalMetabolism = 2;
           offset += byteLenBasalMetabolism;
-
-          result.basalMetabolismKj = basalMetabolismInt;
         }
 
         // mascle mass
         if (mascleMassPresent) {
           const resolutionMascleMass = measurementUnit === 'kg' ? 0.005 : 0.01;
           const mascleMassInt = buf.readUInt16LE(offset);
-          const mascleMassFloat = mascleMassInt * resolutionMascleMass;
+          if (mascleMassInt === errorValue) {
+            result.muscleMass = null;
+          } else {
+            const mascleMassFloat = mascleMassInt * resolutionMascleMass;
+            result.muscleMass = {
+              unit: measurementUnit,
+              value: mascleMassFloat,
+            };
+          }
           const byteLenMascleMass = 2;
           offset += byteLenMascleMass;
-
-          result.muscleMass = { unit: measurementUnit, value: mascleMassFloat };
         }
 
         // body water mass
@@ -713,14 +729,18 @@ export default class UC421BLE implements ObnizPartsBleInterface {
           const resolutionBodyWaterMass =
             measurementUnit === 'kg' ? 0.005 : 0.01;
           const bodyWaterMassInt = buf.readUInt16LE(offset);
-          const bodyWaterMassFloat = bodyWaterMassInt * resolutionBodyWaterMass;
+          if (bodyWaterMassInt === errorValue) {
+            result.bodyWaterMass = null;
+          } else {
+            const bodyWaterMassFloat =
+              bodyWaterMassInt * resolutionBodyWaterMass;
+            result.bodyWaterMass = {
+              unit: measurementUnit,
+              value: bodyWaterMassFloat,
+            };
+          }
           const byteLenBodyWaterMass = 2;
           offset += byteLenBodyWaterMass;
-
-          result.bodyWaterMass = {
-            unit: measurementUnit,
-            value: bodyWaterMassFloat,
-          };
         }
 
         return result;
@@ -738,15 +758,8 @@ export default class UC421BLE implements ObnizPartsBleInterface {
       });
     };
 
-    // const bodyCompositionCccd = bodyCompositionChar.getDescriptor('2902');
-    // if (!bodyCompositionCccd)
-    //   throw new Error('Failed to get cccd of body composition charactaristic.');
-    // // The data is notified as soon as cccd is enabled.
-    // await bodyCompositionCccd.writeWait([enableCccd]);
-
     await startGettingAllData();
     return await waitGettingAllData;
-    // return results;
   }
 
   public async changeRunningModeWait(

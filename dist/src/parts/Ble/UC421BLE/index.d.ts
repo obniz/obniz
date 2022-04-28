@@ -7,7 +7,7 @@ export interface UC421BLEWeightResult {
     weight?: {
         unit: 'kg' | 'lb';
         value: number;
-    };
+    } | null;
     bmi?: number;
     timestamp?: {
         year: number;
@@ -19,16 +19,16 @@ export interface UC421BLEWeightResult {
     };
 }
 export interface UC421BLEBodyCompositionResult {
-    bodyFatPercentage?: number;
-    basalMetabolismKj?: number;
+    bodyFatPercentage?: number | null;
+    basalMetabolismKj?: number | null;
     muscleMass?: {
         unit: 'kg' | 'lb';
         value: number;
-    };
+    } | null;
     bodyWaterMass?: {
         unit: 'kg' | 'lb';
         value: number;
-    };
+    } | null;
     timestamp?: {
         year: number;
         month: number;

@@ -340,13 +340,19 @@ class UC421BLE {
                 const bmiAndHeightPresent = flags & bit3 ? true : false;
                 const byteLenFlags = 1;
                 offset += byteLenFlags;
+                const errorValue = Buffer.from([0xff, 0xff]).readUInt16LE(0);
                 // get weight
                 const resolutionWeight = measurementUnit === 'kg' ? 0.005 : 0.01;
-                const weightMass = buf.readUInt16LE(offset);
-                const weight = weightMass * resolutionWeight;
+                const weightInt = buf.readUInt16LE(offset);
+                if (weightInt === errorValue) {
+                    result.weight = null;
+                }
+                else {
+                    const weightFloat = weightInt * resolutionWeight;
+                    result.weight = { unit: measurementUnit, value: weightFloat };
+                }
                 const byteLenWeight = 2;
                 offset += byteLenWeight;
-                result.weight = { unit: measurementUnit, value: weight };
                 // get ts
                 if (timeStampPresent) {
                     const year = buf.readUInt16LE(offset);
@@ -412,7 +418,6 @@ class UC421BLE {
         return await waitGettingAllData;
     }
     async getBodyCompositionDataWait() {
-        // const enableCccd = 0x01;
         const results = [];
         const bodyCompositionChar = await this._getBodyCompositionMeasurementCharWait();
         const evtEmitter = new eventemitter3_1.EventEmitter();
@@ -423,7 +428,6 @@ class UC421BLE {
         const startGettingAllData = async () => {
             const _analyzeData = (data) => {
                 const result = {};
-                console.log(data);
                 const buf = Buffer.from(data);
                 let offset = 0;
                 // flags
@@ -458,13 +462,19 @@ class UC421BLE {
                 const multiplePacketPresent = flags & bit12 ? true : false; // not used
                 const byteLenFlags = 2;
                 offset += byteLenFlags;
+                const errorValue = Buffer.from([0xff, 0xff]).readUInt16LE(0);
                 // body fat percentage
                 const resolutionBodyFatPercentage = 0.1;
                 const bodyFatPercentageInt = buf.readUInt16LE(offset);
-                const bodyFatPercentageFloat = bodyFatPercentageInt * resolutionBodyFatPercentage;
+                if (bodyFatPercentageInt === errorValue) {
+                    result.bodyFatPercentage = null;
+                }
+                else {
+                    const bodyFatPercentageFloat = bodyFatPercentageInt * resolutionBodyFatPercentage;
+                    result.bodyFatPercentage = bodyFatPercentageFloat;
+                }
                 const byteLenBodyFatPercentage = 2;
                 offset += byteLenBodyFatPercentage;
-                result.bodyFatPercentage = bodyFatPercentageFloat;
                 // ts
                 if (timeStampPresent) {
                     const year = buf.readUInt16LE(offset);
@@ -502,30 +512,48 @@ class UC421BLE {
                 // basal metabolism
                 if (basalMetabolismPresent) {
                     const basalMetabolismInt = buf.readUInt16LE(offset); // resolution is 1
+                    if (basalMetabolismInt === errorValue) {
+                        result.basalMetabolismKj = null;
+                    }
+                    else {
+                        result.basalMetabolismKj = basalMetabolismInt;
+                    }
                     const byteLenBasalMetabolism = 2;
                     offset += byteLenBasalMetabolism;
-                    result.basalMetabolismKj = basalMetabolismInt;
                 }
                 // mascle mass
                 if (mascleMassPresent) {
                     const resolutionMascleMass = measurementUnit === 'kg' ? 0.005 : 0.01;
                     const mascleMassInt = buf.readUInt16LE(offset);
-                    const mascleMassFloat = mascleMassInt * resolutionMascleMass;
+                    if (mascleMassInt === errorValue) {
+                        result.muscleMass = null;
+                    }
+                    else {
+                        const mascleMassFloat = mascleMassInt * resolutionMascleMass;
+                        result.muscleMass = {
+                            unit: measurementUnit,
+                            value: mascleMassFloat,
+                        };
+                    }
                     const byteLenMascleMass = 2;
                     offset += byteLenMascleMass;
-                    result.muscleMass = { unit: measurementUnit, value: mascleMassFloat };
                 }
                 // body water mass
                 if (bodyWaterMassPresent) {
                     const resolutionBodyWaterMass = measurementUnit === 'kg' ? 0.005 : 0.01;
                     const bodyWaterMassInt = buf.readUInt16LE(offset);
-                    const bodyWaterMassFloat = bodyWaterMassInt * resolutionBodyWaterMass;
+                    if (bodyWaterMassInt === errorValue) {
+                        result.bodyWaterMass = null;
+                    }
+                    else {
+                        const bodyWaterMassFloat = bodyWaterMassInt * resolutionBodyWaterMass;
+                        result.bodyWaterMass = {
+                            unit: measurementUnit,
+                            value: bodyWaterMassFloat,
+                        };
+                    }
                     const byteLenBodyWaterMass = 2;
                     offset += byteLenBodyWaterMass;
-                    result.bodyWaterMass = {
-                        unit: measurementUnit,
-                        value: bodyWaterMassFloat,
-                    };
                 }
                 return result;
             };
@@ -539,14 +567,8 @@ class UC421BLE {
                 results.push(_analyzeData(data));
             });
         };
-        // const bodyCompositionCccd = bodyCompositionChar.getDescriptor('2902');
-        // if (!bodyCompositionCccd)
-        //   throw new Error('Failed to get cccd of body composition charactaristic.');
-        // // The data is notified as soon as cccd is enabled.
-        // await bodyCompositionCccd.writeWait([enableCccd]);
         await startGettingAllData();
         return await waitGettingAllData;
-        // return results;
     }
     async changeRunningModeWait(mode) {
         const runningMode = {
