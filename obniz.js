@@ -29874,37 +29874,37 @@ class UC421BLE {
     }
     async updateUserInfoDataWait(userInfo) {
         const updateFunctions = [];
-        if (userInfo.firstName) {
+        if (userInfo.firstName !== undefined) {
             const buf = Buffer.from(userInfo.firstName, 'utf-8');
-            if (buf.length > 20)
-                throw new Error('The length of first name should be within 20 bytes.');
+            if (buf.length > 20 || buf.length === 0)
+                throw new Error('The byte length of firstName should be a range from 1 to 20.');
             const updateFirstName = async () => {
                 const firstNameChar = await this._getFirstNameCharWait();
                 await firstNameChar.writeWait(buf);
             };
             updateFunctions.push(updateFirstName);
         }
-        if (userInfo.lastName) {
+        if (userInfo.lastName !== undefined) {
             const buf = Buffer.from(userInfo.lastName, 'utf-8');
-            if (buf.length > 20)
-                throw new Error('The length of last name should be within 20 bytes.');
+            if (buf.length > 20 || buf.length === 0)
+                throw new Error('The byte length of lastName should be a range from 1 to 20.');
             const updateLastName = async () => {
                 const lastNameChar = await this._getLastNameCharWait();
                 await lastNameChar.writeWait(buf);
             };
             updateFunctions.push(updateLastName);
         }
-        if (userInfo.email) {
+        if (userInfo.email !== undefined) {
             const buf = Buffer.from(userInfo.email, 'utf-8');
-            if (buf.length > 16)
-                throw new Error('The length of email should be within 16 bytes.');
+            if (buf.length > 16 || buf.length === 0)
+                throw new Error('The byte length of email should be a range from 1 to 16.');
             const updateEmail = async () => {
                 const emailChar = await this._getEmailCharWait();
                 await emailChar.writeWait(buf);
             };
             updateFunctions.push(updateEmail);
         }
-        if (userInfo.birth) {
+        if (userInfo.birth !== undefined) {
             const { year, month, day } = userInfo.birth;
             const age = this._getAge(year, month, day);
             if (age < 5 || age > 99)
@@ -29921,7 +29921,7 @@ class UC421BLE {
             };
             updateFunctions.push(updateBirth);
         }
-        if (userInfo.gender) {
+        if (userInfo.gender !== undefined) {
             const arr = new Array(1);
             switch (userInfo.gender) {
                 case 'male':
@@ -29943,7 +29943,7 @@ class UC421BLE {
             };
             updateFunctions.push(updateGender);
         }
-        if (userInfo.height) {
+        if (userInfo.height !== undefined) {
             const height = userInfo.height;
             if (height < 90 || height > 220)
                 throw new Error('Height must be within a range from 90 to 220.');
@@ -30103,126 +30103,141 @@ class UC421BLE {
         return await waitGettingAllData;
     }
     async getBodyCompositionDataWait() {
-        const enableCccd = 0x01;
+        // const enableCccd = 0x01;
         const results = [];
-        const _analyzeData = (data) => {
-            const result = {};
-            console.log(data);
-            const buf = Buffer.from(data);
-            let offset = 0;
-            // flags
-            const flags = buf.readUInt16LE(offset);
-            // add a leading 0 to make it more readable
-            const bit00 = 0b0000000000000001;
-            const bit01 = 0b0000000000000010;
-            const bit02 = 0b0000000000000100;
-            const bit03 = 0b0000000000001000;
-            const bit04 = 0b0000000000010000;
-            const bit05 = 0b0000000000100000;
-            const bit06 = 0b0000000001000000;
-            const bit07 = 0b0000000010000000;
-            const bit08 = 0b0000000100000000;
-            const bit09 = 0b0000001000000000;
-            const bit10 = 0b0000010000000000;
-            const bit11 = 0b0000100000000000;
-            const bit12 = 0b0001000000000000;
-            // some flags are not used but write them to make it more readable
-            const measurementUnit = flags & bit00 ? 'lb' : 'kg';
-            const timeStampPresent = flags & bit01 ? true : false;
-            const userIdPresent = flags & bit02 ? true : false;
-            const basalMetabolismPresent = flags & bit03 ? true : false;
-            const musclePercentagePresent = flags & bit04 ? true : false; // not used
-            const mascleMassPresent = flags & bit05 ? true : false;
-            const fatFreeMassPresent = flags & bit06 ? true : false; // not used
-            const softLeanMassPresent = flags & bit07 ? true : false; // not used
-            const bodyWaterMassPresent = flags & bit08 ? true : false;
-            const impedancePresent = flags & bit09 ? true : false; // not used
-            const weightPresent = flags & bit10 ? true : false; // not used
-            const heightPresent = flags & bit11 ? true : false; // not used
-            const multiplePacketPresent = flags & bit12 ? true : false; // not used
-            const byteLenFlags = 2;
-            offset += byteLenFlags;
-            // body fat percentage
-            const resolutionBodyFatPercentage = 0.1;
-            const bodyFatPercentageInt = buf.readUInt16LE(offset);
-            const bodyFatPercentageFloat = bodyFatPercentageInt * resolutionBodyFatPercentage;
-            const byteLenBodyFatPercentage = 2;
-            offset += byteLenBodyFatPercentage;
-            result.bodyFatPercentage = bodyFatPercentageFloat;
-            // ts
-            if (timeStampPresent) {
-                const year = buf.readUInt16LE(offset);
-                const byteLenYear = 2;
-                offset += byteLenYear;
-                const month = buf.readUInt8(offset);
-                const byteLenMonth = 1;
-                offset += byteLenMonth;
-                const day = buf.readUInt8(offset);
-                const byteLenDay = 1;
-                offset += byteLenDay;
-                const hour = buf.readUInt8(offset);
-                const byteLenHour = 1;
-                offset += byteLenHour;
-                const minute = buf.readUInt8(offset);
-                const byteLenMinute = 1;
-                offset += byteLenMinute;
-                const second = buf.readUInt8(offset);
-                const byteLenSecond = 1;
-                offset += byteLenSecond;
-                result.timestamp = {
-                    year,
-                    month,
-                    day,
-                    hour,
-                    minute,
-                    second,
-                };
-            }
-            if (userIdPresent) {
-                // Do nothing about user id.
-                const byteLenUserId = 1;
-                offset += byteLenUserId;
-            }
-            // basal metabolism
-            if (basalMetabolismPresent) {
-                const basalMetabolismInt = buf.readUInt16LE(offset); // resolution is 1
-                const byteLenBasalMetabolism = 2;
-                offset += byteLenBasalMetabolism;
-                result.basalMetabolismKj = basalMetabolismInt;
-            }
-            // mascle mass
-            if (mascleMassPresent) {
-                const resolutionMascleMass = measurementUnit === 'kg' ? 0.005 : 0.01;
-                const mascleMassInt = buf.readUInt16LE(offset);
-                const mascleMassFloat = mascleMassInt * resolutionMascleMass;
-                const byteLenMascleMass = 2;
-                offset += byteLenMascleMass;
-                result.muscleMass = { unit: measurementUnit, value: mascleMassFloat };
-            }
-            // body water mass
-            if (bodyWaterMassPresent) {
-                const resolutionBodyWaterMass = measurementUnit === 'kg' ? 0.005 : 0.01;
-                const bodyWaterMassInt = buf.readUInt16LE(offset);
-                const bodyWaterMassFloat = bodyWaterMassInt * resolutionBodyWaterMass;
-                const byteLenBodyWaterMass = 2;
-                offset += byteLenBodyWaterMass;
-                result.bodyWaterMass = {
-                    unit: measurementUnit,
-                    value: bodyWaterMassFloat,
-                };
-            }
-            return result;
-        };
         const bodyCompositionChar = await this._getBodyCompositionMeasurementCharWait();
-        await bodyCompositionChar.registerNotifyWait((data) => {
-            results.push(_analyzeData(data));
-        });
-        const bodyCompositionCccd = bodyCompositionChar.getDescriptor('2902');
-        if (!bodyCompositionCccd)
-            throw new Error('Failed to get cccd of body composition charactaristic.');
-        // The data is notified as soon as cccd is enabled.
-        await bodyCompositionCccd.writeWait([enableCccd]);
-        return results;
+        const evtEmitter = new eventemitter3_1.EventEmitter();
+        const waitGettingAllData = new Promise((res, rej) => evtEmitter.on('noDataFor500ms', async () => {
+            await bodyCompositionChar.unregisterNotifyWait();
+            res(results);
+        }));
+        const startGettingAllData = async () => {
+            const _analyzeData = (data) => {
+                const result = {};
+                console.log(data);
+                const buf = Buffer.from(data);
+                let offset = 0;
+                // flags
+                const flags = buf.readUInt16LE(offset);
+                // add a leading 0 to make it more readable
+                const bit00 = 0b0000000000000001;
+                const bit01 = 0b0000000000000010;
+                const bit02 = 0b0000000000000100;
+                const bit03 = 0b0000000000001000;
+                const bit04 = 0b0000000000010000;
+                const bit05 = 0b0000000000100000;
+                const bit06 = 0b0000000001000000;
+                const bit07 = 0b0000000010000000;
+                const bit08 = 0b0000000100000000;
+                const bit09 = 0b0000001000000000;
+                const bit10 = 0b0000010000000000;
+                const bit11 = 0b0000100000000000;
+                const bit12 = 0b0001000000000000;
+                // some flags are not used but write them to make it more readable
+                const measurementUnit = flags & bit00 ? 'lb' : 'kg';
+                const timeStampPresent = flags & bit01 ? true : false;
+                const userIdPresent = flags & bit02 ? true : false;
+                const basalMetabolismPresent = flags & bit03 ? true : false;
+                const musclePercentagePresent = flags & bit04 ? true : false; // not used
+                const mascleMassPresent = flags & bit05 ? true : false;
+                const fatFreeMassPresent = flags & bit06 ? true : false; // not used
+                const softLeanMassPresent = flags & bit07 ? true : false; // not used
+                const bodyWaterMassPresent = flags & bit08 ? true : false;
+                const impedancePresent = flags & bit09 ? true : false; // not used
+                const weightPresent = flags & bit10 ? true : false; // not used
+                const heightPresent = flags & bit11 ? true : false; // not used
+                const multiplePacketPresent = flags & bit12 ? true : false; // not used
+                const byteLenFlags = 2;
+                offset += byteLenFlags;
+                // body fat percentage
+                const resolutionBodyFatPercentage = 0.1;
+                const bodyFatPercentageInt = buf.readUInt16LE(offset);
+                const bodyFatPercentageFloat = bodyFatPercentageInt * resolutionBodyFatPercentage;
+                const byteLenBodyFatPercentage = 2;
+                offset += byteLenBodyFatPercentage;
+                result.bodyFatPercentage = bodyFatPercentageFloat;
+                // ts
+                if (timeStampPresent) {
+                    const year = buf.readUInt16LE(offset);
+                    const byteLenYear = 2;
+                    offset += byteLenYear;
+                    const month = buf.readUInt8(offset);
+                    const byteLenMonth = 1;
+                    offset += byteLenMonth;
+                    const day = buf.readUInt8(offset);
+                    const byteLenDay = 1;
+                    offset += byteLenDay;
+                    const hour = buf.readUInt8(offset);
+                    const byteLenHour = 1;
+                    offset += byteLenHour;
+                    const minute = buf.readUInt8(offset);
+                    const byteLenMinute = 1;
+                    offset += byteLenMinute;
+                    const second = buf.readUInt8(offset);
+                    const byteLenSecond = 1;
+                    offset += byteLenSecond;
+                    result.timestamp = {
+                        year,
+                        month,
+                        day,
+                        hour,
+                        minute,
+                        second,
+                    };
+                }
+                if (userIdPresent) {
+                    // Do nothing about user id.
+                    const byteLenUserId = 1;
+                    offset += byteLenUserId;
+                }
+                // basal metabolism
+                if (basalMetabolismPresent) {
+                    const basalMetabolismInt = buf.readUInt16LE(offset); // resolution is 1
+                    const byteLenBasalMetabolism = 2;
+                    offset += byteLenBasalMetabolism;
+                    result.basalMetabolismKj = basalMetabolismInt;
+                }
+                // mascle mass
+                if (mascleMassPresent) {
+                    const resolutionMascleMass = measurementUnit === 'kg' ? 0.005 : 0.01;
+                    const mascleMassInt = buf.readUInt16LE(offset);
+                    const mascleMassFloat = mascleMassInt * resolutionMascleMass;
+                    const byteLenMascleMass = 2;
+                    offset += byteLenMascleMass;
+                    result.muscleMass = { unit: measurementUnit, value: mascleMassFloat };
+                }
+                // body water mass
+                if (bodyWaterMassPresent) {
+                    const resolutionBodyWaterMass = measurementUnit === 'kg' ? 0.005 : 0.01;
+                    const bodyWaterMassInt = buf.readUInt16LE(offset);
+                    const bodyWaterMassFloat = bodyWaterMassInt * resolutionBodyWaterMass;
+                    const byteLenBodyWaterMass = 2;
+                    offset += byteLenBodyWaterMass;
+                    result.bodyWaterMass = {
+                        unit: measurementUnit,
+                        value: bodyWaterMassFloat,
+                    };
+                }
+                return result;
+            };
+            let timeout = setTimeout(() => evtEmitter.emit('noDataFor500ms'), 500);
+            const resetTimeout = () => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => evtEmitter.emit('noDataFor500ms'), 500);
+            };
+            await bodyCompositionChar.registerNotifyWait((data) => {
+                resetTimeout();
+                results.push(_analyzeData(data));
+            });
+        };
+        // const bodyCompositionCccd = bodyCompositionChar.getDescriptor('2902');
+        // if (!bodyCompositionCccd)
+        //   throw new Error('Failed to get cccd of body composition charactaristic.');
+        // // The data is notified as soon as cccd is enabled.
+        // await bodyCompositionCccd.writeWait([enableCccd]);
+        await startGettingAllData();
+        return await waitGettingAllData;
+        // return results;
     }
     async changeRunningModeWait(mode) {
         const runningMode = {
@@ -30353,11 +30368,14 @@ class UC421BLE {
         return ccArr;
     }
     _getAge(year, month, day) {
+        // NOTE: Add leading zeros if needed.
         const yearStr = year.toString().padStart(4, '0');
         const monthStr = month.toString().padStart(2, '0');
         const dayStr = day.toString().padStart(2, '0');
         const birthdayStr = `${yearStr}-${monthStr}-${dayStr}`;
         const ageYears = moment_1.default().diff(birthdayStr, 'years');
+        if (Number.isNaN(ageYears))
+            throw new Error('Invalid birthday recieved.');
         return ageYears;
     }
     async _setTimeWait() {
