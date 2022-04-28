@@ -29731,7 +29731,7 @@ class UC421BLE {
         return (peripheral.localName && peripheral.localName.startsWith('UC-421BLE_'));
     }
     /**
-     * Extract a manufacturer specific data from an advertisement sent from UC421BLE
+     * Extract a manufacturer specific data from an advertisement sent from UC421BLE.
      *
      * UC421BLEから送られたアドバタイズメントからmanufacturer specific dataを取得する
      *

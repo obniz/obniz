@@ -228,7 +228,7 @@ export default class UC421BLE implements ObnizPartsBleInterface {
      */
     static isDevice(peripheral: BleRemotePeripheral): boolean | "" | null;
     /**
-     * Extract a manufacturer specific data from an advertisement sent from UC421BLE
+     * Extract a manufacturer specific data from an advertisement sent from UC421BLE.
      *
      * UC421BLEから送られたアドバタイズメントからmanufacturer specific dataを取得する
      *
