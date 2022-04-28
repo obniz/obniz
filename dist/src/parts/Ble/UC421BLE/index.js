@@ -1,4 +1,9 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module Parts.UC421BLE
+ */
+/* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -7,6 +12,9 @@ const eventemitter3_1 = require("eventemitter3");
 const moment_1 = __importDefault(require("moment"));
 const arrUserNoType = [1, 2, 3, 4, 5];
 const arrGuestUserNoType = [99];
+/**
+ * UC421BLEを管理するクラス
+ */
 class UC421BLE {
     constructor(peripheral) {
         if (!peripheral || !UC421BLE.isDevice(peripheral)) {
@@ -19,9 +27,27 @@ class UC421BLE {
             name: 'UC421BLE',
         };
     }
+    /**
+     * Judge if the peripheral is UC421BLE or not
+     *
+     * ペリフェラルがUC421BLEかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Judgement if the peripheral is UC421BLE or not ペリフェラルがUC421BLEかどうかの判定
+     */
     static isDevice(peripheral) {
         return (peripheral.localName && peripheral.localName.startsWith('UC-421BLE_'));
     }
+    /**
+     * Extract a manufacturer specific data from an advertisement sent from UC421BLE
+     *
+     * UC421BLEから送られたアドバタイズメントからmanufacturer specific dataを取得する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns manufacturer specific data
+     */
     static getManufacturerSpecificDataFromAdv(peripheral) {
         if (!this.isDevice(peripheral))
             throw new Error('Peripheral is not UC-421BLE');
@@ -69,6 +95,11 @@ class UC421BLE {
             id,
         };
     }
+    /**
+     * Connect to the peripheral without a pairing
+     *
+     * ペアリングせずにペリフェラルに接続する
+     */
     async connectWait() {
         if (!this._peripheral) {
             throw new Error('UC421BLE not found');
@@ -81,6 +112,13 @@ class UC421BLE {
         await this._peripheral.connectWait();
         await this._setTimeWait();
     }
+    /**
+     * Do the pairing with the peripheral
+     *
+     * ペリフェラルとペアリングする
+     *
+     * @returns pairing key ペアリングキー
+     */
     async pairingWait() {
         if (!this._peripheral) {
             throw new Error('UC421BLE not found');
@@ -101,6 +139,15 @@ class UC421BLE {
         await this._setTimeWait();
         return key;
     }
+    /**
+     * Aquire a new user No
+     *
+     * 新規ユーザNoを取得
+     *
+     * @param cc cc is short for 'consent code' and used along with the user No when authorizing a user. It should be a range from 0 to 9999. ccは'consent code'の略でユーザ認証の際にuser Noと一緒に使う。0 ~ 9999で指定する。
+     *
+     * @returns user No ranging from 1 to 5. 1 ~ 5のユーザNo
+     */
     async aquireNewUserNoWait(cc) {
         const ccArr = this._toCcArr(cc);
         let no = null;
@@ -137,6 +184,15 @@ class UC421BLE {
             throw new Error('Failed to register new user.');
         return no;
     }
+    /**
+     * Authorize a user
+     *
+     * ユーザ認証
+     *
+     * @param  userNo User No aquired from the aquireNewUserNoWait function. But when you authorizing a guest user, pass in 99. aquireNewUserNoWait関数で取得したユーザNo。ただしゲストユーザの認証を行う場合は99を指定。
+     * @param cc cc that you have passed in as an argument when calling the aquireNewUserNoWait function. But when you authorizing a guest user, pass in 9999. aquireNewUserNoWait関数で引数に指定したcc。ただしゲストユーザの認証を行う際は9999を指定。
+     *
+     */
     async authorizeUserWait(userNo, cc) {
         let authorized = false;
         const validUserNo = [...arrUserNoType, ...arrGuestUserNoType];
