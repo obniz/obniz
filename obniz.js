@@ -29928,6 +29928,18 @@ class UC421BLE {
         if (!authorized)
             throw new Error('Authorization failed.');
     }
+    /**
+     * Update a user info. After aquiring a new user No, it's recommended to register an initial user info attached to it.
+     * To use this function, you first need to authorize a user by calling authorizeUserWait function.
+     * After that, you can update a personal info of the user.
+     *
+     * ユーザ情報更新。新規ユーザNoを取得した後は、この関数でユーザ情報を登録することを推奨。
+     * この関数を使うにはまずauthorizeUserWait関数を使ってユーザ認証を行う必要がある。
+     * 認証後、そのユーザのユーザ情報を更新できるようになる。
+     *
+     * @param  userInfo UC421BLEUserInfoData object. UC421BLEUserInfoDataオブジェクト
+     *
+     */
     async updateUserInfoDataWait(userInfo) {
         const updateFunctions = [];
         if (userInfo.firstName !== undefined) {
@@ -30018,6 +30030,15 @@ class UC421BLE {
             await updateFunc();
         }
     }
+    /**
+     * Get a user info. To use this function, you first need to authorize a user by calling authorizeUserWait function.
+     * Then you can get a personal info of the user.
+     *
+     * ユーザ情報取得。この関数を使うにはまずauthorizeUserWait関数でユーザ認証を行う必要がある。
+     * 認証後、そのユーザのユーザ情報を取得できるようになる。
+     *
+     * @returns UC421BLEUserInfoData object. UC421BLEUserInfoDataオブジェクト。
+     */
     async getUserInfoDataWait() {
         const firstNameChar = await this._getFirstNameCharWait();
         const lastNameChar = await this._getLastNameCharWait();
@@ -30061,6 +30082,15 @@ class UC421BLE {
         };
         return userInfo;
     }
+    /**
+     * Get a list of measured weight data. To use this function, you first need to authorize a user by calling authorizeUserWait function.
+     * After that, you can get the data attached to the user. If the multiple weight data are stored in memory, multiple data will be returned.
+     *
+     * 体重情報取得。この関数を使うにはまずauthorizeUserWait関数でユーザ認証を行う必要がある。
+     * 認証後、そのユーザの体重データを取得できるようになる。データがメモリに複数保存されている場合はデータが複数返ってくる。
+     *
+     * @returns List of UC421BLEWeightResult object. UC421BLEWeightResultオブジェクトの配列。
+     */
     async getWeightDataWait() {
         const results = [];
         const weightScaleChar = await this._getWeightScaleMeasurementCharWait();
@@ -30164,6 +30194,15 @@ class UC421BLE {
         await startGettingAllData();
         return await waitGettingAllData;
     }
+    /**
+     * Get a list of measured body composition data. To use this function, you first need to authorize a user by calling authorizeUserWait function.
+     * After that, you can get the data attached to the user. If the multiple body composition data are stored in memory, multiple data will be returned.
+     *
+     * 体組成情報取得。この関数を使うにはまずauthorizeUserWait関数でユーザ認証を行う必要がある。
+     * 認証後、そのユーザの体組成データを取得できるようになる。データがメモリに複数保存されている場合はデータが複数返ってくる。
+     *
+     * @returns List of UC421BLEBodyCompositionResult object. UC421BLEBodyCompositionResultオブジェクトの配列。
+     */
     async getBodyCompositionDataWait() {
         const results = [];
         const bodyCompositionChar = await this._getBodyCompositionMeasurementCharWait();
@@ -30317,6 +30356,15 @@ class UC421BLE {
         await startGettingAllData();
         return await waitGettingAllData;
     }
+    /**
+     * Change the runnning mode. By default it's 'measurement' mode, and if you want to do some setting, call this function with an argument 'setting' and go into 'setting' mode.
+     * After 180 seconds passed since this function called, it gets back to its normal 'measurement' mode from 'setting' mode.
+     *
+     * 動作モード変更。デフォルトでは'measurement'(測定)モードだが、本体設定を行いたい時はこの関数を呼んで'setting'(設定)モードに変更する。
+     * この関数を呼んでから180秒後に、通常の'measurement'(測定)モードに戻る。
+     *
+     * @param mode Target mode you want the peripheral to go into. 'measurement' or 'setting'. 変更したいモード。'measurement'または'setting'。
+     */
     async changeRunningModeWait(mode) {
         const runningMode = {
             measurement: 0x02,
@@ -30366,6 +30414,19 @@ class UC421BLE {
         ]);
         await waitNotification;
     }
+    /**
+     * Set medical exam mode. To use this function, you first need to have the peripheral go into 'setting' mode by calling changeRunningModeWait function.
+     * Medical exam mode does not require normal users(No: 1 ~ 5 and cc: 0 ~ 9999), it only uses a guest user(No: 99 and cc: 9999) and no data is saved in memory.
+     * This mode supports two situations. 'measurementWithApp' and 'measurementWithoutApp' both indicated in an advertisement.
+     * Currently, obniz.js only supports the 'measurementWithoutApp' situation, so you can only get the weight data with this mode.
+     *
+     * 検診モード設定。この関数を使うには、まずchangeRunningModeWait関数を呼んで動作モードを'setting'にする必要がある。
+     * 検診モードは通常のユーザではなくゲストユーザを使用し、測定値はメモリに保存されない。
+     * このモードは2つのシチュエーションに対応している。（'アプリ有り計測'と'アプリ無し計測'。アドバタイズメントの中で確認できる）
+     * obniz.jsでは現在'アプリ無し計測'のみ対応しており、この場合は体重データのみ取得可能。
+     *
+     * @param mode 'on' or 'off'
+     */
     async setMedicalExamModeWait(mode) {
         // NOTE: We have to go into 'setting' mode before configuring this mode.
         if (!(mode === 'on' || mode === 'off'))
@@ -30414,6 +30475,13 @@ class UC421BLE {
         ]);
         await waitNotification;
     }
+    /**
+     * Get if the medical exam mode is on or off.
+     *
+     * 検診モード設定状況取得。
+     *
+     * @returns true for medical exam mode on and false for off
+     */
     async isMedicalExamModeOnWait() {
         const aAndDCustomWriteReadChar = await this._getAAndDCustomWriteReadCharWait();
         const aAndDCustomNotificationChar = await this._getAAndDCustomNotificationCharWait();
@@ -30429,6 +30497,11 @@ class UC421BLE {
         await waitNotification;
         return isMedicalExamModeOn;
     }
+    /**
+     * Send disconnect request to peripheral.
+     *
+     * 切断要求をペリフェラルに送信。
+     */
     async disconnectWait() {
         await this._peripheral.disconnectWait();
     }
