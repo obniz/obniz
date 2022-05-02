@@ -64,7 +64,7 @@ await obniz.ble.scan.startWait();
 
 ## [await]aquireNewUserNoWait(cc)
 
-Aquire a new user No
+Aquire a new user No.
 
 ```javascript
 // Javascript Example
@@ -87,7 +87,7 @@ await obniz.ble.scan.startWait();
 
 ## [await]authorizeUserWait(userNo, cc)
 
-Authorize a user
+Authorize a user.
 
 ```javascript
 // Javascript Example
@@ -276,8 +276,10 @@ await obniz.ble.scan.startWait();
 
 ## [await]setMedicalExamModeWait(mode)
 
-Change the runnning mode. By default it's 'measurement' mode, and if you want to do some setting, call this function with an argument 'setting' and go into 'setting' mode.
-After 180 seconds passed since this function called, it gets back to its normal 'measurement' mode from 'setting' mode.
+Set medical exam mode. To use this function, you first need to have the peripheral go into 'setting' mode by calling changeRunningModeWait function.
+Medical exam mode does not require normal users(No: 1 ~ 5 and cc: 0 ~ 9999), it only uses a guest user(No: 99 and cc: 9999) and no data is saved in memory.
+This mode supports two situations. 'measurementWithApp' and 'measurementWithoutApp' both indicated in an advertisement.
+Currently, obniz.js only supports the 'measurementWithoutApp' situation, so you can only get the weight data with this mode.
 
 ```javascript
 // Javascript Example
