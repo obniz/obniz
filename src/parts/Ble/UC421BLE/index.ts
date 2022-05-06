@@ -12,13 +12,24 @@ import ObnizPartsBleInterface, {
   ObnizPartsBleInfo,
 } from '../../../obniz/ObnizPartsBleInterface';
 
+/**
+ * Options of UC421BLE.
+ *
+ * UC421BLEのオプション。
+ */
 export interface UC421BLEOptions {}
 
 /**
- * UC421BLEから送られてくる体重データ
+ * Weight data sent from UC421BLE.
+ *
+ * UC421BLEから送られてくる体重データ。
  */
 export interface UC421BLEWeightResult {
   /**
+   * Height(cm).
+   * Available value range: 90 ~ 220.
+   * If no value is set for the user, this property does not exist.
+   *
    * 身長(cm)
    * 設定可能範囲 90 ~ 220
    * 該当ユーザに対して身長が設定されていない場合はこの項目は存在しない
@@ -26,6 +37,10 @@ export interface UC421BLEWeightResult {
   height?: number;
 
   /**
+   * Weight(kg/lb).
+   * It defaults to 'kg'.
+   * If the measurement failed, this property will be null.
+   *
    * 体重(kg/lb)
    * デフォルトはkg
    * 測定エラーの時はnull
@@ -36,12 +51,19 @@ export interface UC421BLEWeightResult {
   } | null;
 
   /**
+   * BMI.
+   * If the height for the user is not set, this property does not exist.
+   *
    * BMI
    * 該当ユーザに対して身長が設定されていない場合はこの項目は存在しない
    */
   bmi?: number;
 
   /**
+   * TimeStamp.
+   * If the timeStamp is not set, this property does not exist.(In obniz.js setting of timeStamp is automatically done when connecting to UC421BLE)
+   * When measuring both weight and body composition data, the timeStamp of weight data and body composition data will be the same.
+   *
    * タイムスタンプ
    * タイムスタンプが設定されていない場合はこの項目は存在しない（obniz.jsでは毎接続時に自動でタイムスタンプ設定を行なっている）
    * 体重と体組成の両方を測定した場合は、体重データと体組成データのタイムスタンプが同じになる
@@ -57,23 +79,36 @@ export interface UC421BLEWeightResult {
 }
 
 /**
+ * Body composition data sent from UC421BLE.
+ * To get this data, you first need to set a height, gender and age for the user.
+ *
  * UC421BLEから送られてくる体組成データ
  * この値を取得するには事前に該当ユーザに対して身長、性別、年齢を登録しておく必要がある
  */
 export interface UC421BLEBodyCompositionResult {
   /**
+   * Body fat percentage(%).
+   * If the measurement failed, this property will be null.
+   *
    * 体脂肪率(%)
    * 測定エラーの時はnull
    */
   bodyFatPercentage?: number | null;
 
   /**
+   * Basal metabolism(kj).
+   * If the measurement failed, this property will be null.
+   *
    * 基礎代謝(kj)
    * 測定エラーの時はnull
    */
   basalMetabolismKj?: number | null;
 
   /**
+   * Mascle mass(kg/lb).
+   * It defaults to kg.
+   * If the measurement failed, this property will be null.
+   *
    * 筋肉量(kg/lb)
    * デフォルトはkg
    * 測定エラーの時はnull
@@ -84,6 +119,10 @@ export interface UC421BLEBodyCompositionResult {
   } | null;
 
   /**
+   * Body water mass(kg/lb).
+   * It defaults to kg.
+   * If the measurement failed, this property will be null.
+   *
    * 水分量(kg/lb)
    * デフォルトはkg
    * 測定エラーの時はnull
@@ -94,6 +133,10 @@ export interface UC421BLEBodyCompositionResult {
   } | null;
 
   /**
+   * TimeStamp.
+   * If the timeStamp is not set, this property does not exist.(In obniz.js setting of timeStamp is automatically done when connecting to UC421BLE)
+   * When measuring both weight and body composition data, the timeStamp of weight data and body composition data will be the same.
+   *
    * タイムスタンプ
    * タイムスタンプが設定されていない場合はこの項目は存在しない（obniz.jsでは毎接続時に自動でタイムスタンプ設定を行なっている）
    * 体重と体組成の両方を測定した場合は、体重データと体組成データのタイムスタンプが同じになる
@@ -112,6 +155,10 @@ const arrUserNoType = [1, 2, 3, 4, 5] as const;
 const arrGuestUserNoType = [99] as const;
 
 /**
+ * User No.
+ * Available value range: 1 ~ 5.
+ * It's not possible to set the No manually. It's assigned by UC421BLE automatically.
+ *
  * ユーザNo
  * 設定可能範囲: 1 ~ 5
  * 自分でNoを指定することはできず、ユーザNo取得関数(aquireNewUserNoWait)を実行した際に体組成計が空いているユーザNoを自動で設定する
