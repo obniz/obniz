@@ -166,36 +166,54 @@ const arrGuestUserNoType = [99] as const;
 export type UserNo = typeof arrUserNoType[number];
 
 /**
+ * Guest user No.
+ * The value is 99.
+ *
  * ゲストユーザNo
  * 99で固定
  */
 export type GuestUserNo = typeof arrGuestUserNoType[number];
 
 /**
+ * User information attached to each user No.
+ * This includes birthday, gender and height which are used to calculate body composition data.
+ *
  * UC421BLEに登録するユーザ情報
  * 設定を行う際はユーザNoを指定して、それに紐づける形で登録を行う
  * ユーザ情報の誕生日、性別、身長を利用して体組成データを生成する
  */
 export interface UC421BLEUserInfoData {
   /**
+   * Email address(UTF-8)
+   * Available value range: 1 ~ 16 bytes.
+   *
    * メールアドレス(UTF-8)
    * 設定可能範囲: 1 ~ 16バイト
    */
   email?: string;
 
   /**
+   * First name(UTF-8)
+   * Available value range: 1 ~ 20 bytes.
+   *
    * 名前(UTF-8)
    * 設定可能範囲: 1 ~ 20バイト
    */
   firstName?: string;
 
   /**
+   * Last name(UTF-8)
+   * Available value range: 1 ~ 20 bytes.
+   *
    * 苗字(UTF-8)
    * 設定可能範囲: 1 ~ 20バイト
    */
   lastName?: string;
 
   /**
+   * Birthday
+   * Available value range: 5 ~ 99 years old.
+   *
    * 誕生日
    * 設定可能範囲: 年齢換算時 5 ~ 99歳
    */
@@ -206,12 +224,18 @@ export interface UC421BLEUserInfoData {
   };
 
   /**
+   * Gender
+   * 'unspecified' is not recommended to set because body composition data can not be retrieved with it.
+   *
    * 性別
    * 'unspecified'を設定すると体組成データが取得できない
    */
   gender?: 'male' | 'female' | 'unspecified';
 
   /**
+   * Height(cm).
+   * Available value range: 90 ~ 220.
+   *
    * 身長(cm)
    * 設定可能範囲: 90 ~ 220
    */
@@ -219,20 +243,31 @@ export interface UC421BLEUserInfoData {
 }
 
 /**
+ * Manufacturer specific data contained in an advertisement of UC421BLE.
+ *
  * UC421BLEのAdvertisementに含まれるManufacturerSpecificData
  */
 export interface UC421BLEManufacturerSpecificData {
   /**
+   * Company code.
+   * The value is 105(A&D Engineering Inc.).
+   *
    * 会社コード
    * 105(A&D Engineering Inc.)で固定
    */
   companyCode: number;
 
   /**
+   * Running mode related information.
+   *
    * 動作モード関連情報
    */
   opMode: {
     /**
+     * Running mode.
+     * measurementWithApp: mode of measuring with app(default).
+     * measurementWithoutApp: mode of measuring without app(only 60 seconds after measuring without the app).
+     *
      * 動作モード
      * measurementWithApp: アプリ有り測定モード（デフォルト）
      * measurementWithoutApp: アプリ無し測定モード（アプリ無し測定でユーザNo確定後60秒のみ）
@@ -240,6 +275,12 @@ export interface UC421BLEManufacturerSpecificData {
     runningMode: 'measurementWithApp' | 'measurementWithoutApp';
 
     /**
+     * Flag of medical exam mode.
+     * When this mode is on, measurement information is not saved in memory.
+     * This supports 'measurement with app' mode and 'measurement without app' mode.
+     * 'measurement without app' mode can only retrieve weight data(not body composition data since no user information is provided).
+     * The user to authorize is a guest user(No:99, CC:9999).
+     *
      * 検診モードフラグ
      * 検診モードは測定情報がメモリに保存されない
      * アプリ有り測定とアプリ無し測定があり、アプリ無し測定の場合は体重データのみ取得できる
@@ -248,41 +289,61 @@ export interface UC421BLEManufacturerSpecificData {
     isMedicalExamModeOn: boolean;
 
     /**
+     * Flag of whether or not the time is set.
+     *
      * 時刻設定フラグ
      */
     isTimeSet: boolean;
 
     /**
+     * Flag of whether or not the measurement data of user 1 is saved in memory.
+     * This will be true if either weight or body composition data is stored in memory.
+     *
      * ユーザ1の測定データが保存されているかどうか
      * 体重データ、体組成データのいずれかが保存されていればtrue
      */
     hasMemoryForUser1: boolean;
 
     /**
+     * Flag of whether or not the measurement data of user 2 is saved in memory.
+     * This will be true if either weight or body composition data is stored in memory.
+     *
      * ユーザ2の測定データが保存されているかどうか
      * 体重データ、体組成データのいずれかが保存されていればtrue
      */
     hasMemoryForUser2: boolean;
 
     /**
+     * Flag of whether or not the measurement data of user 3 is saved in memory.
+     * This will be true if either weight or body composition data is stored in memory.
+     *
      * ユーザ3の測定データが保存されているかどうか
      * 体重データ、体組成データのいずれかが保存されていればtrue
      */
     hasMemoryForUser3: boolean;
 
     /**
+     * Flag of whether or not the measurement data of user 4 is saved in memory.
+     * This will be true if either weight or body composition data is stored in memory.
+     *
      * ユーザ4の測定データが保存されているかどうか
      * 体重データ、体組成データのいずれかが保存されていればtrue
      */
     hasMemoryForUser4: boolean;
 
     /**
+     * Flag of whether or not the measurement data of user 5 is saved in memory.
+     * This will be true if either weight or body composition data is stored in memory.
+     *
      * ユーザ5の測定データが保存されているかどうか
      * 体重データ、体組成データのいずれかが保存されていればtrue
      */
     hasMemoryForUser5: boolean;
 
     /**
+     * Flag of whether or not there exists available seats for a new user.
+     * Maximum number is 5.
+     *
      * 新規ユーザの空きがあるかどうか
      * ※ ユーザデータは最大5人分まで保存できる
      */
@@ -290,6 +351,9 @@ export interface UC421BLEManufacturerSpecificData {
   };
 
   /**
+   * If the runnning mode is 'measurementWithApp', this will be 255.
+   * If it's  'measurementWithoutApp', this will be the user No(normal user: 1~5, guest user: 99).
+   *
    * アプリ有り測定モード（デフォルト）の時は固定で255
    * アプリ無し測定モード（アプリ無し測定でユーザNo確定後60秒のみ）の時は確定したユーザID（一般ユーザ: 1~5, ゲストユーザ:99）
    */
@@ -297,6 +361,8 @@ export interface UC421BLEManufacturerSpecificData {
 }
 
 /**
+ * Class for managing UC421BLE.
+ *
  * UC421BLEを管理するクラス
  */
 export default class UC421BLE implements ObnizPartsBleInterface {

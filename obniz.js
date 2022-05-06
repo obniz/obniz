@@ -29704,6 +29704,8 @@ const moment_1 = __importDefault(__webpack_require__("./node_modules/moment/mome
 const arrUserNoType = [1, 2, 3, 4, 5];
 const arrGuestUserNoType = [99];
 /**
+ * Class for managing UC421BLE.
+ *
  * UC421BLEを管理するクラス
  */
 class UC421BLE {
