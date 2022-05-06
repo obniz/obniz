@@ -175,6 +175,7 @@ import XBee, { XBeeOptions } from '../parts/Wireless/XBee';
 import EXVital, { EXVital_Options } from '../parts/Ble/EXVital';
 import iBS03T_RH, { iBS03T_RHOptions } from '../parts/Ble/iBS03T_RH';
 import iBS05H, { iBS05HOptions } from '../parts/Ble/iBS05H';
+import UC421BLE, { UC421BLEOptions } from '../parts/Ble/UC421BLE';
 export declare type PartsType = keyof PartsList;
 export interface PartsList {
     LED: {
@@ -868,5 +869,9 @@ export interface PartsList {
     STM550B: {
         class: STM550B;
         options: STM550B_Options;
+    };
+    UC421BLE: {
+        class: UC421BLE;
+        options: UC421BLEOptions;
     };
 }
