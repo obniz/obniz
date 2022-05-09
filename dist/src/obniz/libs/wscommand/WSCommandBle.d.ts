@@ -53,6 +53,7 @@ declare class WSCommandBle extends WSCommand {
     _securityEncryotionLevels: any;
     _securityKeyTypes: any;
     hciCommand: any;
+    private _funcList;
     constructor();
     centralScanStart(params: any): void;
     centralScanStop(params: any): void;

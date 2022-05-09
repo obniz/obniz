@@ -138,10 +138,7 @@ class GattCentral extends EventEmitter<GattEventTypes> {
 
   public async encryptWait(options: SmpEncryptOptions): Promise<string> {
     const result = await this._serialPromiseQueueWait<string>(async () => {
-      const encrypt = await this._aclStream.encryptWait(options);
-      if (encrypt === 0) {
-        throw new Error('Encrypt failed');
-      }
+      await this._aclStream.encryptWait(options);
       this._security = 'medium';
       return this._aclStream._smp.getKeys();
     });

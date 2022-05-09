@@ -7,10 +7,7 @@
 import EventEmitter from 'eventemitter3';
 import { BleDeviceAddress, BleDeviceAddressType } from '../../bleTypes';
 import AclStream from './acl-stream';
-/**
- * @ignore
- */
-declare type SmpEventTypes = 'masterIdent' | 'ltk' | 'fail' | 'end';
+import { SmpEventTypes } from '../common/smp';
 /**
  * @ignore
  */
@@ -19,6 +16,7 @@ export interface SmpEncryptOptions {
      * Stored pairing keys
      */
     keys?: string;
+    secureConnection?: boolean;
     /**
      * Callback function that call on pairing passkey required.
      */
@@ -46,6 +44,7 @@ declare class Smp extends EventEmitter<SmpEventTypes> {
     private onAclStreamEndBinded;
     private _preq;
     private _pres;
+    private _pairingFeature;
     private _tk;
     private _r;
     private _rand;
@@ -54,25 +53,29 @@ declare class Smp extends EventEmitter<SmpEventTypes> {
     private _stk;
     private _ltk;
     private _options?;
+    private _smpCommon;
     constructor(aclStream: AclStream, localAddressType: BleDeviceAddressType, localAddress: BleDeviceAddress, remoteAddressType: BleDeviceAddressType, remoteAddress: BleDeviceAddress);
     debugHandler: any;
     pairingWithKeyWait(key: string): Promise<number | "refresh">;
     setPairingOption(options: SmpEncryptOptions): void;
-    pairingWait(options?: SmpEncryptOptions): Promise<string | number>;
-    onAclStreamData(cid: any, data?: any): void;
+    pairingWait(options?: SmpEncryptOptions): Promise<number | "refresh" | undefined>;
+    onAclStreamData(cid: number, data: Buffer): void;
     onAclStreamEnd(): void;
-    handlePairingResponseWait(data: any): Promise<void>;
-    handlePairingConfirm(data: any): void;
-    handlePairingRandomWait(data: any): Promise<string | number>;
+    handlePairingResponseLegacyPairingWait(): Promise<void>;
+    handlePairingResponseSecureConnectionWait(): Promise<Buffer>;
+    handlePairingConfirm(data: Buffer): void;
+    handlePairingRandomWait(data: Buffer): Promise<string | number>;
     handlePairingFailed(data: Buffer): void;
-    handleEncryptInfo(data: any): void;
-    handleMasterIdent(data: any): void;
-    write(data: any): void;
-    handleSecurityRequest(data: any): void;
+    handleEncryptInfo(data: Buffer): void;
+    handleMasterIdent(data: Buffer): void;
+    write(data: Buffer): void;
+    handleSecurityRequest(data: Buffer): void;
     setKeys(keyStringBase64: string): void;
     getKeys(): string;
+    private _generateAuthenticationRequirementsFlags;
     private sendPairingRequestWait;
     private isPasskeyMode;
+    private isSecureConnectionMode;
     private _readWait;
     private _pairingFailReject;
     private debug;
