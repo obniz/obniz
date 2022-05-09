@@ -15,7 +15,7 @@ import {
 } from './ObnizPartsBleAbstract';
 import ObnizPartsInterface from './ObnizPartsInterface';
 import { PartsList, PartsType } from './ObnizPartsList';
-import PartsClass = Obniz.PartsClass;
+import PartsClass = Obniz.Parts;
 import PartsInstance = Obniz.PartsInstance;
 
 /**

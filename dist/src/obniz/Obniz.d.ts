@@ -241,6 +241,6 @@ export declare namespace Obniz {
     type StopBitType = _StopBitType;
     type UUID = _UUID;
     type PartsInstance<K extends keyof PartsList> = PartsList[K]['instance'];
-    type PartsClass<K extends keyof PartsList> = PartsList[K]['class'];
+    type Parts<K extends keyof PartsList> = PartsList[K]['class'];
     type PartsOptions<K extends keyof PartsList> = PartsList[K]['options'];
 }
