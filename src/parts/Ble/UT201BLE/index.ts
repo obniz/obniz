@@ -96,6 +96,19 @@ export default class UT201BLE implements ObnizPartsBleInterface {
     this._timezoneOffsetMinute = timezoneOffsetMinute;
   }
 
+  public isPairingMode() {
+    if (!this._peripheral) {
+      throw new Error('UT201BLE not found');
+    }
+
+    // adv_data[2]はFlagsで、bit0が1の場合Pairng Mode(Limited Discoverable Mode)
+    if (this._peripheral.adv_data[2] === 5) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   /**
    * Pair with the device
    *
