@@ -81,6 +81,14 @@ type ObnizConnectionEventNamesInternal =
 export default abstract class ObnizConnection extends EventEmitter<
   ObnizConnectionEventNames | ObnizConnectionEventNamesInternal
 > {
+  private _measureTraffic: {
+    readByte: number;
+    readCount: number;
+    sendByte: number;
+    sendCount: number;
+    ceilByte: number;
+  } | null = null;
+
   /**
    * obniz.js version
    */
@@ -725,9 +733,23 @@ export default abstract class ObnizConnection extends EventEmitter<
     }
   }
 
-  protected wsOnMessage(data: any) {
+  protected wsOnMessage(data: string | Buffer | ArrayBuffer | Buffer[]) {
+    if (Array.isArray(data)) {
+      for (const b of data) {
+        this.wsOnMessage(data);
+      }
+      return;
+    }
     this._lastDataReceivedAt = new Date().getTime();
 
+    if (this._measureTraffic) {
+      const trafficSize = this._calcTrafficSize(
+        data,
+        this._measureTraffic.ceilByte
+      );
+      this._measureTraffic.readByte += trafficSize;
+      this._measureTraffic.readCount++;
+    }
     try {
       let json: any;
       if (typeof data === 'string') {
@@ -1052,6 +1074,14 @@ export default abstract class ObnizConnection extends EventEmitter<
   }
 
   protected _sendRouted(data: any) {
+    if (this._measureTraffic) {
+      const trafficSize = this._calcTrafficSize(
+        data,
+        this._measureTraffic.ceilByte
+      );
+      this._measureTraffic.sendByte += trafficSize;
+      this._measureTraffic.sendCount++;
+    }
     if (
       this.socket_local &&
       this.socket_local.readyState === 1 &&
@@ -1343,5 +1373,73 @@ export default abstract class ObnizConnection extends EventEmitter<
     if (this.connectionState !== 'connected') {
       throw new ObnizOfflineError();
     }
+  }
+
+  startTrafficMeasurement(ceil = 1) {
+    if (!this.socket_local) {
+      throw new Error('Cannot measure traffic data outside of local connect');
+    }
+    if (!this._measureTraffic) {
+      this._measureTraffic = {
+        ceilByte: ceil,
+        readByte: 0,
+        readCount: 0,
+        sendByte: 0,
+        sendCount: 0,
+      };
+    }
+  }
+
+  getTrafficData() {
+    if (!this._measureTraffic) {
+      return {
+        readByte: 0,
+        readCount: 0,
+        sendByte: 0,
+        sendCount: 0,
+        ceilByte: 1,
+      };
+    }
+    return {
+      readByte: this._measureTraffic.readByte,
+      readCount: this._measureTraffic.readCount,
+      sendByte: this._measureTraffic.sendByte,
+      sendCount: this._measureTraffic.sendCount,
+      ceilByte: this._measureTraffic.ceilByte,
+    };
+  }
+
+  resetTrafficMeasurement() {
+    if (this._measureTraffic) {
+      const data = this.getTrafficData();
+      this._measureTraffic = {
+        ceilByte: this._measureTraffic.ceilByte,
+        readByte: 0,
+        readCount: 0,
+        sendByte: 0,
+        sendCount: 0,
+      };
+      return data;
+    }
+    return null;
+  }
+
+  endTrafficMeasurement() {
+    const data = this.getTrafficData();
+    this._measureTraffic = null;
+    return data;
+  }
+
+  private _calcTrafficSize(data: Buffer | ArrayBuffer | string, ceil: number) {
+    let trafficSize;
+    if (data instanceof Buffer) {
+      trafficSize = data.length;
+    } else if (data instanceof ArrayBuffer) {
+      trafficSize = data.byteLength;
+    } else {
+      trafficSize = data.length * 8;
+    }
+    const ceiledTrafficSize = Math.round(Math.ceil(trafficSize / ceil) * ceil);
+    return ceiledTrafficSize;
   }
 }

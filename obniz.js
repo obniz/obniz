@@ -409,10 +409,10 @@ var map = {
 	"./response/io/get.yml": "./dist/src/json_schema/response/io/get.yml",
 	"./response/io/index.yml": "./dist/src/json_schema/response/io/index.yml",
 	"./response/io/warning.yml": "./dist/src/json_schema/response/io/warning.yml",
-	"./response/ioanimation/index.yml": "./dist/src/json_schema/response/ioanimation/index.yml",
-	"./response/ioanimation/notify.yml": "./dist/src/json_schema/response/ioanimation/notify.yml",
-	"./response/logicanalyzer/data.yml": "./dist/src/json_schema/response/logicanalyzer/data.yml",
-	"./response/logicanalyzer/index.yml": "./dist/src/json_schema/response/logicanalyzer/index.yml",
+	"./response/ioAnimation/index.yml": "./dist/src/json_schema/response/ioAnimation/index.yml",
+	"./response/ioAnimation/notify.yml": "./dist/src/json_schema/response/ioAnimation/notify.yml",
+	"./response/logicAnalyzer/data.yml": "./dist/src/json_schema/response/logicAnalyzer/data.yml",
+	"./response/logicAnalyzer/index.yml": "./dist/src/json_schema/response/logicAnalyzer/index.yml",
 	"./response/measure/echo.yml": "./dist/src/json_schema/response/measure/echo.yml",
 	"./response/measure/index.yml": "./dist/src/json_schema/response/measure/index.yml",
 	"./response/message/index.yml": "./dist/src/json_schema/response/message/index.yml",
@@ -1539,28 +1539,28 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/ioanimation/index.yml":
+/***/ "./dist/src/json_schema/response/ioAnimation/index.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ioAnimation","basePath":"io","anyOf":[{"$ref":"/response/ioAnimation/notify"}]}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/ioanimation/notify.yml":
+/***/ "./dist/src/json_schema/response/ioAnimation/notify.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ioAnimation/notify","type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status"],"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","enum":["finish"]}}}}}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/logicanalyzer/data.yml":
+/***/ "./dist/src/json_schema/response/logicAnalyzer/data.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/logicAnalyzer/data","type":"object","required":["data"],"properties":{"data":{"$ref":"/bitArray"}}}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/logicanalyzer/index.yml":
+/***/ "./dist/src/json_schema/response/logicAnalyzer/index.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/logicAnalyzer","basePath":"logic_analyzer","anyOf":[{"$ref":"/response/logicAnalyzer/data"}]}
@@ -2346,7 +2346,7 @@ exports.default = ObnizComponents;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
+/* WEBPACK VAR INJECTION */(function(Buffer) {
 /**
  * @packageDocumentation
  * @module ObnizCore
@@ -2365,6 +2365,7 @@ const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 class ObnizConnection extends eventemitter3_1.default {
     constructor(id, options) {
         super();
+        this._measureTraffic = null;
         this.socket = null;
         this.socket_local = null;
         this.wscommand = null;
@@ -2778,7 +2779,18 @@ class ObnizConnection extends eventemitter3_1.default {
         }
     }
     wsOnMessage(data) {
+        if (Array.isArray(data)) {
+            for (const b of data) {
+                this.wsOnMessage(data);
+            }
+            return;
+        }
         this._lastDataReceivedAt = new Date().getTime();
+        if (this._measureTraffic) {
+            const trafficSize = this._calcTrafficSize(data, this._measureTraffic.ceilByte);
+            this._measureTraffic.readByte += trafficSize;
+            this._measureTraffic.readCount++;
+        }
         try {
             let json;
             if (typeof data === 'string') {
@@ -3067,6 +3079,11 @@ class ObnizConnection extends eventemitter3_1.default {
         }
     }
     _sendRouted(data) {
+        if (this._measureTraffic) {
+            const trafficSize = this._calcTrafficSize(data, this._measureTraffic.ceilByte);
+            this._measureTraffic.sendByte += trafficSize;
+            this._measureTraffic.sendCount++;
+        }
         if (this.socket_local &&
             this.socket_local.readyState === 1 &&
             typeof data !== 'string') {
@@ -3329,9 +3346,75 @@ class ObnizConnection extends eventemitter3_1.default {
             throw new ObnizError_1.ObnizOfflineError();
         }
     }
+    startTrafficMeasurement(ceil = 1) {
+        if (!this.socket_local) {
+            throw new Error('Cannot measure traffic data outside of local connect');
+        }
+        if (!this._measureTraffic) {
+            this._measureTraffic = {
+                ceilByte: ceil,
+                readByte: 0,
+                readCount: 0,
+                sendByte: 0,
+                sendCount: 0,
+            };
+        }
+    }
+    getTrafficData() {
+        if (!this._measureTraffic) {
+            return {
+                readByte: 0,
+                readCount: 0,
+                sendByte: 0,
+                sendCount: 0,
+                ceilByte: 1,
+            };
+        }
+        return {
+            readByte: this._measureTraffic.readByte,
+            readCount: this._measureTraffic.readCount,
+            sendByte: this._measureTraffic.sendByte,
+            sendCount: this._measureTraffic.sendCount,
+            ceilByte: this._measureTraffic.ceilByte,
+        };
+    }
+    resetTrafficMeasurement() {
+        if (this._measureTraffic) {
+            const data = this.getTrafficData();
+            this._measureTraffic = {
+                ceilByte: this._measureTraffic.ceilByte,
+                readByte: 0,
+                readCount: 0,
+                sendByte: 0,
+                sendCount: 0,
+            };
+            return data;
+        }
+        return null;
+    }
+    endTrafficMeasurement() {
+        const data = this.getTrafficData();
+        this._measureTraffic = null;
+        return data;
+    }
+    _calcTrafficSize(data, ceil) {
+        let trafficSize;
+        if (data instanceof Buffer) {
+            trafficSize = data.length;
+        }
+        else if (data instanceof ArrayBuffer) {
+            trafficSize = data.byteLength;
+        }
+        else {
+            trafficSize = data.length * 8;
+        }
+        const ceiledTrafficSize = Math.round(Math.ceil(trafficSize / ceil) * ceil);
+        return ceiledTrafficSize;
+    }
 }
 exports.default = ObnizConnection;
 
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -3859,11 +3942,11 @@ class ObnizParts extends ObnizConnection_1.default {
         if (this.connectionState !== 'connected') {
             throw new Error('obniz.wired can only be used after connection');
         }
-        const Parts = ObnizParts.getPartsClass(partsName);
-        if (!Parts) {
+        const TargetPartsClass = ObnizParts.getPartsClass(partsName);
+        if (!TargetPartsClass) {
             throw new Error('No such a parts [' + partsName + '] found');
         }
-        const parts = new Parts();
+        const parts = new TargetPartsClass();
         // eslint-disable-next-line prefer-rest-params
         const args = Array.from(arguments);
         args.shift();
@@ -3916,8 +3999,9 @@ class ObnizParts extends ObnizConnection_1.default {
             .filter(([, m]) => m !== null)
             // Hiring with long library names
             .sort(([na], [nb]) => ((nb !== null && nb !== void 0 ? nb : '')).length - ((na !== null && na !== void 0 ? na : '')).length);
-        if (result.length === 0 || !result[0][0] || !result[0][1])
+        if (result.length === 0 || !result[0][0] || !result[0][1]) {
             return null;
+        }
         const [name, mode] = result[0];
         const parts = new _parts[name](peripheral, mode);
         return parts;
@@ -75099,7 +75183,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
+module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
 
 /***/ }),
 
@@ -77999,9 +78083,7 @@ var global = getGlobal();
 module.exports = exports = global.fetch;
 
 // Needed for TypeScript and Webpack.
-if (global.fetch) {
-	exports.default = global.fetch.bind(global);
-}
+exports.default = global.fetch.bind(global);
 
 exports.Headers = global.Headers;
 exports.Request = global.Request;

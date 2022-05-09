@@ -52,22 +52,22 @@ class WSCommandIO extends WSCommand {
 
   // Commands
 
-  public output(value: any, id: any) {
+  public output(value: any, id: number) {
     const buf = new Uint8Array([id, value]);
     this.sendCommand(this._CommandOutput, buf);
   }
 
-  public outputDetail(params: any, id: any) {
+  public outputDetail(params: any, id: number) {
     const buf = new Uint8Array([id, params.value]);
     this.sendCommand(this._CommandOutput, buf);
   }
 
-  public input(params: any, id: any) {
+  public input(params: any, id: number) {
     const buf = new Uint8Array([id]);
     this.sendCommand(this._CommandInputOnece, buf);
   }
 
-  public inputDetail(params: any, id: any) {
+  public inputDetail(params: any, id: number) {
     const buf = new Uint8Array([id]);
     this.sendCommand(
       params.stream ? this._CommandInputStream : this._CommandInputOnece,
@@ -75,7 +75,7 @@ class WSCommandIO extends WSCommand {
     );
   }
 
-  public outputType(params: any, id: any) {
+  public outputType(params: any, id: number) {
     const buf = new Uint8Array(2);
     buf[0] = id;
     if (params.output_type === 'push-pull5v') {
