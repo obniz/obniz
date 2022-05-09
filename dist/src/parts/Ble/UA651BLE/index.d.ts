@@ -88,6 +88,15 @@ export default class UA651BLE implements ObnizPartsBleInterface {
     batteryService?: BleBatteryService;
     private _timezoneOffsetMinute;
     constructor(peripheral: BleRemotePeripheral | null, timezoneOffsetMinute: number);
+    isPairingMode(): boolean;
+    /**
+     * Pair with the device
+     *
+     * デバイスとペアリング
+     *
+     * @returns pairing key ペアリングキー
+     */
+    pairingWait(): Promise<string | null>;
     /**
      * Get data from the UA651BLE
      *
@@ -95,7 +104,7 @@ export default class UA651BLE implements ObnizPartsBleInterface {
      *
      * @returns data from the UA651BLE UA651BLEから受け取ったデータ
      */
-    getDataWait(): Promise<UA651BLEResult[]>;
+    getDataWait(pairingKeys?: string): Promise<UA651BLEResult[]>;
     private _readSFLOAT_LE;
     private _analyzeData;
     private _getChars;

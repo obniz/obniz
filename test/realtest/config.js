@@ -22,6 +22,8 @@ if (process.env.OBNIZ_DEVICE === 'devkitc') {
   json = require('./board/esp32pikokitv4_check_io.json');
 } else if (process.env.OBNIZ_DEVICE === 'stack') {
   json = require('./board/m5stackbasic_check_io.json');
+} else if (process.env.OBNIZ_DEVICE === 'devkitm') {
+  json = require('./board/esp32c3devkitm_check_io.json');
 } else if (process.env.OBNIZ_DEVICE) {
   throw new Error(`unknown device ${process.env.OBNIZ_DEVICE}`);
 }
@@ -97,6 +99,7 @@ const connectTwoObniz = (done, params) => {
   checkBoard.onconnect = () => {
     if (process.env.DEBUG) {
       checkBoard.debugprint = true;
+      console.log(checkBoard);
     }
     if (json.board.some((board) => board === 'obnizA')) {
       obnizA = new Obniz(obnizA_ID, { local_connect });
@@ -112,9 +115,15 @@ const connectTwoObniz = (done, params) => {
           obnizB.onconnect = () => {
             done();
           };
+          obnizB.onerror = (obniz, error) => {
+            console.error(obnizB_ID, error.message);
+          };
         } else {
           done();
         }
+      };
+      obnizA.onerror = (obniz, error) => {
+        console.error(obnizA_ID, error.message);
       };
     } else {
       if (json.board.some((board) => board === 'obnizB')) {
@@ -124,6 +133,9 @@ const connectTwoObniz = (done, params) => {
         }
         obnizB.onconnect = () => {
           done();
+        };
+        obnizB.onerror = (obniz, error) => {
+          console.error(obnizB_ID, error.message);
         };
       }
     }

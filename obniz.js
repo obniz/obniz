@@ -409,10 +409,10 @@ var map = {
 	"./response/io/get.yml": "./dist/src/json_schema/response/io/get.yml",
 	"./response/io/index.yml": "./dist/src/json_schema/response/io/index.yml",
 	"./response/io/warning.yml": "./dist/src/json_schema/response/io/warning.yml",
-	"./response/ioanimation/index.yml": "./dist/src/json_schema/response/ioanimation/index.yml",
-	"./response/ioanimation/notify.yml": "./dist/src/json_schema/response/ioanimation/notify.yml",
-	"./response/logicanalyzer/data.yml": "./dist/src/json_schema/response/logicanalyzer/data.yml",
-	"./response/logicanalyzer/index.yml": "./dist/src/json_schema/response/logicanalyzer/index.yml",
+	"./response/ioAnimation/index.yml": "./dist/src/json_schema/response/ioAnimation/index.yml",
+	"./response/ioAnimation/notify.yml": "./dist/src/json_schema/response/ioAnimation/notify.yml",
+	"./response/logicAnalyzer/data.yml": "./dist/src/json_schema/response/logicAnalyzer/data.yml",
+	"./response/logicAnalyzer/index.yml": "./dist/src/json_schema/response/logicAnalyzer/index.yml",
 	"./response/measure/echo.yml": "./dist/src/json_schema/response/measure/echo.yml",
 	"./response/measure/index.yml": "./dist/src/json_schema/response/measure/index.yml",
 	"./response/message/index.yml": "./dist/src/json_schema/response/message/index.yml",
@@ -1539,28 +1539,28 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/ioanimation/index.yml":
+/***/ "./dist/src/json_schema/response/ioAnimation/index.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ioAnimation","basePath":"io","anyOf":[{"$ref":"/response/ioAnimation/notify"}]}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/ioanimation/notify.yml":
+/***/ "./dist/src/json_schema/response/ioAnimation/notify.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ioAnimation/notify","type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status"],"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","enum":["finish"]}}}}}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/logicanalyzer/data.yml":
+/***/ "./dist/src/json_schema/response/logicAnalyzer/data.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/logicAnalyzer/data","type":"object","required":["data"],"properties":{"data":{"$ref":"/bitArray"}}}
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/logicanalyzer/index.yml":
+/***/ "./dist/src/json_schema/response/logicAnalyzer/index.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/logicAnalyzer","basePath":"logic_analyzer","anyOf":[{"$ref":"/response/logicAnalyzer/data"}]}
@@ -2346,7 +2346,7 @@ exports.default = ObnizComponents;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
+/* WEBPACK VAR INJECTION */(function(Buffer) {
 /**
  * @packageDocumentation
  * @module ObnizCore
@@ -2365,6 +2365,7 @@ const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 class ObnizConnection extends eventemitter3_1.default {
     constructor(id, options) {
         super();
+        this._measureTraffic = null;
         this.socket = null;
         this.socket_local = null;
         this.wscommand = null;
@@ -2374,6 +2375,7 @@ class ObnizConnection extends eventemitter3_1.default {
         this._waitForLocalConnectReadyTimer = null;
         this._sendPool = null;
         this._repeatInterval = 100;
+        this._isLoopProcessing = false;
         this._nextLoopTimeout = null;
         this._nextPingTimeout = null;
         this._nextAutoConnectLoopTimeout = null;
@@ -2777,7 +2779,18 @@ class ObnizConnection extends eventemitter3_1.default {
         }
     }
     wsOnMessage(data) {
+        if (Array.isArray(data)) {
+            for (const b of data) {
+                this.wsOnMessage(data);
+            }
+            return;
+        }
         this._lastDataReceivedAt = new Date().getTime();
+        if (this._measureTraffic) {
+            const trafficSize = this._calcTrafficSize(data, this._measureTraffic.ceilByte);
+            this._measureTraffic.readByte += trafficSize;
+            this._measureTraffic.readCount++;
+        }
         try {
             let json;
             if (typeof data === 'string') {
@@ -3053,11 +3066,11 @@ class ObnizConnection extends eventemitter3_1.default {
         this._startPingLoopInBackground();
         if (promise instanceof Promise) {
             promise.finally(() => {
-                this._startLoopInBackground();
+                this._startLoopInBackgroundWait();
             });
         }
         else {
-            this._startLoopInBackground();
+            this._startLoopInBackgroundWait();
         }
     }
     _print_debug(str) {
@@ -3066,6 +3079,11 @@ class ObnizConnection extends eventemitter3_1.default {
         }
     }
     _sendRouted(data) {
+        if (this._measureTraffic) {
+            const trafficSize = this._calcTrafficSize(data, this._measureTraffic.ceilByte);
+            this._measureTraffic.sendByte += trafficSize;
+            this._measureTraffic.sendCount++;
+        }
         if (this.socket_local &&
             this.socket_local.readyState === 1 &&
             typeof data !== 'string') {
@@ -3201,41 +3219,27 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         return json;
     }
-    _startLoopInBackground() {
+    async _startLoopInBackgroundWait() {
         this._stopLoopInBackground();
-        this._nextLoopTimeout = setTimeout(async () => {
-            if (this._nextLoopTimeout) {
-                clearTimeout(this._nextLoopTimeout);
+        if (this._isLoopProcessing || this.connectionState !== 'connected') {
+            return;
+        }
+        this._isLoopProcessing = true;
+        try {
+            if (typeof this.onloop === 'function') {
+                await this.onloop(this);
             }
-            this._nextLoopTimeout = null;
-            if (this.connectionState !== 'connected') {
-                return;
-            }
-            try {
-                if (typeof this.onloop === 'function') {
-                    // await this.pingWait();
-                    const prom = this.onloop(this);
-                    if (prom instanceof Promise) {
-                        await prom;
-                    }
-                }
-            }
-            catch (e) {
-                console.error(`obniz.js handled Exception inside of obniz.onloop function`);
-                console.error(e);
-            }
-            finally {
-                if (this.connectionState === 'connected') {
-                    if (!this._nextLoopTimeout) {
-                        let interval = this._repeatInterval;
-                        if (typeof this.onloop !== 'function') {
-                            interval = 100;
-                        }
-                        this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), interval);
-                    }
-                }
-            }
-        }, 0);
+        }
+        catch (e) {
+            console.error(`obniz.js handled Exception inside of obniz.onloop function`);
+            console.error(e);
+        }
+        this._isLoopProcessing = false;
+        if (this._nextLoopTimeout || this.connectionState !== 'connected') {
+            return;
+        }
+        const interval = typeof this.onloop === 'function' ? this._repeatInterval : 100;
+        this._nextLoopTimeout = setTimeout(this._startLoopInBackgroundWait.bind(this), interval);
     }
     _stopLoopInBackground() {
         if (this._nextLoopTimeout) {
@@ -3342,9 +3346,75 @@ class ObnizConnection extends eventemitter3_1.default {
             throw new ObnizError_1.ObnizOfflineError();
         }
     }
+    startTrafficMeasurement(ceil = 1) {
+        if (!this.socket_local) {
+            throw new Error('Cannot measure traffic data outside of local connect');
+        }
+        if (!this._measureTraffic) {
+            this._measureTraffic = {
+                ceilByte: ceil,
+                readByte: 0,
+                readCount: 0,
+                sendByte: 0,
+                sendCount: 0,
+            };
+        }
+    }
+    getTrafficData() {
+        if (!this._measureTraffic) {
+            return {
+                readByte: 0,
+                readCount: 0,
+                sendByte: 0,
+                sendCount: 0,
+                ceilByte: 1,
+            };
+        }
+        return {
+            readByte: this._measureTraffic.readByte,
+            readCount: this._measureTraffic.readCount,
+            sendByte: this._measureTraffic.sendByte,
+            sendCount: this._measureTraffic.sendCount,
+            ceilByte: this._measureTraffic.ceilByte,
+        };
+    }
+    resetTrafficMeasurement() {
+        if (this._measureTraffic) {
+            const data = this.getTrafficData();
+            this._measureTraffic = {
+                ceilByte: this._measureTraffic.ceilByte,
+                readByte: 0,
+                readCount: 0,
+                sendByte: 0,
+                sendCount: 0,
+            };
+            return data;
+        }
+        return null;
+    }
+    endTrafficMeasurement() {
+        const data = this.getTrafficData();
+        this._measureTraffic = null;
+        return data;
+    }
+    _calcTrafficSize(data, ceil) {
+        let trafficSize;
+        if (data instanceof Buffer) {
+            trafficSize = data.length;
+        }
+        else if (data instanceof ArrayBuffer) {
+            trafficSize = data.byteLength;
+        }
+        else {
+            trafficSize = data.length * 8;
+        }
+        const ceiledTrafficSize = Math.round(Math.ceil(trafficSize / ceil) * ceil);
+        return ceiledTrafficSize;
+    }
 }
 exports.default = ObnizConnection;
 
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -3872,11 +3942,11 @@ class ObnizParts extends ObnizConnection_1.default {
         if (this.connectionState !== 'connected') {
             throw new Error('obniz.wired can only be used after connection');
         }
-        const Parts = ObnizParts.getPartsClass(partsName);
-        if (!Parts) {
+        const TargetPartsClass = ObnizParts.getPartsClass(partsName);
+        if (!TargetPartsClass) {
             throw new Error('No such a parts [' + partsName + '] found');
         }
-        const parts = new Parts();
+        const parts = new TargetPartsClass();
         // eslint-disable-next-line prefer-rest-params
         const args = Array.from(arguments);
         args.shift();
@@ -3929,8 +3999,9 @@ class ObnizParts extends ObnizConnection_1.default {
             .filter(([, m]) => m !== null)
             // Hiring with long library names
             .sort(([na], [nb]) => ((nb !== null && nb !== void 0 ? nb : '')).length - ((na !== null && na !== void 0 ? na : '')).length);
-        if (result.length === 0 || !result[0][0] || !result[0][1])
+        if (result.length === 0 || !result[0][0] || !result[0][1]) {
             return null;
+        }
         const [name, mode] = result[0];
         const parts = new _parts[name](peripheral, mode);
         return parts;
@@ -15191,6 +15262,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
                 // eslint-disable-next-line @typescript-eslint/no-var-requires
                 const { createCanvas } = __webpack_require__("./dist/src/obniz/libs/webpackReplace/canvas.js");
                 this._canvas = createCanvas(this.width, this.height);
+                this._reset_canvas();
             }
             catch (e) {
                 return undefined;
@@ -15400,6 +15472,13 @@ module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored_lte\",\"peripherals
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/hw/blewifi_gw2.json":
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"blewifi_gw2\",\"peripherals\":{\"io\":{\"units\":{}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{}},\"spi\":{\"units\":{}},\"i2c\":{\"units\":{}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":true,\"width\":200,\"height\":200,\"color_depth\":[1]},\"storage\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/hw/cc3235mod.json":
 /***/ (function(module) {
 
@@ -15483,6 +15562,9 @@ class HW {
         }
         else if (hw === 'esp32c3') {
             return __webpack_require__("./dist/src/obniz/libs/hw/esp32c3.json");
+        }
+        else if (hw === 'blewifi_gw2') {
+            return __webpack_require__("./dist/src/obniz/libs/hw/blewifi_gw2.json");
         }
         else if (hw === 'blelte_gw2') {
             return __webpack_require__("./dist/src/obniz/libs/hw/blelte_gw2.json");
@@ -29230,6 +29312,47 @@ class UA651BLE {
     static isDevice(peripheral) {
         return (peripheral.localName && peripheral.localName.startsWith('A&D_UA-651BLE_'));
     }
+    isPairingMode() {
+        if (!this._peripheral) {
+            throw new Error('UA651BLE not found');
+        }
+        // adv_data[2]はFlagsで、bit0が1の場合Pairng Mode(Limited Discoverable Mode)
+        if (this._peripheral.adv_data[2] === 5) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    /**
+     * Pair with the device
+     *
+     * デバイスとペアリング
+     *
+     * @returns pairing key ペアリングキー
+     */
+    async pairingWait() {
+        if (!this._peripheral) {
+            throw new Error('UA651BLE not found');
+        }
+        this._peripheral.ondisconnect = (reason) => {
+            if (typeof this.ondisconnect === 'function') {
+                this.ondisconnect(reason);
+            }
+        };
+        let key = null;
+        await this._peripheral.connectWait({
+            pairingOption: {
+                onPairedCallback: (pairingKey) => {
+                    key = pairingKey;
+                },
+            },
+        });
+        const { bloodPressureMeasurementChar, timeChar, customServiceChar, } = this._getChars();
+        await this._writeTimeCharWait(this._timezoneOffsetMinute);
+        await customServiceChar.writeWait([2, 1, 3]); // disconnect req
+        return key;
+    }
     /**
      * Get data from the UA651BLE
      *
@@ -29237,38 +29360,33 @@ class UA651BLE {
      *
      * @returns data from the UA651BLE UA651BLEから受け取ったデータ
      */
-    async getDataWait() {
+    async getDataWait(pairingKeys) {
         if (!this._peripheral) {
             throw new Error('UA651BLE not found');
         }
-        if (!this._peripheral.connected) {
-            this._peripheral.ondisconnect = (reason) => {
-                if (this.ondisconnect) {
-                    this.ondisconnect(reason);
-                }
-            };
-            await this._peripheral.connectWait();
-        }
+        await this._peripheral.connectWait({
+            pairingOption: {
+                keys: pairingKeys,
+            },
+        });
         if (!this._peripheral) {
             throw new Error('UA651BLE not found');
         }
         const results = [];
         const { bloodPressureMeasurementChar, timeChar, customServiceChar, } = this._getChars();
+        const waitDisconnect = new Promise((resolve, reject) => {
+            if (!this._peripheral)
+                return;
+            this._peripheral.ondisconnect = (reason) => {
+                resolve(results);
+            };
+        });
         await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
         await this._writeTimeCharWait(this._timezoneOffsetMinute);
         await bloodPressureMeasurementChar.registerNotifyWait((data) => {
             results.push(this._analyzeData(data));
         });
-        return await new Promise((resolve, reject) => {
-            if (!this._peripheral)
-                return;
-            this._peripheral.ondisconnect = (reason) => {
-                resolve(results);
-                if (this.ondisconnect) {
-                    this.ondisconnect(reason);
-                }
-            };
-        });
+        return waitDisconnect;
     }
     _readSFLOAT_LE(buffer, index) {
         const data = buffer.readUInt16LE(index);
@@ -29414,6 +29532,18 @@ class UT201BLE {
      */
     static isDevice(peripheral) {
         return (peripheral.localName && peripheral.localName.startsWith('A&D_UT201BLE_'));
+    }
+    isPairingMode() {
+        if (!this._peripheral) {
+            throw new Error('UT201BLE not found');
+        }
+        // adv_data[2]はFlagsで、bit0が1の場合Pairng Mode(Limited Discoverable Mode)
+        if (this._peripheral.adv_data[2] === 5) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
     /**
      * Pair with the device
@@ -75063,7 +75193,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
+module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
 
 /***/ }),
 
@@ -77963,9 +78093,7 @@ var global = getGlobal();
 module.exports = exports = global.fetch;
 
 // Needed for TypeScript and Webpack.
-if (global.fetch) {
-	exports.default = global.fetch.bind(global);
-}
+exports.default = global.fetch.bind(global);
 
 exports.Headers = global.Headers;
 exports.Request = global.Request;
