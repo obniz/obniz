@@ -15465,6 +15465,13 @@ exports.default = ObnizSwitch;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/hw/blelte_gw2.json":
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored_lte\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"25\":{},\"26\":{},\"33\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/hw/blewifi_gw2.json":
 /***/ (function(module) {
 
@@ -15558,6 +15565,9 @@ class HW {
         }
         else if (hw === 'blewifi_gw2') {
             return __webpack_require__("./dist/src/obniz/libs/hw/blewifi_gw2.json");
+        }
+        else if (hw === 'blelte_gw2') {
+            return __webpack_require__("./dist/src/obniz/libs/hw/blelte_gw2.json");
         }
         else {
             // default

@@ -27,6 +27,8 @@ export default class HW {
       return require('./esp32c3.json');
     } else if (hw === 'blewifi_gw2') {
       return require('./blewifi_gw2.json');
+    } else if (hw === 'blelte_gw2') {
+      return require('./blelte_gw2.json');
     } else {
       // default
       return require('./esp32w.json');
