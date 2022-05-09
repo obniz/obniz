@@ -78,11 +78,11 @@ class ObnizParts extends ObnizConnection_1.default {
         if (this.connectionState !== 'connected') {
             throw new Error('obniz.wired can only be used after connection');
         }
-        const Parts = ObnizParts.getPartsClass(partsName);
-        if (!Parts) {
+        const TargetPartsClass = ObnizParts.getPartsClass(partsName);
+        if (!TargetPartsClass) {
             throw new Error('No such a parts [' + partsName + '] found');
         }
-        const parts = new Parts();
+        const parts = new TargetPartsClass();
         // eslint-disable-next-line prefer-rest-params
         const args = Array.from(arguments);
         args.shift();

@@ -9,8 +9,8 @@ import { ObnizOptions } from './ObnizOptions';
 import { ObnizPartsBle } from './ObnizPartsBleAbstract';
 import ObnizPartsInterface from './ObnizPartsInterface';
 import { PartsList, PartsType } from './ObnizPartsList';
-import PartsClass = Obniz.Parts;
-import PartsInstance = Obniz.PartsInstance;
+import PartsClass = Obniz.PartsClass;
+import Parts = Obniz.Parts;
 export interface Triaxial {
     x: number;
     y: number;
@@ -55,6 +55,6 @@ export default abstract class ObnizParts extends ObnizConnection {
      * @param partsName
      * @param options
      */
-    wired<K extends keyof PartsList>(partsName: K, options?: PartsList[K]['options']): PartsInstance<K>;
+    wired<K extends keyof PartsList>(partsName: K, options?: PartsList[K]['options']): Parts<K>;
     static getBleParts(peripheral: BleRemotePeripheral): ObnizPartsBle<unknown> | null;
 }

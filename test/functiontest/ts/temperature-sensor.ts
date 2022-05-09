@@ -1,7 +1,5 @@
 /* tslint:disable:class-name max-classes-per-file */
 import Obniz, { Parts } from '../../../dist/src/obniz/index';
-import PartsInstance = Obniz.PartsInstance;
-
 const OBNIZ_ID = '1234-5678';
 
 /**
@@ -161,7 +159,7 @@ class AMG8833Test {
   public getAllPixWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const grideye = obniz.wired('AMG8833', {
+      const grideye: Parts<'AMG8833'> = obniz.wired('AMG8833', {
         vcc: 0,
         gnd: 1,
         sda: 2,

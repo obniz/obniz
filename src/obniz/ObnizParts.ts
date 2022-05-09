@@ -15,8 +15,8 @@ import {
 } from './ObnizPartsBleAbstract';
 import ObnizPartsInterface from './ObnizPartsInterface';
 import { PartsList, PartsType } from './ObnizPartsList';
-import PartsClass = Obniz.Parts;
-import PartsInstance = Obniz.PartsInstance;
+import PartsClass = Obniz.PartsClass;
+import Parts = Obniz.Parts;
 
 /**
  * @ignore
@@ -102,15 +102,15 @@ export default abstract class ObnizParts extends ObnizConnection {
   public wired<K extends keyof PartsList>(
     partsName: K,
     options?: PartsList[K]['options']
-  ): PartsInstance<K> {
+  ): Parts<K> {
     if (this.connectionState !== 'connected') {
       throw new Error('obniz.wired can only be used after connection');
     }
-    const Parts = ObnizParts.getPartsClass(partsName);
-    if (!Parts) {
+    const TargetPartsClass = ObnizParts.getPartsClass(partsName);
+    if (!TargetPartsClass) {
       throw new Error('No such a parts [' + partsName + '] found');
     }
-    const parts = new (Parts as any)();
+    const parts = new (TargetPartsClass as any)();
     // eslint-disable-next-line prefer-rest-params
     const args = Array.from(arguments);
     args.shift();
@@ -150,7 +150,7 @@ export default abstract class ObnizParts extends ObnizConnection {
         display.setPinNames(displayPartsName, ioNames);
       }
     }
-    return parts as PartsInstance<K>;
+    return parts as Parts<K>;
   }
 
   public static getBleParts(
