@@ -1,7 +1,7 @@
 # UT201BLE
 株式会社エー・アンド・デイの体温計です。  
 
-体温を計測するためには、最初にペアリングをしてペアリングキーを取得する必要があります。  
+体温の計測データを受信するには、最初にペアリングをしてペアリングキーを取得する必要があります。  
 
 ![](./image.jpg)
 
@@ -107,19 +107,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
       const data = await device.getDataWait(key);
       console.log(data);
     }
-    // {
-    //     fahrenheit?: number;
-    //     celsius?: number;
-    //     date?: {
-    //       year: number;
-    //       month: number;
-    //       day: number;
-    //       hour: number;
-    //       minute: number;
-    //       second: number;
-    //     };
-    //     temperatureType?: string;
-    //   }
   }
 };
 

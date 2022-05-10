@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.19.1",
+  "version": "3.20.0-beta.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -2347,7 +2347,7 @@ exports.default = ObnizComponents;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
+/* WEBPACK VAR INJECTION */(function(Buffer) {
 /**
  * @packageDocumentation
  * @module ObnizCore
@@ -2366,6 +2366,7 @@ const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 class ObnizConnection extends eventemitter3_1.default {
     constructor(id, options) {
         super();
+        this._measureTraffic = null;
         this.socket = null;
         this.socket_local = null;
         this.wscommand = null;
@@ -2375,6 +2376,7 @@ class ObnizConnection extends eventemitter3_1.default {
         this._waitForLocalConnectReadyTimer = null;
         this._sendPool = null;
         this._repeatInterval = 100;
+        this._isLoopProcessing = false;
         this._nextLoopTimeout = null;
         this._nextPingTimeout = null;
         this._nextAutoConnectLoopTimeout = null;
@@ -2778,7 +2780,18 @@ class ObnizConnection extends eventemitter3_1.default {
         }
     }
     wsOnMessage(data) {
+        if (Array.isArray(data)) {
+            for (const b of data) {
+                this.wsOnMessage(data);
+            }
+            return;
+        }
         this._lastDataReceivedAt = new Date().getTime();
+        if (this._measureTraffic) {
+            const trafficSize = this._calcTrafficSize(data, this._measureTraffic.ceilByte);
+            this._measureTraffic.readByte += trafficSize;
+            this._measureTraffic.readCount++;
+        }
         try {
             let json;
             if (typeof data === 'string') {
@@ -3054,11 +3067,11 @@ class ObnizConnection extends eventemitter3_1.default {
         this._startPingLoopInBackground();
         if (promise instanceof Promise) {
             promise.finally(() => {
-                this._startLoopInBackground();
+                this._startLoopInBackgroundWait();
             });
         }
         else {
-            this._startLoopInBackground();
+            this._startLoopInBackgroundWait();
         }
     }
     _print_debug(str) {
@@ -3067,6 +3080,11 @@ class ObnizConnection extends eventemitter3_1.default {
         }
     }
     _sendRouted(data) {
+        if (this._measureTraffic) {
+            const trafficSize = this._calcTrafficSize(data, this._measureTraffic.ceilByte);
+            this._measureTraffic.sendByte += trafficSize;
+            this._measureTraffic.sendCount++;
+        }
         if (this.socket_local &&
             this.socket_local.readyState === 1 &&
             typeof data !== 'string') {
@@ -3202,41 +3220,27 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         return json;
     }
-    _startLoopInBackground() {
+    async _startLoopInBackgroundWait() {
         this._stopLoopInBackground();
-        this._nextLoopTimeout = setTimeout(async () => {
-            if (this._nextLoopTimeout) {
-                clearTimeout(this._nextLoopTimeout);
+        if (this._isLoopProcessing || this.connectionState !== 'connected') {
+            return;
+        }
+        this._isLoopProcessing = true;
+        try {
+            if (typeof this.onloop === 'function') {
+                await this.onloop(this);
             }
-            this._nextLoopTimeout = null;
-            if (this.connectionState !== 'connected') {
-                return;
-            }
-            try {
-                if (typeof this.onloop === 'function') {
-                    // await this.pingWait();
-                    const prom = this.onloop(this);
-                    if (prom instanceof Promise) {
-                        await prom;
-                    }
-                }
-            }
-            catch (e) {
-                console.error(`obniz.js handled Exception inside of obniz.onloop function`);
-                console.error(e);
-            }
-            finally {
-                if (this.connectionState === 'connected') {
-                    if (!this._nextLoopTimeout) {
-                        let interval = this._repeatInterval;
-                        if (typeof this.onloop !== 'function') {
-                            interval = 100;
-                        }
-                        this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), interval);
-                    }
-                }
-            }
-        }, 0);
+        }
+        catch (e) {
+            console.error(`obniz.js handled Exception inside of obniz.onloop function`);
+            console.error(e);
+        }
+        this._isLoopProcessing = false;
+        if (this._nextLoopTimeout || this.connectionState !== 'connected') {
+            return;
+        }
+        const interval = typeof this.onloop === 'function' ? this._repeatInterval : 100;
+        this._nextLoopTimeout = setTimeout(this._startLoopInBackgroundWait.bind(this), interval);
     }
     _stopLoopInBackground() {
         if (this._nextLoopTimeout) {
@@ -3343,9 +3347,75 @@ class ObnizConnection extends eventemitter3_1.default {
             throw new ObnizError_1.ObnizOfflineError();
         }
     }
+    startTrafficMeasurement(ceil = 1) {
+        if (!this.socket_local) {
+            throw new Error('Cannot measure traffic data outside of local connect');
+        }
+        if (!this._measureTraffic) {
+            this._measureTraffic = {
+                ceilByte: ceil,
+                readByte: 0,
+                readCount: 0,
+                sendByte: 0,
+                sendCount: 0,
+            };
+        }
+    }
+    getTrafficData() {
+        if (!this._measureTraffic) {
+            return {
+                readByte: 0,
+                readCount: 0,
+                sendByte: 0,
+                sendCount: 0,
+                ceilByte: 1,
+            };
+        }
+        return {
+            readByte: this._measureTraffic.readByte,
+            readCount: this._measureTraffic.readCount,
+            sendByte: this._measureTraffic.sendByte,
+            sendCount: this._measureTraffic.sendCount,
+            ceilByte: this._measureTraffic.ceilByte,
+        };
+    }
+    resetTrafficMeasurement() {
+        if (this._measureTraffic) {
+            const data = this.getTrafficData();
+            this._measureTraffic = {
+                ceilByte: this._measureTraffic.ceilByte,
+                readByte: 0,
+                readCount: 0,
+                sendByte: 0,
+                sendCount: 0,
+            };
+            return data;
+        }
+        return null;
+    }
+    endTrafficMeasurement() {
+        const data = this.getTrafficData();
+        this._measureTraffic = null;
+        return data;
+    }
+    _calcTrafficSize(data, ceil) {
+        let trafficSize;
+        if (data instanceof Buffer) {
+            trafficSize = data.length;
+        }
+        else if (data instanceof ArrayBuffer) {
+            trafficSize = data.byteLength;
+        }
+        else {
+            trafficSize = data.length * 8;
+        }
+        const ceiledTrafficSize = Math.round(Math.ceil(trafficSize / ceil) * ceil);
+        return ceiledTrafficSize;
+    }
 }
 exports.default = ObnizConnection;
 
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -3785,6 +3855,18 @@ class ObnizBleGattHandleError extends ObnizError {
     }
 }
 exports.ObnizBleGattHandleError = ObnizBleGattHandleError;
+class ObnizBleUnSupportedPeripheralError extends ObnizError {
+    constructor(target) {
+        super(19, `${target} is not supported by remote peripheral`);
+    }
+}
+exports.ObnizBleUnSupportedPeripheralError = ObnizBleUnSupportedPeripheralError;
+class ObnizBleInvalidPasskeyError extends ObnizError {
+    constructor(passkey) {
+        super(20, `passkey required >0 and <999999, But input: ${passkey}`);
+    }
+}
+exports.ObnizBleInvalidPasskeyError = ObnizBleInvalidPasskeyError;
 
 
 /***/ }),
@@ -3873,11 +3955,11 @@ class ObnizParts extends ObnizConnection_1.default {
         if (this.connectionState !== 'connected') {
             throw new Error('obniz.wired can only be used after connection');
         }
-        const Parts = ObnizParts.getPartsClass(partsName);
-        if (!Parts) {
+        const TargetPartsClass = ObnizParts.getPartsClass(partsName);
+        if (!TargetPartsClass) {
             throw new Error('No such a parts [' + partsName + '] found');
         }
-        const parts = new Parts();
+        const parts = new TargetPartsClass();
         // eslint-disable-next-line prefer-rest-params
         const args = Array.from(arguments);
         args.shift();
@@ -3930,8 +4012,9 @@ class ObnizParts extends ObnizConnection_1.default {
             .filter(([, m]) => m !== null)
             // Hiring with long library names
             .sort(([na], [nb]) => ((nb !== null && nb !== void 0 ? nb : '')).length - ((na !== null && na !== void 0 ? na : '')).length);
-        if (result.length === 0 || !result[0][0] || !result[0][1])
+        if (result.length === 0 || !result[0][0] || !result[0][1]) {
             return null;
+        }
         const [name, mode] = result[0];
         const parts = new _parts[name](peripheral, mode);
         return parts;
@@ -10016,171 +10099,6 @@ exports.default = NobleBindings;
 
 /***/ }),
 
-/***/ "./dist/src/obniz/libs/embeds/bleHci/protocol/central/crypto.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(Buffer) {
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- *
- * @ignore
- */
-const crypto_1 = __importDefault(__webpack_require__("./node_modules/crypto-browserify/index.js"));
-/**
- * @ignore
- */
-const r = () => {
-    return crypto_1.default.randomBytes(16);
-};
-/**
- * @ignore
- */
-const c1 = (k, _r, pres, preq, iat, ia, rat, ra) => {
-    const p1 = Buffer.concat([iat, rat, preq, pres]);
-    const p2 = Buffer.concat([ra, ia, Buffer.from('00000000', 'hex')]);
-    let res = xor(_r, p1);
-    res = e(k, res);
-    res = xor(res, p2);
-    res = e(k, res);
-    return res;
-};
-const s1 = (k, r1, r2) => {
-    return e(k, Buffer.concat([r2.slice(0, 8), r1.slice(0, 8)]));
-};
-const e = (key, data) => {
-    key = swap(key);
-    data = swap(data);
-    const cipher = crypto_1.default.createCipheriv('aes-128-ecb', key, '');
-    cipher.setAutoPadding(false);
-    return swap(Buffer.concat([cipher.update(data), cipher.final()]));
-};
-const xor = (b1, b2) => {
-    const result = Buffer.alloc(b1.length);
-    for (let i = 0; i < b1.length; i++) {
-        result[i] = b1[i] ^ b2[i];
-    }
-    return result;
-};
-const swap = (input) => {
-    const output = Buffer.alloc(input.length);
-    for (let i = 0; i < output.length; i++) {
-        output[i] = input[input.length - i - 1];
-    }
-    return output;
-};
-const emptyBuffer = Buffer.alloc(0);
-const AESCMAC = (key, message) => {
-    const zero = Buffer.alloc(16);
-    const aes = crypto_1.default.createCipheriv('AES-128-ECB', key, emptyBuffer);
-    const L = aes.update(zero);
-    if (leftShift128(L)) {
-        L[15] ^= 0x87;
-    }
-    let flag = true;
-    if (message.length === 0 || message.length % 16 !== 0) {
-        if (leftShift128(L)) {
-            L[15] ^= 0x87;
-        }
-        flag = false;
-    }
-    let X = zero;
-    const n = (message.length + 15) >>> 4;
-    let processed = 0;
-    for (let i = 0; i < n - 1; i++) {
-        X = aes.update(xor(X, message.slice(processed, processed + 16)));
-        processed += 16;
-    }
-    const last = Buffer.alloc(16);
-    message.copy(last, 0, processed);
-    if (!flag) {
-        last[message.length % 16] = 0x80;
-    }
-    return aes.update(xor(xor(X, L), last));
-};
-const leftShift128 = (v) => {
-    let carry = 0;
-    for (let i = 15; i >= 0; --i) {
-        const nextCarry = v[i] >> 7;
-        v[i] = (v[i] << 1) | carry;
-        carry = nextCarry;
-    }
-    return carry;
-};
-const f4 = (U, V, X, Z) => {
-    return AESCMAC(Buffer.from(X).reverse(), Buffer.concat([Buffer.from([Z]), V, U]).reverse()).reverse();
-};
-const f5 = (W, N1, N2, A1, A2) => {
-    const SALT = Buffer.from('6C888391AAF5A53860370BDB5A6083BE', 'hex');
-    const T = AESCMAC(SALT, Buffer.from(W).reverse());
-    const v = Buffer.concat([
-        Buffer.from('btle', 'utf8'),
-        Buffer.from(N1).reverse(),
-        Buffer.from(N2).reverse(),
-        Buffer.from(A1).reverse(),
-        Buffer.from(A2).reverse(),
-        Buffer.from([1, 0]),
-    ]);
-    const macKey = AESCMAC(T, Buffer.concat([Buffer.from([0]), v])).reverse();
-    const ltk = AESCMAC(T, Buffer.concat([Buffer.from([1]), v])).reverse();
-    return [macKey, ltk];
-};
-const f6 = (W, N1, N2, R, IOcap, A1, A2) => {
-    return AESCMAC(Buffer.from(W).reverse(), Buffer.concat([A2, A1, IOcap, R, N2, N1]).reverse()).reverse();
-};
-const g2 = (U, V, X, Y) => {
-    return AESCMAC(Buffer.from(X).reverse(), Buffer.concat([Y, V, U]).reverse()).readUInt32BE(12);
-};
-const createECDHKey = () => {
-    const ecdh = crypto_1.default.createECDH('prime256v1');
-    ecdh.generateKeys();
-    return {
-        x: ecdh.getPublicKey().slice(1, 33).reverse(),
-        y: ecdh.getPublicKey().slice(33, 65).reverse(),
-        ecdh,
-    };
-};
-const generateLtkEaEb = (ecdh, peerPublicKey, ia, iat, ra, rat, initRandomValue, rspRandomValue, userPasskey, maxKeySize, IOCapA, IOCapB) => {
-    const userPasskeyBuffer = Buffer.alloc(16);
-    userPasskeyBuffer.writeUInt32LE(userPasskey, 0);
-    let sharedSecret = null;
-    const buf = Buffer.alloc(65);
-    buf[0] = 0x04;
-    for (let i = 0; i < 32; i++) {
-        buf[1 + i] = peerPublicKey.x[31 - i];
-        buf[33 + i] = peerPublicKey.y[31 - i];
-    }
-    sharedSecret = ecdh.computeSecret(buf).reverse();
-    const A = Buffer.concat([ia, iat]);
-    const B = Buffer.concat([ra, rat]);
-    const keys = f5(sharedSecret, initRandomValue, rspRandomValue, A, B);
-    const macKey = keys[0];
-    const ltk = keys[1].slice(0, maxKeySize);
-    const Ea = f6(macKey, initRandomValue, rspRandomValue, userPasskeyBuffer, IOCapA, A, B);
-    const Eb = f6(macKey, rspRandomValue, initRandomValue, userPasskeyBuffer, IOCapB, B, A);
-    return { ltk, Ea, Eb };
-};
-exports.default = {
-    r,
-    c1,
-    s1,
-    e,
-    f4,
-    f5,
-    f6,
-    createECDHKey,
-    randomBytes: crypto_1.default.randomBytes,
-    generateLtkEaEb,
-};
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
-
-/***/ }),
-
 /***/ "./dist/src/obniz/libs/embeds/bleHci/protocol/central/gap.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -11251,36 +11169,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
-const crypto_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/crypto.js"));
-/**
- * @ignore
- */
-// eslint-disable-next-line @typescript-eslint/no-namespace
-var SMP;
-(function (SMP) {
-    SMP.CID = 0x0006;
-    SMP.PAIRING_REQUEST = 0x01;
-    SMP.PAIRING_RESPONSE = 0x02;
-    SMP.PAIRING_CONFIRM = 0x03;
-    SMP.PAIRING_RANDOM = 0x04;
-    SMP.PAIRING_FAILED = 0x05;
-    SMP.ENCRYPT_INFO = 0x06;
-    SMP.MASTER_IDENT = 0x07;
-    SMP.IDENTITY_INFORMATION = 0x08;
-    SMP.IDENTITY_ADDRESS_INFORMATION = 0x09;
-    SMP.SIGNING_INFORMATION = 0x0a;
-    SMP.PAIRING_PUBLIC_KEY = 0x0c;
-    SMP.PAIRING_DHKEY_CHECK = 0x0d;
-    SMP.SMP_SECURITY_REQUEST = 0x0b;
-})(SMP || (SMP = {}));
+const crypto_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/common/crypto.js"));
+const smp_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/common/smp.js");
 /**
  * @ignore
  */
 class Smp extends eventemitter3_1.default {
     constructor(aclStream, localAddressType, localAddress, remoteAddressType, remoteAddress) {
         super();
-        this._preq = null;
-        this._pres = null;
+        this._preq = null; // pairing Request buffer
+        this._pres = null; // pairing Response buffer
+        this._pairingFeature = null; // conbine (pairing Request & pairing Response)
         this._tk = null;
         this._r = null;
         this._rand = null;
@@ -11289,9 +11188,9 @@ class Smp extends eventemitter3_1.default {
         this._stk = null;
         this._ltk = null;
         this._options = undefined;
+        this._smpCommon = new smp_1.SmpCommon();
         this.debugHandler = (...param) => {
             // do nothing.
-            // console.log(...param);
         };
         this._aclStream = aclStream;
         this._iat = Buffer.from([localAddressType === 'random' ? 0x01 : 0x00]);
@@ -11309,7 +11208,7 @@ class Smp extends eventemitter3_1.default {
         if (!this._ltk || !this._rand || !this._ediv) {
             throw new Error('invalid keys');
         }
-        console.log(this.parsePairingReqRsp(this._pres));
+        // console.log(this._smpCommon.parsePairingReqRsp(this._pres!));
         const encResult = await this._aclStream.onSmpLtkWait(this._ltk, this._rand, this._ediv);
         return encResult;
     }
@@ -11329,29 +11228,33 @@ class Smp extends eventemitter3_1.default {
         this.debug(`Going to Pairing`);
         await this.sendPairingRequestWait();
         this.debug(`Waiting Pairing Response`);
-        const pairingResponse = await this._readWait(SMP.PAIRING_RESPONSE);
+        const pairingResponse = await this._readWait(smp_1.SMP.PAIRING_RESPONSE);
         this.debug(`Receive  Pairing Response ${pairingResponse.toString('hex')}`);
         this._pres = pairingResponse;
+        const parsedPairingRequest = this._smpCommon.parsePairingReqRsp(this._preq);
+        const parsedPairingResponse = this._smpCommon.parsePairingReqRsp(this._pres);
+        this._pairingFeature = this._smpCommon.combinePairingParam(parsedPairingRequest, parsedPairingResponse);
         if (this.isSecureConnectionMode()) {
+            if (!this._pairingFeature.sc) {
+                throw new ObnizError_1.ObnizBleUnSupportedPeripheralError('secure connection');
+            }
             // phase2 : (after receive PAIRING_RESPONSE)
             await this.handlePairingResponseSecureConnectionWait();
-            console.log('paired');
             await new Promise((resolve) => setTimeout(resolve, 1000));
-            console.log('awaited paired');
         }
         else {
             // phase2 : (after receive PAIRING_RESPONSE)
             await this.handlePairingResponseLegacyPairingWait();
             this.debug(`Waiting Pairing Confirm`);
-            const confirm = await this._readWait(SMP.PAIRING_CONFIRM, 60 * 1000); // 60sec timeout
+            const confirm = await this._readWait(smp_1.SMP.PAIRING_CONFIRM, 60 * 1000); // 60sec timeout
             this.handlePairingConfirm(confirm);
             // phase3 : Transport Specific Key Distribution
             this.debug(`Waiting Pairing Random`);
-            const random = await this._readWait(SMP.PAIRING_RANDOM);
+            const random = await this._readWait(smp_1.SMP.PAIRING_RANDOM);
             const encResultPromise = this.handlePairingRandomWait(random);
             this.debug(`Got Pairing Encryption Result`);
-            const encInfoPromise = this._readWait(SMP.ENCRYPT_INFO);
-            const masterIdentPromise = this._readWait(SMP.MASTER_IDENT);
+            const encInfoPromise = this._readWait(smp_1.SMP.ENCRYPT_INFO);
+            const masterIdentPromise = this._readWait(smp_1.SMP.MASTER_IDENT);
             await Promise.all([encResultPromise, encInfoPromise, masterIdentPromise]);
             const encResult = await encResultPromise;
             const encInfo = await encInfoPromise;
@@ -11367,14 +11270,14 @@ class Smp extends eventemitter3_1.default {
         }
     }
     onAclStreamData(cid, data) {
-        if (cid !== SMP.CID) {
+        if (cid !== smp_1.SMP.CID) {
             return;
         }
         const code = data.readUInt8(0);
-        if (SMP.PAIRING_FAILED === code) {
+        if (smp_1.SMP.PAIRING_FAILED === code) {
             this.handlePairingFailed(data);
         }
-        else if (SMP.SMP_SECURITY_REQUEST === code) {
+        else if (smp_1.SMP.SMP_SECURITY_REQUEST === code) {
             this.handleSecurityRequest(data);
         }
         // console.warn("SMP: " + code);
@@ -11400,67 +11303,81 @@ class Smp extends eventemitter3_1.default {
         }
         this._r = crypto_1.default.r();
         this.write(Buffer.concat([
-            Buffer.from([SMP.PAIRING_CONFIRM]),
+            Buffer.from([smp_1.SMP.PAIRING_CONFIRM]),
             crypto_1.default.c1(this._tk, this._r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
         ]));
     }
     async handlePairingResponseSecureConnectionWait() {
-        // TODO: check peer device support sc.
-        // const passkeyBit = new Array<boolean>(20);
-        // for (let i = 0; i < 20; i++) {
-        //   passkeyBit[i] = (passkeyNumber >> i) & 0x1 ? true : false;
-        // }
+        var _a, _b, _c;
         const ecdh = crypto_1.default.createECDHKey();
-        const remoteKeyPromise = this._readWait(SMP.PAIRING_PUBLIC_KEY);
-        this.write(Buffer.concat([Buffer.from([SMP.PAIRING_PUBLIC_KEY]), ecdh.x, ecdh.y]));
+        const usePasskey = ((_a = this._pairingFeature) === null || _a === void 0 ? void 0 : _a.association) === 'PasskeyEntryRspInputs' ||
+            ((_b = this._pairingFeature) === null || _b === void 0 ? void 0 : _b.association) === 'PasskeyEntryBothInputs' ||
+            ((_c = this._pairingFeature) === null || _c === void 0 ? void 0 : _c.association) === 'PasskeyEntryInitInputs';
+        const remoteKeyPromise = this._readWait(smp_1.SMP.PAIRING_PUBLIC_KEY);
+        const remoteConfirmForJustWorksPromise = usePasskey
+            ? null
+            : this._readWait(smp_1.SMP.PAIRING_CONFIRM);
+        this.write(Buffer.concat([Buffer.from([smp_1.SMP.PAIRING_PUBLIC_KEY]), ecdh.x, ecdh.y]));
         const remoteKey = await remoteKeyPromise;
         const peerPublicKey = {
             x: remoteKey.slice(1, 33),
             y: remoteKey.slice(33, 65),
         };
         this.debug('got remote public key');
-        const passkeyNumber = this.isPasskeyMode()
-            ? await this._options.passkeyCallback()
-            : 0;
-        this.debug(`PassKey=${passkeyNumber}`);
+        let passkeyNumber = 0;
+        if (usePasskey) {
+            passkeyNumber = await this._options.passkeyCallback();
+            this.debug(`PassKey=${passkeyNumber}`);
+            if (passkeyNumber < 0 || passkeyNumber > 999999) {
+                throw new ObnizError_1.ObnizBleInvalidPasskeyError(passkeyNumber);
+            }
+        }
         const rspConfirmBuffers = [];
         const rspRandomBuffers = [];
         const initRandomValue = crypto_1.default.randomBytes(16);
-        for (let passkeyBitCounter = 0; passkeyBitCounter < 20; passkeyBitCounter++) {
-            console.log('here' + passkeyBitCounter);
-            const initConfirmValue = crypto_1.default.f4(ecdh.x, peerPublicKey.x, initRandomValue, ((passkeyNumber >> passkeyBitCounter) & 1) | 0x80);
-            const remoteConfirmPromise = this._readWait(SMP.PAIRING_CONFIRM);
-            this.write(Buffer.concat([Buffer.from([SMP.PAIRING_CONFIRM]), initConfirmValue]));
-            console.log('write confirm' + passkeyBitCounter);
-            const buf = await remoteConfirmPromise;
-            console.log('get confirm' + passkeyBitCounter);
+        if (!usePasskey) {
+            this.debug(`pairing confirm only once`);
+            const buf = await remoteConfirmForJustWorksPromise;
             rspConfirmBuffers.push(buf.slice(1));
-            const remoteRamdomPromise = this._readWait(SMP.PAIRING_RANDOM);
-            this.write(Buffer.concat([Buffer.from([SMP.PAIRING_RANDOM]), initRandomValue]));
-            console.log('write random' + passkeyBitCounter);
+            const remoteRamdomPromise = this._readWait(smp_1.SMP.PAIRING_RANDOM);
+            this.write(Buffer.concat([Buffer.from([smp_1.SMP.PAIRING_RANDOM]), initRandomValue]));
             const buf2 = await remoteRamdomPromise;
-            console.log('get random' + passkeyBitCounter);
             rspRandomBuffers.push(buf2.slice(1));
-            console.log('finish' + passkeyBitCounter);
         }
-        const res = crypto_1.default.generateLtkEaEb(ecdh.ecdh, peerPublicKey, this._ia, this._iat, this._ra, this._rat, initRandomValue, rspRandomBuffers[rspRandomBuffers.length - 1], passkeyNumber, 0x10, // max key size
+        else {
+            for (let passkeyBitCounter = 0; passkeyBitCounter < 20; passkeyBitCounter++) {
+                this.debug(`pairing confirm loop:${passkeyBitCounter}`);
+                const remoteConfirmPromise = this._readWait(smp_1.SMP.PAIRING_CONFIRM);
+                const initConfirmValue = crypto_1.default.f4(ecdh.x, peerPublicKey.x, initRandomValue, ((passkeyNumber >> passkeyBitCounter) & 1) | 0x80);
+                this.write(Buffer.concat([Buffer.from([smp_1.SMP.PAIRING_CONFIRM]), initConfirmValue]));
+                const buf = await remoteConfirmPromise;
+                rspConfirmBuffers.push(buf.slice(1));
+                const remoteRamdomPromise = this._readWait(smp_1.SMP.PAIRING_RANDOM);
+                this.write(Buffer.concat([Buffer.from([smp_1.SMP.PAIRING_RANDOM]), initRandomValue]));
+                const buf2 = await remoteRamdomPromise;
+                rspRandomBuffers.push(buf2.slice(1));
+            }
+        }
+        const res = crypto_1.default.generateLtkEaEb(ecdh.ecdh, peerPublicKey, this._ia, this._iat, this._ra, this._rat, initRandomValue, rspRandomBuffers[rspRandomBuffers.length - 1], (passkeyNumber !== null && passkeyNumber !== void 0 ? passkeyNumber : 0), 0x10, // max key size
         this._preq ? this._preq.slice(1, 4) : Buffer.alloc(3), this._pres ? this._pres.slice(1, 4) : Buffer.alloc(3));
-        const remoteDhkeyPromise = this._readWait(SMP.PAIRING_DHKEY_CHECK);
-        this.write(Buffer.concat([Buffer.from([SMP.PAIRING_DHKEY_CHECK]), res.Ea]));
+        const remoteDhkeyPromise = this._readWait(smp_1.SMP.PAIRING_DHKEY_CHECK);
+        this.debug(`send PAIRING_DHKEY_CHECK`);
+        this.write(Buffer.concat([Buffer.from([smp_1.SMP.PAIRING_DHKEY_CHECK]), res.Ea]));
         const buf3 = await remoteDhkeyPromise;
+        this.debug(`receive PAIRING_DHKEY_CHECK`);
         const Eb = buf3.slice(1);
-        console.log('got dhkey');
-        const irkPromise = this._readWait(SMP.IDENTITY_INFORMATION);
-        const bdAddrPromise = this._readWait(SMP.IDENTITY_ADDRESS_INFORMATION);
+        const irkPromise = this._readWait(smp_1.SMP.IDENTITY_INFORMATION);
+        const bdAddrPromise = this._readWait(smp_1.SMP.IDENTITY_ADDRESS_INFORMATION);
+        this.debug(`receive IDENTITY_INFORMATION IDENTITY_ADDRESS_INFORMATION`);
         this._ltk = res.ltk;
         this.emit('ltk', this._ltk);
         await this._aclStream.onSmpStkWait(this._ltk);
         const irkBuf = await irkPromise;
         const bdAddrBuf = await bdAddrPromise;
         // we dont have irk, so zero padding
-        this.write(Buffer.concat([Buffer.from([SMP.IDENTITY_INFORMATION]), Buffer.alloc(16)]));
+        this.write(Buffer.concat([Buffer.from([smp_1.SMP.IDENTITY_INFORMATION]), Buffer.alloc(16)]));
         this.write(Buffer.concat([
-            Buffer.from([SMP.IDENTITY_ADDRESS_INFORMATION]),
+            Buffer.from([smp_1.SMP.IDENTITY_ADDRESS_INFORMATION]),
             this._iat,
             this._ia,
         ]));
@@ -11472,7 +11389,7 @@ class Smp extends eventemitter3_1.default {
         var _a;
         this._pcnf = data;
         this.write(Buffer.concat([
-            Buffer.from([SMP.PAIRING_RANDOM]),
+            Buffer.from([smp_1.SMP.PAIRING_RANDOM]),
             (_a = this._r, (_a !== null && _a !== void 0 ? _a : Buffer.alloc(0))),
         ]));
     }
@@ -11480,7 +11397,7 @@ class Smp extends eventemitter3_1.default {
         const r = data.slice(1);
         let encResult = null;
         const pcnf = Buffer.concat([
-            Buffer.from([SMP.PAIRING_CONFIRM]),
+            Buffer.from([smp_1.SMP.PAIRING_CONFIRM]),
             crypto_1.default.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
         ]);
         if (this._pcnf && this._pcnf.toString('hex') === pcnf.toString('hex')) {
@@ -11492,7 +11409,7 @@ class Smp extends eventemitter3_1.default {
             encResult = await this._aclStream.onSmpStkWait(this._stk);
         }
         else {
-            this.write(Buffer.from([SMP.PAIRING_RANDOM, SMP.PAIRING_CONFIRM]));
+            this.write(Buffer.from([smp_1.SMP.PAIRING_RANDOM, smp_1.SMP.PAIRING_CONFIRM]));
             this.emit('fail', 0);
             throw new Error('Encryption pcnf error');
         }
@@ -11513,7 +11430,7 @@ class Smp extends eventemitter3_1.default {
         this.emit('masterIdent', ediv, rand);
     }
     write(data) {
-        this._aclStream.write(SMP.CID, data);
+        this._aclStream.write(smp_1.SMP.CID, data);
     }
     handleSecurityRequest(data) {
         this.pairingWait()
@@ -11582,7 +11499,7 @@ class Smp extends eventemitter3_1.default {
         if (this.isPasskeyMode()) {
             this.debug(`pair capable passkey`);
             this._preq = Buffer.from([
-                SMP.PAIRING_REQUEST,
+                smp_1.SMP.PAIRING_REQUEST,
                 0x02,
                 0x00,
                 this._generateAuthenticationRequirementsFlags({
@@ -11593,14 +11510,14 @@ class Smp extends eventemitter3_1.default {
                     secureConnection: this.isSecureConnectionMode(),
                 }),
                 0x10,
-                0x02,
-                0x02,
+                this.isSecureConnectionMode() ? 0x02 : 0x00,
+                this.isSecureConnectionMode() ? 0x02 : 0x01,
             ]);
         }
         else {
             this.debug(`pair No Input and No Output`);
             this._preq = Buffer.from([
-                SMP.PAIRING_REQUEST,
+                smp_1.SMP.PAIRING_REQUEST,
                 0x03,
                 0x00,
                 this._generateAuthenticationRequirementsFlags({
@@ -11611,8 +11528,8 @@ class Smp extends eventemitter3_1.default {
                     secureConnection: this.isSecureConnectionMode(),
                 }),
                 0x10,
-                0x00,
-                0x01,
+                this.isSecureConnectionMode() ? 0x02 : 0x00,
+                this.isSecureConnectionMode() ? 0x02 : 0x01,
             ]);
         }
         this.write(this._preq);
@@ -11631,7 +11548,7 @@ class Smp extends eventemitter3_1.default {
     }
     _readWait(flag, timeout) {
         return Promise.race([
-            this._aclStream.readWait(SMP.CID, flag, timeout),
+            this._aclStream.readWait(smp_1.SMP.CID, flag, timeout),
             this._pairingFailReject(),
         ]);
     }
@@ -11643,53 +11560,7 @@ class Smp extends eventemitter3_1.default {
         });
     }
     debug(text) {
-        console.log(`SMP: ${text}`);
-    }
-    parsePairingReqRsp(data) {
-        return {
-            ioCap: this.value2ioCapability(data[1]),
-            bondingFlags: ((data[3] & 3) === 0
-                ? 'NoBonding'
-                : 'Bonding'),
-            mitm: (data[3] & 4) !== 0,
-            sc: (data[3] & 8) !== 0,
-            keypress: (data[3] & 16) !== 0,
-            maxKeySize: data[4],
-            initKeyDistr: {
-                encKey: (data[5] & 1) !== 0,
-                idKey: (data[5] & 2) !== 0,
-            },
-            rspKeyDistr: {
-                encKey: (data[6] & 1) !== 0,
-                idKey: (data[6] & 2) !== 0,
-            },
-        };
-    }
-    ioCapability2value(capability) {
-        switch (capability) {
-            case 'displayOnly':
-                return 0x00;
-            case 'displayYesNo':
-                return 0x01;
-            case 'keyboardDisplay':
-                return 0x04;
-            case 'keyboardOnly':
-                return 0x02;
-        }
-        return 0x03;
-    }
-    value2ioCapability(value) {
-        const map = {
-            0x00: 'displayOnly',
-            0x01: 'displayYesNo',
-            0x02: 'keyboardOnly',
-            0x03: 'noInputNoOutput',
-            0x04: 'keyboardDisplay',
-        };
-        if (map[value]) {
-            return map[value];
-        }
-        throw new Error('unknown value');
+        // console.log(new Date(), `SMP: ${text}`);
     }
 }
 exports.default = Smp;
@@ -11804,6 +11675,171 @@ exports.ATT_ECODE_READABLES = {
     0x11: 'ECODE_INSUFF_RESOURCES',
 };
 
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/embeds/bleHci/protocol/common/crypto.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
+const crypto_1 = __importDefault(__webpack_require__("./node_modules/crypto-browserify/index.js"));
+/**
+ * @ignore
+ */
+const r = () => {
+    return crypto_1.default.randomBytes(16);
+};
+/**
+ * @ignore
+ */
+const c1 = (k, _r, pres, preq, iat, ia, rat, ra) => {
+    const p1 = Buffer.concat([iat, rat, preq, pres]);
+    const p2 = Buffer.concat([ra, ia, Buffer.from('00000000', 'hex')]);
+    let res = xor(_r, p1);
+    res = e(k, res);
+    res = xor(res, p2);
+    res = e(k, res);
+    return res;
+};
+const s1 = (k, r1, r2) => {
+    return e(k, Buffer.concat([r2.slice(0, 8), r1.slice(0, 8)]));
+};
+const e = (key, data) => {
+    key = swap(key);
+    data = swap(data);
+    const cipher = crypto_1.default.createCipheriv('aes-128-ecb', key, '');
+    cipher.setAutoPadding(false);
+    return swap(Buffer.concat([cipher.update(data), cipher.final()]));
+};
+const xor = (b1, b2) => {
+    const result = Buffer.alloc(b1.length);
+    for (let i = 0; i < b1.length; i++) {
+        result[i] = b1[i] ^ b2[i];
+    }
+    return result;
+};
+const swap = (input) => {
+    const output = Buffer.alloc(input.length);
+    for (let i = 0; i < output.length; i++) {
+        output[i] = input[input.length - i - 1];
+    }
+    return output;
+};
+const emptyBuffer = Buffer.alloc(0);
+const AESCMAC = (key, message) => {
+    const zero = Buffer.alloc(16);
+    const aes = crypto_1.default.createCipheriv('AES-128-ECB', key, emptyBuffer);
+    const L = aes.update(zero);
+    if (leftShift128(L)) {
+        L[15] ^= 0x87;
+    }
+    let flag = true;
+    if (message.length === 0 || message.length % 16 !== 0) {
+        if (leftShift128(L)) {
+            L[15] ^= 0x87;
+        }
+        flag = false;
+    }
+    let X = zero;
+    const n = (message.length + 15) >>> 4;
+    let processed = 0;
+    for (let i = 0; i < n - 1; i++) {
+        X = aes.update(xor(X, message.slice(processed, processed + 16)));
+        processed += 16;
+    }
+    const last = Buffer.alloc(16);
+    message.copy(last, 0, processed);
+    if (!flag) {
+        last[message.length % 16] = 0x80;
+    }
+    return aes.update(xor(xor(X, L), last));
+};
+const leftShift128 = (v) => {
+    let carry = 0;
+    for (let i = 15; i >= 0; --i) {
+        const nextCarry = v[i] >> 7;
+        v[i] = (v[i] << 1) | carry;
+        carry = nextCarry;
+    }
+    return carry;
+};
+const f4 = (U, V, X, Z) => {
+    return AESCMAC(Buffer.from(X).reverse(), Buffer.concat([Buffer.from([Z]), V, U]).reverse()).reverse();
+};
+const f5 = (W, N1, N2, A1, A2) => {
+    const SALT = Buffer.from('6C888391AAF5A53860370BDB5A6083BE', 'hex');
+    const T = AESCMAC(SALT, Buffer.from(W).reverse());
+    const v = Buffer.concat([
+        Buffer.from('btle', 'utf8'),
+        Buffer.from(N1).reverse(),
+        Buffer.from(N2).reverse(),
+        Buffer.from(A1).reverse(),
+        Buffer.from(A2).reverse(),
+        Buffer.from([1, 0]),
+    ]);
+    const macKey = AESCMAC(T, Buffer.concat([Buffer.from([0]), v])).reverse();
+    const ltk = AESCMAC(T, Buffer.concat([Buffer.from([1]), v])).reverse();
+    return [macKey, ltk];
+};
+const f6 = (W, N1, N2, R, IOcap, A1, A2) => {
+    return AESCMAC(Buffer.from(W).reverse(), Buffer.concat([A2, A1, IOcap, R, N2, N1]).reverse()).reverse();
+};
+const g2 = (U, V, X, Y) => {
+    return AESCMAC(Buffer.from(X).reverse(), Buffer.concat([Y, V, U]).reverse()).readUInt32BE(12);
+};
+const createECDHKey = () => {
+    const ecdh = crypto_1.default.createECDH('prime256v1');
+    ecdh.generateKeys();
+    return {
+        x: ecdh.getPublicKey().slice(1, 33).reverse(),
+        y: ecdh.getPublicKey().slice(33, 65).reverse(),
+        ecdh,
+    };
+};
+const generateLtkEaEb = (ecdh, peerPublicKey, ia, iat, ra, rat, initRandomValue, rspRandomValue, userPasskey, maxKeySize, IOCapA, IOCapB) => {
+    const userPasskeyBuffer = Buffer.alloc(16);
+    userPasskeyBuffer.writeUInt32LE(userPasskey, 0);
+    let sharedSecret = null;
+    const buf = Buffer.alloc(65);
+    buf[0] = 0x04;
+    for (let i = 0; i < 32; i++) {
+        buf[1 + i] = peerPublicKey.x[31 - i];
+        buf[33 + i] = peerPublicKey.y[31 - i];
+    }
+    sharedSecret = ecdh.computeSecret(buf).reverse();
+    const A = Buffer.concat([ia, iat]);
+    const B = Buffer.concat([ra, rat]);
+    const keys = f5(sharedSecret, initRandomValue, rspRandomValue, A, B);
+    const macKey = keys[0];
+    const ltk = keys[1].slice(0, maxKeySize);
+    const Ea = f6(macKey, initRandomValue, rspRandomValue, userPasskeyBuffer, IOCapA, A, B);
+    const Eb = f6(macKey, rspRandomValue, initRandomValue, userPasskeyBuffer, IOCapB, B, A);
+    return { ltk, Ea, Eb };
+};
+exports.default = {
+    r,
+    c1,
+    s1,
+    e,
+    f4,
+    f5,
+    f6,
+    createECDHKey,
+    randomBytes: crypto_1.default.randomBytes,
+    generateLtkEaEb,
+};
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -12001,6 +12037,147 @@ class GattCommon {
 exports.GattCommon = GattCommon;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/embeds/bleHci/protocol/common/smp.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @ignore
+ */
+// eslint-disable-next-line @typescript-eslint/no-namespace
+var SMP;
+(function (SMP) {
+    SMP.CID = 0x0006;
+    SMP.PAIRING_REQUEST = 0x01;
+    SMP.PAIRING_RESPONSE = 0x02;
+    SMP.PAIRING_CONFIRM = 0x03;
+    SMP.PAIRING_RANDOM = 0x04;
+    SMP.PAIRING_FAILED = 0x05;
+    SMP.ENCRYPT_INFO = 0x06;
+    SMP.MASTER_IDENT = 0x07;
+    SMP.IDENTITY_INFORMATION = 0x08;
+    SMP.IDENTITY_ADDRESS_INFORMATION = 0x09;
+    SMP.SIGNING_INFORMATION = 0x0a;
+    SMP.PAIRING_PUBLIC_KEY = 0x0c;
+    SMP.PAIRING_DHKEY_CHECK = 0x0d;
+    SMP.SMP_SECURITY_REQUEST = 0x0b;
+    SMP.UNSPECIFIED = 0x08;
+})(SMP = exports.SMP || (exports.SMP = {}));
+exports.SmpAssociationModelValue = {
+    JustWorks: 0,
+    PasskeyEntryInitInputs: 1,
+    PasskeyEntryRspInputs: 2,
+    PasskeyEntryBothInputs: 3,
+    NumericComparison: 4,
+};
+class SmpCommon {
+    parsePairingReqRsp(data) {
+        return {
+            ioCap: this.value2ioCapability(data[1]),
+            bondingFlags: (data[3] & 3) === 0 ? 'NoBonding' : 'Bonding',
+            mitm: (data[3] & 4) !== 0,
+            sc: (data[3] & 8) !== 0,
+            keypress: (data[3] & 16) !== 0,
+            maxKeySize: data[4],
+            initKeyDistr: {
+                encKey: (data[5] & 1) !== 0,
+                idKey: (data[5] & 2) !== 0,
+            },
+            rspKeyDistr: {
+                encKey: (data[6] & 1) !== 0,
+                idKey: (data[6] & 2) !== 0,
+            },
+        };
+    }
+    combinePairingParam(a, b) {
+        const combined = {
+            bondingFlags: (a.bondingFlags === 'Bonding' &&
+                b.bondingFlags === 'Bonding'
+                ? 'Bonding'
+                : 'NoBonding'),
+            mitm: a.mitm && b.mitm,
+            sc: a.sc && b.sc,
+            maxKeySize: Math.min(a.maxKeySize, b.maxKeySize),
+            initKeyDistr: {
+                encKey: a.initKeyDistr.encKey && b.initKeyDistr.encKey,
+                idKey: a.initKeyDistr.idKey && b.initKeyDistr.idKey,
+            },
+            rspKeyDistr: {
+                encKey: a.rspKeyDistr.encKey && b.rspKeyDistr.encKey,
+                idKey: a.rspKeyDistr.idKey && b.rspKeyDistr.idKey,
+            },
+        };
+        return Object.assign(Object.assign({}, combined), { association: this._calcAssosiationModel(a, b, combined) });
+    }
+    _calcAssosiationModel(req, rsp, combined) {
+        if (!combined.mitm) {
+            return 'JustWorks';
+        }
+        const reqDisplay = !combined.sc && req.ioCap === 'displayYesNo' ? 'displayOnly' : req.ioCap;
+        const rspDisplay = !combined.sc && rsp.ioCap === 'displayYesNo' ? 'displayOnly' : rsp.ioCap;
+        if (reqDisplay === 'noInputNoOutput' || rspDisplay === 'noInputNoOutput') {
+            return 'JustWorks';
+        }
+        else if (reqDisplay === 'keyboardOnly' && rspDisplay === 'keyboardOnly') {
+            return 'PasskeyEntryBothInputs';
+        }
+        else if (reqDisplay === 'keyboardOnly') {
+            return 'PasskeyEntryInitInputs';
+        }
+        else if (rspDisplay === 'keyboardOnly') {
+            return 'PasskeyEntryRspInputs';
+        }
+        else if (reqDisplay === 'keyboardDisplay' &&
+            rspDisplay === 'keyboardDisplay') {
+            return combined.sc ? 'NumericComparison' : 'PasskeyEntryRspInputs';
+        }
+        else if (reqDisplay === 'displayOnly' &&
+            rspDisplay === 'keyboardDisplay') {
+            return 'PasskeyEntryRspInputs';
+        }
+        else if (rspDisplay === 'displayOnly' &&
+            reqDisplay === 'keyboardDisplay') {
+            return 'PasskeyEntryInitInputs';
+        }
+        else if (reqDisplay === 'displayOnly' || rspDisplay === 'displayOnly') {
+            return 'JustWorks';
+        }
+        return 'NumericComparison';
+    }
+    ioCapability2value(capability) {
+        switch (capability) {
+            case 'displayOnly':
+                return 0x00;
+            case 'displayYesNo':
+                return 0x01;
+            case 'keyboardDisplay':
+                return 0x04;
+            case 'keyboardOnly':
+                return 0x02;
+        }
+        return 0x03;
+    }
+    value2ioCapability(value) {
+        const map = {
+            0x00: 'displayOnly',
+            0x01: 'displayYesNo',
+            0x02: 'keyboardOnly',
+            0x03: 'noInputNoOutput',
+            0x04: 'keyboardDisplay',
+        };
+        if (map[value]) {
+            return map[value];
+        }
+        throw new Error('unknown value');
+    }
+}
+exports.SmpCommon = SmpCommon;
+
 
 /***/ }),
 
@@ -13644,74 +13821,6 @@ exports.default = BlenoBindings;
 
 /***/ }),
 
-/***/ "./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/crypto.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(Buffer) {
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- *
- * @ignore
- */
-const crypto_1 = __importDefault(__webpack_require__("./node_modules/crypto-browserify/index.js"));
-/**
- * @ignore
- */
-const r = () => {
-    return crypto_1.default.randomBytes(16);
-};
-/**
- * @ignore
- */
-const c1 = (k, _r, pres, preq, iat, ia, rat, ra) => {
-    const p1 = Buffer.concat([iat, rat, preq, pres]);
-    const p2 = Buffer.concat([ra, ia, Buffer.from('00000000', 'hex')]);
-    let res = xor(_r, p1);
-    res = e(k, res);
-    res = xor(res, p2);
-    res = e(k, res);
-    return res;
-};
-const s1 = (k, r1, r2) => {
-    return e(k, Buffer.concat([r2.slice(0, 8), r1.slice(0, 8)]));
-};
-const e = (key, data) => {
-    key = swap(key);
-    data = swap(data);
-    const cipher = crypto_1.default.createCipheriv('aes-128-ecb', key, '');
-    cipher.setAutoPadding(false);
-    return swap(Buffer.concat([cipher.update(data), cipher.final()]));
-};
-const xor = (b1, b2) => {
-    const result = Buffer.alloc(b1.length);
-    for (let i = 0; i < b1.length; i++) {
-        result[i] = b1[i] ^ b2[i];
-    }
-    return result;
-};
-const swap = (input) => {
-    const output = Buffer.alloc(input.length);
-    for (let i = 0; i < output.length; i++) {
-        output[i] = input[input.length - i - 1];
-    }
-    return output;
-};
-exports.default = {
-    r,
-    c1,
-    s1,
-    e,
-};
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
-
-/***/ }),
-
 /***/ "./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/gap.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -14842,21 +14951,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
-const crypto_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/crypto.js"));
+const crypto_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/common/crypto.js"));
 const mgmt_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/mgmt.js"));
-// eslint-disable-next-line @typescript-eslint/no-namespace
-var SMP;
-(function (SMP) {
-    SMP.CID = 0x0006;
-    SMP.PAIRING_REQUEST = 0x01;
-    SMP.PAIRING_RESPONSE = 0x02;
-    SMP.PAIRING_CONFIRM = 0x03;
-    SMP.PAIRING_RANDOM = 0x04;
-    SMP.PAIRING_FAILED = 0x05;
-    SMP.ENCRYPT_INFO = 0x06;
-    SMP.MASTER_IDENT = 0x07;
-    SMP.UNSPECIFIED = 0x08;
-})(SMP || (SMP = {}));
+const smp_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/common/smp.js");
 /**
  * @ignore
  */
@@ -14882,29 +14979,29 @@ class Smp extends eventemitter3_1.default {
         this._aclStream.on('end', this.onAclStreamEndBinded);
     }
     onAclStreamData(cid, data) {
-        if (cid !== SMP.CID) {
+        if (cid !== smp_1.SMP.CID) {
             return;
         }
         const code = data.readUInt8(0);
-        if (SMP.PAIRING_REQUEST === code) {
+        if (smp_1.SMP.PAIRING_REQUEST === code) {
             this.handlePairingRequest(data);
         }
-        else if (SMP.PAIRING_CONFIRM === code) {
+        else if (smp_1.SMP.PAIRING_CONFIRM === code) {
             this.handlePairingConfirm(data);
         }
-        else if (SMP.PAIRING_RANDOM === code) {
+        else if (smp_1.SMP.PAIRING_RANDOM === code) {
             this.handlePairingRandom(data);
         }
-        else if (SMP.PAIRING_FAILED === code) {
+        else if (smp_1.SMP.PAIRING_FAILED === code) {
             this.handlePairingFailed(data);
         }
     }
     onAclStreamEncryptChange(encrypted) {
         if (encrypted) {
             if (this._stk && this._diversifier && this._random) {
-                this.write(Buffer.concat([Buffer.from([SMP.ENCRYPT_INFO]), this._stk]));
+                this.write(Buffer.concat([Buffer.from([smp_1.SMP.ENCRYPT_INFO]), this._stk]));
                 this.write(Buffer.concat([
-                    Buffer.from([SMP.MASTER_IDENT]),
+                    Buffer.from([smp_1.SMP.MASTER_IDENT]),
                     this._diversifier,
                     this._random,
                 ]));
@@ -14912,7 +15009,7 @@ class Smp extends eventemitter3_1.default {
         }
     }
     onAclStreamLtkNegReply() {
-        this.write(Buffer.from([SMP.PAIRING_FAILED, SMP.UNSPECIFIED]));
+        this.write(Buffer.from([smp_1.SMP.PAIRING_FAILED, smp_1.SMP.UNSPECIFIED]));
         this.emit('fail');
     }
     onAclStreamEnd() {
@@ -14924,7 +15021,7 @@ class Smp extends eventemitter3_1.default {
     handlePairingRequest(data) {
         this._preq = data;
         this._pres = Buffer.from([
-            SMP.PAIRING_RESPONSE,
+            smp_1.SMP.PAIRING_RESPONSE,
             0x03,
             0x00,
             0x01,
@@ -14939,14 +15036,14 @@ class Smp extends eventemitter3_1.default {
         this._tk = Buffer.from('00000000000000000000000000000000', 'hex');
         this._r = crypto_1.default.r();
         this.write(Buffer.concat([
-            Buffer.from([SMP.PAIRING_CONFIRM]),
+            Buffer.from([smp_1.SMP.PAIRING_CONFIRM]),
             crypto_1.default.c1(this._tk, this._r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
         ]));
     }
     handlePairingRandom(data) {
         const r = data.slice(1);
         const pcnf = Buffer.concat([
-            Buffer.from([SMP.PAIRING_CONFIRM]),
+            Buffer.from([smp_1.SMP.PAIRING_CONFIRM]),
             crypto_1.default.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
         ]);
         if (this._pcnf.toString('hex') === pcnf.toString('hex')) {
@@ -14954,10 +15051,10 @@ class Smp extends eventemitter3_1.default {
             this._random = Buffer.from('0000000000000000', 'hex');
             this._stk = crypto_1.default.s1(this._tk, this._r, r);
             this._mgmt.addLongTermKey(this._ia, this._iat, 0, 0, this._diversifier, this._random, this._stk);
-            this.write(Buffer.concat([Buffer.from([SMP.PAIRING_RANDOM]), this._r]));
+            this.write(Buffer.concat([Buffer.from([smp_1.SMP.PAIRING_RANDOM]), this._r]));
         }
         else {
-            this.write(Buffer.from([SMP.PAIRING_FAILED, SMP.PAIRING_CONFIRM]));
+            this.write(Buffer.from([smp_1.SMP.PAIRING_FAILED, smp_1.SMP.PAIRING_CONFIRM]));
             this.emit('fail');
         }
     }
@@ -14965,7 +15062,7 @@ class Smp extends eventemitter3_1.default {
         this.emit('fail');
     }
     write(data) {
-        this._aclStream.write(SMP.CID, data);
+        this._aclStream.write(smp_1.SMP.CID, data);
     }
 }
 exports.default = Smp;
@@ -15508,6 +15605,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
                 // eslint-disable-next-line @typescript-eslint/no-var-requires
                 const { createCanvas } = __webpack_require__("./dist/src/obniz/libs/webpackReplace/canvas.js");
                 this._canvas = createCanvas(this.width, this.height);
+                this._reset_canvas();
             }
             catch (e) {
                 return undefined;
@@ -15710,6 +15808,20 @@ exports.default = ObnizSwitch;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/hw/blelte_gw2.json":
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored_lte\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"25\":{},\"26\":{},\"33\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/hw/blewifi_gw2.json":
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"blewifi_gw2\",\"peripherals\":{\"io\":{\"units\":{}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{}},\"spi\":{\"units\":{}},\"i2c\":{\"units\":{}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":true,\"width\":200,\"height\":200,\"color_depth\":[1]},\"storage\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/hw/cc3235mod.json":
 /***/ (function(module) {
 
@@ -15793,6 +15905,12 @@ class HW {
         }
         else if (hw === 'esp32c3') {
             return __webpack_require__("./dist/src/obniz/libs/hw/esp32c3.json");
+        }
+        else if (hw === 'blewifi_gw2') {
+            return __webpack_require__("./dist/src/obniz/libs/hw/blewifi_gw2.json");
+        }
+        else if (hw === 'blelte_gw2') {
+            return __webpack_require__("./dist/src/obniz/libs/hw/blelte_gw2.json");
         }
         else {
             // default
@@ -29539,6 +29657,47 @@ class UA651BLE {
     static isDevice(peripheral) {
         return (peripheral.localName && peripheral.localName.startsWith('A&D_UA-651BLE_'));
     }
+    isPairingMode() {
+        if (!this._peripheral) {
+            throw new Error('UA651BLE not found');
+        }
+        // adv_data[2]はFlagsで、bit0が1の場合Pairng Mode(Limited Discoverable Mode)
+        if (this._peripheral.adv_data[2] === 5) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    /**
+     * Pair with the device
+     *
+     * デバイスとペアリング
+     *
+     * @returns pairing key ペアリングキー
+     */
+    async pairingWait() {
+        if (!this._peripheral) {
+            throw new Error('UA651BLE not found');
+        }
+        this._peripheral.ondisconnect = (reason) => {
+            if (typeof this.ondisconnect === 'function') {
+                this.ondisconnect(reason);
+            }
+        };
+        let key = null;
+        await this._peripheral.connectWait({
+            pairingOption: {
+                onPairedCallback: (pairingKey) => {
+                    key = pairingKey;
+                },
+            },
+        });
+        const { bloodPressureMeasurementChar, timeChar, customServiceChar, } = this._getChars();
+        await this._writeTimeCharWait(this._timezoneOffsetMinute);
+        await customServiceChar.writeWait([2, 1, 3]); // disconnect req
+        return key;
+    }
     /**
      * Get data from the UA651BLE
      *
@@ -29546,38 +29705,33 @@ class UA651BLE {
      *
      * @returns data from the UA651BLE UA651BLEから受け取ったデータ
      */
-    async getDataWait() {
+    async getDataWait(pairingKeys) {
         if (!this._peripheral) {
             throw new Error('UA651BLE not found');
         }
-        if (!this._peripheral.connected) {
-            this._peripheral.ondisconnect = (reason) => {
-                if (this.ondisconnect) {
-                    this.ondisconnect(reason);
-                }
-            };
-            await this._peripheral.connectWait();
-        }
+        await this._peripheral.connectWait({
+            pairingOption: {
+                keys: pairingKeys,
+            },
+        });
         if (!this._peripheral) {
             throw new Error('UA651BLE not found');
         }
         const results = [];
         const { bloodPressureMeasurementChar, timeChar, customServiceChar, } = this._getChars();
+        const waitDisconnect = new Promise((resolve, reject) => {
+            if (!this._peripheral)
+                return;
+            this._peripheral.ondisconnect = (reason) => {
+                resolve(results);
+            };
+        });
         await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
         await this._writeTimeCharWait(this._timezoneOffsetMinute);
         await bloodPressureMeasurementChar.registerNotifyWait((data) => {
             results.push(this._analyzeData(data));
         });
-        return await new Promise((resolve, reject) => {
-            if (!this._peripheral)
-                return;
-            this._peripheral.ondisconnect = (reason) => {
-                resolve(results);
-                if (this.ondisconnect) {
-                    this.ondisconnect(reason);
-                }
-            };
-        });
+        return waitDisconnect;
     }
     _readSFLOAT_LE(buffer, index) {
         const data = buffer.readUInt16LE(index);

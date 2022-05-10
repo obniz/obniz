@@ -280,259 +280,425 @@ import EXVital, { EXVital_Options } from '../parts/Ble/EXVital';
 import iBS03T_RH, { iBS03T_RHOptions } from '../parts/Ble/iBS03T_RH';
 import iBS05H, { iBS05HOptions } from '../parts/Ble/iBS05H';
 import UC421BLE, { UC421BLEOptions } from '../parts/Ble/UC421BLE';
+import ObnizPartsBleInterface from './ObnizPartsBleInterface';
+import ObnizPartsInterface from './ObnizPartsInterface';
 
 export type PartsType = keyof PartsList;
 
+interface PartsInterface<P, O, C extends { new (...args: any[]): P }> {
+  instance: P;
+  options: O;
+  class: C;
+}
+
+type PartsListType = {
+  [key: string]: PartsInterface<any, any, any>;
+};
+
 export interface PartsList {
-  LED: { class: LED; options: LEDOptions };
-  FullColorLED: { class: FullColorLED; options: FullColorLEDOptions };
-  WS2811: { class: WS2811; options: WS2811Options };
-  WS2812: { class: WS2812; options: WS2812Options };
-  WS2812B: { class: WS2812B; options: WS2812BOptions };
-  InfraredLED: { class: InfraredLED; options: InfraredLEDOptions };
-  IRSensor: { class: IRSensor; options: IRSensorOptions };
-  IRModule: { class: IRModule; options: IRModuleOptions };
-  '7SegmentLED': { class: _7SegmentLED; options: _7SegmentLEDOptions };
-  '7SegmentLEDArray': {
-    class: _7SegmentLEDArray;
-    options: _7SegmentLEDArrayOptions;
-  };
-  '7SegmentLED_MAX7219': {
-    class: _7SegmentLED_MAX7219;
-    options: _7SegmentLED_MAX7219Options;
-  };
-  MatrixLED_MAX7219: {
-    class: MatrixLED_MAX7219;
-    options: MatrixLED_MAX7219Options;
-  };
-  MatrixLED_HT16K33: {
-    class: MatrixLED_HT16K33;
-    options: MatrixLED_HT16K33Options;
-  };
-  SainSmartTFT18LCD: {
-    class: SainSmartTFT18LCD;
-    options: SainSmartTFT18LCDOptions;
-  };
-  SharpMemoryTFT: { class: SharpMemoryTFT; options: SharpMemoryTFTOptions };
-  ST7735S: { class: ST7735S; options: ST7735SOptions };
-  ArduCAMMini: { class: ArduCAMMini; options: ArduCAMMiniOptions };
-  JpegSerialCam: { class: JpegSerialCam; options: JpegSerialCamOptions };
-  DCMotor: { class: DCMotor; options: DCMotorOptions };
-  PCA9685: { class: PCA9685; options: PCA9685Options };
-  ServoMotor: { class: ServoMotor; options: ServoMotorOptions };
-  Solenoid: { class: Solenoid; options: SolenoidOptions };
-  StepperMotor: { class: StepperMotor; options: StepperMotorOptions };
-  Speaker: { class: Speaker; options: SpeakerOptions };
-  AXP192: { class: AXP192; options: AXP192Options };
-  MQ2: { class: MQ2; options: MQ2Options };
-  MQ3: { class: MQ3; options: MQ3Options };
-  MQ4: { class: MQ4; options: MQ4Options };
-  MQ5: { class: MQ5; options: MQ5Options };
-  MQ6: { class: MQ6; options: MQ6Options };
-  MQ7: { class: MQ7; options: MQ7Options };
-  MQ8: { class: MQ8; options: MQ8Options };
-  MQ9: { class: MQ9; options: MQ9Options };
-  MQ135: { class: MQ135; options: MQ135Options };
-  MH_Z19B: { class: MH_Z19B; options: MH_Z19BOptions };
-  MCP23S08: { class: MCP23S08; options: MCP23S08Options };
-  SNx4HC595: { class: SNx4HC595; options: SNx4HC595Options };
-  USB: { class: USB; options: USBOptions };
-  RN42: { class: RN42; options: RN42Options };
-  XBee: { class: XBee; options: XBeeOptions };
-  Button: { class: Button; options: ButtonOptions };
-  AK8963: { class: AK8963; options: AK8963Options };
-  MPU6050: { class: MPU6050; options: MPU6050Options };
-  MPU6500: { class: MPU6500; options: MPU6500Options };
-  MPU6886: { class: MPU6886; options: MPU6886Options };
-  MPU9250: { class: MPU9250; options: MPU9250Options };
-  SH200Q: { class: SH200Q; options: SH200QOptions };
-  AK09916: { class: AK09916; options: AK09916Options };
-  ICM20948: { class: ICM20948; options: ICM20948Options };
-  'HC-SR505': { class: HCSR505; options: HCSR505Options };
-  JoyStick: { class: JoyStick; options: JoyStickOptions };
-  'KXR94-2050': { class: KXR94_2050; options: KXR94_2050Options };
-  'IPM-165': { class: IPM_165; options: IPM_165Options };
-  PaPIRsVZ: { class: PaPIRsVZ; options: PaPIRsVZOptions };
-  Potentiometer: { class: Potentiometer; options: PotentiometerOptions };
-  // '24LC256':{class: _24LC256,options: _24LC256Options},
-  ENC03R_Module: { class: ENC03R_Module; options: ENC03R_ModuleOptions };
-  FSR40X: { class: FSR40X; options: FSR40XOptions };
-  'HC-SR04': { class: HCSR04; options: HCSR04Options };
-  GP2Y0A21YK0F: { class: GP2Y0A21YK0F; options: GP2Y0A21YK0FOptions };
-  VL53L0X: { class: VL53L0X; options: VL53L0XOptions };
-  GYSFDMAXB: { class: GYSFDMAXB; options: GYSFDMAXBOptions };
-  CT10: { class: CT10; options: CT10Options };
-  HMC5883L: { class: HMC5883L; options: HMC5883LOptions };
-  hx711: { class: HX711; options: Hx711Options };
-  MCP4725: { class: MCP4725; options: MCP4725Options };
-  SEN0114: { class: SEN0114; options: SEN0114Options };
-  LM35DZ: { class: LM35DZ; options: LM35DZOptions };
-  LM60: { class: LM60; options: LM60Options };
-  LM61: { class: LM61; options: LM61Options };
-  LMT87: { class: LMT87; options: LMT87Options };
-  MCP9700: { class: MCP9700; options: MCP9700Options };
-  MCP9701: { class: MCP9701; options: MCP9701Options };
-  // 'S8100B':{class: S8100B,options: S8100BOptions},
-  // 'S8120C':{class: S8120C,options: S8120COptions},
-  // 'ADT7410':{class: ADT7410,options: ADT7410Options},
-  AMG8833: { class: AMG8833; options: AMG8833Options };
-  BME280: { class: BME280; options: BME280Options };
-  D6T44L: { class: D6T44L; options: D6T44LOptions };
-  DHT12: { class: DHT12; options: DHT12Options };
-  // 'S5851A':{class: S5851A,options: S5851AOptions},
-  SHT31: { class: SHT31; options: SHT31Options };
-  SHT20: { class: SHT20; options: SHT20Options };
-  ADT7310: { class: ADT7310; options: ADT7310Options };
-  AM2320: { class: AM2320; options: AM2320Options };
-  PT550: { class: PT550; options: PT550Options };
-  S11059: { class: S11059; options: S11059Options };
-  YG1006: { class: YG1006; options: YG1006Options };
-  Grove_Button: { class: Grove_Button; options: Grove_ButtonOptions };
-  Grove_Buzzer: { class: Grove_Buzzer; options: Grove_BuzzerOptions };
-  Grove_EarHeartRate: {
-    class: Grove_EarHeartRate;
-    options: Grove_EarHeartRateOptions;
-  };
-  Grove_MP3: { class: Grove_MP3; options: Grove_MP3Options };
-  Grove_GPS: { class: Grove_GPS; options: Grove_GPSOptions };
-  Grove_EARTH: { class: Grove_EARTH; options: Grove_EARTHOptions };
-  Grove_JoyStick: { class: Grove_JoyStick; options: Grove_JoyStickOptions };
-  Grove_3AxisAccelerometer: {
-    class: Grove_3AxisAccelerometer;
-    options: Grove_3AxisAccelerometerOptions;
-  };
-  Grove_Speaker: { class: Grove_Speaker; options: Grove_SpeakerOptions };
-  Grove_RotaryAnglesensor: {
-    class: Grove_RotaryAngleSensor;
-    options: Grove_RotaryAngleSensorOptions;
-  };
-  Grove_DistanceSensor: {
-    class: Grove_DistanceSensor;
-    options: Grove_DistanceSensorOptions;
-  };
-  Grove_LightSensor: {
-    class: Grove_LightSensor;
-    options: Grove_LightSensorOptions;
-  };
-  Grove_PressureSensor: {
-    class: Grove_PressureSensor;
-    options: Grove_PressureSensorOptions;
-  };
-  Grove_SoilMoistureSensor: {
-    class: Grove_SoilMoistureSensor;
-    options: Grove_SoilMoistureSensorOptions;
-  };
-  Grove_Gesture: {
-    class: Grove_Gesture;
-    options: Grove_GestureSensorOptions;
-  };
-  Grove_WaterLevelSensor: {
-    class: Grove_WaterLevelSensor;
-    options: Grove_WaterLevelSensorOptions;
-  };
-  Grove_MicroSwitch: {
-    class: Grove_MicroSwitch;
-    options: Grove_MicroSwitchOptions;
-  };
-  M5StickC_JoyStick: {
-    class: M5StickC_JoyStick;
-    options: M5StickC_JoyStickOptions;
-  };
-  M5StickC_ADC: { class: M5StickC_ADC; options: M5StickC_ADCOptions };
-  M5StickC_DAC: { class: M5StickC_DAC; options: M5StickC_DACOptions };
-  M5StickC_ToF: { class: M5StickC_ToF; options: M5StickC_ToFOptions };
-  M5StickC_FINGER: { class: M5StickC_FINGER; options: M5StickC_FINGEROptions };
-  M5StickC_RS485: { class: M5StickC_RS485; options: M5StickC_RS485Options };
-  M5StickC_Yun: { class: M5StickC_Yun; options: M5StickC_YunOptions };
-  Keyestudio_Button: {
-    class: Keyestudio_Button;
-    options: Keyestudio_ButtonOptions;
-  };
-  Keyestudio_MoistureSensor: {
-    class: Keyestudio_MoistureSensor;
-    options: Keyestudio_MoistureSensorOptions;
-  };
-  Keyestudio_Buzzer: {
-    class: Keyestudio_Buzzer;
-    options: Keyestudio_BuzzerOptions;
-  };
-  Keyestudio_TemperatureSensor: {
-    class: Keyestudio_TemperatureSensor;
-    options: Keyestudio_TemperatureSensorOptions;
-  };
-  Keyestudio_PIR: { class: Keyestudio_PIR; options: Keyestudio_PIROptions };
-  Keyestudio_TrafficLight: {
-    class: Keyestudio_TrafficLight;
-    options: Keyestudio_TrafficLightOptions;
-  };
-  Keyestudio_HT16K33: {
-    class: Keyestudio_HT16K33;
-    options: Keyestudio_HT16K33Options;
-  };
-  '2JCIE': { class: OMRON_2JCIE; options: OMRON_2JCIEOptions };
-  Logtta_CO2: { class: Logtta_CO2; options: Logtta_CO2Options };
-  Logtta_TH: { class: Logtta_TH; options: Logtta_THOptions };
-  Logtta_AD: { class: Logtta_AD; options: Logtta_ADOptions };
-  Logtta_Accel: { class: Logtta_Accel; options: Logtta_AccelOptions };
-  Linking: { class: Linking; options: LinkingOptions };
-  uPRISM: { class: uPRISM; options: uPRISMOptions };
-  SCBTGAAAC: { class: SCBTGAAAC; options: SCBTGAAACOptions };
-  iBS01: { class: IBS01; options: iBS01Options };
-  iBS01G: { class: IBS01G; options: iBS01GOptions };
-  iBS01H: { class: IBS01H; options: iBS01HOptions };
-  iBS01RG: { class: IBS01RG; options: iBS01RGOptions };
-  iBS01T: { class: IBS01T; options: iBS01TOptions };
-  iBS02IR: { class: IBS02IR; options: iBS02IROptions };
-  iBS02PIR: { class: IBS02PIR; options: iBS02PIROptions };
-  iBS03: { class: IBS03; options: iBS03Options };
-  iBS03G: { class: IBS03G; options: iBS03GOptions };
-  iBS03T: { class: IBS03T; options: iBS03TOptions };
-  iBS03T_RH: { class: iBS03T_RH; options: iBS03T_RHOptions };
-  iBS03TP: { class: IBS03TP; options: iBS03TPOptions };
-  iBS04: { class: IBS04; options: iBS04Options };
-  iBS04i: { class: IBS04I; options: iBS04iOptions };
-  iBS03R: { class: IBS03R; options: IBS03ROptions };
-  iBS05H: { class: iBS05H; options: iBS05HOptions };
-  TR4x: { class: Tr4; options: Tr4Options };
-  KankiAirMier: { class: KankiAirMier; options: KankiAirMierOptions };
-  MINEW_S1: { class: MINEW_S1; options: MINEW_S1Options };
-  RS_BTEVS1: { class: RS_BTEVS1; options: RS_BTEVS1Options };
-  RS_Seek3: { class: RS_Seek3; options: RS_Seek3Options };
-  REX_BTPM25V: { class: REX_BTPM25V; options: REX_BTPM25VOptions };
-  PLS_01BT: { class: PLS_01BT; options: PLS_01BTOptions };
-  ENERTALK_TOUCH: { class: ENERTALK_TOUCH; options: ENERTALK_TOUCHOptions };
-  TM530: { class: TM530; options: TM530Options };
-  TM511: { class: TM511; options: TM511Options };
-  toio_CoreCube: { class: Toio_CoreCube; options: Toio_CoreCubeOptions };
-  UT201BLE: { class: UT201BLE; options: UT201BLEOptions };
-  VitalBand: { class: VitalBand; options: VitalBandOptions };
-  HEM_6233T: { class: HEM_6233T; options: HEM_6233TOptions };
-  MiniBreeze: { class: MiniBreeze; options: MiniBreezeOptions };
-  MT_500BT: { class: MT_500BT; options: MT_500BTOptions };
-  'PULSE08_M5STICKC-S': {
-    class: Puls08M5stickcS;
-    options: Puls08M5stickcSOptions;
-  };
-  '24LC256': { class: _24LC256; options: _24LC256Options };
-  FlickHat: { class: FlickHat; options: FlickHatOptions };
-  KXSC7_2050: { class: KXSC7_2050; options: KXSC7_2050Options };
-  S8100B: { class: S8100B; options: S8100BOptions };
-  S8120C: { class: S8120C; options: S8120COptions };
-  ADT7410: { class: ADT7410; options: ADT7410Options };
-  S5851A: { class: S5851A; options: S5851AOptions };
-  DPS310: { class: DPS310; options: DPS310Options };
-  BMP280: { class: BMP280; options: BMP280Options };
-  HEM_9200T: { class: HEM_9200T; options: HEM_9200TOptions };
-  W5500: { class: W5500; options: W5500Parts.WiredOptions };
-  RS_BTWATTCH2: { class: RS_BTWATTCH2; options: RS_BTWATTCH2Options };
-  Grove_Relay: { class: Grove_Relay; options: Grove_RelayOptions };
-  Grove_SHT35Sensor: {
-    class: Grove_SHT35Sensor;
-    options: Grove_SHT35SensorOptions;
-  };
-  UA651BLE: { class: UA651BLE; options: UA651BLEOptions };
-  UA1200BLE: { class: UA1200BLE; options: UA1200BLEOptions };
-  EXVital: { class: EXVital; options: EXVital_Options };
-  STM550B: { class: STM550B; options: STM550B_Options };
-  UC421BLE: { class: UC421BLE; options: UC421BLEOptions };
+  LED: PartsInterface<LED, LEDOptions, typeof LED>;
+  FullColorLED: PartsInterface<
+    FullColorLED,
+    FullColorLEDOptions,
+    typeof FullColorLED
+  >;
+  WS2811: PartsInterface<WS2811, WS2811Options, typeof WS2811>;
+  WS2812: PartsInterface<WS2812, WS2812Options, typeof WS2812>;
+  WS2812B: PartsInterface<WS2812B, WS2812BOptions, typeof WS2812B>;
+  InfraredLED: PartsInterface<
+    InfraredLED,
+    InfraredLEDOptions,
+    typeof InfraredLED
+  >;
+  IRSensor: PartsInterface<IRSensor, IRSensorOptions, typeof IRSensor>;
+  IRModule: PartsInterface<IRModule, IRModuleOptions, typeof IRModule>;
+  '7SegmentLED': PartsInterface<
+    _7SegmentLED,
+    _7SegmentLEDOptions,
+    typeof _7SegmentLED
+  >;
+
+  '7SegmentLEDArray': PartsInterface<
+    _7SegmentLEDArray,
+    _7SegmentLEDArrayOptions,
+    typeof _7SegmentLEDArray
+  >;
+
+  '7SegmentLED_MAX7219': PartsInterface<
+    _7SegmentLED_MAX7219,
+    _7SegmentLED_MAX7219Options,
+    typeof _7SegmentLED_MAX7219
+  >;
+
+  MatrixLED_MAX7219: PartsInterface<
+    MatrixLED_MAX7219,
+    MatrixLED_MAX7219Options,
+    typeof MatrixLED_MAX7219
+  >;
+  MatrixLED_HT16K33: PartsInterface<
+    MatrixLED_HT16K33,
+    MatrixLED_HT16K33Options,
+    typeof MatrixLED_HT16K33
+  >;
+  SainSmartTFT18LCD: PartsInterface<
+    SainSmartTFT18LCD,
+    SainSmartTFT18LCDOptions,
+    typeof SainSmartTFT18LCD
+  >;
+  SharpMemoryTFT: PartsInterface<
+    SharpMemoryTFT,
+    SharpMemoryTFTOptions,
+    typeof SharpMemoryTFT
+  >;
+  ST7735S: PartsInterface<ST7735S, ST7735SOptions, typeof ST7735S>;
+  ArduCAMMini: PartsInterface<
+    ArduCAMMini,
+    ArduCAMMiniOptions,
+    typeof ArduCAMMini
+  >;
+  JpegSerialCam: PartsInterface<
+    JpegSerialCam,
+    JpegSerialCamOptions,
+    typeof JpegSerialCam
+  >;
+  DCMotor: PartsInterface<DCMotor, DCMotorOptions, typeof DCMotor>;
+  PCA9685: PartsInterface<PCA9685, PCA9685Options, typeof PCA9685>;
+  ServoMotor: PartsInterface<ServoMotor, ServoMotorOptions, typeof ServoMotor>;
+  Solenoid: PartsInterface<Solenoid, SolenoidOptions, typeof Solenoid>;
+  StepperMotor: PartsInterface<
+    StepperMotor,
+    StepperMotorOptions,
+    typeof StepperMotor
+  >;
+  Speaker: PartsInterface<Speaker, SpeakerOptions, typeof Speaker>;
+  AXP192: PartsInterface<AXP192, AXP192Options, typeof AXP192>;
+  MQ2: PartsInterface<MQ2, MQ2Options, typeof MQ2>;
+  MQ3: PartsInterface<MQ3, MQ3Options, typeof MQ3>;
+  MQ4: PartsInterface<MQ4, MQ4Options, typeof MQ4>;
+  MQ5: PartsInterface<MQ5, MQ5Options, typeof MQ5>;
+  MQ6: PartsInterface<MQ6, MQ6Options, typeof MQ6>;
+  MQ7: PartsInterface<MQ7, MQ7Options, typeof MQ7>;
+  MQ8: PartsInterface<MQ8, MQ8Options, typeof MQ8>;
+  MQ9: PartsInterface<MQ9, MQ9Options, typeof MQ9>;
+  MQ135: PartsInterface<MQ135, MQ135Options, typeof MQ135>;
+  MH_Z19B: PartsInterface<MH_Z19B, MH_Z19BOptions, typeof MH_Z19B>;
+  MCP23S08: PartsInterface<MCP23S08, MCP23S08Options, typeof MCP23S08>;
+  SNx4HC595: PartsInterface<SNx4HC595, SNx4HC595Options, typeof SNx4HC595>;
+  USB: PartsInterface<USB, USBOptions, typeof USB>;
+  RN42: PartsInterface<RN42, RN42Options, typeof RN42>;
+  XBee: PartsInterface<XBee, XBeeOptions, typeof XBee>;
+  Button: PartsInterface<Button, ButtonOptions, typeof Button>;
+  AK8963: PartsInterface<AK8963, AK8963Options, typeof AK8963>;
+  MPU6050: PartsInterface<MPU6050, MPU6050Options, typeof MPU6050>;
+  MPU6500: PartsInterface<MPU6500, MPU6500Options, typeof MPU6500>;
+  MPU6886: PartsInterface<MPU6886, MPU6886Options, typeof MPU6886>;
+  MPU9250: PartsInterface<MPU9250, MPU9250Options, typeof MPU9250>;
+  SH200Q: PartsInterface<SH200Q, SH200QOptions, typeof SH200Q>;
+  AK09916: PartsInterface<AK09916, AK09916Options, typeof AK09916>;
+  ICM20948: PartsInterface<ICM20948, ICM20948Options, typeof ICM20948>;
+  'HC-SR505': PartsInterface<HCSR505, HCSR505Options, typeof HCSR505>;
+
+  JoyStick: PartsInterface<JoyStick, JoyStickOptions, typeof JoyStick>;
+  'KXR94-2050': PartsInterface<
+    KXR94_2050,
+    KXR94_2050Options,
+    typeof KXR94_2050
+  >;
+
+  'IPM-165': PartsInterface<IPM_165, IPM_165Options, typeof IPM_165>;
+
+  PaPIRsVZ: PartsInterface<PaPIRsVZ, PaPIRsVZOptions, typeof PaPIRsVZ>;
+  Potentiometer: PartsInterface<
+    Potentiometer,
+    PotentiometerOptions,
+    typeof Potentiometer
+  >;
+  // '24LC256':{instance: _24LC256,options: _24LC256Options},
+  ENC03R_Module: PartsInterface<
+    ENC03R_Module,
+    ENC03R_ModuleOptions,
+    typeof ENC03R_Module
+  >;
+  FSR40X: PartsInterface<FSR40X, FSR40XOptions, typeof FSR40X>;
+  'HC-SR04': PartsInterface<HCSR04, HCSR04Options, typeof HCSR04>;
+
+  GP2Y0A21YK0F: PartsInterface<
+    GP2Y0A21YK0F,
+    GP2Y0A21YK0FOptions,
+    typeof GP2Y0A21YK0F
+  >;
+  VL53L0X: PartsInterface<VL53L0X, VL53L0XOptions, typeof VL53L0X>;
+  GYSFDMAXB: PartsInterface<GYSFDMAXB, GYSFDMAXBOptions, typeof GYSFDMAXB>;
+  CT10: PartsInterface<CT10, CT10Options, typeof CT10>;
+  HMC5883L: PartsInterface<HMC5883L, HMC5883LOptions, typeof HMC5883L>;
+  hx711: PartsInterface<HX711, Hx711Options, typeof HX711>;
+  MCP4725: PartsInterface<MCP4725, MCP4725Options, typeof MCP4725>;
+  SEN0114: PartsInterface<SEN0114, SEN0114Options, typeof SEN0114>;
+  LM35DZ: PartsInterface<LM35DZ, LM35DZOptions, typeof LM35DZ>;
+  LM60: PartsInterface<LM60, LM60Options, typeof LM60>;
+  LM61: PartsInterface<LM61, LM61Options, typeof LM61>;
+  LMT87: PartsInterface<LMT87, LMT87Options, typeof LMT87>;
+  MCP9700: PartsInterface<MCP9700, MCP9700Options, typeof MCP9700>;
+  MCP9701: PartsInterface<MCP9701, MCP9701Options, typeof MCP9701>;
+  // 'S8100B':{instance: S8100B,options: S8100BOptions},
+  // 'S8120C':{instance: S8120C,options: S8120COptions},
+  // 'ADT7410':{instance: ADT7410,options: ADT7410Options},
+  AMG8833: PartsInterface<AMG8833, AMG8833Options, typeof AMG8833>;
+  BME280: PartsInterface<BME280, BME280Options, typeof BME280>;
+  D6T44L: PartsInterface<D6T44L, D6T44LOptions, typeof D6T44L>;
+  DHT12: PartsInterface<DHT12, DHT12Options, typeof DHT12>;
+  // 'S5851A':{instance: S5851A,options: S5851AOptions},
+  SHT31: PartsInterface<SHT31, SHT31Options, typeof SHT31>;
+  SHT20: PartsInterface<SHT20, SHT20Options, typeof SHT20>;
+  ADT7310: PartsInterface<ADT7310, ADT7310Options, typeof ADT7310>;
+  AM2320: PartsInterface<AM2320, AM2320Options, typeof AM2320>;
+  PT550: PartsInterface<PT550, PT550Options, typeof PT550>;
+  S11059: PartsInterface<S11059, S11059Options, typeof S11059>;
+  YG1006: PartsInterface<YG1006, YG1006Options, typeof YG1006>;
+  Grove_Button: PartsInterface<
+    Grove_Button,
+    Grove_ButtonOptions,
+    typeof Grove_Button
+  >;
+  Grove_Buzzer: PartsInterface<
+    Grove_Buzzer,
+    Grove_BuzzerOptions,
+    typeof Grove_Buzzer
+  >;
+  Grove_EarHeartRate: PartsInterface<
+    Grove_EarHeartRate,
+    Grove_EarHeartRateOptions,
+    typeof Grove_EarHeartRate
+  >;
+  Grove_MP3: PartsInterface<Grove_MP3, Grove_MP3Options, typeof Grove_MP3>;
+  Grove_GPS: PartsInterface<Grove_GPS, Grove_GPSOptions, typeof Grove_GPS>;
+  Grove_EARTH: PartsInterface<
+    Grove_EARTH,
+    Grove_EARTHOptions,
+    typeof Grove_EARTH
+  >;
+  Grove_JoyStick: PartsInterface<
+    Grove_JoyStick,
+    Grove_JoyStickOptions,
+    typeof Grove_JoyStick
+  >;
+  Grove_3AxisAccelerometer: PartsInterface<
+    Grove_3AxisAccelerometer,
+    Grove_3AxisAccelerometerOptions,
+    typeof Grove_3AxisAccelerometer
+  >;
+  Grove_Speaker: PartsInterface<
+    Grove_Speaker,
+    Grove_SpeakerOptions,
+    typeof Grove_Speaker
+  >;
+  Grove_RotaryAnglesensor: PartsInterface<
+    Grove_RotaryAngleSensor,
+    Grove_RotaryAngleSensorOptions,
+    typeof Grove_RotaryAngleSensor
+  >;
+  Grove_DistanceSensor: PartsInterface<
+    Grove_DistanceSensor,
+    Grove_DistanceSensorOptions,
+    typeof Grove_DistanceSensor
+  >;
+  Grove_LightSensor: PartsInterface<
+    Grove_LightSensor,
+    Grove_LightSensorOptions,
+    typeof Grove_LightSensor
+  >;
+  Grove_PressureSensor: PartsInterface<
+    Grove_PressureSensor,
+    Grove_PressureSensorOptions,
+    typeof Grove_PressureSensor
+  >;
+  Grove_SoilMoistureSensor: PartsInterface<
+    Grove_SoilMoistureSensor,
+    Grove_SoilMoistureSensorOptions,
+    typeof Grove_SoilMoistureSensor
+  >;
+  Grove_Gesture: PartsInterface<
+    Grove_Gesture,
+    Grove_GestureSensorOptions,
+    typeof Grove_Gesture
+  >;
+  Grove_WaterLevelSensor: PartsInterface<
+    Grove_WaterLevelSensor,
+    Grove_WaterLevelSensorOptions,
+    typeof Grove_WaterLevelSensor
+  >;
+  Grove_MicroSwitch: PartsInterface<
+    Grove_MicroSwitch,
+    Grove_MicroSwitchOptions,
+    typeof Grove_MicroSwitch
+  >;
+  M5StickC_JoyStick: PartsInterface<
+    M5StickC_JoyStick,
+    M5StickC_JoyStickOptions,
+    typeof M5StickC_JoyStick
+  >;
+  M5StickC_ADC: PartsInterface<
+    M5StickC_ADC,
+    M5StickC_ADCOptions,
+    typeof M5StickC_ADC
+  >;
+  M5StickC_DAC: PartsInterface<
+    M5StickC_DAC,
+    M5StickC_DACOptions,
+    typeof M5StickC_DAC
+  >;
+  M5StickC_ToF: PartsInterface<
+    M5StickC_ToF,
+    M5StickC_ToFOptions,
+    typeof M5StickC_ToF
+  >;
+  M5StickC_FINGER: PartsInterface<
+    M5StickC_FINGER,
+    M5StickC_FINGEROptions,
+    typeof M5StickC_FINGER
+  >;
+  M5StickC_RS485: PartsInterface<
+    M5StickC_RS485,
+    M5StickC_RS485Options,
+    typeof M5StickC_RS485
+  >;
+  M5StickC_Yun: PartsInterface<
+    M5StickC_Yun,
+    M5StickC_YunOptions,
+    typeof M5StickC_Yun
+  >;
+  Keyestudio_Button: PartsInterface<
+    Keyestudio_Button,
+    Keyestudio_ButtonOptions,
+    typeof Keyestudio_Button
+  >;
+  Keyestudio_MoistureSensor: PartsInterface<
+    Keyestudio_MoistureSensor,
+    Keyestudio_MoistureSensorOptions,
+    typeof Keyestudio_MoistureSensor
+  >;
+  Keyestudio_Buzzer: PartsInterface<
+    Keyestudio_Buzzer,
+    Keyestudio_BuzzerOptions,
+    typeof Keyestudio_Buzzer
+  >;
+  Keyestudio_TemperatureSensor: PartsInterface<
+    Keyestudio_TemperatureSensor,
+    Keyestudio_TemperatureSensorOptions,
+    typeof Keyestudio_TemperatureSensor
+  >;
+  Keyestudio_PIR: PartsInterface<
+    Keyestudio_PIR,
+    Keyestudio_PIROptions,
+    typeof Keyestudio_PIR
+  >;
+  Keyestudio_TrafficLight: PartsInterface<
+    Keyestudio_TrafficLight,
+    Keyestudio_TrafficLightOptions,
+    typeof Keyestudio_TrafficLight
+  >;
+  Keyestudio_HT16K33: PartsInterface<
+    Keyestudio_HT16K33,
+    Keyestudio_HT16K33Options,
+    typeof Keyestudio_HT16K33
+  >;
+  '2JCIE': PartsInterface<OMRON_2JCIE, OMRON_2JCIEOptions, typeof OMRON_2JCIE>;
+
+  Logtta_CO2: PartsInterface<Logtta_CO2, Logtta_CO2Options, typeof Logtta_CO2>;
+  Logtta_TH: PartsInterface<Logtta_TH, Logtta_THOptions, typeof Logtta_TH>;
+  Logtta_AD: PartsInterface<Logtta_AD, Logtta_ADOptions, typeof Logtta_AD>;
+  Logtta_Accel: PartsInterface<
+    Logtta_Accel,
+    Logtta_AccelOptions,
+    typeof Logtta_Accel
+  >;
+  Linking: PartsInterface<Linking, LinkingOptions, typeof Linking>;
+  uPRISM: PartsInterface<uPRISM, uPRISMOptions, typeof uPRISM>;
+  SCBTGAAAC: PartsInterface<SCBTGAAAC, SCBTGAAACOptions, typeof SCBTGAAAC>;
+  iBS01: PartsInterface<IBS01, iBS01Options, typeof IBS01>;
+  iBS01G: PartsInterface<IBS01G, iBS01GOptions, typeof IBS01G>;
+  iBS01H: PartsInterface<IBS01H, iBS01HOptions, typeof IBS01H>;
+  iBS01RG: PartsInterface<IBS01RG, iBS01RGOptions, typeof IBS01RG>;
+  iBS01T: PartsInterface<IBS01T, iBS01TOptions, typeof IBS01T>;
+  iBS02IR: PartsInterface<IBS02IR, iBS02IROptions, typeof IBS02IR>;
+  iBS02PIR: PartsInterface<IBS02PIR, iBS02PIROptions, typeof IBS02PIR>;
+  iBS03: PartsInterface<IBS03, iBS03Options, typeof IBS03>;
+  iBS03G: PartsInterface<IBS03G, iBS03GOptions, typeof IBS03G>;
+  iBS03T: PartsInterface<IBS03T, iBS03TOptions, typeof IBS03T>;
+  iBS03T_RH: PartsInterface<iBS03T_RH, iBS03T_RHOptions, typeof iBS03T_RH>;
+  iBS03TP: PartsInterface<IBS03TP, iBS03TPOptions, typeof IBS03TP>;
+  iBS04: PartsInterface<IBS04, iBS04Options, typeof IBS04>;
+  iBS04i: PartsInterface<IBS04I, iBS04iOptions, typeof IBS04I>;
+  iBS03R: PartsInterface<IBS03R, IBS03ROptions, typeof IBS03R>;
+  iBS05H: PartsInterface<iBS05H, iBS05HOptions, typeof iBS05H>;
+  TR4x: PartsInterface<Tr4, Tr4Options, typeof Tr4>;
+  KankiAirMier: PartsInterface<
+    KankiAirMier,
+    KankiAirMierOptions,
+    typeof KankiAirMier
+  >;
+  MINEW_S1: PartsInterface<MINEW_S1, MINEW_S1Options, typeof MINEW_S1>;
+  RS_BTEVS1: PartsInterface<RS_BTEVS1, RS_BTEVS1Options, typeof RS_BTEVS1>;
+  RS_Seek3: PartsInterface<RS_Seek3, RS_Seek3Options, typeof RS_Seek3>;
+  REX_BTPM25V: PartsInterface<
+    REX_BTPM25V,
+    REX_BTPM25VOptions,
+    typeof REX_BTPM25V
+  >;
+  PLS_01BT: PartsInterface<PLS_01BT, PLS_01BTOptions, typeof PLS_01BT>;
+  ENERTALK_TOUCH: PartsInterface<
+    ENERTALK_TOUCH,
+    ENERTALK_TOUCHOptions,
+    typeof ENERTALK_TOUCH
+  >;
+  TM530: PartsInterface<TM530, TM530Options, typeof TM530>;
+  TM511: PartsInterface<TM511, TM511Options, typeof TM511>;
+  toio_CoreCube: PartsInterface<
+    Toio_CoreCube,
+    Toio_CoreCubeOptions,
+    typeof Toio_CoreCube
+  >;
+  UT201BLE: PartsInterface<UT201BLE, UT201BLEOptions, typeof UT201BLE>;
+  VitalBand: PartsInterface<VitalBand, VitalBandOptions, typeof VitalBand>;
+  HEM_6233T: PartsInterface<HEM_6233T, HEM_6233TOptions, typeof HEM_6233T>;
+  MiniBreeze: PartsInterface<MiniBreeze, MiniBreezeOptions, typeof MiniBreeze>;
+  MT_500BT: PartsInterface<MT_500BT, MT_500BTOptions, typeof MT_500BT>;
+  'PULSE08_M5STICKC-S': PartsInterface<
+    Puls08M5stickcS,
+    Puls08M5stickcSOptions,
+    typeof Puls08M5stickcS
+  >;
+
+  '24LC256': PartsInterface<_24LC256, _24LC256Options, typeof _24LC256>;
+
+  FlickHat: PartsInterface<FlickHat, FlickHatOptions, typeof FlickHat>;
+  KXSC7_2050: PartsInterface<KXSC7_2050, KXSC7_2050Options, typeof KXSC7_2050>;
+  S8100B: PartsInterface<S8100B, S8100BOptions, typeof S8100B>;
+  S8120C: PartsInterface<S8120C, S8120COptions, typeof S8120C>;
+  ADT7410: PartsInterface<ADT7410, ADT7410Options, typeof ADT7410>;
+  S5851A: PartsInterface<S5851A, S5851AOptions, typeof S5851A>;
+  DPS310: PartsInterface<DPS310, DPS310Options, typeof DPS310>;
+  BMP280: PartsInterface<BMP280, BMP280Options, typeof BMP280>;
+  HEM_9200T: PartsInterface<HEM_9200T, HEM_9200TOptions, typeof HEM_9200T>;
+  W5500: PartsInterface<W5500, W5500Parts.WiredOptions, typeof W5500>;
+  RS_BTWATTCH2: PartsInterface<
+    RS_BTWATTCH2,
+    RS_BTWATTCH2Options,
+    typeof RS_BTWATTCH2
+  >;
+  Grove_Relay: PartsInterface<
+    Grove_Relay,
+    Grove_RelayOptions,
+    typeof Grove_Relay
+  >;
+  Grove_SHT35Sensor: PartsInterface<
+    Grove_SHT35Sensor,
+    Grove_SHT35SensorOptions,
+    typeof Grove_SHT35Sensor
+  >;
+  UA651BLE: PartsInterface<UA651BLE, UA651BLEOptions, typeof UA651BLE>;
+  UA1200BLE: PartsInterface<UA1200BLE, UA1200BLEOptions, typeof UA1200BLE>;
+  EXVital: PartsInterface<EXVital, EXVital_Options, typeof EXVital>;
+  STM550B: PartsInterface<STM550B, STM550B_Options, typeof STM550B>;
+  UC421BLE: PartsInterface<UC421BLE, UC421BLEOptions, typeof UC421BLE>;
 }

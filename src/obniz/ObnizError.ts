@@ -274,3 +274,15 @@ export class ObnizBleGattHandleError extends ObnizError {
     super(18, msg);
   }
 }
+
+export class ObnizBleUnSupportedPeripheralError extends ObnizError {
+  constructor(target: string) {
+    super(19, `${target} is not supported by remote peripheral`);
+  }
+}
+
+export class ObnizBleInvalidPasskeyError extends ObnizError {
+  constructor(passkey: number) {
+    super(20, `passkey required >0 and <999999, But input: ${passkey}`);
+  }
+}

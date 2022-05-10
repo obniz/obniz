@@ -6,23 +6,9 @@
 import EventEmitter from 'eventemitter3';
 
 import BleHelper from '../../bleHelper';
-import crypto from './crypto';
+import crypto from '../common/crypto';
 import Mgmt from './mgmt';
-
-// eslint-disable-next-line @typescript-eslint/no-namespace
-namespace SMP {
-  export const CID = 0x0006;
-
-  export const PAIRING_REQUEST = 0x01;
-  export const PAIRING_RESPONSE = 0x02;
-  export const PAIRING_CONFIRM = 0x03;
-  export const PAIRING_RANDOM = 0x04;
-  export const PAIRING_FAILED = 0x05;
-  export const ENCRYPT_INFO = 0x06;
-  export const MASTER_IDENT = 0x07;
-
-  export const UNSPECIFIED = 0x08;
-}
+import { SMP } from '../common/smp';
 
 type SmpEventTypes = 'fail';
 

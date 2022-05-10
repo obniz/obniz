@@ -89,3 +89,9 @@ export declare class ObnizBleScanStartError extends ObnizError {
 export declare class ObnizBleGattHandleError extends ObnizError {
     constructor(msg: any);
 }
+export declare class ObnizBleUnSupportedPeripheralError extends ObnizError {
+    constructor(target: string);
+}
+export declare class ObnizBleInvalidPasskeyError extends ObnizError {
+    constructor(passkey: number);
+}
