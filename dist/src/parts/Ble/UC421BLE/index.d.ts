@@ -339,7 +339,7 @@ export default class UC421BLE implements ObnizPartsBleInterface {
      *
      * @returns Judgement if the peripheral is UC421BLE or not ペリフェラルがUC421BLEかどうかの判定
      */
-    static isDevice(peripheral: BleRemotePeripheral): boolean | "" | null;
+    static isDevice(peripheral: BleRemotePeripheral): boolean;
     /**
      * Extract a manufacturer specific data from an advertisement sent from UC421BLE.
      *

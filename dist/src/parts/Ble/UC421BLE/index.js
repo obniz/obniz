@@ -39,7 +39,9 @@ class UC421BLE {
      * @returns Judgement if the peripheral is UC421BLE or not ペリフェラルがUC421BLEかどうかの判定
      */
     static isDevice(peripheral) {
-        return (peripheral.localName && peripheral.localName.startsWith('UC-421BLE_'));
+        if (!peripheral.localName)
+            return false;
+        return peripheral.localName.startsWith('UC-421BLE_');
     }
     /**
      * Extract a manufacturer specific data from an advertisement sent from UC421BLE.
