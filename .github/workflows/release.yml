@@ -1,0 +1,37 @@
+name: Automatic Release
+on:
+  push:
+    tags:
+      - "!*"
+jobs:
+  release:
+    name: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+          registry-url: 'https://registry.npmjs.org'
+      - name: install can-npm-publish and dependencies
+        run: |
+          npm ci
+          npm install can-npm-publish
+      - name: check version and add tag
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          REPO: ${{github.repository}}
+          COMMIT: ${{github.sha}}
+        run: ./release.sh
+      - name: remove can-npm-publish
+        run: npm remove can-npm-publish
+      - name: build
+        run: npm run build
+      - name: test
+        run: npm run test
+      - name: release
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
