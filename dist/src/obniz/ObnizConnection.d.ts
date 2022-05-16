@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module ObnizCore
  */
+/// <reference types="node" />
 import EventEmitter from 'eventemitter3';
 import wsClient from 'ws';
 import WSCommand from './libs/wscommand';
@@ -55,6 +56,7 @@ export interface ConnectedNetwork {
  */
 declare type ObnizConnectionEventNamesInternal = '_close' | '_cloudConnectRedirect' | '_cloudConnectReady' | '_cloudConnectClose' | '_localConnectReady' | '_localConnectClose';
 export default abstract class ObnizConnection extends EventEmitter<ObnizConnectionEventNames | ObnizConnectionEventNamesInternal> {
+    private _measureTraffic;
     /**
      * obniz.js version
      */
@@ -195,7 +197,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
      * ```
      *
      */
-    onloop?: (obniz: this) => void;
+    onloop?: (obniz: this) => void | Promise<void>;
     /**
      * If an error occurs, the onerror function is called.
      *
@@ -242,6 +244,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     private _sendPool;
     private _onConnectCalled;
     private _repeatInterval;
+    private _isLoopProcessing;
     private _nextLoopTimeout;
     private _nextPingTimeout;
     private _nextAutoConnectLoopTimeout;
@@ -401,7 +404,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     abstract pingWait(unixtime?: number, rand?: number, forceGlobalNetwork?: boolean): Promise<void>;
     protected _close(): void;
     protected wsOnOpen(): void;
-    protected wsOnMessage(data: any): void;
+    protected wsOnMessage(data: string | Buffer | ArrayBuffer | Buffer[]): void;
     protected wsOnClose(event: any): void;
     protected wsOnError(event: any): void;
     protected wsOnUnexpectedResponse(req: any, res?: any): void;
@@ -426,12 +429,35 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     protected _handleWSCommand(wsObj: any): void;
     protected _handleSystemCommand(wsObj: any): void;
     protected _binary2Json(binary: any): {}[];
-    private _startLoopInBackground;
+    private _startLoopInBackgroundWait;
     private _stopLoopInBackground;
     private _startAutoConnectLoopInBackground;
     private _stopAutoConnectLoopInBackground;
     private _startPingLoopInBackground;
     _stopPingLoopInBackground(): void;
     protected throwErrorIfOffline(): void;
+    startTrafficMeasurement(ceil?: number): void;
+    getTrafficData(): {
+        readByte: number;
+        readCount: number;
+        sendByte: number;
+        sendCount: number;
+        ceilByte: number;
+    };
+    resetTrafficMeasurement(): {
+        readByte: number;
+        readCount: number;
+        sendByte: number;
+        sendCount: number;
+        ceilByte: number;
+    } | null;
+    endTrafficMeasurement(): {
+        readByte: number;
+        readCount: number;
+        sendByte: number;
+        sendCount: number;
+        ceilByte: number;
+    };
+    private _calcTrafficSize;
 }
 export {};

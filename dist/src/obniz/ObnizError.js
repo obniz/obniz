@@ -252,3 +252,15 @@ class ObnizBleGattHandleError extends ObnizError {
     }
 }
 exports.ObnizBleGattHandleError = ObnizBleGattHandleError;
+class ObnizBleUnSupportedPeripheralError extends ObnizError {
+    constructor(target) {
+        super(19, `${target} is not supported by remote peripheral`);
+    }
+}
+exports.ObnizBleUnSupportedPeripheralError = ObnizBleUnSupportedPeripheralError;
+class ObnizBleInvalidPasskeyError extends ObnizError {
+    constructor(passkey) {
+        super(20, `passkey required >0 and <999999, But input: ${passkey}`);
+    }
+}
+exports.ObnizBleInvalidPasskeyError = ObnizBleInvalidPasskeyError;

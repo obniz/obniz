@@ -240,6 +240,7 @@ export declare namespace Obniz {
     type PWMModulateType = _PWMModulateType;
     type StopBitType = _StopBitType;
     type UUID = _UUID;
-    type Parts<K extends keyof PartsList> = PartsList[K]['class'];
+    type Parts<K extends keyof PartsList> = PartsList[K]['instance'];
+    type PartsClass<K extends keyof PartsList> = PartsList[K]['class'];
     type PartsOptions<K extends keyof PartsList> = PartsList[K]['options'];
 }

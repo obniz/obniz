@@ -68,6 +68,7 @@ export default class UT201BLE implements ObnizPartsBleInterface {
     batteryService?: BleBatteryService;
     private _timezoneOffsetMinute;
     constructor(peripheral: BleRemotePeripheral | null, timezoneOffsetMinute: number);
+    isPairingMode(): boolean;
     /**
      * Pair with the device
      *

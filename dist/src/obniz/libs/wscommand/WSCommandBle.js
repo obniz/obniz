@@ -114,6 +114,31 @@ class WSCommandBle extends WSCommand_1.default {
             0x04: 'csrk',
         };
         this.hciCommand = new WSCommandBleHci_1.default(this);
+        const funcList = {};
+        funcList[this._CommandScanResults] = this.notifyFromBinaryScanResponse.bind(this);
+        funcList[this._CommandConnect] = this.notifyFromBinaryConnect.bind(this);
+        funcList[this._CommandServices] = this.notifyFromBinaryServices.bind(this);
+        funcList[this._CommandCharacteristics] = this.notifyFromBinaryChacateristics.bind(this);
+        funcList[this._CommandWriteCharacteristics] = this.notifyFromBinaryWriteChacateristics.bind(this);
+        funcList[this._CommandReadCharacteristics] = this.notifyFromBinaryReadChacateristics.bind(this);
+        funcList[this._CommandRegisterNotifyCharacteristic] = this.notifyFromBinaryRegisterNotifyChacateristic.bind(this);
+        funcList[this._CommandUnregisterNotifyCharacteristic] = this.notifyFromBinaryUnregisterNotifyChacateristic.bind(this);
+        funcList[this._CommandNotifyCharacteristic] = this.notifyFromBinaryNotifyChacateristic.bind(this);
+        funcList[this._CommandDescriptors] = this.notifyFromBinaryDescriptors.bind(this);
+        funcList[this._CommandWriteDescriptor] = this.notifyFromBinaryWriteDescriptor.bind(this);
+        funcList[this._CommandReadDescriptor] = this.notifyFromBinaryReadDescriptor.bind(this);
+        funcList[this._CommandServerNotifyConnect] = this.notifyFromBinaryServerConnectionState.bind(this);
+        funcList[this._CommandServerReadCharavteristicValue] = this.notifyFromBinaryServerReadCharavteristicValue.bind(this);
+        funcList[this._CommandServerWriteCharavteristicValue] = this.notifyFromBinaryServerWriteCharavteristicValue.bind(this);
+        funcList[this._CommandServerNotifyReadCharavteristicValue] = this.notifyFromBinaryServerNotifyReadCharavteristicValue.bind(this);
+        funcList[this._CommandServerNotifyWriteCharavteristicValue] = this.notifyFromBinaryServerNotifyWriteCharavteristicValue.bind(this);
+        funcList[this._CommandServerReadDescriptorValue] = this.notifyFromBinaryServerReadDescriptorValue.bind(this);
+        funcList[this._CommandServerWriteDescriptorValue] = this.notifyFromBinaryServerWriteDescriptorValue.bind(this);
+        funcList[this._CommandServerNotifyReadDescriptorValue] = this.notifyFromBinaryServerNotifyReadDescriptorValue.bind(this);
+        funcList[this._CommandServerNotifyWriteDescriptorValue] = this.notifyFromBinaryServerNotifyWriteDescriptorValue.bind(this);
+        funcList[this.COMMAND_FUNC_ID_ERROR] = this.notifyFromBinaryError.bind(this);
+        Object.assign(funcList, this.hciCommand.notifyFunctionList());
+        this._funcList = funcList;
     }
     /* CENTRAL   */
     centralScanStart(params) {
@@ -820,32 +845,8 @@ class WSCommandBle extends WSCommand_1.default {
         }
     }
     notifyFromBinary(objToSend, func, payload) {
-        const funcList = {};
-        funcList[this._CommandScanResults] = this.notifyFromBinaryScanResponse.bind(this);
-        funcList[this._CommandConnect] = this.notifyFromBinaryConnect.bind(this);
-        funcList[this._CommandServices] = this.notifyFromBinaryServices.bind(this);
-        funcList[this._CommandCharacteristics] = this.notifyFromBinaryChacateristics.bind(this);
-        funcList[this._CommandWriteCharacteristics] = this.notifyFromBinaryWriteChacateristics.bind(this);
-        funcList[this._CommandReadCharacteristics] = this.notifyFromBinaryReadChacateristics.bind(this);
-        funcList[this._CommandRegisterNotifyCharacteristic] = this.notifyFromBinaryRegisterNotifyChacateristic.bind(this);
-        funcList[this._CommandUnregisterNotifyCharacteristic] = this.notifyFromBinaryUnregisterNotifyChacateristic.bind(this);
-        funcList[this._CommandNotifyCharacteristic] = this.notifyFromBinaryNotifyChacateristic.bind(this);
-        funcList[this._CommandDescriptors] = this.notifyFromBinaryDescriptors.bind(this);
-        funcList[this._CommandWriteDescriptor] = this.notifyFromBinaryWriteDescriptor.bind(this);
-        funcList[this._CommandReadDescriptor] = this.notifyFromBinaryReadDescriptor.bind(this);
-        funcList[this._CommandServerNotifyConnect] = this.notifyFromBinaryServerConnectionState.bind(this);
-        funcList[this._CommandServerReadCharavteristicValue] = this.notifyFromBinaryServerReadCharavteristicValue.bind(this);
-        funcList[this._CommandServerWriteCharavteristicValue] = this.notifyFromBinaryServerWriteCharavteristicValue.bind(this);
-        funcList[this._CommandServerNotifyReadCharavteristicValue] = this.notifyFromBinaryServerNotifyReadCharavteristicValue.bind(this);
-        funcList[this._CommandServerNotifyWriteCharavteristicValue] = this.notifyFromBinaryServerNotifyWriteCharavteristicValue.bind(this);
-        funcList[this._CommandServerReadDescriptorValue] = this.notifyFromBinaryServerReadDescriptorValue.bind(this);
-        funcList[this._CommandServerWriteDescriptorValue] = this.notifyFromBinaryServerWriteDescriptorValue.bind(this);
-        funcList[this._CommandServerNotifyReadDescriptorValue] = this.notifyFromBinaryServerNotifyReadDescriptorValue.bind(this);
-        funcList[this._CommandServerNotifyWriteDescriptorValue] = this.notifyFromBinaryServerNotifyWriteDescriptorValue.bind(this);
-        funcList[this.COMMAND_FUNC_ID_ERROR] = this.notifyFromBinaryError.bind(this);
-        Object.assign(funcList, this.hciCommand.notifyFunctionList());
-        if (funcList[func]) {
-            funcList[func](objToSend, payload);
+        if (this._funcList[func]) {
+            this._funcList[func](objToSend, payload);
         }
     }
     notifyFromBinaryScanResponse(objToSend, payload) {
