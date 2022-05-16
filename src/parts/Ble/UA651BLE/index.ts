@@ -117,6 +117,56 @@ export default class UA651BLE implements ObnizPartsBleInterface {
     this._timezoneOffsetMinute = timezoneOffsetMinute;
   }
 
+  public isPairingMode() {
+    if (!this._peripheral) {
+      throw new Error('UA651BLE not found');
+    }
+
+    // adv_data[2]はFlagsで、bit0が1の場合Pairng Mode(Limited Discoverable Mode)
+    if (this._peripheral.adv_data[2] === 5) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * Pair with the device
+   *
+   * デバイスとペアリング
+   *
+   * @returns pairing key ペアリングキー
+   */
+  public async pairingWait(): Promise<string | null> {
+    if (!this._peripheral) {
+      throw new Error('UA651BLE not found');
+    }
+    this._peripheral.ondisconnect = (reason: any) => {
+      if (typeof this.ondisconnect === 'function') {
+        this.ondisconnect(reason);
+      }
+    };
+    let key: string | null = null;
+    await this._peripheral.connectWait({
+      pairingOption: {
+        onPairedCallback: (pairingKey) => {
+          key = pairingKey;
+        },
+      },
+    });
+
+    const {
+      bloodPressureMeasurementChar,
+      timeChar,
+      customServiceChar,
+    } = this._getChars();
+
+    await this._writeTimeCharWait(this._timezoneOffsetMinute);
+
+    await customServiceChar.writeWait([2, 1, 3]); // disconnect req
+    return key;
+  }
+
   /**
    * Get data from the UA651BLE
    *
@@ -124,18 +174,15 @@ export default class UA651BLE implements ObnizPartsBleInterface {
    *
    * @returns data from the UA651BLE UA651BLEから受け取ったデータ
    */
-  public async getDataWait(): Promise<UA651BLEResult[]> {
+  public async getDataWait(pairingKeys?: string): Promise<UA651BLEResult[]> {
     if (!this._peripheral) {
       throw new Error('UA651BLE not found');
     }
-    if (!this._peripheral.connected) {
-      this._peripheral.ondisconnect = (reason) => {
-        if (this.ondisconnect) {
-          this.ondisconnect(reason);
-        }
-      };
-      await this._peripheral.connectWait();
-    }
+    await this._peripheral.connectWait({
+      pairingOption: {
+        keys: pairingKeys,
+      },
+    });
 
     if (!this._peripheral) {
       throw new Error('UA651BLE not found');
@@ -147,6 +194,13 @@ export default class UA651BLE implements ObnizPartsBleInterface {
       customServiceChar,
     } = this._getChars();
 
+    const waitDisconnect = new Promise<UA651BLEResult[]>((resolve, reject) => {
+      if (!this._peripheral) return;
+      this._peripheral.ondisconnect = (reason: any) => {
+        resolve(results);
+      };
+    });
+
     await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
     await this._writeTimeCharWait(this._timezoneOffsetMinute);
 
@@ -154,15 +208,7 @@ export default class UA651BLE implements ObnizPartsBleInterface {
       results.push(this._analyzeData(data));
     });
 
-    return await new Promise((resolve, reject) => {
-      if (!this._peripheral) return;
-      this._peripheral.ondisconnect = (reason) => {
-        resolve(results);
-        if (this.ondisconnect) {
-          this.ondisconnect(reason);
-        }
-      };
-    });
+    return waitDisconnect;
   }
 
   private _readSFLOAT_LE(buffer: Buffer, index: number) {

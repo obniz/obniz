@@ -12,11 +12,11 @@ declare class WSCommandIO extends WSCommand {
     _CommandPullResisterType: number;
     _CommandEnd: number;
     constructor();
-    output(value: any, id: any): void;
-    outputDetail(params: any, id: any): void;
-    input(params: any, id: any): void;
-    inputDetail(params: any, id: any): void;
-    outputType(params: any, id: any): string | undefined;
+    output(value: any, id: number): void;
+    outputDetail(params: any, id: number): void;
+    input(params: any, id: number): void;
+    inputDetail(params: any, id: number): void;
+    outputType(params: any, id: number): string | undefined;
     pullType(params: any, id: any): string | undefined;
     deinit(params: any, id: any): void;
     parseFromJson(json: any): void;
