@@ -39,6 +39,7 @@ import { Handle as _Handle } from './libs/embeds/bleHci/bleTypes';
 import { UUID as _UUID } from './libs/embeds/bleHci/bleTypes';
 import _ObnizBLEHci from './libs/embeds/bleHci/hci';
 import _Display from './libs/embeds/display';
+import _Storage from './libs/embeds/storage';
 import _ObnizSwitch from './libs/embeds/switch';
 import { M5StackBasic as _M5StackBasic } from './libs/hw/m5stack_basic';
 import { M5StickC as _M5StickC } from './libs/hw/m5stickc';
@@ -174,6 +175,7 @@ export declare namespace Obniz {
     type Directive = _Directive;
     type DirectiveAnimationFrame = _DirectiveAnimationFrame;
     type Display = _Display;
+    type Storage = _Storage;
     type IBeacon = _IBeacon;
     type LogicAnalyzer = _LogicAnalyzer;
     type LogicAnalyzerOptions = _LogicAnalyzerOptions;
