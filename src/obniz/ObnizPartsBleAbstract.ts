@@ -1,9 +1,9 @@
-/* eslint-disable rulesdir/non-ascii */
-/* eslint-disable max-classes-per-file */
 /**
  * @packageDocumentation
  * @module ObnizCore
  */
+/* eslint-disable rulesdir/non-ascii */
+/* eslint-disable max-classes-per-file */
 
 import BleRemoteCharacteristic from './libs/embeds/bleHci/bleRemoteCharacteristic';
 import BleRemotePeripheral, {

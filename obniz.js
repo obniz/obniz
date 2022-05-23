@@ -4028,12 +4028,12 @@ exports.default = ObnizParts;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
-/* eslint-disable rulesdir/non-ascii */
-/* eslint-disable max-classes-per-file */
 /**
  * @packageDocumentation
  * @module ObnizCore
  */
+/* eslint-disable rulesdir/non-ascii */
+/* eslint-disable max-classes-per-file */
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const ObnizPartsBleModeList = ['Beacon', 'Connectable', 'Pairing'];
