@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 /// <reference types="node" />
 import { HandleIndex } from '../peripheral/gatt';
 export declare class GattCommon {

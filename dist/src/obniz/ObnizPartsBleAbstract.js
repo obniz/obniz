@@ -1,6 +1,10 @@
 "use strict";
 /* eslint-disable rulesdir/non-ascii */
 /* eslint-disable max-classes-per-file */
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizError_1 = require("./ObnizError");
 const ObnizPartsBleModeList = ['Beacon', 'Connectable', 'Pairing'];
