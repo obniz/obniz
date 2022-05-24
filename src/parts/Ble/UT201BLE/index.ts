@@ -262,11 +262,15 @@ export default class UT201BLE implements ObnizPartsBleInterface {
     const customServiceChar = this._peripheral
       .getService('233bf0005a341b6d975c000d5690abe4')!
       .getCharacteristic('233bf0015a341b6d975c000d5690abe4')!;
+    const batteryChar = this._peripheral
+      .getService('180F')!
+      .getCharacteristic('2A19')!;
 
     return {
       temperatureMeasurementChar,
       timeChar,
       customServiceChar,
+      batteryChar,
     };
   }
 
