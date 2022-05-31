@@ -630,7 +630,7 @@ export interface PartsList {
   iBS04i: PartsInterface<IBS04I, iBS04iOptions, typeof IBS04I>;
   iBS03R: PartsInterface<IBS03R, IBS03ROptions, typeof IBS03R>;
   iBS05H: PartsInterface<iBS05H, iBS05HOptions, typeof iBS05H>;
-  TR4x: PartsInterface<Tr4, Tr4Options, typeof Tr4>;
+  TR4: PartsInterface<Tr4, Tr4Options, typeof Tr4>;
   KankiAirMier: PartsInterface<
     KankiAirMier,
     KankiAirMierOptions,
