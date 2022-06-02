@@ -281,6 +281,7 @@ import iBS03T_RH, { iBS03T_RHOptions } from '../parts/Ble/iBS03T_RH';
 import iBS05H, { iBS05HOptions } from '../parts/Ble/iBS05H';
 import ObnizPartsBleInterface from './ObnizPartsBleInterface';
 import ObnizPartsInterface from './ObnizPartsInterface';
+import TR7, { TR7Options } from '../parts/Ble/TR7';
 
 export type PartsType = keyof PartsList;
 
@@ -631,6 +632,7 @@ export interface PartsList {
   iBS03R: PartsInterface<IBS03R, IBS03ROptions, typeof IBS03R>;
   iBS05H: PartsInterface<iBS05H, iBS05HOptions, typeof iBS05H>;
   TR4x: PartsInterface<Tr4, Tr4Options, typeof Tr4>;
+  TR7: PartsInterface<TR7, TR7Options, typeof TR7>;
   KankiAirMier: PartsInterface<
     KankiAirMier,
     KankiAirMierOptions,

@@ -24203,6 +24203,7 @@ var map = {
 	"./Ble/RS_SEEK3/index.js": "./dist/src/parts/Ble/RS_SEEK3/index.js",
 	"./Ble/STM550B/index.js": "./dist/src/parts/Ble/STM550B/index.js",
 	"./Ble/TR4/index.js": "./dist/src/parts/Ble/TR4/index.js",
+	"./Ble/TR7/index.js": "./dist/src/parts/Ble/TR7/index.js",
 	"./Ble/UA1200BLE/index.js": "./dist/src/parts/Ble/UA1200BLE/index.js",
 	"./Ble/UA651BLE/index.js": "./dist/src/parts/Ble/UA651BLE/index.js",
 	"./Ble/UT201BLE/index.js": "./dist/src/parts/Ble/UT201BLE/index.js",
@@ -29293,6 +29294,105 @@ Tr4._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
     .groupEnd()
     // local name adv is exist, but cannot use for filter
     .groupStart('localName')
+    .groupEnd();
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/TR7/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.TR7
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+/**
+ * Class that manages TR7 series.
+ *
+ * TR7シリーズを管理するクラス。
+ */
+class TR7 {
+    constructor() {
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: 'TR7',
+        };
+    }
+    /**
+     * Verify that the received peripheral is from the TR7.
+     *
+     * 受け取ったPeripheralがTR7シリーズのものかどうかを確認する。
+     *
+     * @param peripheral Instance of BleRemotePeripheral. BleRemotePeripheralのインスタンス。
+     *
+     * @returns Whether it is the TR7 or not. TR7かどうか。
+     *
+     */
+    static isDevice(peripheral) {
+        return this._deviceAdvAnalyzer.validate(peripheral.adv_data);
+    }
+    /**
+     * Get data from TR7 series.
+     *
+     * T7シリーズからデータを取得。
+     *
+     * @param peripheral Instance of BleRemotePeripheral. BleRemotePeripheralのインスタンス。
+     *
+     * @returns Data recieved from TR7. TR7から受け取ったデータ。
+     *
+     * ```
+     * {
+     *    temperature: temperature 温度 (Unit: 0.1 degC)
+     *    humidity: humidity 湿度 (Unit: 0.1 %)
+     * }
+     * ```
+     */
+    static getData(peripheral) {
+        if (!this.isDevice(peripheral))
+            return null;
+        const temperatureBytes = this._deviceAdvAnalyzer.getData(peripheral.adv_data, 'manufacture', 'measuredDataCh1');
+        const humidityBytes = this._deviceAdvAnalyzer.getData(peripheral.adv_data, 'manufacture', 'measuredDataCh2');
+        if (!temperatureBytes || !humidityBytes)
+            return null;
+        const rawTemperature = temperatureBytes === [0xee, 0xee] // error
+            ? null
+            : Buffer.from(temperatureBytes).readInt16LE(0);
+        const rawHumidity = humidityBytes === [0xee, 0xee] // error
+            ? null
+            : Buffer.from(humidityBytes).readInt16LE(0);
+        if (!rawTemperature || !rawHumidity)
+            return null;
+        return {
+            temperature: (rawTemperature - 1000) / 10,
+            humidity: (rawHumidity - 1000) / 10,
+        };
+    }
+}
+exports.default = TR7;
+TR7._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
+    .addTarget('flags', [0x02, 0x01, 0x06]) // NOTE: length, ad type, ad data
+    .addTarget('32bitServiceUuids', [0x05, 0x05, 0x0a, 0x18, 0x00, 0x00]) // NOTE: little endian
+    .groupStart('manufacture')
+    .addTarget('length', [0x15])
+    .addTarget('type', [0xff])
+    .addTarget('companyId', [0x92, 0x03]) // NOTE: little endian
+    .addTargetByLength('deviceSerial', 4)
+    .addTargetByLength('controlCode', 1)
+    .addTargetByLength('counter', 1)
+    .addTargetByLength('statusCode1', 1)
+    .addTargetByLength('statusCode2', 1)
+    .addTargetByLength('measuredDataCh1', 2)
+    .addTargetByLength('measuredDataCh2', 2)
+    .addTargetByLength('spare', 4)
+    .addTargetByLength('unused', 2)
     .groupEnd();
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
