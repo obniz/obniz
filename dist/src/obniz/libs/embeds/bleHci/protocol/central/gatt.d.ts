@@ -30,6 +30,8 @@ declare class GattCentral extends EventEmitter<GattEventTypes> {
     onEnd(reason: any): void;
     exchangeMtuWait(mtu: number | null): Promise<number>;
     discoverServicesWait(uuids: UUID[]): Promise<UUID[]>;
+    discoverPrimaryServicesWait(uuids: UUID[]): Promise<UUID[]>;
+    discoverSecondaryServicesWait(uuids: UUID[]): Promise<UUID[]>;
     discoverIncludedServicesWait(serviceUuid: UUID, uuids: UUID[]): Promise<string[] | undefined>;
     discoverCharacteristicsWait(serviceUuid: UUID, characteristicUuids: UUID[]): Promise<any[]>;
     readWait(serviceUuid: UUID, characteristicUuid: UUID): Promise<Buffer>;
