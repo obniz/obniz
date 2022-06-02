@@ -216,6 +216,7 @@ export default abstract class WSCommand {
     // abstract
   }
 
+  // NOTE: payload is sent from obniz OS.
   public notifyFromBinary(
     objToSend: { [key: string]: any },
     func: number,
@@ -235,9 +236,10 @@ export default abstract class WSCommand {
         err.err0 = payload[0];
         err.err1 = payload[1];
         err.function = payload[2];
-        err.message = `Error module=${this.module} func=${err.function} err0=${err.err0} returned=${err.err1}`;
+        // NOTE: Why two errors exist?
+        err.message = `obnizOS recieved wscommand(moduleNo=${this.module}, funcNo=${err.function}) but it encountered an error(err0=${err.err0}, returned=${err.err1}).`;
       } else {
-        err.message = `Error module=${this.module} with + ${err._args}`;
+        err.message = `obnizOS recieved wscommand(moduleNo=${this.module}) but it encountered an error(errDetails(payload)=${err._args}).`;
       }
       objToSend.debug.error = err;
     } else {
