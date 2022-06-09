@@ -464,6 +464,15 @@ export default class ObnizBLE extends ComponentAbstract {
     advertisement?: any,
     rssi?: any
   ) {
+    console.log(
+      'onDiscover',
+      uuid,
+      address,
+      addressType,
+      connectable,
+      advertisement,
+      rssi
+    );
     let val: BleRemotePeripheral | null = this.findPeripheral(uuid);
     if (!val) {
       val = new BleRemotePeripheral(this, uuid);
@@ -483,7 +492,7 @@ export default class ObnizBLE extends ComponentAbstract {
     };
 
     val.setParams(peripheralData);
-
+    console.log('notifyFromServer', peripheralData);
     this.scan.notifyFromServer('onfind', val);
   }
 

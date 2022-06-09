@@ -73,3 +73,24 @@ export interface BleServiceDefine {
 }
 export interface BlePeripheralDefine {
 }
+export interface BleExtendedAdvertisingEnable {
+    handle: number;
+    duration: number;
+    events: number;
+}
+export interface BleCreateConnection {
+    phy_1m: BleCreateConnectionParameters;
+    phy_2m: BleCreateConnectionParameters;
+    phy_coded: BleCreateConnectionParameters;
+}
+export interface BleCreateConnectionParameters {
+    enable: boolean;
+    scanInterval: number;
+    scanWindow: number;
+    connectIntervalMin: number;
+    connectIntervalMax: number;
+    latency: number;
+    supervision: number;
+    eventIntervalMin: number;
+    eventIntervalMax: number;
+}

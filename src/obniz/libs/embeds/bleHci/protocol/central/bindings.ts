@@ -110,6 +110,16 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     }
   }
 
+  public async startExtendedScanningWait(
+    serviceUuids: UUID[],
+    allowDuplicates: boolean,
+    activeScan: boolean
+  ) {
+    this._scanServiceUuids = serviceUuids ?? null;
+
+    await this._gap.startExtendedScanningWait(allowDuplicates, activeScan);
+  }
+
   public async startScanningWait(
     serviceUuids: UUID[],
     allowDuplicates: boolean,

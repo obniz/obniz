@@ -172,6 +172,46 @@ export default class BleScan {
     start(target?: BleScanTarget | null, settings?: BleScanSetting): void;
     /**
      * This starts scanning BLE.
+     * Support BLE 5.0
+     *
+     * Coded Phy(Long Lange Mode)
+     * 2M Phy(Faster Mode)(Secondary Only)
+     * Secondary PHY
+     * Long Data(31Byte -> 1650Byte)
+     *
+     * You can filter uuids or localName using the target param.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var target = {
+     *     uuids: ["fff0","FFF1"],     //scan only has uuids "fff0" and "FFF1"
+     *     localName: "obniz-BLE",     //scan only has localName "obniz-BLE"
+     * };
+     *
+     * var setting = {
+     *    duration : 10  //scan duration time in seconds. default is 30 sec.
+     * }
+     *
+     * await obniz.ble.initWait();
+     * await obniz.ble.scan.startExtendedWait(target, setting);
+     * ```
+     *
+     * This is also possible without params being valid.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.scan.startExtendedWait();
+     * ```
+     *
+     * Scanning starts with no error and results with not advertisement found while a device is trying to connect a peripheral.
+     * Before start scannnig. Establishing connection must be completed or canceled.
+     *
+     * @param target
+     * @param settings
+     */
+    startExtendedWait(target?: BleScanTarget | null, settings?: BleScanSetting): Promise<void>;
+    /**
+     * This starts scanning BLE.
      *
      * You can filter uuids or localName using the target param.
      *

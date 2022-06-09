@@ -67,6 +67,10 @@ class NobleBindings extends eventemitter3_1.default {
             this._connectable[uuid] = true;
         }
     }
+    async startExtendedScanningWait(serviceUuids, allowDuplicates, activeScan) {
+        this._scanServiceUuids = (serviceUuids !== null && serviceUuids !== void 0 ? serviceUuids : null);
+        await this._gap.startExtendedScanningWait(allowDuplicates, activeScan);
+    }
     async startScanningWait(serviceUuids, allowDuplicates, activeScan) {
         this._scanServiceUuids = (serviceUuids !== null && serviceUuids !== void 0 ? serviceUuids : null);
         await this._gap.startScanningWait(allowDuplicates, activeScan);

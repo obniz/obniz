@@ -111,3 +111,27 @@ export interface BleServiceDefine {
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface BlePeripheralDefine {}
+
+export interface BleExtendedAdvertisingEnable {
+  handle: number;
+  duration: number;
+  events: number;
+}
+
+export interface BleCreateConnection {
+  phy_1m: BleCreateConnectionParameters;
+  phy_2m: BleCreateConnectionParameters;
+  phy_coded: BleCreateConnectionParameters;
+}
+/* eslint rulesdir/non-ascii: 0 */
+export interface BleCreateConnectionParameters {
+  enable: boolean;
+  scanInterval: number; // 次のスキャンを開始するまでの時間間隔
+  scanWindow: number; // 主広告チャンネルでのスキャンの持続時間
+  connectIntervalMin: number; // 接続間隔
+  connectIntervalMax: number; // 接続間隔
+  latency: number; // スレーブ接続のレイテンシー
+  supervision: number; // LE Link の監視タイムアウト
+  eventIntervalMin: number; // LE 接続に必要な接続イベント
+  eventIntervalMax: number; // LE 接続に必要な接続イベントの
+}

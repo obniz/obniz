@@ -12,8 +12,14 @@ import {
   ObnizParameterError,
 } from '../../../../ObnizError';
 import BleHelper from '../bleHelper';
-import { BleDeviceAddress, BleDeviceAddressType, Handle } from '../bleTypes';
-
+import {
+  BleCreateConnection,
+  BleDeviceAddress,
+  BleDeviceAddressType,
+  BleExtendedAdvertisingEnable,
+  Handle,
+} from '../bleTypes';
+/* eslint rulesdir/non-ascii: 0 */
 // eslint-disable-next-line @typescript-eslint/no-namespace
 namespace COMMANDS {
   export const HCI_COMMAND_PKT = 0x01;
@@ -36,6 +42,14 @@ namespace COMMANDS {
   export const EVT_LE_ADVERTISING_REPORT = 0x02;
   export const EVT_LE_CONN_UPDATE_COMPLETE = 0x03;
   export const EVT_LE_ENHANCED_CONNECTION_COMPLETE = 0x0a;
+  export const EVT_LE_PHY_UPDATE_COMPLETE = 0x0c; // LE PHY アップデート完了イベント
+  export const EVT_LE_EXTENDED_ADVERTISING_REPORT = 0x0d; // LE拡張広告レポートイベント
+  export const EVT_LE_PERIODIC_ADVERTISING_SYNC_ESTABLISHED = 0x0e; // LE 定期的広告同期確立イベント
+  export const EVT_LE_PERIODIC_ADVERTISING_REPORT_EVENT = 0x0f; // LE定期広告レポートイベント
+  export const EVT_LE_PERIODIC_ADVERTISING_SYNC_LOST_EVENT = 0x10; // 周期的広告パケットをタイムアウト時間内に受信しなかった
+  export const EVT_LE_SCAN_TIMEOUT_EVENT = 0x11; // LEスキャンタイムアウトイベント
+  export const EVT_LE_ADVERTISING_SET_TERMINATED_EVENT = 0x12; // LE 広告セット終了イベント
+  export const EVT_LE_SCAN_REQUEST_RECEIVED_EVENT = 0x13; // LE スキャン要求受信イベント
 
   export const OGF_LINK_CTL = 0x01;
   export const OCF_DISCONNECT = 0x0006;
@@ -96,7 +110,27 @@ namespace COMMANDS {
   export const OCF_LE_READ_RESOLVING_LIST_SIZE = 0x002a;
   export const OCF_LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT = 0x002e;
   export const OCF_LE_READ_MAXIMUM_DATA_LENGTH = 0x002f;
-  export const OCF_SET_DEFAULT_PHY = 0x0031;
+  export const OCF_LE_READ_PHY = 0x0030;
+  export const OCF_LE_SET_DEFAULT_PHY = 0x0031;
+  export const OCF_LE_SET_PHY = 0x0032;
+  export const OCF_LE_SET_EXTENDED_ADVERTISING_PARAMETERS = 0x0036; // ExAdv
+  export const OCF_LE_SET_EXTENDED_ADVERTISING_DATA = 0x0037; // ExAdv
+  export const OCF_LE_SET_EXTENDED_SCAN_RESPONSE_DATA = 0x0038; // ExAdv
+  export const OCF_LE_SET_EXTENDED_ADVERTISING_ENABLE = 0x0039; // ExAdv
+  export const OCF_LE_READ_MAXIMUM_ADVERTISING_DATA_LENGTH = 0x003a;
+  export const OCF_LE_CLEAR_ADVERTISING_SETS = 0x003d; // ExAdv
+  export const OCF_LE_SET_PERIODIC_ADVERTISING_PARAMETERS = 0x003e;
+  export const OCF_LE_SET_PERIODIC_ADVERTISING_DATA = 0x003f;
+  export const OCF_LE_SET_PERIODIC_ADVERTISING_ENABLE = 0x0040;
+  export const OCF_LE_SET_EXTENDED_SCAN_PARAMETERS = 0x0041; // ExAdv
+  export const OCF_LE_SET_EXTENDED_SCAN_ENABLE = 0x0042; // ExAdv
+  export const OCF_LE_EXTENDED_CREATE_CONNECTION = 0x0043; // ExAdv
+  export const OCF_LE_PERIODIC_ADVERTISING_CREATE_SYNC = 0x0044;
+  export const OCF_LE_PERIODIC_ADVERTISING_CREATE_SYNC_CANCEL = 0x0045;
+  export const OCF_LE_PERIODIC_ADVERTISING_TERMINATE_SYNC = 0x0046;
+  export const OCF_LE_ADD_DEVICE_TO_PERIODIC_ADVERTISER_LIST = 0x0047;
+  export const OCF_LE_REMOVE_DEVICE_TO_PERIODIC_ADVERTISER_LIST = 0x0048;
+  export const OCF_LE_CLEAR_DEVICE_TO_PERIODIC_ADVERTISER_LIST = 0x0049;
 
   /* OGF_LINK_CTL : 0x01 */
   export const DISCONNECT_CMD = OCF_DISCONNECT | (OGF_LINK_CTL << 10);
@@ -195,7 +229,46 @@ namespace COMMANDS {
     OCF_LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT | (OGF_LE_CTL << 10);
   export const LE_READ_MAXIMUM_DATA_LENGTH_CMD =
     OCF_LE_READ_MAXIMUM_DATA_LENGTH | (OGF_LE_CTL << 10);
-  export const SET_DEFAULT_PHY_CMD = OCF_SET_DEFAULT_PHY | (OGF_LE_CTL << 10);
+  export const LE_SET_DEFAULT_PHY_CMD =
+    OCF_LE_SET_DEFAULT_PHY | (OGF_LE_CTL << 10);
+  export const LE_READ_PHY_CMD = OCF_LE_READ_PHY | (OGF_LE_CTL << 10);
+  export const LE_SET_PHY_CMD = OCF_LE_SET_PHY | (OGF_LE_CTL << 10);
+  export const LE_SET_EXTENDED_ADVERTISING_PARAMETERS_CMD =
+    OCF_LE_SET_EXTENDED_ADVERTISING_PARAMETERS | (OGF_LE_CTL << 10);
+  export const LE_SET_EXTENDED_ADVERTISING_DATA_CMD =
+    OCF_LE_SET_EXTENDED_ADVERTISING_DATA | (OGF_LE_CTL << 10);
+  export const LE_SET_EXTENDED_SCAN_RESPONSE_DATA_CMD =
+    OCF_LE_SET_EXTENDED_SCAN_RESPONSE_DATA | (OGF_LE_CTL << 10);
+  export const LE_SET_EXTENDED_ADVERTISING_ENABLE_CMD =
+    OCF_LE_SET_EXTENDED_ADVERTISING_ENABLE | (OGF_LE_CTL << 10);
+  export const LE_READ_MAXIMUM_ADVERTISING_DATA_LENGTH_CMD =
+    OCF_LE_READ_MAXIMUM_ADVERTISING_DATA_LENGTH | (OGF_LE_CTL << 10);
+  export const LE_CLEAR_ADVERTISING_SETS_CMD =
+    OCF_LE_CLEAR_ADVERTISING_SETS | (OGF_LE_CTL << 10);
+  export const LE_SET_PERIODIC_ADVERTISING_PARAMETERS_CMD =
+    OCF_LE_SET_PERIODIC_ADVERTISING_PARAMETERS | (OGF_LE_CTL << 10);
+  export const LE_SET_PERIODIC_ADVERTISING_DATA_CMD =
+    OCF_LE_SET_PERIODIC_ADVERTISING_DATA | (OGF_LE_CTL << 10);
+  export const LE_SET_PERIODIC_ADVERTISING_ENABLE_CMD =
+    OCF_LE_SET_PERIODIC_ADVERTISING_ENABLE | (OGF_LE_CTL << 10);
+  export const LE_SET_EXTENDED_SCAN_PARAMETERS_CMD =
+    OCF_LE_SET_EXTENDED_SCAN_PARAMETERS | (OGF_LE_CTL << 10);
+  export const LE_SET_EXTENDED_SCAN_ENABLE_CMD =
+    OCF_LE_SET_EXTENDED_SCAN_ENABLE | (OGF_LE_CTL << 10);
+  export const LE_EXTENDED_CREATE_CONNECTION_CMD =
+    OCF_LE_EXTENDED_CREATE_CONNECTION | (OGF_LE_CTL << 10);
+  export const LE_PERIODIC_ADVERTISING_CREATE_SYNC_CMD =
+    OCF_LE_PERIODIC_ADVERTISING_CREATE_SYNC | (OGF_LE_CTL << 10);
+  export const LE_PERIODIC_ADVERTISING_CREATE_SYNC_CANCEL_CMD =
+    OCF_LE_PERIODIC_ADVERTISING_CREATE_SYNC_CANCEL | (OGF_LE_CTL << 10);
+  export const LE_PERIODIC_ADVERTISING_TERMINATE_SYNC_CMD =
+    OCF_LE_PERIODIC_ADVERTISING_TERMINATE_SYNC | (OGF_LE_CTL << 10);
+  export const LE_ADD_DEVICE_TO_PERIODIC_ADVERTISER_LIST_CMD =
+    OCF_LE_ADD_DEVICE_TO_PERIODIC_ADVERTISER_LIST | (OGF_LE_CTL << 10);
+  export const LE_REMOVE_DEVICE_TO_PERIODIC_ADVERTISER_LIST_CMD =
+    OCF_LE_REMOVE_DEVICE_TO_PERIODIC_ADVERTISER_LIST | (OGF_LE_CTL << 10);
+  export const LE_CLEAR_DEVICE_TO_PERIODIC_ADVERTISER_LIST_CMD =
+    OCF_LE_CLEAR_DEVICE_TO_PERIODIC_ADVERTISER_LIST | (OGF_LE_CTL << 10);
 
   export const HCI_OE_USER_ENDED_CONNECTION = 0x13;
 }
@@ -205,6 +278,7 @@ import STATUS_MAPPER from './hci-status.json';
 type HciEventTypes =
   // central
   | 'leAdvertisingReport'
+  | 'leExtendedAdvertisingReport'
 
   // peripheral
   | 'leConnComplete' // central also use, but slave only emit
@@ -347,7 +421,7 @@ class Hci extends EventEmitter<HciEventTypes> {
     this._reset();
     await this.resetCommandWait();
     this.setEventMaskCommand('fffffbff07f8bf3d');
-    this.setLeEventMaskCommand('1f00000000000000');
+    this.setLeEventMaskCommand('1ff8070000000000');
     const {
       hciVer,
       hciRev,
@@ -367,11 +441,12 @@ class Hci extends EventEmitter<HciEventTypes> {
     }
 
     // await this.setRandomDeviceAddressWait();
-    if (this._state !== 'poweredOn') {
-      await this.setScanEnabledWait(false, true);
-      await this.setScanParametersWait(false);
-      this.stateChange('poweredOn');
-    }
+    // if (this._state !== 'poweredOn') {
+    //   console.log('poweredOn');
+    //   await this.setScanEnabledWait(false, true);
+    //   await this.setScanParametersWait(false);
+    //   this.stateChange('poweredOn');
+    // }
   }
 
   public async resetForEsp32Wait() {
@@ -841,6 +916,462 @@ class Hci extends EventEmitter<HciEventTypes> {
     return data.result;
   }
 
+  public async leReadPhyCommandWait(connectionHandle: number) {
+    const cmd = Buffer.alloc(6);
+
+    // header
+    cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+    cmd.writeUInt16LE(COMMANDS.LE_READ_PHY_CMD, 1);
+
+    // length
+    cmd.writeUInt8(2, 3);
+
+    cmd.writeUInt16LE(connectionHandle, 4);
+
+    const p = this.readCmdCompleteEventWait(COMMANDS.LE_READ_PHY_CMD);
+    this.debug(`read Phy - writing: ${cmd.toString('hex')}`);
+    this._socket.write(cmd);
+
+    const data = await p;
+
+    return {
+      status: data.status,
+      connectionHandle: data.result.readUInt16LE(0),
+      txPhy: data.result.readUInt8(2),
+      rxPhy: data.result.readUInt8(3),
+    };
+  }
+
+  // 接続後にのみ使用可能
+  public async leSetPhyCommandWait(
+    connectionHandle: number,
+    allPhys: number,
+    txPhys: number,
+    rxPhys: number,
+    options: number
+  ) {
+    const cmd = Buffer.alloc(11);
+
+    // header
+    cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+    cmd.writeUInt16LE(COMMANDS.LE_SET_PHY_CMD, 1);
+
+    // length
+    cmd.writeUInt8(7, 3);
+
+    cmd.writeUInt16LE(connectionHandle, 4);
+    cmd.writeUInt8(allPhys, 6);
+    cmd.writeUInt8(txPhys, 7);
+    cmd.writeUInt8(rxPhys, 8);
+    cmd.writeUInt16LE(options, 9);
+
+    this.debug('le set phy - writing: ' + cmd.toString('hex'));
+    this._socket.write(cmd);
+  }
+
+  public async setExtendedAdvertisingParametersWait(
+    advertisingHandle: number,
+    advertisingEventProperties: number,
+    primaryAdvertisingPhy: number,
+    secondaryAdvertisingPhy: number
+  ) {
+    const cmd = Buffer.alloc(29);
+
+    // header
+    cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+    cmd.writeUInt16LE(COMMANDS.LE_SET_EXTENDED_ADVERTISING_PARAMETERS_CMD, 1);
+
+    // length
+    cmd.writeUInt8(25, 3);
+
+    const advertisementInterval = Math.floor(
+      (process.env.BLENO_ADVERTISING_INTERVAL
+        ? parseFloat(process.env.BLENO_ADVERTISING_INTERVAL)
+        : 100) * 1.6
+    );
+
+    // data
+    cmd.writeUInt8(advertisingHandle, 4);
+    cmd.writeUInt16LE(0x0000, 5); // Advertising_Event_Properties
+    // Broadcast(0x0000)(ADV Data 1650B send) or Scannable(0x0002)(ScanRsp Data 1650B send)
+
+    cmd.writeUInt16LE(advertisementInterval, 7); // min interval //default 100ms
+    cmd.writeUInt8((advertisementInterval >> 16) & 0xff, 9); // min interval
+    cmd.writeUInt16LE(advertisementInterval, 10); // max interval
+    cmd.writeUInt8((advertisementInterval >> 16) & 0xff, 12); // max interval
+    cmd.writeUInt8(0x07, 13); // Primary_Advertising_Channel_Map used 37,38,39ch
+    cmd.writeUInt8(0x00, 14); // Own_Address_Type direct addr type
+    cmd.writeUInt8(0x00, 15); // Peer_Address_Type
+    Buffer.from('000000000000', 'hex').copy(cmd, 16); // direct addr
+    cmd.writeUInt8(0x07, 22); // Advertising_Filter_Policy All Devices
+    cmd.writeUInt8(0x00, 23); // Advertising_Tx_Power
+    cmd.writeUInt8(primaryAdvertisingPhy, 24); // PrimaryAdvertisingPhy
+    cmd.writeUInt8(0x00, 25); // Secondary_Advertising_Max_Skip
+    cmd.writeUInt8(secondaryAdvertisingPhy, 26); // SecondaryAdvertisingPhy
+    cmd.writeUInt8(0x00, 27); // Advertising_SID
+    cmd.writeUInt8(0x00, 28); // Scan_Request_Notification_Enable
+
+    const p = this.readCmdCompleteEventWait(
+      COMMANDS.LE_SET_EXTENDED_ADVERTISING_PARAMETERS_CMD
+    );
+    this.debug(
+      'set extended advertisement parameters - writing: ' + cmd.toString('hex')
+    );
+    this._socket.write(cmd);
+
+    const data = await p;
+
+    // this.emit("stateChange", "poweredOn"); // TODO : really need?
+
+    return {
+      status: data.status,
+      txPower: data.result.readUInt8(0),
+    };
+  }
+
+  public async setExtendedAdvertisingDataWait(
+    advertisingHandle: number,
+    data: any
+  ) {
+    for (let i = 0; i < data.length / 251; i++) {
+      const size = data.length - i * 251 > 251 ? 251 : data.length - i * 251;
+      console.log('size', size);
+
+      const cmd = Buffer.alloc(size + 4 + 4);
+
+      // header
+      cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+      cmd.writeUInt16LE(COMMANDS.LE_SET_EXTENDED_ADVERTISING_DATA_CMD, 1);
+
+      // length
+      cmd.writeUInt8(size + 4, 3);
+
+      // data
+      cmd.writeUInt8(advertisingHandle, 4);
+      if (i === 0) {
+        if (data.length <= 251) {
+          cmd.writeUInt8(3, 5); // Operation コンプリートスキャン応答データ
+          console.log('Operation', 3);
+        } else {
+          cmd.writeUInt8(1, 5); // Operation 断片化されたスキャンレスポンスデータの最初の断片
+          console.log('Operation', 1);
+        }
+      } else {
+        if (data.length - i * 251 <= 251) {
+          cmd.writeUInt8(2, 5); // Operation 断片化したスキャンレスポンスデータの最後の断片
+          console.log('Operation', 2);
+        } else {
+          cmd.writeUInt8(0, 5); // Operation 断片化したスキャンレスポンスデータの中間断片
+          console.log('Operation', 0);
+        }
+      }
+
+      cmd.writeUInt8(0x00, 6); // Fragment_Preference
+      cmd.writeUInt8(size, 7); // Data_Length
+
+      data.copy(cmd, 8, i * 251, i * 251 + size);
+
+      const p = this.readCmdCompleteEventWait(
+        COMMANDS.LE_SET_EXTENDED_ADVERTISING_DATA_CMD
+      );
+
+      this.debug(
+        'set extended advertisement data - writing: ' + cmd.toString('hex')
+      );
+      this._socket.write(cmd);
+      const result = await p;
+      if (result.status !== 0) {
+        return result.status;
+      }
+    }
+    return 0;
+  }
+
+  // 今の仕様だとScanResponseはExtendedでサポートしていない
+  public async setExtendedScanResponseDataWait(
+    advertisingHandle: number,
+    data: any
+  ) {
+    for (let i = 0; i < data.length / 251; i++) {
+      const size = data.length - i * 251 > 251 ? 251 : data.length - i * 251;
+      console.log('size', size);
+
+      const cmd = Buffer.alloc(size + 4 + 4);
+
+      // header
+      cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+      cmd.writeUInt16LE(COMMANDS.LE_SET_EXTENDED_SCAN_RESPONSE_DATA_CMD, 1);
+
+      // length
+      cmd.writeUInt8(size + 4, 3);
+
+      // data
+      cmd.writeUInt8(advertisingHandle, 4);
+      if (i === 0) {
+        if (data.length <= 251) {
+          cmd.writeUInt8(3, 5); // Operation コンプリートスキャン応答データ
+          console.log('Operation', 3);
+        } else {
+          cmd.writeUInt8(1, 5); // Operation 断片化されたスキャンレスポンスデータの最初の断片
+          console.log('Operation', 1);
+        }
+      } else {
+        if (data.length - i * 251 <= 251) {
+          cmd.writeUInt8(2, 5); // Operation 断片化したスキャンレスポンスデータの最後の断片
+          console.log('Operation', 2);
+        } else {
+          cmd.writeUInt8(0, 5); // Operation 断片化したスキャンレスポンスデータの中間断片
+          console.log('Operation', 0);
+        }
+      }
+
+      cmd.writeUInt8(0x00, 6); // Fragment_Preference
+      cmd.writeUInt8(size, 7); // Data_Length
+
+      data.copy(cmd, 8, i * 251, i * 251 + size);
+
+      const p = this.readCmdCompleteEventWait(
+        COMMANDS.LE_SET_EXTENDED_SCAN_RESPONSE_DATA_CMD
+      );
+
+      this.debug(
+        'set extended scan response data - writing: ' + cmd.toString('hex')
+      );
+      this._socket.write(cmd);
+      const result = await p;
+      if (result.status !== 0) {
+        return result.status;
+      }
+    }
+    return 0;
+  }
+
+  public async setExtendedAdvertiseEnableWait(
+    enabled: boolean,
+    enableList: BleExtendedAdvertisingEnable[]
+  ) {
+    const cmd = Buffer.alloc(enableList.length * 4 + 4 + 2);
+
+    // header
+    cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+    cmd.writeUInt16LE(COMMANDS.LE_SET_EXTENDED_ADVERTISING_ENABLE_CMD, 1);
+
+    // length
+    cmd.writeUInt8(enableList.length * 4 + 2, 3);
+
+    // data
+    cmd.writeUInt8(enabled ? 0x01 : 0x00, 4); // enable: 0 -> disabled, 1 -> enabled
+    cmd.writeUInt8(enableList.length, 5); // length
+    for (let i = 0; i < enableList.length; i++) {
+      cmd.writeUInt8(enableList[i].handle, 6 + i * 4); // handle
+      cmd.writeUInt16LE(enableList[i].duration, 7 + i * 4); // duration
+      cmd.writeUInt8(enableList[i].events, 9 + i * 4); // events
+    }
+    const p = this.readCmdCompleteEventWait(
+      COMMANDS.LE_SET_EXTENDED_ADVERTISING_ENABLE_CMD
+    );
+    this.debug(
+      'set extended advertise enable - writing: ' + cmd.toString('hex')
+    );
+    this._socket.write(cmd);
+    const data = await p;
+    return data.status;
+  }
+
+  public async leReadMaximumAdvertisingDataLengthWait() {
+    const data = await this.writeNoParamCommandWait(
+      COMMANDS.LE_READ_MAXIMUM_ADVERTISING_DATA_LENGTH_CMD,
+      'le read maximum advertising data length'
+    );
+
+    return data.result.readUInt16LE(0);
+  }
+
+  // 先にsetExtendedAdvertiseEnableWaitで無効化してから行うこと
+  public async leClearAdvertisingSetWait() {
+    const data = await this.writeNoParamCommandWait(
+      COMMANDS.LE_CLEAR_ADVERTISING_SETS_CMD,
+      'le clear advertising Set'
+    );
+
+    return data.result.readUInt16LE(0);
+  }
+
+  public async setExtendedScanParametersWait(isActiveScan: boolean) {
+    const cmd = Buffer.alloc(17);
+
+    // header
+    cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+    cmd.writeUInt16LE(COMMANDS.LE_SET_EXTENDED_SCAN_PARAMETERS_CMD, 1);
+
+    // length
+    cmd.writeUInt8(13, 3);
+
+    // data
+    cmd.writeUInt8(0x00, 4); // Own_Address_Type 公開端末アドレス
+    cmd.writeUInt8(0x00, 5); // Scanning_Filter_Policy：本装置宛でない有向広告パケットを除くすべての広告パケットを受信する
+    cmd.writeUInt8(0x05, 6); // Scanning_PHYs：1M Phy and Coded Phy 0b00000101
+    cmd.writeUInt8(isActiveScan ? 0x01 : 0x00, 7); // Scan_Type 1M ActiveScan 1
+    // コントローラが最後のスキャンを開始してから、プライマリ広告チャネルで次のスキャンを開始するまでの時間間隔。
+    cmd.writeUInt16LE(0x0010, 8); // Scan_Interval 1M //default 10ms //もともとのスキャン機能のインターバルから引用
+    // 主広告チャンネルでのスキャンの持続時間
+    cmd.writeUInt16LE(0x0010, 10); // Scan_Interval 1M //default 10ms
+    cmd.writeUInt8(isActiveScan ? 0x01 : 0x00, 12); // Scan_Type Coded ActiveScan 1
+    cmd.writeUInt16LE(0x0010, 13); // Scan_Interval Coded //default 10ms
+    cmd.writeUInt16LE(0x0010, 15); // Scan_Interval Coded //default 10ms
+
+    const p = this.readCmdCompleteEventWait(
+      COMMANDS.LE_SET_EXTENDED_SCAN_PARAMETERS_CMD
+    );
+    this.debug(
+      'set scan　extended parameters - writing: ' + cmd.toString('hex')
+    );
+    this._socket.write(cmd);
+    const data = await p;
+    return data.status;
+  }
+
+  public async setExtendedScanEnabledWait(
+    enabled: boolean,
+    filterDuplicates: boolean
+  ) {
+    const cmd = Buffer.alloc(10);
+
+    // header
+    cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+    cmd.writeUInt16LE(COMMANDS.LE_SET_EXTENDED_SCAN_ENABLE_CMD, 1);
+
+    // length
+    cmd.writeUInt8(0x06, 3);
+
+    // data
+    cmd.writeUInt8(enabled ? 0x01 : 0x00, 4); // enable: 0 -> disabled, 1 -> enabled
+    cmd.writeUInt8(filterDuplicates ? 0x01 : 0x00, 5); // 0x01 => filter enabled, 0x00 => filter disable
+    cmd.writeUInt16LE(0x0000, 6); // Scan_Duration 明示的に無効化されるまで連続スキャン 既存のスキャンと同じように
+    cmd.writeUInt16LE(0x0000, 8); // Scan_Period 定期的なスキャンを無効にする 連続スキャンなのではいらない
+
+    this.debug(
+      `set extended scan =${
+        enabled ? 'enabled' : 'disable'
+      } - writing: ${cmd.toString('hex')}`
+    );
+    const p = this.readCmdCompleteEventWait(
+      COMMANDS.LE_SET_EXTENDED_SCAN_ENABLE_CMD
+    );
+    this._socket.write(cmd);
+    const data = await p;
+    return data.status;
+  }
+
+  public async createLeExtendedConnWait(
+    address: BleDeviceAddress,
+    addressType: BleDeviceAddressType,
+    pyh1m: boolean,
+    pyh2m: boolean,
+    pyhCoded: boolean,
+    timeout: number = 90 * 1000,
+    onConnectCallback: any
+  ) {
+    const booleanToNumber = (flg: boolean): number => (flg ? 1 : 0);
+    const configCount =
+      booleanToNumber(pyh1m) +
+      booleanToNumber(pyh2m) +
+      booleanToNumber(pyhCoded);
+
+    const cmd = Buffer.alloc(configCount * 16 + 10 + 4);
+
+    // header
+    cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+    cmd.writeUInt16LE(COMMANDS.LE_EXTENDED_CREATE_CONNECTION_CMD, 1);
+
+    // length
+    cmd.writeUInt8(configCount * 16 + 10, 3);
+
+    const parameter = {
+      interval: 0x0010, // ms * 0.625 = 10ms
+      window: 0x0010, // ms * 0.625 = 10ms
+      minInterval: 0x0009, // min interval 9 * 1.25 msec => 7.5msec (close to android)
+      maxInterval: 0x0018, // max interval 24 * 1.25 msec => 30msec (close to ios)
+      latency: 0x0001,
+      supervisionTimeout: 0x0190, // 4sec
+      minCeLength: 0x0000,
+      maxCeLength: 0x0000,
+    };
+
+    // data
+    cmd.writeUInt16LE(0x00, 4); // Initiating_Filter_Policy ホワイトリストは使用しません
+    cmd.writeUInt16LE(0x00, 5); // Own_Address_Type 公開端末アドレス
+    cmd.writeUInt8(addressType === 'random' ? 0x01 : 0x00, 6); // peer address type
+    BleHelper.hex2reversedBuffer(address, ':').copy(cmd, 7); // peer address
+    cmd.writeUInt8(
+      booleanToNumber(pyh1m) +
+        booleanToNumber(pyh2m) * 2 +
+        booleanToNumber(pyhCoded) * 4,
+      13
+    ); // Initiating_PHY
+
+    for (let i = 0; i < configCount; i++) {
+      cmd.writeUInt16LE(parameter.interval, 14 + i * 2); // interval
+    }
+    for (let i = 0; i < configCount; i++) {
+      cmd.writeUInt16LE(parameter.window, 14 + i * 2 + configCount * 2); // window
+    }
+    for (let i = 0; i < configCount; i++) {
+      cmd.writeUInt16LE(parameter.minInterval, 14 + i * 2 + configCount * 4); // minInterval
+    }
+    for (let i = 0; i < configCount; i++) {
+      cmd.writeUInt16LE(parameter.maxInterval, 14 + i * 2 + configCount * 6); // maxInterval
+    }
+    for (let i = 0; i < configCount; i++) {
+      cmd.writeUInt16LE(parameter.latency, 14 + i * 2 + configCount * 8); // latency
+    }
+    for (let i = 0; i < configCount; i++) {
+      cmd.writeUInt16LE(
+        parameter.supervisionTimeout,
+        14 + i * 2 + configCount * 10
+      ); // supervisionTimeout
+    }
+    for (let i = 0; i < configCount; i++) {
+      cmd.writeUInt16LE(parameter.minCeLength, 14 + i * 2 + configCount * 12); // minCeLength
+    }
+    for (let i = 0; i < configCount; i++) {
+      cmd.writeUInt16LE(parameter.maxCeLength, 14 + i * 2 + configCount * 14); // maxCeLength
+    }
+
+    this.debug('create le extended conn - writing: ' + cmd.toString('hex'));
+
+    const processConnectionCompletePromise = (async () => {
+      const { status, data } = await this.readLeMetaEventWait(
+        COMMANDS.EVT_LE_CONN_COMPLETE,
+        {
+          timeout,
+        }
+      );
+      return { status, data: this.parseConnectionCompleteEventData(data) };
+    })();
+
+    const processLeConnectionCompletePromise = (async () => {
+      const { status, data } = await this.readLeMetaEventWait(
+        COMMANDS.EVT_LE_ENHANCED_CONNECTION_COMPLETE,
+        {
+          timeout,
+        }
+      );
+      return { status, data: this.parseLeConnectionCompleteEventData(data) };
+    })();
+    this._socket.write(cmd);
+    const result = await Promise.race([
+      processConnectionCompletePromise,
+      processLeConnectionCompletePromise,
+    ]);
+
+    return this.processLeConnComplete(
+      result.status,
+      result.data,
+      onConnectCallback
+    );
+  }
+
   public async leSetDefaultPhyCommandWait(
     allPhys: number,
     txPhys: number,
@@ -850,7 +1381,7 @@ class Hci extends EventEmitter<HciEventTypes> {
 
     // header
     cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
-    cmd.writeUInt16LE(COMMANDS.SET_DEFAULT_PHY_CMD, 1);
+    cmd.writeUInt16LE(COMMANDS.LE_SET_DEFAULT_PHY_CMD, 1);
 
     // length
     cmd.writeUInt8(3, 3);
@@ -966,6 +1497,11 @@ class Hci extends EventEmitter<HciEventTypes> {
     const p = this.readCmdCompleteEventWait(
       COMMANDS.LE_SET_SCAN_PARAMETERS_CMD
     );
+    this.debug(
+      `set scan parameters=${
+        isActiveScan ? 'active' : 'passive'
+      } - writing: ${cmd.toString('hex')}`
+    );
     this.debug('set scan parameters - writing: ' + cmd.toString('hex'));
     this._socket.write(cmd);
     const data = await p;
@@ -986,7 +1522,11 @@ class Hci extends EventEmitter<HciEventTypes> {
     cmd.writeUInt8(enabled ? 0x01 : 0x00, 4); // enable: 0 -> disabled, 1 -> enabled
     cmd.writeUInt8(filterDuplicates ? 0x01 : 0x00, 5); // 0x01 => filter enabled, 0x00 => filter disable
 
-    this.debug('set scan enabled - writing: ' + cmd.toString('hex'));
+    this.debug(
+      `set scan ${enabled ? 'enabled' : 'disable'} - writing: ${cmd.toString(
+        'hex'
+      )}`
+    );
     const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_ENABLE_CMD);
     this._socket.write(cmd);
     const data = await p;
@@ -1532,6 +2072,8 @@ class Hci extends EventEmitter<HciEventTypes> {
   public processLeMetaEvent(eventType: any, status: any, data: Buffer) {
     if (eventType === COMMANDS.EVT_LE_ADVERTISING_REPORT) {
       this.processLeAdvertisingReport(status, data);
+    } else if (eventType === COMMANDS.EVT_LE_EXTENDED_ADVERTISING_REPORT) {
+      this.processLeExtendedAdvertisingReport(status, data);
     } else if (eventType === COMMANDS.EVT_LE_CONN_COMPLETE) {
       const role = data.readUInt8(2);
       if (role === 1) {
@@ -1544,6 +2086,13 @@ class Hci extends EventEmitter<HciEventTypes> {
         const connectionData = this.parseConnectionCompleteEventData(data);
         this.processLeConnComplete(status, connectionData, undefined);
       }
+    } else if (eventType === COMMANDS.EVT_LE_PHY_UPDATE_COMPLETE) {
+      const handler = data.readUInt16LE(0);
+      const txPhy = data.readUInt8(2);
+      const rxPhy = data.readUInt8(3);
+      console.log(
+        'handler: ' + handler + ' txPhy: ' + txPhy + ' rxPhy: ' + rxPhy
+      );
     } else if (eventType === COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE) {
       const {
         handle,
@@ -1670,6 +2219,82 @@ class Hci extends EventEmitter<HciEventTypes> {
     }
 
     return result;
+  }
+
+  private phyToStr(phy: number) {
+    switch (phy) {
+      case 0:
+        return 'noPhy';
+      case 1:
+        return '1m';
+      case 2:
+        return '2m';
+      case 3:
+        return 'coded';
+      default:
+        return 'error';
+    }
+  }
+
+  public processLeExtendedAdvertisingReport(count: number, data: Buffer) {
+    for (let i = 0; i < count; i++) {
+      console.log(
+        'processLeExtendedAdvertisingReport data',
+        data.toString('hex')
+      );
+      const type = data.readUInt16LE(0);
+      const addressType = data.readUInt8(2) === 0x01 ? 'random' : 'public';
+      const address = BleHelper.buffer2reversedHex(data.slice(3, 9), ':');
+      const primaryPhy = this.phyToStr(data.readUInt8(9));
+      const secondaryPhy = this.phyToStr(data.readUInt8(10));
+      const sid = data.readUInt8(11);
+      const txPower = data.readInt8(12);
+      const rssi = data.readInt8(13);
+      const periodicAdvertisingInterval = data.readUInt16LE(14);
+      const directAddressType =
+        data.readUInt8(16) === 0x01 ? 'random' : 'public';
+      const directAddress = BleHelper.buffer2reversedHex(
+        data.slice(17, 23),
+        ':'
+      );
+      const eirLength = data.readUInt8(23);
+      const eir = data.slice(24, eirLength + 24);
+
+      this.debug('\t\t\ttype = ' + type);
+      this.debug('\t\t\taddress = ' + address);
+      this.debug('\t\t\taddress type = ' + addressType);
+      this.debug('\t\t\teir = ' + eir.toString('hex'));
+      this.debug('\t\t\trssi =  ' + rssi);
+      this.debug('\t\t\tprimaryPhy =  ' + primaryPhy);
+      this.debug('\t\t\tsecondaryPhy =  ' + secondaryPhy);
+      this.debug('\t\t\tsid =  ' + sid);
+      this.debug('\t\t\ttxPower  ' + txPower);
+      this.debug(
+        '\t\t\tperiodicAdvertisingInterval  ' + periodicAdvertisingInterval
+      );
+      this.debug('\t\t\tdirectAddressType  ' + directAddressType);
+      this.debug('\t\t\tdirectAddress  ' + directAddress);
+      this.debug('\t\t\teirLength  ' + eirLength);
+
+      this.emit(
+        'leExtendedAdvertisingReport',
+        0,
+        type,
+        address,
+        addressType,
+        eir,
+        rssi,
+        primaryPhy,
+        secondaryPhy,
+        sid,
+        txPower,
+        periodicAdvertisingInterval,
+        directAddressType,
+        directAddress
+      );
+
+      data = data.slice(eirLength + 24);
+    }
   }
 
   public processLeAdvertisingReport(count: number, data: Buffer) {
@@ -1817,6 +2442,7 @@ class Hci extends EventEmitter<HciEventTypes> {
 
   private debug(...args: any) {
     this.debugHandler(`${args[0]}`);
+    console.log('debug', args);
   }
 
   private onHciAclData(data: Buffer) {
