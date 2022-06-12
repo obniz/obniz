@@ -14,7 +14,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const debug = (message) => {
     // do nothing.
-    console.log('gap debug', message);
+    // console.log('gap debug', message);
 };
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const ObnizError_1 = require("../../../../../ObnizError");
@@ -72,7 +72,8 @@ class Gap extends eventemitter3_1.default {
     async stopScanningWait() {
         try {
             if (this._scanState === 'starting' || this._scanState === 'started') {
-                await this.setScanEnabledWait(false, true);
+                // await this.setScanEnabledWait(false, true);
+                await this.setExtendedScanEnabledWait(false, true);
             }
         }
         catch (e) {
@@ -84,7 +85,7 @@ class Gap extends eventemitter3_1.default {
             }
         }
     }
-    async startExtendedScanningWait(allowDuplicates, activeScan) {
+    async startExtendedScanningWait(allowDuplicates, activeScan, usePhy1m, usePhyCoded) {
         this._scanFilterDuplicates = !allowDuplicates;
         this._discoveries = {};
         // Always set scan parameters before scanning
@@ -105,7 +106,7 @@ class Gap extends eventemitter3_1.default {
             }
         }
         this._scanState = 'starting';
-        const status = await this._hci.setExtendedScanParametersWait(activeScan);
+        const status = await this._hci.setExtendedScanParametersWait(activeScan, usePhy1m, usePhyCoded);
         if (status !== 0) {
             throw new ObnizError_1.ObnizBleScanStartError(status, `startExtendedScanning Error setting active scan=${activeScan} was failed`);
         }
@@ -114,9 +115,9 @@ class Gap extends eventemitter3_1.default {
     }
     onHciLeExtendedAdvertisingReport(status, type, address, addressType, eir, rssi, primaryPhy, secondaryPhy, sid, txPower, periodicAdvertisingInterval, directAddressType, directAddress) {
         console.log('onHciLeExtendedAdvertisingReport', type, address, addressType, eir, rssi, primaryPhy, secondaryPhy, sid, txPower, periodicAdvertisingInterval, directAddressType, directAddress);
-        this.onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi);
+        this.onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi, true);
     }
-    onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi) {
+    onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi, extended) {
         const previouslyDiscovered = !!this._discoveries[address];
         const advertisement = previouslyDiscovered
             ? this._discoveries[address].advertisement
@@ -262,9 +263,18 @@ class Gap extends eventemitter3_1.default {
             i += length + 1;
         }
         debug('advertisement = ' + JSON.stringify(advertisement, null, 0));
-        const connectable = type === 0x04 && previouslyDiscovered
-            ? this._discoveries[address].connectable
-            : type !== 0x03;
+        let connectable;
+        if (extended) {
+            connectable = (type & 0b00000001) !== 0;
+        }
+        else {
+            if (type === 0x04 && previouslyDiscovered) {
+                connectable = this._discoveries[address].connectable;
+            }
+            else {
+                connectable = type !== 0x03;
+            }
+        }
         this._discoveries[address] = {
             address,
             addressType,

@@ -387,7 +387,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         return null;
     }
     onDiscover(uuid, address, addressType, connectable, advertisement, rssi) {
-        console.log('onDiscover', uuid, address, addressType, connectable, advertisement, rssi);
         let val = this.findPeripheral(uuid);
         if (!val) {
             val = new bleRemotePeripheral_1.default(this, uuid);
@@ -405,7 +404,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             scan_resp: advertisement.scanResponseRaw,
         };
         val.setParams(peripheralData);
-        console.log('notifyFromServer', peripheralData);
         this.scan.notifyFromServer('onfind', val);
     }
     onDisconnect(peripheralUuid, reason) {

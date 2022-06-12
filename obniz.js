@@ -5817,7 +5817,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         return null;
     }
     onDiscover(uuid, address, addressType, connectable, advertisement, rssi) {
-        console.log('onDiscover', uuid, address, addressType, connectable, advertisement, rssi);
         let val = this.findPeripheral(uuid);
         if (!val) {
             val = new bleRemotePeripheral_1.default(this, uuid);
@@ -5835,7 +5834,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             scan_resp: advertisement.scanResponseRaw,
         };
         val.setParams(peripheralData);
-        console.log('notifyFromServer', peripheralData);
         this.scan.notifyFromServer('onfind', val);
     }
     onDisconnect(peripheralUuid, reason) {
@@ -8860,7 +8858,7 @@ class BleScan {
      * }
      *
      * await obniz.ble.initWait();
-     * await obniz.ble.scan.startExtendedWait(target, setting);
+     * await obniz.ble.scan.startExtendedWait(target, setting,false,true);
      * ```
      *
      * This is also possible without params being valid.
@@ -8875,8 +8873,10 @@ class BleScan {
      *
      * @param target
      * @param settings
+     * @param usePhy1m
+     * @param usePhyCoded
      */
-    async startExtendedWait(target = {}, settings = {}) {
+    async startExtendedWait(target = {}, settings = {}, usePhy1m = true, usePhyCoded = true) {
         this.obnizBle.warningIfNotInitialize();
         if (this.isContainingBleScanSettingProperty(target)) {
             this.obnizBle.Obniz.warning({
@@ -8917,7 +8917,7 @@ class BleScan {
             else {
                 this._setTargetFilterOnDevice({}); // clear
             }
-            await this.obnizBle.centralBindings.startExtendedScanningWait([], settings.duplicate, settings.activeScan);
+            await this.obnizBle.centralBindings.startExtendedScanningWait([], settings.duplicate, settings.activeScan, usePhy1m, usePhyCoded);
             this.clearTimeoutTimer();
             if (timeout !== null) {
                 this._timeoutTimer = setTimeout(async () => {
@@ -9962,9 +9962,9 @@ class NobleBindings extends eventemitter3_1.default {
             this._connectable[uuid] = true;
         }
     }
-    async startExtendedScanningWait(serviceUuids, allowDuplicates, activeScan) {
+    async startExtendedScanningWait(serviceUuids, allowDuplicates, activeScan, usePhy1m, usePhyCoded) {
         this._scanServiceUuids = (serviceUuids !== null && serviceUuids !== void 0 ? serviceUuids : null);
-        await this._gap.startExtendedScanningWait(allowDuplicates, activeScan);
+        await this._gap.startExtendedScanningWait(allowDuplicates, activeScan, usePhy1m, usePhyCoded);
     }
     async startScanningWait(serviceUuids, allowDuplicates, activeScan) {
         this._scanServiceUuids = (serviceUuids !== null && serviceUuids !== void 0 ? serviceUuids : null);
@@ -10225,7 +10225,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const debug = (message) => {
     // do nothing.
-    console.log('gap debug', message);
+    // console.log('gap debug', message);
 };
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
@@ -10283,7 +10283,8 @@ class Gap extends eventemitter3_1.default {
     async stopScanningWait() {
         try {
             if (this._scanState === 'starting' || this._scanState === 'started') {
-                await this.setScanEnabledWait(false, true);
+                // await this.setScanEnabledWait(false, true);
+                await this.setExtendedScanEnabledWait(false, true);
             }
         }
         catch (e) {
@@ -10295,7 +10296,7 @@ class Gap extends eventemitter3_1.default {
             }
         }
     }
-    async startExtendedScanningWait(allowDuplicates, activeScan) {
+    async startExtendedScanningWait(allowDuplicates, activeScan, usePhy1m, usePhyCoded) {
         this._scanFilterDuplicates = !allowDuplicates;
         this._discoveries = {};
         // Always set scan parameters before scanning
@@ -10316,7 +10317,7 @@ class Gap extends eventemitter3_1.default {
             }
         }
         this._scanState = 'starting';
-        const status = await this._hci.setExtendedScanParametersWait(activeScan);
+        const status = await this._hci.setExtendedScanParametersWait(activeScan, usePhy1m, usePhyCoded);
         if (status !== 0) {
             throw new ObnizError_1.ObnizBleScanStartError(status, `startExtendedScanning Error setting active scan=${activeScan} was failed`);
         }
@@ -10325,9 +10326,9 @@ class Gap extends eventemitter3_1.default {
     }
     onHciLeExtendedAdvertisingReport(status, type, address, addressType, eir, rssi, primaryPhy, secondaryPhy, sid, txPower, periodicAdvertisingInterval, directAddressType, directAddress) {
         console.log('onHciLeExtendedAdvertisingReport', type, address, addressType, eir, rssi, primaryPhy, secondaryPhy, sid, txPower, periodicAdvertisingInterval, directAddressType, directAddress);
-        this.onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi);
+        this.onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi, true);
     }
-    onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi) {
+    onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi, extended) {
         const previouslyDiscovered = !!this._discoveries[address];
         const advertisement = previouslyDiscovered
             ? this._discoveries[address].advertisement
@@ -10473,9 +10474,18 @@ class Gap extends eventemitter3_1.default {
             i += length + 1;
         }
         debug('advertisement = ' + JSON.stringify(advertisement, null, 0));
-        const connectable = type === 0x04 && previouslyDiscovered
-            ? this._discoveries[address].connectable
-            : type !== 0x03;
+        let connectable;
+        if (extended) {
+            connectable = (type & 0b00000001) !== 0;
+        }
+        else {
+            if (type === 0x04 && previouslyDiscovered) {
+                connectable = this._discoveries[address].connectable;
+            }
+            else {
+                connectable = type !== 0x03;
+            }
+        }
         this._discoveries[address] = {
             address,
             addressType,
@@ -12551,6 +12561,7 @@ class Hci extends eventemitter3_1.default {
         super();
         this._state = 'poweredOff';
         this._aclStreamObservers = {};
+        this._extendedAdvertiseJoinData = {};
         /**
          * @ignore
          * @private
@@ -13146,25 +13157,25 @@ class Hci extends eventemitter3_1.default {
         const data = await this.writeNoParamCommandWait(COMMANDS.LE_CLEAR_ADVERTISING_SETS_CMD, 'le clear advertising Set');
         return data.result.readUInt16LE(0);
     }
-    async setExtendedScanParametersWait(isActiveScan) {
-        const cmd = Buffer.alloc(17);
+    async setExtendedScanParametersWait(isActiveScan, usePhy1m = true, usePhyCoded = true) {
+        const booleanToNumber = (flg) => (flg ? 1 : 0);
+        const cmd = Buffer.alloc(7 + (booleanToNumber(usePhy1m) + booleanToNumber(usePhyCoded)) * 5);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
         cmd.writeUInt16LE(COMMANDS.LE_SET_EXTENDED_SCAN_PARAMETERS_CMD, 1);
         // length
-        cmd.writeUInt8(13, 3);
+        cmd.writeUInt8(3 + (booleanToNumber(usePhy1m) + booleanToNumber(usePhyCoded)) * 5, 3);
         // data
         cmd.writeUInt8(0x00, 4); // Own_Address_Type 公開端末アドレス
         cmd.writeUInt8(0x00, 5); // Scanning_Filter_Policy：本装置宛でない有向広告パケットを除くすべての広告パケットを受信する
-        cmd.writeUInt8(0x05, 6); // Scanning_PHYs：1M Phy and Coded Phy 0b00000101
-        cmd.writeUInt8(isActiveScan ? 0x01 : 0x00, 7); // Scan_Type 1M ActiveScan 1
-        // コントローラが最後のスキャンを開始してから、プライマリ広告チャネルで次のスキャンを開始するまでの時間間隔。
-        cmd.writeUInt16LE(0x0010, 8); // Scan_Interval 1M //default 10ms //もともとのスキャン機能のインターバルから引用
-        // 主広告チャンネルでのスキャンの持続時間
-        cmd.writeUInt16LE(0x0010, 10); // Scan_Interval 1M //default 10ms
-        cmd.writeUInt8(isActiveScan ? 0x01 : 0x00, 12); // Scan_Type Coded ActiveScan 1
-        cmd.writeUInt16LE(0x0010, 13); // Scan_Interval Coded //default 10ms
-        cmd.writeUInt16LE(0x0010, 15); // Scan_Interval Coded //default 10ms
+        cmd.writeUInt8(booleanToNumber(usePhy1m) + (booleanToNumber(usePhyCoded) << 2), 6); // Scanning_PHYs：1M Phy and Coded Phy 0b00000101
+        for (let i = 0; i < booleanToNumber(usePhy1m) + booleanToNumber(usePhyCoded); i++) {
+            cmd.writeUInt8(isActiveScan ? 0x01 : 0x00, 7 + i * 5); // Scan_Type ActiveScan 1
+            // コントローラが最後のスキャンを開始してから、プライマリ広告チャネルで次のスキャンを開始するまでの時間間隔。
+            cmd.writeUInt16LE(0x0010, 8 + i * 5); // Scan_Interval //default 10ms //もともとのスキャン機能のインターバルから引用
+            // 主広告チャンネルでのスキャンの持続時間
+            cmd.writeUInt16LE(0x0010, 10 + i * 5); // Scan_Window //default 10ms
+        }
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_EXTENDED_SCAN_PARAMETERS_CMD);
         this.debug('set scan　extended parameters - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
@@ -13172,6 +13183,7 @@ class Hci extends eventemitter3_1.default {
         return data.status;
     }
     async setExtendedScanEnabledWait(enabled, filterDuplicates) {
+        this._extendedAdvertiseJoinData = {};
         const cmd = Buffer.alloc(10);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -13863,7 +13875,7 @@ class Hci extends eventemitter3_1.default {
     processLeExtendedAdvertisingReport(count, data) {
         for (let i = 0; i < count; i++) {
             console.log('processLeExtendedAdvertisingReport data', data.toString('hex'));
-            const type = data.readUInt16LE(0);
+            let type = data.readUInt16LE(0);
             const addressType = data.readUInt8(2) === 0x01 ? 'random' : 'public';
             const address = bleHelper_1.default.buffer2reversedHex(data.slice(3, 9), ':');
             const primaryPhy = this.phyToStr(data.readUInt8(9));
@@ -13875,7 +13887,7 @@ class Hci extends eventemitter3_1.default {
             const directAddressType = data.readUInt8(16) === 0x01 ? 'random' : 'public';
             const directAddress = bleHelper_1.default.buffer2reversedHex(data.slice(17, 23), ':');
             const eirLength = data.readUInt8(23);
-            const eir = data.slice(24, eirLength + 24);
+            let eir = data.slice(24, eirLength + 24);
             this.debug('\t\t\ttype = ' + type);
             this.debug('\t\t\taddress = ' + address);
             this.debug('\t\t\taddress type = ' + addressType);
@@ -13889,6 +13901,49 @@ class Hci extends eventemitter3_1.default {
             this.debug('\t\t\tdirectAddressType  ' + directAddressType);
             this.debug('\t\t\tdirectAddress  ' + directAddress);
             this.debug('\t\t\teirLength  ' + eirLength);
+            if ((type & 0x10) === 0) {
+                // レガシー広告ではない
+                const dataMode = type >> 5;
+                switch (dataMode & 0b11) {
+                    case 0:
+                        // complete
+                        if (this._extendedAdvertiseJoinData[address + sid]) {
+                            eir = Buffer.concat([
+                                this._extendedAdvertiseJoinData[address + sid].eir,
+                                eir,
+                            ]);
+                            delete this._extendedAdvertiseJoinData[address + sid];
+                        }
+                        this.debug('\t\t\tcomplete eir = length ' +
+                            eir.length +
+                            ' message' +
+                            eir.toString('hex'));
+                        break;
+                    case 1: {
+                        // 追加データあり
+                        if (this._extendedAdvertiseJoinData[address + sid]) {
+                            this._extendedAdvertiseJoinData[address + sid].eir = Buffer.concat([
+                                this._extendedAdvertiseJoinData[address + sid].eir,
+                                eir,
+                            ]);
+                        }
+                        else {
+                            this._extendedAdvertiseJoinData[address + sid] = {
+                                eir,
+                            };
+                        }
+                        return;
+                    }
+                    case 2:
+                        // エラー追加データなし
+                        delete this._extendedAdvertiseJoinData[address + sid];
+                        return;
+                }
+            }
+            else {
+                type = type & 0x0f;
+            }
+            this.debug('\t\t\ttype = ' + type);
             this.emit('leExtendedAdvertisingReport', 0, type, address, addressType, eir, rssi, primaryPhy, secondaryPhy, sid, txPower, periodicAdvertisingInterval, directAddressType, directAddress);
             data = data.slice(eirLength + 24);
         }
@@ -13906,7 +13961,7 @@ class Hci extends eventemitter3_1.default {
             this.debug('\t\t\taddress type = ' + addressType);
             this.debug('\t\t\teir = ' + eir.toString('hex'));
             this.debug('\t\t\trssi =  ' + rssi);
-            this.emit('leAdvertisingReport', 0, type, address, addressType, eir, rssi);
+            this.emit('leAdvertisingReport', 0, type, address, addressType, eir, rssi, false);
             data = data.slice(eirLength + 10);
         }
     }

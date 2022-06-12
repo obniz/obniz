@@ -193,7 +193,7 @@ export default class BleScan {
      * }
      *
      * await obniz.ble.initWait();
-     * await obniz.ble.scan.startExtendedWait(target, setting);
+     * await obniz.ble.scan.startExtendedWait(target, setting,false,true);
      * ```
      *
      * This is also possible without params being valid.
@@ -208,8 +208,10 @@ export default class BleScan {
      *
      * @param target
      * @param settings
+     * @param usePhy1m
+     * @param usePhyCoded
      */
-    startExtendedWait(target?: BleScanTarget | null, settings?: BleScanSetting): Promise<void>;
+    startExtendedWait(target?: BleScanTarget | null, settings?: BleScanSetting, usePhy1m?: boolean, usePhyCoded?: boolean): Promise<void>;
     /**
      * This starts scanning BLE.
      *

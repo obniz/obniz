@@ -254,7 +254,7 @@ export default class BleScan {
    * }
    *
    * await obniz.ble.initWait();
-   * await obniz.ble.scan.startExtendedWait(target, setting);
+   * await obniz.ble.scan.startExtendedWait(target, setting,false,true);
    * ```
    *
    * This is also possible without params being valid.
@@ -269,10 +269,14 @@ export default class BleScan {
    *
    * @param target
    * @param settings
+   * @param usePhy1m
+   * @param usePhyCoded
    */
   public async startExtendedWait(
     target: BleScanTarget | null = {},
-    settings: BleScanSetting = {}
+    settings: BleScanSetting = {},
+    usePhy1m = true,
+    usePhyCoded = true
   ) {
     this.obnizBle.warningIfNotInitialize();
     if (this.isContainingBleScanSettingProperty(target)) {
@@ -320,7 +324,9 @@ export default class BleScan {
       await this.obnizBle.centralBindings.startExtendedScanningWait(
         [],
         settings.duplicate,
-        settings.activeScan
+        settings.activeScan,
+        usePhy1m,
+        usePhyCoded
       );
 
       this.clearTimeoutTimer();
@@ -592,7 +598,6 @@ export default class BleScan {
       }
       case 'onfind': {
         const peripheral: BleRemotePeripheral = params;
-
         const alreadyGotCompleteAdveData =
           peripheral.adv_data &&
           peripheral.adv_data.length > 0 &&

@@ -79,7 +79,7 @@ class BleScan {
      * }
      *
      * await obniz.ble.initWait();
-     * await obniz.ble.scan.startExtendedWait(target, setting);
+     * await obniz.ble.scan.startExtendedWait(target, setting,false,true);
      * ```
      *
      * This is also possible without params being valid.
@@ -94,8 +94,10 @@ class BleScan {
      *
      * @param target
      * @param settings
+     * @param usePhy1m
+     * @param usePhyCoded
      */
-    async startExtendedWait(target = {}, settings = {}) {
+    async startExtendedWait(target = {}, settings = {}, usePhy1m = true, usePhyCoded = true) {
         this.obnizBle.warningIfNotInitialize();
         if (this.isContainingBleScanSettingProperty(target)) {
             this.obnizBle.Obniz.warning({
@@ -136,7 +138,7 @@ class BleScan {
             else {
                 this._setTargetFilterOnDevice({}); // clear
             }
-            await this.obnizBle.centralBindings.startExtendedScanningWait([], settings.duplicate, settings.activeScan);
+            await this.obnizBle.centralBindings.startExtendedScanningWait([], settings.duplicate, settings.activeScan, usePhy1m, usePhyCoded);
             this.clearTimeoutTimer();
             if (timeout !== null) {
                 this._timeoutTimer = setTimeout(async () => {

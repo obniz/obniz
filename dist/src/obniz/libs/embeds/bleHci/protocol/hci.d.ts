@@ -24,6 +24,7 @@ declare class Hci extends EventEmitter<HciEventTypes> {
     private _socket;
     private _state;
     private _aclStreamObservers;
+    private _extendedAdvertiseJoinData;
     constructor(obnizHci: any);
     /**
      * @ignore
@@ -114,7 +115,7 @@ declare class Hci extends EventEmitter<HciEventTypes> {
     setExtendedAdvertiseEnableWait(enabled: boolean, enableList: BleExtendedAdvertisingEnable[]): Promise<number>;
     leReadMaximumAdvertisingDataLengthWait(): Promise<number>;
     leClearAdvertisingSetWait(): Promise<number>;
-    setExtendedScanParametersWait(isActiveScan: boolean): Promise<number>;
+    setExtendedScanParametersWait(isActiveScan: boolean, usePhy1m?: boolean, usePhyCoded?: boolean): Promise<number>;
     setExtendedScanEnabledWait(enabled: boolean, filterDuplicates: boolean): Promise<number>;
     createLeExtendedConnWait(address: BleDeviceAddress, addressType: BleDeviceAddressType, pyh1m: boolean, pyh2m: boolean, pyhCoded: boolean, timeout: number | undefined, onConnectCallback: any): Promise<{
         status: any;

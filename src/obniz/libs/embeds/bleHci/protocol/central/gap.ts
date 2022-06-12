@@ -10,7 +10,7 @@
  */
 const debug: any = (message: any) => {
   // do nothing.
-  console.log('gap debug', message);
+  // console.log('gap debug', message);
 };
 
 import EventEmitter from 'eventemitter3';
@@ -97,7 +97,8 @@ class Gap extends EventEmitter<GapEventTypes> {
   public async stopScanningWait() {
     try {
       if (this._scanState === 'starting' || this._scanState === 'started') {
-        await this.setScanEnabledWait(false, true);
+        // await this.setScanEnabledWait(false, true);
+        await this.setExtendedScanEnabledWait(false, true);
       }
     } catch (e) {
       if (e instanceof ObnizBleScanStartError) {
@@ -110,7 +111,9 @@ class Gap extends EventEmitter<GapEventTypes> {
 
   public async startExtendedScanningWait(
     allowDuplicates: boolean,
-    activeScan: boolean
+    activeScan: boolean,
+    usePhy1m: boolean,
+    usePhyCoded: boolean
   ) {
     this._scanFilterDuplicates = !allowDuplicates;
     this._discoveries = {};
@@ -134,7 +137,11 @@ class Gap extends EventEmitter<GapEventTypes> {
     }
     this._scanState = 'starting';
 
-    const status = await this._hci.setExtendedScanParametersWait(activeScan);
+    const status = await this._hci.setExtendedScanParametersWait(
+      activeScan,
+      usePhy1m,
+      usePhyCoded
+    );
     if (status !== 0) {
       throw new ObnizBleScanStartError(
         status,
@@ -181,7 +188,8 @@ class Gap extends EventEmitter<GapEventTypes> {
       address,
       addressType,
       eir,
-      rssi
+      rssi,
+      true
     );
   }
 
@@ -191,7 +199,8 @@ class Gap extends EventEmitter<GapEventTypes> {
     address?: any,
     addressType?: any,
     eir?: any,
-    rssi?: any
+    rssi?: any,
+    extended?: boolean
   ) {
     const previouslyDiscovered: any = !!this._discoveries[address];
     const advertisement: any = previouslyDiscovered
@@ -386,11 +395,16 @@ class Gap extends EventEmitter<GapEventTypes> {
 
     debug('advertisement = ' + JSON.stringify(advertisement, null, 0));
 
-    const connectable: any =
-      type === 0x04 && previouslyDiscovered
-        ? this._discoveries[address].connectable
-        : type !== 0x03;
-
+    let connectable: boolean;
+    if (extended) {
+      connectable = (type & 0b00000001) !== 0;
+    } else {
+      if (type === 0x04 && previouslyDiscovered) {
+        connectable = this._discoveries[address].connectable;
+      } else {
+        connectable = type !== 0x03;
+      }
+    }
     this._discoveries[address] = {
       address,
       addressType,
