@@ -21,6 +21,7 @@ const bleHelper_1 = __importDefault(require("../../bleHelper"));
 var GATT;
 (function (GATT) {
     GATT.PRIM_SVC_UUID = 0x2800;
+    GATT.SECONDARY_SVC_UUID = 0x2801;
     GATT.INCLUDE_UUID = 0x2802;
     GATT.CHARAC_UUID = 0x2803;
     GATT.CLIENT_CHARAC_CFG_UUID = 0x2902;
@@ -112,10 +113,50 @@ class GattCentral extends eventemitter3_1.default {
         return this._mtu;
     }
     async discoverServicesWait(uuids) {
+        const pServices = await this.discoverPrimaryServicesWait(uuids);
+        const sServices = await this.discoverSecondaryServicesWait(uuids);
+        return [...pServices, ...sServices];
+    }
+    async discoverPrimaryServicesWait(uuids) {
         const services = [];
         let startHandle = 0x0001;
         while (1) {
             const data = await this._execCommandWait(this._gattCommon.readByGroupRequest(startHandle, 0xffff, GATT.PRIM_SVC_UUID), [att_1.ATT.OP_READ_BY_GROUP_RESP, att_1.ATT.OP_ERROR]);
+            const opcode = data[0];
+            let i = 0;
+            if (opcode === att_1.ATT.OP_READ_BY_GROUP_RESP) {
+                const type = data[1];
+                const num = (data.length - 2) / type;
+                for (i = 0; i < num; i++) {
+                    services.push({
+                        startHandle: data.readUInt16LE(2 + i * type + 0),
+                        endHandle: data.readUInt16LE(2 + i * type + 2),
+                        uuid: type === 6
+                            ? data.readUInt16LE(2 + i * type + 4).toString(16)
+                            : bleHelper_1.default.buffer2reversedHex(data.slice(2 + i * type + 4).slice(0, 16)),
+                    });
+                }
+            }
+            if (opcode !== att_1.ATT.OP_READ_BY_GROUP_RESP ||
+                services[services.length - 1].endHandle === 0xffff) {
+                const serviceUuids = [];
+                for (i = 0; i < services.length; i++) {
+                    if (uuids.length === 0 || uuids.indexOf(services[i].uuid) !== -1) {
+                        serviceUuids.push(services[i].uuid);
+                    }
+                    this._services[services[i].uuid] = services[i];
+                }
+                return serviceUuids;
+            }
+            startHandle = services[services.length - 1].endHandle + 1;
+        }
+        throw new ObnizError_1.ObnizBleGattHandleError('unreachable code');
+    }
+    async discoverSecondaryServicesWait(uuids) {
+        const services = [];
+        let startHandle = 0x0001;
+        while (1) {
+            const data = await this._execCommandWait(this._gattCommon.readByGroupRequest(startHandle, 0xffff, GATT.SECONDARY_SVC_UUID), [att_1.ATT.OP_READ_BY_GROUP_RESP, att_1.ATT.OP_ERROR]);
             const opcode = data[0];
             let i = 0;
             if (opcode === att_1.ATT.OP_READ_BY_GROUP_RESP) {

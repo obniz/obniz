@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @ignore
+ */
+
 import { Obniz } from './Obniz';
 
 /* ===================*/
