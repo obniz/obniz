@@ -175,7 +175,7 @@ import XBee, { XBeeOptions } from '../parts/Wireless/XBee';
 import EXVital, { EXVital_Options } from '../parts/Ble/EXVital';
 import iBS03T_RH, { iBS03T_RHOptions } from '../parts/Ble/iBS03T_RH';
 import iBS05H, { iBS05HOptions } from '../parts/Ble/iBS05H';
-import TR7, { TR7Options } from '../parts/Ble/TR7';
+import UC421BLE, { UC421BLEOptions } from '../parts/Ble/UC421BLE';
 export declare type PartsType = keyof PartsList;
 interface PartsInterface<P, O, C extends {
     new (...args: any[]): P;
@@ -323,8 +323,7 @@ export interface PartsList {
     iBS04i: PartsInterface<IBS04I, iBS04iOptions, typeof IBS04I>;
     iBS03R: PartsInterface<IBS03R, IBS03ROptions, typeof IBS03R>;
     iBS05H: PartsInterface<iBS05H, iBS05HOptions, typeof iBS05H>;
-    TR4x: PartsInterface<Tr4, Tr4Options, typeof Tr4>;
-    TR7: PartsInterface<TR7, TR7Options, typeof TR7>;
+    TR4: PartsInterface<Tr4, Tr4Options, typeof Tr4>;
     KankiAirMier: PartsInterface<KankiAirMier, KankiAirMierOptions, typeof KankiAirMier>;
     MINEW_S1: PartsInterface<MINEW_S1, MINEW_S1Options, typeof MINEW_S1>;
     RS_BTEVS1: PartsInterface<RS_BTEVS1, RS_BTEVS1Options, typeof RS_BTEVS1>;
@@ -359,5 +358,6 @@ export interface PartsList {
     UA1200BLE: PartsInterface<UA1200BLE, UA1200BLEOptions, typeof UA1200BLE>;
     EXVital: PartsInterface<EXVital, EXVital_Options, typeof EXVital>;
     STM550B: PartsInterface<STM550B, STM550B_Options, typeof STM550B>;
+    UC421BLE: PartsInterface<UC421BLE, UC421BLEOptions, typeof UC421BLE>;
 }
 export {};
