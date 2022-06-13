@@ -72,6 +72,13 @@ export interface UA651BLEResult {
     minute: number;
     second: number;
   };
+
+  /**
+   * battery(%) バッテリー(%)
+   *
+   * Value 値: 100 | 66 | 40 | 33
+   */
+  battery?: number;
 }
 
 /** UA651BLE management class UA651BLEを管理するクラス */
@@ -192,6 +199,7 @@ export default class UA651BLE implements ObnizPartsBleInterface {
       bloodPressureMeasurementChar,
       timeChar,
       customServiceChar,
+      batteryChar,
     } = this._getChars();
 
     const waitDisconnect = new Promise<UA651BLEResult[]>((resolve, reject) => {
@@ -201,11 +209,13 @@ export default class UA651BLE implements ObnizPartsBleInterface {
       };
     });
 
+    const battery = await batteryChar.readWait();
+
     await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
     await this._writeTimeCharWait(this._timezoneOffsetMinute);
 
     await bloodPressureMeasurementChar.registerNotifyWait((data: number[]) => {
-      results.push(this._analyzeData(data));
+      results.push(this._analyzeData(data, battery));
     });
 
     return waitDisconnect;
@@ -221,7 +231,7 @@ export default class UA651BLE implements ObnizPartsBleInterface {
     return mantissa * Math.pow(10, exponential);
   }
 
-  private _analyzeData(data: number[]): UA651BLEResult {
+  private _analyzeData(data: number[], battery: number[]): UA651BLEResult {
     const buf = Buffer.from(data);
     const flags = buf.readUInt8(0);
 
@@ -278,6 +288,7 @@ export default class UA651BLE implements ObnizPartsBleInterface {
       index += 1;
     }
 
+    result.battery = battery[0];
     return result;
   }
 
@@ -295,11 +306,15 @@ export default class UA651BLE implements ObnizPartsBleInterface {
     const customServiceChar = this._peripheral
       .getService('233bf0005a341b6d975c000d5690abe4')! // Primary Service Custom Service(pp.14)
       .getCharacteristic('233bf0015a341b6d975c000d5690abe4')!; // Custom Characteristic(pp.14)
+    const batteryChar = this._peripheral
+      .getService('180F')!
+      .getCharacteristic('2A19')!;
 
     return {
       bloodPressureMeasurementChar,
       timeChar,
       customServiceChar,
+      batteryChar,
     };
   }
 
