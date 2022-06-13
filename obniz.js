@@ -116,7 +116,7 @@ module.exports = {
     "local": "gulp --gulpfile devtools/_tools/server.js --cwd .",
     "watch": "tsc -w & webpack --watch --config ./devtools/webpack.config.js  ",
     "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build ",
-    "doc": "typedoc --includes ./src/ --theme ./devtools/typedocTheme --stripInternal --readme none --out docs/obnizjs --excludePrivate --excludeProtected  --media ./docs/images",
+    "doc": "typedoc --includes ./src/ --exclude '**/*.json' --theme ./devtools/typedocTheme --stripInternal --readme none --out docs/obnizjs --excludePrivate --excludeProtected  --media ./docs/images",
     "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
     "version": "npm run build && npm run doc && git add docs && git add obniz.js",
     "lint": "eslint --fix . --rulesdir devtools/eslint/rule --quiet",
@@ -247,8 +247,7 @@ module.exports = {
     "./dist/src/obniz/libs/webpackReplace/require-context": "./dist/src/obniz/libs/webpackReplace/require-context-browser",
     "./dist/src/obniz/libs/webpackReplace/dialogPollyfill": "./dist/src/obniz/libs/webpackReplace/dialogPollyfill-browser"
   }
-}
-;
+};
 
 /***/ }),
 
@@ -4030,6 +4029,10 @@ exports.default = ObnizParts;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 /* eslint-disable rulesdir/non-ascii */
 /* eslint-disable max-classes-per-file */
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -5221,6 +5224,10 @@ const _ReadCookie = (name) => {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(__dirname) {
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const Obniz_1 = __webpack_require__("./dist/src/obniz/Obniz.js");
 /* ===================*/
 /* Utils */
@@ -11576,6 +11583,7 @@ exports.default = Smp;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
+ * @packageDocumentation
  * @ignore
  */
 // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -11848,10 +11856,11 @@ exports.default = {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
+ * @packageDocumentation
  * @ignore
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 // eslint-disable-next-line @typescript-eslint/no-namespace
 var ATT;
 (function (ATT) {
@@ -12047,6 +12056,7 @@ exports.GattCommon = GattCommon;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
+ * @packageDocumentation
  * @ignore
  */
 // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -37228,6 +37238,10 @@ exports.default = BaseiBS;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.utils.advertisement
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class BleAdvBinaryAnalyzer {
     constructor(parent) {

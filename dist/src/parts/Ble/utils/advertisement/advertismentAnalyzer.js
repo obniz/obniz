@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module Parts.utils.advertisement
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class BleAdvBinaryAnalyzer {
     constructor(parent) {
