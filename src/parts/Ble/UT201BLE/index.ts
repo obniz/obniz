@@ -51,6 +51,13 @@ export interface UT201BLEResult {
    * Value 値: 'unknown' | 'Armpit' | 'Body' | 'Ear' | 'Finger' | 'Gastro-intestinal Tract' | 'Mouth' | 'Rectum' | 'Toe' | 'Tympanum'
    */
   temperatureType?: string;
+
+  /**
+   * battery(%) バッテリー(%)
+   *
+   * Value 値: 100 | 66 | 40 | 33
+   */
+  battery?: number;
 }
 
 /** UT201BLE management class UT201BLEを管理するクラス */
@@ -170,6 +177,7 @@ export default class UT201BLE implements ObnizPartsBleInterface {
       temperatureMeasurementChar,
       timeChar,
       customServiceChar,
+      batteryChar,
     } = this._getChars();
 
     const waitDisconnect = new Promise<UT201BLEResult[]>((resolve, reject) => {
@@ -179,12 +187,14 @@ export default class UT201BLE implements ObnizPartsBleInterface {
       };
     });
 
+    const battery = await batteryChar.readWait();
+
     await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
 
     await this._writeTimeCharWait(this._timezoneOffsetMinute);
 
     await temperatureMeasurementChar.registerNotifyWait((data: number[]) => {
-      results.push(this._analyzeData(data));
+      results.push(this._analyzeData(data, battery));
     });
 
     return await waitDisconnect;
@@ -200,7 +210,7 @@ export default class UT201BLE implements ObnizPartsBleInterface {
     return mantissa * Math.pow(10, exponential);
   }
 
-  private _analyzeData(data: number[]): UT201BLEResult {
+  private _analyzeData(data: number[], battery: number[]): UT201BLEResult {
     const buf = Buffer.from(data);
     const flags = buf.readUInt8(0);
 
@@ -243,6 +253,7 @@ export default class UT201BLE implements ObnizPartsBleInterface {
       const value = buf.readUInt8(index);
       index++;
       result.temperatureType = types[value] || 'unknown';
+      result.battery = battery[0];
     }
 
     return result;

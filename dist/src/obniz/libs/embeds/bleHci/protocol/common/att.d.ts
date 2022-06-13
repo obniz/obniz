@@ -1,4 +1,5 @@
 /**
+ * @packageDocumentation
  * @ignore
  */
 export declare namespace ATT {

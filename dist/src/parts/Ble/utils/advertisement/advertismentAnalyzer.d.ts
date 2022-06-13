@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module Parts.utils.advertisement
+ */
 export interface BleAdvBinaryAnalyzerRow {
     name: string;
     filter: number[] | BleAdvBinaryAnalyzer;
