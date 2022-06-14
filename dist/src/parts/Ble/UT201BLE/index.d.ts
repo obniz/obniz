@@ -45,6 +45,12 @@ export interface UT201BLEResult {
      * Value 値: 'unknown' | 'Armpit' | 'Body' | 'Ear' | 'Finger' | 'Gastro-intestinal Tract' | 'Mouth' | 'Rectum' | 'Toe' | 'Tympanum'
      */
     temperatureType?: string;
+    /**
+     * battery(%) バッテリー(%)
+     *
+     * Value 値: 100 | 66 | 40 | 33
+     */
+    battery?: number;
 }
 /** UT201BLE management class UT201BLEを管理するクラス */
 export default class UT201BLE implements ObnizPartsBleInterface {

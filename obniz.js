@@ -116,7 +116,7 @@ module.exports = {
     "local": "gulp --gulpfile devtools/_tools/server.js --cwd .",
     "watch": "tsc -w & webpack --watch --config ./devtools/webpack.config.js  ",
     "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build ",
-    "doc": "typedoc --includes ./src/ --theme ./devtools/typedocTheme --stripInternal --readme none --out docs/obnizjs --excludePrivate --excludeProtected  --media ./docs/images",
+    "doc": "typedoc --includes ./src/ --exclude '**/*.json' --theme ./devtools/typedocTheme --stripInternal --readme none --out docs/obnizjs --excludePrivate --excludeProtected  --media ./docs/images",
     "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
     "version": "npm run build && npm run doc && git add docs && git add obniz.js",
     "lint": "eslint --fix . --rulesdir devtools/eslint/rule --quiet",
@@ -247,8 +247,7 @@ module.exports = {
     "./dist/src/obniz/libs/webpackReplace/require-context": "./dist/src/obniz/libs/webpackReplace/require-context-browser",
     "./dist/src/obniz/libs/webpackReplace/dialogPollyfill": "./dist/src/obniz/libs/webpackReplace/dialogPollyfill-browser"
   }
-}
-;
+};
 
 /***/ }),
 
@@ -4030,6 +4029,10 @@ exports.default = ObnizParts;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 /* eslint-disable rulesdir/non-ascii */
 /* eslint-disable max-classes-per-file */
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -5221,6 +5224,10 @@ const _ReadCookie = (name) => {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(__dirname) {
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const Obniz_1 = __webpack_require__("./dist/src/obniz/Obniz.js");
 /* ===================*/
 /* Utils */
@@ -12175,6 +12182,7 @@ exports.default = Smp;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
+ * @packageDocumentation
  * @ignore
  */
 // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -12447,10 +12455,11 @@ exports.default = {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
+ * @packageDocumentation
  * @ignore
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 // eslint-disable-next-line @typescript-eslint/no-namespace
 var ATT;
 (function (ATT) {
@@ -12646,6 +12655,7 @@ exports.GattCommon = GattCommon;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
+ * @packageDocumentation
  * @ignore
  */
 // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -21572,6 +21582,7 @@ class WSCommand {
     parseFromJson(json) {
         // abstract
     }
+    // NOTE: payload is sent from obniz OS.
     notifyFromBinary(objToSend, func, payload) {
         if (func === this.COMMAND_FUNC_ID_ERROR) {
             if (!objToSend.debug) {
@@ -21586,10 +21597,11 @@ class WSCommand {
                 err.err0 = payload[0];
                 err.err1 = payload[1];
                 err.function = payload[2];
-                err.message = `Error module=${this.module} func=${err.function} err0=${err.err0} returned=${err.err1}`;
+                // NOTE: Why two errors exist?
+                err.message = `obnizOS recieved wscommand(moduleNo=${this.module}, funcNo=${err.function}) but it encountered an error(err0=${err.err0}, returned=${err.err1}).`;
             }
             else {
-                err.message = `Error module=${this.module} with + ${err._args}`;
+                err.message = `obnizOS recieved wscommand(moduleNo=${this.module}) but it encountered an error(errDetails(payload)=${err._args}).`;
             }
             objToSend.debug.error = err;
         }
@@ -25342,6 +25354,7 @@ var map = {
 	"./Ble/RS_SEEK3/index.js": "./dist/src/parts/Ble/RS_SEEK3/index.js",
 	"./Ble/STM550B/index.js": "./dist/src/parts/Ble/STM550B/index.js",
 	"./Ble/TR4/index.js": "./dist/src/parts/Ble/TR4/index.js",
+	"./Ble/TR7/index.js": "./dist/src/parts/Ble/TR7/index.js",
 	"./Ble/UA1200BLE/index.js": "./dist/src/parts/Ble/UA1200BLE/index.js",
 	"./Ble/UA651BLE/index.js": "./dist/src/parts/Ble/UA651BLE/index.js",
 	"./Ble/UC421BLE/index.js": "./dist/src/parts/Ble/UC421BLE/index.js",
@@ -30439,6 +30452,105 @@ Tr4._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/TR7/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.TR7
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+/**
+ * Class that manages TR7 series.
+ *
+ * TR7シリーズを管理するクラス。
+ */
+class TR7 {
+    constructor() {
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: 'TR7',
+        };
+    }
+    /**
+     * Verify that the received peripheral is from the TR7.
+     *
+     * 受け取ったPeripheralがTR7シリーズのものかどうかを確認する。
+     *
+     * @param peripheral Instance of BleRemotePeripheral. BleRemotePeripheralのインスタンス。
+     *
+     * @returns Whether it is the TR7 or not. TR7かどうか。
+     *
+     */
+    static isDevice(peripheral) {
+        return this._deviceAdvAnalyzer.validate(peripheral.adv_data);
+    }
+    /**
+     * Get data from TR7 series.
+     *
+     * T7シリーズからデータを取得。
+     *
+     * @param peripheral Instance of BleRemotePeripheral. BleRemotePeripheralのインスタンス。
+     *
+     * @returns Data recieved from TR7. TR7から受け取ったデータ。
+     *
+     * ```
+     * {
+     *    temperature: temperature 温度 (Unit: 0.1 degC)
+     *    humidity: humidity 湿度 (Unit: 0.1 %)
+     * }
+     * ```
+     */
+    static getData(peripheral) {
+        if (!this.isDevice(peripheral))
+            return null;
+        const temperatureBytes = this._deviceAdvAnalyzer.getData(peripheral.adv_data, 'manufacture', 'measuredDataCh1');
+        const humidityBytes = this._deviceAdvAnalyzer.getData(peripheral.adv_data, 'manufacture', 'measuredDataCh2');
+        if (!temperatureBytes || !humidityBytes)
+            return null;
+        const rawTemperature = temperatureBytes === [0xee, 0xee] // error
+            ? null
+            : Buffer.from(temperatureBytes).readInt16LE(0);
+        const rawHumidity = humidityBytes === [0xee, 0xee] // error
+            ? null
+            : Buffer.from(humidityBytes).readInt16LE(0);
+        if (!rawTemperature || !rawHumidity)
+            return null;
+        return {
+            temperature: (rawTemperature - 1000) / 10,
+            humidity: (rawHumidity - 1000) / 10,
+        };
+    }
+}
+exports.default = TR7;
+TR7._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
+    .addTarget('flags', [0x02, 0x01, 0x06]) // NOTE: length, ad type, ad data
+    .addTarget('32bitServiceUuids', [0x05, 0x05, 0x0a, 0x18, 0x00, 0x00]) // NOTE: little endian
+    .groupStart('manufacture')
+    .addTarget('length', [0x15])
+    .addTarget('type', [0xff])
+    .addTarget('companyId', [0x92, 0x03]) // NOTE: little endian
+    .addTargetByLength('deviceSerial', 4)
+    .addTargetByLength('controlCode', 1)
+    .addTargetByLength('counter', 1)
+    .addTargetByLength('statusCode1', 1)
+    .addTargetByLength('statusCode2', 1)
+    .addTargetByLength('measuredDataCh1', 2)
+    .addTargetByLength('measuredDataCh2', 2)
+    .addTargetByLength('spare', 4)
+    .addTargetByLength('unused', 2)
+    .groupEnd();
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/UA1200BLE/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -30817,7 +30929,7 @@ class UA651BLE {
             throw new Error('UA651BLE not found');
         }
         const results = [];
-        const { bloodPressureMeasurementChar, timeChar, customServiceChar, } = this._getChars();
+        const { bloodPressureMeasurementChar, timeChar, customServiceChar, batteryChar, } = this._getChars();
         const waitDisconnect = new Promise((resolve, reject) => {
             if (!this._peripheral)
                 return;
@@ -30825,10 +30937,11 @@ class UA651BLE {
                 resolve(results);
             };
         });
+        const battery = await batteryChar.readWait();
         await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
         await this._writeTimeCharWait(this._timezoneOffsetMinute);
         await bloodPressureMeasurementChar.registerNotifyWait((data) => {
-            results.push(this._analyzeData(data));
+            results.push(this._analyzeData(data, battery));
         });
         return waitDisconnect;
     }
@@ -30841,7 +30954,7 @@ class UA651BLE {
         const exponential = data >> 12;
         return mantissa * Math.pow(10, exponential);
     }
-    _analyzeData(data) {
+    _analyzeData(data, battery) {
         const buf = Buffer.from(data);
         const flags = buf.readUInt8(0);
         let index = 1;
@@ -30896,6 +31009,7 @@ class UA651BLE {
             result.improperMeasurement = (ms & 0b100000) !== 0;
             index += 1;
         }
+        result.battery = battery[0];
         return result;
     }
     _getChars() {
@@ -30911,10 +31025,14 @@ class UA651BLE {
         const customServiceChar = this._peripheral
             .getService('233bf0005a341b6d975c000d5690abe4') // Primary Service Custom Service(pp.14)
             .getCharacteristic('233bf0015a341b6d975c000d5690abe4'); // Custom Characteristic(pp.14)
+        const batteryChar = this._peripheral
+            .getService('180F')
+            .getCharacteristic('2A19');
         return {
             bloodPressureMeasurementChar,
             timeChar,
             customServiceChar,
+            batteryChar,
         };
     }
     async _writeTimeCharWait(timeOffsetMinute) {
@@ -32062,7 +32180,7 @@ class UT201BLE {
             throw new Error('UT201BLE not found');
         }
         const results = [];
-        const { temperatureMeasurementChar, timeChar, customServiceChar, } = this._getChars();
+        const { temperatureMeasurementChar, timeChar, customServiceChar, batteryChar, } = this._getChars();
         const waitDisconnect = new Promise((resolve, reject) => {
             if (!this._peripheral)
                 return;
@@ -32070,10 +32188,11 @@ class UT201BLE {
                 resolve(results);
             };
         });
+        const battery = await batteryChar.readWait();
         await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
         await this._writeTimeCharWait(this._timezoneOffsetMinute);
         await temperatureMeasurementChar.registerNotifyWait((data) => {
-            results.push(this._analyzeData(data));
+            results.push(this._analyzeData(data, battery));
         });
         return await waitDisconnect;
     }
@@ -32086,7 +32205,7 @@ class UT201BLE {
         const exponential = data >> 24;
         return mantissa * Math.pow(10, exponential);
     }
-    _analyzeData(data) {
+    _analyzeData(data, battery) {
         const buf = Buffer.from(data);
         const flags = buf.readUInt8(0);
         let index = 1;
@@ -32129,6 +32248,7 @@ class UT201BLE {
             const value = buf.readUInt8(index);
             index++;
             result.temperatureType = types[value] || 'unknown';
+            result.battery = battery[0];
         }
         return result;
     }
@@ -32145,10 +32265,14 @@ class UT201BLE {
         const customServiceChar = this._peripheral
             .getService('233bf0005a341b6d975c000d5690abe4')
             .getCharacteristic('233bf0015a341b6d975c000d5690abe4');
+        const batteryChar = this._peripheral
+            .getService('180F')
+            .getCharacteristic('2A19');
         return {
             temperatureMeasurementChar,
             timeChar,
             customServiceChar,
+            batteryChar,
         };
     }
     async _writeTimeCharWait(timeOffsetMinute) {
@@ -38225,6 +38349,10 @@ exports.default = BaseiBS;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.utils.advertisement
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class BleAdvBinaryAnalyzer {
     constructor(parent) {

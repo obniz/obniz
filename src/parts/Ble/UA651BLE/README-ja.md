@@ -135,5 +135,6 @@ await obniz.ble.scan.startWait();
   irregularPulseDetected?: boolean;
   improperMeasurement?: boolean;
   PulseRate?: number;
+  battery?: number;
 }
 ```

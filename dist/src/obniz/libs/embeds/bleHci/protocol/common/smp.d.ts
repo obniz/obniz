@@ -1,5 +1,6 @@
 /// <reference types="node" />
 /**
+ * @packageDocumentation
  * @ignore
  */
 export declare namespace SMP {

@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 import BleRemoteCharacteristic from './libs/embeds/bleHci/bleRemoteCharacteristic';
 import BleRemotePeripheral, { IBeacon } from './libs/embeds/bleHci/bleRemotePeripheral';
 import { ObnizPartsInfo, ObnizPartsProps } from './ObnizPartsInterface';
