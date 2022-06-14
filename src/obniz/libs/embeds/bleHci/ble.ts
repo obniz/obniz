@@ -134,11 +134,11 @@ export default class ObnizBLE extends ComponentAbstract {
 
   constructor(obniz: Obniz, info: any) {
     super(obniz);
-    this.hci = new ObnizBLEHci(obniz);
+    this._extended = info.extended;
+    this.hci = new ObnizBLEHci(obniz, this._extended);
     this.service = BleService;
     this.characteristic = BleCharacteristic;
     this.descriptor = BleDescriptor;
-    this._extended = info.extended;
     // this.on("/response/ble/hci/read", (obj) => {
     //   if (obj.hci) {
     //     this.hci.notified(obj.hci);
@@ -235,7 +235,7 @@ export default class ObnizBLE extends ComponentAbstract {
    * Initialize BLE module. You need call this first everything before.
    * This throws if device is not supported device.
    *
-   * esp32 C3 or esp32 S3 Put false in the argument
+   * esp32 C3 or esp32 S3 Put true in the argument
    * when not using the BLE5.0 extended advertise
    *
    * ```javascript
@@ -243,9 +243,9 @@ export default class ObnizBLE extends ComponentAbstract {
    * await obniz.ble.initWait();
    * ```
    */
-  public async initWait(extendedDisable = false): Promise<void> {
+  public async initWait(extendedDisable?: boolean): Promise<void> {
     if (this._extended && extendedDisable) {
-      this._extended = extendedDisable;
+      this._extended = !extendedDisable;
       this._reset();
     }
     if (!this._initialized) {

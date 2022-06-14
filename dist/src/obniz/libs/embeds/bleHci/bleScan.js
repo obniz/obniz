@@ -290,7 +290,6 @@ class BleScan {
                 break;
             }
             case 'onfind': {
-                console.log(params);
                 const peripheral = params;
                 const alreadyGotCompleteAdveData = peripheral.adv_data &&
                     peripheral.adv_data.length > 0 &&

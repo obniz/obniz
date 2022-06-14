@@ -41,11 +41,11 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         this._extended = false;
         // eslint-disable-next-line
         this.debugHandler = (text) => { };
-        this.hci = new hci_1.default(obniz);
+        this._extended = info.extended;
+        this.hci = new hci_1.default(obniz, this._extended);
         this.service = bleService_1.default;
         this.characteristic = bleCharacteristic_1.default;
         this.descriptor = bleDescriptor_1.default;
-        this._extended = info.extended;
         // this.on("/response/ble/hci/read", (obj) => {
         //   if (obj.hci) {
         //     this.hci.notified(obj.hci);
@@ -167,7 +167,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * Initialize BLE module. You need call this first everything before.
      * This throws if device is not supported device.
      *
-     * esp32 C3 or esp32 S3 Put false in the argument
+     * esp32 C3 or esp32 S3 Put true in the argument
      * when not using the BLE5.0 extended advertise
      *
      * ```javascript
@@ -175,9 +175,9 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * await obniz.ble.initWait();
      * ```
      */
-    async initWait(extendedDisable = false) {
+    async initWait(extendedDisable) {
         if (this._extended && extendedDisable) {
-            this._extended = extendedDisable;
+            this._extended = !extendedDisable;
             this._reset();
         }
         if (!this._initialized) {

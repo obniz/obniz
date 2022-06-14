@@ -5478,11 +5478,11 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         this._extended = false;
         // eslint-disable-next-line
         this.debugHandler = (text) => { };
-        this.hci = new hci_1.default(obniz);
+        this._extended = info.extended;
+        this.hci = new hci_1.default(obniz, this._extended);
         this.service = bleService_1.default;
         this.characteristic = bleCharacteristic_1.default;
         this.descriptor = bleDescriptor_1.default;
-        this._extended = info.extended;
         // this.on("/response/ble/hci/read", (obj) => {
         //   if (obj.hci) {
         //     this.hci.notified(obj.hci);
@@ -5604,7 +5604,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * Initialize BLE module. You need call this first everything before.
      * This throws if device is not supported device.
      *
-     * esp32 C3 or esp32 S3 Put false in the argument
+     * esp32 C3 or esp32 S3 Put true in the argument
      * when not using the BLE5.0 extended advertise
      *
      * ```javascript
@@ -5612,9 +5612,9 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * await obniz.ble.initWait();
      * ```
      */
-    async initWait(extendedDisable = false) {
+    async initWait(extendedDisable) {
         if (this._extended && extendedDisable) {
-            this._extended = extendedDisable;
+            this._extended = !extendedDisable;
             this._reset();
         }
         if (!this._initialized) {
@@ -6937,7 +6937,7 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
      *     data:[0x55,0x55,0x55,0x55,0x55,0x65,0x65,0x65,0x65,0x55,0x55,0x55,0x65,0x55,0x55,0x65,0x65,0x55,0x55,0x55,0x55,]
      *   }]
      * })
-     * obniz.ble.extendedAdvertisement.start();
+     * await obniz.ble.extendedAdvertisement.startWait();
      * ```
      *
      * @param mode BleExtendedAdvertisementMode
@@ -6951,6 +6951,9 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
      * Before calling this function, you should call [[setAdvData]] or [[setAdvDataRaw]] to set data.
      * advertisement interval is 1.28sec fixed.
      *
+     * primaryPhy: 'PHY_1m' or 'PHY_Coded'
+     * secondaryPhy: 'PHY_1m' or 'PHY_2m' or 'PHY_Coded'
+     *
      * ```javascript
      * // Javascript Example
      * await obniz.ble.initWait();
@@ -6963,14 +6966,11 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
      *   serviceUuids:service.advData.serviceUuids,
      *   localName: "test_obniz",
      *   serviceData:[{
-     *     uuid:0x2534,
-     *     data:[0x55,0x55,0x55,0x55,0x55,0x65,0x65,0x65,5,0x55,0x55,0x65,0x55,0x55,0x65,0x65,0x55,0x55,0x55,0x55,]
-     *   },{
      *     uuid:0x3544,
      *     data:[0x55,0x55,0x55,0x55,0x55,0x65,0x65,0x65,0x65,0x55,0x55,0x55,0x65,0x55,0x55,0x65,0x65,0x55,0x55,0x55,0x55,]
      *   }]
      * })
-     * obniz.ble.extendedAdvertisement.start();
+     * await obniz.ble.extendedAdvertisement.startWait('PHY_1m','PHY_2m');
      * ```
      */
     async startWait(primaryPhy = 'PHY_1m', secondaryPhy = 'PHY_1m') {
@@ -7038,8 +7038,8 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
      * ```javascript
      * // Javascript Example
      * await obniz.ble.initWait();
-     * obniz.ble.extendedAdvertisement.start();
-     * obniz.ble.extendedAdvertisement.end();
+     * await obniz.ble.extendedAdvertisement.startWait();
+     * await obniz.ble.extendedAdvertisement.endWait();
      * ```
      *
      */
@@ -7062,7 +7062,7 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
      * //0x02, 0x01, 0x1A  => BLE type for
      * //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
      *
-     * obniz.ble.extendedAdvertisement.start();
+     * await obniz.ble.extendedAdvertisement.startWait();
      * ```
      *
      * @param adv_data
@@ -7086,7 +7086,7 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
      *   }
      * });
      *
-     * obniz.ble.extendedAdvertisement.start();
+     * await obniz.ble.extendedAdvertisement.startWait();
      * ```
      *
      * @param json
@@ -7104,7 +7104,7 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
      * obniz.ble.extendedAdvertisement.setScanRespDataRaw([0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
      * //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
      *
-     * obniz.ble.advertisement.start();
+     * await obniz.ble.advertisement.startWait();
      * ```
      *
      * @param scan_resp
@@ -7122,7 +7122,7 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
      *   localName : "obniz BLE",
      * });
      *
-     * obniz.ble.advertisement.start();
+     * await obniz.ble.advertisement.startWait();
      * ```
      *
      * @param json
@@ -8530,12 +8530,83 @@ class BleRemotePeripheral {
             this.obnizBle.centralBindings.disconnect(this.address);
         });
     }
+    /**
+     * Check the PHY used in the connection
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   const phy = await peripheral.readPhyWait()
+     *   console.log(phy)
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     *
+     */
     async readPhyWait() {
+        const phyToStr = (phy) => {
+            switch (phy) {
+                case 1:
+                    return '1m';
+                case 2:
+                    return '2m';
+                case 3:
+                    return 'coded';
+                default:
+                    throw new Error('decode Phy Error');
+            }
+        };
         const data = await this.obnizBle.centralBindings.readPhyWait(this.address);
         if (data.status === 0) {
-            return { txPhy: data.txPhy, rxPhy: data.rxPhy };
+            return { txPhy: phyToStr(data.txPhy), rxPhy: phyToStr(data.rxPhy) };
         }
     }
+    /**
+     * Check the PHY used in the connection.
+     * Request to change the current PHY
+     *
+     * It will be changed if it corresponds to the PHY set by the other party.
+     *
+     * Changes can be seen on onUpdatePhy
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * obniz.ble.onUpdatePhy = ((txPhy, rxPhy) => {
+     *  console.log("txPhy "+txPhy+" rxPhy "+rxPhy);
+     * });
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await peripheral.setPhyWait(false,false,true,true,true);//Request Only PHY Coded
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     *
+     */
     async setPhyWait(usePhy1m, usePhy2m, usePhyCoded, useCodedModeS8, useCodedModeS2) {
         await this.obnizBle.centralBindings.setPhyWait(this.address, usePhy1m, usePhy2m, usePhyCoded, useCodedModeS8, useCodedModeS2);
     }
@@ -9444,7 +9515,6 @@ class BleScan {
                 break;
             }
             case 'onfind': {
-                console.log(params);
                 const peripheral = params;
                 const alreadyGotCompleteAdveData = peripheral.adv_data &&
                     peripheral.adv_data.length > 0 &&
@@ -9872,7 +9942,7 @@ exports.default = BleService;
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 class ObnizBLEHci {
-    constructor(Obniz) {
+    constructor(Obniz, extended) {
         /*
          * HCI level timeout should never occure. Response must be sent from a device.
          * This timeout is for just in case for a device nerver send response.
@@ -9880,6 +9950,7 @@ class ObnizBLEHci {
         this.timeout = 90 * 1000;
         this._eventHandlerQueue = {};
         this.Obniz = Obniz;
+        this._extended = extended;
     }
     /**
      * @ignore
@@ -10685,7 +10756,7 @@ class Gap extends eventemitter3_1.default {
         await this.setExtendedScanEnabledWait(true, this._scanFilterDuplicates);
     }
     onHciLeExtendedAdvertisingReport(status, type, address, addressType, eir, rssi, primaryPhy, secondaryPhy, sid, txPower, periodicAdvertisingInterval, directAddressType, directAddress) {
-        console.log('onHciLeExtendedAdvertisingReport', type, address, addressType, eir, rssi, primaryPhy, secondaryPhy, sid, txPower, periodicAdvertisingInterval, directAddressType, directAddress);
+        debug('onHciLeExtendedAdvertisingReport', type, address, addressType, eir, rssi, primaryPhy, secondaryPhy, sid, txPower, periodicAdvertisingInterval, directAddressType, directAddress);
         this.onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi, true);
     }
     onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi, extended) {
@@ -13017,7 +13088,7 @@ class Hci extends eventemitter3_1.default {
         this._reset();
         await this.resetCommandWait();
         this.setEventMaskCommand('fffffbff07f8bf3d');
-        this.setLeEventMaskCommand('1ff8070000000000');
+        this.setLeEventMaskCommand('1f1A000000000000');
         const { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer, } = await this.readLocalVersionCommandWait();
         this.writeLeHostSupportedCommand();
         await this.readLeHostSupportedWait();
@@ -13027,12 +13098,11 @@ class Hci extends eventemitter3_1.default {
             this.debug(`Buffer Mtu=${bufsize.aclMtu} aclMaxInProgress=${bufsize.aclMaxInProgress}`);
         }
         // await this.setRandomDeviceAddressWait();
-        // if (this._state !== 'poweredOn') {
-        //   console.log('poweredOn');
-        //   await this.setScanEnabledWait(false, true);
-        //   await this.setScanParametersWait(false);
-        //   this.stateChange('poweredOn');
-        // }
+        if (this._state !== 'poweredOn' && !this._obnizHci._extended) {
+            await this.setScanEnabledWait(false, true);
+            await this.setScanParametersWait(false);
+            this.stateChange('poweredOn');
+        }
     }
     async resetForEsp32Wait() {
         this._reset();
@@ -13412,7 +13482,6 @@ class Hci extends eventemitter3_1.default {
     async setExtendedAdvertisingDataWait(handle, data) {
         for (let i = 0; i < data.length / 251; i++) {
             const size = data.length - i * 251 > 251 ? 251 : data.length - i * 251;
-            console.log('size', size);
             const cmd = Buffer.alloc(size + 4 + 4);
             // header
             cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -13429,7 +13498,6 @@ class Hci extends eventemitter3_1.default {
             this.debug('set extended advertisement data - writing: ' + cmd.toString('hex'));
             this._socket.write(cmd);
             const result = await p;
-            console.log(result);
             if (result.status !== 0) {
                 return result.status;
             }
@@ -13440,7 +13508,6 @@ class Hci extends eventemitter3_1.default {
     async setExtendedAdvertisingScanResponseDataWait(handle, data) {
         for (let i = 0; i < data.length / 251; i++) {
             const size = data.length - i * 251 > 251 ? 251 : data.length - i * 251;
-            console.log('size', size);
             const cmd = Buffer.alloc(size + 4 + 4);
             // header
             cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -13457,7 +13524,6 @@ class Hci extends eventemitter3_1.default {
             this.debug('set extended scan response data - writing: ' + cmd.toString('hex'));
             this._socket.write(cmd);
             const result = await p;
-            console.log(result);
             if (result.status !== 0) {
                 return result.status;
             }
@@ -14200,7 +14266,6 @@ class Hci extends eventemitter3_1.default {
     }
     processLeExtendedAdvertisingReport(count, data) {
         for (let i = 0; i < count; i++) {
-            console.log('processLeExtendedAdvertisingReport data', data.toString('hex'));
             let type = data.readUInt16LE(0);
             const addressType = data.readUInt8(2) === 0x01 ? 'random' : 'public';
             const address = bleHelper_1.default.buffer2reversedHex(data.slice(3, 9), ':');
@@ -14375,7 +14440,7 @@ class Hci extends eventemitter3_1.default {
     }
     debug(...args) {
         this.debugHandler(`${args[0]}`);
-        console.log('debug', args);
+        // console.debug('debug', args);
     }
     onHciAclData(data) {
         const flags = data.readUInt16LE(1) >> 12;

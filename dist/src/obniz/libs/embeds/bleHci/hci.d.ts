@@ -12,7 +12,12 @@ export default class ObnizBLEHci {
     protected _eventHandlerQueue: {
         [key: string]: EventHandler[];
     };
-    constructor(Obniz: ObnizDevice);
+    /**
+     * @ignore
+     * @private
+     */
+    _extended: boolean;
+    constructor(Obniz: ObnizDevice, extended: boolean);
     /**
      * @ignore
      * @private

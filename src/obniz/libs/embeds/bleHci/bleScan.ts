@@ -530,7 +530,6 @@ export default class BleScan {
         break;
       }
       case 'onfind': {
-        console.log(params);
         const peripheral: BleRemotePeripheral = params;
         const alreadyGotCompleteAdveData =
           peripheral.adv_data &&

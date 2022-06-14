@@ -293,7 +293,7 @@ class Hci extends eventemitter3_1.default {
         this._reset();
         await this.resetCommandWait();
         this.setEventMaskCommand('fffffbff07f8bf3d');
-        this.setLeEventMaskCommand('1ff8070000000000');
+        this.setLeEventMaskCommand('1f1A000000000000');
         const { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer, } = await this.readLocalVersionCommandWait();
         this.writeLeHostSupportedCommand();
         await this.readLeHostSupportedWait();
@@ -303,12 +303,11 @@ class Hci extends eventemitter3_1.default {
             this.debug(`Buffer Mtu=${bufsize.aclMtu} aclMaxInProgress=${bufsize.aclMaxInProgress}`);
         }
         // await this.setRandomDeviceAddressWait();
-        // if (this._state !== 'poweredOn') {
-        //   console.log('poweredOn');
-        //   await this.setScanEnabledWait(false, true);
-        //   await this.setScanParametersWait(false);
-        //   this.stateChange('poweredOn');
-        // }
+        if (this._state !== 'poweredOn' && !this._obnizHci._extended) {
+            await this.setScanEnabledWait(false, true);
+            await this.setScanParametersWait(false);
+            this.stateChange('poweredOn');
+        }
     }
     async resetForEsp32Wait() {
         this._reset();
@@ -688,7 +687,6 @@ class Hci extends eventemitter3_1.default {
     async setExtendedAdvertisingDataWait(handle, data) {
         for (let i = 0; i < data.length / 251; i++) {
             const size = data.length - i * 251 > 251 ? 251 : data.length - i * 251;
-            console.log('size', size);
             const cmd = Buffer.alloc(size + 4 + 4);
             // header
             cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -705,7 +703,6 @@ class Hci extends eventemitter3_1.default {
             this.debug('set extended advertisement data - writing: ' + cmd.toString('hex'));
             this._socket.write(cmd);
             const result = await p;
-            console.log(result);
             if (result.status !== 0) {
                 return result.status;
             }
@@ -716,7 +713,6 @@ class Hci extends eventemitter3_1.default {
     async setExtendedAdvertisingScanResponseDataWait(handle, data) {
         for (let i = 0; i < data.length / 251; i++) {
             const size = data.length - i * 251 > 251 ? 251 : data.length - i * 251;
-            console.log('size', size);
             const cmd = Buffer.alloc(size + 4 + 4);
             // header
             cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -733,7 +729,6 @@ class Hci extends eventemitter3_1.default {
             this.debug('set extended scan response data - writing: ' + cmd.toString('hex'));
             this._socket.write(cmd);
             const result = await p;
-            console.log(result);
             if (result.status !== 0) {
                 return result.status;
             }
@@ -1476,7 +1471,6 @@ class Hci extends eventemitter3_1.default {
     }
     processLeExtendedAdvertisingReport(count, data) {
         for (let i = 0; i < count; i++) {
-            console.log('processLeExtendedAdvertisingReport data', data.toString('hex'));
             let type = data.readUInt16LE(0);
             const addressType = data.readUInt8(2) === 0x01 ? 'random' : 'public';
             const address = bleHelper_1.default.buffer2reversedHex(data.slice(3, 9), ':');
@@ -1651,7 +1645,7 @@ class Hci extends eventemitter3_1.default {
     }
     debug(...args) {
         this.debugHandler(`${args[0]}`);
-        console.log('debug', args);
+        // console.debug('debug', args);
     }
     onHciAclData(data) {
         const flags = data.readUInt16LE(1) >> 12;

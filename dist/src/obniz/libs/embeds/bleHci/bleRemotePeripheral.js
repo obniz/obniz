@@ -307,12 +307,83 @@ class BleRemotePeripheral {
             this.obnizBle.centralBindings.disconnect(this.address);
         });
     }
+    /**
+     * Check the PHY used in the connection
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   const phy = await peripheral.readPhyWait()
+     *   console.log(phy)
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     *
+     */
     async readPhyWait() {
+        const phyToStr = (phy) => {
+            switch (phy) {
+                case 1:
+                    return '1m';
+                case 2:
+                    return '2m';
+                case 3:
+                    return 'coded';
+                default:
+                    throw new Error('decode Phy Error');
+            }
+        };
         const data = await this.obnizBle.centralBindings.readPhyWait(this.address);
         if (data.status === 0) {
-            return { txPhy: data.txPhy, rxPhy: data.rxPhy };
+            return { txPhy: phyToStr(data.txPhy), rxPhy: phyToStr(data.rxPhy) };
         }
     }
+    /**
+     * Check the PHY used in the connection.
+     * Request to change the current PHY
+     *
+     * It will be changed if it corresponds to the PHY set by the other party.
+     *
+     * Changes can be seen on onUpdatePhy
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * obniz.ble.onUpdatePhy = ((txPhy, rxPhy) => {
+     *  console.log("txPhy "+txPhy+" rxPhy "+rxPhy);
+     * });
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await peripheral.setPhyWait(false,false,true,true,true);//Request Only PHY Coded
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     *
+     */
     async setPhyWait(usePhy1m, usePhy2m, usePhyCoded, useCodedModeS8, useCodedModeS2) {
         await this.obnizBle.centralBindings.setPhyWait(this.address, usePhy1m, usePhy2m, usePhyCoded, useCodedModeS8, useCodedModeS2);
     }

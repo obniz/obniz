@@ -180,7 +180,7 @@ class Gap extends EventEmitter<GapEventTypes> {
     directAddressType?: any,
     directAddress?: any
   ) {
-    console.log(
+    debug(
       'onHciLeExtendedAdvertisingReport',
       type,
       address,

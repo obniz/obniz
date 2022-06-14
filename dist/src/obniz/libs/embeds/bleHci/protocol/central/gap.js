@@ -128,7 +128,7 @@ class Gap extends eventemitter3_1.default {
         await this.setExtendedScanEnabledWait(true, this._scanFilterDuplicates);
     }
     onHciLeExtendedAdvertisingReport(status, type, address, addressType, eir, rssi, primaryPhy, secondaryPhy, sid, txPower, periodicAdvertisingInterval, directAddressType, directAddress) {
-        console.log('onHciLeExtendedAdvertisingReport', type, address, addressType, eir, rssi, primaryPhy, secondaryPhy, sid, txPower, periodicAdvertisingInterval, directAddressType, directAddress);
+        debug('onHciLeExtendedAdvertisingReport', type, address, addressType, eir, rssi, primaryPhy, secondaryPhy, sid, txPower, periodicAdvertisingInterval, directAddressType, directAddress);
         this.onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi, true);
     }
     onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi, extended) {

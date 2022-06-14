@@ -317,7 +317,6 @@ class Hci extends EventEmitter<HciEventTypes> {
   constructor(obnizHci: any) {
     super();
     this._obnizHci = obnizHci;
-
     this._obnizHci.Obniz.on('_close', () => {
       this.stateChange('poweredOff');
     });
@@ -423,7 +422,7 @@ class Hci extends EventEmitter<HciEventTypes> {
     this._reset();
     await this.resetCommandWait();
     this.setEventMaskCommand('fffffbff07f8bf3d');
-    this.setLeEventMaskCommand('1ff8070000000000');
+    this.setLeEventMaskCommand('1f1A000000000000');
     const {
       hciVer,
       hciRev,
@@ -443,12 +442,11 @@ class Hci extends EventEmitter<HciEventTypes> {
     }
 
     // await this.setRandomDeviceAddressWait();
-    // if (this._state !== 'poweredOn') {
-    //   console.log('poweredOn');
-    //   await this.setScanEnabledWait(false, true);
-    //   await this.setScanParametersWait(false);
-    //   this.stateChange('poweredOn');
-    // }
+    if (this._state !== 'poweredOn' && !this._obnizHci._extended) {
+      await this.setScanEnabledWait(false, true);
+      await this.setScanParametersWait(false);
+      this.stateChange('poweredOn');
+    }
   }
 
   public async resetForEsp32Wait() {
@@ -1044,7 +1042,6 @@ class Hci extends EventEmitter<HciEventTypes> {
   public async setExtendedAdvertisingDataWait(handle: number, data: Buffer) {
     for (let i = 0; i < data.length / 251; i++) {
       const size = data.length - i * 251 > 251 ? 251 : data.length - i * 251;
-      console.log('size', size);
 
       const cmd = Buffer.alloc(size + 4 + 4);
 
@@ -1073,7 +1070,6 @@ class Hci extends EventEmitter<HciEventTypes> {
       );
       this._socket.write(cmd);
       const result = await p;
-      console.log(result);
       if (result.status !== 0) {
         return result.status;
       }
@@ -1088,7 +1084,6 @@ class Hci extends EventEmitter<HciEventTypes> {
   ) {
     for (let i = 0; i < data.length / 251; i++) {
       const size = data.length - i * 251 > 251 ? 251 : data.length - i * 251;
-      console.log('size', size);
 
       const cmd = Buffer.alloc(size + 4 + 4);
 
@@ -1117,7 +1112,6 @@ class Hci extends EventEmitter<HciEventTypes> {
       );
       this._socket.write(cmd);
       const result = await p;
-      console.log(result);
       if (result.status !== 0) {
         return result.status;
       }
@@ -2219,10 +2213,6 @@ class Hci extends EventEmitter<HciEventTypes> {
 
   public processLeExtendedAdvertisingReport(count: number, data: Buffer) {
     for (let i = 0; i < count; i++) {
-      console.log(
-        'processLeExtendedAdvertisingReport data',
-        data.toString('hex')
-      );
       let type = data.readUInt16LE(0);
       const addressType = data.readUInt8(2) === 0x01 ? 'random' : 'public';
       const address = BleHelper.buffer2reversedHex(data.slice(3, 9), ':');
@@ -2469,7 +2459,7 @@ class Hci extends EventEmitter<HciEventTypes> {
 
   private debug(...args: any) {
     this.debugHandler(`${args[0]}`);
-    console.log('debug', args);
+    // console.debug('debug', args);
   }
 
   private onHciAclData(data: Buffer) {

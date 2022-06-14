@@ -41,7 +41,7 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
      *     data:[0x55,0x55,0x55,0x55,0x55,0x65,0x65,0x65,0x65,0x55,0x55,0x55,0x65,0x55,0x55,0x65,0x65,0x55,0x55,0x55,0x55,]
      *   }]
      * })
-     * obniz.ble.extendedAdvertisement.start();
+     * await obniz.ble.extendedAdvertisement.startWait();
      * ```
      *
      * @param mode BleExtendedAdvertisementMode
@@ -55,6 +55,9 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
      * Before calling this function, you should call [[setAdvData]] or [[setAdvDataRaw]] to set data.
      * advertisement interval is 1.28sec fixed.
      *
+     * primaryPhy: 'PHY_1m' or 'PHY_Coded'
+     * secondaryPhy: 'PHY_1m' or 'PHY_2m' or 'PHY_Coded'
+     *
      * ```javascript
      * // Javascript Example
      * await obniz.ble.initWait();
@@ -67,14 +70,11 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
      *   serviceUuids:service.advData.serviceUuids,
      *   localName: "test_obniz",
      *   serviceData:[{
-     *     uuid:0x2534,
-     *     data:[0x55,0x55,0x55,0x55,0x55,0x65,0x65,0x65,5,0x55,0x55,0x65,0x55,0x55,0x65,0x65,0x55,0x55,0x55,0x55,]
-     *   },{
      *     uuid:0x3544,
      *     data:[0x55,0x55,0x55,0x55,0x55,0x65,0x65,0x65,0x65,0x55,0x55,0x55,0x65,0x55,0x55,0x65,0x65,0x55,0x55,0x55,0x55,]
      *   }]
      * })
-     * obniz.ble.extendedAdvertisement.start();
+     * await obniz.ble.extendedAdvertisement.startWait('PHY_1m','PHY_2m');
      * ```
      */
     async startWait(primaryPhy = 'PHY_1m', secondaryPhy = 'PHY_1m') {
@@ -142,8 +142,8 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
      * ```javascript
      * // Javascript Example
      * await obniz.ble.initWait();
-     * obniz.ble.extendedAdvertisement.start();
-     * obniz.ble.extendedAdvertisement.end();
+     * await obniz.ble.extendedAdvertisement.startWait();
+     * await obniz.ble.extendedAdvertisement.endWait();
      * ```
      *
      */
@@ -166,7 +166,7 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
      * //0x02, 0x01, 0x1A  => BLE type for
      * //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
      *
-     * obniz.ble.extendedAdvertisement.start();
+     * await obniz.ble.extendedAdvertisement.startWait();
      * ```
      *
      * @param adv_data
@@ -190,7 +190,7 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
      *   }
      * });
      *
-     * obniz.ble.extendedAdvertisement.start();
+     * await obniz.ble.extendedAdvertisement.startWait();
      * ```
      *
      * @param json
@@ -208,7 +208,7 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
      * obniz.ble.extendedAdvertisement.setScanRespDataRaw([0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
      * //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
      *
-     * obniz.ble.advertisement.start();
+     * await obniz.ble.advertisement.startWait();
      * ```
      *
      * @param scan_resp
@@ -226,7 +226,7 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
      *   localName : "obniz BLE",
      * });
      *
-     * obniz.ble.advertisement.start();
+     * await obniz.ble.advertisement.startWait();
      * ```
      *
      * @param json

@@ -506,10 +506,69 @@ export default class BleRemotePeripheral {
      * ```
      */
     disconnectWait(): Promise<void>;
+    /**
+     * Check the PHY used in the connection
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   const phy = await peripheral.readPhyWait()
+     *   console.log(phy)
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     *
+     */
     readPhyWait(): Promise<{
-        txPhy: number;
-        rxPhy: number;
+        txPhy: string;
+        rxPhy: string;
     } | undefined>;
+    /**
+     * Check the PHY used in the connection.
+     * Request to change the current PHY
+     *
+     * It will be changed if it corresponds to the PHY set by the other party.
+     *
+     * Changes can be seen on onUpdatePhy
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * obniz.ble.onUpdatePhy = ((txPhy, rxPhy) => {
+     *  console.log("txPhy "+txPhy+" rxPhy "+rxPhy);
+     * });
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await peripheral.setPhyWait(false,false,true,true,true);//Request Only PHY Coded
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     *
+     */
     setPhyWait(usePhy1m: boolean, usePhy2m: boolean, usePhyCoded: boolean, useCodedModeS8: boolean, useCodedModeS2: boolean): Promise<void>;
     /**
      * It returns a service which having specified uuid in [[services]].
