@@ -270,6 +270,10 @@ export default class BleRemotePeripheral {
     localName: string | null;
     manufacturerSpecificData: number[] | null;
     manufacturerSpecificDataInScanResponse: number[] | null;
+    service_data: {
+        uuid: number;
+        data: number[];
+    }[] | null;
     /**
      * This returns iBeacon data if the peripheral has it. If none, it will return null.
      *
@@ -440,6 +444,7 @@ export default class BleRemotePeripheral {
      *
      */
     connectWait(setting?: BleConnectSetting): Promise<void>;
+    connectExtendedWait(setting?: BleConnectSetting, pyh1m?: boolean, pyh2m?: boolean, pyhCoded?: boolean): Promise<void>;
     /**
      * @deprecated replaced by {@link #disconnectWait()}
      */
@@ -472,6 +477,11 @@ export default class BleRemotePeripheral {
      * ```
      */
     disconnectWait(): Promise<void>;
+    readPhyWait(): Promise<{
+        txPhy: number;
+        rxPhy: number;
+    } | undefined>;
+    setPhyWait(usePhy1m: boolean, usePhy2m: boolean, usePhyCoded: boolean, useCodedModeS8: boolean, useCodedModeS2: boolean): Promise<void>;
     /**
      * It returns a service which having specified uuid in [[services]].
      * Case is ignored. So aa00 and AA00 are the same.

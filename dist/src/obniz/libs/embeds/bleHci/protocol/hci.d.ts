@@ -6,7 +6,7 @@
 import EventEmitter from 'eventemitter3';
 import ObnizBLEHci from '../hci';
 import { BleDeviceAddress, BleDeviceAddressType, BleExtendedAdvertisingEnable, Handle } from '../bleTypes';
-declare type HciEventTypes = 'leAdvertisingReport' | 'leExtendedAdvertisingReport' | 'leConnComplete' | 'stateChange' | 'leConnUpdateComplete' | 'disconnComplete' | 'encryptChange' | 'aclDataPkt';
+declare type HciEventTypes = 'leAdvertisingReport' | 'leExtendedAdvertisingReport' | 'leConnComplete' | 'stateChange' | 'leConnUpdateComplete' | 'disconnComplete' | 'encryptChange' | 'aclDataPkt' | 'updatePhy';
 export declare type HciState = 'poweredOn' | 'poweredOff';
 /**
  * @ignore
@@ -106,18 +106,19 @@ declare class Hci extends EventEmitter<HciEventTypes> {
         rxPhy: number;
     }>;
     leSetPhyCommandWait(connectionHandle: number, allPhys: number, txPhys: number, rxPhys: number, options: number): Promise<void>;
-    setExtendedAdvertisingParametersWait(advertisingHandle: number, advertisingEventProperties: number, primaryAdvertisingPhy: number, secondaryAdvertisingPhy: number): Promise<{
+    setExtendedAdvertisingParametersWait(handle: number, eventProperties: number, primaryAdvertisingPhy: number, secondaryAdvertisingPhy: number, txPower: number): Promise<{
         status: number;
         txPower: number;
     }>;
-    setExtendedAdvertisingDataWait(advertisingHandle: number, data: any): Promise<number>;
-    setExtendedScanResponseDataWait(advertisingHandle: number, data: any): Promise<number>;
-    setExtendedAdvertiseEnableWait(enabled: boolean, enableList: BleExtendedAdvertisingEnable[]): Promise<number>;
+    private extendedAdvertiseOperation;
+    setExtendedAdvertisingDataWait(handle: number, data: Buffer): Promise<number>;
+    setExtendedAdvertisingScanResponseDataWait(handle: number, data: Buffer): Promise<number>;
+    setExtendedAdvertisingEnableWait(enabled: boolean, enableList: BleExtendedAdvertisingEnable[]): Promise<number>;
     leReadMaximumAdvertisingDataLengthWait(): Promise<number>;
     leClearAdvertisingSetWait(): Promise<number>;
     setExtendedScanParametersWait(isActiveScan: boolean, usePhy1m?: boolean, usePhyCoded?: boolean): Promise<number>;
     setExtendedScanEnabledWait(enabled: boolean, filterDuplicates: boolean): Promise<number>;
-    createLeExtendedConnWait(address: BleDeviceAddress, addressType: BleDeviceAddressType, pyh1m: boolean, pyh2m: boolean, pyhCoded: boolean, timeout: number | undefined, onConnectCallback: any): Promise<{
+    createLeExtendedConnWait(address: BleDeviceAddress, addressType: BleDeviceAddressType, timeout: number | undefined, onConnectCallback: any, pyh1m?: boolean, pyh2m?: boolean, pyhCoded?: boolean): Promise<{
         status: any;
         handle: number;
         role: number;
@@ -128,7 +129,7 @@ declare class Hci extends EventEmitter<HciEventTypes> {
         supervisionTimeout: number;
         masterClockAccuracy: number;
     }>;
-    leSetDefaultPhyCommandWait(allPhys: number, txPhys: number, rxPhys: number): Promise<void>;
+    leSetDefaultPhyCommandWait(allPhys: number, txPhys: number, rxPhys: number): Promise<number>;
     leReadAdvertisingPhysicalChannelTxPowerCommandWait(): Promise<number>;
     leReadWhiteListSizeWait(): Promise<number>;
     readBdAddrWait(): Promise<any>;

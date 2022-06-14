@@ -9,7 +9,7 @@ import { BleDeviceAddress, BleDeviceAddressType, Handle, UUID } from '../../bleT
 import { HciState } from '../hci';
 import { HandleIndex } from '../peripheral/gatt';
 import { SmpEncryptOptions } from './smp';
-declare type NobleBindingsEventType = 'discover' | 'disconnect' | 'stateChange' | 'notification' | 'handleNotify';
+declare type NobleBindingsEventType = 'discover' | 'disconnect' | 'stateChange' | 'notification' | 'handleNotify' | 'updatePhy';
 /**
  * @ignore
  */
@@ -40,6 +40,16 @@ declare class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     startScanningWait(serviceUuids: UUID[], allowDuplicates: boolean, activeScan: boolean): Promise<void>;
     stopScanningWait(): Promise<void>;
     connectWait(peripheralUuid: BleDeviceAddress, mtu: number | null, onConnectCallback?: any): Promise<void>;
+    setDefaultPhyWait(usePhy1m: boolean, usePhy2m: boolean, usePhyCoded: boolean): Promise<void>;
+    readPhyWait(address: string): Promise<{
+        status: number;
+        connectionHandle: number;
+        txPhy: number;
+        rxPhy: number;
+    }>;
+    setPhyWait(address: string, usePhy1m: boolean, usePhy2m: boolean, usePhyCoded: boolean, useCodedModeS8: boolean, useCodedModeS2: boolean): Promise<void>;
+    onPhy(handler: number, txPhy: number, rxPhy: number): void;
+    connectExtendedWait(peripheralUuid: BleDeviceAddress, mtu: number | null, onConnectCallback?: any, pyh1m?: boolean, pyh2m?: boolean, pyhCoded?: boolean): Promise<void>;
     disconnect(peripheralUuid: any): void;
     updateRssiWait(peripheralUuid: UUID): Promise<number>;
     onStateChange(state: HciState): void;

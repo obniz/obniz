@@ -5455,6 +5455,7 @@ const blePeripheral_1 = __importDefault(__webpack_require__("./dist/src/obniz/li
 const bleRemotePeripheral_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemotePeripheral.js"));
 const bleScan_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleScan.js"));
 const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleService.js"));
+const bleExtendedAdvertisement_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleExtendedAdvertisement.js"));
 /**
  * Use a obniz device as a BLE device.
  * Peripheral and Central mode are supported
@@ -5547,6 +5548,18 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         }
         return str;
     }
+    phyToStr(phy) {
+        switch (phy) {
+            case 1:
+                return '1m';
+            case 2:
+                return '2m';
+            case 3:
+                return 'coded';
+            default:
+                throw new Error('decode Phy Error');
+        }
+    }
     notifyFromObniz(json) {
         if (json.hci) {
             this.hci.notified(json.hci);
@@ -5570,6 +5583,14 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             msg += 'descriptor_uuid: ' + error.descriptor_uuid;
             msg += ')';
             this.Obniz.error({ alert: 'error', message: msg });
+        }
+    }
+    async setDefaultPhyWait(usePhy1m, usePhy2m, usePhyCoded) {
+        await this.centralBindings.setDefaultPhyWait(usePhy1m, usePhy2m, usePhyCoded);
+    }
+    onUpdatePhy(handler, txPhy, rxPhy) {
+        if (this.onPhy) {
+            this.onPhy(this.phyToStr(txPhy), this.phyToStr(rxPhy), handler);
         }
     }
     /**
@@ -5659,10 +5680,14 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         if (!this.advertisement) {
             this.advertisement = new bleAdvertisement_1.default(this);
         }
+        if (!this.extendedAdvertisement) {
+            this.extendedAdvertisement = new bleExtendedAdvertisement_1.default(this);
+        }
         // reset all submodules.
         this.peripheral._reset();
         this.scan._reset();
         this.advertisement._reset();
+        this.extendedAdvertisement._reset();
         // clear scanning
         this.hci._reset();
         if (!this.hciProtocol) {
@@ -5683,6 +5708,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             this.centralBindings.on('discover', this.onDiscover.bind(this));
             this.centralBindings.on('disconnect', this.onDisconnect.bind(this));
             this.centralBindings.on('notification', this.onNotification.bind(this));
+            this.centralBindings.on('updatePhy', this.onUpdatePhy.bind(this));
         }
         else {
             this.centralBindings._reset();
@@ -5832,6 +5858,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             rssi,
             adv_data: advertisement.advertisementRaw,
             scan_resp: advertisement.scanResponseRaw,
+            service_data: advertisement.serviceData,
         };
         val.setParams(peripheralData);
         this.scan.notifyFromServer('onfind', val);
@@ -6103,8 +6130,10 @@ const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/e
  * @category Use as Peripheral
  */
 class BleAdvertisementBuilder {
-    constructor(json) {
+    constructor(json, extendedFlg = false) {
         this.rows = {};
+        this._extendedFlg = extendedFlg;
+        this._serviceData = [];
         if (json) {
             if (json.localName) {
                 this.setCompleteLocalName(json.localName);
@@ -6117,6 +6146,11 @@ class BleAdvertisementBuilder {
             if (json.serviceUuids) {
                 for (const uuid of json.serviceUuids) {
                     this.setUuid(uuid);
+                }
+            }
+            if (json.serviceData) {
+                for (const service of json.serviceData) {
+                    this.setServiceData(service.uuid, service.data);
                 }
             }
         }
@@ -6140,8 +6174,18 @@ class BleAdvertisementBuilder {
             data.push(parseInt(key));
             Array.prototype.push.apply(data, this.rows[key]);
         }
-        if (data.length > 31) {
-            throw new Error('Too large data. Advertise/ScanResponse data are must be less than 32 byte.');
+        if (this._serviceData.length !== 0) {
+            Array.prototype.push.apply(data, this._serviceData);
+        }
+        if (this._extendedFlg) {
+            if (data.length > 1650) {
+                throw new Error('Too large data. Advertise/ScanResponse data are must be less than 1650 byte.');
+            }
+        }
+        else {
+            if (data.length > 31) {
+                throw new Error('Too large data. Advertise/ScanResponse data are must be less than 32 byte.');
+            }
         }
         return data;
     }
@@ -6151,6 +6195,20 @@ class BleAdvertisementBuilder {
             data.push(string.charCodeAt(i));
         }
         this.setRow(type, data);
+    }
+    setServiceData(uuid, data) {
+        const row = [];
+        row.push(uuid & 0xff);
+        row.push((uuid >> 8) & 0xff);
+        if (data.length > 252) {
+            throw new Error('ServiceData Length Over UUID' + uuid);
+        }
+        for (const d of data) {
+            row.push(d & 0xff);
+        }
+        this._serviceData.push(row.length + 1);
+        this._serviceData.push(0x16);
+        Array.prototype.push.apply(this._serviceData, row);
     }
     setShortenedLocalName(name) {
         this.setStringData(0x08, name);
@@ -6802,6 +6860,231 @@ class BleDescriptor extends bleLocalValueAttributeAbstract_1.default {
 }
 exports.default = BleDescriptor;
 
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/embeds/bleHci/bleExtendedAdvertisement.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const bleAdvertisementBuilder_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAdvertisementBuilder.js"));
+const bleAdvertisement_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAdvertisement.js"));
+/**
+ * @category Use as Peripheral
+ */
+class BleExtendedAdvertisement extends bleAdvertisement_1.default {
+    constructor(obnizBle) {
+        super(obnizBle);
+        this.mode = 'broadcast';
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        super._reset();
+    }
+    /**
+     * AdvertiseMode can be changed
+     *
+     * broadcast   MAX advData     1650Byte
+     * connectable MAX advData      242Byte
+     * scannable   MAX scanRspData 1650Byte
+     *
+     * @param mode BleExtendedAdvertisementMode
+     */
+    setMode(mode) {
+        this.mode = mode;
+    }
+    /**
+     * This starts advertisement of BLE.
+     *
+     * Before calling this function, you should call [[setAdvData]] or [[setAdvDataRaw]] to set data.
+     * advertisement interval is 1.28sec fixed.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     *   var service = new obniz.ble.service({
+     *  uuid : "fff0"
+     * });
+     * obniz.ble.peripheral.addService(service);
+     * obniz.ble.advertisement.setAdvData(service.advData);
+     * obniz.ble.advertisement.start();
+     * ```
+     */
+    async startWait(primaryPhy = 'PHY_1m', secondaryPhy = 'PHY_1m') {
+        this.obnizBle.warningIfNotInitialize();
+        const advertisementData = Buffer.from(this.adv_data);
+        const scanData = Buffer.from(this.scan_resp);
+        const decodePhy = (phy) => {
+            switch (phy) {
+                case 'PHY_1m':
+                    return 1;
+                case 'PHY_2m':
+                    return 2;
+                case 'PHY_Coded':
+                    return 3;
+            }
+        };
+        const primaryAdvertisingPhy = decodePhy(primaryPhy);
+        const secondaryAdvertisingPhy = decodePhy(secondaryPhy);
+        // ParametersCommand broadcast 0 connectable 1 scannable 2
+        // AdvertiseDataCommand or ResponseDataCommand
+        switch (this.mode) {
+            case 'broadcast':
+                if (advertisementData.length > 1650)
+                    throw new Error('Advertisement data is over maximum limit of 1650 bytes');
+                if (advertisementData.length === 0)
+                    throw new Error('Advertisement data is not found');
+                if (scanData.length !== 0)
+                    throw new Error('Scan data is over maximum limit of 0 bytes');
+                await this.obnizBle.peripheralBindings.setExtendedAdvertisingParametersWait(0, 0x00, primaryAdvertisingPhy, secondaryAdvertisingPhy, 0);
+                await this.obnizBle.peripheralBindings.setExtendedAdvertisingDataWait(0, advertisementData);
+                break;
+            case 'connectable':
+                if (advertisementData.length > 242)
+                    throw new Error('Advertisement data is over maximum limit of 242 bytes');
+                if (advertisementData.length === 0)
+                    throw new Error('Advertisement data is not found');
+                if (scanData.length !== 0)
+                    throw new Error('Scan data is over maximum limit of 0 bytes');
+                await this.obnizBle.peripheralBindings.setExtendedAdvertisingParametersWait(0, 0x41, primaryAdvertisingPhy, secondaryAdvertisingPhy, 0);
+                await this.obnizBle.peripheralBindings.setExtendedAdvertisingDataWait(0, advertisementData);
+                break;
+            case 'scannable':
+                if (advertisementData.length !== 0)
+                    throw new Error('Advertisement data is over maximum limit of 0 bytes');
+                if (scanData.length === 0)
+                    throw new Error('Scan data is not found');
+                if (scanData.length > 1650)
+                    throw new Error('Scan data is over maximum limit of 1650 bytes');
+                await this.obnizBle.peripheralBindings.setExtendedAdvertisingParametersWait(0, 0x42, primaryAdvertisingPhy, secondaryAdvertisingPhy, 0);
+                await this.obnizBle.peripheralBindings.setExtendedAdvertisingScanResponseDataWait(0, scanData);
+                break;
+        }
+        // EnableCommand
+        await this.obnizBle.peripheralBindings.startExtendedAdvertisingWait(0);
+    }
+    /**
+     * @deprecated  replaced by {@link #startWait()}
+     */
+    start() {
+        super.start();
+    }
+    /**
+     * This stops advertisement of BLE.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.advertisement.start();
+     * obniz.ble.advertisement.end();
+     * ```
+     *
+     */
+    async endWait() {
+        await this.obnizBle.peripheralBindings.stopExtendedAdvertisingWait(0);
+    }
+    /**
+     * @deprecated  replaced by {@link #endWait()}
+     */
+    end() {
+        super.end();
+    }
+    /**
+     * This sets advertise data from data array.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.advertisement.setAdvDataRaw([0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
+     * //0x02, 0x01, 0x1A  => BLE type for
+     * //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
+     *
+     * obniz.ble.advertisement.start();
+     * ```
+     *
+     * @param adv_data
+     */
+    setAdvDataRaw(adv_data) {
+        this.adv_data = adv_data;
+    }
+    /**
+     * This sets advertise data from json.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * obniz.ble.advertisement.setAdvData({
+     *   flags: ["general_discoverable_mode","br_edr_not_supported"],
+     *   manufacturerData:{
+     *     companyCode : 0x004C,
+     *     serviceUuids: ["fff0"],
+     *     data : [0x02,0x15, 0xC2, 0x8f, 0x0a, 0xd5, 0xa7, 0xfd, 0x48, 0xbe, 0x9f, 0xd0, 0xea, 0xe9, 0xff, 0xd3, 0xa8, 0xbb,0x10,0x00,0x00,0x10,0xFF],
+     *   }
+     * });
+     *
+     * obniz.ble.advertisement.start();
+     * ```
+     *
+     * @param json
+     */
+    setAdvData(json) {
+        const builder = this.advDataBulider(json);
+        this.setAdvDataRaw(builder.build());
+    }
+    /**
+     * This sets scan response data from data array.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.advertisement.setScanRespDataRaw([0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
+     * //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
+     *
+     * obniz.ble.advertisement.start();
+     * ```
+     *
+     * @param scan_resp
+     */
+    setScanRespDataRaw(scan_resp) {
+        this.scan_resp = scan_resp;
+    }
+    /**
+     * This sets scan response data from json data.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.advertisement.setScanRespData({
+     *   localName : "obniz BLE",
+     * });
+     *
+     * obniz.ble.advertisement.start();
+     * ```
+     *
+     * @param json
+     */
+    setScanRespData(json) {
+        this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
+    }
+    advDataBulider(jsonVal) {
+        return new bleAdvertisementBuilder_1.default(jsonVal, true);
+    }
+    scanRespDataBuilder(json) {
+        return new bleAdvertisementBuilder_1.default(json, true);
+    }
+}
+exports.default = BleExtendedAdvertisement;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -7921,6 +8204,7 @@ class BleRemotePeripheral {
             'rssi',
             'adv_data',
             'scan_resp',
+            'service_data',
         ];
         this.obnizBle = obnizBle;
         this.address = address;
@@ -7938,6 +8222,7 @@ class BleRemotePeripheral {
         this.iBeacon = null;
         this._services = [];
         this.emitter = new eventemitter3_1.default();
+        this.service_data = null;
     }
     /**
      * It contains all discovered services in a peripheral as an array.
@@ -8107,6 +8392,51 @@ class BleRemotePeripheral {
         this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
         this.emitter.emit('connect');
     }
+    async connectExtendedWait(setting, pyh1m = true, pyh2m = true, pyhCoded = true) {
+        var _a;
+        if (this.connected && ((_a = setting) === null || _a === void 0 ? void 0 : _a.forceConnect) === false)
+            return;
+        this._connectSetting = setting || {};
+        this._connectSetting.autoDiscovery =
+            this._connectSetting.autoDiscovery !== false;
+        this._connectSetting.mtuRequest =
+            this._connectSetting.mtuRequest === undefined
+                ? 256
+                : this._connectSetting.mtuRequest;
+        await this.obnizBle.scan.endWait();
+        try {
+            await this.obnizBle.centralBindings.connectExtendedWait(this.address, this._connectSetting.mtuRequest, () => {
+                if (this._connectSetting.pairingOption) {
+                    this.setPairingOption(this._connectSetting.pairingOption);
+                }
+            }, pyh1m, pyh2m, pyhCoded);
+        }
+        catch (e) {
+            if (e instanceof ObnizError_1.ObnizTimeoutError) {
+                await this.obnizBle.resetWait();
+                throw new Error(`Connection to device(address=${this.address}) was timedout. ble have been reseted`);
+            }
+            throw e;
+        }
+        this.connected = true;
+        this.connected_at = new Date();
+        try {
+            if (this._connectSetting.autoDiscovery) {
+                await this.discoverAllHandlesWait();
+            }
+        }
+        catch (e) {
+            try {
+                await this.disconnectWait();
+            }
+            catch (e2) {
+                // nothing
+            }
+            throw e;
+        }
+        this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
+        this.emitter.emit('connect');
+    }
     /**
      * @deprecated replaced by {@link #disconnectWait()}
      */
@@ -8163,6 +8493,15 @@ class BleRemotePeripheral {
             }, 90 * 1000);
             this.obnizBle.centralBindings.disconnect(this.address);
         });
+    }
+    async readPhyWait() {
+        const data = await this.obnizBle.centralBindings.readPhyWait(this.address);
+        if (data.status === 0) {
+            return { txPhy: data.txPhy, rxPhy: data.rxPhy };
+        }
+    }
+    async setPhyWait(usePhy1m, usePhy2m, usePhyCoded, useCodedModeS8, useCodedModeS2) {
+        await this.obnizBle.centralBindings.setPhyWait(this.address, usePhy1m, usePhy2m, usePhyCoded, useCodedModeS8, useCodedModeS2);
     }
     /**
      * It returns a service which having specified uuid in [[services]].
@@ -8938,6 +9277,46 @@ class BleScan {
         }
     }
     /**
+     * This scans and returns the first peripheral that was found among the objects specified in the target.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     *
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * console.log(peripheral);
+     * ```
+     *
+     * @param target
+     * @param settings
+     * @param usePhy1m
+     * @param usePhyCoded
+     */
+    async startExtendedOneWait(target, settings = {}, usePhy1m = true, usePhyCoded = true) {
+        await this.startExtendedWait(target, settings, usePhy1m, usePhyCoded);
+        return new Promise((resolve, reject) => {
+            this.emitter.once('onfind', async (peripheral, error) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+                resolve(peripheral);
+                await this.endWait();
+            });
+            this.emitter.once('onfinish', (peripherals, error) => {
+                if (error) {
+                    assert_1.rejects(error);
+                    return;
+                }
+                resolve(null);
+            });
+        });
+    }
+    /**
      * This starts scanning BLE.
      *
      * You can filter uuids or localName using the target param.
@@ -9154,6 +9533,7 @@ class BleScan {
                 break;
             }
             case 'onfind': {
+                console.log(params);
                 const peripheral = params;
                 const alreadyGotCompleteAdveData = peripheral.adv_data &&
                     peripheral.adv_data.length > 0 &&
@@ -9935,6 +10315,7 @@ class NobleBindings extends eventemitter3_1.default {
         this._hci.on('stateChange', this.onStateChange.bind(this));
         this._hci.on('disconnComplete', this.onDisconnComplete.bind(this));
         this._hci.on('aclDataPkt', this.onAclDataPkt.bind(this));
+        this._hci.on('updatePhy', this.onPhy.bind(this));
         this._gap.on('discover', this.onDiscover.bind(this));
     }
     /**
@@ -9992,6 +10373,57 @@ class NobleBindings extends eventemitter3_1.default {
                     onConnectCallback();
                 }
             }); // connection timeout for 90 secs.
+            return await this._gatts[conResult.handle].exchangeMtuWait(mtu);
+        })
+            .then(() => {
+            this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
+            return Promise.resolve();
+        }, (error) => {
+            this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
+            return Promise.reject(error);
+        });
+        this._connectPromises.push(doPromise);
+        return doPromise;
+    }
+    async setDefaultPhyWait(usePhy1m, usePhy2m, usePhyCoded) {
+        const booleanToNumber = (flg) => (flg ? 1 : 0);
+        const setPhy = booleanToNumber(usePhy1m) +
+            booleanToNumber(usePhy2m) * 2 +
+            booleanToNumber(usePhyCoded) * 4;
+        await this._hci.leSetDefaultPhyCommandWait(0, setPhy, setPhy);
+    }
+    async readPhyWait(address) {
+        return await this._hci.leReadPhyCommandWait(this._handles[address]);
+    }
+    async setPhyWait(address, usePhy1m, usePhy2m, usePhyCoded, useCodedModeS8, useCodedModeS2) {
+        const booleanToNumber = (flg) => (flg ? 1 : 0);
+        const setPhy = booleanToNumber(usePhy1m) +
+            booleanToNumber(usePhy2m) * 2 +
+            booleanToNumber(usePhyCoded) * 4;
+        await this._hci.leSetPhyCommandWait(this._handles[address], 0, setPhy, setPhy, booleanToNumber(useCodedModeS8) * 2 + booleanToNumber(useCodedModeS2));
+    }
+    onPhy(handler, txPhy, rxPhy) {
+        this.emit('updatePhy', handler, txPhy, rxPhy);
+    }
+    async connectExtendedWait(peripheralUuid, mtu, onConnectCallback, pyh1m = true, pyh2m = true, pyhCoded = true) {
+        const address = this._addresses[peripheralUuid];
+        const addressType = this._addresseTypes[peripheralUuid];
+        if (!address) {
+            throw new ObnizError_1.ObnizBleUnknownPeripheralError(peripheralUuid);
+        }
+        // Block parall connection ongoing for ESP32 bug.
+        const doPromise = Promise.all(this._connectPromises)
+            .catch((error) => {
+            // nothing
+        })
+            .then(async () => {
+            const conResult = await this._hci.createLeExtendedConnWait(address, addressType, 90 * 1000, (result) => {
+                // on connect success
+                this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
+                if (onConnectCallback && typeof onConnectCallback === 'function') {
+                    onConnectCallback();
+                }
+            }, pyh1m, pyh2m, pyhCoded); // connection timeout for 90 secs.
             return await this._gatts[conResult.handle].exchangeMtuWait(mtu);
         })
             .then(() => {
@@ -12997,7 +13429,7 @@ class Hci extends eventemitter3_1.default {
         this.debug('le set phy - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
     }
-    async setExtendedAdvertisingParametersWait(advertisingHandle, advertisingEventProperties, primaryAdvertisingPhy, secondaryAdvertisingPhy) {
+    async setExtendedAdvertisingParametersWait(handle, eventProperties, primaryAdvertisingPhy, secondaryAdvertisingPhy, txPower) {
         const cmd = Buffer.alloc(29);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -13008,19 +13440,19 @@ class Hci extends eventemitter3_1.default {
             ? parseFloat(process.env.BLENO_ADVERTISING_INTERVAL)
             : 100) * 1.6);
         // data
-        cmd.writeUInt8(advertisingHandle, 4);
-        cmd.writeUInt16LE(0x0000, 5); // Advertising_Event_Properties
+        cmd.writeUInt8(handle, 4);
+        cmd.writeUInt16LE(eventProperties, 5); // Advertising_Event_Properties
         // Broadcast(0x0000)(ADV Data 1650B send) or Scannable(0x0002)(ScanRsp Data 1650B send)
         cmd.writeUInt16LE(advertisementInterval, 7); // min interval //default 100ms
         cmd.writeUInt8((advertisementInterval >> 16) & 0xff, 9); // min interval
-        cmd.writeUInt16LE(advertisementInterval, 10); // max interval
-        cmd.writeUInt8((advertisementInterval >> 16) & 0xff, 12); // max interval
+        cmd.writeUInt16LE(advertisementInterval * 2, 10); // max interval
+        cmd.writeUInt8(((advertisementInterval * 2) >> 16) & 0xff, 12); // max interval
         cmd.writeUInt8(0x07, 13); // Primary_Advertising_Channel_Map used 37,38,39ch
         cmd.writeUInt8(0x00, 14); // Own_Address_Type direct addr type
         cmd.writeUInt8(0x00, 15); // Peer_Address_Type
         Buffer.from('000000000000', 'hex').copy(cmd, 16); // direct addr
-        cmd.writeUInt8(0x07, 22); // Advertising_Filter_Policy All Devices
-        cmd.writeUInt8(0x00, 23); // Advertising_Tx_Power
+        cmd.writeUInt8(0x00, 22); // Advertising_Filter_Policy All Devices
+        cmd.writeUInt8(txPower, 23); // Advertising_Tx_Power
         cmd.writeUInt8(primaryAdvertisingPhy, 24); // PrimaryAdvertisingPhy
         cmd.writeUInt8(0x00, 25); // Secondary_Advertising_Max_Skip
         cmd.writeUInt8(secondaryAdvertisingPhy, 26); // SecondaryAdvertisingPhy
@@ -13036,7 +13468,17 @@ class Hci extends eventemitter3_1.default {
             txPower: data.result.readUInt8(0),
         };
     }
-    async setExtendedAdvertisingDataWait(advertisingHandle, data) {
+    extendedAdvertiseOperation(index, length) {
+        if (index === 0) {
+            if (length <= 251)
+                return 3; // Operation コンプリートスキャン応答データ
+            return 1; // Operation 断片化されたスキャンレスポンスデータの最初の断片
+        }
+        if (length - index * 251 <= 251)
+            return 2; // Operation 断片化したスキャンレスポンスデータの最後の断片
+        return 0; // Operation 断片化したスキャンレスポンスデータの中間断片
+    }
+    async setExtendedAdvertisingDataWait(handle, data) {
         for (let i = 0; i < data.length / 251; i++) {
             const size = data.length - i * 251 > 251 ? 251 : data.length - i * 251;
             console.log('size', size);
@@ -13047,27 +13489,8 @@ class Hci extends eventemitter3_1.default {
             // length
             cmd.writeUInt8(size + 4, 3);
             // data
-            cmd.writeUInt8(advertisingHandle, 4);
-            if (i === 0) {
-                if (data.length <= 251) {
-                    cmd.writeUInt8(3, 5); // Operation コンプリートスキャン応答データ
-                    console.log('Operation', 3);
-                }
-                else {
-                    cmd.writeUInt8(1, 5); // Operation 断片化されたスキャンレスポンスデータの最初の断片
-                    console.log('Operation', 1);
-                }
-            }
-            else {
-                if (data.length - i * 251 <= 251) {
-                    cmd.writeUInt8(2, 5); // Operation 断片化したスキャンレスポンスデータの最後の断片
-                    console.log('Operation', 2);
-                }
-                else {
-                    cmd.writeUInt8(0, 5); // Operation 断片化したスキャンレスポンスデータの中間断片
-                    console.log('Operation', 0);
-                }
-            }
+            cmd.writeUInt8(handle, 4);
+            cmd.writeUInt8(this.extendedAdvertiseOperation(i, data.length), 5);
             cmd.writeUInt8(0x00, 6); // Fragment_Preference
             cmd.writeUInt8(size, 7); // Data_Length
             data.copy(cmd, 8, i * 251, i * 251 + size);
@@ -13075,6 +13498,7 @@ class Hci extends eventemitter3_1.default {
             this.debug('set extended advertisement data - writing: ' + cmd.toString('hex'));
             this._socket.write(cmd);
             const result = await p;
+            console.log(result);
             if (result.status !== 0) {
                 return result.status;
             }
@@ -13082,7 +13506,7 @@ class Hci extends eventemitter3_1.default {
         return 0;
     }
     // 今の仕様だとScanResponseはExtendedでサポートしていない
-    async setExtendedScanResponseDataWait(advertisingHandle, data) {
+    async setExtendedAdvertisingScanResponseDataWait(handle, data) {
         for (let i = 0; i < data.length / 251; i++) {
             const size = data.length - i * 251 > 251 ? 251 : data.length - i * 251;
             console.log('size', size);
@@ -13093,27 +13517,8 @@ class Hci extends eventemitter3_1.default {
             // length
             cmd.writeUInt8(size + 4, 3);
             // data
-            cmd.writeUInt8(advertisingHandle, 4);
-            if (i === 0) {
-                if (data.length <= 251) {
-                    cmd.writeUInt8(3, 5); // Operation コンプリートスキャン応答データ
-                    console.log('Operation', 3);
-                }
-                else {
-                    cmd.writeUInt8(1, 5); // Operation 断片化されたスキャンレスポンスデータの最初の断片
-                    console.log('Operation', 1);
-                }
-            }
-            else {
-                if (data.length - i * 251 <= 251) {
-                    cmd.writeUInt8(2, 5); // Operation 断片化したスキャンレスポンスデータの最後の断片
-                    console.log('Operation', 2);
-                }
-                else {
-                    cmd.writeUInt8(0, 5); // Operation 断片化したスキャンレスポンスデータの中間断片
-                    console.log('Operation', 0);
-                }
-            }
+            cmd.writeUInt8(handle, 4);
+            cmd.writeUInt8(this.extendedAdvertiseOperation(i, data.length), 5);
             cmd.writeUInt8(0x00, 6); // Fragment_Preference
             cmd.writeUInt8(size, 7); // Data_Length
             data.copy(cmd, 8, i * 251, i * 251 + size);
@@ -13121,13 +13526,14 @@ class Hci extends eventemitter3_1.default {
             this.debug('set extended scan response data - writing: ' + cmd.toString('hex'));
             this._socket.write(cmd);
             const result = await p;
+            console.log(result);
             if (result.status !== 0) {
                 return result.status;
             }
         }
         return 0;
     }
-    async setExtendedAdvertiseEnableWait(enabled, enableList) {
+    async setExtendedAdvertisingEnableWait(enabled, enableList) {
         const cmd = Buffer.alloc(enableList.length * 4 + 4 + 2);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -13201,7 +13607,7 @@ class Hci extends eventemitter3_1.default {
         const data = await p;
         return data.status;
     }
-    async createLeExtendedConnWait(address, addressType, pyh1m, pyh2m, pyhCoded, timeout = 90 * 1000, onConnectCallback) {
+    async createLeExtendedConnWait(address, addressType, timeout = 90 * 1000, onConnectCallback, pyh1m = true, pyh2m = true, pyhCoded = true) {
         const booleanToNumber = (flg) => (flg ? 1 : 0);
         const configCount = booleanToNumber(pyh1m) +
             booleanToNumber(pyh2m) +
@@ -13223,36 +13629,22 @@ class Hci extends eventemitter3_1.default {
             maxCeLength: 0x0000,
         };
         // data
-        cmd.writeUInt16LE(0x00, 4); // Initiating_Filter_Policy ホワイトリストは使用しません
-        cmd.writeUInt16LE(0x00, 5); // Own_Address_Type 公開端末アドレス
+        cmd.writeUInt8(0x00, 4); // Initiating_Filter_Policy ホワイトリストは使用しません
+        cmd.writeUInt8(0x00, 5); // Own_Address_Type 公開端末アドレス
         cmd.writeUInt8(addressType === 'random' ? 0x01 : 0x00, 6); // peer address type
         bleHelper_1.default.hex2reversedBuffer(address, ':').copy(cmd, 7); // peer address
         cmd.writeUInt8(booleanToNumber(pyh1m) +
             booleanToNumber(pyh2m) * 2 +
             booleanToNumber(pyhCoded) * 4, 13); // Initiating_PHY
         for (let i = 0; i < configCount; i++) {
-            cmd.writeUInt16LE(parameter.interval, 14 + i * 2); // interval
-        }
-        for (let i = 0; i < configCount; i++) {
-            cmd.writeUInt16LE(parameter.window, 14 + i * 2 + configCount * 2); // window
-        }
-        for (let i = 0; i < configCount; i++) {
-            cmd.writeUInt16LE(parameter.minInterval, 14 + i * 2 + configCount * 4); // minInterval
-        }
-        for (let i = 0; i < configCount; i++) {
-            cmd.writeUInt16LE(parameter.maxInterval, 14 + i * 2 + configCount * 6); // maxInterval
-        }
-        for (let i = 0; i < configCount; i++) {
-            cmd.writeUInt16LE(parameter.latency, 14 + i * 2 + configCount * 8); // latency
-        }
-        for (let i = 0; i < configCount; i++) {
-            cmd.writeUInt16LE(parameter.supervisionTimeout, 14 + i * 2 + configCount * 10); // supervisionTimeout
-        }
-        for (let i = 0; i < configCount; i++) {
-            cmd.writeUInt16LE(parameter.minCeLength, 14 + i * 2 + configCount * 12); // minCeLength
-        }
-        for (let i = 0; i < configCount; i++) {
-            cmd.writeUInt16LE(parameter.maxCeLength, 14 + i * 2 + configCount * 14); // maxCeLength
+            cmd.writeUInt16LE(parameter.interval, 14 + i * 16); // interval
+            cmd.writeUInt16LE(parameter.window, 16 + i * 16); // window
+            cmd.writeUInt16LE(parameter.minInterval, 18 + i * 16); // minInterval
+            cmd.writeUInt16LE(parameter.maxInterval, 20 + i * 16); // maxInterval
+            cmd.writeUInt16LE(parameter.latency, 22 + i * 16); // latency
+            cmd.writeUInt16LE(parameter.supervisionTimeout, 24 + i * 16); // supervisionTimeout
+            cmd.writeUInt16LE(parameter.minCeLength, 26 + i * 16); // minCeLength
+            cmd.writeUInt16LE(parameter.maxCeLength, 28 + i * 16); // maxCeLength
         }
         this.debug('create le extended conn - writing: ' + cmd.toString('hex'));
         const processConnectionCompletePromise = (async () => {
@@ -13284,8 +13676,11 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(allPhys, 4);
         cmd.writeUInt8(txPhys, 5);
         cmd.writeUInt8(rxPhys, 6);
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_DEFAULT_PHY_CMD);
         this.debug('le set default phy - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
+        const data = await p;
+        return data.status;
     }
     async leReadAdvertisingPhysicalChannelTxPowerCommandWait() {
         const data = await this.writeNoParamCommandWait(COMMANDS.LE_READ_ADVERTISING_CHANNEL_TX_POWER_CMD, 'le read advertising channel tx power');
@@ -13778,7 +14173,7 @@ class Hci extends eventemitter3_1.default {
             const handler = data.readUInt16LE(0);
             const txPhy = data.readUInt8(2);
             const rxPhy = data.readUInt8(3);
-            console.log('handler: ' + handler + ' txPhy: ' + txPhy + ' rxPhy: ' + rxPhy);
+            this.emit('updatePhy', handler, txPhy, rxPhy);
         }
         else if (eventType === COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE) {
             const { handle, interval, latency, supervisionTimeout, } = this.processLeConnUpdateComplete(status, data);
@@ -14324,6 +14719,7 @@ class BlenoBindings extends eventemitter3_1.default {
     constructor(hciProtocol) {
         super();
         this._state = null;
+        this._extended = false;
         this._advertising = false;
         this._hci = hciProtocol;
         this._gap = new gap_1.default(this._hci);
@@ -14367,6 +14763,25 @@ class BlenoBindings extends eventemitter3_1.default {
     async stopAdvertisingWait() {
         this._advertising = false;
         await this._gap.stopAdvertisingWait();
+    }
+    async setExtendedAdvertisingParametersWait(handle, eventProperties, primaryAdvertisingPhy, secondaryAdvertisingPhy, txPower) {
+        await this._gap.setExtendedAdvertiseParametersWait(handle, eventProperties, primaryAdvertisingPhy, secondaryAdvertisingPhy, txPower);
+    }
+    async setExtendedAdvertisingDataWait(handle, data) {
+        await this._gap.setExtendedAdvertisingDataWait(handle, data);
+    }
+    async setExtendedAdvertisingScanResponseDataWait(handle, data) {
+        await this._gap.setExtendedAdvertisingScanResponseDataWait(handle, data);
+    }
+    async startExtendedAdvertisingWait(handle) {
+        this._advertising = true;
+        this._extended = true;
+        await this._gap.startExtendedAdvertisingWait(handle);
+    }
+    async stopExtendedAdvertisingWait(handle) {
+        this._advertising = false;
+        this._extended = false;
+        await this._gap.stopExtendedAdvertisingWait(handle);
     }
     setServices(services) {
         this._gatt.setServices(services);
@@ -14430,7 +14845,12 @@ class BlenoBindings extends eventemitter3_1.default {
             this.emit('disconnect', address, reason); // TODO: use reason
         }
         if (this._advertising) {
-            await this._gap.restartAdvertisingWait();
+            if (this._extended) {
+                await this._gap.restartExtendedAdvertisingWait(0);
+            }
+            else {
+                await this._gap.restartAdvertisingWait();
+            }
         }
     }
     onEncryptChange(handle, encrypt) {
@@ -14577,6 +14997,54 @@ class Gap extends eventemitter3_1.default {
         advertisementData.writeUInt8(dataLength, 8);
         data.copy(advertisementData, 9);
         await this.startAdvertisingWithEIRDataWait(advertisementData, scanData);
+    }
+    async setExtendedAdvertiseParametersWait(handle, eventProperties, primaryAdvertisingPhy, secondaryAdvertisingPhy, txPower) {
+        await this._hci.setExtendedAdvertisingParametersWait(handle, eventProperties, primaryAdvertisingPhy, secondaryAdvertisingPhy, txPower);
+    }
+    async setExtendedAdvertisingDataWait(handle, data) {
+        await this._hci.setExtendedAdvertisingDataWait(handle, data);
+    }
+    async setExtendedAdvertisingScanResponseDataWait(handle, data) {
+        await this._hci.setExtendedAdvertisingScanResponseDataWait(handle, data);
+    }
+    async restartExtendedAdvertisingWait(handle) {
+        this._advertiseState = 'restarting';
+        await this._hci.setExtendedAdvertisingEnableWait(true, [
+            {
+                handle,
+                duration: 0,
+                events: 0,
+            },
+        ]);
+    }
+    async stopExtendedAdvertisingWait(handle) {
+        this._advertiseState = 'stopping';
+        await this._hci.setExtendedAdvertisingEnableWait(false, [
+            {
+                handle,
+                duration: 0,
+                events: 0,
+            },
+        ]);
+    }
+    async startExtendedAdvertisingWait(handle) {
+        this._advertiseState = 'starting';
+        const status = await this._hci.setExtendedAdvertisingEnableWait(true, [
+            {
+                handle,
+                duration: 0,
+                events: 0,
+            },
+        ]);
+        if (this._advertiseState === 'starting') {
+            this._advertiseState = 'started';
+            if (status) {
+                throw new Error(hci_1.default.STATUS_MAPPER[status] || 'Unknown (' + status + ')');
+            }
+        }
+        else if (this._advertiseState === 'stopping') {
+            this._advertiseState = 'stopped';
+        }
     }
     async startAdvertisingWithEIRDataWait(advertisementData, scanData) {
         advertisementData = advertisementData || Buffer.alloc(0);

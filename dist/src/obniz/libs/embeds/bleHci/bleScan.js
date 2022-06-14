@@ -159,6 +159,46 @@ class BleScan {
         }
     }
     /**
+     * This scans and returns the first peripheral that was found among the objects specified in the target.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     *
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * console.log(peripheral);
+     * ```
+     *
+     * @param target
+     * @param settings
+     * @param usePhy1m
+     * @param usePhyCoded
+     */
+    async startExtendedOneWait(target, settings = {}, usePhy1m = true, usePhyCoded = true) {
+        await this.startExtendedWait(target, settings, usePhy1m, usePhyCoded);
+        return new Promise((resolve, reject) => {
+            this.emitter.once('onfind', async (peripheral, error) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+                resolve(peripheral);
+                await this.endWait();
+            });
+            this.emitter.once('onfinish', (peripherals, error) => {
+                if (error) {
+                    assert_1.rejects(error);
+                    return;
+                }
+                resolve(null);
+            });
+        });
+    }
+    /**
      * This starts scanning BLE.
      *
      * You can filter uuids or localName using the target param.
@@ -375,6 +415,7 @@ class BleScan {
                 break;
             }
             case 'onfind': {
+                console.log(params);
                 const peripheral = params;
                 const alreadyGotCompleteAdveData = peripheral.adv_data &&
                     peripheral.adv_data.length > 0 &&

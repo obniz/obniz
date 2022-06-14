@@ -40,6 +40,7 @@ class NobleBindings extends eventemitter3_1.default {
         this._hci.on('stateChange', this.onStateChange.bind(this));
         this._hci.on('disconnComplete', this.onDisconnComplete.bind(this));
         this._hci.on('aclDataPkt', this.onAclDataPkt.bind(this));
+        this._hci.on('updatePhy', this.onPhy.bind(this));
         this._gap.on('discover', this.onDiscover.bind(this));
     }
     /**
@@ -97,6 +98,57 @@ class NobleBindings extends eventemitter3_1.default {
                     onConnectCallback();
                 }
             }); // connection timeout for 90 secs.
+            return await this._gatts[conResult.handle].exchangeMtuWait(mtu);
+        })
+            .then(() => {
+            this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
+            return Promise.resolve();
+        }, (error) => {
+            this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
+            return Promise.reject(error);
+        });
+        this._connectPromises.push(doPromise);
+        return doPromise;
+    }
+    async setDefaultPhyWait(usePhy1m, usePhy2m, usePhyCoded) {
+        const booleanToNumber = (flg) => (flg ? 1 : 0);
+        const setPhy = booleanToNumber(usePhy1m) +
+            booleanToNumber(usePhy2m) * 2 +
+            booleanToNumber(usePhyCoded) * 4;
+        await this._hci.leSetDefaultPhyCommandWait(0, setPhy, setPhy);
+    }
+    async readPhyWait(address) {
+        return await this._hci.leReadPhyCommandWait(this._handles[address]);
+    }
+    async setPhyWait(address, usePhy1m, usePhy2m, usePhyCoded, useCodedModeS8, useCodedModeS2) {
+        const booleanToNumber = (flg) => (flg ? 1 : 0);
+        const setPhy = booleanToNumber(usePhy1m) +
+            booleanToNumber(usePhy2m) * 2 +
+            booleanToNumber(usePhyCoded) * 4;
+        await this._hci.leSetPhyCommandWait(this._handles[address], 0, setPhy, setPhy, booleanToNumber(useCodedModeS8) * 2 + booleanToNumber(useCodedModeS2));
+    }
+    onPhy(handler, txPhy, rxPhy) {
+        this.emit('updatePhy', handler, txPhy, rxPhy);
+    }
+    async connectExtendedWait(peripheralUuid, mtu, onConnectCallback, pyh1m = true, pyh2m = true, pyhCoded = true) {
+        const address = this._addresses[peripheralUuid];
+        const addressType = this._addresseTypes[peripheralUuid];
+        if (!address) {
+            throw new ObnizError_1.ObnizBleUnknownPeripheralError(peripheralUuid);
+        }
+        // Block parall connection ongoing for ESP32 bug.
+        const doPromise = Promise.all(this._connectPromises)
+            .catch((error) => {
+            // nothing
+        })
+            .then(async () => {
+            const conResult = await this._hci.createLeExtendedConnWait(address, addressType, 90 * 1000, (result) => {
+                // on connect success
+                this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
+                if (onConnectCallback && typeof onConnectCallback === 'function') {
+                    onConnectCallback();
+                }
+            }, pyh1m, pyh2m, pyhCoded); // connection timeout for 90 secs.
             return await this._gatts[conResult.handle].exchangeMtuWait(mtu);
         })
             .then(() => {

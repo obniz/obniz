@@ -301,7 +301,7 @@ export default class BleRemotePeripheral {
   public manufacturerSpecificData: number[] | null;
 
   public manufacturerSpecificDataInScanResponse: number[] | null;
-
+  public service_data: { uuid: number; data: number[] }[] | null;
   /**
    * This returns iBeacon data if the peripheral has it. If none, it will return null.
    *
@@ -410,6 +410,7 @@ export default class BleRemotePeripheral {
     'rssi',
     'adv_data',
     'scan_resp',
+    'service_data',
   ];
   protected _services: BleRemoteService[];
   protected emitter: EventEmitter;
@@ -433,6 +434,7 @@ export default class BleRemotePeripheral {
 
     this._services = [];
     this.emitter = new EventEmitter();
+    this.service_data = null;
   }
 
   /**
@@ -578,6 +580,62 @@ export default class BleRemotePeripheral {
     this.emitter.emit('connect');
   }
 
+  public async connectExtendedWait(
+    setting?: BleConnectSetting,
+    pyh1m = true,
+    pyh2m = true,
+    pyhCoded = true
+  ): Promise<void> {
+    if (this.connected && setting?.forceConnect === false) return;
+    this._connectSetting = setting || {};
+    this._connectSetting.autoDiscovery =
+      this._connectSetting.autoDiscovery !== false;
+    this._connectSetting.mtuRequest =
+      this._connectSetting.mtuRequest === undefined
+        ? 256
+        : this._connectSetting.mtuRequest;
+    await this.obnizBle.scan.endWait();
+
+    try {
+      await this.obnizBle.centralBindings.connectExtendedWait(
+        this.address,
+        this._connectSetting.mtuRequest,
+        () => {
+          if (this._connectSetting.pairingOption) {
+            this.setPairingOption(this._connectSetting.pairingOption);
+          }
+        },
+        pyh1m,
+        pyh2m,
+        pyhCoded
+      );
+    } catch (e) {
+      if (e instanceof ObnizTimeoutError) {
+        await this.obnizBle.resetWait();
+        throw new Error(
+          `Connection to device(address=${this.address}) was timedout. ble have been reseted`
+        );
+      }
+      throw e;
+    }
+    this.connected = true;
+    this.connected_at = new Date();
+    try {
+      if (this._connectSetting.autoDiscovery) {
+        await this.discoverAllHandlesWait();
+      }
+    } catch (e) {
+      try {
+        await this.disconnectWait();
+      } catch (e2) {
+        // nothing
+      }
+      throw e;
+    }
+    this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
+    this.emitter.emit('connect');
+  }
+
   /**
    * @deprecated replaced by {@link #disconnectWait()}
    */
@@ -639,6 +697,30 @@ export default class BleRemotePeripheral {
 
       this.obnizBle.centralBindings.disconnect(this.address);
     });
+  }
+
+  public async readPhyWait() {
+    const data = await this.obnizBle.centralBindings.readPhyWait(this.address);
+    if (data.status === 0) {
+      return { txPhy: data.txPhy, rxPhy: data.rxPhy };
+    }
+  }
+
+  public async setPhyWait(
+    usePhy1m: boolean,
+    usePhy2m: boolean,
+    usePhyCoded: boolean,
+    useCodedModeS8: boolean,
+    useCodedModeS2: boolean
+  ) {
+    await this.obnizBle.centralBindings.setPhyWait(
+      this.address,
+      usePhy1m,
+      usePhy2m,
+      usePhyCoded,
+      useCodedModeS8,
+      useCodedModeS2
+    );
   }
 
   /**

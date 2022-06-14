@@ -32,7 +32,8 @@ type NobleBindingsEventType =
   | 'disconnect'
   | 'stateChange'
   | 'notification'
-  | 'handleNotify';
+  | 'handleNotify'
+  | 'updatePhy';
 
 /**
  * @ignore
@@ -72,6 +73,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     this._hci.on('stateChange', this.onStateChange.bind(this));
     this._hci.on('disconnComplete', this.onDisconnComplete.bind(this));
     this._hci.on('aclDataPkt', this.onAclDataPkt.bind(this));
+    this._hci.on('updatePhy', this.onPhy.bind(this));
 
     this._gap.on('discover', this.onDiscover.bind(this));
   }
@@ -179,6 +181,115 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
               onConnectCallback();
             }
           }
+        ); // connection timeout for 90 secs.
+
+        return await this._gatts[conResult.handle].exchangeMtuWait(mtu);
+      })
+      .then(
+        () => {
+          this._connectPromises = this._connectPromises.filter(
+            (e) => e === doPromise
+          );
+          return Promise.resolve();
+        },
+        (error) => {
+          this._connectPromises = this._connectPromises.filter(
+            (e) => e === doPromise
+          );
+          return Promise.reject(error);
+        }
+      );
+    this._connectPromises.push(doPromise);
+    return doPromise;
+  }
+
+  public async setDefaultPhyWait(
+    usePhy1m: boolean,
+    usePhy2m: boolean,
+    usePhyCoded: boolean
+  ) {
+    const booleanToNumber = (flg: boolean): number => (flg ? 1 : 0);
+    const setPhy =
+      booleanToNumber(usePhy1m) +
+      booleanToNumber(usePhy2m) * 2 +
+      booleanToNumber(usePhyCoded) * 4;
+    await this._hci.leSetDefaultPhyCommandWait(0, setPhy, setPhy);
+  }
+
+  public async readPhyWait(address: string) {
+    return await this._hci.leReadPhyCommandWait(this._handles[address]);
+  }
+
+  public async setPhyWait(
+    address: string,
+    usePhy1m: boolean,
+    usePhy2m: boolean,
+    usePhyCoded: boolean,
+    useCodedModeS8: boolean,
+    useCodedModeS2: boolean
+  ) {
+    const booleanToNumber = (flg: boolean): number => (flg ? 1 : 0);
+    const setPhy =
+      booleanToNumber(usePhy1m) +
+      booleanToNumber(usePhy2m) * 2 +
+      booleanToNumber(usePhyCoded) * 4;
+    await this._hci.leSetPhyCommandWait(
+      this._handles[address],
+      0,
+      setPhy,
+      setPhy,
+      booleanToNumber(useCodedModeS8) * 2 + booleanToNumber(useCodedModeS2)
+    );
+  }
+
+  public onPhy(handler: number, txPhy: number, rxPhy: number) {
+    this.emit('updatePhy', handler, txPhy, rxPhy);
+  }
+
+  public async connectExtendedWait(
+    peripheralUuid: BleDeviceAddress,
+    mtu: number | null,
+    onConnectCallback?: any,
+    pyh1m = true,
+    pyh2m = true,
+    pyhCoded = true
+  ) {
+    const address = this._addresses[peripheralUuid];
+    const addressType: any = this._addresseTypes[peripheralUuid];
+    if (!address) {
+      throw new ObnizBleUnknownPeripheralError(peripheralUuid);
+    }
+
+    // Block parall connection ongoing for ESP32 bug.
+    const doPromise = Promise.all(this._connectPromises)
+      .catch((error) => {
+        // nothing
+      })
+      .then(async () => {
+        const conResult = await this._hci.createLeExtendedConnWait(
+          address,
+          addressType,
+          90 * 1000,
+          (result: any) => {
+            // on connect success
+            this.onLeConnComplete(
+              result.status,
+              result.handle,
+              result.role,
+              result.addressType,
+              result.address,
+              result.interval,
+              result.latency,
+              result.supervisionTimeout,
+              result.masterClockAccuracy
+            );
+            if (onConnectCallback && typeof onConnectCallback === 'function') {
+              onConnectCallback();
+            }
+          },
+          pyh1m,
+          pyh2m,
+          pyhCoded
         ); // connection timeout for 90 secs.
 
         return await this._gatts[conResult.handle].exchangeMtuWait(mtu);

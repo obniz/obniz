@@ -22,6 +22,10 @@ export interface BleScanResponseData {
         companyCode?: number;
         data?: number[];
     };
+    serviceData?: [{
+        uuid: number;
+        data: number[];
+    }];
 }
 export interface BleAdvertisementData extends BleScanResponseData {
     flags?: BleAdvertisementFlag[];
@@ -94,3 +98,4 @@ export interface BleCreateConnectionParameters {
     eventIntervalMin: number;
     eventIntervalMax: number;
 }
+export declare type BleExtendedAdvertisementMode = 'broadcast' | 'connectable' | 'scannable';

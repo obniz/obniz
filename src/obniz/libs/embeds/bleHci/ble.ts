@@ -29,6 +29,7 @@ import BleRemotePeripheral from './bleRemotePeripheral';
 import BleScan from './bleScan';
 import BleService from './bleService';
 import { BleDeviceAddress, BleDeviceAddressType, UUID } from './bleTypes';
+import BleExtendedAdvertisement from './bleExtendedAdvertisement';
 
 /**
  * Use a obniz device as a BLE device.
@@ -103,9 +104,28 @@ export default class ObnizBLE extends ComponentAbstract {
    * @ignore
    */
   public advertisement!: BleAdvertisement;
+  public extendedAdvertisement!: BleExtendedAdvertisement;
   protected hciProtocol!: HciProtocol;
   protected _initializeWarning!: boolean;
   protected remotePeripherals: BleRemotePeripheral[] = [];
+
+  private phyToStr(phy: number) {
+    switch (phy) {
+      case 1:
+        return '1m';
+      case 2:
+        return '2m';
+      case 3:
+        return 'coded';
+      default:
+        throw new Error('decode Phy Error');
+    }
+  }
+  public onPhy?: (
+    txPhy: '1m' | '2m' | 'coded',
+    rxPhy: '1m' | '2m' | 'coded',
+    handler?: number
+  ) => void;
 
   /**
    * @ignore
@@ -177,6 +197,24 @@ export default class ObnizBLE extends ComponentAbstract {
       msg += ')';
 
       this.Obniz.error({ alert: 'error', message: msg });
+    }
+  }
+
+  public async setDefaultPhyWait(
+    usePhy1m: boolean,
+    usePhy2m: boolean,
+    usePhyCoded: boolean
+  ) {
+    await this.centralBindings.setDefaultPhyWait(
+      usePhy1m,
+      usePhy2m,
+      usePhyCoded
+    );
+  }
+
+  protected onUpdatePhy(handler: number, txPhy: number, rxPhy: number) {
+    if (this.onPhy) {
+      this.onPhy(this.phyToStr(txPhy), this.phyToStr(rxPhy), handler);
     }
   }
 
@@ -277,11 +315,15 @@ export default class ObnizBLE extends ComponentAbstract {
     if (!this.advertisement) {
       this.advertisement = new BleAdvertisement(this);
     }
+    if (!this.extendedAdvertisement) {
+      this.extendedAdvertisement = new BleExtendedAdvertisement(this);
+    }
 
     // reset all submodules.
     this.peripheral._reset();
     this.scan._reset();
     this.advertisement._reset();
+    this.extendedAdvertisement._reset();
 
     // clear scanning
     this.hci._reset();
@@ -302,6 +344,7 @@ export default class ObnizBLE extends ComponentAbstract {
       this.centralBindings.on('discover', this.onDiscover.bind(this));
       this.centralBindings.on('disconnect', this.onDisconnect.bind(this));
       this.centralBindings.on('notification', this.onNotification.bind(this));
+      this.centralBindings.on('updatePhy', this.onUpdatePhy.bind(this));
     } else {
       this.centralBindings._reset();
     }
@@ -480,6 +523,7 @@ export default class ObnizBLE extends ComponentAbstract {
       rssi,
       adv_data: advertisement.advertisementRaw,
       scan_resp: advertisement.scanResponseRaw,
+      service_data: advertisement.serviceData,
     };
 
     val.setParams(peripheralData);

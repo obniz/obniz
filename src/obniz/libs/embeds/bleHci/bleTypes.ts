@@ -48,6 +48,7 @@ export interface BleScanResponseData {
     companyCode?: number;
     data?: number[];
   };
+  serviceData?: [{ uuid: number; data: number[] }];
 }
 
 export interface BleAdvertisementData extends BleScanResponseData {
@@ -135,3 +136,8 @@ export interface BleCreateConnectionParameters {
   eventIntervalMin: number; // LE 接続に必要な接続イベント
   eventIntervalMax: number; // LE 接続に必要な接続イベントの
 }
+
+export type BleExtendedAdvertisementMode =
+  | 'broadcast' // MAX adv 1650Byte
+  | 'connectable' // MAX adv 242Byte
+  | 'scannable'; // MAX scanRsp 1650Byte

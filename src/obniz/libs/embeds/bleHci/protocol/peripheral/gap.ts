@@ -160,6 +160,79 @@ class Gap extends EventEmitter<GapEventTypes> {
     await this.startAdvertisingWithEIRDataWait(advertisementData, scanData);
   }
 
+  public async setExtendedAdvertiseParametersWait(
+    handle: number,
+    eventProperties: number,
+    primaryAdvertisingPhy: number,
+    secondaryAdvertisingPhy: number,
+    txPower: number
+  ) {
+    await this._hci.setExtendedAdvertisingParametersWait(
+      handle,
+      eventProperties,
+      primaryAdvertisingPhy,
+      secondaryAdvertisingPhy,
+      txPower
+    );
+  }
+
+  public async setExtendedAdvertisingDataWait(handle: number, data: Buffer) {
+    await this._hci.setExtendedAdvertisingDataWait(handle, data);
+  }
+
+  public async setExtendedAdvertisingScanResponseDataWait(
+    handle: number,
+    data: Buffer
+  ) {
+    await this._hci.setExtendedAdvertisingScanResponseDataWait(handle, data);
+  }
+
+  public async restartExtendedAdvertisingWait(handle: number) {
+    this._advertiseState = 'restarting';
+
+    await this._hci.setExtendedAdvertisingEnableWait(true, [
+      {
+        handle,
+        duration: 0,
+        events: 0,
+      },
+    ]);
+  }
+
+  public async stopExtendedAdvertisingWait(handle: number) {
+    this._advertiseState = 'stopping';
+
+    await this._hci.setExtendedAdvertisingEnableWait(false, [
+      {
+        handle,
+        duration: 0,
+        events: 0,
+      },
+    ]);
+  }
+  public async startExtendedAdvertisingWait(handle: number) {
+    this._advertiseState = 'starting';
+
+    const status = await this._hci.setExtendedAdvertisingEnableWait(true, [
+      {
+        handle,
+        duration: 0,
+        events: 0,
+      },
+    ]);
+
+    if (this._advertiseState === 'starting') {
+      this._advertiseState = 'started';
+      if (status) {
+        throw new Error(
+          Hci.STATUS_MAPPER[status] || 'Unknown (' + status + ')'
+        );
+      }
+    } else if (this._advertiseState === 'stopping') {
+      this._advertiseState = 'stopped';
+    }
+  }
+
   public async startAdvertisingWithEIRDataWait(
     advertisementData: any,
     scanData: any

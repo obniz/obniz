@@ -21,6 +21,7 @@ import BleRemotePeripheral from './bleRemotePeripheral';
 import BleScan from './bleScan';
 import BleService from './bleService';
 import { BleDeviceAddress, BleDeviceAddressType, UUID } from './bleTypes';
+import BleExtendedAdvertisement from './bleExtendedAdvertisement';
 /**
  * Use a obniz device as a BLE device.
  * Peripheral and Central mode are supported
@@ -63,15 +64,20 @@ export default class ObnizBLE extends ComponentAbstract {
      * @ignore
      */
     advertisement: BleAdvertisement;
+    extendedAdvertisement: BleExtendedAdvertisement;
     protected hciProtocol: HciProtocol;
     protected _initializeWarning: boolean;
     protected remotePeripherals: BleRemotePeripheral[];
+    private phyToStr;
+    onPhy?: (txPhy: '1m' | '2m' | 'coded', rxPhy: '1m' | '2m' | 'coded', handler?: number) => void;
     /**
      * @ignore
      */
     private _initialized;
     constructor(obniz: Obniz);
     notifyFromObniz(json: any): void;
+    setDefaultPhyWait(usePhy1m: boolean, usePhy2m: boolean, usePhyCoded: boolean): Promise<void>;
+    protected onUpdatePhy(handler: number, txPhy: number, rxPhy: number): void;
     debugHandler: (text: string) => void;
     /**
      * Initialize BLE module. You need call this first everything before.

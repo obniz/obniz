@@ -36,6 +36,7 @@ class BleRemotePeripheral {
             'rssi',
             'adv_data',
             'scan_resp',
+            'service_data',
         ];
         this.obnizBle = obnizBle;
         this.address = address;
@@ -53,6 +54,7 @@ class BleRemotePeripheral {
         this.iBeacon = null;
         this._services = [];
         this.emitter = new eventemitter3_1.default();
+        this.service_data = null;
     }
     /**
      * It contains all discovered services in a peripheral as an array.
@@ -222,6 +224,51 @@ class BleRemotePeripheral {
         this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
         this.emitter.emit('connect');
     }
+    async connectExtendedWait(setting, pyh1m = true, pyh2m = true, pyhCoded = true) {
+        var _a;
+        if (this.connected && ((_a = setting) === null || _a === void 0 ? void 0 : _a.forceConnect) === false)
+            return;
+        this._connectSetting = setting || {};
+        this._connectSetting.autoDiscovery =
+            this._connectSetting.autoDiscovery !== false;
+        this._connectSetting.mtuRequest =
+            this._connectSetting.mtuRequest === undefined
+                ? 256
+                : this._connectSetting.mtuRequest;
+        await this.obnizBle.scan.endWait();
+        try {
+            await this.obnizBle.centralBindings.connectExtendedWait(this.address, this._connectSetting.mtuRequest, () => {
+                if (this._connectSetting.pairingOption) {
+                    this.setPairingOption(this._connectSetting.pairingOption);
+                }
+            }, pyh1m, pyh2m, pyhCoded);
+        }
+        catch (e) {
+            if (e instanceof ObnizError_1.ObnizTimeoutError) {
+                await this.obnizBle.resetWait();
+                throw new Error(`Connection to device(address=${this.address}) was timedout. ble have been reseted`);
+            }
+            throw e;
+        }
+        this.connected = true;
+        this.connected_at = new Date();
+        try {
+            if (this._connectSetting.autoDiscovery) {
+                await this.discoverAllHandlesWait();
+            }
+        }
+        catch (e) {
+            try {
+                await this.disconnectWait();
+            }
+            catch (e2) {
+                // nothing
+            }
+            throw e;
+        }
+        this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
+        this.emitter.emit('connect');
+    }
     /**
      * @deprecated replaced by {@link #disconnectWait()}
      */
@@ -278,6 +325,15 @@ class BleRemotePeripheral {
             }, 90 * 1000);
             this.obnizBle.centralBindings.disconnect(this.address);
         });
+    }
+    async readPhyWait() {
+        const data = await this.obnizBle.centralBindings.readPhyWait(this.address);
+        if (data.status === 0) {
+            return { txPhy: data.txPhy, rxPhy: data.rxPhy };
+        }
+    }
+    async setPhyWait(usePhy1m, usePhy2m, usePhyCoded, useCodedModeS8, useCodedModeS2) {
+        await this.obnizBle.centralBindings.setPhyWait(this.address, usePhy1m, usePhy2m, usePhyCoded, useCodedModeS8, useCodedModeS2);
     }
     /**
      * It returns a service which having specified uuid in [[services]].

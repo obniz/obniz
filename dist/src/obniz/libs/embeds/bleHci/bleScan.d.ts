@@ -213,6 +213,27 @@ export default class BleScan {
      */
     startExtendedWait(target?: BleScanTarget | null, settings?: BleScanSetting, usePhy1m?: boolean, usePhyCoded?: boolean): Promise<void>;
     /**
+     * This scans and returns the first peripheral that was found among the objects specified in the target.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     *
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * console.log(peripheral);
+     * ```
+     *
+     * @param target
+     * @param settings
+     * @param usePhy1m
+     * @param usePhyCoded
+     */
+    startExtendedOneWait(target: BleScanTarget, settings?: BleScanSetting, usePhy1m?: boolean, usePhyCoded?: boolean): Promise<BleRemotePeripheral | null>;
+    /**
      * This starts scanning BLE.
      *
      * You can filter uuids or localName using the target param.
