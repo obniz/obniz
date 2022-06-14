@@ -131,14 +131,16 @@ export default class ObnizBLE extends ComponentAbstract {
    * @ignore
    */
   private _initialized = false;
+  private _extended = false;
 
-  constructor(obniz: Obniz) {
+  constructor(obniz: Obniz, info: any) {
     super(obniz);
     this.hci = new ObnizBLEHci(obniz);
     this.service = BleService;
     this.characteristic = BleCharacteristic;
     this.descriptor = BleDescriptor;
-
+    this._extended = info.extended;
+    console.log('info.extended', info.extended);
     // this.on("/response/ble/hci/read", (obj) => {
     //   if (obj.hci) {
     //     this.hci.notified(obj.hci);
@@ -225,12 +227,19 @@ export default class ObnizBLE extends ComponentAbstract {
    * Initialize BLE module. You need call this first everything before.
    * This throws if device is not supported device.
    *
+   * esp32 C3 or esp32 S3 Put false in the argument
+   * when not using the BLE5.0 extended advertise
+   *
    * ```javascript
    * // Javascript Example
    * await obniz.ble.initWait();
    * ```
    */
-  public async initWait(): Promise<void> {
+  public async initWait(extendedDisable = false): Promise<void> {
+    if (this._extended && extendedDisable) {
+      this._extended = extendedDisable;
+      this._reset();
+    }
     if (!this._initialized) {
       const MinHCIAvailableOS = '3.0.0';
       if (semver.lt(this.Obniz.firmware_ver!, MinHCIAvailableOS)) {
@@ -308,14 +317,14 @@ export default class ObnizBLE extends ComponentAbstract {
       this.peripheral = new BlePeripheral(this);
     }
     if (!this.scan) {
-      this.scan = new BleScan(this);
+      this.scan = new BleScan(this, this._extended);
     } else {
       this.scan.notifyFromServer('obnizClose', {});
     }
     if (!this.advertisement) {
       this.advertisement = new BleAdvertisement(this);
     }
-    if (!this.extendedAdvertisement) {
+    if (!this.extendedAdvertisement && this._extended) {
       this.extendedAdvertisement = new BleExtendedAdvertisement(this);
     }
 

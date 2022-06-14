@@ -74,7 +74,8 @@ export default class ObnizBLE extends ComponentAbstract {
      * @ignore
      */
     private _initialized;
-    constructor(obniz: Obniz);
+    private _extended;
+    constructor(obniz: Obniz, info: any);
     notifyFromObniz(json: any): void;
     setDefaultPhyWait(usePhy1m: boolean, usePhy2m: boolean, usePhyCoded: boolean): Promise<void>;
     protected onUpdatePhy(handler: number, txPhy: number, rxPhy: number): void;
@@ -83,12 +84,15 @@ export default class ObnizBLE extends ComponentAbstract {
      * Initialize BLE module. You need call this first everything before.
      * This throws if device is not supported device.
      *
+     * esp32 C3 or esp32 S3 Put false in the argument
+     * when not using the BLE5.0 extended advertise
+     *
      * ```javascript
      * // Javascript Example
      * await obniz.ble.initWait();
      * ```
      */
-    initWait(): Promise<void>;
+    initWait(extendedDisable?: boolean): Promise<void>;
     /**
      * Reset Target Device and current SDK status without rebooting. If error occured while reset, then target device will reboot.
      *

@@ -17,7 +17,7 @@ const bleHelper_1 = __importDefault(require("./bleHelper"));
  * @category Use as Central
  */
 class BleScan {
-    constructor(obnizBle) {
+    constructor(obnizBle, extendedSupport) {
         this.state = 'stopped';
         this._delayNotifyTimers = [];
         this.obnizBle = obnizBle;
@@ -29,6 +29,7 @@ class BleScan {
         this.obnizBle.Obniz.on('_close', () => {
             this.clearTimeoutTimer();
         });
+        this._extendedSupport = extendedSupport;
     }
     /**
      * @ignore
@@ -54,148 +55,6 @@ class BleScan {
         })
             .catch((e) => {
             throw e;
-        });
-    }
-    /**
-     * This starts scanning BLE.
-     * Support BLE 5.0
-     *
-     * Coded Phy(Long Lange Mode)
-     * 2M Phy(Faster Mode)(Secondary Only)
-     * Secondary PHY
-     * Long Data(31Byte -> 1650Byte)
-     *
-     * You can filter uuids or localName using the target param.
-     *
-     * ```javascript
-     * // Javascript Example
-     * var target = {
-     *     uuids: ["fff0","FFF1"],     //scan only has uuids "fff0" and "FFF1"
-     *     localName: "obniz-BLE",     //scan only has localName "obniz-BLE"
-     * };
-     *
-     * var setting = {
-     *    duration : 10  //scan duration time in seconds. default is 30 sec.
-     * }
-     *
-     * await obniz.ble.initWait();
-     * await obniz.ble.scan.startExtendedWait(target, setting,false,true);
-     * ```
-     *
-     * This is also possible without params being valid.
-     *
-     * ```javascript
-     * // Javascript Example
-     * await obniz.ble.scan.startExtendedWait();
-     * ```
-     *
-     * Scanning starts with no error and results with not advertisement found while a device is trying to connect a peripheral.
-     * Before start scannnig. Establishing connection must be completed or canceled.
-     *
-     * @param target
-     * @param settings
-     * @param usePhy1m
-     * @param usePhyCoded
-     */
-    async startExtendedWait(target = {}, settings = {}, usePhy1m = true, usePhyCoded = true) {
-        this.obnizBle.warningIfNotInitialize();
-        if (this.isContainingBleScanSettingProperty(target)) {
-            this.obnizBle.Obniz.warning({
-                alert: 'warning',
-                message: `Unexpected arguments. It might be contained the second argument keys. Please check object keys and order of 'startWait()' / 'startOneWait()' / 'startAllWait()' arguments. `,
-            });
-        }
-        this.state = 'starting';
-        try {
-            const timeout = settings.duration === undefined ? 30 : settings.duration;
-            settings.duplicate = !!settings.duplicate;
-            settings.filterOnDevice = !!settings.filterOnDevice;
-            settings.activeScan = settings.activeScan !== false;
-            settings.waitBothAdvertisementAndScanResponse =
-                settings.waitBothAdvertisementAndScanResponse !== false;
-            this.scanSettings = settings;
-            this.scanTarget = {};
-            target = target || {};
-            this.scanTarget.binary = target.binary;
-            if (target && target.deviceAddress) {
-                this.scanTarget.deviceAddress = this._arrayWrapper(target.deviceAddress).map((elm) => {
-                    return bleHelper_1.default.deviceAddressFilter(elm);
-                });
-            }
-            this.scanTarget.localName = target.localName;
-            this.scanTarget.localNamePrefix = target.localNamePrefix;
-            this.scanTarget.uuids = [];
-            if (target && target.uuids) {
-                this.scanTarget.uuids = target.uuids.map((elm) => {
-                    return bleHelper_1.default.uuidFilter(elm);
-                });
-            }
-            this.scanedPeripherals = [];
-            this._clearDelayNotifyTimer();
-            if (settings.filterOnDevice) {
-                this._setTargetFilterOnDevice(this.scanTarget);
-            }
-            else {
-                this._setTargetFilterOnDevice({}); // clear
-            }
-            await this.obnizBle.centralBindings.startExtendedScanningWait([], settings.duplicate, settings.activeScan, usePhy1m, usePhyCoded);
-            this.clearTimeoutTimer();
-            if (timeout !== null) {
-                this._timeoutTimer = setTimeout(async () => {
-                    this._timeoutTimer = undefined;
-                    try {
-                        await this.endWait();
-                    }
-                    catch (e) {
-                        this.finish(e);
-                    }
-                }, timeout * 1000);
-            }
-            this.state = 'started';
-        }
-        catch (e) {
-            this.state = 'stopped';
-            throw e;
-        }
-    }
-    /**
-     * This scans and returns the first peripheral that was found among the objects specified in the target.
-     *
-     * ```javascript
-     * // Javascript Example
-     *
-     * await obniz.ble.initWait();
-     * var target = {
-     *   uuids: ["fff0"],
-     * };
-     *
-     * var peripheral = await obniz.ble.scan.startOneWait(target);
-     * console.log(peripheral);
-     * ```
-     *
-     * @param target
-     * @param settings
-     * @param usePhy1m
-     * @param usePhyCoded
-     */
-    async startExtendedOneWait(target, settings = {}, usePhy1m = true, usePhyCoded = true) {
-        await this.startExtendedWait(target, settings, usePhy1m, usePhyCoded);
-        return new Promise((resolve, reject) => {
-            this.emitter.once('onfind', async (peripheral, error) => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-                resolve(peripheral);
-                await this.endWait();
-            });
-            this.emitter.once('onfinish', (peripherals, error) => {
-                if (error) {
-                    assert_1.rejects(error);
-                    return;
-                }
-                resolve(null);
-            });
         });
     }
     /**
@@ -272,7 +131,18 @@ class BleScan {
             else {
                 this._setTargetFilterOnDevice({}); // clear
             }
-            await this.obnizBle.centralBindings.startScanningWait([], settings.duplicate, settings.activeScan);
+            if (!settings.usePhyCoded) {
+                settings.usePhyCoded = true;
+            }
+            if (!settings.usePhy1m) {
+                settings.usePhy1m = true;
+            }
+            if (this._extendedSupport) {
+                await this.obnizBle.centralBindings.startExtendedScanningWait([], settings.duplicate, settings.activeScan, settings.usePhy1m, settings.usePhyCoded);
+            }
+            else {
+                await this.obnizBle.centralBindings.startScanningWait([], settings.duplicate, settings.activeScan);
+            }
             this.clearTimeoutTimer();
             if (timeout !== null) {
                 this._timeoutTimer = setTimeout(async () => {

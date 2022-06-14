@@ -101,6 +101,34 @@ export interface BleScanSetting {
      */
     filterOnDevice?: boolean;
     /**
+     * (ESP32 C3 or ESP32 S3)
+     *
+     * True: Scan phy<br/>
+     * False : Do not scan phy
+     *
+     * Default is true : Scan phy
+     *
+     *
+     * ```javascript
+     * // Javascript Example
+     * var target = {
+     *     localName: "obniz-BLE",     //scan only has localName "obniz-BLE"
+     * };
+     *
+     * var setting = {
+     *    usePhy1m : false,
+     *    usePhyCoded: true
+     * }
+     *
+     * await obniz.ble.initWait();
+     * await obniz.ble.scan.startWait(target, setting);
+     * ```
+     *
+     *
+     */
+    usePhy1m?: boolean;
+    usePhyCoded?: boolean;
+    /**
      * If only one of advertisement and scanResponse is coming, wait until both come.
      *
      * True : wait for other data come until 10 seconds
@@ -158,7 +186,8 @@ export default class BleScan {
     protected scanedPeripherals: BleRemotePeripheral[];
     private _timeoutTimer?;
     private _delayNotifyTimers;
-    constructor(obnizBle: ObnizBLE);
+    private _extendedSupport;
+    constructor(obnizBle: ObnizBLE, extendedSupport: boolean);
     /**
      * @ignore
      * @private
@@ -170,69 +199,6 @@ export default class BleScan {
      * @deprecated
      */
     start(target?: BleScanTarget | null, settings?: BleScanSetting): void;
-    /**
-     * This starts scanning BLE.
-     * Support BLE 5.0
-     *
-     * Coded Phy(Long Lange Mode)
-     * 2M Phy(Faster Mode)(Secondary Only)
-     * Secondary PHY
-     * Long Data(31Byte -> 1650Byte)
-     *
-     * You can filter uuids or localName using the target param.
-     *
-     * ```javascript
-     * // Javascript Example
-     * var target = {
-     *     uuids: ["fff0","FFF1"],     //scan only has uuids "fff0" and "FFF1"
-     *     localName: "obniz-BLE",     //scan only has localName "obniz-BLE"
-     * };
-     *
-     * var setting = {
-     *    duration : 10  //scan duration time in seconds. default is 30 sec.
-     * }
-     *
-     * await obniz.ble.initWait();
-     * await obniz.ble.scan.startExtendedWait(target, setting,false,true);
-     * ```
-     *
-     * This is also possible without params being valid.
-     *
-     * ```javascript
-     * // Javascript Example
-     * await obniz.ble.scan.startExtendedWait();
-     * ```
-     *
-     * Scanning starts with no error and results with not advertisement found while a device is trying to connect a peripheral.
-     * Before start scannnig. Establishing connection must be completed or canceled.
-     *
-     * @param target
-     * @param settings
-     * @param usePhy1m
-     * @param usePhyCoded
-     */
-    startExtendedWait(target?: BleScanTarget | null, settings?: BleScanSetting, usePhy1m?: boolean, usePhyCoded?: boolean): Promise<void>;
-    /**
-     * This scans and returns the first peripheral that was found among the objects specified in the target.
-     *
-     * ```javascript
-     * // Javascript Example
-     *
-     * await obniz.ble.initWait();
-     * var target = {
-     *   uuids: ["fff0"],
-     * };
-     *
-     * var peripheral = await obniz.ble.scan.startOneWait(target);
-     * console.log(peripheral);
-     * ```
-     *
-     * @param target
-     * @param settings
-     * @param usePhy1m
-     * @param usePhyCoded
-     */
-    startExtendedOneWait(target: BleScanTarget, settings?: BleScanSetting, usePhy1m?: boolean, usePhyCoded?: boolean): Promise<BleRemotePeripheral | null>;
     /**
      * This starts scanning BLE.
      *

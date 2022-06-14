@@ -94,7 +94,9 @@
     }
   },
   "network": {
-    "wifi": {}
+    "wifi": {
+      "extended": false
+    }
   },
   "extraInterface": {
     "m5stickc_hat": {

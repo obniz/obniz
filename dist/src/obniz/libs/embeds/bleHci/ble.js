@@ -31,19 +31,22 @@ const bleExtendedAdvertisement_1 = __importDefault(require("./bleExtendedAdverti
  * Peripheral and Central mode are supported
  */
 class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
-    constructor(obniz) {
+    constructor(obniz, info) {
         super(obniz);
         this.remotePeripherals = [];
         /**
          * @ignore
          */
         this._initialized = false;
+        this._extended = false;
         // eslint-disable-next-line
         this.debugHandler = (text) => { };
         this.hci = new hci_1.default(obniz);
         this.service = bleService_1.default;
         this.characteristic = bleCharacteristic_1.default;
         this.descriptor = bleDescriptor_1.default;
+        this._extended = info.extended;
+        console.log('info.extended', info.extended);
         // this.on("/response/ble/hci/read", (obj) => {
         //   if (obj.hci) {
         //     this.hci.notified(obj.hci);
@@ -167,12 +170,19 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * Initialize BLE module. You need call this first everything before.
      * This throws if device is not supported device.
      *
+     * esp32 C3 or esp32 S3 Put false in the argument
+     * when not using the BLE5.0 extended advertise
+     *
      * ```javascript
      * // Javascript Example
      * await obniz.ble.initWait();
      * ```
      */
-    async initWait() {
+    async initWait(extendedDisable = false) {
+        if (this._extended && extendedDisable) {
+            this._extended = extendedDisable;
+            this._reset();
+        }
         if (!this._initialized) {
             const MinHCIAvailableOS = '3.0.0';
             if (semver_1.default.lt(this.Obniz.firmware_ver, MinHCIAvailableOS)) {
@@ -242,7 +252,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             this.peripheral = new blePeripheral_1.default(this);
         }
         if (!this.scan) {
-            this.scan = new bleScan_1.default(this);
+            this.scan = new bleScan_1.default(this, this._extended);
         }
         else {
             this.scan.notifyFromServer('obnizClose', {});
@@ -250,7 +260,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         if (!this.advertisement) {
             this.advertisement = new bleAdvertisement_1.default(this);
         }
-        if (!this.extendedAdvertisement) {
+        if (!this.extendedAdvertisement && this._extended) {
             this.extendedAdvertisement = new bleExtendedAdvertisement_1.default(this);
         }
         // reset all submodules.
