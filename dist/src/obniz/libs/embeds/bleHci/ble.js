@@ -46,7 +46,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         this.characteristic = bleCharacteristic_1.default;
         this.descriptor = bleDescriptor_1.default;
         this._extended = info.extended;
-        console.log('info.extended', info.extended);
         // this.on("/response/ble/hci/read", (obj) => {
         //   if (obj.hci) {
         //     this.hci.notified(obj.hci);
@@ -121,18 +120,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         }
         return str;
     }
-    phyToStr(phy) {
-        switch (phy) {
-            case 1:
-                return '1m';
-            case 2:
-                return '2m';
-            case 3:
-                return 'coded';
-            default:
-                throw new Error('decode Phy Error');
-        }
-    }
     notifyFromObniz(json) {
         if (json.hci) {
             this.hci.notified(json.hci);
@@ -158,12 +145,22 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             this.Obniz.error({ alert: 'error', message: msg });
         }
     }
+    /**
+     * ESP32 C3 or ESP32 S3 only
+     *
+     * Sets the PHY to use by default
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.setDefaultPhyWait(false,false,true);//coded only
+     * ```
+     */
     async setDefaultPhyWait(usePhy1m, usePhy2m, usePhyCoded) {
         await this.centralBindings.setDefaultPhyWait(usePhy1m, usePhy2m, usePhyCoded);
     }
-    onUpdatePhy(handler, txPhy, rxPhy) {
-        if (this.onPhy) {
-            this.onPhy(this.phyToStr(txPhy), this.phyToStr(rxPhy), handler);
+    _onUpdatePhy(handler, txPhy, rxPhy) {
+        if (this.onUpdatePhy) {
+            this.onUpdatePhy(this.phyToStr(txPhy), this.phyToStr(rxPhy), handler);
         }
     }
     /**
@@ -288,7 +285,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             this.centralBindings.on('discover', this.onDiscover.bind(this));
             this.centralBindings.on('disconnect', this.onDisconnect.bind(this));
             this.centralBindings.on('notification', this.onNotification.bind(this));
-            this.centralBindings.on('updatePhy', this.onUpdatePhy.bind(this));
+            this.centralBindings.on('updatePhy', this._onUpdatePhy.bind(this));
         }
         else {
             this.centralBindings._reset();
@@ -441,6 +438,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             service_data: advertisement.serviceData,
         };
         val.setParams(peripheralData);
+        val.setExtendFlg(this._extended);
         this.scan.notifyFromServer('onfind', val);
     }
     onDisconnect(peripheralUuid, reason) {
@@ -511,6 +509,18 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     }
     debug(text) {
         this.debugHandler(text);
+    }
+    phyToStr(phy) {
+        switch (phy) {
+            case 1:
+                return '1m';
+            case 2:
+                return '2m';
+            case 3:
+                return 'coded';
+            default:
+                throw new Error('decode Phy Error');
+        }
     }
 }
 exports.default = ObnizBLE;

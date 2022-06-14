@@ -68,8 +68,18 @@ export default class ObnizBLE extends ComponentAbstract {
     protected hciProtocol: HciProtocol;
     protected _initializeWarning: boolean;
     protected remotePeripherals: BleRemotePeripheral[];
-    private phyToStr;
-    onPhy?: (txPhy: '1m' | '2m' | 'coded', rxPhy: '1m' | '2m' | 'coded', handler?: number) => void;
+    /**
+     * This is a callback function used when an external device gets connected or disconnected.
+     *
+     * ```javascript
+     * await obniz.ble.initWait();
+     * obniz.ble.onUpdatePhy = ((txPhy, rxPhy) => {
+     *    console.log("txPhy "+txPhy+" rxPhy "+rxPhy);
+     * });
+     * ```
+     *
+     */
+    onUpdatePhy?: (txPhy: '1m' | '2m' | 'coded', rxPhy: '1m' | '2m' | 'coded', handler?: number) => void;
     /**
      * @ignore
      */
@@ -77,8 +87,18 @@ export default class ObnizBLE extends ComponentAbstract {
     private _extended;
     constructor(obniz: Obniz, info: any);
     notifyFromObniz(json: any): void;
+    /**
+     * ESP32 C3 or ESP32 S3 only
+     *
+     * Sets the PHY to use by default
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.setDefaultPhyWait(false,false,true);//coded only
+     * ```
+     */
     setDefaultPhyWait(usePhy1m: boolean, usePhy2m: boolean, usePhyCoded: boolean): Promise<void>;
-    protected onUpdatePhy(handler: number, txPhy: number, rxPhy: number): void;
+    protected _onUpdatePhy(handler: number, txPhy: number, rxPhy: number): void;
     debugHandler: (text: string) => void;
     /**
      * Initialize BLE module. You need call this first everything before.
@@ -186,4 +206,5 @@ export default class ObnizBLE extends ComponentAbstract {
     protected onPeripheralMtuChange(mtu: any): void;
     protected onPeripheralDisconnect(clientAddress: any, reason: any): void;
     private debug;
+    private phyToStr;
 }

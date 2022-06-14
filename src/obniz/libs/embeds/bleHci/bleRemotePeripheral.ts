@@ -100,6 +100,33 @@ export interface BleConnectSetting {
    * Default : 256
    */
   mtuRequest?: null | number;
+
+  /**
+   * PHY used for connection
+   *
+   * It was May connect using that PHY
+   *
+   * Default : true
+   */
+  usePyh1m?: boolean;
+
+  /**
+   * PHY used for connection
+   *
+   * It was May connect using that PHY
+   *
+   * Default : true
+   */
+  usePyh2m?: boolean;
+
+  /**
+   * PHY used for connection
+   *
+   * It was May connect using that PHY
+   *
+   * Default : true
+   */
+  usePyhCoded?: boolean;
 }
 
 /**
@@ -414,6 +441,7 @@ export default class BleRemotePeripheral {
   ];
   protected _services: BleRemoteService[];
   protected emitter: EventEmitter;
+  private _extended = false;
 
   constructor(obnizBle: ObnizBLE, address: BleDeviceAddress) {
     this.obnizBle = obnizBle;
@@ -464,6 +492,14 @@ export default class BleRemotePeripheral {
       }
     }
     this.analyseAdvertisement();
+  }
+
+  /**
+   * @ignore
+   * @param extendedMode
+   */
+  public setExtendFlg(extendedMode: boolean) {
+    this._extended = extendedMode;
   }
 
   /**
@@ -541,74 +577,42 @@ export default class BleRemotePeripheral {
       this._connectSetting.mtuRequest === undefined
         ? 256
         : this._connectSetting.mtuRequest;
+    if (!this._connectSetting.usePyh1m) {
+      this._connectSetting.usePyh1m = true;
+    }
+    if (!this._connectSetting.usePyh2m) {
+      this._connectSetting.usePyh2m = true;
+    }
+    if (!this._connectSetting.usePyhCoded) {
+      this._connectSetting.usePyhCoded = true;
+    }
     await this.obnizBle.scan.endWait();
 
     try {
-      await this.obnizBle.centralBindings.connectWait(
-        this.address,
-        this._connectSetting.mtuRequest,
-        () => {
-          if (this._connectSetting.pairingOption) {
-            this.setPairingOption(this._connectSetting.pairingOption);
+      if (this._extended) {
+        await this.obnizBle.centralBindings.connectExtendedWait(
+          this.address,
+          this._connectSetting.mtuRequest,
+          () => {
+            if (this._connectSetting.pairingOption) {
+              this.setPairingOption(this._connectSetting.pairingOption);
+            }
+          },
+          this._connectSetting.usePyh1m,
+          this._connectSetting.usePyh2m,
+          this._connectSetting.usePyhCoded
+        );
+      } else {
+        await this.obnizBle.centralBindings.connectWait(
+          this.address,
+          this._connectSetting.mtuRequest,
+          () => {
+            if (this._connectSetting.pairingOption) {
+              this.setPairingOption(this._connectSetting.pairingOption);
+            }
           }
-        }
-      );
-    } catch (e) {
-      if (e instanceof ObnizTimeoutError) {
-        await this.obnizBle.resetWait();
-        throw new Error(
-          `Connection to device(address=${this.address}) was timedout. ble have been reseted`
         );
       }
-      throw e;
-    }
-    this.connected = true;
-    this.connected_at = new Date();
-    try {
-      if (this._connectSetting.autoDiscovery) {
-        await this.discoverAllHandlesWait();
-      }
-    } catch (e) {
-      try {
-        await this.disconnectWait();
-      } catch (e2) {
-        // nothing
-      }
-      throw e;
-    }
-    this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
-    this.emitter.emit('connect');
-  }
-
-  public async connectExtendedWait(
-    setting?: BleConnectSetting,
-    pyh1m = true,
-    pyh2m = true,
-    pyhCoded = true
-  ): Promise<void> {
-    if (this.connected && setting?.forceConnect === false) return;
-    this._connectSetting = setting || {};
-    this._connectSetting.autoDiscovery =
-      this._connectSetting.autoDiscovery !== false;
-    this._connectSetting.mtuRequest =
-      this._connectSetting.mtuRequest === undefined
-        ? 256
-        : this._connectSetting.mtuRequest;
-    await this.obnizBle.scan.endWait();
-
-    try {
-      await this.obnizBle.centralBindings.connectExtendedWait(
-        this.address,
-        this._connectSetting.mtuRequest,
-        () => {
-          if (this._connectSetting.pairingOption) {
-            this.setPairingOption(this._connectSetting.pairingOption);
-          }
-        },
-        pyh1m,
-        pyh2m,
-        pyhCoded
-      );
     } catch (e) {
       if (e instanceof ObnizTimeoutError) {
         await this.obnizBle.resetWait();

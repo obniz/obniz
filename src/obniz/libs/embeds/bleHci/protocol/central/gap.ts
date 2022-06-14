@@ -97,7 +97,20 @@ class Gap extends EventEmitter<GapEventTypes> {
   public async stopScanningWait() {
     try {
       if (this._scanState === 'starting' || this._scanState === 'started') {
-        // await this.setScanEnabledWait(false, true);
+        await this.setScanEnabledWait(false, true);
+      }
+    } catch (e) {
+      if (e instanceof ObnizBleScanStartError) {
+        // If not started yet. this error may called. just ignore it.
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  public async stopExtendedScanningWait() {
+    try {
+      if (this._scanState === 'starting' || this._scanState === 'started') {
         await this.setExtendedScanEnabledWait(false, true);
       }
     } catch (e) {

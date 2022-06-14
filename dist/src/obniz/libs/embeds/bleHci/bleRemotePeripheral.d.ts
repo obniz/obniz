@@ -86,6 +86,30 @@ export interface BleConnectSetting {
      * Default : 256
      */
     mtuRequest?: null | number;
+    /**
+     * PHY used for connection
+     *
+     * It was May connect using that PHY
+     *
+     * Default : true
+     */
+    usePyh1m?: boolean;
+    /**
+     * PHY used for connection
+     *
+     * It was May connect using that PHY
+     *
+     * Default : true
+     */
+    usePyh2m?: boolean;
+    /**
+     * PHY used for connection
+     *
+     * It was May connect using that PHY
+     *
+     * Default : true
+     */
+    usePyhCoded?: boolean;
 }
 /**
  * Pairing options
@@ -370,6 +394,7 @@ export default class BleRemotePeripheral {
     protected keys: string[];
     protected _services: BleRemoteService[];
     protected emitter: EventEmitter;
+    private _extended;
     constructor(obnizBle: ObnizBLE, address: BleDeviceAddress);
     /**
      * @ignore
@@ -381,6 +406,11 @@ export default class BleRemotePeripheral {
      * @param dic
      */
     setParams(dic: any): void;
+    /**
+     * @ignore
+     * @param extendedMode
+     */
+    setExtendFlg(extendedMode: boolean): void;
     /**
      * @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
      */
@@ -444,7 +474,6 @@ export default class BleRemotePeripheral {
      *
      */
     connectWait(setting?: BleConnectSetting): Promise<void>;
-    connectExtendedWait(setting?: BleConnectSetting, pyh1m?: boolean, pyh2m?: boolean, pyhCoded?: boolean): Promise<void>;
     /**
      * @deprecated replaced by {@link #disconnectWait()}
      */

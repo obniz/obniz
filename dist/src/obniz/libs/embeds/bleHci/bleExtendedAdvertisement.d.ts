@@ -21,8 +21,25 @@ export default class BleExtendedAdvertisement extends BleAdvertisement {
      * AdvertiseMode can be changed
      *
      * broadcast   MAX advData     1650Byte
-     * connectable MAX advData      242Byte
+     * connectable MAX advData      242Byte default
      * scannable   MAX scanRspData 1650Byte
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.extendedAdvertisement.setMode(broadcast);
+     * obniz.ble.extendedAdvertisement.setAdvData({
+     *   localName: "test_obniz",
+     *   serviceData:[{
+     *     uuid:0x2534,
+     *     data:[0x55,0x55,0x55,0x55,0x55,0x65,0x65,0x65,5,0x55,0x55,0x65,0x55,0x55,0x65,0x65,0x55,0x55,0x55,0x55,]
+     *   },{
+     *     uuid:0x3544,
+     *     data:[0x55,0x55,0x55,0x55,0x55,0x65,0x65,0x65,0x65,0x55,0x55,0x55,0x65,0x55,0x55,0x65,0x65,0x55,0x55,0x55,0x55,]
+     *   }]
+     * })
+     * obniz.ble.extendedAdvertisement.start();
+     * ```
      *
      * @param mode BleExtendedAdvertisementMode
      */
@@ -40,8 +57,19 @@ export default class BleExtendedAdvertisement extends BleAdvertisement {
      *  uuid : "fff0"
      * });
      * obniz.ble.peripheral.addService(service);
-     * obniz.ble.advertisement.setAdvData(service.advData);
-     * obniz.ble.advertisement.start();
+     * obniz.ble.extendedAdvertisement.setAdvData({
+     *   flags:service.advData.flags,
+     *   serviceUuids:service.advData.serviceUuids,
+     *   localName: "test_obniz",
+     *   serviceData:[{
+     *     uuid:0x2534,
+     *     data:[0x55,0x55,0x55,0x55,0x55,0x65,0x65,0x65,5,0x55,0x55,0x65,0x55,0x55,0x65,0x65,0x55,0x55,0x55,0x55,]
+     *   },{
+     *     uuid:0x3544,
+     *     data:[0x55,0x55,0x55,0x55,0x55,0x65,0x65,0x65,0x65,0x55,0x55,0x55,0x65,0x55,0x55,0x65,0x65,0x55,0x55,0x55,0x55,]
+     *   }]
+     * })
+     * obniz.ble.extendedAdvertisement.start();
      * ```
      */
     startWait(primaryPhy?: 'PHY_1m' | 'PHY_Coded', secondaryPhy?: 'PHY_1m' | 'PHY_2m' | 'PHY_Coded'): Promise<void>;
@@ -55,8 +83,8 @@ export default class BleExtendedAdvertisement extends BleAdvertisement {
      * ```javascript
      * // Javascript Example
      * await obniz.ble.initWait();
-     * obniz.ble.advertisement.start();
-     * obniz.ble.advertisement.end();
+     * obniz.ble.extendedAdvertisement.start();
+     * obniz.ble.extendedAdvertisement.end();
      * ```
      *
      */
@@ -71,11 +99,11 @@ export default class BleExtendedAdvertisement extends BleAdvertisement {
      * ```javascript
      * // Javascript Example
      * await obniz.ble.initWait();
-     * obniz.ble.advertisement.setAdvDataRaw([0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
+     * obniz.ble.extendedAdvertisement.setAdvDataRaw([0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
      * //0x02, 0x01, 0x1A  => BLE type for
      * //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
      *
-     * obniz.ble.advertisement.start();
+     * obniz.ble.extendedAdvertisement.start();
      * ```
      *
      * @param adv_data
@@ -88,7 +116,7 @@ export default class BleExtendedAdvertisement extends BleAdvertisement {
      * // Javascript Example
      *
      * await obniz.ble.initWait();
-     * obniz.ble.advertisement.setAdvData({
+     * obniz.ble.extendedAdvertisement.setAdvData({
      *   flags: ["general_discoverable_mode","br_edr_not_supported"],
      *   manufacturerData:{
      *     companyCode : 0x004C,
@@ -97,7 +125,7 @@ export default class BleExtendedAdvertisement extends BleAdvertisement {
      *   }
      * });
      *
-     * obniz.ble.advertisement.start();
+     * obniz.ble.extendedAdvertisement.start();
      * ```
      *
      * @param json
@@ -109,7 +137,7 @@ export default class BleExtendedAdvertisement extends BleAdvertisement {
      * ```javascript
      * // Javascript Example
      * await obniz.ble.initWait();
-     * obniz.ble.advertisement.setScanRespDataRaw([0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
+     * obniz.ble.extendedAdvertisement.setScanRespDataRaw([0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
      * //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
      *
      * obniz.ble.advertisement.start();
@@ -124,7 +152,7 @@ export default class BleExtendedAdvertisement extends BleAdvertisement {
      * ```javascript
      * // Javascript Example
      * await obniz.ble.initWait();
-     * obniz.ble.advertisement.setScanRespData({
+     * obniz.ble.extendedAdvertisement.setScanRespData({
      *   localName : "obniz BLE",
      * });
      *

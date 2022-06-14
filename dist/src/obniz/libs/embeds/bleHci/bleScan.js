@@ -269,7 +269,12 @@ class BleScan {
         if (this.state === 'started' || this.state === 'starting') {
             this.state = 'stopping';
             this.clearTimeoutTimer();
-            await this.obnizBle.centralBindings.stopScanningWait();
+            if (this._extendedSupport) {
+                await this.obnizBle.centralBindings.stopExtendedScanningWait();
+            }
+            else {
+                await this.obnizBle.centralBindings.stopScanningWait();
+            }
             this.finish(); // state will changed to stopped inside of this function.
         }
     }

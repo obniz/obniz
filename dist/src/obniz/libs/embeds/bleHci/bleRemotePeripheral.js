@@ -38,6 +38,7 @@ class BleRemotePeripheral {
             'scan_resp',
             'service_data',
         ];
+        this._extended = false;
         this.obnizBle = obnizBle;
         this.address = address;
         this.connected = false;
@@ -115,6 +116,13 @@ class BleRemotePeripheral {
         this.analyseAdvertisement();
     }
     /**
+     * @ignore
+     * @param extendedMode
+     */
+    setExtendFlg(extendedMode) {
+        this._extended = extendedMode;
+    }
+    /**
      * @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
      */
     connect(setting) {
@@ -190,58 +198,31 @@ class BleRemotePeripheral {
             this._connectSetting.mtuRequest === undefined
                 ? 256
                 : this._connectSetting.mtuRequest;
+        if (!this._connectSetting.usePyh1m) {
+            this._connectSetting.usePyh1m = true;
+        }
+        if (!this._connectSetting.usePyh2m) {
+            this._connectSetting.usePyh2m = true;
+        }
+        if (!this._connectSetting.usePyhCoded) {
+            this._connectSetting.usePyhCoded = true;
+        }
         await this.obnizBle.scan.endWait();
         try {
-            await this.obnizBle.centralBindings.connectWait(this.address, this._connectSetting.mtuRequest, () => {
-                if (this._connectSetting.pairingOption) {
-                    this.setPairingOption(this._connectSetting.pairingOption);
-                }
-            });
-        }
-        catch (e) {
-            if (e instanceof ObnizError_1.ObnizTimeoutError) {
-                await this.obnizBle.resetWait();
-                throw new Error(`Connection to device(address=${this.address}) was timedout. ble have been reseted`);
+            if (this._extended) {
+                await this.obnizBle.centralBindings.connectExtendedWait(this.address, this._connectSetting.mtuRequest, () => {
+                    if (this._connectSetting.pairingOption) {
+                        this.setPairingOption(this._connectSetting.pairingOption);
+                    }
+                }, this._connectSetting.usePyh1m, this._connectSetting.usePyh2m, this._connectSetting.usePyhCoded);
             }
-            throw e;
-        }
-        this.connected = true;
-        this.connected_at = new Date();
-        try {
-            if (this._connectSetting.autoDiscovery) {
-                await this.discoverAllHandlesWait();
+            else {
+                await this.obnizBle.centralBindings.connectWait(this.address, this._connectSetting.mtuRequest, () => {
+                    if (this._connectSetting.pairingOption) {
+                        this.setPairingOption(this._connectSetting.pairingOption);
+                    }
+                });
             }
-        }
-        catch (e) {
-            try {
-                await this.disconnectWait();
-            }
-            catch (e2) {
-                // nothing
-            }
-            throw e;
-        }
-        this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
-        this.emitter.emit('connect');
-    }
-    async connectExtendedWait(setting, pyh1m = true, pyh2m = true, pyhCoded = true) {
-        var _a;
-        if (this.connected && ((_a = setting) === null || _a === void 0 ? void 0 : _a.forceConnect) === false)
-            return;
-        this._connectSetting = setting || {};
-        this._connectSetting.autoDiscovery =
-            this._connectSetting.autoDiscovery !== false;
-        this._connectSetting.mtuRequest =
-            this._connectSetting.mtuRequest === undefined
-                ? 256
-                : this._connectSetting.mtuRequest;
-        await this.obnizBle.scan.endWait();
-        try {
-            await this.obnizBle.centralBindings.connectExtendedWait(this.address, this._connectSetting.mtuRequest, () => {
-                if (this._connectSetting.pairingOption) {
-                    this.setPairingOption(this._connectSetting.pairingOption);
-                }
-            }, pyh1m, pyh2m, pyhCoded);
         }
         catch (e) {
             if (e instanceof ObnizError_1.ObnizTimeoutError) {

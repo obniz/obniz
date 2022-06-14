@@ -5483,7 +5483,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         this.characteristic = bleCharacteristic_1.default;
         this.descriptor = bleDescriptor_1.default;
         this._extended = info.extended;
-        console.log('info.extended', info.extended);
         // this.on("/response/ble/hci/read", (obj) => {
         //   if (obj.hci) {
         //     this.hci.notified(obj.hci);
@@ -5558,18 +5557,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         }
         return str;
     }
-    phyToStr(phy) {
-        switch (phy) {
-            case 1:
-                return '1m';
-            case 2:
-                return '2m';
-            case 3:
-                return 'coded';
-            default:
-                throw new Error('decode Phy Error');
-        }
-    }
     notifyFromObniz(json) {
         if (json.hci) {
             this.hci.notified(json.hci);
@@ -5595,12 +5582,22 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             this.Obniz.error({ alert: 'error', message: msg });
         }
     }
+    /**
+     * ESP32 C3 or ESP32 S3 only
+     *
+     * Sets the PHY to use by default
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.setDefaultPhyWait(false,false,true);//coded only
+     * ```
+     */
     async setDefaultPhyWait(usePhy1m, usePhy2m, usePhyCoded) {
         await this.centralBindings.setDefaultPhyWait(usePhy1m, usePhy2m, usePhyCoded);
     }
-    onUpdatePhy(handler, txPhy, rxPhy) {
-        if (this.onPhy) {
-            this.onPhy(this.phyToStr(txPhy), this.phyToStr(rxPhy), handler);
+    _onUpdatePhy(handler, txPhy, rxPhy) {
+        if (this.onUpdatePhy) {
+            this.onUpdatePhy(this.phyToStr(txPhy), this.phyToStr(rxPhy), handler);
         }
     }
     /**
@@ -5725,7 +5722,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             this.centralBindings.on('discover', this.onDiscover.bind(this));
             this.centralBindings.on('disconnect', this.onDisconnect.bind(this));
             this.centralBindings.on('notification', this.onNotification.bind(this));
-            this.centralBindings.on('updatePhy', this.onUpdatePhy.bind(this));
+            this.centralBindings.on('updatePhy', this._onUpdatePhy.bind(this));
         }
         else {
             this.centralBindings._reset();
@@ -5878,6 +5875,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             service_data: advertisement.serviceData,
         };
         val.setParams(peripheralData);
+        val.setExtendFlg(this._extended);
         this.scan.notifyFromServer('onfind', val);
     }
     onDisconnect(peripheralUuid, reason) {
@@ -5948,6 +5946,18 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     }
     debug(text) {
         this.debugHandler(text);
+    }
+    phyToStr(phy) {
+        switch (phy) {
+            case 1:
+                return '1m';
+            case 2:
+                return '2m';
+            case 3:
+                return 'coded';
+            default:
+                throw new Error('decode Phy Error');
+        }
     }
 }
 exports.default = ObnizBLE;
@@ -6897,7 +6907,7 @@ const bleAdvertisement_1 = __importDefault(__webpack_require__("./dist/src/obniz
 class BleExtendedAdvertisement extends bleAdvertisement_1.default {
     constructor(obnizBle) {
         super(obnizBle);
-        this.mode = 'broadcast';
+        this.mode = 'connectable';
     }
     /**
      * @ignore
@@ -6910,8 +6920,25 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
      * AdvertiseMode can be changed
      *
      * broadcast   MAX advData     1650Byte
-     * connectable MAX advData      242Byte
+     * connectable MAX advData      242Byte default
      * scannable   MAX scanRspData 1650Byte
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.extendedAdvertisement.setMode(broadcast);
+     * obniz.ble.extendedAdvertisement.setAdvData({
+     *   localName: "test_obniz",
+     *   serviceData:[{
+     *     uuid:0x2534,
+     *     data:[0x55,0x55,0x55,0x55,0x55,0x65,0x65,0x65,5,0x55,0x55,0x65,0x55,0x55,0x65,0x65,0x55,0x55,0x55,0x55,]
+     *   },{
+     *     uuid:0x3544,
+     *     data:[0x55,0x55,0x55,0x55,0x55,0x65,0x65,0x65,0x65,0x55,0x55,0x55,0x65,0x55,0x55,0x65,0x65,0x55,0x55,0x55,0x55,]
+     *   }]
+     * })
+     * obniz.ble.extendedAdvertisement.start();
+     * ```
      *
      * @param mode BleExtendedAdvertisementMode
      */
@@ -6931,8 +6958,19 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
      *  uuid : "fff0"
      * });
      * obniz.ble.peripheral.addService(service);
-     * obniz.ble.advertisement.setAdvData(service.advData);
-     * obniz.ble.advertisement.start();
+     * obniz.ble.extendedAdvertisement.setAdvData({
+     *   flags:service.advData.flags,
+     *   serviceUuids:service.advData.serviceUuids,
+     *   localName: "test_obniz",
+     *   serviceData:[{
+     *     uuid:0x2534,
+     *     data:[0x55,0x55,0x55,0x55,0x55,0x65,0x65,0x65,5,0x55,0x55,0x65,0x55,0x55,0x65,0x65,0x55,0x55,0x55,0x55,]
+     *   },{
+     *     uuid:0x3544,
+     *     data:[0x55,0x55,0x55,0x55,0x55,0x65,0x65,0x65,0x65,0x55,0x55,0x55,0x65,0x55,0x55,0x65,0x65,0x55,0x55,0x55,0x55,]
+     *   }]
+     * })
+     * obniz.ble.extendedAdvertisement.start();
      * ```
      */
     async startWait(primaryPhy = 'PHY_1m', secondaryPhy = 'PHY_1m') {
@@ -7000,8 +7038,8 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
      * ```javascript
      * // Javascript Example
      * await obniz.ble.initWait();
-     * obniz.ble.advertisement.start();
-     * obniz.ble.advertisement.end();
+     * obniz.ble.extendedAdvertisement.start();
+     * obniz.ble.extendedAdvertisement.end();
      * ```
      *
      */
@@ -7020,11 +7058,11 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
      * ```javascript
      * // Javascript Example
      * await obniz.ble.initWait();
-     * obniz.ble.advertisement.setAdvDataRaw([0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
+     * obniz.ble.extendedAdvertisement.setAdvDataRaw([0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
      * //0x02, 0x01, 0x1A  => BLE type for
      * //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
      *
-     * obniz.ble.advertisement.start();
+     * obniz.ble.extendedAdvertisement.start();
      * ```
      *
      * @param adv_data
@@ -7039,7 +7077,7 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
      * // Javascript Example
      *
      * await obniz.ble.initWait();
-     * obniz.ble.advertisement.setAdvData({
+     * obniz.ble.extendedAdvertisement.setAdvData({
      *   flags: ["general_discoverable_mode","br_edr_not_supported"],
      *   manufacturerData:{
      *     companyCode : 0x004C,
@@ -7048,7 +7086,7 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
      *   }
      * });
      *
-     * obniz.ble.advertisement.start();
+     * obniz.ble.extendedAdvertisement.start();
      * ```
      *
      * @param json
@@ -7063,7 +7101,7 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
      * ```javascript
      * // Javascript Example
      * await obniz.ble.initWait();
-     * obniz.ble.advertisement.setScanRespDataRaw([0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
+     * obniz.ble.extendedAdvertisement.setScanRespDataRaw([0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
      * //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
      *
      * obniz.ble.advertisement.start();
@@ -7080,7 +7118,7 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
      * ```javascript
      * // Javascript Example
      * await obniz.ble.initWait();
-     * obniz.ble.advertisement.setScanRespData({
+     * obniz.ble.extendedAdvertisement.setScanRespData({
      *   localName : "obniz BLE",
      * });
      *
@@ -8223,6 +8261,7 @@ class BleRemotePeripheral {
             'scan_resp',
             'service_data',
         ];
+        this._extended = false;
         this.obnizBle = obnizBle;
         this.address = address;
         this.connected = false;
@@ -8300,6 +8339,13 @@ class BleRemotePeripheral {
         this.analyseAdvertisement();
     }
     /**
+     * @ignore
+     * @param extendedMode
+     */
+    setExtendFlg(extendedMode) {
+        this._extended = extendedMode;
+    }
+    /**
      * @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
      */
     connect(setting) {
@@ -8375,58 +8421,31 @@ class BleRemotePeripheral {
             this._connectSetting.mtuRequest === undefined
                 ? 256
                 : this._connectSetting.mtuRequest;
+        if (!this._connectSetting.usePyh1m) {
+            this._connectSetting.usePyh1m = true;
+        }
+        if (!this._connectSetting.usePyh2m) {
+            this._connectSetting.usePyh2m = true;
+        }
+        if (!this._connectSetting.usePyhCoded) {
+            this._connectSetting.usePyhCoded = true;
+        }
         await this.obnizBle.scan.endWait();
         try {
-            await this.obnizBle.centralBindings.connectWait(this.address, this._connectSetting.mtuRequest, () => {
-                if (this._connectSetting.pairingOption) {
-                    this.setPairingOption(this._connectSetting.pairingOption);
-                }
-            });
-        }
-        catch (e) {
-            if (e instanceof ObnizError_1.ObnizTimeoutError) {
-                await this.obnizBle.resetWait();
-                throw new Error(`Connection to device(address=${this.address}) was timedout. ble have been reseted`);
+            if (this._extended) {
+                await this.obnizBle.centralBindings.connectExtendedWait(this.address, this._connectSetting.mtuRequest, () => {
+                    if (this._connectSetting.pairingOption) {
+                        this.setPairingOption(this._connectSetting.pairingOption);
+                    }
+                }, this._connectSetting.usePyh1m, this._connectSetting.usePyh2m, this._connectSetting.usePyhCoded);
             }
-            throw e;
-        }
-        this.connected = true;
-        this.connected_at = new Date();
-        try {
-            if (this._connectSetting.autoDiscovery) {
-                await this.discoverAllHandlesWait();
+            else {
+                await this.obnizBle.centralBindings.connectWait(this.address, this._connectSetting.mtuRequest, () => {
+                    if (this._connectSetting.pairingOption) {
+                        this.setPairingOption(this._connectSetting.pairingOption);
+                    }
+                });
             }
-        }
-        catch (e) {
-            try {
-                await this.disconnectWait();
-            }
-            catch (e2) {
-                // nothing
-            }
-            throw e;
-        }
-        this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
-        this.emitter.emit('connect');
-    }
-    async connectExtendedWait(setting, pyh1m = true, pyh2m = true, pyhCoded = true) {
-        var _a;
-        if (this.connected && ((_a = setting) === null || _a === void 0 ? void 0 : _a.forceConnect) === false)
-            return;
-        this._connectSetting = setting || {};
-        this._connectSetting.autoDiscovery =
-            this._connectSetting.autoDiscovery !== false;
-        this._connectSetting.mtuRequest =
-            this._connectSetting.mtuRequest === undefined
-                ? 256
-                : this._connectSetting.mtuRequest;
-        await this.obnizBle.scan.endWait();
-        try {
-            await this.obnizBle.centralBindings.connectExtendedWait(this.address, this._connectSetting.mtuRequest, () => {
-                if (this._connectSetting.pairingOption) {
-                    this.setPairingOption(this._connectSetting.pairingOption);
-                }
-            }, pyh1m, pyh2m, pyhCoded);
         }
         catch (e) {
             if (e instanceof ObnizError_1.ObnizTimeoutError) {
@@ -9404,7 +9423,12 @@ class BleScan {
         if (this.state === 'started' || this.state === 'starting') {
             this.state = 'stopping';
             this.clearTimeoutTimer();
-            await this.obnizBle.centralBindings.stopScanningWait();
+            if (this._extendedSupport) {
+                await this.obnizBle.centralBindings.stopExtendedScanningWait();
+            }
+            else {
+                await this.obnizBle.centralBindings.stopScanningWait();
+            }
             this.finish(); // state will changed to stopped inside of this function.
         }
     }
@@ -10241,6 +10265,9 @@ class NobleBindings extends eventemitter3_1.default {
     async stopScanningWait() {
         await this._gap.stopScanningWait();
     }
+    async stopExtendedScanningWait() {
+        await this._gap.stopScanningWait();
+    }
     async connectWait(peripheralUuid, mtu, onConnectCallback) {
         const address = this._addresses[peripheralUuid];
         const addressType = this._addresseTypes[peripheralUuid];
@@ -10602,7 +10629,21 @@ class Gap extends eventemitter3_1.default {
     async stopScanningWait() {
         try {
             if (this._scanState === 'starting' || this._scanState === 'started') {
-                // await this.setScanEnabledWait(false, true);
+                await this.setScanEnabledWait(false, true);
+            }
+        }
+        catch (e) {
+            if (e instanceof ObnizError_1.ObnizBleScanStartError) {
+                // If not started yet. this error may called. just ignore it.
+            }
+            else {
+                throw e;
+            }
+        }
+    }
+    async stopExtendedScanningWait() {
+        try {
+            if (this._scanState === 'starting' || this._scanState === 'started') {
                 await this.setExtendedScanEnabledWait(false, true);
             }
         }

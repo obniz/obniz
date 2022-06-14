@@ -4,7 +4,6 @@
  */
 import BleHelper from './bleHelper';
 import { BleAdvertisementData, BleScanResponseData, UUID } from './bleTypes';
-import { Err } from 'typedoc/dist/lib/utils/result';
 
 /**
  * @category Use as Peripheral

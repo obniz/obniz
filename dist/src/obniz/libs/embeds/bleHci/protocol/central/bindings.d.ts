@@ -39,6 +39,7 @@ declare class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     startExtendedScanningWait(serviceUuids: UUID[], allowDuplicates: boolean, activeScan: boolean, usePhy1m: boolean, usePhyCoded: boolean): Promise<void>;
     startScanningWait(serviceUuids: UUID[], allowDuplicates: boolean, activeScan: boolean): Promise<void>;
     stopScanningWait(): Promise<void>;
+    stopExtendedScanningWait(): Promise<void>;
     connectWait(peripheralUuid: BleDeviceAddress, mtu: number | null, onConnectCallback?: any): Promise<void>;
     setDefaultPhyWait(usePhy1m: boolean, usePhy2m: boolean, usePhyCoded: boolean): Promise<void>;
     readPhyWait(address: string): Promise<{

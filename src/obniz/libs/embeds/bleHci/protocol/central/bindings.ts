@@ -143,6 +143,10 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     await this._gap.stopScanningWait();
   }
 
+  public async stopExtendedScanningWait() {
+    await this._gap.stopScanningWait();
+  }
+
   public async connectWait(
     peripheralUuid: BleDeviceAddress,
     mtu: number | null,
