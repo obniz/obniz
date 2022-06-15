@@ -247,7 +247,8 @@ module.exports = {
     "./dist/src/obniz/libs/webpackReplace/require-context": "./dist/src/obniz/libs/webpackReplace/require-context-browser",
     "./dist/src/obniz/libs/webpackReplace/dialogPollyfill": "./dist/src/obniz/libs/webpackReplace/dialogPollyfill-browser"
   }
-};
+}
+;
 
 /***/ }),
 
@@ -29830,7 +29831,7 @@ class UA651BLE {
             throw new Error('UA651BLE not found');
         }
         const results = [];
-        const { bloodPressureMeasurementChar, timeChar, customServiceChar, } = this._getChars();
+        const { bloodPressureMeasurementChar, timeChar, customServiceChar, batteryChar, } = this._getChars();
         const waitDisconnect = new Promise((resolve, reject) => {
             if (!this._peripheral)
                 return;
@@ -29838,10 +29839,11 @@ class UA651BLE {
                 resolve(results);
             };
         });
+        const battery = await batteryChar.readWait();
         await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
         await this._writeTimeCharWait(this._timezoneOffsetMinute);
         await bloodPressureMeasurementChar.registerNotifyWait((data) => {
-            results.push(this._analyzeData(data));
+            results.push(this._analyzeData(data, battery));
         });
         return waitDisconnect;
     }
@@ -29854,7 +29856,7 @@ class UA651BLE {
         const exponential = data >> 12;
         return mantissa * Math.pow(10, exponential);
     }
-    _analyzeData(data) {
+    _analyzeData(data, battery) {
         const buf = Buffer.from(data);
         const flags = buf.readUInt8(0);
         let index = 1;
@@ -29909,6 +29911,7 @@ class UA651BLE {
             result.improperMeasurement = (ms & 0b100000) !== 0;
             index += 1;
         }
+        result.battery = battery[0];
         return result;
     }
     _getChars() {
@@ -29924,10 +29927,14 @@ class UA651BLE {
         const customServiceChar = this._peripheral
             .getService('233bf0005a341b6d975c000d5690abe4') // Primary Service Custom Service(pp.14)
             .getCharacteristic('233bf0015a341b6d975c000d5690abe4'); // Custom Characteristic(pp.14)
+        const batteryChar = this._peripheral
+            .getService('180F')
+            .getCharacteristic('2A19');
         return {
             bloodPressureMeasurementChar,
             timeChar,
             customServiceChar,
+            batteryChar,
         };
     }
     async _writeTimeCharWait(timeOffsetMinute) {
