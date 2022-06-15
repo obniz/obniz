@@ -8421,13 +8421,13 @@ class BleRemotePeripheral {
             this._connectSetting.mtuRequest === undefined
                 ? 256
                 : this._connectSetting.mtuRequest;
-        if (!this._connectSetting.usePyh1m) {
+        if (this._connectSetting.usePyh1m === undefined) {
             this._connectSetting.usePyh1m = true;
         }
-        if (!this._connectSetting.usePyh2m) {
+        if (this._connectSetting.usePyh2m === undefined) {
             this._connectSetting.usePyh2m = true;
         }
-        if (!this._connectSetting.usePyhCoded) {
+        if (this._connectSetting.usePyhCoded === undefined) {
             this._connectSetting.usePyhCoded = true;
         }
         await this.obnizBle.scan.endWait();
@@ -9356,10 +9356,10 @@ class BleScan {
             else {
                 this._setTargetFilterOnDevice({}); // clear
             }
-            if (!settings.usePhyCoded) {
+            if (settings.usePhyCoded === undefined) {
                 settings.usePhyCoded = true;
             }
-            if (!settings.usePhy1m) {
+            if (settings.usePhy1m === undefined) {
                 settings.usePhy1m = true;
             }
             if (this._extendedSupport) {
@@ -13580,7 +13580,7 @@ class Hci extends eventemitter3_1.default {
             cmd.writeUInt16LE(0x0010, 10 + i * 5); // Scan_Window //default 10ms
         }
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_EXTENDED_SCAN_PARAMETERS_CMD);
-        this.debug('set scan　extended parameters - writing: ' + cmd.toString('hex'));
+        this.debug('set extended scan parameters - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const data = await p;
         return data.status;
@@ -13598,7 +13598,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(filterDuplicates ? 0x01 : 0x00, 5); // 0x01 => filter enabled, 0x00 => filter disable
         cmd.writeUInt16LE(0x0000, 6); // Scan_Duration 明示的に無効化されるまで連続スキャン 既存のスキャンと同じように
         cmd.writeUInt16LE(0x0000, 8); // Scan_Period 定期的なスキャンを無効にする 連続スキャンなのではいらない
-        this.debug(`set extended scan =${enabled ? 'enabled' : 'disable'} - writing: ${cmd.toString('hex')}`);
+        this.debug(`set extended scan ${enabled ? 'enabled' : 'disable'} - writing: ${cmd.toString('hex')}`);
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_EXTENDED_SCAN_ENABLE_CMD);
         this._socket.write(cmd);
         const data = await p;

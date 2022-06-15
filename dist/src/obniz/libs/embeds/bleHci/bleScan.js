@@ -131,10 +131,10 @@ class BleScan {
             else {
                 this._setTargetFilterOnDevice({}); // clear
             }
-            if (!settings.usePhyCoded) {
+            if (settings.usePhyCoded === undefined) {
                 settings.usePhyCoded = true;
             }
-            if (!settings.usePhy1m) {
+            if (settings.usePhy1m === undefined) {
                 settings.usePhy1m = true;
             }
             if (this._extendedSupport) {

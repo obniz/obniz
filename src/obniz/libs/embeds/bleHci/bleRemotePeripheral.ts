@@ -577,13 +577,13 @@ export default class BleRemotePeripheral {
       this._connectSetting.mtuRequest === undefined
         ? 256
         : this._connectSetting.mtuRequest;
-    if (!this._connectSetting.usePyh1m) {
+    if (this._connectSetting.usePyh1m === undefined) {
       this._connectSetting.usePyh1m = true;
     }
-    if (!this._connectSetting.usePyh2m) {
+    if (this._connectSetting.usePyh2m === undefined) {
       this._connectSetting.usePyh2m = true;
     }
-    if (!this._connectSetting.usePyhCoded) {
+    if (this._connectSetting.usePyhCoded === undefined) {
       this._connectSetting.usePyhCoded = true;
     }
     await this.obnizBle.scan.endWait();

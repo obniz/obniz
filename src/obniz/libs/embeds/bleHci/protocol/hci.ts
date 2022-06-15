@@ -1213,7 +1213,7 @@ class Hci extends EventEmitter<HciEventTypes> {
       COMMANDS.LE_SET_EXTENDED_SCAN_PARAMETERS_CMD
     );
     this.debug(
-      'set scan　extended parameters - writing: ' + cmd.toString('hex')
+      'set extended scan parameters - writing: ' + cmd.toString('hex')
     );
     this._socket.write(cmd);
     const data = await p;
@@ -1241,7 +1241,7 @@ class Hci extends EventEmitter<HciEventTypes> {
     cmd.writeUInt16LE(0x0000, 8); // Scan_Period 定期的なスキャンを無効にする 連続スキャンなのではいらない
 
     this.debug(
-      `set extended scan =${
+      `set extended scan ${
         enabled ? 'enabled' : 'disable'
       } - writing: ${cmd.toString('hex')}`
     );

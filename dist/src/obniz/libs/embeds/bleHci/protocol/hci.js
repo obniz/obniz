@@ -785,7 +785,7 @@ class Hci extends eventemitter3_1.default {
             cmd.writeUInt16LE(0x0010, 10 + i * 5); // Scan_Window //default 10ms
         }
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_EXTENDED_SCAN_PARAMETERS_CMD);
-        this.debug('set scan　extended parameters - writing: ' + cmd.toString('hex'));
+        this.debug('set extended scan parameters - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const data = await p;
         return data.status;
@@ -803,7 +803,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(filterDuplicates ? 0x01 : 0x00, 5); // 0x01 => filter enabled, 0x00 => filter disable
         cmd.writeUInt16LE(0x0000, 6); // Scan_Duration 明示的に無効化されるまで連続スキャン 既存のスキャンと同じように
         cmd.writeUInt16LE(0x0000, 8); // Scan_Period 定期的なスキャンを無効にする 連続スキャンなのではいらない
-        this.debug(`set extended scan =${enabled ? 'enabled' : 'disable'} - writing: ${cmd.toString('hex')}`);
+        this.debug(`set extended scan ${enabled ? 'enabled' : 'disable'} - writing: ${cmd.toString('hex')}`);
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_EXTENDED_SCAN_ENABLE_CMD);
         this._socket.write(cmd);
         const data = await p;
