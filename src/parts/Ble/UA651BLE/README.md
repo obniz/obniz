@@ -134,5 +134,6 @@ Output format is here. Blood pressure data is in mmHg or kPa format, and Pulse r
   irregularPulseDetected?: boolean;
   improperMeasurement?: boolean;
   PulseRate?: number;
+  battery?: number;
 }
 ```

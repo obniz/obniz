@@ -1,8 +1,9 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
+ * @packageDocumentation
  * @ignore
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 // eslint-disable-next-line @typescript-eslint/no-namespace
 var ATT;
 (function (ATT) {

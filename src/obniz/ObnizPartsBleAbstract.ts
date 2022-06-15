@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 /* eslint-disable rulesdir/non-ascii */
 /* eslint-disable max-classes-per-file */
 

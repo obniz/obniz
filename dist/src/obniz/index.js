@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const Obniz_1 = require("./Obniz");
 /* ===================*/
 /* Utils */

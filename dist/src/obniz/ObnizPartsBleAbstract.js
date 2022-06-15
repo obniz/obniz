@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 /* eslint-disable rulesdir/non-ascii */
 /* eslint-disable max-classes-per-file */
 Object.defineProperty(exports, "__esModule", { value: true });

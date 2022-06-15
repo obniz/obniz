@@ -65,6 +65,12 @@ export interface UA651BLEResult {
         minute: number;
         second: number;
     };
+    /**
+     * battery(%) バッテリー(%)
+     *
+     * Value 値: 100 | 66 | 40 | 33
+     */
+    battery?: number;
 }
 /** UA651BLE management class UA651BLEを管理するクラス */
 export default class UA651BLE implements ObnizPartsBleInterface {

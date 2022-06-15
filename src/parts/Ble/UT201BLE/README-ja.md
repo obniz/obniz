@@ -130,5 +130,6 @@ await obniz.ble.scan.startWait();
     second: number;
   };
   temperatureType?: string;
+  battery?: number;
 }
 ```

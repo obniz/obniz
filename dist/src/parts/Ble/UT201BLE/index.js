@@ -96,7 +96,7 @@ class UT201BLE {
             throw new Error('UT201BLE not found');
         }
         const results = [];
-        const { temperatureMeasurementChar, timeChar, customServiceChar, } = this._getChars();
+        const { temperatureMeasurementChar, timeChar, customServiceChar, batteryChar, } = this._getChars();
         const waitDisconnect = new Promise((resolve, reject) => {
             if (!this._peripheral)
                 return;
@@ -104,10 +104,11 @@ class UT201BLE {
                 resolve(results);
             };
         });
+        const battery = await batteryChar.readWait();
         await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
         await this._writeTimeCharWait(this._timezoneOffsetMinute);
         await temperatureMeasurementChar.registerNotifyWait((data) => {
-            results.push(this._analyzeData(data));
+            results.push(this._analyzeData(data, battery));
         });
         return await waitDisconnect;
     }
@@ -120,7 +121,7 @@ class UT201BLE {
         const exponential = data >> 24;
         return mantissa * Math.pow(10, exponential);
     }
-    _analyzeData(data) {
+    _analyzeData(data, battery) {
         const buf = Buffer.from(data);
         const flags = buf.readUInt8(0);
         let index = 1;
@@ -163,6 +164,7 @@ class UT201BLE {
             const value = buf.readUInt8(index);
             index++;
             result.temperatureType = types[value] || 'unknown';
+            result.battery = battery[0];
         }
         return result;
     }
@@ -179,10 +181,14 @@ class UT201BLE {
         const customServiceChar = this._peripheral
             .getService('233bf0005a341b6d975c000d5690abe4')
             .getCharacteristic('233bf0015a341b6d975c000d5690abe4');
+        const batteryChar = this._peripheral
+            .getService('180F')
+            .getCharacteristic('2A19');
         return {
             temperatureMeasurementChar,
             timeChar,
             customServiceChar,
+            batteryChar,
         };
     }
     async _writeTimeCharWait(timeOffsetMinute) {
