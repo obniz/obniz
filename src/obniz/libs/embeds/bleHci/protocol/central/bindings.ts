@@ -144,7 +144,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   }
 
   public async stopExtendedScanningWait() {
-    await this._gap.stopScanningWait();
+    await this._gap.stopExtendedScanningWait();
   }
 
   public async connectWait(

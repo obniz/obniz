@@ -10337,7 +10337,7 @@ class NobleBindings extends eventemitter3_1.default {
         await this._gap.stopScanningWait();
     }
     async stopExtendedScanningWait() {
-        await this._gap.stopScanningWait();
+        await this._gap.stopExtendedScanningWait();
     }
     async connectWait(peripheralUuid, mtu, onConnectCallback) {
         const address = this._addresses[peripheralUuid];
