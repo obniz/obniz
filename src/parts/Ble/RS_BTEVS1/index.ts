@@ -141,7 +141,7 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
    * BTEVS-1234: ~1.0.2
    * EVS-1234: 1.1.2~
    */
-  public static readonly LocalName = /(BT|)EVS-[0-9A-F]{4}/;
+  public static readonly LocalName = /^(BT)?EVS-[0-9A-F]{4}$/;
 
   // public static readonly BeaconDataLength: ObnizPartsBleCompare<
   //   number | null

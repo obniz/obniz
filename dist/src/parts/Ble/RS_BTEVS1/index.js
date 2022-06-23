@@ -201,7 +201,7 @@ RS_BTEVS1.PartsName = 'RS_BTEVS1';
  * BTEVS-1234: ~1.0.2
  * EVS-1234: 1.1.2~
  */
-RS_BTEVS1.LocalName = /(BT|)EVS-[0-9A-F]{4}/;
+RS_BTEVS1.LocalName = /^(BT)?EVS-[0-9A-F]{4}$/;
 // public static readonly BeaconDataLength: ObnizPartsBleCompare<
 //   number | null
 // > = 0x0c;
