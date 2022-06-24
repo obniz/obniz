@@ -28001,16 +28001,18 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     async getConfigWait() {
         this.checkConnected();
         const data = await this.readCharWait(this.serviceUuid, this.getCharUuid(0x1525));
+        const buf = Buffer.from(data);
+        const measureOperation = buf.readInt8(12);
         return {
-            pm2_5ConcentrationMode: PM2_5_CONCENTRATION_MODE[data[0]],
-            advertisementBeacon: data[1] === 1,
-            ledDisplay: LED_DISPLAY_MODE[data[2]],
-            co2MeasureOperation: (data[3] & 0b001) > 0,
-            pm2_5MeasureOperation: (data[3] & 0b010) > 0,
-            tempMeasureOperation: (data[3] & 0b100) > 0,
-            co2Interval: ObnizPartsBleAbstract_1.uint(data.slice(4, 8)),
-            pm2_5Interval: ObnizPartsBleAbstract_1.uint(data.slice(8, 12)),
-            tempInterval: ObnizPartsBleAbstract_1.uint(data.slice(12, 16)),
+            tempInterval: buf.readUInt32LE(0),
+            pm2_5Interval: buf.readUInt32LE(4),
+            co2Interval: buf.readUInt32LE(8),
+            tempMeasureOperation: (measureOperation & 0b100) > 0,
+            pm2_5MeasureOperation: (measureOperation & 0b010) > 0,
+            co2MeasureOperation: (measureOperation & 0b000) > 0,
+            ledDisplay: LED_DISPLAY_MODE[buf.readInt8(13)],
+            advertisementBeacon: buf.readInt8(14) === 1,
+            pm2_5ConcentrationMode: PM2_5_CONCENTRATION_MODE[buf.readInt8(15)],
         };
     }
     /**
@@ -28024,24 +28026,25 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     async setConfigWait(config) {
         var _a, _b, _c;
         await this.checkConnected();
-        return await this.writeCharWait(this.serviceUuid, this.getCharUuid(0x1525), [
-            this.firmwareRevision.startsWith('Ver.1.0')
-                ? PM2_5_CONCENTRATION_MODE.indexOf(config.pm2_5ConcentrationMode &&
-                    PM2_5_CONCENTRATION_MODE.indexOf(config.pm2_5ConcentrationMode) >= 0
-                    ? config.pm2_5ConcentrationMode
-                    : 'Number')
-                : 0,
-            config.advertisementBeacon ? 1 : 0,
-            LED_DISPLAY_MODE.indexOf(config.ledDisplay && LED_DISPLAY_MODE.indexOf(config.ledDisplay) >= 0
-                ? config.ledDisplay
-                : 'Disable'),
-            (config.co2MeasureOperation ? 0b001 : 0) +
-                (config.pm2_5MeasureOperation ? 0b010 : 0) +
-                (config.tempMeasureOperation ? 0b100 : 0),
-            ...ObnizPartsBleAbstract_1.uintToArray((_a = config.co2Interval, (_a !== null && _a !== void 0 ? _a : 10000)), 4),
-            ...ObnizPartsBleAbstract_1.uintToArray((_b = config.pm2_5Interval, (_b !== null && _b !== void 0 ? _b : 10000)), 4),
-            ...ObnizPartsBleAbstract_1.uintToArray((_c = config.tempInterval, (_c !== null && _c !== void 0 ? _c : 10000)), 4),
-        ]);
+        const buf = Buffer.alloc(16);
+        buf.writeUInt32LE((_a = config.tempInterval, (_a !== null && _a !== void 0 ? _a : 10000)), 0);
+        buf.writeUInt32LE((_b = config.pm2_5Interval, (_b !== null && _b !== void 0 ? _b : 10000)), 4);
+        buf.writeUInt32LE((_c = config.co2Interval, (_c !== null && _c !== void 0 ? _c : 10000)), 8);
+        buf.writeUInt8((config.co2MeasureOperation ? 0b001 : 0) +
+            (config.pm2_5MeasureOperation ? 0b010 : 0) +
+            (config.tempMeasureOperation ? 0b100 : 0), 12);
+        buf.writeUInt8(LED_DISPLAY_MODE.indexOf(config.ledDisplay && LED_DISPLAY_MODE.indexOf(config.ledDisplay) >= 0
+            ? config.ledDisplay
+            : 'Disable'), 13);
+        buf.writeUInt8(config.advertisementBeacon ? 1 : 0, 14);
+        buf.writeUInt8(this.firmwareRevision.startsWith('Ver.1.0')
+            ? PM2_5_CONCENTRATION_MODE.indexOf(config.pm2_5ConcentrationMode &&
+                PM2_5_CONCENTRATION_MODE.indexOf(config.pm2_5ConcentrationMode) >=
+                    0
+                ? config.pm2_5ConcentrationMode
+                : 'Number')
+            : 0, 15);
+        return await this.writeCharWait(this.serviceUuid, this.getCharUuid(0x1525), Array.from(buf));
     }
     /**
      * Change pairing LED flashing status
@@ -28131,7 +28134,7 @@ RS_BTEVS1.PartsName = 'RS_BTEVS1';
  * BTEVS-1234: ~1.0.2
  * EVS-1234: 1.1.2~
  */
-RS_BTEVS1.LocalName = /(BT|)EVS-[0-9A-E]{4}/;
+RS_BTEVS1.LocalName = /^(BT)?EVS-[0-9A-F]{4}/;
 // public static readonly BeaconDataLength: ObnizPartsBleCompare<
 //   number | null
 // > = 0x0c;
