@@ -28131,7 +28131,7 @@ RS_BTEVS1.PartsName = 'RS_BTEVS1';
  * BTEVS-1234: ~1.0.2
  * EVS-1234: 1.1.2~
  */
-RS_BTEVS1.LocalName = /(BT|)EVS-[0-9A-E]{4}/;
+RS_BTEVS1.LocalName = /^(BT)?EVS-[0-9A-F]{4}/;
 // public static readonly BeaconDataLength: ObnizPartsBleCompare<
 //   number | null
 // > = 0x0c;
@@ -100768,9 +100768,7 @@ var global = getGlobal();
 module.exports = exports = global.fetch;
 
 // Needed for TypeScript and Webpack.
-if (global.fetch) {
-	exports.default = global.fetch.bind(global);
-}
+exports.default = global.fetch.bind(global);
 
 exports.Headers = global.Headers;
 exports.Request = global.Request;
