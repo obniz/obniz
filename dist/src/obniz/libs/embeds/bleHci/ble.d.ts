@@ -20,7 +20,7 @@ import BlePeripheral from './blePeripheral';
 import BleRemotePeripheral from './bleRemotePeripheral';
 import BleScan from './bleScan';
 import BleService from './bleService';
-import { BleDeviceAddress, BleDeviceAddressType, UUID } from './bleTypes';
+import { BleDeviceAddress, BleDeviceAddressType, BleSupportType, UUID } from './bleTypes';
 import BleExtendedAdvertisement from './bleExtendedAdvertisement';
 /**
  * Use a obniz device as a BLE device.
@@ -112,7 +112,7 @@ export default class ObnizBLE extends ComponentAbstract {
      * await obniz.ble.initWait();
      * ```
      */
-    initWait(extendedDisable?: boolean): Promise<void>;
+    initWait(supportType?: BleSupportType): Promise<void>;
     /**
      * Reset Target Device and current SDK status without rebooting. If error occured while reset, then target device will reboot.
      *

@@ -141,3 +141,10 @@ export type BleExtendedAdvertisementMode =
   | 'broadcast' // MAX adv 1650Byte
   | 'connectable' // MAX adv 242Byte
   | 'scannable'; // MAX scanRsp 1650Byte
+
+export interface BleSupportType {
+  /**
+   * BLE 5.0 AdvertiseExtended Support(ESP32 C3 or ESP32 S3)
+   */
+  extended?: boolean;
+}

@@ -28,7 +28,12 @@ import BlePeripheral from './blePeripheral';
 import BleRemotePeripheral from './bleRemotePeripheral';
 import BleScan from './bleScan';
 import BleService from './bleService';
-import { BleDeviceAddress, BleDeviceAddressType, UUID } from './bleTypes';
+import {
+  BleDeviceAddress,
+  BleDeviceAddressType,
+  BleSupportType,
+  UUID,
+} from './bleTypes';
 import BleExtendedAdvertisement from './bleExtendedAdvertisement';
 
 /**
@@ -243,9 +248,9 @@ export default class ObnizBLE extends ComponentAbstract {
    * await obniz.ble.initWait();
    * ```
    */
-  public async initWait(extendedDisable?: boolean): Promise<void> {
-    if (this._extended && extendedDisable) {
-      this._extended = !extendedDisable;
+  public async initWait(supportType?: BleSupportType): Promise<void> {
+    if (this._extended && supportType && supportType.extended) {
+      this._extended = supportType.extended;
       this._reset();
     }
     if (!this._initialized) {

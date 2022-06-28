@@ -175,9 +175,9 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * await obniz.ble.initWait();
      * ```
      */
-    async initWait(extendedDisable) {
-        if (this._extended && extendedDisable) {
-            this._extended = !extendedDisable;
+    async initWait(supportType) {
+        if (this._extended && supportType && supportType.extended) {
+            this._extended = supportType.extended;
             this._reset();
         }
         if (!this._initialized) {
