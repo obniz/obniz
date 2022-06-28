@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ConnectedNetwork | obniz</title>
+	<title>UC421BLEUserInfoData | obniz</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,24 +56,38 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/obnizcore.html">ObnizCore</a>
+					<a href="../modules/parts.html">Parts</a>
 				</li>
 				<li>
-					<a href="obnizcore.connectednetwork.html">ConnectedNetwork</a>
+					<a href="../modules/parts.uc421ble.html">UC421BLE</a>
+				</li>
+				<li>
+					<a href="parts.uc421ble.uc421bleuserinfodata.html">UC421BLEUserInfoData</a>
 				</li>
 			</ul>
-			<h1>Interface ConnectedNetwork</h1>
+			<h1>Interface UC421BLEUserInfoData</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>User information attached to each user No.
+						This includes birthday, gender and height which are used to calculate body composition data.</p>
+					</div>
+					<p>UC421BLEに登録するユーザ情報
+						設定を行う際はユーザNoを指定して、それに紐づける形で登録を行う
+					ユーザ情報の誕生日、性別、身長を利用して体組成データを生成する</p>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">ConnectedNetwork</span>
+						<span class="target">UC421BLEUserInfoData</span>
 					</li>
 				</ul>
 			</section>
@@ -84,12 +98,12 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.connectednetwork.html#global_ip" class="tsd-kind-icon">global_<wbr>ip</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.connectednetwork.html#local_ip" class="tsd-kind-icon">local_<wbr>ip</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.connectednetwork.html#net" class="tsd-kind-icon">net</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.connectednetwork.html#online_at" class="tsd-kind-icon">online_<wbr>at</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.connectednetwork.html#wifi" class="tsd-kind-icon">wifi</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.connectednetwork.html#wifimesh" class="tsd-kind-icon">wifimesh</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.uc421ble.uc421bleuserinfodata.html#birth" class="tsd-kind-icon">birth</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.uc421ble.uc421bleuserinfodata.html#email" class="tsd-kind-icon">email</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.uc421ble.uc421bleuserinfodata.html#firstname" class="tsd-kind-icon">first<wbr>Name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.uc421ble.uc421bleuserinfodata.html#gender" class="tsd-kind-icon">gender</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.uc421ble.uc421bleuserinfodata.html#height" class="tsd-kind-icon">height</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.uc421ble.uc421bleuserinfodata.html#lastname" class="tsd-kind-icon">last<wbr>Name</a></li>
 							</ul>
 						</section>
 					</div>
@@ -98,93 +112,111 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="global_ip" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> global_<wbr>ip</h3>
-					<div class="tsd-signature tsd-kind-icon">global_<wbr>ip<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<a name="birth" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> birth</h3>
+					<div class="tsd-signature tsd-kind-icon">birth<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>day<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>month<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>year<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/ObnizConnection.ts:56</li>
+							<li>Defined in src/parts/Ble/UC421BLE/index.ts:220</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Global IP if exist</p>
+							<p>Birthday
+							Available value range: 5 ~ 99 years old.</p>
 						</div>
+						<p>誕生日
+						設定可能範囲: 年齢換算時 5 ~ 99歳</p>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="local_ip" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> local_<wbr>ip</h3>
-					<div class="tsd-signature tsd-kind-icon">local_<wbr>ip<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<a name="email" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> email</h3>
+					<div class="tsd-signature tsd-kind-icon">email<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/ObnizConnection.ts:51</li>
+							<li>Defined in src/parts/Ble/UC421BLE/index.ts:193</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Local IP if exist</p>
+							<p>Email address(UTF-8)
+							Available value range: 1 ~ 16 bytes.</p>
 						</div>
+						<p>メールアドレス(UTF-8)
+						設定可能範囲: 1 ~ 16バイト</p>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="net" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> net</h3>
-					<div class="tsd-signature tsd-kind-icon">net<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<a name="firstname" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> first<wbr>Name</h3>
+					<div class="tsd-signature tsd-kind-icon">first<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/ObnizConnection.ts:46</li>
+							<li>Defined in src/parts/Ble/UC421BLE/index.ts:202</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Current connected network type. Defined in setting json</p>
+							<p>First name(UTF-8)
+							Available value range: 1 ~ 20 bytes.</p>
 						</div>
+						<p>名前(UTF-8)
+						設定可能範囲: 1 ~ 20バイト</p>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="online_at" class="tsd-anchor"></a>
-					<h3>online_<wbr>at</h3>
-					<div class="tsd-signature tsd-kind-icon">online_<wbr>at<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="gender" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> gender</h3>
+					<div class="tsd-signature tsd-kind-icon">gender<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"male"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"female"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"unspecified"</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/ObnizConnection.ts:41</li>
+							<li>Defined in src/parts/Ble/UC421BLE/index.ts:233</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Epoch Unix Timestamp (seconds) at device become online on the cloud</p>
+							<p>Gender
+							&#39;unspecified&#39; is not recommended to set because body composition data can not be retrieved with it.</p>
 						</div>
+						<p>性別
+						&#39;unspecified&#39;を設定すると体組成データが取得できない</p>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="wifi" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> wifi</h3>
-					<div class="tsd-signature tsd-kind-icon">wifi<span class="tsd-signature-symbol">:</span> <a href="obnizcore.connectednetworkwifi.html" class="tsd-signature-type">ConnectedNetworkWiFi</a></div>
+					<a name="height" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> height</h3>
+					<div class="tsd-signature tsd-kind-icon">height<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/ObnizConnection.ts:61</li>
+							<li>Defined in src/parts/Ble/UC421BLE/index.ts:242</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Wi-Fi information when net is wirelesslan</p>
+							<p>Height(cm).
+							Available value range: 90 ~ 220.</p>
 						</div>
+						<p>身長(cm)
+						設定可能範囲: 90 ~ 220</p>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="wifimesh" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> wifimesh</h3>
-					<div class="tsd-signature tsd-kind-icon">wifimesh<span class="tsd-signature-symbol">:</span> <a href="obnizcore.connectednetworkwifimesh.html" class="tsd-signature-type">ConnectedNetworkWiFiMESH</a></div>
+					<a name="lastname" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> last<wbr>Name</h3>
+					<div class="tsd-signature tsd-kind-icon">last<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/ObnizConnection.ts:66</li>
+							<li>Defined in src/parts/Ble/UC421BLE/index.ts:211</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Wi-Fi MESH information when net is wifimesh</p>
+							<p>Last name(UTF-8)
+							Available value range: 1 ~ 20 bytes.</p>
 						</div>
+						<p>苗字(UTF-8)
+						設定可能範囲: 1 ~ 20バイト</p>
 					</div>
 				</section>
 			</section>
@@ -195,46 +227,64 @@
 					<li class="globals  ">
 						<a href="../index.html"><em>Globals</em></a>
 					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/obnizapp.html">Obniz<wbr>App</a>
-					</li>
-					<li class="current tsd-kind-external-module">
-						<a href="../modules/obnizcore.html">Obniz<wbr>Core</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-not-exported">
-						<a href="../modules/parts.html">Parts</a>
-					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="../classes/parts.uc421ble.uc421ble.html" class="tsd-kind-icon">UC421BLE</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="parts.uc421ble.uc421blebodycompositionresult.html" class="tsd-kind-icon">UC421BLEBody<wbr>Composition<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="parts.uc421ble.uc421blemanufacturerspecificdata.html" class="tsd-kind-icon">UC421BLEManufacturer<wbr>Specific<wbr>Data</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="parts.uc421ble.uc421bleoptions.html" class="tsd-kind-icon">UC421BLEOptions</a>
+					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="obnizcore.connectednetwork.html" class="tsd-kind-icon">Connected<wbr>Network</a>
+						<a href="parts.uc421ble.uc421bleuserinfodata.html" class="tsd-kind-icon">UC421BLEUser<wbr>Info<wbr>Data</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="obnizcore.connectednetwork.html#global_ip" class="tsd-kind-icon">global_<wbr>ip</a>
+								<a href="parts.uc421ble.uc421bleuserinfodata.html#birth" class="tsd-kind-icon">birth</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="obnizcore.connectednetwork.html#local_ip" class="tsd-kind-icon">local_<wbr>ip</a>
+								<a href="parts.uc421ble.uc421bleuserinfodata.html#email" class="tsd-kind-icon">email</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="obnizcore.connectednetwork.html#net" class="tsd-kind-icon">net</a>
+								<a href="parts.uc421ble.uc421bleuserinfodata.html#firstname" class="tsd-kind-icon">first<wbr>Name</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="obnizcore.connectednetwork.html#online_at" class="tsd-kind-icon">online_<wbr>at</a>
+								<a href="parts.uc421ble.uc421bleuserinfodata.html#gender" class="tsd-kind-icon">gender</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="obnizcore.connectednetwork.html#wifi" class="tsd-kind-icon">wifi</a>
+								<a href="parts.uc421ble.uc421bleuserinfodata.html#height" class="tsd-kind-icon">height</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="obnizcore.connectednetwork.html#wifimesh" class="tsd-kind-icon">wifimesh</a>
+								<a href="parts.uc421ble.uc421bleuserinfodata.html#lastname" class="tsd-kind-icon">last<wbr>Name</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="parts.uc421ble.uc421bleweightresult.html" class="tsd-kind-icon">UC421BLEWeight<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/parts.uc421ble.html#guestuserno" class="tsd-kind-icon">Guest<wbr>User<wbr>No</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/parts.uc421ble.html#userno" class="tsd-kind-icon">User<wbr>No</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/parts.uc421ble.html#arrguestusernotype" class="tsd-kind-icon">arr<wbr>Guest<wbr>User<wbr>NoType</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/parts.uc421ble.html#arrusernotype" class="tsd-kind-icon">arr<wbr>User<wbr>NoType</a>
+					</li>
 				</ul>
 			</nav>
 		</div>
