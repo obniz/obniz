@@ -25362,6 +25362,7 @@ var map = {
 	"./Ble/iBS03T_RH/index.js": "./dist/src/parts/Ble/iBS03T_RH/index.js",
 	"./Ble/iBS04/index.js": "./dist/src/parts/Ble/iBS04/index.js",
 	"./Ble/iBS04i/index.js": "./dist/src/parts/Ble/iBS04i/index.js",
+	"./Ble/iBS05G/index.js": "./dist/src/parts/Ble/iBS05G/index.js",
 	"./Ble/iBS05H/index.js": "./dist/src/parts/Ble/iBS05H/index.js",
 	"./Ble/linking/index.js": "./dist/src/parts/Ble/linking/index.js",
 	"./Ble/linking/modules/advertising.js": "./dist/src/parts/Ble/linking/modules/advertising.js",
@@ -32860,6 +32861,33 @@ iBS04i.CompanyID_ScanResponse = iBS_1.BaseiBS.CompanyID;
 iBS04i.BeaconDataLength = 0x1a;
 iBS04i.BeaconDataLength_ScanResponse = iBS_1.BaseiBS.BeaconDataLength;
 iBS04i.BeaconDataStruct = Object.assign(Object.assign({ battery: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.battery), { scanResponse: true }), button: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.button), { scanResponse: true }) }, iBS_1.BaseiBS.getUniqueData(4, 0x18, 0, true)), ObnizPartsBleAbstract_1.iBeaconData);
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/iBS05G/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS05G
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS05G management class iBS05Gを管理するクラス */
+class iBS05G extends iBS_1.BaseiBS {
+    constructor() {
+        super(...arguments);
+        this.staticClass = iBS05G;
+    }
+}
+exports.default = iBS05G;
+iBS05G.PartsName = 'iBS05G';
+iBS05G.CompanyID = [0x2c, 0x08];
+iBS05G.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, moving: iBS_1.BaseiBS.Config.moving }, iBS_1.BaseiBS.getUniqueData(5, 0x33));
 
 
 /***/ }),
@@ -77777,7 +77805,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
+module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
 
 /***/ }),
 
