@@ -112,7 +112,10 @@ export default class PeripheralGrove extends ComponentAbstract {
 
   public getAnalogDigital(
     drive: DriveType = '5v'
-  ): { analog: PeripheralAD; digital: PeripheralIO } {
+  ): {
+    analog: PeripheralAD;
+    digital: PeripheralIO;
+  } {
     this.useWithType('analog-digital', drive);
     const analog = this.Obniz.isValidAD(this._params.pin1)
       ? this.Obniz.getAD(this._params.pin1)

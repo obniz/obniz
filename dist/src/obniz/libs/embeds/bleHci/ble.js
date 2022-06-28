@@ -175,7 +175,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * await obniz.ble.initWait();
      * ```
      */
-    async initWait(supportType) {
+    async initWait(supportType = {}) {
         if (this._extended && supportType && supportType.extended) {
             this._extended = supportType.extended;
             this._reset();
@@ -260,11 +260,16 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         if (!this.extendedAdvertisement && this._extended) {
             this.extendedAdvertisement = new bleExtendedAdvertisement_1.default(this);
         }
+        if (this._extended) {
+            this.extendedAdvertisement = undefined;
+        }
         // reset all submodules.
         this.peripheral._reset();
         this.scan._reset();
         this.advertisement._reset();
-        this.extendedAdvertisement._reset();
+        if (this.extendedAdvertisement) {
+            this.extendedAdvertisement._reset();
+        }
         // clear scanning
         this.hci._reset();
         if (!this.hciProtocol) {
