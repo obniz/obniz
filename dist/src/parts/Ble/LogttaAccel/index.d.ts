@@ -249,4 +249,16 @@ export default class Logtta_Accel extends Logtta<Logtta_Accel_Data, unknown> {
      * Logtta_Accelから受け取った加速度データ
      */
     static getAccelData(peripheral: BleRemotePeripheral): Logtta_Accel_AccelData | null;
+    /**
+     * 加速度ピークを物理量に変換する
+     *
+     * @private
+     */
+    private static _convertAccel;
+    /**
+     * 加速度ピークを物理量に変換する
+     *
+     * @private
+     */
+    private static _convertRms;
 }
