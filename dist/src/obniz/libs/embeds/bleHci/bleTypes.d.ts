@@ -99,3 +99,9 @@ export interface BleCreateConnectionParameters {
     eventIntervalMax: number;
 }
 export declare type BleExtendedAdvertisementMode = 'broadcast' | 'connectable' | 'scannable';
+export interface BleSupportType {
+    /**
+     * BLE 5.0 AdvertiseExtended Support(ESP32 C3 or ESP32 S3)
+     */
+    extended?: boolean;
+}

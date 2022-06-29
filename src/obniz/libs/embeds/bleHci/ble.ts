@@ -28,7 +28,12 @@ import BlePeripheral from './blePeripheral';
 import BleRemotePeripheral from './bleRemotePeripheral';
 import BleScan from './bleScan';
 import BleService from './bleService';
-import { BleDeviceAddress, BleDeviceAddressType, UUID } from './bleTypes';
+import {
+  BleDeviceAddress,
+  BleDeviceAddressType,
+  BleSupportType,
+  UUID,
+} from './bleTypes';
 import BleExtendedAdvertisement from './bleExtendedAdvertisement';
 
 /**
@@ -104,7 +109,7 @@ export default class ObnizBLE extends ComponentAbstract {
    * @ignore
    */
   public advertisement!: BleAdvertisement;
-  public extendedAdvertisement!: BleExtendedAdvertisement;
+  public extendedAdvertisement?: BleExtendedAdvertisement;
   protected hciProtocol!: HciProtocol;
   protected _initializeWarning!: boolean;
   protected remotePeripherals: BleRemotePeripheral[] = [];
@@ -243,9 +248,9 @@ export default class ObnizBLE extends ComponentAbstract {
    * await obniz.ble.initWait();
    * ```
    */
-  public async initWait(extendedDisable?: boolean): Promise<void> {
-    if (this._extended && extendedDisable) {
-      this._extended = !extendedDisable;
+  public async initWait(supportType: BleSupportType = {}): Promise<void> {
+    if (this._extended && supportType && supportType.extended) {
+      this._extended = supportType.extended;
       this._reset();
     }
     if (!this._initialized) {
@@ -335,12 +340,17 @@ export default class ObnizBLE extends ComponentAbstract {
     if (!this.extendedAdvertisement && this._extended) {
       this.extendedAdvertisement = new BleExtendedAdvertisement(this);
     }
+    if (this._extended) {
+      this.extendedAdvertisement = undefined;
+    }
 
     // reset all submodules.
     this.peripheral._reset();
     this.scan._reset();
     this.advertisement._reset();
-    this.extendedAdvertisement._reset();
+    if (this.extendedAdvertisement) {
+      this.extendedAdvertisement._reset();
+    }
 
     // clear scanning
     this.hci._reset();

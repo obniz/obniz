@@ -5613,9 +5613,9 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * await obniz.ble.initWait();
      * ```
      */
-    async initWait(extendedDisable) {
-        if (this._extended && extendedDisable) {
-            this._extended = !extendedDisable;
+    async initWait(supportType = {}) {
+        if (this._extended && supportType && supportType.extended) {
+            this._extended = supportType.extended;
             this._reset();
         }
         if (!this._initialized) {
@@ -5698,11 +5698,16 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         if (!this.extendedAdvertisement && this._extended) {
             this.extendedAdvertisement = new bleExtendedAdvertisement_1.default(this);
         }
+        if (this._extended) {
+            this.extendedAdvertisement = undefined;
+        }
         // reset all submodules.
         this.peripheral._reset();
         this.scan._reset();
         this.advertisement._reset();
-        this.extendedAdvertisement._reset();
+        if (this.extendedAdvertisement) {
+            this.extendedAdvertisement._reset();
+        }
         // clear scanning
         this.hci._reset();
         if (!this.hciProtocol) {
@@ -17162,7 +17167,7 @@ exports.M5StickC = M5StickC;
 /***/ "./dist/src/obniz/libs/hw/m5stickc.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"3\",\"hw\":\"m5stickc\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"9\":{},\"10\":{},\"21\":{},\"22\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}},\"grove\":{\"units\":{\"0\":{\"pin1\":33,\"pin2\":32}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":160,\"height\":80,\"color_depth\":[1,4,16]}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{\"extended\":false}},\"extraInterface\":{\"m5stickc_hat\":{\"units\":{\"0\":{},\"26\":{},\"36\":{}},\"i2c\":{\"sda\":0,\"scl\":26},\"uart\":{\"tx\":0,\"rx\":26}}}}");
+module.exports = JSON.parse("{\"rev\":\"3\",\"hw\":\"m5stickc\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"9\":{},\"10\":{},\"21\":{},\"22\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}},\"grove\":{\"units\":{\"0\":{\"pin1\":33,\"pin2\":32}}}},\"embeds\":{\"ble\":{\"extended\":false},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":160,\"height\":80,\"color_depth\":[1,4,16]}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{\"m5stickc_hat\":{\"units\":{\"0\":{},\"26\":{},\"36\":{}},\"i2c\":{\"sda\":0,\"scl\":26},\"uart\":{\"tx\":0,\"rx\":26}}}}");
 
 /***/ }),
 
@@ -77805,7 +77810,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
+module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
 
 /***/ }),
 
