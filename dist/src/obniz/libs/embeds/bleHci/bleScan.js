@@ -17,7 +17,7 @@ const bleHelper_1 = __importDefault(require("./bleHelper"));
  * @category Use as Central
  */
 class BleScan {
-    constructor(obnizBle) {
+    constructor(obnizBle, extendedSupport) {
         this.state = 'stopped';
         this._delayNotifyTimers = [];
         this.obnizBle = obnizBle;
@@ -29,6 +29,7 @@ class BleScan {
         this.obnizBle.Obniz.on('_close', () => {
             this.clearTimeoutTimer();
         });
+        this._extendedSupport = extendedSupport;
     }
     /**
      * @ignore
@@ -130,7 +131,18 @@ class BleScan {
             else {
                 this._setTargetFilterOnDevice({}); // clear
             }
-            await this.obnizBle.centralBindings.startScanningWait([], settings.duplicate, settings.activeScan);
+            if (settings.usePhyCoded === undefined) {
+                settings.usePhyCoded = true;
+            }
+            if (settings.usePhy1m === undefined) {
+                settings.usePhy1m = true;
+            }
+            if (this._extendedSupport) {
+                await this.obnizBle.centralBindings.startExtendedScanningWait([], settings.duplicate, settings.activeScan, settings.usePhy1m, settings.usePhyCoded);
+            }
+            else {
+                await this.obnizBle.centralBindings.startScanningWait([], settings.duplicate, settings.activeScan);
+            }
             this.clearTimeoutTimer();
             if (timeout !== null) {
                 this._timeoutTimer = setTimeout(async () => {
@@ -257,7 +269,12 @@ class BleScan {
         if (this.state === 'started' || this.state === 'starting') {
             this.state = 'stopping';
             this.clearTimeoutTimer();
-            await this.obnizBle.centralBindings.stopScanningWait();
+            if (this._extendedSupport) {
+                await this.obnizBle.centralBindings.stopExtendedScanningWait();
+            }
+            else {
+                await this.obnizBle.centralBindings.stopScanningWait();
+            }
             this.finish(); // state will changed to stopped inside of this function.
         }
     }

@@ -120,6 +120,34 @@ export interface BleScanSetting {
    *
    */
   filterOnDevice?: boolean;
+  /**
+   * (ESP32 C3 or ESP32 S3)
+   *
+   * True: Scan phy<br/>
+   * False : Do not scan phy
+   *
+   * Default is true : Scan phy
+   *
+   *
+   * ```javascript
+   * // Javascript Example
+   * var target = {
+   *     localName: "obniz-BLE",     //scan only has localName "obniz-BLE"
+   * };
+   *
+   * var setting = {
+   *    usePhy1m : false,
+   *    usePhyCoded: true
+   * }
+   *
+   * await obniz.ble.initWait();
+   * await obniz.ble.scan.startWait(target, setting);
+   * ```
+   *
+   *
+   */
+  usePhy1m?: boolean;
+  usePhyCoded?: boolean;
 
   /**
    * If only one of advertisement and scanResponse is coming, wait until both come.
@@ -185,8 +213,9 @@ export default class BleScan {
     peripheral: BleRemotePeripheral;
     timer: ReturnType<typeof setTimeout>;
   }[] = [];
+  private _extendedSupport: boolean;
 
-  constructor(obnizBle: ObnizBLE) {
+  constructor(obnizBle: ObnizBLE, extendedSupport: boolean) {
     this.obnizBle = obnizBle;
     this.emitter = new EventEmitter();
     this.scanTarget = {};
@@ -197,6 +226,7 @@ export default class BleScan {
     this.obnizBle.Obniz.on('_close', () => {
       this.clearTimeoutTimer();
     });
+    this._extendedSupport = extendedSupport;
   }
 
   /**
@@ -311,11 +341,27 @@ export default class BleScan {
       } else {
         this._setTargetFilterOnDevice({}); // clear
       }
-      await this.obnizBle.centralBindings.startScanningWait(
-        [],
-        settings.duplicate,
-        settings.activeScan
-      );
+      if (settings.usePhyCoded === undefined) {
+        settings.usePhyCoded = true;
+      }
+      if (settings.usePhy1m === undefined) {
+        settings.usePhy1m = true;
+      }
+      if (this._extendedSupport) {
+        await this.obnizBle.centralBindings.startExtendedScanningWait(
+          [],
+          settings.duplicate,
+          settings.activeScan,
+          settings.usePhy1m,
+          settings.usePhyCoded
+        );
+      } else {
+        await this.obnizBle.centralBindings.startScanningWait(
+          [],
+          settings.duplicate,
+          settings.activeScan
+        );
+      }
 
       this.clearTimeoutTimer();
       if (timeout !== null) {
@@ -463,7 +509,11 @@ export default class BleScan {
     if (this.state === 'started' || this.state === 'starting') {
       this.state = 'stopping';
       this.clearTimeoutTimer();
-      await this.obnizBle.centralBindings.stopScanningWait();
+      if (this._extendedSupport) {
+        await this.obnizBle.centralBindings.stopExtendedScanningWait();
+      } else {
+        await this.obnizBle.centralBindings.stopScanningWait();
+      }
       this.finish(); // state will changed to stopped inside of this function.
     }
   }
@@ -481,7 +531,6 @@ export default class BleScan {
       }
       case 'onfind': {
         const peripheral: BleRemotePeripheral = params;
-
         const alreadyGotCompleteAdveData =
           peripheral.adv_data &&
           peripheral.adv_data.length > 0 &&

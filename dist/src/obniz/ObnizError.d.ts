@@ -95,3 +95,6 @@ export declare class ObnizBleUnSupportedPeripheralError extends ObnizError {
 export declare class ObnizBleInvalidPasskeyError extends ObnizError {
     constructor(passkey: number);
 }
+export declare class ObnizBleInvalidParameterError extends ObnizError {
+    constructor(guideMessage: string, input: string);
+}

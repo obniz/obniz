@@ -24,9 +24,15 @@ export default class ObnizBLEHci {
   public hciProtocolOnSocketData: any;
 
   protected _eventHandlerQueue: { [key: string]: EventHandler[] } = {};
+  /**
+   * @ignore
+   * @private
+   */
+  public _extended: boolean;
 
-  constructor(Obniz: ObnizDevice) {
+  constructor(Obniz: ObnizDevice, extended: boolean) {
     this.Obniz = Obniz;
+    this._extended = extended;
   }
 
   /**

@@ -25,21 +25,24 @@ const blePeripheral_1 = __importDefault(require("./blePeripheral"));
 const bleRemotePeripheral_1 = __importDefault(require("./bleRemotePeripheral"));
 const bleScan_1 = __importDefault(require("./bleScan"));
 const bleService_1 = __importDefault(require("./bleService"));
+const bleExtendedAdvertisement_1 = __importDefault(require("./bleExtendedAdvertisement"));
 /**
  * Use a obniz device as a BLE device.
  * Peripheral and Central mode are supported
  */
 class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
-    constructor(obniz) {
+    constructor(obniz, info) {
         super(obniz);
         this.remotePeripherals = [];
         /**
          * @ignore
          */
         this._initialized = false;
+        this._extended = false;
         // eslint-disable-next-line
         this.debugHandler = (text) => { };
-        this.hci = new hci_1.default(obniz);
+        this._extended = info.extended;
+        this.hci = new hci_1.default(obniz, this._extended);
         this.service = bleService_1.default;
         this.characteristic = bleCharacteristic_1.default;
         this.descriptor = bleDescriptor_1.default;
@@ -143,15 +146,40 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         }
     }
     /**
+     * ESP32 C3 or ESP32 S3 only
+     *
+     * Sets the PHY to use by default
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.setDefaultPhyWait(false,false,true);//coded only
+     * ```
+     */
+    async setDefaultPhyWait(usePhy1m, usePhy2m, usePhyCoded) {
+        await this.centralBindings.setDefaultPhyWait(usePhy1m, usePhy2m, usePhyCoded);
+    }
+    _onUpdatePhy(handler, txPhy, rxPhy) {
+        if (this.onUpdatePhy) {
+            this.onUpdatePhy(this.phyToStr(txPhy), this.phyToStr(rxPhy), handler);
+        }
+    }
+    /**
      * Initialize BLE module. You need call this first everything before.
      * This throws if device is not supported device.
+     *
+     * esp32 C3 or esp32 S3 Put true in the argument
+     * when not using the BLE5.0 extended advertise
      *
      * ```javascript
      * // Javascript Example
      * await obniz.ble.initWait();
      * ```
      */
-    async initWait() {
+    async initWait(supportType = {}) {
+        if (this._extended && supportType && supportType.extended) {
+            this._extended = supportType.extended;
+            this._reset();
+        }
         if (!this._initialized) {
             const MinHCIAvailableOS = '3.0.0';
             if (semver_1.default.lt(this.Obniz.firmware_ver, MinHCIAvailableOS)) {
@@ -221,7 +249,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             this.peripheral = new blePeripheral_1.default(this);
         }
         if (!this.scan) {
-            this.scan = new bleScan_1.default(this);
+            this.scan = new bleScan_1.default(this, this._extended);
         }
         else {
             this.scan.notifyFromServer('obnizClose', {});
@@ -229,10 +257,19 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         if (!this.advertisement) {
             this.advertisement = new bleAdvertisement_1.default(this);
         }
+        if (!this.extendedAdvertisement && this._extended) {
+            this.extendedAdvertisement = new bleExtendedAdvertisement_1.default(this);
+        }
+        if (!this._extended) {
+            this.extendedAdvertisement = undefined;
+        }
         // reset all submodules.
         this.peripheral._reset();
         this.scan._reset();
         this.advertisement._reset();
+        if (this.extendedAdvertisement) {
+            this.extendedAdvertisement._reset();
+        }
         // clear scanning
         this.hci._reset();
         if (!this.hciProtocol) {
@@ -253,6 +290,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             this.centralBindings.on('discover', this.onDiscover.bind(this));
             this.centralBindings.on('disconnect', this.onDisconnect.bind(this));
             this.centralBindings.on('notification', this.onNotification.bind(this));
+            this.centralBindings.on('updatePhy', this._onUpdatePhy.bind(this));
         }
         else {
             this.centralBindings._reset();
@@ -402,8 +440,10 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             rssi,
             adv_data: advertisement.advertisementRaw,
             scan_resp: advertisement.scanResponseRaw,
+            service_data: advertisement.serviceData,
         };
         val.setParams(peripheralData);
+        val.setExtendFlg(this._extended);
         this.scan.notifyFromServer('onfind', val);
     }
     onDisconnect(peripheralUuid, reason) {
@@ -474,6 +514,18 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     }
     debug(text) {
         this.debugHandler(text);
+    }
+    phyToStr(phy) {
+        switch (phy) {
+            case 1:
+                return '1m';
+            case 2:
+                return '2m';
+            case 3:
+                return 'coded';
+            default:
+                throw new Error('decode Phy Error');
+        }
     }
 }
 exports.default = ObnizBLE;

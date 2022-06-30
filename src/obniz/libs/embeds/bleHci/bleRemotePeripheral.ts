@@ -100,6 +100,33 @@ export interface BleConnectSetting {
    * Default : 256
    */
   mtuRequest?: null | number;
+
+  /**
+   * PHY used for connection
+   *
+   * It was May connect using that PHY
+   *
+   * Default : true
+   */
+  usePyh1m?: boolean;
+
+  /**
+   * PHY used for connection
+   *
+   * It was May connect using that PHY
+   *
+   * Default : true
+   */
+  usePyh2m?: boolean;
+
+  /**
+   * PHY used for connection
+   *
+   * It was May connect using that PHY
+   *
+   * Default : true
+   */
+  usePyhCoded?: boolean;
 }
 
 /**
@@ -301,7 +328,7 @@ export default class BleRemotePeripheral {
   public manufacturerSpecificData: number[] | null;
 
   public manufacturerSpecificDataInScanResponse: number[] | null;
-
+  public service_data: { uuid: number; data: number[] }[] | null;
   /**
    * This returns iBeacon data if the peripheral has it. If none, it will return null.
    *
@@ -410,9 +437,11 @@ export default class BleRemotePeripheral {
     'rssi',
     'adv_data',
     'scan_resp',
+    'service_data',
   ];
   protected _services: BleRemoteService[];
   protected emitter: EventEmitter;
+  private _extended = false;
 
   constructor(obnizBle: ObnizBLE, address: BleDeviceAddress) {
     this.obnizBle = obnizBle;
@@ -433,6 +462,7 @@ export default class BleRemotePeripheral {
 
     this._services = [];
     this.emitter = new EventEmitter();
+    this.service_data = null;
   }
 
   /**
@@ -462,6 +492,14 @@ export default class BleRemotePeripheral {
       }
     }
     this.analyseAdvertisement();
+  }
+
+  /**
+   * @ignore
+   * @param extendedMode
+   */
+  public setExtendFlg(extendedMode: boolean) {
+    this._extended = extendedMode;
   }
 
   /**
@@ -539,18 +577,42 @@ export default class BleRemotePeripheral {
       this._connectSetting.mtuRequest === undefined
         ? 256
         : this._connectSetting.mtuRequest;
+    if (this._connectSetting.usePyh1m === undefined) {
+      this._connectSetting.usePyh1m = true;
+    }
+    if (this._connectSetting.usePyh2m === undefined) {
+      this._connectSetting.usePyh2m = true;
+    }
+    if (this._connectSetting.usePyhCoded === undefined) {
+      this._connectSetting.usePyhCoded = true;
+    }
     await this.obnizBle.scan.endWait();
 
     try {
-      await this.obnizBle.centralBindings.connectWait(
-        this.address,
-        this._connectSetting.mtuRequest,
-        () => {
-          if (this._connectSetting.pairingOption) {
-            this.setPairingOption(this._connectSetting.pairingOption);
+      if (this._extended) {
+        await this.obnizBle.centralBindings.connectExtendedWait(
+          this.address,
+          this._connectSetting.mtuRequest,
+          () => {
+            if (this._connectSetting.pairingOption) {
+              this.setPairingOption(this._connectSetting.pairingOption);
+            }
+          },
+          this._connectSetting.usePyh1m,
+          this._connectSetting.usePyh2m,
+          this._connectSetting.usePyhCoded
+        );
+      } else {
+        await this.obnizBle.centralBindings.connectWait(
+          this.address,
+          this._connectSetting.mtuRequest,
+          () => {
+            if (this._connectSetting.pairingOption) {
+              this.setPairingOption(this._connectSetting.pairingOption);
+            }
           }
-        }
-      );
+        );
+      }
     } catch (e) {
       if (e instanceof ObnizTimeoutError) {
         await this.obnizBle.resetWait();
@@ -639,6 +701,100 @@ export default class BleRemotePeripheral {
 
       this.obnizBle.centralBindings.disconnect(this.address);
     });
+  }
+  /**
+   * Check the PHY used in the connection
+   *
+   * ```javascript
+   * // Javascript Example
+   *
+   * await obniz.ble.initWait();
+   * var target = {
+   *   uuids: ["fff0"],
+   * };
+   * var peripheral = await obniz.ble.scan.startOneWait(target);
+   * if(!peripheral) {
+   *   console.log('no such peripheral')
+   *   return;
+   * }
+   * try {
+   *   await peripheral.connectWait();
+   *   console.log("connected");
+   *   const phy = await peripheral.readPhyWait()
+   *   console.log(phy)
+   * } catch(e) {
+   *   console.error(e);
+   * }
+   * ```
+   *
+   */
+  public async readPhyWait() {
+    const phyToStr = (phy: number) => {
+      switch (phy) {
+        case 1:
+          return '1m';
+        case 2:
+          return '2m';
+        case 3:
+          return 'coded';
+        default:
+          throw new Error('decode Phy Error');
+      }
+    };
+    const data = await this.obnizBle.centralBindings.readPhyWait(this.address);
+    if (data.status === 0) {
+      return { txPhy: phyToStr(data.txPhy), rxPhy: phyToStr(data.rxPhy) };
+    }
+  }
+
+  /**
+   * Check the PHY used in the connection.
+   * Request to change the current PHY
+   *
+   * It will be changed if it corresponds to the PHY set by the other party.
+   *
+   * Changes can be seen on onUpdatePhy
+   *
+   * ```javascript
+   * // Javascript Example
+   *
+   * await obniz.ble.initWait();
+   * obniz.ble.onUpdatePhy = ((txPhy, rxPhy) => {
+   *  console.log("txPhy "+txPhy+" rxPhy "+rxPhy);
+   * });
+   * var target = {
+   *   uuids: ["fff0"],
+   * };
+   * var peripheral = await obniz.ble.scan.startOneWait(target);
+   * if(!peripheral) {
+   *   console.log('no such peripheral')
+   *   return;
+   * }
+   * try {
+   *   await peripheral.connectWait();
+   *   console.log("connected");
+   *   await peripheral.setPhyWait(false,false,true,true,true);//Request Only PHY Coded
+   * } catch(e) {
+   *   console.error(e);
+   * }
+   * ```
+   *
+   */
+  public async setPhyWait(
+    usePhy1m: boolean,
+    usePhy2m: boolean,
+    usePhyCoded: boolean,
+    useCodedModeS8: boolean,
+    useCodedModeS2: boolean
+  ) {
+    await this.obnizBle.centralBindings.setPhyWait(
+      this.address,
+      usePhy1m,
+      usePhy2m,
+      usePhyCoded,
+      useCodedModeS8,
+      useCodedModeS2
+    );
   }
 
   /**
