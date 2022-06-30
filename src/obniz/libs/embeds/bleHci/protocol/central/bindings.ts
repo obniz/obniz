@@ -9,6 +9,7 @@ import EventEmitter from 'eventemitter3';
 
 import {
   ObnizBleHciStateError,
+  ObnizBleInvalidParameterError,
   ObnizBleUnknownPeripheralError,
 } from '../../../../../ObnizError';
 import BleHelper from '../../bleHelper';
@@ -119,6 +120,12 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     usePhy1m: boolean,
     usePhyCoded: boolean
   ) {
+    if (!usePhy1m && !usePhyCoded) {
+      throw new ObnizBleInvalidParameterError(
+        'Please make either true',
+        `usePhy1M:${usePhy1m} usePhyCoded:${usePhyCoded}`
+      );
+    }
     this._scanServiceUuids = serviceUuids ?? null;
 
     await this._gap.startExtendedScanningWait(
@@ -212,6 +219,12 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     usePhy2m: boolean,
     usePhyCoded: boolean
   ) {
+    if (!usePhy1m && !usePhyCoded && !usePhy2m) {
+      throw new ObnizBleInvalidParameterError(
+        'Please make either true',
+        `usePhy1M:${usePhy1m} usePhy2M:${usePhy2m} usePhyCoded:${usePhyCoded}`
+      );
+    }
     const booleanToNumber = (flg: boolean): number => (flg ? 1 : 0);
     const setPhy =
       booleanToNumber(usePhy1m) +
@@ -232,6 +245,18 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     useCodedModeS8: boolean,
     useCodedModeS2: boolean
   ) {
+    if (!usePhy1m && !usePhyCoded && !usePhy2m) {
+      throw new ObnizBleInvalidParameterError(
+        'Please make either true',
+        `usePhy1M:${usePhy1m} usePhy2M:${usePhy2m} usePhyCoded:${usePhyCoded}`
+      );
+    }
+    if (usePhyCoded && !useCodedModeS8 && !useCodedModeS2) {
+      throw new ObnizBleInvalidParameterError(
+        'Please make either true',
+        `useCodedModeS8:${useCodedModeS8} useCodedModeS2:${useCodedModeS2}`
+      );
+    }
     const booleanToNumber = (flg: boolean): number => (flg ? 1 : 0);
     const setPhy =
       booleanToNumber(usePhy1m) +
@@ -254,10 +279,16 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     peripheralUuid: BleDeviceAddress,
     mtu: number | null,
     onConnectCallback?: any,
-    pyh1m = true,
-    pyh2m = true,
-    pyhCoded = true
+    usePhy1m = true,
+    usePhy2m = true,
+    usePhyCoded = true
   ) {
+    if (!usePhy1m && !usePhyCoded && !usePhy2m) {
+      throw new ObnizBleInvalidParameterError(
+        'Please make either true',
+        `usePhy1M:${usePhy1m} usePhy2M:${usePhy2m} usePhyCoded:${usePhyCoded}`
+      );
+    }
     const address = this._addresses[peripheralUuid];
     const addressType: any = this._addresseTypes[peripheralUuid];
     if (!address) {
@@ -291,9 +322,9 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
               onConnectCallback();
             }
           },
-          pyh1m,
-          pyh2m,
-          pyhCoded
+          usePhy1m,
+          usePhy2m,
+          usePhyCoded
         ); // connection timeout for 90 secs.
 
         return await this._gatts[conResult.handle].exchangeMtuWait(mtu);

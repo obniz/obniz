@@ -69,6 +69,9 @@ class NobleBindings extends eventemitter3_1.default {
         }
     }
     async startExtendedScanningWait(serviceUuids, allowDuplicates, activeScan, usePhy1m, usePhyCoded) {
+        if (!usePhy1m && !usePhyCoded) {
+            throw new ObnizError_1.ObnizBleInvalidParameterError('Please make either true', `usePhy1M:${usePhy1m} usePhyCoded:${usePhyCoded}`);
+        }
         this._scanServiceUuids = (serviceUuids !== null && serviceUuids !== void 0 ? serviceUuids : null);
         await this._gap.startExtendedScanningWait(allowDuplicates, activeScan, usePhy1m, usePhyCoded);
     }
@@ -114,6 +117,9 @@ class NobleBindings extends eventemitter3_1.default {
         return doPromise;
     }
     async setDefaultPhyWait(usePhy1m, usePhy2m, usePhyCoded) {
+        if (!usePhy1m && !usePhyCoded && !usePhy2m) {
+            throw new ObnizError_1.ObnizBleInvalidParameterError('Please make either true', `usePhy1M:${usePhy1m} usePhy2M:${usePhy2m} usePhyCoded:${usePhyCoded}`);
+        }
         const booleanToNumber = (flg) => (flg ? 1 : 0);
         const setPhy = booleanToNumber(usePhy1m) +
             booleanToNumber(usePhy2m) * 2 +
@@ -124,6 +130,12 @@ class NobleBindings extends eventemitter3_1.default {
         return await this._hci.leReadPhyCommandWait(this._handles[address]);
     }
     async setPhyWait(address, usePhy1m, usePhy2m, usePhyCoded, useCodedModeS8, useCodedModeS2) {
+        if (!usePhy1m && !usePhyCoded && !usePhy2m) {
+            throw new ObnizError_1.ObnizBleInvalidParameterError('Please make either true', `usePhy1M:${usePhy1m} usePhy2M:${usePhy2m} usePhyCoded:${usePhyCoded}`);
+        }
+        if (usePhyCoded && !useCodedModeS8 && !useCodedModeS2) {
+            throw new ObnizError_1.ObnizBleInvalidParameterError('Please make either true', `useCodedModeS8:${useCodedModeS8} useCodedModeS2:${useCodedModeS2}`);
+        }
         const booleanToNumber = (flg) => (flg ? 1 : 0);
         const setPhy = booleanToNumber(usePhy1m) +
             booleanToNumber(usePhy2m) * 2 +
@@ -133,7 +145,10 @@ class NobleBindings extends eventemitter3_1.default {
     onPhy(handler, txPhy, rxPhy) {
         this.emit('updatePhy', handler, txPhy, rxPhy);
     }
-    async connectExtendedWait(peripheralUuid, mtu, onConnectCallback, pyh1m = true, pyh2m = true, pyhCoded = true) {
+    async connectExtendedWait(peripheralUuid, mtu, onConnectCallback, usePhy1m = true, usePhy2m = true, usePhyCoded = true) {
+        if (!usePhy1m && !usePhyCoded && !usePhy2m) {
+            throw new ObnizError_1.ObnizBleInvalidParameterError('Please make either true', `usePhy1M:${usePhy1m} usePhy2M:${usePhy2m} usePhyCoded:${usePhyCoded}`);
+        }
         const address = this._addresses[peripheralUuid];
         const addressType = this._addresseTypes[peripheralUuid];
         if (!address) {
@@ -151,7 +166,7 @@ class NobleBindings extends eventemitter3_1.default {
                 if (onConnectCallback && typeof onConnectCallback === 'function') {
                     onConnectCallback();
                 }
-            }, pyh1m, pyh2m, pyhCoded); // connection timeout for 90 secs.
+            }, usePhy1m, usePhy2m, usePhyCoded); // connection timeout for 90 secs.
             return await this._gatts[conResult.handle].exchangeMtuWait(mtu);
         })
             .then(() => {
