@@ -10762,7 +10762,6 @@ class Gap extends eventemitter3_1.default {
         // p2729
         try {
             if (this._scanState === 'starting' || this._scanState === 'started') {
-                console.log("setExtendedScanEnabledWait this._scanState === 'starting' || this._scanState === 'started'");
                 await this.setExtendedScanEnabledWait(false, true);
             }
         }
