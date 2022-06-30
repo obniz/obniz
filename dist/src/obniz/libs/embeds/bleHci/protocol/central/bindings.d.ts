@@ -50,7 +50,7 @@ declare class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     }>;
     setPhyWait(address: string, usePhy1m: boolean, usePhy2m: boolean, usePhyCoded: boolean, useCodedModeS8: boolean, useCodedModeS2: boolean): Promise<void>;
     onPhy(handler: number, txPhy: number, rxPhy: number): void;
-    connectExtendedWait(peripheralUuid: BleDeviceAddress, mtu: number | null, onConnectCallback?: any, pyh1m?: boolean, pyh2m?: boolean, pyhCoded?: boolean): Promise<void>;
+    connectExtendedWait(peripheralUuid: BleDeviceAddress, mtu: number | null, onConnectCallback?: any, usePhy1m?: boolean, usePhy2m?: boolean, usePhyCoded?: boolean): Promise<void>;
     disconnect(peripheralUuid: any): void;
     updateRssiWait(peripheralUuid: UUID): Promise<number>;
     onStateChange(state: HciState): void;

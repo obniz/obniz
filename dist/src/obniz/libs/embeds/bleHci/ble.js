@@ -260,7 +260,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         if (!this.extendedAdvertisement && this._extended) {
             this.extendedAdvertisement = new bleExtendedAdvertisement_1.default(this);
         }
-        if (this._extended) {
+        if (!this._extended) {
             this.extendedAdvertisement = undefined;
         }
         // reset all submodules.

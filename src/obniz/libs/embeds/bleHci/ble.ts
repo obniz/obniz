@@ -340,7 +340,7 @@ export default class ObnizBLE extends ComponentAbstract {
     if (!this.extendedAdvertisement && this._extended) {
       this.extendedAdvertisement = new BleExtendedAdvertisement(this);
     }
-    if (this._extended) {
+    if (!this._extended) {
       this.extendedAdvertisement = undefined;
     }
 
