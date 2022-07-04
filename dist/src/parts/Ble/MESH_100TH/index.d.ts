@@ -23,6 +23,7 @@ export interface MESH_100TH_Data {
 /** MESH_100TH management class MESH_100THを管理するクラス */
 export default class MESH_100TH extends MESH<MESH_100TH_Data> {
     static readonly PartsName = "MESH_100TH";
+    localName: string;
     static AvailableBleMode: "Connectable";
     protected readonly staticClass: typeof MESH_100TH;
     /**
@@ -31,16 +32,11 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
     static isDeviceWithMode(peripheral: BleRemotePeripheral, mode: ObnizPartsBleMode): boolean;
     /** 例） Event handler for button ボタンのイベントハンドラー */
     onButtonPressed: ((pressed: boolean) => void) | null;
-    /**
-     * Connect to the services of a device
-     *
-     * デバイスのサービスに接続
-     */
-    connectWait(): Promise<void>;
     getDataWait(): Promise<{
         battery: number;
         temperature: number;
         humidity: number;
     }>;
     protected beforeOnDisconnectWait(reason: unknown): Promise<void>;
+    lightup(red: number, green: number, blue: number, time: number, cycle_on: number, cycle_off: number, pattern: number): void;
 }

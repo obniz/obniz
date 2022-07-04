@@ -10,6 +10,7 @@ const MESH_1 = require("../utils/abstracts/MESH");
 class MESH_100TH extends MESH_1.MESH {
     constructor() {
         super(...arguments);
+        this.localName = 'MESH-100LE';
         this.staticClass = MESH_100TH;
         /** 例） Event handler for button ボタンのイベントハンドラー */
         this.onButtonPressed = null;
@@ -28,15 +29,6 @@ class MESH_100TH extends MESH_1.MESH {
         // }
         return true;
     }
-    /**
-     * Connect to the services of a device
-     *
-     * デバイスのサービスに接続
-     */
-    async connectWait() {
-        await super.connectWait();
-        await this.authWait();
-    }
     // 接続してデータを取ってくる
     async getDataWait() {
         this.checkConnected();
@@ -48,6 +40,15 @@ class MESH_100TH extends MESH_1.MESH {
     }
     async beforeOnDisconnectWait(reason) {
         // do nothing
+    }
+    lightup(red, green, blue, time, cycle_on, cycle_off, pattern) {
+        if (!this._writeWOCharacteristic) {
+            return;
+        }
+        if (this._writeWOCharacteristic === null) {
+            return;
+        }
+        this._writeWOCharacteristic.writeWait(this._parser.parseLightup(red, green, blue, time, cycle_on, cycle_off, pattern));
     }
 }
 exports.default = MESH_100TH;

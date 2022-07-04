@@ -27,6 +27,7 @@ export interface MESH_100TH_Data {
 /** MESH_100TH management class MESH_100THを管理するクラス */
 export default class MESH_100TH extends MESH<MESH_100TH_Data> {
   public static readonly PartsName = 'MESH_100TH';
+  localName = 'MESH-100LE';
   public static AvailableBleMode = 'Connectable' as const;
   protected readonly staticClass = MESH_100TH;
 
@@ -52,17 +53,6 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
   /** 例） Event handler for button ボタンのイベントハンドラー */
   public onButtonPressed: ((pressed: boolean) => void) | null = null;
 
-  /**
-   * Connect to the services of a device
-   *
-   * デバイスのサービスに接続
-   */
-  public async connectWait(): Promise<void> {
-    await super.connectWait();
-
-    await this.authWait();
-  }
-
   // 接続してデータを取ってくる
   public async getDataWait() {
     this.checkConnected();
@@ -76,5 +66,33 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
 
   protected async beforeOnDisconnectWait(reason: unknown): Promise<void> {
     // do nothing
+  }
+
+  public lightup(
+    red: number,
+    green: number,
+    blue: number,
+    time: number,
+    cycle_on: number,
+    cycle_off: number,
+    pattern: number
+  ) {
+    if (!this._writeWOCharacteristic) {
+      return;
+    }
+    if (this._writeWOCharacteristic === null) {
+      return;
+    }
+    this._writeWOCharacteristic.writeWait(
+      this._parser.parseLightup(
+        red,
+        green,
+        blue,
+        time,
+        cycle_on,
+        cycle_off,
+        pattern
+      )
+    );
   }
 }

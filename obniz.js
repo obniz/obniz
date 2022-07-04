@@ -24246,6 +24246,7 @@ var map = {
 	"./Ble/LogttaCO2/index.js": "./dist/src/parts/Ble/LogttaCO2/index.js",
 	"./Ble/LogttaTemp/index.js": "./dist/src/parts/Ble/LogttaTemp/index.js",
 	"./Ble/MESH_100TH/index.js": "./dist/src/parts/Ble/MESH_100TH/index.js",
+	"./Ble/MESH_parse/index.js": "./dist/src/parts/Ble/MESH_parse/index.js",
 	"./Ble/MINEW_S1/index.js": "./dist/src/parts/Ble/MINEW_S1/index.js",
 	"./Ble/MT_500BT/index.js": "./dist/src/parts/Ble/MT_500BT/index.js",
 	"./Ble/MiniBreeze/index.js": "./dist/src/parts/Ble/MiniBreeze/index.js",
@@ -26842,6 +26843,7 @@ const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js
 class MESH_100TH extends MESH_1.MESH {
     constructor() {
         super(...arguments);
+        this.localName = 'MESH-100LE';
         this.staticClass = MESH_100TH;
         /** 例） Event handler for button ボタンのイベントハンドラー */
         this.onButtonPressed = null;
@@ -26860,15 +26862,6 @@ class MESH_100TH extends MESH_1.MESH {
         // }
         return true;
     }
-    /**
-     * Connect to the services of a device
-     *
-     * デバイスのサービスに接続
-     */
-    async connectWait() {
-        await super.connectWait();
-        await this.authWait();
-    }
     // 接続してデータを取ってくる
     async getDataWait() {
         this.checkConnected();
@@ -26881,10 +26874,95 @@ class MESH_100TH extends MESH_1.MESH {
     async beforeOnDisconnectWait(reason) {
         // do nothing
     }
+    lightup(red, green, blue, time, cycle_on, cycle_off, pattern) {
+        if (!this._writeWOCharacteristic) {
+            return;
+        }
+        if (this._writeWOCharacteristic === null) {
+            return;
+        }
+        this._writeWOCharacteristic.writeWait(this._parser.parseLightup(red, green, blue, time, cycle_on, cycle_off, pattern));
+    }
 }
 exports.default = MESH_100TH;
 MESH_100TH.PartsName = 'MESH_100TH';
 MESH_100TH.AvailableBleMode = 'Connectable';
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_parse/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class MESH_parse {
+    constructor() {
+        this._pattern = { BLICK: 1, FUWA: 2 };
+    }
+    parseFeature() {
+        return [0, 2, 1, 3];
+    }
+    parseLightup(red, green, blue, time, cycle_on, cycle_off, pattern) {
+        if (red < 0 || 255 < red) {
+            this.errorOutOfRange('red (' + red + ') must be 0 ~ 255.');
+            return [];
+        }
+        if (green < 0 || 255 < green) {
+            this.errorOutOfRange('green (' + green + ') must be 0 ~ 255.');
+            return [];
+        }
+        if (blue < 0 || 255 < blue) {
+            this.errorOutOfRange('blue (' + blue + ') must be 0 ~ 255.');
+            return [];
+        }
+        if (time < 0 || 65535 < time) {
+            this.errorOutOfRange('time (' + time + ') must be 0 ~ 65,535.');
+            return [];
+        }
+        if (cycle_on < 0 || 65535 < cycle_on) {
+            this.errorOutOfRange('cycle_on (' + cycle_on + ') must be 0 ~ 65,535.');
+            return [];
+        }
+        if (cycle_off < 0 || 65535 < cycle_off) {
+            this.errorOutOfRange('cycle_off (' + cycle_off + ') must be 0 ~ 65,535.');
+            return [];
+        }
+        const data = [
+            1,
+            0,
+            red,
+            0,
+            green,
+            0,
+            blue,
+            time % 256,
+            time / 256,
+            cycle_on % 256,
+            cycle_on / 256,
+            cycle_off % 256,
+            cycle_off / 256,
+            pattern,
+        ];
+        data.push(this.checkSum(data));
+        return data;
+    }
+    checkSum(command) {
+        let sum = 0;
+        command.forEach((val) => {
+            sum += val;
+        });
+        return sum % 256;
+    }
+    errorMessage(message) {
+        console.log('[Error] Can not parse; ' + message);
+    }
+    errorOutOfRange(message) {
+        console.log(this.errorMessage('out of range ' + message));
+    }
+}
+exports.MESH_parse = MESH_parse;
 
 
 /***/ }),
@@ -37217,14 +37295,80 @@ Logtta.CompanyID = {
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
+const MESH_parse_1 = __webpack_require__("./dist/src/parts/Ble/MESH_parse/index.js");
 class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
-    // 認証とか共通項目はこちらのクラスで
-    async authWait() {
-        const char = this.getChar('uuid1', 'uuid2');
-        await char.writeWait([0, 0, 0, 0]);
+    constructor() {
+        super(...arguments);
+        this._parser = new MESH_parse_1.MESH_parse();
+        this._UUIDS = {
+            serviceId: '72C90001-57A9-4D40-B746-534E22EC9F9E',
+            characteristicIndicate: '72c90005-57a9-4d40-b746-534e22ec9f9e',
+            characteristicNotify: '72c90003-57a9-4d40-b746-534e22ec9f9e',
+            characteristicWrite: '72c90004-57a9-4d40-b746-534e22ec9f9e',
+            characteristicWriteWO: '72c90002-57a9-4d40-b746-534e22ec9f9e',
+        };
+        this._indicateCharacteristic = null;
+        this._notifyCharacteristic = null;
+        this._writeCharacteristic = null;
+        this._writeWOCharacteristic = null;
+    }
+    static isMESHblock(peripheral) {
+        if (!peripheral.localName) {
+            return false;
+        }
+        return peripheral.localName.indexOf(this.localName) !== -1;
+    }
+    /**
+     * Connect to the services of a device
+     *
+     * デバイスのサービスに接続
+     */
+    async connectWait() {
+        // await super.connectWait();
+        await this.peripheral.connectWait();
+        this._indicateCharacteristic = this._getCharacteristic(this._UUIDS.characteristicIndicate);
+        this._notifyCharacteristic = this._getCharacteristic(this._UUIDS.characteristicNotify);
+        this._writeCharacteristic = this._getCharacteristic(this._UUIDS.characteristicWrite);
+        this._writeWOCharacteristic = this._getCharacteristic(this._UUIDS.characteristicWriteWO);
+        if (!this._indicateCharacteristic) {
+            return;
+        }
+        if (typeof this.wirteFeatureWait !== 'function') {
+            return;
+        }
+        await this._indicateCharacteristic.registerNotify((data) => {
+            console.log('data : ' + data);
+        });
+        console.log('connect');
+    }
+    _getCharacteristic(uuid) {
+        return this.peripheral
+            .getService(this._UUIDS.serviceId)
+            .getCharacteristic(uuid);
+    }
+    async wirteFeatureWait(data) {
+        console.log('register notify : ' + data);
+        try {
+            if (!this._writeCharacteristic) {
+                return;
+            }
+            if (this._writeCharacteristic === null) {
+                return;
+            }
+        }
+        catch (error) {
+            console.log(error);
+            return;
+        }
+        await this._writeCharacteristic
+            .writeWait(this._parser.parseFeature(), true)
+            .then((resp) => {
+            console.log('response: ' + resp);
+        });
     }
 }
 exports.MESH = MESH;
+MESH.localName = 'MESH-100';
 
 
 /***/ }),
@@ -76777,7 +76921,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
+module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
 
 /***/ }),
 
