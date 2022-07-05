@@ -7,6 +7,7 @@
 import { ObnizPartsBleMode } from '../../../obniz/ObnizPartsBleAbstract';
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import { MESH } from '../utils/abstracts/MESH';
+import { MESH_TH } from '../MESH_js';
 
 export interface MESH_100THOptions {}
 
@@ -24,39 +25,29 @@ export interface MESH_100TH_Data {
   humidity: number;
 }
 
-/** MESH_100TH management class MESH_100THを管理するクラス */
+/** MESH_100TH management class */
 export default class MESH_100TH extends MESH<MESH_100TH_Data> {
   public static readonly PartsName = 'MESH_100TH';
-  localName = 'MESH-100LE';
+  public static readonly _LocalName = 'MESH-100TH';
   public static AvailableBleMode = 'Connectable' as const;
   protected readonly staticClass = MESH_100TH;
 
-  /**
-   * adからこのデバイスであること判定する
-   */
-  public static isDeviceWithMode(
-    peripheral: BleRemotePeripheral,
-    mode: ObnizPartsBleMode
-  ) {
-    if (mode !== 'Connectable') {
-      return false;
-    }
-    const ad = peripheral.adv_data;
-
-    // sample
-    // if(ad[0] === 0 && ad[1] === 1){
-    //   return true
-    // }
-    return true;
+  protected static _isMESHblock(name: string) {
+    return name.indexOf(MESH_100TH._LocalName) !== -1;
   }
 
-  /** 例） Event handler for button ボタンのイベントハンドラー */
-  public onButtonPressed: ((pressed: boolean) => void) | null = null;
+  protected prepareConnect() {
+    this._mesh = new MESH_TH();
+    super.prepareConnect();
+  }
 
-  // 接続してデータを取ってくる
+  protected _notify(data: any) {
+    console.log('th data: ' + data);
+    this._mesh.notify(data);
+  }
+
   public async getDataWait() {
     this.checkConnected();
-
     return {
       battery: 0,
       temperature: 0,
@@ -68,14 +59,14 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
     // do nothing
   }
 
-  public lightup(
-    red: number,
-    green: number,
-    blue: number,
-    time: number,
-    cycle_on: number,
-    cycle_off: number,
-    pattern: number
+  public setMode(
+    temperature_upper: number,
+    temperature_bottom: number,
+    temperature_condition: number,
+    humidity_upper: number,
+    humidity_bottom: number,
+    humidity_condision: number,
+    type: number
   ) {
     if (!this._writeWOCharacteristic) {
       return;
@@ -84,14 +75,14 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
       return;
     }
     this._writeWOCharacteristic.writeWait(
-      this._parser.parseLightup(
-        red,
-        green,
-        blue,
-        time,
-        cycle_on,
-        cycle_off,
-        pattern
+      (this._mesh as MESH_TH).setMode(
+        temperature_upper,
+        temperature_bottom,
+        humidity_upper,
+        humidity_bottom,
+        temperature_condition,
+        humidity_condision,
+        type
       )
     );
   }

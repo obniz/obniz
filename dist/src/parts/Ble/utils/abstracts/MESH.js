@@ -2,11 +2,11 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = require("../../../../obniz/ObnizPartsBleAbstract");
-const MESH_parse_1 = require("../../MESH_parse");
+const MESH_js_1 = require("../../MESH_js");
 class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     constructor() {
         super(...arguments);
-        this._parser = new MESH_parse_1.MESH_parse();
+        this._mesh = new MESH_js_1.MESH_js();
         this._UUIDS = {
             serviceId: '72C90001-57A9-4D40-B746-534E22EC9F9E',
             characteristicIndicate: '72c90005-57a9-4d40-b746-534e22ec9f9e',
@@ -18,12 +18,25 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         this._notifyCharacteristic = null;
         this._writeCharacteristic = null;
         this._writeWOCharacteristic = null;
+        // event handler
+        this.onBatteryNotify = null;
+        this.onStatusButtonNotify = null;
+        // public setBatteryNotify(func: (val: number) => void) {
+        //   console.log(typeof this.onBatteryNotify + '::: before');
+        //   this.onBatteryNotify = (val) => {
+        //     func(val);
+        //   };
+        //   console.log(typeof this.onBatteryNotify + '::: after');
+        // }
     }
     static isMESHblock(peripheral) {
         if (!peripheral.localName) {
             return false;
         }
-        return peripheral.localName.indexOf(this.localName) !== -1;
+        return this._isMESHblock(peripheral.localName);
+    }
+    static _isMESHblock(name) {
+        return name.indexOf(MESH._LocalName) !== -1;
     }
     /**
      * Connect to the services of a device
@@ -31,7 +44,9 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
      * デバイスのサービスに接続
      */
     async connectWait() {
+        var _a;
         // await super.connectWait();
+        this.prepareConnect();
         await this.peripheral.connectWait();
         this._indicateCharacteristic = this._getCharacteristic(this._UUIDS.characteristicIndicate);
         this._notifyCharacteristic = this._getCharacteristic(this._UUIDS.characteristicNotify);
@@ -40,21 +55,38 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         if (!this._indicateCharacteristic) {
             return;
         }
-        if (typeof this.wirteFeatureWait !== 'function') {
-            return;
-        }
         await this._indicateCharacteristic.registerNotify((data) => {
             console.log('data : ' + data);
         });
+        await ((_a = this._notifyCharacteristic) === null || _a === void 0 ? void 0 : _a.registerNotifyWait((data) => {
+            this._notify(data);
+        }));
         console.log('connect');
+        await this.wirteFeatureWait();
+    }
+    _notify(data) {
+        console.log('Notify : ' + data);
+    }
+    prepareConnect() {
+        this._mesh.onBattery = (battery) => {
+            if (typeof this.onBatteryNotify !== 'function') {
+                return;
+            }
+            this.onBatteryNotify(battery);
+        };
+        this._mesh.onStatusButtonPressed = () => {
+            if (typeof this.onStatusButtonNotify !== 'function') {
+                return;
+            }
+            this.onStatusButtonNotify();
+        };
     }
     _getCharacteristic(uuid) {
         return this.peripheral
             .getService(this._UUIDS.serviceId)
             .getCharacteristic(uuid);
     }
-    async wirteFeatureWait(data) {
-        console.log('register notify : ' + data);
+    async wirteFeatureWait() {
         try {
             if (!this._writeCharacteristic) {
                 return;
@@ -68,11 +100,11 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
             return;
         }
         await this._writeCharacteristic
-            .writeWait(this._parser.parseFeature(), true)
+            .writeWait(this._mesh.feature(), true)
             .then((resp) => {
             console.log('response: ' + resp);
         });
     }
 }
 exports.MESH = MESH;
-MESH.localName = 'MESH-100';
+MESH._LocalName = 'MESH-100';

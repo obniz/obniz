@@ -6,30 +6,24 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
-/** MESH_100TH management class MESH_100THを管理するクラス */
+const MESH_js_1 = require("../MESH_js");
+/** MESH_100TH management class */
 class MESH_100TH extends MESH_1.MESH {
     constructor() {
         super(...arguments);
-        this.localName = 'MESH-100LE';
         this.staticClass = MESH_100TH;
-        /** 例） Event handler for button ボタンのイベントハンドラー */
-        this.onButtonPressed = null;
     }
-    /**
-     * adからこのデバイスであること判定する
-     */
-    static isDeviceWithMode(peripheral, mode) {
-        if (mode !== 'Connectable') {
-            return false;
-        }
-        const ad = peripheral.adv_data;
-        // sample
-        // if(ad[0] === 0 && ad[1] === 1){
-        //   return true
-        // }
-        return true;
+    static _isMESHblock(name) {
+        return name.indexOf(MESH_100TH._LocalName) !== -1;
     }
-    // 接続してデータを取ってくる
+    prepareConnect() {
+        this._mesh = new MESH_js_1.MESH_TH();
+        super.prepareConnect();
+    }
+    _notify(data) {
+        console.log('th data: ' + data);
+        this._mesh.notify(data);
+    }
     async getDataWait() {
         this.checkConnected();
         return {
@@ -41,16 +35,17 @@ class MESH_100TH extends MESH_1.MESH {
     async beforeOnDisconnectWait(reason) {
         // do nothing
     }
-    lightup(red, green, blue, time, cycle_on, cycle_off, pattern) {
+    setMode(temperature_upper, temperature_bottom, temperature_condition, humidity_upper, humidity_bottom, humidity_condision, type) {
         if (!this._writeWOCharacteristic) {
             return;
         }
         if (this._writeWOCharacteristic === null) {
             return;
         }
-        this._writeWOCharacteristic.writeWait(this._parser.parseLightup(red, green, blue, time, cycle_on, cycle_off, pattern));
+        this._writeWOCharacteristic.writeWait(this._mesh.setMode(temperature_upper, temperature_bottom, humidity_upper, humidity_bottom, temperature_condition, humidity_condision, type));
     }
 }
 exports.default = MESH_100TH;
 MESH_100TH.PartsName = 'MESH_100TH';
+MESH_100TH._LocalName = 'MESH-100TH';
 MESH_100TH.AvailableBleMode = 'Connectable';
