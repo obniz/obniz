@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ObnizBleGattHandleError | obniz</title>
+	<title>ObnizBleInvalidParameterError | obniz</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -62,10 +62,10 @@
 					<a href="../modules/obnizcore.errors.html">Errors</a>
 				</li>
 				<li>
-					<a href="obnizcore.errors.obnizblegatthandleerror.html">ObnizBleGattHandleError</a>
+					<a href="obnizcore.errors.obnizbleinvalidparametererror.html">ObnizBleInvalidParameterError</a>
 				</li>
 			</ul>
-			<h1>Class ObnizBleGattHandleError</h1>
+			<h1>Class ObnizBleInvalidParameterError</h1>
 		</div>
 	</div>
 </header>
@@ -79,7 +79,7 @@
 						<a href="obnizcore.errors.obnizerror.html" class="tsd-signature-type">ObnizError</a>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">ObnizBleGattHandleError</span>
+								<span class="target">ObnizBleInvalidParameterError</span>
 							</li>
 						</ul>
 					</li>
@@ -92,16 +92,16 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="obnizcore.errors.obnizblegatthandleerror.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="obnizcore.errors.obnizbleinvalidparametererror.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-inherited">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.errors.obnizblegatthandleerror.html#code" class="tsd-kind-icon">code</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.errors.obnizblegatthandleerror.html#message" class="tsd-kind-icon">message</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.errors.obnizblegatthandleerror.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.errors.obnizblegatthandleerror.html#stack" class="tsd-kind-icon">stack</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.errors.obnizbleinvalidparametererror.html#code" class="tsd-kind-icon">code</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.errors.obnizbleinvalidparametererror.html#message" class="tsd-kind-icon">message</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.errors.obnizbleinvalidparametererror.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.errors.obnizbleinvalidparametererror.html#stack" class="tsd-kind-icon">stack</a></li>
 							</ul>
 						</section>
 					</div>
@@ -113,23 +113,26 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Obniz<wbr>Ble<wbr>Gatt<wbr>Handle<wbr>Error<span class="tsd-signature-symbol">(</span>msg<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="obnizcore.errors.obnizblegatthandleerror.html" class="tsd-signature-type">ObnizBleGattHandleError</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Obniz<wbr>Ble<wbr>Invalid<wbr>Parameter<wbr>Error<span class="tsd-signature-symbol">(</span>guideMessage<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="obnizcore.errors.obnizbleinvalidparametererror.html" class="tsd-signature-type">ObnizBleInvalidParameterError</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="obnizcore.errors.obnizerror.html">ObnizError</a>.<a href="obnizcore.errors.obnizerror.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizError.ts:271</li>
+									<li>Defined in src/obniz/ObnizError.ts:289</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>msg: <span class="tsd-signature-type">any</span></h5>
+									<h5>guideMessage: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>input: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="obnizcore.errors.obnizblegatthandleerror.html" class="tsd-signature-type">ObnizBleGattHandleError</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="obnizcore.errors.obnizbleinvalidparametererror.html" class="tsd-signature-type">ObnizBleInvalidParameterError</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -195,36 +198,36 @@
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="obnizcore.errors.obnizbleatterror.html" class="tsd-kind-icon">Obniz<wbr>Ble<wbr>Att<wbr>Error</a>
 					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="obnizcore.errors.obnizblegatthandleerror.html" class="tsd-kind-icon">Obniz<wbr>Ble<wbr>Gatt<wbr>Handle<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="obnizcore.errors.obnizblehcistateerror.html" class="tsd-kind-icon">Obniz<wbr>Ble<wbr>Hci<wbr>State<wbr>Error</a>
+					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.errors.obnizblegatthandleerror.html" class="tsd-kind-icon">Obniz<wbr>Ble<wbr>Gatt<wbr>Handle<wbr>Error</a>
+						<a href="obnizcore.errors.obnizbleinvalidparametererror.html" class="tsd-kind-icon">Obniz<wbr>Ble<wbr>Invalid<wbr>Parameter<wbr>Error</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-								<a href="obnizcore.errors.obnizblegatthandleerror.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="obnizcore.errors.obnizbleinvalidparametererror.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="obnizcore.errors.obnizblegatthandleerror.html#code" class="tsd-kind-icon">code</a>
+								<a href="obnizcore.errors.obnizbleinvalidparametererror.html#code" class="tsd-kind-icon">code</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="obnizcore.errors.obnizblegatthandleerror.html#message" class="tsd-kind-icon">message</a>
+								<a href="obnizcore.errors.obnizbleinvalidparametererror.html#message" class="tsd-kind-icon">message</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="obnizcore.errors.obnizblegatthandleerror.html#name" class="tsd-kind-icon">name</a>
+								<a href="obnizcore.errors.obnizbleinvalidparametererror.html#name" class="tsd-kind-icon">name</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="obnizcore.errors.obnizblegatthandleerror.html#stack" class="tsd-kind-icon">stack</a>
+								<a href="obnizcore.errors.obnizbleinvalidparametererror.html#stack" class="tsd-kind-icon">stack</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.errors.obnizblehcistateerror.html" class="tsd-kind-icon">Obniz<wbr>Ble<wbr>Hci<wbr>State<wbr>Error</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.errors.obnizbleinvalidparametererror.html" class="tsd-kind-icon">Obniz<wbr>Ble<wbr>Invalid<wbr>Parameter<wbr>Error</a>
-					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="obnizcore.errors.obnizbleinvalidpasskeyerror.html" class="tsd-kind-icon">Obniz<wbr>Ble<wbr>Invalid<wbr>Passkey<wbr>Error</a>
 					</li>
