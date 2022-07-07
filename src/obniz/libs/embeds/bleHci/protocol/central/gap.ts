@@ -136,9 +136,6 @@ class Gap extends EventEmitter<GapEventTypes> {
 
     try {
       if (this._scanState === 'starting' || this._scanState === 'started') {
-        console.log(
-          "setExtendedScanEnabledWait this._scanState === 'starting' || this._scanState === 'started'"
-        );
         await this.setExtendedScanEnabledWait(false, true);
       }
     } catch (e) {
