@@ -4,8 +4,12 @@
  * @module Parts.KankiAirMier
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const advertismentAnalyzer_1 = require("../utils/advertisement/advertismentAnalyzer");
+const round_to_1 = __importDefault(require("round-to"));
 /** Kanki AirMier management class 換気エアミエルを管理するクラス */
 class KankiAirMier {
     constructor() {
@@ -51,8 +55,8 @@ class KankiAirMier {
         const deviceName = Buffer.from(allData.manufacture.deviceName).toString('utf8');
         return {
             co2: co2Raw,
-            temperature: temperatureRaw / 10,
-            humidity: humidityRaw / 10,
+            temperature: round_to_1.default(temperatureRaw / 10, 1),
+            humidity: round_to_1.default(humidityRaw / 10, 1),
             sequenceNumber,
             deviceName,
         };
