@@ -1,5 +1,5 @@
 export class MESH_js {
-  private battery = -1;
+  private _battery = -1;
 
   public onBattery: ((battery: number) => void) | null = null;
   public onStatusButtonPressed: (() => void) | null = null;
@@ -8,8 +8,8 @@ export class MESH_js {
     return [0, 2, 1, 3];
   }
 
-  public getBattery(): number {
-    return this.battery;
+  public get battery(): number {
+    return this._battery;
   }
 
   public notify(data: number[]) {
@@ -18,7 +18,7 @@ export class MESH_js {
   }
 
   public printData(message: string) {
-    console.log('bat: ' + this.battery + ', ' + message);
+    console.log('bat: ' + this._battery + ', ' + message);
   }
 
   protected checkSum(command: number[]) {
@@ -50,11 +50,11 @@ export class MESH_js {
     // if (data[2] === this.battery) {
     //   return;
     // }
-    this.battery = data[2];
+    this._battery = data[2];
     if (typeof this.onBattery !== 'function') {
       return;
     }
-    this.onBattery(this.battery);
+    this.onBattery(this._battery);
   }
 
   private updateStatusButton(data: number[]) {

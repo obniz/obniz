@@ -29,7 +29,7 @@ class MESH_100PA extends MESH_1.MESH {
     async getDataWait() {
         this.checkConnected();
         return {
-            battery: this._mesh.getBattery(),
+            battery: this._mesh.battery,
         };
     }
     async beforeOnDisconnectWait(reason) {

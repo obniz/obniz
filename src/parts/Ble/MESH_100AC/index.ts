@@ -90,7 +90,7 @@ export default class MESH_100AC extends MESH<MESH_100AC_Data> {
     return {
       localname: this.peripheral.localName,
       address: this.peripheral.address,
-      battery: this._mesh.getBattery(),
+      battery: this._mesh.battery,
       accele_x: (this._mesh as MESH_AC).getAccele().x,
       accele_y: (this._mesh as MESH_AC).getAccele().y,
       accele_z: (this._mesh as MESH_AC).getAccele().z,

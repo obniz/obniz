@@ -49,7 +49,7 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
   public async getDataWait() {
     this.checkConnected();
     return {
-      battery: this._mesh.getBattery(),
+      battery: this._mesh.battery,
     };
   }
 

@@ -26896,7 +26896,7 @@ class MESH_100AC extends MESH_1.MESH {
         return {
             localname: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this._mesh.getBattery(),
+            battery: this._mesh.battery,
             accele_x: this._mesh.getAccele().x,
             accele_y: this._mesh.getAccele().y,
             accele_z: this._mesh.getAccele().z,
@@ -26987,7 +26987,7 @@ class MESH_100BU extends MESH_1.MESH {
         return {
             localname: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this._mesh.getBattery(),
+            battery: this._mesh.battery,
         };
     }
     async beforeOnDisconnectWait(reason) {
@@ -27033,7 +27033,7 @@ class MESH_100LE extends MESH_1.MESH {
         return {
             localname: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this._mesh.getBattery(),
+            battery: this._mesh.battery,
         };
     }
     async beforeOnDisconnectWait(reason) {
@@ -27105,7 +27105,7 @@ class MESH_100MD extends MESH_1.MESH {
         return {
             localname: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this._mesh.getBattery(),
+            battery: this._mesh.battery,
         };
     }
     async beforeOnDisconnectWait(reason) {
@@ -27164,7 +27164,7 @@ class MESH_100PA extends MESH_1.MESH {
     async getDataWait() {
         this.checkConnected();
         return {
-            battery: this._mesh.getBattery(),
+            battery: this._mesh.battery,
         };
     }
     async beforeOnDisconnectWait(reason) {
@@ -27246,22 +27246,22 @@ MESH_100TH.AvailableBleMode = 'Connectable';
 Object.defineProperty(exports, "__esModule", { value: true });
 class MESH_js {
     constructor() {
-        this.battery = -1;
+        this._battery = -1;
         this.onBattery = null;
         this.onStatusButtonPressed = null;
     }
     feature() {
         return [0, 2, 1, 3];
     }
-    getBattery() {
-        return this.battery;
+    get battery() {
+        return this._battery;
     }
     notify(data) {
         this.updateBattery(data);
         this.updateStatusButton(data);
     }
     printData(message) {
-        console.log('bat: ' + this.battery + ', ' + message);
+        console.log('bat: ' + this._battery + ', ' + message);
     }
     checkSum(command) {
         let sum = 0;
@@ -27289,11 +27289,11 @@ class MESH_js {
         // if (data[2] === this.battery) {
         //   return;
         // }
-        this.battery = data[2];
+        this._battery = data[2];
         if (typeof this.onBattery !== 'function') {
             return;
         }
-        this.onBattery(this.battery);
+        this.onBattery(this._battery);
     }
     updateStatusButton(data) {
         if (data.length !== 4) {

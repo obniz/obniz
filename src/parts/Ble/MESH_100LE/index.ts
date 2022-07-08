@@ -35,7 +35,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
     return {
       localname: this.peripheral.localName,
       address: this.peripheral.address,
-      battery: this._mesh.getBattery(),
+      battery: this._mesh.battery,
     };
   }
 

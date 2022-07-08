@@ -81,7 +81,7 @@ export default class MESH_100BU extends MESH<MESH_100BU_Data> {
     return {
       localname: this.peripheral.localName,
       address: this.peripheral.address,
-      battery: this._mesh.getBattery(),
+      battery: this._mesh.battery,
     };
   }
 

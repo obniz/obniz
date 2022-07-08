@@ -1,9 +1,9 @@
 export declare class MESH_js {
-    private battery;
+    private _battery;
     onBattery: ((battery: number) => void) | null;
     onStatusButtonPressed: (() => void) | null;
     feature(): number[];
-    getBattery(): number;
+    get battery(): number;
     notify(data: number[]): void;
     printData(message: string): void;
     protected checkSum(command: number[]): number;

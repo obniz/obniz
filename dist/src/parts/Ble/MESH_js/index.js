@@ -2,22 +2,22 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class MESH_js {
     constructor() {
-        this.battery = -1;
+        this._battery = -1;
         this.onBattery = null;
         this.onStatusButtonPressed = null;
     }
     feature() {
         return [0, 2, 1, 3];
     }
-    getBattery() {
-        return this.battery;
+    get battery() {
+        return this._battery;
     }
     notify(data) {
         this.updateBattery(data);
         this.updateStatusButton(data);
     }
     printData(message) {
-        console.log('bat: ' + this.battery + ', ' + message);
+        console.log('bat: ' + this._battery + ', ' + message);
     }
     checkSum(command) {
         let sum = 0;
@@ -45,11 +45,11 @@ class MESH_js {
         // if (data[2] === this.battery) {
         //   return;
         // }
-        this.battery = data[2];
+        this._battery = data[2];
         if (typeof this.onBattery !== 'function') {
             return;
         }
-        this.onBattery(this.battery);
+        this.onBattery(this._battery);
     }
     updateStatusButton(data) {
         if (data.length !== 4) {
