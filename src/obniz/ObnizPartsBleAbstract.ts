@@ -5,6 +5,7 @@
 /* eslint-disable rulesdir/non-ascii */
 /* eslint-disable max-classes-per-file */
 
+import roundTo from 'round-to';
 import BleRemoteCharacteristic from './libs/embeds/bleHci/bleRemoteCharacteristic';
 import BleRemotePeripheral, {
   IBeacon,
@@ -67,6 +68,10 @@ export type ObnizBleBeaconStructNormal<
 > = ObnizBleBeaconStructStandard<NormalValueType> & {
   /** Default: 1 (ex: parseInt() * multiple) */
   multiple?: number;
+  /** Number of bytes in the integer part with fixed point */
+  fixedIntegerBytes?: number;
+  /** round precision */
+  round?: number;
   /** Required in array type, Only in xyz */
   // repeat?: number;
   /** Used only 'custom' */
@@ -79,6 +84,19 @@ export type ObnizBleBeaconStructCheck = ObnizBleBeaconStructStandard<ValueType> 
 };
 
 export const notMatchDeviceError = new Error('Is NOT target device.');
+
+export const fixedPoint = (value: number[], integerBytes = 1): number => {
+  const positive = value[0] >> 7 === 0;
+  if (!positive) {
+    value = value.map((n, i) => (n ^ 0xff) + (i === value.length - 1 ? 1 : 0));
+  }
+  const val =
+    (positive ? 1 : -1) *
+    (uint(value.slice(0, integerBytes)) +
+      uint(value.slice(integerBytes)) /
+        (1 << (8 * (value.length - integerBytes))));
+  return val;
+};
 
 export const uint = (value: number[]): number => {
   let val = 0;
@@ -118,6 +136,9 @@ export interface ObnizPartsBleProps extends ObnizPartsProps {
   readonly CompanyID?: ObnizPartsBleCompare<number[] | null>;
   readonly CompanyID_ScanResponse?: ObnizPartsBleCompare<number[] | null>;
   readonly BeaconDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown> | null>;
+  readonly ServiceDataLength?: ObnizPartsBleCompare<number | null>;
+  readonly ServiceUUID?: ObnizPartsBleCompare<number[] | null>;
+  readonly ServiceDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown> | null>;
   getServiceUuids(mode: ObnizPartsBleMode): string[] | null | undefined;
   getDeviceMode(peripheral: BleRemotePeripheral): ObnizPartsBleMode | null;
   new (
@@ -230,6 +251,33 @@ export abstract class ObnizPartsBle<S> {
   public static readonly BeaconDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown> | null>;
 
   /**
+   * Used as a condition of isDevice() by default.
+   *
+   * 標準でisDevice()の条件として使用
+   */
+  public static readonly ServiceDataLength?: ObnizPartsBleCompare<
+    number | null
+  > = undefined;
+
+  /**
+   * Used as a condition of isDevice() by default.
+   *
+   * 標準でisDevice()の条件として使用
+   */
+  public static readonly ServiceDataUUID?: ObnizPartsBleCompare<
+    number[] | null
+  > = undefined;
+
+  /**
+   * Used as a condition of isDevice() by default.
+   * Compare with data after Service UUID.
+   *
+   * 標準でisDevice()の条件として使用
+   * ServiceUUID以降のデータと比較
+   */
+  public static readonly ServiceDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown> | null>;
+
+  /**
    * @deprecated
    */
   public static isDevice(peripheral: BleRemotePeripheral): boolean {
@@ -309,23 +357,37 @@ export abstract class ObnizPartsBle<S> {
     }
 
     if (
-      !this.checkManufacturerSpecificData(
+      !this.checkCustomData(
         mode,
+        peripheral.address,
         peripheral.manufacturerSpecificData,
         this.BeaconDataLength,
         this.CompanyID,
-        false
+        this.BeaconDataStruct
       )
     )
       return false;
 
     if (
-      !this.checkManufacturerSpecificData(
+      !this.checkCustomData(
         mode,
+        peripheral.address,
         peripheral.manufacturerSpecificDataInScanResponse,
         this.BeaconDataLength_ScanResponse,
         this.CompanyID_ScanResponse,
-        true
+        this.BeaconDataStruct
+      )
+    )
+      return false;
+
+    if (
+      !this.checkCustomData(
+        mode,
+        peripheral.address,
+        peripheral.serviceData,
+        this.ServiceDataLength,
+        this.ServiceDataUUID,
+        this.ServiceDataStruct
       )
     )
       return false;
@@ -333,73 +395,74 @@ export abstract class ObnizPartsBle<S> {
     return true;
   }
 
-  private static checkManufacturerSpecificData(
+  private static checkCustomData(
     mode: ObnizPartsBleMode,
-    beaconData: number[] | null,
-    beaconDataLength: ObnizPartsBleCompare<number | null> | undefined,
-    companyID: ObnizPartsBleCompare<number[] | null> | undefined,
-    inScanResponse: boolean
+    address: string,
+    data: number[] | null,
+    dataLength: ObnizPartsBleCompare<number | null> | undefined,
+    headID: ObnizPartsBleCompare<number[] | null> | undefined,
+    dataStruct:
+      | ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown> | null>
+      | undefined,
+    inScanResponse = false
   ): boolean {
-    if (companyID !== undefined) {
-      const defaultCompanyID =
-        companyID instanceof Array ||
-        companyID === null ||
-        companyID === undefined
-          ? companyID
-          : companyID[mode];
-      if (defaultCompanyID !== undefined) {
-        if (defaultCompanyID === null && beaconData !== null) return false;
-        if (defaultCompanyID !== null && beaconData === null) return false;
+    if (headID !== undefined) {
+      const defHeadID =
+        headID instanceof Array || headID === null || headID === undefined
+          ? headID
+          : headID[mode];
+      if (defHeadID !== undefined) {
+        if (defHeadID === null && data !== null) return false;
+        if (defHeadID !== null && data === null) return false;
         if (
-          defaultCompanyID !== null &&
-          beaconData !== null &&
-          (defaultCompanyID[0] !== beaconData[0] ||
-            defaultCompanyID[1] !== beaconData[1])
+          defHeadID !== null &&
+          data !== null &&
+          (defHeadID[0] !== data[0] || defHeadID[1] !== data[1])
         )
           return false;
       }
     }
 
-    if (beaconDataLength !== undefined) {
-      const defaultBeaconDataLength =
-        typeof beaconDataLength === 'number' ||
-        beaconDataLength === null ||
-        beaconDataLength === undefined
-          ? beaconDataLength
-          : beaconDataLength[mode];
-      if (defaultBeaconDataLength !== undefined) {
-        if (defaultBeaconDataLength === null && beaconData !== null)
-          return false;
-        if (defaultBeaconDataLength !== null && beaconData === null)
-          return false;
+    if (dataLength !== undefined) {
+      const defDataLength =
+        typeof dataLength === 'number' ||
+        dataLength === null ||
+        dataLength === undefined
+          ? dataLength
+          : dataLength[mode];
+      if (defDataLength !== undefined) {
+        if (defDataLength === null && data !== null) return false;
+        if (defDataLength !== null && data === null) return false;
         if (
-          defaultBeaconDataLength !== null &&
-          beaconData !== null &&
-          beaconData.length + 1 !== defaultBeaconDataLength
+          defDataLength !== null &&
+          data !== null &&
+          data.length + 1 !== defDataLength
         )
           return false;
       }
     }
 
-    if (this.BeaconDataStruct !== undefined) {
-      const defaultBeaconDataStruct = (this.BeaconDataStruct !== null &&
-      (this.BeaconDataStruct.Beacon ||
-        this.BeaconDataStruct.Connectable ||
-        this.BeaconDataStruct.Pairing)
-        ? this.BeaconDataStruct[mode]
-        : this.BeaconDataStruct) as
-        | ObnizBleBeaconStruct<unknown>
-        | null
-        | undefined;
-      if (defaultBeaconDataStruct !== undefined) {
+    if (dataStruct !== undefined) {
+      const defDataStruct = (dataStruct !== null &&
+      (dataStruct.Beacon || dataStruct.Connectable || dataStruct.Pairing)
+        ? dataStruct[mode]
+        : dataStruct) as ObnizBleBeaconStruct<unknown> | null | undefined;
+      if (defDataStruct !== undefined) {
+        // TODO: macAddress_ -> macAddress
+        if (defDataStruct && defDataStruct.macAddress_?.type === 'check') {
+          defDataStruct.macAddress_.data = new Array(6)
+            .fill(0)
+            .map((v, i) => parseInt(address.slice(i * 2, (i + 1) * 2), 16))
+            .reverse();
+        }
         if (
-          defaultBeaconDataStruct !== null &&
-          beaconData !== null &&
-          Object.values(defaultBeaconDataStruct).filter(
+          defDataStruct !== null &&
+          data !== null &&
+          Object.values(defDataStruct).filter(
             (config) =>
               inScanResponse === (config.scanResponse ?? false) &&
               config.type === 'check' &&
-              beaconData
+              data
                 .slice(
                   2 + config.index,
                   2 + config.index + (config.length ?? 1)
@@ -446,6 +509,8 @@ export abstract class ObnizPartsBle<S> {
 
   public readonly beaconDataInScanResponse: number[] | null;
 
+  public readonly serviceData: number[] | null;
+
   protected _mode: ObnizPartsBleMode;
 
   public get mode(): ObnizPartsBleMode {
@@ -466,6 +531,8 @@ export abstract class ObnizPartsBle<S> {
     this.beaconDataInScanResponse = this.peripheral.manufacturerSpecificDataInScanResponse;
     if (this.beaconDataInScanResponse)
       this.beaconDataInScanResponse = this.beaconDataInScanResponse.slice(2);
+    this.serviceData = this.peripheral.serviceData;
+    if (this.serviceData) this.serviceData = this.serviceData.slice(2);
   }
 
   public checkMode(force = false): ObnizPartsBleMode {
@@ -483,73 +550,95 @@ export abstract class ObnizPartsBle<S> {
    */
   public getData(): S {
     this.checkMode();
-    if (!this.staticClass.BeaconDataStruct)
-      throw new Error('Data analysis is not defined.');
-    if (!this.beaconData)
-      throw new Error('Manufacturer specific data is null.');
+    const dataStruct =
+      this.staticClass.BeaconDataStruct ?? this.staticClass.ServiceDataStruct;
+    if (!dataStruct) throw new Error('Data analysis is not defined.');
 
-    const defaultBeaconDataStruct = (this.staticClass.BeaconDataStruct.Beacon ||
-    this.staticClass.BeaconDataStruct.Connectable ||
-    this.staticClass.BeaconDataStruct.Pairing
-      ? this.staticClass.BeaconDataStruct[this.mode]
-      : this.staticClass.BeaconDataStruct) as ObnizBleBeaconStruct<S> | null;
-    if (defaultBeaconDataStruct === null)
+    const data = this.beaconData ?? this.serviceData;
+    if (!data) throw new Error('Manufacturer specific data is null.');
+
+    const defDataStruct = (dataStruct.Beacon ||
+    dataStruct.Connectable ||
+    dataStruct.Pairing
+      ? dataStruct[this.mode]
+      : dataStruct) as ObnizBleBeaconStruct<S> | null;
+    if (defDataStruct === null)
       throw new Error('Data analysis is not defined.');
 
     return (Object.fromEntries(
-      Object.entries(defaultBeaconDataStruct)
+      Object.entries(defDataStruct)
         .map(([name, c]) => {
           if (c.type === 'check') return [];
           const config = c as ObnizBleBeaconStructNormal<unknown, never>;
-          if (
-            !(config.scanResponse
-              ? this.beaconDataInScanResponse
-              : this.beaconData)
-          )
+          if (!(config.scanResponse ? this.beaconDataInScanResponse : data))
             throw new Error('manufacturerSpecificData is null.');
-          const data = (
-            (config.scanResponse
-              ? this.beaconDataInScanResponse
-              : this.beaconData) ?? []
+          const vals = (
+            (config.scanResponse ? this.beaconDataInScanResponse : data) ?? []
           ).slice(config.index, config.index + (config.length ?? 1));
           if (config.type.indexOf('bool') === 0)
-            return [name, (data[0] & parseInt(config.type.slice(4), 2)) > 0];
+            return [name, (vals[0] & parseInt(config.type.slice(4), 2)) > 0];
           else if (config.type === 'string')
             return [
               name,
-              Buffer.from(data.slice(0, data.indexOf(0))).toString(),
+              Buffer.from(vals.slice(0, vals.indexOf(0))).toString(),
             ];
           else if (config.type === 'xyz') {
             if (!config.length) config.length = 6;
             if (config.length % 6 !== 0) return [];
-            else if (config.length === 6) return [name, this.getTriaxial(data)];
+            else if (config.length === 6)
+              return [
+                name,
+                this.getTriaxial(vals, config.fixedIntegerBytes, config.round),
+              ];
             else
               return [
                 name,
                 [...Array(config.length / 6).keys()].map((v) =>
-                  this.getTriaxial(data.slice(v * 6, (v + 1) * 6))
+                  this.getTriaxial(
+                    vals.slice(v * 6, (v + 1) * 6),
+                    config.fixedIntegerBytes,
+                    config.round
+                  )
                 ),
               ];
           } else if (config.type === 'custom')
             if (!config.func) return [];
-            else return [name, config.func(data, this.peripheral)];
+            else return [name, config.func(vals, this.peripheral)];
           else {
             const multi = config.multiple ?? 1;
-            const num = (config.type.indexOf('u') === 0 ? uint : int)(
-              config.type.indexOf('BE') >= 0 ? data.reverse() : data
-            );
-            return [name, num * multi];
+            const f = (d: number[]): number =>
+              config.fixedIntegerBytes !== undefined
+                ? fixedPoint(d, config.fixedIntegerBytes)
+                : int(d);
+            const num =
+              (config.type.indexOf('u') === 0 ? uint : f)(
+                config.type.indexOf('BE') >= 0 ? vals.reverse() : vals
+              ) * multi;
+            return [
+              name,
+              config.round !== undefined ? roundTo(num, config.round) : num,
+            ];
           }
         })
         .filter((v) => v[0])
     ) as unknown) as S;
   }
 
-  private getTriaxial(data: number[]): Triaxial {
+  private getTriaxial(
+    data: number[],
+    fixedIntegerBytes?: number,
+    round?: number
+  ): Triaxial {
+    const f = (d: number[]): number =>
+      fixedIntegerBytes !== undefined
+        ? fixedPoint(d, fixedIntegerBytes)
+        : int(d);
+    const ff = (d: number[]): number =>
+      round !== undefined ? roundTo(f(d), round) : f(d);
     return {
-      x: int(data.slice(0, 2)),
-      y: int(data.slice(2, 4)),
-      z: int(data.slice(4, 6)),
+      x: ff(data.slice(0, 2)),
+      y: ff(data.slice(2, 4)),
+      z: ff(data.slice(4, 6)),
     };
   }
 }

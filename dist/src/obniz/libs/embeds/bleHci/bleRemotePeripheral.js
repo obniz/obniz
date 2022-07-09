@@ -52,6 +52,7 @@ class BleRemotePeripheral {
         this.localName = null;
         this.manufacturerSpecificData = null;
         this.manufacturerSpecificDataInScanResponse = null;
+        this.serviceData = null;
         this.iBeacon = null;
         this._services = [];
         this.emitter = new eventemitter3_1.default();
@@ -648,6 +649,7 @@ class BleRemotePeripheral {
         }
         this.setLocalName();
         this.setManufacturerSpecificData();
+        this.setServiceData();
         this.setIBeacon();
     }
     searchTypeVal(type, fromScanResponseData = false) {
@@ -668,6 +670,10 @@ class BleRemotePeripheral {
         var _a, _b;
         this.manufacturerSpecificData = (_a = this.searchTypeVal(0xff), (_a !== null && _a !== void 0 ? _a : null));
         this.manufacturerSpecificDataInScanResponse = (_b = this.searchTypeVal(0xff, true), (_b !== null && _b !== void 0 ? _b : null));
+    }
+    setServiceData() {
+        var _a;
+        this.serviceData = (_a = this.searchTypeVal(0x16), (_a !== null && _a !== void 0 ? _a : null));
     }
     setIBeacon() {
         const data = this.manufacturerSpecificData;
