@@ -10,7 +10,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const MINEW_1 = __importDefault(require("../utils/abstracts/MINEW"));
 /**
- * AAC Slot Only
+ * ACC Slot Only
  */
 class MM_BLEBC5 extends MINEW_1.default {
     constructor() {

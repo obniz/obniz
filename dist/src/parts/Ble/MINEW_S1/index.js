@@ -16,6 +16,12 @@ class MINEW_S1 extends MINEW_1.default {
         super(...arguments);
         this.staticClass = MINEW_S1;
     }
+    // TODO: delete by disable info slot
+    static isDeviceWithMode(peripheral, mode) {
+        return (peripheral.serviceData !== null &&
+            (peripheral.serviceData[3] === 1 || peripheral.serviceData[3] === 8) &&
+            MINEW_1.default.isDeviceWithMode(peripheral, mode));
+    }
     /**
      * Get device information data from the MINEW_S1
      *
@@ -117,5 +123,12 @@ MINEW_S1.ServiceDataStruct = MINEW_1.default.getServiceDataStruct(7, 1, {
         index: 7,
         length: 6,
         type: 'unsignedNumBE',
+    },
+    // TODO: delete by disable info slot
+    versionNumber_: {
+        index: 1,
+        type: 'check',
+        data: 1,
+        scanResponse: true,
     },
 });

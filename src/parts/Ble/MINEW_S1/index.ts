@@ -10,6 +10,7 @@ import ObnizUtil from '../../../obniz/libs/utils/util';
 import {
   ObnizPartsBleCompare,
   ObnizBleBeaconStruct,
+  ObnizPartsBleMode,
 } from '../../../obniz/ObnizPartsBleAbstract';
 
 /**
@@ -97,7 +98,26 @@ export default class MINEW_S1 extends MINEW<MINEW_S1_Data> {
       length: 6,
       type: 'unsignedNumBE',
     },
+    // TODO: delete by disable info slot
+    versionNumber_: {
+      index: 1,
+      type: 'check',
+      data: 1,
+      scanResponse: true, // for ignored by check
+    },
   });
+
+  // TODO: delete by disable info slot
+  public static isDeviceWithMode(
+    peripheral: BleRemotePeripheral,
+    mode: ObnizPartsBleMode
+  ): boolean {
+    return (
+      peripheral.serviceData !== null &&
+      (peripheral.serviceData[3] === 1 || peripheral.serviceData[3] === 8) &&
+      MINEW.isDeviceWithMode(peripheral, mode)
+    );
+  }
 
   /**
    * Get device information data from the MINEW_S1

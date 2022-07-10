@@ -4,7 +4,7 @@
  */
 import MINEW from '../utils/abstracts/MINEW';
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import { ObnizPartsBleCompare, ObnizBleBeaconStruct } from '../../../obniz/ObnizPartsBleAbstract';
+import { ObnizPartsBleCompare, ObnizBleBeaconStruct, ObnizPartsBleMode } from '../../../obniz/ObnizPartsBleAbstract';
 /**
  * temperature and humidity data from MINEW_S1 advertisement
  *
@@ -49,6 +49,7 @@ export default class MINEW_S1 extends MINEW<MINEW_S1_Data> {
     protected staticClass: typeof MINEW_S1;
     static readonly PartsName = "MINEW_S1";
     static readonly ServiceDataStruct: ObnizPartsBleCompare<ObnizBleBeaconStruct<MINEW_S1_Data>>;
+    static isDeviceWithMode(peripheral: BleRemotePeripheral, mode: ObnizPartsBleMode): boolean;
     /**
      * Get device information data from the MINEW_S1
      *

@@ -22,7 +22,7 @@ export interface MM_BLEBC5_Data {
     battery: number;
 }
 /**
- * AAC Slot Only
+ * ACC Slot Only
  */
 export default class MM_BLEBC5 extends MINEW<MM_BLEBC5_Data> {
     protected staticClass: typeof MM_BLEBC5;
