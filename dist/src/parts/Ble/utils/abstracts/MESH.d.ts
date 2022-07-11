@@ -14,6 +14,7 @@ export declare abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> 
     private _writeWOResponseCharacteristic;
     private static readonly LOCAL_NAME_LENGTH;
     static isMESHblock(peripheral: BleRemotePeripheral): boolean;
+    static sameSirialNumberBlock(peripheral: BleRemotePeripheral, sirialnumber: string): boolean;
     /**
      * Connect to the services of a MESH
      */

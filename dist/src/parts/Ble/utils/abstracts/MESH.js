@@ -17,13 +17,21 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         this._writeWOResponseCharacteristic = null;
     }
     static isMESHblock(peripheral) {
-        if (!peripheral.localName) {
+        const _name = peripheral.localName;
+        if (!_name) {
             return false;
         }
-        if (peripheral.localName.length !== MESH.LOCAL_NAME_LENGTH) {
+        if (_name.length !== MESH.LOCAL_NAME_LENGTH) {
             return false;
         }
-        return this._isMESHblock(peripheral.localName);
+        return this._isMESHblock(_name);
+    }
+    static sameSirialNumberBlock(peripheral, sirialnumber) {
+        var _a;
+        if (!this.isMESHblock(peripheral)) {
+            return false;
+        }
+        return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf(sirialnumber)) !== -1;
     }
     /**
      * Connect to the services of a MESH

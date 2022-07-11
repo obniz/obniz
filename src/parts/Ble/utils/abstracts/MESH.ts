@@ -27,13 +27,24 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
   private static readonly LOCAL_NAME_LENGTH = 17;
 
   public static isMESHblock(peripheral: BleRemotePeripheral): boolean {
-    if (!peripheral.localName) {
+    const _name: string | null = peripheral.localName;
+    if (!_name) {
       return false;
     }
-    if (peripheral.localName.length !== MESH.LOCAL_NAME_LENGTH) {
+    if (_name.length !== MESH.LOCAL_NAME_LENGTH) {
       return false;
     }
-    return this._isMESHblock(peripheral.localName);
+    return this._isMESHblock(_name);
+  }
+
+  public static sameSirialNumberBlock(
+    peripheral: BleRemotePeripheral,
+    sirialnumber: string
+  ): boolean {
+    if (!this.isMESHblock(peripheral)) {
+      return false;
+    }
+    return peripheral.localName?.indexOf(sirialnumber) !== -1;
   }
 
   /**
