@@ -24,10 +24,10 @@ obniz.onconnect = async () => {
     await obniz.ble.initWait();
     obniz.ble.scan.onfind = async (peripheral) => {
       // sampleBU(peripheral);
-      // sampleAC(peripheral);
+      sampleAC(peripheral);
       // sampleLE(peripheral);
       // samplePA(peripheral);
-      sampleTH(peripheral);
+      // sampleTH(peripheral);
       // sampleMD(peripheral);
     };
     await obniz.ble.scan.startWait();
@@ -87,7 +87,8 @@ async function sampleLE(peripheral) {
   console.log('obniz.ble.scan.onfind : ' + peripheral.localName + ' : ' + peripheral.rssi);
   const LED_block = new mesh_le(peripheral);
   await LED_block.connectWait();
-  await LED_block.lightup(255, 0, 0, 4000, 256, 256, 1);
+  await LED_block.lightup(127, 0, 0, 4000, 256, 256, 1);
+  LED_block.onStatusButtonNotify = (()=>{console.log('status button pressed');});
 }
 
 async function sampleAC(peripheral) {
@@ -98,6 +99,7 @@ async function sampleAC(peripheral) {
 
   const AC_block = new mesh_ac(peripheral);
   await AC_block.connectWait();
+  // AC_block.setMode(3,0,15);
 
   AC_block.onTapped = ((accele) => {
     console.log('tapped! (ax, ay, az) = (' + accele.x + ', ' + accele.y + ',' + accele.z + ')');
@@ -141,6 +143,8 @@ async function samplePA(peripheral) {
     console.log('status button pressed !');
   });
 
+  PA_block.setMode(32);
+
   // PA_block.getDataWait();
 }
 
@@ -151,15 +155,28 @@ async function sampleTH(peripheral) {
   console.log('obniz.ble.scan.onfind : ' + peripheral.localName + ' : ' + peripheral.rssi);
   const TH_block = new mesh_th(peripheral);
   await TH_block.connectWait();
-  TH_block.setMode(30, 10, 0, 50, 20, 1, 32);
+  TH_block.setMode(40, 10, 0, 50, 20, 1, 32);
+  TH_block.onNotify = ((response) => {
+    console.log('temp: ' + response.temperature + ', hum: ' + response.humidity);
+  });
 }
 
+var MD_block = null;
 async function sampleMD(peripheral) {
   if (!mesh_md.isMESHblock(peripheral)) {
     return;
   }
   console.log('obniz.ble.scan.onfind : ' + peripheral.localName + ' : ' + peripheral.rssi);
-  const MD_block = new mesh_md(peripheral);
+  MD_block = new mesh_md(peripheral);
   await MD_block.connectWait();
-  MD_block.setMode(6, 17, 500, 500);
+  MD_block.setMode(0x01, 500, 500, 6);
+  MD_block.onNotify = ((response) => {
+    console.log(response);
+  });
+  setInterval(getDataMD, 5000);
+}
+
+async function getDataMD() {
+  const res = await MD_block.getDataWait();
+  console.log(res);
 }

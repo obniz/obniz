@@ -9,85 +9,81 @@ import BleRemotePeripheral from '../../../../obniz/libs/embeds/bleHci/bleRemoteP
 import { MESH_js } from '../../MESH_js';
 
 export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
-  protected static _LocalName = 'MESH-100';
-  protected _mesh: MESH_js = new MESH_js();
-
-  protected _UUIDS = {
-    serviceId: '72C90001-57A9-4D40-B746-534E22EC9F9E',
-    characteristicIndicate: '72c90005-57a9-4d40-b746-534e22ec9f9e',
-    characteristicNotify: '72c90003-57a9-4d40-b746-534e22ec9f9e',
-    characteristicWrite: '72c90004-57a9-4d40-b746-534e22ec9f9e',
-    characteristicWriteWO: '72c90002-57a9-4d40-b746-534e22ec9f9e',
-  };
-
-  protected _indicateCharacteristic: BleRemoteCharacteristic | null = null;
-  protected _notifyCharacteristic: BleRemoteCharacteristic | null = null;
-  protected _writeCharacteristic: BleRemoteCharacteristic | null = null;
-  protected _writeWOCharacteristic: BleRemoteCharacteristic | null = null;
-
   // event handler
   public onBatteryNotify: ((battery: number) => void) | null = null;
   public onStatusButtonNotify: (() => void) | null = null;
+  public onResponseWrite: ((response: boolean) => void) | null = null;
 
-  public static isMESHblock(peripheral: BleRemotePeripheral) {
+  public static AvailableBleMode = 'Connectable' as const;
+
+  protected static _LocalName = 'MESH-100';
+  protected _mesh: MESH_js = new MESH_js();
+
+  private _indicateCharacteristic: BleRemoteCharacteristic | null = null;
+  private _notifyCharacteristic: BleRemoteCharacteristic | null = null;
+  private _writeCharacteristic: BleRemoteCharacteristic | null = null;
+  private _writeWOResponseCharacteristic: BleRemoteCharacteristic | null = null;
+
+  private static readonly LOCAL_NAME_LENGTH = 17;
+
+  public static isMESHblock(peripheral: BleRemotePeripheral): boolean {
     if (!peripheral.localName) {
+      return false;
+    }
+    if (peripheral.localName.length !== MESH.LOCAL_NAME_LENGTH) {
       return false;
     }
     return this._isMESHblock(peripheral.localName);
   }
 
-  protected static _isMESHblock(name: string) {
-    return name.indexOf(MESH._LocalName) !== -1;
-  }
-
   /**
-   * Connect to the services of a device
-   *
-   * デバイスのサービスに接続
+   * Connect to the services of a MESH
    */
   public async connectWait(): Promise<void> {
-    // await super.connectWait();
     this.prepareConnect();
 
     await this.peripheral.connectWait();
 
     this._indicateCharacteristic = this._getCharacteristic(
-      this._UUIDS.characteristicIndicate
+      this._mesh.UUIDS.characteristics.Indicate
     );
 
     this._notifyCharacteristic = this._getCharacteristic(
-      this._UUIDS.characteristicNotify
+      this._mesh.UUIDS.characteristics.Notify
     );
 
     this._writeCharacteristic = this._getCharacteristic(
-      this._UUIDS.characteristicWrite
+      this._mesh.UUIDS.characteristics.Write
     );
 
-    this._writeWOCharacteristic = this._getCharacteristic(
-      this._UUIDS.characteristicWriteWO
+    this._writeWOResponseCharacteristic = this._getCharacteristic(
+      this._mesh.UUIDS.characteristics.WriteWOResponse
     );
 
     if (!this._indicateCharacteristic) {
       return;
     }
-    await this._indicateCharacteristic.registerNotify((data) => {
-      console.log('data : ' + data);
+    this._indicateCharacteristic.registerNotify((data) => {
+      this._mesh.indicate(data);
     });
 
-    await this._notifyCharacteristic?.registerNotifyWait((data) => {
-      this._notify(data);
+    if (!this._notifyCharacteristic) {
+      return;
+    }
+    await this._notifyCharacteristic.registerNotifyWait((data) => {
+      this._mesh.notify(data);
     });
 
     console.log('connect');
 
-    await this.wirteFeatureWait();
+    await this._writeFeatureWait();
   }
 
-  protected _notify(data: any) {
-    console.log('Notify : ' + data);
+  protected static _isMESHblock(name: string): boolean {
+    return name.indexOf(MESH._LocalName) === 0;
   }
 
-  protected prepareConnect() {
+  protected prepareConnect(): void {
     this._mesh.onBattery = (battery: number) => {
       if (typeof this.onBatteryNotify !== 'function') {
         return;
@@ -102,36 +98,32 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
     };
   }
 
+  protected async writeWait(data: number[]): Promise<void> {
+    if (!this._writeCharacteristic) {
+      return;
+    }
+    await this._writeCharacteristic.writeWait(data, true).then((resp) => {
+      if (typeof this.onResponseWrite !== 'function') {
+        return;
+      }
+      this.onResponseWrite(resp);
+    });
+  }
+
+  protected writeWOResponse(data: number[]) {
+    if (!this._writeWOResponseCharacteristic) {
+      return;
+    }
+    this._writeWOResponseCharacteristic.writeWait(data, true);
+  }
+
   private _getCharacteristic(uuid: string) {
     return this.peripheral
-      .getService(this._UUIDS.serviceId)!
+      .getService(this._mesh.UUIDS.serviceId)!
       .getCharacteristic(uuid);
   }
 
-  public async wirteFeatureWait(): Promise<void> {
-    try {
-      if (!this._writeCharacteristic) {
-        return;
-      }
-      if (this._writeCharacteristic === null) {
-        return;
-      }
-    } catch (error) {
-      console.log(error);
-      return;
-    }
-    await this._writeCharacteristic
-      .writeWait(this._mesh.feature(), true)
-      .then((resp) => {
-        console.log('response: ' + resp);
-      });
+  private async _writeFeatureWait(): Promise<void> {
+    await this.writeWait(this._mesh.feature);
   }
-
-  // public setBatteryNotify(func: (val: number) => void) {
-  //   console.log(typeof this.onBatteryNotify + '::: before');
-  //   this.onBatteryNotify = (val) => {
-  //     func(val);
-  //   };
-  //   console.log(typeof this.onBatteryNotify + '::: after');
-  // }
 }

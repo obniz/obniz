@@ -289,6 +289,7 @@ import MESH_100AC, { MESH_100ACOptions } from '../parts/Ble/MESH_100AC';
 import MESH_100PA, { MESH_100PAOptions } from '../parts/Ble/MESH_100PA';
 import MESH_100TH, { MESH_100THOptions } from '../parts/Ble/MESH_100TH';
 import MESH_100MD, { MESH_100MDOptions } from '../parts/Ble/MESH_100MD';
+import MESH_100GP, { MESH_100GPOptions } from '../parts/BLe/MESH_100GP';
 
 export type PartsType = keyof PartsList;
 
@@ -715,4 +716,5 @@ export interface PartsList {
   MESH_100PA: PartsInterface<MESH_100PA, MESH_100PAOptions, typeof MESH_100PA>;
   MESH_100TH: PartsInterface<MESH_100TH, MESH_100THOptions, typeof MESH_100TH>;
   MESH_100MD: PartsInterface<MESH_100MD, MESH_100MDOptions, typeof MESH_100MD>;
+  MESH_100GP: PartsInterface<MESH_100GP, MESH_100GPOptions, typeof MESH_100GP>;
 }

@@ -6,68 +6,73 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
-const MESH_js_1 = require("../MESH_js");
+const MESH_js_AC_1 = require("../MESH_js/MESH_js_AC");
 /** MESH_100AC management class */
 class MESH_100AC extends MESH_1.MESH {
     constructor() {
         super(...arguments);
-        this.staticClass = MESH_100AC;
+        // event handler
         this.onTapped = null;
         this.onShaked = null;
         this.onFlipped = null;
         this.onDirection = null;
+        this.staticClass = MESH_100AC;
     }
+    async getDataWait() {
+        this.checkConnected();
+        const _ac = this._mesh;
+        return {
+            localname: this.peripheral.localName,
+            address: this.peripheral.address,
+            battery: this._mesh.battery,
+            accele_x: _ac.getAccele.x,
+            accele_y: _ac.getAccele.y,
+            accele_z: _ac.getAccele.z,
+            face: _ac.getFace,
+        };
+    }
+    // public setMode(event: number, mode: number, requestid = 0): void {
+    //   if (!this._writeCharacteristic) {
+    //     return;
+    //   }
+    //   const _ac = this._mesh as MESH_js_AC;
+    //   this._writeCharacteristic
+    //     .writeWait(_ac.parseSetmodeCommand(event, mode, requestid))
+    //     .then((resp) => {
+    //       console.log('response: ' + resp);
+    //     });
+    // }
     static _isMESHblock(name) {
-        return name.indexOf(MESH_100AC._LocalName) !== -1;
+        return name.indexOf(MESH_100AC._LocalName) === 0;
     }
     prepareConnect() {
-        this._mesh = new MESH_js_1.MESH_AC();
-        this._mesh.onTapped = (accele) => {
+        this._mesh = new MESH_js_AC_1.MESH_js_AC();
+        const _ac = this._mesh;
+        _ac.onTapped = (accele) => {
             if (typeof this.onTapped !== 'function') {
                 return;
             }
             this.onTapped(accele);
         };
-        this._mesh.onShaked = (accele) => {
+        _ac.onShaked = (accele) => {
             if (typeof this.onShaked !== 'function') {
                 return;
             }
             this.onShaked(accele);
         };
-        this._mesh.onFlipped = (accele) => {
+        _ac.onFlipped = (accele) => {
             if (typeof this.onFlipped !== 'function') {
                 return;
             }
             this.onFlipped(accele);
         };
-        this._mesh.onDirection = (face, accele) => {
+        _ac.onDirection = (face, accele) => {
             if (typeof this.onDirection !== 'function') {
                 return;
             }
             this.onDirection(face, accele);
         };
         super.prepareConnect();
-    }
-    _notify(data) {
-        this._mesh.notify(data);
-        //  this.getDataWait();
-    }
-    async getDataWait() {
-        this.checkConnected();
-        this._mesh.printData();
-        return {
-            localname: this.peripheral.localName,
-            address: this.peripheral.address,
-            battery: this._mesh.battery,
-            accele_x: this._mesh.getAccele().x,
-            accele_y: this._mesh.getAccele().y,
-            accele_z: this._mesh.getAccele().z,
-            face: this._mesh.getFace(),
-        };
-    }
-    async writeTestWait() {
-        var _a;
-        await ((_a = this._writeWOCharacteristic) === null || _a === void 0 ? void 0 : _a.writeWait([1, 1, 15, 0, 2, 19]));
     }
     async beforeOnDisconnectWait(reason) {
         // do nothing
@@ -76,4 +81,3 @@ class MESH_100AC extends MESH_1.MESH {
 exports.default = MESH_100AC;
 MESH_100AC.PartsName = 'MESH_100AC';
 MESH_100AC._LocalName = 'MESH-100AC';
-MESH_100AC.AvailableBleMode = 'Connectable';

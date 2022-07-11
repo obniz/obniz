@@ -5,7 +5,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { MESH } from '../utils/abstracts/MESH';
-import { MESH_LE } from '../MESH_js';
+import { MESH_js_LE } from '../MESH_js/MESH_js_LE';
 
 export interface MESH_100LEOptions {}
 
@@ -18,17 +18,8 @@ export interface MESH_100LE_Data {
 export default class MESH_100LE extends MESH<MESH_100LE_Data> {
   public static readonly PartsName = 'MESH_100LE';
   public static readonly _LocalName = 'MESH-100LE';
-  public static AvailableBleMode = 'Connectable' as const;
+
   protected readonly staticClass = MESH_100LE;
-
-  protected static _isMESHblock(name: string) {
-    return name.indexOf(MESH_100LE._LocalName) !== -1;
-  }
-
-  protected prepareConnect() {
-    this._mesh = new MESH_LE();
-    super.prepareConnect();
-  }
 
   public async getDataWait() {
     this.checkConnected();
@@ -39,19 +30,16 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
     };
   }
 
-  protected async beforeOnDisconnectWait(reason: unknown): Promise<void> {
-    // do nothing
-  }
-
   /**
+   * light up
    *
-   * @param red
-   * @param green
-   * @param blue
-   * @param time
-   * @param cycle_on
-   * @param cycle_off
-   * @param pattern
+   * @param red 0 ~ 127
+   * @param green 0 ~ 127
+   * @param blue 0 ~ 127
+   * @param time 0 ~ 65535
+   * @param cycle_on 0 ~ 65535
+   * @param cycle_off 0 ~ 65535
+   * @param pattern 1 or 2
    * @returns
    */
   public lightup(
@@ -63,14 +51,9 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
     cycle_off: number,
     pattern: number
   ): void {
-    if (!this._writeWOCharacteristic) {
-      return;
-    }
-    if (this._writeWOCharacteristic === null) {
-      return;
-    }
-    this._writeWOCharacteristic.writeWait(
-      (this._mesh as MESH_LE).lightup(
+    const _le = this._mesh as MESH_js_LE;
+    this.writeWOResponse(
+      _le.parseLightupCommand(
         red,
         green,
         blue,
@@ -80,5 +63,18 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
         pattern
       )
     );
+  }
+
+  protected static _isMESHblock(name: string): boolean {
+    return name.indexOf(MESH_100LE._LocalName) !== -1;
+  }
+
+  protected prepareConnect(): void {
+    this._mesh = new MESH_js_LE();
+    super.prepareConnect();
+  }
+
+  protected async beforeOnDisconnectWait(reason: unknown): Promise<void> {
+    // do nothing
   }
 }

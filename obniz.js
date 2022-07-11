@@ -24247,10 +24247,18 @@ var map = {
 	"./Ble/LogttaTemp/index.js": "./dist/src/parts/Ble/LogttaTemp/index.js",
 	"./Ble/MESH_100AC/index.js": "./dist/src/parts/Ble/MESH_100AC/index.js",
 	"./Ble/MESH_100BU/index.js": "./dist/src/parts/Ble/MESH_100BU/index.js",
+	"./Ble/MESH_100GP/index.js": "./dist/src/parts/Ble/MESH_100GP/index.js",
 	"./Ble/MESH_100LE/index.js": "./dist/src/parts/Ble/MESH_100LE/index.js",
 	"./Ble/MESH_100MD/index.js": "./dist/src/parts/Ble/MESH_100MD/index.js",
 	"./Ble/MESH_100PA/index.js": "./dist/src/parts/Ble/MESH_100PA/index.js",
 	"./Ble/MESH_100TH/index.js": "./dist/src/parts/Ble/MESH_100TH/index.js",
+	"./Ble/MESH_js/MESH_js_AC.js": "./dist/src/parts/Ble/MESH_js/MESH_js_AC.js",
+	"./Ble/MESH_js/MESH_js_BU.js": "./dist/src/parts/Ble/MESH_js/MESH_js_BU.js",
+	"./Ble/MESH_js/MESH_js_GP.js": "./dist/src/parts/Ble/MESH_js/MESH_js_GP.js",
+	"./Ble/MESH_js/MESH_js_LE.js": "./dist/src/parts/Ble/MESH_js/MESH_js_LE.js",
+	"./Ble/MESH_js/MESH_js_MD.js": "./dist/src/parts/Ble/MESH_js/MESH_js_MD.js",
+	"./Ble/MESH_js/MESH_js_PA.js": "./dist/src/parts/Ble/MESH_js/MESH_js_PA.js",
+	"./Ble/MESH_js/MESH_js_TH.js": "./dist/src/parts/Ble/MESH_js/MESH_js_TH.js",
 	"./Ble/MESH_js/index.js": "./dist/src/parts/Ble/MESH_js/index.js",
 	"./Ble/MINEW_S1/index.js": "./dist/src/parts/Ble/MINEW_S1/index.js",
 	"./Ble/MT_500BT/index.js": "./dist/src/parts/Ble/MT_500BT/index.js",
@@ -26844,68 +26852,73 @@ Logtta_TH.BeaconDataStruct = {
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
-const MESH_js_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
+const MESH_js_AC_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MESH_js_AC.js");
 /** MESH_100AC management class */
 class MESH_100AC extends MESH_1.MESH {
     constructor() {
         super(...arguments);
-        this.staticClass = MESH_100AC;
+        // event handler
         this.onTapped = null;
         this.onShaked = null;
         this.onFlipped = null;
         this.onDirection = null;
+        this.staticClass = MESH_100AC;
     }
+    async getDataWait() {
+        this.checkConnected();
+        const _ac = this._mesh;
+        return {
+            localname: this.peripheral.localName,
+            address: this.peripheral.address,
+            battery: this._mesh.battery,
+            accele_x: _ac.getAccele.x,
+            accele_y: _ac.getAccele.y,
+            accele_z: _ac.getAccele.z,
+            face: _ac.getFace,
+        };
+    }
+    // public setMode(event: number, mode: number, requestid = 0): void {
+    //   if (!this._writeCharacteristic) {
+    //     return;
+    //   }
+    //   const _ac = this._mesh as MESH_js_AC;
+    //   this._writeCharacteristic
+    //     .writeWait(_ac.parseSetmodeCommand(event, mode, requestid))
+    //     .then((resp) => {
+    //       console.log('response: ' + resp);
+    //     });
+    // }
     static _isMESHblock(name) {
-        return name.indexOf(MESH_100AC._LocalName) !== -1;
+        return name.indexOf(MESH_100AC._LocalName) === 0;
     }
     prepareConnect() {
-        this._mesh = new MESH_js_1.MESH_AC();
-        this._mesh.onTapped = (accele) => {
+        this._mesh = new MESH_js_AC_1.MESH_js_AC();
+        const _ac = this._mesh;
+        _ac.onTapped = (accele) => {
             if (typeof this.onTapped !== 'function') {
                 return;
             }
             this.onTapped(accele);
         };
-        this._mesh.onShaked = (accele) => {
+        _ac.onShaked = (accele) => {
             if (typeof this.onShaked !== 'function') {
                 return;
             }
             this.onShaked(accele);
         };
-        this._mesh.onFlipped = (accele) => {
+        _ac.onFlipped = (accele) => {
             if (typeof this.onFlipped !== 'function') {
                 return;
             }
             this.onFlipped(accele);
         };
-        this._mesh.onDirection = (face, accele) => {
+        _ac.onDirection = (face, accele) => {
             if (typeof this.onDirection !== 'function') {
                 return;
             }
             this.onDirection(face, accele);
         };
         super.prepareConnect();
-    }
-    _notify(data) {
-        this._mesh.notify(data);
-        //  this.getDataWait();
-    }
-    async getDataWait() {
-        this.checkConnected();
-        this._mesh.printData();
-        return {
-            localname: this.peripheral.localName,
-            address: this.peripheral.address,
-            battery: this._mesh.battery,
-            accele_x: this._mesh.getAccele().x,
-            accele_y: this._mesh.getAccele().y,
-            accele_z: this._mesh.getAccele().z,
-            face: this._mesh.getFace(),
-        };
-    }
-    async writeTestWait() {
-        var _a;
-        await ((_a = this._writeWOCharacteristic) === null || _a === void 0 ? void 0 : _a.writeWait([1, 1, 15, 0, 2, 19]));
     }
     async beforeOnDisconnectWait(reason) {
         // do nothing
@@ -26914,7 +26927,6 @@ class MESH_100AC extends MESH_1.MESH {
 exports.default = MESH_100AC;
 MESH_100AC.PartsName = 'MESH_100AC';
 MESH_100AC._LocalName = 'MESH-100AC';
-MESH_100AC.AvailableBleMode = 'Connectable';
 
 
 /***/ }),
@@ -26931,57 +26943,17 @@ MESH_100AC.AvailableBleMode = 'Connectable';
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
-const MESH_js_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
-/** MESH_100BU management class MESH_100BUを管理するクラス */
+const MESH_js_BU_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MESH_js_BU.js");
+/** MESH_100BU management class */
 class MESH_100BU extends MESH_1.MESH {
     constructor() {
         super(...arguments);
-        this.staticClass = MESH_100BU;
-        // public readonly single = MESH_BU.type.single;
-        // public readonly longpress = MESH_BU.type.long;
-        // public readonly double = MESH_BU.type.double;
         /** event handler */
-        // public onButtonPressed: ((press_type: number) => void) | null = null;
         this.onSinglePressed = null;
         this.onLongPressed = null;
         this.onDoublePressed = null;
+        this.staticClass = MESH_100BU;
     }
-    static _isMESHblock(name) {
-        return name.indexOf(MESH_100BU._LocalName) !== -1;
-    }
-    prepareConnect() {
-        this._mesh = new MESH_js_1.MESH_BU();
-        // (this._mesh as MESH_BU).onButton = (button: number) => {
-        //   if (typeof this.onButtonPressed !== 'function') {
-        //     return;
-        //   }
-        //   this.onButtonPressed(button);
-        // };
-        this._mesh.onSinglePressed = () => {
-            if (typeof this.onSinglePressed !== 'function') {
-                return;
-            }
-            this.onSinglePressed();
-        };
-        this._mesh.onLongPressed = () => {
-            if (typeof this.onLongPressed !== 'function') {
-                return;
-            }
-            this.onLongPressed();
-        };
-        this._mesh.onDoublePressed = () => {
-            if (typeof this.onDoublePressed !== 'function') {
-                return;
-            }
-            this.onDoublePressed();
-        };
-        super.prepareConnect();
-    }
-    _notify(data) {
-        const res = this._mesh.notify(data);
-        // console.log('res : ' + res);
-    }
-    // 接続してデータを取ってくる
     async getDataWait() {
         this.checkConnected();
         return {
@@ -26990,6 +26962,32 @@ class MESH_100BU extends MESH_1.MESH {
             battery: this._mesh.battery,
         };
     }
+    static _isMESHblock(name) {
+        return name.indexOf(MESH_100BU._LocalName) !== -1;
+    }
+    prepareConnect() {
+        this._mesh = new MESH_js_BU_1.MESH_js_BU();
+        const _bu = this._mesh;
+        _bu.onSinglePressed = () => {
+            if (typeof this.onSinglePressed !== 'function') {
+                return;
+            }
+            this.onSinglePressed();
+        };
+        _bu.onLongPressed = () => {
+            if (typeof this.onLongPressed !== 'function') {
+                return;
+            }
+            this.onLongPressed();
+        };
+        _bu.onDoublePressed = () => {
+            if (typeof this.onDoublePressed !== 'function') {
+                return;
+            }
+            this.onDoublePressed();
+        };
+        super.prepareConnect();
+    }
     async beforeOnDisconnectWait(reason) {
         // do nothing
     }
@@ -26997,7 +26995,106 @@ class MESH_100BU extends MESH_1.MESH {
 exports.default = MESH_100BU;
 MESH_100BU.PartsName = 'MESH_100BU';
 MESH_100BU._LocalName = 'MESH-100BU';
-MESH_100BU.AvailableBleMode = 'Connectable';
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_100GP/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.MESH_100GP
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
+const MESH_js_GP_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MESH_js_GP.js");
+/** MESH_100PA management class */
+class MESH_100GP extends MESH_1.MESH {
+    constructor() {
+        super(...arguments);
+        // event handler
+        this.onDinEvent = null;
+        this.onAinEvent = null;
+        this.onDinState = null;
+        this.onAinState = null;
+        this.onVoutState = null;
+        this.onDoutState = null;
+        this.onPWMoutState = null;
+        this.staticClass = MESH_100GP;
+    }
+    async getDataWait() {
+        this.checkConnected();
+        return {
+            localname: this.peripheral.localName,
+            address: this.peripheral.address,
+            battery: this._mesh.battery,
+        };
+    }
+    setMode(din, din_notify, dout, pwm_ratio, ain_range_upper, ain_range_bottom, ain_notify) {
+        const _gp = this._mesh;
+        this.writeWOResponse(_gp.parseSetmodeCommand(din, din_notify, dout, pwm_ratio, ain_range_upper, ain_range_bottom, ain_notify));
+    }
+    static _isMESHblock(name) {
+        return name.indexOf(MESH_100GP._LocalName) !== -1;
+    }
+    prepareConnect() {
+        this._mesh = new MESH_js_GP_1.MESH_js_GP();
+        const _gp = this._mesh;
+        _gp.onDinEvent = (pin, state) => {
+            if (typeof this.onDinEvent !== 'function') {
+                return;
+            }
+            this.onDinEvent(pin, state);
+        };
+        _gp.onAinEvent = (pin, type, threshold, level) => {
+            if (typeof this.onAinEvent !== 'function') {
+                return;
+            }
+            this.onAinEvent(pin, type, threshold, level);
+        };
+        _gp.onDinState = (requestId, pin, state) => {
+            if (typeof this.onDinState !== 'function') {
+                return;
+            }
+            this.onDinState(requestId, pin, state);
+        };
+        _gp.onAinState = (requestId, pin, state, mode) => {
+            if (typeof this.onAinState !== 'function') {
+                return;
+            }
+            this.onAinState(requestId, pin, state, mode);
+        };
+        _gp.onVoutState = (requestId, pin, state) => {
+            if (typeof this.onVoutState !== 'function') {
+                return;
+            }
+            this.onVoutState(requestId, pin, state);
+        };
+        _gp.onDoutState = (requestId, pin, state) => {
+            if (typeof this.onDoutState !== 'function') {
+                return;
+            }
+            this.onDoutState(requestId, pin, state);
+        };
+        _gp.onPWMoutState = (requestId, pin, level) => {
+            if (typeof this.onPWMoutState !== 'function') {
+                return;
+            }
+            this.onPWMoutState(requestId, pin, level);
+        };
+        super.prepareConnect();
+    }
+    async beforeOnDisconnectWait(reason) {
+        // do nothing
+    }
+}
+exports.default = MESH_100GP;
+MESH_100GP.PartsName = 'MESH_100GP';
+MESH_100GP._LocalName = 'MESH-100GP';
 
 
 /***/ }),
@@ -27014,19 +27111,12 @@ MESH_100BU.AvailableBleMode = 'Connectable';
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
-const MESH_js_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
+const MESH_js_LE_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MESH_js_LE.js");
 /** MESH_100TH management class */
 class MESH_100LE extends MESH_1.MESH {
     constructor() {
         super(...arguments);
         this.staticClass = MESH_100LE;
-    }
-    static _isMESHblock(name) {
-        return name.indexOf(MESH_100LE._LocalName) !== -1;
-    }
-    prepareConnect() {
-        this._mesh = new MESH_js_1.MESH_LE();
-        super.prepareConnect();
     }
     async getDataWait() {
         this.checkConnected();
@@ -27036,34 +27126,36 @@ class MESH_100LE extends MESH_1.MESH {
             battery: this._mesh.battery,
         };
     }
-    async beforeOnDisconnectWait(reason) {
-        // do nothing
-    }
     /**
+     * light up
      *
-     * @param red
-     * @param green
-     * @param blue
-     * @param time
-     * @param cycle_on
-     * @param cycle_off
-     * @param pattern
+     * @param red 0 ~ 127
+     * @param green 0 ~ 127
+     * @param blue 0 ~ 127
+     * @param time 0 ~ 65535
+     * @param cycle_on 0 ~ 65535
+     * @param cycle_off 0 ~ 65535
+     * @param pattern 1 or 2
      * @returns
      */
     lightup(red, green, blue, time, cycle_on, cycle_off, pattern) {
-        if (!this._writeWOCharacteristic) {
-            return;
-        }
-        if (this._writeWOCharacteristic === null) {
-            return;
-        }
-        this._writeWOCharacteristic.writeWait(this._mesh.lightup(red, green, blue, time, cycle_on, cycle_off, pattern));
+        const _le = this._mesh;
+        this.writeWOResponse(_le.parseLightupCommand(red, green, blue, time, cycle_on, cycle_off, pattern));
+    }
+    static _isMESHblock(name) {
+        return name.indexOf(MESH_100LE._LocalName) !== -1;
+    }
+    prepareConnect() {
+        this._mesh = new MESH_js_LE_1.MESH_js_LE();
+        super.prepareConnect();
+    }
+    async beforeOnDisconnectWait(reason) {
+        // do nothing
     }
 }
 exports.default = MESH_100LE;
 MESH_100LE.PartsName = 'MESH_100LE';
 MESH_100LE._LocalName = 'MESH-100LE';
-MESH_100LE.AvailableBleMode = 'Connectable';
 
 
 /***/ }),
@@ -27080,51 +27172,52 @@ MESH_100LE.AvailableBleMode = 'Connectable';
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
-const MESH_js_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
+const MESH_js_MD_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MESH_js_MD.js");
 /** MESH_100MD management class */
 class MESH_100MD extends MESH_1.MESH {
     constructor() {
         super(...arguments);
+        // event handler
+        this.onNotify = null;
         this.staticClass = MESH_100MD;
-    }
-    static _isMESHblock(name) {
-        console.log('name:' + name);
-        return name.indexOf(MESH_100MD._LocalName) !== -1;
-    }
-    prepareConnect() {
-        this._mesh = new MESH_js_1.MESH_MD();
-        super.prepareConnect();
-    }
-    _notify(data) {
-        console.log('md data: ' + data);
-        this._mesh.notify(data);
-        //  this.getDataWait();
     }
     async getDataWait() {
         this.checkConnected();
+        const _md = this._mesh;
         return {
             localname: this.peripheral.localName,
             address: this.peripheral.address,
             battery: this._mesh.battery,
+            motion_state: _md.getResponse.motion_state,
+            detection_mode: _md.getResponse.detection_mode,
         };
+    }
+    setMode(detection_mode, detection_time = 500, response_time = 500, requestid = 0) {
+        const _md = this._mesh;
+        this.writeWOResponse(_md.parseSetmodeCommand(detection_mode, detection_time, response_time, requestid));
+    }
+    static _isMESHblock(name) {
+        return name.indexOf(MESH_100MD._LocalName) !== -1;
+    }
+    prepareConnect() {
+        this._mesh = new MESH_js_MD_1.MESH_js_MD();
+        // set Event handler
+        const _md = this._mesh;
+        _md.onNotify = (response) => {
+            if (typeof this.onNotify !== 'function') {
+                return;
+            }
+            this.onNotify(response);
+        };
+        super.prepareConnect();
     }
     async beforeOnDisconnectWait(reason) {
         // do nothing
-    }
-    setMode(requestid, mode, time1, time2) {
-        if (!this._writeWOCharacteristic) {
-            return;
-        }
-        if (this._writeWOCharacteristic === null) {
-            return;
-        }
-        this._writeWOCharacteristic.writeWait(this._mesh.setMode(requestid, mode, time1, time2));
     }
 }
 exports.default = MESH_100MD;
 MESH_100MD.PartsName = 'MESH_100MD';
 MESH_100MD._LocalName = 'MESH-100MD';
-MESH_100MD.AvailableBleMode = 'Connectable';
 
 
 /***/ }),
@@ -27141,31 +27234,43 @@ MESH_100MD.AvailableBleMode = 'Connectable';
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
-const MESH_js_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
+const MESH_js_PA_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MESH_js_PA.js");
 /** MESH_100PA management class */
 class MESH_100PA extends MESH_1.MESH {
     constructor() {
         super(...arguments);
+        // event handler
+        this.onNotify = null;
         this.staticClass = MESH_100PA;
+    }
+    async getDataWait() {
+        this.checkConnected();
+        const _pa = this._mesh;
+        return {
+            localname: this.peripheral.localName,
+            address: this.peripheral.address,
+            battery: this._mesh.battery,
+            proximity: _pa.getResponse.proximity,
+            brightness: _pa.getResponse.brightness,
+        };
+    }
+    setMode(type) {
+        const _pa = this._mesh;
+        this.writeWOResponse(_pa.parseSetmodeCommand(type));
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100PA._LocalName) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MESH_js_1.MESH_PA();
-        super.prepareConnect();
-    }
-    _notify(data) {
-        // console.log('data : ' + data);
-        const res = this._mesh.notify(data);
-        // console.log('res: ' + res);
-        //  this.getDataWait();
-    }
-    async getDataWait() {
-        this.checkConnected();
-        return {
-            battery: this._mesh.battery,
+        this._mesh = new MESH_js_PA_1.MESH_js_PA();
+        const _pa = this._mesh;
+        _pa.onNotify = (response) => {
+            if (typeof this.onNotify !== 'function') {
+                return;
+            }
+            this.onNotify(response);
         };
+        super.prepareConnect();
     }
     async beforeOnDisconnectWait(reason) {
         // do nothing
@@ -27174,7 +27279,6 @@ class MESH_100PA extends MESH_1.MESH {
 exports.default = MESH_100PA;
 MESH_100PA.PartsName = 'MESH_100PA';
 MESH_100PA._LocalName = 'MESH-100PA';
-MESH_100PA.AvailableBleMode = 'Connectable';
 
 
 /***/ }),
@@ -27191,167 +27295,196 @@ MESH_100PA.AvailableBleMode = 'Connectable';
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
-const MESH_js_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
+const MESH_js_TH_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MESH_js_TH.js");
 /** MESH_100TH management class */
 class MESH_100TH extends MESH_1.MESH {
     constructor() {
         super(...arguments);
+        this.onNotify = null;
         this.staticClass = MESH_100TH;
+    }
+    async getDataWait() {
+        this.checkConnected();
+        const _th = this._mesh;
+        return {
+            localname: this.peripheral.localName,
+            address: this.peripheral.address,
+            battery: this._mesh.battery,
+            temperature: _th.getResponse.temperature,
+            humidity: _th.getResponse.humidity,
+        };
+    }
+    setMode(temperature_upper, temperature_bottom, temperature_condition, humidity_upper, humidity_bottom, humidity_condision, type) {
+        const _th = this._mesh;
+        this.writeWOResponse(_th.parseSetmodeCommand(temperature_upper, temperature_bottom, humidity_upper, humidity_bottom, temperature_condition, humidity_condision, type));
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100TH._LocalName) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MESH_js_1.MESH_TH();
-        super.prepareConnect();
-    }
-    _notify(data) {
-        console.log('th data: ' + data);
-        this._mesh.notify(data);
-    }
-    async getDataWait() {
-        this.checkConnected();
-        return {
-            battery: 0,
-            temperature: 0,
-            humidity: 0,
+        this._mesh = new MESH_js_TH_1.MESH_js_TH();
+        const _th = this._mesh;
+        _th.onNotify = (response) => {
+            if (typeof this.onNotify !== 'function') {
+                return;
+            }
+            this.onNotify(response);
         };
+        super.prepareConnect();
     }
     async beforeOnDisconnectWait(reason) {
         // do nothing
-    }
-    setMode(temperature_upper, temperature_bottom, temperature_condition, humidity_upper, humidity_bottom, humidity_condision, type) {
-        if (!this._writeWOCharacteristic) {
-            return;
-        }
-        if (this._writeWOCharacteristic === null) {
-            return;
-        }
-        this._writeWOCharacteristic.writeWait(this._mesh.setMode(temperature_upper, temperature_bottom, humidity_upper, humidity_bottom, temperature_condition, humidity_condision, type));
     }
 }
 exports.default = MESH_100TH;
 MESH_100TH.PartsName = 'MESH_100TH';
 MESH_100TH._LocalName = 'MESH-100TH';
-MESH_100TH.AvailableBleMode = 'Connectable';
 
 
 /***/ }),
 
-/***/ "./dist/src/parts/Ble/MESH_js/index.js":
+/***/ "./dist/src/parts/Ble/MESH_js/MESH_js_AC.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-class MESH_js {
-    constructor() {
-        this._battery = -1;
-        this.onBattery = null;
-        this.onStatusButtonPressed = null;
-    }
-    feature() {
-        return [0, 2, 1, 3];
-    }
-    get battery() {
-        return this._battery;
-    }
-    notify(data) {
-        this.updateBattery(data);
-        this.updateStatusButton(data);
-    }
-    printData(message) {
-        console.log('bat: ' + this._battery + ', ' + message);
-    }
-    checkSum(command) {
-        let sum = 0;
-        command.forEach((val) => {
-            sum += val;
-        });
-        return sum % 256;
-    }
-    errorMessage(message) {
-        console.log('[Error] Can not parse; ' + message);
-    }
-    errorOutOfRange(message) {
-        console.log(this.errorMessage('out of range ' + message));
-    }
-    updateBattery(data) {
-        if (data.length !== 4) {
-            return;
-        }
-        if (data[0] !== 0) {
-            return;
-        }
-        if (data[1] !== 0) {
-            return;
-        }
-        // if (data[2] === this.battery) {
-        //   return;
-        // }
-        this._battery = data[2];
-        if (typeof this.onBattery !== 'function') {
-            return;
-        }
-        this.onBattery(this._battery);
-    }
-    updateStatusButton(data) {
-        if (data.length !== 4) {
-            return;
-        }
-        if (data[0] !== 0) {
-            return;
-        }
-        if (data[1] !== 1) {
-            return;
-        }
-        if (data[2] !== 0) {
-            return;
-        }
-        if (typeof this.onStatusButtonPressed !== 'function') {
-            return;
-        }
-        this.onStatusButtonPressed();
-    }
-}
-exports.MESH_js = MESH_js;
-class MESH_BU extends MESH_js {
+const _1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
+class MESH_js_AC extends _1.MESH_js {
     constructor() {
         super(...arguments);
-        // public static type = { single: 1, long: 2, double: 3 } as const;
-        this.type = { single: 1, long: 2, double: 3 };
-        this.onSinglePressed = null;
-        this.onLongPressed = null;
-        this.onDoublePressed = null;
+        /**
+         * MessageTypeID
+         * command header
+         */
+        this.MessageTypeID = 1;
+        this.accele = { x: -1, y: -1, z: -1 };
+        this.face = -1;
+        this.DATA_LENGTH = 17;
+        // event handler
+        this.onTapped = null;
+        this.onShaked = null;
+        this.onFlipped = null;
+        this.onDirection = null;
     }
-    // public onButton: ((resp: number) => void) | null = null;
     notify(data) {
         super.notify(data);
-        if (data.length !== 4) {
-            return;
-        }
+        this.updateAccele(data);
         if (data[0] !== 1) {
             return;
         }
-        if (data[1] !== 0) {
+        switch (data[1]) {
+            case 0: // Tap
+                if (typeof this.onTapped === 'function') {
+                    this.onTapped(this.accele);
+                }
+                break;
+            case 1: // Shake
+                if (typeof this.onShaked === 'function') {
+                    this.onShaked(this.accele);
+                }
+                break;
+            case 2: // Flip
+                if (typeof this.onFlipped === 'function') {
+                    this.onFlipped(this.accele);
+                }
+                break;
+            case 3: // Direction
+                if (typeof this.onDirection === 'function') {
+                    this.face = data[2];
+                    this.onDirection(this.face, this.accele);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    get getAccele() {
+        return this.accele;
+    }
+    get getFace() {
+        return this.face;
+    }
+    /**
+     * setMode
+     *
+     * @param type
+     * @returns
+     */
+    //   public parseSetmodeCommand(
+    //     event: number,
+    //     mode: number,
+    //     requestId = 0
+    //   ): number[] {
+    //     const HEADER: number[] = [this.MessageTypeID, 1, requestId];
+    //     const data: number[] = HEADER.concat(event).concat(mode);
+    //     data.push(this.checkSum(data));
+    //     console.log('setMode: ' + data);
+    //     return data;
+    //   }
+    updateAccele(data) {
+        if (data.length !== this.DATA_LENGTH) {
+            return false;
+        }
+        if (data[0] !== 1) {
+            return false;
+        }
+        this.accele.x = this.complemnt(256 * data[5] + data[4]);
+        this.accele.y = this.complemnt(256 * data[7] + data[6]);
+        this.accele.z = this.complemnt(256 * data[9] + data[8]);
+        return true;
+    }
+    complemnt(val) {
+        return val - (val > 32767 ? 65536 : 0);
+    }
+}
+exports.MESH_js_AC = MESH_js_AC;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_js/MESH_js_BU.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const _1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
+class MESH_js_BU extends _1.MESH_js {
+    constructor() {
+        super(...arguments);
+        // event handler
+        this.onSinglePressed = null;
+        this.onLongPressed = null;
+        this.onDoublePressed = null;
+        this.DATA_LENGTH = 4;
+        this.MessageTypeID = 1;
+        this.EventTypeID = 0;
+        this.TYPE = { SINGLE: 1, LONG: 2, DOUBLE: 3 };
+    }
+    notify(data) {
+        super.notify(data);
+        if (data.length !== this.DATA_LENGTH) {
             return;
         }
-        // if (typeof this.onButton !== 'function') {
-        //   return;
-        // }
-        // this.onButton(data[2]);
+        if (data[0] !== this.MessageTypeID) {
+            return;
+        }
+        if (data[1] !== this.EventTypeID) {
+            return;
+        }
         switch (data[2]) {
-            case this.type.single:
+            case this.TYPE.SINGLE:
                 if (typeof this.onSinglePressed === 'function') {
                     this.onSinglePressed();
                 }
                 break;
-            case this.type.long:
+            case this.TYPE.LONG:
                 if (typeof this.onLongPressed === 'function') {
                     this.onLongPressed();
                 }
                 break;
-            case this.type.double:
+            case this.TYPE.DOUBLE:
                 if (typeof this.onDoublePressed === 'function') {
                     this.onDoublePressed();
                 }
@@ -27361,16 +27494,152 @@ class MESH_BU extends MESH_js {
         }
     }
 }
-exports.MESH_BU = MESH_BU;
-class MESH_LE extends MESH_js {
+exports.MESH_js_BU = MESH_js_BU;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_js/MESH_js_GP.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const _1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
+class MESH_js_GP extends _1.MESH_js {
     constructor() {
         super(...arguments);
-        this._pattern = { BLICK: 1, FUWA: 2 };
+        this.onDinEvent = null;
+        this.onAinEvent = null;
+        this.onDinState = null;
+        this.onAinState = null;
+        this.onVoutState = null;
+        this.onDoutState = null;
+        this.onPWMoutState = null;
+        this.MessageTypeID = 1;
+        this.DinEventID = 0;
+        this.AinEventID = 1;
+        this.DinStateID = 2;
+        this.AinStateID = 3;
+        this.VoutStateID = 4;
+        this.DoutStateID = 5;
+        this.PWMoutStateID = 6;
     }
     notify(data) {
         super.notify(data);
+        if (data[0] !== this.MessageTypeID) {
+            return;
+        }
+        switch (data[1]) {
+            case this.DinEventID:
+                if (typeof this.onDinEvent !== 'function') {
+                    return;
+                }
+                this.onDinEvent(data[2], data[3]);
+                break;
+            case this.AinEventID:
+                if (typeof this.onAinEvent !== 'function') {
+                    return;
+                }
+                this.onAinEvent(data[2], data[3], data[4], data[5]);
+                break;
+            case this.DinStateID:
+                if (typeof this.onDinState !== 'function') {
+                    return;
+                }
+                this.onDinState(data[2], data[3], data[4]);
+                break;
+            case this.AinStateID:
+                if (typeof this.onAinState !== 'function') {
+                    return;
+                }
+                this.onAinState(data[2], data[3], data[4], data[5]);
+                break;
+            case this.VoutStateID:
+                if (typeof this.onVoutState !== 'function') {
+                    return;
+                }
+                this.onVoutState(data[2], data[3], data[4]);
+                break;
+            case this.DoutStateID:
+                if (typeof this.onDoutState !== 'function') {
+                    return;
+                }
+                this.onDoutState(data[2], data[3], data[4]);
+                break;
+            case this.PWMoutStateID:
+                if (typeof this.onPWMoutState !== 'function') {
+                    return;
+                }
+                this.onPWMoutState(data[2], data[3], data[4]);
+                break;
+            default:
+                break;
+        }
     }
-    lightup(red, green, blue, time, cycle_on, cycle_off, pattern) {
+    /**
+     *
+     * @param din
+     * @param din_notify
+     * @param dout
+     * @param pwm_ratio
+     * @param ain_range_upper
+     * @param ain_range_bottom
+     * @param ain_notify
+     * @returns
+     */
+    parseSetmodeCommand(din, din_notify, dout, pwm_ratio, ain_range_upper, ain_range_bottom, ain_notify) {
+        const HEADER = [this.MessageTypeID, 1];
+        const BODY = [
+            din,
+            din_notify,
+            dout,
+            pwm_ratio,
+            1,
+            ain_range_upper,
+            ain_range_bottom,
+            ain_notify,
+        ];
+        const data = HEADER.concat(BODY);
+        data.push(this.checkSum(data));
+        return data;
+    }
+    parseSetDinCommand(pin, requestId = 0) {
+        return this._parseSetCommand(this.DinStateID, pin, requestId);
+    }
+    parseSetAinCommand(mode, requestId = 0) {
+        return this._parseSetCommand(this.AinStateID, mode, requestId);
+    }
+    parseSetVoutCommand(pin, requestId = 0) {
+        return this._parseSetCommand(this.VoutStateID, pin, requestId);
+    }
+    parseSetDoutCommand(pin, requestId = 0) {
+        return this._parseSetCommand(this.DoutStateID, pin, requestId);
+    }
+    parseSetPWMCommand(pin, requestId = 0) {
+        return this._parseSetCommand(this.PWMoutStateID, pin, requestId);
+    }
+    _parseSetCommand(eventId, param, requestId) {
+        const HEADER = [this.MessageTypeID, eventId, requestId];
+        const data = HEADER.concat(param);
+        data.push(this.checkSum(data));
+        return data;
+    }
+}
+exports.MESH_js_GP = MESH_js_GP;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_js/MESH_js_LE.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const _1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
+class MESH_js_LE extends _1.MESH_js {
+    parseLightupCommand(red, green, blue, time, cycle_on, cycle_off, pattern) {
         if (red < 0 || 127 < red) {
             this.errorOutOfRange('red (' + red + ') must be 0 ~ 127.');
             return [];
@@ -27395,13 +27664,16 @@ class MESH_LE extends MESH_js {
             this.errorOutOfRange('cycle_off (' + cycle_off + ') must be 0 ~ 65,535.');
             return [];
         }
+        const MessageTypeID = 1;
+        const EventTypeID = 0;
+        const FIXED = 0;
         const data = [
-            1,
-            0,
+            MessageTypeID,
+            EventTypeID,
             red,
-            0,
+            FIXED,
             green,
-            0,
+            FIXED,
             blue,
             time % 256,
             Math.floor(time / 256),
@@ -27415,150 +27687,320 @@ class MESH_LE extends MESH_js {
         return data;
     }
 }
-exports.MESH_LE = MESH_LE;
-class MESH_AC extends MESH_js {
+exports.MESH_js_LE = MESH_js_LE;
+MESH_js_LE.Pattern = { BLICK: 1, FUWA: 2 };
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_js/MESH_js_MD.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const _1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
+class MESH_js_MD extends _1.MESH_js {
     constructor() {
         super(...arguments);
-        this.accele = { x: -1, y: -1, z: -1 };
-        this.face = -1;
-        this.onTapped = null;
-        this.onShaked = null;
-        this.onFlipped = null;
-        this.onDirection = null;
+        this.DetectionMode = {
+            DETECTED: 0x01,
+            NOTDETECTED: 0x02,
+            ONESHOT: 0x10,
+            CONTINUOUS: 0x20,
+        };
+        this.MotionState = {
+            SETUP: 0x00,
+            DETECTED: 0x01,
+            NOTDETECTED: 0x02,
+        };
+        this.onNotify = null;
+        this.MessageTypeID = 1;
+        this.EventTypeID = 0;
+        this.response = { requestId: -1, motion_state: -1, detection_mode: -1 };
     }
     notify(data) {
         super.notify(data);
-        this.updateFace(data);
-        this.updateAccele(data);
-        if (data[0] !== 1) {
+        if (data[0] !== this.MessageTypeID) {
             return;
         }
-        switch (data[1]) {
-            case 0: // Tap
-                if (typeof this.onTapped === 'function') {
-                    this.onTapped(this.accele);
-                }
-                break;
-            case 1: // Shake
-                if (typeof this.onShaked === 'function') {
-                    this.onShaked(this.accele);
-                }
-                break;
-            case 2: // Flip
-                if (typeof this.onFlipped === 'function') {
-                    this.onFlipped(this.accele);
-                }
-                break;
-            case 3: // Direction
-                if (typeof this.onDirection === 'function') {
-                    this.onDirection(this.face, this.accele);
-                }
-                break;
-            default:
-                break;
+        if (data[1] !== this.EventTypeID) {
+            return;
         }
+        this.response.requestId = data[2];
+        this.response.motion_state = data[3];
+        this.response.detection_mode = data[4];
+        if (typeof this.onNotify !== 'function') {
+            return;
+        }
+        this.onNotify(this.response);
     }
-    getAccele() {
-        return this.accele;
+    get getResponse() {
+        return this.response;
     }
-    getFace() {
-        return this.face;
-    }
-    printData() {
-        super.printData('face: ' +
-            this.face +
-            ', accele {x: ' +
-            this.accele.x +
-            ',y: ' +
-            this.accele.y +
-            ',z: ' +
-            this.accele.z +
-            '}');
-    }
-    updateFace(data) {
-        if (data.length !== 17) {
-            return;
+    parseSetmodeCommand(detection_mode, detection_time = 500, response_time = 500, requestid = 0) {
+        if (detection_time < 200 || 60000 < detection_time) {
+            this.errorOutOfRange('detection_time (' + detection_time + ') must be 200 ~ 60000.');
+            return [];
         }
-        if (data[0] !== 1) {
-            return;
+        if (response_time < 500 || 60000 < response_time) {
+            this.errorOutOfRange('response_time (' + response_time + ') must be 500 ~ 60000.');
+            return [];
         }
-        if (data[1] !== 3) {
-            return;
-        }
-        this.face = data[2];
-    }
-    updateAccele(data) {
-        if (data.length !== 17) {
-            return;
-        }
-        if (data[0] !== 1) {
-            return;
-        }
-        this.accele.x = 256 * data[5] + data[4];
-        this.accele.y = 256 * data[7] + data[6];
-        this.accele.z = 256 * data[9] + data[8];
+        const HEADER = [this.MessageTypeID, this.EventTypeID, requestid];
+        const BODY = [
+            detection_mode,
+            detection_time % 256,
+            Math.floor(detection_time / 256),
+            response_time % 256,
+            Math.floor(response_time / 256),
+        ];
+        const data = HEADER.concat(BODY);
+        data.push(this.checkSum(data));
+        return data;
     }
 }
-exports.MESH_AC = MESH_AC;
-class MESH_PA extends MESH_js {
+exports.MESH_js_MD = MESH_js_MD;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_js/MESH_js_PA.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const _1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
+class MESH_js_PA extends _1.MESH_js {
+    constructor() {
+        super(...arguments);
+        /**
+         * MessageTypeID
+         * command header
+         */
+        this.MessageTypeID = 1;
+        /**
+         * EventTypeID
+         * command header
+         */
+        this.EventTypeID = 0;
+        this.response = { requestId: -1, proximity: -1, brightness: -1 };
+        this.onNotify = null;
+    }
     notify(data) {
         super.notify(data);
+        if (data[0] !== this.MessageTypeID) {
+            return;
+        }
+        if (data[1] !== this.EventTypeID) {
+            return;
+        }
+        this.response.requestId = data[2];
+        this.response.proximity = 256 * data[5] + data[4];
+        this.response.brightness = 256 * data[7] + data[6];
+        if (typeof this.onNotify !== 'function') {
+            return;
+        }
+        this.onNotify(this.response);
+    }
+    get getResponse() {
+        return this.response;
+    }
+    /**
+     * setMode
+     *
+     * @param type
+     * @returns
+     */
+    parseSetmodeCommand(notifyType, requestId = 0) {
+        const HEADER = [this.MessageTypeID, this.EventTypeID, requestId];
+        const FIXED = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2];
+        const data = HEADER.concat(FIXED).concat(notifyType);
+        data.push(this.checkSum(data));
+        return data;
     }
 }
-exports.MESH_PA = MESH_PA;
-class MESH_TH extends MESH_js {
+exports.MESH_js_PA = MESH_js_PA;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_js/MESH_js_TH.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const _1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
+class MESH_js_TH extends _1.MESH_js {
+    constructor() {
+        super(...arguments);
+        // Event handler
+        this.onNotify = null;
+        /**
+         * MessageTypeID
+         * command header
+         */
+        this.MessageTypeID = 1;
+        /**
+         * EventTypeID
+         * command header
+         */
+        this.EventTypeID = 0;
+        this.response = { requestId: -1, temperature: -1, humidity: -1 };
+    }
     notify(data) {
         super.notify(data);
+        if (data[0] !== this.MessageTypeID) {
+            return;
+        }
+        if (data[1] !== this.EventTypeID) {
+            return;
+        }
+        const temp_ori = 256 * data[5] + data[4];
+        const temp = (temp_ori - (temp_ori > 32767 ? 65536 : 0)) / 10;
+        this.response.temperature = Math.min(Math.max(-10, temp), 50);
+        // this.response.temperature = (temp < -10) ? -10 : ((temp > 50) ? 50 : temp);
+        const hum_ori = 256 * data[7] + data[6];
+        this.response.humidity = Math.min(Math.max(0, hum_ori), 100);
+        // this.response.humidity = (hum_ori < 0) ? 0 : ((hum_ori > 100) ? 100 : hum_ori);
+        if (typeof this.onNotify !== 'function') {
+            return;
+        }
+        this.onNotify(this.response);
     }
-    setMode(temperature_upper, temperature_bottom, temperature_condition, humidity_upper, humidity_bottom, humidity_condision, type) {
-        const data = [
-            1,
-            0,
-            1,
-            (100 * temperature_upper) % 256,
-            Math.floor((100 * temperature_upper) / 256),
-            (100 * temperature_bottom) % 256,
-            Math.floor((100 * temperature_bottom) / 256),
-            (100 * humidity_upper) % 256,
-            Math.floor((100 * humidity_upper) / 256),
-            (100 * humidity_bottom) % 256,
-            Math.floor((100 * humidity_bottom) / 256),
+    get getResponse() {
+        return this.response;
+    }
+    parseSetmodeCommand(temperature_range_upper, temperature_range_bottom, temperature_condition, humidity_range_upper, humidity_range_bottom, humidity_condision, type) {
+        const RequestID = 0;
+        const HEADER = [this.MessageTypeID, this.EventTypeID, RequestID];
+        const BODY = [
+            (10 * temperature_range_upper) % 256,
+            Math.floor((10 * temperature_range_upper) / 256),
+            (10 * temperature_range_bottom) % 256,
+            Math.floor((10 * temperature_range_bottom) / 256),
+            humidity_range_upper % 256,
+            Math.floor(humidity_range_upper / 256),
+            humidity_range_bottom % 256,
+            Math.floor(humidity_range_bottom / 256),
             temperature_condition,
             humidity_condision,
             type,
         ];
+        const data = HEADER.concat(BODY);
         data.push(this.checkSum(data));
         return data;
     }
 }
-exports.MESH_TH = MESH_TH;
-class MESH_MD extends MESH_js {
-    notify(data) {
-        super.notify(data);
-        if (data[0] !== 1) {
+exports.MESH_js_TH = MESH_js_TH;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_js/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class MESH_js {
+    constructor() {
+        this.UUIDS = {
+            serviceId: '72C90001-57A9-4D40-B746-534E22EC9F9E',
+            characteristics: {
+                Indicate: '72c90005-57a9-4d40-b746-534e22ec9f9e',
+                Notify: '72c90003-57a9-4d40-b746-534e22ec9f9e',
+                Write: '72c90004-57a9-4d40-b746-534e22ec9f9e',
+                WriteWOResponse: '72c90002-57a9-4d40-b746-534e22ec9f9e',
+            },
+        };
+        // event handler
+        this.onBattery = null;
+        this.onStatusButtonPressed = null;
+        this._feature_command = [0, 2, 1, 3];
+        this._battery = -1;
+    }
+    get feature() {
+        return this._feature_command;
+    }
+    get battery() {
+        return this._battery;
+    }
+    indicate(data) {
+        if (data.length !== 16) {
             return;
+        }
+        if (data[0] !== 0) {
+            return;
+        }
+        if (data[1] !== 2) {
+            return;
+        }
+        this._battery = data[14];
+    }
+    notify(data) {
+        this._updateBattery(data);
+        this._updateStatusButton(data);
+    }
+    printData(message) {
+        console.log('bat: ' + this._battery + ', ' + message);
+    }
+    checkSum(command) {
+        let sum = 0;
+        command.forEach((val) => {
+            sum += val;
+        });
+        return sum % 256;
+    }
+    errorMessage(message) {
+        console.log('[Error] Can not parse; ' + message);
+    }
+    errorOutOfRange(message) {
+        console.log(this.errorMessage('out of range ' + message));
+    }
+    _updateBattery(data) {
+        if (data.length !== 4) {
+            return false;
+        }
+        if (data[0] !== 0) {
+            return false;
         }
         if (data[1] !== 0) {
-            return;
+            return false;
         }
+        // if (data[2] === this.battery) {
+        //   return;
+        // }
+        this._battery = data[2];
+        if (typeof this.onBattery !== 'function') {
+            return false;
+        }
+        this.onBattery(this._battery);
+        return true;
     }
-    setMode(requestid, mode, time1, time2) {
-        const data = [
-            1,
-            0,
-            requestid,
-            mode,
-            time1 % 256,
-            Math.floor(time1 / 256),
-            time2 % 256,
-            Math.floor(time2 / 256),
-        ];
-        data.push(this.checkSum(data));
-        console.log('send data:' + data);
-        return data;
+    _updateStatusButton(data) {
+        if (data.length !== 4) {
+            return false;
+        }
+        if (data[0] !== 0) {
+            return false;
+        }
+        if (data[1] !== 1) {
+            return false;
+        }
+        if (data[2] !== 0) {
+            return false;
+        }
+        if (typeof this.onStatusButtonPressed !== 'function') {
+            return false;
+        }
+        this.onStatusButtonPressed();
+        return true;
     }
 }
-exports.MESH_MD = MESH_MD;
+exports.MESH_js = MESH_js;
 
 
 /***/ }),
@@ -37895,66 +38337,52 @@ const MESH_js_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
 class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     constructor() {
         super(...arguments);
-        this._mesh = new MESH_js_1.MESH_js();
-        this._UUIDS = {
-            serviceId: '72C90001-57A9-4D40-B746-534E22EC9F9E',
-            characteristicIndicate: '72c90005-57a9-4d40-b746-534e22ec9f9e',
-            characteristicNotify: '72c90003-57a9-4d40-b746-534e22ec9f9e',
-            characteristicWrite: '72c90004-57a9-4d40-b746-534e22ec9f9e',
-            characteristicWriteWO: '72c90002-57a9-4d40-b746-534e22ec9f9e',
-        };
-        this._indicateCharacteristic = null;
-        this._notifyCharacteristic = null;
-        this._writeCharacteristic = null;
-        this._writeWOCharacteristic = null;
         // event handler
         this.onBatteryNotify = null;
         this.onStatusButtonNotify = null;
-        // public setBatteryNotify(func: (val: number) => void) {
-        //   console.log(typeof this.onBatteryNotify + '::: before');
-        //   this.onBatteryNotify = (val) => {
-        //     func(val);
-        //   };
-        //   console.log(typeof this.onBatteryNotify + '::: after');
-        // }
+        this.onResponseWrite = null;
+        this._mesh = new MESH_js_1.MESH_js();
+        this._indicateCharacteristic = null;
+        this._notifyCharacteristic = null;
+        this._writeCharacteristic = null;
+        this._writeWOResponseCharacteristic = null;
     }
     static isMESHblock(peripheral) {
         if (!peripheral.localName) {
             return false;
         }
+        if (peripheral.localName.length !== MESH.LOCAL_NAME_LENGTH) {
+            return false;
+        }
         return this._isMESHblock(peripheral.localName);
     }
-    static _isMESHblock(name) {
-        return name.indexOf(MESH._LocalName) !== -1;
-    }
     /**
-     * Connect to the services of a device
-     *
-     * デバイスのサービスに接続
+     * Connect to the services of a MESH
      */
     async connectWait() {
-        var _a;
-        // await super.connectWait();
         this.prepareConnect();
         await this.peripheral.connectWait();
-        this._indicateCharacteristic = this._getCharacteristic(this._UUIDS.characteristicIndicate);
-        this._notifyCharacteristic = this._getCharacteristic(this._UUIDS.characteristicNotify);
-        this._writeCharacteristic = this._getCharacteristic(this._UUIDS.characteristicWrite);
-        this._writeWOCharacteristic = this._getCharacteristic(this._UUIDS.characteristicWriteWO);
+        this._indicateCharacteristic = this._getCharacteristic(this._mesh.UUIDS.characteristics.Indicate);
+        this._notifyCharacteristic = this._getCharacteristic(this._mesh.UUIDS.characteristics.Notify);
+        this._writeCharacteristic = this._getCharacteristic(this._mesh.UUIDS.characteristics.Write);
+        this._writeWOResponseCharacteristic = this._getCharacteristic(this._mesh.UUIDS.characteristics.WriteWOResponse);
         if (!this._indicateCharacteristic) {
             return;
         }
-        await this._indicateCharacteristic.registerNotify((data) => {
-            console.log('data : ' + data);
+        this._indicateCharacteristic.registerNotify((data) => {
+            this._mesh.indicate(data);
         });
-        await ((_a = this._notifyCharacteristic) === null || _a === void 0 ? void 0 : _a.registerNotifyWait((data) => {
-            this._notify(data);
-        }));
+        if (!this._notifyCharacteristic) {
+            return;
+        }
+        await this._notifyCharacteristic.registerNotifyWait((data) => {
+            this._mesh.notify(data);
+        });
         console.log('connect');
-        await this.wirteFeatureWait();
+        await this._writeFeatureWait();
     }
-    _notify(data) {
-        console.log('Notify : ' + data);
+    static _isMESHblock(name) {
+        return name.indexOf(MESH._LocalName) === 0;
     }
     prepareConnect() {
         this._mesh.onBattery = (battery) => {
@@ -37970,33 +38398,36 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
             this.onStatusButtonNotify();
         };
     }
-    _getCharacteristic(uuid) {
-        return this.peripheral
-            .getService(this._UUIDS.serviceId)
-            .getCharacteristic(uuid);
-    }
-    async wirteFeatureWait() {
-        try {
-            if (!this._writeCharacteristic) {
-                return;
-            }
-            if (this._writeCharacteristic === null) {
-                return;
-            }
-        }
-        catch (error) {
-            console.log(error);
+    async writeWait(data) {
+        if (!this._writeCharacteristic) {
             return;
         }
-        await this._writeCharacteristic
-            .writeWait(this._mesh.feature(), true)
-            .then((resp) => {
-            console.log('response: ' + resp);
+        await this._writeCharacteristic.writeWait(data, true).then((resp) => {
+            if (typeof this.onResponseWrite !== 'function') {
+                return;
+            }
+            this.onResponseWrite(resp);
         });
+    }
+    writeWOResponse(data) {
+        if (!this._writeWOResponseCharacteristic) {
+            return;
+        }
+        this._writeWOResponseCharacteristic.writeWait(data, true);
+    }
+    _getCharacteristic(uuid) {
+        return this.peripheral
+            .getService(this._mesh.UUIDS.serviceId)
+            .getCharacteristic(uuid);
+    }
+    async _writeFeatureWait() {
+        await this.writeWait(this._mesh.feature);
     }
 }
 exports.MESH = MESH;
+MESH.AvailableBleMode = 'Connectable';
 MESH._LocalName = 'MESH-100';
+MESH.LOCAL_NAME_LENGTH = 17;
 
 
 /***/ }),

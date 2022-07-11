@@ -4,24 +4,20 @@
  */
 /* eslint rulesdir/non-ascii: 0 */
 
-import { ObnizPartsBleMode } from '../../../obniz/ObnizPartsBleAbstract';
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import { MESH } from '../utils/abstracts/MESH';
-import { MESH_TH } from '../MESH_js';
+import { MESH_js_TH } from '../MESH_js/MESH_js_TH';
 
 export interface MESH_100THOptions {}
 
 /**
  * advertisement data from MESH_100TH
- *
- * MESH_100THからのadvertisementデータ
  */
 export interface MESH_100TH_Data {
-  /** battery 電源電圧 (Unit 単位: 0.01 V) */
+  /** battery (0 ~ 10) */
   battery: number;
-  /** temperature 温度 (Unit 単位: 0.01 degC)*/
+  /** temperature (-10 ~ 50 [Celsius])*/
   temperature: number;
-  /** humidity 相対湿度 (Unit 単位: 1% RH) */
+  /** humidity (0 ~ 100 [%]) */
   humidity: number;
 }
 
@@ -29,34 +25,21 @@ export interface MESH_100TH_Data {
 export default class MESH_100TH extends MESH<MESH_100TH_Data> {
   public static readonly PartsName = 'MESH_100TH';
   public static readonly _LocalName = 'MESH-100TH';
-  public static AvailableBleMode = 'Connectable' as const;
+
+  public onNotify: ((resp: MESH_js_TH['response']) => void) | null = null;
+
   protected readonly staticClass = MESH_100TH;
-
-  protected static _isMESHblock(name: string) {
-    return name.indexOf(MESH_100TH._LocalName) !== -1;
-  }
-
-  protected prepareConnect() {
-    this._mesh = new MESH_TH();
-    super.prepareConnect();
-  }
-
-  protected _notify(data: any) {
-    console.log('th data: ' + data);
-    this._mesh.notify(data);
-  }
 
   public async getDataWait() {
     this.checkConnected();
+    const _th = this._mesh as MESH_js_TH;
     return {
-      battery: 0,
-      temperature: 0,
-      humidity: 0,
+      localname: this.peripheral.localName,
+      address: this.peripheral.address,
+      battery: this._mesh.battery,
+      temperature: _th.getResponse.temperature,
+      humidity: _th.getResponse.humidity,
     };
-  }
-
-  protected async beforeOnDisconnectWait(reason: unknown): Promise<void> {
-    // do nothing
   }
 
   public setMode(
@@ -67,15 +50,10 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
     humidity_bottom: number,
     humidity_condision: number,
     type: number
-  ) {
-    if (!this._writeWOCharacteristic) {
-      return;
-    }
-    if (this._writeWOCharacteristic === null) {
-      return;
-    }
-    this._writeWOCharacteristic.writeWait(
-      (this._mesh as MESH_TH).setMode(
+  ): void {
+    const _th = this._mesh as MESH_js_TH;
+    this.writeWOResponse(
+      _th.parseSetmodeCommand(
         temperature_upper,
         temperature_bottom,
         humidity_upper,
@@ -85,5 +63,25 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
         type
       )
     );
+  }
+
+  protected static _isMESHblock(name: string): boolean {
+    return name.indexOf(MESH_100TH._LocalName) !== -1;
+  }
+
+  protected prepareConnect(): void {
+    this._mesh = new MESH_js_TH();
+    const _th = this._mesh as MESH_js_TH;
+    _th.onNotify = (response: MESH_js_TH['response']) => {
+      if (typeof this.onNotify !== 'function') {
+        return;
+      }
+      this.onNotify(response);
+    };
+    super.prepareConnect();
+  }
+
+  protected async beforeOnDisconnectWait(reason: unknown): Promise<void> {
+    // do nothing
   }
 }
