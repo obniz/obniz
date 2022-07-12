@@ -111,12 +111,14 @@ MINEW_S1.ServiceDataStruct = MINEW_1.default.getServiceDataStruct(7, 1, {
         length: 2,
         type: 'numLE',
         fixedIntegerBytes: 1,
+        round: 2,
     },
     humidity: {
         index: 5,
         length: 2,
         type: 'numLE',
         fixedIntegerBytes: 1,
+        round: 2,
     },
     // TODO: delete
     macAddress: {

@@ -85,12 +85,14 @@ export default class MINEW_S1 extends MINEW<MINEW_S1_Data> {
       length: 2,
       type: 'numLE',
       fixedIntegerBytes: 1,
+      round: 2,
     },
     humidity: {
       index: 5,
       length: 2,
       type: 'numLE',
       fixedIntegerBytes: 1,
+      round: 2,
     },
     // TODO: delete
     macAddress: {
