@@ -153,6 +153,44 @@ describe('ble-hci-central', function () {
     /* eslint-enable */
   });
 
+
+  it('scan resp', async function () {
+    this.timeout(10 * 1000);
+    await _initWaitTestWait(this.obniz);
+
+    /* eslint-disable */
+
+    //non filter
+    await _scanStartTestWait(this.obniz, {});
+
+    await _receiveAdvertisementTest(this.obniz, false, [4,62,42,2,1,0,0,229,4,76,220,27,0,30,2,1,6,26,255,76,0,2,21,0,0,0,0,2,45,16,1,176,0,0,28,77,19,142,138,5,2,3,233,194,187],
+      false);
+    await _receiveAdvertisementTest(this.obniz, (p)=>{
+      expect(p.scan_resp).deep.equal([
+        15,
+        9,
+        86,
+        82,
+        45,
+        51,
+        50,
+        48,
+        48,
+        45,
+        52,
+        67,
+        48,
+        52,
+        69,
+        53
+      ])
+
+    },  [4,62,28,2,1,4,0,229,4,76,220,27,0,16,15,9,86,82,45,51,50,48,48,45,52,67,48,52,69,53,189],false);
+
+
+  });
+
+
   it('connect', async function () {
     this.timeout(10 * 1000);
     await _initWaitTestWait(this.obniz);
@@ -454,9 +492,17 @@ describe('ble-hci-central', function () {
     await p;
   }
 
-  async function _receiveAdvertisementTest(obniz, detect, hci) {
+  async function _receiveAdvertisementTest(obniz, detect, hci, receiveTwice = true) {
     let stub = sinon.stub();
-    obniz.ble.scan.onfind = stub;
+    if(typeof detect === "function"){
+      obniz.ble.scan.onfind = (p) =>{
+        stub(p);
+        detect(p);
+      }
+    }else{
+      obniz.ble.scan.onfind = stub;
+
+    }
 
     testUtil.receiveJson(obniz, [
       {
@@ -464,12 +510,15 @@ describe('ble-hci-central', function () {
       },
     ]);
 
-    //receive advertisement second
-    testUtil.receiveJson(obniz, [
-      {
-        ble: { hci: { read: { data: hci } } },
-      },
-    ]);
+    if(receiveTwice){
+      //receive advertisement second for detect ad only
+      testUtil.receiveJson(obniz, [
+        {
+          ble: { hci: { read: { data: hci } } },
+        },
+      ]);
+
+    }
     await wait(0);
 
     if (!detect) {
