@@ -20,6 +20,11 @@ import Hci from '../hci';
 
 type GapEventTypes = 'scanStop' | 'discover';
 
+const LegacyAdvertisingPduMask = 0b0010000;
+const LegacyAdvertising_ADV_SCAN_RESP_TO_ADV_IND = 0b0011011;
+const LegacyAdvertising_ADV_SCAN_RESP_TO_SCAN_IND = 0b0011010;
+const LegacyAdvertising_ADV_NONCONN_IND = 0b0010000;
+
 /**
  * @ignore
  */
@@ -203,16 +208,54 @@ class Gap extends EventEmitter<GapEventTypes> {
     );
   }
 
+  private isAdvOrScanResp(
+    type: number,
+    extended: boolean
+  ): 'advertisement' | 'scanResponse' | null {
+    if (extended) {
+      if ((type & LegacyAdvertisingPduMask) !== 0) {
+        // legacy advertising PDU
+        if (
+          type === LegacyAdvertising_ADV_SCAN_RESP_TO_ADV_IND ||
+          type === LegacyAdvertising_ADV_SCAN_RESP_TO_SCAN_IND
+        ) {
+          return 'scanResponse';
+        } else {
+          return 'advertisement';
+        }
+      } else {
+        if ((type & 0b00010000) === 0) {
+          return 'advertisement';
+        } else {
+          return 'scanResponse';
+        }
+      }
+    } else {
+      if (type === 0x04) {
+        return 'scanResponse';
+      } else if (
+        type === 0x00 ||
+        type === 0x01 ||
+        type === 0x02 ||
+        type === 0x03
+      ) {
+        return 'advertisement';
+      }
+    }
+    return null;
+  }
+
   public onHciLeAdvertisingReport(
     status: any,
-    type?: any,
-    address?: any,
-    addressType?: any,
-    eir?: any,
-    rssi?: any,
-    extended?: boolean
+    type: number,
+    address: any,
+    addressType: any,
+    eir: any,
+    rssi: number,
+    extended: boolean
   ) {
     const previouslyDiscovered: any = !!this._discoveries[address];
+
     const advertisement: any = previouslyDiscovered
       ? this._discoveries[address].advertisement
       : {
@@ -234,7 +277,8 @@ class Gap extends EventEmitter<GapEventTypes> {
       ? this._discoveries[address].hasScanResponse
       : false;
 
-    if (type === 0x04) {
+    const advType = this.isAdvOrScanResp(type, extended);
+    if (advType === 'scanResponse') {
       hasScanResponse = true;
 
       if (eir.length > 0) {
@@ -407,7 +451,19 @@ class Gap extends EventEmitter<GapEventTypes> {
 
     let connectable: boolean;
     if (extended) {
-      connectable = (type & 0b00000001) !== 0;
+      if ((type & LegacyAdvertisingPduMask) !== 0) {
+        // legacy advertising PDU
+        if (
+          type === LegacyAdvertising_ADV_SCAN_RESP_TO_ADV_IND ||
+          type === LegacyAdvertising_ADV_SCAN_RESP_TO_SCAN_IND
+        ) {
+          connectable = this._discoveries[address].connectable;
+        } else {
+          connectable = type !== LegacyAdvertising_ADV_NONCONN_IND;
+        }
+      } else {
+        connectable = (type & 0b00000001) !== 0;
+      }
     } else {
       if (type === 0x04 && previouslyDiscovered) {
         connectable = this._discoveries[address].connectable;

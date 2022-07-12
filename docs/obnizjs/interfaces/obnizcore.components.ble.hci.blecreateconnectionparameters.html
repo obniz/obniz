@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>BleCharacteristicDefine | obniz</title>
+	<title>BleCreateConnectionParameters | obniz</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -68,10 +68,10 @@
 					<a href="../modules/obnizcore.components.ble.hci.html">Hci</a>
 				</li>
 				<li>
-					<a href="obnizcore.components.ble.hci.blecharacteristicdefine.html">BleCharacteristicDefine</a>
+					<a href="obnizcore.components.ble.hci.blecreateconnectionparameters.html">BleCreateConnectionParameters</a>
 				</li>
 			</ul>
-			<h1>Interface BleCharacteristicDefine</h1>
+			<h1>Interface BleCreateConnectionParameters</h1>
 		</div>
 	</div>
 </header>
@@ -82,7 +82,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">BleCharacteristicDefine</span>
+						<span class="target">BleCreateConnectionParameters</span>
 					</li>
 				</ul>
 			</section>
@@ -93,11 +93,15 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blecharacteristicdefine.html#data" class="tsd-kind-icon">data</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blecharacteristicdefine.html#descriptors" class="tsd-kind-icon">descriptors</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blecharacteristicdefine.html#properties" class="tsd-kind-icon">properties</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blecharacteristicdefine.html#text" class="tsd-kind-icon">text</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blecharacteristicdefine.html#uuid" class="tsd-kind-icon">uuid</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blecreateconnectionparameters.html#connectintervalmax" class="tsd-kind-icon">connect<wbr>Interval<wbr>Max</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blecreateconnectionparameters.html#connectintervalmin" class="tsd-kind-icon">connect<wbr>Interval<wbr>Min</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blecreateconnectionparameters.html#enable" class="tsd-kind-icon">enable</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blecreateconnectionparameters.html#eventintervalmax" class="tsd-kind-icon">event<wbr>Interval<wbr>Max</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blecreateconnectionparameters.html#eventintervalmin" class="tsd-kind-icon">event<wbr>Interval<wbr>Min</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blecreateconnectionparameters.html#latency" class="tsd-kind-icon">latency</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blecreateconnectionparameters.html#scaninterval" class="tsd-kind-icon">scan<wbr>Interval</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blecreateconnectionparameters.html#scanwindow" class="tsd-kind-icon">scan<wbr>Window</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blecreateconnectionparameters.html#supervision" class="tsd-kind-icon">supervision</a></li>
 							</ul>
 						</section>
 					</div>
@@ -106,71 +110,94 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="data" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> data</h3>
-					<div class="tsd-signature tsd-kind-icon">data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></div>
+					<a name="connectintervalmax" class="tsd-anchor"></a>
+					<h3>connect<wbr>Interval<wbr>Max</h3>
+					<div class="tsd-signature tsd-kind-icon">connect<wbr>Interval<wbr>Max<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:90</li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Raw data</p>
-						</div>
-						<p>Only one can be specifiedIf <a href="obnizcore.components.ble.hci.blecharacteristicdefine.html#data">data</a>  or <a href="obnizcore.components.ble.hci.blecharacteristicdefine.html#text">text</a></p>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="descriptors" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> descriptors</h3>
-					<div class="tsd-signature tsd-kind-icon">descriptors<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><a href="obnizcore.components.ble.hci.bledescriptordefine.html" class="tsd-signature-type">BleDescriptorDefine</a><span class="tsd-signature-symbol"> | </span><a href="../classes/obnizcore.components.ble.hci.bledescriptor.html" class="tsd-signature-type">BleDescriptor</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:101</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:133</li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="properties" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> properties</h3>
-					<div class="tsd-signature tsd-kind-icon">properties<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.components.ble.hci.html#bleattributepropery" class="tsd-signature-type">BleAttributePropery</a><span class="tsd-signature-symbol">[]</span></div>
+					<a name="connectintervalmin" class="tsd-anchor"></a>
+					<h3>connect<wbr>Interval<wbr>Min</h3>
+					<div class="tsd-signature tsd-kind-icon">connect<wbr>Interval<wbr>Min<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:99</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:132</li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="text" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> text</h3>
-					<div class="tsd-signature tsd-kind-icon">text<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<a name="enable" class="tsd-anchor"></a>
+					<h3>enable</h3>
+					<div class="tsd-signature tsd-kind-icon">enable<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:97</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:129</li>
 						</ul>
 					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>String data</p>
-						</div>
-						<p>Only one can be specifiedIf <a href="obnizcore.components.ble.hci.blecharacteristicdefine.html#data">data</a>  or <a href="obnizcore.components.ble.hci.blecharacteristicdefine.html#text">text</a></p>
-					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="uuid" class="tsd-anchor"></a>
-					<h3>uuid</h3>
-					<div class="tsd-signature tsd-kind-icon">uuid<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.components.ble.hci.html#uuid" class="tsd-signature-type">UUID</a></div>
+					<a name="eventintervalmax" class="tsd-anchor"></a>
+					<h3>event<wbr>Interval<wbr>Max</h3>
+					<div class="tsd-signature tsd-kind-icon">event<wbr>Interval<wbr>Max<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:83</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:137</li>
 						</ul>
 					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>UUID</p>
-						</div>
-					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="eventintervalmin" class="tsd-anchor"></a>
+					<h3>event<wbr>Interval<wbr>Min</h3>
+					<div class="tsd-signature tsd-kind-icon">event<wbr>Interval<wbr>Min<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:136</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="latency" class="tsd-anchor"></a>
+					<h3>latency</h3>
+					<div class="tsd-signature tsd-kind-icon">latency<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:134</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="scaninterval" class="tsd-anchor"></a>
+					<h3>scan<wbr>Interval</h3>
+					<div class="tsd-signature tsd-kind-icon">scan<wbr>Interval<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:130</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="scanwindow" class="tsd-anchor"></a>
+					<h3>scan<wbr>Window</h3>
+					<div class="tsd-signature tsd-kind-icon">scan<wbr>Window<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:131</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="supervision" class="tsd-anchor"></a>
+					<h3>supervision</h3>
+					<div class="tsd-signature tsd-kind-icon">supervision<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:135</li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 		</div>
@@ -187,22 +214,34 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="obnizcore.components.ble.hci.blecharacteristicdefine.html" class="tsd-kind-icon">Ble<wbr>Characteristic<wbr>Define</a>
+						<a href="obnizcore.components.ble.hci.blecreateconnectionparameters.html" class="tsd-kind-icon">Ble<wbr>Create<wbr>Connection<wbr>Parameters</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="obnizcore.components.ble.hci.blecharacteristicdefine.html#data" class="tsd-kind-icon">data</a>
+								<a href="obnizcore.components.ble.hci.blecreateconnectionparameters.html#connectintervalmax" class="tsd-kind-icon">connect<wbr>Interval<wbr>Max</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="obnizcore.components.ble.hci.blecharacteristicdefine.html#descriptors" class="tsd-kind-icon">descriptors</a>
+								<a href="obnizcore.components.ble.hci.blecreateconnectionparameters.html#connectintervalmin" class="tsd-kind-icon">connect<wbr>Interval<wbr>Min</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="obnizcore.components.ble.hci.blecharacteristicdefine.html#properties" class="tsd-kind-icon">properties</a>
+								<a href="obnizcore.components.ble.hci.blecreateconnectionparameters.html#enable" class="tsd-kind-icon">enable</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="obnizcore.components.ble.hci.blecharacteristicdefine.html#text" class="tsd-kind-icon">text</a>
+								<a href="obnizcore.components.ble.hci.blecreateconnectionparameters.html#eventintervalmax" class="tsd-kind-icon">event<wbr>Interval<wbr>Max</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="obnizcore.components.ble.hci.blecharacteristicdefine.html#uuid" class="tsd-kind-icon">uuid</a>
+								<a href="obnizcore.components.ble.hci.blecreateconnectionparameters.html#eventintervalmin" class="tsd-kind-icon">event<wbr>Interval<wbr>Min</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.components.ble.hci.blecreateconnectionparameters.html#latency" class="tsd-kind-icon">latency</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.components.ble.hci.blecreateconnectionparameters.html#scaninterval" class="tsd-kind-icon">scan<wbr>Interval</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.components.ble.hci.blecreateconnectionparameters.html#scanwindow" class="tsd-kind-icon">scan<wbr>Window</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.components.ble.hci.blecreateconnectionparameters.html#supervision" class="tsd-kind-icon">supervision</a>
 							</li>
 						</ul>
 					</li>

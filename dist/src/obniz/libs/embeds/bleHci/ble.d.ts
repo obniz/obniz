@@ -84,7 +84,6 @@ export default class ObnizBLE extends ComponentAbstract {
      * @ignore
      */
     private _initialized;
-    private _extended;
     constructor(obniz: Obniz, info: any);
     notifyFromObniz(json: any): void;
     /**
@@ -126,7 +125,7 @@ export default class ObnizBLE extends ComponentAbstract {
      * @ignore
      * @private
      */
-    _reset(): void;
+    _reset(keepExtended?: boolean): void;
     /**
      * Connect to peripheral without scanning.
      * Returns a peripheral instance, but the advertisement information such as localName is null because it has not been scanned.

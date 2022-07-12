@@ -4,9 +4,12 @@ const sinon = require('sinon');
 
 const testUtil = require('../../../../testUtil.js');
 
-describe('ble-hci-central', function () {
+describe('ble-hci-central-no-extend', function () {
   beforeEach(async function () {
-    await testUtil.setupObnizWait(this, null, { __firmware_ver: '3.0.0' });
+    await testUtil.setupObnizWait(this, null, {
+      __firmware_ver: '4.0.0',
+      __hw: 'blewifi_gw2',
+    });
   });
 
   afterEach(async function () {
@@ -334,33 +337,8 @@ describe('ble-hci-central', function () {
 
 
   async function _initWaitTestWait(obniz) {
-    const p = obniz.ble.initWait();
+    const p = obniz.ble.initWait({extended:false});
 
-    expect(obniz).send([
-      {
-        ble: {
-          hci: {
-            initialize: true,
-          },
-        },
-      },
-    ]);
-    expect(obniz).send([
-      {
-        ble: {
-          hci: null,
-        },
-      },
-    ]);
-    expect(obniz).send([
-      {
-        ble: {
-          hci: {
-            initialize: true,
-          },
-        },
-      },
-    ]);
 
     let commands = [
       [0x01, 0x03, 0x0c, 0x0], // reset
@@ -433,6 +411,7 @@ describe('ble-hci-central', function () {
       [4, 14, 7, 5, 0x02, 0x20, 0, 251, 0, 10], //leReadBufferSize comp
     ]);
 
+    await wait(10);
     sendMultiCommands(obniz, [
       [1, 12, 32, 2, 0, 1], //scan disable
     ]);
@@ -452,7 +431,7 @@ describe('ble-hci-central', function () {
 
   async function _scanStartTestWait(obniz, target = {}, mustReset) {
     const p = obniz.ble.scan.startWait(target);
-    // expect(obniz).send([{ ble: { hci: { advertisement_filter: [] } } }]);  //os ver >= 3.2.0
+    expect(obniz).send([{ ble: { hci: { advertisement_filter: [] } } }]);  //os ver >= 3.2.0
 
     if (mustReset) {
       expect(obniz).send([

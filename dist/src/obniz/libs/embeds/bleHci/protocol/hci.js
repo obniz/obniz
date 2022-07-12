@@ -293,6 +293,7 @@ class Hci extends eventemitter3_1.default {
         this._reset();
         await this.resetCommandWait();
         this.setEventMaskCommand('fffffbff07f8bf3d');
+        // this.setLeEventMaskCommand('1ff8070000000000');
         this.setLeEventMaskCommand('1f1A000000000000');
         const { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer, } = await this.readLocalVersionCommandWait();
         this.writeLeHostSupportedCommand();
@@ -1471,7 +1472,7 @@ class Hci extends eventemitter3_1.default {
     }
     processLeExtendedAdvertisingReport(count, data) {
         for (let i = 0; i < count; i++) {
-            let type = data.readUInt16LE(0);
+            const type = data.readUInt16LE(0);
             const addressType = data.readUInt8(2) === 0x01 ? 'random' : 'public';
             const address = bleHelper_1.default.buffer2reversedHex(data.slice(3, 9), ':');
             const primaryPhy = this.phyToStr(data.readUInt8(9));
@@ -1535,9 +1536,6 @@ class Hci extends eventemitter3_1.default {
                         delete this._extendedAdvertiseJoinData[address + sid];
                         return;
                 }
-            }
-            else {
-                type = type & 0x0f;
             }
             this.debug('\t\t\ttype = ' + type);
             this.emit('leExtendedAdvertisingReport', 0, type, address, addressType, eir, rssi, primaryPhy, secondaryPhy, sid, txPower, periodicAdvertisingInterval, directAddressType, directAddress);

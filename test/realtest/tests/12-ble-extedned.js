@@ -415,7 +415,7 @@ describe('8-ble', function () {
     };
 
     const p = new Promise((resolve) => {
-      obnizA.ble.scan.onfind = async (peripheral)=> {
+      obnizA.ble.scan.onfind = async (peripheral) => {
         resolve(peripheral);
       };
     });

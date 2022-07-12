@@ -6,7 +6,11 @@ import { rejects } from 'assert';
 import EventEmitter from 'eventemitter3';
 import semver from 'semver';
 import { Result } from 'typedoc/dist/lib/utils';
-import { ObnizOfflineError } from '../../../ObnizError';
+import {
+  ObnizBleInvalidParameterError,
+  ObnizBleScanStartError,
+  ObnizOfflineError,
+} from '../../../ObnizError';
 import Util from '../../utils/util';
 import ObnizBLE from './ble';
 import BleHelper from './bleHelper';
@@ -213,9 +217,8 @@ export default class BleScan {
     peripheral: BleRemotePeripheral;
     timer: ReturnType<typeof setTimeout>;
   }[] = [];
-  private _extendedSupport: boolean;
 
-  constructor(obnizBle: ObnizBLE, extendedSupport: boolean) {
+  constructor(obnizBle: ObnizBLE) {
     this.obnizBle = obnizBle;
     this.emitter = new EventEmitter();
     this.scanTarget = {};
@@ -226,7 +229,6 @@ export default class BleScan {
     this.obnizBle.Obniz.on('_close', () => {
       this.clearTimeoutTimer();
     });
-    this._extendedSupport = extendedSupport;
   }
 
   /**
@@ -305,6 +307,22 @@ export default class BleScan {
         message: `Unexpected arguments. It might be contained the second argument keys. Please check object keys and order of 'startWait()' / 'startOneWait()' / 'startAllWait()' arguments. `,
       });
     }
+
+    const ble5DeviceFilterSupportVersion = '5.0.0'; // TODO: CHANGE
+    if (
+      settings.filterOnDevice === true &&
+      this.obnizBle.hci._extended === true &&
+      semver.lt(
+        semver.coerce(this.obnizBle.Obniz.firmware_ver!)!,
+        ble5DeviceFilterSupportVersion
+      )
+    ) {
+      this.obnizBle.Obniz.warning({
+        alert: 'warning',
+        message: `filterOnDevice=true on BLE5.0 is not supported obnizOS ${this.obnizBle.Obniz.firmware_ver}. Please use filterOnDevice=false or obniz.ble.initWait({extended:false}) for BLE4.2 scan`,
+      });
+    }
+
     this.state = 'starting';
     try {
       const timeout: number | null =
@@ -347,7 +365,7 @@ export default class BleScan {
       if (settings.usePhy1m === undefined) {
         settings.usePhy1m = true;
       }
-      if (this._extendedSupport) {
+      if (this.obnizBle.hci._extended) {
         await this.obnizBle.centralBindings.startExtendedScanningWait(
           [],
           settings.duplicate,
@@ -509,7 +527,7 @@ export default class BleScan {
     if (this.state === 'started' || this.state === 'starting') {
       this.state = 'stopping';
       this.clearTimeoutTimer();
-      if (this._extendedSupport) {
+      if (this.obnizBle.hci._extended) {
         await this.obnizBle.centralBindings.stopExtendedScanningWait();
       } else {
         await this.obnizBle.centralBindings.stopScanningWait();

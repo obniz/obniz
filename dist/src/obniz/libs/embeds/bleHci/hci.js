@@ -15,13 +15,17 @@ class ObnizBLEHci {
         this._eventHandlerQueue = {};
         this.Obniz = Obniz;
         this._extended = extended;
+        this.defaultExtended = this._extended;
     }
     /**
      * @ignore
      * @private
      */
-    _reset() {
+    _reset(keepExtended) {
         this._eventHandlerQueue = {};
+        if (!keepExtended) {
+            this._extended = this.defaultExtended;
+        }
     }
     /**
      * Initialize BLE HCI module
