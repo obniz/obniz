@@ -9335,6 +9335,15 @@ class BleScan {
                 message: `Unexpected arguments. It might be contained the second argument keys. Please check object keys and order of 'startWait()' / 'startOneWait()' / 'startAllWait()' arguments. `,
             });
         }
+        const ble5DeviceFilterSupportVersion = '5.0.0'; // TODO: CHANGE
+        if (settings.filterOnDevice === true &&
+            this.obnizBle.hci._extended === true &&
+            semver_1.default.lt(semver_1.default.coerce(this.obnizBle.Obniz.firmware_ver), ble5DeviceFilterSupportVersion)) {
+            this.obnizBle.Obniz.warning({
+                alert: 'warning',
+                message: `filterOnDevice=true on BLE5.0 is not supported obnizOS ${this.obnizBle.Obniz.firmware_ver}. Please use filterOnDevice=false or obniz.ble.initWait({extended:false}) for BLE4.2 scan`,
+            });
+        }
         this.state = 'starting';
         try {
             const timeout = settings.duration === undefined ? 30 : settings.duration;
