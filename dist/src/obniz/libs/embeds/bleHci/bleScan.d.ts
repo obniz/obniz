@@ -186,8 +186,7 @@ export default class BleScan {
     protected scanedPeripherals: BleRemotePeripheral[];
     private _timeoutTimer?;
     private _delayNotifyTimers;
-    private _extendedSupport;
-    constructor(obnizBle: ObnizBLE, extendedSupport: boolean);
+    constructor(obnizBle: ObnizBLE);
     /**
      * @ignore
      * @private

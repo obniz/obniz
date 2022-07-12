@@ -17,12 +17,13 @@ export default class ObnizBLEHci {
      * @private
      */
     _extended: boolean;
+    private defaultExtended;
     constructor(Obniz: ObnizDevice, extended: boolean);
     /**
      * @ignore
      * @private
      */
-    _reset(): void;
+    _reset(keepExtended: boolean): void;
     /**
      * Initialize BLE HCI module
      */

@@ -38,11 +38,10 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
          * @ignore
          */
         this._initialized = false;
-        this._extended = false;
         // eslint-disable-next-line
         this.debugHandler = (text) => { };
-        this._extended = info.extended;
-        this.hci = new hci_1.default(obniz, this._extended);
+        const extended = info.extended;
+        this.hci = new hci_1.default(obniz, extended);
         this.service = bleService_1.default;
         this.characteristic = bleCharacteristic_1.default;
         this.descriptor = bleDescriptor_1.default;
@@ -176,9 +175,11 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * ```
      */
     async initWait(supportType = {}) {
-        if (this._extended && supportType && supportType.extended) {
-            this._extended = supportType.extended;
-            this._reset();
+        if (this.hci._extended &&
+            supportType &&
+            typeof supportType.extended === 'boolean') {
+            this.hci._extended = supportType.extended;
+            this._reset(true);
         }
         if (!this._initialized) {
             const MinHCIAvailableOS = '3.0.0';
@@ -230,7 +231,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * @ignore
      * @private
      */
-    _reset() {
+    _reset(keepExtended = false) {
         // reset state at first
         this._initialized = false;
         this._initializeWarning = true;
@@ -249,7 +250,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             this.peripheral = new blePeripheral_1.default(this);
         }
         if (!this.scan) {
-            this.scan = new bleScan_1.default(this, this._extended);
+            this.scan = new bleScan_1.default(this);
         }
         else {
             this.scan.notifyFromServer('obnizClose', {});
@@ -257,10 +258,10 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         if (!this.advertisement) {
             this.advertisement = new bleAdvertisement_1.default(this);
         }
-        if (!this.extendedAdvertisement && this._extended) {
+        if (!this.extendedAdvertisement && this.hci._extended) {
             this.extendedAdvertisement = new bleExtendedAdvertisement_1.default(this);
         }
-        if (!this._extended) {
+        if (!this.hci._extended) {
             this.extendedAdvertisement = undefined;
         }
         // reset all submodules.
@@ -271,7 +272,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             this.extendedAdvertisement._reset();
         }
         // clear scanning
-        this.hci._reset();
+        this.hci._reset(keepExtended);
         if (!this.hciProtocol) {
             this.hciProtocol = new hci_2.default(this.hci);
             this.hciProtocol.debugHandler = (text) => {
@@ -443,7 +444,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             service_data: advertisement.serviceData,
         };
         val.setParams(peripheralData);
-        val.setExtendFlg(this._extended);
+        val.setExtendFlg(this.hci._extended);
         this.scan.notifyFromServer('onfind', val);
     }
     onDisconnect(peripheralUuid, reason) {

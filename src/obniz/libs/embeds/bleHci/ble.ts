@@ -135,12 +135,11 @@ export default class ObnizBLE extends ComponentAbstract {
    * @ignore
    */
   private _initialized = false;
-  private _extended = false;
 
   constructor(obniz: Obniz, info: any) {
     super(obniz);
-    this._extended = info.extended;
-    this.hci = new ObnizBLEHci(obniz, this._extended);
+    const extended = info.extended;
+    this.hci = new ObnizBLEHci(obniz, extended);
     this.service = BleService;
     this.characteristic = BleCharacteristic;
     this.descriptor = BleDescriptor;
@@ -249,9 +248,13 @@ export default class ObnizBLE extends ComponentAbstract {
    * ```
    */
   public async initWait(supportType: BleSupportType = {}): Promise<void> {
-    if (this._extended && supportType && supportType.extended) {
-      this._extended = supportType.extended;
-      this._reset();
+    if (
+      this.hci._extended &&
+      supportType &&
+      typeof supportType.extended === 'boolean'
+    ) {
+      this.hci._extended = supportType.extended;
+      this._reset(true);
     }
     if (!this._initialized) {
       const MinHCIAvailableOS = '3.0.0';
@@ -309,7 +312,7 @@ export default class ObnizBLE extends ComponentAbstract {
    * @ignore
    * @private
    */
-  public _reset() {
+  public _reset(keepExtended = false) {
     // reset state at first
     this._initialized = false;
     this._initializeWarning = true;
@@ -330,17 +333,17 @@ export default class ObnizBLE extends ComponentAbstract {
       this.peripheral = new BlePeripheral(this);
     }
     if (!this.scan) {
-      this.scan = new BleScan(this, this._extended);
+      this.scan = new BleScan(this);
     } else {
       this.scan.notifyFromServer('obnizClose', {});
     }
     if (!this.advertisement) {
       this.advertisement = new BleAdvertisement(this);
     }
-    if (!this.extendedAdvertisement && this._extended) {
+    if (!this.extendedAdvertisement && this.hci._extended) {
       this.extendedAdvertisement = new BleExtendedAdvertisement(this);
     }
-    if (!this._extended) {
+    if (!this.hci._extended) {
       this.extendedAdvertisement = undefined;
     }
 
@@ -353,7 +356,7 @@ export default class ObnizBLE extends ComponentAbstract {
     }
 
     // clear scanning
-    this.hci._reset();
+    this.hci._reset(keepExtended);
     if (!this.hciProtocol) {
       this.hciProtocol = new HciProtocol(this.hci);
       this.hciProtocol.debugHandler = (text: any) => {
@@ -554,7 +557,7 @@ export default class ObnizBLE extends ComponentAbstract {
     };
 
     val.setParams(peripheralData);
-    val.setExtendFlg(this._extended);
+    val.setExtendFlg(this.hci._extended);
     this.scan.notifyFromServer('onfind', val);
   }
 

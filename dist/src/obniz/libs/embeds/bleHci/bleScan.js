@@ -17,7 +17,7 @@ const bleHelper_1 = __importDefault(require("./bleHelper"));
  * @category Use as Central
  */
 class BleScan {
-    constructor(obnizBle, extendedSupport) {
+    constructor(obnizBle) {
         this.state = 'stopped';
         this._delayNotifyTimers = [];
         this.obnizBle = obnizBle;
@@ -29,7 +29,6 @@ class BleScan {
         this.obnizBle.Obniz.on('_close', () => {
             this.clearTimeoutTimer();
         });
-        this._extendedSupport = extendedSupport;
     }
     /**
      * @ignore
@@ -137,7 +136,7 @@ class BleScan {
             if (settings.usePhy1m === undefined) {
                 settings.usePhy1m = true;
             }
-            if (this._extendedSupport) {
+            if (this.obnizBle.hci._extended) {
                 await this.obnizBle.centralBindings.startExtendedScanningWait([], settings.duplicate, settings.activeScan, settings.usePhy1m, settings.usePhyCoded);
             }
             else {
@@ -269,7 +268,7 @@ class BleScan {
         if (this.state === 'started' || this.state === 'starting') {
             this.state = 'stopping';
             this.clearTimeoutTimer();
-            if (this._extendedSupport) {
+            if (this.obnizBle.hci._extended) {
                 await this.obnizBle.centralBindings.stopExtendedScanningWait();
             }
             else {
