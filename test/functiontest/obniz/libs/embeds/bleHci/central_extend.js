@@ -4,7 +4,7 @@ const sinon = require('sinon');
 
 const testUtil = require('../../../../testUtil.js');
 
-describe('ble-hci-central-no-extend', function () {
+describe('ble-hci-central-extend', function () {
   beforeEach(async function () {
     await testUtil.setupObnizWait(this, null, {
       __firmware_ver: '4.0.0',
@@ -337,7 +337,7 @@ describe('ble-hci-central-no-extend', function () {
 
 
   async function _initWaitTestWait(obniz) {
-    const p = obniz.ble.initWait({extended:false});
+    const p = obniz.ble.initWait();
 
 
     let commands = [

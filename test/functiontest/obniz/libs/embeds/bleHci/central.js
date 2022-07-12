@@ -153,7 +153,6 @@ describe('ble-hci-central', function () {
     /* eslint-enable */
   });
 
-
   it('scan resp', async function () {
     this.timeout(10 * 1000);
     await _initWaitTestWait(this.obniz);

@@ -25,7 +25,8 @@ declare class Gap extends EventEmitter<GapEventTypes> {
     stopExtendedScanningWait(): Promise<void>;
     startExtendedScanningWait(allowDuplicates: boolean, activeScan: boolean, usePhy1m: boolean, usePhyCoded: boolean): Promise<void>;
     onHciLeExtendedAdvertisingReport(status: any, type?: any, address?: any, addressType?: any, eir?: any, rssi?: any, primaryPhy?: any, secondaryPhy?: any, sid?: any, txPower?: any, periodicAdvertisingInterval?: any, directAddressType?: any, directAddress?: any): void;
-    onHciLeAdvertisingReport(status: any, type?: any, address?: any, addressType?: any, eir?: any, rssi?: any, extended?: boolean): void;
+    private isAdvOrScanResp;
+    onHciLeAdvertisingReport(status: any, type: number, address: any, addressType: any, eir: any, rssi: number, extended: boolean): void;
     private setExtendedScanEnabledWait;
     private setScanEnabledWait;
 }

@@ -10678,6 +10678,10 @@ const debug = (message) => {
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
+const LegacyAdvertisingPduMask = 0b0010000;
+const LegacyAdvertising_ADV_SCAN_RESP_TO_ADV_IND = 0b0011011;
+const LegacyAdvertising_ADV_SCAN_RESP_TO_SCAN_IND = 0b0011010;
+const LegacyAdvertising_ADV_NONCONN_IND = 0b0010000;
 /**
  * @ignore
  */
@@ -10789,6 +10793,40 @@ class Gap extends eventemitter3_1.default {
         debug('onHciLeExtendedAdvertisingReport', type, address, addressType, eir, rssi, primaryPhy, secondaryPhy, sid, txPower, periodicAdvertisingInterval, directAddressType, directAddress);
         this.onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi, true);
     }
+    isAdvOrScanResp(type, extended) {
+        if (extended) {
+            if ((type & LegacyAdvertisingPduMask) !== 0) {
+                // legacy advertising PDU
+                if (type === LegacyAdvertising_ADV_SCAN_RESP_TO_ADV_IND ||
+                    type === LegacyAdvertising_ADV_SCAN_RESP_TO_SCAN_IND) {
+                    return 'scanResponse';
+                }
+                else {
+                    return 'advertisement';
+                }
+            }
+            else {
+                if ((type & 0b00010000) === 0) {
+                    return 'advertisement';
+                }
+                else {
+                    return 'scanResponse';
+                }
+            }
+        }
+        else {
+            if (type === 0x04) {
+                return 'scanResponse';
+            }
+            else if (type === 0x00 ||
+                type === 0x01 ||
+                type === 0x02 ||
+                type === 0x03) {
+                return 'advertisement';
+            }
+        }
+        return null;
+    }
     onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi, extended) {
         const previouslyDiscovered = !!this._discoveries[address];
         const advertisement = previouslyDiscovered
@@ -10810,7 +10848,8 @@ class Gap extends eventemitter3_1.default {
         let hasScanResponse = previouslyDiscovered
             ? this._discoveries[address].hasScanResponse
             : false;
-        if (type === 0x04) {
+        const advType = this.isAdvOrScanResp(type, extended);
+        if (advType === 'scanResponse') {
             hasScanResponse = true;
             if (eir.length > 0) {
                 advertisement.scanResponseRaw = Array.from(eir);
@@ -10937,7 +10976,19 @@ class Gap extends eventemitter3_1.default {
         debug('advertisement = ' + JSON.stringify(advertisement, null, 0));
         let connectable;
         if (extended) {
-            connectable = (type & 0b00000001) !== 0;
+            if ((type & LegacyAdvertisingPduMask) !== 0) {
+                // legacy advertising PDU
+                if (type === LegacyAdvertising_ADV_SCAN_RESP_TO_ADV_IND ||
+                    type === LegacyAdvertising_ADV_SCAN_RESP_TO_SCAN_IND) {
+                    connectable = this._discoveries[address].connectable;
+                }
+                else {
+                    connectable = type !== LegacyAdvertising_ADV_NONCONN_IND;
+                }
+            }
+            else {
+                connectable = (type & 0b00000001) !== 0;
+            }
         }
         else {
             if (type === 0x04 && previouslyDiscovered) {
@@ -14297,7 +14348,7 @@ class Hci extends eventemitter3_1.default {
     }
     processLeExtendedAdvertisingReport(count, data) {
         for (let i = 0; i < count; i++) {
-            let type = data.readUInt16LE(0);
+            const type = data.readUInt16LE(0);
             const addressType = data.readUInt8(2) === 0x01 ? 'random' : 'public';
             const address = bleHelper_1.default.buffer2reversedHex(data.slice(3, 9), ':');
             const primaryPhy = this.phyToStr(data.readUInt8(9));
@@ -14361,9 +14412,6 @@ class Hci extends eventemitter3_1.default {
                         delete this._extendedAdvertiseJoinData[address + sid];
                         return;
                 }
-            }
-            else {
-                type = type & 0x0f;
             }
             this.debug('\t\t\ttype = ' + type);
             this.emit('leExtendedAdvertisingReport', 0, type, address, addressType, eir, rssi, primaryPhy, secondaryPhy, sid, txPower, periodicAdvertisingInterval, directAddressType, directAddress);

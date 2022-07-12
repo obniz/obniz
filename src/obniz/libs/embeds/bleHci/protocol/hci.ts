@@ -2215,7 +2215,7 @@ class Hci extends EventEmitter<HciEventTypes> {
 
   public processLeExtendedAdvertisingReport(count: number, data: Buffer) {
     for (let i = 0; i < count; i++) {
-      let type = data.readUInt16LE(0);
+      const type = data.readUInt16LE(0);
       const addressType = data.readUInt8(2) === 0x01 ? 'random' : 'public';
       const address = BleHelper.buffer2reversedHex(data.slice(3, 9), ':');
       const primaryPhy = this.phyToStr(data.readUInt8(9));
@@ -2235,6 +2235,7 @@ class Hci extends EventEmitter<HciEventTypes> {
 
       this.debug('\t\t\ttype = ' + type);
       this.debug('\t\t\taddress = ' + address);
+
       this.debug('\t\t\taddress type = ' + addressType);
       this.debug('\t\t\teir = ' + eir.toString('hex'));
       this.debug('\t\t\trssi =  ' + rssi);
@@ -2290,9 +2291,8 @@ class Hci extends EventEmitter<HciEventTypes> {
             delete this._extendedAdvertiseJoinData[address + sid];
             return;
         }
-      } else {
-        type = type & 0x0f;
       }
+
       this.debug('\t\t\ttype = ' + type);
       this.emit(
         'leExtendedAdvertisingReport',
