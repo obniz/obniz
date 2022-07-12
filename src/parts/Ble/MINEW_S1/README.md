@@ -1,95 +1,64 @@
 # MINEW_S1
-Temperature / Humidity beacon made byShenzhen Minew Technologies Co.
-It is necessary to set the inkjet output in advance using the dedicated application.
 
-It only supports HT sensor / information　SLOT.
+Temperature / Humidity beacon made by Shenzhen Minew Technologies Co.
+It is necessary to set the beacon output with the dedicated application in advance.
 
+Only supported if HT Sensor / Info is set for any SLOT frame type. Even if iBeacon / UID / URL / TLM is set, this library will not be able to receive data (it will not affect detection).
 
 ![](./image.jpg)
 
+## Beacon data (getData())
 
-## isDevice(peripheral)
+- batteryLevel: Battery level (%)
+- temperature: Probe temperature (℃)
+- humidity: Body humidity (%)
 
-Check whether it is MINEW_S1 based on the advertisement information
-
-Return true if advertisement is HT sensor / information　SLOT.
-iBeacon / UID / URL / TLM SLOT are not supported, and return false.
+## Use case
 
 ```javascript
-// Javascript Example
+// Javascript
+const MINEW_S1 = Obniz.getPartsClass('MINEW_S1');
 await obniz.ble.initWait();
-const MINEW_S1 = Obniz.getPartsClass("MINEW_S1");
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (MINEW_S1.isDevice(peripheral)) {
-    console.log("device find");
+obniz.ble.scan.onfind = (peripheral) => {
+  // Get operation mode, it becomes null when not MINEW_S1
+  const mode = MINEW_S1.getDeviceMode(peripheral);
+  if (mode) {
+    // Generate an instance
+    const device = new MINEW_S1(peripheral, mode);
+    // Get data
+    const data = device.getData();
+    // If there is no temperature / humidity data, data will be null
+    if (data) {
+      console.log(data);
+    }
   }
 };
-await obniz.ble.scan.startWait();
-
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
 
+## Example of getting Info data
 
-## getHTData()
+### Info data
 
-Get temperature and humidity data based on the advertisement information.
-Returns null for different SLOT advertisement information.
+- frameType: Frame type
+- versionNumber: Version number
+- batteryLevel: Battery level (%)
+- macAddress: MAC address
+- name: Device name
 
 ```javascript
-// Javascript Example
+// Javascript
 await obniz.ble.initWait();
 const MINEW_S1 = Obniz.getPartsClass("MINEW_S1");
 obniz.ble.scan.onfind = (peripheral) => {
-  if (MINEW_S1.isDevice(peripheral)) {
-    const data = MINEW_S1.getHTData(peripheral);
-    console.log(data); 
-  }
-};
-await obniz.ble.scan.startWait();
-
-```
-
-Return data format is below.
-
-```javascript
-{
-  frameType: number;
-  versionNumber: number;
-  batteryLevel: number;
-  temperature: number;
-  humidity: number;
-  macAddress: string;
-}
-```
-
-
-
-## getInfoData()
-
-Get device data based on the advertisement information.
-Returns null for different SLOT advertisement information.
-
-```javascript
-// Javascript Example
-await obniz.ble.initWait();
-const MINEW_S1 = Obniz.getPartsClass("MINEW_S1");
-obniz.ble.scan.onfind = (peripheral) => {
-  if (MINEW_S1.isDevice(peripheral)) {
+  if (MINEW_S1.getDeviceMode(peripheral)) {
     const data = MINEW_S1.getInfoData(peripheral);
-    console.log(data); 
+    // If there is no Info data, data will be null
+    if (data) {
+      console.log(data);
+    }
   }
 };
-await obniz.ble.scan.startWait();
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 
-```
-
-Return data format is below.
-
-```javascript
-{
-  frameType: number;
-  versionNumber: number;
-  batteryLevel: number;
-  macAddress: string;
-  name: string;
-}
 ```

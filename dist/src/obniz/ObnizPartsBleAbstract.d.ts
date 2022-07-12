@@ -50,7 +50,7 @@ export declare type ObnizBleBeaconStructCheck = ObnizBleBeaconStructStandard<Val
     data?: number | number[];
 };
 export declare const notMatchDeviceError: Error;
-export declare const fixedPoint: (value: number[], integerBytes?: number) => number;
+export declare const fixedPoint: (value: number[], integerBytes: number) => number;
 export declare const uint: (value: number[]) => number;
 export declare const int: (value: number[]) => number;
 export declare const uintBE: (value: number[]) => number;

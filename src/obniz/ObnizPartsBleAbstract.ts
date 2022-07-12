@@ -85,7 +85,7 @@ export type ObnizBleBeaconStructCheck = ObnizBleBeaconStructStandard<ValueType> 
 
 export const notMatchDeviceError = new Error('Is NOT target device.');
 
-export const fixedPoint = (value: number[], integerBytes = 1): number => {
+export const fixedPoint = (value: number[], integerBytes: number): number => {
   const positive = value[0] >> 7 === 0;
   if (!positive) {
     value = value.map((n, i) => (n ^ 0xff) + (i === value.length - 1 ? 1 : 0));
@@ -554,7 +554,11 @@ export abstract class ObnizPartsBle<S> {
       this.staticClass.BeaconDataStruct ?? this.staticClass.ServiceDataStruct;
     if (!dataStruct) throw new Error('Data analysis is not defined.');
 
-    const data = this.beaconData ?? this.serviceData;
+    const data = this.staticClass.BeaconDataStruct
+      ? this.beaconData
+      : this.staticClass.ServiceDataStruct
+      ? this.serviceData
+      : null;
     if (!data) throw new Error('Manufacturer specific data is null.');
 
     const defDataStruct = (dataStruct.Beacon ||
@@ -609,11 +613,10 @@ export abstract class ObnizPartsBle<S> {
             const f = (d: number[]): number =>
               config.fixedIntegerBytes !== undefined
                 ? fixedPoint(d, config.fixedIntegerBytes)
-                : int(d);
-            const num =
-              (config.type.indexOf('u') === 0 ? uint : f)(
-                config.type.indexOf('BE') >= 0 ? vals.reverse() : vals
-              ) * multi;
+                : (config.type.indexOf('u') === 0 ? uint : int)(
+                    config.type.indexOf('BE') >= 0 ? d.reverse() : d
+                  );
+            const num = f(vals) * multi;
             return [
               name,
               config.round !== undefined ? roundTo(num, config.round) : num,

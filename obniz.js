@@ -4050,7 +4050,7 @@ const round_to_1 = __importDefault(__webpack_require__("./node_modules/round-to/
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const ObnizPartsBleModeList = ['Beacon', 'Connectable', 'Pairing'];
 exports.notMatchDeviceError = new Error('Is NOT target device.');
-exports.fixedPoint = (value, integerBytes = 1) => {
+exports.fixedPoint = (value, integerBytes) => {
     const positive = value[0] >> 7 === 0;
     if (!positive) {
         value = value.map((n, i) => (n ^ 0xff) + (i === value.length - 1 ? 1 : 0));
@@ -4298,12 +4298,16 @@ class ObnizPartsBle {
      * Available modes: Beacon, Connectable(only part)
      */
     getData() {
-        var _a, _b;
+        var _a;
         this.checkMode();
         const dataStruct = (_a = this.staticClass.BeaconDataStruct, (_a !== null && _a !== void 0 ? _a : this.staticClass.ServiceDataStruct));
         if (!dataStruct)
             throw new Error('Data analysis is not defined.');
-        const data = (_b = this.beaconData, (_b !== null && _b !== void 0 ? _b : this.serviceData));
+        const data = this.staticClass.BeaconDataStruct
+            ? this.beaconData
+            : this.staticClass.ServiceDataStruct
+                ? this.serviceData
+                : null;
         if (!data)
             throw new Error('Manufacturer specific data is null.');
         const defDataStruct = (dataStruct.Beacon ||
@@ -4354,8 +4358,8 @@ class ObnizPartsBle {
                 const multi = (_c = config.multiple, (_c !== null && _c !== void 0 ? _c : 1));
                 const f = (d) => config.fixedIntegerBytes !== undefined
                     ? exports.fixedPoint(d, config.fixedIntegerBytes)
-                    : exports.int(d);
-                const num = (config.type.indexOf('u') === 0 ? exports.uint : f)(config.type.indexOf('BE') >= 0 ? vals.reverse() : vals) * multi;
+                    : (config.type.indexOf('u') === 0 ? exports.uint : exports.int)(config.type.indexOf('BE') >= 0 ? d.reverse() : d);
+                const num = f(vals) * multi;
                 return [
                     name,
                     config.round !== undefined ? round_to_1.default(num, config.round) : num,
@@ -28121,35 +28125,36 @@ MINEW_S1.ServiceDataStruct = MINEW_1.default.getServiceDataStruct(7, 1, {
     // TODO: delete
     frameType: {
         index: 0,
-        type: 'unsignedNumBE',
+        type: 'unsignedNumLE',
     },
     // TODO: delete
     versionNumber: {
         index: 1,
-        type: 'unsignedNumBE',
+        type: 'unsignedNumLE',
     },
     // TODO: change key name
     batteryLevel: {
         index: 2,
-        type: 'unsignedNumBE',
+        type: 'unsignedNumLE',
     },
     temperature: {
         index: 3,
         length: 2,
-        type: 'numBE',
+        type: 'numLE',
         fixedIntegerBytes: 1,
     },
     humidity: {
         index: 5,
         length: 2,
-        type: 'numBE',
+        type: 'numLE',
         fixedIntegerBytes: 1,
     },
     // TODO: delete
     macAddress: {
         index: 7,
         length: 6,
-        type: 'unsignedNumBE',
+        type: 'custom',
+        func: (data, peripheral) => peripheral.address,
     },
     // TODO: delete by disable info slot
     versionNumber_: {

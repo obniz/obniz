@@ -68,35 +68,36 @@ export default class MINEW_S1 extends MINEW<MINEW_S1_Data> {
     // TODO: delete
     frameType: {
       index: 0,
-      type: 'unsignedNumBE',
+      type: 'unsignedNumLE',
     },
     // TODO: delete
     versionNumber: {
       index: 1,
-      type: 'unsignedNumBE',
+      type: 'unsignedNumLE',
     },
     // TODO: change key name
     batteryLevel: {
       index: 2,
-      type: 'unsignedNumBE',
+      type: 'unsignedNumLE',
     },
     temperature: {
       index: 3,
       length: 2,
-      type: 'numBE',
+      type: 'numLE',
       fixedIntegerBytes: 1,
     },
     humidity: {
       index: 5,
       length: 2,
-      type: 'numBE',
+      type: 'numLE',
       fixedIntegerBytes: 1,
     },
     // TODO: delete
     macAddress: {
       index: 7,
       length: 6,
-      type: 'unsignedNumBE',
+      type: 'custom',
+      func: (data, peripheral) => peripheral.address,
     },
     // TODO: delete by disable info slot
     versionNumber_: {
