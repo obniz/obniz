@@ -112,6 +112,7 @@ class TestUtil {
             ready: true,
             obniz: {
               firmware: options.__firmware_ver || '2.1.0',
+              hw: options.__hw || undefined,
             },
           },
         },

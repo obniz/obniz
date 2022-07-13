@@ -68,7 +68,8 @@ export interface HEM_9200TOptions {
      */
     timezoneOffsetMinute?: number;
     /**
-     * pass key パスキー
+     * Pin code that's written on the back of the device. If leading '0's are included, omit them. 043933 -> 43933
+     * デバイスの背面に書かれているピンコード。先頭の'0'は省く。043933 -> 43933
      */
     passkey?: number;
 }

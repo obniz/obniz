@@ -97,6 +97,8 @@
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blescansetting.html#duplicate" class="tsd-kind-icon">duplicate</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blescansetting.html#duration" class="tsd-kind-icon">duration</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blescansetting.html#filterondevice" class="tsd-kind-icon">filter<wbr>OnDevice</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blescansetting.html#usephy1m" class="tsd-kind-icon">use<wbr>Phy1m</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blescansetting.html#usephycoded" class="tsd-kind-icon">use<wbr>Phy<wbr>Coded</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blescansetting.html#waitbothadvertisementandscanresponse" class="tsd-kind-icon">wait<wbr>Both<wbr>Advertisement<wbr>And<wbr>Scan<wbr>Response</a></li>
 							</ul>
 						</section>
@@ -186,12 +188,52 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="usephy1m" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> use<wbr>Phy1m</h3>
+					<div class="tsd-signature tsd-kind-icon">use<wbr>Phy1m<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:149</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>(ESP32 C3 or ESP32 S3)</p>
+						</div>
+						<p>True: Scan phy<br/>
+						False : Do not scan phy</p>
+						<p>Default is true : Scan phy</p>
+						<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+<span class="hljs-keyword">var</span> target = {
+    <span class="hljs-attr">localName</span>: <span class="hljs-string">"obniz-BLE"</span>,     <span class="hljs-comment">//scan only has localName "obniz-BLE"</span>
+};
+
+<span class="hljs-keyword">var</span> setting = {
+   <span class="hljs-attr">usePhy1m</span> : <span class="hljs-literal">false</span>,
+   <span class="hljs-attr">usePhyCoded</span>: <span class="hljs-literal">true</span>
+}
+
+<span class="hljs-keyword">await</span> obniz.ble.initWait();
+<span class="hljs-keyword">await</span> obniz.ble.scan.startWait(target, setting);</code></pre>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="usephycoded" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> use<wbr>Phy<wbr>Coded</h3>
+					<div class="tsd-signature tsd-kind-icon">use<wbr>Phy<wbr>Coded<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:150</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="waitbothadvertisementandscanresponse" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> wait<wbr>Both<wbr>Advertisement<wbr>And<wbr>Scan<wbr>Response</h3>
 					<div class="tsd-signature tsd-kind-icon">wait<wbr>Both<wbr>Advertisement<wbr>And<wbr>Scan<wbr>Response<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:132</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:160</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -231,6 +273,12 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="obnizcore.components.ble.hci.blescansetting.html#filterondevice" class="tsd-kind-icon">filter<wbr>OnDevice</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.components.ble.hci.blescansetting.html#usephy1m" class="tsd-kind-icon">use<wbr>Phy1m</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.components.ble.hci.blescansetting.html#usephycoded" class="tsd-kind-icon">use<wbr>Phy<wbr>Coded</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="obnizcore.components.ble.hci.blescansetting.html#waitbothadvertisementandscanresponse" class="tsd-kind-icon">wait<wbr>Both<wbr>Advertisement<wbr>And<wbr>Scan<wbr>Response</a>

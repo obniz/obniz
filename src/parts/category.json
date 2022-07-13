@@ -832,6 +832,10 @@
           "store": {}
         },
         {
+          "name": "iBS05G",
+          "store": {}
+        },
+        {
           "name": "LogttaAccel",
           "store": {}
         },

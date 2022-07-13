@@ -6,11 +6,14 @@ export default class BleAdvertisementBuilder {
     protected rows: {
         [key: number]: number[];
     };
-    constructor(json: BleAdvertisementData | BleScanResponseData);
+    private _extendedFlg;
+    private _serviceData;
+    constructor(json: BleAdvertisementData | BleScanResponseData, extendedFlg?: boolean);
     setRow(type: number, data: number[]): void;
     getRow(type: number): number[];
     build(): number[];
     setStringData(type: number, string: string): void;
+    setServiceData(uuid: number, data: number[]): void;
     setShortenedLocalName(name: string): void;
     setCompleteLocalName(name: string): void;
     setManufacturerSpecificData(companyCode: number, data: number[]): void;

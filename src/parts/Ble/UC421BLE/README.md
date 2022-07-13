@@ -318,8 +318,8 @@ obniz.ble.scan.onfind = async (peripheral) => {
     await uc421Ble.connectWait(); // medical exam mode does not need pairing. just connecting will be fine.
     const isOn = await uc421Ble.isMedicalExamModeOnWait();
     console.log('medical exam mode is', isOn); // This should be on.
-    const userNo = 1;
-    const cc = 1234;
+    const userNo = 99;
+    const cc = 9999;
     await uc421Ble.authorizeUserWait(userNo, cc);
     const weightData = await uc421Ble.getWeightDataWait();
     console.log(weightData); // weight data for userNo 1

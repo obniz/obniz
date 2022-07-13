@@ -63,7 +63,9 @@
     }
   },
   "embeds": {
-    "ble": {},
+    "ble": {
+      "extended": false
+    },
     "display": {
       "paper_white": true,
       "raw_alternate": true,

@@ -12,12 +12,18 @@ export default class ObnizBLEHci {
     protected _eventHandlerQueue: {
         [key: string]: EventHandler[];
     };
-    constructor(Obniz: ObnizDevice);
     /**
      * @ignore
      * @private
      */
-    _reset(): void;
+    _extended: boolean;
+    private defaultExtended;
+    constructor(Obniz: ObnizDevice, extended: boolean);
+    /**
+     * @ignore
+     * @private
+     */
+    _reset(keepExtended: boolean): void;
     /**
      * Initialize BLE HCI module
      */

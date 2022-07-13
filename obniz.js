@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.21.0",
+  "version": "3.22.0-beta.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -3867,6 +3867,12 @@ class ObnizBleInvalidPasskeyError extends ObnizError {
     }
 }
 exports.ObnizBleInvalidPasskeyError = ObnizBleInvalidPasskeyError;
+class ObnizBleInvalidParameterError extends ObnizError {
+    constructor(guideMessage, input) {
+        super(21, `${guideMessage}, But input: ${input}`);
+    }
+}
+exports.ObnizBleInvalidParameterError = ObnizBleInvalidParameterError;
 
 
 /***/ }),
@@ -5463,12 +5469,13 @@ const blePeripheral_1 = __importDefault(__webpack_require__("./dist/src/obniz/li
 const bleRemotePeripheral_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemotePeripheral.js"));
 const bleScan_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleScan.js"));
 const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleService.js"));
+const bleExtendedAdvertisement_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleExtendedAdvertisement.js"));
 /**
  * Use a obniz device as a BLE device.
  * Peripheral and Central mode are supported
  */
 class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
-    constructor(obniz) {
+    constructor(obniz, info) {
         super(obniz);
         this.remotePeripherals = [];
         /**
@@ -5477,7 +5484,8 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         this._initialized = false;
         // eslint-disable-next-line
         this.debugHandler = (text) => { };
-        this.hci = new hci_1.default(obniz);
+        const extended = info.extended;
+        this.hci = new hci_1.default(obniz, extended);
         this.service = bleService_1.default;
         this.characteristic = bleCharacteristic_1.default;
         this.descriptor = bleDescriptor_1.default;
@@ -5581,15 +5589,42 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         }
     }
     /**
+     * ESP32 C3 or ESP32 S3 only
+     *
+     * Sets the PHY to use by default
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.setDefaultPhyWait(false,false,true);//coded only
+     * ```
+     */
+    async setDefaultPhyWait(usePhy1m, usePhy2m, usePhyCoded) {
+        await this.centralBindings.setDefaultPhyWait(usePhy1m, usePhy2m, usePhyCoded);
+    }
+    _onUpdatePhy(handler, txPhy, rxPhy) {
+        if (this.onUpdatePhy) {
+            this.onUpdatePhy(this.phyToStr(txPhy), this.phyToStr(rxPhy), handler);
+        }
+    }
+    /**
      * Initialize BLE module. You need call this first everything before.
      * This throws if device is not supported device.
+     *
+     * esp32 C3 or esp32 S3 Put true in the argument
+     * when not using the BLE5.0 extended advertise
      *
      * ```javascript
      * // Javascript Example
      * await obniz.ble.initWait();
      * ```
      */
-    async initWait() {
+    async initWait(supportType = {}) {
+        if (this.hci._extended &&
+            supportType &&
+            typeof supportType.extended === 'boolean') {
+            this.hci._extended = supportType.extended;
+            this._reset(true);
+        }
         if (!this._initialized) {
             const MinHCIAvailableOS = '3.0.0';
             if (semver_1.default.lt(this.Obniz.firmware_ver, MinHCIAvailableOS)) {
@@ -5640,7 +5675,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * @ignore
      * @private
      */
-    _reset() {
+    _reset(keepExtended = false) {
         // reset state at first
         this._initialized = false;
         this._initializeWarning = true;
@@ -5667,12 +5702,21 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         if (!this.advertisement) {
             this.advertisement = new bleAdvertisement_1.default(this);
         }
+        if (!this.extendedAdvertisement && this.hci._extended) {
+            this.extendedAdvertisement = new bleExtendedAdvertisement_1.default(this);
+        }
+        if (!this.hci._extended) {
+            this.extendedAdvertisement = undefined;
+        }
         // reset all submodules.
         this.peripheral._reset();
         this.scan._reset();
         this.advertisement._reset();
+        if (this.extendedAdvertisement) {
+            this.extendedAdvertisement._reset();
+        }
         // clear scanning
-        this.hci._reset();
+        this.hci._reset(keepExtended);
         if (!this.hciProtocol) {
             this.hciProtocol = new hci_2.default(this.hci);
             this.hciProtocol.debugHandler = (text) => {
@@ -5691,6 +5735,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             this.centralBindings.on('discover', this.onDiscover.bind(this));
             this.centralBindings.on('disconnect', this.onDisconnect.bind(this));
             this.centralBindings.on('notification', this.onNotification.bind(this));
+            this.centralBindings.on('updatePhy', this._onUpdatePhy.bind(this));
         }
         else {
             this.centralBindings._reset();
@@ -5840,8 +5885,10 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             rssi,
             adv_data: advertisement.advertisementRaw,
             scan_resp: advertisement.scanResponseRaw,
+            service_data: advertisement.serviceData,
         };
         val.setParams(peripheralData);
+        val.setExtendFlg(this.hci._extended);
         this.scan.notifyFromServer('onfind', val);
     }
     onDisconnect(peripheralUuid, reason) {
@@ -5912,6 +5959,18 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     }
     debug(text) {
         this.debugHandler(text);
+    }
+    phyToStr(phy) {
+        switch (phy) {
+            case 1:
+                return '1m';
+            case 2:
+                return '2m';
+            case 3:
+                return 'coded';
+            default:
+                throw new Error('decode Phy Error');
+        }
     }
 }
 exports.default = ObnizBLE;
@@ -6111,8 +6170,10 @@ const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/e
  * @category Use as Peripheral
  */
 class BleAdvertisementBuilder {
-    constructor(json) {
+    constructor(json, extendedFlg = false) {
         this.rows = {};
+        this._extendedFlg = extendedFlg;
+        this._serviceData = [];
         if (json) {
             if (json.localName) {
                 this.setCompleteLocalName(json.localName);
@@ -6125,6 +6186,11 @@ class BleAdvertisementBuilder {
             if (json.serviceUuids) {
                 for (const uuid of json.serviceUuids) {
                     this.setUuid(uuid);
+                }
+            }
+            if (json.serviceData) {
+                for (const service of json.serviceData) {
+                    this.setServiceData(service.uuid, service.data);
                 }
             }
         }
@@ -6148,8 +6214,18 @@ class BleAdvertisementBuilder {
             data.push(parseInt(key));
             Array.prototype.push.apply(data, this.rows[key]);
         }
-        if (data.length > 31) {
-            throw new Error('Too large data. Advertise/ScanResponse data are must be less than 32 byte.');
+        if (this._serviceData.length !== 0) {
+            Array.prototype.push.apply(data, this._serviceData);
+        }
+        if (this._extendedFlg) {
+            if (data.length > 1650) {
+                throw new Error('Too large data. Advertise/ScanResponse data are must be less than 1650 byte.');
+            }
+        }
+        else {
+            if (data.length > 31) {
+                throw new Error('Too large data. Advertise/ScanResponse data are must be less than 32 byte.');
+            }
         }
         return data;
     }
@@ -6159,6 +6235,20 @@ class BleAdvertisementBuilder {
             data.push(string.charCodeAt(i));
         }
         this.setRow(type, data);
+    }
+    setServiceData(uuid, data) {
+        const row = [];
+        row.push(uuid & 0xff);
+        row.push((uuid >> 8) & 0xff);
+        if (data.length > 252) {
+            throw new Error('ServiceData Length Over UUID' + uuid);
+        }
+        for (const d of data) {
+            row.push(d & 0xff);
+        }
+        this._serviceData.push(row.length + 1);
+        this._serviceData.push(0x16);
+        Array.prototype.push.apply(this._serviceData, row);
     }
     setShortenedLocalName(name) {
         this.setStringData(0x08, name);
@@ -6810,6 +6900,259 @@ class BleDescriptor extends bleLocalValueAttributeAbstract_1.default {
 }
 exports.default = BleDescriptor;
 
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/embeds/bleHci/bleExtendedAdvertisement.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const bleAdvertisementBuilder_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAdvertisementBuilder.js"));
+const bleAdvertisement_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAdvertisement.js"));
+/**
+ * @category Use as Peripheral
+ */
+class BleExtendedAdvertisement extends bleAdvertisement_1.default {
+    constructor(obnizBle) {
+        super(obnizBle);
+        this.mode = 'connectable';
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        super._reset();
+    }
+    /**
+     * AdvertiseMode can be changed
+     *
+     * broadcast   MAX advData     1650Byte
+     * connectable MAX advData      242Byte default
+     * scannable   MAX scanRspData 1650Byte
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.extendedAdvertisement.setMode(broadcast);
+     * obniz.ble.extendedAdvertisement.setAdvData({
+     *   localName: "test_obniz",
+     *   serviceData:[{
+     *     uuid:0x2534,
+     *     data:[0x55,0x55,0x55,0x55,0x55,0x65,0x65,0x65,5,0x55,0x55,0x65,0x55,0x55,0x65,0x65,0x55,0x55,0x55,0x55,]
+     *   },{
+     *     uuid:0x3544,
+     *     data:[0x55,0x55,0x55,0x55,0x55,0x65,0x65,0x65,0x65,0x55,0x55,0x55,0x65,0x55,0x55,0x65,0x65,0x55,0x55,0x55,0x55,]
+     *   }]
+     * })
+     * await obniz.ble.extendedAdvertisement.startWait();
+     * ```
+     *
+     * @param mode BleExtendedAdvertisementMode
+     */
+    setMode(mode) {
+        this.mode = mode;
+    }
+    /**
+     * This starts advertisement of BLE.
+     *
+     * Before calling this function, you should call [[setAdvData]] or [[setAdvDataRaw]] to set data.
+     * advertisement interval is 1.28sec fixed.
+     *
+     * primaryPhy: 'PHY_1m' or 'PHY_Coded'
+     * secondaryPhy: 'PHY_1m' or 'PHY_2m' or 'PHY_Coded'
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     *   var service = new obniz.ble.service({
+     *  uuid : "fff0"
+     * });
+     * obniz.ble.peripheral.addService(service);
+     * obniz.ble.extendedAdvertisement.setAdvData({
+     *   flags:service.advData.flags,
+     *   serviceUuids:service.advData.serviceUuids,
+     *   localName: "test_obniz",
+     *   serviceData:[{
+     *     uuid:0x3544,
+     *     data:[0x55,0x55,0x55,0x55,0x55,0x65,0x65,0x65,0x65,0x55,0x55,0x55,0x65,0x55,0x55,0x65,0x65,0x55,0x55,0x55,0x55,]
+     *   }]
+     * })
+     * await obniz.ble.extendedAdvertisement.startWait('PHY_1m','PHY_2m');
+     * ```
+     */
+    async startWait(primaryPhy = 'PHY_1m', secondaryPhy = 'PHY_1m') {
+        this.obnizBle.warningIfNotInitialize();
+        const advertisementData = Buffer.from(this.adv_data);
+        const scanData = Buffer.from(this.scan_resp);
+        const decodePhy = (phy) => {
+            switch (phy) {
+                case 'PHY_1m':
+                    return 1;
+                case 'PHY_2m':
+                    return 2;
+                case 'PHY_Coded':
+                    return 3;
+            }
+        };
+        const primaryAdvertisingPhy = decodePhy(primaryPhy);
+        const secondaryAdvertisingPhy = decodePhy(secondaryPhy);
+        // ParametersCommand broadcast 0 connectable 1 scannable 2
+        // AdvertiseDataCommand or ResponseDataCommand
+        switch (this.mode) {
+            case 'broadcast':
+                if (advertisementData.length > 1650)
+                    throw new Error('Advertisement data is over maximum limit of 1650 bytes');
+                if (advertisementData.length === 0)
+                    throw new Error('Advertisement data is not found');
+                if (scanData.length !== 0)
+                    throw new Error('Scan data is over maximum limit of 0 bytes');
+                await this.obnizBle.peripheralBindings.setExtendedAdvertisingParametersWait(0, 0x00, primaryAdvertisingPhy, secondaryAdvertisingPhy, 0);
+                await this.obnizBle.peripheralBindings.setExtendedAdvertisingDataWait(0, advertisementData);
+                break;
+            case 'connectable':
+                if (advertisementData.length > 242)
+                    throw new Error('Advertisement data is over maximum limit of 242 bytes');
+                if (advertisementData.length === 0)
+                    throw new Error('Advertisement data is not found');
+                if (scanData.length !== 0)
+                    throw new Error('Scan data is over maximum limit of 0 bytes');
+                await this.obnizBle.peripheralBindings.setExtendedAdvertisingParametersWait(0, 0x41, primaryAdvertisingPhy, secondaryAdvertisingPhy, 0);
+                await this.obnizBle.peripheralBindings.setExtendedAdvertisingDataWait(0, advertisementData);
+                break;
+            case 'scannable':
+                if (advertisementData.length !== 0)
+                    throw new Error('Advertisement data is over maximum limit of 0 bytes');
+                if (scanData.length === 0)
+                    throw new Error('Scan data is not found');
+                if (scanData.length > 1650)
+                    throw new Error('Scan data is over maximum limit of 1650 bytes');
+                await this.obnizBle.peripheralBindings.setExtendedAdvertisingParametersWait(0, 0x42, primaryAdvertisingPhy, secondaryAdvertisingPhy, 0);
+                await this.obnizBle.peripheralBindings.setExtendedAdvertisingScanResponseDataWait(0, scanData);
+                break;
+        }
+        // EnableCommand
+        await this.obnizBle.peripheralBindings.startExtendedAdvertisingWait(0);
+    }
+    /**
+     * @deprecated  replaced by {@link #startWait()}
+     */
+    start() {
+        super.start();
+    }
+    /**
+     * This stops advertisement of BLE.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * await obniz.ble.extendedAdvertisement.startWait();
+     * await obniz.ble.extendedAdvertisement.endWait();
+     * ```
+     *
+     */
+    async endWait() {
+        await this.obnizBle.peripheralBindings.stopExtendedAdvertisingWait(0);
+    }
+    /**
+     * @deprecated  replaced by {@link #endWait()}
+     */
+    end() {
+        super.end();
+    }
+    /**
+     * This sets advertise data from data array.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.extendedAdvertisement.setAdvDataRaw([0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
+     * //0x02, 0x01, 0x1A  => BLE type for
+     * //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
+     *
+     * await obniz.ble.extendedAdvertisement.startWait();
+     * ```
+     *
+     * @param adv_data
+     */
+    setAdvDataRaw(adv_data) {
+        this.adv_data = adv_data;
+    }
+    /**
+     * This sets advertise data from json.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * obniz.ble.extendedAdvertisement.setAdvData({
+     *   flags: ["general_discoverable_mode","br_edr_not_supported"],
+     *   manufacturerData:{
+     *     companyCode : 0x004C,
+     *     serviceUuids: ["fff0"],
+     *     data : [0x02,0x15, 0xC2, 0x8f, 0x0a, 0xd5, 0xa7, 0xfd, 0x48, 0xbe, 0x9f, 0xd0, 0xea, 0xe9, 0xff, 0xd3, 0xa8, 0xbb,0x10,0x00,0x00,0x10,0xFF],
+     *   }
+     * });
+     *
+     * await obniz.ble.extendedAdvertisement.startWait();
+     * ```
+     *
+     * @param json
+     */
+    setAdvData(json) {
+        const builder = this.advDataBulider(json);
+        this.setAdvDataRaw(builder.build());
+    }
+    /**
+     * This sets scan response data from data array.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.extendedAdvertisement.setScanRespDataRaw([0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
+     * //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
+     *
+     * await obniz.ble.advertisement.startWait();
+     * ```
+     *
+     * @param scan_resp
+     */
+    setScanRespDataRaw(scan_resp) {
+        this.scan_resp = scan_resp;
+    }
+    /**
+     * This sets scan response data from json data.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.extendedAdvertisement.setScanRespData({
+     *   localName : "obniz BLE",
+     * });
+     *
+     * await obniz.ble.advertisement.startWait();
+     * ```
+     *
+     * @param json
+     */
+    setScanRespData(json) {
+        this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
+    }
+    advDataBulider(jsonVal) {
+        return new bleAdvertisementBuilder_1.default(jsonVal, true);
+    }
+    scanRespDataBuilder(json) {
+        return new bleAdvertisementBuilder_1.default(json, true);
+    }
+}
+exports.default = BleExtendedAdvertisement;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -7929,7 +8272,9 @@ class BleRemotePeripheral {
             'rssi',
             'adv_data',
             'scan_resp',
+            'service_data',
         ];
+        this._extended = false;
         this.obnizBle = obnizBle;
         this.address = address;
         this.connected = false;
@@ -7946,6 +8291,7 @@ class BleRemotePeripheral {
         this.iBeacon = null;
         this._services = [];
         this.emitter = new eventemitter3_1.default();
+        this.service_data = null;
     }
     /**
      * It contains all discovered services in a peripheral as an array.
@@ -8004,6 +8350,13 @@ class BleRemotePeripheral {
             }
         }
         this.analyseAdvertisement();
+    }
+    /**
+     * @ignore
+     * @param extendedMode
+     */
+    setExtendFlg(extendedMode) {
+        this._extended = extendedMode;
     }
     /**
      * @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
@@ -8081,13 +8434,31 @@ class BleRemotePeripheral {
             this._connectSetting.mtuRequest === undefined
                 ? 256
                 : this._connectSetting.mtuRequest;
+        if (this._connectSetting.usePyh1m === undefined) {
+            this._connectSetting.usePyh1m = true;
+        }
+        if (this._connectSetting.usePyh2m === undefined) {
+            this._connectSetting.usePyh2m = true;
+        }
+        if (this._connectSetting.usePyhCoded === undefined) {
+            this._connectSetting.usePyhCoded = true;
+        }
         await this.obnizBle.scan.endWait();
         try {
-            await this.obnizBle.centralBindings.connectWait(this.address, this._connectSetting.mtuRequest, () => {
-                if (this._connectSetting.pairingOption) {
-                    this.setPairingOption(this._connectSetting.pairingOption);
-                }
-            });
+            if (this._extended) {
+                await this.obnizBle.centralBindings.connectExtendedWait(this.address, this._connectSetting.mtuRequest, () => {
+                    if (this._connectSetting.pairingOption) {
+                        this.setPairingOption(this._connectSetting.pairingOption);
+                    }
+                }, this._connectSetting.usePyh1m, this._connectSetting.usePyh2m, this._connectSetting.usePyhCoded);
+            }
+            else {
+                await this.obnizBle.centralBindings.connectWait(this.address, this._connectSetting.mtuRequest, () => {
+                    if (this._connectSetting.pairingOption) {
+                        this.setPairingOption(this._connectSetting.pairingOption);
+                    }
+                });
+            }
         }
         catch (e) {
             if (e instanceof ObnizError_1.ObnizTimeoutError) {
@@ -8171,6 +8542,86 @@ class BleRemotePeripheral {
             }, 90 * 1000);
             this.obnizBle.centralBindings.disconnect(this.address);
         });
+    }
+    /**
+     * Check the PHY used in the connection
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   const phy = await peripheral.readPhyWait()
+     *   console.log(phy)
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     *
+     */
+    async readPhyWait() {
+        const phyToStr = (phy) => {
+            switch (phy) {
+                case 1:
+                    return '1m';
+                case 2:
+                    return '2m';
+                case 3:
+                    return 'coded';
+                default:
+                    throw new Error('decode Phy Error');
+            }
+        };
+        const data = await this.obnizBle.centralBindings.readPhyWait(this.address);
+        if (data.status === 0) {
+            return { txPhy: phyToStr(data.txPhy), rxPhy: phyToStr(data.rxPhy) };
+        }
+    }
+    /**
+     * Check the PHY used in the connection.
+     * Request to change the current PHY
+     *
+     * It will be changed if it corresponds to the PHY set by the other party.
+     *
+     * Changes can be seen on onUpdatePhy
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * obniz.ble.onUpdatePhy = ((txPhy, rxPhy) => {
+     *  console.log("txPhy "+txPhy+" rxPhy "+rxPhy);
+     * });
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await peripheral.setPhyWait(false,false,true,true,true);//Request Only PHY Coded
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     *
+     */
+    async setPhyWait(usePhy1m, usePhy2m, usePhyCoded, useCodedModeS8, useCodedModeS2) {
+        await this.obnizBle.centralBindings.setPhyWait(this.address, usePhy1m, usePhy2m, usePhyCoded, useCodedModeS8, useCodedModeS2);
     }
     /**
      * It returns a service which having specified uuid in [[services]].
@@ -8884,6 +9335,15 @@ class BleScan {
                 message: `Unexpected arguments. It might be contained the second argument keys. Please check object keys and order of 'startWait()' / 'startOneWait()' / 'startAllWait()' arguments. `,
             });
         }
+        const ble5DeviceFilterSupportVersion = '5.0.0'; // TODO: CHANGE
+        if (settings.filterOnDevice === true &&
+            this.obnizBle.hci._extended === true &&
+            semver_1.default.lt(semver_1.default.coerce(this.obnizBle.Obniz.firmware_ver), ble5DeviceFilterSupportVersion)) {
+            this.obnizBle.Obniz.warning({
+                alert: 'warning',
+                message: `filterOnDevice=true on BLE5.0 is not supported obnizOS ${this.obnizBle.Obniz.firmware_ver}. Please use filterOnDevice=false or obniz.ble.initWait({extended:false}) for BLE4.2 scan`,
+            });
+        }
         this.state = 'starting';
         try {
             const timeout = settings.duration === undefined ? 30 : settings.duration;
@@ -8917,7 +9377,18 @@ class BleScan {
             else {
                 this._setTargetFilterOnDevice({}); // clear
             }
-            await this.obnizBle.centralBindings.startScanningWait([], settings.duplicate, settings.activeScan);
+            if (settings.usePhyCoded === undefined) {
+                settings.usePhyCoded = true;
+            }
+            if (settings.usePhy1m === undefined) {
+                settings.usePhy1m = true;
+            }
+            if (this.obnizBle.hci._extended) {
+                await this.obnizBle.centralBindings.startExtendedScanningWait([], settings.duplicate, settings.activeScan, settings.usePhy1m, settings.usePhyCoded);
+            }
+            else {
+                await this.obnizBle.centralBindings.startScanningWait([], settings.duplicate, settings.activeScan);
+            }
             this.clearTimeoutTimer();
             if (timeout !== null) {
                 this._timeoutTimer = setTimeout(async () => {
@@ -9044,7 +9515,12 @@ class BleScan {
         if (this.state === 'started' || this.state === 'starting') {
             this.state = 'stopping';
             this.clearTimeoutTimer();
-            await this.obnizBle.centralBindings.stopScanningWait();
+            if (this.obnizBle.hci._extended) {
+                await this.obnizBle.centralBindings.stopExtendedScanningWait();
+            }
+            else {
+                await this.obnizBle.centralBindings.stopScanningWait();
+            }
             this.finish(); // state will changed to stopped inside of this function.
         }
     }
@@ -9487,7 +9963,7 @@ exports.default = BleService;
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 class ObnizBLEHci {
-    constructor(Obniz) {
+    constructor(Obniz, extended) {
         /*
          * HCI level timeout should never occure. Response must be sent from a device.
          * This timeout is for just in case for a device nerver send response.
@@ -9495,13 +9971,18 @@ class ObnizBLEHci {
         this.timeout = 90 * 1000;
         this._eventHandlerQueue = {};
         this.Obniz = Obniz;
+        this._extended = extended;
+        this.defaultExtended = this._extended;
     }
     /**
      * @ignore
      * @private
      */
-    _reset() {
+    _reset(keepExtended) {
         this._eventHandlerQueue = {};
+        if (!keepExtended) {
+            this._extended = this.defaultExtended;
+        }
     }
     /**
      * Initialize BLE HCI module
@@ -9841,6 +10322,7 @@ class NobleBindings extends eventemitter3_1.default {
         this._hci.on('stateChange', this.onStateChange.bind(this));
         this._hci.on('disconnComplete', this.onDisconnComplete.bind(this));
         this._hci.on('aclDataPkt', this.onAclDataPkt.bind(this));
+        this._hci.on('updatePhy', this.onPhy.bind(this));
         this._gap.on('discover', this.onDiscover.bind(this));
     }
     /**
@@ -9868,12 +10350,22 @@ class NobleBindings extends eventemitter3_1.default {
             this._connectable[uuid] = true;
         }
     }
+    async startExtendedScanningWait(serviceUuids, allowDuplicates, activeScan, usePhy1m, usePhyCoded) {
+        if (!usePhy1m && !usePhyCoded) {
+            throw new ObnizError_1.ObnizBleInvalidParameterError('Please make either true', `usePhy1M:${usePhy1m} usePhyCoded:${usePhyCoded}`);
+        }
+        this._scanServiceUuids = (serviceUuids !== null && serviceUuids !== void 0 ? serviceUuids : null);
+        await this._gap.startExtendedScanningWait(allowDuplicates, activeScan, usePhy1m, usePhyCoded);
+    }
     async startScanningWait(serviceUuids, allowDuplicates, activeScan) {
         this._scanServiceUuids = (serviceUuids !== null && serviceUuids !== void 0 ? serviceUuids : null);
         await this._gap.startScanningWait(allowDuplicates, activeScan);
     }
     async stopScanningWait() {
         await this._gap.stopScanningWait();
+    }
+    async stopExtendedScanningWait() {
+        await this._gap.stopExtendedScanningWait();
     }
     async connectWait(peripheralUuid, mtu, onConnectCallback) {
         const address = this._addresses[peripheralUuid];
@@ -9894,6 +10386,69 @@ class NobleBindings extends eventemitter3_1.default {
                     onConnectCallback();
                 }
             }); // connection timeout for 90 secs.
+            return await this._gatts[conResult.handle].exchangeMtuWait(mtu);
+        })
+            .then(() => {
+            this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
+            return Promise.resolve();
+        }, (error) => {
+            this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
+            return Promise.reject(error);
+        });
+        this._connectPromises.push(doPromise);
+        return doPromise;
+    }
+    async setDefaultPhyWait(usePhy1m, usePhy2m, usePhyCoded) {
+        if (!usePhy1m && !usePhyCoded && !usePhy2m) {
+            throw new ObnizError_1.ObnizBleInvalidParameterError('Please make either true', `usePhy1M:${usePhy1m} usePhy2M:${usePhy2m} usePhyCoded:${usePhyCoded}`);
+        }
+        const booleanToNumber = (flg) => (flg ? 1 : 0);
+        const setPhy = booleanToNumber(usePhy1m) +
+            booleanToNumber(usePhy2m) * 2 +
+            booleanToNumber(usePhyCoded) * 4;
+        await this._hci.leSetDefaultPhyCommandWait(0, setPhy, setPhy);
+    }
+    async readPhyWait(address) {
+        return await this._hci.leReadPhyCommandWait(this._handles[address]);
+    }
+    async setPhyWait(address, usePhy1m, usePhy2m, usePhyCoded, useCodedModeS8, useCodedModeS2) {
+        if (!usePhy1m && !usePhyCoded && !usePhy2m) {
+            throw new ObnizError_1.ObnizBleInvalidParameterError('Please make either true', `usePhy1M:${usePhy1m} usePhy2M:${usePhy2m} usePhyCoded:${usePhyCoded}`);
+        }
+        if (usePhyCoded && !useCodedModeS8 && !useCodedModeS2) {
+            throw new ObnizError_1.ObnizBleInvalidParameterError('Please make either true', `useCodedModeS8:${useCodedModeS8} useCodedModeS2:${useCodedModeS2}`);
+        }
+        const booleanToNumber = (flg) => (flg ? 1 : 0);
+        const setPhy = booleanToNumber(usePhy1m) +
+            booleanToNumber(usePhy2m) * 2 +
+            booleanToNumber(usePhyCoded) * 4;
+        await this._hci.leSetPhyCommandWait(this._handles[address], 0, setPhy, setPhy, booleanToNumber(useCodedModeS8) * 2 + booleanToNumber(useCodedModeS2));
+    }
+    onPhy(handler, txPhy, rxPhy) {
+        this.emit('updatePhy', handler, txPhy, rxPhy);
+    }
+    async connectExtendedWait(peripheralUuid, mtu, onConnectCallback, usePhy1m = true, usePhy2m = true, usePhyCoded = true) {
+        if (!usePhy1m && !usePhyCoded && !usePhy2m) {
+            throw new ObnizError_1.ObnizBleInvalidParameterError('Please make either true', `usePhy1M:${usePhy1m} usePhy2M:${usePhy2m} usePhyCoded:${usePhyCoded}`);
+        }
+        const address = this._addresses[peripheralUuid];
+        const addressType = this._addresseTypes[peripheralUuid];
+        if (!address) {
+            throw new ObnizError_1.ObnizBleUnknownPeripheralError(peripheralUuid);
+        }
+        // Block parall connection ongoing for ESP32 bug.
+        const doPromise = Promise.all(this._connectPromises)
+            .catch((error) => {
+            // nothing
+        })
+            .then(async () => {
+            const conResult = await this._hci.createLeExtendedConnWait(address, addressType, 90 * 1000, (result) => {
+                // on connect success
+                this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
+                if (onConnectCallback && typeof onConnectCallback === 'function') {
+                    onConnectCallback();
+                }
+            }, usePhy1m, usePhy2m, usePhyCoded); // connection timeout for 90 secs.
             return await this._gatts[conResult.handle].exchangeMtuWait(mtu);
         })
             .then(() => {
@@ -10125,12 +10680,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @ignore
  */
-const debug = () => {
+const debug = (message) => {
     // do nothing.
+    // console.log('gap debug', message);
 };
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
+const LegacyAdvertisingPduMask = 0b0010000;
+const LegacyAdvertising_ADV_SCAN_RESP_TO_ADV_IND = 0b0011011;
+const LegacyAdvertising_ADV_SCAN_RESP_TO_SCAN_IND = 0b0011010;
+const LegacyAdvertising_ADV_NONCONN_IND = 0b0010000;
 /**
  * @ignore
  */
@@ -10143,6 +10703,7 @@ class Gap extends eventemitter3_1.default {
         this._hci = hci;
         this._reset();
         this._hci.on('leAdvertisingReport', this.onHciLeAdvertisingReport.bind(this));
+        this._hci.on('leExtendedAdvertisingReport', this.onHciLeExtendedAdvertisingReport.bind(this));
     }
     /**
      * @ignore
@@ -10195,7 +10756,87 @@ class Gap extends eventemitter3_1.default {
             }
         }
     }
-    onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi) {
+    async stopExtendedScanningWait() {
+        try {
+            if (this._scanState === 'starting' || this._scanState === 'started') {
+                await this.setExtendedScanEnabledWait(false, true);
+            }
+        }
+        catch (e) {
+            if (e instanceof ObnizError_1.ObnizBleScanStartError) {
+                // If not started yet. this error may called. just ignore it.
+            }
+            else {
+                throw e;
+            }
+        }
+    }
+    async startExtendedScanningWait(allowDuplicates, activeScan, usePhy1m, usePhyCoded) {
+        this._scanFilterDuplicates = !allowDuplicates;
+        this._discoveries = {};
+        // Always set scan parameters before scanning
+        // https://www.bluetooth.org/docman/handlers/DownloadDoc.ashx?doc_id=421043
+        // p2729
+        try {
+            if (this._scanState === 'starting' || this._scanState === 'started') {
+                await this.setExtendedScanEnabledWait(false, true);
+            }
+        }
+        catch (e) {
+            if (e instanceof ObnizError_1.ObnizBleScanStartError) {
+                // If not started yet. this error may called. just ignore it.
+            }
+            else {
+                throw e;
+            }
+        }
+        this._scanState = 'starting';
+        const status = await this._hci.setExtendedScanParametersWait(activeScan, usePhy1m, usePhyCoded);
+        if (status !== 0) {
+            throw new ObnizError_1.ObnizBleScanStartError(status, `startExtendedScanning Error setting active scan=${activeScan} was failed`);
+        }
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await this.setExtendedScanEnabledWait(true, this._scanFilterDuplicates);
+    }
+    onHciLeExtendedAdvertisingReport(status, type, address, addressType, eir, rssi, primaryPhy, secondaryPhy, sid, txPower, periodicAdvertisingInterval, directAddressType, directAddress) {
+        debug('onHciLeExtendedAdvertisingReport', type, address, addressType, eir, rssi, primaryPhy, secondaryPhy, sid, txPower, periodicAdvertisingInterval, directAddressType, directAddress);
+        this.onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi, true);
+    }
+    isAdvOrScanResp(type, extended) {
+        if (extended) {
+            if ((type & LegacyAdvertisingPduMask) !== 0) {
+                // legacy advertising PDU
+                if (type === LegacyAdvertising_ADV_SCAN_RESP_TO_ADV_IND ||
+                    type === LegacyAdvertising_ADV_SCAN_RESP_TO_SCAN_IND) {
+                    return 'scanResponse';
+                }
+                else {
+                    return 'advertisement';
+                }
+            }
+            else {
+                if ((type & 0b00010000) === 0) {
+                    return 'advertisement';
+                }
+                else {
+                    return 'scanResponse';
+                }
+            }
+        }
+        else {
+            if (type === 0x04) {
+                return 'scanResponse';
+            }
+            else if (type === 0x00 ||
+                type === 0x01 ||
+                type === 0x02 ||
+                type === 0x03) {
+                return 'advertisement';
+            }
+        }
+        return null;
+    }
+    onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi, extended) {
         const previouslyDiscovered = !!this._discoveries[address];
         const advertisement = previouslyDiscovered
             ? this._discoveries[address].advertisement
@@ -10216,7 +10857,8 @@ class Gap extends eventemitter3_1.default {
         let hasScanResponse = previouslyDiscovered
             ? this._discoveries[address].hasScanResponse
             : false;
-        if (type === 0x04) {
+        const advType = this.isAdvOrScanResp(type, extended);
+        if (advType === 'scanResponse') {
             hasScanResponse = true;
             if (eir.length > 0) {
                 advertisement.scanResponseRaw = Array.from(eir);
@@ -10341,9 +10983,30 @@ class Gap extends eventemitter3_1.default {
             i += length + 1;
         }
         debug('advertisement = ' + JSON.stringify(advertisement, null, 0));
-        const connectable = type === 0x04 && previouslyDiscovered
-            ? this._discoveries[address].connectable
-            : type !== 0x03;
+        let connectable;
+        if (extended) {
+            if ((type & LegacyAdvertisingPduMask) !== 0) {
+                // legacy advertising PDU
+                if (type === LegacyAdvertising_ADV_SCAN_RESP_TO_ADV_IND ||
+                    type === LegacyAdvertising_ADV_SCAN_RESP_TO_SCAN_IND) {
+                    connectable = this._discoveries[address].connectable;
+                }
+                else {
+                    connectable = type !== LegacyAdvertising_ADV_NONCONN_IND;
+                }
+            }
+            else {
+                connectable = (type & 0b00000001) !== 0;
+            }
+        }
+        else {
+            if (type === 0x04 && previouslyDiscovered) {
+                connectable = this._discoveries[address].connectable;
+            }
+            else {
+                connectable = type !== 0x03;
+            }
+        }
         this._discoveries[address] = {
             address,
             addressType,
@@ -10354,6 +11017,23 @@ class Gap extends eventemitter3_1.default {
             hasScanResponse,
         };
         this.emit('discover', status, address, addressType, connectable, advertisement, rssi);
+    }
+    async setExtendedScanEnabledWait(enabled, filterDuplicates) {
+        const status = await this._hci.setExtendedScanEnabledWait(enabled, filterDuplicates);
+        // Check the status we got from the command complete function.
+        if (status !== 0) {
+            // If it is non-zero there was an error, and we should not change
+            // our status as a result.
+            throw new ObnizError_1.ObnizBleScanStartError(status, `startExtendedScanning enable=${enabled} was failed. Maybe Connection to a device is under going.`);
+        }
+        else {
+            if (this._scanState === 'starting') {
+                this._scanState = 'started';
+            }
+            else if (this._scanState === 'stopping') {
+                this._scanState = 'stopped';
+            }
+        }
     }
     async setScanEnabledWait(enabled, filterDuplicates) {
         const status = await this._hci.setScanEnabledWait(enabled, filterDuplicates);
@@ -12215,6 +12895,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
+/* eslint rulesdir/non-ascii: 0 */
 // eslint-disable-next-line @typescript-eslint/no-namespace
 var COMMANDS;
 (function (COMMANDS) {
@@ -12235,6 +12916,14 @@ var COMMANDS;
     COMMANDS.EVT_LE_ADVERTISING_REPORT = 0x02;
     COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE = 0x03;
     COMMANDS.EVT_LE_ENHANCED_CONNECTION_COMPLETE = 0x0a;
+    COMMANDS.EVT_LE_PHY_UPDATE_COMPLETE = 0x0c; // LE PHY アップデート完了イベント
+    COMMANDS.EVT_LE_EXTENDED_ADVERTISING_REPORT = 0x0d; // LE拡張広告レポートイベント
+    COMMANDS.EVT_LE_PERIODIC_ADVERTISING_SYNC_ESTABLISHED = 0x0e; // LE 定期的広告同期確立イベント
+    COMMANDS.EVT_LE_PERIODIC_ADVERTISING_REPORT_EVENT = 0x0f; // LE定期広告レポートイベント
+    COMMANDS.EVT_LE_PERIODIC_ADVERTISING_SYNC_LOST_EVENT = 0x10; // 周期的広告パケットをタイムアウト時間内に受信しなかった
+    COMMANDS.EVT_LE_SCAN_TIMEOUT_EVENT = 0x11; // LEスキャンタイムアウトイベント
+    COMMANDS.EVT_LE_ADVERTISING_SET_TERMINATED_EVENT = 0x12; // LE 広告セット終了イベント
+    COMMANDS.EVT_LE_SCAN_REQUEST_RECEIVED_EVENT = 0x13; // LE スキャン要求受信イベント
     COMMANDS.OGF_LINK_CTL = 0x01;
     COMMANDS.OCF_DISCONNECT = 0x0006;
     COMMANDS.OGF_LINK_POLICY = 0x02;
@@ -12289,7 +12978,27 @@ var COMMANDS;
     COMMANDS.OCF_LE_READ_RESOLVING_LIST_SIZE = 0x002a;
     COMMANDS.OCF_LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT = 0x002e;
     COMMANDS.OCF_LE_READ_MAXIMUM_DATA_LENGTH = 0x002f;
-    COMMANDS.OCF_SET_DEFAULT_PHY = 0x0031;
+    COMMANDS.OCF_LE_READ_PHY = 0x0030;
+    COMMANDS.OCF_LE_SET_DEFAULT_PHY = 0x0031;
+    COMMANDS.OCF_LE_SET_PHY = 0x0032;
+    COMMANDS.OCF_LE_SET_EXTENDED_ADVERTISING_PARAMETERS = 0x0036; // ExAdv
+    COMMANDS.OCF_LE_SET_EXTENDED_ADVERTISING_DATA = 0x0037; // ExAdv
+    COMMANDS.OCF_LE_SET_EXTENDED_SCAN_RESPONSE_DATA = 0x0038; // ExAdv
+    COMMANDS.OCF_LE_SET_EXTENDED_ADVERTISING_ENABLE = 0x0039; // ExAdv
+    COMMANDS.OCF_LE_READ_MAXIMUM_ADVERTISING_DATA_LENGTH = 0x003a;
+    COMMANDS.OCF_LE_CLEAR_ADVERTISING_SETS = 0x003d; // ExAdv
+    COMMANDS.OCF_LE_SET_PERIODIC_ADVERTISING_PARAMETERS = 0x003e;
+    COMMANDS.OCF_LE_SET_PERIODIC_ADVERTISING_DATA = 0x003f;
+    COMMANDS.OCF_LE_SET_PERIODIC_ADVERTISING_ENABLE = 0x0040;
+    COMMANDS.OCF_LE_SET_EXTENDED_SCAN_PARAMETERS = 0x0041; // ExAdv
+    COMMANDS.OCF_LE_SET_EXTENDED_SCAN_ENABLE = 0x0042; // ExAdv
+    COMMANDS.OCF_LE_EXTENDED_CREATE_CONNECTION = 0x0043; // ExAdv
+    COMMANDS.OCF_LE_PERIODIC_ADVERTISING_CREATE_SYNC = 0x0044;
+    COMMANDS.OCF_LE_PERIODIC_ADVERTISING_CREATE_SYNC_CANCEL = 0x0045;
+    COMMANDS.OCF_LE_PERIODIC_ADVERTISING_TERMINATE_SYNC = 0x0046;
+    COMMANDS.OCF_LE_ADD_DEVICE_TO_PERIODIC_ADVERTISER_LIST = 0x0047;
+    COMMANDS.OCF_LE_REMOVE_DEVICE_TO_PERIODIC_ADVERTISER_LIST = 0x0048;
+    COMMANDS.OCF_LE_CLEAR_DEVICE_TO_PERIODIC_ADVERTISER_LIST = 0x0049;
     /* OGF_LINK_CTL : 0x01 */
     COMMANDS.DISCONNECT_CMD = COMMANDS.OCF_DISCONNECT | (COMMANDS.OGF_LINK_CTL << 10);
     /* OGF_LINK_POLICY: 0x02 */
@@ -12344,7 +13053,27 @@ var COMMANDS;
     COMMANDS.LE_READ_RESOLVING_LIST_SIZE_CMD = COMMANDS.OCF_LE_READ_RESOLVING_LIST_SIZE | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT_CMD = COMMANDS.OCF_LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_READ_MAXIMUM_DATA_LENGTH_CMD = COMMANDS.OCF_LE_READ_MAXIMUM_DATA_LENGTH | (COMMANDS.OGF_LE_CTL << 10);
-    COMMANDS.SET_DEFAULT_PHY_CMD = COMMANDS.OCF_SET_DEFAULT_PHY | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_DEFAULT_PHY_CMD = COMMANDS.OCF_LE_SET_DEFAULT_PHY | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_READ_PHY_CMD = COMMANDS.OCF_LE_READ_PHY | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_PHY_CMD = COMMANDS.OCF_LE_SET_PHY | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_EXTENDED_ADVERTISING_PARAMETERS_CMD = COMMANDS.OCF_LE_SET_EXTENDED_ADVERTISING_PARAMETERS | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_EXTENDED_ADVERTISING_DATA_CMD = COMMANDS.OCF_LE_SET_EXTENDED_ADVERTISING_DATA | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_EXTENDED_SCAN_RESPONSE_DATA_CMD = COMMANDS.OCF_LE_SET_EXTENDED_SCAN_RESPONSE_DATA | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_EXTENDED_ADVERTISING_ENABLE_CMD = COMMANDS.OCF_LE_SET_EXTENDED_ADVERTISING_ENABLE | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_READ_MAXIMUM_ADVERTISING_DATA_LENGTH_CMD = COMMANDS.OCF_LE_READ_MAXIMUM_ADVERTISING_DATA_LENGTH | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_CLEAR_ADVERTISING_SETS_CMD = COMMANDS.OCF_LE_CLEAR_ADVERTISING_SETS | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_PERIODIC_ADVERTISING_PARAMETERS_CMD = COMMANDS.OCF_LE_SET_PERIODIC_ADVERTISING_PARAMETERS | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_PERIODIC_ADVERTISING_DATA_CMD = COMMANDS.OCF_LE_SET_PERIODIC_ADVERTISING_DATA | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_PERIODIC_ADVERTISING_ENABLE_CMD = COMMANDS.OCF_LE_SET_PERIODIC_ADVERTISING_ENABLE | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_EXTENDED_SCAN_PARAMETERS_CMD = COMMANDS.OCF_LE_SET_EXTENDED_SCAN_PARAMETERS | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_EXTENDED_SCAN_ENABLE_CMD = COMMANDS.OCF_LE_SET_EXTENDED_SCAN_ENABLE | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_EXTENDED_CREATE_CONNECTION_CMD = COMMANDS.OCF_LE_EXTENDED_CREATE_CONNECTION | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_PERIODIC_ADVERTISING_CREATE_SYNC_CMD = COMMANDS.OCF_LE_PERIODIC_ADVERTISING_CREATE_SYNC | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_PERIODIC_ADVERTISING_CREATE_SYNC_CANCEL_CMD = COMMANDS.OCF_LE_PERIODIC_ADVERTISING_CREATE_SYNC_CANCEL | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_PERIODIC_ADVERTISING_TERMINATE_SYNC_CMD = COMMANDS.OCF_LE_PERIODIC_ADVERTISING_TERMINATE_SYNC | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_ADD_DEVICE_TO_PERIODIC_ADVERTISER_LIST_CMD = COMMANDS.OCF_LE_ADD_DEVICE_TO_PERIODIC_ADVERTISER_LIST | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_REMOVE_DEVICE_TO_PERIODIC_ADVERTISER_LIST_CMD = COMMANDS.OCF_LE_REMOVE_DEVICE_TO_PERIODIC_ADVERTISER_LIST | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_CLEAR_DEVICE_TO_PERIODIC_ADVERTISER_LIST_CMD = COMMANDS.OCF_LE_CLEAR_DEVICE_TO_PERIODIC_ADVERTISER_LIST | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.HCI_OE_USER_ENDED_CONNECTION = 0x13;
 })(COMMANDS || (COMMANDS = {}));
 const hci_status_json_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci-status.json"));
@@ -12356,6 +13085,7 @@ class Hci extends eventemitter3_1.default {
         super();
         this._state = 'poweredOff';
         this._aclStreamObservers = {};
+        this._extendedAdvertiseJoinData = {};
         /**
          * @ignore
          * @private
@@ -12448,7 +13178,8 @@ class Hci extends eventemitter3_1.default {
         this._reset();
         await this.resetCommandWait();
         this.setEventMaskCommand('fffffbff07f8bf3d');
-        this.setLeEventMaskCommand('1f00000000000000');
+        // this.setLeEventMaskCommand('1ff8070000000000');
+        this.setLeEventMaskCommand('1f1A000000000000');
         const { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer, } = await this.readLocalVersionCommandWait();
         this.writeLeHostSupportedCommand();
         await this.readLeHostSupportedWait();
@@ -12458,7 +13189,7 @@ class Hci extends eventemitter3_1.default {
             this.debug(`Buffer Mtu=${bufsize.aclMtu} aclMaxInProgress=${bufsize.aclMaxInProgress}`);
         }
         // await this.setRandomDeviceAddressWait();
-        if (this._state !== 'poweredOn') {
+        if (this._state !== 'poweredOn' && !this._obnizHci._extended) {
             await this.setScanEnabledWait(false, true);
             await this.setScanParametersWait(false);
             this.stateChange('poweredOn');
@@ -12755,18 +13486,289 @@ class Hci extends eventemitter3_1.default {
         this.debug('read local supported features = ' + data.result.toString('hex'));
         return data.result;
     }
+    async leReadPhyCommandWait(connectionHandle) {
+        const cmd = Buffer.alloc(6);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_READ_PHY_CMD, 1);
+        // length
+        cmd.writeUInt8(2, 3);
+        cmd.writeUInt16LE(connectionHandle, 4);
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_READ_PHY_CMD);
+        this.debug(`read Phy - writing: ${cmd.toString('hex')}`);
+        this._socket.write(cmd);
+        const data = await p;
+        return {
+            status: data.status,
+            connectionHandle: data.result.readUInt16LE(0),
+            txPhy: data.result.readUInt8(2),
+            rxPhy: data.result.readUInt8(3),
+        };
+    }
+    // 接続後にのみ使用可能
+    async leSetPhyCommandWait(connectionHandle, allPhys, txPhys, rxPhys, options) {
+        const cmd = Buffer.alloc(11);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_PHY_CMD, 1);
+        // length
+        cmd.writeUInt8(7, 3);
+        cmd.writeUInt16LE(connectionHandle, 4);
+        cmd.writeUInt8(allPhys, 6);
+        cmd.writeUInt8(txPhys, 7);
+        cmd.writeUInt8(rxPhys, 8);
+        cmd.writeUInt16LE(options, 9);
+        this.debug('le set phy - writing: ' + cmd.toString('hex'));
+        this._socket.write(cmd);
+    }
+    async setExtendedAdvertisingParametersWait(handle, eventProperties, primaryAdvertisingPhy, secondaryAdvertisingPhy, txPower) {
+        const cmd = Buffer.alloc(29);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_EXTENDED_ADVERTISING_PARAMETERS_CMD, 1);
+        // length
+        cmd.writeUInt8(25, 3);
+        const advertisementInterval = Math.floor((process.env.BLENO_ADVERTISING_INTERVAL
+            ? parseFloat(process.env.BLENO_ADVERTISING_INTERVAL)
+            : 100) * 1.6);
+        // data
+        cmd.writeUInt8(handle, 4);
+        cmd.writeUInt16LE(eventProperties, 5); // Advertising_Event_Properties
+        // Broadcast(0x0000)(ADV Data 1650B send) or Scannable(0x0002)(ScanRsp Data 1650B send)
+        cmd.writeUInt16LE(advertisementInterval, 7); // min interval //default 100ms
+        cmd.writeUInt8((advertisementInterval >> 16) & 0xff, 9); // min interval
+        cmd.writeUInt16LE(advertisementInterval * 2, 10); // max interval
+        cmd.writeUInt8(((advertisementInterval * 2) >> 16) & 0xff, 12); // max interval
+        cmd.writeUInt8(0x07, 13); // Primary_Advertising_Channel_Map used 37,38,39ch
+        cmd.writeUInt8(0x00, 14); // Own_Address_Type direct addr type
+        cmd.writeUInt8(0x00, 15); // Peer_Address_Type
+        Buffer.from('000000000000', 'hex').copy(cmd, 16); // direct addr
+        cmd.writeUInt8(0x00, 22); // Advertising_Filter_Policy All Devices
+        cmd.writeUInt8(txPower, 23); // Advertising_Tx_Power
+        cmd.writeUInt8(primaryAdvertisingPhy, 24); // PrimaryAdvertisingPhy
+        cmd.writeUInt8(0x00, 25); // Secondary_Advertising_Max_Skip
+        cmd.writeUInt8(secondaryAdvertisingPhy, 26); // SecondaryAdvertisingPhy
+        cmd.writeUInt8(0x00, 27); // Advertising_SID
+        cmd.writeUInt8(0x00, 28); // Scan_Request_Notification_Enable
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_EXTENDED_ADVERTISING_PARAMETERS_CMD);
+        this.debug('set extended advertisement parameters - writing: ' + cmd.toString('hex'));
+        this._socket.write(cmd);
+        const data = await p;
+        // this.emit("stateChange", "poweredOn"); // TODO : really need?
+        return {
+            status: data.status,
+            txPower: data.result.readUInt8(0),
+        };
+    }
+    extendedAdvertiseOperation(index, length) {
+        if (index === 0) {
+            if (length <= 251)
+                return 3; // Operation コンプリートスキャン応答データ
+            return 1; // Operation 断片化されたスキャンレスポンスデータの最初の断片
+        }
+        if (length - index * 251 <= 251)
+            return 2; // Operation 断片化したスキャンレスポンスデータの最後の断片
+        return 0; // Operation 断片化したスキャンレスポンスデータの中間断片
+    }
+    async setExtendedAdvertisingDataWait(handle, data) {
+        for (let i = 0; i < data.length / 251; i++) {
+            const size = data.length - i * 251 > 251 ? 251 : data.length - i * 251;
+            const cmd = Buffer.alloc(size + 4 + 4);
+            // header
+            cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+            cmd.writeUInt16LE(COMMANDS.LE_SET_EXTENDED_ADVERTISING_DATA_CMD, 1);
+            // length
+            cmd.writeUInt8(size + 4, 3);
+            // data
+            cmd.writeUInt8(handle, 4);
+            cmd.writeUInt8(this.extendedAdvertiseOperation(i, data.length), 5);
+            cmd.writeUInt8(0x00, 6); // Fragment_Preference
+            cmd.writeUInt8(size, 7); // Data_Length
+            data.copy(cmd, 8, i * 251, i * 251 + size);
+            const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_EXTENDED_ADVERTISING_DATA_CMD);
+            this.debug('set extended advertisement data - writing: ' + cmd.toString('hex'));
+            this._socket.write(cmd);
+            const result = await p;
+            if (result.status !== 0) {
+                return result.status;
+            }
+        }
+        return 0;
+    }
+    // 今の仕様だとScanResponseはExtendedでサポートしていない
+    async setExtendedAdvertisingScanResponseDataWait(handle, data) {
+        for (let i = 0; i < data.length / 251; i++) {
+            const size = data.length - i * 251 > 251 ? 251 : data.length - i * 251;
+            const cmd = Buffer.alloc(size + 4 + 4);
+            // header
+            cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+            cmd.writeUInt16LE(COMMANDS.LE_SET_EXTENDED_SCAN_RESPONSE_DATA_CMD, 1);
+            // length
+            cmd.writeUInt8(size + 4, 3);
+            // data
+            cmd.writeUInt8(handle, 4);
+            cmd.writeUInt8(this.extendedAdvertiseOperation(i, data.length), 5);
+            cmd.writeUInt8(0x00, 6); // Fragment_Preference
+            cmd.writeUInt8(size, 7); // Data_Length
+            data.copy(cmd, 8, i * 251, i * 251 + size);
+            const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_EXTENDED_SCAN_RESPONSE_DATA_CMD);
+            this.debug('set extended scan response data - writing: ' + cmd.toString('hex'));
+            this._socket.write(cmd);
+            const result = await p;
+            if (result.status !== 0) {
+                return result.status;
+            }
+        }
+        return 0;
+    }
+    async setExtendedAdvertisingEnableWait(enabled, enableList) {
+        const cmd = Buffer.alloc(enableList.length * 4 + 4 + 2);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_EXTENDED_ADVERTISING_ENABLE_CMD, 1);
+        // length
+        cmd.writeUInt8(enableList.length * 4 + 2, 3);
+        // data
+        cmd.writeUInt8(enabled ? 0x01 : 0x00, 4); // enable: 0 -> disabled, 1 -> enabled
+        cmd.writeUInt8(enableList.length, 5); // length
+        for (let i = 0; i < enableList.length; i++) {
+            cmd.writeUInt8(enableList[i].handle, 6 + i * 4); // handle
+            cmd.writeUInt16LE(enableList[i].duration, 7 + i * 4); // duration
+            cmd.writeUInt8(enableList[i].events, 9 + i * 4); // events
+        }
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_EXTENDED_ADVERTISING_ENABLE_CMD);
+        this.debug('set extended advertise enable - writing: ' + cmd.toString('hex'));
+        this._socket.write(cmd);
+        const data = await p;
+        return data.status;
+    }
+    async leReadMaximumAdvertisingDataLengthWait() {
+        const data = await this.writeNoParamCommandWait(COMMANDS.LE_READ_MAXIMUM_ADVERTISING_DATA_LENGTH_CMD, 'le read maximum advertising data length');
+        return data.result.readUInt16LE(0);
+    }
+    // 先にsetExtendedAdvertiseEnableWaitで無効化してから行うこと
+    async leClearAdvertisingSetWait() {
+        const data = await this.writeNoParamCommandWait(COMMANDS.LE_CLEAR_ADVERTISING_SETS_CMD, 'le clear advertising Set');
+        return data.result.readUInt16LE(0);
+    }
+    async setExtendedScanParametersWait(isActiveScan, usePhy1m = true, usePhyCoded = true) {
+        const booleanToNumber = (flg) => (flg ? 1 : 0);
+        const cmd = Buffer.alloc(7 + (booleanToNumber(usePhy1m) + booleanToNumber(usePhyCoded)) * 5);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_EXTENDED_SCAN_PARAMETERS_CMD, 1);
+        // length
+        cmd.writeUInt8(3 + (booleanToNumber(usePhy1m) + booleanToNumber(usePhyCoded)) * 5, 3);
+        // data
+        cmd.writeUInt8(0x00, 4); // Own_Address_Type 公開端末アドレス
+        cmd.writeUInt8(0x00, 5); // Scanning_Filter_Policy：本装置宛でない有向広告パケットを除くすべての広告パケットを受信する
+        cmd.writeUInt8(booleanToNumber(usePhy1m) + (booleanToNumber(usePhyCoded) << 2), 6); // Scanning_PHYs：1M Phy and Coded Phy 0b00000101
+        for (let i = 0; i < booleanToNumber(usePhy1m) + booleanToNumber(usePhyCoded); i++) {
+            cmd.writeUInt8(isActiveScan ? 0x01 : 0x00, 7 + i * 5); // Scan_Type ActiveScan 1
+            // コントローラが最後のスキャンを開始してから、プライマリ広告チャネルで次のスキャンを開始するまでの時間間隔。
+            cmd.writeUInt16LE(0x0010, 8 + i * 5); // Scan_Interval //default 10ms //もともとのスキャン機能のインターバルから引用
+            // 主広告チャンネルでのスキャンの持続時間
+            cmd.writeUInt16LE(0x0010, 10 + i * 5); // Scan_Window //default 10ms
+        }
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_EXTENDED_SCAN_PARAMETERS_CMD);
+        this.debug('set extended scan parameters - writing: ' + cmd.toString('hex'));
+        this._socket.write(cmd);
+        const data = await p;
+        return data.status;
+    }
+    async setExtendedScanEnabledWait(enabled, filterDuplicates) {
+        this._extendedAdvertiseJoinData = {};
+        const cmd = Buffer.alloc(10);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_EXTENDED_SCAN_ENABLE_CMD, 1);
+        // length
+        cmd.writeUInt8(0x06, 3);
+        // data
+        cmd.writeUInt8(enabled ? 0x01 : 0x00, 4); // enable: 0 -> disabled, 1 -> enabled
+        cmd.writeUInt8(filterDuplicates ? 0x01 : 0x00, 5); // 0x01 => filter enabled, 0x00 => filter disable
+        cmd.writeUInt16LE(0x0000, 6); // Scan_Duration 明示的に無効化されるまで連続スキャン 既存のスキャンと同じように
+        cmd.writeUInt16LE(0x0000, 8); // Scan_Period 定期的なスキャンを無効にする 連続スキャンなのではいらない
+        this.debug(`set extended scan ${enabled ? 'enabled' : 'disable'} - writing: ${cmd.toString('hex')}`);
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_EXTENDED_SCAN_ENABLE_CMD);
+        this._socket.write(cmd);
+        const data = await p;
+        return data.status;
+    }
+    async createLeExtendedConnWait(address, addressType, timeout = 90 * 1000, onConnectCallback, pyh1m = true, pyh2m = true, pyhCoded = true) {
+        const booleanToNumber = (flg) => (flg ? 1 : 0);
+        const configCount = booleanToNumber(pyh1m) +
+            booleanToNumber(pyh2m) +
+            booleanToNumber(pyhCoded);
+        const cmd = Buffer.alloc(configCount * 16 + 10 + 4);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_EXTENDED_CREATE_CONNECTION_CMD, 1);
+        // length
+        cmd.writeUInt8(configCount * 16 + 10, 3);
+        const parameter = {
+            interval: 0x0010,
+            window: 0x0010,
+            minInterval: 0x0009,
+            maxInterval: 0x0018,
+            latency: 0x0001,
+            supervisionTimeout: 0x0190,
+            minCeLength: 0x0000,
+            maxCeLength: 0x0000,
+        };
+        // data
+        cmd.writeUInt8(0x00, 4); // Initiating_Filter_Policy ホワイトリストは使用しません
+        cmd.writeUInt8(0x00, 5); // Own_Address_Type 公開端末アドレス
+        cmd.writeUInt8(addressType === 'random' ? 0x01 : 0x00, 6); // peer address type
+        bleHelper_1.default.hex2reversedBuffer(address, ':').copy(cmd, 7); // peer address
+        cmd.writeUInt8(booleanToNumber(pyh1m) +
+            booleanToNumber(pyh2m) * 2 +
+            booleanToNumber(pyhCoded) * 4, 13); // Initiating_PHY
+        for (let i = 0; i < configCount; i++) {
+            cmd.writeUInt16LE(parameter.interval, 14 + i * 16); // interval
+            cmd.writeUInt16LE(parameter.window, 16 + i * 16); // window
+            cmd.writeUInt16LE(parameter.minInterval, 18 + i * 16); // minInterval
+            cmd.writeUInt16LE(parameter.maxInterval, 20 + i * 16); // maxInterval
+            cmd.writeUInt16LE(parameter.latency, 22 + i * 16); // latency
+            cmd.writeUInt16LE(parameter.supervisionTimeout, 24 + i * 16); // supervisionTimeout
+            cmd.writeUInt16LE(parameter.minCeLength, 26 + i * 16); // minCeLength
+            cmd.writeUInt16LE(parameter.maxCeLength, 28 + i * 16); // maxCeLength
+        }
+        this.debug('create le extended conn - writing: ' + cmd.toString('hex'));
+        const processConnectionCompletePromise = (async () => {
+            const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, {
+                timeout,
+            });
+            return { status, data: this.parseConnectionCompleteEventData(data) };
+        })();
+        const processLeConnectionCompletePromise = (async () => {
+            const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_ENHANCED_CONNECTION_COMPLETE, {
+                timeout,
+            });
+            return { status, data: this.parseLeConnectionCompleteEventData(data) };
+        })();
+        this._socket.write(cmd);
+        const result = await Promise.race([
+            processConnectionCompletePromise,
+            processLeConnectionCompletePromise,
+        ]);
+        return this.processLeConnComplete(result.status, result.data, onConnectCallback);
+    }
     async leSetDefaultPhyCommandWait(allPhys, txPhys, rxPhys) {
         const cmd = Buffer.alloc(7);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(COMMANDS.SET_DEFAULT_PHY_CMD, 1);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_DEFAULT_PHY_CMD, 1);
         // length
         cmd.writeUInt8(3, 3);
         cmd.writeUInt8(allPhys, 4);
         cmd.writeUInt8(txPhys, 5);
         cmd.writeUInt8(rxPhys, 6);
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_DEFAULT_PHY_CMD);
         this.debug('le set default phy - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
+        const data = await p;
+        return data.status;
     }
     async leReadAdvertisingPhysicalChannelTxPowerCommandWait() {
         const data = await this.writeNoParamCommandWait(COMMANDS.LE_READ_ADVERTISING_CHANNEL_TX_POWER_CMD, 'le read advertising channel tx power');
@@ -12833,6 +13835,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(addressType, 9); // own address type: 0 -> public, 1 -> random
         cmd.writeUInt8(0x00, 10); // filter: 0 -> all event types
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_PARAMETERS_CMD);
+        this.debug(`set scan parameters=${isActiveScan ? 'active' : 'passive'} - writing: ${cmd.toString('hex')}`);
         this.debug('set scan parameters - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const data = await p;
@@ -12848,7 +13851,7 @@ class Hci extends eventemitter3_1.default {
         // data
         cmd.writeUInt8(enabled ? 0x01 : 0x00, 4); // enable: 0 -> disabled, 1 -> enabled
         cmd.writeUInt8(filterDuplicates ? 0x01 : 0x00, 5); // 0x01 => filter enabled, 0x00 => filter disable
-        this.debug('set scan enabled - writing: ' + cmd.toString('hex'));
+        this.debug(`set scan ${enabled ? 'enabled' : 'disable'} - writing: ${cmd.toString('hex')}`);
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_ENABLE_CMD);
         this._socket.write(cmd);
         const data = await p;
@@ -13237,6 +14240,9 @@ class Hci extends eventemitter3_1.default {
         if (eventType === COMMANDS.EVT_LE_ADVERTISING_REPORT) {
             this.processLeAdvertisingReport(status, data);
         }
+        else if (eventType === COMMANDS.EVT_LE_EXTENDED_ADVERTISING_REPORT) {
+            this.processLeExtendedAdvertisingReport(status, data);
+        }
         else if (eventType === COMMANDS.EVT_LE_CONN_COMPLETE) {
             const role = data.readUInt8(2);
             if (role === 1) {
@@ -13250,6 +14256,12 @@ class Hci extends eventemitter3_1.default {
                 const connectionData = this.parseConnectionCompleteEventData(data);
                 this.processLeConnComplete(status, connectionData, undefined);
             }
+        }
+        else if (eventType === COMMANDS.EVT_LE_PHY_UPDATE_COMPLETE) {
+            const handler = data.readUInt16LE(0);
+            const txPhy = data.readUInt8(2);
+            const rxPhy = data.readUInt8(3);
+            this.emit('updatePhy', handler, txPhy, rxPhy);
         }
         else if (eventType === COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE) {
             const { handle, interval, latency, supervisionTimeout, } = this.processLeConnUpdateComplete(status, data);
@@ -13329,6 +14341,92 @@ class Hci extends eventemitter3_1.default {
         }
         return result;
     }
+    phyToStr(phy) {
+        switch (phy) {
+            case 0:
+                return 'noPhy';
+            case 1:
+                return '1m';
+            case 2:
+                return '2m';
+            case 3:
+                return 'coded';
+            default:
+                return 'error';
+        }
+    }
+    processLeExtendedAdvertisingReport(count, data) {
+        for (let i = 0; i < count; i++) {
+            const type = data.readUInt16LE(0);
+            const addressType = data.readUInt8(2) === 0x01 ? 'random' : 'public';
+            const address = bleHelper_1.default.buffer2reversedHex(data.slice(3, 9), ':');
+            const primaryPhy = this.phyToStr(data.readUInt8(9));
+            const secondaryPhy = this.phyToStr(data.readUInt8(10));
+            const sid = data.readUInt8(11);
+            const txPower = data.readInt8(12);
+            const rssi = data.readInt8(13);
+            const periodicAdvertisingInterval = data.readUInt16LE(14);
+            const directAddressType = data.readUInt8(16) === 0x01 ? 'random' : 'public';
+            const directAddress = bleHelper_1.default.buffer2reversedHex(data.slice(17, 23), ':');
+            const eirLength = data.readUInt8(23);
+            let eir = data.slice(24, eirLength + 24);
+            this.debug('\t\t\ttype = ' + type);
+            this.debug('\t\t\taddress = ' + address);
+            this.debug('\t\t\taddress type = ' + addressType);
+            this.debug('\t\t\teir = ' + eir.toString('hex'));
+            this.debug('\t\t\trssi =  ' + rssi);
+            this.debug('\t\t\tprimaryPhy =  ' + primaryPhy);
+            this.debug('\t\t\tsecondaryPhy =  ' + secondaryPhy);
+            this.debug('\t\t\tsid =  ' + sid);
+            this.debug('\t\t\ttxPower  ' + txPower);
+            this.debug('\t\t\tperiodicAdvertisingInterval  ' + periodicAdvertisingInterval);
+            this.debug('\t\t\tdirectAddressType  ' + directAddressType);
+            this.debug('\t\t\tdirectAddress  ' + directAddress);
+            this.debug('\t\t\teirLength  ' + eirLength);
+            if ((type & 0x10) === 0) {
+                // レガシー広告ではない
+                const dataMode = type >> 5;
+                switch (dataMode & 0b11) {
+                    case 0:
+                        // complete
+                        if (this._extendedAdvertiseJoinData[address + sid]) {
+                            eir = Buffer.concat([
+                                this._extendedAdvertiseJoinData[address + sid].eir,
+                                eir,
+                            ]);
+                            delete this._extendedAdvertiseJoinData[address + sid];
+                        }
+                        this.debug('\t\t\tcomplete eir = length ' +
+                            eir.length +
+                            ' message' +
+                            eir.toString('hex'));
+                        break;
+                    case 1: {
+                        // 追加データあり
+                        if (this._extendedAdvertiseJoinData[address + sid]) {
+                            this._extendedAdvertiseJoinData[address + sid].eir = Buffer.concat([
+                                this._extendedAdvertiseJoinData[address + sid].eir,
+                                eir,
+                            ]);
+                        }
+                        else {
+                            this._extendedAdvertiseJoinData[address + sid] = {
+                                eir,
+                            };
+                        }
+                        return;
+                    }
+                    case 2:
+                        // エラー追加データなし
+                        delete this._extendedAdvertiseJoinData[address + sid];
+                        return;
+                }
+            }
+            this.debug('\t\t\ttype = ' + type);
+            this.emit('leExtendedAdvertisingReport', 0, type, address, addressType, eir, rssi, primaryPhy, secondaryPhy, sid, txPower, periodicAdvertisingInterval, directAddressType, directAddress);
+            data = data.slice(eirLength + 24);
+        }
+    }
     processLeAdvertisingReport(count, data) {
         for (let i = 0; i < count; i++) {
             const type = data.readUInt8(0);
@@ -13342,7 +14440,7 @@ class Hci extends eventemitter3_1.default {
             this.debug('\t\t\taddress type = ' + addressType);
             this.debug('\t\t\teir = ' + eir.toString('hex'));
             this.debug('\t\t\trssi =  ' + rssi);
-            this.emit('leAdvertisingReport', 0, type, address, addressType, eir, rssi);
+            this.emit('leAdvertisingReport', 0, type, address, addressType, eir, rssi, false);
             data = data.slice(eirLength + 10);
         }
     }
@@ -13430,6 +14528,7 @@ class Hci extends eventemitter3_1.default {
     }
     debug(...args) {
         this.debugHandler(`${args[0]}`);
+        // console.debug('debug', args);
     }
     onHciAclData(data) {
         const flags = data.readUInt16LE(1) >> 12;
@@ -13704,6 +14803,7 @@ class BlenoBindings extends eventemitter3_1.default {
     constructor(hciProtocol) {
         super();
         this._state = null;
+        this._extended = false;
         this._advertising = false;
         this._hci = hciProtocol;
         this._gap = new gap_1.default(this._hci);
@@ -13747,6 +14847,25 @@ class BlenoBindings extends eventemitter3_1.default {
     async stopAdvertisingWait() {
         this._advertising = false;
         await this._gap.stopAdvertisingWait();
+    }
+    async setExtendedAdvertisingParametersWait(handle, eventProperties, primaryAdvertisingPhy, secondaryAdvertisingPhy, txPower) {
+        await this._gap.setExtendedAdvertiseParametersWait(handle, eventProperties, primaryAdvertisingPhy, secondaryAdvertisingPhy, txPower);
+    }
+    async setExtendedAdvertisingDataWait(handle, data) {
+        await this._gap.setExtendedAdvertisingDataWait(handle, data);
+    }
+    async setExtendedAdvertisingScanResponseDataWait(handle, data) {
+        await this._gap.setExtendedAdvertisingScanResponseDataWait(handle, data);
+    }
+    async startExtendedAdvertisingWait(handle) {
+        this._advertising = true;
+        this._extended = true;
+        await this._gap.startExtendedAdvertisingWait(handle);
+    }
+    async stopExtendedAdvertisingWait(handle) {
+        this._advertising = false;
+        this._extended = false;
+        await this._gap.stopExtendedAdvertisingWait(handle);
     }
     setServices(services) {
         this._gatt.setServices(services);
@@ -13810,7 +14929,12 @@ class BlenoBindings extends eventemitter3_1.default {
             this.emit('disconnect', address, reason); // TODO: use reason
         }
         if (this._advertising) {
-            await this._gap.restartAdvertisingWait();
+            if (this._extended) {
+                await this._gap.restartExtendedAdvertisingWait(0);
+            }
+            else {
+                await this._gap.restartAdvertisingWait();
+            }
         }
     }
     onEncryptChange(handle, encrypt) {
@@ -13957,6 +15081,54 @@ class Gap extends eventemitter3_1.default {
         advertisementData.writeUInt8(dataLength, 8);
         data.copy(advertisementData, 9);
         await this.startAdvertisingWithEIRDataWait(advertisementData, scanData);
+    }
+    async setExtendedAdvertiseParametersWait(handle, eventProperties, primaryAdvertisingPhy, secondaryAdvertisingPhy, txPower) {
+        await this._hci.setExtendedAdvertisingParametersWait(handle, eventProperties, primaryAdvertisingPhy, secondaryAdvertisingPhy, txPower);
+    }
+    async setExtendedAdvertisingDataWait(handle, data) {
+        await this._hci.setExtendedAdvertisingDataWait(handle, data);
+    }
+    async setExtendedAdvertisingScanResponseDataWait(handle, data) {
+        await this._hci.setExtendedAdvertisingScanResponseDataWait(handle, data);
+    }
+    async restartExtendedAdvertisingWait(handle) {
+        this._advertiseState = 'restarting';
+        await this._hci.setExtendedAdvertisingEnableWait(true, [
+            {
+                handle,
+                duration: 0,
+                events: 0,
+            },
+        ]);
+    }
+    async stopExtendedAdvertisingWait(handle) {
+        this._advertiseState = 'stopping';
+        await this._hci.setExtendedAdvertisingEnableWait(false, [
+            {
+                handle,
+                duration: 0,
+                events: 0,
+            },
+        ]);
+    }
+    async startExtendedAdvertisingWait(handle) {
+        this._advertiseState = 'starting';
+        const status = await this._hci.setExtendedAdvertisingEnableWait(true, [
+            {
+                handle,
+                duration: 0,
+                events: 0,
+            },
+        ]);
+        if (this._advertiseState === 'starting') {
+            this._advertiseState = 'started';
+            if (status) {
+                throw new Error(hci_1.default.STATUS_MAPPER[status] || 'Unknown (' + status + ')');
+            }
+        }
+        else if (this._advertiseState === 'stopping') {
+            this._advertiseState = 'stopped';
+        }
     }
     async startAdvertisingWithEIRDataWait(advertisementData, scanData) {
         advertisementData = advertisementData || Buffer.alloc(0);
@@ -15822,56 +16994,56 @@ exports.default = ObnizSwitch;
 /***/ "./dist/src/obniz/libs/hw/blelte_gw2.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored_lte\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"25\":{},\"26\":{},\"33\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored_lte\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"25\":{},\"26\":{},\"33\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{\"extended\":true}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/blewifi_gw2.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"blewifi_gw2\",\"peripherals\":{\"io\":{\"units\":{}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{}},\"spi\":{\"units\":{}},\"i2c\":{\"units\":{}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":true,\"width\":200,\"height\":200,\"color_depth\":[1]},\"storage\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"blewifi_gw2\",\"peripherals\":{\"io\":{\"units\":{}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{}},\"spi\":{\"units\":{}},\"i2c\":{\"units\":{}}},\"embeds\":{\"ble\":{\"extended\":true},\"display\":{\"paper_white\":true,\"raw_alternate\":true,\"width\":200,\"height\":200,\"color_depth\":[1]},\"storage\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/cc3235mod.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"22\":{},\"23\":{},\"24\":{},\"25\":{},\"28\":{},\"29\":{},\"30\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"22\":{},\"23\":{},\"24\":{},\"25\":{},\"28\":{},\"29\":{},\"30\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"22\":{},\"23\":{},\"24\":{},\"25\":{},\"28\":{},\"29\":{},\"30\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"22\":{},\"23\":{},\"24\":{},\"25\":{},\"28\":{},\"29\":{},\"30\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{\"extended\":false}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/encored.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"25\":{},\"26\":{},\"27\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"25\":{},\"26\":{},\"27\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{\"extended\":false}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/encored_lte.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored_lte\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"25\":{},\"26\":{},\"33\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored_lte\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"25\":{},\"26\":{},\"33\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{\"extended\":false}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{},\"extraInterface\":{}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/esp32c3.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32c3\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"18\":{},\"19\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{}}},\"spi\":{\"units\":{\"0\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32c3\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"18\":{},\"19\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{}}},\"spi\":{\"units\":{\"0\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}}},\"embeds\":{\"ble\":{\"extended\":true}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/esp32p.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"9\":{},\"10\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"9\":{},\"10\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{\"extended\":false}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/esp32w.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{\"extended\":false}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
@@ -15973,7 +17145,7 @@ exports.M5StackBasic = M5StackBasic;
 /***/ "./dist/src/obniz/libs/hw/m5stack_basic.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"m5stack_basic\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"15\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"34\":{},\"35\":{},\"36\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}},\"grove\":{\"units\":{\"0\":{\"pin1\":22,\"pin2\":21}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":320,\"height\":240,\"color_depth\":[1,4,16]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"m5stack_basic\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"15\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"34\":{},\"35\":{},\"36\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}},\"grove\":{\"units\":{\"0\":{\"pin1\":22,\"pin2\":21}}}},\"embeds\":{\"ble\":{\"extended\":false},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":320,\"height\":240,\"color_depth\":[1,4,16]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
@@ -16077,21 +17249,21 @@ exports.M5StickC = M5StickC;
 /***/ "./dist/src/obniz/libs/hw/m5stickc.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"3\",\"hw\":\"m5stickc\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"9\":{},\"10\":{},\"21\":{},\"22\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}},\"grove\":{\"units\":{\"0\":{\"pin1\":33,\"pin2\":32}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":160,\"height\":80,\"color_depth\":[1,4,16]}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{\"m5stickc_hat\":{\"units\":{\"0\":{},\"26\":{},\"36\":{}},\"i2c\":{\"sda\":0,\"scl\":26},\"uart\":{\"tx\":0,\"rx\":26}}}}");
+module.exports = JSON.parse("{\"rev\":\"3\",\"hw\":\"m5stickc\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"9\":{},\"10\":{},\"21\":{},\"22\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}},\"grove\":{\"units\":{\"0\":{\"pin1\":33,\"pin2\":32}}}},\"embeds\":{\"ble\":{\"extended\":false},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":160,\"height\":80,\"color_depth\":[1,4,16]}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{\"m5stickc_hat\":{\"units\":{\"0\":{},\"26\":{},\"36\":{}},\"i2c\":{\"sda\":0,\"scl\":26},\"uart\":{\"tx\":0,\"rx\":26}}}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/obnizb1.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"obnizb1\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":false,\"raw_alternate\":false,\"width\":128,\"height\":64,\"color_depth\":[1]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"obnizb1\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{\"extended\":false},\"display\":{\"paper_white\":false,\"raw_alternate\":false,\"width\":128,\"height\":64,\"color_depth\":[1]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/obnizb2.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"obnizb2\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":true,\"width\":128,\"height\":64,\"color_depth\":[1]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"obnizb2\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{\"extended\":false},\"display\":{\"paper_white\":true,\"raw_alternate\":true,\"width\":128,\"height\":64,\"color_depth\":[1]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
@@ -24277,6 +25449,7 @@ var map = {
 	"./Ble/iBS03T_RH/index.js": "./dist/src/parts/Ble/iBS03T_RH/index.js",
 	"./Ble/iBS04/index.js": "./dist/src/parts/Ble/iBS04/index.js",
 	"./Ble/iBS04i/index.js": "./dist/src/parts/Ble/iBS04i/index.js",
+	"./Ble/iBS05G/index.js": "./dist/src/parts/Ble/iBS05G/index.js",
 	"./Ble/iBS05H/index.js": "./dist/src/parts/Ble/iBS05H/index.js",
 	"./Ble/linking/index.js": "./dist/src/parts/Ble/linking/index.js",
 	"./Ble/linking/modules/advertising.js": "./dist/src/parts/Ble/linking/modules/advertising.js",
@@ -25905,8 +27078,12 @@ exports.default = HEM_9200T;
  * @module Parts.KankiAirMier
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+const round_to_1 = __importDefault(__webpack_require__("./node_modules/round-to/index.js"));
 /** Kanki AirMier management class 換気エアミエルを管理するクラス */
 class KankiAirMier {
     constructor() {
@@ -25952,8 +27129,8 @@ class KankiAirMier {
         const deviceName = Buffer.from(allData.manufacture.deviceName).toString('utf8');
         return {
             co2: co2Raw,
-            temperature: temperatureRaw / 10,
-            humidity: humidityRaw / 10,
+            temperature: round_to_1.default(temperatureRaw / 10, 1),
+            humidity: round_to_1.default(humidityRaw / 10, 1),
             sequenceNumber,
             deviceName,
         };
@@ -26137,7 +27314,7 @@ Logtta_AD.BeaconDataStruct = {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
+/* WEBPACK VAR INJECTION */(function(Buffer) {
 /**
  * @packageDocumentation
  * @module Parts.Logtta_Accel
@@ -26149,6 +27326,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
 const Logtta_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/abstracts/Logtta.js"));
+const round_to_1 = __importDefault(__webpack_require__("./node_modules/round-to/index.js"));
 /**
  * Logtta_Accel management class Logtta_Accelを管理するクラス
  *
@@ -26232,8 +27410,8 @@ class Logtta_Accel extends Logtta_1.default {
                     accel_axis: d[20] & 0b00000111,
                     accel_resolution: d[21],
                 },
-                temperature: Math.floor((((d[22] | (d[23] << 8)) / 65535) * 175 - 45) * 100) / 100,
-                humidity: Math.floor(((d[24] | (d[25] << 8)) / 65535) * 100 * 100) / 100,
+                temperature: round_to_1.default(Math.floor((((d[22] | (d[23] << 8)) / 65535) * 175 - 45) * 100) / 100, 3),
+                humidity: round_to_1.default(Math.floor(((d[24] | (d[25] << 8)) / 65535) * 100 * 100) / 100, 3),
                 alert: alertArray,
             };
         }
@@ -26260,42 +27438,51 @@ class Logtta_Accel extends Logtta_1.default {
         if (!Logtta_Accel.isDevice(peripheral)) {
             return null;
         }
-        if (peripheral.scan_resp && peripheral.scan_resp.length === 31) {
-            const d = peripheral.scan_resp;
-            // console.log(
-            //   `x peak ${data.x.peak} rms ${data.x.rms} y peak ${data.y.peak} rms ${data.y.rms} z peak ${data.z.peak} rms ${data.z.rms} address ${data.address}`,
-            // );
-            return {
+        const scanData = Logtta_Accel.getScanData(peripheral);
+        if (peripheral.scan_resp &&
+            peripheral.scan_resp.length === 31 &&
+            scanData) {
+            const buf = Buffer.from(peripheral.scan_resp);
+            const raw = {
                 x: {
-                    peak: d[5] | (d[6] << 8),
-                    rms: d[7] |
-                        (d[8] << 8) |
-                        (d[9] << 16) |
-                        (d[10] << 24) |
-                        (d[11] << 32) |
-                        (d[12] << 40),
+                    peak: Logtta_Accel._convertAccel(buf.readUInt16LE(5), scanData.setting),
+                    rms: Logtta_Accel._convertRms(buf.readUInt32LE(7) | (buf.readUInt16LE(11) << 32), scanData.setting),
                 },
                 y: {
-                    peak: d[13] | (d[14] << 8),
-                    rms: d[15] |
-                        (d[16] << 8) |
-                        (d[17] << 16) |
-                        (d[18] << 24) |
-                        (d[19] << 32) |
-                        (d[20] << 40),
+                    peak: Logtta_Accel._convertAccel(buf.readUInt16LE(13), scanData.setting),
+                    rms: Logtta_Accel._convertRms(buf.readUInt32LE(15) | (buf.readUInt16LE(19) << 32), scanData.setting),
                 },
                 z: {
-                    peak: d[21] | (d[22] << 8),
-                    rms: d[23] |
-                        (d[24] << 8) |
-                        (d[25] << 16) |
-                        (d[26] << 24) |
-                        (d[27] << 32) |
-                        (d[28] << 40),
+                    peak: Logtta_Accel._convertAccel(buf.readUInt16LE(21), scanData.setting),
+                    rms: Logtta_Accel._convertRms(buf.readUInt32LE(23) | (buf.readUInt16LE(27) << 32), scanData.setting),
                 },
             };
+            return raw;
         }
         return null;
+    }
+    /**
+     * 加速度ピークを物理量に変換する
+     *
+     * @private
+     */
+    static _convertAccel(peak, setting) {
+        // return peak;
+        const result = (peak * setting.accel_range * 9.8) /
+            Math.pow(2, setting.accel_resolution - 1);
+        return round_to_1.default(result, 4);
+    }
+    /**
+     * 加速度ピークを物理量に変換する
+     *
+     * @private
+     */
+    static _convertRms(rms, setting) {
+        const n = setting.accel_sampling * setting.temp_cycle;
+        const result = ((setting.accel_range * 9.8) /
+            Math.pow(2, setting.accel_resolution - 1)) *
+            Math.sqrt(rms / n);
+        return round_to_1.default(result, 4);
     }
 }
 exports.default = Logtta_Accel;
@@ -26363,13 +27550,13 @@ Logtta_Accel.BeaconDataStruct = {
             index: 18,
             length: 2,
             type: 'custom',
-            func: (data) => (ObnizPartsBleAbstract_1.uint(data) / 0x10000) * 175 - 45,
+            func: (data) => round_to_1.default((ObnizPartsBleAbstract_1.uint(data) / 0x10000) * 175 - 45, 3),
         },
         humidity: {
             index: 20,
             length: 2,
             type: 'custom',
-            func: (data) => (ObnizPartsBleAbstract_1.uint(data) / 0x10000) * 100,
+            func: (data) => round_to_1.default((ObnizPartsBleAbstract_1.uint(data) / 0x10000) * 100, 3),
         },
         alert: {
             index: 22,
@@ -26395,13 +27582,21 @@ Logtta_Accel.BeaconDataStruct = {
             func: (data, peripheral) => {
                 if (!peripheral.manufacturerSpecificData)
                     throw new Error('Manufacturer specific data is null.');
-                const range = Logtta_Accel.parseAccelRangeData(peripheral.manufacturerSpecificData[17]);
-                const resolution = peripheral.manufacturerSpecificData[19];
-                return Object.fromEntries(['x', 'y', 'z'].map((key, i) => [
-                    key,
-                    (ObnizPartsBleAbstract_1.uint(data.slice(i * 8, i * 8 + 2)) / (2 ** resolution - 1)) *
-                        range,
-                ]));
+                const d = Logtta_Accel.getAccelData(peripheral);
+                if (d) {
+                    return {
+                        x: d.x.peak,
+                        y: d.y.peak,
+                        z: d.z.peak,
+                    };
+                }
+                else {
+                    return {
+                        x: 0,
+                        y: 0,
+                        z: 0,
+                    };
+                }
             },
             scanResponse: true,
         },
@@ -26412,20 +27607,28 @@ Logtta_Accel.BeaconDataStruct = {
             func: (data, peripheral) => {
                 if (!peripheral.manufacturerSpecificData)
                     throw new Error('Manufacturer specific data is null.');
-                const range = Logtta_Accel.parseAccelRangeData(peripheral.manufacturerSpecificData[17]);
-                const resolution = peripheral.manufacturerSpecificData[19];
-                const n = Logtta_Accel.parseAccelSamplingData(peripheral.manufacturerSpecificData[16]) * ObnizPartsBleAbstract_1.uint(peripheral.manufacturerSpecificData.slice(14, 16));
-                return Object.fromEntries(['x', 'y', 'z'].map((key, i) => [
-                    key,
-                    (range / (2 ** resolution - 1)) *
-                        Math.sqrt(ObnizPartsBleAbstract_1.uint(data.slice(i * 8 + 2, i * 8 + 8)) / n),
-                ]));
+                const d = Logtta_Accel.getAccelData(peripheral);
+                if (d) {
+                    return {
+                        x: d.x.rms,
+                        y: d.y.rms,
+                        z: d.z.rms,
+                    };
+                }
+                else {
+                    return {
+                        x: 0,
+                        y: 0,
+                        z: 0,
+                    };
+                }
             },
             scanResponse: true,
         },
     },
 };
 
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -26634,6 +27837,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
 const Logtta_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/abstracts/Logtta.js"));
+const round_to_1 = __importDefault(__webpack_require__("./node_modules/round-to/index.js"));
 /**
  * Logtta_TH(Logtta_Temp) management class
  *
@@ -26645,10 +27849,10 @@ class Logtta_TH extends Logtta_1.default {
         this.staticClass = Logtta_TH;
     }
     static parseTemperatureData(data, func = ObnizPartsBleAbstract_1.uint) {
-        return (func(data) / 0x10000) * 175.72 - 46.85;
+        return round_to_1.default((func(data) / 0x10000) * 175.72 - 46.85, 2);
     }
     static parseHumidityData(data, func = ObnizPartsBleAbstract_1.uint) {
-        return (func(data) / 0x10000) * 125 - 6;
+        return round_to_1.default((func(data) / 0x10000) * 125 - 6, 2);
     }
     /**
      * @deprecated
@@ -31775,6 +32979,33 @@ iBS04i.CompanyID_ScanResponse = iBS_1.BaseiBS.CompanyID;
 iBS04i.BeaconDataLength = 0x1a;
 iBS04i.BeaconDataLength_ScanResponse = iBS_1.BaseiBS.BeaconDataLength;
 iBS04i.BeaconDataStruct = Object.assign(Object.assign({ battery: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.battery), { scanResponse: true }), button: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.button), { scanResponse: true }) }, iBS_1.BaseiBS.getUniqueData(4, 0x18, 0, true)), ObnizPartsBleAbstract_1.iBeaconData);
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/iBS05G/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS05G
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS05G management class iBS05Gを管理するクラス */
+class iBS05G extends iBS_1.BaseiBS {
+    constructor() {
+        super(...arguments);
+        this.staticClass = iBS05G;
+    }
+}
+exports.default = iBS05G;
+iBS05G.PartsName = 'iBS05G';
+iBS05G.CompanyID = [0x2c, 0x08];
+iBS05G.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, moving: iBS_1.BaseiBS.Config.moving }, iBS_1.BaseiBS.getUniqueData(5, 0x33));
 
 
 /***/ }),
@@ -76692,7 +77923,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
+module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
 
 /***/ }),
 

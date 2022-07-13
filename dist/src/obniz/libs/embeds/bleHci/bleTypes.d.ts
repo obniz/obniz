@@ -22,6 +22,10 @@ export interface BleScanResponseData {
         companyCode?: number;
         data?: number[];
     };
+    serviceData?: [{
+        uuid: number;
+        data: number[];
+    }];
 }
 export interface BleAdvertisementData extends BleScanResponseData {
     flags?: BleAdvertisementFlag[];
@@ -72,4 +76,32 @@ export interface BleServiceDefine {
     characteristics?: (BleCharacteristicDefine | BleCharacteristic)[];
 }
 export interface BlePeripheralDefine {
+}
+export interface BleExtendedAdvertisingEnable {
+    handle: number;
+    duration: number;
+    events: number;
+}
+export interface BleCreateConnection {
+    phy_1m: BleCreateConnectionParameters;
+    phy_2m: BleCreateConnectionParameters;
+    phy_coded: BleCreateConnectionParameters;
+}
+export interface BleCreateConnectionParameters {
+    enable: boolean;
+    scanInterval: number;
+    scanWindow: number;
+    connectIntervalMin: number;
+    connectIntervalMax: number;
+    latency: number;
+    supervision: number;
+    eventIntervalMin: number;
+    eventIntervalMax: number;
+}
+export declare type BleExtendedAdvertisementMode = 'broadcast' | 'connectable' | 'scannable';
+export interface BleSupportType {
+    /**
+     * BLE 5.0 AdvertiseExtended Support(ESP32 C3 or ESP32 S3)
+     */
+    extended?: boolean;
 }

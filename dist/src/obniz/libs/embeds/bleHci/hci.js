@@ -6,7 +6,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizError_1 = require("../../../ObnizError");
 class ObnizBLEHci {
-    constructor(Obniz) {
+    constructor(Obniz, extended) {
         /*
          * HCI level timeout should never occure. Response must be sent from a device.
          * This timeout is for just in case for a device nerver send response.
@@ -14,13 +14,18 @@ class ObnizBLEHci {
         this.timeout = 90 * 1000;
         this._eventHandlerQueue = {};
         this.Obniz = Obniz;
+        this._extended = extended;
+        this.defaultExtended = this._extended;
     }
     /**
      * @ignore
      * @private
      */
-    _reset() {
+    _reset(keepExtended) {
         this._eventHandlerQueue = {};
+        if (!keepExtended) {
+            this._extended = this.defaultExtended;
+        }
     }
     /**
      * Initialize BLE HCI module
