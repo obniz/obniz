@@ -87,7 +87,15 @@ async function sampleLE(peripheral) {
   console.log('obniz.ble.scan.onfind : ' + peripheral.localName + ' : ' + peripheral.rssi);
   const LED_block = new mesh_le(peripheral);
   await LED_block.connectWait();
-  await LED_block.lightup(127, 0, 0, 4000, 256, 256, 1);
+
+  const red = 127;
+  const green = 0;
+  const blue = 0;
+  const time = 4000; // 4.000 seconds
+  const cycle_on = 500; // 0.500 seconds
+  const cycle_off = 500; // 0.500 seconds
+  await LED_block.lightup(red, green, blue, time, cycle_on, cycle_off, 1);
+
   LED_block.onStatusButtonNotify = (()=>{console.log('status button pressed');});
 }
 
