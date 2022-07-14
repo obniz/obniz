@@ -13,6 +13,8 @@ export interface MESH_100THOptions {}
  * advertisement data from MESH_100TH
  */
 export interface MESH_100TH_Data {
+  name: string;
+  address: string;
   /** battery (0 ~ 10) */
   battery: number;
   /** temperature (-10 ~ 50 [Celsius])*/
@@ -34,7 +36,7 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
     this.checkConnected();
     const _th = this._mesh as MESH_js_TH;
     return {
-      localname: this.peripheral.localName,
+      name: this.peripheral.localName!,
       address: this.peripheral.address,
       battery: this._mesh.battery,
       temperature: _th.getResponse.temperature,

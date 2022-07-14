@@ -10,6 +10,8 @@ export interface MESH_100THOptions {
  * advertisement data from MESH_100TH
  */
 export interface MESH_100TH_Data {
+    name: string;
+    address: string;
     /** battery (0 ~ 10) */
     battery: number;
     /** temperature (-10 ~ 50 [Celsius])*/
@@ -24,7 +26,7 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
     onNotify: ((resp: MESH_js_TH['response']) => void) | null;
     protected readonly staticClass: typeof MESH_100TH;
     getDataWait(): Promise<{
-        localname: string | null;
+        name: string;
         address: string;
         battery: number;
         temperature: number;

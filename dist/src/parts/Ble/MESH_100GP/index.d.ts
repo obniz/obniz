@@ -9,6 +9,8 @@ export interface MESH_100GPOptions {
  * advertisement data from MESH_100GP
  */
 export interface MESH_100GP_Data {
+    name: string;
+    address: string;
     /** battery (0 ~ 10) */
     battery: number;
 }
@@ -25,7 +27,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     onPWMoutState: ((requestId: number, pin: number, level: number) => void) | null;
     protected readonly staticClass: typeof MESH_100GP;
     getDataWait(): Promise<{
-        localname: string | null;
+        name: string;
         address: string;
         battery: number;
     }>;

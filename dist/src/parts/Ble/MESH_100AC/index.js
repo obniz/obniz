@@ -22,7 +22,7 @@ class MESH_100AC extends MESH_1.MESH {
         this.checkConnected();
         const _ac = this._mesh;
         return {
-            localname: this.peripheral.localName,
+            name: this.peripheral.localName,
             address: this.peripheral.address,
             battery: this._mesh.battery,
             accele_x: _ac.getAccele.x,

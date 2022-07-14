@@ -18,7 +18,7 @@ class MESH_100TH extends MESH_1.MESH {
         this.checkConnected();
         const _th = this._mesh;
         return {
-            localname: this.peripheral.localName,
+            name: this.peripheral.localName,
             address: this.peripheral.address,
             battery: this._mesh.battery,
             temperature: _th.getResponse.temperature,

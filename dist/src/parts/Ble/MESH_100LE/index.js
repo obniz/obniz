@@ -16,7 +16,7 @@ class MESH_100LE extends MESH_1.MESH {
     async getDataWait() {
         this.checkConnected();
         return {
-            localname: this.peripheral.localName,
+            name: this.peripheral.localName,
             address: this.peripheral.address,
             battery: this._mesh.battery,
         };
@@ -27,9 +27,9 @@ class MESH_100LE extends MESH_1.MESH {
      * @param red 0 ~ 127
      * @param green 0 ~ 127
      * @param blue 0 ~ 127
-     * @param time 0 ~ 65535
-     * @param cycle_on 0 ~ 65535
-     * @param cycle_off 0 ~ 65535
+     * @param time 0 ~ 65535 [ms]
+     * @param cycle_on 0 ~ 65535 [ms]
+     * @param cycle_off 0 ~ 65535 [ms]
      * @param pattern 1 or 2
      * @returns
      */

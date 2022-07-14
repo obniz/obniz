@@ -10,6 +10,8 @@ export interface MESH_100ACOptions {
  * advertisement data from MESH_100AC
  */
 export interface MESH_100AC_Data {
+    name: string;
+    address: string;
     /** battery (0 ~ 10) */
     battery: number;
     accele_x: number;
@@ -27,7 +29,7 @@ export default class MESH_100AC extends MESH<MESH_100AC_Data> {
     onDirection: ((face: number, accele: MESH_js_AC['accele']) => void) | null;
     protected readonly staticClass: typeof MESH_100AC;
     getDataWait(): Promise<{
-        localname: string | null;
+        name: string;
         address: string;
         battery: number;
         accele_x: number;

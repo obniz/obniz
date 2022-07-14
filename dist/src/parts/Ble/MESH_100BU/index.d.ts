@@ -9,6 +9,8 @@ export interface MESH_100BUOptions {
  * advertisement data from MESH_100BU
  */
 export interface MESH_100BU_Data {
+    name: string;
+    address: string;
     battery: number;
 }
 /** MESH_100BU management class */
@@ -21,7 +23,7 @@ export default class MESH_100BU extends MESH<MESH_100BU_Data> {
     onDoublePressed: (() => void) | null;
     protected readonly staticClass: typeof MESH_100BU;
     getDataWait(): Promise<{
-        localname: string | null;
+        name: string;
         address: string;
         battery: number;
     }>;

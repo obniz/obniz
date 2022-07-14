@@ -13,10 +13,12 @@ export interface MESH_100MDOptions {}
  * advertisement data from MESH_100MD
  */
 export interface MESH_100MD_Data {
+  name: string;
   address: string;
   battery: number /** battery (0 ~ 10) */;
   motion_state: number;
   detection_mode: number;
+  request_id: number;
 }
 
 /** MESH_100MD management class */
@@ -33,11 +35,12 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
     this.checkConnected();
     const _md = this._mesh as MESH_js_MD;
     return {
-      localname: this.peripheral.localName,
+      name: this.peripheral!.localName!,
       address: this.peripheral.address,
       battery: this._mesh.battery,
       motion_state: _md.getResponse.motion_state,
       detection_mode: _md.getResponse.detection_mode,
+      request_id: _md.getResponse.requestId,
     };
   }
 

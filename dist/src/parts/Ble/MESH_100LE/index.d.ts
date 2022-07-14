@@ -6,6 +6,8 @@ import { MESH } from '../utils/abstracts/MESH';
 export interface MESH_100LEOptions {
 }
 export interface MESH_100LE_Data {
+    name: string;
+    address: string;
     /** battery (0 ~ 10) */
     battery: number;
 }
@@ -15,7 +17,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
     static readonly _LocalName = "MESH-100LE";
     protected readonly staticClass: typeof MESH_100LE;
     getDataWait(): Promise<{
-        localname: string | null;
+        name: string;
         address: string;
         battery: number;
     }>;
@@ -25,9 +27,9 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
      * @param red 0 ~ 127
      * @param green 0 ~ 127
      * @param blue 0 ~ 127
-     * @param time 0 ~ 65535
-     * @param cycle_on 0 ~ 65535
-     * @param cycle_off 0 ~ 65535
+     * @param time 0 ~ 65535 [ms]
+     * @param cycle_on 0 ~ 65535 [ms]
+     * @param cycle_off 0 ~ 65535 [ms]
      * @param pattern 1 or 2
      * @returns
      */

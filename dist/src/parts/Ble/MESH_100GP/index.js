@@ -24,7 +24,7 @@ class MESH_100GP extends MESH_1.MESH {
     async getDataWait() {
         this.checkConnected();
         return {
-            localname: this.peripheral.localName,
+            name: this.peripheral.localName,
             address: this.peripheral.address,
             battery: this._mesh.battery,
         };

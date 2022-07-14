@@ -10,6 +10,7 @@ export interface MESH_100PAOptions {
  * advertisement data from MESH_100PA
  */
 export interface MESH_100PA_Data {
+    name: string;
     address: string;
     /** battery (0 ~ 10) */
     battery: number;
@@ -23,7 +24,7 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
     onNotify: ((resp: MESH_js_PA['response']) => void) | null;
     protected readonly staticClass: typeof MESH_100PA;
     getDataWait(): Promise<{
-        localname: string | null;
+        name: string;
         address: string;
         battery: number;
         proximity: number;

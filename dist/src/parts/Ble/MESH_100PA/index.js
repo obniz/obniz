@@ -19,7 +19,7 @@ class MESH_100PA extends MESH_1.MESH {
         this.checkConnected();
         const _pa = this._mesh;
         return {
-            localname: this.peripheral.localName,
+            name: this.peripheral.localName,
             address: this.peripheral.address,
             battery: this._mesh.battery,
             proximity: _pa.getResponse.proximity,

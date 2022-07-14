@@ -13,6 +13,7 @@ export interface MESH_100PAOptions {}
  * advertisement data from MESH_100PA
  */
 export interface MESH_100PA_Data {
+  name: string;
   address: string;
   /** battery (0 ~ 10) */
   battery: number;
@@ -34,7 +35,7 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
     this.checkConnected();
     const _pa = this._mesh as MESH_js_PA;
     return {
-      localname: this.peripheral.localName,
+      name: this.peripheral.localName!,
       address: this.peripheral.address,
       battery: this._mesh.battery,
       proximity: _pa.getResponse.proximity,

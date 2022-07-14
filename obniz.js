@@ -26868,7 +26868,7 @@ class MESH_100AC extends MESH_1.MESH {
         this.checkConnected();
         const _ac = this._mesh;
         return {
-            localname: this.peripheral.localName,
+            name: this.peripheral.localName,
             address: this.peripheral.address,
             battery: this._mesh.battery,
             accele_x: _ac.getAccele.x,
@@ -26957,7 +26957,7 @@ class MESH_100BU extends MESH_1.MESH {
     async getDataWait() {
         this.checkConnected();
         return {
-            localname: this.peripheral.localName,
+            name: this.peripheral.localName,
             address: this.peripheral.address,
             battery: this._mesh.battery,
         };
@@ -27029,7 +27029,7 @@ class MESH_100GP extends MESH_1.MESH {
     async getDataWait() {
         this.checkConnected();
         return {
-            localname: this.peripheral.localName,
+            name: this.peripheral.localName,
             address: this.peripheral.address,
             battery: this._mesh.battery,
         };
@@ -27121,7 +27121,7 @@ class MESH_100LE extends MESH_1.MESH {
     async getDataWait() {
         this.checkConnected();
         return {
-            localname: this.peripheral.localName,
+            name: this.peripheral.localName,
             address: this.peripheral.address,
             battery: this._mesh.battery,
         };
@@ -27132,9 +27132,9 @@ class MESH_100LE extends MESH_1.MESH {
      * @param red 0 ~ 127
      * @param green 0 ~ 127
      * @param blue 0 ~ 127
-     * @param time 0 ~ 65535
-     * @param cycle_on 0 ~ 65535
-     * @param cycle_off 0 ~ 65535
+     * @param time 0 ~ 65535 [ms]
+     * @param cycle_on 0 ~ 65535 [ms]
+     * @param cycle_off 0 ~ 65535 [ms]
      * @param pattern 1 or 2
      * @returns
      */
@@ -27185,11 +27185,12 @@ class MESH_100MD extends MESH_1.MESH {
         this.checkConnected();
         const _md = this._mesh;
         return {
-            localname: this.peripheral.localName,
+            name: this.peripheral.localName,
             address: this.peripheral.address,
             battery: this._mesh.battery,
             motion_state: _md.getResponse.motion_state,
             detection_mode: _md.getResponse.detection_mode,
+            request_id: _md.getResponse.requestId,
         };
     }
     setMode(detection_mode, detection_time = 500, response_time = 500, requestid = 0) {
@@ -27247,7 +27248,7 @@ class MESH_100PA extends MESH_1.MESH {
         this.checkConnected();
         const _pa = this._mesh;
         return {
-            localname: this.peripheral.localName,
+            name: this.peripheral.localName,
             address: this.peripheral.address,
             battery: this._mesh.battery,
             proximity: _pa.getResponse.proximity,
@@ -27307,7 +27308,7 @@ class MESH_100TH extends MESH_1.MESH {
         this.checkConnected();
         const _th = this._mesh;
         return {
-            localname: this.peripheral.localName,
+            name: this.peripheral.localName,
             address: this.peripheral.address,
             battery: this._mesh.battery,
             temperature: _th.getResponse.temperature,
@@ -27429,10 +27430,11 @@ class MESH_js_AC extends _1.MESH_js {
         if (data[0] !== 1) {
             return false;
         }
-        this.accele.x = this.complemnt(256 * data[5] + data[4]);
-        this.accele.y = this.complemnt(256 * data[7] + data[6]);
-        this.accele.z = this.complemnt(256 * data[9] + data[8]);
+        this.accele.x = this.complemnt(256 * data[5] + data[4]) / 1024;
+        this.accele.y = this.complemnt(256 * data[7] + data[6]) / 1024;
+        this.accele.z = this.complemnt(256 * data[9] + data[8]) / 1024;
         return true;
+        // 922-1126
     }
     complemnt(val) {
         return val - (val > 32767 ? 65536 : 0);

@@ -13,6 +13,8 @@ export interface MESH_100ACOptions {}
  * advertisement data from MESH_100AC
  */
 export interface MESH_100AC_Data {
+  name: string;
+  address: string;
   /** battery (0 ~ 10) */
   battery: number;
   accele_x: number;
@@ -41,7 +43,7 @@ export default class MESH_100AC extends MESH<MESH_100AC_Data> {
 
     const _ac = this._mesh as MESH_js_AC;
     return {
-      localname: this.peripheral.localName,
+      name: this.peripheral.localName!,
       address: this.peripheral.address,
       battery: this._mesh.battery,
       accele_x: _ac.getAccele.x,

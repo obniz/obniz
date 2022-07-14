@@ -13,6 +13,8 @@ export interface MESH_100GPOptions {}
  * advertisement data from MESH_100GP
  */
 export interface MESH_100GP_Data {
+  name: string;
+  address: string;
   /** battery (0 ~ 10) */
   battery: number;
 }
@@ -48,7 +50,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   public async getDataWait() {
     this.checkConnected();
     return {
-      localname: this.peripheral.localName,
+      name: this.peripheral.localName!,
       address: this.peripheral.address,
       battery: this._mesh.battery,
     };

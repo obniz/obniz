@@ -10,6 +10,8 @@ import { MESH_js_LE } from '../MESH_js/MESH_js_LE';
 export interface MESH_100LEOptions {}
 
 export interface MESH_100LE_Data {
+  name: string;
+  address: string;
   /** battery (0 ~ 10) */
   battery: number;
 }
@@ -24,7 +26,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
   public async getDataWait() {
     this.checkConnected();
     return {
-      localname: this.peripheral.localName,
+      name: this.peripheral.localName!,
       address: this.peripheral.address,
       battery: this._mesh.battery,
     };

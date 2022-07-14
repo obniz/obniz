@@ -19,11 +19,12 @@ class MESH_100MD extends MESH_1.MESH {
         this.checkConnected();
         const _md = this._mesh;
         return {
-            localname: this.peripheral.localName,
+            name: this.peripheral.localName,
             address: this.peripheral.address,
             battery: this._mesh.battery,
             motion_state: _md.getResponse.motion_state,
             detection_mode: _md.getResponse.detection_mode,
+            request_id: _md.getResponse.requestId,
         };
     }
     setMode(detection_mode, detection_time = 500, response_time = 500, requestid = 0) {
