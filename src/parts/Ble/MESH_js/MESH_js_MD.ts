@@ -19,7 +19,7 @@ export class MESH_js_MD extends MESH_js {
 
   private readonly EventTypeID: number = 0;
 
-  private response = { requestId: -1, motion_state: -1, detection_mode: -1 };
+  private response = { request_id: -1, motion_state: -1, detection_mode: -1 };
 
   public notify(data: number[]): void {
     super.notify(data);
@@ -29,7 +29,7 @@ export class MESH_js_MD extends MESH_js {
     if (data[1] !== this.EventTypeID) {
       return;
     }
-    this.response.requestId = data[2];
+    this.response.request_id = data[2];
     this.response.motion_state = data[3];
     this.response.detection_mode = data[4];
     if (typeof this.onNotify !== 'function') {

@@ -11,8 +11,15 @@ export declare class MESH_js_TH extends MESH_js {
      * command header
      */
     private readonly EventTypeID;
+    private readonly MaxTemperature;
+    private readonly MinTemperature;
+    private readonly MaxHumidity;
+    private readonly MinHumidity;
     private response;
     notify(data: number[]): void;
     get getResponse(): MESH_js_TH['response'];
     parseSetmodeCommand(temperature_range_upper: number, temperature_range_bottom: number, temperature_condition: number, humidity_range_upper: number, humidity_range_bottom: number, humidity_condision: number, type: number): number[];
+    private num2array;
+    private complemnt;
+    private invcomplemnt;
 }

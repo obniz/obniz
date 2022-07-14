@@ -18,7 +18,7 @@ class MESH_js_MD extends _1.MESH_js {
         this.onNotify = null;
         this.MessageTypeID = 1;
         this.EventTypeID = 0;
-        this.response = { requestId: -1, motion_state: -1, detection_mode: -1 };
+        this.response = { request_id: -1, motion_state: -1, detection_mode: -1 };
     }
     notify(data) {
         super.notify(data);
@@ -28,7 +28,7 @@ class MESH_js_MD extends _1.MESH_js {
         if (data[1] !== this.EventTypeID) {
             return;
         }
-        this.response.requestId = data[2];
+        this.response.request_id = data[2];
         this.response.motion_state = data[3];
         this.response.detection_mode = data[4];
         if (typeof this.onNotify !== 'function') {

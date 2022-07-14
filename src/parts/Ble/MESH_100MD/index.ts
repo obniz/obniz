@@ -40,7 +40,7 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
       battery: this._mesh.battery,
       motion_state: _md.getResponse.motion_state,
       detection_mode: _md.getResponse.detection_mode,
-      request_id: _md.getResponse.requestId,
+      request_id: _md.getResponse.request_id,
     };
   }
 

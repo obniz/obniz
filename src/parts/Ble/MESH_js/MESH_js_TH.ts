@@ -15,6 +15,11 @@ export class MESH_js_TH extends MESH_js {
    */
   private readonly EventTypeID: number = 0;
 
+  private readonly MaxTemperature = 50;
+  private readonly MinTemperature = -10;
+  private readonly MaxHumidity = 100;
+  private readonly MinHumidity = 0;
+
   private response = { requestId: -1, temperature: -1, humidity: -1 };
 
   public notify(data: number[]): void {
@@ -25,14 +30,17 @@ export class MESH_js_TH extends MESH_js {
     if (data[1] !== this.EventTypeID) {
       return;
     }
-    const temp_ori = 256 * data[5] + data[4];
-    const temp = (temp_ori - (temp_ori > 32767 ? 65536 : 0)) / 10;
-    this.response.temperature = Math.min(Math.max(-10, temp), 50);
-    // this.response.temperature = (temp < -10) ? -10 : ((temp > 50) ? 50 : temp);
+    const temp = this.complemnt(256 * data[5] + data[4]) / 10;
+    this.response.temperature = Math.min(
+      Math.max(this.MinTemperature, temp),
+      this.MaxTemperature
+    );
 
     const hum_ori = 256 * data[7] + data[6];
-    this.response.humidity = Math.min(Math.max(0, hum_ori), 100);
-    // this.response.humidity = (hum_ori < 0) ? 0 : ((hum_ori > 100) ? 100 : hum_ori);
+    this.response.humidity = Math.min(
+      Math.max(this.MinHumidity, hum_ori),
+      this.MaxHumidity
+    );
 
     if (typeof this.onNotify !== 'function') {
       return;
@@ -55,21 +63,33 @@ export class MESH_js_TH extends MESH_js {
   ): number[] {
     const RequestID = 0;
     const HEADER: number[] = [this.MessageTypeID, this.EventTypeID, RequestID];
-    const BODY: number[] = [
-      (10 * temperature_range_upper) % 256,
-      Math.floor((10 * temperature_range_upper) / 256),
-      (10 * temperature_range_bottom) % 256,
-      Math.floor((10 * temperature_range_bottom) / 256),
-      humidity_range_upper % 256,
-      Math.floor(humidity_range_upper / 256),
-      humidity_range_bottom % 256,
-      Math.floor(humidity_range_bottom / 256),
-      temperature_condition,
-      humidity_condision,
-      type,
-    ];
-    const data: number[] = HEADER.concat(BODY);
+    const TEMP_UPPER: number[] = this.num2array(
+      10 * this.invcomplemnt(temperature_range_upper)
+    );
+    const TEMP_BOTTOM: number[] = this.num2array(
+      10 * this.invcomplemnt(temperature_range_bottom)
+    );
+    const HUMI_UPPER: number[] = this.num2array(humidity_range_upper);
+    const HUMI_BOTTOM: number[] = this.num2array(humidity_range_bottom);
+    const data: number[] = HEADER.concat(TEMP_UPPER)
+      .concat(TEMP_BOTTOM)
+      .concat(HUMI_UPPER)
+      .concat(HUMI_BOTTOM)
+      .concat([temperature_condition, humidity_condision, type]);
     data.push(this.checkSum(data));
     return data;
+  }
+
+  private num2array(val: number): number[] {
+    const _base = 256;
+    return [val % _base, Math.floor(val / _base)];
+  }
+
+  private complemnt(val: number): number {
+    return val - (val > 32767 ? 65536 : 0);
+  }
+
+  private invcomplemnt(val: number): number {
+    return val + (val < 0 ? 65536 : 0);
   }
 }
