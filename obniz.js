@@ -27430,11 +27430,11 @@ class MESH_js_AC extends _1.MESH_js {
         if (data[0] !== 1) {
             return false;
         }
-        this.accele.x = this.complemnt(256 * data[5] + data[4]) / 1024;
-        this.accele.y = this.complemnt(256 * data[7] + data[6]) / 1024;
-        this.accele.z = this.complemnt(256 * data[9] + data[8]) / 1024;
+        const BASE = 1024;
+        this.accele.x = this.complemnt(256 * data[5] + data[4]) / BASE;
+        this.accele.y = this.complemnt(256 * data[7] + data[6]) / BASE;
+        this.accele.z = this.complemnt(256 * data[9] + data[8]) / BASE;
         return true;
-        // 922-1126
     }
     complemnt(val) {
         return val - (val > 32767 ? 65536 : 0);
