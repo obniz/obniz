@@ -10,16 +10,15 @@ import { MESH_js_GP } from '../MESH_js/MESH_js_GP';
 export interface MESH_100GPOptions {}
 
 /**
- * advertisement data from MESH_100GP
+ * data from MESH_100GP
  */
 export interface MESH_100GP_Data {
-  name: string;
-  address: string;
-  /** battery (0 ~ 10) */
-  battery: number;
+  name: string; // device name
+  address: string; // bluetooth address
+  battery: number; // battery (0 ~ 10)
 }
 
-/** MESH_100PA management class */
+/** MESH_100GA management class */
 export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   public static readonly PartsName = 'MESH_100GP';
   public static readonly _LocalName = 'MESH-100GP';
@@ -61,6 +60,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     din_notify: number,
     dout: number,
     pwm_ratio: number,
+    vcc: number,
     ain_range_upper: number,
     ain_range_bottom: number,
     ain_notify: number
@@ -72,11 +72,37 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
         din_notify,
         dout,
         pwm_ratio,
+        vcc,
         ain_range_upper,
         ain_range_bottom,
         ain_notify
       )
     );
+  }
+
+  public setDin(pin: number, request_id:number=0): void {
+    const _gp = this._mesh as MESH_js_GP;
+    this.writeWOResponse(_gp.parseSetDinCommand(pin, request_id));
+  }
+
+  public setAin(mode:number, request_id:number = 0) {
+    const _gp = this._mesh as MESH_js_GP;
+    this.writeWOResponse(_gp.parseSetAinCommand(mode, request_id));
+  }
+
+  public setVout(pin:number, request_id:number =0) {
+    const _gp = this._mesh as MESH_js_GP;
+    this.writeWOResponse(_gp.parseSetVoutCommand(pin, request_id));
+  }
+
+  public setDout(pin: number, request_id:number = 0) {
+    const _gp = this._mesh as MESH_js_GP;
+    this.writeWOResponse(_gp.parseSetDoutCommand(pin, request_id));
+  }
+
+  public setPWM(pin: number, request_id:number = 0) {
+    const _gp = this._mesh as MESH_js_GP;
+    this.writeWOResponse(_gp.parseSetPWMCommand(pin, request_id));
   }
 
   protected static _isMESHblock(name: string): boolean {
@@ -85,8 +111,8 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
 
   protected prepareConnect(): void {
     this._mesh = new MESH_js_GP();
-
     const _gp = this._mesh as MESH_js_GP;
+
     _gp.onDinEvent = (pin: number, state: number) => {
       if (typeof this.onDinEvent !== 'function') {
         return;

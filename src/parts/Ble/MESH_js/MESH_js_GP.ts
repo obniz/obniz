@@ -35,48 +35,77 @@ export class MESH_js_GP extends MESH_js {
       return;
     }
     switch (data[1]) {
-      case this.DinEventID:
+      case this.DinEventID: {
         if (typeof this.onDinEvent !== 'function') {
           return;
         }
-        this.onDinEvent(data[2], data[3]);
+        const _pin = data[2];
+        const _state = data[3];
+        this.onDinEvent(_pin, _state);
         break;
-      case this.AinEventID:
+      }
+      case this.AinEventID: {
         if (typeof this.onAinEvent !== 'function') {
           return;
         }
-        this.onAinEvent(data[2], data[3], data[4], data[5]);
+        const _pin = data[2];
+        const _type = data[3];
+        const _threshold = data[4];
+        const _level = data[5];
+        this.onAinEvent(_pin, _type, _threshold, _level);
         break;
-      case this.DinStateID:
+      }
+      case this.DinStateID: {
         if (typeof this.onDinState !== 'function') {
           return;
         }
-        this.onDinState(data[2], data[3], data[4]);
+        const _request_id = data[2];
+        const _pin = data[3];
+        const _state = data[4];
+        this.onDinState(_request_id, _pin, _state);
         break;
-      case this.AinStateID:
+      }
+      case this.AinStateID: {
         if (typeof this.onAinState !== 'function') {
           return;
         }
-        this.onAinState(data[2], data[3], data[4], data[5]);
+        const _request_id = data[2];
+        const _pin = data[3];
+        const _state = data[4];
+        const _mode = data[5];
+        this.onAinState(_request_id, _pin, _state, _mode);
         break;
-      case this.VoutStateID:
+      }
+      case this.VoutStateID: {
         if (typeof this.onVoutState !== 'function') {
           return;
         }
-        this.onVoutState(data[2], data[3], data[4]);
+        const _request_id = data[2];
+        const _pin = data[3];
+        const _state = data[4];
+        this.onVoutState(_request_id, _pin, _state);
         break;
-      case this.DoutStateID:
+      }
+      case this.DoutStateID: {
         if (typeof this.onDoutState !== 'function') {
           return;
         }
-        this.onDoutState(data[2], data[3], data[4]);
+        const _request_id = data[2];
+        const _pin = data[3];
+        const _state = data[4];
+        this.onDoutState(_request_id, _pin, _state);
         break;
-      case this.PWMoutStateID:
+      }
+      case this.PWMoutStateID: {
         if (typeof this.onPWMoutState !== 'function') {
           return;
         }
-        this.onPWMoutState(data[2], data[3], data[4]);
+        const _request_id = data[2];
+        const _pin = data[3];
+        const _level = data[4];
+        this.onPWMoutState(_request_id, _pin, _level);
         break;
+      }
       default:
         break;
     }
@@ -98,6 +127,7 @@ export class MESH_js_GP extends MESH_js {
     din_notify: number,
     dout: number,
     pwm_ratio: number,
+    vcc: number,
     ain_range_upper: number,
     ain_range_bottom: number,
     ain_notify: number
@@ -108,7 +138,7 @@ export class MESH_js_GP extends MESH_js {
       din_notify,
       dout,
       pwm_ratio,
-      1,
+      vcc,
       ain_range_upper,
       ain_range_bottom,
       ain_notify,
