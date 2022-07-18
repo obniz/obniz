@@ -178,6 +178,7 @@ import iBS03T_RH, { iBS03T_RHOptions } from '../parts/Ble/iBS03T_RH';
 import iBS05H, { iBS05HOptions } from '../parts/Ble/iBS05H';
 import UC421BLE, { UC421BLEOptions } from '../parts/Ble/UC421BLE';
 import TR7, { TR7Options } from '../parts/Ble/TR7';
+import MM_BLEBC5, { MM_BLEBC5_Options } from '../parts/Ble/MM_BLEBC5';
 export declare type PartsType = keyof PartsList;
 interface PartsInterface<P, O, C extends {
     new (...args: any[]): P;
@@ -363,5 +364,6 @@ export interface PartsList {
     EXVital: PartsInterface<EXVital, EXVital_Options, typeof EXVital>;
     STM550B: PartsInterface<STM550B, STM550B_Options, typeof STM550B>;
     UC421BLE: PartsInterface<UC421BLE, UC421BLEOptions, typeof UC421BLE>;
+    MM_BLEBC5: PartsInterface<MM_BLEBC5, MM_BLEBC5_Options, typeof MM_BLEBC5>;
 }
 export {};

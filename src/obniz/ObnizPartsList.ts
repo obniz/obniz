@@ -284,6 +284,7 @@ import UC421BLE, { UC421BLEOptions } from '../parts/Ble/UC421BLE';
 import ObnizPartsBleInterface from './ObnizPartsBleInterface';
 import ObnizPartsInterface from './ObnizPartsInterface';
 import TR7, { TR7Options } from '../parts/Ble/TR7';
+import MM_BLEBC5, { MM_BLEBC5_Options } from '../parts/Ble/MM_BLEBC5';
 
 export type PartsType = keyof PartsList;
 
@@ -705,4 +706,5 @@ export interface PartsList {
   EXVital: PartsInterface<EXVital, EXVital_Options, typeof EXVital>;
   STM550B: PartsInterface<STM550B, STM550B_Options, typeof STM550B>;
   UC421BLE: PartsInterface<UC421BLE, UC421BLEOptions, typeof UC421BLE>;
+  MM_BLEBC5: PartsInterface<MM_BLEBC5, MM_BLEBC5_Options, typeof MM_BLEBC5>;
 }

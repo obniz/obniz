@@ -37,6 +37,10 @@ interface ObnizBleBeaconStructStandard<S> {
 export declare type ObnizBleBeaconStructNormal<S, key extends keyof S> = ObnizBleBeaconStructStandard<NormalValueType> & {
     /** Default: 1 (ex: parseInt() * multiple) */
     multiple?: number;
+    /** Number of bytes in the integer part with fixed point */
+    fixedIntegerBytes?: number;
+    /** round precision */
+    round?: number;
     /** Required in array type, Only in xyz */
     /** Used only 'custom' */
     func?: (data: number[], peripheral: BleRemotePeripheral) => S[key];
@@ -46,6 +50,7 @@ export declare type ObnizBleBeaconStructCheck = ObnizBleBeaconStructStandard<Val
     data?: number | number[];
 };
 export declare const notMatchDeviceError: Error;
+export declare const fixedPoint: (value: number[], integerBytes: number) => number;
 export declare const uint: (value: number[]) => number;
 export declare const int: (value: number[]) => number;
 export declare const uintBE: (value: number[]) => number;
@@ -62,6 +67,9 @@ export interface ObnizPartsBleProps extends ObnizPartsProps {
     readonly CompanyID?: ObnizPartsBleCompare<number[] | null>;
     readonly CompanyID_ScanResponse?: ObnizPartsBleCompare<number[] | null>;
     readonly BeaconDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown> | null>;
+    readonly ServiceDataLength?: ObnizPartsBleCompare<number | null>;
+    readonly ServiceUUID?: ObnizPartsBleCompare<number[] | null>;
+    readonly ServiceDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown> | null>;
     getServiceUuids(mode: ObnizPartsBleMode): string[] | null | undefined;
     getDeviceMode(peripheral: BleRemotePeripheral): ObnizPartsBleMode | null;
     new (peripheral: BleRemotePeripheral, mode: ObnizPartsBleMode): ObnizPartsBle<unknown>;
@@ -130,6 +138,26 @@ export declare abstract class ObnizPartsBle<S> {
      */
     static readonly BeaconDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown> | null>;
     /**
+     * Used as a condition of isDevice() by default.
+     *
+     * 標準でisDevice()の条件として使用
+     */
+    static readonly ServiceDataLength?: ObnizPartsBleCompare<number | null>;
+    /**
+     * Used as a condition of isDevice() by default.
+     *
+     * 標準でisDevice()の条件として使用
+     */
+    static readonly ServiceDataUUID?: ObnizPartsBleCompare<number[] | null>;
+    /**
+     * Used as a condition of isDevice() by default.
+     * Compare with data after Service UUID.
+     *
+     * 標準でisDevice()の条件として使用
+     * ServiceUUID以降のデータと比較
+     */
+    static readonly ServiceDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown> | null>;
+    /**
      * @deprecated
      */
     static isDevice(peripheral: BleRemotePeripheral): boolean;
@@ -152,7 +180,7 @@ export declare abstract class ObnizPartsBle<S> {
      * @returns Whether to match 合致するかどうか
      */
     static isDeviceWithMode(peripheral: BleRemotePeripheral, mode: ObnizPartsBleMode): boolean;
-    private static checkManufacturerSpecificData;
+    private static checkCustomData;
     /**
      * Form advertising data into an associative array.
      *
@@ -165,6 +193,7 @@ export declare abstract class ObnizPartsBle<S> {
     readonly address: string;
     readonly beaconData: number[] | null;
     readonly beaconDataInScanResponse: number[] | null;
+    readonly serviceData: number[] | null;
     protected _mode: ObnizPartsBleMode;
     get mode(): ObnizPartsBleMode;
     /**
