@@ -21,6 +21,8 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
   public static readonly PartsName = 'MESH_100LE';
   public static readonly _LocalName = 'MESH-100LE';
 
+  public static Pattern = MESH_js_LE.Pattern;
+
   protected readonly staticClass = MESH_100LE;
 
   public async getDataWait() {
@@ -33,7 +35,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
   }
 
   /**
-   * light up
+   * Light Up
    *
    * @param red 0 ~ 127
    * @param green 0 ~ 127
@@ -41,7 +43,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
    * @param time 0 ~ 65535 [ms]
    * @param cycle_on 0 ~ 65535 [ms]
    * @param cycle_off 0 ~ 65535 [ms]
-   * @param pattern 1 or 2
+   * @param pattern Pattern.Blink or Pattern.Soft
    * @returns
    */
   public lightup(
