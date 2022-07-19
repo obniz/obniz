@@ -29,6 +29,18 @@ export class MESH_js_GP extends MESH_js {
   private readonly DoutStateID: number = 5;
   private readonly PWMoutStateID: number = 6;
 
+  public readonly VCC = { AUTO: 0, ON: 1, OFF: 2 };
+  public readonly AnalogInputEvent = {
+    NotNotify: 0,
+    OverThreshold: 1,
+    InThreshold: 2,
+  };
+  public readonly Pin = { p1: 0, p2: 1, p3: 2 };
+  public readonly Mode = { Always: 0, Once: 1, AlwaysAndOnce: 2 };
+  public readonly State = { Low2High: 1, High2Low: 2 };
+
+  public DigitalPins = { p1: false, p2: false, p3: false };
+
   public notify(data: number[]): void {
     super.notify(data);
     if (data[0] !== this.MessageTypeID) {
@@ -123,20 +135,26 @@ export class MESH_js_GP extends MESH_js {
    * @returns
    */
   public parseSetmodeCommand(
-    din: number,
-    din_notify: number,
-    dout: number,
+    din: MESH_js_GP['DigitalPins'],
+    din_notify: MESH_js_GP['DigitalPins'],
+    dout: MESH_js_GP['DigitalPins'],
     pwm_ratio: number,
     vcc: number,
     ain_range_upper: number,
     ain_range_bottom: number,
     ain_notify: number
   ): number[] {
+    if (pwm_ratio < 0 || 255 < pwm_ratio) {
+      this.errorOutOfRange('PWM ratio (' + pwm_ratio + ') must be 0 ~ 255.');
+      return [];
+    }
     const HEADER: number[] = [this.MessageTypeID, 1];
     const BODY: number[] = [
-      din,
-      din_notify,
-      dout,
+      (din.p1 ? 1 : 0) + (din.p2 ? 2 : 0) + (din.p3 ? 4 : 0),
+      (din_notify.p1 ? 1 : 0) +
+        (din_notify.p2 ? 2 : 0) +
+        (din_notify.p3 ? 4 : 0),
+      (dout.p1 ? 1 : 0) + (dout.p2 ? 2 : 0) + (dout.p3 ? 4 : 0),
       pwm_ratio,
       vcc,
       ain_range_upper,

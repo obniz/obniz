@@ -23,6 +23,15 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   public static readonly PartsName = 'MESH_100GP';
   public static readonly _LocalName = 'MESH-100GP';
 
+  public readonly DigitalPins: MESH_js_GP['DigitalPins'] = (this
+    ._mesh as MESH_js_GP).DigitalPins;
+  public readonly VCC: MESH_js_GP['VCC'] = (this._mesh as MESH_js_GP).VCC;
+  public readonly AnalogInputEvent: MESH_js_GP['AnalogInputEvent'] = (this
+    ._mesh as MESH_js_GP).AnalogInputEvent;
+  public readonly Pin: MESH_js_GP['Pin'] = (this._mesh as MESH_js_GP).Pin;
+  public readonly Mode: MESH_js_GP['Mode'] = (this._mesh as MESH_js_GP).Mode;
+  public readonly State: MESH_js_GP['State'] = (this._mesh as MESH_js_GP).State;
+
   // event handler
   public onDinEvent: ((pin: number, state: number) => void) | null = null;
   public onAinEvent:
@@ -56,9 +65,9 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   }
 
   public setMode(
-    din: number,
-    din_notify: number,
-    dout: number,
+    din: MESH_100GP['DigitalPins'],
+    din_notify: MESH_100GP['DigitalPins'],
+    dout: MESH_100GP['DigitalPins'],
     pwm_ratio: number,
     vcc: number,
     ain_range_upper: number,
@@ -80,27 +89,27 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     );
   }
 
-  public setDin(pin: number, request_id:number=0): void {
+  public setDin(pin: number, request_id = 0): void {
     const _gp = this._mesh as MESH_js_GP;
     this.writeWOResponse(_gp.parseSetDinCommand(pin, request_id));
   }
 
-  public setAin(mode:number, request_id:number = 0) {
+  public setAin(mode: number, request_id = 0) {
     const _gp = this._mesh as MESH_js_GP;
     this.writeWOResponse(_gp.parseSetAinCommand(mode, request_id));
   }
 
-  public setVout(pin:number, request_id:number =0) {
+  public setVout(pin: number, request_id = 0) {
     const _gp = this._mesh as MESH_js_GP;
     this.writeWOResponse(_gp.parseSetVoutCommand(pin, request_id));
   }
 
-  public setDout(pin: number, request_id:number = 0) {
+  public setDout(pin: number, request_id = 0) {
     const _gp = this._mesh as MESH_js_GP;
     this.writeWOResponse(_gp.parseSetDoutCommand(pin, request_id));
   }
 
-  public setPWM(pin: number, request_id:number = 0) {
+  public setPWM(pin: number, request_id = 0) {
     const _gp = this._mesh as MESH_js_GP;
     this.writeWOResponse(_gp.parseSetPWMCommand(pin, request_id));
   }
@@ -119,6 +128,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
       }
       this.onDinEvent(pin, state);
     };
+
     _gp.onAinEvent = (
       pin: number,
       type: number,
@@ -130,12 +140,14 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
       }
       this.onAinEvent(pin, type, threshold, level);
     };
+
     _gp.onDinState = (requestId: number, pin: number, state: number) => {
       if (typeof this.onDinState !== 'function') {
         return;
       }
       this.onDinState(requestId, pin, state);
     };
+
     _gp.onAinState = (
       requestId: number,
       pin: number,
@@ -147,18 +159,21 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
       }
       this.onAinState(requestId, pin, state, mode);
     };
+
     _gp.onVoutState = (requestId: number, pin: number, state: number) => {
       if (typeof this.onVoutState !== 'function') {
         return;
       }
       this.onVoutState(requestId, pin, state);
     };
+
     _gp.onDoutState = (requestId: number, pin: number, state: number) => {
       if (typeof this.onDoutState !== 'function') {
         return;
       }
       this.onDoutState(requestId, pin, state);
     };
+
     _gp.onPWMoutState = (requestId: number, pin: number, level: number) => {
       if (typeof this.onPWMoutState !== 'function') {
         return;

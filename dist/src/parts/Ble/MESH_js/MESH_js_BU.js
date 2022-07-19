@@ -8,14 +8,14 @@ class MESH_js_BU extends _1.MESH_js {
         this.onSinglePressed = null;
         this.onLongPressed = null;
         this.onDoublePressed = null;
-        this.DATA_LENGTH = 4;
+        this.DataLength = 4;
         this.MessageTypeID = 1;
         this.EventTypeID = 0;
-        this.TYPE = { SINGLE: 1, LONG: 2, DOUBLE: 3 };
+        this.Type = { SINGLE: 1, LONG: 2, DOUBLE: 3 };
     }
     notify(data) {
         super.notify(data);
-        if (data.length !== this.DATA_LENGTH) {
+        if (data.length !== this.DataLength) {
             return;
         }
         if (data[0] !== this.MessageTypeID) {
@@ -25,17 +25,17 @@ class MESH_js_BU extends _1.MESH_js {
             return;
         }
         switch (data[2]) {
-            case this.TYPE.SINGLE:
+            case this.Type.SINGLE:
                 if (typeof this.onSinglePressed === 'function') {
                     this.onSinglePressed();
                 }
                 break;
-            case this.TYPE.LONG:
+            case this.Type.LONG:
                 if (typeof this.onLongPressed === 'function') {
                     this.onLongPressed();
                 }
                 break;
-            case this.TYPE.DOUBLE:
+            case this.Type.DOUBLE:
                 if (typeof this.onDoublePressed === 'function') {
                     this.onDoublePressed();
                 }
