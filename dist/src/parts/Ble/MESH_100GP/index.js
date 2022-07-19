@@ -7,10 +7,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
 const MESH_js_GP_1 = require("../MESH_js/MESH_js_GP");
-/** MESH_100PA management class */
+/** MESH_100GA management class */
 class MESH_100GP extends MESH_1.MESH {
     constructor() {
         super(...arguments);
+        this.DigitalPins = this
+            ._mesh.DigitalPins;
+        this.VCC = this._mesh.VCC;
+        this.AnalogInputEvent = this
+            ._mesh.AnalogInputEvent;
+        this.Pin = this._mesh.Pin;
+        this.Mode = this._mesh.Mode;
+        this.State = this._mesh.State;
         // event handler
         this.onDinEvent = null;
         this.onAinEvent = null;
@@ -29,9 +37,29 @@ class MESH_100GP extends MESH_1.MESH {
             battery: this._mesh.battery,
         };
     }
-    setMode(din, din_notify, dout, pwm_ratio, ain_range_upper, ain_range_bottom, ain_notify) {
+    setMode(din, din_notify, dout, pwm_ratio, vcc, ain_range_upper, ain_range_bottom, ain_notify) {
         const _gp = this._mesh;
-        this.writeWOResponse(_gp.parseSetmodeCommand(din, din_notify, dout, pwm_ratio, ain_range_upper, ain_range_bottom, ain_notify));
+        this.writeWOResponse(_gp.parseSetmodeCommand(din, din_notify, dout, pwm_ratio, vcc, ain_range_upper, ain_range_bottom, ain_notify));
+    }
+    setDin(pin, request_id = 0) {
+        const _gp = this._mesh;
+        this.writeWOResponse(_gp.parseSetDinCommand(pin, request_id));
+    }
+    setAin(mode, request_id = 0) {
+        const _gp = this._mesh;
+        this.writeWOResponse(_gp.parseSetAinCommand(mode, request_id));
+    }
+    setVout(pin, request_id = 0) {
+        const _gp = this._mesh;
+        this.writeWOResponse(_gp.parseSetVoutCommand(pin, request_id));
+    }
+    setDout(pin, request_id = 0) {
+        const _gp = this._mesh;
+        this.writeWOResponse(_gp.parseSetDoutCommand(pin, request_id));
+    }
+    setPWM(pin, request_id = 0) {
+        const _gp = this._mesh;
+        this.writeWOResponse(_gp.parseSetPWMCommand(pin, request_id));
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100GP._LocalName) !== -1;

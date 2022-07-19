@@ -22,7 +22,7 @@ class MESH_100LE extends MESH_1.MESH {
         };
     }
     /**
-     * light up
+     * Light Up
      *
      * @param red 0 ~ 127
      * @param green 0 ~ 127
@@ -30,7 +30,11 @@ class MESH_100LE extends MESH_1.MESH {
      * @param time 0 ~ 65535 [ms]
      * @param cycle_on 0 ~ 65535 [ms]
      * @param cycle_off 0 ~ 65535 [ms]
+<<<<<<< HEAD
      * @param pattern 1 or 2
+=======
+     * @param pattern Pattern.Blink or Pattern.Soft
+>>>>>>> a8042557d (gpio)
      * @returns
      */
     lightup(red, green, blue, time, cycle_on, cycle_off, pattern) {
@@ -51,3 +55,4 @@ class MESH_100LE extends MESH_1.MESH {
 exports.default = MESH_100LE;
 MESH_100LE.PartsName = 'MESH_100LE';
 MESH_100LE._LocalName = 'MESH-100LE';
+MESH_100LE.Pattern = MESH_js_LE_1.MESH_js_LE.Pattern;

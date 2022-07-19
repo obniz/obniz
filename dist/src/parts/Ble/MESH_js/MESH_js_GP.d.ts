@@ -15,6 +15,35 @@ export declare class MESH_js_GP extends MESH_js {
     private readonly VoutStateID;
     private readonly DoutStateID;
     private readonly PWMoutStateID;
+    readonly VCC: {
+        AUTO: number;
+        ON: number;
+        OFF: number;
+    };
+    readonly AnalogInputEvent: {
+        NotNotify: number;
+        OverThreshold: number;
+        InThreshold: number;
+    };
+    readonly Pin: {
+        p1: number;
+        p2: number;
+        p3: number;
+    };
+    readonly Mode: {
+        Always: number;
+        Once: number;
+        AlwaysAndOnce: number;
+    };
+    readonly State: {
+        Low2High: number;
+        High2Low: number;
+    };
+    DigitalPins: {
+        p1: boolean;
+        p2: boolean;
+        p3: boolean;
+    };
     notify(data: number[]): void;
     /**
      *
@@ -27,7 +56,7 @@ export declare class MESH_js_GP extends MESH_js {
      * @param ain_notify
      * @returns
      */
-    parseSetmodeCommand(din: number, din_notify: number, dout: number, pwm_ratio: number, ain_range_upper: number, ain_range_bottom: number, ain_notify: number): number[];
+    parseSetmodeCommand(din: MESH_js_GP['DigitalPins'], din_notify: MESH_js_GP['DigitalPins'], dout: MESH_js_GP['DigitalPins'], pwm_ratio: number, vcc: number, ain_range_upper: number, ain_range_bottom: number, ain_notify: number): number[];
     parseSetDinCommand(pin: number, requestId?: number): number[];
     parseSetAinCommand(mode: number, requestId?: number): number[];
     parseSetVoutCommand(pin: number, requestId?: number): number[];

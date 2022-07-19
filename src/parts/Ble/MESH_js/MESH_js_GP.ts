@@ -29,54 +29,95 @@ export class MESH_js_GP extends MESH_js {
   private readonly DoutStateID: number = 5;
   private readonly PWMoutStateID: number = 6;
 
+  public readonly VCC = { AUTO: 0, ON: 1, OFF: 2 };
+  public readonly AnalogInputEvent = {
+    NotNotify: 0,
+    OverThreshold: 1,
+    InThreshold: 2,
+  };
+  public readonly Pin = { p1: 0, p2: 1, p3: 2 };
+  public readonly Mode = { Always: 0, Once: 1, AlwaysAndOnce: 2 };
+  public readonly State = { Low2High: 1, High2Low: 2 };
+
+  public DigitalPins = { p1: false, p2: false, p3: false };
+
   public notify(data: number[]): void {
     super.notify(data);
     if (data[0] !== this.MessageTypeID) {
       return;
     }
     switch (data[1]) {
-      case this.DinEventID:
+      case this.DinEventID: {
         if (typeof this.onDinEvent !== 'function') {
           return;
         }
-        this.onDinEvent(data[2], data[3]);
+        const _pin = data[2];
+        const _state = data[3];
+        this.onDinEvent(_pin, _state);
         break;
-      case this.AinEventID:
+      }
+      case this.AinEventID: {
         if (typeof this.onAinEvent !== 'function') {
           return;
         }
-        this.onAinEvent(data[2], data[3], data[4], data[5]);
+        const _pin = data[2];
+        const _type = data[3];
+        const _threshold = data[4];
+        const _level = data[5];
+        this.onAinEvent(_pin, _type, _threshold, _level);
         break;
-      case this.DinStateID:
+      }
+      case this.DinStateID: {
         if (typeof this.onDinState !== 'function') {
           return;
         }
-        this.onDinState(data[2], data[3], data[4]);
+        const _request_id = data[2];
+        const _pin = data[3];
+        const _state = data[4];
+        this.onDinState(_request_id, _pin, _state);
         break;
-      case this.AinStateID:
+      }
+      case this.AinStateID: {
         if (typeof this.onAinState !== 'function') {
           return;
         }
-        this.onAinState(data[2], data[3], data[4], data[5]);
+        const _request_id = data[2];
+        const _pin = data[3];
+        const _state = data[4];
+        const _mode = data[5];
+        this.onAinState(_request_id, _pin, _state, _mode);
         break;
-      case this.VoutStateID:
+      }
+      case this.VoutStateID: {
         if (typeof this.onVoutState !== 'function') {
           return;
         }
-        this.onVoutState(data[2], data[3], data[4]);
+        const _request_id = data[2];
+        const _pin = data[3];
+        const _state = data[4];
+        this.onVoutState(_request_id, _pin, _state);
         break;
-      case this.DoutStateID:
+      }
+      case this.DoutStateID: {
         if (typeof this.onDoutState !== 'function') {
           return;
         }
-        this.onDoutState(data[2], data[3], data[4]);
+        const _request_id = data[2];
+        const _pin = data[3];
+        const _state = data[4];
+        this.onDoutState(_request_id, _pin, _state);
         break;
-      case this.PWMoutStateID:
+      }
+      case this.PWMoutStateID: {
         if (typeof this.onPWMoutState !== 'function') {
           return;
         }
-        this.onPWMoutState(data[2], data[3], data[4]);
+        const _request_id = data[2];
+        const _pin = data[3];
+        const _level = data[4];
+        this.onPWMoutState(_request_id, _pin, _level);
         break;
+      }
       default:
         break;
     }
@@ -94,21 +135,28 @@ export class MESH_js_GP extends MESH_js {
    * @returns
    */
   public parseSetmodeCommand(
-    din: number,
-    din_notify: number,
-    dout: number,
+    din: MESH_js_GP['DigitalPins'],
+    din_notify: MESH_js_GP['DigitalPins'],
+    dout: MESH_js_GP['DigitalPins'],
     pwm_ratio: number,
+    vcc: number,
     ain_range_upper: number,
     ain_range_bottom: number,
     ain_notify: number
   ): number[] {
+    if (pwm_ratio < 0 || 255 < pwm_ratio) {
+      this.errorOutOfRange('PWM ratio (' + pwm_ratio + ') must be 0 ~ 255.');
+      return [];
+    }
     const HEADER: number[] = [this.MessageTypeID, 1];
     const BODY: number[] = [
-      din,
-      din_notify,
-      dout,
+      (din.p1 ? 1 : 0) + (din.p2 ? 2 : 0) + (din.p3 ? 4 : 0),
+      (din_notify.p1 ? 1 : 0) +
+        (din_notify.p2 ? 2 : 0) +
+        (din_notify.p3 ? 4 : 0),
+      (dout.p1 ? 1 : 0) + (dout.p2 ? 2 : 0) + (dout.p3 ? 4 : 0),
       pwm_ratio,
-      1,
+      vcc,
       ain_range_upper,
       ain_range_bottom,
       ain_notify,
