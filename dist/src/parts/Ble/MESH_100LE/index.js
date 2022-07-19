@@ -31,7 +31,11 @@ class MESH_100LE extends MESH_1.MESH {
      * @param cycle_on 0 ~ 65535 [ms]
      * @param cycle_off 0 ~ 65535 [ms]
 <<<<<<< HEAD
+<<<<<<< HEAD
      * @param pattern 1 or 2
+=======
+     * @param pattern Pattern.Blink or Pattern.Soft
+>>>>>>> a8042557d (gpio)
 =======
      * @param pattern Pattern.Blink or Pattern.Soft
 >>>>>>> a8042557d (gpio)

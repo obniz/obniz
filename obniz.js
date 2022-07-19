@@ -27060,11 +27060,19 @@ class MESH_100GP extends MESH_1.MESH {
         this.writeWOResponse(_gp.parseSetVoutCommand(pin, request_id));
     }
     setDout(pin, request_id = 0) {
+<<<<<<< HEAD
         const _gp = this._mesh;
         this.writeWOResponse(_gp.parseSetDoutCommand(pin, request_id));
     }
     setPWM(pin, request_id = 0) {
         const _gp = this._mesh;
+=======
+        const _gp = this._mesh;
+        this.writeWOResponse(_gp.parseSetDoutCommand(pin, request_id));
+    }
+    setPWM(pin, request_id = 0) {
+        const _gp = this._mesh;
+>>>>>>> a8042557d (gpio)
         this.writeWOResponse(_gp.parseSetPWMCommand(pin, request_id));
     }
     static _isMESHblock(name) {
@@ -27165,7 +27173,11 @@ class MESH_100LE extends MESH_1.MESH {
      * @param cycle_on 0 ~ 65535 [ms]
      * @param cycle_off 0 ~ 65535 [ms]
 <<<<<<< HEAD
+<<<<<<< HEAD
      * @param pattern 1 or 2
+=======
+     * @param pattern Pattern.Blink or Pattern.Soft
+>>>>>>> a8042557d (gpio)
 =======
      * @param pattern Pattern.Blink or Pattern.Soft
 >>>>>>> a8042557d (gpio)
