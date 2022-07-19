@@ -11,7 +11,7 @@ class MESH_js_AC extends _1.MESH_js {
         this.MessageTypeID = 1;
         this.accele = { x: -1, y: -1, z: -1 };
         this.face = -1;
-        this.DATA_LENGTH = 17;
+        this.DataLength = 17;
         // event handler
         this.onTapped = null;
         this.onShaked = null;
@@ -74,7 +74,7 @@ class MESH_js_AC extends _1.MESH_js {
     //     return data;
     //   }
     updateAccele(data) {
-        if (data.length !== this.DATA_LENGTH) {
+        if (data.length !== this.DataLength) {
             return false;
         }
         if (data[0] !== 1) {

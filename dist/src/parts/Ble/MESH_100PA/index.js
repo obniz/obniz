@@ -26,9 +26,9 @@ class MESH_100PA extends MESH_1.MESH {
             brightness: _pa.getResponse.brightness,
         };
     }
-    setMode(type) {
+    setMode(type, request_id = 0) {
         const _pa = this._mesh;
-        this.writeWOResponse(_pa.parseSetmodeCommand(type));
+        this.writeWOResponse(_pa.parseSetmodeCommand(type, request_id));
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100PA._LocalName) !== -1;
@@ -51,3 +51,4 @@ class MESH_100PA extends MESH_1.MESH {
 exports.default = MESH_100PA;
 MESH_100PA.PartsName = 'MESH_100PA';
 MESH_100PA._LocalName = 'MESH-100PA';
+MESH_100PA.NotifyType = MESH_js_PA_1.MESH_js_PA.NotifyType;

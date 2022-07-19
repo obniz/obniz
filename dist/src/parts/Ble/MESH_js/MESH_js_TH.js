@@ -30,10 +30,18 @@ class MESH_js_TH extends _1.MESH_js {
         if (data[1] !== this.EventTypeID) {
             return;
         }
+<<<<<<< HEAD
         const temp = this.complemnt(256 * data[5] + data[4]) / 10;
         this.response.temperature = Math.min(Math.max(this.MinTemperature, temp), this.MaxTemperature);
         const hum_ori = 256 * data[7] + data[6];
         this.response.humidity = Math.min(Math.max(this.MinHumidity, hum_ori), this.MaxHumidity);
+=======
+        const temp_ori = 256 * data[5] + data[4];
+        const temp = (temp_ori - (temp_ori > 32767 ? 65536 : 0)) / 10;
+        this.response.temperature = Math.min(Math.max(-10, temp), 50);
+        const hum_ori = 256 * data[7] + data[6];
+        this.response.humidity = Math.min(Math.max(0, hum_ori), 100);
+>>>>>>> 4f948b4f8 (inp)
         if (typeof this.onNotify !== 'function') {
             return;
         }
@@ -42,6 +50,7 @@ class MESH_js_TH extends _1.MESH_js {
     get getResponse() {
         return this.response;
     }
+<<<<<<< HEAD
     parseSetmodeCommand(temperature_range_upper, temperature_range_bottom, temperature_condition, humidity_range_upper, humidity_range_bottom, humidity_condision, type) {
         const RequestID = 0;
         const HEADER = [this.MessageTypeID, this.EventTypeID, RequestID];
@@ -54,6 +63,26 @@ class MESH_js_TH extends _1.MESH_js {
             .concat(HUMI_UPPER)
             .concat(HUMI_BOTTOM)
             .concat([temperature_condition, humidity_condision, type]);
+=======
+    parseSetmodeCommand(temperature_range_upper, temperature_range_bottom, temperature_condition, humidity_range_upper, humidity_range_bottom, humidity_condision, type, request_id = 0) {
+        // Generate Command
+        const _HEADER = [this.MessageTypeID, this.EventTypeID, request_id];
+        const _Byte = 256;
+        const _BODY = [
+            (10 * temperature_range_upper) % _Byte,
+            Math.floor((10 * temperature_range_upper) / _Byte),
+            (10 * temperature_range_bottom) % _Byte,
+            Math.floor((10 * temperature_range_bottom) / _Byte),
+            humidity_range_upper % _Byte,
+            Math.floor(humidity_range_upper / _Byte),
+            humidity_range_bottom % _Byte,
+            Math.floor(humidity_range_bottom / _Byte),
+            temperature_condition,
+            humidity_condision,
+            type,
+        ];
+        const data = _HEADER.concat(_BODY);
+>>>>>>> 4f948b4f8 (inp)
         data.push(this.checkSum(data));
         return data;
     }

@@ -1,15 +1,13 @@
 // const Obniz = require('obniz');
 const Obniz = require('../../../../index.js'); // local
 const fetch = require('node-fetch');
-const { preProcessFile } = require('typescript');
-const { EventEmitter } = require('stream');
-const { escapeRegExp } = require('lodash');
 const mesh_bu = Obniz.getPartsClass('MESH_100BU');
 const mesh_le = Obniz.getPartsClass('MESH_100LE');
 const mesh_ac = Obniz.getPartsClass('MESH_100AC');
 const mesh_pa = Obniz.getPartsClass('MESH_100PA');
 const mesh_th = Obniz.getPartsClass('MESH_100TH');
 const mesh_md = Obniz.getPartsClass('MESH_100MD');
+const mesh_gp = Obniz.getPartsClass('MESH_100GP');
 
 const obnizId = '00000000';
 
@@ -17,18 +15,19 @@ const obniz = new Obniz(obnizId, {
   access_token: null,
 });
 
-// Connected. 接続完了
+// Connected.
 obniz.onconnect = async () => {
   console.log(`connected obniz ${obniz.id}`);
   try {
     await obniz.ble.initWait();
     obniz.ble.scan.onfind = async (peripheral) => {
       // sampleBU(peripheral);
-      sampleAC(peripheral);
+      // sampleAC(peripheral);
       // sampleLE(peripheral);
-      // samplePA(peripheral);
+      samplePA(peripheral);
       // sampleTH(peripheral);
       // sampleMD(peripheral);
+      // sampleGP(peripheral);
     };
     await obniz.ble.scan.startWait();
   } catch (e) {
@@ -40,7 +39,7 @@ obniz.onconnect = async () => {
   }
 };
 
-// Disconnected. 切断。
+// Disconnected.
 obniz.onclose = async () => {
   console.log(`connection lost for obniz ${obniz.id}`);
 };
@@ -88,13 +87,13 @@ async function sampleLE(peripheral) {
   const LED_block = new mesh_le(peripheral);
   await LED_block.connectWait();
 
-  const red = 127;
-  const green = 0;
-  const blue = 0;
-  const time = 4000; // 4.000 seconds
-  const cycle_on = 500; // 0.500 seconds
-  const cycle_off = 500; // 0.500 seconds
-  await LED_block.lightup(red, green, blue, time, cycle_on, cycle_off, 1);
+  const _red = 127;
+  const _green = 0;
+  const _blue = 0;
+  const _total_time = 4000; // 4.000 seconds
+  const _cycle_on_time = 512; // 0.500 seconds
+  const _cycle_off_time = 512; // 0.500 seconds
+  await LED_block.lightup(_red, _green, _blue, _total_time, _cycle_on_time, _cycle_off_time, mesh_le.Pattern.Soft);
 
   LED_block.onStatusButtonNotify = (()=>{console.log('status button pressed');});
 }
@@ -151,7 +150,13 @@ async function samplePA(peripheral) {
     console.log('status button pressed !');
   });
 
-  PA_block.setMode(32);
+  PA_block.onNotify = ((response) => {
+    console.log(response);
+  });
+
+  const _notifyType = mesh_pa.NotifyType.Once + mesh_pa.NotifyType.Always;
+  const _requestId = 15;
+  PA_block.setMode(_notifyType, _requestId);
 
   // PA_block.getDataWait();
 }

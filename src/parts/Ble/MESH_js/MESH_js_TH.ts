@@ -35,7 +35,6 @@ export class MESH_js_TH extends MESH_js {
       Math.max(this.MinTemperature, temp),
       this.MaxTemperature
     );
-
     const hum_ori = 256 * data[7] + data[6];
     this.response.humidity = Math.min(
       Math.max(this.MinHumidity, hum_ori),
@@ -59,10 +58,11 @@ export class MESH_js_TH extends MESH_js {
     humidity_range_upper: number,
     humidity_range_bottom: number,
     humidity_condision: number,
-    type: number
+    type: number,
+    request_id = 0
   ): number[] {
-    const RequestID = 0;
-    const HEADER: number[] = [this.MessageTypeID, this.EventTypeID, RequestID];
+    // Generate Command
+    const HEADER: number[] = [this.MessageTypeID, this.EventTypeID, request_id];
     const TEMP_UPPER: number[] = this.num2array(
       10 * this.invcomplemnt(temperature_range_upper)
     );
@@ -77,6 +77,7 @@ export class MESH_js_TH extends MESH_js {
       .concat(HUMI_BOTTOM)
       .concat([temperature_condition, humidity_condision, type]);
     data.push(this.checkSum(data));
+
     return data;
   }
 

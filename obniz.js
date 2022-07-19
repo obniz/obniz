@@ -27301,9 +27301,9 @@ class MESH_100PA extends MESH_1.MESH {
             brightness: _pa.getResponse.brightness,
         };
     }
-    setMode(type) {
+    setMode(type, request_id = 0) {
         const _pa = this._mesh;
-        this.writeWOResponse(_pa.parseSetmodeCommand(type));
+        this.writeWOResponse(_pa.parseSetmodeCommand(type, request_id));
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100PA._LocalName) !== -1;
@@ -27326,6 +27326,7 @@ class MESH_100PA extends MESH_1.MESH {
 exports.default = MESH_100PA;
 MESH_100PA.PartsName = 'MESH_100PA';
 MESH_100PA._LocalName = 'MESH-100PA';
+MESH_100PA.NotifyType = MESH_js_PA_1.MESH_js_PA.NotifyType;
 
 
 /***/ }),
@@ -27407,7 +27408,7 @@ class MESH_js_AC extends _1.MESH_js {
         this.MessageTypeID = 1;
         this.accele = { x: -1, y: -1, z: -1 };
         this.face = -1;
-        this.DATA_LENGTH = 17;
+        this.DataLength = 17;
         // event handler
         this.onTapped = null;
         this.onShaked = null;
@@ -27470,7 +27471,7 @@ class MESH_js_AC extends _1.MESH_js {
     //     return data;
     //   }
     updateAccele(data) {
-        if (data.length !== this.DATA_LENGTH) {
+        if (data.length !== this.DataLength) {
             return false;
         }
         if (data[0] !== 1) {
@@ -27574,6 +27575,13 @@ class MESHOutOfRangeError extends MESH_js_Error {
     }
 }
 exports.MESHOutOfRangeError = MESHOutOfRangeError;
+class MESHInvalidValue extends MESH_js_Error {
+    constructor(property) {
+        super(2, property + 'is invalid value.');
+        this.property = property;
+    }
+}
+exports.MESHInvalidValue = MESHInvalidValue;
 
 
 /***/ }),
@@ -27902,6 +27910,7 @@ exports.MESH_js_MD = MESH_js_MD;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const _1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
+const MESH_js_Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MESH_js_Error.js");
 class MESH_js_PA extends _1.MESH_js {
     constructor() {
         super(...arguments);
@@ -27926,9 +27935,10 @@ class MESH_js_PA extends _1.MESH_js {
         if (data[1] !== this.EventTypeID) {
             return;
         }
+        const _Byte = 256;
         this.response.requestId = data[2];
-        this.response.proximity = 256 * data[5] + data[4];
-        this.response.brightness = 256 * data[7] + data[6];
+        this.response.proximity = _Byte * data[5] + data[4];
+        this.response.brightness = _Byte * data[7] + data[6];
         if (typeof this.onNotify !== 'function') {
             return;
         }
@@ -27938,20 +27948,36 @@ class MESH_js_PA extends _1.MESH_js {
         return this.response;
     }
     /**
-     * setMode
      *
-     * @param type
-     * @returns
+     * @param notifyType
+     * @param requestId
+     * @returns command
      */
     parseSetmodeCommand(notifyType, requestId = 0) {
-        const HEADER = [this.MessageTypeID, this.EventTypeID, requestId];
-        const FIXED = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2];
-        const data = HEADER.concat(FIXED).concat(notifyType);
+        // Error Handle
+        if (notifyType % 4 !== 0) {
+            throw new MESH_js_Error_1.MESHInvalidValue('notifyType');
+        }
+        const _notifytypeMin = 4;
+        const _notifytypeMax = 60;
+        if (notifyType < _notifytypeMin || _notifytypeMax < notifyType) {
+            throw new MESH_js_Error_1.MESHOutOfRangeError('notifyType');
+        }
+        // Generate Command
+        const _HEADER = [this.MessageTypeID, this.EventTypeID, requestId];
+        const _FIXED = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2];
+        const data = _HEADER.concat(_FIXED).concat(notifyType);
         data.push(this.checkSum(data));
         return data;
     }
 }
 exports.MESH_js_PA = MESH_js_PA;
+MESH_js_PA.NotifyType = {
+    UpdateProximity: 4,
+    UpdateBrightness: 8,
+    Once: 16,
+    Always: 32,
+};
 
 
 /***/ }),
@@ -27992,10 +28018,18 @@ class MESH_js_TH extends _1.MESH_js {
         if (data[1] !== this.EventTypeID) {
             return;
         }
+<<<<<<< HEAD
         const temp = this.complemnt(256 * data[5] + data[4]) / 10;
         this.response.temperature = Math.min(Math.max(this.MinTemperature, temp), this.MaxTemperature);
         const hum_ori = 256 * data[7] + data[6];
         this.response.humidity = Math.min(Math.max(this.MinHumidity, hum_ori), this.MaxHumidity);
+=======
+        const temp_ori = 256 * data[5] + data[4];
+        const temp = (temp_ori - (temp_ori > 32767 ? 65536 : 0)) / 10;
+        this.response.temperature = Math.min(Math.max(-10, temp), 50);
+        const hum_ori = 256 * data[7] + data[6];
+        this.response.humidity = Math.min(Math.max(0, hum_ori), 100);
+>>>>>>> 4f948b4f8 (inp)
         if (typeof this.onNotify !== 'function') {
             return;
         }
@@ -28004,6 +28038,7 @@ class MESH_js_TH extends _1.MESH_js {
     get getResponse() {
         return this.response;
     }
+<<<<<<< HEAD
     parseSetmodeCommand(temperature_range_upper, temperature_range_bottom, temperature_condition, humidity_range_upper, humidity_range_bottom, humidity_condision, type) {
         const RequestID = 0;
         const HEADER = [this.MessageTypeID, this.EventTypeID, RequestID];
@@ -28016,6 +28051,26 @@ class MESH_js_TH extends _1.MESH_js {
             .concat(HUMI_UPPER)
             .concat(HUMI_BOTTOM)
             .concat([temperature_condition, humidity_condision, type]);
+=======
+    parseSetmodeCommand(temperature_range_upper, temperature_range_bottom, temperature_condition, humidity_range_upper, humidity_range_bottom, humidity_condision, type, request_id = 0) {
+        // Generate Command
+        const _HEADER = [this.MessageTypeID, this.EventTypeID, request_id];
+        const _Byte = 256;
+        const _BODY = [
+            (10 * temperature_range_upper) % _Byte,
+            Math.floor((10 * temperature_range_upper) / _Byte),
+            (10 * temperature_range_bottom) % _Byte,
+            Math.floor((10 * temperature_range_bottom) / _Byte),
+            humidity_range_upper % _Byte,
+            Math.floor(humidity_range_upper / _Byte),
+            humidity_range_bottom % _Byte,
+            Math.floor(humidity_range_bottom / _Byte),
+            temperature_condition,
+            humidity_condision,
+            type,
+        ];
+        const data = _HEADER.concat(_BODY);
+>>>>>>> 4f948b4f8 (inp)
         data.push(this.checkSum(data));
         return data;
     }

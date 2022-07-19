@@ -18,3 +18,9 @@ export class MESHOutOfRangeError extends MESH_js_Error {
     );
   }
 }
+
+export class MESHInvalidValue extends MESH_js_Error {
+  constructor(public property: string) {
+    super(2, property + 'is invalid value.');
+  }
+}
