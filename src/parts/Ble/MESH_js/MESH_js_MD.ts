@@ -1,4 +1,5 @@
 import { MESH_js } from '.';
+import { MESHOutOfRangeError } from './MESH_js_Error';
 export class MESH_js_MD extends MESH_js {
   public readonly DetectionMode = {
     DETECTED: 0x01,
@@ -46,21 +47,33 @@ export class MESH_js_MD extends MESH_js {
     detection_mode: number,
     detection_time = 500,
     response_time = 500,
-    requestid = 0
+    request_id = 0
   ): number[] {
-    if (detection_time < 200 || 60000 < detection_time) {
-      this.errorOutOfRange(
-        'detection_time (' + detection_time + ') must be 200 ~ 60000.'
+    // Error Handle
+    const _DetectionTimeMin = 200 as const;
+    const _DetectionTimeMax = 60000 as const;
+    if (
+      detection_time < _DetectionTimeMin ||
+      _DetectionTimeMax < detection_time
+    ) {
+      throw new MESHOutOfRangeError(
+        'detection_time',
+        _DetectionTimeMin,
+        _DetectionTimeMax
       );
-      return [];
     }
-    if (response_time < 500 || 60000 < response_time) {
-      this.errorOutOfRange(
-        'response_time (' + response_time + ') must be 500 ~ 60000.'
+    const _ResponseTimeMin = 500 as const;
+    const _ResponseTimeMax = 60000 as const;
+    if (response_time < _ResponseTimeMin || _ResponseTimeMax < response_time) {
+      throw new MESHOutOfRangeError(
+        'response_time',
+        _ResponseTimeMin,
+        _ResponseTimeMax
       );
-      return [];
     }
-    const HEADER = [this.MessageTypeID, this.EventTypeID, requestid] as const;
+
+    // Generate Command
+    const HEADER = [this.MessageTypeID, this.EventTypeID, request_id] as const;
     const BODY = [
       detection_mode,
       detection_time % 256,
@@ -70,6 +83,7 @@ export class MESH_js_MD extends MESH_js {
     ] as const;
     const data: number[] = HEADER.concat(BODY);
     data.push(this.checkSum(data));
+
     return data;
   }
 }

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const _1 = require(".");
+const MESH_js_Error_1 = require("./MESH_js_Error");
 class MESH_js_MD extends _1.MESH_js {
     constructor() {
         super(...arguments);
@@ -39,16 +40,21 @@ class MESH_js_MD extends _1.MESH_js {
     get getResponse() {
         return this.response;
     }
-    parseSetmodeCommand(detection_mode, detection_time = 500, response_time = 500, requestid = 0) {
-        if (detection_time < 200 || 60000 < detection_time) {
-            this.errorOutOfRange('detection_time (' + detection_time + ') must be 200 ~ 60000.');
-            return [];
+    parseSetmodeCommand(detection_mode, detection_time = 500, response_time = 500, request_id = 0) {
+        // Error Handle
+        const _DetectionTimeMin = 200;
+        const _DetectionTimeMax = 60000;
+        if (detection_time < _DetectionTimeMin ||
+            _DetectionTimeMax < detection_time) {
+            throw new MESH_js_Error_1.MESHOutOfRangeError('detection_time', _DetectionTimeMin, _DetectionTimeMax);
         }
-        if (response_time < 500 || 60000 < response_time) {
-            this.errorOutOfRange('response_time (' + response_time + ') must be 500 ~ 60000.');
-            return [];
+        const _ResponseTimeMin = 500;
+        const _ResponseTimeMax = 60000;
+        if (response_time < _ResponseTimeMin || _ResponseTimeMax < response_time) {
+            throw new MESH_js_Error_1.MESHOutOfRangeError('response_time', _ResponseTimeMin, _ResponseTimeMax);
         }
-        const HEADER = [this.MessageTypeID, this.EventTypeID, requestid];
+        // Generate Command
+        const HEADER = [this.MessageTypeID, this.EventTypeID, request_id];
         const BODY = [
             detection_mode,
             detection_time % 256,

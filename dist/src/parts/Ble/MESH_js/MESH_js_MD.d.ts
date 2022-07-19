@@ -17,5 +17,5 @@ export declare class MESH_js_MD extends MESH_js {
     private response;
     notify(data: number[]): void;
     get getResponse(): MESH_js_MD['response'];
-    parseSetmodeCommand(detection_mode: number, detection_time?: number, response_time?: number, requestid?: number): number[];
+    parseSetmodeCommand(detection_mode: number, detection_time?: number, response_time?: number, request_id?: number): number[];
 }

@@ -12,13 +12,6 @@ export interface MESH_100GPOptions {
 export interface MESH_100GP_Data {
     name: string;
     address: string;
-<<<<<<< HEAD
-<<<<<<< HEAD
-    /** battery (0 ~ 10) */
-=======
->>>>>>> a8042557d (gpio)
-=======
->>>>>>> a8042557d (gpio)
     battery: number;
 }
 /** MESH_100GA management class */

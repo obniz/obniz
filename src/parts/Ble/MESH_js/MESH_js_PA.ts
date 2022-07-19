@@ -1,20 +1,6 @@
 import { MESH_js } from '.';
 import { MESHInvalidValue, MESHOutOfRangeError } from './MESH_js_Error';
 export class MESH_js_PA extends MESH_js {
-  /**
-   * MessageTypeID
-   * command header
-   */
-  private readonly MessageTypeID: number = 1 as const;
-
-  /**
-   * EventTypeID
-   * command header
-   */
-  private readonly EventTypeID: number = 0 as const;
-
-  private response = { requestId: -1, proximity: -1, brightness: -1 };
-
   public static NotifyType = {
     UpdateProximity: 4,
     UpdateBrightness: 8,
@@ -23,6 +9,10 @@ export class MESH_js_PA extends MESH_js {
   } as const;
 
   public onNotify: ((resp: MESH_js_PA['response']) => void) | null = null;
+
+  private readonly MessageTypeID: number = 1 as const;
+  private readonly EventTypeID: number = 0 as const;
+  private response = { requestId: -1, proximity: -1, brightness: -1 };
 
   public notify(data: number[]): void {
     super.notify(data);

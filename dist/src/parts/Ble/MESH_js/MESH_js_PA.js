@@ -5,18 +5,10 @@ const MESH_js_Error_1 = require("./MESH_js_Error");
 class MESH_js_PA extends _1.MESH_js {
     constructor() {
         super(...arguments);
-        /**
-         * MessageTypeID
-         * command header
-         */
+        this.onNotify = null;
         this.MessageTypeID = 1;
-        /**
-         * EventTypeID
-         * command header
-         */
         this.EventTypeID = 0;
         this.response = { requestId: -1, proximity: -1, brightness: -1 };
-        this.onNotify = null;
     }
     notify(data) {
         super.notify(data);

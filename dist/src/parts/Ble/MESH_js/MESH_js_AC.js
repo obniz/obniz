@@ -85,7 +85,6 @@ class MESH_js_AC extends _1.MESH_js {
         this.accele.y = this.complemnt(256 * data[7] + data[6]) / BASE;
         this.accele.z = this.complemnt(256 * data[9] + data[8]) / BASE;
         return true;
-        // 922-1126
     }
     complemnt(val) {
         return val - (val > 32767 ? 65536 : 0);

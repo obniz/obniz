@@ -24,8 +24,8 @@ obniz.onconnect = async () => {
       // sampleBU(peripheral);
       // sampleAC(peripheral);
       // sampleLE(peripheral);
-      samplePA(peripheral);
-      // sampleTH(peripheral);
+      // samplePA(peripheral);
+      sampleTH(peripheral);
       // sampleMD(peripheral);
       // sampleGP(peripheral);
     };
@@ -168,9 +168,9 @@ async function sampleTH(peripheral) {
   console.log('obniz.ble.scan.onfind : ' + peripheral.localName + ' : ' + peripheral.rssi);
   const TH_block = new mesh_th(peripheral);
   await TH_block.connectWait();
-  TH_block.setMode(40, 10, 0, 50, 20, 1, 32);
+  TH_block.setMode(50, -10, 17, 100, 0, 17, 32, 15);
   TH_block.onNotify = ((response) => {
-    console.log('temp: ' + response.temperature + ', hum: ' + response.humidity);
+    console.log('ID: ' + response.request_id + ', temp: ' + response.temperature + ', hum: ' + response.humidity);
   });
 }
 

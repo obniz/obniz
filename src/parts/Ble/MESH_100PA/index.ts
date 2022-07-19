@@ -26,10 +26,10 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
   public static readonly PartsName = 'MESH_100PA';
   public static readonly _LocalName = 'MESH-100PA';
 
+  public static readonly NotifyType = MESH_js_PA.NotifyType;
+
   // event handler
   public onNotify: ((resp: MESH_js_PA['response']) => void) | null = null;
-
-  public static NotifyType = MESH_js_PA.NotifyType;
 
   protected readonly staticClass = MESH_100PA;
 

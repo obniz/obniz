@@ -27060,19 +27060,11 @@ class MESH_100GP extends MESH_1.MESH {
         this.writeWOResponse(_gp.parseSetVoutCommand(pin, request_id));
     }
     setDout(pin, request_id = 0) {
-<<<<<<< HEAD
         const _gp = this._mesh;
         this.writeWOResponse(_gp.parseSetDoutCommand(pin, request_id));
     }
     setPWM(pin, request_id = 0) {
         const _gp = this._mesh;
-=======
-        const _gp = this._mesh;
-        this.writeWOResponse(_gp.parseSetDoutCommand(pin, request_id));
-    }
-    setPWM(pin, request_id = 0) {
-        const _gp = this._mesh;
->>>>>>> a8042557d (gpio)
         this.writeWOResponse(_gp.parseSetPWMCommand(pin, request_id));
     }
     static _isMESHblock(name) {
@@ -27172,15 +27164,7 @@ class MESH_100LE extends MESH_1.MESH {
      * @param time 0 ~ 65535 [ms]
      * @param cycle_on 0 ~ 65535 [ms]
      * @param cycle_off 0 ~ 65535 [ms]
-<<<<<<< HEAD
-<<<<<<< HEAD
-     * @param pattern 1 or 2
-=======
      * @param pattern Pattern.Blink or Pattern.Soft
->>>>>>> a8042557d (gpio)
-=======
-     * @param pattern Pattern.Blink or Pattern.Soft
->>>>>>> a8042557d (gpio)
      * @returns
      */
     lightup(red, green, blue, time, cycle_on, cycle_off, pattern) {
@@ -27482,7 +27466,6 @@ class MESH_js_AC extends _1.MESH_js {
         this.accele.y = this.complemnt(256 * data[7] + data[6]) / BASE;
         this.accele.z = this.complemnt(256 * data[9] + data[8]) / BASE;
         return true;
-        // 922-1126
     }
     complemnt(val) {
         return val - (val > 32767 ? 65536 : 0);
@@ -27838,6 +27821,7 @@ MESH_js_LE.Pattern = { Blink: 1, Soft: 2 };
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const _1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
+const MESH_js_Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MESH_js_Error.js");
 class MESH_js_MD extends _1.MESH_js {
     constructor() {
         super(...arguments);
@@ -27876,16 +27860,21 @@ class MESH_js_MD extends _1.MESH_js {
     get getResponse() {
         return this.response;
     }
-    parseSetmodeCommand(detection_mode, detection_time = 500, response_time = 500, requestid = 0) {
-        if (detection_time < 200 || 60000 < detection_time) {
-            this.errorOutOfRange('detection_time (' + detection_time + ') must be 200 ~ 60000.');
-            return [];
+    parseSetmodeCommand(detection_mode, detection_time = 500, response_time = 500, request_id = 0) {
+        // Error Handle
+        const _DetectionTimeMin = 200;
+        const _DetectionTimeMax = 60000;
+        if (detection_time < _DetectionTimeMin ||
+            _DetectionTimeMax < detection_time) {
+            throw new MESH_js_Error_1.MESHOutOfRangeError('detection_time', _DetectionTimeMin, _DetectionTimeMax);
         }
-        if (response_time < 500 || 60000 < response_time) {
-            this.errorOutOfRange('response_time (' + response_time + ') must be 500 ~ 60000.');
-            return [];
+        const _ResponseTimeMin = 500;
+        const _ResponseTimeMax = 60000;
+        if (response_time < _ResponseTimeMin || _ResponseTimeMax < response_time) {
+            throw new MESH_js_Error_1.MESHOutOfRangeError('response_time', _ResponseTimeMin, _ResponseTimeMax);
         }
-        const HEADER = [this.MessageTypeID, this.EventTypeID, requestid];
+        // Generate Command
+        const HEADER = [this.MessageTypeID, this.EventTypeID, request_id];
         const BODY = [
             detection_mode,
             detection_time % 256,
@@ -27914,18 +27903,10 @@ const MESH_js_Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MESH_j
 class MESH_js_PA extends _1.MESH_js {
     constructor() {
         super(...arguments);
-        /**
-         * MessageTypeID
-         * command header
-         */
+        this.onNotify = null;
         this.MessageTypeID = 1;
-        /**
-         * EventTypeID
-         * command header
-         */
         this.EventTypeID = 0;
         this.response = { requestId: -1, proximity: -1, brightness: -1 };
-        this.onNotify = null;
     }
     notify(data) {
         super.notify(data);
@@ -27989,6 +27970,7 @@ MESH_js_PA.NotifyType = {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const _1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
+const MESH_js_Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MESH_js_Error.js");
 class MESH_js_TH extends _1.MESH_js {
     constructor() {
         super(...arguments);
@@ -28008,7 +27990,7 @@ class MESH_js_TH extends _1.MESH_js {
         this.MinTemperature = -10;
         this.MaxHumidity = 100;
         this.MinHumidity = 0;
-        this.response = { requestId: -1, temperature: -1, humidity: -1 };
+        this.response = { request_id: -1, temperature: -1, humidity: -1 };
     }
     notify(data) {
         super.notify(data);
@@ -28018,18 +28000,12 @@ class MESH_js_TH extends _1.MESH_js {
         if (data[1] !== this.EventTypeID) {
             return;
         }
-<<<<<<< HEAD
-        const temp = this.complemnt(256 * data[5] + data[4]) / 10;
+        this.response.request_id = data[2];
+        const _Byte = 256;
+        const temp = this.complemnt(_Byte * data[5] + data[4]) / 10;
         this.response.temperature = Math.min(Math.max(this.MinTemperature, temp), this.MaxTemperature);
-        const hum_ori = 256 * data[7] + data[6];
+        const hum_ori = _Byte * data[7] + data[6];
         this.response.humidity = Math.min(Math.max(this.MinHumidity, hum_ori), this.MaxHumidity);
-=======
-        const temp_ori = 256 * data[5] + data[4];
-        const temp = (temp_ori - (temp_ori > 32767 ? 65536 : 0)) / 10;
-        this.response.temperature = Math.min(Math.max(-10, temp), 50);
-        const hum_ori = 256 * data[7] + data[6];
-        this.response.humidity = Math.min(Math.max(0, hum_ori), 100);
->>>>>>> 4f948b4f8 (inp)
         if (typeof this.onNotify !== 'function') {
             return;
         }
@@ -28038,51 +28014,43 @@ class MESH_js_TH extends _1.MESH_js {
     get getResponse() {
         return this.response;
     }
-<<<<<<< HEAD
-    parseSetmodeCommand(temperature_range_upper, temperature_range_bottom, temperature_condition, humidity_range_upper, humidity_range_bottom, humidity_condision, type) {
-        const RequestID = 0;
-        const HEADER = [this.MessageTypeID, this.EventTypeID, RequestID];
+    parseSetmodeCommand(temperature_range_upper, temperature_range_bottom, temperature_condition, humidity_range_upper, humidity_range_bottom, humidity_condision, type, request_id = 0) {
+        // Error Handle
+        if (temperature_range_bottom < this.MinTemperature ||
+            this.MaxTemperature < temperature_range_upper) {
+            throw new MESH_js_Error_1.MESHOutOfRangeError('temperature_range', this.MinTemperature, this.MaxTemperature);
+        }
+        if (humidity_range_bottom < this.MinHumidity ||
+            this.MaxHumidity < humidity_range_upper) {
+            throw new MESH_js_Error_1.MESHOutOfRangeError('humidity_range', this.MinHumidity, this.MaxHumidity);
+        }
+        // Generate Command
+        const _HEADER = [this.MessageTypeID, this.EventTypeID, request_id];
         const TEMP_UPPER = this.num2array(10 * this.invcomplemnt(temperature_range_upper));
         const TEMP_BOTTOM = this.num2array(10 * this.invcomplemnt(temperature_range_bottom));
         const HUMI_UPPER = this.num2array(humidity_range_upper);
         const HUMI_BOTTOM = this.num2array(humidity_range_bottom);
-        const data = HEADER.concat(TEMP_UPPER)
+        const data = _HEADER
+            .concat(TEMP_UPPER)
             .concat(TEMP_BOTTOM)
             .concat(HUMI_UPPER)
             .concat(HUMI_BOTTOM)
             .concat([temperature_condition, humidity_condision, type]);
-=======
-    parseSetmodeCommand(temperature_range_upper, temperature_range_bottom, temperature_condition, humidity_range_upper, humidity_range_bottom, humidity_condision, type, request_id = 0) {
-        // Generate Command
-        const _HEADER = [this.MessageTypeID, this.EventTypeID, request_id];
-        const _Byte = 256;
-        const _BODY = [
-            (10 * temperature_range_upper) % _Byte,
-            Math.floor((10 * temperature_range_upper) / _Byte),
-            (10 * temperature_range_bottom) % _Byte,
-            Math.floor((10 * temperature_range_bottom) / _Byte),
-            humidity_range_upper % _Byte,
-            Math.floor(humidity_range_upper / _Byte),
-            humidity_range_bottom % _Byte,
-            Math.floor(humidity_range_bottom / _Byte),
-            temperature_condition,
-            humidity_condision,
-            type,
-        ];
-        const data = _HEADER.concat(_BODY);
->>>>>>> 4f948b4f8 (inp)
         data.push(this.checkSum(data));
         return data;
     }
     num2array(val) {
-        const _base = 256;
-        return [val % _base, Math.floor(val / _base)];
+        const _Byte = 256;
+        return [val % _Byte, Math.floor(val / _Byte)];
     }
     complemnt(val) {
-        return val - (val > 32767 ? 65536 : 0);
+        const _2Byte = 65536;
+        const _2ByteHalf = Math.floor(_2Byte / 2) - 1;
+        return val - (val > _2ByteHalf ? _2Byte : 0);
     }
     invcomplemnt(val) {
-        return val + (val < 0 ? 65536 : 0);
+        const _2Byte = 65536;
+        return val + (val < 0 ? _2Byte : 0);
     }
 }
 exports.MESH_js_TH = MESH_js_TH;
