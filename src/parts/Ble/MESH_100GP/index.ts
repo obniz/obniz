@@ -23,30 +23,29 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   public static readonly PartsName = 'MESH_100GP';
   public static readonly _LocalName = 'MESH-100GP';
 
+  public static readonly AnalogInputEventCondition =
+    MESH_js_GP.AnalogInputEventCondition;
+  public static readonly Mode = MESH_js_GP.Mode;
+  public static readonly Pin = MESH_js_GP.Pin;
+  public static readonly State = MESH_js_GP.State;
+  public static readonly VCC = MESH_js_GP.VCC;
+
   public readonly DigitalPins: MESH_js_GP['DigitalPins'] = (this
     ._mesh as MESH_js_GP).DigitalPins;
-  public AnalogInputEventCondition = () =>
-    (this._mesh as MESH_js_GP).AnalogInputEventCondition;
-  public readonly Pin: MESH_js_GP['Pin'] = (this._mesh as MESH_js_GP).Pin;
-  public Mode = () => (this._mesh as MESH_js_GP).Mode;
-  public State = () => (this._mesh as MESH_js_GP).State;
-  public VCC = () => (this._mesh as MESH_js_GP).VCC;
 
   // event handler
   public onDigitalInEventNotify:
     | ((pin: number, state: number) => void)
     | null = null;
-  public onAnalogInEventNotify:
-    | ((pin: number, type: number, threshold: number, level: number) => void)
-    | null = null;
+  public onAnalogInEventNotify: ((level: number) => void) | null = null;
   public onDigitalInNotify:
     | ((requestId: number, pin: number, state: number) => void)
     | null = null;
   public onAnalogInNotify:
-    | ((requestId: number, pin: number, state: number, mode: number) => void)
+    | ((requestId: number, state: number, mode: number) => void)
     | null = null;
   public onVOutNotify:
-    | ((requestId: number, pin: number, state: number) => void)
+    | ((requestId: number, state: number) => void)
     | null = null;
   public onDigitalOutNotify:
     | ((requestId: number, pin: number, state: number) => void)
@@ -66,6 +65,18 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     };
   }
 
+  /**
+   * setMode
+   *
+   * @param din {p1:boolean, p2:boolean, p3:boolean}
+   * @param din_notify {p1:boolean, p2:boolean, p3:boolean}
+   * @param dout {p1:boolean, p2:boolean, p3:boolean}
+   * @param pwm_ratio 0 ~ 255
+   * @param vcc VCC.AUTO or VCC.ON or VCC.OFF
+   * @param ain_range_upper 0.00 ~ 3.00[V], resolution 0.05[V]
+   * @param ain_range_bottom 0.00 ~ 3.00[V], resolution 0.05[V]
+   * @param ain_notify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+   */
   public setMode(
     din: MESH_100GP['DigitalPins'],
     din_notify: MESH_100GP['DigitalPins'],
@@ -131,16 +142,11 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
       this.onDigitalInEventNotify(pin, state);
     };
 
-    _gp.onAnalogInEventNotify = (
-      pin: number,
-      type: number,
-      threshold: number,
-      level: number
-    ) => {
+    _gp.onAnalogInEventNotify = (level: number) => {
       if (typeof this.onAnalogInEventNotify !== 'function') {
         return;
       }
-      this.onAnalogInEventNotify(pin, type, threshold, level);
+      this.onAnalogInEventNotify(level);
     };
 
     _gp.onDigitalInNotify = (requestId: number, pin: number, state: number) => {
@@ -150,23 +156,18 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
       this.onDigitalInNotify(requestId, pin, state);
     };
 
-    _gp.onAnalogInNotify = (
-      requestId: number,
-      pin: number,
-      state: number,
-      mode: number
-    ) => {
+    _gp.onAnalogInNotify = (requestId: number, state: number, mode: number) => {
       if (typeof this.onAnalogInNotify !== 'function') {
         return;
       }
-      this.onAnalogInNotify(requestId, pin, state, mode);
+      this.onAnalogInNotify(requestId, state, mode);
     };
 
-    _gp.onVOutNotify = (requestId: number, pin: number, state: number) => {
+    _gp.onVOutNotify = (requestId: number, state: number) => {
       if (typeof this.onVOutNotify !== 'function') {
         return;
       }
-      this.onVOutNotify(requestId, pin, state);
+      this.onVOutNotify(requestId, state);
     };
 
     _gp.onDigitalOutNotify = (

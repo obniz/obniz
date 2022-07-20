@@ -214,8 +214,8 @@ async function sampleGP(peripheral) {
   const _din_notify = {p1:false,p2:false,p3:true};
   const _dout = {p1:false,p2:false,p3:true};
   const _pwm = 200;
-  const _vcc = GP_block.VCC().ON;
-  const _condition = GP_block.AnalogInputEventCondition().InThreshold;
+  const _vcc = mesh_gp.VCC.ON;
+  const _condition = GP_block.AnalogInputEventCondition().BelowThreshold;
 
   GP_block.onPwmNotify = ((id, level) => {
     console.log('[PWM] id: ' + id + ', level: ' + level);
@@ -223,8 +223,8 @@ async function sampleGP(peripheral) {
   GP_block.onDigitalInEventNotify = ((pin, state) => {
     console.log('[Din] pin: ' + pin + ', state: ' + state);
   });
-  GP_block.onAnalogInEventNotify = ((type, threshold, level) => {
-    console.log('[Ain] type: ' + type + ', threshold: ' + threshold + ', level: ' + lovel);
+  GP_block.onAnalogInEventNotify = ((level) => {
+    console.log('[Ain] level: ' + level);
   });
   GP_block.onDigitalInNotify = ((pin, state) => {
     console.log('[DinState] pin: ' + pin + ', state: ' + state);

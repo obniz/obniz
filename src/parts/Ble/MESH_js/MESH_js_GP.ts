@@ -1,21 +1,19 @@
 import { MESH_js } from '.';
-import { MESHOutOfRangeError } from './MESH_js_Error';
+import { MESHInvalidValue, MESHOutOfRangeError } from './MESH_js_Error';
 export class MESH_js_GP extends MESH_js {
   // Event Handler
   public onDigitalInEventNotify:
     | ((pin: number, state: number) => void)
     | null = null;
-  public onAnalogInEventNotify:
-    | ((pin: number, type: number, threshold: number, level: number) => void)
-    | null = null;
+  public onAnalogInEventNotify: ((level: number) => void) | null = null;
   public onDigitalInNotify:
     | ((requestId: number, pin: number, state: number) => void)
     | null = null;
   public onAnalogInNotify:
-    | ((requestId: number, pin: number, state: number, mode: number) => void)
+    | ((requestId: number, state: number, mode: number) => void)
     | null = null;
   public onVOutNotify:
-    | ((requestId: number, pin: number, state: number) => void)
+    | ((requestId: number, state: number) => void)
     | null = null;
   public onDigitalOutNotify:
     | ((requestId: number, pin: number, state: number) => void)
@@ -24,19 +22,24 @@ export class MESH_js_GP extends MESH_js {
     | ((requestId: number, level: number) => void)
     | null = null;
 
-  public readonly VCC = { AUTO: 0, ON: 1, OFF: 2 } as const;
-  public readonly AnalogInputEventCondition = {
+  public static readonly AnalogInputEventCondition = {
     NotNotify: 0,
-    OverThreshold: 1,
-    InThreshold: 2,
+    AboveThreshold: 1,
+    BelowThreshold: 2,
   } as const;
-  public readonly Pin = { p1: 0, p2: 1, p3: 2 } as const;
-  public readonly Mode = { Always: 0, Once: 1, AlwaysAndOnce: 2 } as const;
-  public readonly State = { Low2High: 1, High2Low: 2 } as const;
+  public static readonly Mode = {
+    Always: 0,
+    Once: 1,
+    AlwaysAndOnce: 2,
+  } as const;
+  public static readonly Pin = { p1: 0, p2: 1, p3: 2 } as const;
+  public static readonly State = { Low2High: 1, High2Low: 2 } as const;
+  public static readonly VCC = { AUTO: 0, ON: 1, OFF: 2 } as const;
 
   public DigitalPins = { p1: false, p2: false, p3: false };
 
   private readonly MessageTypeID: number = 1 as const;
+
   private readonly DigitalInEventID: number = 0 as const;
   private readonly AnalogInEventID: number = 1 as const;
   private readonly DigitalInID: number = 2 as const;
@@ -45,6 +48,12 @@ export class MESH_js_GP extends MESH_js {
   private readonly DigitalOutID: number = 5 as const;
   private readonly PwmID: number = 6 as const;
 
+  /**
+   * notify
+   *
+   * @param data
+   * @returns
+   */
   public notify(data: number[]): void {
     super.notify(data);
     if (data[0] !== this.MessageTypeID) {
@@ -64,11 +73,8 @@ export class MESH_js_GP extends MESH_js {
         if (typeof this.onAnalogInEventNotify !== 'function') {
           return;
         }
-        const _pin = data[2];
-        const _type = data[3];
-        const _threshold = data[4];
         const _level = data[5];
-        this.onAnalogInEventNotify(_pin, _type, _threshold, _level);
+        this.onAnalogInEventNotify(_level);
         break;
       }
       case this.DigitalInID: {
@@ -86,10 +92,9 @@ export class MESH_js_GP extends MESH_js {
           return;
         }
         const _request_id = data[2];
-        const _pin = data[3];
         const _state = data[4];
         const _mode = data[5];
-        this.onAnalogInNotify(_request_id, _pin, _state, _mode);
+        this.onAnalogInNotify(_request_id, _state, _mode);
         break;
       }
       case this.VOutID: {
@@ -97,9 +102,8 @@ export class MESH_js_GP extends MESH_js {
           return;
         }
         const _request_id = data[2];
-        const _pin = data[3];
         const _state = data[4];
-        this.onVOutNotify(_request_id, _pin, _state);
+        this.onVOutNotify(_request_id, _state);
         break;
       }
       case this.DigitalOutID: {
@@ -127,15 +131,17 @@ export class MESH_js_GP extends MESH_js {
   }
 
   /**
+   * parseSetmodeCommand
    *
-   * @param din
-   * @param din_notify
-   * @param dout
-   * @param pwm_ratio
-   * @param ain_range_upper
-   * @param ain_range_bottom
-   * @param ain_notify
-   * @returns
+   * @param din {p1:boolean, p2:boolean, p3:boolean}
+   * @param din_notify {p1:boolean, p2:boolean, p3:boolean}
+   * @param dout {p1:boolean, p2:boolean, p3:boolean}
+   * @param pwm_ratio 0 ~ 255
+   * @param vcc VCC.AUTO or VCC.ON or VCC.OFF
+   * @param ain_range_upper 0.00 ~ 3.00[V], resolution 0.05[V]
+   * @param ain_range_bottom 0.00 ~ 3.00[V], resolution 0.05[V]
+   * @param ain_notify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+   * @returns command
    */
   public parseSetmodeCommand(
     din: MESH_js_GP['DigitalPins'],
@@ -152,6 +158,36 @@ export class MESH_js_GP extends MESH_js {
     const _PwmMax = 255 as const;
     if (pwm_ratio < _PwmMin || _PwmMax < pwm_ratio) {
       throw new MESHOutOfRangeError('pwm_ratio', _PwmMin, _PwmMax);
+    }
+    if (
+      vcc !== MESH_js_GP.VCC.AUTO &&
+      vcc !== MESH_js_GP.VCC.ON &&
+      vcc !== MESH_js_GP.VCC.OFF
+    ) {
+      throw new MESHInvalidValue('vcc');
+    }
+    const _AinRangeMin = 0 as const;
+    const _AinRangeMax = 3 as const;
+    if (ain_range_upper < _AinRangeMin || _AinRangeMax < ain_range_upper) {
+      throw new MESHOutOfRangeError(
+        'ain_range_upper',
+        _AinRangeMin,
+        _AinRangeMax
+      );
+    }
+    if (ain_range_bottom < _AinRangeMin || _AinRangeMax < ain_range_bottom) {
+      throw new MESHOutOfRangeError(
+        'ain_range_bottom',
+        _AinRangeMin,
+        _AinRangeMax
+      );
+    }
+    if (
+      ain_notify !== MESH_js_GP.AnalogInputEventCondition.NotNotify &&
+      ain_notify !== MESH_js_GP.AnalogInputEventCondition.AboveThreshold &&
+      ain_notify !== MESH_js_GP.AnalogInputEventCondition.BelowThreshold
+    ) {
+      throw new MESHInvalidValue('ain_notify');
     }
 
     // Generate Command
@@ -172,24 +208,58 @@ export class MESH_js_GP extends MESH_js {
     return data;
   }
 
+  /**
+   * parseSetDinCommand
+   *
+   * @param pin
+   * @param requestId
+   * @returns
+   */
   public parseSetDinCommand(pin: number, requestId = 0) {
     return this._parseSetCommand(this.DigitalInID, pin, requestId);
   }
 
+  /**
+   * parseSetAinCommand
+   *
+   * @param mode
+   * @param requestId
+   * @returns
+   */
   public parseSetAinCommand(mode: number, requestId = 0) {
     return this._parseSetCommand(this.AnalogInID, mode, requestId);
   }
 
+  /**
+   * parseSetVoutCommand
+   *
+   * @param pin
+   * @param requestId
+   * @returns
+   */
   public parseSetVoutCommand(pin: number, requestId = 0) {
     return this._parseSetCommand(this.VOutID, pin, requestId);
   }
 
+  /**
+   * parseSetDoutCommand
+   *
+   * @param pin
+   * @param requestId
+   * @returns
+   */
   public parseSetDoutCommand(pin: number, requestId = 0) {
     return this._parseSetCommand(this.DigitalOutID, pin, requestId);
   }
 
+  /**
+   * parseSetPWMCommand
+   *
+   * @param requestId
+   * @returns
+   */
   public parseSetPWMCommand(requestId = 0) {
-    return this._parseSetCommand(this.PwmID, this.Pin.p3, requestId);
+    return this._parseSetCommand(this.PwmID, MESH_js_GP.Pin.p3, requestId);
   }
 
   private _parseSetCommand(

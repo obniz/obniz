@@ -74,12 +74,13 @@ export class MESH_js_MD extends MESH_js {
 
     // Generate Command
     const HEADER = [this.MessageTypeID, this.EventTypeID, request_id] as const;
+    const _Byte = 256 as const;
     const BODY = [
       detection_mode,
-      detection_time % 256,
-      Math.floor(detection_time / 256),
-      response_time % 256,
-      Math.floor(response_time / 256),
+      detection_time % _Byte,
+      Math.floor(detection_time / _Byte),
+      response_time % _Byte,
+      Math.floor(response_time / _Byte),
     ] as const;
     const data: number[] = HEADER.concat(BODY);
     data.push(this.checkSum(data));

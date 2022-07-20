@@ -13,11 +13,6 @@ class MESH_100GP extends MESH_1.MESH {
         super(...arguments);
         this.DigitalPins = this
             ._mesh.DigitalPins;
-        this.AnalogInputEventCondition = () => this._mesh.AnalogInputEventCondition;
-        this.Pin = this._mesh.Pin;
-        this.Mode = () => this._mesh.Mode;
-        this.State = () => this._mesh.State;
-        this.VCC = () => this._mesh.VCC;
         // event handler
         this.onDigitalInEventNotify = null;
         this.onAnalogInEventNotify = null;
@@ -36,6 +31,18 @@ class MESH_100GP extends MESH_1.MESH {
             battery: this._mesh.battery,
         };
     }
+    /**
+     * setMode
+     *
+     * @param din {p1:boolean, p2:boolean, p3:boolean}
+     * @param din_notify {p1:boolean, p2:boolean, p3:boolean}
+     * @param dout {p1:boolean, p2:boolean, p3:boolean}
+     * @param pwm_ratio 0 ~ 255
+     * @param vcc VCC.AUTO or VCC.ON or VCC.OFF
+     * @param ain_range_upper 0.00 ~ 3.00[V], resolution 0.05[V]
+     * @param ain_range_bottom 0.00 ~ 3.00[V], resolution 0.05[V]
+     * @param ain_notify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+     */
     setMode(din, din_notify, dout, pwm_ratio, vcc, ain_range_upper, ain_range_bottom, ain_notify) {
         const _gp = this._mesh;
         this.writeWOResponse(_gp.parseSetmodeCommand(din, din_notify, dout, pwm_ratio, vcc, ain_range_upper, ain_range_bottom, ain_notify));
@@ -72,11 +79,11 @@ class MESH_100GP extends MESH_1.MESH {
             }
             this.onDigitalInEventNotify(pin, state);
         };
-        _gp.onAnalogInEventNotify = (pin, type, threshold, level) => {
+        _gp.onAnalogInEventNotify = (level) => {
             if (typeof this.onAnalogInEventNotify !== 'function') {
                 return;
             }
-            this.onAnalogInEventNotify(pin, type, threshold, level);
+            this.onAnalogInEventNotify(level);
         };
         _gp.onDigitalInNotify = (requestId, pin, state) => {
             if (typeof this.onDigitalInNotify !== 'function') {
@@ -84,17 +91,17 @@ class MESH_100GP extends MESH_1.MESH {
             }
             this.onDigitalInNotify(requestId, pin, state);
         };
-        _gp.onAnalogInNotify = (requestId, pin, state, mode) => {
+        _gp.onAnalogInNotify = (requestId, state, mode) => {
             if (typeof this.onAnalogInNotify !== 'function') {
                 return;
             }
-            this.onAnalogInNotify(requestId, pin, state, mode);
+            this.onAnalogInNotify(requestId, state, mode);
         };
-        _gp.onVOutNotify = (requestId, pin, state) => {
+        _gp.onVOutNotify = (requestId, state) => {
             if (typeof this.onVOutNotify !== 'function') {
                 return;
             }
-            this.onVOutNotify(requestId, pin, state);
+            this.onVOutNotify(requestId, state);
         };
         _gp.onDigitalOutNotify = (requestId, pin, state) => {
             if (typeof this.onDigitalOutNotify !== 'function') {
@@ -117,3 +124,8 @@ class MESH_100GP extends MESH_1.MESH {
 exports.default = MESH_100GP;
 MESH_100GP.PartsName = 'MESH_100GP';
 MESH_100GP._LocalName = 'MESH-100GP';
+MESH_100GP.AnalogInputEventCondition = MESH_js_GP_1.MESH_js_GP.AnalogInputEventCondition;
+MESH_100GP.Mode = MESH_js_GP_1.MESH_js_GP.Mode;
+MESH_100GP.Pin = MESH_js_GP_1.MESH_js_GP.Pin;
+MESH_100GP.State = MESH_js_GP_1.MESH_js_GP.State;
+MESH_100GP.VCC = MESH_js_GP_1.MESH_js_GP.VCC;
