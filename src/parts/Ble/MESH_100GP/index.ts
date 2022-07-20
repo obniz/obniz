@@ -25,32 +25,34 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
 
   public readonly DigitalPins: MESH_js_GP['DigitalPins'] = (this
     ._mesh as MESH_js_GP).DigitalPins;
-  public readonly VCC: MESH_js_GP['VCC'] = (this._mesh as MESH_js_GP).VCC;
-  public readonly AnalogInputEvent: MESH_js_GP['AnalogInputEvent'] = (this
-    ._mesh as MESH_js_GP).AnalogInputEvent;
+  public AnalogInputEventCondition = () =>
+    (this._mesh as MESH_js_GP).AnalogInputEventCondition;
   public readonly Pin: MESH_js_GP['Pin'] = (this._mesh as MESH_js_GP).Pin;
-  public readonly Mode: MESH_js_GP['Mode'] = (this._mesh as MESH_js_GP).Mode;
-  public readonly State: MESH_js_GP['State'] = (this._mesh as MESH_js_GP).State;
+  public Mode = () => (this._mesh as MESH_js_GP).Mode;
+  public State = () => (this._mesh as MESH_js_GP).State;
+  public VCC = () => (this._mesh as MESH_js_GP).VCC;
 
   // event handler
-  public onDinEvent: ((pin: number, state: number) => void) | null = null;
-  public onAinEvent:
+  public onDigitalInEventNotify:
+    | ((pin: number, state: number) => void)
+    | null = null;
+  public onAnalogInEventNotify:
     | ((pin: number, type: number, threshold: number, level: number) => void)
     | null = null;
-  public onDinState:
+  public onDigitalInNotify:
     | ((requestId: number, pin: number, state: number) => void)
     | null = null;
-  public onAinState:
+  public onAnalogInNotify:
     | ((requestId: number, pin: number, state: number, mode: number) => void)
     | null = null;
-  public onVoutState:
+  public onVOutNotify:
     | ((requestId: number, pin: number, state: number) => void)
     | null = null;
-  public onDoutState:
+  public onDigitalOutNotify:
     | ((requestId: number, pin: number, state: number) => void)
     | null = null;
-  public onPWMoutState:
-    | ((requestId: number, pin: number, level: number) => void)
+  public onPwmNotify:
+    | ((requestId: number, level: number) => void)
     | null = null;
 
   protected readonly staticClass = MESH_100GP;
@@ -109,9 +111,9 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     this.writeWOResponse(_gp.parseSetDoutCommand(pin, request_id));
   }
 
-  public setPWM(pin: number, request_id = 0) {
+  public setPWMNotify(request_id = 0) {
     const _gp = this._mesh as MESH_js_GP;
-    this.writeWOResponse(_gp.parseSetPWMCommand(pin, request_id));
+    this.writeWOResponse(_gp.parseSetPWMCommand(request_id));
   }
 
   protected static _isMESHblock(name: string): boolean {
@@ -122,63 +124,67 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     this._mesh = new MESH_js_GP();
     const _gp = this._mesh as MESH_js_GP;
 
-    _gp.onDinEvent = (pin: number, state: number) => {
-      if (typeof this.onDinEvent !== 'function') {
+    _gp.onDigitalInEventNotify = (pin: number, state: number) => {
+      if (typeof this.onDigitalInEventNotify !== 'function') {
         return;
       }
-      this.onDinEvent(pin, state);
+      this.onDigitalInEventNotify(pin, state);
     };
 
-    _gp.onAinEvent = (
+    _gp.onAnalogInEventNotify = (
       pin: number,
       type: number,
       threshold: number,
       level: number
     ) => {
-      if (typeof this.onAinEvent !== 'function') {
+      if (typeof this.onAnalogInEventNotify !== 'function') {
         return;
       }
-      this.onAinEvent(pin, type, threshold, level);
+      this.onAnalogInEventNotify(pin, type, threshold, level);
     };
 
-    _gp.onDinState = (requestId: number, pin: number, state: number) => {
-      if (typeof this.onDinState !== 'function') {
+    _gp.onDigitalInNotify = (requestId: number, pin: number, state: number) => {
+      if (typeof this.onDigitalInNotify !== 'function') {
         return;
       }
-      this.onDinState(requestId, pin, state);
+      this.onDigitalInNotify(requestId, pin, state);
     };
 
-    _gp.onAinState = (
+    _gp.onAnalogInNotify = (
       requestId: number,
       pin: number,
       state: number,
       mode: number
     ) => {
-      if (typeof this.onAinState !== 'function') {
+      if (typeof this.onAnalogInNotify !== 'function') {
         return;
       }
-      this.onAinState(requestId, pin, state, mode);
+      this.onAnalogInNotify(requestId, pin, state, mode);
     };
 
-    _gp.onVoutState = (requestId: number, pin: number, state: number) => {
-      if (typeof this.onVoutState !== 'function') {
+    _gp.onVOutNotify = (requestId: number, pin: number, state: number) => {
+      if (typeof this.onVOutNotify !== 'function') {
         return;
       }
-      this.onVoutState(requestId, pin, state);
+      this.onVOutNotify(requestId, pin, state);
     };
 
-    _gp.onDoutState = (requestId: number, pin: number, state: number) => {
-      if (typeof this.onDoutState !== 'function') {
+    _gp.onDigitalOutNotify = (
+      requestId: number,
+      pin: number,
+      state: number
+    ) => {
+      if (typeof this.onDigitalOutNotify !== 'function') {
         return;
       }
-      this.onDoutState(requestId, pin, state);
+      this.onDigitalOutNotify(requestId, pin, state);
     };
 
-    _gp.onPWMoutState = (requestId: number, pin: number, level: number) => {
-      if (typeof this.onPWMoutState !== 'function') {
+    _gp.onPwmNotify = (requestId: number, level: number) => {
+      if (typeof this.onPwmNotify !== 'function') {
         return;
       }
-      this.onPWMoutState(requestId, pin, level);
+      this.onPwmNotify(requestId, level);
     };
 
     super.prepareConnect();

@@ -1,7 +1,7 @@
 import { MESH_js } from '.';
 import { MESHInvalidValue, MESHOutOfRangeError } from './MESH_js_Error';
 export class MESH_js_PA extends MESH_js {
-  public static NotifyType = {
+  public static readonly NotifyType = {
     UpdateProximity: 4,
     UpdateBrightness: 8,
     Once: 16,

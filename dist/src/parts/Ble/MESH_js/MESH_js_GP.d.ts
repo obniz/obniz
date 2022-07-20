@@ -1,49 +1,49 @@
 import { MESH_js } from '.';
 export declare class MESH_js_GP extends MESH_js {
-    onDinEvent: ((pin: number, state: number) => void) | null;
-    onAinEvent: ((pin: number, type: number, threshold: number, level: number) => void) | null;
-    onDinState: ((requestId: number, pin: number, state: number) => void) | null;
-    onAinState: ((requestId: number, pin: number, state: number, mode: number) => void) | null;
-    onVoutState: ((requestId: number, pin: number, state: number) => void) | null;
-    onDoutState: ((requestId: number, pin: number, state: number) => void) | null;
-    onPWMoutState: ((requestId: number, pin: number, level: number) => void) | null;
-    private readonly MessageTypeID;
-    private readonly DinEventID;
-    private readonly AinEventID;
-    private readonly DinStateID;
-    private readonly AinStateID;
-    private readonly VoutStateID;
-    private readonly DoutStateID;
-    private readonly PWMoutStateID;
+    onDigitalInEventNotify: ((pin: number, state: number) => void) | null;
+    onAnalogInEventNotify: ((pin: number, type: number, threshold: number, level: number) => void) | null;
+    onDigitalInNotify: ((requestId: number, pin: number, state: number) => void) | null;
+    onAnalogInNotify: ((requestId: number, pin: number, state: number, mode: number) => void) | null;
+    onVOutNotify: ((requestId: number, pin: number, state: number) => void) | null;
+    onDigitalOutNotify: ((requestId: number, pin: number, state: number) => void) | null;
+    onPwmNotify: ((requestId: number, level: number) => void) | null;
     readonly VCC: {
-        AUTO: number;
-        ON: number;
-        OFF: number;
+        readonly AUTO: 0;
+        readonly ON: 1;
+        readonly OFF: 2;
     };
-    readonly AnalogInputEvent: {
-        NotNotify: number;
-        OverThreshold: number;
-        InThreshold: number;
+    readonly AnalogInputEventCondition: {
+        readonly NotNotify: 0;
+        readonly OverThreshold: 1;
+        readonly InThreshold: 2;
     };
     readonly Pin: {
-        p1: number;
-        p2: number;
-        p3: number;
+        readonly p1: 0;
+        readonly p2: 1;
+        readonly p3: 2;
     };
     readonly Mode: {
-        Always: number;
-        Once: number;
-        AlwaysAndOnce: number;
+        readonly Always: 0;
+        readonly Once: 1;
+        readonly AlwaysAndOnce: 2;
     };
     readonly State: {
-        Low2High: number;
-        High2Low: number;
+        readonly Low2High: 1;
+        readonly High2Low: 2;
     };
     DigitalPins: {
         p1: boolean;
         p2: boolean;
         p3: boolean;
     };
+    private readonly MessageTypeID;
+    private readonly DigitalInEventID;
+    private readonly AnalogInEventID;
+    private readonly DigitalInID;
+    private readonly AnalogInID;
+    private readonly VOutID;
+    private readonly DigitalOutID;
+    private readonly PwmID;
     notify(data: number[]): void;
     /**
      *
@@ -61,6 +61,7 @@ export declare class MESH_js_GP extends MESH_js {
     parseSetAinCommand(mode: number, requestId?: number): number[];
     parseSetVoutCommand(pin: number, requestId?: number): number[];
     parseSetDoutCommand(pin: number, requestId?: number): number[];
-    parseSetPWMCommand(pin: number, requestId?: number): number[];
+    parseSetPWMCommand(requestId?: number): number[];
     private _parseSetCommand;
+    private pin2num;
 }

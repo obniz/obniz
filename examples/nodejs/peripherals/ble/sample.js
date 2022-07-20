@@ -9,7 +9,7 @@ const mesh_th = Obniz.getPartsClass('MESH_100TH');
 const mesh_md = Obniz.getPartsClass('MESH_100MD');
 const mesh_gp = Obniz.getPartsClass('MESH_100GP');
 
-const obnizId = '00000000';
+const obnizId = '87287267';
 
 const obniz = new Obniz(obnizId, {
   access_token: null,
@@ -25,9 +25,9 @@ obniz.onconnect = async () => {
       // sampleAC(peripheral);
       // sampleLE(peripheral);
       // samplePA(peripheral);
-      sampleTH(peripheral);
+      // sampleTH(peripheral);
       // sampleMD(peripheral);
-      // sampleGP(peripheral);
+      sampleGP(peripheral);
     };
     await obniz.ble.scan.startWait();
   } catch (e) {
@@ -168,10 +168,18 @@ async function sampleTH(peripheral) {
   console.log('obniz.ble.scan.onfind : ' + peripheral.localName + ' : ' + peripheral.rssi);
   const TH_block = new mesh_th(peripheral);
   await TH_block.connectWait();
-  TH_block.setMode(50, -10, 17, 100, 0, 17, 32, 15);
+
   TH_block.onNotify = ((response) => {
     console.log('ID: ' + response.request_id + ', temp: ' + response.temperature + ', hum: ' + response.humidity);
   });
+
+  const _temp_upper = 50;
+  const _temp_bottom = -10;
+  const _humi_upper = 100;
+  const _humi_bottom = 0;
+  const _request_id = 15;
+  const _notify_type = mesh_th.NotifyType.Once + mesh_th.NotifyType.Always;
+  TH_block.setMode(_temp_upper, _temp_bottom, 17, _humi_upper, _humi_bottom, 17, _notify_type, _request_id);
 }
 
 var MD_block = null;
@@ -192,4 +200,44 @@ async function sampleMD(peripheral) {
 async function getDataMD() {
   const res = await MD_block.getDataWait();
   console.log(res);
+}
+
+async function sampleGP(peripheral) {
+  if (!mesh_gp.isMESHblock(peripheral)) {
+    return;
+  }
+  console.log('obniz.ble.scan.onfind : ' + peripheral.localName + ' : ' + peripheral.rssi);
+  const GP_block = new mesh_gp(peripheral);
+  await GP_block.connectWait();
+
+  const _din = {p1:false,p2:false,p3:true};
+  const _din_notify = {p1:false,p2:false,p3:true};
+  const _dout = {p1:false,p2:false,p3:true};
+  const _pwm = 200;
+  const _vcc = GP_block.VCC().ON;
+  const _condition = GP_block.AnalogInputEventCondition().InThreshold;
+
+  GP_block.onPwmNotify = ((id, level) => {
+    console.log('[PWM] id: ' + id + ', level: ' + level);
+  });
+  GP_block.onDigitalInEventNotify = ((pin, state) => {
+    console.log('[Din] pin: ' + pin + ', state: ' + state);
+  });
+  GP_block.onAnalogInEventNotify = ((type, threshold, level) => {
+    console.log('[Ain] type: ' + type + ', threshold: ' + threshold + ', level: ' + lovel);
+  });
+  GP_block.onDigitalInNotify = ((pin, state) => {
+    console.log('[DinState] pin: ' + pin + ', state: ' + state);
+  });
+
+  let _count = 0;
+  setInterval(()=>{
+    if (_count % 2 == 0) {
+      GP_block.setMode(_din, _din_notify, _dout, _pwm, _vcc, 0, 0, _condition);
+    } else {
+      GP_block.setMode(_din, _din_notify, _dout, 0, _vcc, 0, 0, _condition);
+    }
+    GP_block.setPWMNotify(_count);
+    _count ++;
+  },1500);
 }

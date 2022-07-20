@@ -27019,20 +27019,19 @@ class MESH_100GP extends MESH_1.MESH {
         super(...arguments);
         this.DigitalPins = this
             ._mesh.DigitalPins;
-        this.VCC = this._mesh.VCC;
-        this.AnalogInputEvent = this
-            ._mesh.AnalogInputEvent;
+        this.AnalogInputEventCondition = () => this._mesh.AnalogInputEventCondition;
         this.Pin = this._mesh.Pin;
-        this.Mode = this._mesh.Mode;
-        this.State = this._mesh.State;
+        this.Mode = () => this._mesh.Mode;
+        this.State = () => this._mesh.State;
+        this.VCC = () => this._mesh.VCC;
         // event handler
-        this.onDinEvent = null;
-        this.onAinEvent = null;
-        this.onDinState = null;
-        this.onAinState = null;
-        this.onVoutState = null;
-        this.onDoutState = null;
-        this.onPWMoutState = null;
+        this.onDigitalInEventNotify = null;
+        this.onAnalogInEventNotify = null;
+        this.onDigitalInNotify = null;
+        this.onAnalogInNotify = null;
+        this.onVOutNotify = null;
+        this.onDigitalOutNotify = null;
+        this.onPwmNotify = null;
         this.staticClass = MESH_100GP;
     }
     async getDataWait() {
@@ -27063,9 +27062,9 @@ class MESH_100GP extends MESH_1.MESH {
         const _gp = this._mesh;
         this.writeWOResponse(_gp.parseSetDoutCommand(pin, request_id));
     }
-    setPWM(pin, request_id = 0) {
+    setPWMNotify(request_id = 0) {
         const _gp = this._mesh;
-        this.writeWOResponse(_gp.parseSetPWMCommand(pin, request_id));
+        this.writeWOResponse(_gp.parseSetPWMCommand(request_id));
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100GP._LocalName) !== -1;
@@ -27073,47 +27072,47 @@ class MESH_100GP extends MESH_1.MESH {
     prepareConnect() {
         this._mesh = new MESH_js_GP_1.MESH_js_GP();
         const _gp = this._mesh;
-        _gp.onDinEvent = (pin, state) => {
-            if (typeof this.onDinEvent !== 'function') {
+        _gp.onDigitalInEventNotify = (pin, state) => {
+            if (typeof this.onDigitalInEventNotify !== 'function') {
                 return;
             }
-            this.onDinEvent(pin, state);
+            this.onDigitalInEventNotify(pin, state);
         };
-        _gp.onAinEvent = (pin, type, threshold, level) => {
-            if (typeof this.onAinEvent !== 'function') {
+        _gp.onAnalogInEventNotify = (pin, type, threshold, level) => {
+            if (typeof this.onAnalogInEventNotify !== 'function') {
                 return;
             }
-            this.onAinEvent(pin, type, threshold, level);
+            this.onAnalogInEventNotify(pin, type, threshold, level);
         };
-        _gp.onDinState = (requestId, pin, state) => {
-            if (typeof this.onDinState !== 'function') {
+        _gp.onDigitalInNotify = (requestId, pin, state) => {
+            if (typeof this.onDigitalInNotify !== 'function') {
                 return;
             }
-            this.onDinState(requestId, pin, state);
+            this.onDigitalInNotify(requestId, pin, state);
         };
-        _gp.onAinState = (requestId, pin, state, mode) => {
-            if (typeof this.onAinState !== 'function') {
+        _gp.onAnalogInNotify = (requestId, pin, state, mode) => {
+            if (typeof this.onAnalogInNotify !== 'function') {
                 return;
             }
-            this.onAinState(requestId, pin, state, mode);
+            this.onAnalogInNotify(requestId, pin, state, mode);
         };
-        _gp.onVoutState = (requestId, pin, state) => {
-            if (typeof this.onVoutState !== 'function') {
+        _gp.onVOutNotify = (requestId, pin, state) => {
+            if (typeof this.onVOutNotify !== 'function') {
                 return;
             }
-            this.onVoutState(requestId, pin, state);
+            this.onVOutNotify(requestId, pin, state);
         };
-        _gp.onDoutState = (requestId, pin, state) => {
-            if (typeof this.onDoutState !== 'function') {
+        _gp.onDigitalOutNotify = (requestId, pin, state) => {
+            if (typeof this.onDigitalOutNotify !== 'function') {
                 return;
             }
-            this.onDoutState(requestId, pin, state);
+            this.onDigitalOutNotify(requestId, pin, state);
         };
-        _gp.onPWMoutState = (requestId, pin, level) => {
-            if (typeof this.onPWMoutState !== 'function') {
+        _gp.onPwmNotify = (requestId, level) => {
+            if (typeof this.onPwmNotify !== 'function') {
                 return;
             }
-            this.onPWMoutState(requestId, pin, level);
+            this.onPwmNotify(requestId, level);
         };
         super.prepareConnect();
     }
@@ -27346,9 +27345,9 @@ class MESH_100TH extends MESH_1.MESH {
             humidity: _th.getResponse.humidity,
         };
     }
-    setMode(temperature_upper, temperature_bottom, temperature_condition, humidity_upper, humidity_bottom, humidity_condision, type) {
+    setMode(temperature_upper, temperature_bottom, temperature_condition, humidity_upper, humidity_bottom, humidity_condision, type, request_id = 0) {
         const _th = this._mesh;
-        this.writeWOResponse(_th.parseSetmodeCommand(temperature_upper, temperature_bottom, humidity_upper, humidity_bottom, temperature_condition, humidity_condision, type));
+        this.writeWOResponse(_th.parseSetmodeCommand(temperature_upper, temperature_bottom, humidity_upper, humidity_bottom, temperature_condition, humidity_condision, type, request_id));
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100TH._LocalName) !== -1;
@@ -27371,6 +27370,7 @@ class MESH_100TH extends MESH_1.MESH {
 exports.default = MESH_100TH;
 MESH_100TH.PartsName = 'MESH_100TH';
 MESH_100TH._LocalName = 'MESH-100TH';
+MESH_100TH.NotifyType = MESH_js_TH_1.MESH_js_TH.NotifyType;
 
 
 /***/ }),
@@ -27576,26 +27576,20 @@ exports.MESHInvalidValue = MESHInvalidValue;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const _1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
+const MESH_js_Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MESH_js_Error.js");
 class MESH_js_GP extends _1.MESH_js {
     constructor() {
         super(...arguments);
-        this.onDinEvent = null;
-        this.onAinEvent = null;
-        this.onDinState = null;
-        this.onAinState = null;
-        this.onVoutState = null;
-        this.onDoutState = null;
-        this.onPWMoutState = null;
-        this.MessageTypeID = 1;
-        this.DinEventID = 0;
-        this.AinEventID = 1;
-        this.DinStateID = 2;
-        this.AinStateID = 3;
-        this.VoutStateID = 4;
-        this.DoutStateID = 5;
-        this.PWMoutStateID = 6;
+        // Event Handler
+        this.onDigitalInEventNotify = null;
+        this.onAnalogInEventNotify = null;
+        this.onDigitalInNotify = null;
+        this.onAnalogInNotify = null;
+        this.onVOutNotify = null;
+        this.onDigitalOutNotify = null;
+        this.onPwmNotify = null;
         this.VCC = { AUTO: 0, ON: 1, OFF: 2 };
-        this.AnalogInputEvent = {
+        this.AnalogInputEventCondition = {
             NotNotify: 0,
             OverThreshold: 1,
             InThreshold: 2,
@@ -27604,6 +27598,14 @@ class MESH_js_GP extends _1.MESH_js {
         this.Mode = { Always: 0, Once: 1, AlwaysAndOnce: 2 };
         this.State = { Low2High: 1, High2Low: 2 };
         this.DigitalPins = { p1: false, p2: false, p3: false };
+        this.MessageTypeID = 1;
+        this.DigitalInEventID = 0;
+        this.AnalogInEventID = 1;
+        this.DigitalInID = 2;
+        this.AnalogInID = 3;
+        this.VOutID = 4;
+        this.DigitalOutID = 5;
+        this.PwmID = 6;
     }
     notify(data) {
         super.notify(data);
@@ -27611,75 +27613,74 @@ class MESH_js_GP extends _1.MESH_js {
             return;
         }
         switch (data[1]) {
-            case this.DinEventID: {
-                if (typeof this.onDinEvent !== 'function') {
+            case this.DigitalInEventID: {
+                if (typeof this.onDigitalInEventNotify !== 'function') {
                     return;
                 }
                 const _pin = data[2];
                 const _state = data[3];
-                this.onDinEvent(_pin, _state);
+                this.onDigitalInEventNotify(_pin, _state);
                 break;
             }
-            case this.AinEventID: {
-                if (typeof this.onAinEvent !== 'function') {
+            case this.AnalogInEventID: {
+                if (typeof this.onAnalogInEventNotify !== 'function') {
                     return;
                 }
                 const _pin = data[2];
                 const _type = data[3];
                 const _threshold = data[4];
                 const _level = data[5];
-                this.onAinEvent(_pin, _type, _threshold, _level);
+                this.onAnalogInEventNotify(_pin, _type, _threshold, _level);
                 break;
             }
-            case this.DinStateID: {
-                if (typeof this.onDinState !== 'function') {
+            case this.DigitalInID: {
+                if (typeof this.onDigitalInNotify !== 'function') {
                     return;
                 }
                 const _request_id = data[2];
                 const _pin = data[3];
                 const _state = data[4];
-                this.onDinState(_request_id, _pin, _state);
+                this.onDigitalInNotify(_request_id, _pin, _state);
                 break;
             }
-            case this.AinStateID: {
-                if (typeof this.onAinState !== 'function') {
+            case this.AnalogInID: {
+                if (typeof this.onAnalogInNotify !== 'function') {
                     return;
                 }
                 const _request_id = data[2];
                 const _pin = data[3];
                 const _state = data[4];
                 const _mode = data[5];
-                this.onAinState(_request_id, _pin, _state, _mode);
+                this.onAnalogInNotify(_request_id, _pin, _state, _mode);
                 break;
             }
-            case this.VoutStateID: {
-                if (typeof this.onVoutState !== 'function') {
+            case this.VOutID: {
+                if (typeof this.onVOutNotify !== 'function') {
                     return;
                 }
                 const _request_id = data[2];
                 const _pin = data[3];
                 const _state = data[4];
-                this.onVoutState(_request_id, _pin, _state);
+                this.onVOutNotify(_request_id, _pin, _state);
                 break;
             }
-            case this.DoutStateID: {
-                if (typeof this.onDoutState !== 'function') {
+            case this.DigitalOutID: {
+                if (typeof this.onDigitalOutNotify !== 'function') {
                     return;
                 }
                 const _request_id = data[2];
                 const _pin = data[3];
                 const _state = data[4];
-                this.onDoutState(_request_id, _pin, _state);
+                this.onDigitalOutNotify(_request_id, _pin, _state);
                 break;
             }
-            case this.PWMoutStateID: {
-                if (typeof this.onPWMoutState !== 'function') {
+            case this.PwmID: {
+                if (typeof this.onPwmNotify !== 'function') {
                     return;
                 }
                 const _request_id = data[2];
-                const _pin = data[3];
                 const _level = data[4];
-                this.onPWMoutState(_request_id, _pin, _level);
+                this.onPwmNotify(_request_id, _level);
                 break;
             }
             default:
@@ -27698,17 +27699,18 @@ class MESH_js_GP extends _1.MESH_js {
      * @returns
      */
     parseSetmodeCommand(din, din_notify, dout, pwm_ratio, vcc, ain_range_upper, ain_range_bottom, ain_notify) {
-        if (pwm_ratio < 0 || 255 < pwm_ratio) {
-            this.errorOutOfRange('PWM ratio (' + pwm_ratio + ') must be 0 ~ 255.');
-            return [];
+        // Error Handle
+        const _PwmMin = 0;
+        const _PwmMax = 255;
+        if (pwm_ratio < _PwmMin || _PwmMax < pwm_ratio) {
+            throw new MESH_js_Error_1.MESHOutOfRangeError('pwm_ratio', _PwmMin, _PwmMax);
         }
+        // Generate Command
         const HEADER = [this.MessageTypeID, 1];
         const BODY = [
-            (din.p1 ? 1 : 0) + (din.p2 ? 2 : 0) + (din.p3 ? 4 : 0),
-            (din_notify.p1 ? 1 : 0) +
-                (din_notify.p2 ? 2 : 0) +
-                (din_notify.p3 ? 4 : 0),
-            (dout.p1 ? 1 : 0) + (dout.p2 ? 2 : 0) + (dout.p3 ? 4 : 0),
+            this.pin2num(din),
+            this.pin2num(din_notify),
+            this.pin2num(dout),
             pwm_ratio,
             vcc,
             ain_range_upper,
@@ -27720,25 +27722,28 @@ class MESH_js_GP extends _1.MESH_js {
         return data;
     }
     parseSetDinCommand(pin, requestId = 0) {
-        return this._parseSetCommand(this.DinStateID, pin, requestId);
+        return this._parseSetCommand(this.DigitalInID, pin, requestId);
     }
     parseSetAinCommand(mode, requestId = 0) {
-        return this._parseSetCommand(this.AinStateID, mode, requestId);
+        return this._parseSetCommand(this.AnalogInID, mode, requestId);
     }
     parseSetVoutCommand(pin, requestId = 0) {
-        return this._parseSetCommand(this.VoutStateID, pin, requestId);
+        return this._parseSetCommand(this.VOutID, pin, requestId);
     }
     parseSetDoutCommand(pin, requestId = 0) {
-        return this._parseSetCommand(this.DoutStateID, pin, requestId);
+        return this._parseSetCommand(this.DigitalOutID, pin, requestId);
     }
-    parseSetPWMCommand(pin, requestId = 0) {
-        return this._parseSetCommand(this.PWMoutStateID, pin, requestId);
+    parseSetPWMCommand(requestId = 0) {
+        return this._parseSetCommand(this.PwmID, this.Pin.p3, requestId);
     }
     _parseSetCommand(eventId, param, requestId) {
         const HEADER = [this.MessageTypeID, eventId, requestId];
         const data = HEADER.concat(param);
         data.push(this.checkSum(data));
         return data;
+    }
+    pin2num(pins) {
+        return (pins.p1 ? 1 : 0) + (pins.p2 ? 2 : 0) + (pins.p3 ? 4 : 0);
     }
 }
 exports.MESH_js_GP = MESH_js_GP;
@@ -28054,6 +28059,12 @@ class MESH_js_TH extends _1.MESH_js {
     }
 }
 exports.MESH_js_TH = MESH_js_TH;
+MESH_js_TH.NotifyType = {
+    UpdateTemperature: 4,
+    UpdateHumidity: 8,
+    Once: 16,
+    Always: 32,
+};
 
 
 /***/ }),

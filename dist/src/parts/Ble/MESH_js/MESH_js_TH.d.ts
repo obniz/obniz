@@ -1,5 +1,11 @@
 import { MESH_js } from '.';
 export declare class MESH_js_TH extends MESH_js {
+    static readonly NotifyType: {
+        readonly UpdateTemperature: 4;
+        readonly UpdateHumidity: 8;
+        readonly Once: 16;
+        readonly Always: 32;
+    };
     onNotify: ((accele: MESH_js_TH['response']) => void) | null;
     /**
      * MessageTypeID

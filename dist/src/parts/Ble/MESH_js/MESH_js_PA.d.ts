@@ -1,6 +1,6 @@
 import { MESH_js } from '.';
 export declare class MESH_js_PA extends MESH_js {
-    static NotifyType: {
+    static readonly NotifyType: {
         readonly UpdateProximity: 4;
         readonly UpdateBrightness: 8;
         readonly Once: 16;

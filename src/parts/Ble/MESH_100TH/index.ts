@@ -15,18 +15,17 @@ export interface MESH_100THOptions {}
 export interface MESH_100TH_Data {
   name: string;
   address: string;
-  /** battery (0 ~ 10) */
-  battery: number;
-  /** temperature (-10 ~ 50 [Celsius])*/
-  temperature: number;
-  /** humidity (0 ~ 100 [%]) */
-  humidity: number;
+  battery: number; // 0 ~ 10
+  temperature: number; // -10 ~ 50 [Celsius]
+  humidity: number; // 0 ~ 100 [%]
 }
 
 /** MESH_100TH management class */
 export default class MESH_100TH extends MESH<MESH_100TH_Data> {
   public static readonly PartsName = 'MESH_100TH';
   public static readonly _LocalName = 'MESH-100TH';
+
+  public static readonly NotifyType = MESH_js_TH.NotifyType;
 
   public onNotify: ((resp: MESH_js_TH['response']) => void) | null = null;
 
@@ -51,7 +50,8 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
     humidity_upper: number,
     humidity_bottom: number,
     humidity_condision: number,
-    type: number
+    type: number,
+    request_id = 0
   ): void {
     const _th = this._mesh as MESH_js_TH;
     this.writeWOResponse(
@@ -62,7 +62,8 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
         humidity_bottom,
         temperature_condition,
         humidity_condision,
-        type
+        type,
+        request_id
       )
     );
   }

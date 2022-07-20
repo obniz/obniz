@@ -85,3 +85,9 @@ class MESH_js_TH extends _1.MESH_js {
     }
 }
 exports.MESH_js_TH = MESH_js_TH;
+MESH_js_TH.NotifyType = {
+    UpdateTemperature: 4,
+    UpdateHumidity: 8,
+    Once: 16,
+    Always: 32,
+};

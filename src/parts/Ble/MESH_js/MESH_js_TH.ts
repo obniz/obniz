@@ -1,6 +1,13 @@
 import { MESH_js } from '.';
 import { MESHOutOfRangeError } from './MESH_js_Error';
 export class MESH_js_TH extends MESH_js {
+  public static readonly NotifyType = {
+    UpdateTemperature: 4,
+    UpdateHumidity: 8,
+    Once: 16,
+    Always: 32,
+  } as const;
+
   // Event handler
   public onNotify: ((accele: MESH_js_TH['response']) => void) | null = null;
 
