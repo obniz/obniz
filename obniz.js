@@ -27803,14 +27803,14 @@ class MeshJsGp extends MeshJs_1.MeshJs {
     /**
      * parseSetmodeCommand
      *
-     * @param din {p1:boolean, p2:boolean, p3:boolean}
-     * @param din_notify {p1:boolean, p2:boolean, p3:boolean}
-     * @param dout {p1:boolean, p2:boolean, p3:boolean}
-     * @param pwm_ratio 0 ~ 255
+     * @param digitalIn {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalInNotify {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalOut {p1:boolean, p2:boolean, p3:boolean}
+     * @param pwmRatio 0 ~ 255
      * @param vcc VCC.AUTO or VCC.ON or VCC.OFF
-     * @param ain_range_upper 0.00 ~ 3.00[V], resolution 0.05[V]
-     * @param ain_range_bottom 0.00 ~ 3.00[V], resolution 0.05[V]
-     * @param ain_notify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+     * @param analogInRangeUpper 0.00 ~ 3.00[V], resolution 0.05[V]
+     * @param analogInRangeBottom 0.00 ~ 3.00[V], resolution 0.05[V]
+     * @param analogInNotify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
      * @returns command
      */
     parseSetmodeCommand(digitalIn, digitalInNotify, digitalOut, pwmRatio, vcc, analogInRangeUpper, analogInRangeBottom, analogInNotify) {
@@ -28096,12 +28096,12 @@ class MeshJsMd extends MeshJs_1.MeshJs {
         const DETECTION_TIME_MAX = 60000;
         if (detectionTime < DETECTION_TIME_MIN ||
             DETECTION_TIME_MAX < detectionTime) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('detection_time', DETECTION_TIME_MIN, DETECTION_TIME_MAX);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('detectionTime', DETECTION_TIME_MIN, DETECTION_TIME_MAX);
         }
         const RESPONSE_TIME_MIN = 500;
         const RESPONSE_TIME_MAX = 60000;
         if (responseTime < RESPONSE_TIME_MIN || RESPONSE_TIME_MAX < responseTime) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('response_time', RESPONSE_TIME_MIN, RESPONSE_TIME_MAX);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('responseTime', RESPONSE_TIME_MIN, RESPONSE_TIME_MAX);
         }
         // Generate Command
         const HEADER = [
@@ -28276,11 +28276,11 @@ class MeshJsTh extends MeshJs_1.MeshJs {
         // Error Handle
         if (temperatureRangeBottom < this.MIN_TEMPERATURE_ ||
             this.MAX_TEMPERATURE_ < temperatureRangeUpper) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('temperature_range', this.MIN_TEMPERATURE_, this.MAX_TEMPERATURE_);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('temperatureRange', this.MIN_TEMPERATURE_, this.MAX_TEMPERATURE_);
         }
         if (humidityRangeBottom < this.MIN_HUMIDITY_ ||
             this.MAX_HUMIDITY_ < humidityRangeUpper) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('humidity_range', this.MIN_HUMIDITY_, this.MAX_HUMIDITY_);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('humidityRange', this.MIN_HUMIDITY_, this.MAX_HUMIDITY_);
         }
         // Generate Command
         const HEADER = [

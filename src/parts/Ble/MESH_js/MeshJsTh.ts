@@ -87,7 +87,7 @@ export class MeshJsTh extends MeshJs {
       this.MAX_TEMPERATURE_ < temperatureRangeUpper
     ) {
       throw new MeshJsOutOfRangeError(
-        'temperature_range',
+        'temperatureRange',
         this.MIN_TEMPERATURE_,
         this.MAX_TEMPERATURE_
       );
@@ -97,7 +97,7 @@ export class MeshJsTh extends MeshJs {
       this.MAX_HUMIDITY_ < humidityRangeUpper
     ) {
       throw new MeshJsOutOfRangeError(
-        'humidity_range',
+        'humidityRange',
         this.MIN_HUMIDITY_,
         this.MAX_HUMIDITY_
       );

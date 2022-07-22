@@ -70,7 +70,7 @@ export class MeshJsMd extends MeshJs {
       DETECTION_TIME_MAX < detectionTime
     ) {
       throw new MeshJsOutOfRangeError(
-        'detection_time',
+        'detectionTime',
         DETECTION_TIME_MIN,
         DETECTION_TIME_MAX
       );
@@ -79,7 +79,7 @@ export class MeshJsMd extends MeshJs {
     const RESPONSE_TIME_MAX = 60000 as const;
     if (responseTime < RESPONSE_TIME_MIN || RESPONSE_TIME_MAX < responseTime) {
       throw new MeshJsOutOfRangeError(
-        'response_time',
+        'responseTime',
         RESPONSE_TIME_MIN,
         RESPONSE_TIME_MAX
       );

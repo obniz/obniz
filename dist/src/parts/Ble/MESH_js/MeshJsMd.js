@@ -62,12 +62,12 @@ class MeshJsMd extends MeshJs_1.MeshJs {
         const DETECTION_TIME_MAX = 60000;
         if (detectionTime < DETECTION_TIME_MIN ||
             DETECTION_TIME_MAX < detectionTime) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('detection_time', DETECTION_TIME_MIN, DETECTION_TIME_MAX);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('detectionTime', DETECTION_TIME_MIN, DETECTION_TIME_MAX);
         }
         const RESPONSE_TIME_MIN = 500;
         const RESPONSE_TIME_MAX = 60000;
         if (responseTime < RESPONSE_TIME_MIN || RESPONSE_TIME_MAX < responseTime) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('response_time', RESPONSE_TIME_MIN, RESPONSE_TIME_MAX);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('responseTime', RESPONSE_TIME_MIN, RESPONSE_TIME_MAX);
         }
         // Generate Command
         const HEADER = [

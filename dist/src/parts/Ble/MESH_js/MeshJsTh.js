@@ -58,11 +58,11 @@ class MeshJsTh extends MeshJs_1.MeshJs {
         // Error Handle
         if (temperatureRangeBottom < this.MIN_TEMPERATURE_ ||
             this.MAX_TEMPERATURE_ < temperatureRangeUpper) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('temperature_range', this.MIN_TEMPERATURE_, this.MAX_TEMPERATURE_);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('temperatureRange', this.MIN_TEMPERATURE_, this.MAX_TEMPERATURE_);
         }
         if (humidityRangeBottom < this.MIN_HUMIDITY_ ||
             this.MAX_HUMIDITY_ < humidityRangeUpper) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('humidity_range', this.MIN_HUMIDITY_, this.MAX_HUMIDITY_);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('humidityRange', this.MIN_HUMIDITY_, this.MAX_HUMIDITY_);
         }
         // Generate Command
         const HEADER = [
