@@ -24245,7 +24245,22 @@ var map = {
 	"./Ble/LogttaAccel/index.js": "./dist/src/parts/Ble/LogttaAccel/index.js",
 	"./Ble/LogttaCO2/index.js": "./dist/src/parts/Ble/LogttaCO2/index.js",
 	"./Ble/LogttaTemp/index.js": "./dist/src/parts/Ble/LogttaTemp/index.js",
+	"./Ble/MESH_100AC/index.js": "./dist/src/parts/Ble/MESH_100AC/index.js",
+	"./Ble/MESH_100BU/index.js": "./dist/src/parts/Ble/MESH_100BU/index.js",
+	"./Ble/MESH_100GP/index.js": "./dist/src/parts/Ble/MESH_100GP/index.js",
+	"./Ble/MESH_100LE/index.js": "./dist/src/parts/Ble/MESH_100LE/index.js",
+	"./Ble/MESH_100MD/index.js": "./dist/src/parts/Ble/MESH_100MD/index.js",
+	"./Ble/MESH_100PA/index.js": "./dist/src/parts/Ble/MESH_100PA/index.js",
 	"./Ble/MESH_100TH/index.js": "./dist/src/parts/Ble/MESH_100TH/index.js",
+	"./Ble/MESH_js/MeshJs.js": "./dist/src/parts/Ble/MESH_js/MeshJs.js",
+	"./Ble/MESH_js/MeshJsAc.js": "./dist/src/parts/Ble/MESH_js/MeshJsAc.js",
+	"./Ble/MESH_js/MeshJsBu.js": "./dist/src/parts/Ble/MESH_js/MeshJsBu.js",
+	"./Ble/MESH_js/MeshJsError.js": "./dist/src/parts/Ble/MESH_js/MeshJsError.js",
+	"./Ble/MESH_js/MeshJsGp.js": "./dist/src/parts/Ble/MESH_js/MeshJsGp.js",
+	"./Ble/MESH_js/MeshJsLe.js": "./dist/src/parts/Ble/MESH_js/MeshJsLe.js",
+	"./Ble/MESH_js/MeshJsMd.js": "./dist/src/parts/Ble/MESH_js/MeshJsMd.js",
+	"./Ble/MESH_js/MeshJsPa.js": "./dist/src/parts/Ble/MESH_js/MeshJsPa.js",
+	"./Ble/MESH_js/MeshJsTh.js": "./dist/src/parts/Ble/MESH_js/MeshJsTh.js",
 	"./Ble/MINEW_S1/index.js": "./dist/src/parts/Ble/MINEW_S1/index.js",
 	"./Ble/MT_500BT/index.js": "./dist/src/parts/Ble/MT_500BT/index.js",
 	"./Ble/MiniBreeze/index.js": "./dist/src/parts/Ble/MiniBreeze/index.js",
@@ -26826,6 +26841,480 @@ Logtta_TH.BeaconDataStruct = {
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/MESH_100AC/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.MESH_100AC
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
+const MeshJsAc_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsAc.js");
+/** MESH_100AC management class */
+class MESH_100AC extends MESH_1.MESH {
+    constructor() {
+        super(...arguments);
+        // Event Handler
+        this.onTapped = null;
+        this.onShaked = null;
+        this.onFlipped = null;
+        this.onDirection = null;
+        this.staticClass = MESH_100AC;
+    }
+    async getDataWait() {
+        this.checkConnected();
+        const _ac = this._mesh;
+        return {
+            name: this.peripheral.localName,
+            address: this.peripheral.address,
+            battery: this._mesh.battery,
+            accele_x: _ac.getAccele.x,
+            accele_y: _ac.getAccele.y,
+            accele_z: _ac.getAccele.z,
+            face: _ac.getFace,
+        };
+    }
+    static _isMESHblock(name) {
+        return name.indexOf(MESH_100AC.PREFIX) === 0;
+    }
+    prepareConnect() {
+        this._mesh = new MeshJsAc_1.MeshJsAc();
+        const _ac = this._mesh;
+        _ac.onTapped = (accele) => {
+            if (typeof this.onTapped !== 'function') {
+                return;
+            }
+            this.onTapped(accele);
+        };
+        _ac.onShaked = (accele) => {
+            if (typeof this.onShaked !== 'function') {
+                return;
+            }
+            this.onShaked(accele);
+        };
+        _ac.onFlipped = (accele) => {
+            if (typeof this.onFlipped !== 'function') {
+                return;
+            }
+            this.onFlipped(accele);
+        };
+        _ac.onDirection = (face, accele) => {
+            if (typeof this.onDirection !== 'function') {
+                return;
+            }
+            this.onDirection(face, accele);
+        };
+        super.prepareConnect();
+    }
+    async beforeOnDisconnectWait(reason) {
+        // do nothing
+    }
+}
+exports.default = MESH_100AC;
+MESH_100AC.PartsName = 'MESH_100AC';
+MESH_100AC.PREFIX = 'MESH-100AC';
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_100BU/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.MESH_100BU
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
+const MeshJsBu_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsBu.js");
+/** MESH_100BU management class */
+class MESH_100BU extends MESH_1.MESH {
+    constructor() {
+        super(...arguments);
+        /** Event Handler */
+        this.onSinglePressed = null;
+        this.onLongPressed = null;
+        this.onDoublePressed = null;
+        this.staticClass = MESH_100BU;
+    }
+    async getDataWait() {
+        this.checkConnected();
+        return {
+            name: this.peripheral.localName,
+            address: this.peripheral.address,
+            battery: this._mesh.battery,
+        };
+    }
+    static _isMESHblock(name) {
+        return name.indexOf(MESH_100BU.PREFIX) !== -1;
+    }
+    prepareConnect() {
+        this._mesh = new MeshJsBu_1.MeshJsBu();
+        const _bu = this._mesh;
+        _bu.onSinglePressed = () => {
+            if (typeof this.onSinglePressed !== 'function') {
+                return;
+            }
+            this.onSinglePressed();
+        };
+        _bu.onLongPressed = () => {
+            if (typeof this.onLongPressed !== 'function') {
+                return;
+            }
+            this.onLongPressed();
+        };
+        _bu.onDoublePressed = () => {
+            if (typeof this.onDoublePressed !== 'function') {
+                return;
+            }
+            this.onDoublePressed();
+        };
+        super.prepareConnect();
+    }
+    async beforeOnDisconnectWait(reason) {
+        // do nothing
+    }
+}
+exports.default = MESH_100BU;
+MESH_100BU.PartsName = 'MESH_100BU';
+MESH_100BU.PREFIX = 'MESH-100BU';
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_100GP/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.MESH_100GP
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
+const MeshJsGp_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsGp.js");
+/** MESH_100GA management class */
+class MESH_100GP extends MESH_1.MESH {
+    constructor() {
+        super(...arguments);
+        this.DigitalPins = this
+            ._mesh.DigitalPins;
+        // Event Handler
+        this.onDigitalInEventNotify = null;
+        this.onAnalogInEventNotify = null;
+        this.onDigitalInNotify = null;
+        this.onAnalogInNotify = null;
+        this.onVOutNotify = null;
+        this.onDigitalOutNotify = null;
+        this.onPwmNotify = null;
+        this.staticClass = MESH_100GP;
+    }
+    async getDataWait() {
+        this.checkConnected();
+        return {
+            name: this.peripheral.localName,
+            address: this.peripheral.address,
+            battery: this._mesh.battery,
+        };
+    }
+    /**
+     * setMode
+     *
+     * @param din {p1:boolean, p2:boolean, p3:boolean}
+     * @param din_notify {p1:boolean, p2:boolean, p3:boolean}
+     * @param dout {p1:boolean, p2:boolean, p3:boolean}
+     * @param pwm_ratio 0 ~ 255
+     * @param vcc VCC.AUTO or VCC.ON or VCC.OFF
+     * @param ain_range_upper 0.00 ~ 3.00[V], resolution 0.05[V]
+     * @param ain_range_bottom 0.00 ~ 3.00[V], resolution 0.05[V]
+     * @param ain_notify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+     */
+    setMode(din, din_notify, dout, pwm_ratio, vcc, ain_range_upper, ain_range_bottom, ain_notify) {
+        const _gp = this._mesh;
+        this.writeWOResponse(_gp.parseSetmodeCommand(din, din_notify, dout, pwm_ratio, vcc, ain_range_upper, ain_range_bottom, ain_notify));
+    }
+    setDin(pin, request_id = 0) {
+        const _gp = this._mesh;
+        this.writeWOResponse(_gp.parseSetDinCommand(pin, request_id));
+    }
+    setAin(mode, request_id = 0) {
+        const _gp = this._mesh;
+        this.writeWOResponse(_gp.parseSetAinCommand(mode, request_id));
+    }
+    setVout(pin, request_id = 0) {
+        const _gp = this._mesh;
+        this.writeWOResponse(_gp.parseSetVoutCommand(pin, request_id));
+    }
+    setDout(pin, request_id = 0) {
+        const _gp = this._mesh;
+        this.writeWOResponse(_gp.parseSetDoutCommand(pin, request_id));
+    }
+    setPWMNotify(request_id = 0) {
+        const _gp = this._mesh;
+        this.writeWOResponse(_gp.parseSetPWMCommand(request_id));
+    }
+    static _isMESHblock(name) {
+        return name.indexOf(MESH_100GP.PREFIX) !== -1;
+    }
+    prepareConnect() {
+        this._mesh = new MeshJsGp_1.MeshJsGp();
+        const _gp = this._mesh;
+        _gp.onDigitalInEventNotify = (pin, state) => {
+            if (typeof this.onDigitalInEventNotify !== 'function') {
+                return;
+            }
+            this.onDigitalInEventNotify(pin, state);
+        };
+        _gp.onAnalogInEventNotify = (level) => {
+            if (typeof this.onAnalogInEventNotify !== 'function') {
+                return;
+            }
+            this.onAnalogInEventNotify(level);
+        };
+        _gp.onDigitalInNotify = (requestId, pin, state) => {
+            if (typeof this.onDigitalInNotify !== 'function') {
+                return;
+            }
+            this.onDigitalInNotify(requestId, pin, state);
+        };
+        _gp.onAnalogInNotify = (requestId, state, mode) => {
+            if (typeof this.onAnalogInNotify !== 'function') {
+                return;
+            }
+            this.onAnalogInNotify(requestId, state, mode);
+        };
+        _gp.onVOutNotify = (requestId, state) => {
+            if (typeof this.onVOutNotify !== 'function') {
+                return;
+            }
+            this.onVOutNotify(requestId, state);
+        };
+        _gp.onDigitalOutNotify = (requestId, pin, state) => {
+            if (typeof this.onDigitalOutNotify !== 'function') {
+                return;
+            }
+            this.onDigitalOutNotify(requestId, pin, state);
+        };
+        _gp.onPwmNotify = (requestId, level) => {
+            if (typeof this.onPwmNotify !== 'function') {
+                return;
+            }
+            this.onPwmNotify(requestId, level);
+        };
+        super.prepareConnect();
+    }
+    async beforeOnDisconnectWait(reason) {
+        // do nothing
+    }
+}
+exports.default = MESH_100GP;
+MESH_100GP.PartsName = 'MESH_100GP';
+MESH_100GP.PREFIX = 'MESH-100GP';
+MESH_100GP.AnalogInputEventCondition = MeshJsGp_1.MeshJsGp.ANALOG_IN_EVENT_CONDITION;
+MESH_100GP.Mode = MeshJsGp_1.MeshJsGp.MODE;
+MESH_100GP.Pin = MeshJsGp_1.MeshJsGp.PIN;
+MESH_100GP.State = MeshJsGp_1.MeshJsGp.STATE;
+MESH_100GP.VCC = MeshJsGp_1.MeshJsGp.VCC;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_100LE/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.MESH_100LE
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
+const MeshJsLe_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsLe.js");
+/** MESH_100TH management class */
+class MESH_100LE extends MESH_1.MESH {
+    constructor() {
+        super(...arguments);
+        this.staticClass = MESH_100LE;
+    }
+    async getDataWait() {
+        this.checkConnected();
+        return {
+            name: this.peripheral.localName,
+            address: this.peripheral.address,
+            battery: this._mesh.battery,
+        };
+    }
+    /**
+     * Light Up
+     *
+     * @param red 0 ~ 127
+     * @param green 0 ~ 127
+     * @param blue 0 ~ 127
+     * @param time 0 ~ 65535 [ms]
+     * @param cycle_on 0 ~ 65535 [ms]
+     * @param cycle_off 0 ~ 65535 [ms]
+     * @param pattern Pattern.Blink or Pattern.Soft
+     * @returns
+     */
+    lightup(red, green, blue, time, cycle_on, cycle_off, pattern) {
+        const _le = this._mesh;
+        this.writeWOResponse(_le.parseLightupCommand(red, green, blue, time, cycle_on, cycle_off, pattern));
+    }
+    static _isMESHblock(name) {
+        return name.indexOf(MESH_100LE.PREFIX) !== -1;
+    }
+    prepareConnect() {
+        this._mesh = new MeshJsLe_1.MeshJsLe();
+        super.prepareConnect();
+    }
+    async beforeOnDisconnectWait(reason) {
+        // do nothing
+    }
+}
+exports.default = MESH_100LE;
+MESH_100LE.PartsName = 'MESH_100LE';
+MESH_100LE.PREFIX = 'MESH-100LE';
+MESH_100LE.Pattern = MeshJsLe_1.MeshJsLe.PATTERN;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_100MD/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.MESH_100MD
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
+const MeshJsMd_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsMd.js");
+/** MESH_100MD management class */
+class MESH_100MD extends MESH_1.MESH {
+    constructor() {
+        super(...arguments);
+        // Event Handler
+        this.onNotify = null;
+        this.staticClass = MESH_100MD;
+    }
+    async getDataWait() {
+        this.checkConnected();
+        const _md = this._mesh;
+        return {
+            name: this.peripheral.localName,
+            address: this.peripheral.address,
+            battery: this._mesh.battery,
+            motion_state: _md.getResponse.motionState,
+            detection_mode: _md.getResponse.detectionMode,
+            request_id: _md.getResponse.requestId,
+        };
+    }
+    setMode(detection_mode, detection_time = 500, response_time = 500, requestid = 0) {
+        const _md = this._mesh;
+        this.writeWOResponse(_md.parseSetmodeCommand(detection_mode, detection_time, response_time, requestid));
+    }
+    static _isMESHblock(name) {
+        return name.indexOf(MESH_100MD.PREFIX) !== -1;
+    }
+    prepareConnect() {
+        this._mesh = new MeshJsMd_1.MeshJsMd();
+        // set Event handler
+        const _md = this._mesh;
+        _md.onNotify = (response) => {
+            if (typeof this.onNotify !== 'function') {
+                return;
+            }
+            this.onNotify(response);
+        };
+        super.prepareConnect();
+    }
+    async beforeOnDisconnectWait(reason) {
+        // do nothing
+    }
+}
+exports.default = MESH_100MD;
+MESH_100MD.PartsName = 'MESH_100MD';
+MESH_100MD.PREFIX = 'MESH-100MD';
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_100PA/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.MESH_100PA
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
+const MeshJsPa_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsPa.js");
+/** MESH_100PA management class */
+class MESH_100PA extends MESH_1.MESH {
+    constructor() {
+        super(...arguments);
+        // Event Handler
+        this.onNotify = null;
+        this.staticClass = MESH_100PA;
+    }
+    async getDataWait() {
+        this.checkConnected();
+        const _pa = this._mesh;
+        return {
+            name: this.peripheral.localName,
+            address: this.peripheral.address,
+            battery: this._mesh.battery,
+            proximity: _pa.getResponse.proximity,
+            brightness: _pa.getResponse.brightness,
+        };
+    }
+    setMode(type, request_id = 0) {
+        const _pa = this._mesh;
+        this.writeWOResponse(_pa.parseSetmodeCommand(type, request_id));
+    }
+    static _isMESHblock(name) {
+        return name.indexOf(MESH_100PA.PREFIX) !== -1;
+    }
+    prepareConnect() {
+        this._mesh = new MeshJsPa_1.MeshJsPa();
+        const _pa = this._mesh;
+        _pa.onNotify = (response) => {
+            if (typeof this.onNotify !== 'function') {
+                return;
+            }
+            this.onNotify(response);
+        };
+        super.prepareConnect();
+    }
+    async beforeOnDisconnectWait(reason) {
+        // do nothing
+    }
+}
+exports.default = MESH_100PA;
+MESH_100PA.PartsName = 'MESH_100PA';
+MESH_100PA.PREFIX = 'MESH-100PA';
+MESH_100PA.NotifyType = MeshJsPa_1.MeshJsPa.NOTIFY_TYPE;
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/MESH_100TH/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -26838,45 +27327,43 @@ Logtta_TH.BeaconDataStruct = {
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
-/** MESH_100TH management class MESH_100THを管理するクラス */
+const MeshJsTh_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsTh.js");
+/** MESH_100TH management class */
 class MESH_100TH extends MESH_1.MESH {
     constructor() {
         super(...arguments);
+        // Event Handler
+        this.onNotify = null;
         this.staticClass = MESH_100TH;
-        /** 例） Event handler for button ボタンのイベントハンドラー */
-        this.onButtonPressed = null;
     }
-    /**
-     * adからこのデバイスであること判定する
-     */
-    static isDeviceWithMode(peripheral, mode) {
-        if (mode !== 'Connectable') {
-            return false;
-        }
-        const ad = peripheral.adv_data;
-        // sample
-        // if(ad[0] === 0 && ad[1] === 1){
-        //   return true
-        // }
-        return true;
-    }
-    /**
-     * Connect to the services of a device
-     *
-     * デバイスのサービスに接続
-     */
-    async connectWait() {
-        await super.connectWait();
-        await this.authWait();
-    }
-    // 接続してデータを取ってくる
     async getDataWait() {
         this.checkConnected();
+        const _th = this._mesh;
         return {
-            battery: 0,
-            temperature: 0,
-            humidity: 0,
+            name: this.peripheral.localName,
+            address: this.peripheral.address,
+            battery: this._mesh.battery,
+            temperature: _th.getResponse.temperature,
+            humidity: _th.getResponse.humidity,
         };
+    }
+    setMode(temperature_upper, temperature_bottom, temperature_condition, humidity_upper, humidity_bottom, humidity_condision, type, request_id = 0) {
+        const _th = this._mesh;
+        this.writeWOResponse(_th.parseSetmodeCommand(temperature_upper, temperature_bottom, humidity_upper, humidity_bottom, temperature_condition, humidity_condision, type, request_id));
+    }
+    static _isMESHblock(name) {
+        return name.indexOf(MESH_100TH.PREFIX) !== -1;
+    }
+    prepareConnect() {
+        this._mesh = new MeshJsTh_1.MeshJsTh();
+        const _th = this._mesh;
+        _th.onNotify = (response) => {
+            if (typeof this.onNotify !== 'function') {
+                return;
+            }
+            this.onNotify(response);
+        };
+        super.prepareConnect();
     }
     async beforeOnDisconnectWait(reason) {
         // do nothing
@@ -26884,7 +27371,958 @@ class MESH_100TH extends MESH_1.MESH {
 }
 exports.default = MESH_100TH;
 MESH_100TH.PartsName = 'MESH_100TH';
-MESH_100TH.AvailableBleMode = 'Connectable';
+MESH_100TH.PREFIX = 'MESH-100TH';
+MESH_100TH.NotifyType = MeshJsTh_1.MeshJsTh.NOTIFY_TYPE;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_js/MeshJs.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class MeshJs {
+    constructor() {
+        // Event Handler
+        this.onBattery = null;
+        this.onStatusButtonPressed = null;
+        // Constant Values
+        this.UUIDS = {
+            SERVICE_ID: '72C90001-57A9-4D40-B746-534E22EC9F9E',
+            CHARACTERISTICS: {
+                INDICATE: '72c90005-57a9-4d40-b746-534e22ec9f9e',
+                NOTIFY: '72c90003-57a9-4d40-b746-534e22ec9f9e',
+                WRITE: '72c90004-57a9-4d40-b746-534e22ec9f9e',
+                WRITE_WO_RESPONSE: '72c90002-57a9-4d40-b746-534e22ec9f9e',
+            },
+        };
+        this.FEATURE_COMMAND_ = [
+            0,
+            2,
+            1,
+            3,
+        ];
+        this.battery_ = -1;
+    }
+    get featureCommand() {
+        return this.FEATURE_COMMAND_;
+    }
+    get battery() {
+        return this.battery_;
+    }
+    /**
+     * indicate
+     *
+     * @param data
+     * @returns
+     */
+    indicate(data) {
+        if (data.length !== 16) {
+            return;
+        }
+        if (data[0] !== 0) {
+            return;
+        }
+        if (data[1] !== 2) {
+            return;
+        }
+        this.battery_ = data[14];
+    }
+    /**
+     * notify
+     *
+     * @param data
+     */
+    notify(data) {
+        this.updateBattery_(data);
+        this.updateStatusButton_(data);
+    }
+    checkSum(command) {
+        let sum = 0;
+        command.forEach((val) => {
+            sum += val;
+        });
+        return sum % 256;
+    }
+    updateBattery_(data) {
+        if (data.length !== 4) {
+            return false;
+        }
+        if (data[0] !== 0) {
+            return false;
+        }
+        if (data[1] !== 0) {
+            return false;
+        }
+        // if (data[2] === this.battery) {
+        //   return;
+        // }
+        this.battery_ = data[2];
+        if (typeof this.onBattery !== 'function') {
+            return false;
+        }
+        this.onBattery(this.battery_);
+        return true;
+    }
+    updateStatusButton_(data) {
+        if (data.length !== 4) {
+            return false;
+        }
+        if (data[0] !== 0) {
+            return false;
+        }
+        if (data[1] !== 1) {
+            return false;
+        }
+        if (data[2] !== 0) {
+            return false;
+        }
+        if (typeof this.onStatusButtonPressed !== 'function') {
+            return false;
+        }
+        this.onStatusButtonPressed();
+        return true;
+    }
+}
+exports.MeshJs = MeshJs;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_js/MeshJsAc.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const MeshJs_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJs.js");
+class MeshJsAc extends MeshJs_1.MeshJs {
+    constructor() {
+        super(...arguments);
+        // Event Handler
+        this.onTapped = null;
+        this.onShaked = null;
+        this.onFlipped = null;
+        this.onDirection = null;
+        // Constant Values
+        this.MESSAGE_TYPE_ID_ = 1;
+        this.DATA_LENGTH_ = 17;
+        this.TAP_EVENT_ID_ = 0;
+        this.SHAKE_EVENT_ID_ = 1;
+        this.FLIP_EVENT_ID_ = 2;
+        this.DIRECTION_EVENT_ID_ = 3;
+        this.accele_ = { x: -1, y: -1, z: -1 };
+        this.face_ = -1;
+    }
+    get getAccele() {
+        return this.accele_;
+    }
+    get getFace() {
+        return this.face_;
+    }
+    /**
+     * notify
+     *
+     * @param data
+     * @returns
+     */
+    notify(data) {
+        super.notify(data);
+        this.updateAccele_(data);
+        if (data[0] !== 1) {
+            return;
+        }
+        switch (data[1]) {
+            case this.TAP_EVENT_ID_:
+                if (typeof this.onTapped === 'function') {
+                    this.onTapped(this.accele_);
+                }
+                break;
+            case this.SHAKE_EVENT_ID_:
+                if (typeof this.onShaked === 'function') {
+                    this.onShaked(this.accele_);
+                }
+                break;
+            case this.FLIP_EVENT_ID_:
+                if (typeof this.onFlipped === 'function') {
+                    this.onFlipped(this.accele_);
+                }
+                break;
+            case this.DIRECTION_EVENT_ID_:
+                if (typeof this.onDirection === 'function') {
+                    this.face_ = data[2];
+                    this.onDirection(this.face_, this.accele_);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    updateAccele_(data) {
+        if (data.length !== this.DATA_LENGTH_) {
+            return false;
+        }
+        if (data[0] !== this.MESSAGE_TYPE_ID_) {
+            return false;
+        }
+        const BYTE = 256;
+        const BASE = 1024;
+        this.accele_.x = this.complemnt_(BYTE * data[5] + data[4]) / BASE;
+        this.accele_.y = this.complemnt_(BYTE * data[7] + data[6]) / BASE;
+        this.accele_.z = this.complemnt_(BYTE * data[9] + data[8]) / BASE;
+        return true;
+    }
+    complemnt_(val) {
+        const TWO_BYTE = 65536;
+        const TWO_BYTE_HALF = Math.floor(TWO_BYTE / 2) - 1;
+        return val - (val > TWO_BYTE_HALF ? TWO_BYTE : 0);
+    }
+}
+exports.MeshJsAc = MeshJsAc;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_js/MeshJsBu.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const MeshJs_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJs.js");
+class MeshJsBu extends MeshJs_1.MeshJs {
+    constructor() {
+        super(...arguments);
+        // Event Handler
+        this.onSinglePressed = null;
+        this.onLongPressed = null;
+        this.onDoublePressed = null;
+        // Constant Values
+        this.DATA_LENGTH_ = 4;
+        this.MESSAGE_TYPE_ID_ = 1;
+        this.EVENT_TYPE_ID_ = 0;
+        this.TYPE_ = {
+            SINGLE: 1,
+            LONG: 2,
+            DOUBLE: 3,
+        };
+    }
+    /**
+     * notify
+     *
+     * @param data
+     * @returns
+     */
+    notify(data) {
+        super.notify(data);
+        if (data.length !== this.DATA_LENGTH_) {
+            return;
+        }
+        if (data[0] !== this.MESSAGE_TYPE_ID_) {
+            return;
+        }
+        if (data[1] !== this.EVENT_TYPE_ID_) {
+            return;
+        }
+        switch (data[2]) {
+            case this.TYPE_.SINGLE:
+                if (typeof this.onSinglePressed === 'function') {
+                    this.onSinglePressed();
+                }
+                break;
+            case this.TYPE_.LONG:
+                if (typeof this.onLongPressed === 'function') {
+                    this.onLongPressed();
+                }
+                break;
+            case this.TYPE_.DOUBLE:
+                if (typeof this.onDoublePressed === 'function') {
+                    this.onDoublePressed();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+}
+exports.MeshJsBu = MeshJsBu;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_js/MeshJsError.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class MeshJsError extends Error {
+    constructor(code, e) {
+        super(e);
+        this.code = code;
+        this.name = new.target.name;
+        Object.setPrototypeOf(this, new.target.prototype);
+    }
+}
+exports.MeshJsError = MeshJsError;
+class MeshJsOutOfRangeError extends MeshJsError {
+    constructor(property, min, max) {
+        super(1, property +
+            ' is out of range. ' +
+            (min !== void 0 && max !== void 0
+                ? property + ' must be ' + min + ' ~ ' + max + '.'
+                : ''));
+        this.property = property;
+    }
+}
+exports.MeshJsOutOfRangeError = MeshJsOutOfRangeError;
+class MeshJsInvalidValueError extends MeshJsError {
+    constructor(property) {
+        super(2, property + 'is invalid value.');
+        this.property = property;
+    }
+}
+exports.MeshJsInvalidValueError = MeshJsInvalidValueError;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_js/MeshJsGp.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const MeshJs_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJs.js");
+const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
+class MeshJsGp extends MeshJs_1.MeshJs {
+    constructor() {
+        super(...arguments);
+        // Event Handler
+        this.onDigitalInEventNotify = null;
+        this.onAnalogInEventNotify = null;
+        this.onDigitalInNotify = null;
+        this.onAnalogInNotify = null;
+        this.onVOutNotify = null;
+        this.onDigitalOutNotify = null;
+        this.onPwmNotify = null;
+        this.DigitalPins = { p1: false, p2: false, p3: false };
+        this.MESSAGE_TYPE_ID_ = 1;
+        this.DIGITAL_IN_EVENT_ID_ = 0;
+        this.ANALOG_IN_EVENT_ID_ = 1;
+        this.DIGITAL_IN_ID_ = 2;
+        this.ANALOG_IN_ID_ = 3;
+        this.V_OUT_ID_ = 4;
+        this.DIGITAL_OUT_ID_ = 5;
+        this.PWM_ID_ = 6;
+    }
+    /**
+     * notify
+     *
+     * @const
+     * @param data
+     * @returns
+     */
+    notify(data) {
+        super.notify(data);
+        if (data[0] !== this.MESSAGE_TYPE_ID_) {
+            return;
+        }
+        switch (data[1]) {
+            case this.DIGITAL_IN_EVENT_ID_: {
+                if (typeof this.onDigitalInEventNotify !== 'function') {
+                    return;
+                }
+                const _pin = data[2];
+                const _state = data[3];
+                this.onDigitalInEventNotify(_pin, _state);
+                break;
+            }
+            case this.ANALOG_IN_EVENT_ID_: {
+                if (typeof this.onAnalogInEventNotify !== 'function') {
+                    return;
+                }
+                const _level = data[5];
+                this.onAnalogInEventNotify(_level);
+                break;
+            }
+            case this.DIGITAL_IN_ID_: {
+                if (typeof this.onDigitalInNotify !== 'function') {
+                    return;
+                }
+                const requestId = data[2];
+                const pin = data[3];
+                const state = data[4];
+                this.onDigitalInNotify(requestId, pin, state);
+                break;
+            }
+            case this.ANALOG_IN_ID_: {
+                if (typeof this.onAnalogInNotify !== 'function') {
+                    return;
+                }
+                const requestId = data[2];
+                const state = data[4];
+                const mode = data[5];
+                this.onAnalogInNotify(requestId, state, mode);
+                break;
+            }
+            case this.V_OUT_ID_: {
+                if (typeof this.onVOutNotify !== 'function') {
+                    return;
+                }
+                const requestId = data[2];
+                const state = data[4];
+                this.onVOutNotify(requestId, state);
+                break;
+            }
+            case this.DIGITAL_OUT_ID_: {
+                if (typeof this.onDigitalOutNotify !== 'function') {
+                    return;
+                }
+                const requestId = data[2];
+                const pin = data[3];
+                const state = data[4];
+                this.onDigitalOutNotify(requestId, pin, state);
+                break;
+            }
+            case this.PWM_ID_: {
+                if (typeof this.onPwmNotify !== 'function') {
+                    return;
+                }
+                const requestId = data[2];
+                const level = data[4];
+                this.onPwmNotify(requestId, level);
+                break;
+            }
+            default:
+                break;
+        }
+    }
+    /**
+     * parseSetmodeCommand
+     *
+     * @param din {p1:boolean, p2:boolean, p3:boolean}
+     * @param din_notify {p1:boolean, p2:boolean, p3:boolean}
+     * @param dout {p1:boolean, p2:boolean, p3:boolean}
+     * @param pwm_ratio 0 ~ 255
+     * @param vcc VCC.AUTO or VCC.ON or VCC.OFF
+     * @param ain_range_upper 0.00 ~ 3.00[V], resolution 0.05[V]
+     * @param ain_range_bottom 0.00 ~ 3.00[V], resolution 0.05[V]
+     * @param ain_notify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+     * @returns command
+     */
+    parseSetmodeCommand(digitalIn, digitalInNotify, digitalOut, pwmRatio, vcc, analogInRangeUpper, analogInRangeBottom, analogInNotify) {
+        // Error Handle
+        const PWM_MIN = 0;
+        const PWM_MAX = 255;
+        if (pwmRatio < PWM_MIN || PWM_MAX < pwmRatio) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('pwmRatio', PWM_MIN, PWM_MAX);
+        }
+        if (vcc !== MeshJsGp.VCC.AUTO &&
+            vcc !== MeshJsGp.VCC.ON &&
+            vcc !== MeshJsGp.VCC.OFF) {
+            throw new MeshJsError_1.MeshJsInvalidValueError('vcc');
+        }
+        const ANALOG_IN_RANGE_MIN = 0;
+        const ANALOG_IN_RANGE_MAX = 3;
+        if (analogInRangeUpper < ANALOG_IN_RANGE_MIN ||
+            ANALOG_IN_RANGE_MAX < analogInRangeUpper) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('analogInRangeUpper', ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX);
+        }
+        if (analogInRangeBottom < ANALOG_IN_RANGE_MIN ||
+            ANALOG_IN_RANGE_MAX < analogInRangeBottom) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('analogInRangeBottom', ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX);
+        }
+        if (analogInNotify !== MeshJsGp.ANALOG_IN_EVENT_CONDITION.NOT_NOTIFY &&
+            analogInNotify !== MeshJsGp.ANALOG_IN_EVENT_CONDITION.ABOVE_THRESHOLD &&
+            analogInNotify !== MeshJsGp.ANALOG_IN_EVENT_CONDITION.BELOW_THRESHOLD) {
+            throw new MeshJsError_1.MeshJsInvalidValueError('analogInNotify');
+        }
+        // Generate Command
+        const HEADER = [this.MESSAGE_TYPE_ID_, 1];
+        const BODY = [
+            this.pin2num(digitalIn),
+            this.pin2num(digitalInNotify),
+            this.pin2num(digitalOut),
+            pwmRatio,
+            vcc,
+            analogInRangeUpper,
+            analogInRangeBottom,
+            analogInNotify,
+        ];
+        const data = HEADER.concat(BODY);
+        data.push(this.checkSum(data));
+        return data;
+    }
+    /**
+     * parseSetDinCommand
+     *
+     * @param pin
+     * @param requestId
+     * @returns
+     */
+    parseSetDinCommand(pin, requestId = 0) {
+        return this.parseSetCommand_(this.DIGITAL_IN_ID_, pin, requestId);
+    }
+    /**
+     * parseSetAinCommand
+     *
+     * @param mode
+     * @param requestId
+     * @returns
+     */
+    parseSetAinCommand(mode, requestId = 0) {
+        return this.parseSetCommand_(this.ANALOG_IN_ID_, mode, requestId);
+    }
+    /**
+     * parseSetVoutCommand
+     *
+     * @param pin
+     * @param requestId
+     * @returns
+     */
+    parseSetVoutCommand(pin, requestId = 0) {
+        return this.parseSetCommand_(this.V_OUT_ID_, pin, requestId);
+    }
+    /**
+     * parseSetDoutCommand
+     *
+     * @param pin
+     * @param requestId
+     * @returns
+     */
+    parseSetDoutCommand(pin, requestId = 0) {
+        return this.parseSetCommand_(this.DIGITAL_OUT_ID_, pin, requestId);
+    }
+    /**
+     * parseSetPWMCommand
+     *
+     * @param requestId
+     * @returns
+     */
+    parseSetPWMCommand(requestId = 0) {
+        return this.parseSetCommand_(this.PWM_ID_, MeshJsGp.PIN.P3, requestId);
+    }
+    parseSetCommand_(eventId, param, requestId) {
+        const HEADER = [this.MESSAGE_TYPE_ID_, eventId, requestId];
+        const data = HEADER.concat(param);
+        data.push(this.checkSum(data));
+        return data;
+    }
+    pin2num(pins) {
+        return (pins.p1 ? 1 : 0) + (pins.p2 ? 2 : 0) + (pins.p3 ? 4 : 0);
+    }
+}
+exports.MeshJsGp = MeshJsGp;
+// Constant Values
+MeshJsGp.ANALOG_IN_EVENT_CONDITION = {
+    NOT_NOTIFY: 0,
+    ABOVE_THRESHOLD: 1,
+    BELOW_THRESHOLD: 2,
+};
+MeshJsGp.MODE = {
+    ALWAYS: 0,
+    ONCE: 1,
+    ALWAYS_AND_ONECE: 2,
+};
+MeshJsGp.PIN = {
+    P1: 0,
+    P2: 1,
+    P3: 2,
+};
+MeshJsGp.STATE = {
+    LOW_2_HIGH: 1,
+    HIGH_2_LOW: 2,
+};
+MeshJsGp.VCC = {
+    AUTO: 0,
+    ON: 1,
+    OFF: 2,
+};
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_js/MeshJsLe.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const MeshJs_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJs.js");
+const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
+class MeshJsLe extends MeshJs_1.MeshJs {
+    /**
+     *
+     * @param red
+     * @param green
+     * @param blue
+     * @param totalTime
+     * @param cycleOnTime
+     * @param cycleOffTime
+     * @param pattern
+     * @returns
+     */
+    parseLightupCommand(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern) {
+        // Error Handle
+        const COLOR_MIN = 0;
+        const COLOR_MAX = 127;
+        if (red < COLOR_MIN || COLOR_MAX < red) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('red', COLOR_MIN, COLOR_MAX);
+        }
+        if (green < COLOR_MIN || COLOR_MAX < green) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('green', COLOR_MIN, COLOR_MAX);
+        }
+        if (blue < COLOR_MIN || COLOR_MAX < blue) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('blue', COLOR_MIN, COLOR_MAX);
+        }
+        const TIME_MIN = 0;
+        const TIME_MAX = 65535;
+        if (totalTime < TIME_MIN || TIME_MAX < totalTime) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('time', TIME_MIN, TIME_MAX);
+        }
+        if (cycleOnTime < TIME_MIN || TIME_MAX < cycleOnTime) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('cycle_on', TIME_MIN, TIME_MAX);
+        }
+        if (cycleOffTime < TIME_MIN || TIME_MAX < cycleOffTime) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('cycle_off', TIME_MIN, TIME_MAX);
+        }
+        if (pattern !== MeshJsLe.PATTERN.BLINK &&
+            pattern !== MeshJsLe.PATTERN.SOFT) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('pattern');
+        }
+        // Generate Command
+        const MESSAGE_TYPE_ID = 1;
+        const EVENT_TYPE_ID = 0;
+        const FIXED = 0;
+        const BYTE = 256;
+        const data = [
+            MESSAGE_TYPE_ID,
+            EVENT_TYPE_ID,
+            red,
+            FIXED,
+            green,
+            FIXED,
+            blue,
+            totalTime % BYTE,
+            Math.floor(totalTime / BYTE),
+            cycleOnTime % BYTE,
+            Math.floor(cycleOnTime / BYTE),
+            cycleOffTime % BYTE,
+            Math.floor(cycleOffTime / BYTE),
+            pattern,
+        ];
+        data.push(this.checkSum(data));
+        return data;
+    }
+}
+exports.MeshJsLe = MeshJsLe;
+// Constant Values
+MeshJsLe.PATTERN = {
+    BLINK: 1,
+    SOFT: 2,
+};
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_js/MeshJsMd.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const MeshJs_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJs.js");
+const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
+class MeshJsMd extends MeshJs_1.MeshJs {
+    constructor() {
+        super(...arguments);
+        // Event Handler
+        this.onNotify = null;
+        // Constant Values
+        this.DETECTION_MODE = {
+            DETECTED: 0x01,
+            NOT_DETECTED: 0x02,
+            ONESHOT: 0x10,
+            CONTINUOUS: 0x20,
+        };
+        this.MOTION_STATE = {
+            SETUP: 0x00,
+            DETECTED: 0x01,
+            NOT_DETECTED: 0x02,
+        };
+        this.MESSAGE_TYPE_ID_ = 1;
+        this.EVENT_TYPE_ID_ = 0;
+        this.response_ = { requestId: -1, motionState: -1, detectionMode: -1 };
+    }
+    get getResponse() {
+        return this.response_;
+    }
+    /**
+     * notify
+     *
+     * @param data
+     * @returns
+     */
+    notify(data) {
+        super.notify(data);
+        if (data[0] !== this.MESSAGE_TYPE_ID_) {
+            return;
+        }
+        if (data[1] !== this.EVENT_TYPE_ID_) {
+            return;
+        }
+        this.response_.requestId = data[2];
+        this.response_.motionState = data[3];
+        this.response_.detectionMode = data[4];
+        if (typeof this.onNotify !== 'function') {
+            return;
+        }
+        this.onNotify(this.response_);
+    }
+    /**
+     *
+     * @param detectionMode
+     * @param detectionTime
+     * @param responseTime
+     * @param requestId
+     * @returns
+     */
+    parseSetmodeCommand(detectionMode, detectionTime = 500, responseTime = 500, requestId = 0) {
+        // Error Handle
+        const DETECTION_TIME_MIN = 200;
+        const DETECTION_TIME_MAX = 60000;
+        if (detectionTime < DETECTION_TIME_MIN ||
+            DETECTION_TIME_MAX < detectionTime) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('detection_time', DETECTION_TIME_MIN, DETECTION_TIME_MAX);
+        }
+        const RESPONSE_TIME_MIN = 500;
+        const RESPONSE_TIME_MAX = 60000;
+        if (responseTime < RESPONSE_TIME_MIN || RESPONSE_TIME_MAX < responseTime) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('response_time', RESPONSE_TIME_MIN, RESPONSE_TIME_MAX);
+        }
+        // Generate Command
+        const HEADER = [
+            this.MESSAGE_TYPE_ID_,
+            this.EVENT_TYPE_ID_,
+            requestId,
+        ];
+        const BYTE = 256;
+        const BODY = [
+            detectionMode,
+            detectionTime % BYTE,
+            Math.floor(detectionTime / BYTE),
+            responseTime % BYTE,
+            Math.floor(responseTime / BYTE),
+        ];
+        const data = HEADER.concat(BODY);
+        data.push(this.checkSum(data));
+        return data;
+    }
+}
+exports.MeshJsMd = MeshJsMd;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_js/MeshJsPa.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const MeshJs_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJs.js");
+const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
+class MeshJsPa extends MeshJs_1.MeshJs {
+    constructor() {
+        super(...arguments);
+        // Event Handler
+        this.onNotify = null;
+        this.MESSAGE_TYPE_ID_ = 1;
+        this.EVENT_TYPE_ID_ = 0;
+        this.response_ = { requestId: -1, proximity: -1, brightness: -1 };
+    }
+    get getResponse() {
+        return this.response_;
+    }
+    /**
+     *
+     * @param data
+     * @returns
+     */
+    notify(data) {
+        super.notify(data);
+        if (data[0] !== this.MESSAGE_TYPE_ID_) {
+            return;
+        }
+        if (data[1] !== this.EVENT_TYPE_ID_) {
+            return;
+        }
+        const BYTE = 256;
+        this.response_.requestId = data[2];
+        this.response_.proximity = BYTE * data[5] + data[4];
+        this.response_.brightness = BYTE * data[7] + data[6];
+        if (typeof this.onNotify !== 'function') {
+            return;
+        }
+        this.onNotify(this.response_);
+    }
+    /**
+     *
+     * @param notifyType
+     * @param requestId
+     * @returns command
+     */
+    parseSetmodeCommand(notifyType, requestId = 0) {
+        // Error Handle
+        if (notifyType % 4 !== 0) {
+            throw new MeshJsError_1.MeshJsInvalidValueError('notifyType');
+        }
+        const NOTIFY_TYPE_MIN = MeshJsPa.NOTIFY_TYPE.UPDATE_PROXIMITY;
+        const NOTIFY_TYPE_MAX = MeshJsPa.NOTIFY_TYPE.UPDATE_PROXIMITY +
+            MeshJsPa.NOTIFY_TYPE.UPDATE_BRIGHTNESS +
+            MeshJsPa.NOTIFY_TYPE.ONCE +
+            MeshJsPa.NOTIFY_TYPE.ALWAYS;
+        if (notifyType < NOTIFY_TYPE_MIN || NOTIFY_TYPE_MAX < notifyType) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('notifyType');
+        }
+        // Generate Command
+        const HEADER = [
+            this.MESSAGE_TYPE_ID_,
+            this.EVENT_TYPE_ID_,
+            requestId,
+        ];
+        const FIXED = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2];
+        const data = HEADER.concat(FIXED).concat(notifyType);
+        data.push(this.checkSum(data));
+        return data;
+    }
+}
+exports.MeshJsPa = MeshJsPa;
+// Constant Values
+MeshJsPa.NOTIFY_TYPE = {
+    UPDATE_PROXIMITY: 4,
+    UPDATE_BRIGHTNESS: 8,
+    ONCE: 16,
+    ALWAYS: 32,
+};
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_js/MeshJsTh.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const MeshJs_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJs.js");
+const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
+class MeshJsTh extends MeshJs_1.MeshJs {
+    constructor() {
+        super(...arguments);
+        // Event Handler
+        this.onNotify = null;
+        this.MESSAGE_TYPE_ID_ = 1;
+        this.EVENT_TYPE_ID_ = 0;
+        this.MAX_TEMPERATURE_ = 50;
+        this.MIN_TEMPERATURE_ = -10;
+        this.MAX_HUMIDITY_ = 100;
+        this.MIN_HUMIDITY_ = 0;
+        this.response_ = { requestId: -1, temperature: -1, humidity: -1 };
+    }
+    get getResponse() {
+        return this.response_;
+    }
+    /**
+     *
+     * @param data
+     * @returns
+     */
+    notify(data) {
+        super.notify(data);
+        if (data[0] !== this.MESSAGE_TYPE_ID_) {
+            return;
+        }
+        if (data[1] !== this.EVENT_TYPE_ID_) {
+            return;
+        }
+        this.response_.requestId = data[2];
+        const BYTE = 256;
+        const TEMP = this.complemnt_(BYTE * data[5] + data[4]) / 10;
+        this.response_.temperature = Math.min(Math.max(this.MIN_TEMPERATURE_, TEMP), this.MAX_TEMPERATURE_);
+        const hum_ori = BYTE * data[7] + data[6];
+        this.response_.humidity = Math.min(Math.max(this.MIN_HUMIDITY_, hum_ori), this.MAX_HUMIDITY_);
+        if (typeof this.onNotify !== 'function') {
+            return;
+        }
+        this.onNotify(this.response_);
+    }
+    /**
+     *
+     * @param temperatureRangeUpper
+     * @param temperatureRangeBottom
+     * @param temperatureCondition
+     * @param humidityRangeUpper
+     * @param humidityRangeBottom
+     * @param humidityCondision
+     * @param type
+     * @param requestId
+     * @returns
+     */
+    parseSetmodeCommand(temperatureRangeUpper, temperatureRangeBottom, temperatureCondition, humidityRangeUpper, humidityRangeBottom, humidityCondision, type, requestId = 0) {
+        // Error Handle
+        if (temperatureRangeBottom < this.MIN_TEMPERATURE_ ||
+            this.MAX_TEMPERATURE_ < temperatureRangeUpper) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('temperature_range', this.MIN_TEMPERATURE_, this.MAX_TEMPERATURE_);
+        }
+        if (humidityRangeBottom < this.MIN_HUMIDITY_ ||
+            this.MAX_HUMIDITY_ < humidityRangeUpper) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('humidity_range', this.MIN_HUMIDITY_, this.MAX_HUMIDITY_);
+        }
+        // Generate Command
+        const HEADER = [
+            this.MESSAGE_TYPE_ID_,
+            this.EVENT_TYPE_ID_,
+            requestId,
+        ];
+        const BASE = 10;
+        const TEMP_UPPER = this.num2array_(BASE * this.invcomplemnt_(temperatureRangeUpper));
+        const TEMP_BOTTOM = this.num2array_(BASE * this.invcomplemnt_(temperatureRangeBottom));
+        const HUMI_UPPER = this.num2array_(humidityRangeUpper);
+        const HUMI_BOTTOM = this.num2array_(humidityRangeBottom);
+        const data = HEADER.concat(TEMP_UPPER)
+            .concat(TEMP_BOTTOM)
+            .concat(HUMI_UPPER)
+            .concat(HUMI_BOTTOM)
+            .concat([temperatureCondition, humidityCondision, type]);
+        data.push(this.checkSum(data));
+        return data;
+    }
+    num2array_(val) {
+        const BYTE = 256;
+        return [val % BYTE, Math.floor(val / BYTE)];
+    }
+    complemnt_(val) {
+        const TWO_BYTE = 65536;
+        const TWO_BYTE_HALF = Math.floor(TWO_BYTE / 2) - 1;
+        return val - (val > TWO_BYTE_HALF ? TWO_BYTE : 0);
+    }
+    invcomplemnt_(val) {
+        const TWO_BYTE = 65536;
+        return val + (val < 0 ? TWO_BYTE : 0);
+    }
+}
+exports.MeshJsTh = MeshJsTh;
+// Constant Values
+MeshJsTh.NOTIFY_TYPE = {
+    UPDATE_TEMPERATURE: 4,
+    UPDATE_HUMIDITY: 8,
+    ONCE: 16,
+    ALWAYS: 32,
+};
 
 
 /***/ }),
@@ -37217,14 +38655,107 @@ Logtta.CompanyID = {
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
+const MeshJs_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJs.js");
 class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
-    // 認証とか共通項目はこちらのクラスで
-    async authWait() {
-        const char = this.getChar('uuid1', 'uuid2');
-        await char.writeWait([0, 0, 0, 0]);
+    constructor() {
+        super(...arguments);
+        // Event Handler
+        this.onBatteryNotify = null;
+        this.onStatusButtonNotify = null;
+        this.onResponseWrite = null;
+        this._mesh = new MeshJs_1.MeshJs();
+        this.indicateCharacteristic_ = null;
+        this.notifyCharacteristic_ = null;
+        this.writeCharacteristic_ = null;
+        this.writeWOResponseCharacteristic_ = null;
+    }
+    static isMESHblock(peripheral) {
+        const _name = peripheral.localName;
+        if (!_name) {
+            return false;
+        }
+        if (_name.length !== MESH.LOCAL_NAME_LENGTH_) {
+            return false;
+        }
+        return this._isMESHblock(_name);
+    }
+    static sameSirialNumberBlock(peripheral, sirialnumber) {
+        var _a;
+        if (!this.isMESHblock(peripheral)) {
+            return false;
+        }
+        return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf(sirialnumber)) !== -1;
+    }
+    /**
+     * Connect to the services of a MESH
+     */
+    async connectWait() {
+        this.prepareConnect();
+        await this.peripheral.connectWait();
+        this.indicateCharacteristic_ = this.getCharacteristic_(this._mesh.UUIDS.CHARACTERISTICS.INDICATE);
+        this.notifyCharacteristic_ = this.getCharacteristic_(this._mesh.UUIDS.CHARACTERISTICS.NOTIFY);
+        this.writeCharacteristic_ = this.getCharacteristic_(this._mesh.UUIDS.CHARACTERISTICS.WRITE);
+        this.writeWOResponseCharacteristic_ = this.getCharacteristic_(this._mesh.UUIDS.CHARACTERISTICS.WRITE_WO_RESPONSE);
+        if (!this.indicateCharacteristic_) {
+            return;
+        }
+        this.indicateCharacteristic_.registerNotify((data) => {
+            this._mesh.indicate(data);
+        });
+        if (!this.notifyCharacteristic_) {
+            return;
+        }
+        await this.notifyCharacteristic_.registerNotifyWait((data) => {
+            this._mesh.notify(data);
+        });
+        console.log('connect');
+        await this.writeWait(this._mesh.featureCommand);
+    }
+    static _isMESHblock(name) {
+        return name.indexOf(MESH.PREFIX) === 0;
+    }
+    prepareConnect() {
+        this._mesh.onBattery = (battery) => {
+            if (typeof this.onBatteryNotify !== 'function') {
+                return;
+            }
+            this.onBatteryNotify(battery);
+        };
+        this._mesh.onStatusButtonPressed = () => {
+            if (typeof this.onStatusButtonNotify !== 'function') {
+                return;
+            }
+            this.onStatusButtonNotify();
+        };
+    }
+    async writeWait(data) {
+        if (!this.writeCharacteristic_) {
+            return;
+        }
+        await this.writeCharacteristic_.writeWait(data, true).then((resp) => {
+            if (typeof this.onResponseWrite !== 'function') {
+                return;
+            }
+            this.onResponseWrite(resp);
+        });
+    }
+    writeWOResponse(data) {
+        if (!this.writeWOResponseCharacteristic_) {
+            return;
+        }
+        this.writeWOResponseCharacteristic_.writeWait(data, true);
+    }
+    getCharacteristic_(uuid) {
+        return this.peripheral
+            .getService(this._mesh.UUIDS.SERVICE_ID)
+            .getCharacteristic(uuid);
     }
 }
 exports.MESH = MESH;
+// Constant Values
+MESH.AvailableBleMode = 'Connectable';
+MESH.LOCAL_NAME_LENGTH_ = 17;
+MESH.PREFIX = 'MESH-100';
 
 
 /***/ }),
@@ -76777,7 +78308,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
+module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
 
 /***/ }),
 

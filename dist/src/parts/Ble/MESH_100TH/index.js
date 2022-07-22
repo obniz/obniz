@@ -6,45 +6,43 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
-/** MESH_100TH management class MESH_100THを管理するクラス */
+const MeshJsTh_1 = require("../MESH_js/MeshJsTh");
+/** MESH_100TH management class */
 class MESH_100TH extends MESH_1.MESH {
     constructor() {
         super(...arguments);
+        // Event Handler
+        this.onNotify = null;
         this.staticClass = MESH_100TH;
-        /** 例） Event handler for button ボタンのイベントハンドラー */
-        this.onButtonPressed = null;
     }
-    /**
-     * adからこのデバイスであること判定する
-     */
-    static isDeviceWithMode(peripheral, mode) {
-        if (mode !== 'Connectable') {
-            return false;
-        }
-        const ad = peripheral.adv_data;
-        // sample
-        // if(ad[0] === 0 && ad[1] === 1){
-        //   return true
-        // }
-        return true;
-    }
-    /**
-     * Connect to the services of a device
-     *
-     * デバイスのサービスに接続
-     */
-    async connectWait() {
-        await super.connectWait();
-        await this.authWait();
-    }
-    // 接続してデータを取ってくる
     async getDataWait() {
         this.checkConnected();
+        const _th = this._mesh;
         return {
-            battery: 0,
-            temperature: 0,
-            humidity: 0,
+            name: this.peripheral.localName,
+            address: this.peripheral.address,
+            battery: this._mesh.battery,
+            temperature: _th.getResponse.temperature,
+            humidity: _th.getResponse.humidity,
         };
+    }
+    setMode(temperature_upper, temperature_bottom, temperature_condition, humidity_upper, humidity_bottom, humidity_condision, type, request_id = 0) {
+        const _th = this._mesh;
+        this.writeWOResponse(_th.parseSetmodeCommand(temperature_upper, temperature_bottom, humidity_upper, humidity_bottom, temperature_condition, humidity_condision, type, request_id));
+    }
+    static _isMESHblock(name) {
+        return name.indexOf(MESH_100TH.PREFIX) !== -1;
+    }
+    prepareConnect() {
+        this._mesh = new MeshJsTh_1.MeshJsTh();
+        const _th = this._mesh;
+        _th.onNotify = (response) => {
+            if (typeof this.onNotify !== 'function') {
+                return;
+            }
+            this.onNotify(response);
+        };
+        super.prepareConnect();
     }
     async beforeOnDisconnectWait(reason) {
         // do nothing
@@ -52,4 +50,5 @@ class MESH_100TH extends MESH_1.MESH {
 }
 exports.default = MESH_100TH;
 MESH_100TH.PartsName = 'MESH_100TH';
-MESH_100TH.AvailableBleMode = 'Connectable';
+MESH_100TH.PREFIX = 'MESH-100TH';
+MESH_100TH.NotifyType = MeshJsTh_1.MeshJsTh.NOTIFY_TYPE;
