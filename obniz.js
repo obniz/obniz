@@ -24245,6 +24245,7 @@ var map = {
 	"./Ble/LogttaAccel/index.js": "./dist/src/parts/Ble/LogttaAccel/index.js",
 	"./Ble/LogttaCO2/index.js": "./dist/src/parts/Ble/LogttaCO2/index.js",
 	"./Ble/LogttaTemp/index.js": "./dist/src/parts/Ble/LogttaTemp/index.js",
+	"./Ble/MESH_100TH/index.js": "./dist/src/parts/Ble/MESH_100TH/index.js",
 	"./Ble/MINEW_S1/index.js": "./dist/src/parts/Ble/MINEW_S1/index.js",
 	"./Ble/MT_500BT/index.js": "./dist/src/parts/Ble/MT_500BT/index.js",
 	"./Ble/MiniBreeze/index.js": "./dist/src/parts/Ble/MiniBreeze/index.js",
@@ -24294,6 +24295,7 @@ var map = {
 	"./Ble/toio_corecube/index.js": "./dist/src/parts/Ble/toio_corecube/index.js",
 	"./Ble/uprism/index.js": "./dist/src/parts/Ble/uprism/index.js",
 	"./Ble/utils/abstracts/Logtta.js": "./dist/src/parts/Ble/utils/abstracts/Logtta.js",
+	"./Ble/utils/abstracts/MESH.js": "./dist/src/parts/Ble/utils/abstracts/MESH.js",
 	"./Ble/utils/abstracts/iBS.js": "./dist/src/parts/Ble/utils/abstracts/iBS.js",
 	"./Ble/utils/advertisement/advertismentAnalyzer.js": "./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js",
 	"./Ble/utils/services/batteryService.js": "./dist/src/parts/Ble/utils/services/batteryService.js",
@@ -26820,6 +26822,69 @@ Logtta_TH.BeaconDataStruct = {
         },
     },
 };
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_100TH/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.MESH_100TH
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
+/** MESH_100TH management class MESH_100THを管理するクラス */
+class MESH_100TH extends MESH_1.MESH {
+    constructor() {
+        super(...arguments);
+        this.staticClass = MESH_100TH;
+        /** 例） Event handler for button ボタンのイベントハンドラー */
+        this.onButtonPressed = null;
+    }
+    /**
+     * adからこのデバイスであること判定する
+     */
+    static isDeviceWithMode(peripheral, mode) {
+        if (mode !== 'Connectable') {
+            return false;
+        }
+        const ad = peripheral.adv_data;
+        // sample
+        // if(ad[0] === 0 && ad[1] === 1){
+        //   return true
+        // }
+        return true;
+    }
+    /**
+     * Connect to the services of a device
+     *
+     * デバイスのサービスに接続
+     */
+    async connectWait() {
+        await super.connectWait();
+        await this.authWait();
+    }
+    // 接続してデータを取ってくる
+    async getDataWait() {
+        this.checkConnected();
+        return {
+            battery: 0,
+            temperature: 0,
+            humidity: 0,
+        };
+    }
+    async beforeOnDisconnectWait(reason) {
+        // do nothing
+    }
+}
+exports.default = MESH_100TH;
+MESH_100TH.PartsName = 'MESH_100TH';
+MESH_100TH.AvailableBleMode = 'Connectable';
 
 
 /***/ }),
@@ -37140,6 +37205,26 @@ Logtta.CompanyID = {
     Connectable: null,
     Beacon: [0x10, 0x05],
 };
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/utils/abstracts/MESH.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
+class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
+    // 認証とか共通項目はこちらのクラスで
+    async authWait() {
+        const char = this.getChar('uuid1', 'uuid2');
+        await char.writeWait([0, 0, 0, 0]);
+    }
+}
+exports.MESH = MESH;
 
 
 /***/ }),
