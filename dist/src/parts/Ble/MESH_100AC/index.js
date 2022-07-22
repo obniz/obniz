@@ -11,7 +11,7 @@ const MeshJsAc_1 = require("../MESH_js/MeshJsAc");
 class MESH_100AC extends MESH_1.MESH {
     constructor() {
         super(...arguments);
-        // event handler
+        // Event Handler
         this.onTapped = null;
         this.onShaked = null;
         this.onFlipped = null;
@@ -31,19 +31,8 @@ class MESH_100AC extends MESH_1.MESH {
             face: _ac.getFace,
         };
     }
-    // public setMode(event: number, mode: number, requestid = 0): void {
-    //   if (!this._writeCharacteristic) {
-    //     return;
-    //   }
-    //   const _ac = this._mesh as MESH_js_AC;
-    //   this._writeCharacteristic
-    //     .writeWait(_ac.parseSetmodeCommand(event, mode, requestid))
-    //     .then((resp) => {
-    //       console.log('response: ' + resp);
-    //     });
-    // }
     static _isMESHblock(name) {
-        return name.indexOf(MESH_100AC._LocalName) === 0;
+        return name.indexOf(MESH_100AC.PREFIX) === 0;
     }
     prepareConnect() {
         this._mesh = new MeshJsAc_1.MeshJsAc();
@@ -80,4 +69,4 @@ class MESH_100AC extends MESH_1.MESH {
 }
 exports.default = MESH_100AC;
 MESH_100AC.PartsName = 'MESH_100AC';
-MESH_100AC._LocalName = 'MESH-100AC';
+MESH_100AC.PREFIX = 'MESH-100AC';

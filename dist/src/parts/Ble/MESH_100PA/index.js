@@ -11,7 +11,7 @@ const MeshJsPa_1 = require("../MESH_js/MeshJsPa");
 class MESH_100PA extends MESH_1.MESH {
     constructor() {
         super(...arguments);
-        // event handler
+        // Event Handler
         this.onNotify = null;
         this.staticClass = MESH_100PA;
     }
@@ -31,7 +31,7 @@ class MESH_100PA extends MESH_1.MESH {
         this.writeWOResponse(_pa.parseSetmodeCommand(type, request_id));
     }
     static _isMESHblock(name) {
-        return name.indexOf(MESH_100PA._LocalName) !== -1;
+        return name.indexOf(MESH_100PA.PREFIX) !== -1;
     }
     prepareConnect() {
         this._mesh = new MeshJsPa_1.MeshJsPa();
@@ -50,5 +50,5 @@ class MESH_100PA extends MESH_1.MESH {
 }
 exports.default = MESH_100PA;
 MESH_100PA.PartsName = 'MESH_100PA';
-MESH_100PA._LocalName = 'MESH-100PA';
-MESH_100PA.NotifyType = MeshJsPa_1.MeshJsPa.NotifyType;
+MESH_100PA.PREFIX = 'MESH-100PA';
+MESH_100PA.NotifyType = MeshJsPa_1.MeshJsPa.NOTIFY_TYPE;

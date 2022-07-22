@@ -24,10 +24,10 @@ export interface MESH_100MD_Data {
 /** MESH_100MD management class */
 export default class MESH_100MD extends MESH<MESH_100MD_Data> {
   public static readonly PartsName = 'MESH_100MD';
-  public static readonly _LocalName = 'MESH-100MD';
+  public static readonly PREFIX = 'MESH-100MD';
 
-  // event handler
-  public onNotify: ((resp: MeshJsMd['response']) => void) | null = null;
+  // Event Handler
+  public onNotify: ((resp: MeshJsMd['response_']) => void) | null = null;
 
   protected readonly staticClass = MESH_100MD;
 
@@ -38,9 +38,9 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
       name: this.peripheral!.localName!,
       address: this.peripheral.address,
       battery: this._mesh.battery,
-      motion_state: _md.getResponse.motion_state,
-      detection_mode: _md.getResponse.detection_mode,
-      request_id: _md.getResponse.request_id,
+      motion_state: _md.getResponse.motionState,
+      detection_mode: _md.getResponse.detectionMode,
+      request_id: _md.getResponse.requestId,
     };
   }
 
@@ -62,7 +62,7 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
   }
 
   protected static _isMESHblock(name: string): boolean {
-    return name.indexOf(MESH_100MD._LocalName) !== -1;
+    return name.indexOf(MESH_100MD.PREFIX) !== -1;
   }
 
   protected prepareConnect(): void {
@@ -70,7 +70,7 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
 
     // set Event handler
     const _md = this._mesh as MeshJsMd;
-    _md.onNotify = (response: MeshJsMd['response']) => {
+    _md.onNotify = (response: MeshJsMd['response_']) => {
       if (typeof this.onNotify !== 'function') {
         return;
       }

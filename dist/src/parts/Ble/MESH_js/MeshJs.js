@@ -2,27 +2,39 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class MeshJs {
     constructor() {
-        this.UUIDS = {
-            serviceId: '72C90001-57A9-4D40-B746-534E22EC9F9E',
-            characteristics: {
-                Indicate: '72c90005-57a9-4d40-b746-534e22ec9f9e',
-                Notify: '72c90003-57a9-4d40-b746-534e22ec9f9e',
-                Write: '72c90004-57a9-4d40-b746-534e22ec9f9e',
-                WriteWOResponse: '72c90002-57a9-4d40-b746-534e22ec9f9e',
-            },
-        };
-        // event handler
+        // Event Handler
         this.onBattery = null;
         this.onStatusButtonPressed = null;
-        this._feature_command = [0, 2, 1, 3];
-        this._battery = -1;
+        // Constant Values
+        this.UUIDS = {
+            SERVICE_ID: '72C90001-57A9-4D40-B746-534E22EC9F9E',
+            CHARACTERISTICS: {
+                INDICATE: '72c90005-57a9-4d40-b746-534e22ec9f9e',
+                NOTIFY: '72c90003-57a9-4d40-b746-534e22ec9f9e',
+                WRITE: '72c90004-57a9-4d40-b746-534e22ec9f9e',
+                WRITE_WO_RESPONSE: '72c90002-57a9-4d40-b746-534e22ec9f9e',
+            },
+        };
+        this.FEATURE_COMMAND_ = [
+            0,
+            2,
+            1,
+            3,
+        ];
+        this.battery_ = -1;
     }
-    get feature() {
-        return this._feature_command;
+    get featureCommand() {
+        return this.FEATURE_COMMAND_;
     }
     get battery() {
-        return this._battery;
+        return this.battery_;
     }
+    /**
+     * indicate
+     *
+     * @param data
+     * @returns
+     */
     indicate(data) {
         if (data.length !== 16) {
             return;
@@ -33,14 +45,16 @@ class MeshJs {
         if (data[1] !== 2) {
             return;
         }
-        this._battery = data[14];
+        this.battery_ = data[14];
     }
+    /**
+     * notify
+     *
+     * @param data
+     */
     notify(data) {
-        this._updateBattery(data);
-        this._updateStatusButton(data);
-    }
-    printData(message) {
-        console.log('bat: ' + this._battery + ', ' + message);
+        this.updateBattery_(data);
+        this.updateStatusButton_(data);
     }
     checkSum(command) {
         let sum = 0;
@@ -49,13 +63,7 @@ class MeshJs {
         });
         return sum % 256;
     }
-    errorMessage(message) {
-        console.log('[Error] Can not parse; ' + message);
-    }
-    errorOutOfRange(message) {
-        console.log(this.errorMessage('out of range ' + message));
-    }
-    _updateBattery(data) {
+    updateBattery_(data) {
         if (data.length !== 4) {
             return false;
         }
@@ -68,14 +76,14 @@ class MeshJs {
         // if (data[2] === this.battery) {
         //   return;
         // }
-        this._battery = data[2];
+        this.battery_ = data[2];
         if (typeof this.onBattery !== 'function') {
             return false;
         }
-        this.onBattery(this._battery);
+        this.onBattery(this.battery_);
         return true;
     }
-    _updateStatusButton(data) {
+    updateStatusButton_(data) {
         if (data.length !== 4) {
             return false;
         }

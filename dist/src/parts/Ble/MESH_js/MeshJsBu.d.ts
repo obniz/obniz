@@ -3,9 +3,15 @@ export declare class MeshJsBu extends MeshJs {
     onSinglePressed: (() => void) | null;
     onLongPressed: (() => void) | null;
     onDoublePressed: (() => void) | null;
-    private readonly DataLength;
-    private readonly MessageTypeID;
-    private readonly EventTypeID;
-    private readonly Type;
+    private readonly DATA_LENGTH_;
+    private readonly MESSAGE_TYPE_ID_;
+    private readonly EVENT_TYPE_ID_;
+    private readonly TYPE_;
+    /**
+     * notify
+     *
+     * @param data
+     * @returns
+     */
     notify(data: number[]): void;
 }

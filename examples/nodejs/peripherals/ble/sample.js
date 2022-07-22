@@ -9,7 +9,7 @@ const mesh_th = Obniz.getPartsClass('MESH_100TH');
 const mesh_md = Obniz.getPartsClass('MESH_100MD');
 const mesh_gp = Obniz.getPartsClass('MESH_100GP');
 
-const obnizId = '87287267';
+const obnizId = '00000000';
 
 const obniz = new Obniz(obnizId, {
   access_token: null,

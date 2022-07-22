@@ -1,38 +1,49 @@
 import { MeshJs } from './MeshJs';
 export class MeshJsBu extends MeshJs {
-  // event handler
+  // Event Handler
   public onSinglePressed: (() => void) | null = null;
   public onLongPressed: (() => void) | null = null;
   public onDoublePressed: (() => void) | null = null;
 
-  private readonly DataLength: number = 4;
-  private readonly MessageTypeID: number = 1;
-  private readonly EventTypeID: number = 0;
-  private readonly Type = { SINGLE: 1, LONG: 2, DOUBLE: 3 } as const;
+  // Constant Values
+  private readonly DATA_LENGTH_: number = 4 as const;
+  private readonly MESSAGE_TYPE_ID_: number = 1 as const;
+  private readonly EVENT_TYPE_ID_: number = 0 as const;
+  private readonly TYPE_ = {
+    SINGLE: 1 as const,
+    LONG: 2 as const,
+    DOUBLE: 3 as const,
+  } as const;
 
+  /**
+   * notify
+   *
+   * @param data
+   * @returns
+   */
   public notify(data: number[]): void {
     super.notify(data);
-    if (data.length !== this.DataLength) {
+    if (data.length !== this.DATA_LENGTH_) {
       return;
     }
-    if (data[0] !== this.MessageTypeID) {
+    if (data[0] !== this.MESSAGE_TYPE_ID_) {
       return;
     }
-    if (data[1] !== this.EventTypeID) {
+    if (data[1] !== this.EVENT_TYPE_ID_) {
       return;
     }
     switch (data[2]) {
-      case this.Type.SINGLE:
+      case this.TYPE_.SINGLE:
         if (typeof this.onSinglePressed === 'function') {
           this.onSinglePressed();
         }
         break;
-      case this.Type.LONG:
+      case this.TYPE_.LONG:
         if (typeof this.onLongPressed === 'function') {
           this.onLongPressed();
         }
         break;
-      case this.Type.DOUBLE:
+      case this.TYPE_.DOUBLE:
         if (typeof this.onDoublePressed === 'function') {
           this.onDoublePressed();
         }

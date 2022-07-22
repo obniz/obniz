@@ -11,7 +11,7 @@ const MeshJsMd_1 = require("../MESH_js/MeshJsMd");
 class MESH_100MD extends MESH_1.MESH {
     constructor() {
         super(...arguments);
-        // event handler
+        // Event Handler
         this.onNotify = null;
         this.staticClass = MESH_100MD;
     }
@@ -22,9 +22,9 @@ class MESH_100MD extends MESH_1.MESH {
             name: this.peripheral.localName,
             address: this.peripheral.address,
             battery: this._mesh.battery,
-            motion_state: _md.getResponse.motion_state,
-            detection_mode: _md.getResponse.detection_mode,
-            request_id: _md.getResponse.request_id,
+            motion_state: _md.getResponse.motionState,
+            detection_mode: _md.getResponse.detectionMode,
+            request_id: _md.getResponse.requestId,
         };
     }
     setMode(detection_mode, detection_time = 500, response_time = 500, requestid = 0) {
@@ -32,7 +32,7 @@ class MESH_100MD extends MESH_1.MESH {
         this.writeWOResponse(_md.parseSetmodeCommand(detection_mode, detection_time, response_time, requestid));
     }
     static _isMESHblock(name) {
-        return name.indexOf(MESH_100MD._LocalName) !== -1;
+        return name.indexOf(MESH_100MD.PREFIX) !== -1;
     }
     prepareConnect() {
         this._mesh = new MeshJsMd_1.MeshJsMd();
@@ -52,4 +52,4 @@ class MESH_100MD extends MESH_1.MESH {
 }
 exports.default = MESH_100MD;
 MESH_100MD.PartsName = 'MESH_100MD';
-MESH_100MD._LocalName = 'MESH-100MD';
+MESH_100MD.PREFIX = 'MESH-100MD';

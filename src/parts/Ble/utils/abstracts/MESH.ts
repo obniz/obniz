@@ -9,29 +9,29 @@ import BleRemotePeripheral from '../../../../obniz/libs/embeds/bleHci/bleRemoteP
 import { MeshJs } from '../../MESH_js/MeshJs';
 
 export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
-  // event handler
+  // Event Handler
   public onBatteryNotify: ((battery: number) => void) | null = null;
   public onStatusButtonNotify: (() => void) | null = null;
   public onResponseWrite: ((response: boolean) => void) | null = null;
 
+  // Constant Values
   public static AvailableBleMode = 'Connectable' as const;
+  private static readonly LOCAL_NAME_LENGTH_ = 17 as const;
 
-  protected static _LocalName = 'MESH-100';
+  protected static PREFIX = 'MESH-100';
   protected _mesh: MeshJs = new MeshJs();
 
-  private _indicateCharacteristic: BleRemoteCharacteristic | null = null;
-  private _notifyCharacteristic: BleRemoteCharacteristic | null = null;
-  private _writeCharacteristic: BleRemoteCharacteristic | null = null;
-  private _writeWOResponseCharacteristic: BleRemoteCharacteristic | null = null;
-
-  private static readonly LOCAL_NAME_LENGTH = 17;
+  private indicateCharacteristic_: BleRemoteCharacteristic | null = null;
+  private notifyCharacteristic_: BleRemoteCharacteristic | null = null;
+  private writeCharacteristic_: BleRemoteCharacteristic | null = null;
+  private writeWOResponseCharacteristic_: BleRemoteCharacteristic | null = null;
 
   public static isMESHblock(peripheral: BleRemotePeripheral): boolean {
     const _name: string | null = peripheral.localName;
     if (!_name) {
       return false;
     }
-    if (_name.length !== MESH.LOCAL_NAME_LENGTH) {
+    if (_name.length !== MESH.LOCAL_NAME_LENGTH_) {
       return false;
     }
     return this._isMESHblock(_name);
@@ -55,43 +55,43 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
 
     await this.peripheral.connectWait();
 
-    this._indicateCharacteristic = this._getCharacteristic(
-      this._mesh.UUIDS.characteristics.Indicate
+    this.indicateCharacteristic_ = this.getCharacteristic_(
+      this._mesh.UUIDS.CHARACTERISTICS.INDICATE
     );
 
-    this._notifyCharacteristic = this._getCharacteristic(
-      this._mesh.UUIDS.characteristics.Notify
+    this.notifyCharacteristic_ = this.getCharacteristic_(
+      this._mesh.UUIDS.CHARACTERISTICS.NOTIFY
     );
 
-    this._writeCharacteristic = this._getCharacteristic(
-      this._mesh.UUIDS.characteristics.Write
+    this.writeCharacteristic_ = this.getCharacteristic_(
+      this._mesh.UUIDS.CHARACTERISTICS.WRITE
     );
 
-    this._writeWOResponseCharacteristic = this._getCharacteristic(
-      this._mesh.UUIDS.characteristics.WriteWOResponse
+    this.writeWOResponseCharacteristic_ = this.getCharacteristic_(
+      this._mesh.UUIDS.CHARACTERISTICS.WRITE_WO_RESPONSE
     );
 
-    if (!this._indicateCharacteristic) {
+    if (!this.indicateCharacteristic_) {
       return;
     }
-    this._indicateCharacteristic.registerNotify((data) => {
+    this.indicateCharacteristic_.registerNotify((data) => {
       this._mesh.indicate(data);
     });
 
-    if (!this._notifyCharacteristic) {
+    if (!this.notifyCharacteristic_) {
       return;
     }
-    await this._notifyCharacteristic.registerNotifyWait((data) => {
+    await this.notifyCharacteristic_.registerNotifyWait((data) => {
       this._mesh.notify(data);
     });
 
     console.log('connect');
 
-    await this._writeFeatureWait();
+    await this.writeWait(this._mesh.featureCommand);
   }
 
   protected static _isMESHblock(name: string): boolean {
-    return name.indexOf(MESH._LocalName) === 0;
+    return name.indexOf(MESH.PREFIX) === 0;
   }
 
   protected prepareConnect(): void {
@@ -110,10 +110,10 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
   }
 
   protected async writeWait(data: number[]): Promise<void> {
-    if (!this._writeCharacteristic) {
+    if (!this.writeCharacteristic_) {
       return;
     }
-    await this._writeCharacteristic.writeWait(data, true).then((resp) => {
+    await this.writeCharacteristic_.writeWait(data, true).then((resp) => {
       if (typeof this.onResponseWrite !== 'function') {
         return;
       }
@@ -122,19 +122,15 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
   }
 
   protected writeWOResponse(data: number[]) {
-    if (!this._writeWOResponseCharacteristic) {
+    if (!this.writeWOResponseCharacteristic_) {
       return;
     }
-    this._writeWOResponseCharacteristic.writeWait(data, true);
+    this.writeWOResponseCharacteristic_.writeWait(data, true);
   }
 
-  private _getCharacteristic(uuid: string) {
+  private getCharacteristic_(uuid: string) {
     return this.peripheral
-      .getService(this._mesh.UUIDS.serviceId)!
+      .getService(this._mesh.UUIDS.SERVICE_ID)!
       .getCharacteristic(uuid);
-  }
-
-  private async _writeFeatureWait(): Promise<void> {
-    await this.writeWait(this._mesh.feature);
   }
 }

@@ -26858,7 +26858,7 @@ const MeshJsAc_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsAc.js
 class MESH_100AC extends MESH_1.MESH {
     constructor() {
         super(...arguments);
-        // event handler
+        // Event Handler
         this.onTapped = null;
         this.onShaked = null;
         this.onFlipped = null;
@@ -26878,19 +26878,8 @@ class MESH_100AC extends MESH_1.MESH {
             face: _ac.getFace,
         };
     }
-    // public setMode(event: number, mode: number, requestid = 0): void {
-    //   if (!this._writeCharacteristic) {
-    //     return;
-    //   }
-    //   const _ac = this._mesh as MESH_js_AC;
-    //   this._writeCharacteristic
-    //     .writeWait(_ac.parseSetmodeCommand(event, mode, requestid))
-    //     .then((resp) => {
-    //       console.log('response: ' + resp);
-    //     });
-    // }
     static _isMESHblock(name) {
-        return name.indexOf(MESH_100AC._LocalName) === 0;
+        return name.indexOf(MESH_100AC.PREFIX) === 0;
     }
     prepareConnect() {
         this._mesh = new MeshJsAc_1.MeshJsAc();
@@ -26927,7 +26916,7 @@ class MESH_100AC extends MESH_1.MESH {
 }
 exports.default = MESH_100AC;
 MESH_100AC.PartsName = 'MESH_100AC';
-MESH_100AC._LocalName = 'MESH-100AC';
+MESH_100AC.PREFIX = 'MESH-100AC';
 
 
 /***/ }),
@@ -26949,7 +26938,7 @@ const MeshJsBu_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsBu.js
 class MESH_100BU extends MESH_1.MESH {
     constructor() {
         super(...arguments);
-        /** event handler */
+        /** Event Handler */
         this.onSinglePressed = null;
         this.onLongPressed = null;
         this.onDoublePressed = null;
@@ -26964,7 +26953,7 @@ class MESH_100BU extends MESH_1.MESH {
         };
     }
     static _isMESHblock(name) {
-        return name.indexOf(MESH_100BU._LocalName) !== -1;
+        return name.indexOf(MESH_100BU.PREFIX) !== -1;
     }
     prepareConnect() {
         this._mesh = new MeshJsBu_1.MeshJsBu();
@@ -26995,7 +26984,7 @@ class MESH_100BU extends MESH_1.MESH {
 }
 exports.default = MESH_100BU;
 MESH_100BU.PartsName = 'MESH_100BU';
-MESH_100BU._LocalName = 'MESH-100BU';
+MESH_100BU.PREFIX = 'MESH-100BU';
 
 
 /***/ }),
@@ -27019,7 +27008,7 @@ class MESH_100GP extends MESH_1.MESH {
         super(...arguments);
         this.DigitalPins = this
             ._mesh.DigitalPins;
-        // event handler
+        // Event Handler
         this.onDigitalInEventNotify = null;
         this.onAnalogInEventNotify = null;
         this.onDigitalInNotify = null;
@@ -27074,7 +27063,7 @@ class MESH_100GP extends MESH_1.MESH {
         this.writeWOResponse(_gp.parseSetPWMCommand(request_id));
     }
     static _isMESHblock(name) {
-        return name.indexOf(MESH_100GP._LocalName) !== -1;
+        return name.indexOf(MESH_100GP.PREFIX) !== -1;
     }
     prepareConnect() {
         this._mesh = new MeshJsGp_1.MeshJsGp();
@@ -27129,11 +27118,11 @@ class MESH_100GP extends MESH_1.MESH {
 }
 exports.default = MESH_100GP;
 MESH_100GP.PartsName = 'MESH_100GP';
-MESH_100GP._LocalName = 'MESH-100GP';
-MESH_100GP.AnalogInputEventCondition = MeshJsGp_1.MeshJsGp.AnalogInputEventCondition;
-MESH_100GP.Mode = MeshJsGp_1.MeshJsGp.Mode;
-MESH_100GP.Pin = MeshJsGp_1.MeshJsGp.Pin;
-MESH_100GP.State = MeshJsGp_1.MeshJsGp.State;
+MESH_100GP.PREFIX = 'MESH-100GP';
+MESH_100GP.AnalogInputEventCondition = MeshJsGp_1.MeshJsGp.ANALOG_IN_EVENT_CONDITION;
+MESH_100GP.Mode = MeshJsGp_1.MeshJsGp.MODE;
+MESH_100GP.Pin = MeshJsGp_1.MeshJsGp.PIN;
+MESH_100GP.State = MeshJsGp_1.MeshJsGp.STATE;
 MESH_100GP.VCC = MeshJsGp_1.MeshJsGp.VCC;
 
 
@@ -27183,7 +27172,7 @@ class MESH_100LE extends MESH_1.MESH {
         this.writeWOResponse(_le.parseLightupCommand(red, green, blue, time, cycle_on, cycle_off, pattern));
     }
     static _isMESHblock(name) {
-        return name.indexOf(MESH_100LE._LocalName) !== -1;
+        return name.indexOf(MESH_100LE.PREFIX) !== -1;
     }
     prepareConnect() {
         this._mesh = new MeshJsLe_1.MeshJsLe();
@@ -27195,8 +27184,8 @@ class MESH_100LE extends MESH_1.MESH {
 }
 exports.default = MESH_100LE;
 MESH_100LE.PartsName = 'MESH_100LE';
-MESH_100LE._LocalName = 'MESH-100LE';
-MESH_100LE.Pattern = MeshJsLe_1.MeshJsLe.Pattern;
+MESH_100LE.PREFIX = 'MESH-100LE';
+MESH_100LE.Pattern = MeshJsLe_1.MeshJsLe.PATTERN;
 
 
 /***/ }),
@@ -27218,7 +27207,7 @@ const MeshJsMd_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsMd.js
 class MESH_100MD extends MESH_1.MESH {
     constructor() {
         super(...arguments);
-        // event handler
+        // Event Handler
         this.onNotify = null;
         this.staticClass = MESH_100MD;
     }
@@ -27229,9 +27218,9 @@ class MESH_100MD extends MESH_1.MESH {
             name: this.peripheral.localName,
             address: this.peripheral.address,
             battery: this._mesh.battery,
-            motion_state: _md.getResponse.motion_state,
-            detection_mode: _md.getResponse.detection_mode,
-            request_id: _md.getResponse.request_id,
+            motion_state: _md.getResponse.motionState,
+            detection_mode: _md.getResponse.detectionMode,
+            request_id: _md.getResponse.requestId,
         };
     }
     setMode(detection_mode, detection_time = 500, response_time = 500, requestid = 0) {
@@ -27239,7 +27228,7 @@ class MESH_100MD extends MESH_1.MESH {
         this.writeWOResponse(_md.parseSetmodeCommand(detection_mode, detection_time, response_time, requestid));
     }
     static _isMESHblock(name) {
-        return name.indexOf(MESH_100MD._LocalName) !== -1;
+        return name.indexOf(MESH_100MD.PREFIX) !== -1;
     }
     prepareConnect() {
         this._mesh = new MeshJsMd_1.MeshJsMd();
@@ -27259,7 +27248,7 @@ class MESH_100MD extends MESH_1.MESH {
 }
 exports.default = MESH_100MD;
 MESH_100MD.PartsName = 'MESH_100MD';
-MESH_100MD._LocalName = 'MESH-100MD';
+MESH_100MD.PREFIX = 'MESH-100MD';
 
 
 /***/ }),
@@ -27281,7 +27270,7 @@ const MeshJsPa_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsPa.js
 class MESH_100PA extends MESH_1.MESH {
     constructor() {
         super(...arguments);
-        // event handler
+        // Event Handler
         this.onNotify = null;
         this.staticClass = MESH_100PA;
     }
@@ -27301,7 +27290,7 @@ class MESH_100PA extends MESH_1.MESH {
         this.writeWOResponse(_pa.parseSetmodeCommand(type, request_id));
     }
     static _isMESHblock(name) {
-        return name.indexOf(MESH_100PA._LocalName) !== -1;
+        return name.indexOf(MESH_100PA.PREFIX) !== -1;
     }
     prepareConnect() {
         this._mesh = new MeshJsPa_1.MeshJsPa();
@@ -27320,8 +27309,8 @@ class MESH_100PA extends MESH_1.MESH {
 }
 exports.default = MESH_100PA;
 MESH_100PA.PartsName = 'MESH_100PA';
-MESH_100PA._LocalName = 'MESH-100PA';
-MESH_100PA.NotifyType = MeshJsPa_1.MeshJsPa.NotifyType;
+MESH_100PA.PREFIX = 'MESH-100PA';
+MESH_100PA.NotifyType = MeshJsPa_1.MeshJsPa.NOTIFY_TYPE;
 
 
 /***/ }),
@@ -27343,6 +27332,7 @@ const MeshJsTh_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsTh.js
 class MESH_100TH extends MESH_1.MESH {
     constructor() {
         super(...arguments);
+        // Event Handler
         this.onNotify = null;
         this.staticClass = MESH_100TH;
     }
@@ -27362,7 +27352,7 @@ class MESH_100TH extends MESH_1.MESH {
         this.writeWOResponse(_th.parseSetmodeCommand(temperature_upper, temperature_bottom, humidity_upper, humidity_bottom, temperature_condition, humidity_condision, type, request_id));
     }
     static _isMESHblock(name) {
-        return name.indexOf(MESH_100TH._LocalName) !== -1;
+        return name.indexOf(MESH_100TH.PREFIX) !== -1;
     }
     prepareConnect() {
         this._mesh = new MeshJsTh_1.MeshJsTh();
@@ -27381,8 +27371,8 @@ class MESH_100TH extends MESH_1.MESH {
 }
 exports.default = MESH_100TH;
 MESH_100TH.PartsName = 'MESH_100TH';
-MESH_100TH._LocalName = 'MESH-100TH';
-MESH_100TH.NotifyType = MeshJsTh_1.MeshJsTh.NotifyType;
+MESH_100TH.PREFIX = 'MESH-100TH';
+MESH_100TH.NotifyType = MeshJsTh_1.MeshJsTh.NOTIFY_TYPE;
 
 
 /***/ }),
@@ -27395,27 +27385,39 @@ MESH_100TH.NotifyType = MeshJsTh_1.MeshJsTh.NotifyType;
 Object.defineProperty(exports, "__esModule", { value: true });
 class MeshJs {
     constructor() {
-        this.UUIDS = {
-            serviceId: '72C90001-57A9-4D40-B746-534E22EC9F9E',
-            characteristics: {
-                Indicate: '72c90005-57a9-4d40-b746-534e22ec9f9e',
-                Notify: '72c90003-57a9-4d40-b746-534e22ec9f9e',
-                Write: '72c90004-57a9-4d40-b746-534e22ec9f9e',
-                WriteWOResponse: '72c90002-57a9-4d40-b746-534e22ec9f9e',
-            },
-        };
-        // event handler
+        // Event Handler
         this.onBattery = null;
         this.onStatusButtonPressed = null;
-        this._feature_command = [0, 2, 1, 3];
-        this._battery = -1;
+        // Constant Values
+        this.UUIDS = {
+            SERVICE_ID: '72C90001-57A9-4D40-B746-534E22EC9F9E',
+            CHARACTERISTICS: {
+                INDICATE: '72c90005-57a9-4d40-b746-534e22ec9f9e',
+                NOTIFY: '72c90003-57a9-4d40-b746-534e22ec9f9e',
+                WRITE: '72c90004-57a9-4d40-b746-534e22ec9f9e',
+                WRITE_WO_RESPONSE: '72c90002-57a9-4d40-b746-534e22ec9f9e',
+            },
+        };
+        this.FEATURE_COMMAND_ = [
+            0,
+            2,
+            1,
+            3,
+        ];
+        this.battery_ = -1;
     }
-    get feature() {
-        return this._feature_command;
+    get featureCommand() {
+        return this.FEATURE_COMMAND_;
     }
     get battery() {
-        return this._battery;
+        return this.battery_;
     }
+    /**
+     * indicate
+     *
+     * @param data
+     * @returns
+     */
     indicate(data) {
         if (data.length !== 16) {
             return;
@@ -27426,14 +27428,16 @@ class MeshJs {
         if (data[1] !== 2) {
             return;
         }
-        this._battery = data[14];
+        this.battery_ = data[14];
     }
+    /**
+     * notify
+     *
+     * @param data
+     */
     notify(data) {
-        this._updateBattery(data);
-        this._updateStatusButton(data);
-    }
-    printData(message) {
-        console.log('bat: ' + this._battery + ', ' + message);
+        this.updateBattery_(data);
+        this.updateStatusButton_(data);
     }
     checkSum(command) {
         let sum = 0;
@@ -27442,13 +27446,7 @@ class MeshJs {
         });
         return sum % 256;
     }
-    errorMessage(message) {
-        console.log('[Error] Can not parse; ' + message);
-    }
-    errorOutOfRange(message) {
-        console.log(this.errorMessage('out of range ' + message));
-    }
-    _updateBattery(data) {
+    updateBattery_(data) {
         if (data.length !== 4) {
             return false;
         }
@@ -27461,14 +27459,14 @@ class MeshJs {
         // if (data[2] === this.battery) {
         //   return;
         // }
-        this._battery = data[2];
+        this.battery_ = data[2];
         if (typeof this.onBattery !== 'function') {
             return false;
         }
-        this.onBattery(this._battery);
+        this.onBattery(this.battery_);
         return true;
     }
-    _updateStatusButton(data) {
+    updateStatusButton_(data) {
         if (data.length !== 4) {
             return false;
         }
@@ -27503,90 +27501,83 @@ const MeshJs_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJs.js");
 class MeshJsAc extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
-        /**
-         * MessageTypeID
-         * command header
-         */
-        this.MessageTypeID = 1;
-        this.accele = { x: -1, y: -1, z: -1 };
-        this.face = -1;
-        this.DataLength = 17;
-        // event handler
+        // Event Handler
         this.onTapped = null;
         this.onShaked = null;
         this.onFlipped = null;
         this.onDirection = null;
+        // Constant Values
+        this.MESSAGE_TYPE_ID_ = 1;
+        this.DATA_LENGTH_ = 17;
+        this.TAP_EVENT_ID_ = 0;
+        this.SHAKE_EVENT_ID_ = 1;
+        this.FLIP_EVENT_ID_ = 2;
+        this.DIRECTION_EVENT_ID_ = 3;
+        this.accele_ = { x: -1, y: -1, z: -1 };
+        this.face_ = -1;
     }
+    get getAccele() {
+        return this.accele_;
+    }
+    get getFace() {
+        return this.face_;
+    }
+    /**
+     * notify
+     *
+     * @param data
+     * @returns
+     */
     notify(data) {
         super.notify(data);
-        this.updateAccele(data);
+        this.updateAccele_(data);
         if (data[0] !== 1) {
             return;
         }
         switch (data[1]) {
-            case 0: // Tap
+            case this.TAP_EVENT_ID_:
                 if (typeof this.onTapped === 'function') {
-                    this.onTapped(this.accele);
+                    this.onTapped(this.accele_);
                 }
                 break;
-            case 1: // Shake
+            case this.SHAKE_EVENT_ID_:
                 if (typeof this.onShaked === 'function') {
-                    this.onShaked(this.accele);
+                    this.onShaked(this.accele_);
                 }
                 break;
-            case 2: // Flip
+            case this.FLIP_EVENT_ID_:
                 if (typeof this.onFlipped === 'function') {
-                    this.onFlipped(this.accele);
+                    this.onFlipped(this.accele_);
                 }
                 break;
-            case 3: // Direction
+            case this.DIRECTION_EVENT_ID_:
                 if (typeof this.onDirection === 'function') {
-                    this.face = data[2];
-                    this.onDirection(this.face, this.accele);
+                    this.face_ = data[2];
+                    this.onDirection(this.face_, this.accele_);
                 }
                 break;
             default:
                 break;
         }
     }
-    get getAccele() {
-        return this.accele;
-    }
-    get getFace() {
-        return this.face;
-    }
-    /**
-     * setMode
-     *
-     * @param type
-     * @returns
-     */
-    //   public parseSetmodeCommand(
-    //     event: number,
-    //     mode: number,
-    //     requestId = 0
-    //   ): number[] {
-    //     const HEADER: number[] = [this.MessageTypeID, 1, requestId];
-    //     const data: number[] = HEADER.concat(event).concat(mode);
-    //     data.push(this.checkSum(data));
-    //     console.log('setMode: ' + data);
-    //     return data;
-    //   }
-    updateAccele(data) {
-        if (data.length !== this.DataLength) {
+    updateAccele_(data) {
+        if (data.length !== this.DATA_LENGTH_) {
             return false;
         }
-        if (data[0] !== 1) {
+        if (data[0] !== this.MESSAGE_TYPE_ID_) {
             return false;
         }
+        const BYTE = 256;
         const BASE = 1024;
-        this.accele.x = this.complemnt(256 * data[5] + data[4]) / BASE;
-        this.accele.y = this.complemnt(256 * data[7] + data[6]) / BASE;
-        this.accele.z = this.complemnt(256 * data[9] + data[8]) / BASE;
+        this.accele_.x = this.complemnt_(BYTE * data[5] + data[4]) / BASE;
+        this.accele_.y = this.complemnt_(BYTE * data[7] + data[6]) / BASE;
+        this.accele_.z = this.complemnt_(BYTE * data[9] + data[8]) / BASE;
         return true;
     }
-    complemnt(val) {
-        return val - (val > 32767 ? 65536 : 0);
+    complemnt_(val) {
+        const TWO_BYTE = 65536;
+        const TWO_BYTE_HALF = Math.floor(TWO_BYTE / 2) - 1;
+        return val - (val > TWO_BYTE_HALF ? TWO_BYTE : 0);
     }
 }
 exports.MeshJsAc = MeshJsAc;
@@ -27604,38 +27595,49 @@ const MeshJs_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJs.js");
 class MeshJsBu extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
-        // event handler
+        // Event Handler
         this.onSinglePressed = null;
         this.onLongPressed = null;
         this.onDoublePressed = null;
-        this.DataLength = 4;
-        this.MessageTypeID = 1;
-        this.EventTypeID = 0;
-        this.Type = { SINGLE: 1, LONG: 2, DOUBLE: 3 };
+        // Constant Values
+        this.DATA_LENGTH_ = 4;
+        this.MESSAGE_TYPE_ID_ = 1;
+        this.EVENT_TYPE_ID_ = 0;
+        this.TYPE_ = {
+            SINGLE: 1,
+            LONG: 2,
+            DOUBLE: 3,
+        };
     }
+    /**
+     * notify
+     *
+     * @param data
+     * @returns
+     */
     notify(data) {
         super.notify(data);
-        if (data.length !== this.DataLength) {
+        if (data.length !== this.DATA_LENGTH_) {
             return;
         }
-        if (data[0] !== this.MessageTypeID) {
+        if (data[0] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
-        if (data[1] !== this.EventTypeID) {
+        if (data[1] !== this.EVENT_TYPE_ID_) {
             return;
         }
         switch (data[2]) {
-            case this.Type.SINGLE:
+            case this.TYPE_.SINGLE:
                 if (typeof this.onSinglePressed === 'function') {
                     this.onSinglePressed();
                 }
                 break;
-            case this.Type.LONG:
+            case this.TYPE_.LONG:
                 if (typeof this.onLongPressed === 'function') {
                     this.onLongPressed();
                 }
                 break;
-            case this.Type.DOUBLE:
+            case this.TYPE_.DOUBLE:
                 if (typeof this.onDoublePressed === 'function') {
                     this.onDoublePressed();
                 }
@@ -27707,14 +27709,14 @@ class MeshJsGp extends MeshJs_1.MeshJs {
         this.onDigitalOutNotify = null;
         this.onPwmNotify = null;
         this.DigitalPins = { p1: false, p2: false, p3: false };
-        this.MessageTypeID = 1;
-        this.DigitalInEventID = 0;
-        this.AnalogInEventID = 1;
-        this.DigitalInID = 2;
-        this.AnalogInID = 3;
-        this.VOutID = 4;
-        this.DigitalOutID = 5;
-        this.PwmID = 6;
+        this.MESSAGE_TYPE_ID_ = 1;
+        this.DIGITAL_IN_EVENT_ID_ = 0;
+        this.ANALOG_IN_EVENT_ID_ = 1;
+        this.DIGITAL_IN_ID_ = 2;
+        this.ANALOG_IN_ID_ = 3;
+        this.V_OUT_ID_ = 4;
+        this.DIGITAL_OUT_ID_ = 5;
+        this.PWM_ID_ = 6;
     }
     /**
      * notify
@@ -27725,11 +27727,11 @@ class MeshJsGp extends MeshJs_1.MeshJs {
      */
     notify(data) {
         super.notify(data);
-        if (data[0] !== this.MessageTypeID) {
+        if (data[0] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
         switch (data[1]) {
-            case this.DigitalInEventID: {
+            case this.DIGITAL_IN_EVENT_ID_: {
                 if (typeof this.onDigitalInEventNotify !== 'function') {
                     return;
                 }
@@ -27738,7 +27740,7 @@ class MeshJsGp extends MeshJs_1.MeshJs {
                 this.onDigitalInEventNotify(_pin, _state);
                 break;
             }
-            case this.AnalogInEventID: {
+            case this.ANALOG_IN_EVENT_ID_: {
                 if (typeof this.onAnalogInEventNotify !== 'function') {
                     return;
                 }
@@ -27746,52 +27748,52 @@ class MeshJsGp extends MeshJs_1.MeshJs {
                 this.onAnalogInEventNotify(_level);
                 break;
             }
-            case this.DigitalInID: {
+            case this.DIGITAL_IN_ID_: {
                 if (typeof this.onDigitalInNotify !== 'function') {
                     return;
                 }
-                const _request_id = data[2];
-                const _pin = data[3];
-                const _state = data[4];
-                this.onDigitalInNotify(_request_id, _pin, _state);
+                const requestId = data[2];
+                const pin = data[3];
+                const state = data[4];
+                this.onDigitalInNotify(requestId, pin, state);
                 break;
             }
-            case this.AnalogInID: {
+            case this.ANALOG_IN_ID_: {
                 if (typeof this.onAnalogInNotify !== 'function') {
                     return;
                 }
-                const _request_id = data[2];
-                const _state = data[4];
-                const _mode = data[5];
-                this.onAnalogInNotify(_request_id, _state, _mode);
+                const requestId = data[2];
+                const state = data[4];
+                const mode = data[5];
+                this.onAnalogInNotify(requestId, state, mode);
                 break;
             }
-            case this.VOutID: {
+            case this.V_OUT_ID_: {
                 if (typeof this.onVOutNotify !== 'function') {
                     return;
                 }
-                const _request_id = data[2];
-                const _state = data[4];
-                this.onVOutNotify(_request_id, _state);
+                const requestId = data[2];
+                const state = data[4];
+                this.onVOutNotify(requestId, state);
                 break;
             }
-            case this.DigitalOutID: {
+            case this.DIGITAL_OUT_ID_: {
                 if (typeof this.onDigitalOutNotify !== 'function') {
                     return;
                 }
-                const _request_id = data[2];
-                const _pin = data[3];
-                const _state = data[4];
-                this.onDigitalOutNotify(_request_id, _pin, _state);
+                const requestId = data[2];
+                const pin = data[3];
+                const state = data[4];
+                this.onDigitalOutNotify(requestId, pin, state);
                 break;
             }
-            case this.PwmID: {
+            case this.PWM_ID_: {
                 if (typeof this.onPwmNotify !== 'function') {
                     return;
                 }
-                const _request_id = data[2];
-                const _level = data[4];
-                this.onPwmNotify(_request_id, _level);
+                const requestId = data[2];
+                const level = data[4];
+                this.onPwmNotify(requestId, level);
                 break;
             }
             default:
@@ -27811,42 +27813,44 @@ class MeshJsGp extends MeshJs_1.MeshJs {
      * @param ain_notify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
      * @returns command
      */
-    parseSetmodeCommand(din, din_notify, dout, pwm_ratio, vcc, ain_range_upper, ain_range_bottom, ain_notify) {
+    parseSetmodeCommand(digitalIn, digitalInNotify, digitalOut, pwmRatio, vcc, analogInRangeUpper, analogInRangeBottom, analogInNotify) {
         // Error Handle
-        const _PwmMin = 0;
-        const _PwmMax = 255;
-        if (pwm_ratio < _PwmMin || _PwmMax < pwm_ratio) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('pwm_ratio', _PwmMin, _PwmMax);
+        const PWM_MIN = 0;
+        const PWM_MAX = 255;
+        if (pwmRatio < PWM_MIN || PWM_MAX < pwmRatio) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('pwmRatio', PWM_MIN, PWM_MAX);
         }
         if (vcc !== MeshJsGp.VCC.AUTO &&
             vcc !== MeshJsGp.VCC.ON &&
             vcc !== MeshJsGp.VCC.OFF) {
             throw new MeshJsError_1.MeshJsInvalidValueError('vcc');
         }
-        const _AinRangeMin = 0;
-        const _AinRangeMax = 3;
-        if (ain_range_upper < _AinRangeMin || _AinRangeMax < ain_range_upper) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('ain_range_upper', _AinRangeMin, _AinRangeMax);
+        const ANALOG_IN_RANGE_MIN = 0;
+        const ANALOG_IN_RANGE_MAX = 3;
+        if (analogInRangeUpper < ANALOG_IN_RANGE_MIN ||
+            ANALOG_IN_RANGE_MAX < analogInRangeUpper) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('analogInRangeUpper', ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX);
         }
-        if (ain_range_bottom < _AinRangeMin || _AinRangeMax < ain_range_bottom) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('ain_range_bottom', _AinRangeMin, _AinRangeMax);
+        if (analogInRangeBottom < ANALOG_IN_RANGE_MIN ||
+            ANALOG_IN_RANGE_MAX < analogInRangeBottom) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('analogInRangeBottom', ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX);
         }
-        if (ain_notify !== MeshJsGp.AnalogInputEventCondition.NotNotify &&
-            ain_notify !== MeshJsGp.AnalogInputEventCondition.AboveThreshold &&
-            ain_notify !== MeshJsGp.AnalogInputEventCondition.BelowThreshold) {
-            throw new MeshJsError_1.MeshJsInvalidValueError('ain_notify');
+        if (analogInNotify !== MeshJsGp.ANALOG_IN_EVENT_CONDITION.NOT_NOTIFY &&
+            analogInNotify !== MeshJsGp.ANALOG_IN_EVENT_CONDITION.ABOVE_THRESHOLD &&
+            analogInNotify !== MeshJsGp.ANALOG_IN_EVENT_CONDITION.BELOW_THRESHOLD) {
+            throw new MeshJsError_1.MeshJsInvalidValueError('analogInNotify');
         }
         // Generate Command
-        const HEADER = [this.MessageTypeID, 1];
+        const HEADER = [this.MESSAGE_TYPE_ID_, 1];
         const BODY = [
-            this.pin2num(din),
-            this.pin2num(din_notify),
-            this.pin2num(dout),
-            pwm_ratio,
+            this.pin2num(digitalIn),
+            this.pin2num(digitalInNotify),
+            this.pin2num(digitalOut),
+            pwmRatio,
             vcc,
-            ain_range_upper,
-            ain_range_bottom,
-            ain_notify,
+            analogInRangeUpper,
+            analogInRangeBottom,
+            analogInNotify,
         ];
         const data = HEADER.concat(BODY);
         data.push(this.checkSum(data));
@@ -27860,7 +27864,7 @@ class MeshJsGp extends MeshJs_1.MeshJs {
      * @returns
      */
     parseSetDinCommand(pin, requestId = 0) {
-        return this._parseSetCommand(this.DigitalInID, pin, requestId);
+        return this.parseSetCommand_(this.DIGITAL_IN_ID_, pin, requestId);
     }
     /**
      * parseSetAinCommand
@@ -27870,7 +27874,7 @@ class MeshJsGp extends MeshJs_1.MeshJs {
      * @returns
      */
     parseSetAinCommand(mode, requestId = 0) {
-        return this._parseSetCommand(this.AnalogInID, mode, requestId);
+        return this.parseSetCommand_(this.ANALOG_IN_ID_, mode, requestId);
     }
     /**
      * parseSetVoutCommand
@@ -27880,7 +27884,7 @@ class MeshJsGp extends MeshJs_1.MeshJs {
      * @returns
      */
     parseSetVoutCommand(pin, requestId = 0) {
-        return this._parseSetCommand(this.VOutID, pin, requestId);
+        return this.parseSetCommand_(this.V_OUT_ID_, pin, requestId);
     }
     /**
      * parseSetDoutCommand
@@ -27890,7 +27894,7 @@ class MeshJsGp extends MeshJs_1.MeshJs {
      * @returns
      */
     parseSetDoutCommand(pin, requestId = 0) {
-        return this._parseSetCommand(this.DigitalOutID, pin, requestId);
+        return this.parseSetCommand_(this.DIGITAL_OUT_ID_, pin, requestId);
     }
     /**
      * parseSetPWMCommand
@@ -27899,10 +27903,10 @@ class MeshJsGp extends MeshJs_1.MeshJs {
      * @returns
      */
     parseSetPWMCommand(requestId = 0) {
-        return this._parseSetCommand(this.PwmID, MeshJsGp.Pin.p3, requestId);
+        return this.parseSetCommand_(this.PWM_ID_, MeshJsGp.PIN.P3, requestId);
     }
-    _parseSetCommand(eventId, param, requestId) {
-        const HEADER = [this.MessageTypeID, eventId, requestId];
+    parseSetCommand_(eventId, param, requestId) {
+        const HEADER = [this.MESSAGE_TYPE_ID_, eventId, requestId];
         const data = HEADER.concat(param);
         data.push(this.checkSum(data));
         return data;
@@ -27912,19 +27916,31 @@ class MeshJsGp extends MeshJs_1.MeshJs {
     }
 }
 exports.MeshJsGp = MeshJsGp;
-MeshJsGp.AnalogInputEventCondition = {
-    NotNotify: 0,
-    AboveThreshold: 1,
-    BelowThreshold: 2,
+// Constant Values
+MeshJsGp.ANALOG_IN_EVENT_CONDITION = {
+    NOT_NOTIFY: 0,
+    ABOVE_THRESHOLD: 1,
+    BELOW_THRESHOLD: 2,
 };
-MeshJsGp.Mode = {
-    Always: 0,
-    Once: 1,
-    AlwaysAndOnce: 2,
+MeshJsGp.MODE = {
+    ALWAYS: 0,
+    ONCE: 1,
+    ALWAYS_AND_ONECE: 2,
 };
-MeshJsGp.Pin = { p1: 0, p2: 1, p3: 2 };
-MeshJsGp.State = { Low2High: 1, High2Low: 2 };
-MeshJsGp.VCC = { AUTO: 0, ON: 1, OFF: 2 };
+MeshJsGp.PIN = {
+    P1: 0,
+    P2: 1,
+    P3: 2,
+};
+MeshJsGp.STATE = {
+    LOW_2_HIGH: 1,
+    HIGH_2_LOW: 2,
+};
+MeshJsGp.VCC = {
+    AUTO: 0,
+    ON: 1,
+    OFF: 2,
+};
 
 
 /***/ }),
@@ -27938,53 +27954,64 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const MeshJs_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJs.js");
 const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
 class MeshJsLe extends MeshJs_1.MeshJs {
-    parseLightupCommand(red, green, blue, total_time, cycle_on_time, cycle_off_time, pattern) {
+    /**
+     *
+     * @param red
+     * @param green
+     * @param blue
+     * @param totalTime
+     * @param cycleOnTime
+     * @param cycleOffTime
+     * @param pattern
+     * @returns
+     */
+    parseLightupCommand(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern) {
         // Error Handle
-        const _ColorMin = 0;
-        const _ColorMax = 127;
-        if (red < _ColorMin || _ColorMax < red) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('red', _ColorMin, _ColorMax);
+        const COLOR_MIN = 0;
+        const COLOR_MAX = 127;
+        if (red < COLOR_MIN || COLOR_MAX < red) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('red', COLOR_MIN, COLOR_MAX);
         }
-        if (green < _ColorMin || _ColorMax < green) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('green', _ColorMin, _ColorMax);
+        if (green < COLOR_MIN || COLOR_MAX < green) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('green', COLOR_MIN, COLOR_MAX);
         }
-        if (blue < _ColorMin || _ColorMax < blue) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('blue', _ColorMin, _ColorMax);
+        if (blue < COLOR_MIN || COLOR_MAX < blue) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('blue', COLOR_MIN, COLOR_MAX);
         }
-        const _TimeMin = 0;
-        const _TimeMax = 65535;
-        if (total_time < _TimeMin || _TimeMax < total_time) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('time', _TimeMin, _TimeMax);
+        const TIME_MIN = 0;
+        const TIME_MAX = 65535;
+        if (totalTime < TIME_MIN || TIME_MAX < totalTime) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('time', TIME_MIN, TIME_MAX);
         }
-        if (cycle_on_time < _TimeMin || _TimeMax < cycle_on_time) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('cycle_on', _TimeMin, _TimeMax);
+        if (cycleOnTime < TIME_MIN || TIME_MAX < cycleOnTime) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('cycle_on', TIME_MIN, TIME_MAX);
         }
-        if (cycle_off_time < _TimeMin || _TimeMax < cycle_off_time) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('cycle_off', _TimeMin, _TimeMax);
+        if (cycleOffTime < TIME_MIN || TIME_MAX < cycleOffTime) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('cycle_off', TIME_MIN, TIME_MAX);
         }
-        if (pattern !== MeshJsLe.Pattern.Blink &&
-            pattern !== MeshJsLe.Pattern.Soft) {
+        if (pattern !== MeshJsLe.PATTERN.BLINK &&
+            pattern !== MeshJsLe.PATTERN.SOFT) {
             throw new MeshJsError_1.MeshJsOutOfRangeError('pattern');
         }
         // Generate Command
-        const _MessageTypeID = 1;
-        const _EventTypeID = 0;
-        const _Fixed = 0;
-        const _Byte = 256;
+        const MESSAGE_TYPE_ID = 1;
+        const EVENT_TYPE_ID = 0;
+        const FIXED = 0;
+        const BYTE = 256;
         const data = [
-            _MessageTypeID,
-            _EventTypeID,
+            MESSAGE_TYPE_ID,
+            EVENT_TYPE_ID,
             red,
-            _Fixed,
+            FIXED,
             green,
-            _Fixed,
+            FIXED,
             blue,
-            total_time % _Byte,
-            Math.floor(total_time / _Byte),
-            cycle_on_time % _Byte,
-            Math.floor(cycle_on_time / _Byte),
-            cycle_off_time % _Byte,
-            Math.floor(cycle_off_time / _Byte),
+            totalTime % BYTE,
+            Math.floor(totalTime / BYTE),
+            cycleOnTime % BYTE,
+            Math.floor(cycleOnTime / BYTE),
+            cycleOffTime % BYTE,
+            Math.floor(cycleOffTime / BYTE),
             pattern,
         ];
         data.push(this.checkSum(data));
@@ -27992,7 +28019,11 @@ class MeshJsLe extends MeshJs_1.MeshJs {
     }
 }
 exports.MeshJsLe = MeshJsLe;
-MeshJsLe.Pattern = { Blink: 1, Soft: 2 };
+// Constant Values
+MeshJsLe.PATTERN = {
+    BLINK: 1,
+    SOFT: 2,
+};
 
 
 /***/ }),
@@ -28008,63 +28039,83 @@ const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsEr
 class MeshJsMd extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
-        this.DetectionMode = {
+        // Event Handler
+        this.onNotify = null;
+        // Constant Values
+        this.DETECTION_MODE = {
             DETECTED: 0x01,
-            NOTDETECTED: 0x02,
+            NOT_DETECTED: 0x02,
             ONESHOT: 0x10,
             CONTINUOUS: 0x20,
         };
-        this.MotionState = {
+        this.MOTION_STATE = {
             SETUP: 0x00,
             DETECTED: 0x01,
-            NOTDETECTED: 0x02,
+            NOT_DETECTED: 0x02,
         };
-        this.onNotify = null;
-        this.MessageTypeID = 1;
-        this.EventTypeID = 0;
-        this.response = { request_id: -1, motion_state: -1, detection_mode: -1 };
+        this.MESSAGE_TYPE_ID_ = 1;
+        this.EVENT_TYPE_ID_ = 0;
+        this.response_ = { requestId: -1, motionState: -1, detectionMode: -1 };
     }
+    get getResponse() {
+        return this.response_;
+    }
+    /**
+     * notify
+     *
+     * @param data
+     * @returns
+     */
     notify(data) {
         super.notify(data);
-        if (data[0] !== this.MessageTypeID) {
+        if (data[0] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
-        if (data[1] !== this.EventTypeID) {
+        if (data[1] !== this.EVENT_TYPE_ID_) {
             return;
         }
-        this.response.request_id = data[2];
-        this.response.motion_state = data[3];
-        this.response.detection_mode = data[4];
+        this.response_.requestId = data[2];
+        this.response_.motionState = data[3];
+        this.response_.detectionMode = data[4];
         if (typeof this.onNotify !== 'function') {
             return;
         }
-        this.onNotify(this.response);
+        this.onNotify(this.response_);
     }
-    get getResponse() {
-        return this.response;
-    }
-    parseSetmodeCommand(detection_mode, detection_time = 500, response_time = 500, request_id = 0) {
+    /**
+     *
+     * @param detectionMode
+     * @param detectionTime
+     * @param responseTime
+     * @param requestId
+     * @returns
+     */
+    parseSetmodeCommand(detectionMode, detectionTime = 500, responseTime = 500, requestId = 0) {
         // Error Handle
-        const _DetectionTimeMin = 200;
-        const _DetectionTimeMax = 60000;
-        if (detection_time < _DetectionTimeMin ||
-            _DetectionTimeMax < detection_time) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('detection_time', _DetectionTimeMin, _DetectionTimeMax);
+        const DETECTION_TIME_MIN = 200;
+        const DETECTION_TIME_MAX = 60000;
+        if (detectionTime < DETECTION_TIME_MIN ||
+            DETECTION_TIME_MAX < detectionTime) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('detection_time', DETECTION_TIME_MIN, DETECTION_TIME_MAX);
         }
-        const _ResponseTimeMin = 500;
-        const _ResponseTimeMax = 60000;
-        if (response_time < _ResponseTimeMin || _ResponseTimeMax < response_time) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('response_time', _ResponseTimeMin, _ResponseTimeMax);
+        const RESPONSE_TIME_MIN = 500;
+        const RESPONSE_TIME_MAX = 60000;
+        if (responseTime < RESPONSE_TIME_MIN || RESPONSE_TIME_MAX < responseTime) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('response_time', RESPONSE_TIME_MIN, RESPONSE_TIME_MAX);
         }
         // Generate Command
-        const HEADER = [this.MessageTypeID, this.EventTypeID, request_id];
-        const _Byte = 256;
+        const HEADER = [
+            this.MESSAGE_TYPE_ID_,
+            this.EVENT_TYPE_ID_,
+            requestId,
+        ];
+        const BYTE = 256;
         const BODY = [
-            detection_mode,
-            detection_time % _Byte,
-            Math.floor(detection_time / _Byte),
-            response_time % _Byte,
-            Math.floor(response_time / _Byte),
+            detectionMode,
+            detectionTime % BYTE,
+            Math.floor(detectionTime / BYTE),
+            responseTime % BYTE,
+            Math.floor(responseTime / BYTE),
         ];
         const data = HEADER.concat(BODY);
         data.push(this.checkSum(data));
@@ -28087,30 +28138,36 @@ const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsEr
 class MeshJsPa extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
+        // Event Handler
         this.onNotify = null;
-        this.MessageTypeID = 1;
-        this.EventTypeID = 0;
-        this.response = { requestId: -1, proximity: -1, brightness: -1 };
+        this.MESSAGE_TYPE_ID_ = 1;
+        this.EVENT_TYPE_ID_ = 0;
+        this.response_ = { requestId: -1, proximity: -1, brightness: -1 };
     }
+    get getResponse() {
+        return this.response_;
+    }
+    /**
+     *
+     * @param data
+     * @returns
+     */
     notify(data) {
         super.notify(data);
-        if (data[0] !== this.MessageTypeID) {
+        if (data[0] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
-        if (data[1] !== this.EventTypeID) {
+        if (data[1] !== this.EVENT_TYPE_ID_) {
             return;
         }
-        const _Byte = 256;
-        this.response.requestId = data[2];
-        this.response.proximity = _Byte * data[5] + data[4];
-        this.response.brightness = _Byte * data[7] + data[6];
+        const BYTE = 256;
+        this.response_.requestId = data[2];
+        this.response_.proximity = BYTE * data[5] + data[4];
+        this.response_.brightness = BYTE * data[7] + data[6];
         if (typeof this.onNotify !== 'function') {
             return;
         }
-        this.onNotify(this.response);
-    }
-    get getResponse() {
-        return this.response;
+        this.onNotify(this.response_);
     }
     /**
      *
@@ -28123,25 +28180,33 @@ class MeshJsPa extends MeshJs_1.MeshJs {
         if (notifyType % 4 !== 0) {
             throw new MeshJsError_1.MeshJsInvalidValueError('notifyType');
         }
-        const _notifytypeMin = 4;
-        const _notifytypeMax = 60;
-        if (notifyType < _notifytypeMin || _notifytypeMax < notifyType) {
+        const NOTIFY_TYPE_MIN = MeshJsPa.NOTIFY_TYPE.UPDATE_PROXIMITY;
+        const NOTIFY_TYPE_MAX = MeshJsPa.NOTIFY_TYPE.UPDATE_PROXIMITY +
+            MeshJsPa.NOTIFY_TYPE.UPDATE_BRIGHTNESS +
+            MeshJsPa.NOTIFY_TYPE.ONCE +
+            MeshJsPa.NOTIFY_TYPE.ALWAYS;
+        if (notifyType < NOTIFY_TYPE_MIN || NOTIFY_TYPE_MAX < notifyType) {
             throw new MeshJsError_1.MeshJsOutOfRangeError('notifyType');
         }
         // Generate Command
-        const _HEADER = [this.MessageTypeID, this.EventTypeID, requestId];
-        const _FIXED = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2];
-        const data = _HEADER.concat(_FIXED).concat(notifyType);
+        const HEADER = [
+            this.MESSAGE_TYPE_ID_,
+            this.EVENT_TYPE_ID_,
+            requestId,
+        ];
+        const FIXED = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2];
+        const data = HEADER.concat(FIXED).concat(notifyType);
         data.push(this.checkSum(data));
         return data;
     }
 }
 exports.MeshJsPa = MeshJsPa;
-MeshJsPa.NotifyType = {
-    UpdateProximity: 4,
-    UpdateBrightness: 8,
-    Once: 16,
-    Always: 32,
+// Constant Values
+MeshJsPa.NOTIFY_TYPE = {
+    UPDATE_PROXIMITY: 4,
+    UPDATE_BRIGHTNESS: 8,
+    ONCE: 16,
+    ALWAYS: 32,
 };
 
 
@@ -28158,91 +28223,105 @@ const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsEr
 class MeshJsTh extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
-        // Event handler
+        // Event Handler
         this.onNotify = null;
-        /**
-         * MessageTypeID
-         * command header
-         */
-        this.MessageTypeID = 1;
-        /**
-         * EventTypeID
-         * command header
-         */
-        this.EventTypeID = 0;
-        this.MaxTemperature = 50;
-        this.MinTemperature = -10;
-        this.MaxHumidity = 100;
-        this.MinHumidity = 0;
-        this.response = { request_id: -1, temperature: -1, humidity: -1 };
+        this.MESSAGE_TYPE_ID_ = 1;
+        this.EVENT_TYPE_ID_ = 0;
+        this.MAX_TEMPERATURE_ = 50;
+        this.MIN_TEMPERATURE_ = -10;
+        this.MAX_HUMIDITY_ = 100;
+        this.MIN_HUMIDITY_ = 0;
+        this.response_ = { requestId: -1, temperature: -1, humidity: -1 };
     }
+    get getResponse() {
+        return this.response_;
+    }
+    /**
+     *
+     * @param data
+     * @returns
+     */
     notify(data) {
         super.notify(data);
-        if (data[0] !== this.MessageTypeID) {
+        if (data[0] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
-        if (data[1] !== this.EventTypeID) {
+        if (data[1] !== this.EVENT_TYPE_ID_) {
             return;
         }
-        this.response.request_id = data[2];
-        const _Byte = 256;
-        const temp = this.complemnt(_Byte * data[5] + data[4]) / 10;
-        this.response.temperature = Math.min(Math.max(this.MinTemperature, temp), this.MaxTemperature);
-        const hum_ori = _Byte * data[7] + data[6];
-        this.response.humidity = Math.min(Math.max(this.MinHumidity, hum_ori), this.MaxHumidity);
+        this.response_.requestId = data[2];
+        const BYTE = 256;
+        const TEMP = this.complemnt_(BYTE * data[5] + data[4]) / 10;
+        this.response_.temperature = Math.min(Math.max(this.MIN_TEMPERATURE_, TEMP), this.MAX_TEMPERATURE_);
+        const hum_ori = BYTE * data[7] + data[6];
+        this.response_.humidity = Math.min(Math.max(this.MIN_HUMIDITY_, hum_ori), this.MAX_HUMIDITY_);
         if (typeof this.onNotify !== 'function') {
             return;
         }
-        this.onNotify(this.response);
+        this.onNotify(this.response_);
     }
-    get getResponse() {
-        return this.response;
-    }
-    parseSetmodeCommand(temperature_range_upper, temperature_range_bottom, temperature_condition, humidity_range_upper, humidity_range_bottom, humidity_condision, type, request_id = 0) {
+    /**
+     *
+     * @param temperatureRangeUpper
+     * @param temperatureRangeBottom
+     * @param temperatureCondition
+     * @param humidityRangeUpper
+     * @param humidityRangeBottom
+     * @param humidityCondision
+     * @param type
+     * @param requestId
+     * @returns
+     */
+    parseSetmodeCommand(temperatureRangeUpper, temperatureRangeBottom, temperatureCondition, humidityRangeUpper, humidityRangeBottom, humidityCondision, type, requestId = 0) {
         // Error Handle
-        if (temperature_range_bottom < this.MinTemperature ||
-            this.MaxTemperature < temperature_range_upper) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('temperature_range', this.MinTemperature, this.MaxTemperature);
+        if (temperatureRangeBottom < this.MIN_TEMPERATURE_ ||
+            this.MAX_TEMPERATURE_ < temperatureRangeUpper) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('temperature_range', this.MIN_TEMPERATURE_, this.MAX_TEMPERATURE_);
         }
-        if (humidity_range_bottom < this.MinHumidity ||
-            this.MaxHumidity < humidity_range_upper) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('humidity_range', this.MinHumidity, this.MaxHumidity);
+        if (humidityRangeBottom < this.MIN_HUMIDITY_ ||
+            this.MAX_HUMIDITY_ < humidityRangeUpper) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('humidity_range', this.MIN_HUMIDITY_, this.MAX_HUMIDITY_);
         }
         // Generate Command
-        const _HEADER = [this.MessageTypeID, this.EventTypeID, request_id];
-        const TEMP_UPPER = this.num2array(10 * this.invcomplemnt(temperature_range_upper));
-        const TEMP_BOTTOM = this.num2array(10 * this.invcomplemnt(temperature_range_bottom));
-        const HUMI_UPPER = this.num2array(humidity_range_upper);
-        const HUMI_BOTTOM = this.num2array(humidity_range_bottom);
-        const data = _HEADER
-            .concat(TEMP_UPPER)
+        const HEADER = [
+            this.MESSAGE_TYPE_ID_,
+            this.EVENT_TYPE_ID_,
+            requestId,
+        ];
+        const BASE = 10;
+        const TEMP_UPPER = this.num2array_(BASE * this.invcomplemnt_(temperatureRangeUpper));
+        const TEMP_BOTTOM = this.num2array_(BASE * this.invcomplemnt_(temperatureRangeBottom));
+        const HUMI_UPPER = this.num2array_(humidityRangeUpper);
+        const HUMI_BOTTOM = this.num2array_(humidityRangeBottom);
+        const data = HEADER.concat(TEMP_UPPER)
             .concat(TEMP_BOTTOM)
             .concat(HUMI_UPPER)
             .concat(HUMI_BOTTOM)
-            .concat([temperature_condition, humidity_condision, type]);
+            .concat([temperatureCondition, humidityCondision, type]);
         data.push(this.checkSum(data));
         return data;
     }
-    num2array(val) {
-        const _Byte = 256;
-        return [val % _Byte, Math.floor(val / _Byte)];
+    num2array_(val) {
+        const BYTE = 256;
+        return [val % BYTE, Math.floor(val / BYTE)];
     }
-    complemnt(val) {
-        const _2Byte = 65536;
-        const _2ByteHalf = Math.floor(_2Byte / 2) - 1;
-        return val - (val > _2ByteHalf ? _2Byte : 0);
+    complemnt_(val) {
+        const TWO_BYTE = 65536;
+        const TWO_BYTE_HALF = Math.floor(TWO_BYTE / 2) - 1;
+        return val - (val > TWO_BYTE_HALF ? TWO_BYTE : 0);
     }
-    invcomplemnt(val) {
-        const _2Byte = 65536;
-        return val + (val < 0 ? _2Byte : 0);
+    invcomplemnt_(val) {
+        const TWO_BYTE = 65536;
+        return val + (val < 0 ? TWO_BYTE : 0);
     }
 }
 exports.MeshJsTh = MeshJsTh;
-MeshJsTh.NotifyType = {
-    UpdateTemperature: 4,
-    UpdateHumidity: 8,
-    Once: 16,
-    Always: 32,
+// Constant Values
+MeshJsTh.NOTIFY_TYPE = {
+    UPDATE_TEMPERATURE: 4,
+    UPDATE_HUMIDITY: 8,
+    ONCE: 16,
+    ALWAYS: 32,
 };
 
 
@@ -38580,22 +38659,22 @@ const MeshJs_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJs.js");
 class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     constructor() {
         super(...arguments);
-        // event handler
+        // Event Handler
         this.onBatteryNotify = null;
         this.onStatusButtonNotify = null;
         this.onResponseWrite = null;
         this._mesh = new MeshJs_1.MeshJs();
-        this._indicateCharacteristic = null;
-        this._notifyCharacteristic = null;
-        this._writeCharacteristic = null;
-        this._writeWOResponseCharacteristic = null;
+        this.indicateCharacteristic_ = null;
+        this.notifyCharacteristic_ = null;
+        this.writeCharacteristic_ = null;
+        this.writeWOResponseCharacteristic_ = null;
     }
     static isMESHblock(peripheral) {
         const _name = peripheral.localName;
         if (!_name) {
             return false;
         }
-        if (_name.length !== MESH.LOCAL_NAME_LENGTH) {
+        if (_name.length !== MESH.LOCAL_NAME_LENGTH_) {
             return false;
         }
         return this._isMESHblock(_name);
@@ -38613,27 +38692,27 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     async connectWait() {
         this.prepareConnect();
         await this.peripheral.connectWait();
-        this._indicateCharacteristic = this._getCharacteristic(this._mesh.UUIDS.characteristics.Indicate);
-        this._notifyCharacteristic = this._getCharacteristic(this._mesh.UUIDS.characteristics.Notify);
-        this._writeCharacteristic = this._getCharacteristic(this._mesh.UUIDS.characteristics.Write);
-        this._writeWOResponseCharacteristic = this._getCharacteristic(this._mesh.UUIDS.characteristics.WriteWOResponse);
-        if (!this._indicateCharacteristic) {
+        this.indicateCharacteristic_ = this.getCharacteristic_(this._mesh.UUIDS.CHARACTERISTICS.INDICATE);
+        this.notifyCharacteristic_ = this.getCharacteristic_(this._mesh.UUIDS.CHARACTERISTICS.NOTIFY);
+        this.writeCharacteristic_ = this.getCharacteristic_(this._mesh.UUIDS.CHARACTERISTICS.WRITE);
+        this.writeWOResponseCharacteristic_ = this.getCharacteristic_(this._mesh.UUIDS.CHARACTERISTICS.WRITE_WO_RESPONSE);
+        if (!this.indicateCharacteristic_) {
             return;
         }
-        this._indicateCharacteristic.registerNotify((data) => {
+        this.indicateCharacteristic_.registerNotify((data) => {
             this._mesh.indicate(data);
         });
-        if (!this._notifyCharacteristic) {
+        if (!this.notifyCharacteristic_) {
             return;
         }
-        await this._notifyCharacteristic.registerNotifyWait((data) => {
+        await this.notifyCharacteristic_.registerNotifyWait((data) => {
             this._mesh.notify(data);
         });
         console.log('connect');
-        await this._writeFeatureWait();
+        await this.writeWait(this._mesh.featureCommand);
     }
     static _isMESHblock(name) {
-        return name.indexOf(MESH._LocalName) === 0;
+        return name.indexOf(MESH.PREFIX) === 0;
     }
     prepareConnect() {
         this._mesh.onBattery = (battery) => {
@@ -38650,10 +38729,10 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         };
     }
     async writeWait(data) {
-        if (!this._writeCharacteristic) {
+        if (!this.writeCharacteristic_) {
             return;
         }
-        await this._writeCharacteristic.writeWait(data, true).then((resp) => {
+        await this.writeCharacteristic_.writeWait(data, true).then((resp) => {
             if (typeof this.onResponseWrite !== 'function') {
                 return;
             }
@@ -38661,24 +38740,22 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         });
     }
     writeWOResponse(data) {
-        if (!this._writeWOResponseCharacteristic) {
+        if (!this.writeWOResponseCharacteristic_) {
             return;
         }
-        this._writeWOResponseCharacteristic.writeWait(data, true);
+        this.writeWOResponseCharacteristic_.writeWait(data, true);
     }
-    _getCharacteristic(uuid) {
+    getCharacteristic_(uuid) {
         return this.peripheral
-            .getService(this._mesh.UUIDS.serviceId)
+            .getService(this._mesh.UUIDS.SERVICE_ID)
             .getCharacteristic(uuid);
-    }
-    async _writeFeatureWait() {
-        await this.writeWait(this._mesh.feature);
     }
 }
 exports.MESH = MESH;
+// Constant Values
 MESH.AvailableBleMode = 'Connectable';
-MESH._LocalName = 'MESH-100';
-MESH.LOCAL_NAME_LENGTH = 17;
+MESH.LOCAL_NAME_LENGTH_ = 17;
+MESH.PREFIX = 'MESH-100';
 
 
 /***/ }),

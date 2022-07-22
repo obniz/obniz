@@ -1,49 +1,64 @@
 import { MeshJs } from './MeshJs';
 export class MeshJsAc extends MeshJs {
-  /**
-   * MessageTypeID
-   * command header
-   */
-  private readonly MessageTypeID: number = 1;
-
-  private accele = { x: -1, y: -1, z: -1 };
-  private face = -1;
-  private readonly DataLength = 17;
-
-  // event handler
-  public onTapped: ((accele: MeshJsAc['accele']) => void) | null = null;
-  public onShaked: ((accele: MeshJsAc['accele']) => void) | null = null;
-  public onFlipped: ((accele: MeshJsAc['accele']) => void) | null = null;
+  // Event Handler
+  public onTapped: ((accele: MeshJsAc['accele_']) => void) | null = null;
+  public onShaked: ((accele: MeshJsAc['accele_']) => void) | null = null;
+  public onFlipped: ((accele: MeshJsAc['accele_']) => void) | null = null;
   public onDirection:
-    | ((face: number, accele: MeshJsAc['accele']) => void)
+    | ((face: number, accele: MeshJsAc['accele_']) => void)
     | null = null;
 
+  // Constant Values
+  private readonly MESSAGE_TYPE_ID_: number = 1 as const;
+  private readonly DATA_LENGTH_ = 17 as const;
+  private readonly TAP_EVENT_ID_ = 0 as const;
+  private readonly SHAKE_EVENT_ID_ = 1 as const;
+  private readonly FLIP_EVENT_ID_ = 2 as const;
+  private readonly DIRECTION_EVENT_ID_ = 3 as const;
+
+  private accele_ = { x: -1, y: -1, z: -1 };
+  private face_ = -1;
+
+  public get getAccele(): MeshJsAc['accele_'] {
+    return this.accele_;
+  }
+
+  public get getFace(): number {
+    return this.face_;
+  }
+
+  /**
+   * notify
+   *
+   * @param data
+   * @returns
+   */
   public notify(data: number[]): void {
     super.notify(data);
-    this.updateAccele(data);
+    this.updateAccele_(data);
     if (data[0] !== 1) {
       return;
     }
     switch (data[1]) {
-      case 0: // Tap
+      case this.TAP_EVENT_ID_:
         if (typeof this.onTapped === 'function') {
-          this.onTapped(this.accele);
+          this.onTapped(this.accele_);
         }
         break;
-      case 1: // Shake
+      case this.SHAKE_EVENT_ID_:
         if (typeof this.onShaked === 'function') {
-          this.onShaked(this.accele);
+          this.onShaked(this.accele_);
         }
         break;
-      case 2: // Flip
+      case this.FLIP_EVENT_ID_:
         if (typeof this.onFlipped === 'function') {
-          this.onFlipped(this.accele);
+          this.onFlipped(this.accele_);
         }
         break;
-      case 3: // Direction
+      case this.DIRECTION_EVENT_ID_:
         if (typeof this.onDirection === 'function') {
-          this.face = data[2];
-          this.onDirection(this.face, this.accele);
+          this.face_ = data[2];
+          this.onDirection(this.face_, this.accele_);
         }
         break;
       default:
@@ -51,47 +66,24 @@ export class MeshJsAc extends MeshJs {
     }
   }
 
-  public get getAccele(): MeshJsAc['accele'] {
-    return this.accele;
-  }
-
-  public get getFace(): number {
-    return this.face;
-  }
-
-  /**
-   * setMode
-   *
-   * @param type
-   * @returns
-   */
-  //   public parseSetmodeCommand(
-  //     event: number,
-  //     mode: number,
-  //     requestId = 0
-  //   ): number[] {
-  //     const HEADER: number[] = [this.MessageTypeID, 1, requestId];
-  //     const data: number[] = HEADER.concat(event).concat(mode);
-  //     data.push(this.checkSum(data));
-  //     console.log('setMode: ' + data);
-  //     return data;
-  //   }
-
-  private updateAccele(data: number[]): boolean {
-    if (data.length !== this.DataLength) {
+  private updateAccele_(data: number[]): boolean {
+    if (data.length !== this.DATA_LENGTH_) {
       return false;
     }
-    if (data[0] !== 1) {
+    if (data[0] !== this.MESSAGE_TYPE_ID_) {
       return false;
     }
-    const BASE = 1024;
-    this.accele.x = this.complemnt(256 * data[5] + data[4]) / BASE;
-    this.accele.y = this.complemnt(256 * data[7] + data[6]) / BASE;
-    this.accele.z = this.complemnt(256 * data[9] + data[8]) / BASE;
+    const BYTE = 256 as const;
+    const BASE = 1024 as const;
+    this.accele_.x = this.complemnt_(BYTE * data[5] + data[4]) / BASE;
+    this.accele_.y = this.complemnt_(BYTE * data[7] + data[6]) / BASE;
+    this.accele_.z = this.complemnt_(BYTE * data[9] + data[8]) / BASE;
     return true;
   }
 
-  private complemnt(val: number): number {
-    return val - (val > 32767 ? 65536 : 0);
+  private complemnt_(val: number): number {
+    const TWO_BYTE = 65536 as const;
+    const TWO_BYTE_HALF = Math.floor(TWO_BYTE / 2) - 1;
+    return val - (val > TWO_BYTE_HALF ? TWO_BYTE : 0);
   }
 }

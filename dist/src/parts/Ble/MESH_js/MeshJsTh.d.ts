@@ -1,31 +1,40 @@
 import { MeshJs } from './MeshJs';
 export declare class MeshJsTh extends MeshJs {
-    static readonly NotifyType: {
-        readonly UpdateTemperature: 4;
-        readonly UpdateHumidity: 8;
-        readonly Once: 16;
-        readonly Always: 32;
+    onNotify: ((accele: MeshJsTh['response_']) => void) | null;
+    static readonly NOTIFY_TYPE: {
+        readonly UPDATE_TEMPERATURE: 4;
+        readonly UPDATE_HUMIDITY: 8;
+        readonly ONCE: 16;
+        readonly ALWAYS: 32;
     };
-    onNotify: ((accele: MeshJsTh['response']) => void) | null;
+    private readonly MESSAGE_TYPE_ID_;
+    private readonly EVENT_TYPE_ID_;
+    private readonly MAX_TEMPERATURE_;
+    private readonly MIN_TEMPERATURE_;
+    private readonly MAX_HUMIDITY_;
+    private readonly MIN_HUMIDITY_;
+    private response_;
+    get getResponse(): MeshJsTh['response_'];
     /**
-     * MessageTypeID
-     * command header
+     *
+     * @param data
+     * @returns
      */
-    private readonly MessageTypeID;
-    /**
-     * EventTypeID
-     * command header
-     */
-    private readonly EventTypeID;
-    private readonly MaxTemperature;
-    private readonly MinTemperature;
-    private readonly MaxHumidity;
-    private readonly MinHumidity;
-    private response;
     notify(data: number[]): void;
-    get getResponse(): MeshJsTh['response'];
-    parseSetmodeCommand(temperature_range_upper: number, temperature_range_bottom: number, temperature_condition: number, humidity_range_upper: number, humidity_range_bottom: number, humidity_condision: number, type: number, request_id?: number): number[];
-    private num2array;
-    private complemnt;
-    private invcomplemnt;
+    /**
+     *
+     * @param temperatureRangeUpper
+     * @param temperatureRangeBottom
+     * @param temperatureCondition
+     * @param humidityRangeUpper
+     * @param humidityRangeBottom
+     * @param humidityCondision
+     * @param type
+     * @param requestId
+     * @returns
+     */
+    parseSetmodeCommand(temperatureRangeUpper: number, temperatureRangeBottom: number, temperatureCondition: number, humidityRangeUpper: number, humidityRangeBottom: number, humidityCondision: number, type: number, requestId?: number): number[];
+    private num2array_;
+    private complemnt_;
+    private invcomplemnt_;
 }

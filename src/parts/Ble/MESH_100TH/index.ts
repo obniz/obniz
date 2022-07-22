@@ -23,11 +23,12 @@ export interface MESH_100TH_Data {
 /** MESH_100TH management class */
 export default class MESH_100TH extends MESH<MESH_100TH_Data> {
   public static readonly PartsName = 'MESH_100TH';
-  public static readonly _LocalName = 'MESH-100TH';
+  public static readonly PREFIX = 'MESH-100TH';
 
-  public static readonly NotifyType = MeshJsTh.NotifyType;
+  public static readonly NotifyType = MeshJsTh.NOTIFY_TYPE;
 
-  public onNotify: ((resp: MeshJsTh['response']) => void) | null = null;
+  // Event Handler
+  public onNotify: ((resp: MeshJsTh['response_']) => void) | null = null;
 
   protected readonly staticClass = MESH_100TH;
 
@@ -69,13 +70,13 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
   }
 
   protected static _isMESHblock(name: string): boolean {
-    return name.indexOf(MESH_100TH._LocalName) !== -1;
+    return name.indexOf(MESH_100TH.PREFIX) !== -1;
   }
 
   protected prepareConnect(): void {
     this._mesh = new MeshJsTh();
     const _th = this._mesh as MeshJsTh;
-    _th.onNotify = (response: MeshJsTh['response']) => {
+    _th.onNotify = (response: MeshJsTh['response_']) => {
       if (typeof this.onNotify !== 'function') {
         return;
       }

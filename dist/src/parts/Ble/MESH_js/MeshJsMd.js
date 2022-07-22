@@ -5,63 +5,83 @@ const MeshJsError_1 = require("./MeshJsError");
 class MeshJsMd extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
-        this.DetectionMode = {
+        // Event Handler
+        this.onNotify = null;
+        // Constant Values
+        this.DETECTION_MODE = {
             DETECTED: 0x01,
-            NOTDETECTED: 0x02,
+            NOT_DETECTED: 0x02,
             ONESHOT: 0x10,
             CONTINUOUS: 0x20,
         };
-        this.MotionState = {
+        this.MOTION_STATE = {
             SETUP: 0x00,
             DETECTED: 0x01,
-            NOTDETECTED: 0x02,
+            NOT_DETECTED: 0x02,
         };
-        this.onNotify = null;
-        this.MessageTypeID = 1;
-        this.EventTypeID = 0;
-        this.response = { request_id: -1, motion_state: -1, detection_mode: -1 };
+        this.MESSAGE_TYPE_ID_ = 1;
+        this.EVENT_TYPE_ID_ = 0;
+        this.response_ = { requestId: -1, motionState: -1, detectionMode: -1 };
     }
+    get getResponse() {
+        return this.response_;
+    }
+    /**
+     * notify
+     *
+     * @param data
+     * @returns
+     */
     notify(data) {
         super.notify(data);
-        if (data[0] !== this.MessageTypeID) {
+        if (data[0] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
-        if (data[1] !== this.EventTypeID) {
+        if (data[1] !== this.EVENT_TYPE_ID_) {
             return;
         }
-        this.response.request_id = data[2];
-        this.response.motion_state = data[3];
-        this.response.detection_mode = data[4];
+        this.response_.requestId = data[2];
+        this.response_.motionState = data[3];
+        this.response_.detectionMode = data[4];
         if (typeof this.onNotify !== 'function') {
             return;
         }
-        this.onNotify(this.response);
+        this.onNotify(this.response_);
     }
-    get getResponse() {
-        return this.response;
-    }
-    parseSetmodeCommand(detection_mode, detection_time = 500, response_time = 500, request_id = 0) {
+    /**
+     *
+     * @param detectionMode
+     * @param detectionTime
+     * @param responseTime
+     * @param requestId
+     * @returns
+     */
+    parseSetmodeCommand(detectionMode, detectionTime = 500, responseTime = 500, requestId = 0) {
         // Error Handle
-        const _DetectionTimeMin = 200;
-        const _DetectionTimeMax = 60000;
-        if (detection_time < _DetectionTimeMin ||
-            _DetectionTimeMax < detection_time) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('detection_time', _DetectionTimeMin, _DetectionTimeMax);
+        const DETECTION_TIME_MIN = 200;
+        const DETECTION_TIME_MAX = 60000;
+        if (detectionTime < DETECTION_TIME_MIN ||
+            DETECTION_TIME_MAX < detectionTime) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('detection_time', DETECTION_TIME_MIN, DETECTION_TIME_MAX);
         }
-        const _ResponseTimeMin = 500;
-        const _ResponseTimeMax = 60000;
-        if (response_time < _ResponseTimeMin || _ResponseTimeMax < response_time) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('response_time', _ResponseTimeMin, _ResponseTimeMax);
+        const RESPONSE_TIME_MIN = 500;
+        const RESPONSE_TIME_MAX = 60000;
+        if (responseTime < RESPONSE_TIME_MIN || RESPONSE_TIME_MAX < responseTime) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('response_time', RESPONSE_TIME_MIN, RESPONSE_TIME_MAX);
         }
         // Generate Command
-        const HEADER = [this.MessageTypeID, this.EventTypeID, request_id];
-        const _Byte = 256;
+        const HEADER = [
+            this.MESSAGE_TYPE_ID_,
+            this.EVENT_TYPE_ID_,
+            requestId,
+        ];
+        const BYTE = 256;
         const BODY = [
-            detection_mode,
-            detection_time % _Byte,
-            Math.floor(detection_time / _Byte),
-            response_time % _Byte,
-            Math.floor(response_time / _Byte),
+            detectionMode,
+            detectionTime % BYTE,
+            Math.floor(detectionTime / BYTE),
+            responseTime % BYTE,
+            Math.floor(responseTime / BYTE),
         ];
         const data = HEADER.concat(BODY);
         data.push(this.checkSum(data));

@@ -11,6 +11,7 @@ const MeshJsTh_1 = require("../MESH_js/MeshJsTh");
 class MESH_100TH extends MESH_1.MESH {
     constructor() {
         super(...arguments);
+        // Event Handler
         this.onNotify = null;
         this.staticClass = MESH_100TH;
     }
@@ -30,7 +31,7 @@ class MESH_100TH extends MESH_1.MESH {
         this.writeWOResponse(_th.parseSetmodeCommand(temperature_upper, temperature_bottom, humidity_upper, humidity_bottom, temperature_condition, humidity_condision, type, request_id));
     }
     static _isMESHblock(name) {
-        return name.indexOf(MESH_100TH._LocalName) !== -1;
+        return name.indexOf(MESH_100TH.PREFIX) !== -1;
     }
     prepareConnect() {
         this._mesh = new MeshJsTh_1.MeshJsTh();
@@ -49,5 +50,5 @@ class MESH_100TH extends MESH_1.MESH {
 }
 exports.default = MESH_100TH;
 MESH_100TH.PartsName = 'MESH_100TH';
-MESH_100TH._LocalName = 'MESH-100TH';
-MESH_100TH.NotifyType = MeshJsTh_1.MeshJsTh.NotifyType;
+MESH_100TH.PREFIX = 'MESH-100TH';
+MESH_100TH.NotifyType = MeshJsTh_1.MeshJsTh.NOTIFY_TYPE;

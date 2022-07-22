@@ -38,7 +38,7 @@ class MESH_100LE extends MESH_1.MESH {
         this.writeWOResponse(_le.parseLightupCommand(red, green, blue, time, cycle_on, cycle_off, pattern));
     }
     static _isMESHblock(name) {
-        return name.indexOf(MESH_100LE._LocalName) !== -1;
+        return name.indexOf(MESH_100LE.PREFIX) !== -1;
     }
     prepareConnect() {
         this._mesh = new MeshJsLe_1.MeshJsLe();
@@ -50,5 +50,5 @@ class MESH_100LE extends MESH_1.MESH {
 }
 exports.default = MESH_100LE;
 MESH_100LE.PartsName = 'MESH_100LE';
-MESH_100LE._LocalName = 'MESH-100LE';
-MESH_100LE.Pattern = MeshJsLe_1.MeshJsLe.Pattern;
+MESH_100LE.PREFIX = 'MESH-100LE';
+MESH_100LE.Pattern = MeshJsLe_1.MeshJsLe.PATTERN;

@@ -13,7 +13,7 @@ class MESH_100GP extends MESH_1.MESH {
         super(...arguments);
         this.DigitalPins = this
             ._mesh.DigitalPins;
-        // event handler
+        // Event Handler
         this.onDigitalInEventNotify = null;
         this.onAnalogInEventNotify = null;
         this.onDigitalInNotify = null;
@@ -68,7 +68,7 @@ class MESH_100GP extends MESH_1.MESH {
         this.writeWOResponse(_gp.parseSetPWMCommand(request_id));
     }
     static _isMESHblock(name) {
-        return name.indexOf(MESH_100GP._LocalName) !== -1;
+        return name.indexOf(MESH_100GP.PREFIX) !== -1;
     }
     prepareConnect() {
         this._mesh = new MeshJsGp_1.MeshJsGp();
@@ -123,9 +123,9 @@ class MESH_100GP extends MESH_1.MESH {
 }
 exports.default = MESH_100GP;
 MESH_100GP.PartsName = 'MESH_100GP';
-MESH_100GP._LocalName = 'MESH-100GP';
-MESH_100GP.AnalogInputEventCondition = MeshJsGp_1.MeshJsGp.AnalogInputEventCondition;
-MESH_100GP.Mode = MeshJsGp_1.MeshJsGp.Mode;
-MESH_100GP.Pin = MeshJsGp_1.MeshJsGp.Pin;
-MESH_100GP.State = MeshJsGp_1.MeshJsGp.State;
+MESH_100GP.PREFIX = 'MESH-100GP';
+MESH_100GP.AnalogInputEventCondition = MeshJsGp_1.MeshJsGp.ANALOG_IN_EVENT_CONDITION;
+MESH_100GP.Mode = MeshJsGp_1.MeshJsGp.MODE;
+MESH_100GP.Pin = MeshJsGp_1.MeshJsGp.PIN;
+MESH_100GP.State = MeshJsGp_1.MeshJsGp.STATE;
 MESH_100GP.VCC = MeshJsGp_1.MeshJsGp.VCC;

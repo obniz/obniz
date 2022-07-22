@@ -1,25 +1,33 @@
 export declare class MeshJs {
-    readonly UUIDS: {
-        readonly serviceId: "72C90001-57A9-4D40-B746-534E22EC9F9E";
-        readonly characteristics: {
-            readonly Indicate: "72c90005-57a9-4d40-b746-534e22ec9f9e";
-            readonly Notify: "72c90003-57a9-4d40-b746-534e22ec9f9e";
-            readonly Write: "72c90004-57a9-4d40-b746-534e22ec9f9e";
-            readonly WriteWOResponse: "72c90002-57a9-4d40-b746-534e22ec9f9e";
-        };
-    };
     onBattery: ((battery: number) => void) | null;
     onStatusButtonPressed: (() => void) | null;
-    private readonly _feature_command;
-    private _battery;
-    get feature(): number[];
+    readonly UUIDS: {
+        readonly SERVICE_ID: "72C90001-57A9-4D40-B746-534E22EC9F9E";
+        readonly CHARACTERISTICS: {
+            readonly INDICATE: "72c90005-57a9-4d40-b746-534e22ec9f9e";
+            readonly NOTIFY: "72c90003-57a9-4d40-b746-534e22ec9f9e";
+            readonly WRITE: "72c90004-57a9-4d40-b746-534e22ec9f9e";
+            readonly WRITE_WO_RESPONSE: "72c90002-57a9-4d40-b746-534e22ec9f9e";
+        };
+    };
+    private readonly FEATURE_COMMAND_;
+    private battery_;
+    get featureCommand(): number[];
     get battery(): number;
+    /**
+     * indicate
+     *
+     * @param data
+     * @returns
+     */
     indicate(data: number[]): void;
+    /**
+     * notify
+     *
+     * @param data
+     */
     notify(data: number[]): void;
-    printData(message: string): void;
     protected checkSum(command: number[]): number;
-    protected errorMessage(message: string): void;
-    protected errorOutOfRange(message: string): void;
-    private _updateBattery;
-    private _updateStatusButton;
+    private updateBattery_;
+    private updateStatusButton_;
 }

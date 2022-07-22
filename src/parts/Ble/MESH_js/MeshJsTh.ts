@@ -1,132 +1,146 @@
 import { MeshJs } from './MeshJs';
 import { MeshJsOutOfRangeError } from './MeshJsError';
 export class MeshJsTh extends MeshJs {
-  public static readonly NotifyType = {
-    UpdateTemperature: 4,
-    UpdateHumidity: 8,
-    Once: 16,
-    Always: 32,
+  // Event Handler
+  public onNotify: ((accele: MeshJsTh['response_']) => void) | null = null;
+
+  // Constant Values
+  public static readonly NOTIFY_TYPE = {
+    UPDATE_TEMPERATURE: 4 as const,
+    UPDATE_HUMIDITY: 8 as const,
+    ONCE: 16 as const,
+    ALWAYS: 32 as const,
   } as const;
+  private readonly MESSAGE_TYPE_ID_: number = 1 as const;
+  private readonly EVENT_TYPE_ID_: number = 0 as const;
+  private readonly MAX_TEMPERATURE_ = 50 as const;
+  private readonly MIN_TEMPERATURE_ = -10 as const;
+  private readonly MAX_HUMIDITY_ = 100 as const;
+  private readonly MIN_HUMIDITY_ = 0 as const;
 
-  // Event handler
-  public onNotify: ((accele: MeshJsTh['response']) => void) | null = null;
+  private response_ = { requestId: -1, temperature: -1, humidity: -1 };
+
+  public get getResponse(): MeshJsTh['response_'] {
+    return this.response_;
+  }
 
   /**
-   * MessageTypeID
-   * command header
+   *
+   * @param data
+   * @returns
    */
-  private readonly MessageTypeID: number = 1;
-
-  /**
-   * EventTypeID
-   * command header
-   */
-  private readonly EventTypeID: number = 0;
-
-  private readonly MaxTemperature = 50 as const;
-  private readonly MinTemperature = -10 as const;
-  private readonly MaxHumidity = 100 as const;
-  private readonly MinHumidity = 0 as const;
-
-  private response = { request_id: -1, temperature: -1, humidity: -1 };
-
   public notify(data: number[]): void {
     super.notify(data);
-    if (data[0] !== this.MessageTypeID) {
+    if (data[0] !== this.MESSAGE_TYPE_ID_) {
       return;
     }
-    if (data[1] !== this.EventTypeID) {
+    if (data[1] !== this.EVENT_TYPE_ID_) {
       return;
     }
-    this.response.request_id = data[2];
-    const _Byte = 256;
-    const temp = this.complemnt(_Byte * data[5] + data[4]) / 10;
-    this.response.temperature = Math.min(
-      Math.max(this.MinTemperature, temp),
-      this.MaxTemperature
+
+    this.response_.requestId = data[2];
+
+    const BYTE = 256 as const;
+    const TEMP = this.complemnt_(BYTE * data[5] + data[4]) / 10;
+    this.response_.temperature = Math.min(
+      Math.max(this.MIN_TEMPERATURE_, TEMP),
+      this.MAX_TEMPERATURE_
     );
-    const hum_ori = _Byte * data[7] + data[6];
-    this.response.humidity = Math.min(
-      Math.max(this.MinHumidity, hum_ori),
-      this.MaxHumidity
+
+    const hum_ori = BYTE * data[7] + data[6];
+    this.response_.humidity = Math.min(
+      Math.max(this.MIN_HUMIDITY_, hum_ori),
+      this.MAX_HUMIDITY_
     );
 
     if (typeof this.onNotify !== 'function') {
       return;
     }
-    this.onNotify(this.response);
+    this.onNotify(this.response_);
   }
 
-  public get getResponse(): MeshJsTh['response'] {
-    return this.response;
-  }
-
+  /**
+   *
+   * @param temperatureRangeUpper
+   * @param temperatureRangeBottom
+   * @param temperatureCondition
+   * @param humidityRangeUpper
+   * @param humidityRangeBottom
+   * @param humidityCondision
+   * @param type
+   * @param requestId
+   * @returns
+   */
   public parseSetmodeCommand(
-    temperature_range_upper: number,
-    temperature_range_bottom: number,
-    temperature_condition: number,
-    humidity_range_upper: number,
-    humidity_range_bottom: number,
-    humidity_condision: number,
+    temperatureRangeUpper: number,
+    temperatureRangeBottom: number,
+    temperatureCondition: number,
+    humidityRangeUpper: number,
+    humidityRangeBottom: number,
+    humidityCondision: number,
     type: number,
-    request_id = 0
+    requestId = 0
   ): number[] {
     // Error Handle
     if (
-      temperature_range_bottom < this.MinTemperature ||
-      this.MaxTemperature < temperature_range_upper
+      temperatureRangeBottom < this.MIN_TEMPERATURE_ ||
+      this.MAX_TEMPERATURE_ < temperatureRangeUpper
     ) {
       throw new MeshJsOutOfRangeError(
         'temperature_range',
-        this.MinTemperature,
-        this.MaxTemperature
+        this.MIN_TEMPERATURE_,
+        this.MAX_TEMPERATURE_
       );
     }
     if (
-      humidity_range_bottom < this.MinHumidity ||
-      this.MaxHumidity < humidity_range_upper
+      humidityRangeBottom < this.MIN_HUMIDITY_ ||
+      this.MAX_HUMIDITY_ < humidityRangeUpper
     ) {
       throw new MeshJsOutOfRangeError(
         'humidity_range',
-        this.MinHumidity,
-        this.MaxHumidity
+        this.MIN_HUMIDITY_,
+        this.MAX_HUMIDITY_
       );
     }
 
     // Generate Command
-    const _HEADER = [this.MessageTypeID, this.EventTypeID, request_id] as const;
-    const TEMP_UPPER: number[] = this.num2array(
-      10 * this.invcomplemnt(temperature_range_upper)
+    const HEADER = [
+      this.MESSAGE_TYPE_ID_,
+      this.EVENT_TYPE_ID_,
+      requestId,
+    ] as const;
+    const BASE: number = 10 as const;
+    const TEMP_UPPER: number[] = this.num2array_(
+      BASE * this.invcomplemnt_(temperatureRangeUpper)
     );
-    const TEMP_BOTTOM: number[] = this.num2array(
-      10 * this.invcomplemnt(temperature_range_bottom)
+    const TEMP_BOTTOM: number[] = this.num2array_(
+      BASE * this.invcomplemnt_(temperatureRangeBottom)
     );
-    const HUMI_UPPER: number[] = this.num2array(humidity_range_upper);
-    const HUMI_BOTTOM: number[] = this.num2array(humidity_range_bottom);
-    const data: number[] = _HEADER
-      .concat(TEMP_UPPER)
+    const HUMI_UPPER: number[] = this.num2array_(humidityRangeUpper);
+    const HUMI_BOTTOM: number[] = this.num2array_(humidityRangeBottom);
+    const data: number[] = HEADER.concat(TEMP_UPPER)
       .concat(TEMP_BOTTOM)
       .concat(HUMI_UPPER)
       .concat(HUMI_BOTTOM)
-      .concat([temperature_condition, humidity_condision, type]);
+      .concat([temperatureCondition, humidityCondision, type]);
     data.push(this.checkSum(data));
 
     return data;
   }
 
-  private num2array(val: number): number[] {
-    const _Byte = 256 as const;
-    return [val % _Byte, Math.floor(val / _Byte)];
+  private num2array_(val: number): number[] {
+    const BYTE = 256 as const;
+    return [val % BYTE, Math.floor(val / BYTE)];
   }
 
-  private complemnt(val: number): number {
-    const _2Byte = 65536 as const;
-    const _2ByteHalf = Math.floor(_2Byte / 2) - 1;
-    return val - (val > _2ByteHalf ? _2Byte : 0);
+  private complemnt_(val: number): number {
+    const TWO_BYTE = 65536 as const;
+    const TWO_BYTE_HALF = Math.floor(TWO_BYTE / 2) - 1;
+    return val - (val > TWO_BYTE_HALF ? TWO_BYTE : 0);
   }
 
-  private invcomplemnt(val: number): number {
-    const _2Byte = 65536 as const;
-    return val + (val < 0 ? _2Byte : 0);
+  private invcomplemnt_(val: number): number {
+    const TWO_BYTE = 65536 as const;
+    return val + (val < 0 ? TWO_BYTE : 0);
   }
 }

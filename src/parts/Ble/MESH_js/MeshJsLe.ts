@@ -1,66 +1,81 @@
 import { MeshJs } from './MeshJs';
 import { MeshJsOutOfRangeError } from './MeshJsError';
 export class MeshJsLe extends MeshJs {
-  public static readonly Pattern = { Blink: 1, Soft: 2 } as const;
+  // Constant Values
+  public static readonly PATTERN = {
+    BLINK: 1 as const,
+    SOFT: 2 as const,
+  } as const;
 
+  /**
+   *
+   * @param red
+   * @param green
+   * @param blue
+   * @param totalTime
+   * @param cycleOnTime
+   * @param cycleOffTime
+   * @param pattern
+   * @returns
+   */
   public parseLightupCommand(
     red: number,
     green: number,
     blue: number,
-    total_time: number,
-    cycle_on_time: number,
-    cycle_off_time: number,
+    totalTime: number,
+    cycleOnTime: number,
+    cycleOffTime: number,
     pattern: number
   ): number[] {
     // Error Handle
-    const _ColorMin = 0 as const;
-    const _ColorMax = 127 as const;
-    if (red < _ColorMin || _ColorMax < red) {
-      throw new MeshJsOutOfRangeError('red', _ColorMin, _ColorMax);
+    const COLOR_MIN = 0 as const;
+    const COLOR_MAX = 127 as const;
+    if (red < COLOR_MIN || COLOR_MAX < red) {
+      throw new MeshJsOutOfRangeError('red', COLOR_MIN, COLOR_MAX);
     }
-    if (green < _ColorMin || _ColorMax < green) {
-      throw new MeshJsOutOfRangeError('green', _ColorMin, _ColorMax);
+    if (green < COLOR_MIN || COLOR_MAX < green) {
+      throw new MeshJsOutOfRangeError('green', COLOR_MIN, COLOR_MAX);
     }
-    if (blue < _ColorMin || _ColorMax < blue) {
-      throw new MeshJsOutOfRangeError('blue', _ColorMin, _ColorMax);
+    if (blue < COLOR_MIN || COLOR_MAX < blue) {
+      throw new MeshJsOutOfRangeError('blue', COLOR_MIN, COLOR_MAX);
     }
-    const _TimeMin = 0 as const;
-    const _TimeMax = 65535 as const;
-    if (total_time < _TimeMin || _TimeMax < total_time) {
-      throw new MeshJsOutOfRangeError('time', _TimeMin, _TimeMax);
+    const TIME_MIN = 0 as const;
+    const TIME_MAX = 65535 as const;
+    if (totalTime < TIME_MIN || TIME_MAX < totalTime) {
+      throw new MeshJsOutOfRangeError('time', TIME_MIN, TIME_MAX);
     }
-    if (cycle_on_time < _TimeMin || _TimeMax < cycle_on_time) {
-      throw new MeshJsOutOfRangeError('cycle_on', _TimeMin, _TimeMax);
+    if (cycleOnTime < TIME_MIN || TIME_MAX < cycleOnTime) {
+      throw new MeshJsOutOfRangeError('cycle_on', TIME_MIN, TIME_MAX);
     }
-    if (cycle_off_time < _TimeMin || _TimeMax < cycle_off_time) {
-      throw new MeshJsOutOfRangeError('cycle_off', _TimeMin, _TimeMax);
+    if (cycleOffTime < TIME_MIN || TIME_MAX < cycleOffTime) {
+      throw new MeshJsOutOfRangeError('cycle_off', TIME_MIN, TIME_MAX);
     }
     if (
-      pattern !== MeshJsLe.Pattern.Blink &&
-      pattern !== MeshJsLe.Pattern.Soft
+      pattern !== MeshJsLe.PATTERN.BLINK &&
+      pattern !== MeshJsLe.PATTERN.SOFT
     ) {
       throw new MeshJsOutOfRangeError('pattern');
     }
 
     // Generate Command
-    const _MessageTypeID = 1 as const;
-    const _EventTypeID = 0 as const;
-    const _Fixed = 0 as const;
-    const _Byte = 256 as const;
+    const MESSAGE_TYPE_ID = 1 as const;
+    const EVENT_TYPE_ID = 0 as const;
+    const FIXED = 0 as const;
+    const BYTE = 256 as const;
     const data: number[] = [
-      _MessageTypeID,
-      _EventTypeID,
+      MESSAGE_TYPE_ID,
+      EVENT_TYPE_ID,
       red,
-      _Fixed,
+      FIXED,
       green,
-      _Fixed,
+      FIXED,
       blue,
-      total_time % _Byte,
-      Math.floor(total_time / _Byte),
-      cycle_on_time % _Byte,
-      Math.floor(cycle_on_time / _Byte),
-      cycle_off_time % _Byte,
-      Math.floor(cycle_off_time / _Byte),
+      totalTime % BYTE,
+      Math.floor(totalTime / BYTE),
+      cycleOnTime % BYTE,
+      Math.floor(cycleOnTime / BYTE),
+      cycleOffTime % BYTE,
+      Math.floor(cycleOffTime / BYTE),
       pattern,
     ];
     data.push(this.checkSum(data));

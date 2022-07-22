@@ -6,22 +6,22 @@ const MeshJs_1 = require("../../MESH_js/MeshJs");
 class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     constructor() {
         super(...arguments);
-        // event handler
+        // Event Handler
         this.onBatteryNotify = null;
         this.onStatusButtonNotify = null;
         this.onResponseWrite = null;
         this._mesh = new MeshJs_1.MeshJs();
-        this._indicateCharacteristic = null;
-        this._notifyCharacteristic = null;
-        this._writeCharacteristic = null;
-        this._writeWOResponseCharacteristic = null;
+        this.indicateCharacteristic_ = null;
+        this.notifyCharacteristic_ = null;
+        this.writeCharacteristic_ = null;
+        this.writeWOResponseCharacteristic_ = null;
     }
     static isMESHblock(peripheral) {
         const _name = peripheral.localName;
         if (!_name) {
             return false;
         }
-        if (_name.length !== MESH.LOCAL_NAME_LENGTH) {
+        if (_name.length !== MESH.LOCAL_NAME_LENGTH_) {
             return false;
         }
         return this._isMESHblock(_name);
@@ -39,27 +39,27 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     async connectWait() {
         this.prepareConnect();
         await this.peripheral.connectWait();
-        this._indicateCharacteristic = this._getCharacteristic(this._mesh.UUIDS.characteristics.Indicate);
-        this._notifyCharacteristic = this._getCharacteristic(this._mesh.UUIDS.characteristics.Notify);
-        this._writeCharacteristic = this._getCharacteristic(this._mesh.UUIDS.characteristics.Write);
-        this._writeWOResponseCharacteristic = this._getCharacteristic(this._mesh.UUIDS.characteristics.WriteWOResponse);
-        if (!this._indicateCharacteristic) {
+        this.indicateCharacteristic_ = this.getCharacteristic_(this._mesh.UUIDS.CHARACTERISTICS.INDICATE);
+        this.notifyCharacteristic_ = this.getCharacteristic_(this._mesh.UUIDS.CHARACTERISTICS.NOTIFY);
+        this.writeCharacteristic_ = this.getCharacteristic_(this._mesh.UUIDS.CHARACTERISTICS.WRITE);
+        this.writeWOResponseCharacteristic_ = this.getCharacteristic_(this._mesh.UUIDS.CHARACTERISTICS.WRITE_WO_RESPONSE);
+        if (!this.indicateCharacteristic_) {
             return;
         }
-        this._indicateCharacteristic.registerNotify((data) => {
+        this.indicateCharacteristic_.registerNotify((data) => {
             this._mesh.indicate(data);
         });
-        if (!this._notifyCharacteristic) {
+        if (!this.notifyCharacteristic_) {
             return;
         }
-        await this._notifyCharacteristic.registerNotifyWait((data) => {
+        await this.notifyCharacteristic_.registerNotifyWait((data) => {
             this._mesh.notify(data);
         });
         console.log('connect');
-        await this._writeFeatureWait();
+        await this.writeWait(this._mesh.featureCommand);
     }
     static _isMESHblock(name) {
-        return name.indexOf(MESH._LocalName) === 0;
+        return name.indexOf(MESH.PREFIX) === 0;
     }
     prepareConnect() {
         this._mesh.onBattery = (battery) => {
@@ -76,10 +76,10 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         };
     }
     async writeWait(data) {
-        if (!this._writeCharacteristic) {
+        if (!this.writeCharacteristic_) {
             return;
         }
-        await this._writeCharacteristic.writeWait(data, true).then((resp) => {
+        await this.writeCharacteristic_.writeWait(data, true).then((resp) => {
             if (typeof this.onResponseWrite !== 'function') {
                 return;
             }
@@ -87,21 +87,19 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         });
     }
     writeWOResponse(data) {
-        if (!this._writeWOResponseCharacteristic) {
+        if (!this.writeWOResponseCharacteristic_) {
             return;
         }
-        this._writeWOResponseCharacteristic.writeWait(data, true);
+        this.writeWOResponseCharacteristic_.writeWait(data, true);
     }
-    _getCharacteristic(uuid) {
+    getCharacteristic_(uuid) {
         return this.peripheral
-            .getService(this._mesh.UUIDS.serviceId)
+            .getService(this._mesh.UUIDS.SERVICE_ID)
             .getCharacteristic(uuid);
-    }
-    async _writeFeatureWait() {
-        await this.writeWait(this._mesh.feature);
     }
 }
 exports.MESH = MESH;
+// Constant Values
 MESH.AvailableBleMode = 'Connectable';
-MESH._LocalName = 'MESH-100';
-MESH.LOCAL_NAME_LENGTH = 17;
+MESH.LOCAL_NAME_LENGTH_ = 17;
+MESH.PREFIX = 'MESH-100';

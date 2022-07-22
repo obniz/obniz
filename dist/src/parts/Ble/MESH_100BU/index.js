@@ -11,7 +11,7 @@ const MeshJsBu_1 = require("../MESH_js/MeshJsBu");
 class MESH_100BU extends MESH_1.MESH {
     constructor() {
         super(...arguments);
-        /** event handler */
+        /** Event Handler */
         this.onSinglePressed = null;
         this.onLongPressed = null;
         this.onDoublePressed = null;
@@ -26,7 +26,7 @@ class MESH_100BU extends MESH_1.MESH {
         };
     }
     static _isMESHblock(name) {
-        return name.indexOf(MESH_100BU._LocalName) !== -1;
+        return name.indexOf(MESH_100BU.PREFIX) !== -1;
     }
     prepareConnect() {
         this._mesh = new MeshJsBu_1.MeshJsBu();
@@ -57,4 +57,4 @@ class MESH_100BU extends MESH_1.MESH {
 }
 exports.default = MESH_100BU;
 MESH_100BU.PartsName = 'MESH_100BU';
-MESH_100BU._LocalName = 'MESH-100BU';
+MESH_100BU.PREFIX = 'MESH-100BU';

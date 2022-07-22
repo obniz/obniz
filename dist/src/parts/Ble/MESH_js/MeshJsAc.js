@@ -4,90 +4,83 @@ const MeshJs_1 = require("./MeshJs");
 class MeshJsAc extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
-        /**
-         * MessageTypeID
-         * command header
-         */
-        this.MessageTypeID = 1;
-        this.accele = { x: -1, y: -1, z: -1 };
-        this.face = -1;
-        this.DataLength = 17;
-        // event handler
+        // Event Handler
         this.onTapped = null;
         this.onShaked = null;
         this.onFlipped = null;
         this.onDirection = null;
+        // Constant Values
+        this.MESSAGE_TYPE_ID_ = 1;
+        this.DATA_LENGTH_ = 17;
+        this.TAP_EVENT_ID_ = 0;
+        this.SHAKE_EVENT_ID_ = 1;
+        this.FLIP_EVENT_ID_ = 2;
+        this.DIRECTION_EVENT_ID_ = 3;
+        this.accele_ = { x: -1, y: -1, z: -1 };
+        this.face_ = -1;
     }
+    get getAccele() {
+        return this.accele_;
+    }
+    get getFace() {
+        return this.face_;
+    }
+    /**
+     * notify
+     *
+     * @param data
+     * @returns
+     */
     notify(data) {
         super.notify(data);
-        this.updateAccele(data);
+        this.updateAccele_(data);
         if (data[0] !== 1) {
             return;
         }
         switch (data[1]) {
-            case 0: // Tap
+            case this.TAP_EVENT_ID_:
                 if (typeof this.onTapped === 'function') {
-                    this.onTapped(this.accele);
+                    this.onTapped(this.accele_);
                 }
                 break;
-            case 1: // Shake
+            case this.SHAKE_EVENT_ID_:
                 if (typeof this.onShaked === 'function') {
-                    this.onShaked(this.accele);
+                    this.onShaked(this.accele_);
                 }
                 break;
-            case 2: // Flip
+            case this.FLIP_EVENT_ID_:
                 if (typeof this.onFlipped === 'function') {
-                    this.onFlipped(this.accele);
+                    this.onFlipped(this.accele_);
                 }
                 break;
-            case 3: // Direction
+            case this.DIRECTION_EVENT_ID_:
                 if (typeof this.onDirection === 'function') {
-                    this.face = data[2];
-                    this.onDirection(this.face, this.accele);
+                    this.face_ = data[2];
+                    this.onDirection(this.face_, this.accele_);
                 }
                 break;
             default:
                 break;
         }
     }
-    get getAccele() {
-        return this.accele;
-    }
-    get getFace() {
-        return this.face;
-    }
-    /**
-     * setMode
-     *
-     * @param type
-     * @returns
-     */
-    //   public parseSetmodeCommand(
-    //     event: number,
-    //     mode: number,
-    //     requestId = 0
-    //   ): number[] {
-    //     const HEADER: number[] = [this.MessageTypeID, 1, requestId];
-    //     const data: number[] = HEADER.concat(event).concat(mode);
-    //     data.push(this.checkSum(data));
-    //     console.log('setMode: ' + data);
-    //     return data;
-    //   }
-    updateAccele(data) {
-        if (data.length !== this.DataLength) {
+    updateAccele_(data) {
+        if (data.length !== this.DATA_LENGTH_) {
             return false;
         }
-        if (data[0] !== 1) {
+        if (data[0] !== this.MESSAGE_TYPE_ID_) {
             return false;
         }
+        const BYTE = 256;
         const BASE = 1024;
-        this.accele.x = this.complemnt(256 * data[5] + data[4]) / BASE;
-        this.accele.y = this.complemnt(256 * data[7] + data[6]) / BASE;
-        this.accele.z = this.complemnt(256 * data[9] + data[8]) / BASE;
+        this.accele_.x = this.complemnt_(BYTE * data[5] + data[4]) / BASE;
+        this.accele_.y = this.complemnt_(BYTE * data[7] + data[6]) / BASE;
+        this.accele_.z = this.complemnt_(BYTE * data[9] + data[8]) / BASE;
         return true;
     }
-    complemnt(val) {
-        return val - (val > 32767 ? 65536 : 0);
+    complemnt_(val) {
+        const TWO_BYTE = 65536;
+        const TWO_BYTE_HALF = Math.floor(TWO_BYTE / 2) - 1;
+        return val - (val > TWO_BYTE_HALF ? TWO_BYTE : 0);
     }
 }
 exports.MeshJsAc = MeshJsAc;

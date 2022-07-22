@@ -1,8 +1,19 @@
 import { MeshJs } from './MeshJs';
 export declare class MeshJsLe extends MeshJs {
-    static readonly Pattern: {
-        readonly Blink: 1;
-        readonly Soft: 2;
+    static readonly PATTERN: {
+        readonly BLINK: 1;
+        readonly SOFT: 2;
     };
-    parseLightupCommand(red: number, green: number, blue: number, total_time: number, cycle_on_time: number, cycle_off_time: number, pattern: number): number[];
+    /**
+     *
+     * @param red
+     * @param green
+     * @param blue
+     * @param totalTime
+     * @param cycleOnTime
+     * @param cycleOffTime
+     * @param pattern
+     * @returns
+     */
+    parseLightupCommand(red: number, green: number, blue: number, totalTime: number, cycleOnTime: number, cycleOffTime: number, pattern: number): number[];
 }

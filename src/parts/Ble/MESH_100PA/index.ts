@@ -15,8 +15,7 @@ export interface MESH_100PAOptions {}
 export interface MESH_100PA_Data {
   name: string;
   address: string;
-  /** battery (0 ~ 10) */
-  battery: number;
+  battery: number; // 0 ~ 10
   proximity: number;
   brightness: number;
 }
@@ -24,12 +23,12 @@ export interface MESH_100PA_Data {
 /** MESH_100PA management class */
 export default class MESH_100PA extends MESH<MESH_100PA_Data> {
   public static readonly PartsName = 'MESH_100PA';
-  public static readonly _LocalName = 'MESH-100PA';
+  public static readonly PREFIX = 'MESH-100PA';
 
-  public static readonly NotifyType = MeshJsPa.NotifyType;
+  public static readonly NotifyType = MeshJsPa.NOTIFY_TYPE;
 
-  // event handler
-  public onNotify: ((resp: MeshJsPa['response']) => void) | null = null;
+  // Event Handler
+  public onNotify: ((resp: MeshJsPa['response_']) => void) | null = null;
 
   protected readonly staticClass = MESH_100PA;
 
@@ -51,13 +50,13 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
   }
 
   protected static _isMESHblock(name: string): boolean {
-    return name.indexOf(MESH_100PA._LocalName) !== -1;
+    return name.indexOf(MESH_100PA.PREFIX) !== -1;
   }
 
   protected prepareConnect(): void {
     this._mesh = new MeshJsPa();
     const _pa = this._mesh as MeshJsPa;
-    _pa.onNotify = (response: MeshJsPa['response']) => {
+    _pa.onNotify = (response: MeshJsPa['response_']) => {
       if (typeof this.onNotify !== 'function') {
         return;
       }

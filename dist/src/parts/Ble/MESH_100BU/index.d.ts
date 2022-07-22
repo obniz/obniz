@@ -16,8 +16,8 @@ export interface MESH_100BU_Data {
 /** MESH_100BU management class */
 export default class MESH_100BU extends MESH<MESH_100BU_Data> {
     static readonly PartsName = "MESH_100BU";
-    static readonly _LocalName = "MESH-100BU";
-    /** event handler */
+    static readonly PREFIX: "MESH-100BU";
+    /** Event Handler */
     onSinglePressed: (() => void) | null;
     onLongPressed: (() => void) | null;
     onDoublePressed: (() => void) | null;

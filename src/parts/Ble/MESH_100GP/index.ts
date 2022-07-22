@@ -21,19 +21,19 @@ export interface MESH_100GP_Data {
 /** MESH_100GA management class */
 export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   public static readonly PartsName = 'MESH_100GP';
-  public static readonly _LocalName = 'MESH-100GP';
+  public static readonly PREFIX = 'MESH-100GP';
 
   public static readonly AnalogInputEventCondition =
-    MeshJsGp.AnalogInputEventCondition;
-  public static readonly Mode = MeshJsGp.Mode;
-  public static readonly Pin = MeshJsGp.Pin;
-  public static readonly State = MeshJsGp.State;
+    MeshJsGp.ANALOG_IN_EVENT_CONDITION;
+  public static readonly Mode = MeshJsGp.MODE;
+  public static readonly Pin = MeshJsGp.PIN;
+  public static readonly State = MeshJsGp.STATE;
   public static readonly VCC = MeshJsGp.VCC;
 
   public readonly DigitalPins: MeshJsGp['DigitalPins'] = (this
     ._mesh as MeshJsGp).DigitalPins;
 
-  // event handler
+  // Event Handler
   public onDigitalInEventNotify:
     | ((pin: number, state: number) => void)
     | null = null;
@@ -128,7 +128,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   }
 
   protected static _isMESHblock(name: string): boolean {
-    return name.indexOf(MESH_100GP._LocalName) !== -1;
+    return name.indexOf(MESH_100GP.PREFIX) !== -1;
   }
 
   protected prepareConnect(): void {

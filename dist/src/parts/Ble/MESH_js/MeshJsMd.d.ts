@@ -1,21 +1,35 @@
 import { MeshJs } from './MeshJs';
 export declare class MeshJsMd extends MeshJs {
-    readonly DetectionMode: {
+    onNotify: ((response: MeshJsMd['response_']) => void) | null;
+    readonly DETECTION_MODE: {
         readonly DETECTED: 1;
-        readonly NOTDETECTED: 2;
+        readonly NOT_DETECTED: 2;
         readonly ONESHOT: 16;
         readonly CONTINUOUS: 32;
     };
-    readonly MotionState: {
+    readonly MOTION_STATE: {
         readonly SETUP: 0;
         readonly DETECTED: 1;
-        readonly NOTDETECTED: 2;
+        readonly NOT_DETECTED: 2;
     };
-    onNotify: ((response: MeshJsMd['response']) => void) | null;
-    private readonly MessageTypeID;
-    private readonly EventTypeID;
-    private response;
+    private readonly MESSAGE_TYPE_ID_;
+    private readonly EVENT_TYPE_ID_;
+    private response_;
+    get getResponse(): MeshJsMd['response_'];
+    /**
+     * notify
+     *
+     * @param data
+     * @returns
+     */
     notify(data: number[]): void;
-    get getResponse(): MeshJsMd['response'];
-    parseSetmodeCommand(detection_mode: number, detection_time?: number, response_time?: number, request_id?: number): number[];
+    /**
+     *
+     * @param detectionMode
+     * @param detectionTime
+     * @param responseTime
+     * @param requestId
+     * @returns
+     */
+    parseSetmodeCommand(detectionMode: number, detectionTime?: number, responseTime?: number, requestId?: number): number[];
 }

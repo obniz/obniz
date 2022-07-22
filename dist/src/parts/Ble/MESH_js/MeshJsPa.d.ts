@@ -1,17 +1,22 @@
 import { MeshJs } from './MeshJs';
 export declare class MeshJsPa extends MeshJs {
-    static readonly NotifyType: {
-        readonly UpdateProximity: 4;
-        readonly UpdateBrightness: 8;
-        readonly Once: 16;
-        readonly Always: 32;
+    onNotify: ((resp: MeshJsPa['response_']) => void) | null;
+    static readonly NOTIFY_TYPE: {
+        readonly UPDATE_PROXIMITY: 4;
+        readonly UPDATE_BRIGHTNESS: 8;
+        readonly ONCE: 16;
+        readonly ALWAYS: 32;
     };
-    onNotify: ((resp: MeshJsPa['response']) => void) | null;
-    private readonly MessageTypeID;
-    private readonly EventTypeID;
-    private response;
+    private readonly MESSAGE_TYPE_ID_;
+    private readonly EVENT_TYPE_ID_;
+    private response_;
+    get getResponse(): MeshJsPa['response_'];
+    /**
+     *
+     * @param data
+     * @returns
+     */
     notify(data: number[]): void;
-    get getResponse(): MeshJsPa['response'];
     /**
      *
      * @param notifyType

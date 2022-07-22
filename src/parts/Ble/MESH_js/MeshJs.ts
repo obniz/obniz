@@ -1,29 +1,41 @@
 export class MeshJs {
-  public readonly UUIDS = {
-    serviceId: '72C90001-57A9-4D40-B746-534E22EC9F9E',
-    characteristics: {
-      Indicate: '72c90005-57a9-4d40-b746-534e22ec9f9e',
-      Notify: '72c90003-57a9-4d40-b746-534e22ec9f9e',
-      Write: '72c90004-57a9-4d40-b746-534e22ec9f9e',
-      WriteWOResponse: '72c90002-57a9-4d40-b746-534e22ec9f9e',
-    },
-  } as const;
-
-  // event handler
+  // Event Handler
   public onBattery: ((battery: number) => void) | null = null;
   public onStatusButtonPressed: (() => void) | null = null;
 
-  private readonly _feature_command: number[] = [0, 2, 1, 3];
-  private _battery = -1;
+  // Constant Values
+  public readonly UUIDS = {
+    SERVICE_ID: '72C90001-57A9-4D40-B746-534E22EC9F9E' as const,
+    CHARACTERISTICS: {
+      INDICATE: '72c90005-57a9-4d40-b746-534e22ec9f9e' as const,
+      NOTIFY: '72c90003-57a9-4d40-b746-534e22ec9f9e' as const,
+      WRITE: '72c90004-57a9-4d40-b746-534e22ec9f9e' as const,
+      WRITE_WO_RESPONSE: '72c90002-57a9-4d40-b746-534e22ec9f9e' as const,
+    } as const,
+  } as const;
+  private readonly FEATURE_COMMAND_ = [
+    0 as const,
+    2 as const,
+    1 as const,
+    3 as const,
+  ];
 
-  public get feature(): number[] {
-    return this._feature_command;
+  private battery_ = -1;
+
+  public get featureCommand(): number[] {
+    return this.FEATURE_COMMAND_;
   }
 
   public get battery(): number {
-    return this._battery;
+    return this.battery_;
   }
 
+  /**
+   * indicate
+   *
+   * @param data
+   * @returns
+   */
   public indicate(data: number[]): void {
     if (data.length !== 16) {
       return;
@@ -34,16 +46,17 @@ export class MeshJs {
     if (data[1] !== 2) {
       return;
     }
-    this._battery = data[14];
+    this.battery_ = data[14];
   }
 
+  /**
+   * notify
+   *
+   * @param data
+   */
   public notify(data: number[]): void {
-    this._updateBattery(data);
-    this._updateStatusButton(data);
-  }
-
-  public printData(message: string): void {
-    console.log('bat: ' + this._battery + ', ' + message);
+    this.updateBattery_(data);
+    this.updateStatusButton_(data);
   }
 
   protected checkSum(command: number[]): number {
@@ -54,15 +67,7 @@ export class MeshJs {
     return sum % 256;
   }
 
-  protected errorMessage(message: string): void {
-    console.log('[Error] Can not parse; ' + message);
-  }
-
-  protected errorOutOfRange(message: string): void {
-    console.log(this.errorMessage('out of range ' + message));
-  }
-
-  private _updateBattery(data: number[]): boolean {
+  private updateBattery_(data: number[]): boolean {
     if (data.length !== 4) {
       return false;
     }
@@ -75,15 +80,15 @@ export class MeshJs {
     // if (data[2] === this.battery) {
     //   return;
     // }
-    this._battery = data[2];
+    this.battery_ = data[2];
     if (typeof this.onBattery !== 'function') {
       return false;
     }
-    this.onBattery(this._battery);
+    this.onBattery(this.battery_);
     return true;
   }
 
-  private _updateStatusButton(data: number[]): boolean {
+  private updateStatusButton_(data: number[]): boolean {
     if (data.length !== 4) {
       return false;
     }
