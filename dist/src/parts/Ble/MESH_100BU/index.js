@@ -6,12 +6,12 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
-const MESH_js_BU_1 = require("../MESH_js/MESH_js_BU");
+const MeshJsBu_1 = require("../MESH_js/MeshJsBu");
 /** MESH_100BU management class */
 class MESH_100BU extends MESH_1.MESH {
     constructor() {
         super(...arguments);
-        /** event handler */
+        /** Event Handler */
         this.onSinglePressed = null;
         this.onLongPressed = null;
         this.onDoublePressed = null;
@@ -26,10 +26,10 @@ class MESH_100BU extends MESH_1.MESH {
         };
     }
     static _isMESHblock(name) {
-        return name.indexOf(MESH_100BU._LocalName) !== -1;
+        return name.indexOf(MESH_100BU.PREFIX) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MESH_js_BU_1.MESH_js_BU();
+        this._mesh = new MeshJsBu_1.MeshJsBu();
         const _bu = this._mesh;
         _bu.onSinglePressed = () => {
             if (typeof this.onSinglePressed !== 'function') {
@@ -57,4 +57,4 @@ class MESH_100BU extends MESH_1.MESH {
 }
 exports.default = MESH_100BU;
 MESH_100BU.PartsName = 'MESH_100BU';
-MESH_100BU._LocalName = 'MESH-100BU';
+MESH_100BU.PREFIX = 'MESH-100BU';

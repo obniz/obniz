@@ -3,7 +3,7 @@
  * @module Parts.MESH_100AC
  */
 import { MESH } from '../utils/abstracts/MESH';
-import { MESH_js_AC } from '../MESH_js/MESH_js_AC';
+import { MeshJsAc } from '../MESH_js/MeshJsAc';
 export interface MESH_100ACOptions {
 }
 /**
@@ -12,7 +12,6 @@ export interface MESH_100ACOptions {
 export interface MESH_100AC_Data {
     name: string;
     address: string;
-    /** battery (0 ~ 10) */
     battery: number;
     accele_x: number;
     accele_y: number;
@@ -22,11 +21,11 @@ export interface MESH_100AC_Data {
 /** MESH_100AC management class */
 export default class MESH_100AC extends MESH<MESH_100AC_Data> {
     static readonly PartsName = "MESH_100AC";
-    static readonly _LocalName = "MESH-100AC";
-    onTapped: ((accele: MESH_js_AC['accele']) => void) | null;
-    onShaked: ((accele: MESH_js_AC['accele']) => void) | null;
-    onFlipped: ((accele: MESH_js_AC['accele']) => void) | null;
-    onDirection: ((face: number, accele: MESH_js_AC['accele']) => void) | null;
+    static readonly PREFIX = "MESH-100AC";
+    onTapped: ((accele: MeshJsAc['accele_']) => void) | null;
+    onShaked: ((accele: MeshJsAc['accele_']) => void) | null;
+    onFlipped: ((accele: MeshJsAc['accele_']) => void) | null;
+    onDirection: ((face: number, accele: MeshJsAc['accele_']) => void) | null;
     protected readonly staticClass: typeof MESH_100AC;
     getDataWait(): Promise<{
         name: string;

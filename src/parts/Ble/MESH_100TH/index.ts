@@ -5,7 +5,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { MESH } from '../utils/abstracts/MESH';
-import { MESH_js_TH } from '../MESH_js/MESH_js_TH';
+import { MeshJsTh } from '../MESH_js/MeshJsTh';
 
 export interface MESH_100THOptions {}
 
@@ -23,17 +23,18 @@ export interface MESH_100TH_Data {
 /** MESH_100TH management class */
 export default class MESH_100TH extends MESH<MESH_100TH_Data> {
   public static readonly PartsName = 'MESH_100TH';
-  public static readonly _LocalName = 'MESH-100TH';
+  public static readonly PREFIX = 'MESH-100TH';
 
-  public static readonly NotifyType = MESH_js_TH.NotifyType;
+  public static readonly NotifyType = MeshJsTh.NOTIFY_TYPE;
 
-  public onNotify: ((resp: MESH_js_TH['response']) => void) | null = null;
+  // Event Handler
+  public onNotify: ((resp: MeshJsTh['response_']) => void) | null = null;
 
   protected readonly staticClass = MESH_100TH;
 
   public async getDataWait() {
     this.checkConnected();
-    const _th = this._mesh as MESH_js_TH;
+    const _th = this._mesh as MeshJsTh;
     return {
       name: this.peripheral.localName!,
       address: this.peripheral.address,
@@ -53,7 +54,7 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
     type: number,
     request_id = 0
   ): void {
-    const _th = this._mesh as MESH_js_TH;
+    const _th = this._mesh as MeshJsTh;
     this.writeWOResponse(
       _th.parseSetmodeCommand(
         temperature_upper,
@@ -69,13 +70,13 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
   }
 
   protected static _isMESHblock(name: string): boolean {
-    return name.indexOf(MESH_100TH._LocalName) !== -1;
+    return name.indexOf(MESH_100TH.PREFIX) !== -1;
   }
 
   protected prepareConnect(): void {
-    this._mesh = new MESH_js_TH();
-    const _th = this._mesh as MESH_js_TH;
-    _th.onNotify = (response: MESH_js_TH['response']) => {
+    this._mesh = new MeshJsTh();
+    const _th = this._mesh as MeshJsTh;
+    _th.onNotify = (response: MeshJsTh['response_']) => {
       if (typeof this.onNotify !== 'function') {
         return;
       }

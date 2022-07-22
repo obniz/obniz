@@ -8,16 +8,15 @@ export interface MESH_100LEOptions {
 export interface MESH_100LE_Data {
     name: string;
     address: string;
-    /** battery (0 ~ 10) */
     battery: number;
 }
 /** MESH_100TH management class */
 export default class MESH_100LE extends MESH<MESH_100LE_Data> {
     static readonly PartsName = "MESH_100LE";
-    static readonly _LocalName = "MESH-100LE";
+    static readonly PREFIX = "MESH-100LE";
     static Pattern: {
-        readonly Blink: 1;
-        readonly Soft: 2;
+        readonly BLINK: 1;
+        readonly SOFT: 2;
     };
     protected readonly staticClass: typeof MESH_100LE;
     getDataWait(): Promise<{

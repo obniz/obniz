@@ -6,12 +6,12 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
-const MESH_js_PA_1 = require("../MESH_js/MESH_js_PA");
+const MeshJsPa_1 = require("../MESH_js/MeshJsPa");
 /** MESH_100PA management class */
 class MESH_100PA extends MESH_1.MESH {
     constructor() {
         super(...arguments);
-        // event handler
+        // Event Handler
         this.onNotify = null;
         this.staticClass = MESH_100PA;
     }
@@ -31,10 +31,10 @@ class MESH_100PA extends MESH_1.MESH {
         this.writeWOResponse(_pa.parseSetmodeCommand(type, request_id));
     }
     static _isMESHblock(name) {
-        return name.indexOf(MESH_100PA._LocalName) !== -1;
+        return name.indexOf(MESH_100PA.PREFIX) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MESH_js_PA_1.MESH_js_PA();
+        this._mesh = new MeshJsPa_1.MeshJsPa();
         const _pa = this._mesh;
         _pa.onNotify = (response) => {
             if (typeof this.onNotify !== 'function') {
@@ -50,5 +50,5 @@ class MESH_100PA extends MESH_1.MESH {
 }
 exports.default = MESH_100PA;
 MESH_100PA.PartsName = 'MESH_100PA';
-MESH_100PA._LocalName = 'MESH-100PA';
-MESH_100PA.NotifyType = MESH_js_PA_1.MESH_js_PA.NotifyType;
+MESH_100PA.PREFIX = 'MESH-100PA';
+MESH_100PA.NotifyType = MeshJsPa_1.MeshJsPa.NOTIFY_TYPE;

@@ -1,41 +1,52 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const _1 = require(".");
-class MESH_js_BU extends _1.MESH_js {
+const MeshJs_1 = require("./MeshJs");
+class MeshJsBu extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
-        // event handler
+        // Event Handler
         this.onSinglePressed = null;
         this.onLongPressed = null;
         this.onDoublePressed = null;
-        this.DataLength = 4;
-        this.MessageTypeID = 1;
-        this.EventTypeID = 0;
-        this.Type = { SINGLE: 1, LONG: 2, DOUBLE: 3 };
+        // Constant Values
+        this.DATA_LENGTH_ = 4;
+        this.MESSAGE_TYPE_ID_ = 1;
+        this.EVENT_TYPE_ID_ = 0;
+        this.TYPE_ = {
+            SINGLE: 1,
+            LONG: 2,
+            DOUBLE: 3,
+        };
     }
+    /**
+     * notify
+     *
+     * @param data
+     * @returns
+     */
     notify(data) {
         super.notify(data);
-        if (data.length !== this.DataLength) {
+        if (data.length !== this.DATA_LENGTH_) {
             return;
         }
-        if (data[0] !== this.MessageTypeID) {
+        if (data[0] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
-        if (data[1] !== this.EventTypeID) {
+        if (data[1] !== this.EVENT_TYPE_ID_) {
             return;
         }
         switch (data[2]) {
-            case this.Type.SINGLE:
+            case this.TYPE_.SINGLE:
                 if (typeof this.onSinglePressed === 'function') {
                     this.onSinglePressed();
                 }
                 break;
-            case this.Type.LONG:
+            case this.TYPE_.LONG:
                 if (typeof this.onLongPressed === 'function') {
                     this.onLongPressed();
                 }
                 break;
-            case this.Type.DOUBLE:
+            case this.TYPE_.DOUBLE:
                 if (typeof this.onDoublePressed === 'function') {
                     this.onDoublePressed();
                 }
@@ -45,4 +56,4 @@ class MESH_js_BU extends _1.MESH_js {
         }
     }
 }
-exports.MESH_js_BU = MESH_js_BU;
+exports.MeshJsBu = MeshJsBu;

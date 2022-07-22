@@ -3,7 +3,7 @@
  * @module Parts.MESH_100GP
  */
 import { MESH } from '../utils/abstracts/MESH';
-import { MESH_js_GP } from '../MESH_js/MESH_js_GP';
+import { MeshJsGp } from '../MESH_js/MeshJsGp';
 export interface MESH_100GPOptions {
 }
 /**
@@ -17,32 +17,32 @@ export interface MESH_100GP_Data {
 /** MESH_100GA management class */
 export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     static readonly PartsName = "MESH_100GP";
-    static readonly _LocalName = "MESH-100GP";
+    static readonly PREFIX = "MESH-100GP";
     static readonly AnalogInputEventCondition: {
-        readonly NotNotify: 0;
-        readonly AboveThreshold: 1;
-        readonly BelowThreshold: 2;
+        readonly NOT_NOTIFY: 0;
+        readonly ABOVE_THRESHOLD: 1;
+        readonly BELOW_THRESHOLD: 2;
     };
     static readonly Mode: {
-        readonly Always: 0;
-        readonly Once: 1;
-        readonly AlwaysAndOnce: 2;
+        readonly ALWAYS: 0;
+        readonly ONCE: 1;
+        readonly ALWAYS_AND_ONECE: 2;
     };
     static readonly Pin: {
-        readonly p1: 0;
-        readonly p2: 1;
-        readonly p3: 2;
+        readonly P1: 0;
+        readonly P2: 1;
+        readonly P3: 2;
     };
     static readonly State: {
-        readonly Low2High: 1;
-        readonly High2Low: 2;
+        readonly LOW_2_HIGH: 1;
+        readonly HIGH_2_LOW: 2;
     };
     static readonly VCC: {
         readonly AUTO: 0;
         readonly ON: 1;
         readonly OFF: 2;
     };
-    readonly DigitalPins: MESH_js_GP['DigitalPins'];
+    readonly DigitalPins: MeshJsGp['DigitalPins'];
     onDigitalInEventNotify: ((pin: number, state: number) => void) | null;
     onAnalogInEventNotify: ((level: number) => void) | null;
     onDigitalInNotify: ((requestId: number, pin: number, state: number) => void) | null;

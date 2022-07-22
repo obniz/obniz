@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class MESH_js_Error extends Error {
+class MeshJsError extends Error {
     constructor(code, e) {
         super(e);
         this.code = code;
@@ -8,8 +8,8 @@ class MESH_js_Error extends Error {
         Object.setPrototypeOf(this, new.target.prototype);
     }
 }
-exports.MESH_js_Error = MESH_js_Error;
-class MESHOutOfRangeError extends MESH_js_Error {
+exports.MeshJsError = MeshJsError;
+class MeshJsOutOfRangeError extends MeshJsError {
     constructor(property, min, max) {
         super(1, property +
             ' is out of range. ' +
@@ -19,11 +19,11 @@ class MESHOutOfRangeError extends MESH_js_Error {
         this.property = property;
     }
 }
-exports.MESHOutOfRangeError = MESHOutOfRangeError;
-class MESHInvalidValue extends MESH_js_Error {
+exports.MeshJsOutOfRangeError = MeshJsOutOfRangeError;
+class MeshJsInvalidValueError extends MeshJsError {
     constructor(property) {
         super(2, property + 'is invalid value.');
         this.property = property;
     }
 }
-exports.MESHInvalidValue = MESHInvalidValue;
+exports.MeshJsInvalidValueError = MeshJsInvalidValueError;

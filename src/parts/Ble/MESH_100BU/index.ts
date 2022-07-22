@@ -5,7 +5,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { MESH } from '../utils/abstracts/MESH';
-import { MESH_js_BU } from '../MESH_js/MESH_js_BU';
+import { MeshJsBu } from '../MESH_js/MeshJsBu';
 
 export interface MESH_100BUOptions {}
 
@@ -21,9 +21,9 @@ export interface MESH_100BU_Data {
 /** MESH_100BU management class */
 export default class MESH_100BU extends MESH<MESH_100BU_Data> {
   public static readonly PartsName = 'MESH_100BU';
-  public static readonly _LocalName = 'MESH-100BU';
+  public static readonly PREFIX = 'MESH-100BU' as const;
 
-  /** event handler */
+  /** Event Handler */
   public onSinglePressed: (() => void) | null = null;
   public onLongPressed: (() => void) | null = null;
   public onDoublePressed: (() => void) | null = null;
@@ -40,13 +40,13 @@ export default class MESH_100BU extends MESH<MESH_100BU_Data> {
   }
 
   protected static _isMESHblock(name: string): boolean {
-    return name.indexOf(MESH_100BU._LocalName) !== -1;
+    return name.indexOf(MESH_100BU.PREFIX) !== -1;
   }
 
   protected prepareConnect(): void {
-    this._mesh = new MESH_js_BU();
+    this._mesh = new MeshJsBu();
 
-    const _bu = this._mesh as MESH_js_BU;
+    const _bu = this._mesh as MeshJsBu;
     _bu.onSinglePressed = () => {
       if (typeof this.onSinglePressed !== 'function') {
         return;

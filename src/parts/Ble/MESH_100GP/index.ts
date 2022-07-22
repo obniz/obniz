@@ -5,7 +5,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { MESH } from '../utils/abstracts/MESH';
-import { MESH_js_GP } from '../MESH_js/MESH_js_GP';
+import { MeshJsGp } from '../MESH_js/MeshJsGp';
 
 export interface MESH_100GPOptions {}
 
@@ -21,19 +21,19 @@ export interface MESH_100GP_Data {
 /** MESH_100GA management class */
 export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   public static readonly PartsName = 'MESH_100GP';
-  public static readonly _LocalName = 'MESH-100GP';
+  public static readonly PREFIX = 'MESH-100GP';
 
   public static readonly AnalogInputEventCondition =
-    MESH_js_GP.AnalogInputEventCondition;
-  public static readonly Mode = MESH_js_GP.Mode;
-  public static readonly Pin = MESH_js_GP.Pin;
-  public static readonly State = MESH_js_GP.State;
-  public static readonly VCC = MESH_js_GP.VCC;
+    MeshJsGp.ANALOG_IN_EVENT_CONDITION;
+  public static readonly Mode = MeshJsGp.MODE;
+  public static readonly Pin = MeshJsGp.PIN;
+  public static readonly State = MeshJsGp.STATE;
+  public static readonly VCC = MeshJsGp.VCC;
 
-  public readonly DigitalPins: MESH_js_GP['DigitalPins'] = (this
-    ._mesh as MESH_js_GP).DigitalPins;
+  public readonly DigitalPins: MeshJsGp['DigitalPins'] = (this
+    ._mesh as MeshJsGp).DigitalPins;
 
-  // event handler
+  // Event Handler
   public onDigitalInEventNotify:
     | ((pin: number, state: number) => void)
     | null = null;
@@ -87,7 +87,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     ain_range_bottom: number,
     ain_notify: number
   ): void {
-    const _gp = this._mesh as MESH_js_GP;
+    const _gp = this._mesh as MeshJsGp;
     this.writeWOResponse(
       _gp.parseSetmodeCommand(
         din,
@@ -103,37 +103,37 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   }
 
   public setDin(pin: number, request_id = 0): void {
-    const _gp = this._mesh as MESH_js_GP;
+    const _gp = this._mesh as MeshJsGp;
     this.writeWOResponse(_gp.parseSetDinCommand(pin, request_id));
   }
 
   public setAin(mode: number, request_id = 0) {
-    const _gp = this._mesh as MESH_js_GP;
+    const _gp = this._mesh as MeshJsGp;
     this.writeWOResponse(_gp.parseSetAinCommand(mode, request_id));
   }
 
   public setVout(pin: number, request_id = 0) {
-    const _gp = this._mesh as MESH_js_GP;
+    const _gp = this._mesh as MeshJsGp;
     this.writeWOResponse(_gp.parseSetVoutCommand(pin, request_id));
   }
 
   public setDout(pin: number, request_id = 0) {
-    const _gp = this._mesh as MESH_js_GP;
+    const _gp = this._mesh as MeshJsGp;
     this.writeWOResponse(_gp.parseSetDoutCommand(pin, request_id));
   }
 
   public setPWMNotify(request_id = 0) {
-    const _gp = this._mesh as MESH_js_GP;
+    const _gp = this._mesh as MeshJsGp;
     this.writeWOResponse(_gp.parseSetPWMCommand(request_id));
   }
 
   protected static _isMESHblock(name: string): boolean {
-    return name.indexOf(MESH_100GP._LocalName) !== -1;
+    return name.indexOf(MESH_100GP.PREFIX) !== -1;
   }
 
   protected prepareConnect(): void {
-    this._mesh = new MESH_js_GP();
-    const _gp = this._mesh as MESH_js_GP;
+    this._mesh = new MeshJsGp();
+    const _gp = this._mesh as MeshJsGp;
 
     _gp.onDigitalInEventNotify = (pin: number, state: number) => {
       if (typeof this.onDigitalInEventNotify !== 'function') {

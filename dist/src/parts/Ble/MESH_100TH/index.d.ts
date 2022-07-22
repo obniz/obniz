@@ -3,7 +3,7 @@
  * @module Parts.MESH_100TH
  */
 import { MESH } from '../utils/abstracts/MESH';
-import { MESH_js_TH } from '../MESH_js/MESH_js_TH';
+import { MeshJsTh } from '../MESH_js/MeshJsTh';
 export interface MESH_100THOptions {
 }
 /**
@@ -19,14 +19,14 @@ export interface MESH_100TH_Data {
 /** MESH_100TH management class */
 export default class MESH_100TH extends MESH<MESH_100TH_Data> {
     static readonly PartsName = "MESH_100TH";
-    static readonly _LocalName = "MESH-100TH";
+    static readonly PREFIX = "MESH-100TH";
     static readonly NotifyType: {
-        readonly UpdateTemperature: 4;
-        readonly UpdateHumidity: 8;
-        readonly Once: 16;
-        readonly Always: 32;
+        readonly UPDATE_TEMPERATURE: 4;
+        readonly UPDATE_HUMIDITY: 8;
+        readonly ONCE: 16;
+        readonly ALWAYS: 32;
     };
-    onNotify: ((resp: MESH_js_TH['response']) => void) | null;
+    onNotify: ((resp: MeshJsTh['response_']) => void) | null;
     protected readonly staticClass: typeof MESH_100TH;
     getDataWait(): Promise<{
         name: string;
