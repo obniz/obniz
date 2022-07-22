@@ -1,4 +1,4 @@
-export class MESH_js {
+export class MeshJs {
   public readonly UUIDS = {
     serviceId: '72C90001-57A9-4D40-B746-534E22EC9F9E',
     characteristics: {

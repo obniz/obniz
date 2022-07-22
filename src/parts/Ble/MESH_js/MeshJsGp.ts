@@ -1,6 +1,6 @@
-import { MESH_js } from '.';
-import { MESHInvalidValue, MESHOutOfRangeError } from './MESH_js_Error';
-export class MESH_js_GP extends MESH_js {
+import { MeshJs } from './MeshJs';
+import { MeshJsInvalidValueError, MeshJsOutOfRangeError } from './MeshJsError';
+export class MeshJsGp extends MeshJs {
   // Event Handler
   public onDigitalInEventNotify:
     | ((pin: number, state: number) => void)
@@ -51,6 +51,7 @@ export class MESH_js_GP extends MESH_js {
   /**
    * notify
    *
+   * @const
    * @param data
    * @returns
    */
@@ -144,9 +145,9 @@ export class MESH_js_GP extends MESH_js {
    * @returns command
    */
   public parseSetmodeCommand(
-    din: MESH_js_GP['DigitalPins'],
-    din_notify: MESH_js_GP['DigitalPins'],
-    dout: MESH_js_GP['DigitalPins'],
+    din: MeshJsGp['DigitalPins'],
+    din_notify: MeshJsGp['DigitalPins'],
+    dout: MeshJsGp['DigitalPins'],
     pwm_ratio: number,
     vcc: number,
     ain_range_upper: number,
@@ -157,37 +158,37 @@ export class MESH_js_GP extends MESH_js {
     const _PwmMin = 0 as const;
     const _PwmMax = 255 as const;
     if (pwm_ratio < _PwmMin || _PwmMax < pwm_ratio) {
-      throw new MESHOutOfRangeError('pwm_ratio', _PwmMin, _PwmMax);
+      throw new MeshJsOutOfRangeError('pwm_ratio', _PwmMin, _PwmMax);
     }
     if (
-      vcc !== MESH_js_GP.VCC.AUTO &&
-      vcc !== MESH_js_GP.VCC.ON &&
-      vcc !== MESH_js_GP.VCC.OFF
+      vcc !== MeshJsGp.VCC.AUTO &&
+      vcc !== MeshJsGp.VCC.ON &&
+      vcc !== MeshJsGp.VCC.OFF
     ) {
-      throw new MESHInvalidValue('vcc');
+      throw new MeshJsInvalidValueError('vcc');
     }
     const _AinRangeMin = 0 as const;
     const _AinRangeMax = 3 as const;
     if (ain_range_upper < _AinRangeMin || _AinRangeMax < ain_range_upper) {
-      throw new MESHOutOfRangeError(
+      throw new MeshJsOutOfRangeError(
         'ain_range_upper',
         _AinRangeMin,
         _AinRangeMax
       );
     }
     if (ain_range_bottom < _AinRangeMin || _AinRangeMax < ain_range_bottom) {
-      throw new MESHOutOfRangeError(
+      throw new MeshJsOutOfRangeError(
         'ain_range_bottom',
         _AinRangeMin,
         _AinRangeMax
       );
     }
     if (
-      ain_notify !== MESH_js_GP.AnalogInputEventCondition.NotNotify &&
-      ain_notify !== MESH_js_GP.AnalogInputEventCondition.AboveThreshold &&
-      ain_notify !== MESH_js_GP.AnalogInputEventCondition.BelowThreshold
+      ain_notify !== MeshJsGp.AnalogInputEventCondition.NotNotify &&
+      ain_notify !== MeshJsGp.AnalogInputEventCondition.AboveThreshold &&
+      ain_notify !== MeshJsGp.AnalogInputEventCondition.BelowThreshold
     ) {
-      throw new MESHInvalidValue('ain_notify');
+      throw new MeshJsInvalidValueError('ain_notify');
     }
 
     // Generate Command
@@ -259,7 +260,7 @@ export class MESH_js_GP extends MESH_js {
    * @returns
    */
   public parseSetPWMCommand(requestId = 0) {
-    return this._parseSetCommand(this.PwmID, MESH_js_GP.Pin.p3, requestId);
+    return this._parseSetCommand(this.PwmID, MeshJsGp.Pin.p3, requestId);
   }
 
   private _parseSetCommand(
@@ -273,7 +274,7 @@ export class MESH_js_GP extends MESH_js {
     return data;
   }
 
-  private pin2num(pins: MESH_js_GP['DigitalPins']): number {
+  private pin2num(pins: MeshJsGp['DigitalPins']): number {
     return (pins.p1 ? 1 : 0) + (pins.p2 ? 2 : 0) + (pins.p3 ? 4 : 0);
   }
 }

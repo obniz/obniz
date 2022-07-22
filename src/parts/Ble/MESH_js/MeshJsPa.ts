@@ -1,6 +1,6 @@
-import { MESH_js } from '.';
-import { MESHInvalidValue, MESHOutOfRangeError } from './MESH_js_Error';
-export class MESH_js_PA extends MESH_js {
+import { MeshJs } from './MeshJs';
+import { MeshJsInvalidValueError, MeshJsOutOfRangeError } from './MeshJsError';
+export class MeshJsPa extends MeshJs {
   public static readonly NotifyType = {
     UpdateProximity: 4,
     UpdateBrightness: 8,
@@ -8,7 +8,7 @@ export class MESH_js_PA extends MESH_js {
     Always: 32,
   } as const;
 
-  public onNotify: ((resp: MESH_js_PA['response']) => void) | null = null;
+  public onNotify: ((resp: MeshJsPa['response']) => void) | null = null;
 
   private readonly MessageTypeID: number = 1 as const;
   private readonly EventTypeID: number = 0 as const;
@@ -32,7 +32,7 @@ export class MESH_js_PA extends MESH_js {
     this.onNotify(this.response);
   }
 
-  public get getResponse(): MESH_js_PA['response'] {
+  public get getResponse(): MeshJsPa['response'] {
     return this.response;
   }
 
@@ -45,12 +45,12 @@ export class MESH_js_PA extends MESH_js {
   public parseSetmodeCommand(notifyType: number, requestId = 0): number[] {
     // Error Handle
     if (notifyType % 4 !== 0) {
-      throw new MESHInvalidValue('notifyType');
+      throw new MeshJsInvalidValueError('notifyType');
     }
     const _notifytypeMin = 4;
     const _notifytypeMax = 60;
     if (notifyType < _notifytypeMin || _notifytypeMax < notifyType) {
-      throw new MESHOutOfRangeError('notifyType');
+      throw new MeshJsOutOfRangeError('notifyType');
     }
 
     // Generate Command

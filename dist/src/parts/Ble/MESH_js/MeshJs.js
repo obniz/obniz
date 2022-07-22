@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class MESH_js {
+class MeshJs {
     constructor() {
         this.UUIDS = {
             serviceId: '72C90001-57A9-4D40-B746-534E22EC9F9E',
@@ -95,4 +95,4 @@ class MESH_js {
         return true;
     }
 }
-exports.MESH_js = MESH_js;
+exports.MeshJs = MeshJs;

@@ -6,7 +6,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
-const MESH_js_GP_1 = require("../MESH_js/MESH_js_GP");
+const MeshJsGp_1 = require("../MESH_js/MeshJsGp");
 /** MESH_100GA management class */
 class MESH_100GP extends MESH_1.MESH {
     constructor() {
@@ -71,7 +71,7 @@ class MESH_100GP extends MESH_1.MESH {
         return name.indexOf(MESH_100GP._LocalName) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MESH_js_GP_1.MESH_js_GP();
+        this._mesh = new MeshJsGp_1.MeshJsGp();
         const _gp = this._mesh;
         _gp.onDigitalInEventNotify = (pin, state) => {
             if (typeof this.onDigitalInEventNotify !== 'function') {
@@ -124,8 +124,8 @@ class MESH_100GP extends MESH_1.MESH {
 exports.default = MESH_100GP;
 MESH_100GP.PartsName = 'MESH_100GP';
 MESH_100GP._LocalName = 'MESH-100GP';
-MESH_100GP.AnalogInputEventCondition = MESH_js_GP_1.MESH_js_GP.AnalogInputEventCondition;
-MESH_100GP.Mode = MESH_js_GP_1.MESH_js_GP.Mode;
-MESH_100GP.Pin = MESH_js_GP_1.MESH_js_GP.Pin;
-MESH_100GP.State = MESH_js_GP_1.MESH_js_GP.State;
-MESH_100GP.VCC = MESH_js_GP_1.MESH_js_GP.VCC;
+MESH_100GP.AnalogInputEventCondition = MeshJsGp_1.MeshJsGp.AnalogInputEventCondition;
+MESH_100GP.Mode = MeshJsGp_1.MeshJsGp.Mode;
+MESH_100GP.Pin = MeshJsGp_1.MeshJsGp.Pin;
+MESH_100GP.State = MeshJsGp_1.MeshJsGp.State;
+MESH_100GP.VCC = MeshJsGp_1.MeshJsGp.VCC;

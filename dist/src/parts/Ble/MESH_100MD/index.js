@@ -6,7 +6,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
-const MESH_js_MD_1 = require("../MESH_js/MESH_js_MD");
+const MeshJsMd_1 = require("../MESH_js/MeshJsMd");
 /** MESH_100MD management class */
 class MESH_100MD extends MESH_1.MESH {
     constructor() {
@@ -35,7 +35,7 @@ class MESH_100MD extends MESH_1.MESH {
         return name.indexOf(MESH_100MD._LocalName) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MESH_js_MD_1.MESH_js_MD();
+        this._mesh = new MeshJsMd_1.MeshJsMd();
         // set Event handler
         const _md = this._mesh;
         _md.onNotify = (response) => {

@@ -5,7 +5,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { MESH } from '../utils/abstracts/MESH';
-import { MESH_js_PA } from '../MESH_js/MESH_js_PA';
+import { MeshJsPa } from '../MESH_js/MeshJsPa';
 
 export interface MESH_100PAOptions {}
 
@@ -26,16 +26,16 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
   public static readonly PartsName = 'MESH_100PA';
   public static readonly _LocalName = 'MESH-100PA';
 
-  public static readonly NotifyType = MESH_js_PA.NotifyType;
+  public static readonly NotifyType = MeshJsPa.NotifyType;
 
   // event handler
-  public onNotify: ((resp: MESH_js_PA['response']) => void) | null = null;
+  public onNotify: ((resp: MeshJsPa['response']) => void) | null = null;
 
   protected readonly staticClass = MESH_100PA;
 
   public async getDataWait() {
     this.checkConnected();
-    const _pa = this._mesh as MESH_js_PA;
+    const _pa = this._mesh as MeshJsPa;
     return {
       name: this.peripheral.localName!,
       address: this.peripheral.address,
@@ -46,7 +46,7 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
   }
 
   public setMode(type: number, request_id = 0): void {
-    const _pa = this._mesh as MESH_js_PA;
+    const _pa = this._mesh as MeshJsPa;
     this.writeWOResponse(_pa.parseSetmodeCommand(type, request_id));
   }
 
@@ -55,9 +55,9 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
   }
 
   protected prepareConnect(): void {
-    this._mesh = new MESH_js_PA();
-    const _pa = this._mesh as MESH_js_PA;
-    _pa.onNotify = (response: MESH_js_PA['response']) => {
+    this._mesh = new MeshJsPa();
+    const _pa = this._mesh as MeshJsPa;
+    _pa.onNotify = (response: MeshJsPa['response']) => {
       if (typeof this.onNotify !== 'function') {
         return;
       }

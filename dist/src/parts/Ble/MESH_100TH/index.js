@@ -6,7 +6,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
-const MESH_js_TH_1 = require("../MESH_js/MESH_js_TH");
+const MeshJsTh_1 = require("../MESH_js/MeshJsTh");
 /** MESH_100TH management class */
 class MESH_100TH extends MESH_1.MESH {
     constructor() {
@@ -33,7 +33,7 @@ class MESH_100TH extends MESH_1.MESH {
         return name.indexOf(MESH_100TH._LocalName) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MESH_js_TH_1.MESH_js_TH();
+        this._mesh = new MeshJsTh_1.MeshJsTh();
         const _th = this._mesh;
         _th.onNotify = (response) => {
             if (typeof this.onNotify !== 'function') {
@@ -50,4 +50,4 @@ class MESH_100TH extends MESH_1.MESH {
 exports.default = MESH_100TH;
 MESH_100TH.PartsName = 'MESH_100TH';
 MESH_100TH._LocalName = 'MESH-100TH';
-MESH_100TH.NotifyType = MESH_js_TH_1.MESH_js_TH.NotifyType;
+MESH_100TH.NotifyType = MeshJsTh_1.MeshJsTh.NotifyType;

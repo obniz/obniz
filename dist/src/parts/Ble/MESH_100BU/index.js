@@ -6,7 +6,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
-const MESH_js_BU_1 = require("../MESH_js/MESH_js_BU");
+const MeshJsBu_1 = require("../MESH_js/MeshJsBu");
 /** MESH_100BU management class */
 class MESH_100BU extends MESH_1.MESH {
     constructor() {
@@ -29,7 +29,7 @@ class MESH_100BU extends MESH_1.MESH {
         return name.indexOf(MESH_100BU._LocalName) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MESH_js_BU_1.MESH_js_BU();
+        this._mesh = new MeshJsBu_1.MeshJsBu();
         const _bu = this._mesh;
         _bu.onSinglePressed = () => {
             if (typeof this.onSinglePressed !== 'function') {

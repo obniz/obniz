@@ -5,7 +5,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { MESH } from '../utils/abstracts/MESH';
-import { MESH_js_AC } from '../MESH_js/MESH_js_AC';
+import { MeshJsAc } from '../MESH_js/MeshJsAc';
 
 export interface MESH_100ACOptions {}
 
@@ -29,11 +29,11 @@ export default class MESH_100AC extends MESH<MESH_100AC_Data> {
   public static readonly _LocalName = 'MESH-100AC';
 
   // event handler
-  public onTapped: ((accele: MESH_js_AC['accele']) => void) | null = null;
-  public onShaked: ((accele: MESH_js_AC['accele']) => void) | null = null;
-  public onFlipped: ((accele: MESH_js_AC['accele']) => void) | null = null;
+  public onTapped: ((accele: MeshJsAc['accele']) => void) | null = null;
+  public onShaked: ((accele: MeshJsAc['accele']) => void) | null = null;
+  public onFlipped: ((accele: MeshJsAc['accele']) => void) | null = null;
   public onDirection:
-    | ((face: number, accele: MESH_js_AC['accele']) => void)
+    | ((face: number, accele: MeshJsAc['accele']) => void)
     | null = null;
 
   protected readonly staticClass = MESH_100AC;
@@ -41,7 +41,7 @@ export default class MESH_100AC extends MESH<MESH_100AC_Data> {
   public async getDataWait() {
     this.checkConnected();
 
-    const _ac = this._mesh as MESH_js_AC;
+    const _ac = this._mesh as MeshJsAc;
     return {
       name: this.peripheral.localName!,
       address: this.peripheral.address,
@@ -70,28 +70,28 @@ export default class MESH_100AC extends MESH<MESH_100AC_Data> {
   }
 
   protected prepareConnect(): void {
-    this._mesh = new MESH_js_AC();
+    this._mesh = new MeshJsAc();
 
-    const _ac = this._mesh as MESH_js_AC;
-    _ac.onTapped = (accele: MESH_js_AC['accele']) => {
+    const _ac = this._mesh as MeshJsAc;
+    _ac.onTapped = (accele: MeshJsAc['accele']) => {
       if (typeof this.onTapped !== 'function') {
         return;
       }
       this.onTapped(accele);
     };
-    _ac.onShaked = (accele: MESH_js_AC['accele']) => {
+    _ac.onShaked = (accele: MeshJsAc['accele']) => {
       if (typeof this.onShaked !== 'function') {
         return;
       }
       this.onShaked(accele);
     };
-    _ac.onFlipped = (accele: MESH_js_AC['accele']) => {
+    _ac.onFlipped = (accele: MeshJsAc['accele']) => {
       if (typeof this.onFlipped !== 'function') {
         return;
       }
       this.onFlipped(accele);
     };
-    _ac.onDirection = (face: number, accele: MESH_js_AC['accele']) => {
+    _ac.onDirection = (face: number, accele: MeshJsAc['accele']) => {
       if (typeof this.onDirection !== 'function') {
         return;
       }

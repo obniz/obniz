@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const _1 = require(".");
-const MESH_js_Error_1 = require("./MESH_js_Error");
-class MESH_js_TH extends _1.MESH_js {
+const MeshJs_1 = require("./MeshJs");
+const MeshJsError_1 = require("./MeshJsError");
+class MeshJsTh extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         // Event handler
@@ -49,11 +49,11 @@ class MESH_js_TH extends _1.MESH_js {
         // Error Handle
         if (temperature_range_bottom < this.MinTemperature ||
             this.MaxTemperature < temperature_range_upper) {
-            throw new MESH_js_Error_1.MESHOutOfRangeError('temperature_range', this.MinTemperature, this.MaxTemperature);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('temperature_range', this.MinTemperature, this.MaxTemperature);
         }
         if (humidity_range_bottom < this.MinHumidity ||
             this.MaxHumidity < humidity_range_upper) {
-            throw new MESH_js_Error_1.MESHOutOfRangeError('humidity_range', this.MinHumidity, this.MaxHumidity);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('humidity_range', this.MinHumidity, this.MaxHumidity);
         }
         // Generate Command
         const _HEADER = [this.MessageTypeID, this.EventTypeID, request_id];
@@ -84,8 +84,8 @@ class MESH_js_TH extends _1.MESH_js {
         return val + (val < 0 ? _2Byte : 0);
     }
 }
-exports.MESH_js_TH = MESH_js_TH;
-MESH_js_TH.NotifyType = {
+exports.MeshJsTh = MeshJsTh;
+MeshJsTh.NotifyType = {
     UpdateTemperature: 4,
     UpdateHumidity: 8,
     Once: 16,

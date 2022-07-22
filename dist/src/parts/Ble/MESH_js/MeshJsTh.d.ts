@@ -1,12 +1,12 @@
-import { MESH_js } from '.';
-export declare class MESH_js_TH extends MESH_js {
+import { MeshJs } from './MeshJs';
+export declare class MeshJsTh extends MeshJs {
     static readonly NotifyType: {
         readonly UpdateTemperature: 4;
         readonly UpdateHumidity: 8;
         readonly Once: 16;
         readonly Always: 32;
     };
-    onNotify: ((accele: MESH_js_TH['response']) => void) | null;
+    onNotify: ((accele: MeshJsTh['response']) => void) | null;
     /**
      * MessageTypeID
      * command header
@@ -23,7 +23,7 @@ export declare class MESH_js_TH extends MESH_js {
     private readonly MinHumidity;
     private response;
     notify(data: number[]): void;
-    get getResponse(): MESH_js_TH['response'];
+    get getResponse(): MeshJsTh['response'];
     parseSetmodeCommand(temperature_range_upper: number, temperature_range_bottom: number, temperature_condition: number, humidity_range_upper: number, humidity_range_bottom: number, humidity_condision: number, type: number, request_id?: number): number[];
     private num2array;
     private complemnt;

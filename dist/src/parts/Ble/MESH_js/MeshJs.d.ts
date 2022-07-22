@@ -1,4 +1,4 @@
-export declare class MESH_js {
+export declare class MeshJs {
     readonly UUIDS: {
         readonly serviceId: "72C90001-57A9-4D40-B746-534E22EC9F9E";
         readonly characteristics: {

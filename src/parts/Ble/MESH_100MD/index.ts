@@ -5,7 +5,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { MESH } from '../utils/abstracts/MESH';
-import { MESH_js_MD } from '../MESH_js/MESH_js_MD';
+import { MeshJsMd } from '../MESH_js/MeshJsMd';
 
 export interface MESH_100MDOptions {}
 
@@ -27,13 +27,13 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
   public static readonly _LocalName = 'MESH-100MD';
 
   // event handler
-  public onNotify: ((resp: MESH_js_MD['response']) => void) | null = null;
+  public onNotify: ((resp: MeshJsMd['response']) => void) | null = null;
 
   protected readonly staticClass = MESH_100MD;
 
   public async getDataWait() {
     this.checkConnected();
-    const _md = this._mesh as MESH_js_MD;
+    const _md = this._mesh as MeshJsMd;
     return {
       name: this.peripheral!.localName!,
       address: this.peripheral.address,
@@ -50,7 +50,7 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
     response_time = 500,
     requestid = 0
   ): void {
-    const _md = this._mesh as MESH_js_MD;
+    const _md = this._mesh as MeshJsMd;
     this.writeWOResponse(
       _md.parseSetmodeCommand(
         detection_mode,
@@ -66,11 +66,11 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
   }
 
   protected prepareConnect(): void {
-    this._mesh = new MESH_js_MD();
+    this._mesh = new MeshJsMd();
 
     // set Event handler
-    const _md = this._mesh as MESH_js_MD;
-    _md.onNotify = (response: MESH_js_MD['response']) => {
+    const _md = this._mesh as MeshJsMd;
+    _md.onNotify = (response: MeshJsMd['response']) => {
       if (typeof this.onNotify !== 'function') {
         return;
       }

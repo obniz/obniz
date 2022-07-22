@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const _1 = require(".");
-class MESH_js_BU extends _1.MESH_js {
+const MeshJs_1 = require("./MeshJs");
+class MeshJsBu extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         // event handler
@@ -45,4 +45,4 @@ class MESH_js_BU extends _1.MESH_js {
         }
     }
 }
-exports.MESH_js_BU = MESH_js_BU;
+exports.MeshJsBu = MeshJsBu;

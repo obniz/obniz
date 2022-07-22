@@ -1,6 +1,6 @@
-import { MESH_js } from '.';
-import { MESHOutOfRangeError } from './MESH_js_Error';
-export class MESH_js_LE extends MESH_js {
+import { MeshJs } from './MeshJs';
+import { MeshJsOutOfRangeError } from './MeshJsError';
+export class MeshJsLe extends MeshJs {
   public static readonly Pattern = { Blink: 1, Soft: 2 } as const;
 
   public parseLightupCommand(
@@ -16,30 +16,30 @@ export class MESH_js_LE extends MESH_js {
     const _ColorMin = 0 as const;
     const _ColorMax = 127 as const;
     if (red < _ColorMin || _ColorMax < red) {
-      throw new MESHOutOfRangeError('red', _ColorMin, _ColorMax);
+      throw new MeshJsOutOfRangeError('red', _ColorMin, _ColorMax);
     }
     if (green < _ColorMin || _ColorMax < green) {
-      throw new MESHOutOfRangeError('green', _ColorMin, _ColorMax);
+      throw new MeshJsOutOfRangeError('green', _ColorMin, _ColorMax);
     }
     if (blue < _ColorMin || _ColorMax < blue) {
-      throw new MESHOutOfRangeError('blue', _ColorMin, _ColorMax);
+      throw new MeshJsOutOfRangeError('blue', _ColorMin, _ColorMax);
     }
     const _TimeMin = 0 as const;
     const _TimeMax = 65535 as const;
     if (total_time < _TimeMin || _TimeMax < total_time) {
-      throw new MESHOutOfRangeError('time', _TimeMin, _TimeMax);
+      throw new MeshJsOutOfRangeError('time', _TimeMin, _TimeMax);
     }
     if (cycle_on_time < _TimeMin || _TimeMax < cycle_on_time) {
-      throw new MESHOutOfRangeError('cycle_on', _TimeMin, _TimeMax);
+      throw new MeshJsOutOfRangeError('cycle_on', _TimeMin, _TimeMax);
     }
     if (cycle_off_time < _TimeMin || _TimeMax < cycle_off_time) {
-      throw new MESHOutOfRangeError('cycle_off', _TimeMin, _TimeMax);
+      throw new MeshJsOutOfRangeError('cycle_off', _TimeMin, _TimeMax);
     }
     if (
-      pattern !== MESH_js_LE.Pattern.Blink &&
-      pattern !== MESH_js_LE.Pattern.Soft
+      pattern !== MeshJsLe.Pattern.Blink &&
+      pattern !== MeshJsLe.Pattern.Soft
     ) {
-      throw new MESHOutOfRangeError('pattern');
+      throw new MeshJsOutOfRangeError('pattern');
     }
 
     // Generate Command

@@ -5,7 +5,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { MESH } from '../utils/abstracts/MESH';
-import { MESH_js_LE } from '../MESH_js/MESH_js_LE';
+import { MeshJsLe } from '../MESH_js/MeshJsLe';
 
 export interface MESH_100LEOptions {}
 
@@ -21,7 +21,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
   public static readonly PartsName = 'MESH_100LE';
   public static readonly _LocalName = 'MESH-100LE';
 
-  public static Pattern = MESH_js_LE.Pattern;
+  public static Pattern = MeshJsLe.Pattern;
 
   protected readonly staticClass = MESH_100LE;
 
@@ -55,7 +55,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
     cycle_off: number,
     pattern: number
   ): void {
-    const _le = this._mesh as MESH_js_LE;
+    const _le = this._mesh as MeshJsLe;
     this.writeWOResponse(
       _le.parseLightupCommand(
         red,
@@ -74,7 +74,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
   }
 
   protected prepareConnect(): void {
-    this._mesh = new MESH_js_LE();
+    this._mesh = new MeshJsLe();
     super.prepareConnect();
   }
 

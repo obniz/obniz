@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const _1 = require(".");
-const MESH_js_Error_1 = require("./MESH_js_Error");
-class MESH_js_PA extends _1.MESH_js {
+const MeshJs_1 = require("./MeshJs");
+const MeshJsError_1 = require("./MeshJsError");
+class MeshJsPa extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         this.onNotify = null;
@@ -39,12 +39,12 @@ class MESH_js_PA extends _1.MESH_js {
     parseSetmodeCommand(notifyType, requestId = 0) {
         // Error Handle
         if (notifyType % 4 !== 0) {
-            throw new MESH_js_Error_1.MESHInvalidValue('notifyType');
+            throw new MeshJsError_1.MeshJsInvalidValueError('notifyType');
         }
         const _notifytypeMin = 4;
         const _notifytypeMax = 60;
         if (notifyType < _notifytypeMin || _notifytypeMax < notifyType) {
-            throw new MESH_js_Error_1.MESHOutOfRangeError('notifyType');
+            throw new MeshJsError_1.MeshJsOutOfRangeError('notifyType');
         }
         // Generate Command
         const _HEADER = [this.MessageTypeID, this.EventTypeID, requestId];
@@ -54,8 +54,8 @@ class MESH_js_PA extends _1.MESH_js {
         return data;
     }
 }
-exports.MESH_js_PA = MESH_js_PA;
-MESH_js_PA.NotifyType = {
+exports.MeshJsPa = MeshJsPa;
+MeshJsPa.NotifyType = {
     UpdateProximity: 4,
     UpdateBrightness: 8,
     Once: 16,

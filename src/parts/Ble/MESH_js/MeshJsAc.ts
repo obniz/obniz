@@ -1,5 +1,5 @@
-import { MESH_js } from '.';
-export class MESH_js_AC extends MESH_js {
+import { MeshJs } from './MeshJs';
+export class MeshJsAc extends MeshJs {
   /**
    * MessageTypeID
    * command header
@@ -11,11 +11,11 @@ export class MESH_js_AC extends MESH_js {
   private readonly DataLength = 17;
 
   // event handler
-  public onTapped: ((accele: MESH_js_AC['accele']) => void) | null = null;
-  public onShaked: ((accele: MESH_js_AC['accele']) => void) | null = null;
-  public onFlipped: ((accele: MESH_js_AC['accele']) => void) | null = null;
+  public onTapped: ((accele: MeshJsAc['accele']) => void) | null = null;
+  public onShaked: ((accele: MeshJsAc['accele']) => void) | null = null;
+  public onFlipped: ((accele: MeshJsAc['accele']) => void) | null = null;
   public onDirection:
-    | ((face: number, accele: MESH_js_AC['accele']) => void)
+    | ((face: number, accele: MeshJsAc['accele']) => void)
     | null = null;
 
   public notify(data: number[]): void {
@@ -51,7 +51,7 @@ export class MESH_js_AC extends MESH_js {
     }
   }
 
-  public get getAccele(): MESH_js_AC['accele'] {
+  public get getAccele(): MeshJsAc['accele'] {
     return this.accele;
   }
 

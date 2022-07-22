@@ -1,5 +1,5 @@
-import { MESH_js } from '.';
-export declare class MESH_js_LE extends MESH_js {
+import { MeshJs } from './MeshJs';
+export declare class MeshJsLe extends MeshJs {
     static readonly Pattern: {
         readonly Blink: 1;
         readonly Soft: 2;

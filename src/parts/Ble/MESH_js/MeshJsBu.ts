@@ -1,5 +1,5 @@
-import { MESH_js } from '.';
-export class MESH_js_BU extends MESH_js {
+import { MeshJs } from './MeshJs';
+export class MeshJsBu extends MeshJs {
   // event handler
   public onSinglePressed: (() => void) | null = null;
   public onLongPressed: (() => void) | null = null;

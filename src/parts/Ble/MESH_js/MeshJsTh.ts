@@ -1,6 +1,6 @@
-import { MESH_js } from '.';
-import { MESHOutOfRangeError } from './MESH_js_Error';
-export class MESH_js_TH extends MESH_js {
+import { MeshJs } from './MeshJs';
+import { MeshJsOutOfRangeError } from './MeshJsError';
+export class MeshJsTh extends MeshJs {
   public static readonly NotifyType = {
     UpdateTemperature: 4,
     UpdateHumidity: 8,
@@ -9,7 +9,7 @@ export class MESH_js_TH extends MESH_js {
   } as const;
 
   // Event handler
-  public onNotify: ((accele: MESH_js_TH['response']) => void) | null = null;
+  public onNotify: ((accele: MeshJsTh['response']) => void) | null = null;
 
   /**
    * MessageTypeID
@@ -57,7 +57,7 @@ export class MESH_js_TH extends MESH_js {
     this.onNotify(this.response);
   }
 
-  public get getResponse(): MESH_js_TH['response'] {
+  public get getResponse(): MeshJsTh['response'] {
     return this.response;
   }
 
@@ -76,7 +76,7 @@ export class MESH_js_TH extends MESH_js {
       temperature_range_bottom < this.MinTemperature ||
       this.MaxTemperature < temperature_range_upper
     ) {
-      throw new MESHOutOfRangeError(
+      throw new MeshJsOutOfRangeError(
         'temperature_range',
         this.MinTemperature,
         this.MaxTemperature
@@ -86,7 +86,7 @@ export class MESH_js_TH extends MESH_js {
       humidity_range_bottom < this.MinHumidity ||
       this.MaxHumidity < humidity_range_upper
     ) {
-      throw new MESHOutOfRangeError(
+      throw new MeshJsOutOfRangeError(
         'humidity_range',
         this.MinHumidity,
         this.MaxHumidity

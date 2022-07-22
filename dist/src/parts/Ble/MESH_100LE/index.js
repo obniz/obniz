@@ -6,7 +6,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
-const MESH_js_LE_1 = require("../MESH_js/MESH_js_LE");
+const MeshJsLe_1 = require("../MESH_js/MeshJsLe");
 /** MESH_100TH management class */
 class MESH_100LE extends MESH_1.MESH {
     constructor() {
@@ -41,7 +41,7 @@ class MESH_100LE extends MESH_1.MESH {
         return name.indexOf(MESH_100LE._LocalName) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MESH_js_LE_1.MESH_js_LE();
+        this._mesh = new MeshJsLe_1.MeshJsLe();
         super.prepareConnect();
     }
     async beforeOnDisconnectWait(reason) {
@@ -51,4 +51,4 @@ class MESH_100LE extends MESH_1.MESH {
 exports.default = MESH_100LE;
 MESH_100LE.PartsName = 'MESH_100LE';
 MESH_100LE._LocalName = 'MESH-100LE';
-MESH_100LE.Pattern = MESH_js_LE_1.MESH_js_LE.Pattern;
+MESH_100LE.Pattern = MeshJsLe_1.MeshJsLe.Pattern;

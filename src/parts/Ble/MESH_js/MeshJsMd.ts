@@ -1,6 +1,6 @@
-import { MESH_js } from '.';
-import { MESHOutOfRangeError } from './MESH_js_Error';
-export class MESH_js_MD extends MESH_js {
+import { MeshJs } from './MeshJs';
+import { MeshJsOutOfRangeError } from './MeshJsError';
+export class MeshJsMd extends MeshJs {
   public readonly DetectionMode = {
     DETECTED: 0x01,
     NOTDETECTED: 0x02,
@@ -14,7 +14,7 @@ export class MESH_js_MD extends MESH_js {
     NOTDETECTED: 0x02,
   } as const;
 
-  public onNotify: ((response: MESH_js_MD['response']) => void) | null = null;
+  public onNotify: ((response: MeshJsMd['response']) => void) | null = null;
 
   private readonly MessageTypeID: number = 1;
 
@@ -39,7 +39,7 @@ export class MESH_js_MD extends MESH_js {
     this.onNotify(this.response);
   }
 
-  public get getResponse(): MESH_js_MD['response'] {
+  public get getResponse(): MeshJsMd['response'] {
     return this.response;
   }
 
@@ -56,7 +56,7 @@ export class MESH_js_MD extends MESH_js {
       detection_time < _DetectionTimeMin ||
       _DetectionTimeMax < detection_time
     ) {
-      throw new MESHOutOfRangeError(
+      throw new MeshJsOutOfRangeError(
         'detection_time',
         _DetectionTimeMin,
         _DetectionTimeMax
@@ -65,7 +65,7 @@ export class MESH_js_MD extends MESH_js {
     const _ResponseTimeMin = 500 as const;
     const _ResponseTimeMax = 60000 as const;
     if (response_time < _ResponseTimeMin || _ResponseTimeMax < response_time) {
-      throw new MESHOutOfRangeError(
+      throw new MeshJsOutOfRangeError(
         'response_time',
         _ResponseTimeMin,
         _ResponseTimeMax

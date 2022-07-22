@@ -24252,15 +24252,15 @@ var map = {
 	"./Ble/MESH_100MD/index.js": "./dist/src/parts/Ble/MESH_100MD/index.js",
 	"./Ble/MESH_100PA/index.js": "./dist/src/parts/Ble/MESH_100PA/index.js",
 	"./Ble/MESH_100TH/index.js": "./dist/src/parts/Ble/MESH_100TH/index.js",
-	"./Ble/MESH_js/MESH_js_AC.js": "./dist/src/parts/Ble/MESH_js/MESH_js_AC.js",
-	"./Ble/MESH_js/MESH_js_BU.js": "./dist/src/parts/Ble/MESH_js/MESH_js_BU.js",
-	"./Ble/MESH_js/MESH_js_Error.js": "./dist/src/parts/Ble/MESH_js/MESH_js_Error.js",
-	"./Ble/MESH_js/MESH_js_GP.js": "./dist/src/parts/Ble/MESH_js/MESH_js_GP.js",
-	"./Ble/MESH_js/MESH_js_LE.js": "./dist/src/parts/Ble/MESH_js/MESH_js_LE.js",
-	"./Ble/MESH_js/MESH_js_MD.js": "./dist/src/parts/Ble/MESH_js/MESH_js_MD.js",
-	"./Ble/MESH_js/MESH_js_PA.js": "./dist/src/parts/Ble/MESH_js/MESH_js_PA.js",
-	"./Ble/MESH_js/MESH_js_TH.js": "./dist/src/parts/Ble/MESH_js/MESH_js_TH.js",
-	"./Ble/MESH_js/index.js": "./dist/src/parts/Ble/MESH_js/index.js",
+	"./Ble/MESH_js/MeshJs.js": "./dist/src/parts/Ble/MESH_js/MeshJs.js",
+	"./Ble/MESH_js/MeshJsAc.js": "./dist/src/parts/Ble/MESH_js/MeshJsAc.js",
+	"./Ble/MESH_js/MeshJsBu.js": "./dist/src/parts/Ble/MESH_js/MeshJsBu.js",
+	"./Ble/MESH_js/MeshJsError.js": "./dist/src/parts/Ble/MESH_js/MeshJsError.js",
+	"./Ble/MESH_js/MeshJsGp.js": "./dist/src/parts/Ble/MESH_js/MeshJsGp.js",
+	"./Ble/MESH_js/MeshJsLe.js": "./dist/src/parts/Ble/MESH_js/MeshJsLe.js",
+	"./Ble/MESH_js/MeshJsMd.js": "./dist/src/parts/Ble/MESH_js/MeshJsMd.js",
+	"./Ble/MESH_js/MeshJsPa.js": "./dist/src/parts/Ble/MESH_js/MeshJsPa.js",
+	"./Ble/MESH_js/MeshJsTh.js": "./dist/src/parts/Ble/MESH_js/MeshJsTh.js",
 	"./Ble/MINEW_S1/index.js": "./dist/src/parts/Ble/MINEW_S1/index.js",
 	"./Ble/MT_500BT/index.js": "./dist/src/parts/Ble/MT_500BT/index.js",
 	"./Ble/MiniBreeze/index.js": "./dist/src/parts/Ble/MiniBreeze/index.js",
@@ -26853,7 +26853,7 @@ Logtta_TH.BeaconDataStruct = {
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
-const MESH_js_AC_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MESH_js_AC.js");
+const MeshJsAc_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsAc.js");
 /** MESH_100AC management class */
 class MESH_100AC extends MESH_1.MESH {
     constructor() {
@@ -26893,7 +26893,7 @@ class MESH_100AC extends MESH_1.MESH {
         return name.indexOf(MESH_100AC._LocalName) === 0;
     }
     prepareConnect() {
-        this._mesh = new MESH_js_AC_1.MESH_js_AC();
+        this._mesh = new MeshJsAc_1.MeshJsAc();
         const _ac = this._mesh;
         _ac.onTapped = (accele) => {
             if (typeof this.onTapped !== 'function') {
@@ -26944,7 +26944,7 @@ MESH_100AC._LocalName = 'MESH-100AC';
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
-const MESH_js_BU_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MESH_js_BU.js");
+const MeshJsBu_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsBu.js");
 /** MESH_100BU management class */
 class MESH_100BU extends MESH_1.MESH {
     constructor() {
@@ -26967,7 +26967,7 @@ class MESH_100BU extends MESH_1.MESH {
         return name.indexOf(MESH_100BU._LocalName) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MESH_js_BU_1.MESH_js_BU();
+        this._mesh = new MeshJsBu_1.MeshJsBu();
         const _bu = this._mesh;
         _bu.onSinglePressed = () => {
             if (typeof this.onSinglePressed !== 'function') {
@@ -27012,7 +27012,7 @@ MESH_100BU._LocalName = 'MESH-100BU';
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
-const MESH_js_GP_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MESH_js_GP.js");
+const MeshJsGp_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsGp.js");
 /** MESH_100GA management class */
 class MESH_100GP extends MESH_1.MESH {
     constructor() {
@@ -27077,7 +27077,7 @@ class MESH_100GP extends MESH_1.MESH {
         return name.indexOf(MESH_100GP._LocalName) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MESH_js_GP_1.MESH_js_GP();
+        this._mesh = new MeshJsGp_1.MeshJsGp();
         const _gp = this._mesh;
         _gp.onDigitalInEventNotify = (pin, state) => {
             if (typeof this.onDigitalInEventNotify !== 'function') {
@@ -27130,11 +27130,11 @@ class MESH_100GP extends MESH_1.MESH {
 exports.default = MESH_100GP;
 MESH_100GP.PartsName = 'MESH_100GP';
 MESH_100GP._LocalName = 'MESH-100GP';
-MESH_100GP.AnalogInputEventCondition = MESH_js_GP_1.MESH_js_GP.AnalogInputEventCondition;
-MESH_100GP.Mode = MESH_js_GP_1.MESH_js_GP.Mode;
-MESH_100GP.Pin = MESH_js_GP_1.MESH_js_GP.Pin;
-MESH_100GP.State = MESH_js_GP_1.MESH_js_GP.State;
-MESH_100GP.VCC = MESH_js_GP_1.MESH_js_GP.VCC;
+MESH_100GP.AnalogInputEventCondition = MeshJsGp_1.MeshJsGp.AnalogInputEventCondition;
+MESH_100GP.Mode = MeshJsGp_1.MeshJsGp.Mode;
+MESH_100GP.Pin = MeshJsGp_1.MeshJsGp.Pin;
+MESH_100GP.State = MeshJsGp_1.MeshJsGp.State;
+MESH_100GP.VCC = MeshJsGp_1.MeshJsGp.VCC;
 
 
 /***/ }),
@@ -27151,7 +27151,7 @@ MESH_100GP.VCC = MESH_js_GP_1.MESH_js_GP.VCC;
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
-const MESH_js_LE_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MESH_js_LE.js");
+const MeshJsLe_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsLe.js");
 /** MESH_100TH management class */
 class MESH_100LE extends MESH_1.MESH {
     constructor() {
@@ -27186,7 +27186,7 @@ class MESH_100LE extends MESH_1.MESH {
         return name.indexOf(MESH_100LE._LocalName) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MESH_js_LE_1.MESH_js_LE();
+        this._mesh = new MeshJsLe_1.MeshJsLe();
         super.prepareConnect();
     }
     async beforeOnDisconnectWait(reason) {
@@ -27196,7 +27196,7 @@ class MESH_100LE extends MESH_1.MESH {
 exports.default = MESH_100LE;
 MESH_100LE.PartsName = 'MESH_100LE';
 MESH_100LE._LocalName = 'MESH-100LE';
-MESH_100LE.Pattern = MESH_js_LE_1.MESH_js_LE.Pattern;
+MESH_100LE.Pattern = MeshJsLe_1.MeshJsLe.Pattern;
 
 
 /***/ }),
@@ -27213,7 +27213,7 @@ MESH_100LE.Pattern = MESH_js_LE_1.MESH_js_LE.Pattern;
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
-const MESH_js_MD_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MESH_js_MD.js");
+const MeshJsMd_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsMd.js");
 /** MESH_100MD management class */
 class MESH_100MD extends MESH_1.MESH {
     constructor() {
@@ -27242,7 +27242,7 @@ class MESH_100MD extends MESH_1.MESH {
         return name.indexOf(MESH_100MD._LocalName) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MESH_js_MD_1.MESH_js_MD();
+        this._mesh = new MeshJsMd_1.MeshJsMd();
         // set Event handler
         const _md = this._mesh;
         _md.onNotify = (response) => {
@@ -27276,7 +27276,7 @@ MESH_100MD._LocalName = 'MESH-100MD';
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
-const MESH_js_PA_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MESH_js_PA.js");
+const MeshJsPa_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsPa.js");
 /** MESH_100PA management class */
 class MESH_100PA extends MESH_1.MESH {
     constructor() {
@@ -27304,7 +27304,7 @@ class MESH_100PA extends MESH_1.MESH {
         return name.indexOf(MESH_100PA._LocalName) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MESH_js_PA_1.MESH_js_PA();
+        this._mesh = new MeshJsPa_1.MeshJsPa();
         const _pa = this._mesh;
         _pa.onNotify = (response) => {
             if (typeof this.onNotify !== 'function') {
@@ -27321,7 +27321,7 @@ class MESH_100PA extends MESH_1.MESH {
 exports.default = MESH_100PA;
 MESH_100PA.PartsName = 'MESH_100PA';
 MESH_100PA._LocalName = 'MESH-100PA';
-MESH_100PA.NotifyType = MESH_js_PA_1.MESH_js_PA.NotifyType;
+MESH_100PA.NotifyType = MeshJsPa_1.MeshJsPa.NotifyType;
 
 
 /***/ }),
@@ -27338,7 +27338,7 @@ MESH_100PA.NotifyType = MESH_js_PA_1.MESH_js_PA.NotifyType;
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
-const MESH_js_TH_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MESH_js_TH.js");
+const MeshJsTh_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsTh.js");
 /** MESH_100TH management class */
 class MESH_100TH extends MESH_1.MESH {
     constructor() {
@@ -27365,7 +27365,7 @@ class MESH_100TH extends MESH_1.MESH {
         return name.indexOf(MESH_100TH._LocalName) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MESH_js_TH_1.MESH_js_TH();
+        this._mesh = new MeshJsTh_1.MeshJsTh();
         const _th = this._mesh;
         _th.onNotify = (response) => {
             if (typeof this.onNotify !== 'function') {
@@ -27382,19 +27382,125 @@ class MESH_100TH extends MESH_1.MESH {
 exports.default = MESH_100TH;
 MESH_100TH.PartsName = 'MESH_100TH';
 MESH_100TH._LocalName = 'MESH-100TH';
-MESH_100TH.NotifyType = MESH_js_TH_1.MESH_js_TH.NotifyType;
+MESH_100TH.NotifyType = MeshJsTh_1.MeshJsTh.NotifyType;
 
 
 /***/ }),
 
-/***/ "./dist/src/parts/Ble/MESH_js/MESH_js_AC.js":
+/***/ "./dist/src/parts/Ble/MESH_js/MeshJs.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const _1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
-class MESH_js_AC extends _1.MESH_js {
+class MeshJs {
+    constructor() {
+        this.UUIDS = {
+            serviceId: '72C90001-57A9-4D40-B746-534E22EC9F9E',
+            characteristics: {
+                Indicate: '72c90005-57a9-4d40-b746-534e22ec9f9e',
+                Notify: '72c90003-57a9-4d40-b746-534e22ec9f9e',
+                Write: '72c90004-57a9-4d40-b746-534e22ec9f9e',
+                WriteWOResponse: '72c90002-57a9-4d40-b746-534e22ec9f9e',
+            },
+        };
+        // event handler
+        this.onBattery = null;
+        this.onStatusButtonPressed = null;
+        this._feature_command = [0, 2, 1, 3];
+        this._battery = -1;
+    }
+    get feature() {
+        return this._feature_command;
+    }
+    get battery() {
+        return this._battery;
+    }
+    indicate(data) {
+        if (data.length !== 16) {
+            return;
+        }
+        if (data[0] !== 0) {
+            return;
+        }
+        if (data[1] !== 2) {
+            return;
+        }
+        this._battery = data[14];
+    }
+    notify(data) {
+        this._updateBattery(data);
+        this._updateStatusButton(data);
+    }
+    printData(message) {
+        console.log('bat: ' + this._battery + ', ' + message);
+    }
+    checkSum(command) {
+        let sum = 0;
+        command.forEach((val) => {
+            sum += val;
+        });
+        return sum % 256;
+    }
+    errorMessage(message) {
+        console.log('[Error] Can not parse; ' + message);
+    }
+    errorOutOfRange(message) {
+        console.log(this.errorMessage('out of range ' + message));
+    }
+    _updateBattery(data) {
+        if (data.length !== 4) {
+            return false;
+        }
+        if (data[0] !== 0) {
+            return false;
+        }
+        if (data[1] !== 0) {
+            return false;
+        }
+        // if (data[2] === this.battery) {
+        //   return;
+        // }
+        this._battery = data[2];
+        if (typeof this.onBattery !== 'function') {
+            return false;
+        }
+        this.onBattery(this._battery);
+        return true;
+    }
+    _updateStatusButton(data) {
+        if (data.length !== 4) {
+            return false;
+        }
+        if (data[0] !== 0) {
+            return false;
+        }
+        if (data[1] !== 1) {
+            return false;
+        }
+        if (data[2] !== 0) {
+            return false;
+        }
+        if (typeof this.onStatusButtonPressed !== 'function') {
+            return false;
+        }
+        this.onStatusButtonPressed();
+        return true;
+    }
+}
+exports.MeshJs = MeshJs;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_js/MeshJsAc.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const MeshJs_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJs.js");
+class MeshJsAc extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         /**
@@ -27483,19 +27589,19 @@ class MESH_js_AC extends _1.MESH_js {
         return val - (val > 32767 ? 65536 : 0);
     }
 }
-exports.MESH_js_AC = MESH_js_AC;
+exports.MeshJsAc = MeshJsAc;
 
 
 /***/ }),
 
-/***/ "./dist/src/parts/Ble/MESH_js/MESH_js_BU.js":
+/***/ "./dist/src/parts/Ble/MESH_js/MeshJsBu.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const _1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
-class MESH_js_BU extends _1.MESH_js {
+const MeshJs_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJs.js");
+class MeshJsBu extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         // event handler
@@ -27539,18 +27645,18 @@ class MESH_js_BU extends _1.MESH_js {
         }
     }
 }
-exports.MESH_js_BU = MESH_js_BU;
+exports.MeshJsBu = MeshJsBu;
 
 
 /***/ }),
 
-/***/ "./dist/src/parts/Ble/MESH_js/MESH_js_Error.js":
+/***/ "./dist/src/parts/Ble/MESH_js/MeshJsError.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-class MESH_js_Error extends Error {
+class MeshJsError extends Error {
     constructor(code, e) {
         super(e);
         this.code = code;
@@ -27558,8 +27664,8 @@ class MESH_js_Error extends Error {
         Object.setPrototypeOf(this, new.target.prototype);
     }
 }
-exports.MESH_js_Error = MESH_js_Error;
-class MESHOutOfRangeError extends MESH_js_Error {
+exports.MeshJsError = MeshJsError;
+class MeshJsOutOfRangeError extends MeshJsError {
     constructor(property, min, max) {
         super(1, property +
             ' is out of range. ' +
@@ -27569,27 +27675,27 @@ class MESHOutOfRangeError extends MESH_js_Error {
         this.property = property;
     }
 }
-exports.MESHOutOfRangeError = MESHOutOfRangeError;
-class MESHInvalidValue extends MESH_js_Error {
+exports.MeshJsOutOfRangeError = MeshJsOutOfRangeError;
+class MeshJsInvalidValueError extends MeshJsError {
     constructor(property) {
         super(2, property + 'is invalid value.');
         this.property = property;
     }
 }
-exports.MESHInvalidValue = MESHInvalidValue;
+exports.MeshJsInvalidValueError = MeshJsInvalidValueError;
 
 
 /***/ }),
 
-/***/ "./dist/src/parts/Ble/MESH_js/MESH_js_GP.js":
+/***/ "./dist/src/parts/Ble/MESH_js/MeshJsGp.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const _1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
-const MESH_js_Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MESH_js_Error.js");
-class MESH_js_GP extends _1.MESH_js {
+const MeshJs_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJs.js");
+const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
+class MeshJsGp extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         // Event Handler
@@ -27613,6 +27719,7 @@ class MESH_js_GP extends _1.MESH_js {
     /**
      * notify
      *
+     * @const
      * @param data
      * @returns
      */
@@ -27709,25 +27816,25 @@ class MESH_js_GP extends _1.MESH_js {
         const _PwmMin = 0;
         const _PwmMax = 255;
         if (pwm_ratio < _PwmMin || _PwmMax < pwm_ratio) {
-            throw new MESH_js_Error_1.MESHOutOfRangeError('pwm_ratio', _PwmMin, _PwmMax);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('pwm_ratio', _PwmMin, _PwmMax);
         }
-        if (vcc !== MESH_js_GP.VCC.AUTO &&
-            vcc !== MESH_js_GP.VCC.ON &&
-            vcc !== MESH_js_GP.VCC.OFF) {
-            throw new MESH_js_Error_1.MESHInvalidValue('vcc');
+        if (vcc !== MeshJsGp.VCC.AUTO &&
+            vcc !== MeshJsGp.VCC.ON &&
+            vcc !== MeshJsGp.VCC.OFF) {
+            throw new MeshJsError_1.MeshJsInvalidValueError('vcc');
         }
         const _AinRangeMin = 0;
         const _AinRangeMax = 3;
         if (ain_range_upper < _AinRangeMin || _AinRangeMax < ain_range_upper) {
-            throw new MESH_js_Error_1.MESHOutOfRangeError('ain_range_upper', _AinRangeMin, _AinRangeMax);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('ain_range_upper', _AinRangeMin, _AinRangeMax);
         }
         if (ain_range_bottom < _AinRangeMin || _AinRangeMax < ain_range_bottom) {
-            throw new MESH_js_Error_1.MESHOutOfRangeError('ain_range_bottom', _AinRangeMin, _AinRangeMax);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('ain_range_bottom', _AinRangeMin, _AinRangeMax);
         }
-        if (ain_notify !== MESH_js_GP.AnalogInputEventCondition.NotNotify &&
-            ain_notify !== MESH_js_GP.AnalogInputEventCondition.AboveThreshold &&
-            ain_notify !== MESH_js_GP.AnalogInputEventCondition.BelowThreshold) {
-            throw new MESH_js_Error_1.MESHInvalidValue('ain_notify');
+        if (ain_notify !== MeshJsGp.AnalogInputEventCondition.NotNotify &&
+            ain_notify !== MeshJsGp.AnalogInputEventCondition.AboveThreshold &&
+            ain_notify !== MeshJsGp.AnalogInputEventCondition.BelowThreshold) {
+            throw new MeshJsError_1.MeshJsInvalidValueError('ain_notify');
         }
         // Generate Command
         const HEADER = [this.MessageTypeID, 1];
@@ -27792,7 +27899,7 @@ class MESH_js_GP extends _1.MESH_js {
      * @returns
      */
     parseSetPWMCommand(requestId = 0) {
-        return this._parseSetCommand(this.PwmID, MESH_js_GP.Pin.p3, requestId);
+        return this._parseSetCommand(this.PwmID, MeshJsGp.Pin.p3, requestId);
     }
     _parseSetCommand(eventId, param, requestId) {
         const HEADER = [this.MessageTypeID, eventId, requestId];
@@ -27804,60 +27911,60 @@ class MESH_js_GP extends _1.MESH_js {
         return (pins.p1 ? 1 : 0) + (pins.p2 ? 2 : 0) + (pins.p3 ? 4 : 0);
     }
 }
-exports.MESH_js_GP = MESH_js_GP;
-MESH_js_GP.AnalogInputEventCondition = {
+exports.MeshJsGp = MeshJsGp;
+MeshJsGp.AnalogInputEventCondition = {
     NotNotify: 0,
     AboveThreshold: 1,
     BelowThreshold: 2,
 };
-MESH_js_GP.Mode = {
+MeshJsGp.Mode = {
     Always: 0,
     Once: 1,
     AlwaysAndOnce: 2,
 };
-MESH_js_GP.Pin = { p1: 0, p2: 1, p3: 2 };
-MESH_js_GP.State = { Low2High: 1, High2Low: 2 };
-MESH_js_GP.VCC = { AUTO: 0, ON: 1, OFF: 2 };
+MeshJsGp.Pin = { p1: 0, p2: 1, p3: 2 };
+MeshJsGp.State = { Low2High: 1, High2Low: 2 };
+MeshJsGp.VCC = { AUTO: 0, ON: 1, OFF: 2 };
 
 
 /***/ }),
 
-/***/ "./dist/src/parts/Ble/MESH_js/MESH_js_LE.js":
+/***/ "./dist/src/parts/Ble/MESH_js/MeshJsLe.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const _1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
-const MESH_js_Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MESH_js_Error.js");
-class MESH_js_LE extends _1.MESH_js {
+const MeshJs_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJs.js");
+const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
+class MeshJsLe extends MeshJs_1.MeshJs {
     parseLightupCommand(red, green, blue, total_time, cycle_on_time, cycle_off_time, pattern) {
         // Error Handle
         const _ColorMin = 0;
         const _ColorMax = 127;
         if (red < _ColorMin || _ColorMax < red) {
-            throw new MESH_js_Error_1.MESHOutOfRangeError('red', _ColorMin, _ColorMax);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('red', _ColorMin, _ColorMax);
         }
         if (green < _ColorMin || _ColorMax < green) {
-            throw new MESH_js_Error_1.MESHOutOfRangeError('green', _ColorMin, _ColorMax);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('green', _ColorMin, _ColorMax);
         }
         if (blue < _ColorMin || _ColorMax < blue) {
-            throw new MESH_js_Error_1.MESHOutOfRangeError('blue', _ColorMin, _ColorMax);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('blue', _ColorMin, _ColorMax);
         }
         const _TimeMin = 0;
         const _TimeMax = 65535;
         if (total_time < _TimeMin || _TimeMax < total_time) {
-            throw new MESH_js_Error_1.MESHOutOfRangeError('time', _TimeMin, _TimeMax);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('time', _TimeMin, _TimeMax);
         }
         if (cycle_on_time < _TimeMin || _TimeMax < cycle_on_time) {
-            throw new MESH_js_Error_1.MESHOutOfRangeError('cycle_on', _TimeMin, _TimeMax);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('cycle_on', _TimeMin, _TimeMax);
         }
         if (cycle_off_time < _TimeMin || _TimeMax < cycle_off_time) {
-            throw new MESH_js_Error_1.MESHOutOfRangeError('cycle_off', _TimeMin, _TimeMax);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('cycle_off', _TimeMin, _TimeMax);
         }
-        if (pattern !== MESH_js_LE.Pattern.Blink &&
-            pattern !== MESH_js_LE.Pattern.Soft) {
-            throw new MESH_js_Error_1.MESHOutOfRangeError('pattern');
+        if (pattern !== MeshJsLe.Pattern.Blink &&
+            pattern !== MeshJsLe.Pattern.Soft) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('pattern');
         }
         // Generate Command
         const _MessageTypeID = 1;
@@ -27884,21 +27991,21 @@ class MESH_js_LE extends _1.MESH_js {
         return data;
     }
 }
-exports.MESH_js_LE = MESH_js_LE;
-MESH_js_LE.Pattern = { Blink: 1, Soft: 2 };
+exports.MeshJsLe = MeshJsLe;
+MeshJsLe.Pattern = { Blink: 1, Soft: 2 };
 
 
 /***/ }),
 
-/***/ "./dist/src/parts/Ble/MESH_js/MESH_js_MD.js":
+/***/ "./dist/src/parts/Ble/MESH_js/MeshJsMd.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const _1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
-const MESH_js_Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MESH_js_Error.js");
-class MESH_js_MD extends _1.MESH_js {
+const MeshJs_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJs.js");
+const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
+class MeshJsMd extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         this.DetectionMode = {
@@ -27942,12 +28049,12 @@ class MESH_js_MD extends _1.MESH_js {
         const _DetectionTimeMax = 60000;
         if (detection_time < _DetectionTimeMin ||
             _DetectionTimeMax < detection_time) {
-            throw new MESH_js_Error_1.MESHOutOfRangeError('detection_time', _DetectionTimeMin, _DetectionTimeMax);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('detection_time', _DetectionTimeMin, _DetectionTimeMax);
         }
         const _ResponseTimeMin = 500;
         const _ResponseTimeMax = 60000;
         if (response_time < _ResponseTimeMin || _ResponseTimeMax < response_time) {
-            throw new MESH_js_Error_1.MESHOutOfRangeError('response_time', _ResponseTimeMin, _ResponseTimeMax);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('response_time', _ResponseTimeMin, _ResponseTimeMax);
         }
         // Generate Command
         const HEADER = [this.MessageTypeID, this.EventTypeID, request_id];
@@ -27964,20 +28071,20 @@ class MESH_js_MD extends _1.MESH_js {
         return data;
     }
 }
-exports.MESH_js_MD = MESH_js_MD;
+exports.MeshJsMd = MeshJsMd;
 
 
 /***/ }),
 
-/***/ "./dist/src/parts/Ble/MESH_js/MESH_js_PA.js":
+/***/ "./dist/src/parts/Ble/MESH_js/MeshJsPa.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const _1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
-const MESH_js_Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MESH_js_Error.js");
-class MESH_js_PA extends _1.MESH_js {
+const MeshJs_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJs.js");
+const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
+class MeshJsPa extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         this.onNotify = null;
@@ -28014,12 +28121,12 @@ class MESH_js_PA extends _1.MESH_js {
     parseSetmodeCommand(notifyType, requestId = 0) {
         // Error Handle
         if (notifyType % 4 !== 0) {
-            throw new MESH_js_Error_1.MESHInvalidValue('notifyType');
+            throw new MeshJsError_1.MeshJsInvalidValueError('notifyType');
         }
         const _notifytypeMin = 4;
         const _notifytypeMax = 60;
         if (notifyType < _notifytypeMin || _notifytypeMax < notifyType) {
-            throw new MESH_js_Error_1.MESHOutOfRangeError('notifyType');
+            throw new MeshJsError_1.MeshJsOutOfRangeError('notifyType');
         }
         // Generate Command
         const _HEADER = [this.MessageTypeID, this.EventTypeID, requestId];
@@ -28029,8 +28136,8 @@ class MESH_js_PA extends _1.MESH_js {
         return data;
     }
 }
-exports.MESH_js_PA = MESH_js_PA;
-MESH_js_PA.NotifyType = {
+exports.MeshJsPa = MeshJsPa;
+MeshJsPa.NotifyType = {
     UpdateProximity: 4,
     UpdateBrightness: 8,
     Once: 16,
@@ -28040,15 +28147,15 @@ MESH_js_PA.NotifyType = {
 
 /***/ }),
 
-/***/ "./dist/src/parts/Ble/MESH_js/MESH_js_TH.js":
+/***/ "./dist/src/parts/Ble/MESH_js/MeshJsTh.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const _1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
-const MESH_js_Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MESH_js_Error.js");
-class MESH_js_TH extends _1.MESH_js {
+const MeshJs_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJs.js");
+const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
+class MeshJsTh extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         // Event handler
@@ -28095,11 +28202,11 @@ class MESH_js_TH extends _1.MESH_js {
         // Error Handle
         if (temperature_range_bottom < this.MinTemperature ||
             this.MaxTemperature < temperature_range_upper) {
-            throw new MESH_js_Error_1.MESHOutOfRangeError('temperature_range', this.MinTemperature, this.MaxTemperature);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('temperature_range', this.MinTemperature, this.MaxTemperature);
         }
         if (humidity_range_bottom < this.MinHumidity ||
             this.MaxHumidity < humidity_range_upper) {
-            throw new MESH_js_Error_1.MESHOutOfRangeError('humidity_range', this.MinHumidity, this.MaxHumidity);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('humidity_range', this.MinHumidity, this.MaxHumidity);
         }
         // Generate Command
         const _HEADER = [this.MessageTypeID, this.EventTypeID, request_id];
@@ -28130,119 +28237,13 @@ class MESH_js_TH extends _1.MESH_js {
         return val + (val < 0 ? _2Byte : 0);
     }
 }
-exports.MESH_js_TH = MESH_js_TH;
-MESH_js_TH.NotifyType = {
+exports.MeshJsTh = MeshJsTh;
+MeshJsTh.NotifyType = {
     UpdateTemperature: 4,
     UpdateHumidity: 8,
     Once: 16,
     Always: 32,
 };
-
-
-/***/ }),
-
-/***/ "./dist/src/parts/Ble/MESH_js/index.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-class MESH_js {
-    constructor() {
-        this.UUIDS = {
-            serviceId: '72C90001-57A9-4D40-B746-534E22EC9F9E',
-            characteristics: {
-                Indicate: '72c90005-57a9-4d40-b746-534e22ec9f9e',
-                Notify: '72c90003-57a9-4d40-b746-534e22ec9f9e',
-                Write: '72c90004-57a9-4d40-b746-534e22ec9f9e',
-                WriteWOResponse: '72c90002-57a9-4d40-b746-534e22ec9f9e',
-            },
-        };
-        // event handler
-        this.onBattery = null;
-        this.onStatusButtonPressed = null;
-        this._feature_command = [0, 2, 1, 3];
-        this._battery = -1;
-    }
-    get feature() {
-        return this._feature_command;
-    }
-    get battery() {
-        return this._battery;
-    }
-    indicate(data) {
-        if (data.length !== 16) {
-            return;
-        }
-        if (data[0] !== 0) {
-            return;
-        }
-        if (data[1] !== 2) {
-            return;
-        }
-        this._battery = data[14];
-    }
-    notify(data) {
-        this._updateBattery(data);
-        this._updateStatusButton(data);
-    }
-    printData(message) {
-        console.log('bat: ' + this._battery + ', ' + message);
-    }
-    checkSum(command) {
-        let sum = 0;
-        command.forEach((val) => {
-            sum += val;
-        });
-        return sum % 256;
-    }
-    errorMessage(message) {
-        console.log('[Error] Can not parse; ' + message);
-    }
-    errorOutOfRange(message) {
-        console.log(this.errorMessage('out of range ' + message));
-    }
-    _updateBattery(data) {
-        if (data.length !== 4) {
-            return false;
-        }
-        if (data[0] !== 0) {
-            return false;
-        }
-        if (data[1] !== 0) {
-            return false;
-        }
-        // if (data[2] === this.battery) {
-        //   return;
-        // }
-        this._battery = data[2];
-        if (typeof this.onBattery !== 'function') {
-            return false;
-        }
-        this.onBattery(this._battery);
-        return true;
-    }
-    _updateStatusButton(data) {
-        if (data.length !== 4) {
-            return false;
-        }
-        if (data[0] !== 0) {
-            return false;
-        }
-        if (data[1] !== 1) {
-            return false;
-        }
-        if (data[2] !== 0) {
-            return false;
-        }
-        if (typeof this.onStatusButtonPressed !== 'function') {
-            return false;
-        }
-        this.onStatusButtonPressed();
-        return true;
-    }
-}
-exports.MESH_js = MESH_js;
 
 
 /***/ }),
@@ -38575,7 +38576,7 @@ Logtta.CompanyID = {
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
-const MESH_js_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/index.js");
+const MeshJs_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJs.js");
 class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     constructor() {
         super(...arguments);
@@ -38583,7 +38584,7 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         this.onBatteryNotify = null;
         this.onStatusButtonNotify = null;
         this.onResponseWrite = null;
-        this._mesh = new MESH_js_1.MESH_js();
+        this._mesh = new MeshJs_1.MeshJs();
         this._indicateCharacteristic = null;
         this._notifyCharacteristic = null;
         this._writeCharacteristic = null;

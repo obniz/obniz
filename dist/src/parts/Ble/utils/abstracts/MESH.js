@@ -2,7 +2,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = require("../../../../obniz/ObnizPartsBleAbstract");
-const MESH_js_1 = require("../../MESH_js");
+const MeshJs_1 = require("../../MESH_js/MeshJs");
 class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     constructor() {
         super(...arguments);
@@ -10,7 +10,7 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         this.onBatteryNotify = null;
         this.onStatusButtonNotify = null;
         this.onResponseWrite = null;
-        this._mesh = new MESH_js_1.MESH_js();
+        this._mesh = new MeshJs_1.MeshJs();
         this._indicateCharacteristic = null;
         this._notifyCharacteristic = null;
         this._writeCharacteristic = null;

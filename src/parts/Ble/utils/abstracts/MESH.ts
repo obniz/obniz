@@ -6,7 +6,7 @@ import {
 } from '../../../../obniz/ObnizPartsBleAbstract';
 import { BleRemoteCharacteristic } from '../../../../obniz';
 import BleRemotePeripheral from '../../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import { MESH_js } from '../../MESH_js';
+import { MeshJs } from '../../MESH_js/MeshJs';
 
 export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
   // event handler
@@ -17,7 +17,7 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
   public static AvailableBleMode = 'Connectable' as const;
 
   protected static _LocalName = 'MESH-100';
-  protected _mesh: MESH_js = new MESH_js();
+  protected _mesh: MeshJs = new MeshJs();
 
   private _indicateCharacteristic: BleRemoteCharacteristic | null = null;
   private _notifyCharacteristic: BleRemoteCharacteristic | null = null;

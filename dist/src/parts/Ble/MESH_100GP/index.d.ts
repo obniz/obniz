@@ -3,7 +3,7 @@
  * @module Parts.MESH_100GP
  */
 import { MESH } from '../utils/abstracts/MESH';
-import { MESH_js_GP } from '../MESH_js/MESH_js_GP';
+import { MeshJsGp } from '../MESH_js/MeshJsGp';
 export interface MESH_100GPOptions {
 }
 /**
@@ -42,7 +42,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
         readonly ON: 1;
         readonly OFF: 2;
     };
-    readonly DigitalPins: MESH_js_GP['DigitalPins'];
+    readonly DigitalPins: MeshJsGp['DigitalPins'];
     onDigitalInEventNotify: ((pin: number, state: number) => void) | null;
     onAnalogInEventNotify: ((level: number) => void) | null;
     onDigitalInNotify: ((requestId: number, pin: number, state: number) => void) | null;

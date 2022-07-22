@@ -3,7 +3,7 @@
  * @module Parts.MESH_100MD
  */
 import { MESH } from '../utils/abstracts/MESH';
-import { MESH_js_MD } from '../MESH_js/MESH_js_MD';
+import { MeshJsMd } from '../MESH_js/MeshJsMd';
 export interface MESH_100MDOptions {
 }
 /**
@@ -21,7 +21,7 @@ export interface MESH_100MD_Data {
 export default class MESH_100MD extends MESH<MESH_100MD_Data> {
     static readonly PartsName = "MESH_100MD";
     static readonly _LocalName = "MESH-100MD";
-    onNotify: ((resp: MESH_js_MD['response']) => void) | null;
+    onNotify: ((resp: MeshJsMd['response']) => void) | null;
     protected readonly staticClass: typeof MESH_100MD;
     getDataWait(): Promise<{
         name: string;

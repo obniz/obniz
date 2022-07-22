@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const _1 = require(".");
-const MESH_js_Error_1 = require("./MESH_js_Error");
-class MESH_js_MD extends _1.MESH_js {
+const MeshJs_1 = require("./MeshJs");
+const MeshJsError_1 = require("./MeshJsError");
+class MeshJsMd extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         this.DetectionMode = {
@@ -46,12 +46,12 @@ class MESH_js_MD extends _1.MESH_js {
         const _DetectionTimeMax = 60000;
         if (detection_time < _DetectionTimeMin ||
             _DetectionTimeMax < detection_time) {
-            throw new MESH_js_Error_1.MESHOutOfRangeError('detection_time', _DetectionTimeMin, _DetectionTimeMax);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('detection_time', _DetectionTimeMin, _DetectionTimeMax);
         }
         const _ResponseTimeMin = 500;
         const _ResponseTimeMax = 60000;
         if (response_time < _ResponseTimeMin || _ResponseTimeMax < response_time) {
-            throw new MESH_js_Error_1.MESHOutOfRangeError('response_time', _ResponseTimeMin, _ResponseTimeMax);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('response_time', _ResponseTimeMin, _ResponseTimeMax);
         }
         // Generate Command
         const HEADER = [this.MessageTypeID, this.EventTypeID, request_id];
@@ -68,4 +68,4 @@ class MESH_js_MD extends _1.MESH_js {
         return data;
     }
 }
-exports.MESH_js_MD = MESH_js_MD;
+exports.MeshJsMd = MeshJsMd;

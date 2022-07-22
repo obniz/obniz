@@ -1,5 +1,5 @@
-import { MESH_js } from '.';
-export declare class MESH_js_GP extends MESH_js {
+import { MeshJs } from './MeshJs';
+export declare class MeshJsGp extends MeshJs {
     onDigitalInEventNotify: ((pin: number, state: number) => void) | null;
     onAnalogInEventNotify: ((level: number) => void) | null;
     onDigitalInNotify: ((requestId: number, pin: number, state: number) => void) | null;
@@ -47,6 +47,7 @@ export declare class MESH_js_GP extends MESH_js {
     /**
      * notify
      *
+     * @const
      * @param data
      * @returns
      */
@@ -64,7 +65,7 @@ export declare class MESH_js_GP extends MESH_js {
      * @param ain_notify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
      * @returns command
      */
-    parseSetmodeCommand(din: MESH_js_GP['DigitalPins'], din_notify: MESH_js_GP['DigitalPins'], dout: MESH_js_GP['DigitalPins'], pwm_ratio: number, vcc: number, ain_range_upper: number, ain_range_bottom: number, ain_notify: number): number[];
+    parseSetmodeCommand(din: MeshJsGp['DigitalPins'], din_notify: MeshJsGp['DigitalPins'], dout: MeshJsGp['DigitalPins'], pwm_ratio: number, vcc: number, ain_range_upper: number, ain_range_bottom: number, ain_notify: number): number[];
     /**
      * parseSetDinCommand
      *

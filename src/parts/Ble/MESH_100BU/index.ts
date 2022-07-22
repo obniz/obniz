@@ -5,7 +5,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { MESH } from '../utils/abstracts/MESH';
-import { MESH_js_BU } from '../MESH_js/MESH_js_BU';
+import { MeshJsBu } from '../MESH_js/MeshJsBu';
 
 export interface MESH_100BUOptions {}
 
@@ -44,9 +44,9 @@ export default class MESH_100BU extends MESH<MESH_100BU_Data> {
   }
 
   protected prepareConnect(): void {
-    this._mesh = new MESH_js_BU();
+    this._mesh = new MeshJsBu();
 
-    const _bu = this._mesh as MESH_js_BU;
+    const _bu = this._mesh as MeshJsBu;
     _bu.onSinglePressed = () => {
       if (typeof this.onSinglePressed !== 'function') {
         return;

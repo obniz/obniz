@@ -3,7 +3,7 @@
  * @module Parts.MESH_100PA
  */
 import { MESH } from '../utils/abstracts/MESH';
-import { MESH_js_PA } from '../MESH_js/MESH_js_PA';
+import { MeshJsPa } from '../MESH_js/MeshJsPa';
 export interface MESH_100PAOptions {
 }
 /**
@@ -27,7 +27,7 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
         readonly Once: 16;
         readonly Always: 32;
     };
-    onNotify: ((resp: MESH_js_PA['response']) => void) | null;
+    onNotify: ((resp: MeshJsPa['response']) => void) | null;
     protected readonly staticClass: typeof MESH_100PA;
     getDataWait(): Promise<{
         name: string;

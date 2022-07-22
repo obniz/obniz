@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const _1 = require(".");
-const MESH_js_Error_1 = require("./MESH_js_Error");
-class MESH_js_GP extends _1.MESH_js {
+const MeshJs_1 = require("./MeshJs");
+const MeshJsError_1 = require("./MeshJsError");
+class MeshJsGp extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         // Event Handler
@@ -26,6 +26,7 @@ class MESH_js_GP extends _1.MESH_js {
     /**
      * notify
      *
+     * @const
      * @param data
      * @returns
      */
@@ -122,25 +123,25 @@ class MESH_js_GP extends _1.MESH_js {
         const _PwmMin = 0;
         const _PwmMax = 255;
         if (pwm_ratio < _PwmMin || _PwmMax < pwm_ratio) {
-            throw new MESH_js_Error_1.MESHOutOfRangeError('pwm_ratio', _PwmMin, _PwmMax);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('pwm_ratio', _PwmMin, _PwmMax);
         }
-        if (vcc !== MESH_js_GP.VCC.AUTO &&
-            vcc !== MESH_js_GP.VCC.ON &&
-            vcc !== MESH_js_GP.VCC.OFF) {
-            throw new MESH_js_Error_1.MESHInvalidValue('vcc');
+        if (vcc !== MeshJsGp.VCC.AUTO &&
+            vcc !== MeshJsGp.VCC.ON &&
+            vcc !== MeshJsGp.VCC.OFF) {
+            throw new MeshJsError_1.MeshJsInvalidValueError('vcc');
         }
         const _AinRangeMin = 0;
         const _AinRangeMax = 3;
         if (ain_range_upper < _AinRangeMin || _AinRangeMax < ain_range_upper) {
-            throw new MESH_js_Error_1.MESHOutOfRangeError('ain_range_upper', _AinRangeMin, _AinRangeMax);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('ain_range_upper', _AinRangeMin, _AinRangeMax);
         }
         if (ain_range_bottom < _AinRangeMin || _AinRangeMax < ain_range_bottom) {
-            throw new MESH_js_Error_1.MESHOutOfRangeError('ain_range_bottom', _AinRangeMin, _AinRangeMax);
+            throw new MeshJsError_1.MeshJsOutOfRangeError('ain_range_bottom', _AinRangeMin, _AinRangeMax);
         }
-        if (ain_notify !== MESH_js_GP.AnalogInputEventCondition.NotNotify &&
-            ain_notify !== MESH_js_GP.AnalogInputEventCondition.AboveThreshold &&
-            ain_notify !== MESH_js_GP.AnalogInputEventCondition.BelowThreshold) {
-            throw new MESH_js_Error_1.MESHInvalidValue('ain_notify');
+        if (ain_notify !== MeshJsGp.AnalogInputEventCondition.NotNotify &&
+            ain_notify !== MeshJsGp.AnalogInputEventCondition.AboveThreshold &&
+            ain_notify !== MeshJsGp.AnalogInputEventCondition.BelowThreshold) {
+            throw new MeshJsError_1.MeshJsInvalidValueError('ain_notify');
         }
         // Generate Command
         const HEADER = [this.MessageTypeID, 1];
@@ -205,7 +206,7 @@ class MESH_js_GP extends _1.MESH_js {
      * @returns
      */
     parseSetPWMCommand(requestId = 0) {
-        return this._parseSetCommand(this.PwmID, MESH_js_GP.Pin.p3, requestId);
+        return this._parseSetCommand(this.PwmID, MeshJsGp.Pin.p3, requestId);
     }
     _parseSetCommand(eventId, param, requestId) {
         const HEADER = [this.MessageTypeID, eventId, requestId];
@@ -217,17 +218,17 @@ class MESH_js_GP extends _1.MESH_js {
         return (pins.p1 ? 1 : 0) + (pins.p2 ? 2 : 0) + (pins.p3 ? 4 : 0);
     }
 }
-exports.MESH_js_GP = MESH_js_GP;
-MESH_js_GP.AnalogInputEventCondition = {
+exports.MeshJsGp = MeshJsGp;
+MeshJsGp.AnalogInputEventCondition = {
     NotNotify: 0,
     AboveThreshold: 1,
     BelowThreshold: 2,
 };
-MESH_js_GP.Mode = {
+MeshJsGp.Mode = {
     Always: 0,
     Once: 1,
     AlwaysAndOnce: 2,
 };
-MESH_js_GP.Pin = { p1: 0, p2: 1, p3: 2 };
-MESH_js_GP.State = { Low2High: 1, High2Low: 2 };
-MESH_js_GP.VCC = { AUTO: 0, ON: 1, OFF: 2 };
+MeshJsGp.Pin = { p1: 0, p2: 1, p3: 2 };
+MeshJsGp.State = { Low2High: 1, High2Low: 2 };
+MeshJsGp.VCC = { AUTO: 0, ON: 1, OFF: 2 };
