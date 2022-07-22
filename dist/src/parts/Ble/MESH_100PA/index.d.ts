@@ -21,6 +21,12 @@ export interface MESH_100PA_Data {
 export default class MESH_100PA extends MESH<MESH_100PA_Data> {
     static readonly PartsName = "MESH_100PA";
     static readonly _LocalName = "MESH-100PA";
+    static readonly NotifyType: {
+        readonly UpdateProximity: 4;
+        readonly UpdateBrightness: 8;
+        readonly Once: 16;
+        readonly Always: 32;
+    };
     onNotify: ((resp: MESH_js_PA['response']) => void) | null;
     protected readonly staticClass: typeof MESH_100PA;
     getDataWait(): Promise<{
@@ -30,7 +36,7 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
         proximity: number;
         brightness: number;
     }>;
-    setMode(type: number): void;
+    setMode(type: number, request_id?: number): void;
     protected static _isMESHblock(name: string): boolean;
     protected prepareConnect(): void;
     protected beforeOnDisconnectWait(reason: unknown): Promise<void>;

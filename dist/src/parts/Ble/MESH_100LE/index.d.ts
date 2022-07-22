@@ -34,11 +34,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
      * @param time 0 ~ 65535 [ms]
      * @param cycle_on 0 ~ 65535 [ms]
      * @param cycle_off 0 ~ 65535 [ms]
-<<<<<<< HEAD
-     * @param pattern 1 or 2
-=======
      * @param pattern Pattern.Blink or Pattern.Soft
->>>>>>> a8042557d (gpio)
      * @returns
      */
     lightup(red: number, green: number, blue: number, time: number, cycle_on: number, cycle_off: number, pattern: number): void;

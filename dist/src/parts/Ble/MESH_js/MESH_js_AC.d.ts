@@ -7,7 +7,7 @@ export declare class MESH_js_AC extends MESH_js {
     private readonly MessageTypeID;
     private accele;
     private face;
-    private readonly DATA_LENGTH;
+    private readonly DataLength;
     onTapped: ((accele: MESH_js_AC['accele']) => void) | null;
     onShaked: ((accele: MESH_js_AC['accele']) => void) | null;
     onFlipped: ((accele: MESH_js_AC['accele']) => void) | null;

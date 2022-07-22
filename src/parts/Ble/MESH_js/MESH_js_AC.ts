@@ -8,7 +8,7 @@ export class MESH_js_AC extends MESH_js {
 
   private accele = { x: -1, y: -1, z: -1 };
   private face = -1;
-  private readonly DATA_LENGTH = 17;
+  private readonly DataLength = 17;
 
   // event handler
   public onTapped: ((accele: MESH_js_AC['accele']) => void) | null = null;
@@ -78,7 +78,7 @@ export class MESH_js_AC extends MESH_js {
   //   }
 
   private updateAccele(data: number[]): boolean {
-    if (data.length !== this.DATA_LENGTH) {
+    if (data.length !== this.DataLength) {
       return false;
     }
     if (data[0] !== 1) {

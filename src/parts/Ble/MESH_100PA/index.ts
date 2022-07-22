@@ -26,6 +26,8 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
   public static readonly PartsName = 'MESH_100PA';
   public static readonly _LocalName = 'MESH-100PA';
 
+  public static readonly NotifyType = MESH_js_PA.NotifyType;
+
   // event handler
   public onNotify: ((resp: MESH_js_PA['response']) => void) | null = null;
 
@@ -43,9 +45,9 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
     };
   }
 
-  public setMode(type: number): void {
+  public setMode(type: number, request_id = 0): void {
     const _pa = this._mesh as MESH_js_PA;
-    this.writeWOResponse(_pa.parseSetmodeCommand(type));
+    this.writeWOResponse(_pa.parseSetmodeCommand(type, request_id));
   }
 
   protected static _isMESHblock(name: string): boolean {

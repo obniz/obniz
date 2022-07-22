@@ -20,3 +20,10 @@ class MESHOutOfRangeError extends MESH_js_Error {
     }
 }
 exports.MESHOutOfRangeError = MESHOutOfRangeError;
+class MESHInvalidValue extends MESH_js_Error {
+    constructor(property) {
+        super(2, property + 'is invalid value.');
+        this.property = property;
+    }
+}
+exports.MESHInvalidValue = MESHInvalidValue;
