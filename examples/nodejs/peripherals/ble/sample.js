@@ -2,7 +2,7 @@
 const Obniz = require('../../../../index.js'); // local
 const fetch = require('node-fetch');
 const mesh_bu = Obniz.getPartsClass('MESH_100BU');
-const mesh_le = Obniz.getPartsClass('MESH_100LE');
+const MESH_100LE = Obniz.getPartsClass('MESH_100LE');
 const mesh_ac = Obniz.getPartsClass('MESH_100AC');
 const mesh_pa = Obniz.getPartsClass('MESH_100PA');
 const mesh_th = Obniz.getPartsClass('MESH_100TH');
@@ -80,22 +80,25 @@ async function sampleBU(peripheral) {
 }
 
 async function sampleLE(peripheral) {
-  if (!mesh_le.isMESHblock(peripheral)) {
+  if (!MESH_100LE.isMESHblock(peripheral)) {
     return;
   }
   console.log('obniz.ble.scan.onfind : ' + peripheral.localName + ' : ' + peripheral.rssi);
-  const LED_block = new mesh_le(peripheral);
+  const LED_block = new MESH_100LE(peripheral);
   await LED_block.connectWait();
 
-  const _red = 127;
-  const _green = 0;
-  const _blue = 0;
+  const _red = 63;
+  const _green = 127;
+  const _blue = 31;
   const _total_time = 4000; // 4.000 seconds
-  const _cycle_on_time = 512; // 0.500 seconds
-  const _cycle_off_time = 512; // 0.500 seconds
-  LED_block.lightup(_red, _green, _blue, _total_time, _cycle_on_time, _cycle_off_time, mesh_le.Pattern.SOFT);
+  const _cycle_on_time = 1000; // 0.500 seconds
+  const _cycle_off_time = 500; // 0.500 seconds
+  LED_block.lightup(_red, _green, _blue, _total_time, _cycle_on_time, _cycle_off_time, MESH_100LE.Pattern.FIREFLY);
 
   LED_block.onStatusButtonNotify = (()=>{console.log('status button pressed');});
+
+  const result = await LED_block.getDataWait();
+  console.log(result.battery);
 }
 
 async function sampleAC(peripheral) {
@@ -170,7 +173,7 @@ async function sampleTH(peripheral) {
   await TH_block.connectWait();
 
   TH_block.onNotify = ((response) => {
-    console.log('ID: ' + response.request_id + ', temp: ' + response.temperature + ', hum: ' + response.humidity);
+    console.log('ID: ' + response.requestId + ', temp: ' + response.temperature + ', hum: ' + response.humidity);
   });
 
   const _temp_upper = 50;
