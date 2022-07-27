@@ -18,7 +18,7 @@ export interface MESH_100GP_Data {
 export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     static readonly PartsName = "MESH_100GP";
     static readonly PREFIX = "MESH-100GP";
-    static readonly AnalogInputEventCondition: {
+    static readonly ANALOG_INPUT_EVENT_CONDITION: {
         readonly NOT_NOTIFY: 0;
         readonly ABOVE_THRESHOLD: 1;
         readonly BELOW_THRESHOLD: 2;

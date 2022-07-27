@@ -23,7 +23,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   public static readonly PartsName = 'MESH_100GP';
   public static readonly PREFIX = 'MESH-100GP';
 
-  public static readonly AnalogInputEventCondition =
+  public static readonly ANALOG_INPUT_EVENT_CONDITION =
     MeshJsGp.ANALOG_IN_EVENT_CONDITION;
   public static readonly MODE = MeshJsGp.MODE;
   public static readonly PIN = MeshJsGp.PIN;

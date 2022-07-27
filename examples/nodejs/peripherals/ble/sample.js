@@ -215,7 +215,7 @@ async function sampleGP(peripheral) {
   const _dout = {p1:false,p2:false,p3:true};
   const _pwm = 200;
   const _vcc = mesh_gp.VCC.ON;
-  const _condition = GP_block.ANALOG_IN_EVENT_CONDITION.BELOW_THRESHOLD;
+  const _condition = mesh_gp.ANALOG_IN_EVENT_CONDITION.BELOW_THRESHOLD;
 
   GP_block.onPwmNotify = ((id, level) => {
     console.log('[PWM] id: ' + id + ', level: ' + level);
