@@ -93,7 +93,7 @@ async function sampleLE(peripheral) {
   const _total_time = 4000; // 4.000 seconds
   const _cycle_on_time = 512; // 0.500 seconds
   const _cycle_off_time = 512; // 0.500 seconds
-  await LED_block.lightup(_red, _green, _blue, _total_time, _cycle_on_time, _cycle_off_time, mesh_le.Pattern.Soft);
+  await LED_block.lightup(_red, _green, _blue, _total_time, _cycle_on_time, _cycle_off_time, mesh_le.Pattern.SOFT);
 
   LED_block.onStatusButtonNotify = (()=>{console.log('status button pressed');});
 }
@@ -154,7 +154,7 @@ async function samplePA(peripheral) {
     console.log(response);
   });
 
-  const _notifyType = mesh_pa.NotifyType.Once + mesh_pa.NotifyType.Always;
+  const _notifyType = mesh_pa.NotifyType.ONCE + mesh_pa.NotifyType.ALWAYS;
   const _requestId = 15;
   PA_block.setMode(_notifyType, _requestId);
 
@@ -178,7 +178,7 @@ async function sampleTH(peripheral) {
   const _humi_upper = 100;
   const _humi_bottom = 0;
   const _request_id = 15;
-  const _notify_type = mesh_th.NotifyType.Once + mesh_th.NotifyType.Always;
+  const _notify_type = mesh_th.NotifyType.ONCE + mesh_th.NotifyType.ALWAYS;
   TH_block.setMode(_temp_upper, _temp_bottom, 17, _humi_upper, _humi_bottom, 17, _notify_type, _request_id);
 }
 
@@ -215,7 +215,7 @@ async function sampleGP(peripheral) {
   const _dout = {p1:false,p2:false,p3:true};
   const _pwm = 200;
   const _vcc = mesh_gp.VCC.ON;
-  const _condition = GP_block.AnalogInputEventCondition().BelowThreshold;
+  const _condition = GP_block.ANALOG_IN_EVENT_CONDITION.BELOW_THRESHOLD;
 
   GP_block.onPwmNotify = ((id, level) => {
     console.log('[PWM] id: ' + id + ', level: ' + level);

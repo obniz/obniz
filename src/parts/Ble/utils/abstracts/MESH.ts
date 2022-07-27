@@ -26,6 +26,11 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
   private writeCharacteristic_: BleRemoteCharacteristic | null = null;
   private writeWOResponseCharacteristic_: BleRemoteCharacteristic | null = null;
 
+  /**
+   *
+   * @param peripheral
+   * @returns
+   */
   public static isMESHblock(peripheral: BleRemotePeripheral): boolean {
     const _name: string | null = peripheral.localName;
     if (!_name) {
@@ -37,6 +42,12 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
     return this._isMESHblock(_name);
   }
 
+  /**
+   *
+   * @param peripheral
+   * @param sirialnumber
+   * @returns
+   */
   public static sameSirialNumberBlock(
     peripheral: BleRemotePeripheral,
     sirialnumber: string
