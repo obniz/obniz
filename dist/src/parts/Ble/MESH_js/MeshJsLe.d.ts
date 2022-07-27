@@ -2,7 +2,7 @@ import { MeshJs } from './MeshJs';
 export declare class MeshJsLe extends MeshJs {
     static readonly PATTERN: {
         readonly BLINK: 1;
-        readonly SOFT: 2;
+        readonly FIREFLY: 2;
     };
     /**
      *

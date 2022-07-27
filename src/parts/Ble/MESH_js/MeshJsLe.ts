@@ -4,7 +4,7 @@ export class MeshJsLe extends MeshJs {
   // Constant Values
   public static readonly PATTERN = {
     BLINK: 1 as const,
-    SOFT: 2 as const,
+    FIREFLY: 2 as const,
   } as const;
 
   /**
@@ -52,7 +52,7 @@ export class MeshJsLe extends MeshJs {
     }
     if (
       pattern !== MeshJsLe.PATTERN.BLINK &&
-      pattern !== MeshJsLe.PATTERN.SOFT
+      pattern !== MeshJsLe.PATTERN.FIREFLY
     ) {
       throw new MeshJsInvalidValueError('pattern');
     }

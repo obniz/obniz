@@ -39,10 +39,10 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
    * @param red 0 ~ 127
    * @param green 0 ~ 127
    * @param blue 0 ~ 127
-   * @param totalTime 0 ~ 65535 [ms]
-   * @param cycleOnTime 0 ~ 65535 [ms]
-   * @param cycleOffTime 0 ~ 65535 [ms]
-   * @param pattern Pattern.Blink or Pattern.Soft
+   * @param totalTime 0 ~ 65,535 [ms]
+   * @param cycleOnTime 0 ~ 65,535 [ms]
+   * @param cycleOffTime 0 ~ 65,535 [ms]
+   * @param pattern Pattern.BLINK or Pattern.FIREFLY
    * @returns
    */
   public lightup(

@@ -16,7 +16,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
     static readonly PREFIX = "MESH-100LE";
     static Pattern: {
         readonly BLINK: 1;
-        readonly SOFT: 2;
+        readonly FIREFLY: 2;
     };
     protected readonly staticClass: typeof MESH_100LE;
     getDataWait(): Promise<{
@@ -30,10 +30,10 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
      * @param red 0 ~ 127
      * @param green 0 ~ 127
      * @param blue 0 ~ 127
-     * @param totalTime 0 ~ 65535 [ms]
-     * @param cycleOnTime 0 ~ 65535 [ms]
-     * @param cycleOffTime 0 ~ 65535 [ms]
-     * @param pattern Pattern.Blink or Pattern.Soft
+     * @param totalTime 0 ~ 65,535 [ms]
+     * @param cycleOnTime 0 ~ 65,535 [ms]
+     * @param cycleOffTime 0 ~ 65,535 [ms]
+     * @param pattern Pattern.BLINK or Pattern.FIREFLY
      * @returns
      */
     lightup(red: number, green: number, blue: number, totalTime: number, cycleOnTime: number, cycleOffTime: number, pattern: number): void;

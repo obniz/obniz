@@ -27167,10 +27167,10 @@ class MESH_100LE extends MESH_1.MESH {
      * @param red 0 ~ 127
      * @param green 0 ~ 127
      * @param blue 0 ~ 127
-     * @param totalTime 0 ~ 65535 [ms]
-     * @param cycleOnTime 0 ~ 65535 [ms]
-     * @param cycleOffTime 0 ~ 65535 [ms]
-     * @param pattern Pattern.Blink or Pattern.Soft
+     * @param totalTime 0 ~ 65,535 [ms]
+     * @param cycleOnTime 0 ~ 65,535 [ms]
+     * @param cycleOffTime 0 ~ 65,535 [ms]
+     * @param pattern Pattern.BLINK or Pattern.FIREFLY
      * @returns
      */
     lightup(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern) {
@@ -28003,7 +28003,7 @@ class MeshJsLe extends MeshJs_1.MeshJs {
             throw new MeshJsError_1.MeshJsOutOfRangeError('cycle_off', TIME_MIN, TIME_MAX);
         }
         if (pattern !== MeshJsLe.PATTERN.BLINK &&
-            pattern !== MeshJsLe.PATTERN.SOFT) {
+            pattern !== MeshJsLe.PATTERN.FIREFLY) {
             throw new MeshJsError_1.MeshJsInvalidValueError('pattern');
         }
         // Generate Command
@@ -28035,7 +28035,7 @@ exports.MeshJsLe = MeshJsLe;
 // Constant Values
 MeshJsLe.PATTERN = {
     BLINK: 1,
-    SOFT: 2,
+    FIREFLY: 2,
 };
 
 
