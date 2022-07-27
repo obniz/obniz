@@ -27,9 +27,9 @@ class MESH_100MD extends MESH_1.MESH {
             request_id: _md.getResponse.requestId,
         };
     }
-    setMode(detection_mode, detection_time = 500, response_time = 500, requestid = 0) {
+    setMode(detection_mode, opt_detection_time = 500, opt_response_time = 500, opt_requestid = 0) {
         const _md = this._mesh;
-        this.writeWOResponse(_md.parseSetmodeCommand(detection_mode, detection_time, response_time, requestid));
+        this.writeWOResponse(_md.parseSetmodeCommand(detection_mode, opt_detection_time, opt_response_time, opt_requestid));
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100MD.PREFIX) !== -1;

@@ -47,25 +47,25 @@ class MESH_100GP extends MESH_1.MESH {
         const _gp = this._mesh;
         this.writeWOResponse(_gp.parseSetmodeCommand(din, din_notify, dout, pwm_ratio, vcc, ain_range_upper, ain_range_bottom, ain_notify));
     }
-    setDin(pin, request_id = 0) {
+    setDin(pin, opt_request_id = 0) {
         const _gp = this._mesh;
-        this.writeWOResponse(_gp.parseSetDinCommand(pin, request_id));
+        this.writeWOResponse(_gp.parseSetDinCommand(pin, opt_request_id));
     }
-    setAin(mode, request_id = 0) {
+    setAin(mode, opt_request_id = 0) {
         const _gp = this._mesh;
-        this.writeWOResponse(_gp.parseSetAinCommand(mode, request_id));
+        this.writeWOResponse(_gp.parseSetAinCommand(mode, opt_request_id));
     }
-    setVout(pin, request_id = 0) {
+    setVout(pin, opt_request_id = 0) {
         const _gp = this._mesh;
-        this.writeWOResponse(_gp.parseSetVoutCommand(pin, request_id));
+        this.writeWOResponse(_gp.parseSetVoutCommand(pin, opt_request_id));
     }
-    setDout(pin, request_id = 0) {
+    setDout(pin, opt_request_id = 0) {
         const _gp = this._mesh;
-        this.writeWOResponse(_gp.parseSetDoutCommand(pin, request_id));
+        this.writeWOResponse(_gp.parseSetDoutCommand(pin, opt_request_id));
     }
-    setPWMNotify(request_id = 0) {
+    setPWMNotify(opt_request_id = 0) {
         const _gp = this._mesh;
-        this.writeWOResponse(_gp.parseSetPWMCommand(request_id));
+        this.writeWOResponse(_gp.parseSetPWMCommand(opt_request_id));
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100GP.PREFIX) !== -1;

@@ -52,7 +52,7 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
     humidity_bottom: number,
     humidity_condision: number,
     type: number,
-    request_id = 0
+    opt_request_id = 0
   ): void {
     const _th = this._mesh as MeshJsTh;
     this.writeWOResponse(
@@ -64,7 +64,7 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
         temperature_condition,
         humidity_condision,
         type,
-        request_id
+        opt_request_id
       )
     );
   }

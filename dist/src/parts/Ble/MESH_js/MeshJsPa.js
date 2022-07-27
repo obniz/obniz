@@ -39,10 +39,10 @@ class MeshJsPa extends MeshJs_1.MeshJs {
     /**
      *
      * @param notifyType
-     * @param requestId
+     * @param opt_requestId
      * @returns command
      */
-    parseSetmodeCommand(notifyType, requestId = 0) {
+    parseSetmodeCommand(notifyType, opt_requestId = 0) {
         // Error Handle
         if (notifyType % 4 !== 0) {
             throw new MeshJsError_1.MeshJsInvalidValueError('notifyType');
@@ -59,7 +59,7 @@ class MeshJsPa extends MeshJs_1.MeshJs {
         const HEADER = [
             this.MESSAGE_TYPE_ID_,
             this.EVENT_TYPE_ID_,
-            requestId,
+            opt_requestId,
         ];
         const FIXED = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2];
         const data = HEADER.concat(FIXED).concat(notifyType);

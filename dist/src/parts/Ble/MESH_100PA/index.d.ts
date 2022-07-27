@@ -35,7 +35,7 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
         proximity: number;
         brightness: number;
     }>;
-    setMode(type: number, request_id?: number): void;
+    setMode(type: number, opt_request_id?: number): void;
     protected static _isMESHblock(name: string): boolean;
     protected prepareConnect(): void;
     protected beforeOnDisconnectWait(reason: unknown): Promise<void>;

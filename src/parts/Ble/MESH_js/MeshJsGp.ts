@@ -230,11 +230,11 @@ export class MeshJsGp extends MeshJs {
    * parseSetDinCommand
    *
    * @param pin
-   * @param requestId
+   * @param opt_requestId
    * @returns
    */
-  public parseSetDinCommand(pin: number, requestId = 0) {
-    return this.parseSetCommand_(this.DIGITAL_IN_ID_, pin, requestId);
+  public parseSetDinCommand(pin: number, opt_requestId = 0) {
+    return this.parseSetCommand_(this.DIGITAL_IN_ID_, pin, opt_requestId);
   }
 
   /**

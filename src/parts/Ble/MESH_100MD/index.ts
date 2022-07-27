@@ -46,17 +46,17 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
 
   public setMode(
     detection_mode: number,
-    detection_time = 500,
-    response_time = 500,
-    requestid = 0
+    opt_detection_time = 500,
+    opt_response_time = 500,
+    opt_requestid = 0
   ): void {
     const _md = this._mesh as MeshJsMd;
     this.writeWOResponse(
       _md.parseSetmodeCommand(
         detection_mode,
-        detection_time,
-        response_time,
-        requestid
+        opt_detection_time,
+        opt_response_time,
+        opt_requestid
       )
     );
   }

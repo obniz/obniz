@@ -51,10 +51,10 @@ class MeshJsTh extends MeshJs_1.MeshJs {
      * @param humidityRangeBottom
      * @param humidityCondision
      * @param type
-     * @param requestId
+     * @param opt_requestId
      * @returns
      */
-    parseSetmodeCommand(temperatureRangeUpper, temperatureRangeBottom, temperatureCondition, humidityRangeUpper, humidityRangeBottom, humidityCondision, type, requestId = 0) {
+    parseSetmodeCommand(temperatureRangeUpper, temperatureRangeBottom, temperatureCondition, humidityRangeUpper, humidityRangeBottom, humidityCondision, type, opt_requestId = 0) {
         // Error Handle
         if (temperatureRangeBottom < this.MIN_TEMPERATURE_ ||
             this.MAX_TEMPERATURE_ < temperatureRangeUpper) {
@@ -68,7 +68,7 @@ class MeshJsTh extends MeshJs_1.MeshJs {
         const HEADER = [
             this.MESSAGE_TYPE_ID_,
             this.EVENT_TYPE_ID_,
-            requestId,
+            opt_requestId,
         ];
         const BASE = 10;
         const TEMP_UPPER = this.num2array_(BASE * this.invcomplemnt_(temperatureRangeUpper));

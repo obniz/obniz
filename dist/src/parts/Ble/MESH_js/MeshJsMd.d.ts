@@ -26,10 +26,10 @@ export declare class MeshJsMd extends MeshJs {
     /**
      *
      * @param detectionMode
-     * @param detectionTime
-     * @param responseTime
-     * @param requestId
+     * @param opt_detectionTime
+     * @param opt_responseTime
+     * @param opt_requestId
      * @returns
      */
-    parseSetmodeCommand(detectionMode: number, detectionTime?: number, responseTime?: number, requestId?: number): number[];
+    parseSetmodeCommand(detectionMode: number, opt_detectionTime?: number, opt_responseTime?: number, opt_requestId?: number): number[];
 }

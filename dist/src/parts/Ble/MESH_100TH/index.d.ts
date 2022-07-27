@@ -35,7 +35,7 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
         temperature: number;
         humidity: number;
     }>;
-    setMode(temperature_upper: number, temperature_bottom: number, temperature_condition: number, humidity_upper: number, humidity_bottom: number, humidity_condision: number, type: number, request_id?: number): void;
+    setMode(temperature_upper: number, temperature_bottom: number, temperature_condition: number, humidity_upper: number, humidity_bottom: number, humidity_condision: number, type: number, opt_request_id?: number): void;
     protected static _isMESHblock(name: string): boolean;
     protected prepareConnect(): void;
     protected beforeOnDisconnectWait(reason: unknown): Promise<void>;

@@ -44,9 +44,9 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
     };
   }
 
-  public setMode(type: number, request_id = 0): void {
+  public setMode(type: number, opt_request_id = 0): void {
     const _pa = this._mesh as MeshJsPa;
-    this.writeWOResponse(_pa.parseSetmodeCommand(type, request_id));
+    this.writeWOResponse(_pa.parseSetmodeCommand(type, opt_request_id));
   }
 
   protected static _isMESHblock(name: string): boolean {

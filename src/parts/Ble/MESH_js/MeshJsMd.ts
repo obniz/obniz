@@ -51,35 +51,38 @@ export class MeshJsMd extends MeshJs {
   /**
    *
    * @param detectionMode
-   * @param detectionTime
-   * @param responseTime
-   * @param requestId
+   * @param opt_detectionTime
+   * @param opt_responseTime
+   * @param opt_requestId
    * @returns
    */
   public parseSetmodeCommand(
     detectionMode: number,
-    detectionTime = 500,
-    responseTime = 500,
-    requestId = 0
+    opt_detectionTime = 500,
+    opt_responseTime = 500,
+    opt_requestId = 0
   ): number[] {
     // Error Handle
     const DETECTION_TIME_MIN = 200 as const;
     const DETECTION_TIME_MAX = 60000 as const;
     if (
-      detectionTime < DETECTION_TIME_MIN ||
-      DETECTION_TIME_MAX < detectionTime
+      opt_detectionTime < DETECTION_TIME_MIN ||
+      DETECTION_TIME_MAX < opt_detectionTime
     ) {
       throw new MeshJsOutOfRangeError(
-        'detectionTime',
+        'opt_detectionTime',
         DETECTION_TIME_MIN,
         DETECTION_TIME_MAX
       );
     }
     const RESPONSE_TIME_MIN = 500 as const;
     const RESPONSE_TIME_MAX = 60000 as const;
-    if (responseTime < RESPONSE_TIME_MIN || RESPONSE_TIME_MAX < responseTime) {
+    if (
+      opt_responseTime < RESPONSE_TIME_MIN ||
+      RESPONSE_TIME_MAX < opt_responseTime
+    ) {
       throw new MeshJsOutOfRangeError(
-        'responseTime',
+        'opt_responseTime',
         RESPONSE_TIME_MIN,
         RESPONSE_TIME_MAX
       );
@@ -89,15 +92,15 @@ export class MeshJsMd extends MeshJs {
     const HEADER = [
       this.MESSAGE_TYPE_ID_,
       this.EVENT_TYPE_ID_,
-      requestId,
+      opt_requestId,
     ] as const;
     const BYTE = 256 as const;
     const BODY = [
       detectionMode,
-      detectionTime % BYTE,
-      Math.floor(detectionTime / BYTE),
-      responseTime % BYTE,
-      Math.floor(responseTime / BYTE),
+      opt_detectionTime % BYTE,
+      Math.floor(opt_detectionTime / BYTE),
+      opt_responseTime % BYTE,
+      Math.floor(opt_responseTime / BYTE),
     ] as const;
     const data: number[] = HEADER.concat(BODY);
     data.push(this.checkSum(data));

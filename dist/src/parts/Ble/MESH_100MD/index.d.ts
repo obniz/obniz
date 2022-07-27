@@ -31,7 +31,7 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
         detection_mode: number;
         request_id: number;
     }>;
-    setMode(detection_mode: number, detection_time?: number, response_time?: number, requestid?: number): void;
+    setMode(detection_mode: number, opt_detection_time?: number, opt_response_time?: number, opt_requestid?: number): void;
     protected static _isMESHblock(name: string): boolean;
     protected prepareConnect(): void;
     protected beforeOnDisconnectWait(reason: unknown): Promise<void>;

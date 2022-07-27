@@ -26,9 +26,9 @@ class MESH_100PA extends MESH_1.MESH {
             brightness: _pa.getResponse.brightness,
         };
     }
-    setMode(type, request_id = 0) {
+    setMode(type, opt_request_id = 0) {
         const _pa = this._mesh;
-        this.writeWOResponse(_pa.parseSetmodeCommand(type, request_id));
+        this.writeWOResponse(_pa.parseSetmodeCommand(type, opt_request_id));
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100PA.PREFIX) !== -1;

@@ -20,8 +20,8 @@ export declare class MeshJsPa extends MeshJs {
     /**
      *
      * @param notifyType
-     * @param requestId
+     * @param opt_requestId
      * @returns command
      */
-    parseSetmodeCommand(notifyType: number, requestId?: number): number[];
+    parseSetmodeCommand(notifyType: number, opt_requestId?: number): number[];
 }

@@ -102,29 +102,29 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     );
   }
 
-  public setDin(pin: number, request_id = 0): void {
+  public setDin(pin: number, opt_request_id = 0): void {
     const _gp = this._mesh as MeshJsGp;
-    this.writeWOResponse(_gp.parseSetDinCommand(pin, request_id));
+    this.writeWOResponse(_gp.parseSetDinCommand(pin, opt_request_id));
   }
 
-  public setAin(mode: number, request_id = 0) {
+  public setAin(mode: number, opt_request_id = 0) {
     const _gp = this._mesh as MeshJsGp;
-    this.writeWOResponse(_gp.parseSetAinCommand(mode, request_id));
+    this.writeWOResponse(_gp.parseSetAinCommand(mode, opt_request_id));
   }
 
-  public setVout(pin: number, request_id = 0) {
+  public setVout(pin: number, opt_request_id = 0) {
     const _gp = this._mesh as MeshJsGp;
-    this.writeWOResponse(_gp.parseSetVoutCommand(pin, request_id));
+    this.writeWOResponse(_gp.parseSetVoutCommand(pin, opt_request_id));
   }
 
-  public setDout(pin: number, request_id = 0) {
+  public setDout(pin: number, opt_request_id = 0) {
     const _gp = this._mesh as MeshJsGp;
-    this.writeWOResponse(_gp.parseSetDoutCommand(pin, request_id));
+    this.writeWOResponse(_gp.parseSetDoutCommand(pin, opt_request_id));
   }
 
-  public setPWMNotify(request_id = 0) {
+  public setPWMNotify(opt_request_id = 0) {
     const _gp = this._mesh as MeshJsGp;
-    this.writeWOResponse(_gp.parseSetPWMCommand(request_id));
+    this.writeWOResponse(_gp.parseSetPWMCommand(opt_request_id));
   }
 
   protected static _isMESHblock(name: string): boolean {

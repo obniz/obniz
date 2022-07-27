@@ -70,10 +70,10 @@ export declare class MeshJsGp extends MeshJs {
      * parseSetDinCommand
      *
      * @param pin
-     * @param requestId
+     * @param opt_requestId
      * @returns
      */
-    parseSetDinCommand(pin: number, requestId?: number): number[];
+    parseSetDinCommand(pin: number, opt_requestId?: number): number[];
     /**
      * parseSetAinCommand
      *

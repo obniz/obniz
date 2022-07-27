@@ -69,11 +69,11 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
      * @param ain_notify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
      */
     setMode(din: MESH_100GP['DigitalPins'], din_notify: MESH_100GP['DigitalPins'], dout: MESH_100GP['DigitalPins'], pwm_ratio: number, vcc: number, ain_range_upper: number, ain_range_bottom: number, ain_notify: number): void;
-    setDin(pin: number, request_id?: number): void;
-    setAin(mode: number, request_id?: number): void;
-    setVout(pin: number, request_id?: number): void;
-    setDout(pin: number, request_id?: number): void;
-    setPWMNotify(request_id?: number): void;
+    setDin(pin: number, opt_request_id?: number): void;
+    setAin(mode: number, opt_request_id?: number): void;
+    setVout(pin: number, opt_request_id?: number): void;
+    setDout(pin: number, opt_request_id?: number): void;
+    setPWMNotify(opt_request_id?: number): void;
     protected static _isMESHblock(name: string): boolean;
     protected prepareConnect(): void;
     protected beforeOnDisconnectWait(reason: unknown): Promise<void>;

@@ -46,10 +46,10 @@ export class MeshJsPa extends MeshJs {
   /**
    *
    * @param notifyType
-   * @param requestId
+   * @param opt_requestId
    * @returns command
    */
-  public parseSetmodeCommand(notifyType: number, requestId = 0): number[] {
+  public parseSetmodeCommand(notifyType: number, opt_requestId = 0): number[] {
     // Error Handle
     if (notifyType % 4 !== 0) {
       throw new MeshJsInvalidValueError('notifyType');
@@ -72,7 +72,7 @@ export class MeshJsPa extends MeshJs {
     const HEADER = [
       this.MESSAGE_TYPE_ID_,
       this.EVENT_TYPE_ID_,
-      requestId,
+      opt_requestId,
     ] as const;
     const FIXED = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2] as const;
     const data: number[] = HEADER.concat(FIXED).concat(notifyType);
