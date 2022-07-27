@@ -6,6 +6,7 @@ This is an app-enabled, multi-color, LED indicator for quick prototyping and ins
 See []
 
 ## isMESHblock(peripheral)
+
 '''javascript
 // Example
 await obniz.ble.initWait();
@@ -16,6 +17,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     }
 };
 await obniz.ble.scan.startWait();
+
 '''
 
 ## new M
