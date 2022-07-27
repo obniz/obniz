@@ -16,6 +16,11 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         this.writeCharacteristic_ = null;
         this.writeWOResponseCharacteristic_ = null;
     }
+    /**
+     *
+     * @param peripheral
+     * @returns
+     */
     static isMESHblock(peripheral) {
         const _name = peripheral.localName;
         if (!_name) {
@@ -26,6 +31,12 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         }
         return this._isMESHblock(_name);
     }
+    /**
+     *
+     * @param peripheral
+     * @param sirialnumber
+     * @returns
+     */
     static sameSirialNumberBlock(peripheral, sirialnumber) {
         var _a;
         if (!this.isMESHblock(peripheral)) {
