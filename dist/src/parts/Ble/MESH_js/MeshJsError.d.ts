@@ -4,7 +4,7 @@ export declare class MeshJsError extends Error {
 }
 export declare class MeshJsOutOfRangeError extends MeshJsError {
     property: string;
-    constructor(property: string, min?: number, max?: number);
+    constructor(property: string, min: number, max: number);
 }
 export declare class MeshJsInvalidValueError extends MeshJsError {
     property: string;

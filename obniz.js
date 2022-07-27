@@ -27671,9 +27671,12 @@ class MeshJsOutOfRangeError extends MeshJsError {
     constructor(property, min, max) {
         super(1, property +
             ' is out of range. ' +
-            (min !== void 0 && max !== void 0
-                ? property + ' must be ' + min + ' ~ ' + max + '.'
-                : ''));
+            property +
+            ' must be ' +
+            min +
+            ' ~ ' +
+            max +
+            '.');
         this.property = property;
     }
 }
@@ -27991,7 +27994,7 @@ class MeshJsLe extends MeshJs_1.MeshJs {
         }
         if (pattern !== MeshJsLe.PATTERN.BLINK &&
             pattern !== MeshJsLe.PATTERN.SOFT) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('pattern');
+            throw new MeshJsError_1.MeshJsInvalidValueError('pattern');
         }
         // Generate Command
         const MESSAGE_TYPE_ID = 1;
@@ -28186,7 +28189,7 @@ class MeshJsPa extends MeshJs_1.MeshJs {
             MeshJsPa.NOTIFY_TYPE.ONCE +
             MeshJsPa.NOTIFY_TYPE.ALWAYS;
         if (notifyType < NOTIFY_TYPE_MIN || NOTIFY_TYPE_MAX < notifyType) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('notifyType');
+            throw new MeshJsError_1.MeshJsOutOfRangeError('notifyType', NOTIFY_TYPE_MIN, NOTIFY_TYPE_MAX);
         }
         // Generate Command
         const HEADER = [

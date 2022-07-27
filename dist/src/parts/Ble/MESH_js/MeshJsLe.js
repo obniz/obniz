@@ -40,7 +40,7 @@ class MeshJsLe extends MeshJs_1.MeshJs {
         }
         if (pattern !== MeshJsLe.PATTERN.BLINK &&
             pattern !== MeshJsLe.PATTERN.SOFT) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('pattern');
+            throw new MeshJsError_1.MeshJsInvalidValueError('pattern');
         }
         // Generate Command
         const MESSAGE_TYPE_ID = 1;

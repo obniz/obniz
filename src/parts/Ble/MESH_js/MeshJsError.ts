@@ -7,14 +7,17 @@ export class MeshJsError extends Error {
 }
 
 export class MeshJsOutOfRangeError extends MeshJsError {
-  constructor(public property: string, min?: number, max?: number) {
+  constructor(public property: string, min: number, max: number) {
     super(
       1,
       property +
         ' is out of range. ' +
-        (min !== void 0 && max !== void 0
-          ? property + ' must be ' + min + ' ~ ' + max + '.'
-          : '')
+        property +
+        ' must be ' +
+        min +
+        ' ~ ' +
+        max +
+        '.'
     );
   }
 }

@@ -13,9 +13,12 @@ class MeshJsOutOfRangeError extends MeshJsError {
     constructor(property, min, max) {
         super(1, property +
             ' is out of range. ' +
-            (min !== void 0 && max !== void 0
-                ? property + ' must be ' + min + ' ~ ' + max + '.'
-                : ''));
+            property +
+            ' must be ' +
+            min +
+            ' ~ ' +
+            max +
+            '.');
         this.property = property;
     }
 }

@@ -53,7 +53,7 @@ class MeshJsPa extends MeshJs_1.MeshJs {
             MeshJsPa.NOTIFY_TYPE.ONCE +
             MeshJsPa.NOTIFY_TYPE.ALWAYS;
         if (notifyType < NOTIFY_TYPE_MIN || NOTIFY_TYPE_MAX < notifyType) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('notifyType');
+            throw new MeshJsError_1.MeshJsOutOfRangeError('notifyType', NOTIFY_TYPE_MIN, NOTIFY_TYPE_MAX);
         }
         // Generate Command
         const HEADER = [

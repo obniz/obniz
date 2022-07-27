@@ -1,5 +1,5 @@
 import { MeshJs } from './MeshJs';
-import { MeshJsOutOfRangeError } from './MeshJsError';
+import { MeshJsInvalidValueError, MeshJsOutOfRangeError } from './MeshJsError';
 export class MeshJsLe extends MeshJs {
   // Constant Values
   public static readonly PATTERN = {
@@ -54,7 +54,7 @@ export class MeshJsLe extends MeshJs {
       pattern !== MeshJsLe.PATTERN.BLINK &&
       pattern !== MeshJsLe.PATTERN.SOFT
     ) {
-      throw new MeshJsOutOfRangeError('pattern');
+      throw new MeshJsInvalidValueError('pattern');
     }
 
     // Generate Command
