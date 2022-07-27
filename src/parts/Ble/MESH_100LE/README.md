@@ -7,7 +7,7 @@ See []
 
 ## isMESHblock(peripheral)
 
-'''javascript
+```javascript
 // Example
 await obniz.ble.initWait();
 const ledBlock = Obniz.getPartsClass('MESH_100LE');
@@ -18,7 +18,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 };
 await obniz.ble.scan.startWait();
 
-'''
+```
 
 ## new M
 
