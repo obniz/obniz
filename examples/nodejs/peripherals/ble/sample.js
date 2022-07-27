@@ -93,7 +93,7 @@ async function sampleLE(peripheral) {
   const _total_time = 4000; // 4.000 seconds
   const _cycle_on_time = 512; // 0.500 seconds
   const _cycle_off_time = 512; // 0.500 seconds
-  await LED_block.lightup(_red, _green, _blue, _total_time, _cycle_on_time, _cycle_off_time, mesh_le.Pattern.SOFT);
+  LED_block.lightup(_red, _green, _blue, _total_time, _cycle_on_time, _cycle_off_time, mesh_le.Pattern.SOFT);
 
   LED_block.onStatusButtonNotify = (()=>{console.log('status button pressed');});
 }
