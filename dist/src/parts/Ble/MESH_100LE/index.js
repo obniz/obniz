@@ -18,7 +18,7 @@ class MESH_100LE extends MESH_1.MESH {
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this._mesh.battery,
+            battery: this.meshBlock.battery,
         };
     }
     /**
@@ -27,21 +27,22 @@ class MESH_100LE extends MESH_1.MESH {
      * @param red 0 ~ 127
      * @param green 0 ~ 127
      * @param blue 0 ~ 127
-     * @param time 0 ~ 65535 [ms]
-     * @param cycle_on 0 ~ 65535 [ms]
-     * @param cycle_off 0 ~ 65535 [ms]
+     * @param totalTime 0 ~ 65535 [ms]
+     * @param cycleOnTime 0 ~ 65535 [ms]
+     * @param cycleOffTime 0 ~ 65535 [ms]
      * @param pattern Pattern.Blink or Pattern.Soft
      * @returns
      */
-    lightup(red, green, blue, time, cycle_on, cycle_off, pattern) {
-        const _le = this._mesh;
-        this.writeWOResponse(_le.parseLightupCommand(red, green, blue, time, cycle_on, cycle_off, pattern));
+    lightup(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern) {
+        const ledBlock = this.meshBlock;
+        const command = ledBlock.parseLightupCommand(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern);
+        this.writeWOResponse(command);
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100LE.PREFIX) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MeshJsLe_1.MeshJsLe();
+        this.meshBlock = new MeshJsLe_1.MeshJsLe();
         super.prepareConnect();
     }
     async beforeOnDisconnectWait(reason) {

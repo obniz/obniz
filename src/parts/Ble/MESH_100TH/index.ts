@@ -34,39 +34,38 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
 
   public async getDataWait() {
     this.checkConnected();
-    const _th = this._mesh as MeshJsTh;
+    const _th = this.meshBlock as MeshJsTh;
     return {
       name: this.peripheral.localName!,
       address: this.peripheral.address,
-      battery: this._mesh.battery,
+      battery: this.meshBlock.battery,
       temperature: _th.getResponse.temperature,
       humidity: _th.getResponse.humidity,
     };
   }
 
   public setMode(
-    temperature_upper: number,
-    temperature_bottom: number,
-    temperature_condition: number,
-    humidity_upper: number,
-    humidity_bottom: number,
-    humidity_condision: number,
+    temperatureUpper: number,
+    temperatureBottom: number,
+    temperatureCondition: number,
+    humidityUpper: number,
+    humidityBottom: number,
+    humidityCondision: number,
     type: number,
-    opt_request_id = 0
+    opt_requestId = 0
   ): void {
-    const _th = this._mesh as MeshJsTh;
-    this.writeWOResponse(
-      _th.parseSetmodeCommand(
-        temperature_upper,
-        temperature_bottom,
-        humidity_upper,
-        humidity_bottom,
-        temperature_condition,
-        humidity_condision,
-        type,
-        opt_request_id
-      )
+    const temperatureAndHumidityBlock = this.meshBlock as MeshJsTh;
+    const command = temperatureAndHumidityBlock.parseSetmodeCommand(
+      temperatureUpper,
+      temperatureBottom,
+      humidityUpper,
+      humidityBottom,
+      temperatureCondition,
+      humidityCondision,
+      type,
+      opt_requestId
     );
+    this.writeWOResponse(command);
   }
 
   protected static _isMESHblock(name: string): boolean {
@@ -74,9 +73,11 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
   }
 
   protected prepareConnect(): void {
-    this._mesh = new MeshJsTh();
-    const _th = this._mesh as MeshJsTh;
-    _th.onNotify = (response: MeshJsTh['response_']) => {
+    this.meshBlock = new MeshJsTh();
+    const temperatureAndHumidityBlock = this.meshBlock as MeshJsTh;
+    temperatureAndHumidityBlock.onNotify = (
+      response: MeshJsTh['response_']
+    ) => {
       if (typeof this.onNotify !== 'function') {
         return;
       }

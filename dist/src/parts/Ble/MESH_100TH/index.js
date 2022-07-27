@@ -17,26 +17,27 @@ class MESH_100TH extends MESH_1.MESH {
     }
     async getDataWait() {
         this.checkConnected();
-        const _th = this._mesh;
+        const _th = this.meshBlock;
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this._mesh.battery,
+            battery: this.meshBlock.battery,
             temperature: _th.getResponse.temperature,
             humidity: _th.getResponse.humidity,
         };
     }
-    setMode(temperature_upper, temperature_bottom, temperature_condition, humidity_upper, humidity_bottom, humidity_condision, type, opt_request_id = 0) {
-        const _th = this._mesh;
-        this.writeWOResponse(_th.parseSetmodeCommand(temperature_upper, temperature_bottom, humidity_upper, humidity_bottom, temperature_condition, humidity_condision, type, opt_request_id));
+    setMode(temperatureUpper, temperatureBottom, temperatureCondition, humidityUpper, humidityBottom, humidityCondision, type, opt_requestId = 0) {
+        const temperatureAndHumidityBlock = this.meshBlock;
+        const command = temperatureAndHumidityBlock.parseSetmodeCommand(temperatureUpper, temperatureBottom, humidityUpper, humidityBottom, temperatureCondition, humidityCondision, type, opt_requestId);
+        this.writeWOResponse(command);
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100TH.PREFIX) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MeshJsTh_1.MeshJsTh();
-        const _th = this._mesh;
-        _th.onNotify = (response) => {
+        this.meshBlock = new MeshJsTh_1.MeshJsTh();
+        const temperatureAndHumidityBlock = this.meshBlock;
+        temperatureAndHumidityBlock.onNotify = (response) => {
             if (typeof this.onNotify !== 'function') {
                 return;
             }

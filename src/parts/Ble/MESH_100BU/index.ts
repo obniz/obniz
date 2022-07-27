@@ -35,7 +35,7 @@ export default class MESH_100BU extends MESH<MESH_100BU_Data> {
     return {
       name: this.peripheral.localName!,
       address: this.peripheral.address,
-      battery: this._mesh.battery,
+      battery: this.meshBlock.battery,
     };
   }
 
@@ -44,22 +44,22 @@ export default class MESH_100BU extends MESH<MESH_100BU_Data> {
   }
 
   protected prepareConnect(): void {
-    this._mesh = new MeshJsBu();
+    this.meshBlock = new MeshJsBu();
 
-    const _bu = this._mesh as MeshJsBu;
-    _bu.onSinglePressed = () => {
+    const buttonBlock = this.meshBlock as MeshJsBu;
+    buttonBlock.onSinglePressed = () => {
       if (typeof this.onSinglePressed !== 'function') {
         return;
       }
       this.onSinglePressed();
     };
-    _bu.onLongPressed = () => {
+    buttonBlock.onLongPressed = () => {
       if (typeof this.onLongPressed !== 'function') {
         return;
       }
       this.onLongPressed();
     };
-    _bu.onDoublePressed = () => {
+    buttonBlock.onDoublePressed = () => {
       if (typeof this.onDoublePressed !== 'function') {
         return;
       }

@@ -26867,42 +26867,42 @@ class MESH_100AC extends MESH_1.MESH {
     }
     async getDataWait() {
         this.checkConnected();
-        const _ac = this._mesh;
+        const moveBlock = this.meshBlock;
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this._mesh.battery,
-            accele_x: _ac.getAccele.x,
-            accele_y: _ac.getAccele.y,
-            accele_z: _ac.getAccele.z,
-            face: _ac.getFace,
+            battery: this.meshBlock.battery,
+            accele_x: moveBlock.getAccele.x,
+            accele_y: moveBlock.getAccele.y,
+            accele_z: moveBlock.getAccele.z,
+            face: moveBlock.getFace,
         };
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100AC.PREFIX) === 0;
     }
     prepareConnect() {
-        this._mesh = new MeshJsAc_1.MeshJsAc();
-        const _ac = this._mesh;
-        _ac.onTapped = (accele) => {
+        this.meshBlock = new MeshJsAc_1.MeshJsAc();
+        const moveBlock = this.meshBlock;
+        moveBlock.onTapped = (accele) => {
             if (typeof this.onTapped !== 'function') {
                 return;
             }
             this.onTapped(accele);
         };
-        _ac.onShaked = (accele) => {
+        moveBlock.onShaked = (accele) => {
             if (typeof this.onShaked !== 'function') {
                 return;
             }
             this.onShaked(accele);
         };
-        _ac.onFlipped = (accele) => {
+        moveBlock.onFlipped = (accele) => {
             if (typeof this.onFlipped !== 'function') {
                 return;
             }
             this.onFlipped(accele);
         };
-        _ac.onDirection = (face, accele) => {
+        moveBlock.onDirection = (face, accele) => {
             if (typeof this.onDirection !== 'function') {
                 return;
             }
@@ -26949,28 +26949,28 @@ class MESH_100BU extends MESH_1.MESH {
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this._mesh.battery,
+            battery: this.meshBlock.battery,
         };
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100BU.PREFIX) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MeshJsBu_1.MeshJsBu();
-        const _bu = this._mesh;
-        _bu.onSinglePressed = () => {
+        this.meshBlock = new MeshJsBu_1.MeshJsBu();
+        const buttonBlock = this.meshBlock;
+        buttonBlock.onSinglePressed = () => {
             if (typeof this.onSinglePressed !== 'function') {
                 return;
             }
             this.onSinglePressed();
         };
-        _bu.onLongPressed = () => {
+        buttonBlock.onLongPressed = () => {
             if (typeof this.onLongPressed !== 'function') {
                 return;
             }
             this.onLongPressed();
         };
-        _bu.onDoublePressed = () => {
+        buttonBlock.onDoublePressed = () => {
             if (typeof this.onDoublePressed !== 'function') {
                 return;
             }
@@ -27007,7 +27007,7 @@ class MESH_100GP extends MESH_1.MESH {
     constructor() {
         super(...arguments);
         this.DigitalPins = this
-            ._mesh.DigitalPins;
+            .meshBlock.DigitalPins;
         // Event Handler
         this.onDigitalInEventNotify = null;
         this.onAnalogInEventNotify = null;
@@ -27023,88 +27023,94 @@ class MESH_100GP extends MESH_1.MESH {
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this._mesh.battery,
+            battery: this.meshBlock.battery,
         };
     }
     /**
      * setMode
      *
-     * @param din {p1:boolean, p2:boolean, p3:boolean}
-     * @param din_notify {p1:boolean, p2:boolean, p3:boolean}
-     * @param dout {p1:boolean, p2:boolean, p3:boolean}
-     * @param pwm_ratio 0 ~ 255
+     * @param digitalIn {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalInNotify {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalOut {p1:boolean, p2:boolean, p3:boolean}
+     * @param pwmRatio 0 ~ 255
      * @param vcc VCC.AUTO or VCC.ON or VCC.OFF
-     * @param ain_range_upper 0.00 ~ 3.00[V], resolution 0.05[V]
-     * @param ain_range_bottom 0.00 ~ 3.00[V], resolution 0.05[V]
-     * @param ain_notify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+     * @param analogInRangeUpper 0.00 ~ 3.00[V], resolution 0.05[V]
+     * @param analogInRangeBottom 0.00 ~ 3.00[V], resolution 0.05[V]
+     * @param analogInNotify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
      */
-    setMode(din, din_notify, dout, pwm_ratio, vcc, ain_range_upper, ain_range_bottom, ain_notify) {
-        const _gp = this._mesh;
-        this.writeWOResponse(_gp.parseSetmodeCommand(din, din_notify, dout, pwm_ratio, vcc, ain_range_upper, ain_range_bottom, ain_notify));
+    setMode(digitalIn, digitalInNotify, digitalOut, pwmRatio, vcc, analogInRangeUpper, analogInRangeBottom, analogInNotify) {
+        const gpioBlock = this.meshBlock;
+        const command = gpioBlock.parseSetmodeCommand(digitalIn, digitalInNotify, digitalOut, pwmRatio, vcc, analogInRangeUpper, analogInRangeBottom, analogInNotify);
+        this.writeWOResponse(command);
     }
-    setDin(pin, opt_request_id = 0) {
-        const _gp = this._mesh;
-        this.writeWOResponse(_gp.parseSetDinCommand(pin, opt_request_id));
+    setDin(pin, opt_requestId = 0) {
+        const gpioBlock = this.meshBlock;
+        const command = gpioBlock.parseSetDinCommand(pin, opt_requestId);
+        this.writeWOResponse(command);
     }
-    setAin(mode, opt_request_id = 0) {
-        const _gp = this._mesh;
-        this.writeWOResponse(_gp.parseSetAinCommand(mode, opt_request_id));
+    setAin(mode, opt_requestId = 0) {
+        const gpioBlock = this.meshBlock;
+        const command = gpioBlock.parseSetAinCommand(mode, opt_requestId);
+        this.writeWOResponse(command);
     }
-    setVout(pin, opt_request_id = 0) {
-        const _gp = this._mesh;
-        this.writeWOResponse(_gp.parseSetVoutCommand(pin, opt_request_id));
+    setVout(pin, opt_requestId = 0) {
+        const gpioBlock = this.meshBlock;
+        const command = gpioBlock.parseSetVoutCommand(pin, opt_requestId);
+        this.writeWOResponse(command);
     }
-    setDout(pin, opt_request_id = 0) {
-        const _gp = this._mesh;
-        this.writeWOResponse(_gp.parseSetDoutCommand(pin, opt_request_id));
+    setDout(pin, opt_requestId = 0) {
+        const gpioBlock = this.meshBlock;
+        const command = gpioBlock.parseSetDoutCommand(pin, opt_requestId);
+        this.writeWOResponse(command);
     }
-    setPWMNotify(opt_request_id = 0) {
-        const _gp = this._mesh;
-        this.writeWOResponse(_gp.parseSetPWMCommand(opt_request_id));
+    setPWMNotify(opt_requestId = 0) {
+        const gpioBlock = this.meshBlock;
+        const command = gpioBlock.parseSetPWMCommand(opt_requestId);
+        this.writeWOResponse(command);
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100GP.PREFIX) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MeshJsGp_1.MeshJsGp();
-        const _gp = this._mesh;
-        _gp.onDigitalInEventNotify = (pin, state) => {
+        this.meshBlock = new MeshJsGp_1.MeshJsGp();
+        const gpioBlock = this.meshBlock;
+        gpioBlock.onDigitalInEventNotify = (pin, state) => {
             if (typeof this.onDigitalInEventNotify !== 'function') {
                 return;
             }
             this.onDigitalInEventNotify(pin, state);
         };
-        _gp.onAnalogInEventNotify = (level) => {
+        gpioBlock.onAnalogInEventNotify = (level) => {
             if (typeof this.onAnalogInEventNotify !== 'function') {
                 return;
             }
             this.onAnalogInEventNotify(level);
         };
-        _gp.onDigitalInNotify = (requestId, pin, state) => {
+        gpioBlock.onDigitalInNotify = (requestId, pin, state) => {
             if (typeof this.onDigitalInNotify !== 'function') {
                 return;
             }
             this.onDigitalInNotify(requestId, pin, state);
         };
-        _gp.onAnalogInNotify = (requestId, state, mode) => {
+        gpioBlock.onAnalogInNotify = (requestId, state, mode) => {
             if (typeof this.onAnalogInNotify !== 'function') {
                 return;
             }
             this.onAnalogInNotify(requestId, state, mode);
         };
-        _gp.onVOutNotify = (requestId, state) => {
+        gpioBlock.onVOutNotify = (requestId, state) => {
             if (typeof this.onVOutNotify !== 'function') {
                 return;
             }
             this.onVOutNotify(requestId, state);
         };
-        _gp.onDigitalOutNotify = (requestId, pin, state) => {
+        gpioBlock.onDigitalOutNotify = (requestId, pin, state) => {
             if (typeof this.onDigitalOutNotify !== 'function') {
                 return;
             }
             this.onDigitalOutNotify(requestId, pin, state);
         };
-        _gp.onPwmNotify = (requestId, level) => {
+        gpioBlock.onPwmNotify = (requestId, level) => {
             if (typeof this.onPwmNotify !== 'function') {
                 return;
             }
@@ -27120,9 +27126,9 @@ exports.default = MESH_100GP;
 MESH_100GP.PartsName = 'MESH_100GP';
 MESH_100GP.PREFIX = 'MESH-100GP';
 MESH_100GP.AnalogInputEventCondition = MeshJsGp_1.MeshJsGp.ANALOG_IN_EVENT_CONDITION;
-MESH_100GP.Mode = MeshJsGp_1.MeshJsGp.MODE;
-MESH_100GP.Pin = MeshJsGp_1.MeshJsGp.PIN;
-MESH_100GP.State = MeshJsGp_1.MeshJsGp.STATE;
+MESH_100GP.MODE = MeshJsGp_1.MeshJsGp.MODE;
+MESH_100GP.PIN = MeshJsGp_1.MeshJsGp.PIN;
+MESH_100GP.STATE = MeshJsGp_1.MeshJsGp.STATE;
 MESH_100GP.VCC = MeshJsGp_1.MeshJsGp.VCC;
 
 
@@ -27152,7 +27158,7 @@ class MESH_100LE extends MESH_1.MESH {
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this._mesh.battery,
+            battery: this.meshBlock.battery,
         };
     }
     /**
@@ -27161,21 +27167,22 @@ class MESH_100LE extends MESH_1.MESH {
      * @param red 0 ~ 127
      * @param green 0 ~ 127
      * @param blue 0 ~ 127
-     * @param time 0 ~ 65535 [ms]
-     * @param cycle_on 0 ~ 65535 [ms]
-     * @param cycle_off 0 ~ 65535 [ms]
+     * @param totalTime 0 ~ 65535 [ms]
+     * @param cycleOnTime 0 ~ 65535 [ms]
+     * @param cycleOffTime 0 ~ 65535 [ms]
      * @param pattern Pattern.Blink or Pattern.Soft
      * @returns
      */
-    lightup(red, green, blue, time, cycle_on, cycle_off, pattern) {
-        const _le = this._mesh;
-        this.writeWOResponse(_le.parseLightupCommand(red, green, blue, time, cycle_on, cycle_off, pattern));
+    lightup(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern) {
+        const ledBlock = this.meshBlock;
+        const command = ledBlock.parseLightupCommand(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern);
+        this.writeWOResponse(command);
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100LE.PREFIX) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MeshJsLe_1.MeshJsLe();
+        this.meshBlock = new MeshJsLe_1.MeshJsLe();
         super.prepareConnect();
     }
     async beforeOnDisconnectWait(reason) {
@@ -27213,28 +27220,29 @@ class MESH_100MD extends MESH_1.MESH {
     }
     async getDataWait() {
         this.checkConnected();
-        const _md = this._mesh;
+        const motionBlock = this.meshBlock;
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this._mesh.battery,
-            motion_state: _md.getResponse.motionState,
-            detection_mode: _md.getResponse.detectionMode,
-            request_id: _md.getResponse.requestId,
+            battery: this.meshBlock.battery,
+            motion_state: motionBlock.getResponse.motionState,
+            detection_mode: motionBlock.getResponse.detectionMode,
+            request_id: motionBlock.getResponse.requestId,
         };
     }
-    setMode(detection_mode, opt_detection_time = 500, opt_response_time = 500, opt_requestid = 0) {
-        const _md = this._mesh;
-        this.writeWOResponse(_md.parseSetmodeCommand(detection_mode, opt_detection_time, opt_response_time, opt_requestid));
+    setMode(detectionMode, opt_detectionTime = 500, opt_responseTime = 500, opt_requestId = 0) {
+        const motionBlock = this.meshBlock;
+        const command = motionBlock.parseSetmodeCommand(detectionMode, opt_detectionTime, opt_responseTime, opt_requestId);
+        this.writeWOResponse(command);
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100MD.PREFIX) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MeshJsMd_1.MeshJsMd();
+        this.meshBlock = new MeshJsMd_1.MeshJsMd();
         // set Event handler
-        const _md = this._mesh;
-        _md.onNotify = (response) => {
+        const motionBlock = this.meshBlock;
+        motionBlock.onNotify = (response) => {
             if (typeof this.onNotify !== 'function') {
                 return;
             }
@@ -27276,26 +27284,27 @@ class MESH_100PA extends MESH_1.MESH {
     }
     async getDataWait() {
         this.checkConnected();
-        const _pa = this._mesh;
+        const brightnessBlock = this.meshBlock;
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this._mesh.battery,
-            proximity: _pa.getResponse.proximity,
-            brightness: _pa.getResponse.brightness,
+            battery: this.meshBlock.battery,
+            proximity: brightnessBlock.getResponse.proximity,
+            brightness: brightnessBlock.getResponse.brightness,
         };
     }
-    setMode(type, opt_request_id = 0) {
-        const _pa = this._mesh;
-        this.writeWOResponse(_pa.parseSetmodeCommand(type, opt_request_id));
+    setMode(type, opt_requestId = 0) {
+        const brightnessBlock = this.meshBlock;
+        const command = brightnessBlock.parseSetmodeCommand(type, opt_requestId);
+        this.writeWOResponse(command);
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100PA.PREFIX) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MeshJsPa_1.MeshJsPa();
-        const _pa = this._mesh;
-        _pa.onNotify = (response) => {
+        this.meshBlock = new MeshJsPa_1.MeshJsPa();
+        const brightnessBlock = this.meshBlock;
+        brightnessBlock.onNotify = (response) => {
             if (typeof this.onNotify !== 'function') {
                 return;
             }
@@ -27338,26 +27347,27 @@ class MESH_100TH extends MESH_1.MESH {
     }
     async getDataWait() {
         this.checkConnected();
-        const _th = this._mesh;
+        const _th = this.meshBlock;
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this._mesh.battery,
+            battery: this.meshBlock.battery,
             temperature: _th.getResponse.temperature,
             humidity: _th.getResponse.humidity,
         };
     }
-    setMode(temperature_upper, temperature_bottom, temperature_condition, humidity_upper, humidity_bottom, humidity_condision, type, opt_request_id = 0) {
-        const _th = this._mesh;
-        this.writeWOResponse(_th.parseSetmodeCommand(temperature_upper, temperature_bottom, humidity_upper, humidity_bottom, temperature_condition, humidity_condision, type, opt_request_id));
+    setMode(temperatureUpper, temperatureBottom, temperatureCondition, humidityUpper, humidityBottom, humidityCondision, type, opt_requestId = 0) {
+        const temperatureAndHumidityBlock = this.meshBlock;
+        const command = temperatureAndHumidityBlock.parseSetmodeCommand(temperatureUpper, temperatureBottom, humidityUpper, humidityBottom, temperatureCondition, humidityCondision, type, opt_requestId);
+        this.writeWOResponse(command);
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100TH.PREFIX) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MeshJsTh_1.MeshJsTh();
-        const _th = this._mesh;
-        _th.onNotify = (response) => {
+        this.meshBlock = new MeshJsTh_1.MeshJsTh();
+        const temperatureAndHumidityBlock = this.meshBlock;
+        temperatureAndHumidityBlock.onNotify = (response) => {
             if (typeof this.onNotify !== 'function') {
                 return;
             }
@@ -38667,7 +38677,7 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         this.onBatteryNotify = null;
         this.onStatusButtonNotify = null;
         this.onResponseWrite = null;
-        this._mesh = new MeshJs_1.MeshJs();
+        this.meshBlock = new MeshJs_1.MeshJs();
         this.indicateCharacteristic_ = null;
         this.notifyCharacteristic_ = null;
         this.writeCharacteristic_ = null;
@@ -38707,36 +38717,35 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     async connectWait() {
         this.prepareConnect();
         await this.peripheral.connectWait();
-        this.indicateCharacteristic_ = this.getCharacteristic_(this._mesh.UUIDS.CHARACTERISTICS.INDICATE);
-        this.notifyCharacteristic_ = this.getCharacteristic_(this._mesh.UUIDS.CHARACTERISTICS.NOTIFY);
-        this.writeCharacteristic_ = this.getCharacteristic_(this._mesh.UUIDS.CHARACTERISTICS.WRITE);
-        this.writeWOResponseCharacteristic_ = this.getCharacteristic_(this._mesh.UUIDS.CHARACTERISTICS.WRITE_WO_RESPONSE);
+        this.indicateCharacteristic_ = this.getCharacteristic_(this.meshBlock.UUIDS.CHARACTERISTICS.INDICATE);
+        this.notifyCharacteristic_ = this.getCharacteristic_(this.meshBlock.UUIDS.CHARACTERISTICS.NOTIFY);
+        this.writeCharacteristic_ = this.getCharacteristic_(this.meshBlock.UUIDS.CHARACTERISTICS.WRITE);
+        this.writeWOResponseCharacteristic_ = this.getCharacteristic_(this.meshBlock.UUIDS.CHARACTERISTICS.WRITE_WO_RESPONSE);
         if (!this.indicateCharacteristic_) {
             return;
         }
         this.indicateCharacteristic_.registerNotify((data) => {
-            this._mesh.indicate(data);
+            this.meshBlock.indicate(data);
         });
         if (!this.notifyCharacteristic_) {
             return;
         }
         await this.notifyCharacteristic_.registerNotifyWait((data) => {
-            this._mesh.notify(data);
+            this.meshBlock.notify(data);
         });
-        console.log('connect');
-        await this.writeWait(this._mesh.featureCommand);
+        await this.writeWait(this.meshBlock.featureCommand);
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH.PREFIX) === 0;
     }
     prepareConnect() {
-        this._mesh.onBattery = (battery) => {
+        this.meshBlock.onBattery = (battery) => {
             if (typeof this.onBatteryNotify !== 'function') {
                 return;
             }
             this.onBatteryNotify(battery);
         };
-        this._mesh.onStatusButtonPressed = () => {
+        this.meshBlock.onStatusButtonPressed = () => {
             if (typeof this.onStatusButtonNotify !== 'function') {
                 return;
             }
@@ -38762,7 +38771,7 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     }
     getCharacteristic_(uuid) {
         return this.peripheral
-            .getService(this._mesh.UUIDS.SERVICE_ID)
+            .getService(this.meshBlock.UUIDS.SERVICE_ID)
             .getCharacteristic(uuid);
     }
 }

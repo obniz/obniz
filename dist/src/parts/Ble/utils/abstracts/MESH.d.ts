@@ -8,7 +8,7 @@ export declare abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> 
     static AvailableBleMode: "Connectable";
     private static readonly LOCAL_NAME_LENGTH_;
     protected static PREFIX: string;
-    protected _mesh: MeshJs;
+    protected meshBlock: MeshJs;
     private indicateCharacteristic_;
     private notifyCharacteristic_;
     private writeCharacteristic_;

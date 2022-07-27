@@ -10,7 +10,7 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         this.onBatteryNotify = null;
         this.onStatusButtonNotify = null;
         this.onResponseWrite = null;
-        this._mesh = new MeshJs_1.MeshJs();
+        this.meshBlock = new MeshJs_1.MeshJs();
         this.indicateCharacteristic_ = null;
         this.notifyCharacteristic_ = null;
         this.writeCharacteristic_ = null;
@@ -50,36 +50,35 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     async connectWait() {
         this.prepareConnect();
         await this.peripheral.connectWait();
-        this.indicateCharacteristic_ = this.getCharacteristic_(this._mesh.UUIDS.CHARACTERISTICS.INDICATE);
-        this.notifyCharacteristic_ = this.getCharacteristic_(this._mesh.UUIDS.CHARACTERISTICS.NOTIFY);
-        this.writeCharacteristic_ = this.getCharacteristic_(this._mesh.UUIDS.CHARACTERISTICS.WRITE);
-        this.writeWOResponseCharacteristic_ = this.getCharacteristic_(this._mesh.UUIDS.CHARACTERISTICS.WRITE_WO_RESPONSE);
+        this.indicateCharacteristic_ = this.getCharacteristic_(this.meshBlock.UUIDS.CHARACTERISTICS.INDICATE);
+        this.notifyCharacteristic_ = this.getCharacteristic_(this.meshBlock.UUIDS.CHARACTERISTICS.NOTIFY);
+        this.writeCharacteristic_ = this.getCharacteristic_(this.meshBlock.UUIDS.CHARACTERISTICS.WRITE);
+        this.writeWOResponseCharacteristic_ = this.getCharacteristic_(this.meshBlock.UUIDS.CHARACTERISTICS.WRITE_WO_RESPONSE);
         if (!this.indicateCharacteristic_) {
             return;
         }
         this.indicateCharacteristic_.registerNotify((data) => {
-            this._mesh.indicate(data);
+            this.meshBlock.indicate(data);
         });
         if (!this.notifyCharacteristic_) {
             return;
         }
         await this.notifyCharacteristic_.registerNotifyWait((data) => {
-            this._mesh.notify(data);
+            this.meshBlock.notify(data);
         });
-        console.log('connect');
-        await this.writeWait(this._mesh.featureCommand);
+        await this.writeWait(this.meshBlock.featureCommand);
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH.PREFIX) === 0;
     }
     prepareConnect() {
-        this._mesh.onBattery = (battery) => {
+        this.meshBlock.onBattery = (battery) => {
             if (typeof this.onBatteryNotify !== 'function') {
                 return;
             }
             this.onBatteryNotify(battery);
         };
-        this._mesh.onStatusButtonPressed = () => {
+        this.meshBlock.onStatusButtonPressed = () => {
             if (typeof this.onStatusButtonNotify !== 'function') {
                 return;
             }
@@ -105,7 +104,7 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     }
     getCharacteristic_(uuid) {
         return this.peripheral
-            .getService(this._mesh.UUIDS.SERVICE_ID)
+            .getService(this.meshBlock.UUIDS.SERVICE_ID)
             .getCharacteristic(uuid);
     }
 }

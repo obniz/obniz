@@ -25,13 +25,13 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
 
   public static readonly AnalogInputEventCondition =
     MeshJsGp.ANALOG_IN_EVENT_CONDITION;
-  public static readonly Mode = MeshJsGp.MODE;
-  public static readonly Pin = MeshJsGp.PIN;
-  public static readonly State = MeshJsGp.STATE;
+  public static readonly MODE = MeshJsGp.MODE;
+  public static readonly PIN = MeshJsGp.PIN;
+  public static readonly STATE = MeshJsGp.STATE;
   public static readonly VCC = MeshJsGp.VCC;
 
   public readonly DigitalPins: MeshJsGp['DigitalPins'] = (this
-    ._mesh as MeshJsGp).DigitalPins;
+    .meshBlock as MeshJsGp).DigitalPins;
 
   // Event Handler
   public onDigitalInEventNotify:
@@ -61,70 +61,74 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     return {
       name: this.peripheral.localName!,
       address: this.peripheral.address,
-      battery: this._mesh.battery,
+      battery: this.meshBlock.battery,
     };
   }
 
   /**
    * setMode
    *
-   * @param din {p1:boolean, p2:boolean, p3:boolean}
-   * @param din_notify {p1:boolean, p2:boolean, p3:boolean}
-   * @param dout {p1:boolean, p2:boolean, p3:boolean}
-   * @param pwm_ratio 0 ~ 255
+   * @param digitalIn {p1:boolean, p2:boolean, p3:boolean}
+   * @param digitalInNotify {p1:boolean, p2:boolean, p3:boolean}
+   * @param digitalOut {p1:boolean, p2:boolean, p3:boolean}
+   * @param pwmRatio 0 ~ 255
    * @param vcc VCC.AUTO or VCC.ON or VCC.OFF
-   * @param ain_range_upper 0.00 ~ 3.00[V], resolution 0.05[V]
-   * @param ain_range_bottom 0.00 ~ 3.00[V], resolution 0.05[V]
-   * @param ain_notify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+   * @param analogInRangeUpper 0.00 ~ 3.00[V], resolution 0.05[V]
+   * @param analogInRangeBottom 0.00 ~ 3.00[V], resolution 0.05[V]
+   * @param analogInNotify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
    */
   public setMode(
-    din: MESH_100GP['DigitalPins'],
-    din_notify: MESH_100GP['DigitalPins'],
-    dout: MESH_100GP['DigitalPins'],
-    pwm_ratio: number,
+    digitalIn: MESH_100GP['DigitalPins'],
+    digitalInNotify: MESH_100GP['DigitalPins'],
+    digitalOut: MESH_100GP['DigitalPins'],
+    pwmRatio: number,
     vcc: number,
-    ain_range_upper: number,
-    ain_range_bottom: number,
-    ain_notify: number
+    analogInRangeUpper: number,
+    analogInRangeBottom: number,
+    analogInNotify: number
   ): void {
-    const _gp = this._mesh as MeshJsGp;
-    this.writeWOResponse(
-      _gp.parseSetmodeCommand(
-        din,
-        din_notify,
-        dout,
-        pwm_ratio,
-        vcc,
-        ain_range_upper,
-        ain_range_bottom,
-        ain_notify
-      )
+    const gpioBlock = this.meshBlock as MeshJsGp;
+    const command = gpioBlock.parseSetmodeCommand(
+      digitalIn,
+      digitalInNotify,
+      digitalOut,
+      pwmRatio,
+      vcc,
+      analogInRangeUpper,
+      analogInRangeBottom,
+      analogInNotify
     );
+    this.writeWOResponse(command);
   }
 
-  public setDin(pin: number, opt_request_id = 0): void {
-    const _gp = this._mesh as MeshJsGp;
-    this.writeWOResponse(_gp.parseSetDinCommand(pin, opt_request_id));
+  public setDin(pin: number, opt_requestId = 0): void {
+    const gpioBlock = this.meshBlock as MeshJsGp;
+    const command = gpioBlock.parseSetDinCommand(pin, opt_requestId);
+    this.writeWOResponse(command);
   }
 
-  public setAin(mode: number, opt_request_id = 0) {
-    const _gp = this._mesh as MeshJsGp;
-    this.writeWOResponse(_gp.parseSetAinCommand(mode, opt_request_id));
+  public setAin(mode: number, opt_requestId = 0) {
+    const gpioBlock = this.meshBlock as MeshJsGp;
+    const command = gpioBlock.parseSetAinCommand(mode, opt_requestId);
+    this.writeWOResponse(command);
   }
 
-  public setVout(pin: number, opt_request_id = 0) {
-    const _gp = this._mesh as MeshJsGp;
-    this.writeWOResponse(_gp.parseSetVoutCommand(pin, opt_request_id));
+  public setVout(pin: number, opt_requestId = 0) {
+    const gpioBlock = this.meshBlock as MeshJsGp;
+    const command = gpioBlock.parseSetVoutCommand(pin, opt_requestId);
+    this.writeWOResponse(command);
   }
 
-  public setDout(pin: number, opt_request_id = 0) {
-    const _gp = this._mesh as MeshJsGp;
-    this.writeWOResponse(_gp.parseSetDoutCommand(pin, opt_request_id));
+  public setDout(pin: number, opt_requestId = 0) {
+    const gpioBlock = this.meshBlock as MeshJsGp;
+    const command = gpioBlock.parseSetDoutCommand(pin, opt_requestId);
+    this.writeWOResponse(command);
   }
 
-  public setPWMNotify(opt_request_id = 0) {
-    const _gp = this._mesh as MeshJsGp;
-    this.writeWOResponse(_gp.parseSetPWMCommand(opt_request_id));
+  public setPWMNotify(opt_requestId = 0) {
+    const gpioBlock = this.meshBlock as MeshJsGp;
+    const command = gpioBlock.parseSetPWMCommand(opt_requestId);
+    this.writeWOResponse(command);
   }
 
   protected static _isMESHblock(name: string): boolean {
@@ -132,45 +136,53 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   }
 
   protected prepareConnect(): void {
-    this._mesh = new MeshJsGp();
-    const _gp = this._mesh as MeshJsGp;
+    this.meshBlock = new MeshJsGp();
+    const gpioBlock = this.meshBlock as MeshJsGp;
 
-    _gp.onDigitalInEventNotify = (pin: number, state: number) => {
+    gpioBlock.onDigitalInEventNotify = (pin: number, state: number) => {
       if (typeof this.onDigitalInEventNotify !== 'function') {
         return;
       }
       this.onDigitalInEventNotify(pin, state);
     };
 
-    _gp.onAnalogInEventNotify = (level: number) => {
+    gpioBlock.onAnalogInEventNotify = (level: number) => {
       if (typeof this.onAnalogInEventNotify !== 'function') {
         return;
       }
       this.onAnalogInEventNotify(level);
     };
 
-    _gp.onDigitalInNotify = (requestId: number, pin: number, state: number) => {
+    gpioBlock.onDigitalInNotify = (
+      requestId: number,
+      pin: number,
+      state: number
+    ) => {
       if (typeof this.onDigitalInNotify !== 'function') {
         return;
       }
       this.onDigitalInNotify(requestId, pin, state);
     };
 
-    _gp.onAnalogInNotify = (requestId: number, state: number, mode: number) => {
+    gpioBlock.onAnalogInNotify = (
+      requestId: number,
+      state: number,
+      mode: number
+    ) => {
       if (typeof this.onAnalogInNotify !== 'function') {
         return;
       }
       this.onAnalogInNotify(requestId, state, mode);
     };
 
-    _gp.onVOutNotify = (requestId: number, state: number) => {
+    gpioBlock.onVOutNotify = (requestId: number, state: number) => {
       if (typeof this.onVOutNotify !== 'function') {
         return;
       }
       this.onVOutNotify(requestId, state);
     };
 
-    _gp.onDigitalOutNotify = (
+    gpioBlock.onDigitalOutNotify = (
       requestId: number,
       pin: number,
       state: number
@@ -181,7 +193,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
       this.onDigitalOutNotify(requestId, pin, state);
     };
 
-    _gp.onPwmNotify = (requestId: number, level: number) => {
+    gpioBlock.onPwmNotify = (requestId: number, level: number) => {
       if (typeof this.onPwmNotify !== 'function') {
         return;
       }

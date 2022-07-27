@@ -19,7 +19,7 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
   private static readonly LOCAL_NAME_LENGTH_ = 17 as const;
 
   protected static PREFIX = 'MESH-100';
-  protected _mesh: MeshJs = new MeshJs();
+  protected meshBlock: MeshJs = new MeshJs();
 
   private indicateCharacteristic_: BleRemoteCharacteristic | null = null;
   private notifyCharacteristic_: BleRemoteCharacteristic | null = null;
@@ -67,38 +67,36 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
     await this.peripheral.connectWait();
 
     this.indicateCharacteristic_ = this.getCharacteristic_(
-      this._mesh.UUIDS.CHARACTERISTICS.INDICATE
+      this.meshBlock.UUIDS.CHARACTERISTICS.INDICATE
     );
 
     this.notifyCharacteristic_ = this.getCharacteristic_(
-      this._mesh.UUIDS.CHARACTERISTICS.NOTIFY
+      this.meshBlock.UUIDS.CHARACTERISTICS.NOTIFY
     );
 
     this.writeCharacteristic_ = this.getCharacteristic_(
-      this._mesh.UUIDS.CHARACTERISTICS.WRITE
+      this.meshBlock.UUIDS.CHARACTERISTICS.WRITE
     );
 
     this.writeWOResponseCharacteristic_ = this.getCharacteristic_(
-      this._mesh.UUIDS.CHARACTERISTICS.WRITE_WO_RESPONSE
+      this.meshBlock.UUIDS.CHARACTERISTICS.WRITE_WO_RESPONSE
     );
 
     if (!this.indicateCharacteristic_) {
       return;
     }
     this.indicateCharacteristic_.registerNotify((data) => {
-      this._mesh.indicate(data);
+      this.meshBlock.indicate(data);
     });
 
     if (!this.notifyCharacteristic_) {
       return;
     }
     await this.notifyCharacteristic_.registerNotifyWait((data) => {
-      this._mesh.notify(data);
+      this.meshBlock.notify(data);
     });
 
-    console.log('connect');
-
-    await this.writeWait(this._mesh.featureCommand);
+    await this.writeWait(this.meshBlock.featureCommand);
   }
 
   protected static _isMESHblock(name: string): boolean {
@@ -106,13 +104,13 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
   }
 
   protected prepareConnect(): void {
-    this._mesh.onBattery = (battery: number) => {
+    this.meshBlock.onBattery = (battery: number) => {
       if (typeof this.onBatteryNotify !== 'function') {
         return;
       }
       this.onBatteryNotify(battery);
     };
-    this._mesh.onStatusButtonPressed = () => {
+    this.meshBlock.onStatusButtonPressed = () => {
       if (typeof this.onStatusButtonNotify !== 'function') {
         return;
       }
@@ -141,7 +139,7 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
 
   private getCharacteristic_(uuid: string) {
     return this.peripheral
-      .getService(this._mesh.UUIDS.SERVICE_ID)!
+      .getService(this.meshBlock.UUIDS.SERVICE_ID)!
       .getCharacteristic(uuid);
   }
 }
