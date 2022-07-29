@@ -24,9 +24,9 @@ export default class MESH_100BU extends MESH<MESH_100BU_Data> {
   public static readonly PREFIX = 'MESH-100BU' as const;
 
   /** Event Handler */
-  public onSinglePressed: (() => void) | null = null;
-  public onLongPressed: (() => void) | null = null;
-  public onDoublePressed: (() => void) | null = null;
+  public onSinglePressedNotify: (() => void) | null = null;
+  public onLongPressedNotify: (() => void) | null = null;
+  public onDoublePressedNotify: (() => void) | null = null;
 
   protected readonly staticClass = MESH_100BU;
 
@@ -47,23 +47,23 @@ export default class MESH_100BU extends MESH<MESH_100BU_Data> {
     this.meshBlock = new MeshJsBu();
 
     const buttonBlock = this.meshBlock as MeshJsBu;
-    buttonBlock.onSinglePressed = () => {
-      if (typeof this.onSinglePressed !== 'function') {
+    buttonBlock.onSinglePressedNotify = () => {
+      if (typeof this.onSinglePressedNotify !== 'function') {
         return;
       }
-      this.onSinglePressed();
+      this.onSinglePressedNotify();
     };
-    buttonBlock.onLongPressed = () => {
-      if (typeof this.onLongPressed !== 'function') {
+    buttonBlock.onLongPressedNotify = () => {
+      if (typeof this.onLongPressedNotify !== 'function') {
         return;
       }
-      this.onLongPressed();
+      this.onLongPressedNotify();
     };
-    buttonBlock.onDoublePressed = () => {
-      if (typeof this.onDoublePressed !== 'function') {
+    buttonBlock.onDoublePressedNotify = () => {
+      if (typeof this.onDoublePressedNotify !== 'function') {
         return;
       }
-      this.onDoublePressed();
+      this.onDoublePressedNotify();
     };
     super.prepareConnect();
   }

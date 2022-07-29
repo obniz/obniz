@@ -34,7 +34,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
   }
 
   /**
-   * Light Up
+   * setLed
    *
    * @param red 0 ~ 127
    * @param green 0 ~ 127
@@ -45,7 +45,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
    * @param pattern Pattern.BLINK or Pattern.FIREFLY
    * @returns
    */
-  public lightup(
+  public setLed(
     red: number,
     green: number,
     blue: number,
@@ -55,7 +55,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
     pattern: number
   ): void {
     const ledBlock = this.meshBlock as MeshJsLe;
-    const command = ledBlock.parseLightupCommand(
+    const command = ledBlock.parseLedCommand(
       red,
       green,
       blue,

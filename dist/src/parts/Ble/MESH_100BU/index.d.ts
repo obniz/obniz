@@ -18,9 +18,9 @@ export default class MESH_100BU extends MESH<MESH_100BU_Data> {
     static readonly PartsName = "MESH_100BU";
     static readonly PREFIX: "MESH-100BU";
     /** Event Handler */
-    onSinglePressed: (() => void) | null;
-    onLongPressed: (() => void) | null;
-    onDoublePressed: (() => void) | null;
+    onSinglePressedNotify: (() => void) | null;
+    onLongPressedNotify: (() => void) | null;
+    onDoublePressedNotify: (() => void) | null;
     protected readonly staticClass: typeof MESH_100BU;
     getDataWait(): Promise<{
         name: string;

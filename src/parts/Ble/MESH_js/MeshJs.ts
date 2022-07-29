@@ -1,7 +1,7 @@
 export class MeshJs {
   // Event Handler
-  public onBattery: ((battery: number) => void) | null = null;
-  public onStatusButtonPressed: (() => void) | null = null;
+  public onBatteryLevelNotify: ((battery: number) => void) | null = null;
+  public onStatusButtonPressedNotify: (() => void) | null = null;
 
   // Constant Values
   public readonly UUIDS = {
@@ -64,7 +64,8 @@ export class MeshJs {
     command.forEach((val) => {
       sum += val;
     });
-    return sum % 256;
+    const BYTE = 256;
+    return sum % BYTE;
   }
 
   private updateBattery_(data: number[]): boolean {
@@ -81,10 +82,10 @@ export class MeshJs {
     //   return;
     // }
     this.battery_ = data[2];
-    if (typeof this.onBattery !== 'function') {
+    if (typeof this.onBatteryLevelNotify !== 'function') {
       return false;
     }
-    this.onBattery(this.battery_);
+    this.onBatteryLevelNotify(this.battery_);
     return true;
   }
 
@@ -101,10 +102,10 @@ export class MeshJs {
     if (data[2] !== 0) {
       return false;
     }
-    if (typeof this.onStatusButtonPressed !== 'function') {
+    if (typeof this.onStatusButtonPressedNotify !== 'function') {
       return false;
     }
-    this.onStatusButtonPressed();
+    this.onStatusButtonPressedNotify();
     return true;
   }
 }

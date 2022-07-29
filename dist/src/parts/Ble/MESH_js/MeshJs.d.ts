@@ -1,6 +1,6 @@
 export declare class MeshJs {
-    onBattery: ((battery: number) => void) | null;
-    onStatusButtonPressed: (() => void) | null;
+    onBatteryLevelNotify: ((battery: number) => void) | null;
+    onStatusButtonPressedNotify: (() => void) | null;
     readonly UUIDS: {
         readonly SERVICE_ID: "72C90001-57A9-4D40-B746-534E22EC9F9E";
         readonly CHARACTERISTICS: {

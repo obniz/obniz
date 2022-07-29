@@ -22,7 +22,7 @@ class MESH_100LE extends MESH_1.MESH {
         };
     }
     /**
-     * Light Up
+     * setLed
      *
      * @param red 0 ~ 127
      * @param green 0 ~ 127
@@ -33,9 +33,9 @@ class MESH_100LE extends MESH_1.MESH {
      * @param pattern Pattern.BLINK or Pattern.FIREFLY
      * @returns
      */
-    lightup(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern) {
+    setLed(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern) {
         const ledBlock = this.meshBlock;
-        const command = ledBlock.parseLightupCommand(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern);
+        const command = ledBlock.parseLedCommand(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern);
         this.writeWOResponse(command);
     }
     static _isMESHblock(name) {

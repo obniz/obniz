@@ -25,7 +25,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
         battery: number;
     }>;
     /**
-     * Light Up
+     * setLed
      *
      * @param red 0 ~ 127
      * @param green 0 ~ 127
@@ -36,7 +36,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
      * @param pattern Pattern.BLINK or Pattern.FIREFLY
      * @returns
      */
-    lightup(red: number, green: number, blue: number, totalTime: number, cycleOnTime: number, cycleOffTime: number, pattern: number): void;
+    setLed(red: number, green: number, blue: number, totalTime: number, cycleOnTime: number, cycleOffTime: number, pattern: number): void;
     protected static _isMESHblock(name: string): boolean;
     protected prepareConnect(): void;
     protected beforeOnDisconnectWait(reason: unknown): Promise<void>;

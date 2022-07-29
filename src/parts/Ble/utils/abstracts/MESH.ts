@@ -10,9 +10,9 @@ import { MeshJs } from '../../MESH_js/MeshJs';
 
 export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
   // Event Handler
-  public onBatteryNotify: ((battery: number) => void) | null = null;
+  public onBatteryLevelNotify: ((battery: number) => void) | null = null;
   public onStatusButtonNotify: (() => void) | null = null;
-  public onResponseWrite: ((response: boolean) => void) | null = null;
+  public onResponseWriteNotify: ((response: boolean) => void) | null = null;
 
   // Constant Values
   public static AvailableBleMode = 'Connectable' as const;
@@ -99,18 +99,32 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
     await this.writeWait(this.meshBlock.featureCommand);
   }
 
+  /**
+   * getInfoWait()
+   *
+   * @const
+   * @returns
+   */
+  public async getInfoWait() {
+    this.checkConnected();
+    return {
+      name: this.peripheral.localName!,
+      address: this.peripheral.address,
+    };
+  }
+
   protected static _isMESHblock(name: string): boolean {
     return name.indexOf(MESH.PREFIX) === 0;
   }
 
   protected prepareConnect(): void {
-    this.meshBlock.onBattery = (battery: number) => {
-      if (typeof this.onBatteryNotify !== 'function') {
+    this.meshBlock.onBatteryLevelNotify = (battery: number) => {
+      if (typeof this.onBatteryLevelNotify !== 'function') {
         return;
       }
-      this.onBatteryNotify(battery);
+      this.onBatteryLevelNotify(battery);
     };
-    this.meshBlock.onStatusButtonPressed = () => {
+    this.meshBlock.onStatusButtonPressedNotify = () => {
       if (typeof this.onStatusButtonNotify !== 'function') {
         return;
       }
@@ -123,10 +137,10 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
       return;
     }
     await this.writeCharacteristic_.writeWait(data, true).then((resp) => {
-      if (typeof this.onResponseWrite !== 'function') {
+      if (typeof this.onResponseWriteNotify !== 'function') {
         return;
       }
-      this.onResponseWrite(resp);
+      this.onResponseWriteNotify(resp);
     });
   }
 

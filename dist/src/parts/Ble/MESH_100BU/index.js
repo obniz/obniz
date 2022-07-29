@@ -12,9 +12,9 @@ class MESH_100BU extends MESH_1.MESH {
     constructor() {
         super(...arguments);
         /** Event Handler */
-        this.onSinglePressed = null;
-        this.onLongPressed = null;
-        this.onDoublePressed = null;
+        this.onSinglePressedNotify = null;
+        this.onLongPressedNotify = null;
+        this.onDoublePressedNotify = null;
         this.staticClass = MESH_100BU;
     }
     async getDataWait() {
@@ -31,23 +31,23 @@ class MESH_100BU extends MESH_1.MESH {
     prepareConnect() {
         this.meshBlock = new MeshJsBu_1.MeshJsBu();
         const buttonBlock = this.meshBlock;
-        buttonBlock.onSinglePressed = () => {
-            if (typeof this.onSinglePressed !== 'function') {
+        buttonBlock.onSinglePressedNotify = () => {
+            if (typeof this.onSinglePressedNotify !== 'function') {
                 return;
             }
-            this.onSinglePressed();
+            this.onSinglePressedNotify();
         };
-        buttonBlock.onLongPressed = () => {
-            if (typeof this.onLongPressed !== 'function') {
+        buttonBlock.onLongPressedNotify = () => {
+            if (typeof this.onLongPressedNotify !== 'function') {
                 return;
             }
-            this.onLongPressed();
+            this.onLongPressedNotify();
         };
-        buttonBlock.onDoublePressed = () => {
-            if (typeof this.onDoublePressed !== 'function') {
+        buttonBlock.onDoublePressedNotify = () => {
+            if (typeof this.onDoublePressedNotify !== 'function') {
                 return;
             }
-            this.onDoublePressed();
+            this.onDoublePressedNotify();
         };
         super.prepareConnect();
     }

@@ -15,20 +15,15 @@ class MESH_100AC extends MESH_1.MESH {
         this.onTapped = null;
         this.onShaked = null;
         this.onFlipped = null;
-        this.onDirection = null;
+        this.onOrientation = null;
         this.staticClass = MESH_100AC;
     }
     async getDataWait() {
         this.checkConnected();
-        const moveBlock = this.meshBlock;
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
             battery: this.meshBlock.battery,
-            accele_x: moveBlock.getAccele.x,
-            accele_y: moveBlock.getAccele.y,
-            accele_z: moveBlock.getAccele.z,
-            face: moveBlock.getFace,
         };
     }
     static _isMESHblock(name) {
@@ -37,29 +32,29 @@ class MESH_100AC extends MESH_1.MESH {
     prepareConnect() {
         this.meshBlock = new MeshJsAc_1.MeshJsAc();
         const moveBlock = this.meshBlock;
-        moveBlock.onTapped = (accele) => {
+        moveBlock.onTapped = (acceleX, acceleY, acceleZ) => {
             if (typeof this.onTapped !== 'function') {
                 return;
             }
-            this.onTapped(accele);
+            this.onTapped(acceleX, acceleY, acceleZ);
         };
-        moveBlock.onShaked = (accele) => {
+        moveBlock.onShaked = (acceleX, acceleY, acceleZ) => {
             if (typeof this.onShaked !== 'function') {
                 return;
             }
-            this.onShaked(accele);
+            this.onShaked(acceleX, acceleY, acceleZ);
         };
-        moveBlock.onFlipped = (accele) => {
+        moveBlock.onFlipped = (acceleX, acceleY, acceleZ) => {
             if (typeof this.onFlipped !== 'function') {
                 return;
             }
-            this.onFlipped(accele);
+            this.onFlipped(acceleX, acceleY, acceleZ);
         };
-        moveBlock.onDirection = (face, accele) => {
-            if (typeof this.onDirection !== 'function') {
+        moveBlock.onOrientation = (face, acceleX, acceleY, acceleZ) => {
+            if (typeof this.onOrientation !== 'function') {
                 return;
             }
-            this.onDirection(face, accele);
+            this.onOrientation(face, acceleX, acceleY, acceleZ);
         };
         super.prepareConnect();
     }

@@ -26862,20 +26862,15 @@ class MESH_100AC extends MESH_1.MESH {
         this.onTapped = null;
         this.onShaked = null;
         this.onFlipped = null;
-        this.onDirection = null;
+        this.onOrientation = null;
         this.staticClass = MESH_100AC;
     }
     async getDataWait() {
         this.checkConnected();
-        const moveBlock = this.meshBlock;
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
             battery: this.meshBlock.battery,
-            accele_x: moveBlock.getAccele.x,
-            accele_y: moveBlock.getAccele.y,
-            accele_z: moveBlock.getAccele.z,
-            face: moveBlock.getFace,
         };
     }
     static _isMESHblock(name) {
@@ -26884,29 +26879,29 @@ class MESH_100AC extends MESH_1.MESH {
     prepareConnect() {
         this.meshBlock = new MeshJsAc_1.MeshJsAc();
         const moveBlock = this.meshBlock;
-        moveBlock.onTapped = (accele) => {
+        moveBlock.onTapped = (acceleX, acceleY, acceleZ) => {
             if (typeof this.onTapped !== 'function') {
                 return;
             }
-            this.onTapped(accele);
+            this.onTapped(acceleX, acceleY, acceleZ);
         };
-        moveBlock.onShaked = (accele) => {
+        moveBlock.onShaked = (acceleX, acceleY, acceleZ) => {
             if (typeof this.onShaked !== 'function') {
                 return;
             }
-            this.onShaked(accele);
+            this.onShaked(acceleX, acceleY, acceleZ);
         };
-        moveBlock.onFlipped = (accele) => {
+        moveBlock.onFlipped = (acceleX, acceleY, acceleZ) => {
             if (typeof this.onFlipped !== 'function') {
                 return;
             }
-            this.onFlipped(accele);
+            this.onFlipped(acceleX, acceleY, acceleZ);
         };
-        moveBlock.onDirection = (face, accele) => {
-            if (typeof this.onDirection !== 'function') {
+        moveBlock.onOrientation = (face, acceleX, acceleY, acceleZ) => {
+            if (typeof this.onOrientation !== 'function') {
                 return;
             }
-            this.onDirection(face, accele);
+            this.onOrientation(face, acceleX, acceleY, acceleZ);
         };
         super.prepareConnect();
     }
@@ -26939,9 +26934,9 @@ class MESH_100BU extends MESH_1.MESH {
     constructor() {
         super(...arguments);
         /** Event Handler */
-        this.onSinglePressed = null;
-        this.onLongPressed = null;
-        this.onDoublePressed = null;
+        this.onSinglePressedNotify = null;
+        this.onLongPressedNotify = null;
+        this.onDoublePressedNotify = null;
         this.staticClass = MESH_100BU;
     }
     async getDataWait() {
@@ -26958,23 +26953,23 @@ class MESH_100BU extends MESH_1.MESH {
     prepareConnect() {
         this.meshBlock = new MeshJsBu_1.MeshJsBu();
         const buttonBlock = this.meshBlock;
-        buttonBlock.onSinglePressed = () => {
-            if (typeof this.onSinglePressed !== 'function') {
+        buttonBlock.onSinglePressedNotify = () => {
+            if (typeof this.onSinglePressedNotify !== 'function') {
                 return;
             }
-            this.onSinglePressed();
+            this.onSinglePressedNotify();
         };
-        buttonBlock.onLongPressed = () => {
-            if (typeof this.onLongPressed !== 'function') {
+        buttonBlock.onLongPressedNotify = () => {
+            if (typeof this.onLongPressedNotify !== 'function') {
                 return;
             }
-            this.onLongPressed();
+            this.onLongPressedNotify();
         };
-        buttonBlock.onDoublePressed = () => {
-            if (typeof this.onDoublePressed !== 'function') {
+        buttonBlock.onDoublePressedNotify = () => {
+            if (typeof this.onDoublePressedNotify !== 'function') {
                 return;
             }
-            this.onDoublePressed();
+            this.onDoublePressedNotify();
         };
         super.prepareConnect();
     }
@@ -27162,7 +27157,7 @@ class MESH_100LE extends MESH_1.MESH {
         };
     }
     /**
-     * Light Up
+     * setLed
      *
      * @param red 0 ~ 127
      * @param green 0 ~ 127
@@ -27173,9 +27168,9 @@ class MESH_100LE extends MESH_1.MESH {
      * @param pattern Pattern.BLINK or Pattern.FIREFLY
      * @returns
      */
-    lightup(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern) {
+    setLed(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern) {
         const ledBlock = this.meshBlock;
-        const command = ledBlock.parseLightupCommand(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern);
+        const command = ledBlock.parseLedCommand(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern);
         this.writeWOResponse(command);
     }
     static _isMESHblock(name) {
@@ -27396,8 +27391,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class MeshJs {
     constructor() {
         // Event Handler
-        this.onBattery = null;
-        this.onStatusButtonPressed = null;
+        this.onBatteryLevelNotify = null;
+        this.onStatusButtonPressedNotify = null;
         // Constant Values
         this.UUIDS = {
             SERVICE_ID: '72C90001-57A9-4D40-B746-534E22EC9F9E',
@@ -27454,7 +27449,8 @@ class MeshJs {
         command.forEach((val) => {
             sum += val;
         });
-        return sum % 256;
+        const BYTE = 256;
+        return sum % BYTE;
     }
     updateBattery_(data) {
         if (data.length !== 4) {
@@ -27470,10 +27466,10 @@ class MeshJs {
         //   return;
         // }
         this.battery_ = data[2];
-        if (typeof this.onBattery !== 'function') {
+        if (typeof this.onBatteryLevelNotify !== 'function') {
             return false;
         }
-        this.onBattery(this.battery_);
+        this.onBatteryLevelNotify(this.battery_);
         return true;
     }
     updateStatusButton_(data) {
@@ -27489,10 +27485,10 @@ class MeshJs {
         if (data[2] !== 0) {
             return false;
         }
-        if (typeof this.onStatusButtonPressed !== 'function') {
+        if (typeof this.onStatusButtonPressedNotify !== 'function') {
             return false;
         }
-        this.onStatusButtonPressed();
+        this.onStatusButtonPressedNotify();
         return true;
     }
 }
@@ -27515,22 +27511,14 @@ class MeshJsAc extends MeshJs_1.MeshJs {
         this.onTapped = null;
         this.onShaked = null;
         this.onFlipped = null;
-        this.onDirection = null;
+        this.onOrientation = null;
         // Constant Values
         this.MESSAGE_TYPE_ID_ = 1;
         this.DATA_LENGTH_ = 17;
         this.TAP_EVENT_ID_ = 0;
         this.SHAKE_EVENT_ID_ = 1;
         this.FLIP_EVENT_ID_ = 2;
-        this.DIRECTION_EVENT_ID_ = 3;
-        this.accele_ = { x: -1, y: -1, z: -1 };
-        this.face_ = -1;
-    }
-    get getAccele() {
-        return this.accele_;
-    }
-    get getFace() {
-        return this.face_;
+        this.ORIENTATION_EVENT_ID_ = 3;
     }
     /**
      * notify
@@ -27540,49 +27528,42 @@ class MeshJsAc extends MeshJs_1.MeshJs {
      */
     notify(data) {
         super.notify(data);
-        this.updateAccele_(data);
-        if (data[0] !== 1) {
+        if (data.length !== this.DATA_LENGTH_) {
             return;
         }
+        if (data[0] !== this.MESSAGE_TYPE_ID_) {
+            return;
+        }
+        const BYTE = 256;
+        const BASE = 1024;
+        const acceleX = this.complemnt_(BYTE * data[5] + data[4]) / BASE;
+        const acceleY = this.complemnt_(BYTE * data[7] + data[6]) / BASE;
+        const acceleZ = this.complemnt_(BYTE * data[9] + data[8]) / BASE;
         switch (data[1]) {
             case this.TAP_EVENT_ID_:
                 if (typeof this.onTapped === 'function') {
-                    this.onTapped(this.accele_);
+                    this.onTapped(acceleX, acceleY, acceleZ);
                 }
                 break;
             case this.SHAKE_EVENT_ID_:
                 if (typeof this.onShaked === 'function') {
-                    this.onShaked(this.accele_);
+                    this.onShaked(acceleX, acceleY, acceleZ);
                 }
                 break;
             case this.FLIP_EVENT_ID_:
                 if (typeof this.onFlipped === 'function') {
-                    this.onFlipped(this.accele_);
+                    this.onFlipped(acceleX, acceleY, acceleZ);
                 }
                 break;
-            case this.DIRECTION_EVENT_ID_:
-                if (typeof this.onDirection === 'function') {
-                    this.face_ = data[2];
-                    this.onDirection(this.face_, this.accele_);
+            case this.ORIENTATION_EVENT_ID_:
+                if (typeof this.onOrientation === 'function') {
+                    const face = data[2];
+                    this.onOrientation(face, acceleX, acceleY, acceleZ);
                 }
                 break;
             default:
                 break;
         }
-    }
-    updateAccele_(data) {
-        if (data.length !== this.DATA_LENGTH_) {
-            return false;
-        }
-        if (data[0] !== this.MESSAGE_TYPE_ID_) {
-            return false;
-        }
-        const BYTE = 256;
-        const BASE = 1024;
-        this.accele_.x = this.complemnt_(BYTE * data[5] + data[4]) / BASE;
-        this.accele_.y = this.complemnt_(BYTE * data[7] + data[6]) / BASE;
-        this.accele_.z = this.complemnt_(BYTE * data[9] + data[8]) / BASE;
-        return true;
     }
     complemnt_(val) {
         const TWO_BYTE = 65536;
@@ -27606,9 +27587,9 @@ class MeshJsBu extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onSinglePressed = null;
-        this.onLongPressed = null;
-        this.onDoublePressed = null;
+        this.onSinglePressedNotify = null;
+        this.onLongPressedNotify = null;
+        this.onDoublePressedNotify = null;
         // Constant Values
         this.DATA_LENGTH_ = 4;
         this.MESSAGE_TYPE_ID_ = 1;
@@ -27638,18 +27619,18 @@ class MeshJsBu extends MeshJs_1.MeshJs {
         }
         switch (data[2]) {
             case this.TYPE_.SINGLE:
-                if (typeof this.onSinglePressed === 'function') {
-                    this.onSinglePressed();
+                if (typeof this.onSinglePressedNotify === 'function') {
+                    this.onSinglePressedNotify();
                 }
                 break;
             case this.TYPE_.LONG:
-                if (typeof this.onLongPressed === 'function') {
-                    this.onLongPressed();
+                if (typeof this.onLongPressedNotify === 'function') {
+                    this.onLongPressedNotify();
                 }
                 break;
             case this.TYPE_.DOUBLE:
-                if (typeof this.onDoublePressed === 'function') {
-                    this.onDoublePressed();
+                if (typeof this.onDoublePressedNotify === 'function') {
+                    this.onDoublePressedNotify();
                 }
                 break;
             default:
@@ -27978,7 +27959,7 @@ class MeshJsLe extends MeshJs_1.MeshJs {
      * @param pattern
      * @returns
      */
-    parseLightupCommand(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern) {
+    parseLedCommand(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern) {
         // Error Handle
         const COLOR_MIN = 0;
         const COLOR_MAX = 127;
@@ -38674,9 +38655,9 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onBatteryNotify = null;
+        this.onBatteryLevelNotify = null;
         this.onStatusButtonNotify = null;
-        this.onResponseWrite = null;
+        this.onResponseWriteNotify = null;
         this.meshBlock = new MeshJs_1.MeshJs();
         this.indicateCharacteristic_ = null;
         this.notifyCharacteristic_ = null;
@@ -38735,17 +38716,30 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         });
         await this.writeWait(this.meshBlock.featureCommand);
     }
+    /**
+     * getInfoWait()
+     *
+     * @const
+     * @returns
+     */
+    async getInfoWait() {
+        this.checkConnected();
+        return {
+            name: this.peripheral.localName,
+            address: this.peripheral.address,
+        };
+    }
     static _isMESHblock(name) {
         return name.indexOf(MESH.PREFIX) === 0;
     }
     prepareConnect() {
-        this.meshBlock.onBattery = (battery) => {
-            if (typeof this.onBatteryNotify !== 'function') {
+        this.meshBlock.onBatteryLevelNotify = (battery) => {
+            if (typeof this.onBatteryLevelNotify !== 'function') {
                 return;
             }
-            this.onBatteryNotify(battery);
+            this.onBatteryLevelNotify(battery);
         };
-        this.meshBlock.onStatusButtonPressed = () => {
+        this.meshBlock.onStatusButtonPressedNotify = () => {
             if (typeof this.onStatusButtonNotify !== 'function') {
                 return;
             }
@@ -38757,10 +38751,10 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
             return;
         }
         await this.writeCharacteristic_.writeWait(data, true).then((resp) => {
-            if (typeof this.onResponseWrite !== 'function') {
+            if (typeof this.onResponseWriteNotify !== 'function') {
                 return;
             }
-            this.onResponseWrite(resp);
+            this.onResponseWriteNotify(resp);
         });
     }
     writeWOResponse(data) {

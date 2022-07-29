@@ -1,9 +1,9 @@
 import { MeshJs } from './MeshJs';
 export class MeshJsBu extends MeshJs {
   // Event Handler
-  public onSinglePressed: (() => void) | null = null;
-  public onLongPressed: (() => void) | null = null;
-  public onDoublePressed: (() => void) | null = null;
+  public onSinglePressedNotify: (() => void) | null = null;
+  public onLongPressedNotify: (() => void) | null = null;
+  public onDoublePressedNotify: (() => void) | null = null;
 
   // Constant Values
   private readonly DATA_LENGTH_: number = 4 as const;
@@ -34,18 +34,18 @@ export class MeshJsBu extends MeshJs {
     }
     switch (data[2]) {
       case this.TYPE_.SINGLE:
-        if (typeof this.onSinglePressed === 'function') {
-          this.onSinglePressed();
+        if (typeof this.onSinglePressedNotify === 'function') {
+          this.onSinglePressedNotify();
         }
         break;
       case this.TYPE_.LONG:
-        if (typeof this.onLongPressed === 'function') {
-          this.onLongPressed();
+        if (typeof this.onLongPressedNotify === 'function') {
+          this.onLongPressedNotify();
         }
         break;
       case this.TYPE_.DOUBLE:
-        if (typeof this.onDoublePressed === 'function') {
-          this.onDoublePressed();
+        if (typeof this.onDoublePressedNotify === 'function') {
+          this.onDoublePressedNotify();
         }
         break;
       default:

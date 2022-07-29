@@ -14,7 +14,7 @@ class MeshJsLe extends MeshJs_1.MeshJs {
      * @param pattern
      * @returns
      */
-    parseLightupCommand(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern) {
+    parseLedCommand(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern) {
         // Error Handle
         const COLOR_MIN = 0;
         const COLOR_MAX = 127;

@@ -7,9 +7,9 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onBatteryNotify = null;
+        this.onBatteryLevelNotify = null;
         this.onStatusButtonNotify = null;
-        this.onResponseWrite = null;
+        this.onResponseWriteNotify = null;
         this.meshBlock = new MeshJs_1.MeshJs();
         this.indicateCharacteristic_ = null;
         this.notifyCharacteristic_ = null;
@@ -68,17 +68,30 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         });
         await this.writeWait(this.meshBlock.featureCommand);
     }
+    /**
+     * getInfoWait()
+     *
+     * @const
+     * @returns
+     */
+    async getInfoWait() {
+        this.checkConnected();
+        return {
+            name: this.peripheral.localName,
+            address: this.peripheral.address,
+        };
+    }
     static _isMESHblock(name) {
         return name.indexOf(MESH.PREFIX) === 0;
     }
     prepareConnect() {
-        this.meshBlock.onBattery = (battery) => {
-            if (typeof this.onBatteryNotify !== 'function') {
+        this.meshBlock.onBatteryLevelNotify = (battery) => {
+            if (typeof this.onBatteryLevelNotify !== 'function') {
                 return;
             }
-            this.onBatteryNotify(battery);
+            this.onBatteryLevelNotify(battery);
         };
-        this.meshBlock.onStatusButtonPressed = () => {
+        this.meshBlock.onStatusButtonPressedNotify = () => {
             if (typeof this.onStatusButtonNotify !== 'function') {
                 return;
             }
@@ -90,10 +103,10 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
             return;
         }
         await this.writeCharacteristic_.writeWait(data, true).then((resp) => {
-            if (typeof this.onResponseWrite !== 'function') {
+            if (typeof this.onResponseWriteNotify !== 'function') {
                 return;
             }
-            this.onResponseWrite(resp);
+            this.onResponseWriteNotify(resp);
         });
     }
     writeWOResponse(data) {

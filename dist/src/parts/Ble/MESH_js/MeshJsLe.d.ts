@@ -15,5 +15,5 @@ export declare class MeshJsLe extends MeshJs {
      * @param pattern
      * @returns
      */
-    parseLightupCommand(red: number, green: number, blue: number, totalTime: number, cycleOnTime: number, cycleOffTime: number, pattern: number): number[];
+    parseLedCommand(red: number, green: number, blue: number, totalTime: number, cycleOnTime: number, cycleOffTime: number, pattern: number): number[];
 }
