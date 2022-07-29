@@ -27002,7 +27002,7 @@ MESH_100BU.PREFIX = 'MESH-100BU';
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
 const MeshJsGp_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsGp.js");
-/** MESH_100GA management class */
+/** MESH_100GP management class */
 class MESH_100GP extends MESH_1.MESH {
     constructor() {
         super(...arguments);
@@ -38701,15 +38701,15 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     /**
      *
      * @param peripheral
-     * @param sirialnumber
+     * @param serialnumber
      * @returns
      */
-    static sameSirialNumberBlock(peripheral, sirialnumber) {
+    static sameSerialNumberBlock(peripheral, serialnumber) {
         var _a;
         if (!this.isMESHblock(peripheral)) {
             return false;
         }
-        return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf(sirialnumber)) !== -1;
+        return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf(serialnumber)) !== -1;
     }
     /**
      * Connect to the services of a MESH

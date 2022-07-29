@@ -14,7 +14,7 @@ export interface MESH_100GP_Data {
     address: string;
     battery: number;
 }
-/** MESH_100GA management class */
+/** MESH_100GP management class */
 export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     static readonly PartsName = "MESH_100GP";
     static readonly PREFIX = "MESH-100GP";

@@ -34,15 +34,15 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     /**
      *
      * @param peripheral
-     * @param sirialnumber
+     * @param serialnumber
      * @returns
      */
-    static sameSirialNumberBlock(peripheral, sirialnumber) {
+    static sameSerialNumberBlock(peripheral, serialnumber) {
         var _a;
         if (!this.isMESHblock(peripheral)) {
             return false;
         }
-        return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf(sirialnumber)) !== -1;
+        return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf(serialnumber)) !== -1;
     }
     /**
      * Connect to the services of a MESH

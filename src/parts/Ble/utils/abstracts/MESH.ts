@@ -45,17 +45,17 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
   /**
    *
    * @param peripheral
-   * @param sirialnumber
+   * @param serialnumber
    * @returns
    */
-  public static sameSirialNumberBlock(
+  public static sameSerialNumberBlock(
     peripheral: BleRemotePeripheral,
-    sirialnumber: string
+    serialnumber: string
   ): boolean {
     if (!this.isMESHblock(peripheral)) {
       return false;
     }
-    return peripheral.localName?.indexOf(sirialnumber) !== -1;
+    return peripheral.localName?.indexOf(serialnumber) !== -1;
   }
 
   /**

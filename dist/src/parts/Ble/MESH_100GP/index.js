@@ -7,7 +7,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
 const MeshJsGp_1 = require("../MESH_js/MeshJsGp");
-/** MESH_100GA management class */
+/** MESH_100GP management class */
 class MESH_100GP extends MESH_1.MESH {
     constructor() {
         super(...arguments);
