@@ -33,32 +33,31 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
 
   public async getDataWait() {
     this.checkConnected();
-    const _md = this._mesh as MeshJsMd;
+    const motionBlock = this.meshBlock as MeshJsMd;
     return {
       name: this.peripheral!.localName!,
       address: this.peripheral.address,
-      battery: this._mesh.battery,
-      motion_state: _md.getResponse.motionState,
-      detection_mode: _md.getResponse.detectionMode,
-      request_id: _md.getResponse.requestId,
+      battery: this.meshBlock.battery,
+      motion_state: motionBlock.getResponse.motionState,
+      detection_mode: motionBlock.getResponse.detectionMode,
+      request_id: motionBlock.getResponse.requestId,
     };
   }
 
   public setMode(
-    detection_mode: number,
-    detection_time = 500,
-    response_time = 500,
-    requestid = 0
+    detectionMode: number,
+    opt_detectionTime = 500,
+    opt_responseTime = 500,
+    opt_requestId = 0
   ): void {
-    const _md = this._mesh as MeshJsMd;
-    this.writeWOResponse(
-      _md.parseSetmodeCommand(
-        detection_mode,
-        detection_time,
-        response_time,
-        requestid
-      )
+    const motionBlock = this.meshBlock as MeshJsMd;
+    const command = motionBlock.parseSetmodeCommand(
+      detectionMode,
+      opt_detectionTime,
+      opt_responseTime,
+      opt_requestId
     );
+    this.writeWOResponse(command);
   }
 
   protected static _isMESHblock(name: string): boolean {
@@ -66,11 +65,11 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
   }
 
   protected prepareConnect(): void {
-    this._mesh = new MeshJsMd();
+    this.meshBlock = new MeshJsMd();
 
     // set Event handler
-    const _md = this._mesh as MeshJsMd;
-    _md.onNotify = (response: MeshJsMd['response_']) => {
+    const motionBlock = this.meshBlock as MeshJsMd;
+    motionBlock.onNotify = (response: MeshJsMd['response_']) => {
       if (typeof this.onNotify !== 'function') {
         return;
       }

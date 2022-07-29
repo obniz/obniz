@@ -68,7 +68,7 @@ export class MeshJsTh extends MeshJs {
    * @param humidityRangeBottom
    * @param humidityCondision
    * @param type
-   * @param requestId
+   * @param opt_requestId
    * @returns
    */
   public parseSetmodeCommand(
@@ -79,7 +79,7 @@ export class MeshJsTh extends MeshJs {
     humidityRangeBottom: number,
     humidityCondision: number,
     type: number,
-    requestId = 0
+    opt_requestId = 0
   ): number[] {
     // Error Handle
     if (
@@ -87,7 +87,7 @@ export class MeshJsTh extends MeshJs {
       this.MAX_TEMPERATURE_ < temperatureRangeUpper
     ) {
       throw new MeshJsOutOfRangeError(
-        'temperature_range',
+        'temperatureRange',
         this.MIN_TEMPERATURE_,
         this.MAX_TEMPERATURE_
       );
@@ -97,7 +97,7 @@ export class MeshJsTh extends MeshJs {
       this.MAX_HUMIDITY_ < humidityRangeUpper
     ) {
       throw new MeshJsOutOfRangeError(
-        'humidity_range',
+        'humidityRange',
         this.MIN_HUMIDITY_,
         this.MAX_HUMIDITY_
       );
@@ -107,7 +107,7 @@ export class MeshJsTh extends MeshJs {
     const HEADER = [
       this.MESSAGE_TYPE_ID_,
       this.EVENT_TYPE_ID_,
-      requestId,
+      opt_requestId,
     ] as const;
     const BASE: number = 10 as const;
     const TEMP_UPPER: number[] = this.num2array_(

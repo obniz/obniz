@@ -30,10 +30,10 @@ export declare class MeshJsTh extends MeshJs {
      * @param humidityRangeBottom
      * @param humidityCondision
      * @param type
-     * @param requestId
+     * @param opt_requestId
      * @returns
      */
-    parseSetmodeCommand(temperatureRangeUpper: number, temperatureRangeBottom: number, temperatureCondition: number, humidityRangeUpper: number, humidityRangeBottom: number, humidityCondision: number, type: number, requestId?: number): number[];
+    parseSetmodeCommand(temperatureRangeUpper: number, temperatureRangeBottom: number, temperatureCondition: number, humidityRangeUpper: number, humidityRangeBottom: number, humidityCondision: number, type: number, opt_requestId?: number): number[];
     private num2array_;
     private complemnt_;
     private invcomplemnt_;

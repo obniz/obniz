@@ -17,28 +17,29 @@ class MESH_100MD extends MESH_1.MESH {
     }
     async getDataWait() {
         this.checkConnected();
-        const _md = this._mesh;
+        const motionBlock = this.meshBlock;
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this._mesh.battery,
-            motion_state: _md.getResponse.motionState,
-            detection_mode: _md.getResponse.detectionMode,
-            request_id: _md.getResponse.requestId,
+            battery: this.meshBlock.battery,
+            motion_state: motionBlock.getResponse.motionState,
+            detection_mode: motionBlock.getResponse.detectionMode,
+            request_id: motionBlock.getResponse.requestId,
         };
     }
-    setMode(detection_mode, detection_time = 500, response_time = 500, requestid = 0) {
-        const _md = this._mesh;
-        this.writeWOResponse(_md.parseSetmodeCommand(detection_mode, detection_time, response_time, requestid));
+    setMode(detectionMode, opt_detectionTime = 500, opt_responseTime = 500, opt_requestId = 0) {
+        const motionBlock = this.meshBlock;
+        const command = motionBlock.parseSetmodeCommand(detectionMode, opt_detectionTime, opt_responseTime, opt_requestId);
+        this.writeWOResponse(command);
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100MD.PREFIX) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MeshJsMd_1.MeshJsMd();
+        this.meshBlock = new MeshJsMd_1.MeshJsMd();
         // set Event handler
-        const _md = this._mesh;
-        _md.onNotify = (response) => {
+        const motionBlock = this.meshBlock;
+        motionBlock.onNotify = (response) => {
             if (typeof this.onNotify !== 'function') {
                 return;
             }

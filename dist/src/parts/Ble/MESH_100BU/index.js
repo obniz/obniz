@@ -22,28 +22,28 @@ class MESH_100BU extends MESH_1.MESH {
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this._mesh.battery,
+            battery: this.meshBlock.battery,
         };
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100BU.PREFIX) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MeshJsBu_1.MeshJsBu();
-        const _bu = this._mesh;
-        _bu.onSinglePressed = () => {
+        this.meshBlock = new MeshJsBu_1.MeshJsBu();
+        const buttonBlock = this.meshBlock;
+        buttonBlock.onSinglePressed = () => {
             if (typeof this.onSinglePressed !== 'function') {
                 return;
             }
             this.onSinglePressed();
         };
-        _bu.onLongPressed = () => {
+        buttonBlock.onLongPressed = () => {
             if (typeof this.onLongPressed !== 'function') {
                 return;
             }
             this.onLongPressed();
         };
-        _bu.onDoublePressed = () => {
+        buttonBlock.onDoublePressed = () => {
             if (typeof this.onDoublePressed !== 'function') {
                 return;
             }

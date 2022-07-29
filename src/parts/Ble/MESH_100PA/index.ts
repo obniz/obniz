@@ -34,19 +34,20 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
 
   public async getDataWait() {
     this.checkConnected();
-    const _pa = this._mesh as MeshJsPa;
+    const brightnessBlock = this.meshBlock as MeshJsPa;
     return {
       name: this.peripheral.localName!,
       address: this.peripheral.address,
-      battery: this._mesh.battery,
-      proximity: _pa.getResponse.proximity,
-      brightness: _pa.getResponse.brightness,
+      battery: this.meshBlock.battery,
+      proximity: brightnessBlock.getResponse.proximity,
+      brightness: brightnessBlock.getResponse.brightness,
     };
   }
 
-  public setMode(type: number, request_id = 0): void {
-    const _pa = this._mesh as MeshJsPa;
-    this.writeWOResponse(_pa.parseSetmodeCommand(type, request_id));
+  public setMode(type: number, opt_requestId = 0): void {
+    const brightnessBlock = this.meshBlock as MeshJsPa;
+    const command = brightnessBlock.parseSetmodeCommand(type, opt_requestId);
+    this.writeWOResponse(command);
   }
 
   protected static _isMESHblock(name: string): boolean {
@@ -54,9 +55,9 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
   }
 
   protected prepareConnect(): void {
-    this._mesh = new MeshJsPa();
-    const _pa = this._mesh as MeshJsPa;
-    _pa.onNotify = (response: MeshJsPa['response_']) => {
+    this.meshBlock = new MeshJsPa();
+    const brightnessBlock = this.meshBlock as MeshJsPa;
+    brightnessBlock.onNotify = (response: MeshJsPa['response_']) => {
       if (typeof this.onNotify !== 'function') {
         return;
       }

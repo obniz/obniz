@@ -39,8 +39,8 @@ class MeshJsLe extends MeshJs_1.MeshJs {
             throw new MeshJsError_1.MeshJsOutOfRangeError('cycle_off', TIME_MIN, TIME_MAX);
         }
         if (pattern !== MeshJsLe.PATTERN.BLINK &&
-            pattern !== MeshJsLe.PATTERN.SOFT) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('pattern');
+            pattern !== MeshJsLe.PATTERN.FIREFLY) {
+            throw new MeshJsError_1.MeshJsInvalidValueError('pattern');
         }
         // Generate Command
         const MESSAGE_TYPE_ID = 1;
@@ -71,5 +71,5 @@ exports.MeshJsLe = MeshJsLe;
 // Constant Values
 MeshJsLe.PATTERN = {
     BLINK: 1,
-    SOFT: 2,
+    FIREFLY: 2,
 };

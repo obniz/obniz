@@ -20,42 +20,42 @@ class MESH_100AC extends MESH_1.MESH {
     }
     async getDataWait() {
         this.checkConnected();
-        const _ac = this._mesh;
+        const moveBlock = this.meshBlock;
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this._mesh.battery,
-            accele_x: _ac.getAccele.x,
-            accele_y: _ac.getAccele.y,
-            accele_z: _ac.getAccele.z,
-            face: _ac.getFace,
+            battery: this.meshBlock.battery,
+            accele_x: moveBlock.getAccele.x,
+            accele_y: moveBlock.getAccele.y,
+            accele_z: moveBlock.getAccele.z,
+            face: moveBlock.getFace,
         };
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100AC.PREFIX) === 0;
     }
     prepareConnect() {
-        this._mesh = new MeshJsAc_1.MeshJsAc();
-        const _ac = this._mesh;
-        _ac.onTapped = (accele) => {
+        this.meshBlock = new MeshJsAc_1.MeshJsAc();
+        const moveBlock = this.meshBlock;
+        moveBlock.onTapped = (accele) => {
             if (typeof this.onTapped !== 'function') {
                 return;
             }
             this.onTapped(accele);
         };
-        _ac.onShaked = (accele) => {
+        moveBlock.onShaked = (accele) => {
             if (typeof this.onShaked !== 'function') {
                 return;
             }
             this.onShaked(accele);
         };
-        _ac.onFlipped = (accele) => {
+        moveBlock.onFlipped = (accele) => {
             if (typeof this.onFlipped !== 'function') {
                 return;
             }
             this.onFlipped(accele);
         };
-        _ac.onDirection = (face, accele) => {
+        moveBlock.onDirection = (face, accele) => {
             if (typeof this.onDirection !== 'function') {
                 return;
             }

@@ -51,37 +51,38 @@ class MeshJsMd extends MeshJs_1.MeshJs {
     /**
      *
      * @param detectionMode
-     * @param detectionTime
-     * @param responseTime
-     * @param requestId
+     * @param opt_detectionTime
+     * @param opt_responseTime
+     * @param opt_requestId
      * @returns
      */
-    parseSetmodeCommand(detectionMode, detectionTime = 500, responseTime = 500, requestId = 0) {
+    parseSetmodeCommand(detectionMode, opt_detectionTime = 500, opt_responseTime = 500, opt_requestId = 0) {
         // Error Handle
         const DETECTION_TIME_MIN = 200;
         const DETECTION_TIME_MAX = 60000;
-        if (detectionTime < DETECTION_TIME_MIN ||
-            DETECTION_TIME_MAX < detectionTime) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('detection_time', DETECTION_TIME_MIN, DETECTION_TIME_MAX);
+        if (opt_detectionTime < DETECTION_TIME_MIN ||
+            DETECTION_TIME_MAX < opt_detectionTime) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('opt_detectionTime', DETECTION_TIME_MIN, DETECTION_TIME_MAX);
         }
         const RESPONSE_TIME_MIN = 500;
         const RESPONSE_TIME_MAX = 60000;
-        if (responseTime < RESPONSE_TIME_MIN || RESPONSE_TIME_MAX < responseTime) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('response_time', RESPONSE_TIME_MIN, RESPONSE_TIME_MAX);
+        if (opt_responseTime < RESPONSE_TIME_MIN ||
+            RESPONSE_TIME_MAX < opt_responseTime) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('opt_responseTime', RESPONSE_TIME_MIN, RESPONSE_TIME_MAX);
         }
         // Generate Command
         const HEADER = [
             this.MESSAGE_TYPE_ID_,
             this.EVENT_TYPE_ID_,
-            requestId,
+            opt_requestId,
         ];
         const BYTE = 256;
         const BODY = [
             detectionMode,
-            detectionTime % BYTE,
-            Math.floor(detectionTime / BYTE),
-            responseTime % BYTE,
-            Math.floor(responseTime / BYTE),
+            opt_detectionTime % BYTE,
+            Math.floor(opt_detectionTime / BYTE),
+            opt_responseTime % BYTE,
+            Math.floor(opt_responseTime / BYTE),
         ];
         const data = HEADER.concat(BODY);
         data.push(this.checkSum(data));

@@ -55,14 +55,14 @@ export declare class MeshJsGp extends MeshJs {
     /**
      * parseSetmodeCommand
      *
-     * @param din {p1:boolean, p2:boolean, p3:boolean}
-     * @param din_notify {p1:boolean, p2:boolean, p3:boolean}
-     * @param dout {p1:boolean, p2:boolean, p3:boolean}
-     * @param pwm_ratio 0 ~ 255
+     * @param digitalIn {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalInNotify {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalOut {p1:boolean, p2:boolean, p3:boolean}
+     * @param pwmRatio 0 ~ 255
      * @param vcc VCC.AUTO or VCC.ON or VCC.OFF
-     * @param ain_range_upper 0.00 ~ 3.00[V], resolution 0.05[V]
-     * @param ain_range_bottom 0.00 ~ 3.00[V], resolution 0.05[V]
-     * @param ain_notify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+     * @param analogInRangeUpper 0.00 ~ 3.00[V], resolution 0.05[V]
+     * @param analogInRangeBottom 0.00 ~ 3.00[V], resolution 0.05[V]
+     * @param analogInNotify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
      * @returns command
      */
     parseSetmodeCommand(digitalIn: MeshJsGp['DigitalPins'], digitalInNotify: MeshJsGp['DigitalPins'], digitalOut: MeshJsGp['DigitalPins'], pwmRatio: number, vcc: number, analogInRangeUpper: number, analogInRangeBottom: number, analogInNotify: number): number[];
@@ -70,10 +70,10 @@ export declare class MeshJsGp extends MeshJs {
      * parseSetDinCommand
      *
      * @param pin
-     * @param requestId
+     * @param opt_requestId
      * @returns
      */
-    parseSetDinCommand(pin: number, requestId?: number): number[];
+    parseSetDinCommand(pin: number, opt_requestId?: number): number[];
     /**
      * parseSetAinCommand
      *

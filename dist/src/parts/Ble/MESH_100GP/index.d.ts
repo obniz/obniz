@@ -18,22 +18,22 @@ export interface MESH_100GP_Data {
 export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     static readonly PartsName = "MESH_100GP";
     static readonly PREFIX = "MESH-100GP";
-    static readonly AnalogInputEventCondition: {
+    static readonly ANALOG_INPUT_EVENT_CONDITION: {
         readonly NOT_NOTIFY: 0;
         readonly ABOVE_THRESHOLD: 1;
         readonly BELOW_THRESHOLD: 2;
     };
-    static readonly Mode: {
+    static readonly MODE: {
         readonly ALWAYS: 0;
         readonly ONCE: 1;
         readonly ALWAYS_AND_ONECE: 2;
     };
-    static readonly Pin: {
+    static readonly PIN: {
         readonly P1: 0;
         readonly P2: 1;
         readonly P3: 2;
     };
-    static readonly State: {
+    static readonly STATE: {
         readonly LOW_2_HIGH: 1;
         readonly HIGH_2_LOW: 2;
     };
@@ -59,21 +59,21 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     /**
      * setMode
      *
-     * @param din {p1:boolean, p2:boolean, p3:boolean}
-     * @param din_notify {p1:boolean, p2:boolean, p3:boolean}
-     * @param dout {p1:boolean, p2:boolean, p3:boolean}
-     * @param pwm_ratio 0 ~ 255
+     * @param digitalIn {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalInNotify {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalOut {p1:boolean, p2:boolean, p3:boolean}
+     * @param pwmRatio 0 ~ 255
      * @param vcc VCC.AUTO or VCC.ON or VCC.OFF
-     * @param ain_range_upper 0.00 ~ 3.00[V], resolution 0.05[V]
-     * @param ain_range_bottom 0.00 ~ 3.00[V], resolution 0.05[V]
-     * @param ain_notify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+     * @param analogInRangeUpper 0.00 ~ 3.00[V], resolution 0.05[V]
+     * @param analogInRangeBottom 0.00 ~ 3.00[V], resolution 0.05[V]
+     * @param analogInNotify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
      */
-    setMode(din: MESH_100GP['DigitalPins'], din_notify: MESH_100GP['DigitalPins'], dout: MESH_100GP['DigitalPins'], pwm_ratio: number, vcc: number, ain_range_upper: number, ain_range_bottom: number, ain_notify: number): void;
-    setDin(pin: number, request_id?: number): void;
-    setAin(mode: number, request_id?: number): void;
-    setVout(pin: number, request_id?: number): void;
-    setDout(pin: number, request_id?: number): void;
-    setPWMNotify(request_id?: number): void;
+    setMode(digitalIn: MESH_100GP['DigitalPins'], digitalInNotify: MESH_100GP['DigitalPins'], digitalOut: MESH_100GP['DigitalPins'], pwmRatio: number, vcc: number, analogInRangeUpper: number, analogInRangeBottom: number, analogInNotify: number): void;
+    setDin(pin: number, opt_requestId?: number): void;
+    setAin(mode: number, opt_requestId?: number): void;
+    setVout(pin: number, opt_requestId?: number): void;
+    setDout(pin: number, opt_requestId?: number): void;
+    setPWMNotify(opt_requestId?: number): void;
     protected static _isMESHblock(name: string): boolean;
     protected prepareConnect(): void;
     protected beforeOnDisconnectWait(reason: unknown): Promise<void>;

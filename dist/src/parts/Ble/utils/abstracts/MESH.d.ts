@@ -8,12 +8,23 @@ export declare abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> 
     static AvailableBleMode: "Connectable";
     private static readonly LOCAL_NAME_LENGTH_;
     protected static PREFIX: string;
-    protected _mesh: MeshJs;
+    protected meshBlock: MeshJs;
     private indicateCharacteristic_;
     private notifyCharacteristic_;
     private writeCharacteristic_;
     private writeWOResponseCharacteristic_;
+    /**
+     *
+     * @param peripheral
+     * @returns
+     */
     static isMESHblock(peripheral: BleRemotePeripheral): boolean;
+    /**
+     *
+     * @param peripheral
+     * @param sirialnumber
+     * @returns
+     */
     static sameSirialNumberBlock(peripheral: BleRemotePeripheral, sirialnumber: string): boolean;
     /**
      * Connect to the services of a MESH

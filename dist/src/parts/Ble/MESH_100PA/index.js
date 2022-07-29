@@ -17,26 +17,27 @@ class MESH_100PA extends MESH_1.MESH {
     }
     async getDataWait() {
         this.checkConnected();
-        const _pa = this._mesh;
+        const brightnessBlock = this.meshBlock;
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this._mesh.battery,
-            proximity: _pa.getResponse.proximity,
-            brightness: _pa.getResponse.brightness,
+            battery: this.meshBlock.battery,
+            proximity: brightnessBlock.getResponse.proximity,
+            brightness: brightnessBlock.getResponse.brightness,
         };
     }
-    setMode(type, request_id = 0) {
-        const _pa = this._mesh;
-        this.writeWOResponse(_pa.parseSetmodeCommand(type, request_id));
+    setMode(type, opt_requestId = 0) {
+        const brightnessBlock = this.meshBlock;
+        const command = brightnessBlock.parseSetmodeCommand(type, opt_requestId);
+        this.writeWOResponse(command);
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100PA.PREFIX) !== -1;
     }
     prepareConnect() {
-        this._mesh = new MeshJsPa_1.MeshJsPa();
-        const _pa = this._mesh;
-        _pa.onNotify = (response) => {
+        this.meshBlock = new MeshJsPa_1.MeshJsPa();
+        const brightnessBlock = this.meshBlock;
+        brightnessBlock.onNotify = (response) => {
             if (typeof this.onNotify !== 'function') {
                 return;
             }

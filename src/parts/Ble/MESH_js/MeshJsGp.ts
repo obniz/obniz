@@ -145,14 +145,14 @@ export class MeshJsGp extends MeshJs {
   /**
    * parseSetmodeCommand
    *
-   * @param din {p1:boolean, p2:boolean, p3:boolean}
-   * @param din_notify {p1:boolean, p2:boolean, p3:boolean}
-   * @param dout {p1:boolean, p2:boolean, p3:boolean}
-   * @param pwm_ratio 0 ~ 255
+   * @param digitalIn {p1:boolean, p2:boolean, p3:boolean}
+   * @param digitalInNotify {p1:boolean, p2:boolean, p3:boolean}
+   * @param digitalOut {p1:boolean, p2:boolean, p3:boolean}
+   * @param pwmRatio 0 ~ 255
    * @param vcc VCC.AUTO or VCC.ON or VCC.OFF
-   * @param ain_range_upper 0.00 ~ 3.00[V], resolution 0.05[V]
-   * @param ain_range_bottom 0.00 ~ 3.00[V], resolution 0.05[V]
-   * @param ain_notify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+   * @param analogInRangeUpper 0.00 ~ 3.00[V], resolution 0.05[V]
+   * @param analogInRangeBottom 0.00 ~ 3.00[V], resolution 0.05[V]
+   * @param analogInNotify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
    * @returns command
    */
   public parseSetmodeCommand(
@@ -230,11 +230,11 @@ export class MeshJsGp extends MeshJs {
    * parseSetDinCommand
    *
    * @param pin
-   * @param requestId
+   * @param opt_requestId
    * @returns
    */
-  public parseSetDinCommand(pin: number, requestId = 0) {
-    return this.parseSetCommand_(this.DIGITAL_IN_ID_, pin, requestId);
+  public parseSetDinCommand(pin: number, opt_requestId = 0) {
+    return this.parseSetCommand_(this.DIGITAL_IN_ID_, pin, opt_requestId);
   }
 
   /**
