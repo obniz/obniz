@@ -9,15 +9,27 @@ export class MeshJsPa extends MeshJs {
   // Constant Values
   public static readonly NotifyMode = {
     STOP: 0 as const,
+    EMIT_PROXIMITY: 1 as const,
+    EMIT_BRIGHTNESS: 2 as const,
     UPDATE_PROXIMITY: 4 as const,
     UPDATE_BRIGHTNESS: 8 as const,
     ONCE: 16 as const,
     ALWAYS: 32 as const,
   } as const;
+  private readonly NOTIFY_MODE_MIN_ = MeshJsPa.NotifyMode.STOP;
+  private readonly NOTIFY_MODE_MAX_ =
+    MeshJsPa.NotifyMode.STOP +
+    MeshJsPa.NotifyMode.EMIT_PROXIMITY +
+    MeshJsPa.NotifyMode.EMIT_BRIGHTNESS +
+    MeshJsPa.NotifyMode.UPDATE_PROXIMITY +
+    MeshJsPa.NotifyMode.UPDATE_BRIGHTNESS +
+    MeshJsPa.NotifyMode.ONCE +
+    MeshJsPa.NotifyMode.ALWAYS;
   private readonly MESSAGE_TYPE_ID_: number = 1 as const;
   private readonly EVENT_TYPE_ID_: number = 0 as const;
 
   /**
+   * notify
    *
    * @param data
    * @returns
@@ -32,7 +44,8 @@ export class MeshJsPa extends MeshJs {
     }
     const BYTE = 256 as const;
     const proximity = BYTE * data[5] + data[4];
-    const brightness = BYTE * data[7] + data[6];
+    const LX = 10 as const;
+    const brightness = LX * (BYTE * data[7] + data[6]);
     const requestId = data[2];
     if (typeof this.onSensorEvent !== 'function') {
       return;
@@ -41,12 +54,20 @@ export class MeshJsPa extends MeshJs {
   }
 
   /**
+   * parseSetmodeCommand
    *
-   * @param notifyType
+   * @param notifyMode
    * @param opt_requestId
    * @returns command
    */
-  public parseSetmodeCommand(notifyMode: number, opt_requestId = 0): number[] {
+  public parseSetmodeCommand(
+    proximityRangeUpper: number,
+    proximityRangeBottom: number,
+    brightnessRangeUpper: number,
+    brightnessRangeBottom: number,
+    notifyMode: number,
+    opt_requestId = 0
+  ): number[] {
     // Error Handle
     this.checkNotifyMode_(notifyMode);
 
@@ -56,33 +77,36 @@ export class MeshJsPa extends MeshJs {
       this.EVENT_TYPE_ID_,
       opt_requestId,
     ] as const;
-    const FIXED = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2] as const;
-    const data: number[] = HEADER.concat(FIXED).concat(notifyMode);
+
+    const PROXIMITY_RANGE_UPPER = this.num2array_(proximityRangeUpper);
+    const PROXIMITY_RANGE_BOTTOM = this.num2array_(proximityRangeBottom);
+    const BRIGHTNESS_RANGE_UPPER = this.num2array_(brightnessRangeUpper);
+    const BRIGHTNESS_RANGE_BOTTOM = this.num2array_(brightnessRangeBottom);
+    const FIXED = [0, 0, 2, 2, 2] as const;
+    const data: number[] = HEADER.concat(PROXIMITY_RANGE_UPPER)
+      .concat(PROXIMITY_RANGE_BOTTOM)
+      .concat(BRIGHTNESS_RANGE_UPPER)
+      .concat(BRIGHTNESS_RANGE_BOTTOM)
+      .concat(FIXED)
+      .concat(notifyMode);
     data.push(this.checkSum(data));
 
     return data;
   }
 
   private checkNotifyMode_(target: number): boolean {
-    if (target === 0) {
-      return true;
-    }
-    if (target % 4 !== 0) {
-      throw new MeshJsInvalidValueError('notifyMode');
-    }
-    const NOTIFY_MODE_MIN = MeshJsPa.NotifyMode.UPDATE_PROXIMITY;
-    const NOTIFY_MODE_MAX =
-      MeshJsPa.NotifyMode.UPDATE_PROXIMITY +
-      MeshJsPa.NotifyMode.UPDATE_BRIGHTNESS +
-      MeshJsPa.NotifyMode.ONCE +
-      MeshJsPa.NotifyMode.ALWAYS;
-    if (target < NOTIFY_MODE_MIN || NOTIFY_MODE_MAX < target) {
+    if (target < this.NOTIFY_MODE_MIN_ || this.NOTIFY_MODE_MAX_ < target) {
       throw new MeshJsOutOfRangeError(
         'notifyType',
-        NOTIFY_MODE_MIN,
-        NOTIFY_MODE_MAX
+        this.NOTIFY_MODE_MIN_,
+        this.NOTIFY_MODE_MAX_
       );
     }
     return true;
+  }
+
+  private num2array_(val: number): number[] {
+    const BYTE = 256 as const;
+    return [val % BYTE, Math.floor(val / BYTE)];
   }
 }

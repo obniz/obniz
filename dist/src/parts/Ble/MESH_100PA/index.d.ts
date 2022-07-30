@@ -18,6 +18,8 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
     static readonly PREFIX = "MESH-100PA";
     static readonly NotifyMode: {
         readonly STOP: 0;
+        readonly EMIT_PROXIMITY: 1;
+        readonly EMIT_BRIGHTNESS: 2;
         readonly UPDATE_PROXIMITY: 4;
         readonly UPDATE_BRIGHTNESS: 8;
         readonly ONCE: 16;
@@ -27,12 +29,16 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
     protected readonly staticClass: typeof MESH_100PA;
     private proximity_;
     private brightness_;
+    private proximityRangeUpper_;
+    private proximityRangeBottom_;
+    private brightnessRangeUpper_;
+    private brightnessRangeBottom_;
     getDataWait(): Promise<{
         name: string;
         address: string;
     }>;
     getSensorDataWait(): Promise<unknown>;
-    setMode(type: number): void;
+    setMode(proximityRangeUpper: number, proximityRangeBottom: number, brightnessRangeUpper: number, brightnessRangeBottom: number, notifyMode: number): void;
     protected static _isMESHblock(name: string): boolean;
     protected prepareConnect(): void;
     protected beforeOnDisconnectWait(reason: unknown): Promise<void>;

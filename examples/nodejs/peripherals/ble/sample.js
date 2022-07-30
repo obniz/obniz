@@ -9,7 +9,7 @@ const mesh_th = Obniz.getPartsClass('MESH_100TH');
 const mesh_md = Obniz.getPartsClass('MESH_100MD');
 const mesh_gp = Obniz.getPartsClass('MESH_100GP');
 
-const obnizId = '87287267';
+const obnizId = '00000000';
 
 const obniz = new Obniz(obnizId, {
   access_token: null,
@@ -205,33 +205,112 @@ async function samplePA(peripheral) {
 
   // Select 'notifyMode' from below ( combinations 16 )
   const _notifyMode = 
-    /* select 1 param => combination 5 */
+    /**
+     * select 1 param => combination 7
+     */
     // mesh_pa.NotifyMode.STOP;
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY;
+    // mesh_pa.NotifyMode.EMIT_BRIGHTNESS;
     // mesh_pa.NotifyMode.UPDATE_PROXIMITY;
     // mesh_pa.NotifyMode.UPDATE_BRIGHTNESS;
     // mesh_pa.NotifyMode.ONCE;
     // mesh_pa.NotifyMode.ALWAYS;
-    /* select 2 params => combination 6 */
+    /**
+     * select 2 params => combination 15
+     */
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.EMIT_BRIGHTNESS;
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.UPDATE_PROXIMITY;
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS;
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.ONCE;
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.ALWAYS;
+    // mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_PROXIMITY;
+    // mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS;
+    // mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.ONCE;
+    // mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.ALWAYS;
     // mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS;
     // mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.ONCE;
     // mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.ALWAYS;
     // mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ONCE;
     // mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ALWAYS;
-    mesh_pa.NotifyMode.ONCE + mesh_pa.NotifyMode.ALWAYS;
-    /* select 3 params => combination 4 */
+    // mesh_pa.NotifyMode.ONCE + mesh_pa.NotifyMode.ALWAYS;
+    /**
+     * select 3 params => combination 20
+     *  */
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_PROXIMITY;
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS;
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.ONCE;
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.ALWAYS;
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS;
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.ONCE;
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.ALWAYS;
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ONCE;
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ALWAYS;
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.ONCE + mesh_pa.NotifyMode.ALWAYS;
+    // mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS;
+    // mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.ONCE;
+    // mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.ALWAYS;
+    // mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ONCE;
+    // mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ALWAYS;
+    mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.ONCE + mesh_pa.NotifyMode.ALWAYS;
     // mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ONCE;
     // mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ALWAYS;
     // mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.ONCE + mesh_pa.NotifyMode.ALWAYS;
     // mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ONCE + mesh_pa.NotifyMode.ALWAYS;
-    /* select 4(= all) params => combination 1 */
+    /**
+     * select 4 params => combination 15
+     */
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS;
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.ONCE;
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.ALWAYS;
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ONCE;
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ALWAYS;
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.ONCE + mesh_pa.NotifyMode.ALWAYS;
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ONCE;
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ALWAYS;
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.ONCE + mesh_pa.NotifyMode.ALWAYS;
+    // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ONCE + mesh_pa.NotifyMode.ALWAYS;
+    // mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ONCE;
+    // mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ALWAYS;
+    // mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.ONCE + mesh_pa.NotifyMode.ALWAYS;
+    // mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ONCE + mesh_pa.NotifyMode.ALWAYS;
     // mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ONCE + mesh_pa.NotifyMode.ALWAYS;
+    /**
+     * select 5 params => combination 6
+     */
+    //  mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ONCE;
+    //  mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ALWAYS;
+    //  mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.ONE + mesh_pa.NotifyMode.ALWAYS;
+    //  mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ONE + mesh_pa.NotifyMode.ALWAYS;
+    //  mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ONE + mesh_pa.NotifyMode.ALWAYS;
+    //  mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ONE + mesh_pa.NotifyMode.ALWAYS;
+     /**
+      * select 6 params(=all) => combination 1
+      */
+      // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ONCE + mesh_pa.NotifyMode.ALWAYS;
   
+  const _proximityRangeUpper = 30;
+  const _proximityRangeBottom = 0;
+  const _brightnessRangeUpper = 255;
+  const _brightnessRangeBottom = 0;
   // Normal
-  PA_block.setMode(_notifyMode);
+  PA_block.setMode(
+    _proximityRangeUpper,
+    _proximityRangeBottom,
+    _brightnessRangeUpper,
+    _brightnessRangeBottom,
+    _notifyMode
+  );
   // Delay STOP
+  // const _delay = 5 * 1000; // ms
   // setTimeout(()=>{
-  //   PA_block.setMode(mesh_pa.NotifyMode.STOP)
-  // }, 5 * 1000);
+  //   PA_block.setMode(
+  //     _proximityRangeUpper,
+  //     _proximityRangeBottom,
+  //     _brightnessRangeUpper,
+  //     _brightnessRangeBottom,
+  //     mesh_pa.NotifyMode.STOP
+  //   );
+  // }, _delay);
 
   PA_block.onSensorEvent = ((proximity, brightness) => {
     console.log('Notify: ' + proximity + ', ' + brightness);
@@ -245,16 +324,36 @@ async function samplePA(peripheral) {
   // const res = await PA_block.getSensorDataWait();
   // console.log('get: ' + res.proximity + ', ' + res.brightness);
   /* Delay */
-  // const _delay = 3000; // [ms]
+  // const _delay = 3 * 1000; // [ms]
   // setTimeout(testGet, _delay);
   /* Repeat */
-  const _interval = 1500; // [ms]
-  setInterval(testGet, _interval);
+  // const _interval = 200; // [ms]
+  // setInterval(testGet, _interval);
+  // setInterval(testGet2, _interval);
 }
 
 async function testGet() {
-  const res = await PA_block.getSensorDataWait();
-  console.log('get: ' + res.proximity + ', ' + res.brightness);  
+  const start = Date.now();
+  const res = await PA_block.getSensorDataWait().catch(
+    (error)=>{
+      console.error(error);
+      return {proximity: -1, brightness: -1};
+    }
+  );
+  const end = Date.now();
+  console.log('get: ' + res.proximity + ', ' + res.brightness + '  ' + (end-start) + 'ms');
+}
+
+var isReady = true;
+
+async function testGet2() {
+  if (!isReady) {
+    console.log('------- no send ---------');
+    return;
+  }
+  isReady = false;
+  await testGet();
+  isReady = true;
 }
 
 async function sampleTH(peripheral) {
