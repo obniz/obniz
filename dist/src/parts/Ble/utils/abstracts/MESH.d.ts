@@ -30,16 +30,6 @@ export declare abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> 
      * Connect to the services of a MESH
      */
     connectWait(): Promise<void>;
-    /**
-     * getInfoWait()
-     *
-     * @const
-     * @returns
-     */
-    getInfoWait(): Promise<{
-        name: string;
-        address: string;
-    }>;
     protected static _isMESHblock(name: string): boolean;
     protected prepareConnect(): void;
     protected writeWait(data: number[]): Promise<void>;

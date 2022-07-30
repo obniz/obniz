@@ -1,6 +1,6 @@
 import { MeshJs } from './MeshJs';
 export declare class MeshJsPa extends MeshJs {
-    onNotify: ((resp: MeshJsPa['response_']) => void) | null;
+    onSensorEvent: ((proximity: number, brightness: number, requestId: number) => void) | null;
     static readonly NOTIFY_TYPE: {
         readonly UPDATE_PROXIMITY: 4;
         readonly UPDATE_BRIGHTNESS: 8;
@@ -9,8 +9,6 @@ export declare class MeshJsPa extends MeshJs {
     };
     private readonly MESSAGE_TYPE_ID_;
     private readonly EVENT_TYPE_ID_;
-    private response_;
-    get getResponse(): MeshJsPa['response_'];
     /**
      *
      * @param data

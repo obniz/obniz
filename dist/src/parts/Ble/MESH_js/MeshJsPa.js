@@ -6,13 +6,9 @@ class MeshJsPa extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onNotify = null;
+        this.onSensorEvent = null;
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
-        this.response_ = { requestId: -1, proximity: -1, brightness: -1 };
-    }
-    get getResponse() {
-        return this.response_;
     }
     /**
      *
@@ -28,13 +24,13 @@ class MeshJsPa extends MeshJs_1.MeshJs {
             return;
         }
         const BYTE = 256;
-        this.response_.requestId = data[2];
-        this.response_.proximity = BYTE * data[5] + data[4];
-        this.response_.brightness = BYTE * data[7] + data[6];
-        if (typeof this.onNotify !== 'function') {
+        const proximity = BYTE * data[5] + data[4];
+        const brightness = BYTE * data[7] + data[6];
+        const requestId = data[2];
+        if (typeof this.onSensorEvent !== 'function') {
             return;
         }
-        this.onNotify(this.response_);
+        this.onSensorEvent(proximity, brightness, requestId);
     }
     /**
      *

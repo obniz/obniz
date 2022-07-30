@@ -15,9 +15,6 @@ export interface MESH_100THOptions {}
 export interface MESH_100TH_Data {
   name: string;
   address: string;
-  battery: number; // 0 ~ 10
-  temperature: number; // -10 ~ 50 [Celsius]
-  humidity: number; // 0 ~ 100 [%]
 }
 
 /** MESH_100TH management class */
@@ -28,7 +25,9 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
   public static readonly NotifyType = MeshJsTh.NOTIFY_TYPE;
 
   // Event Handler
-  public onNotify: ((resp: MeshJsTh['response_']) => void) | null = null;
+  public onSensorEvent:
+    | ((temperature: number, humidity: number) => void)
+    | null = null;
 
   protected readonly staticClass = MESH_100TH;
 
@@ -38,9 +37,6 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
     return {
       name: this.peripheral.localName!,
       address: this.peripheral.address,
-      battery: this.meshBlock.battery,
-      temperature: _th.getResponse.temperature,
-      humidity: _th.getResponse.humidity,
     };
   }
 
@@ -75,13 +71,15 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
   protected prepareConnect(): void {
     this.meshBlock = new MeshJsTh();
     const temperatureAndHumidityBlock = this.meshBlock as MeshJsTh;
-    temperatureAndHumidityBlock.onNotify = (
-      response: MeshJsTh['response_']
+    temperatureAndHumidityBlock.onSensorEvent = (
+      temperature: number,
+      humidity: number,
+      requestId: number
     ) => {
-      if (typeof this.onNotify !== 'function') {
+      if (typeof this.onSensorEvent !== 'function') {
         return;
       }
-      this.onNotify(response);
+      this.onSensorEvent(temperature, humidity);
     };
     super.prepareConnect();
   }

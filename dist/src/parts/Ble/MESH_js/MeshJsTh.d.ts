@@ -1,6 +1,6 @@
 import { MeshJs } from './MeshJs';
 export declare class MeshJsTh extends MeshJs {
-    onNotify: ((accele: MeshJsTh['response_']) => void) | null;
+    onSensorEvent: ((temperature: number, humidity: number, requestId: number) => void) | null;
     static readonly NOTIFY_TYPE: {
         readonly UPDATE_TEMPERATURE: 4;
         readonly UPDATE_HUMIDITY: 8;
@@ -13,8 +13,6 @@ export declare class MeshJsTh extends MeshJs {
     private readonly MIN_TEMPERATURE_;
     private readonly MAX_HUMIDITY_;
     private readonly MIN_HUMIDITY_;
-    private response_;
-    get getResponse(): MeshJsTh['response_'];
     /**
      *
      * @param data

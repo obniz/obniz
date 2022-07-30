@@ -1,6 +1,6 @@
 import { MeshJs } from './MeshJs';
 export declare class MeshJsMd extends MeshJs {
-    onNotify: ((response: MeshJsMd['response_']) => void) | null;
+    onSensorEvent: ((motionState: number, detectionMode: number, requestId: number) => void) | null;
     readonly DETECTION_MODE: {
         readonly DETECTED: 1;
         readonly NOT_DETECTED: 2;
@@ -14,8 +14,6 @@ export declare class MeshJsMd extends MeshJs {
     };
     private readonly MESSAGE_TYPE_ID_;
     private readonly EVENT_TYPE_ID_;
-    private response_;
-    get getResponse(): MeshJsMd['response_'];
     /**
      * notify
      *

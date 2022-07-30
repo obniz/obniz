@@ -6,17 +6,13 @@ class MeshJsTh extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onNotify = null;
+        this.onSensorEvent = null;
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
         this.MAX_TEMPERATURE_ = 50;
         this.MIN_TEMPERATURE_ = -10;
         this.MAX_HUMIDITY_ = 100;
         this.MIN_HUMIDITY_ = 0;
-        this.response_ = { requestId: -1, temperature: -1, humidity: -1 };
-    }
-    get getResponse() {
-        return this.response_;
     }
     /**
      *
@@ -31,16 +27,16 @@ class MeshJsTh extends MeshJs_1.MeshJs {
         if (data[1] !== this.EVENT_TYPE_ID_) {
             return;
         }
-        this.response_.requestId = data[2];
         const BYTE = 256;
         const TEMP = this.complemnt_(BYTE * data[5] + data[4]) / 10;
-        this.response_.temperature = Math.min(Math.max(this.MIN_TEMPERATURE_, TEMP), this.MAX_TEMPERATURE_);
-        const hum_ori = BYTE * data[7] + data[6];
-        this.response_.humidity = Math.min(Math.max(this.MIN_HUMIDITY_, hum_ori), this.MAX_HUMIDITY_);
-        if (typeof this.onNotify !== 'function') {
+        const temperature = Math.min(Math.max(this.MIN_TEMPERATURE_, TEMP), this.MAX_TEMPERATURE_);
+        const HUM = BYTE * data[7] + data[6];
+        const humidity = Math.min(Math.max(this.MIN_HUMIDITY_, HUM), this.MAX_HUMIDITY_);
+        const requestId = data[2];
+        if (typeof this.onSensorEvent !== 'function') {
             return;
         }
-        this.onNotify(this.response_);
+        this.onSensorEvent(temperature, humidity, requestId);
     }
     /**
      *

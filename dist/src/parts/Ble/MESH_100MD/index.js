@@ -12,7 +12,7 @@ class MESH_100MD extends MESH_1.MESH {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onNotify = null;
+        this.onSensorEvent = null;
         this.staticClass = MESH_100MD;
     }
     async getDataWait() {
@@ -21,10 +21,6 @@ class MESH_100MD extends MESH_1.MESH {
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this.meshBlock.battery,
-            motion_state: motionBlock.getResponse.motionState,
-            detection_mode: motionBlock.getResponse.detectionMode,
-            request_id: motionBlock.getResponse.requestId,
         };
     }
     setMode(detectionMode, opt_detectionTime = 500, opt_responseTime = 500, opt_requestId = 0) {
@@ -39,11 +35,11 @@ class MESH_100MD extends MESH_1.MESH {
         this.meshBlock = new MeshJsMd_1.MeshJsMd();
         // set Event handler
         const motionBlock = this.meshBlock;
-        motionBlock.onNotify = (response) => {
-            if (typeof this.onNotify !== 'function') {
+        motionBlock.onSensorEvent = (motionState, detectionMode, requestId) => {
+            if (typeof this.onSensorEvent !== 'function') {
                 return;
             }
-            this.onNotify(response);
+            this.onSensorEvent(motionState, detectionMode);
         };
         super.prepareConnect();
     }

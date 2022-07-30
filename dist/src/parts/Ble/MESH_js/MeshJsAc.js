@@ -8,7 +8,8 @@ class MeshJsAc extends MeshJs_1.MeshJs {
         this.onTapped = null;
         this.onShaked = null;
         this.onFlipped = null;
-        this.onOrientation = null;
+        this.onOrientationChanged = null;
+        this.accele = { x: 0, y: 0, z: 0 };
         // Constant Values
         this.MESSAGE_TYPE_ID_ = 1;
         this.DATA_LENGTH_ = 17;
@@ -31,31 +32,33 @@ class MeshJsAc extends MeshJs_1.MeshJs {
         if (data[0] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
+        // update accele values
         const BYTE = 256;
         const BASE = 1024;
-        const acceleX = this.complemnt_(BYTE * data[5] + data[4]) / BASE;
-        const acceleY = this.complemnt_(BYTE * data[7] + data[6]) / BASE;
-        const acceleZ = this.complemnt_(BYTE * data[9] + data[8]) / BASE;
+        this.accele.x = this.complemnt_(BYTE * data[5] + data[4]) / BASE;
+        this.accele.y = this.complemnt_(BYTE * data[7] + data[6]) / BASE;
+        this.accele.z = this.complemnt_(BYTE * data[9] + data[8]) / BASE;
+        // emit event
         switch (data[1]) {
             case this.TAP_EVENT_ID_:
                 if (typeof this.onTapped === 'function') {
-                    this.onTapped(acceleX, acceleY, acceleZ);
+                    this.onTapped(this.accele);
                 }
                 break;
             case this.SHAKE_EVENT_ID_:
                 if (typeof this.onShaked === 'function') {
-                    this.onShaked(acceleX, acceleY, acceleZ);
+                    this.onShaked(this.accele);
                 }
                 break;
             case this.FLIP_EVENT_ID_:
                 if (typeof this.onFlipped === 'function') {
-                    this.onFlipped(acceleX, acceleY, acceleZ);
+                    this.onFlipped(this.accele);
                 }
                 break;
             case this.ORIENTATION_EVENT_ID_:
-                if (typeof this.onOrientation === 'function') {
+                if (typeof this.onOrientationChanged === 'function') {
                     const face = data[2];
-                    this.onOrientation(face, acceleX, acceleY, acceleZ);
+                    this.onOrientationChanged(face, this.accele);
                 }
                 break;
             default:

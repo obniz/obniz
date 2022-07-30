@@ -2,7 +2,9 @@ import { MeshJs } from './MeshJs';
 import { MeshJsInvalidValueError, MeshJsOutOfRangeError } from './MeshJsError';
 export class MeshJsPa extends MeshJs {
   // Event Handler
-  public onNotify: ((resp: MeshJsPa['response_']) => void) | null = null;
+  public onSensorEvent:
+    | ((proximity: number, brightness: number, requestId: number) => void)
+    | null = null;
 
   // Constant Values
   public static readonly NOTIFY_TYPE = {
@@ -13,12 +15,6 @@ export class MeshJsPa extends MeshJs {
   } as const;
   private readonly MESSAGE_TYPE_ID_: number = 1 as const;
   private readonly EVENT_TYPE_ID_: number = 0 as const;
-
-  private response_ = { requestId: -1, proximity: -1, brightness: -1 };
-
-  public get getResponse(): MeshJsPa['response_'] {
-    return this.response_;
-  }
 
   /**
    *
@@ -34,13 +30,13 @@ export class MeshJsPa extends MeshJs {
       return;
     }
     const BYTE = 256 as const;
-    this.response_.requestId = data[2];
-    this.response_.proximity = BYTE * data[5] + data[4];
-    this.response_.brightness = BYTE * data[7] + data[6];
-    if (typeof this.onNotify !== 'function') {
+    const proximity = BYTE * data[5] + data[4];
+    const brightness = BYTE * data[7] + data[6];
+    const requestId = data[2];
+    if (typeof this.onSensorEvent !== 'function') {
       return;
     }
-    this.onNotify(this.response_);
+    this.onSensorEvent(proximity, brightness, requestId);
   }
 
   /**

@@ -99,20 +99,6 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
     await this.writeWait(this.meshBlock.featureCommand);
   }
 
-  /**
-   * getInfoWait()
-   *
-   * @const
-   * @returns
-   */
-  public async getInfoWait() {
-    this.checkConnected();
-    return {
-      name: this.peripheral.localName!,
-      address: this.peripheral.address,
-    };
-  }
-
   protected static _isMESHblock(name: string): boolean {
     return name.indexOf(MESH.PREFIX) === 0;
   }

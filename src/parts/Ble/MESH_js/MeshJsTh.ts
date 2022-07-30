@@ -2,7 +2,9 @@ import { MeshJs } from './MeshJs';
 import { MeshJsOutOfRangeError } from './MeshJsError';
 export class MeshJsTh extends MeshJs {
   // Event Handler
-  public onNotify: ((accele: MeshJsTh['response_']) => void) | null = null;
+  public onSensorEvent:
+    | ((temperature: number, humidity: number, requestId: number) => void)
+    | null = null;
 
   // Constant Values
   public static readonly NOTIFY_TYPE = {
@@ -18,12 +20,6 @@ export class MeshJsTh extends MeshJs {
   private readonly MAX_HUMIDITY_ = 100 as const;
   private readonly MIN_HUMIDITY_ = 0 as const;
 
-  private response_ = { requestId: -1, temperature: -1, humidity: -1 };
-
-  public get getResponse(): MeshJsTh['response_'] {
-    return this.response_;
-  }
-
   /**
    *
    * @param data
@@ -38,25 +34,22 @@ export class MeshJsTh extends MeshJs {
       return;
     }
 
-    this.response_.requestId = data[2];
-
     const BYTE = 256 as const;
     const TEMP = this.complemnt_(BYTE * data[5] + data[4]) / 10;
-    this.response_.temperature = Math.min(
+    const temperature = Math.min(
       Math.max(this.MIN_TEMPERATURE_, TEMP),
       this.MAX_TEMPERATURE_
     );
-
-    const hum_ori = BYTE * data[7] + data[6];
-    this.response_.humidity = Math.min(
-      Math.max(this.MIN_HUMIDITY_, hum_ori),
+    const HUM = BYTE * data[7] + data[6];
+    const humidity = Math.min(
+      Math.max(this.MIN_HUMIDITY_, HUM),
       this.MAX_HUMIDITY_
     );
-
-    if (typeof this.onNotify !== 'function') {
+    const requestId = data[2];
+    if (typeof this.onSensorEvent !== 'function') {
       return;
     }
-    this.onNotify(this.response_);
+    this.onSensorEvent(temperature, humidity, requestId);
   }
 
   /**

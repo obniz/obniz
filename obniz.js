@@ -26858,6 +26858,7 @@ const MeshJsAc_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsAc.js
 class MESH_100AC extends MESH_1.MESH {
     constructor() {
         super(...arguments);
+        this.accele = { x: 0, y: 0, z: 0 };
         // Event Handler
         this.onTapped = null;
         this.onShaked = null;
@@ -26870,7 +26871,6 @@ class MESH_100AC extends MESH_1.MESH {
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this.meshBlock.battery,
         };
     }
     static _isMESHblock(name) {
@@ -26879,29 +26879,29 @@ class MESH_100AC extends MESH_1.MESH {
     prepareConnect() {
         this.meshBlock = new MeshJsAc_1.MeshJsAc();
         const moveBlock = this.meshBlock;
-        moveBlock.onTapped = (acceleX, acceleY, acceleZ) => {
+        moveBlock.onTapped = (accele) => {
             if (typeof this.onTapped !== 'function') {
                 return;
             }
-            this.onTapped(acceleX, acceleY, acceleZ);
+            this.onTapped(accele);
         };
-        moveBlock.onShaked = (acceleX, acceleY, acceleZ) => {
+        moveBlock.onShaked = (accele) => {
             if (typeof this.onShaked !== 'function') {
                 return;
             }
-            this.onShaked(acceleX, acceleY, acceleZ);
+            this.onShaked(accele);
         };
-        moveBlock.onFlipped = (acceleX, acceleY, acceleZ) => {
+        moveBlock.onFlipped = (accele) => {
             if (typeof this.onFlipped !== 'function') {
                 return;
             }
-            this.onFlipped(acceleX, acceleY, acceleZ);
+            this.onFlipped(accele);
         };
-        moveBlock.onOrientation = (face, acceleX, acceleY, acceleZ) => {
+        moveBlock.onOrientationChanged = (face, accele) => {
             if (typeof this.onOrientation !== 'function') {
                 return;
             }
-            this.onOrientation(face, acceleX, acceleY, acceleZ);
+            this.onOrientation(face, accele);
         };
         super.prepareConnect();
     }
@@ -26934,9 +26934,9 @@ class MESH_100BU extends MESH_1.MESH {
     constructor() {
         super(...arguments);
         /** Event Handler */
-        this.onSinglePressedNotify = null;
-        this.onLongPressedNotify = null;
-        this.onDoublePressedNotify = null;
+        this.onSinglePressed = null;
+        this.onLongPressed = null;
+        this.onDoublePressed = null;
         this.staticClass = MESH_100BU;
     }
     async getDataWait() {
@@ -26944,7 +26944,6 @@ class MESH_100BU extends MESH_1.MESH {
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this.meshBlock.battery,
         };
     }
     static _isMESHblock(name) {
@@ -26953,23 +26952,23 @@ class MESH_100BU extends MESH_1.MESH {
     prepareConnect() {
         this.meshBlock = new MeshJsBu_1.MeshJsBu();
         const buttonBlock = this.meshBlock;
-        buttonBlock.onSinglePressedNotify = () => {
-            if (typeof this.onSinglePressedNotify !== 'function') {
+        buttonBlock.onSinglePressed = () => {
+            if (typeof this.onSinglePressed !== 'function') {
                 return;
             }
-            this.onSinglePressedNotify();
+            this.onSinglePressed();
         };
-        buttonBlock.onLongPressedNotify = () => {
-            if (typeof this.onLongPressedNotify !== 'function') {
+        buttonBlock.onLongPressed = () => {
+            if (typeof this.onLongPressed !== 'function') {
                 return;
             }
-            this.onLongPressedNotify();
+            this.onLongPressed();
         };
-        buttonBlock.onDoublePressedNotify = () => {
-            if (typeof this.onDoublePressedNotify !== 'function') {
+        buttonBlock.onDoublePressed = () => {
+            if (typeof this.onDoublePressed !== 'function') {
                 return;
             }
-            this.onDoublePressedNotify();
+            this.onDoublePressed();
         };
         super.prepareConnect();
     }
@@ -27146,6 +27145,7 @@ const MeshJsLe_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsLe.js
 class MESH_100LE extends MESH_1.MESH {
     constructor() {
         super(...arguments);
+        this.colors = { red: 0, green: 0, blue: 0 };
         this.staticClass = MESH_100LE;
     }
     async getDataWait() {
@@ -27153,24 +27153,21 @@ class MESH_100LE extends MESH_1.MESH {
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this.meshBlock.battery,
         };
     }
     /**
      * setLed
      *
-     * @param red 0 ~ 127
-     * @param green 0 ~ 127
-     * @param blue 0 ~ 127
+     * @param colors red 0 ~ 127, green 0 ~ 127, blue 0 ~ 127
      * @param totalTime 0 ~ 65,535 [ms]
      * @param cycleOnTime 0 ~ 65,535 [ms]
      * @param cycleOffTime 0 ~ 65,535 [ms]
      * @param pattern Pattern.BLINK or Pattern.FIREFLY
      * @returns
      */
-    setLed(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern) {
+    setLed(colors, totalTime, cycleOnTime, cycleOffTime, pattern) {
         const ledBlock = this.meshBlock;
-        const command = ledBlock.parseLedCommand(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern);
+        const command = ledBlock.parseLedCommand(colors, totalTime, cycleOnTime, cycleOffTime, pattern);
         this.writeWOResponse(command);
     }
     static _isMESHblock(name) {
@@ -27210,7 +27207,7 @@ class MESH_100MD extends MESH_1.MESH {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onNotify = null;
+        this.onSensorEvent = null;
         this.staticClass = MESH_100MD;
     }
     async getDataWait() {
@@ -27219,10 +27216,6 @@ class MESH_100MD extends MESH_1.MESH {
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this.meshBlock.battery,
-            motion_state: motionBlock.getResponse.motionState,
-            detection_mode: motionBlock.getResponse.detectionMode,
-            request_id: motionBlock.getResponse.requestId,
         };
     }
     setMode(detectionMode, opt_detectionTime = 500, opt_responseTime = 500, opt_requestId = 0) {
@@ -27237,11 +27230,11 @@ class MESH_100MD extends MESH_1.MESH {
         this.meshBlock = new MeshJsMd_1.MeshJsMd();
         // set Event handler
         const motionBlock = this.meshBlock;
-        motionBlock.onNotify = (response) => {
-            if (typeof this.onNotify !== 'function') {
+        motionBlock.onSensorEvent = (motionState, detectionMode, requestId) => {
+            if (typeof this.onSensorEvent !== 'function') {
                 return;
             }
-            this.onNotify(response);
+            this.onSensorEvent(motionState, detectionMode);
         };
         super.prepareConnect();
     }
@@ -27274,7 +27267,7 @@ class MESH_100PA extends MESH_1.MESH {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onNotify = null;
+        this.onSensorEvent = null;
         this.staticClass = MESH_100PA;
     }
     async getDataWait() {
@@ -27283,9 +27276,6 @@ class MESH_100PA extends MESH_1.MESH {
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this.meshBlock.battery,
-            proximity: brightnessBlock.getResponse.proximity,
-            brightness: brightnessBlock.getResponse.brightness,
         };
     }
     setMode(type, opt_requestId = 0) {
@@ -27299,11 +27289,11 @@ class MESH_100PA extends MESH_1.MESH {
     prepareConnect() {
         this.meshBlock = new MeshJsPa_1.MeshJsPa();
         const brightnessBlock = this.meshBlock;
-        brightnessBlock.onNotify = (response) => {
-            if (typeof this.onNotify !== 'function') {
+        brightnessBlock.onSensorEvent = (proximity, brightness, requestId) => {
+            if (typeof this.onSensorEvent !== 'function') {
                 return;
             }
-            this.onNotify(response);
+            this.onSensorEvent(proximity, brightness);
         };
         super.prepareConnect();
     }
@@ -27337,7 +27327,7 @@ class MESH_100TH extends MESH_1.MESH {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onNotify = null;
+        this.onSensorEvent = null;
         this.staticClass = MESH_100TH;
     }
     async getDataWait() {
@@ -27346,9 +27336,6 @@ class MESH_100TH extends MESH_1.MESH {
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this.meshBlock.battery,
-            temperature: _th.getResponse.temperature,
-            humidity: _th.getResponse.humidity,
         };
     }
     setMode(temperatureUpper, temperatureBottom, temperatureCondition, humidityUpper, humidityBottom, humidityCondision, type, opt_requestId = 0) {
@@ -27362,11 +27349,11 @@ class MESH_100TH extends MESH_1.MESH {
     prepareConnect() {
         this.meshBlock = new MeshJsTh_1.MeshJsTh();
         const temperatureAndHumidityBlock = this.meshBlock;
-        temperatureAndHumidityBlock.onNotify = (response) => {
-            if (typeof this.onNotify !== 'function') {
+        temperatureAndHumidityBlock.onSensorEvent = (temperature, humidity, requestId) => {
+            if (typeof this.onSensorEvent !== 'function') {
                 return;
             }
-            this.onNotify(response);
+            this.onSensorEvent(temperature, humidity);
         };
         super.prepareConnect();
     }
@@ -27511,7 +27498,8 @@ class MeshJsAc extends MeshJs_1.MeshJs {
         this.onTapped = null;
         this.onShaked = null;
         this.onFlipped = null;
-        this.onOrientation = null;
+        this.onOrientationChanged = null;
+        this.accele = { x: 0, y: 0, z: 0 };
         // Constant Values
         this.MESSAGE_TYPE_ID_ = 1;
         this.DATA_LENGTH_ = 17;
@@ -27534,31 +27522,33 @@ class MeshJsAc extends MeshJs_1.MeshJs {
         if (data[0] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
+        // update accele values
         const BYTE = 256;
         const BASE = 1024;
-        const acceleX = this.complemnt_(BYTE * data[5] + data[4]) / BASE;
-        const acceleY = this.complemnt_(BYTE * data[7] + data[6]) / BASE;
-        const acceleZ = this.complemnt_(BYTE * data[9] + data[8]) / BASE;
+        this.accele.x = this.complemnt_(BYTE * data[5] + data[4]) / BASE;
+        this.accele.y = this.complemnt_(BYTE * data[7] + data[6]) / BASE;
+        this.accele.z = this.complemnt_(BYTE * data[9] + data[8]) / BASE;
+        // emit event
         switch (data[1]) {
             case this.TAP_EVENT_ID_:
                 if (typeof this.onTapped === 'function') {
-                    this.onTapped(acceleX, acceleY, acceleZ);
+                    this.onTapped(this.accele);
                 }
                 break;
             case this.SHAKE_EVENT_ID_:
                 if (typeof this.onShaked === 'function') {
-                    this.onShaked(acceleX, acceleY, acceleZ);
+                    this.onShaked(this.accele);
                 }
                 break;
             case this.FLIP_EVENT_ID_:
                 if (typeof this.onFlipped === 'function') {
-                    this.onFlipped(acceleX, acceleY, acceleZ);
+                    this.onFlipped(this.accele);
                 }
                 break;
             case this.ORIENTATION_EVENT_ID_:
-                if (typeof this.onOrientation === 'function') {
+                if (typeof this.onOrientationChanged === 'function') {
                     const face = data[2];
-                    this.onOrientation(face, acceleX, acceleY, acceleZ);
+                    this.onOrientationChanged(face, this.accele);
                 }
                 break;
             default:
@@ -27587,9 +27577,9 @@ class MeshJsBu extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onSinglePressedNotify = null;
-        this.onLongPressedNotify = null;
-        this.onDoublePressedNotify = null;
+        this.onSinglePressed = null;
+        this.onLongPressed = null;
+        this.onDoublePressed = null;
         // Constant Values
         this.DATA_LENGTH_ = 4;
         this.MESSAGE_TYPE_ID_ = 1;
@@ -27619,18 +27609,18 @@ class MeshJsBu extends MeshJs_1.MeshJs {
         }
         switch (data[2]) {
             case this.TYPE_.SINGLE:
-                if (typeof this.onSinglePressedNotify === 'function') {
-                    this.onSinglePressedNotify();
+                if (typeof this.onSinglePressed === 'function') {
+                    this.onSinglePressed();
                 }
                 break;
             case this.TYPE_.LONG:
-                if (typeof this.onLongPressedNotify === 'function') {
-                    this.onLongPressedNotify();
+                if (typeof this.onLongPressed === 'function') {
+                    this.onLongPressed();
                 }
                 break;
             case this.TYPE_.DOUBLE:
-                if (typeof this.onDoublePressedNotify === 'function') {
-                    this.onDoublePressedNotify();
+                if (typeof this.onDoublePressed === 'function') {
+                    this.onDoublePressed();
                 }
                 break;
             default:
@@ -27948,28 +27938,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const MeshJs_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJs.js");
 const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
 class MeshJsLe extends MeshJs_1.MeshJs {
+    constructor() {
+        super(...arguments);
+        this.colors = { red: 0, green: 0, blue: 0 };
+    }
     /**
      *
-     * @param red
-     * @param green
-     * @param blue
+     * @param colors
      * @param totalTime
      * @param cycleOnTime
      * @param cycleOffTime
      * @param pattern
      * @returns
      */
-    parseLedCommand(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern) {
+    parseLedCommand(colors, totalTime, cycleOnTime, cycleOffTime, pattern) {
         // Error Handle
         const COLOR_MIN = 0;
         const COLOR_MAX = 127;
-        if (red < COLOR_MIN || COLOR_MAX < red) {
+        if (colors.red < COLOR_MIN || COLOR_MAX < colors.red) {
             throw new MeshJsError_1.MeshJsOutOfRangeError('red', COLOR_MIN, COLOR_MAX);
         }
-        if (green < COLOR_MIN || COLOR_MAX < green) {
+        if (colors.green < COLOR_MIN || COLOR_MAX < colors.green) {
             throw new MeshJsError_1.MeshJsOutOfRangeError('green', COLOR_MIN, COLOR_MAX);
         }
-        if (blue < COLOR_MIN || COLOR_MAX < blue) {
+        if (colors.blue < COLOR_MIN || COLOR_MAX < colors.blue) {
             throw new MeshJsError_1.MeshJsOutOfRangeError('blue', COLOR_MIN, COLOR_MAX);
         }
         const TIME_MIN = 0;
@@ -27995,11 +27987,11 @@ class MeshJsLe extends MeshJs_1.MeshJs {
         const data = [
             MESSAGE_TYPE_ID,
             EVENT_TYPE_ID,
-            red,
+            colors.red,
             FIXED,
-            green,
+            colors.green,
             FIXED,
-            blue,
+            colors.blue,
             totalTime % BYTE,
             Math.floor(totalTime / BYTE),
             cycleOnTime % BYTE,
@@ -28034,7 +28026,7 @@ class MeshJsMd extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onNotify = null;
+        this.onSensorEvent = null;
         // Constant Values
         this.DETECTION_MODE = {
             DETECTED: 0x01,
@@ -28049,10 +28041,6 @@ class MeshJsMd extends MeshJs_1.MeshJs {
         };
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
-        this.response_ = { requestId: -1, motionState: -1, detectionMode: -1 };
-    }
-    get getResponse() {
-        return this.response_;
     }
     /**
      * notify
@@ -28068,13 +28056,13 @@ class MeshJsMd extends MeshJs_1.MeshJs {
         if (data[1] !== this.EVENT_TYPE_ID_) {
             return;
         }
-        this.response_.requestId = data[2];
-        this.response_.motionState = data[3];
-        this.response_.detectionMode = data[4];
-        if (typeof this.onNotify !== 'function') {
+        const requestId = data[2];
+        const motionState = data[3];
+        const detectionMode = data[4];
+        if (typeof this.onSensorEvent !== 'function') {
             return;
         }
-        this.onNotify(this.response_);
+        this.onSensorEvent(motionState, detectionMode, requestId);
     }
     /**
      *
@@ -28134,13 +28122,9 @@ class MeshJsPa extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onNotify = null;
+        this.onSensorEvent = null;
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
-        this.response_ = { requestId: -1, proximity: -1, brightness: -1 };
-    }
-    get getResponse() {
-        return this.response_;
     }
     /**
      *
@@ -28156,13 +28140,13 @@ class MeshJsPa extends MeshJs_1.MeshJs {
             return;
         }
         const BYTE = 256;
-        this.response_.requestId = data[2];
-        this.response_.proximity = BYTE * data[5] + data[4];
-        this.response_.brightness = BYTE * data[7] + data[6];
-        if (typeof this.onNotify !== 'function') {
+        const proximity = BYTE * data[5] + data[4];
+        const brightness = BYTE * data[7] + data[6];
+        const requestId = data[2];
+        if (typeof this.onSensorEvent !== 'function') {
             return;
         }
-        this.onNotify(this.response_);
+        this.onSensorEvent(proximity, brightness, requestId);
     }
     /**
      *
@@ -28219,17 +28203,13 @@ class MeshJsTh extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onNotify = null;
+        this.onSensorEvent = null;
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
         this.MAX_TEMPERATURE_ = 50;
         this.MIN_TEMPERATURE_ = -10;
         this.MAX_HUMIDITY_ = 100;
         this.MIN_HUMIDITY_ = 0;
-        this.response_ = { requestId: -1, temperature: -1, humidity: -1 };
-    }
-    get getResponse() {
-        return this.response_;
     }
     /**
      *
@@ -28244,16 +28224,16 @@ class MeshJsTh extends MeshJs_1.MeshJs {
         if (data[1] !== this.EVENT_TYPE_ID_) {
             return;
         }
-        this.response_.requestId = data[2];
         const BYTE = 256;
         const TEMP = this.complemnt_(BYTE * data[5] + data[4]) / 10;
-        this.response_.temperature = Math.min(Math.max(this.MIN_TEMPERATURE_, TEMP), this.MAX_TEMPERATURE_);
-        const hum_ori = BYTE * data[7] + data[6];
-        this.response_.humidity = Math.min(Math.max(this.MIN_HUMIDITY_, hum_ori), this.MAX_HUMIDITY_);
-        if (typeof this.onNotify !== 'function') {
+        const temperature = Math.min(Math.max(this.MIN_TEMPERATURE_, TEMP), this.MAX_TEMPERATURE_);
+        const HUM = BYTE * data[7] + data[6];
+        const humidity = Math.min(Math.max(this.MIN_HUMIDITY_, HUM), this.MAX_HUMIDITY_);
+        const requestId = data[2];
+        if (typeof this.onSensorEvent !== 'function') {
             return;
         }
-        this.onNotify(this.response_);
+        this.onSensorEvent(temperature, humidity, requestId);
     }
     /**
      *
@@ -38715,19 +38695,6 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
             this.meshBlock.notify(data);
         });
         await this.writeWait(this.meshBlock.featureCommand);
-    }
-    /**
-     * getInfoWait()
-     *
-     * @const
-     * @returns
-     */
-    async getInfoWait() {
-        this.checkConnected();
-        return {
-            name: this.peripheral.localName,
-            address: this.peripheral.address,
-        };
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH.PREFIX) === 0;

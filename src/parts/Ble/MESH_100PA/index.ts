@@ -15,9 +15,6 @@ export interface MESH_100PAOptions {}
 export interface MESH_100PA_Data {
   name: string;
   address: string;
-  battery: number; // 0 ~ 10
-  proximity: number;
-  brightness: number;
 }
 
 /** MESH_100PA management class */
@@ -28,7 +25,9 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
   public static readonly NotifyType = MeshJsPa.NOTIFY_TYPE;
 
   // Event Handler
-  public onNotify: ((resp: MeshJsPa['response_']) => void) | null = null;
+  public onSensorEvent:
+    | ((proximity: number, brightness: number) => void)
+    | null = null;
 
   protected readonly staticClass = MESH_100PA;
 
@@ -38,9 +37,6 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
     return {
       name: this.peripheral.localName!,
       address: this.peripheral.address,
-      battery: this.meshBlock.battery,
-      proximity: brightnessBlock.getResponse.proximity,
-      brightness: brightnessBlock.getResponse.brightness,
     };
   }
 
@@ -57,11 +53,15 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
   protected prepareConnect(): void {
     this.meshBlock = new MeshJsPa();
     const brightnessBlock = this.meshBlock as MeshJsPa;
-    brightnessBlock.onNotify = (response: MeshJsPa['response_']) => {
-      if (typeof this.onNotify !== 'function') {
+    brightnessBlock.onSensorEvent = (
+      proximity: number,
+      brightness: number,
+      requestId: number
+    ) => {
+      if (typeof this.onSensorEvent !== 'function') {
         return;
       }
-      this.onNotify(response);
+      this.onSensorEvent(proximity, brightness);
     };
     super.prepareConnect();
   }

@@ -68,19 +68,6 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         });
         await this.writeWait(this.meshBlock.featureCommand);
     }
-    /**
-     * getInfoWait()
-     *
-     * @const
-     * @returns
-     */
-    async getInfoWait() {
-        this.checkConnected();
-        return {
-            name: this.peripheral.localName,
-            address: this.peripheral.address,
-        };
-    }
     static _isMESHblock(name) {
         return name.indexOf(MESH.PREFIX) === 0;
     }

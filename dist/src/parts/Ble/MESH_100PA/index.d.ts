@@ -3,7 +3,6 @@
  * @module Parts.MESH_100PA
  */
 import { MESH } from '../utils/abstracts/MESH';
-import { MeshJsPa } from '../MESH_js/MeshJsPa';
 export interface MESH_100PAOptions {
 }
 /**
@@ -12,9 +11,6 @@ export interface MESH_100PAOptions {
 export interface MESH_100PA_Data {
     name: string;
     address: string;
-    battery: number;
-    proximity: number;
-    brightness: number;
 }
 /** MESH_100PA management class */
 export default class MESH_100PA extends MESH<MESH_100PA_Data> {
@@ -26,14 +22,11 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
         readonly ONCE: 16;
         readonly ALWAYS: 32;
     };
-    onNotify: ((resp: MeshJsPa['response_']) => void) | null;
+    onSensorEvent: ((proximity: number, brightness: number) => void) | null;
     protected readonly staticClass: typeof MESH_100PA;
     getDataWait(): Promise<{
         name: string;
         address: string;
-        battery: number;
-        proximity: number;
-        brightness: number;
     }>;
     setMode(type: number, opt_requestId?: number): void;
     protected static _isMESHblock(name: string): boolean;

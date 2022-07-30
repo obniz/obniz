@@ -12,7 +12,7 @@ class MESH_100PA extends MESH_1.MESH {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onNotify = null;
+        this.onSensorEvent = null;
         this.staticClass = MESH_100PA;
     }
     async getDataWait() {
@@ -21,9 +21,6 @@ class MESH_100PA extends MESH_1.MESH {
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this.meshBlock.battery,
-            proximity: brightnessBlock.getResponse.proximity,
-            brightness: brightnessBlock.getResponse.brightness,
         };
     }
     setMode(type, opt_requestId = 0) {
@@ -37,11 +34,11 @@ class MESH_100PA extends MESH_1.MESH {
     prepareConnect() {
         this.meshBlock = new MeshJsPa_1.MeshJsPa();
         const brightnessBlock = this.meshBlock;
-        brightnessBlock.onNotify = (response) => {
-            if (typeof this.onNotify !== 'function') {
+        brightnessBlock.onSensorEvent = (proximity, brightness, requestId) => {
+            if (typeof this.onSensorEvent !== 'function') {
                 return;
             }
-            this.onNotify(response);
+            this.onSensorEvent(proximity, brightness);
         };
         super.prepareConnect();
     }

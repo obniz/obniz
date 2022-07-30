@@ -15,7 +15,6 @@ export interface MESH_100BUOptions {}
 export interface MESH_100BU_Data {
   name: string;
   address: string;
-  battery: number;
 }
 
 /** MESH_100BU management class */
@@ -24,9 +23,9 @@ export default class MESH_100BU extends MESH<MESH_100BU_Data> {
   public static readonly PREFIX = 'MESH-100BU' as const;
 
   /** Event Handler */
-  public onSinglePressedNotify: (() => void) | null = null;
-  public onLongPressedNotify: (() => void) | null = null;
-  public onDoublePressedNotify: (() => void) | null = null;
+  public onSinglePressed: (() => void) | null = null;
+  public onLongPressed: (() => void) | null = null;
+  public onDoublePressed: (() => void) | null = null;
 
   protected readonly staticClass = MESH_100BU;
 
@@ -35,7 +34,6 @@ export default class MESH_100BU extends MESH<MESH_100BU_Data> {
     return {
       name: this.peripheral.localName!,
       address: this.peripheral.address,
-      battery: this.meshBlock.battery,
     };
   }
 
@@ -47,23 +45,23 @@ export default class MESH_100BU extends MESH<MESH_100BU_Data> {
     this.meshBlock = new MeshJsBu();
 
     const buttonBlock = this.meshBlock as MeshJsBu;
-    buttonBlock.onSinglePressedNotify = () => {
-      if (typeof this.onSinglePressedNotify !== 'function') {
+    buttonBlock.onSinglePressed = () => {
+      if (typeof this.onSinglePressed !== 'function') {
         return;
       }
-      this.onSinglePressedNotify();
+      this.onSinglePressed();
     };
-    buttonBlock.onLongPressedNotify = () => {
-      if (typeof this.onLongPressedNotify !== 'function') {
+    buttonBlock.onLongPressed = () => {
+      if (typeof this.onLongPressed !== 'function') {
         return;
       }
-      this.onLongPressedNotify();
+      this.onLongPressed();
     };
-    buttonBlock.onDoublePressedNotify = () => {
-      if (typeof this.onDoublePressedNotify !== 'function') {
+    buttonBlock.onDoublePressed = () => {
+      if (typeof this.onDoublePressed !== 'function') {
         return;
       }
-      this.onDoublePressedNotify();
+      this.onDoublePressed();
     };
     super.prepareConnect();
   }

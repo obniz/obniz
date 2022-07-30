@@ -12,7 +12,6 @@ export interface MESH_100LEOptions {}
 export interface MESH_100LE_Data {
   name: string;
   address: string;
-  battery: number; // 0 ~ 10
 }
 
 /** MESH_100TH management class */
@@ -21,6 +20,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
   public static readonly PREFIX = 'MESH-100LE';
 
   public static Pattern = MeshJsLe.PATTERN;
+  public colors: MeshJsLe['colors'] = { red: 0, green: 0, blue: 0 };
 
   protected readonly staticClass = MESH_100LE;
 
@@ -29,16 +29,13 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
     return {
       name: this.peripheral.localName!,
       address: this.peripheral.address,
-      battery: this.meshBlock.battery,
     };
   }
 
   /**
    * setLed
    *
-   * @param red 0 ~ 127
-   * @param green 0 ~ 127
-   * @param blue 0 ~ 127
+   * @param colors red 0 ~ 127, green 0 ~ 127, blue 0 ~ 127
    * @param totalTime 0 ~ 65,535 [ms]
    * @param cycleOnTime 0 ~ 65,535 [ms]
    * @param cycleOffTime 0 ~ 65,535 [ms]
@@ -46,9 +43,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
    * @returns
    */
   public setLed(
-    red: number,
-    green: number,
-    blue: number,
+    colors: MESH_100LE['colors'],
     totalTime: number,
     cycleOnTime: number,
     cycleOffTime: number,
@@ -56,9 +51,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
   ): void {
     const ledBlock = this.meshBlock as MeshJsLe;
     const command = ledBlock.parseLedCommand(
-      red,
-      green,
-      blue,
+      colors,
       totalTime,
       cycleOnTime,
       cycleOffTime,

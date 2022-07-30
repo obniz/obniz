@@ -6,7 +6,7 @@ class MeshJsMd extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onNotify = null;
+        this.onSensorEvent = null;
         // Constant Values
         this.DETECTION_MODE = {
             DETECTED: 0x01,
@@ -21,10 +21,6 @@ class MeshJsMd extends MeshJs_1.MeshJs {
         };
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
-        this.response_ = { requestId: -1, motionState: -1, detectionMode: -1 };
-    }
-    get getResponse() {
-        return this.response_;
     }
     /**
      * notify
@@ -40,13 +36,13 @@ class MeshJsMd extends MeshJs_1.MeshJs {
         if (data[1] !== this.EVENT_TYPE_ID_) {
             return;
         }
-        this.response_.requestId = data[2];
-        this.response_.motionState = data[3];
-        this.response_.detectionMode = data[4];
-        if (typeof this.onNotify !== 'function') {
+        const requestId = data[2];
+        const motionState = data[3];
+        const detectionMode = data[4];
+        if (typeof this.onSensorEvent !== 'function') {
             return;
         }
-        this.onNotify(this.response_);
+        this.onSensorEvent(motionState, detectionMode, requestId);
     }
     /**
      *

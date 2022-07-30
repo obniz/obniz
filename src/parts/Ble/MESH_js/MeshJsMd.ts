@@ -2,7 +2,9 @@ import { MeshJs } from './MeshJs';
 import { MeshJsOutOfRangeError } from './MeshJsError';
 export class MeshJsMd extends MeshJs {
   // Event Handler
-  public onNotify: ((response: MeshJsMd['response_']) => void) | null = null;
+  public onSensorEvent:
+    | ((motionState: number, detectionMode: number, requestId: number) => void)
+    | null = null;
 
   // Constant Values
   public readonly DETECTION_MODE = {
@@ -19,12 +21,6 @@ export class MeshJsMd extends MeshJs {
   private readonly MESSAGE_TYPE_ID_: number = 1 as const;
   private readonly EVENT_TYPE_ID_: number = 0 as const;
 
-  private response_ = { requestId: -1, motionState: -1, detectionMode: -1 };
-
-  public get getResponse(): MeshJsMd['response_'] {
-    return this.response_;
-  }
-
   /**
    * notify
    *
@@ -39,13 +35,13 @@ export class MeshJsMd extends MeshJs {
     if (data[1] !== this.EVENT_TYPE_ID_) {
       return;
     }
-    this.response_.requestId = data[2];
-    this.response_.motionState = data[3];
-    this.response_.detectionMode = data[4];
-    if (typeof this.onNotify !== 'function') {
+    const requestId = data[2];
+    const motionState = data[3];
+    const detectionMode = data[4];
+    if (typeof this.onSensorEvent !== 'function') {
       return;
     }
-    this.onNotify(this.response_);
+    this.onSensorEvent(motionState, detectionMode, requestId);
   }
 
   /**

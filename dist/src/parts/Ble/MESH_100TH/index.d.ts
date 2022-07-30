@@ -3,7 +3,6 @@
  * @module Parts.MESH_100TH
  */
 import { MESH } from '../utils/abstracts/MESH';
-import { MeshJsTh } from '../MESH_js/MeshJsTh';
 export interface MESH_100THOptions {
 }
 /**
@@ -12,9 +11,6 @@ export interface MESH_100THOptions {
 export interface MESH_100TH_Data {
     name: string;
     address: string;
-    battery: number;
-    temperature: number;
-    humidity: number;
 }
 /** MESH_100TH management class */
 export default class MESH_100TH extends MESH<MESH_100TH_Data> {
@@ -26,14 +22,11 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
         readonly ONCE: 16;
         readonly ALWAYS: 32;
     };
-    onNotify: ((resp: MeshJsTh['response_']) => void) | null;
+    onSensorEvent: ((temperature: number, humidity: number) => void) | null;
     protected readonly staticClass: typeof MESH_100TH;
     getDataWait(): Promise<{
         name: string;
         address: string;
-        battery: number;
-        temperature: number;
-        humidity: number;
     }>;
     setMode(temperatureUpper: number, temperatureBottom: number, temperatureCondition: number, humidityUpper: number, humidityBottom: number, humidityCondision: number, type: number, opt_requestId?: number): void;
     protected static _isMESHblock(name: string): boolean;

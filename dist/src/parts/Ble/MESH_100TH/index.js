@@ -12,7 +12,7 @@ class MESH_100TH extends MESH_1.MESH {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onNotify = null;
+        this.onSensorEvent = null;
         this.staticClass = MESH_100TH;
     }
     async getDataWait() {
@@ -21,9 +21,6 @@ class MESH_100TH extends MESH_1.MESH {
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this.meshBlock.battery,
-            temperature: _th.getResponse.temperature,
-            humidity: _th.getResponse.humidity,
         };
     }
     setMode(temperatureUpper, temperatureBottom, temperatureCondition, humidityUpper, humidityBottom, humidityCondision, type, opt_requestId = 0) {
@@ -37,11 +34,11 @@ class MESH_100TH extends MESH_1.MESH {
     prepareConnect() {
         this.meshBlock = new MeshJsTh_1.MeshJsTh();
         const temperatureAndHumidityBlock = this.meshBlock;
-        temperatureAndHumidityBlock.onNotify = (response) => {
-            if (typeof this.onNotify !== 'function') {
+        temperatureAndHumidityBlock.onSensorEvent = (temperature, humidity, requestId) => {
+            if (typeof this.onSensorEvent !== 'function') {
                 return;
             }
-            this.onNotify(response);
+            this.onSensorEvent(temperature, humidity);
         };
         super.prepareConnect();
     }

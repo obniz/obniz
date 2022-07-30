@@ -11,6 +11,7 @@ const MeshJsAc_1 = require("../MESH_js/MeshJsAc");
 class MESH_100AC extends MESH_1.MESH {
     constructor() {
         super(...arguments);
+        this.accele = { x: 0, y: 0, z: 0 };
         // Event Handler
         this.onTapped = null;
         this.onShaked = null;
@@ -23,7 +24,6 @@ class MESH_100AC extends MESH_1.MESH {
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this.meshBlock.battery,
         };
     }
     static _isMESHblock(name) {
@@ -32,29 +32,29 @@ class MESH_100AC extends MESH_1.MESH {
     prepareConnect() {
         this.meshBlock = new MeshJsAc_1.MeshJsAc();
         const moveBlock = this.meshBlock;
-        moveBlock.onTapped = (acceleX, acceleY, acceleZ) => {
+        moveBlock.onTapped = (accele) => {
             if (typeof this.onTapped !== 'function') {
                 return;
             }
-            this.onTapped(acceleX, acceleY, acceleZ);
+            this.onTapped(accele);
         };
-        moveBlock.onShaked = (acceleX, acceleY, acceleZ) => {
+        moveBlock.onShaked = (accele) => {
             if (typeof this.onShaked !== 'function') {
                 return;
             }
-            this.onShaked(acceleX, acceleY, acceleZ);
+            this.onShaked(accele);
         };
-        moveBlock.onFlipped = (acceleX, acceleY, acceleZ) => {
+        moveBlock.onFlipped = (accele) => {
             if (typeof this.onFlipped !== 'function') {
                 return;
             }
-            this.onFlipped(acceleX, acceleY, acceleZ);
+            this.onFlipped(accele);
         };
-        moveBlock.onOrientation = (face, acceleX, acceleY, acceleZ) => {
+        moveBlock.onOrientationChanged = (face, accele) => {
             if (typeof this.onOrientation !== 'function') {
                 return;
             }
-            this.onOrientation(face, acceleX, acceleY, acceleZ);
+            this.onOrientation(face, accele);
         };
         super.prepareConnect();
     }

@@ -12,9 +12,9 @@ class MESH_100BU extends MESH_1.MESH {
     constructor() {
         super(...arguments);
         /** Event Handler */
-        this.onSinglePressedNotify = null;
-        this.onLongPressedNotify = null;
-        this.onDoublePressedNotify = null;
+        this.onSinglePressed = null;
+        this.onLongPressed = null;
+        this.onDoublePressed = null;
         this.staticClass = MESH_100BU;
     }
     async getDataWait() {
@@ -22,7 +22,6 @@ class MESH_100BU extends MESH_1.MESH {
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this.meshBlock.battery,
         };
     }
     static _isMESHblock(name) {
@@ -31,23 +30,23 @@ class MESH_100BU extends MESH_1.MESH {
     prepareConnect() {
         this.meshBlock = new MeshJsBu_1.MeshJsBu();
         const buttonBlock = this.meshBlock;
-        buttonBlock.onSinglePressedNotify = () => {
-            if (typeof this.onSinglePressedNotify !== 'function') {
+        buttonBlock.onSinglePressed = () => {
+            if (typeof this.onSinglePressed !== 'function') {
                 return;
             }
-            this.onSinglePressedNotify();
+            this.onSinglePressed();
         };
-        buttonBlock.onLongPressedNotify = () => {
-            if (typeof this.onLongPressedNotify !== 'function') {
+        buttonBlock.onLongPressed = () => {
+            if (typeof this.onLongPressed !== 'function') {
                 return;
             }
-            this.onLongPressedNotify();
+            this.onLongPressed();
         };
-        buttonBlock.onDoublePressedNotify = () => {
-            if (typeof this.onDoublePressedNotify !== 'function') {
+        buttonBlock.onDoublePressed = () => {
+            if (typeof this.onDoublePressed !== 'function') {
                 return;
             }
-            this.onDoublePressedNotify();
+            this.onDoublePressed();
         };
         super.prepareConnect();
     }

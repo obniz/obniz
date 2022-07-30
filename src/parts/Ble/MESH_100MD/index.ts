@@ -15,10 +15,6 @@ export interface MESH_100MDOptions {}
 export interface MESH_100MD_Data {
   name: string;
   address: string;
-  battery: number /** battery (0 ~ 10) */;
-  motion_state: number;
-  detection_mode: number;
-  request_id: number;
 }
 
 /** MESH_100MD management class */
@@ -27,7 +23,9 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
   public static readonly PREFIX = 'MESH-100MD';
 
   // Event Handler
-  public onNotify: ((resp: MeshJsMd['response_']) => void) | null = null;
+  public onSensorEvent:
+    | ((motionState: number, detectionMode: number) => void)
+    | null = null;
 
   protected readonly staticClass = MESH_100MD;
 
@@ -37,10 +35,6 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
     return {
       name: this.peripheral!.localName!,
       address: this.peripheral.address,
-      battery: this.meshBlock.battery,
-      motion_state: motionBlock.getResponse.motionState,
-      detection_mode: motionBlock.getResponse.detectionMode,
-      request_id: motionBlock.getResponse.requestId,
     };
   }
 
@@ -69,11 +63,15 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
 
     // set Event handler
     const motionBlock = this.meshBlock as MeshJsMd;
-    motionBlock.onNotify = (response: MeshJsMd['response_']) => {
-      if (typeof this.onNotify !== 'function') {
+    motionBlock.onSensorEvent = (
+      motionState: number,
+      detectionMode: number,
+      requestId: number
+    ) => {
+      if (typeof this.onSensorEvent !== 'function') {
         return;
       }
-      this.onNotify(response);
+      this.onSensorEvent(motionState, detectionMode);
     };
 
     super.prepareConnect();

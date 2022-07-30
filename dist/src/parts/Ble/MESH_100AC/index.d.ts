@@ -3,6 +3,7 @@
  * @module Parts.MESH_100AC
  */
 import { MESH } from '../utils/abstracts/MESH';
+import { MeshJsAc } from '../MESH_js/MeshJsAc';
 export interface MESH_100ACOptions {
 }
 /**
@@ -11,21 +12,20 @@ export interface MESH_100ACOptions {
 export interface MESH_100AC_Data {
     name: string;
     address: string;
-    battery: number;
 }
 /** MESH_100AC management class */
 export default class MESH_100AC extends MESH<MESH_100AC_Data> {
     static readonly PartsName = "MESH_100AC";
     static readonly PREFIX = "MESH-100AC";
-    onTapped: ((acceleX: number, acceleY: number, acceleZ: number) => void) | null;
-    onShaked: ((acceleX: number, acceleY: number, acceleZ: number) => void) | null;
-    onFlipped: ((acceleX: number, acceleY: number, acceleZ: number) => void) | null;
-    onOrientation: ((face: number, acceleX: number, acceleY: number, acceleZ: number) => void) | null;
+    accele: MeshJsAc['accele'];
+    onTapped: ((accele: MESH_100AC['accele']) => void) | null;
+    onShaked: ((accele: MESH_100AC['accele']) => void) | null;
+    onFlipped: ((accele: MESH_100AC['accele']) => void) | null;
+    onOrientation: ((face: number, accele: MESH_100AC['accele']) => void) | null;
     protected readonly staticClass: typeof MESH_100AC;
     getDataWait(): Promise<{
         name: string;
         address: string;
-        battery: number;
     }>;
     protected static _isMESHblock(name: string): boolean;
     protected prepareConnect(): void;

@@ -1,8 +1,8 @@
 import { MeshJs } from './MeshJs';
 export declare class MeshJsBu extends MeshJs {
-    onSinglePressedNotify: (() => void) | null;
-    onLongPressedNotify: (() => void) | null;
-    onDoublePressedNotify: (() => void) | null;
+    onSinglePressed: (() => void) | null;
+    onLongPressed: (() => void) | null;
+    onDoublePressed: (() => void) | null;
     private readonly DATA_LENGTH_;
     private readonly MESSAGE_TYPE_ID_;
     private readonly EVENT_TYPE_ID_;

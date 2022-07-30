@@ -5,9 +5,9 @@ class MeshJsBu extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onSinglePressedNotify = null;
-        this.onLongPressedNotify = null;
-        this.onDoublePressedNotify = null;
+        this.onSinglePressed = null;
+        this.onLongPressed = null;
+        this.onDoublePressed = null;
         // Constant Values
         this.DATA_LENGTH_ = 4;
         this.MESSAGE_TYPE_ID_ = 1;
@@ -37,18 +37,18 @@ class MeshJsBu extends MeshJs_1.MeshJs {
         }
         switch (data[2]) {
             case this.TYPE_.SINGLE:
-                if (typeof this.onSinglePressedNotify === 'function') {
-                    this.onSinglePressedNotify();
+                if (typeof this.onSinglePressed === 'function') {
+                    this.onSinglePressed();
                 }
                 break;
             case this.TYPE_.LONG:
-                if (typeof this.onLongPressedNotify === 'function') {
-                    this.onLongPressedNotify();
+                if (typeof this.onLongPressed === 'function') {
+                    this.onLongPressed();
                 }
                 break;
             case this.TYPE_.DOUBLE:
-                if (typeof this.onDoublePressedNotify === 'function') {
-                    this.onDoublePressedNotify();
+                if (typeof this.onDoublePressed === 'function') {
+                    this.onDoublePressed();
                 }
                 break;
             default:

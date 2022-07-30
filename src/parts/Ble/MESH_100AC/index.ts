@@ -15,7 +15,6 @@ export interface MESH_100ACOptions {}
 export interface MESH_100AC_Data {
   name: string;
   address: string;
-  battery: number; // 0 ~ 10
 }
 
 /** MESH_100AC management class */
@@ -23,23 +22,14 @@ export default class MESH_100AC extends MESH<MESH_100AC_Data> {
   public static readonly PartsName = 'MESH_100AC';
   public static readonly PREFIX = 'MESH-100AC';
 
+  public accele: MeshJsAc['accele'] = { x: 0, y: 0, z: 0 };
+
   // Event Handler
-  public onTapped:
-    | ((acceleX: number, acceleY: number, acceleZ: number) => void)
-    | null = null;
-  public onShaked:
-    | ((acceleX: number, acceleY: number, acceleZ: number) => void)
-    | null = null;
-  public onFlipped:
-    | ((acceleX: number, acceleY: number, acceleZ: number) => void)
-    | null = null;
+  public onTapped: ((accele: MESH_100AC['accele']) => void) | null = null;
+  public onShaked: ((accele: MESH_100AC['accele']) => void) | null = null;
+  public onFlipped: ((accele: MESH_100AC['accele']) => void) | null = null;
   public onOrientation:
-    | ((
-        face: number,
-        acceleX: number,
-        acceleY: number,
-        acceleZ: number
-      ) => void)
+    | ((face: number, accele: MESH_100AC['accele']) => void)
     | null = null;
 
   protected readonly staticClass = MESH_100AC;
@@ -49,7 +39,6 @@ export default class MESH_100AC extends MESH<MESH_100AC_Data> {
     return {
       name: this.peripheral.localName!,
       address: this.peripheral.address,
-      battery: this.meshBlock.battery,
     };
   }
 
@@ -61,46 +50,32 @@ export default class MESH_100AC extends MESH<MESH_100AC_Data> {
     this.meshBlock = new MeshJsAc();
 
     const moveBlock = this.meshBlock as MeshJsAc;
-    moveBlock.onTapped = (
-      acceleX: number,
-      acceleY: number,
-      acceleZ: number
-    ) => {
+    moveBlock.onTapped = (accele: MESH_100AC['accele']) => {
       if (typeof this.onTapped !== 'function') {
         return;
       }
-      this.onTapped(acceleX, acceleY, acceleZ);
+      this.onTapped(accele);
     };
-    moveBlock.onShaked = (
-      acceleX: number,
-      acceleY: number,
-      acceleZ: number
-    ) => {
+    moveBlock.onShaked = (accele: MESH_100AC['accele']) => {
       if (typeof this.onShaked !== 'function') {
         return;
       }
-      this.onShaked(acceleX, acceleY, acceleZ);
+      this.onShaked(accele);
     };
-    moveBlock.onFlipped = (
-      acceleX: number,
-      acceleY: number,
-      acceleZ: number
-    ) => {
+    moveBlock.onFlipped = (accele: MESH_100AC['accele']) => {
       if (typeof this.onFlipped !== 'function') {
         return;
       }
-      this.onFlipped(acceleX, acceleY, acceleZ);
+      this.onFlipped(accele);
     };
-    moveBlock.onOrientation = (
+    moveBlock.onOrientationChanged = (
       face: number,
-      acceleX: number,
-      acceleY: number,
-      acceleZ: number
+      accele: MESH_100AC['accele']
     ) => {
       if (typeof this.onOrientation !== 'function') {
         return;
       }
-      this.onOrientation(face, acceleX, acceleY, acceleZ);
+      this.onOrientation(face, accele);
     };
 
     super.prepareConnect();
