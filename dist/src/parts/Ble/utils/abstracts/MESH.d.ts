@@ -2,13 +2,14 @@ import { ObnizPartsBleConnectable } from '../../../../obniz/ObnizPartsBleAbstrac
 import BleRemotePeripheral from '../../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import { MeshJs } from '../../MESH_js/MeshJs';
 export declare abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
-    onBatteryLevelNotify: ((battery: number) => void) | null;
-    onStatusButtonNotify: (() => void) | null;
-    onResponseWriteNotify: ((response: boolean) => void) | null;
+    onBatteryLevel: ((battery: number) => void) | null;
+    onStatusButtonPressed: (() => void) | null;
+    onWriteResponse: ((response: boolean) => void) | null;
     static AvailableBleMode: "Connectable";
     private static readonly LOCAL_NAME_LENGTH_;
     protected static PREFIX: string;
     protected meshBlock: MeshJs;
+    protected requestId: MeshRequestId;
     private indicateCharacteristic_;
     private notifyCharacteristic_;
     private writeCharacteristic_;
@@ -35,4 +36,15 @@ export declare abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> 
     protected writeWait(data: number[]): Promise<void>;
     protected writeWOResponse(data: number[]): void;
     private getCharacteristic_;
+}
+export declare class MeshRequestId {
+    private readonly MAX_ID_;
+    private readonly DEFAULT_ID_;
+    private currentId_;
+    private receivedId_;
+    defaultId(): number;
+    next(): number;
+    isDefaultId(id: number): boolean;
+    isReceived(id: number): boolean;
+    received(id: number): void;
 }

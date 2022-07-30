@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class MeshJs {
     constructor() {
         // Event Handler
-        this.onBatteryLevelNotify = null;
-        this.onStatusButtonPressedNotify = null;
+        this.onBatteryLevel = null;
+        this.onStatusButtonPressed = null;
         // Constant Values
         this.UUIDS = {
             SERVICE_ID: '72C90001-57A9-4D40-B746-534E22EC9F9E',
@@ -78,10 +78,10 @@ class MeshJs {
         //   return;
         // }
         this.battery_ = data[2];
-        if (typeof this.onBatteryLevelNotify !== 'function') {
+        if (typeof this.onBatteryLevel !== 'function') {
             return false;
         }
-        this.onBatteryLevelNotify(this.battery_);
+        this.onBatteryLevel(this.battery_);
         return true;
     }
     updateStatusButton_(data) {
@@ -97,10 +97,10 @@ class MeshJs {
         if (data[2] !== 0) {
             return false;
         }
-        if (typeof this.onStatusButtonPressedNotify !== 'function') {
+        if (typeof this.onStatusButtonPressed !== 'function') {
             return false;
         }
-        this.onStatusButtonPressedNotify();
+        this.onStatusButtonPressed();
         return true;
     }
 }

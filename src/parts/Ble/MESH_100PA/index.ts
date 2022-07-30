@@ -6,6 +6,10 @@
 
 import { MESH } from '../utils/abstracts/MESH';
 import { MeshJsPa } from '../MESH_js/MeshJsPa';
+import {
+  MeshJsInvalidValueError,
+  MeshJsTimeOutError,
+} from '../MESH_js/MeshJsError';
 
 export interface MESH_100PAOptions {}
 
@@ -21,8 +25,7 @@ export interface MESH_100PA_Data {
 export default class MESH_100PA extends MESH<MESH_100PA_Data> {
   public static readonly PartsName = 'MESH_100PA';
   public static readonly PREFIX = 'MESH-100PA';
-
-  public static readonly NotifyType = MeshJsPa.NOTIFY_TYPE;
+  public static readonly NotifyMode = MeshJsPa.NotifyMode;
 
   // Event Handler
   public onSensorEvent:
@@ -30,6 +33,9 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
     | null = null;
 
   protected readonly staticClass = MESH_100PA;
+
+  private proximity_ = -1;
+  private brightness_ = -1;
 
   public async getDataWait() {
     this.checkConnected();
@@ -40,10 +46,34 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
     };
   }
 
-  public setMode(type: number, opt_requestId = 0): void {
-    const brightnessBlock = this.meshBlock as MeshJsPa;
-    const command = brightnessBlock.parseSetmodeCommand(type, opt_requestId);
-    this.writeWOResponse(command);
+  public async getSensorDataWait() {
+    this.checkConnected();
+
+    const _requestId = this.requestId.next();
+    this.setMode_(MESH_100PA.NotifyMode.ONCE, _requestId);
+
+    const _TIMEOUT_MSEC = 1500 as const;
+    const _timeoutId = setTimeout(() => {
+      throw new MeshJsTimeOutError(MESH_100PA.PartsName);
+    }, _TIMEOUT_MSEC);
+
+    const INTERVAL_TIME = 50 as const;
+    const _result = await new Promise((resolve) => {
+      const _intervalId = setInterval(() => {
+        if (!this.requestId.isReceived(_requestId)) {
+          return;
+        }
+        clearTimeout(_timeoutId);
+        clearInterval(_intervalId);
+        resolve({ proximity: this.proximity_, brightness: this.brightness_ });
+      }, INTERVAL_TIME);
+    });
+
+    return _result;
+  }
+
+  public setMode(type: number): void {
+    this.setMode_(type, this.requestId.defaultId());
   }
 
   protected static _isMESHblock(name: string): boolean {
@@ -61,12 +91,26 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
       if (typeof this.onSensorEvent !== 'function') {
         return;
       }
-      this.onSensorEvent(proximity, brightness);
+      if (this.requestId.isDefaultId(requestId)) {
+        // Emit Event
+        this.onSensorEvent(proximity, brightness);
+        return;
+      }
+      // Update Inner Values
+      this.requestId.received(requestId);
+      this.proximity_ = proximity;
+      this.brightness_ = brightness;
     };
     super.prepareConnect();
   }
 
   protected async beforeOnDisconnectWait(reason: unknown): Promise<void> {
     // do nothing
+  }
+
+  private setMode_(notifyMode: number, requestId: number): void {
+    const brightnessBlock = this.meshBlock as MeshJsPa;
+    const command = brightnessBlock.parseSetmodeCommand(notifyMode, requestId);
+    this.writeWOResponse(command);
   }
 }

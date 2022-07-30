@@ -1,7 +1,7 @@
 export class MeshJs {
   // Event Handler
-  public onBatteryLevelNotify: ((battery: number) => void) | null = null;
-  public onStatusButtonPressedNotify: (() => void) | null = null;
+  public onBatteryLevel: ((battery: number) => void) | null = null;
+  public onStatusButtonPressed: (() => void) | null = null;
 
   // Constant Values
   public readonly UUIDS = {
@@ -82,10 +82,10 @@ export class MeshJs {
     //   return;
     // }
     this.battery_ = data[2];
-    if (typeof this.onBatteryLevelNotify !== 'function') {
+    if (typeof this.onBatteryLevel !== 'function') {
       return false;
     }
-    this.onBatteryLevelNotify(this.battery_);
+    this.onBatteryLevel(this.battery_);
     return true;
   }
 
@@ -102,10 +102,10 @@ export class MeshJs {
     if (data[2] !== 0) {
       return false;
     }
-    if (typeof this.onStatusButtonPressedNotify !== 'function') {
+    if (typeof this.onStatusButtonPressed !== 'function') {
       return false;
     }
-    this.onStatusButtonPressedNotify();
+    this.onStatusButtonPressed();
     return true;
   }
 }

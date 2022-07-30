@@ -9,7 +9,7 @@ const mesh_th = Obniz.getPartsClass('MESH_100TH');
 const mesh_md = Obniz.getPartsClass('MESH_100MD');
 const mesh_gp = Obniz.getPartsClass('MESH_100GP');
 
-const obnizId = '00000000';
+const obnizId = '87287267';
 
 const obniz = new Obniz(obnizId, {
   access_token: null,
@@ -24,12 +24,13 @@ obniz.onconnect = async () => {
       // sampleBU(peripheral);
       // sampleAC(peripheral);
       // sampleLE(peripheral);
-      // samplePA(peripheral);
+      samplePA(peripheral);
       // sampleTH(peripheral);
       // sampleMD(peripheral);
-      sampleGP(peripheral);
+      // sampleGP(peripheral);
     };
     await obniz.ble.scan.startWait();
+    // await continueScan(obniz);
   } catch (e) {
     if (e.name === 'ObnizOfflineError') {
       // just disconnected. waiting for new connection establishment.
@@ -38,6 +39,45 @@ obniz.onconnect = async () => {
     }
   }
 };
+
+async function continueScan(obniz) {
+  while (obniz.connectionState === 'connected') {
+    const founded = await scanFor(obniz, 10);
+  }
+}
+
+count = 0;
+sum = 0;
+async function scanFor(obniz, seconds) {
+  return await new Promise(async (resolve, reject) =>{
+    obniz.ble.scan.onfind = async peripheral => {
+      const name = peripheral.localName;
+      if (!name) {
+        return;
+      }
+      if (name.indexOf('MESH-100BU') !== 0) {
+        return;
+      }
+      sum += peripheral.rssi;
+      count ++;
+      console.log(name + ' : ' + peripheral.rssi + ' : ave ' + (sum/count));
+    };
+    obniz.ble.scan.onfinish = async (peripheral, error) => {
+      console.log('end');
+    };
+    try {
+      await obniz.ble.scan.startAllWait(null,{
+        duplicate:true,
+        duration: seconds,
+        activeScan:true,
+        filterOnDevice:false,
+      });
+    } catch(e) {
+      console.error(e);
+      obniz.reboot();
+    }
+  });
+}
 
 // Disconnected.
 obniz.onclose = async () => {
@@ -130,20 +170,26 @@ async function sampleAC(peripheral) {
   // AC_block.getDataWait();
 }
 
+var PA_block = null;
 async function samplePA(peripheral) {
-  if (!mesh_pa.isMESHblock(peripheral)) {
+  if (!mesh_pa.sameSerialNumberBlock(peripheral, '1010394')) {
+  // if (!mesh_pa.isMESHblock(peripheral)) {
     return;
   }
   console.log('obniz.ble.scan.onfind : ' + peripheral.localName + ' : ' + peripheral.rssi);
-  const PA_block = new mesh_pa(peripheral);
+  PA_block = new mesh_pa(peripheral);
   await PA_block.connectWait();
 
-  PA_block.onBatteryNotify = ((batt) => {
+  /**
+   * Test: Common Event
+   */
+
+  PA_block.onBatteryLevel = ((batt) => {
     console.log('battery last : ' + batt + '/10');
   });
 
   let count = 0;
-  PA_block.onStatusButtonNotify = (() => {
+  PA_block.onStatusButtonPresse = (() => {
     ++ count;
     if (count > 9) {
       console.log('status button is pressed 10 times!');
@@ -153,15 +199,62 @@ async function samplePA(peripheral) {
     console.log('status button pressed !');
   });
 
-  PA_block.onNotify = ((response) => {
-    console.log(response);
+  /**
+   * Test: Unieq Event
+   */
+
+  // Select 'notifyMode' from below ( combinations 16 )
+  const _notifyMode = 
+    /* select 1 param => combination 5 */
+    // mesh_pa.NotifyMode.STOP;
+    // mesh_pa.NotifyMode.UPDATE_PROXIMITY;
+    // mesh_pa.NotifyMode.UPDATE_BRIGHTNESS;
+    // mesh_pa.NotifyMode.ONCE;
+    // mesh_pa.NotifyMode.ALWAYS;
+    /* select 2 params => combination 6 */
+    // mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS;
+    // mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.ONCE;
+    // mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.ALWAYS;
+    // mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ONCE;
+    // mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ALWAYS;
+    mesh_pa.NotifyMode.ONCE + mesh_pa.NotifyMode.ALWAYS;
+    /* select 3 params => combination 4 */
+    // mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ONCE;
+    // mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ALWAYS;
+    // mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.ONCE + mesh_pa.NotifyMode.ALWAYS;
+    // mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ONCE + mesh_pa.NotifyMode.ALWAYS;
+    /* select 4(= all) params => combination 1 */
+    // mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ONCE + mesh_pa.NotifyMode.ALWAYS;
+  
+  // Normal
+  PA_block.setMode(_notifyMode);
+  // Delay STOP
+  // setTimeout(()=>{
+  //   PA_block.setMode(mesh_pa.NotifyMode.STOP)
+  // }, 5 * 1000);
+
+  PA_block.onSensorEvent = ((proximity, brightness) => {
+    console.log('Notify: ' + proximity + ', ' + brightness);
   });
 
-  const _notifyType = mesh_pa.NotifyType.ONCE + mesh_pa.NotifyType.ALWAYS;
-  const _requestId = 15;
-  PA_block.setMode(_notifyType, _requestId);
+  /**
+   * Test: get function
+   */
 
-  // PA_block.getDataWait();
+  /* Normal */
+  // const res = await PA_block.getSensorDataWait();
+  // console.log('get: ' + res.proximity + ', ' + res.brightness);
+  /* Delay */
+  // const _delay = 3000; // [ms]
+  // setTimeout(testGet, _delay);
+  /* Repeat */
+  const _interval = 1500; // [ms]
+  setInterval(testGet, _interval);
+}
+
+async function testGet() {
+  const res = await PA_block.getSensorDataWait();
+  console.log('get: ' + res.proximity + ', ' + res.brightness);  
 }
 
 async function sampleTH(peripheral) {

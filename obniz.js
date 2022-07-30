@@ -27262,6 +27262,7 @@ MESH_100MD.PREFIX = 'MESH-100MD';
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
 const MeshJsPa_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsPa.js");
+const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
 /** MESH_100PA management class */
 class MESH_100PA extends MESH_1.MESH {
     constructor() {
@@ -27269,6 +27270,8 @@ class MESH_100PA extends MESH_1.MESH {
         // Event Handler
         this.onSensorEvent = null;
         this.staticClass = MESH_100PA;
+        this.proximity_ = -1;
+        this.brightness_ = -1;
     }
     async getDataWait() {
         this.checkConnected();
@@ -27278,10 +27281,29 @@ class MESH_100PA extends MESH_1.MESH {
             address: this.peripheral.address,
         };
     }
-    setMode(type, opt_requestId = 0) {
-        const brightnessBlock = this.meshBlock;
-        const command = brightnessBlock.parseSetmodeCommand(type, opt_requestId);
-        this.writeWOResponse(command);
+    async getSensorDataWait() {
+        this.checkConnected();
+        const _requestId = this.requestId.next();
+        this.setMode_(MESH_100PA.NotifyMode.ONCE, _requestId);
+        const _TIMEOUT_MSEC = 1500;
+        const _timeoutId = setTimeout(() => {
+            throw new MeshJsError_1.MeshJsTimeOutError(MESH_100PA.PartsName);
+        }, _TIMEOUT_MSEC);
+        const INTERVAL_TIME = 50;
+        const _result = await new Promise((resolve) => {
+            const _intervalId = setInterval(() => {
+                if (!this.requestId.isReceived(_requestId)) {
+                    return;
+                }
+                clearTimeout(_timeoutId);
+                clearInterval(_intervalId);
+                resolve({ proximity: this.proximity_, brightness: this.brightness_ });
+            }, INTERVAL_TIME);
+        });
+        return _result;
+    }
+    setMode(type) {
+        this.setMode_(type, this.requestId.defaultId());
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100PA.PREFIX) !== -1;
@@ -27293,18 +27315,31 @@ class MESH_100PA extends MESH_1.MESH {
             if (typeof this.onSensorEvent !== 'function') {
                 return;
             }
-            this.onSensorEvent(proximity, brightness);
+            if (this.requestId.isDefaultId(requestId)) {
+                // Emit Event
+                this.onSensorEvent(proximity, brightness);
+                return;
+            }
+            // Update Inner Values
+            this.requestId.received(requestId);
+            this.proximity_ = proximity;
+            this.brightness_ = brightness;
         };
         super.prepareConnect();
     }
     async beforeOnDisconnectWait(reason) {
         // do nothing
     }
+    setMode_(notifyMode, requestId) {
+        const brightnessBlock = this.meshBlock;
+        const command = brightnessBlock.parseSetmodeCommand(notifyMode, requestId);
+        this.writeWOResponse(command);
+    }
 }
 exports.default = MESH_100PA;
 MESH_100PA.PartsName = 'MESH_100PA';
 MESH_100PA.PREFIX = 'MESH-100PA';
-MESH_100PA.NotifyType = MeshJsPa_1.MeshJsPa.NOTIFY_TYPE;
+MESH_100PA.NotifyMode = MeshJsPa_1.MeshJsPa.NotifyMode;
 
 
 /***/ }),
@@ -27378,8 +27413,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class MeshJs {
     constructor() {
         // Event Handler
-        this.onBatteryLevelNotify = null;
-        this.onStatusButtonPressedNotify = null;
+        this.onBatteryLevel = null;
+        this.onStatusButtonPressed = null;
         // Constant Values
         this.UUIDS = {
             SERVICE_ID: '72C90001-57A9-4D40-B746-534E22EC9F9E',
@@ -27453,10 +27488,10 @@ class MeshJs {
         //   return;
         // }
         this.battery_ = data[2];
-        if (typeof this.onBatteryLevelNotify !== 'function') {
+        if (typeof this.onBatteryLevel !== 'function') {
             return false;
         }
-        this.onBatteryLevelNotify(this.battery_);
+        this.onBatteryLevel(this.battery_);
         return true;
     }
     updateStatusButton_(data) {
@@ -27472,10 +27507,10 @@ class MeshJs {
         if (data[2] !== 0) {
             return false;
         }
-        if (typeof this.onStatusButtonPressedNotify !== 'function') {
+        if (typeof this.onStatusButtonPressed !== 'function') {
             return false;
         }
-        this.onStatusButtonPressedNotify();
+        this.onStatusButtonPressed();
         return true;
     }
 }
@@ -27664,11 +27699,18 @@ class MeshJsOutOfRangeError extends MeshJsError {
 exports.MeshJsOutOfRangeError = MeshJsOutOfRangeError;
 class MeshJsInvalidValueError extends MeshJsError {
     constructor(property) {
-        super(2, property + 'is invalid value.');
+        super(2, property + ' is invalid value.');
         this.property = property;
     }
 }
 exports.MeshJsInvalidValueError = MeshJsInvalidValueError;
+class MeshJsTimeOutError extends MeshJsError {
+    constructor(property) {
+        super(3, property + ' is time out.');
+        this.property = property;
+    }
+}
+exports.MeshJsTimeOutError = MeshJsTimeOutError;
 
 
 /***/ }),
@@ -28154,19 +28196,9 @@ class MeshJsPa extends MeshJs_1.MeshJs {
      * @param opt_requestId
      * @returns command
      */
-    parseSetmodeCommand(notifyType, opt_requestId = 0) {
+    parseSetmodeCommand(notifyMode, opt_requestId = 0) {
         // Error Handle
-        if (notifyType % 4 !== 0) {
-            throw new MeshJsError_1.MeshJsInvalidValueError('notifyType');
-        }
-        const NOTIFY_TYPE_MIN = MeshJsPa.NOTIFY_TYPE.UPDATE_PROXIMITY;
-        const NOTIFY_TYPE_MAX = MeshJsPa.NOTIFY_TYPE.UPDATE_PROXIMITY +
-            MeshJsPa.NOTIFY_TYPE.UPDATE_BRIGHTNESS +
-            MeshJsPa.NOTIFY_TYPE.ONCE +
-            MeshJsPa.NOTIFY_TYPE.ALWAYS;
-        if (notifyType < NOTIFY_TYPE_MIN || NOTIFY_TYPE_MAX < notifyType) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('notifyType', NOTIFY_TYPE_MIN, NOTIFY_TYPE_MAX);
-        }
+        this.checkNotifyMode_(notifyMode);
         // Generate Command
         const HEADER = [
             this.MESSAGE_TYPE_ID_,
@@ -28174,14 +28206,32 @@ class MeshJsPa extends MeshJs_1.MeshJs {
             opt_requestId,
         ];
         const FIXED = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2];
-        const data = HEADER.concat(FIXED).concat(notifyType);
+        const data = HEADER.concat(FIXED).concat(notifyMode);
         data.push(this.checkSum(data));
         return data;
+    }
+    checkNotifyMode_(target) {
+        if (target === 0) {
+            return true;
+        }
+        if (target % 4 !== 0) {
+            throw new MeshJsError_1.MeshJsInvalidValueError('notifyMode');
+        }
+        const NOTIFY_MODE_MIN = MeshJsPa.NotifyMode.UPDATE_PROXIMITY;
+        const NOTIFY_MODE_MAX = MeshJsPa.NotifyMode.UPDATE_PROXIMITY +
+            MeshJsPa.NotifyMode.UPDATE_BRIGHTNESS +
+            MeshJsPa.NotifyMode.ONCE +
+            MeshJsPa.NotifyMode.ALWAYS;
+        if (target < NOTIFY_MODE_MIN || NOTIFY_MODE_MAX < target) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('notifyType', NOTIFY_MODE_MIN, NOTIFY_MODE_MAX);
+        }
+        return true;
     }
 }
 exports.MeshJsPa = MeshJsPa;
 // Constant Values
-MeshJsPa.NOTIFY_TYPE = {
+MeshJsPa.NotifyMode = {
+    STOP: 0,
     UPDATE_PROXIMITY: 4,
     UPDATE_BRIGHTNESS: 8,
     ONCE: 16,
@@ -38635,10 +38685,11 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onBatteryLevelNotify = null;
-        this.onStatusButtonNotify = null;
-        this.onResponseWriteNotify = null;
+        this.onBatteryLevel = null;
+        this.onStatusButtonPressed = null;
+        this.onWriteResponse = null;
         this.meshBlock = new MeshJs_1.MeshJs();
+        this.requestId = new MeshRequestId();
         this.indicateCharacteristic_ = null;
         this.notifyCharacteristic_ = null;
         this.writeCharacteristic_ = null;
@@ -38700,17 +38751,17 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         return name.indexOf(MESH.PREFIX) === 0;
     }
     prepareConnect() {
-        this.meshBlock.onBatteryLevelNotify = (battery) => {
-            if (typeof this.onBatteryLevelNotify !== 'function') {
+        this.meshBlock.onBatteryLevel = (battery) => {
+            if (typeof this.onBatteryLevel !== 'function') {
                 return;
             }
-            this.onBatteryLevelNotify(battery);
+            this.onBatteryLevel(battery);
         };
-        this.meshBlock.onStatusButtonPressedNotify = () => {
-            if (typeof this.onStatusButtonNotify !== 'function') {
+        this.meshBlock.onStatusButtonPressed = () => {
+            if (typeof this.onStatusButtonPressed !== 'function') {
                 return;
             }
-            this.onStatusButtonNotify();
+            this.onStatusButtonPressed();
         };
     }
     async writeWait(data) {
@@ -38718,10 +38769,10 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
             return;
         }
         await this.writeCharacteristic_.writeWait(data, true).then((resp) => {
-            if (typeof this.onResponseWriteNotify !== 'function') {
+            if (typeof this.onWriteResponse !== 'function') {
                 return;
             }
-            this.onResponseWriteNotify(resp);
+            this.onWriteResponse(resp);
         });
     }
     writeWOResponse(data) {
@@ -38741,6 +38792,31 @@ exports.MESH = MESH;
 MESH.AvailableBleMode = 'Connectable';
 MESH.LOCAL_NAME_LENGTH_ = 17;
 MESH.PREFIX = 'MESH-100';
+class MeshRequestId {
+    constructor() {
+        this.MAX_ID_ = 255;
+        this.DEFAULT_ID_ = 0;
+        this.currentId_ = this.DEFAULT_ID_;
+        this.receivedId_ = this.DEFAULT_ID_;
+    }
+    defaultId() {
+        return this.DEFAULT_ID_;
+    }
+    next() {
+        this.currentId_ = (this.currentId_ % this.MAX_ID_) + 1;
+        return this.currentId_;
+    }
+    isDefaultId(id) {
+        return id === this.DEFAULT_ID_;
+    }
+    isReceived(id) {
+        return id === this.receivedId_;
+    }
+    received(id) {
+        this.receivedId_ = id;
+    }
+}
+exports.MeshRequestId = MeshRequestId;
 
 
 /***/ }),

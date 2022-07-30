@@ -10,9 +10,9 @@ import { MeshJs } from '../../MESH_js/MeshJs';
 
 export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
   // Event Handler
-  public onBatteryLevelNotify: ((battery: number) => void) | null = null;
-  public onStatusButtonNotify: (() => void) | null = null;
-  public onResponseWriteNotify: ((response: boolean) => void) | null = null;
+  public onBatteryLevel: ((battery: number) => void) | null = null;
+  public onStatusButtonPressed: (() => void) | null = null;
+  public onWriteResponse: ((response: boolean) => void) | null = null;
 
   // Constant Values
   public static AvailableBleMode = 'Connectable' as const;
@@ -20,6 +20,7 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
 
   protected static PREFIX = 'MESH-100';
   protected meshBlock: MeshJs = new MeshJs();
+  protected requestId = new MeshRequestId();
 
   private indicateCharacteristic_: BleRemoteCharacteristic | null = null;
   private notifyCharacteristic_: BleRemoteCharacteristic | null = null;
@@ -104,17 +105,17 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
   }
 
   protected prepareConnect(): void {
-    this.meshBlock.onBatteryLevelNotify = (battery: number) => {
-      if (typeof this.onBatteryLevelNotify !== 'function') {
+    this.meshBlock.onBatteryLevel = (battery: number) => {
+      if (typeof this.onBatteryLevel !== 'function') {
         return;
       }
-      this.onBatteryLevelNotify(battery);
+      this.onBatteryLevel(battery);
     };
-    this.meshBlock.onStatusButtonPressedNotify = () => {
-      if (typeof this.onStatusButtonNotify !== 'function') {
+    this.meshBlock.onStatusButtonPressed = () => {
+      if (typeof this.onStatusButtonPressed !== 'function') {
         return;
       }
-      this.onStatusButtonNotify();
+      this.onStatusButtonPressed();
     };
   }
 
@@ -123,10 +124,10 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
       return;
     }
     await this.writeCharacteristic_.writeWait(data, true).then((resp) => {
-      if (typeof this.onResponseWriteNotify !== 'function') {
+      if (typeof this.onWriteResponse !== 'function') {
         return;
       }
-      this.onResponseWriteNotify(resp);
+      this.onWriteResponse(resp);
     });
   }
 
@@ -141,5 +142,34 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
     return this.peripheral
       .getService(this.meshBlock.UUIDS.SERVICE_ID)!
       .getCharacteristic(uuid);
+  }
+}
+
+export class MeshRequestId {
+  private readonly MAX_ID_: number = 255 as const;
+  private readonly DEFAULT_ID_: number = 0 as const;
+
+  private currentId_: number = this.DEFAULT_ID_;
+  private receivedId_: number = this.DEFAULT_ID_;
+
+  public defaultId(): number {
+    return this.DEFAULT_ID_;
+  }
+
+  public next(): number {
+    this.currentId_ = (this.currentId_ % this.MAX_ID_) + 1;
+    return this.currentId_;
+  }
+
+  public isDefaultId(id: number): boolean {
+    return id === this.DEFAULT_ID_;
+  }
+
+  public isReceived(id: number): boolean {
+    return id === this.receivedId_;
+  }
+
+  public received(id: number): void {
+    this.receivedId_ = id;
   }
 }

@@ -7,10 +7,11 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onBatteryLevelNotify = null;
-        this.onStatusButtonNotify = null;
-        this.onResponseWriteNotify = null;
+        this.onBatteryLevel = null;
+        this.onStatusButtonPressed = null;
+        this.onWriteResponse = null;
         this.meshBlock = new MeshJs_1.MeshJs();
+        this.requestId = new MeshRequestId();
         this.indicateCharacteristic_ = null;
         this.notifyCharacteristic_ = null;
         this.writeCharacteristic_ = null;
@@ -72,17 +73,17 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         return name.indexOf(MESH.PREFIX) === 0;
     }
     prepareConnect() {
-        this.meshBlock.onBatteryLevelNotify = (battery) => {
-            if (typeof this.onBatteryLevelNotify !== 'function') {
+        this.meshBlock.onBatteryLevel = (battery) => {
+            if (typeof this.onBatteryLevel !== 'function') {
                 return;
             }
-            this.onBatteryLevelNotify(battery);
+            this.onBatteryLevel(battery);
         };
-        this.meshBlock.onStatusButtonPressedNotify = () => {
-            if (typeof this.onStatusButtonNotify !== 'function') {
+        this.meshBlock.onStatusButtonPressed = () => {
+            if (typeof this.onStatusButtonPressed !== 'function') {
                 return;
             }
-            this.onStatusButtonNotify();
+            this.onStatusButtonPressed();
         };
     }
     async writeWait(data) {
@@ -90,10 +91,10 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
             return;
         }
         await this.writeCharacteristic_.writeWait(data, true).then((resp) => {
-            if (typeof this.onResponseWriteNotify !== 'function') {
+            if (typeof this.onWriteResponse !== 'function') {
                 return;
             }
-            this.onResponseWriteNotify(resp);
+            this.onWriteResponse(resp);
         });
     }
     writeWOResponse(data) {
@@ -113,3 +114,28 @@ exports.MESH = MESH;
 MESH.AvailableBleMode = 'Connectable';
 MESH.LOCAL_NAME_LENGTH_ = 17;
 MESH.PREFIX = 'MESH-100';
+class MeshRequestId {
+    constructor() {
+        this.MAX_ID_ = 255;
+        this.DEFAULT_ID_ = 0;
+        this.currentId_ = this.DEFAULT_ID_;
+        this.receivedId_ = this.DEFAULT_ID_;
+    }
+    defaultId() {
+        return this.DEFAULT_ID_;
+    }
+    next() {
+        this.currentId_ = (this.currentId_ % this.MAX_ID_) + 1;
+        return this.currentId_;
+    }
+    isDefaultId(id) {
+        return id === this.DEFAULT_ID_;
+    }
+    isReceived(id) {
+        return id === this.receivedId_;
+    }
+    received(id) {
+        this.receivedId_ = id;
+    }
+}
+exports.MeshRequestId = MeshRequestId;

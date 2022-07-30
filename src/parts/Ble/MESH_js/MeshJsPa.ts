@@ -7,7 +7,8 @@ export class MeshJsPa extends MeshJs {
     | null = null;
 
   // Constant Values
-  public static readonly NOTIFY_TYPE = {
+  public static readonly NotifyMode = {
+    STOP: 0 as const,
     UPDATE_PROXIMITY: 4 as const,
     UPDATE_BRIGHTNESS: 8 as const,
     ONCE: 16 as const,
@@ -45,24 +46,9 @@ export class MeshJsPa extends MeshJs {
    * @param opt_requestId
    * @returns command
    */
-  public parseSetmodeCommand(notifyType: number, opt_requestId = 0): number[] {
+  public parseSetmodeCommand(notifyMode: number, opt_requestId = 0): number[] {
     // Error Handle
-    if (notifyType % 4 !== 0) {
-      throw new MeshJsInvalidValueError('notifyType');
-    }
-    const NOTIFY_TYPE_MIN = MeshJsPa.NOTIFY_TYPE.UPDATE_PROXIMITY;
-    const NOTIFY_TYPE_MAX =
-      MeshJsPa.NOTIFY_TYPE.UPDATE_PROXIMITY +
-      MeshJsPa.NOTIFY_TYPE.UPDATE_BRIGHTNESS +
-      MeshJsPa.NOTIFY_TYPE.ONCE +
-      MeshJsPa.NOTIFY_TYPE.ALWAYS;
-    if (notifyType < NOTIFY_TYPE_MIN || NOTIFY_TYPE_MAX < notifyType) {
-      throw new MeshJsOutOfRangeError(
-        'notifyType',
-        NOTIFY_TYPE_MIN,
-        NOTIFY_TYPE_MAX
-      );
-    }
+    this.checkNotifyMode_(notifyMode);
 
     // Generate Command
     const HEADER = [
@@ -71,9 +57,32 @@ export class MeshJsPa extends MeshJs {
       opt_requestId,
     ] as const;
     const FIXED = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2] as const;
-    const data: number[] = HEADER.concat(FIXED).concat(notifyType);
+    const data: number[] = HEADER.concat(FIXED).concat(notifyMode);
     data.push(this.checkSum(data));
 
     return data;
+  }
+
+  private checkNotifyMode_(target: number): boolean {
+    if (target === 0) {
+      return true;
+    }
+    if (target % 4 !== 0) {
+      throw new MeshJsInvalidValueError('notifyMode');
+    }
+    const NOTIFY_MODE_MIN = MeshJsPa.NotifyMode.UPDATE_PROXIMITY;
+    const NOTIFY_MODE_MAX =
+      MeshJsPa.NotifyMode.UPDATE_PROXIMITY +
+      MeshJsPa.NotifyMode.UPDATE_BRIGHTNESS +
+      MeshJsPa.NotifyMode.ONCE +
+      MeshJsPa.NotifyMode.ALWAYS;
+    if (target < NOTIFY_MODE_MIN || NOTIFY_MODE_MAX < target) {
+      throw new MeshJsOutOfRangeError(
+        'notifyType',
+        NOTIFY_MODE_MIN,
+        NOTIFY_MODE_MAX
+      );
+    }
+    return true;
   }
 }

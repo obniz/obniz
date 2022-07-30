@@ -10,3 +10,7 @@ export declare class MeshJsInvalidValueError extends MeshJsError {
     property: string;
     constructor(property: string);
 }
+export declare class MeshJsTimeOutError extends MeshJsError {
+    property: string;
+    constructor(property: string);
+}

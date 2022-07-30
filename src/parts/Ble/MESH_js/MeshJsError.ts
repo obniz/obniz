@@ -24,6 +24,12 @@ export class MeshJsOutOfRangeError extends MeshJsError {
 
 export class MeshJsInvalidValueError extends MeshJsError {
   constructor(public property: string) {
-    super(2, property + 'is invalid value.');
+    super(2, property + ' is invalid value.');
+  }
+}
+
+export class MeshJsTimeOutError extends MeshJsError {
+  constructor(public property: string) {
+    super(3, property + ' is time out.');
   }
 }

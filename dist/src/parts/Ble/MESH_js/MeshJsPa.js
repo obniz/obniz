@@ -38,19 +38,9 @@ class MeshJsPa extends MeshJs_1.MeshJs {
      * @param opt_requestId
      * @returns command
      */
-    parseSetmodeCommand(notifyType, opt_requestId = 0) {
+    parseSetmodeCommand(notifyMode, opt_requestId = 0) {
         // Error Handle
-        if (notifyType % 4 !== 0) {
-            throw new MeshJsError_1.MeshJsInvalidValueError('notifyType');
-        }
-        const NOTIFY_TYPE_MIN = MeshJsPa.NOTIFY_TYPE.UPDATE_PROXIMITY;
-        const NOTIFY_TYPE_MAX = MeshJsPa.NOTIFY_TYPE.UPDATE_PROXIMITY +
-            MeshJsPa.NOTIFY_TYPE.UPDATE_BRIGHTNESS +
-            MeshJsPa.NOTIFY_TYPE.ONCE +
-            MeshJsPa.NOTIFY_TYPE.ALWAYS;
-        if (notifyType < NOTIFY_TYPE_MIN || NOTIFY_TYPE_MAX < notifyType) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('notifyType', NOTIFY_TYPE_MIN, NOTIFY_TYPE_MAX);
-        }
+        this.checkNotifyMode_(notifyMode);
         // Generate Command
         const HEADER = [
             this.MESSAGE_TYPE_ID_,
@@ -58,14 +48,32 @@ class MeshJsPa extends MeshJs_1.MeshJs {
             opt_requestId,
         ];
         const FIXED = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2];
-        const data = HEADER.concat(FIXED).concat(notifyType);
+        const data = HEADER.concat(FIXED).concat(notifyMode);
         data.push(this.checkSum(data));
         return data;
+    }
+    checkNotifyMode_(target) {
+        if (target === 0) {
+            return true;
+        }
+        if (target % 4 !== 0) {
+            throw new MeshJsError_1.MeshJsInvalidValueError('notifyMode');
+        }
+        const NOTIFY_MODE_MIN = MeshJsPa.NotifyMode.UPDATE_PROXIMITY;
+        const NOTIFY_MODE_MAX = MeshJsPa.NotifyMode.UPDATE_PROXIMITY +
+            MeshJsPa.NotifyMode.UPDATE_BRIGHTNESS +
+            MeshJsPa.NotifyMode.ONCE +
+            MeshJsPa.NotifyMode.ALWAYS;
+        if (target < NOTIFY_MODE_MIN || NOTIFY_MODE_MAX < target) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('notifyType', NOTIFY_MODE_MIN, NOTIFY_MODE_MAX);
+        }
+        return true;
     }
 }
 exports.MeshJsPa = MeshJsPa;
 // Constant Values
-MeshJsPa.NOTIFY_TYPE = {
+MeshJsPa.NotifyMode = {
+    STOP: 0,
     UPDATE_PROXIMITY: 4,
     UPDATE_BRIGHTNESS: 8,
     ONCE: 16,
