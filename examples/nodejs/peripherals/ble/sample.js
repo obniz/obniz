@@ -26,7 +26,7 @@ obniz.onconnect = async () => {
       // sampleLE(peripheral);
       // samplePA(peripheral);
       // sampleMD(peripheral);
-      // sampleGP(peripheral);
+      sampleGP(peripheral);
     };
     await obniz.ble.scan.startWait();
     // await continueScan(obniz);
@@ -412,42 +412,58 @@ async function getDataMD() {
   console.log('get ' + res);
 }
 
+let GP_block = null;
 async function sampleGP(peripheral) {
   if (!mesh_gp.isMESHblock(peripheral)) {
     return;
   }
   console.log('obniz.ble.scan.onfind : ' + peripheral.localName + ' : ' + peripheral.rssi);
-  const GP_block = new mesh_gp(peripheral);
+  GP_block = new mesh_gp(peripheral);
   await GP_block.connectWait();
 
-  const _din = {p1:false,p2:false,p3:true};
-  const _din_notify = {p1:false,p2:false,p3:true};
-  const _dout = {p1:false,p2:false,p3:true};
+  const _din = {p1:true,p2:false,p3:true};
+  const _din_notify = {p1:true,p2:false,p3:true};
+  const _dout = {p1:true,p2:false,p3:true};
   const _pwm = 200;
-  const _vcc = mesh_gp.VCC.ON;
-  const _condition = mesh_gp.ANALOG_IN_EVENT_CONDITION.BELOW_THRESHOLD;
+  const _vcc = mesh_gp.Vcc.ON;
+  const _condition = mesh_gp.AnalogInEventCondition.ABOVE_THRESHOLD;
 
-  GP_block.onPwmNotify = ((id, level) => {
-    console.log('[PWM] id: ' + id + ', level: ' + level);
+  GP_block.onDigitalInputEvent = ((pin, state) => {
+    console.log('<Event> [Din] pin: ' + pin + ', state: ' + state);
   });
-  GP_block.onDigitalInEventNotify = ((pin, state) => {
-    console.log('[Din] pin: ' + pin + ', state: ' + state);
+  GP_block.onAnalogInputEvent = ((level) => {
+    console.log('<Event> [Ain] level: ' + level);
   });
-  GP_block.onAnalogInEventNotify = ((level) => {
-    console.log('[Ain] level: ' + level);
+  GP_block.onDigitalInput = ((pin, state) => {
+    console.log('<Event> [DinState] pin: ' +
+     pin + ', state: ' + state);
   });
-  GP_block.onDigitalInNotify = ((pin, state) => {
-    console.log('[DinState] pin: ' + pin + ', state: ' + state);
+  GP_block.onPwm = ((level) => {
+    console.log('<Event> [PWM] level: ' + level);
   });
+  GP_block.setMode(_din, _din_notify, _dout, _pwm, _vcc, 20, 0, _condition);
 
-  let _count = 0;
-  setInterval(()=>{
-    if (_count % 2 == 0) {
-      GP_block.setMode(_din, _din_notify, _dout, _pwm, _vcc, 0, 0, _condition);
-    } else {
-      GP_block.setMode(_din, _din_notify, _dout, 0, _vcc, 0, 0, _condition);
-    }
-    GP_block.setPWMNotify(_count);
-    _count ++;
-  },1500);
+  // let _count = 0;
+  // setInterval(()=>{
+  //   getDIN(mesh_gp.Pin.P1);
+  //   if (_count % 2 == 0) {
+  //     GP_block.setMode(_din, _din_notify, _dout, _pwm, _vcc, 0, 0, _condition);
+  //   } else {
+  //     GP_block.setMode(_din, _din_notify, _dout, 0, _vcc, 0, 0, _condition);
+  //   }
+  //   // GP_block.setDin(mesh_gp.Pin.P1);
+  //   // GP_block.setPwm(0);
+  //   getPWM();
+  //   _count ++;
+  // }, 2 * 1000);
+}
+
+async function getPWM() {
+  const res = await GP_block.getPwmDataWait();
+  console.log('get ' + res);
+}
+
+async function getDIN(pin) {
+  const res = await GP_block.getDigitalInputDataWait(pin);
+  console.log('get ' + res);
 }

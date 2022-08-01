@@ -2,52 +2,52 @@ import { MeshJs } from './MeshJs';
 import { MeshJsInvalidValueError, MeshJsOutOfRangeError } from './MeshJsError';
 export class MeshJsGp extends MeshJs {
   // Event Handler
-  public onDigitalInEventNotify:
+  public onDigitalInputEvent:
     | ((pin: number, state: number) => void)
     | null = null;
-  public onAnalogInEventNotify: ((level: number) => void) | null = null;
-  public onDigitalInNotify:
+  public onAnalogInputEvent: ((level: number) => void) | null = null;
+  public onDigitalInput:
     | ((requestId: number, pin: number, state: number) => void)
     | null = null;
-  public onAnalogInNotify:
+  public onAnalogInput:
     | ((requestId: number, state: number, mode: number) => void)
     | null = null;
-  public onVOutNotify:
-    | ((requestId: number, state: number) => void)
-    | null = null;
-  public onDigitalOutNotify:
+  public onVOutput: ((requestId: number, state: number) => void) | null = null;
+  public onDigitalOutput:
     | ((requestId: number, pin: number, state: number) => void)
     | null = null;
-  public onPwmNotify:
-    | ((requestId: number, level: number) => void)
-    | null = null;
+  public onPwm: ((requestId: number, level: number) => void) | null = null;
 
   public DigitalPins = { p1: false, p2: false, p3: false };
 
   // Constant Values
-  public static readonly ANALOG_IN_EVENT_CONDITION = {
+  public static readonly AnalogInEventCondition = {
     NOT_NOTIFY: 0 as const,
-    ABOVE_THRESHOLD: 1 as const,
-    BELOW_THRESHOLD: 2 as const,
+    ABOVE_THRESHOLD: 17 as const,
+    BELOW_THRESHOLD: 34 as const,
   } as const;
-  public static readonly MODE = {
+  public static readonly NotifyMode = {
     ALWAYS: 0 as const,
     ONCE: 1 as const,
     ALWAYS_AND_ONECE: 2 as const,
   } as const;
-  public static readonly PIN = {
+  public static readonly Pin = {
     P1: 0 as const,
     P2: 1 as const,
     P3: 2 as const,
   } as const;
-  public static readonly STATE = {
+  public static readonly State = {
     LOW_2_HIGH: 1 as const,
     HIGH_2_LOW: 2 as const,
   } as const;
-  public static readonly VCC = {
+  public static readonly Vcc = {
     AUTO: 0 as const,
     ON: 1 as const,
     OFF: 2 as const,
+  } as const;
+  public static readonly VccState = {
+    OFF: 0 as const,
+    ON: 1 as const,
   } as const;
 
   private readonly MESSAGE_TYPE_ID_: number = 1 as const;
@@ -73,68 +73,68 @@ export class MeshJsGp extends MeshJs {
     }
     switch (data[1]) {
       case this.DIGITAL_IN_EVENT_ID_: {
-        if (typeof this.onDigitalInEventNotify !== 'function') {
+        if (typeof this.onDigitalInputEvent !== 'function') {
           return;
         }
         const _pin = data[2];
         const _state = data[3];
-        this.onDigitalInEventNotify(_pin, _state);
+        this.onDigitalInputEvent(_pin, _state);
         break;
       }
       case this.ANALOG_IN_EVENT_ID_: {
-        if (typeof this.onAnalogInEventNotify !== 'function') {
+        if (typeof this.onAnalogInputEvent !== 'function') {
           return;
         }
         const _level = data[5];
-        this.onAnalogInEventNotify(_level);
+        this.onAnalogInputEvent(_level);
         break;
       }
       case this.DIGITAL_IN_ID_: {
-        if (typeof this.onDigitalInNotify !== 'function') {
+        if (typeof this.onDigitalInput !== 'function') {
           return;
         }
         const requestId = data[2];
         const pin = data[3];
         const state = data[4];
-        this.onDigitalInNotify(requestId, pin, state);
+        this.onDigitalInput(requestId, pin, state);
         break;
       }
       case this.ANALOG_IN_ID_: {
-        if (typeof this.onAnalogInNotify !== 'function') {
+        if (typeof this.onAnalogInput !== 'function') {
           return;
         }
         const requestId = data[2];
         const state = data[4];
         const mode = data[5];
-        this.onAnalogInNotify(requestId, state, mode);
+        this.onAnalogInput(requestId, state, mode);
         break;
       }
       case this.V_OUT_ID_: {
-        if (typeof this.onVOutNotify !== 'function') {
+        if (typeof this.onVOutput !== 'function') {
           return;
         }
         const requestId = data[2];
         const state = data[4];
-        this.onVOutNotify(requestId, state);
+        this.onVOutput(requestId, state);
         break;
       }
       case this.DIGITAL_OUT_ID_: {
-        if (typeof this.onDigitalOutNotify !== 'function') {
+        if (typeof this.onDigitalOutput !== 'function') {
           return;
         }
         const requestId = data[2];
         const pin = data[3];
         const state = data[4];
-        this.onDigitalOutNotify(requestId, pin, state);
+        this.onDigitalOutput(requestId, pin, state);
         break;
       }
       case this.PWM_ID_: {
-        if (typeof this.onPwmNotify !== 'function') {
+        if (typeof this.onPwm !== 'function') {
           return;
         }
         const requestId = data[2];
         const level = data[4];
-        this.onPwmNotify(requestId, level);
+        this.onPwm(requestId, level);
         break;
       }
       default:
@@ -168,42 +168,32 @@ export class MeshJsGp extends MeshJs {
     // Error Handle
     const PWM_MIN = 0 as const;
     const PWM_MAX = 255 as const;
-    if (pwmRatio < PWM_MIN || PWM_MAX < pwmRatio) {
-      throw new MeshJsOutOfRangeError('pwmRatio', PWM_MIN, PWM_MAX);
-    }
+    this.checkRange_(pwmRatio, PWM_MIN, PWM_MAX, 'pwmRatio');
     if (
-      vcc !== MeshJsGp.VCC.AUTO &&
-      vcc !== MeshJsGp.VCC.ON &&
-      vcc !== MeshJsGp.VCC.OFF
+      vcc !== MeshJsGp.Vcc.AUTO &&
+      vcc !== MeshJsGp.Vcc.ON &&
+      vcc !== MeshJsGp.Vcc.OFF
     ) {
       throw new MeshJsInvalidValueError('vcc');
     }
     const ANALOG_IN_RANGE_MIN = 0 as const;
-    const ANALOG_IN_RANGE_MAX = 3 as const;
+    const ANALOG_IN_RANGE_MAX = 255 as const;
+    this.checkRange_(
+      analogInRangeUpper,
+      ANALOG_IN_RANGE_MIN,
+      ANALOG_IN_RANGE_MAX,
+      'analogInRangeUpper'
+    );
+    this.checkRange_(
+      analogInRangeBottom,
+      ANALOG_IN_RANGE_MIN,
+      ANALOG_IN_RANGE_MAX,
+      'analogInRangeBottom'
+    );
     if (
-      analogInRangeUpper < ANALOG_IN_RANGE_MIN ||
-      ANALOG_IN_RANGE_MAX < analogInRangeUpper
-    ) {
-      throw new MeshJsOutOfRangeError(
-        'analogInRangeUpper',
-        ANALOG_IN_RANGE_MIN,
-        ANALOG_IN_RANGE_MAX
-      );
-    }
-    if (
-      analogInRangeBottom < ANALOG_IN_RANGE_MIN ||
-      ANALOG_IN_RANGE_MAX < analogInRangeBottom
-    ) {
-      throw new MeshJsOutOfRangeError(
-        'analogInRangeBottom',
-        ANALOG_IN_RANGE_MIN,
-        ANALOG_IN_RANGE_MAX
-      );
-    }
-    if (
-      analogInNotify !== MeshJsGp.ANALOG_IN_EVENT_CONDITION.NOT_NOTIFY &&
-      analogInNotify !== MeshJsGp.ANALOG_IN_EVENT_CONDITION.ABOVE_THRESHOLD &&
-      analogInNotify !== MeshJsGp.ANALOG_IN_EVENT_CONDITION.BELOW_THRESHOLD
+      analogInNotify !== MeshJsGp.AnalogInEventCondition.NOT_NOTIFY &&
+      analogInNotify !== MeshJsGp.AnalogInEventCondition.ABOVE_THRESHOLD &&
+      analogInNotify !== MeshJsGp.AnalogInEventCondition.BELOW_THRESHOLD
     ) {
       throw new MeshJsInvalidValueError('analogInNotify');
     }
@@ -277,7 +267,7 @@ export class MeshJsGp extends MeshJs {
    * @returns
    */
   public parseSetPWMCommand(requestId = 0) {
-    return this.parseSetCommand_(this.PWM_ID_, MeshJsGp.PIN.P3, requestId);
+    return this.parseSetCommand_(this.PWM_ID_, MeshJsGp.Pin.P3, requestId);
   }
 
   private parseSetCommand_(
@@ -293,5 +283,17 @@ export class MeshJsGp extends MeshJs {
 
   private pin2num(pins: MeshJsGp['DigitalPins']): number {
     return (pins.p1 ? 1 : 0) + (pins.p2 ? 2 : 0) + (pins.p3 ? 4 : 0);
+  }
+
+  private checkRange_(
+    target: number,
+    min: number,
+    max: number,
+    name: string
+  ): boolean {
+    if (target < min || max < target) {
+      throw new MeshJsOutOfRangeError(name, min, max);
+    }
+    return true;
   }
 }

@@ -6,13 +6,13 @@ class MeshJsGp extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onDigitalInEventNotify = null;
-        this.onAnalogInEventNotify = null;
-        this.onDigitalInNotify = null;
-        this.onAnalogInNotify = null;
-        this.onVOutNotify = null;
-        this.onDigitalOutNotify = null;
-        this.onPwmNotify = null;
+        this.onDigitalInputEvent = null;
+        this.onAnalogInputEvent = null;
+        this.onDigitalInput = null;
+        this.onAnalogInput = null;
+        this.onVOutput = null;
+        this.onDigitalOutput = null;
+        this.onPwm = null;
         this.DigitalPins = { p1: false, p2: false, p3: false };
         this.MESSAGE_TYPE_ID_ = 1;
         this.DIGITAL_IN_EVENT_ID_ = 0;
@@ -37,68 +37,68 @@ class MeshJsGp extends MeshJs_1.MeshJs {
         }
         switch (data[1]) {
             case this.DIGITAL_IN_EVENT_ID_: {
-                if (typeof this.onDigitalInEventNotify !== 'function') {
+                if (typeof this.onDigitalInputEvent !== 'function') {
                     return;
                 }
                 const _pin = data[2];
                 const _state = data[3];
-                this.onDigitalInEventNotify(_pin, _state);
+                this.onDigitalInputEvent(_pin, _state);
                 break;
             }
             case this.ANALOG_IN_EVENT_ID_: {
-                if (typeof this.onAnalogInEventNotify !== 'function') {
+                if (typeof this.onAnalogInputEvent !== 'function') {
                     return;
                 }
                 const _level = data[5];
-                this.onAnalogInEventNotify(_level);
+                this.onAnalogInputEvent(_level);
                 break;
             }
             case this.DIGITAL_IN_ID_: {
-                if (typeof this.onDigitalInNotify !== 'function') {
+                if (typeof this.onDigitalInput !== 'function') {
                     return;
                 }
                 const requestId = data[2];
                 const pin = data[3];
                 const state = data[4];
-                this.onDigitalInNotify(requestId, pin, state);
+                this.onDigitalInput(requestId, pin, state);
                 break;
             }
             case this.ANALOG_IN_ID_: {
-                if (typeof this.onAnalogInNotify !== 'function') {
+                if (typeof this.onAnalogInput !== 'function') {
                     return;
                 }
                 const requestId = data[2];
                 const state = data[4];
                 const mode = data[5];
-                this.onAnalogInNotify(requestId, state, mode);
+                this.onAnalogInput(requestId, state, mode);
                 break;
             }
             case this.V_OUT_ID_: {
-                if (typeof this.onVOutNotify !== 'function') {
+                if (typeof this.onVOutput !== 'function') {
                     return;
                 }
                 const requestId = data[2];
                 const state = data[4];
-                this.onVOutNotify(requestId, state);
+                this.onVOutput(requestId, state);
                 break;
             }
             case this.DIGITAL_OUT_ID_: {
-                if (typeof this.onDigitalOutNotify !== 'function') {
+                if (typeof this.onDigitalOutput !== 'function') {
                     return;
                 }
                 const requestId = data[2];
                 const pin = data[3];
                 const state = data[4];
-                this.onDigitalOutNotify(requestId, pin, state);
+                this.onDigitalOutput(requestId, pin, state);
                 break;
             }
             case this.PWM_ID_: {
-                if (typeof this.onPwmNotify !== 'function') {
+                if (typeof this.onPwm !== 'function') {
                     return;
                 }
                 const requestId = data[2];
                 const level = data[4];
-                this.onPwmNotify(requestId, level);
+                this.onPwm(requestId, level);
                 break;
             }
             default:
@@ -122,27 +122,19 @@ class MeshJsGp extends MeshJs_1.MeshJs {
         // Error Handle
         const PWM_MIN = 0;
         const PWM_MAX = 255;
-        if (pwmRatio < PWM_MIN || PWM_MAX < pwmRatio) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('pwmRatio', PWM_MIN, PWM_MAX);
-        }
-        if (vcc !== MeshJsGp.VCC.AUTO &&
-            vcc !== MeshJsGp.VCC.ON &&
-            vcc !== MeshJsGp.VCC.OFF) {
+        this.checkRange_(pwmRatio, PWM_MIN, PWM_MAX, 'pwmRatio');
+        if (vcc !== MeshJsGp.Vcc.AUTO &&
+            vcc !== MeshJsGp.Vcc.ON &&
+            vcc !== MeshJsGp.Vcc.OFF) {
             throw new MeshJsError_1.MeshJsInvalidValueError('vcc');
         }
         const ANALOG_IN_RANGE_MIN = 0;
-        const ANALOG_IN_RANGE_MAX = 3;
-        if (analogInRangeUpper < ANALOG_IN_RANGE_MIN ||
-            ANALOG_IN_RANGE_MAX < analogInRangeUpper) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('analogInRangeUpper', ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX);
-        }
-        if (analogInRangeBottom < ANALOG_IN_RANGE_MIN ||
-            ANALOG_IN_RANGE_MAX < analogInRangeBottom) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('analogInRangeBottom', ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX);
-        }
-        if (analogInNotify !== MeshJsGp.ANALOG_IN_EVENT_CONDITION.NOT_NOTIFY &&
-            analogInNotify !== MeshJsGp.ANALOG_IN_EVENT_CONDITION.ABOVE_THRESHOLD &&
-            analogInNotify !== MeshJsGp.ANALOG_IN_EVENT_CONDITION.BELOW_THRESHOLD) {
+        const ANALOG_IN_RANGE_MAX = 255;
+        this.checkRange_(analogInRangeUpper, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeUpper');
+        this.checkRange_(analogInRangeBottom, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeBottom');
+        if (analogInNotify !== MeshJsGp.AnalogInEventCondition.NOT_NOTIFY &&
+            analogInNotify !== MeshJsGp.AnalogInEventCondition.ABOVE_THRESHOLD &&
+            analogInNotify !== MeshJsGp.AnalogInEventCondition.BELOW_THRESHOLD) {
             throw new MeshJsError_1.MeshJsInvalidValueError('analogInNotify');
         }
         // Generate Command
@@ -208,7 +200,7 @@ class MeshJsGp extends MeshJs_1.MeshJs {
      * @returns
      */
     parseSetPWMCommand(requestId = 0) {
-        return this.parseSetCommand_(this.PWM_ID_, MeshJsGp.PIN.P3, requestId);
+        return this.parseSetCommand_(this.PWM_ID_, MeshJsGp.Pin.P3, requestId);
     }
     parseSetCommand_(eventId, param, requestId) {
         const HEADER = [this.MESSAGE_TYPE_ID_, eventId, requestId];
@@ -219,30 +211,40 @@ class MeshJsGp extends MeshJs_1.MeshJs {
     pin2num(pins) {
         return (pins.p1 ? 1 : 0) + (pins.p2 ? 2 : 0) + (pins.p3 ? 4 : 0);
     }
+    checkRange_(target, min, max, name) {
+        if (target < min || max < target) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError(name, min, max);
+        }
+        return true;
+    }
 }
 exports.MeshJsGp = MeshJsGp;
 // Constant Values
-MeshJsGp.ANALOG_IN_EVENT_CONDITION = {
+MeshJsGp.AnalogInEventCondition = {
     NOT_NOTIFY: 0,
-    ABOVE_THRESHOLD: 1,
-    BELOW_THRESHOLD: 2,
+    ABOVE_THRESHOLD: 17,
+    BELOW_THRESHOLD: 34,
 };
-MeshJsGp.MODE = {
+MeshJsGp.NotifyMode = {
     ALWAYS: 0,
     ONCE: 1,
     ALWAYS_AND_ONECE: 2,
 };
-MeshJsGp.PIN = {
+MeshJsGp.Pin = {
     P1: 0,
     P2: 1,
     P3: 2,
 };
-MeshJsGp.STATE = {
+MeshJsGp.State = {
     LOW_2_HIGH: 1,
     HIGH_2_LOW: 2,
 };
-MeshJsGp.VCC = {
+MeshJsGp.Vcc = {
     AUTO: 0,
     ON: 1,
     OFF: 2,
+};
+MeshJsGp.VccState = {
+    OFF: 0,
+    ON: 1,
 };

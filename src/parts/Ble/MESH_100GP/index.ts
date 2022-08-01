@@ -6,6 +6,7 @@
 
 import { MESH } from '../utils/abstracts/MESH';
 import { MeshJsGp } from '../MESH_js/MeshJsGp';
+import { MeshJsTimeOutError } from '../MESH_js/MeshJsError';
 
 export interface MESH_100GPOptions {}
 
@@ -23,38 +24,37 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   public static readonly PartsName = 'MESH_100GP';
   public static readonly PREFIX = 'MESH-100GP';
 
-  public static readonly ANALOG_INPUT_EVENT_CONDITION =
-    MeshJsGp.ANALOG_IN_EVENT_CONDITION;
-  public static readonly MODE = MeshJsGp.MODE;
-  public static readonly PIN = MeshJsGp.PIN;
-  public static readonly STATE = MeshJsGp.STATE;
-  public static readonly VCC = MeshJsGp.VCC;
+  public static readonly AnalogInEventCondition =
+    MeshJsGp.AnalogInEventCondition;
+  public static readonly NotifyMode = MeshJsGp.NotifyMode;
+  public static readonly Pin = MeshJsGp.Pin;
+  public static readonly State = MeshJsGp.State;
+  public static readonly Vcc = MeshJsGp.Vcc;
+  public static readonly VccState = MeshJsGp.VccState;
 
   public readonly DigitalPins: MeshJsGp['DigitalPins'] = (this
     .meshBlock as MeshJsGp).DigitalPins;
 
   // Event Handler
-  public onDigitalInEventNotify:
+  public onDigitalInputEvent:
     | ((pin: number, state: number) => void)
     | null = null;
-  public onAnalogInEventNotify: ((level: number) => void) | null = null;
-  public onDigitalInNotify:
-    | ((requestId: number, pin: number, state: number) => void)
-    | null = null;
-  public onAnalogInNotify:
+  public onAnalogInputEvent: ((level: number) => void) | null = null;
+  public onDigitalInput: ((pin: number, state: number) => void) | null = null;
+  public onAnalogInput:
     | ((requestId: number, state: number, mode: number) => void)
     | null = null;
-  public onVOutNotify:
-    | ((requestId: number, state: number) => void)
-    | null = null;
-  public onDigitalOutNotify:
+  public onVOutput: ((requestId: number, state: number) => void) | null = null;
+  public onDigitalOutput:
     | ((requestId: number, pin: number, state: number) => void)
     | null = null;
-  public onPwmNotify:
-    | ((requestId: number, level: number) => void)
-    | null = null;
+  public onPwm: ((level: number) => void) | null = null;
 
   protected readonly staticClass = MESH_100GP;
+
+  private pin_ = -1;
+  private state_ = -1;
+  private pwm_ = -1;
 
   public async getDataWait() {
     this.checkConnected();
@@ -65,6 +65,22 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     };
   }
 
+  public async getDigitalInputDataWait(pin: number) {
+    this.checkConnected();
+    const _requestId = this.requestId.next();
+    this.setDin(pin, _requestId);
+    await this.getSensorDataWait(_requestId);
+    return this.state_;
+  }
+
+  public async getPwmDataWait() {
+    this.checkConnected();
+    const _requestId = this.requestId.next();
+    this.setPwm(_requestId);
+    await this.getSensorDataWait(_requestId);
+    return this.pwm_;
+  }
+
   /**
    * setMode
    *
@@ -73,8 +89,8 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
    * @param digitalOut {p1:boolean, p2:boolean, p3:boolean}
    * @param pwmRatio 0 ~ 255
    * @param vcc VCC.AUTO or VCC.ON or VCC.OFF
-   * @param analogInRangeUpper 0.00 ~ 3.00[V], resolution 0.05[V]
-   * @param analogInRangeBottom 0.00 ~ 3.00[V], resolution 0.05[V]
+   * @param analogInRangeUpper 0.00 ~ 3.00[V]
+   * @param analogInRangeBottom 0.00 ~ 3.00[V]
    * @param analogInNotify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
    */
   public setMode(
@@ -125,7 +141,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     this.writeWOResponse(command);
   }
 
-  public setPWMNotify(opt_requestId = 0) {
+  public setPwm(opt_requestId = 0) {
     const gpioBlock = this.meshBlock as MeshJsGp;
     const command = gpioBlock.parseSetPWMCommand(opt_requestId);
     this.writeWOResponse(command);
@@ -139,65 +155,80 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     this.meshBlock = new MeshJsGp();
     const gpioBlock = this.meshBlock as MeshJsGp;
 
-    gpioBlock.onDigitalInEventNotify = (pin: number, state: number) => {
-      if (typeof this.onDigitalInEventNotify !== 'function') {
+    gpioBlock.onDigitalInputEvent = (pin: number, state: number) => {
+      if (typeof this.onDigitalInputEvent !== 'function') {
         return;
       }
-      this.onDigitalInEventNotify(pin, state);
+      this.onDigitalInputEvent(pin, state);
     };
 
-    gpioBlock.onAnalogInEventNotify = (level: number) => {
-      if (typeof this.onAnalogInEventNotify !== 'function') {
+    gpioBlock.onAnalogInputEvent = (level: number) => {
+      if (typeof this.onAnalogInputEvent !== 'function') {
         return;
       }
-      this.onAnalogInEventNotify(level);
+      this.onAnalogInputEvent(level);
     };
 
-    gpioBlock.onDigitalInNotify = (
+    gpioBlock.onDigitalInput = (
       requestId: number,
       pin: number,
       state: number
     ) => {
-      if (typeof this.onDigitalInNotify !== 'function') {
+      if (typeof this.onDigitalInput !== 'function') {
         return;
       }
-      this.onDigitalInNotify(requestId, pin, state);
+      if (this.requestId.isDefaultId(requestId)) {
+        // Emit Event
+        this.onDigitalInput(pin, state);
+        return;
+      }
+      // Update Inner Values
+      this.requestId.received(requestId);
+      this.pin_ = pin;
+      this.state_ = state;
     };
 
-    gpioBlock.onAnalogInNotify = (
+    gpioBlock.onAnalogInput = (
       requestId: number,
       state: number,
       mode: number
     ) => {
-      if (typeof this.onAnalogInNotify !== 'function') {
+      if (typeof this.onAnalogInput !== 'function') {
         return;
       }
-      this.onAnalogInNotify(requestId, state, mode);
+      this.onAnalogInput(requestId, state, mode);
     };
 
-    gpioBlock.onVOutNotify = (requestId: number, state: number) => {
-      if (typeof this.onVOutNotify !== 'function') {
+    gpioBlock.onVOutput = (requestId: number, state: number) => {
+      if (typeof this.onVOutput !== 'function') {
         return;
       }
-      this.onVOutNotify(requestId, state);
+      this.onVOutput(requestId, state);
     };
 
-    gpioBlock.onDigitalOutNotify = (
+    gpioBlock.onDigitalOutput = (
       requestId: number,
       pin: number,
       state: number
     ) => {
-      if (typeof this.onDigitalOutNotify !== 'function') {
+      if (typeof this.onDigitalOutput !== 'function') {
         return;
       }
-      this.onDigitalOutNotify(requestId, pin, state);
+      this.onDigitalOutput(requestId, pin, state);
     };
 
-    gpioBlock.onPwmNotify = (requestId: number, level: number) => {
-      if (typeof this.onPwmNotify !== 'function') {
+    gpioBlock.onPwm = (requestId: number, level: number) => {
+      if (typeof this.onPwm !== 'function') {
         return;
       }
-      this.onPwmNotify(requestId, level);
+      if (this.requestId.isDefaultId(requestId)) {
+        // Emit Event
+        this.onPwm(level);
+        return;
+      }
+      // Update Inner Values
+      this.requestId.received(requestId);
+      this.pwm_ = level;
     };
 
     super.prepareConnect();
@@ -205,5 +236,41 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
 
   protected async beforeOnDisconnectWait(reason: unknown): Promise<void> {
     // do nothing
+  }
+
+  protected async getSensorDataWait(requestId: number) {
+    const _TIMEOUT_MSEC = 2500 as const;
+    let _isTimeout = false;
+
+    const start = Date.now();
+
+    const _timeoutId = setTimeout(() => {
+      _isTimeout = true;
+    }, _TIMEOUT_MSEC);
+
+    const INTERVAL_TIME = 50 as const;
+    const _result = await new Promise((resolve) => {
+      const _intervalId = setInterval(() => {
+        if (!this.requestId.isReceived(requestId)) {
+          if (_isTimeout) {
+            clearInterval(_intervalId);
+            resolve(null);
+          }
+          return;
+        }
+        clearTimeout(_timeoutId);
+        clearInterval(_intervalId);
+        console.log(Date.now() - start + ' [ms]');
+        resolve(true);
+      }, INTERVAL_TIME);
+    });
+    // if (this.notifyMode_ !== MESH_100MD.NotifyMode.ONCE) {
+    //   // Continus previous mode
+    //   this.setMode(this.notifyMode_, this.detectionTime_, this.responseTime_);
+    // }
+    if (_result == null) {
+      throw new MeshJsTimeOutError(MESH_100GP.PartsName);
+    }
+    return _result;
   }
 }

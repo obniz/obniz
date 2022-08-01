@@ -7,6 +7,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
 const MeshJsGp_1 = require("../MESH_js/MeshJsGp");
+const MeshJsError_1 = require("../MESH_js/MeshJsError");
 /** MESH_100GP management class */
 class MESH_100GP extends MESH_1.MESH {
     constructor() {
@@ -14,14 +15,17 @@ class MESH_100GP extends MESH_1.MESH {
         this.DigitalPins = this
             .meshBlock.DigitalPins;
         // Event Handler
-        this.onDigitalInEventNotify = null;
-        this.onAnalogInEventNotify = null;
-        this.onDigitalInNotify = null;
-        this.onAnalogInNotify = null;
-        this.onVOutNotify = null;
-        this.onDigitalOutNotify = null;
-        this.onPwmNotify = null;
+        this.onDigitalInputEvent = null;
+        this.onAnalogInputEvent = null;
+        this.onDigitalInput = null;
+        this.onAnalogInput = null;
+        this.onVOutput = null;
+        this.onDigitalOutput = null;
+        this.onPwm = null;
         this.staticClass = MESH_100GP;
+        this.pin_ = -1;
+        this.state_ = -1;
+        this.pwm_ = -1;
     }
     async getDataWait() {
         this.checkConnected();
@@ -31,6 +35,20 @@ class MESH_100GP extends MESH_1.MESH {
             battery: this.meshBlock.battery,
         };
     }
+    async getDigitalInputDataWait(pin) {
+        this.checkConnected();
+        const _requestId = this.requestId.next();
+        this.setDin(pin, _requestId);
+        await this.getSensorDataWait(_requestId);
+        return this.state_;
+    }
+    async getPwmDataWait() {
+        this.checkConnected();
+        const _requestId = this.requestId.next();
+        this.setPwm(_requestId);
+        await this.getSensorDataWait(_requestId);
+        return this.pwm_;
+    }
     /**
      * setMode
      *
@@ -39,8 +57,8 @@ class MESH_100GP extends MESH_1.MESH {
      * @param digitalOut {p1:boolean, p2:boolean, p3:boolean}
      * @param pwmRatio 0 ~ 255
      * @param vcc VCC.AUTO or VCC.ON or VCC.OFF
-     * @param analogInRangeUpper 0.00 ~ 3.00[V], resolution 0.05[V]
-     * @param analogInRangeBottom 0.00 ~ 3.00[V], resolution 0.05[V]
+     * @param analogInRangeUpper 0.00 ~ 3.00[V]
+     * @param analogInRangeBottom 0.00 ~ 3.00[V]
      * @param analogInNotify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
      */
     setMode(digitalIn, digitalInNotify, digitalOut, pwmRatio, vcc, analogInRangeUpper, analogInRangeBottom, analogInNotify) {
@@ -68,7 +86,7 @@ class MESH_100GP extends MESH_1.MESH {
         const command = gpioBlock.parseSetDoutCommand(pin, opt_requestId);
         this.writeWOResponse(command);
     }
-    setPWMNotify(opt_requestId = 0) {
+    setPwm(opt_requestId = 0) {
         const gpioBlock = this.meshBlock;
         const command = gpioBlock.parseSetPWMCommand(opt_requestId);
         this.writeWOResponse(command);
@@ -79,59 +97,107 @@ class MESH_100GP extends MESH_1.MESH {
     prepareConnect() {
         this.meshBlock = new MeshJsGp_1.MeshJsGp();
         const gpioBlock = this.meshBlock;
-        gpioBlock.onDigitalInEventNotify = (pin, state) => {
-            if (typeof this.onDigitalInEventNotify !== 'function') {
+        gpioBlock.onDigitalInputEvent = (pin, state) => {
+            if (typeof this.onDigitalInputEvent !== 'function') {
                 return;
             }
-            this.onDigitalInEventNotify(pin, state);
+            this.onDigitalInputEvent(pin, state);
         };
-        gpioBlock.onAnalogInEventNotify = (level) => {
-            if (typeof this.onAnalogInEventNotify !== 'function') {
+        gpioBlock.onAnalogInputEvent = (level) => {
+            if (typeof this.onAnalogInputEvent !== 'function') {
                 return;
             }
-            this.onAnalogInEventNotify(level);
+            this.onAnalogInputEvent(level);
         };
-        gpioBlock.onDigitalInNotify = (requestId, pin, state) => {
-            if (typeof this.onDigitalInNotify !== 'function') {
+        gpioBlock.onDigitalInput = (requestId, pin, state) => {
+            if (typeof this.onDigitalInput !== 'function') {
                 return;
             }
-            this.onDigitalInNotify(requestId, pin, state);
+            if (this.requestId.isDefaultId(requestId)) {
+                // Emit Event
+                this.onDigitalInput(pin, state);
+                return;
+            }
+            // Update Inner Values
+            this.requestId.received(requestId);
+            this.pin_ = pin;
+            this.state_ = state;
         };
-        gpioBlock.onAnalogInNotify = (requestId, state, mode) => {
-            if (typeof this.onAnalogInNotify !== 'function') {
+        gpioBlock.onAnalogInput = (requestId, state, mode) => {
+            if (typeof this.onAnalogInput !== 'function') {
                 return;
             }
-            this.onAnalogInNotify(requestId, state, mode);
+            this.onAnalogInput(requestId, state, mode);
         };
-        gpioBlock.onVOutNotify = (requestId, state) => {
-            if (typeof this.onVOutNotify !== 'function') {
+        gpioBlock.onVOutput = (requestId, state) => {
+            if (typeof this.onVOutput !== 'function') {
                 return;
             }
-            this.onVOutNotify(requestId, state);
+            this.onVOutput(requestId, state);
         };
-        gpioBlock.onDigitalOutNotify = (requestId, pin, state) => {
-            if (typeof this.onDigitalOutNotify !== 'function') {
+        gpioBlock.onDigitalOutput = (requestId, pin, state) => {
+            if (typeof this.onDigitalOutput !== 'function') {
                 return;
             }
-            this.onDigitalOutNotify(requestId, pin, state);
+            this.onDigitalOutput(requestId, pin, state);
         };
-        gpioBlock.onPwmNotify = (requestId, level) => {
-            if (typeof this.onPwmNotify !== 'function') {
+        gpioBlock.onPwm = (requestId, level) => {
+            if (typeof this.onPwm !== 'function') {
                 return;
             }
-            this.onPwmNotify(requestId, level);
+            if (this.requestId.isDefaultId(requestId)) {
+                // Emit Event
+                this.onPwm(level);
+                return;
+            }
+            // Update Inner Values
+            this.requestId.received(requestId);
+            this.pwm_ = level;
         };
         super.prepareConnect();
     }
     async beforeOnDisconnectWait(reason) {
         // do nothing
     }
+    async getSensorDataWait(requestId) {
+        const _TIMEOUT_MSEC = 2500;
+        let _isTimeout = false;
+        const start = Date.now();
+        const _timeoutId = setTimeout(() => {
+            _isTimeout = true;
+        }, _TIMEOUT_MSEC);
+        const INTERVAL_TIME = 50;
+        const _result = await new Promise((resolve) => {
+            const _intervalId = setInterval(() => {
+                if (!this.requestId.isReceived(requestId)) {
+                    if (_isTimeout) {
+                        clearInterval(_intervalId);
+                        resolve(null);
+                    }
+                    return;
+                }
+                clearTimeout(_timeoutId);
+                clearInterval(_intervalId);
+                console.log(Date.now() - start + ' [ms]');
+                resolve(true);
+            }, INTERVAL_TIME);
+        });
+        // if (this.notifyMode_ !== MESH_100MD.NotifyMode.ONCE) {
+        //   // Continus previous mode
+        //   this.setMode(this.notifyMode_, this.detectionTime_, this.responseTime_);
+        // }
+        if (_result == null) {
+            throw new MeshJsError_1.MeshJsTimeOutError(MESH_100GP.PartsName);
+        }
+        return _result;
+    }
 }
 exports.default = MESH_100GP;
 MESH_100GP.PartsName = 'MESH_100GP';
 MESH_100GP.PREFIX = 'MESH-100GP';
-MESH_100GP.ANALOG_INPUT_EVENT_CONDITION = MeshJsGp_1.MeshJsGp.ANALOG_IN_EVENT_CONDITION;
-MESH_100GP.MODE = MeshJsGp_1.MeshJsGp.MODE;
-MESH_100GP.PIN = MeshJsGp_1.MeshJsGp.PIN;
-MESH_100GP.STATE = MeshJsGp_1.MeshJsGp.STATE;
-MESH_100GP.VCC = MeshJsGp_1.MeshJsGp.VCC;
+MESH_100GP.AnalogInEventCondition = MeshJsGp_1.MeshJsGp.AnalogInEventCondition;
+MESH_100GP.NotifyMode = MeshJsGp_1.MeshJsGp.NotifyMode;
+MESH_100GP.Pin = MeshJsGp_1.MeshJsGp.Pin;
+MESH_100GP.State = MeshJsGp_1.MeshJsGp.State;
+MESH_100GP.Vcc = MeshJsGp_1.MeshJsGp.Vcc;
+MESH_100GP.VccState = MeshJsGp_1.MeshJsGp.VccState;
