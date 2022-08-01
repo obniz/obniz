@@ -7,6 +7,12 @@ export class MeshJsPa extends MeshJs {
     | null = null;
 
   // Constant Values
+  public static readonly EmitCondition = {
+    ABOVE_UPPER_AND_BELOW_BOTTOM: 0 as const,
+    ABOVE_UPPER_AND_ABOVE_BOTTOM: 1 as const,
+    BELOW_UPPER_AND_BELOW_BOTTOM: 16 as const,
+    BELOW_UPPER_AND_ABOVE_BOTTOM: 17 as const,
+  };
   public static readonly NotifyMode = {
     STOP: 0 as const,
     EMIT_PROXIMITY: 1 as const,
@@ -16,6 +22,8 @@ export class MeshJsPa extends MeshJs {
     ONCE: 16 as const,
     ALWAYS: 32 as const,
   } as const;
+  private readonly RANGE_MIN = 0 as const;
+  private readonly RANGE_MAX = 65535 as const;
   private readonly NOTIFY_MODE_MIN_ = MeshJsPa.NotifyMode.STOP;
   private readonly NOTIFY_MODE_MAX_ =
     MeshJsPa.NotifyMode.STOP +
@@ -65,10 +73,21 @@ export class MeshJsPa extends MeshJs {
     proximityRangeBottom: number,
     brightnessRangeUpper: number,
     brightnessRangeBottom: number,
+    proximityCondition: number,
+    brightnessCondition: number,
     notifyMode: number,
     opt_requestId = 0
   ): number[] {
+    // Convert
+    const LX = 10 as const;
+    const _brightnessRangeUpper = brightnessRangeUpper / LX;
+    const _brightnessRangeBottom = brightnessRangeBottom / LX;
+
     // Error Handle
+    this.checkRange_(proximityRangeUpper);
+    this.checkRange_(proximityRangeBottom);
+    this.checkRange_(_brightnessRangeUpper);
+    this.checkRange_(_brightnessRangeBottom);
     this.checkNotifyMode_(notifyMode);
 
     // Generate Command
@@ -80,18 +99,31 @@ export class MeshJsPa extends MeshJs {
 
     const PROXIMITY_RANGE_UPPER = this.num2array_(proximityRangeUpper);
     const PROXIMITY_RANGE_BOTTOM = this.num2array_(proximityRangeBottom);
-    const BRIGHTNESS_RANGE_UPPER = this.num2array_(brightnessRangeUpper);
-    const BRIGHTNESS_RANGE_BOTTOM = this.num2array_(brightnessRangeBottom);
-    const FIXED = [0, 0, 2, 2, 2] as const;
+    const BRIGHTNESS_RANGE_UPPER = this.num2array_(_brightnessRangeUpper);
+    const BRIGHTNESS_RANGE_BOTTOM = this.num2array_(_brightnessRangeBottom);
+    const FIXED = [2, 2, 2] as const;
     const data: number[] = HEADER.concat(PROXIMITY_RANGE_UPPER)
       .concat(PROXIMITY_RANGE_BOTTOM)
       .concat(BRIGHTNESS_RANGE_UPPER)
       .concat(BRIGHTNESS_RANGE_BOTTOM)
+      .concat(proximityCondition)
+      .concat(brightnessCondition)
       .concat(FIXED)
       .concat(notifyMode);
     data.push(this.checkSum(data));
 
     return data;
+  }
+
+  private checkRange_(target: number): boolean {
+    if (target < this.RANGE_MIN || this.RANGE_MAX < target) {
+      throw new MeshJsOutOfRangeError(
+        'range value',
+        this.RANGE_MIN,
+        this.RANGE_MAX
+      );
+    }
+    return true;
   }
 
   private checkNotifyMode_(target: number): boolean {

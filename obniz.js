@@ -27272,10 +27272,6 @@ class MESH_100PA extends MESH_1.MESH {
         this.staticClass = MESH_100PA;
         this.proximity_ = -1;
         this.brightness_ = -1;
-        this.proximityRangeUpper_ = 0;
-        this.proximityRangeBottom_ = 0;
-        this.brightnessRangeUpper_ = 0;
-        this.brightnessRangeBottom_ = 0;
     }
     async getDataWait() {
         this.checkConnected();
@@ -27288,7 +27284,11 @@ class MESH_100PA extends MESH_1.MESH {
         this.checkConnected();
         // const _start = Date.now();
         const _requestId = this.requestId.next();
-        this.setMode_(MESH_100PA.NotifyMode.ONCE, _requestId);
+        const _proximityRangeUpper = 0;
+        const _proximityRangeBottom = 0;
+        const _brightnessRangeUpper = 0;
+        const _brightnessRangeBottom = 0;
+        this.setMode_(_proximityRangeUpper, _proximityRangeBottom, _brightnessRangeUpper, _brightnessRangeBottom, MESH_100PA.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM, MESH_100PA.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM, MESH_100PA.NotifyMode.ONCE, _requestId);
         const _TIMEOUT_MSEC = 2000;
         let _isTimeout = false;
         const _timeoutId = setTimeout(() => {
@@ -27318,8 +27318,8 @@ class MESH_100PA extends MESH_1.MESH {
         }
         return _result;
     }
-    setMode(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, notifyMode) {
-        this.setMode_(notifyMode, this.requestId.defaultId(), proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom);
+    setMode(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode) {
+        this.setMode_(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode, this.requestId.defaultId());
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100PA.PREFIX) !== -1;
@@ -27346,20 +27346,16 @@ class MESH_100PA extends MESH_1.MESH {
     async beforeOnDisconnectWait(reason) {
         // do nothing
     }
-    setMode_(notifyMode, requestId, opt_proximityRangeUpper = this.proximityRangeUpper_, opt_proximityRangeBottom = this.proximityRangeBottom_, opt_brightnessRangeUpper = this.brightnessRangeUpper_, opt_brightnessRangeBottom = this.brightnessRangeBottom_) {
+    setMode_(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode, requestId) {
         const brightnessBlock = this.meshBlock;
-        const command = brightnessBlock.parseSetmodeCommand(opt_proximityRangeUpper, opt_proximityRangeBottom, opt_brightnessRangeUpper, opt_brightnessRangeBottom, notifyMode, requestId);
+        const command = brightnessBlock.parseSetmodeCommand(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode, requestId);
         this.writeWOResponse(command);
-        // Remember params for using at getSensorDataWait
-        this.proximityRangeUpper_ = opt_proximityRangeUpper;
-        this.proximityRangeBottom_ = opt_proximityRangeBottom;
-        this.brightnessRangeUpper_ = opt_brightnessRangeUpper;
-        this.brightnessRangeBottom_ = opt_brightnessRangeBottom;
     }
 }
 exports.default = MESH_100PA;
 MESH_100PA.PartsName = 'MESH_100PA';
 MESH_100PA.PREFIX = 'MESH-100PA';
+MESH_100PA.EmitCondition = MeshJsPa_1.MeshJsPa.EmitCondition;
 MESH_100PA.NotifyMode = MeshJsPa_1.MeshJsPa.NotifyMode;
 
 
@@ -28186,6 +28182,8 @@ class MeshJsPa extends MeshJs_1.MeshJs {
         super(...arguments);
         // Event Handler
         this.onSensorEvent = null;
+        this.RANGE_MIN = 0;
+        this.RANGE_MAX = 65535;
         this.NOTIFY_MODE_MIN_ = MeshJsPa.NotifyMode.STOP;
         this.NOTIFY_MODE_MAX_ = MeshJsPa.NotifyMode.STOP +
             MeshJsPa.NotifyMode.EMIT_PROXIMITY +
@@ -28228,8 +28226,16 @@ class MeshJsPa extends MeshJs_1.MeshJs {
      * @param opt_requestId
      * @returns command
      */
-    parseSetmodeCommand(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, notifyMode, opt_requestId = 0) {
+    parseSetmodeCommand(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode, opt_requestId = 0) {
+        // Convert
+        const LX = 10;
+        const _brightnessRangeUpper = brightnessRangeUpper / LX;
+        const _brightnessRangeBottom = brightnessRangeBottom / LX;
         // Error Handle
+        this.checkRange_(proximityRangeUpper);
+        this.checkRange_(proximityRangeBottom);
+        this.checkRange_(_brightnessRangeUpper);
+        this.checkRange_(_brightnessRangeBottom);
         this.checkNotifyMode_(notifyMode);
         // Generate Command
         const HEADER = [
@@ -28239,17 +28245,25 @@ class MeshJsPa extends MeshJs_1.MeshJs {
         ];
         const PROXIMITY_RANGE_UPPER = this.num2array_(proximityRangeUpper);
         const PROXIMITY_RANGE_BOTTOM = this.num2array_(proximityRangeBottom);
-        const BRIGHTNESS_RANGE_UPPER = this.num2array_(brightnessRangeUpper);
-        const BRIGHTNESS_RANGE_BOTTOM = this.num2array_(brightnessRangeBottom);
-        const FIXED = [0, 0, 2, 2, 2];
+        const BRIGHTNESS_RANGE_UPPER = this.num2array_(_brightnessRangeUpper);
+        const BRIGHTNESS_RANGE_BOTTOM = this.num2array_(_brightnessRangeBottom);
+        const FIXED = [2, 2, 2];
         const data = HEADER.concat(PROXIMITY_RANGE_UPPER)
             .concat(PROXIMITY_RANGE_BOTTOM)
             .concat(BRIGHTNESS_RANGE_UPPER)
             .concat(BRIGHTNESS_RANGE_BOTTOM)
+            .concat(proximityCondition)
+            .concat(brightnessCondition)
             .concat(FIXED)
             .concat(notifyMode);
         data.push(this.checkSum(data));
         return data;
+    }
+    checkRange_(target) {
+        if (target < this.RANGE_MIN || this.RANGE_MAX < target) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('range value', this.RANGE_MIN, this.RANGE_MAX);
+        }
+        return true;
     }
     checkNotifyMode_(target) {
         if (target < this.NOTIFY_MODE_MIN_ || this.NOTIFY_MODE_MAX_ < target) {
@@ -28264,6 +28278,12 @@ class MeshJsPa extends MeshJs_1.MeshJs {
 }
 exports.MeshJsPa = MeshJsPa;
 // Constant Values
+MeshJsPa.EmitCondition = {
+    ABOVE_UPPER_AND_BELOW_BOTTOM: 0,
+    ABOVE_UPPER_AND_ABOVE_BOTTOM: 1,
+    BELOW_UPPER_AND_BELOW_BOTTOM: 16,
+    BELOW_UPPER_AND_ABOVE_BOTTOM: 17,
+};
 MeshJsPa.NotifyMode = {
     STOP: 0,
     EMIT_PROXIMITY: 1,

@@ -26,6 +26,8 @@ export interface MESH_100PA_Data {
 export default class MESH_100PA extends MESH<MESH_100PA_Data> {
   public static readonly PartsName = 'MESH_100PA';
   public static readonly PREFIX = 'MESH-100PA';
+
+  public static readonly EmitCondition = MeshJsPa.EmitCondition;
   public static readonly NotifyMode = MeshJsPa.NotifyMode;
 
   // Event Handler
@@ -37,10 +39,6 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
 
   private proximity_ = -1;
   private brightness_ = -1;
-  private proximityRangeUpper_ = 0;
-  private proximityRangeBottom_ = 0;
-  private brightnessRangeUpper_ = 0;
-  private brightnessRangeBottom_ = 0;
 
   public async getDataWait() {
     this.checkConnected();
@@ -54,7 +52,20 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
     this.checkConnected();
     // const _start = Date.now();
     const _requestId = this.requestId.next();
-    this.setMode_(MESH_100PA.NotifyMode.ONCE, _requestId);
+    const _proximityRangeUpper: number = 0 as const;
+    const _proximityRangeBottom: number = 0 as const;
+    const _brightnessRangeUpper: number = 0 as const;
+    const _brightnessRangeBottom: number = 0 as const;
+    this.setMode_(
+      _proximityRangeUpper,
+      _proximityRangeBottom,
+      _brightnessRangeUpper,
+      _brightnessRangeBottom,
+      MESH_100PA.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM,
+      MESH_100PA.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM,
+      MESH_100PA.NotifyMode.ONCE,
+      _requestId
+    );
 
     const _TIMEOUT_MSEC = 2000 as const;
     let _isTimeout = false;
@@ -92,15 +103,19 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
     proximityRangeBottom: number,
     brightnessRangeUpper: number,
     brightnessRangeBottom: number,
+    proximityCondition: number,
+    brightnessCondition: number,
     notifyMode: number
   ): void {
     this.setMode_(
-      notifyMode,
-      this.requestId.defaultId(),
       proximityRangeUpper,
       proximityRangeBottom,
       brightnessRangeUpper,
-      brightnessRangeBottom
+      brightnessRangeBottom,
+      proximityCondition,
+      brightnessCondition,
+      notifyMode,
+      this.requestId.defaultId()
     );
   }
 
@@ -137,28 +152,26 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
   }
 
   private setMode_(
+    proximityRangeUpper: number,
+    proximityRangeBottom: number,
+    brightnessRangeUpper: number,
+    brightnessRangeBottom: number,
+    proximityCondition: number,
+    brightnessCondition: number,
     notifyMode: number,
-    requestId: number,
-    opt_proximityRangeUpper: number = this.proximityRangeUpper_,
-    opt_proximityRangeBottom: number = this.proximityRangeBottom_,
-    opt_brightnessRangeUpper: number = this.brightnessRangeUpper_,
-    opt_brightnessRangeBottom: number = this.brightnessRangeBottom_
+    requestId: number
   ): void {
     const brightnessBlock = this.meshBlock as MeshJsPa;
     const command = brightnessBlock.parseSetmodeCommand(
-      opt_proximityRangeUpper,
-      opt_proximityRangeBottom,
-      opt_brightnessRangeUpper,
-      opt_brightnessRangeBottom,
+      proximityRangeUpper,
+      proximityRangeBottom,
+      brightnessRangeUpper,
+      brightnessRangeBottom,
+      proximityCondition,
+      brightnessCondition,
       notifyMode,
       requestId
     );
     this.writeWOResponse(command);
-
-    // Remember params for using at getSensorDataWait
-    this.proximityRangeUpper_ = opt_proximityRangeUpper;
-    this.proximityRangeBottom_ = opt_proximityRangeBottom;
-    this.brightnessRangeUpper_ = opt_brightnessRangeUpper;
-    this.brightnessRangeBottom_ = opt_brightnessRangeBottom;
   }
 }
