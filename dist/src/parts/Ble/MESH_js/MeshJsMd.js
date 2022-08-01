@@ -7,14 +7,7 @@ class MeshJsMd extends MeshJs_1.MeshJs {
         super(...arguments);
         // Event Handler
         this.onSensorEvent = null;
-        // Constant Values
-        this.DETECTION_MODE = {
-            DETECTED: 0x01,
-            NOT_DETECTED: 0x02,
-            ONESHOT: 0x10,
-            CONTINUOUS: 0x20,
-        };
-        this.MOTION_STATE = {
+        this.MotionState = {
             SETUP: 0x00,
             DETECTED: 0x01,
             NOT_DETECTED: 0x02,
@@ -38,34 +31,28 @@ class MeshJsMd extends MeshJs_1.MeshJs {
         }
         const requestId = data[2];
         const motionState = data[3];
-        const detectionMode = data[4];
+        const notifyMode = data[4];
         if (typeof this.onSensorEvent !== 'function') {
             return;
         }
-        this.onSensorEvent(motionState, detectionMode, requestId);
+        this.onSensorEvent(motionState, notifyMode, requestId);
     }
     /**
      *
-     * @param detectionMode
+     * @param notifyMode
      * @param opt_detectionTime
      * @param opt_responseTime
      * @param opt_requestId
      * @returns
      */
-    parseSetmodeCommand(detectionMode, opt_detectionTime = 500, opt_responseTime = 500, opt_requestId = 0) {
+    parseSetmodeCommand(notifyMode, opt_detectionTime = 500, opt_responseTime = 500, opt_requestId = 0) {
         // Error Handle
         const DETECTION_TIME_MIN = 200;
         const DETECTION_TIME_MAX = 60000;
-        if (opt_detectionTime < DETECTION_TIME_MIN ||
-            DETECTION_TIME_MAX < opt_detectionTime) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('opt_detectionTime', DETECTION_TIME_MIN, DETECTION_TIME_MAX);
-        }
+        this.checkRange_(opt_detectionTime, DETECTION_TIME_MIN, DETECTION_TIME_MAX, 'opt_detectionTime');
         const RESPONSE_TIME_MIN = 500;
         const RESPONSE_TIME_MAX = 60000;
-        if (opt_responseTime < RESPONSE_TIME_MIN ||
-            RESPONSE_TIME_MAX < opt_responseTime) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('opt_responseTime', RESPONSE_TIME_MIN, RESPONSE_TIME_MAX);
-        }
+        this.checkRange_(opt_responseTime, RESPONSE_TIME_MIN, RESPONSE_TIME_MAX, 'opt_responseTime');
         // Generate Command
         const HEADER = [
             this.MESSAGE_TYPE_ID_,
@@ -74,7 +61,7 @@ class MeshJsMd extends MeshJs_1.MeshJs {
         ];
         const BYTE = 256;
         const BODY = [
-            detectionMode,
+            notifyMode,
             opt_detectionTime % BYTE,
             Math.floor(opt_detectionTime / BYTE),
             opt_responseTime % BYTE,
@@ -84,5 +71,18 @@ class MeshJsMd extends MeshJs_1.MeshJs {
         data.push(this.checkSum(data));
         return data;
     }
+    checkRange_(target, min, max, name) {
+        if (target < min || max < target) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError(name, min, max);
+        }
+        return true;
+    }
 }
 exports.MeshJsMd = MeshJsMd;
+// Constant Values
+MeshJsMd.NotifyMode = {
+    DETECTED: 0x01,
+    NOT_DETECTED: 0x02,
+    ONCE: 0x10,
+    ALWAYS: 0x20,
+};

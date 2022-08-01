@@ -28,7 +28,8 @@ class MeshJsTh extends MeshJs_1.MeshJs {
             return;
         }
         const BYTE = 256;
-        const TEMP = this.complemnt_(BYTE * data[5] + data[4]) / 10;
+        const BASE = 10;
+        const TEMP = this.complemnt_(BYTE * data[5] + data[4]) / BASE;
         const temperature = Math.min(Math.max(this.MIN_TEMPERATURE_, TEMP), this.MAX_TEMPERATURE_);
         const HUM = BYTE * data[7] + data[6];
         const humidity = Math.min(Math.max(this.MIN_HUMIDITY_, HUM), this.MAX_HUMIDITY_);

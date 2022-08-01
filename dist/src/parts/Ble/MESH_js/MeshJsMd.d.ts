@@ -1,13 +1,13 @@
 import { MeshJs } from './MeshJs';
 export declare class MeshJsMd extends MeshJs {
-    onSensorEvent: ((motionState: number, detectionMode: number, requestId: number) => void) | null;
-    readonly DETECTION_MODE: {
+    onSensorEvent: ((motionState: number, notifyMode: number, requestId: number) => void) | null;
+    static readonly NotifyMode: {
         readonly DETECTED: 1;
         readonly NOT_DETECTED: 2;
-        readonly ONESHOT: 16;
-        readonly CONTINUOUS: 32;
+        readonly ONCE: 16;
+        readonly ALWAYS: 32;
     };
-    readonly MOTION_STATE: {
+    readonly MotionState: {
         readonly SETUP: 0;
         readonly DETECTED: 1;
         readonly NOT_DETECTED: 2;
@@ -23,11 +23,12 @@ export declare class MeshJsMd extends MeshJs {
     notify(data: number[]): void;
     /**
      *
-     * @param detectionMode
+     * @param notifyMode
      * @param opt_detectionTime
      * @param opt_responseTime
      * @param opt_requestId
      * @returns
      */
-    parseSetmodeCommand(detectionMode: number, opt_detectionTime?: number, opt_responseTime?: number, opt_requestId?: number): number[];
+    parseSetmodeCommand(notifyMode: number, opt_detectionTime?: number, opt_responseTime?: number, opt_requestId?: number): number[];
+    private checkRange_;
 }

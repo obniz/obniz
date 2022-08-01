@@ -84,10 +84,12 @@ export class MeshJsPa extends MeshJs {
     const _brightnessRangeBottom = brightnessRangeBottom / LX;
 
     // Error Handle
-    this.checkRange_(proximityRangeUpper);
-    this.checkRange_(proximityRangeBottom);
-    this.checkRange_(_brightnessRangeUpper);
-    this.checkRange_(_brightnessRangeBottom);
+    this.checkRange_(proximityRangeUpper, 'proximityRangeUpper');
+    this.checkRange_(proximityRangeBottom, 'proximityRangeBottom');
+    this.checkRange_(_brightnessRangeUpper, 'brightnessRangeUpper/' + LX);
+    this.checkRange_(_brightnessRangeBottom, 'brightnessRangeBottom/' + LX);
+    this.checkEmitCondition_(proximityCondition, 'proximityCondition');
+    this.checkEmitCondition_(brightnessCondition, 'brightnessCondition');
     this.checkNotifyMode_(notifyMode);
 
     // Generate Command
@@ -115,15 +117,24 @@ export class MeshJsPa extends MeshJs {
     return data;
   }
 
-  private checkRange_(target: number): boolean {
+  private checkRange_(target: number, name: string): boolean {
     if (target < this.RANGE_MIN || this.RANGE_MAX < target) {
-      throw new MeshJsOutOfRangeError(
-        'range value',
-        this.RANGE_MIN,
-        this.RANGE_MAX
-      );
+      throw new MeshJsOutOfRangeError(name, this.RANGE_MIN, this.RANGE_MAX);
     }
     return true;
+  }
+
+  private checkEmitCondition_(target: number, name: string) {
+    let _isExist = false;
+    Object.entries(MeshJsPa.EmitCondition).forEach(([key, value]) => {
+      if (target === value) {
+        _isExist = true;
+      }
+    });
+    if (_isExist) {
+      return true;
+    }
+    throw new MeshJsInvalidValueError(name);
   }
 
   private checkNotifyMode_(target: number): boolean {

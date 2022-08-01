@@ -6,6 +6,7 @@
 
 import { MESH } from '../utils/abstracts/MESH';
 import { MeshJsMd } from '../MESH_js/MeshJsMd';
+import { MeshJsTimeOutError } from '../MESH_js/MeshJsError';
 
 export interface MESH_100MDOptions {}
 
@@ -21,13 +22,19 @@ export interface MESH_100MD_Data {
 export default class MESH_100MD extends MESH<MESH_100MD_Data> {
   public static readonly PartsName = 'MESH_100MD';
   public static readonly PREFIX = 'MESH-100MD';
+  public static readonly NotifyMode = MeshJsMd.NotifyMode;
 
   // Event Handler
   public onSensorEvent:
-    | ((motionState: number, detectionMode: number) => void)
+    | ((motionState: number, nofifyMode: number) => void)
     | null = null;
 
   protected readonly staticClass = MESH_100MD;
+
+  private notifyMode_ = -1;
+  private motionState_ = -1;
+  private detectionTime_ = 500; // [ms]
+  private responseTime_ = 500; // [ms]
 
   public async getDataWait() {
     this.checkConnected();
@@ -38,20 +45,61 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
     };
   }
 
+  public async getSensorDataWait() {
+    this.checkConnected();
+    const _requestId = this.requestId.next();
+    this.setMode_(
+      MESH_100MD.NotifyMode.ONCE,
+      this.detectionTime_,
+      this.responseTime_,
+      _requestId
+    );
+
+    const _TIMEOUT_MSEC = 2000 as const;
+    let _isTimeout = false;
+    const _timeoutId = setTimeout(() => {
+      _isTimeout = true;
+    }, _TIMEOUT_MSEC);
+
+    const INTERVAL_TIME = 50 as const;
+    const _result = await new Promise((resolve) => {
+      const _intervalId = setInterval(() => {
+        if (!this.requestId.isReceived(_requestId)) {
+          if (_isTimeout) {
+            clearInterval(_intervalId);
+            resolve(null);
+          }
+          return;
+        }
+        clearTimeout(_timeoutId);
+        clearInterval(_intervalId);
+        resolve(this.motionState_);
+      }, INTERVAL_TIME);
+    });
+    if (this.notifyMode_ !== MESH_100MD.NotifyMode.ONCE) {
+      // Continus previous mode
+      this.setMode(this.notifyMode_, this.detectionTime_, this.responseTime_);
+    }
+    if (_result == null) {
+      throw new MeshJsTimeOutError(MESH_100MD.PartsName);
+    }
+    return _result;
+  }
+
   public setMode(
-    detectionMode: number,
+    notifyMode: number,
     opt_detectionTime = 500,
-    opt_responseTime = 500,
-    opt_requestId = 0
+    opt_responseTime = 500
   ): void {
-    const motionBlock = this.meshBlock as MeshJsMd;
-    const command = motionBlock.parseSetmodeCommand(
-      detectionMode,
+    this.setMode_(
+      notifyMode,
       opt_detectionTime,
       opt_responseTime,
-      opt_requestId
+      this.requestId.defaultId()
     );
-    this.writeWOResponse(command);
+    this.notifyMode_ = notifyMode;
+    this.detectionTime_ = opt_detectionTime;
+    this.responseTime_ = opt_responseTime;
   }
 
   protected static _isMESHblock(name: string): boolean {
@@ -61,23 +109,52 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
   protected prepareConnect(): void {
     this.meshBlock = new MeshJsMd();
 
-    // set Event handler
+    // set Event Handler
     const motionBlock = this.meshBlock as MeshJsMd;
     motionBlock.onSensorEvent = (
       motionState: number,
-      detectionMode: number,
+      notifyMode: number,
       requestId: number
-    ) => {
-      if (typeof this.onSensorEvent !== 'function') {
-        return;
-      }
-      this.onSensorEvent(motionState, detectionMode);
-    };
+    ) => this.setHandler_(motionState, notifyMode, requestId);
 
     super.prepareConnect();
   }
 
   protected async beforeOnDisconnectWait(reason: unknown): Promise<void> {
     // do nothing
+  }
+
+  private setMode_(
+    notifyMode: number,
+    detectionTime: number,
+    responseTime: number,
+    requestId: number
+  ): void {
+    const motionBlock = this.meshBlock as MeshJsMd;
+    const command = motionBlock.parseSetmodeCommand(
+      notifyMode,
+      detectionTime,
+      responseTime,
+      requestId
+    );
+    this.writeWOResponse(command);
+  }
+
+  private setHandler_(
+    motionState: number,
+    notifyMode: number,
+    requestId: number
+  ) {
+    if (typeof this.onSensorEvent !== 'function') {
+      return;
+    }
+    if (this.requestId.isDefaultId(requestId)) {
+      // Emit Event
+      this.onSensorEvent(motionState, notifyMode);
+      return;
+    }
+    // Update Inner Values
+    this.requestId.received(requestId);
+    this.motionState_ = motionState;
   }
 }

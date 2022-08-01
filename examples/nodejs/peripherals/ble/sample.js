@@ -24,9 +24,9 @@ obniz.onconnect = async () => {
       // sampleBU(peripheral);
       // sampleAC(peripheral);
       // sampleLE(peripheral);
-      samplePA(peripheral);
+      // samplePA(peripheral);
       // sampleTH(peripheral);
-      // sampleMD(peripheral);
+      sampleMD(peripheral);
       // sampleGP(peripheral);
     };
     await obniz.ble.scan.startWait();
@@ -210,7 +210,7 @@ async function samplePA(peripheral) {
      */
     // mesh_pa.NotifyMode.STOP;
     // mesh_pa.NotifyMode.EMIT_PROXIMITY;
-    // mesh_pa.NotifyMode.EMIT_BRIGHTNESS;
+    mesh_pa.NotifyMode.EMIT_BRIGHTNESS;
     // mesh_pa.NotifyMode.UPDATE_PROXIMITY;
     // mesh_pa.NotifyMode.UPDATE_BRIGHTNESS;
     // mesh_pa.NotifyMode.ONCE;
@@ -251,7 +251,7 @@ async function samplePA(peripheral) {
     // mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.ALWAYS;
     // mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ONCE;
     // mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ALWAYS;
-    mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.ONCE + mesh_pa.NotifyMode.ALWAYS;
+    // mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.ONCE + mesh_pa.NotifyMode.ALWAYS;
     // mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ONCE;
     // mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ALWAYS;
     // mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.ONCE + mesh_pa.NotifyMode.ALWAYS;
@@ -391,16 +391,47 @@ async function sampleMD(peripheral) {
   console.log('obniz.ble.scan.onfind : ' + peripheral.localName + ' : ' + peripheral.rssi);
   MD_block = new mesh_md(peripheral);
   await MD_block.connectWait();
-  MD_block.setMode(0x01, 500, 500, 6);
-  MD_block.onNotify = ((response) => {
-    console.log(response);
+
+  const _notifyMode =
+    /**
+     * select 1 param => combination 4
+     */
+    // mesh_md.NotifyMode.DETECTED;
+    // mesh_md.NotifyMode.NOT_DETECTED;
+    // mesh_md.NotifyMode.ONCE;
+    mesh_md.NotifyMode.ALWAYS;
+    /**
+     * select 2 params => combination 6
+     */
+    // mesh_md.NotifyMode.DETECTED + mesh_md.NotifyMode.NOT_DETECTED;
+    // mesh_md.NotifyMode.DETECTED + mesh_md.NotifyMode.ONCE;
+    // mesh_md.NotifyMode.DETECTED + mesh_md.NotifyMode.ALWAYS;
+    // mesh_md.NotifyMode.NOT_DETECTED + mesh_md.NotifyMode.ONCE;
+    // mesh_md.NotifyMode.NOT_DETECTED + mesh_md.NotifyMode.ALWAYS;
+    // mesh_md.NotifyMode.ONCE + mesh_md.NotifyMode.ALWAYS;
+    /**
+     * select 3 params => combination 4
+     */
+    // mesh_md.NotifyMode.DETECTED + mesh_md.NotifyMode.NOT_DETECTED + mesh_md.NotifyMode.ONCE;
+    // mesh_md.NotifyMode.DETECTED + mesh_md.NotifyMode.NOT_DETECTED + mesh_md.NotifyMode.ALWAYS;
+    // mesh_md.NotifyMode.DETECTED + mesh_md.NotifyMode.ONCE + mesh_md.NotifyMode.ALWAYS;
+    // mesh_md.NotifyMode.NOT_DETECTED + mesh_md.NotifyMode.ONCE + mesh_md.NotifyMode.ALWAYS;
+    /**
+     * select 4 params(=all) => combination 1
+     */
+    // mesh_md.NotifyMode.DETECTED + mesh_md.NotifyMode.NOT_DETECTED + mesh_md.NotifyMode.ONCE + mesh_md.NotifyMode.ALWAYS;
+
+  MD_block.setMode(_notifyMode, 500, 500);
+  MD_block.onSensorEvent = ((motionState, notifyMode) => {
+    console.log(motionState, notifyMode);
   });
+
   setInterval(getDataMD, 5000);
 }
 
 async function getDataMD() {
-  const res = await MD_block.getDataWait();
-  console.log(res);
+  const res = await MD_block.getSensorDataWait();
+  console.log('get ' + res);
 }
 
 async function sampleGP(peripheral) {

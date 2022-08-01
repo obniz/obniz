@@ -125,6 +125,8 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
 
   protected prepareConnect(): void {
     this.meshBlock = new MeshJsPa();
+
+    // set Event Handler
     const brightnessBlock = this.meshBlock as MeshJsPa;
     brightnessBlock.onSensorEvent = (
       proximity: number,

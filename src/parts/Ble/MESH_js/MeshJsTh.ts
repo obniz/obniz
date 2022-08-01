@@ -35,7 +35,8 @@ export class MeshJsTh extends MeshJs {
     }
 
     const BYTE = 256 as const;
-    const TEMP = this.complemnt_(BYTE * data[5] + data[4]) / 10;
+    const BASE = 10 as const;
+    const TEMP = this.complemnt_(BYTE * data[5] + data[4]) / BASE;
     const temperature = Math.min(
       Math.max(this.MIN_TEMPERATURE_, TEMP),
       this.MAX_TEMPERATURE_

@@ -3,17 +3,17 @@ import { MeshJsOutOfRangeError } from './MeshJsError';
 export class MeshJsMd extends MeshJs {
   // Event Handler
   public onSensorEvent:
-    | ((motionState: number, detectionMode: number, requestId: number) => void)
+    | ((motionState: number, notifyMode: number, requestId: number) => void)
     | null = null;
 
   // Constant Values
-  public readonly DETECTION_MODE = {
+  public static readonly NotifyMode = {
     DETECTED: 0x01 as const,
     NOT_DETECTED: 0x02 as const,
-    ONESHOT: 0x10 as const,
-    CONTINUOUS: 0x20 as const,
+    ONCE: 0x10 as const,
+    ALWAYS: 0x20 as const,
   } as const;
-  public readonly MOTION_STATE = {
+  public readonly MotionState = {
     SETUP: 0x00 as const,
     DETECTED: 0x01 as const,
     NOT_DETECTED: 0x02 as const,
@@ -37,23 +37,23 @@ export class MeshJsMd extends MeshJs {
     }
     const requestId = data[2];
     const motionState = data[3];
-    const detectionMode = data[4];
+    const notifyMode = data[4];
     if (typeof this.onSensorEvent !== 'function') {
       return;
     }
-    this.onSensorEvent(motionState, detectionMode, requestId);
+    this.onSensorEvent(motionState, notifyMode, requestId);
   }
 
   /**
    *
-   * @param detectionMode
+   * @param notifyMode
    * @param opt_detectionTime
    * @param opt_responseTime
    * @param opt_requestId
    * @returns
    */
   public parseSetmodeCommand(
-    detectionMode: number,
+    notifyMode: number,
     opt_detectionTime = 500,
     opt_responseTime = 500,
     opt_requestId = 0
@@ -61,28 +61,20 @@ export class MeshJsMd extends MeshJs {
     // Error Handle
     const DETECTION_TIME_MIN = 200 as const;
     const DETECTION_TIME_MAX = 60000 as const;
-    if (
-      opt_detectionTime < DETECTION_TIME_MIN ||
-      DETECTION_TIME_MAX < opt_detectionTime
-    ) {
-      throw new MeshJsOutOfRangeError(
-        'opt_detectionTime',
-        DETECTION_TIME_MIN,
-        DETECTION_TIME_MAX
-      );
-    }
+    this.checkRange_(
+      opt_detectionTime,
+      DETECTION_TIME_MIN,
+      DETECTION_TIME_MAX,
+      'opt_detectionTime'
+    );
     const RESPONSE_TIME_MIN = 500 as const;
     const RESPONSE_TIME_MAX = 60000 as const;
-    if (
-      opt_responseTime < RESPONSE_TIME_MIN ||
-      RESPONSE_TIME_MAX < opt_responseTime
-    ) {
-      throw new MeshJsOutOfRangeError(
-        'opt_responseTime',
-        RESPONSE_TIME_MIN,
-        RESPONSE_TIME_MAX
-      );
-    }
+    this.checkRange_(
+      opt_responseTime,
+      RESPONSE_TIME_MIN,
+      RESPONSE_TIME_MAX,
+      'opt_responseTime'
+    );
 
     // Generate Command
     const HEADER = [
@@ -92,7 +84,7 @@ export class MeshJsMd extends MeshJs {
     ] as const;
     const BYTE = 256 as const;
     const BODY = [
-      detectionMode,
+      notifyMode,
       opt_detectionTime % BYTE,
       Math.floor(opt_detectionTime / BYTE),
       opt_responseTime % BYTE,
@@ -102,5 +94,17 @@ export class MeshJsMd extends MeshJs {
     data.push(this.checkSum(data));
 
     return data;
+  }
+
+  private checkRange_(
+    target: number,
+    min: number,
+    max: number,
+    name: string
+  ): boolean {
+    if (target < min || max < target) {
+      throw new MeshJsOutOfRangeError(name, min, max);
+    }
+    return true;
   }
 }

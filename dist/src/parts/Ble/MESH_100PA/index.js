@@ -71,6 +71,7 @@ class MESH_100PA extends MESH_1.MESH {
     }
     prepareConnect() {
         this.meshBlock = new MeshJsPa_1.MeshJsPa();
+        // set Event Handler
         const brightnessBlock = this.meshBlock;
         brightnessBlock.onSensorEvent = (proximity, brightness, requestId) => {
             if (typeof this.onSensorEvent !== 'function') {

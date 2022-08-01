@@ -16,14 +16,27 @@ export interface MESH_100MD_Data {
 export default class MESH_100MD extends MESH<MESH_100MD_Data> {
     static readonly PartsName = "MESH_100MD";
     static readonly PREFIX = "MESH-100MD";
-    onSensorEvent: ((motionState: number, detectionMode: number) => void) | null;
+    static readonly NotifyMode: {
+        readonly DETECTED: 1;
+        readonly NOT_DETECTED: 2;
+        readonly ONCE: 16;
+        readonly ALWAYS: 32;
+    };
+    onSensorEvent: ((motionState: number, nofifyMode: number) => void) | null;
     protected readonly staticClass: typeof MESH_100MD;
+    private notifyMode_;
+    private motionState_;
+    private detectionTime_;
+    private responseTime_;
     getDataWait(): Promise<{
         name: string;
         address: string;
     }>;
-    setMode(detectionMode: number, opt_detectionTime?: number, opt_responseTime?: number, opt_requestId?: number): void;
+    getSensorDataWait(): Promise<unknown>;
+    setMode(notifyMode: number, opt_detectionTime?: number, opt_responseTime?: number): void;
     protected static _isMESHblock(name: string): boolean;
     protected prepareConnect(): void;
     protected beforeOnDisconnectWait(reason: unknown): Promise<void>;
+    private setMode_;
+    private setHandler_;
 }
