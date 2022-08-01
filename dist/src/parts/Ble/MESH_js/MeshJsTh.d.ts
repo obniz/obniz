@@ -1,7 +1,16 @@
 import { MeshJs } from './MeshJs';
 export declare class MeshJsTh extends MeshJs {
     onSensorEvent: ((temperature: number, humidity: number, requestId: number) => void) | null;
-    static readonly NOTIFY_TYPE: {
+    static readonly EmitCondition: {
+        ABOVE_UPPER_AND_BELOW_BOTTOM: 0;
+        ABOVE_UPPER_AND_ABOVE_BOTTOM: 1;
+        BELOW_UPPER_AND_BELOW_BOTTOM: 16;
+        BELOW_UPPER_AND_ABOVE_BOTTOM: 17;
+    };
+    static readonly NotifyMode: {
+        readonly STOP: 0;
+        readonly EMIT_TEMPERATURE: 1;
+        readonly EMIT_HUMIDITY: 2;
         readonly UPDATE_TEMPERATURE: 4;
         readonly UPDATE_HUMIDITY: 8;
         readonly ONCE: 16;
@@ -9,10 +18,12 @@ export declare class MeshJsTh extends MeshJs {
     };
     private readonly MESSAGE_TYPE_ID_;
     private readonly EVENT_TYPE_ID_;
-    private readonly MAX_TEMPERATURE_;
-    private readonly MIN_TEMPERATURE_;
-    private readonly MAX_HUMIDITY_;
-    private readonly MIN_HUMIDITY_;
+    private readonly TEMPERATURE_MAX_;
+    private readonly TEMPERATURE_MIN_;
+    private readonly HUMIDITY_MAX_;
+    private readonly HUMIDITY_MIN_;
+    private readonly NOTIFY_MODE_MIN_;
+    private readonly NOTIFY_MODE_MAX_;
     /**
      *
      * @param data
@@ -23,16 +34,19 @@ export declare class MeshJsTh extends MeshJs {
      *
      * @param temperatureRangeUpper
      * @param temperatureRangeBottom
-     * @param temperatureCondition
      * @param humidityRangeUpper
      * @param humidityRangeBottom
+     * @param temperatureCondition
      * @param humidityCondision
-     * @param type
+     * @param notifyMode
      * @param opt_requestId
      * @returns
      */
-    parseSetmodeCommand(temperatureRangeUpper: number, temperatureRangeBottom: number, temperatureCondition: number, humidityRangeUpper: number, humidityRangeBottom: number, humidityCondision: number, type: number, opt_requestId?: number): number[];
+    parseSetmodeCommand(temperatureRangeUpper: number, temperatureRangeBottom: number, humidityRangeUpper: number, humidityRangeBottom: number, temperatureCondition: number, humidityCondision: number, notifyMode: number, opt_requestId?: number): number[];
     private num2array_;
     private complemnt_;
     private invcomplemnt_;
+    private checkRange_;
+    private checkEmitCondition_;
+    private checkNotifyMode_;
 }

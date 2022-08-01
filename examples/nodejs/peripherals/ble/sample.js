@@ -25,8 +25,7 @@ obniz.onconnect = async () => {
       // sampleAC(peripheral);
       // sampleLE(peripheral);
       // samplePA(peripheral);
-      // sampleTH(peripheral);
-      sampleMD(peripheral);
+      // sampleMD(peripheral);
       // sampleGP(peripheral);
     };
     await obniz.ble.scan.startWait();
@@ -360,27 +359,6 @@ async function testGet2() {
   isReady = false;
   await testGet();
   isReady = true;
-}
-
-async function sampleTH(peripheral) {
-  if (!mesh_th.isMESHblock(peripheral)) {
-    return;
-  }
-  console.log('obniz.ble.scan.onfind : ' + peripheral.localName + ' : ' + peripheral.rssi);
-  const TH_block = new mesh_th(peripheral);
-  await TH_block.connectWait();
-
-  TH_block.onNotify = ((response) => {
-    console.log('ID: ' + response.requestId + ', temp: ' + response.temperature + ', hum: ' + response.humidity);
-  });
-
-  const _temp_upper = 50;
-  const _temp_bottom = -10;
-  const _humi_upper = 100;
-  const _humi_bottom = 0;
-  const _request_id = 15;
-  const _notify_type = mesh_th.NotifyType.ONCE + mesh_th.NotifyType.ALWAYS;
-  TH_block.setMode(_temp_upper, _temp_bottom, 17, _humi_upper, _humi_bottom, 17, _notify_type, _request_id);
 }
 
 var MD_block = null;

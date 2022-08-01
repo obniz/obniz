@@ -1,5 +1,5 @@
 import { MeshJs } from './MeshJs';
-import { MeshJsOutOfRangeError } from './MeshJsError';
+import { MeshJsInvalidValueError, MeshJsOutOfRangeError } from './MeshJsError';
 export class MeshJsTh extends MeshJs {
   // Event Handler
   public onSensorEvent:
@@ -7,7 +7,16 @@ export class MeshJsTh extends MeshJs {
     | null = null;
 
   // Constant Values
-  public static readonly NOTIFY_TYPE = {
+  public static readonly EmitCondition = {
+    ABOVE_UPPER_AND_BELOW_BOTTOM: 0 as const,
+    ABOVE_UPPER_AND_ABOVE_BOTTOM: 1 as const,
+    BELOW_UPPER_AND_BELOW_BOTTOM: 16 as const,
+    BELOW_UPPER_AND_ABOVE_BOTTOM: 17 as const,
+  };
+  public static readonly NotifyMode = {
+    STOP: 0 as const,
+    EMIT_TEMPERATURE: 1 as const,
+    EMIT_HUMIDITY: 2 as const,
     UPDATE_TEMPERATURE: 4 as const,
     UPDATE_HUMIDITY: 8 as const,
     ONCE: 16 as const,
@@ -15,10 +24,19 @@ export class MeshJsTh extends MeshJs {
   } as const;
   private readonly MESSAGE_TYPE_ID_: number = 1 as const;
   private readonly EVENT_TYPE_ID_: number = 0 as const;
-  private readonly MAX_TEMPERATURE_ = 50 as const;
-  private readonly MIN_TEMPERATURE_ = -10 as const;
-  private readonly MAX_HUMIDITY_ = 100 as const;
-  private readonly MIN_HUMIDITY_ = 0 as const;
+  private readonly TEMPERATURE_MAX_ = 50 as const;
+  private readonly TEMPERATURE_MIN_ = -10 as const;
+  private readonly HUMIDITY_MAX_ = 100 as const;
+  private readonly HUMIDITY_MIN_ = 0 as const;
+  private readonly NOTIFY_MODE_MIN_ = MeshJsTh.NotifyMode.STOP;
+  private readonly NOTIFY_MODE_MAX_ =
+    MeshJsTh.NotifyMode.STOP +
+    MeshJsTh.NotifyMode.EMIT_TEMPERATURE +
+    MeshJsTh.NotifyMode.EMIT_HUMIDITY +
+    MeshJsTh.NotifyMode.UPDATE_TEMPERATURE +
+    MeshJsTh.NotifyMode.UPDATE_HUMIDITY +
+    MeshJsTh.NotifyMode.ONCE +
+    MeshJsTh.NotifyMode.ALWAYS;
 
   /**
    *
@@ -38,13 +56,13 @@ export class MeshJsTh extends MeshJs {
     const BASE = 10 as const;
     const TEMP = this.complemnt_(BYTE * data[5] + data[4]) / BASE;
     const temperature = Math.min(
-      Math.max(this.MIN_TEMPERATURE_, TEMP),
-      this.MAX_TEMPERATURE_
+      Math.max(this.TEMPERATURE_MIN_, TEMP),
+      this.TEMPERATURE_MAX_
     );
     const HUM = BYTE * data[7] + data[6];
     const humidity = Math.min(
-      Math.max(this.MIN_HUMIDITY_, HUM),
-      this.MAX_HUMIDITY_
+      Math.max(this.HUMIDITY_MIN_, HUM),
+      this.HUMIDITY_MAX_
     );
     const requestId = data[2];
     if (typeof this.onSensorEvent !== 'function') {
@@ -57,45 +75,52 @@ export class MeshJsTh extends MeshJs {
    *
    * @param temperatureRangeUpper
    * @param temperatureRangeBottom
-   * @param temperatureCondition
    * @param humidityRangeUpper
    * @param humidityRangeBottom
+   * @param temperatureCondition
    * @param humidityCondision
-   * @param type
+   * @param notifyMode
    * @param opt_requestId
    * @returns
    */
   public parseSetmodeCommand(
     temperatureRangeUpper: number,
     temperatureRangeBottom: number,
-    temperatureCondition: number,
     humidityRangeUpper: number,
     humidityRangeBottom: number,
+    temperatureCondition: number,
     humidityCondision: number,
-    type: number,
+    notifyMode: number,
     opt_requestId = 0
   ): number[] {
     // Error Handle
-    if (
-      temperatureRangeBottom < this.MIN_TEMPERATURE_ ||
-      this.MAX_TEMPERATURE_ < temperatureRangeUpper
-    ) {
-      throw new MeshJsOutOfRangeError(
-        'temperatureRange',
-        this.MIN_TEMPERATURE_,
-        this.MAX_TEMPERATURE_
-      );
-    }
-    if (
-      humidityRangeBottom < this.MIN_HUMIDITY_ ||
-      this.MAX_HUMIDITY_ < humidityRangeUpper
-    ) {
-      throw new MeshJsOutOfRangeError(
-        'humidityRange',
-        this.MIN_HUMIDITY_,
-        this.MAX_HUMIDITY_
-      );
-    }
+    this.checkRange_(
+      temperatureRangeUpper,
+      this.TEMPERATURE_MIN_,
+      this.TEMPERATURE_MAX_,
+      'temperatureRangeUpper'
+    );
+    this.checkRange_(
+      temperatureRangeBottom,
+      this.TEMPERATURE_MIN_,
+      this.TEMPERATURE_MAX_,
+      'temperatureRangeBottom'
+    );
+    this.checkRange_(
+      humidityRangeUpper,
+      this.HUMIDITY_MIN_,
+      this.HUMIDITY_MAX_,
+      'humidityRangeUpper'
+    );
+    this.checkRange_(
+      humidityRangeBottom,
+      this.HUMIDITY_MIN_,
+      this.HUMIDITY_MAX_,
+      'humidityRangeBottom'
+    );
+    this.checkEmitCondition_(temperatureCondition, 'temperatureCondition');
+    this.checkEmitCondition_(humidityCondision, 'humidityCondision');
+    this.checkNotifyMode_(notifyMode);
 
     // Generate Command
     const HEADER = [
@@ -116,7 +141,7 @@ export class MeshJsTh extends MeshJs {
       .concat(TEMP_BOTTOM)
       .concat(HUMI_UPPER)
       .concat(HUMI_BOTTOM)
-      .concat([temperatureCondition, humidityCondision, type]);
+      .concat([temperatureCondition, humidityCondision, notifyMode]);
     data.push(this.checkSum(data));
 
     return data;
@@ -136,5 +161,41 @@ export class MeshJsTh extends MeshJs {
   private invcomplemnt_(val: number): number {
     const TWO_BYTE = 65536 as const;
     return val + (val < 0 ? TWO_BYTE : 0);
+  }
+
+  private checkRange_(
+    target: number,
+    min: number,
+    max: number,
+    name: string
+  ): boolean {
+    if (target < min || max < target) {
+      throw new MeshJsOutOfRangeError(name, min, max);
+    }
+    return true;
+  }
+
+  private checkEmitCondition_(target: number, name: string) {
+    let _isExist = false;
+    Object.entries(MeshJsTh.EmitCondition).forEach(([, value]) => {
+      if (target === value) {
+        _isExist = true;
+      }
+    });
+    if (_isExist) {
+      return true;
+    }
+    throw new MeshJsInvalidValueError(name);
+  }
+
+  private checkNotifyMode_(target: number): boolean {
+    if (target < this.NOTIFY_MODE_MIN_ || this.NOTIFY_MODE_MAX_ < target) {
+      throw new MeshJsOutOfRangeError(
+        'notifyType',
+        this.NOTIFY_MODE_MIN_,
+        this.NOTIFY_MODE_MAX_
+      );
+    }
+    return true;
   }
 }

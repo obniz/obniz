@@ -16,20 +16,34 @@ export interface MESH_100TH_Data {
 export default class MESH_100TH extends MESH<MESH_100TH_Data> {
     static readonly PartsName = "MESH_100TH";
     static readonly PREFIX = "MESH-100TH";
-    static readonly NotifyType: {
+    static readonly NotifyMode: {
+        readonly STOP: 0;
+        readonly EMIT_TEMPERATURE: 1;
+        readonly EMIT_HUMIDITY: 2;
         readonly UPDATE_TEMPERATURE: 4;
         readonly UPDATE_HUMIDITY: 8;
         readonly ONCE: 16;
         readonly ALWAYS: 32;
     };
+    static readonly EmitCondition: {
+        ABOVE_UPPER_AND_BELOW_BOTTOM: 0;
+        ABOVE_UPPER_AND_ABOVE_BOTTOM: 1;
+        BELOW_UPPER_AND_BELOW_BOTTOM: 16;
+        BELOW_UPPER_AND_ABOVE_BOTTOM: 17;
+    };
     onSensorEvent: ((temperature: number, humidity: number) => void) | null;
     protected readonly staticClass: typeof MESH_100TH;
+    private temperature_;
+    private humidity_;
     getDataWait(): Promise<{
         name: string;
         address: string;
     }>;
-    setMode(temperatureUpper: number, temperatureBottom: number, temperatureCondition: number, humidityUpper: number, humidityBottom: number, humidityCondision: number, type: number, opt_requestId?: number): void;
+    getSensorDataWait(): Promise<unknown>;
+    setMode(temperatureUpper: number, temperatureBottom: number, humidityUpper: number, humidityBottom: number, temperatureCondition: number, humidityCondision: number, notifyMode: number): void;
     protected static _isMESHblock(name: string): boolean;
     protected prepareConnect(): void;
     protected beforeOnDisconnectWait(reason: unknown): Promise<void>;
+    private setMode_;
+    private setHandler_;
 }
