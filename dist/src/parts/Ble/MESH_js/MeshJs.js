@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const MeshJsError_1 = require("./MeshJsError");
 class MeshJs {
     constructor() {
         // Event Handler
@@ -46,6 +47,7 @@ class MeshJs {
             return;
         }
         this.battery_ = data[14];
+        this.checkVersion_(data[7], data[8], data[9]);
     }
     /**
      * notify
@@ -102,6 +104,29 @@ class MeshJs {
         }
         this.onStatusButtonPressed();
         return true;
+    }
+    checkVersion_(major, minor, release) {
+        const VERSION_MAJOR = 1;
+        const VERSION_MINOR = 2;
+        const VERSION_RELEASE = 5;
+        if (VERSION_MAJOR < major) {
+            return;
+        }
+        if (major < VERSION_MAJOR) {
+            throw new MeshJsError_1.MeshBlockVersionError(major, minor, release);
+        }
+        if (VERSION_MINOR < minor) {
+            return;
+        }
+        if (minor < VERSION_MINOR) {
+            throw new MeshJsError_1.MeshBlockVersionError(major, minor, release);
+        }
+        if (VERSION_RELEASE < release) {
+            return;
+        }
+        if (release < VERSION_RELEASE) {
+            throw new MeshJsError_1.MeshBlockVersionError(major, minor, release);
+        }
     }
 }
 exports.MeshJs = MeshJs;

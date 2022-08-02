@@ -27685,6 +27685,7 @@ MESH_100TH.EmitCondition = MeshJsTh_1.MeshJsTh.EmitCondition;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
 class MeshJs {
     constructor() {
         // Event Handler
@@ -27731,6 +27732,7 @@ class MeshJs {
             return;
         }
         this.battery_ = data[14];
+        this.checkVersion_(data[7], data[8], data[9]);
     }
     /**
      * notify
@@ -27787,6 +27789,29 @@ class MeshJs {
         }
         this.onStatusButtonPressed();
         return true;
+    }
+    checkVersion_(major, minor, release) {
+        const VERSION_MAJOR = 1;
+        const VERSION_MINOR = 2;
+        const VERSION_RELEASE = 5;
+        if (VERSION_MAJOR < major) {
+            return;
+        }
+        if (major < VERSION_MAJOR) {
+            throw new MeshJsError_1.MeshBlockVersionError(major, minor, release);
+        }
+        if (VERSION_MINOR < minor) {
+            return;
+        }
+        if (minor < VERSION_MINOR) {
+            throw new MeshJsError_1.MeshBlockVersionError(major, minor, release);
+        }
+        if (VERSION_RELEASE < release) {
+            return;
+        }
+        if (release < VERSION_RELEASE) {
+            throw new MeshJsError_1.MeshBlockVersionError(major, minor, release);
+        }
     }
 }
 exports.MeshJs = MeshJs;
@@ -27958,9 +27983,22 @@ class MeshJsError extends Error {
     }
 }
 exports.MeshJsError = MeshJsError;
+class MeshBlockVersionError extends MeshJsError {
+    constructor(major, minor, release) {
+        super(1, 'please UPDATE block version to 1.2.5 more. (current block version ' +
+            major +
+            '.' +
+            minor +
+            '.' +
+            release +
+            ')');
+        this.major = major;
+    }
+}
+exports.MeshBlockVersionError = MeshBlockVersionError;
 class MeshJsOutOfRangeError extends MeshJsError {
     constructor(property, min, max) {
-        super(1, property +
+        super(2, property +
             ' is out of range. ' +
             property +
             ' must be ' +
@@ -27974,14 +28012,14 @@ class MeshJsOutOfRangeError extends MeshJsError {
 exports.MeshJsOutOfRangeError = MeshJsOutOfRangeError;
 class MeshJsInvalidValueError extends MeshJsError {
     constructor(property) {
-        super(2, property + ' is invalid value.');
+        super(3, property + ' is invalid value.');
         this.property = property;
     }
 }
 exports.MeshJsInvalidValueError = MeshJsInvalidValueError;
 class MeshJsTimeOutError extends MeshJsError {
     constructor(property) {
-        super(3, property + ' is time out.');
+        super(4, property + ' is time out.');
         this.property = property;
     }
 }

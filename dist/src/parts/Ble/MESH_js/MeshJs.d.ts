@@ -30,4 +30,5 @@ export declare class MeshJs {
     protected checkSum(command: number[]): number;
     private updateBattery_;
     private updateStatusButton_;
+    private checkVersion_;
 }
