@@ -17,16 +17,10 @@ export declare abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> 
     /**
      *
      * @param peripheral
+     * @param opt_serialnumber
      * @returns
      */
-    static isMESHblock(peripheral: BleRemotePeripheral): boolean;
-    /**
-     *
-     * @param peripheral
-     * @param serialnumber
-     * @returns
-     */
-    static sameSerialNumberBlock(peripheral: BleRemotePeripheral, serialnumber: string): boolean;
+    static isMESHblock(peripheral: BleRemotePeripheral, opt_serialnumber?: string): boolean;
     /**
      * Connect to the services of a MESH
      */
@@ -40,8 +34,8 @@ export declare abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> 
 export declare class MeshRequestId {
     private readonly MAX_ID_;
     private readonly DEFAULT_ID_;
+    private pool_;
     private currentId_;
-    private receivedId_;
     defaultId(): number;
     next(): number;
     isDefaultId(id: number): boolean;

@@ -33,8 +33,17 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
 
   protected readonly staticClass = MESH_100TH;
 
-  private temperature_ = -1;
-  private humidity_ = -1;
+  private retTemperature_ = -1;
+  private retHumidity_ = -1;
+  private temperatureUpper_ = 50;
+  private temperatureBottom_ = -10;
+  private humidityUpper_ = 100;
+  private humidityBottom_ = 0;
+  private temperatureCondition_: number =
+    MESH_100TH.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM;
+  private humidityCondision_: number =
+    MESH_100TH.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM;
+  private notifyMode_ = -1;
 
   public async getDataWait() {
     this.checkConnected();
@@ -68,15 +77,26 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
         }
         clearTimeout(_timeoutId);
         clearInterval(_intervalId);
-        resolve({ temperature: this.temperature_, humidity: this.humidity_ });
+        resolve({
+          temperature: this.retTemperature_,
+          humidity: this.retHumidity_,
+        });
       }, INTERVAL_TIME);
     });
-    // if (this.notifyMode_ !== MESH_100TH.NotifyMode.ONCE) {
-    //   // Continus previous mode
-    //   this.setMode(this.notifyMode_, this.detectionTime_, this.responseTime_);
-    // }
+    if (this.notifyMode_ !== MESH_100TH.NotifyMode.ONCE) {
+      // Continus previous mode
+      this.setMode(
+        this.temperatureUpper_,
+        this.temperatureBottom_,
+        this.humidityUpper_,
+        this.humidityBottom_,
+        this.temperatureCondition_,
+        this.humidityCondision_,
+        this.notifyMode_
+      );
+    }
     if (_result == null) {
-      throw new MeshJsTimeOutError(MESH_100TH.PartsName);
+      throw new MeshJsTimeOutError(this.peripheral.localName!);
     }
     return _result;
   }
@@ -100,6 +120,13 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
       notifyMode,
       this.requestId.defaultId()
     );
+    this.temperatureUpper_ = temperatureUpper;
+    this.temperatureBottom_ = temperatureBottom;
+    this.humidityUpper_ = humidityUpper;
+    this.humidityBottom_ = humidityBottom;
+    this.temperatureCondition_ = temperatureCondition;
+    this.humidityCondision_ = humidityCondision;
+    this.notifyMode_ = notifyMode;
   }
 
   protected static _isMESHblock(name: string): boolean {
@@ -163,7 +190,7 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
     }
     // Update Inner Values
     this.requestId.received(requestId);
-    this.temperature_ = temperature;
-    this.humidity_ = humidity;
+    this.retTemperature_ = temperature;
+    this.retHumidity_ = humidity;
   }
 }

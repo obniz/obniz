@@ -274,7 +274,7 @@ class MESH_100GP extends MESH_1.MESH {
             }, INTERVAL_TIME);
         });
         if (_result == null) {
-            throw new MeshJsError_1.MeshJsTimeOutError(MESH_100GP.PartsName);
+            throw new MeshJsError_1.MeshJsTimeOutError(this.peripheral.localName);
         }
         return _result;
     }

@@ -20,9 +20,10 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     /**
      *
      * @param peripheral
+     * @param opt_serialnumber
      * @returns
      */
-    static isMESHblock(peripheral) {
+    static isMESHblock(peripheral, opt_serialnumber = '') {
         const _name = peripheral.localName;
         if (!_name) {
             return false;
@@ -30,20 +31,10 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         if (_name.length !== MESH.LOCAL_NAME_LENGTH_) {
             return false;
         }
-        return this._isMESHblock(_name);
-    }
-    /**
-     *
-     * @param peripheral
-     * @param serialnumber
-     * @returns
-     */
-    static sameSerialNumberBlock(peripheral, serialnumber) {
-        var _a;
-        if (!this.isMESHblock(peripheral)) {
+        if (opt_serialnumber !== '' && _name.indexOf(opt_serialnumber) === -1) {
             return false;
         }
-        return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf(serialnumber)) !== -1;
+        return this._isMESHblock(_name);
     }
     /**
      * Connect to the services of a MESH
@@ -118,24 +109,34 @@ class MeshRequestId {
     constructor() {
         this.MAX_ID_ = 255;
         this.DEFAULT_ID_ = 0;
+        this.pool_ = [];
         this.currentId_ = this.DEFAULT_ID_;
-        this.receivedId_ = this.DEFAULT_ID_;
     }
+    // private receivedId_: number = this.DEFAULT_ID_;
     defaultId() {
         return this.DEFAULT_ID_;
     }
     next() {
         this.currentId_ = (this.currentId_ % this.MAX_ID_) + 1;
+        // console.log('send ' + this.currentId_);
         return this.currentId_;
     }
     isDefaultId(id) {
         return id === this.DEFAULT_ID_;
     }
     isReceived(id) {
-        return id === this.receivedId_;
+        const _index = this.pool_.findIndex((element) => element === id);
+        if (_index === -1) {
+            return false;
+        }
+        this.pool_.splice(_index, 1);
+        return true;
+        // return id === this.receivedId_;
     }
     received(id) {
-        this.receivedId_ = id;
+        this.pool_.push(id);
+        // console.log(this.pool_);
+        // this.receivedId_ = id;
     }
 }
 exports.MeshRequestId = MeshRequestId;

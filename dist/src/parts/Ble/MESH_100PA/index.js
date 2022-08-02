@@ -27,7 +27,6 @@ class MESH_100PA extends MESH_1.MESH {
     }
     async getSensorDataWait() {
         this.checkConnected();
-        // const _start = Date.now();
         const _requestId = this.requestId.next();
         const _proximityRangeUpper = 0;
         const _proximityRangeBottom = 0;
@@ -39,11 +38,9 @@ class MESH_100PA extends MESH_1.MESH {
         const _timeoutId = setTimeout(() => {
             _isTimeout = true;
         }, _TIMEOUT_MSEC);
-        // let _count = 0;
         const INTERVAL_TIME = 50;
         const _result = await new Promise((resolve) => {
             const _intervalId = setInterval(() => {
-                // _count ++;
                 if (!this.requestId.isReceived(_requestId)) {
                     if (_isTimeout) {
                         clearInterval(_intervalId);
@@ -53,13 +50,11 @@ class MESH_100PA extends MESH_1.MESH {
                 }
                 clearTimeout(_timeoutId);
                 clearInterval(_intervalId);
-                // const end = Date.now();
-                // console.log(end - _start + ' [ms] ' + _count);
                 resolve({ proximity: this.proximity_, brightness: this.brightness_ });
             }, INTERVAL_TIME);
         });
         if (_result == null) {
-            throw new MeshJsError_1.MeshJsTimeOutError(MESH_100PA.PartsName);
+            throw new MeshJsError_1.MeshJsTimeOutError(this.peripheral.localName);
         }
         return _result;
     }

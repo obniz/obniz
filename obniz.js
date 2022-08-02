@@ -27263,7 +27263,7 @@ class MESH_100GP extends MESH_1.MESH {
             }, INTERVAL_TIME);
         });
         if (_result == null) {
-            throw new MeshJsError_1.MeshJsTimeOutError(MESH_100GP.PartsName);
+            throw new MeshJsError_1.MeshJsTimeOutError(this.peripheral.localName);
         }
         return _result;
     }
@@ -27364,8 +27364,8 @@ class MESH_100MD extends MESH_1.MESH {
         // Event Handler
         this.onSensorEvent = null;
         this.staticClass = MESH_100MD;
+        this.retMotionState_ = -1;
         this.notifyMode_ = -1;
-        this.motionState_ = -1;
         this.detectionTime_ = 500; // [ms]
         this.responseTime_ = 500; // [ms]
     }
@@ -27398,7 +27398,7 @@ class MESH_100MD extends MESH_1.MESH {
                 }
                 clearTimeout(_timeoutId);
                 clearInterval(_intervalId);
-                resolve(this.motionState_);
+                resolve(this.retMotionState_);
             }, INTERVAL_TIME);
         });
         if (this.notifyMode_ !== MESH_100MD.NotifyMode.ONCE) {
@@ -27406,7 +27406,7 @@ class MESH_100MD extends MESH_1.MESH {
             this.setMode(this.notifyMode_, this.detectionTime_, this.responseTime_);
         }
         if (_result == null) {
-            throw new MeshJsError_1.MeshJsTimeOutError(MESH_100MD.PartsName);
+            throw new MeshJsError_1.MeshJsTimeOutError(this.peripheral.localName);
         }
         return _result;
     }
@@ -27445,7 +27445,7 @@ class MESH_100MD extends MESH_1.MESH {
         }
         // Update Inner Values
         this.requestId.received(requestId);
-        this.motionState_ = motionState;
+        this.retMotionState_ = motionState;
     }
 }
 exports.default = MESH_100MD;
@@ -27489,7 +27489,6 @@ class MESH_100PA extends MESH_1.MESH {
     }
     async getSensorDataWait() {
         this.checkConnected();
-        // const _start = Date.now();
         const _requestId = this.requestId.next();
         const _proximityRangeUpper = 0;
         const _proximityRangeBottom = 0;
@@ -27501,11 +27500,9 @@ class MESH_100PA extends MESH_1.MESH {
         const _timeoutId = setTimeout(() => {
             _isTimeout = true;
         }, _TIMEOUT_MSEC);
-        // let _count = 0;
         const INTERVAL_TIME = 50;
         const _result = await new Promise((resolve) => {
             const _intervalId = setInterval(() => {
-                // _count ++;
                 if (!this.requestId.isReceived(_requestId)) {
                     if (_isTimeout) {
                         clearInterval(_intervalId);
@@ -27515,13 +27512,11 @@ class MESH_100PA extends MESH_1.MESH {
                 }
                 clearTimeout(_timeoutId);
                 clearInterval(_intervalId);
-                // const end = Date.now();
-                // console.log(end - _start + ' [ms] ' + _count);
                 resolve({ proximity: this.proximity_, brightness: this.brightness_ });
             }, INTERVAL_TIME);
         });
         if (_result == null) {
-            throw new MeshJsError_1.MeshJsTimeOutError(MESH_100PA.PartsName);
+            throw new MeshJsError_1.MeshJsTimeOutError(this.peripheral.localName);
         }
         return _result;
     }
@@ -27590,8 +27585,15 @@ class MESH_100TH extends MESH_1.MESH {
         // Event Handler
         this.onSensorEvent = null;
         this.staticClass = MESH_100TH;
-        this.temperature_ = -1;
-        this.humidity_ = -1;
+        this.retTemperature_ = -1;
+        this.retHumidity_ = -1;
+        this.temperatureUpper_ = 50;
+        this.temperatureBottom_ = -10;
+        this.humidityUpper_ = 100;
+        this.humidityBottom_ = 0;
+        this.temperatureCondition_ = MESH_100TH.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM;
+        this.humidityCondision_ = MESH_100TH.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM;
+        this.notifyMode_ = -1;
     }
     async getDataWait() {
         this.checkConnected();
@@ -27622,20 +27624,30 @@ class MESH_100TH extends MESH_1.MESH {
                 }
                 clearTimeout(_timeoutId);
                 clearInterval(_intervalId);
-                resolve({ temperature: this.temperature_, humidity: this.humidity_ });
+                resolve({
+                    temperature: this.retTemperature_,
+                    humidity: this.retHumidity_,
+                });
             }, INTERVAL_TIME);
         });
-        // if (this.notifyMode_ !== MESH_100TH.NotifyMode.ONCE) {
-        //   // Continus previous mode
-        //   this.setMode(this.notifyMode_, this.detectionTime_, this.responseTime_);
-        // }
+        if (this.notifyMode_ !== MESH_100TH.NotifyMode.ONCE) {
+            // Continus previous mode
+            this.setMode(this.temperatureUpper_, this.temperatureBottom_, this.humidityUpper_, this.humidityBottom_, this.temperatureCondition_, this.humidityCondision_, this.notifyMode_);
+        }
         if (_result == null) {
-            throw new MeshJsError_1.MeshJsTimeOutError(MESH_100TH.PartsName);
+            throw new MeshJsError_1.MeshJsTimeOutError(this.peripheral.localName);
         }
         return _result;
     }
     setMode(temperatureUpper, temperatureBottom, humidityUpper, humidityBottom, temperatureCondition, humidityCondision, notifyMode) {
         this.setMode_(temperatureUpper, temperatureBottom, humidityUpper, humidityBottom, temperatureCondition, humidityCondision, notifyMode, this.requestId.defaultId());
+        this.temperatureUpper_ = temperatureUpper;
+        this.temperatureBottom_ = temperatureBottom;
+        this.humidityUpper_ = humidityUpper;
+        this.humidityBottom_ = humidityBottom;
+        this.temperatureCondition_ = temperatureCondition;
+        this.humidityCondision_ = humidityCondision;
+        this.notifyMode_ = notifyMode;
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100TH.PREFIX) !== -1;
@@ -27666,8 +27678,8 @@ class MESH_100TH extends MESH_1.MESH {
         }
         // Update Inner Values
         this.requestId.received(requestId);
-        this.temperature_ = temperature;
-        this.humidity_ = humidity;
+        this.retTemperature_ = temperature;
+        this.retHumidity_ = humidity;
     }
 }
 exports.default = MESH_100TH;
@@ -39111,9 +39123,10 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     /**
      *
      * @param peripheral
+     * @param opt_serialnumber
      * @returns
      */
-    static isMESHblock(peripheral) {
+    static isMESHblock(peripheral, opt_serialnumber = '') {
         const _name = peripheral.localName;
         if (!_name) {
             return false;
@@ -39121,20 +39134,10 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         if (_name.length !== MESH.LOCAL_NAME_LENGTH_) {
             return false;
         }
-        return this._isMESHblock(_name);
-    }
-    /**
-     *
-     * @param peripheral
-     * @param serialnumber
-     * @returns
-     */
-    static sameSerialNumberBlock(peripheral, serialnumber) {
-        var _a;
-        if (!this.isMESHblock(peripheral)) {
+        if (opt_serialnumber !== '' && _name.indexOf(opt_serialnumber) === -1) {
             return false;
         }
-        return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf(serialnumber)) !== -1;
+        return this._isMESHblock(_name);
     }
     /**
      * Connect to the services of a MESH
@@ -39209,24 +39212,34 @@ class MeshRequestId {
     constructor() {
         this.MAX_ID_ = 255;
         this.DEFAULT_ID_ = 0;
+        this.pool_ = [];
         this.currentId_ = this.DEFAULT_ID_;
-        this.receivedId_ = this.DEFAULT_ID_;
     }
+    // private receivedId_: number = this.DEFAULT_ID_;
     defaultId() {
         return this.DEFAULT_ID_;
     }
     next() {
         this.currentId_ = (this.currentId_ % this.MAX_ID_) + 1;
+        // console.log('send ' + this.currentId_);
         return this.currentId_;
     }
     isDefaultId(id) {
         return id === this.DEFAULT_ID_;
     }
     isReceived(id) {
-        return id === this.receivedId_;
+        const _index = this.pool_.findIndex((element) => element === id);
+        if (_index === -1) {
+            return false;
+        }
+        this.pool_.splice(_index, 1);
+        return true;
+        // return id === this.receivedId_;
     }
     received(id) {
-        this.receivedId_ = id;
+        this.pool_.push(id);
+        // console.log(this.pool_);
+        // this.receivedId_ = id;
     }
 }
 exports.MeshRequestId = MeshRequestId;

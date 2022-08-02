@@ -15,8 +15,8 @@ class MESH_100MD extends MESH_1.MESH {
         // Event Handler
         this.onSensorEvent = null;
         this.staticClass = MESH_100MD;
+        this.retMotionState_ = -1;
         this.notifyMode_ = -1;
-        this.motionState_ = -1;
         this.detectionTime_ = 500; // [ms]
         this.responseTime_ = 500; // [ms]
     }
@@ -49,7 +49,7 @@ class MESH_100MD extends MESH_1.MESH {
                 }
                 clearTimeout(_timeoutId);
                 clearInterval(_intervalId);
-                resolve(this.motionState_);
+                resolve(this.retMotionState_);
             }, INTERVAL_TIME);
         });
         if (this.notifyMode_ !== MESH_100MD.NotifyMode.ONCE) {
@@ -57,7 +57,7 @@ class MESH_100MD extends MESH_1.MESH {
             this.setMode(this.notifyMode_, this.detectionTime_, this.responseTime_);
         }
         if (_result == null) {
-            throw new MeshJsError_1.MeshJsTimeOutError(MESH_100MD.PartsName);
+            throw new MeshJsError_1.MeshJsTimeOutError(this.peripheral.localName);
         }
         return _result;
     }
@@ -96,7 +96,7 @@ class MESH_100MD extends MESH_1.MESH {
         }
         // Update Inner Values
         this.requestId.received(requestId);
-        this.motionState_ = motionState;
+        this.retMotionState_ = motionState;
     }
 }
 exports.default = MESH_100MD;

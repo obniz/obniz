@@ -34,8 +34,7 @@ obniz.onclose = async () => {
 
 var TH_block = null;
 async function sampleTH(peripheral) {
-  if (!mesh_th.sameSerialNumberBlock(peripheral, '1019853')) {
-  // if (!mesh_th.isMESHblock(peripheral)) {
+  if (!mesh_th.isMESHblock(peripheral, '1019853')) {
     return;
   }
   console.log('obniz.ble.scan.onfind : ' + peripheral.localName + ' : ' + peripheral.rssi);

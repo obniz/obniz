@@ -30,9 +30,13 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
   /**
    *
    * @param peripheral
+   * @param opt_serialnumber
    * @returns
    */
-  public static isMESHblock(peripheral: BleRemotePeripheral): boolean {
+  public static isMESHblock(
+    peripheral: BleRemotePeripheral,
+    opt_serialnumber = ''
+  ): boolean {
     const _name: string | null = peripheral.localName;
     if (!_name) {
       return false;
@@ -40,23 +44,10 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
     if (_name.length !== MESH.LOCAL_NAME_LENGTH_) {
       return false;
     }
-    return this._isMESHblock(_name);
-  }
-
-  /**
-   *
-   * @param peripheral
-   * @param serialnumber
-   * @returns
-   */
-  public static sameSerialNumberBlock(
-    peripheral: BleRemotePeripheral,
-    serialnumber: string
-  ): boolean {
-    if (!this.isMESHblock(peripheral)) {
+    if (opt_serialnumber !== '' && _name.indexOf(opt_serialnumber) === -1) {
       return false;
     }
-    return peripheral.localName?.indexOf(serialnumber) !== -1;
+    return this._isMESHblock(_name);
   }
 
   /**
@@ -149,8 +140,9 @@ export class MeshRequestId {
   private readonly MAX_ID_: number = 255 as const;
   private readonly DEFAULT_ID_: number = 0 as const;
 
+  private pool_: number[] = [];
   private currentId_: number = this.DEFAULT_ID_;
-  private receivedId_: number = this.DEFAULT_ID_;
+  // private receivedId_: number = this.DEFAULT_ID_;
 
   public defaultId(): number {
     return this.DEFAULT_ID_;
@@ -158,6 +150,7 @@ export class MeshRequestId {
 
   public next(): number {
     this.currentId_ = (this.currentId_ % this.MAX_ID_) + 1;
+    // console.log('send ' + this.currentId_);
     return this.currentId_;
   }
 
@@ -166,10 +159,18 @@ export class MeshRequestId {
   }
 
   public isReceived(id: number): boolean {
-    return id === this.receivedId_;
+    const _index = this.pool_.findIndex((element) => element === id);
+    if (_index === -1) {
+      return false;
+    }
+    this.pool_.splice(_index, 1);
+    return true;
+    // return id === this.receivedId_;
   }
 
   public received(id: number): void {
-    this.receivedId_ = id;
+    this.pool_.push(id);
+    // console.log(this.pool_);
+    // this.receivedId_ = id;
   }
 }

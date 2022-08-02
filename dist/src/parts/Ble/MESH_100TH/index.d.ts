@@ -33,8 +33,15 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
     };
     onSensorEvent: ((temperature: number, humidity: number) => void) | null;
     protected readonly staticClass: typeof MESH_100TH;
-    private temperature_;
-    private humidity_;
+    private retTemperature_;
+    private retHumidity_;
+    private temperatureUpper_;
+    private temperatureBottom_;
+    private humidityUpper_;
+    private humidityBottom_;
+    private temperatureCondition_;
+    private humidityCondision_;
+    private notifyMode_;
     getDataWait(): Promise<{
         name: string;
         address: string;

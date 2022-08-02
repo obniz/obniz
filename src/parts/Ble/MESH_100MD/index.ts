@@ -31,8 +31,8 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
 
   protected readonly staticClass = MESH_100MD;
 
+  private retMotionState_ = -1;
   private notifyMode_ = -1;
-  private motionState_ = -1;
   private detectionTime_ = 500; // [ms]
   private responseTime_ = 500; // [ms]
 
@@ -73,7 +73,7 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
         }
         clearTimeout(_timeoutId);
         clearInterval(_intervalId);
-        resolve(this.motionState_);
+        resolve(this.retMotionState_);
       }, INTERVAL_TIME);
     });
     if (this.notifyMode_ !== MESH_100MD.NotifyMode.ONCE) {
@@ -81,7 +81,7 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
       this.setMode(this.notifyMode_, this.detectionTime_, this.responseTime_);
     }
     if (_result == null) {
-      throw new MeshJsTimeOutError(MESH_100MD.PartsName);
+      throw new MeshJsTimeOutError(this.peripheral.localName!);
     }
     return _result;
   }
@@ -155,6 +155,6 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
     }
     // Update Inner Values
     this.requestId.received(requestId);
-    this.motionState_ = motionState;
+    this.retMotionState_ = motionState;
   }
 }

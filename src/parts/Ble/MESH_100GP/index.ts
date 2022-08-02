@@ -411,7 +411,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
       }, INTERVAL_TIME);
     });
     if (_result == null) {
-      throw new MeshJsTimeOutError(MESH_100GP.PartsName);
+      throw new MeshJsTimeOutError(this.peripheral.localName!);
     }
     return _result;
   }

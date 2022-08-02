@@ -15,8 +15,15 @@ class MESH_100TH extends MESH_1.MESH {
         // Event Handler
         this.onSensorEvent = null;
         this.staticClass = MESH_100TH;
-        this.temperature_ = -1;
-        this.humidity_ = -1;
+        this.retTemperature_ = -1;
+        this.retHumidity_ = -1;
+        this.temperatureUpper_ = 50;
+        this.temperatureBottom_ = -10;
+        this.humidityUpper_ = 100;
+        this.humidityBottom_ = 0;
+        this.temperatureCondition_ = MESH_100TH.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM;
+        this.humidityCondision_ = MESH_100TH.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM;
+        this.notifyMode_ = -1;
     }
     async getDataWait() {
         this.checkConnected();
@@ -47,20 +54,30 @@ class MESH_100TH extends MESH_1.MESH {
                 }
                 clearTimeout(_timeoutId);
                 clearInterval(_intervalId);
-                resolve({ temperature: this.temperature_, humidity: this.humidity_ });
+                resolve({
+                    temperature: this.retTemperature_,
+                    humidity: this.retHumidity_,
+                });
             }, INTERVAL_TIME);
         });
-        // if (this.notifyMode_ !== MESH_100TH.NotifyMode.ONCE) {
-        //   // Continus previous mode
-        //   this.setMode(this.notifyMode_, this.detectionTime_, this.responseTime_);
-        // }
+        if (this.notifyMode_ !== MESH_100TH.NotifyMode.ONCE) {
+            // Continus previous mode
+            this.setMode(this.temperatureUpper_, this.temperatureBottom_, this.humidityUpper_, this.humidityBottom_, this.temperatureCondition_, this.humidityCondision_, this.notifyMode_);
+        }
         if (_result == null) {
-            throw new MeshJsError_1.MeshJsTimeOutError(MESH_100TH.PartsName);
+            throw new MeshJsError_1.MeshJsTimeOutError(this.peripheral.localName);
         }
         return _result;
     }
     setMode(temperatureUpper, temperatureBottom, humidityUpper, humidityBottom, temperatureCondition, humidityCondision, notifyMode) {
         this.setMode_(temperatureUpper, temperatureBottom, humidityUpper, humidityBottom, temperatureCondition, humidityCondision, notifyMode, this.requestId.defaultId());
+        this.temperatureUpper_ = temperatureUpper;
+        this.temperatureBottom_ = temperatureBottom;
+        this.humidityUpper_ = humidityUpper;
+        this.humidityBottom_ = humidityBottom;
+        this.temperatureCondition_ = temperatureCondition;
+        this.humidityCondision_ = humidityCondision;
+        this.notifyMode_ = notifyMode;
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100TH.PREFIX) !== -1;
@@ -91,8 +108,8 @@ class MESH_100TH extends MESH_1.MESH {
         }
         // Update Inner Values
         this.requestId.received(requestId);
-        this.temperature_ = temperature;
-        this.humidity_ = humidity;
+        this.retTemperature_ = temperature;
+        this.retHumidity_ = humidity;
     }
 }
 exports.default = MESH_100TH;

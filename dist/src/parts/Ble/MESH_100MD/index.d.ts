@@ -24,8 +24,8 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
     };
     onSensorEvent: ((motionState: number, nofifyMode: number) => void) | null;
     protected readonly staticClass: typeof MESH_100MD;
+    private retMotionState_;
     private notifyMode_;
-    private motionState_;
     private detectionTime_;
     private responseTime_;
     getDataWait(): Promise<{
