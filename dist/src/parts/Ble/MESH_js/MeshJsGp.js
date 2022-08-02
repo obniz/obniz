@@ -68,9 +68,9 @@ class MeshJsGp extends MeshJs_1.MeshJs {
                     return;
                 }
                 const requestId = data[2];
-                const state = data[4];
-                const mode = data[5];
-                this.onAnalogInput(requestId, state, mode);
+                const level = data[4];
+                const analogInputNotifyMode = data[5];
+                this.onAnalogInput(requestId, level, analogInputNotifyMode);
                 break;
             }
             case this.V_OUT_ID_: {
@@ -78,8 +78,8 @@ class MeshJsGp extends MeshJs_1.MeshJs {
                     return;
                 }
                 const requestId = data[2];
-                const state = data[4];
-                this.onVOutput(requestId, state);
+                const vccState = data[4];
+                this.onVOutput(requestId, vccState);
                 break;
             }
             case this.DIGITAL_OUT_ID_: {
@@ -108,17 +108,17 @@ class MeshJsGp extends MeshJs_1.MeshJs {
     /**
      * parseSetmodeCommand
      *
-     * @param digitalIn {p1:boolean, p2:boolean, p3:boolean}
-     * @param digitalInNotify {p1:boolean, p2:boolean, p3:boolean}
-     * @param digitalOut {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalInputLow2High {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalInputHigh2Low {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalOutput {p1:boolean, p2:boolean, p3:boolean}
      * @param pwmRatio 0 ~ 255
-     * @param vcc VCC.AUTO or VCC.ON or VCC.OFF
-     * @param analogInRangeUpper 0.00 ~ 3.00[V], resolution 0.05[V]
-     * @param analogInRangeBottom 0.00 ~ 3.00[V], resolution 0.05[V]
-     * @param analogInNotify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+     * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
+     * @param analogInputRangeUpper 0 ~ 255(0.00 ~ 3.00[V])
+     * @param analogInputRangeBottom 0 ~ 255(0.00 ~ 3.00[V])
+     * @param analogInputNotify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
      * @returns command
      */
-    parseSetmodeCommand(digitalIn, digitalInNotify, digitalOut, pwmRatio, vcc, analogInRangeUpper, analogInRangeBottom, analogInNotify) {
+    parseSetmodeCommand(digitalInputLow2High, digitalInputHigh2Low, digitalOutput, pwmRatio, vcc, analogInputRangeUpper, analogInputRangeBottom, analogInputNotify) {
         // Error Handle
         const PWM_MIN = 0;
         const PWM_MAX = 255;
@@ -130,24 +130,24 @@ class MeshJsGp extends MeshJs_1.MeshJs {
         }
         const ANALOG_IN_RANGE_MIN = 0;
         const ANALOG_IN_RANGE_MAX = 255;
-        this.checkRange_(analogInRangeUpper, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeUpper');
-        this.checkRange_(analogInRangeBottom, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeBottom');
-        if (analogInNotify !== MeshJsGp.AnalogInEventCondition.NOT_NOTIFY &&
-            analogInNotify !== MeshJsGp.AnalogInEventCondition.ABOVE_THRESHOLD &&
-            analogInNotify !== MeshJsGp.AnalogInEventCondition.BELOW_THRESHOLD) {
+        this.checkRange_(analogInputRangeUpper, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeUpper');
+        this.checkRange_(analogInputRangeBottom, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeBottom');
+        if (analogInputNotify !== MeshJsGp.AnalogInEventCondition.NOT_NOTIFY &&
+            analogInputNotify !== MeshJsGp.AnalogInEventCondition.ABOVE_THRESHOLD &&
+            analogInputNotify !== MeshJsGp.AnalogInEventCondition.BELOW_THRESHOLD) {
             throw new MeshJsError_1.MeshJsInvalidValueError('analogInNotify');
         }
         // Generate Command
         const HEADER = [this.MESSAGE_TYPE_ID_, 1];
         const BODY = [
-            this.pin2num(digitalIn),
-            this.pin2num(digitalInNotify),
-            this.pin2num(digitalOut),
+            this.pin2num(digitalInputLow2High),
+            this.pin2num(digitalInputHigh2Low),
+            this.pin2num(digitalOutput),
             pwmRatio,
             vcc,
-            analogInRangeUpper,
-            analogInRangeBottom,
-            analogInNotify,
+            analogInputRangeUpper,
+            analogInputRangeBottom,
+            analogInputNotify,
         ];
         const data = HEADER.concat(BODY);
         data.push(this.checkSum(data));
@@ -166,22 +166,22 @@ class MeshJsGp extends MeshJs_1.MeshJs {
     /**
      * parseSetAinCommand
      *
-     * @param mode
+     * @param analogInputNotifyMode
      * @param requestId
      * @returns
      */
-    parseSetAinCommand(mode, requestId = 0) {
-        return this.parseSetCommand_(this.ANALOG_IN_ID_, mode, requestId);
+    parseSetAinCommand(analogInputNotifyMode, requestId = 0) {
+        return this.parseSetCommand_(this.ANALOG_IN_ID_, analogInputNotifyMode, requestId);
     }
     /**
-     * parseSetVoutCommand
+     * parseSetVOutputCommand
      *
-     * @param pin
      * @param requestId
      * @returns
      */
-    parseSetVoutCommand(pin, requestId = 0) {
-        return this.parseSetCommand_(this.V_OUT_ID_, pin, requestId);
+    parseSetVOutputCommand(requestId = 0) {
+        const PIN = 0; // VOUT pin
+        return this.parseSetCommand_(this.V_OUT_ID_, PIN, requestId);
     }
     /**
      * parseSetDoutCommand
@@ -225,10 +225,14 @@ MeshJsGp.AnalogInEventCondition = {
     ABOVE_THRESHOLD: 17,
     BELOW_THRESHOLD: 34,
 };
-MeshJsGp.NotifyMode = {
-    ALWAYS: 0,
+MeshJsGp.AnalogInputNotifyMode = {
+    STOP: 0,
     ONCE: 1,
-    ALWAYS_AND_ONECE: 2,
+    ALWAYS: 2,
+};
+MeshJsGp.DigitalInputState = {
+    UP_EDGE: 0,
+    DOWN_EDGE: 1,
 };
 MeshJsGp.Pin = {
     P1: 0,

@@ -421,41 +421,56 @@ async function sampleGP(peripheral) {
   GP_block = new mesh_gp(peripheral);
   await GP_block.connectWait();
 
-  const _din = {p1:true,p2:false,p3:true};
-  const _din_notify = {p1:true,p2:false,p3:true};
-  const _dout = {p1:true,p2:false,p3:true};
-  const _pwm = 200;
-  const _vcc = mesh_gp.Vcc.ON;
-  const _condition = mesh_gp.AnalogInEventCondition.ABOVE_THRESHOLD;
-
-  GP_block.onDigitalInputEvent = ((pin, state) => {
-    console.log('<Event> [Din] pin: ' + pin + ', state: ' + state);
+  /**
+   * Event Notify
+   */
+   GP_block.onDigitalInputEvent = ((pin, state) => {
+    const _name = (pin === mesh_gp.Pin.P1 ? 'Pin1' : (pin === mesh_gp.Pin.P2 ? 'Pin2' : 'Pin3'));
+    console.log('<Event> digital input pin: ' + _name + ', state: ' + state);
   });
   GP_block.onAnalogInputEvent = ((level) => {
-    console.log('<Event> [Ain] level: ' + level);
+    console.log('<Event> analog input level: ' + level);
   });
-  GP_block.onDigitalInput = ((pin, state) => {
-    console.log('<Event> [DinState] pin: ' +
-     pin + ', state: ' + state);
-  });
-  GP_block.onPwm = ((level) => {
-    console.log('<Event> [PWM] level: ' + level);
-  });
-  GP_block.setMode(_din, _din_notify, _dout, _pwm, _vcc, 20, 0, _condition);
+
+  const _dinL2H = { p1:true, p2:false, p3:true };
+  const _dinH2L = { p1:true, p2:false, p3:true };
+  let _dout = { p1:true, p2:false, p3:true };
+  const _pwm = 0;//200;
+  const _vcc =
+    // mesh_gp.Vcc.AUTO;
+    // mesh_gp.Vcc.ON;
+    mesh_gp.Vcc.OFF;
+  const _condition =
+    // mesh_gp.AnalogInEventCondition.NOT_NOTIFY;
+    mesh_gp.AnalogInEventCondition.ABOVE_THRESHOLD;
+    // mesh_gp.AnalogInEventCondition.BELOW_THRESHOLD;
+  const _ainUpper = 30;
+  const _ainBottom = 0;
+  // GP_block.setMode(_dinL2H, _dinH2L, _dout, _pwm, _vcc, _ainUpper, _ainBottom, _condition);
+
+  GP_block.setVOutput(mesh_gp.Vcc.ON);
+  GP_block.setPwmOutput(100);
 
   // let _count = 0;
   // setInterval(()=>{
-  //   getDIN(mesh_gp.Pin.P1);
   //   if (_count % 2 == 0) {
-  //     GP_block.setMode(_din, _din_notify, _dout, _pwm, _vcc, 0, 0, _condition);
+  //     _dout = { p1:true, p2:false, p3:true };
   //   } else {
-  //     GP_block.setMode(_din, _din_notify, _dout, 0, _vcc, 0, 0, _condition);
+  //     _dout = { p1:false, p2:true, p3:false };
   //   }
-  //   // GP_block.setDin(mesh_gp.Pin.P1);
-  //   // GP_block.setPwm(0);
-  //   getPWM();
+  //   GP_block.setMode(_dinL2H, _dinH2L, _dout, _pwm, _vcc, _ainUpper, _ainBottom, _condition);
   //   _count ++;
-  // }, 2 * 1000);
+  // }, 5 * 1000);
+
+  const _interval = 2 * 1000;
+  // setInterval(getDOUT, _interval, mesh_gp.Pin.P1);
+  // setInterval(getDIN, _interval, mesh_gp.Pin.P2);
+  // getAIN();
+}
+
+async function getAIN() {
+  const res = await GP_block.getAnalogInputDataWait();
+  console.log(res);
 }
 
 async function getPWM() {
@@ -464,6 +479,35 @@ async function getPWM() {
 }
 
 async function getDIN(pin) {
-  const res = await GP_block.getDigitalInputDataWait(pin);
-  console.log('get ' + res);
+  const _digitalInputState = await GP_block.getDigitalInputDataWait(pin);
+  const _name = (pin === mesh_gp.Pin.P1 ? 'Pin1' : (pin === mesh_gp.Pin.P2 ? 'Pin2' : 'Pin3'));
+  switch (_digitalInputState) {
+    case mesh_gp.DigitalInputState.UP_EDGE:{
+      console.log('getDigitalInputDataWait: ' + _name + ' UP');
+      break;
+    }
+    case mesh_gp.DigitalInputState.DOWN_EDGE:{
+      console.log('getDigitalInputDataWait: ' + _name + ' DOWN');
+      break;
+    }
+    default:
+      break;
+  }
+}
+
+async function getDOUT(pin) {
+  const _doutState = await GP_block.getDigitalOutputDataWait(pin);
+  const _name = (pin === mesh_gp.Pin.P1 ? 'Pin1' : (pin === mesh_gp.Pin.P2 ? 'Pin2' : 'Pin3'));
+  switch (_doutState) {
+    case mesh_gp.VccState.OFF:{
+      console.log('getDigitalOutputDataWait: ' + _name + ' OFF');
+      break;
+    }
+    case mesh_gp.VccState.ON:{
+      console.log('getDigitalOutputDataWait: ' + _name + ' ON');
+      break;
+    }
+    default:
+      break;
+  }
 }
