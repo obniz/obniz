@@ -7,7 +7,7 @@ export declare class Motion extends Base {
         readonly ONCE: 16;
         readonly ALWAYS: 32;
     };
-    readonly MotionState: {
+    static readonly MotionState: {
         readonly SETUP: 0;
         readonly DETECTED: 1;
         readonly NOT_DETECTED: 2;

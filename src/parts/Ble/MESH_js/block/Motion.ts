@@ -13,7 +13,7 @@ export class Motion extends Base {
     ONCE: 0x10 as const,
     ALWAYS: 0x20 as const,
   } as const;
-  public readonly MotionState = {
+  public static readonly MotionState = {
     SETUP: 0x00 as const,
     DETECTED: 0x01 as const,
     NOT_DETECTED: 0x02 as const,

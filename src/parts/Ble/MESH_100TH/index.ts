@@ -180,17 +180,18 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
     humidity: number,
     requestId: number
   ) {
-    if (typeof this.onSensorEvent !== 'function') {
-      return;
-    }
-    if (this.requestId.isDefaultId(requestId)) {
-      // Emit Event
-      this.onSensorEvent(temperature, humidity);
-      return;
-    }
     // Update Inner Values
     this.requestId.received(requestId);
     this.retTemperature_ = temperature;
     this.retHumidity_ = humidity;
+
+    // Emit Event
+    if (typeof this.onSensorEvent !== 'function') {
+      return;
+    }
+    if (!this.requestId.isDefaultId(requestId)) {
+      return;
+    }
+    this.onSensorEvent(temperature, humidity);
   }
 }

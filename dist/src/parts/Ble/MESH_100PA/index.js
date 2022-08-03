@@ -68,20 +68,7 @@ class MESH_100PA extends MESH_1.MESH {
         this.meshBlock = new Brightness_1.Brightness();
         // set Event Handler
         const brightnessBlock = this.meshBlock;
-        brightnessBlock.onSensorEvent = (proximity, brightness, requestId) => {
-            if (typeof this.onSensorEvent !== 'function') {
-                return;
-            }
-            if (this.requestId.isDefaultId(requestId)) {
-                // Emit Event
-                this.onSensorEvent(proximity, brightness);
-                return;
-            }
-            // Update Inner Values
-            this.requestId.received(requestId);
-            this.proximity_ = proximity;
-            this.brightness_ = brightness;
-        };
+        brightnessBlock.onSensorEvent = (proximity, brightness, requestId) => this.setHandler_(proximity, brightness, requestId);
         super.prepareConnect();
     }
     async beforeOnDisconnectWait(reason) {
@@ -91,6 +78,20 @@ class MESH_100PA extends MESH_1.MESH {
         const brightnessBlock = this.meshBlock;
         const command = brightnessBlock.parseSetmodeCommand(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode, requestId);
         this.writeWOResponse(command);
+    }
+    setHandler_(proximity, brightness, requestId) {
+        // Update Inner Values
+        this.requestId.received(requestId);
+        this.proximity_ = proximity;
+        this.brightness_ = brightness;
+        // Emit Event
+        if (typeof this.onSensorEvent !== 'function') {
+            return;
+        }
+        if (!this.requestId.isDefaultId(requestId)) {
+            return;
+        }
+        this.onSensorEvent(proximity, brightness);
     }
 }
 exports.default = MESH_100PA;

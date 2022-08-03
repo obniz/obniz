@@ -86,20 +86,21 @@ class MESH_100MD extends MESH_1.MESH {
         this.writeWOResponse(command);
     }
     setHandler_(motionState, notifyMode, requestId) {
-        if (typeof this.onSensorEvent !== 'function') {
-            return;
-        }
-        if (this.requestId.isDefaultId(requestId)) {
-            // Emit Event
-            this.onSensorEvent(motionState, notifyMode);
-            return;
-        }
         // Update Inner Values
         this.requestId.received(requestId);
         this.retMotionState_ = motionState;
+        // Emit Event
+        if (typeof this.onSensorEvent !== 'function') {
+            return;
+        }
+        if (!this.requestId.isDefaultId(requestId)) {
+            return;
+        }
+        this.onSensorEvent(motionState, notifyMode);
     }
 }
 exports.default = MESH_100MD;
 MESH_100MD.PartsName = 'MESH_100MD';
 MESH_100MD.PREFIX = 'MESH-100MD';
 MESH_100MD.NotifyMode = Motion_1.Motion.NotifyMode;
+MESH_100MD.MotionState = Motion_1.Motion.MotionState;

@@ -22,6 +22,11 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
         readonly ONCE: 16;
         readonly ALWAYS: 32;
     };
+    static readonly MotionState: {
+        readonly SETUP: 0;
+        readonly DETECTED: 1;
+        readonly NOT_DETECTED: 2;
+    };
     onSensorEvent: ((motionState: number, nofifyMode: number) => void) | null;
     protected readonly staticClass: typeof MESH_100MD;
     private retMotionState_;

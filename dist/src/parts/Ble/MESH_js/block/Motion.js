@@ -6,11 +6,6 @@ class Motion extends Base_1.Base {
         super(...arguments);
         // Event Handler
         this.onSensorEvent = null;
-        this.MotionState = {
-            SETUP: 0x00,
-            DETECTED: 0x01,
-            NOT_DETECTED: 0x02,
-        };
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
     }
@@ -78,4 +73,9 @@ Motion.NotifyMode = {
     NOT_DETECTED: 0x02,
     ONCE: 0x10,
     ALWAYS: 0x20,
+};
+Motion.MotionState = {
+    SETUP: 0x00,
+    DETECTED: 0x01,
+    NOT_DETECTED: 0x02,
 };

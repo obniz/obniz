@@ -27436,23 +27436,24 @@ class MESH_100MD extends MESH_1.MESH {
         this.writeWOResponse(command);
     }
     setHandler_(motionState, notifyMode, requestId) {
-        if (typeof this.onSensorEvent !== 'function') {
-            return;
-        }
-        if (this.requestId.isDefaultId(requestId)) {
-            // Emit Event
-            this.onSensorEvent(motionState, notifyMode);
-            return;
-        }
         // Update Inner Values
         this.requestId.received(requestId);
         this.retMotionState_ = motionState;
+        // Emit Event
+        if (typeof this.onSensorEvent !== 'function') {
+            return;
+        }
+        if (!this.requestId.isDefaultId(requestId)) {
+            return;
+        }
+        this.onSensorEvent(motionState, notifyMode);
     }
 }
 exports.default = MESH_100MD;
 MESH_100MD.PartsName = 'MESH_100MD';
 MESH_100MD.PREFIX = 'MESH-100MD';
 MESH_100MD.NotifyMode = Motion_1.Motion.NotifyMode;
+MESH_100MD.MotionState = Motion_1.Motion.MotionState;
 
 
 /***/ }),
@@ -27531,20 +27532,7 @@ class MESH_100PA extends MESH_1.MESH {
         this.meshBlock = new Brightness_1.Brightness();
         // set Event Handler
         const brightnessBlock = this.meshBlock;
-        brightnessBlock.onSensorEvent = (proximity, brightness, requestId) => {
-            if (typeof this.onSensorEvent !== 'function') {
-                return;
-            }
-            if (this.requestId.isDefaultId(requestId)) {
-                // Emit Event
-                this.onSensorEvent(proximity, brightness);
-                return;
-            }
-            // Update Inner Values
-            this.requestId.received(requestId);
-            this.proximity_ = proximity;
-            this.brightness_ = brightness;
-        };
+        brightnessBlock.onSensorEvent = (proximity, brightness, requestId) => this.setHandler_(proximity, brightness, requestId);
         super.prepareConnect();
     }
     async beforeOnDisconnectWait(reason) {
@@ -27554,6 +27542,20 @@ class MESH_100PA extends MESH_1.MESH {
         const brightnessBlock = this.meshBlock;
         const command = brightnessBlock.parseSetmodeCommand(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode, requestId);
         this.writeWOResponse(command);
+    }
+    setHandler_(proximity, brightness, requestId) {
+        // Update Inner Values
+        this.requestId.received(requestId);
+        this.proximity_ = proximity;
+        this.brightness_ = brightness;
+        // Emit Event
+        if (typeof this.onSensorEvent !== 'function') {
+            return;
+        }
+        if (!this.requestId.isDefaultId(requestId)) {
+            return;
+        }
+        this.onSensorEvent(proximity, brightness);
     }
 }
 exports.default = MESH_100PA;
@@ -27669,18 +27671,18 @@ class MESH_100TH extends MESH_1.MESH {
         this.writeWOResponse(command);
     }
     setHandler_(temperature, humidity, requestId) {
-        if (typeof this.onSensorEvent !== 'function') {
-            return;
-        }
-        if (this.requestId.isDefaultId(requestId)) {
-            // Emit Event
-            this.onSensorEvent(temperature, humidity);
-            return;
-        }
         // Update Inner Values
         this.requestId.received(requestId);
         this.retTemperature_ = temperature;
         this.retHumidity_ = humidity;
+        // Emit Event
+        if (typeof this.onSensorEvent !== 'function') {
+            return;
+        }
+        if (!this.requestId.isDefaultId(requestId)) {
+            return;
+        }
+        this.onSensorEvent(temperature, humidity);
     }
 }
 exports.default = MESH_100TH;
@@ -28382,11 +28384,6 @@ class Motion extends Base_1.Base {
         super(...arguments);
         // Event Handler
         this.onSensorEvent = null;
-        this.MotionState = {
-            SETUP: 0x00,
-            DETECTED: 0x01,
-            NOT_DETECTED: 0x02,
-        };
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
     }
@@ -28454,6 +28451,11 @@ Motion.NotifyMode = {
     NOT_DETECTED: 0x02,
     ONCE: 0x10,
     ALWAYS: 0x20,
+};
+Motion.MotionState = {
+    SETUP: 0x00,
+    DETECTED: 0x01,
+    NOT_DETECTED: 0x02,
 };
 
 

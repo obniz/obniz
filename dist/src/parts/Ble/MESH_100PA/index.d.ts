@@ -45,4 +45,5 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
     protected prepareConnect(): void;
     protected beforeOnDisconnectWait(reason: unknown): Promise<void>;
     private setMode_;
+    private setHandler_;
 }

@@ -98,18 +98,18 @@ class MESH_100TH extends MESH_1.MESH {
         this.writeWOResponse(command);
     }
     setHandler_(temperature, humidity, requestId) {
-        if (typeof this.onSensorEvent !== 'function') {
-            return;
-        }
-        if (this.requestId.isDefaultId(requestId)) {
-            // Emit Event
-            this.onSensorEvent(temperature, humidity);
-            return;
-        }
         // Update Inner Values
         this.requestId.received(requestId);
         this.retTemperature_ = temperature;
         this.retHumidity_ = humidity;
+        // Emit Event
+        if (typeof this.onSensorEvent !== 'function') {
+            return;
+        }
+        if (!this.requestId.isDefaultId(requestId)) {
+            return;
+        }
+        this.onSensorEvent(temperature, humidity);
     }
 }
 exports.default = MESH_100TH;

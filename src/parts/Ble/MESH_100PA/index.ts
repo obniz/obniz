@@ -127,20 +127,8 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
       proximity: number,
       brightness: number,
       requestId: number
-    ) => {
-      if (typeof this.onSensorEvent !== 'function') {
-        return;
-      }
-      if (this.requestId.isDefaultId(requestId)) {
-        // Emit Event
-        this.onSensorEvent(proximity, brightness);
-        return;
-      }
-      // Update Inner Values
-      this.requestId.received(requestId);
-      this.proximity_ = proximity;
-      this.brightness_ = brightness;
-    };
+    ) => this.setHandler_(proximity, brightness, requestId);
+
     super.prepareConnect();
   }
 
@@ -170,5 +158,25 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
       requestId
     );
     this.writeWOResponse(command);
+  }
+
+  private setHandler_(
+    proximity: number,
+    brightness: number,
+    requestId: number
+  ) {
+    // Update Inner Values
+    this.requestId.received(requestId);
+    this.proximity_ = proximity;
+    this.brightness_ = brightness;
+
+    // Emit Event
+    if (typeof this.onSensorEvent !== 'function') {
+      return;
+    }
+    if (!this.requestId.isDefaultId(requestId)) {
+      return;
+    }
+    this.onSensorEvent(proximity, brightness);
   }
 }

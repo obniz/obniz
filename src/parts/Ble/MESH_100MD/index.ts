@@ -23,6 +23,7 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
   public static readonly PartsName = 'MESH_100MD';
   public static readonly PREFIX = 'MESH-100MD';
   public static readonly NotifyMode = Motion.NotifyMode;
+  public static readonly MotionState = Motion.MotionState;
 
   // Event Handler
   public onSensorEvent:
@@ -145,16 +146,17 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
     notifyMode: number,
     requestId: number
   ) {
-    if (typeof this.onSensorEvent !== 'function') {
-      return;
-    }
-    if (this.requestId.isDefaultId(requestId)) {
-      // Emit Event
-      this.onSensorEvent(motionState, notifyMode);
-      return;
-    }
     // Update Inner Values
     this.requestId.received(requestId);
     this.retMotionState_ = motionState;
+
+    // Emit Event
+    if (typeof this.onSensorEvent !== 'function') {
+      return;
+    }
+    if (!this.requestId.isDefaultId(requestId)) {
+      return;
+    }
+    this.onSensorEvent(motionState, notifyMode);
   }
 }
