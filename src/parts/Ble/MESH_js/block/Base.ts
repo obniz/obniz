@@ -7,7 +7,7 @@ export class Base {
 
   // Constant Values
   public readonly UUIDS = {
-    SERVICE_ID: '72C90001-57A9-4D40-B746-534E22EC9F9E' as const,
+    SERVICE_ID: '72c90001-57a9-4d40-b746-534e22ec9f9e' as const,
     CHARACTERISTICS: {
       INDICATE: '72c90005-57a9-4d40-b746-534e22ec9f9e' as const,
       NOTIFY: '72c90003-57a9-4d40-b746-534e22ec9f9e' as const,

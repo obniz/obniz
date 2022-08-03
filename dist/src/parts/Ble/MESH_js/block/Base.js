@@ -8,7 +8,7 @@ class Base {
         this.onStatusButtonPressed = null;
         // Constant Values
         this.UUIDS = {
-            SERVICE_ID: '72C90001-57A9-4D40-B746-534E22EC9F9E',
+            SERVICE_ID: '72c90001-57a9-4d40-b746-534e22ec9f9e',
             CHARACTERISTICS: {
                 INDICATE: '72c90005-57a9-4d40-b746-534e22ec9f9e',
                 NOTIFY: '72c90003-57a9-4d40-b746-534e22ec9f9e',
