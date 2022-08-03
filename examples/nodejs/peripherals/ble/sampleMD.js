@@ -71,15 +71,28 @@ async function sampleMD(peripheral) {
      */
     // mesh_md.NotifyMode.DETECTED + mesh_md.NotifyMode.NOT_DETECTED + mesh_md.NotifyMode.ONCE + mesh_md.NotifyMode.ALWAYS;
 
-  MD_block.setMode(_notifyMode, 500, 500);
-  MD_block.onSensorEvent = ((motionState, notifyMode) => {
-    console.log(motionState, notifyMode);
-  });
+  // MD_block.setMode(_notifyMode, 500, 500);
+  // MD_block.onSensorEvent = ((motionState, notifyMode) => {
+  //   console.log(motionState, notifyMode);
+  // });
 
-  setInterval(getDataMD, 5000);
+  setInterval(getDataMD, 2000);
 }
 
 async function getDataMD() {
-  const res = await MD_block.getSensorDataWait();
-  console.log('get ' + res);
+  const motionState = await MD_block.getSensorDataWait();
+  switch (motionState) {
+    case mesh_md.MotionState.DETECTED: {
+      console.log('Detected !');
+      break;
+    }
+    case mesh_md.MotionState.NOT_DETECTED: {
+      console.log('Not Detected.');
+      break;
+    }
+    default: {
+      console.log('During Startup...');
+      break;
+    }
+  }
 }
