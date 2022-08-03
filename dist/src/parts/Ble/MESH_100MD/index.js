@@ -6,7 +6,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
-const MeshJsMd_1 = require("../MESH_js/MeshJsMd");
+const Motion_1 = require("../MESH_js/block/Motion");
 const MeshJsError_1 = require("../MESH_js/MeshJsError");
 /** MESH_100MD management class */
 class MESH_100MD extends MESH_1.MESH {
@@ -71,7 +71,7 @@ class MESH_100MD extends MESH_1.MESH {
         return name.indexOf(MESH_100MD.PREFIX) !== -1;
     }
     prepareConnect() {
-        this.meshBlock = new MeshJsMd_1.MeshJsMd();
+        this.meshBlock = new Motion_1.Motion();
         // set Event Handler
         const motionBlock = this.meshBlock;
         motionBlock.onSensorEvent = (motionState, notifyMode, requestId) => this.setHandler_(motionState, notifyMode, requestId);
@@ -102,4 +102,4 @@ class MESH_100MD extends MESH_1.MESH {
 exports.default = MESH_100MD;
 MESH_100MD.PartsName = 'MESH_100MD';
 MESH_100MD.PREFIX = 'MESH-100MD';
-MESH_100MD.NotifyMode = MeshJsMd_1.MeshJsMd.NotifyMode;
+MESH_100MD.NotifyMode = Motion_1.Motion.NotifyMode;

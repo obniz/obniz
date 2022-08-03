@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const MeshJs_1 = require("./MeshJs");
-const MeshJsError_1 = require("./MeshJsError");
-class MeshJsMd extends MeshJs_1.MeshJs {
+const Base_1 = require("./Base");
+const MeshJsError_1 = require("../MeshJsError");
+class Motion extends Base_1.Base {
     constructor() {
         super(...arguments);
         // Event Handler
@@ -78,9 +78,9 @@ class MeshJsMd extends MeshJs_1.MeshJs {
         return true;
     }
 }
-exports.MeshJsMd = MeshJsMd;
+exports.Motion = Motion;
 // Constant Values
-MeshJsMd.NotifyMode = {
+Motion.NotifyMode = {
     DETECTED: 0x01,
     NOT_DETECTED: 0x02,
     ONCE: 0x10,

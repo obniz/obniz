@@ -1,11 +1,11 @@
-import { MeshJs } from './MeshJs';
-export class MeshJsAc extends MeshJs {
+import { Base } from './Base';
+export class Move extends Base {
   // Event Handler
-  public onTapped: ((accele: MeshJsAc['accele']) => void) | null = null;
-  public onShaked: ((accele: MeshJsAc['accele']) => void) | null = null;
-  public onFlipped: ((accele: MeshJsAc['accele']) => void) | null = null;
+  public onTapped: ((accele: Move['accele']) => void) | null = null;
+  public onShaked: ((accele: Move['accele']) => void) | null = null;
+  public onFlipped: ((accele: Move['accele']) => void) | null = null;
   public onOrientationChanged:
-    | ((face: number, accele: MeshJsAc['accele']) => void)
+    | ((face: number, accele: Move['accele']) => void)
     | null = null;
 
   protected accele = { x: 0, y: 0, z: 0 };

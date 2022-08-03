@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const MeshJs_1 = require("./MeshJs");
-const MeshJsError_1 = require("./MeshJsError");
-class MeshJsTh extends MeshJs_1.MeshJs {
+const Base_1 = require("./Base");
+const MeshJsError_1 = require("../MeshJsError");
+class TempHumid extends Base_1.Base {
     constructor() {
         super(...arguments);
         // Event Handler
@@ -13,14 +13,14 @@ class MeshJsTh extends MeshJs_1.MeshJs {
         this.TEMPERATURE_MIN_ = -10;
         this.HUMIDITY_MAX_ = 100;
         this.HUMIDITY_MIN_ = 0;
-        this.NOTIFY_MODE_MIN_ = MeshJsTh.NotifyMode.STOP;
-        this.NOTIFY_MODE_MAX_ = MeshJsTh.NotifyMode.STOP +
-            MeshJsTh.NotifyMode.EMIT_TEMPERATURE +
-            MeshJsTh.NotifyMode.EMIT_HUMIDITY +
-            MeshJsTh.NotifyMode.UPDATE_TEMPERATURE +
-            MeshJsTh.NotifyMode.UPDATE_HUMIDITY +
-            MeshJsTh.NotifyMode.ONCE +
-            MeshJsTh.NotifyMode.ALWAYS;
+        this.NOTIFY_MODE_MIN_ = TempHumid.NotifyMode.STOP;
+        this.NOTIFY_MODE_MAX_ = TempHumid.NotifyMode.STOP +
+            TempHumid.NotifyMode.EMIT_TEMPERATURE +
+            TempHumid.NotifyMode.EMIT_HUMIDITY +
+            TempHumid.NotifyMode.UPDATE_TEMPERATURE +
+            TempHumid.NotifyMode.UPDATE_HUMIDITY +
+            TempHumid.NotifyMode.ONCE +
+            TempHumid.NotifyMode.ALWAYS;
     }
     /**
      *
@@ -108,7 +108,7 @@ class MeshJsTh extends MeshJs_1.MeshJs {
     }
     checkEmitCondition_(target, name) {
         let _isExist = false;
-        Object.entries(MeshJsTh.EmitCondition).forEach(([, value]) => {
+        Object.entries(TempHumid.EmitCondition).forEach(([, value]) => {
             if (target === value) {
                 _isExist = true;
             }
@@ -125,15 +125,15 @@ class MeshJsTh extends MeshJs_1.MeshJs {
         return true;
     }
 }
-exports.MeshJsTh = MeshJsTh;
+exports.TempHumid = TempHumid;
 // Constant Values
-MeshJsTh.EmitCondition = {
+TempHumid.EmitCondition = {
     ABOVE_UPPER_AND_BELOW_BOTTOM: 0,
     ABOVE_UPPER_AND_ABOVE_BOTTOM: 1,
     BELOW_UPPER_AND_BELOW_BOTTOM: 16,
     BELOW_UPPER_AND_ABOVE_BOTTOM: 17,
 };
-MeshJsTh.NotifyMode = {
+TempHumid.NotifyMode = {
     STOP: 0,
     EMIT_TEMPERATURE: 1,
     EMIT_HUMIDITY: 2,

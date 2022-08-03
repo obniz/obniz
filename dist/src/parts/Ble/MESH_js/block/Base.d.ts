@@ -1,4 +1,4 @@
-export declare class MeshJs {
+export declare class Base {
     onBatteryLevel: ((battery: number) => void) | null;
     onStatusButtonPressed: (() => void) | null;
     readonly UUIDS: {

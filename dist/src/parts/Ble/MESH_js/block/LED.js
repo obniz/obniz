@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const MeshJs_1 = require("./MeshJs");
-const MeshJsError_1 = require("./MeshJsError");
-class MeshJsLe extends MeshJs_1.MeshJs {
+const Base_1 = require("./Base");
+const MeshJsError_1 = require("../MeshJsError");
+class LED extends Base_1.Base {
     constructor() {
         super(...arguments);
         this.colors = { red: 0, green: 0, blue: 0 };
@@ -40,8 +40,7 @@ class MeshJsLe extends MeshJs_1.MeshJs {
         if (cycleOffTime < TIME_MIN || TIME_MAX < cycleOffTime) {
             throw new MeshJsError_1.MeshJsOutOfRangeError('cycle_off', TIME_MIN, TIME_MAX);
         }
-        if (pattern !== MeshJsLe.PATTERN.BLINK &&
-            pattern !== MeshJsLe.PATTERN.FIREFLY) {
+        if (pattern !== LED.PATTERN.BLINK && pattern !== LED.PATTERN.FIREFLY) {
             throw new MeshJsError_1.MeshJsInvalidValueError('pattern');
         }
         // Generate Command
@@ -69,9 +68,9 @@ class MeshJsLe extends MeshJs_1.MeshJs {
         return data;
     }
 }
-exports.MeshJsLe = MeshJsLe;
+exports.LED = LED;
 // Constant Values
-MeshJsLe.PATTERN = {
+LED.PATTERN = {
     BLINK: 1,
     FIREFLY: 2,
 };

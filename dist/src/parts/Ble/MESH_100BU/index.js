@@ -6,7 +6,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
-const MeshJsBu_1 = require("../MESH_js/MeshJsBu");
+const Button_1 = require("../MESH_js/block/Button");
 /** MESH_100BU management class */
 class MESH_100BU extends MESH_1.MESH {
     constructor() {
@@ -28,7 +28,7 @@ class MESH_100BU extends MESH_1.MESH {
         return name.indexOf(MESH_100BU.PREFIX) !== -1;
     }
     prepareConnect() {
-        this.meshBlock = new MeshJsBu_1.MeshJsBu();
+        this.meshBlock = new Button_1.Button();
         const buttonBlock = this.meshBlock;
         buttonBlock.onSinglePressed = () => {
             if (typeof this.onSinglePressed !== 'function') {

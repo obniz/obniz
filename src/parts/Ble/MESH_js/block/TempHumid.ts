@@ -1,6 +1,6 @@
-import { MeshJs } from './MeshJs';
-import { MeshJsInvalidValueError, MeshJsOutOfRangeError } from './MeshJsError';
-export class MeshJsTh extends MeshJs {
+import { Base } from './Base';
+import { MeshJsInvalidValueError, MeshJsOutOfRangeError } from '../MeshJsError';
+export class TempHumid extends Base {
   // Event Handler
   public onSensorEvent:
     | ((temperature: number, humidity: number, requestId: number) => void)
@@ -28,15 +28,15 @@ export class MeshJsTh extends MeshJs {
   private readonly TEMPERATURE_MIN_ = -10 as const;
   private readonly HUMIDITY_MAX_ = 100 as const;
   private readonly HUMIDITY_MIN_ = 0 as const;
-  private readonly NOTIFY_MODE_MIN_ = MeshJsTh.NotifyMode.STOP;
+  private readonly NOTIFY_MODE_MIN_ = TempHumid.NotifyMode.STOP;
   private readonly NOTIFY_MODE_MAX_ =
-    MeshJsTh.NotifyMode.STOP +
-    MeshJsTh.NotifyMode.EMIT_TEMPERATURE +
-    MeshJsTh.NotifyMode.EMIT_HUMIDITY +
-    MeshJsTh.NotifyMode.UPDATE_TEMPERATURE +
-    MeshJsTh.NotifyMode.UPDATE_HUMIDITY +
-    MeshJsTh.NotifyMode.ONCE +
-    MeshJsTh.NotifyMode.ALWAYS;
+    TempHumid.NotifyMode.STOP +
+    TempHumid.NotifyMode.EMIT_TEMPERATURE +
+    TempHumid.NotifyMode.EMIT_HUMIDITY +
+    TempHumid.NotifyMode.UPDATE_TEMPERATURE +
+    TempHumid.NotifyMode.UPDATE_HUMIDITY +
+    TempHumid.NotifyMode.ONCE +
+    TempHumid.NotifyMode.ALWAYS;
 
   /**
    *
@@ -177,7 +177,7 @@ export class MeshJsTh extends MeshJs {
 
   private checkEmitCondition_(target: number, name: string) {
     let _isExist = false;
-    Object.entries(MeshJsTh.EmitCondition).forEach(([, value]) => {
+    Object.entries(TempHumid.EmitCondition).forEach(([, value]) => {
       if (target === value) {
         _isExist = true;
       }

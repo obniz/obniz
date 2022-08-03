@@ -1,6 +1,6 @@
 import { ObnizPartsBleConnectable } from '../../../../obniz/ObnizPartsBleAbstract';
 import BleRemotePeripheral from '../../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import { MeshJs } from '../../MESH_js/MeshJs';
+import { Base } from '../../MESH_js/block/Base';
 export declare abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
     onBatteryLevel: ((battery: number) => void) | null;
     onStatusButtonPressed: (() => void) | null;
@@ -8,7 +8,7 @@ export declare abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> 
     static AvailableBleMode: "Connectable";
     private static readonly LOCAL_NAME_LENGTH_;
     protected static PREFIX: string;
-    protected meshBlock: MeshJs;
+    protected meshBlock: Base;
     protected requestId: MeshRequestId;
     private indicateCharacteristic_;
     private notifyCharacteristic_;

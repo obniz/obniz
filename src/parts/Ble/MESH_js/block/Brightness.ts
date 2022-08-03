@@ -1,6 +1,6 @@
-import { MeshJs } from './MeshJs';
-import { MeshJsInvalidValueError, MeshJsOutOfRangeError } from './MeshJsError';
-export class MeshJsPa extends MeshJs {
+import { Base } from './Base';
+import { MeshJsInvalidValueError, MeshJsOutOfRangeError } from '../MeshJsError';
+export class Brightness extends Base {
   // Event Handler
   public onSensorEvent:
     | ((proximity: number, brightness: number, requestId: number) => void)
@@ -24,15 +24,15 @@ export class MeshJsPa extends MeshJs {
   } as const;
   private readonly RANGE_MIN = 0 as const;
   private readonly RANGE_MAX = 65535 as const;
-  private readonly NOTIFY_MODE_MIN_ = MeshJsPa.NotifyMode.STOP;
+  private readonly NOTIFY_MODE_MIN_ = Brightness.NotifyMode.STOP;
   private readonly NOTIFY_MODE_MAX_ =
-    MeshJsPa.NotifyMode.STOP +
-    MeshJsPa.NotifyMode.EMIT_PROXIMITY +
-    MeshJsPa.NotifyMode.EMIT_BRIGHTNESS +
-    MeshJsPa.NotifyMode.UPDATE_PROXIMITY +
-    MeshJsPa.NotifyMode.UPDATE_BRIGHTNESS +
-    MeshJsPa.NotifyMode.ONCE +
-    MeshJsPa.NotifyMode.ALWAYS;
+    Brightness.NotifyMode.STOP +
+    Brightness.NotifyMode.EMIT_PROXIMITY +
+    Brightness.NotifyMode.EMIT_BRIGHTNESS +
+    Brightness.NotifyMode.UPDATE_PROXIMITY +
+    Brightness.NotifyMode.UPDATE_BRIGHTNESS +
+    Brightness.NotifyMode.ONCE +
+    Brightness.NotifyMode.ALWAYS;
   private readonly MESSAGE_TYPE_ID_: number = 1 as const;
   private readonly EVENT_TYPE_ID_: number = 0 as const;
 
@@ -126,7 +126,7 @@ export class MeshJsPa extends MeshJs {
 
   private checkEmitCondition_(target: number, name: string) {
     let _isExist = false;
-    Object.entries(MeshJsPa.EmitCondition).forEach(([key, value]) => {
+    Object.entries(Brightness.EmitCondition).forEach(([key, value]) => {
       if (target === value) {
         _isExist = true;
       }

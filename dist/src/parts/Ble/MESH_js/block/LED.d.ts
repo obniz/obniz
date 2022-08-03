@@ -1,5 +1,5 @@
-import { MeshJs } from './MeshJs';
-export declare class MeshJsLe extends MeshJs {
+import { Base } from './Base';
+export declare class LED extends Base {
     static readonly PATTERN: {
         readonly BLINK: 1;
         readonly FIREFLY: 2;
@@ -18,5 +18,5 @@ export declare class MeshJsLe extends MeshJs {
      * @param pattern
      * @returns
      */
-    parseLedCommand(colors: MeshJsLe['colors'], totalTime: number, cycleOnTime: number, cycleOffTime: number, pattern: number): number[];
+    parseLedCommand(colors: LED['colors'], totalTime: number, cycleOnTime: number, cycleOffTime: number, pattern: number): number[];
 }

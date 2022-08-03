@@ -1,5 +1,5 @@
-import { MeshJs } from './MeshJs';
-export declare class MeshJsGp extends MeshJs {
+import { Base } from './Base';
+export declare class GPIO extends Base {
     onDigitalInputEvent: ((pin: number, state: number) => void) | null;
     onAnalogInputEvent: ((level: number) => void) | null;
     onDigitalInput: ((requestId: number, pin: number, state: number) => void) | null;
@@ -73,7 +73,7 @@ export declare class MeshJsGp extends MeshJs {
      * @param analogInputNotify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
      * @returns command
      */
-    parseSetmodeCommand(digitalInputLow2High: MeshJsGp['DigitalPins'], digitalInputHigh2Low: MeshJsGp['DigitalPins'], digitalOutput: MeshJsGp['DigitalPins'], pwmRatio: number, vcc: number, analogInputRangeUpper: number, analogInputRangeBottom: number, analogInputNotify: number): number[];
+    parseSetmodeCommand(digitalInputLow2High: GPIO['DigitalPins'], digitalInputHigh2Low: GPIO['DigitalPins'], digitalOutput: GPIO['DigitalPins'], pwmRatio: number, vcc: number, analogInputRangeUpper: number, analogInputRangeBottom: number, analogInputNotify: number): number[];
     /**
      * parseSetDinCommand
      *
@@ -81,7 +81,7 @@ export declare class MeshJsGp extends MeshJs {
      * @param opt_requestId
      * @returns
      */
-    parseSetDinCommand(pin: number, opt_requestId?: number): number[];
+    parseDigitalInputCommand(pin: number, opt_requestId?: number): number[];
     /**
      * parseSetAinCommand
      *
@@ -89,14 +89,14 @@ export declare class MeshJsGp extends MeshJs {
      * @param requestId
      * @returns
      */
-    parseSetAinCommand(analogInputNotifyMode: number, requestId?: number): number[];
+    parseAnalogInputCommand(analogInputNotifyMode: number, requestId?: number): number[];
     /**
      * parseSetVOutputCommand
      *
      * @param requestId
      * @returns
      */
-    parseSetVOutputCommand(requestId?: number): number[];
+    parseVOutputCommand(requestId?: number): number[];
     /**
      * parseSetDoutCommand
      *
@@ -104,15 +104,15 @@ export declare class MeshJsGp extends MeshJs {
      * @param requestId
      * @returns
      */
-    parseSetDoutCommand(pin: number, requestId?: number): number[];
+    parseDigitalOutputCommand(pin: number, requestId?: number): number[];
     /**
      * parseSetPWMCommand
      *
      * @param requestId
      * @returns
      */
-    parseSetPWMCommand(requestId?: number): number[];
-    private parseSetCommand_;
-    private pin2num;
+    parsePwmCommand(requestId?: number): number[];
+    private parseCommand_;
+    private pin2num_;
     private checkRange_;
 }

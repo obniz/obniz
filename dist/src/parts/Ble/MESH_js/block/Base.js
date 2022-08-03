@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const MeshJsError_1 = require("./MeshJsError");
-class MeshJs {
+const MeshJsError_1 = require("../MeshJsError");
+class Base {
     constructor() {
         // Event Handler
         this.onBatteryLevel = null;
@@ -129,4 +129,4 @@ class MeshJs {
         }
     }
 }
-exports.MeshJs = MeshJs;
+exports.Base = Base;

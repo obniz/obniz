@@ -3,7 +3,7 @@
  * @module Parts.MESH_100LE
  */
 import { MESH } from '../utils/abstracts/MESH';
-import { MeshJsLe } from '../MESH_js/MeshJsLe';
+import { LED } from '../MESH_js/block/LED';
 export interface MESH_100LEOptions {
 }
 export interface MESH_100LE_Data {
@@ -18,7 +18,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
         readonly BLINK: 1;
         readonly FIREFLY: 2;
     };
-    colors: MeshJsLe['colors'];
+    colors: LED['colors'];
     protected readonly staticClass: typeof MESH_100LE;
     getDataWait(): Promise<{
         name: string;

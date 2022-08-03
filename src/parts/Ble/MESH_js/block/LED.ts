@@ -1,6 +1,6 @@
-import { MeshJs } from './MeshJs';
-import { MeshJsInvalidValueError, MeshJsOutOfRangeError } from './MeshJsError';
-export class MeshJsLe extends MeshJs {
+import { Base } from './Base';
+import { MeshJsInvalidValueError, MeshJsOutOfRangeError } from '../MeshJsError';
+export class LED extends Base {
   // Constant Values
   public static readonly PATTERN = {
     BLINK: 1 as const,
@@ -19,7 +19,7 @@ export class MeshJsLe extends MeshJs {
    * @returns
    */
   public parseLedCommand(
-    colors: MeshJsLe['colors'],
+    colors: LED['colors'],
     totalTime: number,
     cycleOnTime: number,
     cycleOffTime: number,
@@ -48,10 +48,7 @@ export class MeshJsLe extends MeshJs {
     if (cycleOffTime < TIME_MIN || TIME_MAX < cycleOffTime) {
       throw new MeshJsOutOfRangeError('cycle_off', TIME_MIN, TIME_MAX);
     }
-    if (
-      pattern !== MeshJsLe.PATTERN.BLINK &&
-      pattern !== MeshJsLe.PATTERN.FIREFLY
-    ) {
+    if (pattern !== LED.PATTERN.BLINK && pattern !== LED.PATTERN.FIREFLY) {
       throw new MeshJsInvalidValueError('pattern');
     }
 

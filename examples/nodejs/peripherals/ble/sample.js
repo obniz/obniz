@@ -1,6 +1,5 @@
 // const Obniz = require('obniz');
 const Obniz = require('../../../../index.js'); // local
-const fetch = require('node-fetch');
 const mesh_bu = Obniz.getPartsClass('MESH_100BU');
 const MESH_100LE = Obniz.getPartsClass('MESH_100LE');
 const mesh_ac = Obniz.getPartsClass('MESH_100AC');

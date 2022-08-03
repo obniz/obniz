@@ -5,7 +5,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { MESH } from '../utils/abstracts/MESH';
-import { MeshJsTh } from '../MESH_js/MeshJsTh';
+import { TempHumid } from '../MESH_js/block/TempHumid';
 import { MeshJsTimeOutError } from '../MESH_js/MeshJsError';
 
 export interface MESH_100THOptions {}
@@ -23,8 +23,8 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
   public static readonly PartsName = 'MESH_100TH';
   public static readonly PREFIX = 'MESH-100TH';
 
-  public static readonly NotifyMode = MeshJsTh.NotifyMode;
-  public static readonly EmitCondition = MeshJsTh.EmitCondition;
+  public static readonly NotifyMode = TempHumid.NotifyMode;
+  public static readonly EmitCondition = TempHumid.EmitCondition;
 
   // Event Handler
   public onSensorEvent:
@@ -47,7 +47,7 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
 
   public async getDataWait() {
     this.checkConnected();
-    const _th = this.meshBlock as MeshJsTh;
+    const _th = this.meshBlock as TempHumid;
     return {
       name: this.peripheral.localName!,
       address: this.peripheral.address,
@@ -134,8 +134,8 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
   }
 
   protected prepareConnect(): void {
-    this.meshBlock = new MeshJsTh();
-    const temperatureAndHumidityBlock = this.meshBlock as MeshJsTh;
+    this.meshBlock = new TempHumid();
+    const temperatureAndHumidityBlock = this.meshBlock as TempHumid;
 
     // set Event Handler
     temperatureAndHumidityBlock.onSensorEvent = (
@@ -161,7 +161,7 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
     notifyMode: number,
     requestId: number
   ): void {
-    const temperatureAndHumidityBlock = this.meshBlock as MeshJsTh;
+    const temperatureAndHumidityBlock = this.meshBlock as TempHumid;
     const command = temperatureAndHumidityBlock.parseSetmodeCommand(
       temperatureUpper,
       temperatureBottom,

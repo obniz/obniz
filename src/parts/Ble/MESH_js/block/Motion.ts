@@ -1,6 +1,6 @@
-import { MeshJs } from './MeshJs';
-import { MeshJsOutOfRangeError } from './MeshJsError';
-export class MeshJsMd extends MeshJs {
+import { Base } from './Base';
+import { MeshJsOutOfRangeError } from '../MeshJsError';
+export class Motion extends Base {
   // Event Handler
   public onSensorEvent:
     | ((motionState: number, notifyMode: number, requestId: number) => void)

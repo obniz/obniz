@@ -1,6 +1,6 @@
-import { MeshBlockVersionError, MeshJsInvalidValueError } from './MeshJsError';
+import { MeshBlockVersionError, MeshJsInvalidValueError } from '../MeshJsError';
 
-export class MeshJs {
+export class Base {
   // Event Handler
   public onBatteryLevel: ((battery: number) => void) | null = null;
   public onStatusButtonPressed: (() => void) | null = null;

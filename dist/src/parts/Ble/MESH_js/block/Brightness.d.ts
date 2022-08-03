@@ -1,5 +1,5 @@
-import { MeshJs } from './MeshJs';
-export declare class MeshJsPa extends MeshJs {
+import { Base } from './Base';
+export declare class Brightness extends Base {
     onSensorEvent: ((proximity: number, brightness: number, requestId: number) => void) | null;
     static readonly EmitCondition: {
         ABOVE_UPPER_AND_BELOW_BOTTOM: 0;

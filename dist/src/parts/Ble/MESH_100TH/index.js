@@ -6,7 +6,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
-const MeshJsTh_1 = require("../MESH_js/MeshJsTh");
+const TempHumid_1 = require("../MESH_js/block/TempHumid");
 const MeshJsError_1 = require("../MESH_js/MeshJsError");
 /** MESH_100TH management class */
 class MESH_100TH extends MESH_1.MESH {
@@ -83,7 +83,7 @@ class MESH_100TH extends MESH_1.MESH {
         return name.indexOf(MESH_100TH.PREFIX) !== -1;
     }
     prepareConnect() {
-        this.meshBlock = new MeshJsTh_1.MeshJsTh();
+        this.meshBlock = new TempHumid_1.TempHumid();
         const temperatureAndHumidityBlock = this.meshBlock;
         // set Event Handler
         temperatureAndHumidityBlock.onSensorEvent = (temperature, humidity, requestId) => this.setHandler_(temperature, humidity, requestId);
@@ -115,5 +115,5 @@ class MESH_100TH extends MESH_1.MESH {
 exports.default = MESH_100TH;
 MESH_100TH.PartsName = 'MESH_100TH';
 MESH_100TH.PREFIX = 'MESH-100TH';
-MESH_100TH.NotifyMode = MeshJsTh_1.MeshJsTh.NotifyMode;
-MESH_100TH.EmitCondition = MeshJsTh_1.MeshJsTh.EmitCondition;
+MESH_100TH.NotifyMode = TempHumid_1.TempHumid.NotifyMode;
+MESH_100TH.EmitCondition = TempHumid_1.TempHumid.EmitCondition;
