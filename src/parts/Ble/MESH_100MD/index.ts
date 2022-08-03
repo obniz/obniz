@@ -5,8 +5,8 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { MESH } from '../utils/abstracts/MESH';
-import { MeshJsMd } from '../MESH_js/MeshJsMd';
-import { MeshJsTimeOutError } from '../MESH_js/MeshJsError';
+import { Motion } from '../MESH_js/block/Motion';
+import { MESHJsTimeOutError } from '../MESH_js/util/Error';
 
 export interface MESH_100MDOptions {}
 
@@ -22,7 +22,7 @@ export interface MESH_100MD_Data {
 export default class MESH_100MD extends MESH<MESH_100MD_Data> {
   public static readonly PartsName = 'MESH_100MD';
   public static readonly PREFIX = 'MESH-100MD';
-  public static readonly NotifyMode = MeshJsMd.NotifyMode;
+  public static readonly NotifyMode = Motion.NotifyMode;
 
   // Event Handler
   public onSensorEvent:
@@ -38,7 +38,7 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
 
   public async getDataWait() {
     this.checkConnected();
-    const motionBlock = this.meshBlock as MeshJsMd;
+    const motionBlock = this.meshBlock as Motion;
     return {
       name: this.peripheral!.localName!,
       address: this.peripheral.address,
@@ -81,7 +81,7 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
       this.setMode(this.notifyMode_, this.detectionTime_, this.responseTime_);
     }
     if (_result == null) {
-      throw new MeshJsTimeOutError(this.peripheral.localName!);
+      throw new MESHJsTimeOutError(this.peripheral.localName!);
     }
     return _result;
   }
@@ -107,10 +107,10 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
   }
 
   protected prepareConnect(): void {
-    this.meshBlock = new MeshJsMd();
+    this.meshBlock = new Motion();
 
     // set Event Handler
-    const motionBlock = this.meshBlock as MeshJsMd;
+    const motionBlock = this.meshBlock as Motion;
     motionBlock.onSensorEvent = (
       motionState: number,
       notifyMode: number,
@@ -130,7 +130,7 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
     responseTime: number,
     requestId: number
   ): void {
-    const motionBlock = this.meshBlock as MeshJsMd;
+    const motionBlock = this.meshBlock as Motion;
     const command = motionBlock.parseSetmodeCommand(
       notifyMode,
       detectionTime,

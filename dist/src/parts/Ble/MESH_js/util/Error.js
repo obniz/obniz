@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class MeshJsError extends Error {
+class MESHJsError extends Error {
     constructor(code, e) {
         super(e);
         this.code = code;
@@ -8,8 +8,8 @@ class MeshJsError extends Error {
         Object.setPrototypeOf(this, new.target.prototype);
     }
 }
-exports.MeshJsError = MeshJsError;
-class MeshBlockVersionError extends MeshJsError {
+exports.MESHJsError = MESHJsError;
+class MESHJsBlockVersionError extends MESHJsError {
     constructor(major, minor, release) {
         super(1, 'please UPDATE block version to 1.2.5 more. (current block version ' +
             major +
@@ -21,8 +21,8 @@ class MeshBlockVersionError extends MeshJsError {
         this.major = major;
     }
 }
-exports.MeshBlockVersionError = MeshBlockVersionError;
-class MeshJsOutOfRangeError extends MeshJsError {
+exports.MESHJsBlockVersionError = MESHJsBlockVersionError;
+class MESHJsOutOfRangeError extends MESHJsError {
     constructor(property, min, max) {
         super(2, property +
             ' is out of range. ' +
@@ -35,18 +35,18 @@ class MeshJsOutOfRangeError extends MeshJsError {
         this.property = property;
     }
 }
-exports.MeshJsOutOfRangeError = MeshJsOutOfRangeError;
-class MeshJsInvalidValueError extends MeshJsError {
+exports.MESHJsOutOfRangeError = MESHJsOutOfRangeError;
+class MESHJsInvalidValueError extends MESHJsError {
     constructor(property) {
         super(3, property + ' is invalid value.');
         this.property = property;
     }
 }
-exports.MeshJsInvalidValueError = MeshJsInvalidValueError;
-class MeshJsTimeOutError extends MeshJsError {
+exports.MESHJsInvalidValueError = MESHJsInvalidValueError;
+class MESHJsTimeOutError extends MESHJsError {
     constructor(property) {
         super(4, property + ' is time out.');
         this.property = property;
     }
 }
-exports.MeshJsTimeOutError = MeshJsTimeOutError;
+exports.MESHJsTimeOutError = MESHJsTimeOutError;

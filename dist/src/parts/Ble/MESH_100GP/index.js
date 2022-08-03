@@ -6,14 +6,14 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
-const MeshJsGp_1 = require("../MESH_js/MeshJsGp");
-const MeshJsError_1 = require("../MESH_js/MeshJsError");
+const GPIO_1 = require("../MESH_js/block/GPIO");
+const Error_1 = require("../MESH_js/util/Error");
 /** MESH_100GP management class */
 class MESH_100GP extends MESH_1.MESH {
     constructor() {
         super(...arguments);
-        this.DigitalPins = this
-            .meshBlock.DigitalPins;
+        this.DigitalPins = this.meshBlock
+            .DigitalPins;
         // Event Handler
         this.onDigitalInputEvent = null;
         this.onAnalogInputEvent = null;
@@ -47,7 +47,7 @@ class MESH_100GP extends MESH_1.MESH {
     async getDigitalInputDataWait(pin) {
         const _requestId = this.requestId.next();
         const _gpioBlock = this.meshBlock;
-        const _command = _gpioBlock.parseSetDinCommand(pin, _requestId);
+        const _command = _gpioBlock.parseDigitalInputCommand(pin, _requestId);
         await this.getSensorDataWait(_requestId, _command);
         return this.retDigitalInState_;
     }
@@ -58,7 +58,7 @@ class MESH_100GP extends MESH_1.MESH {
     async getAnalogInputDataWait() {
         const _requestId = this.requestId.next();
         const _gpioBlock = this.meshBlock;
-        const _command = _gpioBlock.parseSetAinCommand(MESH_100GP.AnalogInputNotifyMode.ONCE, _requestId);
+        const _command = _gpioBlock.parseAnalogInputCommand(MESH_100GP.AnalogInputNotifyMode.ONCE, _requestId);
         await this.getSensorDataWait(_requestId, _command);
         return this.retLevel_;
     }
@@ -69,7 +69,7 @@ class MESH_100GP extends MESH_1.MESH {
     async getVOutputDataWait() {
         const _requestId = this.requestId.next();
         const _gpioBlock = this.meshBlock;
-        const _command = _gpioBlock.parseSetVOutputCommand(_requestId);
+        const _command = _gpioBlock.parseVOutputCommand(_requestId);
         await this.getSensorDataWait(_requestId, _command);
         return this.retVccState_;
     }
@@ -81,7 +81,7 @@ class MESH_100GP extends MESH_1.MESH {
     async getDigitalOutputDataWait(pin) {
         const _requestId = this.requestId.next();
         const _gpioBlock = this.meshBlock;
-        const _command = _gpioBlock.parseSetDoutCommand(pin, _requestId);
+        const _command = _gpioBlock.parseDigitalOutputCommand(pin, _requestId);
         await this.getSensorDataWait(_requestId, _command);
         return this.retDigitalOutState_;
     }
@@ -92,7 +92,7 @@ class MESH_100GP extends MESH_1.MESH {
     async getPwmDataWait() {
         const _requestId = this.requestId.next();
         const _gpioBlock = this.meshBlock;
-        const _command = _gpioBlock.parseSetPWMCommand(_requestId);
+        const _command = _gpioBlock.parsePwmCommand(_requestId);
         await this.getSensorDataWait(_requestId, _command);
         return this.retPwm_;
     }
@@ -186,7 +186,7 @@ class MESH_100GP extends MESH_1.MESH {
         return name.indexOf(MESH_100GP.PREFIX) !== -1;
     }
     prepareConnect() {
-        this.meshBlock = new MeshJsGp_1.MeshJsGp();
+        this.meshBlock = new GPIO_1.GPIO();
         const gpioBlock = this.meshBlock;
         gpioBlock.onDigitalInputEvent = (pin, state) => {
             if (typeof this.onDigitalInputEvent !== 'function') {
@@ -274,7 +274,7 @@ class MESH_100GP extends MESH_1.MESH {
             }, INTERVAL_TIME);
         });
         if (_result == null) {
-            throw new MeshJsError_1.MeshJsTimeOutError(this.peripheral.localName);
+            throw new Error_1.MESHJsTimeOutError(this.peripheral.localName);
         }
         return _result;
     }
@@ -282,10 +282,10 @@ class MESH_100GP extends MESH_1.MESH {
 exports.default = MESH_100GP;
 MESH_100GP.PartsName = 'MESH_100GP';
 MESH_100GP.PREFIX = 'MESH-100GP';
-MESH_100GP.AnalogInEventCondition = MeshJsGp_1.MeshJsGp.AnalogInEventCondition;
-MESH_100GP.AnalogInputNotifyMode = MeshJsGp_1.MeshJsGp.AnalogInputNotifyMode;
-MESH_100GP.Pin = MeshJsGp_1.MeshJsGp.Pin;
-MESH_100GP.State = MeshJsGp_1.MeshJsGp.State;
-MESH_100GP.DigitalInputState = MeshJsGp_1.MeshJsGp.DigitalInputState;
-MESH_100GP.Vcc = MeshJsGp_1.MeshJsGp.Vcc;
-MESH_100GP.VccState = MeshJsGp_1.MeshJsGp.VccState;
+MESH_100GP.AnalogInEventCondition = GPIO_1.GPIO.AnalogInEventCondition;
+MESH_100GP.AnalogInputNotifyMode = GPIO_1.GPIO.AnalogInputNotifyMode;
+MESH_100GP.Pin = GPIO_1.GPIO.Pin;
+MESH_100GP.State = GPIO_1.GPIO.State;
+MESH_100GP.DigitalInputState = GPIO_1.GPIO.DigitalInputState;
+MESH_100GP.Vcc = GPIO_1.GPIO.Vcc;
+MESH_100GP.VccState = GPIO_1.GPIO.VccState;

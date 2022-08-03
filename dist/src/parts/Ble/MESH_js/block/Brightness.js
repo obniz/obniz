@@ -1,22 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const MeshJs_1 = require("./MeshJs");
-const MeshJsError_1 = require("./MeshJsError");
-class MeshJsPa extends MeshJs_1.MeshJs {
+const Base_1 = require("./Base");
+const Error_1 = require("../util/Error");
+class Brightness extends Base_1.Base {
     constructor() {
         super(...arguments);
         // Event Handler
         this.onSensorEvent = null;
         this.RANGE_MIN = 0;
         this.RANGE_MAX = 65535;
-        this.NOTIFY_MODE_MIN_ = MeshJsPa.NotifyMode.STOP;
-        this.NOTIFY_MODE_MAX_ = MeshJsPa.NotifyMode.STOP +
-            MeshJsPa.NotifyMode.EMIT_PROXIMITY +
-            MeshJsPa.NotifyMode.EMIT_BRIGHTNESS +
-            MeshJsPa.NotifyMode.UPDATE_PROXIMITY +
-            MeshJsPa.NotifyMode.UPDATE_BRIGHTNESS +
-            MeshJsPa.NotifyMode.ONCE +
-            MeshJsPa.NotifyMode.ALWAYS;
+        this.NOTIFY_MODE_MIN_ = Brightness.NotifyMode.STOP;
+        this.NOTIFY_MODE_MAX_ = Brightness.NotifyMode.STOP +
+            Brightness.NotifyMode.EMIT_PROXIMITY +
+            Brightness.NotifyMode.EMIT_BRIGHTNESS +
+            Brightness.NotifyMode.UPDATE_PROXIMITY +
+            Brightness.NotifyMode.UPDATE_BRIGHTNESS +
+            Brightness.NotifyMode.ONCE +
+            Brightness.NotifyMode.ALWAYS;
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
     }
@@ -57,10 +57,10 @@ class MeshJsPa extends MeshJs_1.MeshJs {
         const _brightnessRangeUpper = brightnessRangeUpper / LX;
         const _brightnessRangeBottom = brightnessRangeBottom / LX;
         // Error Handle
-        this.checkRange_(proximityRangeUpper, 'proximityRangeUpper');
-        this.checkRange_(proximityRangeBottom, 'proximityRangeBottom');
-        this.checkRange_(_brightnessRangeUpper, 'brightnessRangeUpper/' + LX);
-        this.checkRange_(_brightnessRangeBottom, 'brightnessRangeBottom/' + LX);
+        this.checkRange(proximityRangeUpper, this.RANGE_MIN, this.RANGE_MAX, 'proximityRangeUpper');
+        this.checkRange(proximityRangeBottom, this.RANGE_MIN, this.RANGE_MAX, 'proximityRangeBottom');
+        this.checkRange(_brightnessRangeUpper, this.RANGE_MIN, this.RANGE_MAX, 'brightnessRangeUpper/' + LX);
+        this.checkRange(_brightnessRangeBottom, this.RANGE_MIN, this.RANGE_MAX, 'brightnessRangeBottom/' + LX);
         this.checkEmitCondition_(proximityCondition, 'proximityCondition');
         this.checkEmitCondition_(brightnessCondition, 'brightnessCondition');
         this.checkNotifyMode_(notifyMode);
@@ -86,15 +86,9 @@ class MeshJsPa extends MeshJs_1.MeshJs {
         data.push(this.checkSum(data));
         return data;
     }
-    checkRange_(target, name) {
-        if (target < this.RANGE_MIN || this.RANGE_MAX < target) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError(name, this.RANGE_MIN, this.RANGE_MAX);
-        }
-        return true;
-    }
     checkEmitCondition_(target, name) {
         let _isExist = false;
-        Object.entries(MeshJsPa.EmitCondition).forEach(([key, value]) => {
+        Object.entries(Brightness.EmitCondition).forEach(([key, value]) => {
             if (target === value) {
                 _isExist = true;
             }
@@ -102,11 +96,11 @@ class MeshJsPa extends MeshJs_1.MeshJs {
         if (_isExist) {
             return true;
         }
-        throw new MeshJsError_1.MeshJsInvalidValueError(name);
+        throw new Error_1.MESHJsInvalidValueError(name);
     }
     checkNotifyMode_(target) {
         if (target < this.NOTIFY_MODE_MIN_ || this.NOTIFY_MODE_MAX_ < target) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('notifyType', this.NOTIFY_MODE_MIN_, this.NOTIFY_MODE_MAX_);
+            throw new Error_1.MESHJsOutOfRangeError('notifyType', this.NOTIFY_MODE_MIN_, this.NOTIFY_MODE_MAX_);
         }
         return true;
     }
@@ -115,15 +109,15 @@ class MeshJsPa extends MeshJs_1.MeshJs {
         return [val % BYTE, Math.floor(val / BYTE)];
     }
 }
-exports.MeshJsPa = MeshJsPa;
+exports.Brightness = Brightness;
 // Constant Values
-MeshJsPa.EmitCondition = {
+Brightness.EmitCondition = {
     ABOVE_UPPER_AND_BELOW_BOTTOM: 0,
     ABOVE_UPPER_AND_ABOVE_BOTTOM: 1,
     BELOW_UPPER_AND_BELOW_BOTTOM: 16,
     BELOW_UPPER_AND_ABOVE_BOTTOM: 17,
 };
-MeshJsPa.NotifyMode = {
+Brightness.NotifyMode = {
     STOP: 0,
     EMIT_PROXIMITY: 1,
     EMIT_BRIGHTNESS: 2,

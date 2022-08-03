@@ -1,4 +1,4 @@
-export class MeshJsError extends Error {
+export class MESHJsError extends Error {
   constructor(public code: number, e?: string) {
     super(e);
     this.name = new.target.name;
@@ -6,7 +6,7 @@ export class MeshJsError extends Error {
   }
 }
 
-export class MeshBlockVersionError extends MeshJsError {
+export class MESHJsBlockVersionError extends MESHJsError {
   constructor(public major: number, minor: number, release: number) {
     super(
       1,
@@ -21,7 +21,7 @@ export class MeshBlockVersionError extends MeshJsError {
   }
 }
 
-export class MeshJsOutOfRangeError extends MeshJsError {
+export class MESHJsOutOfRangeError extends MESHJsError {
   constructor(public property: string, min: number, max: number) {
     super(
       2,
@@ -37,13 +37,13 @@ export class MeshJsOutOfRangeError extends MeshJsError {
   }
 }
 
-export class MeshJsInvalidValueError extends MeshJsError {
+export class MESHJsInvalidValueError extends MESHJsError {
   constructor(public property: string) {
     super(3, property + ' is invalid value.');
   }
 }
 
-export class MeshJsTimeOutError extends MeshJsError {
+export class MESHJsTimeOutError extends MESHJsError {
   constructor(public property: string) {
     super(4, property + ' is time out.');
   }

@@ -1,5 +1,5 @@
-import { MeshJs } from './MeshJs';
-export declare class MeshJsTh extends MeshJs {
+import { Base } from './Base';
+export declare class TempHumid extends Base {
     onSensorEvent: ((temperature: number, humidity: number, requestId: number) => void) | null;
     static readonly EmitCondition: {
         ABOVE_UPPER_AND_BELOW_BOTTOM: 0;
@@ -46,7 +46,6 @@ export declare class MeshJsTh extends MeshJs {
     private num2array_;
     private complemnt_;
     private invcomplemnt_;
-    private checkRange_;
     private checkEmitCondition_;
     private checkNotifyMode_;
 }

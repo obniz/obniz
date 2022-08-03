@@ -1,6 +1,5 @@
 // const Obniz = require('obniz');
 const Obniz = require('../../../../index.js'); // local
-const fetch = require('node-fetch');
 const mesh_bu = Obniz.getPartsClass('MESH_100BU');
 const MESH_100LE = Obniz.getPartsClass('MESH_100LE');
 const mesh_ac = Obniz.getPartsClass('MESH_100AC');
@@ -123,7 +122,7 @@ async function sampleLE(peripheral) {
   const _green = 127;
   const _blue = 31;
   const _total_time = 4000; // 4.000 seconds
-  const _cycle_on_time = 1000; // 0.500 seconds
+  const _cycle_on_time = 750; // 0.750 seconds
   const _cycle_off_time = 500; // 0.500 seconds
   LED_block.lightup(_red, _green, _blue, _total_time, _cycle_on_time, _cycle_off_time, MESH_100LE.Pattern.FIREFLY);
 

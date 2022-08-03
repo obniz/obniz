@@ -1,4 +1,4 @@
-export declare class MeshJs {
+export declare class Base {
     onBatteryLevel: ((battery: number) => void) | null;
     onStatusButtonPressed: (() => void) | null;
     readonly UUIDS: {
@@ -28,6 +28,7 @@ export declare class MeshJs {
      */
     notify(data: number[]): void;
     protected checkSum(command: number[]): number;
+    protected checkRange(target: number, min: number, max: number, name: string): boolean;
     private updateBattery_;
     private updateStatusButton_;
     private checkVersion_;

@@ -1,8 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const MeshJs_1 = require("./MeshJs");
-const MeshJsError_1 = require("./MeshJsError");
-class MeshJsMd extends MeshJs_1.MeshJs {
+const Base_1 = require("./Base");
+class Motion extends Base_1.Base {
     constructor() {
         super(...arguments);
         // Event Handler
@@ -49,10 +48,10 @@ class MeshJsMd extends MeshJs_1.MeshJs {
         // Error Handle
         const DETECTION_TIME_MIN = 200;
         const DETECTION_TIME_MAX = 60000;
-        this.checkRange_(opt_detectionTime, DETECTION_TIME_MIN, DETECTION_TIME_MAX, 'opt_detectionTime');
+        this.checkRange(opt_detectionTime, DETECTION_TIME_MIN, DETECTION_TIME_MAX, 'opt_detectionTime');
         const RESPONSE_TIME_MIN = 500;
         const RESPONSE_TIME_MAX = 60000;
-        this.checkRange_(opt_responseTime, RESPONSE_TIME_MIN, RESPONSE_TIME_MAX, 'opt_responseTime');
+        this.checkRange(opt_responseTime, RESPONSE_TIME_MIN, RESPONSE_TIME_MAX, 'opt_responseTime');
         // Generate Command
         const HEADER = [
             this.MESSAGE_TYPE_ID_,
@@ -71,16 +70,10 @@ class MeshJsMd extends MeshJs_1.MeshJs {
         data.push(this.checkSum(data));
         return data;
     }
-    checkRange_(target, min, max, name) {
-        if (target < min || max < target) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError(name, min, max);
-        }
-        return true;
-    }
 }
-exports.MeshJsMd = MeshJsMd;
+exports.Motion = Motion;
 // Constant Values
-MeshJsMd.NotifyMode = {
+Motion.NotifyMode = {
     DETECTED: 0x01,
     NOT_DETECTED: 0x02,
     ONCE: 0x10,

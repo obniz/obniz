@@ -5,11 +5,11 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { MESH } from '../utils/abstracts/MESH';
-import { MeshJsPa } from '../MESH_js/MeshJsPa';
+import { Brightness } from '../MESH_js/block/Brightness';
 import {
-  MeshJsInvalidValueError,
-  MeshJsTimeOutError,
-} from '../MESH_js/MeshJsError';
+  MESHJsInvalidValueError,
+  MESHJsTimeOutError,
+} from '../MESH_js/util/Error';
 import { rejects } from 'assert';
 
 export interface MESH_100PAOptions {}
@@ -27,8 +27,8 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
   public static readonly PartsName = 'MESH_100PA';
   public static readonly PREFIX = 'MESH-100PA';
 
-  public static readonly EmitCondition = MeshJsPa.EmitCondition;
-  public static readonly NotifyMode = MeshJsPa.NotifyMode;
+  public static readonly EmitCondition = Brightness.EmitCondition;
+  public static readonly NotifyMode = Brightness.NotifyMode;
 
   // Event Handler
   public onSensorEvent:
@@ -88,7 +88,7 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
       }, INTERVAL_TIME);
     });
     if (_result == null) {
-      throw new MeshJsTimeOutError(this.peripheral.localName!);
+      throw new MESHJsTimeOutError(this.peripheral.localName!);
     }
     return _result;
   }
@@ -119,10 +119,10 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
   }
 
   protected prepareConnect(): void {
-    this.meshBlock = new MeshJsPa();
+    this.meshBlock = new Brightness();
 
     // set Event Handler
-    const brightnessBlock = this.meshBlock as MeshJsPa;
+    const brightnessBlock = this.meshBlock as Brightness;
     brightnessBlock.onSensorEvent = (
       proximity: number,
       brightness: number,
@@ -158,7 +158,7 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
     notifyMode: number,
     requestId: number
   ): void {
-    const brightnessBlock = this.meshBlock as MeshJsPa;
+    const brightnessBlock = this.meshBlock as Brightness;
     const command = brightnessBlock.parseSetmodeCommand(
       proximityRangeUpper,
       proximityRangeBottom,

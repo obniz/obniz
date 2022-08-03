@@ -5,8 +5,8 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { MESH } from '../utils/abstracts/MESH';
-import { MeshJsGp } from '../MESH_js/MeshJsGp';
-import { MeshJsTimeOutError } from '../MESH_js/MeshJsError';
+import { GPIO } from '../MESH_js/block/GPIO';
+import { MESHJsTimeOutError } from '../MESH_js/util/Error';
 
 export interface MESH_100GPOptions {}
 
@@ -23,17 +23,16 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   public static readonly PartsName = 'MESH_100GP';
   public static readonly PREFIX = 'MESH-100GP';
 
-  public static readonly AnalogInEventCondition =
-    MeshJsGp.AnalogInEventCondition;
-  public static readonly AnalogInputNotifyMode = MeshJsGp.AnalogInputNotifyMode;
-  public static readonly Pin = MeshJsGp.Pin;
-  public static readonly State = MeshJsGp.State;
-  public static readonly DigitalInputState = MeshJsGp.DigitalInputState;
-  public static readonly Vcc = MeshJsGp.Vcc;
-  public static readonly VccState = MeshJsGp.VccState;
+  public static readonly AnalogInEventCondition = GPIO.AnalogInEventCondition;
+  public static readonly AnalogInputNotifyMode = GPIO.AnalogInputNotifyMode;
+  public static readonly Pin = GPIO.Pin;
+  public static readonly State = GPIO.State;
+  public static readonly DigitalInputState = GPIO.DigitalInputState;
+  public static readonly Vcc = GPIO.Vcc;
+  public static readonly VccState = GPIO.VccState;
 
-  public readonly DigitalPins: MeshJsGp['DigitalPins'] = (this
-    .meshBlock as MeshJsGp).DigitalPins;
+  public readonly DigitalPins: GPIO['DigitalPins'] = (this.meshBlock as GPIO)
+    .DigitalPins;
 
   // Event Handler
   public onDigitalInputEvent:
@@ -74,8 +73,8 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
    */
   public async getDigitalInputDataWait(pin: number) {
     const _requestId = this.requestId.next();
-    const _gpioBlock = this.meshBlock as MeshJsGp;
-    const _command = _gpioBlock.parseSetDinCommand(pin, _requestId);
+    const _gpioBlock = this.meshBlock as GPIO;
+    const _command = _gpioBlock.parseDigitalInputCommand(pin, _requestId);
     await this.getSensorDataWait(_requestId, _command);
     return this.retDigitalInState_;
   }
@@ -86,8 +85,8 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
    */
   public async getAnalogInputDataWait() {
     const _requestId = this.requestId.next();
-    const _gpioBlock = this.meshBlock as MeshJsGp;
-    const _command = _gpioBlock.parseSetAinCommand(
+    const _gpioBlock = this.meshBlock as GPIO;
+    const _command = _gpioBlock.parseAnalogInputCommand(
       MESH_100GP.AnalogInputNotifyMode.ONCE,
       _requestId
     );
@@ -101,8 +100,8 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
    */
   public async getVOutputDataWait() {
     const _requestId = this.requestId.next();
-    const _gpioBlock = this.meshBlock as MeshJsGp;
-    const _command = _gpioBlock.parseSetVOutputCommand(_requestId);
+    const _gpioBlock = this.meshBlock as GPIO;
+    const _command = _gpioBlock.parseVOutputCommand(_requestId);
     await this.getSensorDataWait(_requestId, _command);
     return this.retVccState_;
   }
@@ -114,8 +113,8 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
    */
   public async getDigitalOutputDataWait(pin: number) {
     const _requestId = this.requestId.next();
-    const _gpioBlock = this.meshBlock as MeshJsGp;
-    const _command = _gpioBlock.parseSetDoutCommand(pin, _requestId);
+    const _gpioBlock = this.meshBlock as GPIO;
+    const _command = _gpioBlock.parseDigitalOutputCommand(pin, _requestId);
     await this.getSensorDataWait(_requestId, _command);
     return this.retDigitalOutState_;
   }
@@ -126,8 +125,8 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
    */
   public async getPwmDataWait() {
     const _requestId = this.requestId.next();
-    const _gpioBlock = this.meshBlock as MeshJsGp;
-    const _command = _gpioBlock.parseSetPWMCommand(_requestId);
+    const _gpioBlock = this.meshBlock as GPIO;
+    const _command = _gpioBlock.parsePwmCommand(_requestId);
     await this.getSensorDataWait(_requestId, _command);
     return this.retPwm_;
   }
@@ -154,7 +153,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     analogInputRangeBottom: number,
     analogInputCondition: number
   ): void {
-    const gpioBlock = this.meshBlock as MeshJsGp;
+    const gpioBlock = this.meshBlock as GPIO;
     const command = gpioBlock.parseSetmodeCommand(
       digitalInputLow2High,
       digitalInputHigh2Low,
@@ -186,7 +185,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     digitalInputLow2High: MESH_100GP['DigitalPins'],
     digitalInputHigh2Low: MESH_100GP['DigitalPins']
   ): void {
-    const gpioBlock = this.meshBlock as MeshJsGp;
+    const gpioBlock = this.meshBlock as GPIO;
     const command = gpioBlock.parseSetmodeCommand(
       digitalInputLow2High,
       digitalInputHigh2Low,
@@ -214,7 +213,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     analogInputRangeBottom: number,
     analogInputCondition: number
   ): void {
-    const gpioBlock = this.meshBlock as MeshJsGp;
+    const gpioBlock = this.meshBlock as GPIO;
     const command = gpioBlock.parseSetmodeCommand(
       this.digitalInputLow2High_,
       this.digitalInputHigh2Low_,
@@ -237,7 +236,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
    * @param digitalOutput {p1:boolean, p2:boolean, p3:boolean}
    */
   public setDigitalOutput(digitalOutput: MESH_100GP['DigitalPins']): void {
-    const gpioBlock = this.meshBlock as MeshJsGp;
+    const gpioBlock = this.meshBlock as GPIO;
     const command = gpioBlock.parseSetmodeCommand(
       this.digitalInputLow2High_,
       this.digitalInputHigh2Low_,
@@ -258,7 +257,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
    * @param pwmRatio 0 ~ 255
    */
   public setPwmOutput(pwmRatio: number): void {
-    const gpioBlock = this.meshBlock as MeshJsGp;
+    const gpioBlock = this.meshBlock as GPIO;
     const command = gpioBlock.parseSetmodeCommand(
       this.digitalInputLow2High_,
       this.digitalInputHigh2Low_,
@@ -279,7 +278,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
    * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
    */
   public setVOutput(vcc: number): void {
-    const gpioBlock = this.meshBlock as MeshJsGp;
+    const gpioBlock = this.meshBlock as GPIO;
     const command = gpioBlock.parseSetmodeCommand(
       this.digitalInputLow2High_,
       this.digitalInputHigh2Low_,
@@ -299,8 +298,8 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   }
 
   protected prepareConnect(): void {
-    this.meshBlock = new MeshJsGp();
-    const gpioBlock = this.meshBlock as MeshJsGp;
+    this.meshBlock = new GPIO();
+    const gpioBlock = this.meshBlock as GPIO;
 
     gpioBlock.onDigitalInputEvent = (pin: number, state: number) => {
       if (typeof this.onDigitalInputEvent !== 'function') {
@@ -411,7 +410,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
       }, INTERVAL_TIME);
     });
     if (_result == null) {
-      throw new MeshJsTimeOutError(this.peripheral.localName!);
+      throw new MESHJsTimeOutError(this.peripheral.localName!);
     }
     return _result;
   }

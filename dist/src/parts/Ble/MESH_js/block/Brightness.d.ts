@@ -1,5 +1,5 @@
-import { MeshJs } from './MeshJs';
-export declare class MeshJsPa extends MeshJs {
+import { Base } from './Base';
+export declare class Brightness extends Base {
     onSensorEvent: ((proximity: number, brightness: number, requestId: number) => void) | null;
     static readonly EmitCondition: {
         ABOVE_UPPER_AND_BELOW_BOTTOM: 0;
@@ -37,7 +37,6 @@ export declare class MeshJsPa extends MeshJs {
      * @returns command
      */
     parseSetmodeCommand(proximityRangeUpper: number, proximityRangeBottom: number, brightnessRangeUpper: number, brightnessRangeBottom: number, proximityCondition: number, brightnessCondition: number, notifyMode: number, opt_requestId?: number): number[];
-    private checkRange_;
     private checkEmitCondition_;
     private checkNotifyMode_;
     private num2array_;

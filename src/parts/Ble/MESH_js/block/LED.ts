@@ -1,6 +1,6 @@
-import { MeshJs } from './MeshJs';
-import { MeshJsInvalidValueError, MeshJsOutOfRangeError } from './MeshJsError';
-export class MeshJsLe extends MeshJs {
+import { Base } from './Base';
+import { MESHJsInvalidValueError } from '../util/Error';
+export class LED extends Base {
   // Constant Values
   public static readonly PATTERN = {
     BLINK: 1 as const,
@@ -19,7 +19,7 @@ export class MeshJsLe extends MeshJs {
    * @returns
    */
   public parseLedCommand(
-    colors: MeshJsLe['colors'],
+    colors: LED['colors'],
     totalTime: number,
     cycleOnTime: number,
     cycleOffTime: number,
@@ -28,31 +28,16 @@ export class MeshJsLe extends MeshJs {
     // Error Handle
     const COLOR_MIN = 0 as const;
     const COLOR_MAX = 127 as const;
-    if (colors.red < COLOR_MIN || COLOR_MAX < colors.red) {
-      throw new MeshJsOutOfRangeError('red', COLOR_MIN, COLOR_MAX);
-    }
-    if (colors.green < COLOR_MIN || COLOR_MAX < colors.green) {
-      throw new MeshJsOutOfRangeError('green', COLOR_MIN, COLOR_MAX);
-    }
-    if (colors.blue < COLOR_MIN || COLOR_MAX < colors.blue) {
-      throw new MeshJsOutOfRangeError('blue', COLOR_MIN, COLOR_MAX);
-    }
+    this.checkRange(colors.red, COLOR_MIN, COLOR_MAX, 'colors.red');
+    this.checkRange(colors.green, COLOR_MIN, COLOR_MAX, 'colors.green');
+    this.checkRange(colors.blue, COLOR_MIN, COLOR_MAX, 'colors.blue');
     const TIME_MIN = 0 as const;
     const TIME_MAX = 65535 as const;
-    if (totalTime < TIME_MIN || TIME_MAX < totalTime) {
-      throw new MeshJsOutOfRangeError('time', TIME_MIN, TIME_MAX);
-    }
-    if (cycleOnTime < TIME_MIN || TIME_MAX < cycleOnTime) {
-      throw new MeshJsOutOfRangeError('cycle_on', TIME_MIN, TIME_MAX);
-    }
-    if (cycleOffTime < TIME_MIN || TIME_MAX < cycleOffTime) {
-      throw new MeshJsOutOfRangeError('cycle_off', TIME_MIN, TIME_MAX);
-    }
-    if (
-      pattern !== MeshJsLe.PATTERN.BLINK &&
-      pattern !== MeshJsLe.PATTERN.FIREFLY
-    ) {
-      throw new MeshJsInvalidValueError('pattern');
+    this.checkRange(totalTime, TIME_MIN, TIME_MAX, 'totalTime');
+    this.checkRange(cycleOnTime, TIME_MIN, TIME_MAX, 'cycleOnTime');
+    this.checkRange(cycleOffTime, TIME_MIN, TIME_MAX, 'cycleOffTIme');
+    if (pattern !== LED.PATTERN.BLINK && pattern !== LED.PATTERN.FIREFLY) {
+      throw new MESHJsInvalidValueError('pattern');
     }
 
     // Generate Command

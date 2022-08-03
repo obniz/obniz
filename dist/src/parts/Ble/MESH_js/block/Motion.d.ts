@@ -1,5 +1,5 @@
-import { MeshJs } from './MeshJs';
-export declare class MeshJsMd extends MeshJs {
+import { Base } from './Base';
+export declare class Motion extends Base {
     onSensorEvent: ((motionState: number, notifyMode: number, requestId: number) => void) | null;
     static readonly NotifyMode: {
         readonly DETECTED: 1;
@@ -30,5 +30,4 @@ export declare class MeshJsMd extends MeshJs {
      * @returns
      */
     parseSetmodeCommand(notifyMode: number, opt_detectionTime?: number, opt_responseTime?: number, opt_requestId?: number): number[];
-    private checkRange_;
 }

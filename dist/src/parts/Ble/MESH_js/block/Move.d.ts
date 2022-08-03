@@ -1,9 +1,9 @@
-import { MeshJs } from './MeshJs';
-export declare class MeshJsAc extends MeshJs {
-    onTapped: ((accele: MeshJsAc['accele']) => void) | null;
-    onShaked: ((accele: MeshJsAc['accele']) => void) | null;
-    onFlipped: ((accele: MeshJsAc['accele']) => void) | null;
-    onOrientationChanged: ((face: number, accele: MeshJsAc['accele']) => void) | null;
+import { Base } from './Base';
+export declare class Move extends Base {
+    onTapped: ((accele: Move['accele']) => void) | null;
+    onShaked: ((accele: Move['accele']) => void) | null;
+    onFlipped: ((accele: Move['accele']) => void) | null;
+    onOrientationChanged: ((face: number, accele: Move['accele']) => void) | null;
     protected accele: {
         x: number;
         y: number;

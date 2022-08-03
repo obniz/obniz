@@ -1,5 +1,5 @@
-import { MeshJs } from './MeshJs';
-export declare class MeshJsBu extends MeshJs {
+import { Base } from './Base';
+export declare class Button extends Base {
     onSinglePressed: (() => void) | null;
     onLongPressed: (() => void) | null;
     onDoublePressed: (() => void) | null;

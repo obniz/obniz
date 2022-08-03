@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const MeshJs_1 = require("./MeshJs");
-class MeshJsAc extends MeshJs_1.MeshJs {
+const Base_1 = require("./Base");
+class Move extends Base_1.Base {
     constructor() {
         super(...arguments);
         // Event Handler
@@ -71,4 +71,4 @@ class MeshJsAc extends MeshJs_1.MeshJs {
         return val - (val > TWO_BYTE_HALF ? TWO_BYTE : 0);
     }
 }
-exports.MeshJsAc = MeshJsAc;
+exports.Move = Move;
