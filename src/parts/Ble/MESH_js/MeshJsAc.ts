@@ -1,12 +1,14 @@
 import { MeshJs } from './MeshJs';
 export class MeshJsAc extends MeshJs {
   // Event Handler
-  public onTapped: ((accele: MeshJsAc['accele_']) => void) | null = null;
-  public onShaked: ((accele: MeshJsAc['accele_']) => void) | null = null;
-  public onFlipped: ((accele: MeshJsAc['accele_']) => void) | null = null;
-  public onDirection:
-    | ((face: number, accele: MeshJsAc['accele_']) => void)
+  public onTapped: ((accele: MeshJsAc['accele']) => void) | null = null;
+  public onShaked: ((accele: MeshJsAc['accele']) => void) | null = null;
+  public onFlipped: ((accele: MeshJsAc['accele']) => void) | null = null;
+  public onOrientationChanged:
+    | ((face: number, accele: MeshJsAc['accele']) => void)
     | null = null;
+
+  protected accele = { x: 0, y: 0, z: 0 };
 
   // Constant Values
   private readonly MESSAGE_TYPE_ID_: number = 1 as const;
@@ -14,18 +16,7 @@ export class MeshJsAc extends MeshJs {
   private readonly TAP_EVENT_ID_ = 0 as const;
   private readonly SHAKE_EVENT_ID_ = 1 as const;
   private readonly FLIP_EVENT_ID_ = 2 as const;
-  private readonly DIRECTION_EVENT_ID_ = 3 as const;
-
-  private accele_ = { x: -1, y: -1, z: -1 };
-  private face_ = -1;
-
-  public get getAccele(): MeshJsAc['accele_'] {
-    return this.accele_;
-  }
-
-  public get getFace(): number {
-    return this.face_;
-  }
+  private readonly ORIENTATION_EVENT_ID_ = 3 as const;
 
   /**
    * notify
@@ -35,50 +26,47 @@ export class MeshJsAc extends MeshJs {
    */
   public notify(data: number[]): void {
     super.notify(data);
-    this.updateAccele_(data);
-    if (data[0] !== 1) {
+
+    if (data.length !== this.DATA_LENGTH_) {
       return;
     }
+    if (data[0] !== this.MESSAGE_TYPE_ID_) {
+      return;
+    }
+
+    // update accele values
+    const BYTE = 256 as const;
+    const BASE = 1024 as const;
+    this.accele.x = this.complemnt_(BYTE * data[5] + data[4]) / BASE;
+    this.accele.y = this.complemnt_(BYTE * data[7] + data[6]) / BASE;
+    this.accele.z = this.complemnt_(BYTE * data[9] + data[8]) / BASE;
+
+    // emit event
     switch (data[1]) {
       case this.TAP_EVENT_ID_:
         if (typeof this.onTapped === 'function') {
-          this.onTapped(this.accele_);
+          this.onTapped(this.accele);
         }
         break;
       case this.SHAKE_EVENT_ID_:
         if (typeof this.onShaked === 'function') {
-          this.onShaked(this.accele_);
+          this.onShaked(this.accele);
         }
         break;
       case this.FLIP_EVENT_ID_:
         if (typeof this.onFlipped === 'function') {
-          this.onFlipped(this.accele_);
+          this.onFlipped(this.accele);
         }
         break;
-      case this.DIRECTION_EVENT_ID_:
-        if (typeof this.onDirection === 'function') {
-          this.face_ = data[2];
-          this.onDirection(this.face_, this.accele_);
+      case this.ORIENTATION_EVENT_ID_:
+        if (typeof this.onOrientationChanged === 'function') {
+          const face = data[2];
+          this.onOrientationChanged(face, this.accele);
         }
         break;
       default:
         break;
     }
-  }
-
-  private updateAccele_(data: number[]): boolean {
-    if (data.length !== this.DATA_LENGTH_) {
-      return false;
-    }
-    if (data[0] !== this.MESSAGE_TYPE_ID_) {
-      return false;
-    }
-    const BYTE = 256 as const;
-    const BASE = 1024 as const;
-    this.accele_.x = this.complemnt_(BYTE * data[5] + data[4]) / BASE;
-    this.accele_.y = this.complemnt_(BYTE * data[7] + data[6]) / BASE;
-    this.accele_.z = this.complemnt_(BYTE * data[9] + data[8]) / BASE;
-    return true;
   }
 
   private complemnt_(val: number): number {

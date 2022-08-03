@@ -7,21 +7,19 @@ export class MeshJsLe extends MeshJs {
     FIREFLY: 2 as const,
   } as const;
 
+  protected colors = { red: 0, green: 0, blue: 0 };
+
   /**
    *
-   * @param red
-   * @param green
-   * @param blue
+   * @param colors
    * @param totalTime
    * @param cycleOnTime
    * @param cycleOffTime
    * @param pattern
    * @returns
    */
-  public parseLightupCommand(
-    red: number,
-    green: number,
-    blue: number,
+  public parseLedCommand(
+    colors: MeshJsLe['colors'],
     totalTime: number,
     cycleOnTime: number,
     cycleOffTime: number,
@@ -30,13 +28,13 @@ export class MeshJsLe extends MeshJs {
     // Error Handle
     const COLOR_MIN = 0 as const;
     const COLOR_MAX = 127 as const;
-    if (red < COLOR_MIN || COLOR_MAX < red) {
+    if (colors.red < COLOR_MIN || COLOR_MAX < colors.red) {
       throw new MeshJsOutOfRangeError('red', COLOR_MIN, COLOR_MAX);
     }
-    if (green < COLOR_MIN || COLOR_MAX < green) {
+    if (colors.green < COLOR_MIN || COLOR_MAX < colors.green) {
       throw new MeshJsOutOfRangeError('green', COLOR_MIN, COLOR_MAX);
     }
-    if (blue < COLOR_MIN || COLOR_MAX < blue) {
+    if (colors.blue < COLOR_MIN || COLOR_MAX < colors.blue) {
       throw new MeshJsOutOfRangeError('blue', COLOR_MIN, COLOR_MAX);
     }
     const TIME_MIN = 0 as const;
@@ -65,11 +63,11 @@ export class MeshJsLe extends MeshJs {
     const data: number[] = [
       MESSAGE_TYPE_ID,
       EVENT_TYPE_ID,
-      red,
+      colors.red,
       FIXED,
-      green,
+      colors.green,
       FIXED,
-      blue,
+      colors.blue,
       totalTime % BYTE,
       Math.floor(totalTime / BYTE),
       cycleOnTime % BYTE,

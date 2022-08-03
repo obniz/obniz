@@ -6,15 +6,22 @@ class MeshJsPa extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onNotify = null;
+        this.onSensorEvent = null;
+        this.RANGE_MIN = 0;
+        this.RANGE_MAX = 65535;
+        this.NOTIFY_MODE_MIN_ = MeshJsPa.NotifyMode.STOP;
+        this.NOTIFY_MODE_MAX_ = MeshJsPa.NotifyMode.STOP +
+            MeshJsPa.NotifyMode.EMIT_PROXIMITY +
+            MeshJsPa.NotifyMode.EMIT_BRIGHTNESS +
+            MeshJsPa.NotifyMode.UPDATE_PROXIMITY +
+            MeshJsPa.NotifyMode.UPDATE_BRIGHTNESS +
+            MeshJsPa.NotifyMode.ONCE +
+            MeshJsPa.NotifyMode.ALWAYS;
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
-        this.response_ = { requestId: -1, proximity: -1, brightness: -1 };
-    }
-    get getResponse() {
-        return this.response_;
     }
     /**
+     * notify
      *
      * @param data
      * @returns
@@ -28,48 +35,98 @@ class MeshJsPa extends MeshJs_1.MeshJs {
             return;
         }
         const BYTE = 256;
-        this.response_.requestId = data[2];
-        this.response_.proximity = BYTE * data[5] + data[4];
-        this.response_.brightness = BYTE * data[7] + data[6];
-        if (typeof this.onNotify !== 'function') {
+        const proximity = BYTE * data[5] + data[4];
+        const LX = 10;
+        const brightness = LX * (BYTE * data[7] + data[6]);
+        const requestId = data[2];
+        if (typeof this.onSensorEvent !== 'function') {
             return;
         }
-        this.onNotify(this.response_);
+        this.onSensorEvent(proximity, brightness, requestId);
     }
     /**
+     * parseSetmodeCommand
      *
-     * @param notifyType
+     * @param notifyMode
      * @param opt_requestId
      * @returns command
      */
-    parseSetmodeCommand(notifyType, opt_requestId = 0) {
+    parseSetmodeCommand(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode, opt_requestId = 0) {
+        // Convert
+        const LX = 10;
+        const _brightnessRangeUpper = brightnessRangeUpper / LX;
+        const _brightnessRangeBottom = brightnessRangeBottom / LX;
         // Error Handle
-        if (notifyType % 4 !== 0) {
-            throw new MeshJsError_1.MeshJsInvalidValueError('notifyType');
-        }
-        const NOTIFY_TYPE_MIN = MeshJsPa.NOTIFY_TYPE.UPDATE_PROXIMITY;
-        const NOTIFY_TYPE_MAX = MeshJsPa.NOTIFY_TYPE.UPDATE_PROXIMITY +
-            MeshJsPa.NOTIFY_TYPE.UPDATE_BRIGHTNESS +
-            MeshJsPa.NOTIFY_TYPE.ONCE +
-            MeshJsPa.NOTIFY_TYPE.ALWAYS;
-        if (notifyType < NOTIFY_TYPE_MIN || NOTIFY_TYPE_MAX < notifyType) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('notifyType', NOTIFY_TYPE_MIN, NOTIFY_TYPE_MAX);
-        }
+        this.checkRange_(proximityRangeUpper, 'proximityRangeUpper');
+        this.checkRange_(proximityRangeBottom, 'proximityRangeBottom');
+        this.checkRange_(_brightnessRangeUpper, 'brightnessRangeUpper/' + LX);
+        this.checkRange_(_brightnessRangeBottom, 'brightnessRangeBottom/' + LX);
+        this.checkEmitCondition_(proximityCondition, 'proximityCondition');
+        this.checkEmitCondition_(brightnessCondition, 'brightnessCondition');
+        this.checkNotifyMode_(notifyMode);
         // Generate Command
         const HEADER = [
             this.MESSAGE_TYPE_ID_,
             this.EVENT_TYPE_ID_,
             opt_requestId,
         ];
-        const FIXED = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2];
-        const data = HEADER.concat(FIXED).concat(notifyType);
+        const PROXIMITY_RANGE_UPPER = this.num2array_(proximityRangeUpper);
+        const PROXIMITY_RANGE_BOTTOM = this.num2array_(proximityRangeBottom);
+        const BRIGHTNESS_RANGE_UPPER = this.num2array_(_brightnessRangeUpper);
+        const BRIGHTNESS_RANGE_BOTTOM = this.num2array_(_brightnessRangeBottom);
+        const FIXED = [2, 2, 2];
+        const data = HEADER.concat(PROXIMITY_RANGE_UPPER)
+            .concat(PROXIMITY_RANGE_BOTTOM)
+            .concat(BRIGHTNESS_RANGE_UPPER)
+            .concat(BRIGHTNESS_RANGE_BOTTOM)
+            .concat(proximityCondition)
+            .concat(brightnessCondition)
+            .concat(FIXED)
+            .concat(notifyMode);
         data.push(this.checkSum(data));
         return data;
+    }
+    checkRange_(target, name) {
+        if (target < this.RANGE_MIN || this.RANGE_MAX < target) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError(name, this.RANGE_MIN, this.RANGE_MAX);
+        }
+        return true;
+    }
+    checkEmitCondition_(target, name) {
+        let _isExist = false;
+        Object.entries(MeshJsPa.EmitCondition).forEach(([key, value]) => {
+            if (target === value) {
+                _isExist = true;
+            }
+        });
+        if (_isExist) {
+            return true;
+        }
+        throw new MeshJsError_1.MeshJsInvalidValueError(name);
+    }
+    checkNotifyMode_(target) {
+        if (target < this.NOTIFY_MODE_MIN_ || this.NOTIFY_MODE_MAX_ < target) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('notifyType', this.NOTIFY_MODE_MIN_, this.NOTIFY_MODE_MAX_);
+        }
+        return true;
+    }
+    num2array_(val) {
+        const BYTE = 256;
+        return [val % BYTE, Math.floor(val / BYTE)];
     }
 }
 exports.MeshJsPa = MeshJsPa;
 // Constant Values
-MeshJsPa.NOTIFY_TYPE = {
+MeshJsPa.EmitCondition = {
+    ABOVE_UPPER_AND_BELOW_BOTTOM: 0,
+    ABOVE_UPPER_AND_ABOVE_BOTTOM: 1,
+    BELOW_UPPER_AND_BELOW_BOTTOM: 16,
+    BELOW_UPPER_AND_ABOVE_BOTTOM: 17,
+};
+MeshJsPa.NotifyMode = {
+    STOP: 0,
+    EMIT_PROXIMITY: 1,
+    EMIT_BRIGHTNESS: 2,
     UPDATE_PROXIMITY: 4,
     UPDATE_BRIGHTNESS: 8,
     ONCE: 16,

@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const MeshJsError_1 = require("./MeshJsError");
 class MeshJs {
     constructor() {
         // Event Handler
-        this.onBattery = null;
+        this.onBatteryLevel = null;
         this.onStatusButtonPressed = null;
         // Constant Values
         this.UUIDS = {
@@ -46,6 +47,7 @@ class MeshJs {
             return;
         }
         this.battery_ = data[14];
+        this.checkVersion_(data[7], data[8], data[9]);
     }
     /**
      * notify
@@ -61,7 +63,8 @@ class MeshJs {
         command.forEach((val) => {
             sum += val;
         });
-        return sum % 256;
+        const BYTE = 256;
+        return sum % BYTE;
     }
     updateBattery_(data) {
         if (data.length !== 4) {
@@ -77,10 +80,10 @@ class MeshJs {
         //   return;
         // }
         this.battery_ = data[2];
-        if (typeof this.onBattery !== 'function') {
+        if (typeof this.onBatteryLevel !== 'function') {
             return false;
         }
-        this.onBattery(this.battery_);
+        this.onBatteryLevel(this.battery_);
         return true;
     }
     updateStatusButton_(data) {
@@ -101,6 +104,29 @@ class MeshJs {
         }
         this.onStatusButtonPressed();
         return true;
+    }
+    checkVersion_(major, minor, release) {
+        const VERSION_MAJOR = 1;
+        const VERSION_MINOR = 2;
+        const VERSION_RELEASE = 5;
+        if (VERSION_MAJOR < major) {
+            return;
+        }
+        if (major < VERSION_MAJOR) {
+            throw new MeshJsError_1.MeshBlockVersionError(major, minor, release);
+        }
+        if (VERSION_MINOR < minor) {
+            return;
+        }
+        if (minor < VERSION_MINOR) {
+            throw new MeshJsError_1.MeshBlockVersionError(major, minor, release);
+        }
+        if (VERSION_RELEASE < release) {
+            return;
+        }
+        if (release < VERSION_RELEASE) {
+            throw new MeshJsError_1.MeshBlockVersionError(major, minor, release);
+        }
     }
 }
 exports.MeshJs = MeshJs;

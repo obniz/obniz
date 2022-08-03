@@ -26858,24 +26858,19 @@ const MeshJsAc_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsAc.js
 class MESH_100AC extends MESH_1.MESH {
     constructor() {
         super(...arguments);
+        this.accele = { x: 0, y: 0, z: 0 };
         // Event Handler
         this.onTapped = null;
         this.onShaked = null;
         this.onFlipped = null;
-        this.onDirection = null;
+        this.onOrientation = null;
         this.staticClass = MESH_100AC;
     }
     async getDataWait() {
         this.checkConnected();
-        const moveBlock = this.meshBlock;
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this.meshBlock.battery,
-            accele_x: moveBlock.getAccele.x,
-            accele_y: moveBlock.getAccele.y,
-            accele_z: moveBlock.getAccele.z,
-            face: moveBlock.getFace,
         };
     }
     static _isMESHblock(name) {
@@ -26902,11 +26897,11 @@ class MESH_100AC extends MESH_1.MESH {
             }
             this.onFlipped(accele);
         };
-        moveBlock.onDirection = (face, accele) => {
-            if (typeof this.onDirection !== 'function') {
+        moveBlock.onOrientationChanged = (face, accele) => {
+            if (typeof this.onOrientation !== 'function') {
                 return;
             }
-            this.onDirection(face, accele);
+            this.onOrientation(face, accele);
         };
         super.prepareConnect();
     }
@@ -26949,7 +26944,6 @@ class MESH_100BU extends MESH_1.MESH {
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this.meshBlock.battery,
         };
     }
     static _isMESHblock(name) {
@@ -27002,71 +26996,180 @@ MESH_100BU.PREFIX = 'MESH-100BU';
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
 const MeshJsGp_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsGp.js");
-/** MESH_100GA management class */
+const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
+/** MESH_100GP management class */
 class MESH_100GP extends MESH_1.MESH {
     constructor() {
         super(...arguments);
         this.DigitalPins = this
             .meshBlock.DigitalPins;
         // Event Handler
-        this.onDigitalInEventNotify = null;
-        this.onAnalogInEventNotify = null;
-        this.onDigitalInNotify = null;
-        this.onAnalogInNotify = null;
-        this.onVOutNotify = null;
-        this.onDigitalOutNotify = null;
-        this.onPwmNotify = null;
+        this.onDigitalInputEvent = null;
+        this.onAnalogInputEvent = null;
         this.staticClass = MESH_100GP;
+        this.digitalInputLow2High_ = { p1: false, p2: false, p3: false };
+        this.digitalInputHigh2Low_ = { p1: false, p2: false, p3: false };
+        this.digitalOutput_ = { p1: false, p2: false, p3: false };
+        this.pwmRatio_ = 0;
+        this.vcc_ = MESH_100GP.Vcc.AUTO;
+        this.analogInputRangeUpper_ = 0;
+        this.analogInputRangeBottom_ = 0;
+        this.analogInputCondition_ = MESH_100GP.AnalogInEventCondition.NOT_NOTIFY;
+        this.retDigitalInState_ = -1;
+        this.retPwm_ = -1;
+        this.retVccState_ = -1;
+        this.retLevel_ = -1;
+        this.retDigitalOutState_ = -1;
     }
     async getDataWait() {
         this.checkConnected();
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this.meshBlock.battery,
         };
+    }
+    /**
+     *
+     * @param pin
+     * @returns
+     */
+    async getDigitalInputDataWait(pin) {
+        const _requestId = this.requestId.next();
+        const _gpioBlock = this.meshBlock;
+        const _command = _gpioBlock.parseSetDinCommand(pin, _requestId);
+        await this.getSensorDataWait(_requestId, _command);
+        return this.retDigitalInState_;
+    }
+    /**
+     *
+     * @returns
+     */
+    async getAnalogInputDataWait() {
+        const _requestId = this.requestId.next();
+        const _gpioBlock = this.meshBlock;
+        const _command = _gpioBlock.parseSetAinCommand(MESH_100GP.AnalogInputNotifyMode.ONCE, _requestId);
+        await this.getSensorDataWait(_requestId, _command);
+        return this.retLevel_;
+    }
+    /**
+     *
+     * @returns
+     */
+    async getVOutputDataWait() {
+        const _requestId = this.requestId.next();
+        const _gpioBlock = this.meshBlock;
+        const _command = _gpioBlock.parseSetVOutputCommand(_requestId);
+        await this.getSensorDataWait(_requestId, _command);
+        return this.retVccState_;
+    }
+    /**
+     *
+     * @param pin
+     * @returns
+     */
+    async getDigitalOutputDataWait(pin) {
+        const _requestId = this.requestId.next();
+        const _gpioBlock = this.meshBlock;
+        const _command = _gpioBlock.parseSetDoutCommand(pin, _requestId);
+        await this.getSensorDataWait(_requestId, _command);
+        return this.retDigitalOutState_;
+    }
+    /**
+     *
+     * @returns
+     */
+    async getPwmDataWait() {
+        const _requestId = this.requestId.next();
+        const _gpioBlock = this.meshBlock;
+        const _command = _gpioBlock.parseSetPWMCommand(_requestId);
+        await this.getSensorDataWait(_requestId, _command);
+        return this.retPwm_;
     }
     /**
      * setMode
      *
-     * @param digitalIn {p1:boolean, p2:boolean, p3:boolean}
-     * @param digitalInNotify {p1:boolean, p2:boolean, p3:boolean}
-     * @param digitalOut {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalInputLow2High {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalInputHigh2Low {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalOutput {p1:boolean, p2:boolean, p3:boolean}
      * @param pwmRatio 0 ~ 255
-     * @param vcc VCC.AUTO or VCC.ON or VCC.OFF
-     * @param analogInRangeUpper 0.00 ~ 3.00[V], resolution 0.05[V]
-     * @param analogInRangeBottom 0.00 ~ 3.00[V], resolution 0.05[V]
-     * @param analogInNotify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+     * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
+     * @param analogInputRangeUpper 0 ~ 255(0.00 ~ 3.00[V])
+     * @param analogInputRangeBottom 0 ~ 255(0.00 ~ 3.00[V])
+     * @param analogInputCondition AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
      */
-    setMode(digitalIn, digitalInNotify, digitalOut, pwmRatio, vcc, analogInRangeUpper, analogInRangeBottom, analogInNotify) {
+    setMode(digitalInputLow2High, digitalInputHigh2Low, digitalOutput, pwmRatio, vcc, analogInputRangeUpper, analogInputRangeBottom, analogInputCondition) {
         const gpioBlock = this.meshBlock;
-        const command = gpioBlock.parseSetmodeCommand(digitalIn, digitalInNotify, digitalOut, pwmRatio, vcc, analogInRangeUpper, analogInRangeBottom, analogInNotify);
+        const command = gpioBlock.parseSetmodeCommand(digitalInputLow2High, digitalInputHigh2Low, digitalOutput, pwmRatio, vcc, analogInputRangeUpper, analogInputRangeBottom, analogInputCondition);
         this.writeWOResponse(command);
+        this.digitalInputLow2High_ = digitalInputLow2High;
+        this.digitalInputHigh2Low_ = digitalInputHigh2Low;
+        this.digitalOutput_ = digitalOutput;
+        this.pwmRatio_ = pwmRatio;
+        this.vcc_ = vcc;
+        this.analogInputRangeUpper_ = analogInputRangeUpper;
+        this.analogInputRangeBottom_ = analogInputRangeBottom;
+        this.analogInputCondition_ = analogInputCondition;
     }
-    setDin(pin, opt_requestId = 0) {
+    /**
+     * setModeDigitalInput
+     *
+     * @param digitalInputLow2High {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalInputHigh2Low {p1:boolean, p2:boolean, p3:boolean}
+     */
+    setModeDigitalInput(digitalInputLow2High, digitalInputHigh2Low) {
         const gpioBlock = this.meshBlock;
-        const command = gpioBlock.parseSetDinCommand(pin, opt_requestId);
+        const command = gpioBlock.parseSetmodeCommand(digitalInputLow2High, digitalInputHigh2Low, this.digitalOutput_, this.pwmRatio_, this.vcc_, this.analogInputRangeUpper_, this.analogInputRangeBottom_, this.analogInputCondition_);
         this.writeWOResponse(command);
+        this.digitalInputLow2High_ = digitalInputLow2High;
+        this.digitalInputHigh2Low_ = digitalInputHigh2Low;
     }
-    setAin(mode, opt_requestId = 0) {
+    /**
+     * setModeAnalogInput
+     *
+     * @param analogInputRangeUpper 0 ~ 255(0.00 ~ 3.00[V])
+     * @param analogInputRangeBottom 0 ~ 255(0.00 ~ 3.00[V])
+     * @param analogInputCondition AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+     */
+    setModeAnalogInput(analogInputRangeUpper, analogInputRangeBottom, analogInputCondition) {
         const gpioBlock = this.meshBlock;
-        const command = gpioBlock.parseSetAinCommand(mode, opt_requestId);
+        const command = gpioBlock.parseSetmodeCommand(this.digitalInputLow2High_, this.digitalInputHigh2Low_, this.digitalOutput_, this.pwmRatio_, this.vcc_, analogInputRangeUpper, analogInputRangeBottom, analogInputCondition);
         this.writeWOResponse(command);
+        this.analogInputRangeUpper_ = analogInputRangeUpper;
+        this.analogInputRangeBottom_ = analogInputRangeBottom;
+        this.analogInputCondition_ = analogInputCondition;
     }
-    setVout(pin, opt_requestId = 0) {
+    /**
+     * setDigitalOutput
+     *
+     * @param digitalOutput {p1:boolean, p2:boolean, p3:boolean}
+     */
+    setDigitalOutput(digitalOutput) {
         const gpioBlock = this.meshBlock;
-        const command = gpioBlock.parseSetVoutCommand(pin, opt_requestId);
+        const command = gpioBlock.parseSetmodeCommand(this.digitalInputLow2High_, this.digitalInputHigh2Low_, digitalOutput, this.pwmRatio_, this.vcc_, this.analogInputRangeUpper_, this.analogInputRangeBottom_, this.analogInputCondition_);
         this.writeWOResponse(command);
+        this.digitalOutput_ = digitalOutput;
     }
-    setDout(pin, opt_requestId = 0) {
+    /**
+     * setPwmOutput
+     *
+     * @param pwmRatio 0 ~ 255
+     */
+    setPwmOutput(pwmRatio) {
         const gpioBlock = this.meshBlock;
-        const command = gpioBlock.parseSetDoutCommand(pin, opt_requestId);
+        const command = gpioBlock.parseSetmodeCommand(this.digitalInputLow2High_, this.digitalInputHigh2Low_, this.digitalOutput_, pwmRatio, this.vcc_, this.analogInputRangeUpper_, this.analogInputRangeBottom_, this.analogInputCondition_);
         this.writeWOResponse(command);
+        this.pwmRatio_ = pwmRatio;
     }
-    setPWMNotify(opt_requestId = 0) {
+    /**
+     * setVOutput
+     *
+     * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
+     */
+    setVOutput(vcc) {
         const gpioBlock = this.meshBlock;
-        const command = gpioBlock.parseSetPWMCommand(opt_requestId);
+        const command = gpioBlock.parseSetmodeCommand(this.digitalInputLow2High_, this.digitalInputHigh2Low_, this.digitalOutput_, this.pwmRatio_, vcc, this.analogInputRangeUpper_, this.analogInputRangeBottom_, this.analogInputCondition_);
         this.writeWOResponse(command);
+        this.vcc_ = vcc;
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100GP.PREFIX) !== -1;
@@ -27074,62 +27177,107 @@ class MESH_100GP extends MESH_1.MESH {
     prepareConnect() {
         this.meshBlock = new MeshJsGp_1.MeshJsGp();
         const gpioBlock = this.meshBlock;
-        gpioBlock.onDigitalInEventNotify = (pin, state) => {
-            if (typeof this.onDigitalInEventNotify !== 'function') {
+        gpioBlock.onDigitalInputEvent = (pin, state) => {
+            if (typeof this.onDigitalInputEvent !== 'function') {
                 return;
             }
-            this.onDigitalInEventNotify(pin, state);
+            this.onDigitalInputEvent(pin, state);
         };
-        gpioBlock.onAnalogInEventNotify = (level) => {
-            if (typeof this.onAnalogInEventNotify !== 'function') {
+        gpioBlock.onAnalogInputEvent = (level) => {
+            if (typeof this.onAnalogInputEvent !== 'function') {
                 return;
             }
-            this.onAnalogInEventNotify(level);
+            this.onAnalogInputEvent(level);
         };
-        gpioBlock.onDigitalInNotify = (requestId, pin, state) => {
-            if (typeof this.onDigitalInNotify !== 'function') {
+        gpioBlock.onDigitalInput = (requestId, pin, state) => {
+            if (this.requestId.isDefaultId(requestId)) {
                 return;
             }
-            this.onDigitalInNotify(requestId, pin, state);
+            // Update Inner Values
+            this.requestId.received(requestId);
+            this.retDigitalInState_ = state;
+            void pin;
         };
-        gpioBlock.onAnalogInNotify = (requestId, state, mode) => {
-            if (typeof this.onAnalogInNotify !== 'function') {
+        gpioBlock.onAnalogInput = (requestId, level, analogInputNotifyMode) => {
+            if (this.requestId.isDefaultId(requestId)) {
                 return;
             }
-            this.onAnalogInNotify(requestId, state, mode);
+            if (analogInputNotifyMode !== MESH_100GP.AnalogInputNotifyMode.ONCE) {
+                return;
+            }
+            // Update Inner Values
+            this.requestId.received(requestId);
+            this.retLevel_ = level;
         };
-        gpioBlock.onVOutNotify = (requestId, state) => {
-            if (typeof this.onVOutNotify !== 'function') {
+        gpioBlock.onVOutput = (requestId, vccState) => {
+            if (this.requestId.isDefaultId(requestId)) {
                 return;
             }
-            this.onVOutNotify(requestId, state);
+            // Update Inner Values
+            this.requestId.received(requestId);
+            this.retVccState_ = vccState;
         };
-        gpioBlock.onDigitalOutNotify = (requestId, pin, state) => {
-            if (typeof this.onDigitalOutNotify !== 'function') {
+        gpioBlock.onDigitalOutput = (requestId, pin, state) => {
+            if (this.requestId.isDefaultId(requestId)) {
                 return;
             }
-            this.onDigitalOutNotify(requestId, pin, state);
+            // Update Inner Values
+            this.requestId.received(requestId);
+            this.retDigitalOutState_ = state;
+            void pin;
         };
-        gpioBlock.onPwmNotify = (requestId, level) => {
-            if (typeof this.onPwmNotify !== 'function') {
+        gpioBlock.onPwm = (requestId, level) => {
+            if (this.requestId.isDefaultId(requestId)) {
                 return;
             }
-            this.onPwmNotify(requestId, level);
+            // Update Inner Values
+            this.requestId.received(requestId);
+            this.retPwm_ = level;
         };
         super.prepareConnect();
     }
     async beforeOnDisconnectWait(reason) {
         // do nothing
     }
+    async getSensorDataWait(requestId, command) {
+        this.checkConnected();
+        this.writeWOResponse(command);
+        const _TIMEOUT_MSEC = 2500;
+        let _isTimeout = false;
+        const _timeoutId = setTimeout(() => {
+            _isTimeout = true;
+        }, _TIMEOUT_MSEC);
+        const INTERVAL_TIME = 50;
+        const _result = await new Promise((resolve) => {
+            const _intervalId = setInterval(() => {
+                if (!this.requestId.isReceived(requestId)) {
+                    if (_isTimeout) {
+                        clearInterval(_intervalId);
+                        resolve(null);
+                    }
+                    return;
+                }
+                clearTimeout(_timeoutId);
+                clearInterval(_intervalId);
+                resolve(true);
+            }, INTERVAL_TIME);
+        });
+        if (_result == null) {
+            throw new MeshJsError_1.MeshJsTimeOutError(this.peripheral.localName);
+        }
+        return _result;
+    }
 }
 exports.default = MESH_100GP;
 MESH_100GP.PartsName = 'MESH_100GP';
 MESH_100GP.PREFIX = 'MESH-100GP';
-MESH_100GP.ANALOG_INPUT_EVENT_CONDITION = MeshJsGp_1.MeshJsGp.ANALOG_IN_EVENT_CONDITION;
-MESH_100GP.MODE = MeshJsGp_1.MeshJsGp.MODE;
-MESH_100GP.PIN = MeshJsGp_1.MeshJsGp.PIN;
-MESH_100GP.STATE = MeshJsGp_1.MeshJsGp.STATE;
-MESH_100GP.VCC = MeshJsGp_1.MeshJsGp.VCC;
+MESH_100GP.AnalogInEventCondition = MeshJsGp_1.MeshJsGp.AnalogInEventCondition;
+MESH_100GP.AnalogInputNotifyMode = MeshJsGp_1.MeshJsGp.AnalogInputNotifyMode;
+MESH_100GP.Pin = MeshJsGp_1.MeshJsGp.Pin;
+MESH_100GP.State = MeshJsGp_1.MeshJsGp.State;
+MESH_100GP.DigitalInputState = MeshJsGp_1.MeshJsGp.DigitalInputState;
+MESH_100GP.Vcc = MeshJsGp_1.MeshJsGp.Vcc;
+MESH_100GP.VccState = MeshJsGp_1.MeshJsGp.VccState;
 
 
 /***/ }),
@@ -27151,6 +27299,7 @@ const MeshJsLe_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsLe.js
 class MESH_100LE extends MESH_1.MESH {
     constructor() {
         super(...arguments);
+        this.colors = { red: 0, green: 0, blue: 0 };
         this.staticClass = MESH_100LE;
     }
     async getDataWait() {
@@ -27158,24 +27307,21 @@ class MESH_100LE extends MESH_1.MESH {
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this.meshBlock.battery,
         };
     }
     /**
-     * Light Up
+     * setLed
      *
-     * @param red 0 ~ 127
-     * @param green 0 ~ 127
-     * @param blue 0 ~ 127
+     * @param colors red 0 ~ 127, green 0 ~ 127, blue 0 ~ 127
      * @param totalTime 0 ~ 65,535 [ms]
      * @param cycleOnTime 0 ~ 65,535 [ms]
      * @param cycleOffTime 0 ~ 65,535 [ms]
      * @param pattern Pattern.BLINK or Pattern.FIREFLY
      * @returns
      */
-    lightup(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern) {
+    setLed(colors, totalTime, cycleOnTime, cycleOffTime, pattern) {
         const ledBlock = this.meshBlock;
-        const command = ledBlock.parseLightupCommand(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern);
+        const command = ledBlock.parseLedCommand(colors, totalTime, cycleOnTime, cycleOffTime, pattern);
         this.writeWOResponse(command);
     }
     static _isMESHblock(name) {
@@ -27210,13 +27356,18 @@ MESH_100LE.Pattern = MeshJsLe_1.MeshJsLe.PATTERN;
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
 const MeshJsMd_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsMd.js");
+const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
 /** MESH_100MD management class */
 class MESH_100MD extends MESH_1.MESH {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onNotify = null;
+        this.onSensorEvent = null;
         this.staticClass = MESH_100MD;
+        this.retMotionState_ = -1;
+        this.notifyMode_ = -1;
+        this.detectionTime_ = 500; // [ms]
+        this.responseTime_ = 500; // [ms]
     }
     async getDataWait() {
         this.checkConnected();
@@ -27224,39 +27375,83 @@ class MESH_100MD extends MESH_1.MESH {
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this.meshBlock.battery,
-            motion_state: motionBlock.getResponse.motionState,
-            detection_mode: motionBlock.getResponse.detectionMode,
-            request_id: motionBlock.getResponse.requestId,
         };
     }
-    setMode(detectionMode, opt_detectionTime = 500, opt_responseTime = 500, opt_requestId = 0) {
-        const motionBlock = this.meshBlock;
-        const command = motionBlock.parseSetmodeCommand(detectionMode, opt_detectionTime, opt_responseTime, opt_requestId);
-        this.writeWOResponse(command);
+    async getSensorDataWait() {
+        this.checkConnected();
+        const _requestId = this.requestId.next();
+        this.setMode_(MESH_100MD.NotifyMode.ONCE, this.detectionTime_, this.responseTime_, _requestId);
+        const _TIMEOUT_MSEC = 2000;
+        let _isTimeout = false;
+        const _timeoutId = setTimeout(() => {
+            _isTimeout = true;
+        }, _TIMEOUT_MSEC);
+        const INTERVAL_TIME = 50;
+        const _result = await new Promise((resolve) => {
+            const _intervalId = setInterval(() => {
+                if (!this.requestId.isReceived(_requestId)) {
+                    if (_isTimeout) {
+                        clearInterval(_intervalId);
+                        resolve(null);
+                    }
+                    return;
+                }
+                clearTimeout(_timeoutId);
+                clearInterval(_intervalId);
+                resolve(this.retMotionState_);
+            }, INTERVAL_TIME);
+        });
+        if (this.notifyMode_ !== MESH_100MD.NotifyMode.ONCE) {
+            // Continus previous mode
+            this.setMode(this.notifyMode_, this.detectionTime_, this.responseTime_);
+        }
+        if (_result == null) {
+            throw new MeshJsError_1.MeshJsTimeOutError(this.peripheral.localName);
+        }
+        return _result;
+    }
+    setMode(notifyMode, opt_detectionTime = 500, opt_responseTime = 500) {
+        this.setMode_(notifyMode, opt_detectionTime, opt_responseTime, this.requestId.defaultId());
+        this.notifyMode_ = notifyMode;
+        this.detectionTime_ = opt_detectionTime;
+        this.responseTime_ = opt_responseTime;
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100MD.PREFIX) !== -1;
     }
     prepareConnect() {
         this.meshBlock = new MeshJsMd_1.MeshJsMd();
-        // set Event handler
+        // set Event Handler
         const motionBlock = this.meshBlock;
-        motionBlock.onNotify = (response) => {
-            if (typeof this.onNotify !== 'function') {
-                return;
-            }
-            this.onNotify(response);
-        };
+        motionBlock.onSensorEvent = (motionState, notifyMode, requestId) => this.setHandler_(motionState, notifyMode, requestId);
         super.prepareConnect();
     }
     async beforeOnDisconnectWait(reason) {
         // do nothing
     }
+    setMode_(notifyMode, detectionTime, responseTime, requestId) {
+        const motionBlock = this.meshBlock;
+        const command = motionBlock.parseSetmodeCommand(notifyMode, detectionTime, responseTime, requestId);
+        this.writeWOResponse(command);
+    }
+    setHandler_(motionState, notifyMode, requestId) {
+        if (typeof this.onSensorEvent !== 'function') {
+            return;
+        }
+        if (this.requestId.isDefaultId(requestId)) {
+            // Emit Event
+            this.onSensorEvent(motionState, notifyMode);
+            return;
+        }
+        // Update Inner Values
+        this.requestId.received(requestId);
+        this.retMotionState_ = motionState;
+    }
 }
 exports.default = MESH_100MD;
 MESH_100MD.PartsName = 'MESH_100MD';
 MESH_100MD.PREFIX = 'MESH-100MD';
+MESH_100MD.NotifyMode = MeshJsMd_1.MeshJsMd.NotifyMode;
 
 
 /***/ }),
@@ -27274,52 +27469,97 @@ MESH_100MD.PREFIX = 'MESH-100MD';
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
 const MeshJsPa_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsPa.js");
+const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
 /** MESH_100PA management class */
 class MESH_100PA extends MESH_1.MESH {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onNotify = null;
+        this.onSensorEvent = null;
         this.staticClass = MESH_100PA;
+        this.proximity_ = -1;
+        this.brightness_ = -1;
     }
     async getDataWait() {
         this.checkConnected();
-        const brightnessBlock = this.meshBlock;
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this.meshBlock.battery,
-            proximity: brightnessBlock.getResponse.proximity,
-            brightness: brightnessBlock.getResponse.brightness,
         };
     }
-    setMode(type, opt_requestId = 0) {
-        const brightnessBlock = this.meshBlock;
-        const command = brightnessBlock.parseSetmodeCommand(type, opt_requestId);
-        this.writeWOResponse(command);
+    async getSensorDataWait() {
+        this.checkConnected();
+        const _requestId = this.requestId.next();
+        const _proximityRangeUpper = 0;
+        const _proximityRangeBottom = 0;
+        const _brightnessRangeUpper = 0;
+        const _brightnessRangeBottom = 0;
+        this.setMode_(_proximityRangeUpper, _proximityRangeBottom, _brightnessRangeUpper, _brightnessRangeBottom, MESH_100PA.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM, MESH_100PA.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM, MESH_100PA.NotifyMode.ONCE, _requestId);
+        const _TIMEOUT_MSEC = 2000;
+        let _isTimeout = false;
+        const _timeoutId = setTimeout(() => {
+            _isTimeout = true;
+        }, _TIMEOUT_MSEC);
+        const INTERVAL_TIME = 50;
+        const _result = await new Promise((resolve) => {
+            const _intervalId = setInterval(() => {
+                if (!this.requestId.isReceived(_requestId)) {
+                    if (_isTimeout) {
+                        clearInterval(_intervalId);
+                        resolve(null);
+                    }
+                    return;
+                }
+                clearTimeout(_timeoutId);
+                clearInterval(_intervalId);
+                resolve({ proximity: this.proximity_, brightness: this.brightness_ });
+            }, INTERVAL_TIME);
+        });
+        if (_result == null) {
+            throw new MeshJsError_1.MeshJsTimeOutError(this.peripheral.localName);
+        }
+        return _result;
+    }
+    setMode(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode) {
+        this.setMode_(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode, this.requestId.defaultId());
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100PA.PREFIX) !== -1;
     }
     prepareConnect() {
         this.meshBlock = new MeshJsPa_1.MeshJsPa();
+        // set Event Handler
         const brightnessBlock = this.meshBlock;
-        brightnessBlock.onNotify = (response) => {
-            if (typeof this.onNotify !== 'function') {
+        brightnessBlock.onSensorEvent = (proximity, brightness, requestId) => {
+            if (typeof this.onSensorEvent !== 'function') {
                 return;
             }
-            this.onNotify(response);
+            if (this.requestId.isDefaultId(requestId)) {
+                // Emit Event
+                this.onSensorEvent(proximity, brightness);
+                return;
+            }
+            // Update Inner Values
+            this.requestId.received(requestId);
+            this.proximity_ = proximity;
+            this.brightness_ = brightness;
         };
         super.prepareConnect();
     }
     async beforeOnDisconnectWait(reason) {
         // do nothing
     }
+    setMode_(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode, requestId) {
+        const brightnessBlock = this.meshBlock;
+        const command = brightnessBlock.parseSetmodeCommand(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode, requestId);
+        this.writeWOResponse(command);
+    }
 }
 exports.default = MESH_100PA;
 MESH_100PA.PartsName = 'MESH_100PA';
 MESH_100PA.PREFIX = 'MESH-100PA';
-MESH_100PA.NotifyType = MeshJsPa_1.MeshJsPa.NOTIFY_TYPE;
+MESH_100PA.EmitCondition = MeshJsPa_1.MeshJsPa.EmitCondition;
+MESH_100PA.NotifyMode = MeshJsPa_1.MeshJsPa.NotifyMode;
 
 
 /***/ }),
@@ -27337,13 +27577,23 @@ MESH_100PA.NotifyType = MeshJsPa_1.MeshJsPa.NOTIFY_TYPE;
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
 const MeshJsTh_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsTh.js");
+const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
 /** MESH_100TH management class */
 class MESH_100TH extends MESH_1.MESH {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onNotify = null;
+        this.onSensorEvent = null;
         this.staticClass = MESH_100TH;
+        this.retTemperature_ = -1;
+        this.retHumidity_ = -1;
+        this.temperatureUpper_ = 50;
+        this.temperatureBottom_ = -10;
+        this.humidityUpper_ = 100;
+        this.humidityBottom_ = 0;
+        this.temperatureCondition_ = MESH_100TH.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM;
+        this.humidityCondision_ = MESH_100TH.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM;
+        this.notifyMode_ = -1;
     }
     async getDataWait() {
         this.checkConnected();
@@ -27351,15 +27601,53 @@ class MESH_100TH extends MESH_1.MESH {
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this.meshBlock.battery,
-            temperature: _th.getResponse.temperature,
-            humidity: _th.getResponse.humidity,
         };
     }
-    setMode(temperatureUpper, temperatureBottom, temperatureCondition, humidityUpper, humidityBottom, humidityCondision, type, opt_requestId = 0) {
-        const temperatureAndHumidityBlock = this.meshBlock;
-        const command = temperatureAndHumidityBlock.parseSetmodeCommand(temperatureUpper, temperatureBottom, humidityUpper, humidityBottom, temperatureCondition, humidityCondision, type, opt_requestId);
-        this.writeWOResponse(command);
+    async getSensorDataWait() {
+        this.checkConnected();
+        const _requestId = this.requestId.next();
+        this.setMode_(0, 0, 0, 0, 0, 0, MESH_100TH.NotifyMode.ONCE, _requestId);
+        const _TIMEOUT_MSEC = 2000;
+        let _isTimeout = false;
+        const _timeoutId = setTimeout(() => {
+            _isTimeout = true;
+        }, _TIMEOUT_MSEC);
+        const INTERVAL_TIME = 50;
+        const _result = await new Promise((resolve) => {
+            const _intervalId = setInterval(() => {
+                if (!this.requestId.isReceived(_requestId)) {
+                    if (_isTimeout) {
+                        clearInterval(_intervalId);
+                        resolve(null);
+                    }
+                    return;
+                }
+                clearTimeout(_timeoutId);
+                clearInterval(_intervalId);
+                resolve({
+                    temperature: this.retTemperature_,
+                    humidity: this.retHumidity_,
+                });
+            }, INTERVAL_TIME);
+        });
+        if (this.notifyMode_ !== MESH_100TH.NotifyMode.ONCE) {
+            // Continus previous mode
+            this.setMode(this.temperatureUpper_, this.temperatureBottom_, this.humidityUpper_, this.humidityBottom_, this.temperatureCondition_, this.humidityCondision_, this.notifyMode_);
+        }
+        if (_result == null) {
+            throw new MeshJsError_1.MeshJsTimeOutError(this.peripheral.localName);
+        }
+        return _result;
+    }
+    setMode(temperatureUpper, temperatureBottom, humidityUpper, humidityBottom, temperatureCondition, humidityCondision, notifyMode) {
+        this.setMode_(temperatureUpper, temperatureBottom, humidityUpper, humidityBottom, temperatureCondition, humidityCondision, notifyMode, this.requestId.defaultId());
+        this.temperatureUpper_ = temperatureUpper;
+        this.temperatureBottom_ = temperatureBottom;
+        this.humidityUpper_ = humidityUpper;
+        this.humidityBottom_ = humidityBottom;
+        this.temperatureCondition_ = temperatureCondition;
+        this.humidityCondision_ = humidityCondision;
+        this.notifyMode_ = notifyMode;
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100TH.PREFIX) !== -1;
@@ -27367,22 +27655,38 @@ class MESH_100TH extends MESH_1.MESH {
     prepareConnect() {
         this.meshBlock = new MeshJsTh_1.MeshJsTh();
         const temperatureAndHumidityBlock = this.meshBlock;
-        temperatureAndHumidityBlock.onNotify = (response) => {
-            if (typeof this.onNotify !== 'function') {
-                return;
-            }
-            this.onNotify(response);
-        };
+        // set Event Handler
+        temperatureAndHumidityBlock.onSensorEvent = (temperature, humidity, requestId) => this.setHandler_(temperature, humidity, requestId);
         super.prepareConnect();
     }
     async beforeOnDisconnectWait(reason) {
         // do nothing
     }
+    setMode_(temperatureUpper, temperatureBottom, humidityUpper, humidityBottom, temperatureCondition, humidityCondision, notifyMode, requestId) {
+        const temperatureAndHumidityBlock = this.meshBlock;
+        const command = temperatureAndHumidityBlock.parseSetmodeCommand(temperatureUpper, temperatureBottom, humidityUpper, humidityBottom, temperatureCondition, humidityCondision, notifyMode, requestId);
+        this.writeWOResponse(command);
+    }
+    setHandler_(temperature, humidity, requestId) {
+        if (typeof this.onSensorEvent !== 'function') {
+            return;
+        }
+        if (this.requestId.isDefaultId(requestId)) {
+            // Emit Event
+            this.onSensorEvent(temperature, humidity);
+            return;
+        }
+        // Update Inner Values
+        this.requestId.received(requestId);
+        this.retTemperature_ = temperature;
+        this.retHumidity_ = humidity;
+    }
 }
 exports.default = MESH_100TH;
 MESH_100TH.PartsName = 'MESH_100TH';
 MESH_100TH.PREFIX = 'MESH-100TH';
-MESH_100TH.NotifyType = MeshJsTh_1.MeshJsTh.NOTIFY_TYPE;
+MESH_100TH.NotifyMode = MeshJsTh_1.MeshJsTh.NotifyMode;
+MESH_100TH.EmitCondition = MeshJsTh_1.MeshJsTh.EmitCondition;
 
 
 /***/ }),
@@ -27393,10 +27697,11 @@ MESH_100TH.NotifyType = MeshJsTh_1.MeshJsTh.NOTIFY_TYPE;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
 class MeshJs {
     constructor() {
         // Event Handler
-        this.onBattery = null;
+        this.onBatteryLevel = null;
         this.onStatusButtonPressed = null;
         // Constant Values
         this.UUIDS = {
@@ -27439,6 +27744,7 @@ class MeshJs {
             return;
         }
         this.battery_ = data[14];
+        this.checkVersion_(data[7], data[8], data[9]);
     }
     /**
      * notify
@@ -27454,7 +27760,8 @@ class MeshJs {
         command.forEach((val) => {
             sum += val;
         });
-        return sum % 256;
+        const BYTE = 256;
+        return sum % BYTE;
     }
     updateBattery_(data) {
         if (data.length !== 4) {
@@ -27470,10 +27777,10 @@ class MeshJs {
         //   return;
         // }
         this.battery_ = data[2];
-        if (typeof this.onBattery !== 'function') {
+        if (typeof this.onBatteryLevel !== 'function') {
             return false;
         }
-        this.onBattery(this.battery_);
+        this.onBatteryLevel(this.battery_);
         return true;
     }
     updateStatusButton_(data) {
@@ -27495,6 +27802,29 @@ class MeshJs {
         this.onStatusButtonPressed();
         return true;
     }
+    checkVersion_(major, minor, release) {
+        const VERSION_MAJOR = 1;
+        const VERSION_MINOR = 2;
+        const VERSION_RELEASE = 5;
+        if (VERSION_MAJOR < major) {
+            return;
+        }
+        if (major < VERSION_MAJOR) {
+            throw new MeshJsError_1.MeshBlockVersionError(major, minor, release);
+        }
+        if (VERSION_MINOR < minor) {
+            return;
+        }
+        if (minor < VERSION_MINOR) {
+            throw new MeshJsError_1.MeshBlockVersionError(major, minor, release);
+        }
+        if (VERSION_RELEASE < release) {
+            return;
+        }
+        if (release < VERSION_RELEASE) {
+            throw new MeshJsError_1.MeshBlockVersionError(major, minor, release);
+        }
+    }
 }
 exports.MeshJs = MeshJs;
 
@@ -27515,22 +27845,15 @@ class MeshJsAc extends MeshJs_1.MeshJs {
         this.onTapped = null;
         this.onShaked = null;
         this.onFlipped = null;
-        this.onDirection = null;
+        this.onOrientationChanged = null;
+        this.accele = { x: 0, y: 0, z: 0 };
         // Constant Values
         this.MESSAGE_TYPE_ID_ = 1;
         this.DATA_LENGTH_ = 17;
         this.TAP_EVENT_ID_ = 0;
         this.SHAKE_EVENT_ID_ = 1;
         this.FLIP_EVENT_ID_ = 2;
-        this.DIRECTION_EVENT_ID_ = 3;
-        this.accele_ = { x: -1, y: -1, z: -1 };
-        this.face_ = -1;
-    }
-    get getAccele() {
-        return this.accele_;
-    }
-    get getFace() {
-        return this.face_;
+        this.ORIENTATION_EVENT_ID_ = 3;
     }
     /**
      * notify
@@ -27540,49 +27863,44 @@ class MeshJsAc extends MeshJs_1.MeshJs {
      */
     notify(data) {
         super.notify(data);
-        this.updateAccele_(data);
-        if (data[0] !== 1) {
+        if (data.length !== this.DATA_LENGTH_) {
             return;
         }
+        if (data[0] !== this.MESSAGE_TYPE_ID_) {
+            return;
+        }
+        // update accele values
+        const BYTE = 256;
+        const BASE = 1024;
+        this.accele.x = this.complemnt_(BYTE * data[5] + data[4]) / BASE;
+        this.accele.y = this.complemnt_(BYTE * data[7] + data[6]) / BASE;
+        this.accele.z = this.complemnt_(BYTE * data[9] + data[8]) / BASE;
+        // emit event
         switch (data[1]) {
             case this.TAP_EVENT_ID_:
                 if (typeof this.onTapped === 'function') {
-                    this.onTapped(this.accele_);
+                    this.onTapped(this.accele);
                 }
                 break;
             case this.SHAKE_EVENT_ID_:
                 if (typeof this.onShaked === 'function') {
-                    this.onShaked(this.accele_);
+                    this.onShaked(this.accele);
                 }
                 break;
             case this.FLIP_EVENT_ID_:
                 if (typeof this.onFlipped === 'function') {
-                    this.onFlipped(this.accele_);
+                    this.onFlipped(this.accele);
                 }
                 break;
-            case this.DIRECTION_EVENT_ID_:
-                if (typeof this.onDirection === 'function') {
-                    this.face_ = data[2];
-                    this.onDirection(this.face_, this.accele_);
+            case this.ORIENTATION_EVENT_ID_:
+                if (typeof this.onOrientationChanged === 'function') {
+                    const face = data[2];
+                    this.onOrientationChanged(face, this.accele);
                 }
                 break;
             default:
                 break;
         }
-    }
-    updateAccele_(data) {
-        if (data.length !== this.DATA_LENGTH_) {
-            return false;
-        }
-        if (data[0] !== this.MESSAGE_TYPE_ID_) {
-            return false;
-        }
-        const BYTE = 256;
-        const BASE = 1024;
-        this.accele_.x = this.complemnt_(BYTE * data[5] + data[4]) / BASE;
-        this.accele_.y = this.complemnt_(BYTE * data[7] + data[6]) / BASE;
-        this.accele_.z = this.complemnt_(BYTE * data[9] + data[8]) / BASE;
-        return true;
     }
     complemnt_(val) {
         const TWO_BYTE = 65536;
@@ -27677,9 +27995,22 @@ class MeshJsError extends Error {
     }
 }
 exports.MeshJsError = MeshJsError;
+class MeshBlockVersionError extends MeshJsError {
+    constructor(major, minor, release) {
+        super(1, 'please UPDATE block version to 1.2.5 more. (current block version ' +
+            major +
+            '.' +
+            minor +
+            '.' +
+            release +
+            ')');
+        this.major = major;
+    }
+}
+exports.MeshBlockVersionError = MeshBlockVersionError;
 class MeshJsOutOfRangeError extends MeshJsError {
     constructor(property, min, max) {
-        super(1, property +
+        super(2, property +
             ' is out of range. ' +
             property +
             ' must be ' +
@@ -27693,11 +28024,18 @@ class MeshJsOutOfRangeError extends MeshJsError {
 exports.MeshJsOutOfRangeError = MeshJsOutOfRangeError;
 class MeshJsInvalidValueError extends MeshJsError {
     constructor(property) {
-        super(2, property + 'is invalid value.');
+        super(3, property + ' is invalid value.');
         this.property = property;
     }
 }
 exports.MeshJsInvalidValueError = MeshJsInvalidValueError;
+class MeshJsTimeOutError extends MeshJsError {
+    constructor(property) {
+        super(4, property + ' is time out.');
+        this.property = property;
+    }
+}
+exports.MeshJsTimeOutError = MeshJsTimeOutError;
 
 
 /***/ }),
@@ -27714,13 +28052,13 @@ class MeshJsGp extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onDigitalInEventNotify = null;
-        this.onAnalogInEventNotify = null;
-        this.onDigitalInNotify = null;
-        this.onAnalogInNotify = null;
-        this.onVOutNotify = null;
-        this.onDigitalOutNotify = null;
-        this.onPwmNotify = null;
+        this.onDigitalInputEvent = null;
+        this.onAnalogInputEvent = null;
+        this.onDigitalInput = null;
+        this.onAnalogInput = null;
+        this.onVOutput = null;
+        this.onDigitalOutput = null;
+        this.onPwm = null;
         this.DigitalPins = { p1: false, p2: false, p3: false };
         this.MESSAGE_TYPE_ID_ = 1;
         this.DIGITAL_IN_EVENT_ID_ = 0;
@@ -27745,68 +28083,68 @@ class MeshJsGp extends MeshJs_1.MeshJs {
         }
         switch (data[1]) {
             case this.DIGITAL_IN_EVENT_ID_: {
-                if (typeof this.onDigitalInEventNotify !== 'function') {
+                if (typeof this.onDigitalInputEvent !== 'function') {
                     return;
                 }
                 const _pin = data[2];
                 const _state = data[3];
-                this.onDigitalInEventNotify(_pin, _state);
+                this.onDigitalInputEvent(_pin, _state);
                 break;
             }
             case this.ANALOG_IN_EVENT_ID_: {
-                if (typeof this.onAnalogInEventNotify !== 'function') {
+                if (typeof this.onAnalogInputEvent !== 'function') {
                     return;
                 }
                 const _level = data[5];
-                this.onAnalogInEventNotify(_level);
+                this.onAnalogInputEvent(_level);
                 break;
             }
             case this.DIGITAL_IN_ID_: {
-                if (typeof this.onDigitalInNotify !== 'function') {
+                if (typeof this.onDigitalInput !== 'function') {
                     return;
                 }
                 const requestId = data[2];
                 const pin = data[3];
                 const state = data[4];
-                this.onDigitalInNotify(requestId, pin, state);
+                this.onDigitalInput(requestId, pin, state);
                 break;
             }
             case this.ANALOG_IN_ID_: {
-                if (typeof this.onAnalogInNotify !== 'function') {
-                    return;
-                }
-                const requestId = data[2];
-                const state = data[4];
-                const mode = data[5];
-                this.onAnalogInNotify(requestId, state, mode);
-                break;
-            }
-            case this.V_OUT_ID_: {
-                if (typeof this.onVOutNotify !== 'function') {
-                    return;
-                }
-                const requestId = data[2];
-                const state = data[4];
-                this.onVOutNotify(requestId, state);
-                break;
-            }
-            case this.DIGITAL_OUT_ID_: {
-                if (typeof this.onDigitalOutNotify !== 'function') {
-                    return;
-                }
-                const requestId = data[2];
-                const pin = data[3];
-                const state = data[4];
-                this.onDigitalOutNotify(requestId, pin, state);
-                break;
-            }
-            case this.PWM_ID_: {
-                if (typeof this.onPwmNotify !== 'function') {
+                if (typeof this.onAnalogInput !== 'function') {
                     return;
                 }
                 const requestId = data[2];
                 const level = data[4];
-                this.onPwmNotify(requestId, level);
+                const analogInputNotifyMode = data[5];
+                this.onAnalogInput(requestId, level, analogInputNotifyMode);
+                break;
+            }
+            case this.V_OUT_ID_: {
+                if (typeof this.onVOutput !== 'function') {
+                    return;
+                }
+                const requestId = data[2];
+                const vccState = data[4];
+                this.onVOutput(requestId, vccState);
+                break;
+            }
+            case this.DIGITAL_OUT_ID_: {
+                if (typeof this.onDigitalOutput !== 'function') {
+                    return;
+                }
+                const requestId = data[2];
+                const pin = data[3];
+                const state = data[4];
+                this.onDigitalOutput(requestId, pin, state);
+                break;
+            }
+            case this.PWM_ID_: {
+                if (typeof this.onPwm !== 'function') {
+                    return;
+                }
+                const requestId = data[2];
+                const level = data[4];
+                this.onPwm(requestId, level);
                 break;
             }
             default:
@@ -27816,54 +28154,46 @@ class MeshJsGp extends MeshJs_1.MeshJs {
     /**
      * parseSetmodeCommand
      *
-     * @param digitalIn {p1:boolean, p2:boolean, p3:boolean}
-     * @param digitalInNotify {p1:boolean, p2:boolean, p3:boolean}
-     * @param digitalOut {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalInputLow2High {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalInputHigh2Low {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalOutput {p1:boolean, p2:boolean, p3:boolean}
      * @param pwmRatio 0 ~ 255
-     * @param vcc VCC.AUTO or VCC.ON or VCC.OFF
-     * @param analogInRangeUpper 0.00 ~ 3.00[V], resolution 0.05[V]
-     * @param analogInRangeBottom 0.00 ~ 3.00[V], resolution 0.05[V]
-     * @param analogInNotify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+     * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
+     * @param analogInputRangeUpper 0 ~ 255(0.00 ~ 3.00[V])
+     * @param analogInputRangeBottom 0 ~ 255(0.00 ~ 3.00[V])
+     * @param analogInputNotify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
      * @returns command
      */
-    parseSetmodeCommand(digitalIn, digitalInNotify, digitalOut, pwmRatio, vcc, analogInRangeUpper, analogInRangeBottom, analogInNotify) {
+    parseSetmodeCommand(digitalInputLow2High, digitalInputHigh2Low, digitalOutput, pwmRatio, vcc, analogInputRangeUpper, analogInputRangeBottom, analogInputNotify) {
         // Error Handle
         const PWM_MIN = 0;
         const PWM_MAX = 255;
-        if (pwmRatio < PWM_MIN || PWM_MAX < pwmRatio) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('pwmRatio', PWM_MIN, PWM_MAX);
-        }
-        if (vcc !== MeshJsGp.VCC.AUTO &&
-            vcc !== MeshJsGp.VCC.ON &&
-            vcc !== MeshJsGp.VCC.OFF) {
+        this.checkRange_(pwmRatio, PWM_MIN, PWM_MAX, 'pwmRatio');
+        if (vcc !== MeshJsGp.Vcc.AUTO &&
+            vcc !== MeshJsGp.Vcc.ON &&
+            vcc !== MeshJsGp.Vcc.OFF) {
             throw new MeshJsError_1.MeshJsInvalidValueError('vcc');
         }
         const ANALOG_IN_RANGE_MIN = 0;
-        const ANALOG_IN_RANGE_MAX = 3;
-        if (analogInRangeUpper < ANALOG_IN_RANGE_MIN ||
-            ANALOG_IN_RANGE_MAX < analogInRangeUpper) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('analogInRangeUpper', ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX);
-        }
-        if (analogInRangeBottom < ANALOG_IN_RANGE_MIN ||
-            ANALOG_IN_RANGE_MAX < analogInRangeBottom) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('analogInRangeBottom', ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX);
-        }
-        if (analogInNotify !== MeshJsGp.ANALOG_IN_EVENT_CONDITION.NOT_NOTIFY &&
-            analogInNotify !== MeshJsGp.ANALOG_IN_EVENT_CONDITION.ABOVE_THRESHOLD &&
-            analogInNotify !== MeshJsGp.ANALOG_IN_EVENT_CONDITION.BELOW_THRESHOLD) {
+        const ANALOG_IN_RANGE_MAX = 255;
+        this.checkRange_(analogInputRangeUpper, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeUpper');
+        this.checkRange_(analogInputRangeBottom, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeBottom');
+        if (analogInputNotify !== MeshJsGp.AnalogInEventCondition.NOT_NOTIFY &&
+            analogInputNotify !== MeshJsGp.AnalogInEventCondition.ABOVE_THRESHOLD &&
+            analogInputNotify !== MeshJsGp.AnalogInEventCondition.BELOW_THRESHOLD) {
             throw new MeshJsError_1.MeshJsInvalidValueError('analogInNotify');
         }
         // Generate Command
         const HEADER = [this.MESSAGE_TYPE_ID_, 1];
         const BODY = [
-            this.pin2num(digitalIn),
-            this.pin2num(digitalInNotify),
-            this.pin2num(digitalOut),
+            this.pin2num(digitalInputLow2High),
+            this.pin2num(digitalInputHigh2Low),
+            this.pin2num(digitalOutput),
             pwmRatio,
             vcc,
-            analogInRangeUpper,
-            analogInRangeBottom,
-            analogInNotify,
+            analogInputRangeUpper,
+            analogInputRangeBottom,
+            analogInputNotify,
         ];
         const data = HEADER.concat(BODY);
         data.push(this.checkSum(data));
@@ -27882,22 +28212,22 @@ class MeshJsGp extends MeshJs_1.MeshJs {
     /**
      * parseSetAinCommand
      *
-     * @param mode
+     * @param analogInputNotifyMode
      * @param requestId
      * @returns
      */
-    parseSetAinCommand(mode, requestId = 0) {
-        return this.parseSetCommand_(this.ANALOG_IN_ID_, mode, requestId);
+    parseSetAinCommand(analogInputNotifyMode, requestId = 0) {
+        return this.parseSetCommand_(this.ANALOG_IN_ID_, analogInputNotifyMode, requestId);
     }
     /**
-     * parseSetVoutCommand
+     * parseSetVOutputCommand
      *
-     * @param pin
      * @param requestId
      * @returns
      */
-    parseSetVoutCommand(pin, requestId = 0) {
-        return this.parseSetCommand_(this.V_OUT_ID_, pin, requestId);
+    parseSetVOutputCommand(requestId = 0) {
+        const PIN = 0; // VOUT pin
+        return this.parseSetCommand_(this.V_OUT_ID_, PIN, requestId);
     }
     /**
      * parseSetDoutCommand
@@ -27916,7 +28246,7 @@ class MeshJsGp extends MeshJs_1.MeshJs {
      * @returns
      */
     parseSetPWMCommand(requestId = 0) {
-        return this.parseSetCommand_(this.PWM_ID_, MeshJsGp.PIN.P3, requestId);
+        return this.parseSetCommand_(this.PWM_ID_, MeshJsGp.Pin.P3, requestId);
     }
     parseSetCommand_(eventId, param, requestId) {
         const HEADER = [this.MESSAGE_TYPE_ID_, eventId, requestId];
@@ -27927,32 +28257,46 @@ class MeshJsGp extends MeshJs_1.MeshJs {
     pin2num(pins) {
         return (pins.p1 ? 1 : 0) + (pins.p2 ? 2 : 0) + (pins.p3 ? 4 : 0);
     }
+    checkRange_(target, min, max, name) {
+        if (target < min || max < target) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError(name, min, max);
+        }
+        return true;
+    }
 }
 exports.MeshJsGp = MeshJsGp;
 // Constant Values
-MeshJsGp.ANALOG_IN_EVENT_CONDITION = {
+MeshJsGp.AnalogInEventCondition = {
     NOT_NOTIFY: 0,
-    ABOVE_THRESHOLD: 1,
-    BELOW_THRESHOLD: 2,
+    ABOVE_THRESHOLD: 17,
+    BELOW_THRESHOLD: 34,
 };
-MeshJsGp.MODE = {
-    ALWAYS: 0,
+MeshJsGp.AnalogInputNotifyMode = {
+    STOP: 0,
     ONCE: 1,
-    ALWAYS_AND_ONECE: 2,
+    ALWAYS: 2,
 };
-MeshJsGp.PIN = {
+MeshJsGp.DigitalInputState = {
+    UP_EDGE: 0,
+    DOWN_EDGE: 1,
+};
+MeshJsGp.Pin = {
     P1: 0,
     P2: 1,
     P3: 2,
 };
-MeshJsGp.STATE = {
+MeshJsGp.State = {
     LOW_2_HIGH: 1,
     HIGH_2_LOW: 2,
 };
-MeshJsGp.VCC = {
+MeshJsGp.Vcc = {
     AUTO: 0,
     ON: 1,
     OFF: 2,
+};
+MeshJsGp.VccState = {
+    OFF: 0,
+    ON: 1,
 };
 
 
@@ -27967,28 +28311,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const MeshJs_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJs.js");
 const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
 class MeshJsLe extends MeshJs_1.MeshJs {
+    constructor() {
+        super(...arguments);
+        this.colors = { red: 0, green: 0, blue: 0 };
+    }
     /**
      *
-     * @param red
-     * @param green
-     * @param blue
+     * @param colors
      * @param totalTime
      * @param cycleOnTime
      * @param cycleOffTime
      * @param pattern
      * @returns
      */
-    parseLightupCommand(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern) {
+    parseLedCommand(colors, totalTime, cycleOnTime, cycleOffTime, pattern) {
         // Error Handle
         const COLOR_MIN = 0;
         const COLOR_MAX = 127;
-        if (red < COLOR_MIN || COLOR_MAX < red) {
+        if (colors.red < COLOR_MIN || COLOR_MAX < colors.red) {
             throw new MeshJsError_1.MeshJsOutOfRangeError('red', COLOR_MIN, COLOR_MAX);
         }
-        if (green < COLOR_MIN || COLOR_MAX < green) {
+        if (colors.green < COLOR_MIN || COLOR_MAX < colors.green) {
             throw new MeshJsError_1.MeshJsOutOfRangeError('green', COLOR_MIN, COLOR_MAX);
         }
-        if (blue < COLOR_MIN || COLOR_MAX < blue) {
+        if (colors.blue < COLOR_MIN || COLOR_MAX < colors.blue) {
             throw new MeshJsError_1.MeshJsOutOfRangeError('blue', COLOR_MIN, COLOR_MAX);
         }
         const TIME_MIN = 0;
@@ -28014,11 +28360,11 @@ class MeshJsLe extends MeshJs_1.MeshJs {
         const data = [
             MESSAGE_TYPE_ID,
             EVENT_TYPE_ID,
-            red,
+            colors.red,
             FIXED,
-            green,
+            colors.green,
             FIXED,
-            blue,
+            colors.blue,
             totalTime % BYTE,
             Math.floor(totalTime / BYTE),
             cycleOnTime % BYTE,
@@ -28053,25 +28399,14 @@ class MeshJsMd extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onNotify = null;
-        // Constant Values
-        this.DETECTION_MODE = {
-            DETECTED: 0x01,
-            NOT_DETECTED: 0x02,
-            ONESHOT: 0x10,
-            CONTINUOUS: 0x20,
-        };
-        this.MOTION_STATE = {
+        this.onSensorEvent = null;
+        this.MotionState = {
             SETUP: 0x00,
             DETECTED: 0x01,
             NOT_DETECTED: 0x02,
         };
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
-        this.response_ = { requestId: -1, motionState: -1, detectionMode: -1 };
-    }
-    get getResponse() {
-        return this.response_;
     }
     /**
      * notify
@@ -28087,36 +28422,30 @@ class MeshJsMd extends MeshJs_1.MeshJs {
         if (data[1] !== this.EVENT_TYPE_ID_) {
             return;
         }
-        this.response_.requestId = data[2];
-        this.response_.motionState = data[3];
-        this.response_.detectionMode = data[4];
-        if (typeof this.onNotify !== 'function') {
+        const requestId = data[2];
+        const motionState = data[3];
+        const notifyMode = data[4];
+        if (typeof this.onSensorEvent !== 'function') {
             return;
         }
-        this.onNotify(this.response_);
+        this.onSensorEvent(motionState, notifyMode, requestId);
     }
     /**
      *
-     * @param detectionMode
+     * @param notifyMode
      * @param opt_detectionTime
      * @param opt_responseTime
      * @param opt_requestId
      * @returns
      */
-    parseSetmodeCommand(detectionMode, opt_detectionTime = 500, opt_responseTime = 500, opt_requestId = 0) {
+    parseSetmodeCommand(notifyMode, opt_detectionTime = 500, opt_responseTime = 500, opt_requestId = 0) {
         // Error Handle
         const DETECTION_TIME_MIN = 200;
         const DETECTION_TIME_MAX = 60000;
-        if (opt_detectionTime < DETECTION_TIME_MIN ||
-            DETECTION_TIME_MAX < opt_detectionTime) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('opt_detectionTime', DETECTION_TIME_MIN, DETECTION_TIME_MAX);
-        }
+        this.checkRange_(opt_detectionTime, DETECTION_TIME_MIN, DETECTION_TIME_MAX, 'opt_detectionTime');
         const RESPONSE_TIME_MIN = 500;
         const RESPONSE_TIME_MAX = 60000;
-        if (opt_responseTime < RESPONSE_TIME_MIN ||
-            RESPONSE_TIME_MAX < opt_responseTime) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('opt_responseTime', RESPONSE_TIME_MIN, RESPONSE_TIME_MAX);
-        }
+        this.checkRange_(opt_responseTime, RESPONSE_TIME_MIN, RESPONSE_TIME_MAX, 'opt_responseTime');
         // Generate Command
         const HEADER = [
             this.MESSAGE_TYPE_ID_,
@@ -28125,7 +28454,7 @@ class MeshJsMd extends MeshJs_1.MeshJs {
         ];
         const BYTE = 256;
         const BODY = [
-            detectionMode,
+            notifyMode,
             opt_detectionTime % BYTE,
             Math.floor(opt_detectionTime / BYTE),
             opt_responseTime % BYTE,
@@ -28135,8 +28464,21 @@ class MeshJsMd extends MeshJs_1.MeshJs {
         data.push(this.checkSum(data));
         return data;
     }
+    checkRange_(target, min, max, name) {
+        if (target < min || max < target) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError(name, min, max);
+        }
+        return true;
+    }
 }
 exports.MeshJsMd = MeshJsMd;
+// Constant Values
+MeshJsMd.NotifyMode = {
+    DETECTED: 0x01,
+    NOT_DETECTED: 0x02,
+    ONCE: 0x10,
+    ALWAYS: 0x20,
+};
 
 
 /***/ }),
@@ -28153,15 +28495,22 @@ class MeshJsPa extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onNotify = null;
+        this.onSensorEvent = null;
+        this.RANGE_MIN = 0;
+        this.RANGE_MAX = 65535;
+        this.NOTIFY_MODE_MIN_ = MeshJsPa.NotifyMode.STOP;
+        this.NOTIFY_MODE_MAX_ = MeshJsPa.NotifyMode.STOP +
+            MeshJsPa.NotifyMode.EMIT_PROXIMITY +
+            MeshJsPa.NotifyMode.EMIT_BRIGHTNESS +
+            MeshJsPa.NotifyMode.UPDATE_PROXIMITY +
+            MeshJsPa.NotifyMode.UPDATE_BRIGHTNESS +
+            MeshJsPa.NotifyMode.ONCE +
+            MeshJsPa.NotifyMode.ALWAYS;
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
-        this.response_ = { requestId: -1, proximity: -1, brightness: -1 };
-    }
-    get getResponse() {
-        return this.response_;
     }
     /**
+     * notify
      *
      * @param data
      * @returns
@@ -28175,48 +28524,98 @@ class MeshJsPa extends MeshJs_1.MeshJs {
             return;
         }
         const BYTE = 256;
-        this.response_.requestId = data[2];
-        this.response_.proximity = BYTE * data[5] + data[4];
-        this.response_.brightness = BYTE * data[7] + data[6];
-        if (typeof this.onNotify !== 'function') {
+        const proximity = BYTE * data[5] + data[4];
+        const LX = 10;
+        const brightness = LX * (BYTE * data[7] + data[6]);
+        const requestId = data[2];
+        if (typeof this.onSensorEvent !== 'function') {
             return;
         }
-        this.onNotify(this.response_);
+        this.onSensorEvent(proximity, brightness, requestId);
     }
     /**
+     * parseSetmodeCommand
      *
-     * @param notifyType
+     * @param notifyMode
      * @param opt_requestId
      * @returns command
      */
-    parseSetmodeCommand(notifyType, opt_requestId = 0) {
+    parseSetmodeCommand(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode, opt_requestId = 0) {
+        // Convert
+        const LX = 10;
+        const _brightnessRangeUpper = brightnessRangeUpper / LX;
+        const _brightnessRangeBottom = brightnessRangeBottom / LX;
         // Error Handle
-        if (notifyType % 4 !== 0) {
-            throw new MeshJsError_1.MeshJsInvalidValueError('notifyType');
-        }
-        const NOTIFY_TYPE_MIN = MeshJsPa.NOTIFY_TYPE.UPDATE_PROXIMITY;
-        const NOTIFY_TYPE_MAX = MeshJsPa.NOTIFY_TYPE.UPDATE_PROXIMITY +
-            MeshJsPa.NOTIFY_TYPE.UPDATE_BRIGHTNESS +
-            MeshJsPa.NOTIFY_TYPE.ONCE +
-            MeshJsPa.NOTIFY_TYPE.ALWAYS;
-        if (notifyType < NOTIFY_TYPE_MIN || NOTIFY_TYPE_MAX < notifyType) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('notifyType', NOTIFY_TYPE_MIN, NOTIFY_TYPE_MAX);
-        }
+        this.checkRange_(proximityRangeUpper, 'proximityRangeUpper');
+        this.checkRange_(proximityRangeBottom, 'proximityRangeBottom');
+        this.checkRange_(_brightnessRangeUpper, 'brightnessRangeUpper/' + LX);
+        this.checkRange_(_brightnessRangeBottom, 'brightnessRangeBottom/' + LX);
+        this.checkEmitCondition_(proximityCondition, 'proximityCondition');
+        this.checkEmitCondition_(brightnessCondition, 'brightnessCondition');
+        this.checkNotifyMode_(notifyMode);
         // Generate Command
         const HEADER = [
             this.MESSAGE_TYPE_ID_,
             this.EVENT_TYPE_ID_,
             opt_requestId,
         ];
-        const FIXED = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2];
-        const data = HEADER.concat(FIXED).concat(notifyType);
+        const PROXIMITY_RANGE_UPPER = this.num2array_(proximityRangeUpper);
+        const PROXIMITY_RANGE_BOTTOM = this.num2array_(proximityRangeBottom);
+        const BRIGHTNESS_RANGE_UPPER = this.num2array_(_brightnessRangeUpper);
+        const BRIGHTNESS_RANGE_BOTTOM = this.num2array_(_brightnessRangeBottom);
+        const FIXED = [2, 2, 2];
+        const data = HEADER.concat(PROXIMITY_RANGE_UPPER)
+            .concat(PROXIMITY_RANGE_BOTTOM)
+            .concat(BRIGHTNESS_RANGE_UPPER)
+            .concat(BRIGHTNESS_RANGE_BOTTOM)
+            .concat(proximityCondition)
+            .concat(brightnessCondition)
+            .concat(FIXED)
+            .concat(notifyMode);
         data.push(this.checkSum(data));
         return data;
+    }
+    checkRange_(target, name) {
+        if (target < this.RANGE_MIN || this.RANGE_MAX < target) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError(name, this.RANGE_MIN, this.RANGE_MAX);
+        }
+        return true;
+    }
+    checkEmitCondition_(target, name) {
+        let _isExist = false;
+        Object.entries(MeshJsPa.EmitCondition).forEach(([key, value]) => {
+            if (target === value) {
+                _isExist = true;
+            }
+        });
+        if (_isExist) {
+            return true;
+        }
+        throw new MeshJsError_1.MeshJsInvalidValueError(name);
+    }
+    checkNotifyMode_(target) {
+        if (target < this.NOTIFY_MODE_MIN_ || this.NOTIFY_MODE_MAX_ < target) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('notifyType', this.NOTIFY_MODE_MIN_, this.NOTIFY_MODE_MAX_);
+        }
+        return true;
+    }
+    num2array_(val) {
+        const BYTE = 256;
+        return [val % BYTE, Math.floor(val / BYTE)];
     }
 }
 exports.MeshJsPa = MeshJsPa;
 // Constant Values
-MeshJsPa.NOTIFY_TYPE = {
+MeshJsPa.EmitCondition = {
+    ABOVE_UPPER_AND_BELOW_BOTTOM: 0,
+    ABOVE_UPPER_AND_ABOVE_BOTTOM: 1,
+    BELOW_UPPER_AND_BELOW_BOTTOM: 16,
+    BELOW_UPPER_AND_ABOVE_BOTTOM: 17,
+};
+MeshJsPa.NotifyMode = {
+    STOP: 0,
+    EMIT_PROXIMITY: 1,
+    EMIT_BRIGHTNESS: 2,
     UPDATE_PROXIMITY: 4,
     UPDATE_BRIGHTNESS: 8,
     ONCE: 16,
@@ -28238,17 +28637,21 @@ class MeshJsTh extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onNotify = null;
+        this.onSensorEvent = null;
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
-        this.MAX_TEMPERATURE_ = 50;
-        this.MIN_TEMPERATURE_ = -10;
-        this.MAX_HUMIDITY_ = 100;
-        this.MIN_HUMIDITY_ = 0;
-        this.response_ = { requestId: -1, temperature: -1, humidity: -1 };
-    }
-    get getResponse() {
-        return this.response_;
+        this.TEMPERATURE_MAX_ = 50;
+        this.TEMPERATURE_MIN_ = -10;
+        this.HUMIDITY_MAX_ = 100;
+        this.HUMIDITY_MIN_ = 0;
+        this.NOTIFY_MODE_MIN_ = MeshJsTh.NotifyMode.STOP;
+        this.NOTIFY_MODE_MAX_ = MeshJsTh.NotifyMode.STOP +
+            MeshJsTh.NotifyMode.EMIT_TEMPERATURE +
+            MeshJsTh.NotifyMode.EMIT_HUMIDITY +
+            MeshJsTh.NotifyMode.UPDATE_TEMPERATURE +
+            MeshJsTh.NotifyMode.UPDATE_HUMIDITY +
+            MeshJsTh.NotifyMode.ONCE +
+            MeshJsTh.NotifyMode.ALWAYS;
     }
     /**
      *
@@ -28263,39 +28666,39 @@ class MeshJsTh extends MeshJs_1.MeshJs {
         if (data[1] !== this.EVENT_TYPE_ID_) {
             return;
         }
-        this.response_.requestId = data[2];
         const BYTE = 256;
-        const TEMP = this.complemnt_(BYTE * data[5] + data[4]) / 10;
-        this.response_.temperature = Math.min(Math.max(this.MIN_TEMPERATURE_, TEMP), this.MAX_TEMPERATURE_);
-        const hum_ori = BYTE * data[7] + data[6];
-        this.response_.humidity = Math.min(Math.max(this.MIN_HUMIDITY_, hum_ori), this.MAX_HUMIDITY_);
-        if (typeof this.onNotify !== 'function') {
+        const BASE = 10;
+        const TEMP = this.complemnt_(BYTE * data[5] + data[4]) / BASE;
+        const temperature = Math.min(Math.max(this.TEMPERATURE_MIN_, TEMP), this.TEMPERATURE_MAX_);
+        const HUM = BYTE * data[7] + data[6];
+        const humidity = Math.min(Math.max(this.HUMIDITY_MIN_, HUM), this.HUMIDITY_MAX_);
+        const requestId = data[2];
+        if (typeof this.onSensorEvent !== 'function') {
             return;
         }
-        this.onNotify(this.response_);
+        this.onSensorEvent(temperature, humidity, requestId);
     }
     /**
      *
      * @param temperatureRangeUpper
      * @param temperatureRangeBottom
-     * @param temperatureCondition
      * @param humidityRangeUpper
      * @param humidityRangeBottom
+     * @param temperatureCondition
      * @param humidityCondision
-     * @param type
+     * @param notifyMode
      * @param opt_requestId
      * @returns
      */
-    parseSetmodeCommand(temperatureRangeUpper, temperatureRangeBottom, temperatureCondition, humidityRangeUpper, humidityRangeBottom, humidityCondision, type, opt_requestId = 0) {
+    parseSetmodeCommand(temperatureRangeUpper, temperatureRangeBottom, humidityRangeUpper, humidityRangeBottom, temperatureCondition, humidityCondision, notifyMode, opt_requestId = 0) {
         // Error Handle
-        if (temperatureRangeBottom < this.MIN_TEMPERATURE_ ||
-            this.MAX_TEMPERATURE_ < temperatureRangeUpper) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('temperatureRange', this.MIN_TEMPERATURE_, this.MAX_TEMPERATURE_);
-        }
-        if (humidityRangeBottom < this.MIN_HUMIDITY_ ||
-            this.MAX_HUMIDITY_ < humidityRangeUpper) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('humidityRange', this.MIN_HUMIDITY_, this.MAX_HUMIDITY_);
-        }
+        this.checkRange_(temperatureRangeUpper, this.TEMPERATURE_MIN_, this.TEMPERATURE_MAX_, 'temperatureRangeUpper');
+        this.checkRange_(temperatureRangeBottom, this.TEMPERATURE_MIN_, this.TEMPERATURE_MAX_, 'temperatureRangeBottom');
+        this.checkRange_(humidityRangeUpper, this.HUMIDITY_MIN_, this.HUMIDITY_MAX_, 'humidityRangeUpper');
+        this.checkRange_(humidityRangeBottom, this.HUMIDITY_MIN_, this.HUMIDITY_MAX_, 'humidityRangeBottom');
+        this.checkEmitCondition_(temperatureCondition, 'temperatureCondition');
+        this.checkEmitCondition_(humidityCondision, 'humidityCondision');
+        this.checkNotifyMode_(notifyMode);
         // Generate Command
         const HEADER = [
             this.MESSAGE_TYPE_ID_,
@@ -28311,7 +28714,7 @@ class MeshJsTh extends MeshJs_1.MeshJs {
             .concat(TEMP_BOTTOM)
             .concat(HUMI_UPPER)
             .concat(HUMI_BOTTOM)
-            .concat([temperatureCondition, humidityCondision, type]);
+            .concat([temperatureCondition, humidityCondision, notifyMode]);
         data.push(this.checkSum(data));
         return data;
     }
@@ -28328,10 +28731,43 @@ class MeshJsTh extends MeshJs_1.MeshJs {
         const TWO_BYTE = 65536;
         return val + (val < 0 ? TWO_BYTE : 0);
     }
+    checkRange_(target, min, max, name) {
+        if (target < min || max < target) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError(name, min, max);
+        }
+        return true;
+    }
+    checkEmitCondition_(target, name) {
+        let _isExist = false;
+        Object.entries(MeshJsTh.EmitCondition).forEach(([, value]) => {
+            if (target === value) {
+                _isExist = true;
+            }
+        });
+        if (_isExist) {
+            return true;
+        }
+        throw new MeshJsError_1.MeshJsInvalidValueError(name);
+    }
+    checkNotifyMode_(target) {
+        if (target < this.NOTIFY_MODE_MIN_ || this.NOTIFY_MODE_MAX_ < target) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('notifyType', this.NOTIFY_MODE_MIN_, this.NOTIFY_MODE_MAX_);
+        }
+        return true;
+    }
 }
 exports.MeshJsTh = MeshJsTh;
 // Constant Values
-MeshJsTh.NOTIFY_TYPE = {
+MeshJsTh.EmitCondition = {
+    ABOVE_UPPER_AND_BELOW_BOTTOM: 0,
+    ABOVE_UPPER_AND_ABOVE_BOTTOM: 1,
+    BELOW_UPPER_AND_BELOW_BOTTOM: 16,
+    BELOW_UPPER_AND_ABOVE_BOTTOM: 17,
+};
+MeshJsTh.NotifyMode = {
+    STOP: 0,
+    EMIT_TEMPERATURE: 1,
+    EMIT_HUMIDITY: 2,
     UPDATE_TEMPERATURE: 4,
     UPDATE_HUMIDITY: 8,
     ONCE: 16,
@@ -38674,10 +39110,11 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onBatteryNotify = null;
-        this.onStatusButtonNotify = null;
-        this.onResponseWrite = null;
+        this.onBatteryLevel = null;
+        this.onStatusButtonPressed = null;
+        this.onWriteResponse = null;
         this.meshBlock = new MeshJs_1.MeshJs();
+        this.requestId = new MeshRequestId();
         this.indicateCharacteristic_ = null;
         this.notifyCharacteristic_ = null;
         this.writeCharacteristic_ = null;
@@ -38686,9 +39123,10 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     /**
      *
      * @param peripheral
+     * @param opt_serialnumber
      * @returns
      */
-    static isMESHblock(peripheral) {
+    static isMESHblock(peripheral, opt_serialnumber = '') {
         const _name = peripheral.localName;
         if (!_name) {
             return false;
@@ -38696,20 +39134,10 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         if (_name.length !== MESH.LOCAL_NAME_LENGTH_) {
             return false;
         }
-        return this._isMESHblock(_name);
-    }
-    /**
-     *
-     * @param peripheral
-     * @param sirialnumber
-     * @returns
-     */
-    static sameSirialNumberBlock(peripheral, sirialnumber) {
-        var _a;
-        if (!this.isMESHblock(peripheral)) {
+        if (opt_serialnumber !== '' && _name.indexOf(opt_serialnumber) === -1) {
             return false;
         }
-        return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf(sirialnumber)) !== -1;
+        return this._isMESHblock(_name);
     }
     /**
      * Connect to the services of a MESH
@@ -38739,17 +39167,17 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         return name.indexOf(MESH.PREFIX) === 0;
     }
     prepareConnect() {
-        this.meshBlock.onBattery = (battery) => {
-            if (typeof this.onBatteryNotify !== 'function') {
+        this.meshBlock.onBatteryLevel = (battery) => {
+            if (typeof this.onBatteryLevel !== 'function') {
                 return;
             }
-            this.onBatteryNotify(battery);
+            this.onBatteryLevel(battery);
         };
         this.meshBlock.onStatusButtonPressed = () => {
-            if (typeof this.onStatusButtonNotify !== 'function') {
+            if (typeof this.onStatusButtonPressed !== 'function') {
                 return;
             }
-            this.onStatusButtonNotify();
+            this.onStatusButtonPressed();
         };
     }
     async writeWait(data) {
@@ -38757,10 +39185,10 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
             return;
         }
         await this.writeCharacteristic_.writeWait(data, true).then((resp) => {
-            if (typeof this.onResponseWrite !== 'function') {
+            if (typeof this.onWriteResponse !== 'function') {
                 return;
             }
-            this.onResponseWrite(resp);
+            this.onWriteResponse(resp);
         });
     }
     writeWOResponse(data) {
@@ -38780,6 +39208,41 @@ exports.MESH = MESH;
 MESH.AvailableBleMode = 'Connectable';
 MESH.LOCAL_NAME_LENGTH_ = 17;
 MESH.PREFIX = 'MESH-100';
+class MeshRequestId {
+    constructor() {
+        this.MAX_ID_ = 255;
+        this.DEFAULT_ID_ = 0;
+        this.pool_ = [];
+        this.currentId_ = this.DEFAULT_ID_;
+    }
+    // private receivedId_: number = this.DEFAULT_ID_;
+    defaultId() {
+        return this.DEFAULT_ID_;
+    }
+    next() {
+        this.currentId_ = (this.currentId_ % this.MAX_ID_) + 1;
+        // console.log('send ' + this.currentId_);
+        return this.currentId_;
+    }
+    isDefaultId(id) {
+        return id === this.DEFAULT_ID_;
+    }
+    isReceived(id) {
+        const _index = this.pool_.findIndex((element) => element === id);
+        if (_index === -1) {
+            return false;
+        }
+        this.pool_.splice(_index, 1);
+        return true;
+        // return id === this.receivedId_;
+    }
+    received(id) {
+        this.pool_.push(id);
+        // console.log(this.pool_);
+        // this.receivedId_ = id;
+    }
+}
+exports.MeshRequestId = MeshRequestId;
 
 
 /***/ }),

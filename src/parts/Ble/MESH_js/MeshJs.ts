@@ -1,6 +1,8 @@
+import { MeshBlockVersionError, MeshJsInvalidValueError } from './MeshJsError';
+
 export class MeshJs {
   // Event Handler
-  public onBattery: ((battery: number) => void) | null = null;
+  public onBatteryLevel: ((battery: number) => void) | null = null;
   public onStatusButtonPressed: (() => void) | null = null;
 
   // Constant Values
@@ -47,6 +49,7 @@ export class MeshJs {
       return;
     }
     this.battery_ = data[14];
+    this.checkVersion_(data[7], data[8], data[9]);
   }
 
   /**
@@ -64,7 +67,8 @@ export class MeshJs {
     command.forEach((val) => {
       sum += val;
     });
-    return sum % 256;
+    const BYTE = 256;
+    return sum % BYTE;
   }
 
   private updateBattery_(data: number[]): boolean {
@@ -81,10 +85,10 @@ export class MeshJs {
     //   return;
     // }
     this.battery_ = data[2];
-    if (typeof this.onBattery !== 'function') {
+    if (typeof this.onBatteryLevel !== 'function') {
       return false;
     }
-    this.onBattery(this.battery_);
+    this.onBatteryLevel(this.battery_);
     return true;
   }
 
@@ -106,5 +110,29 @@ export class MeshJs {
     }
     this.onStatusButtonPressed();
     return true;
+  }
+
+  private checkVersion_(major: number, minor: number, release: number) {
+    const VERSION_MAJOR = 1;
+    const VERSION_MINOR = 2;
+    const VERSION_RELEASE = 5;
+    if (VERSION_MAJOR < major) {
+      return;
+    }
+    if (major < VERSION_MAJOR) {
+      throw new MeshBlockVersionError(major, minor, release);
+    }
+    if (VERSION_MINOR < minor) {
+      return;
+    }
+    if (minor < VERSION_MINOR) {
+      throw new MeshBlockVersionError(major, minor, release);
+    }
+    if (VERSION_RELEASE < release) {
+      return;
+    }
+    if (release < VERSION_RELEASE) {
+      throw new MeshBlockVersionError(major, minor, release);
+    }
   }
 }

@@ -10,9 +10,9 @@ import { MeshJs } from '../../MESH_js/MeshJs';
 
 export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
   // Event Handler
-  public onBatteryNotify: ((battery: number) => void) | null = null;
-  public onStatusButtonNotify: (() => void) | null = null;
-  public onResponseWrite: ((response: boolean) => void) | null = null;
+  public onBatteryLevel: ((battery: number) => void) | null = null;
+  public onStatusButtonPressed: (() => void) | null = null;
+  public onWriteResponse: ((response: boolean) => void) | null = null;
 
   // Constant Values
   public static AvailableBleMode = 'Connectable' as const;
@@ -20,6 +20,7 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
 
   protected static PREFIX = 'MESH-100';
   protected meshBlock: MeshJs = new MeshJs();
+  protected requestId = new MeshRequestId();
 
   private indicateCharacteristic_: BleRemoteCharacteristic | null = null;
   private notifyCharacteristic_: BleRemoteCharacteristic | null = null;
@@ -29,9 +30,13 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
   /**
    *
    * @param peripheral
+   * @param opt_serialnumber
    * @returns
    */
-  public static isMESHblock(peripheral: BleRemotePeripheral): boolean {
+  public static isMESHblock(
+    peripheral: BleRemotePeripheral,
+    opt_serialnumber = ''
+  ): boolean {
     const _name: string | null = peripheral.localName;
     if (!_name) {
       return false;
@@ -39,23 +44,10 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
     if (_name.length !== MESH.LOCAL_NAME_LENGTH_) {
       return false;
     }
-    return this._isMESHblock(_name);
-  }
-
-  /**
-   *
-   * @param peripheral
-   * @param sirialnumber
-   * @returns
-   */
-  public static sameSirialNumberBlock(
-    peripheral: BleRemotePeripheral,
-    sirialnumber: string
-  ): boolean {
-    if (!this.isMESHblock(peripheral)) {
+    if (opt_serialnumber !== '' && _name.indexOf(opt_serialnumber) === -1) {
       return false;
     }
-    return peripheral.localName?.indexOf(sirialnumber) !== -1;
+    return this._isMESHblock(_name);
   }
 
   /**
@@ -104,17 +96,17 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
   }
 
   protected prepareConnect(): void {
-    this.meshBlock.onBattery = (battery: number) => {
-      if (typeof this.onBatteryNotify !== 'function') {
+    this.meshBlock.onBatteryLevel = (battery: number) => {
+      if (typeof this.onBatteryLevel !== 'function') {
         return;
       }
-      this.onBatteryNotify(battery);
+      this.onBatteryLevel(battery);
     };
     this.meshBlock.onStatusButtonPressed = () => {
-      if (typeof this.onStatusButtonNotify !== 'function') {
+      if (typeof this.onStatusButtonPressed !== 'function') {
         return;
       }
-      this.onStatusButtonNotify();
+      this.onStatusButtonPressed();
     };
   }
 
@@ -123,10 +115,10 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
       return;
     }
     await this.writeCharacteristic_.writeWait(data, true).then((resp) => {
-      if (typeof this.onResponseWrite !== 'function') {
+      if (typeof this.onWriteResponse !== 'function') {
         return;
       }
-      this.onResponseWrite(resp);
+      this.onWriteResponse(resp);
     });
   }
 
@@ -141,5 +133,44 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
     return this.peripheral
       .getService(this.meshBlock.UUIDS.SERVICE_ID)!
       .getCharacteristic(uuid);
+  }
+}
+
+export class MeshRequestId {
+  private readonly MAX_ID_: number = 255 as const;
+  private readonly DEFAULT_ID_: number = 0 as const;
+
+  private pool_: number[] = [];
+  private currentId_: number = this.DEFAULT_ID_;
+  // private receivedId_: number = this.DEFAULT_ID_;
+
+  public defaultId(): number {
+    return this.DEFAULT_ID_;
+  }
+
+  public next(): number {
+    this.currentId_ = (this.currentId_ % this.MAX_ID_) + 1;
+    // console.log('send ' + this.currentId_);
+    return this.currentId_;
+  }
+
+  public isDefaultId(id: number): boolean {
+    return id === this.DEFAULT_ID_;
+  }
+
+  public isReceived(id: number): boolean {
+    const _index = this.pool_.findIndex((element) => element === id);
+    if (_index === -1) {
+      return false;
+    }
+    this.pool_.splice(_index, 1);
+    return true;
+    // return id === this.receivedId_;
+  }
+
+  public received(id: number): void {
+    this.pool_.push(id);
+    // console.log(this.pool_);
+    // this.receivedId_ = id;
   }
 }

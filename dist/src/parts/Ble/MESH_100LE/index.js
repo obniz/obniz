@@ -11,6 +11,7 @@ const MeshJsLe_1 = require("../MESH_js/MeshJsLe");
 class MESH_100LE extends MESH_1.MESH {
     constructor() {
         super(...arguments);
+        this.colors = { red: 0, green: 0, blue: 0 };
         this.staticClass = MESH_100LE;
     }
     async getDataWait() {
@@ -18,24 +19,21 @@ class MESH_100LE extends MESH_1.MESH {
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this.meshBlock.battery,
         };
     }
     /**
-     * Light Up
+     * setLed
      *
-     * @param red 0 ~ 127
-     * @param green 0 ~ 127
-     * @param blue 0 ~ 127
+     * @param colors red 0 ~ 127, green 0 ~ 127, blue 0 ~ 127
      * @param totalTime 0 ~ 65,535 [ms]
      * @param cycleOnTime 0 ~ 65,535 [ms]
      * @param cycleOffTime 0 ~ 65,535 [ms]
      * @param pattern Pattern.BLINK or Pattern.FIREFLY
      * @returns
      */
-    lightup(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern) {
+    setLed(colors, totalTime, cycleOnTime, cycleOffTime, pattern) {
         const ledBlock = this.meshBlock;
-        const command = ledBlock.parseLightupCommand(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern);
+        const command = ledBlock.parseLedCommand(colors, totalTime, cycleOnTime, cycleOffTime, pattern);
         this.writeWOResponse(command);
     }
     static _isMESHblock(name) {

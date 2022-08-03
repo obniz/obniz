@@ -3,12 +3,12 @@
  * @module Parts.MESH_100LE
  */
 import { MESH } from '../utils/abstracts/MESH';
+import { MeshJsLe } from '../MESH_js/MeshJsLe';
 export interface MESH_100LEOptions {
 }
 export interface MESH_100LE_Data {
     name: string;
     address: string;
-    battery: number;
 }
 /** MESH_100TH management class */
 export default class MESH_100LE extends MESH<MESH_100LE_Data> {
@@ -18,25 +18,23 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
         readonly BLINK: 1;
         readonly FIREFLY: 2;
     };
+    colors: MeshJsLe['colors'];
     protected readonly staticClass: typeof MESH_100LE;
     getDataWait(): Promise<{
         name: string;
         address: string;
-        battery: number;
     }>;
     /**
-     * Light Up
+     * setLed
      *
-     * @param red 0 ~ 127
-     * @param green 0 ~ 127
-     * @param blue 0 ~ 127
+     * @param colors red 0 ~ 127, green 0 ~ 127, blue 0 ~ 127
      * @param totalTime 0 ~ 65,535 [ms]
      * @param cycleOnTime 0 ~ 65,535 [ms]
      * @param cycleOffTime 0 ~ 65,535 [ms]
      * @param pattern Pattern.BLINK or Pattern.FIREFLY
      * @returns
      */
-    lightup(red: number, green: number, blue: number, totalTime: number, cycleOnTime: number, cycleOffTime: number, pattern: number): void;
+    setLed(colors: MESH_100LE['colors'], totalTime: number, cycleOnTime: number, cycleOffTime: number, pattern: number): void;
     protected static _isMESHblock(name: string): boolean;
     protected prepareConnect(): void;
     protected beforeOnDisconnectWait(reason: unknown): Promise<void>;

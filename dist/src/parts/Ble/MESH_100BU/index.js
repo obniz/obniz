@@ -22,7 +22,6 @@ class MESH_100BU extends MESH_1.MESH {
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this.meshBlock.battery,
         };
     }
     static _isMESHblock(name) {

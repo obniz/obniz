@@ -6,17 +6,21 @@ class MeshJsTh extends MeshJs_1.MeshJs {
     constructor() {
         super(...arguments);
         // Event Handler
-        this.onNotify = null;
+        this.onSensorEvent = null;
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
-        this.MAX_TEMPERATURE_ = 50;
-        this.MIN_TEMPERATURE_ = -10;
-        this.MAX_HUMIDITY_ = 100;
-        this.MIN_HUMIDITY_ = 0;
-        this.response_ = { requestId: -1, temperature: -1, humidity: -1 };
-    }
-    get getResponse() {
-        return this.response_;
+        this.TEMPERATURE_MAX_ = 50;
+        this.TEMPERATURE_MIN_ = -10;
+        this.HUMIDITY_MAX_ = 100;
+        this.HUMIDITY_MIN_ = 0;
+        this.NOTIFY_MODE_MIN_ = MeshJsTh.NotifyMode.STOP;
+        this.NOTIFY_MODE_MAX_ = MeshJsTh.NotifyMode.STOP +
+            MeshJsTh.NotifyMode.EMIT_TEMPERATURE +
+            MeshJsTh.NotifyMode.EMIT_HUMIDITY +
+            MeshJsTh.NotifyMode.UPDATE_TEMPERATURE +
+            MeshJsTh.NotifyMode.UPDATE_HUMIDITY +
+            MeshJsTh.NotifyMode.ONCE +
+            MeshJsTh.NotifyMode.ALWAYS;
     }
     /**
      *
@@ -31,39 +35,39 @@ class MeshJsTh extends MeshJs_1.MeshJs {
         if (data[1] !== this.EVENT_TYPE_ID_) {
             return;
         }
-        this.response_.requestId = data[2];
         const BYTE = 256;
-        const TEMP = this.complemnt_(BYTE * data[5] + data[4]) / 10;
-        this.response_.temperature = Math.min(Math.max(this.MIN_TEMPERATURE_, TEMP), this.MAX_TEMPERATURE_);
-        const hum_ori = BYTE * data[7] + data[6];
-        this.response_.humidity = Math.min(Math.max(this.MIN_HUMIDITY_, hum_ori), this.MAX_HUMIDITY_);
-        if (typeof this.onNotify !== 'function') {
+        const BASE = 10;
+        const TEMP = this.complemnt_(BYTE * data[5] + data[4]) / BASE;
+        const temperature = Math.min(Math.max(this.TEMPERATURE_MIN_, TEMP), this.TEMPERATURE_MAX_);
+        const HUM = BYTE * data[7] + data[6];
+        const humidity = Math.min(Math.max(this.HUMIDITY_MIN_, HUM), this.HUMIDITY_MAX_);
+        const requestId = data[2];
+        if (typeof this.onSensorEvent !== 'function') {
             return;
         }
-        this.onNotify(this.response_);
+        this.onSensorEvent(temperature, humidity, requestId);
     }
     /**
      *
      * @param temperatureRangeUpper
      * @param temperatureRangeBottom
-     * @param temperatureCondition
      * @param humidityRangeUpper
      * @param humidityRangeBottom
+     * @param temperatureCondition
      * @param humidityCondision
-     * @param type
+     * @param notifyMode
      * @param opt_requestId
      * @returns
      */
-    parseSetmodeCommand(temperatureRangeUpper, temperatureRangeBottom, temperatureCondition, humidityRangeUpper, humidityRangeBottom, humidityCondision, type, opt_requestId = 0) {
+    parseSetmodeCommand(temperatureRangeUpper, temperatureRangeBottom, humidityRangeUpper, humidityRangeBottom, temperatureCondition, humidityCondision, notifyMode, opt_requestId = 0) {
         // Error Handle
-        if (temperatureRangeBottom < this.MIN_TEMPERATURE_ ||
-            this.MAX_TEMPERATURE_ < temperatureRangeUpper) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('temperatureRange', this.MIN_TEMPERATURE_, this.MAX_TEMPERATURE_);
-        }
-        if (humidityRangeBottom < this.MIN_HUMIDITY_ ||
-            this.MAX_HUMIDITY_ < humidityRangeUpper) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('humidityRange', this.MIN_HUMIDITY_, this.MAX_HUMIDITY_);
-        }
+        this.checkRange_(temperatureRangeUpper, this.TEMPERATURE_MIN_, this.TEMPERATURE_MAX_, 'temperatureRangeUpper');
+        this.checkRange_(temperatureRangeBottom, this.TEMPERATURE_MIN_, this.TEMPERATURE_MAX_, 'temperatureRangeBottom');
+        this.checkRange_(humidityRangeUpper, this.HUMIDITY_MIN_, this.HUMIDITY_MAX_, 'humidityRangeUpper');
+        this.checkRange_(humidityRangeBottom, this.HUMIDITY_MIN_, this.HUMIDITY_MAX_, 'humidityRangeBottom');
+        this.checkEmitCondition_(temperatureCondition, 'temperatureCondition');
+        this.checkEmitCondition_(humidityCondision, 'humidityCondision');
+        this.checkNotifyMode_(notifyMode);
         // Generate Command
         const HEADER = [
             this.MESSAGE_TYPE_ID_,
@@ -79,7 +83,7 @@ class MeshJsTh extends MeshJs_1.MeshJs {
             .concat(TEMP_BOTTOM)
             .concat(HUMI_UPPER)
             .concat(HUMI_BOTTOM)
-            .concat([temperatureCondition, humidityCondision, type]);
+            .concat([temperatureCondition, humidityCondision, notifyMode]);
         data.push(this.checkSum(data));
         return data;
     }
@@ -96,10 +100,43 @@ class MeshJsTh extends MeshJs_1.MeshJs {
         const TWO_BYTE = 65536;
         return val + (val < 0 ? TWO_BYTE : 0);
     }
+    checkRange_(target, min, max, name) {
+        if (target < min || max < target) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError(name, min, max);
+        }
+        return true;
+    }
+    checkEmitCondition_(target, name) {
+        let _isExist = false;
+        Object.entries(MeshJsTh.EmitCondition).forEach(([, value]) => {
+            if (target === value) {
+                _isExist = true;
+            }
+        });
+        if (_isExist) {
+            return true;
+        }
+        throw new MeshJsError_1.MeshJsInvalidValueError(name);
+    }
+    checkNotifyMode_(target) {
+        if (target < this.NOTIFY_MODE_MIN_ || this.NOTIFY_MODE_MAX_ < target) {
+            throw new MeshJsError_1.MeshJsOutOfRangeError('notifyType', this.NOTIFY_MODE_MIN_, this.NOTIFY_MODE_MAX_);
+        }
+        return true;
+    }
 }
 exports.MeshJsTh = MeshJsTh;
 // Constant Values
-MeshJsTh.NOTIFY_TYPE = {
+MeshJsTh.EmitCondition = {
+    ABOVE_UPPER_AND_BELOW_BOTTOM: 0,
+    ABOVE_UPPER_AND_ABOVE_BOTTOM: 1,
+    BELOW_UPPER_AND_BELOW_BOTTOM: 16,
+    BELOW_UPPER_AND_ABOVE_BOTTOM: 17,
+};
+MeshJsTh.NotifyMode = {
+    STOP: 0,
+    EMIT_TEMPERATURE: 1,
+    EMIT_HUMIDITY: 2,
     UPDATE_TEMPERATURE: 4,
     UPDATE_HUMIDITY: 8,
     ONCE: 16,

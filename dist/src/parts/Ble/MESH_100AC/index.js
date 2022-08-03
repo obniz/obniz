@@ -11,24 +11,19 @@ const MeshJsAc_1 = require("../MESH_js/MeshJsAc");
 class MESH_100AC extends MESH_1.MESH {
     constructor() {
         super(...arguments);
+        this.accele = { x: 0, y: 0, z: 0 };
         // Event Handler
         this.onTapped = null;
         this.onShaked = null;
         this.onFlipped = null;
-        this.onDirection = null;
+        this.onOrientation = null;
         this.staticClass = MESH_100AC;
     }
     async getDataWait() {
         this.checkConnected();
-        const moveBlock = this.meshBlock;
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
-            battery: this.meshBlock.battery,
-            accele_x: moveBlock.getAccele.x,
-            accele_y: moveBlock.getAccele.y,
-            accele_z: moveBlock.getAccele.z,
-            face: moveBlock.getFace,
         };
     }
     static _isMESHblock(name) {
@@ -55,11 +50,11 @@ class MESH_100AC extends MESH_1.MESH {
             }
             this.onFlipped(accele);
         };
-        moveBlock.onDirection = (face, accele) => {
-            if (typeof this.onDirection !== 'function') {
+        moveBlock.onOrientationChanged = (face, accele) => {
+            if (typeof this.onOrientation !== 'function') {
                 return;
             }
-            this.onDirection(face, accele);
+            this.onOrientation(face, accele);
         };
         super.prepareConnect();
     }

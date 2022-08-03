@@ -3,28 +3,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const MeshJs_1 = require("./MeshJs");
 const MeshJsError_1 = require("./MeshJsError");
 class MeshJsLe extends MeshJs_1.MeshJs {
+    constructor() {
+        super(...arguments);
+        this.colors = { red: 0, green: 0, blue: 0 };
+    }
     /**
      *
-     * @param red
-     * @param green
-     * @param blue
+     * @param colors
      * @param totalTime
      * @param cycleOnTime
      * @param cycleOffTime
      * @param pattern
      * @returns
      */
-    parseLightupCommand(red, green, blue, totalTime, cycleOnTime, cycleOffTime, pattern) {
+    parseLedCommand(colors, totalTime, cycleOnTime, cycleOffTime, pattern) {
         // Error Handle
         const COLOR_MIN = 0;
         const COLOR_MAX = 127;
-        if (red < COLOR_MIN || COLOR_MAX < red) {
+        if (colors.red < COLOR_MIN || COLOR_MAX < colors.red) {
             throw new MeshJsError_1.MeshJsOutOfRangeError('red', COLOR_MIN, COLOR_MAX);
         }
-        if (green < COLOR_MIN || COLOR_MAX < green) {
+        if (colors.green < COLOR_MIN || COLOR_MAX < colors.green) {
             throw new MeshJsError_1.MeshJsOutOfRangeError('green', COLOR_MIN, COLOR_MAX);
         }
-        if (blue < COLOR_MIN || COLOR_MAX < blue) {
+        if (colors.blue < COLOR_MIN || COLOR_MAX < colors.blue) {
             throw new MeshJsError_1.MeshJsOutOfRangeError('blue', COLOR_MIN, COLOR_MAX);
         }
         const TIME_MIN = 0;
@@ -50,11 +52,11 @@ class MeshJsLe extends MeshJs_1.MeshJs {
         const data = [
             MESSAGE_TYPE_ID,
             EVENT_TYPE_ID,
-            red,
+            colors.red,
             FIXED,
-            green,
+            colors.green,
             FIXED,
-            blue,
+            colors.blue,
             totalTime % BYTE,
             Math.floor(totalTime / BYTE),
             cycleOnTime % BYTE,

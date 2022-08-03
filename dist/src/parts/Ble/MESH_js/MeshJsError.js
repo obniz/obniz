@@ -9,9 +9,22 @@ class MeshJsError extends Error {
     }
 }
 exports.MeshJsError = MeshJsError;
+class MeshBlockVersionError extends MeshJsError {
+    constructor(major, minor, release) {
+        super(1, 'please UPDATE block version to 1.2.5 more. (current block version ' +
+            major +
+            '.' +
+            minor +
+            '.' +
+            release +
+            ')');
+        this.major = major;
+    }
+}
+exports.MeshBlockVersionError = MeshBlockVersionError;
 class MeshJsOutOfRangeError extends MeshJsError {
     constructor(property, min, max) {
-        super(1, property +
+        super(2, property +
             ' is out of range. ' +
             property +
             ' must be ' +
@@ -25,8 +38,15 @@ class MeshJsOutOfRangeError extends MeshJsError {
 exports.MeshJsOutOfRangeError = MeshJsOutOfRangeError;
 class MeshJsInvalidValueError extends MeshJsError {
     constructor(property) {
-        super(2, property + 'is invalid value.');
+        super(3, property + ' is invalid value.');
         this.property = property;
     }
 }
 exports.MeshJsInvalidValueError = MeshJsInvalidValueError;
+class MeshJsTimeOutError extends MeshJsError {
+    constructor(property) {
+        super(4, property + ' is time out.');
+        this.property = property;
+    }
+}
+exports.MeshJsTimeOutError = MeshJsTimeOutError;
