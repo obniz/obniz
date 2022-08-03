@@ -28105,54 +28105,49 @@ class GPIO extends Base_1.Base {
                 break;
             }
         }
-        const _requestId = data[2];
+        const _reqId = data[2];
         switch (_receivedId) {
             case this.DIGITAL_IN_ID_: {
                 if (typeof this.onDigitalInput !== 'function') {
                     return;
                 }
-                const requestId = data[2];
                 const pin = data[3];
                 const state = data[4];
-                this.onDigitalInput(requestId, pin, state);
+                this.onDigitalInput(_reqId, pin, state);
                 return;
             }
             case this.ANALOG_IN_ID_: {
                 if (typeof this.onAnalogInput !== 'function') {
                     return;
                 }
-                const requestId = data[2];
                 const level = data[4];
                 const analogInputNotifyMode = data[5];
-                this.onAnalogInput(requestId, level, analogInputNotifyMode);
+                this.onAnalogInput(_reqId, level, analogInputNotifyMode);
                 return;
             }
             case this.V_OUT_ID_: {
                 if (typeof this.onVOutput !== 'function') {
                     return;
                 }
-                const requestId = data[2];
                 const vccState = data[4];
-                this.onVOutput(requestId, vccState);
+                this.onVOutput(_reqId, vccState);
                 return;
             }
             case this.DIGITAL_OUT_ID_: {
                 if (typeof this.onDigitalOutput !== 'function') {
                     return;
                 }
-                const requestId = data[2];
                 const pin = data[3];
                 const state = data[4];
-                this.onDigitalOutput(requestId, pin, state);
+                this.onDigitalOutput(_reqId, pin, state);
                 return;
             }
             case this.PWM_ID_: {
                 if (typeof this.onPwm !== 'function') {
                     return;
                 }
-                const requestId = data[2];
                 const level = data[4];
-                this.onPwm(requestId, level);
+                this.onPwm(_reqId, level);
                 return;
             }
             default: {
