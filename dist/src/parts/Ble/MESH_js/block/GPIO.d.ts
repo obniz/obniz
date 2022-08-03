@@ -89,14 +89,14 @@ export declare class GPIO extends Base {
      * @param requestId
      * @returns
      */
-    parseAnalogInputCommand(analogInputNotifyMode: number, requestId?: number): number[];
+    parseAnalogInputCommand(analogInputNotifyMode: number, opt_requestId?: number): number[];
     /**
      * parseSetVOutputCommand
      *
      * @param requestId
      * @returns
      */
-    parseVOutputCommand(requestId?: number): number[];
+    parseVOutputCommand(opt_requestId?: number): number[];
     /**
      * parseSetDoutCommand
      *
@@ -104,14 +104,14 @@ export declare class GPIO extends Base {
      * @param requestId
      * @returns
      */
-    parseDigitalOutputCommand(pin: number, requestId?: number): number[];
+    parseDigitalOutputCommand(pin: number, opt_requestId?: number): number[];
     /**
      * parseSetPWMCommand
      *
      * @param requestId
      * @returns
      */
-    parsePwmCommand(requestId?: number): number[];
+    parsePwmCommand(opt_requestId?: number): number[];
     private parseCommand_;
     private pin2num_;
 }

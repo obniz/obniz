@@ -249,11 +249,14 @@ export class GPIO extends Base {
    * @param requestId
    * @returns
    */
-  public parseAnalogInputCommand(analogInputNotifyMode: number, requestId = 0) {
+  public parseAnalogInputCommand(
+    analogInputNotifyMode: number,
+    opt_requestId = 0
+  ) {
     return this.parseCommand_(
       this.ANALOG_IN_ID_,
       analogInputNotifyMode,
-      requestId
+      opt_requestId
     );
   }
 
@@ -263,9 +266,9 @@ export class GPIO extends Base {
    * @param requestId
    * @returns
    */
-  public parseVOutputCommand(requestId = 0) {
+  public parseVOutputCommand(opt_requestId = 0) {
     const PIN = 0; // VOUT pin
-    return this.parseCommand_(this.V_OUT_ID_, PIN, requestId);
+    return this.parseCommand_(this.V_OUT_ID_, PIN, opt_requestId);
   }
 
   /**
@@ -275,8 +278,8 @@ export class GPIO extends Base {
    * @param requestId
    * @returns
    */
-  public parseDigitalOutputCommand(pin: number, requestId = 0) {
-    return this.parseCommand_(this.DIGITAL_OUT_ID_, pin, requestId);
+  public parseDigitalOutputCommand(pin: number, opt_requestId = 0) {
+    return this.parseCommand_(this.DIGITAL_OUT_ID_, pin, opt_requestId);
   }
 
   /**
@@ -285,8 +288,8 @@ export class GPIO extends Base {
    * @param requestId
    * @returns
    */
-  public parsePwmCommand(requestId = 0) {
-    return this.parseCommand_(this.PWM_ID_, GPIO.Pin.P3, requestId);
+  public parsePwmCommand(opt_requestId = 0) {
+    return this.parseCommand_(this.PWM_ID_, GPIO.Pin.P3, opt_requestId);
   }
 
   private parseCommand_(
