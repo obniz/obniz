@@ -6,7 +6,7 @@
 
 import { MESH } from '../utils/abstracts/MESH';
 import { GPIO } from '../MESH_js/block/GPIO';
-import { MeshJsTimeOutError } from '../MESH_js/MeshJsError';
+import { MESHJsTimeOutError } from '../MESH_js/util/Error';
 
 export interface MESH_100GPOptions {}
 
@@ -410,7 +410,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
       }, INTERVAL_TIME);
     });
     if (_result == null) {
-      throw new MeshJsTimeOutError(this.peripheral.localName!);
+      throw new MESHJsTimeOutError(this.peripheral.localName!);
     }
     return _result;
   }

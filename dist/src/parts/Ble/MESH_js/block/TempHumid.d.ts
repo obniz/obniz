@@ -46,7 +46,6 @@ export declare class TempHumid extends Base {
     private num2array_;
     private complemnt_;
     private invcomplemnt_;
-    private checkRange_;
     private checkEmitCondition_;
     private checkNotifyMode_;
 }

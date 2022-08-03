@@ -6,7 +6,7 @@
 
 import { MESH } from '../utils/abstracts/MESH';
 import { TempHumid } from '../MESH_js/block/TempHumid';
-import { MeshJsTimeOutError } from '../MESH_js/MeshJsError';
+import { MESHJsTimeOutError } from '../MESH_js/util/Error';
 
 export interface MESH_100THOptions {}
 
@@ -96,7 +96,7 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
       );
     }
     if (_result == null) {
-      throw new MeshJsTimeOutError(this.peripheral.localName!);
+      throw new MESHJsTimeOutError(this.peripheral.localName!);
     }
     return _result;
   }

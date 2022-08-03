@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Base_1 = require("./Base");
-const MeshJsError_1 = require("../MeshJsError");
+const Error_1 = require("../util/Error");
 class GPIO extends Base_1.Base {
     constructor() {
         super(...arguments);
@@ -130,18 +130,18 @@ class GPIO extends Base_1.Base {
         // Error Handle
         const PWM_MIN = 0;
         const PWM_MAX = 255;
-        this.checkRange_(pwmRatio, PWM_MIN, PWM_MAX, 'pwmRatio');
+        this.checkRange(pwmRatio, PWM_MIN, PWM_MAX, 'pwmRatio');
         if (vcc !== GPIO.Vcc.AUTO && vcc !== GPIO.Vcc.ON && vcc !== GPIO.Vcc.OFF) {
-            throw new MeshJsError_1.MeshJsInvalidValueError('vcc');
+            throw new Error_1.MESHJsInvalidValueError('vcc');
         }
         const ANALOG_IN_RANGE_MIN = 0;
         const ANALOG_IN_RANGE_MAX = 255;
-        this.checkRange_(analogInputRangeUpper, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeUpper');
-        this.checkRange_(analogInputRangeBottom, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeBottom');
+        this.checkRange(analogInputRangeUpper, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeUpper');
+        this.checkRange(analogInputRangeBottom, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeBottom');
         if (analogInputNotify !== GPIO.AnalogInEventCondition.NOT_NOTIFY &&
             analogInputNotify !== GPIO.AnalogInEventCondition.ABOVE_THRESHOLD &&
             analogInputNotify !== GPIO.AnalogInEventCondition.BELOW_THRESHOLD) {
-            throw new MeshJsError_1.MeshJsInvalidValueError('analogInNotify');
+            throw new Error_1.MESHJsInvalidValueError('analogInNotify');
         }
         // Generate Command
         const HEADER = [this.MESSAGE_TYPE_ID_, 1];
@@ -216,12 +216,6 @@ class GPIO extends Base_1.Base {
     }
     pin2num_(pins) {
         return (pins.p1 ? 1 : 0) + (pins.p2 ? 2 : 0) + (pins.p3 ? 4 : 0);
-    }
-    checkRange_(target, min, max, name) {
-        if (target < min || max < target) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError(name, min, max);
-        }
-        return true;
     }
 }
 exports.GPIO = GPIO;

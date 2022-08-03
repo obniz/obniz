@@ -28,6 +28,7 @@ export declare class Base {
      */
     notify(data: number[]): void;
     protected checkSum(command: number[]): number;
+    protected checkRange(target: number, min: number, max: number, name: string): boolean;
     private updateBattery_;
     private updateStatusButton_;
     private checkVersion_;

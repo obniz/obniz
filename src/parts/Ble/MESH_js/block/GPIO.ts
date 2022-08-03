@@ -1,5 +1,5 @@
 import { Base } from './Base';
-import { MeshJsInvalidValueError, MeshJsOutOfRangeError } from '../MeshJsError';
+import { MESHJsInvalidValueError, MESHJsOutOfRangeError } from '../util/Error';
 export class GPIO extends Base {
   // Event Handler
   public onDigitalInputEvent:
@@ -187,19 +187,19 @@ export class GPIO extends Base {
     // Error Handle
     const PWM_MIN = 0 as const;
     const PWM_MAX = 255 as const;
-    this.checkRange_(pwmRatio, PWM_MIN, PWM_MAX, 'pwmRatio');
+    this.checkRange(pwmRatio, PWM_MIN, PWM_MAX, 'pwmRatio');
     if (vcc !== GPIO.Vcc.AUTO && vcc !== GPIO.Vcc.ON && vcc !== GPIO.Vcc.OFF) {
-      throw new MeshJsInvalidValueError('vcc');
+      throw new MESHJsInvalidValueError('vcc');
     }
     const ANALOG_IN_RANGE_MIN = 0 as const;
     const ANALOG_IN_RANGE_MAX = 255 as const;
-    this.checkRange_(
+    this.checkRange(
       analogInputRangeUpper,
       ANALOG_IN_RANGE_MIN,
       ANALOG_IN_RANGE_MAX,
       'analogInRangeUpper'
     );
-    this.checkRange_(
+    this.checkRange(
       analogInputRangeBottom,
       ANALOG_IN_RANGE_MIN,
       ANALOG_IN_RANGE_MAX,
@@ -210,7 +210,7 @@ export class GPIO extends Base {
       analogInputNotify !== GPIO.AnalogInEventCondition.ABOVE_THRESHOLD &&
       analogInputNotify !== GPIO.AnalogInEventCondition.BELOW_THRESHOLD
     ) {
-      throw new MeshJsInvalidValueError('analogInNotify');
+      throw new MESHJsInvalidValueError('analogInNotify');
     }
 
     // Generate Command
@@ -302,17 +302,5 @@ export class GPIO extends Base {
 
   private pin2num_(pins: GPIO['DigitalPins']): number {
     return (pins.p1 ? 1 : 0) + (pins.p2 ? 2 : 0) + (pins.p3 ? 4 : 0);
-  }
-
-  private checkRange_(
-    target: number,
-    min: number,
-    max: number,
-    name: string
-  ): boolean {
-    if (target < min || max < target) {
-      throw new MeshJsOutOfRangeError(name, min, max);
-    }
-    return true;
   }
 }

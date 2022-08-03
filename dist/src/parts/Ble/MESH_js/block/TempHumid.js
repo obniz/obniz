@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Base_1 = require("./Base");
-const MeshJsError_1 = require("../MeshJsError");
+const Error_1 = require("../util/Error");
 class TempHumid extends Base_1.Base {
     constructor() {
         super(...arguments);
@@ -61,10 +61,10 @@ class TempHumid extends Base_1.Base {
      */
     parseSetmodeCommand(temperatureRangeUpper, temperatureRangeBottom, humidityRangeUpper, humidityRangeBottom, temperatureCondition, humidityCondision, notifyMode, opt_requestId = 0) {
         // Error Handle
-        this.checkRange_(temperatureRangeUpper, this.TEMPERATURE_MIN_, this.TEMPERATURE_MAX_, 'temperatureRangeUpper');
-        this.checkRange_(temperatureRangeBottom, this.TEMPERATURE_MIN_, this.TEMPERATURE_MAX_, 'temperatureRangeBottom');
-        this.checkRange_(humidityRangeUpper, this.HUMIDITY_MIN_, this.HUMIDITY_MAX_, 'humidityRangeUpper');
-        this.checkRange_(humidityRangeBottom, this.HUMIDITY_MIN_, this.HUMIDITY_MAX_, 'humidityRangeBottom');
+        this.checkRange(temperatureRangeUpper, this.TEMPERATURE_MIN_, this.TEMPERATURE_MAX_, 'temperatureRangeUpper');
+        this.checkRange(temperatureRangeBottom, this.TEMPERATURE_MIN_, this.TEMPERATURE_MAX_, 'temperatureRangeBottom');
+        this.checkRange(humidityRangeUpper, this.HUMIDITY_MIN_, this.HUMIDITY_MAX_, 'humidityRangeUpper');
+        this.checkRange(humidityRangeBottom, this.HUMIDITY_MIN_, this.HUMIDITY_MAX_, 'humidityRangeBottom');
         this.checkEmitCondition_(temperatureCondition, 'temperatureCondition');
         this.checkEmitCondition_(humidityCondision, 'humidityCondision');
         this.checkNotifyMode_(notifyMode);
@@ -100,12 +100,6 @@ class TempHumid extends Base_1.Base {
         const TWO_BYTE = 65536;
         return val + (val < 0 ? TWO_BYTE : 0);
     }
-    checkRange_(target, min, max, name) {
-        if (target < min || max < target) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError(name, min, max);
-        }
-        return true;
-    }
     checkEmitCondition_(target, name) {
         let _isExist = false;
         Object.entries(TempHumid.EmitCondition).forEach(([, value]) => {
@@ -116,11 +110,11 @@ class TempHumid extends Base_1.Base {
         if (_isExist) {
             return true;
         }
-        throw new MeshJsError_1.MeshJsInvalidValueError(name);
+        throw new Error_1.MESHJsInvalidValueError(name);
     }
     checkNotifyMode_(target) {
         if (target < this.NOTIFY_MODE_MIN_ || this.NOTIFY_MODE_MAX_ < target) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('notifyType', this.NOTIFY_MODE_MIN_, this.NOTIFY_MODE_MAX_);
+            throw new Error_1.MESHJsOutOfRangeError('notifyType', this.NOTIFY_MODE_MIN_, this.NOTIFY_MODE_MAX_);
         }
         return true;
     }

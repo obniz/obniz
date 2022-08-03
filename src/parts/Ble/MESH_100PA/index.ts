@@ -7,9 +7,9 @@
 import { MESH } from '../utils/abstracts/MESH';
 import { Brightness } from '../MESH_js/block/Brightness';
 import {
-  MeshJsInvalidValueError,
-  MeshJsTimeOutError,
-} from '../MESH_js/MeshJsError';
+  MESHJsInvalidValueError,
+  MESHJsTimeOutError,
+} from '../MESH_js/util/Error';
 import { rejects } from 'assert';
 
 export interface MESH_100PAOptions {}
@@ -88,7 +88,7 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
       }, INTERVAL_TIME);
     });
     if (_result == null) {
-      throw new MeshJsTimeOutError(this.peripheral.localName!);
+      throw new MESHJsTimeOutError(this.peripheral.localName!);
     }
     return _result;
   }

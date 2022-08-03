@@ -30,5 +30,4 @@ export declare class Motion extends Base {
      * @returns
      */
     parseSetmodeCommand(notifyMode: number, opt_detectionTime?: number, opt_responseTime?: number, opt_requestId?: number): number[];
-    private checkRange_;
 }

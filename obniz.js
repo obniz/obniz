@@ -24252,7 +24252,6 @@ var map = {
 	"./Ble/MESH_100MD/index.js": "./dist/src/parts/Ble/MESH_100MD/index.js",
 	"./Ble/MESH_100PA/index.js": "./dist/src/parts/Ble/MESH_100PA/index.js",
 	"./Ble/MESH_100TH/index.js": "./dist/src/parts/Ble/MESH_100TH/index.js",
-	"./Ble/MESH_js/MeshJsError.js": "./dist/src/parts/Ble/MESH_js/MeshJsError.js",
 	"./Ble/MESH_js/block/Base.js": "./dist/src/parts/Ble/MESH_js/block/Base.js",
 	"./Ble/MESH_js/block/Brightness.js": "./dist/src/parts/Ble/MESH_js/block/Brightness.js",
 	"./Ble/MESH_js/block/Button.js": "./dist/src/parts/Ble/MESH_js/block/Button.js",
@@ -24261,6 +24260,8 @@ var map = {
 	"./Ble/MESH_js/block/Motion.js": "./dist/src/parts/Ble/MESH_js/block/Motion.js",
 	"./Ble/MESH_js/block/Move.js": "./dist/src/parts/Ble/MESH_js/block/Move.js",
 	"./Ble/MESH_js/block/TempHumid.js": "./dist/src/parts/Ble/MESH_js/block/TempHumid.js",
+	"./Ble/MESH_js/util/Common.js": "./dist/src/parts/Ble/MESH_js/util/Common.js",
+	"./Ble/MESH_js/util/Error.js": "./dist/src/parts/Ble/MESH_js/util/Error.js",
 	"./Ble/MINEW_S1/index.js": "./dist/src/parts/Ble/MINEW_S1/index.js",
 	"./Ble/MT_500BT/index.js": "./dist/src/parts/Ble/MT_500BT/index.js",
 	"./Ble/MiniBreeze/index.js": "./dist/src/parts/Ble/MiniBreeze/index.js",
@@ -26996,7 +26997,7 @@ MESH_100BU.PREFIX = 'MESH-100BU';
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
 const GPIO_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/block/GPIO.js");
-const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
+const Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/util/Error.js");
 /** MESH_100GP management class */
 class MESH_100GP extends MESH_1.MESH {
     constructor() {
@@ -27263,7 +27264,7 @@ class MESH_100GP extends MESH_1.MESH {
             }, INTERVAL_TIME);
         });
         if (_result == null) {
-            throw new MeshJsError_1.MeshJsTimeOutError(this.peripheral.localName);
+            throw new Error_1.MESHJsTimeOutError(this.peripheral.localName);
         }
         return _result;
     }
@@ -27356,7 +27357,7 @@ MESH_100LE.Pattern = LED_1.LED.PATTERN;
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
 const Motion_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/block/Motion.js");
-const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
+const Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/util/Error.js");
 /** MESH_100MD management class */
 class MESH_100MD extends MESH_1.MESH {
     constructor() {
@@ -27406,7 +27407,7 @@ class MESH_100MD extends MESH_1.MESH {
             this.setMode(this.notifyMode_, this.detectionTime_, this.responseTime_);
         }
         if (_result == null) {
-            throw new MeshJsError_1.MeshJsTimeOutError(this.peripheral.localName);
+            throw new Error_1.MESHJsTimeOutError(this.peripheral.localName);
         }
         return _result;
     }
@@ -27469,7 +27470,7 @@ MESH_100MD.NotifyMode = Motion_1.Motion.NotifyMode;
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
 const Brightness_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/block/Brightness.js");
-const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
+const Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/util/Error.js");
 /** MESH_100PA management class */
 class MESH_100PA extends MESH_1.MESH {
     constructor() {
@@ -27516,7 +27517,7 @@ class MESH_100PA extends MESH_1.MESH {
             }, INTERVAL_TIME);
         });
         if (_result == null) {
-            throw new MeshJsError_1.MeshJsTimeOutError(this.peripheral.localName);
+            throw new Error_1.MESHJsTimeOutError(this.peripheral.localName);
         }
         return _result;
     }
@@ -27577,7 +27578,7 @@ MESH_100PA.NotifyMode = Brightness_1.Brightness.NotifyMode;
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESH.js");
 const TempHumid_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/block/TempHumid.js");
-const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
+const Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/util/Error.js");
 /** MESH_100TH management class */
 class MESH_100TH extends MESH_1.MESH {
     constructor() {
@@ -27635,7 +27636,7 @@ class MESH_100TH extends MESH_1.MESH {
             this.setMode(this.temperatureUpper_, this.temperatureBottom_, this.humidityUpper_, this.humidityBottom_, this.temperatureCondition_, this.humidityCondision_, this.notifyMode_);
         }
         if (_result == null) {
-            throw new MeshJsError_1.MeshJsTimeOutError(this.peripheral.localName);
+            throw new Error_1.MESHJsTimeOutError(this.peripheral.localName);
         }
         return _result;
     }
@@ -27691,73 +27692,13 @@ MESH_100TH.EmitCondition = TempHumid_1.TempHumid.EmitCondition;
 
 /***/ }),
 
-/***/ "./dist/src/parts/Ble/MESH_js/MeshJsError.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-class MeshJsError extends Error {
-    constructor(code, e) {
-        super(e);
-        this.code = code;
-        this.name = new.target.name;
-        Object.setPrototypeOf(this, new.target.prototype);
-    }
-}
-exports.MeshJsError = MeshJsError;
-class MeshBlockVersionError extends MeshJsError {
-    constructor(major, minor, release) {
-        super(1, 'please UPDATE block version to 1.2.5 more. (current block version ' +
-            major +
-            '.' +
-            minor +
-            '.' +
-            release +
-            ')');
-        this.major = major;
-    }
-}
-exports.MeshBlockVersionError = MeshBlockVersionError;
-class MeshJsOutOfRangeError extends MeshJsError {
-    constructor(property, min, max) {
-        super(2, property +
-            ' is out of range. ' +
-            property +
-            ' must be ' +
-            min +
-            ' ~ ' +
-            max +
-            '.');
-        this.property = property;
-    }
-}
-exports.MeshJsOutOfRangeError = MeshJsOutOfRangeError;
-class MeshJsInvalidValueError extends MeshJsError {
-    constructor(property) {
-        super(3, property + ' is invalid value.');
-        this.property = property;
-    }
-}
-exports.MeshJsInvalidValueError = MeshJsInvalidValueError;
-class MeshJsTimeOutError extends MeshJsError {
-    constructor(property) {
-        super(4, property + ' is time out.');
-        this.property = property;
-    }
-}
-exports.MeshJsTimeOutError = MeshJsTimeOutError;
-
-
-/***/ }),
-
 /***/ "./dist/src/parts/Ble/MESH_js/block/Base.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
+const Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/util/Error.js");
 class Base {
     constructor() {
         // Event Handler
@@ -27823,6 +27764,12 @@ class Base {
         const BYTE = 256;
         return sum % BYTE;
     }
+    checkRange(target, min, max, name) {
+        if (target < min || max < target) {
+            throw new Error_1.MESHJsOutOfRangeError(name, min, max);
+        }
+        return true;
+    }
     updateBattery_(data) {
         if (data.length !== 4) {
             return false;
@@ -27870,19 +27817,19 @@ class Base {
             return;
         }
         if (major < VERSION_MAJOR) {
-            throw new MeshJsError_1.MeshBlockVersionError(major, minor, release);
+            throw new Error_1.MESHJsBlockVersionError(major, minor, release);
         }
         if (VERSION_MINOR < minor) {
             return;
         }
         if (minor < VERSION_MINOR) {
-            throw new MeshJsError_1.MeshBlockVersionError(major, minor, release);
+            throw new Error_1.MESHJsBlockVersionError(major, minor, release);
         }
         if (VERSION_RELEASE < release) {
             return;
         }
         if (release < VERSION_RELEASE) {
-            throw new MeshJsError_1.MeshBlockVersionError(major, minor, release);
+            throw new Error_1.MESHJsBlockVersionError(major, minor, release);
         }
     }
 }
@@ -27898,7 +27845,7 @@ exports.Base = Base;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const Base_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/block/Base.js");
-const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
+const Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/util/Error.js");
 class Brightness extends Base_1.Base {
     constructor() {
         super(...arguments);
@@ -27954,10 +27901,10 @@ class Brightness extends Base_1.Base {
         const _brightnessRangeUpper = brightnessRangeUpper / LX;
         const _brightnessRangeBottom = brightnessRangeBottom / LX;
         // Error Handle
-        this.checkRange_(proximityRangeUpper, 'proximityRangeUpper');
-        this.checkRange_(proximityRangeBottom, 'proximityRangeBottom');
-        this.checkRange_(_brightnessRangeUpper, 'brightnessRangeUpper/' + LX);
-        this.checkRange_(_brightnessRangeBottom, 'brightnessRangeBottom/' + LX);
+        this.checkRange(proximityRangeUpper, this.RANGE_MIN, this.RANGE_MAX, 'proximityRangeUpper');
+        this.checkRange(proximityRangeBottom, this.RANGE_MIN, this.RANGE_MAX, 'proximityRangeBottom');
+        this.checkRange(_brightnessRangeUpper, this.RANGE_MIN, this.RANGE_MAX, 'brightnessRangeUpper/' + LX);
+        this.checkRange(_brightnessRangeBottom, this.RANGE_MIN, this.RANGE_MAX, 'brightnessRangeBottom/' + LX);
         this.checkEmitCondition_(proximityCondition, 'proximityCondition');
         this.checkEmitCondition_(brightnessCondition, 'brightnessCondition');
         this.checkNotifyMode_(notifyMode);
@@ -27983,12 +27930,6 @@ class Brightness extends Base_1.Base {
         data.push(this.checkSum(data));
         return data;
     }
-    checkRange_(target, name) {
-        if (target < this.RANGE_MIN || this.RANGE_MAX < target) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError(name, this.RANGE_MIN, this.RANGE_MAX);
-        }
-        return true;
-    }
     checkEmitCondition_(target, name) {
         let _isExist = false;
         Object.entries(Brightness.EmitCondition).forEach(([key, value]) => {
@@ -27999,11 +27940,11 @@ class Brightness extends Base_1.Base {
         if (_isExist) {
             return true;
         }
-        throw new MeshJsError_1.MeshJsInvalidValueError(name);
+        throw new Error_1.MESHJsInvalidValueError(name);
     }
     checkNotifyMode_(target) {
         if (target < this.NOTIFY_MODE_MIN_ || this.NOTIFY_MODE_MAX_ < target) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('notifyType', this.NOTIFY_MODE_MIN_, this.NOTIFY_MODE_MAX_);
+            throw new Error_1.MESHJsOutOfRangeError('notifyType', this.NOTIFY_MODE_MIN_, this.NOTIFY_MODE_MAX_);
         }
         return true;
     }
@@ -28107,7 +28048,7 @@ exports.Button = Button;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const Base_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/block/Base.js");
-const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
+const Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/util/Error.js");
 class GPIO extends Base_1.Base {
     constructor() {
         super(...arguments);
@@ -28236,18 +28177,18 @@ class GPIO extends Base_1.Base {
         // Error Handle
         const PWM_MIN = 0;
         const PWM_MAX = 255;
-        this.checkRange_(pwmRatio, PWM_MIN, PWM_MAX, 'pwmRatio');
+        this.checkRange(pwmRatio, PWM_MIN, PWM_MAX, 'pwmRatio');
         if (vcc !== GPIO.Vcc.AUTO && vcc !== GPIO.Vcc.ON && vcc !== GPIO.Vcc.OFF) {
-            throw new MeshJsError_1.MeshJsInvalidValueError('vcc');
+            throw new Error_1.MESHJsInvalidValueError('vcc');
         }
         const ANALOG_IN_RANGE_MIN = 0;
         const ANALOG_IN_RANGE_MAX = 255;
-        this.checkRange_(analogInputRangeUpper, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeUpper');
-        this.checkRange_(analogInputRangeBottom, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeBottom');
+        this.checkRange(analogInputRangeUpper, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeUpper');
+        this.checkRange(analogInputRangeBottom, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeBottom');
         if (analogInputNotify !== GPIO.AnalogInEventCondition.NOT_NOTIFY &&
             analogInputNotify !== GPIO.AnalogInEventCondition.ABOVE_THRESHOLD &&
             analogInputNotify !== GPIO.AnalogInEventCondition.BELOW_THRESHOLD) {
-            throw new MeshJsError_1.MeshJsInvalidValueError('analogInNotify');
+            throw new Error_1.MESHJsInvalidValueError('analogInNotify');
         }
         // Generate Command
         const HEADER = [this.MESSAGE_TYPE_ID_, 1];
@@ -28323,12 +28264,6 @@ class GPIO extends Base_1.Base {
     pin2num_(pins) {
         return (pins.p1 ? 1 : 0) + (pins.p2 ? 2 : 0) + (pins.p3 ? 4 : 0);
     }
-    checkRange_(target, min, max, name) {
-        if (target < min || max < target) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError(name, min, max);
-        }
-        return true;
-    }
 }
 exports.GPIO = GPIO;
 // Constant Values
@@ -28375,7 +28310,7 @@ GPIO.VccState = {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const Base_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/block/Base.js");
-const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
+const Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/util/Error.js");
 class LED extends Base_1.Base {
     constructor() {
         super(...arguments);
@@ -28394,28 +28329,16 @@ class LED extends Base_1.Base {
         // Error Handle
         const COLOR_MIN = 0;
         const COLOR_MAX = 127;
-        if (colors.red < COLOR_MIN || COLOR_MAX < colors.red) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('red', COLOR_MIN, COLOR_MAX);
-        }
-        if (colors.green < COLOR_MIN || COLOR_MAX < colors.green) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('green', COLOR_MIN, COLOR_MAX);
-        }
-        if (colors.blue < COLOR_MIN || COLOR_MAX < colors.blue) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('blue', COLOR_MIN, COLOR_MAX);
-        }
+        this.checkRange(colors.red, COLOR_MIN, COLOR_MAX, 'colors.red');
+        this.checkRange(colors.green, COLOR_MIN, COLOR_MAX, 'colors.green');
+        this.checkRange(colors.blue, COLOR_MIN, COLOR_MAX, 'colors.blue');
         const TIME_MIN = 0;
         const TIME_MAX = 65535;
-        if (totalTime < TIME_MIN || TIME_MAX < totalTime) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('time', TIME_MIN, TIME_MAX);
-        }
-        if (cycleOnTime < TIME_MIN || TIME_MAX < cycleOnTime) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('cycle_on', TIME_MIN, TIME_MAX);
-        }
-        if (cycleOffTime < TIME_MIN || TIME_MAX < cycleOffTime) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('cycle_off', TIME_MIN, TIME_MAX);
-        }
+        this.checkRange(totalTime, TIME_MIN, TIME_MAX, 'totalTime');
+        this.checkRange(cycleOnTime, TIME_MIN, TIME_MAX, 'cycleOnTime');
+        this.checkRange(cycleOffTime, TIME_MIN, TIME_MAX, 'cycleOffTIme');
         if (pattern !== LED.PATTERN.BLINK && pattern !== LED.PATTERN.FIREFLY) {
-            throw new MeshJsError_1.MeshJsInvalidValueError('pattern');
+            throw new Error_1.MESHJsInvalidValueError('pattern');
         }
         // Generate Command
         const MESSAGE_TYPE_ID = 1;
@@ -28459,7 +28382,6 @@ LED.PATTERN = {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const Base_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/block/Base.js");
-const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
 class Motion extends Base_1.Base {
     constructor() {
         super(...arguments);
@@ -28507,10 +28429,10 @@ class Motion extends Base_1.Base {
         // Error Handle
         const DETECTION_TIME_MIN = 200;
         const DETECTION_TIME_MAX = 60000;
-        this.checkRange_(opt_detectionTime, DETECTION_TIME_MIN, DETECTION_TIME_MAX, 'opt_detectionTime');
+        this.checkRange(opt_detectionTime, DETECTION_TIME_MIN, DETECTION_TIME_MAX, 'opt_detectionTime');
         const RESPONSE_TIME_MIN = 500;
         const RESPONSE_TIME_MAX = 60000;
-        this.checkRange_(opt_responseTime, RESPONSE_TIME_MIN, RESPONSE_TIME_MAX, 'opt_responseTime');
+        this.checkRange(opt_responseTime, RESPONSE_TIME_MIN, RESPONSE_TIME_MAX, 'opt_responseTime');
         // Generate Command
         const HEADER = [
             this.MESSAGE_TYPE_ID_,
@@ -28528,12 +28450,6 @@ class Motion extends Base_1.Base {
         const data = HEADER.concat(BODY);
         data.push(this.checkSum(data));
         return data;
-    }
-    checkRange_(target, min, max, name) {
-        if (target < min || max < target) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError(name, min, max);
-        }
-        return true;
     }
 }
 exports.Motion = Motion;
@@ -28637,7 +28553,7 @@ exports.Move = Move;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const Base_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/block/Base.js");
-const MeshJsError_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/MeshJsError.js");
+const Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/util/Error.js");
 class TempHumid extends Base_1.Base {
     constructor() {
         super(...arguments);
@@ -28697,10 +28613,10 @@ class TempHumid extends Base_1.Base {
      */
     parseSetmodeCommand(temperatureRangeUpper, temperatureRangeBottom, humidityRangeUpper, humidityRangeBottom, temperatureCondition, humidityCondision, notifyMode, opt_requestId = 0) {
         // Error Handle
-        this.checkRange_(temperatureRangeUpper, this.TEMPERATURE_MIN_, this.TEMPERATURE_MAX_, 'temperatureRangeUpper');
-        this.checkRange_(temperatureRangeBottom, this.TEMPERATURE_MIN_, this.TEMPERATURE_MAX_, 'temperatureRangeBottom');
-        this.checkRange_(humidityRangeUpper, this.HUMIDITY_MIN_, this.HUMIDITY_MAX_, 'humidityRangeUpper');
-        this.checkRange_(humidityRangeBottom, this.HUMIDITY_MIN_, this.HUMIDITY_MAX_, 'humidityRangeBottom');
+        this.checkRange(temperatureRangeUpper, this.TEMPERATURE_MIN_, this.TEMPERATURE_MAX_, 'temperatureRangeUpper');
+        this.checkRange(temperatureRangeBottom, this.TEMPERATURE_MIN_, this.TEMPERATURE_MAX_, 'temperatureRangeBottom');
+        this.checkRange(humidityRangeUpper, this.HUMIDITY_MIN_, this.HUMIDITY_MAX_, 'humidityRangeUpper');
+        this.checkRange(humidityRangeBottom, this.HUMIDITY_MIN_, this.HUMIDITY_MAX_, 'humidityRangeBottom');
         this.checkEmitCondition_(temperatureCondition, 'temperatureCondition');
         this.checkEmitCondition_(humidityCondision, 'humidityCondision');
         this.checkNotifyMode_(notifyMode);
@@ -28736,12 +28652,6 @@ class TempHumid extends Base_1.Base {
         const TWO_BYTE = 65536;
         return val + (val < 0 ? TWO_BYTE : 0);
     }
-    checkRange_(target, min, max, name) {
-        if (target < min || max < target) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError(name, min, max);
-        }
-        return true;
-    }
     checkEmitCondition_(target, name) {
         let _isExist = false;
         Object.entries(TempHumid.EmitCondition).forEach(([, value]) => {
@@ -28752,11 +28662,11 @@ class TempHumid extends Base_1.Base {
         if (_isExist) {
             return true;
         }
-        throw new MeshJsError_1.MeshJsInvalidValueError(name);
+        throw new Error_1.MESHJsInvalidValueError(name);
     }
     checkNotifyMode_(target) {
         if (target < this.NOTIFY_MODE_MIN_ || this.NOTIFY_MODE_MAX_ < target) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('notifyType', this.NOTIFY_MODE_MIN_, this.NOTIFY_MODE_MAX_);
+            throw new Error_1.MESHJsOutOfRangeError('notifyType', this.NOTIFY_MODE_MIN_, this.NOTIFY_MODE_MAX_);
         }
         return true;
     }
@@ -28778,6 +28688,75 @@ TempHumid.NotifyMode = {
     ONCE: 16,
     ALWAYS: 32,
 };
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_js/util/Common.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MESH_js/util/Error.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class MESHJsError extends Error {
+    constructor(code, e) {
+        super(e);
+        this.code = code;
+        this.name = new.target.name;
+        Object.setPrototypeOf(this, new.target.prototype);
+    }
+}
+exports.MESHJsError = MESHJsError;
+class MESHJsBlockVersionError extends MESHJsError {
+    constructor(major, minor, release) {
+        super(1, 'please UPDATE block version to 1.2.5 more. (current block version ' +
+            major +
+            '.' +
+            minor +
+            '.' +
+            release +
+            ')');
+        this.major = major;
+    }
+}
+exports.MESHJsBlockVersionError = MESHJsBlockVersionError;
+class MESHJsOutOfRangeError extends MESHJsError {
+    constructor(property, min, max) {
+        super(2, property +
+            ' is out of range. ' +
+            property +
+            ' must be ' +
+            min +
+            ' ~ ' +
+            max +
+            '.');
+        this.property = property;
+    }
+}
+exports.MESHJsOutOfRangeError = MESHJsOutOfRangeError;
+class MESHJsInvalidValueError extends MESHJsError {
+    constructor(property) {
+        super(3, property + ' is invalid value.');
+        this.property = property;
+    }
+}
+exports.MESHJsInvalidValueError = MESHJsInvalidValueError;
+class MESHJsTimeOutError extends MESHJsError {
+    constructor(property) {
+        super(4, property + ' is time out.');
+        this.property = property;
+    }
+}
+exports.MESHJsTimeOutError = MESHJsTimeOutError;
 
 
 /***/ }),

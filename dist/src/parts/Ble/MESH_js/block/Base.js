@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const MeshJsError_1 = require("../MeshJsError");
+const Error_1 = require("../util/Error");
 class Base {
     constructor() {
         // Event Handler
@@ -66,6 +66,12 @@ class Base {
         const BYTE = 256;
         return sum % BYTE;
     }
+    checkRange(target, min, max, name) {
+        if (target < min || max < target) {
+            throw new Error_1.MESHJsOutOfRangeError(name, min, max);
+        }
+        return true;
+    }
     updateBattery_(data) {
         if (data.length !== 4) {
             return false;
@@ -113,19 +119,19 @@ class Base {
             return;
         }
         if (major < VERSION_MAJOR) {
-            throw new MeshJsError_1.MeshBlockVersionError(major, minor, release);
+            throw new Error_1.MESHJsBlockVersionError(major, minor, release);
         }
         if (VERSION_MINOR < minor) {
             return;
         }
         if (minor < VERSION_MINOR) {
-            throw new MeshJsError_1.MeshBlockVersionError(major, minor, release);
+            throw new Error_1.MESHJsBlockVersionError(major, minor, release);
         }
         if (VERSION_RELEASE < release) {
             return;
         }
         if (release < VERSION_RELEASE) {
-            throw new MeshJsError_1.MeshBlockVersionError(major, minor, release);
+            throw new Error_1.MESHJsBlockVersionError(major, minor, release);
         }
     }
 }

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Base_1 = require("./Base");
-const MeshJsError_1 = require("../MeshJsError");
+const Error_1 = require("../util/Error");
 class LED extends Base_1.Base {
     constructor() {
         super(...arguments);
@@ -20,28 +20,16 @@ class LED extends Base_1.Base {
         // Error Handle
         const COLOR_MIN = 0;
         const COLOR_MAX = 127;
-        if (colors.red < COLOR_MIN || COLOR_MAX < colors.red) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('red', COLOR_MIN, COLOR_MAX);
-        }
-        if (colors.green < COLOR_MIN || COLOR_MAX < colors.green) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('green', COLOR_MIN, COLOR_MAX);
-        }
-        if (colors.blue < COLOR_MIN || COLOR_MAX < colors.blue) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('blue', COLOR_MIN, COLOR_MAX);
-        }
+        this.checkRange(colors.red, COLOR_MIN, COLOR_MAX, 'colors.red');
+        this.checkRange(colors.green, COLOR_MIN, COLOR_MAX, 'colors.green');
+        this.checkRange(colors.blue, COLOR_MIN, COLOR_MAX, 'colors.blue');
         const TIME_MIN = 0;
         const TIME_MAX = 65535;
-        if (totalTime < TIME_MIN || TIME_MAX < totalTime) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('time', TIME_MIN, TIME_MAX);
-        }
-        if (cycleOnTime < TIME_MIN || TIME_MAX < cycleOnTime) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('cycle_on', TIME_MIN, TIME_MAX);
-        }
-        if (cycleOffTime < TIME_MIN || TIME_MAX < cycleOffTime) {
-            throw new MeshJsError_1.MeshJsOutOfRangeError('cycle_off', TIME_MIN, TIME_MAX);
-        }
+        this.checkRange(totalTime, TIME_MIN, TIME_MAX, 'totalTime');
+        this.checkRange(cycleOnTime, TIME_MIN, TIME_MAX, 'cycleOnTime');
+        this.checkRange(cycleOffTime, TIME_MIN, TIME_MAX, 'cycleOffTIme');
         if (pattern !== LED.PATTERN.BLINK && pattern !== LED.PATTERN.FIREFLY) {
-            throw new MeshJsError_1.MeshJsInvalidValueError('pattern');
+            throw new Error_1.MESHJsInvalidValueError('pattern');
         }
         // Generate Command
         const MESSAGE_TYPE_ID = 1;

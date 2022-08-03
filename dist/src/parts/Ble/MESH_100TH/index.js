@@ -7,7 +7,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
 const TempHumid_1 = require("../MESH_js/block/TempHumid");
-const MeshJsError_1 = require("../MESH_js/MeshJsError");
+const Error_1 = require("../MESH_js/util/Error");
 /** MESH_100TH management class */
 class MESH_100TH extends MESH_1.MESH {
     constructor() {
@@ -65,7 +65,7 @@ class MESH_100TH extends MESH_1.MESH {
             this.setMode(this.temperatureUpper_, this.temperatureBottom_, this.humidityUpper_, this.humidityBottom_, this.temperatureCondition_, this.humidityCondision_, this.notifyMode_);
         }
         if (_result == null) {
-            throw new MeshJsError_1.MeshJsTimeOutError(this.peripheral.localName);
+            throw new Error_1.MESHJsTimeOutError(this.peripheral.localName);
         }
         return _result;
     }

@@ -7,7 +7,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
 const Motion_1 = require("../MESH_js/block/Motion");
-const MeshJsError_1 = require("../MESH_js/MeshJsError");
+const Error_1 = require("../MESH_js/util/Error");
 /** MESH_100MD management class */
 class MESH_100MD extends MESH_1.MESH {
     constructor() {
@@ -57,7 +57,7 @@ class MESH_100MD extends MESH_1.MESH {
             this.setMode(this.notifyMode_, this.detectionTime_, this.responseTime_);
         }
         if (_result == null) {
-            throw new MeshJsError_1.MeshJsTimeOutError(this.peripheral.localName);
+            throw new Error_1.MESHJsTimeOutError(this.peripheral.localName);
         }
         return _result;
     }

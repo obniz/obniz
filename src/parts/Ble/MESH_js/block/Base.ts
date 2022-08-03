@@ -1,4 +1,4 @@
-import { MeshBlockVersionError, MeshJsInvalidValueError } from '../MeshJsError';
+import { MESHJsBlockVersionError, MESHJsOutOfRangeError } from '../util/Error';
 
 export class Base {
   // Event Handler
@@ -71,6 +71,18 @@ export class Base {
     return sum % BYTE;
   }
 
+  protected checkRange(
+    target: number,
+    min: number,
+    max: number,
+    name: string
+  ): boolean {
+    if (target < min || max < target) {
+      throw new MESHJsOutOfRangeError(name, min, max);
+    }
+    return true;
+  }
+
   private updateBattery_(data: number[]): boolean {
     if (data.length !== 4) {
       return false;
@@ -120,19 +132,19 @@ export class Base {
       return;
     }
     if (major < VERSION_MAJOR) {
-      throw new MeshBlockVersionError(major, minor, release);
+      throw new MESHJsBlockVersionError(major, minor, release);
     }
     if (VERSION_MINOR < minor) {
       return;
     }
     if (minor < VERSION_MINOR) {
-      throw new MeshBlockVersionError(major, minor, release);
+      throw new MESHJsBlockVersionError(major, minor, release);
     }
     if (VERSION_RELEASE < release) {
       return;
     }
     if (release < VERSION_RELEASE) {
-      throw new MeshBlockVersionError(major, minor, release);
+      throw new MESHJsBlockVersionError(major, minor, release);
     }
   }
 }

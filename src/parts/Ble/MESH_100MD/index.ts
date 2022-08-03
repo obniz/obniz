@@ -6,7 +6,7 @@
 
 import { MESH } from '../utils/abstracts/MESH';
 import { Motion } from '../MESH_js/block/Motion';
-import { MeshJsTimeOutError } from '../MESH_js/MeshJsError';
+import { MESHJsTimeOutError } from '../MESH_js/util/Error';
 
 export interface MESH_100MDOptions {}
 
@@ -81,7 +81,7 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
       this.setMode(this.notifyMode_, this.detectionTime_, this.responseTime_);
     }
     if (_result == null) {
-      throw new MeshJsTimeOutError(this.peripheral.localName!);
+      throw new MESHJsTimeOutError(this.peripheral.localName!);
     }
     return _result;
   }

@@ -1,5 +1,5 @@
 import { Base } from './Base';
-import { MeshJsInvalidValueError, MeshJsOutOfRangeError } from '../MeshJsError';
+import { MESHJsInvalidValueError, MESHJsOutOfRangeError } from '../util/Error';
 export class Brightness extends Base {
   // Event Handler
   public onSensorEvent:
@@ -84,10 +84,30 @@ export class Brightness extends Base {
     const _brightnessRangeBottom = brightnessRangeBottom / LX;
 
     // Error Handle
-    this.checkRange_(proximityRangeUpper, 'proximityRangeUpper');
-    this.checkRange_(proximityRangeBottom, 'proximityRangeBottom');
-    this.checkRange_(_brightnessRangeUpper, 'brightnessRangeUpper/' + LX);
-    this.checkRange_(_brightnessRangeBottom, 'brightnessRangeBottom/' + LX);
+    this.checkRange(
+      proximityRangeUpper,
+      this.RANGE_MIN,
+      this.RANGE_MAX,
+      'proximityRangeUpper'
+    );
+    this.checkRange(
+      proximityRangeBottom,
+      this.RANGE_MIN,
+      this.RANGE_MAX,
+      'proximityRangeBottom'
+    );
+    this.checkRange(
+      _brightnessRangeUpper,
+      this.RANGE_MIN,
+      this.RANGE_MAX,
+      'brightnessRangeUpper/' + LX
+    );
+    this.checkRange(
+      _brightnessRangeBottom,
+      this.RANGE_MIN,
+      this.RANGE_MAX,
+      'brightnessRangeBottom/' + LX
+    );
     this.checkEmitCondition_(proximityCondition, 'proximityCondition');
     this.checkEmitCondition_(brightnessCondition, 'brightnessCondition');
     this.checkNotifyMode_(notifyMode);
@@ -117,13 +137,6 @@ export class Brightness extends Base {
     return data;
   }
 
-  private checkRange_(target: number, name: string): boolean {
-    if (target < this.RANGE_MIN || this.RANGE_MAX < target) {
-      throw new MeshJsOutOfRangeError(name, this.RANGE_MIN, this.RANGE_MAX);
-    }
-    return true;
-  }
-
   private checkEmitCondition_(target: number, name: string) {
     let _isExist = false;
     Object.entries(Brightness.EmitCondition).forEach(([key, value]) => {
@@ -134,12 +147,12 @@ export class Brightness extends Base {
     if (_isExist) {
       return true;
     }
-    throw new MeshJsInvalidValueError(name);
+    throw new MESHJsInvalidValueError(name);
   }
 
   private checkNotifyMode_(target: number): boolean {
     if (target < this.NOTIFY_MODE_MIN_ || this.NOTIFY_MODE_MAX_ < target) {
-      throw new MeshJsOutOfRangeError(
+      throw new MESHJsOutOfRangeError(
         'notifyType',
         this.NOTIFY_MODE_MIN_,
         this.NOTIFY_MODE_MAX_

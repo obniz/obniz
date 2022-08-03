@@ -1,5 +1,5 @@
 import { Base } from './Base';
-import { MeshJsOutOfRangeError } from '../MeshJsError';
+import { MESHJsOutOfRangeError } from '../util/Error';
 export class Motion extends Base {
   // Event Handler
   public onSensorEvent:
@@ -61,7 +61,7 @@ export class Motion extends Base {
     // Error Handle
     const DETECTION_TIME_MIN = 200 as const;
     const DETECTION_TIME_MAX = 60000 as const;
-    this.checkRange_(
+    this.checkRange(
       opt_detectionTime,
       DETECTION_TIME_MIN,
       DETECTION_TIME_MAX,
@@ -69,7 +69,7 @@ export class Motion extends Base {
     );
     const RESPONSE_TIME_MIN = 500 as const;
     const RESPONSE_TIME_MAX = 60000 as const;
-    this.checkRange_(
+    this.checkRange(
       opt_responseTime,
       RESPONSE_TIME_MIN,
       RESPONSE_TIME_MAX,
@@ -94,17 +94,5 @@ export class Motion extends Base {
     data.push(this.checkSum(data));
 
     return data;
-  }
-
-  private checkRange_(
-    target: number,
-    min: number,
-    max: number,
-    name: string
-  ): boolean {
-    if (target < min || max < target) {
-      throw new MeshJsOutOfRangeError(name, min, max);
-    }
-    return true;
   }
 }

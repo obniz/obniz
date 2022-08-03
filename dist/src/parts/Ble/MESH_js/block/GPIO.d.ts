@@ -114,5 +114,4 @@ export declare class GPIO extends Base {
     parsePwmCommand(requestId?: number): number[];
     private parseCommand_;
     private pin2num_;
-    private checkRange_;
 }
