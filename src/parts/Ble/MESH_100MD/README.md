@@ -1,9 +1,6 @@
-# MESH-100MD
-Official product introduction page is [here](https://shop.meshprj.com/products/motion)
-
-Infrared motion sensor  
-Rechargeable: build-in Li battery, 100mAh, approx 30-day battery life  
-Compact: approx W24 * H48 * D12 mm
+# MESH-100MD (MESH Motion)
+MESH-100MD (MESH Motion) is an app-enabled infrared motion sensor of MESH blocks.  
+MESH official web site is [here](https://meshprj.com/).
 
 # License
 See [LICENSE.txt]().
@@ -18,12 +15,12 @@ obniz.ble.scan.onfind = async (peripheral) => {
     if (!MESH_100MD.isMESHblock(peripheral)) {
         return;
     }
-    console.log('find');
+    console.log('found');
 
     // Create an instance
     const motionBlock = new MESH_100MD(peripheral);
 
-    // Connect to LED block
+    // Connect to the Motion block
     await motionBlock.connectWait();
     console.log('connected');
     
@@ -39,7 +36,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
             break;
         }
         default: {
-            console.log('During Startup...');
+            console.log('Starting up...');
             break;
         }
     }
@@ -56,12 +53,12 @@ obniz.ble.scan.onfind = async (peripheral) => {
     if (!MESH_100MD.isMESHblock(peripheral)) {
         return;
     }
-    console.log('find');
+    console.log('found');
 
     // Create an instance
     const motionBlock = new MESH_100MD(peripheral);
 
-    // Connect to LED block
+    // Connect to the Motion block
     await motionBlock.connectWait();
     console.log('connected');
     
@@ -77,14 +74,14 @@ obniz.ble.scan.onfind = async (peripheral) => {
                 break;
             }
             default: {
-                console.log('During Startup...');
+                console.log('Starting up...');
                 break;
             }
         }
     });
 
     // Prepare params
-    const notifyMode = mesh_md.NotifyMode.ALWAYS;
+    const notifyMode = MESH_100MD.NotifyMode.ALWAYS;
     
     // Write
     motionBlock.setMode(notifyMode);

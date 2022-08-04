@@ -1,9 +1,6 @@
-# MESH-100AC
-Official product introduction page is [here](https://shop.meshprj.com/products/move)
-
-Functions: detects shaking, flipping, vibration, and orientation (Front, back, left, right, top, bottom)
-Rechargeable: build-in Li battery, 100mAh, approx 30-day battery life
-Compact: approx W24 * H48 * D12 mm
+# MESH-100AC (MESH Move) 
+MESH-100AC (MESH Move) is an app-enabled accelerometer of MESH blocks.  
+MESH official web site is [here](https://meshprj.com/).
 
 # License
 See [LICENSE.txt]().
@@ -18,12 +15,12 @@ obniz.ble.scan.onfind = async (peripheral) => {
     if (!MESH_100AC.isMESHblock(peripheral)) {
         return;
     }
-    console.log('find');
+    console.log('found');
 
     // Create an instance
     const moveBlock = new MESH_100AC(peripheral);
 
-    // Connect to LED block
+    // Connect to the Move block
     await moveBlock.connectWait();
     console.log('connected');
     

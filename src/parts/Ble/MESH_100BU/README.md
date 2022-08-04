@@ -1,9 +1,7 @@
-# MESH-100BU
-Official product introduction page is [here](https://shop.meshprj.com/products/button)
+# MESH-100BU (MESH Button)
+MESH-100BU (MESH Button) is an app-enabled push button of MESH blocks.
 
-Functions: Press, Hold, Double Press
-Rechargeable: build-in Li battery, 100mAh, approx 30-day battery life
-Compact: approx W24 * H48 * D12 mm
+MESH official web site is [here](https://meshprj.com/).
 
 # License
 See [LICENSE.txt]().
@@ -18,12 +16,12 @@ obniz.ble.scan.onfind = async (peripheral) => {
     if (!MESH_100BU.isMESHblock(peripheral)) {
         return;
     }
-    console.log('find');
+    console.log('found');
 
     // Create an instance
     const buttonBlock = new MESH_100BU(peripheral);
 
-    // Connect to LED block
+    // Connect to the Button block
     await buttonBlock.connectWait();
     console.log('connected');
     
@@ -33,21 +31,21 @@ obniz.ble.scan.onfind = async (peripheral) => {
     // Single Pressed Event
     buttonBlock.onSinglePressed = (() => {
         ++ count;
-        console.log('Single pressed, Plus 1; count = ' + count);
-        if (count === GOAL) { console.log('YOU ARE WON !!');}
+        console.log('Single pressed, 1 count added; count = ' + count);
+        if (count === GOAL) { console.log('YOU WIN !!');}
     });
     
     // Double Pressed Event
     buttonBlock.onDoublePressed = (() => {
         count += 2;
-        console.log('Double pressed, Plus 2; count = ' + count);
-        if (count === GOAL) { console.log('YOU ARE WON !!');}
+        console.log('Double pressed, 2 counts added; count = ' + count);
+        if (count === GOAL) { console.log('YOU WIN !!');}
     });
     
     // Long Pressed Event
     buttonBlock.onLongPressed = (() => {
         count = 0;
-        console.log('Long pressed, Reset count; count = ' + count);
+        console.log('Long pressed, count has been reset; count = ' + count);
     });
 };
 await obniz.ble.scan.startWait();
