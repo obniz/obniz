@@ -130,10 +130,10 @@ export class TempHumid extends Base {
     ] as const;
     const BASE: number = 10 as const;
     const TEMP_UPPER: number[] = this.num2array_(
-      BASE * this.invcomplemnt_(temperatureRangeUpper)
+      this.invcomplemnt_(BASE * temperatureRangeUpper)
     );
     const TEMP_BOTTOM: number[] = this.num2array_(
-      BASE * this.invcomplemnt_(temperatureRangeBottom)
+      this.invcomplemnt_(BASE * temperatureRangeBottom)
     );
     const HUMI_UPPER: number[] = this.num2array_(humidityRangeUpper);
     const HUMI_BOTTOM: number[] = this.num2array_(humidityRangeBottom);
