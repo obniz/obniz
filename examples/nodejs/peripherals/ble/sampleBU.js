@@ -62,7 +62,7 @@ async function sampleBU(peripheral) {
     console.log('long pressed, reset count; current = ' + count);
   });
 
-  BU_block.onBatteryNotify = ((batt) => {
+  BU_block.onBatteryLevel = ((batt) => {
     console.log('battery last : ' + batt + '/10');
   });
 
