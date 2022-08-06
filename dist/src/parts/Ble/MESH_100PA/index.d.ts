@@ -16,16 +16,8 @@ export interface MESH_100PA_Data {
 export default class MESH_100PA extends MESH<MESH_100PA_Data> {
     static readonly PartsName = "MESH_100PA";
     static readonly PREFIX = "MESH-100PA";
-    static readonly EmitCondition: {
-        ABOVE_UPPER_AND_BELOW_BOTTOM: 0;
-        ABOVE_UPPER_AND_ABOVE_BOTTOM: 1;
-        BELOW_UPPER_AND_BELOW_BOTTOM: 16;
-        BELOW_UPPER_AND_ABOVE_BOTTOM: 17;
-    };
     static readonly NotifyMode: {
         readonly STOP: 0;
-        readonly EMIT_PROXIMITY: 1;
-        readonly EMIT_BRIGHTNESS: 2;
         readonly UPDATE_PROXIMITY: 4;
         readonly UPDATE_BRIGHTNESS: 8;
         readonly ONCE: 16;
@@ -53,15 +45,9 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
     /**
      * setMode
      *
-     * @param proximityRangeUpper
-     * @param proximityRangeBottom
-     * @param brightnessRangeUpper
-     * @param brightnessRangeBottom
-     * @param proximityCondition
-     * @param brightnessCondition
      * @param notifyMode
      */
-    setMode(proximityRangeUpper: number, proximityRangeBottom: number, brightnessRangeUpper: number, brightnessRangeBottom: number, proximityCondition: number, brightnessCondition: number, notifyMode: number): void;
+    setMode(notifyMode: number): void;
     protected static _isMESHblock(name: string): boolean;
     protected prepareConnect(): void;
     protected beforeOnDisconnectWait(reason: unknown): Promise<void>;

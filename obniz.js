@@ -27543,11 +27543,7 @@ class MESH_100PA extends MESH_1.MESH {
     async getSensorDataWait() {
         this.checkConnected();
         const _requestId = this.requestId.next();
-        const _proximityRangeUpper = 0;
-        const _proximityRangeBottom = 0;
-        const _brightnessRangeUpper = 0;
-        const _brightnessRangeBottom = 0;
-        this.setMode_(_proximityRangeUpper, _proximityRangeBottom, _brightnessRangeUpper, _brightnessRangeBottom, MESH_100PA.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM, MESH_100PA.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM, MESH_100PA.NotifyMode.ONCE, _requestId);
+        this.setMode_(MESH_100PA.NotifyMode.ONCE, _requestId);
         const _TIMEOUT_MSEC = 2000;
         let _isTimeout = false;
         const _timeoutId = setTimeout(() => {
@@ -27576,16 +27572,10 @@ class MESH_100PA extends MESH_1.MESH {
     /**
      * setMode
      *
-     * @param proximityRangeUpper
-     * @param proximityRangeBottom
-     * @param brightnessRangeUpper
-     * @param brightnessRangeBottom
-     * @param proximityCondition
-     * @param brightnessCondition
      * @param notifyMode
      */
-    setMode(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode) {
-        this.setMode_(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode, this.requestId.defaultId());
+    setMode(notifyMode) {
+        this.setMode_(notifyMode, this.requestId.defaultId());
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100PA.PREFIX) !== -1;
@@ -27600,9 +27590,9 @@ class MESH_100PA extends MESH_1.MESH {
     async beforeOnDisconnectWait(reason) {
         // do nothing
     }
-    setMode_(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode, requestId) {
+    setMode_(notifyMode, requestId) {
         const brightnessBlock = this.meshBlock;
-        const command = brightnessBlock.parseSetmodeCommand(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode, requestId);
+        const command = brightnessBlock.parseSetmodeCommand(notifyMode, requestId);
         this.writeWOResponse(command);
     }
     setHandler_(proximity, brightness, requestId) {
@@ -27623,7 +27613,6 @@ class MESH_100PA extends MESH_1.MESH {
 exports.default = MESH_100PA;
 MESH_100PA.PartsName = 'MESH_100PA';
 MESH_100PA.PREFIX = 'MESH-100PA';
-MESH_100PA.EmitCondition = Brightness_1.Brightness.EmitCondition;
 MESH_100PA.NotifyMode = Brightness_1.Brightness.NotifyMode;
 
 
@@ -27954,20 +27943,13 @@ exports.Base = Base;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const Base_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/block/Base.js");
-const Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/util/Error.js");
 class Brightness extends Base_1.Base {
     constructor() {
         super(...arguments);
         // Event Handler
         this.onSensorEvent = null;
-        this.PROXIMITY_RANGE_MIN_ = 0;
-        this.PROXIMITY_RANGE_MAX_ = 4095;
-        this.BRIGHTNESS_RANGE_MIN_ = 0;
-        this.BRIGHTNESS_RANGE_MAX_ = 65535;
         this.NOTIFY_MODE_MIN_ = Brightness.NotifyMode.STOP;
         this.NOTIFY_MODE_MAX_ = Brightness.NotifyMode.STOP +
-            Brightness.NotifyMode.EMIT_PROXIMITY +
-            Brightness.NotifyMode.EMIT_BRIGHTNESS +
             Brightness.NotifyMode.UPDATE_PROXIMITY +
             Brightness.NotifyMode.UPDATE_BRIGHTNESS +
             Brightness.NotifyMode.ONCE +
@@ -28008,17 +27990,8 @@ class Brightness extends Base_1.Base {
      * @param opt_requestId
      * @returns command
      */
-    parseSetmodeCommand(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode, opt_requestId = 0) {
-        // Convert
-        const _brightnessRangeUpper = brightnessRangeUpper / this.LX_;
-        const _brightnessRangeBottom = brightnessRangeBottom / this.LX_;
+    parseSetmodeCommand(notifyMode, opt_requestId = 0) {
         // Error Handle
-        this.checkRange(proximityRangeUpper, this.PROXIMITY_RANGE_MIN_, this.PROXIMITY_RANGE_MAX_, 'proximityRangeUpper');
-        this.checkRange(proximityRangeBottom, this.PROXIMITY_RANGE_MIN_, this.PROXIMITY_RANGE_MAX_, 'proximityRangeBottom');
-        this.checkRange(_brightnessRangeUpper, this.BRIGHTNESS_RANGE_MIN_, this.BRIGHTNESS_RANGE_MAX_, 'brightnessRangeUpper/' + this.LX_);
-        this.checkRange(_brightnessRangeBottom, this.BRIGHTNESS_RANGE_MIN_, this.BRIGHTNESS_RANGE_MAX_, 'brightnessRangeBottom/' + this.LX_);
-        this.checkEmitCondition_(proximityCondition, 'proximityCondition');
-        this.checkEmitCondition_(brightnessCondition, 'brightnessCondition');
         this.checkRange(notifyMode, this.NOTIFY_MODE_MIN_, this.NOTIFY_MODE_MAX_, 'notifyMode');
         // Generate Command
         const HEADER = [
@@ -28026,51 +27999,16 @@ class Brightness extends Base_1.Base {
             this.EVENT_TYPE_ID_,
             opt_requestId,
         ];
-        const PROXIMITY_RANGE_UPPER = this.num2array_(proximityRangeUpper);
-        const PROXIMITY_RANGE_BOTTOM = this.num2array_(proximityRangeBottom);
-        const BRIGHTNESS_RANGE_UPPER = this.num2array_(_brightnessRangeUpper);
-        const BRIGHTNESS_RANGE_BOTTOM = this.num2array_(_brightnessRangeBottom);
-        const FIXED = [2, 2, 2];
-        const data = HEADER.concat(PROXIMITY_RANGE_UPPER)
-            .concat(PROXIMITY_RANGE_BOTTOM)
-            .concat(BRIGHTNESS_RANGE_UPPER)
-            .concat(BRIGHTNESS_RANGE_BOTTOM)
-            .concat(proximityCondition)
-            .concat(brightnessCondition)
-            .concat(FIXED)
-            .concat(notifyMode);
+        const FIXED = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2];
+        const data = HEADER.concat(FIXED).concat(notifyMode);
         data.push(this.checkSum(data));
         return data;
-    }
-    checkEmitCondition_(target, name) {
-        let _isExist = false;
-        Object.entries(Brightness.EmitCondition).forEach(([key, value]) => {
-            if (target === value) {
-                _isExist = true;
-            }
-        });
-        if (_isExist) {
-            return true;
-        }
-        throw new Error_1.MESHJsInvalidValueError(name);
-    }
-    num2array_(val) {
-        const BYTE = 256;
-        return [val % BYTE, Math.floor(val / BYTE)];
     }
 }
 exports.Brightness = Brightness;
 // Constant Values
-Brightness.EmitCondition = {
-    ABOVE_UPPER_AND_BELOW_BOTTOM: 0,
-    ABOVE_UPPER_AND_ABOVE_BOTTOM: 1,
-    BELOW_UPPER_AND_BELOW_BOTTOM: 16,
-    BELOW_UPPER_AND_ABOVE_BOTTOM: 17,
-};
 Brightness.NotifyMode = {
     STOP: 0,
-    EMIT_PROXIMITY: 1,
-    EMIT_BRIGHTNESS: 2,
     UPDATE_PROXIMITY: 4,
     UPDATE_BRIGHTNESS: 8,
     ONCE: 16,

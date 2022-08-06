@@ -38,11 +38,7 @@ class MESH_100PA extends MESH_1.MESH {
     async getSensorDataWait() {
         this.checkConnected();
         const _requestId = this.requestId.next();
-        const _proximityRangeUpper = 0;
-        const _proximityRangeBottom = 0;
-        const _brightnessRangeUpper = 0;
-        const _brightnessRangeBottom = 0;
-        this.setMode_(_proximityRangeUpper, _proximityRangeBottom, _brightnessRangeUpper, _brightnessRangeBottom, MESH_100PA.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM, MESH_100PA.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM, MESH_100PA.NotifyMode.ONCE, _requestId);
+        this.setMode_(MESH_100PA.NotifyMode.ONCE, _requestId);
         const _TIMEOUT_MSEC = 2000;
         let _isTimeout = false;
         const _timeoutId = setTimeout(() => {
@@ -71,16 +67,10 @@ class MESH_100PA extends MESH_1.MESH {
     /**
      * setMode
      *
-     * @param proximityRangeUpper
-     * @param proximityRangeBottom
-     * @param brightnessRangeUpper
-     * @param brightnessRangeBottom
-     * @param proximityCondition
-     * @param brightnessCondition
      * @param notifyMode
      */
-    setMode(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode) {
-        this.setMode_(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode, this.requestId.defaultId());
+    setMode(notifyMode) {
+        this.setMode_(notifyMode, this.requestId.defaultId());
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100PA.PREFIX) !== -1;
@@ -95,9 +85,9 @@ class MESH_100PA extends MESH_1.MESH {
     async beforeOnDisconnectWait(reason) {
         // do nothing
     }
-    setMode_(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode, requestId) {
+    setMode_(notifyMode, requestId) {
         const brightnessBlock = this.meshBlock;
-        const command = brightnessBlock.parseSetmodeCommand(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode, requestId);
+        const command = brightnessBlock.parseSetmodeCommand(notifyMode, requestId);
         this.writeWOResponse(command);
     }
     setHandler_(proximity, brightness, requestId) {
@@ -118,5 +108,4 @@ class MESH_100PA extends MESH_1.MESH {
 exports.default = MESH_100PA;
 MESH_100PA.PartsName = 'MESH_100PA';
 MESH_100PA.PREFIX = 'MESH-100PA';
-MESH_100PA.EmitCondition = Brightness_1.Brightness.EmitCondition;
 MESH_100PA.NotifyMode = Brightness_1.Brightness.NotifyMode;
