@@ -88,7 +88,7 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
         });
       }, INTERVAL_TIME);
     });
-    if (this.notifyMode_ !== MESH_100TH.NotifyMode.ONCE) {
+    if (MESH_100TH.NotifyMode.ALWAYS < this.notifyMode_) {
       // Continus previous mode
       this.setMode(
         this.temperatureUpper_,

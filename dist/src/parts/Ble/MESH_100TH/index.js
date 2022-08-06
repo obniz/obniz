@@ -65,7 +65,7 @@ class MESH_100TH extends MESH_1.MESH {
                 });
             }, INTERVAL_TIME);
         });
-        if (this.notifyMode_ !== MESH_100TH.NotifyMode.ONCE) {
+        if (MESH_100TH.NotifyMode.ALWAYS < this.notifyMode_) {
             // Continus previous mode
             this.setMode(this.temperatureUpper_, this.temperatureBottom_, this.humidityUpper_, this.humidityBottom_, this.temperatureCondition_, this.humidityCondision_, this.notifyMode_);
         }

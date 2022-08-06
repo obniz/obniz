@@ -87,7 +87,7 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
         resolve(this.retMotionState_);
       }, INTERVAL_TIME);
     });
-    if (this.notifyMode_ !== MESH_100MD.NotifyMode.ONCE) {
+    if (MESH_100MD.NotifyMode.ALWAYS < this.notifyMode_) {
       // Continus previous mode
       this.setMode(this.notifyMode_, this.detectionTime_, this.holdingTime_);
     }
