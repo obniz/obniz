@@ -35,7 +35,7 @@ obniz.onclose = async () => {
 
 var MD_block = null;
 async function sampleMD(peripheral) {
-  if (!mesh_md.isMESHblock(peripheral)) {
+  if (!mesh_md.isMESHblock(peripheral, '1007720')) {
     return;
   }
   console.log('obniz.ble.scan.onfind : ' + peripheral.localName + ' : ' + peripheral.rssi);
@@ -49,14 +49,14 @@ async function sampleMD(peripheral) {
     // mesh_md.NotifyMode.DETECTED;
     // mesh_md.NotifyMode.NOT_DETECTED;
     // mesh_md.NotifyMode.ONCE;
-    mesh_md.NotifyMode.ALWAYS;
+    // mesh_md.NotifyMode.ALWAYS;
     /**
      * select 2 params => combination 6
      */
     // mesh_md.NotifyMode.DETECTED + mesh_md.NotifyMode.NOT_DETECTED;
     // mesh_md.NotifyMode.DETECTED + mesh_md.NotifyMode.ONCE;
     // mesh_md.NotifyMode.DETECTED + mesh_md.NotifyMode.ALWAYS;
-    // mesh_md.NotifyMode.NOT_DETECTED + mesh_md.NotifyMode.ONCE;
+    mesh_md.NotifyMode.NOT_DETECTED + mesh_md.NotifyMode.ONCE;
     // mesh_md.NotifyMode.NOT_DETECTED + mesh_md.NotifyMode.ALWAYS;
     // mesh_md.NotifyMode.ONCE + mesh_md.NotifyMode.ALWAYS;
     /**
@@ -71,10 +71,10 @@ async function sampleMD(peripheral) {
      */
     // mesh_md.NotifyMode.DETECTED + mesh_md.NotifyMode.NOT_DETECTED + mesh_md.NotifyMode.ONCE + mesh_md.NotifyMode.ALWAYS;
 
-  // MD_block.setMode(_notifyMode, 500, 500);
-  // MD_block.onSensorEvent = ((motionState, notifyMode) => {
-  //   console.log(motionState, notifyMode);
-  // });
+  MD_block.setMode(_notifyMode, 500, 500);
+  MD_block.onSensorEvent = ((motionState, notifyMode) => {
+    console.log('notify: ',motionState, notifyMode);
+  });
 
   setInterval(getDataMD, 2000);
 }

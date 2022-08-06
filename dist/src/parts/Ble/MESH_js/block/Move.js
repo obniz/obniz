@@ -11,6 +11,8 @@ class Move extends Base_1.Base {
         this.onOrientationChanged = null;
         this.accele = { x: 0, y: 0, z: 0 };
         // Constant Values
+        this.MESSAGE_TYPE_INDEX_ = 0;
+        this.TYPE_INDEX_ = 1;
         this.MESSAGE_TYPE_ID_ = 1;
         this.DATA_LENGTH_ = 17;
         this.TAP_EVENT_ID_ = 0;
@@ -29,7 +31,7 @@ class Move extends Base_1.Base {
         if (data.length !== this.DATA_LENGTH_) {
             return;
         }
-        if (data[0] !== this.MESSAGE_TYPE_ID_) {
+        if (data[this.MESSAGE_TYPE_INDEX_] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
         // update accele values
@@ -39,7 +41,7 @@ class Move extends Base_1.Base {
         this.accele.y = this.complemnt(BYTE * data[7] + data[6]) / BASE;
         this.accele.z = this.complemnt(BYTE * data[9] + data[8]) / BASE;
         // emit event
-        switch (data[1]) {
+        switch (data[this.TYPE_INDEX_]) {
             case this.TAP_EVENT_ID_:
                 if (typeof this.onTapped === 'function') {
                     this.onTapped(this.accele);

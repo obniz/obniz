@@ -22,10 +22,10 @@ export class Brightness extends Base {
     ONCE: 16 as const,
     ALWAYS: 32 as const,
   } as const;
-  private readonly PROXIMITY_RANGE_MIN = 0 as const;
-  private readonly PROXIMITY_RANGE_MAX = 4095 as const;
-  private readonly BRIGHTNESS_RANGE_MIN = 0 as const;
-  private readonly BRIGHTNESS_RANGE_MAX = 65535 as const;
+  private readonly PROXIMITY_RANGE_MIN_ = 0 as const;
+  private readonly PROXIMITY_RANGE_MAX_ = 4095 as const;
+  private readonly BRIGHTNESS_RANGE_MIN_ = 0 as const;
+  private readonly BRIGHTNESS_RANGE_MAX_ = 65535 as const;
   private readonly NOTIFY_MODE_MIN_ = Brightness.NotifyMode.STOP;
   private readonly NOTIFY_MODE_MAX_ =
     Brightness.NotifyMode.STOP +
@@ -35,8 +35,11 @@ export class Brightness extends Base {
     Brightness.NotifyMode.UPDATE_BRIGHTNESS +
     Brightness.NotifyMode.ONCE +
     Brightness.NotifyMode.ALWAYS;
+  private readonly MESSAGE_TYPE_INDEX_: number = 0 as const;
+  private readonly EVENT_TYPE_INDEX_: number = 1 as const;
   private readonly MESSAGE_TYPE_ID_: number = 1 as const;
   private readonly EVENT_TYPE_ID_: number = 0 as const;
+  private readonly LX_: number = 10 as const;
 
   /**
    * notify
@@ -46,16 +49,15 @@ export class Brightness extends Base {
    */
   public notify(data: number[]): void {
     super.notify(data);
-    if (data[0] !== this.MESSAGE_TYPE_ID_) {
+    if (data[this.MESSAGE_TYPE_INDEX_] !== this.MESSAGE_TYPE_ID_) {
       return;
     }
-    if (data[1] !== this.EVENT_TYPE_ID_) {
+    if (data[this.EVENT_TYPE_INDEX_] !== this.EVENT_TYPE_ID_) {
       return;
     }
     const BYTE = 256 as const;
     const proximity = BYTE * data[5] + data[4];
-    const LX = 10 as const;
-    const brightness = LX * (BYTE * data[7] + data[6]);
+    const brightness = this.LX_ * (BYTE * data[7] + data[6]);
     const requestId = data[2];
     if (typeof this.onSensorEvent !== 'function') {
       return;
@@ -81,34 +83,33 @@ export class Brightness extends Base {
     opt_requestId = 0
   ): number[] {
     // Convert
-    const LX = 10 as const;
-    const _brightnessRangeUpper = brightnessRangeUpper / LX;
-    const _brightnessRangeBottom = brightnessRangeBottom / LX;
+    const _brightnessRangeUpper = brightnessRangeUpper / this.LX_;
+    const _brightnessRangeBottom = brightnessRangeBottom / this.LX_;
 
     // Error Handle
     this.checkRange(
       proximityRangeUpper,
-      this.PROXIMITY_RANGE_MIN,
-      this.PROXIMITY_RANGE_MAX,
+      this.PROXIMITY_RANGE_MIN_,
+      this.PROXIMITY_RANGE_MAX_,
       'proximityRangeUpper'
     );
     this.checkRange(
       proximityRangeBottom,
-      this.PROXIMITY_RANGE_MIN,
-      this.PROXIMITY_RANGE_MAX,
+      this.PROXIMITY_RANGE_MIN_,
+      this.PROXIMITY_RANGE_MAX_,
       'proximityRangeBottom'
     );
     this.checkRange(
       _brightnessRangeUpper,
-      this.BRIGHTNESS_RANGE_MIN,
-      this.BRIGHTNESS_RANGE_MAX,
-      'brightnessRangeUpper/' + LX
+      this.BRIGHTNESS_RANGE_MIN_,
+      this.BRIGHTNESS_RANGE_MAX_,
+      'brightnessRangeUpper/' + this.LX_
     );
     this.checkRange(
       _brightnessRangeBottom,
-      this.BRIGHTNESS_RANGE_MIN,
-      this.BRIGHTNESS_RANGE_MAX,
-      'brightnessRangeBottom/' + LX
+      this.BRIGHTNESS_RANGE_MIN_,
+      this.BRIGHTNESS_RANGE_MAX_,
+      'brightnessRangeBottom/' + this.LX_
     );
     this.checkEmitCondition_(proximityCondition, 'proximityCondition');
     this.checkEmitCondition_(brightnessCondition, 'brightnessCondition');

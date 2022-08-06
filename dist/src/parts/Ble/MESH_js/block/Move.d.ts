@@ -9,6 +9,8 @@ export declare class Move extends Base {
         y: number;
         z: number;
     };
+    private readonly MESSAGE_TYPE_INDEX_;
+    private readonly TYPE_INDEX_;
     private readonly MESSAGE_TYPE_ID_;
     private readonly DATA_LENGTH_;
     private readonly TAP_EVENT_ID_;

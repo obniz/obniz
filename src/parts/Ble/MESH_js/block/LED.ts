@@ -6,6 +6,10 @@ export class LED extends Base {
     BLINK: 1 as const,
     FIREFLY: 2 as const,
   } as const;
+  private readonly COLOR_MIN_ = 0 as const;
+  private readonly COLOR_MAX_ = 127 as const;
+  private readonly TIME_MIN_ = 0 as const;
+  private readonly TIME_MAX_ = 65535 as const;
 
   protected colors = { red: 0, green: 0, blue: 0 };
 
@@ -27,16 +31,27 @@ export class LED extends Base {
     pattern: number
   ): number[] {
     // Error Handle
-    const COLOR_MIN = 0 as const;
-    const COLOR_MAX = 127 as const;
-    this.checkRange(colors.red, COLOR_MIN, COLOR_MAX, 'colors.red');
-    this.checkRange(colors.green, COLOR_MIN, COLOR_MAX, 'colors.green');
-    this.checkRange(colors.blue, COLOR_MIN, COLOR_MAX, 'colors.blue');
-    const TIME_MIN = 0 as const;
-    const TIME_MAX = 65535 as const;
-    this.checkRange(totalTime, TIME_MIN, TIME_MAX, 'totalTime');
-    this.checkRange(cycleOnTime, TIME_MIN, TIME_MAX, 'cycleOnTime');
-    this.checkRange(cycleOffTime, TIME_MIN, TIME_MAX, 'cycleOffTIme');
+    this.checkRange(colors.red, this.COLOR_MIN_, this.COLOR_MAX_, 'colors.red');
+    this.checkRange(
+      colors.green,
+      this.COLOR_MIN_,
+      this.COLOR_MAX_,
+      'colors.green'
+    );
+    this.checkRange(
+      colors.blue,
+      this.COLOR_MIN_,
+      this.COLOR_MAX_,
+      'colors.blue'
+    );
+    this.checkRange(totalTime, this.TIME_MIN_, this.TIME_MAX_, 'totalTime');
+    this.checkRange(cycleOnTime, this.TIME_MIN_, this.TIME_MAX_, 'cycleOnTime');
+    this.checkRange(
+      cycleOffTime,
+      this.TIME_MIN_,
+      this.TIME_MAX_,
+      'cycleOffTIme'
+    );
     if (pattern !== LED.PATTERN.BLINK && pattern !== LED.PATTERN.FIREFLY) {
       throw new MESHJsInvalidValueError('pattern');
     }

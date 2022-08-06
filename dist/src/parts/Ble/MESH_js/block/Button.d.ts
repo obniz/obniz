@@ -4,6 +4,9 @@ export declare class Button extends Base {
     onLongPressed: (() => void) | null;
     onDoublePressed: (() => void) | null;
     private readonly DATA_LENGTH_;
+    private readonly MESSAGE_TYPE_INDEX_;
+    private readonly EVENT_TYPE_ID_INDEX_;
+    private readonly TYPE_INDEX_;
     private readonly MESSAGE_TYPE_ID_;
     private readonly EVENT_TYPE_ID_;
     private readonly TYPE_;

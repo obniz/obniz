@@ -7,6 +7,9 @@ export class Button extends Base {
 
   // Constant Values
   private readonly DATA_LENGTH_: number = 4 as const;
+  private readonly MESSAGE_TYPE_INDEX_: number = 0 as const;
+  private readonly EVENT_TYPE_ID_INDEX_: number = 1 as const;
+  private readonly TYPE_INDEX_: number = 2 as const;
   private readonly MESSAGE_TYPE_ID_: number = 1 as const;
   private readonly EVENT_TYPE_ID_: number = 0 as const;
   private readonly TYPE_ = {
@@ -26,13 +29,13 @@ export class Button extends Base {
     if (data.length !== this.DATA_LENGTH_) {
       return;
     }
-    if (data[0] !== this.MESSAGE_TYPE_ID_) {
+    if (data[this.MESSAGE_TYPE_INDEX_] !== this.MESSAGE_TYPE_ID_) {
       return;
     }
-    if (data[1] !== this.EVENT_TYPE_ID_) {
+    if (data[this.EVENT_TYPE_ID_INDEX_] !== this.EVENT_TYPE_ID_) {
       return;
     }
-    switch (data[2]) {
+    switch (data[this.TYPE_INDEX_]) {
       case this.TYPE_.SINGLE:
         if (typeof this.onSinglePressed === 'function') {
           this.onSinglePressed();

@@ -7,10 +7,10 @@ class Brightness extends Base_1.Base {
         super(...arguments);
         // Event Handler
         this.onSensorEvent = null;
-        this.PROXIMITY_RANGE_MIN = 0;
-        this.PROXIMITY_RANGE_MAX = 4095;
-        this.BRIGHTNESS_RANGE_MIN = 0;
-        this.BRIGHTNESS_RANGE_MAX = 65535;
+        this.PROXIMITY_RANGE_MIN_ = 0;
+        this.PROXIMITY_RANGE_MAX_ = 4095;
+        this.BRIGHTNESS_RANGE_MIN_ = 0;
+        this.BRIGHTNESS_RANGE_MAX_ = 65535;
         this.NOTIFY_MODE_MIN_ = Brightness.NotifyMode.STOP;
         this.NOTIFY_MODE_MAX_ = Brightness.NotifyMode.STOP +
             Brightness.NotifyMode.EMIT_PROXIMITY +
@@ -19,8 +19,11 @@ class Brightness extends Base_1.Base {
             Brightness.NotifyMode.UPDATE_BRIGHTNESS +
             Brightness.NotifyMode.ONCE +
             Brightness.NotifyMode.ALWAYS;
+        this.MESSAGE_TYPE_INDEX_ = 0;
+        this.EVENT_TYPE_INDEX_ = 1;
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
+        this.LX_ = 10;
     }
     /**
      * notify
@@ -30,16 +33,15 @@ class Brightness extends Base_1.Base {
      */
     notify(data) {
         super.notify(data);
-        if (data[0] !== this.MESSAGE_TYPE_ID_) {
+        if (data[this.MESSAGE_TYPE_INDEX_] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
-        if (data[1] !== this.EVENT_TYPE_ID_) {
+        if (data[this.EVENT_TYPE_INDEX_] !== this.EVENT_TYPE_ID_) {
             return;
         }
         const BYTE = 256;
         const proximity = BYTE * data[5] + data[4];
-        const LX = 10;
-        const brightness = LX * (BYTE * data[7] + data[6]);
+        const brightness = this.LX_ * (BYTE * data[7] + data[6]);
         const requestId = data[2];
         if (typeof this.onSensorEvent !== 'function') {
             return;
@@ -55,14 +57,13 @@ class Brightness extends Base_1.Base {
      */
     parseSetmodeCommand(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode, opt_requestId = 0) {
         // Convert
-        const LX = 10;
-        const _brightnessRangeUpper = brightnessRangeUpper / LX;
-        const _brightnessRangeBottom = brightnessRangeBottom / LX;
+        const _brightnessRangeUpper = brightnessRangeUpper / this.LX_;
+        const _brightnessRangeBottom = brightnessRangeBottom / this.LX_;
         // Error Handle
-        this.checkRange(proximityRangeUpper, this.PROXIMITY_RANGE_MIN, this.PROXIMITY_RANGE_MAX, 'proximityRangeUpper');
-        this.checkRange(proximityRangeBottom, this.PROXIMITY_RANGE_MIN, this.PROXIMITY_RANGE_MAX, 'proximityRangeBottom');
-        this.checkRange(_brightnessRangeUpper, this.BRIGHTNESS_RANGE_MIN, this.BRIGHTNESS_RANGE_MAX, 'brightnessRangeUpper/' + LX);
-        this.checkRange(_brightnessRangeBottom, this.BRIGHTNESS_RANGE_MIN, this.BRIGHTNESS_RANGE_MAX, 'brightnessRangeBottom/' + LX);
+        this.checkRange(proximityRangeUpper, this.PROXIMITY_RANGE_MIN_, this.PROXIMITY_RANGE_MAX_, 'proximityRangeUpper');
+        this.checkRange(proximityRangeBottom, this.PROXIMITY_RANGE_MIN_, this.PROXIMITY_RANGE_MAX_, 'proximityRangeBottom');
+        this.checkRange(_brightnessRangeUpper, this.BRIGHTNESS_RANGE_MIN_, this.BRIGHTNESS_RANGE_MAX_, 'brightnessRangeUpper/' + this.LX_);
+        this.checkRange(_brightnessRangeBottom, this.BRIGHTNESS_RANGE_MIN_, this.BRIGHTNESS_RANGE_MAX_, 'brightnessRangeBottom/' + this.LX_);
         this.checkEmitCondition_(proximityCondition, 'proximityCondition');
         this.checkEmitCondition_(brightnessCondition, 'brightnessCondition');
         this.checkRange(notifyMode, this.NOTIFY_MODE_MIN_, this.NOTIFY_MODE_MAX_, 'notifyMode');

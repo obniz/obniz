@@ -27960,10 +27960,10 @@ class Brightness extends Base_1.Base {
         super(...arguments);
         // Event Handler
         this.onSensorEvent = null;
-        this.PROXIMITY_RANGE_MIN = 0;
-        this.PROXIMITY_RANGE_MAX = 4095;
-        this.BRIGHTNESS_RANGE_MIN = 0;
-        this.BRIGHTNESS_RANGE_MAX = 65535;
+        this.PROXIMITY_RANGE_MIN_ = 0;
+        this.PROXIMITY_RANGE_MAX_ = 4095;
+        this.BRIGHTNESS_RANGE_MIN_ = 0;
+        this.BRIGHTNESS_RANGE_MAX_ = 65535;
         this.NOTIFY_MODE_MIN_ = Brightness.NotifyMode.STOP;
         this.NOTIFY_MODE_MAX_ = Brightness.NotifyMode.STOP +
             Brightness.NotifyMode.EMIT_PROXIMITY +
@@ -27972,8 +27972,11 @@ class Brightness extends Base_1.Base {
             Brightness.NotifyMode.UPDATE_BRIGHTNESS +
             Brightness.NotifyMode.ONCE +
             Brightness.NotifyMode.ALWAYS;
+        this.MESSAGE_TYPE_INDEX_ = 0;
+        this.EVENT_TYPE_INDEX_ = 1;
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
+        this.LX_ = 10;
     }
     /**
      * notify
@@ -27983,16 +27986,15 @@ class Brightness extends Base_1.Base {
      */
     notify(data) {
         super.notify(data);
-        if (data[0] !== this.MESSAGE_TYPE_ID_) {
+        if (data[this.MESSAGE_TYPE_INDEX_] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
-        if (data[1] !== this.EVENT_TYPE_ID_) {
+        if (data[this.EVENT_TYPE_INDEX_] !== this.EVENT_TYPE_ID_) {
             return;
         }
         const BYTE = 256;
         const proximity = BYTE * data[5] + data[4];
-        const LX = 10;
-        const brightness = LX * (BYTE * data[7] + data[6]);
+        const brightness = this.LX_ * (BYTE * data[7] + data[6]);
         const requestId = data[2];
         if (typeof this.onSensorEvent !== 'function') {
             return;
@@ -28008,14 +28010,13 @@ class Brightness extends Base_1.Base {
      */
     parseSetmodeCommand(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode, opt_requestId = 0) {
         // Convert
-        const LX = 10;
-        const _brightnessRangeUpper = brightnessRangeUpper / LX;
-        const _brightnessRangeBottom = brightnessRangeBottom / LX;
+        const _brightnessRangeUpper = brightnessRangeUpper / this.LX_;
+        const _brightnessRangeBottom = brightnessRangeBottom / this.LX_;
         // Error Handle
-        this.checkRange(proximityRangeUpper, this.PROXIMITY_RANGE_MIN, this.PROXIMITY_RANGE_MAX, 'proximityRangeUpper');
-        this.checkRange(proximityRangeBottom, this.PROXIMITY_RANGE_MIN, this.PROXIMITY_RANGE_MAX, 'proximityRangeBottom');
-        this.checkRange(_brightnessRangeUpper, this.BRIGHTNESS_RANGE_MIN, this.BRIGHTNESS_RANGE_MAX, 'brightnessRangeUpper/' + LX);
-        this.checkRange(_brightnessRangeBottom, this.BRIGHTNESS_RANGE_MIN, this.BRIGHTNESS_RANGE_MAX, 'brightnessRangeBottom/' + LX);
+        this.checkRange(proximityRangeUpper, this.PROXIMITY_RANGE_MIN_, this.PROXIMITY_RANGE_MAX_, 'proximityRangeUpper');
+        this.checkRange(proximityRangeBottom, this.PROXIMITY_RANGE_MIN_, this.PROXIMITY_RANGE_MAX_, 'proximityRangeBottom');
+        this.checkRange(_brightnessRangeUpper, this.BRIGHTNESS_RANGE_MIN_, this.BRIGHTNESS_RANGE_MAX_, 'brightnessRangeUpper/' + this.LX_);
+        this.checkRange(_brightnessRangeBottom, this.BRIGHTNESS_RANGE_MIN_, this.BRIGHTNESS_RANGE_MAX_, 'brightnessRangeBottom/' + this.LX_);
         this.checkEmitCondition_(proximityCondition, 'proximityCondition');
         this.checkEmitCondition_(brightnessCondition, 'brightnessCondition');
         this.checkRange(notifyMode, this.NOTIFY_MODE_MIN_, this.NOTIFY_MODE_MAX_, 'notifyMode');
@@ -28095,6 +28096,9 @@ class Button extends Base_1.Base {
         this.onDoublePressed = null;
         // Constant Values
         this.DATA_LENGTH_ = 4;
+        this.MESSAGE_TYPE_INDEX_ = 0;
+        this.EVENT_TYPE_ID_INDEX_ = 1;
+        this.TYPE_INDEX_ = 2;
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
         this.TYPE_ = {
@@ -28114,13 +28118,13 @@ class Button extends Base_1.Base {
         if (data.length !== this.DATA_LENGTH_) {
             return;
         }
-        if (data[0] !== this.MESSAGE_TYPE_ID_) {
+        if (data[this.MESSAGE_TYPE_INDEX_] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
-        if (data[1] !== this.EVENT_TYPE_ID_) {
+        if (data[this.EVENT_TYPE_ID_INDEX_] !== this.EVENT_TYPE_ID_) {
             return;
         }
-        switch (data[2]) {
+        switch (data[this.TYPE_INDEX_]) {
             case this.TYPE_.SINGLE:
                 if (typeof this.onSinglePressed === 'function') {
                     this.onSinglePressed();
@@ -28414,6 +28418,10 @@ const Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/util/Error.js"
 class LED extends Base_1.Base {
     constructor() {
         super(...arguments);
+        this.COLOR_MIN_ = 0;
+        this.COLOR_MAX_ = 127;
+        this.TIME_MIN_ = 0;
+        this.TIME_MAX_ = 65535;
         this.colors = { red: 0, green: 0, blue: 0 };
     }
     /**
@@ -28428,16 +28436,12 @@ class LED extends Base_1.Base {
      */
     parseLedCommand(colors, totalTime, cycleOnTime, cycleOffTime, pattern) {
         // Error Handle
-        const COLOR_MIN = 0;
-        const COLOR_MAX = 127;
-        this.checkRange(colors.red, COLOR_MIN, COLOR_MAX, 'colors.red');
-        this.checkRange(colors.green, COLOR_MIN, COLOR_MAX, 'colors.green');
-        this.checkRange(colors.blue, COLOR_MIN, COLOR_MAX, 'colors.blue');
-        const TIME_MIN = 0;
-        const TIME_MAX = 65535;
-        this.checkRange(totalTime, TIME_MIN, TIME_MAX, 'totalTime');
-        this.checkRange(cycleOnTime, TIME_MIN, TIME_MAX, 'cycleOnTime');
-        this.checkRange(cycleOffTime, TIME_MIN, TIME_MAX, 'cycleOffTIme');
+        this.checkRange(colors.red, this.COLOR_MIN_, this.COLOR_MAX_, 'colors.red');
+        this.checkRange(colors.green, this.COLOR_MIN_, this.COLOR_MAX_, 'colors.green');
+        this.checkRange(colors.blue, this.COLOR_MIN_, this.COLOR_MAX_, 'colors.blue');
+        this.checkRange(totalTime, this.TIME_MIN_, this.TIME_MAX_, 'totalTime');
+        this.checkRange(cycleOnTime, this.TIME_MIN_, this.TIME_MAX_, 'cycleOnTime');
+        this.checkRange(cycleOffTime, this.TIME_MIN_, this.TIME_MAX_, 'cycleOffTIme');
         if (pattern !== LED.PATTERN.BLINK && pattern !== LED.PATTERN.FIREFLY) {
             throw new Error_1.MESHJsInvalidValueError('pattern');
         }
@@ -28582,6 +28586,8 @@ class Move extends Base_1.Base {
         this.onOrientationChanged = null;
         this.accele = { x: 0, y: 0, z: 0 };
         // Constant Values
+        this.MESSAGE_TYPE_INDEX_ = 0;
+        this.TYPE_INDEX_ = 1;
         this.MESSAGE_TYPE_ID_ = 1;
         this.DATA_LENGTH_ = 17;
         this.TAP_EVENT_ID_ = 0;
@@ -28600,7 +28606,7 @@ class Move extends Base_1.Base {
         if (data.length !== this.DATA_LENGTH_) {
             return;
         }
-        if (data[0] !== this.MESSAGE_TYPE_ID_) {
+        if (data[this.MESSAGE_TYPE_INDEX_] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
         // update accele values
@@ -28610,7 +28616,7 @@ class Move extends Base_1.Base {
         this.accele.y = this.complemnt(BYTE * data[7] + data[6]) / BASE;
         this.accele.z = this.complemnt(BYTE * data[9] + data[8]) / BASE;
         // emit event
-        switch (data[1]) {
+        switch (data[this.TYPE_INDEX_]) {
             case this.TAP_EVENT_ID_:
                 if (typeof this.onTapped === 'function') {
                     this.onTapped(this.accele);

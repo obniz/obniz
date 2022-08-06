@@ -69,7 +69,7 @@ async function sampleTH(peripheral) {
      */
     // mesh_th.NotifyMode.STOP;
     // mesh_th.NotifyMode.EMIT_TEMPERATURE;
-    mesh_th.NotifyMode.EMIT_HUMIDITY;
+    // mesh_th.NotifyMode.EMIT_HUMIDITY;
     // mesh_th.NotifyMode.UPDATE_TEMPERATURE;
     // mesh_th.NotifyMode.UPDATE_HUMIDITY;
     // mesh_th.NotifyMode.ONCE;
@@ -95,6 +95,7 @@ async function sampleTH(peripheral) {
     /**
      * select 3 params => combination 20
      */
+    mesh_th.NotifyMode.UPDATE_HUMIDITY + mesh_th.NotifyMode.ONCE + mesh_th.NotifyMode.ALWAYS;
     /**
      * select 4 params => combination 15
      */
