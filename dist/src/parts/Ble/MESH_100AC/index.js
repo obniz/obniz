@@ -6,7 +6,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
-const MeshJsAc_1 = require("../MESH_js/MeshJsAc");
+const Move_1 = require("../MESH_js/block/Move");
 /** MESH_100AC management class */
 class MESH_100AC extends MESH_1.MESH {
     constructor() {
@@ -19,6 +19,11 @@ class MESH_100AC extends MESH_1.MESH {
         this.onOrientation = null;
         this.staticClass = MESH_100AC;
     }
+    /**
+     * getDataWait
+     *
+     * @returns
+     */
     async getDataWait() {
         this.checkConnected();
         return {
@@ -30,7 +35,7 @@ class MESH_100AC extends MESH_1.MESH {
         return name.indexOf(MESH_100AC.PREFIX) === 0;
     }
     prepareConnect() {
-        this.meshBlock = new MeshJsAc_1.MeshJsAc();
+        this.meshBlock = new Move_1.Move();
         const moveBlock = this.meshBlock;
         moveBlock.onTapped = (accele) => {
             if (typeof this.onTapped !== 'function') {

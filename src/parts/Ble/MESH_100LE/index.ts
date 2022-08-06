@@ -5,7 +5,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { MESH } from '../utils/abstracts/MESH';
-import { MeshJsLe } from '../MESH_js/MeshJsLe';
+import { LED } from '../MESH_js/block/LED';
 
 export interface MESH_100LEOptions {}
 
@@ -19,11 +19,16 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
   public static readonly PartsName = 'MESH_100LE';
   public static readonly PREFIX = 'MESH-100LE';
 
-  public static Pattern = MeshJsLe.PATTERN;
-  public colors: MeshJsLe['colors'] = { red: 0, green: 0, blue: 0 };
+  public static Pattern = LED.PATTERN;
+  public colors: LED['colors'] = { red: 0, green: 0, blue: 0 };
 
   protected readonly staticClass = MESH_100LE;
 
+  /**
+   * getDataWait
+   *
+   * @returns
+   */
   public async getDataWait() {
     this.checkConnected();
     return {
@@ -35,7 +40,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
   /**
    * setLed
    *
-   * @param colors red 0 ~ 127, green 0 ~ 127, blue 0 ~ 127
+   * @param colors { red: 0 ~ 127, green: 0 ~ 127, blue: 0 ~ 127 }
    * @param totalTime 0 ~ 65,535 [ms]
    * @param cycleOnTime 0 ~ 65,535 [ms]
    * @param cycleOffTime 0 ~ 65,535 [ms]
@@ -49,7 +54,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
     cycleOffTime: number,
     pattern: number
   ): void {
-    const ledBlock = this.meshBlock as MeshJsLe;
+    const ledBlock = this.meshBlock as LED;
     const command = ledBlock.parseLedCommand(
       colors,
       totalTime,
@@ -65,7 +70,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
   }
 
   protected prepareConnect(): void {
-    this.meshBlock = new MeshJsLe();
+    this.meshBlock = new LED();
     super.prepareConnect();
   }
 

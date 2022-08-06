@@ -6,8 +6,8 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
-const MeshJsPa_1 = require("../MESH_js/MeshJsPa");
-const MeshJsError_1 = require("../MESH_js/MeshJsError");
+const Brightness_1 = require("../MESH_js/block/Brightness");
+const Error_1 = require("../MESH_js/util/Error");
 /** MESH_100PA management class */
 class MESH_100PA extends MESH_1.MESH {
     constructor() {
@@ -18,6 +18,11 @@ class MESH_100PA extends MESH_1.MESH {
         this.proximity_ = -1;
         this.brightness_ = -1;
     }
+    /**
+     * getDataWait
+     *
+     * @returns
+     */
     async getDataWait() {
         this.checkConnected();
         return {
@@ -25,6 +30,11 @@ class MESH_100PA extends MESH_1.MESH {
             address: this.peripheral.address,
         };
     }
+    /**
+     * getSensorDataWait
+     *
+     * @returns
+     */
     async getSensorDataWait() {
         this.checkConnected();
         const _requestId = this.requestId.next();
@@ -54,10 +64,21 @@ class MESH_100PA extends MESH_1.MESH {
             }, INTERVAL_TIME);
         });
         if (_result == null) {
-            throw new MeshJsError_1.MeshJsTimeOutError(this.peripheral.localName);
+            throw new Error_1.MESHJsTimeOutError(this.peripheral.localName);
         }
         return _result;
     }
+    /**
+     * setMode
+     *
+     * @param proximityRangeUpper
+     * @param proximityRangeBottom
+     * @param brightnessRangeUpper
+     * @param brightnessRangeBottom
+     * @param proximityCondition
+     * @param brightnessCondition
+     * @param notifyMode
+     */
     setMode(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode) {
         this.setMode_(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode, this.requestId.defaultId());
     }
@@ -65,23 +86,10 @@ class MESH_100PA extends MESH_1.MESH {
         return name.indexOf(MESH_100PA.PREFIX) !== -1;
     }
     prepareConnect() {
-        this.meshBlock = new MeshJsPa_1.MeshJsPa();
+        this.meshBlock = new Brightness_1.Brightness();
         // set Event Handler
         const brightnessBlock = this.meshBlock;
-        brightnessBlock.onSensorEvent = (proximity, brightness, requestId) => {
-            if (typeof this.onSensorEvent !== 'function') {
-                return;
-            }
-            if (this.requestId.isDefaultId(requestId)) {
-                // Emit Event
-                this.onSensorEvent(proximity, brightness);
-                return;
-            }
-            // Update Inner Values
-            this.requestId.received(requestId);
-            this.proximity_ = proximity;
-            this.brightness_ = brightness;
-        };
+        brightnessBlock.onSensorEvent = (proximity, brightness, requestId) => this.setHandler_(proximity, brightness, requestId);
         super.prepareConnect();
     }
     async beforeOnDisconnectWait(reason) {
@@ -92,9 +100,23 @@ class MESH_100PA extends MESH_1.MESH {
         const command = brightnessBlock.parseSetmodeCommand(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode, requestId);
         this.writeWOResponse(command);
     }
+    setHandler_(proximity, brightness, requestId) {
+        // Update Inner Values
+        this.requestId.received(requestId);
+        this.proximity_ = proximity;
+        this.brightness_ = brightness;
+        // Emit Event
+        if (typeof this.onSensorEvent !== 'function') {
+            return;
+        }
+        if (!this.requestId.isDefaultId(requestId)) {
+            return;
+        }
+        this.onSensorEvent(proximity, brightness);
+    }
 }
 exports.default = MESH_100PA;
 MESH_100PA.PartsName = 'MESH_100PA';
 MESH_100PA.PREFIX = 'MESH-100PA';
-MESH_100PA.EmitCondition = MeshJsPa_1.MeshJsPa.EmitCondition;
-MESH_100PA.NotifyMode = MeshJsPa_1.MeshJsPa.NotifyMode;
+MESH_100PA.EmitCondition = Brightness_1.Brightness.EmitCondition;
+MESH_100PA.NotifyMode = Brightness_1.Brightness.NotifyMode;

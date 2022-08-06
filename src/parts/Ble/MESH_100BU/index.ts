@@ -5,7 +5,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { MESH } from '../utils/abstracts/MESH';
-import { MeshJsBu } from '../MESH_js/MeshJsBu';
+import { Button } from '../MESH_js/block/Button';
 
 export interface MESH_100BUOptions {}
 
@@ -29,6 +29,11 @@ export default class MESH_100BU extends MESH<MESH_100BU_Data> {
 
   protected readonly staticClass = MESH_100BU;
 
+  /**
+   * getDataWait
+   *
+   * @returns
+   */
   public async getDataWait() {
     this.checkConnected();
     return {
@@ -42,9 +47,9 @@ export default class MESH_100BU extends MESH<MESH_100BU_Data> {
   }
 
   protected prepareConnect(): void {
-    this.meshBlock = new MeshJsBu();
+    this.meshBlock = new Button();
 
-    const buttonBlock = this.meshBlock as MeshJsBu;
+    const buttonBlock = this.meshBlock as Button;
     buttonBlock.onSinglePressed = () => {
       if (typeof this.onSinglePressed !== 'function') {
         return;

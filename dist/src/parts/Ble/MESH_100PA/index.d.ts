@@ -35,14 +35,36 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
     protected readonly staticClass: typeof MESH_100PA;
     private proximity_;
     private brightness_;
+    /**
+     * getDataWait
+     *
+     * @returns
+     */
     getDataWait(): Promise<{
         name: string;
         address: string;
     }>;
+    /**
+     * getSensorDataWait
+     *
+     * @returns
+     */
     getSensorDataWait(): Promise<unknown>;
+    /**
+     * setMode
+     *
+     * @param proximityRangeUpper
+     * @param proximityRangeBottom
+     * @param brightnessRangeUpper
+     * @param brightnessRangeBottom
+     * @param proximityCondition
+     * @param brightnessCondition
+     * @param notifyMode
+     */
     setMode(proximityRangeUpper: number, proximityRangeBottom: number, brightnessRangeUpper: number, brightnessRangeBottom: number, proximityCondition: number, brightnessCondition: number, notifyMode: number): void;
     protected static _isMESHblock(name: string): boolean;
     protected prepareConnect(): void;
     protected beforeOnDisconnectWait(reason: unknown): Promise<void>;
     private setMode_;
+    private setHandler_;
 }

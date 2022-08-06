@@ -1,11 +1,10 @@
 // const Obniz = require('obniz');
 const Obniz = require('../../../../index.js'); // local
-const fetch = require('node-fetch');
 const mesh_bu = Obniz.getPartsClass('MESH_100BU');
 const MESH_100LE = Obniz.getPartsClass('MESH_100LE');
 const mesh_ac = Obniz.getPartsClass('MESH_100AC');
 
-const obnizId = '00000000';
+const obnizId = '87287267';
 
 const obniz = new Obniz(obnizId, {
   access_token: null,
@@ -18,8 +17,8 @@ obniz.onconnect = async () => {
     await obniz.ble.initWait();
     obniz.ble.scan.onfind = async (peripheral) => {
       // sampleBU(peripheral);
-      // sampleAC(peripheral);
-      sampleLE(peripheral);
+      sampleAC(peripheral);
+      // sampleLE(peripheral);
     };
     await obniz.ble.scan.startWait();
     // await continueScan(obniz);
@@ -85,7 +84,7 @@ async function sampleBU(peripheral) {
   await BU_block.connectWait();
 
   let count = 0;
-  let goal = 10;
+  const goal = 10;
 
   BU_block.onSinglePressed = (() => {
     ++ count;
@@ -119,18 +118,20 @@ async function sampleLE(peripheral) {
   const LED_block = new MESH_100LE(peripheral);
   await LED_block.connectWait();
 
-  const _red = 63;
-  const _green = 127;
-  const _blue = 31;
+  const _color = {
+    red: 15,
+    green: 63,
+    blue: 0
+  };
   const _total_time = 4000; // 4.000 seconds
-  const _cycle_on_time = 1000; // 0.500 seconds
+  const _cycle_on_time = 750; // 0.750 seconds
   const _cycle_off_time = 500; // 0.500 seconds
-  LED_block.lightup(_red, _green, _blue, _total_time, _cycle_on_time, _cycle_off_time, MESH_100LE.Pattern.FIREFLY);
+  LED_block.setLed(_color, _total_time, _cycle_on_time, _cycle_off_time, MESH_100LE.Pattern.FIREFLY);
 
   LED_block.onStatusButtonNotify = (()=>{console.log('status button pressed');});
 
   const result = await LED_block.getDataWait();
-  console.log(result.battery);
+  console.log(result);
 }
 
 async function sampleAC(peripheral) {
@@ -155,8 +156,8 @@ async function sampleAC(peripheral) {
     console.log('flipped! (ax, ay, az) = (' + accele.x + ', ' + accele.y + ',' + accele.z + ')');
   });
 
-  AC_block.onDirection = ((face, accele) => {
-    console.log('face ' + face + ', (ax, ay, az) = (' + accele.x + ', ' + accele.y + ',' + accele.z + ')');
+  AC_block.onOrientation = ((face, accele) => {
+    console.log('orientation ' + face + ', (ax, ay, az) = (' + accele.x + ', ' + accele.y + ',' + accele.z + ')');
   });
 
   // AC_block.getDataWait();

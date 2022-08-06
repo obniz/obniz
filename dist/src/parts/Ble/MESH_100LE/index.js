@@ -6,7 +6,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
-const MeshJsLe_1 = require("../MESH_js/MeshJsLe");
+const LED_1 = require("../MESH_js/block/LED");
 /** MESH_100TH management class */
 class MESH_100LE extends MESH_1.MESH {
     constructor() {
@@ -14,6 +14,11 @@ class MESH_100LE extends MESH_1.MESH {
         this.colors = { red: 0, green: 0, blue: 0 };
         this.staticClass = MESH_100LE;
     }
+    /**
+     * getDataWait
+     *
+     * @returns
+     */
     async getDataWait() {
         this.checkConnected();
         return {
@@ -24,7 +29,7 @@ class MESH_100LE extends MESH_1.MESH {
     /**
      * setLed
      *
-     * @param colors red 0 ~ 127, green 0 ~ 127, blue 0 ~ 127
+     * @param colors { red: 0 ~ 127, green: 0 ~ 127, blue: 0 ~ 127 }
      * @param totalTime 0 ~ 65,535 [ms]
      * @param cycleOnTime 0 ~ 65,535 [ms]
      * @param cycleOffTime 0 ~ 65,535 [ms]
@@ -40,7 +45,7 @@ class MESH_100LE extends MESH_1.MESH {
         return name.indexOf(MESH_100LE.PREFIX) !== -1;
     }
     prepareConnect() {
-        this.meshBlock = new MeshJsLe_1.MeshJsLe();
+        this.meshBlock = new LED_1.LED();
         super.prepareConnect();
     }
     async beforeOnDisconnectWait(reason) {
@@ -50,4 +55,4 @@ class MESH_100LE extends MESH_1.MESH {
 exports.default = MESH_100LE;
 MESH_100LE.PartsName = 'MESH_100LE';
 MESH_100LE.PREFIX = 'MESH-100LE';
-MESH_100LE.Pattern = MeshJsLe_1.MeshJsLe.PATTERN;
+MESH_100LE.Pattern = LED_1.LED.PATTERN;

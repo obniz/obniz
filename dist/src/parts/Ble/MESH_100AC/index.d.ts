@@ -3,7 +3,7 @@
  * @module Parts.MESH_100AC
  */
 import { MESH } from '../utils/abstracts/MESH';
-import { MeshJsAc } from '../MESH_js/MeshJsAc';
+import { Move } from '../MESH_js/block/Move';
 export interface MESH_100ACOptions {
 }
 /**
@@ -17,12 +17,17 @@ export interface MESH_100AC_Data {
 export default class MESH_100AC extends MESH<MESH_100AC_Data> {
     static readonly PartsName = "MESH_100AC";
     static readonly PREFIX = "MESH-100AC";
-    accele: MeshJsAc['accele'];
+    accele: Move['accele'];
     onTapped: ((accele: MESH_100AC['accele']) => void) | null;
     onShaked: ((accele: MESH_100AC['accele']) => void) | null;
     onFlipped: ((accele: MESH_100AC['accele']) => void) | null;
     onOrientation: ((face: number, accele: MESH_100AC['accele']) => void) | null;
     protected readonly staticClass: typeof MESH_100AC;
+    /**
+     * getDataWait
+     *
+     * @returns
+     */
     getDataWait(): Promise<{
         name: string;
         address: string;

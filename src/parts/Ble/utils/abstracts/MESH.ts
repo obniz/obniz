@@ -6,7 +6,7 @@ import {
 } from '../../../../obniz/ObnizPartsBleAbstract';
 import { BleRemoteCharacteristic } from '../../../../obniz';
 import BleRemotePeripheral from '../../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import { MeshJs } from '../../MESH_js/MeshJs';
+import { Base } from '../../MESH_js/block/Base';
 
 export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
   // Event Handler
@@ -19,7 +19,7 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
   private static readonly LOCAL_NAME_LENGTH_ = 17 as const;
 
   protected static PREFIX = 'MESH-100';
-  protected meshBlock: MeshJs = new MeshJs();
+  protected meshBlock: Base = new Base();
   protected requestId = new MeshRequestId();
 
   private indicateCharacteristic_: BleRemoteCharacteristic | null = null;
@@ -28,6 +28,7 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
   private writeWOResponseCharacteristic_: BleRemoteCharacteristic | null = null;
 
   /**
+   * isMESHblock
    *
    * @param peripheral
    * @param opt_serialnumber
@@ -52,6 +53,8 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
 
   /**
    * Connect to the services of a MESH
+   *
+   * @returns
    */
   public async connectWait(): Promise<void> {
     this.prepareConnect();
@@ -89,6 +92,8 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
     });
 
     await this.writeWait(this.meshBlock.featureCommand);
+
+    this.meshBlock.checkVersion();
   }
 
   protected static _isMESHblock(name: string): boolean {
@@ -144,20 +149,41 @@ export class MeshRequestId {
   private currentId_: number = this.DEFAULT_ID_;
   // private receivedId_: number = this.DEFAULT_ID_;
 
+  /**
+   * defaultId
+   *
+   * @returns
+   */
   public defaultId(): number {
     return this.DEFAULT_ID_;
   }
 
+  /**
+   * next
+   *
+   * @returns
+   */
   public next(): number {
     this.currentId_ = (this.currentId_ % this.MAX_ID_) + 1;
-    // console.log('send ' + this.currentId_);
     return this.currentId_;
   }
 
+  /**
+   * isDefaultId
+   *
+   * @param id
+   * @returns
+   */
   public isDefaultId(id: number): boolean {
     return id === this.DEFAULT_ID_;
   }
 
+  /**
+   * isReceived
+   *
+   * @param id
+   * @returns
+   */
   public isReceived(id: number): boolean {
     const _index = this.pool_.findIndex((element) => element === id);
     if (_index === -1) {
@@ -168,9 +194,13 @@ export class MeshRequestId {
     // return id === this.receivedId_;
   }
 
+  /**
+   * received
+   *
+   * @param id
+   */
   public received(id: number): void {
     this.pool_.push(id);
-    // console.log(this.pool_);
     // this.receivedId_ = id;
   }
 }

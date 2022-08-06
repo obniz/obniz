@@ -5,8 +5,8 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { MESH } from '../utils/abstracts/MESH';
-import { MeshJsTh } from '../MESH_js/MeshJsTh';
-import { MeshJsTimeOutError } from '../MESH_js/MeshJsError';
+import { TempHumid } from '../MESH_js/block/TempHumid';
+import { MESHJsTimeOutError } from '../MESH_js/util/Error';
 
 export interface MESH_100THOptions {}
 
@@ -23,8 +23,8 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
   public static readonly PartsName = 'MESH_100TH';
   public static readonly PREFIX = 'MESH-100TH';
 
-  public static readonly NotifyMode = MeshJsTh.NotifyMode;
-  public static readonly EmitCondition = MeshJsTh.EmitCondition;
+  public static readonly NotifyMode = TempHumid.NotifyMode;
+  public static readonly EmitCondition = TempHumid.EmitCondition;
 
   // Event Handler
   public onSensorEvent:
@@ -47,13 +47,18 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
 
   public async getDataWait() {
     this.checkConnected();
-    const _th = this.meshBlock as MeshJsTh;
+    const _th = this.meshBlock as TempHumid;
     return {
       name: this.peripheral.localName!,
       address: this.peripheral.address,
     };
   }
 
+  /**
+   * getSensorDataWait
+   *
+   * @returns
+   */
   public async getSensorDataWait() {
     this.checkConnected();
     const _requestId = this.requestId.next();
@@ -83,7 +88,7 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
         });
       }, INTERVAL_TIME);
     });
-    if (this.notifyMode_ !== MESH_100TH.NotifyMode.ONCE) {
+    if (MESH_100TH.NotifyMode.ALWAYS < this.notifyMode_) {
       // Continus previous mode
       this.setMode(
         this.temperatureUpper_,
@@ -96,11 +101,22 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
       );
     }
     if (_result == null) {
-      throw new MeshJsTimeOutError(this.peripheral.localName!);
+      throw new MESHJsTimeOutError(this.peripheral.localName!);
     }
     return _result;
   }
 
+  /**
+   * setMode
+   *
+   * @param temperatureUpper
+   * @param temperatureBottom
+   * @param humidityUpper
+   * @param humidityBottom
+   * @param temperatureCondition
+   * @param humidityCondision
+   * @param notifyMode
+   */
   public setMode(
     temperatureUpper: number,
     temperatureBottom: number,
@@ -134,8 +150,8 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
   }
 
   protected prepareConnect(): void {
-    this.meshBlock = new MeshJsTh();
-    const temperatureAndHumidityBlock = this.meshBlock as MeshJsTh;
+    this.meshBlock = new TempHumid();
+    const temperatureAndHumidityBlock = this.meshBlock as TempHumid;
 
     // set Event Handler
     temperatureAndHumidityBlock.onSensorEvent = (
@@ -161,7 +177,7 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
     notifyMode: number,
     requestId: number
   ): void {
-    const temperatureAndHumidityBlock = this.meshBlock as MeshJsTh;
+    const temperatureAndHumidityBlock = this.meshBlock as TempHumid;
     const command = temperatureAndHumidityBlock.parseSetmodeCommand(
       temperatureUpper,
       temperatureBottom,
@@ -180,17 +196,18 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
     humidity: number,
     requestId: number
   ) {
-    if (typeof this.onSensorEvent !== 'function') {
-      return;
-    }
-    if (this.requestId.isDefaultId(requestId)) {
-      // Emit Event
-      this.onSensorEvent(temperature, humidity);
-      return;
-    }
     // Update Inner Values
     this.requestId.received(requestId);
     this.retTemperature_ = temperature;
     this.retHumidity_ = humidity;
+
+    // Emit Event
+    if (typeof this.onSensorEvent !== 'function') {
+      return;
+    }
+    if (!this.requestId.isDefaultId(requestId)) {
+      return;
+    }
+    this.onSensorEvent(temperature, humidity);
   }
 }

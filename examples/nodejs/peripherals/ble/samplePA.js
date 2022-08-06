@@ -72,11 +72,11 @@ async function samplePA(peripheral) {
      */
     // mesh_pa.NotifyMode.STOP;
     // mesh_pa.NotifyMode.EMIT_PROXIMITY;
-    mesh_pa.NotifyMode.EMIT_BRIGHTNESS;
+    // mesh_pa.NotifyMode.EMIT_BRIGHTNESS;
     // mesh_pa.NotifyMode.UPDATE_PROXIMITY;
     // mesh_pa.NotifyMode.UPDATE_BRIGHTNESS;
     // mesh_pa.NotifyMode.ONCE;
-    // mesh_pa.NotifyMode.ALWAYS;
+    mesh_pa.NotifyMode.ALWAYS;
     /**
      * select 2 params => combination 15
      */
@@ -196,7 +196,7 @@ async function samplePA(peripheral) {
   // setTimeout(testGet, _delay);
   /* Repeat */
   const _interval = 1000; // [ms]
-  setInterval(testGet, _interval);
+  // setInterval(testGet, _interval);
   // setInterval(testGet2, _interval);
 }
 

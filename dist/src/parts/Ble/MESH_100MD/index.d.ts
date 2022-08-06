@@ -22,18 +22,40 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
         readonly ONCE: 16;
         readonly ALWAYS: 32;
     };
+    static readonly MotionState: {
+        readonly SETUP: 0;
+        readonly DETECTED: 1;
+        readonly NOT_DETECTED: 2;
+    };
     onSensorEvent: ((motionState: number, nofifyMode: number) => void) | null;
     protected readonly staticClass: typeof MESH_100MD;
     private retMotionState_;
     private notifyMode_;
     private detectionTime_;
-    private responseTime_;
+    private holdingTime_;
+    /**
+     * getDataWait
+     *
+     * @returns
+     */
     getDataWait(): Promise<{
         name: string;
         address: string;
     }>;
+    /**
+     * getSensorDataWait
+     *
+     * @returns
+     */
     getSensorDataWait(): Promise<unknown>;
-    setMode(notifyMode: number, opt_detectionTime?: number, opt_responseTime?: number): void;
+    /**
+     * setMode
+     *
+     * @param notifyMode
+     * @param opt_detectionTime
+     * @param opt_holdingTime
+     */
+    setMode(notifyMode: number, opt_detectionTime?: number, opt_holdingTime?: number): void;
     protected static _isMESHblock(name: string): boolean;
     protected prepareConnect(): void;
     protected beforeOnDisconnectWait(reason: unknown): Promise<void>;

@@ -5,8 +5,8 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { MESH } from '../utils/abstracts/MESH';
-import { MeshJsMd } from '../MESH_js/MeshJsMd';
-import { MeshJsTimeOutError } from '../MESH_js/MeshJsError';
+import { Motion } from '../MESH_js/block/Motion';
+import { MESHJsTimeOutError } from '../MESH_js/util/Error';
 
 export interface MESH_100MDOptions {}
 
@@ -22,7 +22,8 @@ export interface MESH_100MD_Data {
 export default class MESH_100MD extends MESH<MESH_100MD_Data> {
   public static readonly PartsName = 'MESH_100MD';
   public static readonly PREFIX = 'MESH-100MD';
-  public static readonly NotifyMode = MeshJsMd.NotifyMode;
+  public static readonly NotifyMode = Motion.NotifyMode;
+  public static readonly MotionState = Motion.MotionState;
 
   // Event Handler
   public onSensorEvent:
@@ -34,24 +35,34 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
   private retMotionState_ = -1;
   private notifyMode_ = -1;
   private detectionTime_ = 500; // [ms]
-  private responseTime_ = 500; // [ms]
+  private holdingTime_ = 500; // [ms]
 
+  /**
+   * getDataWait
+   *
+   * @returns
+   */
   public async getDataWait() {
     this.checkConnected();
-    const motionBlock = this.meshBlock as MeshJsMd;
+    const motionBlock = this.meshBlock as Motion;
     return {
       name: this.peripheral!.localName!,
       address: this.peripheral.address,
     };
   }
 
+  /**
+   * getSensorDataWait
+   *
+   * @returns
+   */
   public async getSensorDataWait() {
     this.checkConnected();
     const _requestId = this.requestId.next();
     this.setMode_(
       MESH_100MD.NotifyMode.ONCE,
       this.detectionTime_,
-      this.responseTime_,
+      this.holdingTime_,
       _requestId
     );
 
@@ -76,30 +87,37 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
         resolve(this.retMotionState_);
       }, INTERVAL_TIME);
     });
-    if (this.notifyMode_ !== MESH_100MD.NotifyMode.ONCE) {
+    if (MESH_100MD.NotifyMode.ALWAYS < this.notifyMode_) {
       // Continus previous mode
-      this.setMode(this.notifyMode_, this.detectionTime_, this.responseTime_);
+      this.setMode(this.notifyMode_, this.detectionTime_, this.holdingTime_);
     }
     if (_result == null) {
-      throw new MeshJsTimeOutError(this.peripheral.localName!);
+      throw new MESHJsTimeOutError(this.peripheral.localName!);
     }
     return _result;
   }
 
+  /**
+   * setMode
+   *
+   * @param notifyMode
+   * @param opt_detectionTime
+   * @param opt_holdingTime
+   */
   public setMode(
     notifyMode: number,
     opt_detectionTime = 500,
-    opt_responseTime = 500
+    opt_holdingTime = 500
   ): void {
     this.setMode_(
       notifyMode,
       opt_detectionTime,
-      opt_responseTime,
+      opt_holdingTime,
       this.requestId.defaultId()
     );
     this.notifyMode_ = notifyMode;
     this.detectionTime_ = opt_detectionTime;
-    this.responseTime_ = opt_responseTime;
+    this.holdingTime_ = opt_holdingTime;
   }
 
   protected static _isMESHblock(name: string): boolean {
@@ -107,10 +125,10 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
   }
 
   protected prepareConnect(): void {
-    this.meshBlock = new MeshJsMd();
+    this.meshBlock = new Motion();
 
     // set Event Handler
-    const motionBlock = this.meshBlock as MeshJsMd;
+    const motionBlock = this.meshBlock as Motion;
     motionBlock.onSensorEvent = (
       motionState: number,
       notifyMode: number,
@@ -127,14 +145,14 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
   private setMode_(
     notifyMode: number,
     detectionTime: number,
-    responseTime: number,
+    holdingTime: number,
     requestId: number
   ): void {
-    const motionBlock = this.meshBlock as MeshJsMd;
+    const motionBlock = this.meshBlock as Motion;
     const command = motionBlock.parseSetmodeCommand(
       notifyMode,
       detectionTime,
-      responseTime,
+      holdingTime,
       requestId
     );
     this.writeWOResponse(command);
@@ -145,16 +163,17 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
     notifyMode: number,
     requestId: number
   ) {
-    if (typeof this.onSensorEvent !== 'function') {
-      return;
-    }
-    if (this.requestId.isDefaultId(requestId)) {
-      // Emit Event
-      this.onSensorEvent(motionState, notifyMode);
-      return;
-    }
     // Update Inner Values
     this.requestId.received(requestId);
     this.retMotionState_ = motionState;
+
+    // Emit Event
+    if (typeof this.onSensorEvent !== 'function') {
+      return;
+    }
+    if (!this.requestId.isDefaultId(requestId)) {
+      return;
+    }
+    this.onSensorEvent(motionState, notifyMode);
   }
 }

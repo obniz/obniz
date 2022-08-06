@@ -3,7 +3,7 @@
  * @module Parts.MESH_100GP
  */
 import { MESH } from '../utils/abstracts/MESH';
-import { MeshJsGp } from '../MESH_js/MeshJsGp';
+import { GPIO } from '../MESH_js/block/GPIO';
 export interface MESH_100GPOptions {
 }
 /**
@@ -49,7 +49,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
         readonly OFF: 0;
         readonly ON: 1;
     };
-    readonly DigitalPins: MeshJsGp['DigitalPins'];
+    readonly DigitalPins: GPIO['DigitalPins'];
     onDigitalInputEvent: ((pin: number, state: number) => void) | null;
     onAnalogInputEvent: ((level: number) => void) | null;
     protected readonly staticClass: typeof MESH_100GP;
@@ -66,33 +66,43 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     private retVccState_;
     private retLevel_;
     private retDigitalOutState_;
+    /**
+     * getDataWait
+     *
+     * @returns
+     */
     getDataWait(): Promise<{
         name: string;
         address: string;
     }>;
     /**
+     * getDigitalInputDataWait
      *
      * @param pin
      * @returns
      */
     getDigitalInputDataWait(pin: number): Promise<number>;
     /**
+     * getAnalogInputDataWait
      *
      * @returns
      */
     getAnalogInputDataWait(): Promise<number>;
     /**
+     * getVOutputDataWait
      *
      * @returns
      */
     getVOutputDataWait(): Promise<number>;
     /**
+     * getDigitalOutputDataWait
      *
      * @param pin
      * @returns
      */
     getDigitalOutputDataWait(pin: number): Promise<number>;
     /**
+     * getPwmDataWait
      *
      * @returns
      */

@@ -5,7 +5,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { MESH } from '../utils/abstracts/MESH';
-import { MeshJsAc } from '../MESH_js/MeshJsAc';
+import { Move } from '../MESH_js/block/Move';
 
 export interface MESH_100ACOptions {}
 
@@ -22,7 +22,7 @@ export default class MESH_100AC extends MESH<MESH_100AC_Data> {
   public static readonly PartsName = 'MESH_100AC';
   public static readonly PREFIX = 'MESH-100AC';
 
-  public accele: MeshJsAc['accele'] = { x: 0, y: 0, z: 0 };
+  public accele: Move['accele'] = { x: 0, y: 0, z: 0 };
 
   // Event Handler
   public onTapped: ((accele: MESH_100AC['accele']) => void) | null = null;
@@ -34,6 +34,11 @@ export default class MESH_100AC extends MESH<MESH_100AC_Data> {
 
   protected readonly staticClass = MESH_100AC;
 
+  /**
+   * getDataWait
+   *
+   * @returns
+   */
   public async getDataWait() {
     this.checkConnected();
     return {
@@ -47,9 +52,9 @@ export default class MESH_100AC extends MESH<MESH_100AC_Data> {
   }
 
   protected prepareConnect(): void {
-    this.meshBlock = new MeshJsAc();
+    this.meshBlock = new Move();
 
-    const moveBlock = this.meshBlock as MeshJsAc;
+    const moveBlock = this.meshBlock as Move;
     moveBlock.onTapped = (accele: MESH_100AC['accele']) => {
       if (typeof this.onTapped !== 'function') {
         return;
