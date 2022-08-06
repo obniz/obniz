@@ -27998,7 +27998,7 @@ class Brightness extends Base_1.Base {
         this.checkRange(_brightnessRangeBottom, this.BRIGHTNESS_RANGE_MIN, this.BRIGHTNESS_RANGE_MAX, 'brightnessRangeBottom/' + LX);
         this.checkEmitCondition_(proximityCondition, 'proximityCondition');
         this.checkEmitCondition_(brightnessCondition, 'brightnessCondition');
-        this.checkNotifyMode_(notifyMode);
+        this.checkRange(notifyMode, this.NOTIFY_MODE_MIN_, this.NOTIFY_MODE_MAX_, 'notifyMode');
         // Generate Command
         const HEADER = [
             this.MESSAGE_TYPE_ID_,
@@ -28032,12 +28032,6 @@ class Brightness extends Base_1.Base {
             return true;
         }
         throw new Error_1.MESHJsInvalidValueError(name);
-    }
-    checkNotifyMode_(target) {
-        if (target < this.NOTIFY_MODE_MIN_ || this.NOTIFY_MODE_MAX_ < target) {
-            throw new Error_1.MESHJsOutOfRangeError('notifyType', this.NOTIFY_MODE_MIN_, this.NOTIFY_MODE_MAX_);
-        }
-        return true;
     }
     num2array_(val) {
         const BYTE = 256;
@@ -28703,7 +28697,7 @@ class TempHumid extends Base_1.Base {
         this.checkRange(humidityRangeBottom, this.HUMIDITY_MIN_, this.HUMIDITY_MAX_, 'humidityRangeBottom');
         this.checkEmitCondition_(temperatureCondition, 'temperatureCondition');
         this.checkEmitCondition_(humidityCondision, 'humidityCondision');
-        this.checkNotifyMode_(notifyMode);
+        this.checkRange(notifyMode, this.NOTIFY_MODE_MIN_, this.NOTIFY_MODE_MAX_, 'notifyMode');
         // Generate Command
         const HEADER = [
             this.MESSAGE_TYPE_ID_,
@@ -28738,12 +28732,6 @@ class TempHumid extends Base_1.Base {
             return true;
         }
         throw new Error_1.MESHJsInvalidValueError(name);
-    }
-    checkNotifyMode_(target) {
-        if (target < this.NOTIFY_MODE_MIN_ || this.NOTIFY_MODE_MAX_ < target) {
-            throw new Error_1.MESHJsOutOfRangeError('notifyType', this.NOTIFY_MODE_MIN_, this.NOTIFY_MODE_MAX_);
-        }
-        return true;
     }
 }
 exports.TempHumid = TempHumid;

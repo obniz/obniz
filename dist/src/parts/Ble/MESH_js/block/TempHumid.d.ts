@@ -47,5 +47,4 @@ export declare class TempHumid extends Base {
     parseSetmodeCommand(temperatureRangeUpper: number, temperatureRangeBottom: number, humidityRangeUpper: number, humidityRangeBottom: number, temperatureCondition: number, humidityCondision: number, notifyMode: number, opt_requestId?: number): number[];
     private num2array_;
     private checkEmitCondition_;
-    private checkNotifyMode_;
 }

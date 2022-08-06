@@ -40,6 +40,5 @@ export declare class Brightness extends Base {
      */
     parseSetmodeCommand(proximityRangeUpper: number, proximityRangeBottom: number, brightnessRangeUpper: number, brightnessRangeBottom: number, proximityCondition: number, brightnessCondition: number, notifyMode: number, opt_requestId?: number): number[];
     private checkEmitCondition_;
-    private checkNotifyMode_;
     private num2array_;
 }

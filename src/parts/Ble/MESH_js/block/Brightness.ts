@@ -1,5 +1,5 @@
 import { Base } from './Base';
-import { MESHJsInvalidValueError, MESHJsOutOfRangeError } from '../util/Error';
+import { MESHJsInvalidValueError } from '../util/Error';
 export class Brightness extends Base {
   // Event Handler
   public onSensorEvent:
@@ -112,7 +112,12 @@ export class Brightness extends Base {
     );
     this.checkEmitCondition_(proximityCondition, 'proximityCondition');
     this.checkEmitCondition_(brightnessCondition, 'brightnessCondition');
-    this.checkNotifyMode_(notifyMode);
+    this.checkRange(
+      notifyMode,
+      this.NOTIFY_MODE_MIN_,
+      this.NOTIFY_MODE_MAX_,
+      'notifyMode'
+    );
 
     // Generate Command
     const HEADER = [
@@ -150,17 +155,6 @@ export class Brightness extends Base {
       return true;
     }
     throw new MESHJsInvalidValueError(name);
-  }
-
-  private checkNotifyMode_(target: number): boolean {
-    if (target < this.NOTIFY_MODE_MIN_ || this.NOTIFY_MODE_MAX_ < target) {
-      throw new MESHJsOutOfRangeError(
-        'notifyType',
-        this.NOTIFY_MODE_MIN_,
-        this.NOTIFY_MODE_MAX_
-      );
-    }
-    return true;
   }
 
   private num2array_(val: number): number[] {
