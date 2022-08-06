@@ -150,32 +150,14 @@ async function samplePA(peripheral) {
       */
       // mesh_pa.NotifyMode.EMIT_PROXIMITY + mesh_pa.NotifyMode.EMIT_BRIGHTNESS + mesh_pa.NotifyMode.UPDATE_PROXIMITY + mesh_pa.NotifyMode.UPDATE_BRIGHTNESS + mesh_pa.NotifyMode.ONCE + mesh_pa.NotifyMode.ALWAYS;
   
-  const _proximityRangeUpper = 30;
-  const _proximityRangeBottom = 0;
-  const _brightnessRangeUpper = 2550;
-  const _brightnessRangeBottom = 0;
-  const _proximityCondition = mesh_pa.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM;
-  const _brightnessCondition = mesh_pa.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM;
   // Normal
   PA_block.setMode(
-    _proximityRangeUpper,
-    _proximityRangeBottom,
-    _brightnessRangeUpper,
-    _brightnessRangeBottom,
-    _proximityCondition,
-    _brightnessCondition,
-    _notifyMode
+     _notifyMode
   );
   // Delay STOP
   // const _delay = 5 * 1000; // ms
   // setTimeout(()=>{
   //   PA_block.setMode(
-  //     _proximityRangeUpper,
-  //     _proximityRangeBottom,
-  //     _brightnessRangeUpper,
-  //     _brightnessRangeBottom,
-  //     _proximityCondition,
-  //     _brightnessCondition,
   //     mesh_pa.NotifyMode.STOP
   //   );
   // }, _delay);
