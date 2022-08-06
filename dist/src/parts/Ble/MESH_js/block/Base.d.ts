@@ -39,11 +39,16 @@ export declare class Base {
      * @param data
      */
     notify(data: number[]): void;
+    /**
+     * checkVersion
+     *
+     * @returns
+     */
+    checkVersion(): boolean;
     protected checkSum(command: number[]): number;
     protected checkRange(target: number, min: number, max: number, name: string): boolean;
     protected complemnt(val: number): number;
     protected invcomplemnt(val: number): number;
     private updateBattery_;
     private updateStatusButton_;
-    private checkVersion_;
 }

@@ -92,6 +92,8 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
     });
 
     await this.writeWait(this.meshBlock.featureCommand);
+
+    this.meshBlock.checkVersion();
   }
 
   protected static _isMESHblock(name: string): boolean {

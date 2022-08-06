@@ -76,6 +76,48 @@ export class Base {
     this.updateStatusButton_(data);
   }
 
+  /**
+   * checkVersion
+   *
+   * @returns
+   */
+  public checkVersion() {
+    const VERSION_MAJOR = 1;
+    const VERSION_MINOR = 2;
+    const VERSION_RELEASE = 5;
+    if (VERSION_MAJOR < this.versionMajor_) {
+      return true;
+    }
+    if (this.versionMajor_ < VERSION_MAJOR) {
+      throw new MESHJsBlockVersionError(
+        this.versionMajor_,
+        this.versionMinor_,
+        this.versionRelease_
+      );
+    }
+    if (VERSION_MINOR < this.versionMinor_) {
+      return true;
+    }
+    if (this.versionMinor_ < VERSION_MINOR) {
+      throw new MESHJsBlockVersionError(
+        this.versionMajor_,
+        this.versionMinor_,
+        this.versionRelease_
+      );
+    }
+    if (VERSION_RELEASE < this.versionRelease_) {
+      return true;
+    }
+    if (this.versionRelease_ < VERSION_RELEASE) {
+      throw new MESHJsBlockVersionError(
+        this.versionMajor_,
+        this.versionMinor_,
+        this.versionRelease_
+      );
+    }
+    return true;
+  }
+
   protected checkSum(command: number[]): number {
     let sum = 0;
     command.forEach((val) => {
@@ -147,29 +189,5 @@ export class Base {
     }
     this.onStatusButtonPressed();
     return true;
-  }
-
-  private checkVersion_(major: number, minor: number, release: number) {
-    const VERSION_MAJOR = 1;
-    const VERSION_MINOR = 2;
-    const VERSION_RELEASE = 5;
-    if (VERSION_MAJOR < major) {
-      return;
-    }
-    if (major < VERSION_MAJOR) {
-      throw new MESHJsBlockVersionError(major, minor, release);
-    }
-    if (VERSION_MINOR < minor) {
-      return;
-    }
-    if (minor < VERSION_MINOR) {
-      throw new MESHJsBlockVersionError(major, minor, release);
-    }
-    if (VERSION_RELEASE < release) {
-      return;
-    }
-    if (release < VERSION_RELEASE) {
-      throw new MESHJsBlockVersionError(major, minor, release);
-    }
   }
 }

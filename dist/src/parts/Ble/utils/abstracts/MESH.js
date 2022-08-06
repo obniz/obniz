@@ -62,6 +62,7 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
             this.meshBlock.notify(data);
         });
         await this.writeWait(this.meshBlock.featureCommand);
+        this.meshBlock.checkVersion();
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH.PREFIX) === 0;
