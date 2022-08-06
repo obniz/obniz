@@ -22,5 +22,4 @@ export declare class Move extends Base {
      * @returns
      */
     notify(data: number[]): void;
-    private complemnt_;
 }

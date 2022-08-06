@@ -72,6 +72,15 @@ class Base {
         }
         return true;
     }
+    complemnt(val) {
+        const TWO_BYTE_PLUS1 = 65536; // 0x10000
+        const TWO_BYTE_HALF = Math.floor(TWO_BYTE_PLUS1 / 2) - 1;
+        return val - (val > TWO_BYTE_HALF ? TWO_BYTE_PLUS1 : 0);
+    }
+    invcomplemnt(val) {
+        const TWO_BYTE_PLUS1 = 65536; // 0x10000
+        return val + (val < 0 ? TWO_BYTE_PLUS1 : 0);
+    }
     updateBattery_(data) {
         if (data.length !== 4) {
             return false;

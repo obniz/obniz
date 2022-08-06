@@ -37,7 +37,7 @@ class TempHumid extends Base_1.Base {
         }
         const BYTE = 256;
         const BASE = 10;
-        const TEMP = this.complemnt_(BYTE * data[5] + data[4]) / BASE;
+        const TEMP = this.complemnt(BYTE * data[5] + data[4]) / BASE;
         const temperature = Math.min(Math.max(this.TEMPERATURE_MIN_, TEMP), this.TEMPERATURE_MAX_);
         const HUM = BYTE * data[7] + data[6];
         const humidity = Math.min(Math.max(this.HUMIDITY_MIN_, HUM), this.HUMIDITY_MAX_);
@@ -75,8 +75,8 @@ class TempHumid extends Base_1.Base {
             opt_requestId,
         ];
         const BASE = 10;
-        const TEMP_UPPER = this.num2array_(this.invcomplemnt_(BASE * temperatureRangeUpper));
-        const TEMP_BOTTOM = this.num2array_(this.invcomplemnt_(BASE * temperatureRangeBottom));
+        const TEMP_UPPER = this.num2array_(this.invcomplemnt(BASE * temperatureRangeUpper));
+        const TEMP_BOTTOM = this.num2array_(this.invcomplemnt(BASE * temperatureRangeBottom));
         const HUMI_UPPER = this.num2array_(humidityRangeUpper);
         const HUMI_BOTTOM = this.num2array_(humidityRangeBottom);
         const data = HEADER.concat(TEMP_UPPER)
@@ -90,15 +90,6 @@ class TempHumid extends Base_1.Base {
     num2array_(val) {
         const BYTE = 256;
         return [val % BYTE, Math.floor(val / BYTE)];
-    }
-    complemnt_(val) {
-        const TWO_BYTE = 65536;
-        const TWO_BYTE_HALF = Math.floor(TWO_BYTE / 2) - 1;
-        return val - (val > TWO_BYTE_HALF ? TWO_BYTE : 0);
-    }
-    invcomplemnt_(val) {
-        const TWO_BYTE = 65536;
-        return val + (val < 0 ? TWO_BYTE : 0);
     }
     checkEmitCondition_(target, name) {
         let _isExist = false;

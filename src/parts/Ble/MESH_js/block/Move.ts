@@ -37,9 +37,9 @@ export class Move extends Base {
     // update accele values
     const BYTE = 256 as const;
     const BASE = 1024 as const;
-    this.accele.x = this.complemnt_(BYTE * data[5] + data[4]) / BASE;
-    this.accele.y = this.complemnt_(BYTE * data[7] + data[6]) / BASE;
-    this.accele.z = this.complemnt_(BYTE * data[9] + data[8]) / BASE;
+    this.accele.x = this.complemnt(BYTE * data[5] + data[4]) / BASE;
+    this.accele.y = this.complemnt(BYTE * data[7] + data[6]) / BASE;
+    this.accele.z = this.complemnt(BYTE * data[9] + data[8]) / BASE;
 
     // emit event
     switch (data[1]) {
@@ -67,11 +67,5 @@ export class Move extends Base {
       default:
         break;
     }
-  }
-
-  private complemnt_(val: number): number {
-    const TWO_BYTE = 65536 as const;
-    const TWO_BYTE_HALF = Math.floor(TWO_BYTE / 2) - 1;
-    return val - (val > TWO_BYTE_HALF ? TWO_BYTE : 0);
   }
 }

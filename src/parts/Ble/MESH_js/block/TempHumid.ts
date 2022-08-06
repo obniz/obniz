@@ -54,7 +54,7 @@ export class TempHumid extends Base {
 
     const BYTE = 256 as const;
     const BASE = 10 as const;
-    const TEMP = this.complemnt_(BYTE * data[5] + data[4]) / BASE;
+    const TEMP = this.complemnt(BYTE * data[5] + data[4]) / BASE;
     const temperature = Math.min(
       Math.max(this.TEMPERATURE_MIN_, TEMP),
       this.TEMPERATURE_MAX_
@@ -130,10 +130,10 @@ export class TempHumid extends Base {
     ] as const;
     const BASE: number = 10 as const;
     const TEMP_UPPER: number[] = this.num2array_(
-      this.invcomplemnt_(BASE * temperatureRangeUpper)
+      this.invcomplemnt(BASE * temperatureRangeUpper)
     );
     const TEMP_BOTTOM: number[] = this.num2array_(
-      this.invcomplemnt_(BASE * temperatureRangeBottom)
+      this.invcomplemnt(BASE * temperatureRangeBottom)
     );
     const HUMI_UPPER: number[] = this.num2array_(humidityRangeUpper);
     const HUMI_BOTTOM: number[] = this.num2array_(humidityRangeBottom);
@@ -150,17 +150,6 @@ export class TempHumid extends Base {
   private num2array_(val: number): number[] {
     const BYTE = 256 as const;
     return [val % BYTE, Math.floor(val / BYTE)];
-  }
-
-  private complemnt_(val: number): number {
-    const TWO_BYTE = 65536 as const;
-    const TWO_BYTE_HALF = Math.floor(TWO_BYTE / 2) - 1;
-    return val - (val > TWO_BYTE_HALF ? TWO_BYTE : 0);
-  }
-
-  private invcomplemnt_(val: number): number {
-    const TWO_BYTE = 65536 as const;
-    return val + (val < 0 ? TWO_BYTE : 0);
   }
 
   private checkEmitCondition_(target: number, name: string) {
