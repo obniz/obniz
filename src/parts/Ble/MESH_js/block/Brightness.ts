@@ -22,8 +22,10 @@ export class Brightness extends Base {
     ONCE: 16 as const,
     ALWAYS: 32 as const,
   } as const;
-  private readonly RANGE_MIN = 0 as const;
-  private readonly RANGE_MAX = 65535 as const;
+  private readonly PROXIMITY_RANGE_MIN = 0 as const;
+  private readonly PROXIMITY_RANGE_MAX = 4095 as const;
+  private readonly BRIGHTNESS_RANGE_MIN = 0 as const;
+  private readonly BRIGHTNESS_RANGE_MAX = 65535 as const;
   private readonly NOTIFY_MODE_MIN_ = Brightness.NotifyMode.STOP;
   private readonly NOTIFY_MODE_MAX_ =
     Brightness.NotifyMode.STOP +
@@ -86,26 +88,26 @@ export class Brightness extends Base {
     // Error Handle
     this.checkRange(
       proximityRangeUpper,
-      this.RANGE_MIN,
-      this.RANGE_MAX,
+      this.PROXIMITY_RANGE_MIN,
+      this.PROXIMITY_RANGE_MAX,
       'proximityRangeUpper'
     );
     this.checkRange(
       proximityRangeBottom,
-      this.RANGE_MIN,
-      this.RANGE_MAX,
+      this.PROXIMITY_RANGE_MIN,
+      this.PROXIMITY_RANGE_MAX,
       'proximityRangeBottom'
     );
     this.checkRange(
       _brightnessRangeUpper,
-      this.RANGE_MIN,
-      this.RANGE_MAX,
+      this.BRIGHTNESS_RANGE_MIN,
+      this.BRIGHTNESS_RANGE_MAX,
       'brightnessRangeUpper/' + LX
     );
     this.checkRange(
       _brightnessRangeBottom,
-      this.RANGE_MIN,
-      this.RANGE_MAX,
+      this.BRIGHTNESS_RANGE_MIN,
+      this.BRIGHTNESS_RANGE_MAX,
       'brightnessRangeBottom/' + LX
     );
     this.checkEmitCondition_(proximityCondition, 'proximityCondition');

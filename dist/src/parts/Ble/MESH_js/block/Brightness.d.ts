@@ -16,8 +16,10 @@ export declare class Brightness extends Base {
         readonly ONCE: 16;
         readonly ALWAYS: 32;
     };
-    private readonly RANGE_MIN;
-    private readonly RANGE_MAX;
+    private readonly PROXIMITY_RANGE_MIN;
+    private readonly PROXIMITY_RANGE_MAX;
+    private readonly BRIGHTNESS_RANGE_MIN;
+    private readonly BRIGHTNESS_RANGE_MAX;
     private readonly NOTIFY_MODE_MIN_;
     private readonly NOTIFY_MODE_MAX_;
     private readonly MESSAGE_TYPE_ID_;
