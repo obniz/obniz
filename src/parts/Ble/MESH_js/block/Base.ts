@@ -21,7 +21,19 @@ export class Base {
     1 as const,
     3 as const,
   ];
+  private readonly MESSAGE_TYPE_ID_INDEX = 0 as const;
+  private readonly EVENT_TYPE_ID_INDEX = 1 as const;
+  private readonly VERSION_MAJOR_INDEX_ = 7 as const;
+  private readonly VERSION_MINOR_INDEX_ = 8 as const;
+  private readonly VERSION_RELEASE_INDEX_ = 9 as const;
+  private readonly BATTERY_INDEX_ = 14 as const;
+  private readonly MESSAGE_TYPE_ID_VALUE = 0 as const;
+  private readonly EVENT_TYPE_ID_VALUE = 2 as const;
+  private readonly INDICATE_LENGTH = 16 as const;
 
+  private versionMajor_ = -1;
+  private versionMinor_ = -1;
+  private versionRelease_ = -1;
   private battery_ = -1;
 
   public get featureCommand(): number[] {
@@ -39,17 +51,19 @@ export class Base {
    * @returns
    */
   public indicate(data: number[]): void {
-    if (data.length !== 16) {
+    if (data.length !== this.INDICATE_LENGTH) {
       return;
     }
-    if (data[0] !== 0) {
+    if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_VALUE) {
       return;
     }
-    if (data[1] !== 2) {
+    if (data[this.EVENT_TYPE_ID_INDEX] !== this.EVENT_TYPE_ID_VALUE) {
       return;
     }
-    this.battery_ = data[14];
-    this.checkVersion_(data[7], data[8], data[9]);
+    this.battery_ = data[this.BATTERY_INDEX_];
+    this.versionMajor_ = data[this.VERSION_MAJOR_INDEX_];
+    this.versionMinor_ = data[this.VERSION_MINOR_INDEX_];
+    this.versionRelease_ = data[this.VERSION_RELEASE_INDEX_];
   }
 
   /**

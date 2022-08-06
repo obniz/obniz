@@ -22,6 +22,18 @@ class Base {
             1,
             3,
         ];
+        this.MESSAGE_TYPE_ID_INDEX = 0;
+        this.EVENT_TYPE_ID_INDEX = 1;
+        this.VERSION_MAJOR_INDEX_ = 7;
+        this.VERSION_MINOR_INDEX_ = 8;
+        this.VERSION_RELEASE_INDEX_ = 9;
+        this.BATTERY_INDEX_ = 14;
+        this.MESSAGE_TYPE_ID_VALUE = 0;
+        this.EVENT_TYPE_ID_VALUE = 2;
+        this.INDICATE_LENGTH = 16;
+        this.versionMajor_ = -1;
+        this.versionMinor_ = -1;
+        this.versionRelease_ = -1;
         this.battery_ = -1;
     }
     get featureCommand() {
@@ -37,17 +49,19 @@ class Base {
      * @returns
      */
     indicate(data) {
-        if (data.length !== 16) {
+        if (data.length !== this.INDICATE_LENGTH) {
             return;
         }
-        if (data[0] !== 0) {
+        if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_VALUE) {
             return;
         }
-        if (data[1] !== 2) {
+        if (data[this.EVENT_TYPE_ID_INDEX] !== this.EVENT_TYPE_ID_VALUE) {
             return;
         }
-        this.battery_ = data[14];
-        this.checkVersion_(data[7], data[8], data[9]);
+        this.battery_ = data[this.BATTERY_INDEX_];
+        this.versionMajor_ = data[this.VERSION_MAJOR_INDEX_];
+        this.versionMinor_ = data[this.VERSION_MINOR_INDEX_];
+        this.versionRelease_ = data[this.VERSION_RELEASE_INDEX_];
     }
     /**
      * notify

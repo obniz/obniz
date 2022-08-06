@@ -11,6 +11,18 @@ export declare class Base {
         };
     };
     private readonly FEATURE_COMMAND_;
+    private readonly MESSAGE_TYPE_ID_INDEX;
+    private readonly EVENT_TYPE_ID_INDEX;
+    private readonly VERSION_MAJOR_INDEX_;
+    private readonly VERSION_MINOR_INDEX_;
+    private readonly VERSION_RELEASE_INDEX_;
+    private readonly BATTERY_INDEX_;
+    private readonly MESSAGE_TYPE_ID_VALUE;
+    private readonly EVENT_TYPE_ID_VALUE;
+    private readonly INDICATE_LENGTH;
+    private versionMajor_;
+    private versionMinor_;
+    private versionRelease_;
     private battery_;
     get featureCommand(): number[];
     get battery(): number;
