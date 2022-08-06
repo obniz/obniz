@@ -28624,8 +28624,8 @@ class TempHumid extends Base_1.Base {
             opt_requestId,
         ];
         const BASE = 10;
-        const TEMP_UPPER = this.num2array_(BASE * this.invcomplemnt_(temperatureRangeUpper));
-        const TEMP_BOTTOM = this.num2array_(BASE * this.invcomplemnt_(temperatureRangeBottom));
+        const TEMP_UPPER = this.num2array_(this.invcomplemnt_(BASE * temperatureRangeUpper));
+        const TEMP_BOTTOM = this.num2array_(this.invcomplemnt_(BASE * temperatureRangeBottom));
         const HUMI_UPPER = this.num2array_(humidityRangeUpper);
         const HUMI_BOTTOM = this.num2array_(humidityRangeBottom);
         const data = HEADER.concat(TEMP_UPPER)
@@ -28715,7 +28715,7 @@ class MESHJsError extends Error {
 exports.MESHJsError = MESHJsError;
 class MESHJsBlockVersionError extends MESHJsError {
     constructor(major, minor, release) {
-        super(1, 'please UPDATE block version to 1.2.5 more. (current block version ' +
+        super(1, 'please UPDATE the block software to version 1.2.5 or higher. (current block software version is ' +
             major +
             '.' +
             minor +

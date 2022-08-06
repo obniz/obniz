@@ -11,7 +11,7 @@ class MESHJsError extends Error {
 exports.MESHJsError = MESHJsError;
 class MESHJsBlockVersionError extends MESHJsError {
     constructor(major, minor, release) {
-        super(1, 'please UPDATE block version to 1.2.5 more. (current block version ' +
+        super(1, 'please UPDATE the block software to version 1.2.5 or higher. (current block software version is ' +
             major +
             '.' +
             minor +
