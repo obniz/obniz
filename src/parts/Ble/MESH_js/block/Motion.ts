@@ -48,14 +48,14 @@ export class Motion extends Base {
    *
    * @param notifyMode
    * @param opt_detectionTime
-   * @param opt_responseTime
+   * @param opt_holdingTime
    * @param opt_requestId
    * @returns
    */
   public parseSetmodeCommand(
     notifyMode: number,
     opt_detectionTime = 500,
-    opt_responseTime = 500,
+    opt_holdingTime = 500,
     opt_requestId = 0
   ): number[] {
     // Error Handle
@@ -67,13 +67,13 @@ export class Motion extends Base {
       DETECTION_TIME_MAX,
       'opt_detectionTime'
     );
-    const RESPONSE_TIME_MIN = 500 as const;
-    const RESPONSE_TIME_MAX = 60000 as const;
+    const HOLDING_TIME_MIN = 500 as const;
+    const HOLDING_TIME_MAX = 60000 as const;
     this.checkRange(
-      opt_responseTime,
-      RESPONSE_TIME_MIN,
-      RESPONSE_TIME_MAX,
-      'opt_responseTime'
+      opt_holdingTime,
+      HOLDING_TIME_MIN,
+      HOLDING_TIME_MAX,
+      'opt_holdingTime'
     );
 
     // Generate Command
@@ -87,8 +87,8 @@ export class Motion extends Base {
       notifyMode,
       opt_detectionTime % BYTE,
       Math.floor(opt_detectionTime / BYTE),
-      opt_responseTime % BYTE,
-      Math.floor(opt_responseTime / BYTE),
+      opt_holdingTime % BYTE,
+      Math.floor(opt_holdingTime / BYTE),
     ] as const;
     const data: number[] = HEADER.concat(BODY);
     data.push(this.checkSum(data));

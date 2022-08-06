@@ -35,18 +35,18 @@ class Motion extends Base_1.Base {
      *
      * @param notifyMode
      * @param opt_detectionTime
-     * @param opt_responseTime
+     * @param opt_holdingTime
      * @param opt_requestId
      * @returns
      */
-    parseSetmodeCommand(notifyMode, opt_detectionTime = 500, opt_responseTime = 500, opt_requestId = 0) {
+    parseSetmodeCommand(notifyMode, opt_detectionTime = 500, opt_holdingTime = 500, opt_requestId = 0) {
         // Error Handle
         const DETECTION_TIME_MIN = 200;
         const DETECTION_TIME_MAX = 60000;
         this.checkRange(opt_detectionTime, DETECTION_TIME_MIN, DETECTION_TIME_MAX, 'opt_detectionTime');
-        const RESPONSE_TIME_MIN = 500;
-        const RESPONSE_TIME_MAX = 60000;
-        this.checkRange(opt_responseTime, RESPONSE_TIME_MIN, RESPONSE_TIME_MAX, 'opt_responseTime');
+        const HOLDING_TIME_MIN = 500;
+        const HOLDING_TIME_MAX = 60000;
+        this.checkRange(opt_holdingTime, HOLDING_TIME_MIN, HOLDING_TIME_MAX, 'opt_holdingTime');
         // Generate Command
         const HEADER = [
             this.MESSAGE_TYPE_ID_,
@@ -58,8 +58,8 @@ class Motion extends Base_1.Base {
             notifyMode,
             opt_detectionTime % BYTE,
             Math.floor(opt_detectionTime / BYTE),
-            opt_responseTime % BYTE,
-            Math.floor(opt_responseTime / BYTE),
+            opt_holdingTime % BYTE,
+            Math.floor(opt_holdingTime / BYTE),
         ];
         const data = HEADER.concat(BODY);
         data.push(this.checkSum(data));

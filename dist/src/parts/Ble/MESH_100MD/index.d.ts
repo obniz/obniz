@@ -32,13 +32,20 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
     private retMotionState_;
     private notifyMode_;
     private detectionTime_;
-    private responseTime_;
+    private holdingTime_;
     getDataWait(): Promise<{
         name: string;
         address: string;
     }>;
     getSensorDataWait(): Promise<unknown>;
-    setMode(notifyMode: number, opt_detectionTime?: number, opt_responseTime?: number): void;
+    /**
+     * setMode
+     *
+     * @param notifyMode
+     * @param opt_detectionTime
+     * @param opt_holdingTime
+     */
+    setMode(notifyMode: number, opt_detectionTime?: number, opt_holdingTime?: number): void;
     protected static _isMESHblock(name: string): boolean;
     protected prepareConnect(): void;
     protected beforeOnDisconnectWait(reason: unknown): Promise<void>;

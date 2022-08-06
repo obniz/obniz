@@ -25,9 +25,9 @@ export declare class Motion extends Base {
      *
      * @param notifyMode
      * @param opt_detectionTime
-     * @param opt_responseTime
+     * @param opt_holdingTime
      * @param opt_requestId
      * @returns
      */
-    parseSetmodeCommand(notifyMode: number, opt_detectionTime?: number, opt_responseTime?: number, opt_requestId?: number): number[];
+    parseSetmodeCommand(notifyMode: number, opt_detectionTime?: number, opt_holdingTime?: number, opt_requestId?: number): number[];
 }

@@ -27368,7 +27368,7 @@ class MESH_100MD extends MESH_1.MESH {
         this.retMotionState_ = -1;
         this.notifyMode_ = -1;
         this.detectionTime_ = 500; // [ms]
-        this.responseTime_ = 500; // [ms]
+        this.holdingTime_ = 500; // [ms]
     }
     async getDataWait() {
         this.checkConnected();
@@ -27381,7 +27381,7 @@ class MESH_100MD extends MESH_1.MESH {
     async getSensorDataWait() {
         this.checkConnected();
         const _requestId = this.requestId.next();
-        this.setMode_(MESH_100MD.NotifyMode.ONCE, this.detectionTime_, this.responseTime_, _requestId);
+        this.setMode_(MESH_100MD.NotifyMode.ONCE, this.detectionTime_, this.holdingTime_, _requestId);
         const _TIMEOUT_MSEC = 2000;
         let _isTimeout = false;
         const _timeoutId = setTimeout(() => {
@@ -27404,18 +27404,25 @@ class MESH_100MD extends MESH_1.MESH {
         });
         if (this.notifyMode_ !== MESH_100MD.NotifyMode.ONCE) {
             // Continus previous mode
-            this.setMode(this.notifyMode_, this.detectionTime_, this.responseTime_);
+            this.setMode(this.notifyMode_, this.detectionTime_, this.holdingTime_);
         }
         if (_result == null) {
             throw new Error_1.MESHJsTimeOutError(this.peripheral.localName);
         }
         return _result;
     }
-    setMode(notifyMode, opt_detectionTime = 500, opt_responseTime = 500) {
-        this.setMode_(notifyMode, opt_detectionTime, opt_responseTime, this.requestId.defaultId());
+    /**
+     * setMode
+     *
+     * @param notifyMode
+     * @param opt_detectionTime
+     * @param opt_holdingTime
+     */
+    setMode(notifyMode, opt_detectionTime = 500, opt_holdingTime = 500) {
+        this.setMode_(notifyMode, opt_detectionTime, opt_holdingTime, this.requestId.defaultId());
         this.notifyMode_ = notifyMode;
         this.detectionTime_ = opt_detectionTime;
-        this.responseTime_ = opt_responseTime;
+        this.holdingTime_ = opt_holdingTime;
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH_100MD.PREFIX) !== -1;
@@ -27430,9 +27437,9 @@ class MESH_100MD extends MESH_1.MESH {
     async beforeOnDisconnectWait(reason) {
         // do nothing
     }
-    setMode_(notifyMode, detectionTime, responseTime, requestId) {
+    setMode_(notifyMode, detectionTime, holdingTime, requestId) {
         const motionBlock = this.meshBlock;
-        const command = motionBlock.parseSetmodeCommand(notifyMode, detectionTime, responseTime, requestId);
+        const command = motionBlock.parseSetmodeCommand(notifyMode, detectionTime, holdingTime, requestId);
         this.writeWOResponse(command);
     }
     setHandler_(motionState, notifyMode, requestId) {
@@ -28424,18 +28431,18 @@ class Motion extends Base_1.Base {
      *
      * @param notifyMode
      * @param opt_detectionTime
-     * @param opt_responseTime
+     * @param opt_holdingTime
      * @param opt_requestId
      * @returns
      */
-    parseSetmodeCommand(notifyMode, opt_detectionTime = 500, opt_responseTime = 500, opt_requestId = 0) {
+    parseSetmodeCommand(notifyMode, opt_detectionTime = 500, opt_holdingTime = 500, opt_requestId = 0) {
         // Error Handle
         const DETECTION_TIME_MIN = 200;
         const DETECTION_TIME_MAX = 60000;
         this.checkRange(opt_detectionTime, DETECTION_TIME_MIN, DETECTION_TIME_MAX, 'opt_detectionTime');
-        const RESPONSE_TIME_MIN = 500;
-        const RESPONSE_TIME_MAX = 60000;
-        this.checkRange(opt_responseTime, RESPONSE_TIME_MIN, RESPONSE_TIME_MAX, 'opt_responseTime');
+        const HOLDING_TIME_MIN = 500;
+        const HOLDING_TIME_MAX = 60000;
+        this.checkRange(opt_holdingTime, HOLDING_TIME_MIN, HOLDING_TIME_MAX, 'opt_holdingTime');
         // Generate Command
         const HEADER = [
             this.MESSAGE_TYPE_ID_,
@@ -28447,8 +28454,8 @@ class Motion extends Base_1.Base {
             notifyMode,
             opt_detectionTime % BYTE,
             Math.floor(opt_detectionTime / BYTE),
-            opt_responseTime % BYTE,
-            Math.floor(opt_responseTime / BYTE),
+            opt_holdingTime % BYTE,
+            Math.floor(opt_holdingTime / BYTE),
         ];
         const data = HEADER.concat(BODY);
         data.push(this.checkSum(data));
