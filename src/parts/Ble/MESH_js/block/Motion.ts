@@ -1,5 +1,4 @@
 import { Base } from './Base';
-import { MESHJsOutOfRangeError } from '../util/Error';
 export class Motion extends Base {
   // Event Handler
   public onSensorEvent:

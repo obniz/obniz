@@ -17,6 +17,11 @@ class MESH_100BU extends MESH_1.MESH {
         this.onDoublePressed = null;
         this.staticClass = MESH_100BU;
     }
+    /**
+     * getDataWait
+     *
+     * @returns
+     */
     async getDataWait() {
         this.checkConnected();
         return {

@@ -54,6 +54,11 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
     };
   }
 
+  /**
+   * getSensorDataWait
+   *
+   * @returns
+   */
   public async getSensorDataWait() {
     this.checkConnected();
     const _requestId = this.requestId.next();
@@ -101,6 +106,17 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
     return _result;
   }
 
+  /**
+   * setMode
+   *
+   * @param temperatureUpper
+   * @param temperatureBottom
+   * @param humidityUpper
+   * @param humidityBottom
+   * @param temperatureCondition
+   * @param humidityCondision
+   * @param notifyMode
+   */
   public setMode(
     temperatureUpper: number,
     temperatureBottom: number,

@@ -67,7 +67,7 @@ export class Base {
     command.forEach((val) => {
       sum += val;
     });
-    const BYTE = 256;
+    const BYTE = 256 as const;
     return sum % BYTE;
   }
 

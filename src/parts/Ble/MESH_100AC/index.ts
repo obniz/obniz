@@ -34,6 +34,11 @@ export default class MESH_100AC extends MESH<MESH_100AC_Data> {
 
   protected readonly staticClass = MESH_100AC;
 
+  /**
+   * getDataWait
+   *
+   * @returns
+   */
   public async getDataWait() {
     this.checkConnected();
     return {

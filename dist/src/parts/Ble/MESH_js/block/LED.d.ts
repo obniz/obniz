@@ -10,6 +10,7 @@ export declare class LED extends Base {
         blue: number;
     };
     /**
+     * parseLedCommand
      *
      * @param colors
      * @param totalTime

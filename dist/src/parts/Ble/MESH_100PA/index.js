@@ -18,6 +18,11 @@ class MESH_100PA extends MESH_1.MESH {
         this.proximity_ = -1;
         this.brightness_ = -1;
     }
+    /**
+     * getDataWait
+     *
+     * @returns
+     */
     async getDataWait() {
         this.checkConnected();
         return {
@@ -25,6 +30,11 @@ class MESH_100PA extends MESH_1.MESH {
             address: this.peripheral.address,
         };
     }
+    /**
+     * getSensorDataWait
+     *
+     * @returns
+     */
     async getSensorDataWait() {
         this.checkConnected();
         const _requestId = this.requestId.next();
@@ -58,6 +68,17 @@ class MESH_100PA extends MESH_1.MESH {
         }
         return _result;
     }
+    /**
+     * setMode
+     *
+     * @param proximityRangeUpper
+     * @param proximityRangeBottom
+     * @param brightnessRangeUpper
+     * @param brightnessRangeBottom
+     * @param proximityCondition
+     * @param brightnessCondition
+     * @param notifyMode
+     */
     setMode(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode) {
         this.setMode_(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode, this.requestId.defaultId());
     }

@@ -66,33 +66,43 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     private retVccState_;
     private retLevel_;
     private retDigitalOutState_;
+    /**
+     * getDataWait
+     *
+     * @returns
+     */
     getDataWait(): Promise<{
         name: string;
         address: string;
     }>;
     /**
+     * getDigitalInputDataWait
      *
      * @param pin
      * @returns
      */
     getDigitalInputDataWait(pin: number): Promise<number>;
     /**
+     * getAnalogInputDataWait
      *
      * @returns
      */
     getAnalogInputDataWait(): Promise<number>;
     /**
+     * getVOutputDataWait
      *
      * @returns
      */
     getVOutputDataWait(): Promise<number>;
     /**
+     * getDigitalOutputDataWait
      *
      * @param pin
      * @returns
      */
     getDigitalOutputDataWait(pin: number): Promise<number>;
     /**
+     * getPwmDataWait
      *
      * @returns
      */

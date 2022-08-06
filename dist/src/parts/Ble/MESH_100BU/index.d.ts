@@ -21,6 +21,11 @@ export default class MESH_100BU extends MESH<MESH_100BU_Data> {
     onLongPressed: (() => void) | null;
     onDoublePressed: (() => void) | null;
     protected readonly staticClass: typeof MESH_100BU;
+    /**
+     * getDataWait
+     *
+     * @returns
+     */
     getDataWait(): Promise<{
         name: string;
         address: string;

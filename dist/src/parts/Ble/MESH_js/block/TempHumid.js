@@ -23,6 +23,7 @@ class TempHumid extends Base_1.Base {
             TempHumid.NotifyMode.ALWAYS;
     }
     /**
+     * notify
      *
      * @param data
      * @returns
@@ -48,6 +49,7 @@ class TempHumid extends Base_1.Base {
         this.onSensorEvent(temperature, humidity, requestId);
     }
     /**
+     * parseSetmodeCommand
      *
      * @param temperatureRangeUpper
      * @param temperatureRangeBottom

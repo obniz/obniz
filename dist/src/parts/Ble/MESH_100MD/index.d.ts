@@ -33,10 +33,20 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
     private notifyMode_;
     private detectionTime_;
     private holdingTime_;
+    /**
+     * getDataWait
+     *
+     * @returns
+     */
     getDataWait(): Promise<{
         name: string;
         address: string;
     }>;
+    /**
+     * getSensorDataWait
+     *
+     * @returns
+     */
     getSensorDataWait(): Promise<unknown>;
     /**
      * setMode

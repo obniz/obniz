@@ -1,5 +1,5 @@
 import { Base } from './Base';
-import { MESHJsInvalidValueError, MESHJsOutOfRangeError } from '../util/Error';
+import { MESHJsInvalidValueError } from '../util/Error';
 export class GPIO extends Base {
   // Event Handler
   public onDigitalInputEvent:
@@ -241,7 +241,7 @@ export class GPIO extends Base {
    * parseSetAinCommand
    *
    * @param analogInputNotifyMode
-   * @param requestId
+   * @param opt_requestId
    * @returns
    */
   public parseAnalogInputCommand(
@@ -258,7 +258,7 @@ export class GPIO extends Base {
   /**
    * parseSetVOutputCommand
    *
-   * @param requestId
+   * @param opt_requestId
    * @returns
    */
   public parseVOutputCommand(opt_requestId = 0) {
@@ -270,7 +270,7 @@ export class GPIO extends Base {
    * parseSetDoutCommand
    *
    * @param pin
-   * @param requestId
+   * @param opt_requestId
    * @returns
    */
   public parseDigitalOutputCommand(pin: number, opt_requestId = 0) {
@@ -280,7 +280,7 @@ export class GPIO extends Base {
   /**
    * parseSetPWMCommand
    *
-   * @param requestId
+   * @param opt_requestId
    * @returns
    */
   public parsePwmCommand(opt_requestId = 0) {

@@ -37,6 +37,11 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
   private detectionTime_ = 500; // [ms]
   private holdingTime_ = 500; // [ms]
 
+  /**
+   * getDataWait
+   *
+   * @returns
+   */
   public async getDataWait() {
     this.checkConnected();
     const motionBlock = this.meshBlock as Motion;
@@ -46,6 +51,11 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
     };
   }
 
+  /**
+   * getSensorDataWait
+   *
+   * @returns
+   */
   public async getSensorDataWait() {
     this.checkConnected();
     const _requestId = this.requestId.next();

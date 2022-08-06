@@ -20,6 +20,11 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
     };
     colors: LED['colors'];
     protected readonly staticClass: typeof MESH_100LE;
+    /**
+     * getDataWait
+     *
+     * @returns
+     */
     getDataWait(): Promise<{
         name: string;
         address: string;

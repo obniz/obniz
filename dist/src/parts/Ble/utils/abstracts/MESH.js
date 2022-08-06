@@ -18,6 +18,7 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         this.writeWOResponseCharacteristic_ = null;
     }
     /**
+     * isMESHblock
      *
      * @param peripheral
      * @param opt_serialnumber
@@ -38,6 +39,8 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     }
     /**
      * Connect to the services of a MESH
+     *
+     * @returns
      */
     async connectWait() {
         this.prepareConnect();
@@ -113,17 +116,38 @@ class MeshRequestId {
         this.currentId_ = this.DEFAULT_ID_;
     }
     // private receivedId_: number = this.DEFAULT_ID_;
+    /**
+     * defaultId
+     *
+     * @returns
+     */
     defaultId() {
         return this.DEFAULT_ID_;
     }
+    /**
+     * next
+     *
+     * @returns
+     */
     next() {
         this.currentId_ = (this.currentId_ % this.MAX_ID_) + 1;
-        // console.log('send ' + this.currentId_);
         return this.currentId_;
     }
+    /**
+     * isDefaultId
+     *
+     * @param id
+     * @returns
+     */
     isDefaultId(id) {
         return id === this.DEFAULT_ID_;
     }
+    /**
+     * isReceived
+     *
+     * @param id
+     * @returns
+     */
     isReceived(id) {
         const _index = this.pool_.findIndex((element) => element === id);
         if (_index === -1) {
@@ -133,9 +157,13 @@ class MeshRequestId {
         return true;
         // return id === this.receivedId_;
     }
+    /**
+     * received
+     *
+     * @param id
+     */
     received(id) {
         this.pool_.push(id);
-        // console.log(this.pool_);
         // this.receivedId_ = id;
     }
 }

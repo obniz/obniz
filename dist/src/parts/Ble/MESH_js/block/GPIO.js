@@ -168,7 +168,7 @@ class GPIO extends Base_1.Base {
      * parseSetAinCommand
      *
      * @param analogInputNotifyMode
-     * @param requestId
+     * @param opt_requestId
      * @returns
      */
     parseAnalogInputCommand(analogInputNotifyMode, opt_requestId = 0) {
@@ -177,7 +177,7 @@ class GPIO extends Base_1.Base {
     /**
      * parseSetVOutputCommand
      *
-     * @param requestId
+     * @param opt_requestId
      * @returns
      */
     parseVOutputCommand(opt_requestId = 0) {
@@ -188,7 +188,7 @@ class GPIO extends Base_1.Base {
      * parseSetDoutCommand
      *
      * @param pin
-     * @param requestId
+     * @param opt_requestId
      * @returns
      */
     parseDigitalOutputCommand(pin, opt_requestId = 0) {
@@ -197,7 +197,7 @@ class GPIO extends Base_1.Base {
     /**
      * parseSetPWMCommand
      *
-     * @param requestId
+     * @param opt_requestId
      * @returns
      */
     parsePwmCommand(opt_requestId = 0) {

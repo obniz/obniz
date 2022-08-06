@@ -40,6 +40,11 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
   private proximity_ = -1;
   private brightness_ = -1;
 
+  /**
+   * getDataWait
+   *
+   * @returns
+   */
   public async getDataWait() {
     this.checkConnected();
     return {
@@ -48,6 +53,11 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
     };
   }
 
+  /**
+   * getSensorDataWait
+   *
+   * @returns
+   */
   public async getSensorDataWait() {
     this.checkConnected();
     const _requestId = this.requestId.next();
@@ -93,6 +103,17 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
     return _result;
   }
 
+  /**
+   * setMode
+   *
+   * @param proximityRangeUpper
+   * @param proximityRangeBottom
+   * @param brightnessRangeUpper
+   * @param brightnessRangeBottom
+   * @param proximityCondition
+   * @param brightnessCondition
+   * @param notifyMode
+   */
   public setMode(
     proximityRangeUpper: number,
     proximityRangeBottom: number,

@@ -32,6 +32,11 @@ class MESH_100GP extends MESH_1.MESH {
         this.retLevel_ = -1;
         this.retDigitalOutState_ = -1;
     }
+    /**
+     * getDataWait
+     *
+     * @returns
+     */
     async getDataWait() {
         this.checkConnected();
         return {
@@ -40,6 +45,7 @@ class MESH_100GP extends MESH_1.MESH {
         };
     }
     /**
+     * getDigitalInputDataWait
      *
      * @param pin
      * @returns
@@ -52,6 +58,7 @@ class MESH_100GP extends MESH_1.MESH {
         return this.retDigitalInState_;
     }
     /**
+     * getAnalogInputDataWait
      *
      * @returns
      */
@@ -63,6 +70,7 @@ class MESH_100GP extends MESH_1.MESH {
         return this.retLevel_;
     }
     /**
+     * getVOutputDataWait
      *
      * @returns
      */
@@ -74,6 +82,7 @@ class MESH_100GP extends MESH_1.MESH {
         return this.retVccState_;
     }
     /**
+     * getDigitalOutputDataWait
      *
      * @param pin
      * @returns
@@ -86,6 +95,7 @@ class MESH_100GP extends MESH_1.MESH {
         return this.retDigitalOutState_;
     }
     /**
+     * getPwmDataWait
      *
      * @returns
      */

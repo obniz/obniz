@@ -14,6 +14,11 @@ class MESH_100LE extends MESH_1.MESH {
         this.colors = { red: 0, green: 0, blue: 0 };
         this.staticClass = MESH_100LE;
     }
+    /**
+     * getDataWait
+     *
+     * @returns
+     */
     async getDataWait() {
         this.checkConnected();
         return {

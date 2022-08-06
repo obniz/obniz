@@ -20,6 +20,11 @@ class MESH_100MD extends MESH_1.MESH {
         this.detectionTime_ = 500; // [ms]
         this.holdingTime_ = 500; // [ms]
     }
+    /**
+     * getDataWait
+     *
+     * @returns
+     */
     async getDataWait() {
         this.checkConnected();
         const motionBlock = this.meshBlock;
@@ -28,6 +33,11 @@ class MESH_100MD extends MESH_1.MESH {
             address: this.peripheral.address,
         };
     }
+    /**
+     * getSensorDataWait
+     *
+     * @returns
+     */
     async getSensorDataWait() {
         this.checkConnected();
         const _requestId = this.requestId.next();

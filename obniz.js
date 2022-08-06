@@ -24260,7 +24260,6 @@ var map = {
 	"./Ble/MESH_js/block/Motion.js": "./dist/src/parts/Ble/MESH_js/block/Motion.js",
 	"./Ble/MESH_js/block/Move.js": "./dist/src/parts/Ble/MESH_js/block/Move.js",
 	"./Ble/MESH_js/block/TempHumid.js": "./dist/src/parts/Ble/MESH_js/block/TempHumid.js",
-	"./Ble/MESH_js/util/Common.js": "./dist/src/parts/Ble/MESH_js/util/Common.js",
 	"./Ble/MESH_js/util/Error.js": "./dist/src/parts/Ble/MESH_js/util/Error.js",
 	"./Ble/MINEW_S1/index.js": "./dist/src/parts/Ble/MINEW_S1/index.js",
 	"./Ble/MT_500BT/index.js": "./dist/src/parts/Ble/MT_500BT/index.js",
@@ -26867,6 +26866,11 @@ class MESH_100AC extends MESH_1.MESH {
         this.onOrientation = null;
         this.staticClass = MESH_100AC;
     }
+    /**
+     * getDataWait
+     *
+     * @returns
+     */
     async getDataWait() {
         this.checkConnected();
         return {
@@ -26940,6 +26944,11 @@ class MESH_100BU extends MESH_1.MESH {
         this.onDoublePressed = null;
         this.staticClass = MESH_100BU;
     }
+    /**
+     * getDataWait
+     *
+     * @returns
+     */
     async getDataWait() {
         this.checkConnected();
         return {
@@ -27022,6 +27031,11 @@ class MESH_100GP extends MESH_1.MESH {
         this.retLevel_ = -1;
         this.retDigitalOutState_ = -1;
     }
+    /**
+     * getDataWait
+     *
+     * @returns
+     */
     async getDataWait() {
         this.checkConnected();
         return {
@@ -27030,6 +27044,7 @@ class MESH_100GP extends MESH_1.MESH {
         };
     }
     /**
+     * getDigitalInputDataWait
      *
      * @param pin
      * @returns
@@ -27042,6 +27057,7 @@ class MESH_100GP extends MESH_1.MESH {
         return this.retDigitalInState_;
     }
     /**
+     * getAnalogInputDataWait
      *
      * @returns
      */
@@ -27053,6 +27069,7 @@ class MESH_100GP extends MESH_1.MESH {
         return this.retLevel_;
     }
     /**
+     * getVOutputDataWait
      *
      * @returns
      */
@@ -27064,6 +27081,7 @@ class MESH_100GP extends MESH_1.MESH {
         return this.retVccState_;
     }
     /**
+     * getDigitalOutputDataWait
      *
      * @param pin
      * @returns
@@ -27076,6 +27094,7 @@ class MESH_100GP extends MESH_1.MESH {
         return this.retDigitalOutState_;
     }
     /**
+     * getPwmDataWait
      *
      * @returns
      */
@@ -27303,6 +27322,11 @@ class MESH_100LE extends MESH_1.MESH {
         this.colors = { red: 0, green: 0, blue: 0 };
         this.staticClass = MESH_100LE;
     }
+    /**
+     * getDataWait
+     *
+     * @returns
+     */
     async getDataWait() {
         this.checkConnected();
         return {
@@ -27370,6 +27394,11 @@ class MESH_100MD extends MESH_1.MESH {
         this.detectionTime_ = 500; // [ms]
         this.holdingTime_ = 500; // [ms]
     }
+    /**
+     * getDataWait
+     *
+     * @returns
+     */
     async getDataWait() {
         this.checkConnected();
         const motionBlock = this.meshBlock;
@@ -27378,6 +27407,11 @@ class MESH_100MD extends MESH_1.MESH {
             address: this.peripheral.address,
         };
     }
+    /**
+     * getSensorDataWait
+     *
+     * @returns
+     */
     async getSensorDataWait() {
         this.checkConnected();
         const _requestId = this.requestId.next();
@@ -27489,6 +27523,11 @@ class MESH_100PA extends MESH_1.MESH {
         this.proximity_ = -1;
         this.brightness_ = -1;
     }
+    /**
+     * getDataWait
+     *
+     * @returns
+     */
     async getDataWait() {
         this.checkConnected();
         return {
@@ -27496,6 +27535,11 @@ class MESH_100PA extends MESH_1.MESH {
             address: this.peripheral.address,
         };
     }
+    /**
+     * getSensorDataWait
+     *
+     * @returns
+     */
     async getSensorDataWait() {
         this.checkConnected();
         const _requestId = this.requestId.next();
@@ -27529,6 +27573,17 @@ class MESH_100PA extends MESH_1.MESH {
         }
         return _result;
     }
+    /**
+     * setMode
+     *
+     * @param proximityRangeUpper
+     * @param proximityRangeBottom
+     * @param brightnessRangeUpper
+     * @param brightnessRangeBottom
+     * @param proximityCondition
+     * @param brightnessCondition
+     * @param notifyMode
+     */
     setMode(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode) {
         this.setMode_(proximityRangeUpper, proximityRangeBottom, brightnessRangeUpper, brightnessRangeBottom, proximityCondition, brightnessCondition, notifyMode, this.requestId.defaultId());
     }
@@ -27613,6 +27668,11 @@ class MESH_100TH extends MESH_1.MESH {
             address: this.peripheral.address,
         };
     }
+    /**
+     * getSensorDataWait
+     *
+     * @returns
+     */
     async getSensorDataWait() {
         this.checkConnected();
         const _requestId = this.requestId.next();
@@ -27649,6 +27709,17 @@ class MESH_100TH extends MESH_1.MESH {
         }
         return _result;
     }
+    /**
+     * setMode
+     *
+     * @param temperatureUpper
+     * @param temperatureBottom
+     * @param humidityUpper
+     * @param humidityBottom
+     * @param temperatureCondition
+     * @param humidityCondision
+     * @param notifyMode
+     */
     setMode(temperatureUpper, temperatureBottom, humidityUpper, humidityBottom, temperatureCondition, humidityCondision, notifyMode) {
         this.setMode_(temperatureUpper, temperatureBottom, humidityUpper, humidityBottom, temperatureCondition, humidityCondision, notifyMode, this.requestId.defaultId());
         this.temperatureUpper_ = temperatureUpper;
@@ -28235,7 +28306,7 @@ class GPIO extends Base_1.Base {
      * parseSetAinCommand
      *
      * @param analogInputNotifyMode
-     * @param requestId
+     * @param opt_requestId
      * @returns
      */
     parseAnalogInputCommand(analogInputNotifyMode, opt_requestId = 0) {
@@ -28244,7 +28315,7 @@ class GPIO extends Base_1.Base {
     /**
      * parseSetVOutputCommand
      *
-     * @param requestId
+     * @param opt_requestId
      * @returns
      */
     parseVOutputCommand(opt_requestId = 0) {
@@ -28255,7 +28326,7 @@ class GPIO extends Base_1.Base {
      * parseSetDoutCommand
      *
      * @param pin
-     * @param requestId
+     * @param opt_requestId
      * @returns
      */
     parseDigitalOutputCommand(pin, opt_requestId = 0) {
@@ -28264,7 +28335,7 @@ class GPIO extends Base_1.Base {
     /**
      * parseSetPWMCommand
      *
-     * @param requestId
+     * @param opt_requestId
      * @returns
      */
     parsePwmCommand(opt_requestId = 0) {
@@ -28332,6 +28403,7 @@ class LED extends Base_1.Base {
         this.colors = { red: 0, green: 0, blue: 0 };
     }
     /**
+     * parseLedCommand
      *
      * @param colors
      * @param totalTime
@@ -28585,6 +28657,7 @@ class TempHumid extends Base_1.Base {
             TempHumid.NotifyMode.ALWAYS;
     }
     /**
+     * notify
      *
      * @param data
      * @returns
@@ -28610,6 +28683,7 @@ class TempHumid extends Base_1.Base {
         this.onSensorEvent(temperature, humidity, requestId);
     }
     /**
+     * parseSetmodeCommand
      *
      * @param temperatureRangeUpper
      * @param temperatureRangeBottom
@@ -28689,15 +28763,6 @@ TempHumid.NotifyMode = {
     ONCE: 16,
     ALWAYS: 32,
 };
-
-
-/***/ }),
-
-/***/ "./dist/src/parts/Ble/MESH_js/util/Common.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
 
 
 /***/ }),
@@ -39106,6 +39171,7 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         this.writeWOResponseCharacteristic_ = null;
     }
     /**
+     * isMESHblock
      *
      * @param peripheral
      * @param opt_serialnumber
@@ -39126,6 +39192,8 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     }
     /**
      * Connect to the services of a MESH
+     *
+     * @returns
      */
     async connectWait() {
         this.prepareConnect();
@@ -39201,17 +39269,38 @@ class MeshRequestId {
         this.currentId_ = this.DEFAULT_ID_;
     }
     // private receivedId_: number = this.DEFAULT_ID_;
+    /**
+     * defaultId
+     *
+     * @returns
+     */
     defaultId() {
         return this.DEFAULT_ID_;
     }
+    /**
+     * next
+     *
+     * @returns
+     */
     next() {
         this.currentId_ = (this.currentId_ % this.MAX_ID_) + 1;
-        // console.log('send ' + this.currentId_);
         return this.currentId_;
     }
+    /**
+     * isDefaultId
+     *
+     * @param id
+     * @returns
+     */
     isDefaultId(id) {
         return id === this.DEFAULT_ID_;
     }
+    /**
+     * isReceived
+     *
+     * @param id
+     * @returns
+     */
     isReceived(id) {
         const _index = this.pool_.findIndex((element) => element === id);
         if (_index === -1) {
@@ -39221,9 +39310,13 @@ class MeshRequestId {
         return true;
         // return id === this.receivedId_;
     }
+    /**
+     * received
+     *
+     * @param id
+     */
     received(id) {
         this.pool_.push(id);
-        // console.log(this.pool_);
         // this.receivedId_ = id;
     }
 }

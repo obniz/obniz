@@ -58,6 +58,11 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   private retLevel_ = -1;
   private retDigitalOutState_ = -1;
 
+  /**
+   * getDataWait
+   *
+   * @returns
+   */
   public async getDataWait() {
     this.checkConnected();
     return {
@@ -67,6 +72,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   }
 
   /**
+   * getDigitalInputDataWait
    *
    * @param pin
    * @returns
@@ -80,6 +86,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   }
 
   /**
+   * getAnalogInputDataWait
    *
    * @returns
    */
@@ -95,6 +102,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   }
 
   /**
+   * getVOutputDataWait
    *
    * @returns
    */
@@ -107,6 +115,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   }
 
   /**
+   * getDigitalOutputDataWait
    *
    * @param pin
    * @returns
@@ -120,6 +129,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   }
 
   /**
+   * getPwmDataWait
    *
    * @returns
    */

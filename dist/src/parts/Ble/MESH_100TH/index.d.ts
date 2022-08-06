@@ -46,7 +46,23 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
         name: string;
         address: string;
     }>;
+    /**
+     * getSensorDataWait
+     *
+     * @returns
+     */
     getSensorDataWait(): Promise<unknown>;
+    /**
+     * setMode
+     *
+     * @param temperatureUpper
+     * @param temperatureBottom
+     * @param humidityUpper
+     * @param humidityBottom
+     * @param temperatureCondition
+     * @param humidityCondision
+     * @param notifyMode
+     */
     setMode(temperatureUpper: number, temperatureBottom: number, humidityUpper: number, humidityBottom: number, temperatureCondition: number, humidityCondision: number, notifyMode: number): void;
     protected static _isMESHblock(name: string): boolean;
     protected prepareConnect(): void;

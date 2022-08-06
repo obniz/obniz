@@ -23,6 +23,11 @@ export default class MESH_100AC extends MESH<MESH_100AC_Data> {
     onFlipped: ((accele: MESH_100AC['accele']) => void) | null;
     onOrientation: ((face: number, accele: MESH_100AC['accele']) => void) | null;
     protected readonly staticClass: typeof MESH_100AC;
+    /**
+     * getDataWait
+     *
+     * @returns
+     */
     getDataWait(): Promise<{
         name: string;
         address: string;

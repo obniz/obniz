@@ -25,12 +25,14 @@ export declare class TempHumid extends Base {
     private readonly NOTIFY_MODE_MIN_;
     private readonly NOTIFY_MODE_MAX_;
     /**
+     * notify
      *
      * @param data
      * @returns
      */
     notify(data: number[]): void;
     /**
+     * parseSetmodeCommand
      *
      * @param temperatureRangeUpper
      * @param temperatureRangeBottom

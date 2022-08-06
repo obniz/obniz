@@ -33,6 +33,11 @@ class MESH_100TH extends MESH_1.MESH {
             address: this.peripheral.address,
         };
     }
+    /**
+     * getSensorDataWait
+     *
+     * @returns
+     */
     async getSensorDataWait() {
         this.checkConnected();
         const _requestId = this.requestId.next();
@@ -69,6 +74,17 @@ class MESH_100TH extends MESH_1.MESH {
         }
         return _result;
     }
+    /**
+     * setMode
+     *
+     * @param temperatureUpper
+     * @param temperatureBottom
+     * @param humidityUpper
+     * @param humidityBottom
+     * @param temperatureCondition
+     * @param humidityCondision
+     * @param notifyMode
+     */
     setMode(temperatureUpper, temperatureBottom, humidityUpper, humidityBottom, temperatureCondition, humidityCondision, notifyMode) {
         this.setMode_(temperatureUpper, temperatureBottom, humidityUpper, humidityBottom, temperatureCondition, humidityCondision, notifyMode, this.requestId.defaultId());
         this.temperatureUpper_ = temperatureUpper;

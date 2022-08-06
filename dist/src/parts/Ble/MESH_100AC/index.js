@@ -19,6 +19,11 @@ class MESH_100AC extends MESH_1.MESH {
         this.onOrientation = null;
         this.staticClass = MESH_100AC;
     }
+    /**
+     * getDataWait
+     *
+     * @returns
+     */
     async getDataWait() {
         this.checkConnected();
         return {

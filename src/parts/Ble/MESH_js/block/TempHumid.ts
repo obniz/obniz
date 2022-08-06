@@ -39,6 +39,7 @@ export class TempHumid extends Base {
     TempHumid.NotifyMode.ALWAYS;
 
   /**
+   * notify
    *
    * @param data
    * @returns
@@ -72,6 +73,7 @@ export class TempHumid extends Base {
   }
 
   /**
+   * parseSetmodeCommand
    *
    * @param temperatureRangeUpper
    * @param temperatureRangeBottom
