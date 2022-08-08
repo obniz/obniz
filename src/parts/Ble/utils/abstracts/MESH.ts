@@ -52,7 +52,7 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
   }
 
   /**
-   * Connect to the services of a MESH
+   * Connect to the services of MESH
    *
    * @returns
    */

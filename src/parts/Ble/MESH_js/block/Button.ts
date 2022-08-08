@@ -1,4 +1,5 @@
 import { Base } from './Base';
+
 export class Button extends Base {
   // Event Handler
   public onSinglePressed: (() => void) | null = null;

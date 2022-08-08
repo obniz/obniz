@@ -1,5 +1,6 @@
 import { Base } from './Base';
 import { MESHJsInvalidValueError } from '../util/Error';
+
 export class TempHumid extends Base {
   // Event Handler
   public onSensorEvent:

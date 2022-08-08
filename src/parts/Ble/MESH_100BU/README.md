@@ -6,7 +6,7 @@ MESH official web site is [here](https://meshprj.com/).
 # License
 See [LICENSE.txt]().
 
-## Use case
+# Use case
 
 ```javascript
 // Example
@@ -52,4 +52,4 @@ await obniz.ble.scan.startWait();
 
 ```
 
-More detail is [here]().
+For more information, click [here]().

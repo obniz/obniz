@@ -11,13 +11,13 @@ class MESHJsError extends Error {
 exports.MESHJsError = MESHJsError;
 class MESHJsBlockVersionError extends MESHJsError {
     constructor(major, minor, release) {
-        super(1, 'please UPDATE the block software to version 1.2.5 or higher. (current block software version is ' +
+        super(1, 'Please UPDATE the block software to version 1.2.5 or higher. (Current block software version is ' +
             major +
             '.' +
             minor +
             '.' +
             release +
-            ')');
+            ' .)');
         this.major = major;
     }
 }
@@ -29,7 +29,7 @@ class MESHJsOutOfRangeError extends MESHJsError {
             property +
             ' must be ' +
             min +
-            ' ~ ' +
+            '-' +
             max +
             '.');
         this.property = property;

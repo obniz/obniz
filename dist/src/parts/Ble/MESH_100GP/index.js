@@ -112,10 +112,10 @@ class MESH_100GP extends MESH_1.MESH {
      * @param digitalInputLow2High {p1:boolean, p2:boolean, p3:boolean}
      * @param digitalInputHigh2Low {p1:boolean, p2:boolean, p3:boolean}
      * @param digitalOutput {p1:boolean, p2:boolean, p3:boolean}
-     * @param pwmRatio 0 ~ 255
+     * @param pwmRatio 0-255
      * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
-     * @param analogInputRangeUpper 0 ~ 255(0.00 ~ 3.00[V])
-     * @param analogInputRangeBottom 0 ~ 255(0.00 ~ 3.00[V])
+     * @param analogInputRangeUpper 0-255(0.00-3.00[V])
+     * @param analogInputRangeBottom 0-255(0.00-3.00[V])
      * @param analogInputCondition AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
      */
     setMode(digitalInputLow2High, digitalInputHigh2Low, digitalOutput, pwmRatio, vcc, analogInputRangeUpper, analogInputRangeBottom, analogInputCondition) {
@@ -147,8 +147,8 @@ class MESH_100GP extends MESH_1.MESH {
     /**
      * setModeAnalogInput
      *
-     * @param analogInputRangeUpper 0 ~ 255(0.00 ~ 3.00[V])
-     * @param analogInputRangeBottom 0 ~ 255(0.00 ~ 3.00[V])
+     * @param analogInputRangeUpper 0-255(0.00-3.00[V])
+     * @param analogInputRangeBottom 0-255(0.00-3.00[V])
      * @param analogInputCondition AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
      */
     setModeAnalogInput(analogInputRangeUpper, analogInputRangeBottom, analogInputCondition) {
@@ -173,7 +173,7 @@ class MESH_100GP extends MESH_1.MESH {
     /**
      * setPwmOutput
      *
-     * @param pwmRatio 0 ~ 255
+     * @param pwmRatio 0-255
      */
     setPwmOutput(pwmRatio) {
         const gpioBlock = this.meshBlock;

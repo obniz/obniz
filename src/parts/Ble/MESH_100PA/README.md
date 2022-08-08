@@ -1,11 +1,12 @@
 # MESH-100PA (MESH Brightness)
-MESH-100PA (MESH Brightness) is an app-enabled light sensor of MESH blocks.  
+MESH-100PA (MESH Brightness) is an app-enabled light sensor of MESH blocks.
+
 MESH official web site is [here](https://meshprj.com/).
 
 # License
 See [LICENSE.txt]().
 
-## Use case
+# Use case
 
 ```javascript
 // Example
@@ -54,7 +55,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
         console.log('proximity: ' + proximity + ', brightness: ' + brightness);
     });
 
-    // Prepare params (click the link below for more details.)
+    // Prepare params (See the linked page below for more information.)
     const notifyMode = MESH_100PA.NotifyMode.ALWAYS;
     const proximityRangeUpper = 30;
     const proximityRangeBottom = 0;
@@ -78,4 +79,4 @@ await obniz.ble.scan.startWait();
 
 ```
 
-More detail is [here]().
+For more information, click [here]().

@@ -26863,7 +26863,7 @@ class MESH_100AC extends MESH_1.MESH {
         this.onTapped = null;
         this.onShaked = null;
         this.onFlipped = null;
-        this.onOrientation = null;
+        this.onOrientationChanged = null;
         this.staticClass = MESH_100AC;
     }
     /**
@@ -26903,10 +26903,10 @@ class MESH_100AC extends MESH_1.MESH {
             this.onFlipped(accele);
         };
         moveBlock.onOrientationChanged = (face, accele) => {
-            if (typeof this.onOrientation !== 'function') {
+            if (typeof this.onOrientationChanged !== 'function') {
                 return;
             }
-            this.onOrientation(face, accele);
+            this.onOrientationChanged(face, accele);
         };
         super.prepareConnect();
     }
@@ -27111,10 +27111,10 @@ class MESH_100GP extends MESH_1.MESH {
      * @param digitalInputLow2High {p1:boolean, p2:boolean, p3:boolean}
      * @param digitalInputHigh2Low {p1:boolean, p2:boolean, p3:boolean}
      * @param digitalOutput {p1:boolean, p2:boolean, p3:boolean}
-     * @param pwmRatio 0 ~ 255
+     * @param pwmRatio 0-255
      * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
-     * @param analogInputRangeUpper 0 ~ 255(0.00 ~ 3.00[V])
-     * @param analogInputRangeBottom 0 ~ 255(0.00 ~ 3.00[V])
+     * @param analogInputRangeUpper 0-255(0.00-3.00[V])
+     * @param analogInputRangeBottom 0-255(0.00-3.00[V])
      * @param analogInputCondition AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
      */
     setMode(digitalInputLow2High, digitalInputHigh2Low, digitalOutput, pwmRatio, vcc, analogInputRangeUpper, analogInputRangeBottom, analogInputCondition) {
@@ -27146,8 +27146,8 @@ class MESH_100GP extends MESH_1.MESH {
     /**
      * setModeAnalogInput
      *
-     * @param analogInputRangeUpper 0 ~ 255(0.00 ~ 3.00[V])
-     * @param analogInputRangeBottom 0 ~ 255(0.00 ~ 3.00[V])
+     * @param analogInputRangeUpper 0-255(0.00-3.00[V])
+     * @param analogInputRangeBottom 0-255(0.00-3.00[V])
      * @param analogInputCondition AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
      */
     setModeAnalogInput(analogInputRangeUpper, analogInputRangeBottom, analogInputCondition) {
@@ -27172,7 +27172,7 @@ class MESH_100GP extends MESH_1.MESH {
     /**
      * setPwmOutput
      *
-     * @param pwmRatio 0 ~ 255
+     * @param pwmRatio 0-255
      */
     setPwmOutput(pwmRatio) {
         const gpioBlock = this.meshBlock;
@@ -27337,10 +27337,10 @@ class MESH_100LE extends MESH_1.MESH {
     /**
      * setLed
      *
-     * @param colors { red: 0 ~ 127, green: 0 ~ 127, blue: 0 ~ 127 }
-     * @param totalTime 0 ~ 65,535 [ms]
-     * @param cycleOnTime 0 ~ 65,535 [ms]
-     * @param cycleOffTime 0 ~ 65,535 [ms]
+     * @param colors { red: 0-127, green: 0-127, blue: 0-127 }
+     * @param totalTime 0-65,535 [ms]
+     * @param cycleOnTime 0-65,535 [ms]
+     * @param cycleOffTime 0-65,535 [ms]
      * @param pattern Pattern.BLINK or Pattern.FIREFLY
      * @returns
      */
@@ -28208,10 +28208,10 @@ class GPIO extends Base_1.Base {
      * @param digitalInputLow2High {p1:boolean, p2:boolean, p3:boolean}
      * @param digitalInputHigh2Low {p1:boolean, p2:boolean, p3:boolean}
      * @param digitalOutput {p1:boolean, p2:boolean, p3:boolean}
-     * @param pwmRatio 0 ~ 255
+     * @param pwmRatio 0-255
      * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
-     * @param analogInputRangeUpper 0 ~ 255(0.00 ~ 3.00[V])
-     * @param analogInputRangeBottom 0 ~ 255(0.00 ~ 3.00[V])
+     * @param analogInputRangeUpper 0-255(0.00-3.00[V])
+     * @param analogInputRangeBottom 0-255(0.00-3.00[V])
      * @param analogInputNotify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
      * @returns command
      */
@@ -28736,13 +28736,13 @@ class MESHJsError extends Error {
 exports.MESHJsError = MESHJsError;
 class MESHJsBlockVersionError extends MESHJsError {
     constructor(major, minor, release) {
-        super(1, 'please UPDATE the block software to version 1.2.5 or higher. (current block software version is ' +
+        super(1, 'Please UPDATE the block software to version 1.2.5 or higher. (Current block software version is ' +
             major +
             '.' +
             minor +
             '.' +
             release +
-            ')');
+            ' .)');
         this.major = major;
     }
 }
@@ -28754,7 +28754,7 @@ class MESHJsOutOfRangeError extends MESHJsError {
             property +
             ' must be ' +
             min +
-            ' ~ ' +
+            '-' +
             max +
             '.');
         this.property = property;
@@ -39143,7 +39143,7 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         return this._isMESHblock(_name);
     }
     /**
-     * Connect to the services of a MESH
+     * Connect to the services of MESH
      *
      * @returns
      */

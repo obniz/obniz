@@ -10,13 +10,13 @@ export class MESHJsBlockVersionError extends MESHJsError {
   constructor(public major: number, minor: number, release: number) {
     super(
       1,
-      'please UPDATE the block software to version 1.2.5 or higher. (current block software version is ' +
+      'Please UPDATE the block software to version 1.2.5 or higher. (Current block software version is ' +
         major +
         '.' +
         minor +
         '.' +
         release +
-        ')'
+        ' .)'
     );
   }
 }
@@ -30,7 +30,7 @@ export class MESHJsOutOfRangeError extends MESHJsError {
         property +
         ' must be ' +
         min +
-        ' ~ ' +
+        '-' +
         max +
         '.'
     );
