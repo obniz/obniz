@@ -1,4 +1,5 @@
 import { Base } from './Base';
+
 export class Move extends Base {
   // Event Handler
   public onTapped: ((accele: Move['accele']) => void) | null = null;

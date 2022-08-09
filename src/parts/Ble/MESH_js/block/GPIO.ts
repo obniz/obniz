@@ -1,5 +1,6 @@
 import { Base } from './Base';
 import { MESHJsInvalidValueError } from '../util/Error';
+
 export class GPIO extends Base {
   // Event Handler
   public onDigitalInputEvent:
@@ -162,10 +163,10 @@ export class GPIO extends Base {
    * @param digitalInputLow2High {p1:boolean, p2:boolean, p3:boolean}
    * @param digitalInputHigh2Low {p1:boolean, p2:boolean, p3:boolean}
    * @param digitalOutput {p1:boolean, p2:boolean, p3:boolean}
-   * @param pwmRatio 0 ~ 255
+   * @param pwmRatio 0-255
    * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
-   * @param analogInputRangeUpper 0 ~ 255(0.00 ~ 3.00[V])
-   * @param analogInputRangeBottom 0 ~ 255(0.00 ~ 3.00[V])
+   * @param analogInputRangeUpper 0-255(0.00-3.00[V])
+   * @param analogInputRangeBottom 0-255(0.00-3.00[V])
    * @param analogInputNotify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
    * @returns command
    */

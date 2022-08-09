@@ -38,7 +38,7 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         return this._isMESHblock(_name);
     }
     /**
-     * Connect to the services of a MESH
+     * Connect to the services of MESH
      *
      * @returns
      */

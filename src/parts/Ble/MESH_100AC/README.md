@@ -1,11 +1,12 @@
 # MESH-100AC (MESH Move) 
-MESH-100AC (MESH Move) is an app-enabled accelerometer of MESH blocks.  
+MESH-100AC (MESH Move) is an app-enabled accelerometer of MESH blocks.
+
 MESH official web site is [here](https://meshprj.com/).
 
 # License
 See [LICENSE.txt]().
 
-## Use case
+# Use case
 
 ```javascript
 // Example
@@ -40,7 +41,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     });
     
     // Orientation Event
-    moveBlock.onOrientation = ((face, accele) => {
+    moveBlock.onOrientationChanged = ((face, accele) => {
         console.log('orientation ' + face + ', (ax, ay, az) = (' + accele.x + ', ' + accele.y + ',' + accele.z + ')');
     });
 };
@@ -48,4 +49,4 @@ await obniz.ble.scan.startWait();
 
 ```
 
-More detail is [here]().
+For more information, click [here]().

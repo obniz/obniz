@@ -28,7 +28,6 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
     static readonly EmitCondition: {
         ABOVE_UPPER_AND_BELOW_BOTTOM: 0;
         ABOVE_UPPER_AND_ABOVE_BOTTOM: 1;
-        /** MESH_100TH management class */
         BELOW_UPPER_AND_BELOW_BOTTOM: 16;
         BELOW_UPPER_AND_ABOVE_BOTTOM: 17;
     };

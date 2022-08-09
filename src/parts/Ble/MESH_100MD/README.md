@@ -1,11 +1,12 @@
 # MESH-100MD (MESH Motion)
-MESH-100MD (MESH Motion) is an app-enabled infrared motion sensor of MESH blocks.  
+MESH-100MD (MESH Motion) is an app-enabled infrared motion sensor of MESH blocks.
+
 MESH official web site is [here](https://meshprj.com/).
 
 # License
 See [LICENSE.txt]().
 
-## Use case
+# Use case
 
 ```javascript
 // Example
@@ -90,4 +91,4 @@ await obniz.ble.scan.startWait();
 
 ```
 
-More detail is [here]().
+For more information, click [here]().

@@ -28,7 +28,7 @@ export default class MESH_100AC extends MESH<MESH_100AC_Data> {
   public onTapped: ((accele: MESH_100AC['accele']) => void) | null = null;
   public onShaked: ((accele: MESH_100AC['accele']) => void) | null = null;
   public onFlipped: ((accele: MESH_100AC['accele']) => void) | null = null;
-  public onOrientation:
+  public onOrientationChanged:
     | ((face: number, accele: MESH_100AC['accele']) => void)
     | null = null;
 
@@ -77,10 +77,10 @@ export default class MESH_100AC extends MESH<MESH_100AC_Data> {
       face: number,
       accele: MESH_100AC['accele']
     ) => {
-      if (typeof this.onOrientation !== 'function') {
+      if (typeof this.onOrientationChanged !== 'function') {
         return;
       }
-      this.onOrientation(face, accele);
+      this.onOrientationChanged(face, accele);
     };
 
     super.prepareConnect();

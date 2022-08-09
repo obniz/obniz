@@ -1,4 +1,5 @@
 import { Base } from './Base';
+
 export class Motion extends Base {
   // Event Handler
   public onSensorEvent:

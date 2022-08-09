@@ -1,11 +1,12 @@
 # MESH-100GP (MESH GPIO)
-MESH-100GP (MESH GPIO) is an app-enabled general-purpose input/output of MESH blocks.  
+MESH-100GP (MESH GPIO) is an app-enabled general-purpose input/output of MESH blocks.
+
 MESH official web site is [here](https://meshprj.com/).
 
 # License
 See [LICENSE.txt]().
 
-## Use case
+# Use case
 
 ```javascript
 // Example
@@ -81,7 +82,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
         console.log('Analog Input: ' + level);
     });
     
-    // Prepare params (click the link below for more details.)
+    // Prepare params (See the linked page below for more information.)
     const digitalInputLow2High = { p1:true, p2:false, p3:true };
     const digitalInputHigh2Low = { p1:true, p2:false, p3:true };
     const analogInputRangeUpper = 30;
@@ -100,4 +101,4 @@ await obniz.ble.scan.startWait();
 
 ```
 
-More detail is [here]().
+For more information, click [here]().

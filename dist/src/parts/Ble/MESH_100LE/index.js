@@ -29,10 +29,10 @@ class MESH_100LE extends MESH_1.MESH {
     /**
      * setLed
      *
-     * @param colors { red: 0 ~ 127, green: 0 ~ 127, blue: 0 ~ 127 }
-     * @param totalTime 0 ~ 65,535 [ms]
-     * @param cycleOnTime 0 ~ 65,535 [ms]
-     * @param cycleOffTime 0 ~ 65,535 [ms]
+     * @param colors { red: 0-127, green: 0-127, blue: 0-127 }
+     * @param totalTime 0-65,535 [ms]
+     * @param cycleOnTime 0-65,535 [ms]
+     * @param cycleOffTime 0-65,535 [ms]
      * @param pattern Pattern.BLINK or Pattern.FIREFLY
      * @returns
      */

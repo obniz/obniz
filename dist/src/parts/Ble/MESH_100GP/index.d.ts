@@ -113,10 +113,10 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
      * @param digitalInputLow2High {p1:boolean, p2:boolean, p3:boolean}
      * @param digitalInputHigh2Low {p1:boolean, p2:boolean, p3:boolean}
      * @param digitalOutput {p1:boolean, p2:boolean, p3:boolean}
-     * @param pwmRatio 0 ~ 255
+     * @param pwmRatio 0-255
      * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
-     * @param analogInputRangeUpper 0 ~ 255(0.00 ~ 3.00[V])
-     * @param analogInputRangeBottom 0 ~ 255(0.00 ~ 3.00[V])
+     * @param analogInputRangeUpper 0-255(0.00-3.00[V])
+     * @param analogInputRangeBottom 0-255(0.00-3.00[V])
      * @param analogInputCondition AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
      */
     setMode(digitalInputLow2High: MESH_100GP['DigitalPins'], digitalInputHigh2Low: MESH_100GP['DigitalPins'], digitalOutput: MESH_100GP['DigitalPins'], pwmRatio: number, vcc: number, analogInputRangeUpper: number, analogInputRangeBottom: number, analogInputCondition: number): void;
@@ -130,8 +130,8 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     /**
      * setModeAnalogInput
      *
-     * @param analogInputRangeUpper 0 ~ 255(0.00 ~ 3.00[V])
-     * @param analogInputRangeBottom 0 ~ 255(0.00 ~ 3.00[V])
+     * @param analogInputRangeUpper 0-255(0.00-3.00[V])
+     * @param analogInputRangeBottom 0-255(0.00-3.00[V])
      * @param analogInputCondition AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
      */
     setModeAnalogInput(analogInputRangeUpper: number, analogInputRangeBottom: number, analogInputCondition: number): void;
@@ -144,7 +144,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     /**
      * setPwmOutput
      *
-     * @param pwmRatio 0 ~ 255
+     * @param pwmRatio 0-255
      */
     setPwmOutput(pwmRatio: number): void;
     /**

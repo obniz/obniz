@@ -21,7 +21,7 @@ export default class MESH_100AC extends MESH<MESH_100AC_Data> {
     onTapped: ((accele: MESH_100AC['accele']) => void) | null;
     onShaked: ((accele: MESH_100AC['accele']) => void) | null;
     onFlipped: ((accele: MESH_100AC['accele']) => void) | null;
-    onOrientation: ((face: number, accele: MESH_100AC['accele']) => void) | null;
+    onOrientationChanged: ((face: number, accele: MESH_100AC['accele']) => void) | null;
     protected readonly staticClass: typeof MESH_100AC;
     /**
      * getDataWait

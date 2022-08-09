@@ -16,7 +16,7 @@ class MESH_100AC extends MESH_1.MESH {
         this.onTapped = null;
         this.onShaked = null;
         this.onFlipped = null;
-        this.onOrientation = null;
+        this.onOrientationChanged = null;
         this.staticClass = MESH_100AC;
     }
     /**
@@ -56,10 +56,10 @@ class MESH_100AC extends MESH_1.MESH {
             this.onFlipped(accele);
         };
         moveBlock.onOrientationChanged = (face, accele) => {
-            if (typeof this.onOrientation !== 'function') {
+            if (typeof this.onOrientationChanged !== 'function') {
                 return;
             }
-            this.onOrientation(face, accele);
+            this.onOrientationChanged(face, accele);
         };
         super.prepareConnect();
     }

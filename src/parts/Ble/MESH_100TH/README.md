@@ -1,11 +1,12 @@
 # MESH-100TH (MESH Temperature & Humidity)
-MESH-100TH (MESH Temperature & Humidity) is an app-enabled temperature and humidity sensor of MESH blocks.  
+MESH-100TH (MESH Temperature & Humidity) is an app-enabled temperature and humidity sensor of MESH blocks.
+
 MESH official web site is [here](https://meshprj.com/).
 
 # License
 See [LICENSE.txt]().
 
-## Use case
+# Use case
 
 ```javascript
 // Example
@@ -54,7 +55,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
         console.log('temperature: ' + temperature + ', humidity: ' + humidity);
     });
 
-    // Prepare params (click the link below for more details.)
+    // Prepare params (See the linked page below for more information.)
     const notifyMode = MESH_100TH.NotifyMode.ALWAYS;
     const tempUpper = 50;
     const tempBottom = -10;
@@ -78,4 +79,4 @@ await obniz.ble.scan.startWait();
 
 ```
 
-More detail is [here]().
+For more information, click [here]().

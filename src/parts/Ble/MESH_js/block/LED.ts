@@ -1,5 +1,6 @@
 import { Base } from './Base';
 import { MESHJsInvalidValueError } from '../util/Error';
+
 export class LED extends Base {
   // Constant Values
   public static readonly PATTERN = {
