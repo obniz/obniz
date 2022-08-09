@@ -138,7 +138,7 @@ class GPIO extends Base_1.Base {
      * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
      * @param analogInputRangeBottom 0-255(0.00-3.00[V])
-     * @param analogInputNotify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+     * @param analogInputNotify AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
      * @returns command
      */
     parseSetmodeCommand(digitalInputLow2High, digitalInputHigh2Low, digitalOutput, pwmRatio, vcc, analogInputRangeUpper, analogInputRangeBottom, analogInputNotify) {
@@ -153,9 +153,9 @@ class GPIO extends Base_1.Base {
         const ANALOG_IN_RANGE_MAX = 255;
         this.checkRange(analogInputRangeUpper, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeUpper');
         this.checkRange(analogInputRangeBottom, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeBottom');
-        if (analogInputNotify !== GPIO.AnalogInEventCondition.NOT_NOTIFY &&
-            analogInputNotify !== GPIO.AnalogInEventCondition.ABOVE_THRESHOLD &&
-            analogInputNotify !== GPIO.AnalogInEventCondition.BELOW_THRESHOLD) {
+        if (analogInputNotify !== GPIO.AnalogInputEventCondition.NOT_NOTIFY &&
+            analogInputNotify !== GPIO.AnalogInputEventCondition.ABOVE_THRESHOLD &&
+            analogInputNotify !== GPIO.AnalogInputEventCondition.BELOW_THRESHOLD) {
             throw new Error_1.MESHJsInvalidValueError('analogInNotify');
         }
         // Generate Command
@@ -235,7 +235,7 @@ class GPIO extends Base_1.Base {
 }
 exports.GPIO = GPIO;
 // Constant Values
-GPIO.AnalogInEventCondition = {
+GPIO.AnalogInputEventCondition = {
     NOT_NOTIFY: 0,
     ABOVE_THRESHOLD: 17,
     BELOW_THRESHOLD: 34,

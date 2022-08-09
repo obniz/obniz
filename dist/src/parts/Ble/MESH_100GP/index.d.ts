@@ -17,7 +17,7 @@ export interface MESH_100GP_Data {
 export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     static readonly PartsName = "MESH_100GP";
     static readonly PREFIX = "MESH-100GP";
-    static readonly AnalogInEventCondition: {
+    static readonly AnalogInputEventCondition: {
         readonly NOT_NOTIFY: 0;
         readonly ABOVE_THRESHOLD: 17;
         readonly BELOW_THRESHOLD: 34;
@@ -117,7 +117,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
      * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
      * @param analogInputRangeBottom 0-255(0.00-3.00[V])
-     * @param analogInputCondition AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+     * @param analogInputCondition AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
      */
     setMode(digitalInputLow2High: MESH_100GP['DigitalPins'], digitalInputHigh2Low: MESH_100GP['DigitalPins'], digitalOutput: MESH_100GP['DigitalPins'], pwmRatio: number, vcc: number, analogInputRangeUpper: number, analogInputRangeBottom: number, analogInputCondition: number): void;
     /**
@@ -132,7 +132,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
      *
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
      * @param analogInputRangeBottom 0-255(0.00-3.00[V])
-     * @param analogInputCondition AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+     * @param analogInputCondition AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
      */
     setModeAnalogInput(analogInputRangeUpper: number, analogInputRangeBottom: number, analogInputCondition: number): void;
     /**

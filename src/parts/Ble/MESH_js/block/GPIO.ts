@@ -48,7 +48,7 @@ export class GPIO extends Base {
   public DigitalPins = { p1: false, p2: false, p3: false };
 
   // Constant Values
-  public static readonly AnalogInEventCondition = {
+  public static readonly AnalogInputEventCondition = {
     NOT_NOTIFY: 0 as const,
     ABOVE_THRESHOLD: 17 as const,
     BELOW_THRESHOLD: 34 as const,
@@ -187,7 +187,7 @@ export class GPIO extends Base {
    * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
    * @param analogInputRangeUpper 0-255(0.00-3.00[V])
    * @param analogInputRangeBottom 0-255(0.00-3.00[V])
-   * @param analogInputNotify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+   * @param analogInputNotify AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
    * @returns command
    */
   public parseSetmodeCommand(
@@ -222,9 +222,9 @@ export class GPIO extends Base {
       'analogInRangeBottom'
     );
     if (
-      analogInputNotify !== GPIO.AnalogInEventCondition.NOT_NOTIFY &&
-      analogInputNotify !== GPIO.AnalogInEventCondition.ABOVE_THRESHOLD &&
-      analogInputNotify !== GPIO.AnalogInEventCondition.BELOW_THRESHOLD
+      analogInputNotify !== GPIO.AnalogInputEventCondition.NOT_NOTIFY &&
+      analogInputNotify !== GPIO.AnalogInputEventCondition.ABOVE_THRESHOLD &&
+      analogInputNotify !== GPIO.AnalogInputEventCondition.BELOW_THRESHOLD
     ) {
       throw new MESHJsInvalidValueError('analogInNotify');
     }

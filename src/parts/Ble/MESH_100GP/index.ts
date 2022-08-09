@@ -23,7 +23,8 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   public static readonly PartsName = 'MESH_100GP';
   public static readonly PREFIX = 'MESH-100GP';
 
-  public static readonly AnalogInEventCondition = GPIO.AnalogInEventCondition;
+  public static readonly AnalogInputEventCondition =
+    GPIO.AnalogInputEventCondition;
   public static readonly AnalogInputNotifyMode = GPIO.AnalogInputNotifyMode;
   public static readonly Pin = GPIO.Pin;
   public static readonly State = GPIO.State;
@@ -50,7 +51,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   private analogInputRangeUpper_ = 0;
   private analogInputRangeBottom_ = 0;
   private analogInputCondition_: number =
-    MESH_100GP.AnalogInEventCondition.NOT_NOTIFY;
+    MESH_100GP.AnalogInputEventCondition.NOT_NOTIFY;
 
   private retDigitalInState_ = -1;
   private retPwm_ = -1;
@@ -151,7 +152,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
    * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
    * @param analogInputRangeUpper 0-255(0.00-3.00[V])
    * @param analogInputRangeBottom 0-255(0.00-3.00[V])
-   * @param analogInputCondition AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+   * @param analogInputCondition AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
    */
   public setMode(
     digitalInputLow2High: MESH_100GP['DigitalPins'],
@@ -216,7 +217,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
    *
    * @param analogInputRangeUpper 0-255(0.00-3.00[V])
    * @param analogInputRangeBottom 0-255(0.00-3.00[V])
-   * @param analogInputCondition AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+   * @param analogInputCondition AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
    */
   public setModeAnalogInput(
     analogInputRangeUpper: number,

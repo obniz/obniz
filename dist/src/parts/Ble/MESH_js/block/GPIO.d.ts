@@ -33,7 +33,7 @@ export declare class GPIO extends Base {
         p2: boolean;
         p3: boolean;
     };
-    static readonly AnalogInEventCondition: {
+    static readonly AnalogInputEventCondition: {
         readonly NOT_NOTIFY: 0;
         readonly ABOVE_THRESHOLD: 17;
         readonly BELOW_THRESHOLD: 34;
@@ -91,7 +91,7 @@ export declare class GPIO extends Base {
      * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
      * @param analogInputRangeBottom 0-255(0.00-3.00[V])
-     * @param analogInputNotify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+     * @param analogInputNotify AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
      * @returns command
      */
     parseSetmodeCommand(digitalInputLow2High: GPIO['DigitalPins'], digitalInputHigh2Low: GPIO['DigitalPins'], digitalOutput: GPIO['DigitalPins'], pwmRatio: number, vcc: number, analogInputRangeUpper: number, analogInputRangeBottom: number, analogInputNotify: number): number[];

@@ -25,7 +25,7 @@ class MESH_100GP extends MESH_1.MESH {
         this.vcc_ = MESH_100GP.Vcc.AUTO;
         this.analogInputRangeUpper_ = 0;
         this.analogInputRangeBottom_ = 0;
-        this.analogInputCondition_ = MESH_100GP.AnalogInEventCondition.NOT_NOTIFY;
+        this.analogInputCondition_ = MESH_100GP.AnalogInputEventCondition.NOT_NOTIFY;
         this.retDigitalInState_ = -1;
         this.retPwm_ = -1;
         this.retVccState_ = -1;
@@ -116,7 +116,7 @@ class MESH_100GP extends MESH_1.MESH {
      * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
      * @param analogInputRangeBottom 0-255(0.00-3.00[V])
-     * @param analogInputCondition AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+     * @param analogInputCondition AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
      */
     setMode(digitalInputLow2High, digitalInputHigh2Low, digitalOutput, pwmRatio, vcc, analogInputRangeUpper, analogInputRangeBottom, analogInputCondition) {
         const gpioBlock = this.meshBlock;
@@ -149,7 +149,7 @@ class MESH_100GP extends MESH_1.MESH {
      *
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
      * @param analogInputRangeBottom 0-255(0.00-3.00[V])
-     * @param analogInputCondition AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+     * @param analogInputCondition AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
      */
     setModeAnalogInput(analogInputRangeUpper, analogInputRangeBottom, analogInputCondition) {
         const gpioBlock = this.meshBlock;
@@ -292,7 +292,7 @@ class MESH_100GP extends MESH_1.MESH {
 exports.default = MESH_100GP;
 MESH_100GP.PartsName = 'MESH_100GP';
 MESH_100GP.PREFIX = 'MESH-100GP';
-MESH_100GP.AnalogInEventCondition = GPIO_1.GPIO.AnalogInEventCondition;
+MESH_100GP.AnalogInputEventCondition = GPIO_1.GPIO.AnalogInputEventCondition;
 MESH_100GP.AnalogInputNotifyMode = GPIO_1.GPIO.AnalogInputNotifyMode;
 MESH_100GP.Pin = GPIO_1.GPIO.Pin;
 MESH_100GP.State = GPIO_1.GPIO.State;
