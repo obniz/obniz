@@ -40,6 +40,7 @@ export class Base {
   private readonly REGULARLY_BATTERY_INDEX_ = 2 as const;
   private readonly STATUSBUTTON_PRESSED_EVENT_TYPE_ID_VALUE_ = 1 as const;
   private readonly STATUSBUTTON_PRESSED_LENGTH_ = 4 as const;
+  private readonly STATUSBAR_LED_EVENT_TYPE_ID_VALUE_ = 0 as const;
 
   private versionMajor_ = -1;
   private versionMinor_ = -1;
@@ -90,6 +91,35 @@ export class Base {
   public notify(data: number[]): void {
     this.updateBattery_(data);
     this.updateStatusButton_(data);
+  }
+
+  /**
+   * Parse to statusbar LED command
+   *
+   * @param power
+   * @param red
+   * @param green
+   * @param blue
+   * @returns
+   */
+  public parseStatusbarLedCommand(
+    power: boolean,
+    red: boolean,
+    green: boolean,
+    blue: boolean
+  ): number[] {
+    // Generate Command
+    const data = [
+      this.MESSAGE_TYPE_ID_VALUE_,
+      this.STATUSBAR_LED_EVENT_TYPE_ID_VALUE_,
+      Number(red),
+      Number(green),
+      Number(blue),
+      Number(power),
+    ];
+    data.push(this.checkSum(data));
+
+    return data;
   }
 
   /**

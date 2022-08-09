@@ -135,4 +135,5 @@ async function sampleAC(peripheral) {
   });
 
   // AC_block.getDataWait();
+  AC_block.setStatusbarLed(true,false,false,false);
 }

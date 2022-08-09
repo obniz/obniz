@@ -96,6 +96,29 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
     this.meshBlock.checkVersion();
   }
 
+  /**
+   * Control statusbar LED
+   *
+   * @param power
+   * @param red
+   * @param green
+   * @param blue
+   */
+  public setStatusbarLed(
+    power: boolean,
+    red: boolean,
+    green: boolean,
+    blue: boolean
+  ): void {
+    const command = this.meshBlock.parseStatusbarLedCommand(
+      power,
+      red,
+      green,
+      blue
+    );
+    this.writeWOResponse(command);
+  }
+
   protected static _isMESHblock(name: string): boolean {
     return name.indexOf(MESH.PREFIX) === 0;
   }

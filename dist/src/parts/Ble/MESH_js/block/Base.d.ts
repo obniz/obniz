@@ -31,6 +31,7 @@ export declare class Base {
     private readonly REGULARLY_BATTERY_INDEX_;
     private readonly STATUSBUTTON_PRESSED_EVENT_TYPE_ID_VALUE_;
     private readonly STATUSBUTTON_PRESSED_LENGTH_;
+    private readonly STATUSBAR_LED_EVENT_TYPE_ID_VALUE_;
     private versionMajor_;
     private versionMinor_;
     private versionRelease_;
@@ -56,6 +57,16 @@ export declare class Base {
      * @param data
      */
     notify(data: number[]): void;
+    /**
+     * Parse to statusbar LED command
+     *
+     * @param power
+     * @param red
+     * @param green
+     * @param blue
+     * @returns
+     */
+    parseStatusbarLedCommand(power: boolean, red: boolean, green: boolean, blue: boolean): number[];
     /**
      * Check software version of MESH block
      *

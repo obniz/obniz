@@ -64,6 +64,18 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         await this.writeWait(this.meshBlock.featureCommand);
         this.meshBlock.checkVersion();
     }
+    /**
+     * Control statusbar LED
+     *
+     * @param power
+     * @param red
+     * @param green
+     * @param blue
+     */
+    setStatusbarLed(power, red, green, blue) {
+        const command = this.meshBlock.parseStatusbarLedCommand(power, red, green, blue);
+        this.writeWOResponse(command);
+    }
     static _isMESHblock(name) {
         return name.indexOf(MESH.PREFIX) === 0;
     }

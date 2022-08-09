@@ -41,6 +41,7 @@ class Base {
         this.REGULARLY_BATTERY_INDEX_ = 2;
         this.STATUSBUTTON_PRESSED_EVENT_TYPE_ID_VALUE_ = 1;
         this.STATUSBUTTON_PRESSED_LENGTH_ = 4;
+        this.STATUSBAR_LED_EVENT_TYPE_ID_VALUE_ = 0;
         this.versionMajor_ = -1;
         this.versionMinor_ = -1;
         this.versionRelease_ = -1;
@@ -87,6 +88,28 @@ class Base {
     notify(data) {
         this.updateBattery_(data);
         this.updateStatusButton_(data);
+    }
+    /**
+     * Parse to statusbar LED command
+     *
+     * @param power
+     * @param red
+     * @param green
+     * @param blue
+     * @returns
+     */
+    parseStatusbarLedCommand(power, red, green, blue) {
+        // Generate Command
+        const data = [
+            this.MESSAGE_TYPE_ID_VALUE_,
+            this.STATUSBAR_LED_EVENT_TYPE_ID_VALUE_,
+            Number(red),
+            Number(green),
+            Number(blue),
+            Number(power),
+        ];
+        data.push(this.checkSum(data));
+        return data;
     }
     /**
      * Check software version of MESH block
