@@ -1,8 +1,13 @@
 import { MESHJsBlockVersionError, MESHJsOutOfRangeError } from '../util/Error';
 
 export class Base {
-  // Event Handler
+  /**
+   * Battery level event
+   */
   public onBatteryLevel: ((battery: number) => void) | null = null;
+  /**
+   * Status button pressed event
+   */
   public onStatusButtonPressed: (() => void) | null = null;
 
   // Constant Values
@@ -36,16 +41,22 @@ export class Base {
   private versionRelease_ = -1;
   private battery_ = -1;
 
+  /**
+   * Get command of feature behavior
+   */
   public get featureCommand(): number[] {
     return this.FEATURE_COMMAND_;
   }
 
+  /**
+   * Get battery level
+   */
   public get battery(): number {
     return this.battery_;
   }
 
   /**
-   * indicate
+   * Set result of indicate
    *
    * @param data
    * @returns
@@ -77,7 +88,7 @@ export class Base {
   }
 
   /**
-   * checkVersion
+   * Check software version of MESH block
    *
    * @returns
    */

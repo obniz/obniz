@@ -17,9 +17,7 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
     static readonly PartsName = "MESH_100MD";
     static readonly PREFIX = "MESH-100MD";
     static readonly NotifyMode: {
-        readonly DETECTED: 1; /**
-         * advertisement data from MESH_100MD
-         */
+        readonly DETECTED: 1;
         readonly NOT_DETECTED: 2;
         readonly ONCE: 16;
         readonly ALWAYS: 32;

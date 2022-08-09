@@ -1,5 +1,8 @@
 import { Base } from './Base';
 export declare class TempHumid extends Base {
+    /**
+     * Sensing event
+     */
     onSensorEvent: ((temperature: number, humidity: number, requestId: number) => void) | null;
     static readonly EmitCondition: {
         ABOVE_UPPER_AND_BELOW_BOTTOM: 0;
@@ -32,7 +35,7 @@ export declare class TempHumid extends Base {
      */
     notify(data: number[]): void;
     /**
-     * parseSetmodeCommand
+     * Parse to set-mode command
      *
      * @param temperatureRangeUpper
      * @param temperatureRangeBottom

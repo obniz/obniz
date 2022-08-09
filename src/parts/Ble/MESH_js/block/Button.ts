@@ -1,9 +1,17 @@
 import { Base } from './Base';
 
 export class Button extends Base {
-  // Event Handler
+  /**
+   * Single pressed event
+   */
   public onSinglePressed: (() => void) | null = null;
+  /**
+   * Long pressed event
+   */
   public onLongPressed: (() => void) | null = null;
+  /**
+   * Double pressed event
+   */
   public onDoublePressed: (() => void) | null = null;
 
   // Constant Values

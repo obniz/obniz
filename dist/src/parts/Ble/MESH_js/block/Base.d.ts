@@ -1,5 +1,11 @@
 export declare class Base {
+    /**
+     * Battery level event
+     */
     onBatteryLevel: ((battery: number) => void) | null;
+    /**
+     * Status button pressed event
+     */
     onStatusButtonPressed: (() => void) | null;
     readonly UUIDS: {
         readonly SERVICE_ID: "72c90001-57a9-4d40-b746-534e22ec9f9e";
@@ -24,10 +30,16 @@ export declare class Base {
     private versionMinor_;
     private versionRelease_;
     private battery_;
+    /**
+     * Get command of feature behavior
+     */
     get featureCommand(): number[];
+    /**
+     * Get battery level
+     */
     get battery(): number;
     /**
-     * indicate
+     * Set result of indicate
      *
      * @param data
      * @returns
@@ -40,7 +52,7 @@ export declare class Base {
      */
     notify(data: number[]): void;
     /**
-     * checkVersion
+     * Check software version of MESH block
      *
      * @returns
      */

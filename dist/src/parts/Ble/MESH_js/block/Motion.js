@@ -4,7 +4,9 @@ const Base_1 = require("./Base");
 class Motion extends Base_1.Base {
     constructor() {
         super(...arguments);
-        // Event Handler
+        /**
+         * Sensing event
+         */
         this.onSensorEvent = null;
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
@@ -32,6 +34,7 @@ class Motion extends Base_1.Base {
         this.onSensorEvent(motionState, notifyMode, requestId);
     }
     /**
+     * Parse to set-mode command
      *
      * @param notifyMode
      * @param opt_detectionTime

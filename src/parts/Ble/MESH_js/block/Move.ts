@@ -1,10 +1,21 @@
 import { Base } from './Base';
 
 export class Move extends Base {
-  // Event Handler
+  /**
+   * Tapped event
+   */
   public onTapped: ((accele: Move['accele']) => void) | null = null;
+  /**
+   * Shaked event
+   */
   public onShaked: ((accele: Move['accele']) => void) | null = null;
+  /**
+   * Flipped event
+   */
   public onFlipped: ((accele: Move['accele']) => void) | null = null;
+  /**
+   * Orientation changed event
+   */
   public onOrientationChanged:
     | ((face: number, accele: Move['accele']) => void)
     | null = null;

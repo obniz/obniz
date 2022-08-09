@@ -4,10 +4,21 @@ const Base_1 = require("./Base");
 class Move extends Base_1.Base {
     constructor() {
         super(...arguments);
-        // Event Handler
+        /**
+         * Tapped event
+         */
         this.onTapped = null;
+        /**
+         * Shaked event
+         */
         this.onShaked = null;
+        /**
+         * Flipped event
+         */
         this.onFlipped = null;
+        /**
+         * Orientation changed event
+         */
         this.onOrientationChanged = null;
         this.accele = { x: 0, y: 0, z: 0 };
         // Constant Values

@@ -1,11 +1,32 @@
 import { Base } from './Base';
 export declare class GPIO extends Base {
+    /**
+     * Digital input event
+     */
     onDigitalInputEvent: ((pin: number, state: number) => void) | null;
+    /**
+     * Analog input event
+     */
     onAnalogInputEvent: ((level: number) => void) | null;
+    /**
+     * Digital input
+     */
     onDigitalInput: ((requestId: number, pin: number, state: number) => void) | null;
+    /**
+     * Analog input
+     */
     onAnalogInput: ((requestId: number, level: number, analogInputNotifyMode: number) => void) | null;
+    /**
+     * VCC output
+     */
     onVOutput: ((requestId: number, vccState: number) => void) | null;
+    /**
+     * Digital output
+     */
     onDigitalOutput: ((requestId: number, pin: number, state: number) => void) | null;
+    /**
+     * PWM output
+     */
     onPwm: ((requestId: number, level: number) => void) | null;
     DigitalPins: {
         p1: boolean;
@@ -61,11 +82,11 @@ export declare class GPIO extends Base {
      */
     notify(data: number[]): void;
     /**
-     * parseSetmodeCommand
+     * Parse to set-mode command
      *
-     * @param digitalInputLow2High {p1:boolean, p2:boolean, p3:boolean}
-     * @param digitalInputHigh2Low {p1:boolean, p2:boolean, p3:boolean}
-     * @param digitalOutput {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalInputLow2High { p1:boolean, p2:boolean, p3:boolean }
+     * @param digitalInputHigh2Low { p1:boolean, p2:boolean, p3:boolean }
+     * @param digitalOutput { p1:boolean, p2:boolean, p3:boolean }
      * @param pwmRatio 0-255
      * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
@@ -75,7 +96,7 @@ export declare class GPIO extends Base {
      */
     parseSetmodeCommand(digitalInputLow2High: GPIO['DigitalPins'], digitalInputHigh2Low: GPIO['DigitalPins'], digitalOutput: GPIO['DigitalPins'], pwmRatio: number, vcc: number, analogInputRangeUpper: number, analogInputRangeBottom: number, analogInputNotify: number): number[];
     /**
-     * parseSetDinCommand
+     * Parse to digital-input command
      *
      * @param pin
      * @param opt_requestId
@@ -83,7 +104,7 @@ export declare class GPIO extends Base {
      */
     parseDigitalInputCommand(pin: number, opt_requestId?: number): number[];
     /**
-     * parseSetAinCommand
+     * Parse to analog-input command
      *
      * @param analogInputNotifyMode
      * @param opt_requestId
@@ -91,14 +112,14 @@ export declare class GPIO extends Base {
      */
     parseAnalogInputCommand(analogInputNotifyMode: number, opt_requestId?: number): number[];
     /**
-     * parseSetVOutputCommand
+     * Parse to v-output command
      *
      * @param opt_requestId
      * @returns
      */
     parseVOutputCommand(opt_requestId?: number): number[];
     /**
-     * parseSetDoutCommand
+     * Parse to digital-output command
      *
      * @param pin
      * @param opt_requestId
@@ -106,7 +127,7 @@ export declare class GPIO extends Base {
      */
     parseDigitalOutputCommand(pin: number, opt_requestId?: number): number[];
     /**
-     * parseSetPWMCommand
+     * Parse to PWM command
      *
      * @param opt_requestId
      * @returns

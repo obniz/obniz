@@ -1,8 +1,20 @@
 import { Base } from './Base';
 export declare class Move extends Base {
+    /**
+     * Tapped event
+     */
     onTapped: ((accele: Move['accele']) => void) | null;
+    /**
+     * Shaked event
+     */
     onShaked: ((accele: Move['accele']) => void) | null;
+    /**
+     * Flipped event
+     */
     onFlipped: ((accele: Move['accele']) => void) | null;
+    /**
+     * Orientation changed event
+     */
     onOrientationChanged: ((face: number, accele: Move['accele']) => void) | null;
     protected accele: {
         x: number;

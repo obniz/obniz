@@ -2,7 +2,9 @@ import { Base } from './Base';
 import { MESHJsInvalidValueError } from '../util/Error';
 
 export class Brightness extends Base {
-  // Event Handler
+  /**
+   * Sensing event
+   */
   public onSensorEvent:
     | ((proximity: number, brightness: number, requestId: number) => void)
     | null = null;
@@ -53,7 +55,7 @@ export class Brightness extends Base {
   }
 
   /**
-   * parseSetmodeCommand
+   * Parse to set-mode command
    *
    * @param notifyMode
    * @param opt_requestId

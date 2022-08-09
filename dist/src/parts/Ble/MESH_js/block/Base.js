@@ -3,8 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Error_1 = require("../util/Error");
 class Base {
     constructor() {
-        // Event Handler
+        /**
+         * Battery level event
+         */
         this.onBatteryLevel = null;
+        /**
+         * Status button pressed event
+         */
         this.onStatusButtonPressed = null;
         // Constant Values
         this.UUIDS = {
@@ -36,14 +41,20 @@ class Base {
         this.versionRelease_ = -1;
         this.battery_ = -1;
     }
+    /**
+     * Get command of feature behavior
+     */
     get featureCommand() {
         return this.FEATURE_COMMAND_;
     }
+    /**
+     * Get battery level
+     */
     get battery() {
         return this.battery_;
     }
     /**
-     * indicate
+     * Set result of indicate
      *
      * @param data
      * @returns
@@ -73,7 +84,7 @@ class Base {
         this.updateStatusButton_(data);
     }
     /**
-     * checkVersion
+     * Check software version of MESH block
      *
      * @returns
      */

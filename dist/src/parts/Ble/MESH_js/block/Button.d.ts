@@ -1,7 +1,16 @@
 import { Base } from './Base';
 export declare class Button extends Base {
+    /**
+     * Single pressed event
+     */
     onSinglePressed: (() => void) | null;
+    /**
+     * Long pressed event
+     */
     onLongPressed: (() => void) | null;
+    /**
+     * Double pressed event
+     */
     onDoublePressed: (() => void) | null;
     private readonly DATA_LENGTH_;
     private readonly MESSAGE_TYPE_INDEX_;

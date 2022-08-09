@@ -15,7 +15,7 @@ export class LED extends Base {
   protected colors = { red: 0, green: 0, blue: 0 };
 
   /**
-   * parseLedCommand
+   * Parse to LED command
    *
    * @param colors
    * @param totalTime

@@ -4,7 +4,9 @@ const Base_1 = require("./Base");
 class Brightness extends Base_1.Base {
     constructor() {
         super(...arguments);
-        // Event Handler
+        /**
+         * Sensing event
+         */
         this.onSensorEvent = null;
         this.NOTIFY_MODE_MIN_ = Brightness.NotifyMode.STOP;
         this.NOTIFY_MODE_MAX_ = Brightness.NotifyMode.STOP +
@@ -42,7 +44,7 @@ class Brightness extends Base_1.Base {
         this.onSensorEvent(proximity, brightness, requestId);
     }
     /**
-     * parseSetmodeCommand
+     * Parse to set-mode command
      *
      * @param notifyMode
      * @param opt_requestId

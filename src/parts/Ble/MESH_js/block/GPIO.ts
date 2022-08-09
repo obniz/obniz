@@ -2,14 +2,25 @@ import { Base } from './Base';
 import { MESHJsInvalidValueError } from '../util/Error';
 
 export class GPIO extends Base {
-  // Event Handler
+  /**
+   * Digital input event
+   */
   public onDigitalInputEvent:
     | ((pin: number, state: number) => void)
     | null = null;
+  /**
+   * Analog input event
+   */
   public onAnalogInputEvent: ((level: number) => void) | null = null;
+  /**
+   * Digital input
+   */
   public onDigitalInput:
     | ((requestId: number, pin: number, state: number) => void)
     | null = null;
+  /**
+   * Analog input
+   */
   public onAnalogInput:
     | ((
         requestId: number,
@@ -17,12 +28,21 @@ export class GPIO extends Base {
         analogInputNotifyMode: number
       ) => void)
     | null = null;
+  /**
+   * VCC output
+   */
   public onVOutput:
     | ((requestId: number, vccState: number) => void)
     | null = null;
+  /**
+   * Digital output
+   */
   public onDigitalOutput:
     | ((requestId: number, pin: number, state: number) => void)
     | null = null;
+  /**
+   * PWM output
+   */
   public onPwm: ((requestId: number, level: number) => void) | null = null;
 
   public DigitalPins = { p1: false, p2: false, p3: false };
@@ -158,11 +178,11 @@ export class GPIO extends Base {
   }
 
   /**
-   * parseSetmodeCommand
+   * Parse to set-mode command
    *
-   * @param digitalInputLow2High {p1:boolean, p2:boolean, p3:boolean}
-   * @param digitalInputHigh2Low {p1:boolean, p2:boolean, p3:boolean}
-   * @param digitalOutput {p1:boolean, p2:boolean, p3:boolean}
+   * @param digitalInputLow2High { p1:boolean, p2:boolean, p3:boolean }
+   * @param digitalInputHigh2Low { p1:boolean, p2:boolean, p3:boolean }
+   * @param digitalOutput { p1:boolean, p2:boolean, p3:boolean }
    * @param pwmRatio 0-255
    * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
    * @param analogInputRangeUpper 0-255(0.00-3.00[V])
@@ -228,7 +248,7 @@ export class GPIO extends Base {
   }
 
   /**
-   * parseSetDinCommand
+   * Parse to digital-input command
    *
    * @param pin
    * @param opt_requestId
@@ -239,7 +259,7 @@ export class GPIO extends Base {
   }
 
   /**
-   * parseSetAinCommand
+   * Parse to analog-input command
    *
    * @param analogInputNotifyMode
    * @param opt_requestId
@@ -257,7 +277,7 @@ export class GPIO extends Base {
   }
 
   /**
-   * parseSetVOutputCommand
+   * Parse to v-output command
    *
    * @param opt_requestId
    * @returns
@@ -268,7 +288,7 @@ export class GPIO extends Base {
   }
 
   /**
-   * parseSetDoutCommand
+   * Parse to digital-output command
    *
    * @param pin
    * @param opt_requestId
@@ -279,7 +299,7 @@ export class GPIO extends Base {
   }
 
   /**
-   * parseSetPWMCommand
+   * Parse to PWM command
    *
    * @param opt_requestId
    * @returns

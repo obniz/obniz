@@ -2,7 +2,9 @@ import { Base } from './Base';
 import { MESHJsInvalidValueError } from '../util/Error';
 
 export class TempHumid extends Base {
-  // Event Handler
+  /**
+   * Sensing event
+   */
   public onSensorEvent:
     | ((temperature: number, humidity: number, requestId: number) => void)
     | null = null;
@@ -74,7 +76,7 @@ export class TempHumid extends Base {
   }
 
   /**
-   * parseSetmodeCommand
+   * Parse to set-mode command
    *
    * @param temperatureRangeUpper
    * @param temperatureRangeBottom

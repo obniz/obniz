@@ -1,5 +1,8 @@
 import { Base } from './Base';
 export declare class Brightness extends Base {
+    /**
+     * Sensing event
+     */
     onSensorEvent: ((proximity: number, brightness: number, requestId: number) => void) | null;
     static readonly NotifyMode: {
         readonly STOP: 0;
@@ -23,7 +26,7 @@ export declare class Brightness extends Base {
      */
     notify(data: number[]): void;
     /**
-     * parseSetmodeCommand
+     * Parse to set-mode command
      *
      * @param notifyMode
      * @param opt_requestId

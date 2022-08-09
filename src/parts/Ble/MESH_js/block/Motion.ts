@@ -1,7 +1,9 @@
 import { Base } from './Base';
 
 export class Motion extends Base {
-  // Event Handler
+  /**
+   * Sensing event
+   */
   public onSensorEvent:
     | ((motionState: number, notifyMode: number, requestId: number) => void)
     | null = null;
@@ -45,6 +47,7 @@ export class Motion extends Base {
   }
 
   /**
+   * Parse to set-mode command
    *
    * @param notifyMode
    * @param opt_detectionTime

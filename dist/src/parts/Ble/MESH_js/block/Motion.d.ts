@@ -1,5 +1,8 @@
 import { Base } from './Base';
 export declare class Motion extends Base {
+    /**
+     * Sensing event
+     */
     onSensorEvent: ((motionState: number, notifyMode: number, requestId: number) => void) | null;
     static readonly NotifyMode: {
         readonly DETECTED: 1;
@@ -22,6 +25,7 @@ export declare class Motion extends Base {
      */
     notify(data: number[]): void;
     /**
+     * Parse to set-mode command
      *
      * @param notifyMode
      * @param opt_detectionTime

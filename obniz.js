@@ -27770,8 +27770,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/util/Error.js");
 class Base {
     constructor() {
-        // Event Handler
+        /**
+         * Battery level event
+         */
         this.onBatteryLevel = null;
+        /**
+         * Status button pressed event
+         */
         this.onStatusButtonPressed = null;
         // Constant Values
         this.UUIDS = {
@@ -27803,14 +27808,20 @@ class Base {
         this.versionRelease_ = -1;
         this.battery_ = -1;
     }
+    /**
+     * Get command of feature behavior
+     */
     get featureCommand() {
         return this.FEATURE_COMMAND_;
     }
+    /**
+     * Get battery level
+     */
     get battery() {
         return this.battery_;
     }
     /**
-     * indicate
+     * Set result of indicate
      *
      * @param data
      * @returns
@@ -27840,7 +27851,7 @@ class Base {
         this.updateStatusButton_(data);
     }
     /**
-     * checkVersion
+     * Check software version of MESH block
      *
      * @returns
      */
@@ -27946,7 +27957,9 @@ const Base_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/block/Base.js")
 class Brightness extends Base_1.Base {
     constructor() {
         super(...arguments);
-        // Event Handler
+        /**
+         * Sensing event
+         */
         this.onSensorEvent = null;
         this.NOTIFY_MODE_MIN_ = Brightness.NotifyMode.STOP;
         this.NOTIFY_MODE_MAX_ = Brightness.NotifyMode.STOP +
@@ -27984,7 +27997,7 @@ class Brightness extends Base_1.Base {
         this.onSensorEvent(proximity, brightness, requestId);
     }
     /**
-     * parseSetmodeCommand
+     * Parse to set-mode command
      *
      * @param notifyMode
      * @param opt_requestId
@@ -28028,9 +28041,17 @@ const Base_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/block/Base.js")
 class Button extends Base_1.Base {
     constructor() {
         super(...arguments);
-        // Event Handler
+        /**
+         * Single pressed event
+         */
         this.onSinglePressed = null;
+        /**
+         * Long pressed event
+         */
         this.onLongPressed = null;
+        /**
+         * Double pressed event
+         */
         this.onDoublePressed = null;
         // Constant Values
         this.DATA_LENGTH_ = 4;
@@ -28099,13 +28120,33 @@ const Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/util/Error.js"
 class GPIO extends Base_1.Base {
     constructor() {
         super(...arguments);
-        // Event Handler
+        /**
+         * Digital input event
+         */
         this.onDigitalInputEvent = null;
+        /**
+         * Analog input event
+         */
         this.onAnalogInputEvent = null;
+        /**
+         * Digital input
+         */
         this.onDigitalInput = null;
+        /**
+         * Analog input
+         */
         this.onAnalogInput = null;
+        /**
+         * VCC output
+         */
         this.onVOutput = null;
+        /**
+         * Digital output
+         */
         this.onDigitalOutput = null;
+        /**
+         * PWM output
+         */
         this.onPwm = null;
         this.DigitalPins = { p1: false, p2: false, p3: false };
         this.MESSAGE_TYPE_ID_ = 1;
@@ -28203,11 +28244,11 @@ class GPIO extends Base_1.Base {
         }
     }
     /**
-     * parseSetmodeCommand
+     * Parse to set-mode command
      *
-     * @param digitalInputLow2High {p1:boolean, p2:boolean, p3:boolean}
-     * @param digitalInputHigh2Low {p1:boolean, p2:boolean, p3:boolean}
-     * @param digitalOutput {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalInputLow2High { p1:boolean, p2:boolean, p3:boolean }
+     * @param digitalInputHigh2Low { p1:boolean, p2:boolean, p3:boolean }
+     * @param digitalOutput { p1:boolean, p2:boolean, p3:boolean }
      * @param pwmRatio 0-255
      * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
@@ -28249,7 +28290,7 @@ class GPIO extends Base_1.Base {
         return data;
     }
     /**
-     * parseSetDinCommand
+     * Parse to digital-input command
      *
      * @param pin
      * @param opt_requestId
@@ -28259,7 +28300,7 @@ class GPIO extends Base_1.Base {
         return this.parseCommand_(this.DIGITAL_IN_ID_, pin, opt_requestId);
     }
     /**
-     * parseSetAinCommand
+     * Parse to analog-input command
      *
      * @param analogInputNotifyMode
      * @param opt_requestId
@@ -28269,7 +28310,7 @@ class GPIO extends Base_1.Base {
         return this.parseCommand_(this.ANALOG_IN_ID_, analogInputNotifyMode, opt_requestId);
     }
     /**
-     * parseSetVOutputCommand
+     * Parse to v-output command
      *
      * @param opt_requestId
      * @returns
@@ -28279,7 +28320,7 @@ class GPIO extends Base_1.Base {
         return this.parseCommand_(this.V_OUT_ID_, PIN, opt_requestId);
     }
     /**
-     * parseSetDoutCommand
+     * Parse to digital-output command
      *
      * @param pin
      * @param opt_requestId
@@ -28289,7 +28330,7 @@ class GPIO extends Base_1.Base {
         return this.parseCommand_(this.DIGITAL_OUT_ID_, pin, opt_requestId);
     }
     /**
-     * parseSetPWMCommand
+     * Parse to PWM command
      *
      * @param opt_requestId
      * @returns
@@ -28363,7 +28404,7 @@ class LED extends Base_1.Base {
         this.colors = { red: 0, green: 0, blue: 0 };
     }
     /**
-     * parseLedCommand
+     * Parse to LED command
      *
      * @param colors
      * @param totalTime
@@ -28428,7 +28469,9 @@ const Base_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/block/Base.js")
 class Motion extends Base_1.Base {
     constructor() {
         super(...arguments);
-        // Event Handler
+        /**
+         * Sensing event
+         */
         this.onSensorEvent = null;
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
@@ -28456,6 +28499,7 @@ class Motion extends Base_1.Base {
         this.onSensorEvent(motionState, notifyMode, requestId);
     }
     /**
+     * Parse to set-mode command
      *
      * @param notifyMode
      * @param opt_detectionTime
@@ -28517,10 +28561,21 @@ const Base_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/block/Base.js")
 class Move extends Base_1.Base {
     constructor() {
         super(...arguments);
-        // Event Handler
+        /**
+         * Tapped event
+         */
         this.onTapped = null;
+        /**
+         * Shaked event
+         */
         this.onShaked = null;
+        /**
+         * Flipped event
+         */
         this.onFlipped = null;
+        /**
+         * Orientation changed event
+         */
         this.onOrientationChanged = null;
         this.accele = { x: 0, y: 0, z: 0 };
         // Constant Values
@@ -28597,7 +28652,9 @@ const Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/util/Error.js"
 class TempHumid extends Base_1.Base {
     constructor() {
         super(...arguments);
-        // Event Handler
+        /**
+         * Sensing event
+         */
         this.onSensorEvent = null;
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
@@ -28641,7 +28698,7 @@ class TempHumid extends Base_1.Base {
         this.onSensorEvent(temperature, humidity, requestId);
     }
     /**
-     * parseSetmodeCommand
+     * Parse to set-mode command
      *
      * @param temperatureRangeUpper
      * @param temperatureRangeBottom

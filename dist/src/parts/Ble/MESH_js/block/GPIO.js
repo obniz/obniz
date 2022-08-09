@@ -5,13 +5,33 @@ const Error_1 = require("../util/Error");
 class GPIO extends Base_1.Base {
     constructor() {
         super(...arguments);
-        // Event Handler
+        /**
+         * Digital input event
+         */
         this.onDigitalInputEvent = null;
+        /**
+         * Analog input event
+         */
         this.onAnalogInputEvent = null;
+        /**
+         * Digital input
+         */
         this.onDigitalInput = null;
+        /**
+         * Analog input
+         */
         this.onAnalogInput = null;
+        /**
+         * VCC output
+         */
         this.onVOutput = null;
+        /**
+         * Digital output
+         */
         this.onDigitalOutput = null;
+        /**
+         * PWM output
+         */
         this.onPwm = null;
         this.DigitalPins = { p1: false, p2: false, p3: false };
         this.MESSAGE_TYPE_ID_ = 1;
@@ -109,11 +129,11 @@ class GPIO extends Base_1.Base {
         }
     }
     /**
-     * parseSetmodeCommand
+     * Parse to set-mode command
      *
-     * @param digitalInputLow2High {p1:boolean, p2:boolean, p3:boolean}
-     * @param digitalInputHigh2Low {p1:boolean, p2:boolean, p3:boolean}
-     * @param digitalOutput {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalInputLow2High { p1:boolean, p2:boolean, p3:boolean }
+     * @param digitalInputHigh2Low { p1:boolean, p2:boolean, p3:boolean }
+     * @param digitalOutput { p1:boolean, p2:boolean, p3:boolean }
      * @param pwmRatio 0-255
      * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
@@ -155,7 +175,7 @@ class GPIO extends Base_1.Base {
         return data;
     }
     /**
-     * parseSetDinCommand
+     * Parse to digital-input command
      *
      * @param pin
      * @param opt_requestId
@@ -165,7 +185,7 @@ class GPIO extends Base_1.Base {
         return this.parseCommand_(this.DIGITAL_IN_ID_, pin, opt_requestId);
     }
     /**
-     * parseSetAinCommand
+     * Parse to analog-input command
      *
      * @param analogInputNotifyMode
      * @param opt_requestId
@@ -175,7 +195,7 @@ class GPIO extends Base_1.Base {
         return this.parseCommand_(this.ANALOG_IN_ID_, analogInputNotifyMode, opt_requestId);
     }
     /**
-     * parseSetVOutputCommand
+     * Parse to v-output command
      *
      * @param opt_requestId
      * @returns
@@ -185,7 +205,7 @@ class GPIO extends Base_1.Base {
         return this.parseCommand_(this.V_OUT_ID_, PIN, opt_requestId);
     }
     /**
-     * parseSetDoutCommand
+     * Parse to digital-output command
      *
      * @param pin
      * @param opt_requestId
@@ -195,7 +215,7 @@ class GPIO extends Base_1.Base {
         return this.parseCommand_(this.DIGITAL_OUT_ID_, pin, opt_requestId);
     }
     /**
-     * parseSetPWMCommand
+     * Parse to PWM command
      *
      * @param opt_requestId
      * @returns

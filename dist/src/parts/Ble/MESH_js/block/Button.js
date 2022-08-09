@@ -4,9 +4,17 @@ const Base_1 = require("./Base");
 class Button extends Base_1.Base {
     constructor() {
         super(...arguments);
-        // Event Handler
+        /**
+         * Single pressed event
+         */
         this.onSinglePressed = null;
+        /**
+         * Long pressed event
+         */
         this.onLongPressed = null;
+        /**
+         * Double pressed event
+         */
         this.onDoublePressed = null;
         // Constant Values
         this.DATA_LENGTH_ = 4;
