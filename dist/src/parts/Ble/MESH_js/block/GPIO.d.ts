@@ -57,7 +57,6 @@ export declare class GPIO extends Base {
         readonly HIGH_2_LOW: 2;
     };
     static readonly Vcc: {
-        readonly AUTO: 0;
         readonly ON: 1;
         readonly OFF: 2;
     };
@@ -88,7 +87,7 @@ export declare class GPIO extends Base {
      * @param digitalInputHigh2Low { p1:boolean, p2:boolean, p3:boolean }
      * @param digitalOutput { p1:boolean, p2:boolean, p3:boolean }
      * @param pwmRatio 0-255
-     * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
+     * @param vcc Vcc.ON or Vcc.OFF
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
      * @param analogInputRangeBottom 0-255(0.00-3.00[V])
      * @param analogInputNotify AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD

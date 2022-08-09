@@ -22,7 +22,7 @@ class MESH_100GP extends MESH_1.MESH {
         this.digitalInputHigh2Low_ = { p1: false, p2: false, p3: false };
         this.digitalOutput_ = { p1: false, p2: false, p3: false };
         this.pwmRatio_ = 0;
-        this.vcc_ = MESH_100GP.Vcc.AUTO;
+        this.vcc_ = MESH_100GP.Vcc.OFF;
         this.analogInputRangeUpper_ = 0;
         this.analogInputRangeBottom_ = 0;
         this.analogInputCondition_ = MESH_100GP.AnalogInputEventCondition.NOT_NOTIFY;
@@ -113,7 +113,7 @@ class MESH_100GP extends MESH_1.MESH {
      * @param digitalInputHigh2Low {p1:boolean, p2:boolean, p3:boolean}
      * @param digitalOutput {p1:boolean, p2:boolean, p3:boolean}
      * @param pwmRatio 0-255
-     * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
+     * @param vcc Vcc.ON or Vcc.OFF
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
      * @param analogInputRangeBottom 0-255(0.00-3.00[V])
      * @param analogInputCondition AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
@@ -184,7 +184,7 @@ class MESH_100GP extends MESH_1.MESH {
     /**
      * setVOutput
      *
-     * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
+     * @param vcc Vcc.ON or Vcc.OFF
      */
     setVOutput(vcc) {
         const gpioBlock = this.meshBlock;

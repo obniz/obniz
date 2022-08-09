@@ -57,7 +57,6 @@ async function sampleGP(peripheral) {
   let _dout = { p1:true, p2:false, p3:true };
   const _pwm = 0;//200;
   const _vcc =
-    // mesh_gp.Vcc.AUTO;
     // mesh_gp.Vcc.ON;
     mesh_gp.Vcc.OFF;
   const _condition =

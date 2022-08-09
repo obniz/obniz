@@ -135,7 +135,7 @@ class GPIO extends Base_1.Base {
      * @param digitalInputHigh2Low { p1:boolean, p2:boolean, p3:boolean }
      * @param digitalOutput { p1:boolean, p2:boolean, p3:boolean }
      * @param pwmRatio 0-255
-     * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
+     * @param vcc Vcc.ON or Vcc.OFF
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
      * @param analogInputRangeBottom 0-255(0.00-3.00[V])
      * @param analogInputNotify AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
@@ -146,7 +146,7 @@ class GPIO extends Base_1.Base {
         const PWM_MIN = 0;
         const PWM_MAX = 255;
         this.checkRange(pwmRatio, PWM_MIN, PWM_MAX, 'pwmRatio');
-        if (vcc !== GPIO.Vcc.AUTO && vcc !== GPIO.Vcc.ON && vcc !== GPIO.Vcc.OFF) {
+        if (vcc !== GPIO.Vcc.ON && vcc !== GPIO.Vcc.OFF) {
             throw new Error_1.MESHJsInvalidValueError('vcc');
         }
         const ANALOG_IN_RANGE_MIN = 0;
@@ -259,7 +259,6 @@ GPIO.State = {
     HIGH_2_LOW: 2,
 };
 GPIO.Vcc = {
-    AUTO: 0,
     ON: 1,
     OFF: 2,
 };
