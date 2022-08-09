@@ -102,8 +102,8 @@ export class GPIO extends Base {
     if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_) {
       return;
     }
-    const _receivedId = data[1];
-    switch (_receivedId) {
+    const _receivedEventId = data[1];
+    switch (_receivedEventId) {
       case this.DIGITAL_IN_EVENT_ID_: {
         if (typeof this.onDigitalInputEvent !== 'function') {
           return;
@@ -126,15 +126,15 @@ export class GPIO extends Base {
       }
     }
 
-    const _reqId = data[2];
-    switch (_receivedId) {
+    const _requestId = data[2];
+    switch (_receivedEventId) {
       case this.DIGITAL_IN_ID_: {
         if (typeof this.onDigitalInput !== 'function') {
           return;
         }
         const pin = data[3];
         const state = data[4];
-        this.onDigitalInput(_reqId, pin, state);
+        this.onDigitalInput(_requestId, pin, state);
         return;
       }
       case this.ANALOG_IN_ID_: {
@@ -143,7 +143,7 @@ export class GPIO extends Base {
         }
         const level = data[4];
         const analogInputNotifyMode = data[5];
-        this.onAnalogInput(_reqId, level, analogInputNotifyMode);
+        this.onAnalogInput(_requestId, level, analogInputNotifyMode);
         return;
       }
       case this.V_OUT_ID_: {
@@ -151,7 +151,7 @@ export class GPIO extends Base {
           return;
         }
         const vccState = data[4];
-        this.onVOutput(_reqId, vccState);
+        this.onVOutput(_requestId, vccState);
         return;
       }
       case this.DIGITAL_OUT_ID_: {
@@ -160,7 +160,7 @@ export class GPIO extends Base {
         }
         const pin = data[3];
         const state = data[4];
-        this.onDigitalOutput(_reqId, pin, state);
+        this.onDigitalOutput(_requestId, pin, state);
         return;
       }
       case this.PWM_ID_: {
@@ -168,7 +168,7 @@ export class GPIO extends Base {
           return;
         }
         const level = data[4];
-        this.onPwm(_reqId, level);
+        this.onPwm(_requestId, level);
         return;
       }
       default: {
