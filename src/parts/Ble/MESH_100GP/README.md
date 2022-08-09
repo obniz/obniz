@@ -101,4 +101,4 @@ await obniz.ble.scan.startWait();
 
 ```
 
-For more information, click [here]().
+For more information, click [here](https://developer.meshprj.com/).
