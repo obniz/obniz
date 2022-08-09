@@ -23,7 +23,6 @@ export class Move extends Base {
   protected accele = { x: 0, y: 0, z: 0 };
 
   // Constant Values
-  private readonly MESSAGE_TYPE_INDEX_: number = 0 as const;
   private readonly TYPE_INDEX_: number = 1 as const;
   private readonly MESSAGE_TYPE_ID_: number = 1 as const;
   private readonly DATA_LENGTH_ = 17 as const;
@@ -44,7 +43,7 @@ export class Move extends Base {
     if (data.length !== this.DATA_LENGTH_) {
       return;
     }
-    if (data[this.MESSAGE_TYPE_INDEX_] !== this.MESSAGE_TYPE_ID_) {
+    if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_) {
       return;
     }
 

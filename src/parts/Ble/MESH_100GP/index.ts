@@ -188,8 +188,8 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   /**
    * setModeDigitalInput
    *
-   * @param digitalInputLow2High {p1:boolean, p2:boolean, p3:boolean}
-   * @param digitalInputHigh2Low {p1:boolean, p2:boolean, p3:boolean}
+   * @param digitalInputLow2High { p1:boolean, p2:boolean, p3:boolean }
+   * @param digitalInputHigh2Low { p1:boolean, p2:boolean, p3:boolean }
    */
   public setModeDigitalInput(
     digitalInputLow2High: MESH_100GP['DigitalPins'],
@@ -243,7 +243,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   /**
    * setDigitalOutput
    *
-   * @param digitalOutput {p1:boolean, p2:boolean, p3:boolean}
+   * @param digitalOutput { p1:boolean, p2:boolean, p3:boolean }
    */
   public setDigitalOutput(digitalOutput: MESH_100GP['DigitalPins']): void {
     const gpioBlock = this.meshBlock as GPIO;

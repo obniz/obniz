@@ -10,15 +10,15 @@ export class Motion extends Base {
 
   // Constant Values
   public static readonly NotifyMode = {
-    DETECTED: 0x01 as const,
-    NOT_DETECTED: 0x02 as const,
-    ONCE: 0x10 as const,
-    ALWAYS: 0x20 as const,
+    DETECTED: 1 as const,
+    NOT_DETECTED: 2 as const,
+    ONCE: 16 as const,
+    ALWAYS: 32 as const,
   } as const;
   public static readonly MotionState = {
-    SETUP: 0x00 as const,
-    DETECTED: 0x01 as const,
-    NOT_DETECTED: 0x02 as const,
+    SETUP: 0 as const,
+    DETECTED: 1 as const,
+    NOT_DETECTED: 2 as const,
   } as const;
   private readonly MESSAGE_TYPE_ID_: number = 1 as const;
   private readonly EVENT_TYPE_ID_: number = 0 as const;
@@ -31,10 +31,10 @@ export class Motion extends Base {
    */
   public notify(data: number[]): void {
     super.notify(data);
-    if (data[0] !== this.MESSAGE_TYPE_ID_) {
+    if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_) {
       return;
     }
-    if (data[1] !== this.EVENT_TYPE_ID_) {
+    if (data[this.EVENT_TYPE_ID_INDEX] !== this.EVENT_TYPE_ID_) {
       return;
     }
     const requestId = data[2];

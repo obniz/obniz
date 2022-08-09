@@ -13,8 +13,6 @@ export declare class Brightness extends Base {
     };
     private readonly NOTIFY_MODE_MIN_;
     private readonly NOTIFY_MODE_MAX_;
-    private readonly MESSAGE_TYPE_INDEX_;
-    private readonly EVENT_TYPE_INDEX_;
     private readonly MESSAGE_TYPE_ID_;
     private readonly EVENT_TYPE_ID_;
     private readonly LX_;

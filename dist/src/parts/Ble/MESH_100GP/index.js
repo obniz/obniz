@@ -134,8 +134,8 @@ class MESH_100GP extends MESH_1.MESH {
     /**
      * setModeDigitalInput
      *
-     * @param digitalInputLow2High {p1:boolean, p2:boolean, p3:boolean}
-     * @param digitalInputHigh2Low {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalInputLow2High { p1:boolean, p2:boolean, p3:boolean }
+     * @param digitalInputHigh2Low { p1:boolean, p2:boolean, p3:boolean }
      */
     setModeDigitalInput(digitalInputLow2High, digitalInputHigh2Low) {
         const gpioBlock = this.meshBlock;
@@ -162,7 +162,7 @@ class MESH_100GP extends MESH_1.MESH {
     /**
      * setDigitalOutput
      *
-     * @param digitalOutput {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalOutput { p1:boolean, p2:boolean, p3:boolean }
      */
     setDigitalOutput(digitalOutput) {
         const gpioBlock = this.meshBlock;

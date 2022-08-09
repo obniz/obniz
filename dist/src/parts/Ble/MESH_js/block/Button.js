@@ -18,8 +18,6 @@ class Button extends Base_1.Base {
         this.onDoublePressed = null;
         // Constant Values
         this.DATA_LENGTH_ = 4;
-        this.MESSAGE_TYPE_INDEX_ = 0;
-        this.EVENT_TYPE_ID_INDEX_ = 1;
         this.TYPE_INDEX_ = 2;
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
@@ -40,10 +38,10 @@ class Button extends Base_1.Base {
         if (data.length !== this.DATA_LENGTH_) {
             return;
         }
-        if (data[this.MESSAGE_TYPE_INDEX_] !== this.MESSAGE_TYPE_ID_) {
+        if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
-        if (data[this.EVENT_TYPE_ID_INDEX_] !== this.EVENT_TYPE_ID_) {
+        if (data[this.EVENT_TYPE_ID_INDEX] !== this.EVENT_TYPE_ID_) {
             return;
         }
         switch (data[this.TYPE_INDEX_]) {
