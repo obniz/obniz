@@ -3,8 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Error_1 = require("../util/Error");
 class Base {
     constructor() {
-        // Event Handler
+        /**
+         * Battery level event
+         */
         this.onBatteryLevel = null;
+        /**
+         * Status button pressed event
+         */
         this.onStatusButtonPressed = null;
         // Constant Values
         this.UUIDS = {
@@ -16,52 +21,64 @@ class Base {
                 WRITE_WO_RESPONSE: '72c90002-57a9-4d40-b746-534e22ec9f9e',
             },
         };
+        this.MESSAGE_TYPE_ID_INDEX = 0;
+        this.EVENT_TYPE_ID_INDEX = 1;
         this.FEATURE_COMMAND_ = [
             0,
             2,
             1,
             3,
         ];
-        this.MESSAGE_TYPE_ID_INDEX = 0;
-        this.EVENT_TYPE_ID_INDEX = 1;
-        this.VERSION_MAJOR_INDEX_ = 7;
-        this.VERSION_MINOR_INDEX_ = 8;
-        this.VERSION_RELEASE_INDEX_ = 9;
-        this.BATTERY_INDEX_ = 14;
-        this.MESSAGE_TYPE_ID_VALUE = 0;
-        this.EVENT_TYPE_ID_VALUE = 2;
-        this.INDICATE_LENGTH = 16;
+        this.MESSAGE_TYPE_ID_VALUE_ = 0;
+        this.INDICATE_EVENT_TYPE_ID_VALUE_ = 2;
+        this.INDICATE_LENGTH_ = 16;
+        this.INDICATE_VERSION_MAJOR_INDEX_ = 7;
+        this.INDICATE_VERSION_MINOR_INDEX_ = 8;
+        this.INDICATE_VERSION_RELEASE_INDEX_ = 9;
+        this.INDICATE_BATTERY_INDEX_ = 14;
+        this.REGULARLY_EVENT_TYPE_ID_VALUE_ = 0;
+        this.REGULARLY_LENGTH_ = 4;
+        this.REGULARLY_BATTERY_INDEX_ = 2;
+        this.STATUSBUTTON_PRESSED_EVENT_TYPE_ID_VALUE_ = 1;
+        this.STATUSBUTTON_PRESSED_LENGTH_ = 4;
+        this.STATUSBAR_LED_EVENT_TYPE_ID_VALUE_ = 0;
         this.versionMajor_ = -1;
         this.versionMinor_ = -1;
         this.versionRelease_ = -1;
         this.battery_ = -1;
     }
+    /**
+     * Get command of feature behavior
+     */
     get featureCommand() {
         return this.FEATURE_COMMAND_;
     }
+    /**
+     * Get battery level
+     */
     get battery() {
         return this.battery_;
     }
     /**
-     * indicate
+     * Set result of indicate
      *
      * @param data
      * @returns
      */
     indicate(data) {
-        if (data.length !== this.INDICATE_LENGTH) {
+        if (data.length !== this.INDICATE_LENGTH_) {
             return;
         }
-        if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_VALUE) {
+        if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_VALUE_) {
             return;
         }
-        if (data[this.EVENT_TYPE_ID_INDEX] !== this.EVENT_TYPE_ID_VALUE) {
+        if (data[this.EVENT_TYPE_ID_INDEX] !== this.INDICATE_EVENT_TYPE_ID_VALUE_) {
             return;
         }
-        this.battery_ = data[this.BATTERY_INDEX_];
-        this.versionMajor_ = data[this.VERSION_MAJOR_INDEX_];
-        this.versionMinor_ = data[this.VERSION_MINOR_INDEX_];
-        this.versionRelease_ = data[this.VERSION_RELEASE_INDEX_];
+        this.battery_ = data[this.INDICATE_BATTERY_INDEX_];
+        this.versionMajor_ = data[this.INDICATE_VERSION_MAJOR_INDEX_];
+        this.versionMinor_ = data[this.INDICATE_VERSION_MINOR_INDEX_];
+        this.versionRelease_ = data[this.INDICATE_VERSION_RELEASE_INDEX_];
     }
     /**
      * notify
@@ -73,7 +90,29 @@ class Base {
         this.updateStatusButton_(data);
     }
     /**
-     * checkVersion
+     * Parse to statusbar LED command
+     *
+     * @param power
+     * @param red
+     * @param green
+     * @param blue
+     * @returns
+     */
+    parseStatusbarLedCommand(power, red, green, blue) {
+        // Generate Command
+        const data = [
+            this.MESSAGE_TYPE_ID_VALUE_,
+            this.STATUSBAR_LED_EVENT_TYPE_ID_VALUE_,
+            Number(red),
+            Number(green),
+            Number(blue),
+            Number(power),
+        ];
+        data.push(this.checkSum(data));
+        return data;
+    }
+    /**
+     * Check software version of MESH block
      *
      * @returns
      */
@@ -125,19 +164,19 @@ class Base {
         return val + (val < 0 ? TWO_BYTE_PLUS1 : 0);
     }
     updateBattery_(data) {
-        if (data.length !== 4) {
+        if (data.length !== this.REGULARLY_LENGTH_) {
             return false;
         }
-        if (data[0] !== 0) {
+        if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_VALUE_) {
             return false;
         }
-        if (data[1] !== 0) {
+        if (data[this.EVENT_TYPE_ID_INDEX] !== this.REGULARLY_EVENT_TYPE_ID_VALUE_) {
             return false;
         }
         // if (data[2] === this.battery) {
         //   return;
         // }
-        this.battery_ = data[2];
+        this.battery_ = data[this.REGULARLY_BATTERY_INDEX_];
         if (typeof this.onBatteryLevel !== 'function') {
             return false;
         }
@@ -145,13 +184,14 @@ class Base {
         return true;
     }
     updateStatusButton_(data) {
-        if (data.length !== 4) {
+        if (data.length !== this.STATUSBUTTON_PRESSED_LENGTH_) {
             return false;
         }
-        if (data[0] !== 0) {
+        if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_VALUE_) {
             return false;
         }
-        if (data[1] !== 1) {
+        if (data[this.EVENT_TYPE_ID_INDEX] !==
+            this.STATUSBUTTON_PRESSED_EVENT_TYPE_ID_VALUE_) {
             return false;
         }
         if (data[2] !== 0) {

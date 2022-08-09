@@ -27021,10 +27021,10 @@ class MESH_100GP extends MESH_1.MESH {
         this.digitalInputHigh2Low_ = { p1: false, p2: false, p3: false };
         this.digitalOutput_ = { p1: false, p2: false, p3: false };
         this.pwmRatio_ = 0;
-        this.vcc_ = MESH_100GP.Vcc.AUTO;
+        this.vcc_ = MESH_100GP.Vcc.OFF;
         this.analogInputRangeUpper_ = 0;
         this.analogInputRangeBottom_ = 0;
-        this.analogInputCondition_ = MESH_100GP.AnalogInEventCondition.NOT_NOTIFY;
+        this.analogInputCondition_ = MESH_100GP.AnalogInputEventCondition.NOT_NOTIFY;
         this.retDigitalInState_ = -1;
         this.retPwm_ = -1;
         this.retVccState_ = -1;
@@ -27112,10 +27112,10 @@ class MESH_100GP extends MESH_1.MESH {
      * @param digitalInputHigh2Low {p1:boolean, p2:boolean, p3:boolean}
      * @param digitalOutput {p1:boolean, p2:boolean, p3:boolean}
      * @param pwmRatio 0-255
-     * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
+     * @param vcc Vcc.ON or Vcc.OFF
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
      * @param analogInputRangeBottom 0-255(0.00-3.00[V])
-     * @param analogInputCondition AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+     * @param analogInputCondition AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
      */
     setMode(digitalInputLow2High, digitalInputHigh2Low, digitalOutput, pwmRatio, vcc, analogInputRangeUpper, analogInputRangeBottom, analogInputCondition) {
         const gpioBlock = this.meshBlock;
@@ -27133,8 +27133,8 @@ class MESH_100GP extends MESH_1.MESH {
     /**
      * setModeDigitalInput
      *
-     * @param digitalInputLow2High {p1:boolean, p2:boolean, p3:boolean}
-     * @param digitalInputHigh2Low {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalInputLow2High { p1:boolean, p2:boolean, p3:boolean }
+     * @param digitalInputHigh2Low { p1:boolean, p2:boolean, p3:boolean }
      */
     setModeDigitalInput(digitalInputLow2High, digitalInputHigh2Low) {
         const gpioBlock = this.meshBlock;
@@ -27148,7 +27148,7 @@ class MESH_100GP extends MESH_1.MESH {
      *
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
      * @param analogInputRangeBottom 0-255(0.00-3.00[V])
-     * @param analogInputCondition AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+     * @param analogInputCondition AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
      */
     setModeAnalogInput(analogInputRangeUpper, analogInputRangeBottom, analogInputCondition) {
         const gpioBlock = this.meshBlock;
@@ -27161,7 +27161,7 @@ class MESH_100GP extends MESH_1.MESH {
     /**
      * setDigitalOutput
      *
-     * @param digitalOutput {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalOutput { p1:boolean, p2:boolean, p3:boolean }
      */
     setDigitalOutput(digitalOutput) {
         const gpioBlock = this.meshBlock;
@@ -27183,7 +27183,7 @@ class MESH_100GP extends MESH_1.MESH {
     /**
      * setVOutput
      *
-     * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
+     * @param vcc Vcc.ON or Vcc.OFF
      */
     setVOutput(vcc) {
         const gpioBlock = this.meshBlock;
@@ -27291,7 +27291,7 @@ class MESH_100GP extends MESH_1.MESH {
 exports.default = MESH_100GP;
 MESH_100GP.PartsName = 'MESH_100GP';
 MESH_100GP.PREFIX = 'MESH-100GP';
-MESH_100GP.AnalogInEventCondition = GPIO_1.GPIO.AnalogInEventCondition;
+MESH_100GP.AnalogInputEventCondition = GPIO_1.GPIO.AnalogInputEventCondition;
 MESH_100GP.AnalogInputNotifyMode = GPIO_1.GPIO.AnalogInputNotifyMode;
 MESH_100GP.Pin = GPIO_1.GPIO.Pin;
 MESH_100GP.State = GPIO_1.GPIO.State;
@@ -27770,8 +27770,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/util/Error.js");
 class Base {
     constructor() {
-        // Event Handler
+        /**
+         * Battery level event
+         */
         this.onBatteryLevel = null;
+        /**
+         * Status button pressed event
+         */
         this.onStatusButtonPressed = null;
         // Constant Values
         this.UUIDS = {
@@ -27783,52 +27788,64 @@ class Base {
                 WRITE_WO_RESPONSE: '72c90002-57a9-4d40-b746-534e22ec9f9e',
             },
         };
+        this.MESSAGE_TYPE_ID_INDEX = 0;
+        this.EVENT_TYPE_ID_INDEX = 1;
         this.FEATURE_COMMAND_ = [
             0,
             2,
             1,
             3,
         ];
-        this.MESSAGE_TYPE_ID_INDEX = 0;
-        this.EVENT_TYPE_ID_INDEX = 1;
-        this.VERSION_MAJOR_INDEX_ = 7;
-        this.VERSION_MINOR_INDEX_ = 8;
-        this.VERSION_RELEASE_INDEX_ = 9;
-        this.BATTERY_INDEX_ = 14;
-        this.MESSAGE_TYPE_ID_VALUE = 0;
-        this.EVENT_TYPE_ID_VALUE = 2;
-        this.INDICATE_LENGTH = 16;
+        this.MESSAGE_TYPE_ID_VALUE_ = 0;
+        this.INDICATE_EVENT_TYPE_ID_VALUE_ = 2;
+        this.INDICATE_LENGTH_ = 16;
+        this.INDICATE_VERSION_MAJOR_INDEX_ = 7;
+        this.INDICATE_VERSION_MINOR_INDEX_ = 8;
+        this.INDICATE_VERSION_RELEASE_INDEX_ = 9;
+        this.INDICATE_BATTERY_INDEX_ = 14;
+        this.REGULARLY_EVENT_TYPE_ID_VALUE_ = 0;
+        this.REGULARLY_LENGTH_ = 4;
+        this.REGULARLY_BATTERY_INDEX_ = 2;
+        this.STATUSBUTTON_PRESSED_EVENT_TYPE_ID_VALUE_ = 1;
+        this.STATUSBUTTON_PRESSED_LENGTH_ = 4;
+        this.STATUSBAR_LED_EVENT_TYPE_ID_VALUE_ = 0;
         this.versionMajor_ = -1;
         this.versionMinor_ = -1;
         this.versionRelease_ = -1;
         this.battery_ = -1;
     }
+    /**
+     * Get command of feature behavior
+     */
     get featureCommand() {
         return this.FEATURE_COMMAND_;
     }
+    /**
+     * Get battery level
+     */
     get battery() {
         return this.battery_;
     }
     /**
-     * indicate
+     * Set result of indicate
      *
      * @param data
      * @returns
      */
     indicate(data) {
-        if (data.length !== this.INDICATE_LENGTH) {
+        if (data.length !== this.INDICATE_LENGTH_) {
             return;
         }
-        if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_VALUE) {
+        if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_VALUE_) {
             return;
         }
-        if (data[this.EVENT_TYPE_ID_INDEX] !== this.EVENT_TYPE_ID_VALUE) {
+        if (data[this.EVENT_TYPE_ID_INDEX] !== this.INDICATE_EVENT_TYPE_ID_VALUE_) {
             return;
         }
-        this.battery_ = data[this.BATTERY_INDEX_];
-        this.versionMajor_ = data[this.VERSION_MAJOR_INDEX_];
-        this.versionMinor_ = data[this.VERSION_MINOR_INDEX_];
-        this.versionRelease_ = data[this.VERSION_RELEASE_INDEX_];
+        this.battery_ = data[this.INDICATE_BATTERY_INDEX_];
+        this.versionMajor_ = data[this.INDICATE_VERSION_MAJOR_INDEX_];
+        this.versionMinor_ = data[this.INDICATE_VERSION_MINOR_INDEX_];
+        this.versionRelease_ = data[this.INDICATE_VERSION_RELEASE_INDEX_];
     }
     /**
      * notify
@@ -27840,7 +27857,29 @@ class Base {
         this.updateStatusButton_(data);
     }
     /**
-     * checkVersion
+     * Parse to statusbar LED command
+     *
+     * @param power
+     * @param red
+     * @param green
+     * @param blue
+     * @returns
+     */
+    parseStatusbarLedCommand(power, red, green, blue) {
+        // Generate Command
+        const data = [
+            this.MESSAGE_TYPE_ID_VALUE_,
+            this.STATUSBAR_LED_EVENT_TYPE_ID_VALUE_,
+            Number(red),
+            Number(green),
+            Number(blue),
+            Number(power),
+        ];
+        data.push(this.checkSum(data));
+        return data;
+    }
+    /**
+     * Check software version of MESH block
      *
      * @returns
      */
@@ -27892,19 +27931,19 @@ class Base {
         return val + (val < 0 ? TWO_BYTE_PLUS1 : 0);
     }
     updateBattery_(data) {
-        if (data.length !== 4) {
+        if (data.length !== this.REGULARLY_LENGTH_) {
             return false;
         }
-        if (data[0] !== 0) {
+        if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_VALUE_) {
             return false;
         }
-        if (data[1] !== 0) {
+        if (data[this.EVENT_TYPE_ID_INDEX] !== this.REGULARLY_EVENT_TYPE_ID_VALUE_) {
             return false;
         }
         // if (data[2] === this.battery) {
         //   return;
         // }
-        this.battery_ = data[2];
+        this.battery_ = data[this.REGULARLY_BATTERY_INDEX_];
         if (typeof this.onBatteryLevel !== 'function') {
             return false;
         }
@@ -27912,13 +27951,14 @@ class Base {
         return true;
     }
     updateStatusButton_(data) {
-        if (data.length !== 4) {
+        if (data.length !== this.STATUSBUTTON_PRESSED_LENGTH_) {
             return false;
         }
-        if (data[0] !== 0) {
+        if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_VALUE_) {
             return false;
         }
-        if (data[1] !== 1) {
+        if (data[this.EVENT_TYPE_ID_INDEX] !==
+            this.STATUSBUTTON_PRESSED_EVENT_TYPE_ID_VALUE_) {
             return false;
         }
         if (data[2] !== 0) {
@@ -27946,7 +27986,9 @@ const Base_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/block/Base.js")
 class Brightness extends Base_1.Base {
     constructor() {
         super(...arguments);
-        // Event Handler
+        /**
+         * Sensing event
+         */
         this.onSensorEvent = null;
         this.NOTIFY_MODE_MIN_ = Brightness.NotifyMode.STOP;
         this.NOTIFY_MODE_MAX_ = Brightness.NotifyMode.STOP +
@@ -27954,8 +27996,6 @@ class Brightness extends Base_1.Base {
             Brightness.NotifyMode.UPDATE_BRIGHTNESS +
             Brightness.NotifyMode.ONCE +
             Brightness.NotifyMode.ALWAYS;
-        this.MESSAGE_TYPE_INDEX_ = 0;
-        this.EVENT_TYPE_INDEX_ = 1;
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
         this.LX_ = 10;
@@ -27968,10 +28008,10 @@ class Brightness extends Base_1.Base {
      */
     notify(data) {
         super.notify(data);
-        if (data[this.MESSAGE_TYPE_INDEX_] !== this.MESSAGE_TYPE_ID_) {
+        if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
-        if (data[this.EVENT_TYPE_INDEX_] !== this.EVENT_TYPE_ID_) {
+        if (data[this.EVENT_TYPE_ID_INDEX] !== this.EVENT_TYPE_ID_) {
             return;
         }
         const BYTE = 256;
@@ -27984,7 +28024,7 @@ class Brightness extends Base_1.Base {
         this.onSensorEvent(proximity, brightness, requestId);
     }
     /**
-     * parseSetmodeCommand
+     * Parse to set-mode command
      *
      * @param notifyMode
      * @param opt_requestId
@@ -28028,14 +28068,20 @@ const Base_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/block/Base.js")
 class Button extends Base_1.Base {
     constructor() {
         super(...arguments);
-        // Event Handler
+        /**
+         * Single pressed event
+         */
         this.onSinglePressed = null;
+        /**
+         * Long pressed event
+         */
         this.onLongPressed = null;
+        /**
+         * Double pressed event
+         */
         this.onDoublePressed = null;
         // Constant Values
         this.DATA_LENGTH_ = 4;
-        this.MESSAGE_TYPE_INDEX_ = 0;
-        this.EVENT_TYPE_ID_INDEX_ = 1;
         this.TYPE_INDEX_ = 2;
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
@@ -28056,10 +28102,10 @@ class Button extends Base_1.Base {
         if (data.length !== this.DATA_LENGTH_) {
             return;
         }
-        if (data[this.MESSAGE_TYPE_INDEX_] !== this.MESSAGE_TYPE_ID_) {
+        if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
-        if (data[this.EVENT_TYPE_ID_INDEX_] !== this.EVENT_TYPE_ID_) {
+        if (data[this.EVENT_TYPE_ID_INDEX] !== this.EVENT_TYPE_ID_) {
             return;
         }
         switch (data[this.TYPE_INDEX_]) {
@@ -28099,13 +28145,33 @@ const Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/util/Error.js"
 class GPIO extends Base_1.Base {
     constructor() {
         super(...arguments);
-        // Event Handler
+        /**
+         * Digital input event
+         */
         this.onDigitalInputEvent = null;
+        /**
+         * Analog input event
+         */
         this.onAnalogInputEvent = null;
+        /**
+         * Digital input
+         */
         this.onDigitalInput = null;
+        /**
+         * Analog input
+         */
         this.onAnalogInput = null;
+        /**
+         * VCC output
+         */
         this.onVOutput = null;
+        /**
+         * Digital output
+         */
         this.onDigitalOutput = null;
+        /**
+         * PWM output
+         */
         this.onPwm = null;
         this.DigitalPins = { p1: false, p2: false, p3: false };
         this.MESSAGE_TYPE_ID_ = 1;
@@ -28126,11 +28192,11 @@ class GPIO extends Base_1.Base {
      */
     notify(data) {
         super.notify(data);
-        if (data[0] !== this.MESSAGE_TYPE_ID_) {
+        if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
-        const _receivedId = data[1];
-        switch (_receivedId) {
+        const _receivedEventId = data[1];
+        switch (_receivedEventId) {
             case this.DIGITAL_IN_EVENT_ID_: {
                 if (typeof this.onDigitalInputEvent !== 'function') {
                     return;
@@ -28152,15 +28218,15 @@ class GPIO extends Base_1.Base {
                 break;
             }
         }
-        const _reqId = data[2];
-        switch (_receivedId) {
+        const _requestId = data[2];
+        switch (_receivedEventId) {
             case this.DIGITAL_IN_ID_: {
                 if (typeof this.onDigitalInput !== 'function') {
                     return;
                 }
                 const pin = data[3];
                 const state = data[4];
-                this.onDigitalInput(_reqId, pin, state);
+                this.onDigitalInput(_requestId, pin, state);
                 return;
             }
             case this.ANALOG_IN_ID_: {
@@ -28169,7 +28235,7 @@ class GPIO extends Base_1.Base {
                 }
                 const level = data[4];
                 const analogInputNotifyMode = data[5];
-                this.onAnalogInput(_reqId, level, analogInputNotifyMode);
+                this.onAnalogInput(_requestId, level, analogInputNotifyMode);
                 return;
             }
             case this.V_OUT_ID_: {
@@ -28177,7 +28243,7 @@ class GPIO extends Base_1.Base {
                     return;
                 }
                 const vccState = data[4];
-                this.onVOutput(_reqId, vccState);
+                this.onVOutput(_requestId, vccState);
                 return;
             }
             case this.DIGITAL_OUT_ID_: {
@@ -28186,7 +28252,7 @@ class GPIO extends Base_1.Base {
                 }
                 const pin = data[3];
                 const state = data[4];
-                this.onDigitalOutput(_reqId, pin, state);
+                this.onDigitalOutput(_requestId, pin, state);
                 return;
             }
             case this.PWM_ID_: {
@@ -28194,7 +28260,7 @@ class GPIO extends Base_1.Base {
                     return;
                 }
                 const level = data[4];
-                this.onPwm(_reqId, level);
+                this.onPwm(_requestId, level);
                 return;
             }
             default: {
@@ -28203,16 +28269,16 @@ class GPIO extends Base_1.Base {
         }
     }
     /**
-     * parseSetmodeCommand
+     * Parse to set-mode command
      *
-     * @param digitalInputLow2High {p1:boolean, p2:boolean, p3:boolean}
-     * @param digitalInputHigh2Low {p1:boolean, p2:boolean, p3:boolean}
-     * @param digitalOutput {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalInputLow2High { p1:boolean, p2:boolean, p3:boolean }
+     * @param digitalInputHigh2Low { p1:boolean, p2:boolean, p3:boolean }
+     * @param digitalOutput { p1:boolean, p2:boolean, p3:boolean }
      * @param pwmRatio 0-255
-     * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
+     * @param vcc Vcc.ON or Vcc.OFF
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
      * @param analogInputRangeBottom 0-255(0.00-3.00[V])
-     * @param analogInputNotify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+     * @param analogInputNotify AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
      * @returns command
      */
     parseSetmodeCommand(digitalInputLow2High, digitalInputHigh2Low, digitalOutput, pwmRatio, vcc, analogInputRangeUpper, analogInputRangeBottom, analogInputNotify) {
@@ -28220,16 +28286,16 @@ class GPIO extends Base_1.Base {
         const PWM_MIN = 0;
         const PWM_MAX = 255;
         this.checkRange(pwmRatio, PWM_MIN, PWM_MAX, 'pwmRatio');
-        if (vcc !== GPIO.Vcc.AUTO && vcc !== GPIO.Vcc.ON && vcc !== GPIO.Vcc.OFF) {
+        if (vcc !== GPIO.Vcc.ON && vcc !== GPIO.Vcc.OFF) {
             throw new Error_1.MESHJsInvalidValueError('vcc');
         }
         const ANALOG_IN_RANGE_MIN = 0;
         const ANALOG_IN_RANGE_MAX = 255;
         this.checkRange(analogInputRangeUpper, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeUpper');
         this.checkRange(analogInputRangeBottom, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeBottom');
-        if (analogInputNotify !== GPIO.AnalogInEventCondition.NOT_NOTIFY &&
-            analogInputNotify !== GPIO.AnalogInEventCondition.ABOVE_THRESHOLD &&
-            analogInputNotify !== GPIO.AnalogInEventCondition.BELOW_THRESHOLD) {
+        if (analogInputNotify !== GPIO.AnalogInputEventCondition.NOT_NOTIFY &&
+            analogInputNotify !== GPIO.AnalogInputEventCondition.ABOVE_THRESHOLD &&
+            analogInputNotify !== GPIO.AnalogInputEventCondition.BELOW_THRESHOLD) {
             throw new Error_1.MESHJsInvalidValueError('analogInNotify');
         }
         // Generate Command
@@ -28249,7 +28315,7 @@ class GPIO extends Base_1.Base {
         return data;
     }
     /**
-     * parseSetDinCommand
+     * Parse to digital-input command
      *
      * @param pin
      * @param opt_requestId
@@ -28259,7 +28325,7 @@ class GPIO extends Base_1.Base {
         return this.parseCommand_(this.DIGITAL_IN_ID_, pin, opt_requestId);
     }
     /**
-     * parseSetAinCommand
+     * Parse to analog-input command
      *
      * @param analogInputNotifyMode
      * @param opt_requestId
@@ -28269,7 +28335,7 @@ class GPIO extends Base_1.Base {
         return this.parseCommand_(this.ANALOG_IN_ID_, analogInputNotifyMode, opt_requestId);
     }
     /**
-     * parseSetVOutputCommand
+     * Parse to v-output command
      *
      * @param opt_requestId
      * @returns
@@ -28279,7 +28345,7 @@ class GPIO extends Base_1.Base {
         return this.parseCommand_(this.V_OUT_ID_, PIN, opt_requestId);
     }
     /**
-     * parseSetDoutCommand
+     * Parse to digital-output command
      *
      * @param pin
      * @param opt_requestId
@@ -28289,7 +28355,7 @@ class GPIO extends Base_1.Base {
         return this.parseCommand_(this.DIGITAL_OUT_ID_, pin, opt_requestId);
     }
     /**
-     * parseSetPWMCommand
+     * Parse to PWM command
      *
      * @param opt_requestId
      * @returns
@@ -28309,7 +28375,7 @@ class GPIO extends Base_1.Base {
 }
 exports.GPIO = GPIO;
 // Constant Values
-GPIO.AnalogInEventCondition = {
+GPIO.AnalogInputEventCondition = {
     NOT_NOTIFY: 0,
     ABOVE_THRESHOLD: 17,
     BELOW_THRESHOLD: 34,
@@ -28333,7 +28399,6 @@ GPIO.State = {
     HIGH_2_LOW: 2,
 };
 GPIO.Vcc = {
-    AUTO: 0,
     ON: 1,
     OFF: 2,
 };
@@ -28363,7 +28428,7 @@ class LED extends Base_1.Base {
         this.colors = { red: 0, green: 0, blue: 0 };
     }
     /**
-     * parseLedCommand
+     * Parse to LED command
      *
      * @param colors
      * @param totalTime
@@ -28428,7 +28493,9 @@ const Base_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/block/Base.js")
 class Motion extends Base_1.Base {
     constructor() {
         super(...arguments);
-        // Event Handler
+        /**
+         * Sensing event
+         */
         this.onSensorEvent = null;
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
@@ -28441,10 +28508,10 @@ class Motion extends Base_1.Base {
      */
     notify(data) {
         super.notify(data);
-        if (data[0] !== this.MESSAGE_TYPE_ID_) {
+        if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
-        if (data[1] !== this.EVENT_TYPE_ID_) {
+        if (data[this.EVENT_TYPE_ID_INDEX] !== this.EVENT_TYPE_ID_) {
             return;
         }
         const requestId = data[2];
@@ -28456,6 +28523,7 @@ class Motion extends Base_1.Base {
         this.onSensorEvent(motionState, notifyMode, requestId);
     }
     /**
+     * Parse to set-mode command
      *
      * @param notifyMode
      * @param opt_detectionTime
@@ -28493,15 +28561,15 @@ class Motion extends Base_1.Base {
 exports.Motion = Motion;
 // Constant Values
 Motion.NotifyMode = {
-    DETECTED: 0x01,
-    NOT_DETECTED: 0x02,
-    ONCE: 0x10,
-    ALWAYS: 0x20,
+    DETECTED: 1,
+    NOT_DETECTED: 2,
+    ONCE: 16,
+    ALWAYS: 32,
 };
 Motion.MotionState = {
-    SETUP: 0x00,
-    DETECTED: 0x01,
-    NOT_DETECTED: 0x02,
+    SETUP: 0,
+    DETECTED: 1,
+    NOT_DETECTED: 2,
 };
 
 
@@ -28517,14 +28585,24 @@ const Base_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/block/Base.js")
 class Move extends Base_1.Base {
     constructor() {
         super(...arguments);
-        // Event Handler
+        /**
+         * Tapped event
+         */
         this.onTapped = null;
+        /**
+         * Shaked event
+         */
         this.onShaked = null;
+        /**
+         * Flipped event
+         */
         this.onFlipped = null;
+        /**
+         * Orientation changed event
+         */
         this.onOrientationChanged = null;
         this.accele = { x: 0, y: 0, z: 0 };
         // Constant Values
-        this.MESSAGE_TYPE_INDEX_ = 0;
         this.TYPE_INDEX_ = 1;
         this.MESSAGE_TYPE_ID_ = 1;
         this.DATA_LENGTH_ = 17;
@@ -28544,7 +28622,7 @@ class Move extends Base_1.Base {
         if (data.length !== this.DATA_LENGTH_) {
             return;
         }
-        if (data[this.MESSAGE_TYPE_INDEX_] !== this.MESSAGE_TYPE_ID_) {
+        if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
         // update accele values
@@ -28597,7 +28675,9 @@ const Error_1 = __webpack_require__("./dist/src/parts/Ble/MESH_js/util/Error.js"
 class TempHumid extends Base_1.Base {
     constructor() {
         super(...arguments);
-        // Event Handler
+        /**
+         * Sensing event
+         */
         this.onSensorEvent = null;
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
@@ -28622,10 +28702,10 @@ class TempHumid extends Base_1.Base {
      */
     notify(data) {
         super.notify(data);
-        if (data[0] !== this.MESSAGE_TYPE_ID_) {
+        if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
-        if (data[1] !== this.EVENT_TYPE_ID_) {
+        if (data[this.EVENT_TYPE_ID_INDEX] !== this.EVENT_TYPE_ID_) {
             return;
         }
         const BYTE = 256;
@@ -28641,7 +28721,7 @@ class TempHumid extends Base_1.Base {
         this.onSensorEvent(temperature, humidity, requestId);
     }
     /**
-     * parseSetmodeCommand
+     * Parse to set-mode command
      *
      * @param temperatureRangeUpper
      * @param temperatureRangeBottom
@@ -39123,7 +39203,7 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         this.writeWOResponseCharacteristic_ = null;
     }
     /**
-     * isMESHblock
+     * Check MESH block
      *
      * @param peripheral
      * @param opt_serialnumber
@@ -39168,6 +39248,18 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         });
         await this.writeWait(this.meshBlock.featureCommand);
         this.meshBlock.checkVersion();
+    }
+    /**
+     * Control statusbar LED
+     *
+     * @param power
+     * @param red
+     * @param green
+     * @param blue
+     */
+    setStatusbarLed(power, red, green, blue) {
+        const command = this.meshBlock.parseStatusbarLedCommand(power, red, green, blue);
+        this.writeWOResponse(command);
     }
     static _isMESHblock(name) {
         return name.indexOf(MESH.PREFIX) === 0;

@@ -4,7 +4,9 @@ const Base_1 = require("./Base");
 class Brightness extends Base_1.Base {
     constructor() {
         super(...arguments);
-        // Event Handler
+        /**
+         * Sensing event
+         */
         this.onSensorEvent = null;
         this.NOTIFY_MODE_MIN_ = Brightness.NotifyMode.STOP;
         this.NOTIFY_MODE_MAX_ = Brightness.NotifyMode.STOP +
@@ -12,8 +14,6 @@ class Brightness extends Base_1.Base {
             Brightness.NotifyMode.UPDATE_BRIGHTNESS +
             Brightness.NotifyMode.ONCE +
             Brightness.NotifyMode.ALWAYS;
-        this.MESSAGE_TYPE_INDEX_ = 0;
-        this.EVENT_TYPE_INDEX_ = 1;
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
         this.LX_ = 10;
@@ -26,10 +26,10 @@ class Brightness extends Base_1.Base {
      */
     notify(data) {
         super.notify(data);
-        if (data[this.MESSAGE_TYPE_INDEX_] !== this.MESSAGE_TYPE_ID_) {
+        if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
-        if (data[this.EVENT_TYPE_INDEX_] !== this.EVENT_TYPE_ID_) {
+        if (data[this.EVENT_TYPE_ID_INDEX] !== this.EVENT_TYPE_ID_) {
             return;
         }
         const BYTE = 256;
@@ -42,7 +42,7 @@ class Brightness extends Base_1.Base {
         this.onSensorEvent(proximity, brightness, requestId);
     }
     /**
-     * parseSetmodeCommand
+     * Parse to set-mode command
      *
      * @param notifyMode
      * @param opt_requestId

@@ -87,7 +87,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const digitalInputHigh2Low = { p1:true, p2:false, p3:true };
     const analogInputRangeUpper = 30;
     const analogInputRangeBottom = 0;
-    const analogInputCondition = MESH_100GP.AnalogInEventCondition.ABOVE_THRESHOLD;
+    const analogInputCondition = MESH_100GP.AnalogInputEventCondition.ABOVE_THRESHOLD;
   
     // Write
     gpioBlock.setModeDigitalInput(digitalInputLow2High, digitalInputHigh2Low);
@@ -101,4 +101,4 @@ await obniz.ble.scan.startWait();
 
 ```
 
-For more information, click [here]().
+For more information, click [here](https://developer.meshprj.com/).

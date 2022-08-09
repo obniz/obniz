@@ -4,14 +4,24 @@ const Base_1 = require("./Base");
 class Move extends Base_1.Base {
     constructor() {
         super(...arguments);
-        // Event Handler
+        /**
+         * Tapped event
+         */
         this.onTapped = null;
+        /**
+         * Shaked event
+         */
         this.onShaked = null;
+        /**
+         * Flipped event
+         */
         this.onFlipped = null;
+        /**
+         * Orientation changed event
+         */
         this.onOrientationChanged = null;
         this.accele = { x: 0, y: 0, z: 0 };
         // Constant Values
-        this.MESSAGE_TYPE_INDEX_ = 0;
         this.TYPE_INDEX_ = 1;
         this.MESSAGE_TYPE_ID_ = 1;
         this.DATA_LENGTH_ = 17;
@@ -31,7 +41,7 @@ class Move extends Base_1.Base {
         if (data.length !== this.DATA_LENGTH_) {
             return;
         }
-        if (data[this.MESSAGE_TYPE_INDEX_] !== this.MESSAGE_TYPE_ID_) {
+        if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
         // update accele values

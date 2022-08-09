@@ -4,7 +4,9 @@ const Base_1 = require("./Base");
 class Motion extends Base_1.Base {
     constructor() {
         super(...arguments);
-        // Event Handler
+        /**
+         * Sensing event
+         */
         this.onSensorEvent = null;
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
@@ -17,10 +19,10 @@ class Motion extends Base_1.Base {
      */
     notify(data) {
         super.notify(data);
-        if (data[0] !== this.MESSAGE_TYPE_ID_) {
+        if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
-        if (data[1] !== this.EVENT_TYPE_ID_) {
+        if (data[this.EVENT_TYPE_ID_INDEX] !== this.EVENT_TYPE_ID_) {
             return;
         }
         const requestId = data[2];
@@ -32,6 +34,7 @@ class Motion extends Base_1.Base {
         this.onSensorEvent(motionState, notifyMode, requestId);
     }
     /**
+     * Parse to set-mode command
      *
      * @param notifyMode
      * @param opt_detectionTime
@@ -69,13 +72,13 @@ class Motion extends Base_1.Base {
 exports.Motion = Motion;
 // Constant Values
 Motion.NotifyMode = {
-    DETECTED: 0x01,
-    NOT_DETECTED: 0x02,
-    ONCE: 0x10,
-    ALWAYS: 0x20,
+    DETECTED: 1,
+    NOT_DETECTED: 2,
+    ONCE: 16,
+    ALWAYS: 32,
 };
 Motion.MotionState = {
-    SETUP: 0x00,
-    DETECTED: 0x01,
-    NOT_DETECTED: 0x02,
+    SETUP: 0,
+    DETECTED: 1,
+    NOT_DETECTED: 2,
 };

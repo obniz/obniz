@@ -1,8 +1,13 @@
 import { MESHJsBlockVersionError, MESHJsOutOfRangeError } from '../util/Error';
 
 export class Base {
-  // Event Handler
+  /**
+   * Battery level event
+   */
   public onBatteryLevel: ((battery: number) => void) | null = null;
+  /**
+   * Status button pressed event
+   */
   public onStatusButtonPressed: (() => void) | null = null;
 
   // Constant Values
@@ -15,55 +20,67 @@ export class Base {
       WRITE_WO_RESPONSE: '72c90002-57a9-4d40-b746-534e22ec9f9e' as const,
     } as const,
   } as const;
+  protected readonly MESSAGE_TYPE_ID_INDEX = 0 as const;
+  protected readonly EVENT_TYPE_ID_INDEX = 1 as const;
   private readonly FEATURE_COMMAND_ = [
     0 as const,
     2 as const,
     1 as const,
     3 as const,
   ];
-  private readonly MESSAGE_TYPE_ID_INDEX = 0 as const;
-  private readonly EVENT_TYPE_ID_INDEX = 1 as const;
-  private readonly VERSION_MAJOR_INDEX_ = 7 as const;
-  private readonly VERSION_MINOR_INDEX_ = 8 as const;
-  private readonly VERSION_RELEASE_INDEX_ = 9 as const;
-  private readonly BATTERY_INDEX_ = 14 as const;
-  private readonly MESSAGE_TYPE_ID_VALUE = 0 as const;
-  private readonly EVENT_TYPE_ID_VALUE = 2 as const;
-  private readonly INDICATE_LENGTH = 16 as const;
+  private readonly MESSAGE_TYPE_ID_VALUE_ = 0 as const;
+  private readonly INDICATE_EVENT_TYPE_ID_VALUE_ = 2 as const;
+  private readonly INDICATE_LENGTH_ = 16 as const;
+  private readonly INDICATE_VERSION_MAJOR_INDEX_ = 7 as const;
+  private readonly INDICATE_VERSION_MINOR_INDEX_ = 8 as const;
+  private readonly INDICATE_VERSION_RELEASE_INDEX_ = 9 as const;
+  private readonly INDICATE_BATTERY_INDEX_ = 14 as const;
+  private readonly REGULARLY_EVENT_TYPE_ID_VALUE_ = 0 as const;
+  private readonly REGULARLY_LENGTH_ = 4 as const;
+  private readonly REGULARLY_BATTERY_INDEX_ = 2 as const;
+  private readonly STATUSBUTTON_PRESSED_EVENT_TYPE_ID_VALUE_ = 1 as const;
+  private readonly STATUSBUTTON_PRESSED_LENGTH_ = 4 as const;
+  private readonly STATUSBAR_LED_EVENT_TYPE_ID_VALUE_ = 0 as const;
 
   private versionMajor_ = -1;
   private versionMinor_ = -1;
   private versionRelease_ = -1;
   private battery_ = -1;
 
+  /**
+   * Get command of feature behavior
+   */
   public get featureCommand(): number[] {
     return this.FEATURE_COMMAND_;
   }
 
+  /**
+   * Get battery level
+   */
   public get battery(): number {
     return this.battery_;
   }
 
   /**
-   * indicate
+   * Set result of indicate
    *
    * @param data
    * @returns
    */
   public indicate(data: number[]): void {
-    if (data.length !== this.INDICATE_LENGTH) {
+    if (data.length !== this.INDICATE_LENGTH_) {
       return;
     }
-    if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_VALUE) {
+    if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_VALUE_) {
       return;
     }
-    if (data[this.EVENT_TYPE_ID_INDEX] !== this.EVENT_TYPE_ID_VALUE) {
+    if (data[this.EVENT_TYPE_ID_INDEX] !== this.INDICATE_EVENT_TYPE_ID_VALUE_) {
       return;
     }
-    this.battery_ = data[this.BATTERY_INDEX_];
-    this.versionMajor_ = data[this.VERSION_MAJOR_INDEX_];
-    this.versionMinor_ = data[this.VERSION_MINOR_INDEX_];
-    this.versionRelease_ = data[this.VERSION_RELEASE_INDEX_];
+    this.battery_ = data[this.INDICATE_BATTERY_INDEX_];
+    this.versionMajor_ = data[this.INDICATE_VERSION_MAJOR_INDEX_];
+    this.versionMinor_ = data[this.INDICATE_VERSION_MINOR_INDEX_];
+    this.versionRelease_ = data[this.INDICATE_VERSION_RELEASE_INDEX_];
   }
 
   /**
@@ -77,7 +94,36 @@ export class Base {
   }
 
   /**
-   * checkVersion
+   * Parse to statusbar LED command
+   *
+   * @param power
+   * @param red
+   * @param green
+   * @param blue
+   * @returns
+   */
+  public parseStatusbarLedCommand(
+    power: boolean,
+    red: boolean,
+    green: boolean,
+    blue: boolean
+  ): number[] {
+    // Generate Command
+    const data = [
+      this.MESSAGE_TYPE_ID_VALUE_,
+      this.STATUSBAR_LED_EVENT_TYPE_ID_VALUE_,
+      Number(red),
+      Number(green),
+      Number(blue),
+      Number(power),
+    ];
+    data.push(this.checkSum(data));
+
+    return data;
+  }
+
+  /**
+   * Check software version of MESH block
    *
    * @returns
    */
@@ -151,19 +197,21 @@ export class Base {
   }
 
   private updateBattery_(data: number[]): boolean {
-    if (data.length !== 4) {
+    if (data.length !== this.REGULARLY_LENGTH_) {
       return false;
     }
-    if (data[0] !== 0) {
+    if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_VALUE_) {
       return false;
     }
-    if (data[1] !== 0) {
+    if (
+      data[this.EVENT_TYPE_ID_INDEX] !== this.REGULARLY_EVENT_TYPE_ID_VALUE_
+    ) {
       return false;
     }
     // if (data[2] === this.battery) {
     //   return;
     // }
-    this.battery_ = data[2];
+    this.battery_ = data[this.REGULARLY_BATTERY_INDEX_];
     if (typeof this.onBatteryLevel !== 'function') {
       return false;
     }
@@ -172,13 +220,16 @@ export class Base {
   }
 
   private updateStatusButton_(data: number[]): boolean {
-    if (data.length !== 4) {
+    if (data.length !== this.STATUSBUTTON_PRESSED_LENGTH_) {
       return false;
     }
-    if (data[0] !== 0) {
+    if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_VALUE_) {
       return false;
     }
-    if (data[1] !== 1) {
+    if (
+      data[this.EVENT_TYPE_ID_INDEX] !==
+      this.STATUSBUTTON_PRESSED_EVENT_TYPE_ID_VALUE_
+    ) {
       return false;
     }
     if (data[2] !== 0) {

@@ -5,7 +5,9 @@ const Error_1 = require("../util/Error");
 class TempHumid extends Base_1.Base {
     constructor() {
         super(...arguments);
-        // Event Handler
+        /**
+         * Sensing event
+         */
         this.onSensorEvent = null;
         this.MESSAGE_TYPE_ID_ = 1;
         this.EVENT_TYPE_ID_ = 0;
@@ -30,10 +32,10 @@ class TempHumid extends Base_1.Base {
      */
     notify(data) {
         super.notify(data);
-        if (data[0] !== this.MESSAGE_TYPE_ID_) {
+        if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
-        if (data[1] !== this.EVENT_TYPE_ID_) {
+        if (data[this.EVENT_TYPE_ID_INDEX] !== this.EVENT_TYPE_ID_) {
             return;
         }
         const BYTE = 256;
@@ -49,7 +51,7 @@ class TempHumid extends Base_1.Base {
         this.onSensorEvent(temperature, humidity, requestId);
     }
     /**
-     * parseSetmodeCommand
+     * Parse to set-mode command
      *
      * @param temperatureRangeUpper
      * @param temperatureRangeBottom

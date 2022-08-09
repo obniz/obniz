@@ -2,7 +2,9 @@ import { Base } from './Base';
 import { MESHJsInvalidValueError } from '../util/Error';
 
 export class TempHumid extends Base {
-  // Event Handler
+  /**
+   * Sensing event
+   */
   public onSensorEvent:
     | ((temperature: number, humidity: number, requestId: number) => void)
     | null = null;
@@ -25,12 +27,12 @@ export class TempHumid extends Base {
   } as const;
   private readonly MESSAGE_TYPE_ID_: number = 1 as const;
   private readonly EVENT_TYPE_ID_: number = 0 as const;
-  private readonly TEMPERATURE_MAX_ = 50 as const;
-  private readonly TEMPERATURE_MIN_ = -10 as const;
-  private readonly HUMIDITY_MAX_ = 100 as const;
-  private readonly HUMIDITY_MIN_ = 0 as const;
-  private readonly NOTIFY_MODE_MIN_ = TempHumid.NotifyMode.STOP;
-  private readonly NOTIFY_MODE_MAX_ =
+  private readonly TEMPERATURE_MAX_: number = 50 as const;
+  private readonly TEMPERATURE_MIN_: number = -10 as const;
+  private readonly HUMIDITY_MAX_: number = 100 as const;
+  private readonly HUMIDITY_MIN_: number = 0 as const;
+  private readonly NOTIFY_MODE_MIN_: number = TempHumid.NotifyMode.STOP;
+  private readonly NOTIFY_MODE_MAX_: number =
     TempHumid.NotifyMode.STOP +
     TempHumid.NotifyMode.EMIT_TEMPERATURE +
     TempHumid.NotifyMode.EMIT_HUMIDITY +
@@ -47,10 +49,10 @@ export class TempHumid extends Base {
    */
   public notify(data: number[]): void {
     super.notify(data);
-    if (data[0] !== this.MESSAGE_TYPE_ID_) {
+    if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_) {
       return;
     }
-    if (data[1] !== this.EVENT_TYPE_ID_) {
+    if (data[this.EVENT_TYPE_ID_INDEX] !== this.EVENT_TYPE_ID_) {
       return;
     }
 
@@ -74,7 +76,7 @@ export class TempHumid extends Base {
   }
 
   /**
-   * parseSetmodeCommand
+   * Parse to set-mode command
    *
    * @param temperatureRangeUpper
    * @param temperatureRangeBottom

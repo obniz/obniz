@@ -5,13 +5,33 @@ const Error_1 = require("../util/Error");
 class GPIO extends Base_1.Base {
     constructor() {
         super(...arguments);
-        // Event Handler
+        /**
+         * Digital input event
+         */
         this.onDigitalInputEvent = null;
+        /**
+         * Analog input event
+         */
         this.onAnalogInputEvent = null;
+        /**
+         * Digital input
+         */
         this.onDigitalInput = null;
+        /**
+         * Analog input
+         */
         this.onAnalogInput = null;
+        /**
+         * VCC output
+         */
         this.onVOutput = null;
+        /**
+         * Digital output
+         */
         this.onDigitalOutput = null;
+        /**
+         * PWM output
+         */
         this.onPwm = null;
         this.DigitalPins = { p1: false, p2: false, p3: false };
         this.MESSAGE_TYPE_ID_ = 1;
@@ -32,11 +52,11 @@ class GPIO extends Base_1.Base {
      */
     notify(data) {
         super.notify(data);
-        if (data[0] !== this.MESSAGE_TYPE_ID_) {
+        if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_) {
             return;
         }
-        const _receivedId = data[1];
-        switch (_receivedId) {
+        const _receivedEventId = data[1];
+        switch (_receivedEventId) {
             case this.DIGITAL_IN_EVENT_ID_: {
                 if (typeof this.onDigitalInputEvent !== 'function') {
                     return;
@@ -58,15 +78,15 @@ class GPIO extends Base_1.Base {
                 break;
             }
         }
-        const _reqId = data[2];
-        switch (_receivedId) {
+        const _requestId = data[2];
+        switch (_receivedEventId) {
             case this.DIGITAL_IN_ID_: {
                 if (typeof this.onDigitalInput !== 'function') {
                     return;
                 }
                 const pin = data[3];
                 const state = data[4];
-                this.onDigitalInput(_reqId, pin, state);
+                this.onDigitalInput(_requestId, pin, state);
                 return;
             }
             case this.ANALOG_IN_ID_: {
@@ -75,7 +95,7 @@ class GPIO extends Base_1.Base {
                 }
                 const level = data[4];
                 const analogInputNotifyMode = data[5];
-                this.onAnalogInput(_reqId, level, analogInputNotifyMode);
+                this.onAnalogInput(_requestId, level, analogInputNotifyMode);
                 return;
             }
             case this.V_OUT_ID_: {
@@ -83,7 +103,7 @@ class GPIO extends Base_1.Base {
                     return;
                 }
                 const vccState = data[4];
-                this.onVOutput(_reqId, vccState);
+                this.onVOutput(_requestId, vccState);
                 return;
             }
             case this.DIGITAL_OUT_ID_: {
@@ -92,7 +112,7 @@ class GPIO extends Base_1.Base {
                 }
                 const pin = data[3];
                 const state = data[4];
-                this.onDigitalOutput(_reqId, pin, state);
+                this.onDigitalOutput(_requestId, pin, state);
                 return;
             }
             case this.PWM_ID_: {
@@ -100,7 +120,7 @@ class GPIO extends Base_1.Base {
                     return;
                 }
                 const level = data[4];
-                this.onPwm(_reqId, level);
+                this.onPwm(_requestId, level);
                 return;
             }
             default: {
@@ -109,16 +129,16 @@ class GPIO extends Base_1.Base {
         }
     }
     /**
-     * parseSetmodeCommand
+     * Parse to set-mode command
      *
-     * @param digitalInputLow2High {p1:boolean, p2:boolean, p3:boolean}
-     * @param digitalInputHigh2Low {p1:boolean, p2:boolean, p3:boolean}
-     * @param digitalOutput {p1:boolean, p2:boolean, p3:boolean}
+     * @param digitalInputLow2High { p1:boolean, p2:boolean, p3:boolean }
+     * @param digitalInputHigh2Low { p1:boolean, p2:boolean, p3:boolean }
+     * @param digitalOutput { p1:boolean, p2:boolean, p3:boolean }
      * @param pwmRatio 0-255
-     * @param vcc Vcc.AUTO or Vcc.ON or Vcc.OFF
+     * @param vcc Vcc.ON or Vcc.OFF
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
      * @param analogInputRangeBottom 0-255(0.00-3.00[V])
-     * @param analogInputNotify AnalogInputEventCondition.NotNotify or AnalogInputEventCondition.AboveThreshold or AnalogInputEventCondition.BelowThreshold
+     * @param analogInputNotify AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
      * @returns command
      */
     parseSetmodeCommand(digitalInputLow2High, digitalInputHigh2Low, digitalOutput, pwmRatio, vcc, analogInputRangeUpper, analogInputRangeBottom, analogInputNotify) {
@@ -126,16 +146,16 @@ class GPIO extends Base_1.Base {
         const PWM_MIN = 0;
         const PWM_MAX = 255;
         this.checkRange(pwmRatio, PWM_MIN, PWM_MAX, 'pwmRatio');
-        if (vcc !== GPIO.Vcc.AUTO && vcc !== GPIO.Vcc.ON && vcc !== GPIO.Vcc.OFF) {
+        if (vcc !== GPIO.Vcc.ON && vcc !== GPIO.Vcc.OFF) {
             throw new Error_1.MESHJsInvalidValueError('vcc');
         }
         const ANALOG_IN_RANGE_MIN = 0;
         const ANALOG_IN_RANGE_MAX = 255;
         this.checkRange(analogInputRangeUpper, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeUpper');
         this.checkRange(analogInputRangeBottom, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeBottom');
-        if (analogInputNotify !== GPIO.AnalogInEventCondition.NOT_NOTIFY &&
-            analogInputNotify !== GPIO.AnalogInEventCondition.ABOVE_THRESHOLD &&
-            analogInputNotify !== GPIO.AnalogInEventCondition.BELOW_THRESHOLD) {
+        if (analogInputNotify !== GPIO.AnalogInputEventCondition.NOT_NOTIFY &&
+            analogInputNotify !== GPIO.AnalogInputEventCondition.ABOVE_THRESHOLD &&
+            analogInputNotify !== GPIO.AnalogInputEventCondition.BELOW_THRESHOLD) {
             throw new Error_1.MESHJsInvalidValueError('analogInNotify');
         }
         // Generate Command
@@ -155,7 +175,7 @@ class GPIO extends Base_1.Base {
         return data;
     }
     /**
-     * parseSetDinCommand
+     * Parse to digital-input command
      *
      * @param pin
      * @param opt_requestId
@@ -165,7 +185,7 @@ class GPIO extends Base_1.Base {
         return this.parseCommand_(this.DIGITAL_IN_ID_, pin, opt_requestId);
     }
     /**
-     * parseSetAinCommand
+     * Parse to analog-input command
      *
      * @param analogInputNotifyMode
      * @param opt_requestId
@@ -175,7 +195,7 @@ class GPIO extends Base_1.Base {
         return this.parseCommand_(this.ANALOG_IN_ID_, analogInputNotifyMode, opt_requestId);
     }
     /**
-     * parseSetVOutputCommand
+     * Parse to v-output command
      *
      * @param opt_requestId
      * @returns
@@ -185,7 +205,7 @@ class GPIO extends Base_1.Base {
         return this.parseCommand_(this.V_OUT_ID_, PIN, opt_requestId);
     }
     /**
-     * parseSetDoutCommand
+     * Parse to digital-output command
      *
      * @param pin
      * @param opt_requestId
@@ -195,7 +215,7 @@ class GPIO extends Base_1.Base {
         return this.parseCommand_(this.DIGITAL_OUT_ID_, pin, opt_requestId);
     }
     /**
-     * parseSetPWMCommand
+     * Parse to PWM command
      *
      * @param opt_requestId
      * @returns
@@ -215,7 +235,7 @@ class GPIO extends Base_1.Base {
 }
 exports.GPIO = GPIO;
 // Constant Values
-GPIO.AnalogInEventCondition = {
+GPIO.AnalogInputEventCondition = {
     NOT_NOTIFY: 0,
     ABOVE_THRESHOLD: 17,
     BELOW_THRESHOLD: 34,
@@ -239,7 +259,6 @@ GPIO.State = {
     HIGH_2_LOW: 2,
 };
 GPIO.Vcc = {
-    AUTO: 0,
     ON: 1,
     OFF: 2,
 };

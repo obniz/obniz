@@ -15,7 +15,7 @@ export declare abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> 
     private writeCharacteristic_;
     private writeWOResponseCharacteristic_;
     /**
-     * isMESHblock
+     * Check MESH block
      *
      * @param peripheral
      * @param opt_serialnumber
@@ -28,6 +28,15 @@ export declare abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> 
      * @returns
      */
     connectWait(): Promise<void>;
+    /**
+     * Control statusbar LED
+     *
+     * @param power
+     * @param red
+     * @param green
+     * @param blue
+     */
+    setStatusbarLed(power: boolean, red: boolean, green: boolean, blue: boolean): void;
     protected static _isMESHblock(name: string): boolean;
     protected prepareConnect(): void;
     protected writeWait(data: number[]): Promise<void>;

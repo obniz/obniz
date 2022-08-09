@@ -2,7 +2,9 @@ import { Base } from './Base';
 import { MESHJsInvalidValueError } from '../util/Error';
 
 export class Brightness extends Base {
-  // Event Handler
+  /**
+   * Sensing event
+   */
   public onSensorEvent:
     | ((proximity: number, brightness: number, requestId: number) => void)
     | null = null;
@@ -22,8 +24,6 @@ export class Brightness extends Base {
     Brightness.NotifyMode.UPDATE_BRIGHTNESS +
     Brightness.NotifyMode.ONCE +
     Brightness.NotifyMode.ALWAYS;
-  private readonly MESSAGE_TYPE_INDEX_: number = 0 as const;
-  private readonly EVENT_TYPE_INDEX_: number = 1 as const;
   private readonly MESSAGE_TYPE_ID_: number = 1 as const;
   private readonly EVENT_TYPE_ID_: number = 0 as const;
   private readonly LX_: number = 10 as const;
@@ -36,10 +36,10 @@ export class Brightness extends Base {
    */
   public notify(data: number[]): void {
     super.notify(data);
-    if (data[this.MESSAGE_TYPE_INDEX_] !== this.MESSAGE_TYPE_ID_) {
+    if (data[this.MESSAGE_TYPE_ID_INDEX] !== this.MESSAGE_TYPE_ID_) {
       return;
     }
-    if (data[this.EVENT_TYPE_INDEX_] !== this.EVENT_TYPE_ID_) {
+    if (data[this.EVENT_TYPE_ID_INDEX] !== this.EVENT_TYPE_ID_) {
       return;
     }
     const BYTE = 256 as const;
@@ -53,7 +53,7 @@ export class Brightness extends Base {
   }
 
   /**
-   * parseSetmodeCommand
+   * Parse to set-mode command
    *
    * @param notifyMode
    * @param opt_requestId

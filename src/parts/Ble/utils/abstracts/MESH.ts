@@ -28,7 +28,7 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
   private writeWOResponseCharacteristic_: BleRemoteCharacteristic | null = null;
 
   /**
-   * isMESHblock
+   * Check MESH block
    *
    * @param peripheral
    * @param opt_serialnumber
@@ -94,6 +94,29 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
     await this.writeWait(this.meshBlock.featureCommand);
 
     this.meshBlock.checkVersion();
+  }
+
+  /**
+   * Control statusbar LED
+   *
+   * @param power
+   * @param red
+   * @param green
+   * @param blue
+   */
+  public setStatusbarLed(
+    power: boolean,
+    red: boolean,
+    green: boolean,
+    blue: boolean
+  ): void {
+    const command = this.meshBlock.parseStatusbarLedCommand(
+      power,
+      red,
+      green,
+      blue
+    );
+    this.writeWOResponse(command);
   }
 
   protected static _isMESHblock(name: string): boolean {
