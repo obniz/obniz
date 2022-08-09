@@ -28,7 +28,7 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
   private writeWOResponseCharacteristic_: BleRemoteCharacteristic | null = null;
 
   /**
-   * isMESHblock
+   * Check MESH block
    *
    * @param peripheral
    * @param opt_serialnumber

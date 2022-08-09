@@ -39180,7 +39180,7 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         this.writeWOResponseCharacteristic_ = null;
     }
     /**
-     * isMESHblock
+     * Check MESH block
      *
      * @param peripheral
      * @param opt_serialnumber

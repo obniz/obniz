@@ -67,8 +67,8 @@ async function sampleGP(peripheral) {
   const _ainBottom = 0;
   // GP_block.setMode(_dinL2H, _dinH2L, _dout, _pwm, _vcc, _ainUpper, _ainBottom, _condition);
 
-  GP_block.setVOutput(mesh_gp.Vcc.ON);
-  GP_block.setPwmOutput(100);
+  // GP_block.setVOutput(mesh_gp.Vcc.ON);
+  // GP_block.setPwmOutput(100);
 
   // let _count = 0;
   // setInterval(()=>{
@@ -81,10 +81,10 @@ async function sampleGP(peripheral) {
   //   _count ++;
   // }, 5 * 1000);
 
-  const _interval = 2 * 1000;
+  const _interval = 3 * 1000;
   // setInterval(getDOUT, _interval, mesh_gp.Pin.P1);
   // setInterval(getDIN, _interval, mesh_gp.Pin.P2);
-  // getAIN();
+  setInterval(getAIN, _interval);
 }
 
 async function getAIN() {

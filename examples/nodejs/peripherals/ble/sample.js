@@ -1,7 +1,6 @@
 // const Obniz = require('obniz');
 const Obniz = require('../../../../index.js'); // local
 const mesh_bu = Obniz.getPartsClass('MESH_100BU');
-const MESH_100LE = Obniz.getPartsClass('MESH_100LE');
 const mesh_ac = Obniz.getPartsClass('MESH_100AC');
 
 const obnizId = '87287267';
@@ -18,7 +17,6 @@ obniz.onconnect = async () => {
     obniz.ble.scan.onfind = async (peripheral) => {
       // sampleBU(peripheral);
       sampleAC(peripheral);
-      // sampleLE(peripheral);
     };
     await obniz.ble.scan.startWait();
     // await continueScan(obniz);
@@ -110,30 +108,6 @@ async function sampleBU(peripheral) {
   // BU_block.getDataWait();
 }
 
-async function sampleLE(peripheral) {
-  if (!MESH_100LE.isMESHblock(peripheral)) {
-    return;
-  }
-  console.log('obniz.ble.scan.onfind : ' + peripheral.localName + ' : ' + peripheral.rssi);
-  const LED_block = new MESH_100LE(peripheral);
-  await LED_block.connectWait();
-
-  const _color = {
-    red: 15,
-    green: 63,
-    blue: 0
-  };
-  const _total_time = 4000; // 4.000 seconds
-  const _cycle_on_time = 750; // 0.750 seconds
-  const _cycle_off_time = 500; // 0.500 seconds
-  LED_block.setLed(_color, _total_time, _cycle_on_time, _cycle_off_time, MESH_100LE.Pattern.FIREFLY);
-
-  LED_block.onStatusButtonNotify = (()=>{console.log('status button pressed');});
-
-  const result = await LED_block.getDataWait();
-  console.log(result);
-}
-
 async function sampleAC(peripheral) {
   if (!mesh_ac.isMESHblock(peripheral)) {
     return;
@@ -156,7 +130,7 @@ async function sampleAC(peripheral) {
     console.log('flipped! (ax, ay, az) = (' + accele.x + ', ' + accele.y + ',' + accele.z + ')');
   });
 
-  AC_block.onOrientation = ((face, accele) => {
+  AC_block.onOrientationChanged = ((face, accele) => {
     console.log('orientation ' + face + ', (ax, ay, az) = (' + accele.x + ', ' + accele.y + ',' + accele.z + ')');
   });
 
