@@ -60,9 +60,9 @@ async function sampleGP(peripheral) {
     // mesh_gp.Vcc.ON;
     mesh_gp.Vcc.OFF;
   const _condition =
-    // mesh_gp.AnalogInEventCondition.NOT_NOTIFY;
-    mesh_gp.AnalogInEventCondition.ABOVE_THRESHOLD;
-    // mesh_gp.AnalogInEventCondition.BELOW_THRESHOLD;
+    // mesh_gp.AnalogInputEventCondition.NOT_NOTIFY;
+    mesh_gp.AnalogInputEventCondition.ABOVE_THRESHOLD;
+    // mesh_gp.AnalogInputEventCondition.BELOW_THRESHOLD;
   const _ainUpper = 30;
   const _ainBottom = 0;
   // GP_block.setMode(_dinL2H, _dinH2L, _dout, _pwm, _vcc, _ainUpper, _ainBottom, _condition);
