@@ -29,12 +29,12 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const targetPin = MESH_100GP.Pin.P1;
     const digitalInputState = await MESH_100GP.getDigitalInputDataWait(targetPin);
     switch (digitalInputState) {
-        case MESH_100GP.DigitalInputState.UP_EDGE:{
-            console.log('DigitalInput: UP');
+        case MESH_100GP.DigitalInputState.HIGH:{
+            console.log('DigitalInput: High');
             break;
         }
-        case MESH_100GP.DigitalInputState.DOWN_EDGE:{
-            console.log('DigitalInput: DOWN');
+        case MESH_100GP.DigitalInputState.LOW:{
+            console.log('DigitalInput: Low');
             break;
         }
         default:

@@ -37,8 +37,8 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
         readonly HIGH_2_LOW: 2;
     };
     static readonly DigitalInputState: {
-        UP_EDGE: 0;
-        DOWN_EDGE: 1;
+        HIGH: 0;
+        LOW: 1;
     };
     static readonly Vcc: {
         readonly ON: 1;

@@ -44,8 +44,8 @@ export declare class GPIO extends Base {
         readonly ALWAYS: 2;
     };
     static readonly DigitalInputState: {
-        UP_EDGE: 0;
-        DOWN_EDGE: 1;
+        HIGH: 0;
+        LOW: 1;
     };
     static readonly Pin: {
         readonly P1: 0;

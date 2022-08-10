@@ -59,8 +59,8 @@ export class GPIO extends Base {
     ALWAYS: 2 as const,
   } as const;
   public static readonly DigitalInputState = {
-    UP_EDGE: 0 as const,
-    DOWN_EDGE: 1 as const,
+    HIGH: 0 as const,
+    LOW: 1 as const,
   };
   public static readonly Pin = {
     P1: 0 as const,

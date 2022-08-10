@@ -246,8 +246,8 @@ GPIO.AnalogInputNotifyMode = {
     ALWAYS: 2,
 };
 GPIO.DigitalInputState = {
-    UP_EDGE: 0,
-    DOWN_EDGE: 1,
+    HIGH: 0,
+    LOW: 1,
 };
 GPIO.Pin = {
     P1: 0,

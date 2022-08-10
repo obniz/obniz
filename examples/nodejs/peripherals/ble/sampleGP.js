@@ -101,12 +101,12 @@ async function getDIN(pin) {
   const _digitalInputState = await GP_block.getDigitalInputDataWait(pin);
   const _name = (pin === mesh_gp.Pin.P1 ? 'Pin1' : (pin === mesh_gp.Pin.P2 ? 'Pin2' : 'Pin3'));
   switch (_digitalInputState) {
-    case mesh_gp.DigitalInputState.UP_EDGE:{
-      console.log('getDigitalInputDataWait: ' + _name + ' UP');
+    case mesh_gp.DigitalInputState.HIGH:{
+      console.log('getDigitalInputDataWait: ' + _name + ' High');
       break;
     }
-    case mesh_gp.DigitalInputState.DOWN_EDGE:{
-      console.log('getDigitalInputDataWait: ' + _name + ' DOWN');
+    case mesh_gp.DigitalInputState.LOW:{
+      console.log('getDigitalInputDataWait: ' + _name + ' Low');
       break;
     }
     default:
