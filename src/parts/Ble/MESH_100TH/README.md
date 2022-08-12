@@ -10,7 +10,6 @@ See [LICENSE.txt]().
 
 ```javascript
 // Example
-await obniz.ble.initWait();
 const MESH_100TH = Obniz.getPartsClass('MESH_100TH');
 obniz.ble.scan.onfind = async (peripheral) => {
     if (!MESH_100TH.isMESHblock(peripheral)) {
@@ -29,13 +28,11 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const res = await temphumidBlock.getSensorDataWait();
     console.log('temperature: ' + res.temperature + ', humidity: ' + res.humidity);
 };
-await obniz.ble.scan.startWait();
 
 ```
 
 ```javascript
 // Example
-await obniz.ble.initWait();
 const MESH_100TH = Obniz.getPartsClass('MESH_100TH');
 obniz.ble.scan.onfind = async (peripheral) => {
     if (!MESH_100TH.isMESHblock(peripheral)) {
@@ -75,7 +72,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
         notifyMode
     );
 };
-await obniz.ble.scan.startWait();
 
 ```
 
