@@ -10,7 +10,6 @@ See [LICENSE.txt]().
 
 ```javascript
 // Example
-await obniz.ble.initWait();
 const MESH_100GP = Obniz.getPartsClass('MESH_100GP');
 obniz.ble.scan.onfind = async (peripheral) => {
     if (!MESH_100GP.isMESHblock(peripheral)) {
@@ -27,7 +26,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     
     // Get sensor data
     const targetPin = MESH_100GP.Pin.P1;
-    const digitalInputState = await MESH_100GP.getDigitalInputDataWait(targetPin);
+    const digitalInputState = await gpioBlock.getDigitalInputDataWait(targetPin);
     switch (digitalInputState) {
         case MESH_100GP.DigitalInputState.HIGH:{
             console.log('DigitalInput: High');
@@ -41,13 +40,11 @@ obniz.ble.scan.onfind = async (peripheral) => {
             break;
     }
 };
-await obniz.ble.scan.startWait();
 
 ```
 
 ```javascript
 // Example
-await obniz.ble.initWait();
 const MESH_100GP = Obniz.getPartsClass('MESH_100GP');
 obniz.ble.scan.onfind = async (peripheral) => {
     if (!MESH_100GP.isMESHblock(peripheral)) {
@@ -97,7 +94,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
         analogInputCondition
     );
 };
-await obniz.ble.scan.startWait();
 
 ```
 

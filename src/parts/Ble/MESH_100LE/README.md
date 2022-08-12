@@ -10,7 +10,6 @@ See [LICENSE.txt]().
 
 ```javascript
 // Example
-await obniz.ble.initWait();
 const MESH_100LE = Obniz.getPartsClass('MESH_100LE');
 obniz.ble.scan.onfind = async (peripheral) => {
     if (!MESH_100LE.isMESHblock(peripheral)) {
@@ -39,7 +38,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
     // Write
     ledBlock.setLed(colors, totalTime, cycleOnTime, cycleOffTime, pattern);
 };
-await obniz.ble.scan.startWait();
 
 ```
 
