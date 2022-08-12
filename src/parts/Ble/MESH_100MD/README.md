@@ -10,7 +10,6 @@ See [LICENSE.txt]().
 
 ```javascript
 // Example
-await obniz.ble.initWait();
 const MESH_100MD = Obniz.getPartsClass('MESH_100MD');
 obniz.ble.scan.onfind = async (peripheral) => {
     if (!MESH_100MD.isMESHblock(peripheral)) {
@@ -28,11 +27,11 @@ obniz.ble.scan.onfind = async (peripheral) => {
     // Get sensor data
     const motionState = await motionBlock.getSensorDataWait();
     switch (motionState) {
-        case mesh_md.MotionState.DETECTED: {
-            console.log('Detected !');
+        case MESH_100MD.MotionState.DETECTED: {
+            console.log('Detected!');
             break;
         }
-        case mesh_md.MotionState.NOT_DETECTED: {
+        case MESH_100MD.MotionState.NOT_DETECTED: {
             console.log('Not Detected.');
             break;
         }
@@ -42,13 +41,11 @@ obniz.ble.scan.onfind = async (peripheral) => {
         }
     }
 };
-await obniz.ble.scan.startWait();
 
 ```
 
 ```javascript
 // Example
-await obniz.ble.initWait();
 const MESH_100MD = Obniz.getPartsClass('MESH_100MD');
 obniz.ble.scan.onfind = async (peripheral) => {
     if (!MESH_100MD.isMESHblock(peripheral)) {
@@ -66,11 +63,11 @@ obniz.ble.scan.onfind = async (peripheral) => {
     // Set event handler
     motionBlock.onSensorEvent = ((motionState, notifyMode) => {
         switch (motionState) {
-            case mesh_md.MotionState.DETECTED: {
+            case MESH_100MD.MotionState.DETECTED: {
                 console.log('Detected !');
                 break;
             }
-            case mesh_md.MotionState.NOT_DETECTED: {
+            case MESH_100MD.MotionState.NOT_DETECTED: {
                 console.log('Not Detected.');
                 break;
             }
@@ -87,7 +84,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
     // Write
     motionBlock.setMode(notifyMode);
 };
-await obniz.ble.scan.startWait();
 
 ```
 
