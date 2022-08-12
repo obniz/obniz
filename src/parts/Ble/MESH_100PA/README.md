@@ -10,7 +10,6 @@ See [LICENSE.txt]().
 
 ```javascript
 // Example
-await obniz.ble.initWait();
 const MESH_100PA = Obniz.getPartsClass('MESH_100PA');
 obniz.ble.scan.onfind = async (peripheral) => {
     if (!MESH_100PA.isMESHblock(peripheral)) {
@@ -29,13 +28,11 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const res = await brightnessBlock.getSensorDataWait();
     console.log('proximity: ' + res.proximity + ', brightness: ' + res.brightness);
 };
-await obniz.ble.scan.startWait();
 
 ```
 
 ```javascript
 // Example
-await obniz.ble.initWait();
 const MESH_100PA = Obniz.getPartsClass('MESH_100PA');
 obniz.ble.scan.onfind = async (peripheral) => {
     if (!MESH_100PA.isMESHblock(peripheral)) {
@@ -57,25 +54,10 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
     // Prepare params (See the linked page below for more information.)
     const notifyMode = MESH_100PA.NotifyMode.ALWAYS;
-    const proximityRangeUpper = 30;
-    const proximityRangeBottom = 0;
-    const brightnessRangeUpper = 3000;
-    const brightnessRangeBottom = 0;
-    const proximityCondition = MESH_100PA.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM;
-    const brightnessCondition = MESH_100PA.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM;
     
     // Write
-    brightnessBlock.setMode(
-        proximityRangeUpper,
-        proximityRangeBottom,
-        brightnessRangeUpper,
-        brightnessRangeBottom,
-        proximityCondition,
-        brightnessCondition,
-        notifyMode
-    );
+    brightnessBlock.setMode(notifyMode);
 };
-await obniz.ble.scan.startWait();
 
 ```
 
