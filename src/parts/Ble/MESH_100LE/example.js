@@ -25,7 +25,7 @@ obniz.onconnect = async () => {
       await ledBlock.connectWait();
       console.log('connected');
 
-      // Prepare params (See the linked page below for more information.)
+      // Prepare params
       const colors = {
         red: 15, // Set LED-Red in the range of 0 to 127.
         green: 63, // Set LED-Green in the range of 0 to 127.
