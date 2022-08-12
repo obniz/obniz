@@ -10,7 +10,6 @@ See [LICENSE.txt]().
 
 ```javascript
 // Example
-await obniz.ble.initWait();
 const MESH_100BU = Obniz.getPartsClass('MESH_100BU');
 obniz.ble.scan.onfind = async (peripheral) => {
     if (!MESH_100BU.isMESHblock(peripheral)) {
@@ -48,7 +47,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
         console.log('Long pressed, count has been reset; count = ' + count);
     });
 };
-await obniz.ble.scan.startWait();
 
 ```
 
