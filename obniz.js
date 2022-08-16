@@ -13308,6 +13308,26 @@ class Hci extends eventemitter3_1.default {
         // await this.leEncryptWait();
         await this.leSetRandomAddressWait(Buffer.from([254, 117, 174, 251, 138, 21]));
     }
+    async lePeriodicAdvertisingCreateSyncWait(report, advertisingSid, address, addressType, skip, syncTimeout, syncCTEType) {
+        const cmd = Buffer.alloc(17);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_PERIODIC_ADVERTISING_CREATE_SYNC_CMD, 1);
+        // length
+        cmd.writeUInt8(report ? 0b0000 : 0b0010, 3);
+        cmd.writeUInt8(advertisingSid, 4);
+        cmd.writeUInt8(['public', 'rpa_public'].includes(addressType) ? 0x00 : 0x01, 5);
+        bleHelper_1.default.hex2reversedBuffer(address, ':').copy(cmd, 6); // peer address
+        cmd.writeUInt16LE(skip, 12);
+        cmd.writeUInt16LE(syncTimeout, 14);
+        cmd.writeUInt8(syncCTEType, 16);
+        const p = this.readCmdCompleteEventWait(COMMANDS.EVT_LE_PERIODIC_ADVERTISING_SYNC_ESTABLISHED);
+        this.debug('le encrypt - writing: ' + cmd.toString('hex'));
+        this._socket.write(cmd);
+        const data = await p;
+        const encryptedData = data.result;
+        return { encryptedData };
+    }
     async leEncryptWait(key, plainTextData) {
         const cmd = Buffer.alloc(4 + 16 + 16);
         // header
