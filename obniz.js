@@ -10124,18 +10124,16 @@ class ObnizBLEHci {
      * @param option.timeout Timeout number in seconds. If not specified. default timeout is applied. If null specified, never timeout.
      * @param option.waitingFor Readable description of command for waiting. Printed when Error or timeout occured.
      */
-    timeoutPromiseWrapper(promise, option) {
-        option = option || {};
-        if (option.timeout === null) {
-            option.timeout = null;
+    timeoutPromiseWrapper(promise, _option) {
+        var _a;
+        const option = {
+            timeout: _option.timeout === null ? null : (_a = _option.timeout, (_a !== null && _a !== void 0 ? _a : this.timeout)),
+            waitingFor: _option.waitingFor,
+            onTimeout: _option.onTimeout || undefined,
+        };
+        if (option.timeout !== null && option.timeout < 0) {
+            throw new ObnizError_1.ObnizParameterError(`option.timeout`, `0 or greater`);
         }
-        else {
-            option.timeout = option.timeout || this.timeout;
-            if (option.timeout < 0) {
-                throw new ObnizError_1.ObnizParameterError(`option.timeout`, `0 or greater`);
-            }
-        }
-        option.waitingFor = option.waitingFor || undefined;
         let onObnizClosed = null;
         let timeoutHandler = null;
         const clearListeners = () => {
@@ -10173,14 +10171,16 @@ class ObnizBLEHci {
                 onTimeout = () => {
                     timeoutHandler = null;
                     clearListeners();
-                    option
-                        .onTimeout()
-                        .then(() => {
-                        reject(timeoutError);
-                    })
-                        .catch((e) => {
-                        reject(e);
-                    });
+                    if (option.onTimeout) {
+                        option
+                            .onTimeout()
+                            .then(() => {
+                            reject(timeoutError);
+                        })
+                            .catch((e) => {
+                            reject(e);
+                        });
+                    }
                 };
             }
             else {
@@ -10191,7 +10191,9 @@ class ObnizBLEHci {
                     reject(timeoutError);
                 };
             }
-            timeoutHandler = setTimeout(onTimeout, option.timeout);
+            if (option.timeout !== null) {
+                timeoutHandler = setTimeout(onTimeout, option.timeout);
+            }
         });
         if (option.timeout !== null) {
             return Promise.race([successPromise, errorPromise]);
@@ -13308,26 +13310,6 @@ class Hci extends eventemitter3_1.default {
         // await this.leEncryptWait();
         await this.leSetRandomAddressWait(Buffer.from([254, 117, 174, 251, 138, 21]));
     }
-    async lePeriodicAdvertisingCreateSyncWait(report, advertisingSid, address, addressType, skip, syncTimeout, syncCTEType) {
-        const cmd = Buffer.alloc(17);
-        // header
-        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(COMMANDS.LE_PERIODIC_ADVERTISING_CREATE_SYNC_CMD, 1);
-        // length
-        cmd.writeUInt8(report ? 0b0000 : 0b0010, 3);
-        cmd.writeUInt8(advertisingSid, 4);
-        cmd.writeUInt8(['public', 'rpa_public'].includes(addressType) ? 0x00 : 0x01, 5);
-        bleHelper_1.default.hex2reversedBuffer(address, ':').copy(cmd, 6); // peer address
-        cmd.writeUInt16LE(skip, 12);
-        cmd.writeUInt16LE(syncTimeout, 14);
-        cmd.writeUInt8(syncCTEType, 16);
-        const p = this.readCmdCompleteEventWait(COMMANDS.EVT_LE_PERIODIC_ADVERTISING_SYNC_ESTABLISHED);
-        this.debug('le encrypt - writing: ' + cmd.toString('hex'));
-        this._socket.write(cmd);
-        const data = await p;
-        const encryptedData = data.result;
-        return { encryptedData };
-    }
     async leEncryptWait(key, plainTextData) {
         const cmd = Buffer.alloc(4 + 16 + 16);
         // header
@@ -13815,12 +13797,14 @@ class Hci extends eventemitter3_1.default {
         const processConnectionCompletePromise = (async () => {
             const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, {
                 timeout,
+                waitingFor: 'EVT_LE_CONN_COMPLETE',
             });
             return { status, data: this.parseConnectionCompleteEventData(data) };
         })();
         const processLeConnectionCompletePromise = (async () => {
             const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_ENHANCED_CONNECTION_COMPLETE, {
                 timeout,
+                waitingFor: 'EVT_LE_ENHANCED_CONNECTION_COMPLETE',
             });
             return { status, data: this.parseLeConnectionCompleteEventData(data) };
         })();
@@ -13987,12 +13971,14 @@ class Hci extends eventemitter3_1.default {
         const processConnectionCompletePromise = (async () => {
             const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, {
                 timeout,
+                waitingFor: 'EVT_LE_CONN_COMPLETE',
             });
             return { status, data: this.parseConnectionCompleteEventData(data) };
         })();
         const processLeConnectionCompletePromise = (async () => {
             const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_ENHANCED_CONNECTION_COMPLETE, {
                 timeout,
+                waitingFor: 'EVT_LE_ENHANCED_CONNECTION_COMPLETE',
             });
             return { status, data: this.parseLeConnectionCompleteEventData(data) };
         })();
@@ -14025,7 +14011,9 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(0x0000, 14); // min ce length
         cmd.writeUInt16LE(0x0000, 16); // max ce length
         this.debug('conn update le - writing: ' + cmd.toString('hex'));
-        const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE);
+        const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE, {
+            waitingFor: 'EVT_LE_CONN_UPDATE_COMPLETE',
+        });
         this._socket.write(cmd);
         const { status, data } = await p;
         return this.processLeConnUpdateComplete(status, data);
@@ -14562,7 +14550,7 @@ class Hci extends eventemitter3_1.default {
     async readLeMetaEventWait(eventType, options) {
         const filter = this.createLeMetaEventFilter(eventType);
         options = options || {};
-        options.waitingFor = `LeMetaEvent ${JSON.stringify(filter)} (event = ${eventType})`;
+        options.waitingFor = `LeMetaEvent ${options.waitingFor} (${JSON.stringify(filter)}, event = ${eventType})`;
         const data = await this._obnizHci.readWait(filter, options);
         const type = data.readUInt8(3);
         const status = data.readUInt8(4);
