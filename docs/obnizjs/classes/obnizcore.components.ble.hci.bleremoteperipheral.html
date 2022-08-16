@@ -120,6 +120,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.bleremoteperipheral.html#onerror" class="tsd-kind-icon">onerror</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.bleremoteperipheral.html#rssi" class="tsd-kind-icon">rssi</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.bleremoteperipheral.html#scan_resp" class="tsd-kind-icon">scan_<wbr>resp</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.bleremoteperipheral.html#servicedata" class="tsd-kind-icon">service<wbr>Data</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.bleremoteperipheral.html#service_data" class="tsd-kind-icon">service_<wbr>data</a></li>
 							</ul>
 						</section>
@@ -159,7 +160,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:444</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:449</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -233,7 +234,7 @@
 					<div class="tsd-signature tsd-kind-icon">advertise_<wbr>data_<wbr>rows<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:395</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:400</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -311,7 +312,7 @@
 					<div class="tsd-signature tsd-kind-icon">i<wbr>Beacon<span class="tsd-signature-symbol">:</span> <a href="../interfaces/obnizcore.components.ble.hci.ibeacon.html" class="tsd-signature-type">IBeacon</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:346</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:351</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -378,7 +379,7 @@
 					<div class="tsd-signature tsd-kind-icon">onconnect<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:366</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:371</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -405,7 +406,7 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 					<div class="tsd-signature tsd-kind-icon">ondisconnect<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>reason<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:388</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:393</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -434,7 +435,7 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 					<div class="tsd-signature tsd-kind-icon">onerror<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>err<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:414</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:419</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -489,6 +490,21 @@ obniz.ble.scan.onfind = <span class="hljs-keyword">async</span> (peripheral) =&g
 
 <span class="hljs-built_in">console</span>.log(peripheral.adv_data)
 <span class="hljs-built_in">console</span>.log(peripheral.scan_resp)</code></pre>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="servicedata" class="tsd-anchor"></a>
+					<h3>service<wbr>Data</h3>
+					<div class="tsd-signature tsd-kind-icon">service<wbr>Data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:335</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Ad Type: 0x16 (16bit UUID)</p>
+						</div>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
@@ -560,7 +576,7 @@ obniz.ble.scan.onfind = <span class="hljs-keyword">async</span> (peripheral) =&g
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:508</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:514</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -590,7 +606,7 @@ obniz.ble.scan.onfind = <span class="hljs-keyword">async</span> (peripheral) =&g
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:571</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:577</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -662,7 +678,7 @@ obniz.ble.scan.onfind = <span class="hljs-keyword">async</span> (peripheral) =&g
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:646</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:652</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -686,7 +702,7 @@ obniz.ble.scan.onfind = <span class="hljs-keyword">async</span> (peripheral) =&g
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:678</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:684</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -728,7 +744,7 @@ obniz.ble.scan.onfind = <span class="hljs-keyword">async</span> (peripheral) =&g
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:901</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:907</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -765,7 +781,7 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:832</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:838</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -819,7 +835,7 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:1052</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:1058</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -882,7 +898,7 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:731</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:737</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -923,7 +939,7 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:1060</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:1066</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -946,7 +962,7 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:783</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:789</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1070,6 +1086,9 @@ obniz.ble.onUpdatePhy = <span class="hljs-function">(<span class="hljs-params">(
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="obnizcore.components.ble.hci.bleremoteperipheral.html#scan_resp" class="tsd-kind-icon">scan_<wbr>resp</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="obnizcore.components.ble.hci.bleremoteperipheral.html#servicedata" class="tsd-kind-icon">service<wbr>Data</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="obnizcore.components.ble.hci.bleremoteperipheral.html#service_data" class="tsd-kind-icon">service_<wbr>data</a>

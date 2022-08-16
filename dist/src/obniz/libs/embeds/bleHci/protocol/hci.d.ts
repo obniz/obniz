@@ -51,6 +51,9 @@ declare class Hci extends EventEmitter<HciEventTypes> {
         result: Buffer;
     }>;
     setRandomDeviceAddressWait(): Promise<void>;
+    lePeriodicAdvertisingCreateSyncWait(report: boolean, advertisingSid: number, address: BleDeviceAddress, addressType: BleDeviceAddressType, skip: number, syncTimeout: number, syncCTEType: number): Promise<{
+        encryptedData: Buffer;
+    }>;
     leEncryptWait(key: Buffer, plainTextData: Buffer): Promise<{
         encryptedData: Buffer;
     }>;
