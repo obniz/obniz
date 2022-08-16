@@ -57,8 +57,16 @@ export default class ObnizBLEHci {
      * @param option.timeout Timeout number in seconds. If not specified. default timeout is applied. If null specified, never timeout.
      * @param option.waitingFor Readable description of command for waiting. Printed when Error or timeout occured.
      */
-    timeoutPromiseWrapper<T>(promise: Promise<T>, option?: any): Promise<T>;
-    readWait(binaryFilter: number[], option?: any): Promise<Buffer>;
+    timeoutPromiseWrapper<T>(promise: Promise<T>, _option: {
+        timeout?: number | null;
+        waitingFor: string;
+        onTimeout?: () => Promise<void>;
+    }): Promise<T>;
+    readWait(binaryFilter: number[], option: {
+        timeout?: number | null;
+        waitingFor: string;
+        onTimeout?: () => Promise<void>;
+    }): Promise<Buffer>;
     protected onceQueue(binaryFilter: number[], func: EventHandler): void;
     protected validate(str: string, json: any): boolean;
     protected encodeBinaryFilter(binary: number[]): string;

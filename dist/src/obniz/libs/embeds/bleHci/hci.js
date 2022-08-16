@@ -110,18 +110,16 @@ class ObnizBLEHci {
      * @param option.timeout Timeout number in seconds. If not specified. default timeout is applied. If null specified, never timeout.
      * @param option.waitingFor Readable description of command for waiting. Printed when Error or timeout occured.
      */
-    timeoutPromiseWrapper(promise, option) {
-        option = option || {};
-        if (option.timeout === null) {
-            option.timeout = null;
+    timeoutPromiseWrapper(promise, _option) {
+        var _a;
+        const option = {
+            timeout: _option.timeout === null ? null : (_a = _option.timeout, (_a !== null && _a !== void 0 ? _a : this.timeout)),
+            waitingFor: _option.waitingFor,
+            onTimeout: _option.onTimeout || undefined,
+        };
+        if (option.timeout !== null && option.timeout < 0) {
+            throw new ObnizError_1.ObnizParameterError(`option.timeout`, `0 or greater`);
         }
-        else {
-            option.timeout = option.timeout || this.timeout;
-            if (option.timeout < 0) {
-                throw new ObnizError_1.ObnizParameterError(`option.timeout`, `0 or greater`);
-            }
-        }
-        option.waitingFor = option.waitingFor || undefined;
         let onObnizClosed = null;
         let timeoutHandler = null;
         const clearListeners = () => {
@@ -159,14 +157,16 @@ class ObnizBLEHci {
                 onTimeout = () => {
                     timeoutHandler = null;
                     clearListeners();
-                    option
-                        .onTimeout()
-                        .then(() => {
-                        reject(timeoutError);
-                    })
-                        .catch((e) => {
-                        reject(e);
-                    });
+                    if (option.onTimeout) {
+                        option
+                            .onTimeout()
+                            .then(() => {
+                            reject(timeoutError);
+                        })
+                            .catch((e) => {
+                            reject(e);
+                        });
+                    }
                 };
             }
             else {
@@ -177,7 +177,9 @@ class ObnizBLEHci {
                     reject(timeoutError);
                 };
             }
-            timeoutHandler = setTimeout(onTimeout, option.timeout);
+            if (option.timeout !== null) {
+                timeoutHandler = setTimeout(onTimeout, option.timeout);
+            }
         });
         if (option.timeout !== null) {
             return Promise.race([successPromise, errorPromise]);
