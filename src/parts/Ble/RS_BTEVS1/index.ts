@@ -203,7 +203,6 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
   };
 
   protected staticClass = RS_BTEVS1;
-
   /** Event handler for button ボタンのイベントハンドラー */
   public onButtonPressed: ((pressed: boolean) => void) | null = null;
   /** Event handler for temperature sensor 温度センサーのイベントハンドラー */
@@ -231,40 +230,51 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
     ).toString();
   }
 
+  /**
+   * Get device all data
+   * Version 1.0.x is not supported
+   * デバイスの全てのデータの取得
+   * バージョン1.0.xはサポートされません
+   *
+   * @returns
+   */
   public async getDataWait(): Promise<RS_BTEVS1_Data> {
     if (this.firmwareRevision.startsWith('Ver.1.0')) {
       throw new Error('This operation is not supported.');
     }
     this.checkConnected();
 
-    const data = await this.readCharWait(
-      this.serviceUuid,
-      this.getCharUuid(0x152a)
-    );
-    const buf = Buffer.from(data);
-    return {
-      temp: uint(data.slice(0, 2)) * 0.1,
-      humid: data[2],
-      co2: uint(data.slice(3, 5)),
-      pm1_0: buf.readFloatLE(5),
-      pm2_5: buf.readFloatLE(9),
-      pm4_0: buf.readFloatLE(13),
-      pm10_0: buf.readFloatLE(17),
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore for compatibility
-      pm5_0: buf.readFloatLE(13),
-    };
+    return new Promise((res, rej) => {
+      this.subscribeWait(this.serviceUuid, this.getCharUuid(0x152a), (data) => {
+        const buf = Buffer.from(data);
+        const result = {
+          temp: uint(data.slice(0, 2)) * 0.1,
+          humid: data[2],
+          co2: uint(data.slice(3, 5)),
+          pm1_0: buf.readFloatLE(5),
+          pm2_5: buf.readFloatLE(9),
+          pm4_0: buf.readFloatLE(13),
+          pm10_0: buf.readFloatLE(17),
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore for compatibility
+          pm5_0: buf.readFloatLE(13),
+        };
+        res(result);
+      });
+    });
   }
 
   protected async beforeOnDisconnectWait(): Promise<void> {
-    // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1524));
-    // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1525));
-    // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1526));
-    // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1527));
-    // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1528));
-    // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1529));
-    // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x152a));
-    // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x152b));
+    if (this.firmwareRevision.startsWith('Ver.1.1')) {
+      await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1524));
+      // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1525));
+      await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1526));
+      await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1527));
+      await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1528));
+      // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1529));
+      await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x152a));
+      await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x152b));
+    }
   }
 
   /**
