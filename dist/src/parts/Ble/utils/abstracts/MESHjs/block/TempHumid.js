@@ -25,7 +25,7 @@ class TempHumid extends Base_1.Base {
             TempHumid.NotifyMode.ALWAYS;
     }
     /**
-     * notify
+     * Parse data that received from MESH block, and emit event
      *
      * @param data
      * @returns
@@ -51,7 +51,7 @@ class TempHumid extends Base_1.Base {
         this.onSensorEvent(temperature, humidity, requestId);
     }
     /**
-     * Parse to set-mode command
+     * Convert parameters to command of set-mode
      *
      * @param temperatureRangeUpper
      * @param temperatureRangeBottom

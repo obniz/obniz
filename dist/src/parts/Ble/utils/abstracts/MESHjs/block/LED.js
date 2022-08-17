@@ -12,7 +12,7 @@ class LED extends Base_1.Base {
         this.colors = { red: 0, green: 0, blue: 0 };
     }
     /**
-     * Parse to LED command
+     * Convert parameters to command of LED
      *
      * @param colors
      * @param totalTime

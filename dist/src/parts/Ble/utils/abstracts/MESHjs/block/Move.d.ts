@@ -29,7 +29,7 @@ export declare class Move extends Base {
     private readonly FLIP_EVENT_ID_;
     private readonly ORIENTATION_EVENT_ID_;
     /**
-     * notify
+     * Parse data that received from MESH block, and emit event
      *
      * @param data
      * @returns

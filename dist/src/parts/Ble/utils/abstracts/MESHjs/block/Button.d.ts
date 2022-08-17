@@ -18,7 +18,7 @@ export declare class Button extends Base {
     private readonly EVENT_TYPE_ID_;
     private readonly TYPE_;
     /**
-     * notify
+     * Parse data that received from MESH block, and emit event
      *
      * @param data
      * @returns

@@ -42,7 +42,7 @@ export class TempHumid extends Base {
     TempHumid.NotifyMode.ALWAYS;
 
   /**
-   * notify
+   * Parse data that received from MESH block, and emit event
    *
    * @param data
    * @returns
@@ -76,7 +76,7 @@ export class TempHumid extends Base {
   }
 
   /**
-   * Parse to set-mode command
+   * Convert parameters to command of set-mode
    *
    * @param temperatureRangeUpper
    * @param temperatureRangeBottom

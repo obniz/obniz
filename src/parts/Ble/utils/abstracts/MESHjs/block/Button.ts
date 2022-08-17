@@ -26,7 +26,7 @@ export class Button extends Base {
   } as const;
 
   /**
-   * notify
+   * Parse data that received from MESH block, and emit event
    *
    * @param data
    * @returns

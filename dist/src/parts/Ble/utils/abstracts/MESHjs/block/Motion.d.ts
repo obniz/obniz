@@ -18,14 +18,14 @@ export declare class Motion extends Base {
     private readonly MESSAGE_TYPE_ID_;
     private readonly EVENT_TYPE_ID_;
     /**
-     * notify
+     * Parse data that received from MESH block, and emit event
      *
      * @param data
      * @returns
      */
     notify(data: number[]): void;
     /**
-     * Parse to set-mode command
+     * Convert parameters to command of set-mode
      *
      * @param notifyMode
      * @param opt_detectionTime

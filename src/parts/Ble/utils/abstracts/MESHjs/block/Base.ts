@@ -94,7 +94,7 @@ export class Base {
   }
 
   /**
-   * Parse to statusbar LED command
+   * Convert parameters to command of statusbar LED
    *
    * @param power
    * @param red

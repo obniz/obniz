@@ -12,7 +12,7 @@ class Motion extends Base_1.Base {
         this.EVENT_TYPE_ID_ = 0;
     }
     /**
-     * notify
+     * Parse data that received from MESH block, and emit event
      *
      * @param data
      * @returns
@@ -34,7 +34,7 @@ class Motion extends Base_1.Base {
         this.onSensorEvent(motionState, notifyMode, requestId);
     }
     /**
-     * Parse to set-mode command
+     * Convert parameters to command of set-mode
      *
      * @param notifyMode
      * @param opt_detectionTime
