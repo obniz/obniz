@@ -6,7 +6,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
-const Move_1 = require("../MESH_js/block/Move");
+const Move_1 = require("../utils/abstracts/MESHjs/block/Move");
 /** MESH_100AC management class */
 class MESH_100AC extends MESH_1.MESH {
     constructor() {

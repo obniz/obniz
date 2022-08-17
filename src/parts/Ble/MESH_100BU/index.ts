@@ -5,7 +5,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { MESH } from '../utils/abstracts/MESH';
-import { Button } from '../MESH_js/block/Button';
+import { Button } from '../utils/abstracts/MESHjs/block/Button';
 
 export interface MESH_100BUOptions {}
 

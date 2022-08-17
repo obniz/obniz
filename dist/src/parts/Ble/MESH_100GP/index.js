@@ -6,8 +6,8 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
-const GPIO_1 = require("../MESH_js/block/GPIO");
-const Error_1 = require("../MESH_js/util/Error");
+const GPIO_1 = require("../utils/abstracts/MESHjs/block/GPIO");
+const Error_1 = require("../utils/abstracts/MESHjs/util/Error");
 /** MESH_100GP management class */
 class MESH_100GP extends MESH_1.MESH {
     constructor() {

@@ -5,8 +5,8 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { MESH } from '../utils/abstracts/MESH';
-import { GPIO } from '../MESH_js/block/GPIO';
-import { MESHJsTimeOutError } from '../MESH_js/util/Error';
+import { GPIO } from '../utils/abstracts/MESHjs/block/GPIO';
+import { MESHJsTimeOutError } from '../utils/abstracts/MESHjs/util/Error';
 
 export interface MESH_100GPOptions {}
 
