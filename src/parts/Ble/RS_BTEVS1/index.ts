@@ -288,7 +288,7 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
       co2Interval: buf.readUInt32LE(8),
       tempMeasureOperation: (measureOperation & 0b100) > 0,
       pm2_5MeasureOperation: (measureOperation & 0b010) > 0,
-      co2MeasureOperation: (measureOperation & 0b000) > 0,
+      co2MeasureOperation: (measureOperation & 0b001) > 0,
       ledDisplay: LED_DISPLAY_MODE[buf.readInt8(13)],
       advertisementBeacon: buf.readInt8(14) === 1,
       pm2_5ConcentrationMode: PM2_5_CONCENTRATION_MODE[buf.readInt8(15)],

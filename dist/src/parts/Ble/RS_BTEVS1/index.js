@@ -33,35 +33,49 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         await super.connectWait();
         this.firmwareRevision = Buffer.from(await this.readCharWait('180A', '2A26')).toString();
     }
+    /**
+     * Get device all data
+     * Version 1.0.x is not supported
+     * デバイスの全てのデータの取得
+     * バージョン1.0.xはサポートされません
+     *
+     * @returns
+     */
     async getDataWait() {
         if (this.firmwareRevision.startsWith('Ver.1.0')) {
             throw new Error('This operation is not supported.');
         }
         this.checkConnected();
-        const data = await this.readCharWait(this.serviceUuid, this.getCharUuid(0x152a));
-        const buf = Buffer.from(data);
-        return {
-            temp: ObnizPartsBleAbstract_1.uint(data.slice(0, 2)) * 0.1,
-            humid: data[2],
-            co2: ObnizPartsBleAbstract_1.uint(data.slice(3, 5)),
-            pm1_0: buf.readFloatLE(5),
-            pm2_5: buf.readFloatLE(9),
-            pm4_0: buf.readFloatLE(13),
-            pm10_0: buf.readFloatLE(17),
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore for compatibility
-            pm5_0: buf.readFloatLE(13),
-        };
+        return new Promise((res, rej) => {
+            this.subscribeWait(this.serviceUuid, this.getCharUuid(0x152a), (data) => {
+                const buf = Buffer.from(data);
+                const result = {
+                    temp: ObnizPartsBleAbstract_1.uint(data.slice(0, 2)) * 0.1,
+                    humid: data[2],
+                    co2: ObnizPartsBleAbstract_1.uint(data.slice(3, 5)),
+                    pm1_0: buf.readFloatLE(5),
+                    pm2_5: buf.readFloatLE(9),
+                    pm4_0: buf.readFloatLE(13),
+                    pm10_0: buf.readFloatLE(17),
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore for compatibility
+                    pm5_0: buf.readFloatLE(13),
+                };
+                res(result);
+            });
+        });
     }
     async beforeOnDisconnectWait() {
-        // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1524));
-        // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1525));
-        // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1526));
-        // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1527));
-        // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1528));
-        // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1529));
-        // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x152a));
-        // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x152b));
+        if (this.firmwareRevision.startsWith('Ver.1.1')) {
+            await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1524));
+            // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1525));
+            await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1526));
+            await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1527));
+            await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1528));
+            // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1529));
+            await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x152a));
+            await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x152b));
+        }
     }
     /**
      * Get device settings デバイスの設定を取得
@@ -79,7 +93,7 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
             co2Interval: buf.readUInt32LE(8),
             tempMeasureOperation: (measureOperation & 0b100) > 0,
             pm2_5MeasureOperation: (measureOperation & 0b010) > 0,
-            co2MeasureOperation: (measureOperation & 0b000) > 0,
+            co2MeasureOperation: (measureOperation & 0b001) > 0,
             ledDisplay: LED_DISPLAY_MODE[buf.readInt8(13)],
             advertisementBeacon: buf.readInt8(14) === 1,
             pm2_5ConcentrationMode: PM2_5_CONCENTRATION_MODE[buf.readInt8(15)],
@@ -118,13 +132,17 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     }
     /**
      * Change pairing LED flashing status
-     *
+     * Version 1.0.x is not supported
      * ペアリングLEDの点滅状態の変更
+     * バージョン1.0.xはサポートされません
      *
      * @param blink Whether it blinks 点滅するかどうか
      * @returns Write result 書き込み結果
      */
     async setModeLEDWait(blink) {
+        if (this.firmwareRevision.startsWith('Ver.1.0')) {
+            throw new Error('This operation is not supported.');
+        }
         await this.checkConnected();
         return await this.writeCharWait(this.serviceUuid, this.getCharUuid(0x1529), [blink ? 1 : 0]);
     }
@@ -145,10 +163,14 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
      * @deprecated
      *
      * Start reading the temperature sensor
-     *
+     * Version 1.0.x is not supported
      * 温度センサーの読み取りを開始
+     * バージョン1.0.xはサポートされません
      */
     async tempMeasureStartWait() {
+        if (this.firmwareRevision.startsWith('Ver.1.0')) {
+            throw new Error('This operation is not supported.');
+        }
         this.checkConnected();
         await this.subscribeWait(this.serviceUuid, this.getCharUuid(0x1526), (data) => {
             if (typeof this.onTempMeasured !== 'function')
@@ -175,10 +197,14 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
      * @deprecated
      *
      * Start reading the PM2.5 sensor
-     *
+     * Version 1.1.x is not supported
      * PM2.5センサーの読み取りを開始
+     * バージョン1.1.xはサポートされません
      */
     async pm2_5MeasureStartWait() {
+        if (this.firmwareRevision.startsWith('Ver.1.1')) {
+            throw new Error('This operation is not supported.');
+        }
         this.checkConnected();
         await this.subscribeWait(this.serviceUuid, this.getCharUuid(0x1528), (data) => {
             if (typeof this.onPm2_5Measured !== 'function')

@@ -131,6 +131,14 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<RS_BTEVS1_Data, 
      * デバイスのサービスに接続
      */
     connectWait(): Promise<void>;
+    /**
+     * Get device all data
+     * Version 1.0.x is not supported
+     * デバイスの全てのデータの取得
+     * バージョン1.0.xはサポートされません
+     *
+     * @returns
+     */
     getDataWait(): Promise<RS_BTEVS1_Data>;
     protected beforeOnDisconnectWait(): Promise<void>;
     /**
@@ -150,8 +158,9 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<RS_BTEVS1_Data, 
     setConfigWait(config: Partial<RS_BTEVS1_Config>): Promise<boolean>;
     /**
      * Change pairing LED flashing status
-     *
+     * Version 1.0.x is not supported
      * ペアリングLEDの点滅状態の変更
+     * バージョン1.0.xはサポートされません
      *
      * @param blink Whether it blinks 点滅するかどうか
      * @returns Write result 書き込み結果
@@ -167,8 +176,9 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<RS_BTEVS1_Data, 
      * @deprecated
      *
      * Start reading the temperature sensor
-     *
+     * Version 1.0.x is not supported
      * 温度センサーの読み取りを開始
+     * バージョン1.0.xはサポートされません
      */
     tempMeasureStartWait(): Promise<void>;
     /**
@@ -183,8 +193,9 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<RS_BTEVS1_Data, 
      * @deprecated
      *
      * Start reading the PM2.5 sensor
-     *
+     * Version 1.1.x is not supported
      * PM2.5センサーの読み取りを開始
+     * バージョン1.1.xはサポートされません
      */
     pm2_5MeasureStartWait(): Promise<void>;
     protected getCharUuid(code: number): string;
