@@ -351,13 +351,17 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
 
   /**
    * Change pairing LED flashing status
-   *
+   * Version 1.0.x is not supported
    * ペアリングLEDの点滅状態の変更
+   * バージョン1.0.xはサポートされません
    *
    * @param blink Whether it blinks 点滅するかどうか
    * @returns Write result 書き込み結果
    */
   public async setModeLEDWait(blink: boolean): Promise<boolean> {
+    if (this.firmwareRevision.startsWith('Ver.1.0')) {
+      throw new Error('This operation is not supported.');
+    }
     await this.checkConnected();
 
     return await this.writeCharWait(
@@ -389,10 +393,14 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
    * @deprecated
    *
    * Start reading the temperature sensor
-   *
+   * Version 1.0.x is not supported
    * 温度センサーの読み取りを開始
+   * バージョン1.0.xはサポートされません
    */
   public async tempMeasureStartWait(): Promise<void> {
+    if (this.firmwareRevision.startsWith('Ver.1.0')) {
+      throw new Error('This operation is not supported.');
+    }
     this.checkConnected();
 
     await this.subscribeWait(
@@ -429,10 +437,14 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
    * @deprecated
    *
    * Start reading the PM2.5 sensor
-   *
+   * Version 1.1.x is not supported
    * PM2.5センサーの読み取りを開始
+   * バージョン1.1.xはサポートされません
    */
   public async pm2_5MeasureStartWait(): Promise<void> {
+    if (this.firmwareRevision.startsWith('Ver.1.1')) {
+      throw new Error('This operation is not supported.');
+    }
     this.checkConnected();
 
     await this.subscribeWait(
@@ -446,7 +458,7 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
           mass_pm2_5: buf.readFloatLE(4),
           mass_pm4: buf.readFloatLE(8),
           mass_pm10: buf.readFloatLE(12),
-          number_pm0_5: buf.readFloatLE(16), // 1パケット=20バイトしか来ない
+          number_pm0_5: buf.readFloatLE(16), // 1パケット=20バイトしか来ない // TODO
           // number_pm1: buf.readFloatLE(20),
           // number_pm2_5: buf.readFloatLE(24),
           // number_pm4: buf.readFloatLE(28),
