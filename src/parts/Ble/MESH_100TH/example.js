@@ -1,9 +1,7 @@
-// const Obniz = require('obniz');
-const Obniz = require('../../../../index.js'); // local
+const Obniz = require('obniz');
 const MESH_100TH = Obniz.getPartsClass('MESH_100TH');
 
-// const obnizId = '00000000';
-const obnizId = '87287267'; // Sugimoto
+const obnizId = 'XXXXXXXX'; // WRITE YOUR OBNIZ ID
 
 const obniz = new Obniz(obnizId, {
   access_token: null,
