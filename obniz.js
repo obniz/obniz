@@ -38368,7 +38368,7 @@ class Base {
         this.updateStatusButton_(data);
     }
     /**
-     * Parse to statusbar LED command
+     * Convert parameters to command of statusbar LED
      *
      * @param power
      * @param red
@@ -38451,9 +38451,6 @@ class Base {
         if (data[this.EVENT_TYPE_ID_INDEX] !== this.REGULARLY_EVENT_TYPE_ID_VALUE_) {
             return false;
         }
-        // if (data[2] === this.battery) {
-        //   return;
-        // }
         this.battery_ = data[this.REGULARLY_BATTERY_INDEX_];
         if (typeof this.onBatteryLevel !== 'function') {
             return false;
@@ -38603,7 +38600,7 @@ class Button extends Base_1.Base {
         };
     }
     /**
-     * notify
+     * Parse data that received from MESH block, and emit event
      *
      * @param data
      * @returns
@@ -38695,7 +38692,7 @@ class GPIO extends Base_1.Base {
         this.PWM_ID_ = 6;
     }
     /**
-     * notify
+     * Parse data that received from MESH block, and emit event
      *
      * @const
      * @param data
@@ -38780,7 +38777,7 @@ class GPIO extends Base_1.Base {
         }
     }
     /**
-     * Parse to set-mode command
+     * Convert parameters to command of set-mode
      *
      * @param digitalInputLow2High { p1:boolean, p2:boolean, p3:boolean }
      * @param digitalInputHigh2Low { p1:boolean, p2:boolean, p3:boolean }
@@ -38826,7 +38823,7 @@ class GPIO extends Base_1.Base {
         return data;
     }
     /**
-     * Parse to digital-input command
+     * Convert parameters to command of digital-input
      *
      * @param pin
      * @param opt_requestId
@@ -38836,7 +38833,7 @@ class GPIO extends Base_1.Base {
         return this.parseCommand_(this.DIGITAL_IN_ID_, pin, opt_requestId);
     }
     /**
-     * Parse to analog-input command
+     * Convert parameters to command of analog-input
      *
      * @param analogInputNotifyMode
      * @param opt_requestId
@@ -38846,7 +38843,7 @@ class GPIO extends Base_1.Base {
         return this.parseCommand_(this.ANALOG_IN_ID_, analogInputNotifyMode, opt_requestId);
     }
     /**
-     * Parse to v-output command
+     * Convert parameters to command of v-output
      *
      * @param opt_requestId
      * @returns
@@ -38856,7 +38853,7 @@ class GPIO extends Base_1.Base {
         return this.parseCommand_(this.V_OUT_ID_, PIN, opt_requestId);
     }
     /**
-     * Parse to digital-output command
+     * Convert parameters to command of digital-output
      *
      * @param pin
      * @param opt_requestId
@@ -38866,7 +38863,7 @@ class GPIO extends Base_1.Base {
         return this.parseCommand_(this.DIGITAL_OUT_ID_, pin, opt_requestId);
     }
     /**
-     * Parse to PWM command
+     * Convert parameters to command of PWM
      *
      * @param opt_requestId
      * @returns
@@ -38939,7 +38936,7 @@ class LED extends Base_1.Base {
         this.colors = { red: 0, green: 0, blue: 0 };
     }
     /**
-     * Parse to LED command
+     * Convert parameters to command of LED
      *
      * @param colors
      * @param totalTime
@@ -39012,7 +39009,7 @@ class Motion extends Base_1.Base {
         this.EVENT_TYPE_ID_ = 0;
     }
     /**
-     * notify
+     * Parse data that received from MESH block, and emit event
      *
      * @param data
      * @returns
@@ -39034,7 +39031,7 @@ class Motion extends Base_1.Base {
         this.onSensorEvent(motionState, notifyMode, requestId);
     }
     /**
-     * Parse to set-mode command
+     * Convert parameters to command of set-mode
      *
      * @param notifyMode
      * @param opt_detectionTime
@@ -39123,7 +39120,7 @@ class Move extends Base_1.Base {
         this.ORIENTATION_EVENT_ID_ = 3;
     }
     /**
-     * notify
+     * Parse data that received from MESH block, and emit event
      *
      * @param data
      * @returns
@@ -39206,7 +39203,7 @@ class TempHumid extends Base_1.Base {
             TempHumid.NotifyMode.ALWAYS;
     }
     /**
-     * notify
+     * Parse data that received from MESH block, and emit event
      *
      * @param data
      * @returns
@@ -39232,7 +39229,7 @@ class TempHumid extends Base_1.Base {
         this.onSensorEvent(temperature, humidity, requestId);
     }
     /**
-     * Parse to set-mode command
+     * Convert parameters to command of set-mode
      *
      * @param temperatureRangeUpper
      * @param temperatureRangeBottom

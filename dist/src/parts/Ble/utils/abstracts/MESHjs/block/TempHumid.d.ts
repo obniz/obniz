@@ -28,14 +28,14 @@ export declare class TempHumid extends Base {
     private readonly NOTIFY_MODE_MIN_;
     private readonly NOTIFY_MODE_MAX_;
     /**
-     * notify
+     * Parse data that received from MESH block, and emit event
      *
      * @param data
      * @returns
      */
     notify(data: number[]): void;
     /**
-     * Parse to set-mode command
+     * Convert parameters to command of set-mode
      *
      * @param temperatureRangeUpper
      * @param temperatureRangeBottom

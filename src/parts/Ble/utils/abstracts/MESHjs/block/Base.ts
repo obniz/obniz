@@ -94,7 +94,7 @@ export class Base {
   }
 
   /**
-   * Parse to statusbar LED command
+   * Convert parameters to command of statusbar LED
    *
    * @param power
    * @param red
@@ -208,9 +208,6 @@ export class Base {
     ) {
       return false;
     }
-    // if (data[2] === this.battery) {
-    //   return;
-    // }
     this.battery_ = data[this.REGULARLY_BATTERY_INDEX_];
     if (typeof this.onBatteryLevel !== 'function') {
       return false;

@@ -90,7 +90,7 @@ class Base {
         this.updateStatusButton_(data);
     }
     /**
-     * Parse to statusbar LED command
+     * Convert parameters to command of statusbar LED
      *
      * @param power
      * @param red
@@ -173,9 +173,6 @@ class Base {
         if (data[this.EVENT_TYPE_ID_INDEX] !== this.REGULARLY_EVENT_TYPE_ID_VALUE_) {
             return false;
         }
-        // if (data[2] === this.battery) {
-        //   return;
-        // }
         this.battery_ = data[this.REGULARLY_BATTERY_INDEX_];
         if (typeof this.onBatteryLevel !== 'function') {
             return false;

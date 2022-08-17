@@ -73,7 +73,7 @@ export declare class GPIO extends Base {
     private readonly DIGITAL_OUT_ID_;
     private readonly PWM_ID_;
     /**
-     * notify
+     * Parse data that received from MESH block, and emit event
      *
      * @const
      * @param data
@@ -81,7 +81,7 @@ export declare class GPIO extends Base {
      */
     notify(data: number[]): void;
     /**
-     * Parse to set-mode command
+     * Convert parameters to command of set-mode
      *
      * @param digitalInputLow2High { p1:boolean, p2:boolean, p3:boolean }
      * @param digitalInputHigh2Low { p1:boolean, p2:boolean, p3:boolean }
@@ -95,7 +95,7 @@ export declare class GPIO extends Base {
      */
     parseSetmodeCommand(digitalInputLow2High: GPIO['DigitalPins'], digitalInputHigh2Low: GPIO['DigitalPins'], digitalOutput: GPIO['DigitalPins'], pwmRatio: number, vcc: number, analogInputRangeUpper: number, analogInputRangeBottom: number, analogInputNotify: number): number[];
     /**
-     * Parse to digital-input command
+     * Convert parameters to command of digital-input
      *
      * @param pin
      * @param opt_requestId
@@ -103,7 +103,7 @@ export declare class GPIO extends Base {
      */
     parseDigitalInputCommand(pin: number, opt_requestId?: number): number[];
     /**
-     * Parse to analog-input command
+     * Convert parameters to command of analog-input
      *
      * @param analogInputNotifyMode
      * @param opt_requestId
@@ -111,14 +111,14 @@ export declare class GPIO extends Base {
      */
     parseAnalogInputCommand(analogInputNotifyMode: number, opt_requestId?: number): number[];
     /**
-     * Parse to v-output command
+     * Convert parameters to command of v-output
      *
      * @param opt_requestId
      * @returns
      */
     parseVOutputCommand(opt_requestId?: number): number[];
     /**
-     * Parse to digital-output command
+     * Convert parameters to command of digital-output
      *
      * @param pin
      * @param opt_requestId
@@ -126,7 +126,7 @@ export declare class GPIO extends Base {
      */
     parseDigitalOutputCommand(pin: number, opt_requestId?: number): number[];
     /**
-     * Parse to PWM command
+     * Convert parameters to command of PWM
      *
      * @param opt_requestId
      * @returns

@@ -90,7 +90,7 @@ export class GPIO extends Base {
   private readonly PWM_ID_: number = 6 as const;
 
   /**
-   * notify
+   * Parse data that received from MESH block, and emit event
    *
    * @const
    * @param data
@@ -177,7 +177,7 @@ export class GPIO extends Base {
   }
 
   /**
-   * Parse to set-mode command
+   * Convert parameters to command of set-mode
    *
    * @param digitalInputLow2High { p1:boolean, p2:boolean, p3:boolean }
    * @param digitalInputHigh2Low { p1:boolean, p2:boolean, p3:boolean }
@@ -247,7 +247,7 @@ export class GPIO extends Base {
   }
 
   /**
-   * Parse to digital-input command
+   * Convert parameters to command of digital-input
    *
    * @param pin
    * @param opt_requestId
@@ -258,7 +258,7 @@ export class GPIO extends Base {
   }
 
   /**
-   * Parse to analog-input command
+   * Convert parameters to command of analog-input
    *
    * @param analogInputNotifyMode
    * @param opt_requestId
@@ -276,7 +276,7 @@ export class GPIO extends Base {
   }
 
   /**
-   * Parse to v-output command
+   * Convert parameters to command of v-output
    *
    * @param opt_requestId
    * @returns
@@ -287,7 +287,7 @@ export class GPIO extends Base {
   }
 
   /**
-   * Parse to digital-output command
+   * Convert parameters to command of digital-output
    *
    * @param pin
    * @param opt_requestId
@@ -298,7 +298,7 @@ export class GPIO extends Base {
   }
 
   /**
-   * Parse to PWM command
+   * Convert parameters to command of PWM
    *
    * @param opt_requestId
    * @returns

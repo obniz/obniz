@@ -14,7 +14,7 @@ export declare class LED extends Base {
         blue: number;
     };
     /**
-     * Parse to LED command
+     * Convert parameters to command of LED
      *
      * @param colors
      * @param totalTime

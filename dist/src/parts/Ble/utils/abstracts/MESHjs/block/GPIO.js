@@ -44,7 +44,7 @@ class GPIO extends Base_1.Base {
         this.PWM_ID_ = 6;
     }
     /**
-     * notify
+     * Parse data that received from MESH block, and emit event
      *
      * @const
      * @param data
@@ -129,7 +129,7 @@ class GPIO extends Base_1.Base {
         }
     }
     /**
-     * Parse to set-mode command
+     * Convert parameters to command of set-mode
      *
      * @param digitalInputLow2High { p1:boolean, p2:boolean, p3:boolean }
      * @param digitalInputHigh2Low { p1:boolean, p2:boolean, p3:boolean }
@@ -175,7 +175,7 @@ class GPIO extends Base_1.Base {
         return data;
     }
     /**
-     * Parse to digital-input command
+     * Convert parameters to command of digital-input
      *
      * @param pin
      * @param opt_requestId
@@ -185,7 +185,7 @@ class GPIO extends Base_1.Base {
         return this.parseCommand_(this.DIGITAL_IN_ID_, pin, opt_requestId);
     }
     /**
-     * Parse to analog-input command
+     * Convert parameters to command of analog-input
      *
      * @param analogInputNotifyMode
      * @param opt_requestId
@@ -195,7 +195,7 @@ class GPIO extends Base_1.Base {
         return this.parseCommand_(this.ANALOG_IN_ID_, analogInputNotifyMode, opt_requestId);
     }
     /**
-     * Parse to v-output command
+     * Convert parameters to command of v-output
      *
      * @param opt_requestId
      * @returns
@@ -205,7 +205,7 @@ class GPIO extends Base_1.Base {
         return this.parseCommand_(this.V_OUT_ID_, PIN, opt_requestId);
     }
     /**
-     * Parse to digital-output command
+     * Convert parameters to command of digital-output
      *
      * @param pin
      * @param opt_requestId
@@ -215,7 +215,7 @@ class GPIO extends Base_1.Base {
         return this.parseCommand_(this.DIGITAL_OUT_ID_, pin, opt_requestId);
     }
     /**
-     * Parse to PWM command
+     * Convert parameters to command of PWM
      *
      * @param opt_requestId
      * @returns

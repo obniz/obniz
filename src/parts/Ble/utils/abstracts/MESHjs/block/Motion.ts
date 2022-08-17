@@ -24,7 +24,7 @@ export class Motion extends Base {
   private readonly EVENT_TYPE_ID_: number = 0 as const;
 
   /**
-   * notify
+   * Parse data that received from MESH block, and emit event
    *
    * @param data
    * @returns
@@ -47,7 +47,7 @@ export class Motion extends Base {
   }
 
   /**
-   * Parse to set-mode command
+   * Convert parameters to command of set-mode
    *
    * @param notifyMode
    * @param opt_detectionTime

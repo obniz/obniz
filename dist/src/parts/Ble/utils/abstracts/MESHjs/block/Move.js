@@ -31,7 +31,7 @@ class Move extends Base_1.Base {
         this.ORIENTATION_EVENT_ID_ = 3;
     }
     /**
-     * notify
+     * Parse data that received from MESH block, and emit event
      *
      * @param data
      * @returns

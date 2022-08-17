@@ -32,7 +32,7 @@ export class Move extends Base {
   private readonly ORIENTATION_EVENT_ID_ = 3 as const;
 
   /**
-   * notify
+   * Parse data that received from MESH block, and emit event
    *
    * @param data
    * @returns

@@ -28,7 +28,7 @@ class Button extends Base_1.Base {
         };
     }
     /**
-     * notify
+     * Parse data that received from MESH block, and emit event
      *
      * @param data
      * @returns
