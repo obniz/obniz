@@ -3,7 +3,7 @@
  * @module Parts.MESH_100LE
  */
 import { MESH } from '../utils/abstracts/MESH';
-import { LED } from '../MESH_js/block/LED';
+import { LED } from '../utils/abstracts/MESHjs/block/LED';
 export interface MESH_100LEOptions {
 }
 export interface MESH_100LE_Data {

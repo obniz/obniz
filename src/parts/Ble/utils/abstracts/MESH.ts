@@ -6,7 +6,7 @@ import {
 } from '../../../../obniz/ObnizPartsBleAbstract';
 import { BleRemoteCharacteristic } from '../../../../obniz';
 import BleRemotePeripheral from '../../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import { Base } from '../../MESH_js/block/Base';
+import { Base } from './MESHjs/block/Base';
 
 export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
   // Event Handler

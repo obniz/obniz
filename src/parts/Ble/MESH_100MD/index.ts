@@ -5,8 +5,8 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { MESH } from '../utils/abstracts/MESH';
-import { Motion } from '../MESH_js/block/Motion';
-import { MESHJsTimeOutError } from '../MESH_js/util/Error';
+import { Motion } from '../utils/abstracts/MESHjs/block/Motion';
+import { MESHJsTimeOutError } from '../utils/abstracts/MESHjs/util/Error';
 
 export interface MESH_100MDOptions {}
 

@@ -3,7 +3,7 @@
  * @module Parts.MESH_100GP
  */
 import { MESH } from '../utils/abstracts/MESH';
-import { GPIO } from '../MESH_js/block/GPIO';
+import { GPIO } from '../utils/abstracts/MESHjs/block/GPIO';
 export interface MESH_100GPOptions {
 }
 /**

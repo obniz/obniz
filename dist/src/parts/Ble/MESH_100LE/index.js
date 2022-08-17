@@ -6,7 +6,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const MESH_1 = require("../utils/abstracts/MESH");
-const LED_1 = require("../MESH_js/block/LED");
+const LED_1 = require("../utils/abstracts/MESHjs/block/LED");
 /** MESH_100TH management class */
 class MESH_100LE extends MESH_1.MESH {
     constructor() {

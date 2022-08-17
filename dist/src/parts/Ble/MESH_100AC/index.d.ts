@@ -3,7 +3,7 @@
  * @module Parts.MESH_100AC
  */
 import { MESH } from '../utils/abstracts/MESH';
-import { Move } from '../MESH_js/block/Move';
+import { Move } from '../utils/abstracts/MESHjs/block/Move';
 export interface MESH_100ACOptions {
 }
 /**
