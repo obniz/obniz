@@ -125,6 +125,7 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<RS_BTEVS1_Data, 
     onPm2_5Measured: ((pm2_5: RS_BTEVS1_Pm2_5) => void) | null;
     protected readonly serviceUuid = "F9CC15234E0A49E58CF30007E819EA1E";
     firmwareRevision: string;
+    private firmwareSemRevision;
     /**
      * Connect to the services of a device
      *

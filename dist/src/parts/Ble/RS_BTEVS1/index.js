@@ -4,8 +4,12 @@
  * @module Parts.RS_BTEVS1
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = require("../../../obniz/ObnizPartsBleAbstract");
+const semver_1 = __importDefault(require("semver"));
 const LED_DISPLAY_MODE = ['Disable', 'PM2.5', 'CO2'];
 const PM2_5_CONCENTRATION_MODE = ['Mass', 'Number'];
 /** RS_BTEVS1 management class RS_BTEVS1を管理するクラス */
@@ -23,6 +27,7 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         this.onPm2_5Measured = null;
         this.serviceUuid = 'F9CC15234E0A49E58CF30007E819EA1E';
         this.firmwareRevision = '';
+        this.firmwareSemRevision = null;
     }
     /**
      * Connect to the services of a device
@@ -32,6 +37,7 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     async connectWait() {
         await super.connectWait();
         this.firmwareRevision = Buffer.from(await this.readCharWait('180A', '2A26')).toString();
+        this.firmwareSemRevision = semver_1.default.parse(this.firmwareRevision.replace('Ver.', ''));
     }
     /**
      * Get device all data
@@ -42,10 +48,10 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
      * @returns
      */
     async getDataWait() {
-        if (this.firmwareRevision.startsWith('Ver.1.0')) {
+        this.checkConnected();
+        if (semver_1.default.lt(this.firmwareSemRevision, '1.1.0')) {
             throw new Error('This operation is not supported.');
         }
-        this.checkConnected();
         return new Promise((res, rej) => {
             this.subscribeWait(this.serviceUuid, this.getCharUuid(0x152a), (data) => {
                 const buf = Buffer.from(data);
@@ -66,7 +72,7 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         });
     }
     async beforeOnDisconnectWait() {
-        if (this.firmwareRevision.startsWith('Ver.1.1')) {
+        if (semver_1.default.gte(this.firmwareSemRevision, '1.1.2')) {
             await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1524));
             // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1525));
             await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1526));
@@ -121,7 +127,7 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
             ? config.ledDisplay
             : 'Disable'), 13);
         buf.writeUInt8(config.advertisementBeacon ? 1 : 0, 14);
-        buf.writeUInt8(this.firmwareRevision.startsWith('Ver.1.0')
+        buf.writeUInt8(semver_1.default.lt(this.firmwareSemRevision, '1.1.0')
             ? PM2_5_CONCENTRATION_MODE.indexOf(config.pm2_5ConcentrationMode &&
                 PM2_5_CONCENTRATION_MODE.indexOf(config.pm2_5ConcentrationMode) >=
                     0
@@ -140,10 +146,10 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
      * @returns Write result 書き込み結果
      */
     async setModeLEDWait(blink) {
-        if (this.firmwareRevision.startsWith('Ver.1.0')) {
+        await this.checkConnected();
+        if (semver_1.default.lt(this.firmwareSemRevision, '1.1.0')) {
             throw new Error('This operation is not supported.');
         }
-        await this.checkConnected();
         return await this.writeCharWait(this.serviceUuid, this.getCharUuid(0x1529), [blink ? 1 : 0]);
     }
     /**
@@ -168,10 +174,10 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
      * バージョン1.0.xはサポートされません
      */
     async tempMeasureStartWait() {
-        if (this.firmwareRevision.startsWith('Ver.1.0')) {
+        this.checkConnected();
+        if (semver_1.default.lt(this.firmwareSemRevision, '1.1.0')) {
             throw new Error('This operation is not supported.');
         }
-        this.checkConnected();
         await this.subscribeWait(this.serviceUuid, this.getCharUuid(0x1526), (data) => {
             if (typeof this.onTempMeasured !== 'function')
                 return;
@@ -202,10 +208,10 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
      * バージョン1.1.xはサポートされません
      */
     async pm2_5MeasureStartWait() {
-        if (this.firmwareRevision.startsWith('Ver.1.1')) {
+        this.checkConnected();
+        if (semver_1.default.gte(this.firmwareSemRevision, '1.1.2')) {
             throw new Error('This operation is not supported.');
         }
-        this.checkConnected();
         await this.subscribeWait(this.serviceUuid, this.getCharUuid(0x1528), (data) => {
             if (typeof this.onPm2_5Measured !== 'function')
                 return;

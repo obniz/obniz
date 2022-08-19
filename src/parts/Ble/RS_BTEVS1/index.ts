@@ -20,6 +20,7 @@ import {
   int,
   uint,
 } from '../../../obniz/ObnizPartsBleAbstract';
+import semver from 'semver';
 
 export interface RS_BTEVS1Options {}
 
@@ -217,6 +218,8 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
   protected readonly serviceUuid = 'F9CC15234E0A49E58CF30007E819EA1E';
   public firmwareRevision = '';
 
+  private firmwareSemRevision: semver.SemVer | null = null;
+
   /**
    * Connect to the services of a device
    *
@@ -228,6 +231,9 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
     this.firmwareRevision = Buffer.from(
       await this.readCharWait('180A', '2A26')
     ).toString();
+    this.firmwareSemRevision = semver.parse(
+      this.firmwareRevision.replace('Ver.', '')
+    );
   }
 
   /**
@@ -239,10 +245,10 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
    * @returns
    */
   public async getDataWait(): Promise<RS_BTEVS1_Data> {
-    if (this.firmwareRevision.startsWith('Ver.1.0')) {
+    this.checkConnected();
+    if (semver.lt(this.firmwareSemRevision!, '1.1.0')) {
       throw new Error('This operation is not supported.');
     }
-    this.checkConnected();
 
     return new Promise((res, rej) => {
       this.subscribeWait(this.serviceUuid, this.getCharUuid(0x152a), (data) => {
@@ -265,7 +271,7 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
   }
 
   protected async beforeOnDisconnectWait(): Promise<void> {
-    if (this.firmwareRevision.startsWith('Ver.1.1')) {
+    if (semver.gte(this.firmwareSemRevision!, '1.1.2')) {
       await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1524));
       // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1525));
       await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1526));
@@ -339,7 +345,7 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
 
     buf.writeUInt8(config.advertisementBeacon ? 1 : 0, 14);
     buf.writeUInt8(
-      this.firmwareRevision.startsWith('Ver.1.0')
+      semver.lt(this.firmwareSemRevision!, '1.1.0')
         ? PM2_5_CONCENTRATION_MODE.indexOf(
             config.pm2_5ConcentrationMode &&
               PM2_5_CONCENTRATION_MODE.indexOf(config.pm2_5ConcentrationMode) >=
@@ -369,10 +375,10 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
    * @returns Write result 書き込み結果
    */
   public async setModeLEDWait(blink: boolean): Promise<boolean> {
-    if (this.firmwareRevision.startsWith('Ver.1.0')) {
+    await this.checkConnected();
+    if (semver.lt(this.firmwareSemRevision!, '1.1.0')) {
       throw new Error('This operation is not supported.');
     }
-    await this.checkConnected();
 
     return await this.writeCharWait(
       this.serviceUuid,
@@ -408,10 +414,10 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
    * バージョン1.0.xはサポートされません
    */
   public async tempMeasureStartWait(): Promise<void> {
-    if (this.firmwareRevision.startsWith('Ver.1.0')) {
+    this.checkConnected();
+    if (semver.lt(this.firmwareSemRevision!, '1.1.0')) {
       throw new Error('This operation is not supported.');
     }
-    this.checkConnected();
 
     await this.subscribeWait(
       this.serviceUuid,
@@ -452,10 +458,10 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
    * バージョン1.1.xはサポートされません
    */
   public async pm2_5MeasureStartWait(): Promise<void> {
-    if (this.firmwareRevision.startsWith('Ver.1.1')) {
+    this.checkConnected();
+    if (semver.gte(this.firmwareSemRevision!, '1.1.2')) {
       throw new Error('This operation is not supported.');
     }
-    this.checkConnected();
 
     await this.subscribeWait(
       this.serviceUuid,
