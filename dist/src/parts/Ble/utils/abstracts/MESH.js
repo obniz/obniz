@@ -4,8 +4,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = require("../../../../obniz/ObnizPartsBleAbstract");
 const Base_1 = require("./MESHjs/block/Base");
 class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
-    constructor() {
-        super(...arguments);
+    /**
+     * Create new instance of MESH
+     *
+     * @param peripheral
+     */
+    constructor(peripheral) {
+        super(peripheral, 'Connectable');
         // Event Handler
         this.onBatteryLevel = null;
         this.onStatusButtonPressed = null;

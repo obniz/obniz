@@ -3,6 +3,7 @@
 import {
   ObnizPartsBle,
   ObnizPartsBleConnectable,
+  ObnizPartsBleMode,
 } from '../../../../obniz/ObnizPartsBleAbstract';
 import { BleRemoteCharacteristic } from '../../../../obniz';
 import BleRemotePeripheral from '../../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
@@ -49,6 +50,15 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
       return false;
     }
     return this._isMESHblock(_name);
+  }
+
+  /**
+   * Create new instance of MESH
+   *
+   * @param peripheral
+   */
+  constructor(peripheral: BleRemotePeripheral) {
+    super(peripheral, 'Connectable');
   }
 
   /**
@@ -170,6 +180,7 @@ export class MeshRequestId {
 
   private pool_: number[] = [];
   private currentId_: number = this.DEFAULT_ID_;
+
   // private receivedId_: number = this.DEFAULT_ID_;
 
   /**

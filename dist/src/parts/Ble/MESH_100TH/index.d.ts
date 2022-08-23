@@ -51,7 +51,10 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
      *
      * @returns
      */
-    getSensorDataWait(): Promise<unknown>;
+    getSensorDataWait(): Promise<{
+        temperature: number;
+        humidity: number;
+    }>;
     /**
      * setMode
      *

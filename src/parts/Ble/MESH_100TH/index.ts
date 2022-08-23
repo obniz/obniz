@@ -71,7 +71,10 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
     }, _TIMEOUT_MSEC);
 
     const INTERVAL_TIME = 50 as const;
-    const _result = await new Promise((resolve) => {
+    const _result = await new Promise<{
+      temperature: number;
+      humidity: number;
+    } | null>((resolve) => {
       const _intervalId = setInterval(() => {
         if (!this.requestId.isReceived(_requestId)) {
           if (_isTimeout) {

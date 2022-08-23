@@ -65,7 +65,10 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
     }, _TIMEOUT_MSEC);
 
     const INTERVAL_TIME = 50 as const;
-    const _result = await new Promise((resolve) => {
+    const _result = await new Promise<{
+      proximity: number;
+      brightness: number;
+    } | null>((resolve) => {
       const _intervalId = setInterval(() => {
         if (!this.requestId.isReceived(_requestId)) {
           if (_isTimeout) {

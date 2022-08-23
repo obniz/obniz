@@ -47,7 +47,7 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
      *
      * @returns
      */
-    getSensorDataWait(): Promise<unknown>;
+    getSensorDataWait(): Promise<number>;
     /**
      * setMode
      *

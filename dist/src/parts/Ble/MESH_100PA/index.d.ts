@@ -41,7 +41,10 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
      *
      * @returns
      */
-    getSensorDataWait(): Promise<unknown>;
+    getSensorDataWait(): Promise<{
+        proximity: number;
+        brightness: number;
+    }>;
     /**
      * setMode
      *

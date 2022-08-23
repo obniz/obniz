@@ -3031,7 +3031,7 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         /* send queue */
         if (this._sendQueueTimer) {
-            delete this._sendQueue;
+            this._sendQueue = null;
             clearTimeout(this._sendQueueTimer);
             this._sendQueueTimer = null;
         }
@@ -38091,8 +38091,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
 const Base_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/MESHjs/block/Base.js");
 class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
-    constructor() {
-        super(...arguments);
+    /**
+     * Create new instance of MESH
+     *
+     * @param peripheral
+     */
+    constructor(peripheral) {
+        super(peripheral, 'Connectable');
         // Event Handler
         this.onBatteryLevel = null;
         this.onStatusButtonPressed = null;

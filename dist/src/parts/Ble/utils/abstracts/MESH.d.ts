@@ -23,6 +23,12 @@ export declare abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> 
      */
     static isMESHblock(peripheral: BleRemotePeripheral, opt_serialnumber?: string): boolean;
     /**
+     * Create new instance of MESH
+     *
+     * @param peripheral
+     */
+    constructor(peripheral: BleRemotePeripheral);
+    /**
      * Connect to the services of MESH
      *
      * @returns

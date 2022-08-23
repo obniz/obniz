@@ -302,9 +302,8 @@ export default abstract class ObnizConnection extends EventEmitter<
   private _isLoopProcessing = false;
   private _nextLoopTimeout: ReturnType<typeof setTimeout> | null = null;
   private _nextPingTimeout: ReturnType<typeof setTimeout> | null = null;
-  private _nextAutoConnectLoopTimeout: ReturnType<
-    typeof setTimeout
-  > | null = null;
+  private _nextAutoConnectLoopTimeout: ReturnType<typeof setTimeout> | null =
+    null;
   private _lastDataReceivedAt = 0;
   private _autoConnectTimeout?: ReturnType<typeof setTimeout>;
   private _localConnectIp: string | null = null;
