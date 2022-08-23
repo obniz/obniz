@@ -302,8 +302,9 @@ export default abstract class ObnizConnection extends EventEmitter<
   private _isLoopProcessing = false;
   private _nextLoopTimeout: ReturnType<typeof setTimeout> | null = null;
   private _nextPingTimeout: ReturnType<typeof setTimeout> | null = null;
-  private _nextAutoConnectLoopTimeout: ReturnType<typeof setTimeout> | null =
-    null;
+  private _nextAutoConnectLoopTimeout: ReturnType<
+    typeof setTimeout
+  > | null = null;
   private _lastDataReceivedAt = 0;
   private _autoConnectTimeout?: ReturnType<typeof setTimeout>;
   private _localConnectIp: string | null = null;
@@ -575,14 +576,14 @@ export default abstract class ObnizConnection extends EventEmitter<
         return;
       }
 
-      let sendData = JSON.stringify([obj]);
+      let sendData: string | Uint8Array = JSON.stringify([obj]);
       if (this.debugprint) {
         this._print_debug('send: ' + sendData);
       }
 
       /* compress */
       if (this.wscommand && options.local_connect) {
-        let compressed: any;
+        let compressed: Uint8Array | null;
         try {
           compressed = this.wscommand.compress(
             this.wscommands,
@@ -591,7 +592,9 @@ export default abstract class ObnizConnection extends EventEmitter<
           if (compressed) {
             sendData = compressed;
             if (this.debugprintBinary) {
-              this.log('binalized: ' + new Uint8Array(compressed).toString());
+              this.log(
+                'binalized(send): ' + new Uint8Array(compressed).toString()
+              );
             }
           }
         } catch (e) {
@@ -601,7 +604,7 @@ export default abstract class ObnizConnection extends EventEmitter<
           });
           this.error({
             alert: 'error',
-            message: sendData,
+            message: sendData as string,
           });
           throw e;
         }
@@ -755,7 +758,7 @@ export default abstract class ObnizConnection extends EventEmitter<
         json = JSON.parse(data);
       } else if (this.wscommands) {
         if (this.debugprintBinary) {
-          this.log('binalized: ' + new Uint8Array(data).toString());
+          this.log('binalized(recieve): ' + new Uint8Array(data).toString());
         }
         json = this._binary2Json(data);
       }

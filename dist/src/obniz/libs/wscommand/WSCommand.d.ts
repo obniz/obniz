@@ -48,7 +48,9 @@ export default abstract class WSCommand {
      * @returns chunk
      */
     static dequeueOne(buf: Uint8Array): PayloadChunk | null;
-    static compress(wscommands: any, json: any): Uint8Array | null;
+    static compress(wscommands: WSCommand[], json: {
+        [k: string]: unknown;
+    }): Uint8Array | null;
     _hw: HW;
     ioNotUsed: number;
     COMMAND_FUNC_ID_ERROR: number;
@@ -57,7 +59,9 @@ export default abstract class WSCommand {
     constructor();
     setHw(obj: HW): void;
     sendCommand(func: number, payload: Uint8Array | null): void;
-    parseFromJson(json: any): void;
+    parseFromJson(json: {
+        [k: string]: unknown;
+    }): void;
     notifyFromBinary(objToSend: {
         [key: string]: any;
     }, func: number, payload: Uint8Array): void;

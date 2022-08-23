@@ -19,6 +19,7 @@ import WiFi from './libs/network/wifi';
 import Plugin from './libs/plugin/plugin';
 import ObnizParts from './ObnizParts';
 import { ObnizOptions } from './ObnizOptions';
+import Storage from './libs/embeds/storage';
 export declare type PeripheralName = 'pwm' | 'uart' | 'spi' | 'i2c' | 'tcp';
 export default abstract class ObnizComponents extends ObnizParts {
     /**
@@ -181,6 +182,10 @@ export default abstract class ObnizComponents extends ObnizParts {
      * @category Embeds
      */
     switch?: ObnizSwitch;
+    /**
+     * @category Embeds
+     */
+    storage?: Storage;
     /**
      * If obnizOS ver >= 3.0.0, automatically load [[ObnizCore.Components.Ble.Hci.ObnizBLE|ObnizHciBLE]],
      * and obnizOS ver < 3.0.0 throw unsupported Error,

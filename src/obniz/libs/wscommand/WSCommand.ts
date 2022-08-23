@@ -154,7 +154,10 @@ export default abstract class WSCommand {
     };
   }
 
-  public static compress(wscommands: any, json: any): Uint8Array | null {
+  public static compress(
+    wscommands: WSCommand[],
+    json: { [k: string]: unknown }
+  ): Uint8Array | null {
     let ret: Uint8Array | null = null;
 
     const append = (
@@ -206,13 +209,14 @@ export default abstract class WSCommand {
     this._hw = obj;
   }
 
+  // This function does NOT send command to websocket. Just doing creating frame and append it to some variable.
   public sendCommand(func: number, payload: Uint8Array | null): void {
     if (this.parsed) {
       this.parsed(this.module, func, payload);
     }
   }
 
-  public parseFromJson(json: any) {
+  public parseFromJson(json: { [k: string]: unknown }) {
     // abstract
   }
 

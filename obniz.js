@@ -340,6 +340,9 @@ var map = {
 	"./request/spi/index.yml": "./dist/src/json_schema/request/spi/index.yml",
 	"./request/spi/init_master.yml": "./dist/src/json_schema/request/spi/init_master.yml",
 	"./request/spi/write.yml": "./dist/src/json_schema/request/spi/write.yml",
+	"./request/storage/index.yml": "./dist/src/json_schema/request/storage/index.yml",
+	"./request/storage/read.yml": "./dist/src/json_schema/request/storage/read.yml",
+	"./request/storage/save.yml": "./dist/src/json_schema/request/storage/save.yml",
 	"./request/switch/get.yml": "./dist/src/json_schema/request/switch/get.yml",
 	"./request/switch/index.yml": "./dist/src/json_schema/request/switch/index.yml",
 	"./request/system/index.yml": "./dist/src/json_schema/request/system/index.yml",
@@ -422,6 +425,8 @@ var map = {
 	"./response/plugin/receive.yml": "./dist/src/json_schema/response/plugin/receive.yml",
 	"./response/spi/index.yml": "./dist/src/json_schema/response/spi/index.yml",
 	"./response/spi/read.yml": "./dist/src/json_schema/response/spi/read.yml",
+	"./response/storage/index.yml": "./dist/src/json_schema/response/storage/index.yml",
+	"./response/storage/read.yml": "./dist/src/json_schema/response/storage/read.yml",
 	"./response/switch/change.yml": "./dist/src/json_schema/response/switch/change.yml",
 	"./response/switch/index.yml": "./dist/src/json_schema/response/switch/index.yml",
 	"./response/system/index.yml": "./dist/src/json_schema/response/system/index.yml",
@@ -836,7 +841,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./dist/src/json_schema/request/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c[0-1]$":{"$ref":"/request/i2c"},"^tcp[0-7]$":{"$ref":"/request/tcp"}},"properties":{"io":{"$ref":"/request/ioAnimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"measure":{"$ref":"/request/measure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"},"ws":{"$ref":"/request/ws"},"wifi":{"$ref":"/request/wifi"},"plugin":{"$ref":"/request/plugin"}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c[0-1]$":{"$ref":"/request/i2c"},"^tcp[0-7]$":{"$ref":"/request/tcp"}},"properties":{"io":{"$ref":"/request/ioAnimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"measure":{"$ref":"/request/measure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"},"ws":{"$ref":"/request/ws"},"wifi":{"$ref":"/request/wifi"},"plugin":{"$ref":"/request/plugin"},"storage":{"$ref":"/request/storage"}}}}
 
 /***/ }),
 
@@ -1047,6 +1052,27 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi/write","related":"/response/spi/read","type":"object","required":["data","read"],"properties":{"data":{"$ref":"/dataArray1024"},"read":{"type":"boolean","default":true}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/storage/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/storage","basePath":"storage","anyOf":[{"$ref":"/request/storage/save"},{"$ref":"/request/storage/read"}]}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/storage/read.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/storage/read","related":"/response/storage/read","desription":"Read file data by file name from obniz storage.","type":"object","required":["read"],"properties":{"read":{"type":"object","required":["fileName"],"properties":{"fileName":{"type":"string"}}}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/storage/save.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/storage/save","type":"object","required":["save"],"properties":{"save":{"type":"object","required":["fileName","data"],"properties":{"fileName":{"type":"string"},"data":{"$ref":"/dataArray"}}}}}
 
 /***/ }),
 
@@ -1508,7 +1534,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./dist/src/json_schema/response/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c[0-1]$":{"$ref":"/response/i2c"},"^tcp[0-7]$":{"$ref":"/response/tcp"}},"properties":{"io":{"$ref":"/response/ioAnimation"},"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"measure":{"$ref":"/response/measure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"},"ws":{"$ref":"/response/ws"},"wifi":{"$ref":"/response/wifi"},"plugin":{"$ref":"/response/plugin"}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c[0-1]$":{"$ref":"/response/i2c"},"^tcp[0-7]$":{"$ref":"/response/tcp"}},"properties":{"io":{"$ref":"/response/ioAnimation"},"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"measure":{"$ref":"/response/measure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"},"ws":{"$ref":"/response/ws"},"wifi":{"$ref":"/response/wifi"},"plugin":{"$ref":"/response/plugin"},"storage":{"$ref":"/response/storage"}}}}
 
 /***/ }),
 
@@ -1621,6 +1647,20 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/spi/read","type":"object","required":["data"],"properties":{"data":{"$ref":"/dataArray"}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/response/storage/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/storage","basePath":"storage","anyOf":[{"$ref":"/response/storage/read"}]}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/response/storage/read.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/storage/read","type":"object","required":["read"],"properties":{"read":{"$ref":"/dataArray"}}}
 
 /***/ }),
 
@@ -2042,6 +2082,7 @@ const ObnizParts_1 = __importDefault(__webpack_require__("./dist/src/obniz/Obniz
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 const hw_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/hw/index.js"));
 const grove_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/io_peripherals/grove.js"));
+const storage_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/storage.js"));
 class ObnizComponents extends ObnizParts_1.default {
     constructor(id, options) {
         super(id, options);
@@ -2208,6 +2249,7 @@ class ObnizComponents extends ObnizParts_1.default {
             display: display_1.default,
             switch: switch_1.default,
             ble,
+            storage: storage_1.default,
         };
         const protocol_map = {
             tcp: tcp_1.default,
@@ -2237,6 +2279,7 @@ class ObnizComponents extends ObnizParts_1.default {
             for (const key in embeds_map) {
                 if (hw_embeds[key]) {
                     const Class = embeds_map[key];
+                    // 'this' must be an instance of Obniz class since it's the only class that gets instantiated by user.
                     this[key] = new Class(this, hw_embeds[key]);
                     this._allComponentKeys.push(key);
                     if (typeof this[key].debugHandler === 'function') {
@@ -2654,7 +2697,7 @@ class ObnizConnection extends eventemitter3_1.default {
                     if (compressed) {
                         sendData = compressed;
                         if (this.debugprintBinary) {
-                            this.log('binalized: ' + new Uint8Array(compressed).toString());
+                            this.log('binalized(send): ' + new Uint8Array(compressed).toString());
                         }
                     }
                 }
@@ -2799,7 +2842,7 @@ class ObnizConnection extends eventemitter3_1.default {
             }
             else if (this.wscommands) {
                 if (this.debugprintBinary) {
-                    this.log('binalized: ' + new Uint8Array(data).toString());
+                    this.log('binalized(recieve): ' + new Uint8Array(data).toString());
                 }
                 json = this._binary2Json(data);
             }
@@ -3031,7 +3074,7 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         /* send queue */
         if (this._sendQueueTimer) {
-            this._sendQueue = null;
+            delete this._sendQueue;
             clearTimeout(this._sendQueueTimer);
             this._sendQueueTimer = null;
         }
@@ -15735,6 +15778,51 @@ exports.default = Display;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/embeds/storage.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
+class Storage extends ComponentAbstact_1.ComponentAbstract {
+    schemaBasePath() {
+        return 'storage';
+    }
+    _reset() {
+        // What should I do?
+    }
+    constructor(obniz, info) {
+        super(obniz);
+    }
+    save(fileName, data) {
+        const obj = {
+            storage: {
+                save: {
+                    fileName,
+                    data,
+                },
+            },
+        };
+        this.Obniz.send(obj);
+    }
+    async readWait(fileName) {
+        const obj = {
+            storage: {
+                read: {
+                    fileName,
+                },
+            },
+        };
+        const json = await this.sendAndReceiveJsonWait(obj, '/response/storage/read');
+        return json.read;
+    }
+}
+exports.default = Storage;
+
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/embeds/switch.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -20476,6 +20564,7 @@ class WSCommand {
     setHw(obj) {
         this._hw = obj;
     }
+    // This function does NOT send command to websocket. Just doing creating frame and append it to some variable.
     sendCommand(func, payload) {
         if (this.parsed) {
             this.parsed(this.module, func, payload);
@@ -23246,6 +23335,101 @@ exports.default = WSCommandSPI;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/wscommand/WSCommandStorage.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
+class WSCommandStorage extends WSCommand_1.default {
+    constructor() {
+        super(...arguments);
+        this.module = 17;
+        this._CommandSave = 0;
+        this._CommandRead = 1;
+    }
+    // public _CommandErase = 2; // TODO: Implement this in the future.
+    save(json) {
+        // request payload format
+        // length of filename | filename | data
+        const { fileName, data } = json.save;
+        const buf = Buffer.from(fileName);
+        const fileNameUintArr = new Uint8Array(buf);
+        const joined = new Uint8Array(1 /* this 1 byte indicates length of filename */ +
+            fileNameUintArr.length +
+            data.length);
+        const iLenFileName = 0;
+        const iFileName = iLenFileName + 1;
+        const iData = iFileName + fileNameUintArr.length;
+        joined.set(new Uint8Array([fileNameUintArr.length]), iLenFileName);
+        joined.set(fileNameUintArr, iFileName);
+        joined.set(data, iData);
+        this.sendCommand(this._CommandSave, joined);
+    }
+    read(json) {
+        // request payload format
+        // length of filename | filename
+        const { fileName } = json.read;
+        const buf = Buffer.from(fileName);
+        const fileNameUintArr = new Uint8Array(buf);
+        const joined = new Uint8Array(1 /* this 1 byte indicates length of filename */ + fileNameUintArr.length);
+        const iLenFileName = 0;
+        const iFileName = iLenFileName + 1;
+        joined.set(new Uint8Array([fileNameUintArr.length]), iLenFileName);
+        joined.set(fileNameUintArr, iFileName);
+        this.sendCommand(this._CommandRead, joined);
+    }
+    parseFromJson(json) {
+        const module = json.storage;
+        if (!module)
+            return;
+        const schemaData = [
+            { uri: '/request/storage/save', onValid: this.save },
+            { uri: '/request/storage/read', onValid: this.read },
+        ];
+        const res = this.validateCommandSchema(schemaData, module, 'storage');
+        if (res.valid === 0) {
+            if (res.invalidButLike.length > 0) {
+                throw new Error(res.invalidButLike[0].message);
+            }
+            else {
+                throw new this.WSCommandNotFoundError('[storage]unknown commnad');
+            }
+        }
+    }
+    notifyFromBinary(objToSend, func, payload) {
+        switch (func) {
+            case this._CommandSave: {
+                super.notifyFromBinary(objToSend, func, payload);
+                break;
+            }
+            case this._CommandRead: {
+                // parse binary and build up json out of it
+                // binary format: lenFileName | bytesFileName | bytesData
+                const lenFileName = payload[0];
+                const bytesFileName = payload.slice(1, lenFileName + 1);
+                const uBytesData = payload.slice(1 + bytesFileName.length);
+                objToSend.storage = {
+                    read: Array.from(uBytesData),
+                };
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    }
+}
+exports.default = WSCommandStorage;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/wscommand/WSCommandSwitch.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -23946,6 +24130,7 @@ const WSCommandSystem_1 = __importDefault(__webpack_require__("./dist/src/obniz/
 const WSCommandTcp_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandTcp.js"));
 const WSCommandUart_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandUart.js"));
 const WSCommandWiFi_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandWiFi.js"));
+const WSCommandStorage_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandStorage.js"));
 /* eslint-disable */
 WSCommand_1.default.addCommandClass("WSCommandSystem", WSCommandSystem_1.default);
 WSCommand_1.default.addCommandClass("WSCommandDirective", WSCommandDirective_1.default);
@@ -23963,6 +24148,7 @@ WSCommand_1.default.addCommandClass("WSCommandMeasurement", WSCommandMeasurement
 WSCommand_1.default.addCommandClass("WSCommandTcp", WSCommandTcp_1.default);
 WSCommand_1.default.addCommandClass("WSCommandWiFi", WSCommandWiFi_1.default);
 WSCommand_1.default.addCommandClass("WSCommandPlugin", WSCommandPlugin_1.default);
+WSCommand_1.default.addCommandClass("WSCommandStorage", WSCommandStorage_1.default);
 exports.default = WSCommand_1.default;
 
 

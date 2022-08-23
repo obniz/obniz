@@ -26,6 +26,7 @@ const ObnizParts_1 = __importDefault(require("./ObnizParts"));
 const ComponentAbstact_1 = require("./libs/ComponentAbstact");
 const hw_1 = __importDefault(require("./libs/hw"));
 const grove_1 = __importDefault(require("./libs/io_peripherals/grove"));
+const storage_1 = __importDefault(require("./libs/embeds/storage"));
 class ObnizComponents extends ObnizParts_1.default {
     constructor(id, options) {
         super(id, options);
@@ -192,6 +193,7 @@ class ObnizComponents extends ObnizParts_1.default {
             display: display_1.default,
             switch: switch_1.default,
             ble,
+            storage: storage_1.default,
         };
         const protocol_map = {
             tcp: tcp_1.default,
@@ -221,6 +223,7 @@ class ObnizComponents extends ObnizParts_1.default {
             for (const key in embeds_map) {
                 if (hw_embeds[key]) {
                     const Class = embeds_map[key];
+                    // 'this' must be an instance of Obniz class since it's the only class that gets instantiated by user.
                     this[key] = new Class(this, hw_embeds[key]);
                     this._allComponentKeys.push(key);
                     if (typeof this[key].debugHandler === 'function') {
