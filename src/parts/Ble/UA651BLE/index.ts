@@ -72,6 +72,13 @@ export interface UA651BLEResult {
     minute: number;
     second: number;
   };
+
+  /**
+   * battery(%) バッテリー(%)
+   *
+   * Value 値: 100 | 66 | 40 | 33
+   */
+  battery?: number;
 }
 
 /** UA651BLE management class UA651BLEを管理するクラス */
@@ -117,6 +124,56 @@ export default class UA651BLE implements ObnizPartsBleInterface {
     this._timezoneOffsetMinute = timezoneOffsetMinute;
   }
 
+  public isPairingMode() {
+    if (!this._peripheral) {
+      throw new Error('UA651BLE not found');
+    }
+
+    // adv_data[2]はFlagsで、bit0が1の場合Pairng Mode(Limited Discoverable Mode)
+    if (this._peripheral.adv_data[2] === 5) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * Pair with the device
+   *
+   * デバイスとペアリング
+   *
+   * @returns pairing key ペアリングキー
+   */
+  public async pairingWait(): Promise<string | null> {
+    if (!this._peripheral) {
+      throw new Error('UA651BLE not found');
+    }
+    this._peripheral.ondisconnect = (reason: any) => {
+      if (typeof this.ondisconnect === 'function') {
+        this.ondisconnect(reason);
+      }
+    };
+    let key: string | null = null;
+    await this._peripheral.connectWait({
+      pairingOption: {
+        onPairedCallback: (pairingKey) => {
+          key = pairingKey;
+        },
+      },
+    });
+
+    const {
+      bloodPressureMeasurementChar,
+      timeChar,
+      customServiceChar,
+    } = this._getChars();
+
+    await this._writeTimeCharWait(this._timezoneOffsetMinute);
+
+    await customServiceChar.writeWait([2, 1, 3]); // disconnect req
+    return key;
+  }
+
   /**
    * Get data from the UA651BLE
    *
@@ -124,18 +181,15 @@ export default class UA651BLE implements ObnizPartsBleInterface {
    *
    * @returns data from the UA651BLE UA651BLEから受け取ったデータ
    */
-  public async getDataWait(): Promise<UA651BLEResult[]> {
+  public async getDataWait(pairingKeys?: string): Promise<UA651BLEResult[]> {
     if (!this._peripheral) {
       throw new Error('UA651BLE not found');
     }
-    if (!this._peripheral.connected) {
-      this._peripheral.ondisconnect = (reason) => {
-        if (this.ondisconnect) {
-          this.ondisconnect(reason);
-        }
-      };
-      await this._peripheral.connectWait();
-    }
+    await this._peripheral.connectWait({
+      pairingOption: {
+        keys: pairingKeys,
+      },
+    });
 
     if (!this._peripheral) {
       throw new Error('UA651BLE not found');
@@ -145,24 +199,26 @@ export default class UA651BLE implements ObnizPartsBleInterface {
       bloodPressureMeasurementChar,
       timeChar,
       customServiceChar,
+      batteryChar,
     } = this._getChars();
+
+    const waitDisconnect = new Promise<UA651BLEResult[]>((resolve, reject) => {
+      if (!this._peripheral) return;
+      this._peripheral.ondisconnect = (reason: any) => {
+        resolve(results);
+      };
+    });
+
+    const battery = await batteryChar.readWait();
 
     await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
     await this._writeTimeCharWait(this._timezoneOffsetMinute);
 
     await bloodPressureMeasurementChar.registerNotifyWait((data: number[]) => {
-      results.push(this._analyzeData(data));
+      results.push(this._analyzeData(data, battery));
     });
 
-    return await new Promise((resolve, reject) => {
-      if (!this._peripheral) return;
-      this._peripheral.ondisconnect = (reason) => {
-        resolve(results);
-        if (this.ondisconnect) {
-          this.ondisconnect(reason);
-        }
-      };
-    });
+    return waitDisconnect;
   }
 
   private _readSFLOAT_LE(buffer: Buffer, index: number) {
@@ -175,7 +231,7 @@ export default class UA651BLE implements ObnizPartsBleInterface {
     return mantissa * Math.pow(10, exponential);
   }
 
-  private _analyzeData(data: number[]): UA651BLEResult {
+  private _analyzeData(data: number[], battery: number[]): UA651BLEResult {
     const buf = Buffer.from(data);
     const flags = buf.readUInt8(0);
 
@@ -232,6 +288,7 @@ export default class UA651BLE implements ObnizPartsBleInterface {
       index += 1;
     }
 
+    result.battery = battery[0];
     return result;
   }
 
@@ -249,11 +306,15 @@ export default class UA651BLE implements ObnizPartsBleInterface {
     const customServiceChar = this._peripheral
       .getService('233bf0005a341b6d975c000d5690abe4')! // Primary Service Custom Service(pp.14)
       .getCharacteristic('233bf0015a341b6d975c000d5690abe4')!; // Custom Characteristic(pp.14)
+    const batteryChar = this._peripheral
+      .getService('180F')!
+      .getCharacteristic('2A19')!;
 
     return {
       bloodPressureMeasurementChar,
       timeChar,
       customServiceChar,
+      batteryChar,
     };
   }
 

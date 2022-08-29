@@ -1,8 +1,9 @@
-import { HandleIndex } from '../peripheral/gatt';
-
 /**
+ * @packageDocumentation
  * @ignore
  */
+
+import { HandleIndex } from '../peripheral/gatt';
 // eslint-disable-next-line @typescript-eslint/no-namespace
 namespace ATT {
   export const OP_ERROR = 0x01;

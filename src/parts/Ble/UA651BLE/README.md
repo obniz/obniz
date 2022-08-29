@@ -1,8 +1,8 @@
 # UA651BLE
 This is a blood pressure meter from A&D Corporation.
 
-Pairing is required for data communication. Pairing can be done by pressing and holding the power button until "Pr" is displayed.
-The device will record the paired device, return localName only to that device, and transfer data only to that device after the connection is established.
+
+In order to measure blood pressure, the device must first be paired to get a pairing key.  
 
 ![](./image.jpg)
 
@@ -43,28 +43,75 @@ await obniz.ble.scan.startWait();
 
 ```
 
+## isPairingMode()
 
-## [await]getDataWait()
-
-Connects to the device and collects data in batches.
-The only data that can be retrieved is the data that the device has not yet sent.
-
-After the data is sent, the connection to the device is automatically terminated.
+Based on the advertisement information received by BLE, it determines whether it is in pairing mode or measurement mode.  
+In case of pairing mode, true is returned.
 
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
 const UA651BLE = Obniz.getPartsClass("UA651BLE");
+let key;
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (UA651BLE.isDevice(peripheral)) {
+    console.log("device find");
+    const device = new UA651BLE(peripheral);
+    console.log(device.isPairingMode());
+  }
+};
+await obniz.ble.scan.startWait();
+```
+
+## [await]pairingWait()
+
+Pair with UA651BLE and obtain a pairing key.
+
+```javascript
+// Javascript Example
+await obniz.ble.initWait();
+const UA651BLE = Obniz.getPartsClass("UA651BLE");
+let key;
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (UA651BLE.isDevice(peripheral) ) {
+    console.log("device find");
+    const device = new UA651BLE(peripheral);
+    if(device.isPairingMode()){
+      key = await device.pairingWait();
+      console.log(key);
+    };
+  }
+};
+await obniz.ble.scan.startWait();
+
+```
+
+
+## [await]getDataWait()
+
+Connects to the device and collects data in batches.  
+The only data that can be retrieved is the data that the device has not yet sent.  
+
+A pairing key is required to get data.  
+
+After the data is sent, the connection to the device is automatically terminated.  
+
+```javascript
+// Javascript Example
+await obniz.ble.initWait();
+const UA651BLE = Obniz.getPartsClass("UA651BLE");
+let key = "pairing key here";
 obniz.ble.scan.onfind = async (peripheral) => {
   if (UA651BLE.isDevice(peripheral)) {
     console.log("find");
     const device = new UA651BLE(peripheral);
-    
-    const data = await device.getDataWait();
-    
-    console.log(data);
+    if(key){
+      const data = await device.getDataWait(key);
+      console.log(data);
+    }
   }
 };
+
 await obniz.ble.scan.startWait();
 
 ```
@@ -87,5 +134,6 @@ Output format is here. Blood pressure data is in mmHg or kPa format, and Pulse r
   irregularPulseDetected?: boolean;
   improperMeasurement?: boolean;
   PulseRate?: number;
+  battery?: number;
 }
 ```

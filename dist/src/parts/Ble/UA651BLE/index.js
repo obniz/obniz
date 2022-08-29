@@ -33,6 +33,47 @@ class UA651BLE {
     static isDevice(peripheral) {
         return (peripheral.localName && peripheral.localName.startsWith('A&D_UA-651BLE_'));
     }
+    isPairingMode() {
+        if (!this._peripheral) {
+            throw new Error('UA651BLE not found');
+        }
+        // adv_data[2]はFlagsで、bit0が1の場合Pairng Mode(Limited Discoverable Mode)
+        if (this._peripheral.adv_data[2] === 5) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    /**
+     * Pair with the device
+     *
+     * デバイスとペアリング
+     *
+     * @returns pairing key ペアリングキー
+     */
+    async pairingWait() {
+        if (!this._peripheral) {
+            throw new Error('UA651BLE not found');
+        }
+        this._peripheral.ondisconnect = (reason) => {
+            if (typeof this.ondisconnect === 'function') {
+                this.ondisconnect(reason);
+            }
+        };
+        let key = null;
+        await this._peripheral.connectWait({
+            pairingOption: {
+                onPairedCallback: (pairingKey) => {
+                    key = pairingKey;
+                },
+            },
+        });
+        const { bloodPressureMeasurementChar, timeChar, customServiceChar, } = this._getChars();
+        await this._writeTimeCharWait(this._timezoneOffsetMinute);
+        await customServiceChar.writeWait([2, 1, 3]); // disconnect req
+        return key;
+    }
     /**
      * Get data from the UA651BLE
      *
@@ -40,38 +81,34 @@ class UA651BLE {
      *
      * @returns data from the UA651BLE UA651BLEから受け取ったデータ
      */
-    async getDataWait() {
+    async getDataWait(pairingKeys) {
         if (!this._peripheral) {
             throw new Error('UA651BLE not found');
         }
-        if (!this._peripheral.connected) {
-            this._peripheral.ondisconnect = (reason) => {
-                if (this.ondisconnect) {
-                    this.ondisconnect(reason);
-                }
-            };
-            await this._peripheral.connectWait();
-        }
+        await this._peripheral.connectWait({
+            pairingOption: {
+                keys: pairingKeys,
+            },
+        });
         if (!this._peripheral) {
             throw new Error('UA651BLE not found');
         }
         const results = [];
-        const { bloodPressureMeasurementChar, timeChar, customServiceChar, } = this._getChars();
-        await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
-        await this._writeTimeCharWait(this._timezoneOffsetMinute);
-        await bloodPressureMeasurementChar.registerNotifyWait((data) => {
-            results.push(this._analyzeData(data));
-        });
-        return await new Promise((resolve, reject) => {
+        const { bloodPressureMeasurementChar, timeChar, customServiceChar, batteryChar, } = this._getChars();
+        const waitDisconnect = new Promise((resolve, reject) => {
             if (!this._peripheral)
                 return;
             this._peripheral.ondisconnect = (reason) => {
                 resolve(results);
-                if (this.ondisconnect) {
-                    this.ondisconnect(reason);
-                }
             };
         });
+        const battery = await batteryChar.readWait();
+        await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
+        await this._writeTimeCharWait(this._timezoneOffsetMinute);
+        await bloodPressureMeasurementChar.registerNotifyWait((data) => {
+            results.push(this._analyzeData(data, battery));
+        });
+        return waitDisconnect;
     }
     _readSFLOAT_LE(buffer, index) {
         const data = buffer.readUInt16LE(index);
@@ -82,7 +119,7 @@ class UA651BLE {
         const exponential = data >> 12;
         return mantissa * Math.pow(10, exponential);
     }
-    _analyzeData(data) {
+    _analyzeData(data, battery) {
         const buf = Buffer.from(data);
         const flags = buf.readUInt8(0);
         let index = 1;
@@ -137,6 +174,7 @@ class UA651BLE {
             result.improperMeasurement = (ms & 0b100000) !== 0;
             index += 1;
         }
+        result.battery = battery[0];
         return result;
     }
     _getChars() {
@@ -152,10 +190,14 @@ class UA651BLE {
         const customServiceChar = this._peripheral
             .getService('233bf0005a341b6d975c000d5690abe4') // Primary Service Custom Service(pp.14)
             .getCharacteristic('233bf0015a341b6d975c000d5690abe4'); // Custom Characteristic(pp.14)
+        const batteryChar = this._peripheral
+            .getService('180F')
+            .getCharacteristic('2A19');
         return {
             bloodPressureMeasurementChar,
             timeChar,
             customServiceChar,
+            batteryChar,
         };
     }
     async _writeTimeCharWait(timeOffsetMinute) {
