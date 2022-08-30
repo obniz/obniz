@@ -11421,33 +11421,19 @@ class GattCentral extends eventemitter3_1.default {
         const _data = await this._execCommandWait(this._gattCommon.writeRequest(handle, valueBuffer, false), att_1.ATT.OP_WRITE_RESP);
     }
     async notifyWait(serviceUuid, characteristicUuid, notify) {
+        try {
+            const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
+            const descriptor = this.getDescriptor(serviceUuid, characteristicUuid, '2902');
+            return await this.notifyByDescriptorWait(serviceUuid, characteristicUuid, notify);
+        }
+        catch (e) {
+            debug(`failed to handle descriptor`);
+        }
+        return await this.notifyByHandleWait(serviceUuid, characteristicUuid, notify);
+    }
+    async notifyByDescriptorWait(serviceUuid, characteristicUuid, notify) {
         const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
-        // const descriptor = this.getDescriptor(serviceUuid, characteristicUuid, "2902");
         let value = 0;
-        // let handle = null;
-        // try {
-        //   const buf = await this.readValueWait(
-        //     serviceUuid,
-        //     characteristicUuid,
-        //     '2902'
-        //   );
-        //   value = buf.readUInt16LE(0);
-        // } catch (e) {
-        //   // retry
-        //   const data = await this._execCommandWait(
-        //     this._gattCommon.readByTypeRequest(
-        //       characteristic.startHandle,
-        //       characteristic.endHandle,
-        //       GATT.CLIENT_CHARAC_CFG_UUID
-        //     ),
-        //     ATT.OP_READ_BY_TYPE_RESP
-        //   );
-        //
-        //   const opcode = data[0];
-        //   // let type = data[1];
-        //   handle = data.readUInt16LE(2);
-        //   value = data.readUInt16LE(4);
-        // }
         const useNotify = characteristic.properties & 0x10;
         const useIndicate = characteristic.properties & 0x20;
         if (notify) {
@@ -11477,6 +11463,52 @@ class GattCentral extends eventemitter3_1.default {
         // } else {
         _data = await this.writeValueWait(serviceUuid, characteristicUuid, '2902', valueBuffer);
         // }
+        const _opcode = _data && _data[0];
+        debug('set notify write results: ' + (_opcode === att_1.ATT.OP_WRITE_RESP));
+    }
+    async notifyByHandleWait(serviceUuid, characteristicUuid, notify) {
+        const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
+        // const descriptor: any = this.getDescriptor(serviceUuid, characteristicUuid, "2902");
+        let value = null;
+        let handle = null;
+        try {
+            value = await this.readValueWait(serviceUuid, characteristicUuid, '2902');
+        }
+        catch (e) {
+            // retry
+            const data = await this._execCommandWait(this._gattCommon.readByTypeRequest(characteristic.startHandle, characteristic.endHandle, GATT.CLIENT_CHARAC_CFG_UUID), att_1.ATT.OP_READ_BY_TYPE_RESP);
+            const opcode = data[0];
+            // let type = data[1];
+            handle = data.readUInt16LE(2);
+            value = data.readUInt16LE(4);
+        }
+        const useNotify = characteristic.properties & 0x10;
+        const useIndicate = characteristic.properties & 0x20;
+        if (notify) {
+            if (useNotify) {
+                value |= 0x0001;
+            }
+            else if (useIndicate) {
+                value |= 0x0002;
+            }
+        }
+        else {
+            if (useNotify) {
+                value &= 0xfffe;
+            }
+            else if (useIndicate) {
+                value &= 0xfffd;
+            }
+        }
+        const valueBuffer = Buffer.alloc(2);
+        valueBuffer.writeUInt16LE(value, 0);
+        let _data = null;
+        if (handle) {
+            _data = await this._execCommandWait(this._gattCommon.writeRequest(handle, valueBuffer, false), att_1.ATT.OP_WRITE_RESP);
+        }
+        else {
+            _data = await this.writeValueWait(serviceUuid, characteristicUuid, '2902', valueBuffer);
+        }
         const _opcode = _data && _data[0];
         debug('set notify write results: ' + (_opcode === att_1.ATT.OP_WRITE_RESP));
     }
@@ -77923,7 +77955,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
+module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
 
 /***/ }),
 

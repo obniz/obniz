@@ -357,33 +357,19 @@ class GattCentral extends eventemitter3_1.default {
         const _data = await this._execCommandWait(this._gattCommon.writeRequest(handle, valueBuffer, false), att_1.ATT.OP_WRITE_RESP);
     }
     async notifyWait(serviceUuid, characteristicUuid, notify) {
+        try {
+            const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
+            const descriptor = this.getDescriptor(serviceUuid, characteristicUuid, '2902');
+            return await this.notifyByDescriptorWait(serviceUuid, characteristicUuid, notify);
+        }
+        catch (e) {
+            debug(`failed to handle descriptor`);
+        }
+        return await this.notifyByHandleWait(serviceUuid, characteristicUuid, notify);
+    }
+    async notifyByDescriptorWait(serviceUuid, characteristicUuid, notify) {
         const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
-        // const descriptor = this.getDescriptor(serviceUuid, characteristicUuid, "2902");
         let value = 0;
-        // let handle = null;
-        // try {
-        //   const buf = await this.readValueWait(
-        //     serviceUuid,
-        //     characteristicUuid,
-        //     '2902'
-        //   );
-        //   value = buf.readUInt16LE(0);
-        // } catch (e) {
-        //   // retry
-        //   const data = await this._execCommandWait(
-        //     this._gattCommon.readByTypeRequest(
-        //       characteristic.startHandle,
-        //       characteristic.endHandle,
-        //       GATT.CLIENT_CHARAC_CFG_UUID
-        //     ),
-        //     ATT.OP_READ_BY_TYPE_RESP
-        //   );
-        //
-        //   const opcode = data[0];
-        //   // let type = data[1];
-        //   handle = data.readUInt16LE(2);
-        //   value = data.readUInt16LE(4);
-        // }
         const useNotify = characteristic.properties & 0x10;
         const useIndicate = characteristic.properties & 0x20;
         if (notify) {
@@ -413,6 +399,52 @@ class GattCentral extends eventemitter3_1.default {
         // } else {
         _data = await this.writeValueWait(serviceUuid, characteristicUuid, '2902', valueBuffer);
         // }
+        const _opcode = _data && _data[0];
+        debug('set notify write results: ' + (_opcode === att_1.ATT.OP_WRITE_RESP));
+    }
+    async notifyByHandleWait(serviceUuid, characteristicUuid, notify) {
+        const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
+        // const descriptor: any = this.getDescriptor(serviceUuid, characteristicUuid, "2902");
+        let value = null;
+        let handle = null;
+        try {
+            value = await this.readValueWait(serviceUuid, characteristicUuid, '2902');
+        }
+        catch (e) {
+            // retry
+            const data = await this._execCommandWait(this._gattCommon.readByTypeRequest(characteristic.startHandle, characteristic.endHandle, GATT.CLIENT_CHARAC_CFG_UUID), att_1.ATT.OP_READ_BY_TYPE_RESP);
+            const opcode = data[0];
+            // let type = data[1];
+            handle = data.readUInt16LE(2);
+            value = data.readUInt16LE(4);
+        }
+        const useNotify = characteristic.properties & 0x10;
+        const useIndicate = characteristic.properties & 0x20;
+        if (notify) {
+            if (useNotify) {
+                value |= 0x0001;
+            }
+            else if (useIndicate) {
+                value |= 0x0002;
+            }
+        }
+        else {
+            if (useNotify) {
+                value &= 0xfffe;
+            }
+            else if (useIndicate) {
+                value &= 0xfffd;
+            }
+        }
+        const valueBuffer = Buffer.alloc(2);
+        valueBuffer.writeUInt16LE(value, 0);
+        let _data = null;
+        if (handle) {
+            _data = await this._execCommandWait(this._gattCommon.writeRequest(handle, valueBuffer, false), att_1.ATT.OP_WRITE_RESP);
+        }
+        else {
+            _data = await this.writeValueWait(serviceUuid, characteristicUuid, '2902', valueBuffer);
+        }
         const _opcode = _data && _data[0];
         debug('set notify write results: ' + (_opcode === att_1.ATT.OP_WRITE_RESP));
     }
