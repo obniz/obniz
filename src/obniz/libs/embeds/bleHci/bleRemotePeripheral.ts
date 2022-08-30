@@ -330,6 +330,11 @@ export default class BleRemotePeripheral {
   public manufacturerSpecificDataInScanResponse: number[] | null;
   public service_data: { uuid: number; data: number[] }[] | null;
   /**
+   * Ad Type: 0x16 (16bit UUID)
+   */
+  public serviceData: number[] | null;
+
+  /**
    * This returns iBeacon data if the peripheral has it. If none, it will return null.
    *
    * ```javascript
@@ -458,6 +463,7 @@ export default class BleRemotePeripheral {
     this.localName = null;
     this.manufacturerSpecificData = null;
     this.manufacturerSpecificDataInScanResponse = null;
+    this.serviceData = null;
     this.iBeacon = null;
 
     this._services = [];
@@ -1097,6 +1103,7 @@ export default class BleRemotePeripheral {
     }
     this.setLocalName();
     this.setManufacturerSpecificData();
+    this.setServiceData();
     this.setIBeacon();
   }
 
@@ -1121,6 +1128,10 @@ export default class BleRemotePeripheral {
     this.manufacturerSpecificData = this.searchTypeVal(0xff) ?? null;
     this.manufacturerSpecificDataInScanResponse =
       this.searchTypeVal(0xff, true) ?? null;
+  }
+
+  protected setServiceData(): void {
+    this.serviceData = this.searchTypeVal(0x16) ?? null;
   }
 
   protected setIBeacon(): void {

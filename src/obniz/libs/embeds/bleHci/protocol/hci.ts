@@ -1320,6 +1320,7 @@ class Hci extends EventEmitter<HciEventTypes> {
         COMMANDS.EVT_LE_CONN_COMPLETE,
         {
           timeout,
+          waitingFor: 'EVT_LE_CONN_COMPLETE',
         }
       );
       return { status, data: this.parseConnectionCompleteEventData(data) };
@@ -1330,6 +1331,7 @@ class Hci extends EventEmitter<HciEventTypes> {
         COMMANDS.EVT_LE_ENHANCED_CONNECTION_COMPLETE,
         {
           timeout,
+          waitingFor: 'EVT_LE_ENHANCED_CONNECTION_COMPLETE',
         }
       );
       return { status, data: this.parseLeConnectionCompleteEventData(data) };
@@ -1585,6 +1587,7 @@ class Hci extends EventEmitter<HciEventTypes> {
         COMMANDS.EVT_LE_CONN_COMPLETE,
         {
           timeout,
+          waitingFor: 'EVT_LE_CONN_COMPLETE',
         }
       );
       return { status, data: this.parseConnectionCompleteEventData(data) };
@@ -1595,6 +1598,7 @@ class Hci extends EventEmitter<HciEventTypes> {
         COMMANDS.EVT_LE_ENHANCED_CONNECTION_COMPLETE,
         {
           timeout,
+          waitingFor: 'EVT_LE_ENHANCED_CONNECTION_COMPLETE',
         }
       );
       return { status, data: this.parseLeConnectionCompleteEventData(data) };
@@ -1648,7 +1652,9 @@ class Hci extends EventEmitter<HciEventTypes> {
     cmd.writeUInt16LE(0x0000, 16); // max ce length
 
     this.debug('conn update le - writing: ' + cmd.toString('hex'));
-    const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE);
+    const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE, {
+      waitingFor: 'EVT_LE_CONN_UPDATE_COMPLETE',
+    });
     this._socket.write(cmd);
 
     const { status, data } = await p;
@@ -2394,12 +2400,19 @@ class Hci extends EventEmitter<HciEventTypes> {
     );
   }
 
-  protected async readLeMetaEventWait(eventType: number, options?: any) {
+  protected async readLeMetaEventWait(
+    eventType: number,
+    options: {
+      timeout?: number | null;
+      waitingFor: string;
+      onTimeout?: () => Promise<void>;
+    }
+  ) {
     const filter = this.createLeMetaEventFilter(eventType);
     options = options || {};
-    options.waitingFor = `LeMetaEvent ${JSON.stringify(
+    options.waitingFor = `LeMetaEvent ${options.waitingFor} (${JSON.stringify(
       filter
-    )} (event = ${eventType})`;
+    )}, event = ${eventType})`;
     const data = await this._obnizHci.readWait(filter, options);
 
     const type = data.readUInt8(3);
