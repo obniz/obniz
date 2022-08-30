@@ -49,9 +49,7 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
      */
     async getDataWait() {
         this.checkConnected();
-        if (semver_1.default.lt(this.firmwareSemRevision, '1.1.0')) {
-            throw new Error('This operation is not supported.');
-        }
+        this.checkVersion('1.1.0');
         return new Promise((res, rej) => {
             this.subscribeWait(this.serviceUuid, this.getCharUuid(0x152a), (data) => {
                 const buf = Buffer.from(data);
@@ -147,9 +145,7 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
      */
     async setModeLEDWait(blink) {
         await this.checkConnected();
-        if (semver_1.default.lt(this.firmwareSemRevision, '1.1.0')) {
-            throw new Error('This operation is not supported.');
-        }
+        this.checkVersion('1.1.0');
         return await this.writeCharWait(this.serviceUuid, this.getCharUuid(0x1529), [blink ? 1 : 0]);
     }
     /**
@@ -175,13 +171,11 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
      */
     async tempMeasureStartWait() {
         this.checkConnected();
-        if (semver_1.default.lt(this.firmwareSemRevision, '1.1.0')) {
-            throw new Error('This operation is not supported.');
-        }
+        this.checkVersion('1.1.0');
         await this.subscribeWait(this.serviceUuid, this.getCharUuid(0x1526), (data) => {
             if (typeof this.onTempMeasured !== 'function')
                 return;
-            this.onTempMeasured(ObnizPartsBleAbstract_1.int(data.slice(0, 2)), data[2]);
+            this.onTempMeasured(ObnizPartsBleAbstract_1.int(data.slice(0, 2)) / 10, data[2]);
         });
     }
     /**
@@ -209,9 +203,7 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
      */
     async pm2_5MeasureStartWait() {
         this.checkConnected();
-        if (semver_1.default.gte(this.firmwareSemRevision, '1.1.2')) {
-            throw new Error('This operation is not supported.');
-        }
+        this.checkVersion('1.1.2');
         await this.subscribeWait(this.serviceUuid, this.getCharUuid(0x1528), (data) => {
             if (typeof this.onPm2_5Measured !== 'function')
                 return;
@@ -227,6 +219,12 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     }
     getCharUuid(code) {
         return `${this.serviceUuid.slice(0, 4)}${code.toString(16)}${this.serviceUuid.slice(8)}`;
+    }
+    checkVersion(version) {
+        var _a;
+        if (semver_1.default.lt(this.firmwareSemRevision, version)) {
+            throw new Error(`This operation is not supported. required firmware v${version}, but device v${(_a = this.firmwareSemRevision) === null || _a === void 0 ? void 0 : _a.version}`);
+        }
     }
 }
 exports.default = RS_BTEVS1;

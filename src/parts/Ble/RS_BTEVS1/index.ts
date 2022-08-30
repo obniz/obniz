@@ -246,9 +246,7 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
    */
   public async getDataWait(): Promise<RS_BTEVS1_Data> {
     this.checkConnected();
-    if (semver.lt(this.firmwareSemRevision!, '1.1.0')) {
-      throw new Error('This operation is not supported.');
-    }
+    this.checkVersion('1.1.0');
 
     return new Promise((res, rej) => {
       this.subscribeWait(this.serviceUuid, this.getCharUuid(0x152a), (data) => {
@@ -376,9 +374,7 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
    */
   public async setModeLEDWait(blink: boolean): Promise<boolean> {
     await this.checkConnected();
-    if (semver.lt(this.firmwareSemRevision!, '1.1.0')) {
-      throw new Error('This operation is not supported.');
-    }
+    this.checkVersion('1.1.0');
 
     return await this.writeCharWait(
       this.serviceUuid,
@@ -415,16 +411,14 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
    */
   public async tempMeasureStartWait(): Promise<void> {
     this.checkConnected();
-    if (semver.lt(this.firmwareSemRevision!, '1.1.0')) {
-      throw new Error('This operation is not supported.');
-    }
+    this.checkVersion('1.1.0');
 
     await this.subscribeWait(
       this.serviceUuid,
       this.getCharUuid(0x1526),
       (data) => {
         if (typeof this.onTempMeasured !== 'function') return;
-        this.onTempMeasured(int(data.slice(0, 2)), data[2]);
+        this.onTempMeasured(int(data.slice(0, 2)) / 10, data[2]);
       }
     );
   }
@@ -459,9 +453,7 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
    */
   public async pm2_5MeasureStartWait(): Promise<void> {
     this.checkConnected();
-    if (semver.gte(this.firmwareSemRevision!, '1.1.2')) {
-      throw new Error('This operation is not supported.');
-    }
+    this.checkVersion('1.1.2');
 
     await this.subscribeWait(
       this.serviceUuid,
@@ -488,5 +480,13 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
     return `${this.serviceUuid.slice(0, 4)}${code.toString(
       16
     )}${this.serviceUuid.slice(8)}`;
+  }
+
+  private checkVersion(version: string) {
+    if (semver.lt(this.firmwareSemRevision!, version)) {
+      throw new Error(
+        `This operation is not supported. required firmware v${version}, but device v${this.firmwareSemRevision?.version}`
+      );
+    }
   }
 }

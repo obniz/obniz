@@ -200,5 +200,6 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<RS_BTEVS1_Data, 
      */
     pm2_5MeasureStartWait(): Promise<void>;
     protected getCharUuid(code: number): string;
+    private checkVersion;
 }
 export {};
