@@ -139,18 +139,21 @@ export default class ObnizBLEHci {
    */
   public timeoutPromiseWrapper<T>(
     promise: Promise<T>,
-    option?: any
-  ): Promise<T> {
-    option = option || {};
-    if (option.timeout === null) {
-      option.timeout = null;
-    } else {
-      option.timeout = option.timeout || this.timeout;
-      if (option.timeout < 0) {
-        throw new ObnizParameterError(`option.timeout`, `0 or greater`);
-      }
+    _option: {
+      timeout?: number | null;
+      waitingFor: string;
+      onTimeout?: () => Promise<void>;
     }
-    option.waitingFor = option.waitingFor || undefined;
+  ): Promise<T> {
+    const option = {
+      timeout:
+        _option.timeout === null ? null : _option.timeout ?? this.timeout,
+      waitingFor: _option.waitingFor,
+      onTimeout: _option.onTimeout || undefined,
+    };
+    if (option.timeout !== null && option.timeout < 0) {
+      throw new ObnizParameterError(`option.timeout`, `0 or greater`);
+    }
 
     let onObnizClosed: null | (() => void) = null;
     let timeoutHandler: null | ReturnType<typeof setTimeout> = null;
@@ -197,14 +200,16 @@ export default class ObnizBLEHci {
         onTimeout = () => {
           timeoutHandler = null;
           clearListeners();
-          option
-            .onTimeout()
-            .then(() => {
-              reject(timeoutError);
-            })
-            .catch((e: Error) => {
-              reject(e);
-            });
+          if (option.onTimeout) {
+            option
+              .onTimeout()
+              .then(() => {
+                reject(timeoutError);
+              })
+              .catch((e: Error) => {
+                reject(e);
+              });
+          }
         };
       } else {
         const timeoutError = new ObnizTimeoutError(option.waitingFor);
@@ -214,7 +219,9 @@ export default class ObnizBLEHci {
           reject(timeoutError);
         };
       }
-      timeoutHandler = setTimeout(onTimeout, option.timeout);
+      if (option.timeout !== null) {
+        timeoutHandler = setTimeout(onTimeout, option.timeout);
+      }
     });
 
     if (option.timeout !== null) {
@@ -223,7 +230,14 @@ export default class ObnizBLEHci {
     return successPromise;
   }
 
-  public readWait(binaryFilter: number[], option?: any): Promise<Buffer> {
+  public readWait(
+    binaryFilter: number[],
+    option: {
+      timeout?: number | null;
+      waitingFor: string;
+      onTimeout?: () => Promise<void>;
+    }
+  ): Promise<Buffer> {
     return this.timeoutPromiseWrapper(
       new Promise((resolve) => {
         this.onceQueue(binaryFilter, resolve);

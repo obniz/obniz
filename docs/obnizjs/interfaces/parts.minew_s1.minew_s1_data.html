@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>MINEW_S1_InfoData | obniz</title>
+	<title>MINEW_S1_Data | obniz</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -59,13 +59,13 @@
 					<a href="../modules/parts.html">Parts</a>
 				</li>
 				<li>
-					<a href="../modules/parts.minew_s1_ht.html">MINEW_S1_HT</a>
+					<a href="../modules/parts.minew_s1.html">MINEW_S1</a>
 				</li>
 				<li>
-					<a href="parts.minew_s1_ht.minew_s1_infodata.html">MINEW_S1_InfoData</a>
+					<a href="parts.minew_s1.minew_s1_data.html">MINEW_S1_Data</a>
 				</li>
 			</ul>
-			<h1>Interface MINEW_S1_InfoData</h1>
+			<h1>Interface MINEW_S1_Data</h1>
 		</div>
 	</div>
 </header>
@@ -75,16 +75,16 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>device data from MINEW_S1 advertisement</p>
+						<p>temperature and humidity data from MINEW_S1 advertisement</p>
 					</div>
-					<p>MINEW_S1のadvertisementからのデバイスデータ</p>
+					<p>MINEW_S1のadvertisementからの温湿度データ</p>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">MINEW_S1_InfoData</span>
+						<span class="target">MINEW_S1_Data</span>
 					</li>
 				</ul>
 			</section>
@@ -95,11 +95,12 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.minew_s1_ht.minew_s1_infodata.html#batterylevel" class="tsd-kind-icon">battery<wbr>Level</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.minew_s1_ht.minew_s1_infodata.html#frametype" class="tsd-kind-icon">frame<wbr>Type</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.minew_s1_ht.minew_s1_infodata.html#macaddress" class="tsd-kind-icon">mac<wbr>Address</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.minew_s1_ht.minew_s1_infodata.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.minew_s1_ht.minew_s1_infodata.html#versionnumber" class="tsd-kind-icon">version<wbr>Number</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.minew_s1.minew_s1_data.html#batterylevel" class="tsd-kind-icon">battery<wbr>Level</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.minew_s1.minew_s1_data.html#frametype" class="tsd-kind-icon">frame<wbr>Type</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.minew_s1.minew_s1_data.html#humidity" class="tsd-kind-icon">humidity</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.minew_s1.minew_s1_data.html#macaddress" class="tsd-kind-icon">mac<wbr>Address</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.minew_s1.minew_s1_data.html#temperature" class="tsd-kind-icon">temperature</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.minew_s1.minew_s1_data.html#versionnumber" class="tsd-kind-icon">version<wbr>Number</a></li>
 							</ul>
 						</section>
 					</div>
@@ -113,7 +114,7 @@
 					<div class="tsd-signature tsd-kind-icon">battery<wbr>Level<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/MINEW_S1/index.ts:48</li>
+							<li>Defined in src/parts/Ble/MINEW_S1/index.ts:24</li>
 						</ul>
 					</aside>
 				</section>
@@ -123,9 +124,25 @@
 					<div class="tsd-signature tsd-kind-icon">frame<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/MINEW_S1/index.ts:46</li>
+							<li>Defined in src/parts/Ble/MINEW_S1/index.ts:22</li>
 						</ul>
 					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="humidity" class="tsd-anchor"></a>
+					<h3>humidity</h3>
+					<div class="tsd-signature tsd-kind-icon">humidity<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/MINEW_S1/index.ts:36</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>relative humidity 湿度</p>
+						</div>
+						<p>Range 範囲: 0~100 (Unit 単位: 0.05%RH)</p>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="macaddress" class="tsd-anchor"></a>
@@ -133,7 +150,7 @@
 					<div class="tsd-signature tsd-kind-icon">mac<wbr>Address<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/MINEW_S1/index.ts:50</li>
+							<li>Defined in src/parts/Ble/MINEW_S1/index.ts:38</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -143,14 +160,20 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="name" class="tsd-anchor"></a>
-					<h3>name</h3>
-					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="temperature" class="tsd-anchor"></a>
+					<h3>temperature</h3>
+					<div class="tsd-signature tsd-kind-icon">temperature<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/MINEW_S1/index.ts:51</li>
+							<li>Defined in src/parts/Ble/MINEW_S1/index.ts:30</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>temperature 温度</p>
+						</div>
+						<p>Range 範囲: -40~70 (Unit 単位: 0.05 degC)</p>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="versionnumber" class="tsd-anchor"></a>
@@ -158,7 +181,7 @@
 					<div class="tsd-signature tsd-kind-icon">version<wbr>Number<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/MINEW_S1/index.ts:47</li>
+							<li>Defined in src/parts/Ble/MINEW_S1/index.ts:23</li>
 						</ul>
 					</aside>
 				</section>
@@ -175,38 +198,41 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/parts.minew_s1_ht.minew_s1.html" class="tsd-kind-icon">MINEW_<wbr><wbr>S1</a>
+						<a href="../classes/parts.minew_s1.minew_s1.html" class="tsd-kind-icon">MINEW_<wbr><wbr>S1</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="parts.minew_s1_ht.minew_s1options.html" class="tsd-kind-icon">MINEW_<wbr><wbr>S1Options</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="parts.minew_s1_ht.minew_s1_htdata.html" class="tsd-kind-icon">MINEW_<wbr><wbr>S1_<wbr>HTData</a>
+						<a href="parts.minew_s1.minew_s1options.html" class="tsd-kind-icon">MINEW_<wbr><wbr>S1Options</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="parts.minew_s1_ht.minew_s1_infodata.html" class="tsd-kind-icon">MINEW_<wbr><wbr>S1_<wbr><wbr>Info<wbr>Data</a>
+						<a href="parts.minew_s1.minew_s1_data.html" class="tsd-kind-icon">MINEW_<wbr><wbr>S1_<wbr><wbr>Data</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="parts.minew_s1_ht.minew_s1_infodata.html#batterylevel" class="tsd-kind-icon">battery<wbr>Level</a>
+								<a href="parts.minew_s1.minew_s1_data.html#batterylevel" class="tsd-kind-icon">battery<wbr>Level</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="parts.minew_s1_ht.minew_s1_infodata.html#frametype" class="tsd-kind-icon">frame<wbr>Type</a>
+								<a href="parts.minew_s1.minew_s1_data.html#frametype" class="tsd-kind-icon">frame<wbr>Type</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="parts.minew_s1_ht.minew_s1_infodata.html#macaddress" class="tsd-kind-icon">mac<wbr>Address</a>
+								<a href="parts.minew_s1.minew_s1_data.html#humidity" class="tsd-kind-icon">humidity</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="parts.minew_s1_ht.minew_s1_infodata.html#name" class="tsd-kind-icon">name</a>
+								<a href="parts.minew_s1.minew_s1_data.html#macaddress" class="tsd-kind-icon">mac<wbr>Address</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="parts.minew_s1_ht.minew_s1_infodata.html#versionnumber" class="tsd-kind-icon">version<wbr>Number</a>
+								<a href="parts.minew_s1.minew_s1_data.html#temperature" class="tsd-kind-icon">temperature</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.minew_s1.minew_s1_data.html#versionnumber" class="tsd-kind-icon">version<wbr>Number</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="parts.minew_s1.minew_s1_infodata.html" class="tsd-kind-icon">MINEW_<wbr><wbr>S1_<wbr><wbr>Info<wbr>Data</a>
+					</li>
 				</ul>
 			</nav>
 		</div>

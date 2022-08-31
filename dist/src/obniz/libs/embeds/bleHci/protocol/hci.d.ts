@@ -215,7 +215,11 @@ declare class Hci extends EventEmitter<HciEventTypes> {
     } | null | undefined>;
     stateChange(state: HciState): void;
     readAclStreamWait(handle: Handle, cid: number, firstData: number, timeout?: number): Promise<Buffer>;
-    protected readLeMetaEventWait(eventType: number, options?: any): Promise<{
+    protected readLeMetaEventWait(eventType: number, options: {
+        timeout?: number | null;
+        waitingFor: string;
+        onTimeout?: () => Promise<void>;
+    }): Promise<{
         type: number;
         status: number;
         data: Buffer;
