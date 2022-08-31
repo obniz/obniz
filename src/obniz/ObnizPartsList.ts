@@ -291,7 +291,7 @@ import MESH_100AC, { MESH_100ACOptions } from '../parts/Ble/MESH_100AC';
 import MESH_100MD, { MESH_100MDOptions } from '../parts/Ble/MESH_100MD';
 import MESH_100PA, { MESH_100PAOptions } from '../parts/Ble/MESH_100PA';
 import MESH_100TH, { MESH_100THOptions } from '../parts/Ble/MESH_100TH';
-import MESH_100GP, { MESH_100GPOptions } from '../parts/BLe/MESH_100GP';
+import MESH_100GP, { MESH_100GPOptions } from '../parts/Ble/MESH_100GP';
 
 export type PartsType = keyof PartsList;
 
