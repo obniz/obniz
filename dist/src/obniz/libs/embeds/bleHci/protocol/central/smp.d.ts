@@ -4,6 +4,7 @@
  * @ignore
  */
 /// <reference types="node" />
+/// <reference types="node" />
 import EventEmitter from 'eventemitter3';
 import { BleDeviceAddress, BleDeviceAddressType } from '../../bleTypes';
 import AclStream from './acl-stream';

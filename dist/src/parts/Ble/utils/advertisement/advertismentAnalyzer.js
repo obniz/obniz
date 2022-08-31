@@ -4,6 +4,7 @@
  * @module Parts.utils.advertisement
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleAdvBinaryAnalyzer = void 0;
 class BleAdvBinaryAnalyzer {
     constructor(parent) {
         this._target = [];

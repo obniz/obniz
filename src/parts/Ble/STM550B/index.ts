@@ -8,6 +8,7 @@ import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeri
 import {
   NormalValueType,
   ObnizBleBeaconStruct,
+  ObnizBleBeaconStructNormal,
   ObnizPartsBle,
   ObnizPartsBleCompare,
   ObnizPartsBleMode,
@@ -154,6 +155,12 @@ const findType = (type: keyof STM550B_Data, multiple = 1, precision = 0) => {
   };
 };
 
+const t: ObnizBleBeaconStructNormal<STM550B_Data, 'temperature'> = {
+  index: 4,
+  length: 255,
+  type: 'custom',
+  func: findType('temperature', 0.01),
+};
 export default class STM550B extends ObnizPartsBle<STM550B_Data> {
   public static readonly PartsName = 'STM550B';
   public static AvailableBleMode = 'Beacon' as const;

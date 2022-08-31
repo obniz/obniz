@@ -4,6 +4,7 @@
  * @ignore
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.GattCommon = void 0;
 // eslint-disable-next-line @typescript-eslint/no-namespace
 var ATT;
 (function (ATT) {
