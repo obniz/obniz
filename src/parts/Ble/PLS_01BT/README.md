@@ -2,6 +2,10 @@
 It's an oxygen saturation meter made by Custom Co.
 ![](./image.jpg)
 
+## Notes
+<span style="color: red;">**PLS_01BT is confirmed to be unable to connect properly with BLE5.0 devices.  
+For this reason, it cannot connect to obniz BLE/Wi-Fi Gateway Gen2.0 and obniz BLE/LTE Gateway (Cat.4).**</span>
+
 ## isDevice(peripheral)
 
 Determines whether PLS_01BT is a PLS_01BT based on the advertisement information received by the BLE.
