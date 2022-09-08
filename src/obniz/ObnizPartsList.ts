@@ -290,6 +290,8 @@ import MESH_100PA, { MESH_100PAOptions } from '../parts/Ble/MESH_100PA';
 import MESH_100TH, { MESH_100THOptions } from '../parts/Ble/MESH_100TH';
 import MESH_100MD, { MESH_100MDOptions } from '../parts/Ble/MESH_100MD';
 import MESH_100GP, { MESH_100GPOptions } from '../parts/BLe/MESH_100GP';
+import HN_300T2, { HN_300T2Options } from '../parts/Ble/HN_300T2';
+import GT_7510, { GT_7510Options } from '../parts/Ble/GT_7510';
 
 export type PartsType = keyof PartsList;
 
@@ -717,4 +719,6 @@ export interface PartsList {
   MESH_100TH: PartsInterface<MESH_100TH, MESH_100THOptions, typeof MESH_100TH>;
   MESH_100MD: PartsInterface<MESH_100MD, MESH_100MDOptions, typeof MESH_100MD>;
   MESH_100GP: PartsInterface<MESH_100GP, MESH_100GPOptions, typeof MESH_100GP>;
+  HN_300T2: PartsInterface<HN_300T2, HN_300T2Options, typeof HN_300T2>;
+  GT_7510: PartsInterface<GT_7510, GT_7510Options, typeof GT_7510>;
 }
