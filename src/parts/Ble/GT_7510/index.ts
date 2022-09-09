@@ -11,6 +11,7 @@ import ObnizPartsBleInterface, {
 } from '../../../obniz/ObnizPartsBleInterface';
 
 import crypto from 'crypto';
+import Keyestudio_Button from '../../Keyestudio/Keyestudio_Button';
 
 export interface GT_7510Options {}
 
@@ -84,7 +85,17 @@ export default class GT_7510 implements ObnizPartsBleInterface {
       return;
     });
     await meterChara!.writeWait([0xa2, 0x6f, 0x62, 0x6e, 0x69, 0x7a]); // obniz
+    return this.key;
   }
+
+  public async connectWait(key: string) {
+    await this._peripheral.connectWait({
+      pairingOption: {
+        keys: key ? key : this.key,
+      },
+    });
+  }
+
 
   public async getDataWait(key: string) {
     const results: GT_7510Result[] = [];
