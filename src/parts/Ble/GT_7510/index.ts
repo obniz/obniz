@@ -51,7 +51,7 @@ export default class GT_7510 implements ObnizPartsBleInterface {
 
   constructor(peripheral: BleRemotePeripheral) {
     if (!peripheral || !GT_7510.isDevice(peripheral)) {
-      throw new Error('peripheral is not HN_300TN');
+      throw new Error('peripheral is not GT_7510');
     }
     this._peripheral = peripheral;
   }
@@ -60,12 +60,10 @@ export default class GT_7510 implements ObnizPartsBleInterface {
     return peripheral.localName && peripheral.localName.indexOf('GT-7510') >= 0;
   }
 
-  public async paringWait(passKey: number) {
+  public async paringWait(passkeyCallback: () => Promise<number>) {
     await this._peripheral.connectWait({
       pairingOption: {
-        passkeyCallback: async () => {
-          return passKey;
-        },
+        passkeyCallback,
         onPairedCallback: (keys) => {
           this.key = keys;
         },
@@ -74,15 +72,13 @@ export default class GT_7510 implements ObnizPartsBleInterface {
         },
       },
     });
+
     const customService = this._peripheral.getService(
       '7ae4000153f646288894b231f30a81d7'
     );
     const meterChara = customService!.getCharacteristic(
       '7ae4200253f646288894b231f30a81d7'
     );
-    await meterChara!.registerNotifyWait((data) => {
-      console.log('a');
-    });
     await meterChara!.writeWait([0xa2, 0x6f, 0x62, 0x6e, 0x69, 0x7a]); // obniz
   }
 
@@ -140,7 +136,6 @@ export default class GT_7510 implements ObnizPartsBleInterface {
     let meterInfoData: number[] = [];
     let mode = 0;
     await commandChara!.registerNotifyWait(async (data) => {
-      console.log('command notify with data ' + data.join(','));
       if (data[0] === 68 || mode === 1) {
         mode = 1;
         meterInfoData = meterInfoData.concat(data);
