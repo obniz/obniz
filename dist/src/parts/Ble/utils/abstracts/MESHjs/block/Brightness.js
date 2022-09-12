@@ -19,10 +19,23 @@ class Brightness extends Base_1.Base {
         this.LX_ = 10;
     }
     /**
+     * Verify that the device is MESH block
+     *
+     * @param name
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(name, opt_serialnumber = '') {
+        var _a;
+        return super.isMESHblock(name, opt_serialnumber)
+            ? ((_a = name) === null || _a === void 0 ? void 0 : _a.indexOf('MESH-100PA')) !== -1
+            : false;
+    }
+    /**
      * notify
      *
      * @param data
-     * @returns
+     * @returns void
      */
     notify(data) {
         super.notify(data);
@@ -42,13 +55,13 @@ class Brightness extends Base_1.Base {
         this.onSensorEvent(proximity, brightness, requestId);
     }
     /**
-     * Parse to set-mode command
+     * Create command of set-mode
      *
      * @param notifyMode
      * @param opt_requestId
      * @returns command
      */
-    parseSetmodeCommand(notifyMode, opt_requestId = 0) {
+    createSetmodeCommand(notifyMode, opt_requestId = 0) {
         // Error Handle
         this.checkRange(notifyMode, this.NOTIFY_MODE_MIN_, this.NOTIFY_MODE_MAX_, 'notifyMode');
         // Generate Command

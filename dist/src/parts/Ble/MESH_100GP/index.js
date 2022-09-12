@@ -24,13 +24,23 @@ class MESH_100GP extends MESH_1.MESH {
         this.pwmRatio_ = 0;
         this.vcc_ = MESH_100GP.Vcc.OFF;
         this.analogInputRangeUpper_ = 0;
-        this.analogInputRangeBottom_ = 0;
+        this.analogInputRangeLower_ = 0;
         this.analogInputCondition_ = MESH_100GP.AnalogInputEventCondition.NOT_NOTIFY;
         this.retDigitalInState_ = -1;
         this.retPwm_ = -1;
         this.retVccState_ = -1;
         this.retLevel_ = -1;
         this.retDigitalOutState_ = -1;
+    }
+    /**
+     * Check MESH block
+     *
+     * @param peripheral
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(peripheral, opt_serialnumber = '') {
+        return GPIO_1.GPIO.isMESHblock(peripheral.localName, opt_serialnumber);
     }
     /**
      * getDataWait
@@ -50,11 +60,11 @@ class MESH_100GP extends MESH_1.MESH {
      * @param pin
      * @returns
      */
-    async getDigitalInputDataWait(pin) {
+    async getDigitalInputDataWait(pin, opt_timeoutMsec = this.TIMEOUT_MSEC) {
         const _requestId = this.requestId.next();
         const _gpioBlock = this.meshBlock;
-        const _command = _gpioBlock.parseDigitalInputCommand(pin, _requestId);
-        await this.getSensorDataWait(_requestId, _command);
+        const _command = _gpioBlock.createDigitalInputCommand(pin, _requestId);
+        await this.getSensorDataWait(_requestId, _command, opt_timeoutMsec);
         return this.retDigitalInState_;
     }
     /**
@@ -62,11 +72,11 @@ class MESH_100GP extends MESH_1.MESH {
      *
      * @returns
      */
-    async getAnalogInputDataWait() {
+    async getAnalogInputDataWait(opt_timeoutMsec = this.TIMEOUT_MSEC) {
         const _requestId = this.requestId.next();
         const _gpioBlock = this.meshBlock;
-        const _command = _gpioBlock.parseAnalogInputCommand(MESH_100GP.AnalogInputNotifyMode.ONCE, _requestId);
-        await this.getSensorDataWait(_requestId, _command);
+        const _command = _gpioBlock.createAnalogInputCommand(MESH_100GP.AnalogInputNotifyMode.ONCE, _requestId);
+        await this.getSensorDataWait(_requestId, _command, opt_timeoutMsec);
         return this.retLevel_;
     }
     /**
@@ -74,11 +84,11 @@ class MESH_100GP extends MESH_1.MESH {
      *
      * @returns
      */
-    async getVOutputDataWait() {
+    async getVOutputDataWait(opt_timeoutMsec = this.TIMEOUT_MSEC) {
         const _requestId = this.requestId.next();
         const _gpioBlock = this.meshBlock;
-        const _command = _gpioBlock.parseVOutputCommand(_requestId);
-        await this.getSensorDataWait(_requestId, _command);
+        const _command = _gpioBlock.createVOutputCommand(_requestId);
+        await this.getSensorDataWait(_requestId, _command, opt_timeoutMsec);
         return this.retVccState_;
     }
     /**
@@ -87,11 +97,11 @@ class MESH_100GP extends MESH_1.MESH {
      * @param pin
      * @returns
      */
-    async getDigitalOutputDataWait(pin) {
+    async getDigitalOutputDataWait(pin, opt_timeoutMsec = this.TIMEOUT_MSEC) {
         const _requestId = this.requestId.next();
         const _gpioBlock = this.meshBlock;
-        const _command = _gpioBlock.parseDigitalOutputCommand(pin, _requestId);
-        await this.getSensorDataWait(_requestId, _command);
+        const _command = _gpioBlock.createDigitalOutputCommand(pin, _requestId);
+        await this.getSensorDataWait(_requestId, _command, opt_timeoutMsec);
         return this.retDigitalOutState_;
     }
     /**
@@ -99,11 +109,11 @@ class MESH_100GP extends MESH_1.MESH {
      *
      * @returns
      */
-    async getPwmDataWait() {
+    async getPwmDataWait(opt_timeoutMsec = this.TIMEOUT_MSEC) {
         const _requestId = this.requestId.next();
         const _gpioBlock = this.meshBlock;
-        const _command = _gpioBlock.parsePwmCommand(_requestId);
-        await this.getSensorDataWait(_requestId, _command);
+        const _command = _gpioBlock.createPwmCommand(_requestId);
+        await this.getSensorDataWait(_requestId, _command, opt_timeoutMsec);
         return this.retPwm_;
     }
     /**
@@ -115,12 +125,12 @@ class MESH_100GP extends MESH_1.MESH {
      * @param pwmRatio 0-255
      * @param vcc Vcc.ON or Vcc.OFF
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
-     * @param analogInputRangeBottom 0-255(0.00-3.00[V])
+     * @param analogInputRangeLower 0-255(0.00-3.00[V])
      * @param analogInputCondition AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
      */
-    setMode(digitalInputLow2High, digitalInputHigh2Low, digitalOutput, pwmRatio, vcc, analogInputRangeUpper, analogInputRangeBottom, analogInputCondition) {
+    setMode(digitalInputLow2High, digitalInputHigh2Low, digitalOutput, pwmRatio, vcc, analogInputRangeUpper, analogInputRangeLower, analogInputCondition) {
         const gpioBlock = this.meshBlock;
-        const command = gpioBlock.parseSetmodeCommand(digitalInputLow2High, digitalInputHigh2Low, digitalOutput, pwmRatio, vcc, analogInputRangeUpper, analogInputRangeBottom, analogInputCondition);
+        const command = gpioBlock.createSetmodeCommand(digitalInputLow2High, digitalInputHigh2Low, digitalOutput, pwmRatio, vcc, analogInputRangeUpper, analogInputRangeLower, analogInputCondition);
         this.writeWOResponse(command);
         this.digitalInputLow2High_ = digitalInputLow2High;
         this.digitalInputHigh2Low_ = digitalInputHigh2Low;
@@ -128,7 +138,7 @@ class MESH_100GP extends MESH_1.MESH {
         this.pwmRatio_ = pwmRatio;
         this.vcc_ = vcc;
         this.analogInputRangeUpper_ = analogInputRangeUpper;
-        this.analogInputRangeBottom_ = analogInputRangeBottom;
+        this.analogInputRangeLower_ = analogInputRangeLower;
         this.analogInputCondition_ = analogInputCondition;
     }
     /**
@@ -139,7 +149,7 @@ class MESH_100GP extends MESH_1.MESH {
      */
     setModeDigitalInput(digitalInputLow2High, digitalInputHigh2Low) {
         const gpioBlock = this.meshBlock;
-        const command = gpioBlock.parseSetmodeCommand(digitalInputLow2High, digitalInputHigh2Low, this.digitalOutput_, this.pwmRatio_, this.vcc_, this.analogInputRangeUpper_, this.analogInputRangeBottom_, this.analogInputCondition_);
+        const command = gpioBlock.createSetmodeCommand(digitalInputLow2High, digitalInputHigh2Low, this.digitalOutput_, this.pwmRatio_, this.vcc_, this.analogInputRangeUpper_, this.analogInputRangeLower_, this.analogInputCondition_);
         this.writeWOResponse(command);
         this.digitalInputLow2High_ = digitalInputLow2High;
         this.digitalInputHigh2Low_ = digitalInputHigh2Low;
@@ -148,15 +158,15 @@ class MESH_100GP extends MESH_1.MESH {
      * setModeAnalogInput
      *
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
-     * @param analogInputRangeBottom 0-255(0.00-3.00[V])
+     * @param analogInputRangeLower 0-255(0.00-3.00[V])
      * @param analogInputCondition AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
      */
-    setModeAnalogInput(analogInputRangeUpper, analogInputRangeBottom, analogInputCondition) {
+    setModeAnalogInput(analogInputRangeUpper, analogInputRangeLower, analogInputCondition) {
         const gpioBlock = this.meshBlock;
-        const command = gpioBlock.parseSetmodeCommand(this.digitalInputLow2High_, this.digitalInputHigh2Low_, this.digitalOutput_, this.pwmRatio_, this.vcc_, analogInputRangeUpper, analogInputRangeBottom, analogInputCondition);
+        const command = gpioBlock.createSetmodeCommand(this.digitalInputLow2High_, this.digitalInputHigh2Low_, this.digitalOutput_, this.pwmRatio_, this.vcc_, analogInputRangeUpper, analogInputRangeLower, analogInputCondition);
         this.writeWOResponse(command);
         this.analogInputRangeUpper_ = analogInputRangeUpper;
-        this.analogInputRangeBottom_ = analogInputRangeBottom;
+        this.analogInputRangeLower_ = analogInputRangeLower;
         this.analogInputCondition_ = analogInputCondition;
     }
     /**
@@ -166,7 +176,7 @@ class MESH_100GP extends MESH_1.MESH {
      */
     setDigitalOutput(digitalOutput) {
         const gpioBlock = this.meshBlock;
-        const command = gpioBlock.parseSetmodeCommand(this.digitalInputLow2High_, this.digitalInputHigh2Low_, digitalOutput, this.pwmRatio_, this.vcc_, this.analogInputRangeUpper_, this.analogInputRangeBottom_, this.analogInputCondition_);
+        const command = gpioBlock.createSetmodeCommand(this.digitalInputLow2High_, this.digitalInputHigh2Low_, digitalOutput, this.pwmRatio_, this.vcc_, this.analogInputRangeUpper_, this.analogInputRangeLower_, this.analogInputCondition_);
         this.writeWOResponse(command);
         this.digitalOutput_ = digitalOutput;
     }
@@ -177,7 +187,7 @@ class MESH_100GP extends MESH_1.MESH {
      */
     setPwmOutput(pwmRatio) {
         const gpioBlock = this.meshBlock;
-        const command = gpioBlock.parseSetmodeCommand(this.digitalInputLow2High_, this.digitalInputHigh2Low_, this.digitalOutput_, pwmRatio, this.vcc_, this.analogInputRangeUpper_, this.analogInputRangeBottom_, this.analogInputCondition_);
+        const command = gpioBlock.createSetmodeCommand(this.digitalInputLow2High_, this.digitalInputHigh2Low_, this.digitalOutput_, pwmRatio, this.vcc_, this.analogInputRangeUpper_, this.analogInputRangeLower_, this.analogInputCondition_);
         this.writeWOResponse(command);
         this.pwmRatio_ = pwmRatio;
     }
@@ -188,12 +198,9 @@ class MESH_100GP extends MESH_1.MESH {
      */
     setVOutput(vcc) {
         const gpioBlock = this.meshBlock;
-        const command = gpioBlock.parseSetmodeCommand(this.digitalInputLow2High_, this.digitalInputHigh2Low_, this.digitalOutput_, this.pwmRatio_, vcc, this.analogInputRangeUpper_, this.analogInputRangeBottom_, this.analogInputCondition_);
+        const command = gpioBlock.createSetmodeCommand(this.digitalInputLow2High_, this.digitalInputHigh2Low_, this.digitalOutput_, this.pwmRatio_, vcc, this.analogInputRangeUpper_, this.analogInputRangeLower_, this.analogInputCondition_);
         this.writeWOResponse(command);
         this.vcc_ = vcc;
-    }
-    static _isMESHblock(name) {
-        return name.indexOf(MESH_100GP.PREFIX) !== -1;
     }
     prepareConnect() {
         this.meshBlock = new GPIO_1.GPIO();
@@ -260,14 +267,13 @@ class MESH_100GP extends MESH_1.MESH {
     async beforeOnDisconnectWait(reason) {
         // do nothing
     }
-    async getSensorDataWait(requestId, command) {
+    async getSensorDataWait(requestId, command, timeoutMsec) {
         this.checkConnected();
         this.writeWOResponse(command);
-        const _TIMEOUT_MSEC = 2500;
         let _isTimeout = false;
         const _timeoutId = setTimeout(() => {
             _isTimeout = true;
-        }, _TIMEOUT_MSEC);
+        }, timeoutMsec);
         const INTERVAL_TIME = 50;
         const _result = await new Promise((resolve) => {
             const _intervalId = setInterval(() => {
@@ -291,7 +297,7 @@ class MESH_100GP extends MESH_1.MESH {
 }
 exports.default = MESH_100GP;
 MESH_100GP.PartsName = 'MESH_100GP';
-MESH_100GP.PREFIX = 'MESH-100GP';
+MESH_100GP.LocalName = /^MESH-100GP/;
 MESH_100GP.AnalogInputEventCondition = GPIO_1.GPIO.AnalogInputEventCondition;
 MESH_100GP.AnalogInputNotifyMode = GPIO_1.GPIO.AnalogInputNotifyMode;
 MESH_100GP.Pin = GPIO_1.GPIO.Pin;

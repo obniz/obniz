@@ -3,8 +3,10 @@ MESH-100AC (MESH Move) is an app-enabled accelerometer of MESH blocks.
 
 MESH official web site is [here](https://meshprj.com/).
 
-# License
-See [LICENSE.txt]().
+![](./image.jpg)
+
+# Requirement
+MESH block : version 1.2.5 or higher
 
 # Use case
 
@@ -22,7 +24,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
     // Connect to the Move block
     await moveBlock.connectWait();
-    console.log('connected');
+    console.log(`connected: ${moveBlock.peripheral.localName}`);
     
     // Tap Event
     moveBlock.onTapped = (accele) => {
@@ -47,4 +49,5 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
 ```
 
-For more information, click [here](https://developer.meshprj.com/).
+# Related documents
+[MESH technical specification](https://developer.meshprj.com/).

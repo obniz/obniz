@@ -15,6 +15,16 @@ class MESH_100LE extends MESH_1.MESH {
         this.staticClass = MESH_100LE;
     }
     /**
+     * Check MESH block
+     *
+     * @param peripheral
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(peripheral, opt_serialnumber = '') {
+        return LED_1.LED.isMESHblock(peripheral.localName, opt_serialnumber);
+    }
+    /**
      * getDataWait
      *
      * @returns
@@ -34,15 +44,12 @@ class MESH_100LE extends MESH_1.MESH {
      * @param cycleOnTime 0-65,535 [ms]
      * @param cycleOffTime 0-65,535 [ms]
      * @param pattern Pattern.BLINK or Pattern.FIREFLY
-     * @returns
+     * @returns void
      */
     setLed(colors, totalTime, cycleOnTime, cycleOffTime, pattern) {
         const ledBlock = this.meshBlock;
-        const command = ledBlock.parseLedCommand(colors, totalTime, cycleOnTime, cycleOffTime, pattern);
+        const command = ledBlock.createLedCommand(colors, totalTime, cycleOnTime, cycleOffTime, pattern);
         this.writeWOResponse(command);
-    }
-    static _isMESHblock(name) {
-        return name.indexOf(MESH_100LE.PREFIX) !== -1;
     }
     prepareConnect() {
         this.meshBlock = new LED_1.LED();
@@ -54,5 +61,5 @@ class MESH_100LE extends MESH_1.MESH {
 }
 exports.default = MESH_100LE;
 MESH_100LE.PartsName = 'MESH_100LE';
-MESH_100LE.PREFIX = 'MESH-100LE';
+MESH_100LE.LocalName = /^MESH-100LE/;
 MESH_100LE.Pattern = LED_1.LED.PATTERN;

@@ -18,6 +18,14 @@ export declare class Button extends Base {
     private readonly EVENT_TYPE_ID_;
     private readonly TYPE_;
     /**
+     * Verify that the device is MESH block
+     *
+     * @param name
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(name: string | null, opt_serialnumber?: string): boolean;
+    /**
      * Parse data that received from MESH block, and emit event
      *
      * @param data

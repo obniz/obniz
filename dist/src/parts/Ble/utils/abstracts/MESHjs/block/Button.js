@@ -28,6 +28,19 @@ class Button extends Base_1.Base {
         };
     }
     /**
+     * Verify that the device is MESH block
+     *
+     * @param name
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(name, opt_serialnumber = '') {
+        var _a;
+        return super.isMESHblock(name, opt_serialnumber)
+            ? ((_a = name) === null || _a === void 0 ? void 0 : _a.indexOf('MESH-100BU')) !== -1
+            : false;
+    }
+    /**
      * Parse data that received from MESH block, and emit event
      *
      * @param data

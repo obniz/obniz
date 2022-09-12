@@ -18,6 +18,16 @@ class MESH_100BU extends MESH_1.MESH {
         this.staticClass = MESH_100BU;
     }
     /**
+     * Check MESH block
+     *
+     * @param peripheral
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(peripheral, opt_serialnumber = '') {
+        return Button_1.Button.isMESHblock(peripheral.localName, opt_serialnumber);
+    }
+    /**
      * getDataWait
      *
      * @returns
@@ -28,9 +38,6 @@ class MESH_100BU extends MESH_1.MESH {
             name: this.peripheral.localName,
             address: this.peripheral.address,
         };
-    }
-    static _isMESHblock(name) {
-        return name.indexOf(MESH_100BU.PREFIX) !== -1;
     }
     prepareConnect() {
         this.meshBlock = new Button_1.Button();
@@ -61,4 +68,4 @@ class MESH_100BU extends MESH_1.MESH {
 }
 exports.default = MESH_100BU;
 MESH_100BU.PartsName = 'MESH_100BU';
-MESH_100BU.PREFIX = 'MESH-100BU';
+MESH_100BU.LocalName = /^MESH-100BU/;

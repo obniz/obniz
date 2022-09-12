@@ -90,11 +90,27 @@ export class GPIO extends Base {
   private readonly PWM_ID_: number = 6 as const;
 
   /**
+   * Verify that the device is MESH block
+   *
+   * @param name
+   * @param opt_serialnumber
+   * @returns
+   */
+  public static isMESHblock(
+    name: string | null,
+    opt_serialnumber = ''
+  ): boolean {
+    return super.isMESHblock(name, opt_serialnumber)
+      ? name?.indexOf('MESH-100GP') !== -1
+      : false;
+  }
+
+  /**
    * Parse data that received from MESH block, and emit event
    *
    * @const
    * @param data
-   * @returns
+   * @returns void
    */
   public notify(data: number[]): void {
     super.notify(data);
@@ -177,7 +193,7 @@ export class GPIO extends Base {
   }
 
   /**
-   * Convert parameters to command of set-mode
+   * Create command of set-mode
    *
    * @param digitalInputLow2High { p1:boolean, p2:boolean, p3:boolean }
    * @param digitalInputHigh2Low { p1:boolean, p2:boolean, p3:boolean }
@@ -185,18 +201,18 @@ export class GPIO extends Base {
    * @param pwmRatio 0-255
    * @param vcc Vcc.ON or Vcc.OFF
    * @param analogInputRangeUpper 0-255(0.00-3.00[V])
-   * @param analogInputRangeBottom 0-255(0.00-3.00[V])
+   * @param analogInputRangeLower 0-255(0.00-3.00[V])
    * @param analogInputNotify AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
    * @returns command
    */
-  public parseSetmodeCommand(
+  public createSetmodeCommand(
     digitalInputLow2High: GPIO['DigitalPins'],
     digitalInputHigh2Low: GPIO['DigitalPins'],
     digitalOutput: GPIO['DigitalPins'],
     pwmRatio: number,
     vcc: number,
     analogInputRangeUpper: number,
-    analogInputRangeBottom: number,
+    analogInputRangeLower: number,
     analogInputNotify: number
   ): number[] {
     // Error Handle
@@ -215,10 +231,10 @@ export class GPIO extends Base {
       'analogInRangeUpper'
     );
     this.checkRange(
-      analogInputRangeBottom,
+      analogInputRangeLower,
       ANALOG_IN_RANGE_MIN,
       ANALOG_IN_RANGE_MAX,
-      'analogInRangeBottom'
+      'analogInRangeLower'
     );
     if (
       analogInputNotify !== GPIO.AnalogInputEventCondition.NOT_NOTIFY &&
@@ -237,7 +253,7 @@ export class GPIO extends Base {
       pwmRatio,
       vcc,
       analogInputRangeUpper,
-      analogInputRangeBottom,
+      analogInputRangeLower,
       analogInputNotify,
     ] as const;
     const data: number[] = HEADER.concat(BODY);
@@ -247,28 +263,28 @@ export class GPIO extends Base {
   }
 
   /**
-   * Convert parameters to command of digital-input
+   * Create command of digital-input
    *
    * @param pin
    * @param opt_requestId
-   * @returns
+   * @returns command
    */
-  public parseDigitalInputCommand(pin: number, opt_requestId = 0) {
-    return this.parseCommand_(this.DIGITAL_IN_ID_, pin, opt_requestId);
+  public createDigitalInputCommand(pin: number, opt_requestId = 0): number[] {
+    return this.createCommand_(this.DIGITAL_IN_ID_, pin, opt_requestId);
   }
 
   /**
-   * Convert parameters to command of analog-input
+   * Create command of analog-input
    *
    * @param analogInputNotifyMode
    * @param opt_requestId
-   * @returns
+   * @returns command
    */
-  public parseAnalogInputCommand(
+  public createAnalogInputCommand(
     analogInputNotifyMode: number,
     opt_requestId = 0
-  ) {
-    return this.parseCommand_(
+  ): number[] {
+    return this.createCommand_(
       this.ANALOG_IN_ID_,
       analogInputNotifyMode,
       opt_requestId
@@ -276,38 +292,38 @@ export class GPIO extends Base {
   }
 
   /**
-   * Convert parameters to command of v-output
+   * Create command of v-output
    *
    * @param opt_requestId
-   * @returns
+   * @returns command
    */
-  public parseVOutputCommand(opt_requestId = 0) {
+  public createVOutputCommand(opt_requestId = 0): number[] {
     const PIN = 0; // VOUT pin
-    return this.parseCommand_(this.V_OUT_ID_, PIN, opt_requestId);
+    return this.createCommand_(this.V_OUT_ID_, PIN, opt_requestId);
   }
 
   /**
-   * Convert parameters to command of digital-output
+   * Create command of digital-output
    *
    * @param pin
    * @param opt_requestId
-   * @returns
+   * @returns command
    */
-  public parseDigitalOutputCommand(pin: number, opt_requestId = 0) {
-    return this.parseCommand_(this.DIGITAL_OUT_ID_, pin, opt_requestId);
+  public createDigitalOutputCommand(pin: number, opt_requestId = 0): number[] {
+    return this.createCommand_(this.DIGITAL_OUT_ID_, pin, opt_requestId);
   }
 
   /**
-   * Convert parameters to command of PWM
+   * Create command of PWM
    *
    * @param opt_requestId
-   * @returns
+   * @returns command
    */
-  public parsePwmCommand(opt_requestId = 0) {
-    return this.parseCommand_(this.PWM_ID_, GPIO.Pin.P3, opt_requestId);
+  public createPwmCommand(opt_requestId = 0): number[] {
+    return this.createCommand_(this.PWM_ID_, GPIO.Pin.P3, opt_requestId);
   }
 
-  private parseCommand_(
+  private createCommand_(
     eventId: number,
     param: number,
     requestId: number

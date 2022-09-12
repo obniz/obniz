@@ -3,8 +3,10 @@ MESH-100TH (MESH Temperature & Humidity) is an app-enabled temperature and humid
 
 MESH official web site is [here](https://meshprj.com/).
 
-# License
-See [LICENSE.txt]().
+![](./image.jpg)
+
+# Requirement
+MESH block : version 1.2.5 or higher
 
 # Use case
 
@@ -22,7 +24,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
     // Connect to the Temperature & Humidity block
     await temphumidBlock.connectWait();
-    console.log('connected');
+    console.log(`connected: ${temphumidBlock.peripheral.localName}`);
     
     // Get sensor data
     const res = await temphumidBlock.getSensorDataWait();
@@ -45,7 +47,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
     // Connect to the Temperature & Humidity block
     await temphumidBlock.connectWait();
-    console.log('connected');
+    console.log(`connected: ${temphumidBlock.peripheral.localName}`);
     
     // Set event handler
     temphumidBlock.onSensorEvent = ((temperature, humidity) => {
@@ -55,18 +57,18 @@ obniz.ble.scan.onfind = async (peripheral) => {
     // Prepare params (See the linked page below for more information.)
     const notifyMode = MESH_100TH.NotifyMode.ALWAYS;
     const tempUpper = 50;
-    const tempBottom = -10;
+    const tempLower = -10;
     const humidUpper = 100;
-    const humidBottom = 0;
-    const tempCondition = MESH_100TH.EmitCondition.ABOVE_UPPER_AND_ABOVE_BOTTOM;
-    const humidCondition = MESH_100TH.EmitCondition.ABOVE_UPPER_AND_ABOVE_BOTTOM;
+    const humidLower = 0;
+    const tempCondition = MESH_100TH.EmitCondition.ABOVE_UPPER_OR_ABOVE_LOWER;
+    const humidCondition = MESH_100TH.EmitCondition.ABOVE_UPPER_OR_ABOVE_LOWER;
     
     // Write
     temphumidBlock.setMode(
         tempUpper,
-        tempBottom,
+        tempLower,
         humidUpper,
-        humidBottom,
+        humidLower,
         tempCondition,
         humidCondition,
         notifyMode
@@ -75,4 +77,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
 ```
 
-For more information, click [here](https://developer.meshprj.com/).
+# Related documents
+
+[MESH technical specification](https://developer.meshprj.com/)

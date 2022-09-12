@@ -45,10 +45,18 @@ export declare class Base {
      */
     get battery(): number;
     /**
+     * Verify that the device is MESH block
+     *
+     * @param name
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(name: string | null, opt_serialnumber?: string): boolean;
+    /**
      * Set result of indicate
      *
      * @param data
-     * @returns
+     * @returns void
      */
     indicate(data: number[]): void;
     /**
@@ -58,15 +66,15 @@ export declare class Base {
      */
     notify(data: number[]): void;
     /**
-     * Convert parameters to command of statusbar LED
+     * Create command of statusbar LED
      *
      * @param power
      * @param red
      * @param green
      * @param blue
-     * @returns
+     * @returns command
      */
-    parseStatusbarLedCommand(power: boolean, red: boolean, green: boolean, blue: boolean): number[];
+    createStatusbarLedCommand(power: boolean, red: boolean, green: boolean, blue: boolean): number[];
     /**
      * Check software version of MESH block
      *

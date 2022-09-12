@@ -1,7 +1,7 @@
-const Obniz = require('obniz');
+const Obniz = require('../../../../index.js'); // local
 const MESH_100AC = Obniz.getPartsClass('MESH_100AC');
 
-const obnizId = 'XXXXXXXX'; // WRITE YOUR OBNIZ ID
+const obnizId = '87287267'; // WRITE YOUR OBNIZ ID
 
 const obniz = new Obniz(obnizId, {
   access_token: null,
@@ -9,7 +9,7 @@ const obniz = new Obniz(obnizId, {
 
 // Connected.
 obniz.onconnect = async () => {
-  console.log(`connected obniz ${obniz.id}`);
+  console.log(`connected: obniz ${obniz.id}`);
   try {
     await obniz.ble.initWait();
     obniz.ble.scan.onfind = async (peripheral) => {
@@ -23,7 +23,7 @@ obniz.onconnect = async () => {
 
       // Connect to the Move block
       await moveBlock.connectWait();
-      console.log('connected');
+      console.log(`connected: ${moveBlock.peripheral.localName}`);
 
       // Tap Event
       moveBlock.onTapped = (accele) => {

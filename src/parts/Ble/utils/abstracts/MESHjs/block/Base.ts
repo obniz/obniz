@@ -62,10 +62,37 @@ export class Base {
   }
 
   /**
+   * Verify that the device is MESH block
+   *
+   * @param name
+   * @param opt_serialnumber
+   * @returns
+   */
+  public static isMESHblock(
+    name: string | null,
+    opt_serialnumber = ''
+  ): boolean {
+    if (!name) {
+      return false;
+    }
+    const LOCAL_NAME_LENGTH = 17 as const;
+    if (name.length !== LOCAL_NAME_LENGTH) {
+      return false;
+    }
+    if (name.indexOf('MESH-100') === -1) {
+      return false;
+    }
+    if (opt_serialnumber !== '' && name.indexOf(opt_serialnumber) === -1) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
    * Set result of indicate
    *
    * @param data
-   * @returns
+   * @returns void
    */
   public indicate(data: number[]): void {
     if (data.length !== this.INDICATE_LENGTH_) {
@@ -94,21 +121,20 @@ export class Base {
   }
 
   /**
-   * Convert parameters to command of statusbar LED
+   * Create command of statusbar LED
    *
    * @param power
    * @param red
    * @param green
    * @param blue
-   * @returns
+   * @returns command
    */
-  public parseStatusbarLedCommand(
+  public createStatusbarLedCommand(
     power: boolean,
     red: boolean,
     green: boolean,
     blue: boolean
   ): number[] {
-    // Generate Command
     const data = [
       this.MESSAGE_TYPE_ID_VALUE_,
       this.STATUSBAR_LED_EVENT_TYPE_ID_VALUE_,
@@ -118,7 +144,6 @@ export class Base {
       Number(power),
     ];
     data.push(this.checkSum(data));
-
     return data;
   }
 

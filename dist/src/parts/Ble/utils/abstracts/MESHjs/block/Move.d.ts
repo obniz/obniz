@@ -29,6 +29,14 @@ export declare class Move extends Base {
     private readonly FLIP_EVENT_ID_;
     private readonly ORIENTATION_EVENT_ID_;
     /**
+     * Verify that the device is MESH block
+     *
+     * @param name
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(name: string | null, opt_serialnumber?: string): boolean;
+    /**
      * Parse data that received from MESH block, and emit event
      *
      * @param data

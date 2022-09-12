@@ -1,23 +1,24 @@
 /**
  * @packageDocumentation
- * @module Parts.MINEW_S1_HT
+ * @module Parts.MINEW_S1
  */
 /* eslint rulesdir/non-ascii: 0 */
 
-import Obniz from '../../../obniz';
+import MINEW from '../utils/abstracts/MINEW';
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import ObnizUtil from '../../../obniz/libs/utils/util';
-import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from '../../../obniz/ObnizPartsInterface';
+import {
+  ObnizPartsBleCompare,
+  ObnizBleBeaconStruct,
+  ObnizPartsBleMode,
+} from '../../../obniz/ObnizPartsBleAbstract';
 
 /**
  * temperature and humidity data from MINEW_S1 advertisement
  *
  * MINEW_S1のadvertisementからの温湿度データ
  */
-export interface MINEW_S1_HTData {
+export interface MINEW_S1_Data {
   frameType: number;
   versionNumber: number;
   batteryLevel: number;
@@ -54,45 +55,71 @@ export interface MINEW_S1_InfoData {
 export interface MINEW_S1Options {}
 
 /** MINEW_S1 management class MINEW_S1を管理するクラス */
-export default class MINEW_S1 implements ObnizPartsBleInterface {
-  public static info() {
-    return { name: 'MINEW_S1' };
-  }
+export default class MINEW_S1 extends MINEW<MINEW_S1_Data> {
+  protected staticClass = MINEW_S1;
+  public static readonly PartsName = 'MINEW_S1';
 
-  /**
-   * Verify that the received peripheral is from the MINEW_S1
-   *
-   * 受け取ったPeripheralがMINEW_S1のものかどうかを確認する
-   *
-   * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
-   *
-   * @param macAddress (optional: If you want to specify a MAC address) MAC address
-   *
-   * (任意: MACアドレスを指定したい場合) MACアドレス
-   *
-   * @returns Whether it is the MINEW_S1
-   *
-   * MINEW_S1かどうか
-   *
-   * true: HT Sensor SLOT / Info SLOT
-   *
-   * false: iBeacon SLOT / UID SLOT / URL SLOT / TLM SLOT / other advertisements
-   */
-  public static isDevice(
+  // TODO: restore by disable info slot
+  // public static readonly ServiceDataLength = 16;
+
+  public static readonly ServiceDataStruct: ObnizPartsBleCompare<
+    ObnizBleBeaconStruct<MINEW_S1_Data>
+  > = MINEW.getServiceDataStruct<MINEW_S1_Data>(7, 1, {
+    // TODO: delete
+    frameType: {
+      index: 0,
+      type: 'unsignedNumLE',
+    },
+    // TODO: delete
+    versionNumber: {
+      index: 1,
+      type: 'unsignedNumLE',
+    },
+    // TODO: change key name
+    batteryLevel: {
+      index: 2,
+      type: 'unsignedNumLE',
+    },
+    temperature: {
+      index: 3,
+      length: 2,
+      type: 'numLE',
+      fixedIntegerBytes: 1,
+      round: 2,
+    },
+    humidity: {
+      index: 5,
+      length: 2,
+      type: 'numLE',
+      fixedIntegerBytes: 1,
+      round: 2,
+    },
+    // TODO: delete
+    macAddress: {
+      index: 7,
+      length: 6,
+      type: 'custom',
+      func: (data, peripheral) => peripheral.address,
+    },
+    // TODO: delete by disable info slot
+    versionNumber_: {
+      index: 1,
+      type: 'check',
+      data: 1,
+      scanResponse: true, // for ignored by check
+    },
+  });
+
+  // TODO: delete by disable info slot
+  public static isDeviceWithMode(
     peripheral: BleRemotePeripheral,
-    macAddress: string | null = null
+    mode: ObnizPartsBleMode
   ): boolean {
-    if (!this._hasPrefix(peripheral)) {
-      return false;
-    }
-    if (macAddress) {
-      const data = this.getInfoData(peripheral) || this.getHTData(peripheral);
-      if (data && data.macAddress === macAddress) {
-        return true;
-      }
-      return false;
-    }
-    return true;
+    return (
+      peripheral.serviceData !== null &&
+      (peripheral.serviceData[3] === 1 || peripheral.serviceData[3] === 8) &&
+      MINEW.isDeviceWithMode(peripheral, mode)
+    );
   }
 
   /**
@@ -109,10 +136,11 @@ export default class MINEW_S1 implements ObnizPartsBleInterface {
   public static getInfoData(
     peripheral: BleRemotePeripheral
   ): null | MINEW_S1_InfoData {
-    if (!this._hasPrefix(peripheral)) {
-      return null;
-    }
-    if (!peripheral.adv_data || peripheral.adv_data.length < 20) {
+    if (
+      MINEW_S1.getDeviceMode(peripheral) !== 'Beacon' ||
+      !peripheral.serviceData ||
+      peripheral.serviceData[3] !== 0x08
+    ) {
       return null;
     }
     const frameType = peripheral.adv_data[11];
@@ -122,11 +150,13 @@ export default class MINEW_S1 implements ObnizPartsBleInterface {
     }
 
     const batteryLevel = peripheral.adv_data[13];
-    const macAddress = peripheral.adv_data
-      .slice(14, 20)
-      .map((e: number) => ('0' + e.toString(16)).slice(-2))
-      .join('')
-      .match(/.{1,2}/g)!
+    const macAddress = (
+      peripheral.adv_data
+        .slice(14, 20)
+        .map((e: number) => ('0' + e.toString(16)).slice(-2))
+        .join('')
+        .match(/.{1,2}/g) ?? []
+    )
       .reverse()
       .join('');
 
@@ -144,6 +174,9 @@ export default class MINEW_S1 implements ObnizPartsBleInterface {
   }
 
   /**
+   * @deprecated
+   * Use MINEW_S1.getData();
+   *
    * Get temperature and humidity data from the MINEW_S1
    *
    * MINEW_S1からの温湿度データを取得
@@ -156,81 +189,15 @@ export default class MINEW_S1 implements ObnizPartsBleInterface {
    */
   public static getHTData(
     peripheral: BleRemotePeripheral
-  ): null | MINEW_S1_HTData {
-    if (!this._hasPrefix(peripheral)) {
+  ): null | MINEW_S1_Data {
+    if (
+      MINEW_S1.getDeviceMode(peripheral) !== 'Beacon' ||
+      !peripheral.serviceData ||
+      peripheral.serviceData[3] !== 0x01
+    ) {
       return null;
     }
-    if (!peripheral.adv_data || peripheral.adv_data.length !== 24) {
-      return null;
-    }
-    const frameType = peripheral.adv_data[11];
-    const versionNumber = peripheral.adv_data[12];
-    if (frameType !== 0xa1 || versionNumber !== 0x01) {
-      return null;
-    }
-
-    const batteryLevel = peripheral.adv_data[13];
-    const temperatureH = peripheral.adv_data[14];
-    const temperatureL = peripheral.adv_data[15];
-    const temperature = temperatureH + (temperatureL * 1) / (1 << 8);
-    const humidityH = peripheral.adv_data[16];
-    const humidityL = peripheral.adv_data[17];
-    const humidity = humidityH + (humidityL * 1) / (1 << 8);
-
-    const macAddress = peripheral.adv_data
-      .splice(18)
-      .map((e: number) => ('0' + e.toString(16)).slice(-2))
-      .join('')
-      .match(/.{1,2}/g)!
-      .reverse()
-      .join('');
-
-    return {
-      frameType,
-      versionNumber,
-      batteryLevel,
-      temperature,
-      humidity,
-      macAddress,
-    };
-  }
-
-  private static _hasPrefix(peripheral: BleRemotePeripheral): boolean {
-    if (!peripheral.adv_data || peripheral.adv_data.length < 10) {
-      return false;
-    }
-    const target = [
-      // flag
-      0x02,
-      0x01,
-      0x06,
-      // 16bit uuid
-      0x03,
-      0x03,
-      0xe1,
-      0xff,
-      // service data
-      -1,
-      0x16,
-      0xe1,
-      0xff,
-    ];
-    for (const index in target) {
-      if (target[index] >= 0 && target[index] !== peripheral.adv_data[index]) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  public _peripheral: null | BleRemotePeripheral = null;
-
-  // non-wired device
-  public keys: string[] = [];
-  public requiredKeys: string[] = [];
-  public params: any = {};
-
-  public wired(obniz: Obniz): void {
-    // do nothing.
+    const device = new MINEW_S1(peripheral, 'Beacon');
+    return device.getData();
   }
 }

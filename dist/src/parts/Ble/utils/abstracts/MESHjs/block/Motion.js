@@ -12,10 +12,23 @@ class Motion extends Base_1.Base {
         this.EVENT_TYPE_ID_ = 0;
     }
     /**
+     * Verify that the device is MESH block
+     *
+     * @param name
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(name, opt_serialnumber = '') {
+        var _a;
+        return super.isMESHblock(name, opt_serialnumber)
+            ? ((_a = name) === null || _a === void 0 ? void 0 : _a.indexOf('MESH-100MD')) !== -1
+            : false;
+    }
+    /**
      * Parse data that received from MESH block, and emit event
      *
      * @param data
-     * @returns
+     * @returns void
      */
     notify(data) {
         super.notify(data);
@@ -34,22 +47,22 @@ class Motion extends Base_1.Base {
         this.onSensorEvent(motionState, notifyMode, requestId);
     }
     /**
-     * Convert parameters to command of set-mode
+     * Create command of set-mode
      *
      * @param notifyMode
-     * @param opt_detectionTime
      * @param opt_holdingTime
+     * @param opt_detectionTime
      * @param opt_requestId
-     * @returns
+     * @returns command
      */
-    parseSetmodeCommand(notifyMode, opt_detectionTime = 500, opt_holdingTime = 500, opt_requestId = 0) {
+    createSetmodeCommand(notifyMode, opt_holdingTime = 500, opt_detectionTime = 500, opt_requestId = 0) {
         // Error Handle
-        const DETECTION_TIME_MIN = 200;
-        const DETECTION_TIME_MAX = 60000;
-        this.checkRange(opt_detectionTime, DETECTION_TIME_MIN, DETECTION_TIME_MAX, 'opt_detectionTime');
-        const HOLDING_TIME_MIN = 500;
+        const HOLDING_TIME_MIN = 200;
         const HOLDING_TIME_MAX = 60000;
         this.checkRange(opt_holdingTime, HOLDING_TIME_MIN, HOLDING_TIME_MAX, 'opt_holdingTime');
+        const DETECTION_TIME_MIN = 500;
+        const DETECTION_TIME_MAX = 60000;
+        this.checkRange(opt_detectionTime, DETECTION_TIME_MIN, DETECTION_TIME_MAX, 'opt_detectionTime');
         // Generate Command
         const HEADER = [
             this.MESSAGE_TYPE_ID_,
@@ -59,10 +72,10 @@ class Motion extends Base_1.Base {
         const BYTE = 256;
         const BODY = [
             notifyMode,
-            opt_detectionTime % BYTE,
-            Math.floor(opt_detectionTime / BYTE),
             opt_holdingTime % BYTE,
             Math.floor(opt_holdingTime / BYTE),
+            opt_detectionTime % BYTE,
+            Math.floor(opt_detectionTime / BYTE),
         ];
         const data = HEADER.concat(BODY);
         data.push(this.checkSum(data));

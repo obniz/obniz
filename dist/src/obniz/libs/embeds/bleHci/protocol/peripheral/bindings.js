@@ -26,6 +26,7 @@ class BlenoBindings extends eventemitter3_1.default {
     constructor(hciProtocol) {
         super();
         this._state = null;
+        this._extended = false;
         this._advertising = false;
         this._hci = hciProtocol;
         this._gap = new gap_1.default(this._hci);
@@ -69,6 +70,25 @@ class BlenoBindings extends eventemitter3_1.default {
     async stopAdvertisingWait() {
         this._advertising = false;
         await this._gap.stopAdvertisingWait();
+    }
+    async setExtendedAdvertisingParametersWait(handle, eventProperties, primaryAdvertisingPhy, secondaryAdvertisingPhy, txPower) {
+        await this._gap.setExtendedAdvertiseParametersWait(handle, eventProperties, primaryAdvertisingPhy, secondaryAdvertisingPhy, txPower);
+    }
+    async setExtendedAdvertisingDataWait(handle, data) {
+        await this._gap.setExtendedAdvertisingDataWait(handle, data);
+    }
+    async setExtendedAdvertisingScanResponseDataWait(handle, data) {
+        await this._gap.setExtendedAdvertisingScanResponseDataWait(handle, data);
+    }
+    async startExtendedAdvertisingWait(handle) {
+        this._advertising = true;
+        this._extended = true;
+        await this._gap.startExtendedAdvertisingWait(handle);
+    }
+    async stopExtendedAdvertisingWait(handle) {
+        this._advertising = false;
+        this._extended = false;
+        await this._gap.stopExtendedAdvertisingWait(handle);
     }
     setServices(services) {
         this._gatt.setServices(services);
@@ -132,7 +152,12 @@ class BlenoBindings extends eventemitter3_1.default {
             this.emit('disconnect', address, reason); // TODO: use reason
         }
         if (this._advertising) {
-            await this._gap.restartAdvertisingWait();
+            if (this._extended) {
+                await this._gap.restartExtendedAdvertisingWait(0);
+            }
+            else {
+                await this._gap.restartAdvertisingWait();
+            }
         }
     }
     onEncryptChange(handle, encrypt) {

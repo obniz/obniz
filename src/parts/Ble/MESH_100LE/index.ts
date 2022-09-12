@@ -6,6 +6,7 @@
 
 import { MESH } from '../utils/abstracts/MESH';
 import { LED } from '../utils/abstracts/MESHjs/block/LED';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 
 export interface MESH_100LEOptions {}
 
@@ -17,12 +18,26 @@ export interface MESH_100LE_Data {
 /** MESH_100TH management class */
 export default class MESH_100LE extends MESH<MESH_100LE_Data> {
   public static readonly PartsName = 'MESH_100LE';
-  public static readonly PREFIX = 'MESH-100LE';
+  public static readonly LocalName = /^MESH-100LE/;
 
   public static Pattern = LED.PATTERN;
   public colors: LED['colors'] = { red: 0, green: 0, blue: 0 };
 
   protected readonly staticClass = MESH_100LE;
+
+  /**
+   * Check MESH block
+   *
+   * @param peripheral
+   * @param opt_serialnumber
+   * @returns
+   */
+  public static isMESHblock(
+    peripheral: BleRemotePeripheral,
+    opt_serialnumber = ''
+  ): boolean {
+    return LED.isMESHblock(peripheral.localName, opt_serialnumber);
+  }
 
   /**
    * getDataWait
@@ -45,7 +60,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
    * @param cycleOnTime 0-65,535 [ms]
    * @param cycleOffTime 0-65,535 [ms]
    * @param pattern Pattern.BLINK or Pattern.FIREFLY
-   * @returns
+   * @returns void
    */
   public setLed(
     colors: MESH_100LE['colors'],
@@ -55,7 +70,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
     pattern: number
   ): void {
     const ledBlock = this.meshBlock as LED;
-    const command = ledBlock.parseLedCommand(
+    const command = ledBlock.createLedCommand(
       colors,
       totalTime,
       cycleOnTime,
@@ -63,10 +78,6 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
       pattern
     );
     this.writeWOResponse(command);
-  }
-
-  protected static _isMESHblock(name: string): boolean {
-    return name.indexOf(MESH_100LE.PREFIX) !== -1;
   }
 
   protected prepareConnect(): void {

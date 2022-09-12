@@ -7,6 +7,7 @@
 import { MESH } from '../utils/abstracts/MESH';
 import { GPIO } from '../utils/abstracts/MESHjs/block/GPIO';
 import { MESHJsTimeOutError } from '../utils/abstracts/MESHjs/util/Error';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 
 export interface MESH_100GPOptions {}
 
@@ -21,7 +22,7 @@ export interface MESH_100GP_Data {
 /** MESH_100GP management class */
 export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   public static readonly PartsName = 'MESH_100GP';
-  public static readonly PREFIX = 'MESH-100GP';
+  public static readonly LocalName = /^MESH-100GP/;
 
   public static readonly AnalogInputEventCondition =
     GPIO.AnalogInputEventCondition;
@@ -49,7 +50,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   private pwmRatio_ = 0;
   private vcc_: number = MESH_100GP.Vcc.OFF;
   private analogInputRangeUpper_ = 0;
-  private analogInputRangeBottom_ = 0;
+  private analogInputRangeLower_ = 0;
   private analogInputCondition_: number =
     MESH_100GP.AnalogInputEventCondition.NOT_NOTIFY;
 
@@ -58,6 +59,20 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
   private retVccState_ = -1;
   private retLevel_ = -1;
   private retDigitalOutState_ = -1;
+
+  /**
+   * Check MESH block
+   *
+   * @param peripheral
+   * @param opt_serialnumber
+   * @returns
+   */
+  public static isMESHblock(
+    peripheral: BleRemotePeripheral,
+    opt_serialnumber = ''
+  ): boolean {
+    return GPIO.isMESHblock(peripheral.localName, opt_serialnumber);
+  }
 
   /**
    * getDataWait
@@ -78,11 +93,14 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
    * @param pin
    * @returns
    */
-  public async getDigitalInputDataWait(pin: number) {
+  public async getDigitalInputDataWait(
+    pin: number,
+    opt_timeoutMsec = this.TIMEOUT_MSEC
+  ) {
     const _requestId = this.requestId.next();
     const _gpioBlock = this.meshBlock as GPIO;
-    const _command = _gpioBlock.parseDigitalInputCommand(pin, _requestId);
-    await this.getSensorDataWait(_requestId, _command);
+    const _command = _gpioBlock.createDigitalInputCommand(pin, _requestId);
+    await this.getSensorDataWait(_requestId, _command, opt_timeoutMsec);
     return this.retDigitalInState_;
   }
 
@@ -91,14 +109,14 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
    *
    * @returns
    */
-  public async getAnalogInputDataWait() {
+  public async getAnalogInputDataWait(opt_timeoutMsec = this.TIMEOUT_MSEC) {
     const _requestId = this.requestId.next();
     const _gpioBlock = this.meshBlock as GPIO;
-    const _command = _gpioBlock.parseAnalogInputCommand(
+    const _command = _gpioBlock.createAnalogInputCommand(
       MESH_100GP.AnalogInputNotifyMode.ONCE,
       _requestId
     );
-    await this.getSensorDataWait(_requestId, _command);
+    await this.getSensorDataWait(_requestId, _command, opt_timeoutMsec);
     return this.retLevel_;
   }
 
@@ -107,11 +125,11 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
    *
    * @returns
    */
-  public async getVOutputDataWait() {
+  public async getVOutputDataWait(opt_timeoutMsec = this.TIMEOUT_MSEC) {
     const _requestId = this.requestId.next();
     const _gpioBlock = this.meshBlock as GPIO;
-    const _command = _gpioBlock.parseVOutputCommand(_requestId);
-    await this.getSensorDataWait(_requestId, _command);
+    const _command = _gpioBlock.createVOutputCommand(_requestId);
+    await this.getSensorDataWait(_requestId, _command, opt_timeoutMsec);
     return this.retVccState_;
   }
 
@@ -121,11 +139,14 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
    * @param pin
    * @returns
    */
-  public async getDigitalOutputDataWait(pin: number) {
+  public async getDigitalOutputDataWait(
+    pin: number,
+    opt_timeoutMsec = this.TIMEOUT_MSEC
+  ) {
     const _requestId = this.requestId.next();
     const _gpioBlock = this.meshBlock as GPIO;
-    const _command = _gpioBlock.parseDigitalOutputCommand(pin, _requestId);
-    await this.getSensorDataWait(_requestId, _command);
+    const _command = _gpioBlock.createDigitalOutputCommand(pin, _requestId);
+    await this.getSensorDataWait(_requestId, _command, opt_timeoutMsec);
     return this.retDigitalOutState_;
   }
 
@@ -134,11 +155,11 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
    *
    * @returns
    */
-  public async getPwmDataWait() {
+  public async getPwmDataWait(opt_timeoutMsec = this.TIMEOUT_MSEC) {
     const _requestId = this.requestId.next();
     const _gpioBlock = this.meshBlock as GPIO;
-    const _command = _gpioBlock.parsePwmCommand(_requestId);
-    await this.getSensorDataWait(_requestId, _command);
+    const _command = _gpioBlock.createPwmCommand(_requestId);
+    await this.getSensorDataWait(_requestId, _command, opt_timeoutMsec);
     return this.retPwm_;
   }
 
@@ -151,7 +172,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
    * @param pwmRatio 0-255
    * @param vcc Vcc.ON or Vcc.OFF
    * @param analogInputRangeUpper 0-255(0.00-3.00[V])
-   * @param analogInputRangeBottom 0-255(0.00-3.00[V])
+   * @param analogInputRangeLower 0-255(0.00-3.00[V])
    * @param analogInputCondition AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
    */
   public setMode(
@@ -161,18 +182,18 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     pwmRatio: number,
     vcc: number,
     analogInputRangeUpper: number,
-    analogInputRangeBottom: number,
+    analogInputRangeLower: number,
     analogInputCondition: number
   ): void {
     const gpioBlock = this.meshBlock as GPIO;
-    const command = gpioBlock.parseSetmodeCommand(
+    const command = gpioBlock.createSetmodeCommand(
       digitalInputLow2High,
       digitalInputHigh2Low,
       digitalOutput,
       pwmRatio,
       vcc,
       analogInputRangeUpper,
-      analogInputRangeBottom,
+      analogInputRangeLower,
       analogInputCondition
     );
     this.writeWOResponse(command);
@@ -182,7 +203,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     this.pwmRatio_ = pwmRatio;
     this.vcc_ = vcc;
     this.analogInputRangeUpper_ = analogInputRangeUpper;
-    this.analogInputRangeBottom_ = analogInputRangeBottom;
+    this.analogInputRangeLower_ = analogInputRangeLower;
     this.analogInputCondition_ = analogInputCondition;
   }
 
@@ -197,14 +218,14 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     digitalInputHigh2Low: MESH_100GP['DigitalPins']
   ): void {
     const gpioBlock = this.meshBlock as GPIO;
-    const command = gpioBlock.parseSetmodeCommand(
+    const command = gpioBlock.createSetmodeCommand(
       digitalInputLow2High,
       digitalInputHigh2Low,
       this.digitalOutput_,
       this.pwmRatio_,
       this.vcc_,
       this.analogInputRangeUpper_,
-      this.analogInputRangeBottom_,
+      this.analogInputRangeLower_,
       this.analogInputCondition_
     );
     this.writeWOResponse(command);
@@ -216,28 +237,28 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
    * setModeAnalogInput
    *
    * @param analogInputRangeUpper 0-255(0.00-3.00[V])
-   * @param analogInputRangeBottom 0-255(0.00-3.00[V])
+   * @param analogInputRangeLower 0-255(0.00-3.00[V])
    * @param analogInputCondition AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
    */
   public setModeAnalogInput(
     analogInputRangeUpper: number,
-    analogInputRangeBottom: number,
+    analogInputRangeLower: number,
     analogInputCondition: number
   ): void {
     const gpioBlock = this.meshBlock as GPIO;
-    const command = gpioBlock.parseSetmodeCommand(
+    const command = gpioBlock.createSetmodeCommand(
       this.digitalInputLow2High_,
       this.digitalInputHigh2Low_,
       this.digitalOutput_,
       this.pwmRatio_,
       this.vcc_,
       analogInputRangeUpper,
-      analogInputRangeBottom,
+      analogInputRangeLower,
       analogInputCondition
     );
     this.writeWOResponse(command);
     this.analogInputRangeUpper_ = analogInputRangeUpper;
-    this.analogInputRangeBottom_ = analogInputRangeBottom;
+    this.analogInputRangeLower_ = analogInputRangeLower;
     this.analogInputCondition_ = analogInputCondition;
   }
 
@@ -248,14 +269,14 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
    */
   public setDigitalOutput(digitalOutput: MESH_100GP['DigitalPins']): void {
     const gpioBlock = this.meshBlock as GPIO;
-    const command = gpioBlock.parseSetmodeCommand(
+    const command = gpioBlock.createSetmodeCommand(
       this.digitalInputLow2High_,
       this.digitalInputHigh2Low_,
       digitalOutput,
       this.pwmRatio_,
       this.vcc_,
       this.analogInputRangeUpper_,
-      this.analogInputRangeBottom_,
+      this.analogInputRangeLower_,
       this.analogInputCondition_
     );
     this.writeWOResponse(command);
@@ -269,14 +290,14 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
    */
   public setPwmOutput(pwmRatio: number): void {
     const gpioBlock = this.meshBlock as GPIO;
-    const command = gpioBlock.parseSetmodeCommand(
+    const command = gpioBlock.createSetmodeCommand(
       this.digitalInputLow2High_,
       this.digitalInputHigh2Low_,
       this.digitalOutput_,
       pwmRatio,
       this.vcc_,
       this.analogInputRangeUpper_,
-      this.analogInputRangeBottom_,
+      this.analogInputRangeLower_,
       this.analogInputCondition_
     );
     this.writeWOResponse(command);
@@ -290,22 +311,18 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
    */
   public setVOutput(vcc: number): void {
     const gpioBlock = this.meshBlock as GPIO;
-    const command = gpioBlock.parseSetmodeCommand(
+    const command = gpioBlock.createSetmodeCommand(
       this.digitalInputLow2High_,
       this.digitalInputHigh2Low_,
       this.digitalOutput_,
       this.pwmRatio_,
       vcc,
       this.analogInputRangeUpper_,
-      this.analogInputRangeBottom_,
+      this.analogInputRangeLower_,
       this.analogInputCondition_
     );
     this.writeWOResponse(command);
     this.vcc_ = vcc;
-  }
-
-  protected static _isMESHblock(name: string): boolean {
-    return name.indexOf(MESH_100GP.PREFIX) !== -1;
   }
 
   protected prepareConnect(): void {
@@ -395,15 +412,18 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     // do nothing
   }
 
-  protected async getSensorDataWait(requestId: number, command: number[]) {
+  protected async getSensorDataWait(
+    requestId: number,
+    command: number[],
+    timeoutMsec: number
+  ) {
     this.checkConnected();
     this.writeWOResponse(command);
 
-    const _TIMEOUT_MSEC = 2500 as const;
     let _isTimeout = false;
     const _timeoutId = setTimeout(() => {
       _isTimeout = true;
-    }, _TIMEOUT_MSEC);
+    }, timeoutMsec);
 
     const INTERVAL_TIME = 50 as const;
     const _result = await new Promise((resolve) => {

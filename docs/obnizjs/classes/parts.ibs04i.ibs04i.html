@@ -109,6 +109,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="parts.ibs04i.ibs04i.html#beacondata" class="tsd-kind-icon">beacon<wbr>Data</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="parts.ibs04i.ibs04i.html#beacondatainscanresponse" class="tsd-kind-icon">beacon<wbr>Data<wbr>InScan<wbr>Response</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="parts.ibs04i.ibs04i.html#peripheral" class="tsd-kind-icon">peripheral</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="parts.ibs04i.ibs04i.html#servicedata" class="tsd-kind-icon">service<wbr>Data</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="parts.ibs04i.ibs04i.html#address-1" class="tsd-kind-icon">Address</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="parts.ibs04i.ibs04i.html#availableblemode" class="tsd-kind-icon">Available<wbr>Ble<wbr>Mode</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-static"><a href="parts.ibs04i.ibs04i.html#beacondatalength" class="tsd-kind-icon">Beacon<wbr>Data<wbr>Length</a></li>
@@ -117,6 +118,9 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-static"><a href="parts.ibs04i.ibs04i.html#companyid_scanresponse" class="tsd-kind-icon">CompanyID_<wbr><wbr>Scan<wbr>Response</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="parts.ibs04i.ibs04i.html#localname" class="tsd-kind-icon">Local<wbr>Name</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><a href="parts.ibs04i.ibs04i.html#partsname" class="tsd-kind-icon">Parts<wbr>Name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="parts.ibs04i.ibs04i.html#servicedatalength" class="tsd-kind-icon">Service<wbr>Data<wbr>Length</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="parts.ibs04i.ibs04i.html#servicedatastruct" class="tsd-kind-icon">Service<wbr>Data<wbr>Struct</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="parts.ibs04i.ibs04i.html#servicedatauuid" class="tsd-kind-icon">Service<wbr>DataUUID</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="parts.ibs04i.ibs04i.html#serviceuuids" class="tsd-kind-icon">Service<wbr>Uuids</a></li>
 							</ul>
 						</section>
@@ -163,7 +167,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:458</li>
+									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:523</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -189,7 +193,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#address">address</a></p>
 						<ul>
-							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:443</li>
+							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:506</li>
 						</ul>
 					</aside>
 				</section>
@@ -200,7 +204,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#beacondata">beaconData</a></p>
 						<ul>
-							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:445</li>
+							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:508</li>
 						</ul>
 					</aside>
 				</section>
@@ -211,7 +215,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#beacondatainscanresponse">beaconDataInScanResponse</a></p>
 						<ul>
-							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:447</li>
+							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:510</li>
 						</ul>
 					</aside>
 				</section>
@@ -222,7 +226,18 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#peripheral">peripheral</a></p>
 						<ul>
-							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:441</li>
+							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:504</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="servicedata" class="tsd-anchor"></a>
+					<h3>service<wbr>Data</h3>
+					<div class="tsd-signature tsd-kind-icon">service<wbr>Data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#servicedata">serviceData</a></p>
+						<ul>
+							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:512</li>
 						</ul>
 					</aside>
 				</section>
@@ -233,7 +248,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#address-1">Address</a></p>
 						<ul>
-							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:156</li>
+							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:177</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -305,7 +320,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#localname">LocalName</a></p>
 						<ul>
-							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:163</li>
+							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:184</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -326,13 +341,66 @@
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="servicedatalength" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> <span class="tsd-flag ts-flagOptional">Optional</span> Service<wbr>Data<wbr>Length</h3>
+					<div class="tsd-signature tsd-kind-icon">Service<wbr>Data<wbr>Length<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.html#obnizpartsblecompare" class="tsd-signature-type">ObnizPartsBleCompare</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = undefined</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#servicedatalength">ServiceDataLength</a></p>
+						<ul>
+							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:258</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Used as a condition of isDevice() by default.</p>
+						</div>
+						<p>標準でisDevice()の条件として使用</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="servicedatastruct" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> <span class="tsd-flag ts-flagOptional">Optional</span> Service<wbr>Data<wbr>Struct</h3>
+					<div class="tsd-signature tsd-kind-icon">Service<wbr>Data<wbr>Struct<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.html#obnizpartsblecompare" class="tsd-signature-type">ObnizPartsBleCompare</a><span class="tsd-signature-symbol">&lt;</span><a href="../modules/obnizcore.html#obnizblebeaconstruct" class="tsd-signature-type">ObnizBleBeaconStruct</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#servicedatastruct">ServiceDataStruct</a></p>
+						<ul>
+							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:278</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Used as a condition of isDevice() by default.
+							Compare with data after Service UUID.</p>
+						</div>
+						<p>標準でisDevice()の条件として使用
+						ServiceUUID以降のデータと比較</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="servicedatauuid" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> <span class="tsd-flag ts-flagOptional">Optional</span> Service<wbr>DataUUID</h3>
+					<div class="tsd-signature tsd-kind-icon">Service<wbr>DataUUID<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.html#obnizpartsblecompare" class="tsd-signature-type">ObnizPartsBleCompare</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = undefined</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#servicedatauuid">ServiceDataUUID</a></p>
+						<ul>
+							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:267</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Used as a condition of isDevice() by default.</p>
+						</div>
+						<p>標準でisDevice()の条件として使用</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 					<a name="serviceuuids" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> <span class="tsd-flag ts-flagOptional">Optional</span> Service<wbr>Uuids</h3>
 					<div class="tsd-signature tsd-kind-icon">Service<wbr>Uuids<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.html#obnizpartsblecompare" class="tsd-signature-type">ObnizPartsBleCompare</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = undefined</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#serviceuuids">ServiceUuids</a></p>
 						<ul>
-							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:170</li>
+							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:191</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -356,7 +424,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#mode">mode</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:451</li>
+									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:516</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../modules/obnizcore.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a></h4>
@@ -377,7 +445,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#checkmode">checkMode</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:471</li>
+									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:538</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -401,7 +469,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#getdata-1">getData</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:484</li>
+									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:551</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -427,7 +495,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#getavailableblemode">getAvailableBleMode</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:143</li>
+									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:164</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -451,7 +519,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#getdata-1">getData</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:429</li>
+									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:492</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -485,7 +553,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#getdevicemode">getDeviceMode</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:247</li>
+									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:295</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -519,7 +587,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#getserviceuuids">getServiceUuids</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:174</li>
+									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:195</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -543,7 +611,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#info">info</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:134</li>
+									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:155</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -567,7 +635,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#isdevice">isDevice</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:235</li>
+									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:283</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -597,7 +665,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#isdevicewithmode">isDeviceWithMode</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:268</li>
+									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:316</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1084,6 +1152,14 @@
 					<li class="globals  ">
 						<a href="../index.html"><em>Globals</em></a>
 					</li>
+					<li class="current tsd-kind-external-module tsd-is-not-exported">
+						<a href="../modules/parts.html">Parts</a>
+						<ul>
+							<li class="current tsd-kind-external-module tsd-parent-kind-external-module">
+								<a href="../modules/parts.ibs04i.html">iBS04i</a>
+							</li>
+						</ul>
+					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
@@ -1111,6 +1187,9 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="parts.ibs04i.ibs04i.html#peripheral" class="tsd-kind-icon">peripheral</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.ibs04i.ibs04i.html#servicedata" class="tsd-kind-icon">service<wbr>Data</a>
+							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 								<a href="parts.ibs04i.ibs04i.html#address-1" class="tsd-kind-icon">Address</a>
 							</li>
@@ -1134,6 +1213,15 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-static">
 								<a href="parts.ibs04i.ibs04i.html#partsname" class="tsd-kind-icon">Parts<wbr>Name</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+								<a href="parts.ibs04i.ibs04i.html#servicedatalength" class="tsd-kind-icon">Service<wbr>Data<wbr>Length</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+								<a href="parts.ibs04i.ibs04i.html#servicedatastruct" class="tsd-kind-icon">Service<wbr>Data<wbr>Struct</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+								<a href="parts.ibs04i.ibs04i.html#servicedatauuid" class="tsd-kind-icon">Service<wbr>DataUUID</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 								<a href="parts.ibs04i.ibs04i.html#serviceuuids" class="tsd-kind-icon">Service<wbr>Uuids</a>

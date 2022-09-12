@@ -3,6 +3,7 @@
  *
  * @ignore
  */
+/// <reference types="node" />
 import Hci from '../hci';
 import EventEmitter from 'eventemitter3';
 import { Handle } from '../../bleTypes';
@@ -15,6 +16,7 @@ declare type BlenoBindingsEventType = 'stateChange' | 'mtuChange' | 'accept' | '
 declare class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
     _state: any;
     _advertising: any;
+    _extended: boolean;
     _hci: Hci;
     _gap: Gap;
     _gatt: GattPeripheral;
@@ -31,6 +33,11 @@ declare class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
     startAdvertisingIBeaconWait(data: any): Promise<void>;
     startAdvertisingWithEIRDataWait(advertisementData: any, scanData: any): Promise<void>;
     stopAdvertisingWait(): Promise<void>;
+    setExtendedAdvertisingParametersWait(handle: number, eventProperties: number, primaryAdvertisingPhy: number, secondaryAdvertisingPhy: number, txPower: number): Promise<void>;
+    setExtendedAdvertisingDataWait(handle: number, data: Buffer): Promise<void>;
+    setExtendedAdvertisingScanResponseDataWait(handle: number, data: Buffer): Promise<void>;
+    startExtendedAdvertisingWait(handle: number): Promise<void>;
+    stopExtendedAdvertisingWait(handle: number): Promise<void>;
     setServices(services: any): void;
     disconnect(): void;
     updateRssiWait(): Promise<number | null>;

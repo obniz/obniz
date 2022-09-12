@@ -17,18 +17,26 @@ export declare class Brightness extends Base {
     private readonly EVENT_TYPE_ID_;
     private readonly LX_;
     /**
+     * Verify that the device is MESH block
+     *
+     * @param name
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(name: string | null, opt_serialnumber?: string): boolean;
+    /**
      * notify
      *
      * @param data
-     * @returns
+     * @returns void
      */
     notify(data: number[]): void;
     /**
-     * Parse to set-mode command
+     * Create command of set-mode
      *
      * @param notifyMode
      * @param opt_requestId
      * @returns command
      */
-    parseSetmodeCommand(notifyMode: number, opt_requestId?: number): number[];
+    createSetmodeCommand(notifyMode: number, opt_requestId?: number): number[];
 }

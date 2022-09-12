@@ -7,6 +7,7 @@
 import { MESH } from '../utils/abstracts/MESH';
 import { Brightness } from '../utils/abstracts/MESHjs/block/Brightness';
 import { MESHJsTimeOutError } from '../utils/abstracts/MESHjs/util/Error';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 
 export interface MESH_100PAOptions {}
 
@@ -21,9 +22,23 @@ export interface MESH_100PA_Data {
 /** MESH_100PA management class */
 export default class MESH_100PA extends MESH<MESH_100PA_Data> {
   public static readonly PartsName = 'MESH_100PA';
-  public static readonly PREFIX = 'MESH-100PA';
+  public static readonly LocalName = /^MESH-100PA/;
 
   public static readonly NotifyMode = Brightness.NotifyMode;
+
+  /**
+   * Check MESH block
+   *
+   * @param peripheral
+   * @param opt_serialnumber
+   * @returns
+   */
+  public static isMESHblock(
+    peripheral: BleRemotePeripheral,
+    opt_serialnumber = ''
+  ): boolean {
+    return Brightness.isMESHblock(peripheral.localName, opt_serialnumber);
+  }
 
   // Event Handler
   public onSensorEvent:
@@ -45,6 +60,7 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
     return {
       name: this.peripheral.localName!,
       address: this.peripheral.address,
+      ...(await this.getSensorDataWait()),
     };
   }
 
@@ -53,16 +69,15 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
    *
    * @returns
    */
-  public async getSensorDataWait() {
+  public async getSensorDataWait(opt_timeoutMsec = this.TIMEOUT_MSEC) {
     this.checkConnected();
     const _requestId = this.requestId.next();
     this.setMode_(MESH_100PA.NotifyMode.ONCE, _requestId);
 
-    const _TIMEOUT_MSEC = 2000 as const;
     let _isTimeout = false;
     const _timeoutId = setTimeout(() => {
       _isTimeout = true;
-    }, _TIMEOUT_MSEC);
+    }, opt_timeoutMsec);
 
     const INTERVAL_TIME = 50 as const;
     const _result = await new Promise<{
@@ -97,10 +112,6 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
     this.setMode_(notifyMode, this.requestId.defaultId());
   }
 
-  protected static _isMESHblock(name: string): boolean {
-    return name.indexOf(MESH_100PA.PREFIX) !== -1;
-  }
-
   protected prepareConnect(): void {
     this.meshBlock = new Brightness();
 
@@ -121,7 +132,7 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
 
   private setMode_(notifyMode: number, requestId: number): void {
     const brightnessBlock = this.meshBlock as Brightness;
-    const command = brightnessBlock.parseSetmodeCommand(notifyMode, requestId);
+    const command = brightnessBlock.createSetmodeCommand(notifyMode, requestId);
     this.writeWOResponse(command);
   }
 

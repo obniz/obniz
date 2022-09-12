@@ -20,3 +20,4 @@ log
 /test/test*.js
 /test/test*.ts
 .vscode
+/.run/

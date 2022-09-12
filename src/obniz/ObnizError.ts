@@ -268,7 +268,6 @@ export class ObnizBleScanStartError extends ObnizError {
     );
   }
 }
-
 export class ObnizBleGattHandleError extends ObnizError {
   constructor(msg: any) {
     super(18, msg);
@@ -284,5 +283,11 @@ export class ObnizBleUnSupportedPeripheralError extends ObnizError {
 export class ObnizBleInvalidPasskeyError extends ObnizError {
   constructor(passkey: number) {
     super(20, `passkey required >0 and <999999, But input: ${passkey}`);
+  }
+}
+
+export class ObnizBleInvalidParameterError extends ObnizError {
+  constructor(guideMessage: string, input: string) {
+    super(21, `${guideMessage}, But input: ${input}`);
   }
 }
