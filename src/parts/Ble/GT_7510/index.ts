@@ -11,7 +11,6 @@ import ObnizPartsBleInterface, {
 } from '../../../obniz/ObnizPartsBleInterface';
 
 import crypto from 'crypto';
-import Keyestudio_Button from '../../Keyestudio/Keyestudio_Button';
 
 export interface GT_7510Options {}
 
@@ -61,7 +60,22 @@ export default class GT_7510 implements ObnizPartsBleInterface {
     return peripheral.localName && peripheral.localName.indexOf('GT-7510') >= 0;
   }
 
+  public isPairingMode() {
+    if (!this._peripheral) {
+      throw new Error('GT_7510 not found');
+    }
+
+    if (this._peripheral.adv_data[13] === 3) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   public async pairingWait(passkeyCallback: () => Promise<number>) {
+    if(!this.isPairingMode()){
+      throw new Error('GT_7510 is not pairing mode.');
+    }
     await this._peripheral.connectWait({
       pairingOption: {
         passkeyCallback,
@@ -95,7 +109,6 @@ export default class GT_7510 implements ObnizPartsBleInterface {
       },
     });
   }
-
 
   public async getDataWait(key: string) {
     const results: GT_7510Result[] = [];
