@@ -6,6 +6,7 @@
 
 import { MESH } from '../utils/abstracts/MESH';
 import { Button } from '../utils/abstracts/MESHjs/block/Button';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 
 export interface MESH_100BUOptions {}
 
@@ -20,7 +21,7 @@ export interface MESH_100BU_Data {
 /** MESH_100BU management class */
 export default class MESH_100BU extends MESH<MESH_100BU_Data> {
   public static readonly PartsName = 'MESH_100BU';
-  public static readonly PREFIX = 'MESH-100BU' as const;
+  public static readonly LocalName = /^MESH-100BU/;
 
   /** Event Handler */
   public onSinglePressed: (() => void) | null = null;
@@ -28,6 +29,20 @@ export default class MESH_100BU extends MESH<MESH_100BU_Data> {
   public onDoublePressed: (() => void) | null = null;
 
   protected readonly staticClass = MESH_100BU;
+
+  /**
+   * Check MESH block
+   *
+   * @param peripheral
+   * @param opt_serialnumber
+   * @returns
+   */
+  public static isMESHblock(
+    peripheral: BleRemotePeripheral,
+    opt_serialnumber = ''
+  ): boolean {
+    return Button.isMESHblock(peripheral.localName, opt_serialnumber);
+  }
 
   /**
    * getDataWait
@@ -40,10 +55,6 @@ export default class MESH_100BU extends MESH<MESH_100BU_Data> {
       name: this.peripheral.localName!,
       address: this.peripheral.address,
     };
-  }
-
-  protected static _isMESHblock(name: string): boolean {
-    return name.indexOf(MESH_100BU.PREFIX) !== -1;
   }
 
   protected prepareConnect(): void {

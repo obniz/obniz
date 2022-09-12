@@ -36,7 +36,9 @@ class BleRemotePeripheral {
             'rssi',
             'adv_data',
             'scan_resp',
+            'service_data',
         ];
+        this._extended = false;
         this.obnizBle = obnizBle;
         this.address = address;
         this.connected = false;
@@ -50,9 +52,11 @@ class BleRemotePeripheral {
         this.localName = null;
         this.manufacturerSpecificData = null;
         this.manufacturerSpecificDataInScanResponse = null;
+        this.serviceData = null;
         this.iBeacon = null;
         this._services = [];
         this.emitter = new eventemitter3_1.default();
+        this.service_data = null;
     }
     /**
      * It contains all discovered services in a peripheral as an array.
@@ -111,6 +115,13 @@ class BleRemotePeripheral {
             }
         }
         this.analyseAdvertisement();
+    }
+    /**
+     * @ignore
+     * @param extendedMode
+     */
+    setExtendFlg(extendedMode) {
+        this._extended = extendedMode;
     }
     /**
      * @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
@@ -188,13 +199,31 @@ class BleRemotePeripheral {
             this._connectSetting.mtuRequest === undefined
                 ? 256
                 : this._connectSetting.mtuRequest;
+        if (this._connectSetting.usePyh1m === undefined) {
+            this._connectSetting.usePyh1m = true;
+        }
+        if (this._connectSetting.usePyh2m === undefined) {
+            this._connectSetting.usePyh2m = true;
+        }
+        if (this._connectSetting.usePyhCoded === undefined) {
+            this._connectSetting.usePyhCoded = true;
+        }
         await this.obnizBle.scan.endWait();
         try {
-            await this.obnizBle.centralBindings.connectWait(this.address, this._connectSetting.mtuRequest, () => {
-                if (this._connectSetting.pairingOption) {
-                    this.setPairingOption(this._connectSetting.pairingOption);
-                }
-            });
+            if (this._extended) {
+                await this.obnizBle.centralBindings.connectExtendedWait(this.address, this._connectSetting.mtuRequest, () => {
+                    if (this._connectSetting.pairingOption) {
+                        this.setPairingOption(this._connectSetting.pairingOption);
+                    }
+                }, this._connectSetting.usePyh1m, this._connectSetting.usePyh2m, this._connectSetting.usePyhCoded);
+            }
+            else {
+                await this.obnizBle.centralBindings.connectWait(this.address, this._connectSetting.mtuRequest, () => {
+                    if (this._connectSetting.pairingOption) {
+                        this.setPairingOption(this._connectSetting.pairingOption);
+                    }
+                });
+            }
         }
         catch (e) {
             if (e instanceof ObnizError_1.ObnizTimeoutError) {
@@ -278,6 +307,86 @@ class BleRemotePeripheral {
             }, 90 * 1000);
             this.obnizBle.centralBindings.disconnect(this.address);
         });
+    }
+    /**
+     * Check the PHY used in the connection
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   const phy = await peripheral.readPhyWait()
+     *   console.log(phy)
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     *
+     */
+    async readPhyWait() {
+        const phyToStr = (phy) => {
+            switch (phy) {
+                case 1:
+                    return '1m';
+                case 2:
+                    return '2m';
+                case 3:
+                    return 'coded';
+                default:
+                    throw new Error('decode Phy Error');
+            }
+        };
+        const data = await this.obnizBle.centralBindings.readPhyWait(this.address);
+        if (data.status === 0) {
+            return { txPhy: phyToStr(data.txPhy), rxPhy: phyToStr(data.rxPhy) };
+        }
+    }
+    /**
+     * Check the PHY used in the connection.
+     * Request to change the current PHY
+     *
+     * It will be changed if it corresponds to the PHY set by the other party.
+     *
+     * Changes can be seen on onUpdatePhy
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * obniz.ble.onUpdatePhy = ((txPhy, rxPhy) => {
+     *  console.log("txPhy "+txPhy+" rxPhy "+rxPhy);
+     * });
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await peripheral.setPhyWait(false,false,true,true,true);//Request Only PHY Coded
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     *
+     */
+    async setPhyWait(usePhy1m, usePhy2m, usePhyCoded, useCodedModeS8, useCodedModeS2) {
+        await this.obnizBle.centralBindings.setPhyWait(this.address, usePhy1m, usePhy2m, usePhyCoded, useCodedModeS8, useCodedModeS2);
     }
     /**
      * It returns a service which having specified uuid in [[services]].
@@ -540,6 +649,7 @@ class BleRemotePeripheral {
         }
         this.setLocalName();
         this.setManufacturerSpecificData();
+        this.setServiceData();
         this.setIBeacon();
     }
     searchTypeVal(type, fromScanResponseData = false) {
@@ -560,6 +670,10 @@ class BleRemotePeripheral {
         var _a, _b;
         this.manufacturerSpecificData = (_a = this.searchTypeVal(0xff), (_a !== null && _a !== void 0 ? _a : null));
         this.manufacturerSpecificDataInScanResponse = (_b = this.searchTypeVal(0xff, true), (_b !== null && _b !== void 0 ? _b : null));
+    }
+    setServiceData() {
+        var _a;
+        this.serviceData = (_a = this.searchTypeVal(0x16), (_a !== null && _a !== void 0 ? _a : null));
     }
     setIBeacon() {
         const data = this.manufacturerSpecificData;

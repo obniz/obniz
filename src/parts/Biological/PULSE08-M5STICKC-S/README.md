@@ -9,6 +9,8 @@ Pulse rate can be measured and graphed.
 
 <!-- HTML Example -->
 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
 bpm : <span id="bpm"></span>
 <canvas id="myChart" style="width:100%;height:400px"></canvas>
@@ -22,7 +24,7 @@ bpm : <span id="bpm"></span>
   obniz.onconnect = async function () {
     let device = obniz.wired("Puls08M5stickcS", {tx: 26, rx: 0});
     device.onbpmupdate = (bpm) => {
-      $("#bpm").text(bpm.toFixed(1));
+        $("#bpm").text("" + Math.round(bpm*10)/10);
     };
 
     device.onrawupdate = (data) => {

@@ -264,3 +264,9 @@ class ObnizBleInvalidPasskeyError extends ObnizError {
     }
 }
 exports.ObnizBleInvalidPasskeyError = ObnizBleInvalidPasskeyError;
+class ObnizBleInvalidParameterError extends ObnizError {
+    constructor(guideMessage, input) {
+        super(21, `${guideMessage}, But input: ${input}`);
+    }
+}
+exports.ObnizBleInvalidParameterError = ObnizBleInvalidParameterError;

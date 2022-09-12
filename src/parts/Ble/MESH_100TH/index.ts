@@ -7,6 +7,7 @@
 import { MESH } from '../utils/abstracts/MESH';
 import { TempHumid } from '../utils/abstracts/MESHjs/block/TempHumid';
 import { MESHJsTimeOutError } from '../utils/abstracts/MESHjs/util/Error';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 
 export interface MESH_100THOptions {}
 
@@ -21,7 +22,7 @@ export interface MESH_100TH_Data {
 /** MESH_100TH management class */
 export default class MESH_100TH extends MESH<MESH_100TH_Data> {
   public static readonly PartsName = 'MESH_100TH';
-  public static readonly PREFIX = 'MESH-100TH';
+  public static readonly LocalName = /^MESH-100TH/;
 
   public static readonly NotifyMode = TempHumid.NotifyMode;
   public static readonly EmitCondition = TempHumid.EmitCondition;
@@ -36,14 +37,28 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
   private retTemperature_ = -1;
   private retHumidity_ = -1;
   private temperatureUpper_ = 50;
-  private temperatureBottom_ = -10;
+  private temperatureLower_ = -10;
   private humidityUpper_ = 100;
-  private humidityBottom_ = 0;
+  private humidityLower_ = 0;
   private temperatureCondition_: number =
-    MESH_100TH.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM;
-  private humidityCondision_: number =
-    MESH_100TH.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM;
+    MESH_100TH.EmitCondition.ABOVE_UPPER_OR_BELOW_LOWER;
+  private humidityCondition_: number =
+    MESH_100TH.EmitCondition.ABOVE_UPPER_OR_BELOW_LOWER;
   private notifyMode_ = -1;
+
+  /**
+   * Check MESH block
+   *
+   * @param peripheral
+   * @param opt_serialnumber
+   * @returns
+   */
+  public static isMESHblock(
+    peripheral: BleRemotePeripheral,
+    opt_serialnumber = ''
+  ): boolean {
+    return TempHumid.isMESHblock(peripheral.localName, opt_serialnumber);
+  }
 
   public async getDataWait() {
     this.checkConnected();
@@ -51,6 +66,7 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
     return {
       name: this.peripheral.localName!,
       address: this.peripheral.address,
+      ...(await this.getSensorDataWait()),
     };
   }
 
@@ -59,16 +75,15 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
    *
    * @returns
    */
-  public async getSensorDataWait() {
+  public async getSensorDataWait(opt_timeoutMsec = this.TIMEOUT_MSEC) {
     this.checkConnected();
     const _requestId = this.requestId.next();
     this.setMode_(0, 0, 0, 0, 0, 0, MESH_100TH.NotifyMode.ONCE, _requestId);
 
-    const _TIMEOUT_MSEC = 2000 as const;
     let _isTimeout = false;
     const _timeoutId = setTimeout(() => {
       _isTimeout = true;
-    }, _TIMEOUT_MSEC);
+    }, opt_timeoutMsec);
 
     const INTERVAL_TIME = 50 as const;
     const _result = await new Promise<{
@@ -95,11 +110,11 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
       // Continus previous mode
       this.setMode(
         this.temperatureUpper_,
-        this.temperatureBottom_,
+        this.temperatureLower_,
         this.humidityUpper_,
-        this.humidityBottom_,
+        this.humidityLower_,
         this.temperatureCondition_,
-        this.humidityCondision_,
+        this.humidityCondition_,
         this.notifyMode_
       );
     }
@@ -113,43 +128,39 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
    * setMode
    *
    * @param temperatureUpper
-   * @param temperatureBottom
+   * @param temperatureLower
    * @param humidityUpper
-   * @param humidityBottom
+   * @param humidityLower
    * @param temperatureCondition
-   * @param humidityCondision
+   * @param humidityCondition
    * @param notifyMode
    */
   public setMode(
     temperatureUpper: number,
-    temperatureBottom: number,
+    temperatureLower: number,
     humidityUpper: number,
-    humidityBottom: number,
+    humidityLower: number,
     temperatureCondition: number,
-    humidityCondision: number,
+    humidityCondition: number,
     notifyMode: number
   ): void {
     this.setMode_(
       temperatureUpper,
-      temperatureBottom,
+      temperatureLower,
       humidityUpper,
-      humidityBottom,
+      humidityLower,
       temperatureCondition,
-      humidityCondision,
+      humidityCondition,
       notifyMode,
       this.requestId.defaultId()
     );
     this.temperatureUpper_ = temperatureUpper;
-    this.temperatureBottom_ = temperatureBottom;
+    this.temperatureLower_ = temperatureLower;
     this.humidityUpper_ = humidityUpper;
-    this.humidityBottom_ = humidityBottom;
+    this.humidityLower_ = humidityLower;
     this.temperatureCondition_ = temperatureCondition;
-    this.humidityCondision_ = humidityCondision;
+    this.humidityCondition_ = humidityCondition;
     this.notifyMode_ = notifyMode;
-  }
-
-  protected static _isMESHblock(name: string): boolean {
-    return name.indexOf(MESH_100TH.PREFIX) !== -1;
   }
 
   protected prepareConnect(): void {
@@ -172,22 +183,22 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
 
   private setMode_(
     temperatureUpper: number,
-    temperatureBottom: number,
+    temperatureLower: number,
     humidityUpper: number,
-    humidityBottom: number,
+    humidityLower: number,
     temperatureCondition: number,
-    humidityCondision: number,
+    humidityCondition: number,
     notifyMode: number,
     requestId: number
   ): void {
     const temperatureAndHumidityBlock = this.meshBlock as TempHumid;
-    const command = temperatureAndHumidityBlock.parseSetmodeCommand(
+    const command = temperatureAndHumidityBlock.createSetmodeCommand(
       temperatureUpper,
-      temperatureBottom,
+      temperatureLower,
       humidityUpper,
-      humidityBottom,
+      humidityLower,
       temperatureCondition,
-      humidityCondision,
+      humidityCondition,
       notifyMode,
       requestId
     );

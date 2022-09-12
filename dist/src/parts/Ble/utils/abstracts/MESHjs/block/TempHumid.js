@@ -25,10 +25,23 @@ class TempHumid extends Base_1.Base {
             TempHumid.NotifyMode.ALWAYS;
     }
     /**
+     * Verify that the device is MESH block
+     *
+     * @param name
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(name, opt_serialnumber = '') {
+        var _a;
+        return super.isMESHblock(name, opt_serialnumber)
+            ? ((_a = name) === null || _a === void 0 ? void 0 : _a.indexOf('MESH-100TH')) !== -1
+            : false;
+    }
+    /**
      * Parse data that received from MESH block, and emit event
      *
      * @param data
-     * @returns
+     * @returns void
      */
     notify(data) {
         super.notify(data);
@@ -51,26 +64,26 @@ class TempHumid extends Base_1.Base {
         this.onSensorEvent(temperature, humidity, requestId);
     }
     /**
-     * Convert parameters to command of set-mode
+     * Create command of set-mode
      *
      * @param temperatureRangeUpper
-     * @param temperatureRangeBottom
+     * @param temperatureRangeLower
      * @param humidityRangeUpper
-     * @param humidityRangeBottom
+     * @param humidityRangeLower
      * @param temperatureCondition
-     * @param humidityCondision
+     * @param humidityCondition
      * @param notifyMode
      * @param opt_requestId
      * @returns
      */
-    parseSetmodeCommand(temperatureRangeUpper, temperatureRangeBottom, humidityRangeUpper, humidityRangeBottom, temperatureCondition, humidityCondision, notifyMode, opt_requestId = 0) {
+    createSetmodeCommand(temperatureRangeUpper, temperatureRangeLower, humidityRangeUpper, humidityRangeLower, temperatureCondition, humidityCondition, notifyMode, opt_requestId = 0) {
         // Error Handle
         this.checkRange(temperatureRangeUpper, this.TEMPERATURE_MIN_, this.TEMPERATURE_MAX_, 'temperatureRangeUpper');
-        this.checkRange(temperatureRangeBottom, this.TEMPERATURE_MIN_, this.TEMPERATURE_MAX_, 'temperatureRangeBottom');
+        this.checkRange(temperatureRangeLower, this.TEMPERATURE_MIN_, this.TEMPERATURE_MAX_, 'temperatureRangeLower');
         this.checkRange(humidityRangeUpper, this.HUMIDITY_MIN_, this.HUMIDITY_MAX_, 'humidityRangeUpper');
-        this.checkRange(humidityRangeBottom, this.HUMIDITY_MIN_, this.HUMIDITY_MAX_, 'humidityRangeBottom');
+        this.checkRange(humidityRangeLower, this.HUMIDITY_MIN_, this.HUMIDITY_MAX_, 'humidityRangeLower');
         this.checkEmitCondition_(temperatureCondition, 'temperatureCondition');
-        this.checkEmitCondition_(humidityCondision, 'humidityCondision');
+        this.checkEmitCondition_(humidityCondition, 'humidityCondition');
         this.checkRange(notifyMode, this.NOTIFY_MODE_MIN_, this.NOTIFY_MODE_MAX_, 'notifyMode');
         // Generate Command
         const HEADER = [
@@ -80,14 +93,14 @@ class TempHumid extends Base_1.Base {
         ];
         const BASE = 10;
         const TEMP_UPPER = this.num2array_(this.invcomplemnt(BASE * temperatureRangeUpper));
-        const TEMP_BOTTOM = this.num2array_(this.invcomplemnt(BASE * temperatureRangeBottom));
+        const TEMP_LOWER = this.num2array_(this.invcomplemnt(BASE * temperatureRangeLower));
         const HUMI_UPPER = this.num2array_(humidityRangeUpper);
-        const HUMI_BOTTOM = this.num2array_(humidityRangeBottom);
+        const HUMI_LOWER = this.num2array_(humidityRangeLower);
         const data = HEADER.concat(TEMP_UPPER)
-            .concat(TEMP_BOTTOM)
+            .concat(TEMP_LOWER)
             .concat(HUMI_UPPER)
-            .concat(HUMI_BOTTOM)
-            .concat([temperatureCondition, humidityCondision, notifyMode]);
+            .concat(HUMI_LOWER)
+            .concat([temperatureCondition, humidityCondition, notifyMode]);
         data.push(this.checkSum(data));
         return data;
     }
@@ -111,10 +124,10 @@ class TempHumid extends Base_1.Base {
 exports.TempHumid = TempHumid;
 // Constant Values
 TempHumid.EmitCondition = {
-    ABOVE_UPPER_AND_BELOW_BOTTOM: 0,
-    ABOVE_UPPER_AND_ABOVE_BOTTOM: 1,
-    BELOW_UPPER_AND_BELOW_BOTTOM: 16,
-    BELOW_UPPER_AND_ABOVE_BOTTOM: 17,
+    ABOVE_UPPER_OR_BELOW_LOWER: 0,
+    ABOVE_UPPER_OR_ABOVE_LOWER: 1,
+    BELOW_UPPER_OR_BELOW_LOWER: 16,
+    BELOW_UPPER_OR_ABOVE_LOWER: 17,
 };
 TempHumid.NotifyMode = {
     STOP: 0,

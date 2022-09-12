@@ -6,6 +6,7 @@ export declare abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> 
     onStatusButtonPressed: (() => void) | null;
     onWriteResponse: ((response: boolean) => void) | null;
     static AvailableBleMode: "Connectable";
+    protected readonly TIMEOUT_MSEC: 5000;
     private static readonly LOCAL_NAME_LENGTH_;
     protected static PREFIX: string;
     protected meshBlock: Base;
@@ -43,7 +44,6 @@ export declare abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> 
      * @param blue
      */
     setStatusbarLed(power: boolean, red: boolean, green: boolean, blue: boolean): void;
-    protected static _isMESHblock(name: string): boolean;
     protected prepareConnect(): void;
     protected writeWait(data: number[]): Promise<void>;
     protected writeWOResponse(data: number[]): void;

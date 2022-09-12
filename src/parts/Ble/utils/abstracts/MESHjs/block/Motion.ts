@@ -24,10 +24,26 @@ export class Motion extends Base {
   private readonly EVENT_TYPE_ID_: number = 0 as const;
 
   /**
+   * Verify that the device is MESH block
+   *
+   * @param name
+   * @param opt_serialnumber
+   * @returns
+   */
+  public static isMESHblock(
+    name: string | null,
+    opt_serialnumber = ''
+  ): boolean {
+    return super.isMESHblock(name, opt_serialnumber)
+      ? name?.indexOf('MESH-100MD') !== -1
+      : false;
+  }
+
+  /**
    * Parse data that received from MESH block, and emit event
    *
    * @param data
-   * @returns
+   * @returns void
    */
   public notify(data: number[]): void {
     super.notify(data);
@@ -47,36 +63,36 @@ export class Motion extends Base {
   }
 
   /**
-   * Convert parameters to command of set-mode
+   * Create command of set-mode
    *
    * @param notifyMode
-   * @param opt_detectionTime
    * @param opt_holdingTime
+   * @param opt_detectionTime
    * @param opt_requestId
-   * @returns
+   * @returns command
    */
-  public parseSetmodeCommand(
+  public createSetmodeCommand(
     notifyMode: number,
-    opt_detectionTime = 500,
     opt_holdingTime = 500,
+    opt_detectionTime = 500,
     opt_requestId = 0
   ): number[] {
     // Error Handle
-    const DETECTION_TIME_MIN = 200 as const;
-    const DETECTION_TIME_MAX = 60000 as const;
-    this.checkRange(
-      opt_detectionTime,
-      DETECTION_TIME_MIN,
-      DETECTION_TIME_MAX,
-      'opt_detectionTime'
-    );
-    const HOLDING_TIME_MIN = 500 as const;
+    const HOLDING_TIME_MIN = 200 as const;
     const HOLDING_TIME_MAX = 60000 as const;
     this.checkRange(
       opt_holdingTime,
       HOLDING_TIME_MIN,
       HOLDING_TIME_MAX,
       'opt_holdingTime'
+    );
+    const DETECTION_TIME_MIN = 500 as const;
+    const DETECTION_TIME_MAX = 60000 as const;
+    this.checkRange(
+      opt_detectionTime,
+      DETECTION_TIME_MIN,
+      DETECTION_TIME_MAX,
+      'opt_detectionTime'
     );
 
     // Generate Command
@@ -88,10 +104,10 @@ export class Motion extends Base {
     const BYTE = 256 as const;
     const BODY = [
       notifyMode,
-      opt_detectionTime % BYTE,
-      Math.floor(opt_detectionTime / BYTE),
       opt_holdingTime % BYTE,
       Math.floor(opt_holdingTime / BYTE),
+      opt_detectionTime % BYTE,
+      Math.floor(opt_detectionTime / BYTE),
     ] as const;
     const data: number[] = HEADER.concat(BODY);
     data.push(this.checkSum(data));

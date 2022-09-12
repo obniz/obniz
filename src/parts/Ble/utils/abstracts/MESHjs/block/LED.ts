@@ -15,16 +15,32 @@ export class LED extends Base {
   protected colors = { red: 0, green: 0, blue: 0 };
 
   /**
-   * Convert parameters to command of LED
+   * Verify that the device is MESH block
+   *
+   * @param name
+   * @param opt_serialnumber
+   * @returns
+   */
+  public static isMESHblock(
+    name: string | null,
+    opt_serialnumber = ''
+  ): boolean {
+    return super.isMESHblock(name, opt_serialnumber)
+      ? name?.indexOf('MESH-100LE') !== -1
+      : false;
+  }
+
+  /**
+   * Create command of LED
    *
    * @param colors
    * @param totalTime
    * @param cycleOnTime
    * @param cycleOffTime
    * @param pattern
-   * @returns
+   * @returns command
    */
-  public parseLedCommand(
+  public createLedCommand(
     colors: LED['colors'],
     totalTime: number,
     cycleOnTime: number,

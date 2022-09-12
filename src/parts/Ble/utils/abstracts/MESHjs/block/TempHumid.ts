@@ -11,10 +11,10 @@ export class TempHumid extends Base {
 
   // Constant Values
   public static readonly EmitCondition = {
-    ABOVE_UPPER_AND_BELOW_BOTTOM: 0 as const,
-    ABOVE_UPPER_AND_ABOVE_BOTTOM: 1 as const,
-    BELOW_UPPER_AND_BELOW_BOTTOM: 16 as const,
-    BELOW_UPPER_AND_ABOVE_BOTTOM: 17 as const,
+    ABOVE_UPPER_OR_BELOW_LOWER: 0 as const,
+    ABOVE_UPPER_OR_ABOVE_LOWER: 1 as const,
+    BELOW_UPPER_OR_BELOW_LOWER: 16 as const,
+    BELOW_UPPER_OR_ABOVE_LOWER: 17 as const,
   };
   public static readonly NotifyMode = {
     STOP: 0 as const,
@@ -42,10 +42,26 @@ export class TempHumid extends Base {
     TempHumid.NotifyMode.ALWAYS;
 
   /**
+   * Verify that the device is MESH block
+   *
+   * @param name
+   * @param opt_serialnumber
+   * @returns
+   */
+  public static isMESHblock(
+    name: string | null,
+    opt_serialnumber = ''
+  ): boolean {
+    return super.isMESHblock(name, opt_serialnumber)
+      ? name?.indexOf('MESH-100TH') !== -1
+      : false;
+  }
+
+  /**
    * Parse data that received from MESH block, and emit event
    *
    * @param data
-   * @returns
+   * @returns void
    */
   public notify(data: number[]): void {
     super.notify(data);
@@ -76,25 +92,25 @@ export class TempHumid extends Base {
   }
 
   /**
-   * Convert parameters to command of set-mode
+   * Create command of set-mode
    *
    * @param temperatureRangeUpper
-   * @param temperatureRangeBottom
+   * @param temperatureRangeLower
    * @param humidityRangeUpper
-   * @param humidityRangeBottom
+   * @param humidityRangeLower
    * @param temperatureCondition
-   * @param humidityCondision
+   * @param humidityCondition
    * @param notifyMode
    * @param opt_requestId
    * @returns
    */
-  public parseSetmodeCommand(
+  public createSetmodeCommand(
     temperatureRangeUpper: number,
-    temperatureRangeBottom: number,
+    temperatureRangeLower: number,
     humidityRangeUpper: number,
-    humidityRangeBottom: number,
+    humidityRangeLower: number,
     temperatureCondition: number,
-    humidityCondision: number,
+    humidityCondition: number,
     notifyMode: number,
     opt_requestId = 0
   ): number[] {
@@ -106,10 +122,10 @@ export class TempHumid extends Base {
       'temperatureRangeUpper'
     );
     this.checkRange(
-      temperatureRangeBottom,
+      temperatureRangeLower,
       this.TEMPERATURE_MIN_,
       this.TEMPERATURE_MAX_,
-      'temperatureRangeBottom'
+      'temperatureRangeLower'
     );
     this.checkRange(
       humidityRangeUpper,
@@ -118,13 +134,13 @@ export class TempHumid extends Base {
       'humidityRangeUpper'
     );
     this.checkRange(
-      humidityRangeBottom,
+      humidityRangeLower,
       this.HUMIDITY_MIN_,
       this.HUMIDITY_MAX_,
-      'humidityRangeBottom'
+      'humidityRangeLower'
     );
     this.checkEmitCondition_(temperatureCondition, 'temperatureCondition');
-    this.checkEmitCondition_(humidityCondision, 'humidityCondision');
+    this.checkEmitCondition_(humidityCondition, 'humidityCondition');
     this.checkRange(
       notifyMode,
       this.NOTIFY_MODE_MIN_,
@@ -142,16 +158,16 @@ export class TempHumid extends Base {
     const TEMP_UPPER: number[] = this.num2array_(
       this.invcomplemnt(BASE * temperatureRangeUpper)
     );
-    const TEMP_BOTTOM: number[] = this.num2array_(
-      this.invcomplemnt(BASE * temperatureRangeBottom)
+    const TEMP_LOWER: number[] = this.num2array_(
+      this.invcomplemnt(BASE * temperatureRangeLower)
     );
     const HUMI_UPPER: number[] = this.num2array_(humidityRangeUpper);
-    const HUMI_BOTTOM: number[] = this.num2array_(humidityRangeBottom);
+    const HUMI_LOWER: number[] = this.num2array_(humidityRangeLower);
     const data: number[] = HEADER.concat(TEMP_UPPER)
-      .concat(TEMP_BOTTOM)
+      .concat(TEMP_LOWER)
       .concat(HUMI_UPPER)
-      .concat(HUMI_BOTTOM)
-      .concat([temperatureCondition, humidityCondision, notifyMode]);
+      .concat(HUMI_LOWER)
+      .concat([temperatureCondition, humidityCondition, notifyMode]);
     data.push(this.checkSum(data));
 
     return data;

@@ -3,8 +3,10 @@ MESH-100LE (MESH LED) is an app-enabled LED indicator of MESH blocks.
 
 MESH official web site is [here](https://meshprj.com/).
 
-# License
-See [LICENSE.txt]().
+![](./image.jpg)
+
+# Requirement
+MESH block : version 1.2.5 or higher
 
 # Use case
 
@@ -22,7 +24,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
     // Connect to the LED block
     await ledBlock.connectWait();
-    console.log('connected');
+    console.log(`connected: ${ledBlock.peripheral.localName}`);
     
     // Prepare params (See the linked page below for more information.)
     const colors = {
@@ -41,4 +43,5 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
 ```
 
-For more information, click [here](https://developer.meshprj.com/).
+# Related documents
+[MESH technical specification](https://developer.meshprj.com/).

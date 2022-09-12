@@ -9,7 +9,7 @@ const obniz = new Obniz(obnizId, {
 
 // Connected.
 obniz.onconnect = async () => {
-  console.log(`connected obniz ${obniz.id}`);
+  console.log(`connected: obniz ${obniz.id}`);
   try {
     await obniz.ble.initWait();
     obniz.ble.scan.onfind = async (peripheral) => {
@@ -23,7 +23,7 @@ obniz.onconnect = async () => {
 
       // Connect to the Button block
       await buttonBlock.connectWait();
-      console.log('connected');
+      console.log(`connected: ${buttonBlock.peripheral.localName}`);
 
       buttonBlock.onSinglePressed = () => {
         console.log('single pressed');

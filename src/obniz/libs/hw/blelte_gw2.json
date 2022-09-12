@@ -49,7 +49,9 @@
       }
     },
     "embeds": {
-      "ble": {}
+      "ble": {
+        "extended": true
+      }
     },
     "protocol": {
       "tcp": {
@@ -70,4 +72,3 @@
     },
     "extraInterface": {}
   }
-  

@@ -3,8 +3,10 @@ MESH-100GP (MESH GPIO) is an app-enabled general-purpose input/output of MESH bl
 
 MESH official web site is [here](https://meshprj.com/).
 
-# License
-See [LICENSE.txt]().
+![](./image.jpg)
+
+# Requirement
+MESH block : version 1.2.5 or higher
 
 # Use case
 
@@ -22,7 +24,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
     // Connect to the GPIO block
     await gpioBlock.connectWait();
-    console.log('connected');
+    console.log(`connected: ${gpioBlock.peripheral.localName}`);
     
     // Get sensor data
     const targetPin = MESH_100GP.Pin.P1;
@@ -57,7 +59,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
     // Connect to the GPIO block
     await gpioBlock.connectWait();
-    console.log('connected');
+    console.log(`connected: ${gpioBlock.peripheral.localName}`);
     
     // Set event handler
     gpioBlock.onDigitalInputEvent = ((pin, state) => {
@@ -83,18 +85,19 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const digitalInputLow2High = { p1:true, p2:false, p3:true };
     const digitalInputHigh2Low = { p1:true, p2:false, p3:true };
     const analogInputRangeUpper = 30;
-    const analogInputRangeBottom = 0;
+    const analogInputRangeLower = 0;
     const analogInputCondition = MESH_100GP.AnalogInputEventCondition.ABOVE_THRESHOLD;
   
     // Write
     gpioBlock.setModeDigitalInput(digitalInputLow2High, digitalInputHigh2Low);
     gpioBlock.setModeAnalogInput(
         analogInputRangeUpper,
-        analogInputRangeBottom,
+        analogInputRangeLower,
         analogInputCondition
     );
 };
 
 ```
 
-For more information, click [here](https://developer.meshprj.com/).
+# Related documents
+[MESH technical specification](https://developer.meshprj.com/).

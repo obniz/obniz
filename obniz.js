@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.21.1",
+  "version": "3.23.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -3910,6 +3910,12 @@ class ObnizBleInvalidPasskeyError extends ObnizError {
     }
 }
 exports.ObnizBleInvalidPasskeyError = ObnizBleInvalidPasskeyError;
+class ObnizBleInvalidParameterError extends ObnizError {
+    constructor(guideMessage, input) {
+        super(21, `${guideMessage}, But input: ${input}`);
+    }
+}
+exports.ObnizBleInvalidParameterError = ObnizBleInvalidParameterError;
 
 
 /***/ }),
@@ -4079,10 +4085,25 @@ exports.default = ObnizParts;
  */
 /* eslint-disable rulesdir/non-ascii */
 /* eslint-disable max-classes-per-file */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const round_to_1 = __importDefault(__webpack_require__("./node_modules/round-to/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const ObnizPartsBleModeList = ['Beacon', 'Connectable', 'Pairing'];
 exports.notMatchDeviceError = new Error('Is NOT target device.');
+exports.fixedPoint = (value, integerBytes) => {
+    const positive = value[0] >> 7 === 0;
+    if (!positive) {
+        value = value.map((n, i) => (n ^ 0xff) + (i === value.length - 1 ? 1 : 0));
+    }
+    const val = (positive ? 1 : -1) *
+        (exports.uint(value.slice(0, integerBytes)) +
+            exports.uint(value.slice(integerBytes)) /
+                (1 << (8 * (value.length - integerBytes))));
+    return val;
+};
 exports.uint = (value) => {
     let val = 0;
     value.forEach((v, i) => (val += v << (i * 8)));
@@ -4113,6 +4134,9 @@ class ObnizPartsBle {
         this.beaconDataInScanResponse = this.peripheral.manufacturerSpecificDataInScanResponse;
         if (this.beaconDataInScanResponse)
             this.beaconDataInScanResponse = this.beaconDataInScanResponse.slice(2);
+        this.serviceData = this.peripheral.serviceData;
+        if (this.serviceData)
+            this.serviceData = this.serviceData.slice(2);
     }
     /**
      * Information of parts.
@@ -4203,63 +4227,68 @@ class ObnizPartsBle {
                     return false;
             }
         }
-        if (!this.checkManufacturerSpecificData(mode, peripheral.manufacturerSpecificData, this.BeaconDataLength, this.CompanyID, false))
+        if (!this.checkCustomData(mode, peripheral.address, peripheral.manufacturerSpecificData, this.BeaconDataLength, this.CompanyID, this.BeaconDataStruct))
             return false;
-        if (!this.checkManufacturerSpecificData(mode, peripheral.manufacturerSpecificDataInScanResponse, this.BeaconDataLength_ScanResponse, this.CompanyID_ScanResponse, true))
+        if (!this.checkCustomData(mode, peripheral.address, peripheral.manufacturerSpecificDataInScanResponse, this.BeaconDataLength_ScanResponse, this.CompanyID_ScanResponse, this.BeaconDataStruct))
+            return false;
+        if (!this.checkCustomData(mode, peripheral.address, peripheral.serviceData, this.ServiceDataLength, this.ServiceDataUUID, this.ServiceDataStruct))
             return false;
         return true;
     }
-    static checkManufacturerSpecificData(mode, beaconData, beaconDataLength, companyID, inScanResponse) {
-        if (companyID !== undefined) {
-            const defaultCompanyID = companyID instanceof Array ||
-                companyID === null ||
-                companyID === undefined
-                ? companyID
-                : companyID[mode];
-            if (defaultCompanyID !== undefined) {
-                if (defaultCompanyID === null && beaconData !== null)
+    static checkCustomData(mode, address, data, dataLength, headID, dataStruct, inScanResponse = false) {
+        var _a;
+        if (headID !== undefined) {
+            const defHeadID = headID instanceof Array || headID === null || headID === undefined
+                ? headID
+                : headID[mode];
+            if (defHeadID !== undefined) {
+                if (defHeadID === null && data !== null)
                     return false;
-                if (defaultCompanyID !== null && beaconData === null)
+                if (defHeadID !== null && data === null)
                     return false;
-                if (defaultCompanyID !== null &&
-                    beaconData !== null &&
-                    (defaultCompanyID[0] !== beaconData[0] ||
-                        defaultCompanyID[1] !== beaconData[1]))
+                if (defHeadID !== null &&
+                    data !== null &&
+                    (defHeadID[0] !== data[0] || defHeadID[1] !== data[1]))
                     return false;
             }
         }
-        if (beaconDataLength !== undefined) {
-            const defaultBeaconDataLength = typeof beaconDataLength === 'number' ||
-                beaconDataLength === null ||
-                beaconDataLength === undefined
-                ? beaconDataLength
-                : beaconDataLength[mode];
-            if (defaultBeaconDataLength !== undefined) {
-                if (defaultBeaconDataLength === null && beaconData !== null)
+        if (dataLength !== undefined) {
+            const defDataLength = typeof dataLength === 'number' ||
+                dataLength === null ||
+                dataLength === undefined
+                ? dataLength
+                : dataLength[mode];
+            if (defDataLength !== undefined) {
+                if (defDataLength === null && data !== null)
                     return false;
-                if (defaultBeaconDataLength !== null && beaconData === null)
+                if (defDataLength !== null && data === null)
                     return false;
-                if (defaultBeaconDataLength !== null &&
-                    beaconData !== null &&
-                    beaconData.length + 1 !== defaultBeaconDataLength)
+                if (defDataLength !== null &&
+                    data !== null &&
+                    data.length + 1 !== defDataLength)
                     return false;
             }
         }
-        if (this.BeaconDataStruct !== undefined) {
-            const defaultBeaconDataStruct = (this.BeaconDataStruct !== null &&
-                (this.BeaconDataStruct.Beacon ||
-                    this.BeaconDataStruct.Connectable ||
-                    this.BeaconDataStruct.Pairing)
-                ? this.BeaconDataStruct[mode]
-                : this.BeaconDataStruct);
-            if (defaultBeaconDataStruct !== undefined) {
-                if (defaultBeaconDataStruct !== null &&
-                    beaconData !== null &&
-                    Object.values(defaultBeaconDataStruct).filter((config) => {
+        if (dataStruct !== undefined) {
+            const defDataStruct = (dataStruct !== null &&
+                (dataStruct.Beacon || dataStruct.Connectable || dataStruct.Pairing)
+                ? dataStruct[mode]
+                : dataStruct);
+            if (defDataStruct !== undefined) {
+                // TODO: macAddress_ -> macAddress
+                if (defDataStruct && ((_a = defDataStruct.macAddress_) === null || _a === void 0 ? void 0 : _a.type) === 'check') {
+                    defDataStruct.macAddress_.data = new Array(6)
+                        .fill(0)
+                        .map((v, i) => parseInt(address.slice(i * 2, (i + 1) * 2), 16))
+                        .reverse();
+                }
+                if (defDataStruct !== null &&
+                    data !== null &&
+                    Object.values(defDataStruct).filter((config) => {
                         var _a, _b;
                         return inScanResponse === (_a = config.scanResponse, (_a !== null && _a !== void 0 ? _a : false)) &&
                             config.type === 'check' &&
-                            beaconData
+                            data
                                 .slice(2 + config.index, 2 + config.index + (_b = config.length, (_b !== null && _b !== void 0 ? _b : 1)))
                                 .filter((d, i) => {
                                 var _a;
@@ -4312,37 +4341,40 @@ class ObnizPartsBle {
      * Available modes: Beacon, Connectable(only part)
      */
     getData() {
+        var _a;
         this.checkMode();
-        if (!this.staticClass.BeaconDataStruct)
+        const dataStruct = (_a = this.staticClass.BeaconDataStruct, (_a !== null && _a !== void 0 ? _a : this.staticClass.ServiceDataStruct));
+        if (!dataStruct)
             throw new Error('Data analysis is not defined.');
-        if (!this.beaconData)
+        const data = this.staticClass.BeaconDataStruct
+            ? this.beaconData
+            : this.staticClass.ServiceDataStruct
+                ? this.serviceData
+                : null;
+        if (!data)
             throw new Error('Manufacturer specific data is null.');
-        const defaultBeaconDataStruct = (this.staticClass.BeaconDataStruct.Beacon ||
-            this.staticClass.BeaconDataStruct.Connectable ||
-            this.staticClass.BeaconDataStruct.Pairing
-            ? this.staticClass.BeaconDataStruct[this.mode]
-            : this.staticClass.BeaconDataStruct);
-        if (defaultBeaconDataStruct === null)
+        const defDataStruct = (dataStruct.Beacon ||
+            dataStruct.Connectable ||
+            dataStruct.Pairing
+            ? dataStruct[this.mode]
+            : dataStruct);
+        if (defDataStruct === null)
             throw new Error('Data analysis is not defined.');
-        return Object.fromEntries(Object.entries(defaultBeaconDataStruct)
+        return Object.fromEntries(Object.entries(defDataStruct)
             .map(([name, c]) => {
             var _a, _b, _c;
             if (c.type === 'check')
                 return [];
             const config = c;
-            if (!(config.scanResponse
-                ? this.beaconDataInScanResponse
-                : this.beaconData))
+            if (!(config.scanResponse ? this.beaconDataInScanResponse : data))
                 throw new Error('manufacturerSpecificData is null.');
-            const data = (_a = (config.scanResponse
-                ? this.beaconDataInScanResponse
-                : this.beaconData), (_a !== null && _a !== void 0 ? _a : [])).slice(config.index, config.index + (_b = config.length, (_b !== null && _b !== void 0 ? _b : 1)));
+            const vals = (_a = (config.scanResponse ? this.beaconDataInScanResponse : data), (_a !== null && _a !== void 0 ? _a : [])).slice(config.index, config.index + (_b = config.length, (_b !== null && _b !== void 0 ? _b : 1)));
             if (config.type.indexOf('bool') === 0)
-                return [name, (data[0] & parseInt(config.type.slice(4), 2)) > 0];
+                return [name, (vals[0] & parseInt(config.type.slice(4), 2)) > 0];
             else if (config.type === 'string')
                 return [
                     name,
-                    Buffer.from(data.slice(0, data.indexOf(0))).toString(),
+                    Buffer.from(vals.slice(0, vals.indexOf(0))).toString(),
                 ];
             else if (config.type === 'xyz') {
                 if (!config.length)
@@ -4350,31 +4382,44 @@ class ObnizPartsBle {
                 if (config.length % 6 !== 0)
                     return [];
                 else if (config.length === 6)
-                    return [name, this.getTriaxial(data)];
+                    return [
+                        name,
+                        this.getTriaxial(vals, config.fixedIntegerBytes, config.round),
+                    ];
                 else
                     return [
                         name,
-                        [...Array(config.length / 6).keys()].map((v) => this.getTriaxial(data.slice(v * 6, (v + 1) * 6))),
+                        [...Array(config.length / 6).keys()].map((v) => this.getTriaxial(vals.slice(v * 6, (v + 1) * 6), config.fixedIntegerBytes, config.round)),
                     ];
             }
             else if (config.type === 'custom')
                 if (!config.func)
                     return [];
                 else
-                    return [name, config.func(data, this.peripheral)];
+                    return [name, config.func(vals, this.peripheral)];
             else {
                 const multi = (_c = config.multiple, (_c !== null && _c !== void 0 ? _c : 1));
-                const num = (config.type.indexOf('u') === 0 ? exports.uint : exports.int)(config.type.indexOf('BE') >= 0 ? data.reverse() : data);
-                return [name, num * multi];
+                const f = (d) => config.fixedIntegerBytes !== undefined
+                    ? exports.fixedPoint(d, config.fixedIntegerBytes)
+                    : (config.type.indexOf('u') === 0 ? exports.uint : exports.int)(config.type.indexOf('BE') >= 0 ? d.reverse() : d);
+                const num = f(vals) * multi;
+                return [
+                    name,
+                    config.round !== undefined ? round_to_1.default(num, config.round) : num,
+                ];
             }
         })
             .filter((v) => v[0]));
     }
-    getTriaxial(data) {
+    getTriaxial(data, fixedIntegerBytes, round) {
+        const f = (d) => fixedIntegerBytes !== undefined
+            ? exports.fixedPoint(d, fixedIntegerBytes)
+            : exports.int(d);
+        const ff = (d) => round !== undefined ? round_to_1.default(f(d), round) : f(d);
         return {
-            x: exports.int(data.slice(0, 2)),
-            y: exports.int(data.slice(2, 4)),
-            z: exports.int(data.slice(4, 6)),
+            x: ff(data.slice(0, 2)),
+            y: ff(data.slice(2, 4)),
+            z: ff(data.slice(4, 6)),
         };
     }
 }
@@ -4421,6 +4466,18 @@ ObnizPartsBle.CompanyID = undefined;
  * 標準でisDevice()の条件として使用
  */
 ObnizPartsBle.CompanyID_ScanResponse = undefined;
+/**
+ * Used as a condition of isDevice() by default.
+ *
+ * 標準でisDevice()の条件として使用
+ */
+ObnizPartsBle.ServiceDataLength = undefined;
+/**
+ * Used as a condition of isDevice() by default.
+ *
+ * 標準でisDevice()の条件として使用
+ */
+ObnizPartsBle.ServiceDataUUID = undefined;
 class ObnizPartsBleConnectable extends ObnizPartsBle {
     constructor(peripheral, mode) {
         super(peripheral, mode);
@@ -5506,12 +5563,13 @@ const blePeripheral_1 = __importDefault(__webpack_require__("./dist/src/obniz/li
 const bleRemotePeripheral_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemotePeripheral.js"));
 const bleScan_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleScan.js"));
 const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleService.js"));
+const bleExtendedAdvertisement_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleExtendedAdvertisement.js"));
 /**
  * Use a obniz device as a BLE device.
  * Peripheral and Central mode are supported
  */
 class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
-    constructor(obniz) {
+    constructor(obniz, info) {
         super(obniz);
         this.remotePeripherals = [];
         /**
@@ -5520,7 +5578,8 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         this._initialized = false;
         // eslint-disable-next-line
         this.debugHandler = (text) => { };
-        this.hci = new hci_1.default(obniz);
+        const extended = info.extended;
+        this.hci = new hci_1.default(obniz, extended);
         this.service = bleService_1.default;
         this.characteristic = bleCharacteristic_1.default;
         this.descriptor = bleDescriptor_1.default;
@@ -5624,15 +5683,42 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         }
     }
     /**
+     * ESP32 C3 or ESP32 S3 only
+     *
+     * Sets the PHY to use by default
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.setDefaultPhyWait(false,false,true);//coded only
+     * ```
+     */
+    async setDefaultPhyWait(usePhy1m, usePhy2m, usePhyCoded) {
+        await this.centralBindings.setDefaultPhyWait(usePhy1m, usePhy2m, usePhyCoded);
+    }
+    _onUpdatePhy(handler, txPhy, rxPhy) {
+        if (this.onUpdatePhy) {
+            this.onUpdatePhy(this.phyToStr(txPhy), this.phyToStr(rxPhy), handler);
+        }
+    }
+    /**
      * Initialize BLE module. You need call this first everything before.
      * This throws if device is not supported device.
+     *
+     * esp32 C3 or esp32 S3 Put true in the argument
+     * when not using the BLE5.0 extended advertise
      *
      * ```javascript
      * // Javascript Example
      * await obniz.ble.initWait();
      * ```
      */
-    async initWait() {
+    async initWait(supportType = {}) {
+        if (this.hci._extended &&
+            supportType &&
+            typeof supportType.extended === 'boolean') {
+            this.hci._extended = supportType.extended;
+            this._reset(true);
+        }
         if (!this._initialized) {
             const MinHCIAvailableOS = '3.0.0';
             if (semver_1.default.lt(this.Obniz.firmware_ver, MinHCIAvailableOS)) {
@@ -5683,7 +5769,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * @ignore
      * @private
      */
-    _reset() {
+    _reset(keepExtended = false) {
         // reset state at first
         this._initialized = false;
         this._initializeWarning = true;
@@ -5710,12 +5796,21 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         if (!this.advertisement) {
             this.advertisement = new bleAdvertisement_1.default(this);
         }
+        if (!this.extendedAdvertisement && this.hci._extended) {
+            this.extendedAdvertisement = new bleExtendedAdvertisement_1.default(this);
+        }
+        if (!this.hci._extended) {
+            this.extendedAdvertisement = undefined;
+        }
         // reset all submodules.
         this.peripheral._reset();
         this.scan._reset();
         this.advertisement._reset();
+        if (this.extendedAdvertisement) {
+            this.extendedAdvertisement._reset();
+        }
         // clear scanning
-        this.hci._reset();
+        this.hci._reset(keepExtended);
         if (!this.hciProtocol) {
             this.hciProtocol = new hci_2.default(this.hci);
             this.hciProtocol.debugHandler = (text) => {
@@ -5734,6 +5829,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             this.centralBindings.on('discover', this.onDiscover.bind(this));
             this.centralBindings.on('disconnect', this.onDisconnect.bind(this));
             this.centralBindings.on('notification', this.onNotification.bind(this));
+            this.centralBindings.on('updatePhy', this._onUpdatePhy.bind(this));
         }
         else {
             this.centralBindings._reset();
@@ -5883,8 +5979,10 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             rssi,
             adv_data: advertisement.advertisementRaw,
             scan_resp: advertisement.scanResponseRaw,
+            service_data: advertisement.serviceData,
         };
         val.setParams(peripheralData);
+        val.setExtendFlg(this.hci._extended);
         this.scan.notifyFromServer('onfind', val);
     }
     onDisconnect(peripheralUuid, reason) {
@@ -5955,6 +6053,18 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     }
     debug(text) {
         this.debugHandler(text);
+    }
+    phyToStr(phy) {
+        switch (phy) {
+            case 1:
+                return '1m';
+            case 2:
+                return '2m';
+            case 3:
+                return 'coded';
+            default:
+                throw new Error('decode Phy Error');
+        }
     }
 }
 exports.default = ObnizBLE;
@@ -6154,8 +6264,10 @@ const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/e
  * @category Use as Peripheral
  */
 class BleAdvertisementBuilder {
-    constructor(json) {
+    constructor(json, extendedFlg = false) {
         this.rows = {};
+        this._extendedFlg = extendedFlg;
+        this._serviceData = [];
         if (json) {
             if (json.localName) {
                 this.setCompleteLocalName(json.localName);
@@ -6168,6 +6280,11 @@ class BleAdvertisementBuilder {
             if (json.serviceUuids) {
                 for (const uuid of json.serviceUuids) {
                     this.setUuid(uuid);
+                }
+            }
+            if (json.serviceData) {
+                for (const service of json.serviceData) {
+                    this.setServiceData(service.uuid, service.data);
                 }
             }
         }
@@ -6191,8 +6308,18 @@ class BleAdvertisementBuilder {
             data.push(parseInt(key));
             Array.prototype.push.apply(data, this.rows[key]);
         }
-        if (data.length > 31) {
-            throw new Error('Too large data. Advertise/ScanResponse data are must be less than 32 byte.');
+        if (this._serviceData.length !== 0) {
+            Array.prototype.push.apply(data, this._serviceData);
+        }
+        if (this._extendedFlg) {
+            if (data.length > 1650) {
+                throw new Error('Too large data. Advertise/ScanResponse data are must be less than 1650 byte.');
+            }
+        }
+        else {
+            if (data.length > 31) {
+                throw new Error('Too large data. Advertise/ScanResponse data are must be less than 32 byte.');
+            }
         }
         return data;
     }
@@ -6202,6 +6329,20 @@ class BleAdvertisementBuilder {
             data.push(string.charCodeAt(i));
         }
         this.setRow(type, data);
+    }
+    setServiceData(uuid, data) {
+        const row = [];
+        row.push(uuid & 0xff);
+        row.push((uuid >> 8) & 0xff);
+        if (data.length > 252) {
+            throw new Error('ServiceData Length Over UUID' + uuid);
+        }
+        for (const d of data) {
+            row.push(d & 0xff);
+        }
+        this._serviceData.push(row.length + 1);
+        this._serviceData.push(0x16);
+        Array.prototype.push.apply(this._serviceData, row);
     }
     setShortenedLocalName(name) {
         this.setStringData(0x08, name);
@@ -6853,6 +6994,259 @@ class BleDescriptor extends bleLocalValueAttributeAbstract_1.default {
 }
 exports.default = BleDescriptor;
 
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/embeds/bleHci/bleExtendedAdvertisement.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const bleAdvertisementBuilder_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAdvertisementBuilder.js"));
+const bleAdvertisement_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAdvertisement.js"));
+/**
+ * @category Use as Peripheral
+ */
+class BleExtendedAdvertisement extends bleAdvertisement_1.default {
+    constructor(obnizBle) {
+        super(obnizBle);
+        this.mode = 'connectable';
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        super._reset();
+    }
+    /**
+     * AdvertiseMode can be changed
+     *
+     * broadcast   MAX advData     1650Byte
+     * connectable MAX advData      242Byte default
+     * scannable   MAX scanRspData 1650Byte
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.extendedAdvertisement.setMode(broadcast);
+     * obniz.ble.extendedAdvertisement.setAdvData({
+     *   localName: "test_obniz",
+     *   serviceData:[{
+     *     uuid:0x2534,
+     *     data:[0x55,0x55,0x55,0x55,0x55,0x65,0x65,0x65,5,0x55,0x55,0x65,0x55,0x55,0x65,0x65,0x55,0x55,0x55,0x55,]
+     *   },{
+     *     uuid:0x3544,
+     *     data:[0x55,0x55,0x55,0x55,0x55,0x65,0x65,0x65,0x65,0x55,0x55,0x55,0x65,0x55,0x55,0x65,0x65,0x55,0x55,0x55,0x55,]
+     *   }]
+     * })
+     * await obniz.ble.extendedAdvertisement.startWait();
+     * ```
+     *
+     * @param mode BleExtendedAdvertisementMode
+     */
+    setMode(mode) {
+        this.mode = mode;
+    }
+    /**
+     * This starts advertisement of BLE.
+     *
+     * Before calling this function, you should call [[setAdvData]] or [[setAdvDataRaw]] to set data.
+     * advertisement interval is 1.28sec fixed.
+     *
+     * primaryPhy: 'PHY_1m' or 'PHY_Coded'
+     * secondaryPhy: 'PHY_1m' or 'PHY_2m' or 'PHY_Coded'
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     *   var service = new obniz.ble.service({
+     *  uuid : "fff0"
+     * });
+     * obniz.ble.peripheral.addService(service);
+     * obniz.ble.extendedAdvertisement.setAdvData({
+     *   flags:service.advData.flags,
+     *   serviceUuids:service.advData.serviceUuids,
+     *   localName: "test_obniz",
+     *   serviceData:[{
+     *     uuid:0x3544,
+     *     data:[0x55,0x55,0x55,0x55,0x55,0x65,0x65,0x65,0x65,0x55,0x55,0x55,0x65,0x55,0x55,0x65,0x65,0x55,0x55,0x55,0x55,]
+     *   }]
+     * })
+     * await obniz.ble.extendedAdvertisement.startWait('PHY_1m','PHY_2m');
+     * ```
+     */
+    async startWait(primaryPhy = 'PHY_1m', secondaryPhy = 'PHY_1m') {
+        this.obnizBle.warningIfNotInitialize();
+        const advertisementData = Buffer.from(this.adv_data);
+        const scanData = Buffer.from(this.scan_resp);
+        const decodePhy = (phy) => {
+            switch (phy) {
+                case 'PHY_1m':
+                    return 1;
+                case 'PHY_2m':
+                    return 2;
+                case 'PHY_Coded':
+                    return 3;
+            }
+        };
+        const primaryAdvertisingPhy = decodePhy(primaryPhy);
+        const secondaryAdvertisingPhy = decodePhy(secondaryPhy);
+        // ParametersCommand broadcast 0 connectable 1 scannable 2
+        // AdvertiseDataCommand or ResponseDataCommand
+        switch (this.mode) {
+            case 'broadcast':
+                if (advertisementData.length > 1650)
+                    throw new Error('Advertisement data is over maximum limit of 1650 bytes');
+                if (advertisementData.length === 0)
+                    throw new Error('Advertisement data is not found');
+                if (scanData.length !== 0)
+                    throw new Error('Scan data is over maximum limit of 0 bytes');
+                await this.obnizBle.peripheralBindings.setExtendedAdvertisingParametersWait(0, 0x00, primaryAdvertisingPhy, secondaryAdvertisingPhy, 0);
+                await this.obnizBle.peripheralBindings.setExtendedAdvertisingDataWait(0, advertisementData);
+                break;
+            case 'connectable':
+                if (advertisementData.length > 242)
+                    throw new Error('Advertisement data is over maximum limit of 242 bytes');
+                if (advertisementData.length === 0)
+                    throw new Error('Advertisement data is not found');
+                if (scanData.length !== 0)
+                    throw new Error('Scan data is over maximum limit of 0 bytes');
+                await this.obnizBle.peripheralBindings.setExtendedAdvertisingParametersWait(0, 0x41, primaryAdvertisingPhy, secondaryAdvertisingPhy, 0);
+                await this.obnizBle.peripheralBindings.setExtendedAdvertisingDataWait(0, advertisementData);
+                break;
+            case 'scannable':
+                if (advertisementData.length !== 0)
+                    throw new Error('Advertisement data is over maximum limit of 0 bytes');
+                if (scanData.length === 0)
+                    throw new Error('Scan data is not found');
+                if (scanData.length > 1650)
+                    throw new Error('Scan data is over maximum limit of 1650 bytes');
+                await this.obnizBle.peripheralBindings.setExtendedAdvertisingParametersWait(0, 0x42, primaryAdvertisingPhy, secondaryAdvertisingPhy, 0);
+                await this.obnizBle.peripheralBindings.setExtendedAdvertisingScanResponseDataWait(0, scanData);
+                break;
+        }
+        // EnableCommand
+        await this.obnizBle.peripheralBindings.startExtendedAdvertisingWait(0);
+    }
+    /**
+     * @deprecated  replaced by {@link #startWait()}
+     */
+    start() {
+        super.start();
+    }
+    /**
+     * This stops advertisement of BLE.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * await obniz.ble.extendedAdvertisement.startWait();
+     * await obniz.ble.extendedAdvertisement.endWait();
+     * ```
+     *
+     */
+    async endWait() {
+        await this.obnizBle.peripheralBindings.stopExtendedAdvertisingWait(0);
+    }
+    /**
+     * @deprecated  replaced by {@link #endWait()}
+     */
+    end() {
+        super.end();
+    }
+    /**
+     * This sets advertise data from data array.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.extendedAdvertisement.setAdvDataRaw([0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
+     * //0x02, 0x01, 0x1A  => BLE type for
+     * //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
+     *
+     * await obniz.ble.extendedAdvertisement.startWait();
+     * ```
+     *
+     * @param adv_data
+     */
+    setAdvDataRaw(adv_data) {
+        this.adv_data = adv_data;
+    }
+    /**
+     * This sets advertise data from json.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * obniz.ble.extendedAdvertisement.setAdvData({
+     *   flags: ["general_discoverable_mode","br_edr_not_supported"],
+     *   manufacturerData:{
+     *     companyCode : 0x004C,
+     *     serviceUuids: ["fff0"],
+     *     data : [0x02,0x15, 0xC2, 0x8f, 0x0a, 0xd5, 0xa7, 0xfd, 0x48, 0xbe, 0x9f, 0xd0, 0xea, 0xe9, 0xff, 0xd3, 0xa8, 0xbb,0x10,0x00,0x00,0x10,0xFF],
+     *   }
+     * });
+     *
+     * await obniz.ble.extendedAdvertisement.startWait();
+     * ```
+     *
+     * @param json
+     */
+    setAdvData(json) {
+        const builder = this.advDataBulider(json);
+        this.setAdvDataRaw(builder.build());
+    }
+    /**
+     * This sets scan response data from data array.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.extendedAdvertisement.setScanRespDataRaw([0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
+     * //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
+     *
+     * await obniz.ble.advertisement.startWait();
+     * ```
+     *
+     * @param scan_resp
+     */
+    setScanRespDataRaw(scan_resp) {
+        this.scan_resp = scan_resp;
+    }
+    /**
+     * This sets scan response data from json data.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.extendedAdvertisement.setScanRespData({
+     *   localName : "obniz BLE",
+     * });
+     *
+     * await obniz.ble.advertisement.startWait();
+     * ```
+     *
+     * @param json
+     */
+    setScanRespData(json) {
+        this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
+    }
+    advDataBulider(jsonVal) {
+        return new bleAdvertisementBuilder_1.default(jsonVal, true);
+    }
+    scanRespDataBuilder(json) {
+        return new bleAdvertisementBuilder_1.default(json, true);
+    }
+}
+exports.default = BleExtendedAdvertisement;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -7972,7 +8366,9 @@ class BleRemotePeripheral {
             'rssi',
             'adv_data',
             'scan_resp',
+            'service_data',
         ];
+        this._extended = false;
         this.obnizBle = obnizBle;
         this.address = address;
         this.connected = false;
@@ -7986,9 +8382,11 @@ class BleRemotePeripheral {
         this.localName = null;
         this.manufacturerSpecificData = null;
         this.manufacturerSpecificDataInScanResponse = null;
+        this.serviceData = null;
         this.iBeacon = null;
         this._services = [];
         this.emitter = new eventemitter3_1.default();
+        this.service_data = null;
     }
     /**
      * It contains all discovered services in a peripheral as an array.
@@ -8047,6 +8445,13 @@ class BleRemotePeripheral {
             }
         }
         this.analyseAdvertisement();
+    }
+    /**
+     * @ignore
+     * @param extendedMode
+     */
+    setExtendFlg(extendedMode) {
+        this._extended = extendedMode;
     }
     /**
      * @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
@@ -8124,13 +8529,31 @@ class BleRemotePeripheral {
             this._connectSetting.mtuRequest === undefined
                 ? 256
                 : this._connectSetting.mtuRequest;
+        if (this._connectSetting.usePyh1m === undefined) {
+            this._connectSetting.usePyh1m = true;
+        }
+        if (this._connectSetting.usePyh2m === undefined) {
+            this._connectSetting.usePyh2m = true;
+        }
+        if (this._connectSetting.usePyhCoded === undefined) {
+            this._connectSetting.usePyhCoded = true;
+        }
         await this.obnizBle.scan.endWait();
         try {
-            await this.obnizBle.centralBindings.connectWait(this.address, this._connectSetting.mtuRequest, () => {
-                if (this._connectSetting.pairingOption) {
-                    this.setPairingOption(this._connectSetting.pairingOption);
-                }
-            });
+            if (this._extended) {
+                await this.obnizBle.centralBindings.connectExtendedWait(this.address, this._connectSetting.mtuRequest, () => {
+                    if (this._connectSetting.pairingOption) {
+                        this.setPairingOption(this._connectSetting.pairingOption);
+                    }
+                }, this._connectSetting.usePyh1m, this._connectSetting.usePyh2m, this._connectSetting.usePyhCoded);
+            }
+            else {
+                await this.obnizBle.centralBindings.connectWait(this.address, this._connectSetting.mtuRequest, () => {
+                    if (this._connectSetting.pairingOption) {
+                        this.setPairingOption(this._connectSetting.pairingOption);
+                    }
+                });
+            }
         }
         catch (e) {
             if (e instanceof ObnizError_1.ObnizTimeoutError) {
@@ -8214,6 +8637,86 @@ class BleRemotePeripheral {
             }, 90 * 1000);
             this.obnizBle.centralBindings.disconnect(this.address);
         });
+    }
+    /**
+     * Check the PHY used in the connection
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   const phy = await peripheral.readPhyWait()
+     *   console.log(phy)
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     *
+     */
+    async readPhyWait() {
+        const phyToStr = (phy) => {
+            switch (phy) {
+                case 1:
+                    return '1m';
+                case 2:
+                    return '2m';
+                case 3:
+                    return 'coded';
+                default:
+                    throw new Error('decode Phy Error');
+            }
+        };
+        const data = await this.obnizBle.centralBindings.readPhyWait(this.address);
+        if (data.status === 0) {
+            return { txPhy: phyToStr(data.txPhy), rxPhy: phyToStr(data.rxPhy) };
+        }
+    }
+    /**
+     * Check the PHY used in the connection.
+     * Request to change the current PHY
+     *
+     * It will be changed if it corresponds to the PHY set by the other party.
+     *
+     * Changes can be seen on onUpdatePhy
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * obniz.ble.onUpdatePhy = ((txPhy, rxPhy) => {
+     *  console.log("txPhy "+txPhy+" rxPhy "+rxPhy);
+     * });
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await peripheral.setPhyWait(false,false,true,true,true);//Request Only PHY Coded
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     *
+     */
+    async setPhyWait(usePhy1m, usePhy2m, usePhyCoded, useCodedModeS8, useCodedModeS2) {
+        await this.obnizBle.centralBindings.setPhyWait(this.address, usePhy1m, usePhy2m, usePhyCoded, useCodedModeS8, useCodedModeS2);
     }
     /**
      * It returns a service which having specified uuid in [[services]].
@@ -8476,6 +8979,7 @@ class BleRemotePeripheral {
         }
         this.setLocalName();
         this.setManufacturerSpecificData();
+        this.setServiceData();
         this.setIBeacon();
     }
     searchTypeVal(type, fromScanResponseData = false) {
@@ -8496,6 +9000,10 @@ class BleRemotePeripheral {
         var _a, _b;
         this.manufacturerSpecificData = (_a = this.searchTypeVal(0xff), (_a !== null && _a !== void 0 ? _a : null));
         this.manufacturerSpecificDataInScanResponse = (_b = this.searchTypeVal(0xff, true), (_b !== null && _b !== void 0 ? _b : null));
+    }
+    setServiceData() {
+        var _a;
+        this.serviceData = (_a = this.searchTypeVal(0x16), (_a !== null && _a !== void 0 ? _a : null));
     }
     setIBeacon() {
         const data = this.manufacturerSpecificData;
@@ -8927,6 +9435,15 @@ class BleScan {
                 message: `Unexpected arguments. It might be contained the second argument keys. Please check object keys and order of 'startWait()' / 'startOneWait()' / 'startAllWait()' arguments. `,
             });
         }
+        const ble5DeviceFilterSupportVersion = '5.0.0'; // TODO: CHANGE
+        if (settings.filterOnDevice === true &&
+            this.obnizBle.hci._extended === true &&
+            semver_1.default.lt(semver_1.default.coerce(this.obnizBle.Obniz.firmware_ver), ble5DeviceFilterSupportVersion)) {
+            this.obnizBle.Obniz.warning({
+                alert: 'warning',
+                message: `filterOnDevice=true on BLE5.0 is not supported obnizOS ${this.obnizBle.Obniz.firmware_ver}. Please use filterOnDevice=false or obniz.ble.initWait({extended:false}) for BLE4.2 scan`,
+            });
+        }
         this.state = 'starting';
         try {
             const timeout = settings.duration === undefined ? 30 : settings.duration;
@@ -8960,7 +9477,18 @@ class BleScan {
             else {
                 this._setTargetFilterOnDevice({}); // clear
             }
-            await this.obnizBle.centralBindings.startScanningWait([], settings.duplicate, settings.activeScan);
+            if (settings.usePhyCoded === undefined) {
+                settings.usePhyCoded = true;
+            }
+            if (settings.usePhy1m === undefined) {
+                settings.usePhy1m = true;
+            }
+            if (this.obnizBle.hci._extended) {
+                await this.obnizBle.centralBindings.startExtendedScanningWait([], settings.duplicate, settings.activeScan, settings.usePhy1m, settings.usePhyCoded);
+            }
+            else {
+                await this.obnizBle.centralBindings.startScanningWait([], settings.duplicate, settings.activeScan);
+            }
             this.clearTimeoutTimer();
             if (timeout !== null) {
                 this._timeoutTimer = setTimeout(async () => {
@@ -9087,7 +9615,12 @@ class BleScan {
         if (this.state === 'started' || this.state === 'starting') {
             this.state = 'stopping';
             this.clearTimeoutTimer();
-            await this.obnizBle.centralBindings.stopScanningWait();
+            if (this.obnizBle.hci._extended) {
+                await this.obnizBle.centralBindings.stopExtendedScanningWait();
+            }
+            else {
+                await this.obnizBle.centralBindings.stopScanningWait();
+            }
             this.finish(); // state will changed to stopped inside of this function.
         }
     }
@@ -9530,7 +10063,7 @@ exports.default = BleService;
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 class ObnizBLEHci {
-    constructor(Obniz) {
+    constructor(Obniz, extended) {
         /*
          * HCI level timeout should never occure. Response must be sent from a device.
          * This timeout is for just in case for a device nerver send response.
@@ -9538,13 +10071,18 @@ class ObnizBLEHci {
         this.timeout = 90 * 1000;
         this._eventHandlerQueue = {};
         this.Obniz = Obniz;
+        this._extended = extended;
+        this.defaultExtended = this._extended;
     }
     /**
      * @ignore
      * @private
      */
-    _reset() {
+    _reset(keepExtended) {
         this._eventHandlerQueue = {};
+        if (!keepExtended) {
+            this._extended = this.defaultExtended;
+        }
     }
     /**
      * Initialize BLE HCI module
@@ -9629,18 +10167,16 @@ class ObnizBLEHci {
      * @param option.timeout Timeout number in seconds. If not specified. default timeout is applied. If null specified, never timeout.
      * @param option.waitingFor Readable description of command for waiting. Printed when Error or timeout occured.
      */
-    timeoutPromiseWrapper(promise, option) {
-        option = option || {};
-        if (option.timeout === null) {
-            option.timeout = null;
+    timeoutPromiseWrapper(promise, _option) {
+        var _a;
+        const option = {
+            timeout: _option.timeout === null ? null : (_a = _option.timeout, (_a !== null && _a !== void 0 ? _a : this.timeout)),
+            waitingFor: _option.waitingFor,
+            onTimeout: _option.onTimeout || undefined,
+        };
+        if (option.timeout !== null && option.timeout < 0) {
+            throw new ObnizError_1.ObnizParameterError(`option.timeout`, `0 or greater`);
         }
-        else {
-            option.timeout = option.timeout || this.timeout;
-            if (option.timeout < 0) {
-                throw new ObnizError_1.ObnizParameterError(`option.timeout`, `0 or greater`);
-            }
-        }
-        option.waitingFor = option.waitingFor || undefined;
         let onObnizClosed = null;
         let timeoutHandler = null;
         const clearListeners = () => {
@@ -9678,14 +10214,16 @@ class ObnizBLEHci {
                 onTimeout = () => {
                     timeoutHandler = null;
                     clearListeners();
-                    option
-                        .onTimeout()
-                        .then(() => {
-                        reject(timeoutError);
-                    })
-                        .catch((e) => {
-                        reject(e);
-                    });
+                    if (option.onTimeout) {
+                        option
+                            .onTimeout()
+                            .then(() => {
+                            reject(timeoutError);
+                        })
+                            .catch((e) => {
+                            reject(e);
+                        });
+                    }
                 };
             }
             else {
@@ -9696,7 +10234,9 @@ class ObnizBLEHci {
                     reject(timeoutError);
                 };
             }
-            timeoutHandler = setTimeout(onTimeout, option.timeout);
+            if (option.timeout !== null) {
+                timeoutHandler = setTimeout(onTimeout, option.timeout);
+            }
         });
         if (option.timeout !== null) {
             return Promise.race([successPromise, errorPromise]);
@@ -9884,6 +10424,7 @@ class NobleBindings extends eventemitter3_1.default {
         this._hci.on('stateChange', this.onStateChange.bind(this));
         this._hci.on('disconnComplete', this.onDisconnComplete.bind(this));
         this._hci.on('aclDataPkt', this.onAclDataPkt.bind(this));
+        this._hci.on('updatePhy', this.onPhy.bind(this));
         this._gap.on('discover', this.onDiscover.bind(this));
     }
     /**
@@ -9911,12 +10452,22 @@ class NobleBindings extends eventemitter3_1.default {
             this._connectable[uuid] = true;
         }
     }
+    async startExtendedScanningWait(serviceUuids, allowDuplicates, activeScan, usePhy1m, usePhyCoded) {
+        if (!usePhy1m && !usePhyCoded) {
+            throw new ObnizError_1.ObnizBleInvalidParameterError('Please make either true', `usePhy1M:${usePhy1m} usePhyCoded:${usePhyCoded}`);
+        }
+        this._scanServiceUuids = (serviceUuids !== null && serviceUuids !== void 0 ? serviceUuids : null);
+        await this._gap.startExtendedScanningWait(allowDuplicates, activeScan, usePhy1m, usePhyCoded);
+    }
     async startScanningWait(serviceUuids, allowDuplicates, activeScan) {
         this._scanServiceUuids = (serviceUuids !== null && serviceUuids !== void 0 ? serviceUuids : null);
         await this._gap.startScanningWait(allowDuplicates, activeScan);
     }
     async stopScanningWait() {
         await this._gap.stopScanningWait();
+    }
+    async stopExtendedScanningWait() {
+        await this._gap.stopExtendedScanningWait();
     }
     async connectWait(peripheralUuid, mtu, onConnectCallback) {
         const address = this._addresses[peripheralUuid];
@@ -9937,6 +10488,69 @@ class NobleBindings extends eventemitter3_1.default {
                     onConnectCallback();
                 }
             }); // connection timeout for 90 secs.
+            return await this._gatts[conResult.handle].exchangeMtuWait(mtu);
+        })
+            .then(() => {
+            this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
+            return Promise.resolve();
+        }, (error) => {
+            this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
+            return Promise.reject(error);
+        });
+        this._connectPromises.push(doPromise);
+        return doPromise;
+    }
+    async setDefaultPhyWait(usePhy1m, usePhy2m, usePhyCoded) {
+        if (!usePhy1m && !usePhyCoded && !usePhy2m) {
+            throw new ObnizError_1.ObnizBleInvalidParameterError('Please make either true', `usePhy1M:${usePhy1m} usePhy2M:${usePhy2m} usePhyCoded:${usePhyCoded}`);
+        }
+        const booleanToNumber = (flg) => (flg ? 1 : 0);
+        const setPhy = booleanToNumber(usePhy1m) +
+            booleanToNumber(usePhy2m) * 2 +
+            booleanToNumber(usePhyCoded) * 4;
+        await this._hci.leSetDefaultPhyCommandWait(0, setPhy, setPhy);
+    }
+    async readPhyWait(address) {
+        return await this._hci.leReadPhyCommandWait(this._handles[address]);
+    }
+    async setPhyWait(address, usePhy1m, usePhy2m, usePhyCoded, useCodedModeS8, useCodedModeS2) {
+        if (!usePhy1m && !usePhyCoded && !usePhy2m) {
+            throw new ObnizError_1.ObnizBleInvalidParameterError('Please make either true', `usePhy1M:${usePhy1m} usePhy2M:${usePhy2m} usePhyCoded:${usePhyCoded}`);
+        }
+        if (usePhyCoded && !useCodedModeS8 && !useCodedModeS2) {
+            throw new ObnizError_1.ObnizBleInvalidParameterError('Please make either true', `useCodedModeS8:${useCodedModeS8} useCodedModeS2:${useCodedModeS2}`);
+        }
+        const booleanToNumber = (flg) => (flg ? 1 : 0);
+        const setPhy = booleanToNumber(usePhy1m) +
+            booleanToNumber(usePhy2m) * 2 +
+            booleanToNumber(usePhyCoded) * 4;
+        await this._hci.leSetPhyCommandWait(this._handles[address], 0, setPhy, setPhy, booleanToNumber(useCodedModeS8) * 2 + booleanToNumber(useCodedModeS2));
+    }
+    onPhy(handler, txPhy, rxPhy) {
+        this.emit('updatePhy', handler, txPhy, rxPhy);
+    }
+    async connectExtendedWait(peripheralUuid, mtu, onConnectCallback, usePhy1m = true, usePhy2m = true, usePhyCoded = true) {
+        if (!usePhy1m && !usePhyCoded && !usePhy2m) {
+            throw new ObnizError_1.ObnizBleInvalidParameterError('Please make either true', `usePhy1M:${usePhy1m} usePhy2M:${usePhy2m} usePhyCoded:${usePhyCoded}`);
+        }
+        const address = this._addresses[peripheralUuid];
+        const addressType = this._addresseTypes[peripheralUuid];
+        if (!address) {
+            throw new ObnizError_1.ObnizBleUnknownPeripheralError(peripheralUuid);
+        }
+        // Block parall connection ongoing for ESP32 bug.
+        const doPromise = Promise.all(this._connectPromises)
+            .catch((error) => {
+            // nothing
+        })
+            .then(async () => {
+            const conResult = await this._hci.createLeExtendedConnWait(address, addressType, 90 * 1000, (result) => {
+                // on connect success
+                this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
+                if (onConnectCallback && typeof onConnectCallback === 'function') {
+                    onConnectCallback();
+                }
+            }, usePhy1m, usePhy2m, usePhyCoded); // connection timeout for 90 secs.
             return await this._gatts[conResult.handle].exchangeMtuWait(mtu);
         })
             .then(() => {
@@ -10168,12 +10782,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @ignore
  */
-const debug = () => {
+const debug = (message) => {
     // do nothing.
+    // console.log('gap debug', message);
 };
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
+const LegacyAdvertisingPduMask = 0b0010000;
+const LegacyAdvertising_ADV_SCAN_RESP_TO_ADV_IND = 0b0011011;
+const LegacyAdvertising_ADV_SCAN_RESP_TO_SCAN_IND = 0b0011010;
+const LegacyAdvertising_ADV_NONCONN_IND = 0b0010000;
 /**
  * @ignore
  */
@@ -10186,6 +10805,7 @@ class Gap extends eventemitter3_1.default {
         this._hci = hci;
         this._reset();
         this._hci.on('leAdvertisingReport', this.onHciLeAdvertisingReport.bind(this));
+        this._hci.on('leExtendedAdvertisingReport', this.onHciLeExtendedAdvertisingReport.bind(this));
     }
     /**
      * @ignore
@@ -10238,7 +10858,87 @@ class Gap extends eventemitter3_1.default {
             }
         }
     }
-    onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi) {
+    async stopExtendedScanningWait() {
+        try {
+            if (this._scanState === 'starting' || this._scanState === 'started') {
+                await this.setExtendedScanEnabledWait(false, true);
+            }
+        }
+        catch (e) {
+            if (e instanceof ObnizError_1.ObnizBleScanStartError) {
+                // If not started yet. this error may called. just ignore it.
+            }
+            else {
+                throw e;
+            }
+        }
+    }
+    async startExtendedScanningWait(allowDuplicates, activeScan, usePhy1m, usePhyCoded) {
+        this._scanFilterDuplicates = !allowDuplicates;
+        this._discoveries = {};
+        // Always set scan parameters before scanning
+        // https://www.bluetooth.org/docman/handlers/DownloadDoc.ashx?doc_id=421043
+        // p2729
+        try {
+            if (this._scanState === 'starting' || this._scanState === 'started') {
+                await this.setExtendedScanEnabledWait(false, true);
+            }
+        }
+        catch (e) {
+            if (e instanceof ObnizError_1.ObnizBleScanStartError) {
+                // If not started yet. this error may called. just ignore it.
+            }
+            else {
+                throw e;
+            }
+        }
+        this._scanState = 'starting';
+        const status = await this._hci.setExtendedScanParametersWait(activeScan, usePhy1m, usePhyCoded);
+        if (status !== 0) {
+            throw new ObnizError_1.ObnizBleScanStartError(status, `startExtendedScanning Error setting active scan=${activeScan} was failed`);
+        }
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await this.setExtendedScanEnabledWait(true, this._scanFilterDuplicates);
+    }
+    onHciLeExtendedAdvertisingReport(status, type, address, addressType, eir, rssi, primaryPhy, secondaryPhy, sid, txPower, periodicAdvertisingInterval, directAddressType, directAddress) {
+        debug('onHciLeExtendedAdvertisingReport', type, address, addressType, eir, rssi, primaryPhy, secondaryPhy, sid, txPower, periodicAdvertisingInterval, directAddressType, directAddress);
+        this.onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi, true);
+    }
+    isAdvOrScanResp(type, extended) {
+        if (extended) {
+            if ((type & LegacyAdvertisingPduMask) !== 0) {
+                // legacy advertising PDU
+                if (type === LegacyAdvertising_ADV_SCAN_RESP_TO_ADV_IND ||
+                    type === LegacyAdvertising_ADV_SCAN_RESP_TO_SCAN_IND) {
+                    return 'scanResponse';
+                }
+                else {
+                    return 'advertisement';
+                }
+            }
+            else {
+                if ((type & 0b00010000) === 0) {
+                    return 'advertisement';
+                }
+                else {
+                    return 'scanResponse';
+                }
+            }
+        }
+        else {
+            if (type === 0x04) {
+                return 'scanResponse';
+            }
+            else if (type === 0x00 ||
+                type === 0x01 ||
+                type === 0x02 ||
+                type === 0x03) {
+                return 'advertisement';
+            }
+        }
+        return null;
+    }
+    onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi, extended) {
         const previouslyDiscovered = !!this._discoveries[address];
         const advertisement = previouslyDiscovered
             ? this._discoveries[address].advertisement
@@ -10259,7 +10959,8 @@ class Gap extends eventemitter3_1.default {
         let hasScanResponse = previouslyDiscovered
             ? this._discoveries[address].hasScanResponse
             : false;
-        if (type === 0x04) {
+        const advType = this.isAdvOrScanResp(type, extended);
+        if (advType === 'scanResponse') {
             hasScanResponse = true;
             if (eir.length > 0) {
                 advertisement.scanResponseRaw = Array.from(eir);
@@ -10384,9 +11085,30 @@ class Gap extends eventemitter3_1.default {
             i += length + 1;
         }
         debug('advertisement = ' + JSON.stringify(advertisement, null, 0));
-        const connectable = type === 0x04 && previouslyDiscovered
-            ? this._discoveries[address].connectable
-            : type !== 0x03;
+        let connectable;
+        if (extended) {
+            if ((type & LegacyAdvertisingPduMask) !== 0) {
+                // legacy advertising PDU
+                if (type === LegacyAdvertising_ADV_SCAN_RESP_TO_ADV_IND ||
+                    type === LegacyAdvertising_ADV_SCAN_RESP_TO_SCAN_IND) {
+                    connectable = this._discoveries[address].connectable;
+                }
+                else {
+                    connectable = type !== LegacyAdvertising_ADV_NONCONN_IND;
+                }
+            }
+            else {
+                connectable = (type & 0b00000001) !== 0;
+            }
+        }
+        else {
+            if (type === 0x04 && previouslyDiscovered) {
+                connectable = this._discoveries[address].connectable;
+            }
+            else {
+                connectable = type !== 0x03;
+            }
+        }
         this._discoveries[address] = {
             address,
             addressType,
@@ -10397,6 +11119,23 @@ class Gap extends eventemitter3_1.default {
             hasScanResponse,
         };
         this.emit('discover', status, address, addressType, connectable, advertisement, rssi);
+    }
+    async setExtendedScanEnabledWait(enabled, filterDuplicates) {
+        const status = await this._hci.setExtendedScanEnabledWait(enabled, filterDuplicates);
+        // Check the status we got from the command complete function.
+        if (status !== 0) {
+            // If it is non-zero there was an error, and we should not change
+            // our status as a result.
+            throw new ObnizError_1.ObnizBleScanStartError(status, `startExtendedScanning enable=${enabled} was failed. Maybe Connection to a device is under going.`);
+        }
+        else {
+            if (this._scanState === 'starting') {
+                this._scanState = 'started';
+            }
+            else if (this._scanState === 'stopping') {
+                this._scanState = 'stopped';
+            }
+        }
     }
     async setScanEnabledWait(enabled, filterDuplicates) {
         const status = await this._hci.setScanEnabledWait(enabled, filterDuplicates);
@@ -10784,33 +11523,19 @@ class GattCentral extends eventemitter3_1.default {
         const _data = await this._execCommandWait(this._gattCommon.writeRequest(handle, valueBuffer, false), att_1.ATT.OP_WRITE_RESP);
     }
     async notifyWait(serviceUuid, characteristicUuid, notify) {
+        try {
+            const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
+            const descriptor = this.getDescriptor(serviceUuid, characteristicUuid, '2902');
+            return await this.notifyByDescriptorWait(serviceUuid, characteristicUuid, notify);
+        }
+        catch (e) {
+            debug(`failed to handle descriptor`);
+        }
+        return await this.notifyByHandleWait(serviceUuid, characteristicUuid, notify);
+    }
+    async notifyByDescriptorWait(serviceUuid, characteristicUuid, notify) {
         const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
-        // const descriptor = this.getDescriptor(serviceUuid, characteristicUuid, "2902");
         let value = 0;
-        // let handle = null;
-        // try {
-        //   const buf = await this.readValueWait(
-        //     serviceUuid,
-        //     characteristicUuid,
-        //     '2902'
-        //   );
-        //   value = buf.readUInt16LE(0);
-        // } catch (e) {
-        //   // retry
-        //   const data = await this._execCommandWait(
-        //     this._gattCommon.readByTypeRequest(
-        //       characteristic.startHandle,
-        //       characteristic.endHandle,
-        //       GATT.CLIENT_CHARAC_CFG_UUID
-        //     ),
-        //     ATT.OP_READ_BY_TYPE_RESP
-        //   );
-        //
-        //   const opcode = data[0];
-        //   // let type = data[1];
-        //   handle = data.readUInt16LE(2);
-        //   value = data.readUInt16LE(4);
-        // }
         const useNotify = characteristic.properties & 0x10;
         const useIndicate = characteristic.properties & 0x20;
         if (notify) {
@@ -10840,6 +11565,52 @@ class GattCentral extends eventemitter3_1.default {
         // } else {
         _data = await this.writeValueWait(serviceUuid, characteristicUuid, '2902', valueBuffer);
         // }
+        const _opcode = _data && _data[0];
+        debug('set notify write results: ' + (_opcode === att_1.ATT.OP_WRITE_RESP));
+    }
+    async notifyByHandleWait(serviceUuid, characteristicUuid, notify) {
+        const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
+        // const descriptor: any = this.getDescriptor(serviceUuid, characteristicUuid, "2902");
+        let value = null;
+        let handle = null;
+        try {
+            value = await this.readValueWait(serviceUuid, characteristicUuid, '2902');
+        }
+        catch (e) {
+            // retry
+            const data = await this._execCommandWait(this._gattCommon.readByTypeRequest(characteristic.startHandle, characteristic.endHandle, GATT.CLIENT_CHARAC_CFG_UUID), att_1.ATT.OP_READ_BY_TYPE_RESP);
+            const opcode = data[0];
+            // let type = data[1];
+            handle = data.readUInt16LE(2);
+            value = data.readUInt16LE(4);
+        }
+        const useNotify = characteristic.properties & 0x10;
+        const useIndicate = characteristic.properties & 0x20;
+        if (notify) {
+            if (useNotify) {
+                value |= 0x0001;
+            }
+            else if (useIndicate) {
+                value |= 0x0002;
+            }
+        }
+        else {
+            if (useNotify) {
+                value &= 0xfffe;
+            }
+            else if (useIndicate) {
+                value &= 0xfffd;
+            }
+        }
+        const valueBuffer = Buffer.alloc(2);
+        valueBuffer.writeUInt16LE(value, 0);
+        let _data = null;
+        if (handle) {
+            _data = await this._execCommandWait(this._gattCommon.writeRequest(handle, valueBuffer, false), att_1.ATT.OP_WRITE_RESP);
+        }
+        else {
+            _data = await this.writeValueWait(serviceUuid, characteristicUuid, '2902', valueBuffer);
+        }
         const _opcode = _data && _data[0];
         debug('set notify write results: ' + (_opcode === att_1.ATT.OP_WRITE_RESP));
     }
@@ -12258,6 +13029,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
+/* eslint rulesdir/non-ascii: 0 */
 // eslint-disable-next-line @typescript-eslint/no-namespace
 var COMMANDS;
 (function (COMMANDS) {
@@ -12278,6 +13050,14 @@ var COMMANDS;
     COMMANDS.EVT_LE_ADVERTISING_REPORT = 0x02;
     COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE = 0x03;
     COMMANDS.EVT_LE_ENHANCED_CONNECTION_COMPLETE = 0x0a;
+    COMMANDS.EVT_LE_PHY_UPDATE_COMPLETE = 0x0c; // LE PHY アップデート完了イベント
+    COMMANDS.EVT_LE_EXTENDED_ADVERTISING_REPORT = 0x0d; // LE拡張広告レポートイベント
+    COMMANDS.EVT_LE_PERIODIC_ADVERTISING_SYNC_ESTABLISHED = 0x0e; // LE 定期的広告同期確立イベント
+    COMMANDS.EVT_LE_PERIODIC_ADVERTISING_REPORT_EVENT = 0x0f; // LE定期広告レポートイベント
+    COMMANDS.EVT_LE_PERIODIC_ADVERTISING_SYNC_LOST_EVENT = 0x10; // 周期的広告パケットをタイムアウト時間内に受信しなかった
+    COMMANDS.EVT_LE_SCAN_TIMEOUT_EVENT = 0x11; // LEスキャンタイムアウトイベント
+    COMMANDS.EVT_LE_ADVERTISING_SET_TERMINATED_EVENT = 0x12; // LE 広告セット終了イベント
+    COMMANDS.EVT_LE_SCAN_REQUEST_RECEIVED_EVENT = 0x13; // LE スキャン要求受信イベント
     COMMANDS.OGF_LINK_CTL = 0x01;
     COMMANDS.OCF_DISCONNECT = 0x0006;
     COMMANDS.OGF_LINK_POLICY = 0x02;
@@ -12332,7 +13112,27 @@ var COMMANDS;
     COMMANDS.OCF_LE_READ_RESOLVING_LIST_SIZE = 0x002a;
     COMMANDS.OCF_LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT = 0x002e;
     COMMANDS.OCF_LE_READ_MAXIMUM_DATA_LENGTH = 0x002f;
-    COMMANDS.OCF_SET_DEFAULT_PHY = 0x0031;
+    COMMANDS.OCF_LE_READ_PHY = 0x0030;
+    COMMANDS.OCF_LE_SET_DEFAULT_PHY = 0x0031;
+    COMMANDS.OCF_LE_SET_PHY = 0x0032;
+    COMMANDS.OCF_LE_SET_EXTENDED_ADVERTISING_PARAMETERS = 0x0036; // ExAdv
+    COMMANDS.OCF_LE_SET_EXTENDED_ADVERTISING_DATA = 0x0037; // ExAdv
+    COMMANDS.OCF_LE_SET_EXTENDED_SCAN_RESPONSE_DATA = 0x0038; // ExAdv
+    COMMANDS.OCF_LE_SET_EXTENDED_ADVERTISING_ENABLE = 0x0039; // ExAdv
+    COMMANDS.OCF_LE_READ_MAXIMUM_ADVERTISING_DATA_LENGTH = 0x003a;
+    COMMANDS.OCF_LE_CLEAR_ADVERTISING_SETS = 0x003d; // ExAdv
+    COMMANDS.OCF_LE_SET_PERIODIC_ADVERTISING_PARAMETERS = 0x003e;
+    COMMANDS.OCF_LE_SET_PERIODIC_ADVERTISING_DATA = 0x003f;
+    COMMANDS.OCF_LE_SET_PERIODIC_ADVERTISING_ENABLE = 0x0040;
+    COMMANDS.OCF_LE_SET_EXTENDED_SCAN_PARAMETERS = 0x0041; // ExAdv
+    COMMANDS.OCF_LE_SET_EXTENDED_SCAN_ENABLE = 0x0042; // ExAdv
+    COMMANDS.OCF_LE_EXTENDED_CREATE_CONNECTION = 0x0043; // ExAdv
+    COMMANDS.OCF_LE_PERIODIC_ADVERTISING_CREATE_SYNC = 0x0044;
+    COMMANDS.OCF_LE_PERIODIC_ADVERTISING_CREATE_SYNC_CANCEL = 0x0045;
+    COMMANDS.OCF_LE_PERIODIC_ADVERTISING_TERMINATE_SYNC = 0x0046;
+    COMMANDS.OCF_LE_ADD_DEVICE_TO_PERIODIC_ADVERTISER_LIST = 0x0047;
+    COMMANDS.OCF_LE_REMOVE_DEVICE_TO_PERIODIC_ADVERTISER_LIST = 0x0048;
+    COMMANDS.OCF_LE_CLEAR_DEVICE_TO_PERIODIC_ADVERTISER_LIST = 0x0049;
     /* OGF_LINK_CTL : 0x01 */
     COMMANDS.DISCONNECT_CMD = COMMANDS.OCF_DISCONNECT | (COMMANDS.OGF_LINK_CTL << 10);
     /* OGF_LINK_POLICY: 0x02 */
@@ -12387,7 +13187,27 @@ var COMMANDS;
     COMMANDS.LE_READ_RESOLVING_LIST_SIZE_CMD = COMMANDS.OCF_LE_READ_RESOLVING_LIST_SIZE | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT_CMD = COMMANDS.OCF_LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_READ_MAXIMUM_DATA_LENGTH_CMD = COMMANDS.OCF_LE_READ_MAXIMUM_DATA_LENGTH | (COMMANDS.OGF_LE_CTL << 10);
-    COMMANDS.SET_DEFAULT_PHY_CMD = COMMANDS.OCF_SET_DEFAULT_PHY | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_DEFAULT_PHY_CMD = COMMANDS.OCF_LE_SET_DEFAULT_PHY | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_READ_PHY_CMD = COMMANDS.OCF_LE_READ_PHY | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_PHY_CMD = COMMANDS.OCF_LE_SET_PHY | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_EXTENDED_ADVERTISING_PARAMETERS_CMD = COMMANDS.OCF_LE_SET_EXTENDED_ADVERTISING_PARAMETERS | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_EXTENDED_ADVERTISING_DATA_CMD = COMMANDS.OCF_LE_SET_EXTENDED_ADVERTISING_DATA | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_EXTENDED_SCAN_RESPONSE_DATA_CMD = COMMANDS.OCF_LE_SET_EXTENDED_SCAN_RESPONSE_DATA | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_EXTENDED_ADVERTISING_ENABLE_CMD = COMMANDS.OCF_LE_SET_EXTENDED_ADVERTISING_ENABLE | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_READ_MAXIMUM_ADVERTISING_DATA_LENGTH_CMD = COMMANDS.OCF_LE_READ_MAXIMUM_ADVERTISING_DATA_LENGTH | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_CLEAR_ADVERTISING_SETS_CMD = COMMANDS.OCF_LE_CLEAR_ADVERTISING_SETS | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_PERIODIC_ADVERTISING_PARAMETERS_CMD = COMMANDS.OCF_LE_SET_PERIODIC_ADVERTISING_PARAMETERS | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_PERIODIC_ADVERTISING_DATA_CMD = COMMANDS.OCF_LE_SET_PERIODIC_ADVERTISING_DATA | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_PERIODIC_ADVERTISING_ENABLE_CMD = COMMANDS.OCF_LE_SET_PERIODIC_ADVERTISING_ENABLE | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_EXTENDED_SCAN_PARAMETERS_CMD = COMMANDS.OCF_LE_SET_EXTENDED_SCAN_PARAMETERS | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_EXTENDED_SCAN_ENABLE_CMD = COMMANDS.OCF_LE_SET_EXTENDED_SCAN_ENABLE | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_EXTENDED_CREATE_CONNECTION_CMD = COMMANDS.OCF_LE_EXTENDED_CREATE_CONNECTION | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_PERIODIC_ADVERTISING_CREATE_SYNC_CMD = COMMANDS.OCF_LE_PERIODIC_ADVERTISING_CREATE_SYNC | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_PERIODIC_ADVERTISING_CREATE_SYNC_CANCEL_CMD = COMMANDS.OCF_LE_PERIODIC_ADVERTISING_CREATE_SYNC_CANCEL | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_PERIODIC_ADVERTISING_TERMINATE_SYNC_CMD = COMMANDS.OCF_LE_PERIODIC_ADVERTISING_TERMINATE_SYNC | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_ADD_DEVICE_TO_PERIODIC_ADVERTISER_LIST_CMD = COMMANDS.OCF_LE_ADD_DEVICE_TO_PERIODIC_ADVERTISER_LIST | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_REMOVE_DEVICE_TO_PERIODIC_ADVERTISER_LIST_CMD = COMMANDS.OCF_LE_REMOVE_DEVICE_TO_PERIODIC_ADVERTISER_LIST | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_CLEAR_DEVICE_TO_PERIODIC_ADVERTISER_LIST_CMD = COMMANDS.OCF_LE_CLEAR_DEVICE_TO_PERIODIC_ADVERTISER_LIST | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.HCI_OE_USER_ENDED_CONNECTION = 0x13;
 })(COMMANDS || (COMMANDS = {}));
 const hci_status_json_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci-status.json"));
@@ -12399,6 +13219,7 @@ class Hci extends eventemitter3_1.default {
         super();
         this._state = 'poweredOff';
         this._aclStreamObservers = {};
+        this._extendedAdvertiseJoinData = {};
         /**
          * @ignore
          * @private
@@ -12491,7 +13312,8 @@ class Hci extends eventemitter3_1.default {
         this._reset();
         await this.resetCommandWait();
         this.setEventMaskCommand('fffffbff07f8bf3d');
-        this.setLeEventMaskCommand('1f00000000000000');
+        // this.setLeEventMaskCommand('1ff8070000000000');
+        this.setLeEventMaskCommand('1f1A000000000000');
         const { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer, } = await this.readLocalVersionCommandWait();
         this.writeLeHostSupportedCommand();
         await this.readLeHostSupportedWait();
@@ -12501,7 +13323,7 @@ class Hci extends eventemitter3_1.default {
             this.debug(`Buffer Mtu=${bufsize.aclMtu} aclMaxInProgress=${bufsize.aclMaxInProgress}`);
         }
         // await this.setRandomDeviceAddressWait();
-        if (this._state !== 'poweredOn') {
+        if (this._state !== 'poweredOn' && !this._obnizHci._extended) {
             await this.setScanEnabledWait(false, true);
             await this.setScanParametersWait(false);
             this.stateChange('poweredOn');
@@ -12798,18 +13620,291 @@ class Hci extends eventemitter3_1.default {
         this.debug('read local supported features = ' + data.result.toString('hex'));
         return data.result;
     }
+    async leReadPhyCommandWait(connectionHandle) {
+        const cmd = Buffer.alloc(6);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_READ_PHY_CMD, 1);
+        // length
+        cmd.writeUInt8(2, 3);
+        cmd.writeUInt16LE(connectionHandle, 4);
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_READ_PHY_CMD);
+        this.debug(`read Phy - writing: ${cmd.toString('hex')}`);
+        this._socket.write(cmd);
+        const data = await p;
+        return {
+            status: data.status,
+            connectionHandle: data.result.readUInt16LE(0),
+            txPhy: data.result.readUInt8(2),
+            rxPhy: data.result.readUInt8(3),
+        };
+    }
+    // 接続後にのみ使用可能
+    async leSetPhyCommandWait(connectionHandle, allPhys, txPhys, rxPhys, options) {
+        const cmd = Buffer.alloc(11);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_PHY_CMD, 1);
+        // length
+        cmd.writeUInt8(7, 3);
+        cmd.writeUInt16LE(connectionHandle, 4);
+        cmd.writeUInt8(allPhys, 6);
+        cmd.writeUInt8(txPhys, 7);
+        cmd.writeUInt8(rxPhys, 8);
+        cmd.writeUInt16LE(options, 9);
+        this.debug('le set phy - writing: ' + cmd.toString('hex'));
+        this._socket.write(cmd);
+    }
+    async setExtendedAdvertisingParametersWait(handle, eventProperties, primaryAdvertisingPhy, secondaryAdvertisingPhy, txPower) {
+        const cmd = Buffer.alloc(29);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_EXTENDED_ADVERTISING_PARAMETERS_CMD, 1);
+        // length
+        cmd.writeUInt8(25, 3);
+        const advertisementInterval = Math.floor((process.env.BLENO_ADVERTISING_INTERVAL
+            ? parseFloat(process.env.BLENO_ADVERTISING_INTERVAL)
+            : 100) * 1.6);
+        // data
+        cmd.writeUInt8(handle, 4);
+        cmd.writeUInt16LE(eventProperties, 5); // Advertising_Event_Properties
+        // Broadcast(0x0000)(ADV Data 1650B send) or Scannable(0x0002)(ScanRsp Data 1650B send)
+        cmd.writeUInt16LE(advertisementInterval, 7); // min interval //default 100ms
+        cmd.writeUInt8((advertisementInterval >> 16) & 0xff, 9); // min interval
+        cmd.writeUInt16LE(advertisementInterval * 2, 10); // max interval
+        cmd.writeUInt8(((advertisementInterval * 2) >> 16) & 0xff, 12); // max interval
+        cmd.writeUInt8(0x07, 13); // Primary_Advertising_Channel_Map used 37,38,39ch
+        cmd.writeUInt8(0x00, 14); // Own_Address_Type direct addr type
+        cmd.writeUInt8(0x00, 15); // Peer_Address_Type
+        Buffer.from('000000000000', 'hex').copy(cmd, 16); // direct addr
+        cmd.writeUInt8(0x00, 22); // Advertising_Filter_Policy All Devices
+        cmd.writeUInt8(txPower, 23); // Advertising_Tx_Power
+        cmd.writeUInt8(primaryAdvertisingPhy, 24); // PrimaryAdvertisingPhy
+        cmd.writeUInt8(0x00, 25); // Secondary_Advertising_Max_Skip
+        cmd.writeUInt8(secondaryAdvertisingPhy, 26); // SecondaryAdvertisingPhy
+        cmd.writeUInt8(0x00, 27); // Advertising_SID
+        cmd.writeUInt8(0x00, 28); // Scan_Request_Notification_Enable
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_EXTENDED_ADVERTISING_PARAMETERS_CMD);
+        this.debug('set extended advertisement parameters - writing: ' + cmd.toString('hex'));
+        this._socket.write(cmd);
+        const data = await p;
+        // this.emit("stateChange", "poweredOn"); // TODO : really need?
+        return {
+            status: data.status,
+            txPower: data.result.readUInt8(0),
+        };
+    }
+    extendedAdvertiseOperation(index, length) {
+        if (index === 0) {
+            if (length <= 251)
+                return 3; // Operation コンプリートスキャン応答データ
+            return 1; // Operation 断片化されたスキャンレスポンスデータの最初の断片
+        }
+        if (length - index * 251 <= 251)
+            return 2; // Operation 断片化したスキャンレスポンスデータの最後の断片
+        return 0; // Operation 断片化したスキャンレスポンスデータの中間断片
+    }
+    async setExtendedAdvertisingDataWait(handle, data) {
+        for (let i = 0; i < data.length / 251; i++) {
+            const size = data.length - i * 251 > 251 ? 251 : data.length - i * 251;
+            const cmd = Buffer.alloc(size + 4 + 4);
+            // header
+            cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+            cmd.writeUInt16LE(COMMANDS.LE_SET_EXTENDED_ADVERTISING_DATA_CMD, 1);
+            // length
+            cmd.writeUInt8(size + 4, 3);
+            // data
+            cmd.writeUInt8(handle, 4);
+            cmd.writeUInt8(this.extendedAdvertiseOperation(i, data.length), 5);
+            cmd.writeUInt8(0x00, 6); // Fragment_Preference
+            cmd.writeUInt8(size, 7); // Data_Length
+            data.copy(cmd, 8, i * 251, i * 251 + size);
+            const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_EXTENDED_ADVERTISING_DATA_CMD);
+            this.debug('set extended advertisement data - writing: ' + cmd.toString('hex'));
+            this._socket.write(cmd);
+            const result = await p;
+            if (result.status !== 0) {
+                return result.status;
+            }
+        }
+        return 0;
+    }
+    // 今の仕様だとScanResponseはExtendedでサポートしていない
+    async setExtendedAdvertisingScanResponseDataWait(handle, data) {
+        for (let i = 0; i < data.length / 251; i++) {
+            const size = data.length - i * 251 > 251 ? 251 : data.length - i * 251;
+            const cmd = Buffer.alloc(size + 4 + 4);
+            // header
+            cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+            cmd.writeUInt16LE(COMMANDS.LE_SET_EXTENDED_SCAN_RESPONSE_DATA_CMD, 1);
+            // length
+            cmd.writeUInt8(size + 4, 3);
+            // data
+            cmd.writeUInt8(handle, 4);
+            cmd.writeUInt8(this.extendedAdvertiseOperation(i, data.length), 5);
+            cmd.writeUInt8(0x00, 6); // Fragment_Preference
+            cmd.writeUInt8(size, 7); // Data_Length
+            data.copy(cmd, 8, i * 251, i * 251 + size);
+            const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_EXTENDED_SCAN_RESPONSE_DATA_CMD);
+            this.debug('set extended scan response data - writing: ' + cmd.toString('hex'));
+            this._socket.write(cmd);
+            const result = await p;
+            if (result.status !== 0) {
+                return result.status;
+            }
+        }
+        return 0;
+    }
+    async setExtendedAdvertisingEnableWait(enabled, enableList) {
+        const cmd = Buffer.alloc(enableList.length * 4 + 4 + 2);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_EXTENDED_ADVERTISING_ENABLE_CMD, 1);
+        // length
+        cmd.writeUInt8(enableList.length * 4 + 2, 3);
+        // data
+        cmd.writeUInt8(enabled ? 0x01 : 0x00, 4); // enable: 0 -> disabled, 1 -> enabled
+        cmd.writeUInt8(enableList.length, 5); // length
+        for (let i = 0; i < enableList.length; i++) {
+            cmd.writeUInt8(enableList[i].handle, 6 + i * 4); // handle
+            cmd.writeUInt16LE(enableList[i].duration, 7 + i * 4); // duration
+            cmd.writeUInt8(enableList[i].events, 9 + i * 4); // events
+        }
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_EXTENDED_ADVERTISING_ENABLE_CMD);
+        this.debug('set extended advertise enable - writing: ' + cmd.toString('hex'));
+        this._socket.write(cmd);
+        const data = await p;
+        return data.status;
+    }
+    async leReadMaximumAdvertisingDataLengthWait() {
+        const data = await this.writeNoParamCommandWait(COMMANDS.LE_READ_MAXIMUM_ADVERTISING_DATA_LENGTH_CMD, 'le read maximum advertising data length');
+        return data.result.readUInt16LE(0);
+    }
+    // 先にsetExtendedAdvertiseEnableWaitで無効化してから行うこと
+    async leClearAdvertisingSetWait() {
+        const data = await this.writeNoParamCommandWait(COMMANDS.LE_CLEAR_ADVERTISING_SETS_CMD, 'le clear advertising Set');
+        return data.result.readUInt16LE(0);
+    }
+    async setExtendedScanParametersWait(isActiveScan, usePhy1m = true, usePhyCoded = true) {
+        const booleanToNumber = (flg) => (flg ? 1 : 0);
+        const cmd = Buffer.alloc(7 + (booleanToNumber(usePhy1m) + booleanToNumber(usePhyCoded)) * 5);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_EXTENDED_SCAN_PARAMETERS_CMD, 1);
+        // length
+        cmd.writeUInt8(3 + (booleanToNumber(usePhy1m) + booleanToNumber(usePhyCoded)) * 5, 3);
+        // data
+        cmd.writeUInt8(0x00, 4); // Own_Address_Type 公開端末アドレス
+        cmd.writeUInt8(0x00, 5); // Scanning_Filter_Policy：本装置宛でない有向広告パケットを除くすべての広告パケットを受信する
+        cmd.writeUInt8(booleanToNumber(usePhy1m) + (booleanToNumber(usePhyCoded) << 2), 6); // Scanning_PHYs：1M Phy and Coded Phy 0b00000101
+        for (let i = 0; i < booleanToNumber(usePhy1m) + booleanToNumber(usePhyCoded); i++) {
+            cmd.writeUInt8(isActiveScan ? 0x01 : 0x00, 7 + i * 5); // Scan_Type ActiveScan 1
+            // コントローラが最後のスキャンを開始してから、プライマリ広告チャネルで次のスキャンを開始するまでの時間間隔。
+            cmd.writeUInt16LE(0x0010, 8 + i * 5); // Scan_Interval //default 10ms //もともとのスキャン機能のインターバルから引用
+            // 主広告チャンネルでのスキャンの持続時間
+            cmd.writeUInt16LE(0x0010, 10 + i * 5); // Scan_Window //default 10ms
+        }
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_EXTENDED_SCAN_PARAMETERS_CMD);
+        this.debug('set extended scan parameters - writing: ' + cmd.toString('hex'));
+        this._socket.write(cmd);
+        const data = await p;
+        return data.status;
+    }
+    async setExtendedScanEnabledWait(enabled, filterDuplicates) {
+        this._extendedAdvertiseJoinData = {};
+        const cmd = Buffer.alloc(10);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_EXTENDED_SCAN_ENABLE_CMD, 1);
+        // length
+        cmd.writeUInt8(0x06, 3);
+        // data
+        cmd.writeUInt8(enabled ? 0x01 : 0x00, 4); // enable: 0 -> disabled, 1 -> enabled
+        cmd.writeUInt8(filterDuplicates ? 0x01 : 0x00, 5); // 0x01 => filter enabled, 0x00 => filter disable
+        cmd.writeUInt16LE(0x0000, 6); // Scan_Duration 明示的に無効化されるまで連続スキャン 既存のスキャンと同じように
+        cmd.writeUInt16LE(0x0000, 8); // Scan_Period 定期的なスキャンを無効にする 連続スキャンなのではいらない
+        this.debug(`set extended scan ${enabled ? 'enabled' : 'disable'} - writing: ${cmd.toString('hex')}`);
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_EXTENDED_SCAN_ENABLE_CMD);
+        this._socket.write(cmd);
+        const data = await p;
+        return data.status;
+    }
+    async createLeExtendedConnWait(address, addressType, timeout = 90 * 1000, onConnectCallback, pyh1m = true, pyh2m = true, pyhCoded = true) {
+        const booleanToNumber = (flg) => (flg ? 1 : 0);
+        const configCount = booleanToNumber(pyh1m) +
+            booleanToNumber(pyh2m) +
+            booleanToNumber(pyhCoded);
+        const cmd = Buffer.alloc(configCount * 16 + 10 + 4);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_EXTENDED_CREATE_CONNECTION_CMD, 1);
+        // length
+        cmd.writeUInt8(configCount * 16 + 10, 3);
+        const parameter = {
+            interval: 0x0010,
+            window: 0x0010,
+            minInterval: 0x0009,
+            maxInterval: 0x0018,
+            latency: 0x0001,
+            supervisionTimeout: 0x0190,
+            minCeLength: 0x0000,
+            maxCeLength: 0x0000,
+        };
+        // data
+        cmd.writeUInt8(0x00, 4); // Initiating_Filter_Policy ホワイトリストは使用しません
+        cmd.writeUInt8(0x00, 5); // Own_Address_Type 公開端末アドレス
+        cmd.writeUInt8(addressType === 'random' ? 0x01 : 0x00, 6); // peer address type
+        bleHelper_1.default.hex2reversedBuffer(address, ':').copy(cmd, 7); // peer address
+        cmd.writeUInt8(booleanToNumber(pyh1m) +
+            booleanToNumber(pyh2m) * 2 +
+            booleanToNumber(pyhCoded) * 4, 13); // Initiating_PHY
+        for (let i = 0; i < configCount; i++) {
+            cmd.writeUInt16LE(parameter.interval, 14 + i * 16); // interval
+            cmd.writeUInt16LE(parameter.window, 16 + i * 16); // window
+            cmd.writeUInt16LE(parameter.minInterval, 18 + i * 16); // minInterval
+            cmd.writeUInt16LE(parameter.maxInterval, 20 + i * 16); // maxInterval
+            cmd.writeUInt16LE(parameter.latency, 22 + i * 16); // latency
+            cmd.writeUInt16LE(parameter.supervisionTimeout, 24 + i * 16); // supervisionTimeout
+            cmd.writeUInt16LE(parameter.minCeLength, 26 + i * 16); // minCeLength
+            cmd.writeUInt16LE(parameter.maxCeLength, 28 + i * 16); // maxCeLength
+        }
+        this.debug('create le extended conn - writing: ' + cmd.toString('hex'));
+        const processConnectionCompletePromise = (async () => {
+            const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, {
+                timeout,
+                waitingFor: 'EVT_LE_CONN_COMPLETE',
+            });
+            return { status, data: this.parseConnectionCompleteEventData(data) };
+        })();
+        const processLeConnectionCompletePromise = (async () => {
+            const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_ENHANCED_CONNECTION_COMPLETE, {
+                timeout,
+                waitingFor: 'EVT_LE_ENHANCED_CONNECTION_COMPLETE',
+            });
+            return { status, data: this.parseLeConnectionCompleteEventData(data) };
+        })();
+        this._socket.write(cmd);
+        const result = await Promise.race([
+            processConnectionCompletePromise,
+            processLeConnectionCompletePromise,
+        ]);
+        return this.processLeConnComplete(result.status, result.data, onConnectCallback);
+    }
     async leSetDefaultPhyCommandWait(allPhys, txPhys, rxPhys) {
         const cmd = Buffer.alloc(7);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(COMMANDS.SET_DEFAULT_PHY_CMD, 1);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_DEFAULT_PHY_CMD, 1);
         // length
         cmd.writeUInt8(3, 3);
         cmd.writeUInt8(allPhys, 4);
         cmd.writeUInt8(txPhys, 5);
         cmd.writeUInt8(rxPhys, 6);
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_DEFAULT_PHY_CMD);
         this.debug('le set default phy - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
+        const data = await p;
+        return data.status;
     }
     async leReadAdvertisingPhysicalChannelTxPowerCommandWait() {
         const data = await this.writeNoParamCommandWait(COMMANDS.LE_READ_ADVERTISING_CHANNEL_TX_POWER_CMD, 'le read advertising channel tx power');
@@ -12876,6 +13971,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(addressType, 9); // own address type: 0 -> public, 1 -> random
         cmd.writeUInt8(0x00, 10); // filter: 0 -> all event types
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_PARAMETERS_CMD);
+        this.debug(`set scan parameters=${isActiveScan ? 'active' : 'passive'} - writing: ${cmd.toString('hex')}`);
         this.debug('set scan parameters - writing: ' + cmd.toString('hex'));
         this._socket.write(cmd);
         const data = await p;
@@ -12891,7 +13987,7 @@ class Hci extends eventemitter3_1.default {
         // data
         cmd.writeUInt8(enabled ? 0x01 : 0x00, 4); // enable: 0 -> disabled, 1 -> enabled
         cmd.writeUInt8(filterDuplicates ? 0x01 : 0x00, 5); // 0x01 => filter enabled, 0x00 => filter disable
-        this.debug('set scan enabled - writing: ' + cmd.toString('hex'));
+        this.debug(`set scan ${enabled ? 'enabled' : 'disable'} - writing: ${cmd.toString('hex')}`);
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_ENABLE_CMD);
         this._socket.write(cmd);
         const data = await p;
@@ -12950,12 +14046,14 @@ class Hci extends eventemitter3_1.default {
         const processConnectionCompletePromise = (async () => {
             const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, {
                 timeout,
+                waitingFor: 'EVT_LE_CONN_COMPLETE',
             });
             return { status, data: this.parseConnectionCompleteEventData(data) };
         })();
         const processLeConnectionCompletePromise = (async () => {
             const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_ENHANCED_CONNECTION_COMPLETE, {
                 timeout,
+                waitingFor: 'EVT_LE_ENHANCED_CONNECTION_COMPLETE',
             });
             return { status, data: this.parseLeConnectionCompleteEventData(data) };
         })();
@@ -12988,7 +14086,9 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(0x0000, 14); // min ce length
         cmd.writeUInt16LE(0x0000, 16); // max ce length
         this.debug('conn update le - writing: ' + cmd.toString('hex'));
-        const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE);
+        const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE, {
+            waitingFor: 'EVT_LE_CONN_UPDATE_COMPLETE',
+        });
         this._socket.write(cmd);
         const { status, data } = await p;
         return this.processLeConnUpdateComplete(status, data);
@@ -13280,6 +14380,9 @@ class Hci extends eventemitter3_1.default {
         if (eventType === COMMANDS.EVT_LE_ADVERTISING_REPORT) {
             this.processLeAdvertisingReport(status, data);
         }
+        else if (eventType === COMMANDS.EVT_LE_EXTENDED_ADVERTISING_REPORT) {
+            this.processLeExtendedAdvertisingReport(status, data);
+        }
         else if (eventType === COMMANDS.EVT_LE_CONN_COMPLETE) {
             const role = data.readUInt8(2);
             if (role === 1) {
@@ -13293,6 +14396,12 @@ class Hci extends eventemitter3_1.default {
                 const connectionData = this.parseConnectionCompleteEventData(data);
                 this.processLeConnComplete(status, connectionData, undefined);
             }
+        }
+        else if (eventType === COMMANDS.EVT_LE_PHY_UPDATE_COMPLETE) {
+            const handler = data.readUInt16LE(0);
+            const txPhy = data.readUInt8(2);
+            const rxPhy = data.readUInt8(3);
+            this.emit('updatePhy', handler, txPhy, rxPhy);
         }
         else if (eventType === COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE) {
             const { handle, interval, latency, supervisionTimeout, } = this.processLeConnUpdateComplete(status, data);
@@ -13372,6 +14481,92 @@ class Hci extends eventemitter3_1.default {
         }
         return result;
     }
+    phyToStr(phy) {
+        switch (phy) {
+            case 0:
+                return 'noPhy';
+            case 1:
+                return '1m';
+            case 2:
+                return '2m';
+            case 3:
+                return 'coded';
+            default:
+                return 'error';
+        }
+    }
+    processLeExtendedAdvertisingReport(count, data) {
+        for (let i = 0; i < count; i++) {
+            const type = data.readUInt16LE(0);
+            const addressType = data.readUInt8(2) === 0x01 ? 'random' : 'public';
+            const address = bleHelper_1.default.buffer2reversedHex(data.slice(3, 9), ':');
+            const primaryPhy = this.phyToStr(data.readUInt8(9));
+            const secondaryPhy = this.phyToStr(data.readUInt8(10));
+            const sid = data.readUInt8(11);
+            const txPower = data.readInt8(12);
+            const rssi = data.readInt8(13);
+            const periodicAdvertisingInterval = data.readUInt16LE(14);
+            const directAddressType = data.readUInt8(16) === 0x01 ? 'random' : 'public';
+            const directAddress = bleHelper_1.default.buffer2reversedHex(data.slice(17, 23), ':');
+            const eirLength = data.readUInt8(23);
+            let eir = data.slice(24, eirLength + 24);
+            this.debug('\t\t\ttype = ' + type);
+            this.debug('\t\t\taddress = ' + address);
+            this.debug('\t\t\taddress type = ' + addressType);
+            this.debug('\t\t\teir = ' + eir.toString('hex'));
+            this.debug('\t\t\trssi =  ' + rssi);
+            this.debug('\t\t\tprimaryPhy =  ' + primaryPhy);
+            this.debug('\t\t\tsecondaryPhy =  ' + secondaryPhy);
+            this.debug('\t\t\tsid =  ' + sid);
+            this.debug('\t\t\ttxPower  ' + txPower);
+            this.debug('\t\t\tperiodicAdvertisingInterval  ' + periodicAdvertisingInterval);
+            this.debug('\t\t\tdirectAddressType  ' + directAddressType);
+            this.debug('\t\t\tdirectAddress  ' + directAddress);
+            this.debug('\t\t\teirLength  ' + eirLength);
+            if ((type & 0x10) === 0) {
+                // レガシー広告ではない
+                const dataMode = type >> 5;
+                switch (dataMode & 0b11) {
+                    case 0:
+                        // complete
+                        if (this._extendedAdvertiseJoinData[address + sid]) {
+                            eir = Buffer.concat([
+                                this._extendedAdvertiseJoinData[address + sid].eir,
+                                eir,
+                            ]);
+                            delete this._extendedAdvertiseJoinData[address + sid];
+                        }
+                        this.debug('\t\t\tcomplete eir = length ' +
+                            eir.length +
+                            ' message' +
+                            eir.toString('hex'));
+                        break;
+                    case 1: {
+                        // 追加データあり
+                        if (this._extendedAdvertiseJoinData[address + sid]) {
+                            this._extendedAdvertiseJoinData[address + sid].eir = Buffer.concat([
+                                this._extendedAdvertiseJoinData[address + sid].eir,
+                                eir,
+                            ]);
+                        }
+                        else {
+                            this._extendedAdvertiseJoinData[address + sid] = {
+                                eir,
+                            };
+                        }
+                        return;
+                    }
+                    case 2:
+                        // エラー追加データなし
+                        delete this._extendedAdvertiseJoinData[address + sid];
+                        return;
+                }
+            }
+            this.debug('\t\t\ttype = ' + type);
+            this.emit('leExtendedAdvertisingReport', 0, type, address, addressType, eir, rssi, primaryPhy, secondaryPhy, sid, txPower, periodicAdvertisingInterval, directAddressType, directAddress);
+            data = data.slice(eirLength + 24);
+        }
+    }
     processLeAdvertisingReport(count, data) {
         for (let i = 0; i < count; i++) {
             const type = data.readUInt8(0);
@@ -13385,7 +14580,7 @@ class Hci extends eventemitter3_1.default {
             this.debug('\t\t\taddress type = ' + addressType);
             this.debug('\t\t\teir = ' + eir.toString('hex'));
             this.debug('\t\t\trssi =  ' + rssi);
-            this.emit('leAdvertisingReport', 0, type, address, addressType, eir, rssi);
+            this.emit('leAdvertisingReport', 0, type, address, addressType, eir, rssi, false);
             data = data.slice(eirLength + 10);
         }
     }
@@ -13430,7 +14625,7 @@ class Hci extends eventemitter3_1.default {
     async readLeMetaEventWait(eventType, options) {
         const filter = this.createLeMetaEventFilter(eventType);
         options = options || {};
-        options.waitingFor = `LeMetaEvent ${JSON.stringify(filter)} (event = ${eventType})`;
+        options.waitingFor = `LeMetaEvent ${options.waitingFor} (${JSON.stringify(filter)}, event = ${eventType})`;
         const data = await this._obnizHci.readWait(filter, options);
         const type = data.readUInt8(3);
         const status = data.readUInt8(4);
@@ -13473,6 +14668,7 @@ class Hci extends eventemitter3_1.default {
     }
     debug(...args) {
         this.debugHandler(`${args[0]}`);
+        // console.debug('debug', args);
     }
     onHciAclData(data) {
         const flags = data.readUInt16LE(1) >> 12;
@@ -13747,6 +14943,7 @@ class BlenoBindings extends eventemitter3_1.default {
     constructor(hciProtocol) {
         super();
         this._state = null;
+        this._extended = false;
         this._advertising = false;
         this._hci = hciProtocol;
         this._gap = new gap_1.default(this._hci);
@@ -13790,6 +14987,25 @@ class BlenoBindings extends eventemitter3_1.default {
     async stopAdvertisingWait() {
         this._advertising = false;
         await this._gap.stopAdvertisingWait();
+    }
+    async setExtendedAdvertisingParametersWait(handle, eventProperties, primaryAdvertisingPhy, secondaryAdvertisingPhy, txPower) {
+        await this._gap.setExtendedAdvertiseParametersWait(handle, eventProperties, primaryAdvertisingPhy, secondaryAdvertisingPhy, txPower);
+    }
+    async setExtendedAdvertisingDataWait(handle, data) {
+        await this._gap.setExtendedAdvertisingDataWait(handle, data);
+    }
+    async setExtendedAdvertisingScanResponseDataWait(handle, data) {
+        await this._gap.setExtendedAdvertisingScanResponseDataWait(handle, data);
+    }
+    async startExtendedAdvertisingWait(handle) {
+        this._advertising = true;
+        this._extended = true;
+        await this._gap.startExtendedAdvertisingWait(handle);
+    }
+    async stopExtendedAdvertisingWait(handle) {
+        this._advertising = false;
+        this._extended = false;
+        await this._gap.stopExtendedAdvertisingWait(handle);
     }
     setServices(services) {
         this._gatt.setServices(services);
@@ -13853,7 +15069,12 @@ class BlenoBindings extends eventemitter3_1.default {
             this.emit('disconnect', address, reason); // TODO: use reason
         }
         if (this._advertising) {
-            await this._gap.restartAdvertisingWait();
+            if (this._extended) {
+                await this._gap.restartExtendedAdvertisingWait(0);
+            }
+            else {
+                await this._gap.restartAdvertisingWait();
+            }
         }
     }
     onEncryptChange(handle, encrypt) {
@@ -14000,6 +15221,54 @@ class Gap extends eventemitter3_1.default {
         advertisementData.writeUInt8(dataLength, 8);
         data.copy(advertisementData, 9);
         await this.startAdvertisingWithEIRDataWait(advertisementData, scanData);
+    }
+    async setExtendedAdvertiseParametersWait(handle, eventProperties, primaryAdvertisingPhy, secondaryAdvertisingPhy, txPower) {
+        await this._hci.setExtendedAdvertisingParametersWait(handle, eventProperties, primaryAdvertisingPhy, secondaryAdvertisingPhy, txPower);
+    }
+    async setExtendedAdvertisingDataWait(handle, data) {
+        await this._hci.setExtendedAdvertisingDataWait(handle, data);
+    }
+    async setExtendedAdvertisingScanResponseDataWait(handle, data) {
+        await this._hci.setExtendedAdvertisingScanResponseDataWait(handle, data);
+    }
+    async restartExtendedAdvertisingWait(handle) {
+        this._advertiseState = 'restarting';
+        await this._hci.setExtendedAdvertisingEnableWait(true, [
+            {
+                handle,
+                duration: 0,
+                events: 0,
+            },
+        ]);
+    }
+    async stopExtendedAdvertisingWait(handle) {
+        this._advertiseState = 'stopping';
+        await this._hci.setExtendedAdvertisingEnableWait(false, [
+            {
+                handle,
+                duration: 0,
+                events: 0,
+            },
+        ]);
+    }
+    async startExtendedAdvertisingWait(handle) {
+        this._advertiseState = 'starting';
+        const status = await this._hci.setExtendedAdvertisingEnableWait(true, [
+            {
+                handle,
+                duration: 0,
+                events: 0,
+            },
+        ]);
+        if (this._advertiseState === 'starting') {
+            this._advertiseState = 'started';
+            if (status) {
+                throw new Error(hci_1.default.STATUS_MAPPER[status] || 'Unknown (' + status + ')');
+            }
+        }
+        else if (this._advertiseState === 'stopping') {
+            this._advertiseState = 'stopped';
+        }
     }
     async startAdvertisingWithEIRDataWait(advertisementData, scanData) {
         advertisementData = advertisementData || Buffer.alloc(0);
@@ -15910,56 +17179,56 @@ exports.default = ObnizSwitch;
 /***/ "./dist/src/obniz/libs/hw/blelte_gw2.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored_lte\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"25\":{},\"26\":{},\"33\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored_lte\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"25\":{},\"26\":{},\"33\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{\"extended\":true}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/blewifi_gw2.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"blewifi_gw2\",\"peripherals\":{\"io\":{\"units\":{}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{}},\"spi\":{\"units\":{}},\"i2c\":{\"units\":{}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":true,\"width\":200,\"height\":200,\"color_depth\":[1]},\"storage\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"blewifi_gw2\",\"peripherals\":{\"io\":{\"units\":{}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{}},\"spi\":{\"units\":{}},\"i2c\":{\"units\":{}}},\"embeds\":{\"ble\":{\"extended\":true},\"display\":{\"paper_white\":true,\"raw_alternate\":true,\"width\":200,\"height\":200,\"color_depth\":[1]},\"storage\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/cc3235mod.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"22\":{},\"23\":{},\"24\":{},\"25\":{},\"28\":{},\"29\":{},\"30\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"22\":{},\"23\":{},\"24\":{},\"25\":{},\"28\":{},\"29\":{},\"30\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"22\":{},\"23\":{},\"24\":{},\"25\":{},\"28\":{},\"29\":{},\"30\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"22\":{},\"23\":{},\"24\":{},\"25\":{},\"28\":{},\"29\":{},\"30\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{\"extended\":false}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/encored.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"25\":{},\"26\":{},\"27\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"25\":{},\"26\":{},\"27\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{\"extended\":false}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/encored_lte.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored_lte\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"25\":{},\"26\":{},\"33\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored_lte\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"25\":{},\"26\":{},\"33\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{\"extended\":false}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{},\"extraInterface\":{}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/esp32c3.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32c3\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"18\":{},\"19\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{}}},\"spi\":{\"units\":{\"0\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32c3\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"18\":{},\"19\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{}}},\"spi\":{\"units\":{\"0\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}}},\"embeds\":{\"ble\":{\"extended\":true}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/esp32p.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"9\":{},\"10\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"9\":{},\"10\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{\"extended\":false}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/esp32w.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{\"extended\":false}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
@@ -16061,7 +17330,7 @@ exports.M5StackBasic = M5StackBasic;
 /***/ "./dist/src/obniz/libs/hw/m5stack_basic.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"m5stack_basic\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"15\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"34\":{},\"35\":{},\"36\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}},\"grove\":{\"units\":{\"0\":{\"pin1\":22,\"pin2\":21}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":320,\"height\":240,\"color_depth\":[1,4,16]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"m5stack_basic\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"15\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"34\":{},\"35\":{},\"36\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}},\"grove\":{\"units\":{\"0\":{\"pin1\":22,\"pin2\":21}}}},\"embeds\":{\"ble\":{\"extended\":false},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":320,\"height\":240,\"color_depth\":[1,4,16]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
@@ -16165,21 +17434,21 @@ exports.M5StickC = M5StickC;
 /***/ "./dist/src/obniz/libs/hw/m5stickc.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"3\",\"hw\":\"m5stickc\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"9\":{},\"10\":{},\"21\":{},\"22\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}},\"grove\":{\"units\":{\"0\":{\"pin1\":33,\"pin2\":32}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":160,\"height\":80,\"color_depth\":[1,4,16]}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{\"m5stickc_hat\":{\"units\":{\"0\":{},\"26\":{},\"36\":{}},\"i2c\":{\"sda\":0,\"scl\":26},\"uart\":{\"tx\":0,\"rx\":26}}}}");
+module.exports = JSON.parse("{\"rev\":\"3\",\"hw\":\"m5stickc\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"9\":{},\"10\":{},\"21\":{},\"22\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}},\"grove\":{\"units\":{\"0\":{\"pin1\":33,\"pin2\":32}}}},\"embeds\":{\"ble\":{\"extended\":false},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":160,\"height\":80,\"color_depth\":[1,4,16]}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{\"m5stickc_hat\":{\"units\":{\"0\":{},\"26\":{},\"36\":{}},\"i2c\":{\"sda\":0,\"scl\":26},\"uart\":{\"tx\":0,\"rx\":26}}}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/obnizb1.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"obnizb1\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":false,\"raw_alternate\":false,\"width\":128,\"height\":64,\"color_depth\":[1]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"obnizb1\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{\"extended\":false},\"display\":{\"paper_white\":false,\"raw_alternate\":false,\"width\":128,\"height\":64,\"color_depth\":[1]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/obnizb2.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"obnizb2\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":true,\"width\":128,\"height\":64,\"color_depth\":[1]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"obnizb2\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{\"extended\":false},\"display\":{\"paper_white\":true,\"raw_alternate\":true,\"width\":128,\"height\":64,\"color_depth\":[1]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
@@ -24424,8 +25693,10 @@ var map = {
 	"./Ble/ENERTALK/index.js": "./dist/src/parts/Ble/ENERTALK/index.js",
 	"./Ble/EXTxx/index.js": "./dist/src/parts/Ble/EXTxx/index.js",
 	"./Ble/EXVital/index.js": "./dist/src/parts/Ble/EXVital/index.js",
+	"./Ble/GT_7510/index.js": "./dist/src/parts/Ble/GT_7510/index.js",
 	"./Ble/HEM_6233T/index.js": "./dist/src/parts/Ble/HEM_6233T/index.js",
 	"./Ble/HEM_9200T/index.js": "./dist/src/parts/Ble/HEM_9200T/index.js",
+	"./Ble/HN_300T2/index.js": "./dist/src/parts/Ble/HN_300T2/index.js",
 	"./Ble/KankiAirMier/index.js": "./dist/src/parts/Ble/KankiAirMier/index.js",
 	"./Ble/LogttaAD/index.js": "./dist/src/parts/Ble/LogttaAD/index.js",
 	"./Ble/LogttaAccel/index.js": "./dist/src/parts/Ble/LogttaAccel/index.js",
@@ -24439,6 +25710,7 @@ var map = {
 	"./Ble/MESH_100PA/index.js": "./dist/src/parts/Ble/MESH_100PA/index.js",
 	"./Ble/MESH_100TH/index.js": "./dist/src/parts/Ble/MESH_100TH/index.js",
 	"./Ble/MINEW_S1/index.js": "./dist/src/parts/Ble/MINEW_S1/index.js",
+	"./Ble/MM_BLEBC5/index.js": "./dist/src/parts/Ble/MM_BLEBC5/index.js",
 	"./Ble/MT_500BT/index.js": "./dist/src/parts/Ble/MT_500BT/index.js",
 	"./Ble/MiniBreeze/index.js": "./dist/src/parts/Ble/MiniBreeze/index.js",
 	"./Ble/PLS_01BT/index.js": "./dist/src/parts/Ble/PLS_01BT/index.js",
@@ -24470,6 +25742,7 @@ var map = {
 	"./Ble/iBS03T_RH/index.js": "./dist/src/parts/Ble/iBS03T_RH/index.js",
 	"./Ble/iBS04/index.js": "./dist/src/parts/Ble/iBS04/index.js",
 	"./Ble/iBS04i/index.js": "./dist/src/parts/Ble/iBS04i/index.js",
+	"./Ble/iBS05G/index.js": "./dist/src/parts/Ble/iBS05G/index.js",
 	"./Ble/iBS05H/index.js": "./dist/src/parts/Ble/iBS05H/index.js",
 	"./Ble/linking/index.js": "./dist/src/parts/Ble/linking/index.js",
 	"./Ble/linking/modules/advertising.js": "./dist/src/parts/Ble/linking/modules/advertising.js",
@@ -24497,6 +25770,7 @@ var map = {
 	"./Ble/utils/abstracts/MESHjs/block/Move.js": "./dist/src/parts/Ble/utils/abstracts/MESHjs/block/Move.js",
 	"./Ble/utils/abstracts/MESHjs/block/TempHumid.js": "./dist/src/parts/Ble/utils/abstracts/MESHjs/block/TempHumid.js",
 	"./Ble/utils/abstracts/MESHjs/util/Error.js": "./dist/src/parts/Ble/utils/abstracts/MESHjs/util/Error.js",
+	"./Ble/utils/abstracts/MINEW.js": "./dist/src/parts/Ble/utils/abstracts/MINEW.js",
 	"./Ble/utils/abstracts/iBS.js": "./dist/src/parts/Ble/utils/abstracts/iBS.js",
 	"./Ble/utils/advertisement/advertismentAnalyzer.js": "./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js",
 	"./Ble/utils/services/batteryService.js": "./dist/src/parts/Ble/utils/services/batteryService.js",
@@ -25649,6 +26923,209 @@ const unsigned16 = (value) => {
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/GT_7510/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.GT_7510
+ */
+/* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const crypto_1 = __importDefault(__webpack_require__("./node_modules/crypto-browserify/index.js"));
+class GT_7510 {
+    constructor(peripheral) {
+        this.key = '';
+        if (!peripheral || !GT_7510.isDevice(peripheral)) {
+            throw new Error('peripheral is not GT_7510');
+        }
+        this._peripheral = peripheral;
+    }
+    static info() {
+        return {
+            name: 'GT_7510',
+        };
+    }
+    static isDevice(peripheral) {
+        return peripheral.localName && peripheral.localName.indexOf('GT-7510') >= 0;
+    }
+    isPairingMode() {
+        if (!this._peripheral) {
+            throw new Error('GT_7510 not found');
+        }
+        if (this._peripheral.adv_data[13] === 3) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    async pairingWait(passkeyCallback) {
+        if (!this.isPairingMode()) {
+            throw new Error('GT_7510 is not pairing mode.');
+        }
+        await this._peripheral.connectWait({
+            pairingOption: {
+                passkeyCallback,
+                onPairedCallback: (keys) => {
+                    this.key = keys;
+                    console.log('paired', keys);
+                },
+                onPairingFailed: () => {
+                    console.log(`pairing failed`);
+                },
+            },
+        });
+        const customService = this._peripheral.getService('7ae4000153f646288894b231f30a81d7');
+        const meterChara = customService.getCharacteristic('7ae4200253f646288894b231f30a81d7');
+        await meterChara.registerNotifyWait((data) => {
+            return;
+        });
+        await meterChara.writeWait([0xa2, 0x6f, 0x62, 0x6e, 0x69, 0x7a]); // obniz
+        return this.key;
+    }
+    async connectWait(key) {
+        await this._peripheral.connectWait({
+            pairingOption: {
+                keys: key ? key : this.key,
+            },
+        });
+    }
+    async getDataWait(key) {
+        const results = [];
+        await this._peripheral.connectWait({
+            pairingOption: {
+                keys: key ? key : this.key,
+            },
+        });
+        const customService = this._peripheral.getService('7ae4000153f646288894b231f30a81d7');
+        const commandChara = customService.getCharacteristic('7ae4100153f646288894b231f30a81d7');
+        const securityChara = customService.getCharacteristic('7ae4200153f646288894b231f30a81d7');
+        let charengeArr;
+        await securityChara.registerNotifyWait((data) => {
+            charengeArr = data.slice(2);
+            if (data[1] === 82) {
+                if (data[2] !== 0) {
+                    throw new Error('Authentication error');
+                }
+            }
+        });
+        await securityChara.writeWait([0x50]);
+        const deviceName = '373531302D';
+        const serialHex = this.toHex(this._peripheral.scan_resp.slice(10, 17));
+        const masterKey = '7AFCE720C798F4F46C98B0B8D87D242E13CD2056B3458D4EC58F4455DA2C89A0';
+        const str = deviceName + serialHex + masterKey;
+        const deviceKey = await this.digestMessageWait(str);
+        const charengeCode = this.toHex(charengeArr);
+        const message = deviceName + serialHex + charengeCode;
+        const deviceKeyBuf = Buffer.from(deviceKey, 'hex');
+        const messageBuf = Buffer.from(message, 'hex');
+        const hmac = crypto_1.default.createHmac('sha256', deviceKeyBuf);
+        hmac.update(messageBuf);
+        const authKey = hmac.digest('hex');
+        const buf = Buffer.from(authKey, 'hex');
+        const arr = [0x52];
+        arr.push(...buf);
+        await securityChara.writeWait(arr);
+        let meterInfoData = [];
+        let mode = 0;
+        await commandChara.registerNotifyWait(async (data) => {
+            if (data[0] === 68 || mode === 1) {
+                mode = 1;
+                meterInfoData = meterInfoData.concat(data);
+            }
+            if (data.slice(-3).toString() === '13,10,6') {
+                const a = meterInfoData;
+                const result = this.analyzeData(a);
+                meterInfoData = [];
+                mode = 0;
+                results.push(result);
+                await this._peripheral.disconnectWait();
+            }
+        });
+        await commandChara.writeWait([0x16]);
+        const waitDisconnect = new Promise((resolve, reject) => {
+            if (!this._peripheral)
+                return;
+            this._peripheral.ondisconnect = (reason) => {
+                resolve(results);
+            };
+        });
+        return await waitDisconnect;
+    }
+    async digestMessageWait(message) {
+        const buffer = Buffer.from(message, 'hex');
+        return crypto_1.default.createHash('sha256').update(buffer).digest('hex');
+    }
+    toHex(arr) {
+        return arr.map((b) => b.toString(16).padStart(2, '0')).join('');
+    }
+    analyzeData(data) {
+        const _data = [];
+        let pos = 0;
+        for (let i = 0; i < data.length; i++) {
+            if (data[i] === 124) {
+                _data.push(data.slice(pos, i));
+                pos = i + 1;
+            }
+        }
+        data = _data[4];
+        const r = String.fromCharCode(data[4], data[5]);
+        const l = String.fromCharCode(data[6], data[7]);
+        const min = String.fromCharCode(data[8], data[9]);
+        const hour = String.fromCharCode(data[10], data[11]);
+        const day = String.fromCharCode(data[12], data[13]);
+        const month = String.fromCharCode(data[14], data[15]);
+        const year = String.fromCharCode(data[16], data[17]);
+        let range = String.fromCharCode(data[18], data[19]);
+        let timing = String.fromCharCode(data[20]);
+        let _range = parseInt(range, 16);
+        _range = _range & 96; // 96 = flag up(bit5,bit6)
+        if (_range === 0) {
+            // 00
+            range = '通常';
+        }
+        else if (_range === 64) {
+            // 10
+            range = '高値';
+        }
+        else if (_range === 32) {
+            // 01
+            range = '低値';
+        }
+        const timngArr = [
+            '未指定',
+            '朝食前',
+            '朝食後',
+            '昼食前',
+            '昼食後',
+            '夕食前',
+            '夕食後',
+            '就寝前',
+            '夜間',
+            '食後マーク',
+        ];
+        timing = timngArr[parseInt(timing, 16)];
+        const result = {
+            glucose: (parseInt(l, 16) << 8) | parseInt(r, 16),
+            date: `${year}/${month}/${day} ${hour}:${min}`,
+            range,
+            timing,
+        };
+        return result;
+    }
+}
+exports.default = GT_7510;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/HEM_6233T/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -26098,6 +27575,128 @@ exports.default = HEM_9200T;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/HN_300T2/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.HN_300T2
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+class HN_300T2 {
+    constructor(peripheral, timezoneOffset) {
+        if (!peripheral || !HN_300T2.isDevice(peripheral)) {
+            throw new Error('peripheral is not HN_300TN');
+        }
+        this._peripheral = peripheral;
+        this._timezoneOffset = timezoneOffset ? timezoneOffset : 9;
+    }
+    static info() {
+        return {
+            name: 'HN_300T2',
+        };
+    }
+    static isDevice(peripheral) {
+        return (peripheral.localName && peripheral.localName.startsWith('BLESmart_0001'));
+    }
+    isPairingMode() {
+        if (!this._peripheral) {
+            throw new Error('HN_300TN not found');
+        }
+        if ((this._peripheral.adv_data[15] & 8) === 8) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    async pairingWait() {
+        if (!this.isPairingMode()) {
+            throw new Error('HN_300TN is not pairing mode.');
+        }
+        const keys = await new Promise((resolve, reject) => {
+            this._peripheral
+                .connectWait({
+                pairingOption: {
+                    onPairedCallback: (pairingKey) => {
+                        console.log('key', pairingKey);
+                        resolve(pairingKey);
+                    },
+                },
+            })
+                .catch(reject);
+        });
+        await this._peripheral.disconnectWait();
+        return;
+    }
+    async getDataWait(pairingKeys) {
+        if (!this._peripheral) {
+            throw new Error('HN_300T2 not found');
+        }
+        await this._peripheral.connectWait({
+            pairingOption: { keys: pairingKeys },
+        });
+        const results = [];
+        const deviceInfoService = this._peripheral.getService('1805');
+        const currentTimeChara = deviceInfoService.getCharacteristic('2A2B');
+        await this.writeCurrentTimeWait(currentTimeChara);
+        const service = this._peripheral.getService('181D');
+        const waitDisconnect = new Promise((resolve, reject) => {
+            if (!this._peripheral)
+                return;
+            this._peripheral.ondisconnect = (reason) => {
+                resolve(results);
+            };
+        });
+        const WeightMeasurementChara = service.getCharacteristic('2A9D');
+        await WeightMeasurementChara.registerNotifyWait(async (data) => {
+            results.push(this._analyseWeightMesureData(data));
+            return;
+        });
+        return await waitDisconnect;
+    }
+    _analyseWeightMesureData(data) {
+        const buf = Buffer.from(data);
+        const result = {};
+        result.weight = ((data[2] << 8) | data[1]) * 0.005;
+        result.date = {
+            year: buf.readUInt16LE(3),
+            month: buf.readUInt8(5),
+            day: buf.readUInt8(6),
+            hour: buf.readUInt8(7),
+            minute: buf.readUInt8(8),
+            second: buf.readUInt8(9),
+        };
+        const user = buf.readUInt8(10);
+        return result;
+    }
+    async writeCurrentTimeWait(chara) {
+        const dayFormat = [7, 1, 2, 3, 4, 5, 6];
+        const date = new Date();
+        date.setTime(Date.now() + 1000 * 60 * 60 * this._timezoneOffset);
+        const buf = Buffer.alloc(10);
+        buf.writeUInt16LE(date.getUTCFullYear(), 0);
+        buf.writeUInt8(date.getUTCMonth() + 1, 2);
+        buf.writeUInt8(date.getUTCDate(), 3);
+        buf.writeUInt8(date.getUTCHours(), 4);
+        buf.writeUInt8(date.getUTCMinutes(), 5);
+        buf.writeUInt8(date.getUTCSeconds(), 6);
+        buf.writeUInt8(dayFormat[date.getUTCDay()], 7);
+        buf.writeUInt8(Math.trunc(date.getUTCMilliseconds() / (9999 / 256)), 8);
+        buf.writeUInt8(1, 9);
+        const arr = Array.from(buf);
+        await chara.writeWait(arr);
+    }
+}
+exports.default = HN_300T2;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/KankiAirMier/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -26108,8 +27707,12 @@ exports.default = HEM_9200T;
  * @module Parts.KankiAirMier
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+const round_to_1 = __importDefault(__webpack_require__("./node_modules/round-to/index.js"));
 /** Kanki AirMier management class 換気エアミエルを管理するクラス */
 class KankiAirMier {
     constructor() {
@@ -26155,8 +27758,8 @@ class KankiAirMier {
         const deviceName = Buffer.from(allData.manufacture.deviceName).toString('utf8');
         return {
             co2: co2Raw,
-            temperature: temperatureRaw / 10,
-            humidity: humidityRaw / 10,
+            temperature: round_to_1.default(temperatureRaw / 10, 1),
+            humidity: round_to_1.default(humidityRaw / 10, 1),
             sequenceNumber,
             deviceName,
         };
@@ -26340,7 +27943,7 @@ Logtta_AD.BeaconDataStruct = {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
+/* WEBPACK VAR INJECTION */(function(Buffer) {
 /**
  * @packageDocumentation
  * @module Parts.Logtta_Accel
@@ -26352,6 +27955,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
 const Logtta_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/abstracts/Logtta.js"));
+const round_to_1 = __importDefault(__webpack_require__("./node_modules/round-to/index.js"));
 /**
  * Logtta_Accel management class Logtta_Accelを管理するクラス
  *
@@ -26435,8 +28039,8 @@ class Logtta_Accel extends Logtta_1.default {
                     accel_axis: d[20] & 0b00000111,
                     accel_resolution: d[21],
                 },
-                temperature: Math.floor((((d[22] | (d[23] << 8)) / 65535) * 175 - 45) * 100) / 100,
-                humidity: Math.floor(((d[24] | (d[25] << 8)) / 65535) * 100 * 100) / 100,
+                temperature: round_to_1.default(Math.floor((((d[22] | (d[23] << 8)) / 65535) * 175 - 45) * 100) / 100, 3),
+                humidity: round_to_1.default(Math.floor(((d[24] | (d[25] << 8)) / 65535) * 100 * 100) / 100, 3),
                 alert: alertArray,
             };
         }
@@ -26463,42 +28067,51 @@ class Logtta_Accel extends Logtta_1.default {
         if (!Logtta_Accel.isDevice(peripheral)) {
             return null;
         }
-        if (peripheral.scan_resp && peripheral.scan_resp.length === 31) {
-            const d = peripheral.scan_resp;
-            // console.log(
-            //   `x peak ${data.x.peak} rms ${data.x.rms} y peak ${data.y.peak} rms ${data.y.rms} z peak ${data.z.peak} rms ${data.z.rms} address ${data.address}`,
-            // );
-            return {
+        const scanData = Logtta_Accel.getScanData(peripheral);
+        if (peripheral.scan_resp &&
+            peripheral.scan_resp.length === 31 &&
+            scanData) {
+            const buf = Buffer.from(peripheral.scan_resp);
+            const raw = {
                 x: {
-                    peak: d[5] | (d[6] << 8),
-                    rms: d[7] |
-                        (d[8] << 8) |
-                        (d[9] << 16) |
-                        (d[10] << 24) |
-                        (d[11] << 32) |
-                        (d[12] << 40),
+                    peak: Logtta_Accel._convertAccel(buf.readUInt16LE(5), scanData.setting),
+                    rms: Logtta_Accel._convertRms(buf.readUInt32LE(7) | (buf.readUInt16LE(11) << 32), scanData.setting),
                 },
                 y: {
-                    peak: d[13] | (d[14] << 8),
-                    rms: d[15] |
-                        (d[16] << 8) |
-                        (d[17] << 16) |
-                        (d[18] << 24) |
-                        (d[19] << 32) |
-                        (d[20] << 40),
+                    peak: Logtta_Accel._convertAccel(buf.readUInt16LE(13), scanData.setting),
+                    rms: Logtta_Accel._convertRms(buf.readUInt32LE(15) | (buf.readUInt16LE(19) << 32), scanData.setting),
                 },
                 z: {
-                    peak: d[21] | (d[22] << 8),
-                    rms: d[23] |
-                        (d[24] << 8) |
-                        (d[25] << 16) |
-                        (d[26] << 24) |
-                        (d[27] << 32) |
-                        (d[28] << 40),
+                    peak: Logtta_Accel._convertAccel(buf.readUInt16LE(21), scanData.setting),
+                    rms: Logtta_Accel._convertRms(buf.readUInt32LE(23) | (buf.readUInt16LE(27) << 32), scanData.setting),
                 },
             };
+            return raw;
         }
         return null;
+    }
+    /**
+     * 加速度ピークを物理量に変換する
+     *
+     * @private
+     */
+    static _convertAccel(peak, setting) {
+        // return peak;
+        const result = (peak * setting.accel_range * 9.8) /
+            Math.pow(2, setting.accel_resolution - 1);
+        return round_to_1.default(result, 4);
+    }
+    /**
+     * 加速度ピークを物理量に変換する
+     *
+     * @private
+     */
+    static _convertRms(rms, setting) {
+        const n = setting.accel_sampling * setting.temp_cycle;
+        const result = ((setting.accel_range * 9.8) /
+            Math.pow(2, setting.accel_resolution - 1)) *
+            Math.sqrt(rms / n);
+        return round_to_1.default(result, 4);
     }
 }
 exports.default = Logtta_Accel;
@@ -26566,13 +28179,13 @@ Logtta_Accel.BeaconDataStruct = {
             index: 18,
             length: 2,
             type: 'custom',
-            func: (data) => (ObnizPartsBleAbstract_1.uint(data) / 0x10000) * 175 - 45,
+            func: (data) => round_to_1.default((ObnizPartsBleAbstract_1.uint(data) / 0x10000) * 175 - 45, 3),
         },
         humidity: {
             index: 20,
             length: 2,
             type: 'custom',
-            func: (data) => (ObnizPartsBleAbstract_1.uint(data) / 0x10000) * 100,
+            func: (data) => round_to_1.default((ObnizPartsBleAbstract_1.uint(data) / 0x10000) * 100, 3),
         },
         alert: {
             index: 22,
@@ -26598,13 +28211,21 @@ Logtta_Accel.BeaconDataStruct = {
             func: (data, peripheral) => {
                 if (!peripheral.manufacturerSpecificData)
                     throw new Error('Manufacturer specific data is null.');
-                const range = Logtta_Accel.parseAccelRangeData(peripheral.manufacturerSpecificData[17]);
-                const resolution = peripheral.manufacturerSpecificData[19];
-                return Object.fromEntries(['x', 'y', 'z'].map((key, i) => [
-                    key,
-                    (ObnizPartsBleAbstract_1.uint(data.slice(i * 8, i * 8 + 2)) / (2 ** resolution - 1)) *
-                        range,
-                ]));
+                const d = Logtta_Accel.getAccelData(peripheral);
+                if (d) {
+                    return {
+                        x: d.x.peak,
+                        y: d.y.peak,
+                        z: d.z.peak,
+                    };
+                }
+                else {
+                    return {
+                        x: 0,
+                        y: 0,
+                        z: 0,
+                    };
+                }
             },
             scanResponse: true,
         },
@@ -26615,20 +28236,28 @@ Logtta_Accel.BeaconDataStruct = {
             func: (data, peripheral) => {
                 if (!peripheral.manufacturerSpecificData)
                     throw new Error('Manufacturer specific data is null.');
-                const range = Logtta_Accel.parseAccelRangeData(peripheral.manufacturerSpecificData[17]);
-                const resolution = peripheral.manufacturerSpecificData[19];
-                const n = Logtta_Accel.parseAccelSamplingData(peripheral.manufacturerSpecificData[16]) * ObnizPartsBleAbstract_1.uint(peripheral.manufacturerSpecificData.slice(14, 16));
-                return Object.fromEntries(['x', 'y', 'z'].map((key, i) => [
-                    key,
-                    (range / (2 ** resolution - 1)) *
-                        Math.sqrt(ObnizPartsBleAbstract_1.uint(data.slice(i * 8 + 2, i * 8 + 8)) / n),
-                ]));
+                const d = Logtta_Accel.getAccelData(peripheral);
+                if (d) {
+                    return {
+                        x: d.x.rms,
+                        y: d.y.rms,
+                        z: d.z.rms,
+                    };
+                }
+                else {
+                    return {
+                        x: 0,
+                        y: 0,
+                        z: 0,
+                    };
+                }
             },
             scanResponse: true,
         },
     },
 };
 
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -26837,6 +28466,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
 const Logtta_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/abstracts/Logtta.js"));
+const round_to_1 = __importDefault(__webpack_require__("./node_modules/round-to/index.js"));
 /**
  * Logtta_TH(Logtta_Temp) management class
  *
@@ -26848,10 +28478,10 @@ class Logtta_TH extends Logtta_1.default {
         this.staticClass = Logtta_TH;
     }
     static parseTemperatureData(data, func = ObnizPartsBleAbstract_1.uint) {
-        return (func(data) / 0x10000) * 175.72 - 46.85;
+        return round_to_1.default((func(data) / 0x10000) * 175.72 - 46.85, 2);
     }
     static parseHumidityData(data, func = ObnizPartsBleAbstract_1.uint) {
-        return (func(data) / 0x10000) * 125 - 6;
+        return round_to_1.default((func(data) / 0x10000) * 125 - 6, 2);
     }
     /**
      * @deprecated
@@ -27053,6 +28683,16 @@ class MESH_100AC extends MESH_1.MESH {
         this.staticClass = MESH_100AC;
     }
     /**
+     * Check MESH block
+     *
+     * @param peripheral
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(peripheral, opt_serialnumber = '') {
+        return Move_1.Move.isMESHblock(peripheral.localName, opt_serialnumber);
+    }
+    /**
      * getDataWait
      *
      * @returns
@@ -27063,9 +28703,6 @@ class MESH_100AC extends MESH_1.MESH {
             name: this.peripheral.localName,
             address: this.peripheral.address,
         };
-    }
-    static _isMESHblock(name) {
-        return name.indexOf(MESH_100AC.PREFIX) === 0;
     }
     prepareConnect() {
         this.meshBlock = new Move_1.Move();
@@ -27102,7 +28739,7 @@ class MESH_100AC extends MESH_1.MESH {
 }
 exports.default = MESH_100AC;
 MESH_100AC.PartsName = 'MESH_100AC';
-MESH_100AC.PREFIX = 'MESH-100AC';
+MESH_100AC.LocalName = /^MESH-100AC/;
 
 
 /***/ }),
@@ -27131,6 +28768,16 @@ class MESH_100BU extends MESH_1.MESH {
         this.staticClass = MESH_100BU;
     }
     /**
+     * Check MESH block
+     *
+     * @param peripheral
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(peripheral, opt_serialnumber = '') {
+        return Button_1.Button.isMESHblock(peripheral.localName, opt_serialnumber);
+    }
+    /**
      * getDataWait
      *
      * @returns
@@ -27141,9 +28788,6 @@ class MESH_100BU extends MESH_1.MESH {
             name: this.peripheral.localName,
             address: this.peripheral.address,
         };
-    }
-    static _isMESHblock(name) {
-        return name.indexOf(MESH_100BU.PREFIX) !== -1;
     }
     prepareConnect() {
         this.meshBlock = new Button_1.Button();
@@ -27174,7 +28818,7 @@ class MESH_100BU extends MESH_1.MESH {
 }
 exports.default = MESH_100BU;
 MESH_100BU.PartsName = 'MESH_100BU';
-MESH_100BU.PREFIX = 'MESH-100BU';
+MESH_100BU.LocalName = /^MESH-100BU/;
 
 
 /***/ }),
@@ -27209,13 +28853,23 @@ class MESH_100GP extends MESH_1.MESH {
         this.pwmRatio_ = 0;
         this.vcc_ = MESH_100GP.Vcc.OFF;
         this.analogInputRangeUpper_ = 0;
-        this.analogInputRangeBottom_ = 0;
+        this.analogInputRangeLower_ = 0;
         this.analogInputCondition_ = MESH_100GP.AnalogInputEventCondition.NOT_NOTIFY;
         this.retDigitalInState_ = -1;
         this.retPwm_ = -1;
         this.retVccState_ = -1;
         this.retLevel_ = -1;
         this.retDigitalOutState_ = -1;
+    }
+    /**
+     * Check MESH block
+     *
+     * @param peripheral
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(peripheral, opt_serialnumber = '') {
+        return GPIO_1.GPIO.isMESHblock(peripheral.localName, opt_serialnumber);
     }
     /**
      * getDataWait
@@ -27235,11 +28889,11 @@ class MESH_100GP extends MESH_1.MESH {
      * @param pin
      * @returns
      */
-    async getDigitalInputDataWait(pin) {
+    async getDigitalInputDataWait(pin, opt_timeoutMsec = this.TIMEOUT_MSEC) {
         const _requestId = this.requestId.next();
         const _gpioBlock = this.meshBlock;
-        const _command = _gpioBlock.parseDigitalInputCommand(pin, _requestId);
-        await this.getSensorDataWait(_requestId, _command);
+        const _command = _gpioBlock.createDigitalInputCommand(pin, _requestId);
+        await this.getSensorDataWait(_requestId, _command, opt_timeoutMsec);
         return this.retDigitalInState_;
     }
     /**
@@ -27247,11 +28901,11 @@ class MESH_100GP extends MESH_1.MESH {
      *
      * @returns
      */
-    async getAnalogInputDataWait() {
+    async getAnalogInputDataWait(opt_timeoutMsec = this.TIMEOUT_MSEC) {
         const _requestId = this.requestId.next();
         const _gpioBlock = this.meshBlock;
-        const _command = _gpioBlock.parseAnalogInputCommand(MESH_100GP.AnalogInputNotifyMode.ONCE, _requestId);
-        await this.getSensorDataWait(_requestId, _command);
+        const _command = _gpioBlock.createAnalogInputCommand(MESH_100GP.AnalogInputNotifyMode.ONCE, _requestId);
+        await this.getSensorDataWait(_requestId, _command, opt_timeoutMsec);
         return this.retLevel_;
     }
     /**
@@ -27259,11 +28913,11 @@ class MESH_100GP extends MESH_1.MESH {
      *
      * @returns
      */
-    async getVOutputDataWait() {
+    async getVOutputDataWait(opt_timeoutMsec = this.TIMEOUT_MSEC) {
         const _requestId = this.requestId.next();
         const _gpioBlock = this.meshBlock;
-        const _command = _gpioBlock.parseVOutputCommand(_requestId);
-        await this.getSensorDataWait(_requestId, _command);
+        const _command = _gpioBlock.createVOutputCommand(_requestId);
+        await this.getSensorDataWait(_requestId, _command, opt_timeoutMsec);
         return this.retVccState_;
     }
     /**
@@ -27272,11 +28926,11 @@ class MESH_100GP extends MESH_1.MESH {
      * @param pin
      * @returns
      */
-    async getDigitalOutputDataWait(pin) {
+    async getDigitalOutputDataWait(pin, opt_timeoutMsec = this.TIMEOUT_MSEC) {
         const _requestId = this.requestId.next();
         const _gpioBlock = this.meshBlock;
-        const _command = _gpioBlock.parseDigitalOutputCommand(pin, _requestId);
-        await this.getSensorDataWait(_requestId, _command);
+        const _command = _gpioBlock.createDigitalOutputCommand(pin, _requestId);
+        await this.getSensorDataWait(_requestId, _command, opt_timeoutMsec);
         return this.retDigitalOutState_;
     }
     /**
@@ -27284,11 +28938,11 @@ class MESH_100GP extends MESH_1.MESH {
      *
      * @returns
      */
-    async getPwmDataWait() {
+    async getPwmDataWait(opt_timeoutMsec = this.TIMEOUT_MSEC) {
         const _requestId = this.requestId.next();
         const _gpioBlock = this.meshBlock;
-        const _command = _gpioBlock.parsePwmCommand(_requestId);
-        await this.getSensorDataWait(_requestId, _command);
+        const _command = _gpioBlock.createPwmCommand(_requestId);
+        await this.getSensorDataWait(_requestId, _command, opt_timeoutMsec);
         return this.retPwm_;
     }
     /**
@@ -27300,12 +28954,12 @@ class MESH_100GP extends MESH_1.MESH {
      * @param pwmRatio 0-255
      * @param vcc Vcc.ON or Vcc.OFF
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
-     * @param analogInputRangeBottom 0-255(0.00-3.00[V])
+     * @param analogInputRangeLower 0-255(0.00-3.00[V])
      * @param analogInputCondition AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
      */
-    setMode(digitalInputLow2High, digitalInputHigh2Low, digitalOutput, pwmRatio, vcc, analogInputRangeUpper, analogInputRangeBottom, analogInputCondition) {
+    setMode(digitalInputLow2High, digitalInputHigh2Low, digitalOutput, pwmRatio, vcc, analogInputRangeUpper, analogInputRangeLower, analogInputCondition) {
         const gpioBlock = this.meshBlock;
-        const command = gpioBlock.parseSetmodeCommand(digitalInputLow2High, digitalInputHigh2Low, digitalOutput, pwmRatio, vcc, analogInputRangeUpper, analogInputRangeBottom, analogInputCondition);
+        const command = gpioBlock.createSetmodeCommand(digitalInputLow2High, digitalInputHigh2Low, digitalOutput, pwmRatio, vcc, analogInputRangeUpper, analogInputRangeLower, analogInputCondition);
         this.writeWOResponse(command);
         this.digitalInputLow2High_ = digitalInputLow2High;
         this.digitalInputHigh2Low_ = digitalInputHigh2Low;
@@ -27313,7 +28967,7 @@ class MESH_100GP extends MESH_1.MESH {
         this.pwmRatio_ = pwmRatio;
         this.vcc_ = vcc;
         this.analogInputRangeUpper_ = analogInputRangeUpper;
-        this.analogInputRangeBottom_ = analogInputRangeBottom;
+        this.analogInputRangeLower_ = analogInputRangeLower;
         this.analogInputCondition_ = analogInputCondition;
     }
     /**
@@ -27324,7 +28978,7 @@ class MESH_100GP extends MESH_1.MESH {
      */
     setModeDigitalInput(digitalInputLow2High, digitalInputHigh2Low) {
         const gpioBlock = this.meshBlock;
-        const command = gpioBlock.parseSetmodeCommand(digitalInputLow2High, digitalInputHigh2Low, this.digitalOutput_, this.pwmRatio_, this.vcc_, this.analogInputRangeUpper_, this.analogInputRangeBottom_, this.analogInputCondition_);
+        const command = gpioBlock.createSetmodeCommand(digitalInputLow2High, digitalInputHigh2Low, this.digitalOutput_, this.pwmRatio_, this.vcc_, this.analogInputRangeUpper_, this.analogInputRangeLower_, this.analogInputCondition_);
         this.writeWOResponse(command);
         this.digitalInputLow2High_ = digitalInputLow2High;
         this.digitalInputHigh2Low_ = digitalInputHigh2Low;
@@ -27333,15 +28987,15 @@ class MESH_100GP extends MESH_1.MESH {
      * setModeAnalogInput
      *
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
-     * @param analogInputRangeBottom 0-255(0.00-3.00[V])
+     * @param analogInputRangeLower 0-255(0.00-3.00[V])
      * @param analogInputCondition AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
      */
-    setModeAnalogInput(analogInputRangeUpper, analogInputRangeBottom, analogInputCondition) {
+    setModeAnalogInput(analogInputRangeUpper, analogInputRangeLower, analogInputCondition) {
         const gpioBlock = this.meshBlock;
-        const command = gpioBlock.parseSetmodeCommand(this.digitalInputLow2High_, this.digitalInputHigh2Low_, this.digitalOutput_, this.pwmRatio_, this.vcc_, analogInputRangeUpper, analogInputRangeBottom, analogInputCondition);
+        const command = gpioBlock.createSetmodeCommand(this.digitalInputLow2High_, this.digitalInputHigh2Low_, this.digitalOutput_, this.pwmRatio_, this.vcc_, analogInputRangeUpper, analogInputRangeLower, analogInputCondition);
         this.writeWOResponse(command);
         this.analogInputRangeUpper_ = analogInputRangeUpper;
-        this.analogInputRangeBottom_ = analogInputRangeBottom;
+        this.analogInputRangeLower_ = analogInputRangeLower;
         this.analogInputCondition_ = analogInputCondition;
     }
     /**
@@ -27351,7 +29005,7 @@ class MESH_100GP extends MESH_1.MESH {
      */
     setDigitalOutput(digitalOutput) {
         const gpioBlock = this.meshBlock;
-        const command = gpioBlock.parseSetmodeCommand(this.digitalInputLow2High_, this.digitalInputHigh2Low_, digitalOutput, this.pwmRatio_, this.vcc_, this.analogInputRangeUpper_, this.analogInputRangeBottom_, this.analogInputCondition_);
+        const command = gpioBlock.createSetmodeCommand(this.digitalInputLow2High_, this.digitalInputHigh2Low_, digitalOutput, this.pwmRatio_, this.vcc_, this.analogInputRangeUpper_, this.analogInputRangeLower_, this.analogInputCondition_);
         this.writeWOResponse(command);
         this.digitalOutput_ = digitalOutput;
     }
@@ -27362,7 +29016,7 @@ class MESH_100GP extends MESH_1.MESH {
      */
     setPwmOutput(pwmRatio) {
         const gpioBlock = this.meshBlock;
-        const command = gpioBlock.parseSetmodeCommand(this.digitalInputLow2High_, this.digitalInputHigh2Low_, this.digitalOutput_, pwmRatio, this.vcc_, this.analogInputRangeUpper_, this.analogInputRangeBottom_, this.analogInputCondition_);
+        const command = gpioBlock.createSetmodeCommand(this.digitalInputLow2High_, this.digitalInputHigh2Low_, this.digitalOutput_, pwmRatio, this.vcc_, this.analogInputRangeUpper_, this.analogInputRangeLower_, this.analogInputCondition_);
         this.writeWOResponse(command);
         this.pwmRatio_ = pwmRatio;
     }
@@ -27373,12 +29027,9 @@ class MESH_100GP extends MESH_1.MESH {
      */
     setVOutput(vcc) {
         const gpioBlock = this.meshBlock;
-        const command = gpioBlock.parseSetmodeCommand(this.digitalInputLow2High_, this.digitalInputHigh2Low_, this.digitalOutput_, this.pwmRatio_, vcc, this.analogInputRangeUpper_, this.analogInputRangeBottom_, this.analogInputCondition_);
+        const command = gpioBlock.createSetmodeCommand(this.digitalInputLow2High_, this.digitalInputHigh2Low_, this.digitalOutput_, this.pwmRatio_, vcc, this.analogInputRangeUpper_, this.analogInputRangeLower_, this.analogInputCondition_);
         this.writeWOResponse(command);
         this.vcc_ = vcc;
-    }
-    static _isMESHblock(name) {
-        return name.indexOf(MESH_100GP.PREFIX) !== -1;
     }
     prepareConnect() {
         this.meshBlock = new GPIO_1.GPIO();
@@ -27445,14 +29096,13 @@ class MESH_100GP extends MESH_1.MESH {
     async beforeOnDisconnectWait(reason) {
         // do nothing
     }
-    async getSensorDataWait(requestId, command) {
+    async getSensorDataWait(requestId, command, timeoutMsec) {
         this.checkConnected();
         this.writeWOResponse(command);
-        const _TIMEOUT_MSEC = 2500;
         let _isTimeout = false;
         const _timeoutId = setTimeout(() => {
             _isTimeout = true;
-        }, _TIMEOUT_MSEC);
+        }, timeoutMsec);
         const INTERVAL_TIME = 50;
         const _result = await new Promise((resolve) => {
             const _intervalId = setInterval(() => {
@@ -27476,7 +29126,7 @@ class MESH_100GP extends MESH_1.MESH {
 }
 exports.default = MESH_100GP;
 MESH_100GP.PartsName = 'MESH_100GP';
-MESH_100GP.PREFIX = 'MESH-100GP';
+MESH_100GP.LocalName = /^MESH-100GP/;
 MESH_100GP.AnalogInputEventCondition = GPIO_1.GPIO.AnalogInputEventCondition;
 MESH_100GP.AnalogInputNotifyMode = GPIO_1.GPIO.AnalogInputNotifyMode;
 MESH_100GP.Pin = GPIO_1.GPIO.Pin;
@@ -27509,6 +29159,16 @@ class MESH_100LE extends MESH_1.MESH {
         this.staticClass = MESH_100LE;
     }
     /**
+     * Check MESH block
+     *
+     * @param peripheral
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(peripheral, opt_serialnumber = '') {
+        return LED_1.LED.isMESHblock(peripheral.localName, opt_serialnumber);
+    }
+    /**
      * getDataWait
      *
      * @returns
@@ -27528,15 +29188,12 @@ class MESH_100LE extends MESH_1.MESH {
      * @param cycleOnTime 0-65,535 [ms]
      * @param cycleOffTime 0-65,535 [ms]
      * @param pattern Pattern.BLINK or Pattern.FIREFLY
-     * @returns
+     * @returns void
      */
     setLed(colors, totalTime, cycleOnTime, cycleOffTime, pattern) {
         const ledBlock = this.meshBlock;
-        const command = ledBlock.parseLedCommand(colors, totalTime, cycleOnTime, cycleOffTime, pattern);
+        const command = ledBlock.createLedCommand(colors, totalTime, cycleOnTime, cycleOffTime, pattern);
         this.writeWOResponse(command);
-    }
-    static _isMESHblock(name) {
-        return name.indexOf(MESH_100LE.PREFIX) !== -1;
     }
     prepareConnect() {
         this.meshBlock = new LED_1.LED();
@@ -27548,7 +29205,7 @@ class MESH_100LE extends MESH_1.MESH {
 }
 exports.default = MESH_100LE;
 MESH_100LE.PartsName = 'MESH_100LE';
-MESH_100LE.PREFIX = 'MESH-100LE';
+MESH_100LE.LocalName = /^MESH-100LE/;
 MESH_100LE.Pattern = LED_1.LED.PATTERN;
 
 
@@ -27577,8 +29234,18 @@ class MESH_100MD extends MESH_1.MESH {
         this.staticClass = MESH_100MD;
         this.retMotionState_ = -1;
         this.notifyMode_ = -1;
-        this.detectionTime_ = 500; // [ms]
         this.holdingTime_ = 500; // [ms]
+        this.detectionTime_ = 500; // [ms]
+    }
+    /**
+     * Check MESH block
+     *
+     * @param peripheral
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(peripheral, opt_serialnumber = '') {
+        return Motion_1.Motion.isMESHblock(peripheral.localName, opt_serialnumber);
     }
     /**
      * getDataWait
@@ -27587,10 +29254,10 @@ class MESH_100MD extends MESH_1.MESH {
      */
     async getDataWait() {
         this.checkConnected();
-        const motionBlock = this.meshBlock;
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
+            motionState: await this.getSensorDataWait(),
         };
     }
     /**
@@ -27598,15 +29265,14 @@ class MESH_100MD extends MESH_1.MESH {
      *
      * @returns
      */
-    async getSensorDataWait() {
+    async getSensorDataWait(opt_timeoutMsec = this.TIMEOUT_MSEC) {
         this.checkConnected();
         const _requestId = this.requestId.next();
-        this.setMode_(MESH_100MD.NotifyMode.ONCE, this.detectionTime_, this.holdingTime_, _requestId);
-        const _TIMEOUT_MSEC = 2000;
+        this.setMode_(MESH_100MD.NotifyMode.ONCE, this.holdingTime_, this.detectionTime_, _requestId);
         let _isTimeout = false;
         const _timeoutId = setTimeout(() => {
             _isTimeout = true;
-        }, _TIMEOUT_MSEC);
+        }, opt_timeoutMsec);
         const INTERVAL_TIME = 50;
         const _result = await new Promise((resolve) => {
             const _intervalId = setInterval(() => {
@@ -27624,7 +29290,7 @@ class MESH_100MD extends MESH_1.MESH {
         });
         if (MESH_100MD.NotifyMode.ALWAYS < this.notifyMode_) {
             // Continus previous mode
-            this.setMode(this.notifyMode_, this.detectionTime_, this.holdingTime_);
+            this.setMode(this.notifyMode_, this.holdingTime_, this.detectionTime_);
         }
         if (_result == null) {
             throw new Error_1.MESHJsTimeOutError(this.peripheral.localName);
@@ -27635,17 +29301,14 @@ class MESH_100MD extends MESH_1.MESH {
      * setMode
      *
      * @param notifyMode
-     * @param opt_detectionTime
      * @param opt_holdingTime
+     * @param opt_detectionTime
      */
-    setMode(notifyMode, opt_detectionTime = 500, opt_holdingTime = 500) {
-        this.setMode_(notifyMode, opt_detectionTime, opt_holdingTime, this.requestId.defaultId());
+    setMode(notifyMode, opt_holdingTime = 500, opt_detectionTime = 500) {
+        this.setMode_(notifyMode, opt_holdingTime, opt_detectionTime, this.requestId.defaultId());
         this.notifyMode_ = notifyMode;
-        this.detectionTime_ = opt_detectionTime;
         this.holdingTime_ = opt_holdingTime;
-    }
-    static _isMESHblock(name) {
-        return name.indexOf(MESH_100MD.PREFIX) !== -1;
+        this.detectionTime_ = opt_detectionTime;
     }
     prepareConnect() {
         this.meshBlock = new Motion_1.Motion();
@@ -27657,9 +29320,9 @@ class MESH_100MD extends MESH_1.MESH {
     async beforeOnDisconnectWait(reason) {
         // do nothing
     }
-    setMode_(notifyMode, detectionTime, holdingTime, requestId) {
+    setMode_(notifyMode, holdingTime, detectionTime, requestId) {
         const motionBlock = this.meshBlock;
-        const command = motionBlock.parseSetmodeCommand(notifyMode, detectionTime, holdingTime, requestId);
+        const command = motionBlock.createSetmodeCommand(notifyMode, holdingTime, detectionTime, requestId);
         this.writeWOResponse(command);
     }
     setHandler_(motionState, notifyMode, requestId) {
@@ -27678,7 +29341,7 @@ class MESH_100MD extends MESH_1.MESH {
 }
 exports.default = MESH_100MD;
 MESH_100MD.PartsName = 'MESH_100MD';
-MESH_100MD.PREFIX = 'MESH-100MD';
+MESH_100MD.LocalName = /^MESH-100MD/;
 MESH_100MD.NotifyMode = Motion_1.Motion.NotifyMode;
 MESH_100MD.MotionState = Motion_1.Motion.MotionState;
 
@@ -27710,31 +29373,37 @@ class MESH_100PA extends MESH_1.MESH {
         this.brightness_ = -1;
     }
     /**
+     * Check MESH block
+     *
+     * @param peripheral
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(peripheral, opt_serialnumber = '') {
+        return Brightness_1.Brightness.isMESHblock(peripheral.localName, opt_serialnumber);
+    }
+    /**
      * getDataWait
      *
      * @returns
      */
     async getDataWait() {
         this.checkConnected();
-        return {
-            name: this.peripheral.localName,
-            address: this.peripheral.address,
-        };
+        return Object.assign({ name: this.peripheral.localName, address: this.peripheral.address }, (await this.getSensorDataWait()));
     }
     /**
      * getSensorDataWait
      *
      * @returns
      */
-    async getSensorDataWait() {
+    async getSensorDataWait(opt_timeoutMsec = this.TIMEOUT_MSEC) {
         this.checkConnected();
         const _requestId = this.requestId.next();
         this.setMode_(MESH_100PA.NotifyMode.ONCE, _requestId);
-        const _TIMEOUT_MSEC = 2000;
         let _isTimeout = false;
         const _timeoutId = setTimeout(() => {
             _isTimeout = true;
-        }, _TIMEOUT_MSEC);
+        }, opt_timeoutMsec);
         const INTERVAL_TIME = 50;
         const _result = await new Promise((resolve) => {
             const _intervalId = setInterval(() => {
@@ -27763,9 +29432,6 @@ class MESH_100PA extends MESH_1.MESH {
     setMode(notifyMode) {
         this.setMode_(notifyMode, this.requestId.defaultId());
     }
-    static _isMESHblock(name) {
-        return name.indexOf(MESH_100PA.PREFIX) !== -1;
-    }
     prepareConnect() {
         this.meshBlock = new Brightness_1.Brightness();
         // set Event Handler
@@ -27778,7 +29444,7 @@ class MESH_100PA extends MESH_1.MESH {
     }
     setMode_(notifyMode, requestId) {
         const brightnessBlock = this.meshBlock;
-        const command = brightnessBlock.parseSetmodeCommand(notifyMode, requestId);
+        const command = brightnessBlock.createSetmodeCommand(notifyMode, requestId);
         this.writeWOResponse(command);
     }
     setHandler_(proximity, brightness, requestId) {
@@ -27798,7 +29464,7 @@ class MESH_100PA extends MESH_1.MESH {
 }
 exports.default = MESH_100PA;
 MESH_100PA.PartsName = 'MESH_100PA';
-MESH_100PA.PREFIX = 'MESH-100PA';
+MESH_100PA.LocalName = /^MESH-100PA/;
 MESH_100PA.NotifyMode = Brightness_1.Brightness.NotifyMode;
 
 
@@ -27828,35 +29494,41 @@ class MESH_100TH extends MESH_1.MESH {
         this.retTemperature_ = -1;
         this.retHumidity_ = -1;
         this.temperatureUpper_ = 50;
-        this.temperatureBottom_ = -10;
+        this.temperatureLower_ = -10;
         this.humidityUpper_ = 100;
-        this.humidityBottom_ = 0;
-        this.temperatureCondition_ = MESH_100TH.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM;
-        this.humidityCondision_ = MESH_100TH.EmitCondition.ABOVE_UPPER_AND_BELOW_BOTTOM;
+        this.humidityLower_ = 0;
+        this.temperatureCondition_ = MESH_100TH.EmitCondition.ABOVE_UPPER_OR_BELOW_LOWER;
+        this.humidityCondition_ = MESH_100TH.EmitCondition.ABOVE_UPPER_OR_BELOW_LOWER;
         this.notifyMode_ = -1;
+    }
+    /**
+     * Check MESH block
+     *
+     * @param peripheral
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(peripheral, opt_serialnumber = '') {
+        return TempHumid_1.TempHumid.isMESHblock(peripheral.localName, opt_serialnumber);
     }
     async getDataWait() {
         this.checkConnected();
         const _th = this.meshBlock;
-        return {
-            name: this.peripheral.localName,
-            address: this.peripheral.address,
-        };
+        return Object.assign({ name: this.peripheral.localName, address: this.peripheral.address }, (await this.getSensorDataWait()));
     }
     /**
      * getSensorDataWait
      *
      * @returns
      */
-    async getSensorDataWait() {
+    async getSensorDataWait(opt_timeoutMsec = this.TIMEOUT_MSEC) {
         this.checkConnected();
         const _requestId = this.requestId.next();
         this.setMode_(0, 0, 0, 0, 0, 0, MESH_100TH.NotifyMode.ONCE, _requestId);
-        const _TIMEOUT_MSEC = 2000;
         let _isTimeout = false;
         const _timeoutId = setTimeout(() => {
             _isTimeout = true;
-        }, _TIMEOUT_MSEC);
+        }, opt_timeoutMsec);
         const INTERVAL_TIME = 50;
         const _result = await new Promise((resolve) => {
             const _intervalId = setInterval(() => {
@@ -27877,7 +29549,7 @@ class MESH_100TH extends MESH_1.MESH {
         });
         if (MESH_100TH.NotifyMode.ALWAYS < this.notifyMode_) {
             // Continus previous mode
-            this.setMode(this.temperatureUpper_, this.temperatureBottom_, this.humidityUpper_, this.humidityBottom_, this.temperatureCondition_, this.humidityCondision_, this.notifyMode_);
+            this.setMode(this.temperatureUpper_, this.temperatureLower_, this.humidityUpper_, this.humidityLower_, this.temperatureCondition_, this.humidityCondition_, this.notifyMode_);
         }
         if (_result == null) {
             throw new Error_1.MESHJsTimeOutError(this.peripheral.localName);
@@ -27888,25 +29560,22 @@ class MESH_100TH extends MESH_1.MESH {
      * setMode
      *
      * @param temperatureUpper
-     * @param temperatureBottom
+     * @param temperatureLower
      * @param humidityUpper
-     * @param humidityBottom
+     * @param humidityLower
      * @param temperatureCondition
-     * @param humidityCondision
+     * @param humidityCondition
      * @param notifyMode
      */
-    setMode(temperatureUpper, temperatureBottom, humidityUpper, humidityBottom, temperatureCondition, humidityCondision, notifyMode) {
-        this.setMode_(temperatureUpper, temperatureBottom, humidityUpper, humidityBottom, temperatureCondition, humidityCondision, notifyMode, this.requestId.defaultId());
+    setMode(temperatureUpper, temperatureLower, humidityUpper, humidityLower, temperatureCondition, humidityCondition, notifyMode) {
+        this.setMode_(temperatureUpper, temperatureLower, humidityUpper, humidityLower, temperatureCondition, humidityCondition, notifyMode, this.requestId.defaultId());
         this.temperatureUpper_ = temperatureUpper;
-        this.temperatureBottom_ = temperatureBottom;
+        this.temperatureLower_ = temperatureLower;
         this.humidityUpper_ = humidityUpper;
-        this.humidityBottom_ = humidityBottom;
+        this.humidityLower_ = humidityLower;
         this.temperatureCondition_ = temperatureCondition;
-        this.humidityCondision_ = humidityCondision;
+        this.humidityCondition_ = humidityCondition;
         this.notifyMode_ = notifyMode;
-    }
-    static _isMESHblock(name) {
-        return name.indexOf(MESH_100TH.PREFIX) !== -1;
     }
     prepareConnect() {
         this.meshBlock = new TempHumid_1.TempHumid();
@@ -27918,9 +29587,9 @@ class MESH_100TH extends MESH_1.MESH {
     async beforeOnDisconnectWait(reason) {
         // do nothing
     }
-    setMode_(temperatureUpper, temperatureBottom, humidityUpper, humidityBottom, temperatureCondition, humidityCondision, notifyMode, requestId) {
+    setMode_(temperatureUpper, temperatureLower, humidityUpper, humidityLower, temperatureCondition, humidityCondition, notifyMode, requestId) {
         const temperatureAndHumidityBlock = this.meshBlock;
-        const command = temperatureAndHumidityBlock.parseSetmodeCommand(temperatureUpper, temperatureBottom, humidityUpper, humidityBottom, temperatureCondition, humidityCondision, notifyMode, requestId);
+        const command = temperatureAndHumidityBlock.createSetmodeCommand(temperatureUpper, temperatureLower, humidityUpper, humidityLower, temperatureCondition, humidityCondition, notifyMode, requestId);
         this.writeWOResponse(command);
     }
     setHandler_(temperature, humidity, requestId) {
@@ -27940,7 +29609,7 @@ class MESH_100TH extends MESH_1.MESH {
 }
 exports.default = MESH_100TH;
 MESH_100TH.PartsName = 'MESH_100TH';
-MESH_100TH.PREFIX = 'MESH-100TH';
+MESH_100TH.LocalName = /^MESH-100TH/;
 MESH_100TH.NotifyMode = TempHumid_1.TempHumid.NotifyMode;
 MESH_100TH.EmitCondition = TempHumid_1.TempHumid.EmitCondition;
 
@@ -27954,57 +29623,26 @@ MESH_100TH.EmitCondition = TempHumid_1.TempHumid.EmitCondition;
 
 /**
  * @packageDocumentation
- * @module Parts.MINEW_S1_HT
+ * @module Parts.MINEW_S1
  */
 /* eslint rulesdir/non-ascii: 0 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const MINEW_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/abstracts/MINEW.js"));
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 /** MINEW_S1 management class MINEW_S1を管理するクラス */
-class MINEW_S1 {
+class MINEW_S1 extends MINEW_1.default {
     constructor() {
-        this._peripheral = null;
-        // non-wired device
-        this.keys = [];
-        this.requiredKeys = [];
-        this.params = {};
+        super(...arguments);
+        this.staticClass = MINEW_S1;
     }
-    static info() {
-        return { name: 'MINEW_S1' };
-    }
-    /**
-     * Verify that the received peripheral is from the MINEW_S1
-     *
-     * 受け取ったPeripheralがMINEW_S1のものかどうかを確認する
-     *
-     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
-     *
-     * @param macAddress (optional: If you want to specify a MAC address) MAC address
-     *
-     * (任意: MACアドレスを指定したい場合) MACアドレス
-     *
-     * @returns Whether it is the MINEW_S1
-     *
-     * MINEW_S1かどうか
-     *
-     * true: HT Sensor SLOT / Info SLOT
-     *
-     * false: iBeacon SLOT / UID SLOT / URL SLOT / TLM SLOT / other advertisements
-     */
-    static isDevice(peripheral, macAddress = null) {
-        if (!this._hasPrefix(peripheral)) {
-            return false;
-        }
-        if (macAddress) {
-            const data = this.getInfoData(peripheral) || this.getHTData(peripheral);
-            if (data && data.macAddress === macAddress) {
-                return true;
-            }
-            return false;
-        }
-        return true;
+    // TODO: delete by disable info slot
+    static isDeviceWithMode(peripheral, mode) {
+        return (peripheral.serviceData !== null &&
+            (peripheral.serviceData[3] === 1 || peripheral.serviceData[3] === 8) &&
+            MINEW_1.default.isDeviceWithMode(peripheral, mode));
     }
     /**
      * Get device information data from the MINEW_S1
@@ -28018,10 +29656,10 @@ class MINEW_S1 {
      * MINEW_S1から受け取ったデバイス情報データ
      */
     static getInfoData(peripheral) {
-        if (!this._hasPrefix(peripheral)) {
-            return null;
-        }
-        if (!peripheral.adv_data || peripheral.adv_data.length < 20) {
+        var _a;
+        if (MINEW_S1.getDeviceMode(peripheral) !== 'Beacon' ||
+            !peripheral.serviceData ||
+            peripheral.serviceData[3] !== 0x08) {
             return null;
         }
         const frameType = peripheral.adv_data[11];
@@ -28030,11 +29668,11 @@ class MINEW_S1 {
             return null;
         }
         const batteryLevel = peripheral.adv_data[13];
-        const macAddress = peripheral.adv_data
+        const macAddress = (_a = peripheral.adv_data
             .slice(14, 20)
             .map((e) => ('0' + e.toString(16)).slice(-2))
             .join('')
-            .match(/.{1,2}/g)
+            .match(/.{1,2}/g), (_a !== null && _a !== void 0 ? _a : []))
             .reverse()
             .join('');
         const name = util_1.default.dataArray2string(peripheral.adv_data.slice(20));
@@ -28047,6 +29685,9 @@ class MINEW_S1 {
         };
     }
     /**
+     * @deprecated
+     * Use MINEW_S1.getData();
+     *
      * Get temperature and humidity data from the MINEW_S1
      *
      * MINEW_S1からの温湿度データを取得
@@ -28058,72 +29699,109 @@ class MINEW_S1 {
      * MINEW_S1から受け取った温湿度データ
      */
     static getHTData(peripheral) {
-        if (!this._hasPrefix(peripheral)) {
+        if (MINEW_S1.getDeviceMode(peripheral) !== 'Beacon' ||
+            !peripheral.serviceData ||
+            peripheral.serviceData[3] !== 0x01) {
             return null;
         }
-        if (!peripheral.adv_data || peripheral.adv_data.length !== 24) {
-            return null;
-        }
-        const frameType = peripheral.adv_data[11];
-        const versionNumber = peripheral.adv_data[12];
-        if (frameType !== 0xa1 || versionNumber !== 0x01) {
-            return null;
-        }
-        const batteryLevel = peripheral.adv_data[13];
-        const temperatureH = peripheral.adv_data[14];
-        const temperatureL = peripheral.adv_data[15];
-        const temperature = temperatureH + (temperatureL * 1) / (1 << 8);
-        const humidityH = peripheral.adv_data[16];
-        const humidityL = peripheral.adv_data[17];
-        const humidity = humidityH + (humidityL * 1) / (1 << 8);
-        const macAddress = peripheral.adv_data
-            .splice(18)
-            .map((e) => ('0' + e.toString(16)).slice(-2))
-            .join('')
-            .match(/.{1,2}/g)
-            .reverse()
-            .join('');
-        return {
-            frameType,
-            versionNumber,
-            batteryLevel,
-            temperature,
-            humidity,
-            macAddress,
-        };
-    }
-    static _hasPrefix(peripheral) {
-        if (!peripheral.adv_data || peripheral.adv_data.length < 10) {
-            return false;
-        }
-        const target = [
-            // flag
-            0x02,
-            0x01,
-            0x06,
-            // 16bit uuid
-            0x03,
-            0x03,
-            0xe1,
-            0xff,
-            // service data
-            -1,
-            0x16,
-            0xe1,
-            0xff,
-        ];
-        for (const index in target) {
-            if (target[index] >= 0 && target[index] !== peripheral.adv_data[index]) {
-                return false;
-            }
-        }
-        return true;
-    }
-    wired(obniz) {
-        // do nothing.
+        const device = new MINEW_S1(peripheral, 'Beacon');
+        return device.getData();
     }
 }
 exports.default = MINEW_S1;
+MINEW_S1.PartsName = 'MINEW_S1';
+// TODO: restore by disable info slot
+// public static readonly ServiceDataLength = 16;
+MINEW_S1.ServiceDataStruct = MINEW_1.default.getServiceDataStruct(7, 1, {
+    // TODO: delete
+    frameType: {
+        index: 0,
+        type: 'unsignedNumLE',
+    },
+    // TODO: delete
+    versionNumber: {
+        index: 1,
+        type: 'unsignedNumLE',
+    },
+    // TODO: change key name
+    batteryLevel: {
+        index: 2,
+        type: 'unsignedNumLE',
+    },
+    temperature: {
+        index: 3,
+        length: 2,
+        type: 'numLE',
+        fixedIntegerBytes: 1,
+        round: 2,
+    },
+    humidity: {
+        index: 5,
+        length: 2,
+        type: 'numLE',
+        fixedIntegerBytes: 1,
+        round: 2,
+    },
+    // TODO: delete
+    macAddress: {
+        index: 7,
+        length: 6,
+        type: 'custom',
+        func: (data, peripheral) => peripheral.address,
+    },
+    // TODO: delete by disable info slot
+    versionNumber_: {
+        index: 1,
+        type: 'check',
+        data: 1,
+        scanResponse: true,
+    },
+});
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MM_BLEBC5/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.MM_BLEBC5
+ */
+/* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const MINEW_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/abstracts/MINEW.js"));
+/**
+ * ACC Slot Only
+ */
+class MM_BLEBC5 extends MINEW_1.default {
+    constructor() {
+        super(...arguments);
+        this.staticClass = MM_BLEBC5;
+    }
+}
+exports.default = MM_BLEBC5;
+MM_BLEBC5.PartsName = 'MM_BLEBC5';
+MM_BLEBC5.ServiceDataLength = 18;
+MM_BLEBC5.ServiceDataStruct = MINEW_1.default.getServiceDataStruct(9, 3, {
+    // TODO: delete (abstract)
+    battery: {
+        index: 2,
+        type: 'unsignedNumBE',
+    },
+    acceleration: {
+        index: 3,
+        length: 6,
+        type: 'xyz',
+        fixedIntegerBytes: 1,
+        round: 2,
+    },
+});
 
 
 /***/ }),
@@ -29057,8 +30735,12 @@ exports.default = REX_BTPM25V;
  * @module Parts.RS_BTEVS1
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
+const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
 const LED_DISPLAY_MODE = ['Disable', 'PM2.5', 'CO2'];
 const PM2_5_CONCENTRATION_MODE = ['Mass', 'Number'];
 /** RS_BTEVS1 management class RS_BTEVS1を管理するクラス */
@@ -29076,6 +30758,7 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         this.onPm2_5Measured = null;
         this.serviceUuid = 'F9CC15234E0A49E58CF30007E819EA1E';
         this.firmwareRevision = '';
+        this.firmwareSemRevision = null;
     }
     /**
      * Connect to the services of a device
@@ -29085,36 +30768,49 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     async connectWait() {
         await super.connectWait();
         this.firmwareRevision = Buffer.from(await this.readCharWait('180A', '2A26')).toString();
+        this.firmwareSemRevision = semver_1.default.parse(this.firmwareRevision.replace('Ver.', ''));
     }
+    /**
+     * Get device all data
+     * Version 1.0.x is not supported
+     * デバイスの全てのデータの取得
+     * バージョン1.0.xはサポートされません
+     *
+     * @returns
+     */
     async getDataWait() {
-        if (this.firmwareRevision.startsWith('Ver.1.0')) {
-            throw new Error('This operation is not supported.');
-        }
         this.checkConnected();
-        const data = await this.readCharWait(this.serviceUuid, this.getCharUuid(0x152a));
-        const buf = Buffer.from(data);
-        return {
-            temp: ObnizPartsBleAbstract_1.uint(data.slice(0, 2)) * 0.1,
-            humid: data[2],
-            co2: ObnizPartsBleAbstract_1.uint(data.slice(3, 5)),
-            pm1_0: buf.readFloatLE(5),
-            pm2_5: buf.readFloatLE(9),
-            pm4_0: buf.readFloatLE(13),
-            pm10_0: buf.readFloatLE(17),
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore for compatibility
-            pm5_0: buf.readFloatLE(13),
-        };
+        this.checkVersion('1.1.0');
+        return new Promise((res, rej) => {
+            this.subscribeWait(this.serviceUuid, this.getCharUuid(0x152a), (data) => {
+                const buf = Buffer.from(data);
+                const result = {
+                    temp: ObnizPartsBleAbstract_1.uint(data.slice(0, 2)) * 0.1,
+                    humid: data[2],
+                    co2: ObnizPartsBleAbstract_1.uint(data.slice(3, 5)),
+                    pm1_0: buf.readFloatLE(5),
+                    pm2_5: buf.readFloatLE(9),
+                    pm4_0: buf.readFloatLE(13),
+                    pm10_0: buf.readFloatLE(17),
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore for compatibility
+                    pm5_0: buf.readFloatLE(13),
+                };
+                res(result);
+            });
+        });
     }
     async beforeOnDisconnectWait() {
-        // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1524));
-        // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1525));
-        // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1526));
-        // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1527));
-        // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1528));
-        // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1529));
-        // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x152a));
-        // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x152b));
+        if (semver_1.default.gte(this.firmwareSemRevision, '1.1.2')) {
+            await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1524));
+            // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1525));
+            await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1526));
+            await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1527));
+            await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1528));
+            // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1529));
+            await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x152a));
+            await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x152b));
+        }
     }
     /**
      * Get device settings デバイスの設定を取得
@@ -29132,7 +30828,7 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
             co2Interval: buf.readUInt32LE(8),
             tempMeasureOperation: (measureOperation & 0b100) > 0,
             pm2_5MeasureOperation: (measureOperation & 0b010) > 0,
-            co2MeasureOperation: (measureOperation & 0b000) > 0,
+            co2MeasureOperation: (measureOperation & 0b001) > 0,
             ledDisplay: LED_DISPLAY_MODE[buf.readInt8(13)],
             advertisementBeacon: buf.readInt8(14) === 1,
             pm2_5ConcentrationMode: PM2_5_CONCENTRATION_MODE[buf.readInt8(15)],
@@ -29160,7 +30856,7 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
             ? config.ledDisplay
             : 'Disable'), 13);
         buf.writeUInt8(config.advertisementBeacon ? 1 : 0, 14);
-        buf.writeUInt8(this.firmwareRevision.startsWith('Ver.1.0')
+        buf.writeUInt8(semver_1.default.lt(this.firmwareSemRevision, '1.1.0')
             ? PM2_5_CONCENTRATION_MODE.indexOf(config.pm2_5ConcentrationMode &&
                 PM2_5_CONCENTRATION_MODE.indexOf(config.pm2_5ConcentrationMode) >=
                     0
@@ -29171,14 +30867,16 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     }
     /**
      * Change pairing LED flashing status
-     *
+     * Version 1.0.x is not supported
      * ペアリングLEDの点滅状態の変更
+     * バージョン1.0.xはサポートされません
      *
      * @param blink Whether it blinks 点滅するかどうか
      * @returns Write result 書き込み結果
      */
     async setModeLEDWait(blink) {
         await this.checkConnected();
+        this.checkVersion('1.1.0');
         return await this.writeCharWait(this.serviceUuid, this.getCharUuid(0x1529), [blink ? 1 : 0]);
     }
     /**
@@ -29198,15 +30896,17 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
      * @deprecated
      *
      * Start reading the temperature sensor
-     *
+     * Version 1.0.x is not supported
      * 温度センサーの読み取りを開始
+     * バージョン1.0.xはサポートされません
      */
     async tempMeasureStartWait() {
         this.checkConnected();
+        this.checkVersion('1.1.0');
         await this.subscribeWait(this.serviceUuid, this.getCharUuid(0x1526), (data) => {
             if (typeof this.onTempMeasured !== 'function')
                 return;
-            this.onTempMeasured(ObnizPartsBleAbstract_1.int(data.slice(0, 2)), data[2]);
+            this.onTempMeasured(ObnizPartsBleAbstract_1.int(data.slice(0, 2)) / 10, data[2]);
         });
     }
     /**
@@ -29228,11 +30928,13 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
      * @deprecated
      *
      * Start reading the PM2.5 sensor
-     *
+     * Version 1.1.x is not supported
      * PM2.5センサーの読み取りを開始
+     * バージョン1.1.xはサポートされません
      */
     async pm2_5MeasureStartWait() {
         this.checkConnected();
+        this.checkVersion('1.1.2');
         await this.subscribeWait(this.serviceUuid, this.getCharUuid(0x1528), (data) => {
             if (typeof this.onPm2_5Measured !== 'function')
                 return;
@@ -29248,6 +30950,12 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
     }
     getCharUuid(code) {
         return `${this.serviceUuid.slice(0, 4)}${code.toString(16)}${this.serviceUuid.slice(8)}`;
+    }
+    checkVersion(version) {
+        var _a;
+        if (semver_1.default.lt(this.firmwareSemRevision, version)) {
+            throw new Error(`This operation is not supported. required firmware v${version}, but device v${(_a = this.firmwareSemRevision) === null || _a === void 0 ? void 0 : _a.version}`);
+        }
     }
 }
 exports.default = RS_BTEVS1;
@@ -32898,6 +34606,33 @@ iBS04i.CompanyID_ScanResponse = iBS_1.BaseiBS.CompanyID;
 iBS04i.BeaconDataLength = 0x1a;
 iBS04i.BeaconDataLength_ScanResponse = iBS_1.BaseiBS.BeaconDataLength;
 iBS04i.BeaconDataStruct = Object.assign(Object.assign({ battery: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.battery), { scanResponse: true }), button: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.button), { scanResponse: true }) }, iBS_1.BaseiBS.getUniqueData(4, 0x18, 0, true)), ObnizPartsBleAbstract_1.iBeaconData);
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/iBS05G/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS05G
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS05G management class iBS05Gを管理するクラス */
+class iBS05G extends iBS_1.BaseiBS {
+    constructor() {
+        super(...arguments);
+        this.staticClass = iBS05G;
+    }
+}
+exports.default = iBS05G;
+iBS05G.PartsName = 'iBS05G';
+iBS05G.CompanyID = [0x2c, 0x08];
+iBS05G.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, moving: iBS_1.BaseiBS.Config.moving }, iBS_1.BaseiBS.getUniqueData(5, 0x33));
 
 
 /***/ }),
@@ -38288,6 +40023,7 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         this.onBatteryLevel = null;
         this.onStatusButtonPressed = null;
         this.onWriteResponse = null;
+        this.TIMEOUT_MSEC = 5000;
         this.meshBlock = new Base_1.Base();
         this.requestId = new MeshRequestId();
         this.indicateCharacteristic_ = null;
@@ -38303,17 +40039,7 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
      * @returns
      */
     static isMESHblock(peripheral, opt_serialnumber = '') {
-        const _name = peripheral.localName;
-        if (!_name) {
-            return false;
-        }
-        if (_name.length !== MESH.LOCAL_NAME_LENGTH_) {
-            return false;
-        }
-        if (opt_serialnumber !== '' && _name.indexOf(opt_serialnumber) === -1) {
-            return false;
-        }
-        return this._isMESHblock(_name);
+        return Base_1.Base.isMESHblock(peripheral.localName, opt_serialnumber);
     }
     /**
      * Connect to the services of MESH
@@ -38351,11 +40077,8 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
      * @param blue
      */
     setStatusbarLed(power, red, green, blue) {
-        const command = this.meshBlock.parseStatusbarLedCommand(power, red, green, blue);
+        const command = this.meshBlock.createStatusbarLedCommand(power, red, green, blue);
         this.writeWOResponse(command);
-    }
-    static _isMESHblock(name) {
-        return name.indexOf(MESH.PREFIX) === 0;
     }
     prepareConnect() {
         this.meshBlock.onBatteryLevel = (battery) => {
@@ -38529,10 +40252,33 @@ class Base {
         return this.battery_;
     }
     /**
+     * Verify that the device is MESH block
+     *
+     * @param name
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(name, opt_serialnumber = '') {
+        if (!name) {
+            return false;
+        }
+        const LOCAL_NAME_LENGTH = 17;
+        if (name.length !== LOCAL_NAME_LENGTH) {
+            return false;
+        }
+        if (name.indexOf('MESH-100') === -1) {
+            return false;
+        }
+        if (opt_serialnumber !== '' && name.indexOf(opt_serialnumber) === -1) {
+            return false;
+        }
+        return true;
+    }
+    /**
      * Set result of indicate
      *
      * @param data
-     * @returns
+     * @returns void
      */
     indicate(data) {
         if (data.length !== this.INDICATE_LENGTH_) {
@@ -38559,16 +40305,15 @@ class Base {
         this.updateStatusButton_(data);
     }
     /**
-     * Convert parameters to command of statusbar LED
+     * Create command of statusbar LED
      *
      * @param power
      * @param red
      * @param green
      * @param blue
-     * @returns
+     * @returns command
      */
-    parseStatusbarLedCommand(power, red, green, blue) {
-        // Generate Command
+    createStatusbarLedCommand(power, red, green, blue) {
         const data = [
             this.MESSAGE_TYPE_ID_VALUE_,
             this.STATUSBAR_LED_EVENT_TYPE_ID_VALUE_,
@@ -38700,10 +40445,23 @@ class Brightness extends Base_1.Base {
         this.LX_ = 10;
     }
     /**
+     * Verify that the device is MESH block
+     *
+     * @param name
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(name, opt_serialnumber = '') {
+        var _a;
+        return super.isMESHblock(name, opt_serialnumber)
+            ? ((_a = name) === null || _a === void 0 ? void 0 : _a.indexOf('MESH-100PA')) !== -1
+            : false;
+    }
+    /**
      * notify
      *
      * @param data
-     * @returns
+     * @returns void
      */
     notify(data) {
         super.notify(data);
@@ -38723,13 +40481,13 @@ class Brightness extends Base_1.Base {
         this.onSensorEvent(proximity, brightness, requestId);
     }
     /**
-     * Parse to set-mode command
+     * Create command of set-mode
      *
      * @param notifyMode
      * @param opt_requestId
      * @returns command
      */
-    parseSetmodeCommand(notifyMode, opt_requestId = 0) {
+    createSetmodeCommand(notifyMode, opt_requestId = 0) {
         // Error Handle
         this.checkRange(notifyMode, this.NOTIFY_MODE_MIN_, this.NOTIFY_MODE_MAX_, 'notifyMode');
         // Generate Command
@@ -38789,6 +40547,19 @@ class Button extends Base_1.Base {
             LONG: 2,
             DOUBLE: 3,
         };
+    }
+    /**
+     * Verify that the device is MESH block
+     *
+     * @param name
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(name, opt_serialnumber = '') {
+        var _a;
+        return super.isMESHblock(name, opt_serialnumber)
+            ? ((_a = name) === null || _a === void 0 ? void 0 : _a.indexOf('MESH-100BU')) !== -1
+            : false;
     }
     /**
      * Parse data that received from MESH block, and emit event
@@ -38883,11 +40654,24 @@ class GPIO extends Base_1.Base {
         this.PWM_ID_ = 6;
     }
     /**
+     * Verify that the device is MESH block
+     *
+     * @param name
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(name, opt_serialnumber = '') {
+        var _a;
+        return super.isMESHblock(name, opt_serialnumber)
+            ? ((_a = name) === null || _a === void 0 ? void 0 : _a.indexOf('MESH-100GP')) !== -1
+            : false;
+    }
+    /**
      * Parse data that received from MESH block, and emit event
      *
      * @const
      * @param data
-     * @returns
+     * @returns void
      */
     notify(data) {
         super.notify(data);
@@ -38968,7 +40752,7 @@ class GPIO extends Base_1.Base {
         }
     }
     /**
-     * Convert parameters to command of set-mode
+     * Create command of set-mode
      *
      * @param digitalInputLow2High { p1:boolean, p2:boolean, p3:boolean }
      * @param digitalInputHigh2Low { p1:boolean, p2:boolean, p3:boolean }
@@ -38976,11 +40760,11 @@ class GPIO extends Base_1.Base {
      * @param pwmRatio 0-255
      * @param vcc Vcc.ON or Vcc.OFF
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
-     * @param analogInputRangeBottom 0-255(0.00-3.00[V])
+     * @param analogInputRangeLower 0-255(0.00-3.00[V])
      * @param analogInputNotify AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
      * @returns command
      */
-    parseSetmodeCommand(digitalInputLow2High, digitalInputHigh2Low, digitalOutput, pwmRatio, vcc, analogInputRangeUpper, analogInputRangeBottom, analogInputNotify) {
+    createSetmodeCommand(digitalInputLow2High, digitalInputHigh2Low, digitalOutput, pwmRatio, vcc, analogInputRangeUpper, analogInputRangeLower, analogInputNotify) {
         // Error Handle
         const PWM_MIN = 0;
         const PWM_MAX = 255;
@@ -38991,7 +40775,7 @@ class GPIO extends Base_1.Base {
         const ANALOG_IN_RANGE_MIN = 0;
         const ANALOG_IN_RANGE_MAX = 255;
         this.checkRange(analogInputRangeUpper, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeUpper');
-        this.checkRange(analogInputRangeBottom, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeBottom');
+        this.checkRange(analogInputRangeLower, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeLower');
         if (analogInputNotify !== GPIO.AnalogInputEventCondition.NOT_NOTIFY &&
             analogInputNotify !== GPIO.AnalogInputEventCondition.ABOVE_THRESHOLD &&
             analogInputNotify !== GPIO.AnalogInputEventCondition.BELOW_THRESHOLD) {
@@ -39006,7 +40790,7 @@ class GPIO extends Base_1.Base {
             pwmRatio,
             vcc,
             analogInputRangeUpper,
-            analogInputRangeBottom,
+            analogInputRangeLower,
             analogInputNotify,
         ];
         const data = HEADER.concat(BODY);
@@ -39014,55 +40798,55 @@ class GPIO extends Base_1.Base {
         return data;
     }
     /**
-     * Convert parameters to command of digital-input
+     * Create command of digital-input
      *
      * @param pin
      * @param opt_requestId
-     * @returns
+     * @returns command
      */
-    parseDigitalInputCommand(pin, opt_requestId = 0) {
-        return this.parseCommand_(this.DIGITAL_IN_ID_, pin, opt_requestId);
+    createDigitalInputCommand(pin, opt_requestId = 0) {
+        return this.createCommand_(this.DIGITAL_IN_ID_, pin, opt_requestId);
     }
     /**
-     * Convert parameters to command of analog-input
+     * Create command of analog-input
      *
      * @param analogInputNotifyMode
      * @param opt_requestId
-     * @returns
+     * @returns command
      */
-    parseAnalogInputCommand(analogInputNotifyMode, opt_requestId = 0) {
-        return this.parseCommand_(this.ANALOG_IN_ID_, analogInputNotifyMode, opt_requestId);
+    createAnalogInputCommand(analogInputNotifyMode, opt_requestId = 0) {
+        return this.createCommand_(this.ANALOG_IN_ID_, analogInputNotifyMode, opt_requestId);
     }
     /**
-     * Convert parameters to command of v-output
+     * Create command of v-output
      *
      * @param opt_requestId
-     * @returns
+     * @returns command
      */
-    parseVOutputCommand(opt_requestId = 0) {
+    createVOutputCommand(opt_requestId = 0) {
         const PIN = 0; // VOUT pin
-        return this.parseCommand_(this.V_OUT_ID_, PIN, opt_requestId);
+        return this.createCommand_(this.V_OUT_ID_, PIN, opt_requestId);
     }
     /**
-     * Convert parameters to command of digital-output
+     * Create command of digital-output
      *
      * @param pin
      * @param opt_requestId
-     * @returns
+     * @returns command
      */
-    parseDigitalOutputCommand(pin, opt_requestId = 0) {
-        return this.parseCommand_(this.DIGITAL_OUT_ID_, pin, opt_requestId);
+    createDigitalOutputCommand(pin, opt_requestId = 0) {
+        return this.createCommand_(this.DIGITAL_OUT_ID_, pin, opt_requestId);
     }
     /**
-     * Convert parameters to command of PWM
+     * Create command of PWM
      *
      * @param opt_requestId
-     * @returns
+     * @returns command
      */
-    parsePwmCommand(opt_requestId = 0) {
-        return this.parseCommand_(this.PWM_ID_, GPIO.Pin.P3, opt_requestId);
+    createPwmCommand(opt_requestId = 0) {
+        return this.createCommand_(this.PWM_ID_, GPIO.Pin.P3, opt_requestId);
     }
-    parseCommand_(eventId, param, requestId) {
+    createCommand_(eventId, param, requestId) {
         const HEADER = [this.MESSAGE_TYPE_ID_, eventId, requestId];
         const data = HEADER.concat(param);
         data.push(this.checkSum(data));
@@ -39127,16 +40911,29 @@ class LED extends Base_1.Base {
         this.colors = { red: 0, green: 0, blue: 0 };
     }
     /**
-     * Convert parameters to command of LED
+     * Verify that the device is MESH block
+     *
+     * @param name
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(name, opt_serialnumber = '') {
+        var _a;
+        return super.isMESHblock(name, opt_serialnumber)
+            ? ((_a = name) === null || _a === void 0 ? void 0 : _a.indexOf('MESH-100LE')) !== -1
+            : false;
+    }
+    /**
+     * Create command of LED
      *
      * @param colors
      * @param totalTime
      * @param cycleOnTime
      * @param cycleOffTime
      * @param pattern
-     * @returns
+     * @returns command
      */
-    parseLedCommand(colors, totalTime, cycleOnTime, cycleOffTime, pattern) {
+    createLedCommand(colors, totalTime, cycleOnTime, cycleOffTime, pattern) {
         // Error Handle
         this.checkRange(colors.red, this.COLOR_MIN_, this.COLOR_MAX_, 'colors.red');
         this.checkRange(colors.green, this.COLOR_MIN_, this.COLOR_MAX_, 'colors.green');
@@ -39200,10 +40997,23 @@ class Motion extends Base_1.Base {
         this.EVENT_TYPE_ID_ = 0;
     }
     /**
+     * Verify that the device is MESH block
+     *
+     * @param name
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(name, opt_serialnumber = '') {
+        var _a;
+        return super.isMESHblock(name, opt_serialnumber)
+            ? ((_a = name) === null || _a === void 0 ? void 0 : _a.indexOf('MESH-100MD')) !== -1
+            : false;
+    }
+    /**
      * Parse data that received from MESH block, and emit event
      *
      * @param data
-     * @returns
+     * @returns void
      */
     notify(data) {
         super.notify(data);
@@ -39222,22 +41032,22 @@ class Motion extends Base_1.Base {
         this.onSensorEvent(motionState, notifyMode, requestId);
     }
     /**
-     * Convert parameters to command of set-mode
+     * Create command of set-mode
      *
      * @param notifyMode
-     * @param opt_detectionTime
      * @param opt_holdingTime
+     * @param opt_detectionTime
      * @param opt_requestId
-     * @returns
+     * @returns command
      */
-    parseSetmodeCommand(notifyMode, opt_detectionTime = 500, opt_holdingTime = 500, opt_requestId = 0) {
+    createSetmodeCommand(notifyMode, opt_holdingTime = 500, opt_detectionTime = 500, opt_requestId = 0) {
         // Error Handle
-        const DETECTION_TIME_MIN = 200;
-        const DETECTION_TIME_MAX = 60000;
-        this.checkRange(opt_detectionTime, DETECTION_TIME_MIN, DETECTION_TIME_MAX, 'opt_detectionTime');
-        const HOLDING_TIME_MIN = 500;
+        const HOLDING_TIME_MIN = 200;
         const HOLDING_TIME_MAX = 60000;
         this.checkRange(opt_holdingTime, HOLDING_TIME_MIN, HOLDING_TIME_MAX, 'opt_holdingTime');
+        const DETECTION_TIME_MIN = 500;
+        const DETECTION_TIME_MAX = 60000;
+        this.checkRange(opt_detectionTime, DETECTION_TIME_MIN, DETECTION_TIME_MAX, 'opt_detectionTime');
         // Generate Command
         const HEADER = [
             this.MESSAGE_TYPE_ID_,
@@ -39247,10 +41057,10 @@ class Motion extends Base_1.Base {
         const BYTE = 256;
         const BODY = [
             notifyMode,
-            opt_detectionTime % BYTE,
-            Math.floor(opt_detectionTime / BYTE),
             opt_holdingTime % BYTE,
             Math.floor(opt_holdingTime / BYTE),
+            opt_detectionTime % BYTE,
+            Math.floor(opt_detectionTime / BYTE),
         ];
         const data = HEADER.concat(BODY);
         data.push(this.checkSum(data));
@@ -39309,6 +41119,19 @@ class Move extends Base_1.Base {
         this.SHAKE_EVENT_ID_ = 1;
         this.FLIP_EVENT_ID_ = 2;
         this.ORIENTATION_EVENT_ID_ = 3;
+    }
+    /**
+     * Verify that the device is MESH block
+     *
+     * @param name
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(name, opt_serialnumber = '') {
+        var _a;
+        return super.isMESHblock(name, opt_serialnumber)
+            ? ((_a = name) === null || _a === void 0 ? void 0 : _a.indexOf('MESH-100AC')) !== -1
+            : false;
     }
     /**
      * Parse data that received from MESH block, and emit event
@@ -39394,10 +41217,23 @@ class TempHumid extends Base_1.Base {
             TempHumid.NotifyMode.ALWAYS;
     }
     /**
+     * Verify that the device is MESH block
+     *
+     * @param name
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(name, opt_serialnumber = '') {
+        var _a;
+        return super.isMESHblock(name, opt_serialnumber)
+            ? ((_a = name) === null || _a === void 0 ? void 0 : _a.indexOf('MESH-100TH')) !== -1
+            : false;
+    }
+    /**
      * Parse data that received from MESH block, and emit event
      *
      * @param data
-     * @returns
+     * @returns void
      */
     notify(data) {
         super.notify(data);
@@ -39420,26 +41256,26 @@ class TempHumid extends Base_1.Base {
         this.onSensorEvent(temperature, humidity, requestId);
     }
     /**
-     * Convert parameters to command of set-mode
+     * Create command of set-mode
      *
      * @param temperatureRangeUpper
-     * @param temperatureRangeBottom
+     * @param temperatureRangeLower
      * @param humidityRangeUpper
-     * @param humidityRangeBottom
+     * @param humidityRangeLower
      * @param temperatureCondition
-     * @param humidityCondision
+     * @param humidityCondition
      * @param notifyMode
      * @param opt_requestId
      * @returns
      */
-    parseSetmodeCommand(temperatureRangeUpper, temperatureRangeBottom, humidityRangeUpper, humidityRangeBottom, temperatureCondition, humidityCondision, notifyMode, opt_requestId = 0) {
+    createSetmodeCommand(temperatureRangeUpper, temperatureRangeLower, humidityRangeUpper, humidityRangeLower, temperatureCondition, humidityCondition, notifyMode, opt_requestId = 0) {
         // Error Handle
         this.checkRange(temperatureRangeUpper, this.TEMPERATURE_MIN_, this.TEMPERATURE_MAX_, 'temperatureRangeUpper');
-        this.checkRange(temperatureRangeBottom, this.TEMPERATURE_MIN_, this.TEMPERATURE_MAX_, 'temperatureRangeBottom');
+        this.checkRange(temperatureRangeLower, this.TEMPERATURE_MIN_, this.TEMPERATURE_MAX_, 'temperatureRangeLower');
         this.checkRange(humidityRangeUpper, this.HUMIDITY_MIN_, this.HUMIDITY_MAX_, 'humidityRangeUpper');
-        this.checkRange(humidityRangeBottom, this.HUMIDITY_MIN_, this.HUMIDITY_MAX_, 'humidityRangeBottom');
+        this.checkRange(humidityRangeLower, this.HUMIDITY_MIN_, this.HUMIDITY_MAX_, 'humidityRangeLower');
         this.checkEmitCondition_(temperatureCondition, 'temperatureCondition');
-        this.checkEmitCondition_(humidityCondision, 'humidityCondision');
+        this.checkEmitCondition_(humidityCondition, 'humidityCondition');
         this.checkRange(notifyMode, this.NOTIFY_MODE_MIN_, this.NOTIFY_MODE_MAX_, 'notifyMode');
         // Generate Command
         const HEADER = [
@@ -39449,14 +41285,14 @@ class TempHumid extends Base_1.Base {
         ];
         const BASE = 10;
         const TEMP_UPPER = this.num2array_(this.invcomplemnt(BASE * temperatureRangeUpper));
-        const TEMP_BOTTOM = this.num2array_(this.invcomplemnt(BASE * temperatureRangeBottom));
+        const TEMP_LOWER = this.num2array_(this.invcomplemnt(BASE * temperatureRangeLower));
         const HUMI_UPPER = this.num2array_(humidityRangeUpper);
-        const HUMI_BOTTOM = this.num2array_(humidityRangeBottom);
+        const HUMI_LOWER = this.num2array_(humidityRangeLower);
         const data = HEADER.concat(TEMP_UPPER)
-            .concat(TEMP_BOTTOM)
+            .concat(TEMP_LOWER)
             .concat(HUMI_UPPER)
-            .concat(HUMI_BOTTOM)
-            .concat([temperatureCondition, humidityCondision, notifyMode]);
+            .concat(HUMI_LOWER)
+            .concat([temperatureCondition, humidityCondition, notifyMode]);
         data.push(this.checkSum(data));
         return data;
     }
@@ -39480,10 +41316,10 @@ class TempHumid extends Base_1.Base {
 exports.TempHumid = TempHumid;
 // Constant Values
 TempHumid.EmitCondition = {
-    ABOVE_UPPER_AND_BELOW_BOTTOM: 0,
-    ABOVE_UPPER_AND_ABOVE_BOTTOM: 1,
-    BELOW_UPPER_AND_BELOW_BOTTOM: 16,
-    BELOW_UPPER_AND_ABOVE_BOTTOM: 17,
+    ABOVE_UPPER_OR_BELOW_LOWER: 0,
+    ABOVE_UPPER_OR_ABOVE_LOWER: 1,
+    BELOW_UPPER_OR_BELOW_LOWER: 16,
+    BELOW_UPPER_OR_ABOVE_LOWER: 17,
 };
 TempHumid.NotifyMode = {
     STOP: 0,
@@ -39554,6 +41390,59 @@ class MESHJsTimeOutError extends MESHJsError {
     }
 }
 exports.MESHJsTimeOutError = MESHJsTimeOutError;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/utils/abstracts/MINEW.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MINEW
+ */
+/* eslint rulesdir/non-ascii: 0 */
+const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
+/** abstract class common to the MINEW devices MINEWデバイス共通の抽象クラス */
+class MINEW extends ObnizPartsBleAbstract_1.ObnizPartsBle {
+}
+exports.default = MINEW;
+/**
+ * Only beacon mode support at the moment
+ * 現時点ではビーコンモードのみサポート
+ */
+MINEW.AvailableBleMode = 'Beacon';
+MINEW.ServiceUuids = 'ffe1';
+MINEW.ServiceDataUUID = [0xe1, 0xff];
+MINEW.getServiceDataStruct = (macAddressIndex, versionNumber, additonalData) => (Object.assign({ 
+    // TODO: delete underscore
+    frameType_: {
+        index: 0,
+        type: 'check',
+        data: 0xa1,
+    }, 
+    // TODO: delete underscore
+    versionNumber_: {
+        index: 1,
+        type: 'check',
+        data: versionNumber,
+    }, 
+    // TODO: only 'battery'
+    [Object.keys(additonalData).includes('batteryLevel')
+        ? 'batteryLevel'
+        : 'battery']: {
+        index: 2,
+        type: 'unsignedNumBE',
+    }, 
+    // TODO: delete underscore
+    macAddress_: {
+        index: macAddressIndex,
+        length: 6,
+        type: 'check',
+    } }, additonalData));
 
 
 /***/ }),

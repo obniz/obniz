@@ -12,16 +12,29 @@ class LED extends Base_1.Base {
         this.colors = { red: 0, green: 0, blue: 0 };
     }
     /**
-     * Convert parameters to command of LED
+     * Verify that the device is MESH block
+     *
+     * @param name
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(name, opt_serialnumber = '') {
+        var _a;
+        return super.isMESHblock(name, opt_serialnumber)
+            ? ((_a = name) === null || _a === void 0 ? void 0 : _a.indexOf('MESH-100LE')) !== -1
+            : false;
+    }
+    /**
+     * Create command of LED
      *
      * @param colors
      * @param totalTime
      * @param cycleOnTime
      * @param cycleOffTime
      * @param pattern
-     * @returns
+     * @returns command
      */
-    parseLedCommand(colors, totalTime, cycleOnTime, cycleOffTime, pattern) {
+    createLedCommand(colors, totalTime, cycleOnTime, cycleOffTime, pattern) {
         // Error Handle
         this.checkRange(colors.red, this.COLOR_MIN_, this.COLOR_MAX_, 'colors.red');
         this.checkRange(colors.green, this.COLOR_MIN_, this.COLOR_MAX_, 'colors.green');

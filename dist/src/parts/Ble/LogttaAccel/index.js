@@ -10,6 +10,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = require("../../../obniz/ObnizPartsBleAbstract");
 const Logtta_1 = __importDefault(require("../utils/abstracts/Logtta"));
+const round_to_1 = __importDefault(require("round-to"));
 /**
  * Logtta_Accel management class Logtta_Accelを管理するクラス
  *
@@ -93,8 +94,8 @@ class Logtta_Accel extends Logtta_1.default {
                     accel_axis: d[20] & 0b00000111,
                     accel_resolution: d[21],
                 },
-                temperature: Math.floor((((d[22] | (d[23] << 8)) / 65535) * 175 - 45) * 100) / 100,
-                humidity: Math.floor(((d[24] | (d[25] << 8)) / 65535) * 100 * 100) / 100,
+                temperature: round_to_1.default(Math.floor((((d[22] | (d[23] << 8)) / 65535) * 175 - 45) * 100) / 100, 3),
+                humidity: round_to_1.default(Math.floor(((d[24] | (d[25] << 8)) / 65535) * 100 * 100) / 100, 3),
                 alert: alertArray,
             };
         }
@@ -121,42 +122,51 @@ class Logtta_Accel extends Logtta_1.default {
         if (!Logtta_Accel.isDevice(peripheral)) {
             return null;
         }
-        if (peripheral.scan_resp && peripheral.scan_resp.length === 31) {
-            const d = peripheral.scan_resp;
-            // console.log(
-            //   `x peak ${data.x.peak} rms ${data.x.rms} y peak ${data.y.peak} rms ${data.y.rms} z peak ${data.z.peak} rms ${data.z.rms} address ${data.address}`,
-            // );
-            return {
+        const scanData = Logtta_Accel.getScanData(peripheral);
+        if (peripheral.scan_resp &&
+            peripheral.scan_resp.length === 31 &&
+            scanData) {
+            const buf = Buffer.from(peripheral.scan_resp);
+            const raw = {
                 x: {
-                    peak: d[5] | (d[6] << 8),
-                    rms: d[7] |
-                        (d[8] << 8) |
-                        (d[9] << 16) |
-                        (d[10] << 24) |
-                        (d[11] << 32) |
-                        (d[12] << 40),
+                    peak: Logtta_Accel._convertAccel(buf.readUInt16LE(5), scanData.setting),
+                    rms: Logtta_Accel._convertRms(buf.readUInt32LE(7) | (buf.readUInt16LE(11) << 32), scanData.setting),
                 },
                 y: {
-                    peak: d[13] | (d[14] << 8),
-                    rms: d[15] |
-                        (d[16] << 8) |
-                        (d[17] << 16) |
-                        (d[18] << 24) |
-                        (d[19] << 32) |
-                        (d[20] << 40),
+                    peak: Logtta_Accel._convertAccel(buf.readUInt16LE(13), scanData.setting),
+                    rms: Logtta_Accel._convertRms(buf.readUInt32LE(15) | (buf.readUInt16LE(19) << 32), scanData.setting),
                 },
                 z: {
-                    peak: d[21] | (d[22] << 8),
-                    rms: d[23] |
-                        (d[24] << 8) |
-                        (d[25] << 16) |
-                        (d[26] << 24) |
-                        (d[27] << 32) |
-                        (d[28] << 40),
+                    peak: Logtta_Accel._convertAccel(buf.readUInt16LE(21), scanData.setting),
+                    rms: Logtta_Accel._convertRms(buf.readUInt32LE(23) | (buf.readUInt16LE(27) << 32), scanData.setting),
                 },
             };
+            return raw;
         }
         return null;
+    }
+    /**
+     * 加速度ピークを物理量に変換する
+     *
+     * @private
+     */
+    static _convertAccel(peak, setting) {
+        // return peak;
+        const result = (peak * setting.accel_range * 9.8) /
+            Math.pow(2, setting.accel_resolution - 1);
+        return round_to_1.default(result, 4);
+    }
+    /**
+     * 加速度ピークを物理量に変換する
+     *
+     * @private
+     */
+    static _convertRms(rms, setting) {
+        const n = setting.accel_sampling * setting.temp_cycle;
+        const result = ((setting.accel_range * 9.8) /
+            Math.pow(2, setting.accel_resolution - 1)) *
+            Math.sqrt(rms / n);
+        return round_to_1.default(result, 4);
     }
 }
 exports.default = Logtta_Accel;
@@ -224,13 +234,13 @@ Logtta_Accel.BeaconDataStruct = {
             index: 18,
             length: 2,
             type: 'custom',
-            func: (data) => (ObnizPartsBleAbstract_1.uint(data) / 0x10000) * 175 - 45,
+            func: (data) => round_to_1.default((ObnizPartsBleAbstract_1.uint(data) / 0x10000) * 175 - 45, 3),
         },
         humidity: {
             index: 20,
             length: 2,
             type: 'custom',
-            func: (data) => (ObnizPartsBleAbstract_1.uint(data) / 0x10000) * 100,
+            func: (data) => round_to_1.default((ObnizPartsBleAbstract_1.uint(data) / 0x10000) * 100, 3),
         },
         alert: {
             index: 22,
@@ -256,13 +266,21 @@ Logtta_Accel.BeaconDataStruct = {
             func: (data, peripheral) => {
                 if (!peripheral.manufacturerSpecificData)
                     throw new Error('Manufacturer specific data is null.');
-                const range = Logtta_Accel.parseAccelRangeData(peripheral.manufacturerSpecificData[17]);
-                const resolution = peripheral.manufacturerSpecificData[19];
-                return Object.fromEntries(['x', 'y', 'z'].map((key, i) => [
-                    key,
-                    (ObnizPartsBleAbstract_1.uint(data.slice(i * 8, i * 8 + 2)) / (2 ** resolution - 1)) *
-                        range,
-                ]));
+                const d = Logtta_Accel.getAccelData(peripheral);
+                if (d) {
+                    return {
+                        x: d.x.peak,
+                        y: d.y.peak,
+                        z: d.z.peak,
+                    };
+                }
+                else {
+                    return {
+                        x: 0,
+                        y: 0,
+                        z: 0,
+                    };
+                }
             },
             scanResponse: true,
         },
@@ -273,14 +291,21 @@ Logtta_Accel.BeaconDataStruct = {
             func: (data, peripheral) => {
                 if (!peripheral.manufacturerSpecificData)
                     throw new Error('Manufacturer specific data is null.');
-                const range = Logtta_Accel.parseAccelRangeData(peripheral.manufacturerSpecificData[17]);
-                const resolution = peripheral.manufacturerSpecificData[19];
-                const n = Logtta_Accel.parseAccelSamplingData(peripheral.manufacturerSpecificData[16]) * ObnizPartsBleAbstract_1.uint(peripheral.manufacturerSpecificData.slice(14, 16));
-                return Object.fromEntries(['x', 'y', 'z'].map((key, i) => [
-                    key,
-                    (range / (2 ** resolution - 1)) *
-                        Math.sqrt(ObnizPartsBleAbstract_1.uint(data.slice(i * 8 + 2, i * 8 + 8)) / n),
-                ]));
+                const d = Logtta_Accel.getAccelData(peripheral);
+                if (d) {
+                    return {
+                        x: d.x.rms,
+                        y: d.y.rms,
+                        z: d.z.rms,
+                    };
+                }
+                else {
+                    return {
+                        x: 0,
+                        y: 0,
+                        z: 0,
+                    };
+                }
             },
             scanResponse: true,
         },

@@ -26,19 +26,9 @@ obniz.ble.scan.onfind = async (peripheral) => {
     device.onButtonPressed = (pressed) => {
       console.log('Button', pressed);
     };
-    device.onTempMeasured = (temp, humidity) => {
-      console.log('Temp', temp, humidity);
-    };
-    device.onCo2Measured = (co2) => {
-      console.log('CO2', co2);
-    };
-    device.onPm2_5Measured = (pm2_5) => {
-      console.log('PM2.5', pm2_5);
-    };
 
-    await device.tempMeasureStartWait();
-    await device.co2MeasureStartWait();
-    await device.pm2_5MeasureStartWait();
+    const dataResult = await device.getDataWait();
+    console.log(dataReulst);
   }
 };
 await obniz.ble.scan.startWait();
@@ -75,7 +65,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
       co2MeasureOperation: false, // CO2センサー計測動作設定
       ledDisplay: 'Disable', // 10連LEDへの表示設定 (Disable | PM2.5 | CO2)
       advertisementBeacon: false, // アドバタイズビーコン設定
-      pm2_5ConcentrationMode: 'Number' // PM2.5質量濃度/個数濃度モード設定 (Mass | Number)
+      pm2_5ConcentrationMode: 'Number' // PM2.5質量濃度/個数濃度モード設定 (Mass | Number) このオプションはファームウェアバージョン1.1以降では動作しません。
     });
   }
 };

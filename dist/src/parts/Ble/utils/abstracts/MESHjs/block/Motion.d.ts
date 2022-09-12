@@ -18,20 +18,28 @@ export declare class Motion extends Base {
     private readonly MESSAGE_TYPE_ID_;
     private readonly EVENT_TYPE_ID_;
     /**
+     * Verify that the device is MESH block
+     *
+     * @param name
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(name: string | null, opt_serialnumber?: string): boolean;
+    /**
      * Parse data that received from MESH block, and emit event
      *
      * @param data
-     * @returns
+     * @returns void
      */
     notify(data: number[]): void;
     /**
-     * Convert parameters to command of set-mode
+     * Create command of set-mode
      *
      * @param notifyMode
-     * @param opt_detectionTime
      * @param opt_holdingTime
+     * @param opt_detectionTime
      * @param opt_requestId
-     * @returns
+     * @returns command
      */
-    parseSetmodeCommand(notifyMode: number, opt_detectionTime?: number, opt_holdingTime?: number, opt_requestId?: number): number[];
+    createSetmodeCommand(notifyMode: number, opt_holdingTime?: number, opt_detectionTime?: number, opt_requestId?: number): number[];
 }

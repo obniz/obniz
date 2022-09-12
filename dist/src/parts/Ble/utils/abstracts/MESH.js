@@ -15,6 +15,7 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         this.onBatteryLevel = null;
         this.onStatusButtonPressed = null;
         this.onWriteResponse = null;
+        this.TIMEOUT_MSEC = 5000;
         this.meshBlock = new Base_1.Base();
         this.requestId = new MeshRequestId();
         this.indicateCharacteristic_ = null;
@@ -30,17 +31,7 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
      * @returns
      */
     static isMESHblock(peripheral, opt_serialnumber = '') {
-        const _name = peripheral.localName;
-        if (!_name) {
-            return false;
-        }
-        if (_name.length !== MESH.LOCAL_NAME_LENGTH_) {
-            return false;
-        }
-        if (opt_serialnumber !== '' && _name.indexOf(opt_serialnumber) === -1) {
-            return false;
-        }
-        return this._isMESHblock(_name);
+        return Base_1.Base.isMESHblock(peripheral.localName, opt_serialnumber);
     }
     /**
      * Connect to the services of MESH
@@ -78,11 +69,8 @@ class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
      * @param blue
      */
     setStatusbarLed(power, red, green, blue) {
-        const command = this.meshBlock.parseStatusbarLedCommand(power, red, green, blue);
+        const command = this.meshBlock.createStatusbarLedCommand(power, red, green, blue);
         this.writeWOResponse(command);
-    }
-    static _isMESHblock(name) {
-        return name.indexOf(MESH.PREFIX) === 0;
     }
     prepareConnect() {
         this.meshBlock.onBatteryLevel = (battery) => {

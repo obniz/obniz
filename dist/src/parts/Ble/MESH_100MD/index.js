@@ -17,8 +17,18 @@ class MESH_100MD extends MESH_1.MESH {
         this.staticClass = MESH_100MD;
         this.retMotionState_ = -1;
         this.notifyMode_ = -1;
-        this.detectionTime_ = 500; // [ms]
         this.holdingTime_ = 500; // [ms]
+        this.detectionTime_ = 500; // [ms]
+    }
+    /**
+     * Check MESH block
+     *
+     * @param peripheral
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(peripheral, opt_serialnumber = '') {
+        return Motion_1.Motion.isMESHblock(peripheral.localName, opt_serialnumber);
     }
     /**
      * getDataWait
@@ -27,10 +37,10 @@ class MESH_100MD extends MESH_1.MESH {
      */
     async getDataWait() {
         this.checkConnected();
-        const motionBlock = this.meshBlock;
         return {
             name: this.peripheral.localName,
             address: this.peripheral.address,
+            motionState: await this.getSensorDataWait(),
         };
     }
     /**
@@ -38,15 +48,14 @@ class MESH_100MD extends MESH_1.MESH {
      *
      * @returns
      */
-    async getSensorDataWait() {
+    async getSensorDataWait(opt_timeoutMsec = this.TIMEOUT_MSEC) {
         this.checkConnected();
         const _requestId = this.requestId.next();
-        this.setMode_(MESH_100MD.NotifyMode.ONCE, this.detectionTime_, this.holdingTime_, _requestId);
-        const _TIMEOUT_MSEC = 2000;
+        this.setMode_(MESH_100MD.NotifyMode.ONCE, this.holdingTime_, this.detectionTime_, _requestId);
         let _isTimeout = false;
         const _timeoutId = setTimeout(() => {
             _isTimeout = true;
-        }, _TIMEOUT_MSEC);
+        }, opt_timeoutMsec);
         const INTERVAL_TIME = 50;
         const _result = await new Promise((resolve) => {
             const _intervalId = setInterval(() => {
@@ -64,7 +73,7 @@ class MESH_100MD extends MESH_1.MESH {
         });
         if (MESH_100MD.NotifyMode.ALWAYS < this.notifyMode_) {
             // Continus previous mode
-            this.setMode(this.notifyMode_, this.detectionTime_, this.holdingTime_);
+            this.setMode(this.notifyMode_, this.holdingTime_, this.detectionTime_);
         }
         if (_result == null) {
             throw new Error_1.MESHJsTimeOutError(this.peripheral.localName);
@@ -75,17 +84,14 @@ class MESH_100MD extends MESH_1.MESH {
      * setMode
      *
      * @param notifyMode
-     * @param opt_detectionTime
      * @param opt_holdingTime
+     * @param opt_detectionTime
      */
-    setMode(notifyMode, opt_detectionTime = 500, opt_holdingTime = 500) {
-        this.setMode_(notifyMode, opt_detectionTime, opt_holdingTime, this.requestId.defaultId());
+    setMode(notifyMode, opt_holdingTime = 500, opt_detectionTime = 500) {
+        this.setMode_(notifyMode, opt_holdingTime, opt_detectionTime, this.requestId.defaultId());
         this.notifyMode_ = notifyMode;
-        this.detectionTime_ = opt_detectionTime;
         this.holdingTime_ = opt_holdingTime;
-    }
-    static _isMESHblock(name) {
-        return name.indexOf(MESH_100MD.PREFIX) !== -1;
+        this.detectionTime_ = opt_detectionTime;
     }
     prepareConnect() {
         this.meshBlock = new Motion_1.Motion();
@@ -97,9 +103,9 @@ class MESH_100MD extends MESH_1.MESH {
     async beforeOnDisconnectWait(reason) {
         // do nothing
     }
-    setMode_(notifyMode, detectionTime, holdingTime, requestId) {
+    setMode_(notifyMode, holdingTime, detectionTime, requestId) {
         const motionBlock = this.meshBlock;
-        const command = motionBlock.parseSetmodeCommand(notifyMode, detectionTime, holdingTime, requestId);
+        const command = motionBlock.createSetmodeCommand(notifyMode, holdingTime, detectionTime, requestId);
         this.writeWOResponse(command);
     }
     setHandler_(motionState, notifyMode, requestId) {
@@ -118,6 +124,6 @@ class MESH_100MD extends MESH_1.MESH {
 }
 exports.default = MESH_100MD;
 MESH_100MD.PartsName = 'MESH_100MD';
-MESH_100MD.PREFIX = 'MESH-100MD';
+MESH_100MD.LocalName = /^MESH-100MD/;
 MESH_100MD.NotifyMode = Motion_1.Motion.NotifyMode;
 MESH_100MD.MotionState = Motion_1.Motion.MotionState;
