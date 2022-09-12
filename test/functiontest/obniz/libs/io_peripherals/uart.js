@@ -119,7 +119,13 @@ describe('obniz.libs.uart', function () {
 
     expect(this.obniz.uart0.isDataExists()).to.be.true;
     expect(this.obniz.uart0.readBytes()).to.be.deep.equal([
-      78, 105, 99, 101, 1, 2, 3,
+      78,
+      105,
+      99,
+      101,
+      1,
+      2,
+      3,
     ]);
     expect(this.obniz).to.be.finished;
   });

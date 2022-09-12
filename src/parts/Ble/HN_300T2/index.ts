@@ -84,7 +84,7 @@ export default class HN_300T2 implements ObnizPartsBleInterface {
         .catch(reject);
     });
     await this._peripheral.disconnectWait();
-    return;
+    return keys;
   }
 
   public async getDataWait(pairingKeys: string): Promise<HN_300T2Result[]> {

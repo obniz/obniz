@@ -130,7 +130,30 @@ describe('obniz.libs.pwm', function () {
 
     // signal for room heater's remote signal
     const arr = [
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
     ];
 
     pwm.modulate('am', 0.07, arr); // am modulate. symbol length = 70usec.

@@ -26983,7 +26983,8 @@ class GT_7510 {
         });
         const customService = this._peripheral.getService('7ae4000153f646288894b231f30a81d7');
         const meterChara = customService.getCharacteristic('7ae4200253f646288894b231f30a81d7');
-        await meterChara.registerNotifyWait((data) => {
+        await meterChara.registerNotifyWait(async (data) => {
+            await meterChara.writeWait([0x90]);
             return;
         });
         await meterChara.writeWait([0xa2, 0x6f, 0x62, 0x6e, 0x69, 0x7a]); // obniz
@@ -27045,6 +27046,14 @@ class GT_7510 {
                 meterInfoData = [];
                 mode = 0;
                 results.push(result);
+                // 通信終了コマンド失敗リスト
+                // await commandChara!.writeWait([0xA1]);
+                // await commandChara!.writeWait([0x91]);
+                // await commandChara!.writeWait(Array.from(Buffer.from("0xA1", "utf8")));
+                // await commandChara!.writeWait(Array.from(Buffer.from("A1", "utf8")));
+                // await commandChara!.writeWait(Array.from(Buffer.from("91", "utf8")));
+                // await commandChara!.writeWait(Array.from(Buffer.from("0x91", "utf8")));
+                // 全て 5,4の繰り返しが返ってきて10回で終了する。
                 await this._peripheral.disconnectWait();
             }
         });
@@ -27630,7 +27639,7 @@ class HN_300T2 {
                 .catch(reject);
         });
         await this._peripheral.disconnectWait();
-        return;
+        return keys;
     }
     async getDataWait(pairingKeys) {
         if (!this._peripheral) {

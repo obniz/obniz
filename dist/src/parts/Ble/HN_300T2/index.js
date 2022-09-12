@@ -49,7 +49,7 @@ class HN_300T2 {
                 .catch(reject);
         });
         await this._peripheral.disconnectWait();
-        return;
+        return keys;
     }
     async getDataWait(pairingKeys) {
         if (!this._peripheral) {
