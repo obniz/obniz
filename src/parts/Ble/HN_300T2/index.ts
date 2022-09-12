@@ -41,10 +41,7 @@ export default class HN_300T2 implements ObnizPartsBleInterface {
   public onNotify?: (co2: number) => void;
   public ondisconnect?: (reason: any) => void;
 
-  constructor(
-    peripheral: BleRemotePeripheral,
-    timezoneOffset: number
-  ) {
+  constructor(peripheral: BleRemotePeripheral, timezoneOffset: number) {
     if (!peripheral || !HN_300T2.isDevice(peripheral)) {
       throw new Error('peripheral is not HN_300TN');
     }
@@ -58,16 +55,37 @@ export default class HN_300T2 implements ObnizPartsBleInterface {
     );
   }
 
+  public isPairingMode() {
+    if (!this._peripheral) {
+      throw new Error('HN_300TN not found');
+    }
+
+    if ((this._peripheral.adv_data[15] & 8) === 8) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public async pairingWait() {
+    if (!this.isPairingMode()) {
+      throw new Error('HN_300TN is not pairing mode.');
+    }
+    await this._peripheral.connectWait();
+    const service = this._peripheral.getService('181D');
+    const weight_chara = service!.getCharacteristic('2A9D');
+    await weight_chara!.registerNotifyWait((data) => {
+      if(data){console.log("paired");}
+      return;
+    });
+  }
+
   public async getDataWait(): Promise<HN_300T2Result[]> {
     if (!this._peripheral) {
       throw new Error('HN_300T2 not found');
     }
 
     await this._peripheral.connectWait();
-
-    if (!this._peripheral) {
-      throw new Error('HN_300T2 not found');
-    }
 
     const results: HN_300T2Result[] = [];
 
@@ -77,10 +95,6 @@ export default class HN_300T2 implements ObnizPartsBleInterface {
     await this.writeCurrentTimeWait(currentTimeChara!);
 
     const service = this._peripheral.getService('181D');
-
-    // const weightScaleFeatureChara = service!.getCharacteristic("2A9E");
-    // const scaleDataArray = await WweightScaleFeatureChara!.readWait();
-    // const scaleData = this._analyseScaleData(scaleDataArray);
 
     const waitDisconnect = new Promise<HN_300T2Result[]>((resolve, reject) => {
       if (!this._peripheral) return;
@@ -103,7 +117,7 @@ export default class HN_300T2 implements ObnizPartsBleInterface {
     const buf = Buffer.from(data);
     const result: HN_300T2Result = {};
 
-    result.weight = ((data[2] << 8) | (data[1])) * 0.005;
+    result.weight = ((data[2] << 8) | data[1]) * 0.005;
     result.date = {
       year: buf.readUInt16LE(3),
       month: buf.readUInt8(5),
@@ -119,7 +133,7 @@ export default class HN_300T2 implements ObnizPartsBleInterface {
   }
 
   private async writeCurrentTimeWait(chara: BleRemoteCharacteristic) {
-    const dayFormat:number[] = [7,1,2,3,4,5,6];
+    const dayFormat: number[] = [7, 1, 2, 3, 4, 5, 6];
     const date = new Date();
     date.setTime(Date.now() + 1000 * 60 * 60 * this._timezoneOffset);
 
@@ -131,7 +145,7 @@ export default class HN_300T2 implements ObnizPartsBleInterface {
     buf.writeUInt8(date.getUTCMinutes(), 5);
     buf.writeUInt8(date.getUTCSeconds(), 6);
     buf.writeUInt8(dayFormat[date.getUTCDay()], 7);
-    buf.writeUInt8(Math.trunc(date.getUTCMilliseconds() / (9999/256)), 8);
+    buf.writeUInt8(Math.trunc(date.getUTCMilliseconds() / (9999 / 256)), 8);
     buf.writeUInt8(1, 9);
 
     const arr = Array.from(buf);
