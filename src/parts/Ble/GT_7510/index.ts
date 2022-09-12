@@ -73,7 +73,7 @@ export default class GT_7510 implements ObnizPartsBleInterface {
   }
 
   public async pairingWait(passkeyCallback: () => Promise<number>) {
-    if(!this.isPairingMode()){
+    if (!this.isPairingMode()) {
       throw new Error('GT_7510 is not pairing mode.');
     }
     await this._peripheral.connectWait({
