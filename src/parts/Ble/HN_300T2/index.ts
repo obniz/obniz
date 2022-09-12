@@ -71,21 +71,30 @@ export default class HN_300T2 implements ObnizPartsBleInterface {
     if (!this.isPairingMode()) {
       throw new Error('HN_300TN is not pairing mode.');
     }
-    await this._peripheral.connectWait();
-    const service = this._peripheral.getService('181D');
-    const weight_chara = service!.getCharacteristic('2A9D');
-    await weight_chara!.registerNotifyWait((data) => {
-      if(data){console.log("paired");}
-      return;
+    const keys = await new Promise((resolve, reject) => {
+      this._peripheral
+        .connectWait({
+          pairingOption: {
+            onPairedCallback: (pairingKey) => {
+              console.log('key', pairingKey);
+              resolve(pairingKey);
+            },
+          },
+        })
+        .catch(reject);
     });
+    await this._peripheral.disconnectWait();
+    return;
   }
 
-  public async getDataWait(): Promise<HN_300T2Result[]> {
+  public async getDataWait(pairingKeys: string): Promise<HN_300T2Result[]> {
     if (!this._peripheral) {
       throw new Error('HN_300T2 not found');
     }
 
-    await this._peripheral.connectWait();
+    await this._peripheral.connectWait({
+      pairingOption: { keys: pairingKeys },
+    });
 
     const results: HN_300T2Result[] = [];
 

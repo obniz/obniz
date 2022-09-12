@@ -31,7 +31,7 @@ export default class HN_300T2 implements ObnizPartsBleInterface {
     static isDevice(peripheral: BleRemotePeripheral): boolean | "" | null;
     isPairingMode(): boolean;
     pairingWait(): Promise<void>;
-    getDataWait(): Promise<HN_300T2Result[]>;
+    getDataWait(pairingKeys: string): Promise<HN_300T2Result[]>;
     private _analyseWeightMesureData;
     private writeCurrentTimeWait;
 }

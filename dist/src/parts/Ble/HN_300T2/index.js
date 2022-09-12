@@ -36,21 +36,28 @@ class HN_300T2 {
         if (!this.isPairingMode()) {
             throw new Error('HN_300TN is not pairing mode.');
         }
-        await this._peripheral.connectWait();
-        const service = this._peripheral.getService('181D');
-        const weight_chara = service.getCharacteristic('2A9D');
-        await weight_chara.registerNotifyWait((data) => {
-            if (data) {
-                console.log('paired');
-            }
-            return;
+        const keys = await new Promise((resolve, reject) => {
+            this._peripheral
+                .connectWait({
+                pairingOption: {
+                    onPairedCallback: (pairingKey) => {
+                        console.log('key', pairingKey);
+                        resolve(pairingKey);
+                    },
+                },
+            })
+                .catch(reject);
         });
+        await this._peripheral.disconnectWait();
+        return;
     }
-    async getDataWait() {
+    async getDataWait(pairingKeys) {
         if (!this._peripheral) {
             throw new Error('HN_300T2 not found');
         }
-        await this._peripheral.connectWait();
+        await this._peripheral.connectWait({
+            pairingOption: { keys: pairingKeys },
+        });
         const results = [];
         const deviceInfoService = this._peripheral.getService('1805');
         const currentTimeChara = deviceInfoService.getCharacteristic('2A2B');
