@@ -26965,7 +26965,9 @@ class GT_7510 {
             return false;
         }
     }
-    async pairingWait(passkeyCallback) {
+    async pairingWait(passkeyCallback, option = {}) {
+        var _a;
+        const name = (_a = option.name, (_a !== null && _a !== void 0 ? _a : `obniz${this._peripheral.obnizBle.Obniz.id}`));
         if (!this.isPairingMode()) {
             throw new Error('GT_7510 is not pairing mode.');
         }
@@ -26974,10 +26976,10 @@ class GT_7510 {
                 passkeyCallback,
                 onPairedCallback: (keys) => {
                     this.key = keys;
-                    console.log('paired', keys);
+                    // console.log('paired', keys);
                 },
                 onPairingFailed: () => {
-                    console.log(`pairing failed`);
+                    // console.log(`pairing failed`);
                 },
             },
         });
@@ -26987,7 +26989,10 @@ class GT_7510 {
             await meterChara.writeWait([0x90]);
             return;
         });
-        await meterChara.writeWait([0xa2, 0x6f, 0x62, 0x6e, 0x69, 0x7a]); // obniz
+        await meterChara.writeWait([
+            0xa2,
+            ...Array.from(Buffer.from(name.slice(0, 16), 'utf8')),
+        ]);
         return this.key;
     }
     async connectWait(key) {
@@ -27238,7 +27243,7 @@ class HEM_6233T {
                 0x00,
                 0x0a,
             ]);
-            this._writeTimeCharWait(this._timezoneOffsetMinute);
+            await this._writeTimeCharWait(this._timezoneOffsetMinute);
         }); // battery Level
         await this.subscribeWait('1810', '2A35', async (data) => {
             // console.log('SUCCESS', data);
@@ -42488,7 +42493,7 @@ class ArduCAMMini {
     async takeWait(size) {
         if (typeof size === 'string' && this._size !== size) {
             this.setSize(size);
-            this.obniz.wait(1000);
+            await this.obniz.wait(1000);
         }
         this.flushFIFO();
         this.flushFIFO();
@@ -48384,9 +48389,9 @@ class HCSR04 {
             callback: async (edges) => {
                 if (this.reset_alltime) {
                     this.vccIO.output(false);
-                    this.obniz.wait(100);
+                    await this.obniz.wait(100);
                     this.vccIO.output(true);
-                    this.obniz.wait(100);
+                    await this.obniz.wait(100);
                 }
                 let distance;
                 for (let i = 0; i < edges.length - 1; i++) {
@@ -55859,7 +55864,7 @@ class AK09916 extends i2cParts_1.default {
         // 1111 1111 1111 1111 -1 uT
         // 1000 0000 0001 0000 -4912 uT
         const raw3 = await this.readThreeInt16Wait(this._HXL, 'l');
-        this.readWait(this._ST2, 1);
+        await this.readWait(this._ST2, 1);
         const xyz = raw3.map((d, i) => {
             return (d * this.so - this.offset[i]) * this.scale[i];
         });
@@ -59571,9 +59576,9 @@ class AM2320 {
             // do nothing.
         };
         this.i2c.write(this.address, [0]); // wake
-        this.obniz.wait(2);
+        await this.obniz.wait(2);
         this.i2c.write(this.address, [0x03, 0x00, 0x04]);
-        this.obniz.wait(2);
+        await this.obniz.wait(2);
         this.i2c.write(this.address, [0x03, 0x00, 0x04]);
         const ret = await this.i2c.readWait(this.address, 6);
         this.i2c.onerror = i2cOnerror;

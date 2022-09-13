@@ -36,7 +36,9 @@ class GT_7510 {
             return false;
         }
     }
-    async pairingWait(passkeyCallback) {
+    async pairingWait(passkeyCallback, option = {}) {
+        var _a;
+        const name = (_a = option.name, (_a !== null && _a !== void 0 ? _a : `obniz${this._peripheral.obnizBle.Obniz.id}`));
         if (!this.isPairingMode()) {
             throw new Error('GT_7510 is not pairing mode.');
         }
@@ -45,10 +47,10 @@ class GT_7510 {
                 passkeyCallback,
                 onPairedCallback: (keys) => {
                     this.key = keys;
-                    console.log('paired', keys);
+                    // console.log('paired', keys);
                 },
                 onPairingFailed: () => {
-                    console.log(`pairing failed`);
+                    // console.log(`pairing failed`);
                 },
             },
         });
@@ -58,7 +60,10 @@ class GT_7510 {
             await meterChara.writeWait([0x90]);
             return;
         });
-        await meterChara.writeWait([0xa2, 0x6f, 0x62, 0x6e, 0x69, 0x7a]); // obniz
+        await meterChara.writeWait([
+            0xa2,
+            ...Array.from(Buffer.from(name.slice(0, 16), 'utf8')),
+        ]);
         return this.key;
     }
     async connectWait(key) {

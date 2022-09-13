@@ -72,7 +72,11 @@ export default class GT_7510 implements ObnizPartsBleInterface {
     }
   }
 
-  public async pairingWait(passkeyCallback: () => Promise<number>) {
+  public async pairingWait(
+    passkeyCallback: () => Promise<number>,
+    option: { name?: string } = {}
+  ) {
+    const name = option.name ?? `obniz${this._peripheral.obnizBle.Obniz.id}`;
     if (!this.isPairingMode()) {
       throw new Error('GT_7510 is not pairing mode.');
     }
@@ -81,10 +85,10 @@ export default class GT_7510 implements ObnizPartsBleInterface {
         passkeyCallback,
         onPairedCallback: (keys) => {
           this.key = keys;
-          console.log('paired', keys);
+          // console.log('paired', keys);
         },
         onPairingFailed: () => {
-          console.log(`pairing failed`);
+          // console.log(`pairing failed`);
         },
       },
     });
@@ -99,7 +103,10 @@ export default class GT_7510 implements ObnizPartsBleInterface {
       await meterChara!.writeWait([0x90]);
       return;
     });
-    await meterChara!.writeWait([0xa2, 0x6f, 0x62, 0x6e, 0x69, 0x7a]); // obniz
+    await meterChara!.writeWait([
+      0xa2,
+      ...Array.from(Buffer.from(name.slice(0, 16), 'utf8')),
+    ]);
     return this.key;
   }
 
