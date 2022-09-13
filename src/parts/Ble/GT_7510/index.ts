@@ -11,6 +11,7 @@ import ObnizPartsBleInterface, {
 } from '../../../obniz/ObnizPartsBleInterface';
 
 import crypto from 'crypto';
+import EventEmitter from 'eventemitter3';
 
 export interface GT_7510Options {}
 
@@ -46,6 +47,18 @@ export default class GT_7510 implements ObnizPartsBleInterface {
   public _peripheral: BleRemotePeripheral;
   public onNotify?: (co2: number) => void;
   public ondisconnect?: (reason: any) => void;
+
+  private _emitter = new EventEmitter();
+  private _buffer: Buffer[] = [];
+
+  private STX = 0x02;
+  private ETX = 0x03;
+  private EOT = 0x04;
+  private ENQ = 0x05;
+  private ACK = 0x06;
+  private NAK = 0x15;
+  private ETB = 0x17;
+  private SYN = 0x16;
 
   constructor(peripheral: BleRemotePeripheral) {
     if (!peripheral || !GT_7510.isDevice(peripheral)) {
@@ -179,43 +192,73 @@ export default class GT_7510 implements ObnizPartsBleInterface {
     await securityChara!.writeWait(arr);
 
     let meterInfoData: number[] = [];
-    let mode = 0;
+    // let mode = 0;
     await commandChara!.registerNotifyWait(async (data) => {
-      if (data[0] === 68 || mode === 1) {
+      console.log(`${new Date()} receive ${Buffer.from(data).toString('hex')}`);
+      this._buffer.push(Buffer.from(data));
+      this._emitter.emit('data');
+    });
+
+    await commandChara!.writeWait([this.SYN]);
+    let mode = 0;
+    for (let i = 0; i < 100; i++) {
+      // 無限ループ対策
+      const data = await this._getCommandDataWait();
+      if (data.readUInt8(0) === 68 || mode === 1) {
         mode = 1;
-        meterInfoData = meterInfoData.concat(data);
+        meterInfoData = [...meterInfoData, ...Array.from(data)];
       }
-
-      if (data.slice(-3).toString() === '13,10,6') {
-        const a = meterInfoData;
-        const result = this.analyzeData(a);
-        meterInfoData = [];
+      const last3Data = data.slice(-3);
+      if (last3Data.toString('hex') === '0d0a06' /* '13,10,6'*/) {
         mode = 0;
-        results.push(result);
-
-        // 通信終了コマンド失敗リスト
-        // await commandChara!.writeWait([0xA1]);
-        // await commandChara!.writeWait([0x91]);
-        // await commandChara!.writeWait(Array.from(Buffer.from("0xA1", "utf8")));
-        // await commandChara!.writeWait(Array.from(Buffer.from("A1", "utf8")));
-        // await commandChara!.writeWait(Array.from(Buffer.from("91", "utf8")));
-        // await commandChara!.writeWait(Array.from(Buffer.from("0x91", "utf8")));
-        // 全て 5,4の繰り返しが返ってきて10回で終了する。
-
-        await this._peripheral.disconnectWait();
+        break;
       }
+    }
+    const result = this.analyzeData(meterInfoData);
+
+    const d1 = await this._sendCommandDataReplyWait(
+      commandChara!,
+      // Buffer.from([this.SYN])
+      // Buffer.from([this.ACK])
+      // Buffer.from([this.NAK])
+      Buffer.from([0xa1])
+    );
+    try {
+      const d2 = await this._sendCommandDataReplyWait(
+        commandChara!,
+        Buffer.from([0xa1])
+      );
+    } catch (e) {
+      // d1で既にdisconnectされてるかもしれない。ただ、05 = ENQ がきてるので再送も入れとく。
+    }
+    return [result];
+  }
+
+  private _sendCommandDataReplyWait(
+    commandChara: BleRemoteCharacteristic,
+    sendData: Buffer
+  ): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      if (this._buffer.length > 0) {
+        throw new Error('Not empty buffer');
+      }
+      this._getCommandDataWait().then(resolve).catch(reject);
+      commandChara.writeWait(Array.from(sendData)).catch(reject);
     });
+  }
 
-    await commandChara!.writeWait([0x16]);
-
-    const waitDisconnect = new Promise<GT_7510Result[]>((resolve, reject) => {
-      if (!this._peripheral) return;
-      this._peripheral.ondisconnect = (reason: any) => {
-        resolve(results);
-      };
+  private _getCommandDataWait(): Promise<Buffer> {
+    if (this._buffer.length > 0) {
+      const b = this._buffer.shift()!;
+      return Promise.resolve(b);
+    }
+    return new Promise((resolve) => {
+      this._emitter.once('data', () => {
+        if (this._buffer.length > 0) {
+          resolve(this._buffer.shift());
+        }
+      });
     });
-
-    return await waitDisconnect;
   }
 
   private async digestMessageWait(message: string) {

@@ -26937,8 +26937,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const crypto_1 = __importDefault(__webpack_require__("./node_modules/crypto-browserify/index.js"));
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 class GT_7510 {
     constructor(peripheral) {
+        this._emitter = new eventemitter3_1.default();
+        this._buffer = [];
+        this.STX = 0x02;
+        this.ETX = 0x03;
+        this.EOT = 0x04;
+        this.ENQ = 0x05;
+        this.ACK = 0x06;
+        this.NAK = 0x15;
+        this.ETB = 0x17;
+        this.SYN = 0x16;
         if (!peripheral || !GT_7510.isDevice(peripheral)) {
             throw new Error('peripheral is not GT_7510');
         }
@@ -27048,38 +27059,62 @@ class GT_7510 {
         arr.push(...buf);
         await securityChara.writeWait(arr);
         let meterInfoData = [];
-        let mode = 0;
+        // let mode = 0;
         await commandChara.registerNotifyWait(async (data) => {
-            if (data[0] === 68 || mode === 1) {
+            console.log(`${new Date()} receive ${Buffer.from(data).toString('hex')}`);
+            this._buffer.push(Buffer.from(data));
+            this._emitter.emit('data');
+        });
+        await commandChara.writeWait([this.SYN]);
+        let mode = 0;
+        for (let i = 0; i < 100; i++) {
+            // 無限ループ対策
+            const data = await this._getCommandDataWait();
+            if (data.readUInt8(0) === 68 || mode === 1) {
                 mode = 1;
-                meterInfoData = meterInfoData.concat(data);
+                meterInfoData = [...meterInfoData, ...Array.from(data)];
             }
-            if (data.slice(-3).toString() === '13,10,6') {
-                const a = meterInfoData;
-                const result = this.analyzeData(a);
-                meterInfoData = [];
+            const last3Data = data.slice(-3);
+            if (last3Data.toString('hex') === '0d0a06' /* '13,10,6'*/) {
                 mode = 0;
-                results.push(result);
-                // 通信終了コマンド失敗リスト
-                // await commandChara!.writeWait([0xA1]);
-                // await commandChara!.writeWait([0x91]);
-                // await commandChara!.writeWait(Array.from(Buffer.from("0xA1", "utf8")));
-                // await commandChara!.writeWait(Array.from(Buffer.from("A1", "utf8")));
-                // await commandChara!.writeWait(Array.from(Buffer.from("91", "utf8")));
-                // await commandChara!.writeWait(Array.from(Buffer.from("0x91", "utf8")));
-                // 全て 5,4の繰り返しが返ってきて10回で終了する。
-                await this._peripheral.disconnectWait();
+                break;
             }
+        }
+        const result = this.analyzeData(meterInfoData);
+        const d1 = await this._sendCommandDataReplyWait(commandChara, 
+        // Buffer.from([this.SYN])
+        // Buffer.from([this.ACK])
+        // Buffer.from([this.NAK])
+        Buffer.from([0xa1]));
+        try {
+            const d2 = await this._sendCommandDataReplyWait(commandChara, Buffer.from([0xa1]));
+        }
+        catch (e) {
+            // d1で既にdisconnectされてるかもしれない。ただ、05 = ENQ がきてるので再送も入れとく。
+        }
+        return [result];
+    }
+    _sendCommandDataReplyWait(commandChara, sendData) {
+        return new Promise((resolve, reject) => {
+            if (this._buffer.length > 0) {
+                throw new Error('Not empty buffer');
+            }
+            this._getCommandDataWait().then(resolve).catch(reject);
+            commandChara.writeWait(Array.from(sendData)).catch(reject);
         });
-        await commandChara.writeWait([0x16]);
-        const waitDisconnect = new Promise((resolve, reject) => {
-            if (!this._peripheral)
-                return;
-            this._peripheral.ondisconnect = (reason) => {
-                resolve(results);
-            };
+    }
+    _getCommandDataWait() {
+        if (this._buffer.length > 0) {
+            const b = this._buffer.shift();
+            return Promise.resolve(b);
+        }
+        return new Promise((resolve) => {
+            this._emitter.once('data', () => {
+                if (this._buffer.length > 0) {
+                    resolve(this._buffer.shift());
+                }
+            });
         });
-        return await waitDisconnect;
     }
     async digestMessageWait(message) {
         const buffer = Buffer.from(message, 'hex');

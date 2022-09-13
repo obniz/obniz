@@ -29,6 +29,16 @@ export default class GT_7510 implements ObnizPartsBleInterface {
     _peripheral: BleRemotePeripheral;
     onNotify?: (co2: number) => void;
     ondisconnect?: (reason: any) => void;
+    private _emitter;
+    private _buffer;
+    private STX;
+    private ETX;
+    private EOT;
+    private ENQ;
+    private ACK;
+    private NAK;
+    private ETB;
+    private SYN;
     constructor(peripheral: BleRemotePeripheral);
     static isDevice(peripheral: BleRemotePeripheral): boolean | "" | null;
     isPairingMode(): boolean;
@@ -36,7 +46,14 @@ export default class GT_7510 implements ObnizPartsBleInterface {
         name?: string;
     }): Promise<unknown>;
     connectWait(key: string): Promise<void>;
-    getDataWait(key: string): Promise<GT_7510Result[]>;
+    getDataWait(key: string): Promise<{
+        glucose: number;
+        date: string;
+        range: string;
+        timing: string;
+    }[]>;
+    private _sendCommandDataReplyWait;
+    private _getCommandDataWait;
     private digestMessageWait;
     private toHex;
     private analyzeData;
