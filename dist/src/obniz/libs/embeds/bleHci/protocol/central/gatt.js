@@ -581,7 +581,6 @@ class GattCentral extends eventemitter3_1.default {
         else {
             await this._execCommandWait(this._gattCommon.executeWriteRequest(characteristic.valueHandle), att_1.ATT.OP_EXECUTE_WRITE_RESP);
         }
-        throw new ObnizError_1.ObnizBleOpError();
     }
     getService(serviceUuid) {
         if (!this._services[serviceUuid]) {

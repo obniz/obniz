@@ -29,13 +29,12 @@ export default class GT_7510 implements ObnizPartsBleInterface {
     _peripheral: BleRemotePeripheral;
     onNotify?: (co2: number) => void;
     ondisconnect?: (reason: any) => void;
-    private key;
     constructor(peripheral: BleRemotePeripheral);
     static isDevice(peripheral: BleRemotePeripheral): boolean | "" | null;
     isPairingMode(): boolean;
     pairingWait(passkeyCallback: () => Promise<number>, option?: {
         name?: string;
-    }): Promise<string>;
+    }): Promise<unknown>;
     connectWait(key: string): Promise<void>;
     getDataWait(key: string): Promise<GT_7510Result[]>;
     private digestMessageWait;

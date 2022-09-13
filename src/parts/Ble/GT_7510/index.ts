@@ -47,8 +47,6 @@ export default class GT_7510 implements ObnizPartsBleInterface {
   public onNotify?: (co2: number) => void;
   public ondisconnect?: (reason: any) => void;
 
-  private key = '';
-
   constructor(peripheral: BleRemotePeripheral) {
     if (!peripheral || !GT_7510.isDevice(peripheral)) {
       throw new Error('peripheral is not GT_7510');
@@ -80,17 +78,23 @@ export default class GT_7510 implements ObnizPartsBleInterface {
     if (!this.isPairingMode()) {
       throw new Error('GT_7510 is not pairing mode.');
     }
-    await this._peripheral.connectWait({
-      pairingOption: {
-        passkeyCallback,
-        onPairedCallback: (keys) => {
-          this.key = keys;
-          // console.log('paired', keys);
-        },
-        onPairingFailed: () => {
-          // console.log(`pairing failed`);
-        },
-      },
+
+    const key = await new Promise((resolve, reject) => {
+      return this._peripheral
+        .connectWait({
+          pairingOption: {
+            passkeyCallback,
+            onPairedCallback: (keys) => {
+              console.log('paired', keys);
+              resolve(keys);
+            },
+            onPairingFailed: () => {
+              console.log(`pairing failed`);
+              reject(new Error('GT_7510 pairing failed'));
+            },
+          },
+        })
+        .catch(reject);
     });
 
     const customService = this._peripheral.getService(
@@ -100,20 +104,25 @@ export default class GT_7510 implements ObnizPartsBleInterface {
       '7ae4200253f646288894b231f30a81d7'
     );
     await meterChara!.registerNotifyWait(async (data) => {
-      await meterChara!.writeWait([0x90]);
-      return;
+      try {
+        // 向こうから切断される
+        await meterChara!.writeWait([0x90]);
+        return;
+      } catch (e) {
+        // do nothing
+      }
     });
     await meterChara!.writeWait([
       0xa2,
       ...Array.from(Buffer.from(name.slice(0, 16), 'utf8')),
     ]);
-    return this.key;
+    return key;
   }
 
   public async connectWait(key: string) {
     await this._peripheral.connectWait({
       pairingOption: {
-        keys: key ? key : this.key,
+        keys: key,
       },
     });
   }
@@ -122,7 +131,7 @@ export default class GT_7510 implements ObnizPartsBleInterface {
     const results: GT_7510Result[] = [];
     await this._peripheral.connectWait({
       pairingOption: {
-        keys: key ? key : this.key,
+        keys: key,
       },
     });
 

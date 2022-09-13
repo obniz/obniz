@@ -11,7 +11,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const crypto_1 = __importDefault(require("crypto"));
 class GT_7510 {
     constructor(peripheral) {
-        this.key = '';
         if (!peripheral || !GT_7510.isDevice(peripheral)) {
             throw new Error('peripheral is not GT_7510');
         }
@@ -42,34 +41,45 @@ class GT_7510 {
         if (!this.isPairingMode()) {
             throw new Error('GT_7510 is not pairing mode.');
         }
-        await this._peripheral.connectWait({
-            pairingOption: {
-                passkeyCallback,
-                onPairedCallback: (keys) => {
-                    this.key = keys;
-                    // console.log('paired', keys);
+        const key = await new Promise((resolve, reject) => {
+            return this._peripheral
+                .connectWait({
+                pairingOption: {
+                    passkeyCallback,
+                    onPairedCallback: (keys) => {
+                        console.log('paired', keys);
+                        resolve(keys);
+                    },
+                    onPairingFailed: () => {
+                        console.log(`pairing failed`);
+                        reject(new Error('GT_7510 pairing failed'));
+                    },
                 },
-                onPairingFailed: () => {
-                    // console.log(`pairing failed`);
-                },
-            },
+            })
+                .catch(reject);
         });
         const customService = this._peripheral.getService('7ae4000153f646288894b231f30a81d7');
         const meterChara = customService.getCharacteristic('7ae4200253f646288894b231f30a81d7');
         await meterChara.registerNotifyWait(async (data) => {
-            await meterChara.writeWait([0x90]);
-            return;
+            try {
+                // 向こうから切断される
+                await meterChara.writeWait([0x90]);
+                return;
+            }
+            catch (e) {
+                // do nothing
+            }
         });
         await meterChara.writeWait([
             0xa2,
             ...Array.from(Buffer.from(name.slice(0, 16), 'utf8')),
         ]);
-        return this.key;
+        return key;
     }
     async connectWait(key) {
         await this._peripheral.connectWait({
             pairingOption: {
-                keys: key ? key : this.key,
+                keys: key,
             },
         });
     }
@@ -77,7 +87,7 @@ class GT_7510 {
         const results = [];
         await this._peripheral.connectWait({
             pairingOption: {
-                keys: key ? key : this.key,
+                keys: key,
             },
         });
         const customService = this._peripheral.getService('7ae4000153f646288894b231f30a81d7');
