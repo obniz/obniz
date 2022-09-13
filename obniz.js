@@ -27622,7 +27622,7 @@ class HN_300T2 {
             return false;
         }
     }
-    async pairingWait() {
+    async pairingWait({ disconnect } = { disconnect: true }) {
         if (!this.isPairingMode()) {
             throw new Error('HN_300TN is not pairing mode.');
         }
@@ -27631,14 +27631,19 @@ class HN_300T2 {
                 .connectWait({
                 pairingOption: {
                     onPairedCallback: (pairingKey) => {
-                        console.log('key', pairingKey);
                         resolve(pairingKey);
                     },
                 },
             })
+                .then(() => {
+                // retry
+                return this._peripheral.pairingWait();
+            })
                 .catch(reject);
         });
-        await this._peripheral.disconnectWait();
+        if (disconnect) {
+            await this._peripheral.disconnectWait();
+        }
         return keys;
     }
     async getDataWait(pairingKeys) {
