@@ -92,7 +92,7 @@ export default class GT_7510 implements ObnizPartsBleInterface {
       throw new Error('GT_7510 is not pairing mode.');
     }
 
-    const key = await new Promise((resolve, reject) => {
+    const key: string = await new Promise<string>((resolve, reject) => {
       return this._peripheral
         .connectWait({
           pairingOption: {
