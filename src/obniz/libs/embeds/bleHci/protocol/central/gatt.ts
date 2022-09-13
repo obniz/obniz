@@ -995,7 +995,6 @@ class GattCentral extends EventEmitter<GattEventTypes> {
         ATT.OP_EXECUTE_WRITE_RESP
       );
     }
-    throw new ObnizBleOpError();
   }
 
   private getService(serviceUuid: UUID): GattService {
