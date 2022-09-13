@@ -56,9 +56,9 @@ export default class AM2320 implements ObnizPartsInterface {
       // do nothing.
     };
     this.i2c.write(this.address, [0]); // wake
-    this.obniz.wait(2);
+    await this.obniz.wait(2);
     this.i2c.write(this.address, [0x03, 0x00, 0x04]);
-    this.obniz.wait(2);
+    await this.obniz.wait(2);
     this.i2c.write(this.address, [0x03, 0x00, 0x04]);
     const ret: any = await this.i2c.readWait(this.address, 6);
     this.i2c.onerror = i2cOnerror;
