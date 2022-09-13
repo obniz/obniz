@@ -58,11 +58,11 @@ class GT_7510 {
                 pairingOption: {
                     passkeyCallback,
                     onPairedCallback: (keys) => {
-                        console.log('paired', keys);
+                        // console.log('paired', keys);
                         resolve(keys);
                     },
                     onPairingFailed: () => {
-                        console.log(`pairing failed`);
+                        // console.log(`pairing failed`);
                         reject(new Error('GT_7510 pairing failed'));
                     },
                 },
@@ -133,7 +133,7 @@ class GT_7510 {
         let meterInfoData = [];
         // let mode = 0;
         await commandChara.registerNotifyWait(async (data) => {
-            console.log(`${new Date()} receive ${Buffer.from(data).toString('hex')}`);
+            // console.log(`${new Date()} receive ${Buffer.from(data).toString('hex')}`);
             this._buffer.push(Buffer.from(data));
             this._emitter.emit('data');
         });
