@@ -92,7 +92,7 @@ export default class AK09916 extends i2cParts implements ObnizPartsInterface {
       'l'
     );
 
-    this.readWait(this._ST2, 1);
+    await this.readWait(this._ST2, 1);
 
     const xyz: [number, number, number] = raw3.map((d, i) => {
       return (d * this.so - this.offset[i]) * this.scale[i];
