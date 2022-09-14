@@ -224,6 +224,7 @@ module.exports = {
     "yaml-loader": "^0.5.0"
   },
   "dependencies": {
+    "@9wick/serial-executor": "^1.0.0",
     "@types/tv4": "^1.2.29",
     "@types/ws": "^6.0.4",
     "eventemitter3": "^3.1.2",
@@ -8578,8 +8579,9 @@ class BleRemotePeripheral {
                 }
                 if (this._connectSetting.waitUntilPairing &&
                     !(await this.isPairingFinishedWait())) {
-                    console.log('waitUntilPairing');
+                    // console.log('waitUntilPairing');
                     await this.pairingWait(this._connectSetting.pairingOption);
+                    // console.log('waitUntilPairing finished');
                 }
             }
             catch (e) {
@@ -8592,7 +8594,7 @@ class BleRemotePeripheral {
                 throw e;
             }
         }, async (err) => {
-            console.log('connection fail, retry', err);
+            // console.log('connection fail, retry', err);
         });
         this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
         this.emitter.emit('connect');
@@ -12038,6 +12040,7 @@ const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 const crypto_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/common/crypto.js"));
 const smp_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/common/smp.js");
+const serial_executor_1 = __webpack_require__("./node_modules/@9wick/serial-executor/dist/index.js");
 /**
  * @ignore
  */
@@ -12056,6 +12059,7 @@ class Smp extends eventemitter3_1.default {
         this._ltk = null;
         this._options = undefined;
         this._smpCommon = new smp_1.SmpCommon();
+        this._serialExecutor = serial_executor_1.createSerialExecutor();
         this.debugHandler = (...param) => {
             // do nothing.
         };
@@ -12083,13 +12087,25 @@ class Smp extends eventemitter3_1.default {
         this._options = options;
     }
     async pairingWait(options) {
+        return await this._serialExecutor.execute(async () => {
+            return await this.pairingSingleQueueWait(options);
+        });
+    }
+    async pairingSingleQueueWait(options) {
         this._options = Object.assign(Object.assign({}, this._options), options);
+        // if already paired
+        if (this.hasKeys()) {
+            if (this._options && this._options.onPairedCallback) {
+                this._options.onPairedCallback(this.getKeys());
+            }
+            return;
+        }
         if (this._options && this._options.keys) {
             const result = await this.pairingWithKeyWait(this._options.keys);
             if (this._options && this._options.onPairedCallback) {
                 this._options.onPairedCallback(this.getKeys());
             }
-            return result;
+            return;
         }
         // phase 1 : Pairing Feature Exchange
         this.debug(`Going to Pairing`);
@@ -12427,8 +12443,9 @@ class Smp extends eventemitter3_1.default {
     }
     _pairingFailReject() {
         return new Promise((resolve, reject) => {
+            const cause = new Error('stacktrace');
             this.on('fail', (reason) => {
-                reject(new ObnizError_1.ObnizBlePairingRejectByRemoteError(reason));
+                reject(new ObnizError_1.ObnizBlePairingRejectByRemoteError(reason, { cause }));
             });
         });
     }
@@ -27057,11 +27074,19 @@ class GT_7510 {
         if (!this.isPairingMode()) {
             throw new Error('GT_7510 is not pairing mode.');
         }
-        await this._peripheral.connectWait({
-            pairingOption: {
-                passkeyCallback,
-            },
-            waitUntilPairing: true,
+        await new Promise((resolve, reject) => {
+            this._peripheral
+                .connectWait({
+                pairingOption: {
+                    passkeyCallback,
+                    onPairingFailed: (e) => {
+                        reject(e);
+                    },
+                },
+                waitUntilPairing: true,
+            })
+                .then(resolve)
+                .catch(reject);
         });
         const key = await this._peripheral.getPairingKeysWait();
         if (!key) {
@@ -61855,6 +61880,118 @@ exports.default = I2cPartsAbstract;
 
 /***/ }),
 
+/***/ "./node_modules/@9wick/serial-executor/dist/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+__exportStar(__webpack_require__("./node_modules/@9wick/serial-executor/dist/serial-executor.js"), exports);
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
+/***/ "./node_modules/@9wick/serial-executor/dist/serial-executor.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SerialExecutorTimeoutError = exports.createSerialExecutor = void 0;
+const events_1 = __webpack_require__("./node_modules/events/events.js");
+function createSerialExecutor() {
+    return new SerialExecutorImpl();
+}
+exports.createSerialExecutor = createSerialExecutor;
+class SerialExecutorTimeoutError extends Error {
+    constructor(key, timeout) {
+        super();
+        this.message = `execute:${key} was ${timeout} ms timeout`;
+    }
+}
+exports.SerialExecutorTimeoutError = SerialExecutorTimeoutError;
+class SerialExecutorImpl {
+    constructor() {
+        this.queue = [];
+        this.isActive = false;
+        this.count = 0;
+        this.ee = new events_1.EventEmitter();
+        this.queue = [];
+        this.ee = new events_1.EventEmitter();
+        this.isActive = false;
+    }
+    _activate() {
+        this.isActive = true;
+        process.nextTick(() => this._execute());
+    }
+    size() {
+        return this.queue.length;
+    }
+    _generateUniqueKey() {
+        this.count++;
+        return `${this.count}-${new Date().getTime()}-${Math.random()}`;
+    }
+    async execute(_task, timeout = null) {
+        let task = _task;
+        const key = this._generateUniqueKey();
+        if (timeout !== null) {
+            const timeoutError = new SerialExecutorTimeoutError(key, timeout);
+            task = () => Promise.race([
+                _task(),
+                new Promise((resolve, reject) => setTimeout(() => {
+                    reject(timeoutError);
+                }, timeout)),
+            ]);
+        }
+        this.queue.push({
+            task,
+            key,
+        });
+        if (!this.isActive)
+            this._activate();
+        return new Promise((resolve, reject) => {
+            this.ee.once(`executed:${key}`, (err, result) => {
+                err ? reject(err) : resolve(result);
+            });
+        });
+    }
+    _dequeue() {
+        return this.queue.shift();
+    }
+    async _execute() {
+        const reg = this._dequeue();
+        if (reg) {
+            try {
+                const result = await reg.task();
+                this.ee.emit(`executed:${reg.key}`, null, result);
+            }
+            catch (e) {
+                this.ee.emit(`executed:${reg.key}`, e, null);
+            }
+            finally {
+                process.nextTick(() => this._execute());
+            }
+        }
+        else {
+            this.isActive = false;
+        }
+    }
+}
+//# sourceMappingURL=serial-executor.js.map
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/process/browser.js")))
+
+/***/ }),
+
 /***/ "./node_modules/asn1.js/lib/asn1.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -81548,6 +81685,7 @@ function EventEmitter() {
   EventEmitter.init.call(this);
 }
 module.exports = EventEmitter;
+module.exports.once = once;
 
 // Backwards-compat with node 0.10.x
 EventEmitter.EventEmitter = EventEmitter;
@@ -81937,6 +82075,56 @@ function unwrapListeners(arr) {
     ret[i] = arr[i].listener || arr[i];
   }
   return ret;
+}
+
+function once(emitter, name) {
+  return new Promise(function (resolve, reject) {
+    function errorListener(err) {
+      emitter.removeListener(name, resolver);
+      reject(err);
+    }
+
+    function resolver() {
+      if (typeof emitter.removeListener === 'function') {
+        emitter.removeListener('error', errorListener);
+      }
+      resolve([].slice.call(arguments));
+    };
+
+    eventTargetAgnosticAddListener(emitter, name, resolver, { once: true });
+    if (name !== 'error') {
+      addErrorHandlerIfEventEmitter(emitter, errorListener, { once: true });
+    }
+  });
+}
+
+function addErrorHandlerIfEventEmitter(emitter, handler, flags) {
+  if (typeof emitter.on === 'function') {
+    eventTargetAgnosticAddListener(emitter, 'error', handler, flags);
+  }
+}
+
+function eventTargetAgnosticAddListener(emitter, name, listener, flags) {
+  if (typeof emitter.on === 'function') {
+    if (flags.once) {
+      emitter.once(name, listener);
+    } else {
+      emitter.on(name, listener);
+    }
+  } else if (typeof emitter.addEventListener === 'function') {
+    // EventTarget does not have `error` event semantics like Node
+    // EventEmitters, we do not listen for `error` events here.
+    emitter.addEventListener(name, function wrapListener(arg) {
+      // IE does not have builtin `{ once: true }` support so we
+      // have to do it manually.
+      if (flags.once) {
+        emitter.removeEventListener(name, wrapListener);
+      }
+      listener(arg);
+    });
+  } else {
+    throw new TypeError('The "emitter" argument must be of type EventEmitter. Received type ' + typeof emitter);
+  }
 }
 
 
