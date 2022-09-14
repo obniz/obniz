@@ -54,11 +54,13 @@ declare class Smp extends EventEmitter<SmpEventTypes> {
     private _ltk;
     private _options?;
     private _smpCommon;
+    private _serialExecutor;
     constructor(aclStream: AclStream, localAddressType: BleDeviceAddressType, localAddress: BleDeviceAddress, remoteAddressType: BleDeviceAddressType, remoteAddress: BleDeviceAddress);
     debugHandler: any;
     pairingWithKeyWait(key: string): Promise<number | "refresh">;
     setPairingOption(options: SmpEncryptOptions): void;
-    pairingWait(options?: SmpEncryptOptions): Promise<number | "refresh" | undefined>;
+    pairingWait(options?: SmpEncryptOptions): Promise<void>;
+    pairingSingleQueueWait(options?: SmpEncryptOptions): Promise<void>;
     onAclStreamData(cid: number, data: Buffer): void;
     onAclStreamEnd(): void;
     handlePairingResponseLegacyPairingWait(): Promise<void>;

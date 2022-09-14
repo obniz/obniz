@@ -72,6 +72,9 @@ class UA651BLE {
             retry: 3,
         });
         const keys = await this._peripheral.getPairingKeysWait();
+        if (!keys) {
+            throw new Error('UA651BLE pairing failed');
+        }
         const { bloodPressureMeasurementChar, timeChar, customServiceChar, } = this._getChars();
         try {
             // 自動切断されてるかもしれない
