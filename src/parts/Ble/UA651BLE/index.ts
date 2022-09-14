@@ -161,6 +161,9 @@ export default class UA651BLE implements ObnizPartsBleInterface {
       retry: 3,
     });
     const keys = await this._peripheral.getPairingKeysWait();
+    if (!keys) {
+      throw new Error('UA651BLE pairing failed');
+    }
 
     const {
       bloodPressureMeasurementChar,
