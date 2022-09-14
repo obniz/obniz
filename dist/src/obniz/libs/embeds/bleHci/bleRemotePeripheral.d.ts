@@ -111,6 +111,7 @@ export interface BleConnectSetting {
      * Default : true
      */
     usePyhCoded?: boolean;
+    retry?: number;
 }
 /**
  * Pairing options

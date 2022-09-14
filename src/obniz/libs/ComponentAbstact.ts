@@ -7,6 +7,7 @@ import EventEmitter from 'eventemitter3';
 import Obniz from '../index';
 import {
   ObnizError,
+  ObnizErrorStatic,
   ObnizOfflineError,
   ObnizTimeoutError,
 } from '../ObnizError';
@@ -26,7 +27,7 @@ export interface ReceiveJsonOptions {
    * Indicate sequencial operation or not
    */
   queue?: boolean;
-  errors?: { [schema: string]: typeof ObnizError };
+  errors?: { [schema: string]: ObnizErrorStatic };
 }
 
 export abstract class ComponentAbstract<

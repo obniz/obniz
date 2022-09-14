@@ -1087,6 +1087,7 @@ class GattCentral extends EventEmitter<GattEventTypes> {
         this.off('end', disconnectReject);
       }
     };
+    const errorForStacktrace = new Error('stacktrace');
 
     let disconnectReject: null | EventEmitter.ListenerFn = null;
     const doPromise = Promise.all(this._commandPromises)
@@ -1106,12 +1107,14 @@ class GattCentral extends EventEmitter<GattEventTypes> {
         },
         (error) => {
           onfinish();
+          error.cause = errorForStacktrace;
           return Promise.reject(error);
         }
       );
     const disconnectPromise = new Promise((resolve, reject) => {
       disconnectReject = (reason: any) => {
         onfinish();
+        reason.cause = errorForStacktrace;
         reject(reason);
       };
       this.on('end', disconnectReject);

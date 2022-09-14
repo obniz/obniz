@@ -12,6 +12,7 @@ const ObnizError_1 = require("../../../ObnizError");
 const ble_1 = __importDefault(require("./ble"));
 const bleHelper_1 = __importDefault(require("./bleHelper"));
 const bleRemoteService_1 = __importDefault(require("./bleRemoteService"));
+const retry_1 = require("../../utils/retry");
 /**
  * @category Use as Central
  */
@@ -189,7 +190,7 @@ class BleRemotePeripheral {
      *
      */
     async connectWait(setting) {
-        var _a;
+        var _a, _b;
         if (this.connected && ((_a = setting) === null || _a === void 0 ? void 0 : _a.forceConnect) === false)
             return;
         this._connectSetting = setting || {};
@@ -209,50 +210,56 @@ class BleRemotePeripheral {
             this._connectSetting.usePyhCoded = true;
         }
         await this.obnizBle.scan.endWait();
-        try {
-            if (this._extended) {
-                await this.obnizBle.centralBindings.connectExtendedWait(this.address, this._connectSetting.mtuRequest, () => {
-                    if (this._connectSetting.pairingOption) {
-                        this.setPairingOption(this._connectSetting.pairingOption);
-                    }
-                }, this._connectSetting.usePyh1m, this._connectSetting.usePyh2m, this._connectSetting.usePyhCoded);
-            }
-            else {
-                await this.obnizBle.centralBindings.connectWait(this.address, this._connectSetting.mtuRequest, () => {
-                    if (this._connectSetting.pairingOption) {
-                        this.setPairingOption(this._connectSetting.pairingOption);
-                    }
-                });
-            }
-        }
-        catch (e) {
-            if (e instanceof ObnizError_1.ObnizTimeoutError) {
-                await this.obnizBle.resetWait();
-                throw new Error(`Connection to device(address=${this.address}) was timedout. ble have been reseted`);
-            }
-            throw e;
-        }
-        this.connected = true;
-        this.connected_at = new Date();
-        try {
-            if (this._connectSetting.autoDiscovery) {
-                await this.discoverAllHandlesWait();
-            }
-            if (this._connectSetting.waitUntilPairing &&
-                !(await this.isPairingFinishedWait())) {
-                console.log('waitUntilPairing');
-                await this.pairingWait(this._connectSetting.pairingOption);
-            }
-        }
-        catch (e) {
+        // for only typescript type
+        const mtuRequest = this._connectSetting.mtuRequest;
+        await retry_1.retry((_b = this._connectSetting.retry, (_b !== null && _b !== void 0 ? _b : 1)), async () => {
             try {
-                await this.disconnectWait();
+                if (this._extended) {
+                    await this.obnizBle.centralBindings.connectExtendedWait(this.address, mtuRequest, () => {
+                        if (this._connectSetting.pairingOption) {
+                            this.setPairingOption(this._connectSetting.pairingOption);
+                        }
+                    }, this._connectSetting.usePyh1m, this._connectSetting.usePyh2m, this._connectSetting.usePyhCoded);
+                }
+                else {
+                    await this.obnizBle.centralBindings.connectWait(this.address, mtuRequest, () => {
+                        if (this._connectSetting.pairingOption) {
+                            this.setPairingOption(this._connectSetting.pairingOption);
+                        }
+                    });
+                }
             }
-            catch (e2) {
-                // nothing
+            catch (e) {
+                if (e instanceof ObnizError_1.ObnizTimeoutError) {
+                    await this.obnizBle.resetWait();
+                    throw new Error(`Connection to device(address=${this.address}) was timedout. ble have been reseted`);
+                }
+                throw e;
             }
-            throw e;
-        }
+            this.connected = true;
+            this.connected_at = new Date();
+            try {
+                if (this._connectSetting.autoDiscovery) {
+                    await this.discoverAllHandlesWait();
+                }
+                if (this._connectSetting.waitUntilPairing &&
+                    !(await this.isPairingFinishedWait())) {
+                    console.log('waitUntilPairing');
+                    await this.pairingWait(this._connectSetting.pairingOption);
+                }
+            }
+            catch (e) {
+                try {
+                    await this.disconnectWait();
+                }
+                catch (e2) {
+                    // nothing
+                }
+                throw e;
+            }
+        }, async (err) => {
+            console.log('connection fail, retry', err);
+        });
         this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
         this.emitter.emit('connect');
     }

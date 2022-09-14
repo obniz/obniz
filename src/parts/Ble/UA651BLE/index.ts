@@ -158,6 +158,7 @@ export default class UA651BLE implements ObnizPartsBleInterface {
         },
       },
       waitUntilPairing: true,
+      retry: 3,
     });
     const keys = await this._peripheral.getPairingKeysWait();
 
@@ -167,9 +168,20 @@ export default class UA651BLE implements ObnizPartsBleInterface {
       customServiceChar,
     } = this._getChars();
 
-    await this._writeTimeCharWait(this._timezoneOffsetMinute);
-
-    await customServiceChar.writeWait([2, 1, 3]); // disconnect req
+    try {
+      // 自動切断されてるかもしれない
+      await this._writeTimeCharWait(this._timezoneOffsetMinute);
+      await customServiceChar.writeWait([2, 1, 3]); // disconnect req
+    } catch (e) {
+      // do nothing
+    }
+    try {
+      if (this._peripheral.connected) {
+        await this._peripheral.disconnectWait();
+      }
+    } catch (e) {
+      // do nothing
+    }
     return keys;
   }
 
