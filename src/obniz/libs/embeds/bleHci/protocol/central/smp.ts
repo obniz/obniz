@@ -470,6 +470,13 @@ class Smp extends EventEmitter<SmpEventTypes> {
     this._rand = keys.rand ? Buffer.from(keys.rand, 'hex') : null;
   }
 
+  public hasKeys() {
+    if (!this._ltk || !this._rand || !this._ediv) {
+      return false;
+    }
+    return true;
+  }
+
   public getKeys() {
     const keys = {
       stk: this._stk ? this._stk.toString('hex') : null,
