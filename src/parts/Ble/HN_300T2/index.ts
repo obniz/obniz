@@ -77,6 +77,9 @@ export default class HN_300T2 implements ObnizPartsBleInterface {
     });
 
     const keys = await this._peripheral.getPairingKeysWait();
+    if (!keys) {
+      throw new Error('HN_300TN pairing failed');
+    }
     if (disconnect) {
       await this._peripheral.disconnectWait();
     }
