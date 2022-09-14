@@ -73,6 +73,8 @@ declare class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     writeHandleWait(peripheralUuid: BleDeviceAddress, attHandle: HandleIndex, data: Buffer, withoutResponse: boolean): Promise<void>;
     onHandleNotify(address: BleDeviceAddress, handle?: HandleIndex, data?: Buffer): void;
     onConnectionParameterUpdateWait(handle: Handle, minInterval: number, maxInterval: number, latency: number, supervisionTimeout: number): void;
+    isPairingFinishedWait(peripheralUuid: BleDeviceAddress): Promise<boolean>;
+    getPairingKeysWait(peripheralUuid: BleDeviceAddress): Promise<string | null>;
     pairingWait(peripheralUuid: BleDeviceAddress, options?: SmpEncryptOptions): Promise<string>;
     setPairingOption(peripheralUuid: BleDeviceAddress, options: SmpEncryptOptions): void;
     private getGatt;

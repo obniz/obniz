@@ -88,12 +88,12 @@ export default class UA651BLE implements ObnizPartsBleInterface {
      */
     static isDevice(peripheral: BleRemotePeripheral): boolean | "" | null;
     onNotify?: (co2: number) => void;
-    _peripheral: BleRemotePeripheral | null;
+    _peripheral: BleRemotePeripheral;
     ondisconnect?: (reason: any) => void;
     genericAccess?: BleGenericAccess;
     batteryService?: BleBatteryService;
     private _timezoneOffsetMinute;
-    constructor(peripheral: BleRemotePeripheral | null, timezoneOffsetMinute: number);
+    constructor(peripheral: BleRemotePeripheral, timezoneOffsetMinute: number);
     isPairingMode(): boolean;
     /**
      * Pair with the device

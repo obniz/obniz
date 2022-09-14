@@ -32,7 +32,7 @@ export default class HN_300T2 implements ObnizPartsBleInterface {
     isPairingMode(): boolean;
     pairingWait({ disconnect }?: {
         disconnect: boolean;
-    }): Promise<string>;
+    }): Promise<string | null>;
     getDataWait(pairingKeys: string): Promise<HN_300T2Result[]>;
     private _analyseWeightMesureData;
     private writeCurrentTimeWait;

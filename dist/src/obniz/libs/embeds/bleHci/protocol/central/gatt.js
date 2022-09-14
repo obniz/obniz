@@ -60,6 +60,15 @@ class GattCentral extends eventemitter3_1.default {
             });
         };
     }
+    hasEncryptKeys() {
+        return this._aclStream._smp.hasKeys();
+    }
+    getEncryptKeys() {
+        if (!this.hasEncryptKeys()) {
+            return null;
+        }
+        return this._aclStream._smp.getKeys();
+    }
     async encryptWait(options) {
         const result = await this._serialPromiseQueueWait(async () => {
             await this._aclStream.encryptWait(options);

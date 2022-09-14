@@ -62,6 +62,7 @@ export interface BleConnectSetting {
      *
      */
     autoDiscovery?: boolean;
+    waitUntilPairing?: boolean;
     /**
      * Pairing Option
      *
@@ -708,6 +709,8 @@ export default class BleRemotePeripheral {
      * @param options BlePairingOptions
      */
     pairingWait(options?: BlePairingOptions): Promise<string>;
+    getPairingKeysWait(): Promise<string | null>;
+    isPairingFinishedWait(): Promise<boolean>;
     setPairingOption(options: BlePairingOptions): void;
     protected analyseAdvertisement(): void;
     protected searchTypeVal(type: number, fromScanResponseData?: boolean): number[] | undefined;

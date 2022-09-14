@@ -238,6 +238,11 @@ class BleRemotePeripheral {
             if (this._connectSetting.autoDiscovery) {
                 await this.discoverAllHandlesWait();
             }
+            if (this._connectSetting.waitUntilPairing &&
+                !(await this.isPairingFinishedWait())) {
+                console.log('waitUntilPairing');
+                await this.pairingWait(this._connectSetting.pairingOption);
+            }
         }
         catch (e) {
             try {
@@ -614,6 +619,14 @@ class BleRemotePeripheral {
      */
     async pairingWait(options) {
         const result = await this.obnizBle.centralBindings.pairingWait(this.address, options);
+        return result;
+    }
+    async getPairingKeysWait() {
+        const result = await this.obnizBle.centralBindings.getPairingKeysWait(this.address);
+        return result;
+    }
+    async isPairingFinishedWait() {
+        const result = await this.obnizBle.centralBindings.isPairingFinishedWait(this.address);
         return result;
     }
     setPairingOption(options) {

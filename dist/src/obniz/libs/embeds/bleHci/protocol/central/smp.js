@@ -302,6 +302,12 @@ class Smp extends eventemitter3_1.default {
         this._ediv = keys.ediv ? Buffer.from(keys.ediv, 'hex') : null;
         this._rand = keys.rand ? Buffer.from(keys.rand, 'hex') : null;
     }
+    hasKeys() {
+        if (!this._ltk || !this._rand || !this._ediv) {
+            return false;
+        }
+        return true;
+    }
     getKeys() {
         const keys = {
             stk: this._stk ? this._stk.toString('hex') : null,

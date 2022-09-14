@@ -8568,6 +8568,11 @@ class BleRemotePeripheral {
             if (this._connectSetting.autoDiscovery) {
                 await this.discoverAllHandlesWait();
             }
+            if (this._connectSetting.waitUntilPairing &&
+                !(await this.isPairingFinishedWait())) {
+                console.log('waitUntilPairing');
+                await this.pairingWait(this._connectSetting.pairingOption);
+            }
         }
         catch (e) {
             try {
@@ -8944,6 +8949,14 @@ class BleRemotePeripheral {
      */
     async pairingWait(options) {
         const result = await this.obnizBle.centralBindings.pairingWait(this.address, options);
+        return result;
+    }
+    async getPairingKeysWait() {
+        const result = await this.obnizBle.centralBindings.getPairingKeysWait(this.address);
+        return result;
+    }
+    async isPairingFinishedWait() {
+        const result = await this.obnizBle.centralBindings.isPairingFinishedWait(this.address);
         return result;
     }
     setPairingOption(options) {
@@ -10736,6 +10749,16 @@ class NobleBindings extends eventemitter3_1.default {
         });
         // this.onLeConnUpdateComplete(); is nop
     }
+    async isPairingFinishedWait(peripheralUuid) {
+        const gatt = this.getGatt(peripheralUuid);
+        const result = gatt.hasEncryptKeys();
+        return result;
+    }
+    async getPairingKeysWait(peripheralUuid) {
+        const gatt = this.getGatt(peripheralUuid);
+        const result = gatt.getEncryptKeys();
+        return result;
+    }
     async pairingWait(peripheralUuid, options) {
         options = options || {};
         const gatt = this.getGatt(peripheralUuid);
@@ -11225,6 +11248,15 @@ class GattCentral extends eventemitter3_1.default {
                 console.error('_execNoRespCommandWait error', e);
             });
         };
+    }
+    hasEncryptKeys() {
+        return this._aclStream._smp.hasKeys();
+    }
+    getEncryptKeys() {
+        if (!this.hasEncryptKeys()) {
+            return null;
+        }
+        return this._aclStream._smp.getKeys();
     }
     async encryptWait(options) {
         const result = await this._serialPromiseQueueWait(async () => {
@@ -12280,6 +12312,12 @@ class Smp extends eventemitter3_1.default {
         this._ltk = keys.ltk ? Buffer.from(keys.ltk, 'hex') : null;
         this._ediv = keys.ediv ? Buffer.from(keys.ediv, 'hex') : null;
         this._rand = keys.rand ? Buffer.from(keys.rand, 'hex') : null;
+    }
+    hasKeys() {
+        if (!this._ltk || !this._rand || !this._ediv) {
+            return false;
+        }
+        return true;
     }
     getKeys() {
         const keys = {
@@ -26980,23 +27018,16 @@ class GT_7510 {
         if (!this.isPairingMode()) {
             throw new Error('GT_7510 is not pairing mode.');
         }
-        const key = await new Promise((resolve, reject) => {
-            return this._peripheral
-                .connectWait({
-                pairingOption: {
-                    passkeyCallback,
-                    onPairedCallback: (keys) => {
-                        // console.log('paired', keys);
-                        resolve(keys);
-                    },
-                    onPairingFailed: () => {
-                        // console.log(`pairing failed`);
-                        reject(new Error('GT_7510 pairing failed'));
-                    },
-                },
-            })
-                .catch(reject);
+        await this._peripheral.connectWait({
+            pairingOption: {
+                passkeyCallback,
+            },
+            waitUntilPairing: true,
         });
+        const key = await this._peripheral.getPairingKeysWait();
+        if (!key) {
+            throw new Error('GT_7510 pairing failed');
+        }
         const customService = this._peripheral.getService('7ae4000153f646288894b231f30a81d7');
         const meterChara = customService.getCharacteristic('7ae4200253f646288894b231f30a81d7');
         await meterChara.registerNotifyWait(async (data) => {
@@ -27675,21 +27706,10 @@ class HN_300T2 {
         if (!this.isPairingMode()) {
             throw new Error('HN_300TN is not pairing mode.');
         }
-        const keys = await new Promise((resolve, reject) => {
-            this._peripheral
-                .connectWait({
-                pairingOption: {
-                    onPairedCallback: (pairingKey) => {
-                        resolve(pairingKey);
-                    },
-                },
-            })
-                .then(() => {
-                // retry
-                return this._peripheral.pairingWait();
-            })
-                .catch(reject);
+        await this._peripheral.connectWait({
+            waitUntilPairing: true,
         });
+        const keys = await this._peripheral.getPairingKeysWait();
         if (disconnect) {
             await this._peripheral.disconnectWait();
         }
@@ -32695,18 +32715,20 @@ class UA651BLE {
                 this.ondisconnect(reason);
             }
         };
-        let key = null;
+        // let key: string | null = null;
         await this._peripheral.connectWait({
             pairingOption: {
                 onPairedCallback: (pairingKey) => {
-                    key = pairingKey;
+                    // console.log('pairied ' + pairingKey);
                 },
             },
+            waitUntilPairing: true,
         });
+        const keys = await this._peripheral.getPairingKeysWait();
         const { bloodPressureMeasurementChar, timeChar, customServiceChar, } = this._getChars();
         await this._writeTimeCharWait(this._timezoneOffsetMinute);
         await customServiceChar.writeWait([2, 1, 3]); // disconnect req
-        return key;
+        return keys;
     }
     /**
      * Get data from the UA651BLE
@@ -32780,14 +32802,14 @@ class UA651BLE {
         if (flags & 0x02) {
             // // Time Stamp Flag
             // TODO: get Time Stamp
-            // result.date = {
-            //   year: buf.readUInt16LE(index),
-            //   month: buf.readUInt8(index + 2),
-            //   day: buf.readUInt8(index + 3),
-            //   hour: buf.readUInt8(index + 4),
-            //   minute: buf.readUInt8(index + 5),
-            //   second: buf.readUInt8(index + 6),
-            // };
+            result.date = {
+                year: buf.readUInt16LE(index),
+                month: buf.readUInt8(index + 2),
+                day: buf.readUInt8(index + 3),
+                hour: buf.readUInt8(index + 4),
+                minute: buf.readUInt8(index + 5),
+                second: buf.readUInt8(index + 6),
+            };
             index += 7;
         }
         if (flags & 0x04) {

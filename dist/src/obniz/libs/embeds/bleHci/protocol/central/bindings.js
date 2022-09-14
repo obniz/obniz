@@ -352,6 +352,16 @@ class NobleBindings extends eventemitter3_1.default {
         });
         // this.onLeConnUpdateComplete(); is nop
     }
+    async isPairingFinishedWait(peripheralUuid) {
+        const gatt = this.getGatt(peripheralUuid);
+        const result = gatt.hasEncryptKeys();
+        return result;
+    }
+    async getPairingKeysWait(peripheralUuid) {
+        const gatt = this.getGatt(peripheralUuid);
+        const result = gatt.getEncryptKeys();
+        return result;
+    }
     async pairingWait(peripheralUuid, options) {
         options = options || {};
         const gatt = this.getGatt(peripheralUuid);
