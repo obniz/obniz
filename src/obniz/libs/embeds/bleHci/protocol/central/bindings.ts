@@ -698,6 +698,18 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     // this.onLeConnUpdateComplete(); is nop
   }
 
+  public async isPairingFinishedWait(peripheralUuid: BleDeviceAddress) {
+    const gatt: GattCentral = this.getGatt(peripheralUuid);
+    const result = gatt.hasEncryptKeys();
+    return result;
+  }
+
+  public async getPairingKeysWait(peripheralUuid: BleDeviceAddress) {
+    const gatt: GattCentral = this.getGatt(peripheralUuid);
+    const result = gatt.getEncryptKeys();
+    return result;
+  }
+
   public async pairingWait(
     peripheralUuid: BleDeviceAddress,
     options?: SmpEncryptOptions

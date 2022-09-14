@@ -74,6 +74,8 @@ export interface BleConnectSetting {
    */
   autoDiscovery?: boolean;
 
+  waitUntilPairing?: boolean;
+
   /**
    * Pairing Option
    *
@@ -634,6 +636,13 @@ export default class BleRemotePeripheral {
       if (this._connectSetting.autoDiscovery) {
         await this.discoverAllHandlesWait();
       }
+      if (
+        this._connectSetting.waitUntilPairing &&
+        !(await this.isPairingFinishedWait())
+      ) {
+        console.log('waitUntilPairing');
+        await this.pairingWait(this._connectSetting.pairingOption);
+      }
     } catch (e) {
       try {
         await this.disconnectWait();
@@ -708,6 +717,7 @@ export default class BleRemotePeripheral {
       this.obnizBle.centralBindings.disconnect(this.address);
     });
   }
+
   /**
    * Check the PHY used in the connection
    *
@@ -1059,6 +1069,20 @@ export default class BleRemotePeripheral {
     const result = await this.obnizBle.centralBindings.pairingWait(
       this.address,
       options
+    );
+    return result;
+  }
+
+  public async getPairingKeysWait(): Promise<string | null> {
+    const result = await this.obnizBle.centralBindings.getPairingKeysWait(
+      this.address
+    );
+    return result;
+  }
+
+  public async isPairingFinishedWait(): Promise<boolean> {
+    const result = await this.obnizBle.centralBindings.isPairingFinishedWait(
+      this.address
     );
     return result;
   }

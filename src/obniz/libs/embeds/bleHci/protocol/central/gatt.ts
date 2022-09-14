@@ -137,6 +137,17 @@ class GattCentral extends EventEmitter<GattEventTypes> {
     };
   }
 
+  public hasEncryptKeys(): boolean {
+    return this._aclStream._smp.hasKeys();
+  }
+
+  public getEncryptKeys(): string | null {
+    if (!this.hasEncryptKeys()) {
+      return null;
+    }
+    return this._aclStream._smp.getKeys();
+  }
+
   public async encryptWait(options: SmpEncryptOptions): Promise<string> {
     const result = await this._serialPromiseQueueWait<string>(async () => {
       await this._aclStream.encryptWait(options);
