@@ -132,6 +132,7 @@
     "yaml-loader": "^0.5.0"
   },
   "dependencies": {
+    "@9wick/serial-executor": "^1.0.0",
     "@types/tv4": "^1.2.29",
     "@types/ws": "^6.0.4",
     "eventemitter3": "^3.1.2",

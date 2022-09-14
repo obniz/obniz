@@ -649,8 +649,9 @@ export default class BleRemotePeripheral {
             this._connectSetting.waitUntilPairing &&
             !(await this.isPairingFinishedWait())
           ) {
-            console.log('waitUntilPairing');
+            // console.log('waitUntilPairing');
             await this.pairingWait(this._connectSetting.pairingOption);
+            // console.log('waitUntilPairing finished');
           }
         } catch (e) {
           try {
@@ -662,7 +663,7 @@ export default class BleRemotePeripheral {
         }
       },
       async (err) => {
-        console.log('connection fail, retry', err);
+        // console.log('connection fail, retry', err);
       }
     );
     this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
