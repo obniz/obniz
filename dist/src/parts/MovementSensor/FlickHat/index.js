@@ -252,7 +252,7 @@ class FlickHat {
                                 ['doubletap', 'west'],
                                 ['doubletap', 'north'],
                                 ['doubletap', 'east'],
-                                ['doubletap', 'center'], // 14
+                                ['doubletap', 'center'],
                             ];
                             const touches = [];
                             const taps = [];
@@ -325,7 +325,7 @@ class FlickHat {
                         statusInfo = {
                             msgId: data[4],
                             maxCmdSize: data[5],
-                            error: data[6] | (data[7] << 8), // little endian
+                            error: data[6] | (data[7] << 8),
                         };
                         this.statusInfo = statusInfo;
                         if (this.debugprint || this.obniz.debugprint) {

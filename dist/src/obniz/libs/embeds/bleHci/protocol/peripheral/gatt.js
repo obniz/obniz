@@ -71,7 +71,6 @@ class GattPeripheral extends eventemitter3_1.default {
                 uuid: service.uuid,
                 attribute: service,
                 startHandle: serviceHandle,
-                // endHandle filled in below
             };
             for (let j = 0; j < service.characteristics.length; j++) {
                 const characteristic = service.characteristics[j];

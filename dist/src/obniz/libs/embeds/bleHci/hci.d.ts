@@ -3,7 +3,6 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 /// <reference types="node" />
-/// <reference types="node" />
 import ObnizDevice from '../../../ObnizDevice';
 export declare type EventHandler = (...args: any) => any;
 export default class ObnizBLEHci {

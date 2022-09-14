@@ -1,5 +1,4 @@
 /// <reference types="node" />
-/// <reference types="node" />
 import { HandleIndex } from '../peripheral/gatt';
 import AclStream from './acl-stream';
 import EventEmitter from 'eventemitter3';
@@ -26,6 +25,8 @@ declare class GattCentral extends EventEmitter<GattEventTypes> {
     private _remoteMtuRequest;
     private _gattPeripheral;
     constructor(address: BleDeviceAddress, aclStream: AclStream);
+    hasEncryptKeys(): boolean;
+    getEncryptKeys(): string | null;
     encryptWait(options: SmpEncryptOptions): Promise<string>;
     setEncryptOption(options: SmpEncryptOptions): void;
     onEnd(reason: any): void;

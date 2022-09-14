@@ -3,7 +3,6 @@
  * @ignore
  */
 /// <reference types="node" />
-/// <reference types="node" />
 import { HandleIndex } from '../peripheral/gatt';
 export declare class GattCommon {
     write(): void;

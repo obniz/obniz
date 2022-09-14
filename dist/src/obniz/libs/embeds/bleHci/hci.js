@@ -113,7 +113,7 @@ class ObnizBLEHci {
     timeoutPromiseWrapper(promise, _option) {
         var _a;
         const option = {
-            timeout: _option.timeout === null ? null : (_a = _option.timeout) !== null && _a !== void 0 ? _a : this.timeout,
+            timeout: _option.timeout === null ? null : (_a = _option.timeout, (_a !== null && _a !== void 0 ? _a : this.timeout)),
             waitingFor: _option.waitingFor,
             onTimeout: _option.onTimeout || undefined,
         };

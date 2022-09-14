@@ -93,7 +93,7 @@ const findType = (type, multiple = 1, precision = 0) => {
             const rawData = buf.slice(i + 1, i + 1 + dataSize);
             let result = readData(rawData, dataSize, dataType.encoding);
             if (result && typeof result === 'number') {
-                result = (0, round_to_1.default)(result * multiple, precision);
+                result = round_to_1.default(result * multiple, precision);
             }
             return result;
         }

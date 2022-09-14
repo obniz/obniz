@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Motion = void 0;
 const Base_1 = require("./Base");
 class Motion extends Base_1.Base {
     constructor() {
@@ -20,8 +19,9 @@ class Motion extends Base_1.Base {
      * @returns
      */
     static isMESHblock(name, opt_serialnumber = '') {
+        var _a;
         return super.isMESHblock(name, opt_serialnumber)
-            ? (name === null || name === void 0 ? void 0 : name.indexOf('MESH-100MD')) !== -1
+            ? ((_a = name) === null || _a === void 0 ? void 0 : _a.indexOf('MESH-100MD')) !== -1
             : false;
     }
     /**

@@ -3,7 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Obniz = void 0;
 const m5stack_basic_1 = require("./libs/hw/m5stack_basic");
 const m5stickc_1 = require("./libs/hw/m5stickc");
 const ObnizApi_1 = __importDefault(require("./ObnizApi"));

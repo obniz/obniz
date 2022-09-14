@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GPIO = void 0;
 const Base_1 = require("./Base");
 const Error_1 = require("../util/Error");
 class GPIO extends Base_1.Base {
@@ -52,8 +51,9 @@ class GPIO extends Base_1.Base {
      * @returns
      */
     static isMESHblock(name, opt_serialnumber = '') {
+        var _a;
         return super.isMESHblock(name, opt_serialnumber)
-            ? (name === null || name === void 0 ? void 0 : name.indexOf('MESH-100GP')) !== -1
+            ? ((_a = name) === null || _a === void 0 ? void 0 : _a.indexOf('MESH-100GP')) !== -1
             : false;
     }
     /**

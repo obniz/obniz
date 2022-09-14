@@ -1,5 +1,4 @@
 /// <reference types="node" />
-/// <reference types="node" />
 import { UUID } from '../../bleTypes';
 import AclStream from './acl-stream';
 import EventEmitter from 'eventemitter3';

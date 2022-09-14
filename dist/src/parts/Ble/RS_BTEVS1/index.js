@@ -54,9 +54,9 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
             this.subscribeWait(this.serviceUuid, this.getCharUuid(0x152a), (data) => {
                 const buf = Buffer.from(data);
                 const result = {
-                    temp: (0, ObnizPartsBleAbstract_1.uint)(data.slice(0, 2)) * 0.1,
+                    temp: ObnizPartsBleAbstract_1.uint(data.slice(0, 2)) * 0.1,
                     humid: data[2],
-                    co2: (0, ObnizPartsBleAbstract_1.uint)(data.slice(3, 5)),
+                    co2: ObnizPartsBleAbstract_1.uint(data.slice(3, 5)),
                     pm1_0: buf.readFloatLE(5),
                     pm2_5: buf.readFloatLE(9),
                     pm4_0: buf.readFloatLE(13),
@@ -115,9 +115,9 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         var _a, _b, _c;
         await this.checkConnected();
         const buf = Buffer.alloc(16);
-        buf.writeUInt32LE((_a = config.tempInterval) !== null && _a !== void 0 ? _a : 10000, 0);
-        buf.writeUInt32LE((_b = config.pm2_5Interval) !== null && _b !== void 0 ? _b : 10000, 4);
-        buf.writeUInt32LE((_c = config.co2Interval) !== null && _c !== void 0 ? _c : 10000, 8);
+        buf.writeUInt32LE((_a = config.tempInterval, (_a !== null && _a !== void 0 ? _a : 10000)), 0);
+        buf.writeUInt32LE((_b = config.pm2_5Interval, (_b !== null && _b !== void 0 ? _b : 10000)), 4);
+        buf.writeUInt32LE((_c = config.co2Interval, (_c !== null && _c !== void 0 ? _c : 10000)), 8);
         buf.writeUInt8((config.co2MeasureOperation ? 0b001 : 0) +
             (config.pm2_5MeasureOperation ? 0b010 : 0) +
             (config.tempMeasureOperation ? 0b100 : 0), 12);
@@ -175,7 +175,7 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         await this.subscribeWait(this.serviceUuid, this.getCharUuid(0x1526), (data) => {
             if (typeof this.onTempMeasured !== 'function')
                 return;
-            this.onTempMeasured((0, ObnizPartsBleAbstract_1.int)(data.slice(0, 2)) / 10, data[2]);
+            this.onTempMeasured(ObnizPartsBleAbstract_1.int(data.slice(0, 2)) / 10, data[2]);
         });
     }
     /**
@@ -190,7 +190,7 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         await this.subscribeWait(this.serviceUuid, this.getCharUuid(0x1527), (data) => {
             if (typeof this.onCo2Measured !== 'function')
                 return;
-            this.onCo2Measured((0, ObnizPartsBleAbstract_1.uint)(data));
+            this.onCo2Measured(ObnizPartsBleAbstract_1.uint(data));
         });
     }
     /**
@@ -213,11 +213,7 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
                 mass_pm2_5: buf.readFloatLE(4),
                 mass_pm4: buf.readFloatLE(8),
                 mass_pm10: buf.readFloatLE(12),
-                number_pm0_5: buf.readFloatLE(16), // 1パケット=20バイトしか来ない // TODO
-                // number_pm1: buf.readFloatLE(20),
-                // number_pm2_5: buf.readFloatLE(24),
-                // number_pm4: buf.readFloatLE(28),
-                // number_pm10: buf.readFloatLE(32),
+                number_pm0_5: buf.readFloatLE(16),
             });
         });
     }
@@ -280,10 +276,10 @@ RS_BTEVS1.BeaconDataStruct = {
         multiple: 0.1,
         func: (data, p) => {
             var _a, _b, _c;
-            return ((_b = (_a = p.manufacturerSpecificData) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0) + 1 === 0x0b &&
-                ((_c = p.localName) !== null && _c !== void 0 ? _c : '').startsWith('BT')
+            return (_b = (_a = p.manufacturerSpecificData) === null || _a === void 0 ? void 0 : _a.length, (_b !== null && _b !== void 0 ? _b : 0)) + 1 === 0x0b &&
+                (_c = p.localName, (_c !== null && _c !== void 0 ? _c : '')).startsWith('BT')
                 ? data[0]
-                : (0, ObnizPartsBleAbstract_1.int)(data) * 0.1;
+                : ObnizPartsBleAbstract_1.int(data) * 0.1;
         },
     },
     humid: {
@@ -292,8 +288,8 @@ RS_BTEVS1.BeaconDataStruct = {
         type: 'custom',
         func: (data, p) => {
             var _a, _b, _c;
-            return ((_b = (_a = p.manufacturerSpecificData) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0) + 1 === 0x0b &&
-                ((_c = p.localName) !== null && _c !== void 0 ? _c : '').startsWith('BT')
+            return (_b = (_a = p.manufacturerSpecificData) === null || _a === void 0 ? void 0 : _a.length, (_b !== null && _b !== void 0 ? _b : 0)) + 1 === 0x0b &&
+                (_c = p.localName, (_c !== null && _c !== void 0 ? _c : '')).startsWith('BT')
                 ? data[0]
                 : data[1];
         },

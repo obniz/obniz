@@ -4,7 +4,6 @@
  * @ignore
  */
 /// <reference types="node" />
-/// <reference types="node" />
 import EventEmitter from 'eventemitter3';
 import { BleDeviceAddress, BleDeviceAddressType } from '../../bleTypes';
 import AclStream from './acl-stream';
@@ -72,6 +71,7 @@ declare class Smp extends EventEmitter<SmpEventTypes> {
     write(data: Buffer): void;
     handleSecurityRequest(data: Buffer): void;
     setKeys(keyStringBase64: string): void;
+    hasKeys(): boolean;
     getKeys(): string;
     private _generateAuthenticationRequirementsFlags;
     private sendPairingRequestWait;

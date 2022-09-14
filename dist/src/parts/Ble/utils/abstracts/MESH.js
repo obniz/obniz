@@ -1,7 +1,6 @@
 "use strict";
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MeshRequestId = exports.MESH = void 0;
 const ObnizPartsBleAbstract_1 = require("../../../../obniz/ObnizPartsBleAbstract");
 const Base_1 = require("./MESHjs/block/Base");
 class MESH extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {

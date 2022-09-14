@@ -53,7 +53,6 @@ class CCS811 extends i2cParts_1.default {
     static info() {
         return {
             name: 'CCS811',
-            // datasheet: "",
         };
     }
     i2cInfo() {

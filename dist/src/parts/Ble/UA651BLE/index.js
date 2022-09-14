@@ -61,18 +61,35 @@ class UA651BLE {
                 this.ondisconnect(reason);
             }
         };
-        let key = null;
+        // let key: string | null = null;
         await this._peripheral.connectWait({
             pairingOption: {
                 onPairedCallback: (pairingKey) => {
-                    key = pairingKey;
+                    // console.log('pairied ' + pairingKey);
                 },
             },
+            waitUntilPairing: true,
+            retry: 3,
         });
+        const keys = await this._peripheral.getPairingKeysWait();
         const { bloodPressureMeasurementChar, timeChar, customServiceChar, } = this._getChars();
-        await this._writeTimeCharWait(this._timezoneOffsetMinute);
-        await customServiceChar.writeWait([2, 1, 3]); // disconnect req
-        return key;
+        try {
+            // 自動切断されてるかもしれない
+            await this._writeTimeCharWait(this._timezoneOffsetMinute);
+            await customServiceChar.writeWait([2, 1, 3]); // disconnect req
+        }
+        catch (e) {
+            // do nothing
+        }
+        try {
+            if (this._peripheral.connected) {
+                await this._peripheral.disconnectWait();
+            }
+        }
+        catch (e) {
+            // do nothing
+        }
+        return keys;
     }
     /**
      * Get data from the UA651BLE
@@ -146,14 +163,14 @@ class UA651BLE {
         if (flags & 0x02) {
             // // Time Stamp Flag
             // TODO: get Time Stamp
-            // result.date = {
-            //   year: buf.readUInt16LE(index),
-            //   month: buf.readUInt8(index + 2),
-            //   day: buf.readUInt8(index + 3),
-            //   hour: buf.readUInt8(index + 4),
-            //   minute: buf.readUInt8(index + 5),
-            //   second: buf.readUInt8(index + 6),
-            // };
+            result.date = {
+                year: buf.readUInt16LE(index),
+                month: buf.readUInt8(index + 2),
+                day: buf.readUInt8(index + 3),
+                hour: buf.readUInt8(index + 4),
+                minute: buf.readUInt8(index + 5),
+                second: buf.readUInt8(index + 6),
+            };
             index += 7;
         }
         if (flags & 0x04) {

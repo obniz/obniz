@@ -110,7 +110,7 @@ EXVital.DefaultAdvData = [
     -1,
     -1,
     -1,
-    -1, // Steps
+    -1,
 ];
 const unsigned16 = (value) => {
     return (value[0] << 8) | value[1];

@@ -74,12 +74,6 @@ class UA1200BLE {
             'f0',
             '3b',
             '23',
-            // "5",
-            // "ff",
-            // "69",
-            // "0",
-            // "0",
-            // "ff",
         ].join('');
         return peripheralHex.indexOf(peripheralArray) > -1;
     }
@@ -252,7 +246,6 @@ class UA1200BLE {
         return {
             bloodPressureMeasurementChar,
             timeChar,
-            // CCCDChar,
         };
     }
     async _writeTimeCharWait(timeOffsetMinute) {

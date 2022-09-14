@@ -94,8 +94,8 @@ class Logtta_Accel extends Logtta_1.default {
                     accel_axis: d[20] & 0b00000111,
                     accel_resolution: d[21],
                 },
-                temperature: (0, round_to_1.default)(Math.floor((((d[22] | (d[23] << 8)) / 65535) * 175 - 45) * 100) / 100, 3),
-                humidity: (0, round_to_1.default)(Math.floor(((d[24] | (d[25] << 8)) / 65535) * 100 * 100) / 100, 3),
+                temperature: round_to_1.default(Math.floor((((d[22] | (d[23] << 8)) / 65535) * 175 - 45) * 100) / 100, 3),
+                humidity: round_to_1.default(Math.floor(((d[24] | (d[25] << 8)) / 65535) * 100 * 100) / 100, 3),
                 alert: alertArray,
             };
         }
@@ -154,7 +154,7 @@ class Logtta_Accel extends Logtta_1.default {
         // return peak;
         const result = (peak * setting.accel_range * 9.8) /
             Math.pow(2, setting.accel_resolution - 1);
-        return (0, round_to_1.default)(result, 4);
+        return round_to_1.default(result, 4);
     }
     /**
      * 加速度ピークを物理量に変換する
@@ -166,7 +166,7 @@ class Logtta_Accel extends Logtta_1.default {
         const result = ((setting.accel_range * 9.8) /
             Math.pow(2, setting.accel_resolution - 1)) *
             Math.sqrt(rms / n);
-        return (0, round_to_1.default)(result, 4);
+        return round_to_1.default(result, 4);
     }
 }
 exports.default = Logtta_Accel;
@@ -222,7 +222,7 @@ Logtta_Accel.BeaconDataStruct = {
             length: 6,
             type: 'custom',
             func: (data) => ({
-                temp_cycle: (0, ObnizPartsBleAbstract_1.uint)(data.slice(0, 2)),
+                temp_cycle: ObnizPartsBleAbstract_1.uint(data.slice(0, 2)),
                 accel_sampling: Logtta_Accel.parseAccelSamplingData(data[2]),
                 hpf: (data[3] & 0b00010000) > 0,
                 accel_range: Logtta_Accel.parseAccelRangeData(data[3]),
@@ -234,13 +234,13 @@ Logtta_Accel.BeaconDataStruct = {
             index: 18,
             length: 2,
             type: 'custom',
-            func: (data) => (0, round_to_1.default)(((0, ObnizPartsBleAbstract_1.uint)(data) / 0x10000) * 175 - 45, 3),
+            func: (data) => round_to_1.default((ObnizPartsBleAbstract_1.uint(data) / 0x10000) * 175 - 45, 3),
         },
         humidity: {
             index: 20,
             length: 2,
             type: 'custom',
-            func: (data) => (0, round_to_1.default)(((0, ObnizPartsBleAbstract_1.uint)(data) / 0x10000) * 100, 3),
+            func: (data) => round_to_1.default((ObnizPartsBleAbstract_1.uint(data) / 0x10000) * 100, 3),
         },
         alert: {
             index: 22,

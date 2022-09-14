@@ -3,7 +3,6 @@
  * @module ObnizCore
  */
 /// <reference types="node" />
-/// <reference types="node" />
 import EventEmitter from 'eventemitter3';
 import wsClient from 'ws';
 import WSCommand from './libs/wscommand';

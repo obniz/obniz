@@ -13,9 +13,6 @@ export default abstract class MINEW<S extends MINEW_Base_Data> extends ObnizPart
      */
     static readonly AvailableBleMode: ObnizPartsBleMode | ObnizPartsBleMode[];
     static readonly ServiceUuids: ObnizPartsBleCompare<string>;
-    static readonly ServiceDataUUID: ObnizPartsBleCompare<[
-        number,
-        number
-    ]>;
-    protected static getServiceDataStruct: <T>(macAddressIndex: number, versionNumber: number, additonalData: ObnizBleBeaconStruct<Omit<T, never>>) => ObnizPartsBleCompare<ObnizBleBeaconStruct<T>>;
+    static readonly ServiceDataUUID: ObnizPartsBleCompare<[number, number]>;
+    protected static getServiceDataStruct: <T>(macAddressIndex: number, versionNumber: number, additonalData: ObnizBleBeaconStruct<Pick<T, Exclude<keyof T, never>>>) => ObnizPartsBleCompare<ObnizBleBeaconStruct<T>>;
 }

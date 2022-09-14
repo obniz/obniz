@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setBaseDir = void 0;
 /**
  * @packageDocumentation
  * @ignore
@@ -56,7 +55,6 @@ exports.default = (directory, recursive, regExp) => {
     };
     return context;
 };
-const setBaseDir = (base) => {
+exports.setBaseDir = (base) => {
     baseDir = base;
 };
-exports.setBaseDir = setBaseDir;

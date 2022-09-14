@@ -200,7 +200,7 @@ class Smp extends eventemitter3_1.default {
                 rspRandomBuffers.push(buf2.slice(1));
             }
         }
-        const res = crypto_1.default.generateLtkEaEb(ecdh.ecdh, peerPublicKey, this._ia, this._iat, this._ra, this._rat, initRandomValue, rspRandomBuffers[rspRandomBuffers.length - 1], passkeyNumber !== null && passkeyNumber !== void 0 ? passkeyNumber : 0, 0x10, // max key size
+        const res = crypto_1.default.generateLtkEaEb(ecdh.ecdh, peerPublicKey, this._ia, this._iat, this._ra, this._rat, initRandomValue, rspRandomBuffers[rspRandomBuffers.length - 1], (passkeyNumber !== null && passkeyNumber !== void 0 ? passkeyNumber : 0), 0x10, // max key size
         this._preq ? this._preq.slice(1, 4) : Buffer.alloc(3), this._pres ? this._pres.slice(1, 4) : Buffer.alloc(3));
         const remoteDhkeyPromise = this._readWait(smp_1.SMP.PAIRING_DHKEY_CHECK);
         this.debug(`send PAIRING_DHKEY_CHECK`);
@@ -232,7 +232,7 @@ class Smp extends eventemitter3_1.default {
         this._pcnf = data;
         this.write(Buffer.concat([
             Buffer.from([smp_1.SMP.PAIRING_RANDOM]),
-            (_a = this._r) !== null && _a !== void 0 ? _a : Buffer.alloc(0),
+            (_a = this._r, (_a !== null && _a !== void 0 ? _a : Buffer.alloc(0))),
         ]));
     }
     async handlePairingRandomWait(data) {
@@ -302,6 +302,12 @@ class Smp extends eventemitter3_1.default {
         this._ediv = keys.ediv ? Buffer.from(keys.ediv, 'hex') : null;
         this._rand = keys.rand ? Buffer.from(keys.rand, 'hex') : null;
     }
+    hasKeys() {
+        if (!this._ltk || !this._rand || !this._ediv) {
+            return false;
+        }
+        return true;
+    }
     getKeys() {
         const keys = {
             stk: this._stk ? this._stk.toString('hex') : null,
@@ -353,7 +359,7 @@ class Smp extends eventemitter3_1.default {
                 }),
                 0x10,
                 this.isSecureConnectionMode() ? 0x02 : 0x00,
-                this.isSecureConnectionMode() ? 0x02 : 0x01, // Responder key distribution: EncKey   peripheral -> central
+                this.isSecureConnectionMode() ? 0x02 : 0x01,
             ]);
         }
         else {
@@ -371,7 +377,7 @@ class Smp extends eventemitter3_1.default {
                 }),
                 0x10,
                 this.isSecureConnectionMode() ? 0x02 : 0x00,
-                this.isSecureConnectionMode() ? 0x02 : 0x01, // Responder key distribution: EncKey
+                this.isSecureConnectionMode() ? 0x02 : 0x01,
             ]);
         }
         this.write(this._preq);

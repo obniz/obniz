@@ -315,8 +315,6 @@ class REX_BTPM25V {
             tvoc,
             eco2,
             uv,
-            // vocState_init,
-            // vocState_wakeup,
         };
     }
 }

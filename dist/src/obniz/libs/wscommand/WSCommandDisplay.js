@@ -48,7 +48,7 @@ class WSCommandDisplay extends WSCommand_1.default {
         const text = params.qr.text;
         const correctionLevel = params.qr.correction || 'M';
         const typeNumber = 0; // auto detect type.
-        const qr = (0, qr_1.default)(typeNumber, correctionLevel);
+        const qr = qr_1.default(typeNumber, correctionLevel);
         qr.addData(text);
         qr.make();
         let size = qr.getModuleCount();
