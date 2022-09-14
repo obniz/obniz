@@ -6,12 +6,16 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 class HN_300T2 {
+    /**
+     *
+     * @param timeOffsetMinute difference from UTC (Unit: minutes) 協定世界時との差(単位: 分)
+     */
     constructor(peripheral, timezoneOffset) {
         if (!peripheral || !HN_300T2.isDevice(peripheral)) {
             throw new Error('peripheral is not HN_300TN');
         }
         this._peripheral = peripheral;
-        this._timezoneOffset = timezoneOffset ? timezoneOffset : 9;
+        this._timezoneOffset = timezoneOffset ? timezoneOffset : 9 * 60;
     }
     static info() {
         return {
@@ -92,7 +96,7 @@ class HN_300T2 {
     async writeCurrentTimeWait(chara) {
         const dayFormat = [7, 1, 2, 3, 4, 5, 6];
         const date = new Date();
-        date.setTime(Date.now() + 1000 * 60 * 60 * this._timezoneOffset);
+        date.setTime(Date.now() + 1000 * 60 * this._timezoneOffset);
         const buf = Buffer.alloc(10);
         buf.writeUInt16LE(date.getUTCFullYear(), 0);
         buf.writeUInt8(date.getUTCMonth() + 1, 2);

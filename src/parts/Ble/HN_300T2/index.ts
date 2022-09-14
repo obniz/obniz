@@ -41,12 +41,16 @@ export default class HN_300T2 implements ObnizPartsBleInterface {
   public onNotify?: (co2: number) => void;
   public ondisconnect?: (reason: any) => void;
 
+  /**
+   *
+   * @param timeOffsetMinute difference from UTC (Unit: minutes) 協定世界時との差(単位: 分)
+   */
   constructor(peripheral: BleRemotePeripheral, timezoneOffset: number) {
     if (!peripheral || !HN_300T2.isDevice(peripheral)) {
       throw new Error('peripheral is not HN_300TN');
     }
     this._peripheral = peripheral;
-    this._timezoneOffset = timezoneOffset ? timezoneOffset : 9;
+    this._timezoneOffset = timezoneOffset ? timezoneOffset : 9 * 60;
   }
 
   public static isDevice(peripheral: BleRemotePeripheral) {
@@ -143,7 +147,7 @@ export default class HN_300T2 implements ObnizPartsBleInterface {
   private async writeCurrentTimeWait(chara: BleRemoteCharacteristic) {
     const dayFormat: number[] = [7, 1, 2, 3, 4, 5, 6];
     const date = new Date();
-    date.setTime(Date.now() + 1000 * 60 * 60 * this._timezoneOffset);
+    date.setTime(Date.now() + 1000 * 60 * this._timezoneOffset);
 
     const buf = Buffer.alloc(10);
     buf.writeUInt16LE(date.getUTCFullYear(), 0);
@@ -155,7 +159,6 @@ export default class HN_300T2 implements ObnizPartsBleInterface {
     buf.writeUInt8(dayFormat[date.getUTCDay()], 7);
     buf.writeUInt8(Math.trunc(date.getUTCMilliseconds() / (9999 / 256)), 8);
     buf.writeUInt8(1, 9);
-
     const arr = Array.from(buf);
     await chara!.writeWait(arr);
   }

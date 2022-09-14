@@ -27,6 +27,10 @@ export default class HN_300T2 implements ObnizPartsBleInterface {
     private _timezoneOffset;
     onNotify?: (co2: number) => void;
     ondisconnect?: (reason: any) => void;
+    /**
+     *
+     * @param timeOffsetMinute difference from UTC (Unit: minutes) 協定世界時との差(単位: 分)
+     */
     constructor(peripheral: BleRemotePeripheral, timezoneOffset: number);
     static isDevice(peripheral: BleRemotePeripheral): boolean | "" | null;
     isPairingMode(): boolean;
