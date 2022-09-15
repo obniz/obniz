@@ -55,6 +55,7 @@ declare class Smp extends EventEmitter<SmpEventTypes> {
     private _options?;
     private _smpCommon;
     private _serialExecutor;
+    private _pairingPromise;
     constructor(aclStream: AclStream, localAddressType: BleDeviceAddressType, localAddress: BleDeviceAddress, remoteAddressType: BleDeviceAddressType, remoteAddress: BleDeviceAddress);
     debugHandler: any;
     pairingWithKeyWait(key: string): Promise<number | "refresh">;

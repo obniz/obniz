@@ -642,9 +642,6 @@ export default class BleRemotePeripheral {
         this.connected = true;
         this.connected_at = new Date();
         try {
-          if (this._connectSetting.autoDiscovery) {
-            await this.discoverAllHandlesWait();
-          }
           if (
             this._connectSetting.waitUntilPairing &&
             !(await this.isPairingFinishedWait())
@@ -652,6 +649,9 @@ export default class BleRemotePeripheral {
             // console.log('waitUntilPairing');
             await this.pairingWait(this._connectSetting.pairingOption);
             // console.log('waitUntilPairing finished');
+          }
+          if (this._connectSetting.autoDiscovery) {
+            await this.discoverAllHandlesWait();
           }
         } catch (e) {
           try {

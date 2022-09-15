@@ -78,6 +78,7 @@ class Smp extends EventEmitter<SmpEventTypes> {
   private _options?: SmpEncryptOptions = undefined;
   private _smpCommon = new SmpCommon();
   private _serialExecutor = createSerialExecutor();
+  private _pairingPromise: Promise<void> | null = null;
 
   constructor(
     aclStream: AclStream,
@@ -126,9 +127,13 @@ class Smp extends EventEmitter<SmpEventTypes> {
   }
 
   public async pairingWait(options?: SmpEncryptOptions) {
-    return await this._serialExecutor.execute(async () => {
+    if (this._pairingPromise) {
+      return await this._pairingPromise;
+    }
+    this._pairingPromise = this._serialExecutor.execute(async () => {
       return await this.pairingSingleQueueWait(options);
     });
+    return await this._pairingPromise;
   }
 
   public async pairingSingleQueueWait(
