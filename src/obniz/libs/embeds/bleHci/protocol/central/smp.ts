@@ -127,6 +127,8 @@ class Smp extends EventEmitter<SmpEventTypes> {
   }
 
   public async pairingWait(options?: SmpEncryptOptions) {
+    // allow only once for connection
+
     if (this._pairingPromise) {
       return await this._pairingPromise;
     }
@@ -473,7 +475,8 @@ class Smp extends EventEmitter<SmpEventTypes> {
         if (this._options && this._options.onPairingFailed) {
           this._options.onPairingFailed(e);
         } else {
-          throw e;
+          e.cause = new Error('pairing failed when remote device request');
+          console.error(e);
         }
       });
   }
