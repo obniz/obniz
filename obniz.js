@@ -8531,14 +8531,14 @@ class BleRemotePeripheral {
             this.connected = true;
             this.connected_at = new Date();
             try {
-                if (this._connectSetting.autoDiscovery) {
-                    await this.discoverAllHandlesWait();
-                }
                 if (this._connectSetting.waitUntilPairing &&
                     !(await this.isPairingFinishedWait())) {
                     // console.log('waitUntilPairing');
                     await this.pairingWait(this._connectSetting.pairingOption);
                     // console.log('waitUntilPairing finished');
+                }
+                if (this._connectSetting.autoDiscovery) {
+                    await this.discoverAllHandlesWait();
                 }
             }
             catch (e) {
@@ -12017,6 +12017,7 @@ class Smp extends eventemitter3_1.default {
         this._options = undefined;
         this._smpCommon = new smp_1.SmpCommon();
         this._serialExecutor = serial_executor_1.createSerialExecutor();
+        this._pairingPromise = null;
         this.debugHandler = (...param) => {
             // do nothing.
         };
@@ -12044,9 +12045,13 @@ class Smp extends eventemitter3_1.default {
         this._options = options;
     }
     async pairingWait(options) {
-        return await this._serialExecutor.execute(async () => {
+        if (this._pairingPromise) {
+            return await this._pairingPromise;
+        }
+        this._pairingPromise = this._serialExecutor.execute(async () => {
             return await this.pairingSingleQueueWait(options);
         });
+        return await this._pairingPromise;
     }
     async pairingSingleQueueWait(options) {
         this._options = Object.assign(Object.assign({}, this._options), options);
