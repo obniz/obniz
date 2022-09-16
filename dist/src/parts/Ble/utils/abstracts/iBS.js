@@ -5,6 +5,7 @@
  */
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BaseiBS01 = exports.BaseiBS = void 0;
 const ObnizPartsBleAbstract_1 = require("../../../../obniz/ObnizPartsBleAbstract");
 const magic = {
     1: [0x80, 0xbc],
@@ -26,7 +27,7 @@ class BaseiBS extends ObnizPartsBleAbstract_1.ObnizPartsBle {
                 scanResponse,
             },
             subtype: {
-                index: 11 + ((addLength !== null && addLength !== void 0 ? addLength : 0)),
+                index: 11 + (addLength !== null && addLength !== void 0 ? addLength : 0),
                 type: 'check',
                 data: subtype,
                 scanResponse,

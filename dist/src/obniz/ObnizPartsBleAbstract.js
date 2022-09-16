@@ -9,28 +9,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.iBeaconData = exports.iBeaconCompanyID = exports.ObnizPartsBleConnectable = exports.ObnizPartsBle = exports.uintToArray = exports.intBE = exports.uintBE = exports.int = exports.uint = exports.fixedPoint = exports.notMatchDeviceError = void 0;
 const round_to_1 = __importDefault(require("round-to"));
 const ObnizError_1 = require("./ObnizError");
 const ObnizPartsBleModeList = ['Beacon', 'Connectable', 'Pairing'];
 exports.notMatchDeviceError = new Error('Is NOT target device.');
-exports.fixedPoint = (value, integerBytes) => {
+const fixedPoint = (value, integerBytes) => {
     const positive = value[0] >> 7 === 0;
     if (!positive) {
         value = value.map((n, i) => (n ^ 0xff) + (i === value.length - 1 ? 1 : 0));
     }
     const val = (positive ? 1 : -1) *
-        (exports.uint(value.slice(0, integerBytes)) +
-            exports.uint(value.slice(integerBytes)) /
+        ((0, exports.uint)(value.slice(0, integerBytes)) +
+            (0, exports.uint)(value.slice(integerBytes)) /
                 (1 << (8 * (value.length - integerBytes))));
     return val;
 };
-exports.uint = (value) => {
+exports.fixedPoint = fixedPoint;
+const uint = (value) => {
     let val = 0;
     value.forEach((v, i) => (val += v << (i * 8)));
     return val;
 };
-exports.int = (value) => {
-    const num = exports.uint(value);
+exports.uint = uint;
+const int = (value) => {
+    const num = (0, exports.uint)(value);
     return (num -
         ((num & (0x8 << (value.length * 8 - 4))) !== 0
             ? value.length && value.length >= 28
@@ -38,11 +41,15 @@ exports.int = (value) => {
                 : 0x1 << (value.length * 8)
             : 0));
 };
-exports.uintBE = (value) => exports.uint(value.reverse());
-exports.intBE = (value) => exports.int(value.reverse());
-exports.uintToArray = (value, length = 2) => new Array(length)
+exports.int = int;
+const uintBE = (value) => (0, exports.uint)(value.reverse());
+exports.uintBE = uintBE;
+const intBE = (value) => (0, exports.int)(value.reverse());
+exports.intBE = intBE;
+const uintToArray = (value, length = 2) => new Array(length)
     .fill(0)
     .map((v, i) => value % (1 << ((i + 1) * 8)) >> (i * 8));
+exports.uintToArray = uintToArray;
 class ObnizPartsBle {
     constructor(peripheral, mode) {
         this._mode = mode;
@@ -102,9 +109,9 @@ class ObnizPartsBle {
      */
     static getDeviceMode(peripheral) {
         var _a;
-        return (_a = this.getAvailableBleMode()
+        return ((_a = this.getAvailableBleMode()
             .map((mode) => this.isDeviceWithMode(peripheral, mode) ? mode : undefined)
-            .find((mode) => mode), (_a !== null && _a !== void 0 ? _a : null));
+            .find((mode) => mode)) !== null && _a !== void 0 ? _a : null);
     }
     /**
      * Check if peripherals and modes match the library.
@@ -130,7 +137,7 @@ class ObnizPartsBle {
                 ? this.LocalName
                 : this.LocalName[mode];
             if (defaultLocalName !== undefined &&
-                !defaultLocalName.test((_a = peripheral.localName, (_a !== null && _a !== void 0 ? _a : 'null'))))
+                !defaultLocalName.test((_a = peripheral.localName) !== null && _a !== void 0 ? _a : 'null'))
                 return false;
         }
         if (this.ServiceUuids) {
@@ -206,16 +213,16 @@ class ObnizPartsBle {
                     data !== null &&
                     Object.values(defDataStruct).filter((config) => {
                         var _a, _b;
-                        return inScanResponse === (_a = config.scanResponse, (_a !== null && _a !== void 0 ? _a : false)) &&
+                        return inScanResponse === ((_a = config.scanResponse) !== null && _a !== void 0 ? _a : false) &&
                             config.type === 'check' &&
                             data
-                                .slice(2 + config.index, 2 + config.index + (_b = config.length, (_b !== null && _b !== void 0 ? _b : 1)))
+                                .slice(2 + config.index, 2 + config.index + ((_b = config.length) !== null && _b !== void 0 ? _b : 1))
                                 .filter((d, i) => {
                                 var _a;
                                 return d !==
                                     (typeof config.data === 'number'
                                         ? [config.data]
-                                        : (_a = config.data, (_a !== null && _a !== void 0 ? _a : [])))[i];
+                                        : (_a = config.data) !== null && _a !== void 0 ? _a : [])[i];
                             }).length !== 0;
                     }).length !== 0)
                     return false;
@@ -263,7 +270,7 @@ class ObnizPartsBle {
     getData() {
         var _a;
         this.checkMode();
-        const dataStruct = (_a = this.staticClass.BeaconDataStruct, (_a !== null && _a !== void 0 ? _a : this.staticClass.ServiceDataStruct));
+        const dataStruct = (_a = this.staticClass.BeaconDataStruct) !== null && _a !== void 0 ? _a : this.staticClass.ServiceDataStruct;
         if (!dataStruct)
             throw new Error('Data analysis is not defined.');
         const data = this.staticClass.BeaconDataStruct
@@ -288,7 +295,7 @@ class ObnizPartsBle {
             const config = c;
             if (!(config.scanResponse ? this.beaconDataInScanResponse : data))
                 throw new Error('manufacturerSpecificData is null.');
-            const vals = (_a = (config.scanResponse ? this.beaconDataInScanResponse : data), (_a !== null && _a !== void 0 ? _a : [])).slice(config.index, config.index + (_b = config.length, (_b !== null && _b !== void 0 ? _b : 1)));
+            const vals = ((_a = (config.scanResponse ? this.beaconDataInScanResponse : data)) !== null && _a !== void 0 ? _a : []).slice(config.index, config.index + ((_b = config.length) !== null && _b !== void 0 ? _b : 1));
             if (config.type.indexOf('bool') === 0)
                 return [name, (vals[0] & parseInt(config.type.slice(4), 2)) > 0];
             else if (config.type === 'string')
@@ -318,14 +325,14 @@ class ObnizPartsBle {
                 else
                     return [name, config.func(vals, this.peripheral)];
             else {
-                const multi = (_c = config.multiple, (_c !== null && _c !== void 0 ? _c : 1));
+                const multi = (_c = config.multiple) !== null && _c !== void 0 ? _c : 1;
                 const f = (d) => config.fixedIntegerBytes !== undefined
-                    ? exports.fixedPoint(d, config.fixedIntegerBytes)
+                    ? (0, exports.fixedPoint)(d, config.fixedIntegerBytes)
                     : (config.type.indexOf('u') === 0 ? exports.uint : exports.int)(config.type.indexOf('BE') >= 0 ? d.reverse() : d);
                 const num = f(vals) * multi;
                 return [
                     name,
-                    config.round !== undefined ? round_to_1.default(num, config.round) : num,
+                    config.round !== undefined ? (0, round_to_1.default)(num, config.round) : num,
                 ];
             }
         })
@@ -333,9 +340,9 @@ class ObnizPartsBle {
     }
     getTriaxial(data, fixedIntegerBytes, round) {
         const f = (d) => fixedIntegerBytes !== undefined
-            ? exports.fixedPoint(d, fixedIntegerBytes)
-            : exports.int(d);
-        const ff = (d) => round !== undefined ? round_to_1.default(f(d), round) : f(d);
+            ? (0, exports.fixedPoint)(d, fixedIntegerBytes)
+            : (0, exports.int)(d);
+        const ff = (d) => round !== undefined ? (0, round_to_1.default)(f(d), round) : f(d);
         return {
             x: ff(data.slice(0, 2)),
             y: ff(data.slice(2, 4)),
@@ -503,9 +510,9 @@ class ObnizPartsBleConnectable extends ObnizPartsBle {
      */
     async subscribeWait(serviceUuid, characteristicUuid, callback) {
         const characteristic = this.getChar(serviceUuid, characteristicUuid);
-        await characteristic.registerNotifyWait((callback !== null && callback !== void 0 ? callback : (() => {
+        await characteristic.registerNotifyWait(callback !== null && callback !== void 0 ? callback : (() => {
             // do nothing.
-        })));
+        }));
     }
     /**
      * Unregister notification to any characteristic of any service.
@@ -557,6 +564,6 @@ exports.iBeaconData =
     rssi: {
         index: 0,
         type: 'custom',
-        func: (d, p) => { var _a; return _a = p.rssi, (_a !== null && _a !== void 0 ? _a : 0); },
+        func: (d, p) => { var _a; return (_a = p.rssi) !== null && _a !== void 0 ? _a : 0; },
     },
 };

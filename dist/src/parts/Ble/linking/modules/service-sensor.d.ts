@@ -3,6 +3,7 @@
  * @module Parts.Linking
  */
 /// <reference types="node" />
+/// <reference types="node" />
 export default class LinkingServiceSensor {
     SERVICE_ID: number;
     SERVICE_NAME: string;

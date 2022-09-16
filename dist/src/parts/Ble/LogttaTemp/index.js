@@ -22,10 +22,10 @@ class Logtta_TH extends Logtta_1.default {
         this.staticClass = Logtta_TH;
     }
     static parseTemperatureData(data, func = ObnizPartsBleAbstract_1.uint) {
-        return round_to_1.default((func(data) / 0x10000) * 175.72 - 46.85, 2);
+        return (0, round_to_1.default)((func(data) / 0x10000) * 175.72 - 46.85, 2);
     }
     static parseHumidityData(data, func = ObnizPartsBleAbstract_1.uint) {
-        return round_to_1.default((func(data) / 0x10000) * 125 - 6, 2);
+        return (0, round_to_1.default)((func(data) / 0x10000) * 125 - 6, 2);
     }
     /**
      * @deprecated

@@ -2690,7 +2690,10 @@ class Hci extends EventEmitter<HciEventTypes> {
     // length
     cmd.writeUInt8(0x01, 3);
     if (!(param in options)) {
-      throw new ObnizParameterError(`${param}`, `BLE HCI ${commandName} param`);
+      throw new ObnizParameterError(
+        `${String(param)}`,
+        `BLE HCI ${commandName} param`
+      );
     }
     const val = options[param];
     cmd.writeUInt8(val, 4);
