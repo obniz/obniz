@@ -201,7 +201,7 @@ class BleScan {
             });
             this.emitter.once('onfinish', (peripherals, error) => {
                 if (error) {
-                    assert_1.rejects(error);
+                    (0, assert_1.rejects)(error);
                     return;
                 }
                 resolve(null);

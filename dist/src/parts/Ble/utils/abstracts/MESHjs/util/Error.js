@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.MESHJsTimeOutError = exports.MESHJsInvalidValueError = exports.MESHJsOutOfRangeError = exports.MESHJsBlockVersionError = exports.MESHJsError = void 0;
 class MESHJsError extends Error {
     constructor(code, e) {
         super(e);

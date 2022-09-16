@@ -139,8 +139,11 @@ export interface ObnizPartsBleProps extends ObnizPartsProps {
   readonly ServiceDataLength?: ObnizPartsBleCompare<number | null>;
   readonly ServiceUUID?: ObnizPartsBleCompare<number[] | null>;
   readonly ServiceDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown> | null>;
+
   getServiceUuids(mode: ObnizPartsBleMode): string[] | null | undefined;
+
   getDeviceMode(peripheral: BleRemotePeripheral): ObnizPartsBleMode | null;
+
   new (
     peripheral: BleRemotePeripheral,
     mode: ObnizPartsBleMode

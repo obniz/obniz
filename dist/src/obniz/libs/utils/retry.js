@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.retry = async (times, f, onFail) => {
+exports.retry = void 0;
+const retry = async (times, f, onFail) => {
     let error = new Error(`Failed ${times} times`); // will be not use
     for (let i = 0; i < times; i++) {
         try {
@@ -15,3 +16,4 @@ exports.retry = async (times, f, onFail) => {
     }
     throw error;
 };
+exports.retry = retry;

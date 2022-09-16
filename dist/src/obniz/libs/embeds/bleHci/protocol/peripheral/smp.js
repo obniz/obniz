@@ -86,7 +86,7 @@ class Smp extends eventemitter3_1.default {
             0x01,
             0x10,
             0x00,
-            0x01,
+            0x01, // Responder key distribution: EncKey
         ]);
         this.write(this._pres);
     }

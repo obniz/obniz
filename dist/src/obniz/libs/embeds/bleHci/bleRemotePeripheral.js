@@ -190,8 +190,8 @@ class BleRemotePeripheral {
      *
      */
     async connectWait(setting) {
-        var _a, _b;
-        if (this.connected && ((_a = setting) === null || _a === void 0 ? void 0 : _a.forceConnect) === false)
+        var _a;
+        if (this.connected && (setting === null || setting === void 0 ? void 0 : setting.forceConnect) === false)
             return;
         this._connectSetting = setting || {};
         this._connectSetting.autoDiscovery =
@@ -212,7 +212,7 @@ class BleRemotePeripheral {
         await this.obnizBle.scan.endWait();
         // for only typescript type
         const mtuRequest = this._connectSetting.mtuRequest;
-        await retry_1.retry((_b = this._connectSetting.retry, (_b !== null && _b !== void 0 ? _b : 1)), async () => {
+        await (0, retry_1.retry)((_a = this._connectSetting.retry) !== null && _a !== void 0 ? _a : 1, async () => {
             try {
                 if (this._extended) {
                     await this.obnizBle.centralBindings.connectExtendedWait(this.address, mtuRequest, () => {
@@ -684,17 +684,18 @@ class BleRemotePeripheral {
     }
     setLocalName() {
         var _a;
-        const data = (_a = this.searchTypeVal(0x09), (_a !== null && _a !== void 0 ? _a : this.searchTypeVal(0x08)));
+        const data = (_a = this.searchTypeVal(0x09)) !== null && _a !== void 0 ? _a : this.searchTypeVal(0x08);
         this.localName = data ? String.fromCharCode.apply(null, data) : null;
     }
     setManufacturerSpecificData() {
         var _a, _b;
-        this.manufacturerSpecificData = (_a = this.searchTypeVal(0xff), (_a !== null && _a !== void 0 ? _a : null));
-        this.manufacturerSpecificDataInScanResponse = (_b = this.searchTypeVal(0xff, true), (_b !== null && _b !== void 0 ? _b : null));
+        this.manufacturerSpecificData = (_a = this.searchTypeVal(0xff)) !== null && _a !== void 0 ? _a : null;
+        this.manufacturerSpecificDataInScanResponse =
+            (_b = this.searchTypeVal(0xff, true)) !== null && _b !== void 0 ? _b : null;
     }
     setServiceData() {
         var _a;
-        this.serviceData = (_a = this.searchTypeVal(0x16), (_a !== null && _a !== void 0 ? _a : null));
+        this.serviceData = (_a = this.searchTypeVal(0x16)) !== null && _a !== void 0 ? _a : null;
     }
     setIBeacon() {
         const data = this.manufacturerSpecificData;

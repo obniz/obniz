@@ -1,4 +1,5 @@
 /// <reference types="node" />
+/// <reference types="node" />
 import { HandleIndex } from '../peripheral/gatt';
 import AclStream from './acl-stream';
 import EventEmitter from 'eventemitter3';

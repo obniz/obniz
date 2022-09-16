@@ -93,7 +93,7 @@ const findType = (type, multiple = 1, precision = 0) => {
             const rawData = buf.slice(i + 1, i + 1 + dataSize);
             let result = readData(rawData, dataSize, dataType.encoding);
             if (result && typeof result === 'number') {
-                result = round_to_1.default(result * multiple, precision);
+                result = (0, round_to_1.default)(result * multiple, precision);
             }
             return result;
         }
@@ -120,6 +120,7 @@ STM550B.BeaconDataStruct = {
         index: 4,
         length: 255,
         type: 'custom',
+        round: 10,
         func: findType('temperature', 0.01),
     },
     voltage: {

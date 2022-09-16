@@ -3,6 +3,7 @@
  * @module ObnizCore.Components
  */
 /// <reference types="node" />
+/// <reference types="node" />
 import Obniz from '../../index';
 import { ComponentAbstract } from '../ComponentAbstact';
 import { BitType, DriveType, FlowControlType, ParityType, PullType, StopBitType } from './common';

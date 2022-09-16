@@ -4,6 +4,7 @@
  * @ignore
  */
 /// <reference types="node" />
+/// <reference types="node" />
 import EventEmitter from 'eventemitter3';
 import Hci from '../hci';
 declare type GapEventTypes = '';

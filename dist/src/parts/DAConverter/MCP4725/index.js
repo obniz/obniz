@@ -8,7 +8,7 @@ class MCP4725 {
     constructor() {
         this.cmd = {
             WRITEDAC: 0x40,
-            WRITEDACEEPROM: 0x60,
+            WRITEDACEEPROM: 0x60, // Writes data to the DAC and the EEPROM (persisting the assigned value after reset)
         };
         this._vcc_voltage = 5.0;
         this.keys = ['vcc', 'gnd', 'sda', 'scl', 'i2c'];

@@ -72,11 +72,11 @@ class NobleBindings extends eventemitter3_1.default {
         if (!usePhy1m && !usePhyCoded) {
             throw new ObnizError_1.ObnizBleInvalidParameterError('Please make either true', `usePhy1M:${usePhy1m} usePhyCoded:${usePhyCoded}`);
         }
-        this._scanServiceUuids = (serviceUuids !== null && serviceUuids !== void 0 ? serviceUuids : null);
+        this._scanServiceUuids = serviceUuids !== null && serviceUuids !== void 0 ? serviceUuids : null;
         await this._gap.startExtendedScanningWait(allowDuplicates, activeScan, usePhy1m, usePhyCoded);
     }
     async startScanningWait(serviceUuids, allowDuplicates, activeScan) {
-        this._scanServiceUuids = (serviceUuids !== null && serviceUuids !== void 0 ? serviceUuids : null);
+        this._scanServiceUuids = serviceUuids !== null && serviceUuids !== void 0 ? serviceUuids : null;
         await this._gap.startScanningWait(allowDuplicates, activeScan);
     }
     async stopScanningWait() {

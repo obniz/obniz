@@ -50,24 +50,23 @@ class TR7 {
      * ```
      */
     static getData(peripheral) {
-        var _a, _b, _c, _d;
         if (!this.isDevice(peripheral))
             return null;
         const temperatureBytes = this._deviceAdvAnalyzer.getData(peripheral.adv_data, 'manufacture', 'measuredDataCh1');
         const humidityBytes = this._deviceAdvAnalyzer.getData(peripheral.adv_data, 'manufacture', 'measuredDataCh2');
         if (!temperatureBytes || !humidityBytes)
             return null;
-        const rawTemperature = ((_a = temperatureBytes) === null || _a === void 0 ? void 0 : _a[0]) === 0xee && ((_b = temperatureBytes) === null || _b === void 0 ? void 0 : _b[1]) === 0xee // error
+        const rawTemperature = (temperatureBytes === null || temperatureBytes === void 0 ? void 0 : temperatureBytes[0]) === 0xee && (temperatureBytes === null || temperatureBytes === void 0 ? void 0 : temperatureBytes[1]) === 0xee // error
             ? null
             : Buffer.from(temperatureBytes).readInt16LE(0);
-        const rawHumidity = ((_c = humidityBytes) === null || _c === void 0 ? void 0 : _c[0]) === 0xee && ((_d = humidityBytes) === null || _d === void 0 ? void 0 : _d[1]) === 0xee // error
+        const rawHumidity = (humidityBytes === null || humidityBytes === void 0 ? void 0 : humidityBytes[0]) === 0xee && (humidityBytes === null || humidityBytes === void 0 ? void 0 : humidityBytes[1]) === 0xee // error
             ? null
             : Buffer.from(humidityBytes).readInt16LE(0);
         if (!rawTemperature || !rawHumidity)
             return null;
         return {
             temperature: (rawTemperature - 1000) / 10,
-            humidity: (rawHumidity - 1000) / 10,
+            humidity: (rawHumidity - 1000) / 10, // NOTE: Document says we have to do this mathmatics.
         };
     }
 }
