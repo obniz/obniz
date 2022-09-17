@@ -12,6 +12,7 @@ const ObnizError_1 = require("../../../ObnizError");
 const ble_1 = __importDefault(require("./ble"));
 const bleHelper_1 = __importDefault(require("./bleHelper"));
 const bleRemoteService_1 = __importDefault(require("./bleRemoteService"));
+const retry_1 = require("../../utils/retry");
 /**
  * @category Use as Central
  */
@@ -190,7 +191,7 @@ class BleRemotePeripheral {
      */
     async connectWait(setting) {
         var _a;
-        if (this.connected && ((_a = setting) === null || _a === void 0 ? void 0 : _a.forceConnect) === false)
+        if (this.connected && (setting === null || setting === void 0 ? void 0 : setting.forceConnect) === false)
             return;
         this._connectSetting = setting || {};
         this._connectSetting.autoDiscovery =
@@ -209,45 +210,57 @@ class BleRemotePeripheral {
             this._connectSetting.usePyhCoded = true;
         }
         await this.obnizBle.scan.endWait();
-        try {
-            if (this._extended) {
-                await this.obnizBle.centralBindings.connectExtendedWait(this.address, this._connectSetting.mtuRequest, () => {
-                    if (this._connectSetting.pairingOption) {
-                        this.setPairingOption(this._connectSetting.pairingOption);
-                    }
-                }, this._connectSetting.usePyh1m, this._connectSetting.usePyh2m, this._connectSetting.usePyhCoded);
-            }
-            else {
-                await this.obnizBle.centralBindings.connectWait(this.address, this._connectSetting.mtuRequest, () => {
-                    if (this._connectSetting.pairingOption) {
-                        this.setPairingOption(this._connectSetting.pairingOption);
-                    }
-                });
-            }
-        }
-        catch (e) {
-            if (e instanceof ObnizError_1.ObnizTimeoutError) {
-                await this.obnizBle.resetWait();
-                throw new Error(`Connection to device(address=${this.address}) was timedout. ble have been reseted`);
-            }
-            throw e;
-        }
-        this.connected = true;
-        this.connected_at = new Date();
-        try {
-            if (this._connectSetting.autoDiscovery) {
-                await this.discoverAllHandlesWait();
-            }
-        }
-        catch (e) {
+        // for only typescript type
+        const mtuRequest = this._connectSetting.mtuRequest;
+        await (0, retry_1.retry)((_a = this._connectSetting.retry) !== null && _a !== void 0 ? _a : 1, async () => {
             try {
-                await this.disconnectWait();
+                if (this._extended) {
+                    await this.obnizBle.centralBindings.connectExtendedWait(this.address, mtuRequest, () => {
+                        if (this._connectSetting.pairingOption) {
+                            this.setPairingOption(this._connectSetting.pairingOption);
+                        }
+                    }, this._connectSetting.usePyh1m, this._connectSetting.usePyh2m, this._connectSetting.usePyhCoded);
+                }
+                else {
+                    await this.obnizBle.centralBindings.connectWait(this.address, mtuRequest, () => {
+                        if (this._connectSetting.pairingOption) {
+                            this.setPairingOption(this._connectSetting.pairingOption);
+                        }
+                    });
+                }
             }
-            catch (e2) {
-                // nothing
+            catch (e) {
+                if (e instanceof ObnizError_1.ObnizTimeoutError) {
+                    await this.obnizBle.resetWait();
+                    throw new Error(`Connection to device(address=${this.address}) was timedout. ble have been reseted`);
+                }
+                throw e;
             }
-            throw e;
-        }
+            this.connected = true;
+            this.connected_at = new Date();
+            try {
+                if (this._connectSetting.waitUntilPairing &&
+                    !(await this.isPairingFinishedWait())) {
+                    // console.log('waitUntilPairing');
+                    await this.pairingWait(this._connectSetting.pairingOption);
+                    // console.log('waitUntilPairing finished');
+                }
+                if (this._connectSetting.autoDiscovery) {
+                    await this.discoverAllHandlesWait();
+                }
+            }
+            catch (e) {
+                try {
+                    await this.disconnectWait();
+                }
+                catch (e2) {
+                    // nothing
+                }
+                throw e;
+            }
+        }, async (err) => {
+            // console.log('connection fail, retry', err);
+        });
         this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
         this.emitter.emit('connect');
     }
@@ -616,6 +629,14 @@ class BleRemotePeripheral {
         const result = await this.obnizBle.centralBindings.pairingWait(this.address, options);
         return result;
     }
+    async getPairingKeysWait() {
+        const result = await this.obnizBle.centralBindings.getPairingKeysWait(this.address);
+        return result;
+    }
+    async isPairingFinishedWait() {
+        const result = await this.obnizBle.centralBindings.isPairingFinishedWait(this.address);
+        return result;
+    }
     setPairingOption(options) {
         this.obnizBle.centralBindings.setPairingOption(this.address, options);
     }
@@ -663,17 +684,18 @@ class BleRemotePeripheral {
     }
     setLocalName() {
         var _a;
-        const data = (_a = this.searchTypeVal(0x09), (_a !== null && _a !== void 0 ? _a : this.searchTypeVal(0x08)));
+        const data = (_a = this.searchTypeVal(0x09)) !== null && _a !== void 0 ? _a : this.searchTypeVal(0x08);
         this.localName = data ? String.fromCharCode.apply(null, data) : null;
     }
     setManufacturerSpecificData() {
         var _a, _b;
-        this.manufacturerSpecificData = (_a = this.searchTypeVal(0xff), (_a !== null && _a !== void 0 ? _a : null));
-        this.manufacturerSpecificDataInScanResponse = (_b = this.searchTypeVal(0xff, true), (_b !== null && _b !== void 0 ? _b : null));
+        this.manufacturerSpecificData = (_a = this.searchTypeVal(0xff)) !== null && _a !== void 0 ? _a : null;
+        this.manufacturerSpecificDataInScanResponse =
+            (_b = this.searchTypeVal(0xff, true)) !== null && _b !== void 0 ? _b : null;
     }
     setServiceData() {
         var _a;
-        this.serviceData = (_a = this.searchTypeVal(0x16), (_a !== null && _a !== void 0 ? _a : null));
+        this.serviceData = (_a = this.searchTypeVal(0x16)) !== null && _a !== void 0 ? _a : null;
     }
     setIBeacon() {
         const data = this.manufacturerSpecificData;

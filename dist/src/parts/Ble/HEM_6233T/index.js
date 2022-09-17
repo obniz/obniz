@@ -95,9 +95,9 @@ class HEM_6233T {
                 0x06,
                 0x01,
                 0x00,
-                0x0a,
+                0x0a, // error code : 10 = Attribute Not Found
             ]);
-            this._writeTimeCharWait(this._timezoneOffsetMinute);
+            await this._writeTimeCharWait(this._timezoneOffsetMinute);
         }); // battery Level
         await this.subscribeWait('1810', '2A35', async (data) => {
             // console.log('SUCCESS', data);

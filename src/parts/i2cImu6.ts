@@ -83,17 +83,17 @@ export default abstract class I2cImu6Abstract extends i2cParts {
   protected accel_sf: accelUnit = 'g';
   protected gyro_sf: gyroUnit = 'dps';
 
-  public abstract async whoamiWait(): Promise<number>;
+  public abstract whoamiWait(): Promise<number>;
 
   public abstract calcTemp(data?: number | null): number | null;
 
-  public abstract async getAccelAdcWait(): Promise<Xyz>;
+  public abstract getAccelAdcWait(): Promise<Xyz>;
 
-  public abstract async getGyroAdcWait(): Promise<Xyz>;
+  public abstract getGyroAdcWait(): Promise<Xyz>;
 
-  public abstract async getTempAdcWait(): Promise<number>;
+  public abstract getTempAdcWait(): Promise<number>;
 
-  public abstract async getAllAdcWait(): Promise<Inertia6>;
+  public abstract getAllAdcWait(): Promise<Inertia6>;
 
   public async getAccelWait(): Promise<Xyz> {
     const adc = await this.getAccelAdcWait();

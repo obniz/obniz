@@ -50,7 +50,7 @@ class Grove_GPS {
             GPGSV: 0x0004,
             GPRMC: 0x0008,
             GPVTG: 0x0010,
-            GPZDA: 0x0020,
+            GPZDA: 0x0020, // ZDA - Date & Time
         };
         this.gpsInfo.status = 'V';
         this.gpsInfo.sentences = new Set(); // Set specifying sentence of MNEA from which data have been obtained

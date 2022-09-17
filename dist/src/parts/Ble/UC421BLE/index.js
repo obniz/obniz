@@ -837,7 +837,7 @@ class UC421BLE {
         const monthStr = month.toString().padStart(2, '0');
         const dayStr = day.toString().padStart(2, '0');
         const birthdayStr = `${yearStr}-${monthStr}-${dayStr}`;
-        const ageYears = moment_1.default().diff(birthdayStr, 'years');
+        const ageYears = (0, moment_1.default)().diff(birthdayStr, 'years');
         if (Number.isNaN(ageYears))
             throw new Error('Invalid birthday recieved.');
         return ageYears;

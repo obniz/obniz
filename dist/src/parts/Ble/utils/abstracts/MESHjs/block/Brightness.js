@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Brightness = void 0;
 const Base_1 = require("./Base");
 class Brightness extends Base_1.Base {
     constructor() {
@@ -26,9 +27,8 @@ class Brightness extends Base_1.Base {
      * @returns
      */
     static isMESHblock(name, opt_serialnumber = '') {
-        var _a;
         return super.isMESHblock(name, opt_serialnumber)
-            ? ((_a = name) === null || _a === void 0 ? void 0 : _a.indexOf('MESH-100PA')) !== -1
+            ? (name === null || name === void 0 ? void 0 : name.indexOf('MESH-100PA')) !== -1
             : false;
     }
     /**

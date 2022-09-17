@@ -4,6 +4,7 @@
  * @ignore
  */
 /// <reference types="node" />
+/// <reference types="node" />
 import Hci from '../hci';
 import EventEmitter from 'eventemitter3';
 import { Handle } from '../../bleTypes';

@@ -46,11 +46,11 @@ class MINEW_S1 extends MINEW_1.default {
             return null;
         }
         const batteryLevel = peripheral.adv_data[13];
-        const macAddress = (_a = peripheral.adv_data
+        const macAddress = ((_a = peripheral.adv_data
             .slice(14, 20)
             .map((e) => ('0' + e.toString(16)).slice(-2))
             .join('')
-            .match(/.{1,2}/g), (_a !== null && _a !== void 0 ? _a : []))
+            .match(/.{1,2}/g)) !== null && _a !== void 0 ? _a : [])
             .reverse()
             .join('');
         const name = util_1.default.dataArray2string(peripheral.adv_data.slice(20));
@@ -132,6 +132,6 @@ MINEW_S1.ServiceDataStruct = MINEW_1.default.getServiceDataStruct(7, 1, {
         index: 1,
         type: 'check',
         data: 1,
-        scanResponse: true,
+        scanResponse: true, // for ignored by check
     },
 });

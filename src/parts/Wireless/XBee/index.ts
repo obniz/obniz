@@ -155,7 +155,7 @@ export default class XBee implements ObnizPartsInterface {
     if (this.isAtMode) {
       throw new Error('Xbee : duplicate config setting');
     }
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       const standaloneKeys: any = {
         destination_address_high: 'DH',
         destination_address_low: 'DL',

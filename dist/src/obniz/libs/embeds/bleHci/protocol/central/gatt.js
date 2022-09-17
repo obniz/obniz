@@ -60,6 +60,15 @@ class GattCentral extends eventemitter3_1.default {
             });
         };
     }
+    hasEncryptKeys() {
+        return this._aclStream._smp.hasKeys();
+    }
+    getEncryptKeys() {
+        if (!this.hasEncryptKeys()) {
+            return null;
+        }
+        return this._aclStream._smp.getKeys();
+    }
     async encryptWait(options) {
         const result = await this._serialPromiseQueueWait(async () => {
             await this._aclStream.encryptWait(options);
@@ -581,7 +590,6 @@ class GattCentral extends eventemitter3_1.default {
         else {
             await this._execCommandWait(this._gattCommon.executeWriteRequest(characteristic.valueHandle), att_1.ATT.OP_EXECUTE_WRITE_RESP);
         }
-        throw new ObnizError_1.ObnizBleOpError();
     }
     getService(serviceUuid) {
         if (!this._services[serviceUuid]) {
@@ -634,6 +642,7 @@ class GattCentral extends eventemitter3_1.default {
                 this.off('end', disconnectReject);
             }
         };
+        const errorForStacktrace = new Error('stacktrace');
         let disconnectReject = null;
         const doPromise = Promise.all(this._commandPromises)
             .catch((error) => {
@@ -650,11 +659,13 @@ class GattCentral extends eventemitter3_1.default {
             return Promise.resolve(result);
         }, (error) => {
             onfinish();
+            error.cause = errorForStacktrace;
             return Promise.reject(error);
         });
         const disconnectPromise = new Promise((resolve, reject) => {
             disconnectReject = (reason) => {
                 onfinish();
+                reason.cause = errorForStacktrace;
                 reject(reason);
             };
             this.on('end', disconnectReject);

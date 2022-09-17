@@ -388,7 +388,7 @@ export default class BleScan {
           try {
             await this.endWait();
           } catch (e) {
-            this.finish(e);
+            this.finish(e instanceof Error ? e : new Error(`${e}`));
           }
         }, timeout * 1000);
       }
