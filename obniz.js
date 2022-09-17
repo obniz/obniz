@@ -115,6 +115,7 @@ module.exports = {
     "realtest-debug": "DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./test/realtest/index.js",
     "local": "gulp --gulpfile devtools/_tools/server.js --cwd .",
     "watch": "tsc -w & webpack --watch --config ./devtools/webpack.config.js  ",
+    "watch:debug": "tsc -w -p tsconfig.debug.json & webpack --watch --config ./devtools/webpack.config.js  ",
     "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build ",
     "doc": "typedoc --includes ./src/ --exclude '**/*.json' --theme ./devtools/typedocTheme --stripInternal --readme none --out docs/obnizjs --excludePrivate --excludeProtected  --media ./docs/images",
     "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
@@ -14718,7 +14719,7 @@ class Hci extends eventemitter3_1.default {
     }
     onHciAclData(data) {
         const flags = data.readUInt16LE(1) >> 12;
-        const handle = data.readUInt16LE(1) & 0x0fff;
+        const handle = (data.readUInt16LE(1) & 0x0fff);
         if (COMMANDS.ACL_START === flags) {
             const cid = data.readUInt16LE(7);
             const length = data.readUInt16LE(5);

@@ -1653,7 +1653,7 @@ class Hci extends eventemitter3_1.default {
     }
     onHciAclData(data) {
         const flags = data.readUInt16LE(1) >> 12;
-        const handle = data.readUInt16LE(1) & 0x0fff;
+        const handle = (data.readUInt16LE(1) & 0x0fff);
         if (COMMANDS.ACL_START === flags) {
             const cid = data.readUInt16LE(7);
             const length = data.readUInt16LE(5);

@@ -1729,7 +1729,7 @@ class Hci extends EventEmitter<HciEventTypes> {
           `le encryption event EVT_ENCRYPT_CHANGE failed with error ${status}`
         );
       }
-      const encHandle: Handle = data.readUInt16LE(4);
+      const encHandle: Handle = data.readUInt16LE(4) as Handle;
       const encrypt = data.readUInt8(6);
 
       this.debug('\t\thandle = ' + encHandle);
@@ -1749,7 +1749,7 @@ class Hci extends EventEmitter<HciEventTypes> {
           `le encryption event EVT_ENCRYPTION_KEY_REFRESH_COMPLETE failed with error ${status}`
         );
       }
-      const encHandle: Handle = data.readUInt16LE(4);
+      const encHandle: Handle = data.readUInt16LE(4) as Handle;
 
       this.debug('\t\thandle = ' + encHandle);
       return 'refresh';
@@ -2479,7 +2479,7 @@ class Hci extends EventEmitter<HciEventTypes> {
 
   private onHciAclData(data: Buffer) {
     const flags = data.readUInt16LE(1) >> 12;
-    const handle: Handle = data.readUInt16LE(1) & 0x0fff;
+    const handle: Handle = (data.readUInt16LE(1) & 0x0fff) as Handle;
 
     if (COMMANDS.ACL_START === flags) {
       const cid = data.readUInt16LE(7);
@@ -2552,7 +2552,7 @@ class Hci extends EventEmitter<HciEventTypes> {
     this.debug('\tsub event type = 0x' + subEventType.toString(16));
 
     if (subEventType === COMMANDS.EVT_DISCONN_COMPLETE) {
-      const handle: Handle = data.readUInt16LE(4);
+      const handle: Handle = data.readUInt16LE(4) as Handle;
       const reason = data.readUInt8(6);
 
       this.debug('\t\thandle = ' + handle);
@@ -2577,7 +2577,7 @@ class Hci extends EventEmitter<HciEventTypes> {
       this.emit('disconnComplete', handle, reason);
     } else if (subEventType === COMMANDS.EVT_ENCRYPT_CHANGE) {
       const status = data.readUInt8(3);
-      const handle: Handle = data.readUInt16LE(4);
+      const handle: Handle = data.readUInt16LE(4) as Handle;
       const encrypt = data.readUInt8(6);
 
       if (status === 0) {
@@ -2617,7 +2617,7 @@ class Hci extends EventEmitter<HciEventTypes> {
     } else if (subEventType === COMMANDS.EVT_NUMBER_OF_COMPLETED_PACKETS) {
       const handles = data.readUInt8(3);
       for (let i = 0; i < handles; i++) {
-        const handle: Handle = data.readUInt16LE(4 + i * 4);
+        const handle: Handle = data.readUInt16LE(4 + i * 4) as Handle;
         const pkts = data.readUInt16LE(6 + i * 4);
         this.debug('\thandle = ' + handle);
         this.debug('\t\tcompleted = ' + pkts);
