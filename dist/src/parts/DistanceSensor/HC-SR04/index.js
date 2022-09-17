@@ -44,9 +44,13 @@ class HCSR04 {
             callback: async (edges) => {
                 if (this.reset_alltime) {
                     this.vccIO.output(false);
-                    await this.obniz.wait(100);
+                    this.obniz.wait(100).catch(() => {
+                        // ignore error
+                    });
                     this.vccIO.output(true);
-                    await this.obniz.wait(100);
+                    this.obniz.wait(100).catch(() => {
+                        // ignore error
+                    });
                 }
                 let distance;
                 for (let i = 0; i < edges.length - 1; i++) {

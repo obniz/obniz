@@ -42113,7 +42113,9 @@ class ArduCAMMini {
     init() {
         this.i2c_byte_write(0xff, 0x01);
         this.i2c_byte_write(0x12, 0x80);
-        this.obniz.wait(100);
+        this.obniz.wait(100).catch(() => {
+            // ignore error
+        });
         this.i2c_regs_write(this.configs.OV2640_JPEG_INIT);
         this.i2c_regs_write(this.configs.OV2640_YUV422);
         this.i2c_regs_write(this.configs.OV2640_JPEG);
@@ -48029,9 +48031,13 @@ class HCSR04 {
             callback: async (edges) => {
                 if (this.reset_alltime) {
                     this.vccIO.output(false);
-                    await this.obniz.wait(100);
+                    this.obniz.wait(100).catch(() => {
+                        // ignore error
+                    });
                     this.vccIO.output(true);
-                    await this.obniz.wait(100);
+                    this.obniz.wait(100).catch(() => {
+                        // ignore error
+                    });
                 }
                 let distance;
                 for (let i = 0; i < edges.length - 1; i++) {
@@ -59218,9 +59224,13 @@ class AM2320 {
             // do nothing.
         };
         this.i2c.write(this.address, [0]); // wake
-        await this.obniz.wait(2);
+        this.obniz.wait(2).catch(() => {
+            /* ignore error */
+        });
         this.i2c.write(this.address, [0x03, 0x00, 0x04]);
-        await this.obniz.wait(2);
+        this.obniz.wait(2).catch(() => {
+            /* ignore error */
+        });
         this.i2c.write(this.address, [0x03, 0x00, 0x04]);
         const ret = await this.i2c.readWait(this.address, 6);
         this.i2c.onerror = i2cOnerror;
