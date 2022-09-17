@@ -170,7 +170,6 @@ export default class STM550B extends ObnizPartsBle<STM550B_Data> {
       index: 4,
       length: 255,
       type: 'custom',
-      round: 10,
       func: findType('temperature', 0.01),
     },
     voltage: {

@@ -31668,7 +31668,6 @@ STM550B.BeaconDataStruct = {
         index: 4,
         length: 255,
         type: 'custom',
-        round: 10,
         func: findType('temperature', 0.01),
     },
     voltage: {
