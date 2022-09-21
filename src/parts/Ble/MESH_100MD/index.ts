@@ -7,6 +7,7 @@
 import { MESH } from '../utils/abstracts/MESH';
 import { Motion } from '../utils/abstracts/MESHjs/block/Motion';
 import { MESHJsTimeOutError } from '../utils/abstracts/MESHjs/util/Error';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 
 export interface MESH_100MDOptions {}
 
@@ -21,7 +22,8 @@ export interface MESH_100MD_Data {
 /** MESH_100MD management class */
 export default class MESH_100MD extends MESH<MESH_100MD_Data> {
   public static readonly PartsName = 'MESH_100MD';
-  public static readonly PREFIX = 'MESH-100MD';
+  public static readonly LocalName = /^MESH-100MD/;
+
   public static readonly NotifyMode = Motion.NotifyMode;
   public static readonly MotionState = Motion.MotionState;
 
@@ -34,8 +36,22 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
 
   private retMotionState_ = -1;
   private notifyMode_ = -1;
-  private detectionTime_ = 500; // [ms]
   private holdingTime_ = 500; // [ms]
+  private detectionTime_ = 500; // [ms]
+
+  /**
+   * Check MESH block
+   *
+   * @param peripheral
+   * @param opt_serialnumber
+   * @returns
+   */
+  public static isMESHblock(
+    peripheral: BleRemotePeripheral,
+    opt_serialnumber = ''
+  ): boolean {
+    return Motion.isMESHblock(peripheral.localName, opt_serialnumber);
+  }
 
   /**
    * getDataWait
@@ -44,10 +60,10 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
    */
   public async getDataWait() {
     this.checkConnected();
-    const motionBlock = this.meshBlock as Motion;
     return {
       name: this.peripheral!.localName!,
       address: this.peripheral.address,
+      motionState: await this.getSensorDataWait(),
     };
   }
 
@@ -56,21 +72,20 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
    *
    * @returns
    */
-  public async getSensorDataWait() {
+  public async getSensorDataWait(opt_timeoutMsec = this.TIMEOUT_MSEC) {
     this.checkConnected();
     const _requestId = this.requestId.next();
     this.setMode_(
       MESH_100MD.NotifyMode.ONCE,
-      this.detectionTime_,
       this.holdingTime_,
+      this.detectionTime_,
       _requestId
     );
 
-    const _TIMEOUT_MSEC = 2000 as const;
     let _isTimeout = false;
     const _timeoutId = setTimeout(() => {
       _isTimeout = true;
-    }, _TIMEOUT_MSEC);
+    }, opt_timeoutMsec);
 
     const INTERVAL_TIME = 50 as const;
     const _result = await new Promise<number | null>((resolve) => {
@@ -89,7 +104,7 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
     });
     if (MESH_100MD.NotifyMode.ALWAYS < this.notifyMode_) {
       // Continus previous mode
-      this.setMode(this.notifyMode_, this.detectionTime_, this.holdingTime_);
+      this.setMode(this.notifyMode_, this.holdingTime_, this.detectionTime_);
     }
     if (_result == null) {
       throw new MESHJsTimeOutError(this.peripheral.localName!);
@@ -101,27 +116,23 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
    * setMode
    *
    * @param notifyMode
-   * @param opt_detectionTime
    * @param opt_holdingTime
+   * @param opt_detectionTime
    */
   public setMode(
     notifyMode: number,
-    opt_detectionTime = 500,
-    opt_holdingTime = 500
+    opt_holdingTime = 500,
+    opt_detectionTime = 500
   ): void {
     this.setMode_(
       notifyMode,
-      opt_detectionTime,
       opt_holdingTime,
+      opt_detectionTime,
       this.requestId.defaultId()
     );
     this.notifyMode_ = notifyMode;
-    this.detectionTime_ = opt_detectionTime;
     this.holdingTime_ = opt_holdingTime;
-  }
-
-  protected static _isMESHblock(name: string): boolean {
-    return name.indexOf(MESH_100MD.PREFIX) !== -1;
+    this.detectionTime_ = opt_detectionTime;
   }
 
   protected prepareConnect(): void {
@@ -144,15 +155,15 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
 
   private setMode_(
     notifyMode: number,
-    detectionTime: number,
     holdingTime: number,
+    detectionTime: number,
     requestId: number
   ): void {
     const motionBlock = this.meshBlock as Motion;
-    const command = motionBlock.parseSetmodeCommand(
+    const command = motionBlock.createSetmodeCommand(
       notifyMode,
-      detectionTime,
       holdingTime,
+      detectionTime,
       requestId
     );
     this.writeWOResponse(command);

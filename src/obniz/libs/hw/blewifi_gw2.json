@@ -19,7 +19,9 @@
       }
     },
     "embeds": {
-      "ble": {},
+      "ble": {
+        "extended": true
+      },
       "display": {
         "paper_white": true,
         "raw_alternate": true,
@@ -50,4 +52,3 @@
     },
     "extraInterface": {}
   }
-  

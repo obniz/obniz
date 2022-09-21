@@ -123,7 +123,9 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.components.ble.hci.obnizble.html#obniz" class="tsd-kind-icon">Obniz</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.obnizble.html#characteristic" class="tsd-kind-icon">characteristic</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.obnizble.html#descriptor" class="tsd-kind-icon">descriptor</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.obnizble.html#extendedadvertisement" class="tsd-kind-icon">extended<wbr>Advertisement</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.obnizble.html#hci" class="tsd-kind-icon">hci</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.obnizble.html#onupdatephy" class="tsd-kind-icon">on<wbr>Update<wbr>Phy</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.obnizble.html#peripheral" class="tsd-kind-icon">peripheral</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.obnizble.html#scan" class="tsd-kind-icon">scan</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.obnizble.html#service" class="tsd-kind-icon">service</a></li>
@@ -159,6 +161,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.components.ble.hci.obnizble.html#removelistener" class="tsd-kind-icon">remove<wbr>Listener</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.obnizble.html#resetwait" class="tsd-kind-icon">reset<wbr>Wait</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="obnizcore.components.ble.hci.obnizble.html#schemabasepath" class="tsd-kind-icon">schema<wbr>Base<wbr>Path</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.obnizble.html#setdefaultphywait" class="tsd-kind-icon">set<wbr>Default<wbr>Phy<wbr>Wait</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.components.ble.hci.obnizble.html#validate" class="tsd-kind-icon">validate</a></li>
 							</ul>
 						</section>
@@ -171,20 +174,23 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>ObnizBLE<span class="tsd-signature-symbol">(</span>obniz<span class="tsd-signature-symbol">: </span><a href="obnizcore.obniz.html" class="tsd-signature-type">Obniz</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.obnizble.html" class="tsd-signature-type">ObnizBLE</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>ObnizBLE<span class="tsd-signature-symbol">(</span>obniz<span class="tsd-signature-symbol">: </span><a href="obnizcore.obniz.html" class="tsd-signature-type">Obniz</a>, info<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.obnizble.html" class="tsd-signature-type">ObnizBLE</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="obnizcore.components.componentabstract.html">ComponentAbstract</a>.<a href="obnizcore.components.componentabstract.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:113</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:137</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>obniz: <a href="obnizcore.obniz.html" class="tsd-signature-type">Obniz</a></h5>
+								</li>
+								<li>
+									<h5>info: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="obnizcore.components.ble.hci.obnizble.html" class="tsd-signature-type">ObnizBLE</a></h4>
@@ -216,7 +222,7 @@
 					<div class="tsd-signature tsd-kind-icon">characteristic<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">typeof </span><span class="tsd-signature-type">BleCharacteristic</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:99</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:105</li>
 						</ul>
 					</aside>
 				</section>
@@ -226,7 +232,17 @@
 					<div class="tsd-signature tsd-kind-icon">descriptor<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">typeof </span><span class="tsd-signature-type">BleDescriptor</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:100</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:106</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="extendedadvertisement" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> extended<wbr>Advertisement</h3>
+					<div class="tsd-signature tsd-kind-icon">extended<wbr>Advertisement<span class="tsd-signature-symbol">:</span> <a href="obnizcore.components.ble.hci.bleextendedadvertisement.html" class="tsd-signature-type">BleExtendedAdvertisement</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:112</li>
 						</ul>
 					</aside>
 				</section>
@@ -236,9 +252,28 @@
 					<div class="tsd-signature tsd-kind-icon">hci<span class="tsd-signature-symbol">:</span> <a href="obnizcore.components.ble.hci.obnizblehci.html" class="tsd-signature-type">ObnizBLEHci</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:85</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:91</li>
 						</ul>
 					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="onupdatephy" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> on<wbr>Update<wbr>Phy</h3>
+					<div class="tsd-signature tsd-kind-icon">on<wbr>Update<wbr>Phy<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>txPhy<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">"1m"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"2m"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"coded"</span>, rxPhy<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">"1m"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"2m"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"coded"</span>, handler<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:128</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>This is a callback function used when an external device gets connected or disconnected.</p>
+						</div>
+						<pre><code class="language-javascript"><span class="hljs-keyword">await</span> obniz.ble.initWait();
+obniz.ble.onUpdatePhy = <span class="hljs-function">(<span class="hljs-params">(txPhy, rxPhy</span>) =&gt;</span> {
+   <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"txPhy "</span>+txPhy+<span class="hljs-string">" rxPhy "</span>+rxPhy);
+});</code></pre>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="peripheral" class="tsd-anchor"></a>
@@ -246,7 +281,7 @@
 					<div class="tsd-signature tsd-kind-icon">peripheral<span class="tsd-signature-symbol">:</span> <a href="obnizcore.components.ble.hci.bleperipheral.html" class="tsd-signature-type">BlePeripheral</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:86</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:92</li>
 						</ul>
 					</aside>
 				</section>
@@ -256,7 +291,7 @@
 					<div class="tsd-signature tsd-kind-icon">scan<span class="tsd-signature-symbol">:</span> <a href="obnizcore.components.ble.hci.blescan.html" class="tsd-signature-type">BleScan</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:87</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:93</li>
 						</ul>
 					</aside>
 				</section>
@@ -266,7 +301,7 @@
 					<div class="tsd-signature tsd-kind-icon">service<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">typeof </span><span class="tsd-signature-type">BleService</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:98</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:104</li>
 						</ul>
 					</aside>
 				</section>
@@ -310,7 +345,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:50</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:56</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -369,7 +404,7 @@ obniz.ble.isInitialized; <span class="hljs-comment">// =&gt; true</span></code><
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:184</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:236</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -392,7 +427,7 @@ obniz.ble.isInitialized; <span class="hljs-comment">// =&gt; true</span></code><
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:347</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:420</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -442,7 +477,7 @@ peripheral.onconnect = <span class="hljs-function"><span class="hljs-params">()<
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:380</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:453</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -572,7 +607,7 @@ peripheral.onconnect = <span class="hljs-function"><span class="hljs-params">()<
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:416</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:489</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -603,13 +638,13 @@ peripheral.onconnect = <span class="hljs-function"><span class="hljs-params">()<
 					<a name="initwait" class="tsd-anchor"></a>
 					<h3>init<wbr>Wait</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">init<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">init<wbr>Wait<span class="tsd-signature-symbol">(</span>supportType<span class="tsd-signature-symbol">?: </span><a href="../interfaces/obnizcore.components.ble.hci.blesupporttype.html" class="tsd-signature-type">BleSupportType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:195</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:250</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -617,9 +652,17 @@ peripheral.onconnect = <span class="hljs-function"><span class="hljs-params">()<
 									<p>Initialize BLE module. You need call this first everything before.
 									This throws if device is not supported device.</p>
 								</div>
+								<p>esp32 C3 or esp32 S3 Put true in the argument
+								when not using the BLE5.0 extended advertise</p>
 								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
 <span class="hljs-keyword">await</span> obniz.ble.initWait();</code></pre>
 							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> supportType: <a href="../interfaces/obnizcore.components.ble.hci.blesupporttype.html" class="tsd-signature-type">BleSupportType</a><span class="tsd-signature-symbol"> = {}</span></h5>
+								</li>
+							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
@@ -693,7 +736,7 @@ peripheral.onconnect = <span class="hljs-function"><span class="hljs-params">()<
 							<aside class="tsd-sources">
 								<p>Overrides <a href="obnizcore.components.componentabstract.html">ComponentAbstract</a>.<a href="obnizcore.components.componentabstract.html#notifyfromobniz">notifyFromObniz</a></p>
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:155</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:179</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -886,7 +929,7 @@ peripheral.onconnect = <span class="hljs-function"><span class="hljs-params">()<
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:233</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:296</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -911,10 +954,47 @@ peripheral.onconnect = <span class="hljs-function"><span class="hljs-params">()<
 							<aside class="tsd-sources">
 								<p>Overrides <a href="obnizcore.components.componentabstract.html">ComponentAbstract</a>.<a href="obnizcore.components.componentabstract.html#schemabasepath">schemaBasePath</a></p>
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:442</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:515</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="setdefaultphywait" class="tsd-anchor"></a>
+					<h3>set<wbr>Default<wbr>Phy<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Default<wbr>Phy<wbr>Wait<span class="tsd-signature-symbol">(</span>usePhy1m<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, usePhy2m<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, usePhyCoded<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:217</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>ESP32 C3 or ESP32 S3 only</p>
+								</div>
+								<p>Sets the PHY to use by default</p>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+<span class="hljs-keyword">await</span> obniz.ble.setDefaultPhyWait(<span class="hljs-literal">false</span>,<span class="hljs-literal">false</span>,<span class="hljs-literal">true</span>);<span class="hljs-comment">//coded only</span></code></pre>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>usePhy1m: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+								<li>
+									<h5>usePhy2m: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+								<li>
+									<h5>usePhyCoded: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -953,6 +1033,66 @@ peripheral.onconnect = <span class="hljs-function"><span class="hljs-params">()<
 					<li class="globals  ">
 						<a href="../index.html"><em>Globals</em></a>
 					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_utils_abstracts_mesh_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESH&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_base_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/<wbr>Base&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_brightness_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/<wbr>Brightness&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_button_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/<wbr>Button&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_gpio_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/GPIO&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_led_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/LED&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_motion_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/<wbr>Motion&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_move_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/<wbr>Move&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_temphumid_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/<wbr>Temp<wbr>Humid&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_utils_abstracts_meshjs_util_error_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/util/<wbr>Error&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/obnizapp.html">Obniz<wbr>App</a>
+					</li>
+					<li class="current tsd-kind-external-module">
+						<a href="../modules/obnizcore.html">Obniz<wbr>Core</a>
+						<ul>
+							<li class="current tsd-kind-external-module tsd-parent-kind-external-module">
+								<a href="../modules/obnizcore.components.html">Components</a>
+								<ul>
+									<li class="current tsd-kind-external-module tsd-parent-kind-external-module tsd-is-not-exported">
+										<a href="../modules/obnizcore.components.ble.html">Ble</a>
+										<ul>
+											<li class="current tsd-kind-external-module tsd-parent-kind-external-module">
+												<a href="../modules/obnizcore.components.ble.hci.html">Hci</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+							<li class=" tsd-kind-external-module tsd-parent-kind-external-module">
+								<a href="../modules/obnizcore.errors.html">Errors</a>
+							</li>
+							<li class=" tsd-kind-external-module tsd-parent-kind-external-module">
+								<a href="../modules/obnizcore.hardware.html">Hardware</a>
+							</li>
+						</ul>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-not-exported">
+						<a href="../modules/parts.html">Parts</a>
+					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
@@ -975,7 +1115,13 @@ peripheral.onconnect = <span class="hljs-function"><span class="hljs-params">()<
 								<a href="obnizcore.components.ble.hci.obnizble.html#descriptor" class="tsd-kind-icon">descriptor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="obnizcore.components.ble.hci.obnizble.html#extendedadvertisement" class="tsd-kind-icon">extended<wbr>Advertisement</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="obnizcore.components.ble.hci.obnizble.html#hci" class="tsd-kind-icon">hci</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="obnizcore.components.ble.hci.obnizble.html#onupdatephy" class="tsd-kind-icon">on<wbr>Update<wbr>Phy</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="obnizcore.components.ble.hci.obnizble.html#peripheral" class="tsd-kind-icon">peripheral</a>
@@ -1051,6 +1197,9 @@ peripheral.onconnect = <span class="hljs-function"><span class="hljs-params">()<
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="obnizcore.components.ble.hci.obnizble.html#schemabasepath" class="tsd-kind-icon">schema<wbr>Base<wbr>Path</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="obnizcore.components.ble.hci.obnizble.html#setdefaultphywait" class="tsd-kind-icon">set<wbr>Default<wbr>Phy<wbr>Wait</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="obnizcore.components.ble.hci.obnizble.html#validate" class="tsd-kind-icon">validate</a>

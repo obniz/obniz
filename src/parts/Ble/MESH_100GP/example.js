@@ -9,7 +9,7 @@ const obniz = new Obniz(obnizId, {
 
 // Connected.
 obniz.onconnect = async () => {
-  console.log(`connected obniz ${obniz.id}`);
+  console.log(`connected: obniz ${obniz.id}`);
   try {
     await obniz.ble.initWait();
     obniz.ble.scan.onfind = async (peripheral) => {
@@ -23,25 +23,29 @@ obniz.onconnect = async () => {
 
       // Connect to the GPIO block
       await gpioBlock.connectWait();
-      console.log('connected');
+      console.log(`connected: ${gpioBlock.peripheral.localName}`);
 
       // Get sensor data
-      const targetPin = MESH_100GP.Pin.P1;
-      const digitalInputState = await gpioBlock.getDigitalInputDataWait(
-        targetPin
-      );
-      switch (digitalInputState) {
-        case MESH_100GP.DigitalInputState.HIGH: {
-          console.log('DigitalInput: High');
-          break;
-        }
-        case MESH_100GP.DigitalInputState.LOW: {
-          console.log('DigitalInput: Low');
-          break;
-        }
-        default:
-          break;
-      }
+      gpioBlock.onDigitalInputEvent = (pin, digitalInputState) => {
+        const _pin =
+          pin === MESH_100GP.Pin.P1
+            ? `DIN1`
+            : pin === MESH_100GP.Pin.P2
+            ? `DIN2`
+            : `DIN3`;
+        const _state =
+          digitalInputState === MESH_100GP.DigitalInputState.HIGH
+            ? `High`
+            : `Low`;
+        console.log(`DigitalInput: ${_pin} ${_state}`);
+      };
+
+      // Prepare params
+      const digitalInputLow2High = { p1: true, p2: true, p3: true };
+      const digitalInputHigh2Low = { p1: true, p2: true, p3: true };
+
+      // Write
+      gpioBlock.setModeDigitalInput(digitalInputLow2High, digitalInputHigh2Low);
     };
     await obniz.ble.scan.startWait();
   } catch (e) {

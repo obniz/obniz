@@ -32,6 +32,22 @@ export class Move extends Base {
   private readonly ORIENTATION_EVENT_ID_ = 3 as const;
 
   /**
+   * Verify that the device is MESH block
+   *
+   * @param name
+   * @param opt_serialnumber
+   * @returns
+   */
+  public static isMESHblock(
+    name: string | null,
+    opt_serialnumber = ''
+  ): boolean {
+    return super.isMESHblock(name, opt_serialnumber)
+      ? name?.indexOf('MESH-100AC') !== -1
+      : false;
+  }
+
+  /**
    * Parse data that received from MESH block, and emit event
    *
    * @param data

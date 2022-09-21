@@ -27,6 +27,7 @@ import IBS03T, { iBS03TOptions } from '../parts/Ble/iBS03T';
 import IBS03TP, { iBS03TPOptions } from '../parts/Ble/iBS03TP';
 import IBS04, { iBS04Options } from '../parts/Ble/iBS04';
 import IBS04I, { iBS04iOptions } from '../parts/Ble/iBS04i';
+import IBS05G, { iBS05GOptions } from '../parts/Ble/iBS05G';
 import KankiAirMier, { KankiAirMierOptions } from '../parts/Ble/KankiAirMier';
 import Linking, { LinkingOptions } from '../parts/Ble/linking';
 import Logtta_Accel, { Logtta_AccelOptions } from '../parts/Ble/LogttaAccel';
@@ -283,13 +284,16 @@ import UC421BLE, { UC421BLEOptions } from '../parts/Ble/UC421BLE';
 import ObnizPartsBleInterface from './ObnizPartsBleInterface';
 import ObnizPartsInterface from './ObnizPartsInterface';
 import TR7, { TR7Options } from '../parts/Ble/TR7';
+import MM_BLEBC5, { MM_BLEBC5_Options } from '../parts/Ble/MM_BLEBC5';
 import MESH_100BU, { MESH_100BUOptions } from '../parts/Ble/MESH_100BU';
 import MESH_100LE, { MESH_100LEOptions } from '../parts/Ble/MESH_100LE';
 import MESH_100AC, { MESH_100ACOptions } from '../parts/Ble/MESH_100AC';
+import MESH_100MD, { MESH_100MDOptions } from '../parts/Ble/MESH_100MD';
 import MESH_100PA, { MESH_100PAOptions } from '../parts/Ble/MESH_100PA';
 import MESH_100TH, { MESH_100THOptions } from '../parts/Ble/MESH_100TH';
-import MESH_100MD, { MESH_100MDOptions } from '../parts/Ble/MESH_100MD';
-import MESH_100GP, { MESH_100GPOptions } from '../parts/BLe/MESH_100GP';
+import MESH_100GP, { MESH_100GPOptions } from '../parts/Ble/MESH_100GP';
+import HN_300T2, { HN_300T2Options } from '../parts/Ble/HN_300T2';
+import GT_7510, { GT_7510Options } from '../parts/Ble/GT_7510';
 
 export type PartsType = keyof PartsList;
 
@@ -639,6 +643,7 @@ export interface PartsList {
   iBS04i: PartsInterface<IBS04I, iBS04iOptions, typeof IBS04I>;
   iBS03R: PartsInterface<IBS03R, IBS03ROptions, typeof IBS03R>;
   iBS05H: PartsInterface<iBS05H, iBS05HOptions, typeof iBS05H>;
+  iBS05G: PartsInterface<IBS05G, iBS05GOptions, typeof IBS05G>;
   TR4: PartsInterface<Tr4, Tr4Options, typeof Tr4>;
   TR7: PartsInterface<TR7, TR7Options, typeof TR7>;
   KankiAirMier: PartsInterface<
@@ -713,8 +718,11 @@ export interface PartsList {
   MESH_100BU: PartsInterface<MESH_100BU, MESH_100BUOptions, typeof MESH_100BU>;
   MESH_100LE: PartsInterface<MESH_100LE, MESH_100LEOptions, typeof MESH_100LE>;
   MESH_100AC: PartsInterface<MESH_100AC, MESH_100ACOptions, typeof MESH_100AC>;
+  MESH_100MD: PartsInterface<MESH_100MD, MESH_100MDOptions, typeof MESH_100MD>;
   MESH_100PA: PartsInterface<MESH_100PA, MESH_100PAOptions, typeof MESH_100PA>;
   MESH_100TH: PartsInterface<MESH_100TH, MESH_100THOptions, typeof MESH_100TH>;
-  MESH_100MD: PartsInterface<MESH_100MD, MESH_100MDOptions, typeof MESH_100MD>;
   MESH_100GP: PartsInterface<MESH_100GP, MESH_100GPOptions, typeof MESH_100GP>;
+  MM_BLEBC5: PartsInterface<MM_BLEBC5, MM_BLEBC5_Options, typeof MM_BLEBC5>;
+  HN_300T2: PartsInterface<HN_300T2, HN_300T2Options, typeof HN_300T2>;
+  GT_7510: PartsInterface<GT_7510, GT_7510Options, typeof GT_7510>;
 }

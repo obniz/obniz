@@ -9,7 +9,7 @@ const obniz = new Obniz(obnizId, {
 
 // Connected.
 obniz.onconnect = async () => {
-  console.log(`connected obniz ${obniz.id}`);
+  console.log(`connected: obniz ${obniz.id}`);
   try {
     await obniz.ble.initWait();
     obniz.ble.scan.onfind = async (peripheral) => {
@@ -23,7 +23,7 @@ obniz.onconnect = async () => {
 
       // Connect to the Temperature & Humidity block
       await temphumidBlock.connectWait();
-      console.log('connected');
+      console.log(`connected: ${temphumidBlock.peripheral.localName}`);
 
       // Set event handler
       temphumidBlock.onSensorEvent = (temperature, humidity) => {
@@ -33,20 +33,19 @@ obniz.onconnect = async () => {
       // Prepare params
       const notifyMode = MESH_100TH.NotifyMode.ALWAYS;
       const tempUpper = 50;
-      const tempBottom = -10;
+      const tempLower = -10;
       const humidUpper = 100;
-      const humidBottom = 0;
-      const tempCondition =
-        MESH_100TH.EmitCondition.ABOVE_UPPER_AND_ABOVE_BOTTOM;
+      const humidLower = 0;
+      const tempCondition = MESH_100TH.EmitCondition.ABOVE_UPPER_OR_ABOVE_LOWER;
       const humidCondition =
-        MESH_100TH.EmitCondition.ABOVE_UPPER_AND_ABOVE_BOTTOM;
+        MESH_100TH.EmitCondition.ABOVE_UPPER_OR_ABOVE_LOWER;
 
       // Write
       temphumidBlock.setMode(
         tempUpper,
-        tempBottom,
+        tempLower,
         humidUpper,
-        humidBottom,
+        humidLower,
         tempCondition,
         humidCondition,
         notifyMode

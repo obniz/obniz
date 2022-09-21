@@ -25,6 +25,8 @@ declare class GattCentral extends EventEmitter<GattEventTypes> {
     private _remoteMtuRequest;
     private _gattPeripheral;
     constructor(address: BleDeviceAddress, aclStream: AclStream);
+    hasEncryptKeys(): boolean;
+    getEncryptKeys(): string | null;
     encryptWait(options: SmpEncryptOptions): Promise<string>;
     setEncryptOption(options: SmpEncryptOptions): void;
     onEnd(reason: any): void;
@@ -38,6 +40,8 @@ declare class GattCentral extends EventEmitter<GattEventTypes> {
     writeWait(serviceUuid: UUID, characteristicUuid: UUID, data: Buffer, withoutResponse: boolean): Promise<void>;
     broadcastWait(serviceUuid: UUID, characteristicUuid: UUID, broadcast: boolean): Promise<void>;
     notifyWait(serviceUuid: UUID, characteristicUuid: UUID, notify: boolean): Promise<void>;
+    notifyByDescriptorWait(serviceUuid: UUID, characteristicUuid: UUID, notify: boolean): Promise<void>;
+    notifyByHandleWait(serviceUuid: any, characteristicUuid: any, notify: any): Promise<void>;
     discoverDescriptorsWait(serviceUuid: UUID, characteristicUuid: UUID): Promise<UUID[]>;
     readValueWait(serviceUuid: UUID, characteristicUuid: UUID, descriptorUuid: UUID): Promise<Buffer>;
     writeValueWait(serviceUuid: UUID, characteristicUuid: UUID, descriptorUuid: UUID, data: Buffer): Promise<Buffer>;

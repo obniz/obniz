@@ -4,6 +4,7 @@
  */
 import { MESH } from '../utils/abstracts/MESH';
 import { GPIO } from '../utils/abstracts/MESHjs/block/GPIO';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 export interface MESH_100GPOptions {
 }
 /**
@@ -16,7 +17,7 @@ export interface MESH_100GP_Data {
 /** MESH_100GP management class */
 export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     static readonly PartsName = "MESH_100GP";
-    static readonly PREFIX = "MESH-100GP";
+    static readonly LocalName: RegExp;
     static readonly AnalogInputEventCondition: {
         readonly NOT_NOTIFY: 0;
         readonly ABOVE_THRESHOLD: 17;
@@ -58,13 +59,21 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
     private pwmRatio_;
     private vcc_;
     private analogInputRangeUpper_;
-    private analogInputRangeBottom_;
+    private analogInputRangeLower_;
     private analogInputCondition_;
     private retDigitalInState_;
     private retPwm_;
     private retVccState_;
     private retLevel_;
     private retDigitalOutState_;
+    /**
+     * Check MESH block
+     *
+     * @param peripheral
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(peripheral: BleRemotePeripheral, opt_serialnumber?: string): boolean;
     /**
      * getDataWait
      *
@@ -80,32 +89,32 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
      * @param pin
      * @returns
      */
-    getDigitalInputDataWait(pin: number): Promise<number>;
+    getDigitalInputDataWait(pin: number, opt_timeoutMsec?: 5000): Promise<number>;
     /**
      * getAnalogInputDataWait
      *
      * @returns
      */
-    getAnalogInputDataWait(): Promise<number>;
+    getAnalogInputDataWait(opt_timeoutMsec?: 5000): Promise<number>;
     /**
      * getVOutputDataWait
      *
      * @returns
      */
-    getVOutputDataWait(): Promise<number>;
+    getVOutputDataWait(opt_timeoutMsec?: 5000): Promise<number>;
     /**
      * getDigitalOutputDataWait
      *
      * @param pin
      * @returns
      */
-    getDigitalOutputDataWait(pin: number): Promise<number>;
+    getDigitalOutputDataWait(pin: number, opt_timeoutMsec?: 5000): Promise<number>;
     /**
      * getPwmDataWait
      *
      * @returns
      */
-    getPwmDataWait(): Promise<number>;
+    getPwmDataWait(opt_timeoutMsec?: 5000): Promise<number>;
     /**
      * setMode
      *
@@ -115,10 +124,10 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
      * @param pwmRatio 0-255
      * @param vcc Vcc.ON or Vcc.OFF
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
-     * @param analogInputRangeBottom 0-255(0.00-3.00[V])
+     * @param analogInputRangeLower 0-255(0.00-3.00[V])
      * @param analogInputCondition AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
      */
-    setMode(digitalInputLow2High: MESH_100GP['DigitalPins'], digitalInputHigh2Low: MESH_100GP['DigitalPins'], digitalOutput: MESH_100GP['DigitalPins'], pwmRatio: number, vcc: number, analogInputRangeUpper: number, analogInputRangeBottom: number, analogInputCondition: number): void;
+    setMode(digitalInputLow2High: MESH_100GP['DigitalPins'], digitalInputHigh2Low: MESH_100GP['DigitalPins'], digitalOutput: MESH_100GP['DigitalPins'], pwmRatio: number, vcc: number, analogInputRangeUpper: number, analogInputRangeLower: number, analogInputCondition: number): void;
     /**
      * setModeDigitalInput
      *
@@ -130,10 +139,10 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
      * setModeAnalogInput
      *
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
-     * @param analogInputRangeBottom 0-255(0.00-3.00[V])
+     * @param analogInputRangeLower 0-255(0.00-3.00[V])
      * @param analogInputCondition AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
      */
-    setModeAnalogInput(analogInputRangeUpper: number, analogInputRangeBottom: number, analogInputCondition: number): void;
+    setModeAnalogInput(analogInputRangeUpper: number, analogInputRangeLower: number, analogInputCondition: number): void;
     /**
      * setDigitalOutput
      *
@@ -152,8 +161,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
      * @param vcc Vcc.ON or Vcc.OFF
      */
     setVOutput(vcc: number): void;
-    protected static _isMESHblock(name: string): boolean;
     protected prepareConnect(): void;
     protected beforeOnDisconnectWait(reason: unknown): Promise<void>;
-    protected getSensorDataWait(requestId: number, command: number[]): Promise<unknown>;
+    protected getSensorDataWait(requestId: number, command: number[], timeoutMsec: number): Promise<unknown>;
 }

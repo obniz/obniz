@@ -6,6 +6,7 @@
 
 import { MESH } from '../utils/abstracts/MESH';
 import { Move } from '../utils/abstracts/MESHjs/block/Move';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 
 export interface MESH_100ACOptions {}
 
@@ -20,7 +21,7 @@ export interface MESH_100AC_Data {
 /** MESH_100AC management class */
 export default class MESH_100AC extends MESH<MESH_100AC_Data> {
   public static readonly PartsName = 'MESH_100AC';
-  public static readonly PREFIX = 'MESH-100AC';
+  public static readonly LocalName = /^MESH-100AC/;
 
   public accele: Move['accele'] = { x: 0, y: 0, z: 0 };
 
@@ -35,6 +36,20 @@ export default class MESH_100AC extends MESH<MESH_100AC_Data> {
   protected readonly staticClass = MESH_100AC;
 
   /**
+   * Check MESH block
+   *
+   * @param peripheral
+   * @param opt_serialnumber
+   * @returns
+   */
+  public static isMESHblock(
+    peripheral: BleRemotePeripheral,
+    opt_serialnumber = ''
+  ): boolean {
+    return Move.isMESHblock(peripheral.localName, opt_serialnumber);
+  }
+
+  /**
    * getDataWait
    *
    * @returns
@@ -45,10 +60,6 @@ export default class MESH_100AC extends MESH<MESH_100AC_Data> {
       name: this.peripheral.localName!,
       address: this.peripheral.address,
     };
-  }
-
-  protected static _isMESHblock(name: string): boolean {
-    return name.indexOf(MESH_100AC.PREFIX) === 0;
   }
 
   protected prepareConnect(): void {

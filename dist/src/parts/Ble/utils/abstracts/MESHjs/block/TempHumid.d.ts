@@ -5,10 +5,10 @@ export declare class TempHumid extends Base {
      */
     onSensorEvent: ((temperature: number, humidity: number, requestId: number) => void) | null;
     static readonly EmitCondition: {
-        ABOVE_UPPER_AND_BELOW_BOTTOM: 0;
-        ABOVE_UPPER_AND_ABOVE_BOTTOM: 1;
-        BELOW_UPPER_AND_BELOW_BOTTOM: 16;
-        BELOW_UPPER_AND_ABOVE_BOTTOM: 17;
+        ABOVE_UPPER_OR_BELOW_LOWER: 0;
+        ABOVE_UPPER_OR_ABOVE_LOWER: 1;
+        BELOW_UPPER_OR_BELOW_LOWER: 16;
+        BELOW_UPPER_OR_ABOVE_LOWER: 17;
     };
     static readonly NotifyMode: {
         readonly STOP: 0;
@@ -28,26 +28,34 @@ export declare class TempHumid extends Base {
     private readonly NOTIFY_MODE_MIN_;
     private readonly NOTIFY_MODE_MAX_;
     /**
+     * Verify that the device is MESH block
+     *
+     * @param name
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(name: string | null, opt_serialnumber?: string): boolean;
+    /**
      * Parse data that received from MESH block, and emit event
      *
      * @param data
-     * @returns
+     * @returns void
      */
     notify(data: number[]): void;
     /**
-     * Convert parameters to command of set-mode
+     * Create command of set-mode
      *
      * @param temperatureRangeUpper
-     * @param temperatureRangeBottom
+     * @param temperatureRangeLower
      * @param humidityRangeUpper
-     * @param humidityRangeBottom
+     * @param humidityRangeLower
      * @param temperatureCondition
-     * @param humidityCondision
+     * @param humidityCondition
      * @param notifyMode
      * @param opt_requestId
      * @returns
      */
-    parseSetmodeCommand(temperatureRangeUpper: number, temperatureRangeBottom: number, humidityRangeUpper: number, humidityRangeBottom: number, temperatureCondition: number, humidityCondision: number, notifyMode: number, opt_requestId?: number): number[];
+    createSetmodeCommand(temperatureRangeUpper: number, temperatureRangeLower: number, humidityRangeUpper: number, humidityRangeLower: number, temperatureCondition: number, humidityCondition: number, notifyMode: number, opt_requestId?: number): number[];
     private num2array_;
     private checkEmitCondition_;
 }

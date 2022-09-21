@@ -123,19 +123,22 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>ObnizBLEHci<span class="tsd-signature-symbol">(</span>Obniz<span class="tsd-signature-symbol">: </span><a href="obnizcore.obnizdevice.html" class="tsd-signature-type">ObnizDevice</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.obnizblehci.html" class="tsd-signature-type">ObnizBLEHci</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>ObnizBLEHci<span class="tsd-signature-symbol">(</span>Obniz<span class="tsd-signature-symbol">: </span><a href="obnizcore.obnizdevice.html" class="tsd-signature-type">ObnizDevice</a>, extended<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.obnizblehci.html" class="tsd-signature-type">ObnizBLEHci</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/hci.ts:26</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/hci.ts:32</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>Obniz: <a href="obnizcore.obnizdevice.html" class="tsd-signature-type">ObnizDevice</a></h5>
+								</li>
+								<li>
+									<h5>extended: <span class="tsd-signature-type">boolean</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="obnizcore.components.ble.hci.obnizblehci.html" class="tsd-signature-type">ObnizBLEHci</a></h4>
@@ -188,7 +191,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/hci.ts:56</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/hci.ts:67</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -210,7 +213,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/hci.ts:43</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/hci.ts:54</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -232,7 +235,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/hci.ts:117</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/hci.ts:128</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -256,13 +259,13 @@
 					<a name="readwait" class="tsd-anchor"></a>
 					<h3>read<wbr>Wait</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">read<wbr>Wait<span class="tsd-signature-symbol">(</span>binaryFilter<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, option<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Buffer</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">read<wbr>Wait<span class="tsd-signature-symbol">(</span>binaryFilter<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, option<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>onTimeout<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span>timeout<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">; </span>waitingFor<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Buffer</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/hci.ts:215</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/hci.ts:233</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -271,7 +274,18 @@
 									<h5>binaryFilter: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> option: <span class="tsd-signature-type">any</span></h5>
+									<h5>option: <span class="tsd-signature-symbol">{ </span>onTimeout<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span>timeout<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">; </span>waitingFor<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter">
+											<h5><span class="tsd-flag ts-flagOptional">Optional</span> on<wbr>Timeout<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span></h5>
+										</li>
+										<li class="tsd-parameter">
+											<h5><span class="tsd-flag ts-flagOptional">Optional</span> timeout<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
+										</li>
+										<li class="tsd-parameter">
+											<h5>waiting<wbr>For<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+										</li>
+									</ul>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Buffer</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -288,7 +302,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/hci.ts:69</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/hci.ts:80</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -315,6 +329,66 @@
 				<ul>
 					<li class="globals  ">
 						<a href="../index.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_utils_abstracts_mesh_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESH&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_base_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/<wbr>Base&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_brightness_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/<wbr>Brightness&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_button_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/<wbr>Button&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_gpio_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/GPIO&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_led_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/LED&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_motion_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/<wbr>Motion&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_move_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/<wbr>Move&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_temphumid_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/<wbr>Temp<wbr>Humid&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_utils_abstracts_meshjs_util_error_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/util/<wbr>Error&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/obnizapp.html">Obniz<wbr>App</a>
+					</li>
+					<li class="current tsd-kind-external-module">
+						<a href="../modules/obnizcore.html">Obniz<wbr>Core</a>
+						<ul>
+							<li class="current tsd-kind-external-module tsd-parent-kind-external-module">
+								<a href="../modules/obnizcore.components.html">Components</a>
+								<ul>
+									<li class="current tsd-kind-external-module tsd-parent-kind-external-module tsd-is-not-exported">
+										<a href="../modules/obnizcore.components.ble.html">Ble</a>
+										<ul>
+											<li class="current tsd-kind-external-module tsd-parent-kind-external-module">
+												<a href="../modules/obnizcore.components.ble.hci.html">Hci</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+							<li class=" tsd-kind-external-module tsd-parent-kind-external-module">
+								<a href="../modules/obnizcore.errors.html">Errors</a>
+							</li>
+							<li class=" tsd-kind-external-module tsd-parent-kind-external-module">
+								<a href="../modules/obnizcore.hardware.html">Hardware</a>
+							</li>
+						</ul>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-not-exported">
+						<a href="../modules/parts.html">Parts</a>
 					</li>
 				</ul>
 			</nav>

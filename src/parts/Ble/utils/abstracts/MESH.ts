@@ -17,6 +17,7 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
 
   // Constant Values
   public static AvailableBleMode = 'Connectable' as const;
+  protected readonly TIMEOUT_MSEC = 5000 as const;
   private static readonly LOCAL_NAME_LENGTH_ = 17 as const;
 
   protected static PREFIX = 'MESH-100';
@@ -39,17 +40,7 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
     peripheral: BleRemotePeripheral,
     opt_serialnumber = ''
   ): boolean {
-    const _name: string | null = peripheral.localName;
-    if (!_name) {
-      return false;
-    }
-    if (_name.length !== MESH.LOCAL_NAME_LENGTH_) {
-      return false;
-    }
-    if (opt_serialnumber !== '' && _name.indexOf(opt_serialnumber) === -1) {
-      return false;
-    }
-    return this._isMESHblock(_name);
+    return Base.isMESHblock(peripheral.localName, opt_serialnumber);
   }
 
   /**
@@ -120,17 +111,13 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
     green: boolean,
     blue: boolean
   ): void {
-    const command = this.meshBlock.parseStatusbarLedCommand(
+    const command = this.meshBlock.createStatusbarLedCommand(
       power,
       red,
       green,
       blue
     );
     this.writeWOResponse(command);
-  }
-
-  protected static _isMESHblock(name: string): boolean {
-    return name.indexOf(MESH.PREFIX) === 0;
   }
 
   protected prepareConnect(): void {

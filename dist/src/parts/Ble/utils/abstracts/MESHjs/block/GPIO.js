@@ -44,11 +44,24 @@ class GPIO extends Base_1.Base {
         this.PWM_ID_ = 6;
     }
     /**
+     * Verify that the device is MESH block
+     *
+     * @param name
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(name, opt_serialnumber = '') {
+        var _a;
+        return super.isMESHblock(name, opt_serialnumber)
+            ? ((_a = name) === null || _a === void 0 ? void 0 : _a.indexOf('MESH-100GP')) !== -1
+            : false;
+    }
+    /**
      * Parse data that received from MESH block, and emit event
      *
      * @const
      * @param data
-     * @returns
+     * @returns void
      */
     notify(data) {
         super.notify(data);
@@ -129,7 +142,7 @@ class GPIO extends Base_1.Base {
         }
     }
     /**
-     * Convert parameters to command of set-mode
+     * Create command of set-mode
      *
      * @param digitalInputLow2High { p1:boolean, p2:boolean, p3:boolean }
      * @param digitalInputHigh2Low { p1:boolean, p2:boolean, p3:boolean }
@@ -137,11 +150,11 @@ class GPIO extends Base_1.Base {
      * @param pwmRatio 0-255
      * @param vcc Vcc.ON or Vcc.OFF
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
-     * @param analogInputRangeBottom 0-255(0.00-3.00[V])
+     * @param analogInputRangeLower 0-255(0.00-3.00[V])
      * @param analogInputNotify AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
      * @returns command
      */
-    parseSetmodeCommand(digitalInputLow2High, digitalInputHigh2Low, digitalOutput, pwmRatio, vcc, analogInputRangeUpper, analogInputRangeBottom, analogInputNotify) {
+    createSetmodeCommand(digitalInputLow2High, digitalInputHigh2Low, digitalOutput, pwmRatio, vcc, analogInputRangeUpper, analogInputRangeLower, analogInputNotify) {
         // Error Handle
         const PWM_MIN = 0;
         const PWM_MAX = 255;
@@ -152,7 +165,7 @@ class GPIO extends Base_1.Base {
         const ANALOG_IN_RANGE_MIN = 0;
         const ANALOG_IN_RANGE_MAX = 255;
         this.checkRange(analogInputRangeUpper, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeUpper');
-        this.checkRange(analogInputRangeBottom, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeBottom');
+        this.checkRange(analogInputRangeLower, ANALOG_IN_RANGE_MIN, ANALOG_IN_RANGE_MAX, 'analogInRangeLower');
         if (analogInputNotify !== GPIO.AnalogInputEventCondition.NOT_NOTIFY &&
             analogInputNotify !== GPIO.AnalogInputEventCondition.ABOVE_THRESHOLD &&
             analogInputNotify !== GPIO.AnalogInputEventCondition.BELOW_THRESHOLD) {
@@ -167,7 +180,7 @@ class GPIO extends Base_1.Base {
             pwmRatio,
             vcc,
             analogInputRangeUpper,
-            analogInputRangeBottom,
+            analogInputRangeLower,
             analogInputNotify,
         ];
         const data = HEADER.concat(BODY);
@@ -175,55 +188,55 @@ class GPIO extends Base_1.Base {
         return data;
     }
     /**
-     * Convert parameters to command of digital-input
+     * Create command of digital-input
      *
      * @param pin
      * @param opt_requestId
-     * @returns
+     * @returns command
      */
-    parseDigitalInputCommand(pin, opt_requestId = 0) {
-        return this.parseCommand_(this.DIGITAL_IN_ID_, pin, opt_requestId);
+    createDigitalInputCommand(pin, opt_requestId = 0) {
+        return this.createCommand_(this.DIGITAL_IN_ID_, pin, opt_requestId);
     }
     /**
-     * Convert parameters to command of analog-input
+     * Create command of analog-input
      *
      * @param analogInputNotifyMode
      * @param opt_requestId
-     * @returns
+     * @returns command
      */
-    parseAnalogInputCommand(analogInputNotifyMode, opt_requestId = 0) {
-        return this.parseCommand_(this.ANALOG_IN_ID_, analogInputNotifyMode, opt_requestId);
+    createAnalogInputCommand(analogInputNotifyMode, opt_requestId = 0) {
+        return this.createCommand_(this.ANALOG_IN_ID_, analogInputNotifyMode, opt_requestId);
     }
     /**
-     * Convert parameters to command of v-output
+     * Create command of v-output
      *
      * @param opt_requestId
-     * @returns
+     * @returns command
      */
-    parseVOutputCommand(opt_requestId = 0) {
+    createVOutputCommand(opt_requestId = 0) {
         const PIN = 0; // VOUT pin
-        return this.parseCommand_(this.V_OUT_ID_, PIN, opt_requestId);
+        return this.createCommand_(this.V_OUT_ID_, PIN, opt_requestId);
     }
     /**
-     * Convert parameters to command of digital-output
+     * Create command of digital-output
      *
      * @param pin
      * @param opt_requestId
-     * @returns
+     * @returns command
      */
-    parseDigitalOutputCommand(pin, opt_requestId = 0) {
-        return this.parseCommand_(this.DIGITAL_OUT_ID_, pin, opt_requestId);
+    createDigitalOutputCommand(pin, opt_requestId = 0) {
+        return this.createCommand_(this.DIGITAL_OUT_ID_, pin, opt_requestId);
     }
     /**
-     * Convert parameters to command of PWM
+     * Create command of PWM
      *
      * @param opt_requestId
-     * @returns
+     * @returns command
      */
-    parsePwmCommand(opt_requestId = 0) {
-        return this.parseCommand_(this.PWM_ID_, GPIO.Pin.P3, opt_requestId);
+    createPwmCommand(opt_requestId = 0) {
+        return this.createCommand_(this.PWM_ID_, GPIO.Pin.P3, opt_requestId);
     }
-    parseCommand_(eventId, param, requestId) {
+    createCommand_(eventId, param, requestId) {
         const HEADER = [this.MESSAGE_TYPE_ID_, eventId, requestId];
         const data = HEADER.concat(param);
         data.push(this.checkSum(data));

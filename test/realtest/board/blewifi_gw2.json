@@ -1,0 +1,9 @@
+{
+  "name": "obniz board",
+  "board": [
+    "obnizA"
+  ],
+  "sleep_test": false,
+  "io": [
+  ]
+}

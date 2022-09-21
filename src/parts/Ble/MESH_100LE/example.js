@@ -9,7 +9,7 @@ const obniz = new Obniz(obnizId, {
 
 // Connected.
 obniz.onconnect = async () => {
-  console.log(`connected obniz ${obniz.id}`);
+  console.log(`connected: obniz ${obniz.id}`);
   try {
     await obniz.ble.initWait();
     obniz.ble.scan.onfind = async (peripheral) => {
@@ -23,7 +23,7 @@ obniz.onconnect = async () => {
 
       // Connect to the LED block
       await ledBlock.connectWait();
-      console.log('connected');
+      console.log(`connected: ${ledBlock.peripheral.localName}`);
 
       // Prepare params
       const colors = {

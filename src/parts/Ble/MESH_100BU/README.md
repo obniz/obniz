@@ -3,8 +3,10 @@ MESH-100BU (MESH Button) is an app-enabled push button of MESH blocks.
 
 MESH official web site is [here](https://meshprj.com/).
 
-# License
-See [LICENSE.txt]().
+![](./image.jpg)
+
+# Requirement
+MESH block : version 1.2.5 or higher
 
 # Use case
 
@@ -22,7 +24,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
     // Connect to the Button block
     await buttonBlock.connectWait();
-    console.log('connected');
+    console.log(`connected: ${buttonBlock.peripheral.localName}`);
     
     let count = 0;
     const GOAL = 10;
@@ -50,4 +52,5 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
 ```
 
-For more information, click [here](https://developer.meshprj.com/).
+# Related documents
+[MESH technical specification](https://developer.meshprj.com/).

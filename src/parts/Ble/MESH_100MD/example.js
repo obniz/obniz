@@ -9,7 +9,7 @@ const obniz = new Obniz(obnizId, {
 
 // Connected.
 obniz.onconnect = async () => {
-  console.log(`connected obniz ${obniz.id}`);
+  console.log(`connected: obniz ${obniz.id}`);
   try {
     await obniz.ble.initWait();
     obniz.ble.scan.onfind = async (peripheral) => {
@@ -23,7 +23,7 @@ obniz.onconnect = async () => {
 
       // Connect to the Motion block
       await motionBlock.connectWait();
-      console.log('connected');
+      console.log(`connected: ${motionBlock.peripheral.localName}`);
 
       // Set event handler
       motionBlock.onSensorEvent = (motionState, notifyMode) => {
@@ -45,7 +45,8 @@ obniz.onconnect = async () => {
       };
 
       // Prepare params
-      const notifyMode = MESH_100MD.NotifyMode.ALWAYS;
+      const notifyMode =
+        MESH_100MD.NotifyMode.DETECTED + MESH_100MD.NotifyMode.NOT_DETECTED;
 
       // Write
       motionBlock.setMode(notifyMode);

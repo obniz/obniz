@@ -20,6 +20,16 @@ class MESH_100AC extends MESH_1.MESH {
         this.staticClass = MESH_100AC;
     }
     /**
+     * Check MESH block
+     *
+     * @param peripheral
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(peripheral, opt_serialnumber = '') {
+        return Move_1.Move.isMESHblock(peripheral.localName, opt_serialnumber);
+    }
+    /**
      * getDataWait
      *
      * @returns
@@ -30,9 +40,6 @@ class MESH_100AC extends MESH_1.MESH {
             name: this.peripheral.localName,
             address: this.peripheral.address,
         };
-    }
-    static _isMESHblock(name) {
-        return name.indexOf(MESH_100AC.PREFIX) === 0;
     }
     prepareConnect() {
         this.meshBlock = new Move_1.Move();
@@ -69,4 +76,4 @@ class MESH_100AC extends MESH_1.MESH {
 }
 exports.default = MESH_100AC;
 MESH_100AC.PartsName = 'MESH_100AC';
-MESH_100AC.PREFIX = 'MESH-100AC';
+MESH_100AC.LocalName = /^MESH-100AC/;

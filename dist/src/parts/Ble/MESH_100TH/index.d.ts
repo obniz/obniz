@@ -3,6 +3,7 @@
  * @module Parts.MESH_100TH
  */
 import { MESH } from '../utils/abstracts/MESH';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 export interface MESH_100THOptions {
 }
 /**
@@ -15,7 +16,7 @@ export interface MESH_100TH_Data {
 /** MESH_100TH management class */
 export default class MESH_100TH extends MESH<MESH_100TH_Data> {
     static readonly PartsName = "MESH_100TH";
-    static readonly PREFIX = "MESH-100TH";
+    static readonly LocalName: RegExp;
     static readonly NotifyMode: {
         readonly STOP: 0;
         readonly EMIT_TEMPERATURE: 1;
@@ -26,23 +27,33 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
         readonly ALWAYS: 32;
     };
     static readonly EmitCondition: {
-        ABOVE_UPPER_AND_BELOW_BOTTOM: 0;
-        ABOVE_UPPER_AND_ABOVE_BOTTOM: 1;
-        BELOW_UPPER_AND_BELOW_BOTTOM: 16;
-        BELOW_UPPER_AND_ABOVE_BOTTOM: 17;
+        ABOVE_UPPER_OR_BELOW_LOWER: 0;
+        ABOVE_UPPER_OR_ABOVE_LOWER: 1;
+        BELOW_UPPER_OR_BELOW_LOWER: 16;
+        BELOW_UPPER_OR_ABOVE_LOWER: 17;
     };
     onSensorEvent: ((temperature: number, humidity: number) => void) | null;
     protected readonly staticClass: typeof MESH_100TH;
     private retTemperature_;
     private retHumidity_;
     private temperatureUpper_;
-    private temperatureBottom_;
+    private temperatureLower_;
     private humidityUpper_;
-    private humidityBottom_;
+    private humidityLower_;
     private temperatureCondition_;
-    private humidityCondision_;
+    private humidityCondition_;
     private notifyMode_;
+    /**
+     * Check MESH block
+     *
+     * @param peripheral
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(peripheral: BleRemotePeripheral, opt_serialnumber?: string): boolean;
     getDataWait(): Promise<{
+        temperature: number;
+        humidity: number;
         name: string;
         address: string;
     }>;
@@ -51,7 +62,7 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
      *
      * @returns
      */
-    getSensorDataWait(): Promise<{
+    getSensorDataWait(opt_timeoutMsec?: 5000): Promise<{
         temperature: number;
         humidity: number;
     }>;
@@ -59,15 +70,14 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
      * setMode
      *
      * @param temperatureUpper
-     * @param temperatureBottom
+     * @param temperatureLower
      * @param humidityUpper
-     * @param humidityBottom
+     * @param humidityLower
      * @param temperatureCondition
-     * @param humidityCondision
+     * @param humidityCondition
      * @param notifyMode
      */
-    setMode(temperatureUpper: number, temperatureBottom: number, humidityUpper: number, humidityBottom: number, temperatureCondition: number, humidityCondision: number, notifyMode: number): void;
-    protected static _isMESHblock(name: string): boolean;
+    setMode(temperatureUpper: number, temperatureLower: number, humidityUpper: number, humidityLower: number, temperatureCondition: number, humidityCondition: number, notifyMode: number): void;
     protected prepareConnect(): void;
     protected beforeOnDisconnectWait(reason: unknown): Promise<void>;
     private setMode_;

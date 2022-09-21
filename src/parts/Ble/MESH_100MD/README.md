@@ -3,8 +3,10 @@ MESH-100MD (MESH Motion) is an app-enabled infrared motion sensor of MESH blocks
 
 MESH official web site is [here](https://meshprj.com/).
 
-# License
-See [LICENSE.txt]().
+![](./image.jpg)
+
+# Requirement
+MESH block : version 1.2.5 or higher
 
 # Use case
 
@@ -22,7 +24,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
     // Connect to the Motion block
     await motionBlock.connectWait();
-    console.log('connected');
+    console.log(`connected: ${motionBlock.peripheral.localName}`);
     
     // Get sensor data
     const motionState = await motionBlock.getSensorDataWait();
@@ -58,7 +60,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
     // Connect to the Motion block
     await motionBlock.connectWait();
-    console.log('connected');
+    console.log(`connected: ${motionBlock.peripheral.localName}`);
     
     // Set event handler
     motionBlock.onSensorEvent = ((motionState, notifyMode) => {
@@ -87,4 +89,5 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
 ```
 
-For more information, click [here](https://developer.meshprj.com/).
+# Related documents
+[MESH technical specification](https://developer.meshprj.com/).

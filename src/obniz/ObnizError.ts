@@ -5,55 +5,75 @@
 
 /* eslint max-classes-per-file: 0 */
 
+export interface ObnizErrorStatic {
+  new (): ObnizError;
+}
+
 export class ObnizError extends Error {
-  constructor(public code: number, e?: string) {
-    super(e);
+  constructor(
+    public code: number,
+    e?: string,
+    { cause }: { cause?: Error } = {}
+  ) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore for ES2022 Error Cause
+    super(e, { cause });
     this.name = new.target.name;
     Object.setPrototypeOf(this, new.target.prototype); // for ES3, ES5
   }
 }
 
 export class ObnizOfflineError extends ObnizError {
-  constructor() {
-    super(1, 'obniz is not online.');
+  constructor({ cause }: { cause?: Error } = {}) {
+    super(1, 'obniz is not online.', { cause });
   }
 }
 
 export class ObnizTimeoutError extends ObnizError {
-  constructor(public waitingFor?: string) {
+  constructor(public waitingFor?: string, { cause }: { cause?: Error } = {}) {
     super(
       2,
-      'Receive data timeout.' + (waitingFor ? ' Waiting for ' + waitingFor : '')
+      'Receive data timeout.' +
+        (waitingFor ? ' Waiting for ' + waitingFor : ''),
+      { cause }
     );
   }
 }
 
 export class ObnizI2cError extends ObnizError {
-  constructor() {
-    super(3, 'I2C error.');
+  constructor({ cause }: { cause?: Error } = {}) {
+    super(3, 'I2C error.', { cause });
   }
 }
 
 export class ObnizI2cWarning extends ObnizError {
-  constructor() {
-    super(4, 'I2C error.');
+  constructor({ cause }: { cause?: Error } = {}) {
+    super(4, 'I2C error.', { cause });
   }
 }
 
 export class ObnizBleUnknownPeripheralError extends ObnizError {
-  constructor(public peripheralUuid: string) {
-    super(5, 'unknown peripheral :' + peripheralUuid);
+  constructor(
+    public peripheralUuid: string,
+    { cause }: { cause?: Error } = {}
+  ) {
+    super(5, 'unknown peripheral :' + peripheralUuid, { cause });
   }
 }
 
 export class ObnizBleUnknownServiceError extends ObnizError {
-  constructor(public peripheralUuid: string, public serviceUuid: string) {
+  constructor(
+    public peripheralUuid: string,
+    public serviceUuid: string,
+    { cause }: { cause?: Error } = {}
+  ) {
     super(
       6,
       'unknown service.  peripheral :' +
         peripheralUuid +
         ' service :' +
-        serviceUuid
+        serviceUuid,
+      { cause }
     );
   }
 }
@@ -62,7 +82,8 @@ export class ObnizBleUnknownCharacteristicError extends ObnizError {
   constructor(
     public peripheralUuid: string,
     public serviceUuid: string,
-    public characteristicUuid: string
+    public characteristicUuid: string,
+    { cause }: { cause?: Error } = {}
   ) {
     super(
       7,
@@ -71,7 +92,8 @@ export class ObnizBleUnknownCharacteristicError extends ObnizError {
         ' service :' +
         serviceUuid +
         ' characteristic :' +
-        characteristicUuid
+        characteristicUuid,
+      { cause }
     );
   }
 }
@@ -81,7 +103,8 @@ export class ObnizBleUnknownDescriptorError extends ObnizError {
     public peripheralUuid: string,
     public serviceUuid: string,
     public characteristicUuid: string,
-    public descriptorUuid: string
+    public descriptorUuid: string,
+    { cause }: { cause?: Error } = {}
   ) {
     super(
       8,
@@ -92,14 +115,15 @@ export class ObnizBleUnknownDescriptorError extends ObnizError {
         ' characteristic :' +
         characteristicUuid +
         ' descriptor :' +
-        descriptorUuid
+        descriptorUuid,
+      { cause }
     );
   }
 }
 
 export class ObnizBleOpError extends ObnizError {
-  constructor() {
-    super(9, 'BLE operation error');
+  constructor({ cause }: { cause?: Error } = {}) {
+    super(9, 'BLE operation error', { cause });
   }
 }
 
@@ -177,12 +201,17 @@ export class ObnizBleHciStateError extends ObnizError {
     0x45: 'Packet Too Long ',
   };
 
-  constructor(public state: number, params?: any) {
+  constructor(
+    public state: number,
+    params?: any,
+    { cause }: { cause?: Error } = {}
+  ) {
     super(
       10,
       (ObnizBleHciStateError.Errors[state]
         ? ObnizBleHciStateError.Errors[state]
-        : 'Ble Hci state Error') + (params ? ` ${JSON.stringify(params)}` : '')
+        : 'Ble Hci state Error') + (params ? ` ${JSON.stringify(params)}` : ''),
+      { cause }
     );
   }
 }
@@ -191,40 +220,63 @@ export class ObnizBleHciStateError extends ObnizError {
 export class ObnizBleAttError extends ObnizError {
   public static Errors: { [key: number]: string } = {};
 
-  constructor(public state: number, params?: string) {
-    super(11, `ATT Error: ${params || ''}`);
+  constructor(
+    public state: number,
+    params?: string,
+    { cause }: { cause?: Error } = {}
+  ) {
+    super(11, `ATT Error: ${params || ''}`, { cause });
   }
 }
 
 export class ObnizDeprecatedFunctionError extends ObnizError {
-  constructor(public deprecateFunctionName: string, replaceFunction: string) {
+  constructor(
+    public deprecateFunctionName: string,
+    replaceFunction: string,
+    { cause }: { cause?: Error } = {}
+  ) {
     super(
       12,
-      `${deprecateFunctionName} is deprecated function, please use ${replaceFunction}`
+      `${deprecateFunctionName} is deprecated function, please use ${replaceFunction}`,
+      { cause }
     );
   }
 }
 
 export class ObnizBleUnsupportedHciError extends ObnizError {
-  constructor(public needVer: number, public currentVer: number) {
+  constructor(
+    public needVer: number,
+    public currentVer: number,
+    { cause }: { cause?: Error } = {}
+  ) {
     super(
       13,
-      `Unsupported hci version, need version : ${needVer}, current version ${currentVer}`
+      `Unsupported hci version, need version : ${needVer}, current version ${currentVer}`,
+      { cause }
     );
   }
 }
 
 export class ObnizParameterError extends ObnizError {
-  constructor(public parameter: string, public should: string) {
-    super(14, `Parameter ${parameter} should satisfy ${should}`);
+  constructor(
+    public parameter: string,
+    public should: string,
+    { cause }: { cause?: Error } = {}
+  ) {
+    super(14, `Parameter ${parameter} should satisfy ${should}`, { cause });
   }
 }
 
 export class ObnizBleUnSupportedOSVersionError extends ObnizError {
-  constructor(public deviceOS: string, public atLeast: string) {
+  constructor(
+    public deviceOS: string,
+    public atLeast: string,
+    { cause }: { cause?: Error } = {}
+  ) {
     super(
       15,
-      `Connected Device has OS=${deviceOS}. But This SDK Support at least ${atLeast} or above. Upgrade Your OS or Downgrade your SDK to use this function`
+      `Connected Device has OS=${deviceOS}. But This SDK Support at least ${atLeast} or above. Upgrade Your OS or Downgrade your SDK to use this function`,
+      { cause }
     );
   }
 }
@@ -248,41 +300,55 @@ export class ObnizBlePairingRejectByRemoteError extends ObnizError {
     0x0e: 'Cross-transport Key Deriva- tion/Generation not allowed',
   };
 
-  constructor(reason: number) {
+  constructor(reason: number, { cause }: { cause?: Error } = {}) {
     super(
       16,
-      `pairing sequence reject by remote peripheral. reason : ${ObnizBlePairingRejectByRemoteError.Errors[reason]}`
+      `pairing sequence reject by remote peripheral. reason : ${ObnizBlePairingRejectByRemoteError.Errors[reason]}`,
+      { cause }
     );
   }
 }
 
 export class ObnizBleScanStartError extends ObnizError {
-  constructor(state: number, msg: any) {
+  constructor(state: number, msg: any, { cause }: { cause?: Error } = {}) {
     super(
       17,
       `${msg} state=${state}(${
         ObnizBleHciStateError.Errors[state]
           ? ObnizBleHciStateError.Errors[state]
           : ''
-      })`
+      })`,
+      { cause }
     );
   }
 }
 
 export class ObnizBleGattHandleError extends ObnizError {
-  constructor(msg: any) {
-    super(18, msg);
+  constructor(msg: any, { cause }: { cause?: Error } = {}) {
+    super(18, msg, { cause });
   }
 }
 
 export class ObnizBleUnSupportedPeripheralError extends ObnizError {
-  constructor(target: string) {
-    super(19, `${target} is not supported by remote peripheral`);
+  constructor(target: string, { cause }: { cause?: Error } = {}) {
+    super(19, `${target} is not supported by remote peripheral`, { cause });
   }
 }
 
 export class ObnizBleInvalidPasskeyError extends ObnizError {
-  constructor(passkey: number) {
-    super(20, `passkey required >0 and <999999, But input: ${passkey}`);
+  constructor(passkey: number, { cause }: { cause?: Error } = {}) {
+    super(20, `passkey required >0 and <999999, But input: ${passkey}`, {
+      cause,
+    });
+  }
+}
+
+export class ObnizBleInvalidParameterError extends ObnizError {
+  constructor(
+    guideMessage: string,
+    input: string,
+    { cause }: { cause?: Error } = {}
+  ) {
+    super(21, `${guideMessage}, But input: ${input}`, { cause });
   }
 }

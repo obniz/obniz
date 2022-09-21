@@ -3,6 +3,7 @@
  * @module Parts.MESH_100MD
  */
 import { MESH } from '../utils/abstracts/MESH';
+import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 export interface MESH_100MDOptions {
 }
 /**
@@ -15,7 +16,7 @@ export interface MESH_100MD_Data {
 /** MESH_100MD management class */
 export default class MESH_100MD extends MESH<MESH_100MD_Data> {
     static readonly PartsName = "MESH_100MD";
-    static readonly PREFIX = "MESH-100MD";
+    static readonly LocalName: RegExp;
     static readonly NotifyMode: {
         readonly DETECTED: 1;
         readonly NOT_DETECTED: 2;
@@ -31,8 +32,16 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
     protected readonly staticClass: typeof MESH_100MD;
     private retMotionState_;
     private notifyMode_;
-    private detectionTime_;
     private holdingTime_;
+    private detectionTime_;
+    /**
+     * Check MESH block
+     *
+     * @param peripheral
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(peripheral: BleRemotePeripheral, opt_serialnumber?: string): boolean;
     /**
      * getDataWait
      *
@@ -41,22 +50,22 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
     getDataWait(): Promise<{
         name: string;
         address: string;
+        motionState: number;
     }>;
     /**
      * getSensorDataWait
      *
      * @returns
      */
-    getSensorDataWait(): Promise<number>;
+    getSensorDataWait(opt_timeoutMsec?: 5000): Promise<number>;
     /**
      * setMode
      *
      * @param notifyMode
-     * @param opt_detectionTime
      * @param opt_holdingTime
+     * @param opt_detectionTime
      */
-    setMode(notifyMode: number, opt_detectionTime?: number, opt_holdingTime?: number): void;
-    protected static _isMESHblock(name: string): boolean;
+    setMode(notifyMode: number, opt_holdingTime?: number, opt_detectionTime?: number): void;
     protected prepareConnect(): void;
     protected beforeOnDisconnectWait(reason: unknown): Promise<void>;
     private setMode_;

@@ -737,7 +737,7 @@ class ArduCAMMini {
     async takeWait(size) {
         if (typeof size === 'string' && this._size !== size) {
             this.setSize(size);
-            this.obniz.wait(1000);
+            await this.obniz.wait(1000);
         }
         this.flushFIFO();
         this.flushFIFO();

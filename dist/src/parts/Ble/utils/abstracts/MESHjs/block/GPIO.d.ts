@@ -73,15 +73,23 @@ export declare class GPIO extends Base {
     private readonly DIGITAL_OUT_ID_;
     private readonly PWM_ID_;
     /**
+     * Verify that the device is MESH block
+     *
+     * @param name
+     * @param opt_serialnumber
+     * @returns
+     */
+    static isMESHblock(name: string | null, opt_serialnumber?: string): boolean;
+    /**
      * Parse data that received from MESH block, and emit event
      *
      * @const
      * @param data
-     * @returns
+     * @returns void
      */
     notify(data: number[]): void;
     /**
-     * Convert parameters to command of set-mode
+     * Create command of set-mode
      *
      * @param digitalInputLow2High { p1:boolean, p2:boolean, p3:boolean }
      * @param digitalInputHigh2Low { p1:boolean, p2:boolean, p3:boolean }
@@ -89,49 +97,49 @@ export declare class GPIO extends Base {
      * @param pwmRatio 0-255
      * @param vcc Vcc.ON or Vcc.OFF
      * @param analogInputRangeUpper 0-255(0.00-3.00[V])
-     * @param analogInputRangeBottom 0-255(0.00-3.00[V])
+     * @param analogInputRangeLower 0-255(0.00-3.00[V])
      * @param analogInputNotify AnalogInputEventCondition.NOT_NOTIFY or AnalogInputEventCondition.ABOVE_THRESHOLD or AnalogInputEventCondition.BELOW_THRESHOLD
      * @returns command
      */
-    parseSetmodeCommand(digitalInputLow2High: GPIO['DigitalPins'], digitalInputHigh2Low: GPIO['DigitalPins'], digitalOutput: GPIO['DigitalPins'], pwmRatio: number, vcc: number, analogInputRangeUpper: number, analogInputRangeBottom: number, analogInputNotify: number): number[];
+    createSetmodeCommand(digitalInputLow2High: GPIO['DigitalPins'], digitalInputHigh2Low: GPIO['DigitalPins'], digitalOutput: GPIO['DigitalPins'], pwmRatio: number, vcc: number, analogInputRangeUpper: number, analogInputRangeLower: number, analogInputNotify: number): number[];
     /**
-     * Convert parameters to command of digital-input
+     * Create command of digital-input
      *
      * @param pin
      * @param opt_requestId
-     * @returns
+     * @returns command
      */
-    parseDigitalInputCommand(pin: number, opt_requestId?: number): number[];
+    createDigitalInputCommand(pin: number, opt_requestId?: number): number[];
     /**
-     * Convert parameters to command of analog-input
+     * Create command of analog-input
      *
      * @param analogInputNotifyMode
      * @param opt_requestId
-     * @returns
+     * @returns command
      */
-    parseAnalogInputCommand(analogInputNotifyMode: number, opt_requestId?: number): number[];
+    createAnalogInputCommand(analogInputNotifyMode: number, opt_requestId?: number): number[];
     /**
-     * Convert parameters to command of v-output
+     * Create command of v-output
      *
      * @param opt_requestId
-     * @returns
+     * @returns command
      */
-    parseVOutputCommand(opt_requestId?: number): number[];
+    createVOutputCommand(opt_requestId?: number): number[];
     /**
-     * Convert parameters to command of digital-output
+     * Create command of digital-output
      *
      * @param pin
      * @param opt_requestId
-     * @returns
+     * @returns command
      */
-    parseDigitalOutputCommand(pin: number, opt_requestId?: number): number[];
+    createDigitalOutputCommand(pin: number, opt_requestId?: number): number[];
     /**
-     * Convert parameters to command of PWM
+     * Create command of PWM
      *
      * @param opt_requestId
-     * @returns
+     * @returns command
      */
-    parsePwmCommand(opt_requestId?: number): number[];
-    private parseCommand_;
+    createPwmCommand(opt_requestId?: number): number[];
+    private createCommand_;
     private pin2num_;
 }

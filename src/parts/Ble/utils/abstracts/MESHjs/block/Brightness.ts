@@ -1,5 +1,4 @@
 import { Base } from './Base';
-import { MESHJsInvalidValueError } from '../util/Error';
 
 export class Brightness extends Base {
   /**
@@ -29,10 +28,26 @@ export class Brightness extends Base {
   private readonly LX_: number = 10 as const;
 
   /**
+   * Verify that the device is MESH block
+   *
+   * @param name
+   * @param opt_serialnumber
+   * @returns
+   */
+  public static isMESHblock(
+    name: string | null,
+    opt_serialnumber = ''
+  ): boolean {
+    return super.isMESHblock(name, opt_serialnumber)
+      ? name?.indexOf('MESH-100PA') !== -1
+      : false;
+  }
+
+  /**
    * notify
    *
    * @param data
-   * @returns
+   * @returns void
    */
   public notify(data: number[]): void {
     super.notify(data);
@@ -53,13 +68,13 @@ export class Brightness extends Base {
   }
 
   /**
-   * Parse to set-mode command
+   * Create command of set-mode
    *
    * @param notifyMode
    * @param opt_requestId
    * @returns command
    */
-  public parseSetmodeCommand(notifyMode: number, opt_requestId = 0): number[] {
+  public createSetmodeCommand(notifyMode: number, opt_requestId = 0): number[] {
     // Error Handle
     this.checkRange(
       notifyMode,

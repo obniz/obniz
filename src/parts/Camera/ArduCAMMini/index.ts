@@ -831,7 +831,7 @@ export default class ArduCAMMini implements ObnizPartsInterface {
   public async takeWait(size?: string): Promise<number[]> {
     if (typeof size === 'string' && this._size !== size) {
       this.setSize(size);
-      this.obniz.wait(1000);
+      await this.obniz.wait(1000);
     }
 
     this.flushFIFO();
