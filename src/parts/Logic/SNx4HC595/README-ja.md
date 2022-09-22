@@ -84,7 +84,7 @@ ioext.onece(function(){ // io 4 and 5 will be changed to false state at same tim
 
 ## getIO(io)
 それぞれの出力端子のioオブジェクトを取得します。ioオブジェクトはobniz Boardのioのようにoutput()関数を呼ぶことができます。
-また、obnizパーツライブラリの[LED](../Light/LED)や[7SegmentLED](../7SegmentLED/README.md)のioとしても使用することが出来ます。
+また、obnizパーツライブラリの[LED](../LED/README.md)や[7SegmentLED](../7SegmentLED/README.md)のioとしても使用することが出来ます。
 
 ```Javascript
 // Javascript Example
