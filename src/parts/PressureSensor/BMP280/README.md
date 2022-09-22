@@ -9,11 +9,9 @@ Very low energy consumption and high accuracy.
 Connect a sensor to an obniz Board.
 obniz Board has internal pull up. But for communication stability, please add pull-up resistor to both SCK and SDI.
 
-![](image2.jpg)
 
 ##### Not recommended direct connecting.
 
-![](image3.jpg)
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
