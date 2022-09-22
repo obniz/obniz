@@ -25503,7 +25503,7 @@ var map = {
 	"./ADConverter/hx711/index.js": "./dist/src/parts/ADConverter/hx711/index.js",
 	"./Accessory/USB/index.js": "./dist/src/parts/Accessory/USB/index.js",
 	"./Biological/PULSE08-M5STICKC-S/index.js": "./dist/src/parts/Biological/PULSE08-M5STICKC-S/index.js",
-	"./Ble/2jcie/index.js": "./dist/src/parts/Ble/2jcie/index.js",
+	"./Ble/2JCIE/index.js": "./dist/src/parts/Ble/2JCIE/index.js",
 	"./Ble/ENERTALK/index.js": "./dist/src/parts/Ble/ENERTALK/index.js",
 	"./Ble/EXTxx/index.js": "./dist/src/parts/Ble/EXTxx/index.js",
 	"./Ble/EXVital/index.js": "./dist/src/parts/Ble/EXVital/index.js",
@@ -25992,7 +25992,7 @@ exports.default = Puls08M5stickcS;
 
 /***/ }),
 
-/***/ "./dist/src/parts/Ble/2jcie/index.js":
+/***/ "./dist/src/parts/Ble/2JCIE/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
