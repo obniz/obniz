@@ -29,8 +29,6 @@ Then wire your LED to obniz Board
 ![](wired.jpg)
 
 
-![](./wired.png)
-
 ```Javascript
 // Javascript Example
 
