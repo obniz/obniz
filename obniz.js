@@ -126,6 +126,7 @@ module.exports = {
     "lint-test": "mocha $NODE_DEBUG_OPTION ./devtools/eslint/test/**/*.js",
     "precommit": "lint-staged && npm run build && git add dist && git add obniz.js",
     "prepublishOnly": "npm run build",
+    "code-quality": "docker run --rm -it -v $PWD:/data/project/ -p 8080:8080 jetbrains/qodana-js:2022.2-eap --show-report",
     "clean": "rimraf ./dist ./obniz.js ./obniz.d.ts"
   },
   "lint-staged": {
@@ -2822,6 +2823,7 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     wsOnClose(event) {
         this._print_debug(`closed from remote event=${event}`);
+        this.connectionState = 'closing';
         const beforeOnConnectCalled = this._onConnectCalled;
         this._close();
         this.connectionState = 'closed';
