@@ -26434,9 +26434,9 @@ class DR_MARK {
     constructor(peripheral) {
         this.keys = [];
         this.requiredKeys = [];
-        this.onnotify = null;
-        this.onfinish = null;
-        this.onpulse = null;
+        this.onNotifyCallback = null;
+        this.onFinishCallback = null;
+        this.onPulseCallback = null;
         this._peripheral = null;
         this._uuids = {
             deviceInfoSystem: '180a',
@@ -26882,13 +26882,13 @@ class DR_MARK {
             data: data.slice(2),
         };
         console.log('notifyData', notifyData);
-        if (this.onnotify && typeof this.onnotify === 'function') {
-            this.onnotify(notifyData);
+        if (this.onNotifyCallback && typeof this.onNotifyCallback === 'function') {
+            this.onNotifyCallback(notifyData);
         }
-        if (this.onfinish &&
-            typeof this.onfinish === 'function' &&
+        if (this.onFinishCallback &&
+            typeof this.onFinishCallback === 'function' &&
             notifyData.commandId === 0x88) {
-            this.onfinish();
+            this.onFinishCallback();
         }
         const callback = this.callbackArray.filter((value) => value.commandId === notifyData.commandId);
         callback.forEach((value) => value.function(notifyData));
@@ -26916,8 +26916,8 @@ class DR_MARK {
                 batteryVoltage: buffer.readUInt16LE(14),
             };
             this.pulseDataArray.push(scanData);
-            if (this.onpulse && typeof this.onpulse === 'function') {
-                this.onpulse(scanData);
+            if (this.onPulseCallback && typeof this.onPulseCallback === 'function') {
+                this.onPulseCallback(scanData);
             }
             console.log('Pulse Data', JSON.stringify(scanData));
         }

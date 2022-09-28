@@ -120,9 +120,9 @@ export default class DR_MARK implements ObnizPartsBleInterface {
   public keys: string[] = [];
   public requiredKeys: string[] = [];
   public params: any;
-  public onnotify: ((data: CommandNotifyData) => void) | null = null;
-  public onfinish: (() => void) | null = null;
-  public onpulse: ((pulseData: PulseData) => void) | null = null;
+  public onNotifyCallback: ((data: CommandNotifyData) => void) | null = null;
+  public onFinishCallback: (() => void) | null = null;
+  public onPulseCallback: ((pulseData: PulseData) => void) | null = null;
   public _peripheral: BleRemotePeripheral | null = null;
   public ondisconnect?: (reason: any) => void;
   public batteryService?: BleBatteryService;
@@ -627,15 +627,15 @@ export default class DR_MARK implements ObnizPartsBleInterface {
       data: data.slice(2),
     };
     console.log('notifyData', notifyData);
-    if (this.onnotify && typeof this.onnotify === 'function') {
-      this.onnotify(notifyData);
+    if (this.onNotifyCallback && typeof this.onNotifyCallback === 'function') {
+      this.onNotifyCallback(notifyData);
     }
     if (
-      this.onfinish &&
-      typeof this.onfinish === 'function' &&
+      this.onFinishCallback &&
+      typeof this.onFinishCallback === 'function' &&
       notifyData.commandId === 0x88
     ) {
-      this.onfinish();
+      this.onFinishCallback();
     }
     const callback = this.callbackArray.filter(
       (value) => value.commandId === notifyData.commandId
@@ -665,8 +665,8 @@ export default class DR_MARK implements ObnizPartsBleInterface {
         batteryVoltage: buffer.readUInt16LE(14),
       };
       this.pulseDataArray.push(scanData);
-      if (this.onpulse && typeof this.onpulse === 'function') {
-        this.onpulse(scanData);
+      if (this.onPulseCallback && typeof this.onPulseCallback === 'function') {
+        this.onPulseCallback(scanData);
       }
       console.log('Pulse Data', JSON.stringify(scanData));
     }
