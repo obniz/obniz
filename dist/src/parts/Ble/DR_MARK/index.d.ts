@@ -15,6 +15,43 @@ export interface CommandNotifyData {
     result: CommandResultType;
     data: number[];
 }
+interface PulseData {
+    sequenceNumber: number;
+    pulse: number;
+    status: number;
+    error: {
+        outRange: boolean;
+        changeSetting: boolean;
+        overSumFlow: boolean;
+        lowInstantFlow: boolean;
+        highInstantFlow: boolean;
+        shutdownBattery: boolean;
+        lowBattery: boolean;
+        isError: boolean;
+    };
+    instantFlowRate: number;
+    sumFlowRate: number;
+    averageFlowRate: number;
+    batteryVoltage: number;
+}
+export interface ConditionSettingData {
+    infusionDropCount: number;
+    targetSumFlowRate: number;
+    targetFlowRate: number;
+    correctionFactor: number;
+}
+export interface BaseSettingData {
+    effectiveInstantFlowRate: number;
+    finishJudgmentSec: number;
+    effectiveIntegratedFlowRate: number;
+    powerOffSec: number;
+}
+export interface EngineerSettingData {
+    movingAverage: number;
+    lowVoltage: number;
+    shutdownVoltage: number;
+    offsetSec: number;
+}
 export interface DR_MARKOptions {
 }
 /** DR MARK management class DR MARKを管理するクラス */
@@ -37,6 +74,7 @@ export default class DR_MARK implements ObnizPartsBleInterface {
     params: any;
     onnotify: ((data: CommandNotifyData) => void) | null;
     onfinish: (() => void) | null;
+    onpulse: ((pulseData: PulseData) => void) | null;
     _peripheral: BleRemotePeripheral | null;
     ondisconnect?: (reason: any) => void;
     batteryService?: BleBatteryService;
@@ -44,6 +82,7 @@ export default class DR_MARK implements ObnizPartsBleInterface {
     private _deviceInfoSystem;
     private _requestChar;
     private callbackArray;
+    private pulseDataArray;
     constructor(peripheral: BleRemotePeripheral | null);
     /**
      * Connect the sensor
@@ -150,10 +189,52 @@ export default class DR_MARK implements ObnizPartsBleInterface {
      */
     setEngineerSettingWait(movingAverage: number, lowVoltage: number, shutdownVoltage: number, offsetSec: number): Promise<void>;
     /**
-     * 計測データ送信リクエスト
+     * LED設定
+     *
+     * @param bright LED 調光(trueの時明るい)
      */
+    setLedSettingWait(bright: boolean): Promise<void>;
+    /**
+     * 計測条件取得
+     *
+     * @return ConditionSettingData
+     */
+    getConditionSettingWait(): Promise<ConditionSettingData>;
+    /**
+     * 基本設定取得
+     *
+     * @return BaseSettingData
+     */
+    getBaseSettingWait(): Promise<BaseSettingData>;
+    /**
+     * エンジニア設定
+     *
+     * @return EngineerSettingData
+     */
+    getEngineerSettingWait(): Promise<EngineerSettingData>;
+    /**
+     * LED設定
+     *
+     * @return true:bright mode
+     */
+    isBrightLedWait(): Promise<boolean>;
+    /**
+     * 電圧値読出し
+     *
+     * @return バッテリ電圧（mV）
+     */
+    getBatteryVoltageWait(): Promise<number>;
+    /**
+     * Pulseデータをの取得を開始
+     */
+    startPulseDataWait(): Promise<void>;
+    /**
+     * Pulseデータの取得を停止かつ、開始時からのパルスデータの配列を返却
+     */
+    stopPulseDataWait(): Promise<PulseData[]>;
     private getCommandResultWait;
     private setCommandCallback;
     private removeCommandCallback;
     private notifyCallback;
 }
+export {};

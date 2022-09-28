@@ -14,6 +14,7 @@ class ENERTALK_TOUCH {
     constructor(peripheral) {
         this.keys = [];
         this.requiredKeys = [];
+        this.onbuttonpressed = null;
         this._peripheral = null;
         this._uuids = {
             service: '3526797e-448b-4bbb-9145-c5083e0e09dc',

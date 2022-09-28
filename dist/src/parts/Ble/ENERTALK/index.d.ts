@@ -26,6 +26,7 @@ export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
     keys: string[];
     requiredKeys: string[];
     params: any;
+    onbuttonpressed: ((pressed: boolean) => void) | null;
     _peripheral: BleRemotePeripheral | null;
     ondisconnect?: (reason: any) => void;
     batteryService?: BleBatteryService;

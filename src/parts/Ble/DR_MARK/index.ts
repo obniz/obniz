@@ -69,6 +69,27 @@ interface PulseData {
   batteryVoltage: number; // 電圧値（mV）
 }
 
+export interface ConditionSettingData {
+  infusionDropCount: number; // 輸液セットタイプ default 20滴
+  targetSumFlowRate: number; // 設定量 (ml) default 500ml
+  targetFlowRate: number; // 目標流量(ml/h) default 250ml/h
+  correctionFactor: number; // 流量を補正する(-20% ～ 20%) default 0%
+}
+
+export interface BaseSettingData {
+  effectiveInstantFlowRate: number; // 有効瞬時流量(%) 瞬時流量判定に使用 目標流量に対する瞬時流量の差分 default 30%
+  finishJudgmentSec: number; // 輸液終了判定時間(秒後) 輸液終了判定（センサ信号無応答時間） default 60秒後
+  effectiveIntegratedFlowRate: number; // 有効積算流量(%) 総積算流量を判定する ※計測中の流量異常判定無効区間を算出 default 10%
+  powerOffSec: number; // 自動電源断時間(秒後) default 60秒後
+}
+
+export interface EngineerSettingData {
+  movingAverage: number; // 移動平均回数(回) 最大30回 default 30回
+  lowVoltage: number; // Lowバッテリ判定レベル(mv) この電圧値以下で黄色LED ハーフ点灯 default 3400mv
+  shutdownVoltage: number; // バッテリ電源断レベル(mv) この電圧値以下で電源断実行 default 3300mv
+  offsetSec: number; // 時刻補正(秒) 時刻設定時の遅延時間補正 default 0秒
+}
+
 export interface DR_MARKOptions {}
 
 /** DR MARK management class DR MARKを管理するクラス */
@@ -101,6 +122,7 @@ export default class DR_MARK implements ObnizPartsBleInterface {
   public params: any;
   public onnotify: ((data: CommandNotifyData) => void) | null = null;
   public onfinish: (() => void) | null = null;
+  public onpulse: ((pulseData: PulseData) => void) | null = null;
   public _peripheral: BleRemotePeripheral | null = null;
   public ondisconnect?: (reason: any) => void;
   public batteryService?: BleBatteryService;
@@ -117,7 +139,7 @@ export default class DR_MARK implements ObnizPartsBleInterface {
   private _requestChar: BleRemoteCharacteristic | null = null;
 
   private callbackArray: CommandNotifyCallback[] = [];
-
+  private pulseDataArray: PulseData[] = [];
   constructor(peripheral: BleRemotePeripheral | null) {
     if (peripheral && !DR_MARK.isDevice(peripheral)) {
       throw new Error('peripheral is not DR_MARK');
@@ -436,8 +458,100 @@ export default class DR_MARK implements ObnizPartsBleInterface {
   }
 
   /**
-   * 計測データ送信リクエスト
+   * LED設定
+   *
+   * @param bright LED 調光(trueの時明るい)
    */
+  public async setLedSettingWait(bright: boolean) {
+    const buf = Buffer.alloc(1);
+    buf.writeUInt8(bright ? 1 : 0, 0);
+    await this.getCommandResultWait(0x25, Uint8Array.from(buf));
+  }
+
+  /**
+   * 計測条件取得
+   *
+   * @return ConditionSettingData
+   */
+  public async getConditionSettingWait(): Promise<ConditionSettingData> {
+    const data = await this.getCommandResultWait(0x28);
+    const buffer = Buffer.from(data.data);
+    return {
+      infusionDropCount: buffer.readUInt16LE(0),
+      targetSumFlowRate: buffer.readUInt16LE(2),
+      targetFlowRate: buffer.readUInt16LE(4),
+      correctionFactor: buffer.readUInt16LE(6),
+    };
+  }
+
+  /**
+   * 基本設定取得
+   *
+   * @return BaseSettingData
+   */
+  public async getBaseSettingWait(): Promise<BaseSettingData> {
+    const data = await this.getCommandResultWait(0x29);
+    const buffer = Buffer.from(data.data);
+    return {
+      effectiveInstantFlowRate: buffer.readUInt8(0),
+      finishJudgmentSec: buffer.readUInt8(1),
+      effectiveIntegratedFlowRate: buffer.readUInt8(2),
+      powerOffSec: buffer.readUInt8(3),
+    };
+  }
+  /**
+   * エンジニア設定
+   *
+   * @return EngineerSettingData
+   */
+  public async getEngineerSettingWait(): Promise<EngineerSettingData> {
+    const data = await this.getCommandResultWait(0x2a);
+    const buffer = Buffer.from(data.data);
+    return {
+      movingAverage: buffer.readUInt16LE(0),
+      lowVoltage: buffer.readUInt16LE(2),
+      shutdownVoltage: buffer.readUInt16LE(4),
+      offsetSec: buffer.readUInt16LE(6),
+    };
+  }
+
+  /**
+   * LED設定
+   *
+   * @return true:bright mode
+   */
+  public async isBrightLedWait(): Promise<boolean> {
+    const data = await this.getCommandResultWait(0x2b);
+    const buffer = Buffer.from(data.data);
+    return Boolean(buffer.readUInt8(0));
+  }
+
+  /**
+   * 電圧値読出し
+   *
+   * @return バッテリ電圧（mV）
+   */
+  public async getBatteryVoltageWait(): Promise<number> {
+    const data = await this.getCommandResultWait(0x2c);
+    const buffer = Buffer.from(data.data);
+    return buffer.readUInt16LE(0);
+  }
+
+  /**
+   * Pulseデータをの取得を開始
+   */
+  public async startPulseDataWait() {
+    this.pulseDataArray = [];
+    await this.requestPulseDataWait(true);
+  }
+
+  /**
+   * Pulseデータの取得を停止かつ、開始時からのパルスデータの配列を返却
+   */
+  public async stopPulseDataWait(): Promise<PulseData[]> {
+    await this.requestPulseDataWait(false);
+    return this.pulseDataArray;
+  }
 
   private async getCommandResultWait(
     commandId: number,
@@ -546,6 +660,10 @@ export default class DR_MARK implements ObnizPartsBleInterface {
         averageFlowRate: buffer.readUInt16LE(12),
         batteryVoltage: buffer.readUInt16LE(14),
       };
+      this.pulseDataArray.push(scanData);
+      if (typeof this.onpulse === 'function') {
+        this.onpulse(scanData);
+      }
       console.log('Pulse Data', JSON.stringify(scanData));
     }
   }

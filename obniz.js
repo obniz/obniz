@@ -26436,6 +26436,7 @@ class DR_MARK {
         this.requiredKeys = [];
         this.onnotify = null;
         this.onfinish = null;
+        this.onpulse = null;
         this._peripheral = null;
         this._uuids = {
             deviceInfoSystem: '180A',
@@ -26448,6 +26449,7 @@ class DR_MARK {
         this._deviceInfoSystem = null;
         this._requestChar = null;
         this.callbackArray = [];
+        this.pulseDataArray = [];
         if (peripheral && !DR_MARK.isDevice(peripheral)) {
             throw new Error('peripheral is not DR_MARK');
         }
@@ -26735,8 +26737,94 @@ class DR_MARK {
         await this.getCommandResultWait(0x24, Uint8Array.from(buf));
     }
     /**
-     * 計測データ送信リクエスト
+     * LED設定
+     *
+     * @param bright LED 調光(trueの時明るい)
      */
+    async setLedSettingWait(bright) {
+        const buf = Buffer.alloc(1);
+        buf.writeUInt8(bright ? 1 : 0, 0);
+        await this.getCommandResultWait(0x25, Uint8Array.from(buf));
+    }
+    /**
+     * 計測条件取得
+     *
+     * @return ConditionSettingData
+     */
+    async getConditionSettingWait() {
+        const data = await this.getCommandResultWait(0x28);
+        const buffer = Buffer.from(data.data);
+        return {
+            infusionDropCount: buffer.readUInt16LE(0),
+            targetSumFlowRate: buffer.readUInt16LE(2),
+            targetFlowRate: buffer.readUInt16LE(4),
+            correctionFactor: buffer.readUInt16LE(6),
+        };
+    }
+    /**
+     * 基本設定取得
+     *
+     * @return BaseSettingData
+     */
+    async getBaseSettingWait() {
+        const data = await this.getCommandResultWait(0x29);
+        const buffer = Buffer.from(data.data);
+        return {
+            effectiveInstantFlowRate: buffer.readUInt8(0),
+            finishJudgmentSec: buffer.readUInt8(1),
+            effectiveIntegratedFlowRate: buffer.readUInt8(2),
+            powerOffSec: buffer.readUInt8(3),
+        };
+    }
+    /**
+     * エンジニア設定
+     *
+     * @return EngineerSettingData
+     */
+    async getEngineerSettingWait() {
+        const data = await this.getCommandResultWait(0x2a);
+        const buffer = Buffer.from(data.data);
+        return {
+            movingAverage: buffer.readUInt16LE(0),
+            lowVoltage: buffer.readUInt16LE(2),
+            shutdownVoltage: buffer.readUInt16LE(4),
+            offsetSec: buffer.readUInt16LE(6),
+        };
+    }
+    /**
+     * LED設定
+     *
+     * @return true:bright mode
+     */
+    async isBrightLedWait() {
+        const data = await this.getCommandResultWait(0x2b);
+        const buffer = Buffer.from(data.data);
+        return Boolean(buffer.readUInt8(0));
+    }
+    /**
+     * 電圧値読出し
+     *
+     * @return バッテリ電圧（mV）
+     */
+    async getBatteryVoltageWait() {
+        const data = await this.getCommandResultWait(0x2c);
+        const buffer = Buffer.from(data.data);
+        return buffer.readUInt16LE(0);
+    }
+    /**
+     * Pulseデータをの取得を開始
+     */
+    async startPulseDataWait() {
+        this.pulseDataArray = [];
+        await this.requestPulseDataWait(true);
+    }
+    /**
+     * Pulseデータの取得を停止かつ、開始時からのパルスデータの配列を返却
+     */
+    async stopPulseDataWait() {
+        await this.requestPulseDataWait(false);
+        return this.pulseDataArray;
+    }
     async getCommandResultWait(commandId, data, timeoutMs) {
         return new Promise((resolve, reject) => {
             setTimeout(() => reject(new Error('timeout')), timeoutMs ? timeoutMs : 5000);
@@ -26825,6 +26913,10 @@ class DR_MARK {
                 averageFlowRate: buffer.readUInt16LE(12),
                 batteryVoltage: buffer.readUInt16LE(14),
             };
+            this.pulseDataArray.push(scanData);
+            if (typeof this.onpulse === 'function') {
+                this.onpulse(scanData);
+            }
             console.log('Pulse Data', JSON.stringify(scanData));
         }
     }
@@ -26855,6 +26947,7 @@ class ENERTALK_TOUCH {
     constructor(peripheral) {
         this.keys = [];
         this.requiredKeys = [];
+        this.onbuttonpressed = null;
         this._peripheral = null;
         this._uuids = {
             service: '3526797e-448b-4bbb-9145-c5083e0e09dc',
