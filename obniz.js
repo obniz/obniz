@@ -30547,13 +30547,13 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
      * @deprecated
      *
      * Start reading the PM2.5 sensor
-     * Version 1.1.x is not supported
+     * Version 1.1 is not supported
      * PM2.5センサーの読み取りを開始
-     * バージョン1.1.xはサポートされません
+     * バージョン1.1より上のバージョンはサポートされません
      */
     async pm2_5MeasureStartWait() {
         this.checkConnected();
-        this.checkVersion('1.1.2');
+        this.checkLessVersion('1.1.0');
         await this.subscribeWait(this.serviceUuid, this.getCharUuid(0x1528), (data) => {
             if (typeof this.onPm2_5Measured !== 'function')
                 return;
@@ -30563,7 +30563,7 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
                 mass_pm2_5: buf.readFloatLE(4),
                 mass_pm4: buf.readFloatLE(8),
                 mass_pm10: buf.readFloatLE(12),
-                number_pm0_5: buf.readFloatLE(16), // 1パケット=20バイトしか来ない // TODO
+                // number_pm0_5: buf.readFloatLE(16), // 1パケット=20バイトしか来ない // TODO
                 // number_pm1: buf.readFloatLE(20),
                 // number_pm2_5: buf.readFloatLE(24),
                 // number_pm4: buf.readFloatLE(28),
@@ -30578,6 +30578,12 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         var _a;
         if (semver_1.default.lt(this.firmwareSemRevision, version)) {
             throw new Error(`This operation is not supported. required firmware v${version}, but device v${(_a = this.firmwareSemRevision) === null || _a === void 0 ? void 0 : _a.version}`);
+        }
+    }
+    checkLessVersion(version) {
+        var _a;
+        if (semver_1.default.gte(this.firmwareSemRevision, version)) {
+            throw new Error(`This operation is not supported. required firmware less than v${version}, but device v${(_a = this.firmwareSemRevision) === null || _a === void 0 ? void 0 : _a.version}`);
         }
     }
 }

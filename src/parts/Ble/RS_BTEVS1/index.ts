@@ -116,7 +116,7 @@ export interface RS_BTEVS1_Pm2_5 {
   /** PM10.0 [ug/m3] */
   mass_pm10: number;
   /** PM0.5 [#/m3] */
-  number_pm0_5: number;
+  number_pm0_5?: number;
   /** PM1.0 [#/m3] */
   number_pm1?: number;
   /** PM2.5 [#/m3] */
@@ -447,13 +447,13 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
    * @deprecated
    *
    * Start reading the PM2.5 sensor
-   * Version 1.1.x is not supported
+   * Version 1.1 is not supported
    * PM2.5センサーの読み取りを開始
-   * バージョン1.1.xはサポートされません
+   * バージョン1.1より上のバージョンはサポートされません
    */
   public async pm2_5MeasureStartWait(): Promise<void> {
     this.checkConnected();
-    this.checkVersion('1.1.2');
+    this.checkLessVersion('1.1.0');
 
     await this.subscribeWait(
       this.serviceUuid,
@@ -466,7 +466,7 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
           mass_pm2_5: buf.readFloatLE(4),
           mass_pm4: buf.readFloatLE(8),
           mass_pm10: buf.readFloatLE(12),
-          number_pm0_5: buf.readFloatLE(16), // 1パケット=20バイトしか来ない // TODO
+          // number_pm0_5: buf.readFloatLE(16), // 1パケット=20バイトしか来ない // TODO
           // number_pm1: buf.readFloatLE(20),
           // number_pm2_5: buf.readFloatLE(24),
           // number_pm4: buf.readFloatLE(28),
@@ -486,6 +486,14 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
     if (semver.lt(this.firmwareSemRevision!, version)) {
       throw new Error(
         `This operation is not supported. required firmware v${version}, but device v${this.firmwareSemRevision?.version}`
+      );
+    }
+  }
+
+  private checkLessVersion(version: string) {
+    if (semver.gte(this.firmwareSemRevision!, version)) {
+      throw new Error(
+        `This operation is not supported. required firmware less than v${version}, but device v${this.firmwareSemRevision?.version}`
       );
     }
   }
