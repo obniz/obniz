@@ -10,9 +10,6 @@ class DR_MARK {
     constructor(peripheral) {
         this.keys = [];
         this.requiredKeys = [];
-        this.onNotifyCallback = null;
-        this.onFinishCallback = null;
-        this.onPulseCallback = null;
         this._peripheral = null;
         this._uuids = {
             deviceInfoSystem: '180a',
@@ -24,8 +21,6 @@ class DR_MARK {
         };
         this._deviceInfoSystem = null;
         this._requestChar = null;
-        this.callbackArray = [];
-        this.pulseDataArray = [];
         if (peripheral && !DR_MARK.isDevice(peripheral)) {
             throw new Error('peripheral is not DR_MARK');
         }
@@ -391,7 +386,7 @@ class DR_MARK {
      * Pulseデータをの取得を開始
      */
     async startPulseDataWait() {
-        this.pulseDataArray = [];
+        DR_MARK.pulseDataArray = [];
         await this.requestPulseDataWait(true);
     }
     /**
@@ -399,7 +394,7 @@ class DR_MARK {
      */
     async stopPulseDataWait() {
         await this.requestPulseDataWait(false);
-        return this.pulseDataArray;
+        return DR_MARK.pulseDataArray;
     }
     async getCommandResultWait(commandId, data, timeoutMs) {
         return new Promise((resolve, reject) => {
@@ -416,13 +411,13 @@ class DR_MARK {
         });
     }
     setCommandCallback(commandId, callback) {
-        this.callbackArray = [
-            ...this.callbackArray,
+        DR_MARK.callbackArray = [
+            ...DR_MARK.callbackArray,
             { commandId, function: callback },
         ];
     }
     removeCommandCallback(commandId) {
-        this.callbackArray = this.callbackArray.filter((value) => value.commandId !== commandId);
+        DR_MARK.callbackArray = DR_MARK.callbackArray.filter((value) => value.commandId !== commandId);
     }
     notifyCallback(data) {
         let result = 'errorId';
@@ -458,15 +453,15 @@ class DR_MARK {
             data: data.slice(2),
         };
         console.log('notifyData', notifyData);
-        if (this.onNotifyCallback && typeof this.onNotifyCallback === 'function') {
-            this.onNotifyCallback(notifyData);
+        if (DR_MARK.onnotify && typeof DR_MARK.onnotify === 'function') {
+            DR_MARK.onnotify(notifyData);
         }
-        if (this.onFinishCallback &&
-            typeof this.onFinishCallback === 'function' &&
+        if (DR_MARK.onfinish &&
+            typeof DR_MARK.onfinish === 'function' &&
             notifyData.commandId === 0x88) {
-            this.onFinishCallback();
+            DR_MARK.onfinish();
         }
-        const callback = this.callbackArray.filter((value) => value.commandId === notifyData.commandId);
+        const callback = DR_MARK.callbackArray.filter((value) => value.commandId === notifyData.commandId);
         callback.forEach((value) => value.function(notifyData));
         if (notifyData.commandId === 0xa0) {
             const buffer = Buffer.from(notifyData.data);
@@ -491,12 +486,17 @@ class DR_MARK {
                 averageFlowRate: buffer.readUInt16LE(12),
                 batteryVoltage: buffer.readUInt16LE(14),
             };
-            this.pulseDataArray.push(scanData);
-            if (this.onPulseCallback && typeof this.onPulseCallback === 'function') {
-                this.onPulseCallback(scanData);
+            DR_MARK.pulseDataArray.push(scanData);
+            if (DR_MARK.onpulse && typeof DR_MARK.onpulse === 'function') {
+                DR_MARK.onpulse(scanData);
             }
             console.log('Pulse Data', JSON.stringify(scanData));
         }
     }
 }
 exports.default = DR_MARK;
+DR_MARK.onnotify = null;
+DR_MARK.onfinish = null;
+DR_MARK.onpulse = null;
+DR_MARK.callbackArray = [];
+DR_MARK.pulseDataArray = [];
