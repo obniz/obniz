@@ -93,7 +93,7 @@ export interface RS_BTEVS1_Pm2_5 {
     /** PM10.0 [ug/m3] */
     mass_pm10: number;
     /** PM0.5 [#/m3] */
-    number_pm0_5: number;
+    number_pm0_5?: number;
     /** PM1.0 [#/m3] */
     number_pm1?: number;
     /** PM2.5 [#/m3] */
@@ -194,12 +194,13 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<RS_BTEVS1_Data, 
      * @deprecated
      *
      * Start reading the PM2.5 sensor
-     * Version 1.1.x is not supported
+     * Version 1.1 is not supported
      * PM2.5センサーの読み取りを開始
-     * バージョン1.1.xはサポートされません
+     * バージョン1.1より上のバージョンはサポートされません
      */
     pm2_5MeasureStartWait(): Promise<void>;
     protected getCharUuid(code: number): string;
     private checkVersion;
+    private checkLessVersion;
 }
 export {};
