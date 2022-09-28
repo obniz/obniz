@@ -26882,10 +26882,12 @@ class DR_MARK {
             data: data.slice(2),
         };
         console.log('notifyData', notifyData);
-        if (typeof this.onnotify === 'function') {
+        if (this.onnotify && typeof this.onnotify === 'function') {
             this.onnotify(notifyData);
         }
-        if (typeof this.onfinish === 'function' && notifyData.commandId === 0x88) {
+        if (this.onfinish &&
+            typeof this.onfinish === 'function' &&
+            notifyData.commandId === 0x88) {
             this.onfinish();
         }
         const callback = this.callbackArray.filter((value) => value.commandId === notifyData.commandId);
@@ -26914,7 +26916,7 @@ class DR_MARK {
                 batteryVoltage: buffer.readUInt16LE(14),
             };
             this.pulseDataArray.push(scanData);
-            if (typeof this.onpulse === 'function') {
+            if (this.onpulse && typeof this.onpulse === 'function') {
                 this.onpulse(scanData);
             }
             console.log('Pulse Data', JSON.stringify(scanData));
