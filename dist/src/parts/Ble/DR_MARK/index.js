@@ -15,12 +15,12 @@ class DR_MARK {
         this.onpulse = null;
         this._peripheral = null;
         this._uuids = {
-            deviceInfoSystem: '180A',
-            systemId: '00002A26‐0000‐1000‐8000‐00805F9B34FB',
-            firmwareVersion: '00002A23‐0000‐1000‐8000‐00805F9B34FB',
-            customService: '0000FFF0‐0000‐1000‐8000‐00805F9B34FB',
-            requestChar: '0000FFF3‐0000‐1000‐8000‐00805F9B34FB',
-            notifyChar: '0000FFF4‐0000‐1000‐8000‐00805F9B34FB',
+            deviceInfoSystem: '180a',
+            systemId: '2a26',
+            firmwareVersion: '2a23',
+            customService: 'fff0',
+            requestChar: 'fff3',
+            notifyChar: 'fff4',
         };
         this._deviceInfoSystem = null;
         this._requestChar = null;
