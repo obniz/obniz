@@ -165,7 +165,8 @@ export default class DR_MARK implements ObnizPartsBleInterface {
         this.ondisconnect(reason);
       }
     };
-    await this._peripheral.connectWait();
+    await this._peripheral.connectWait({ autoDiscovery: false });
+    await this._peripheral.discoverAllServicesWait();
     const customService = this._peripheral.getService(
       this._uuids.customService
     );
@@ -173,19 +174,13 @@ export default class DR_MARK implements ObnizPartsBleInterface {
       await this._peripheral.disconnectWait();
       throw new Error('service is not find.');
     }
+    await customService.discoverAllCharacteristicsWait();
     this._requestChar = customService.getCharacteristic(
       this._uuids.requestChar
     );
     const notifyChar = customService.getCharacteristic(this._uuids.notifyChar);
     if (notifyChar) {
       await notifyChar.registerNotifyWait(this.notifyCallback);
-    }
-    this._deviceInfoSystem = this._peripheral.getService(
-      this._uuids.deviceInfoSystem
-    );
-    if (!this._deviceInfoSystem) {
-      await this._peripheral.disconnectWait();
-      throw new Error('device info service is not find.');
     }
   }
 
@@ -211,7 +206,18 @@ export default class DR_MARK implements ObnizPartsBleInterface {
    */
   public async getSystemIdWait(): Promise<string | null> {
     if (!this._deviceInfoSystem) {
-      throw new Error('device is not connected');
+      if (this._peripheral) {
+        this._deviceInfoSystem = this._peripheral.getService(
+          this._uuids.deviceInfoSystem
+        );
+        if (!this._deviceInfoSystem) {
+          await this._peripheral.disconnectWait();
+          throw new Error('device info service is not find.');
+        }
+        await this._deviceInfoSystem.discoverAllCharacteristicsWait();
+      } else {
+        throw new Error('device is not connected');
+      }
     }
     const char = await this._deviceInfoSystem.getCharacteristic(
       this._uuids.systemId
@@ -233,7 +239,18 @@ export default class DR_MARK implements ObnizPartsBleInterface {
    */
   public async getFirmwareVersionWait(): Promise<string | null> {
     if (!this._deviceInfoSystem) {
-      throw new Error('device is not connected');
+      if (this._peripheral) {
+        this._deviceInfoSystem = this._peripheral.getService(
+          this._uuids.deviceInfoSystem
+        );
+        if (!this._deviceInfoSystem) {
+          await this._peripheral.disconnectWait();
+          throw new Error('device info service is not find.');
+        }
+        await this._deviceInfoSystem.discoverAllCharacteristicsWait();
+      } else {
+        throw new Error('device is not connected');
+      }
     }
     const char = await this._deviceInfoSystem.getCharacteristic(
       this._uuids.firmwareVersion

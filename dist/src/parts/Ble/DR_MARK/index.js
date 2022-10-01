@@ -63,21 +63,18 @@ class DR_MARK {
                 this.ondisconnect(reason);
             }
         };
-        await this._peripheral.connectWait();
+        await this._peripheral.connectWait({ autoDiscovery: false });
+        await this._peripheral.discoverAllServicesWait();
         const customService = this._peripheral.getService(this._uuids.customService);
         if (!customService) {
             await this._peripheral.disconnectWait();
             throw new Error('service is not find.');
         }
+        await customService.discoverAllCharacteristicsWait();
         this._requestChar = customService.getCharacteristic(this._uuids.requestChar);
         const notifyChar = customService.getCharacteristic(this._uuids.notifyChar);
         if (notifyChar) {
             await notifyChar.registerNotifyWait(this.notifyCallback);
-        }
-        this._deviceInfoSystem = this._peripheral.getService(this._uuids.deviceInfoSystem);
-        if (!this._deviceInfoSystem) {
-            await this._peripheral.disconnectWait();
-            throw new Error('device info service is not find.');
         }
     }
     /**
@@ -102,7 +99,17 @@ class DR_MARK {
      */
     async getSystemIdWait() {
         if (!this._deviceInfoSystem) {
-            throw new Error('device is not connected');
+            if (this._peripheral) {
+                this._deviceInfoSystem = this._peripheral.getService(this._uuids.deviceInfoSystem);
+                if (!this._deviceInfoSystem) {
+                    await this._peripheral.disconnectWait();
+                    throw new Error('device info service is not find.');
+                }
+                await this._deviceInfoSystem.discoverAllCharacteristicsWait();
+            }
+            else {
+                throw new Error('device is not connected');
+            }
         }
         const char = await this._deviceInfoSystem.getCharacteristic(this._uuids.systemId);
         if (!char) {
@@ -121,7 +128,17 @@ class DR_MARK {
      */
     async getFirmwareVersionWait() {
         if (!this._deviceInfoSystem) {
-            throw new Error('device is not connected');
+            if (this._peripheral) {
+                this._deviceInfoSystem = this._peripheral.getService(this._uuids.deviceInfoSystem);
+                if (!this._deviceInfoSystem) {
+                    await this._peripheral.disconnectWait();
+                    throw new Error('device info service is not find.');
+                }
+                await this._deviceInfoSystem.discoverAllCharacteristicsWait();
+            }
+            else {
+                throw new Error('device is not connected');
+            }
         }
         const char = await this._deviceInfoSystem.getCharacteristic(this._uuids.firmwareVersion);
         if (!char) {
