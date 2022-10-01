@@ -75,6 +75,7 @@ export default class DR_MARK implements ObnizPartsBleInterface {
     static onnotify: ((data: CommandNotifyData) => void) | null;
     static onfinish: (() => void) | null;
     static onpulse: ((pulseData: PulseData) => void) | null;
+    private static onsystempulse;
     _peripheral: BleRemotePeripheral | null;
     ondisconnect?: (reason: any) => void;
     batteryService?: BleBatteryService;
@@ -232,6 +233,10 @@ export default class DR_MARK implements ObnizPartsBleInterface {
      * Pulseデータの取得を停止かつ、開始時からのパルスデータの配列を返却
      */
     stopPulseDataWait(): Promise<PulseData[]>;
+    /**
+     * Pulseデータを1件取得する
+     */
+    getPulseDataWait(timeoutMs?: number): Promise<PulseData>;
     private getCommandResultWait;
     private setCommandCallback;
     private removeCommandCallback;

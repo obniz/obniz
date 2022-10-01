@@ -26837,6 +26837,19 @@ class DR_MARK {
         await this.requestPulseDataWait(false);
         return DR_MARK.pulseDataArray;
     }
+    /**
+     * Pulseデータを1件取得する
+     */
+    async getPulseDataWait(timeoutMs) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => reject(new Error('timeout')), timeoutMs ? timeoutMs : 5000);
+            DR_MARK.onsystempulse = (data) => {
+                DR_MARK.onsystempulse = null;
+                this.requestPulseDataWait(false).then(() => resolve(data));
+            };
+            this.requestPulseDataWait(true);
+        });
+    }
     async getCommandResultWait(commandId, data, timeoutMs) {
         return new Promise((resolve, reject) => {
             setTimeout(() => reject(new Error('timeout')), timeoutMs ? timeoutMs : 5000);
@@ -26931,6 +26944,10 @@ class DR_MARK {
             if (DR_MARK.onpulse && typeof DR_MARK.onpulse === 'function') {
                 DR_MARK.onpulse(scanData);
             }
+            if (DR_MARK.onsystempulse &&
+                typeof DR_MARK.onsystempulse === 'function') {
+                DR_MARK.onsystempulse(scanData);
+            }
             console.log('Pulse Data', JSON.stringify(scanData));
         }
     }
@@ -26939,6 +26956,7 @@ exports.default = DR_MARK;
 DR_MARK.onnotify = null;
 DR_MARK.onfinish = null;
 DR_MARK.onpulse = null;
+DR_MARK.onsystempulse = null;
 DR_MARK.callbackArray = [];
 DR_MARK.pulseDataArray = [];
 

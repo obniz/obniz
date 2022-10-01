@@ -123,6 +123,7 @@ export default class DR_MARK implements ObnizPartsBleInterface {
   public static onnotify: ((data: CommandNotifyData) => void) | null = null;
   public static onfinish: (() => void) | null = null;
   public static onpulse: ((pulseData: PulseData) => void) | null = null;
+  private static onsystempulse: ((pulseData: PulseData) => void) | null = null;
   public _peripheral: BleRemotePeripheral | null = null;
   public ondisconnect?: (reason: any) => void;
   public batteryService?: BleBatteryService;
@@ -570,6 +571,23 @@ export default class DR_MARK implements ObnizPartsBleInterface {
     return DR_MARK.pulseDataArray;
   }
 
+  /**
+   * Pulseデータを1件取得する
+   */
+  public async getPulseDataWait(timeoutMs?: number): Promise<PulseData> {
+    return new Promise((resolve, reject) => {
+      setTimeout(
+        () => reject(new Error('timeout')),
+        timeoutMs ? timeoutMs : 5000
+      );
+      DR_MARK.onsystempulse = (data) => {
+        DR_MARK.onsystempulse = null;
+        this.requestPulseDataWait(false).then(() => resolve(data));
+      };
+      this.requestPulseDataWait(true);
+    });
+  }
+
   private async getCommandResultWait(
     commandId: number,
     data?: Uint8Array,
@@ -684,6 +702,12 @@ export default class DR_MARK implements ObnizPartsBleInterface {
       DR_MARK.pulseDataArray.push(scanData);
       if (DR_MARK.onpulse && typeof DR_MARK.onpulse === 'function') {
         DR_MARK.onpulse(scanData);
+      }
+      if (
+        DR_MARK.onsystempulse &&
+        typeof DR_MARK.onsystempulse === 'function'
+      ) {
+        DR_MARK.onsystempulse(scanData);
       }
       console.log('Pulse Data', JSON.stringify(scanData));
     }
