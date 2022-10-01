@@ -692,7 +692,7 @@ export default class DR_MARK implements ObnizPartsBleInterface {
         error: {
           outRange: Boolean(status & 0b01000000),
           changeSetting: Boolean(status & 0b00100000),
-          overSumFlow: Boolean(status & 0b0001000),
+          overSumFlow: Boolean(status & 0b00010000),
           lowInstantFlow: Boolean(status & 0b00001000),
           highInstantFlow: Boolean(status & 0b00000100),
           shutdownBattery: Boolean(status & 0b00000010),
