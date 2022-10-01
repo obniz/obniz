@@ -430,7 +430,7 @@ class DR_MARK {
     }
     async getCommandResultWait(commandId, data, timeoutMs) {
         return new Promise((resolve, reject) => {
-            setTimeout(() => reject(new Error('timeout')), timeoutMs ? timeoutMs : 5000);
+            setTimeout(() => reject(new Error(`timeout command:${commandId}`)), timeoutMs ? timeoutMs : 5000);
             // callbackは0x80を加算する
             this.setCommandCallback(commandId + 0x80, (notifyData) => {
                 this.removeCommandCallback(commandId + 0x80);
@@ -497,20 +497,19 @@ class DR_MARK {
         callback.forEach((value) => value.function(notifyData));
         if (notifyData.commandId === 0xa0) {
             const buffer = Buffer.from(notifyData.data);
-            const pulse_status = buffer.readUInt32LE(4);
-            const status = (pulse_status & 0xf000) >> 24;
+            const status = buffer.readUInt8(7);
             const scanData = {
                 sequenceNumber: buffer.readUInt32LE(0),
-                pulse: pulse_status & 0x0fff,
+                pulse: buffer.readUInt32LE(4) & 0x0fff,
                 status,
                 error: {
-                    outRange: Boolean(status && 0b01000000),
-                    changeSetting: Boolean(status && 0b00100000),
-                    overSumFlow: Boolean(status && 0b0001000),
-                    lowInstantFlow: Boolean(status && 0b00001000),
-                    highInstantFlow: Boolean(status && 0b00000100),
-                    shutdownBattery: Boolean(status && 0b00000010),
-                    lowBattery: Boolean(status && 0b00000001),
+                    outRange: Boolean(status & 0b01000000),
+                    changeSetting: Boolean(status & 0b00100000),
+                    overSumFlow: Boolean(status & 0b0001000),
+                    lowInstantFlow: Boolean(status & 0b00001000),
+                    highInstantFlow: Boolean(status & 0b00000100),
+                    shutdownBattery: Boolean(status & 0b00000010),
+                    lowBattery: Boolean(status & 0b00000001),
                     isError: Boolean(status),
                 },
                 instantFlowRate: buffer.readUInt16LE(8),
