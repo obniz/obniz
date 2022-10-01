@@ -130,8 +130,8 @@ export default class DR_MARK implements ObnizPartsBleInterface {
 
   private _uuids = {
     deviceInfoSystem: '180a',
-    systemId: '2a26',
-    firmwareVersion: '2a23',
+    systemId: '2a23',
+    firmwareVersion: '2a26',
     customService: 'fff0',
     requestChar: 'fff3',
     notifyChar: 'fff4',
@@ -226,7 +226,13 @@ export default class DR_MARK implements ObnizPartsBleInterface {
     if (!char) {
       return null;
     }
-    return char.readTextWait();
+    const data = await char.readWait();
+    return data.reduce(
+      (previousValue, currentValue) =>
+        previousValue +
+        ('00' + currentValue.toString(16).toUpperCase()).slice(-2),
+      ''
+    );
   }
 
   /**

@@ -13,8 +13,8 @@ class DR_MARK {
         this._peripheral = null;
         this._uuids = {
             deviceInfoSystem: '180a',
-            systemId: '2a26',
-            firmwareVersion: '2a23',
+            systemId: '2a23',
+            firmwareVersion: '2a26',
             customService: 'fff0',
             requestChar: 'fff3',
             notifyChar: 'fff4',
@@ -115,7 +115,9 @@ class DR_MARK {
         if (!char) {
             return null;
         }
-        return char.readTextWait();
+        const data = await char.readWait();
+        return data.reduce((previousValue, currentValue) => previousValue +
+            ('00' + currentValue.toString(16).toUpperCase()).slice(-2), '');
     }
     /**
      * Get the FirmwareVersion from the sensor
