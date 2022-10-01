@@ -152,8 +152,10 @@ export default class DR_MARK implements ObnizPartsBleInterface {
     setRtcWait(timeOffsetMinute: number): Promise<void>;
     /**
      * RTC get
+     *
+     * @param timeOffsetMinute 時差を入れる
      */
-    getRtcWait(): Promise<Date>;
+    getRtcWait(timeOffsetMinute: number): Promise<Date>;
     /**
      * 接続確認
      */

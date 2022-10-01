@@ -257,11 +257,24 @@ class DR_MARK {
     }
     /**
      * RTC get
+     *
+     * @param timeOffsetMinute 時差を入れる
      */
-    async getRtcWait() {
+    async getRtcWait(timeOffsetMinute) {
         const data = await this.getCommandResultWait(0x11);
         const buffer = Buffer.from(data.data);
-        return new Date(`${buffer.readUInt16LE(2)}/${buffer.readUInt8(1)}/${buffer.readUInt8(0)} ${buffer.readUInt8(6)}:${buffer.readUInt8(5)}:${buffer.readUInt8(4)}`);
+        const d = String('00000000' + buffer.readUInt32LE(0))
+            .slice(-8)
+            .match(/.{2}/g);
+        const t = String('00000000' + buffer.readUInt32LE(4))
+            .slice(-8)
+            .match(/.{2}/g);
+        if (d === null || t === null) {
+            throw new Error('rtc error');
+        }
+        const date = new Date(`${d[0]}${d[1]}/${d[2]}/${d[3]} ${t[1]}:${t[2]}:${t[3]}`);
+        date.setTime(date.getTime() + 1000 * 60 * timeOffsetMinute);
+        return date;
     }
     /**
      * 接続確認
