@@ -26753,7 +26753,7 @@ class DR_MARK {
      * @param offsetSec 時刻補正(秒) 時刻設定時の遅延時間補正 default 0秒
      */
     async setEngineerSettingWait(movingAverage, lowVoltage, shutdownVoltage, offsetSec) {
-        if (movingAverage < 30 || movingAverage < 0) {
+        if (movingAverage > 30 || movingAverage < 0) {
             throw new Error('movingAverage 0 <= movingAverage <= 30');
         }
         const buf = Buffer.alloc(8);

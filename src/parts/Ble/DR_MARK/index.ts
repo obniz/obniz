@@ -481,7 +481,7 @@ export default class DR_MARK implements ObnizPartsBleInterface {
     shutdownVoltage: number,
     offsetSec: number
   ) {
-    if (movingAverage < 30 || movingAverage < 0) {
+    if (movingAverage > 30 || movingAverage < 0) {
       throw new Error('movingAverage 0 <= movingAverage <= 30');
     }
     const buf = Buffer.alloc(8);
