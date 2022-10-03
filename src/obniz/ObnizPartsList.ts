@@ -43,6 +43,7 @@ import RS_BTEVS1, { RS_BTEVS1Options } from '../parts/Ble/RS_BTEVS1';
 import RS_BTWATTCH2, { RS_BTWATTCH2Options } from '../parts/Ble/RS_BTWATTCH2';
 import RS_Seek3, { RS_Seek3Options } from '../parts/Ble/RS_SEEK3';
 import SCBTGAAAC, { SCBTGAAACOptions } from '../parts/Ble/scbtgaaac';
+import SCBTGABBI, { SCBTGABBIOptions } from '../parts/Ble/scbtgabbi';
 import STM550B, { STM550B_Options } from '../parts/Ble/STM550B';
 import TM530, { TM530Options } from '../parts/Ble/tm530';
 import TM511, { TM511Options } from '../parts/Ble/tm511';
@@ -627,6 +628,7 @@ export interface PartsList {
   Linking: PartsInterface<Linking, LinkingOptions, typeof Linking>;
   uPRISM: PartsInterface<uPRISM, uPRISMOptions, typeof uPRISM>;
   SCBTGAAAC: PartsInterface<SCBTGAAAC, SCBTGAAACOptions, typeof SCBTGAAAC>;
+  SCBTGABBI: PartsInterface<SCBTGABBI, SCBTGABBIOptions, typeof SCBTGABBI>;
   iBS01: PartsInterface<IBS01, iBS01Options, typeof IBS01>;
   iBS01G: PartsInterface<IBS01G, iBS01GOptions, typeof IBS01G>;
   iBS01H: PartsInterface<IBS01H, iBS01HOptions, typeof IBS01H>;
