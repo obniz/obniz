@@ -25,12 +25,6 @@ module.exports = {
     'jsdoc/check-alignment': 'error',
     'jsdoc/check-indentation': 'error',
     'jsdoc/newline-after-description': 'error',
-    'rulesdir/non-ascii': [
-      'error',
-      {
-        allowedChars: '°',
-      },
-    ],
     'rulesdir/async-function-name': ['error'],
     'prefer-arrow/prefer-arrow-functions': 'error',
     eqeqeq: ['error', 'smart'],

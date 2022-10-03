@@ -470,6 +470,7 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     wsOnClose(event) {
         this._print_debug(`closed from remote event=${event}`);
+        this.connectionState = 'closing';
         const beforeOnConnectCalled = this._onConnectCalled;
         this._close();
         this.connectionState = 'closed';
@@ -650,7 +651,7 @@ class ObnizConnection extends eventemitter3_1.default {
                 this.socket_local.close();
             }
             this._clearSocket(this.socket_local);
-            delete this.socket_local;
+            this.socket_local = null;
         }
         this.emit('_localConnectClose');
     }
@@ -670,7 +671,7 @@ class ObnizConnection extends eventemitter3_1.default {
                 this.socket.close(1000, 'close');
             }
             this._clearSocket(this.socket);
-            delete this.socket;
+            this.socket = null;
         }
         if (notify) {
             this.emit('_cloudConnectClose');
@@ -682,7 +683,7 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         /* send queue */
         if (this._sendQueueTimer) {
-            delete this._sendQueue;
+            this._sendQueue = null;
             clearTimeout(this._sendQueueTimer);
             this._sendQueueTimer = null;
         }
@@ -769,7 +770,7 @@ class ObnizConnection extends eventemitter3_1.default {
             filled += this._sendQueue[i].length;
         }
         this._sendRouted(sendData);
-        delete this._sendQueue;
+        this._sendQueue = null;
         if (this._sendQueueTimer) {
             clearTimeout(this._sendQueueTimer);
             this._sendQueueTimer = null;

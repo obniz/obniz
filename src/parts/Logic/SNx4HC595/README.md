@@ -84,7 +84,7 @@ ioext.onece(function(){ // io 4 and 5 will be changed to false state at same tim
 
 ## getIO(io)
 Retriving io object. io object works like a obniz Board io. You can call output().
-Additionaly, you can use this io for io in  [LED](./LED) and [7SegmentLED](./7SegmentLED).
+Additionaly, you can use this io for io in  [LED](../LED/README.md) and [7SegmentLED](../7SegmentLED/README.md).
 
 ```Javascript
 // Javascript Example

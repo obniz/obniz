@@ -71,7 +71,7 @@ class ObnizApi {
         if (params) {
             fetchParams.body = JSON.stringify(params);
         }
-        const res = await node_fetch_1.default(url, fetchParams);
+        const res = await (0, node_fetch_1.default)(url, fetchParams);
         const json = await res.json();
         if (typeof callback === 'function') {
             callback(json);
@@ -94,7 +94,7 @@ class ObnizApi {
             method: 'GET',
             headers,
         };
-        return node_fetch_1.default(url, fetchParams)
+        return (0, node_fetch_1.default)(url, fetchParams)
             .then((res) => {
             return res.json();
         })

@@ -5,13 +5,14 @@
 
 import BleCharacteristic from './bleCharacteristic';
 import BleDescriptor from './bleDescriptor';
+import { Brand } from '../../utils/brand';
 
 /**
  * BLE UUID. Case is ignored. So aa00 and AA00 are the same.
  */
-export type UUID = string;
-export type BleDeviceAddress = string;
-export type Handle = number;
+export type UUID = string; // Brand<string, 'UUID'>;
+export type BleDeviceAddress = Brand<string, 'BleDeviceAddress'>;
+export type Handle = Brand<number, 'BleHandle'>;
 
 export type BleDeviceType = 'ble' | 'dumo' | 'breder';
 export type BleDeviceAddressType =

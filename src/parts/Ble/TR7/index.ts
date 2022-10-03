@@ -76,12 +76,12 @@ export default class TR7 implements ObnizPartsBleInterface {
     if (!temperatureBytes || !humidityBytes) return null;
 
     const rawTemperature =
-      temperatureBytes === [0xee, 0xee] // error
+      temperatureBytes?.[0] === 0xee && temperatureBytes?.[1] === 0xee // error
         ? null
         : Buffer.from(temperatureBytes).readInt16LE(0);
 
     const rawHumidity =
-      humidityBytes === [0xee, 0xee] // error
+      humidityBytes?.[0] === 0xee && humidityBytes?.[1] === 0xee // error
         ? null
         : Buffer.from(humidityBytes).readInt16LE(0);
 
