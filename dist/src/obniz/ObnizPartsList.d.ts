@@ -186,6 +186,8 @@ import MESH_100MD, { MESH_100MDOptions } from '../parts/Ble/MESH_100MD';
 import MESH_100PA, { MESH_100PAOptions } from '../parts/Ble/MESH_100PA';
 import MESH_100TH, { MESH_100THOptions } from '../parts/Ble/MESH_100TH';
 import MESH_100GP, { MESH_100GPOptions } from '../parts/Ble/MESH_100GP';
+import Tr4A, { Tr4AOptions } from '../parts/Ble/TR4A';
+import RTR500B, { RTR500BOptions } from '../parts/Ble/RTR500B';
 export declare type PartsType = keyof PartsList;
 interface PartsInterface<P, O, C extends {
     new (...args: any[]): P;
@@ -335,6 +337,8 @@ export interface PartsList {
     iBS05H: PartsInterface<iBS05H, iBS05HOptions, typeof iBS05H>;
     iBS05G: PartsInterface<IBS05G, iBS05GOptions, typeof IBS05G>;
     TR4: PartsInterface<Tr4, Tr4Options, typeof Tr4>;
+    TR4A: PartsInterface<Tr4A, Tr4AOptions, typeof Tr4A>;
+    RTR500B: PartsInterface<RTR500B, RTR500BOptions, typeof Tr4A>;
     TR7: PartsInterface<TR7, TR7Options, typeof TR7>;
     KankiAirMier: PartsInterface<KankiAirMier, KankiAirMierOptions, typeof KankiAirMier>;
     MINEW_S1: PartsInterface<MINEW_S1, MINEW_S1Options, typeof MINEW_S1>;
