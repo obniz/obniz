@@ -255,7 +255,7 @@ export default class GT_7510 implements ObnizPartsBleInterface {
     return new Promise((resolve) => {
       this._emitter.once('data', () => {
         if (this._buffer.length > 0) {
-          resolve(this._buffer.shift());
+          resolve(this._buffer.shift()!);
         }
       });
     });
