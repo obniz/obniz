@@ -1,0 +1,40 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+
+
+# これらのブランチへのプッシュを禁止する
+prohibited_branches="(master|develop|main)"
+
+while read local_ref local_sha remote_ref remote_sha
+
+echo "local_ref"
+echo local_ref
+
+echo "local_sha"
+echo local_sha
+
+echo "remote_ref"
+echo remote_ref
+
+echo "remote_sha"
+echo remote_sha
+#
+#do
+#    # プッシュ先ブランチ名が正規表現でマッチしたら...
+#    if [[ "$remote_ref" =~ ^.*/$prohibited_branches$ ]]; then
+#        cat <<-EOS
+#        --------------------------------------------------
+#
+#        DO NOT PUSH TO $remote_ref DIRECTLY!
+#
+#        --------------------------------------------------
+#        EOS
+#
+#        # 異常終了（プッシュはされない）
+#        exit 1
+#    fi
+#done
+
+# それ以外のブランチはプッシュする
+exit 1
