@@ -5,61 +5,46 @@
 import WSCommand from './WSCommand';
 
 class WSCommandSystem extends WSCommand {
-  public module: number;
-  public _CommandReboot: number;
-  public _CommandReset: number;
-  public _CommandSelfCheck: number;
-  public _CommandWait: number;
-  public _CommandResetOnDisconnect: number;
-  public _CommandPingPong: number;
-  public _CommandVCC: number;
-  public _CommandSleepSeconds: number;
-  public _CommandSleepMinute: number;
-  public _CommandSleepIoTrigger: number;
+  module = 0;
 
-  constructor() {
-    super();
-    this.module = 0;
+  _CommandReboot = 0;
 
-    this._CommandReboot = 0;
+  _CommandReset = 2;
+  _CommandSelfCheck = 3;
+  _CommandWait = 4;
+  _CommandResetOnDisconnect = 5;
 
-    this._CommandReset = 2;
-    this._CommandSelfCheck = 3;
-    this._CommandWait = 4;
-    this._CommandResetOnDisconnect = 5;
-
-    this._CommandPingPong = 8;
-    this._CommandVCC = 9;
-    this._CommandSleepSeconds = 10;
-    this._CommandSleepMinute = 11;
-    this._CommandSleepIoTrigger = 12;
-  }
+  _CommandPingPong = 8;
+  _CommandVCC = 9;
+  _CommandSleepSeconds = 10;
+  _CommandSleepMinute = 11;
+  _CommandSleepIoTrigger = 12;
 
   // Commands
 
-  public reboot(params: any) {
+  public reboot() {
     this.sendCommand(this._CommandReboot, null);
   }
 
-  public reset(params: any) {
+  public reset() {
     this.sendCommand(this._CommandReset, null);
   }
 
-  public selfCheck(params: any) {
+  public selfCheck() {
     this.sendCommand(this._CommandSelfCheck, null);
   }
 
-  public wait(params: any) {
+  public wait(params: { wait: number }) {
     const msec = params.wait;
     const buf = new Uint8Array([msec >> 8, msec]);
     this.sendCommand(this._CommandWait, buf);
   }
 
-  public keepWorkingAtOffline(params: any) {
+  public keepWorkingAtOffline(params: { keep_working_at_offline: boolean }) {
     this.resetOnDisconnect(!params.keep_working_at_offline);
   }
 
-  public ping(params: any) {
+  public ping(params: { ping: { key: number[] } }) {
     const unixtime = new Date().getTime();
     const buf = new Uint8Array(params.ping.key.length + 8);
     const upper = Math.floor(unixtime / Math.pow(2, 32));
@@ -79,7 +64,7 @@ class WSCommandSystem extends WSCommand {
     this.sendCommand(this._CommandPingPong, buf);
   }
 
-  public resetOnDisconnect(mustReset: any) {
+  public resetOnDisconnect(mustReset: boolean) {
     const buf = new Uint8Array([mustReset ? 1 : 0]);
     this.sendCommand(this._CommandResetOnDisconnect, buf);
   }
@@ -115,19 +100,19 @@ class WSCommandSystem extends WSCommand {
     }
   }
 
-  public pong(objToSend: any, payload: any) {
+  public pong(objToSend: any, payload: Uint8Array) {
     objToSend.system = objToSend.system || {};
     const pongServerTime = new Date().getTime();
 
     if (payload.length >= 16) {
-      payload = Buffer.from(payload);
+      const buf = Buffer.from(payload);
       const obnizTime =
-        payload.readUIntBE(0, 4) * Math.pow(2, 32) + payload.readUIntBE(4, 4);
+        buf.readUIntBE(0, 4) * Math.pow(2, 32) + buf.readUIntBE(4, 4);
       const pingServerTime =
-        payload.readUIntBE(8, 4) * Math.pow(2, 32) + payload.readUIntBE(12, 4);
+        buf.readUIntBE(8, 4) * Math.pow(2, 32) + buf.readUIntBE(12, 4);
       const key = [];
-      for (let i = 16; i < payload.length; i++) {
-        key.push(payload[i]);
+      for (let i = 16; i < buf.length; i++) {
+        key.push(buf.readUInt8(i));
       }
       objToSend.system.pong = {
         key,
@@ -165,26 +150,22 @@ class WSCommandSystem extends WSCommand {
     }
   }
 
-  public sleepSeconds(params: any) {
+  public sleepSeconds(params: { sleep_seconds: number }) {
     const sec = params.sleep_seconds;
     const buf = new Uint8Array([sec >> 8, sec]);
     this.sendCommand(this._CommandSleepSeconds, buf);
   }
 
-  public sleepMinute(params: any) {
+  public sleepMinute(params: { sleep_minute: number }) {
     const minute = params.sleep_minute;
     const buf = new Uint8Array([minute >> 8, minute]);
     this.sendCommand(this._CommandSleepMinute, buf);
   }
 
-  public sleepIoTrigger(params: any) {
-    let trigger = params.sleep_io_trigger;
-    if (trigger === true) {
-      trigger = 1;
-    } else {
-      trigger = 0;
-    }
-    const buf = new Uint8Array([trigger]);
+  public sleepIoTrigger(params: { sleep_io_trigger: boolean }) {
+    const trigger = params.sleep_io_trigger;
+    const triggerNum = trigger === true ? 1 : 0;
+    const buf = new Uint8Array([triggerNum]);
     this.sendCommand(this._CommandSleepIoTrigger, buf);
   }
 }

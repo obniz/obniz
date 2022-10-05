@@ -38,7 +38,7 @@ export default abstract class WSCommand {
     static get CommandClasses(): {
         [key: string]: WSCommandConstructor;
     };
-    get WSCommandNotFoundError(): any;
+    get WSCommandNotFoundError(): typeof WSCommandNotFoundError;
     static addCommandClass(name: string, classObj: WSCommandConstructor): void;
     static framed(module: number, func: number, payload: Uint8Array | null): Uint8Array;
     /**
@@ -48,14 +48,13 @@ export default abstract class WSCommand {
      * @returns chunk
      */
     static dequeueOne(buf: Uint8Array): PayloadChunk | null;
-    static compress(wscommands: WSCommand[], json: {
-        [k: string]: unknown;
-    }): Uint8Array | null;
+    static onCompressed: (data: Uint8Array) => void;
+    static compress(wscommands: WSCommand[], json: any): Uint8Array | null;
     _hw: HW;
     ioNotUsed: number;
     COMMAND_FUNC_ID_ERROR: number;
     abstract module: number;
-    private parsed?;
+    onParsed?: (module: number, func: number, payload: Uint8Array | null) => void;
     constructor();
     setHw(obj: HW): void;
     sendCommand(func: number, payload: Uint8Array | null): void;
@@ -79,5 +78,7 @@ export default abstract class WSCommand {
     onlyTypeErrorMessage(validateError: any, rootPath: any): string | boolean;
     filter(commandUri: any, json: any): any;
     _filterSchema(schema: any, json: any): any;
+}
+declare class WSCommandNotFoundError extends Error {
 }
 export {};

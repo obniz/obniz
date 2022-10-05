@@ -60,7 +60,7 @@ export default abstract class WSCommand {
     return commandClasses;
   }
 
-  get WSCommandNotFoundError(): any {
+  get WSCommandNotFoundError(): typeof WSCommandNotFoundError {
     return WSCommandNotFoundError;
   }
 
@@ -154,9 +154,13 @@ export default abstract class WSCommand {
     };
   }
 
+  public static onCompressed: (data: Uint8Array) => void = () => {
+    // do nothing
+  };
+
   public static compress(
     wscommands: WSCommand[],
-    json: { [k: string]: unknown }
+    json: any
   ): Uint8Array | null {
     let ret: Uint8Array | null = null;
 
@@ -177,8 +181,11 @@ export default abstract class WSCommand {
     };
 
     for (const wscommand of wscommands) {
-      wscommand.parsed = append;
+      wscommand.onParsed = append;
       wscommand.parseFromJson(json);
+    }
+    if (ret) {
+      this.onCompressed(ret);
     }
     return ret;
   }
@@ -188,7 +195,7 @@ export default abstract class WSCommand {
   public COMMAND_FUNC_ID_ERROR: number;
 
   public abstract module: number;
-  private parsed?: (
+  public onParsed?: (
     module: number,
     func: number,
     payload: Uint8Array | null
@@ -211,8 +218,8 @@ export default abstract class WSCommand {
 
   // This function does NOT send command to websocket. Just doing creating frame and append it to some variable.
   public sendCommand(func: number, payload: Uint8Array | null): void {
-    if (this.parsed) {
-      this.parsed(this.module, func, payload);
+    if (this.onParsed) {
+      this.onParsed(this.module, func, payload);
     }
   }
 

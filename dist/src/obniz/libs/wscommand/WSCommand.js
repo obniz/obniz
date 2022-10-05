@@ -122,8 +122,11 @@ class WSCommand {
             }
         };
         for (const wscommand of wscommands) {
-            wscommand.parsed = append;
+            wscommand.onParsed = append;
             wscommand.parseFromJson(json);
+        }
+        if (ret) {
+            this.onCompressed(ret);
         }
         return ret;
     }
@@ -132,8 +135,8 @@ class WSCommand {
     }
     // This function does NOT send command to websocket. Just doing creating frame and append it to some variable.
     sendCommand(func, payload) {
-        if (this.parsed) {
-            this.parsed(this.module, func, payload);
+        if (this.onParsed) {
+            this.onParsed(this.module, func, payload);
         }
     }
     parseFromJson(json) {
@@ -297,6 +300,9 @@ class WSCommand {
     }
 }
 exports.default = WSCommand;
+WSCommand.onCompressed = () => {
+    // do nothing
+};
 /* eslint max-classes-per-file: 0 */
 class WSCommandNotFoundError extends Error {
 }
