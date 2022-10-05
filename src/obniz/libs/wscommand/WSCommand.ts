@@ -424,6 +424,10 @@ export default abstract class WSCommand {
 
     throw Error('unknown json schema type');
   }
+
+  isWSRoomOnlyCommand(func: number, payload: Uint8Array) {
+    return false;
+  }
 }
 
 /* eslint max-classes-per-file: 0 */

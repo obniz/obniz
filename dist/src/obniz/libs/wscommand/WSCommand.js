@@ -298,6 +298,9 @@ class WSCommand {
         }
         throw Error('unknown json schema type');
     }
+    isWSRoomOnlyCommand(func, payload) {
+        return false;
+    }
 }
 exports.default = WSCommand;
 WSCommand.onCompressed = () => {

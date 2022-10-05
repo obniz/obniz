@@ -20,6 +20,7 @@ import WSCommandTcp from './WSCommandTcp';
 import WSCommandUart from './WSCommandUart';
 import WSCommandWiFi from './WSCommandWiFi';
 import WSCommandStorage from './WSCommandStorage';
+import WSCommandSubnet from './WSCommandSubnet';
 
 /* eslint-disable */
 WSCommand.addCommandClass("WSCommandSystem", WSCommandSystem);
@@ -39,5 +40,6 @@ WSCommand.addCommandClass("WSCommandTcp", WSCommandTcp);
 WSCommand.addCommandClass("WSCommandWiFi", WSCommandWiFi);
 WSCommand.addCommandClass("WSCommandPlugin", WSCommandPlugin);
 WSCommand.addCommandClass("WSCommandStorage", WSCommandStorage);
+WSCommand.addCommandClass("WSCommandSubnet", WSCommandSubnet);
 
 export default WSCommand;

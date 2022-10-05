@@ -78,6 +78,7 @@ export default abstract class WSCommand {
     onlyTypeErrorMessage(validateError: any, rootPath: any): string | boolean;
     filter(commandUri: any, json: any): any;
     _filterSchema(schema: any, json: any): any;
+    isWSRoomOnlyCommand(func: number, payload: Uint8Array): boolean;
 }
 declare class WSCommandNotFoundError extends Error {
 }

@@ -25,6 +25,7 @@ const WSCommandTcp_1 = __importDefault(require("./WSCommandTcp"));
 const WSCommandUart_1 = __importDefault(require("./WSCommandUart"));
 const WSCommandWiFi_1 = __importDefault(require("./WSCommandWiFi"));
 const WSCommandStorage_1 = __importDefault(require("./WSCommandStorage"));
+const WSCommandSubnet_1 = __importDefault(require("./WSCommandSubnet"));
 /* eslint-disable */
 WSCommand_1.default.addCommandClass("WSCommandSystem", WSCommandSystem_1.default);
 WSCommand_1.default.addCommandClass("WSCommandDirective", WSCommandDirective_1.default);
@@ -43,4 +44,5 @@ WSCommand_1.default.addCommandClass("WSCommandTcp", WSCommandTcp_1.default);
 WSCommand_1.default.addCommandClass("WSCommandWiFi", WSCommandWiFi_1.default);
 WSCommand_1.default.addCommandClass("WSCommandPlugin", WSCommandPlugin_1.default);
 WSCommand_1.default.addCommandClass("WSCommandStorage", WSCommandStorage_1.default);
+WSCommand_1.default.addCommandClass("WSCommandSubnet", WSCommandSubnet_1.default);
 exports.default = WSCommand_1.default;
