@@ -10,7 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const WSCommand_1 = __importDefault(require("./WSCommand"));
 class WSCommandSystem extends WSCommand_1.default {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 0;
         this._CommandReboot = 0;
         this._CommandReset = 2;
@@ -24,13 +24,13 @@ class WSCommandSystem extends WSCommand_1.default {
         this._CommandSleepIoTrigger = 12;
     }
     // Commands
-    reboot(params) {
+    reboot() {
         this.sendCommand(this._CommandReboot, null);
     }
-    reset(params) {
+    reset() {
         this.sendCommand(this._CommandReset, null);
     }
-    selfCheck(params) {
+    selfCheck() {
         this.sendCommand(this._CommandSelfCheck, null);
     }
     wait(params) {
@@ -96,12 +96,12 @@ class WSCommandSystem extends WSCommand_1.default {
         objToSend.system = objToSend.system || {};
         const pongServerTime = new Date().getTime();
         if (payload.length >= 16) {
-            payload = Buffer.from(payload);
-            const obnizTime = payload.readUIntBE(0, 4) * Math.pow(2, 32) + payload.readUIntBE(4, 4);
-            const pingServerTime = payload.readUIntBE(8, 4) * Math.pow(2, 32) + payload.readUIntBE(12, 4);
+            const buf = Buffer.from(payload);
+            const obnizTime = buf.readUIntBE(0, 4) * Math.pow(2, 32) + buf.readUIntBE(4, 4);
+            const pingServerTime = buf.readUIntBE(8, 4) * Math.pow(2, 32) + buf.readUIntBE(12, 4);
             const key = [];
-            for (let i = 16; i < payload.length; i++) {
-                key.push(payload[i]);
+            for (let i = 16; i < buf.length; i++) {
+                key.push(buf.readUInt8(i));
             }
             objToSend.system.pong = {
                 key,
@@ -146,14 +146,9 @@ class WSCommandSystem extends WSCommand_1.default {
         this.sendCommand(this._CommandSleepMinute, buf);
     }
     sleepIoTrigger(params) {
-        let trigger = params.sleep_io_trigger;
-        if (trigger === true) {
-            trigger = 1;
-        }
-        else {
-            trigger = 0;
-        }
-        const buf = new Uint8Array([trigger]);
+        const trigger = params.sleep_io_trigger;
+        const triggerNum = trigger === true ? 1 : 0;
+        const buf = new Uint8Array([triggerNum]);
         this.sendCommand(this._CommandSleepIoTrigger, buf);
     }
 }
