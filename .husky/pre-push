@@ -1,40 +1,25 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+remote="$1"
+url="$2"
+
+echo "checking remote url... $url"
 
 
-# これらのブランチへのプッシュを禁止する
-prohibited_branches="(master|develop|main)"
+if [[ "$url" =~ ^.*(obnizjs-for-admin).*$ ]]; then
 
-while read local_ref local_sha remote_ref remote_sha
+    # プッシュする
+    exit 0
+fi
+cat <<-EOS
+    --------------------------------------------------
 
-echo "local_ref"
-echo local_ref
+    DO NOT PUSH TO $url. It's maybe obnizjs-for-admin script.
 
-echo "local_sha"
-echo local_sha
+    --------------------------------------------------
+EOS
 
-echo "remote_ref"
-echo remote_ref
-
-echo "remote_sha"
-echo remote_sha
-#
-#do
-#    # プッシュ先ブランチ名が正規表現でマッチしたら...
-#    if [[ "$remote_ref" =~ ^.*/$prohibited_branches$ ]]; then
-#        cat <<-EOS
-#        --------------------------------------------------
-#
-#        DO NOT PUSH TO $remote_ref DIRECTLY!
-#
-#        --------------------------------------------------
-#        EOS
-#
-#        # 異常終了（プッシュはされない）
-#        exit 1
-#    fi
-#done
-
-# それ以外のブランチはプッシュする
+# 異常終了（プッシュはされない）
 exit 1
+
