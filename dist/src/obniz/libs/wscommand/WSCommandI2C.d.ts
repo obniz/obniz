@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
-declare class WSCommandI2C extends WSCommand {
+import { WSCommand } from './WSCommand';
+export declare class WSCommandI2C extends WSCommand {
     module: number;
     _CommandInit: number;
     _CommandDeinit: number;
@@ -19,4 +19,3 @@ declare class WSCommandI2C extends WSCommand {
     parseFromJson(json: any): void;
     notifyFromBinary(objToSend: any, func: number, payload: Uint8Array): void;
 }
-export default WSCommandI2C;

@@ -4,8 +4,9 @@
  */
 
 import Obniz from '../../../obniz';
-import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
-import ObnizPartsInterface, {
+import { PeripheralIO } from '../../../obniz/libs/io_peripherals/io';
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 import LED from '../../Light/LED';

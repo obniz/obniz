@@ -10,7 +10,7 @@ import Obniz from '../../index';
  * received data
  */
 declare type PluginReceiveCallbackFunction = (data: number[], str: string | null) => void;
-export default class Plugin {
+export declare class Plugin {
     /**
      * Callback function is called when Plugin is received.
      *

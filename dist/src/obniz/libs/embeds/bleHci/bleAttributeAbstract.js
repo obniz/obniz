@@ -9,7 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const ObnizError_1 = require("../../../ObnizError");
-const util_1 = __importDefault(require("../../utils/util"));
+const util_1 = require("../../utils/util");
 const bleHelper_1 = __importDefault(require("./bleHelper"));
 class BleAttributeAbstract {
     constructor(params) {
@@ -20,7 +20,7 @@ class BleAttributeAbstract {
         this.discoverdOnRemote = false;
         this.data = params.data || null;
         if (!this.data && params.text) {
-            this.data = util_1.default.string2dataArray(params.text);
+            this.data = util_1.ObnizUtil.string2dataArray(params.text);
         }
         if (!this.data && params.value) {
             this.data = [params.value];
@@ -102,7 +102,7 @@ class BleAttributeAbstract {
      */
     async readTextWait() {
         const data = await this.readWait();
-        return util_1.default.dataArray2string(data);
+        return util_1.ObnizUtil.dataArray2string(data);
     }
     /**
      * @ignore
@@ -124,7 +124,7 @@ class BleAttributeAbstract {
      * @ignore
      */
     async writeTextWait(str, needResponse) {
-        return await this.writeWait(util_1.default.string2dataArray(str), needResponse);
+        return await this.writeWait(util_1.ObnizUtil.string2dataArray(str), needResponse);
     }
     /**
      * Use writeNumberWait() instead from 3.5.0

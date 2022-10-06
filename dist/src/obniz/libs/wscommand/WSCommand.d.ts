@@ -33,7 +33,7 @@ interface HW {
      */
     firmware: string | undefined;
 }
-export default abstract class WSCommand {
+export declare abstract class WSCommand {
     static get schema(): any;
     static get CommandClasses(): {
         [key: string]: WSCommandConstructor;

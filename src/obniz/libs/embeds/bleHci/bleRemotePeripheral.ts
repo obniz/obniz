@@ -5,7 +5,7 @@
 
 import EventEmitter from 'eventemitter3';
 import { ObnizTimeoutError } from '../../../ObnizError';
-import ObnizBLE from './ble';
+import { ObnizBLE } from './ble';
 import BleHelper from './bleHelper';
 import BleRemoteCharacteristic from './bleRemoteCharacteristic';
 import BleRemoteService from './bleRemoteService';

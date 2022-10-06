@@ -1,5 +1,5 @@
-import WSCommand from './WSCommand';
-declare class WSCommandBle extends WSCommand {
+import { WSCommand } from './WSCommand';
+export declare class WSCommandBle extends WSCommand {
     module: number;
     uuidLength: number;
     _CommandSetAdvData: number;
@@ -109,4 +109,3 @@ declare class WSCommandBle extends WSCommand {
     notifyFromBinaryError(objToSend: any, payload?: any): void;
     _addRowForPath(sendObj: any, path: any, row: any): void;
 }
-export default WSCommandBle;

@@ -3,7 +3,7 @@
  * @module ObnizCore
  */
 
-import ObnizUtil from './libs/utils/util';
+import { ObnizUtil } from './libs/utils/util';
 import { ObnizErrorMessage } from './ObnizConnection';
 import { ObnizOptions } from './ObnizOptions';
 import ObnizUIs from './ObnizUIs';

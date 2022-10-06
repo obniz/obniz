@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
-declare class WSCommandUart extends WSCommand {
+import { WSCommand } from './WSCommand';
+export declare class WSCommandUart extends WSCommand {
     module: number;
     _CommandInit: number;
     _CommandDeinit: number;
@@ -16,4 +16,3 @@ declare class WSCommandUart extends WSCommand {
     parseFromJson(json: any): void;
     notifyFromBinary(objToSend: any, func: number, payload: Uint8Array): void;
 }
-export default WSCommandUart;

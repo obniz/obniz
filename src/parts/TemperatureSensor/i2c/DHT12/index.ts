@@ -3,7 +3,8 @@
  * @module Parts.DHT12
  */
 
-import ObnizPartsInterface, {
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../../obniz/ObnizPartsInterface';
 import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from '../../../i2cParts';

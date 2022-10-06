@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @ignore
  */
-declare class JsonBinaryConverter {
+export declare class JsonBinaryConverter {
     static convertFromBinaryToJson(schema: any, binary: any): any;
     static hexFromBinary(data: any, schema?: any): any;
     static uuidFromBinary(data: any): any;
@@ -23,4 +23,3 @@ declare class JsonBinaryConverter {
     static flagToBinary(data: any, schema?: any): any;
     static stringToBinary(data: any): Uint8Array;
 }
-export default JsonBinaryConverter;

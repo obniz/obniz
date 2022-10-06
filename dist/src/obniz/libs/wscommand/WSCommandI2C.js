@@ -1,14 +1,12 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandI2C = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __importDefault(require("./WSCommand"));
-class WSCommandI2C extends WSCommand_1.default {
+const WSCommand_1 = require("./WSCommand");
+class WSCommandI2C extends WSCommand_1.WSCommand {
     constructor() {
         super();
         this.module = 6;
@@ -172,4 +170,4 @@ class WSCommandI2C extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandI2C;
+exports.WSCommandI2C = WSCommandI2C;

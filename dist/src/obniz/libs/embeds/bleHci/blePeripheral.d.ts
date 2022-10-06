@@ -1,4 +1,4 @@
-import ObnizBLE from './ble';
+import { ObnizBLE } from './ble';
 import BleService from './bleService';
 import { BleDeviceAddress, BleServiceDefine, UUID } from './bleTypes';
 export declare type BleConnectionState = 'connected' | 'disconnected';

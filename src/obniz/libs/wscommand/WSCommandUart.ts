@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
+import { WSCommand } from './WSCommand';
 
-class WSCommandUart extends WSCommand {
+export class WSCommandUart extends WSCommand {
   public module: number;
   public _CommandInit: number;
   public _CommandDeinit: number;
@@ -125,5 +125,3 @@ class WSCommandUart extends WSCommand {
     }
   }
 }
-
-export default WSCommandUart;

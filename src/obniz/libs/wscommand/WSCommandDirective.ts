@@ -3,12 +3,12 @@
  * @ignore
  */
 import semver = require('semver');
-import ObnizUtil from '../utils/util';
-import WSCommand from './WSCommand';
-import CommandIO from './WSCommandIO';
-import CommandPWM from './WSCommandPWM';
+import { ObnizUtil } from '../utils/util';
+import { WSCommand } from './WSCommand';
+import { WSCommandIO } from './WSCommandIO';
+import { WSCommandPWM } from './WSCommandPWM';
 
-export default class WSCommandDirective extends WSCommand {
+export class WSCommandDirective extends WSCommand {
   public availableCommands: any[];
 
   public module: number;
@@ -26,7 +26,7 @@ export default class WSCommandDirective extends WSCommand {
     this._CommandResume = 2;
     this._CommandNotify = 3;
 
-    this.availableCommands = [new CommandIO(), new CommandPWM()];
+    this.availableCommands = [new WSCommandIO(), new WSCommandPWM()];
   }
 
   // Commands

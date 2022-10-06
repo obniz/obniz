@@ -2,10 +2,10 @@
  * @packageDocumentation
  * @ignore
  */
-import JsonBinaryConverter from './jsonBinaryConverter';
-import WSCommand from './WSCommand';
+import { JsonBinaryConverter } from './jsonBinaryConverter';
+import { WSCommand } from './WSCommand';
 
-class WSCommandWiFi extends WSCommand {
+export class WSCommandWiFi extends WSCommand {
   public module: number;
   public _CommandScan: number;
 
@@ -97,5 +97,3 @@ class WSCommandWiFi extends WSCommand {
     }
   }
 }
-
-export default WSCommandWiFi;

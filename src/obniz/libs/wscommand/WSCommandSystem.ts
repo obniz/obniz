@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
+import { WSCommand } from './WSCommand';
 
-class WSCommandSystem extends WSCommand {
+export class WSCommandSystem extends WSCommand {
   public module: number;
   public _CommandReboot: number;
   public _CommandReset: number;
@@ -188,5 +188,3 @@ class WSCommandSystem extends WSCommand {
     this.sendCommand(this._CommandSleepIoTrigger, buf);
   }
 }
-
-export default WSCommandSystem;

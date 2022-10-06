@@ -4,7 +4,7 @@
  */
 import EventEmitter from 'eventemitter3';
 import { ObnizDeprecatedFunctionError } from '../../../ObnizError';
-import ObnizUtil from '../../utils/util';
+import { ObnizUtil } from '../../utils/util';
 import BleHelper from './bleHelper';
 import { BleDeviceAddress, UUID } from './bleTypes';
 

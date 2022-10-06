@@ -7,17 +7,17 @@ import ObnizDevice from '../../ObnizDevice';
 
 import Button from '../../../parts/MovementSensor/Button';
 
-import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
-import IO from '../../../obniz/libs/io_peripherals/io';
-import ObnizBLEHci from '../embeds/bleHci/ble';
-import Display from '../embeds/display';
-import PeripheralAD from '../io_peripherals/ad';
-import PeripheralGrove from '../io_peripherals/grove';
-import PeripheralPWM from '../io_peripherals/pwm';
-import PeripheralSPI from '../io_peripherals/spi';
-import PeripheralUART from '../io_peripherals/uart';
-import LogicAnalyzer from '../measurements/logicanalyzer';
-import ObnizMeasure from '../measurements/measure';
+import { PeripheralI2C } from '../../../obniz/libs/io_peripherals/i2c';
+import { PeripheralIO as IO } from '../../../obniz/libs/io_peripherals/io';
+import { ObnizBLE } from '../embeds/bleHci/ble';
+import { Display } from '../embeds/display';
+import { PeripheralAD } from '../io_peripherals/ad';
+import { PeripheralGrove } from '../io_peripherals/grove';
+import { PeripheralPWM } from '../io_peripherals/pwm';
+import { PeripheralSPI } from '../io_peripherals/spi';
+import { PeripheralUART } from '../io_peripherals/uart';
+import { LogicAnalyzer } from '../measurements/logicanalyzer';
+import { ObnizMeasure } from '../measurements/measure';
 
 export class M5StackBasic extends ObnizDevice {
   /**
@@ -315,7 +315,7 @@ export class M5StackBasic extends ObnizDevice {
    *
    * @category Embeds
    */
-  public ble!: ObnizBLEHci;
+  public ble!: ObnizBLE;
 
   protected io32!: IO; // LCD
   protected io33!: IO; // LCD

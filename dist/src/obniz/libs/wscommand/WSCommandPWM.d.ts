@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
-declare class WSCommandPWM extends WSCommand {
+import { WSCommand } from './WSCommand';
+export declare class WSCommandPWM extends WSCommand {
     module: number;
     ModuleNum: number;
     _CommandInit: number;
@@ -21,4 +21,3 @@ declare class WSCommandPWM extends WSCommand {
     amModulate(params: any, module: any): void;
     parseFromJson(json: any): void;
 }
-export default WSCommandPWM;

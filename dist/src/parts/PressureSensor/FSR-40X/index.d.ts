@@ -3,7 +3,7 @@
  * @module Parts.FSR40X
  */
 import Obniz from '../../../obniz';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface FSR40XOptions {
     pin0: number;
     pin1: number;

@@ -282,7 +282,7 @@ import iBS03T_RH, { iBS03T_RHOptions } from '../parts/Ble/iBS03T_RH';
 import iBS05H, { iBS05HOptions } from '../parts/Ble/iBS05H';
 import UC421BLE, { UC421BLEOptions } from '../parts/Ble/UC421BLE';
 import ObnizPartsBleInterface from './ObnizPartsBleInterface';
-import ObnizPartsInterface from './ObnizPartsInterface';
+import { ObnizPartsInterface } from './ObnizPartsInterface';
 import TR7, { TR7Options } from '../parts/Ble/TR7';
 import MM_BLEBC5, { MM_BLEBC5_Options } from '../parts/Ble/MM_BLEBC5';
 import MESH_100BU, { MESH_100BUOptions } from '../parts/Ble/MESH_100BU';

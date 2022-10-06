@@ -6,7 +6,7 @@
 
 import Obniz from '../../../obniz';
 import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizUtil from '../../../obniz/libs/utils/util';
+import { ObnizUtil } from '../../../obniz/libs/utils/util';
 import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
 
 /**

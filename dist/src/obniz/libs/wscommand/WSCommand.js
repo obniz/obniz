@@ -7,6 +7,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommand = void 0;
 const WSSchema_1 = __importDefault(require("./WSSchema"));
 const commandClasses = {};
 class WSCommand {
@@ -295,7 +296,7 @@ class WSCommand {
         throw Error('unknown json schema type');
     }
 }
-exports.default = WSCommand;
+exports.WSCommand = WSCommand;
 /* eslint max-classes-per-file: 0 */
 class WSCommandNotFoundError extends Error {
 }

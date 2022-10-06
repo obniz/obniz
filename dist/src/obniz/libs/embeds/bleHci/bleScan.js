@@ -11,7 +11,7 @@ const assert_1 = require("assert");
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const semver_1 = __importDefault(require("semver"));
 const ObnizError_1 = require("../../../ObnizError");
-const util_1 = __importDefault(require("../../utils/util"));
+const util_1 = require("../../utils/util");
 const bleHelper_1 = __importDefault(require("./bleHelper"));
 /**
  * @category Use as Central
@@ -353,14 +353,14 @@ class BleScan {
                         index: 9,
                         length: 255,
                     },
-                    value: [0x08, ...util_1.default.string2dataArray(filterVal.localNamePrefix)],
+                    value: [0x08, ...util_1.ObnizUtil.string2dataArray(filterVal.localNamePrefix)],
                 });
                 filters.push({
                     range: {
                         index: 9,
                         length: 255,
                     },
-                    value: [0x09, ...util_1.default.string2dataArray(filterVal.localNamePrefix)],
+                    value: [0x09, ...util_1.ObnizUtil.string2dataArray(filterVal.localNamePrefix)],
                 });
             }
             if (filterVal.deviceAddress) {
@@ -369,11 +369,11 @@ class BleScan {
                         index: 2,
                         length: 6,
                     },
-                    value: util_1.default.hexToBinary(filterVal.deviceAddress, true),
+                    value: util_1.ObnizUtil.hexToBinary(filterVal.deviceAddress, true),
                 });
             }
             if (filterVal.uuid) {
-                const binary = util_1.default.hexToBinary(filterVal.uuid, true);
+                const binary = util_1.ObnizUtil.hexToBinary(filterVal.uuid, true);
                 filters.push({
                     range: {
                         index: 9,

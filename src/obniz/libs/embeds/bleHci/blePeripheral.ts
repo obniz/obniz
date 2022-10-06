@@ -3,7 +3,7 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 import { ObnizOfflineError } from '../../../ObnizError';
-import ObnizBLE from './ble';
+import { ObnizBLE } from './ble';
 import BleHelper from './bleHelper';
 import BleService from './bleService';
 import { BleDeviceAddress, BleServiceDefine, UUID } from './bleTypes';

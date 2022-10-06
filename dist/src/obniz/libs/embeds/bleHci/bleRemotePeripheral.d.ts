@@ -3,7 +3,7 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 import EventEmitter from 'eventemitter3';
-import ObnizBLE from './ble';
+import { ObnizBLE } from './ble';
 import BleRemoteCharacteristic from './bleRemoteCharacteristic';
 import BleRemoteService from './bleRemoteService';
 import { BleDeviceAddress, BleDeviceAddressType, BleDeviceType, BleEventType, UUID } from './bleTypes';

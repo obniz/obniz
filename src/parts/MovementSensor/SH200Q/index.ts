@@ -5,7 +5,8 @@
 import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from '../../i2cParts';
 
 import Obniz from '../../../obniz';
-import ObnizPartsInterface, {
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 import I2cImu6, { accelRange, gyroRange, Inertia6, Xyz } from '../../i2cImu6';

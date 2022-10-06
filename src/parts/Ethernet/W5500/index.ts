@@ -7,9 +7,10 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import Obniz from '../../../obniz';
-import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
-import PeripheralSPI from '../../../obniz/libs/io_peripherals/spi';
-import ObnizPartsInterface, {
+import { PeripheralIO } from '../../../obniz/libs/io_peripherals/io';
+import { PeripheralSPI } from '../../../obniz/libs/io_peripherals/spi';
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 

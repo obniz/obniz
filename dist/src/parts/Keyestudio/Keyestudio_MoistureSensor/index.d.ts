@@ -3,7 +3,7 @@
  * @module Parts.Keyestudio_MoistureSensor
  */
 import Obniz from '../../../obniz';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface Keyestudio_MoistureSensorOptions {
     vcc?: number;
     signal: number;

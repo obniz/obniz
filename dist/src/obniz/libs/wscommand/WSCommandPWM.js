@@ -1,14 +1,12 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandPWM = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __importDefault(require("./WSCommand"));
-class WSCommandPWM extends WSCommand_1.default {
+const WSCommand_1 = require("./WSCommand");
+class WSCommandPWM extends WSCommand_1.WSCommand {
     constructor() {
         super();
         this.module = 3;
@@ -107,4 +105,4 @@ class WSCommandPWM extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandPWM;
+exports.WSCommandPWM = WSCommandPWM;

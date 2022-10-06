@@ -4,6 +4,7 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ObnizBLEHci = void 0;
 const ObnizError_1 = require("../../../ObnizError");
 class ObnizBLEHci {
     constructor(Obniz, extended) {
@@ -221,4 +222,4 @@ class ObnizBLEHci {
         return JSON.parse(str);
     }
 }
-exports.default = ObnizBLEHci;
+exports.ObnizBLEHci = ObnizBLEHci;

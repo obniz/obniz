@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import ObnizBLE from './ble';
+import { ObnizBLE } from './ble';
 import BleAdvertisementBuilder from './bleAdvertisementBuilder';
 import { BleAdvertisementData, BleExtendedAdvertisementMode, BleScanResponseData } from './bleTypes';
 import BleAdvertisement from './bleAdvertisement';

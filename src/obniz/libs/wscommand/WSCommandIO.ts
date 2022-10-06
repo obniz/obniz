@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
+import { WSCommand } from './WSCommand';
 
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH = 1;
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW = 2;
@@ -29,7 +29,7 @@ const COMMAND_IO_MUTEX_NAMES: any = {
   8: 'Measure',
 };
 
-class WSCommandIO extends WSCommand {
+export class WSCommandIO extends WSCommand {
   public module: number;
   public _CommandOutput: number;
   public _CommandInputStream: number;
@@ -180,5 +180,3 @@ class WSCommandIO extends WSCommand {
     }
   }
 }
-
-export default WSCommandIO;

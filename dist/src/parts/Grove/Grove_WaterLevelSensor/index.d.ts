@@ -3,8 +3,8 @@
  * @module Parts.Grove_WaterLevelSensor
  */
 import Obniz from '../../../obniz';
-import PeripheralGrove from '../../../obniz/libs/io_peripherals/grove';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { PeripheralGrove } from '../../../obniz/libs/io_peripherals/grove';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface Grove_WaterLevelSensorOptionsA {
     gnd?: number;
     vcc?: number;

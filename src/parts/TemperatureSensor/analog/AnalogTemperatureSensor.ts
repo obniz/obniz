@@ -3,9 +3,10 @@
  * @module Parts.AnalogTemperatureSensor
  */
 import Obniz from '../../../obniz';
-import PeripheralAD from '../../../obniz/libs/io_peripherals/ad';
+import { PeripheralAD } from '../../../obniz/libs/io_peripherals/ad';
 
-import ObnizPartsInterface, {
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 

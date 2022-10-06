@@ -7,7 +7,7 @@ import { Obniz } from './Obniz';
 import ObnizConnection from './ObnizConnection';
 import { ObnizOptions } from './ObnizOptions';
 import { ObnizPartsBle } from './ObnizPartsBleAbstract';
-import ObnizPartsInterface from './ObnizPartsInterface';
+import { ObnizPartsInterface } from './ObnizPartsInterface';
 import { PartsList, PartsType } from './ObnizPartsList';
 import PartsClass = Obniz.PartsClass;
 import Parts = Obniz.Parts;

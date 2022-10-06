@@ -2028,25 +2028,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const ble_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/ble.js"));
-const display_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/display.js"));
-const switch_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/switch.js"));
-const ad_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/io_peripherals/ad.js"));
-const directive_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/io_peripherals/directive.js"));
-const i2c_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/io_peripherals/i2c.js"));
-const io_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/io_peripherals/io.js"));
-const pwm_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/io_peripherals/pwm.js"));
-const spi_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/io_peripherals/spi.js"));
-const uart_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/io_peripherals/uart.js"));
-const logicanalyzer_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/measurements/logicanalyzer.js"));
-const measure_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/measurements/measure.js"));
-const wifi_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/network/wifi.js"));
-const plugin_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/plugin/plugin.js"));
-const tcp_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/protocol/tcp.js"));
+const ble_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/ble.js");
+const display_1 = __webpack_require__("./dist/src/obniz/libs/embeds/display.js");
+const switch_1 = __webpack_require__("./dist/src/obniz/libs/embeds/switch.js");
+const ad_1 = __webpack_require__("./dist/src/obniz/libs/io_peripherals/ad.js");
+const directive_1 = __webpack_require__("./dist/src/obniz/libs/io_peripherals/directive.js");
+const i2c_1 = __webpack_require__("./dist/src/obniz/libs/io_peripherals/i2c.js");
+const io_1 = __webpack_require__("./dist/src/obniz/libs/io_peripherals/io.js");
+const pwm_1 = __webpack_require__("./dist/src/obniz/libs/io_peripherals/pwm.js");
+const spi_1 = __webpack_require__("./dist/src/obniz/libs/io_peripherals/spi.js");
+const uart_1 = __webpack_require__("./dist/src/obniz/libs/io_peripherals/uart.js");
+const logicanalyzer_1 = __webpack_require__("./dist/src/obniz/libs/measurements/logicanalyzer.js");
+const measure_1 = __webpack_require__("./dist/src/obniz/libs/measurements/measure.js");
+const wifi_1 = __webpack_require__("./dist/src/obniz/libs/network/wifi.js");
+const plugin_1 = __webpack_require__("./dist/src/obniz/libs/plugin/plugin.js");
+const tcp_1 = __webpack_require__("./dist/src/obniz/libs/protocol/tcp.js");
 const ObnizParts_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizParts.js"));
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 const hw_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/hw/index.js"));
-const grove_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/io_peripherals/grove.js"));
+const grove_1 = __webpack_require__("./dist/src/obniz/libs/io_peripherals/grove.js");
 class ObnizComponents extends ObnizParts_1.default {
     constructor(id, options) {
         super(id, options);
@@ -2194,31 +2194,31 @@ class ObnizComponents extends ObnizParts_1.default {
         const hw_protocol = this._hwDefinition.protocol;
         const hw_network = this._hwDefinition.network;
         const shared_map = {
-            io: directive_1.default,
-            logicAnalyzer: logicanalyzer_1.default,
-            measure: measure_1.default,
-            plugin: plugin_1.default,
+            io: directive_1.Directive,
+            logicAnalyzer: logicanalyzer_1.LogicAnalyzer,
+            measure: measure_1.ObnizMeasure,
+            plugin: plugin_1.Plugin,
         };
         const peripheral_map = {
-            io: io_1.default,
-            ad: ad_1.default,
-            uart: uart_1.default,
-            spi: spi_1.default,
-            i2c: i2c_1.default,
-            pwm: pwm_1.default,
-            grove: grove_1.default,
+            io: io_1.PeripheralIO,
+            ad: ad_1.PeripheralAD,
+            uart: uart_1.PeripheralUART,
+            spi: spi_1.PeripheralSPI,
+            i2c: i2c_1.PeripheralI2C,
+            pwm: pwm_1.PeripheralPWM,
+            grove: grove_1.PeripheralGrove,
         };
-        const ble = ble_1.default;
+        const ble = ble_1.ObnizBLE;
         const embeds_map = {
-            display: display_1.default,
-            switch: switch_1.default,
+            display: display_1.Display,
+            switch: switch_1.ObnizSwitch,
             ble,
         };
         const protocol_map = {
-            tcp: tcp_1.default,
+            tcp: tcp_1.Tcp,
         };
         const network_map = {
-            wifi: wifi_1.default,
+            wifi: wifi_1.WiFi,
         };
         for (const key in shared_map) {
             const Class = shared_map[key];
@@ -3438,7 +3438,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+const util_1 = __webpack_require__("./dist/src/obniz/libs/utils/util.js");
 const ObnizUIs_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizUIs.js"));
 class ObnizDevice extends ObnizUIs_1.default {
     /**
@@ -3484,7 +3484,7 @@ class ObnizDevice extends ObnizUIs_1.default {
      */
     constructor(id, options) {
         super(id, options);
-        this.util = new util_1.default(this);
+        this.util = new util_1.ObnizUtil(this);
     }
     /**
      * @ignore
@@ -3901,7 +3901,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+const util_1 = __webpack_require__("./dist/src/obniz/libs/utils/util.js");
 const ObnizConnection_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizConnection.js"));
 /**
  * @ignore
@@ -3986,12 +3986,12 @@ class ObnizParts extends ObnizConnection_1.default {
         }
         if (parts.keys) {
             if (parts.requiredKeys) {
-                const err = util_1.default._requiredKeys(args[1], parts.requiredKeys);
+                const err = util_1.ObnizUtil._requiredKeys(args[1], parts.requiredKeys);
                 if (err) {
                     throw new Error(partsName + " wired param '" + err + "' required, but not found ");
                 }
             }
-            parts.params = util_1.default._keyFilter(args[1], parts.keys);
+            parts.params = util_1.ObnizUtil._keyFilter(args[1], parts.keys);
         }
         parts.obniz = this;
         parts.wired(...args);
@@ -5525,7 +5525,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const hci_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/hci.js"));
+exports.ObnizBLE = void 0;
+const hci_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/hci.js");
 const bindings_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/bindings.js"));
 const hci_2 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js"));
 const bindings_2 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/bindings.js"));
@@ -5555,7 +5556,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         // eslint-disable-next-line
         this.debugHandler = (text) => { };
         const extended = info.extended;
-        this.hci = new hci_1.default(obniz, extended);
+        this.hci = new hci_1.ObnizBLEHci(obniz, extended);
         this.service = bleService_1.default;
         this.characteristic = bleCharacteristic_1.default;
         this.descriptor = bleDescriptor_1.default;
@@ -6043,7 +6044,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         }
     }
 }
-exports.default = ObnizBLE;
+exports.ObnizBLE = ObnizBLE;
 
 
 /***/ }),
@@ -6426,7 +6427,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
-const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+const util_1 = __webpack_require__("./dist/src/obniz/libs/utils/util.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 class BleAttributeAbstract {
     constructor(params) {
@@ -6437,7 +6438,7 @@ class BleAttributeAbstract {
         this.discoverdOnRemote = false;
         this.data = params.data || null;
         if (!this.data && params.text) {
-            this.data = util_1.default.string2dataArray(params.text);
+            this.data = util_1.ObnizUtil.string2dataArray(params.text);
         }
         if (!this.data && params.value) {
             this.data = [params.value];
@@ -6519,7 +6520,7 @@ class BleAttributeAbstract {
      */
     async readTextWait() {
         const data = await this.readWait();
-        return util_1.default.dataArray2string(data);
+        return util_1.ObnizUtil.dataArray2string(data);
     }
     /**
      * @ignore
@@ -6541,7 +6542,7 @@ class BleAttributeAbstract {
      * @ignore
      */
     async writeTextWait(str, needResponse) {
-        return await this.writeWait(util_1.default.string2dataArray(str), needResponse);
+        return await this.writeWait(util_1.ObnizUtil.string2dataArray(str), needResponse);
     }
     /**
      * Use writeNumberWait() instead from 3.5.0
@@ -8315,7 +8316,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
-const ble_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/ble.js"));
+const ble_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/ble.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 const bleRemoteService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteService.js"));
 const retry_1 = __webpack_require__("./dist/src/obniz/libs/utils/retry.js");
@@ -9043,7 +9044,7 @@ class BleRemotePeripheral {
         const uuidLength = bit / 8;
         for (let i = 0; i < data.length; i = i + uuidLength) {
             const one = data.slice(i, i + uuidLength);
-            results.push(ble_1.default._dataArray2uuidHex(one, true));
+            results.push(ble_1.ObnizBLE._dataArray2uuidHex(one, true));
         }
     }
 }
@@ -9347,7 +9348,7 @@ const assert_1 = __webpack_require__("./node_modules/assert/assert.js");
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
-const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+const util_1 = __webpack_require__("./dist/src/obniz/libs/utils/util.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 /**
  * @category Use as Central
@@ -9689,14 +9690,14 @@ class BleScan {
                         index: 9,
                         length: 255,
                     },
-                    value: [0x08, ...util_1.default.string2dataArray(filterVal.localNamePrefix)],
+                    value: [0x08, ...util_1.ObnizUtil.string2dataArray(filterVal.localNamePrefix)],
                 });
                 filters.push({
                     range: {
                         index: 9,
                         length: 255,
                     },
-                    value: [0x09, ...util_1.default.string2dataArray(filterVal.localNamePrefix)],
+                    value: [0x09, ...util_1.ObnizUtil.string2dataArray(filterVal.localNamePrefix)],
                 });
             }
             if (filterVal.deviceAddress) {
@@ -9705,11 +9706,11 @@ class BleScan {
                         index: 2,
                         length: 6,
                     },
-                    value: util_1.default.hexToBinary(filterVal.deviceAddress, true),
+                    value: util_1.ObnizUtil.hexToBinary(filterVal.deviceAddress, true),
                 });
             }
             if (filterVal.uuid) {
-                const binary = util_1.default.hexToBinary(filterVal.uuid, true);
+                const binary = util_1.ObnizUtil.hexToBinary(filterVal.uuid, true);
                 filters.push({
                     range: {
                         index: 9,
@@ -10059,6 +10060,7 @@ exports.default = BleService;
  * @module ObnizCore.Components.Ble.Hci
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ObnizBLEHci = void 0;
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 class ObnizBLEHci {
     constructor(Obniz, extended) {
@@ -10276,7 +10278,7 @@ class ObnizBLEHci {
         return JSON.parse(str);
     }
 }
-exports.default = ObnizBLEHci;
+exports.ObnizBLEHci = ObnizBLEHci;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -16451,6 +16453,7 @@ exports.default = Smp;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Display = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore.Components
@@ -17093,7 +17096,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
         this.raw(raw);
     }
 }
-exports.default = Display;
+exports.Display = Display;
 
 
 /***/ }),
@@ -17108,6 +17111,7 @@ exports.default = Display;
  * @module ObnizCore.Components
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ObnizSwitch = void 0;
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 /**
  * The embedded switch on obniz Board.
@@ -17177,7 +17181,7 @@ class ObnizSwitch extends ComponentAbstact_1.ComponentAbstract {
         this.state = 'none';
     }
 }
-exports.default = ObnizSwitch;
+exports.ObnizSwitch = ObnizSwitch;
 
 
 /***/ }),
@@ -17470,6 +17474,7 @@ module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"obnizb2\",\"peripherals\":{
  * @module ObnizCore.Components
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PeripheralAD = void 0;
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 /**
  * @category Peripherals
@@ -17555,7 +17560,7 @@ class PeripheralAD extends ComponentAbstact_1.ComponentAbstract {
         this.value = 0.0;
     }
 }
-exports.default = PeripheralAD;
+exports.PeripheralAD = PeripheralAD;
 
 
 /***/ }),
@@ -17573,6 +17578,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Directive = void 0;
 const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 /**
@@ -17757,7 +17763,7 @@ class Directive extends ComponentAbstact_1.ComponentAbstract {
         }
     }
 }
-exports.default = Directive;
+exports.Directive = Directive;
 
 
 /***/ }),
@@ -17772,6 +17778,7 @@ exports.default = Directive;
  * @module ObnizCore.Components
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PeripheralGrove = void 0;
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 /**
  * @category Peripherals
@@ -17934,7 +17941,7 @@ class PeripheralGrove extends ComponentAbstact_1.ComponentAbstract {
         }
     }
 }
-exports.default = PeripheralGrove;
+exports.PeripheralGrove = PeripheralGrove;
 
 
 /***/ }),
@@ -17948,13 +17955,11 @@ exports.default = PeripheralGrove;
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PeripheralI2C = void 0;
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
-const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+const util_1 = __webpack_require__("./dist/src/obniz/libs/utils/util.js");
 /**
  * i2c can be used.
  * Master/Slave mode.
@@ -18026,11 +18031,11 @@ class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
      * @param arg
      */
     start(arg) {
-        const err = util_1.default._requiredKeys(arg, ['mode', 'sda', 'scl']);
+        const err = util_1.ObnizUtil._requiredKeys(arg, ['mode', 'sda', 'scl']);
         if (err) {
             throw new Error("I2C start param '" + err + "' required, but not found ");
         }
-        this.state = util_1.default._keyFilter(arg, [
+        this.state = util_1.ObnizUtil._keyFilter(arg, [
             'mode',
             'sda',
             'scl',
@@ -18100,7 +18105,7 @@ class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
                 this.Obniz.display.setPinNames('i2c' + this.id, ioNames);
             }
         }
-        const startObj = util_1.default._keyFilter(this.state, [
+        const startObj = util_1.ObnizUtil._keyFilter(this.state, [
             'mode',
             'sda',
             'scl',
@@ -18236,7 +18241,7 @@ class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
         this.onwritten = undefined;
     }
 }
-exports.default = PeripheralI2C;
+exports.PeripheralI2C = PeripheralI2C;
 
 
 /***/ }),
@@ -18251,6 +18256,7 @@ exports.default = PeripheralI2C;
  * @module ObnizCore.Components
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PeripheralIO = void 0;
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 /**
  * General purpose IO
@@ -18456,7 +18462,7 @@ class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
         this.value = false;
     }
 }
-exports.default = PeripheralIO;
+exports.PeripheralIO = PeripheralIO;
 
 
 /***/ }),
@@ -18470,12 +18476,10 @@ exports.default = PeripheralIO;
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PeripheralPWM = void 0;
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
-const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+const util_1 = __webpack_require__("./dist/src/obniz/libs/utils/util.js");
 /**
  * We will now generate PWM.
  * Maximum current depends on the driving mode. See [[PeripheralIO|io]].
@@ -18512,11 +18516,11 @@ class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
      * @param params
      */
     start(params) {
-        const err = util_1.default._requiredKeys(params, ['io']);
+        const err = util_1.ObnizUtil._requiredKeys(params, ['io']);
         if (err) {
             throw new Error("pwm start param '" + err + "' required, but not found ");
         }
-        this.params = util_1.default._keyFilter(params, ['io', 'drive', 'pull']);
+        this.params = util_1.ObnizUtil._keyFilter(params, ['io', 'drive', 'pull']);
         const io = this.params.io;
         const ioObj = this.Obniz.getIO(io);
         ioObj.drive(this.params.drive || '5v');
@@ -18696,7 +18700,7 @@ class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
         this.Obniz.send(wsObj);
     }
 }
-exports.default = PeripheralPWM;
+exports.PeripheralPWM = PeripheralPWM;
 
 
 /***/ }),
@@ -18714,9 +18718,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PeripheralSPI = void 0;
 const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
-const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+const util_1 = __webpack_require__("./dist/src/obniz/libs/utils/util.js");
 /**
  * It is General Purpose SPI
  *
@@ -18749,11 +18754,11 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
      * @param params spi parameters
      */
     start(params) {
-        const err = util_1.default._requiredKeys(params, ['mode', 'frequency']);
+        const err = util_1.ObnizUtil._requiredKeys(params, ['mode', 'frequency']);
         if (err) {
             throw new Error("spi start param '" + err + "' required, but not found ");
         }
-        this.params = util_1.default._keyFilter(params, [
+        this.params = util_1.ObnizUtil._keyFilter(params, [
             'mode',
             'clk',
             'mosi',
@@ -18943,7 +18948,7 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
         this.params = null;
     }
 }
-exports.default = PeripheralSPI;
+exports.PeripheralSPI = PeripheralSPI;
 
 
 /***/ }),
@@ -18957,12 +18962,10 @@ exports.default = PeripheralSPI;
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PeripheralUART = void 0;
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
-const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+const util_1 = __webpack_require__("./dist/src/obniz/libs/utils/util.js");
 /**
  * Uart module
  *
@@ -18994,11 +18997,11 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
      * @param params
      */
     start(params) {
-        const err = util_1.default._requiredKeys(params, ['tx', 'rx']);
+        const err = util_1.ObnizUtil._requiredKeys(params, ['tx', 'rx']);
         if (err) {
             throw new Error("uart start param '" + err + "' required, but not found ");
         }
-        this.params = util_1.default._keyFilter(params, [
+        this.params = util_1.ObnizUtil._keyFilter(params, [
             'tx',
             'rx',
             'baud',
@@ -19046,7 +19049,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
             }
         }
         const obj = {};
-        const sendParams = util_1.default._keyFilter(this.params, [
+        const sendParams = util_1.ObnizUtil._keyFilter(this.params, [
             'tx',
             'rx',
             'baud',
@@ -19247,7 +19250,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
      * @return converted string. If convert failed, return null.
      */
     tryConvertString(data) {
-        return util_1.default.dataArray2string(data);
+        return util_1.ObnizUtil.dataArray2string(data);
     }
     /**
      * @ignore
@@ -19265,7 +19268,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
         this.used = false;
     }
 }
-exports.default = PeripheralUART;
+exports.PeripheralUART = PeripheralUART;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -19280,12 +19283,10 @@ exports.default = PeripheralUART;
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.LogicAnalyzer = void 0;
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
-const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+const util_1 = __webpack_require__("./dist/src/obniz/libs/utils/util.js");
 /**
  * LogicAnalyzer records samples read from io periodically.
  * This is useful for digital bus signal check.
@@ -19361,11 +19362,11 @@ class LogicAnalyzer extends ComponentAbstact_1.ComponentAbstract {
      * @param params
      */
     start(params) {
-        const err = util_1.default._requiredKeys(params, ['io', 'interval', 'duration']);
+        const err = util_1.ObnizUtil._requiredKeys(params, ['io', 'interval', 'duration']);
         if (err) {
             throw new Error("LogicAnalyzer start param '" + err + "' required, but not found ");
         }
-        this.params = util_1.default._keyFilter(params, [
+        this.params = util_1.ObnizUtil._keyFilter(params, [
             'io',
             'interval',
             'duration',
@@ -19407,7 +19408,7 @@ class LogicAnalyzer extends ComponentAbstact_1.ComponentAbstract {
         return 'logic_analyzer';
     }
 }
-exports.default = LogicAnalyzer;
+exports.LogicAnalyzer = LogicAnalyzer;
 
 
 /***/ }),
@@ -19421,12 +19422,10 @@ exports.default = LogicAnalyzer;
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ObnizMeasure = void 0;
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
-const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+const util_1 = __webpack_require__("./dist/src/obniz/libs/utils/util.js");
 /**
  * The measure module provides hardware level measurement.
  *
@@ -19470,7 +19469,7 @@ class ObnizMeasure extends ComponentAbstact_1.ComponentAbstract {
      * @param params
      */
     echo(params) {
-        const err = util_1.default._requiredKeys(params, [
+        const err = util_1.ObnizUtil._requiredKeys(params, [
             'io_pulse',
             'pulse',
             'pulse_width',
@@ -19480,7 +19479,7 @@ class ObnizMeasure extends ComponentAbstact_1.ComponentAbstract {
         if (err) {
             throw new Error("Measure start param '" + err + "' required, but not found ");
         }
-        params = util_1.default._keyFilter(params, [
+        params = util_1.ObnizUtil._keyFilter(params, [
             'io_pulse',
             'pulse',
             'pulse_width',
@@ -19513,7 +19512,7 @@ class ObnizMeasure extends ComponentAbstact_1.ComponentAbstract {
         return 'measure';
     }
 }
-exports.default = ObnizMeasure;
+exports.ObnizMeasure = ObnizMeasure;
 
 
 /***/ }),
@@ -19531,6 +19530,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WiFi = void 0;
 const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
 class WiFi {
     constructor(obniz, id) {
@@ -19588,7 +19588,7 @@ class WiFi {
         }
     }
 }
-exports.default = WiFi;
+exports.WiFi = WiFi;
 
 
 /***/ }),
@@ -19606,8 +19606,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Plugin = void 0;
 const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
-const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+const util_1 = __webpack_require__("./dist/src/obniz/libs/utils/util.js");
 class Plugin {
     constructor(obniz, id) {
         this.Obniz = obniz;
@@ -19660,12 +19661,12 @@ class Plugin {
     notified(obj) {
         if (obj.receive) {
             /* Connectino state update. response of connect(), close from destination, response from */
-            const string = util_1.default.dataArray2string(obj.receive);
+            const string = util_1.ObnizUtil.dataArray2string(obj.receive);
             this.Obniz._runUserCreatedFunction(this.onreceive, obj.receive, string);
         }
     }
 }
-exports.default = Plugin;
+exports.Plugin = Plugin;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -19684,6 +19685,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Tcp = void 0;
 const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 /**
@@ -19881,7 +19883,7 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
         }
     }
 }
-exports.default = Tcp;
+exports.Tcp = Tcp;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -21453,6 +21455,7 @@ exports.retry = retry;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ObnizUtil = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore
@@ -21590,7 +21593,7 @@ class ObnizUtil {
         }
     }
 }
-exports.default = ObnizUtil;
+exports.ObnizUtil = ObnizUtil;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -21745,6 +21748,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommand = void 0;
 const WSSchema_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSSchema.js"));
 const commandClasses = {};
 class WSCommand {
@@ -22033,7 +22037,7 @@ class WSCommand {
         throw Error('unknown json schema type');
     }
 }
-exports.default = WSCommand;
+exports.WSCommand = WSCommand;
 /* eslint max-classes-per-file: 0 */
 class WSCommandNotFoundError extends Error {
 }
@@ -22046,16 +22050,14 @@ class WSCommandNotFoundError extends Error {
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandAD = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
-class WSCommandAD extends WSCommand_1.default {
+const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
+class WSCommandAD extends WSCommand_1.WSCommand {
     constructor() {
         super();
         this.module = 7;
@@ -22131,7 +22133,7 @@ class WSCommandAD extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandAD;
+exports.WSCommandAD = WSCommandAD;
 
 
 /***/ }),
@@ -22141,18 +22143,16 @@ exports.default = WSCommandAD;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandBle = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const jsonBinaryConverter_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/jsonBinaryConverter.js"));
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
-const WSCommandBleHci_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandBleHci.js"));
-class WSCommandBle extends WSCommand_1.default {
+const jsonBinaryConverter_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/jsonBinaryConverter.js");
+const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
+const WSCommandBleHci_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandBleHci.js");
+class WSCommandBle extends WSCommand_1.WSCommand {
     constructor() {
         super();
         this.module = 11;
@@ -22255,7 +22255,7 @@ class WSCommandBle extends WSCommand_1.default {
             0x02: 'irk',
             0x04: 'csrk',
         };
-        this.hciCommand = new WSCommandBleHci_1.default(this);
+        this.hciCommand = new WSCommandBleHci_1.WSCommandBleHci(this);
         const funcList = {};
         funcList[this._CommandScanResults] = this.notifyFromBinaryScanResponse.bind(this);
         funcList[this._CommandConnect] = this.notifyFromBinaryConnect.bind(this);
@@ -22287,7 +22287,7 @@ class WSCommandBle extends WSCommand_1.default {
         const schema = [
             { path: 'scan.duration', length: 4, type: 'int', default: 30 },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandStartScan, buf);
     }
     centralScanStop(params) {
@@ -22304,7 +22304,7 @@ class WSCommandBle extends WSCommand_1.default {
             },
             { path: null, length: 1, type: 'char', default: false }, // const val
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandConnect, buf);
     }
     centralDisconnect(params) {
@@ -22318,7 +22318,7 @@ class WSCommandBle extends WSCommand_1.default {
             },
             { path: null, length: 1, type: 'char', default: true }, // const val
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandConnect, buf);
     }
     centralServiceGet(params) {
@@ -22331,7 +22331,7 @@ class WSCommandBle extends WSCommand_1.default {
                 endianness: 'little',
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandServices, buf);
     }
     centralCharacteristicGet(params) {
@@ -22350,7 +22350,7 @@ class WSCommandBle extends WSCommand_1.default {
                 required: true,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandCharacteristics, buf);
     }
     centralCharacteristicRead(params) {
@@ -22375,7 +22375,7 @@ class WSCommandBle extends WSCommand_1.default {
                 required: true,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandReadCharacteristics, buf);
     }
     centralCharacteristicWrite(params) {
@@ -22407,7 +22407,7 @@ class WSCommandBle extends WSCommand_1.default {
             },
             { path: 'write_characteristic.data', length: null, type: 'dataArray' },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandWriteCharacteristics, buf);
     }
     centralCharacteristicRegisterNotify(params) {
@@ -22432,7 +22432,7 @@ class WSCommandBle extends WSCommand_1.default {
                 required: true,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandRegisterNotifyCharacteristic, buf);
     }
     centralCharacteristicUnregisterNotify(params) {
@@ -22457,7 +22457,7 @@ class WSCommandBle extends WSCommand_1.default {
                 required: true,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandUnregisterNotifyCharacteristic, buf);
     }
     centralDescriptorGet(params) {
@@ -22482,7 +22482,7 @@ class WSCommandBle extends WSCommand_1.default {
                 required: true,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandDescriptors, buf);
     }
     centralDescriptorRead(params) {
@@ -22513,7 +22513,7 @@ class WSCommandBle extends WSCommand_1.default {
                 required: true,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandReadDescriptor, buf);
     }
     centralDescriptorWrite(params) {
@@ -22551,7 +22551,7 @@ class WSCommandBle extends WSCommand_1.default {
             },
             { path: 'write_descriptor.data', length: null, type: 'dataArray' },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandWriteDescriptor, buf);
     }
     /* PERIPHERAL   */
@@ -22648,12 +22648,12 @@ class WSCommandBle extends WSCommand_1.default {
         let buf;
         for (const serviceIndex in val.services) {
             const service = val.services[serviceIndex];
-            buf = jsonBinaryConverter_1.default.createSendBuffer(schema.service.schema, service);
+            buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema.service.schema, service);
             if (buf.length === 0) {
                 return;
             }
             sendBufs.push({ command: schema.service.command, buffer: buf });
-            buf = jsonBinaryConverter_1.default.createSendBuffer(schema.startService.schema, service);
+            buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema.startService.schema, service);
             startServiceBufs.push({
                 command: schema.startService.command,
                 buffer: buf,
@@ -22661,7 +22661,7 @@ class WSCommandBle extends WSCommand_1.default {
             for (const charaIndex in service.characteristics) {
                 const chara = service.characteristics[charaIndex];
                 chara.service_uuid = service.uuid;
-                buf = jsonBinaryConverter_1.default.createSendBuffer(schema.characteristic.schema, chara);
+                buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema.characteristic.schema, chara);
                 if (buf.length === 0) {
                     return;
                 }
@@ -22673,7 +22673,7 @@ class WSCommandBle extends WSCommand_1.default {
                     const desc = chara.descriptors[descIndex];
                     desc.service_uuid = service.uuid;
                     desc.characteristic_uuid = chara.uuid;
-                    buf = jsonBinaryConverter_1.default.createSendBuffer(schema.descriptor.schema, desc);
+                    buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema.descriptor.schema, desc);
                     if (buf.length === 0) {
                         return;
                     }
@@ -22698,7 +22698,7 @@ class WSCommandBle extends WSCommand_1.default {
             },
             { path: null, length: 1, type: 'char', default: 1 }, // const val
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandServerStartStopService, buf);
     }
     peripheralServiceStopAll() {
@@ -22719,7 +22719,7 @@ class WSCommandBle extends WSCommand_1.default {
                 required: true,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandServerReadCharavteristicValue, buf);
     }
     peripheralCharacteristicWrite(params) {
@@ -22738,7 +22738,7 @@ class WSCommandBle extends WSCommand_1.default {
             },
             { path: 'peripheral.write_characteristic.data', type: 'dataArray' },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandServerWriteCharavteristicValue, buf);
     }
     peripheralCharacteristicNotify(params) {
@@ -22756,7 +22756,7 @@ class WSCommandBle extends WSCommand_1.default {
                 required: true,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandServerNotifyCharavteristic, buf);
     }
     peripheralDescriptorRead(params) {
@@ -22780,7 +22780,7 @@ class WSCommandBle extends WSCommand_1.default {
                 required: true,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandServerReadDescriptorValue, buf);
     }
     peripheralDescriptorWrite(params) {
@@ -22805,7 +22805,7 @@ class WSCommandBle extends WSCommand_1.default {
             },
             { path: 'peripheral.write_descriptor.data', type: 'dataArray' },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandServerWriteDescriptorValue, buf);
     }
     securityAuth(params) {
@@ -22818,7 +22818,7 @@ class WSCommandBle extends WSCommand_1.default {
                 flags: this._securityAuthValues,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandSecuritySetAuth, buf);
     }
     securityIndicateLevel(params) {
@@ -22830,7 +22830,7 @@ class WSCommandBle extends WSCommand_1.default {
                 required: true,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandSecuritySetEncryptionLevel, buf);
     }
     securityKeyType(params) {
@@ -22843,7 +22843,7 @@ class WSCommandBle extends WSCommand_1.default {
                 flags: this._securityKeyTypes,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandSecuritySetEnableKeyTypes, buf);
     }
     securityKeySize(params) {
@@ -22855,7 +22855,7 @@ class WSCommandBle extends WSCommand_1.default {
                 required: true,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandSecuritySetKeyMaxSize, buf);
     }
     clearBondingDevicesList(params) {
@@ -23026,7 +23026,7 @@ class WSCommandBle extends WSCommand_1.default {
                 { name: 'advertise_length', type: 'number', length: 1 },
                 { name: 'scan_response_length', type: 'number', length: 1 },
             ];
-            const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+            const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
             results.scan_resp = results.adv_data.slice(results.advertise_length, results.advertise_length + results.scan_response_length);
             results.adv_data = results.adv_data.slice(0, results.advertise_length);
             delete results.num_response;
@@ -23053,7 +23053,7 @@ class WSCommandBle extends WSCommand_1.default {
                     enum: { connected: 0, disconnected: 1 },
                 },
             ];
-            const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+            const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
             this._addRowForPath(objToSend, 'ble.status_update', results);
         }
     }
@@ -23062,7 +23062,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'address', type: 'hex', length: 6, endianness: 'little' },
             { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         if (results.service_uuid !== null) {
             this._addRowForPath(objToSend, 'ble.get_service_result', results);
         }
@@ -23084,7 +23084,7 @@ class WSCommandBle extends WSCommand_1.default {
                 flags: true,
             },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         if (results.characteristic_uuid !== null) {
             this._addRowForPath(objToSend, 'ble.get_characteristic_result', results);
         }
@@ -23102,7 +23102,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'result', type: 'int', length: 1 },
             { name: 'data', type: 'dataArray', length: null },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         results.result =
             results.result === this._commandResults.success ? 'success' : 'failed';
         this._addRowForPath(objToSend, 'ble.read_characteristic_result', results);
@@ -23114,7 +23114,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'result', type: 'int', length: 1 },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         results.result =
             results.result === this._commandResults.success ? 'success' : 'failed';
         this._addRowForPath(objToSend, 'ble.write_characteristic_result', results);
@@ -23126,7 +23126,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'result', type: 'int', length: 1 },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         results.result =
             results.result === this._commandResults.success ? 'success' : 'failed';
         this._addRowForPath(objToSend, 'ble.register_notify_characteristic_result', results);
@@ -23138,7 +23138,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'result', type: 'int', length: 1 },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         results.result =
             results.result === this._commandResults.success ? 'success' : 'failed';
         this._addRowForPath(objToSend, 'ble.unregister_notify_characteristic_result', results);
@@ -23151,7 +23151,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'is_notify', type: 'int', length: 1 },
             { name: 'data', type: 'dataArray', length: null },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         results.is_notify = results.is_notify === 1;
         this._addRowForPath(objToSend, 'ble.notify_characteristic', results);
     }
@@ -23162,7 +23162,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         if (results.descriptor_uuid !== null) {
             this._addRowForPath(objToSend, 'ble.get_descriptor_result', results);
         }
@@ -23180,7 +23180,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'result', type: 'int', length: 1 },
             { name: 'data', type: 'dataArray', length: null },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         results.result =
             results.result === this._commandResults.success ? 'success' : 'failed';
         this._addRowForPath(objToSend, 'ble.read_descriptor_result', results);
@@ -23193,7 +23193,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'result', type: 'int', length: 1 },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         results.result =
             results.result === this._commandResults.success ? 'success' : 'failed';
         this._addRowForPath(objToSend, 'ble.write_descriptor_result', results);
@@ -23208,7 +23208,7 @@ class WSCommandBle extends WSCommand_1.default {
                 enum: { connected: 1, disconnected: 0 },
             },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         this._addRowForPath(objToSend, 'ble.peripheral.connection_status', results);
     }
     notifyFromBinaryServerWriteCharavteristicValue(objToSend, payload) {
@@ -23217,7 +23217,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'result', type: 'int', length: 1 },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         results.result =
             results.result === this._commandResults.success ? 'success' : 'failed';
         this._addRowForPath(objToSend, 'ble.peripheral.write_characteristic_result', results);
@@ -23228,7 +23228,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'data', type: 'dataArray', length: null },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         results.result = 'success'; // always success
         this._addRowForPath(objToSend, 'ble.peripheral.read_characteristic_result', results);
     }
@@ -23238,7 +23238,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         this._addRowForPath(objToSend, 'ble.peripheral.notify_read_characteristic', results);
     }
     notifyFromBinaryServerNotifyWriteCharavteristicValue(objToSend, payload) {
@@ -23248,7 +23248,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'data', type: 'dataArray', length: null },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         this._addRowForPath(objToSend, 'ble.peripheral.notify_write_characteristic', results);
     }
     notifyFromBinaryServerReadDescriptorValue(objToSend, payload) {
@@ -23258,7 +23258,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'data', type: 'dataArray', length: null },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         results.result = 'success'; // always success
         this._addRowForPath(objToSend, 'ble.peripheral.read_descriptor_result', results);
     }
@@ -23269,7 +23269,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'result', type: 'int', length: 1 },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         results.result =
             results.result === this._commandResults.success ? 'success' : 'failed';
         this._addRowForPath(objToSend, 'ble.peripheral.write_descriptor_result', results);
@@ -23281,7 +23281,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         this._addRowForPath(objToSend, 'ble.peripheral.notify_read_descriptor', results);
     }
     notifyFromBinaryServerNotifyWriteDescriptorValue(objToSend, payload) {
@@ -23292,7 +23292,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'data', type: 'dataArray', length: null },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         this._addRowForPath(objToSend, 'ble.peripheral.notify_write_descriptor', results);
     }
     notifyFromBinaryError(objToSend, payload) {
@@ -23305,7 +23305,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         const errorMessage = {
             0x00: 'no error',
             0x01: 'device not connected',
@@ -23373,7 +23373,7 @@ class WSCommandBle extends WSCommand_1.default {
         target[keys[keys.length - 1]] = row;
     }
 }
-exports.default = WSCommandBle;
+exports.WSCommandBle = WSCommandBle;
 
 
 /***/ }),
@@ -23384,6 +23384,7 @@ exports.default = WSCommandBle;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandBleHci = void 0;
 /**
  * @packageDocumentation
  * @ignore
@@ -23451,7 +23452,7 @@ class WSCommandBleHci {
         this._delegate.sendCommand(this._CommandHCIAdvertisementFilter, buf);
     }
 }
-exports.default = WSCommandBleHci;
+exports.WSCommandBleHci = WSCommandBleHci;
 
 
 /***/ }),
@@ -23461,20 +23462,18 @@ exports.default = WSCommandBleHci;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandDirective = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
 const semver = __webpack_require__("./node_modules/semver/semver.js");
-const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
-const WSCommandIO_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandIO.js"));
-const WSCommandPWM_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandPWM.js"));
-class WSCommandDirective extends WSCommand_1.default {
+const util_1 = __webpack_require__("./dist/src/obniz/libs/utils/util.js");
+const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
+const WSCommandIO_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandIO.js");
+const WSCommandPWM_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandPWM.js");
+class WSCommandDirective extends WSCommand_1.WSCommand {
     constructor() {
         super();
         this.module = 1;
@@ -23482,11 +23481,11 @@ class WSCommandDirective extends WSCommand_1.default {
         this._CommandPause = 1;
         this._CommandResume = 2;
         this._CommandNotify = 3;
-        this.availableCommands = [new WSCommandIO_1.default(), new WSCommandPWM_1.default()];
+        this.availableCommands = [new WSCommandIO_1.WSCommandIO(), new WSCommandPWM_1.WSCommandPWM()];
     }
     // Commands
     init(params, originalParams) {
-        const nameArray = util_1.default.string2dataArray(params.animation.name);
+        const nameArray = util_1.ObnizUtil.string2dataArray(params.animation.name);
         let frame;
         let offset = 0;
         if (semver.lt(this._hw.firmware || '1.0.0', '2.0.0')) {
@@ -23537,7 +23536,7 @@ class WSCommandDirective extends WSCommand_1.default {
             }
             let compressed = null;
             for (let commandIndex = 0; commandIndex < parsedCommands.length; commandIndex++) {
-                const _frame = WSCommand_1.default.compress(this.availableCommands, parsedCommands[commandIndex]);
+                const _frame = WSCommand_1.WSCommand.compress(this.availableCommands, parsedCommands[commandIndex]);
                 if (!_frame) {
                     throw new Error('[io.animation.states.state]only io or pwm commands. Pleave provide state at least one of them.');
                 }
@@ -23578,7 +23577,7 @@ class WSCommandDirective extends WSCommand_1.default {
     }
     changeState(params) {
         if (params.animation.status === 'resume') {
-            const nameArray = util_1.default.string2dataArray(params.animation.name);
+            const nameArray = util_1.ObnizUtil.string2dataArray(params.animation.name);
             const frame = new Uint8Array(nameArray.length + 2);
             frame[0] = nameArray.length + 1;
             frame.set(nameArray, 1);
@@ -23586,7 +23585,7 @@ class WSCommandDirective extends WSCommand_1.default {
             this.sendCommand(this._CommandResume, frame);
         }
         else if (params.animation.status === 'pause') {
-            const nameArray = util_1.default.string2dataArray(params.animation.name);
+            const nameArray = util_1.ObnizUtil.string2dataArray(params.animation.name);
             const frame = new Uint8Array(nameArray.length + 2);
             frame[0] = nameArray.length + 1;
             frame.set(nameArray, 1);
@@ -23628,7 +23627,7 @@ class WSCommandDirective extends WSCommand_1.default {
     }
     notifyFromBinary(objToSend, func, payload) {
         if (func === this._CommandNotify) {
-            const name = util_1.default.dataArray2string(payload.slice(2, payload.byteLength - 1)); // remove null string
+            const name = util_1.ObnizUtil.dataArray2string(payload.slice(2, payload.byteLength - 1)); // remove null string
             objToSend.io = {
                 animation: {
                     name,
@@ -23641,7 +23640,7 @@ class WSCommandDirective extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandDirective;
+exports.WSCommandDirective = WSCommandDirective;
 
 
 /***/ }),
@@ -23655,13 +23654,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandDisplay = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
 const qr_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/qr.js"));
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
-class WSCommandDisplay extends WSCommand_1.default {
+const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
+class WSCommandDisplay extends WSCommand_1.WSCommand {
     constructor() {
         super(...arguments);
         this.module = 8;
@@ -23791,7 +23791,7 @@ class WSCommandDisplay extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandDisplay;
+exports.WSCommandDisplay = WSCommandDisplay;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -23802,16 +23802,14 @@ exports.default = WSCommandDisplay;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandI2C = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
-class WSCommandI2C extends WSCommand_1.default {
+const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
+class WSCommandI2C extends WSCommand_1.WSCommand {
     constructor() {
         super();
         this.module = 6;
@@ -23975,7 +23973,7 @@ class WSCommandI2C extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandI2C;
+exports.WSCommandI2C = WSCommandI2C;
 
 
 /***/ }),
@@ -23985,15 +23983,13 @@ exports.default = WSCommandI2C;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandIO = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
+const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH = 1;
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW = 2;
 const COMMAND_IO_ERRORS_IO_TOO_LOW = 3;
@@ -24016,7 +24012,7 @@ const COMMAND_IO_MUTEX_NAMES = {
     7: 'LogicAnalyzer',
     8: 'Measure',
 };
-class WSCommandIO extends WSCommand_1.default {
+class WSCommandIO extends WSCommand_1.WSCommand {
     constructor() {
         super();
         this.module = 2;
@@ -24148,7 +24144,7 @@ class WSCommandIO extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandIO;
+exports.WSCommandIO = WSCommandIO;
 
 
 /***/ }),
@@ -24158,16 +24154,14 @@ exports.default = WSCommandIO;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandLogicAnalyzer = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
-class WSCommandLogicAnalyzer extends WSCommand_1.default {
+const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
+class WSCommandLogicAnalyzer extends WSCommand_1.WSCommand {
     constructor() {
         super();
         this.module = 10;
@@ -24240,7 +24234,7 @@ class WSCommandLogicAnalyzer extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandLogicAnalyzer;
+exports.WSCommandLogicAnalyzer = WSCommandLogicAnalyzer;
 
 
 /***/ }),
@@ -24250,16 +24244,14 @@ exports.default = WSCommandLogicAnalyzer;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandMeasurement = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
-class WSCommandMeasurement extends WSCommand_1.default {
+const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
+class WSCommandMeasurement extends WSCommand_1.WSCommand {
     constructor() {
         super();
         this.module = 12;
@@ -24333,7 +24325,7 @@ class WSCommandMeasurement extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandMeasurement;
+exports.WSCommandMeasurement = WSCommandMeasurement;
 
 
 /***/ }),
@@ -24343,16 +24335,14 @@ exports.default = WSCommandMeasurement;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandPWM = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
-class WSCommandPWM extends WSCommand_1.default {
+const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
+class WSCommandPWM extends WSCommand_1.WSCommand {
     constructor() {
         super();
         this.module = 3;
@@ -24451,7 +24441,7 @@ class WSCommandPWM extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandPWM;
+exports.WSCommandPWM = WSCommandPWM;
 
 
 /***/ }),
@@ -24461,16 +24451,14 @@ exports.default = WSCommandPWM;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandPlugin = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
-class WSCommandPlugin extends WSCommand_1.default {
+const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
+class WSCommandPlugin extends WSCommand_1.WSCommand {
     constructor() {
         super();
         this.module = 15;
@@ -24513,7 +24501,7 @@ class WSCommandPlugin extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandPlugin;
+exports.WSCommandPlugin = WSCommandPlugin;
 
 
 /***/ }),
@@ -24523,16 +24511,14 @@ exports.default = WSCommandPlugin;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandSPI = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
-class WSCommandSPI extends WSCommand_1.default {
+const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
+class WSCommandSPI extends WSCommand_1.WSCommand {
     constructor() {
         super();
         this.module = 5;
@@ -24633,7 +24619,7 @@ class WSCommandSPI extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandSPI;
+exports.WSCommandSPI = WSCommandSPI;
 
 
 /***/ }),
@@ -24643,16 +24629,14 @@ exports.default = WSCommandSPI;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandSwitch = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
-class WSCommandSwitch extends WSCommand_1.default {
+const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
+class WSCommandSwitch extends WSCommand_1.WSCommand {
     constructor() {
         super();
         this.module = 9;
@@ -24697,7 +24681,7 @@ class WSCommandSwitch extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandSwitch;
+exports.WSCommandSwitch = WSCommandSwitch;
 
 
 /***/ }),
@@ -24707,16 +24691,14 @@ exports.default = WSCommandSwitch;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandSystem = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
-class WSCommandSystem extends WSCommand_1.default {
+const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
+class WSCommandSystem extends WSCommand_1.WSCommand {
     constructor() {
         super();
         this.module = 0;
@@ -24865,7 +24847,7 @@ class WSCommandSystem extends WSCommand_1.default {
         this.sendCommand(this._CommandSleepIoTrigger, buf);
     }
 }
-exports.default = WSCommandSystem;
+exports.WSCommandSystem = WSCommandSystem;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -24876,16 +24858,14 @@ exports.default = WSCommandSystem;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandTcp = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
-class WSCommandTcp extends WSCommand_1.default {
+const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
+class WSCommandTcp extends WSCommand_1.WSCommand {
     constructor() {
         super();
         this.module = 13;
@@ -25008,7 +24988,7 @@ class WSCommandTcp extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandTcp;
+exports.WSCommandTcp = WSCommandTcp;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -25019,16 +24999,14 @@ exports.default = WSCommandTcp;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandUart = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
-class WSCommandUart extends WSCommand_1.default {
+const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
+class WSCommandUart extends WSCommand_1.WSCommand {
     constructor() {
         super();
         this.module = 4;
@@ -25136,7 +25114,7 @@ class WSCommandUart extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandUart;
+exports.WSCommandUart = WSCommandUart;
 
 
 /***/ }),
@@ -25146,17 +25124,15 @@ exports.default = WSCommandUart;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandWiFi = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const jsonBinaryConverter_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/jsonBinaryConverter.js"));
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
-class WSCommandWiFi extends WSCommand_1.default {
+const jsonBinaryConverter_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/jsonBinaryConverter.js");
+const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
+class WSCommandWiFi extends WSCommand_1.WSCommand {
     constructor() {
         super();
         this.module = 14;
@@ -25219,7 +25195,7 @@ class WSCommandWiFi extends WSCommand_1.default {
                             }
                             break;
                         case ScanState.SCAN_RSSI:
-                            rssi = jsonBinaryConverter_1.default.signedNumberFromBinary([payload[i]]);
+                            rssi = jsonBinaryConverter_1.JsonBinaryConverter.signedNumberFromBinary([payload[i]]);
                             mode = ScanState.SCAN_SSID_LEN;
                             scanArray.push({
                                 ssid,
@@ -25240,7 +25216,7 @@ class WSCommandWiFi extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandWiFi;
+exports.WSCommandWiFi = WSCommandWiFi;
 
 
 /***/ }),
@@ -25313,49 +25289,46 @@ exports.default = tv4;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
-const WSCommandAD_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAD.js"));
-const WSCommandBle_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandBle.js"));
-const WSCommandDirective_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandDirective.js"));
-const WSCommandDisplay_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandDisplay.js"));
-const WSCommandI2C_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandI2C.js"));
-const WSCommandIO_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandIO.js"));
-const WSCommandLogicAnalyzer_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandLogicAnalyzer.js"));
-const WSCommandMeasurement_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandMeasurement.js"));
-const WSCommandPlugin_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandPlugin.js"));
-const WSCommandPWM_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandPWM.js"));
-const WSCommandSPI_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandSPI.js"));
-const WSCommandSwitch_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandSwitch.js"));
-const WSCommandSystem_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandSystem.js"));
-const WSCommandTcp_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandTcp.js"));
-const WSCommandUart_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandUart.js"));
-const WSCommandWiFi_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandWiFi.js"));
+const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
+const WSCommandAD_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAD.js");
+const WSCommandBle_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandBle.js");
+const WSCommandDirective_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandDirective.js");
+const WSCommandDisplay_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandDisplay.js");
+const WSCommandI2C_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandI2C.js");
+const WSCommandIO_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandIO.js");
+const WSCommandLogicAnalyzer_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandLogicAnalyzer.js");
+const WSCommandMeasurement_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandMeasurement.js");
+const WSCommandPlugin_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandPlugin.js");
+const WSCommandPWM_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandPWM.js");
+const WSCommandSPI_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandSPI.js");
+const WSCommandSwitch_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandSwitch.js");
+const WSCommandSystem_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandSystem.js");
+const WSCommandTcp_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandTcp.js");
+const WSCommandUart_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandUart.js");
+const WSCommandWiFi_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandWiFi.js");
 /* eslint-disable */
-WSCommand_1.default.addCommandClass("WSCommandSystem", WSCommandSystem_1.default);
-WSCommand_1.default.addCommandClass("WSCommandDirective", WSCommandDirective_1.default);
-WSCommand_1.default.addCommandClass("WSCommandIO", WSCommandIO_1.default);
-WSCommand_1.default.addCommandClass("WSCommandPWM", WSCommandPWM_1.default);
-WSCommand_1.default.addCommandClass("WSCommandUart", WSCommandUart_1.default);
-WSCommand_1.default.addCommandClass("WSCommandAD", WSCommandAD_1.default);
-WSCommand_1.default.addCommandClass("WSCommandSPI", WSCommandSPI_1.default);
-WSCommand_1.default.addCommandClass("WSCommandI2C", WSCommandI2C_1.default);
-WSCommand_1.default.addCommandClass("WSCommandLogicAnalyzer", WSCommandLogicAnalyzer_1.default);
-WSCommand_1.default.addCommandClass("WSCommandDisplay", WSCommandDisplay_1.default);
-WSCommand_1.default.addCommandClass("WSCommandSwitch", WSCommandSwitch_1.default);
-WSCommand_1.default.addCommandClass("WSCommandBle", WSCommandBle_1.default);
-WSCommand_1.default.addCommandClass("WSCommandMeasurement", WSCommandMeasurement_1.default);
-WSCommand_1.default.addCommandClass("WSCommandTcp", WSCommandTcp_1.default);
-WSCommand_1.default.addCommandClass("WSCommandWiFi", WSCommandWiFi_1.default);
-WSCommand_1.default.addCommandClass("WSCommandPlugin", WSCommandPlugin_1.default);
-exports.default = WSCommand_1.default;
+WSCommand_1.WSCommand.addCommandClass("WSCommandSystem", WSCommandSystem_1.WSCommandSystem);
+WSCommand_1.WSCommand.addCommandClass("WSCommandDirective", WSCommandDirective_1.WSCommandDirective);
+WSCommand_1.WSCommand.addCommandClass("WSCommandIO", WSCommandIO_1.WSCommandIO);
+WSCommand_1.WSCommand.addCommandClass("WSCommandPWM", WSCommandPWM_1.WSCommandPWM);
+WSCommand_1.WSCommand.addCommandClass("WSCommandUart", WSCommandUart_1.WSCommandUart);
+WSCommand_1.WSCommand.addCommandClass("WSCommandAD", WSCommandAD_1.WSCommandAD);
+WSCommand_1.WSCommand.addCommandClass("WSCommandSPI", WSCommandSPI_1.WSCommandSPI);
+WSCommand_1.WSCommand.addCommandClass("WSCommandI2C", WSCommandI2C_1.WSCommandI2C);
+WSCommand_1.WSCommand.addCommandClass("WSCommandLogicAnalyzer", WSCommandLogicAnalyzer_1.WSCommandLogicAnalyzer);
+WSCommand_1.WSCommand.addCommandClass("WSCommandDisplay", WSCommandDisplay_1.WSCommandDisplay);
+WSCommand_1.WSCommand.addCommandClass("WSCommandSwitch", WSCommandSwitch_1.WSCommandSwitch);
+WSCommand_1.WSCommand.addCommandClass("WSCommandBle", WSCommandBle_1.WSCommandBle);
+WSCommand_1.WSCommand.addCommandClass("WSCommandMeasurement", WSCommandMeasurement_1.WSCommandMeasurement);
+WSCommand_1.WSCommand.addCommandClass("WSCommandTcp", WSCommandTcp_1.WSCommandTcp);
+WSCommand_1.WSCommand.addCommandClass("WSCommandWiFi", WSCommandWiFi_1.WSCommandWiFi);
+WSCommand_1.WSCommand.addCommandClass("WSCommandPlugin", WSCommandPlugin_1.WSCommandPlugin);
+exports.default = WSCommand_1.WSCommand;
 
 
 /***/ }),
@@ -25366,6 +25339,7 @@ exports.default = WSCommand_1.default;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.JsonBinaryConverter = void 0;
 /**
  * @packageDocumentation
  * @ignore
@@ -25613,7 +25587,7 @@ class JsonBinaryConverter {
         return new Uint8Array(Buffer.from(data, 'utf8'));
     }
 }
-exports.default = JsonBinaryConverter;
+exports.JsonBinaryConverter = JsonBinaryConverter;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -29249,7 +29223,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const MINEW_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/abstracts/MINEW.js"));
-const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+const util_1 = __webpack_require__("./dist/src/obniz/libs/utils/util.js");
 /** MINEW_S1 management class MINEW_S1を管理するクラス */
 class MINEW_S1 extends MINEW_1.default {
     constructor() {
@@ -29293,7 +29267,7 @@ class MINEW_S1 extends MINEW_1.default {
             .match(/.{1,2}/g)) !== null && _a !== void 0 ? _a : [])
             .reverse()
             .join('');
-        const name = util_1.default.dataArray2string(peripheral.adv_data.slice(20));
+        const name = util_1.ObnizUtil.dataArray2string(peripheral.adv_data.slice(20));
         return {
             frameType,
             versionNumber,
@@ -29439,7 +29413,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
-const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+const util_1 = __webpack_require__("./dist/src/obniz/libs/utils/util.js");
 /** MT_500BT management class MT_500BTを管理するクラス */
 class MT_500BT {
     constructor(peripheral) {
@@ -29609,8 +29583,8 @@ class MT_500BT {
         };
         return {
             cls: deviceType[res1.readUInt8(3)],
-            dvnm: util_1.default.dataArray2string(Array.from(res1.slice(4, -1))),
-            swif: util_1.default.dataArray2string(Array.from(res2.slice(3, -1))),
+            dvnm: util_1.ObnizUtil.dataArray2string(Array.from(res1.slice(4, -1))),
+            swif: util_1.ObnizUtil.dataArray2string(Array.from(res2.slice(3, -1))),
         };
     }
     // device always throw error
@@ -55112,11 +55086,8 @@ exports.default = M5StickC_ToF;
  * @packageDocumentation
  * @module Parts.M5StickC_Yun
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+const util_1 = __webpack_require__("./dist/src/obniz/libs/utils/util.js");
 class M5StickC_Yun {
     constructor() {
         this.LED_LEN = 14;
@@ -55200,9 +55171,9 @@ class M5StickC_Yun {
     //   this.rgb(color[0], color[1], color[2]);
     // }
     rgb(red, green, blue) {
-        util_1.default.assertNumber(0, 255, 'red', red);
-        util_1.default.assertNumber(0, 255, 'green', green);
-        util_1.default.assertNumber(0, 255, 'blue', blue);
+        util_1.ObnizUtil.assertNumber(0, 255, 'red', red);
+        util_1.ObnizUtil.assertNumber(0, 255, 'green', green);
+        util_1.ObnizUtil.assertNumber(0, 255, 'blue', blue);
         const leds = [];
         for (let i = 0; i < this.LED_LEN; i++) {
             leds.push([red, green, blue]);
@@ -55210,9 +55181,9 @@ class M5StickC_Yun {
         this.rgbs(leds);
     }
     hsv(hue, saturation, value) {
-        util_1.default.assertNumber(0, 300, 'hue', hue);
-        util_1.default.assertNumber(0, 1, 'saturation', saturation);
-        util_1.default.assertNumber(0, 1, 'value', value);
+        util_1.ObnizUtil.assertNumber(0, 300, 'hue', hue);
+        util_1.ObnizUtil.assertNumber(0, 1, 'saturation', saturation);
+        util_1.ObnizUtil.assertNumber(0, 1, 'value', value);
         const color = M5StickC_Yun._generateHsvColor(hue, saturation, value);
         this.rgb(color.red, color.green, color.blue);
     }

@@ -11,7 +11,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const hci_1 = __importDefault(require("./hci"));
+exports.ObnizBLE = void 0;
+const hci_1 = require("./hci");
 const bindings_1 = __importDefault(require("./protocol/central/bindings"));
 const hci_2 = __importDefault(require("./protocol/hci"));
 const bindings_2 = __importDefault(require("./protocol/peripheral/bindings"));
@@ -41,7 +42,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         // eslint-disable-next-line
         this.debugHandler = (text) => { };
         const extended = info.extended;
-        this.hci = new hci_1.default(obniz, extended);
+        this.hci = new hci_1.ObnizBLEHci(obniz, extended);
         this.service = bleService_1.default;
         this.characteristic = bleCharacteristic_1.default;
         this.descriptor = bleDescriptor_1.default;
@@ -529,4 +530,4 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         }
     }
 }
-exports.default = ObnizBLE;
+exports.ObnizBLE = ObnizBLE;

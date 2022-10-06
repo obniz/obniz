@@ -3,7 +3,7 @@
  * @ignore
  */
 import EventEmitter from 'eventemitter3';
-import ObnizBLEHci from '../hci';
+import { ObnizBLEHci } from '../hci';
 
 import {
   ObnizBleHciStateError,

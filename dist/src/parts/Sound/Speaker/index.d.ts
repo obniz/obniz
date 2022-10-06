@@ -3,7 +3,7 @@
  * @module Parts.Speaker
  */
 import Obniz from '../../../obniz';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface SpeakerOptions {
     signal: number;
     gnd?: number;

@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
-declare class WSCommandTcp extends WSCommand {
+import { WSCommand } from './WSCommand';
+export declare class WSCommandTcp extends WSCommand {
     module: number;
     _MaxPort: number;
     _CommandConnect: number;
@@ -18,4 +18,3 @@ declare class WSCommandTcp extends WSCommand {
     parseFromJson(json: any): void;
     notifyFromBinary(objToSend: any, func: number, payload: Uint8Array): void;
 }
-export default WSCommandTcp;

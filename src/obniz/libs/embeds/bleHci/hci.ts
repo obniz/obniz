@@ -12,7 +12,7 @@ import {
 
 export type EventHandler = (...args: any) => any;
 
-export default class ObnizBLEHci {
+export class ObnizBLEHci {
   public Obniz: ObnizDevice;
 
   /*

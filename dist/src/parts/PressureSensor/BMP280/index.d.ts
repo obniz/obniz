@@ -3,9 +3,9 @@
  * @module Parts.BMP280
  */
 import Obniz from '../../../obniz';
-import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
-import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { PeripheralI2C } from '../../../obniz/libs/io_peripherals/i2c';
+import { PeripheralIO } from '../../../obniz/libs/io_peripherals/io';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface BMP280Options {
     vio?: number;
     vcore?: number;

@@ -7,7 +7,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const util_1 = __importDefault(require("./libs/utils/util"));
+const util_1 = require("./libs/utils/util");
 const ObnizUIs_1 = __importDefault(require("./ObnizUIs"));
 class ObnizDevice extends ObnizUIs_1.default {
     /**
@@ -53,7 +53,7 @@ class ObnizDevice extends ObnizUIs_1.default {
      */
     constructor(id, options) {
         super(id, options);
-        this.util = new util_1.default(this);
+        this.util = new util_1.ObnizUtil(this);
     }
     /**
      * @ignore

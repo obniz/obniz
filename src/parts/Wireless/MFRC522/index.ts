@@ -8,7 +8,8 @@ import Obniz from '../../../obniz';
 const OK: any = true;
 const ERROR: any = false;
 
-import ObnizPartsInterface, {
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 

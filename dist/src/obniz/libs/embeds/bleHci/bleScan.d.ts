@@ -1,5 +1,5 @@
 import EventEmitter from 'eventemitter3';
-import ObnizBLE from './ble';
+import { ObnizBLE } from './ble';
 import BleRemotePeripheral from './bleRemotePeripheral';
 import { BleDeviceAddress, UUID } from './bleTypes';
 export declare type BleScanMode = 'passive' | 'active';

@@ -3,7 +3,7 @@
  * @module Parts.GYSFDMAXB
  */
 import Obniz from '../../../obniz';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface GYSFDMAXBOptions {
     vcc?: number;
     gnd?: number;

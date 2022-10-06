@@ -11,8 +11,8 @@ import {
   ObnizBleScanStartError,
   ObnizOfflineError,
 } from '../../../ObnizError';
-import Util from '../../utils/util';
-import ObnizBLE from './ble';
+import { ObnizUtil as Util } from '../../utils/util';
+import { ObnizBLE } from './ble';
 import BleHelper from './bleHelper';
 import BleRemotePeripheral from './bleRemotePeripheral';
 import { BleDeviceAddress, UUID } from './bleTypes';

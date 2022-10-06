@@ -3,7 +3,7 @@
  * @module Parts.Keyestudio_Button
  */
 import Obniz from '../../../obniz';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface Keyestudio_ButtonOptions {
     signal: number;
     vcc?: number;

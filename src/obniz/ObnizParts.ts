@@ -4,7 +4,7 @@
  */
 
 import BleRemotePeripheral from './libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizUtil from './libs/utils/util';
+import { ObnizUtil } from './libs/utils/util';
 import { Obniz } from './Obniz';
 import ObnizConnection from './ObnizConnection';
 import { ObnizOptions } from './ObnizOptions';
@@ -13,7 +13,7 @@ import {
   ObnizPartsBleMode,
   ObnizPartsBleProps,
 } from './ObnizPartsBleAbstract';
-import ObnizPartsInterface from './ObnizPartsInterface';
+import { ObnizPartsInterface } from './ObnizPartsInterface';
 import { PartsList, PartsType } from './ObnizPartsList';
 import PartsClass = Obniz.PartsClass;
 import Parts = Obniz.Parts;

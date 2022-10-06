@@ -6,7 +6,7 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import ObnizBLEHci from './hci';
+import { ObnizBLEHci } from './hci';
 import CentralBindings from './protocol/central/bindings';
 import HciProtocol from './protocol/hci';
 import PeripheralBindings from './protocol/peripheral/bindings';
@@ -26,7 +26,7 @@ import BleExtendedAdvertisement from './bleExtendedAdvertisement';
  * Use a obniz device as a BLE device.
  * Peripheral and Central mode are supported
  */
-export default class ObnizBLE extends ComponentAbstract {
+export declare class ObnizBLE extends ComponentAbstract {
     /**
      * Initialized status.
      *

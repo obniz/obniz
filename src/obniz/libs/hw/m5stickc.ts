@@ -9,21 +9,21 @@ import InfraredLED from '../../../parts/Infrared/InfraredLED';
 import LED from '../../../parts/Light/LED';
 import Button from '../../../parts/MovementSensor/Button';
 
-import I2C from '../../../obniz/libs/io_peripherals/i2c';
-import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
-import IO from '../../../obniz/libs/io_peripherals/io';
+import { PeripheralI2C as I2C } from '../../../obniz/libs/io_peripherals/i2c';
+import { PeripheralI2C } from '../../../obniz/libs/io_peripherals/i2c';
+import { PeripheralIO as IO } from '../../../obniz/libs/io_peripherals/io';
 import MPU6886 from '../../../parts/MovementSensor/MPU6886';
 import SH200Q from '../../../parts/MovementSensor/SH200Q';
 import AXP192 from '../../../parts/Power/AXP192';
-import ObnizBLEHci from '../embeds/bleHci/ble';
-import Display from '../embeds/display';
-import PeripheralAD from '../io_peripherals/ad';
-import PeripheralGrove from '../io_peripherals/grove';
-import PeripheralPWM from '../io_peripherals/pwm';
-import PeripheralSPI from '../io_peripherals/spi';
-import PeripheralUART from '../io_peripherals/uart';
-import LogicAnalyzer from '../measurements/logicanalyzer';
-import ObnizMeasure from '../measurements/measure';
+import { ObnizBLE as ObnizBLEHci } from '../embeds/bleHci/ble';
+import { Display } from '../embeds/display';
+import { PeripheralAD } from '../io_peripherals/ad';
+import { PeripheralGrove } from '../io_peripherals/grove';
+import { PeripheralPWM } from '../io_peripherals/pwm';
+import { PeripheralSPI } from '../io_peripherals/spi';
+import { PeripheralUART } from '../io_peripherals/uart';
+import { LogicAnalyzer } from '../measurements/logicanalyzer';
+import { ObnizMeasure } from '../measurements/measure';
 
 export class M5StickC extends ObnizDevice {
   /**
