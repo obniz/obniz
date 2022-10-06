@@ -6,7 +6,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const advertismentAnalyzer_1 = require("../utils/advertisement/advertismentAnalyzer");
-/** Tr4 series management class Tr4シリーズを管理するクラス */
+/** Tr4 series management class RTR500Bシリーズを管理するクラス */
 class RTR500B {
     constructor() {
         // local name adv is exist, but cannot use for filter
@@ -26,7 +26,7 @@ class RTR500B {
      *
      * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
      *
-     * @returns Whether it is the Tr4
+     * @returns Whether it is the RTR500B
      *
      * RTR500Bかどうか
      */
@@ -50,7 +50,7 @@ class RTR500B {
      * {
      *
      * temperature: temperature 温度 (Unit 単位: 0.1 degC)
-     *
+     * humidity?: Humidity 湿度 (Unit 単位: 0.1 percent);
      * }
      * ```
      */

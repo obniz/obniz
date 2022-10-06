@@ -19,7 +19,7 @@ export interface Tr4A_Data {
   humidity?: number;
 }
 
-/** Tr4 series management class Tr4シリーズを管理するクラス */
+/** Tr4A series management class Tr4Aシリーズを管理するクラス */
 export default class Tr4A implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
@@ -34,9 +34,9 @@ export default class Tr4A implements ObnizPartsBleInterface {
    *
    * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
    *
-   * @returns Whether it is the Tr4
+   * @returns Whether it is the Tr4A
    *
-   * Tr4かどうか
+   * Tr4Aかどうか
    */
   public static isDevice(peripheral: BleRemotePeripheral): boolean {
     if (!peripheral.localName?.startsWith('TR4')) {
@@ -48,7 +48,7 @@ export default class Tr4A implements ObnizPartsBleInterface {
   /**
    * Get a data from the Tr4A
    *
-   * Tr4からデータを取得
+   * Tr4Aからデータを取得
    *
    * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
    *
@@ -58,7 +58,7 @@ export default class Tr4A implements ObnizPartsBleInterface {
    * {
    *
    * temperature: temperature 温度 (Unit 単位: 0.1 degC)
-   *
+   * humidity?: Humidity 湿度 (Unit 単位: 0.1 percent);
    * }
    * ```
    */

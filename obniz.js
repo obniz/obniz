@@ -31564,7 +31564,7 @@ exports.default = RS_Seek3;
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
-/** Tr4 series management class Tr4シリーズを管理するクラス */
+/** Tr4 series management class RTR500Bシリーズを管理するクラス */
 class RTR500B {
     constructor() {
         // local name adv is exist, but cannot use for filter
@@ -31584,7 +31584,7 @@ class RTR500B {
      *
      * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
      *
-     * @returns Whether it is the Tr4
+     * @returns Whether it is the RTR500B
      *
      * RTR500Bかどうか
      */
@@ -31608,7 +31608,7 @@ class RTR500B {
      * {
      *
      * temperature: temperature 温度 (Unit 単位: 0.1 degC)
-     *
+     * humidity?: Humidity 湿度 (Unit 単位: 0.1 percent);
      * }
      * ```
      */
@@ -31952,7 +31952,7 @@ Tr4._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
-/** Tr4 series management class Tr4シリーズを管理するクラス */
+/** Tr4A series management class Tr4Aシリーズを管理するクラス */
 class Tr4A {
     constructor() {
         // local name adv is exist, but cannot use for filter
@@ -31972,9 +31972,9 @@ class Tr4A {
      *
      * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
      *
-     * @returns Whether it is the Tr4
+     * @returns Whether it is the Tr4A
      *
-     * Tr4かどうか
+     * Tr4Aかどうか
      */
     static isDevice(peripheral) {
         var _a;
@@ -31986,7 +31986,7 @@ class Tr4A {
     /**
      * Get a data from the Tr4A
      *
-     * Tr4からデータを取得
+     * Tr4Aからデータを取得
      *
      * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
      *
@@ -31996,7 +31996,7 @@ class Tr4A {
      * {
      *
      * temperature: temperature 温度 (Unit 単位: 0.1 degC)
-     *
+     * humidity?: Humidity 湿度 (Unit 単位: 0.1 percent);
      * }
      * ```
      */

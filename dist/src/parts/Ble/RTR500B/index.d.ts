@@ -10,7 +10,7 @@ export interface RTR500B_Data {
     temperature: number;
     humidity?: number;
 }
-/** Tr4 series management class Tr4シリーズを管理するクラス */
+/** Tr4 series management class RTR500Bシリーズを管理するクラス */
 export default class RTR500B implements ObnizPartsBleInterface {
     static info(): ObnizPartsBleInfo;
     /**
@@ -20,7 +20,7 @@ export default class RTR500B implements ObnizPartsBleInterface {
      *
      * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
      *
-     * @returns Whether it is the Tr4
+     * @returns Whether it is the RTR500B
      *
      * RTR500Bかどうか
      */
@@ -38,7 +38,7 @@ export default class RTR500B implements ObnizPartsBleInterface {
      * {
      *
      * temperature: temperature 温度 (Unit 単位: 0.1 degC)
-     *
+     * humidity?: Humidity 湿度 (Unit 単位: 0.1 percent);
      * }
      * ```
      */
