@@ -25820,6 +25820,7 @@ var map = {
 	"./Ble/HEM_6233T/index.js": "./dist/src/parts/Ble/HEM_6233T/index.js",
 	"./Ble/HEM_9200T/index.js": "./dist/src/parts/Ble/HEM_9200T/index.js",
 	"./Ble/HN_300T2/index.js": "./dist/src/parts/Ble/HN_300T2/index.js",
+	"./Ble/INKBIRD/index.js": "./dist/src/parts/Ble/INKBIRD/index.js",
 	"./Ble/KankiAirMier/index.js": "./dist/src/parts/Ble/KankiAirMier/index.js",
 	"./Ble/LogttaAD/index.js": "./dist/src/parts/Ble/LogttaAD/index.js",
 	"./Ble/LogttaAccel/index.js": "./dist/src/parts/Ble/LogttaAccel/index.js",
@@ -27876,6 +27877,118 @@ class HN_300T2 {
     }
 }
 exports.default = HN_300T2;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/INKBIRD/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.INKBIRD
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+/** INKBIRD series management class INKBIRDシリーズを管理するクラス */
+class INKBIRD {
+    constructor() {
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: 'INKBIRD',
+        };
+    }
+    /**
+     * Verify that the received peripheral is from the INKBIRD
+     *
+     * 受け取ったPeripheralがINKBIRDのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the INKBIRD
+     *
+     * INKBIRDかどうか
+     */
+    static isDevice(peripheral) {
+        // if (!peripheral.localName?.startsWith('sps')) {
+        //   return false;
+        // }
+        // if (peripheral.localName?.startsWith('sps')) {
+        //   console.log(peripheral);
+        // }
+        // console.log(INKBIRD._deviceAdvAnalyzer.validate(peripheral.adv_data));
+        if (peripheral.adv_data && peripheral.scan_resp) {
+            return INKBIRD._deviceAdvAnalyzer.validate([
+                ...peripheral.adv_data,
+                ...peripheral.scan_resp,
+            ]);
+        }
+        else {
+            return false;
+        }
+    }
+    /**
+     * Get a data from the INKBIRD
+     *
+     * INKBIRDからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the INKBIRD INKBIRDから受け取ったデータ
+     *
+     * ```
+     * {
+     *
+     * temperature: temperature 温度 (Unit 単位: 0.1 degC)
+     * humidity?: Humidity 湿度 (Unit 単位: 0.1 percent);
+     * }
+     * ```
+     */
+    static getData(peripheral) {
+        if (!INKBIRD.isDevice(peripheral)) {
+            return null;
+        }
+        if (!peripheral.scan_resp) {
+            return null;
+        }
+        const temperature = INKBIRD._deviceAdvAnalyzer.getData([...peripheral.adv_data, ...peripheral.scan_resp], 'manufacture', 'temperature');
+        if (!temperature) {
+            return null;
+        }
+        const temperatureRaw = Buffer.from(temperature).readInt16LE(0);
+        const humidity = INKBIRD._deviceAdvAnalyzer.getData([...peripheral.adv_data, ...peripheral.scan_resp], 'manufacture', 'humidity');
+        if (!humidity) {
+            return null;
+        }
+        const humidityRaw = Buffer.from(humidity).readInt16LE(0);
+        return {
+            temperature: temperatureRaw / 100,
+            humidity: humidityRaw / 100,
+        };
+    }
+}
+exports.default = INKBIRD;
+INKBIRD._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
+    .addTarget('flag', [0x02, 0x01, 0x06])
+    .groupStart('manufacture')
+    .addTarget('length', [0x03])
+    .addTarget('type', [0x02])
+    .addTargetByLength('uuid', 2)
+    .addTarget('length2', [0x04])
+    .addTarget('type2', [0x09])
+    .addTarget('deviceName', [0x73, 0x70, 0x73])
+    .addTarget('dataLength', [0x0a])
+    .addTarget('dataType', [0xff])
+    .addTargetByLength('temperature', 2)
+    .addTargetByLength('humidity', 2)
+    .addTargetByLength('reserved', 5)
+    .groupEnd();
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -81458,7 +81571,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
+module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
 
 /***/ }),
 

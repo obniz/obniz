@@ -189,6 +189,7 @@ import MESH_100TH, { MESH_100THOptions } from '../parts/Ble/MESH_100TH';
 import MESH_100GP, { MESH_100GPOptions } from '../parts/Ble/MESH_100GP';
 import HN_300T2, { HN_300T2Options } from '../parts/Ble/HN_300T2';
 import GT_7510, { GT_7510Options } from '../parts/Ble/GT_7510';
+import INKBIRD, { INKBIRDOptions } from '../parts/Ble/INKBIRD';
 export declare type PartsType = keyof PartsList;
 interface PartsInterface<P, O, C extends {
     new (...args: any[]): P;
@@ -270,6 +271,7 @@ export interface PartsList {
     LMT87: PartsInterface<LMT87, LMT87Options, typeof LMT87>;
     MCP9700: PartsInterface<MCP9700, MCP9700Options, typeof MCP9700>;
     MCP9701: PartsInterface<MCP9701, MCP9701Options, typeof MCP9701>;
+    INKBIRD: PartsInterface<INKBIRD, INKBIRDOptions, typeof INKBIRD>;
     AMG8833: PartsInterface<AMG8833, AMG8833Options, typeof AMG8833>;
     BME280: PartsInterface<BME280, BME280Options, typeof BME280>;
     D6T44L: PartsInterface<D6T44L, D6T44LOptions, typeof D6T44L>;

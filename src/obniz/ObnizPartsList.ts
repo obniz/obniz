@@ -295,6 +295,7 @@ import MESH_100TH, { MESH_100THOptions } from '../parts/Ble/MESH_100TH';
 import MESH_100GP, { MESH_100GPOptions } from '../parts/Ble/MESH_100GP';
 import HN_300T2, { HN_300T2Options } from '../parts/Ble/HN_300T2';
 import GT_7510, { GT_7510Options } from '../parts/Ble/GT_7510';
+import INKBIRD, { INKBIRDOptions } from '../parts/Ble/INKBIRD';
 
 export type PartsType = keyof PartsList;
 
@@ -453,6 +454,7 @@ export interface PartsList {
   LMT87: PartsInterface<LMT87, LMT87Options, typeof LMT87>;
   MCP9700: PartsInterface<MCP9700, MCP9700Options, typeof MCP9700>;
   MCP9701: PartsInterface<MCP9701, MCP9701Options, typeof MCP9701>;
+  INKBIRD: PartsInterface<INKBIRD, INKBIRDOptions, typeof INKBIRD>;
   // 'S8100B':{instance: S8100B,options: S8100BOptions},
   // 'S8120C':{instance: S8120C,options: S8120COptions},
   // 'ADT7410':{instance: ADT7410,options: ADT7410Options},
