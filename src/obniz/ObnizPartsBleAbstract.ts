@@ -6,8 +6,9 @@
 /* eslint-disable max-classes-per-file */
 
 import roundTo from 'round-to';
-import BleRemoteCharacteristic from './libs/embeds/bleHci/bleRemoteCharacteristic';
-import BleRemotePeripheral, {
+import { BleRemoteCharacteristic } from './libs/embeds/bleHci/bleRemoteCharacteristic';
+import {
+  BleRemotePeripheral,
   IBeacon,
 } from './libs/embeds/bleHci/bleRemotePeripheral';
 import {

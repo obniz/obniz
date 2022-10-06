@@ -3,17 +3,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleRemoteService = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
 const bleHelper_1 = __importDefault(require("./bleHelper"));
-const bleRemoteAttributeAbstract_1 = __importDefault(require("./bleRemoteAttributeAbstract"));
-const bleRemoteCharacteristic_1 = __importDefault(require("./bleRemoteCharacteristic"));
+const bleRemoteAttributeAbstract_1 = require("./bleRemoteAttributeAbstract");
+const bleRemoteCharacteristic_1 = require("./bleRemoteCharacteristic");
 /**
  * @category Use as Central
  */
-class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
+class BleRemoteService extends bleRemoteAttributeAbstract_1.BleRemoteAttributeAbstract {
     constructor(obj) {
         super(obj);
     }
@@ -27,7 +28,7 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      * @ignore
      */
     get childrenClass() {
-        return bleRemoteCharacteristic_1.default;
+        return bleRemoteCharacteristic_1.BleRemoteCharacteristic;
     }
     /**
      * @ignore
@@ -198,4 +199,4 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
         throw new Error('cannot write service');
     }
 }
-exports.default = BleRemoteService;
+exports.BleRemoteService = BleRemoteService;

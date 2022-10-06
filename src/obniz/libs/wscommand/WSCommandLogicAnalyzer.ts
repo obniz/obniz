@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
+import { WSCommand } from './WSCommand';
 
-class WSCommandLogicAnalyzer extends WSCommand {
+export class WSCommandLogicAnalyzer extends WSCommand {
   public module: number;
   public _CommandInit: number;
   public _CommandDeinit: number;
@@ -94,5 +94,3 @@ class WSCommandLogicAnalyzer extends WSCommand {
     }
   }
 }
-
-export default WSCommandLogicAnalyzer;

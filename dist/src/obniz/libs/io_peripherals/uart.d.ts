@@ -64,7 +64,7 @@ export interface PeripheralUARTOptions {
  *
  * @category Peripherals
  */
-export default class PeripheralUART extends ComponentAbstract {
+export declare class PeripheralUART extends ComponentAbstract {
     received: any;
     /**
      * @ignore

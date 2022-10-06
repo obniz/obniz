@@ -1,10 +1,8 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const WSCommand_1 = __importDefault(require("./WSCommand"));
-class WSCommandStorage extends WSCommand_1.default {
+exports.WSCommandStorage = void 0;
+const WSCommand_1 = require("./WSCommand");
+class WSCommandStorage extends WSCommand_1.WSCommand {
     constructor() {
         super(...arguments);
         this.module = 17;
@@ -83,4 +81,4 @@ class WSCommandStorage extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandStorage;
+exports.WSCommandStorage = WSCommandStorage;

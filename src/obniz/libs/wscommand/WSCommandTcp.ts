@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
+import { WSCommand } from './WSCommand';
 
-class WSCommandTcp extends WSCommand {
+export class WSCommandTcp extends WSCommand {
   public module: number;
   public _MaxPort: number;
   public _CommandConnect: number;
@@ -141,5 +141,3 @@ class WSCommandTcp extends WSCommand {
     }
   }
 }
-
-export default WSCommandTcp;

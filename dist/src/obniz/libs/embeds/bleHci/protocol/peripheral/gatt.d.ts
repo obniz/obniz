@@ -1,7 +1,7 @@
 /// <reference types="node" />
 /// <reference types="node" />
 import { UUID } from '../../bleTypes';
-import AclStream from './acl-stream';
+import { AclStream } from './acl-stream';
 import EventEmitter from 'eventemitter3';
 export declare type HandleIndex = number;
 interface GattServiceHandle {
@@ -46,7 +46,7 @@ declare type GattEventTypes = 'mtuChange';
 /**
  * @ignore
  */
-export default class GattPeripheral extends EventEmitter<GattEventTypes> {
+export declare class GattPeripheral extends EventEmitter<GattEventTypes> {
     maxMtu: number;
     _mtu: number;
     _preparedWriteRequest: any;

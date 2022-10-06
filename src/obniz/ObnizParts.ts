@@ -3,17 +3,17 @@
  * @module ObnizCore
  */
 
-import BleRemotePeripheral from './libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizUtil from './libs/utils/util';
+import { BleRemotePeripheral } from './libs/embeds/bleHci/bleRemotePeripheral';
+import { ObnizUtil } from './libs/utils/util';
 import { Obniz } from './Obniz';
-import ObnizConnection from './ObnizConnection';
+import { ObnizConnection } from './ObnizConnection';
 import { ObnizOptions } from './ObnizOptions';
 import {
   ObnizPartsBle,
   ObnizPartsBleMode,
   ObnizPartsBleProps,
 } from './ObnizPartsBleAbstract';
-import ObnizPartsInterface from './ObnizPartsInterface';
+import { ObnizPartsInterface } from './ObnizPartsInterface';
 import { PartsList, PartsType } from './ObnizPartsList';
 import PartsClass = Obniz.PartsClass;
 import Parts = Obniz.Parts;
@@ -31,7 +31,7 @@ export interface Triaxial {
   z: number;
 }
 
-export default abstract class ObnizParts extends ObnizConnection {
+export abstract class ObnizParts extends ObnizConnection {
   /**
    * @ignore
    * @private

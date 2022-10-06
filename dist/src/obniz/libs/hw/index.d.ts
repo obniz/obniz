@@ -2,6 +2,6 @@
  * @packageDocumentation
  * @ignore
  */
-export default class HW {
-    static getDefinitionFor(hw: any): any;
+export declare class HW {
+    static getDefinitionFor(hw: string | undefined): any;
 }

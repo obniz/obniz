@@ -4,13 +4,13 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
+import { WSCommand } from './WSCommand';
 interface WiFiInfo {
     ssid: string;
     macAddress: string;
     rssi: number;
 }
-declare class WSCommandSystem extends WSCommand {
+export declare class WSCommandSystem extends WSCommand {
     module: number;
     _CommandReboot: number;
     _CommandUpdateFirmware: number;
@@ -117,4 +117,4 @@ declare class WSCommandSystem extends WSCommand {
     decodeWiFiInfo(payload: Uint8Array): WiFiInfo[];
     _signedNumberFromBinary(data: number[]): number;
 }
-export default WSCommandSystem;
+export {};

@@ -3,11 +3,11 @@
  *
  * @ignore
  */
-import BleCharacteristic from '../../bleCharacteristic';
+import { BleCharacteristic } from '../../bleCharacteristic';
 import { ATT, ATT_ECODE_READABLES, ATT_OP_READABLES } from '../common/att';
 import { GattCommon } from '../common/gatt';
-import GattPeripheral, { HandleIndex } from '../peripheral/gatt';
-import AclStream from './acl-stream';
+import { GattPeripheral, HandleIndex } from '../peripheral/gatt';
+import { AclStream } from './acl-stream';
 
 // let debug = require('debug')('att');
 const debug: any = () => {
@@ -28,7 +28,7 @@ import {
   ObnizTimeoutError,
 } from '../../../../../ObnizError';
 import BleHelper from '../../bleHelper';
-import BleRemoteService from '../../bleRemoteService';
+import { BleRemoteService } from '../../bleRemoteService';
 import { BleDeviceAddress, UUID } from '../../bleTypes';
 import { SmpEncryptOptions } from './smp';
 
@@ -82,7 +82,7 @@ interface CommandQueue {
 /**
  * @ignore
  */
-class GattCentral extends EventEmitter<GattEventTypes> {
+export class GattCentral extends EventEmitter<GattEventTypes> {
   public onAclStreamDataBinded: (cid: number, data: Buffer) => void;
   public onAclStreamEndBinded: () => void;
   private _address: BleDeviceAddress;
@@ -1186,5 +1186,3 @@ class GattCentral extends EventEmitter<GattEventTypes> {
     });
   }
 }
-
-export default GattCentral;

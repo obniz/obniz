@@ -3,7 +3,7 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 
-import ObnizDevice from '../../../ObnizDevice';
+import { ObnizDevice } from '../../../ObnizDevice';
 import {
   ObnizOfflineError,
   ObnizParameterError,
@@ -12,7 +12,7 @@ import {
 
 export type EventHandler = (...args: any) => any;
 
-export default class ObnizBLEHci {
+export class ObnizBLEHci {
   public Obniz: ObnizDevice;
 
   /*

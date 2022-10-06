@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
-declare class WSCommandAD extends WSCommand {
+import { WSCommand } from './WSCommand';
+export declare class WSCommandAD extends WSCommand {
     module: number;
     _CommandInitNormalInterval: number;
     _CommandDeinit: number;
@@ -15,4 +15,3 @@ declare class WSCommandAD extends WSCommand {
     parseFromJson(json: any): void;
     notifyFromBinary(objToSend: any, func: number, payload: Uint8Array): void;
 }
-export default WSCommandAD;

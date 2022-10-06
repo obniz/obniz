@@ -3,7 +3,7 @@
  * @module Parts.Linking
  */
 import Obniz from '../../../obniz';
-import bleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/BleRemotePeripheral';
 import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 import LinkingAdvertising from './modules/advertising';
 import LinkingDevice from './modules/device';
@@ -38,7 +38,7 @@ export default class Linking {
     initialized: boolean;
     keys: string[];
     requiredKeys: string[];
-    peripheral: bleRemotePeripheral | null;
+    peripheral: BleRemotePeripheral | null;
     obniz: Obniz;
     get LinkingAdvertising(): typeof LinkingAdvertising;
     get LinkingDevice(): typeof LinkingDevice;
@@ -80,7 +80,7 @@ export default class Linking {
      */
     discoverWait(p: LinkingParams): Promise<any[]>;
     _checkInitialized(): void;
-    _discoveredDevice(peripheral: bleRemotePeripheral, name_filter: any, id_filter: any): LinkingDevice | null;
+    _discoveredDevice(peripheral: BleRemotePeripheral, name_filter: any, id_filter: any): LinkingDevice | null;
     _scanDevices(): void;
     /**
      * Finish scanning device

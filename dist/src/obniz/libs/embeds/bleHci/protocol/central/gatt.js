@@ -3,9 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.GattCentral = void 0;
 const att_1 = require("../common/att");
 const gatt_1 = require("../common/gatt");
-const gatt_2 = __importDefault(require("../peripheral/gatt"));
+const gatt_2 = require("../peripheral/gatt");
 // let debug = require('debug')('att');
 const debug = () => {
     // do nothing.
@@ -52,7 +53,7 @@ class GattCentral extends eventemitter3_1.default {
         this._aclStream.on('data', this.onAclStreamDataBinded);
         this._aclStream.on('end', this.onAclStreamEndBinded);
         this._gattCommon = new gatt_1.GattCommon();
-        this._gattPeripheral = new gatt_2.default();
+        this._gattPeripheral = new gatt_2.GattPeripheral();
         this._gattPeripheral.send = (data) => {
             this._execNoRespCommandWait(data).catch((e) => {
                 // nothing to do
@@ -725,4 +726,4 @@ class GattCentral extends eventemitter3_1.default {
         });
     }
 }
-exports.default = GattCentral;
+exports.GattCentral = GattCentral;

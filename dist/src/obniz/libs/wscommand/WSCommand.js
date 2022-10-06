@@ -7,6 +7,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommand = void 0;
 const WSSchema_1 = __importDefault(require("./WSSchema"));
 const commandClasses = {};
 class WSCommand {
@@ -302,7 +303,7 @@ class WSCommand {
         return false;
     }
 }
-exports.default = WSCommand;
+exports.WSCommand = WSCommand;
 WSCommand.onCompressed = () => {
     // do nothing
 };

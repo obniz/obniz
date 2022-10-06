@@ -1,14 +1,12 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandSubnet = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __importDefault(require("./WSCommand"));
-class WSCommandSubnet extends WSCommand_1.default.CommandClasses.WSCommandSystem {
+const WSCommand_1 = require("./WSCommand");
+class WSCommandSubnet extends WSCommand_1.WSCommand.CommandClasses.WSCommandSystem {
     constructor() {
         super(...arguments);
         this.module = 16;
@@ -77,7 +75,7 @@ class WSCommandSubnet extends WSCommand_1.default.CommandClasses.WSCommandSystem
      *
      */
     sendRequestConnectToNode(targetMacAddr) {
-        this.sendToNode(targetMacAddr, WSCommand_1.default.framed(this.module, this._CommandRequestJoin, new Uint8Array([]))); // send request
+        this.sendToNode(targetMacAddr, WSCommand_1.WSCommand.framed(this.module, this._CommandRequestJoin, new Uint8Array([]))); // send request
     }
     /**
      * Onlineになったことを通知。authorizeとは関係なく、http request を読みその返り値として返す
@@ -85,11 +83,11 @@ class WSCommandSubnet extends WSCommand_1.default.CommandClasses.WSCommandSystem
      */
     sendOnline(targetMacAddr) {
         // system commandの16を送信。OSはwebsocket handshakeが終わったとして次の処理に進む
-        this.sendToNode(targetMacAddr, WSCommand_1.default.framed(0, 16, new Uint8Array([1]))); // make target online recognized
+        this.sendToNode(targetMacAddr, WSCommand_1.WSCommand.framed(0, 16, new Uint8Array([1]))); // make target online recognized
     }
     // 再起動を指示
     sendRebootToNode(targetMacAddr) {
-        const framed = WSCommand_1.default.framed(0, 0, new Uint8Array([]));
+        const framed = WSCommand_1.WSCommand.framed(0, 0, new Uint8Array([]));
         this.sendToNode(targetMacAddr, framed);
     }
     parsedRequestString(reqHeader) {
@@ -118,4 +116,4 @@ class WSCommandSubnet extends WSCommand_1.default.CommandClasses.WSCommandSystem
         return true;
     }
 }
-exports.default = WSCommandSubnet;
+exports.WSCommandSubnet = WSCommandSubnet;

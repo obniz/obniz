@@ -58,7 +58,7 @@ export interface LogicAnalyzerOptionsExt extends LogicAnalyzerOptions {
  *
  * @category Measurement
  */
-export default class LogicAnalyzer extends ComponentAbstract {
+export declare class LogicAnalyzer extends ComponentAbstract {
     /**
      * This is a callback function that will be called when data arrives.
      *

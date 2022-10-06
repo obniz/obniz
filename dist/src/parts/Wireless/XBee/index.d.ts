@@ -3,7 +3,7 @@
  * @module Parts.XBee
  */
 import Obniz from '../../../obniz';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface XBeeOptions {
     tx: number;
     rx: number;

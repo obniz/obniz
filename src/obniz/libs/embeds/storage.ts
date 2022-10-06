@@ -1,7 +1,7 @@
 import { Obniz } from '../../Obniz';
 import { ComponentAbstract } from '../ComponentAbstact';
 
-export default class Storage extends ComponentAbstract {
+export class Storage extends ComponentAbstract {
   public schemaBasePath(): string {
     return 'storage';
   }

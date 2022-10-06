@@ -6,7 +6,7 @@
 import semver from 'semver';
 import Obniz from '../../index';
 import { ComponentAbstract } from '../ComponentAbstact';
-import ObnizUtil from '../utils/util';
+import { ObnizUtil } from '../utils/util';
 import { DriveType, PullType } from './common';
 
 interface PeripheralSPIOptions {
@@ -52,7 +52,7 @@ interface PeripheralSPIOptions {
  *
  * @category Peripherals
  */
-export default class PeripheralSPI extends ComponentAbstract {
+export class PeripheralSPI extends ComponentAbstract {
   /**
    * @ignore
    */

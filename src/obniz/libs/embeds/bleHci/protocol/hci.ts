@@ -3,7 +3,7 @@
  * @ignore
  */
 import EventEmitter from 'eventemitter3';
-import ObnizBLEHci from '../hci';
+import { ObnizBLEHci } from '../hci';
 
 import {
   ObnizBleHciStateError,
@@ -296,7 +296,7 @@ export type HciState = 'poweredOn' | 'poweredOff';
 /**
  * @ignore
  */
-class Hci extends EventEmitter<HciEventTypes> {
+export class Hci extends EventEmitter<HciEventTypes> {
   public static STATUS_MAPPER: any;
   public _obnizHci: ObnizBLEHci;
   public _handleBuffers: any;
@@ -2706,4 +2706,3 @@ class Hci extends EventEmitter<HciEventTypes> {
 }
 
 Hci.STATUS_MAPPER = STATUS_MAPPER;
-export default Hci;

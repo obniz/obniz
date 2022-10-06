@@ -4,7 +4,7 @@
  */
 
 import Obniz from '../../../obniz';
-import PeripheralGrove from '../../../obniz/libs/io_peripherals/grove';
+import { PeripheralGrove } from '../../../obniz/libs/io_peripherals/grove';
 import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 import GP2Y0A21YK0F from '../../../parts/DistanceSensor/GP2Y0A21YK0F';
 

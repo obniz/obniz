@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Smp = void 0;
 /**
  * @packageDocumentation
  *
@@ -11,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const bleHelper_1 = __importDefault(require("../../bleHelper"));
 const crypto_1 = __importDefault(require("../common/crypto"));
-const mgmt_1 = __importDefault(require("./mgmt"));
+const mgmt_1 = require("./mgmt");
 const smp_1 = require("../common/smp");
 /**
  * @ignore
@@ -20,7 +21,7 @@ class Smp extends eventemitter3_1.default {
     constructor(aclStream, localAddressType, localAddress, remoteAddressType, remoteAddress, hciProtocol) {
         super();
         this._aclStream = aclStream;
-        this._mgmt = new mgmt_1.default(hciProtocol);
+        this._mgmt = new mgmt_1.Mgmt(hciProtocol);
         this._iat = Buffer.from([remoteAddressType === 'random' ? 0x01 : 0x00]);
         this._ia = bleHelper_1.default.hex2reversedBuffer(remoteAddress, ':');
         this._rat = Buffer.from([localAddressType === 'random' ? 0x01 : 0x00]);
@@ -124,4 +125,4 @@ class Smp extends eventemitter3_1.default {
         this._aclStream.write(smp_1.SMP.CID, data);
     }
 }
-exports.default = Smp;
+exports.Smp = Smp;

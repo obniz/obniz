@@ -16,7 +16,7 @@ const debug: any = (message: any) => {
 import EventEmitter from 'eventemitter3';
 import { ObnizBleScanStartError } from '../../../../../ObnizError';
 import BleHelper from '../../bleHelper';
-import Hci from '../hci';
+import { Hci } from '../hci';
 
 type GapEventTypes = 'scanStop' | 'discover';
 
@@ -28,7 +28,7 @@ const LegacyAdvertising_ADV_NONCONN_IND = 0b0010000;
 /**
  * @ignore
  */
-class Gap extends EventEmitter<GapEventTypes> {
+export class Gap extends EventEmitter<GapEventTypes> {
   public _hci: Hci;
   public _scanState:
     | null
@@ -544,5 +544,3 @@ class Gap extends EventEmitter<GapEventTypes> {
     }
   }
 }
-
-export default Gap;

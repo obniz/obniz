@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @module ObnizCore
  */
-import ObnizComponents from './ObnizComponents';
+import { ObnizComponents } from './ObnizComponents';
 import { ObnizOptions } from './ObnizOptions';
-export default class ObnizSystemMethods extends ObnizComponents {
+export declare class ObnizSystemMethods extends ObnizComponents {
     constructor(id: string, options?: ObnizOptions);
     /**
      * This pauses obniz Board for a period given in terms of ms (millisecond).

@@ -5,14 +5,14 @@
  * @module ObnizCore
  */
 
-import BleRemotePeripheral from './libs/embeds/bleHci/bleRemotePeripheral';
+import { BleRemotePeripheral } from './libs/embeds/bleHci/bleRemotePeripheral';
 
 export interface ObnizPartsBleInfo {
   name: string;
   datasheet?: any;
 }
 
-export default abstract class ObnizPartsBleInterface {
+export abstract class ObnizPartsBleInterface {
   /**
    * Information of parts.
    * name: key name of parts

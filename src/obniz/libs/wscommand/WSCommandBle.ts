@@ -2,11 +2,11 @@
  * @packageDocumentation
  * @ignore
  */
-import JsonBinaryConverter from './jsonBinaryConverter';
-import WSCommand from './WSCommand';
-import WSCommandBleHci from './WSCommandBleHci';
+import { JsonBinaryConverter } from './jsonBinaryConverter';
+import { WSCommand } from './WSCommand';
+import { WSCommandBleHci } from './WSCommandBleHci';
 
-class WSCommandBle extends WSCommand {
+export class WSCommandBle extends WSCommand {
   public module: number;
   public uuidLength: number;
   public _CommandSetAdvData: number;
@@ -1603,5 +1603,3 @@ class WSCommandBle extends WSCommand {
     target[keys[keys.length - 1]] = row;
   }
 }
-
-export default WSCommandBle;

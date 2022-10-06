@@ -3,9 +3,9 @@
  * @module Parts.PCA9685
  */
 import Obniz from '../../../obniz';
-import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
+import { PeripheralI2C } from '../../../obniz/libs/io_peripherals/i2c';
 import { PWMInterface } from '../../../obniz/libs/io_peripherals/pwm';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 declare class PCA9685_PWM implements PWMInterface {
     chip: PCA9685;
     id: number;

@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
+import { WSCommand } from './WSCommand';
 
 interface WiFiInfo {
   ssid: string;
@@ -10,7 +10,7 @@ interface WiFiInfo {
   rssi: number;
 }
 
-class WSCommandSystem extends WSCommand {
+export class WSCommandSystem extends WSCommand {
   module = 0;
 
   _CommandReboot = 0;
@@ -377,5 +377,3 @@ class WSCommandSystem extends WSCommand {
     return val;
   }
 }
-
-export default WSCommandSystem;

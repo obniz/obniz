@@ -6,7 +6,8 @@
 import { I2cInfo, Xyz } from '../../i2cParts';
 import MPU6050, { MPU6050Options } from '../MPU6050';
 
-import ObnizPartsInterface, {
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 

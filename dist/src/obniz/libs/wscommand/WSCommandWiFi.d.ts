@@ -1,5 +1,5 @@
-import WSCommand from './WSCommand';
-declare class WSCommandWiFi extends WSCommand {
+import { WSCommand } from './WSCommand';
+export declare class WSCommandWiFi extends WSCommand {
     module: number;
     _CommandScan: number;
     constructor();
@@ -7,4 +7,3 @@ declare class WSCommandWiFi extends WSCommand {
     parseFromJson(json: any): void;
     notifyFromBinary(objToSend: any, func: number, payload: Uint8Array): void;
 }
-export default WSCommandWiFi;

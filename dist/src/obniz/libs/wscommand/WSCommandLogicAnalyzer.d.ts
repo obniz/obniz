@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
-declare class WSCommandLogicAnalyzer extends WSCommand {
+import { WSCommand } from './WSCommand';
+export declare class WSCommandLogicAnalyzer extends WSCommand {
     module: number;
     _CommandInit: number;
     _CommandDeinit: number;
@@ -14,4 +14,3 @@ declare class WSCommandLogicAnalyzer extends WSCommand {
     parseFromJson(json: any): void;
     notifyFromBinary(objToSend: any, func: number, payload: Uint8Array): void;
 }
-export default WSCommandLogicAnalyzer;

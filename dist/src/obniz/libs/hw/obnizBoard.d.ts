@@ -2,22 +2,22 @@
  * @packageDocumentation
  * @module ObnizCore.Hardware
  */
-import ObnizDevice from '../../ObnizDevice';
-import ObnizBLEHci from '../embeds/bleHci/ble';
-import Display from '../embeds/display';
-import ObnizSwitch from '../embeds/switch';
-import PeripheralAD from '../io_peripherals/ad';
-import PeripheralI2C from '../io_peripherals/i2c';
-import PeripheralIO from '../io_peripherals/io';
-import PeripheralPWM from '../io_peripherals/pwm';
-import PeripheralSPI from '../io_peripherals/spi';
-import PeripheralUART from '../io_peripherals/uart';
-import LogicAnalyzer from '../measurements/logicanalyzer';
-import ObnizMeasure from '../measurements/measure';
+import { ObnizDevice } from '../../ObnizDevice';
+import { ObnizBLE } from '../embeds/bleHci/ble';
+import { Display } from '../embeds/display';
+import { ObnizSwitch } from '../embeds/switch';
+import { PeripheralAD } from '../io_peripherals/ad';
+import { PeripheralI2C } from '../io_peripherals/i2c';
+import { PeripheralIO } from '../io_peripherals/io';
+import { PeripheralPWM } from '../io_peripherals/pwm';
+import { PeripheralSPI } from '../io_peripherals/spi';
+import { PeripheralUART } from '../io_peripherals/uart';
+import { LogicAnalyzer } from '../measurements/logicanalyzer';
+import { ObnizMeasure } from '../measurements/measure';
 /**
  * obniz Board interface
  */
-interface obnizBoard extends ObnizDevice {
+export interface ObnizBoard extends ObnizDevice {
     io0: PeripheralIO;
     io1: PeripheralIO;
     io2: PeripheralIO;
@@ -57,10 +57,5 @@ interface obnizBoard extends ObnizDevice {
     measure: ObnizMeasure;
     display: Display;
     switch: ObnizSwitch;
-    ble: ObnizBLEHci;
+    ble: ObnizBLE;
 }
-/**
- * @ignore
- */
-declare type ObnizBoard = obnizBoard;
-export default ObnizBoard;

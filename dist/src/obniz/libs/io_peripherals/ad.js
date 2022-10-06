@@ -4,6 +4,7 @@
  * @module ObnizCore.Components
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PeripheralAD = void 0;
 const ComponentAbstact_1 = require("../ComponentAbstact");
 /**
  * @category Peripherals
@@ -89,4 +90,4 @@ class PeripheralAD extends ComponentAbstact_1.ComponentAbstract {
         this.value = 0.0;
     }
 }
-exports.default = PeripheralAD;
+exports.PeripheralAD = PeripheralAD;

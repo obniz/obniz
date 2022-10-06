@@ -3,7 +3,7 @@
  * @module Parts.SEN0114
  */
 import Obniz from '../../../obniz';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface SEN0114Options {
     vcc?: number;
     output: number;

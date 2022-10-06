@@ -78,7 +78,7 @@ export interface ObnizMeasureOptions {
  *
  * @category Measurement
  */
-export default class ObnizMeasure extends ComponentAbstract {
+export declare class ObnizMeasure extends ComponentAbstract {
     private observers;
     private params?;
     constructor(obniz: Obniz);

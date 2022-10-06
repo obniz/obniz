@@ -30,7 +30,7 @@ type SignalingEventTypes = 'connectionParameterUpdateRequest';
 /**
  * @ignore
  */
-class Signaling extends EventEmitter<SignalingEventTypes> {
+export class Signaling extends EventEmitter<SignalingEventTypes> {
   public _handle: any;
   public _aclStream: any;
   public onAclStreamDataBinded: any;
@@ -104,5 +104,3 @@ class Signaling extends EventEmitter<SignalingEventTypes> {
     );
   }
 }
-
-export default Signaling;

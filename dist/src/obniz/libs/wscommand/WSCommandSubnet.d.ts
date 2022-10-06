@@ -4,8 +4,8 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
-declare class WSCommandSubnet extends WSCommand.CommandClasses.WSCommandSystem {
+import { WSCommand } from './WSCommand';
+export declare class WSCommandSubnet extends WSCommand.CommandClasses.WSCommandSystem {
     module: number;
     _CommandRequestAllSubnet: number;
     _CommandSendAddr: number;
@@ -44,4 +44,3 @@ declare class WSCommandSubnet extends WSCommand.CommandClasses.WSCommandSystem {
     };
     isWSRoomOnlyCommand(): boolean;
 }
-export default WSCommandSubnet;

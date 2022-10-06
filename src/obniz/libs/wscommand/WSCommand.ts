@@ -51,7 +51,7 @@ interface HW {
   firmware: string | undefined;
 }
 
-export default abstract class WSCommand {
+export abstract class WSCommand {
   static get schema(): any {
     return WSSchema;
   }

@@ -4,11 +4,8 @@
  * @module Parts.TM511
  */
 /* eslint rulesdir/non-ascii: 0 */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
+const ObnizPartsBleInterface_1 = require("../../../obniz/ObnizPartsBleInterface");
 /** TM511 management class TM511を管理するクラス */
 class TM511 {
     constructor() {
@@ -61,11 +58,11 @@ class TM511 {
         const data = {
             battery: peripheral.adv_data[13],
             x: peripheral.adv_data[14] +
-                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[15]),
+                ObnizPartsBleInterface_1.ObnizPartsBleInterface.readFraction(peripheral.adv_data[15]),
             y: peripheral.adv_data[16] +
-                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[17]),
+                ObnizPartsBleInterface_1.ObnizPartsBleInterface.readFraction(peripheral.adv_data[17]),
             z: peripheral.adv_data[18] +
-                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[19]),
+                ObnizPartsBleInterface_1.ObnizPartsBleInterface.readFraction(peripheral.adv_data[19]),
         };
         return data;
     }

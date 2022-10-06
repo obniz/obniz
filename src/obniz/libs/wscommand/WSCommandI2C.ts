@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
+import { WSCommand } from './WSCommand';
 
-class WSCommandI2C extends WSCommand {
+export class WSCommandI2C extends WSCommand {
   public module: number;
   public _CommandInit: number;
   public _CommandDeinit: number;
@@ -195,5 +195,3 @@ class WSCommandI2C extends WSCommand {
     }
   }
 }
-
-export default WSCommandI2C;

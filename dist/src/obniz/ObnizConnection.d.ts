@@ -56,7 +56,7 @@ export interface ConnectedNetwork {
  *
  */
 declare type ObnizConnectionEventNamesInternal = '_close' | '_cloudConnectRedirect' | '_cloudConnectReady' | '_cloudConnectClose' | '_localConnectReady' | '_localConnectClose';
-export default abstract class ObnizConnection extends EventEmitter<ObnizConnectionEventNames | ObnizConnectionEventNamesInternal> {
+export declare abstract class ObnizConnection extends EventEmitter<ObnizConnectionEventNames | ObnizConnectionEventNamesInternal> {
     private _measureTraffic;
     /**
      * obniz.js version

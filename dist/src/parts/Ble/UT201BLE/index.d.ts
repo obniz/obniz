@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module Parts.UT201BLE
  */
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { ObnizPartsBleInterface, ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
 import BleBatteryService from '../utils/services/batteryService';
 import BleGenericAccess from '../utils/services/genericAccess';
 export interface UT201BLEOptions {

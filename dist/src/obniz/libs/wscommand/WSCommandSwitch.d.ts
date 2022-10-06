@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
-declare class WSCommandSwitch extends WSCommand {
+import { WSCommand } from './WSCommand';
+export declare class WSCommandSwitch extends WSCommand {
     module: number;
     _CommandNotifyValue: number;
     _CommandOnece: number;
@@ -12,4 +12,3 @@ declare class WSCommandSwitch extends WSCommand {
     parseFromJson(json: any): void;
     notifyFromBinary(objToSend: any, func: number, payload: Uint8Array): void;
 }
-export default WSCommandSwitch;

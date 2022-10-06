@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
+import { WSCommand } from './WSCommand';
 
-class WSCommandSubnet extends WSCommand.CommandClasses.WSCommandSystem {
+export class WSCommandSubnet extends WSCommand.CommandClasses.WSCommandSystem {
   module = 16;
 
   _CommandRequestAllSubnet = 0;
@@ -149,5 +149,3 @@ class WSCommandSubnet extends WSCommand.CommandClasses.WSCommandSystem {
     return true;
   }
 }
-
-export default WSCommandSubnet;

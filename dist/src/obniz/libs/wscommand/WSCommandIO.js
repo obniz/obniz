@@ -1,13 +1,11 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandIO = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __importDefault(require("./WSCommand"));
+const WSCommand_1 = require("./WSCommand");
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH = 1;
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW = 2;
 const COMMAND_IO_ERRORS_IO_TOO_LOW = 3;
@@ -30,7 +28,7 @@ const COMMAND_IO_MUTEX_NAMES = {
     7: 'LogicAnalyzer',
     8: 'Measure',
 };
-class WSCommandIO extends WSCommand_1.default {
+class WSCommandIO extends WSCommand_1.WSCommand {
     constructor() {
         super();
         this.module = 2;
@@ -162,4 +160,4 @@ class WSCommandIO extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandIO;
+exports.WSCommandIO = WSCommandIO;

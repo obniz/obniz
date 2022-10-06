@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
-declare class WSCommandSPI extends WSCommand {
+import { WSCommand } from './WSCommand';
+export declare class WSCommandSPI extends WSCommand {
     module: number;
     _CommandInit: number;
     _CommandDeinit: number;
@@ -17,4 +17,3 @@ declare class WSCommandSPI extends WSCommand {
     parseFromJson(json: any): void;
     notifyFromBinary(objToSend: any, func: number, payload: Uint8Array): void;
 }
-export default WSCommandSPI;

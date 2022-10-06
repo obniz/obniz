@@ -3,10 +3,10 @@
  * @module Parts.Grove_RotaryAngleSensorOptionsA
  */
 import Obniz from '../../../obniz';
-import PeripheralAD from '../../../obniz/libs/io_peripherals/ad';
+import { PeripheralAD } from '../../../obniz/libs/io_peripherals/ad';
 import { DriveType } from '../../../obniz/libs/io_peripherals/common';
-import PeripheralGrove from '../../../obniz/libs/io_peripherals/grove';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { PeripheralGrove } from '../../../obniz/libs/io_peripherals/grove';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 interface Grove_RotaryAngleSensorOptionsA {
     signal: number;
     vcc?: number;

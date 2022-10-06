@@ -5,9 +5,9 @@
 
 import dialogPolyfill from './libs/webpackReplace/dialogPollyfill';
 import { ObnizOptions } from './ObnizOptions';
-import ObnizSystemMethods from './ObnizSystemMethods';
+import { ObnizSystemMethods } from './ObnizSystemMethods';
 
-export default class ObnizUIs extends ObnizSystemMethods {
+export class ObnizUIs extends ObnizSystemMethods {
   /**
    * @ignore
    */

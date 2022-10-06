@@ -5,12 +5,12 @@
 
 import Obniz from '../../index';
 import { ComponentAbstract } from '../ComponentAbstact';
-import PeripheralAD from './ad';
+import { PeripheralAD } from './ad';
 import { DriveType } from './common';
-import PeripheralI2C from './i2c';
-import PeripheralIO from './io';
-import PeripheralPWM from './pwm';
-import PeripheralUART from './uart';
+import { PeripheralI2C } from './i2c';
+import { PeripheralIO } from './io';
+import { PeripheralPWM } from './pwm';
+import { PeripheralUART } from './uart';
 
 export interface PeripheralGroveParams {
   pin1: number;
@@ -30,7 +30,7 @@ export type GrovePinOption = 'default' | 'secondaryOnly';
 /**
  * @category Peripherals
  */
-export default class PeripheralGrove extends ComponentAbstract {
+export class PeripheralGrove extends ComponentAbstract {
   public no: number;
   public used = false;
   private _params: PeripheralGroveParams;

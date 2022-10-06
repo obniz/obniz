@@ -11,10 +11,10 @@ import {
   ObnizBleScanStartError,
   ObnizOfflineError,
 } from '../../../ObnizError';
-import Util from '../../utils/util';
-import ObnizBLE from './ble';
+import { ObnizUtil as Util } from '../../utils/util';
+import { ObnizBLE } from './ble';
 import BleHelper from './bleHelper';
-import BleRemotePeripheral from './bleRemotePeripheral';
+import { BleRemotePeripheral } from './bleRemotePeripheral';
 import { BleDeviceAddress, UUID } from './bleTypes';
 
 export type BleScanMode = 'passive' | 'active';
@@ -169,7 +169,7 @@ type BleScanState = 'stopped' | 'stopping' | 'started' | 'starting';
 /**
  * @category Use as Central
  */
-export default class BleScan {
+export class BleScan {
   /**
    * This function gets called when obniz Board finishes scanning.
    *

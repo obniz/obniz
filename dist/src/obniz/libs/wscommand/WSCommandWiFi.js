@@ -1,15 +1,13 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandWiFi = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const jsonBinaryConverter_1 = __importDefault(require("./jsonBinaryConverter"));
-const WSCommand_1 = __importDefault(require("./WSCommand"));
-class WSCommandWiFi extends WSCommand_1.default {
+const jsonBinaryConverter_1 = require("./jsonBinaryConverter");
+const WSCommand_1 = require("./WSCommand");
+class WSCommandWiFi extends WSCommand_1.WSCommand {
     constructor() {
         super();
         this.module = 14;
@@ -72,7 +70,7 @@ class WSCommandWiFi extends WSCommand_1.default {
                             }
                             break;
                         case ScanState.SCAN_RSSI:
-                            rssi = jsonBinaryConverter_1.default.signedNumberFromBinary([payload[i]]);
+                            rssi = jsonBinaryConverter_1.JsonBinaryConverter.signedNumberFromBinary([payload[i]]);
                             mode = ScanState.SCAN_SSID_LEN;
                             scanArray.push({
                                 ssid,
@@ -93,4 +91,4 @@ class WSCommandWiFi extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandWiFi;
+exports.WSCommandWiFi = WSCommandWiFi;

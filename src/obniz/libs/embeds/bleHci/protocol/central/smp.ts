@@ -13,7 +13,7 @@ import {
 } from '../../../../../ObnizError';
 import BleHelper from '../../bleHelper';
 import { BleDeviceAddress, BleDeviceAddressType } from '../../bleTypes';
-import AclStream from './acl-stream';
+import { AclStream } from './acl-stream';
 import crypto from '../common/crypto';
 import {
   BondingType,
@@ -55,7 +55,7 @@ export interface SmpEncryptOptions {
 /**
  * @ignore
  */
-class Smp extends EventEmitter<SmpEventTypes> {
+export class Smp extends EventEmitter<SmpEventTypes> {
   private _aclStream: AclStream;
   private _iat: Buffer;
   private _ia: Buffer;
@@ -620,5 +620,3 @@ class Smp extends EventEmitter<SmpEventTypes> {
     // console.log(new Date(), `SMP: ${text}`);
   }
 }
-
-export default Smp;

@@ -5,7 +5,7 @@
  */
 // var debug = require('debug')('bindings');
 
-import Hci from '../hci';
+import { Hci } from '../hci';
 
 /**
  * @ignore
@@ -15,9 +15,9 @@ const debug: any = () => {
 };
 import EventEmitter from 'eventemitter3';
 import { Handle } from '../../bleTypes';
-import AclStream from './acl-stream';
-import Gap from './gap';
-import GattPeripheral from './gatt';
+import { AclStream } from './acl-stream';
+import { Gap } from './gap';
+import { GattPeripheral } from './gatt';
 
 type BlenoBindingsEventType =
   | 'stateChange'
@@ -28,7 +28,7 @@ type BlenoBindingsEventType =
 /**
  * @ignore
  */
-class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
+export class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
   public _state: any;
   public _advertising: any;
   public _extended: boolean;
@@ -283,5 +283,3 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
     }
   }
 }
-
-export default BlenoBindings;
