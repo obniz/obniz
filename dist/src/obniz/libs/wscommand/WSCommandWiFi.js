@@ -6,8 +6,8 @@ exports.WSCommandWiFi = void 0;
  * @ignore
  */
 const jsonBinaryConverter_1 = require("./jsonBinaryConverter");
-const WSCommand_1 = require("./WSCommand");
-class WSCommandWiFi extends WSCommand_1.WSCommand {
+const WSCommandAbstract_1 = require("./WSCommandAbstract");
+class WSCommandWiFi extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super();
         this.module = 14;

@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WSCommandStorage = void 0;
-const WSCommand_1 = require("./WSCommand");
-class WSCommandStorage extends WSCommand_1.WSCommand {
+const WSCommandAbstract_1 = require("./WSCommandAbstract");
+class WSCommandStorage extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super(...arguments);
         this.module = 17;

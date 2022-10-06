@@ -1113,7 +1113,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./dist/src/json_schema/request/system/network_get.yml":
 /***/ (function(module, exports) {
 
-throw new Error("Module build failed (from ./dist/src/obniz/libs/webpackReplace/yaml-schema-loader.js):\nTypeError: self.emitError is not a function\n    at Object.exports.default (/Users/kido/Documents/src/github.com/obniz/obniz/dist/src/obniz/libs/webpackReplace/yaml-schema-loader.js:27:14)");
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/network_get","type":"object","required":["network"],"properties":{"network":{"type":"string","enum":["get"]}}}
 
 /***/ }),
 
@@ -2423,7 +2423,7 @@ const ws_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/webpackR
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const package_1 = __importDefault(__webpack_require__("./dist/package.js")); // pakcage.js will be created from package.json on build.
-const wscommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/index.js"));
+const wscommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/index.js");
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 class ObnizConnection extends eventemitter3_1.default {
     constructor(id, options) {
@@ -2431,8 +2431,7 @@ class ObnizConnection extends eventemitter3_1.default {
         this._measureTraffic = null;
         this.socket = null;
         this.socket_local = null;
-        this.wscommand = null;
-        this.wscommands = [];
+        this.wsCommandManager = wscommand_1.WSCommandManagerInstance;
         this._sendQueueTimer = null;
         this._sendQueue = null;
         this._waitForLocalConnectReadyTimer = null;
@@ -2469,14 +2468,7 @@ class ObnizConnection extends eventemitter3_1.default {
             reset_obniz_on_ws_disconnection: options.reset_obniz_on_ws_disconnection === false ? false : true,
             obnizid_dialog: options.obnizid_dialog === false ? false : true,
         };
-        if (this.options.binary) {
-            this.wscommand = this.constructor.WSCommand;
-            const classes = this.wscommand.CommandClasses;
-            this.wscommands = [];
-            for (const class_name in classes) {
-                this.wscommands.push(new classes[class_name]());
-            }
-        }
+        this.wsCommandManager.createCommandInstances();
         if (this.autoConnect) {
             this._startAutoConnectLoopInBackground();
         }
@@ -2486,13 +2478,6 @@ class ObnizConnection extends eventemitter3_1.default {
      */
     static get version() {
         return package_1.default.version;
-    }
-    /**
-     * @ignore
-     * @constructor
-     */
-    static get WSCommand() {
-        return wscommand_1.default;
     }
     static isIpAddress(str) {
         const regex = /^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$/;
@@ -2709,10 +2694,10 @@ class ObnizConnection extends eventemitter3_1.default {
                 this._print_debug('send: ' + sendData);
             }
             /* compress */
-            if (this.wscommand && options.local_connect) {
+            if (this.options.binary && options.local_connect) {
                 let compressed;
                 try {
-                    compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
+                    compressed = this.wsCommandManager.compress(JSON.parse(sendData)[0]);
                     if (compressed) {
                         sendData = compressed;
                         if (this.debugprintBinary) {
@@ -2859,11 +2844,13 @@ class ObnizConnection extends eventemitter3_1.default {
             if (typeof data === 'string') {
                 json = JSON.parse(data);
             }
-            else if (this.wscommands) {
+            else {
+                const binary = new Uint8Array(data);
+                // binary
                 if (this.debugprintBinary) {
-                    this.log('binalized(recieve): ' + new Uint8Array(data).toString());
+                    this.log('binalized: ' + binary.toString());
                 }
-                json = this._binary2Json(data);
+                json = this.wsCommandManager.binary2Json(binary);
             }
             if (Array.isArray(json)) {
                 for (const i in json) {
@@ -2950,7 +2937,7 @@ class ObnizConnection extends eventemitter3_1.default {
         if (this.options.access_token) {
             query.push('access_token=' + this.options.access_token);
         }
-        if (this.wscommand) {
+        if (this.options.binary) {
             query.push('accept_binary=true');
         }
         if (query.length > 0) {
@@ -3011,7 +2998,7 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     _connectLocalWait() {
         const host = this._localConnectIp;
-        if (!host || !this.wscommand || !this.options.local_connect) {
+        if (!host || !this.options.binary || !this.options.local_connect) {
             return;
             // cannot local connect
             // throw new Error(
@@ -3216,15 +3203,10 @@ class ObnizConnection extends eventemitter3_1.default {
             if (!this.hw) {
                 this.hw = 'obnizb1';
             }
-            if (this.wscommands) {
-                for (let i = 0; i < this.wscommands.length; i++) {
-                    const command = this.wscommands[i];
-                    command.setHw({
-                        hw: this.hw,
-                        firmware: this.firmware_ver,
-                    });
-                }
-            }
+            this.wsCommandManager.setHw({
+                hw: this.hw,
+                firmware: this.firmware_ver,
+            });
             if (this.options.reset_obniz_on_ws_disconnection) {
                 this.resetOnDisconnect(true);
             }
@@ -3261,27 +3243,6 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     _handleSystemCommand(wsObj) {
         // do nothing.
-    }
-    _binary2Json(binary) {
-        let data = new Uint8Array(binary);
-        const json = [];
-        while (data !== null) {
-            const frame = wscommand_1.default.dequeueOne(data);
-            if (!frame) {
-                break;
-            }
-            const obj = {};
-            for (let i = 0; i < this.wscommands.length; i++) {
-                const command = this.wscommands[i];
-                if (command.module === frame.module) {
-                    command.notifyFromBinary(obj, frame.func, frame.payload);
-                    break;
-                }
-            }
-            json.push(obj);
-            data = frame.next;
-        }
-        return json;
     }
     async _startLoopInBackgroundWait() {
         this._stopLoopInBackground();
@@ -21831,7 +21792,100 @@ webpackEmptyContext.id = "./dist/src/obniz/libs/wscommand sync recursive";
 
 /***/ }),
 
-/***/ "./dist/src/obniz/libs/wscommand/WSCommand.js":
+/***/ "./dist/src/obniz/libs/wscommand/WSCommandAD.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandAD = void 0;
+/**
+ * @packageDocumentation
+ * @ignore
+ */
+const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
+class WSCommandAD extends WSCommandAbstract_1.WSCommandAbstract {
+    constructor() {
+        super();
+        this.module = 7;
+        this._CommandInitNormalInterval = 0;
+        this._CommandDeinit = 1;
+        this._CommandNotifyValue = 2;
+        this._CommandDoOnece = 3;
+    }
+    // Commands
+    get(params, no) {
+        const buf = new Uint8Array([no]);
+        this.sendCommand(params.stream ? this._CommandInitNormalInterval : this._CommandDoOnece, buf);
+    }
+    deinit(params, no) {
+        const buf = new Uint8Array([no]);
+        this.sendCommand(this._CommandDeinit, buf);
+    }
+    parseFromJson(json) {
+        for (let i = 0; i < 40; i++) {
+            const module = json['ad' + i];
+            if (module === undefined) {
+                continue;
+            }
+            const schemaData = [
+                { uri: '/request/ad/deinit', onValid: this.deinit },
+                { uri: '/request/ad/get', onValid: this.get },
+            ];
+            const res = this.validateCommandSchema(schemaData, module, 'ad' + i, i);
+            if (res.valid === 0) {
+                if (res.invalidButLike.length > 0) {
+                    throw new Error(res.invalidButLike[0].message);
+                }
+                else {
+                    throw new this.WSCommandNotFoundError(`[ad${i}]unknown command`);
+                }
+            }
+        }
+    }
+    notifyFromBinary(objToSend, func, payload) {
+        if (func === this._CommandNotifyValue) {
+            for (let i = 0; i + 2 < payload.byteLength; i += 3) {
+                let value;
+                if (this._hw.hw === 'cc3235mod') {
+                    // 12bit mode
+                    value = ((payload[i + 1] & 0x0f) << 8) + payload[i + 2]; // 0x0000 to 0x3FF;
+                    value = (1.467 * value) / 4095.0; // 4095.0 ===0xFFF // vdd is not always
+                    value = Math.round(value * 1000) / 1000;
+                }
+                else {
+                    if (payload[i + 1] & 0x80) {
+                        // 10bit mode
+                        value = ((payload[i + 1] & 0x03) << 8) + payload[i + 2]; // 0x0000 to 0x3FF;
+                        value = (5.0 * value) / 1023.0; // 1023.0 ===0x3FF
+                        value = Math.round(value * 1000) / 1000;
+                    }
+                    else if (payload[i + 1] & 0x40) {
+                        // 12bit mode
+                        value = ((payload[i + 1] & 0x0f) << 8) + payload[i + 2]; // 0x0000 to 0x3FF;
+                        value = (3.3 * value) / 4095.0; // 4095.0 ===0xFFF // vdd is not always 3.3v but...
+                        value = Math.round(value * 1000) / 1000;
+                    }
+                    else {
+                        // unsigned 100 times mode. (0 to 500 from 0v to 5v).
+                        value = (payload[i + 1] << 8) + payload[i + 2];
+                        value = value / 100.0;
+                    }
+                }
+                objToSend['ad' + payload[i]] = value;
+            }
+        }
+        else {
+            super.notifyFromBinary(objToSend, func, payload);
+        }
+    }
+}
+exports.WSCommandAD = WSCommandAD;
+
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/wscommand/WSCommandAbstract.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21844,10 +21898,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WSCommand = void 0;
+exports.WSCommandAbstract = void 0;
 const WSSchema_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSSchema.js"));
-const commandClasses = {};
-class WSCommand {
+class WSCommandAbstract {
     constructor() {
         this._hw = {
             hw: undefined,
@@ -21857,124 +21910,16 @@ class WSCommand {
         this.COMMAND_FUNC_ID_ERROR = 0xff;
         this.ioNotUsed = 0xff;
     }
-    static get schema() {
-        return WSSchema_1.default;
-    }
-    static get CommandClasses() {
-        return commandClasses;
-    }
     get WSCommandNotFoundError() {
         return WSCommandNotFoundError;
-    }
-    static addCommandClass(name, classObj) {
-        commandClasses[name] = classObj;
-    }
-    static framed(module, func, payload) {
-        let payload_length = 0;
-        if (payload) {
-            payload_length = payload.length;
-        }
-        let length_type;
-        if (payload_length <= 0x3f) {
-            length_type = 0;
-        }
-        else if (payload_length <= 0x3fff) {
-            length_type = 1;
-        }
-        else if (payload_length <= 0x3fffffff) {
-            length_type = 2;
-        }
-        else {
-            throw new Error('too big payload');
-        }
-        let length_extra_bytse = length_type === 0 ? 0 : length_type === 1 ? 1 : 3;
-        const header_length = 3 + length_extra_bytse;
-        const result = new Uint8Array(header_length + payload_length);
-        let index = 0;
-        result[index++] = module & 0x7f;
-        result[index++] = func;
-        result[index++] =
-            (length_type << 6) | (payload_length >> (length_extra_bytse * 8));
-        while (length_extra_bytse > 0) {
-            length_extra_bytse--;
-            result[index++] = payload_length >> (length_extra_bytse * 8);
-        }
-        if (payload_length === 0 || !payload) {
-            return result;
-        }
-        else {
-            result.set(payload, header_length);
-            return result;
-        }
-    }
-    /**
-     * Dequeue a next wscommands from binary array.
-     *
-     * @param buf binary array received from obniz cloud.
-     * @returns chunk
-     */
-    static dequeueOne(buf) {
-        if (!buf || buf.byteLength === 0) {
-            return null;
-        }
-        if (buf.byteLength < 3) {
-            throw new Error('something wrong. buf less than 3');
-        }
-        if (buf[0] & 0x80) {
-            throw new Error('reserved bit 1');
-        }
-        const module = 0x7f & buf[0];
-        const func = buf[1];
-        const length_type = (buf[2] >> 6) & 0x3;
-        const length_extra_bytse = length_type === 0 ? 0 : length_type === 1 ? 1 : 3;
-        if (length_type === 4) {
-            throw new Error('invalid length');
-        }
-        let length = (buf[2] & 0x3f) << (length_extra_bytse * 8);
-        let index = 3;
-        let shift = length_extra_bytse;
-        while (shift > 0) {
-            shift--;
-            length += buf[index] << (shift * 8);
-            index++;
-        }
-        return {
-            module,
-            func,
-            payload: buf.slice(3 + length_extra_bytse, 3 + length_extra_bytse + length),
-            next: buf.slice(3 + length_extra_bytse + length),
-        };
-    }
-    static compress(wscommands, json) {
-        let ret = null;
-        const append = (module, func, payload) => {
-            const frame = WSCommand.framed(module, func, payload);
-            if (ret) {
-                const combined = new Uint8Array(ret.length + frame.length);
-                combined.set(ret, 0);
-                combined.set(frame, ret.length);
-                ret = combined;
-            }
-            else {
-                ret = frame;
-            }
-        };
-        for (const wscommand of wscommands) {
-            wscommand.onParsed = append;
-            wscommand.parseFromJson(json);
-        }
-        if (ret) {
-            this.onCompressed(ret);
-        }
-        return ret;
     }
     setHw(obj) {
         this._hw = obj;
     }
     // This function does NOT send command to websocket. Just doing creating frame and append it to some variable.
     sendCommand(func, payload) {
-        if (this.onParsed) {
-            this.onParsed(this.module, func, payload);
+        if (this.parsed) {
+            this.parsed(this.module, func, payload);
         }
     }
     parseFromJson(json) {
@@ -22140,106 +22085,10 @@ class WSCommand {
         return false;
     }
 }
-exports.WSCommand = WSCommand;
-WSCommand.onCompressed = () => {
-    // do nothing
-};
+exports.WSCommandAbstract = WSCommandAbstract;
 /* eslint max-classes-per-file: 0 */
 class WSCommandNotFoundError extends Error {
 }
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/wscommand/WSCommandAD.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.WSCommandAD = void 0;
-/**
- * @packageDocumentation
- * @ignore
- */
-const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
-class WSCommandAD extends WSCommand_1.WSCommand {
-    constructor() {
-        super();
-        this.module = 7;
-        this._CommandInitNormalInterval = 0;
-        this._CommandDeinit = 1;
-        this._CommandNotifyValue = 2;
-        this._CommandDoOnece = 3;
-    }
-    // Commands
-    get(params, no) {
-        const buf = new Uint8Array([no]);
-        this.sendCommand(params.stream ? this._CommandInitNormalInterval : this._CommandDoOnece, buf);
-    }
-    deinit(params, no) {
-        const buf = new Uint8Array([no]);
-        this.sendCommand(this._CommandDeinit, buf);
-    }
-    parseFromJson(json) {
-        for (let i = 0; i < 40; i++) {
-            const module = json['ad' + i];
-            if (module === undefined) {
-                continue;
-            }
-            const schemaData = [
-                { uri: '/request/ad/deinit', onValid: this.deinit },
-                { uri: '/request/ad/get', onValid: this.get },
-            ];
-            const res = this.validateCommandSchema(schemaData, module, 'ad' + i, i);
-            if (res.valid === 0) {
-                if (res.invalidButLike.length > 0) {
-                    throw new Error(res.invalidButLike[0].message);
-                }
-                else {
-                    throw new this.WSCommandNotFoundError(`[ad${i}]unknown command`);
-                }
-            }
-        }
-    }
-    notifyFromBinary(objToSend, func, payload) {
-        if (func === this._CommandNotifyValue) {
-            for (let i = 0; i + 2 < payload.byteLength; i += 3) {
-                let value;
-                if (this._hw.hw === 'cc3235mod') {
-                    // 12bit mode
-                    value = ((payload[i + 1] & 0x0f) << 8) + payload[i + 2]; // 0x0000 to 0x3FF;
-                    value = (1.467 * value) / 4095.0; // 4095.0 ===0xFFF // vdd is not always
-                    value = Math.round(value * 1000) / 1000;
-                }
-                else {
-                    if (payload[i + 1] & 0x80) {
-                        // 10bit mode
-                        value = ((payload[i + 1] & 0x03) << 8) + payload[i + 2]; // 0x0000 to 0x3FF;
-                        value = (5.0 * value) / 1023.0; // 1023.0 ===0x3FF
-                        value = Math.round(value * 1000) / 1000;
-                    }
-                    else if (payload[i + 1] & 0x40) {
-                        // 12bit mode
-                        value = ((payload[i + 1] & 0x0f) << 8) + payload[i + 2]; // 0x0000 to 0x3FF;
-                        value = (3.3 * value) / 4095.0; // 4095.0 ===0xFFF // vdd is not always 3.3v but...
-                        value = Math.round(value * 1000) / 1000;
-                    }
-                    else {
-                        // unsigned 100 times mode. (0 to 500 from 0v to 5v).
-                        value = (payload[i + 1] << 8) + payload[i + 2];
-                        value = value / 100.0;
-                    }
-                }
-                objToSend['ad' + payload[i]] = value;
-            }
-        }
-        else {
-            super.notifyFromBinary(objToSend, func, payload);
-        }
-    }
-}
-exports.WSCommandAD = WSCommandAD;
 
 
 /***/ }),
@@ -22256,9 +22105,9 @@ exports.WSCommandBle = void 0;
  * @ignore
  */
 const jsonBinaryConverter_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/jsonBinaryConverter.js");
-const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
+const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
 const WSCommandBleHci_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandBleHci.js");
-class WSCommandBle extends WSCommand_1.WSCommand {
+class WSCommandBle extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super();
         this.module = 11;
@@ -23576,10 +23425,11 @@ exports.WSCommandDirective = void 0;
  */
 const semver = __webpack_require__("./node_modules/semver/semver.js");
 const util_1 = __webpack_require__("./dist/src/obniz/libs/utils/util.js");
-const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
+const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
 const WSCommandIO_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandIO.js");
 const WSCommandPWM_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandPWM.js");
-class WSCommandDirective extends WSCommand_1.WSCommand {
+const WSCommandManager_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandManager.js");
+class WSCommandDirective extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super();
         this.module = 1;
@@ -23587,7 +23437,10 @@ class WSCommandDirective extends WSCommand_1.WSCommand {
         this._CommandPause = 1;
         this._CommandResume = 2;
         this._CommandNotify = 3;
-        this.availableCommands = [new WSCommandIO_1.WSCommandIO(), new WSCommandPWM_1.WSCommandPWM()];
+        this.subCommandManager = new WSCommandManager_1.WSCommandManager();
+        this.subCommandManager.addCommandClass('WSCommandIO', WSCommandIO_1.WSCommandIO);
+        this.subCommandManager.addCommandClass('WSCommandPWM', WSCommandPWM_1.WSCommandPWM);
+        this.subCommandManager.createCommandInstances();
     }
     // Commands
     init(params, originalParams) {
@@ -23642,9 +23495,9 @@ class WSCommandDirective extends WSCommand_1.WSCommand {
             }
             let compressed = null;
             for (let commandIndex = 0; commandIndex < parsedCommands.length; commandIndex++) {
-                const _frame = WSCommand_1.WSCommand.compress(this.availableCommands, parsedCommands[commandIndex]);
+                const _frame = this.subCommandManager.compress(parsedCommands[commandIndex]);
                 if (!_frame) {
-                    throw new Error('[io.animation.states.state]only io or pwm commands. Pleave provide state at least one of them.');
+                    throw new Error('[io.animation.states.state]only io or pwm commands. Please provide state at least one of them.');
                 }
                 if (compressed) {
                     const _combined = new Uint8Array(compressed.length + _frame.length);
@@ -23766,8 +23619,8 @@ exports.WSCommandDisplay = void 0;
  * @ignore
  */
 const qr_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/qr.js"));
-const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
-class WSCommandDisplay extends WSCommand_1.WSCommand {
+const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
+class WSCommandDisplay extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super(...arguments);
         this.module = 8;
@@ -23914,8 +23767,8 @@ exports.WSCommandI2C = void 0;
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
-class WSCommandI2C extends WSCommand_1.WSCommand {
+const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
+class WSCommandI2C extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super();
         this.module = 6;
@@ -24095,7 +23948,7 @@ exports.WSCommandIO = void 0;
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
+const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH = 1;
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW = 2;
 const COMMAND_IO_ERRORS_IO_TOO_LOW = 3;
@@ -24118,7 +23971,7 @@ const COMMAND_IO_MUTEX_NAMES = {
     7: 'LogicAnalyzer',
     8: 'Measure',
 };
-class WSCommandIO extends WSCommand_1.WSCommand {
+class WSCommandIO extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super();
         this.module = 2;
@@ -24266,8 +24119,8 @@ exports.WSCommandLogicAnalyzer = void 0;
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
-class WSCommandLogicAnalyzer extends WSCommand_1.WSCommand {
+const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
+class WSCommandLogicAnalyzer extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super();
         this.module = 10;
@@ -24345,6 +24198,168 @@ exports.WSCommandLogicAnalyzer = WSCommandLogicAnalyzer;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/wscommand/WSCommandManager.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @ignore
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandManager = void 0;
+const WSSchema_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSSchema.js"));
+class WSCommandManager {
+    constructor() {
+        this.commandClasses = {};
+        this.commands = {};
+    }
+    static get schema() {
+        return WSSchema_1.default;
+    }
+    addCommandClass(name, classObj) {
+        this.commandClasses[name] = classObj;
+    }
+    createCommandInstances() {
+        for (const [name, classObj] of Object.entries(this.commandClasses)) {
+            this.commands[name] = new classObj();
+        }
+    }
+    framed(module, func, payload) {
+        let payload_length = 0;
+        if (payload) {
+            payload_length = payload.length;
+        }
+        let length_type;
+        if (payload_length <= 0x3f) {
+            length_type = 0;
+        }
+        else if (payload_length <= 0x3fff) {
+            length_type = 1;
+        }
+        else if (payload_length <= 0x3fffffff) {
+            length_type = 2;
+        }
+        else {
+            throw new Error('too big payload');
+        }
+        let length_extra_bytse = length_type === 0 ? 0 : length_type === 1 ? 1 : 3;
+        const header_length = 3 + length_extra_bytse;
+        const result = new Uint8Array(header_length + payload_length);
+        let index = 0;
+        result[index++] = module & 0x7f;
+        result[index++] = func;
+        result[index++] =
+            (length_type << 6) | (payload_length >> (length_extra_bytse * 8));
+        while (length_extra_bytse > 0) {
+            length_extra_bytse--;
+            result[index++] = payload_length >> (length_extra_bytse * 8);
+        }
+        if (payload_length === 0 || !payload) {
+            return result;
+        }
+        else {
+            result.set(payload, header_length);
+            return result;
+        }
+    }
+    /**
+     * Dequeue a next wscommands from binary array.
+     *
+     * @param buf binary array received from obniz cloud.
+     * @returns chunk
+     */
+    dequeueOne(buf) {
+        if (!buf || buf.byteLength === 0) {
+            return null;
+        }
+        if (buf.byteLength < 3) {
+            throw new Error('something wrong. buf less than 3');
+        }
+        if (buf[0] & 0x80) {
+            throw new Error('reserved bit 1');
+        }
+        const module = 0x7f & buf[0];
+        const func = buf[1];
+        const length_type = (buf[2] >> 6) & 0x3;
+        const length_extra_bytse = length_type === 0 ? 0 : length_type === 1 ? 1 : 3;
+        if (length_type === 4) {
+            throw new Error('invalid length');
+        }
+        let length = (buf[2] & 0x3f) << (length_extra_bytse * 8);
+        let index = 3;
+        let shift = length_extra_bytse;
+        while (shift > 0) {
+            shift--;
+            length += buf[index] << (shift * 8);
+            index++;
+        }
+        return {
+            module,
+            func,
+            payload: buf.slice(3 + length_extra_bytse, 3 + length_extra_bytse + length),
+            next: buf.slice(3 + length_extra_bytse + length),
+        };
+    }
+    /**
+     * json to binary
+     *
+     * @param json
+     */
+    compress(json) {
+        let ret = null;
+        const append = (module, func, payload) => {
+            const frame = this.framed(module, func, payload);
+            if (ret) {
+                const combined = new Uint8Array(ret.length + frame.length);
+                combined.set(ret, 0);
+                combined.set(frame, ret.length);
+                ret = combined;
+            }
+            else {
+                ret = frame;
+            }
+        };
+        for (const [name, wscommand] of Object.entries(this.commands)) {
+            wscommand.parsed = append;
+            wscommand.parseFromJson(json);
+        }
+        return ret;
+    }
+    binary2Json(data) {
+        const json = [];
+        while (data !== null) {
+            const frame = this.dequeueOne(data);
+            if (!frame) {
+                break;
+            }
+            const obj = {};
+            for (const [, command] of Object.entries(this.commands)) {
+                if (command.module === frame.module) {
+                    command.notifyFromBinary(obj, frame.func, frame.payload);
+                    break;
+                }
+            }
+            json.push(obj);
+            data = frame.next;
+        }
+        return json;
+    }
+    setHw(obj) {
+        for (const [, command] of Object.entries(this.commands)) {
+            command.setHw(obj);
+        }
+    }
+}
+exports.WSCommandManager = WSCommandManager;
+
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/wscommand/WSCommandMeasurement.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -24356,8 +24371,8 @@ exports.WSCommandMeasurement = void 0;
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
-class WSCommandMeasurement extends WSCommand_1.WSCommand {
+const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
+class WSCommandMeasurement extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super();
         this.module = 12;
@@ -24447,8 +24462,8 @@ exports.WSCommandPWM = void 0;
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
-class WSCommandPWM extends WSCommand_1.WSCommand {
+const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
+class WSCommandPWM extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super();
         this.module = 3;
@@ -24563,8 +24578,8 @@ exports.WSCommandPlugin = void 0;
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
-class WSCommandPlugin extends WSCommand_1.WSCommand {
+const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
+class WSCommandPlugin extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super();
         this.module = 15;
@@ -24623,8 +24638,8 @@ exports.WSCommandSPI = void 0;
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
-class WSCommandSPI extends WSCommand_1.WSCommand {
+const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
+class WSCommandSPI extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super();
         this.module = 5;
@@ -24737,8 +24752,8 @@ exports.WSCommandSPI = WSCommandSPI;
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WSCommandStorage = void 0;
-const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
-class WSCommandStorage extends WSCommand_1.WSCommand {
+const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
+class WSCommandStorage extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super(...arguments);
         this.module = 17;
@@ -24834,8 +24849,9 @@ exports.WSCommandSubnet = void 0;
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
-class WSCommandSubnet extends WSCommand_1.WSCommand.CommandClasses.WSCommandSystem {
+const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
+const WSCommandManager_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandManager.js");
+class WSCommandSubnet extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super(...arguments);
         this.module = 16;
@@ -24846,6 +24862,7 @@ class WSCommandSubnet extends WSCommand_1.WSCommand.CommandClasses.WSCommandSyst
         this._CommandRecv = 4;
         this._CommandRequestJoin = 5;
         this.currentFromAddr = null;
+        this.commandManager = new WSCommandManager_1.WSCommandManager();
     }
     // Commands
     requestAllSubnet() {
@@ -24904,7 +24921,7 @@ class WSCommandSubnet extends WSCommand_1.WSCommand.CommandClasses.WSCommandSyst
      *
      */
     sendRequestConnectToNode(targetMacAddr) {
-        this.sendToNode(targetMacAddr, WSCommand_1.WSCommand.framed(this.module, this._CommandRequestJoin, new Uint8Array([]))); // send request
+        this.sendToNode(targetMacAddr, this.commandManager.framed(this.module, this._CommandRequestJoin, new Uint8Array([]))); // send request
     }
     /**
      * Onlineになったことを通知。authorizeとは関係なく、http request を読みその返り値として返す
@@ -24912,11 +24929,11 @@ class WSCommandSubnet extends WSCommand_1.WSCommand.CommandClasses.WSCommandSyst
      */
     sendOnline(targetMacAddr) {
         // system commandの16を送信。OSはwebsocket handshakeが終わったとして次の処理に進む
-        this.sendToNode(targetMacAddr, WSCommand_1.WSCommand.framed(0, 16, new Uint8Array([1]))); // make target online recognized
+        this.sendToNode(targetMacAddr, this.commandManager.framed(0, 16, new Uint8Array([1]))); // make target online recognized
     }
     // 再起動を指示
     sendRebootToNode(targetMacAddr) {
-        const framed = WSCommand_1.WSCommand.framed(0, 0, new Uint8Array([]));
+        const framed = this.commandManager.framed(0, 0, new Uint8Array([]));
         this.sendToNode(targetMacAddr, framed);
     }
     parsedRequestString(reqHeader) {
@@ -24962,8 +24979,8 @@ exports.WSCommandSwitch = void 0;
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
-class WSCommandSwitch extends WSCommand_1.WSCommand {
+const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
+class WSCommandSwitch extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super();
         this.module = 9;
@@ -25024,8 +25041,8 @@ exports.WSCommandSystem = void 0;
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
-class WSCommandSystem extends WSCommand_1.WSCommand {
+const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
+class WSCommandSystem extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super(...arguments);
         this.module = 0;
@@ -25365,8 +25382,8 @@ exports.WSCommandTcp = void 0;
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
-class WSCommandTcp extends WSCommand_1.WSCommand {
+const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
+class WSCommandTcp extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super();
         this.module = 13;
@@ -25506,8 +25523,8 @@ exports.WSCommandUart = void 0;
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
-class WSCommandUart extends WSCommand_1.WSCommand {
+const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
+class WSCommandUart extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super();
         this.module = 4;
@@ -25632,8 +25649,8 @@ exports.WSCommandWiFi = void 0;
  * @ignore
  */
 const jsonBinaryConverter_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/jsonBinaryConverter.js");
-const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
-class WSCommandWiFi extends WSCommand_1.WSCommand {
+const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
+class WSCommandWiFi extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super();
         this.module = 14;
@@ -25791,11 +25808,12 @@ exports.default = tv4;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandManagerInstance = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js");
+const WSCommandManager_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandManager.js");
 const WSCommandAD_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAD.js");
 const WSCommandBle_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandBle.js");
 const WSCommandDirective_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandDirective.js");
@@ -25814,26 +25832,26 @@ const WSCommandUart_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSC
 const WSCommandWiFi_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandWiFi.js");
 const WSCommandStorage_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandStorage.js");
 const WSCommandSubnet_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandSubnet.js");
+exports.WSCommandManagerInstance = new WSCommandManager_1.WSCommandManager();
 /* eslint-disable */
-WSCommand_1.WSCommand.addCommandClass("WSCommandSystem", WSCommandSystem_1.WSCommandSystem);
-WSCommand_1.WSCommand.addCommandClass("WSCommandDirective", WSCommandDirective_1.WSCommandDirective);
-WSCommand_1.WSCommand.addCommandClass("WSCommandIO", WSCommandIO_1.WSCommandIO);
-WSCommand_1.WSCommand.addCommandClass("WSCommandPWM", WSCommandPWM_1.WSCommandPWM);
-WSCommand_1.WSCommand.addCommandClass("WSCommandUart", WSCommandUart_1.WSCommandUart);
-WSCommand_1.WSCommand.addCommandClass("WSCommandAD", WSCommandAD_1.WSCommandAD);
-WSCommand_1.WSCommand.addCommandClass("WSCommandSPI", WSCommandSPI_1.WSCommandSPI);
-WSCommand_1.WSCommand.addCommandClass("WSCommandI2C", WSCommandI2C_1.WSCommandI2C);
-WSCommand_1.WSCommand.addCommandClass("WSCommandLogicAnalyzer", WSCommandLogicAnalyzer_1.WSCommandLogicAnalyzer);
-WSCommand_1.WSCommand.addCommandClass("WSCommandDisplay", WSCommandDisplay_1.WSCommandDisplay);
-WSCommand_1.WSCommand.addCommandClass("WSCommandSwitch", WSCommandSwitch_1.WSCommandSwitch);
-WSCommand_1.WSCommand.addCommandClass("WSCommandBle", WSCommandBle_1.WSCommandBle);
-WSCommand_1.WSCommand.addCommandClass("WSCommandMeasurement", WSCommandMeasurement_1.WSCommandMeasurement);
-WSCommand_1.WSCommand.addCommandClass("WSCommandTcp", WSCommandTcp_1.WSCommandTcp);
-WSCommand_1.WSCommand.addCommandClass("WSCommandWiFi", WSCommandWiFi_1.WSCommandWiFi);
-WSCommand_1.WSCommand.addCommandClass("WSCommandPlugin", WSCommandPlugin_1.WSCommandPlugin);
-WSCommand_1.WSCommand.addCommandClass("WSCommandStorage", WSCommandStorage_1.WSCommandStorage);
-WSCommand_1.WSCommand.addCommandClass("WSCommandSubnet", WSCommandSubnet_1.WSCommandSubnet);
-exports.default = WSCommand_1.WSCommand;
+exports.WSCommandManagerInstance.addCommandClass("WSCommandSystem", WSCommandSystem_1.WSCommandSystem);
+exports.WSCommandManagerInstance.addCommandClass("WSCommandDirective", WSCommandDirective_1.WSCommandDirective);
+exports.WSCommandManagerInstance.addCommandClass("WSCommandIO", WSCommandIO_1.WSCommandIO);
+exports.WSCommandManagerInstance.addCommandClass("WSCommandPWM", WSCommandPWM_1.WSCommandPWM);
+exports.WSCommandManagerInstance.addCommandClass("WSCommandUart", WSCommandUart_1.WSCommandUart);
+exports.WSCommandManagerInstance.addCommandClass("WSCommandAD", WSCommandAD_1.WSCommandAD);
+exports.WSCommandManagerInstance.addCommandClass("WSCommandSPI", WSCommandSPI_1.WSCommandSPI);
+exports.WSCommandManagerInstance.addCommandClass("WSCommandI2C", WSCommandI2C_1.WSCommandI2C);
+exports.WSCommandManagerInstance.addCommandClass("WSCommandLogicAnalyzer", WSCommandLogicAnalyzer_1.WSCommandLogicAnalyzer);
+exports.WSCommandManagerInstance.addCommandClass("WSCommandDisplay", WSCommandDisplay_1.WSCommandDisplay);
+exports.WSCommandManagerInstance.addCommandClass("WSCommandSwitch", WSCommandSwitch_1.WSCommandSwitch);
+exports.WSCommandManagerInstance.addCommandClass("WSCommandBle", WSCommandBle_1.WSCommandBle);
+exports.WSCommandManagerInstance.addCommandClass("WSCommandMeasurement", WSCommandMeasurement_1.WSCommandMeasurement);
+exports.WSCommandManagerInstance.addCommandClass("WSCommandTcp", WSCommandTcp_1.WSCommandTcp);
+exports.WSCommandManagerInstance.addCommandClass("WSCommandWiFi", WSCommandWiFi_1.WSCommandWiFi);
+exports.WSCommandManagerInstance.addCommandClass("WSCommandPlugin", WSCommandPlugin_1.WSCommandPlugin);
+exports.WSCommandManagerInstance.addCommandClass("WSCommandStorage", WSCommandStorage_1.WSCommandStorage);
+exports.WSCommandManagerInstance.addCommandClass("WSCommandSubnet", WSCommandSubnet_1.WSCommandSubnet);
 
 
 /***/ }),

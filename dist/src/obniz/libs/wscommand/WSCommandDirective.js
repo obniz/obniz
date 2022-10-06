@@ -7,10 +7,11 @@ exports.WSCommandDirective = void 0;
  */
 const semver = require("semver");
 const util_1 = require("../utils/util");
-const WSCommand_1 = require("./WSCommand");
+const WSCommandAbstract_1 = require("./WSCommandAbstract");
 const WSCommandIO_1 = require("./WSCommandIO");
 const WSCommandPWM_1 = require("./WSCommandPWM");
-class WSCommandDirective extends WSCommand_1.WSCommand {
+const WSCommandManager_1 = require("./WSCommandManager");
+class WSCommandDirective extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super();
         this.module = 1;
@@ -18,7 +19,10 @@ class WSCommandDirective extends WSCommand_1.WSCommand {
         this._CommandPause = 1;
         this._CommandResume = 2;
         this._CommandNotify = 3;
-        this.availableCommands = [new WSCommandIO_1.WSCommandIO(), new WSCommandPWM_1.WSCommandPWM()];
+        this.subCommandManager = new WSCommandManager_1.WSCommandManager();
+        this.subCommandManager.addCommandClass('WSCommandIO', WSCommandIO_1.WSCommandIO);
+        this.subCommandManager.addCommandClass('WSCommandPWM', WSCommandPWM_1.WSCommandPWM);
+        this.subCommandManager.createCommandInstances();
     }
     // Commands
     init(params, originalParams) {
@@ -73,9 +77,9 @@ class WSCommandDirective extends WSCommand_1.WSCommand {
             }
             let compressed = null;
             for (let commandIndex = 0; commandIndex < parsedCommands.length; commandIndex++) {
-                const _frame = WSCommand_1.WSCommand.compress(this.availableCommands, parsedCommands[commandIndex]);
+                const _frame = this.subCommandManager.compress(parsedCommands[commandIndex]);
                 if (!_frame) {
-                    throw new Error('[io.animation.states.state]only io or pwm commands. Pleave provide state at least one of them.');
+                    throw new Error('[io.animation.states.state]only io or pwm commands. Please provide state at least one of them.');
                 }
                 if (compressed) {
                     const _combined = new Uint8Array(compressed.length + _frame.length);

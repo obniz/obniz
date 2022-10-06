@@ -5,8 +5,9 @@ exports.WSCommandSubnet = void 0;
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = require("./WSCommand");
-class WSCommandSubnet extends WSCommand_1.WSCommand.CommandClasses.WSCommandSystem {
+const WSCommandAbstract_1 = require("./WSCommandAbstract");
+const WSCommandManager_1 = require("./WSCommandManager");
+class WSCommandSubnet extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super(...arguments);
         this.module = 16;
@@ -17,6 +18,7 @@ class WSCommandSubnet extends WSCommand_1.WSCommand.CommandClasses.WSCommandSyst
         this._CommandRecv = 4;
         this._CommandRequestJoin = 5;
         this.currentFromAddr = null;
+        this.commandManager = new WSCommandManager_1.WSCommandManager();
     }
     // Commands
     requestAllSubnet() {
@@ -75,7 +77,7 @@ class WSCommandSubnet extends WSCommand_1.WSCommand.CommandClasses.WSCommandSyst
      *
      */
     sendRequestConnectToNode(targetMacAddr) {
-        this.sendToNode(targetMacAddr, WSCommand_1.WSCommand.framed(this.module, this._CommandRequestJoin, new Uint8Array([]))); // send request
+        this.sendToNode(targetMacAddr, this.commandManager.framed(this.module, this._CommandRequestJoin, new Uint8Array([]))); // send request
     }
     /**
      * Onlineになったことを通知。authorizeとは関係なく、http request を読みその返り値として返す
@@ -83,11 +85,11 @@ class WSCommandSubnet extends WSCommand_1.WSCommand.CommandClasses.WSCommandSyst
      */
     sendOnline(targetMacAddr) {
         // system commandの16を送信。OSはwebsocket handshakeが終わったとして次の処理に進む
-        this.sendToNode(targetMacAddr, WSCommand_1.WSCommand.framed(0, 16, new Uint8Array([1]))); // make target online recognized
+        this.sendToNode(targetMacAddr, this.commandManager.framed(0, 16, new Uint8Array([1]))); // make target online recognized
     }
     // 再起動を指示
     sendRebootToNode(targetMacAddr) {
-        const framed = WSCommand_1.WSCommand.framed(0, 0, new Uint8Array([]));
+        const framed = this.commandManager.framed(0, 0, new Uint8Array([]));
         this.sendToNode(targetMacAddr, framed);
     }
     parsedRequestString(reqHeader) {

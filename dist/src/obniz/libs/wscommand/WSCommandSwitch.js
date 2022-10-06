@@ -5,8 +5,8 @@ exports.WSCommandSwitch = void 0;
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = require("./WSCommand");
-class WSCommandSwitch extends WSCommand_1.WSCommand {
+const WSCommandAbstract_1 = require("./WSCommandAbstract");
+class WSCommandSwitch extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super();
         this.module = 9;

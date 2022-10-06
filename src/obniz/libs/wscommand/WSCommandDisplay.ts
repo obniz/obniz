@@ -3,9 +3,9 @@
  * @ignore
  */
 import qrcode from '../utils/qr';
-import { WSCommand } from './WSCommand';
+import { WSCommandAbstract } from './WSCommandAbstract';
 
-export class WSCommandDisplay extends WSCommand {
+export class WSCommandDisplay extends WSCommandAbstract {
   public module = 8;
 
   public _CommandClear = 0;

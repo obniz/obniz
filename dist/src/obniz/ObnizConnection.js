@@ -13,7 +13,7 @@ const ws_1 = __importDefault(require("ws"));
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const package_1 = __importDefault(require("../../package")); // pakcage.js will be created from package.json on build.
-const wscommand_1 = __importDefault(require("./libs/wscommand"));
+const wscommand_1 = require("./libs/wscommand");
 const ObnizError_1 = require("./ObnizError");
 class ObnizConnection extends eventemitter3_1.default {
     constructor(id, options) {
@@ -21,8 +21,7 @@ class ObnizConnection extends eventemitter3_1.default {
         this._measureTraffic = null;
         this.socket = null;
         this.socket_local = null;
-        this.wscommand = null;
-        this.wscommands = [];
+        this.wsCommandManager = wscommand_1.WSCommandManagerInstance;
         this._sendQueueTimer = null;
         this._sendQueue = null;
         this._waitForLocalConnectReadyTimer = null;
@@ -59,14 +58,7 @@ class ObnizConnection extends eventemitter3_1.default {
             reset_obniz_on_ws_disconnection: options.reset_obniz_on_ws_disconnection === false ? false : true,
             obnizid_dialog: options.obnizid_dialog === false ? false : true,
         };
-        if (this.options.binary) {
-            this.wscommand = this.constructor.WSCommand;
-            const classes = this.wscommand.CommandClasses;
-            this.wscommands = [];
-            for (const class_name in classes) {
-                this.wscommands.push(new classes[class_name]());
-            }
-        }
+        this.wsCommandManager.createCommandInstances();
         if (this.autoConnect) {
             this._startAutoConnectLoopInBackground();
         }
@@ -76,13 +68,6 @@ class ObnizConnection extends eventemitter3_1.default {
      */
     static get version() {
         return package_1.default.version;
-    }
-    /**
-     * @ignore
-     * @constructor
-     */
-    static get WSCommand() {
-        return wscommand_1.default;
     }
     static isIpAddress(str) {
         const regex = /^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$/;
@@ -299,10 +284,10 @@ class ObnizConnection extends eventemitter3_1.default {
                 this._print_debug('send: ' + sendData);
             }
             /* compress */
-            if (this.wscommand && options.local_connect) {
+            if (this.options.binary && options.local_connect) {
                 let compressed;
                 try {
-                    compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
+                    compressed = this.wsCommandManager.compress(JSON.parse(sendData)[0]);
                     if (compressed) {
                         sendData = compressed;
                         if (this.debugprintBinary) {
@@ -449,11 +434,13 @@ class ObnizConnection extends eventemitter3_1.default {
             if (typeof data === 'string') {
                 json = JSON.parse(data);
             }
-            else if (this.wscommands) {
+            else {
+                const binary = new Uint8Array(data);
+                // binary
                 if (this.debugprintBinary) {
-                    this.log('binalized(recieve): ' + new Uint8Array(data).toString());
+                    this.log('binalized: ' + binary.toString());
                 }
-                json = this._binary2Json(data);
+                json = this.wsCommandManager.binary2Json(binary);
             }
             if (Array.isArray(json)) {
                 for (const i in json) {
@@ -540,7 +527,7 @@ class ObnizConnection extends eventemitter3_1.default {
         if (this.options.access_token) {
             query.push('access_token=' + this.options.access_token);
         }
-        if (this.wscommand) {
+        if (this.options.binary) {
             query.push('accept_binary=true');
         }
         if (query.length > 0) {
@@ -601,7 +588,7 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     _connectLocalWait() {
         const host = this._localConnectIp;
-        if (!host || !this.wscommand || !this.options.local_connect) {
+        if (!host || !this.options.binary || !this.options.local_connect) {
             return;
             // cannot local connect
             // throw new Error(
@@ -806,15 +793,10 @@ class ObnizConnection extends eventemitter3_1.default {
             if (!this.hw) {
                 this.hw = 'obnizb1';
             }
-            if (this.wscommands) {
-                for (let i = 0; i < this.wscommands.length; i++) {
-                    const command = this.wscommands[i];
-                    command.setHw({
-                        hw: this.hw,
-                        firmware: this.firmware_ver,
-                    });
-                }
-            }
+            this.wsCommandManager.setHw({
+                hw: this.hw,
+                firmware: this.firmware_ver,
+            });
             if (this.options.reset_obniz_on_ws_disconnection) {
                 this.resetOnDisconnect(true);
             }
@@ -851,27 +833,6 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     _handleSystemCommand(wsObj) {
         // do nothing.
-    }
-    _binary2Json(binary) {
-        let data = new Uint8Array(binary);
-        const json = [];
-        while (data !== null) {
-            const frame = wscommand_1.default.dequeueOne(data);
-            if (!frame) {
-                break;
-            }
-            const obj = {};
-            for (let i = 0; i < this.wscommands.length; i++) {
-                const command = this.wscommands[i];
-                if (command.module === frame.module) {
-                    command.notifyFromBinary(obj, frame.func, frame.payload);
-                    break;
-                }
-            }
-            json.push(obj);
-            data = frame.next;
-        }
-        return json;
     }
     async _startLoopInBackgroundWait() {
         this._stopLoopInBackground();

@@ -1,5 +1,5 @@
-import { WSCommand } from './WSCommand';
-export declare class WSCommandDisplay extends WSCommand {
+import { WSCommandAbstract } from './WSCommandAbstract';
+export declare class WSCommandDisplay extends WSCommandAbstract {
     module: number;
     _CommandClear: number;
     _CommandPrint: number;

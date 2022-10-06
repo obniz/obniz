@@ -8,5 +8,5 @@ required: [network]
 properties:
   network:
     type: string
-      enum:
+    enum:
         - get

@@ -4,8 +4,9 @@
  * @packageDocumentation
  * @ignore
  */
-import { WSCommand } from './WSCommand';
-export declare class WSCommandSubnet extends WSCommand.CommandClasses.WSCommandSystem {
+import { WSCommandAbstract } from './WSCommandAbstract';
+import { WSCommandManager } from './WSCommandManager';
+export declare class WSCommandSubnet extends WSCommandAbstract {
     module: number;
     _CommandRequestAllSubnet: number;
     _CommandSendAddr: number;
@@ -18,6 +19,7 @@ export declare class WSCommandSubnet extends WSCommand.CommandClasses.WSCommandS
         onSubnetTableReceived: (subnetNodes: string[]) => void;
         onDataReceivedFromSubnet: (fromAddr: string, payload: Uint8Array) => void;
     };
+    commandManager: WSCommandManager;
     requestAllSubnet(): void;
     sendToNode(targetMacAddr: string, data: Uint8Array): void;
     sendToNodeBufAddr(bufAddr: Buffer, data: Uint8Array): void;

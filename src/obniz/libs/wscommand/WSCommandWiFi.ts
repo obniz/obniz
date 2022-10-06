@@ -3,9 +3,9 @@
  * @ignore
  */
 import { JsonBinaryConverter } from './jsonBinaryConverter';
-import { WSCommand } from './WSCommand';
+import { WSCommandAbstract } from './WSCommandAbstract';
 
-export class WSCommandWiFi extends WSCommand {
+export class WSCommandWiFi extends WSCommandAbstract {
   public module: number;
   public _CommandScan: number;
 

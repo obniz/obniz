@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @ignore
  */
-import { WSCommand } from './WSCommand';
+import { WSCommandAbstract } from './WSCommandAbstract';
 
-export class WSCommandSwitch extends WSCommand {
+export class WSCommandSwitch extends WSCommandAbstract {
   public module: number;
   public _CommandNotifyValue: number;
   public _CommandOnece: number;

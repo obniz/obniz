@@ -4,29 +4,26 @@
  */
 import semver = require('semver');
 import { ObnizUtil } from '../utils/util';
-import { WSCommand } from './WSCommand';
+import { WSCommandAbstract } from './WSCommandAbstract';
 import { WSCommandIO } from './WSCommandIO';
 import { WSCommandPWM } from './WSCommandPWM';
+import { WSCommandManagerInstance } from './index';
+import { WSCommandManager } from './WSCommandManager';
 
-export class WSCommandDirective extends WSCommand {
-  public availableCommands: any[];
+export class WSCommandDirective extends WSCommandAbstract {
+  module = 1;
 
-  public module: number;
-  protected _CommandRegistrate: number;
-  protected _CommandPause: number;
-  protected _CommandResume: number;
-  protected _CommandNotify: number;
+  _CommandRegistrate = 0;
+  _CommandPause = 1;
+  _CommandResume = 2;
+  _CommandNotify = 3;
+  subCommandManager = new WSCommandManager();
 
   constructor() {
     super();
-    this.module = 1;
-
-    this._CommandRegistrate = 0;
-    this._CommandPause = 1;
-    this._CommandResume = 2;
-    this._CommandNotify = 3;
-
-    this.availableCommands = [new WSCommandIO(), new WSCommandPWM()];
+    this.subCommandManager.addCommandClass('WSCommandIO', WSCommandIO);
+    this.subCommandManager.addCommandClass('WSCommandPWM', WSCommandPWM);
+    this.subCommandManager.createCommandInstances();
   }
 
   // Commands
@@ -92,13 +89,12 @@ export class WSCommandDirective extends WSCommand {
         commandIndex < parsedCommands.length;
         commandIndex++
       ) {
-        const _frame = WSCommand.compress(
-          this.availableCommands,
+        const _frame = this.subCommandManager.compress(
           parsedCommands[commandIndex]
         );
         if (!_frame) {
           throw new Error(
-            '[io.animation.states.state]only io or pwm commands. Pleave provide state at least one of them.'
+            '[io.animation.states.state]only io or pwm commands. Please provide state at least one of them.'
           );
         }
         if (compressed) {

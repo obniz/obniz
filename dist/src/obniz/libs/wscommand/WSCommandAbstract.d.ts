@@ -4,26 +4,7 @@
  */
 /// <reference types="tv4" />
 import WSSchema from './WSSchema';
-declare type WSCommandConstructor = new () => WSCommand;
-interface PayloadChunk {
-    /**
-     * module number
-     */
-    module: number;
-    /**
-     * function index number
-     */
-    func: number;
-    /**
-     * payload for wscommand
-     */
-    payload: Uint8Array;
-    /**
-     * left binary array
-     */
-    next: Uint8Array;
-}
-interface HW {
+export interface HW {
     /**
      * hardware identifer. "esp32w"
      */
@@ -33,28 +14,13 @@ interface HW {
      */
     firmware: string | undefined;
 }
-export declare abstract class WSCommand {
-    static get schema(): any;
-    static get CommandClasses(): {
-        [key: string]: WSCommandConstructor;
-    };
-    get WSCommandNotFoundError(): typeof WSCommandNotFoundError;
-    static addCommandClass(name: string, classObj: WSCommandConstructor): void;
-    static framed(module: number, func: number, payload: Uint8Array | null): Uint8Array;
-    /**
-     * Dequeue a next wscommands from binary array.
-     *
-     * @param buf binary array received from obniz cloud.
-     * @returns chunk
-     */
-    static dequeueOne(buf: Uint8Array): PayloadChunk | null;
-    static onCompressed: (data: Uint8Array) => void;
-    static compress(wscommands: WSCommand[], json: any): Uint8Array | null;
+export declare abstract class WSCommandAbstract {
+    get WSCommandNotFoundError(): any;
     _hw: HW;
     ioNotUsed: number;
     COMMAND_FUNC_ID_ERROR: number;
     abstract module: number;
-    onParsed?: (module: number, func: number, payload: Uint8Array | null) => void;
+    parsed?: (module: number, func: number, payload: Uint8Array | null) => void;
     constructor();
     setHw(obj: HW): void;
     sendCommand(func: number, payload: Uint8Array | null): void;
@@ -80,6 +46,3 @@ export declare abstract class WSCommand {
     _filterSchema(schema: any, json: any): any;
     isWSRoomOnlyCommand(func: number, payload: Uint8Array): boolean;
 }
-declare class WSCommandNotFoundError extends Error {
-}
-export {};

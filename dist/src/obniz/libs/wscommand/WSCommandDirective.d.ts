@@ -1,11 +1,12 @@
-import { WSCommand } from './WSCommand';
-export declare class WSCommandDirective extends WSCommand {
-    availableCommands: any[];
+import { WSCommandAbstract } from './WSCommandAbstract';
+import { WSCommandManager } from './WSCommandManager';
+export declare class WSCommandDirective extends WSCommandAbstract {
     module: number;
-    protected _CommandRegistrate: number;
-    protected _CommandPause: number;
-    protected _CommandResume: number;
-    protected _CommandNotify: number;
+    _CommandRegistrate: number;
+    _CommandPause: number;
+    _CommandResume: number;
+    _CommandNotify: number;
+    subCommandManager: WSCommandManager;
     constructor();
     init(params: any, originalParams: any): void;
     changeState(params: any): void;

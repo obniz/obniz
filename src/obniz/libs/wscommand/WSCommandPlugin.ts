@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @ignore
  */
-import { WSCommand } from './WSCommand';
+import { WSCommandAbstract } from './WSCommandAbstract';
 
-export class WSCommandPlugin extends WSCommand {
+export class WSCommandPlugin extends WSCommandAbstract {
   public module: number;
   public _CommandReceive: number; // js <- device
   public _CommandSend: number; // js -> device

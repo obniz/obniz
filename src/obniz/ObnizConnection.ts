@@ -9,9 +9,10 @@ import wsClient from 'ws';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import packageJson from '../../package'; // pakcage.js will be created from package.json on build.
-import WSCommand from './libs/wscommand';
+import { WSCommandManagerInstance } from './libs/wscommand';
 import { ObnizOfflineError } from './ObnizError';
 import { ObnizOptions } from './ObnizOptions';
+import { WSCommandManager } from './libs/wscommand/WSCommandManager';
 
 export type ObnizConnectionEventNames = 'connect' | 'close';
 
@@ -94,14 +95,6 @@ export abstract class ObnizConnection extends EventEmitter<
    */
   static get version() {
     return packageJson.version;
-  }
-
-  /**
-   * @ignore
-   * @constructor
-   */
-  static get WSCommand() {
-    return WSCommand;
   }
 
   public static isIpAddress(str: string) {
@@ -288,8 +281,7 @@ export abstract class ObnizConnection extends EventEmitter<
   protected socket_local: wsClient | null = null;
   protected bufferdAmoundWarnBytes: number;
   protected options: Required<ObnizOptions>;
-  protected wscommand: typeof WSCommand | null = null;
-  protected wscommands: WSCommand[] = [];
+  protected wsCommandManager: WSCommandManager = WSCommandManagerInstance;
   protected _sendQueueTimer: ReturnType<typeof setTimeout> | null = null;
   protected _sendQueue: Uint8Array[] | null = null;
   protected _waitForLocalConnectReadyTimer: ReturnType<
@@ -339,14 +331,7 @@ export abstract class ObnizConnection extends EventEmitter<
         options.reset_obniz_on_ws_disconnection === false ? false : true,
       obnizid_dialog: options.obnizid_dialog === false ? false : true,
     };
-    if (this.options.binary) {
-      this.wscommand = (this.constructor as typeof ObnizConnection).WSCommand;
-      const classes = this.wscommand.CommandClasses;
-      this.wscommands = [];
-      for (const class_name in classes) {
-        this.wscommands.push(new classes[class_name]());
-      }
-    }
+    this.wsCommandManager.createCommandInstances();
     if (this.autoConnect) {
       this._startAutoConnectLoopInBackground();
     }
@@ -582,13 +567,10 @@ export abstract class ObnizConnection extends EventEmitter<
       }
 
       /* compress */
-      if (this.wscommand && options.local_connect) {
+      if (this.options.binary && options.local_connect) {
         let compressed: Uint8Array | null;
         try {
-          compressed = this.wscommand.compress(
-            this.wscommands,
-            JSON.parse(sendData)[0]
-          );
+          compressed = this.wsCommandManager.compress(JSON.parse(sendData)[0]);
           if (compressed) {
             sendData = compressed;
             if (this.debugprintBinary) {
@@ -756,11 +738,13 @@ export abstract class ObnizConnection extends EventEmitter<
       let json: any;
       if (typeof data === 'string') {
         json = JSON.parse(data);
-      } else if (this.wscommands) {
+      } else {
+        const binary = new Uint8Array(data);
+        // binary
         if (this.debugprintBinary) {
-          this.log('binalized(recieve): ' + new Uint8Array(data).toString());
+          this.log('binalized: ' + binary.toString());
         }
-        json = this._binary2Json(data);
+        json = this.wsCommandManager.binary2Json(binary);
       }
 
       if (Array.isArray(json)) {
@@ -862,7 +846,7 @@ export abstract class ObnizConnection extends EventEmitter<
     if (this.options.access_token) {
       query.push('access_token=' + this.options.access_token);
     }
-    if (this.wscommand) {
+    if (this.options.binary) {
       query.push('accept_binary=true');
     }
     if (query.length > 0) {
@@ -929,7 +913,7 @@ export abstract class ObnizConnection extends EventEmitter<
 
   protected _connectLocalWait() {
     const host = this._localConnectIp;
-    if (!host || !this.wscommand || !this.options.local_connect) {
+    if (!host || !this.options.binary || !this.options.local_connect) {
       return;
       // cannot local connect
       // throw new Error(
@@ -1162,15 +1146,11 @@ export abstract class ObnizConnection extends EventEmitter<
       if (!this.hw) {
         this.hw = 'obnizb1';
       }
-      if (this.wscommands) {
-        for (let i = 0; i < this.wscommands.length; i++) {
-          const command = this.wscommands[i];
-          command.setHw({
-            hw: this.hw, // hard coding
-            firmware: this.firmware_ver,
-          });
-        }
-      }
+      this.wsCommandManager.setHw({
+        hw: this.hw, // hard coding
+        firmware: this.firmware_ver,
+      });
+
       if (this.options.reset_obniz_on_ws_disconnection) {
         (this as any).resetOnDisconnect(true);
       }
@@ -1210,28 +1190,6 @@ export abstract class ObnizConnection extends EventEmitter<
 
   protected _handleSystemCommand(wsObj: any) {
     // do nothing.
-  }
-
-  protected _binary2Json(binary: any) {
-    let data = new Uint8Array(binary);
-    const json = [];
-    while (data !== null) {
-      const frame = WSCommand.dequeueOne(data);
-      if (!frame) {
-        break;
-      }
-      const obj = {};
-      for (let i = 0; i < this.wscommands.length; i++) {
-        const command = this.wscommands[i];
-        if (command.module === frame.module) {
-          command.notifyFromBinary(obj, frame.func, frame.payload);
-          break;
-        }
-      }
-      json.push(obj);
-      data = frame.next;
-    }
-    return json;
   }
 
   private async _startLoopInBackgroundWait() {

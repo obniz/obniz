@@ -2,9 +2,10 @@
  * @packageDocumentation
  * @ignore
  */
-import { WSCommand } from './WSCommand';
+import { WSCommandAbstract } from './WSCommandAbstract';
+import { WSCommandManager } from './WSCommandManager';
 
-export class WSCommandSubnet extends WSCommand.CommandClasses.WSCommandSystem {
+export class WSCommandSubnet extends WSCommandAbstract {
   module = 16;
 
   _CommandRequestAllSubnet = 0;
@@ -19,6 +20,8 @@ export class WSCommandSubnet extends WSCommand.CommandClasses.WSCommandSystem {
     onSubnetTableReceived: (subnetNodes: string[]) => void;
     onDataReceivedFromSubnet: (fromAddr: string, payload: Uint8Array) => void;
   };
+
+  commandManager = new WSCommandManager();
 
   // Commands
 
@@ -92,7 +95,7 @@ export class WSCommandSubnet extends WSCommand.CommandClasses.WSCommandSystem {
   sendRequestConnectToNode(targetMacAddr: string) {
     this.sendToNode(
       targetMacAddr,
-      WSCommand.framed(
+      this.commandManager.framed(
         this.module,
         this._CommandRequestJoin,
         new Uint8Array([])
@@ -108,13 +111,13 @@ export class WSCommandSubnet extends WSCommand.CommandClasses.WSCommandSystem {
     // system commandの16を送信。OSはwebsocket handshakeが終わったとして次の処理に進む
     this.sendToNode(
       targetMacAddr,
-      WSCommand.framed(0, 16, new Uint8Array([1]))
+      this.commandManager.framed(0, 16, new Uint8Array([1]))
     ); // make target online recognized
   }
 
   // 再起動を指示
   sendRebootToNode(targetMacAddr: string) {
-    const framed = WSCommand.framed(0, 0, new Uint8Array([]));
+    const framed = this.commandManager.framed(0, 0, new Uint8Array([]));
     this.sendToNode(targetMacAddr, framed);
   }
 

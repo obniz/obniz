@@ -5,8 +5,8 @@ exports.WSCommandSPI = void 0;
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = require("./WSCommand");
-class WSCommandSPI extends WSCommand_1.WSCommand {
+const WSCommandAbstract_1 = require("./WSCommandAbstract");
+class WSCommandSPI extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super();
         this.module = 5;
