@@ -3,10 +3,8 @@
  * @packageDocumentation
  * @module ObnizCore
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ObnizComponents = void 0;
 const ble_1 = require("./libs/embeds/bleHci/ble");
 const display_1 = require("./libs/embeds/display");
 const switch_1 = require("./libs/embeds/switch");
@@ -22,11 +20,11 @@ const measure_1 = require("./libs/measurements/measure");
 const wifi_1 = require("./libs/network/wifi");
 const plugin_1 = require("./libs/plugin/plugin");
 const tcp_1 = require("./libs/protocol/tcp");
-const ObnizParts_1 = __importDefault(require("./ObnizParts"));
+const ObnizParts_1 = require("./ObnizParts");
 const ComponentAbstact_1 = require("./libs/ComponentAbstact");
-const hw_1 = __importDefault(require("./libs/hw"));
+const hw_1 = require("./libs/hw");
 const grove_1 = require("./libs/io_peripherals/grove");
-class ObnizComponents extends ObnizParts_1.default {
+class ObnizComponents extends ObnizParts_1.ObnizParts {
     constructor(id, options) {
         super(id, options);
         this.pongObservers = [];
@@ -163,7 +161,7 @@ class ObnizComponents extends ObnizParts_1.default {
         if (this._allComponentKeys.length !== 0) {
             return;
         }
-        this._hwDefinition = hw_1.default.getDefinitionFor(this.hw);
+        this._hwDefinition = hw_1.HW.getDefinitionFor(this.hw);
         if (!this._hwDefinition) {
             throw new Error(`unkown hw ${this.hw || ''}`);
         }
@@ -322,4 +320,4 @@ class ObnizComponents extends ObnizParts_1.default {
         throw new Error(`No More ${peripheral} Available.`);
     }
 }
-exports.default = ObnizComponents;
+exports.ObnizComponents = ObnizComponents;

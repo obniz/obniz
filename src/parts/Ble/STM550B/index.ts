@@ -4,7 +4,7 @@
  */
 /* eslint rulesdir/non-ascii: 0 */
 
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import {
   NormalValueType,
   ObnizBleBeaconStruct,

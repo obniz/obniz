@@ -13,7 +13,7 @@
  * ---------------------------------------------------------------- */
 
 import Obniz from '../../../obniz';
-import bleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/BleRemotePeripheral';
 import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 
 import LinkingAdvertising from './modules/advertising';
@@ -60,7 +60,7 @@ export default class Linking {
 
   public keys: string[];
   public requiredKeys: string[];
-  public peripheral: bleRemotePeripheral | null;
+  public peripheral: BleRemotePeripheral | null;
   public obniz!: Obniz;
 
   public get LinkingAdvertising() {
@@ -173,7 +173,7 @@ export default class Linking {
         resolve(device_list);
       };
       this._peripherals = {};
-      this.obniz.ble!.scan.onfind = (peripheral: bleRemotePeripheral) => {
+      this.obniz.ble!.scan.onfind = (peripheral: BleRemotePeripheral) => {
         const dev = this._discoveredDevice(peripheral, name_filter, id_filter);
         if (quick && dev) {
           finishDiscovery();
@@ -200,7 +200,7 @@ export default class Linking {
   }
 
   public _discoveredDevice(
-    peripheral: bleRemotePeripheral,
+    peripheral: BleRemotePeripheral,
     name_filter: any,
     id_filter: any
   ) {
@@ -276,7 +276,7 @@ export default class Linking {
       }
     }
 
-    this.obniz.ble!.scan.onfind = (peripheral: bleRemotePeripheral) => {
+    this.obniz.ble!.scan.onfind = (peripheral: BleRemotePeripheral) => {
       if (!peripheral.localName) {
         return;
       }

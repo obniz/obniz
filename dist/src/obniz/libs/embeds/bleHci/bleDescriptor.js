@@ -1,13 +1,11 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const bleLocalValueAttributeAbstract_1 = __importDefault(require("./bleLocalValueAttributeAbstract"));
+exports.BleDescriptor = void 0;
+const bleLocalValueAttributeAbstract_1 = require("./bleLocalValueAttributeAbstract");
 /**
  * @category Use as Peripheral
  */
-class BleDescriptor extends bleLocalValueAttributeAbstract_1.default {
+class BleDescriptor extends bleLocalValueAttributeAbstract_1.BleLocalValueAttributeAbstract {
     // public permissions: any;
     /**
      * Create descriptor.
@@ -69,4 +67,4 @@ class BleDescriptor extends bleLocalValueAttributeAbstract_1.default {
         return obj;
     }
 }
-exports.default = BleDescriptor;
+exports.BleDescriptor = BleDescriptor;

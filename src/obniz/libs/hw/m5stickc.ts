@@ -3,7 +3,7 @@
  * @module ObnizCore.Hardware
  */
 
-import ObnizDevice from '../../ObnizDevice';
+import { ObnizDevice } from '../../ObnizDevice';
 
 import InfraredLED from '../../../parts/Infrared/InfraredLED';
 import LED from '../../../parts/Light/LED';

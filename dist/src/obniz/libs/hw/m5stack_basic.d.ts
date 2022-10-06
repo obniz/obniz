@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module ObnizCore.Hardware
  */
-import ObnizDevice from '../../ObnizDevice';
+import { ObnizDevice } from '../../ObnizDevice';
 import Button from '../../../parts/MovementSensor/Button';
 import { PeripheralI2C } from '../../../obniz/libs/io_peripherals/i2c';
 import { PeripheralIO as IO } from '../../../obniz/libs/io_peripherals/io';

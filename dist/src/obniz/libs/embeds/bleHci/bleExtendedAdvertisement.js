@@ -1,14 +1,12 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const bleAdvertisementBuilder_1 = __importDefault(require("./bleAdvertisementBuilder"));
-const bleAdvertisement_1 = __importDefault(require("./bleAdvertisement"));
+exports.BleExtendedAdvertisement = void 0;
+const bleAdvertisementBuilder_1 = require("./bleAdvertisementBuilder");
+const bleAdvertisement_1 = require("./bleAdvertisement");
 /**
  * @category Use as Peripheral
  */
-class BleExtendedAdvertisement extends bleAdvertisement_1.default {
+class BleExtendedAdvertisement extends bleAdvertisement_1.BleAdvertisement {
     constructor(obnizBle) {
         super(obnizBle);
         this.mode = 'connectable';
@@ -235,10 +233,10 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
         this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
     }
     advDataBulider(jsonVal) {
-        return new bleAdvertisementBuilder_1.default(jsonVal, true);
+        return new bleAdvertisementBuilder_1.BleAdvertisementBuilder(jsonVal, true);
     }
     scanRespDataBuilder(json) {
-        return new bleAdvertisementBuilder_1.default(json, true);
+        return new bleAdvertisementBuilder_1.BleAdvertisementBuilder(json, true);
     }
 }
-exports.default = BleExtendedAdvertisement;
+exports.BleExtendedAdvertisement = BleExtendedAdvertisement;

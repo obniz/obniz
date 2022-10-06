@@ -1760,16 +1760,13 @@ webpackEmptyContext.id = "./dist/src/obniz sync recursive";
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Obniz = void 0;
 const m5stack_basic_1 = __webpack_require__("./dist/src/obniz/libs/hw/m5stack_basic.js");
 const m5stickc_1 = __webpack_require__("./dist/src/obniz/libs/hw/m5stickc.js");
-const ObnizApi_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApi.js"));
-const ObnizApp_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApp.js"));
-const ObnizDevice_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizDevice.js"));
+const ObnizApi_1 = __webpack_require__("./dist/src/obniz/ObnizApi.js");
+const ObnizApp_1 = __webpack_require__("./dist/src/obniz/ObnizApp.js");
+const ObnizDevice_1 = __webpack_require__("./dist/src/obniz/ObnizDevice.js");
 /**
  * obniz class is the abstract version of obniz Board hardware within JavaScript.
  *
@@ -1793,14 +1790,14 @@ const ObnizDevice_1 = __importDefault(__webpack_require__("./dist/src/obniz/Obni
  * If you'd like to receive, you need to specify `local_connect: false` at all of obniz.js to disable local connect.
  *
  */
-class Obniz extends ObnizDevice_1.default {
+class Obniz extends ObnizDevice_1.ObnizDevice {
     /**
      * obniz REST api class
      *
      * @returns {ObnizApi}
      */
     static get api() {
-        return ObnizApi_1.default;
+        return ObnizApi_1.ObnizApi;
     }
     /**
      * App Support class
@@ -1808,7 +1805,7 @@ class Obniz extends ObnizDevice_1.default {
      * @returns {ObnizApp}
      */
     static get App() {
-        return ObnizApp_1.default;
+        return ObnizApp_1.ObnizApp;
     }
 }
 exports.Obniz = Obniz;
@@ -1834,6 +1831,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ObnizApi = void 0;
 const node_fetch_1 = __importDefault(__webpack_require__("./node_modules/node-fetch/browser.js"));
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -1935,7 +1933,7 @@ class ObnizApi {
         });
     }
 }
-exports.default = ObnizApi;
+exports.ObnizApi = ObnizApi;
 
 
 /***/ }),
@@ -1950,6 +1948,7 @@ exports.default = ObnizApi;
  * @module ObnizApp
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ObnizApp = void 0;
 class ObnizApp {
     /**
      * Determine obniz.js is running on obniz Cloud or not.
@@ -2010,7 +2009,7 @@ class ObnizApp {
         }
     }
 }
-exports.default = ObnizApp;
+exports.ObnizApp = ObnizApp;
 
 
 /***/ }),
@@ -2024,10 +2023,8 @@ exports.default = ObnizApp;
  * @packageDocumentation
  * @module ObnizCore
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ObnizComponents = void 0;
 const ble_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/ble.js");
 const display_1 = __webpack_require__("./dist/src/obniz/libs/embeds/display.js");
 const switch_1 = __webpack_require__("./dist/src/obniz/libs/embeds/switch.js");
@@ -2043,11 +2040,11 @@ const measure_1 = __webpack_require__("./dist/src/obniz/libs/measurements/measur
 const wifi_1 = __webpack_require__("./dist/src/obniz/libs/network/wifi.js");
 const plugin_1 = __webpack_require__("./dist/src/obniz/libs/plugin/plugin.js");
 const tcp_1 = __webpack_require__("./dist/src/obniz/libs/protocol/tcp.js");
-const ObnizParts_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizParts.js"));
+const ObnizParts_1 = __webpack_require__("./dist/src/obniz/ObnizParts.js");
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
-const hw_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/hw/index.js"));
+const hw_1 = __webpack_require__("./dist/src/obniz/libs/hw/index.js");
 const grove_1 = __webpack_require__("./dist/src/obniz/libs/io_peripherals/grove.js");
-class ObnizComponents extends ObnizParts_1.default {
+class ObnizComponents extends ObnizParts_1.ObnizParts {
     constructor(id, options) {
         super(id, options);
         this.pongObservers = [];
@@ -2184,7 +2181,7 @@ class ObnizComponents extends ObnizParts_1.default {
         if (this._allComponentKeys.length !== 0) {
             return;
         }
-        this._hwDefinition = hw_1.default.getDefinitionFor(this.hw);
+        this._hwDefinition = hw_1.HW.getDefinitionFor(this.hw);
         if (!this._hwDefinition) {
             throw new Error(`unkown hw ${this.hw || ''}`);
         }
@@ -2343,7 +2340,7 @@ class ObnizComponents extends ObnizParts_1.default {
         throw new Error(`No More ${peripheral} Available.`);
     }
 }
-exports.default = ObnizComponents;
+exports.ObnizComponents = ObnizComponents;
 
 
 /***/ }),
@@ -2361,6 +2358,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ObnizConnection = void 0;
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ws_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/webpackReplace/ws.js"));
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -3419,7 +3417,7 @@ class ObnizConnection extends eventemitter3_1.default {
         return ceiledTrafficSize;
     }
 }
-exports.default = ObnizConnection;
+exports.ObnizConnection = ObnizConnection;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -3434,13 +3432,11 @@ exports.default = ObnizConnection;
  * @packageDocumentation
  * @module ObnizCore
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ObnizDevice = void 0;
 const util_1 = __webpack_require__("./dist/src/obniz/libs/utils/util.js");
-const ObnizUIs_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizUIs.js"));
-class ObnizDevice extends ObnizUIs_1.default {
+const ObnizUIs_1 = __webpack_require__("./dist/src/obniz/ObnizUIs.js");
+class ObnizDevice extends ObnizUIs_1.ObnizUIs {
     /**
      * We will now instantiate obniz.
      *
@@ -3598,7 +3594,7 @@ class ObnizDevice extends ObnizUIs_1.default {
         }
     }
 }
-exports.default = ObnizDevice;
+exports.ObnizDevice = ObnizDevice;
 
 
 /***/ }),
@@ -3897,17 +3893,15 @@ exports.ObnizBleInvalidParameterError = ObnizBleInvalidParameterError;
  * @packageDocumentation
  * @module ObnizCore
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ObnizParts = void 0;
 const util_1 = __webpack_require__("./dist/src/obniz/libs/utils/util.js");
-const ObnizConnection_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizConnection.js"));
+const ObnizConnection_1 = __webpack_require__("./dist/src/obniz/ObnizConnection.js");
 /**
  * @ignore
  */
 const _parts = {};
-class ObnizParts extends ObnizConnection_1.default {
+class ObnizParts extends ObnizConnection_1.ObnizConnection {
     /**
      * @ignore
      * @private
@@ -4037,7 +4031,7 @@ class ObnizParts extends ObnizConnection_1.default {
         return parts;
     }
 }
-exports.default = ObnizParts;
+exports.ObnizParts = ObnizParts;
 
 
 /***/ }),
@@ -4632,6 +4626,7 @@ exports.iBeaconData =
  * @module ObnizCore
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ObnizPartsBleInterface = void 0;
 class ObnizPartsBleInterface {
     constructor() {
         /**
@@ -4676,7 +4671,7 @@ class ObnizPartsBleInterface {
         return result;
     }
 }
-exports.default = ObnizPartsBleInterface;
+exports.ObnizPartsBleInterface = ObnizPartsBleInterface;
 
 
 /***/ }),
@@ -4690,12 +4685,10 @@ exports.default = ObnizPartsBleInterface;
  * @packageDocumentation
  * @module ObnizCore
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizComponents_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizComponents.js"));
-class ObnizSystemMethods extends ObnizComponents_1.default {
+exports.ObnizSystemMethods = void 0;
+const ObnizComponents_1 = __webpack_require__("./dist/src/obniz/ObnizComponents.js");
+class ObnizSystemMethods extends ObnizComponents_1.ObnizComponents {
     constructor(id, options) {
         super(id, options);
     }
@@ -4988,7 +4981,7 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
         });
     }
 }
-exports.default = ObnizSystemMethods;
+exports.ObnizSystemMethods = ObnizSystemMethods;
 
 
 /***/ }),
@@ -5006,9 +4999,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ObnizUIs = void 0;
 const dialogPollyfill_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/webpackReplace/dialogPollyfill-browser.js"));
-const ObnizSystemMethods_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizSystemMethods.js"));
-class ObnizUIs extends ObnizSystemMethods_1.default {
+const ObnizSystemMethods_1 = __webpack_require__("./dist/src/obniz/ObnizSystemMethods.js");
+class ObnizUIs extends ObnizSystemMethods_1.ObnizSystemMethods {
     constructor(id, options) {
         super(id, options);
     }
@@ -5260,7 +5254,7 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
         }
     }
 }
-exports.default = ObnizUIs;
+exports.ObnizUIs = ObnizUIs;
 /**
  * @ignore
  */
@@ -5527,20 +5521,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ObnizBLE = void 0;
 const hci_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/hci.js");
-const bindings_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/bindings.js"));
-const hci_2 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js"));
-const bindings_2 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/bindings.js"));
+const bindings_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/bindings.js");
+const hci_2 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js");
+const bindings_2 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/bindings.js");
 const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
-const bleAdvertisement_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAdvertisement.js"));
-const bleCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleCharacteristic.js"));
-const bleDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleDescriptor.js"));
-const blePeripheral_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/blePeripheral.js"));
-const bleRemotePeripheral_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemotePeripheral.js"));
-const bleScan_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleScan.js"));
-const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleService.js"));
-const bleExtendedAdvertisement_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleExtendedAdvertisement.js"));
+const bleAdvertisement_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAdvertisement.js");
+const bleCharacteristic_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleCharacteristic.js");
+const bleDescriptor_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleDescriptor.js");
+const blePeripheral_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/blePeripheral.js");
+const bleRemotePeripheral_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemotePeripheral.js");
+const bleScan_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleScan.js");
+const bleService_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleService.js");
+const bleExtendedAdvertisement_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleExtendedAdvertisement.js");
 /**
  * Use a obniz device as a BLE device.
  * Peripheral and Central mode are supported
@@ -5557,9 +5551,9 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         this.debugHandler = (text) => { };
         const extended = info.extended;
         this.hci = new hci_1.ObnizBLEHci(obniz, extended);
-        this.service = bleService_1.default;
-        this.characteristic = bleCharacteristic_1.default;
-        this.descriptor = bleDescriptor_1.default;
+        this.service = bleService_1.BleService;
+        this.characteristic = bleCharacteristic_1.BleCharacteristic;
+        this.descriptor = bleDescriptor_1.BleDescriptor;
         // this.on("/response/ble/hci/read", (obj) => {
         //   if (obj.hci) {
         //     this.hci.notified(obj.hci);
@@ -5762,19 +5756,19 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         this.remotePeripherals = [];
         // instantiate
         if (!this.peripheral) {
-            this.peripheral = new blePeripheral_1.default(this);
+            this.peripheral = new blePeripheral_1.BlePeripheral(this);
         }
         if (!this.scan) {
-            this.scan = new bleScan_1.default(this);
+            this.scan = new bleScan_1.BleScan(this);
         }
         else {
             this.scan.notifyFromServer('obnizClose', {});
         }
         if (!this.advertisement) {
-            this.advertisement = new bleAdvertisement_1.default(this);
+            this.advertisement = new bleAdvertisement_1.BleAdvertisement(this);
         }
         if (!this.extendedAdvertisement && this.hci._extended) {
-            this.extendedAdvertisement = new bleExtendedAdvertisement_1.default(this);
+            this.extendedAdvertisement = new bleExtendedAdvertisement_1.BleExtendedAdvertisement(this);
         }
         if (!this.hci._extended) {
             this.extendedAdvertisement = undefined;
@@ -5789,7 +5783,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         // clear scanning
         this.hci._reset(keepExtended);
         if (!this.hciProtocol) {
-            this.hciProtocol = new hci_2.default(this.hci);
+            this.hciProtocol = new hci_2.Hci(this.hci);
             this.hciProtocol.debugHandler = (text) => {
                 this.debug(`BLE-HCI: ${text}`);
             };
@@ -5798,7 +5792,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             this.hciProtocol._reset();
         }
         if (!this.centralBindings) {
-            this.centralBindings = new bindings_1.default(this.hciProtocol);
+            this.centralBindings = new bindings_1.NobleBindings(this.hciProtocol);
             this.centralBindings.debugHandler = (text) => {
                 this.debug(`BLE: ${text}`);
             };
@@ -5812,7 +5806,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             this.centralBindings._reset();
         }
         if (!this.peripheralBindings) {
-            this.peripheralBindings = new bindings_2.default(this.hciProtocol);
+            this.peripheralBindings = new bindings_2.BlenoBindings(this.hciProtocol);
             this.peripheralBindings.on('stateChange', this.onPeripheralStateChange.bind(this));
             this.peripheralBindings.on('accept', this.onPeripheralAccept.bind(this));
             this.peripheralBindings.on('mtuChange', this.onPeripheralMtuChange.bind(this));
@@ -5873,7 +5867,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     async directConnectWait(address, addressType) {
         let peripheral = this.findPeripheral(address);
         if (!peripheral) {
-            peripheral = new bleRemotePeripheral_1.default(this, address);
+            peripheral = new bleRemotePeripheral_1.BleRemotePeripheral(this, address);
             this.remotePeripherals.push(peripheral);
         }
         this.centralBindings.addPeripheralData(address, addressType);
@@ -5943,7 +5937,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     onDiscover(uuid, address, addressType, connectable, advertisement, rssi) {
         let val = this.findPeripheral(uuid);
         if (!val) {
-            val = new bleRemotePeripheral_1.default(this, uuid);
+            val = new bleRemotePeripheral_1.BleRemotePeripheral(this, uuid);
             this.remotePeripherals.push(val);
         }
         val.discoverdOnRemote = true;
@@ -6054,11 +6048,9 @@ exports.ObnizBLE = ObnizBLE;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const bleAdvertisementBuilder_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAdvertisementBuilder.js"));
+exports.BleAdvertisement = void 0;
+const bleAdvertisementBuilder_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAdvertisementBuilder.js");
 /**
  * @category Use as Peripheral
  */
@@ -6211,13 +6203,13 @@ class BleAdvertisement {
         this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
     }
     advDataBulider(jsonVal) {
-        return new bleAdvertisementBuilder_1.default(jsonVal);
+        return new bleAdvertisementBuilder_1.BleAdvertisementBuilder(jsonVal);
     }
     scanRespDataBuilder(json) {
-        return new bleAdvertisementBuilder_1.default(json);
+        return new bleAdvertisementBuilder_1.BleAdvertisementBuilder(json);
     }
 }
-exports.default = BleAdvertisement;
+exports.BleAdvertisement = BleAdvertisement;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -6232,6 +6224,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleAdvertisementBuilder = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
@@ -6407,7 +6400,7 @@ class BleAdvertisementBuilder {
         this.setRow(0x01, data);
     }
 }
-exports.default = BleAdvertisementBuilder;
+exports.BleAdvertisementBuilder = BleAdvertisementBuilder;
 
 
 /***/ }),
@@ -6421,6 +6414,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleAttributeAbstract = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
@@ -6644,7 +6638,7 @@ class BleAttributeAbstract {
         }
     }
 }
-exports.default = BleAttributeAbstract;
+exports.BleAttributeAbstract = BleAttributeAbstract;
 
 
 /***/ }),
@@ -6654,20 +6648,18 @@ exports.default = BleAttributeAbstract;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleCharacteristic = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-const bleDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleDescriptor.js"));
-const bleLocalValueAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalValueAttributeAbstract.js"));
+const bleDescriptor_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleDescriptor.js");
+const bleLocalValueAttributeAbstract_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalValueAttributeAbstract.js");
 /**
  * @category Use as Peripheral
  */
-class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
+class BleCharacteristic extends bleLocalValueAttributeAbstract_1.BleLocalValueAttributeAbstract {
     /**
      * Create Characteristics
      *
@@ -6713,7 +6705,7 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
      * @ignore
      */
     get childrenClass() {
-        return bleDescriptor_1.default;
+        return bleDescriptor_1.BleDescriptor;
     }
     /**
      * @ignore
@@ -6888,7 +6880,7 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
         }
     }
 }
-exports.default = BleCharacteristic;
+exports.BleCharacteristic = BleCharacteristic;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -6899,15 +6891,13 @@ exports.default = BleCharacteristic;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const bleLocalValueAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalValueAttributeAbstract.js"));
+exports.BleDescriptor = void 0;
+const bleLocalValueAttributeAbstract_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalValueAttributeAbstract.js");
 /**
  * @category Use as Peripheral
  */
-class BleDescriptor extends bleLocalValueAttributeAbstract_1.default {
+class BleDescriptor extends bleLocalValueAttributeAbstract_1.BleLocalValueAttributeAbstract {
     // public permissions: any;
     /**
      * Create descriptor.
@@ -6969,7 +6959,7 @@ class BleDescriptor extends bleLocalValueAttributeAbstract_1.default {
         return obj;
     }
 }
-exports.default = BleDescriptor;
+exports.BleDescriptor = BleDescriptor;
 
 
 /***/ }),
@@ -6979,16 +6969,14 @@ exports.default = BleDescriptor;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const bleAdvertisementBuilder_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAdvertisementBuilder.js"));
-const bleAdvertisement_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAdvertisement.js"));
+exports.BleExtendedAdvertisement = void 0;
+const bleAdvertisementBuilder_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAdvertisementBuilder.js");
+const bleAdvertisement_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAdvertisement.js");
 /**
  * @category Use as Peripheral
  */
-class BleExtendedAdvertisement extends bleAdvertisement_1.default {
+class BleExtendedAdvertisement extends bleAdvertisement_1.BleAdvertisement {
     constructor(obnizBle) {
         super(obnizBle);
         this.mode = 'connectable';
@@ -7215,13 +7203,13 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.default {
         this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
     }
     advDataBulider(jsonVal) {
-        return new bleAdvertisementBuilder_1.default(jsonVal, true);
+        return new bleAdvertisementBuilder_1.BleAdvertisementBuilder(jsonVal, true);
     }
     scanRespDataBuilder(json) {
-        return new bleAdvertisementBuilder_1.default(json, true);
+        return new bleAdvertisementBuilder_1.BleAdvertisementBuilder(json, true);
     }
 }
-exports.default = BleExtendedAdvertisement;
+exports.BleExtendedAdvertisement = BleExtendedAdvertisement;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -7233,6 +7221,7 @@ exports.default = BleExtendedAdvertisement;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleHelper = void 0;
 class BleHelper {
     uuidFilter(uuid) {
         return uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
@@ -7285,6 +7274,7 @@ class BleHelper {
         return result;
     }
 }
+exports.BleHelper = BleHelper;
 exports.default = new BleHelper();
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
@@ -7300,7 +7290,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAttributeAbstract.js"));
+exports.BleLocalAttributeAbstract = void 0;
+const bleAttributeAbstract_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAttributeAbstract.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 /**
  * @ignore
@@ -7316,7 +7307,7 @@ var BleResponseResult;
 /**
  * @category Use as Peripheral
  */
-class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
+class BleLocalAttributeAbstract extends bleAttributeAbstract_1.BleAttributeAbstract {
     constructor(params) {
         super(params);
     }
@@ -7413,7 +7404,7 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
         return this.data;
     }
 }
-exports.default = BleLocalAttributeAbstract;
+exports.BleLocalAttributeAbstract = BleLocalAttributeAbstract;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -7424,19 +7415,17 @@ exports.default = BleLocalAttributeAbstract;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleLocalValueAttributeAbstract = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-const bleLocalAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalAttributeAbstract.js"));
+const bleLocalAttributeAbstract_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalAttributeAbstract.js");
 /**
  * @category Use as Peripheral
  */
-class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default {
+class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.BleLocalAttributeAbstract {
     constructor(params) {
         super(params);
     }
@@ -7493,7 +7482,7 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
         }
     }
 }
-exports.default = BleLocalValueAttributeAbstract;
+exports.BleLocalValueAttributeAbstract = BleLocalValueAttributeAbstract;
 
 
 /***/ }),
@@ -7507,13 +7496,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BlePeripheral = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
-const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleService.js"));
+const bleService_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleService.js");
 /**
  * @category Use as Peripheral
  */
@@ -7572,8 +7562,8 @@ class BlePeripheral {
      */
     addService(service) {
         this.obnizBle.warningIfNotInitialize();
-        if (!(service instanceof bleService_1.default)) {
-            service = new bleService_1.default(service);
+        if (!(service instanceof bleService_1.BleService)) {
+            service = new bleService_1.BleService(service);
         }
         this._services.push(service);
         service.peripheral = this;
@@ -7678,7 +7668,7 @@ class BlePeripheral {
         // do nothing.
     }
 }
-exports.default = BlePeripheral;
+exports.BlePeripheral = BlePeripheral;
 
 
 /***/ }),
@@ -7688,19 +7678,17 @@ exports.default = BlePeripheral;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleRemoteAttributeAbstract = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAttributeAbstract.js"));
+const bleAttributeAbstract_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAttributeAbstract.js");
 /**
  * @category Use as Central
  */
-class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
+class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.BleAttributeAbstract {
     constructor(params) {
         super(params);
         this.isRemote = false;
@@ -7718,7 +7706,7 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
         return childName + '_uuid';
     }
 }
-exports.default = BleRemoteAttributeAbstract;
+exports.BleRemoteAttributeAbstract = BleRemoteAttributeAbstract;
 
 
 /***/ }),
@@ -7728,21 +7716,19 @@ exports.default = BleRemoteAttributeAbstract;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleRemoteCharacteristic = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
-const bleRemoteDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.js"));
-const bleRemoteValueAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.js"));
+const bleRemoteDescriptor_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.js");
+const bleRemoteValueAttributeAbstract_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.js");
 /**
  * @category Use as Central
  */
-class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default {
+class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.BleRemoteValueAttributeAbstract {
     constructor(params) {
         super(params);
         this.properties = params.properties || [];
@@ -7760,7 +7746,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * @ignore
      */
     get childrenClass() {
-        return bleRemoteDescriptor_1.default;
+        return bleRemoteDescriptor_1.BleRemoteDescriptor;
     }
     /**
      * @ignore
@@ -8191,7 +8177,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
         }
     }
 }
-exports.default = BleRemoteCharacteristic;
+exports.BleRemoteCharacteristic = BleRemoteCharacteristic;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -8202,15 +8188,13 @@ exports.default = BleRemoteCharacteristic;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const bleRemoteValueAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.js"));
+exports.BleRemoteDescriptor = void 0;
+const bleRemoteValueAttributeAbstract_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.js");
 /**
  * @category Use as Central
  */
-class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
+class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.BleRemoteValueAttributeAbstract {
     constructor(params) {
         super(params);
     }
@@ -8295,7 +8279,7 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
         // do nothing.
     }
 }
-exports.default = BleRemoteDescriptor;
+exports.BleRemoteDescriptor = BleRemoteDescriptor;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -8314,11 +8298,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleRemotePeripheral = void 0;
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const ble_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/ble.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
-const bleRemoteService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteService.js"));
+const bleRemoteService_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteService.js");
 const retry_1 = __webpack_require__("./dist/src/obniz/libs/utils/retry.js");
 /**
  * @category Use as Central
@@ -8810,7 +8795,7 @@ class BleRemotePeripheral {
         for (const uuid of serviceUuids) {
             let child = this.getService(uuid);
             if (!child) {
-                const newService = new bleRemoteService_1.default({ uuid });
+                const newService = new bleRemoteService_1.BleRemoteService({ uuid });
                 newService.parent = this;
                 this._services.push(newService);
                 child = newService;
@@ -9048,7 +9033,7 @@ class BleRemotePeripheral {
         }
     }
 }
-exports.default = BleRemotePeripheral;
+exports.BleRemotePeripheral = BleRemotePeripheral;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -9063,17 +9048,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleRemoteService = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
-const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js"));
-const bleRemoteCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.js"));
+const bleRemoteAttributeAbstract_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js");
+const bleRemoteCharacteristic_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.js");
 /**
  * @category Use as Central
  */
-class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
+class BleRemoteService extends bleRemoteAttributeAbstract_1.BleRemoteAttributeAbstract {
     constructor(obj) {
         super(obj);
     }
@@ -9087,7 +9073,7 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      * @ignore
      */
     get childrenClass() {
-        return bleRemoteCharacteristic_1.default;
+        return bleRemoteCharacteristic_1.BleRemoteCharacteristic;
     }
     /**
      * @ignore
@@ -9258,7 +9244,7 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
         throw new Error('cannot write service');
     }
 }
-exports.default = BleRemoteService;
+exports.BleRemoteService = BleRemoteService;
 
 
 /***/ }),
@@ -9268,19 +9254,17 @@ exports.default = BleRemoteService;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleRemoteValueAttributeAbstract = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js"));
+const bleRemoteAttributeAbstract_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js");
 /**
  * @category Use as Central
  */
-class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.default {
+class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.BleRemoteAttributeAbstract {
     /**
      * Wrapper for [[readWait]] with data converting to text.
      * It convert  UTF-8 and write binary array to string.
@@ -9326,7 +9310,7 @@ class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.defau
         return super.writeNumberWait(val, needResponse);
     }
 }
-exports.default = BleRemoteValueAttributeAbstract;
+exports.BleRemoteValueAttributeAbstract = BleRemoteValueAttributeAbstract;
 
 
 /***/ }),
@@ -9340,6 +9324,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleScan = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
@@ -9929,7 +9914,7 @@ class BleScan {
         });
     }
 }
-exports.default = BleScan;
+exports.BleScan = BleScan;
 
 
 /***/ }),
@@ -9939,20 +9924,18 @@ exports.default = BleScan;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleService = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-const bleCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleCharacteristic.js"));
-const bleLocalAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalAttributeAbstract.js"));
+const bleCharacteristic_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleCharacteristic.js");
+const bleLocalAttributeAbstract_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalAttributeAbstract.js");
 /**
  * @category Use as Peripheral
  */
-class BleService extends bleLocalAttributeAbstract_1.default {
+class BleService extends bleLocalAttributeAbstract_1.BleLocalAttributeAbstract {
     constructor(obj) {
         super(obj);
         this.addCharacteristic = this.addChild;
@@ -9990,7 +9973,7 @@ class BleService extends bleLocalAttributeAbstract_1.default {
      * @ignore
      */
     get childrenClass() {
-        return bleCharacteristic_1.default;
+        return bleCharacteristic_1.BleCharacteristic;
     }
     get characteristics() {
         return this.children;
@@ -10045,7 +10028,7 @@ class BleService extends bleLocalAttributeAbstract_1.default {
         // nothing
     }
 }
-exports.default = BleService;
+exports.BleService = BleService;
 
 
 /***/ }),
@@ -10299,8 +10282,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.AclStream = void 0;
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
-const smp_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/smp.js"));
+const smp_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/smp.js");
 /**
  *
  * @ignore
@@ -10313,7 +10297,7 @@ class AclStream extends eventemitter3_1.default {
         };
         this._hci = hci;
         this._handle = handle;
-        this._smp = new smp_1.default(this, localAddressType, localAddress, remoteAddressType, remoteAddress);
+        this._smp = new smp_1.Smp(this, localAddressType, localAddress, remoteAddressType, remoteAddress);
         this._smp.debugHandler = (text) => {
             this.debug(text);
         };
@@ -10372,7 +10356,7 @@ class AclStream extends eventemitter3_1.default {
         this.debugHandler(`AclStream: ${text}`);
     }
 }
-exports.default = AclStream;
+exports.AclStream = AclStream;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -10393,13 +10377,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.NobleBindings = void 0;
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
-const acl_stream_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/acl-stream.js"));
-const gap_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/gap.js"));
-const gatt_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/gatt.js"));
-const signaling_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/signaling.js"));
+const acl_stream_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/acl-stream.js");
+const gap_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/gap.js");
+const gatt_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/gatt.js");
+const signaling_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/signaling.js");
 /**
  * @ignore
  */
@@ -10411,7 +10396,7 @@ class NobleBindings extends eventemitter3_1.default {
             // do nothing.
         };
         this._hci = hciProtocol;
-        this._gap = new gap_1.default(this._hci);
+        this._gap = new gap_1.Gap(this._hci);
         this._state = null;
         this._addresses = {};
         this._addresseTypes = {};
@@ -10615,12 +10600,12 @@ class NobleBindings extends eventemitter3_1.default {
             throw new ObnizError_1.ObnizBleHciStateError(status);
         }
         const uuid = address.split(':').join('').toLowerCase();
-        const aclStream = new acl_stream_1.default(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
+        const aclStream = new acl_stream_1.AclStream(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
         aclStream.debugHandler = (text) => {
             this.debug(text);
         };
-        const gatt = new gatt_1.default(address, aclStream);
-        const signaling = new signaling_1.default(handle, aclStream);
+        const gatt = new gatt_1.GattCentral(address, aclStream);
+        const signaling = new signaling_1.Signaling(handle, aclStream);
         this._gatts[uuid] = this._gatts[handle] = gatt;
         this._signalings[uuid] = this._signalings[handle] = signaling;
         this._aclStreams[handle] = aclStream;
@@ -10769,7 +10754,7 @@ class NobleBindings extends eventemitter3_1.default {
         this.debugHandler(`${text}`);
     }
 }
-exports.default = NobleBindings;
+exports.NobleBindings = NobleBindings;
 
 
 /***/ }),
@@ -10789,6 +10774,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Gap = void 0;
 /**
  * @ignore
  */
@@ -11165,7 +11151,7 @@ class Gap extends eventemitter3_1.default {
         }
     }
 }
-exports.default = Gap;
+exports.Gap = Gap;
 
 
 /***/ }),
@@ -11179,9 +11165,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.GattCentral = void 0;
 const att_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/common/att.js");
 const gatt_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/common/gatt.js");
-const gatt_2 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/gatt.js"));
+const gatt_2 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/gatt.js");
 // let debug = require('debug')('att');
 const debug = () => {
     // do nothing.
@@ -11228,7 +11215,7 @@ class GattCentral extends eventemitter3_1.default {
         this._aclStream.on('data', this.onAclStreamDataBinded);
         this._aclStream.on('end', this.onAclStreamEndBinded);
         this._gattCommon = new gatt_1.GattCommon();
-        this._gattPeripheral = new gatt_2.default();
+        this._gattPeripheral = new gatt_2.GattPeripheral();
         this._gattPeripheral.send = (data) => {
             this._execNoRespCommandWait(data).catch((e) => {
                 // nothing to do
@@ -11901,7 +11888,7 @@ class GattCentral extends eventemitter3_1.default {
         });
     }
 }
-exports.default = GattCentral;
+exports.GattCentral = GattCentral;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -11916,6 +11903,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Signaling = void 0;
 /**
  * @packageDocumentation
  *
@@ -11989,7 +11977,7 @@ class Signaling extends eventemitter3_1.default {
         this.emit('connectionParameterUpdateRequest', this._handle, minInterval, maxInterval, latency, supervisionTimeout);
     }
 }
-exports.default = Signaling;
+exports.Signaling = Signaling;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -12009,6 +11997,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Smp = void 0;
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
@@ -12434,7 +12423,7 @@ class Smp extends eventemitter3_1.default {
         // console.log(new Date(), `SMP: ${text}`);
     }
 }
-exports.default = Smp;
+exports.Smp = Smp;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -13074,6 +13063,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Hci = void 0;
 /**
  * @packageDocumentation
  * @ignore
@@ -14908,8 +14898,8 @@ class Hci extends eventemitter3_1.default {
         return resetResult;
     }
 }
+exports.Hci = Hci;
 Hci.STATUS_MAPPER = hci_status_json_1.default;
-exports.default = Hci;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer, __webpack_require__("./node_modules/process/browser.js")))
 
@@ -14924,13 +14914,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.AclStream = void 0;
 /**
  * @packageDocumentation
  *
  * @ignore
  */
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
-const smp_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/smp.js"));
+const smp_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/smp.js");
 /**
  * @ignore
  */
@@ -14940,7 +14931,7 @@ class AclStream extends eventemitter3_1.default {
         this._hci = hci;
         this._handle = handle;
         this.encypted = false;
-        this._smp = new smp_1.default(this, localAddressType, localAddress, remoteAddressType, remoteAddress, this._hci);
+        this._smp = new smp_1.Smp(this, localAddressType, localAddress, remoteAddressType, remoteAddress, this._hci);
     }
     write(cid, data) {
         this._hci.queueAclDataPkt(this._handle, cid, data);
@@ -14958,7 +14949,7 @@ class AclStream extends eventemitter3_1.default {
         this.emit('encryptChange', this.encrypted);
     }
 }
-exports.default = AclStream;
+exports.AclStream = AclStream;
 
 
 /***/ }),
@@ -14978,6 +14969,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BlenoBindings = void 0;
 /**
  * @ignore
  */
@@ -14985,9 +14977,9 @@ const debug = () => {
     // do nothing.
 };
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
-const acl_stream_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/acl-stream.js"));
-const gap_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/gap.js"));
-const gatt_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/gatt.js"));
+const acl_stream_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/acl-stream.js");
+const gap_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/gap.js");
+const gatt_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/gatt.js");
 /**
  * @ignore
  */
@@ -14998,8 +14990,8 @@ class BlenoBindings extends eventemitter3_1.default {
         this._extended = false;
         this._advertising = false;
         this._hci = hciProtocol;
-        this._gap = new gap_1.default(this._hci);
-        this._gatt = new gatt_1.default();
+        this._gap = new gap_1.Gap(this._hci);
+        this._gatt = new gatt_1.GattPeripheral();
         this._gatt.on('mtuChange', this.onMtuChange.bind(this));
         this._hci.on('stateChange', this.onStateChange.bind(this));
         this._hci.on('leConnComplete', this.onLeConnComplete.bind(this));
@@ -15099,7 +15091,7 @@ class BlenoBindings extends eventemitter3_1.default {
         }
         this._address = address;
         this._handle = handle;
-        this._aclStream = new acl_stream_1.default(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
+        this._aclStream = new acl_stream_1.AclStream(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
         this._gatt.setAclStream(this._aclStream);
         this.emit('accept', address);
     }
@@ -15143,7 +15135,7 @@ class BlenoBindings extends eventemitter3_1.default {
         }
     }
 }
-exports.default = BlenoBindings;
+exports.BlenoBindings = BlenoBindings;
 
 
 /***/ }),
@@ -15163,6 +15155,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Gap = void 0;
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 /**
  * @ignore
@@ -15171,7 +15164,7 @@ const debug = () => {
     // do nothing.
 };
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
-const hci_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js"));
+const hci_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js");
 /**
  * @ignore
  */
@@ -15315,7 +15308,7 @@ class Gap extends eventemitter3_1.default {
         if (this._advertiseState === 'starting') {
             this._advertiseState = 'started';
             if (status) {
-                throw new Error(hci_1.default.STATUS_MAPPER[status] || 'Unknown (' + status + ')');
+                throw new Error(hci_1.Hci.STATUS_MAPPER[status] || 'Unknown (' + status + ')');
             }
         }
         else if (this._advertiseState === 'stopping') {
@@ -15347,7 +15340,7 @@ class Gap extends eventemitter3_1.default {
         if (this._advertiseState === 'starting') {
             this._advertiseState = 'started';
             if (status) {
-                throw new Error(hci_1.default.STATUS_MAPPER[status] || 'Unknown (' + status + ')');
+                throw new Error(hci_1.Hci.STATUS_MAPPER[status] || 'Unknown (' + status + ')');
             }
         }
         else if (this._advertiseState === 'stopping') {
@@ -15363,7 +15356,7 @@ class Gap extends eventemitter3_1.default {
         await this._hci.setAdvertiseEnableWait(false);
     }
 }
-exports.default = Gap;
+exports.Gap = Gap;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -15378,6 +15371,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.GattPeripheral = void 0;
 /**
  * @packageDocumentation
  *
@@ -16238,7 +16232,7 @@ class GattPeripheral extends eventemitter3_1.default {
         }
     }
 }
-exports.default = GattPeripheral;
+exports.GattPeripheral = GattPeripheral;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -16250,6 +16244,7 @@ exports.default = GattPeripheral;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Mgmt = void 0;
 /**
  * @ignore
  */
@@ -16305,7 +16300,7 @@ class Mgmt {
         this.write(MGMT_OP_LOAD_LONG_TERM_KEYS, 0, op);
     }
 }
-exports.default = Mgmt;
+exports.Mgmt = Mgmt;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -16320,6 +16315,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Smp = void 0;
 /**
  * @packageDocumentation
  *
@@ -16328,7 +16324,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 const crypto_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/common/crypto.js"));
-const mgmt_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/mgmt.js"));
+const mgmt_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/mgmt.js");
 const smp_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/common/smp.js");
 /**
  * @ignore
@@ -16337,7 +16333,7 @@ class Smp extends eventemitter3_1.default {
     constructor(aclStream, localAddressType, localAddress, remoteAddressType, remoteAddress, hciProtocol) {
         super();
         this._aclStream = aclStream;
-        this._mgmt = new mgmt_1.default(hciProtocol);
+        this._mgmt = new mgmt_1.Mgmt(hciProtocol);
         this._iat = Buffer.from([remoteAddressType === 'random' ? 0x01 : 0x00]);
         this._ia = bleHelper_1.default.hex2reversedBuffer(remoteAddress, ':');
         this._rat = Buffer.from([localAddressType === 'random' ? 0x01 : 0x00]);
@@ -16441,7 +16437,7 @@ class Smp extends eventemitter3_1.default {
         this._aclStream.write(smp_1.SMP.CID, data);
     }
 }
-exports.default = Smp;
+exports.Smp = Smp;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -17252,6 +17248,7 @@ module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\
  * @ignore
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.HW = void 0;
 class HW {
     static getDefinitionFor(hw) {
         if (hw === 'obnizb1') {
@@ -17296,7 +17293,7 @@ class HW {
         }
     }
 }
-exports.default = HW;
+exports.HW = HW;
 
 
 /***/ }),
@@ -17310,13 +17307,10 @@ exports.default = HW;
  * @packageDocumentation
  * @module ObnizCore.Hardware
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.M5StackBasic = void 0;
-const ObnizDevice_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizDevice.js"));
-class M5StackBasic extends ObnizDevice_1.default {
+const ObnizDevice_1 = __webpack_require__("./dist/src/obniz/ObnizDevice.js");
+class M5StackBasic extends ObnizDevice_1.ObnizDevice {
     constructor(id, options) {
         super(id, options);
     }
@@ -17354,13 +17348,10 @@ module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"m5stack_basic\",\"periphera
  * @packageDocumentation
  * @module ObnizCore.Hardware
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.M5StickC = void 0;
-const ObnizDevice_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizDevice.js"));
-class M5StickC extends ObnizDevice_1.default {
+const ObnizDevice_1 = __webpack_require__("./dist/src/obniz/ObnizDevice.js");
+class M5StickC extends ObnizDevice_1.ObnizDevice {
     constructor(id, options) {
         super(id, options);
     }
@@ -26099,11 +26090,8 @@ exports.default = Puls08M5stickcS;
  * @module Parts.OMRON_2JCIE
  */
 /* eslint rulesdir/non-ascii: 0 */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+const ObnizPartsBleInterface_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js");
 /** 2JCIE management class 2JCIEを管理するクラス */
 class OMRON_2JCIE {
     constructor(peripheral) {
@@ -26161,16 +26149,16 @@ class OMRON_2JCIE {
         const adv_data = peripheral.adv_data;
         if (peripheral.localName && peripheral.localName.indexOf('IM') >= 0) {
             return {
-                temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[9], adv_data[8]) *
+                temperature: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[9], adv_data[8]) *
                     0.01,
-                relative_humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[11], adv_data[10]) * 0.01,
-                light: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[13], adv_data[12]) * 1,
-                uv_index: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[15], adv_data[14]) * 0.01,
-                barometric_pressure: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[17], adv_data[16]) * 0.1,
-                sound_noise: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[19], adv_data[18]) * 0.01,
-                acceleration_x: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[21], adv_data[20]),
-                acceleration_y: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[23], adv_data[22]),
-                acceleration_z: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[25], adv_data[24]),
+                relative_humidity: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[11], adv_data[10]) * 0.01,
+                light: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[13], adv_data[12]) * 1,
+                uv_index: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[15], adv_data[14]) * 0.01,
+                barometric_pressure: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[17], adv_data[16]) * 0.1,
+                sound_noise: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[19], adv_data[18]) * 0.01,
+                acceleration_x: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[21], adv_data[20]),
+                acceleration_y: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[23], adv_data[22]),
+                acceleration_z: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[25], adv_data[24]),
                 battery: (adv_data[26] + 100) / 100,
             };
         }
@@ -26180,14 +26168,14 @@ class OMRON_2JCIE {
             adv_data[6] === 0x02 &&
             adv_data[7] === 0x01) {
             return {
-                temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[10], adv_data[9]) *
+                temperature: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[10], adv_data[9]) *
                     0.01,
-                relative_humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[12], adv_data[11]) * 0.01,
-                light: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[14], adv_data[13]) * 1,
-                barometric_pressure: ObnizPartsBleInterface_1.default.signed32FromBinary(adv_data[18], adv_data[17], adv_data[16], adv_data[15]) * 0.001,
-                sound_noise: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[20], adv_data[19]) * 0.01,
-                etvoc: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[22], adv_data[21]),
-                eco2: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[24], adv_data[23]),
+                relative_humidity: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[12], adv_data[11]) * 0.01,
+                light: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[14], adv_data[13]) * 1,
+                barometric_pressure: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed32FromBinary(adv_data[18], adv_data[17], adv_data[16], adv_data[15]) * 0.001,
+                sound_noise: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[20], adv_data[19]) * 0.01,
+                etvoc: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[22], adv_data[21]),
+                eco2: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[24], adv_data[23]),
             };
         }
         return null;
@@ -26593,13 +26581,10 @@ exports.default = ENERTALK_TOUCH;
  * @module Parts.EXTxx
  */
 /* eslint rulesdir/non-ascii: 0 */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+const ObnizPartsBleInterface_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js");
 /** EXTxx management class EXTxxを管理するクラス */
-class EXTxx extends ObnizPartsBleInterface_1.default {
+class EXTxx extends ObnizPartsBleInterface_1.ObnizPartsBleInterface {
     constructor(peripheral) {
         super();
         this._peripheral = peripheral;
@@ -26716,13 +26701,10 @@ const unsigned16 = (value) => {
  * @module Parts.EXVital
  */
 /* eslint rulesdir/non-ascii: 0 */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+const ObnizPartsBleInterface_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js");
 /** EXVital management class EXVitalを管理するクラス */
-class EXVital extends ObnizPartsBleInterface_1.default {
+class EXVital extends ObnizPartsBleInterface_1.ObnizPartsBleInterface {
     constructor(peripheral) {
         super();
         this._peripheral = peripheral;
@@ -38695,11 +38677,8 @@ exports.default = SCBTGAAAC;
  * @module Parts.TM511
  */
 /* eslint rulesdir/non-ascii: 0 */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+const ObnizPartsBleInterface_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js");
 /** TM511 management class TM511を管理するクラス */
 class TM511 {
     constructor() {
@@ -38752,11 +38731,11 @@ class TM511 {
         const data = {
             battery: peripheral.adv_data[13],
             x: peripheral.adv_data[14] +
-                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[15]),
+                ObnizPartsBleInterface_1.ObnizPartsBleInterface.readFraction(peripheral.adv_data[15]),
             y: peripheral.adv_data[16] +
-                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[17]),
+                ObnizPartsBleInterface_1.ObnizPartsBleInterface.readFraction(peripheral.adv_data[17]),
             z: peripheral.adv_data[18] +
-                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[19]),
+                ObnizPartsBleInterface_1.ObnizPartsBleInterface.readFraction(peripheral.adv_data[19]),
         };
         return data;
     }
@@ -38798,11 +38777,8 @@ TM511.deviceAdv = [
  * @module Parts.TM530
  */
 /* eslint rulesdir/non-ascii: 0 */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+const ObnizPartsBleInterface_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js");
 /** TM530 management class TM530を管理するクラス */
 class TM530 {
     constructor() {
@@ -38855,9 +38831,9 @@ class TM530 {
         const data = {
             battery: peripheral.adv_data[13],
             temperature: peripheral.adv_data[14] +
-                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[15]),
+                ObnizPartsBleInterface_1.ObnizPartsBleInterface.readFraction(peripheral.adv_data[15]),
             humidity: peripheral.adv_data[16] +
-                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[17]),
+                ObnizPartsBleInterface_1.ObnizPartsBleInterface.readFraction(peripheral.adv_data[17]),
         };
         return data;
     }
@@ -39248,11 +39224,8 @@ exports.default = Toio_CoreCube;
  * @module Parts.uPRISM
  */
 /* eslint rulesdir/non-ascii: 0 */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+const ObnizPartsBleInterface_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js");
 /** uPRISM management class uPRISMを管理するクラス */
 class uPRISM {
     constructor(peripheral) {
@@ -39371,18 +39344,18 @@ class uPRISM {
                 this.readIndex = data[19];
                 this.readData = {
                     acceleration: {
-                        x: ObnizPartsBleInterface_1.default.signed16FromBinary(data[3], data[2]) /
+                        x: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(data[3], data[2]) /
                             this.accelRange,
-                        y: ObnizPartsBleInterface_1.default.signed16FromBinary(data[5], data[4]) /
+                        y: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(data[5], data[4]) /
                             this.accelRange,
-                        z: ObnizPartsBleInterface_1.default.signed16FromBinary(data[7], data[6]) /
+                        z: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(data[7], data[6]) /
                             this.accelRange,
                     },
                     geomagnetic: {
-                        x: ObnizPartsBleInterface_1.default.signed16FromBinary(data[9], data[8]) / 16,
-                        y: ObnizPartsBleInterface_1.default.signed16FromBinary(data[11], data[10]) /
+                        x: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(data[9], data[8]) / 16,
+                        y: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(data[11], data[10]) /
                             16,
-                        z: ObnizPartsBleInterface_1.default.signed16FromBinary(data[13], data[12]) /
+                        z: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(data[13], data[12]) /
                             16,
                     },
                     time: {
@@ -39405,7 +39378,7 @@ class uPRISM {
             else if (data[0] === 0xb2) {
                 if (this.readIndex === data[19] && this.readData) {
                     this.readData.temperature =
-                        ObnizPartsBleInterface_1.default.signed16FromBinary(data[3], data[2]) / 100;
+                        ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(data[3], data[2]) / 100;
                     this.readData.humidity = ((data[5] << 8) | data[4]) / 100;
                     this.readData.ambient_light =
                         ((data[8] << 16) | (data[7] << 8) | data[6]) / 128;

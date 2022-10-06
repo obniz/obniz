@@ -12,7 +12,7 @@ export declare type HciState = 'poweredOn' | 'poweredOff';
 /**
  * @ignore
  */
-declare class Hci extends EventEmitter<HciEventTypes> {
+export declare class Hci extends EventEmitter<HciEventTypes> {
     static STATUS_MAPPER: any;
     _obnizHci: ObnizBLEHci;
     _handleBuffers: any;
@@ -242,4 +242,4 @@ declare class Hci extends EventEmitter<HciEventTypes> {
     private writeNoParamCommandWait;
     private writeSingleParamCommandWait;
 }
-export default Hci;
+export {};

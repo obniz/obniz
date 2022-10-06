@@ -3,15 +3,15 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 import { ObnizDeprecatedFunctionError } from '../../../ObnizError';
-import BleRemoteDescriptor from './bleRemoteDescriptor';
-import BleRemoteService from './bleRemoteService';
-import BleRemoteValueAttributeAbstract from './bleRemoteValueAttributeAbstract';
+import { BleRemoteDescriptor } from './bleRemoteDescriptor';
+import { BleRemoteService } from './bleRemoteService';
+import { BleRemoteValueAttributeAbstract } from './bleRemoteValueAttributeAbstract';
 import { BleAttributePropery, UUID } from './bleTypes';
 
 /**
  * @category Use as Central
  */
-export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbstract<
+export class BleRemoteCharacteristic extends BleRemoteValueAttributeAbstract<
   BleRemoteService,
   BleRemoteDescriptor
 > {

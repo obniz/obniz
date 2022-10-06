@@ -3,7 +3,7 @@
  * @module Parts.REX_BTPM25V
  */
 import Obniz from '../../../obniz';
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface REX_BTPM25VOptions {
 }

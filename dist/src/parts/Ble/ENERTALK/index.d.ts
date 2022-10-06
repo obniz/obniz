@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module Parts.ENERTALK_TOUCH
  */
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { ObnizPartsBleInterface } from '../../../obniz/ObnizPartsBleInterface';
 import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 import BleBatteryService from '../utils/services/batteryService';
 export interface ENERTALK_TOUCHOptions {

@@ -3,7 +3,7 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 
-import ObnizDevice from '../../../ObnizDevice';
+import { ObnizDevice } from '../../../ObnizDevice';
 import {
   ObnizOfflineError,
   ObnizParameterError,

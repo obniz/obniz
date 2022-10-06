@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleAttributeAbstract = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
@@ -226,4 +227,4 @@ class BleAttributeAbstract {
         }
     }
 }
-exports.default = BleAttributeAbstract;
+exports.BleAttributeAbstract = BleAttributeAbstract;

@@ -78,7 +78,7 @@ type ObnizConnectionEventNamesInternal =
   | '_localConnectReady'
   | '_localConnectClose';
 
-export default abstract class ObnizConnection extends EventEmitter<
+export abstract class ObnizConnection extends EventEmitter<
   ObnizConnectionEventNames | ObnizConnectionEventNamesInternal
 > {
   private _measureTraffic: {

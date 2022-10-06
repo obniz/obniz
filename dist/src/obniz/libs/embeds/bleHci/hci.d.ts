@@ -4,7 +4,7 @@
  */
 /// <reference types="node" />
 /// <reference types="node" />
-import ObnizDevice from '../../../ObnizDevice';
+import { ObnizDevice } from '../../../ObnizDevice';
 export declare type EventHandler = (...args: any) => any;
 export declare class ObnizBLEHci {
     Obniz: ObnizDevice;

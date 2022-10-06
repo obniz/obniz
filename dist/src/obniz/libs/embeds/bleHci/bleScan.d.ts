@@ -1,6 +1,6 @@
 import EventEmitter from 'eventemitter3';
 import { ObnizBLE } from './ble';
-import BleRemotePeripheral from './bleRemotePeripheral';
+import { BleRemotePeripheral } from './bleRemotePeripheral';
 import { BleDeviceAddress, UUID } from './bleTypes';
 export declare type BleScanMode = 'passive' | 'active';
 export declare type BleBinary = number[];
@@ -142,7 +142,7 @@ declare type BleScanState = 'stopped' | 'stopping' | 'started' | 'starting';
 /**
  * @category Use as Central
  */
-export default class BleScan {
+export declare class BleScan {
     /**
      * This function gets called when obniz Board finishes scanning.
      *

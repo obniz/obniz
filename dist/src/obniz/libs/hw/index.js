@@ -4,6 +4,7 @@
  * @ignore
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.HW = void 0;
 class HW {
     static getDefinitionFor(hw) {
         if (hw === 'obnizb1') {
@@ -48,4 +49,4 @@ class HW {
         }
     }
 }
-exports.default = HW;
+exports.HW = HW;

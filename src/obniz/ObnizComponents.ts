@@ -22,16 +22,16 @@ import { Plugin } from './libs/plugin/plugin';
 
 import { Tcp } from './libs/protocol/tcp';
 
-import ObnizParts from './ObnizParts';
+import { ObnizParts } from './ObnizParts';
 
 import { ComponentAbstract } from './libs/ComponentAbstact';
-import HW from './libs/hw';
+import { HW } from './libs/hw';
 import { PeripheralGrove as PeripheralGrove } from './libs/io_peripherals/grove';
 import { ObnizOptions } from './ObnizOptions';
 
 export type PeripheralName = 'pwm' | 'uart' | 'spi' | 'i2c' | 'tcp';
 
-export default abstract class ObnizComponents extends ObnizParts {
+export abstract class ObnizComponents extends ObnizParts {
   /* board peripherals */
 
   /**

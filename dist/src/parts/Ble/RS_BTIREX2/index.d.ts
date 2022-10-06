@@ -3,7 +3,7 @@
  * @module Parts.RS_BTIREX2
  */
 import Obniz from '../../../obniz';
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface RS_BTIREX2Options {
 }

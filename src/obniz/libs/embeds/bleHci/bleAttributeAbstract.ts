@@ -18,7 +18,7 @@ export type BleAttributeChildrenName =
   | 'characteristics'
   | 'descriptors';
 
-export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
+export abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * @ignore
    */

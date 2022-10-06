@@ -2,12 +2,12 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import BleAttributeAbstract from './bleAttributeAbstract';
+import { BleAttributeAbstract } from './bleAttributeAbstract';
 
 /**
  * @category Use as Central
  */
-export default abstract class BleRemoteAttributeAbstract<
+export abstract class BleRemoteAttributeAbstract<
   ParentClass,
   ChildrenClass
 > extends BleAttributeAbstract<ParentClass, ChildrenClass> {

@@ -4,6 +4,7 @@
  * @module ObnizApp
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ObnizApp = void 0;
 class ObnizApp {
     /**
      * Determine obniz.js is running on obniz Cloud or not.
@@ -64,4 +65,4 @@ class ObnizApp {
         }
     }
 }
-exports.default = ObnizApp;
+exports.ObnizApp = ObnizApp;

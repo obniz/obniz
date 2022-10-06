@@ -4,8 +4,8 @@
  */
 import EventEmitter from 'eventemitter3';
 import { ObnizBLE } from './ble';
-import BleRemoteCharacteristic from './bleRemoteCharacteristic';
-import BleRemoteService from './bleRemoteService';
+import { BleRemoteCharacteristic } from './bleRemoteCharacteristic';
+import { BleRemoteService } from './bleRemoteService';
 import { BleDeviceAddress, BleDeviceAddressType, BleDeviceType, BleEventType, UUID } from './bleTypes';
 import { SmpEncryptOptions } from './protocol/central/smp';
 /**
@@ -160,7 +160,7 @@ export interface BlePairingOptions extends SmpEncryptOptions {
 /**
  * @category Use as Central
  */
-export default class BleRemotePeripheral {
+export declare class BleRemotePeripheral {
     /**
      * It contains all discovered services in a peripheral as an array.
      * It is discovered when connection automatically.
@@ -623,7 +623,7 @@ export default class BleRemotePeripheral {
      * @ignore
      * @param param
      */
-    findDescriptor(param: any): import("./bleRemoteDescriptor").default | null;
+    findDescriptor(param: any): import("./bleRemoteDescriptor").BleRemoteDescriptor | null;
     /**
      * Discover services.
      *

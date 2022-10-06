@@ -1,13 +1,11 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const bleRemoteValueAttributeAbstract_1 = __importDefault(require("./bleRemoteValueAttributeAbstract"));
+exports.BleRemoteDescriptor = void 0;
+const bleRemoteValueAttributeAbstract_1 = require("./bleRemoteValueAttributeAbstract");
 /**
  * @category Use as Central
  */
-class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
+class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.BleRemoteValueAttributeAbstract {
     constructor(params) {
         super(params);
     }
@@ -92,4 +90,4 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
         // do nothing.
     }
 }
-exports.default = BleRemoteDescriptor;
+exports.BleRemoteDescriptor = BleRemoteDescriptor;

@@ -3,7 +3,7 @@
  * @module Parts.Toio_CoreCube
  */
 import Obniz from '../../../obniz';
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface Toio_CoreCubeOptions {
 }

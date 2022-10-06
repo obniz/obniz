@@ -3,9 +3,9 @@
  * @module Parts.MT_500BT
  */
 import Obniz from '../../../obniz';
-import BleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import BleRemoteService from '../../../obniz/libs/embeds/bleHci/bleRemoteService';
+import { BleRemoteCharacteristic } from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { BleRemoteService } from '../../../obniz/libs/embeds/bleHci/bleRemoteService';
 import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 import BleGenericAccess from '../utils/services/genericAccess';
 export interface MT_500BTOptions {

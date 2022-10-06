@@ -7,21 +7,21 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 import { ObnizBLEHci } from './hci';
-import CentralBindings from './protocol/central/bindings';
-import HciProtocol from './protocol/hci';
-import PeripheralBindings from './protocol/peripheral/bindings';
+import { NobleBindings as CentralBindings } from './protocol/central/bindings';
+import { Hci as HciProtocol } from './protocol/hci';
+import { BlenoBindings as PeripheralBindings } from './protocol/peripheral/bindings';
 import Obniz from '../../../index';
 import { ObnizBleHciStateError } from '../../../ObnizError';
 import { ComponentAbstract } from '../../ComponentAbstact';
-import BleAdvertisement from './bleAdvertisement';
-import BleCharacteristic from './bleCharacteristic';
-import BleDescriptor from './bleDescriptor';
-import BlePeripheral from './blePeripheral';
-import BleRemotePeripheral from './bleRemotePeripheral';
-import BleScan from './bleScan';
-import BleService from './bleService';
+import { BleAdvertisement } from './bleAdvertisement';
+import { BleCharacteristic } from './bleCharacteristic';
+import { BleDescriptor } from './bleDescriptor';
+import { BlePeripheral } from './blePeripheral';
+import { BleRemotePeripheral } from './bleRemotePeripheral';
+import { BleScan } from './bleScan';
+import { BleService } from './bleService';
 import { BleDeviceAddress, BleDeviceAddressType, BleSupportType, UUID } from './bleTypes';
-import BleExtendedAdvertisement from './bleExtendedAdvertisement';
+import { BleExtendedAdvertisement } from './bleExtendedAdvertisement';
 /**
  * Use a obniz device as a BLE device.
  * Peripheral and Central mode are supported

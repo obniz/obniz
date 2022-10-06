@@ -3,7 +3,7 @@
  * @module ObnizCore.Hardware
  */
 
-import ObnizDevice from '../../ObnizDevice';
+import { ObnizDevice } from '../../ObnizDevice';
 
 import Button from '../../../parts/MovementSensor/Button';
 

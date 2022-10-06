@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Hci = void 0;
 /**
  * @packageDocumentation
  * @ignore
@@ -1837,5 +1838,5 @@ class Hci extends eventemitter3_1.default {
         return resetResult;
     }
 }
+exports.Hci = Hci;
 Hci.STATUS_MAPPER = hci_status_json_1.default;
-exports.default = Hci;

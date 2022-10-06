@@ -2,7 +2,7 @@ import { BleAdvertisementData, BleScanResponseData, UUID } from './bleTypes';
 /**
  * @category Use as Peripheral
  */
-export default class BleAdvertisementBuilder {
+export declare class BleAdvertisementBuilder {
     protected rows: {
         [key: number]: number[];
     };

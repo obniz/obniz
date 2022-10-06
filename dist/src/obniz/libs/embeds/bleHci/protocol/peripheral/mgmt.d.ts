@@ -3,11 +3,11 @@
  *
  * @ignore
  */
-import Hci from '../hci';
+import { Hci } from '../hci';
 /**
  * @ignore
  */
-export default class Mgmt {
+export declare class Mgmt {
     _ltkInfos: any;
     _hci: Hci;
     loadLongTermKeys: any;

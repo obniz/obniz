@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module Parts.Logtta_CO2
  */
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import { ObnizBleBeaconStruct, ObnizPartsBleCompare } from '../../../obniz/ObnizPartsBleAbstract';
 import Logtta from '../utils/abstracts/Logtta';
 export interface Logtta_CO2Options {
