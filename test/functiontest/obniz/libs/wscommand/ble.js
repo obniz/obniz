@@ -21,10 +21,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     const binaryArray = expecteBinaryStrings
       .join(' ')
@@ -97,7 +94,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -156,7 +153,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -191,7 +188,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -226,7 +223,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -285,7 +282,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -349,7 +346,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -369,7 +366,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -386,10 +383,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     const binaryArray = expecteBinaryStrings
       .join(' ')
@@ -462,7 +456,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -497,7 +491,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -556,7 +550,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -591,7 +585,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -650,7 +644,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -685,7 +679,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -775,7 +769,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -795,7 +789,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -812,10 +806,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     const binaryArray = expecteBinaryStrings
       .join(' ')
@@ -838,10 +829,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     const binaryArray = expecteBinaryStrings
       .join(' ')
@@ -872,7 +860,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -902,10 +890,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     const binaryArray = expecteBinaryStrings
       .join(' ')
@@ -940,10 +925,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     const binaryArray = expecteBinaryStrings
       .join(' ')
@@ -980,7 +962,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -1012,7 +994,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -1037,7 +1019,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -1062,7 +1044,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -1081,10 +1063,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     const binaryArray = expecteBinaryStrings
       .join(' ')
@@ -1118,10 +1097,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     const binaryArray = expecteBinaryStrings
       .join(' ')
@@ -1144,10 +1120,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     const binaryArray = expecteBinaryStrings
       .join(' ')
@@ -1188,7 +1161,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -1247,7 +1220,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -1282,7 +1255,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -1349,7 +1322,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -1408,7 +1381,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -1498,7 +1471,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -1515,10 +1488,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     const binaryArray = expecteBinaryStrings
       .join(' ')
@@ -1552,10 +1522,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     const binaryArray = expecteBinaryStrings
       .join(' ')
@@ -1596,7 +1563,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -1613,10 +1580,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     const binaryArray = expecteBinaryStrings
       .join(' ')
@@ -1649,7 +1613,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -1682,7 +1646,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -1715,7 +1679,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -1747,7 +1711,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -1778,8 +1742,8 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const WSCommand = this.obniz.constructor.WSCommand;
-    const compress = WSCommand.compress(this.obniz.wscommands, requestJson[0]);
+    const WSCommand = this.obniz.wsCommandManager;
+    const compress = WSCommand.compress(requestJson[0]);
 
     const binaryArray = expecteBinaryStrings
       .join(' ')
@@ -1817,7 +1781,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -1849,7 +1813,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -1881,7 +1845,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -1912,10 +1876,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     const binaryArray = expecteBinaryStrings
       .join(' ')
@@ -1952,10 +1913,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     const binaryArray = expecteBinaryStrings
       .join(' ')
@@ -1994,7 +1952,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -2026,7 +1984,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -2056,10 +2014,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     const binaryArray = expecteBinaryStrings
       .join(' ')
@@ -2096,10 +2051,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     const binaryArray = expecteBinaryStrings
       .join(' ')
@@ -2138,7 +2090,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -2170,7 +2122,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -2202,7 +2154,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -2233,10 +2185,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     const binaryArray = expecteBinaryStrings
       .join(' ')
@@ -2274,7 +2223,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -2302,10 +2251,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     const binaryArray = expecteBinaryStrings
       .join(' ')
@@ -2328,10 +2274,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     const binaryArray = expecteBinaryStrings
       .join(' ')
@@ -2367,10 +2310,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     const binaryArray = expecteBinaryStrings
       .join(' ')
@@ -2412,10 +2352,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     const binaryArray = expecteBinaryStrings
       .join(' ')
@@ -2462,10 +2399,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     const binaryArray = expecteBinaryStrings
       .join(' ')
@@ -2502,7 +2436,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -2545,7 +2479,7 @@ describe('ble.log', function () {
     ];
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -2598,7 +2532,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -2651,7 +2585,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -2694,7 +2628,7 @@ describe('ble.log', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -2766,7 +2700,7 @@ describe('ble.log', function () {
     ];
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -3004,7 +2938,7 @@ describe('ble.log', function () {
     ];
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -3074,7 +3008,7 @@ describe('ble.log', function () {
     ];
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -3099,10 +3033,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     const binaryArray = [
       11,
@@ -3240,7 +3171,7 @@ describe('ble.log', function () {
 
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -3329,7 +3260,7 @@ describe('ble.log', function () {
 
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -3421,10 +3352,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     expect(binaryArray.length).to.be.above(2);
     const binary = new Uint8Array(binaryArray);
@@ -3517,7 +3445,7 @@ describe('ble.log', function () {
     ];
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -3612,10 +3540,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     expect(binaryArray.length).to.be.above(2);
     const binary = new Uint8Array(binaryArray);
@@ -3705,7 +3630,7 @@ describe('ble.log', function () {
     ];
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -3798,10 +3723,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     expect(binaryArray.length).to.be.above(2);
     const binary = new Uint8Array(binaryArray);
@@ -3887,10 +3809,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     expect(binaryArray.length).to.be.above(2);
     const binary = new Uint8Array(binaryArray);
@@ -3975,7 +3894,7 @@ describe('ble.log', function () {
     ];
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -4114,7 +4033,7 @@ describe('ble.log', function () {
     ];
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -4215,7 +4134,7 @@ describe('ble.log', function () {
     ];
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -4305,7 +4224,7 @@ describe('ble.log', function () {
     ];
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -4378,10 +4297,7 @@ describe('ble.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     expect(binaryArray.length).to.be.above(2);
     const binary = new Uint8Array(binaryArray);

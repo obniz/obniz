@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @ignore
  */
-import { WSCommand } from './WSCommand';
-export declare class WSCommandTcp extends WSCommand {
+import { WSCommandAbstract } from './WSCommandAbstract';
+export declare class WSCommandTcp extends WSCommandAbstract {
     module: number;
     _MaxPort: number;
     _CommandConnect: number;

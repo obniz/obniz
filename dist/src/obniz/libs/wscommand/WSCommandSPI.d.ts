@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @ignore
  */
-import { WSCommand } from './WSCommand';
-export declare class WSCommandSPI extends WSCommand {
+import { WSCommandAbstract } from './WSCommandAbstract';
+export declare class WSCommandSPI extends WSCommandAbstract {
     module: number;
     _CommandInit: number;
     _CommandDeinit: number;

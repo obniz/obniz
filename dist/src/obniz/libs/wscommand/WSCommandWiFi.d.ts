@@ -1,5 +1,5 @@
-import { WSCommand } from './WSCommand';
-export declare class WSCommandWiFi extends WSCommand {
+import { WSCommandAbstract } from './WSCommandAbstract';
+export declare class WSCommandWiFi extends WSCommandAbstract {
     module: number;
     _CommandScan: number;
     constructor();

@@ -5,7 +5,7 @@ exports.WSCommandIO = void 0;
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = require("./WSCommand");
+const WSCommandAbstract_1 = require("./WSCommandAbstract");
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH = 1;
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW = 2;
 const COMMAND_IO_ERRORS_IO_TOO_LOW = 3;
@@ -28,7 +28,7 @@ const COMMAND_IO_MUTEX_NAMES = {
     7: 'LogicAnalyzer',
     8: 'Measure',
 };
-class WSCommandIO extends WSCommand_1.WSCommand {
+class WSCommandIO extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super();
         this.module = 2;

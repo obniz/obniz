@@ -9,8 +9,8 @@ exports.WSCommandDisplay = void 0;
  * @ignore
  */
 const qr_1 = __importDefault(require("../utils/qr"));
-const WSCommand_1 = require("./WSCommand");
-class WSCommandDisplay extends WSCommand_1.WSCommand {
+const WSCommandAbstract_1 = require("./WSCommandAbstract");
+class WSCommandDisplay extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super(...arguments);
         this.module = 8;

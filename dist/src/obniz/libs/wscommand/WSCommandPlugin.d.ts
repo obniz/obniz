@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @ignore
  */
-import { WSCommand } from './WSCommand';
-export declare class WSCommandPlugin extends WSCommand {
+import { WSCommandAbstract } from './WSCommandAbstract';
+export declare class WSCommandPlugin extends WSCommandAbstract {
     module: number;
     _CommandReceive: number;
     _CommandSend: number;

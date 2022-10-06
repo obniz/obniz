@@ -5,8 +5,8 @@ exports.WSCommandI2C = void 0;
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = require("./WSCommand");
-class WSCommandI2C extends WSCommand_1.WSCommand {
+const WSCommandAbstract_1 = require("./WSCommandAbstract");
+class WSCommandI2C extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super();
         this.module = 6;

@@ -5,8 +5,8 @@ exports.WSCommandPWM = void 0;
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = require("./WSCommand");
-class WSCommandPWM extends WSCommand_1.WSCommand {
+const WSCommandAbstract_1 = require("./WSCommandAbstract");
+class WSCommandPWM extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super();
         this.module = 3;

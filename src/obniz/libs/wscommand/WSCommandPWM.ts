@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @ignore
  */
-import { WSCommand } from './WSCommand';
+import { WSCommandAbstract } from './WSCommandAbstract';
 
-export class WSCommandPWM extends WSCommand {
+export class WSCommandPWM extends WSCommandAbstract {
   public module: number;
   public ModuleNum: number;
   public _CommandInit: number;

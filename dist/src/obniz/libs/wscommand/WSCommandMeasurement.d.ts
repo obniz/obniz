@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @ignore
  */
-import { WSCommand } from './WSCommand';
-export declare class WSCommandMeasurement extends WSCommand {
+import { WSCommandAbstract } from './WSCommandAbstract';
+export declare class WSCommandMeasurement extends WSCommandAbstract {
     module: number;
     _CommandMeasurementEcho: number;
     constructor();

@@ -6,9 +6,9 @@ exports.WSCommandBle = void 0;
  * @ignore
  */
 const jsonBinaryConverter_1 = require("./jsonBinaryConverter");
-const WSCommand_1 = require("./WSCommand");
+const WSCommandAbstract_1 = require("./WSCommandAbstract");
 const WSCommandBleHci_1 = require("./WSCommandBleHci");
-class WSCommandBle extends WSCommand_1.WSCommand {
+class WSCommandBle extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super();
         this.module = 11;

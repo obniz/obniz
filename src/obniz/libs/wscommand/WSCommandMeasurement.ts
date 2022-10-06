@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @ignore
  */
-import { WSCommand } from './WSCommand';
+import { WSCommandAbstract } from './WSCommandAbstract';
 
-export class WSCommandMeasurement extends WSCommand {
+export class WSCommandMeasurement extends WSCommandAbstract {
   public module: number;
   public _CommandMeasurementEcho: number;
 

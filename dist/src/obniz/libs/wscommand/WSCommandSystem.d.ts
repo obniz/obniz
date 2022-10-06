@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @ignore
  */
-import { WSCommand } from './WSCommand';
-export declare class WSCommandSystem extends WSCommand {
+import { WSCommandAbstract } from './WSCommandAbstract';
+export declare class WSCommandSystem extends WSCommandAbstract {
     module: number;
     _CommandReboot: number;
     _CommandReset: number;

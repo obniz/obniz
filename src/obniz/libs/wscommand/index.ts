@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @ignore
  */
-import { WSCommand } from './WSCommand';
+import { WSCommandManager } from './WSCommandManager';
 import { WSCommandAD } from './WSCommandAD';
 import { WSCommandBle } from './WSCommandBle';
 import { WSCommandDirective } from './WSCommandDirective';
@@ -20,22 +20,31 @@ import { WSCommandTcp } from './WSCommandTcp';
 import { WSCommandUart } from './WSCommandUart';
 import { WSCommandWiFi } from './WSCommandWiFi';
 
-/* eslint-disable */
-WSCommand.addCommandClass("WSCommandSystem", WSCommandSystem);
-WSCommand.addCommandClass("WSCommandDirective", WSCommandDirective);
-WSCommand.addCommandClass("WSCommandIO", WSCommandIO);
-WSCommand.addCommandClass("WSCommandPWM", WSCommandPWM);
-WSCommand.addCommandClass("WSCommandUart", WSCommandUart);
-WSCommand.addCommandClass("WSCommandAD", WSCommandAD);
-WSCommand.addCommandClass("WSCommandSPI", WSCommandSPI);
-WSCommand.addCommandClass("WSCommandI2C", WSCommandI2C);
-WSCommand.addCommandClass("WSCommandLogicAnalyzer", WSCommandLogicAnalyzer);
-WSCommand.addCommandClass("WSCommandDisplay", WSCommandDisplay);
-WSCommand.addCommandClass("WSCommandSwitch", WSCommandSwitch);
-WSCommand.addCommandClass("WSCommandBle", WSCommandBle);
-WSCommand.addCommandClass("WSCommandMeasurement", WSCommandMeasurement);
-WSCommand.addCommandClass("WSCommandTcp", WSCommandTcp);
-WSCommand.addCommandClass("WSCommandWiFi", WSCommandWiFi);
-WSCommand.addCommandClass("WSCommandPlugin", WSCommandPlugin);
+export const WSCommandManagerInstance = new WSCommandManager();
 
-export default WSCommand;
+/* eslint-disable */
+WSCommandManagerInstance.addCommandClass("WSCommandSystem", WSCommandSystem);
+WSCommandManagerInstance.addCommandClass(
+  "WSCommandDirective",
+  WSCommandDirective
+);
+WSCommandManagerInstance.addCommandClass("WSCommandIO", WSCommandIO);
+WSCommandManagerInstance.addCommandClass("WSCommandPWM", WSCommandPWM);
+WSCommandManagerInstance.addCommandClass("WSCommandUart", WSCommandUart);
+WSCommandManagerInstance.addCommandClass("WSCommandAD", WSCommandAD);
+WSCommandManagerInstance.addCommandClass("WSCommandSPI", WSCommandSPI);
+WSCommandManagerInstance.addCommandClass("WSCommandI2C", WSCommandI2C);
+WSCommandManagerInstance.addCommandClass(
+  "WSCommandLogicAnalyzer",
+  WSCommandLogicAnalyzer
+);
+WSCommandManagerInstance.addCommandClass("WSCommandDisplay", WSCommandDisplay);
+WSCommandManagerInstance.addCommandClass("WSCommandSwitch", WSCommandSwitch);
+WSCommandManagerInstance.addCommandClass("WSCommandBle", WSCommandBle);
+WSCommandManagerInstance.addCommandClass(
+  "WSCommandMeasurement",
+  WSCommandMeasurement
+);
+WSCommandManagerInstance.addCommandClass("WSCommandTcp", WSCommandTcp);
+WSCommandManagerInstance.addCommandClass("WSCommandWiFi", WSCommandWiFi);
+WSCommandManagerInstance.addCommandClass("WSCommandPlugin", WSCommandPlugin);

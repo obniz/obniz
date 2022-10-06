@@ -5,8 +5,8 @@ exports.WSCommandMeasurement = void 0;
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = require("./WSCommand");
-class WSCommandMeasurement extends WSCommand_1.WSCommand {
+const WSCommandAbstract_1 = require("./WSCommandAbstract");
+class WSCommandMeasurement extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super();
         this.module = 12;

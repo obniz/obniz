@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @ignore
  */
-import { WSCommand } from './WSCommand';
+import { WSCommandAbstract } from './WSCommandAbstract';
 
-export class WSCommandAD extends WSCommand {
+export class WSCommandAD extends WSCommandAbstract {
   public module: number;
   public _CommandInitNormalInterval: number;
   public _CommandDeinit: number;

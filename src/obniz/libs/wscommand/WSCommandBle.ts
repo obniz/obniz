@@ -3,10 +3,10 @@
  * @ignore
  */
 import { JsonBinaryConverter } from './jsonBinaryConverter';
-import { WSCommand } from './WSCommand';
+import { WSCommandAbstract } from './WSCommandAbstract';
 import { WSCommandBleHci } from './WSCommandBleHci';
 
-export class WSCommandBle extends WSCommand {
+export class WSCommandBle extends WSCommandAbstract {
   public module: number;
   public uuidLength: number;
   public _CommandSetAdvData: number;

@@ -6,8 +6,8 @@
 /// <reference types="node" />
 import EventEmitter from 'eventemitter3';
 import wsClient from 'ws';
-import WSCommand from './libs/wscommand';
 import { ObnizOptions } from './ObnizOptions';
+import { WSCommandManager } from './libs/wscommand/WSCommandManager';
 export declare type ObnizConnectionEventNames = 'connect' | 'close';
 export interface ObnizErrorMessage {
     alert: 'warn' | 'error';
@@ -62,11 +62,6 @@ export declare abstract class ObnizConnection extends EventEmitter<ObnizConnecti
      * obniz.js version
      */
     static get version(): any;
-    /**
-     * @ignore
-     * @constructor
-     */
-    static get WSCommand(): typeof WSCommand;
     static isIpAddress(str: string): boolean;
     /**
      * This lets obniz.js to show logs like communicated jsons and connection logs in console.log.
@@ -236,8 +231,7 @@ export declare abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     protected socket_local: wsClient | null;
     protected bufferdAmoundWarnBytes: number;
     protected options: Required<ObnizOptions>;
-    protected wscommand: typeof WSCommand | null;
-    protected wscommands: WSCommand[];
+    protected wsCommandManager: WSCommandManager;
     protected _sendQueueTimer: ReturnType<typeof setTimeout> | null;
     protected _sendQueue: Uint8Array[] | null;
     protected _waitForLocalConnectReadyTimer: ReturnType<typeof setTimeout> | null;
@@ -429,7 +423,6 @@ export declare abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     protected _canConnectToInsecure(): boolean;
     protected _handleWSCommand(wsObj: any): void;
     protected _handleSystemCommand(wsObj: any): void;
-    protected _binary2Json(binary: any): {}[];
     private _startLoopInBackgroundWait;
     private _stopLoopInBackground;
     private _startAutoConnectLoopInBackground;
