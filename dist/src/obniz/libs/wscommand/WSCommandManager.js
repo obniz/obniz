@@ -11,6 +11,7 @@ exports.WSCommandManager = void 0;
 const WSSchema_1 = __importDefault(require("./WSSchema"));
 class WSCommandManager {
     constructor() {
+        this.moduleNo2Name = {};
         this.commandClasses = {};
         this.commands = {};
     }
@@ -23,10 +24,14 @@ class WSCommandManager {
     createCommandInstances() {
         for (const [name, classObj] of Object.entries(this.commandClasses)) {
             this.commands[name] = new classObj();
+            this.moduleNo2Name[this.commands[name].module] = name;
         }
     }
     getCommandInstance(name) {
         return this.commands[name];
+    }
+    getCommandInstanceByModule(module) {
+        return this.commands[this.moduleNo2Name[module]];
     }
     framed(module, func, payload) {
         let payload_length = 0;
@@ -129,23 +134,35 @@ class WSCommandManager {
         }
         return ret;
     }
-    binary2Json(data) {
-        const json = [];
+    binary2frame(data) {
+        const payloads = [];
         while (data !== null) {
             const frame = this.dequeueOne(data);
             if (!frame) {
                 break;
             }
-            const obj = {};
-            for (const [, command] of Object.entries(this.commands)) {
-                if (command.module === frame.module) {
-                    command.notifyFromBinary(obj, frame.func, frame.payload);
-                    break;
-                }
-            }
-            json.push(obj);
+            payloads.push({
+                func: frame.func,
+                module: frame.module,
+                payload: frame.payload,
+            });
             data = frame.next;
         }
+        return payloads;
+    }
+    frame2json(frame) {
+        const obj = {};
+        for (const [, command] of Object.entries(this.commands)) {
+            if (command.module === frame.module) {
+                command.notifyFromBinary(obj, frame.func, frame.payload);
+                break;
+            }
+        }
+        return obj;
+    }
+    binary2Json(data) {
+        const frames = this.binary2frame(data);
+        const json = frames.map((f) => this.frame2json(f));
         return json;
     }
     setHw(obj) {

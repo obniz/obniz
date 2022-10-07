@@ -8,7 +8,7 @@ import { HW, WSCommandAbstract } from './WSCommandAbstract';
 
 type WSCommandConstructor = new () => WSCommandAbstract;
 
-interface PayloadChunk {
+interface Payload {
   /**
    * module number
    */
@@ -23,7 +23,9 @@ interface PayloadChunk {
    * payload for wscommand
    */
   payload: Uint8Array;
+}
 
+interface PayloadChunk extends Payload {
   /**
    * left binary array
    */
@@ -31,6 +33,7 @@ interface PayloadChunk {
 }
 
 export class WSCommandManager {
+  private moduleNo2Name: Record<number, string> = {};
   private commandClasses: { [key: string]: WSCommandConstructor } = {};
   private commands: { [key: string]: WSCommandAbstract } = {};
 
@@ -45,11 +48,16 @@ export class WSCommandManager {
   public createCommandInstances() {
     for (const [name, classObj] of Object.entries(this.commandClasses)) {
       this.commands[name] = new classObj();
+      this.moduleNo2Name[this.commands[name].module] = name;
     }
   }
 
   public getCommandInstance(name: string) {
     return this.commands[name];
+  }
+
+  public getCommandInstanceByModule(module: number) {
+    return this.commands[this.moduleNo2Name[module]];
   }
 
   public framed(
@@ -166,23 +174,37 @@ export class WSCommandManager {
     return ret;
   }
 
-  public binary2Json(data: Uint8Array) {
-    const json = [];
+  public binary2frame(data: Uint8Array): Payload[] {
+    const payloads: Payload[] = [];
     while (data !== null) {
       const frame = this.dequeueOne(data);
       if (!frame) {
         break;
       }
-      const obj = {};
-      for (const [, command] of Object.entries(this.commands)) {
-        if (command.module === frame.module) {
-          command.notifyFromBinary(obj, frame.func, frame.payload);
-          break;
-        }
-      }
-      json.push(obj);
+      payloads.push({
+        func: frame.func,
+        module: frame.module,
+        payload: frame.payload,
+      });
       data = frame.next;
     }
+    return payloads;
+  }
+
+  public frame2json(frame: Payload) {
+    const obj = {};
+    for (const [, command] of Object.entries(this.commands)) {
+      if (command.module === frame.module) {
+        command.notifyFromBinary(obj, frame.func, frame.payload);
+        break;
+      }
+    }
+    return obj;
+  }
+
+  public binary2Json(data: Uint8Array) {
+    const frames = this.binary2frame(data);
+    const json = frames.map((f) => this.frame2json(f));
     return json;
   }
 

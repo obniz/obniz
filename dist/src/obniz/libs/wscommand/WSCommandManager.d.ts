@@ -4,7 +4,7 @@
  */
 import { HW, WSCommandAbstract } from './WSCommandAbstract';
 declare type WSCommandConstructor = new () => WSCommandAbstract;
-interface PayloadChunk {
+interface Payload {
     /**
      * module number
      */
@@ -17,18 +17,22 @@ interface PayloadChunk {
      * payload for wscommand
      */
     payload: Uint8Array;
+}
+interface PayloadChunk extends Payload {
     /**
      * left binary array
      */
     next: Uint8Array;
 }
 export declare class WSCommandManager {
+    private moduleNo2Name;
     private commandClasses;
     private commands;
     static get schema(): any;
     addCommandClass(name: string, classObj: WSCommandConstructor): void;
     createCommandInstances(): void;
     getCommandInstance(name: string): WSCommandAbstract;
+    getCommandInstanceByModule(module: number): WSCommandAbstract;
     framed(module: number, func: number, payload: Uint8Array | null): Uint8Array;
     /**
      * Dequeue a next wscommands from binary array.
@@ -43,6 +47,8 @@ export declare class WSCommandManager {
      * @param json
      */
     compress(json: any): Uint8Array | null;
+    binary2frame(data: Uint8Array): Payload[];
+    frame2json(frame: Payload): {};
     binary2Json(data: Uint8Array): {}[];
     setHw(obj: HW): void;
 }
