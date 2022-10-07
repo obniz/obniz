@@ -22,33 +22,28 @@ import { WSCommandWiFi } from './WSCommandWiFi';
 import { WSCommandStorage } from './WSCommandStorage';
 import { WSCommandSubnet } from './WSCommandSubnet';
 
-export const WSCommandManagerInstance = new WSCommandManager();
+export const createCommandManager = () => {
+  const instance = new WSCommandManager();
 
-/* eslint-disable */
-WSCommandManagerInstance.addCommandClass("WSCommandSystem", WSCommandSystem);
-WSCommandManagerInstance.addCommandClass(
-  "WSCommandDirective",
-  WSCommandDirective
-);
-WSCommandManagerInstance.addCommandClass("WSCommandIO", WSCommandIO);
-WSCommandManagerInstance.addCommandClass("WSCommandPWM", WSCommandPWM);
-WSCommandManagerInstance.addCommandClass("WSCommandUart", WSCommandUart);
-WSCommandManagerInstance.addCommandClass("WSCommandAD", WSCommandAD);
-WSCommandManagerInstance.addCommandClass("WSCommandSPI", WSCommandSPI);
-WSCommandManagerInstance.addCommandClass("WSCommandI2C", WSCommandI2C);
-WSCommandManagerInstance.addCommandClass(
-  "WSCommandLogicAnalyzer",
-  WSCommandLogicAnalyzer
-);
-WSCommandManagerInstance.addCommandClass("WSCommandDisplay", WSCommandDisplay);
-WSCommandManagerInstance.addCommandClass("WSCommandSwitch", WSCommandSwitch);
-WSCommandManagerInstance.addCommandClass("WSCommandBle", WSCommandBle);
-WSCommandManagerInstance.addCommandClass(
-  "WSCommandMeasurement",
-  WSCommandMeasurement
-);
-WSCommandManagerInstance.addCommandClass("WSCommandTcp", WSCommandTcp);
-WSCommandManagerInstance.addCommandClass("WSCommandWiFi", WSCommandWiFi);
-WSCommandManagerInstance.addCommandClass("WSCommandPlugin", WSCommandPlugin);
-WSCommandManagerInstance.addCommandClass("WSCommandStorage", WSCommandStorage);
-WSCommandManagerInstance.addCommandClass("WSCommandSubnet", WSCommandSubnet);
+  /* eslint-disable */
+  instance.addCommandClass("WSCommandSystem", WSCommandSystem);
+  instance.addCommandClass("WSCommandDirective", WSCommandDirective);
+  instance.addCommandClass("WSCommandIO", WSCommandIO);
+  instance.addCommandClass("WSCommandPWM", WSCommandPWM);
+  instance.addCommandClass("WSCommandUart", WSCommandUart);
+  instance.addCommandClass("WSCommandAD", WSCommandAD);
+  instance.addCommandClass("WSCommandSPI", WSCommandSPI);
+  instance.addCommandClass("WSCommandI2C", WSCommandI2C);
+  instance.addCommandClass("WSCommandLogicAnalyzer", WSCommandLogicAnalyzer);
+  instance.addCommandClass("WSCommandDisplay", WSCommandDisplay);
+  instance.addCommandClass("WSCommandSwitch", WSCommandSwitch);
+  instance.addCommandClass("WSCommandBle", WSCommandBle);
+  instance.addCommandClass("WSCommandMeasurement", WSCommandMeasurement);
+  instance.addCommandClass("WSCommandTcp", WSCommandTcp);
+  instance.addCommandClass("WSCommandWiFi", WSCommandWiFi);
+  instance.addCommandClass("WSCommandPlugin", WSCommandPlugin);
+
+  return instance;
+};
+
+export const WSCommandManagerInstance = createCommandManager();

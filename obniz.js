@@ -24749,229 +24749,6 @@ exports.WSCommandSPI = WSCommandSPI;
 
 /***/ }),
 
-/***/ "./dist/src/obniz/libs/wscommand/WSCommandStorage.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(Buffer) {
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.WSCommandStorage = void 0;
-const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
-class WSCommandStorage extends WSCommandAbstract_1.WSCommandAbstract {
-    constructor() {
-        super(...arguments);
-        this.module = 17;
-        this._CommandSave = 0;
-        this._CommandRead = 1;
-    }
-    // public _CommandErase = 2; // TODO: Implement this in the future.
-    save(json) {
-        // request payload format
-        // length of filename | filename | data
-        const { fileName, data } = json.save;
-        const buf = Buffer.from(fileName);
-        const fileNameUintArr = new Uint8Array(buf);
-        const joined = new Uint8Array(1 /* this 1 byte indicates length of filename */ +
-            fileNameUintArr.length +
-            data.length);
-        const iLenFileName = 0;
-        const iFileName = iLenFileName + 1;
-        const iData = iFileName + fileNameUintArr.length;
-        joined.set(new Uint8Array([fileNameUintArr.length]), iLenFileName);
-        joined.set(fileNameUintArr, iFileName);
-        joined.set(data, iData);
-        this.sendCommand(this._CommandSave, joined);
-    }
-    read(json) {
-        // request payload format
-        // length of filename | filename
-        const { fileName } = json.read;
-        const buf = Buffer.from(fileName);
-        const fileNameUintArr = new Uint8Array(buf);
-        const joined = new Uint8Array(1 /* this 1 byte indicates length of filename */ + fileNameUintArr.length);
-        const iLenFileName = 0;
-        const iFileName = iLenFileName + 1;
-        joined.set(new Uint8Array([fileNameUintArr.length]), iLenFileName);
-        joined.set(fileNameUintArr, iFileName);
-        this.sendCommand(this._CommandRead, joined);
-    }
-    parseFromJson(json) {
-        const module = json.storage;
-        if (!module)
-            return;
-        const schemaData = [
-            { uri: '/request/storage/save', onValid: this.save },
-            { uri: '/request/storage/read', onValid: this.read },
-        ];
-        const res = this.validateCommandSchema(schemaData, module, 'storage');
-        if (res.valid === 0) {
-            if (res.invalidButLike.length > 0) {
-                throw new Error(res.invalidButLike[0].message);
-            }
-            else {
-                throw new this.WSCommandNotFoundError('[storage]unknown commnad');
-            }
-        }
-    }
-    notifyFromBinary(objToSend, func, payload) {
-        switch (func) {
-            case this._CommandSave: {
-                super.notifyFromBinary(objToSend, func, payload);
-                break;
-            }
-            case this._CommandRead: {
-                // parse binary and build up json out of it
-                // binary format: lenFileName | bytesFileName | bytesData
-                const lenFileName = payload[0];
-                const bytesFileName = payload.slice(1, lenFileName + 1);
-                const uBytesData = payload.slice(1 + bytesFileName.length);
-                objToSend.storage = {
-                    read: Array.from(uBytesData),
-                };
-                break;
-            }
-            default: {
-                break;
-            }
-        }
-    }
-}
-exports.WSCommandStorage = WSCommandStorage;
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/wscommand/WSCommandSubnet.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(Buffer) {
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.WSCommandSubnet = void 0;
-/**
- * @packageDocumentation
- * @ignore
- */
-const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
-const WSCommandManager_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandManager.js");
-class WSCommandSubnet extends WSCommandAbstract_1.WSCommandAbstract {
-    constructor() {
-        super(...arguments);
-        this.module = 16;
-        this._CommandRequestAllSubnet = 0;
-        this._CommandSendAddr = 1;
-        this._CommandSend = 2;
-        this._CommandFromAddr = 3;
-        this._CommandRecv = 4;
-        this._CommandRequestJoin = 5;
-        this.currentFromAddr = null;
-        this.commandManager = new WSCommandManager_1.WSCommandManager();
-    }
-    // Commands
-    requestAllSubnet() {
-        const buf = new Uint8Array([]);
-        this.sendCommand(this._CommandRequestAllSubnet, buf);
-    }
-    sendToNode(targetMacAddr, data) {
-        let addr;
-        try {
-            addr = Buffer.from(targetMacAddr, 'hex');
-        }
-        catch (e) {
-            console.error(e);
-            return;
-        }
-        this.sendCommand(this._CommandSendAddr, new Uint8Array(addr));
-        this.sendCommand(this._CommandSend, new Uint8Array(data));
-    }
-    sendToNodeBufAddr(bufAddr, data) {
-        this.sendCommand(this._CommandSendAddr, new Uint8Array(bufAddr));
-        this.sendCommand(this._CommandSend, new Uint8Array(data));
-    }
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    parseFromJson() { }
-    notifyFromBinary(objToSend, func, payload) {
-        var _a, _b;
-        switch (func) {
-            case this._CommandRequestAllSubnet: {
-                const subnetNodes = [];
-                for (let i = 0; i < payload.length; i += 6) {
-                    subnetNodes.push(Buffer.from(payload.slice(i, i + 6)).toString('hex'));
-                }
-                (_a = this.delegate) === null || _a === void 0 ? void 0 : _a.onSubnetTableReceived(subnetNodes);
-                break;
-            }
-            case this._CommandFromAddr:
-                this.currentFromAddr = Buffer.from(payload).toString('hex');
-                break;
-            case this._CommandRecv:
-                if (this.currentFromAddr) {
-                    (_b = this.delegate) === null || _b === void 0 ? void 0 : _b.onDataReceivedFromSubnet(this.currentFromAddr, payload);
-                }
-                break;
-            case this._CommandRequestJoin: {
-                const requestObj = Buffer.from(payload).toString();
-                console.log(requestObj);
-                break;
-            }
-            default:
-                super.notifyFromBinary(objToSend, func, payload);
-                break;
-        }
-    }
-    /**
-     * 参加要求フレームを送るように指示
-     *
-     */
-    sendRequestConnectToNode(targetMacAddr) {
-        this.sendToNode(targetMacAddr, this.commandManager.framed(this.module, this._CommandRequestJoin, new Uint8Array([]))); // send request
-    }
-    /**
-     * Onlineになったことを通知。authorizeとは関係なく、http request を読みその返り値として返す
-     *
-     */
-    sendOnline(targetMacAddr) {
-        // system commandの16を送信。OSはwebsocket handshakeが終わったとして次の処理に進む
-        this.sendToNode(targetMacAddr, this.commandManager.framed(0, 16, new Uint8Array([1]))); // make target online recognized
-    }
-    // 再起動を指示
-    sendRebootToNode(targetMacAddr) {
-        const framed = this.commandManager.framed(0, 0, new Uint8Array([]));
-        this.sendToNode(targetMacAddr, framed);
-    }
-    parsedRequestString(reqHeader) {
-        const lines = reqHeader.split('\r\n');
-        const ret = {
-            obniz_id: null,
-            headers: {},
-        };
-        if (lines.length < 2) {
-            throw new Error('invalid format');
-        }
-        let pathinfo = lines.shift();
-        pathinfo = pathinfo === null || pathinfo === void 0 ? void 0 : pathinfo.replace('GET /endpoints/', '');
-        pathinfo = pathinfo === null || pathinfo === void 0 ? void 0 : pathinfo.replace('/ws HTTP/1.1', '');
-        ret.obniz_id = pathinfo !== null && pathinfo !== void 0 ? pathinfo : null;
-        for (const line of lines) {
-            const splitted = line.split(': ');
-            if (splitted.length !== 2) {
-                break;
-            }
-            ret.headers[splitted[0].toLowerCase()] = splitted[1];
-        }
-        return ret;
-    }
-    isWSRoomOnlyCommand() {
-        return true;
-    }
-}
-exports.WSCommandSubnet = WSCommandSubnet;
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
-
-/***/ }),
-
 /***/ "./dist/src/obniz/libs/wscommand/WSCommandSwitch.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -25812,7 +25589,7 @@ exports.default = tv4;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WSCommandManagerInstance = void 0;
+exports.WSCommandManagerInstance = exports.createCommandManager = void 0;
 /**
  * @packageDocumentation
  * @ignore
@@ -25834,28 +25611,29 @@ const WSCommandSystem_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/W
 const WSCommandTcp_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandTcp.js");
 const WSCommandUart_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandUart.js");
 const WSCommandWiFi_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandWiFi.js");
-const WSCommandStorage_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandStorage.js");
-const WSCommandSubnet_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandSubnet.js");
-exports.WSCommandManagerInstance = new WSCommandManager_1.WSCommandManager();
-/* eslint-disable */
-exports.WSCommandManagerInstance.addCommandClass("WSCommandSystem", WSCommandSystem_1.WSCommandSystem);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandDirective", WSCommandDirective_1.WSCommandDirective);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandIO", WSCommandIO_1.WSCommandIO);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandPWM", WSCommandPWM_1.WSCommandPWM);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandUart", WSCommandUart_1.WSCommandUart);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandAD", WSCommandAD_1.WSCommandAD);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandSPI", WSCommandSPI_1.WSCommandSPI);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandI2C", WSCommandI2C_1.WSCommandI2C);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandLogicAnalyzer", WSCommandLogicAnalyzer_1.WSCommandLogicAnalyzer);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandDisplay", WSCommandDisplay_1.WSCommandDisplay);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandSwitch", WSCommandSwitch_1.WSCommandSwitch);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandBle", WSCommandBle_1.WSCommandBle);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandMeasurement", WSCommandMeasurement_1.WSCommandMeasurement);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandTcp", WSCommandTcp_1.WSCommandTcp);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandWiFi", WSCommandWiFi_1.WSCommandWiFi);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandPlugin", WSCommandPlugin_1.WSCommandPlugin);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandStorage", WSCommandStorage_1.WSCommandStorage);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandSubnet", WSCommandSubnet_1.WSCommandSubnet);
+const createCommandManager = () => {
+    const instance = new WSCommandManager_1.WSCommandManager();
+    /* eslint-disable */
+    instance.addCommandClass("WSCommandSystem", WSCommandSystem_1.WSCommandSystem);
+    instance.addCommandClass("WSCommandDirective", WSCommandDirective_1.WSCommandDirective);
+    instance.addCommandClass("WSCommandIO", WSCommandIO_1.WSCommandIO);
+    instance.addCommandClass("WSCommandPWM", WSCommandPWM_1.WSCommandPWM);
+    instance.addCommandClass("WSCommandUart", WSCommandUart_1.WSCommandUart);
+    instance.addCommandClass("WSCommandAD", WSCommandAD_1.WSCommandAD);
+    instance.addCommandClass("WSCommandSPI", WSCommandSPI_1.WSCommandSPI);
+    instance.addCommandClass("WSCommandI2C", WSCommandI2C_1.WSCommandI2C);
+    instance.addCommandClass("WSCommandLogicAnalyzer", WSCommandLogicAnalyzer_1.WSCommandLogicAnalyzer);
+    instance.addCommandClass("WSCommandDisplay", WSCommandDisplay_1.WSCommandDisplay);
+    instance.addCommandClass("WSCommandSwitch", WSCommandSwitch_1.WSCommandSwitch);
+    instance.addCommandClass("WSCommandBle", WSCommandBle_1.WSCommandBle);
+    instance.addCommandClass("WSCommandMeasurement", WSCommandMeasurement_1.WSCommandMeasurement);
+    instance.addCommandClass("WSCommandTcp", WSCommandTcp_1.WSCommandTcp);
+    instance.addCommandClass("WSCommandWiFi", WSCommandWiFi_1.WSCommandWiFi);
+    instance.addCommandClass("WSCommandPlugin", WSCommandPlugin_1.WSCommandPlugin);
+    return instance;
+};
+exports.createCommandManager = createCommandManager;
+exports.WSCommandManagerInstance = (0, exports.createCommandManager)();
 
 
 /***/ }),
