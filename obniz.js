@@ -237,6 +237,7 @@ module.exports = {
     "node-fetch": "^2.3.0",
     "round-to": "^5.0.0",
     "semver": "^5.7.0",
+    "strict-event-emitter": "^0.2.6",
     "tv4": "^1.3.0",
     "ws": "^6.1.4"
   },
@@ -24104,11 +24105,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WSCommandManager = void 0;
 const WSSchema_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSSchema.js"));
+const strict_event_emitter_1 = __webpack_require__("./node_modules/strict-event-emitter/lib/index.js");
 class WSCommandManager {
     constructor() {
         this.moduleNo2Name = {};
         this.commandClasses = {};
         this.commands = {};
+        this.events = new strict_event_emitter_1.StrictEventEmitter();
     }
     static get schema() {
         return WSSchema_1.default;
@@ -24120,6 +24123,9 @@ class WSCommandManager {
         for (const [name, classObj] of Object.entries(this.commandClasses)) {
             this.commands[name] = new classObj();
             this.moduleNo2Name[this.commands[name].module] = name;
+            this.commands[name].parsed = (module, func, payload) => {
+                this.events.emit('binaryGenerated', module, func, payload);
+            };
         }
     }
     getCommandInstance(name) {
@@ -24224,10 +24230,11 @@ class WSCommandManager {
                 ret = frame;
             }
         };
+        this.events.on('binaryGenerated', append);
         for (const [name, wscommand] of Object.entries(this.commands)) {
-            wscommand.parsed = append;
             wscommand.parseFromJson(json);
         }
+        this.events.off('binaryGenerated', append);
         return ret;
     }
     binary2frame(data) {
@@ -112448,6 +112455,113 @@ Stream.prototype.pipe = function(dest, options) {
   // Allow for unix-like usage: A.pipe(B).pipe(C)
   return dest;
 };
+
+
+/***/ }),
+
+/***/ "./node_modules/strict-event-emitter/lib/StrictEventEmitter.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
+exports.__esModule = true;
+exports.StrictEventEmitter = void 0;
+var events_1 = __webpack_require__("./node_modules/events/events.js");
+var StrictEventEmitter = /** @class */ (function (_super) {
+    __extends(StrictEventEmitter, _super);
+    function StrictEventEmitter() {
+        return _super.call(this) || this;
+    }
+    StrictEventEmitter.prototype.on = function (event, listener) {
+        return _super.prototype.on.call(this, event.toString(), listener);
+    };
+    StrictEventEmitter.prototype.once = function (event, listener) {
+        return _super.prototype.once.call(this, event.toString(), listener);
+    };
+    StrictEventEmitter.prototype.off = function (event, listener) {
+        return _super.prototype.off.call(this, event.toString(), listener);
+    };
+    StrictEventEmitter.prototype.emit = function (event) {
+        var data = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            data[_i - 1] = arguments[_i];
+        }
+        return _super.prototype.emit.apply(this, __spreadArrays([event.toString()], data));
+    };
+    StrictEventEmitter.prototype.addListener = function (event, listener) {
+        return _super.prototype.addListener.call(this, event.toString(), listener);
+    };
+    StrictEventEmitter.prototype.prependListener = function (event, listener) {
+        return _super.prototype.prependListener.call(this, event.toString(), listener);
+    };
+    StrictEventEmitter.prototype.prependOnceListener = function (event, listener) {
+        return _super.prototype.prependOnceListener.call(this, event.toString(), listener);
+    };
+    StrictEventEmitter.prototype.removeListener = function (event, listener) {
+        return _super.prototype.removeListener.call(this, event.toString(), listener);
+    };
+    StrictEventEmitter.prototype.removeAllListeners = function (event) {
+        if (event) {
+            return _super.prototype.removeAllListeners.call(this, event.toString());
+        }
+        return _super.prototype.removeAllListeners.call(this);
+    };
+    StrictEventEmitter.prototype.eventNames = function () {
+        return _super.prototype.eventNames.call(this);
+    };
+    StrictEventEmitter.prototype.listeners = function (event) {
+        return _super.prototype.listeners.call(this, event.toString());
+    };
+    StrictEventEmitter.prototype.rawListeners = function (event) {
+        return _super.prototype.rawListeners.call(this, event.toString());
+    };
+    StrictEventEmitter.prototype.listenerCount = function (event) {
+        return _super.prototype.listenerCount.call(this, event.toString());
+    };
+    return StrictEventEmitter;
+}(events_1.EventEmitter));
+exports.StrictEventEmitter = StrictEventEmitter;
+
+
+/***/ }),
+
+/***/ "./node_modules/strict-event-emitter/lib/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+exports.__esModule = true;
+__exportStar(__webpack_require__("./node_modules/strict-event-emitter/lib/StrictEventEmitter.js"), exports);
 
 
 /***/ }),

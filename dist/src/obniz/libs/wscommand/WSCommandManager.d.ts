@@ -3,6 +3,7 @@
  * @ignore
  */
 import { HW, WSCommandAbstract } from './WSCommandAbstract';
+import { StrictEventEmitter } from 'strict-event-emitter';
 declare type WSCommandConstructor = new () => WSCommandAbstract;
 interface Payload {
     /**
@@ -28,10 +29,14 @@ interface PayloadChunk extends Payload {
      */
     next: Uint8Array;
 }
+interface WSCommandManagerEventsMap {
+    binaryGenerated: (module: number, func: number, binary: Uint8Array | null) => void;
+}
 export declare class WSCommandManager {
     private moduleNo2Name;
     private commandClasses;
     private commands;
+    events: StrictEventEmitter<WSCommandManagerEventsMap>;
     static get schema(): any;
     addCommandClass(name: string, classObj: WSCommandConstructor): void;
     createCommandInstances(): void;
