@@ -9,7 +9,6 @@ export declare class WSCommandUart extends WSCommandAbstract {
     _CommandDeinit: number;
     _CommandSend: number;
     _CommandRecv: number;
-    constructor();
     init(params: any, module: any): void;
     deinit(params: any, module: any): void;
     send(params: any, module: any): void;

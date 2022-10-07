@@ -8,7 +8,6 @@ export declare class WSCommandLogicAnalyzer extends WSCommandAbstract {
     _CommandInit: number;
     _CommandDeinit: number;
     _CommandRecv: number;
-    constructor();
     init(params: any): void;
     deinit(params: any): void;
     parseFromJson(json: any): void;

@@ -5,26 +5,18 @@
 import { WSCommandAbstract } from './WSCommandAbstract';
 
 export class WSCommandPWM extends WSCommandAbstract {
-  public module: number;
-  public ModuleNum: number;
-  public _CommandInit: number;
-  public _CommandDeinit: number;
-  public _CommandSetFreq: number;
-  public _CommandSetDuty: number;
-  public _CommandAMModulate: number;
-  public pwms: any;
+  module = 3;
+  ModuleNum = 6;
+  _CommandInit = 0;
+  _CommandDeinit = 1;
+  _CommandSetFreq = 2;
+  _CommandSetDuty = 3;
+  _CommandAMModulate = 4;
+  pwms: any[] = [];
 
   constructor() {
     super();
-    this.module = 3;
-    this.ModuleNum = 6;
     this.resetInternalStatus();
-
-    this._CommandInit = 0;
-    this._CommandDeinit = 1;
-    this._CommandSetFreq = 2;
-    this._CommandSetDuty = 3;
-    this._CommandAMModulate = 4;
   }
 
   public resetInternalStatus() {

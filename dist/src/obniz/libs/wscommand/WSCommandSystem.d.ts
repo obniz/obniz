@@ -15,7 +15,6 @@ export declare class WSCommandSystem extends WSCommandAbstract {
     _CommandSleepSeconds: number;
     _CommandSleepMinute: number;
     _CommandSleepIoTrigger: number;
-    constructor();
     reboot(params: any): void;
     reset(params: any): void;
     selfCheck(params: any): void;

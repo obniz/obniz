@@ -8,7 +8,7 @@ exports.WSCommandMeasurement = void 0;
 const WSCommandAbstract_1 = require("./WSCommandAbstract");
 class WSCommandMeasurement extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 12;
         this._CommandMeasurementEcho = 0;
     }

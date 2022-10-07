@@ -8,7 +8,7 @@ exports.WSCommandSystem = void 0;
 const WSCommandAbstract_1 = require("./WSCommandAbstract");
 class WSCommandSystem extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 0;
         this._CommandReboot = 0;
         this._CommandReset = 2;

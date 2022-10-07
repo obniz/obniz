@@ -6,15 +6,9 @@ import { JsonBinaryConverter } from './jsonBinaryConverter';
 import { WSCommandAbstract } from './WSCommandAbstract';
 
 export class WSCommandWiFi extends WSCommandAbstract {
-  public module: number;
-  public _CommandScan: number;
+  module = 14;
 
-  constructor() {
-    super();
-    this.module = 14;
-
-    this._CommandScan = 0;
-  }
+  _CommandScan = 0;
 
   public scan(params: any, index: any) {
     this.sendCommand(this._CommandScan, null);

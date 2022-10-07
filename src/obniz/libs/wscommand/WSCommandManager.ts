@@ -31,7 +31,7 @@ interface PayloadChunk {
 }
 
 export class WSCommandManager {
-  public commandClasses: { [key: string]: WSCommandConstructor } = {};
+  private commandClasses: { [key: string]: WSCommandConstructor } = {};
   private commands: { [key: string]: WSCommandAbstract } = {};
 
   static get schema(): any {
@@ -46,6 +46,10 @@ export class WSCommandManager {
     for (const [name, classObj] of Object.entries(this.commandClasses)) {
       this.commands[name] = new classObj();
     }
+  }
+
+  public getCommandInstance(name: string) {
+    return this.commands[name];
   }
 
   public framed(

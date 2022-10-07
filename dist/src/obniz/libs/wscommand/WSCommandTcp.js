@@ -8,7 +8,7 @@ exports.WSCommandTcp = void 0;
 const WSCommandAbstract_1 = require("./WSCommandAbstract");
 class WSCommandTcp extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 13;
         this._MaxPort = 8;
         this._CommandConnect = 0;

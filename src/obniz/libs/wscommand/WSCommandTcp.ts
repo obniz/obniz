@@ -5,27 +5,16 @@
 import { WSCommandAbstract } from './WSCommandAbstract';
 
 export class WSCommandTcp extends WSCommandAbstract {
-  public module: number;
-  public _MaxPort: number;
-  public _CommandConnect: number;
-  public _CommandClose: number;
-  public _CommandConnection: number;
-  public _CommandWrite: number;
-  public _CommandRead: number;
+  module = 13;
+  _MaxPort = 8;
 
-  constructor() {
-    super();
-    this.module = 13;
-    this._MaxPort = 8;
-
-    this._CommandConnect = 0;
-    this._CommandClose = 1;
-    // Notification
-    this._CommandConnection = 2;
-    this._CommandWrite = 3;
-    // Notification
-    this._CommandRead = 4;
-  }
+  _CommandConnect = 0;
+  _CommandClose = 1;
+  // Notification
+  _CommandConnection = 2;
+  _CommandWrite = 3;
+  // Notification
+  _CommandRead = 4;
 
   public connect(params: any, index: any) {
     const domain = new Uint8Array(Buffer.from(params.connect.domain, 'utf8'));

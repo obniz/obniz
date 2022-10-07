@@ -10,7 +10,6 @@ export declare class WSCommandI2C extends WSCommandAbstract {
     _CommandWrite: number;
     _CommandRead: number;
     _CommandSlvWritten: number;
-    constructor();
     initMaster(params: any, module: any): void;
     initSlave(params: any, module: any): void;
     deinit(params: any, module: any): void;

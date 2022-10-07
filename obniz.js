@@ -21701,7 +21701,7 @@ exports.WSCommandAD = void 0;
 const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
 class WSCommandAD extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 7;
         this._CommandInitNormalInterval = 0;
         this._CommandDeinit = 1;
@@ -23661,7 +23661,7 @@ exports.WSCommandI2C = void 0;
 const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
 class WSCommandI2C extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 6;
         this._CommandInit = 0;
         this._CommandDeinit = 1;
@@ -23864,7 +23864,7 @@ const COMMAND_IO_MUTEX_NAMES = {
 };
 class WSCommandIO extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 2;
         this._CommandOutput = 0;
         this._CommandInputStream = 1;
@@ -24013,7 +24013,7 @@ exports.WSCommandLogicAnalyzer = void 0;
 const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
 class WSCommandLogicAnalyzer extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 10;
         this._CommandInit = 0;
         this._CommandDeinit = 1;
@@ -24119,6 +24119,9 @@ class WSCommandManager {
         for (const [name, classObj] of Object.entries(this.commandClasses)) {
             this.commands[name] = new classObj();
         }
+    }
+    getCommandInstance(name) {
+        return this.commands[name];
     }
     framed(module, func, payload) {
         let payload_length = 0;
@@ -24265,7 +24268,7 @@ exports.WSCommandMeasurement = void 0;
 const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
 class WSCommandMeasurement extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 12;
         this._CommandMeasurementEcho = 0;
     }
@@ -24359,12 +24362,13 @@ class WSCommandPWM extends WSCommandAbstract_1.WSCommandAbstract {
         super();
         this.module = 3;
         this.ModuleNum = 6;
-        this.resetInternalStatus();
         this._CommandInit = 0;
         this._CommandDeinit = 1;
         this._CommandSetFreq = 2;
         this._CommandSetDuty = 3;
         this._CommandAMModulate = 4;
+        this.pwms = [];
+        this.resetInternalStatus();
     }
     resetInternalStatus() {
         this.pwms = [];
@@ -24472,7 +24476,7 @@ exports.WSCommandPlugin = void 0;
 const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
 class WSCommandPlugin extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 15;
         this._CommandSend = 0;
         this._CommandReceive = 1;
@@ -24532,7 +24536,7 @@ exports.WSCommandSPI = void 0;
 const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
 class WSCommandSPI extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 5;
         this._CommandInit = 0;
         this._CommandDeinit = 1;
@@ -24650,7 +24654,7 @@ exports.WSCommandSwitch = void 0;
 const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
 class WSCommandSwitch extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 9;
         this._CommandNotifyValue = 0;
         this._CommandOnece = 1;
@@ -24712,7 +24716,7 @@ exports.WSCommandSystem = void 0;
 const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
 class WSCommandSystem extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 0;
         this._CommandReboot = 0;
         this._CommandReset = 2;
@@ -24879,7 +24883,7 @@ exports.WSCommandTcp = void 0;
 const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
 class WSCommandTcp extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 13;
         this._MaxPort = 8;
         this._CommandConnect = 0;
@@ -25020,7 +25024,7 @@ exports.WSCommandUart = void 0;
 const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
 class WSCommandUart extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 4;
         this._CommandInit = 0;
         this._CommandDeinit = 1;
@@ -25146,7 +25150,7 @@ const jsonBinaryConverter_1 = __webpack_require__("./dist/src/obniz/libs/wscomma
 const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
 class WSCommandWiFi extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 14;
         this._CommandScan = 0;
     }

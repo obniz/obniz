@@ -11,12 +11,13 @@ class WSCommandPWM extends WSCommandAbstract_1.WSCommandAbstract {
         super();
         this.module = 3;
         this.ModuleNum = 6;
-        this.resetInternalStatus();
         this._CommandInit = 0;
         this._CommandDeinit = 1;
         this._CommandSetFreq = 2;
         this._CommandSetDuty = 3;
         this._CommandAMModulate = 4;
+        this.pwms = [];
+        this.resetInternalStatus();
     }
     resetInternalStatus() {
         this.pwms = [];

@@ -9,7 +9,6 @@ export declare class WSCommandAD extends WSCommandAbstract {
     _CommandDeinit: number;
     _CommandNotifyValue: number;
     _CommandDoOnece: number;
-    constructor();
     get(params: any, no: any): void;
     deinit(params: any, no: any): void;
     parseFromJson(json: any): void;
