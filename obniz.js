@@ -25113,6 +25113,13 @@ class WSCommandSystem extends WSCommandAbstract_1.WSCommandAbstract {
     }
     // Commands
     /**
+     * ペリフェラルなどのリセットに加えて、ローカルコネクト切断も行います。またOS4.0.0以降はローカルコネクト用のport80のlistenも停止します
+     */
+    hardReset() {
+        const buf = new Uint8Array([1]);
+        this.sendCommand(this._CommandReset, buf);
+    }
+    /**
      * firmareのbinaryを使ってupdateします
      *
      * @param {Buffer} firmware

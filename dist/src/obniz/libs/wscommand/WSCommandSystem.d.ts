@@ -54,6 +54,10 @@ export declare class WSCommandSystem extends WSCommandAbstract {
     }): void;
     resetOnDisconnect(mustReset: boolean): void;
     /**
+     * ペリフェラルなどのリセットに加えて、ローカルコネクト切断も行います。またOS4.0.0以降はローカルコネクト用のport80のlistenも停止します
+     */
+    hardReset(): void;
+    /**
      * firmareのbinaryを使ってupdateします
      *
      * @param {Buffer} firmware
