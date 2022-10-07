@@ -9,11 +9,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WSCommandManager = void 0;
 const WSSchema_1 = __importDefault(require("./WSSchema"));
+const strict_event_emitter_1 = require("strict-event-emitter");
 class WSCommandManager {
     constructor() {
         this.moduleNo2Name = {};
         this.commandClasses = {};
         this.commands = {};
+        this.events = new strict_event_emitter_1.StrictEventEmitter();
     }
     static get schema() {
         return WSSchema_1.default;
@@ -25,6 +27,9 @@ class WSCommandManager {
         for (const [name, classObj] of Object.entries(this.commandClasses)) {
             this.commands[name] = new classObj();
             this.moduleNo2Name[this.commands[name].module] = name;
+            this.commands[name].parsed = (module, func, payload) => {
+                this.events.emit('binaryGenerated', module, func, payload);
+            };
         }
     }
     getCommandInstance(name) {
@@ -129,10 +134,11 @@ class WSCommandManager {
                 ret = frame;
             }
         };
+        this.events.on('binaryGenerated', append);
         for (const [name, wscommand] of Object.entries(this.commands)) {
-            wscommand.parsed = append;
             wscommand.parseFromJson(json);
         }
+        this.events.off('binaryGenerated', append);
         return ret;
     }
     binary2frame(data) {

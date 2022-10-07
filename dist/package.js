@@ -145,6 +145,7 @@ module.exports = {
     "node-fetch": "^2.3.0",
     "round-to": "^5.0.0",
     "semver": "^5.7.0",
+    "strict-event-emitter": "^0.2.6",
     "tv4": "^1.3.0",
     "ws": "^6.1.4"
   },

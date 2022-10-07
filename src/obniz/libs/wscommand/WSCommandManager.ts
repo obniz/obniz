@@ -5,6 +5,7 @@
 
 import WSSchema from './WSSchema';
 import { HW, WSCommandAbstract } from './WSCommandAbstract';
+import { StrictEventEmitter } from 'strict-event-emitter';
 
 type WSCommandConstructor = new () => WSCommandAbstract;
 
@@ -37,10 +38,19 @@ interface PayloadChunk extends Payload {
   next: Uint8Array;
 }
 
+interface WSCommandManagerEventsMap {
+  binaryGenerated: (
+    module: number,
+    func: number,
+    binary: Uint8Array | null
+  ) => void;
+}
+
 export class WSCommandManager {
   private moduleNo2Name: Record<number, string> = {};
   private commandClasses: { [key: string]: WSCommandConstructor } = {};
   private commands: { [key: string]: WSCommandAbstract } = {};
+  public events = new StrictEventEmitter<WSCommandManagerEventsMap>();
 
   static get schema(): any {
     return WSSchema;
@@ -54,6 +64,9 @@ export class WSCommandManager {
     for (const [name, classObj] of Object.entries(this.commandClasses)) {
       this.commands[name] = new classObj();
       this.moduleNo2Name[this.commands[name].module] = name;
+      this.commands[name].parsed = (module, func, payload) => {
+        this.events.emit('binaryGenerated', module, func, payload);
+      };
     }
   }
 
@@ -172,11 +185,11 @@ export class WSCommandManager {
         ret = frame;
       }
     };
-
+    this.events.on('binaryGenerated', append);
     for (const [name, wscommand] of Object.entries(this.commands)) {
-      wscommand.parsed = append;
       wscommand.parseFromJson(json);
     }
+    this.events.off('binaryGenerated', append);
     return ret;
   }
 
