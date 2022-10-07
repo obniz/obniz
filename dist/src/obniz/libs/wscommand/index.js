@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WSCommandManagerInstance = void 0;
+exports.WSCommandManagerInstance = exports.createCommandManager = void 0;
 /**
  * @packageDocumentation
  * @ignore
@@ -22,21 +22,26 @@ const WSCommandSystem_1 = require("./WSCommandSystem");
 const WSCommandTcp_1 = require("./WSCommandTcp");
 const WSCommandUart_1 = require("./WSCommandUart");
 const WSCommandWiFi_1 = require("./WSCommandWiFi");
-exports.WSCommandManagerInstance = new WSCommandManager_1.WSCommandManager();
-/* eslint-disable */
-exports.WSCommandManagerInstance.addCommandClass("WSCommandSystem", WSCommandSystem_1.WSCommandSystem);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandDirective", WSCommandDirective_1.WSCommandDirective);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandIO", WSCommandIO_1.WSCommandIO);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandPWM", WSCommandPWM_1.WSCommandPWM);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandUart", WSCommandUart_1.WSCommandUart);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandAD", WSCommandAD_1.WSCommandAD);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandSPI", WSCommandSPI_1.WSCommandSPI);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandI2C", WSCommandI2C_1.WSCommandI2C);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandLogicAnalyzer", WSCommandLogicAnalyzer_1.WSCommandLogicAnalyzer);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandDisplay", WSCommandDisplay_1.WSCommandDisplay);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandSwitch", WSCommandSwitch_1.WSCommandSwitch);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandBle", WSCommandBle_1.WSCommandBle);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandMeasurement", WSCommandMeasurement_1.WSCommandMeasurement);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandTcp", WSCommandTcp_1.WSCommandTcp);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandWiFi", WSCommandWiFi_1.WSCommandWiFi);
-exports.WSCommandManagerInstance.addCommandClass("WSCommandPlugin", WSCommandPlugin_1.WSCommandPlugin);
+const createCommandManager = () => {
+    const instance = new WSCommandManager_1.WSCommandManager();
+    /* eslint-disable */
+    instance.addCommandClass("WSCommandSystem", WSCommandSystem_1.WSCommandSystem);
+    instance.addCommandClass("WSCommandDirective", WSCommandDirective_1.WSCommandDirective);
+    instance.addCommandClass("WSCommandIO", WSCommandIO_1.WSCommandIO);
+    instance.addCommandClass("WSCommandPWM", WSCommandPWM_1.WSCommandPWM);
+    instance.addCommandClass("WSCommandUart", WSCommandUart_1.WSCommandUart);
+    instance.addCommandClass("WSCommandAD", WSCommandAD_1.WSCommandAD);
+    instance.addCommandClass("WSCommandSPI", WSCommandSPI_1.WSCommandSPI);
+    instance.addCommandClass("WSCommandI2C", WSCommandI2C_1.WSCommandI2C);
+    instance.addCommandClass("WSCommandLogicAnalyzer", WSCommandLogicAnalyzer_1.WSCommandLogicAnalyzer);
+    instance.addCommandClass("WSCommandDisplay", WSCommandDisplay_1.WSCommandDisplay);
+    instance.addCommandClass("WSCommandSwitch", WSCommandSwitch_1.WSCommandSwitch);
+    instance.addCommandClass("WSCommandBle", WSCommandBle_1.WSCommandBle);
+    instance.addCommandClass("WSCommandMeasurement", WSCommandMeasurement_1.WSCommandMeasurement);
+    instance.addCommandClass("WSCommandTcp", WSCommandTcp_1.WSCommandTcp);
+    instance.addCommandClass("WSCommandWiFi", WSCommandWiFi_1.WSCommandWiFi);
+    instance.addCommandClass("WSCommandPlugin", WSCommandPlugin_1.WSCommandPlugin);
+    return instance;
+};
+exports.createCommandManager = createCommandManager;
+exports.WSCommandManagerInstance = (0, exports.createCommandManager)();
