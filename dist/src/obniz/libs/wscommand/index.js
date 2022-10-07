@@ -22,6 +22,8 @@ const WSCommandSystem_1 = require("./WSCommandSystem");
 const WSCommandTcp_1 = require("./WSCommandTcp");
 const WSCommandUart_1 = require("./WSCommandUart");
 const WSCommandWiFi_1 = require("./WSCommandWiFi");
+const WSCommandStorage_1 = require("./WSCommandStorage");
+const WSCommandSubnet_1 = require("./WSCommandSubnet");
 const createCommandManager = () => {
     const instance = new WSCommandManager_1.WSCommandManager();
     /* eslint-disable */
@@ -41,6 +43,9 @@ const createCommandManager = () => {
     instance.addCommandClass("WSCommandTcp", WSCommandTcp_1.WSCommandTcp);
     instance.addCommandClass("WSCommandWiFi", WSCommandWiFi_1.WSCommandWiFi);
     instance.addCommandClass("WSCommandPlugin", WSCommandPlugin_1.WSCommandPlugin);
+    //for admin
+    instance.addCommandClass("WSCommandStorage", WSCommandStorage_1.WSCommandStorage);
+    instance.addCommandClass("WSCommandSubnet", WSCommandSubnet_1.WSCommandSubnet);
     return instance;
 };
 exports.createCommandManager = createCommandManager;

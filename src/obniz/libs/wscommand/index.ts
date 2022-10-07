@@ -43,6 +43,10 @@ export const createCommandManager = () => {
   instance.addCommandClass("WSCommandWiFi", WSCommandWiFi);
   instance.addCommandClass("WSCommandPlugin", WSCommandPlugin);
 
+  //for admin
+  instance.addCommandClass("WSCommandStorage", WSCommandStorage);
+  instance.addCommandClass("WSCommandSubnet", WSCommandSubnet);
+
   return instance;
 };
 
