@@ -24310,6 +24310,7 @@ class WSCommandManager {
             module,
             func,
             payload: buf.slice(3 + length_extra_bytse, 3 + length_extra_bytse + length),
+            raw: buf,
             next: buf.slice(3 + length_extra_bytse + length),
         };
     }
@@ -24349,6 +24350,7 @@ class WSCommandManager {
                 func: frame.func,
                 module: frame.module,
                 payload: frame.payload,
+                raw: frame.raw,
             });
             data = frame.next;
         }
