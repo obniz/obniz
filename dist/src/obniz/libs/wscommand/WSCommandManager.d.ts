@@ -17,6 +17,10 @@ interface Payload {
      * payload for wscommand
      */
     payload: Uint8Array;
+    /**
+     * raw data
+     */
+    raw: Uint8Array;
 }
 interface PayloadChunk extends Payload {
     /**
