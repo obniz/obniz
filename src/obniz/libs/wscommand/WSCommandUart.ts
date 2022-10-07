@@ -5,22 +5,12 @@
 import { WSCommandAbstract } from './WSCommandAbstract';
 
 export class WSCommandUart extends WSCommandAbstract {
-  public module: number;
-  public _CommandInit: number;
-  public _CommandDeinit: number;
-  public _CommandSend: number;
-  public _CommandRecv: number;
+  module = 4;
 
-  constructor() {
-    super();
-    this.module = 4;
-
-    this._CommandInit = 0;
-    this._CommandDeinit = 1;
-    this._CommandSend = 2;
-    this._CommandRecv = 3;
-  }
-
+  _CommandInit = 0;
+  _CommandDeinit = 1;
+  _CommandSend = 2;
+  _CommandRecv = 3;
   // Commands
 
   public init(params: any, module: any) {

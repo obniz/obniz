@@ -5,15 +5,9 @@
 import { WSCommandAbstract } from './WSCommandAbstract';
 
 export class WSCommandMeasurement extends WSCommandAbstract {
-  public module: number;
-  public _CommandMeasurementEcho: number;
+  module = 12;
 
-  constructor() {
-    super();
-    this.module = 12;
-
-    this._CommandMeasurementEcho = 0;
-  }
+  _CommandMeasurementEcho = 0;
 
   // Commands
 

@@ -9,7 +9,7 @@ const jsonBinaryConverter_1 = require("./jsonBinaryConverter");
 const WSCommandAbstract_1 = require("./WSCommandAbstract");
 class WSCommandWiFi extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 14;
         this._CommandScan = 0;
     }

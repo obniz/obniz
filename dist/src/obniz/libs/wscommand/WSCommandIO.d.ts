@@ -11,7 +11,6 @@ export declare class WSCommandIO extends WSCommandAbstract {
     _CommandOutputType: number;
     _CommandPullResisterType: number;
     _CommandEnd: number;
-    constructor();
     output(value: any, id: number): void;
     outputDetail(params: any, id: number): void;
     input(params: any, id: number): void;

@@ -5,17 +5,10 @@
 import { WSCommandAbstract } from './WSCommandAbstract';
 
 export class WSCommandPlugin extends WSCommandAbstract {
-  public module: number;
-  public _CommandReceive: number; // js <- device
-  public _CommandSend: number; // js -> device
+  module = 15;
 
-  constructor() {
-    super();
-    this.module = 15;
-
-    this._CommandSend = 0;
-    this._CommandReceive = 1;
-  }
+  _CommandSend = 0;
+  _CommandReceive = 1;
 
   public send(params: any, index: any) {
     const buf = new Uint8Array(params.send);

@@ -5,18 +5,10 @@
 import { WSCommandAbstract } from './WSCommandAbstract';
 
 export class WSCommandSwitch extends WSCommandAbstract {
-  public module: number;
-  public _CommandNotifyValue: number;
-  public _CommandOnece: number;
+  module = 9;
 
-  constructor() {
-    super();
-    this.module = 9;
-
-    this._CommandNotifyValue = 0;
-    this._CommandOnece = 1;
-  }
-
+  _CommandNotifyValue = 0;
+  _CommandOnece = 1;
   // Commands
 
   public get(params: any) {

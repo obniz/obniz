@@ -5,22 +5,12 @@
 import { WSCommandAbstract } from './WSCommandAbstract';
 
 export class WSCommandAD extends WSCommandAbstract {
-  public module: number;
-  public _CommandInitNormalInterval: number;
-  public _CommandDeinit: number;
-  public _CommandNotifyValue: number;
-  public _CommandDoOnece: number;
+  module = 7;
 
-  constructor() {
-    super();
-    this.module = 7;
-
-    this._CommandInitNormalInterval = 0;
-    this._CommandDeinit = 1;
-    this._CommandNotifyValue = 2;
-    this._CommandDoOnece = 3;
-  }
-
+  _CommandInitNormalInterval = 0;
+  _CommandDeinit = 1;
+  _CommandNotifyValue = 2;
+  _CommandDoOnece = 3;
   // Commands
 
   public get(params: any, no: any) {

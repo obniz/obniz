@@ -8,7 +8,7 @@ exports.WSCommandSPI = void 0;
 const WSCommandAbstract_1 = require("./WSCommandAbstract");
 class WSCommandSPI extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 5;
         this._CommandInit = 0;
         this._CommandDeinit = 1;

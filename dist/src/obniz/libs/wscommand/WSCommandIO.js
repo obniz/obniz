@@ -30,7 +30,7 @@ const COMMAND_IO_MUTEX_NAMES = {
 };
 class WSCommandIO extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 2;
         this._CommandOutput = 0;
         this._CommandInputStream = 1;

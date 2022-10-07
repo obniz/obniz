@@ -23,13 +23,12 @@ interface PayloadChunk {
     next: Uint8Array;
 }
 export declare class WSCommandManager {
-    commandClasses: {
-        [key: string]: WSCommandConstructor;
-    };
+    private commandClasses;
     private commands;
     static get schema(): any;
     addCommandClass(name: string, classObj: WSCommandConstructor): void;
     createCommandInstances(): void;
+    getCommandInstance(name: string): WSCommandAbstract;
     framed(module: number, func: number, payload: Uint8Array | null): Uint8Array;
     /**
      * Dequeue a next wscommands from binary array.

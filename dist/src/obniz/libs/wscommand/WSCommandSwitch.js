@@ -8,7 +8,7 @@ exports.WSCommandSwitch = void 0;
 const WSCommandAbstract_1 = require("./WSCommandAbstract");
 class WSCommandSwitch extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 9;
         this._CommandNotifyValue = 0;
         this._CommandOnece = 1;

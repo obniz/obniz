@@ -5,23 +5,13 @@
 import { WSCommandAbstract } from './WSCommandAbstract';
 
 export class WSCommandI2C extends WSCommandAbstract {
-  public module: number;
-  public _CommandInit: number;
-  public _CommandDeinit: number;
-  public _CommandWrite: number;
-  public _CommandRead: number;
-  public _CommandSlvWritten: number;
+  module = 6;
 
-  constructor() {
-    super();
-    this.module = 6;
-
-    this._CommandInit = 0;
-    this._CommandDeinit = 1;
-    this._CommandWrite = 2;
-    this._CommandRead = 3;
-    this._CommandSlvWritten = 4;
-  }
+  _CommandInit = 0;
+  _CommandDeinit = 1;
+  _CommandWrite = 2;
+  _CommandRead = 3;
+  _CommandSlvWritten = 4;
 
   // Commands
 

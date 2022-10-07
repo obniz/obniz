@@ -11,7 +11,7 @@ export declare class WSCommandPWM extends WSCommandAbstract {
     _CommandSetFreq: number;
     _CommandSetDuty: number;
     _CommandAMModulate: number;
-    pwms: any;
+    pwms: any[];
     constructor();
     resetInternalStatus(): void;
     init(params: any, module: any): void;

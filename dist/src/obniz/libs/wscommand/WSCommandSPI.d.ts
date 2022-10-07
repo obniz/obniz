@@ -9,8 +9,6 @@ export declare class WSCommandSPI extends WSCommandAbstract {
     _CommandDeinit: number;
     _CommandWriteRead: number;
     _CommandWrite: number;
-    ioNotUsed: any;
-    constructor();
     initMaster(params: any, module: any): void;
     deinit(params: any, module: any): void;
     write(params: any, module: any): void;

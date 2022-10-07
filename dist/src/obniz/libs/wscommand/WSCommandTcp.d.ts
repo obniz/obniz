@@ -11,7 +11,6 @@ export declare class WSCommandTcp extends WSCommandAbstract {
     _CommandConnection: number;
     _CommandWrite: number;
     _CommandRead: number;
-    constructor();
     connect(params: any, index: any): void;
     disconnect(params: any, index: any): void;
     write(params: any, index: any): void;

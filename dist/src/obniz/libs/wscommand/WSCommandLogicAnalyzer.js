@@ -8,7 +8,7 @@ exports.WSCommandLogicAnalyzer = void 0;
 const WSCommandAbstract_1 = require("./WSCommandAbstract");
 class WSCommandLogicAnalyzer extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 10;
         this._CommandInit = 0;
         this._CommandDeinit = 1;

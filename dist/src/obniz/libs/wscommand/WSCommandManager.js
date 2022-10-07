@@ -25,6 +25,9 @@ class WSCommandManager {
             this.commands[name] = new classObj();
         }
     }
+    getCommandInstance(name) {
+        return this.commands[name];
+    }
     framed(module, func, payload) {
         let payload_length = 0;
         if (payload) {
