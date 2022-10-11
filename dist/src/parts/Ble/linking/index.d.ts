@@ -3,7 +3,7 @@
  * @module Parts.Linking
  */
 import Obniz from '../../../obniz';
-import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/BleRemotePeripheral';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 import LinkingAdvertising from './modules/advertising';
 import LinkingDevice from './modules/device';
