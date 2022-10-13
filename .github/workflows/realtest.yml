@@ -1,15 +1,15 @@
 name: Realtest only BLE
-
-workflow_dispatch:
-  inputs:
-    targetObnizId:
-      type: string
-      required: true
-      description: 'Test target obnizID (XXXX-XXXX)'
-    supportObnizId:
-      type: string
-      required: true
-      description: 'Test support obnizID (XXXX-XXXX)'
+on:
+  workflow_dispatch:
+    inputs:
+      targetObnizId:
+        type: string
+        required: true
+        description: 'Test target obnizID (XXXX-XXXX)'
+      supportObnizId:
+        type: string
+        required: true
+        description: 'Test support obnizID (XXXX-XXXX)'
 
 jobs:
   build-test:
