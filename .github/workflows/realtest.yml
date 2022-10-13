@@ -66,6 +66,8 @@ jobs:
           OBNIZ_DEVICE: ${{ github.event.inputs.targetObnizHw }}
           OBNIZ_ID: ${{ github.event.inputs.targetObnizId }}
           OBNIZA_ID: ${{ github.event.inputs.supportObnizId }}
+          IGNORE_TCP_TEST: "true"
+
 
   slack-notify:
     name: workflow notification to slack

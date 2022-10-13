@@ -7,7 +7,6 @@ const LOCAL_IP = '';
 // Select Test Board
 
 let json = require('./board/obniz_1y_check_io.json');
-json = require('./board/blewifi_gw.json');
 
 if (process.env.OBNIZ_DEVICE === 'devkitc') {
   json = require('./board/esp32devkitc_check_io.json');
