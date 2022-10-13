@@ -1,20 +1,24 @@
-const chai = require('chai');
+const chai = require("chai");
 const expect = chai.expect;
-const config = require('../config.js');
+const config = require("../config.js");
 
 let obnizA;
 let checkBoard;
 let check_io;
 
-describe('6-i2c-exchange', function () {
+describe("6-i2c-exchange", function () {
   this.timeout(10000);
 
-  before(() => {
+  before(function () {
     return new Promise((resolve) => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
         checkBoard = config.checkBoard;
-        check_io = config.check_io.filter((io) => io.obniz === 'obnizA');
+        check_io = config.check_io.filter((io) => io.obniz === "obnizA");
+        if (check_io.length === 0) {
+          this.skip();
+        }
+
         resolve();
       });
     });
@@ -29,24 +33,24 @@ describe('6-i2c-exchange', function () {
     }
   });
 
-  it('1k data', async () => {
+  it("1k data", async () => {
     const sender = checkBoard.getFreeI2C();
     sender.start({
-      mode: 'master',
+      mode: "master",
       sda: check_io[0].board_io,
       scl: check_io[1].board_io,
       clock: 100 * 1000,
-      pull: '5v',
+      pull: "5v",
     });
     await checkBoard.pingWait();
     const receiver = obnizA.getFreeI2C();
     receiver.start({
-      mode: 'slave',
+      mode: "slave",
       sda: check_io[0].obniz_io,
       scl: check_io[1].obniz_io,
       clock: 100 * 1000,
       slave_address: 0x50,
-      pull: '5v',
+      pull: "5v",
     });
     await obnizA.pingWait();
 
@@ -72,24 +76,24 @@ describe('6-i2c-exchange', function () {
     sender.end();
   });
 
-  it('1k data again', async () => {
+  it("1k data again", async () => {
     const sender = checkBoard.getFreeI2C();
     sender.start({
-      mode: 'master',
+      mode: "master",
       sda: check_io[0].board_io,
       scl: check_io[1].board_io,
       clock: 100 * 1000,
-      pull: '5v',
+      pull: "5v",
     });
     await checkBoard.pingWait();
     const receiver = obnizA.getFreeI2C();
     receiver.start({
-      mode: 'slave',
+      mode: "slave",
       sda: check_io[0].obniz_io,
       scl: check_io[1].obniz_io,
       clock: 100 * 1000,
       slave_address: 0x50,
-      pull: '5v',
+      pull: "5v",
     });
     await obnizA.pingWait();
 
@@ -115,24 +119,24 @@ describe('6-i2c-exchange', function () {
     sender.end();
   });
 
-  it('1k data counter direction', async () => {
+  it("1k data counter direction", async () => {
     const sender = obnizA.getFreeI2C();
     sender.start({
-      mode: 'master',
+      mode: "master",
       sda: check_io[0].obniz_io,
       scl: check_io[1].obniz_io,
       clock: 100 * 1000,
-      pull: '5v',
+      pull: "5v",
     });
     await obnizA.pingWait();
     const receiver = checkBoard.getFreeI2C();
     receiver.start({
-      mode: 'slave',
+      mode: "slave",
       sda: check_io[0].board_io,
       scl: check_io[1].board_io,
       clock: 100 * 1000,
       slave_address: 0x50,
-      pull: '5v',
+      pull: "5v",
     });
     await checkBoard.pingWait();
 

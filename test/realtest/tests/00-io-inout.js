@@ -9,7 +9,7 @@ let check_read;
 describe('0-io-input', function () {
   this.timeout(10000);
 
-  before(() => {
+  before(function () {
     return new Promise((resolve) => {
       config.waitForConenct(() => {
         checkBoard = config.checkBoard;
@@ -19,6 +19,9 @@ describe('0-io-input', function () {
         check_read = config.check_io.filter((io) =>
           io.mode.some((mode) => mode === 'digitalRead')
         );
+        if (check_io.length === 0) {
+          this.skip()
+        }
         resolve();
       });
     });

@@ -5,11 +5,21 @@ on:
       targetObnizId:
         type: string
         required: true
-        description: 'Test target obnizID (XXXX-XXXX)'
+        description: "Test target obnizID (XXXX-XXXX)"
+
+      targetObnizHw:
+        type: choice
+        description: "Test target obniz hardware type"
+        options:
+          - blewifi_gw
+          - blewifi_gw2
+          - board
+          - board1y
+
       supportObnizId:
         type: string
         required: true
-        description: 'Test support obnizID (XXXX-XXXX)'
+        description: "Test support obnizID (XXXX-XXXX)"
 
 jobs:
   build-test:
@@ -53,7 +63,7 @@ jobs:
           max_attempts: 3
           command: npm run realtest
         env:
-          OBNIZ_DEVICE: 'devkitc'
+          OBNIZ_DEVICE: ${{ targetObnizHw }}
           OBNIZ_ID: ${{ github.event.inputs.targetObnizId }}
           OBNIZA_ID: ${{ github.event.inputs.supportObnizId }}
 
