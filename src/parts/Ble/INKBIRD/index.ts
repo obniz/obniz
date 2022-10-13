@@ -39,18 +39,11 @@ export default class INKBIRD implements ObnizPartsBleInterface {
    * INKBIRDかどうか
    */
   public static isDevice(peripheral: BleRemotePeripheral): boolean {
-    // if (!peripheral.localName?.startsWith('sps')) {
-    //   return false;
-    // }
-    // if (peripheral.localName?.startsWith('sps')) {
-    //   console.log(peripheral);
-    // }
-    // console.log(INKBIRD._deviceAdvAnalyzer.validate(peripheral.adv_data));
     if (peripheral.adv_data && peripheral.scan_resp) {
-      return INKBIRD._deviceAdvAnalyzer.validate([
-        ...peripheral.adv_data,
-        ...peripheral.scan_resp,
-      ]);
+      return (
+        INKBIRD._deviceAdvAnalyzer.validate(peripheral.adv_data) &&
+        INKBIRD._deviceScanResponseAnalyzer.validate(peripheral.scan_resp)
+      );
     } else {
       return false;
     }
@@ -81,9 +74,9 @@ export default class INKBIRD implements ObnizPartsBleInterface {
       return null;
     }
 
-    const temperature = INKBIRD._deviceAdvAnalyzer.getData(
-      [...peripheral.adv_data, ...peripheral.scan_resp],
-      'manufacture',
+    const temperature = INKBIRD._deviceScanResponseAnalyzer.getData(
+      peripheral.scan_resp,
+      'scanData',
       'temperature'
     );
     if (!temperature) {
@@ -92,9 +85,9 @@ export default class INKBIRD implements ObnizPartsBleInterface {
 
     const temperatureRaw = Buffer.from(temperature).readInt16LE(0);
 
-    const humidity = INKBIRD._deviceAdvAnalyzer.getData(
-      [...peripheral.adv_data, ...peripheral.scan_resp],
-      'manufacture',
+    const humidity = INKBIRD._deviceScanResponseAnalyzer.getData(
+      peripheral.scan_resp,
+      'scanData',
       'humidity'
     );
 
@@ -116,6 +109,10 @@ export default class INKBIRD implements ObnizPartsBleInterface {
     .addTarget('length', [0x03])
     .addTarget('type', [0x02])
     .addTargetByLength('uuid', 2)
+    .groupEnd();
+
+  private static _deviceScanResponseAnalyzer = new BleAdvBinaryAnalyzer()
+    .groupStart('scanData')
     .addTarget('length2', [0x04])
     .addTarget('type2', [0x09])
     .addTarget('deviceName', [0x73, 0x70, 0x73])
@@ -123,7 +120,10 @@ export default class INKBIRD implements ObnizPartsBleInterface {
     .addTarget('dataType', [0xff])
     .addTargetByLength('temperature', 2)
     .addTargetByLength('humidity', 2)
-    .addTargetByLength('reserved', 5)
+    .addTargetByLength('proveType', 1)
+    .addTargetByLength('crc', 2)
+    .addTargetByLength('battery', 1)
+    .addTargetByLength('reserved', 1)
     .groupEnd();
 
   public _peripheral: BleRemotePeripheral | null = null;
