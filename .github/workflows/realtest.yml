@@ -63,7 +63,7 @@ jobs:
           max_attempts: 3
           command: npm run realtest
         env:
-          OBNIZ_DEVICE: ${{ targetObnizHw }}
+          OBNIZ_DEVICE: ${{ github.event.inputs.targetObnizHw }}
           OBNIZ_ID: ${{ github.event.inputs.targetObnizId }}
           OBNIZA_ID: ${{ github.event.inputs.supportObnizId }}
 
