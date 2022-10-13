@@ -1,4 +1,4 @@
-name: Realtest only BLE
+name: Realtest
 on:
   workflow_dispatch:
     inputs:

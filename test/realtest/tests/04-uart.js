@@ -14,7 +14,7 @@ describe('4-uart', function () {
         checkBoard = config.checkBoard;
         check_io = config.check_io.filter((io) => io.obniz === 'obnizA');
         if (check_io.length === 0) {
-          this.skip()
+          this.skip();
         }
         resolve();
       });

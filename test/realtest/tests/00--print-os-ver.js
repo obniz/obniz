@@ -1,18 +1,11 @@
-const chai = require('chai');
-const expect = chai.expect;
-
 const config = require('../config.js');
 
-let checkBoard;
-let check_output_io;
-let check_input_io;
 describe('00--print-os-ver', function () {
   this.timeout(15000);
 
   before(() => {
     return new Promise((resolve) => {
       config.waitForConenct(() => {
-        checkBoard = config.checkBoard;
         resolve();
       });
     });

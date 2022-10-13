@@ -20,7 +20,7 @@ describe('0-io-input', function () {
           io.mode.some((mode) => mode === 'digitalRead')
         );
         if (check_io.length === 0) {
-          this.skip()
+          this.skip();
         }
         resolve();
       });

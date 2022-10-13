@@ -15,7 +15,7 @@ describe('2-io-animation', function () {
           io.mode.some((mode) => mode === 'digitalWrite')
         );
         if (check_io.length === 0) {
-          this.skip()
+          this.skip();
         }
         resolve();
       });
