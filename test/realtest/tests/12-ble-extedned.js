@@ -8,11 +8,16 @@ let checkBoard;
 
 describe('8-ble', function () {
   this.timeout(120000);
-  before(async () => {
+  before(async function () {
     await new Promise((resolve) => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
         checkBoard = config.checkBoard;
+        if (checkBoard.ble && checkBoard.ble.extended === true) {
+          // ok
+        } else {
+          this.skip();
+        }
         resolve();
       });
     });

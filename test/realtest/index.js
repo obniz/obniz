@@ -3,6 +3,7 @@ const fs = require('fs');
 
 const config = require('./config.js');
 
+console.log(`${process.env.OBNIZ_DEVICE} のデバイスをチェックするよ`); // eslint-disable-line rulesdir/non-ascii
 console.log(
   `obniz ${config.checkBoard_ID} ${config.obnizA_ID} ${config.obnizB_ID}を` + // eslint-disable-line rulesdir/non-ascii
     'つかうよ!\n3つを"同じ"電源に繋いでね。' // eslint-disable-line rulesdir/non-ascii

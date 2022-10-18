@@ -4,7 +4,7 @@ const expect = chai.expect;
 let obnizA;
 let checkBoard;
 
-describe('9-ble-security', function () {
+describe.skip('9-ble-security', function () {
   this.timeout(30000);
 
   beforeEach(() => {

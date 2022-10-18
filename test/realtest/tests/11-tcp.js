@@ -18,7 +18,11 @@ const tcpArray = [];
 describe('11-tcp', function () {
   this.timeout(30000);
 
-  before(() => {
+  before(function () {
+    if (process.env.IGNORE_TCP_TEST === 'true') {
+      this.skip();
+      return;
+    }
     return new Promise((resolve) => {
       config.waitForConenct(async () => {
         checkBoard = config.checkBoard;
