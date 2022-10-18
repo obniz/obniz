@@ -36,5 +36,5 @@ export default class XBee implements ObnizPartsInterface {
     sendCommand(): void;
     enterAtMode(): void;
     exitAtMode(): void;
-    configWait(config: any): Promise<unknown>;
+    configWait(config: any): Promise<void>;
 }

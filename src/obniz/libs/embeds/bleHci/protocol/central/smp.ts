@@ -22,6 +22,7 @@ import {
   SmpEventTypes,
   SmpCommon,
 } from '../common/smp';
+import { createSerialExecutor } from '@9wick/serial-executor';
 
 /**
  * @ignore
@@ -76,6 +77,8 @@ class Smp extends EventEmitter<SmpEventTypes> {
   private _ltk: Buffer | null = null;
   private _options?: SmpEncryptOptions = undefined;
   private _smpCommon = new SmpCommon();
+  private _serialExecutor = createSerialExecutor();
+  private _pairingPromise: Promise<void> | null = null;
 
   constructor(
     aclStream: AclStream,
@@ -124,14 +127,36 @@ class Smp extends EventEmitter<SmpEventTypes> {
   }
 
   public async pairingWait(options?: SmpEncryptOptions) {
+    // allow only once for connection
+
+    if (this._pairingPromise) {
+      return await this._pairingPromise;
+    }
+    this._pairingPromise = this._serialExecutor.execute(async () => {
+      return await this.pairingSingleQueueWait(options);
+    });
+    return await this._pairingPromise;
+  }
+
+  public async pairingSingleQueueWait(
+    options?: SmpEncryptOptions
+  ): Promise<void> {
     this._options = { ...this._options, ...options };
+
+    // if already paired
+    if (this.hasKeys()) {
+      if (this._options && this._options.onPairedCallback) {
+        this._options.onPairedCallback(this.getKeys());
+      }
+      return;
+    }
     if (this._options && this._options.keys) {
       const result = await this.pairingWithKeyWait(this._options.keys);
 
       if (this._options && this._options.onPairedCallback) {
         this._options.onPairedCallback(this.getKeys());
       }
-      return result;
+      return;
     }
     // phase 1 : Pairing Feature Exchange
     this.debug(`Going to Pairing`);
@@ -450,7 +475,8 @@ class Smp extends EventEmitter<SmpEventTypes> {
         if (this._options && this._options.onPairingFailed) {
           this._options.onPairingFailed(e);
         } else {
-          throw e;
+          e.cause = new Error('pairing failed when remote device request');
+          console.error(e);
         }
       });
   }
@@ -468,6 +494,13 @@ class Smp extends EventEmitter<SmpEventTypes> {
     this._ltk = keys.ltk ? Buffer.from(keys.ltk, 'hex') : null;
     this._ediv = keys.ediv ? Buffer.from(keys.ediv, 'hex') : null;
     this._rand = keys.rand ? Buffer.from(keys.rand, 'hex') : null;
+  }
+
+  public hasKeys() {
+    if (!this._ltk || !this._rand || !this._ediv) {
+      return false;
+    }
+    return true;
   }
 
   public getKeys() {
@@ -576,8 +609,9 @@ class Smp extends EventEmitter<SmpEventTypes> {
 
   private _pairingFailReject(): Promise<Buffer> {
     return new Promise((resolve, reject) => {
+      const cause = new Error('stacktrace');
       this.on('fail', (reason) => {
-        reject(new ObnizBlePairingRejectByRemoteError(reason));
+        reject(new ObnizBlePairingRejectByRemoteError(reason, { cause }));
       });
     });
   }

@@ -189,7 +189,7 @@ export default class LinkingDevice {
   }
 
   public _wait(msec: number) {
-    const promise = new Promise((resolve, reject) => {
+    const promise = new Promise<void>((resolve, reject) => {
       setTimeout(() => {
         resolve();
       }, msec);

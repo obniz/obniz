@@ -159,7 +159,7 @@ class BleScan {
                         await this.endWait();
                     }
                     catch (e) {
-                        this.finish(e);
+                        this.finish(e instanceof Error ? e : new Error(`${e}`));
                     }
                 }, timeout * 1000);
             }
@@ -201,7 +201,7 @@ class BleScan {
             });
             this.emitter.once('onfinish', (peripherals, error) => {
                 if (error) {
-                    assert_1.rejects(error);
+                    (0, assert_1.rejects)(error);
                     return;
                 }
                 resolve(null);

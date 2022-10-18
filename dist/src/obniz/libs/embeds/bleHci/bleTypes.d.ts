@@ -4,12 +4,13 @@
  */
 import BleCharacteristic from './bleCharacteristic';
 import BleDescriptor from './bleDescriptor';
+import { Brand } from '../../utils/brand';
 /**
  * BLE UUID. Case is ignored. So aa00 and AA00 are the same.
  */
 export declare type UUID = string;
-export declare type BleDeviceAddress = string;
-export declare type Handle = number;
+export declare type BleDeviceAddress = Brand<string, 'BleDeviceAddress'>;
+export declare type Handle = Brand<number, 'BleHandle'>;
 export declare type BleDeviceType = 'ble' | 'dumo' | 'breder';
 export declare type BleDeviceAddressType = 'public' | 'random' | 'rpa_public' | 'rpa_random';
 export declare type BleEventType = 'connectable_advertisemnt' | 'connectable_directed_advertisemnt' | 'scannable_advertising' | 'non_connectable_advertising' | 'scan_response';

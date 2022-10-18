@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.LED = void 0;
 const Base_1 = require("./Base");
 const Error_1 = require("../util/Error");
 class LED extends Base_1.Base {
@@ -19,9 +20,8 @@ class LED extends Base_1.Base {
      * @returns
      */
     static isMESHblock(name, opt_serialnumber = '') {
-        var _a;
         return super.isMESHblock(name, opt_serialnumber)
-            ? ((_a = name) === null || _a === void 0 ? void 0 : _a.indexOf('MESH-100LE')) !== -1
+            ? (name === null || name === void 0 ? void 0 : name.indexOf('MESH-100LE')) !== -1
             : false;
     }
     /**

@@ -513,7 +513,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   }
 
   public async discoverIncludedServicesWait(
-    peripheralUuid: string,
+    peripheralUuid: BleDeviceAddress,
     serviceUuid: UUID,
     serviceUuids: UUID[]
   ) {
@@ -605,7 +605,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   }
 
   public async discoverDescriptorsWait(
-    peripheralUuid: UUID,
+    peripheralUuid: BleDeviceAddress,
     serviceUuid: UUID,
     characteristicUuid: UUID
   ): Promise<UUID[]> {
@@ -614,7 +614,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   }
 
   public async readValueWait(
-    peripheralUuid: UUID,
+    peripheralUuid: BleDeviceAddress,
     serviceUuid: UUID,
     characteristicUuid: UUID,
     descriptorUuid: UUID
@@ -696,6 +696,18 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
         // console.error(e);
       });
     // this.onLeConnUpdateComplete(); is nop
+  }
+
+  public async isPairingFinishedWait(peripheralUuid: BleDeviceAddress) {
+    const gatt: GattCentral = this.getGatt(peripheralUuid);
+    const result = gatt.hasEncryptKeys();
+    return result;
+  }
+
+  public async getPairingKeysWait(peripheralUuid: BleDeviceAddress) {
+    const gatt: GattCentral = this.getGatt(peripheralUuid);
+    const result = gatt.getEncryptKeys();
+    return result;
   }
 
   public async pairingWait(

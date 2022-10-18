@@ -137,6 +137,17 @@ class GattCentral extends EventEmitter<GattEventTypes> {
     };
   }
 
+  public hasEncryptKeys(): boolean {
+    return this._aclStream._smp.hasKeys();
+  }
+
+  public getEncryptKeys(): string | null {
+    if (!this.hasEncryptKeys()) {
+      return null;
+    }
+    return this._aclStream._smp.getKeys();
+  }
+
   public async encryptWait(options: SmpEncryptOptions): Promise<string> {
     const result = await this._serialPromiseQueueWait<string>(async () => {
       await this._aclStream.encryptWait(options);
@@ -995,7 +1006,6 @@ class GattCentral extends EventEmitter<GattEventTypes> {
         ATT.OP_EXECUTE_WRITE_RESP
       );
     }
-    throw new ObnizBleOpError();
   }
 
   private getService(serviceUuid: UUID): GattService {
@@ -1077,6 +1087,7 @@ class GattCentral extends EventEmitter<GattEventTypes> {
         this.off('end', disconnectReject);
       }
     };
+    const errorForStacktrace = new Error('stacktrace');
 
     let disconnectReject: null | EventEmitter.ListenerFn = null;
     const doPromise = Promise.all(this._commandPromises)
@@ -1096,12 +1107,14 @@ class GattCentral extends EventEmitter<GattEventTypes> {
         },
         (error) => {
           onfinish();
+          error.cause = errorForStacktrace;
           return Promise.reject(error);
         }
       );
     const disconnectPromise = new Promise((resolve, reject) => {
       disconnectReject = (reason: any) => {
         onfinish();
+        reason.cause = errorForStacktrace;
         reject(reason);
       };
       this.on('end', disconnectReject);

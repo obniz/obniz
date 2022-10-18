@@ -1400,7 +1400,7 @@ class Hci extends eventemitter3_1.default {
             interval: data.readUInt16LE(10) * 1.25,
             latency: data.readUInt16LE(12),
             supervisionTimeout: data.readUInt16LE(14) * 10,
-            masterClockAccuracy: data.readUInt8(16),
+            masterClockAccuracy: data.readUInt8(16), // TODO: multiplier?
         };
     }
     parseLeConnectionCompleteEventData(data) {
@@ -1414,14 +1414,14 @@ class Hci extends eventemitter3_1.default {
         return {
             handle: data.readUInt16LE(0),
             role: data.readUInt8(2),
-            addressType: (_a = addressTypeList[data.readUInt8(3)], (_a !== null && _a !== void 0 ? _a : 'undefined')),
+            addressType: (_a = addressTypeList[data.readUInt8(3)]) !== null && _a !== void 0 ? _a : 'undefined',
             address: bleHelper_1.default.buffer2reversedHex(data.slice(4, 10), ':'),
             localResolvablePrivateAddress: bleHelper_1.default.buffer2reversedHex(data.slice(10, 16), ':'),
             peerResolvablePrivateAddress: bleHelper_1.default.buffer2reversedHex(data.slice(16, 22), ':'),
             interval: data.readUInt16LE(22) * 1.25,
             latency: data.readUInt16LE(24),
             supervisionTimeout: data.readUInt16LE(26) * 10,
-            masterClockAccuracy: data.readUInt8(28),
+            masterClockAccuracy: data.readUInt8(28), // TODO: multiplier?
         };
     }
     processLeConnComplete(status, data, onConnectCallback) {
@@ -1653,7 +1653,7 @@ class Hci extends eventemitter3_1.default {
     }
     onHciAclData(data) {
         const flags = data.readUInt16LE(1) >> 12;
-        const handle = data.readUInt16LE(1) & 0x0fff;
+        const handle = (data.readUInt16LE(1) & 0x0fff);
         if (COMMANDS.ACL_START === flags) {
             const cid = data.readUInt16LE(7);
             const length = data.readUInt16LE(5);
@@ -1826,7 +1826,7 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(0x01, 3);
         if (!(param in options)) {
-            throw new ObnizError_1.ObnizParameterError(`${param}`, `BLE HCI ${commandName} param`);
+            throw new ObnizError_1.ObnizParameterError(`${String(param)}`, `BLE HCI ${commandName} param`);
         }
         const val = options[param];
         cmd.writeUInt8(val, 4);

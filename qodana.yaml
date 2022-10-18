@@ -1,0 +1,13 @@
+version: "1.0"
+linter: jetbrains/qodana-js:2022.2-eap
+bootstrap: npm install
+profile:
+  path: .idea/inspectionProfiles/ForShared.xml
+exclude:
+  - name: All
+    paths:
+      - dist
+      - examples
+      - obniz.js
+      - docs
+

@@ -5,7 +5,7 @@ Dot matrix LED. driver: MAX7219.
 
 [http://akizukidenshi.com/catalog/g/gM-09984/](http://akizukidenshi.com/catalog/g/gM-09984/)
 
-![](./max7129.jpg)
+![](max7219.jpg)
 
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/5teMmFK1_FY" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>

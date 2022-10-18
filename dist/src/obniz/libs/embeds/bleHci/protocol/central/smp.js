@@ -13,6 +13,7 @@ const ObnizError_1 = require("../../../../../ObnizError");
 const bleHelper_1 = __importDefault(require("../../bleHelper"));
 const crypto_1 = __importDefault(require("../common/crypto"));
 const smp_1 = require("../common/smp");
+const serial_executor_1 = require("@9wick/serial-executor");
 /**
  * @ignore
  */
@@ -31,6 +32,8 @@ class Smp extends eventemitter3_1.default {
         this._ltk = null;
         this._options = undefined;
         this._smpCommon = new smp_1.SmpCommon();
+        this._serialExecutor = (0, serial_executor_1.createSerialExecutor)();
+        this._pairingPromise = null;
         this.debugHandler = (...param) => {
             // do nothing.
         };
@@ -58,13 +61,30 @@ class Smp extends eventemitter3_1.default {
         this._options = options;
     }
     async pairingWait(options) {
+        // allow only once for connection
+        if (this._pairingPromise) {
+            return await this._pairingPromise;
+        }
+        this._pairingPromise = this._serialExecutor.execute(async () => {
+            return await this.pairingSingleQueueWait(options);
+        });
+        return await this._pairingPromise;
+    }
+    async pairingSingleQueueWait(options) {
         this._options = Object.assign(Object.assign({}, this._options), options);
+        // if already paired
+        if (this.hasKeys()) {
+            if (this._options && this._options.onPairedCallback) {
+                this._options.onPairedCallback(this.getKeys());
+            }
+            return;
+        }
         if (this._options && this._options.keys) {
             const result = await this.pairingWithKeyWait(this._options.keys);
             if (this._options && this._options.onPairedCallback) {
                 this._options.onPairedCallback(this.getKeys());
             }
-            return result;
+            return;
         }
         // phase 1 : Pairing Feature Exchange
         this.debug(`Going to Pairing`);
@@ -200,7 +220,7 @@ class Smp extends eventemitter3_1.default {
                 rspRandomBuffers.push(buf2.slice(1));
             }
         }
-        const res = crypto_1.default.generateLtkEaEb(ecdh.ecdh, peerPublicKey, this._ia, this._iat, this._ra, this._rat, initRandomValue, rspRandomBuffers[rspRandomBuffers.length - 1], (passkeyNumber !== null && passkeyNumber !== void 0 ? passkeyNumber : 0), 0x10, // max key size
+        const res = crypto_1.default.generateLtkEaEb(ecdh.ecdh, peerPublicKey, this._ia, this._iat, this._ra, this._rat, initRandomValue, rspRandomBuffers[rspRandomBuffers.length - 1], passkeyNumber !== null && passkeyNumber !== void 0 ? passkeyNumber : 0, 0x10, // max key size
         this._preq ? this._preq.slice(1, 4) : Buffer.alloc(3), this._pres ? this._pres.slice(1, 4) : Buffer.alloc(3));
         const remoteDhkeyPromise = this._readWait(smp_1.SMP.PAIRING_DHKEY_CHECK);
         this.debug(`send PAIRING_DHKEY_CHECK`);
@@ -232,7 +252,7 @@ class Smp extends eventemitter3_1.default {
         this._pcnf = data;
         this.write(Buffer.concat([
             Buffer.from([smp_1.SMP.PAIRING_RANDOM]),
-            (_a = this._r, (_a !== null && _a !== void 0 ? _a : Buffer.alloc(0))),
+            (_a = this._r) !== null && _a !== void 0 ? _a : Buffer.alloc(0),
         ]));
     }
     async handlePairingRandomWait(data) {
@@ -284,7 +304,8 @@ class Smp extends eventemitter3_1.default {
                 this._options.onPairingFailed(e);
             }
             else {
-                throw e;
+                e.cause = new Error('pairing failed when remote device request');
+                console.error(e);
             }
         });
     }
@@ -301,6 +322,12 @@ class Smp extends eventemitter3_1.default {
         this._ltk = keys.ltk ? Buffer.from(keys.ltk, 'hex') : null;
         this._ediv = keys.ediv ? Buffer.from(keys.ediv, 'hex') : null;
         this._rand = keys.rand ? Buffer.from(keys.rand, 'hex') : null;
+    }
+    hasKeys() {
+        if (!this._ltk || !this._rand || !this._ediv) {
+            return false;
+        }
+        return true;
     }
     getKeys() {
         const keys = {
@@ -353,7 +380,7 @@ class Smp extends eventemitter3_1.default {
                 }),
                 0x10,
                 this.isSecureConnectionMode() ? 0x02 : 0x00,
-                this.isSecureConnectionMode() ? 0x02 : 0x01,
+                this.isSecureConnectionMode() ? 0x02 : 0x01, // Responder key distribution: EncKey   peripheral -> central
             ]);
         }
         else {
@@ -371,7 +398,7 @@ class Smp extends eventemitter3_1.default {
                 }),
                 0x10,
                 this.isSecureConnectionMode() ? 0x02 : 0x00,
-                this.isSecureConnectionMode() ? 0x02 : 0x01,
+                this.isSecureConnectionMode() ? 0x02 : 0x01, // Responder key distribution: EncKey
             ]);
         }
         this.write(this._preq);
@@ -396,8 +423,9 @@ class Smp extends eventemitter3_1.default {
     }
     _pairingFailReject() {
         return new Promise((resolve, reject) => {
+            const cause = new Error('stacktrace');
             this.on('fail', (reason) => {
-                reject(new ObnizError_1.ObnizBlePairingRejectByRemoteError(reason));
+                reject(new ObnizError_1.ObnizBlePairingRejectByRemoteError(reason, { cause }));
             });
         });
     }

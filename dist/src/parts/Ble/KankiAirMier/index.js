@@ -55,8 +55,8 @@ class KankiAirMier {
         const deviceName = Buffer.from(allData.manufacture.deviceName).toString('utf8');
         return {
             co2: co2Raw,
-            temperature: round_to_1.default(temperatureRaw / 10, 1),
-            humidity: round_to_1.default(humidityRaw / 10, 1),
+            temperature: (0, round_to_1.default)(temperatureRaw / 10, 1),
+            humidity: (0, round_to_1.default)(humidityRaw / 10, 1),
             sequenceNumber,
             deviceName,
         };

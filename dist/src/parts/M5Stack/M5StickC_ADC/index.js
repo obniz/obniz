@@ -28,7 +28,7 @@ class M5StickC_ADC {
             PGA_1: 0x00,
             PGA_2: 0x01,
             PGA_4: 0x02,
-            PGA_8: 0x03,
+            PGA_8: 0x03, // Gain 8
         };
         this.os = this.config_regs.OS_SINGLE;
         this.mode = this.config_regs.MODE_CONTIN;

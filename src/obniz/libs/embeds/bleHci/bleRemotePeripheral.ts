@@ -17,6 +17,7 @@ import {
   UUID,
 } from './bleTypes';
 import { SmpEncryptOptions } from './protocol/central/smp';
+import { retry } from '../../utils/retry';
 
 /**
  * The return values are shown below.
@@ -74,6 +75,8 @@ export interface BleConnectSetting {
    */
   autoDiscovery?: boolean;
 
+  waitUntilPairing?: boolean;
+
   /**
    * Pairing Option
    *
@@ -127,6 +130,8 @@ export interface BleConnectSetting {
    * Default : true
    */
   usePyhCoded?: boolean;
+
+  retry?: number;
 }
 
 /**
@@ -594,54 +599,73 @@ export default class BleRemotePeripheral {
     }
     await this.obnizBle.scan.endWait();
 
-    try {
-      if (this._extended) {
-        await this.obnizBle.centralBindings.connectExtendedWait(
-          this.address,
-          this._connectSetting.mtuRequest,
-          () => {
-            if (this._connectSetting.pairingOption) {
-              this.setPairingOption(this._connectSetting.pairingOption);
-            }
-          },
-          this._connectSetting.usePyh1m,
-          this._connectSetting.usePyh2m,
-          this._connectSetting.usePyhCoded
-        );
-      } else {
-        await this.obnizBle.centralBindings.connectWait(
-          this.address,
-          this._connectSetting.mtuRequest,
-          () => {
-            if (this._connectSetting.pairingOption) {
-              this.setPairingOption(this._connectSetting.pairingOption);
-            }
+    // for only typescript type
+    const mtuRequest = this._connectSetting.mtuRequest;
+
+    await retry(
+      this._connectSetting.retry ?? 1,
+      async () => {
+        try {
+          if (this._extended) {
+            await this.obnizBle.centralBindings.connectExtendedWait(
+              this.address,
+              mtuRequest,
+              () => {
+                if (this._connectSetting.pairingOption) {
+                  this.setPairingOption(this._connectSetting.pairingOption);
+                }
+              },
+              this._connectSetting.usePyh1m,
+              this._connectSetting.usePyh2m,
+              this._connectSetting.usePyhCoded
+            );
+          } else {
+            await this.obnizBle.centralBindings.connectWait(
+              this.address,
+              mtuRequest,
+              () => {
+                if (this._connectSetting.pairingOption) {
+                  this.setPairingOption(this._connectSetting.pairingOption);
+                }
+              }
+            );
           }
-        );
+        } catch (e) {
+          if (e instanceof ObnizTimeoutError) {
+            await this.obnizBle.resetWait();
+            throw new Error(
+              `Connection to device(address=${this.address}) was timedout. ble have been reseted`
+            );
+          }
+          throw e;
+        }
+        this.connected = true;
+        this.connected_at = new Date();
+        try {
+          if (
+            this._connectSetting.waitUntilPairing &&
+            !(await this.isPairingFinishedWait())
+          ) {
+            // console.log('waitUntilPairing');
+            await this.pairingWait(this._connectSetting.pairingOption);
+            // console.log('waitUntilPairing finished');
+          }
+          if (this._connectSetting.autoDiscovery) {
+            await this.discoverAllHandlesWait();
+          }
+        } catch (e) {
+          try {
+            await this.disconnectWait();
+          } catch (e2) {
+            // nothing
+          }
+          throw e;
+        }
+      },
+      async (err) => {
+        // console.log('connection fail, retry', err);
       }
-    } catch (e) {
-      if (e instanceof ObnizTimeoutError) {
-        await this.obnizBle.resetWait();
-        throw new Error(
-          `Connection to device(address=${this.address}) was timedout. ble have been reseted`
-        );
-      }
-      throw e;
-    }
-    this.connected = true;
-    this.connected_at = new Date();
-    try {
-      if (this._connectSetting.autoDiscovery) {
-        await this.discoverAllHandlesWait();
-      }
-    } catch (e) {
-      try {
-        await this.disconnectWait();
-      } catch (e2) {
-        // nothing
-      }
-      throw e;
-    }
+    );
     this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
     this.emitter.emit('connect');
   }
@@ -708,6 +732,7 @@ export default class BleRemotePeripheral {
       this.obnizBle.centralBindings.disconnect(this.address);
     });
   }
+
   /**
    * Check the PHY used in the connection
    *
@@ -1059,6 +1084,20 @@ export default class BleRemotePeripheral {
     const result = await this.obnizBle.centralBindings.pairingWait(
       this.address,
       options
+    );
+    return result;
+  }
+
+  public async getPairingKeysWait(): Promise<string | null> {
+    const result = await this.obnizBle.centralBindings.getPairingKeysWait(
+      this.address
+    );
+    return result;
+  }
+
+  public async isPairingFinishedWait(): Promise<boolean> {
+    const result = await this.obnizBle.centralBindings.isPairingFinishedWait(
+      this.address
     );
     return result;
   }
