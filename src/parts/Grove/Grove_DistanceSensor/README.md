@@ -10,12 +10,12 @@ This unit output voltage regarding measured distance.
 connect to the obniz device.  
 yellow, red and black wires correspond to signal, vcc and gnd respectively.  
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-vcc | `number(obniz Board io)` | no |  &nbsp; | Power Supply
-gnd | `number(obniz Board io)` | no |  &nbsp; | Power Supply
-signal | `number(obniz Board io)` | no |  &nbsp; | signal output pin
-grove | `object` | no | &nbsp;  | grove interface object if a device has
+| name   | type                     | required | default | description                            |
+|--------|--------------------------|----------|---------|----------------------------------------|
+| vcc    | `number(obniz Board io)` | no       | &nbsp;  | Power Supply                           |
+| gnd    | `number(obniz Board io)` | no       | &nbsp;  | Power Supply                           |
+| signal | `number(obniz Board io)` | no       | &nbsp;  | signal output pin                      |
+| grove  | `object`                 | no       | &nbsp;  | grove interface object if a device has |
 
 ```javascript
 // Javascript Example

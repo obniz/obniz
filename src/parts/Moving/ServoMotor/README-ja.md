@@ -18,22 +18,22 @@ RCサーボの多くは電源も含めそのままobniz Boardに接続できま�
 
 obniz Boardのioから直接電源供給を確認したサーボモーター
 
-メーカー | 型番
---- | ---
-Tower Pro | SG-5010
-Tower Pro | MG92B
-Tower Pro | MG90S
-Tower Pro | MG90D
-Tower Pro | SG90
-Tower Pro | SG92R
-GWS | S35STD
+| メーカー      | 型番      |
+|-----------|---------|
+| Tower Pro | SG-5010 |
+| Tower Pro | MG92B   |
+| Tower Pro | MG90S   |
+| Tower Pro | MG90D   |
+| Tower Pro | SG90    |
+| Tower Pro | SG92R   |
+| GWS       | S35STD  |
 
 obniz Boardのioからでは直接電源供給できないサーボモーター
 
-メーカー | 型番
---- | ---
-Quimat | QKY66-5
-FEETECH | FS90R
+| メーカー    | 型番      |
+|---------|---------|
+| Quimat  | QKY66-5 |
+| FEETECH | FS90R   |
 
 ## obniz.wired("ServoMotor", {[vcc, gnd, signal, pwm]})
 ３本の足をobniz Boardにつなぎます。それぞれプラス、信号、マイナスとなっていて、製造メーカーなどにより配置が違います。

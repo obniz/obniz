@@ -11,11 +11,11 @@
 
 ## wired(obniz, { signal[, vcc, gnd]});
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-signal | `number(obniz Board io)` | yes |  &nbsp; | 出力となるアナログ端子です。
-vcc | `number(obniz Board io)` | no |  &nbsp; | 電源として5vを出力する端子です。
-gnd | `number(obniz Board io)` | no |  &nbsp; | GNDにつないだピン番号です。
+| name   | type                     | required | default | description       |
+|--------|--------------------------|----------|---------|-------------------|
+| signal | `number(obniz Board io)` | yes      | &nbsp;  | 出力となるアナログ端子です。    |
+| vcc    | `number(obniz Board io)` | no       | &nbsp;  | 電源として5vを出力する端子です。 |
+| gnd    | `number(obniz Board io)` | no       | &nbsp;  | GNDにつないだピン番号です。   |
 
 写真にあるイノセント社のモジュールでは印刷面を正面にし、ピンを下側にしたときに左側から VCC, SIGNAL, GNDとなります。
 

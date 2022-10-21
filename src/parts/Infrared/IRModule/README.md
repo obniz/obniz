@@ -38,13 +38,13 @@ So, It's like below.
 monitor options and these default value
 See more details on logicanalyzer document
 
-property | type | default | description
---- | --- | --- | --- 
-dataSymbolLength | `number` | 0.07 (msec) | sampling interval of logicanalyzer
-duration | `number` | 500 (msec) | data length
-dataInverted | `number` | true | 0,1 of data should be inverted
-cutTail | `number` | false | cutting of tail 0. It may affect communication.
-output_pullup | `number` | true | pullup to 5v or not of sensor output.
+| property         | type     | default     | description                                     |
+|------------------|----------|-------------|-------------------------------------------------|
+| dataSymbolLength | `number` | 0.07 (msec) | sampling interval of logicanalyzer              |
+| duration         | `number` | 500 (msec)  | data length                                     |
+| dataInverted     | `number` | true        | 0,1 of data should be inverted                  |
+| cutTail          | `number` | false       | cutting of tail 0. It may affect communication. |
+| output_pullup    | `number` | true        | pullup to 5v or not of sensor output.           |
 
 You can chenge these before start.
 

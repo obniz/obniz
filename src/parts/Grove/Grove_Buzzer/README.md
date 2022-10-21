@@ -7,13 +7,12 @@ Grove connectable buzzer. It make a specified sound.
 ## wired(obniz,  { signal [, vcc, gnd, grove]});
 
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-signal | `number(obniz Board io)` | yes |  &nbsp; | signal output pin(4 pin of Grove)
-vcc | `number(obniz Board io)` | no |  &nbsp; | VCC(2 pin of Grove)
-gnd | `number(obniz Board io)` | no |  &nbsp; | GND(0 pin of Grove)
-grove | `object` | no | &nbsp;  | grove interface object if a device has
-
+| name   | type                     | required | default | description                            |
+|--------|--------------------------|----------|---------|----------------------------------------|
+| signal | `number(obniz Board io)` | yes      | &nbsp;  | signal output pin(4 pin of Grove)      |
+| vcc    | `number(obniz Board io)` | no       | &nbsp;  | VCC(2 pin of Grove)                    |
+| gnd    | `number(obniz Board io)` | no       | &nbsp;  | GND(0 pin of Grove)                    |
+| grove  | `object`                 | no       | &nbsp;  | grove interface object if a device has |
 
 ```Javascript
 // Javascript Example

@@ -22,14 +22,13 @@ See below image to connect.
 This function recognize motor bipolar/unipolar by specifying common.
 
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-a | `number(obniz Board io)` | no |  &nbsp; | Specify obniz Board io
-b | `number(obniz Board io)` | no |  &nbsp; | Specify obniz Board io
-aa | `number(obniz Board io)` | no |  &nbsp; | Specify obniz Board io. This is other side of a.
-bb | `number(obniz Board io)` | no |  &nbsp; | Specify obniz Board io. This is other side of b.
-common | `number(obniz Board io)` | no |  &nbsp; | Specify only when unipolar.
-
+| name   | type                     | required | default | description                                      |
+|--------|--------------------------|----------|---------|--------------------------------------------------|
+| a      | `number(obniz Board io)` | no       | &nbsp;  | Specify obniz Board io                           |
+| b      | `number(obniz Board io)` | no       | &nbsp;  | Specify obniz Board io                           |
+| aa     | `number(obniz Board io)` | no       | &nbsp;  | Specify obniz Board io. This is other side of a. |
+| bb     | `number(obniz Board io)` | no       | &nbsp;  | Specify obniz Board io. This is other side of b. |
+| common | `number(obniz Board io)` | no       | &nbsp;  | Specify only when unipolar.                      |
 
 ```Javascript
 // Javascript Example
@@ -44,17 +43,15 @@ console.log(motor.currentStep); // => 300
 It change stepping method. By default, it is 2
 
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-type | `string` | yes | `'2'` | See below options
+| name | type     | required | default | description       |
+|------|----------|----------|---------|-------------------|
+| type | `string` | yes      | `'2'`   | See below options |
 
-
-
-keyname | type | description
---- | --- | ---
-`'1'` | 1 phase ecitation | Only one coil is driven. Low power consumption. But not strong
-`'2'` | 2 phase ecitation | Two coil is always driven. Very common.
-`'1-2'` | 1-2 phase ecitation | Combination of above two method. Step is 1/2.
+| keyname | type                | description                                                    |
+|---------|---------------------|----------------------------------------------------------------|
+| `'1'`   | 1 phase ecitation   | Only one coil is driven. Low power consumption. But not strong |
+| `'2'`   | 2 phase ecitation   | Two coil is always driven. Very common.                        |
+| `'1-2'` | 1-2 phase ecitation | Combination of above two method. Step is 1/2.                  |
 
 ```Javascript
 // Javascript Example
@@ -69,9 +66,9 @@ console.log(motor.currentStep); // => 300
 
 It specify speed in hz. 100 means 100 step per sec.
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-frequency | `number` | yes | `100` | frequency of steps
+| name      | type     | required | default | description        |
+|-----------|----------|----------|---------|--------------------|
+| frequency | `number` | yes      | `100`   | frequency of steps |
 
 Limit of frequency is depends on motor which you are using. High frequency has risks of slips.
 
@@ -87,9 +84,9 @@ await motor.stepWait(100);
 It rotate a motor by specified steps.
 Also it follow speed and stepType.
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-step | `number` | yes | - | Steps wants to move
+| name | type     | required | default | description         |
+|------|----------|----------|---------|---------------------|
+| step | `number` | yes      | -       | Steps wants to move |
 
 If decimal number was provided, then the number will be rounded.
 
@@ -106,11 +103,9 @@ await motor.stepWait(-100);
 It rotate a motor to specified destionation step.
 Also it follow speed and stepType.
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-destination | `number` | yes | - | Destionation step
-
-
+| name        | type     | required | default | description       |
+|-------------|----------|----------|---------|-------------------|
+| destination | `number` | yes      | -       | Destionation step |
 
 ```Javascript
 // Javascript Example
@@ -159,9 +154,9 @@ console.log(motor.currentStep) // => -150
 It rotate by specified angle.
 It also follow rotationStepCount variable. Please set correct number first.
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-rotation | `number` | yes | - | angle to move in degree
+| name     | type     | required | default | description             |
+|----------|----------|----------|---------|-------------------------|
+| rotation | `number` | yes      | -       | angle to move in degree |
 
 360 measn one rotate.
 
@@ -180,9 +175,9 @@ It rotate to specified angle. (Initial angle is recognized as 0).
 It rotate at minimum rotation.
 It also follow rotationStepCount variable. Please set correct number first.
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-angle | `number` | yes | - | Destination angle in degree
+| name  | type     | required | default | description                 |
+|-------|----------|----------|---------|-----------------------------|
+| angle | `number` | yes      | -       | Destination angle in degree |
 
 ```Javascript
 // Javascript Example
@@ -209,10 +204,9 @@ await motor.rotateToWait(90);
 It rotate specified distance in mm.
 It also follow milliMeterStepCount variable. Please set correct number first.
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-distance | `number` | yes | - | distance to be moved
-
+| name     | type     | required | default | description          |
+|----------|----------|----------|---------|----------------------|
+| distance | `number` | yes      | -       | distance to be moved |
 
 ```Javascript
 // Javascript Example
@@ -228,10 +222,9 @@ console.log(motor.currentDistance()); // => 90
 It rotate to specified distance in mm. Initial position is recognized as 0.
 It also follow milliMeterStepCount variable. Please set correct number first.
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-destination | `number` | yes | - | destination distance in mm
-
+| name        | type     | required | default | description                |
+|-------------|----------|----------|---------|----------------------------|
+| destination | `number` | yes      | -       | destination distance in mm |
 
 ```Javascript
 // Javascript Example
