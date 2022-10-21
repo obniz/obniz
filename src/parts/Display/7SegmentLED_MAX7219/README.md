@@ -77,16 +77,16 @@ change the digit of LED showing.
 
 value accept 
 
-| Value        | description   | 
-| ------------- |-------------| 
-| 0 to 9      | number | 
-| 'on'      | all on (=8) | 
-| 'off'      | all off | 
-| '-'      |  show "-" | 
-| 'e'      |  show "E" | 
-| 'h'      |  show "H" | 
-| 'l'      |  show "L" | 
-| 'p'      |  show "P" | 
+| Value  | description |
+|--------|-------------|
+| 0 to 9 | number      |
+| 'on'   | all on (=8) | 
+| 'off'  | all off     |
+| '-'    | show "-"    | 
+| 'e'    | show "E"    | 
+| 'h'    | show "H"    | 
+| 'l'    | show "L"    | 
+| 'p'    | show "P"    | 
 
 ```Javascript
 // Javascript Example

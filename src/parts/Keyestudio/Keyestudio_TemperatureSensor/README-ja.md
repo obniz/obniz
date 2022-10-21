@@ -7,12 +7,11 @@ Keyestudio社製温度センサです。センサで取得した温度を知る�
 ## wired(obniz, {signal [, vcc, gnd]})
 obniz Boardに温度センサをつなぎます。  
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-signal | `number(obniz Board io)` | yes |  &nbsp; | signal センサの値を示す端子(s pin of Keyestudio)
-vcc | `number(obniz Board io)` | no |  &nbsp; | VCC端子(+ pin of Keyestudio)
-gnd | `number(obniz Board io)` | no |  &nbsp; | GND端子(- pin of Keyestudio)
-
+| name   | type                     | required | default | description                            |
+|--------|--------------------------|----------|---------|----------------------------------------|
+| signal | `number(obniz Board io)` | yes      | &nbsp;  | signal センサの値を示す端子(s pin of Keyestudio) |
+| vcc    | `number(obniz Board io)` | no       | &nbsp;  | VCC端子(+ pin of Keyestudio)             |
+| gnd    | `number(obniz Board io)` | no       | &nbsp;  | GND端子(- pin of Keyestudio)             |
 
 ```javascript
 // Javascript Example

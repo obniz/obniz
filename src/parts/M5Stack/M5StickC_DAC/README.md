@@ -20,13 +20,13 @@ dac.setVoltage(1.5);
 
 When using other devices, assign vcc and gnd as appropriate pins.
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-vcc | `number(obniz Board io)` | no |  &nbsp; | Power Supply
-gnd | `number(obniz Board io)` | no |  &nbsp; | Power Supply
-scl | `number(obniz Board io)` | no |  &nbsp; | scl of I2C
-sda | `number(obniz Board io)` | no | &nbsp;  | sda of I2C
-i2c | `object` | no | &nbsp;  | obniz i2c object
+| name | type                     | required | default | description      |
+|------|--------------------------|----------|---------|------------------|
+| vcc  | `number(obniz Board io)` | no       | &nbsp;  | Power Supply     |
+| gnd  | `number(obniz Board io)` | no       | &nbsp;  | Power Supply     |
+| scl  | `number(obniz Board io)` | no       | &nbsp;  | scl of I2C       |
+| sda  | `number(obniz Board io)` | no       | &nbsp;  | sda of I2C       |
+| i2c  | `object`                 | no       | &nbsp;  | obniz i2c object |
 
 ```javascript
 // JavaScript Examples

@@ -9,19 +9,20 @@ Also, this sensor needs to be aged before use. See the manufacturer's datasheet 
 
 ## wired(obniz, { vcc, gnd, do, ao});
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-vcc | `number(obniz Board io)` | no | &nbsp; | Connect to vcc for a module, or to H for a stand-alone power supply. If the module is connected to another power supply, it is not necessary to specify.
-gnd | `number(obniz Board io)` | no | &nbsp; | gnd if it is a module, or connects to H if it is a stand-alone device. If the module is connected to another power supply, it is not necessary to specify.
-scl | `number(obniz Board io)` | no | &nbsp; | The IO of the obniz connected to the scl of I2C.
-sda | `number(obniz Board io)` | no | &nbsp; | the IO of obniz connected to the I2C sda
-nwak | `number(obniz Board io)` | no | &nbsp; | the IO of obniz connected to the nwak terminal of the sensor
-nwak | `number(obniz Board io)` | no | &nbsp; | the IO of obniz connected to the nwak terminal of the sensor
-nrst | `number(obniz Board io)` | no | &nbsp; | the IO of obniz connected to the sensor's nrst terminal
-nrst | `number(obniz Board io)` | no | &nbsp; | the IO of obniz connected to the sensor's nrst terminal
-nint | `number(obniz Board io)` | no | &nbsp; | the IO of obniz connected to the nint terminal of the sensor
-i2c | `number(obniz Board io)` | no | &nbsp; | The i2c object of initialized obniz, which, if it exists, takes precedence over scl,sda.
-add | `number(obniz Board io)` | no | &nbsp; | the addressing terminal. The IO of the connected obniz is specified. If the address is 0x5a, it is output as false, otherwise it is output as true.
+| name | type                     | required | default | description                                                                                                                                                |
+|------|--------------------------|----------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| vcc  | `number(obniz Board io)` | no       | &nbsp;  | Connect to vcc for a module, or to H for a stand-alone power supply. If the module is connected to another power supply, it is not necessary to specify.   |
+| gnd  | `number(obniz Board io)` | no       | &nbsp;  | gnd if it is a module, or connects to H if it is a stand-alone device. If the module is connected to another power supply, it is not necessary to specify. |
+| scl  | `number(obniz Board io)` | no       | &nbsp;  | The IO of the obniz connected to the scl of I2C.                                                                                                           |
+| sda  | `number(obniz Board io)` | no       | &nbsp;  | the IO of obniz connected to the I2C sda                                                                                                                   |
+| nwak | `number(obniz Board io)` | no       | &nbsp;  | the IO of obniz connected to the nwak terminal of the sensor                                                                                               |
+| nwak | `number(obniz Board io)` | no       | &nbsp;  | the IO of obniz connected to the nwak terminal of the sensor                                                                                               |
+| nrst | `number(obniz Board io)` | no       | &nbsp;  | the IO of obniz connected to the sensor's nrst terminal                                                                                                    |
+| nrst | `number(obniz Board io)` | no       | &nbsp;  | the IO of obniz connected to the sensor's nrst terminal                                                                                                    |
+| nint | `number(obniz Board io)` | no       | &nbsp;  | the IO of obniz connected to the nint terminal of the sensor                                                                                               |
+| i2c  | `number(obniz Board io)` | no       | &nbsp;  | The i2c object of initialized obniz, which, if it exists, takes precedence over scl,sda.                                                                   |
+| add  | `number(obniz Board io)` | no       | &nbsp;  | the addressing terminal. The IO of the connected obniz is specified. If the address is 0x5a, it is output as false, otherwise it is output as true.        |
+
 If the address is either 0x5b or 0x5a, otherwise it is an error.
 
 

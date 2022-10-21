@@ -7,12 +7,11 @@ Grove connectable magnet sensor.
 ## wired(obniz,  { signal [, vcc, gnd]});
 
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-signal | `number(obniz Board io)` | yes |  &nbsp; | Signal pin of state output(4 pin of Grove)
-vcc | `number(obniz Board io)` | no |  &nbsp; | VCC for ct10(2 pin of Grove)
-gnd | `number(obniz Board io)` | no |  &nbsp; | GND for ct10(0 pin of Grove)
-
+| name   | type                     | required | default | description                                |
+|--------|--------------------------|----------|---------|--------------------------------------------|
+| signal | `number(obniz Board io)` | yes      | &nbsp;  | Signal pin of state output(4 pin of Grove) |
+| vcc    | `number(obniz Board io)` | no       | &nbsp;  | VCC for ct10(2 pin of Grove)               |
+| gnd    | `number(obniz Board io)` | no       | &nbsp;  | GND for ct10(0 pin of Grove)               |
 
 ```Javascript
 // Javascript Example

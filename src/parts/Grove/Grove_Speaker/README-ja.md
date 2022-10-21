@@ -10,12 +10,12 @@ Groveコネクタで利用できるスピーカーです。
 obnizデバイスと接続します。  
 黄線、赤線、黒線がそれぞれsignal、vcc、gndに対応します。
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-vcc | `number(obniz Board io)` | no |  &nbsp; | モジュールの場合はvcc, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。
-gnd | `number(obniz Board io)` | no |  &nbsp; | モジュールの場合はgnd, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。
-signal | `number(obniz Board io)` | no |  &nbsp; | signal 出力端子
-grove | `object` | no | &nbsp;  | 接続するデバイスにgroveがある場合に利用できます
+| name   | type                     | required | default | description                                             |
+|--------|--------------------------|----------|---------|---------------------------------------------------------|
+| vcc    | `number(obniz Board io)` | no       | &nbsp;  | モジュールの場合はvcc, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。 |
+| gnd    | `number(obniz Board io)` | no       | &nbsp;  | モジュールの場合はgnd, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。 |
+| signal | `number(obniz Board io)` | no       | &nbsp;  | signal 出力端子                                             |
+| grove  | `object`                 | no       | &nbsp;  | 接続するデバイスにgroveがある場合に利用できます                              |
 
 ```Javascript
 // Javascript Example

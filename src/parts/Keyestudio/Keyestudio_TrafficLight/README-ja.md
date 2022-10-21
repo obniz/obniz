@@ -6,13 +6,12 @@ Keyestudio社製の、緑、黄、赤色の3つのLEDを備えた信号機型モ
 ## obniz.wired("Keyestudio_TrafficLight", {green, yellow, red [, gnd]})
 obniz Boardに接続します。
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-green | `number(obniz Board io)` | yes |  &nbsp; | 緑色LED(G pin of Keyestudio)
-yellow | `number(obniz Board io)` | yes |  &nbsp; | 黄色LED(Y pin of Keyestudio)
-red | `number(obniz Board io)` | yes |  &nbsp; | 赤色LED(R pin of Keyestudio)
-gnd | `number(obniz Board io)` | no |  &nbsp; | GND端子(GND pin of Keyestudio)
-
+| name   | type                     | required | default | description                  |
+|--------|--------------------------|----------|---------|------------------------------|
+| green  | `number(obniz Board io)` | yes      | &nbsp;  | 緑色LED(G pin of Keyestudio)   |
+| yellow | `number(obniz Board io)` | yes      | &nbsp;  | 黄色LED(Y pin of Keyestudio)   |
+| red    | `number(obniz Board io)` | yes      | &nbsp;  | 赤色LED(R pin of Keyestudio)   |
+| gnd    | `number(obniz Board io)` | no       | &nbsp;  | GND端子(GND pin of Keyestudio) |
 
 ```javascript
 // JavaScript Example

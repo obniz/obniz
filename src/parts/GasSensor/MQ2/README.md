@@ -11,13 +11,12 @@ This library get analog voltage from a sensor. Output voltage will increase rega
 
 ## wired(obniz,  { vcc, gnd, do, ao});
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-vcc | `number(obniz io)` | no |  &nbsp; | VCC or H on MQ2.
-gnd | `number(obniz io)` | no |  &nbsp; | GND or H on MQ2.
-do | `number(obniz io)` | no |  &nbsp; | digital out
-ao | `number(obniz io)` | no | &nbsp;  | analog out
-
+| name | type               | required | default | description      |
+|------|--------------------|----------|---------|------------------|
+| vcc  | `number(obniz io)` | no       | &nbsp;  | VCC or H on MQ2. |
+| gnd  | `number(obniz io)` | no       | &nbsp;  | GND or H on MQ2. |
+| do   | `number(obniz io)` | no       | &nbsp;  | digital out      |
+| ao   | `number(obniz io)` | no       | &nbsp;  | analog out       |
 
 ```Javascript
 // Javascript Example
@@ -43,9 +42,9 @@ mq2.startHeating();
 It start heating and wait for a while.
 You can update wait time.
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-sec | `number` | no | 120 | seconds for wait
+| name | type     | required | default | description      |
+|------|----------|----------|---------|------------------|
+| sec  | `number` | no       | 120     | seconds for wait |
 
 ```Javascript
 // Javascript Example
