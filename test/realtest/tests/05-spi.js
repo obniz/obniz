@@ -9,23 +9,17 @@ let check_io;
 describe('5-spi', function () {
   this.timeout(30000);
 
-  before(function () {
-    return new Promise((resolve) => {
-      config.waitForConenct(() => {
-        obnizA = config.obnizA;
-        checkBoard = config.checkBoard;
-        check_io = config.check_io.filter(
-          (io) =>
-            io.obniz === 'obnizA' &&
-            io.mode.some((mode) => mode === 'digitalWrite')
-        );
-        if (check_io.length === 0) {
-          this.skip();
-        }
-
-        resolve();
-      });
-    });
+  before(async function () {
+    await config.waitForConenct();
+    obnizA = config.obnizA;
+    checkBoard = config.checkBoard;
+    check_io = config.check_io.filter(
+      (io) =>
+        io.obniz === 'obnizA' && io.mode.some((mode) => mode === 'digitalWrite')
+    );
+    if (check_io.length === 0) {
+      this.skip();
+    }
   });
 
   afterEach(async () => {

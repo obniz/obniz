@@ -9,19 +9,14 @@ let check_io;
 describe('6-i2c-exchange', function () {
   this.timeout(10000);
 
-  before(function () {
-    return new Promise((resolve) => {
-      config.waitForConenct(() => {
-        obnizA = config.obnizA;
-        checkBoard = config.checkBoard;
-        check_io = config.check_io.filter((io) => io.obniz === 'obnizA');
-        if (check_io.length === 0) {
-          this.skip();
-        }
-
-        resolve();
-      });
-    });
+  before(async function () {
+    config.waitForConenct();
+    obnizA = config.obnizA;
+    checkBoard = config.checkBoard;
+    check_io = config.check_io.filter((io) => io.obniz === 'obnizA');
+    if (check_io.length === 0) {
+      this.skip();
+    }
   });
 
   afterEach(async () => {

@@ -7,16 +7,13 @@ let checkBoard;
 describe.skip('9-ble-security', function () {
   this.timeout(30000);
 
-  beforeEach(() => {
+  beforeEach(async () => {
     console.error('reboot start');
-    return new Promise((resolve) => {
-      config.reboot(() => {
-        obnizA = config.obnizA;
-        checkBoard = config.checkBoard;
-        console.error('reboot finished');
-        setTimeout(resolve, 1000);
-      }, false);
-    });
+    await config.reboot();
+    obnizA = config.obnizA;
+    checkBoard = config.checkBoard;
+    console.error('reboot finished');
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   });
   it('dummy for reboot', async () => {});
 

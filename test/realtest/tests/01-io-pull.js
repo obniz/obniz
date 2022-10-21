@@ -7,20 +7,15 @@ let check_io;
 
 describe('1-io-pull', function () {
   this.timeout(10000);
-  before(function () {
-    return new Promise((resolve) => {
-      config.waitForConenct(() => {
-        checkBoard = config.checkBoard;
-        check_io = config.check_io.filter((io) =>
-          io.mode.some((mode) => mode === 'digitalWrite')
-        );
-        if (check_io.length === 0) {
-          this.skip();
-        }
-
-        resolve();
-      });
-    });
+  before(async function () {
+    await config.waitForConenct();
+    checkBoard = config.checkBoard;
+    check_io = config.check_io.filter((io) =>
+      io.mode.some((mode) => mode === 'digitalWrite')
+    );
+    if (check_io.length === 0) {
+      this.skip();
+    }
   });
 
   it('pulldown', async () => {
