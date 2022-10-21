@@ -56,7 +56,7 @@ await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 // Javascript
 const Logtta_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (peripheral) => {
+obniz.ble.scan.onfind = async (peripheral) => {
   // 動作モードを取得、Logtta_ADでないときはnullに
   const mode = Logtta_AD.getDeviceMode(peripheral);
   if (mode === 'Connectable') {
