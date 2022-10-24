@@ -54,6 +54,7 @@ interface GattDescriptor {
 // eslint-disable-next-line @typescript-eslint/no-namespace
 namespace GATT {
   export const PRIM_SVC_UUID = 0x2800;
+  export const SECONDARY_SVC_UUID = 0x2801;
   export const INCLUDE_UUID = 0x2802;
   export const CHARAC_UUID = 0x2803;
 
@@ -133,12 +134,20 @@ class GattCentral extends EventEmitter<GattEventTypes> {
     };
   }
 
+  public hasEncryptKeys(): boolean {
+    return this._aclStream._smp.hasKeys();
+  }
+
+  public getEncryptKeys(): string | null {
+    if (!this.hasEncryptKeys()) {
+      return null;
+    }
+    return this._aclStream._smp.getKeys();
+  }
+
   public async encryptWait(options: SmpEncryptOptions): Promise<string> {
     const result = await this._serialPromiseQueueWait<string>(async () => {
-      const encrypt = await this._aclStream.encryptWait(options);
-      if (encrypt === 0) {
-        throw new Error('Encrypt failed');
-      }
+      await this._aclStream.encryptWait(options);
       this._security = 'medium';
       return this._aclStream._smp.getKeys();
     });
@@ -199,6 +208,12 @@ class GattCentral extends EventEmitter<GattEventTypes> {
   }
 
   public async discoverServicesWait(uuids: UUID[]): Promise<UUID[]> {
+    const pServices = await this.discoverPrimaryServicesWait(uuids);
+    const sServices = await this.discoverSecondaryServicesWait(uuids);
+    return [...pServices, ...sServices];
+  }
+
+  public async discoverPrimaryServicesWait(uuids: UUID[]): Promise<UUID[]> {
     const services: GattService[] = [];
     let startHandle = 0x0001;
 
@@ -208,6 +223,58 @@ class GattCentral extends EventEmitter<GattEventTypes> {
           startHandle,
           0xffff,
           GATT.PRIM_SVC_UUID
+        ),
+        [ATT.OP_READ_BY_GROUP_RESP, ATT.OP_ERROR]
+      );
+      const opcode = data[0];
+      let i = 0;
+      if (opcode === ATT.OP_READ_BY_GROUP_RESP) {
+        const type = data[1];
+        const num = (data.length - 2) / type;
+
+        for (i = 0; i < num; i++) {
+          services.push({
+            startHandle: data.readUInt16LE(2 + i * type + 0),
+            endHandle: data.readUInt16LE(2 + i * type + 2),
+            uuid:
+              type === 6
+                ? data.readUInt16LE(2 + i * type + 4).toString(16)
+                : BleHelper.buffer2reversedHex(
+                    data.slice(2 + i * type + 4).slice(0, 16)
+                  ),
+          });
+        }
+      }
+
+      if (
+        opcode !== ATT.OP_READ_BY_GROUP_RESP ||
+        services[services.length - 1].endHandle === 0xffff
+      ) {
+        const serviceUuids: string[] = [];
+        for (i = 0; i < services.length; i++) {
+          if (uuids.length === 0 || uuids.indexOf(services[i].uuid) !== -1) {
+            serviceUuids.push(services[i].uuid);
+          }
+
+          this._services[services[i].uuid] = services[i];
+        }
+        return serviceUuids;
+      }
+      startHandle = services[services.length - 1].endHandle + 1;
+    }
+    throw new ObnizBleGattHandleError('unreachable code');
+  }
+
+  public async discoverSecondaryServicesWait(uuids: UUID[]): Promise<UUID[]> {
+    const services: GattService[] = [];
+    let startHandle = 0x0001;
+
+    while (1) {
+      const data = await this._execCommandWait(
+        this._gattCommon.readByGroupRequest(
+          startHandle,
+          0xffff,
+          GATT.SECONDARY_SVC_UUID
         ),
         [ATT.OP_READ_BY_GROUP_RESP, ATT.OP_ERROR]
       );
@@ -541,37 +608,42 @@ class GattCentral extends EventEmitter<GattEventTypes> {
     characteristicUuid: UUID,
     notify: boolean
   ): Promise<void> {
+    try {
+      const characteristic = this.getCharacteristic(
+        serviceUuid,
+        characteristicUuid
+      );
+      const descriptor: any = this.getDescriptor(
+        serviceUuid,
+        characteristicUuid,
+        '2902'
+      );
+      return await this.notifyByDescriptorWait(
+        serviceUuid,
+        characteristicUuid,
+        notify
+      );
+    } catch (e) {
+      debug(`failed to handle descriptor`);
+    }
+    return await this.notifyByHandleWait(
+      serviceUuid,
+      characteristicUuid,
+      notify
+    );
+  }
+
+  public async notifyByDescriptorWait(
+    serviceUuid: UUID,
+    characteristicUuid: UUID,
+    notify: boolean
+  ): Promise<void> {
     const characteristic = this.getCharacteristic(
       serviceUuid,
       characteristicUuid
     );
-    // const descriptor = this.getDescriptor(serviceUuid, characteristicUuid, "2902");
 
     let value = 0;
-    // let handle = null;
-    // try {
-    //   const buf = await this.readValueWait(
-    //     serviceUuid,
-    //     characteristicUuid,
-    //     '2902'
-    //   );
-    //   value = buf.readUInt16LE(0);
-    // } catch (e) {
-    //   // retry
-    //   const data = await this._execCommandWait(
-    //     this._gattCommon.readByTypeRequest(
-    //       characteristic.startHandle,
-    //       characteristic.endHandle,
-    //       GATT.CLIENT_CHARAC_CFG_UUID
-    //     ),
-    //     ATT.OP_READ_BY_TYPE_RESP
-    //   );
-    //
-    //   const opcode = data[0];
-    //   // let type = data[1];
-    //   handle = data.readUInt16LE(2);
-    //   value = data.readUInt16LE(4);
-    // }
 
     const useNotify = characteristic.properties & 0x10;
     const useIndicate = characteristic.properties & 0x20;
@@ -610,6 +682,78 @@ class GattCentral extends EventEmitter<GattEventTypes> {
     // }
 
     const _opcode = _data && _data[0];
+    debug('set notify write results: ' + (_opcode === ATT.OP_WRITE_RESP));
+  }
+
+  public async notifyByHandleWait(
+    serviceUuid: any,
+    characteristicUuid: any,
+    notify: any
+  ): Promise<void> {
+    const characteristic: any = this.getCharacteristic(
+      serviceUuid,
+      characteristicUuid
+    );
+    // const descriptor: any = this.getDescriptor(serviceUuid, characteristicUuid, "2902");
+
+    let value: any = null;
+    let handle: any = null;
+    try {
+      value = await this.readValueWait(serviceUuid, characteristicUuid, '2902');
+    } catch (e) {
+      // retry
+      const data = await this._execCommandWait(
+        this._gattCommon.readByTypeRequest(
+          characteristic.startHandle,
+          characteristic.endHandle,
+          GATT.CLIENT_CHARAC_CFG_UUID
+        ),
+        ATT.OP_READ_BY_TYPE_RESP
+      );
+
+      const opcode: any = data[0];
+      // let type = data[1];
+      handle = data.readUInt16LE(2);
+      value = data.readUInt16LE(4);
+    }
+
+    const useNotify: any = characteristic.properties & 0x10;
+    const useIndicate: any = characteristic.properties & 0x20;
+
+    if (notify) {
+      if (useNotify) {
+        value |= 0x0001;
+      } else if (useIndicate) {
+        value |= 0x0002;
+      }
+    } else {
+      if (useNotify) {
+        value &= 0xfffe;
+      } else if (useIndicate) {
+        value &= 0xfffd;
+      }
+    }
+
+    const valueBuffer: any = Buffer.alloc(2);
+    valueBuffer.writeUInt16LE(value, 0);
+
+    let _data = null;
+
+    if (handle) {
+      _data = await this._execCommandWait(
+        this._gattCommon.writeRequest(handle, valueBuffer, false),
+        ATT.OP_WRITE_RESP
+      );
+    } else {
+      _data = await this.writeValueWait(
+        serviceUuid,
+        characteristicUuid,
+        '2902',
+        valueBuffer
+      );
+    }
+
+    const _opcode: any = _data && _data[0];
     debug('set notify write results: ' + (_opcode === ATT.OP_WRITE_RESP));
   }
 
@@ -859,7 +1003,6 @@ class GattCentral extends EventEmitter<GattEventTypes> {
         ATT.OP_EXECUTE_WRITE_RESP
       );
     }
-    throw new ObnizBleOpError();
   }
 
   private getService(serviceUuid: UUID): GattService {
@@ -941,6 +1084,7 @@ class GattCentral extends EventEmitter<GattEventTypes> {
         this.off('end', disconnectReject);
       }
     };
+    const errorForStacktrace = new Error('stacktrace');
 
     let disconnectReject: null | EventEmitter.ListenerFn = null;
     const doPromise = Promise.all(this._commandPromises)
@@ -960,12 +1104,14 @@ class GattCentral extends EventEmitter<GattEventTypes> {
         },
         (error) => {
           onfinish();
+          error.cause = errorForStacktrace;
           return Promise.reject(error);
         }
       );
     const disconnectPromise = new Promise((resolve, reject) => {
       disconnectReject = (reason: any) => {
         onfinish();
+        reason.cause = errorForStacktrace;
         reject(reason);
       };
       this.on('end', disconnectReject);

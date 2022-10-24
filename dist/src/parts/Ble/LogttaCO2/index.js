@@ -130,7 +130,7 @@ class Logtta_CO2 extends Logtta_1.default {
     }
     parseData(data) {
         return {
-            co2: ObnizPartsBleAbstract_1.uintBE(data),
+            co2: (0, ObnizPartsBleAbstract_1.uintBE)(data),
         };
     }
 }

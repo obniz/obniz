@@ -8,8 +8,9 @@
 /**
  * @ignore
  */
-const debug: any = () => {
+const debug: any = (message: any) => {
   // do nothing.
+  // console.log('gap debug', message);
 };
 
 import EventEmitter from 'eventemitter3';
@@ -24,6 +25,11 @@ import {
 import Hci from '../hci';
 
 type GapEventTypes = 'scanStop' | 'discover';
+
+const LegacyAdvertisingPduMask = 0b0010000;
+const LegacyAdvertising_ADV_SCAN_RESP_TO_ADV_IND = 0b0011011;
+const LegacyAdvertising_ADV_SCAN_RESP_TO_SCAN_IND = 0b0011010;
+const LegacyAdvertising_ADV_NONCONN_IND = 0b0010000;
 
 /**
  * @ignore
@@ -59,6 +65,10 @@ class Gap extends EventEmitter<GapEventTypes> {
     this._hci.on(
       'leAdvertisingReport',
       this.onHciLeAdvertisingReport.bind(this)
+    );
+    this._hci.on(
+      'leExtendedAdvertisingReport',
+      this.onHciLeExtendedAdvertisingReport.bind(this)
     );
   }
 
@@ -120,16 +130,150 @@ class Gap extends EventEmitter<GapEventTypes> {
     }
   }
 
-  public onHciLeAdvertisingReport(
+  public async stopExtendedScanningWait() {
+    try {
+      if (this._scanState === 'starting' || this._scanState === 'started') {
+        await this.setExtendedScanEnabledWait(false, true);
+      }
+    } catch (e) {
+      if (e instanceof ObnizBleScanStartError) {
+        // If not started yet. this error may called. just ignore it.
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  public async startExtendedScanningWait(
+    allowDuplicates: boolean,
+    activeScan: boolean,
+    usePhy1m: boolean,
+    usePhyCoded: boolean
+  ) {
+    this._scanFilterDuplicates = !allowDuplicates;
+    this._discoveries = {};
+    // Always set scan parameters before scanning
+    // https://www.bluetooth.org/docman/handlers/DownloadDoc.ashx?doc_id=421043
+    // p2729
+
+    try {
+      if (this._scanState === 'starting' || this._scanState === 'started') {
+        await this.setExtendedScanEnabledWait(false, true);
+      }
+    } catch (e) {
+      if (e instanceof ObnizBleScanStartError) {
+        // If not started yet. this error may called. just ignore it.
+      } else {
+        throw e;
+      }
+    }
+    this._scanState = 'starting';
+
+    const status = await this._hci.setExtendedScanParametersWait(
+      activeScan,
+      usePhy1m,
+      usePhyCoded
+    );
+    if (status !== 0) {
+      throw new ObnizBleScanStartError(
+        status,
+        `startExtendedScanning Error setting active scan=${activeScan} was failed`
+      );
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await this.setExtendedScanEnabledWait(true, this._scanFilterDuplicates);
+  }
+
+  public onHciLeExtendedAdvertisingReport(
     status: 0,
     type: number,
     address: BleDeviceAddressWithColon,
     addressType: BleDeviceAddressType,
     eir: Buffer,
-    rssi: number
-  ): void {
-    const previouslyDiscovered = !!this._discoveries[address];
-    const advertisement = previouslyDiscovered
+    rssi: number,
+    primaryPhy?: any,
+    secondaryPhy?: any,
+    sid?: any,
+    txPower?: any,
+    periodicAdvertisingInterval?: any,
+    directAddressType?: any,
+    directAddress?: any
+  ) {
+    debug(
+      'onHciLeExtendedAdvertisingReport',
+      type,
+      address,
+      addressType,
+      eir,
+      rssi,
+      primaryPhy,
+      secondaryPhy,
+      sid,
+      txPower,
+      periodicAdvertisingInterval,
+      directAddressType,
+      directAddress
+    );
+    this.onHciLeAdvertisingReport(
+      status,
+      type,
+      address,
+      addressType,
+      eir,
+      rssi,
+      true
+    );
+  }
+
+  private isAdvOrScanResp(
+    type: number,
+    extended: boolean
+  ): 'advertisement' | 'scanResponse' | null {
+    if (extended) {
+      if ((type & LegacyAdvertisingPduMask) !== 0) {
+        // legacy advertising PDU
+        if (
+          type === LegacyAdvertising_ADV_SCAN_RESP_TO_ADV_IND ||
+          type === LegacyAdvertising_ADV_SCAN_RESP_TO_SCAN_IND
+        ) {
+          return 'scanResponse';
+        } else {
+          return 'advertisement';
+        }
+      } else {
+        if ((type & 0b00010000) === 0) {
+          return 'advertisement';
+        } else {
+          return 'scanResponse';
+        }
+      }
+    } else {
+      if (type === 0x04) {
+        return 'scanResponse';
+      } else if (
+        type === 0x00 ||
+        type === 0x01 ||
+        type === 0x02 ||
+        type === 0x03
+      ) {
+        return 'advertisement';
+      }
+    }
+    return null;
+  }
+
+  public onHciLeAdvertisingReport(
+    status: any,
+    type: number,
+    address: any,
+    addressType: any,
+    eir: any,
+    rssi: number,
+    extended: boolean
+  ) {
+    const previouslyDiscovered: any = !!this._discoveries[address];
+
+    const advertisement: any = previouslyDiscovered
       ? this._discoveries[address].advertisement
       : {
           localName: undefined,
@@ -151,7 +295,8 @@ class Gap extends EventEmitter<GapEventTypes> {
       ? this._discoveries[address].hasScanResponse
       : false;
 
-    if (type === 0x04) {
+    const advType = this.isAdvOrScanResp(type, extended);
+    if (advType === 'scanResponse') {
       hasScanResponse = true;
 
       if (eir.length > 0) {
@@ -322,11 +467,28 @@ class Gap extends EventEmitter<GapEventTypes> {
 
     debug('advertisement = ' + JSON.stringify(advertisement, null, 0));
 
-    const connectable =
-      type === 0x04 && previouslyDiscovered
-        ? this._discoveries[address].connectable
-        : type !== 0x03;
-
+    let connectable: boolean;
+    if (extended) {
+      if ((type & LegacyAdvertisingPduMask) !== 0) {
+        // legacy advertising PDU
+        if (
+          type === LegacyAdvertising_ADV_SCAN_RESP_TO_ADV_IND ||
+          type === LegacyAdvertising_ADV_SCAN_RESP_TO_SCAN_IND
+        ) {
+          connectable = this._discoveries[address].connectable;
+        } else {
+          connectable = type !== LegacyAdvertising_ADV_NONCONN_IND;
+        }
+      } else {
+        connectable = (type & 0b00000001) !== 0;
+      }
+    } else {
+      if (type === 0x04 && previouslyDiscovered) {
+        connectable = this._discoveries[address].connectable;
+      } else {
+        connectable = type !== 0x03;
+      }
+    }
     this._discoveries[address] = {
       address,
       addressType,
@@ -346,6 +508,32 @@ class Gap extends EventEmitter<GapEventTypes> {
       advertisement,
       rssi
     );
+  }
+
+  private async setExtendedScanEnabledWait(
+    enabled: boolean,
+    filterDuplicates: boolean
+  ) {
+    const status = await this._hci.setExtendedScanEnabledWait(
+      enabled,
+      filterDuplicates
+    );
+
+    // Check the status we got from the command complete function.
+    if (status !== 0) {
+      // If it is non-zero there was an error, and we should not change
+      // our status as a result.
+      throw new ObnizBleScanStartError(
+        status,
+        `startExtendedScanning enable=${enabled} was failed. Maybe Connection to a device is under going.`
+      );
+    } else {
+      if (this._scanState === 'starting') {
+        this._scanState = 'started';
+      } else if (this._scanState === 'stopping') {
+        this._scanState = 'stopped';
+      }
+    }
   }
 
   private async setScanEnabledWait(

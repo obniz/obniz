@@ -32,7 +32,7 @@ export default abstract class I2cCompassAbstract extends i2cParts {
   protected abstract range: string;
   protected abstract defaultUnit: compassUnit;
 
-  public abstract async getAdcWait(): Promise<Xyz>;
+  public abstract getAdcWait(): Promise<Xyz>;
 
   public async getWait(): Promise<Xyz> {
     const adc = await this.getAdcWait();

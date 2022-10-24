@@ -28,8 +28,6 @@ obniz BoardにLEDを繋ぐには抵抗が必要です。(抵抗入りのLEDは�
 ![](wired.jpg)
 
 
-![](./wired.png)
-
 ```Javascript
 // Javascript Example
 

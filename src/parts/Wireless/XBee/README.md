@@ -11,7 +11,6 @@ Wiring obniz Board and XBee. XBee also need VCC(3.3V) and GND.
 
 If you wired like this photo,code is here.
 obniz Board output 5V vcc to regulator and convert to 3.3V. 
-![photo of wired XBee](./xbee.png)
 
 ![](wired.png)
 

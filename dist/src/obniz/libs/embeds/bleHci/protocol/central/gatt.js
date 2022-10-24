@@ -26,6 +26,7 @@ const bleHelper_1 = __importDefault(require("../../bleHelper"));
 var GATT;
 (function (GATT) {
     GATT.PRIM_SVC_UUID = 0x2800;
+    GATT.SECONDARY_SVC_UUID = 0x2801;
     GATT.INCLUDE_UUID = 0x2802;
     GATT.CHARAC_UUID = 0x2803;
     GATT.CLIENT_CHARAC_CFG_UUID = 0x2902;
@@ -64,12 +65,18 @@ class GattCentral extends eventemitter3_1.default {
             });
         };
     }
+    hasEncryptKeys() {
+        return this._aclStream._smp.hasKeys();
+    }
+    getEncryptKeys() {
+        if (!this.hasEncryptKeys()) {
+            return null;
+        }
+        return this._aclStream._smp.getKeys();
+    }
     async encryptWait(options) {
         const result = await this._serialPromiseQueueWait(async () => {
-            const encrypt = await this._aclStream.encryptWait(options);
-            if (encrypt === 0) {
-                throw new Error('Encrypt failed');
-            }
+            await this._aclStream.encryptWait(options);
             this._security = 'medium';
             return this._aclStream._smp.getKeys();
         });
@@ -120,10 +127,50 @@ class GattCentral extends eventemitter3_1.default {
         return this._mtu;
     }
     async discoverServicesWait(uuids) {
+        const pServices = await this.discoverPrimaryServicesWait(uuids);
+        const sServices = await this.discoverSecondaryServicesWait(uuids);
+        return [...pServices, ...sServices];
+    }
+    async discoverPrimaryServicesWait(uuids) {
         const services = [];
         let startHandle = 0x0001;
         while (1) {
             const data = await this._execCommandWait(this._gattCommon.readByGroupRequest(startHandle, 0xffff, GATT.PRIM_SVC_UUID), [att_1.ATT.OP_READ_BY_GROUP_RESP, att_1.ATT.OP_ERROR]);
+            const opcode = data[0];
+            let i = 0;
+            if (opcode === att_1.ATT.OP_READ_BY_GROUP_RESP) {
+                const type = data[1];
+                const num = (data.length - 2) / type;
+                for (i = 0; i < num; i++) {
+                    services.push({
+                        startHandle: data.readUInt16LE(2 + i * type + 0),
+                        endHandle: data.readUInt16LE(2 + i * type + 2),
+                        uuid: type === 6
+                            ? data.readUInt16LE(2 + i * type + 4).toString(16)
+                            : bleHelper_1.default.buffer2reversedHex(data.slice(2 + i * type + 4).slice(0, 16)),
+                    });
+                }
+            }
+            if (opcode !== att_1.ATT.OP_READ_BY_GROUP_RESP ||
+                services[services.length - 1].endHandle === 0xffff) {
+                const serviceUuids = [];
+                for (i = 0; i < services.length; i++) {
+                    if (uuids.length === 0 || uuids.indexOf(services[i].uuid) !== -1) {
+                        serviceUuids.push(services[i].uuid);
+                    }
+                    this._services[services[i].uuid] = services[i];
+                }
+                return serviceUuids;
+            }
+            startHandle = services[services.length - 1].endHandle + 1;
+        }
+        throw new ObnizError_1.ObnizBleGattHandleError('unreachable code');
+    }
+    async discoverSecondaryServicesWait(uuids) {
+        const services = [];
+        let startHandle = 0x0001;
+        while (1) {
+            const data = await this._execCommandWait(this._gattCommon.readByGroupRequest(startHandle, 0xffff, GATT.SECONDARY_SVC_UUID), [att_1.ATT.OP_READ_BY_GROUP_RESP, att_1.ATT.OP_ERROR]);
             const opcode = data[0];
             let i = 0;
             if (opcode === att_1.ATT.OP_READ_BY_GROUP_RESP) {
@@ -324,33 +371,19 @@ class GattCentral extends eventemitter3_1.default {
         const _data = await this._execCommandWait(this._gattCommon.writeRequest(handle, valueBuffer, false), att_1.ATT.OP_WRITE_RESP);
     }
     async notifyWait(serviceUuid, characteristicUuid, notify) {
+        try {
+            const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
+            const descriptor = this.getDescriptor(serviceUuid, characteristicUuid, '2902');
+            return await this.notifyByDescriptorWait(serviceUuid, characteristicUuid, notify);
+        }
+        catch (e) {
+            debug(`failed to handle descriptor`);
+        }
+        return await this.notifyByHandleWait(serviceUuid, characteristicUuid, notify);
+    }
+    async notifyByDescriptorWait(serviceUuid, characteristicUuid, notify) {
         const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
-        // const descriptor = this.getDescriptor(serviceUuid, characteristicUuid, "2902");
         let value = 0;
-        // let handle = null;
-        // try {
-        //   const buf = await this.readValueWait(
-        //     serviceUuid,
-        //     characteristicUuid,
-        //     '2902'
-        //   );
-        //   value = buf.readUInt16LE(0);
-        // } catch (e) {
-        //   // retry
-        //   const data = await this._execCommandWait(
-        //     this._gattCommon.readByTypeRequest(
-        //       characteristic.startHandle,
-        //       characteristic.endHandle,
-        //       GATT.CLIENT_CHARAC_CFG_UUID
-        //     ),
-        //     ATT.OP_READ_BY_TYPE_RESP
-        //   );
-        //
-        //   const opcode = data[0];
-        //   // let type = data[1];
-        //   handle = data.readUInt16LE(2);
-        //   value = data.readUInt16LE(4);
-        // }
         const useNotify = characteristic.properties & 0x10;
         const useIndicate = characteristic.properties & 0x20;
         if (notify) {
@@ -380,6 +413,52 @@ class GattCentral extends eventemitter3_1.default {
         // } else {
         _data = await this.writeValueWait(serviceUuid, characteristicUuid, '2902', valueBuffer);
         // }
+        const _opcode = _data && _data[0];
+        debug('set notify write results: ' + (_opcode === att_1.ATT.OP_WRITE_RESP));
+    }
+    async notifyByHandleWait(serviceUuid, characteristicUuid, notify) {
+        const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
+        // const descriptor: any = this.getDescriptor(serviceUuid, characteristicUuid, "2902");
+        let value = null;
+        let handle = null;
+        try {
+            value = await this.readValueWait(serviceUuid, characteristicUuid, '2902');
+        }
+        catch (e) {
+            // retry
+            const data = await this._execCommandWait(this._gattCommon.readByTypeRequest(characteristic.startHandle, characteristic.endHandle, GATT.CLIENT_CHARAC_CFG_UUID), att_1.ATT.OP_READ_BY_TYPE_RESP);
+            const opcode = data[0];
+            // let type = data[1];
+            handle = data.readUInt16LE(2);
+            value = data.readUInt16LE(4);
+        }
+        const useNotify = characteristic.properties & 0x10;
+        const useIndicate = characteristic.properties & 0x20;
+        if (notify) {
+            if (useNotify) {
+                value |= 0x0001;
+            }
+            else if (useIndicate) {
+                value |= 0x0002;
+            }
+        }
+        else {
+            if (useNotify) {
+                value &= 0xfffe;
+            }
+            else if (useIndicate) {
+                value &= 0xfffd;
+            }
+        }
+        const valueBuffer = Buffer.alloc(2);
+        valueBuffer.writeUInt16LE(value, 0);
+        let _data = null;
+        if (handle) {
+            _data = await this._execCommandWait(this._gattCommon.writeRequest(handle, valueBuffer, false), att_1.ATT.OP_WRITE_RESP);
+        }
+        else {
+            _data = await this.writeValueWait(serviceUuid, characteristicUuid, '2902', valueBuffer);
+        }
         const _opcode = _data && _data[0];
         debug('set notify write results: ' + (_opcode === att_1.ATT.OP_WRITE_RESP));
     }
@@ -516,7 +595,6 @@ class GattCentral extends eventemitter3_1.default {
         else {
             await this._execCommandWait(this._gattCommon.executeWriteRequest(characteristic.valueHandle), att_1.ATT.OP_EXECUTE_WRITE_RESP);
         }
-        throw new ObnizError_1.ObnizBleOpError();
     }
     getService(serviceUuid) {
         if (!this._services[serviceUuid]) {
@@ -569,6 +647,7 @@ class GattCentral extends eventemitter3_1.default {
                 this.off('end', disconnectReject);
             }
         };
+        const errorForStacktrace = new Error('stacktrace');
         let disconnectReject = null;
         const doPromise = Promise.all(this._commandPromises)
             .catch((error) => {
@@ -585,11 +664,13 @@ class GattCentral extends eventemitter3_1.default {
             return Promise.resolve(result);
         }, (error) => {
             onfinish();
+            error.cause = errorForStacktrace;
             return Promise.reject(error);
         });
         const disconnectPromise = new Promise((resolve, reject) => {
             disconnectReject = (reason) => {
                 onfinish();
+                reason.cause = errorForStacktrace;
                 reject(reason);
             };
             this.on('end', disconnectReject);

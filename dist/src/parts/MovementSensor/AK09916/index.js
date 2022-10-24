@@ -65,7 +65,7 @@ class AK09916 extends i2cParts_1.default {
         // 1111 1111 1111 1111 -1 uT
         // 1000 0000 0001 0000 -4912 uT
         const raw3 = await this.readThreeInt16Wait(this._HXL, 'l');
-        this.readWait(this._ST2, 1);
+        await this.readWait(this._ST2, 1);
         const xyz = raw3.map((d, i) => {
             return (d * this.so - this.offset[i]) * this.scale[i];
         });

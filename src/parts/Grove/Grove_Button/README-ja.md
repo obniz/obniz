@@ -7,12 +7,12 @@ Groveコネクタで利用できるボタンです。押されたかどうかを
 ## wired(obniz,  { signal [, vcc, gnd, grove]});
 
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-signal | `number(obniz Board io)` | yes |  &nbsp; | signal ボタンの状態を示す端子(4 pin of Grove)
-vcc | `number(obniz Board io)` | no |  &nbsp; | VCC端子(2 pin of Grove)
-gnd | `number(obniz Board io)` | no |  &nbsp; | GND端子(0 pin of Grove)
-grove | `object` | no | &nbsp;  | 接続するデバイスにgroveがある場合に利用できます
+| name   | type                     | required | default | description                        |
+|--------|--------------------------|----------|---------|------------------------------------|
+| signal | `number(obniz Board io)` | yes      | &nbsp;  | signal ボタンの状態を示す端子(4 pin of Grove) |
+| vcc    | `number(obniz Board io)` | no       | &nbsp;  | VCC端子(2 pin of Grove)              |
+| gnd    | `number(obniz Board io)` | no       | &nbsp;  | GND端子(0 pin of Grove)              |
+| grove  | `object`                 | no       | &nbsp;  | 接続するデバイスにgroveがある場合に利用できます         |
 
 ```Javascript
 // Javascript Example

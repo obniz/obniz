@@ -7,6 +7,7 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 /// <reference types="node" />
+/// <reference types="node" />
 import ObnizBLEHci from './hci';
 import CentralBindings from './protocol/central/bindings';
 import HciProtocol from './protocol/hci';
@@ -21,7 +22,8 @@ import BlePeripheral from './blePeripheral';
 import BleRemotePeripheral from './bleRemotePeripheral';
 import BleScan from './bleScan';
 import BleService from './bleService';
-import { BleDeviceAddress, BleDeviceAddressType, BleDiscoveryAdvertisement, UUID } from './bleTypes';
+import { BleDeviceAddress, BleDeviceAddressType, BleDiscoveryAdvertisement, BleSupportType, UUID } from './bleTypes';
+import BleExtendedAdvertisement from './bleExtendedAdvertisement';
 /**
  * Use a obniz device as a BLE device.
  * Peripheral and Central mode are supported
@@ -64,26 +66,54 @@ export default class ObnizBLE extends ComponentAbstract {
      * @ignore
      */
     advertisement: BleAdvertisement;
+    extendedAdvertisement?: BleExtendedAdvertisement;
     protected hciProtocol: HciProtocol;
     protected _initializeWarning: boolean;
     protected connectedPeripherals: Record<BleDeviceAddress, BleRemotePeripheral>;
     /**
+     * This is a callback function used when an external device gets connected or disconnected.
+     *
+     * ```javascript
+     * await obniz.ble.initWait();
+     * obniz.ble.onUpdatePhy = ((txPhy, rxPhy) => {
+     *    console.log("txPhy "+txPhy+" rxPhy "+rxPhy);
+     * });
+     * ```
+     *
+     */
+    onUpdatePhy?: (txPhy: '1m' | '2m' | 'coded', rxPhy: '1m' | '2m' | 'coded', handler?: number) => void;
+    /**
      * @ignore
      */
     private _initialized;
-    constructor(obniz: Obniz);
+    constructor(obniz: Obniz, info: any);
     notifyFromObniz(json: any): void;
+    /**
+     * ESP32 C3 or ESP32 S3 only
+     *
+     * Sets the PHY to use by default
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.setDefaultPhyWait(false,false,true);//coded only
+     * ```
+     */
+    setDefaultPhyWait(usePhy1m: boolean, usePhy2m: boolean, usePhyCoded: boolean): Promise<void>;
+    protected _onUpdatePhy(handler: number, txPhy: number, rxPhy: number): void;
     debugHandler: (text: string) => void;
     /**
      * Initialize BLE module. You need call this first everything before.
      * This throws if device is not supported device.
+     *
+     * esp32 C3 or esp32 S3 Put true in the argument
+     * when not using the BLE5.0 extended advertise
      *
      * ```javascript
      * // Javascript Example
      * await obniz.ble.initWait();
      * ```
      */
-    initWait(): Promise<void>;
+    initWait(supportType?: BleSupportType): Promise<void>;
     /**
      * Reset Target Device and current SDK status without rebooting. If error occured while reset, then target device will reboot.
      *
@@ -97,7 +127,7 @@ export default class ObnizBLE extends ComponentAbstract {
      * @ignore
      * @private
      */
-    _reset(): void;
+    _reset(keepExtended?: boolean): void;
     /**
      * Connect to peripheral without scanning.
      * Returns a peripheral instance, but the advertisement information such as localName is null because it has not been scanned.
@@ -180,4 +210,5 @@ export default class ObnizBLE extends ComponentAbstract {
     protected onPeripheralMtuChange(mtu: any): void;
     protected onPeripheralDisconnect(clientAddress: any, reason: any): void;
     private debug;
+    private phyToStr;
 }

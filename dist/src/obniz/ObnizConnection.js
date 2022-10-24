@@ -17,6 +17,7 @@ const ObnizError_1 = require("./ObnizError");
 class ObnizConnection extends eventemitter3_1.default {
     constructor(id, options) {
         super();
+        this._measureTraffic = null;
         this.socket = null;
         this.socket_local = null;
         this.wscommand = null;
@@ -26,6 +27,7 @@ class ObnizConnection extends eventemitter3_1.default {
         this._waitForLocalConnectReadyTimer = null;
         this._sendPool = null;
         this._repeatInterval = 100;
+        this._isLoopProcessing = false;
         this._nextLoopTimeout = null;
         this._nextPingTimeout = null;
         this._nextAutoConnectLoopTimeout = null;
@@ -429,7 +431,18 @@ class ObnizConnection extends eventemitter3_1.default {
         }
     }
     wsOnMessage(data) {
+        if (Array.isArray(data)) {
+            for (const b of data) {
+                this.wsOnMessage(data);
+            }
+            return;
+        }
         this._lastDataReceivedAt = new Date().getTime();
+        if (this._measureTraffic) {
+            const trafficSize = this._calcTrafficSize(data, this._measureTraffic.ceilByte);
+            this._measureTraffic.readByte += trafficSize;
+            this._measureTraffic.readCount++;
+        }
         try {
             let json;
             if (typeof data === 'string') {
@@ -457,6 +470,7 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     wsOnClose(event) {
         this._print_debug(`closed from remote event=${event}`);
+        this.connectionState = 'closing';
         const beforeOnConnectCalled = this._onConnectCalled;
         this._close();
         this.connectionState = 'closed';
@@ -637,7 +651,7 @@ class ObnizConnection extends eventemitter3_1.default {
                 this.socket_local.close();
             }
             this._clearSocket(this.socket_local);
-            delete this.socket_local;
+            this.socket_local = null;
         }
         this.emit('_localConnectClose');
     }
@@ -657,7 +671,7 @@ class ObnizConnection extends eventemitter3_1.default {
                 this.socket.close(1000, 'close');
             }
             this._clearSocket(this.socket);
-            delete this.socket;
+            this.socket = null;
         }
         if (notify) {
             this.emit('_cloudConnectClose');
@@ -669,7 +683,7 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         /* send queue */
         if (this._sendQueueTimer) {
-            delete this._sendQueue;
+            this._sendQueue = null;
             clearTimeout(this._sendQueueTimer);
             this._sendQueueTimer = null;
         }
@@ -705,11 +719,11 @@ class ObnizConnection extends eventemitter3_1.default {
         this._startPingLoopInBackground();
         if (promise instanceof Promise) {
             promise.finally(() => {
-                this._startLoopInBackground();
+                this._startLoopInBackgroundWait();
             });
         }
         else {
-            this._startLoopInBackground();
+            this._startLoopInBackgroundWait();
         }
     }
     _print_debug(str) {
@@ -718,6 +732,11 @@ class ObnizConnection extends eventemitter3_1.default {
         }
     }
     _sendRouted(data) {
+        if (this._measureTraffic) {
+            const trafficSize = this._calcTrafficSize(data, this._measureTraffic.ceilByte);
+            this._measureTraffic.sendByte += trafficSize;
+            this._measureTraffic.sendCount++;
+        }
         if (this.socket_local &&
             this.socket_local.readyState === 1 &&
             typeof data !== 'string') {
@@ -751,7 +770,7 @@ class ObnizConnection extends eventemitter3_1.default {
             filled += this._sendQueue[i].length;
         }
         this._sendRouted(sendData);
-        delete this._sendQueue;
+        this._sendQueue = null;
         if (this._sendQueueTimer) {
             clearTimeout(this._sendQueueTimer);
             this._sendQueueTimer = null;
@@ -853,41 +872,27 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         return json;
     }
-    _startLoopInBackground() {
+    async _startLoopInBackgroundWait() {
         this._stopLoopInBackground();
-        this._nextLoopTimeout = setTimeout(async () => {
-            if (this._nextLoopTimeout) {
-                clearTimeout(this._nextLoopTimeout);
+        if (this._isLoopProcessing || this.connectionState !== 'connected') {
+            return;
+        }
+        this._isLoopProcessing = true;
+        try {
+            if (typeof this.onloop === 'function') {
+                await this.onloop(this);
             }
-            this._nextLoopTimeout = null;
-            if (this.connectionState !== 'connected') {
-                return;
-            }
-            try {
-                if (typeof this.onloop === 'function') {
-                    // await this.pingWait();
-                    const prom = this.onloop(this);
-                    if (prom instanceof Promise) {
-                        await prom;
-                    }
-                }
-            }
-            catch (e) {
-                console.error(`obniz.js handled Exception inside of obniz.onloop function`);
-                console.error(e);
-            }
-            finally {
-                if (this.connectionState === 'connected') {
-                    if (!this._nextLoopTimeout) {
-                        let interval = this._repeatInterval;
-                        if (typeof this.onloop !== 'function') {
-                            interval = 100;
-                        }
-                        this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), interval);
-                    }
-                }
-            }
-        }, 0);
+        }
+        catch (e) {
+            console.error(`obniz.js handled Exception inside of obniz.onloop function`);
+            console.error(e);
+        }
+        this._isLoopProcessing = false;
+        if (this._nextLoopTimeout || this.connectionState !== 'connected') {
+            return;
+        }
+        const interval = typeof this.onloop === 'function' ? this._repeatInterval : 100;
+        this._nextLoopTimeout = setTimeout(this._startLoopInBackgroundWait.bind(this), interval);
     }
     _stopLoopInBackground() {
         if (this._nextLoopTimeout) {
@@ -993,6 +998,71 @@ class ObnizConnection extends eventemitter3_1.default {
         if (this.connectionState !== 'connected') {
             throw new ObnizError_1.ObnizOfflineError();
         }
+    }
+    startTrafficMeasurement(ceil = 1) {
+        if (!this.socket_local) {
+            throw new Error('Cannot measure traffic data outside of local connect');
+        }
+        if (!this._measureTraffic) {
+            this._measureTraffic = {
+                ceilByte: ceil,
+                readByte: 0,
+                readCount: 0,
+                sendByte: 0,
+                sendCount: 0,
+            };
+        }
+    }
+    getTrafficData() {
+        if (!this._measureTraffic) {
+            return {
+                readByte: 0,
+                readCount: 0,
+                sendByte: 0,
+                sendCount: 0,
+                ceilByte: 1,
+            };
+        }
+        return {
+            readByte: this._measureTraffic.readByte,
+            readCount: this._measureTraffic.readCount,
+            sendByte: this._measureTraffic.sendByte,
+            sendCount: this._measureTraffic.sendCount,
+            ceilByte: this._measureTraffic.ceilByte,
+        };
+    }
+    resetTrafficMeasurement() {
+        if (this._measureTraffic) {
+            const data = this.getTrafficData();
+            this._measureTraffic = {
+                ceilByte: this._measureTraffic.ceilByte,
+                readByte: 0,
+                readCount: 0,
+                sendByte: 0,
+                sendCount: 0,
+            };
+            return data;
+        }
+        return null;
+    }
+    endTrafficMeasurement() {
+        const data = this.getTrafficData();
+        this._measureTraffic = null;
+        return data;
+    }
+    _calcTrafficSize(data, ceil) {
+        let trafficSize;
+        if (data instanceof Buffer) {
+            trafficSize = data.length;
+        }
+        else if (data instanceof ArrayBuffer) {
+            trafficSize = data.byteLength;
+        }
+        else {
+            trafficSize = data.length * 8;
+        }
+        const ceiledTrafficSize = Math.round(Math.ceil(trafficSize / ceil) * ceil);
+        return ceiledTrafficSize;
     }
 }
 exports.default = ObnizConnection;

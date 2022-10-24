@@ -5,7 +5,7 @@
 /// <reference types="tv4" />
 import EventEmitter from 'eventemitter3';
 import Obniz from '../index';
-import { ObnizError } from '../ObnizError';
+import { ObnizErrorStatic } from '../ObnizError';
 import WSSchema from './wscommand/WSSchema';
 export declare type EventHandler = (...args: any) => any;
 export interface ReceiveJsonOptions {
@@ -19,7 +19,7 @@ export interface ReceiveJsonOptions {
      */
     queue?: boolean;
     errors?: {
-        [schema: string]: typeof ObnizError;
+        [schema: string]: ObnizErrorStatic;
     };
 }
 export declare abstract class ComponentAbstract<EventTypes extends string = string> extends EventEmitter<EventTypes> {

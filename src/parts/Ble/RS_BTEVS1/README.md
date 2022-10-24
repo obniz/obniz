@@ -14,32 +14,22 @@ The following sensors are built-in.
 const RS_BTEVS1 = Obniz.getPartsClass('RS_BTEVS1');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (RS_BTEVS1.isDevice(peripheral)) {
-    console.log('find');
-    const device = new RS_BTEVS1(peripheral);
-    device.ondisconnect = (reason) => {
-      console.log(reason)
-    };
-    await device.connectWait();
-    console.log('connected');
+    if (RS_BTEVS1.isDevice(peripheral)) {
+        console.log('find');
+        const device = new RS_BTEVS1(peripheral);
+        device.ondisconnect = (reason) => {
+            console.log(reason)
+        };
+        await device.connectWait();
+        console.log('connected');
 
-    device.onButtonPressed = (pressed) => {
-      console.log('Button', pressed);
-    };
-    device.onTempMeasured = (temp, humidity) => {
-      console.log('Temp', temp, humidity);
-    };
-    device.onCo2Measured = (co2) => {
-      console.log('CO2', co2);
-    };
-    device.onPm2_5Measured = (pm2_5) => {
-      console.log('PM2.5', pm2_5);
-    };
+        device.onButtonPressed = (pressed) => {
+            console.log('Button', pressed);
+        };
 
-    await device.tempMeasureStartWait();
-    await device.co2MeasureStartWait();
-    await device.pm2_5MeasureStartWait();
-  }
+        const dataResult = await device.getDataWait();
+        console.log(dataReulst);
+    }
 };
 await obniz.ble.scan.startWait();
 ```
@@ -75,7 +65,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
       co2MeasureOperation: false, // CO2 sensor measurement operation setting
       ledDisplay: 'Disable', // Display setting for 10 LEDs (Disable | PM2.5 | CO2)
       advertisementBeacon: false, // Advertisement Beacon Settings
-      pm2_5ConcentrationMode: 'Number' // PM2.5 mass concentration / number concentration mode setting (Mass | Number)
+      pm2_5ConcentrationMode: 'Number' // PM2.5 mass concentration / number concentration mode setting (Mass | Number)　This option does not work with firmware version 1.1 or later.
     });
   }
 };

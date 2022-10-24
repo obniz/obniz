@@ -9,8 +9,10 @@ import EventEmitter from 'eventemitter3';
 
 import {
   ObnizBleHciStateError,
+  ObnizBleInvalidParameterError,
   ObnizBleUnknownPeripheralError,
 } from '../../../../../ObnizError';
+import BleHelper from '../../bleHelper';
 import BleCharacteristic from '../../bleCharacteristic';
 import {
   BleDeviceAddress,
@@ -34,15 +36,19 @@ type NobleBindingsEventType =
   | 'disconnect'
   | 'stateChange'
   | 'notification'
-  | 'handleNotify';
+  | 'handleNotify'
+  | 'updatePhy';
 
 /**
  * @ignore
  */
 class NobleBindings extends EventEmitter<NobleBindingsEventType> {
+  public _connectable: { [key: string]: boolean };
+
   private _state: HciState | null;
   private _handles: Record<BleDeviceAddress, number>;
-  private _addresses: Record<number, BleDeviceAddress>;
+  private _addresses: Record<string, BleDeviceAddress>;
+  private _addresseTypes: Record<string, BleDeviceAddressType>;
   private _gatts: Record<BleDeviceAddress, GattCentral>;
   private _aclStreams: Record<BleDeviceAddress, AclStream>;
   private _signalings: Record<BleDeviceAddress, Signaling>;
@@ -58,8 +64,11 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
 
     this._state = null;
 
-    this._handles = {};
     this._addresses = {};
+    this._addresseTypes = {};
+    this._connectable = {};
+
+    this._handles = {};
     this._gatts = {};
     this._aclStreams = {};
     this._signalings = {};
@@ -67,7 +76,8 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
 
     this._hci.on('stateChange', this.onStateChange.bind(this));
     this._hci.on('disconnComplete', this.onDisconnComplete.bind(this));
-    // this._hci.on('aclDataPkt', this.onAclDataPkt.bind(this));
+    this._hci.on('aclDataPkt', this.onAclDataPkt.bind(this));
+    this._hci.on('updatePhy', this.onPhy.bind(this));
 
     this._gap.on('discover', this.onDiscover.bind(this));
   }
@@ -93,6 +103,38 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     // do nothing.
   };
 
+  public addPeripheralData(uuid: UUID, addressType: BleDeviceAddressType) {
+    if (!this._addresses[uuid]) {
+      const address: any = BleHelper.reverseHexString(uuid, ':');
+      this._addresses[uuid] = address;
+      this._addresseTypes[uuid] = addressType;
+      this._connectable[uuid] = true;
+    }
+  }
+
+  public async startExtendedScanningWait(
+    serviceUuids: UUID[],
+    allowDuplicates: boolean,
+    activeScan: boolean,
+    usePhy1m: boolean,
+    usePhyCoded: boolean
+  ) {
+    if (!usePhy1m && !usePhyCoded) {
+      throw new ObnizBleInvalidParameterError(
+        'Please make either true',
+        `usePhy1M:${usePhy1m} usePhyCoded:${usePhyCoded}`
+      );
+    }
+    this._scanServiceUuids = serviceUuids ?? null;
+
+    await this._gap.startExtendedScanningWait(
+      allowDuplicates,
+      activeScan,
+      usePhy1m,
+      usePhyCoded
+    );
+  }
+
   public async startScanningWait(
     serviceUuids: UUID[],
     allowDuplicates: boolean,
@@ -107,6 +149,10 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     await this._gap.stopScanningWait();
   }
 
+  public async stopExtendedScanningWait() {
+    await this._gap.stopExtendedScanningWait();
+  }
+
   /**
    * Connect to BLE device
    *
@@ -116,11 +162,13 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
    * @param onConnectCallback
    */
   public async connectWait(
-    address: BleDeviceAddress,
-    addressType: BleDeviceAddressType,
+    peripheralUuid: BleDeviceAddress,
     mtu: number | null,
     onConnectCallback?: () => void
   ): Promise<void> {
+    const address = this._addresses[peripheralUuid];
+    const addressType = this._addresseTypes[peripheralUuid];
+
     if (!address) {
       throw new ObnizBleUnknownPeripheralError(address);
     }
@@ -165,6 +213,139 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
         ); // connection timeout for 90 secs.
 
         return await this._gatts[address].exchangeMtuWait(mtu);
+      })
+      .then(
+        () => {
+          this._connectPromises = this._connectPromises.filter(
+            (e) => e === doPromise
+          );
+          return Promise.resolve();
+        },
+        (error) => {
+          this._connectPromises = this._connectPromises.filter(
+            (e) => e === doPromise
+          );
+          return Promise.reject(error);
+        }
+      );
+    this._connectPromises.push(doPromise);
+    return doPromise;
+  }
+
+  public async setDefaultPhyWait(
+    usePhy1m: boolean,
+    usePhy2m: boolean,
+    usePhyCoded: boolean
+  ) {
+    if (!usePhy1m && !usePhyCoded && !usePhy2m) {
+      throw new ObnizBleInvalidParameterError(
+        'Please make either true',
+        `usePhy1M:${usePhy1m} usePhy2M:${usePhy2m} usePhyCoded:${usePhyCoded}`
+      );
+    }
+    const booleanToNumber = (flg: boolean): number => (flg ? 1 : 0);
+    const setPhy =
+      booleanToNumber(usePhy1m) +
+      booleanToNumber(usePhy2m) * 2 +
+      booleanToNumber(usePhyCoded) * 4;
+    await this._hci.leSetDefaultPhyCommandWait(0, setPhy, setPhy);
+  }
+
+  public async readPhyWait(address: string) {
+    return await this._hci.leReadPhyCommandWait(this._handles[address]);
+  }
+
+  public async setPhyWait(
+    address: string,
+    usePhy1m: boolean,
+    usePhy2m: boolean,
+    usePhyCoded: boolean,
+    useCodedModeS8: boolean,
+    useCodedModeS2: boolean
+  ) {
+    if (!usePhy1m && !usePhyCoded && !usePhy2m) {
+      throw new ObnizBleInvalidParameterError(
+        'Please make either true',
+        `usePhy1M:${usePhy1m} usePhy2M:${usePhy2m} usePhyCoded:${usePhyCoded}`
+      );
+    }
+    if (usePhyCoded && !useCodedModeS8 && !useCodedModeS2) {
+      throw new ObnizBleInvalidParameterError(
+        'Please make either true',
+        `useCodedModeS8:${useCodedModeS8} useCodedModeS2:${useCodedModeS2}`
+      );
+    }
+    const booleanToNumber = (flg: boolean): number => (flg ? 1 : 0);
+    const setPhy =
+      booleanToNumber(usePhy1m) +
+      booleanToNumber(usePhy2m) * 2 +
+      booleanToNumber(usePhyCoded) * 4;
+    await this._hci.leSetPhyCommandWait(
+      this._handles[address],
+      0,
+      setPhy,
+      setPhy,
+      booleanToNumber(useCodedModeS8) * 2 + booleanToNumber(useCodedModeS2)
+    );
+  }
+
+  public onPhy(handler: number, txPhy: number, rxPhy: number) {
+    this.emit('updatePhy', handler, txPhy, rxPhy);
+  }
+
+  public async connectExtendedWait(
+    peripheralUuid: BleDeviceAddress,
+    mtu: number | null,
+    onConnectCallback?: any,
+    usePhy1m = true,
+    usePhy2m = true,
+    usePhyCoded = true
+  ) {
+    if (!usePhy1m && !usePhyCoded && !usePhy2m) {
+      throw new ObnizBleInvalidParameterError(
+        'Please make either true',
+        `usePhy1M:${usePhy1m} usePhy2M:${usePhy2m} usePhyCoded:${usePhyCoded}`
+      );
+    }
+    const address = this._addresses[peripheralUuid];
+    const addressType: any = this._addresseTypes[peripheralUuid];
+    if (!address) {
+      throw new ObnizBleUnknownPeripheralError(peripheralUuid);
+    }
+
+    // Block parall connection ongoing for ESP32 bug.
+    const doPromise = Promise.all(this._connectPromises)
+      .catch((error) => {
+        // nothing
+      })
+      .then(async () => {
+        const conResult = await this._hci.createLeExtendedConnWait(
+          address,
+          addressType,
+          90 * 1000,
+          (result: any) => {
+            // on connect success
+            this.onLeConnComplete(
+              result.status,
+              result.handle,
+              result.role,
+              result.addressType,
+              result.address,
+              result.interval,
+              result.latency,
+              result.supervisionTimeout,
+              result.masterClockAccuracy
+            );
+            if (onConnectCallback && typeof onConnectCallback === 'function') {
+              onConnectCallback();
+            }
+          },
+          usePhy1m,
+          usePhy2m,
+          usePhyCoded
+        ); // connection timeout for 90 secs.
+
+        return await this._gatts[conResult.handle].exchangeMtuWait(mtu);
       })
       .then(
         () => {
@@ -350,7 +531,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
 
   /** not used */
   public async discoverIncludedServicesWait(
-    address: string,
+    address: BleDeviceAddress,
     serviceUuid: UUID,
     serviceUuids: UUID[]
   ): Promise<UUID[] | undefined> {
@@ -536,6 +717,18 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
         // console.error(e);
       });
     // this.onLeConnUpdateComplete(); is nop
+  }
+
+  public async isPairingFinishedWait(peripheralUuid: BleDeviceAddress) {
+    const gatt: GattCentral = this.getGatt(peripheralUuid);
+    const result = gatt.hasEncryptKeys();
+    return result;
+  }
+
+  public async getPairingKeysWait(peripheralUuid: BleDeviceAddress) {
+    const gatt: GattCentral = this.getGatt(peripheralUuid);
+    const result = gatt.getEncryptKeys();
+    return result;
   }
 
   public async pairingWait(

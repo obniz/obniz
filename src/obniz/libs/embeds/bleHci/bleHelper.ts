@@ -12,7 +12,7 @@ class BleHelper {
   deviceAddressFilter(
     uuid: string | BleDeviceAddress | BleDeviceAddressWithColon
   ): BleDeviceAddress {
-    return uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
+    return uuid.toLowerCase().replace(/[^0-9abcdef]/g, '') as BleDeviceAddress;
   }
 
   toCamelCase(str: string): string {

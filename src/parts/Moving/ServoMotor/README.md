@@ -21,22 +21,22 @@ If it occure, our recommendations are
 
 Servomotors which vcc can be driven directly from obniz Board io
 
-Maker | SKU
---- | ---
-Tower Pro | SG-5010
-Tower Pro | MG92B
-Tower Pro | MG90S
-Tower Pro | MG90D
-Tower Pro | SG90
-Tower Pro | SG92R
-GWS | S35STD
+| Maker     | SKU     |
+|-----------|---------|
+| Tower Pro | SG-5010 |
+| Tower Pro | MG92B   |
+| Tower Pro | MG90S   |
+| Tower Pro | MG90D   |
+| Tower Pro | SG90    |
+| Tower Pro | SG92R   |
+| GWS       | S35STD  |
 
 Servomotors which vcc can not be driven directly from obniz Board io
 
-Maker | SKU
---- | ---
-Quimat | QKY66-5
-FEETECH | FS90R
+| Maker   | SKU     |
+|---------|---------|
+| Quimat  | QKY66-5 |
+| FEETECH | FS90R   |
 
 ## obniz.wired("ServoMotor", {[vcc, gnd, signal, pwm]})
 

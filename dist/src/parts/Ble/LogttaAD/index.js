@@ -97,7 +97,7 @@ class Logtta_AD extends Logtta_1.default {
         return {
             ampere: this.staticClass.parseAmpereData(data.slice(0, 2), ObnizPartsBleAbstract_1.uintBE),
             volt: this.staticClass.parseVoltData(data.slice(0, 2), ObnizPartsBleAbstract_1.uintBE),
-            count: ObnizPartsBleAbstract_1.uintBE(data.slice(2, 4)),
+            count: (0, ObnizPartsBleAbstract_1.uintBE)(data.slice(2, 4)),
         };
     }
 }
@@ -141,5 +141,14 @@ Logtta_AD.BeaconDataStruct = {
             length: 2,
             type: 'unsignedNumBE',
         },
+        /* alert: {
+          index: 8,
+          type: 'uint8',
+        },
+        name: {
+          index: 9,
+          length: 15,
+          type: 'string',
+        } */
     },
 };

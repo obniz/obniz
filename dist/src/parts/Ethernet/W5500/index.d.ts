@@ -805,7 +805,7 @@ export declare class W5500Socket {
      *
      * コールバック関数、extraはname=ReceiveDataの時とname=ConnectSuccessかつprotocol=TCPServerの時のみ
      */
-    setInterruptHandler(name: W5500SocketParts.Interrupt, handler: ((socket: W5500Socket) => Promise<void>) | ((socket: W5500Socket, extra?: number[] | string | W5500Parts.DestInfo) => Promise<void>)): ((socket: W5500Socket) => Promise<void>) | ((socket: W5500Socket, extra?: string | number[] | W5500Parts.DestInfo | undefined) => Promise<void>);
+    setInterruptHandler(name: W5500SocketParts.Interrupt, handler: ((socket: W5500Socket) => Promise<void>) | ((socket: W5500Socket, extra?: number[] | string | W5500Parts.DestInfo) => Promise<void>)): ((socket: W5500Socket) => Promise<void>) | ((socket: W5500Socket, extra?: number[] | string | W5500Parts.DestInfo) => Promise<void>);
     /**
      * Set a handler to catch all interrupts
      *
@@ -819,7 +819,7 @@ export declare class W5500Socket {
      *
      * コールバック関数、nameは割り込みの種類、extraはname=ReceiveDataの時とname=ConnectSuccessかつprotocol=TCPServerの時のみ
      */
-    setAllInterruptHandler(handler: (socket: W5500Socket, name: W5500SocketParts.Interrupt, extra?: number[] | string | W5500Parts.DestInfo) => Promise<void>): (socket: W5500Socket, name: W5500SocketParts.Interrupt, extra?: string | number[] | W5500Parts.DestInfo | undefined) => Promise<void>;
+    setAllInterruptHandler(handler: (socket: W5500Socket, name: W5500SocketParts.Interrupt, extra?: number[] | string | W5500Parts.DestInfo) => Promise<void>): (socket: W5500Socket, name: W5500SocketParts.Interrupt, extra?: number[] | string | W5500Parts.DestInfo) => Promise<void>;
     /**
      * Get the current protocol 現在のプロトコルを取得
      *

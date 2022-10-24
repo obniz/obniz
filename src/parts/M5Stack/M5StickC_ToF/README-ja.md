@@ -20,11 +20,11 @@ console.log(distance);
 
 他のデバイスの場合は、下記のようにピン指定を行ってください。 
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-scl | `number(obniz Board io)` | no |  &nbsp; | I2Cのsclとなる端子です
-sda | `number(obniz Board io)` | no | &nbsp;  | I2Cのsdaとなる端子です
-i2c | `object` | no | &nbsp;  | obnizのi2cオブジェクトです
+| name | type                     | required | default | description       |
+|------|--------------------------|----------|---------|-------------------|
+| scl  | `number(obniz Board io)` | no       | &nbsp;  | I2Cのsclとなる端子です    |
+| sda  | `number(obniz Board io)` | no       | &nbsp;  | I2Cのsdaとなる端子です    |
+| i2c  | `object`                 | no       | &nbsp;  | obnizのi2cオブジェクトです |
 
 ```javascript
 // JavaScript Examples

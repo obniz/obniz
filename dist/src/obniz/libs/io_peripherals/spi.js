@@ -70,7 +70,7 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
         }
         obj['spi' + this.id] = {
             mode: this.params.mode,
-            clock: this.params.frequency,
+            clock: this.params.frequency, // name different
         };
         if (this.params.clk !== undefined) {
             obj['spi' + this.id].clk = this.params.clk;

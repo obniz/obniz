@@ -10,6 +10,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = require("../../../obniz/ObnizPartsBleAbstract");
 const Logtta_1 = __importDefault(require("../utils/abstracts/Logtta"));
+const round_to_1 = __importDefault(require("round-to"));
 /**
  * Logtta_TH(Logtta_Temp) management class
  *
@@ -21,10 +22,10 @@ class Logtta_TH extends Logtta_1.default {
         this.staticClass = Logtta_TH;
     }
     static parseTemperatureData(data, func = ObnizPartsBleAbstract_1.uint) {
-        return (func(data) / 0x10000) * 175.72 - 46.85;
+        return (0, round_to_1.default)((func(data) / 0x10000) * 175.72 - 46.85, 2);
     }
     static parseHumidityData(data, func = ObnizPartsBleAbstract_1.uint) {
-        return (func(data) / 0x10000) * 125 - 6;
+        return (0, round_to_1.default)((func(data) / 0x10000) * 125 - 6, 2);
     }
     /**
      * @deprecated

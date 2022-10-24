@@ -62,6 +62,7 @@ export interface BleConnectSetting {
      *
      */
     autoDiscovery?: boolean;
+    waitUntilPairing?: boolean;
     /**
      * Pairing Option
      *
@@ -86,6 +87,31 @@ export interface BleConnectSetting {
      * Default : 256
      */
     mtuRequest?: null | number;
+    /**
+     * PHY used for connection
+     *
+     * It was May connect using that PHY
+     *
+     * Default : true
+     */
+    usePyh1m?: boolean;
+    /**
+     * PHY used for connection
+     *
+     * It was May connect using that PHY
+     *
+     * Default : true
+     */
+    usePyh2m?: boolean;
+    /**
+     * PHY used for connection
+     *
+     * It was May connect using that PHY
+     *
+     * Default : true
+     */
+    usePyhCoded?: boolean;
+    retry?: number;
 }
 /**
  * Pairing options
@@ -270,6 +296,14 @@ export default class BleRemotePeripheral {
     localName: string | null;
     manufacturerSpecificData: number[] | null;
     manufacturerSpecificDataInScanResponse: number[] | null;
+    service_data: {
+        uuid: number;
+        data: number[];
+    }[] | null;
+    /**
+     * Ad Type: 0x16 (16bit UUID)
+     */
+    serviceData: number[] | null;
     /**
      * This returns iBeacon data if the peripheral has it. If none, it will return null.
      *
@@ -366,6 +400,7 @@ export default class BleRemotePeripheral {
     protected keys: string[];
     protected _services: BleRemoteService[];
     protected emitter: EventEmitter;
+    private _extended;
     constructor(obnizBle: ObnizBLE, address: BleDeviceAddress, address_type: BleDeviceAddressType);
     /**
      * @ignore
@@ -377,6 +412,11 @@ export default class BleRemotePeripheral {
      * @param dic
      */
     setParams(dic: Record<string, unknown>): void;
+    /**
+     * @ignore
+     * @param extendedMode
+     */
+    setExtendFlg(extendedMode: boolean): void;
     /**
      * @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
      */
@@ -472,6 +512,70 @@ export default class BleRemotePeripheral {
      * ```
      */
     disconnectWait(): Promise<boolean>;
+    /**
+     * Check the PHY used in the connection
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   const phy = await peripheral.readPhyWait()
+     *   console.log(phy)
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     *
+     */
+    readPhyWait(): Promise<{
+        txPhy: string;
+        rxPhy: string;
+    } | undefined>;
+    /**
+     * Check the PHY used in the connection.
+     * Request to change the current PHY
+     *
+     * It will be changed if it corresponds to the PHY set by the other party.
+     *
+     * Changes can be seen on onUpdatePhy
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * obniz.ble.onUpdatePhy = ((txPhy, rxPhy) => {
+     *  console.log("txPhy "+txPhy+" rxPhy "+rxPhy);
+     * });
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await peripheral.setPhyWait(false,false,true,true,true);//Request Only PHY Coded
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     *
+     */
+    setPhyWait(usePhy1m: boolean, usePhy2m: boolean, usePhyCoded: boolean, useCodedModeS8: boolean, useCodedModeS2: boolean): Promise<void>;
     /**
      * It returns a service which having specified uuid in [[services]].
      * Case is ignored. So aa00 and AA00 are the same.
@@ -606,11 +710,14 @@ export default class BleRemotePeripheral {
      * @param options BlePairingOptions
      */
     pairingWait(options?: BlePairingOptions): Promise<string>;
+    getPairingKeysWait(): Promise<string | null>;
+    isPairingFinishedWait(): Promise<boolean>;
     setPairingOption(options: BlePairingOptions): void;
     protected analyseAdvertisement(): void;
     protected searchTypeVal(type: number, fromScanResponseData?: boolean): number[] | undefined;
     protected setLocalName(): void;
     protected setManufacturerSpecificData(): void;
+    protected setServiceData(): void;
     protected setIBeacon(): void;
     protected _addServiceUuids(results: UUID[], data: any, bit: any): void;
 }

@@ -117,6 +117,8 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.ua651ble.ua651ble.html#getdatawait" class="tsd-kind-icon">get<wbr>Data<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.ua651ble.ua651ble.html#ispairingmode" class="tsd-kind-icon">is<wbr>Pairing<wbr>Mode</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.ua651ble.ua651ble.html#pairingwait" class="tsd-kind-icon">pairing<wbr>Wait</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="parts.ua651ble.ua651ble.html#info" class="tsd-kind-icon">info</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="parts.ua651ble.ua651ble.html#isdevice" class="tsd-kind-icon">is<wbr>Device</a></li>
 							</ul>
@@ -130,19 +132,19 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new UA651BLE<span class="tsd-signature-symbol">(</span>peripheral<span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span>, timezoneOffsetMinute<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="parts.ua651ble.ua651ble.html" class="tsd-signature-type">UA651BLE</a></li>
+						<li class="tsd-signature tsd-kind-icon">new UA651BLE<span class="tsd-signature-symbol">(</span>peripheral<span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a>, timezoneOffsetMinute<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="parts.ua651ble.ua651ble.html" class="tsd-signature-type">UA651BLE</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/UA651BLE/index.ts:107</li>
+									<li>Defined in src/parts/Ble/UA651BLE/index.ts:114</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
+									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
 								</li>
 								<li>
 									<h5>timezoneOffsetMinute: <span class="tsd-signature-type">number</span></h5>
@@ -158,10 +160,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="_peripheral" class="tsd-anchor"></a>
 					<h3>_peripheral</h3>
-					<div class="tsd-signature tsd-kind-icon">_peripheral<span class="tsd-signature-symbol">:</span> <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
+					<div class="tsd-signature tsd-kind-icon">_peripheral<span class="tsd-signature-symbol">:</span> <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/UA651BLE/index.ts:103</li>
+							<li>Defined in src/parts/Ble/UA651BLE/index.ts:110</li>
 						</ul>
 					</aside>
 				</section>
@@ -171,7 +173,7 @@
 					<div class="tsd-signature tsd-kind-icon">battery<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="parts.utils.services.blebatteryservice.html" class="tsd-signature-type">BleBatteryService</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/UA651BLE/index.ts:106</li>
+							<li>Defined in src/parts/Ble/UA651BLE/index.ts:113</li>
 						</ul>
 					</aside>
 				</section>
@@ -181,7 +183,7 @@
 					<div class="tsd-signature tsd-kind-icon">generic<wbr>Access<span class="tsd-signature-symbol">:</span> <a href="parts.utils.services.blegenericaccess.html" class="tsd-signature-type">BleGenericAccess</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/UA651BLE/index.ts:105</li>
+							<li>Defined in src/parts/Ble/UA651BLE/index.ts:112</li>
 						</ul>
 					</aside>
 				</section>
@@ -191,7 +193,7 @@
 					<div class="tsd-signature tsd-kind-icon">on<wbr>Notify<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>co2<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/UA651BLE/index.ts:102</li>
+							<li>Defined in src/parts/Ble/UA651BLE/index.ts:109</li>
 						</ul>
 					</aside>
 				</section>
@@ -201,7 +203,7 @@
 					<div class="tsd-signature tsd-kind-icon">ondisconnect<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>reason<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/UA651BLE/index.ts:104</li>
+							<li>Defined in src/parts/Ble/UA651BLE/index.ts:111</li>
 						</ul>
 					</aside>
 				</section>
@@ -212,13 +214,13 @@
 					<a name="getdatawait" class="tsd-anchor"></a>
 					<h3>get<wbr>Data<wbr>Wait</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Data<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/parts.ua651ble.ua651bleresult.html" class="tsd-signature-type">UA651BLEResult</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Data<wbr>Wait<span class="tsd-signature-symbol">(</span>pairingKeys<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/parts.ua651ble.ua651bleresult.html" class="tsd-signature-type">UA651BLEResult</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/UA651BLE/index.ts:127</li>
+									<li>Defined in src/parts/Ble/UA651BLE/index.ts:198</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -227,8 +229,55 @@
 								</div>
 								<p>UA651BLEからデータを取得</p>
 							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> pairingKeys: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/parts.ua651ble.ua651bleresult.html" class="tsd-signature-type">UA651BLEResult</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
 							<p>data from the UA651BLE UA651BLEから受け取ったデータ</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="ispairingmode" class="tsd-anchor"></a>
+					<h3>is<wbr>Pairing<wbr>Mode</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Pairing<wbr>Mode<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in src/parts/Ble/UA651BLE/index.ts:124</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="pairingwait" class="tsd-anchor"></a>
+					<h3>pairing<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">pairing<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in src/parts/Ble/UA651BLE/index.ts:144</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Pair with the device</p>
+								</div>
+								<p>デバイスとペアリング</p>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>pairing key ペアリングキー</p>
 						</li>
 					</ul>
 				</section>
@@ -242,7 +291,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/UA651BLE/index.ts:79</li>
+									<li>Defined in src/parts/Ble/UA651BLE/index.ts:86</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/obnizcore.obnizpartsbleinfo.html" class="tsd-signature-type">ObnizPartsBleInfo</a></h4>
@@ -259,7 +308,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/UA651BLE/index.ts:96</li>
+									<li>Defined in src/parts/Ble/UA651BLE/index.ts:103</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -320,6 +369,12 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="parts.ua651ble.ua651ble.html#getdatawait" class="tsd-kind-icon">get<wbr>Data<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="parts.ua651ble.ua651ble.html#ispairingmode" class="tsd-kind-icon">is<wbr>Pairing<wbr>Mode</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="parts.ua651ble.ua651ble.html#pairingwait" class="tsd-kind-icon">pairing<wbr>Wait</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
 								<a href="parts.ua651ble.ua651ble.html#info" class="tsd-kind-icon">info</a>

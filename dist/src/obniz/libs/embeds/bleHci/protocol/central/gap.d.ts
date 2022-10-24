@@ -4,6 +4,7 @@
  * @ignore
  */
 /// <reference types="node" />
+/// <reference types="node" />
 import EventEmitter from 'eventemitter3';
 import { BleDeviceAddressType, BleDeviceAddressWithColon, BleDiscoveryAdvertisement } from '../../bleTypes';
 import Hci from '../hci';
@@ -32,7 +33,12 @@ declare class Gap extends EventEmitter<GapEventTypes> {
     _reset(): void;
     startScanningWait(allowDuplicates: boolean, activeScan: boolean): Promise<void>;
     stopScanningWait(): Promise<void>;
-    onHciLeAdvertisingReport(status: 0, type: number, address: BleDeviceAddressWithColon, addressType: BleDeviceAddressType, eir: Buffer, rssi: number): void;
+    stopExtendedScanningWait(): Promise<void>;
+    startExtendedScanningWait(allowDuplicates: boolean, activeScan: boolean, usePhy1m: boolean, usePhyCoded: boolean): Promise<void>;
+    onHciLeExtendedAdvertisingReport(status: 0, type: number, address: BleDeviceAddressWithColon, addressType: BleDeviceAddressType, eir: Buffer, rssi: number, primaryPhy?: any, secondaryPhy?: any, sid?: any, txPower?: any, periodicAdvertisingInterval?: any, directAddressType?: any, directAddress?: any): void;
+    private isAdvOrScanResp;
+    onHciLeAdvertisingReport(status: any, type: number, address: any, addressType: any, eir: any, rssi: number, extended: boolean): void;
+    private setExtendedScanEnabledWait;
     private setScanEnabledWait;
 }
 export default Gap;

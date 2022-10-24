@@ -36,8 +36,6 @@ var led = obniz.wired("LED", {anode:0, cathode:1});
 led.on();
 ```
 
-![](./led_on.jpg)
-
 ## off()
 Turning off a LED.
 

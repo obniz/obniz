@@ -117,6 +117,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     //       second: number;
     //     };
     //     temperatureType?: string;
+    //     battery?: number;
     //   }
   }
 };
@@ -128,7 +129,7 @@ await obniz.ble.scan.startWait();
 
 Output format is here. temperature data is in fahrenheit or celsius.
 
-```json
+```
 {
   fahrenheit?: number;
   celsius?: number;
@@ -141,5 +142,6 @@ Output format is here. temperature data is in fahrenheit or celsius.
     second: number;
   };
   temperatureType?: string;
+  battery?: number;
 }
 ```
